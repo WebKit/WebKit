@@ -66,15 +66,9 @@ using namespace WebKit;
 static const CGFloat windowContentBorderThickness = 55;
 #endif
 
-// The margin from the top and right of the dock button (same as the full screen button).
-static const CGFloat dockButtonMargin = 3;
-
-// The spacing between the dock buttons.
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-static const CGFloat dockButtonSpacing = 1;
 static const NSUInteger windowStyleMask = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask | NSFullSizeContentViewWindowMask;
 #else
-static const CGFloat dockButtonSpacing = dockButtonMargin * 2;
 static const NSUInteger windowStyleMask = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask | NSTexturedBackgroundWindowMask;
 #endif
 
@@ -197,45 +191,6 @@ static const unsigned webViewCloseTimeout = 60;
 
 @end
 
-@interface NSView (AppKitDetails)
-- (void)_addKnownSubview:(NSView *)subview;
-@end
-
-@interface NSWindow (AppKitDetails)
-- (NSCursor *)_cursorForResizeDirection:(NSInteger)direction;
-- (NSRect)_customTitleFrame;
-@end
-
-@interface WKWebInspectorWindow : NSWindow {
-@public
-    RetainPtr<NSButton> _dockBottomButton;
-    RetainPtr<NSButton> _dockRightButton;
-}
-@end
-
-@implementation WKWebInspectorWindow
-
-- (NSCursor *)_cursorForResizeDirection:(NSInteger)direction
-{
-    // Don't show a resize cursor for the northeast (top right) direction if the dock button is visible.
-    // This matches what happens when the full screen button is visible.
-    if (direction == 1 && ![_dockRightButton isHidden])
-        return nil;
-    return [super _cursorForResizeDirection:direction];
-}
-
-- (NSRect)_customTitleFrame
-{
-    // Adjust the title frame if needed to prevent it from intersecting the dock button.
-    NSRect titleFrame = [super _customTitleFrame];
-    NSRect dockButtonFrame = _dockBottomButton.get().frame;
-    if (NSMaxX(titleFrame) > NSMinX(dockButtonFrame) - dockButtonMargin)
-        titleFrame.size.width -= (NSMaxX(titleFrame) - NSMinX(dockButtonFrame)) + dockButtonMargin;
-    return titleFrame;
-}
-
-@end
-
 namespace WebKit {
 
 static WKRect getWindowFrame(WKPageRef, const void* clientInfo)
@@ -333,25 +288,6 @@ void WebInspectorProxy::closeTimerFired()
     m_inspectorProxyObjCAdapter = nil;
 }
 
-static NSButton *createDockButton(NSString *imageName)
-{
-    // Create a full screen button so we can turn it into a dock button.
-    NSButton *dockButton = [NSWindow standardWindowButton:NSWindowFullScreenButton forStyleMask:windowStyleMask];
-
-    // Set the autoresizing mask to keep the dock button pinned to the top right corner.
-    dockButton.autoresizingMask = NSViewMinXMargin | NSViewMinYMargin;
-
-    // Get the dock image and make it a template so the button cell effects will apply.
-    NSImage *dockImage = [[NSBundle bundleForClass:[WKWebInspectorWKWebView class]] imageForResource:imageName];
-    [dockImage setTemplate:YES];
-
-    // Set the dock image on the button cell.
-    NSCell *dockButtonCell = dockButton.cell;
-    dockButtonCell.image = dockImage;
-
-    return [dockButton retain];
-}
-
 void WebInspectorProxy::createInspectorWindow()
 {
     ASSERT(!m_inspectorWindow);
@@ -364,7 +300,7 @@ void WebInspectorProxy::createInspectorWindow()
     if (!NSIsEmptyRect(savedWindowFrame))
         windowFrame = savedWindowFrame;
 
-    WKWebInspectorWindow *window = [[WKWebInspectorWindow alloc] initWithContentRect:windowFrame styleMask:windowStyleMask backing:NSBackingStoreBuffered defer:NO];
+    NSWindow *window = [[NSWindow alloc] initWithContentRect:windowFrame styleMask:windowStyleMask backing:NSBackingStoreBuffered defer:NO];
     [window setDelegate:m_inspectorProxyObjCAdapter.get()];
     [window setMinSize:NSMakeSize(minimumWindowWidth, minimumWindowHeight)];
     [window setReleasedWhenClosed:NO];
@@ -379,62 +315,6 @@ void WebInspectorProxy::createInspectorWindow()
     m_inspectorWindow = adoptNS(window);
 
     NSView *contentView = [window contentView];
-
-    static const int32_t firstVersionOfSafariWithDockToRightSupport = 0x02181d0d; // 536.29.13
-    static bool supportsDockToRight = NSVersionOfLinkTimeLibrary("Safari") >= firstVersionOfSafariWithDockToRightSupport;
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    m_dockBottomButton = adoptNS(createDockButton(@"DockBottom"));
-    m_dockRightButton = adoptNS(createDockButton(@"DockRight"));
-
-    m_dockBottomButton.get().alphaValue = 0.55;
-    m_dockRightButton.get().alphaValue = supportsDockToRight ? 0.55 : 0.25;
-#else
-    m_dockBottomButton = adoptNS(createDockButton(@"DockBottomLegacy"));
-    m_dockRightButton = adoptNS(createDockButton(@"DockRightLegacy"));
-
-    m_dockRightButton.get().alphaValue = supportsDockToRight ? 1 : 0.5;
-#endif
-
-    m_dockBottomButton.get().target = m_inspectorProxyObjCAdapter.get();
-    m_dockBottomButton.get().action = @selector(attachBottom:);
-
-    m_dockRightButton.get().target = m_inspectorProxyObjCAdapter.get();
-    m_dockRightButton.get().action = @selector(attachRight:);
-    m_dockRightButton.get().enabled = supportsDockToRight;
-
-    // Store the dock buttons on the window too so it can check its visibility.
-    window->_dockBottomButton = m_dockBottomButton;
-    window->_dockRightButton = m_dockRightButton;
-
-    // Get the frame view, the superview of the content view, and its frame.
-    // This will be the superview of the dock button too.
-    NSView *frameView = contentView.superview;
-    NSRect frameViewBounds = frameView.bounds;
-    NSSize dockButtonSize = m_dockBottomButton.get().frame.size;
-
-    ASSERT(!frameView.isFlipped);
-
-    // Position the dock button in the corner to match where the full screen button is normally.
-    NSPoint dockButtonOrigin;
-    dockButtonOrigin.x = NSMaxX(frameViewBounds) - dockButtonSize.width - dockButtonMargin;
-    dockButtonOrigin.y = NSMaxY(frameViewBounds) - dockButtonSize.height - dockButtonMargin;
-    m_dockRightButton.get().frameOrigin = dockButtonOrigin;
-
-    dockButtonOrigin.x -= dockButtonSize.width + dockButtonSpacing;
-    m_dockBottomButton.get().frameOrigin = dockButtonOrigin;
-
-    if ([frameView respondsToSelector:@selector(_addKnownSubview:)]) {
-        [frameView _addKnownSubview:m_dockBottomButton.get()];
-        [frameView _addKnownSubview:m_dockRightButton.get()];
-    } else {
-        [frameView addSubview:m_dockBottomButton.get()];
-        [frameView addSubview:m_dockRightButton.get()];
-    }
-
-    // Hide the dock buttons if we can't attach.
-    m_dockBottomButton.get().hidden = !canAttach();
-    m_dockRightButton.get().hidden = !canAttach();
 
     [m_inspectorView setFrame:[contentView bounds]];
     [m_inspectorView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
@@ -662,8 +542,7 @@ bool WebInspectorProxy::platformIsFront()
 
 void WebInspectorProxy::platformAttachAvailabilityChanged(bool available)
 {
-    m_dockBottomButton.get().hidden = !available;
-    m_dockRightButton.get().hidden = !available;
+    // Do nothing.
 }
 
 void WebInspectorProxy::platformInspectedURLChanged(const String& urlString)

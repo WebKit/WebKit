@@ -243,8 +243,6 @@ private:
 #if PLATFORM(MAC) && WK_API_ENABLED
     RetainPtr<WKWebInspectorWKWebView> m_inspectorView;
     RetainPtr<NSWindow> m_inspectorWindow;
-    RetainPtr<NSButton> m_dockBottomButton;
-    RetainPtr<NSButton> m_dockRightButton;
     RetainPtr<WKWebInspectorProxyObjCAdapter> m_inspectorProxyObjCAdapter;
     HashMap<String, RetainPtr<NSURL>> m_suggestedToActualURLMap;
     RunLoop::Timer<WebInspectorProxy> m_closeTimer;

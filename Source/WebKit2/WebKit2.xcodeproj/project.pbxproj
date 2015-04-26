@@ -520,8 +520,6 @@
 		1AFF49001833DE78009AB15A /* WKDeprecatedFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AFF48FE1833DE78009AB15A /* WKDeprecatedFunctions.cpp */; };
 		1C891D6519B124FF00BA79DD /* WebInspectorUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C891D6219B124FF00BA79DD /* WebInspectorUI.cpp */; };
 		1C891D6619B124FF00BA79DD /* WebInspectorUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C891D6319B124FF00BA79DD /* WebInspectorUI.h */; };
-		1C8AE7611992F63A00ABF6EC /* DockBottomLegacy.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 1C8AE75F1992F62F00ABF6EC /* DockBottomLegacy.pdf */; };
-		1C8AE7621992F63C00ABF6EC /* DockRightLegacy.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 1C8AE7601992F62F00ABF6EC /* DockRightLegacy.pdf */; };
 		1C8E28201275D15400BC7BD0 /* WebInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C8E281E1275D15400BC7BD0 /* WebInspector.h */; };
 		1C8E28211275D15400BC7BD0 /* WebInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C8E281F1275D15400BC7BD0 /* WebInspector.cpp */; };
 		1C8E28341275D73800BC7BD0 /* WebInspectorProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C8E28321275D73800BC7BD0 /* WebInspectorProxy.h */; };
@@ -534,10 +532,8 @@
 		1CA8B945127C882A00576C2B /* WebInspectorProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CA8B943127C882A00576C2B /* WebInspectorProxyMessageReceiver.cpp */; };
 		1CA8B946127C882A00576C2B /* WebInspectorProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CA8B944127C882A00576C2B /* WebInspectorProxyMessages.h */; };
 		1CA8B954127C891500576C2B /* WebInspectorUIMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C8E2DAD1278C5B200BC7BD0 /* WebInspectorUIMac.mm */; };
-		1CB75C941701E880009F809F /* DockRight.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 1CB75C931701E880009F809F /* DockRight.pdf */; };
 		1CBBE4A019B66C53006B7D81 /* WebInspectorUIMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CBBE49E19B66C53006B7D81 /* WebInspectorUIMessageReceiver.cpp */; };
 		1CBBE4A119B66C53006B7D81 /* WebInspectorUIMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CBBE49F19B66C53006B7D81 /* WebInspectorUIMessages.h */; };
-		1CBC945E16515ED200D68AAE /* DockBottom.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 1CBC945D16515ED200D68AAE /* DockBottom.pdf */; };
 		1F335BC0185B84F0001A201A /* WKWebProcessPlugInLoadDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F335BBF185B84D8001A201A /* WKWebProcessPlugInLoadDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1F604BAA1889FBB800EE0395 /* _WKRenderingProgressEventsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F604BA71889FA7400EE0395 /* _WKRenderingProgressEventsInternal.h */; };
 		1F7506AD1859161C00EC0FF7 /* WKWebProcessPlugInFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1F01816A1858DC1500F92884 /* WKWebProcessPlugInFrame.mm */; };
@@ -2674,8 +2670,6 @@
 		1C891D6219B124FF00BA79DD /* WebInspectorUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInspectorUI.cpp; sourceTree = "<group>"; };
 		1C891D6319B124FF00BA79DD /* WebInspectorUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorUI.h; sourceTree = "<group>"; };
 		1C891D6419B124FF00BA79DD /* WebInspectorUI.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebInspectorUI.messages.in; sourceTree = "<group>"; };
-		1C8AE75F1992F62F00ABF6EC /* DockBottomLegacy.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = DockBottomLegacy.pdf; path = Resources/DockBottomLegacy.pdf; sourceTree = "<group>"; };
-		1C8AE7601992F62F00ABF6EC /* DockRightLegacy.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = DockRightLegacy.pdf; path = Resources/DockRightLegacy.pdf; sourceTree = "<group>"; };
 		1C8E281E1275D15400BC7BD0 /* WebInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspector.h; sourceTree = "<group>"; };
 		1C8E281F1275D15400BC7BD0 /* WebInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInspector.cpp; sourceTree = "<group>"; };
 		1C8E28321275D73800BC7BD0 /* WebInspectorProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorProxy.h; sourceTree = "<group>"; };
@@ -2689,10 +2683,8 @@
 		1CA8B935127C774E00576C2B /* WebInspectorProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspectorProxyMac.mm; sourceTree = "<group>"; };
 		1CA8B943127C882A00576C2B /* WebInspectorProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInspectorProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		1CA8B944127C882A00576C2B /* WebInspectorProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorProxyMessages.h; sourceTree = "<group>"; };
-		1CB75C931701E880009F809F /* DockRight.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = DockRight.pdf; path = Resources/DockRight.pdf; sourceTree = "<group>"; };
 		1CBBE49E19B66C53006B7D81 /* WebInspectorUIMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInspectorUIMessageReceiver.cpp; sourceTree = "<group>"; };
 		1CBBE49F19B66C53006B7D81 /* WebInspectorUIMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorUIMessages.h; sourceTree = "<group>"; };
-		1CBC945D16515ED200D68AAE /* DockBottom.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = DockBottom.pdf; path = Resources/DockBottom.pdf; sourceTree = "<group>"; };
 		1CC417C912C00CCA002BE67B /* TextCheckerCompletion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCheckerCompletion.h; sourceTree = "<group>"; };
 		1F0181691858DC1500F92884 /* WKWebProcessPlugInFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcessPlugInFrame.h; sourceTree = "<group>"; };
 		1F01816A1858DC1500F92884 /* WKWebProcessPlugInFrame.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebProcessPlugInFrame.mm; sourceTree = "<group>"; };
@@ -4324,10 +4316,6 @@
 			isa = PBXGroup;
 			children = (
 				6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb.in */,
-				1CBC945D16515ED200D68AAE /* DockBottom.pdf */,
-				1C8AE75F1992F62F00ABF6EC /* DockBottomLegacy.pdf */,
-				1CB75C931701E880009F809F /* DockRight.pdf */,
-				1C8AE7601992F62F00ABF6EC /* DockRightLegacy.pdf */,
 				8DC2EF5A0486A6940098B216 /* Info.plist */,
 				089C1666FE841158C02AAC07 /* InfoPlist.strings */,
 				37F8C94F1AE22BD8007DAB9E /* mac */,
@@ -8954,10 +8942,6 @@
 				E115C716190F8A2500ECC516 /* com.apple.WebKit.Databases.sb in Resources */,
 				E17AE2C316B9C63A001C42F1 /* com.apple.WebKit.NetworkProcess.sb in Resources */,
 				E11D35AE16B63D1B006D23D7 /* com.apple.WebProcess.sb in Resources */,
-				1CBC945E16515ED200D68AAE /* DockBottom.pdf in Resources */,
-				1C8AE7611992F63A00ABF6EC /* DockBottomLegacy.pdf in Resources */,
-				1CB75C941701E880009F809F /* DockRight.pdf in Resources */,
-				1C8AE7621992F63C00ABF6EC /* DockRightLegacy.pdf in Resources */,
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
 				2DC658351AD7237600D44508 /* SwipeShadow.png in Resources */,
 				2DC658361AD7237600D44508 /* SwipeShadow@2x.png in Resources */,

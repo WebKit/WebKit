@@ -1,3 +1,16 @@
+2015-04-24  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Remove native window dock controls
+        https://bugs.webkit.org/show_bug.cgi?id=144184
+
+        Reviewed by Joseph Pecoraro.
+
+        * Resources/Dock.pdf: Removed.
+        * Resources/DockLegacy.pdf: Removed.
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController window]):
+        (-[WebInspectorWindowController setDockingUnavailable:]):
+
 2015-04-25  Martin Robinson  <mrobinson@igalia.com>
 
         Rename ENABLE_3D_RENDERING to ENABLE_3D_TRANSFORMS
