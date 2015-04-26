@@ -32,9 +32,7 @@ VALID_ARCHS_macosx_NO = i386;
 PRODUCT_NAME = com.apple.WebKit.Plugin.32;
 INFOPLIST_FILE = PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64.Info.plist;
 
-FRAMEWORK_LDFLAGS = -framework Foundation -framework WebKit2;
-
-OTHER_LDFLAGS = $(FRAMEWORK_LDFLAGS) $(OTHER_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM) $(OTHER_LDFLAGS_VERSIONED_FRAMEWORK_PATH);
+OTHER_LDFLAGS = $(OTHER_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM) $(OTHER_LDFLAGS_VERSIONED_FRAMEWORK_PATH);
 OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = -framework AppKit;
 
 CODE_SIGN_ENTITLEMENTS = Configurations/PluginService.entitlements;

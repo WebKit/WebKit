@@ -1,5 +1,23 @@
 2015-04-26  Dan Bernstein  <mitz@apple.com>
 
+        <rdar://problem/20702337> REGRESSION (r182952): Plug-in service fails to load because it links against WebKit2.framework
+        https://bugs.webkit.org/show_bug.cgi?id=144233
+
+        Reviewed by Simon Fraser.
+
+        Have the plug-in service link against WebKit.framework rather than WebKit2.framework.
+
+        * Configurations/PluginService.32.xcconfig: Removed linker flags for linking against WebKit2
+        and Foundation from the definition of OTHER_LDFLAGS. Since linking is no longer conditional,
+        we can just do it in the target’s Link Binary With Libraries build phase.
+
+        * Configurations/PluginService.64.xcconfig: Ditto.
+
+        * WebKit2.xcodeproj/project.pbxproj: Have Foundation and WebKit listed in the services’ Link
+        Binariy With Libraries build phases (one service already had WebKit).
+
+2015-04-26  Dan Bernstein  <mitz@apple.com>
+
         Fixed the build.
 
         * UIProcess/ios/forms/WKFileUploadPanel.mm:
