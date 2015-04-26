@@ -117,12 +117,22 @@ private:
     LayoutUnit logicalContentHeightForChild(RenderBox&, Vector<GridTrack>&);
     LayoutUnit minContentForChild(RenderBox&, GridTrackSizingDirection, Vector<GridTrack>& columnTracks);
     LayoutUnit maxContentForChild(RenderBox&, GridTrackSizingDirection, Vector<GridTrack>& columnTracks);
-    LayoutPoint findChildLogicalPosition(RenderBox&, const GridSizingData&);
+    LayoutUnit startOfRowForChild(const RenderBox&) const;
+    LayoutUnit endOfRowForChild(const RenderBox&) const;
+    LayoutUnit centeredRowPositionForChild(const RenderBox&) const;
+    LayoutUnit rowPositionForChild(const RenderBox&) const;
+    LayoutPoint findChildLogicalPosition(const RenderBox&, const GridSizingData&) const;
     GridCoordinate cachedGridCoordinate(const RenderBox&) const;
 
     LayoutUnit gridAreaBreadthForChild(const RenderBox& child, GridTrackSizingDirection, const Vector<GridTrack>&) const;
 
     virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint& paintOffset, PaintInfo& forChild, bool usePrintRect) override;
+    bool allowedToStretchLogicalHeightForChild(const RenderBox&) const;
+    bool needToStretchChildLogicalHeight(const RenderBox&) const;
+    LayoutUnit marginLogicalHeightForChild(const RenderBox&) const;
+    LayoutUnit computeMarginLogicalHeightForChild(const RenderBox&) const;
+    LayoutUnit availableAlignmentSpaceForChildBeforeStretching(LayoutUnit gridAreaBreadthForChild, const RenderBox&) const;
+    void applyStretchAlignmentToChildIfNeeded(RenderBox&, LayoutUnit gridAreaBreadthForChild);
 
 #ifndef NDEBUG
     bool tracksAreWiderThanMinTrackBreadth(GridTrackSizingDirection, const Vector<GridTrack>&);

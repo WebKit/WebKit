@@ -1,3 +1,24 @@
+2015-04-26  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout] Support for align-self and align-items in grid layout
+        https://bugs.webkit.org/show_bug.cgi?id=133225
+
+        Reviewed by Darin Adler.
+
+        Implementation of align-self and align-items properties ifor grid.
+
+        Several layout tests were touched for adapting them to the new grid item's
+        column-axis position when using RTL direction.
+
+        * fast/css-grid-layout/grid-align-expected.txt: Added.
+        * fast/css-grid-layout/grid-align.html: Added.
+        * fast/css-grid-layout/grid-element-border-grid-item.html:
+        * fast/css-grid-layout/grid-element-border-padding-grid-item.html:
+        * fast/css-grid-layout/grid-element-padding-grid-item.html:
+        * fast/css-grid-layout/grid-item-margin-auto-columns-rows-horizontal-rtl-expected.html:
+        * fast/css-grid-layout/grid-item-margin-auto-columns-rows-vertical-rtl-expected.html:
+        * fast/css-grid-layout/grid-item-margin-resolution.html:
+
 2015-04-26  Doug Russell  <d_russell@apple.com>
 
         AX: richer text change notifications (142719)
