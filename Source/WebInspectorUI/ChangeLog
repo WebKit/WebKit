@@ -1,5 +1,27 @@
 2015-04-22  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Make debugger keyboard shortcuts global
+        https://bugs.webkit.org/show_bug.cgi?id=144068
+
+        We wont always have a DebuggerSidebarPanel to listen for the shortcuts.
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        (WebInspector.showSourceCodeForFrame):
+        (WebInspector.showSourceCode):
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype.pause):
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype.restoreStateFromCookie):
+        (WebInspector.DebuggerSidebarPanel.prototype._debuggerDidResume):
+        (WebInspector.DebuggerSidebarPanel.prototype._handleIssueAdded):
+        (WebInspector.DebuggerSidebarPanel.prototype._handleIssuesCleared):
+        (WebInspector.DebuggerSidebarPanel):
+
+2015-04-22  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Remove Reload and Download Web Archive buttons from FrameTreeElement
         https://bugs.webkit.org/show_bug.cgi?id=144064
 
