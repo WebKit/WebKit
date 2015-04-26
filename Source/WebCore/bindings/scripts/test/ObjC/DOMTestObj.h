@@ -56,9 +56,9 @@ enum {
     DOM_CONST_VALUE_14 = 0x1abc,
     DOM_CONST_JAVASCRIPT = 15,
     DOM_readonly = 0
-} WEBKIT_ENUM_AVAILABLE_MAC(TBD);
+} WEBKIT_ENUM_AVAILABLE_MAC(9876_5);
 
-WEBKIT_CLASS_AVAILABLE_MAC(TBD)
+WEBKIT_CLASS_AVAILABLE_MAC(9876_5)
 WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 @property (readonly) int readOnlyLongAttr;
 @property (readonly, copy) NSString *readOnlyStringAttr;

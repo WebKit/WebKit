@@ -33,7 +33,7 @@
 @class DOMTestNode;
 @class NSString;
 
-WEBKIT_CLASS_AVAILABLE_MAC(TBD)
+WEBKIT_CLASS_AVAILABLE_MAC(9876_5)
 WEBCORE_EXPORT @interface DOMTestCallback : DOMObject
 - (BOOL)callbackWithNoParam;
 - (BOOL)callbackWithArrayParam:(DOMFloat32Array *)arrayParam;

@@ -32,9 +32,9 @@
 
 enum {
 
-} WEBKIT_ENUM_AVAILABLE_MAC(TBD);
+} WEBKIT_ENUM_AVAILABLE_MAC(9876_5);
 
-WEBKIT_CLASS_AVAILABLE_MAC(TBD)
+WEBKIT_CLASS_AVAILABLE_MAC(9876_5)
 WEBCORE_EXPORT @interface DOMTestInterface : DOMObject
 @property (readonly, copy) NSString *implementsStr1;
 @property (copy) NSString *implementsStr2;
