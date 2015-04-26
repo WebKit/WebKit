@@ -1,0 +1,305 @@
+/*
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.tab-bar {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    position: relative;
+
+    border-bottom: 1px solid rgb(168, 168, 168);
+
+    background-image: linear-gradient(to bottom, rgb(199, 199, 199), rgb(184, 184, 184));
+    background-size: 100% 200%;
+
+    height: 30px;
+
+    white-space: nowrap;
+    overflow: hidden;
+
+    outline: none;
+}
+
+body.window-inactive .tab-bar {
+    border-bottom-color: rgb(219, 219, 219);
+
+    background-image: none !important;
+    background-color: rgb(236, 236, 236) !important;
+}
+
+.tab-bar > .top-border {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+
+    background-color: rgb(168, 168, 168);
+
+    z-index: 0;
+}
+
+body.window-inactive .tab-bar > .top-border {
+    background-color: rgb(219, 219, 219);
+}
+
+.tab-bar > .item {
+    display: flex;
+    flex: 1;
+
+    position: relative;
+
+    z-index: 1;
+
+    align-items: center;
+
+    padding: 0 6px;
+
+    min-width: 30px;
+    overflow: hidden;
+
+    background-image: linear-gradient(to bottom, rgb(199, 199, 199), rgb(184, 184, 184));
+    background-size: 100% 200%;
+
+    border-top: 1px solid rgb(168, 168, 168);
+
+    height: 100%;
+    outline: none;
+
+    /* FIXME: These cause noticeable transitions when focusing the window. Fix that with JavaScript? */
+    /* transition-property: background-position, border-color; */
+    /* transition-duration: 250ms; */
+    /* transition-delay: 50ms; */
+}
+
+.tab-bar > :nth-child(n + 2 of .item),
+.tab-bar.dragging-tab > .item.selected {
+    border-left: 1px solid rgb(168, 168, 168);
+}
+
+.tab-bar > .item.pinned {
+    width: 30px;
+    flex: none;
+    justify-content: center;
+}
+
+.tab-bar > .item.selected {
+    border-top-color: rgb(190, 190, 190);
+    background-image: linear-gradient(to bottom, rgb(222, 222, 222), rgb(211, 211, 211));
+    background-size: 100% 100%;
+}
+
+.tab-bar:not(.animating) > .item:not(.selected):hover,
+.tab-bar > .item.new-tab-button:hover {
+    background-position: 0 100%;
+    border-top-color: rgb(152, 152, 152);
+    border-left-color: rgb(152, 152, 152);
+}
+
+.tab-bar:not(.animating) > .item:not(.selected):hover + .item {
+    border-left-color: rgb(152, 152, 152);
+}
+
+body.window-inactive .tab-bar > .item {
+    border-left-color: rgb(219, 219, 219) !important;
+    border-top-color: rgb(219, 219, 219) !important;
+
+    background-image: none !important;
+    background-color: rgb(236, 236, 236) !important;
+
+    transition: none;
+}
+
+body.window-inactive .tab-bar > .item.selected {
+    background-image: none !important;
+    background-color: rgb(246, 246, 246) !important;
+}
+
+.tab-bar > .item > .close {
+    width: 16px;
+    height: 16px;
+
+    min-width: 16px;
+    min-height: 16px;
+
+    opacity: 0;
+
+    border-radius: 2px;
+
+    background-image: url(../Images/Close.svg);
+    background-repeat: no-repeat;
+
+    margin-right: 4px;
+
+    transition-property: background-color, opacity;
+    transition-duration: 250ms, 500ms;
+    transition-delay: 0, 50ms;
+}
+
+body:not(.window-inactive) .tab-bar:not(.single-tab) > .item:not(.hide-close-button):hover > .close {
+    opacity: 0.6;
+}
+
+.tab-bar.single-tab > .item > .close,
+.tab-bar > .item.hide-close-button > .close {
+    pointer-events: none;
+}
+
+.tab-bar > .item > .close:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.tab-bar > .item > .close:active {
+    opacity: 0.8 !important;
+}
+
+.tab-bar > .item > .flex-space {
+    display: flex;
+    flex: 1;
+}
+
+.tab-bar > .item > .flex-space:last-child {
+    margin-right: 16px;
+}
+
+.tab-bar > .item > .icon {
+    width: 16px;
+    height: 16px;
+
+    min-width: 16px;
+    min-height: 16px;
+
+    opacity: 0.55; /* Assumes black glyphs. */
+
+    -webkit-user-drag: none;
+}
+
+.tab-bar > .item.selected > .icon {
+    opacity: 0.7;
+}
+
+.tab-bar:not(.animating) > .item:not(.selected):hover > .icon,
+.tab-bar > .item.new-tab-button:hover > .icon {
+    opacity: 0.6;
+}
+
+.tab-bar > .item > .title {
+    margin-left: 6px;
+
+    color: rgba(0, 0, 0, 0.55);
+
+    display: flex;
+
+    min-width: 0;
+    max-width: 400px;
+}
+
+.tab-bar > .item > .title > .content {
+    min-width: 0;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tab-bar:not(.animating) > .item:not(.selected):hover > .title {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.tab-bar > .item.selected > .title {
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.tab-bar.collapsed > .item {
+    justify-content: center;
+}
+
+.tab-bar.collapsed > .item > .flex-space {
+    display: none;
+}
+
+.tab-bar.collapsed > .item > .close {
+    display: none;
+    margin-right: 0;
+}
+
+.tab-bar.hide-titles > .item > .title {
+    display: none;
+}
+
+.tab-bar.collapsed:not(.hide-titles) > .item:not(.pinned, .hide-close-button):hover > .icon,
+.tab-bar.hide-titles > .item.selected:hover > .icon {
+    display: none;
+}
+
+.tab-bar.collapsed:not(.hide-titles) > .item:not(.hide-close-button):hover > .close,
+.tab-bar.hide-titles > .item.selected:hover > .close {
+    display: inline-block;
+}
+
+.tab-bar.static-layout {
+    position: relative;
+}
+
+.tab-bar.static-layout > .item {
+    position: absolute !important;
+    top: 0;
+}
+
+.tab-bar.animating.closing-tab > .item {
+    transition-property: left;
+    transition-duration: 250ms;
+    transition-timing-function: ease-in-out;
+}
+
+.tab-bar.animating:matches(.expanding-tabs, .inserting-tab) > .item {
+    transition-property: left, width;
+    transition-duration: 250ms;
+    transition-timing-function: ease-in-out;
+}
+
+.tab-bar.animating.inserting-tab > .item.being-inserted {
+    z-index: 2;
+    min-width: 0 !important;
+    padding: 0 !important;
+}
+
+.tab-bar.dragging-tab > .item.selected,
+.tab-bar.static-layout:not(.animating.inserting-tab):not(.dragging-tab) > .item:nth-last-child(1 of :not(.pinned)),
+.tab-bar.animating.closing-tab > .item.selected {
+    border-right: 1px solid rgb(168, 168, 168);
+}
+
+body.window-inactive .tab-bar.dragging-tab > .item.selected,
+body.window-inactive .tab-bar.static-layout:not(.animating.inserting-tab):not(.dragging-tab) > .item:nth-last-child(1 of :not(.pinned)),
+body.window-inactive .tab-bar.animating.closing-tab > .item.selected {
+    border-right-color: rgb(219, 219, 219) !important;
+}
+
+.tab-bar.dragging-tab > .item.selected {
+    z-index: 2;
+    pointer-events: none;
+}

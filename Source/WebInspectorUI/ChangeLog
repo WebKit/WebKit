@@ -1,3 +1,108 @@
+2015-04-06  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Add a WebInspector.TabBar class
+        https://bugs.webkit.org/show_bug.cgi?id=143442
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Main.html:
+        Added new files.
+
+        * UserInterface/Protocol/InspectorFrontendHostStub.js:
+        (window.Symbol):
+        (WebInspector.InspectorFrontendHostStub.prototype.showContextMenu):
+        Added some stubs needed to work standalone.
+
+        * UserInterface/Views/TabBar.css: Added.
+        (.tab-bar):
+        (body.window-inactive .tab-bar):
+        (.tab-bar > .top-border):
+        (body.window-inactive .tab-bar > .top-border):
+        (.tab-bar > .item):
+        (.tab-bar > :nth-child(n + 2 of .item)):
+        (.tab-bar > .item.pinned):
+        (.tab-bar > .item.selected):
+        (.tab-bar > .item.new-tab-button:hover):
+        (.tab-bar:not(.animating) > .item:not(.selected):hover + .item):
+        (body.window-inactive .tab-bar > .item):
+        (body.window-inactive .tab-bar > .item.selected):
+        (.tab-bar > .item > .close):
+        (body:not(.window-inactive) .tab-bar:not(.single-tab) > .item:hover > .close):
+        (.tab-bar.single-tab > .item > .close):
+        (.tab-bar > .item > .close:hover):
+        (.tab-bar > .item > .close:active):
+        (.tab-bar > .item > .flex-space):
+        (.tab-bar > .item > .flex-space:last-child):
+        (.tab-bar > .item > .icon):
+        (.tab-bar > .item.selected > .icon):
+        (.tab-bar > .item.new-tab-button:hover > .icon):
+        (.tab-bar > .item > .title):
+        (.tab-bar > .item > .title > .content):
+        (.tab-bar:not(.animating) > .item:not(.selected):hover > .title):
+        (.tab-bar > .item.selected > .title):
+        (.tab-bar.collapsed > .item):
+        (.tab-bar.collapsed > .item > .flex-space):
+        (.tab-bar.collapsed > .item > .close):
+        (.tab-bar.hide-titles > .item > .title):
+        (.tab-bar.hide-titles > .item.selected:hover > .icon):
+        (.tab-bar.hide-titles > .item.selected:hover > .close):
+        (.tab-bar.static-layout):
+        (.tab-bar.static-layout > .item):
+        (.tab-bar.animating.closing-tab > .item):
+        (.tab-bar.animating:matches(.expanding-tabs, .inserting-tab) > .item):
+        (.tab-bar.animating.inserting-tab > .item.being-inserted):
+        (.tab-bar.animating.closing-tab > .item.selected):
+        (body.window-inactive .tab-bar.animating.closing-tab > .item.selected):
+        (.tab-bar.dragging-tab > .item.selected):
+
+        * UserInterface/Views/TabBar.js: Added.
+        (WebInspector.TabBar):
+        (WebInspector.TabBar.prototype.get newTabItem):
+        (WebInspector.TabBar.prototype.set newTabItem):
+        (WebInspector.TabBar.prototype.addTabBarItem):
+        (WebInspector.TabBar.prototype.insertTabBarItem.animateTabs):
+        (WebInspector.TabBar.prototype.insertTabBarItem.removeStyles):
+        (WebInspector.TabBar.prototype.insertTabBarItem):
+        (WebInspector.TabBar.prototype.insertTabBarItem.set else):
+        (WebInspector.TabBar.prototype.insertTabBarItem.set this):
+        (WebInspector.TabBar.animateTabs.get if):
+        (WebInspector.TabBar.animateTabs):
+        (WebInspector.TabBar.removeStyles):
+        (WebInspector.TabBar.prototype.insertTabBarItem):
+        (WebInspector.TabBar.prototype.updateLayoutSoon.update):
+        (WebInspector.TabBar.prototype.updateLayoutSoon):
+        (WebInspector.TabBar.prototype.updateLayout):
+        (WebInspector.TabBar.prototype.get selectedTabBarItem):
+        (WebInspector.TabBar.prototype.set selectedTabBarItem):
+        (WebInspector.TabBar.prototype.get tabBarItems):
+        (WebInspector.TabBar.prototype.get element):
+        (WebInspector.TabBar.prototype._findTabBarItem):
+        (WebInspector.TabBar.prototype._hasMoreThanOneNormalTab):
+        (WebInspector.TabBar.prototype._recordTabBarItemSizesAndPositions):
+        (WebInspector.TabBar.prototype._clearTabBarItemSizesAndPositions):
+        (WebInspector.TabBar.prototype._finishExpandingTabsAfterClose.):
+        (WebInspector.TabBar.prototype._finishExpandingTabsAfterClose):
+        (WebInspector.TabBar.prototype._handleMouseDown):
+        (WebInspector.TabBar.prototype._handleMouseMoved):
+        (WebInspector.TabBar.prototype._handleMouseUp):
+        (WebInspector.TabBar.prototype._handleMouseLeave):
+        (WebInspector.TabBar.prototype._handleNewTabMouseEnter):
+
+        * UserInterface/Views/TabBarItem.js: Added.
+        (WebInspector.TabBarItem):
+        (WebInspector.TabBarItem.prototype.get identifier):
+        (WebInspector.TabBarItem.prototype.get element):
+        (WebInspector.TabBarItem.prototype.get parentTabBar):
+        (WebInspector.TabBarItem.prototype.set parentTabBar):
+        (WebInspector.TabBarItem.prototype.get selected):
+        (WebInspector.TabBarItem.prototype.set selected):
+        (WebInspector.TabBarItem.prototype.get pinned):
+        (WebInspector.TabBarItem.prototype.get image):
+        (WebInspector.TabBarItem.prototype.set image):
+        (WebInspector.TabBarItem.prototype.get title):
+        (WebInspector.TabBarItem.prototype.set title):
+        (WebInspector.TabBarItem.prototype.updateLayout):
+
 2015-04-25  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Make closing ContentViews more leak proof
