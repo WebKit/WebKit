@@ -44,6 +44,7 @@ OBJC_CLASS _UINavigationInteractiveTransitionBase;
 OBJC_CLASS _UIViewControllerOneToOneTransitionContext;
 OBJC_CLASS _UIViewControllerTransitionContext;
 #else
+OBJC_CLASS CAGradientLayer;
 OBJC_CLASS NSEvent;
 OBJC_CLASS NSView;
 OBJC_CLASS WKSwipeCancellationTracker;
@@ -187,7 +188,7 @@ private:
     RetainPtr<WKSwipeCancellationTracker> m_swipeCancellationTracker;
     RetainPtr<CALayer> m_swipeLayer;
     RetainPtr<CALayer> m_swipeSnapshotLayer;
-    RetainPtr<CALayer> m_swipeShadowLayer;
+    RetainPtr<CAGradientLayer> m_swipeShadowLayer;
     RetainPtr<CALayer> m_swipeDimmingLayer;
     Vector<RetainPtr<CALayer>> m_currentSwipeLiveLayers;
 

@@ -68,8 +68,9 @@ static const float smartMagnificationPanScrollThreshold = 100;
 static const double swipeOverlayShadowOpacity = 0.66;
 static const double swipeOverlayShadowRadius = 3;
 #else
-static const double swipeOverlayShadowOpacity = 0.47;
+static const double swipeOverlayShadowOpacity = 0.06;
 static const double swipeOverlayDimmingOpacity = 0.12;
+static const CGFloat swipeOverlayShadowWidth = 81;
 #endif
 
 static const CGFloat minimumHorizontalSwipeDistance = 15;
@@ -631,12 +632,47 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
         [m_swipeDimmingLayer setGeometryFlipped:geometryIsFlippedToRoot];
         [m_swipeDimmingLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
 
-        NSImage *shadowImage = [[NSBundle bundleForClass:[WKSwipeCancellationTracker class]] imageForResource:@"SwipeShadow"];
-        FloatRect shadowRect(-shadowImage.size.width, topContentInset, shadowImage.size.width, m_webPageProxy.viewSize().height() - topContentInset);
-        m_swipeShadowLayer = adoptNS([[CALayer alloc] init]);
+        FloatRect shadowRect(-swipeOverlayShadowWidth, topContentInset, swipeOverlayShadowWidth, m_webPageProxy.viewSize().height() - topContentInset);
+        m_swipeShadowLayer = adoptNS([[CAGradientLayer alloc] init]);
         [m_swipeShadowLayer setName:@"Gesture Swipe Shadow Layer"];
-        [m_swipeShadowLayer setBackgroundColor:[NSColor colorWithPatternImage:shadowImage].CGColor];
-        [m_swipeShadowLayer setContentsScale:deviceScaleFactor];
+        [m_swipeShadowLayer setColors:@[
+            (id)CGColorCreateGenericGray(0, 1.),
+            (id)CGColorCreateGenericGray(0, 0.99),
+            (id)CGColorCreateGenericGray(0, 0.98),
+            (id)CGColorCreateGenericGray(0, 0.95),
+            (id)CGColorCreateGenericGray(0, 0.92),
+            (id)CGColorCreateGenericGray(0, 0.82),
+            (id)CGColorCreateGenericGray(0, 0.71),
+            (id)CGColorCreateGenericGray(0, 0.46),
+            (id)CGColorCreateGenericGray(0, 0.35),
+            (id)CGColorCreateGenericGray(0, 0.25),
+            (id)CGColorCreateGenericGray(0, 0.17),
+            (id)CGColorCreateGenericGray(0, 0.11),
+            (id)CGColorCreateGenericGray(0, 0.07),
+            (id)CGColorCreateGenericGray(0, 0.04),
+            (id)CGColorCreateGenericGray(0, 0.01),
+            (id)CGColorCreateGenericGray(0, 0.),
+        ]];
+        [m_swipeShadowLayer setLocations:@[
+            @0,
+            @0.03125,
+            @0.0625,
+            @0.0938,
+            @0.125,
+            @0.1875,
+            @0.25,
+            @0.375,
+            @0.4375,
+            @0.5,
+            @0.5625,
+            @0.625,
+            @0.6875,
+            @0.75,
+            @0.875,
+            @1,
+        ]];
+        [m_swipeShadowLayer setStartPoint:CGPointMake(1, 0)];
+        [m_swipeShadowLayer setEndPoint:CGPointMake(0, 0)];
         [m_swipeShadowLayer setOpacity:swipeOverlayShadowOpacity];
         [m_swipeShadowLayer setAnchorPoint:CGPointZero];
         [m_swipeShadowLayer setFrame:shadowRect];
