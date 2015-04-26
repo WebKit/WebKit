@@ -1,3 +1,13 @@
+2015-04-26  Benjamin Poulain  <benjamin@webkit.org>, Chris Bateman  <chrisb808@gmail.com>
+
+        Start a basic status page on webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=143940
+
+        Reviewed by Darin Adler.
+
+        * status.html: Added.
+        Nothing fancy, for now just show the "features" list of the two features.json
+
 2015-04-19  Dan Bernstein  <mitz@apple.com>
 
         Fixed a typo.
