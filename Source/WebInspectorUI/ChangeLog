@@ -1,5 +1,30 @@
 2015-04-22  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Remove time and weight from the dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=144063
+
+        These two items were the odd ones out since they are only available
+        when recording a timeline. We will need the toolbar space soon, so make
+        this lets us make the dashboard skinnier.
+
+        This also removes the exception catching in DashboardContainerView. It doesn't really
+        help us and it makes debugging an exception harder.
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/DashboardContainerView.css:
+        (.toolbar .dashboard-container):
+        * UserInterface/Views/DashboardContainerView.js:
+        (WebInspector.DashboardContainerView.prototype._dashboardViewForRepresentedObject):
+        * UserInterface/Views/DefaultDashboardView.css:
+        (body.web .toolbar.collapsed .dashboard.default > .item.resourcesCount):
+        (body.javascript .toolbar .dashboard.default > .item.resourcesCount):
+        * UserInterface/Views/DefaultDashboardView.js:
+        (WebInspector.DefaultDashboardView):
+        (WebInspector.DefaultDashboardView.prototype._updateDisplay):
+
+2015-04-22  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Remove sidebar panel shortcut and image
         https://bugs.webkit.org/show_bug.cgi?id=144061
 

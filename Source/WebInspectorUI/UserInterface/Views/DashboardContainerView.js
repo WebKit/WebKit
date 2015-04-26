@@ -136,13 +136,12 @@ WebInspector.DashboardContainerView = class DashboardContainerView extends WebIn
         if (onlyReturnExistingViews)
             return null;
 
-        try {
-            // No existing content view found, make a new one.
-            dashboardView = WebInspector.DashboardView.create(representedObject);
-        } catch (e) {
-            console.error(e, e.stack);
+        // No existing content view found, make a new one.
+        dashboardView = WebInspector.DashboardView.create(representedObject);
+
+        console.assert(dashboardView, "Unknown representedObject", representedObject);
+        if (!dashboardView)
             return null;
-        }
 
         this._dashboardStack.push(dashboardView);
         this._toolbarItem.element.appendChild(dashboardView.element);
