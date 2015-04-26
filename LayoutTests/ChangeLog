@@ -1,3 +1,9 @@
+2015-04-26  Simon Fraser  <simon.fraser@apple.com>
+
+        New WK1 results for this test.
+
+        * platform/mac-wk1/compositing/tiling/transform-origin-tiled-expected.txt: Added.
+
 2015-04-25  Simon Fraser  <simon.fraser@apple.com>
 
         Expand compositing coverage rect when scrolling and animating
