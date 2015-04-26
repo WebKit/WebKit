@@ -470,6 +470,12 @@ webkit.org/b/135053 [ Debug ] html5lib/webkit-resumer.html [ Slow ]
 [ Debug ] js/dfg-osr-entry-hoisted-clobbered-structure-check.html [ Slow ]
 [ Debug ] editing/selection/move-by-character-brute-force.html [ Slow ]
 [ Debug ] fast/workers/dedicated-worker-lifecycle.html [ Slow ]
+[ Debug ] js/dom/random-array-gc-stress.html [ Slow ]
+[ Debug ] editing/selection/move-by-word-visually-crash-test-5.html [ Slow ]
+[ Debug ] editing/selection/caret-at-bidi-boundary.html [ Slow ]
+[ Debug ] js/dom/line-column-numbers.html [ Slow ]
+[ Debug ] css3/flexbox/multiline-justify-content.html [ Slow ]
+[ Debug ] accessibility/table-sections.html [ Slow ]
 
 webkit.org/b/142175 js/promises-tests/promises-tests-2-1-2.html [ Pass Timeout ]
 
@@ -489,6 +495,7 @@ webkit.org/b/141370 http/tests/security/appcache-in-private-browsing.html [ Pass
 webkit.org/b/141488 fast/replaced/pdf-as-object-and-embed.html [ Skip ]
 
 webkit.org/b/141695 [ Debug ] fast/selectors/nth-last-child-of-register-requirement.html [ Slow ]
+[ Debug ] fast/selectors/case-insensitive-attribute-register-requirement-1.html [ Slow ]
 
 # Content extensions are Mac-WK2-only for now
 http/tests/contentextensions [ Skip ]
