@@ -56,6 +56,7 @@ public:
     virtual void connect(Inspector::FrontendChannel*, bool automaticInspection) override;
     virtual void disconnect() override;
     virtual void dispatchMessageFromRemoteFrontend(const String& message) override;
+    virtual void pause() override;
 
     virtual bool automaticInspectionAllowed() const override { return true; }
     virtual void pauseWaitingForAutomaticInspection() override;

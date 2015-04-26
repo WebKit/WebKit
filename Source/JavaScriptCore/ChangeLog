@@ -1,3 +1,31 @@
+2015-04-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Allow for pausing a JSContext when opening a Web Inspector
+        <rdar://problem/20564788>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::receivedSetupMessage):
+        * inspector/remote/RemoteInspectorConstants.h:
+        * inspector/remote/RemoteInspectorDebuggable.h:
+        * inspector/remote/RemoteInspectorDebuggableConnection.h:
+        * inspector/remote/RemoteInspectorDebuggableConnection.mm:
+        (Inspector::RemoteInspectorDebuggableConnection::setup):
+        On any incoming setup message, we may want to automatically
+        pause the debuggable. If requested, pause the debuggable
+        after we have setup the frontend connection.
+
+        * runtime/JSGlobalObjectDebuggable.h:
+        * runtime/JSGlobalObjectDebuggable.cpp:
+        (JSC::JSGlobalObjectDebuggable::pause):
+        Pass through to the inspector controller.
+
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::pause):
+        Enable pause on next statement.
+
 2015-04-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         class methods should be non-enumerable

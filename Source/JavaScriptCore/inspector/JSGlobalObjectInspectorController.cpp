@@ -147,6 +147,16 @@ void JSGlobalObjectInspectorController::dispatchMessageFromFrontend(const String
         m_backendDispatcher->dispatch(message);
 }
 
+void JSGlobalObjectInspectorController::pause()
+{
+    if (!m_frontendChannel)
+        return;
+
+    ErrorString dummyError;
+    m_debuggerAgent->enable(dummyError);
+    m_debuggerAgent->pause(dummyError);
+}
+
 void JSGlobalObjectInspectorController::appendAPIBacktrace(ScriptCallStack* callStack)
 {
 #if OS(DARWIN) || (OS(LINUX) && !PLATFORM(GTK))

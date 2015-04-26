@@ -63,6 +63,13 @@ void JSGlobalObjectDebuggable::disconnect()
     m_globalObject.inspectorController().disconnectFrontend(DisconnectReason::InspectorDestroyed);
 }
 
+void JSGlobalObjectDebuggable::pause()
+{
+    JSLockHolder locker(&m_globalObject.vm());
+
+    m_globalObject.inspectorController().pause();
+}
+
 void JSGlobalObjectDebuggable::dispatchMessageFromRemoteFrontend(const String& message)
 {
     JSLockHolder locker(&m_globalObject.vm());

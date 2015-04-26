@@ -80,6 +80,7 @@ public:
     bool includesNativeCallStackWhenReportingExceptions() const { return m_includeNativeCallStackWithExceptions; }
     void setIncludesNativeCallStackWhenReportingExceptions(bool includesNativeCallStack) { m_includeNativeCallStackWithExceptions = includesNativeCallStack; }
 
+    void pause();
     void reportAPIException(JSC::ExecState*, JSC::JSValue exception);
 
     JSC::ConsoleClient* consoleClient() const;

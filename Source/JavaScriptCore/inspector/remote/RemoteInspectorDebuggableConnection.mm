@@ -150,7 +150,7 @@ void RemoteInspectorDebuggableConnection::dispatchAsyncOnDebuggable(void (^block
     RemoteInspectorQueueTaskOnGlobalQueue(block);
 }
 
-bool RemoteInspectorDebuggableConnection::setup(bool isAutomaticInspection)
+bool RemoteInspectorDebuggableConnection::setup(bool isAutomaticInspection, bool automaticallyPause)
 {
     std::lock_guard<std::mutex> lock(m_debuggableMutex);
 
@@ -167,6 +167,9 @@ bool RemoteInspectorDebuggableConnection::setup(bool isAutomaticInspection)
             } else {
                 m_debuggable->connect(this, isAutomaticInspection);
                 m_connected = true;
+
+                if (automaticallyPause)
+                    m_debuggable->pause();
             }
         }
         deref();
