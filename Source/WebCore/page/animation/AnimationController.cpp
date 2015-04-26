@@ -89,7 +89,7 @@ CompositeAnimation& AnimationControllerPrivate::ensureCompositeAnimation(RenderE
 {
     auto result = m_compositeAnimations.add(&renderer, nullptr);
     if (result.isNewEntry) {
-        result.iterator->value = CompositeAnimation::create(this);
+        result.iterator->value = CompositeAnimation::create(*this);
         renderer.setIsCSSAnimating(true);
     }
 
@@ -487,7 +487,7 @@ void AnimationControllerPrivate::addToAnimationsWaitingForStartTimeResponse(Anim
     
     if (willGetResponse)
         m_waitingForAsyncStartNotification = true;
-    
+
     m_animationsWaitingForStartTimeResponse.add(animation);
 }
 

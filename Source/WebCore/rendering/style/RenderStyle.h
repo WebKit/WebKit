@@ -1060,6 +1060,9 @@ public:
     const AnimationList* animations() const { return rareNonInheritedData->m_animations.get(); }
     const AnimationList* transitions() const { return rareNonInheritedData->m_transitions.get(); }
 
+    AnimationList* animations() { return rareNonInheritedData->m_animations.get(); }
+    AnimationList* transitions() { return rareNonInheritedData->m_transitions.get(); }
+
     AnimationList& ensureAnimations();
     AnimationList& ensureTransitions();
 

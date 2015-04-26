@@ -3750,8 +3750,8 @@ void RenderLayer::paint(GraphicsContext* context, const LayoutRect& damageRect, 
     LayerPaintingInfo paintingInfo(this, enclosingIntRect(damageRect), paintBehavior, subpixelAccumulation, subtreePaintRoot, &overlapTestRequests);
     paintLayer(context, paintingInfo, paintFlags);
 
-    for (auto it : overlapTestRequests)
-        it.key->setOverlapTestResult(false);
+    for (auto& widget : overlapTestRequests.keys())
+        widget->setOverlapTestResult(false);
 }
 
 void RenderLayer::paintOverlayScrollbars(GraphicsContext* context, const LayoutRect& damageRect, PaintBehavior paintBehavior, RenderObject* subtreePaintRoot)
@@ -3820,12 +3820,12 @@ static void performOverlapTests(OverlapTestRequestMap& overlapTestRequests, cons
 {
     Vector<OverlapTestRequestClient*> overlappedRequestClients;
     LayoutRect boundingBox = layer->boundingBox(rootLayer, layer->offsetFromAncestor(rootLayer));
-    for (auto it : overlapTestRequests) {
-        if (!boundingBox.intersects(it.value))
+    for (auto& request : overlapTestRequests) {
+        if (!boundingBox.intersects(request.value))
             continue;
 
-        it.key->setOverlapTestResult(true);
-        overlappedRequestClients.append(it.key);
+        request.key->setOverlapTestResult(true);
+        overlappedRequestClients.append(request.key);
     }
     for (auto client : overlappedRequestClients)
         overlapTestRequests.remove(client);

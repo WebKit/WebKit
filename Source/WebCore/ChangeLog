@@ -1,3 +1,83 @@
+2015-04-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Modernize animations code
+        https://bugs.webkit.org/show_bug.cgi?id=144196
+
+        Reviewed by Darin Adler.
+        
+        General cleanup in animation-related code.
+        
+        Use C++ references where possible. Use modern loops. Make classes fast-allocated.
+        Use C++11 member initialization. Order member variables to optimize packing.
+        
+        This removes some null checks in CompositeAnimation, but the values in m_transitions
+        and m_keyframeAnimations can never be null.
+        
+        No behavior change.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::AnimationBase):
+        (WebCore::AnimationBase::animationsMatch):
+        (WebCore::AnimationBase::updateStateMachine):
+        (WebCore::AnimationBase::fireAnimationEventsIfNeeded):
+        (WebCore::AnimationBase::beginAnimationUpdateTime):
+        (WebCore::AnimationBase::getElapsedTime):
+        * page/animation/AnimationBase.h:
+        (WebCore::AnimationBase::animation):
+        (WebCore::AnimationBase::setAnimation):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::ensureCompositeAnimation):
+        (WebCore::AnimationControllerPrivate::addToAnimationsWaitingForStartTimeResponse):
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::CompositeAnimation):
+        (WebCore::CompositeAnimation::clearRenderer):
+        (WebCore::CompositeAnimation::updateTransitions):
+        (WebCore::CompositeAnimation::updateKeyframeAnimations):
+        (WebCore::CompositeAnimation::animate):
+        (WebCore::CompositeAnimation::getAnimatedStyle):
+        (WebCore::CompositeAnimation::timeToNextService):
+        (WebCore::CompositeAnimation::getAnimationForProperty):
+        (WebCore::CompositeAnimation::computeExtentOfTransformAnimation):
+        (WebCore::CompositeAnimation::suspendAnimations):
+        (WebCore::CompositeAnimation::resumeAnimations):
+        (WebCore::CompositeAnimation::overrideImplicitAnimations):
+        (WebCore::CompositeAnimation::resumeOverriddenImplicitAnimations):
+        (WebCore::CompositeAnimation::isAnimatingProperty):
+        (WebCore::CompositeAnimation::pauseTransitionAtTime):
+        (WebCore::CompositeAnimation::numberOfActiveAnimations):
+        * page/animation/CompositeAnimation.h:
+        (WebCore::CompositeAnimation::create):
+        (WebCore::CompositeAnimation::animationController):
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::ImplicitAnimation):
+        (WebCore::ImplicitAnimation::sendTransitionEvent):
+        * page/animation/ImplicitAnimation.h:
+        (WebCore::ImplicitAnimation::create):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::KeyframeAnimation):
+        (WebCore::KeyframeAnimation::animate):
+        (WebCore::KeyframeAnimation::getAnimatedStyle):
+        (WebCore::KeyframeAnimation::computeExtentOfTransformAnimation):
+        (WebCore::KeyframeAnimation::startAnimation):
+        (WebCore::KeyframeAnimation::sendAnimationEvent):
+        (WebCore::KeyframeAnimation::overrideAnimations):
+        (WebCore::KeyframeAnimation::resumeOverriddenAnimations):
+        (WebCore::KeyframeAnimation::timeToNextService):
+        * page/animation/KeyframeAnimation.h:
+        * platform/animation/Animation.cpp:
+        (WebCore::Animation::animationsMatch):
+        * platform/animation/Animation.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paint):
+        (WebCore::performOverlapTests):
+        * rendering/style/KeyframeList.h:
+        (WebCore::KeyframeList::properties):
+        (WebCore::KeyframeList::keyframes):
+        (WebCore::KeyframeList::beginProperties): Deleted.
+        (WebCore::KeyframeList::endProperties): Deleted.
+        (WebCore::KeyframeList::operator[]): Deleted.
+        * rendering/style/RenderStyle.h:
+
 2015-04-25  Simon Fraser  <simon.fraser@apple.com>
 
         Expand compositing coverage rect when scrolling and animating

@@ -39,13 +39,11 @@
 
 namespace WebCore {
 
-ImplicitAnimation::ImplicitAnimation(const Animation& transition, CSSPropertyID animatingProperty, RenderElement* renderer, CompositeAnimation* compAnim, RenderStyle* fromStyle)
+ImplicitAnimation::ImplicitAnimation(Animation& transition, CSSPropertyID animatingProperty, RenderElement* renderer, CompositeAnimation* compAnim, RenderStyle* fromStyle)
     : AnimationBase(transition, renderer, compAnim)
+    , m_fromStyle(fromStyle)
     , m_transitionProperty(transition.property())
     , m_animatingProperty(animatingProperty)
-    , m_overridden(false)
-    , m_active(true)
-    , m_fromStyle(fromStyle)
 {
     ASSERT(animatingProperty != CSSPropertyInvalid);
 }
@@ -189,7 +187,7 @@ bool ImplicitAnimation::sendTransitionEvent(const AtomicString& eventType, doubl
                 return false;
 
             // Schedule event handling
-            m_compositeAnimation->animationController()->addEventToDispatch(element, eventType, propertyName, elapsedTime);
+            m_compositeAnimation->animationController().addEventToDispatch(element, eventType, propertyName, elapsedTime);
 
             // Restore the original (unanimated) style
             if (eventType == eventNames().transitionendEvent && element->renderer())

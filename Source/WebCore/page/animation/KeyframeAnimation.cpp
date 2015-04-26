@@ -41,12 +41,11 @@
 
 namespace WebCore {
 
-KeyframeAnimation::KeyframeAnimation(const Animation& animation, RenderElement* renderer, int index, CompositeAnimation* compositeAnimation, RenderStyle* unanimatedStyle)
+KeyframeAnimation::KeyframeAnimation(Animation& animation, RenderElement* renderer, int index, CompositeAnimation* compositeAnimation, RenderStyle* unanimatedStyle)
     : AnimationBase(animation, renderer, compositeAnimation)
     , m_keyframes(animation.name())
-    , m_index(index)
-    , m_startEventDispatched(false)
     , m_unanimatedStyle(unanimatedStyle)
+    , m_index(index)
 {
     // Get the keyframe RenderStyles
     if (m_object && m_object->element())
@@ -157,15 +156,14 @@ void KeyframeAnimation::animate(CompositeAnimation* compositeAnimation, RenderEl
 
     // FIXME: we need to be more efficient about determining which keyframes we are animating between.
     // We should cache the last pair or something.
-    HashSet<CSSPropertyID>::const_iterator endProperties = m_keyframes.endProperties();
-    for (HashSet<CSSPropertyID>::const_iterator it = m_keyframes.beginProperties(); it != endProperties; ++it) {
+    for (auto propertyID : m_keyframes.properties()) {
         // Get the from/to styles and progress between
         const RenderStyle* fromStyle = nullptr;
         const RenderStyle* toStyle = nullptr;
         double progress = 0;
-        fetchIntervalEndpointsForProperty(*it, fromStyle, toStyle, progress);
+        fetchIntervalEndpointsForProperty(propertyID, fromStyle, toStyle, progress);
 
-        bool needsAnim = CSSPropertyAnimation::blendProperties(this, *it, animatedStyle.get(), fromStyle, toStyle, progress);
+        bool needsAnim = CSSPropertyAnimation::blendProperties(this, propertyID, animatedStyle.get(), fromStyle, toStyle, progress);
         if (!needsAnim)
             // If we are running an accelerated animation, set a flag in the style
             // to indicate it. This can be used to make sure we get an updated
@@ -187,15 +185,14 @@ void KeyframeAnimation::getAnimatedStyle(RefPtr<RenderStyle>& animatedStyle)
     if (!animatedStyle)
         animatedStyle = RenderStyle::clone(&m_object->style());
 
-    HashSet<CSSPropertyID>::const_iterator endProperties = m_keyframes.endProperties();
-    for (HashSet<CSSPropertyID>::const_iterator it = m_keyframes.beginProperties(); it != endProperties; ++it) {
+    for (auto propertyID : m_keyframes.properties()) {
         // Get the from/to styles and progress between
         const RenderStyle* fromStyle = nullptr;
         const RenderStyle* toStyle = nullptr;
         double progress = 0;
-        fetchIntervalEndpointsForProperty(*it, fromStyle, toStyle, progress);
+        fetchIntervalEndpointsForProperty(propertyID, fromStyle, toStyle, progress);
 
-        CSSPropertyAnimation::blendProperties(this, *it, animatedStyle.get(), fromStyle, toStyle, progress);
+        CSSPropertyAnimation::blendProperties(this, propertyID, animatedStyle.get(), fromStyle, toStyle, progress);
     }
 }
 
@@ -211,20 +208,17 @@ bool KeyframeAnimation::computeExtentOfTransformAnimation(LayoutRect& bounds) co
 
     FloatRect cumulativeBounds = bounds;
 
-    size_t numKeyframes = m_keyframes.size();
-    for (size_t i = 0; i < numKeyframes; ++i) {
-        const KeyframeValue& currKeyFrame = m_keyframes[i];
-
-        if (!currKeyFrame.containsProperty(CSSPropertyTransform))
+    for (auto& keyframe : m_keyframes.keyframes()) {
+        if (!keyframe.containsProperty(CSSPropertyTransform))
             continue;
 
         LayoutRect keyframeBounds = bounds;
         
         bool canCompute;
         if (isTransformFunctionListValid())
-            canCompute = computeTransformedExtentViaTransformList(rendererBox, *currKeyFrame.style(), keyframeBounds);
+            canCompute = computeTransformedExtentViaTransformList(rendererBox, *keyframe.style(), keyframeBounds);
         else
-            canCompute = computeTransformedExtentViaMatrix(rendererBox, *currKeyFrame.style(), keyframeBounds);
+            canCompute = computeTransformedExtentViaMatrix(rendererBox, *keyframe.style(), keyframeBounds);
         
         if (!canCompute)
             return false;
@@ -244,7 +238,7 @@ bool KeyframeAnimation::hasAnimationForProperty(CSSPropertyID property) const
 bool KeyframeAnimation::startAnimation(double timeOffset)
 {
     if (m_object && m_object->isComposited())
-        return downcast<RenderBoxModelObject>(*m_object).startAnimation(timeOffset, m_animation.get(), m_keyframes);
+        return downcast<RenderBoxModelObject>(*m_object).startAnimation(timeOffset, m_animation.ptr(), m_keyframes);
     return false;
 }
 
@@ -322,7 +316,7 @@ bool KeyframeAnimation::sendAnimationEvent(const AtomicString& eventType, double
             return false;
 
         // Schedule event handling
-        m_compositeAnimation->animationController()->addEventToDispatch(element, eventType, m_keyframes.animationName(), elapsedTime);
+        m_compositeAnimation->animationController().addEventToDispatch(element, eventType, m_keyframes.animationName(), elapsedTime);
 
         // Restore the original (unanimated) style
         if ((eventType == eventNames().webkitAnimationEndEvent || eventType == eventNames().animationendEvent) && element->renderer())
@@ -337,17 +331,15 @@ bool KeyframeAnimation::sendAnimationEvent(const AtomicString& eventType, double
 void KeyframeAnimation::overrideAnimations()
 {
     // This will override implicit animations that match the properties in the keyframe animation
-    HashSet<CSSPropertyID>::const_iterator end = m_keyframes.endProperties();
-    for (HashSet<CSSPropertyID>::const_iterator it = m_keyframes.beginProperties(); it != end; ++it)
-        compositeAnimation()->overrideImplicitAnimations(*it);
+    for (auto propertyID : m_keyframes.properties())
+        compositeAnimation()->overrideImplicitAnimations(propertyID);
 }
 
 void KeyframeAnimation::resumeOverriddenAnimations()
 {
     // This will resume overridden implicit animations
-    HashSet<CSSPropertyID>::const_iterator end = m_keyframes.endProperties();
-    for (HashSet<CSSPropertyID>::const_iterator it = m_keyframes.beginProperties(); it != end; ++it)
-        compositeAnimation()->resumeOverriddenImplicitAnimations(*it);
+    for (auto propertyID : m_keyframes.properties())
+        compositeAnimation()->resumeOverriddenImplicitAnimations(propertyID);
 }
 
 bool KeyframeAnimation::affectsProperty(CSSPropertyID property) const
@@ -447,11 +439,10 @@ double KeyframeAnimation::timeToNextService()
         
     // A return value of 0 means we need service. But if we only have accelerated animations we 
     // only need service at the end of the transition
-    HashSet<CSSPropertyID>::const_iterator endProperties = m_keyframes.endProperties();
     bool acceleratedPropertiesOnly = true;
     
-    for (HashSet<CSSPropertyID>::const_iterator it = m_keyframes.beginProperties(); it != endProperties; ++it) {
-        if (!CSSPropertyAnimation::animationOfPropertyIsAccelerated(*it) || !isAccelerated()) {
+    for (auto propertyID : m_keyframes.properties()) {
+        if (!CSSPropertyAnimation::animationOfPropertyIsAccelerated(propertyID) || !isAccelerated()) {
             acceleratedPropertiesOnly = false;
             break;
         }

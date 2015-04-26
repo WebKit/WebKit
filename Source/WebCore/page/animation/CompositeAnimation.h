@@ -45,8 +45,9 @@ class RenderStyle;
 // A CompositeAnimation represents a collection of animations that are running
 // on a single RenderElement, such as a number of properties transitioning at once.
 class CompositeAnimation : public RefCounted<CompositeAnimation> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<CompositeAnimation> create(AnimationControllerPrivate* animationController)
+    static Ref<CompositeAnimation> create(AnimationControllerPrivate& animationController)
     {
         return adoptRef(*new CompositeAnimation(animationController));
     };
@@ -61,7 +62,7 @@ public:
 
     double timeToNextService() const;
     
-    AnimationControllerPrivate* animationController() const { return m_animationController; }
+    AnimationControllerPrivate& animationController() const { return m_animationController; }
 
     void suspendAnimations();
     void resumeAnimations();
@@ -85,7 +86,7 @@ public:
 #endif
 
 private:
-    CompositeAnimation(AnimationControllerPrivate*);
+    CompositeAnimation(AnimationControllerPrivate&);
 
     void updateTransitions(RenderElement*, RenderStyle* currentStyle, RenderStyle* targetStyle);
     void updateKeyframeAnimations(RenderElement*, RenderStyle* currentStyle, RenderStyle* targetStyle);
@@ -93,13 +94,13 @@ private:
     typedef HashMap<int, RefPtr<ImplicitAnimation>> CSSPropertyTransitionsMap;
     typedef HashMap<AtomicStringImpl*, RefPtr<KeyframeAnimation>> AnimationNameMap;
 
-    AnimationControllerPrivate* m_animationController;
+    AnimationControllerPrivate& m_animationController;
     CSSPropertyTransitionsMap m_transitions;
     AnimationNameMap m_keyframeAnimations;
     Vector<AtomicStringImpl*> m_keyframeAnimationOrderMap;
     bool m_suspended;
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    bool m_hasScrollTriggeredAnimation;
+    bool m_hasScrollTriggeredAnimation { false };
 #endif
 };
 

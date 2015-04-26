@@ -70,19 +70,10 @@ static inline double solveStepsFunction(int numSteps, bool stepAtStart, double t
     return floor(numSteps * t) / numSteps;
 }
 
-AnimationBase::AnimationBase(const Animation& transition, RenderElement* renderer, CompositeAnimation* compositeAnimation)
-    : m_animationState(AnimationState::New)
-    , m_isAccelerated(false)
-    , m_transformFunctionListValid(false)
-    , m_filterFunctionListsMatch(false)
-    , m_startTime(0)
-    , m_pauseTime(-1)
-    , m_requestedStartTime(0)
-    , m_totalDuration(-1)
-    , m_nextIterationDuration(-1)
-    , m_object(renderer)
-    , m_animation(const_cast<Animation*>(&transition))
+AnimationBase::AnimationBase(Animation& animation, RenderElement* renderer, CompositeAnimation* compositeAnimation)
+    : m_object(renderer)
     , m_compositeAnimation(compositeAnimation)
+    , m_animation(animation)
 {
     // Compute the total duration
     if (m_animation->iterationCount() > 0)
@@ -106,9 +97,9 @@ bool AnimationBase::playStatePlaying() const
     return m_animation->playState() == AnimPlayStatePlaying;
 }
 
-bool AnimationBase::animationsMatch(const Animation* anim) const
+bool AnimationBase::animationsMatch(const Animation& animation) const
 {
-    return m_animation->animationsMatch(anim);
+    return m_animation->animationsMatch(animation);
 }
 
 #if !LOG_DISABLED
@@ -161,7 +152,7 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
     // If we get AnimationStateInput::RestartAnimation then we force a new animation, regardless of state.
     if (input == AnimationStateInput::MakeNew) {
         if (m_animationState == AnimationState::StartWaitStyleAvailable)
-            m_compositeAnimation->animationController()->removeFromAnimationsWaitingForStyle(this);
+            m_compositeAnimation->animationController().removeFromAnimationsWaitingForStyle(this);
         LOG(Animations, "%p AnimationState %s -> New", this, nameForState(m_animationState));
         m_animationState = AnimationState::New;
         m_startTime = 0;
@@ -174,7 +165,7 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
 
     if (input == AnimationStateInput::RestartAnimation) {
         if (m_animationState == AnimationState::StartWaitStyleAvailable)
-            m_compositeAnimation->animationController()->removeFromAnimationsWaitingForStyle(this);
+            m_compositeAnimation->animationController().removeFromAnimationsWaitingForStyle(this);
         LOG(Animations, "%p AnimationState %s -> New", this, nameForState(m_animationState));
         m_animationState = AnimationState::New;
         m_startTime = 0;
@@ -190,7 +181,7 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
 
     if (input == AnimationStateInput::EndAnimation) {
         if (m_animationState == AnimationState::StartWaitStyleAvailable)
-            m_compositeAnimation->animationController()->removeFromAnimationsWaitingForStyle(this);
+            m_compositeAnimation->animationController().removeFromAnimationsWaitingForStyle(this);
         LOG(Animations, "%p AnimationState %s -> Done", this, nameForState(m_animationState));
         m_animationState = AnimationState::Done;
         endAnimation();
@@ -232,7 +223,7 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
 
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
             if (m_animation->trigger() && m_animation->trigger()->isScrollAnimationTrigger())
-                m_compositeAnimation->animationController()->addToAnimationsDependentOnScroll(this);
+                m_compositeAnimation->animationController().addToAnimationsDependentOnScroll(this);
 #endif
             break;
         case AnimationState::StartWaitTimer:
@@ -243,11 +234,11 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
                 // Start timer has fired, tell the animation to start and wait for it to respond with start time
                 LOG(Animations, "%p AnimationState %s -> StartWaitStyleAvailable", this, nameForState(m_animationState));
                 m_animationState = AnimationState::StartWaitStyleAvailable;
-                m_compositeAnimation->animationController()->addToAnimationsWaitingForStyle(this);
+                m_compositeAnimation->animationController().addToAnimationsWaitingForStyle(this);
 
                 // Trigger a render so we can start the animation
                 if (m_object && m_object->element())
-                    m_compositeAnimation->animationController()->addElementChangeToDispatch(*m_object->element());
+                    m_compositeAnimation->animationController().addElementChangeToDispatch(*m_object->element());
             } else {
                 ASSERT(!paused());
                 // We're waiting for the start timer to fire and we got a pause. Cancel the timer, pause and wait
@@ -281,7 +272,7 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
                         timeOffset = -m_animation->delay();
                     bool started = startAnimation(timeOffset);
 
-                    m_compositeAnimation->animationController()->addToAnimationsWaitingForStartTimeResponse(this, started);
+                    m_compositeAnimation->animationController().addToAnimationsWaitingForStartTimeResponse(this, started);
                     m_isAccelerated = started;
                 }
             } else {
@@ -312,7 +303,7 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
 
                 // Dispatch updateStyleIfNeeded so we can start the animation
                 if (m_object && m_object->element())
-                    m_compositeAnimation->animationController()->addElementChangeToDispatch(*m_object->element());
+                    m_compositeAnimation->animationController().addElementChangeToDispatch(*m_object->element());
             } else {
                 // We are pausing while waiting for a start response. Cancel the animation and wait. When 
                 // we unpause, we will act as though the start timer just fired
@@ -363,7 +354,7 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
 
                     // Fire off another style change so we can set the final value
                     if (m_object->element())
-                        m_compositeAnimation->animationController()->addElementChangeToDispatch(*m_object->element());
+                        m_compositeAnimation->animationController().addElementChangeToDispatch(*m_object->element());
                 }
             } else {
                 // We are pausing while running. Cancel the animation and wait
@@ -432,7 +423,7 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
                         m_isAccelerated = true;
                     } else {
                         bool started = startAnimation(beginAnimationUpdateTime() - m_startTime);
-                        m_compositeAnimation->animationController()->addToAnimationsWaitingForStartTimeResponse(this, started);
+                        m_compositeAnimation->animationController().addToAnimationsWaitingForStartTimeResponse(this, started);
                         m_isAccelerated = started;
                     }
                 }
@@ -487,7 +478,7 @@ void AnimationBase::fireAnimationEventsIfNeeded()
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
         if (m_animation->trigger() && m_animation->trigger()->isScrollAnimationTrigger()) {
             if (m_object) {
-                float offset = m_compositeAnimation->animationController()->scrollPosition();
+                float offset = m_compositeAnimation->animationController().scrollPosition();
                 ScrollAnimationTrigger& scrollTrigger = downcast<ScrollAnimationTrigger>(*m_animation->trigger().get());
                 if (offset > scrollTrigger.startValue().value())
                     updateStateMachine(AnimationStateInput::StartTimerFired, 0);
@@ -724,7 +715,7 @@ double AnimationBase::beginAnimationUpdateTime() const
     if (!m_compositeAnimation)
         return 0;
 
-    return m_compositeAnimation->animationController()->beginAnimationUpdateTime();
+    return m_compositeAnimation->animationController().beginAnimationUpdateTime();
 }
 
 double AnimationBase::getElapsedTime() const
@@ -733,7 +724,7 @@ double AnimationBase::getElapsedTime() const
     if (m_animation->trigger() && m_animation->trigger()->isScrollAnimationTrigger()) {
         ScrollAnimationTrigger& scrollTrigger = downcast<ScrollAnimationTrigger>(*m_animation->trigger().get());
         if (scrollTrigger.hasEndValue() && m_object) {
-            float offset = m_compositeAnimation->animationController()->scrollPosition();
+            float offset = m_compositeAnimation->animationController().scrollPosition();
             float startValue = scrollTrigger.startValue().value();
             if (offset < startValue)
                 return 0;
