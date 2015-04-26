@@ -940,7 +940,7 @@ WebInspector.LogContentView.prototype = {
 
         for (var provisionalMessage of this._provisionalMessages) {
             var messageView = this._logViewController.appendConsoleMessage(provisionalMessage);
-            if (message.type !== WebInspector.ConsoleMessage.MessageType.EndGroup)
+            if (messageView.message.type !== WebInspector.ConsoleMessage.MessageType.EndGroup)
                 this._filterMessageElements([messageView.element]);
         }
 

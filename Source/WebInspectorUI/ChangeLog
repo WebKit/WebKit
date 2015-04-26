@@ -1,5 +1,16 @@
 2015-04-25  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Uncaught exception ReferenceError: Can't find variable: message LogContentView.js
+        https://bugs.webkit.org/show_bug.cgi?id=144210
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype._reappendProvisionalMessages):
+        With recent refactorings this change was missed.
+
+2015-04-25  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Uncaught exception using WebInspector.contentBrowser
         https://bugs.webkit.org/show_bug.cgi?id=144206
 
