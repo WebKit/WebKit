@@ -137,15 +137,6 @@ WebInspector.loaded = function()
     document.addEventListener("DOMContentLoaded", this.contentLoaded.bind(this));
 
     // Create settings.
-    this._lastInspectorViewStateCookieSetting = new WebInspector.Setting("last-content-view-state-cookie", {});
-
-    this._navigationSidebarCollapsedSetting = new WebInspector.Setting("navigation-sidebar-collapsed", false);
-    this._navigationSidebarWidthSetting = new WebInspector.Setting("navigation-sidebar-width", null);
-
-    this._lastSelectedDetailsSidebarPanelSetting = new WebInspector.Setting("last-selected-details-sidebar-panel", null);
-    this._detailsSidebarCollapsedSetting = new WebInspector.Setting("details-sidebar-collapsed", true);
-    this._detailsSidebarWidthSetting = new WebInspector.Setting("details-sidebar-width", null);
-
     this._toolbarDockedRightDisplayModeSetting = new WebInspector.Setting("toolbar-docked-right-display-mode", WebInspector.Toolbar.DisplayMode.IconAndLabelVertical);
     this._toolbarDockedRightSizeModeSetting = new WebInspector.Setting("toolbar-docked-right-size-mode",WebInspector.Toolbar.SizeMode.Normal);
 
@@ -217,10 +208,6 @@ WebInspector.contentLoaded = function()
     contentElement.setAttribute("role", "main");
     contentElement.setAttribute("aria-label", WebInspector.UIString("Content"));
 
-    this.contentBrowser = new WebInspector.ContentBrowser(document.getElementById("content-browser"), this);
-    this.contentBrowser.addEventListener(WebInspector.ContentBrowser.Event.CurrentRepresentedObjectsDidChange, this._contentBrowserRepresentedObjectsDidChange, this);
-    this.contentBrowser.addEventListener(WebInspector.ContentBrowser.Event.CurrentContentViewDidChange, this._contentBrowserCurrentContentViewDidChange, this);
-
     this.splitContentBrowser = new WebInspector.ContentBrowser(document.getElementById("split-content-browser"), this, true);
     this.splitContentBrowser.navigationBar.element.addEventListener("mousedown", this._consoleResizerMouseDown.bind(this));
 
@@ -233,15 +220,11 @@ WebInspector.contentLoaded = function()
     this.consoleLogViewController = this.consoleContentView.logViewController;
 
     // FIXME: The sidebars should be flipped in RTL languages.
-    this.leftSidebar = this.navigationSidebar = new WebInspector.Sidebar(document.getElementById("navigation-sidebar"), WebInspector.Sidebar.Sides.Left);
-    this.navigationSidebar.addEventListener(WebInspector.Sidebar.Event.CollapsedStateDidChange, this._sidebarCollapsedStateDidChange, this);
+    this.navigationSidebar = new WebInspector.Sidebar(document.getElementById("navigation-sidebar"), WebInspector.Sidebar.Sides.Left);
     this.navigationSidebar.addEventListener(WebInspector.Sidebar.Event.WidthDidChange, this._sidebarWidthDidChange, this);
-    this.navigationSidebar.addEventListener(WebInspector.Sidebar.Event.SidebarPanelSelected, this._navigationSidebarPanelSelected, this);
 
-    this.rightSidebar = this.detailsSidebar = new WebInspector.Sidebar(document.getElementById("details-sidebar"), WebInspector.Sidebar.Sides.Right, null, null, WebInspector.UIString("Details"));
-    this.detailsSidebar.addEventListener(WebInspector.Sidebar.Event.CollapsedStateDidChange, this._sidebarCollapsedStateDidChange, this);
+    this.detailsSidebar = new WebInspector.Sidebar(document.getElementById("details-sidebar"), WebInspector.Sidebar.Sides.Right, null, null, WebInspector.UIString("Details"));
     this.detailsSidebar.addEventListener(WebInspector.Sidebar.Event.WidthDidChange, this._sidebarWidthDidChange, this);
-    this.detailsSidebar.addEventListener(WebInspector.Sidebar.Event.SidebarPanelSelected, this._detailsSidebarPanelSelected, this);
 
     this.navigationSidebarKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "0", this.toggleNavigationSidebar.bind(this));
     this.detailsSidebarKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Option, "0", this.toggleDetailsSidebar.bind(this));
@@ -280,42 +263,10 @@ WebInspector.contentLoaded = function()
     this.toolbar.addToolbarItem(this.closeButtonNavigationItem, WebInspector.Toolbar.Section.Control);
     this.toolbar.addToolbarItem(this.undockButtonNavigationItem, WebInspector.Toolbar.Section.Control);
 
-    this.resourceSidebarPanel = new WebInspector.ResourceSidebarPanel;
-    this.timelineSidebarPanel = new WebInspector.TimelineSidebarPanel;
-    this.debuggerSidebarPanel = new WebInspector.DebuggerSidebarPanel;
-
-    this.navigationSidebar.addSidebarPanel(this.resourceSidebarPanel);
-    // FIXME: Enable timelines panel for JavaScript inspection.
-    if (this.debuggableType !== WebInspector.DebuggableType.JavaScript)
-        this.navigationSidebar.addSidebarPanel(this.timelineSidebarPanel);
-    this.navigationSidebar.addSidebarPanel(this.debuggerSidebarPanel);
-
-    this.toolbar.addToolbarItem(this.resourceSidebarPanel.toolbarItem, WebInspector.Toolbar.Section.Left);
-    // FIXME: Enable timelines panel for JavaScript inspection.
-    if (this.debuggableType !== WebInspector.DebuggableType.JavaScript)
-        this.toolbar.addToolbarItem(this.timelineSidebarPanel.toolbarItem, WebInspector.Toolbar.Section.Left);
-    this.toolbar.addToolbarItem(this.debuggerSidebarPanel.toolbarItem, WebInspector.Toolbar.Section.Left);
-
-    // The toolbar button for the console.
-    var toolTip = WebInspector.UIString("Show console (%s)").format(WebInspector._consoleKeyboardShortcut.displayName);
-    var activatedToolTip = WebInspector.UIString("Hide console (%s)").format(WebInspector._consoleKeyboardShortcut.displayName);
-    this._consoleToolbarButton = new WebInspector.ActivateButtonToolbarItem("console", toolTip, activatedToolTip, WebInspector.UIString("Console"), "Images/NavigationItemLog.svg");
-    this._consoleToolbarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this.toggleConsoleView, this);
-    this.toolbar.addToolbarItem(this._consoleToolbarButton, WebInspector.Toolbar.Section.Center);
-
     this.dashboardContainer = new WebInspector.DashboardContainerView;
     this.dashboardContainer.showDashboardViewForRepresentedObject(this.dashboardManager.dashboards.default);
 
     this.toolbar.addToolbarItem(this.dashboardContainer.toolbarItem, WebInspector.Toolbar.Section.Center);
-
-    // The toolbar button for node inspection.
-    if (this.debuggableType === WebInspector.DebuggableType.Web) {
-        var toolTip = WebInspector.UIString("Enable point to inspect mode (%s)").format(WebInspector._inspectModeKeyboardShortcut.displayName);
-        var activatedToolTip = WebInspector.UIString("Disable point to inspect mode (%s)").format(WebInspector._inspectModeKeyboardShortcut.displayName);
-        this._inspectModeToolbarButton = new WebInspector.ActivateButtonToolbarItem("inspect", toolTip, activatedToolTip, WebInspector.UIString("Inspect"), "Images/Crosshair.svg");
-        this._inspectModeToolbarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._toggleInspectMode, this);
-        this.toolbar.addToolbarItem(this._inspectModeToolbarButton, WebInspector.Toolbar.Section.Center);
-    }
 
     this.resourceDetailsSidebarPanel = new WebInspector.ResourceDetailsSidebarPanel;
     this.domNodeDetailsSidebarPanel = new WebInspector.DOMNodeDetailsSidebarPanel;
@@ -325,23 +276,10 @@ WebInspector.contentLoaded = function()
     this.probeDetailsSidebarPanel = new WebInspector.ProbeDetailsSidebarPanel;
     this.renderingFrameDetailsSidebarPanel = new WebInspector.RenderingFrameDetailsSidebarPanel;
 
-    this.detailsSidebarPanels = [this.resourceDetailsSidebarPanel, this.applicationCacheDetailsSidebarPanel, this.scopeChainDetailsSidebarPanel,
-        this.domNodeDetailsSidebarPanel, this.cssStyleDetailsSidebarPanel, this.probeDetailsSidebarPanel, this.renderingFrameDetailsSidebarPanel];
-
-    if (window.LayerTreeAgent) {
+    if (window.LayerTreeAgent)
         this.layerTreeDetailsSidebarPanel = new WebInspector.LayerTreeDetailsSidebarPanel;
-        this.detailsSidebarPanels.splice(this.detailsSidebarPanels.length - 1, 0, this.layerTreeDetailsSidebarPanel);
-    }
 
     this.modifierKeys = {altKey: false, metaKey: false, shiftKey: false};
-
-    // Add the items in reverse order since the last items appear and disappear the least. So they
-    // will not cause the other buttons to visually shift around, keeping things more stable.
-    for (var i = this.detailsSidebarPanels.length - 1; i >= 0; --i) {
-        var toolbarItem = this.detailsSidebarPanels[i].toolbarItem;
-        toolbarItem.hidden = true;
-        this.toolbar.addToolbarItem(toolbarItem, WebInspector.Toolbar.Section.Right);
-    }
 
     this.toolbar.element.addEventListener("mousedown", this._toolbarMouseDown.bind(this));
     document.getElementById("docked-resizer").addEventListener("mousedown", this._dockedResizerMouseDown.bind(this));
@@ -349,26 +287,12 @@ WebInspector.contentLoaded = function()
     this._updateDockNavigationItems();
     this._updateToolbarHeight();
 
-    if (this._navigationSidebarWidthSetting.value)
-        this.navigationSidebar.width = this._navigationSidebarWidthSetting.value;
-
-    if (this._detailsSidebarWidthSetting.value)
-        this.detailsSidebar.width = this._detailsSidebarWidthSetting.value;
-
     // Signal that the frontend is now ready to receive messages.
     InspectorFrontendAPI.loadCompleted();
 
     // Tell the InspectorFrontendHost we loaded, which causes the window to display
     // and pending InspectorFrontendAPI commands to be sent.
     InspectorFrontendHost.loaded();
-
-    // Set collapsed after loading the pending frontend commands are dispatched so only the final
-    // selected sidebar panel gets shown and has a say in what content view gets shown.
-    this.navigationSidebar.collapsed = this.navigationSidebar.selectedSidebarPanel ? this._navigationSidebarCollapsedSetting.value : true;
-
-    // If InspectorFrontendAPI didn't show a content view, then try to restore the last saved view state.
-    if (!this.contentBrowser.currentContentView && !this.ignoreLastContentCookie)
-        this._restoreInspectorViewStateFromCookie(this._lastInspectorViewStateCookieSetting.value);
 
     this._updateSplitConsoleHeight(this._splitConsoleHeightSetting.value);
 
@@ -393,37 +317,6 @@ WebInspector.activateExtraDomains = function(domains)
     this.notifications.dispatchEventToListeners(WebInspector.Notification.ExtraDomainsActivated, {"domains": domains});
 
     WebInspector.CSSCompletions.requestCSSNameCompletions();
-};
-
-WebInspector.sidebarPanelForCurrentContentView = function()
-{
-    var currentContentView = this.contentBrowser.currentContentView;
-    if (!currentContentView)
-        return null;
-    return this.sidebarPanelForRepresentedObject(currentContentView.representedObject);
-};
-
-WebInspector.sidebarPanelForRepresentedObject = function(representedObject)
-{
-    if (representedObject instanceof WebInspector.Frame || representedObject instanceof WebInspector.Resource ||
-        representedObject instanceof WebInspector.Script || representedObject instanceof WebInspector.ContentFlow)
-        return this.resourceSidebarPanel;
-
-    if (representedObject instanceof WebInspector.DOMStorageObject || representedObject instanceof WebInspector.CookieStorageObject ||
-        representedObject instanceof WebInspector.DatabaseTableObject || representedObject instanceof WebInspector.DatabaseObject ||
-        representedObject instanceof WebInspector.ApplicationCacheFrame || representedObject instanceof WebInspector.IndexedDatabaseObjectStore ||
-        representedObject instanceof WebInspector.IndexedDatabaseObjectStoreIndex)
-        return this.resourceSidebarPanel;
-
-    if (representedObject instanceof WebInspector.TimelineRecording)
-        return this.timelineSidebarPanel;
-
-    // The console does not have a sidebar.
-    if (representedObject instanceof WebInspector.LogObject)
-        return null;
-
-    console.error("Unknown representedObject: ", representedObject);
-    return null;
 };
 
 WebInspector.contentBrowserTreeElementForRepresentedObject = function(contentBrowser, representedObject)
@@ -997,8 +890,6 @@ WebInspector._mainResourceDidChange = function(event)
 
     this._inProvisionalLoad = false;
 
-    this._restoreInspectorViewStateFromCookie(this._lastInspectorViewStateCookieSetting.value, true);
-
     this.updateWindowTitle();
 };
 
@@ -1006,8 +897,6 @@ WebInspector._provisionalLoadStarted = function(event)
 {
     if (!event.target.isMainFrame())
         return;
-
-    this._updateCookieForInspectorViewState();
 
     this._inProvisionalLoad = true;
 };
@@ -1074,7 +963,6 @@ WebInspector._mouseMoved = function(event)
 
 WebInspector._pageHidden = function(event)
 {
-    this._updateCookieForInspectorViewState();
 };
 
 WebInspector._undock = function(event)
@@ -1102,108 +990,6 @@ WebInspector._updateDockNavigationItems = function()
     this.undockButtonNavigationItem.toggled = this._dockButtonToggledSetting.value;
 };
 
-WebInspector._sidebarCollapsedStateDidChange = function(event)
-{
-    if (event.target === this.navigationSidebar) {
-        if (!this._ignoreNavigationSidebarPanelCollapsedEvent) {
-            this._navigationSidebarCollapsedSetting.value = this.navigationSidebar.collapsed;
-            this._updateContentViewForCurrentNavigationSidebar();
-        }
-    } else if (event.target === this.detailsSidebar) {
-        if (!this._ignoreDetailsSidebarPanelCollapsedEvent)
-            this._detailsSidebarCollapsedSetting.value = this.detailsSidebar.collapsed;
-    }
-};
-
-WebInspector._detailsSidebarPanelSelected = function(event)
-{
-    if (!this.detailsSidebar.selectedSidebarPanel || this._ignoreDetailsSidebarPanelSelectedEvent)
-        return;
-
-    this._lastSelectedDetailsSidebarPanelSetting.value = this.detailsSidebar.selectedSidebarPanel.identifier;
-};
-
-WebInspector._revealAndSelectRepresentedObjectInNavigationSidebar = function(representedObject)
-{
-    if (this.navigationSidebar.collapsed)
-        return;
-
-    var selectedSidebarPanel = this.navigationSidebar.selectedSidebarPanel;
-    if (!selectedSidebarPanel)
-        return;
-
-    // If a tree outline is processing a selection currently then we can assume the selection does not
-    // need to be changed. This is needed to allow breakpoint and call frame tree elements to be selected
-    // without jumping back to selecting the resource tree element.
-    for (var contentTreeOutline of selectedSidebarPanel.visibleContentTreeOutlines) {
-        if (contentTreeOutline.processingSelectionChange)
-            return;
-    }
-
-    var treeElement = selectedSidebarPanel.treeElementForRepresentedObject(representedObject);
-
-    if (treeElement)
-        treeElement.revealAndSelect(true, false, false, true);
-    else if (selectedSidebarPanel.contentTreeOutline.selectedTreeElement)
-        selectedSidebarPanel.contentTreeOutline.selectedTreeElement.deselect(true);
-};
-
-WebInspector._updateContentViewForCurrentNavigationSidebar = function()
-{
-    if (this.navigationSidebar.collapsed)
-        return;
-
-    var selectedSidebarPanel = this.navigationSidebar.selectedSidebarPanel;
-    if (!selectedSidebarPanel)
-        return;
-
-    var currentContentView = this.contentBrowser.currentContentView;
-    if (!currentContentView)
-        return;
-
-    // Ensure the navigation sidebar panel is allowed by the current content view, if not ask the sidebar panel
-    // to show the content view for the current selection.
-    var allowedNavigationSidebarPanels = currentContentView.allowedNavigationSidebarPanels;
-    if (allowedNavigationSidebarPanels && (!allowedNavigationSidebarPanels.length || allowedNavigationSidebarPanels.includes(selectedSidebarPanel.identifier))) {
-        this._revealAndSelectRepresentedObjectInNavigationSidebar(currentContentView.representedObject);
-        return;
-    }
-
-    var backForwardList = WebInspector.contentBrowser.contentViewContainer.backForwardList;
-    var index = backForwardList.length;
-    while (index--) {
-        var contentView = backForwardList[index].contentView;
-        var allowedNavigationSidebarPanels = contentView.allowedNavigationSidebarPanels;
-        if (allowedNavigationSidebarPanels && (!allowedNavigationSidebarPanels.length || allowedNavigationSidebarPanels.includes(selectedSidebarPanel.identifier))) {
-            WebInspector.contentBrowser.showContentView(contentView);
-            return;
-        }
-    }
-
-    selectedSidebarPanel.showDefaultContentView();
-};
-
-WebInspector._navigationSidebarPanelSelected = function(event)
-{
-    if (this._ignoreNavigationSidebarPanelSelectedEvent)
-        return;
-
-    if (!this.navigationSidebar.selectedSidebarPanel) {
-        this._ignoreNavigationSidebarPanelCollapsedEvent = true;
-        this.navigationSidebar.collapsed = true;
-        delete this._ignoreNavigationSidebarPanelCollapsedEvent;
-        return;
-    }
-
-    // Restore the sidebar if was forced collapsed earlier because of no selectedSidebarPanel.
-    this.navigationSidebar.collapsed = this._navigationSidebarCollapsedSetting.value;
-
-    if (this.navigationSidebar.collapsed)
-        return;
-
-    this._updateContentViewForCurrentNavigationSidebar();
-};
-
 WebInspector._contentBrowserSizeDidChange = function(event)
 {
     this.contentBrowser.updateLayout();
@@ -1218,13 +1004,6 @@ WebInspector._quickConsoleDidResize = function(event)
 
 WebInspector._sidebarWidthDidChange = function(event)
 {
-    if (!event.target.collapsed) {
-        if (event.target === this.navigationSidebar)
-            this._navigationSidebarWidthSetting.value = this.navigationSidebar.width;
-        else if (event.target === this.detailsSidebar)
-            this._detailsSidebarWidthSetting.value = this.detailsSidebar.width;
-    }
-
     this._contentBrowserSizeDidChange(event);
 };
 
@@ -1262,179 +1041,6 @@ WebInspector._toolbarSizeModeDidChange = function(event)
         this._toolbarUndockedSizeModeSetting.value = this.toolbar.sizeMode;
 
     this._updateToolbarHeight();
-};
-
-WebInspector._updateCookieForInspectorViewState = function()
-{
-    var cookie = {};
-    var currentContentView = this.contentBrowser.currentContentView;
-
-    // The console does not have a sidebar, so create a cookie here.
-    if (currentContentView && currentContentView.representedObject instanceof WebInspector.LogObject) {
-        cookie[WebInspector.SelectedSidebarPanelCookieKey] = "console";
-        this._lastInspectorViewStateCookieSetting.value = cookie;
-        return;
-    }
-
-    // Ignore saving the sidebar state for provisional loads. The currently selected sidebar
-    // may have been the result of content views closing as a result of a page navigation,
-    // but those content views may come back very soon.
-    if (this._inProvisionalLoad)
-        return;
-
-    var selectedSidebarPanel = this.navigationSidebar.selectedSidebarPanel;
-    if (!selectedSidebarPanel)
-        return;
-
-    // Restoring view state after inspector re-open or page reload is delegated to navigation sidebars.
-    // This is because some navigation sidebar state (such as breakpoint selections) cannot be inferred
-    // solely based on which content view is visible, or multiple navigation sidebars could be shown.
-    cookie[WebInspector.SelectedSidebarPanelCookieKey] = selectedSidebarPanel.identifier;
-    selectedSidebarPanel.saveStateToCookie(cookie);
-    this._lastInspectorViewStateCookieSetting.value = cookie;
-};
-
-WebInspector._contentBrowserCurrentContentViewDidChange = function(event)
-{
-    var consoleViewShowing = this.isShowingConsoleView();
-    this._consoleToolbarButton.activated = consoleViewShowing;
-
-    if (!this.isShowingSplitConsole())
-        this.quickConsole.consoleLogVisibilityChanged(consoleViewShowing);
-
-    if (!this.currentViewSupportsSplitContentBrowser())
-        this.hideSplitConsole();
-
-    var currentContentView = this.contentBrowser.currentContentView;
-    if (!currentContentView)
-        return;
-
-    var selectedSidebarPanel = this.navigationSidebar.selectedSidebarPanel;
-    if (!selectedSidebarPanel)
-        return;
-
-    this._ignoreNavigationSidebarPanelSelectedEvent = true;
-
-    // Ensure the navigation sidebar panel is allowed by the current content view, if not change the navigation sidebar panel
-    // to the last navigation sidebar panel used with the content view or the first one allowed.
-    var selectedSidebarPanelIdentifier = selectedSidebarPanel.identifier;
-    var allowedNavigationSidebarPanels = currentContentView.allowedNavigationSidebarPanels;
-
-    if (allowedNavigationSidebarPanels) {
-        if (allowedNavigationSidebarPanels.length && !allowedNavigationSidebarPanels.includes(selectedSidebarPanelIdentifier)) {
-            console.assert(!currentContentView.__lastNavigationSidebarPanelIdentifier || allowedNavigationSidebarPanels.includes(currentContentView.__lastNavigationSidebarPanelIdentifier));
-            this.navigationSidebar.selectedSidebarPanel = currentContentView.__lastNavigationSidebarPanelIdentifier || allowedNavigationSidebarPanels[0];
-            console.assert(this.navigationSidebar.selectedSidebarPanel);
-        }
-
-        if (this._wasShowingNavigationSidebarBeforeForcedCollapsed) {
-            this._ignoreNavigationSidebarPanelCollapsedEvent = true;
-            this.navigationSidebar.collapsed = false;
-            delete this._ignoreNavigationSidebarPanelCollapsedEvent;
-
-            delete this._wasShowingNavigationSidebarBeforeForcedCollapsed;
-        }
-    } else if (!allowedNavigationSidebarPanels && !this.navigationSidebar.collapsed) {
-        this._wasShowingNavigationSidebarBeforeForcedCollapsed = true;
-
-        this._ignoreNavigationSidebarPanelCollapsedEvent = true;
-        this.navigationSidebar.collapsed = true;
-        delete this._ignoreNavigationSidebarPanelCollapsedEvent;
-    }
-
-    if (allowedNavigationSidebarPanels && !this.navigationSidebar.collapsed)
-        currentContentView.__lastNavigationSidebarPanelIdentifier = this.navigationSidebar.selectedSidebarPanel.identifier;
-
-    this._revealAndSelectRepresentedObjectInNavigationSidebar(currentContentView.representedObject);
-
-    delete this._ignoreNavigationSidebarPanelSelectedEvent;
-};
-
-WebInspector._contentBrowserRepresentedObjectsDidChange = function(event)
-{
-    var currentRepresentedObjects = this.contentBrowser.currentRepresentedObjects;
-    var currentSidebarPanels = this.detailsSidebar.sidebarPanels;
-    var wasSidebarEmpty = !currentSidebarPanels.length;
-
-    // Ignore any changes to the selected sidebar panel during this function so only user initiated
-    // changes are recorded in _lastSelectedDetailsSidebarPanelSetting.
-    this._ignoreDetailsSidebarPanelSelectedEvent = true;
-
-    for (var i = 0; i < this.detailsSidebarPanels.length; ++i) {
-        var sidebarPanel = this.detailsSidebarPanels[i];
-        if (sidebarPanel.inspect(currentRepresentedObjects)) {
-            var currentSidebarPanelIndex = currentSidebarPanels.indexOf(sidebarPanel);
-            if (currentSidebarPanelIndex !== -1) {
-                // Already showing the panel.
-                continue;
-            }
-
-            // The sidebar panel was not previously showing, so add the panel and show the toolbar item.
-            this.detailsSidebar.addSidebarPanel(sidebarPanel);
-            sidebarPanel.toolbarItem.hidden = false;
-
-            if (this._selectAndShowScopeChainDetailsSidebarPanelWhenAvailable && sidebarPanel === this.scopeChainDetailsSidebarPanel) {
-                // Select the scope chain sidebar panel since it needs to be shown after pausing in the debugger.
-                delete this._selectAndShowScopeChainDetailsSidebarPanelWhenAvailable;
-                this.detailsSidebar.selectedSidebarPanel = this.scopeChainDetailsSidebarPanel;
-
-                this._ignoreDetailsSidebarPanelCollapsedEvent = true;
-                this.detailsSidebar.collapsed = false;
-                delete this._ignoreDetailsSidebarPanelCollapsedEvent;
-            } else if (this._lastSelectedDetailsSidebarPanelSetting.value === sidebarPanel.identifier) {
-                // Restore the sidebar panel selection if this sidebar panel was the last one selected by the user.
-                this.detailsSidebar.selectedSidebarPanel = sidebarPanel;
-            }
-        } else {
-            // The sidebar panel can't inspect the current represented objects, so remove the panel and hide the toolbar item.
-            this.detailsSidebar.removeSidebarPanel(sidebarPanel);
-            sidebarPanel.toolbarItem.hidden = true;
-        }
-    }
-
-    if (!this.detailsSidebar.selectedSidebarPanel && currentSidebarPanels.length)
-        this.detailsSidebar.selectedSidebarPanel = currentSidebarPanels[0];
-
-    this._ignoreDetailsSidebarPanelCollapsedEvent = true;
-
-    if (!this.detailsSidebar.sidebarPanels.length)
-        this.detailsSidebar.collapsed = true;
-    else if (wasSidebarEmpty)
-        this.detailsSidebar.collapsed = this._detailsSidebarCollapsedSetting.value;
-
-    delete this._ignoreDetailsSidebarPanelCollapsedEvent;
-
-    // Stop ignoring the sidebar panel selected event.
-    delete this._ignoreDetailsSidebarPanelSelectedEvent;
-};
-
-WebInspector._restoreInspectorViewStateFromCookie = function(cookie, causedByReload)
-{
-    if (!cookie) {
-        this.navigationSidebar.selectedSidebarPanel = this.resourceSidebarPanel;
-        return;
-    }
-
-    // The console does not have a sidebar, so handle its special cookie here.
-    if (cookie[WebInspector.SelectedSidebarPanelCookieKey] === "console") {
-        this.showFullHeightConsole();
-        return;
-    }
-
-    const matchTypeOnlyDelayForReload = 2000;
-    const matchTypeOnlyDelayForReopen = 1000;
-
-    var sidebarPanelIdentifier = cookie[WebInspector.SelectedSidebarPanelCookieKey];
-    var sidebarPanel = this.navigationSidebar.findSidebarPanel(sidebarPanelIdentifier);
-    if (!sidebarPanel) {
-        this.navigationSidebar.selectedSidebarPanel = this.resourceSidebarPanel;
-        return;
-    }
-
-    this.navigationSidebar.selectedSidebarPanel = sidebarPanel;
-
-    var relaxMatchDelay = causedByReload ? matchTypeOnlyDelayForReload : matchTypeOnlyDelayForReopen;
-    sidebarPanel.restoreStateFromCookie(cookie, relaxMatchDelay);
 };
 
 WebInspector._initializeWebSocketIfNeeded = function()

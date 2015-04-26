@@ -1,5 +1,16 @@
 2015-04-23  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Remove Main.js code we don't need for Tabs
+        https://bugs.webkit.org/show_bug.cgi?id=144126
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        (WebInspector.contentLoaded):
+
+2015-04-23  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Change more places that changed WebInspector.navigationSidebar.selectedSidebarPanel to tabs
         https://bugs.webkit.org/show_bug.cgi?id=144125
 
