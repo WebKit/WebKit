@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -35,30 +35,40 @@
 
 #include "NotificationCenter.h"
 
-#include "Document.h"
-#include "NotificationClient.h"
+#include "Notification.h"
+#include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
-#include "WorkerGlobalScope.h"
 
 namespace WebCore {
 
 Ref<NotificationCenter> NotificationCenter::create(ScriptExecutionContext* context, NotificationClient* client)
 {
     auto notificationCenter = adoptRef(*new NotificationCenter(context, client));
-    notificationCenter.get().suspendIfNeeded();
+    notificationCenter->suspendIfNeeded();
     return notificationCenter;
 }
 
 NotificationCenter::NotificationCenter(ScriptExecutionContext* context, NotificationClient* client)
     : ActiveDOMObject(context)
     , m_client(client)
+    , m_timer([this]() { timerFired(); })
 {
 }
 
 #if ENABLE(LEGACY_NOTIFICATIONS)
+
+RefPtr<Notification> NotificationCenter::createNotification(const String& iconURI, const String& title, const String& body, ExceptionCode& ec)
+{
+    if (!m_client) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+    return Notification::create(title, body, iconURI, scriptExecutionContext(), ec, this);
+}
+
 int NotificationCenter::checkPermission()
 {
-    if (!client() || !scriptExecutionContext())
+    if (!m_client || !scriptExecutionContext())
         return NotificationClient::PermissionDenied;
 
     switch (scriptExecutionContext()->securityOrigin()->canShowNotifications()) {
@@ -73,27 +83,33 @@ int NotificationCenter::checkPermission()
     ASSERT_NOT_REACHED();
     return m_client->checkPermission(scriptExecutionContext());
 }
-#endif
 
-#if ENABLE(LEGACY_NOTIFICATIONS)
-void NotificationCenter::requestPermission(PassRefPtr<VoidCallback> callback)
+void NotificationCenter::requestPermission(const RefPtr<VoidCallback>& callback)
 {
-    if (!client() || !scriptExecutionContext())
+    if (!m_client || !scriptExecutionContext())
         return;
 
     switch (scriptExecutionContext()->securityOrigin()->canShowNotifications()) {
     case SecurityOrigin::AlwaysAllow:
-    case SecurityOrigin::AlwaysDeny: {
-        m_callbacks.add(NotificationRequestCallback::createAndStartTimer(this, callback));
+    case SecurityOrigin::AlwaysDeny:
+        if (m_callbacks.isEmpty()) {
+            ref(); // Balanced by the derefs in NotificationCenter::stop and NotificationCenter::timerFired.
+            m_timer.startOneShot(0);
+        }
+        m_callbacks.append([callback]() {
+            if (callback)
+                callback->handleEvent();
+        });
         return;
-    }
     case SecurityOrigin::Ask:
-        return m_client->requestPermission(scriptExecutionContext(), callback);
+        m_client->requestPermission(scriptExecutionContext(), callback.get());
+        return;
     }
 
     ASSERT_NOT_REACHED();
-    m_client->requestPermission(scriptExecutionContext(), callback);
+    m_client->requestPermission(scriptExecutionContext(), callback.get());
 }
+
 #endif
 
 void NotificationCenter::stop()
@@ -101,15 +117,19 @@ void NotificationCenter::stop()
     if (!m_client)
         return;
 
-    // Clear m_client now because the call to NotificationClient::clearNotifications() below potentially
-    // destroy the NotificationCenter. This is because the notifications will be destroyed and unref the
-    // NotificationCenter.
-    auto& client = *m_client;
-    m_client = nullptr;
+    // Clear m_client immediately to guarantee reentrant calls to NotificationCenter do nothing.
+    // Also protect |this| so it's not indirectly destroyed under us by work done by the client.
+    auto& client = *std::exchange(m_client, nullptr);
+    Ref<NotificationCenter> protector(*this);
+
+    if (!m_callbacks.isEmpty())
+        deref(); // Balanced by the ref in NotificationCenter::requestPermission.
+
+    m_timer.stop();
+    m_callbacks.clear();
 
     client.cancelRequestsForPermission(scriptExecutionContext());
     client.clearNotifications(scriptExecutionContext());
-    // Do not attempt the access |this|, the NotificationCenter may be destroyed at this point.
 }
 
 const char* NotificationCenter::activeDOMObjectName() const
@@ -120,40 +140,17 @@ const char* NotificationCenter::activeDOMObjectName() const
 bool NotificationCenter::canSuspendForPageCache() const
 {
     // We don't need to worry about Notifications because those are ActiveDOMObject too.
-    // The NotificationCenter can safely be suspended if there are no pending permission
-    // requests.
+    // The NotificationCenter can safely be suspended if there are no pending permission requests.
     return m_callbacks.isEmpty() && (!m_client || !m_client->hasPendingPermissionRequests(scriptExecutionContext()));
 }
 
-void NotificationCenter::requestTimedOut(NotificationCenter::NotificationRequestCallback* request)
+void NotificationCenter::timerFired()
 {
-    m_callbacks.remove(request);
-}
-
-PassRefPtr<NotificationCenter::NotificationRequestCallback> NotificationCenter::NotificationRequestCallback::createAndStartTimer(NotificationCenter* center, PassRefPtr<VoidCallback> callback)
-{
-    RefPtr<NotificationCenter::NotificationRequestCallback> requestCallback = adoptRef(new NotificationCenter::NotificationRequestCallback(center, callback));
-    requestCallback->startTimer();
-    return requestCallback.release();
-}
-
-NotificationCenter::NotificationRequestCallback::NotificationRequestCallback(NotificationCenter* center, PassRefPtr<VoidCallback> callback)
-    : m_notificationCenter(center)
-    , m_timer(*this, &NotificationCenter::NotificationRequestCallback::timerFired)
-    , m_callback(callback)
-{
-}
-
-void NotificationCenter::NotificationRequestCallback::startTimer()
-{
-    m_timer.startOneShot(0);
-}
-
-void NotificationCenter::NotificationRequestCallback::timerFired()
-{
-    if (m_callback)
-        m_callback->handleEvent();
-    m_notificationCenter->requestTimedOut(this);
+    ASSERT(m_client);
+    auto callbacks = WTF::move(m_callbacks);
+    for (auto& callback : callbacks)
+        callback();
+    deref(); // Balanced by the ref in NotificationCenter::requestPermission.
 }
 
 } // namespace WebCore

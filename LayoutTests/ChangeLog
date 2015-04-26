@@ -1,3 +1,13 @@
+2015-04-26  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r173801): Use after free in WebCore::NotificationCenter::~NotificationCenter
+        https://bugs.webkit.org/show_bug.cgi?id=137163
+
+        Reviewed by Andy Estes.
+
+        * fast/notifications/request-notification-permission-while-reloading-expected.txt: Added.
+        * fast/notifications/request-notification-permission-while-reloading.html: Added.
+
 2015-04-26  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] Implement Math.clz32(), remove Number.clz()

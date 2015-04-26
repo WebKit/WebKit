@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -32,69 +32,46 @@
 #ifndef NotificationCenter_h
 #define NotificationCenter_h
 
+#include "ActiveDOMObject.h"
 #include "ExceptionCode.h"
-#include "Notification.h"
-#include "ScriptExecutionContext.h"
 #include "Timer.h"
-#include "VoidCallback.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 namespace WebCore {
 
+class Notification;
 class NotificationClient;
 class VoidCallback;
 
-class NotificationCenter : public RefCounted<NotificationCenter>, public ActiveDOMObject {
+class NotificationCenter : public RefCounted<NotificationCenter>, private ActiveDOMObject {
 public:
     static Ref<NotificationCenter> create(ScriptExecutionContext*, NotificationClient*);
 
 #if ENABLE(LEGACY_NOTIFICATIONS)
-    PassRefPtr<Notification> createNotification(const String& iconURI, const String& title, const String& body, ExceptionCode& ec)
-    {
-        if (!client()) {
-            ec = INVALID_STATE_ERR;
-            return 0;
-        }
-        return Notification::create(title, body, iconURI, scriptExecutionContext(), ec, this);
-    }
+    RefPtr<Notification> createNotification(const String& iconURI, const String& title, const String& body, ExceptionCode&);
+
+    int checkPermission();
+    void requestPermission(const RefPtr<VoidCallback>&);
 #endif
 
     NotificationClient* client() const { return m_client; }
 
-#if ENABLE(LEGACY_NOTIFICATIONS)
-    int checkPermission();
-    void requestPermission(PassRefPtr<VoidCallback> = 0);
-#endif
+    using ActiveDOMObject::hasPendingActivity;
 
 private:
     NotificationCenter(ScriptExecutionContext*, NotificationClient*);
 
-    // ActiveDOMObject API.
     void stop() override;
     const char* activeDOMObjectName() const override;
     bool canSuspendForPageCache() const override;
 
-    class NotificationRequestCallback : public RefCounted<NotificationRequestCallback> {
-    public:
-        static PassRefPtr<NotificationRequestCallback> createAndStartTimer(NotificationCenter*, PassRefPtr<VoidCallback>);
-        void startTimer();
-        void timerFired();
-    private:
-        NotificationRequestCallback(NotificationCenter*, PassRefPtr<VoidCallback>);
-
-        RefPtr<NotificationCenter> m_notificationCenter;
-        Timer m_timer;
-        RefPtr<VoidCallback> m_callback;
-    };
-
-    void requestTimedOut(NotificationRequestCallback*);
+    void timerFired();
 
     NotificationClient* m_client;
-    HashSet<RefPtr<NotificationRequestCallback>> m_callbacks;
+    Vector<std::function<void ()>> m_callbacks;
+    Timer m_timer;
 };
 
 } // namespace WebCore

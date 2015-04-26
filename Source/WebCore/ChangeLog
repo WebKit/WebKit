@@ -1,3 +1,35 @@
+2015-04-26  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r173801): Use after free in WebCore::NotificationCenter::~NotificationCenter
+        https://bugs.webkit.org/show_bug.cgi?id=137163
+
+        Reviewed by Andy Estes.
+
+        Test: fast/notifications/request-notification-permission-while-reloading.html
+
+        The test doesn't crash under WebKit2, but that's still OK for our purposes.
+
+        * Modules/notifications/NotificationCenter.cpp:
+        (WebCore::NotificationCenter::NotificationCenter): Initialize m_timer.
+        (WebCore::NotificationCenter::createNotification): Moved here from the header.
+        (WebCore::NotificationCenter::requestPermission): Start the timer and ref the notification
+        center when we need to defer a callback. Also use a lambda for the callback and changed
+        the argument to match what the bindings actually pass. Before we said PassRefPtr, but the
+        bindings were not transferring ownership of the VoidCallback. The new type is a little
+        strange but it's consistent with how the bindings work right now.
+        (WebCore::NotificationCenter::timerFired): Added. Calls all the callbacks, then does a deref
+        to match the ref we did above.
+        (WebCore::NotificationCenter::requestTimedOut): Deleted.
+        (WebCore::NotificationCenter::NotificationRequestCallback::createAndStartTimer): Deleted.
+        (WebCore::NotificationCenter::NotificationRequestCallback::NotificationRequestCallback): Deleted.
+        (WebCore::NotificationCenter::NotificationRequestCallback::startTimer): Deleted.
+        (WebCore::NotificationCenter::NotificationRequestCallback::timerFired): Deleted.
+
+        * Modules/notifications/NotificationCenter.h: Reorganized the header to be a bit more tidy.
+        Changed the argument type for requestPermission to match the reality of what's passed by the
+        bindings. Removed NotificationRequestCallback and replaced the m_callbacks HashSet with a
+        vector of std::function.
+
 2015-04-26  Simon Fraser  <simon.fraser@apple.com>
 
         Modernize animations code
