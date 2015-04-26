@@ -110,11 +110,6 @@ WebInspector.TimelineRecordingContentView.prototype = {
         this._contentViewContainer.showContentView(this._timelineViewMap.get(timeline));
     },
 
-    get allowedNavigationSidebarPanels()
-    {
-        return [WebInspector.timelineSidebarPanel.identifier];
-    },
-
     get supportsSplitContentBrowser()
     {
         // The layout of the overview and split content browser don't work well.

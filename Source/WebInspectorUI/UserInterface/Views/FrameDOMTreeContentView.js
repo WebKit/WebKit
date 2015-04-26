@@ -42,11 +42,6 @@ WebInspector.FrameDOMTreeContentView.prototype = {
 
     // Public
 
-    get allowedNavigationSidebarPanels()
-    {
-        return [WebInspector.resourceSidebarPanel.identifier];
-    },
-
     get domTree()
     {
         return this._domTree;

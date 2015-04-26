@@ -39,11 +39,6 @@ WebInspector.CookieStorageContentView.prototype = {
 
     // Public
 
-    get allowedNavigationSidebarPanels()
-    {
-        return [WebInspector.resourceSidebarPanel.identifier];
-    },
-
     update: function()
     {
         function callback(error, cookies)

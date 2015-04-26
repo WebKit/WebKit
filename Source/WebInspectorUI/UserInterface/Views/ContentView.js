@@ -176,12 +176,6 @@ WebInspector.ContentView.prototype = {
         return [];
     },
 
-    get allowedNavigationSidebarPanels()
-    {
-        // Allow any navigation sidebar panel.
-        return [];
-    },
-
     get element()
     {
         return this._element;

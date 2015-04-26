@@ -50,11 +50,6 @@ WebInspector.DOMStorageContentView.prototype = {
 
     // Public
 
-    get allowedNavigationSidebarPanels()
-    {
-        return [WebInspector.resourceSidebarPanel.identifier];
-    },
-
     reset: function()
     {
         this.representedObject.getEntries(function(error, entries) {

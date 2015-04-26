@@ -1,5 +1,25 @@
 2015-04-22  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Remove allowedNavigationSidebarPanels, it isn't needed
+        https://bugs.webkit.org/show_bug.cgi?id=144056
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ApplicationCacheFrameContentView.js:
+        * UserInterface/Views/ContentView.js:
+        * UserInterface/Views/CookieStorageContentView.js:
+        * UserInterface/Views/DOMStorageContentView.js:
+        * UserInterface/Views/DOMTreeContentView.js:
+        * UserInterface/Views/DatabaseContentView.js:
+        * UserInterface/Views/DatabaseTableContentView.js:
+        * UserInterface/Views/FontResourceContentView.js:
+        * UserInterface/Views/FrameDOMTreeContentView.js:
+        * UserInterface/Views/LogContentView.js:
+        * UserInterface/Views/ResourceClusterContentView.js:
+        * UserInterface/Views/TimelineRecordingContentView.js:
+
+2015-04-22  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Support passing extra arguments to ContentViews during construction
         https://bugs.webkit.org/show_bug.cgi?id=144055
 

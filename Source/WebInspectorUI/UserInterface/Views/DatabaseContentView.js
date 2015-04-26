@@ -50,11 +50,6 @@ WebInspector.DatabaseContentView.prototype = {
 
     // Public
 
-    get allowedNavigationSidebarPanels()
-    {
-        return [WebInspector.resourceSidebarPanel.identifier];
-    },
-
     shown: function()
     {
         this.prompt.shown();

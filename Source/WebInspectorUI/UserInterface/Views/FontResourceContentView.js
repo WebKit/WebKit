@@ -53,14 +53,6 @@ WebInspector.FontResourceContentView.prototype = {
 
     // Public
 
-    get allowedNavigationSidebarPanels()
-    {
-        return [
-            WebInspector.resourceSidebarPanel.identifier,
-            WebInspector.timelineSidebarPanel.identifier
-        ];
-    },
-
     get previewElement()
     {
         return this._previewElement;
