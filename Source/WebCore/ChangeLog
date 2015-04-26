@@ -1,3 +1,9 @@
+2015-04-25  Timothy Hatcher  <timothy@apple.com>
+
+        Update localized strings.
+
+        * English.lproj/Localizable.strings: Updated.
+
 2015-04-25  Darin Adler  <darin@apple.com>
 
         Crash if IDBTransaction is aborted right after it's created

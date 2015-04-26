@@ -376,6 +376,9 @@
 /* WebKitErrorCannotUseRestrictedPort description */
 "Not allowed to use restricted network port" = "Not allowed to use restricted network port";
 
+/* OK button label in PDF password failure alert */
+"OK (PDF password failure alert)" = "OK";
+
 /* Menu item label for the track that represents disabling closed captions */
 "Off" = "Off";
 
@@ -618,6 +621,9 @@
 
 /* WebKitErrorGeolocationLocationUnknown description */
 "The current location cannot be found." = "The current location cannot be found.";
+
+/* PDF password failure alert message */
+"The document could not be opened with that password." = "The document could not be opened with that password.";
 
 /* WebKitErrorCannotFindPlugin description */
 "The plug-in can’t be found" = "The plug-in can’t be found";
@@ -1108,8 +1114,3 @@
 /* accessibility label for video element controller */
 "video playback" = "video playback";
 
-/* PDF password failure alert message */
-"The document could not be opened with that password." = "The document could not be opened with that password.";
-
-/* OK button label in PDF password failure alert */
-"OK (PDF password failure alert)" = "OK";
