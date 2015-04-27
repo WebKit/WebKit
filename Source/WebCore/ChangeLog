@@ -1,3 +1,16 @@
+2015-04-27  Darin Adler  <darin@apple.com>
+
+        Crashes under IDBDatabase::closeConnection
+        https://bugs.webkit.org/show_bug.cgi?id=141745
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::~IDBDatabase): Do the work of close/closeConnection without
+        actually calling those functions.
+        (WebCore::IDBDatabase::closeConnection): Protect the database so it's not destroyed
+        in the middle of this function's execution.
+
 2015-04-27  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] ReadableStream constructor start function should be able to close the stream
