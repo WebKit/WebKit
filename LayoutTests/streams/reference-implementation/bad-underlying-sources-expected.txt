@@ -17,11 +17,11 @@ FAIL Underlying source: throwing strategy.shouldApplyBackpressure method assert_
 FAIL Underlying source: strategy.size returning NaN assert_unreached: enqueue didn't throw Reached unreachable code
 FAIL Underlying source: strategy.size returning -Infinity assert_unreached: enqueue didn't throw Reached unreachable code
 FAIL Underlying source: strategy.size returning +Infinity assert_unreached: enqueue didn't throw Reached unreachable code
-TIMEOUT Underlying source: calling close twice on an empty stream should throw the second time Test timed out
+PASS Underlying source: calling close twice on an empty stream should throw the second time 
 FAIL Underlying source: calling close twice on a non-empty stream should throw the second time read is not implemented
 FAIL Underlying source: calling close on an empty canceled stream should not throw cancel is not implemented
 FAIL Underlying source: calling close on a non-empty canceled stream should not throw cancel is not implemented
 TIMEOUT Underlying source: calling close after error should throw Test timed out
 TIMEOUT Underlying source: calling error twice should throw the second time Test timed out
-TIMEOUT Underlying source: calling error after close should throw Test timed out
+PASS Underlying source: calling error after close should throw 
 

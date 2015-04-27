@@ -49,7 +49,7 @@ JSValue JSReadableStreamController::close(ExecState* exec)
     // FIXME: Handle the case of draining.
     if (stream->internalState() != ReadableStream::State::Readable)
         return exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Calling close on a stream which is not readable")));
-    notImplemented();
+    stream->changeStateToClosed();
     return jsUndefined();
 }
 

@@ -1,3 +1,44 @@
+2015-04-27  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Streams API] ReadableStream constructor start function should be able to close the stream
+        https://bugs.webkit.org/show_bug.cgi?id=143363
+
+        Reviewed by Benjamin Poulain.
+
+        Implements https://streams.spec.whatwg.org/#close-readable-stream.
+        When the "close" JS function is called, the stream is getting closed.
+        The stream state is changed to close and if it has a reader, the reader gets closed as well:
+        The reader resolves the closed promise and releases the stream.
+
+        Enabled the possibility to resolve a promise with any JS value.
+        This is used to resolve closed promise with jsUndefined and will be used for read promises in
+        the future as well, though of course it is not restricted to Streams.
+
+        Covered by reference tests that are now passing.
+
+        * Modules/streams/ReadableStream.h:
+        * Modules/streams/ReadableStream.cpp:
+        (WebCore::ReadableStream::changeStateToClosed): Called by the JS function 'close'.
+        * Modules/streams/ReadableStreamReader.cpp:
+        (WebCore::ReadableStreamReader::ReadableStreamReader): Initialized stream.
+        (WebCore::ReadableStreamReader::initialize): Added to handle state change at constructor time
+        in particular closed/errored state.
+        (WebCore::ReadableStreamReader::releaseStream): Releases the stream.
+        (WebCore::ReadableStreamReader::closed): Stores the promise callbacks and invokes success
+        immediately if the stream is already closed.
+        (WebCore::ReadableStreamReader::changeStateToClosed): Changes the internal state to closed,
+        resolves the promise and releases the stream.
+        * Modules/streams/ReadableStreamReader.h:
+        (WebCore::ReadableStreamReader::State): Added.
+        * bindings/js/JSDOMPromise.h:
+        (WebCore::DeferredWrapper::resolve<JSC::JSValue>): Adds the ability to resolve a promise with
+        a custom JS value.
+        * bindings/js/JSReadableStreamControllerCustom.cpp:
+        (WebCore::JSReadableStreamController::close): Not "notImplemented" anymore. Now it closes the
+        stream.
+        * bindings/js/JSReadableStreamReaderCustom.cpp:
+        (WebCore::JSReadableStreamReader::closed): Resolves the promise with undefined.
+
 2015-04-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the !ENABLE(CSS_GRID_LAYOUT) build after r183370
