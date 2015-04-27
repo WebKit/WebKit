@@ -2077,9 +2077,13 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseGetterSetter(T
 {
     const Identifier* stringPropertyName = 0;
     double numericPropertyName = 0;
-    if (m_token.m_type == IDENT || m_token.m_type == STRING)
+    if (m_token.m_type == IDENT || m_token.m_type == STRING) {
         stringPropertyName = m_token.m_data.ident;
-    else if (m_token.m_type == DOUBLE || m_token.m_type == INTEGER)
+        semanticFailIfTrue(superBinding == SuperBinding::Needed && *stringPropertyName == m_vm->propertyNames->prototype,
+            "Cannot declare a static method named 'prototype'");
+        semanticFailIfTrue(superBinding == SuperBinding::Needed && *stringPropertyName == m_vm->propertyNames->constructor,
+            "Cannot declare a getter or setter named 'constructor'");
+    } else if (m_token.m_type == DOUBLE || m_token.m_type == INTEGER)
         numericPropertyName = m_token.m_data.doubleValue;
     else
         failDueToUnexpectedToken();

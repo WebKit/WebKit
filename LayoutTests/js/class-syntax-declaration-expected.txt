@@ -22,9 +22,13 @@ PASS class X { threw exception SyntaxError: Unexpected end of script.
 PASS class X { ( } threw exception SyntaxError: Unexpected token '('. Expected an identifier..
 PASS class X {} did not throw exception.
 PASS class X { constructor() {} constructor() {} } threw exception SyntaxError: Cannot declare multiple constructors in a single class..
+PASS class X { get constructor() {} } threw exception SyntaxError: Cannot declare a getter or setter named 'constructor'..
+PASS class X { set constructor() {} } threw exception SyntaxError: Cannot declare a getter or setter named 'constructor'..
 PASS class X { constructor() {} static constructor() { return staticMethodValue; } } did not throw exception.
 PASS class X { constructor() {} static constructor() { return staticMethodValue; } }; X.constructor() is staticMethodValue
 PASS class X { constructor() {} static prototype() {} } threw exception SyntaxError: Cannot declare a static method named 'prototype'..
+PASS class X { constructor() {} static get prototype() {} } threw exception SyntaxError: Cannot declare a static method named 'prototype'..
+PASS class X { constructor() {} static set prototype() {} } threw exception SyntaxError: Cannot declare a static method named 'prototype'..
 PASS class X { constructor() {} prototype() { return instanceMethodValue; } } did not throw exception.
 PASS class X { constructor() {} prototype() { return instanceMethodValue; } }; (new X).prototype() is instanceMethodValue
 PASS class X { constructor() {} set foo(a) {} } did not throw exception.

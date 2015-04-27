@@ -35,10 +35,16 @@ shouldThrow("class {", "'SyntaxError: Class statements must have a name.'");
 shouldThrow("class X {", "'SyntaxError: Unexpected end of script'");
 shouldThrow("class X { ( }", "'SyntaxError: Unexpected token \\'(\\'. Expected an identifier.'");
 shouldNotThrow("class X {}");
+
 shouldThrow("class X { constructor() {} constructor() {} }", "'SyntaxError: Cannot declare multiple constructors in a single class.'");
+shouldThrow("class X { get constructor() {} }", "'SyntaxError: Cannot declare a getter or setter named \\'constructor\\'.'");
+shouldThrow("class X { set constructor() {} }", "'SyntaxError: Cannot declare a getter or setter named \\'constructor\\'.'");
 shouldNotThrow("class X { constructor() {} static constructor() { return staticMethodValue; } }");
 shouldBe("class X { constructor() {} static constructor() { return staticMethodValue; } }; X.constructor()", "staticMethodValue");
+
 shouldThrow("class X { constructor() {} static prototype() {} }", "'SyntaxError: Cannot declare a static method named \\'prototype\\'.'");
+shouldThrow("class X { constructor() {} static get prototype() {} }", "'SyntaxError: Cannot declare a static method named \\'prototype\\'.'");
+shouldThrow("class X { constructor() {} static set prototype() {} }", "'SyntaxError: Cannot declare a static method named \\'prototype\\'.'");
 shouldNotThrow("class X { constructor() {} prototype() { return instanceMethodValue; } }");
 shouldBe("class X { constructor() {} prototype() { return instanceMethodValue; } }; (new X).prototype()", "instanceMethodValue");
 
