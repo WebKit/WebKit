@@ -1,5 +1,11 @@
 2015-04-27  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Also skip it in run-javascriptcore-tests.
+
+        * js/script-tests/class-syntax-semicolon.js:
+
+2015-04-27  Ryosuke Niwa  <rniwa@webkit.org>
+
         Temporarily skip the test added in r183384 as it's hitting an assertion per an existing bug.
 
         The newly uncovered bug is tracked by webkit.org/b/144258.

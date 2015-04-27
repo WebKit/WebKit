@@ -1,3 +1,4 @@
+//@ skip
 
 description('Tests for ES6 class syntax containing semicolon in the class body');
 
