@@ -1,0 +1,74 @@
+This test checks that the 'margin', 'border' and 'padding' properties are applied together correctly for 'align' and 'justify' properties.
+
+border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
+direction: LTR | align-items: 'auto' | justify-items: 'auto'
+
+PASS
+border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
+direction: LTR | align-items: 'center' | justify-items: 'center'
+
+PASS
+border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
+direction: LTR | align-items: 'end' | justify-items: 'end'
+
+PASS
+border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
+direction: LTR | align-items: 'left' | justify-items: 'left'
+
+PASS
+border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
+direction: LTR | align-items: 'right' | justify-items: 'right'
+
+PASS
+border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
+direction: LTR (ortho) | align-items: 'self-start' | justify-items: 'self-start'
+
+PASS
+border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
+direction: LTR (ortho) | align-items: 'self-end' | justify-items: 'self-end'
+
+PASS
+border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
+direction: LTR (parall) | align-items: 'self-start' | justify-items: 'self-start'
+
+PASS
+border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
+direction: LTR - (parall) | align-items: 'self-end' | justify-items: 'self-end'
+
+PASS
+border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
+direction: RTL | align-items: 'auto' | justify-items: 'auto'
+
+PASS
+border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
+direction: RTL | align-items: 'center' | justify-items: 'center'
+
+PASS
+border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
+direction: RTL | align-items: 'end' | justify-items: 'end'
+
+PASS
+border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
+direction: RTL | align-items: 'left' | justify-items: 'left'
+
+PASS
+border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
+direction: RTL | align-items: 'right' | justify-items: 'right'
+
+PASS
+border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
+direction: RTL (ortho) | align-items: 'self-start' | justify-items: 'self-start'
+
+PASS
+border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
+direction: RTL (ortho) | align-items: 'self-end' | justify-items: 'self-end'
+
+PASS
+border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
+direction: RTL (parall) | align-items: 'self-start' | justify-items: 'self-start'
+
+PASS
+border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
+direction: RTL (parall) | align-items: 'self-end' | justify-items: 'self-end'
+
+PASS

@@ -179,6 +179,13 @@ ItemPosition RenderStyle::resolveAlignment(const RenderStyle& parentStyle, const
     return childStyle.alignSelf();
 }
 
+ItemPosition RenderStyle::resolveJustification(const RenderStyle& parentStyle, const RenderStyle& childStyle, ItemPosition resolvedAutoPositionForLayoutObject)
+{
+    if (childStyle.justifySelf() == ItemPositionAuto)
+        return (parentStyle.justifyItems() == ItemPositionAuto) ? resolvedAutoPositionForLayoutObject : parentStyle.justifyItems();
+    return childStyle.justifySelf();
+}
+
 void RenderStyle::inheritFrom(const RenderStyle* inheritParent, IsAtShadowBoundary isAtShadowBoundary)
 {
     if (isAtShadowBoundary == AtShadowBoundary) {

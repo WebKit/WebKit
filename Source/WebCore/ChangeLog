@@ -1,3 +1,41 @@
+2015-04-27  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout] Support for the justify-self and justify-items in grid layout
+        https://bugs.webkit.org/show_bug.cgi?id=133280
+
+        Reviewed by David Hyatt.
+
+        Implementation of justify-self and justify-items properties for grid. It supports
+        different writing-modes and direction. Margins, borders and paddings are also
+        considered when computing the final position and stretched size.
+
+        This patch applies also a quite important refactoring of the alignment logic in
+        order to share code between the two alignment dimensions, row-axis and column-axis.
+
+        Overflow handling is still missing and will be added later in a follow-up bug.
+
+        Tests: fast/css-grid-layout/grid-align-justify-margin-border-padding-vertical-lr.html
+               fast/css-grid-layout/grid-align-justify-margin-border-padding-vertical-rl.html
+               fast/css-grid-layout/grid-align-justify-margin-border-padding.html
+               fast/css-grid-layout/justify-self-cell.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutGridItems):
+        (WebCore::RenderGrid::columnAxisPositionForChild):
+        (WebCore::RenderGrid::rowAxisPositionForChild):
+        (WebCore::RenderGrid::rowPositionForChild):
+        (WebCore::RenderGrid::columnPositionForChild):
+        (WebCore::RenderGrid::findChildLogicalPosition):
+        (WebCore::RenderGrid::allowedToStretchLogicalHeightForChild): Deleted.
+        (WebCore::RenderGrid::needToStretchChildLogicalHeight): Deleted.
+        (WebCore::RenderGrid::marginLogicalHeightForChild): Deleted.
+        (WebCore::RenderGrid::availableAlignmentSpaceForChildBeforeStretching): Deleted.
+        (WebCore::RenderGrid::applyStretchAlignmentToChildIfNeeded): Deleted.
+        * rendering/RenderGrid.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::resolveJustification):
+        * rendering/style/RenderStyle.h:
+
 2015-04-27  Darin Adler  <darin@apple.com>
 
         Crashes under IDBDatabase::closeConnection

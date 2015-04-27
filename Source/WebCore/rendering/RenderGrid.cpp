@@ -40,8 +40,6 @@ namespace WebCore {
 
 static const int infinity = -1;
 
-enum GridAxisPosition {GridAxisStart, GridAxisEnd, GridAxisCenter};
-
 class GridTrack {
 public:
     GridTrack() {}
@@ -1186,7 +1184,7 @@ void RenderGrid::layoutGridItems()
 
         child->layoutIfNeeded();
 
-        child->setLogicalLocation(findChildLogicalPosition(*child, sizingData));
+        child->setLogicalLocation(findChildLogicalPosition(*child));
 
         // If the child moved, we have to repaint it as well as any floating/positioned
         // descendants. An exception is if we need a layout. In this case, we know we're going to
@@ -1240,42 +1238,6 @@ void RenderGrid::populateGridPositions(const GridSizingData& sizingData)
         m_rowPositions[i + 1] = m_rowPositions[i] + sizingData.rowTracks[i].baseSize();
 }
 
-LayoutUnit RenderGrid::endOfRowForChild(const RenderBox& child) const
-{
-    const GridCoordinate& coordinate = cachedGridCoordinate(child);
-
-    LayoutUnit startOfRow = m_rowPositions[coordinate.rows.resolvedInitialPosition.toInt()];
-    // The grid items should be inside the grid container's border box, that's why they need to be shifted.
-    LayoutUnit rowPosition = startOfRow + marginBeforeForChild(child);
-
-    LayoutUnit endOfRow = m_rowPositions[coordinate.rows.resolvedFinalPosition.next().toInt()];
-    // FIXME: This should account for the grid item's <overflow-position>.
-    return rowPosition + std::max<LayoutUnit>(0, endOfRow - startOfRow - child.logicalHeight());
-}
-
-LayoutUnit RenderGrid::startOfRowForChild(const RenderBox& child) const
-{
-    const GridCoordinate& coordinate = cachedGridCoordinate(child);
-
-    LayoutUnit startOfRow = m_rowPositions[coordinate.rows.resolvedInitialPosition.toInt()];
-    // The grid items should be inside the grid container's border box, that's why they need to be shifted.
-    // FIXME: This should account for the grid item's <overflow-position>.
-    LayoutUnit rowPosition = startOfRow + marginBeforeForChild(child);
-
-    return rowPosition;
-}
-
-LayoutUnit RenderGrid::centeredRowPositionForChild(const RenderBox& child) const
-{
-    const GridCoordinate& coordinate = cachedGridCoordinate(child);
-
-    // The grid items should be inside the grid container's border box, that's why they need to be shifted.
-    LayoutUnit startOfRow = m_rowPositions[coordinate.rows.resolvedInitialPosition.toInt()];
-    LayoutUnit endOfRow = m_rowPositions[coordinate.rows.resolvedFinalPosition.next().toInt()];
-    // FIXME: This should account for the grid item's <overflow-position>.
-    return startOfRow + std::max<LayoutUnit>(0, endOfRow - startOfRow - child.logicalHeight()) / 2;
-}
-
 bool RenderGrid::allowedToStretchLogicalHeightForChild(const RenderBox& child) const
 {
     return child.style().logicalHeight().isAuto() && !child.style().marginBeforeUsing(&style()).isAuto() && !child.style().marginAfterUsing(&style()).isAuto();
@@ -1327,9 +1289,12 @@ void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child, LayoutUn
     }
 }
 
-static GridAxisPosition columnAxisPosition(ItemPosition position, bool hasOrthogonalWritingMode, bool hasSameWritingMode)
+GridAxisPosition RenderGrid::columnAxisPositionForChild(const RenderBox& child) const
 {
-    switch (position) {
+    bool hasOrthogonalWritingMode = child.isHorizontalWritingMode() != isHorizontalWritingMode();
+    bool hasSameWritingMode = child.style().writingMode() == style().writingMode();
+
+    switch (RenderStyle::resolveAlignment(style(), child.style(), ItemPositionStretch)) {
     case ItemPositionSelfStart:
         // If orthogonal writing-modes, this computes to 'start'.
         // FIXME: grid track sizing and positioning do not support orthogonal modes yet.
@@ -1362,7 +1327,49 @@ static GridAxisPosition columnAxisPosition(ItemPosition position, bool hasOrthog
         return GridAxisStart;
     case ItemPositionBaseline:
     case ItemPositionLastBaseline:
-        // FIXME: Implement the ItemPositionBaseline value. For now, we always 'start' align the child.
+        // FIXME: Implement the previous values. For now, we always 'start' align the child.
+        return GridAxisStart;
+    case ItemPositionAuto:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return GridAxisStart;
+}
+
+GridAxisPosition RenderGrid::rowAxisPositionForChild(const RenderBox& child) const
+{
+    bool hasOrthogonalWritingMode = child.isHorizontalWritingMode() != isHorizontalWritingMode();
+    bool hasSameDirection = child.style().direction() == style().direction();
+    bool isLTR = style().isLeftToRightDirection();
+
+    switch (RenderStyle::resolveJustification(style(), child.style(), ItemPositionStretch)) {
+    case ItemPositionSelfStart:
+        // For orthogonal writing-modes, this computes to 'start'
+        // FIXME: grid track sizing and positioning do not support orthogonal modes yet.
+        // self-start is based on the child's direction. That's why we need to check against the grid container's direction.
+        return (hasOrthogonalWritingMode || hasSameDirection) ? GridAxisStart : GridAxisEnd;
+    case ItemPositionSelfEnd:
+        // For orthogonal writing-modes, this computes to 'start'
+        // FIXME: grid track sizing and positioning do not support orthogonal modes yet.
+        return (hasOrthogonalWritingMode || hasSameDirection) ? GridAxisEnd : GridAxisStart;
+    case ItemPositionLeft:
+        return isLTR ? GridAxisStart : GridAxisEnd;
+    case ItemPositionRight:
+        return isLTR ? GridAxisEnd : GridAxisStart;
+    case ItemPositionCenter:
+        return GridAxisCenter;
+    case ItemPositionFlexStart: // Only used in flex layout, otherwise equivalent to 'start'.
+    case ItemPositionStart:
+        return GridAxisStart;
+    case ItemPositionFlexEnd: // Only used in flex layout, otherwise equivalent to 'end'.
+    case ItemPositionEnd:
+        return GridAxisEnd;
+    case ItemPositionStretch:
+        return GridAxisStart;
+    case ItemPositionBaseline:
+    case ItemPositionLastBaseline:
+        // FIXME: Implement the previous values. For now, we always 'start' align the child.
         return GridAxisStart;
     case ItemPositionAuto:
         break;
@@ -1374,30 +1381,52 @@ static GridAxisPosition columnAxisPosition(ItemPosition position, bool hasOrthog
 
 LayoutUnit RenderGrid::rowPositionForChild(const RenderBox& child) const
 {
-    bool hasOrthogonalWritingMode = child.isHorizontalWritingMode() != isHorizontalWritingMode();
-    bool hasSameWritingMode = child.style().writingMode() == style().writingMode();
-    ItemPosition position = RenderStyle::resolveAlignment(style(), child.style(), ItemPositionStretch);
+    const GridCoordinate& coordinate = cachedGridCoordinate(child);
+    LayoutUnit startOfRow = m_rowPositions[coordinate.rows.resolvedInitialPosition.toInt()];
+    LayoutUnit endOfRow = m_rowPositions[coordinate.rows.resolvedFinalPosition.next().toInt()];
+    LayoutUnit startPosition = startOfRow + marginBeforeForChild(child);
+    // FIXME: This should account for the grid item's <overflow-position>.
+    LayoutUnit offsetFromStartPosition = endOfRow - startOfRow - child.logicalHeight() - child.marginLogicalHeight();
 
-    switch (columnAxisPosition(position, hasOrthogonalWritingMode, hasSameWritingMode)) {
+    switch (columnAxisPositionForChild(child)) {
     case GridAxisStart:
-        return startOfRowForChild(child);
+        return startPosition;
     case GridAxisEnd:
-        return endOfRowForChild(child);
+        return startPosition + offsetFromStartPosition;
     case GridAxisCenter:
-        return centeredRowPositionForChild(child);
+        return startPosition + offsetFromStartPosition / 2;
     }
 
     ASSERT_NOT_REACHED();
     return 0;
 }
 
-LayoutPoint RenderGrid::findChildLogicalPosition(const RenderBox& child, const GridSizingData& sizingData) const
+
+LayoutUnit RenderGrid::columnPositionForChild(const RenderBox& child) const
 {
     const GridCoordinate& coordinate = cachedGridCoordinate(child);
-    ASSERT_UNUSED(sizingData, coordinate.columns.resolvedInitialPosition.toInt() < sizingData.columnTracks.size());
-    ASSERT_UNUSED(sizingData, coordinate.rows.resolvedInitialPosition.toInt() < sizingData.rowTracks.size());
+    LayoutUnit startOfColumn = m_columnPositions[coordinate.columns.resolvedInitialPosition.toInt()];
+    LayoutUnit endOfColumn = m_columnPositions[coordinate.columns.resolvedFinalPosition.next().toInt()];
+    LayoutUnit startPosition = startOfColumn + marginStartForChild(child);
+    // FIXME: This should account for the grid item's <overflow-position>.
+    LayoutUnit offsetFromStartPosition = endOfColumn - startOfColumn - child.logicalWidth() - child.marginLogicalWidth();
 
-    LayoutUnit columnPosition = m_columnPositions[coordinate.columns.resolvedInitialPosition.toInt()] + marginStartForChild(child);
+    switch (rowAxisPositionForChild(child)) {
+    case GridAxisStart:
+        return startPosition;
+    case GridAxisEnd:
+        return startPosition + offsetFromStartPosition;
+    case GridAxisCenter:
+        return startPosition + offsetFromStartPosition / 2;
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+LayoutPoint RenderGrid::findChildLogicalPosition(const RenderBox& child) const
+{
+    LayoutUnit columnPosition = columnPositionForChild(child);
     // We stored m_columnPositions's data ignoring the direction, hence we might need now
     // to translate positions from RTL to LTR, as it's more convenient for painting.
     if (!style().isLeftToRightDirection())

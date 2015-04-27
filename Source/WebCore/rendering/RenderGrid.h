@@ -40,6 +40,8 @@ class GridSpan;
 class GridTrack;
 class GridItemWithSpan;
 
+enum GridAxisPosition {GridAxisStart, GridAxisEnd, GridAxisCenter};
+
 class RenderGrid final : public RenderBlock {
 public:
     RenderGrid(Element&, Ref<RenderStyle>&&);
@@ -117,12 +119,13 @@ private:
     LayoutUnit logicalContentHeightForChild(RenderBox&, Vector<GridTrack>&);
     LayoutUnit minContentForChild(RenderBox&, GridTrackSizingDirection, Vector<GridTrack>& columnTracks);
     LayoutUnit maxContentForChild(RenderBox&, GridTrackSizingDirection, Vector<GridTrack>& columnTracks);
-    LayoutUnit startOfRowForChild(const RenderBox&) const;
-    LayoutUnit endOfRowForChild(const RenderBox&) const;
-    LayoutUnit centeredRowPositionForChild(const RenderBox&) const;
+    GridAxisPosition columnAxisPositionForChild(const RenderBox&) const;
+    GridAxisPosition rowAxisPositionForChild(const RenderBox&) const;
     LayoutUnit rowPositionForChild(const RenderBox&) const;
-    LayoutPoint findChildLogicalPosition(const RenderBox&, const GridSizingData&) const;
+    LayoutUnit columnPositionForChild(const RenderBox&) const;
+    LayoutPoint findChildLogicalPosition(const RenderBox&) const;
     GridCoordinate cachedGridCoordinate(const RenderBox&) const;
+
 
     LayoutUnit gridAreaBreadthForChild(const RenderBox& child, GridTrackSizingDirection, const Vector<GridTrack>&) const;
 
