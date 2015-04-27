@@ -1,3 +1,28 @@
+2015-04-27  Yoav Weiss  <yoav@yoav.ws>
+
+        Fix viewport units in Media Queries
+        https://bugs.webkit.org/show_bug.cgi?id=144260
+
+        Reviewed by Darin Adler.
+
+        This patch makes sure that viewport units are considered "length units"
+        in the context of Media Queries, by having MediaQueryExp use the unit logic
+        that is in CSSPrimitiveValue.
+        It does that by turning the relevant methods in CSSPrimitiveValue into static.
+
+        It also makes sure that the logic for "resolution units" is not maintained separately 
+        in MediaQueryExp, to avoid similiar issues in the future with resolution units.
+
+        Test: fast/media/mq-viewport-units.html
+
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::isViewportPercentageLength): Added a static variant.
+        (WebCore::CSSPrimitiveValue::isLength): Added a static variant.
+        (WebCore::CSSPrimitiveValue::isResolution): Added a static variant.
+        * css/MediaQueryExp.cpp:
+        (WebCore::featureWithValidPositiveLenghtOrNumber): Call CSSPrimitiveValue's length unit logic.
+        (WebCore::featureWithValidDensity): Call CSSPrimitiveValue's resolution unit logic.
+
 2015-04-27  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] Support for the justify-self and justify-items in grid layout

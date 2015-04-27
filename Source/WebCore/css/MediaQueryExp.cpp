@@ -54,7 +54,7 @@ static inline bool featureWithCSSValueID(const AtomicString& mediaFeature, const
 
 static inline bool featureWithValidPositiveLenghtOrNumber(const AtomicString& mediaFeature, const CSSParserValue* value)
 {
-    if (!(((value->unit >= CSSPrimitiveValue::CSS_EMS && value->unit <= CSSPrimitiveValue::CSS_PC) || value->unit == CSSPrimitiveValue::CSS_REMS) || value->unit == CSSPrimitiveValue::CSS_NUMBER) || value->fValue < 0)
+    if (!(CSSPrimitiveValue::isLength(value->unit) || value->unit == CSSPrimitiveValue::CSS_NUMBER) || value->fValue < 0)
         return false;
 
     return mediaFeature == MediaFeatureNames::heightMediaFeature
@@ -73,7 +73,7 @@ static inline bool featureWithValidPositiveLenghtOrNumber(const AtomicString& me
 
 static inline bool featureWithValidDensity(const AtomicString& mediaFeature, const CSSParserValue* value)
 {
-    if ((value->unit != CSSPrimitiveValue::CSS_DPPX && value->unit != CSSPrimitiveValue::CSS_DPI && value->unit != CSSPrimitiveValue::CSS_DPCM) || value->fValue <= 0)
+    if (!CSSPrimitiveValue::isResolution(value->unit) || value->fValue <= 0)
         return false;
 
     return mediaFeature == MediaFeatureNames::resolutionMediaFeature
