@@ -1,3 +1,15 @@
+2015-04-27  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r182879): Images and video can no longer be downloaded
+        https://bugs.webkit.org/show_bug.cgi?id=144267
+        <rdar://problem/20702844>
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebActionMenuController.mm:
+        (-[WebActionMenuController _createActionMenuItemForTag:]): Check for
+        "!WebCore::protocolIs(..., "file")" for image and media downloads.
+
 2015-04-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement ES6 template literals

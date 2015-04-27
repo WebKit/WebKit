@@ -1,3 +1,15 @@
+2015-04-27  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r182879): Images and video can no longer be downloaded
+        https://bugs.webkit.org/show_bug.cgi?id=144267
+        <rdar://problem/20702844>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/mac/WKActionMenuController.mm:
+        (-[WKActionMenuController _createActionMenuItemForTag:]): Check for
+        "!WebCore::protocolIs(..., "file")" for image and media downloads.
+
 2015-04-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] TestWebKitAPI's forwarding header generator should depend on WebKit2's generator

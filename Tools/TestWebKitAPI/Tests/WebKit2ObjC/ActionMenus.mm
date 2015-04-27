@@ -665,14 +665,11 @@ TEST(WebKit2, ActionMenusTest)
         EXPECT_EQ(174, image.size.height);
     }];
 
-    // Download an image.
+    // Download a local image (should be disabled)
     activeDownloadContext.shouldCheckForImage = true;
     [wkView runMenuSequenceAtPoint:windowPointForTarget(TargetType::Image) preDidCloseMenuHandler:^() {
         EXPECT_EQ(kWKActionMenuImage, [wkView _actionMenuResult].type);
-
-        didFinishDownload = false;
-        performMenuItemAtIndexOfTypeAsync([wkView _actionMenu], 2, kWKContextActionItemTagSaveImageToDownloads);
-        Util::run(&didFinishDownload);
+        ensureMenuItemAtIndexOfTypeIsDisabled([wkView _actionMenu], 2, kWKContextActionItemTagSaveImageToDownloads);
     }];
     activeDownloadContext.shouldCheckForImage = false;
 
@@ -689,6 +686,9 @@ TEST(WebKit2, ActionMenusTest)
         performMenuItemAtIndexOfTypeAsync([wkView _actionMenu], 0, kWKContextActionItemTagCopyVideoURL);
         NSString *videoURL = watchPasteboardForString();
         EXPECT_WK_STREQ(@"test.mp4", [videoURL lastPathComponent]);
+
+        // Since this video is a local file, it should be disabled.
+        ensureMenuItemAtIndexOfTypeIsDisabled([wkView _actionMenu], 2, kWKContextActionItemTagSaveVideoToDownloads);
     }];
 
     // Copying a video URL for a non-downloadable video should result in copying the page URL instead.

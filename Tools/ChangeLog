@@ -1,3 +1,19 @@
+2015-04-27  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r182879): Images and video can no longer be downloaded
+        https://bugs.webkit.org/show_bug.cgi?id=144267
+        <rdar://problem/20702844>
+
+        Reviewed by Simon Fraser.
+
+        Revise tests to check for proper download menu state.
+        1. Downloading a loal image should be disabled.
+        2. Downloading a local media file should be disabled.
+        3. Downloading non-downloadable media should be disabled.
+
+        * TestWebKitAPI/Tests/WebKit2ObjC/ActionMenus.mm:
+        (TestWebKitAPI::TEST):
+
 2015-04-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         Merge run-launcher into run-minibrowser

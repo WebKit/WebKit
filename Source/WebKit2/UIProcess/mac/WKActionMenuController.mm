@@ -590,7 +590,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         selector = @selector(_saveImageToDownloads:);
         title = WEB_UI_STRING_KEY("Save to Downloads", "Save to Downloads (image action menu item)", "image action menu item");
         image = [NSImage imageNamed:@"NSActionMenuSaveToDownloads"];
-        enabled = WebCore::protocolIs(hitTestResult->absoluteImageURL(), "file");
+        enabled = !WebCore::protocolIs(hitTestResult->absoluteImageURL(), "file");
         break;
 
     case kWKContextActionItemTagCopyText:
@@ -621,7 +621,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         selector = @selector(_saveVideoToDownloads:);
         title = WEB_UI_STRING_KEY("Save to Downloads", "Save to Downloads (video action menu item)", "video action menu item");
         image = [NSImage imageNamed:@"NSActionMenuSaveToDownloads"];
-        enabled = WebCore::protocolIs(hitTestResult->absoluteMediaURL(), "file");
+        enabled = !WebCore::protocolIs(hitTestResult->absoluteMediaURL(), "file") && hitTestResult->isDownloadableMedia();
         break;
 
     default:
