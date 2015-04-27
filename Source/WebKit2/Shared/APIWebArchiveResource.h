@@ -51,7 +51,7 @@ public:
     static PassRefPtr<WebArchiveResource> create(API::Data*, const String& URL, const String& MIMEType, const String& textEncoding);
     static PassRefPtr<WebArchiveResource> create(PassRefPtr<WebCore::ArchiveResource>);
 
-    PassRefPtr<API::Data> data();
+    Ref<API::Data> data();
     String URL();
     String MIMEType();
     String textEncoding();

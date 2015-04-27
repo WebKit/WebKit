@@ -28,7 +28,7 @@
 
 namespace API {
 
-PassRefPtr<Data> Data::createWithoutCopying(RetainPtr<NSData> data)
+Ref<Data> Data::createWithoutCopying(RetainPtr<NSData> data)
 {
     const unsigned char* bytes = reinterpret_cast<const unsigned char*>([data bytes]);
     size_t size = [data length];

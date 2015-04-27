@@ -45,7 +45,7 @@ WKWebArchiveResourceRef WKWebArchiveResourceCreate(WKDataRef dataRef, WKURLRef U
 
 WKDataRef WKWebArchiveResourceCopyData(WKWebArchiveResourceRef webArchiveResourceRef)
 {
-    return toAPI(toImpl(webArchiveResourceRef)->data().leakRef());
+    return toAPI(&toImpl(webArchiveResourceRef)->data().leakRef());
 }
 
 WKURLRef WKWebArchiveResourceCopyURL(WKWebArchiveResourceRef webArchiveResourceRef)

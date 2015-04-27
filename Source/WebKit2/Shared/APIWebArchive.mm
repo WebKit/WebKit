@@ -143,7 +143,7 @@ static void releaseCFData(unsigned char*, const void* data)
     CFRelease(data);
 }
 
-PassRefPtr<API::Data> WebArchive::data()
+Ref<API::Data> WebArchive::data()
 {
     RetainPtr<CFDataRef> rawDataRepresentation = m_legacyWebArchive->rawDataRepresentation();
 

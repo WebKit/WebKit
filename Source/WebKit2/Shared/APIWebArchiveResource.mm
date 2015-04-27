@@ -67,7 +67,7 @@ static void releaseCFData(unsigned char*, const void* data)
     CFRelease(data);
 }
 
-PassRefPtr<API::Data> WebArchiveResource::data()
+Ref<API::Data> WebArchiveResource::data()
 {
     RetainPtr<CFDataRef> cfData = m_archiveResource->data()->createCFData();
 

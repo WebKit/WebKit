@@ -2382,8 +2382,8 @@ void webkit_web_view_load_bytes(WebKitWebView* webView, GBytes* bytes, const cha
     // Balanced by g_bytes_unref in releaseGBytes.
     g_bytes_ref(bytes);
 
-    RefPtr<API::Data> data = API::Data::createWithoutCopying(static_cast<const unsigned char*>(bytesData), bytesDataSize, releaseGBytes, bytes);
-    getPage(webView)->loadData(data.get(), mimeType ? String::fromUTF8(mimeType) : String::fromUTF8("text/html"),
+    Ref<API::Data> data = API::Data::createWithoutCopying(static_cast<const unsigned char*>(bytesData), bytesDataSize, releaseGBytes, bytes);
+    getPage(webView)->loadData(data.ptr(), mimeType ? String::fromUTF8(mimeType) : String::fromUTF8("text/html"),
         encoding ? String::fromUTF8(encoding) : String::fromUTF8("UTF-8"), String::fromUTF8(baseURI));
 }
 

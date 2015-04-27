@@ -1,5 +1,45 @@
 2015-04-27  Zan Dobersek  <zdobersek@igalia.com>
 
+        [WK2] API::Data creation functions should return Ref<>
+        https://bugs.webkit.org/show_bug.cgi?id=144220
+
+        Reviewed by Darin Adler.
+
+        Have API::Data creation functions return Ref<>.
+        The call-sites are also updated, using and operating
+        on the returned Ref<> object where possible.
+
+        * Shared/API/APIData.h:
+        (API::Data::createWithoutCopying):
+        (API::Data::create):
+        * Shared/API/c/WKData.cpp:
+        (WKDataCreate):
+        * Shared/API/c/mac/WKWebArchive.cpp:
+        (WKWebArchiveCopyData):
+        * Shared/API/c/mac/WKWebArchiveResource.cpp:
+        (WKWebArchiveResourceCopyData):
+        * Shared/APIWebArchive.h:
+        * Shared/APIWebArchive.mm:
+        (API::WebArchive::data):
+        * Shared/APIWebArchiveResource.h:
+        * Shared/APIWebArchiveResource.mm:
+        (API::WebArchiveResource::data):
+        * Shared/Cocoa/APIDataCocoa.mm:
+        (API::Data::createWithoutCopying):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView loadData:MIMEType:characterEncodingName:baseURL:]):
+        * UIProcess/API/gtk/WebKitURISchemeRequest.cpp:
+        (webkitURISchemeRequestReadCallback):
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_load_bytes):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::createData):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dataCallback):
+        (WebKit::WebPageProxy::savePDFToFileInDownloadsFolder):
+
+2015-04-27  Zan Dobersek  <zdobersek@igalia.com>
+
         [WK2] API::URL creation functions should return Ref<>
         https://bugs.webkit.org/show_bug.cgi?id=144219
 

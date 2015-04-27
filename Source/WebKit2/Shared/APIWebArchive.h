@@ -59,7 +59,7 @@ public:
     API::Array* subresources();
     API::Array* subframeArchives();
 
-    PassRefPtr<API::Data> data();
+    Ref<API::Data> data();
 
     WebCore::LegacyWebArchive* coreLegacyWebArchive();
 

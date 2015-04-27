@@ -460,7 +460,7 @@ static int32_t deviceOrientation()
 
 - (WKNavigation *)loadData:(NSData *)data MIMEType:(NSString *)MIMEType characterEncodingName:(NSString *)characterEncodingName baseURL:(NSURL *)baseURL
 {
-    auto navigation = _page->loadData(API::Data::createWithoutCopying(data).get(), MIMEType, characterEncodingName, baseURL.absoluteString);
+    auto navigation = _page->loadData(API::Data::createWithoutCopying(data).ptr(), MIMEType, characterEncodingName, baseURL.absoluteString);
     if (!navigation)
         return nil;
 

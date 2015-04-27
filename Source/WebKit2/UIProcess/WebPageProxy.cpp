@@ -4540,7 +4540,7 @@ void WebPageProxy::dataCallback(const IPC::DataReference& dataReference, uint64_
         return;
     }
 
-    callback->performCallbackWithReturnValue(API::Data::create(dataReference.data(), dataReference.size()).get());
+    callback->performCallbackWithReturnValue(API::Data::create(dataReference.data(), dataReference.size()).ptr());
 }
 
 void WebPageProxy::imageCallback(const ShareableBitmap::Handle& bitmapHandle, uint64_t callbackID)
@@ -5356,9 +5356,8 @@ void WebPageProxy::savePDFToFileInDownloadsFolder(const String& suggestedFilenam
     if (!suggestedFilename.endsWith(".pdf", false))
         return;
 
-    RefPtr<API::Data> data = API::Data::create(dataReference.data(), dataReference.size());
-
-    saveDataToFileInDownloadsFolder(suggestedFilename, "application/pdf", originatingURLString, data.get());
+    saveDataToFileInDownloadsFolder(suggestedFilename, "application/pdf", originatingURLString,
+        API::Data::create(dataReference.data(), dataReference.size()).ptr());
 }
 
 void WebPageProxy::setMinimumLayoutSize(const IntSize& minimumLayoutSize)

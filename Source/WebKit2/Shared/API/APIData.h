@@ -44,12 +44,12 @@ class Data : public ObjectImpl<API::Object::Type::Data> {
 public:
     typedef void (*FreeDataFunction)(unsigned char*, const void* context);
 
-    static PassRefPtr<Data> createWithoutCopying(const unsigned char* bytes, size_t size, FreeDataFunction freeDataFunction, const void* context)
+    static Ref<Data> createWithoutCopying(const unsigned char* bytes, size_t size, FreeDataFunction freeDataFunction, const void* context)
     {
-        return adoptRef(new Data(bytes, size, freeDataFunction, context));
+        return adoptRef(*new Data(bytes, size, freeDataFunction, context));
     }
 
-    static PassRefPtr<Data> create(const unsigned char* bytes, size_t size)
+    static Ref<Data> create(const unsigned char* bytes, size_t size)
     {
         unsigned char *copiedBytes = 0;
 
@@ -61,13 +61,13 @@ public:
         return createWithoutCopying(copiedBytes, size, fastFreeBytes, 0);
     }
     
-    static PassRefPtr<Data> create(const Vector<unsigned char>& buffer)
+    static Ref<Data> create(const Vector<unsigned char>& buffer)
     {
         return create(buffer.data(), buffer.size());
     }
 
 #if PLATFORM(COCOA)
-    static PassRefPtr<Data> createWithoutCopying(RetainPtr<NSData>);
+    static Ref<Data> createWithoutCopying(RetainPtr<NSData>);
 #endif
 
     ~Data()

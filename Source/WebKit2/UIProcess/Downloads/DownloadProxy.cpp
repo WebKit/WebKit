@@ -177,7 +177,7 @@ void DownloadProxy::didFinish()
     m_downloadProxyMap.downloadFinished(this);
 }
 
-static PassRefPtr<API::Data> createData(const IPC::DataReference& data)
+static RefPtr<API::Data> createData(const IPC::DataReference& data)
 {
     if (data.isEmpty())
         return 0;

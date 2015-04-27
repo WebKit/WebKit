@@ -79,5 +79,5 @@ WKArrayRef WKWebArchiveCopySubframeArchives(WKWebArchiveRef webArchiveRef)
 
 WKDataRef WKWebArchiveCopyData(WKWebArchiveRef webArchiveRef)
 {
-    return toAPI(toImpl(webArchiveRef)->data().leakRef());
+    return toAPI(&toImpl(webArchiveRef)->data().leakRef());
 }
