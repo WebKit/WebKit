@@ -1343,8 +1343,21 @@ static const char **_argv;
 @end
 #endif
 
+static bool returningFromMain = false;
+
+void atexitFunction()
+{
+    if (returningFromMain)
+        return;
+
+    NSLog(@"DumpRenderTree is exiting unexpectedly. Generating a crash log.");
+    __builtin_trap();
+}
+
 int DumpRenderTreeMain(int argc, const char *argv[])
 {
+    atexit(atexitFunction);
+
 #if PLATFORM(IOS)
     _UIApplicationLoadWebKit();
 #endif
@@ -1366,6 +1379,7 @@ int DumpRenderTreeMain(int argc, const char *argv[])
     if (JSC::Options::logHeapStatisticsAtExit())
         JSC::HeapStatistics::reportSuccess();
     [pool release];
+    returningFromMain = true;
     return 0;
 }
 
