@@ -1,5 +1,16 @@
 2015-04-27  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Attempt to workaround exception in TimelineRuler
+        https://bugs.webkit.org/show_bug.cgi?id=144228
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype.updateLayout):
+        Use firstChild instead of a custom _labelElement property on the dividerElement.
+
+2015-04-27  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Elements tab details sidebar becomes non-expandable after using Console tab
         https://bugs.webkit.org/show_bug.cgi?id=144212
 

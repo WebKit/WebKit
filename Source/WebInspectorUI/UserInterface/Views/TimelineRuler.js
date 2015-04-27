@@ -370,7 +370,6 @@ WebInspector.TimelineRuler.prototype = {
 
                 var labelElement = document.createElement("div");
                 labelElement.className = WebInspector.TimelineRuler.DividerLabelElementStyleClassName;
-                dividerElement._labelElement = labelElement;
                 dividerElement.appendChild(labelElement);
             }
 
@@ -402,7 +401,9 @@ WebInspector.TimelineRuler.prototype = {
             this._updatePositionOfElement(dividerElement, newLeftPosition, visibleWidth);
             this._updatePositionOfElement(markerDividerElement, newLeftPosition, visibleWidth);
 
-            dividerElement._labelElement.textContent = isNaN(dividerTime) ? "" : Number.secondsToString(dividerTime - this._zeroTime, true);
+            console.assert(dividerElement.firstChild.classList.contains(WebInspector.TimelineRuler.DividerLabelElementStyleClassName));
+
+            dividerElement.firstChild.textContent = isNaN(dividerTime) ? "" : Number.secondsToString(dividerTime - this._zeroTime, true);
             dividerElement = dividerElement.nextSibling;
         }
 
