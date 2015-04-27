@@ -1,3 +1,24 @@
+2015-04-26  Benjamin Poulain  <benjamin@webkit.org>
+
+        Improve the status page
+        https://bugs.webkit.org/show_bug.cgi?id=144248
+
+        Reviewed by Darin Adler.
+
+        * status.html:
+        Lots of minor changes:
+        -Add a page title.
+        -Do not use sync XHR. That was nice for testing but that's eveil
+         and it breaks Firefox.
+        -Start fetching the json files as soon as possible during page load,
+         that server takes forever to respond.
+        -Remove some useless CSS.
+        -Get rid of mustache. That template thing was awesome but it took
+         up to 600ms to fetch the file (plus it is not exactly efficient).
+        -Put both the specifications and the features in the list.
+         They are referencing each other with links. That seems to work pretty well.
+        -Use the keywords for filtering.
+
 2015-04-26  Benjamin Poulain  <benjamin@webkit.org>, Chris Bateman  <chrisb808@gmail.com>
 
         Start a basic status page on webkit.org

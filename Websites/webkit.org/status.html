@@ -1,21 +1,51 @@
 <?php
+$title = "Web Platform Status";
 $extra_head_content = <<<EOF
-<style type="text/css">
-p { margin: 0px 0px 4px 0px; }
-</style>
+<script>
+function xhrPromise(url) {
+    return new Promise(function(resolve, reject) {
+        var xhrRequest = new XMLHttpRequest();
+        xhrRequest.open('GET', url, true);
+        xhrRequest.responseType = "json";
+
+        xhrRequest.onload = function() {
+            if (xhrRequest.status == 200) {
+                if (xhrRequest.response) {
+                    resolve(xhrRequest.response);
+                } else {
+                    reject({ request: xhrRequest, url:url});
+                }
+            } else {
+                reject({ request: xhrRequest, url:url});
+            }
+        };
+        xhrRequest.onerror = function() {
+            reject({ request: xhrRequest, url:url});
+        };
+        xhrRequest.send();
+    });
+}
+var origin = new URL("https://svn.webkit.org/")
+var loadJavaScriptCoreFeatures = xhrPromise(new URL("/repository/webkit/trunk/Source/JavaScriptCore/features.json", origin));
+var loadWebCoreFeatures = xhrPromise(new URL("/repository/webkit/trunk/Source/WebCore/features.json", origin));
+</script>
 EOF;
 include("header.inc");
 ?>
-
 <style>
 #feature-list {
     margin-top: 2em;
+    word-wrap: break-word;
+    -webkit-text-size-adjust:135%;
 }
-
 #search {
     width: 50%;
     margin-top: 1em;
     margin-bottom: 1em;
+}
+/* Hide the internal links on search since they are unlikely to work. */
+#search:required:valid + *  .internal-reference {
+    display: none;
 }
 
 .feature-header {
@@ -24,16 +54,17 @@ include("header.inc");
     -webkit-flex-direction: row;
     flex-direction: row;
 }
-
 .feature-header > h3:first-of-type {
     -webkit-flex-grow: 1;
     flex-grow: 1;
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.4em;
+    text-shadow: none;
 }
-
 ul.features {
     padding: 0;
 }
-
 .feature {
     display: block;
     background: linear-gradient(#fff, #f9f9f9);
@@ -46,30 +77,12 @@ ul.features {
 .feature.is-hidden {
     display: none;
 }
-
-.feature-header {
-    display: inline-block;
-    width: 100%;
-    vertical-align: middle;
-}
-.feature-heading {
-    margin: 0;
-    float: left;
-    font-size: 16px;
-    line-height: 1.4em;
-    text-shadow: none;
-}
-.feature-status {
-    float:right;
-}
 .feature-desc {
     margin: 0.4em 0;
 }
-
 ul.feature-details {
     margin: 0;
 }
-
 .feature-statusItem {
     margin-right: .5em;
 }
@@ -80,8 +93,8 @@ ul.feature-details {
 </div>
 
 <template id="success-template">
-    <input type="search" id="search" placeholder="Filter" title="Filter the feature list.">
-    <ul class="features" id="featuresContainer"></ul>
+    <input type="search" id="search" placeholder="Filter" title="Filter the feature list." required>
+    <ul class="features" id="features-container"></ul>
     <p>Cannot find something? You can contact <a href="https://twitter.com/webkit">@webkit</a> on Twitter or contact the <a href="https://lists.webkit.org/mailman/listinfo/webkit-help">webkit-help</a> mailing list for questions.</p>
     <p>You can also <a href="http://127.0.0.1:8000/coding/contributing.html">contribute to features</a> directly, the entire project is Open Source. To report bugs on existing features or check existing bug reports, see <a href="https://bugs.webkit.org">https://bugs.webkit.org</a>.</p>
 </template>
@@ -90,40 +103,6 @@ ul.feature-details {
     <p>If this is not resolved soon, please contact <a href="https://twitter.com/webkit">@webkit</a> on Twitter or the <a href="https://lists.webkit.org/mailman/listinfo/webkit-help">webkit-help</a> mailing list.</p>
 </template>
 
-<script id="template" type="x-tmpl-mustache">
-{{#features}}
-    <li class="feature">
-        <div class="feature-header">
-            <div class="feature-header">
-                <h3 class="feature-heading">{{name}}</h3>
-                <strong class="feature-status">Status: {{#webkit-url}}<a href="{{webkit-url}}">{{/webkit-url}}{{status.status}}{{#webkit-url}}</a>{{/webkit-url}}</strong>
-            </div>
-            {{#description}}
-                <p class="feature-desc">{{description}}</p>
-            {{/description}}
-            {{#comment}}
-            <p>Comment: {{comment}}</p>
-            {{/comment}}
-        </div>
-        <ul class="feature-details">
-            {{#documentation-url}}
-                 <li>Documentation: <a href="{{documentation-url}}">{{documentation-url}}</a></li>
-            {{/documentation-url}}
-            {{#url}}
-                <li>More Info: <a href="{{url}}">{{url}}</a></li>
-            {{/url}}
-            {{#contact}}
-                <li>Contact:
-                    {{#twitter}} <a href="https://twitter.com/{{twitter}}">{{twitter}}</a>{{/twitter}}
-                    {{#email}}<a href="mailto:{{email}}">{{name}}</a>{{/email}}
-                </li>
-            {{/contact}}
-        </ul>
-    </li>
-{{/features}}
-</script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/0.8.1/mustache.min.js"></script>
 <script>
 function initializeStatusPage() {
     function sortAlphabetically(array) {
@@ -141,14 +120,147 @@ function initializeStatusPage() {
         });
     }
 
-    function renderFeatures(features) {
-        var template = document.getElementById('template').innerHTML;
-        
-        var rendered = Mustache.render(template, {
-            features: features
-        });
-        
-        document.getElementById('featuresContainer').innerHTML = rendered;
+    function createFeatureView(featureObject) {
+        function createLinkWithHeading(elementName, heading, linkText, linkUrl) {
+            var container = document.createElement(elementName);
+            if (heading) {
+                container.textContent = heading + ": ";
+            }
+            var link = document.createElement("a");
+            link.textContent = linkText;
+            link.href = linkUrl;
+            container.appendChild(link);
+            return container;
+        }
+
+        var container = document.createElement('li');
+        container.className = "feature";
+
+        if ("features" in featureObject) {
+            container.setAttribute("id", "specification-" + featureObject.name);
+        } else {
+            container.setAttribute("id", "feature-" + featureObject.name);
+        }
+
+        var descriptionContainer = document.createElement('div');
+        descriptionContainer.className = "feature-description";
+
+        var featureHeaderContainer = document.createElement('div');
+        featureHeaderContainer.className = "feature-header";
+        descriptionContainer.appendChild(featureHeaderContainer);
+
+        var titleElement = document.createElement("h3");
+        titleElement.textContent = featureObject.name;
+        featureHeaderContainer.appendChild(titleElement);
+
+        if ("status" in featureObject) {
+            var statusContainer = document.createElement("span");
+            statusContainer.className = "feature-status";
+            if ("webkit-url" in featureObject) {
+                statusContainer.textContent = "Status: ";
+                var statusLink = document.createElement("a");
+                statusLink.href = featureObject["webkit-url"];
+                statusLink.textContent = featureObject.status.status;
+                statusContainer.appendChild(statusLink);
+            } else {
+                statusContainer.textContent = "Status: " + featureObject.status.status;
+            }
+
+            featureHeaderContainer.appendChild(statusContainer);
+        }
+
+        if ("description" in featureObject) {
+            var testDescription = document.createElement('p');
+            testDescription.className = "feature-desc";
+            testDescription.innerHTML = featureObject.description;
+            descriptionContainer.appendChild(testDescription);
+        }
+
+        if ("comment" in featureObject) {
+            if ("description" in featureObject) {
+                descriptionContainer.appendChild(document.createElement("hr"));
+            }
+            var comment = document.createElement('p');
+            comment.innerHTML = featureObject.comment;
+            descriptionContainer.appendChild(comment);
+        }
+
+        container.appendChild(descriptionContainer);
+
+        var hasDocumentationLink = "documentation-url" in featureObject;
+        var hasReferenceLink = "url" in featureObject;
+        var hasContactObject = "contact" in featureObject;
+        var hasSpecificationObject = "specification" in featureObject;
+        if (hasDocumentationLink || hasReferenceLink || hasContactObject) {
+            var moreInfoList = document.createElement("ul");
+            if (hasDocumentationLink) {
+                var url = featureObject["documentation-url"];
+                moreInfoList.appendChild(createLinkWithHeading("li", "Documentation", url, url));
+            }
+
+            if (hasReferenceLink) {
+                var url = featureObject.url;
+                moreInfoList.appendChild(createLinkWithHeading("li", "Reference", url, url));
+            }
+
+            if (hasSpecificationObject) {
+                var specification = featureObject.specification;
+                var li = createLinkWithHeading("li", "Parent feature", specification.name, ("#specification-" + specification.name));
+                li.className = "internal-reference";
+                moreInfoList.appendChild(li);
+            }
+
+            if (hasContactObject) {
+                var li = document.createElement("li");
+                li.textContent = "Contact: ";
+                if (featureObject.contact.twitter) {
+                    li.appendChild(createLinkWithHeading("span", null, featureObject.contact.twitter, featureObject.contact.twitter));
+                }
+                if (featureObject.contact.email) {
+                    if (featureObject.contact.twitter) {
+                        li.appendChild(document.createTextNode(" - "));
+                    }
+                    var emailText = featureObject.contact.email;
+                    if (featureObject.contact.name) {
+                        emailText = featureObject.contact.name;
+                    }
+                    li.appendChild(createLinkWithHeading("span", null, emailText, featureObject.contact.email));
+                }
+                moreInfoList.appendChild(li);
+            }
+
+            container.appendChild(moreInfoList);
+        }
+
+        if ("features" in featureObject && featureObject.features.length) {
+            var internalLinkContainer = document.createElement("div");
+            internalLinkContainer.className = "internal-reference";
+            var trackedFeatures = document.createElement("p");
+            trackedFeatures.textContent = "Subfeatures: ";
+            internalLinkContainer.appendChild(trackedFeatures);
+
+            var list = document.createElement("ul");
+            for (var feature of featureObject.features) {
+                var link = document.createElement("a");
+                link.textContent = feature.name;
+                link.href = "#feature-" + feature.name;
+
+                var li = document.createElement("li");
+                li.appendChild(link);
+                list.appendChild(li);
+            }
+            internalLinkContainer.appendChild(list);
+            container.appendChild(internalLinkContainer);
+        }
+
+        return container;
+    }
+
+    function renderFeaturesAndSpecifications(featureLikeObjects) {
+        var featureContainer = document.getElementById('features-container');
+        for (var featureLikeObject of featureLikeObjects) {
+            featureContainer.appendChild(createFeatureView(featureLikeObject));
+        }
     }
 
     function initSearch(featuresArray) {
@@ -183,7 +295,15 @@ function initializeStatusPage() {
     }
 
     function isSearchMatch(feature, searchTerm) {
-        return feature.name.toLowerCase().indexOf(searchTerm) !== -1;
+        if (feature.name.toLowerCase().indexOf(searchTerm) !== -1)
+            return true;
+        if ("keywords" in feature) {
+            for (var keyword of feature.keywords) {
+                if (keyword.toLowerCase().indexOf(searchTerm) !== -1)
+                    return true;
+            }
+        }
+        return false;
     }
 
     function displayFeatures(results)
@@ -192,13 +312,36 @@ function initializeStatusPage() {
         var successSubtree = document.importNode(document.getElementById("success-template").content, true);
         mainContent.appendChild(successSubtree);
 
+        var allSpecifications = [];
+        for (var i in results) {
+            allSpecifications = allSpecifications.concat(results[i].specification);
+        }
+        var specificationsByName = {}
+        for (var specification of allSpecifications) {
+            specification.features = [];
+            specification.isSpecification = true;
+            specificationsByName[specification.name] = specification;
+        }
+
         var allFeatures = [];
         for (var i in results) {
             allFeatures = allFeatures.concat(results[i].features);
         }
-        sortAlphabetically(allFeatures);
-        renderFeatures(allFeatures);
-        initSearch(allFeatures);
+        var featuresByName = {};
+        for (var feature of allFeatures) {
+            if ('specification' in feature) {
+                var specificationObject = specificationsByName[feature.specification];
+                specificationObject.features.push(feature);
+                feature.specification = specificationObject;
+            }
+            feature.isSpecification = false;
+            featuresByName[feature.name] = feature;
+        }
+
+        var everythingToShow = allFeatures.concat(allSpecifications);
+        sortAlphabetically(everythingToShow);
+        renderFeaturesAndSpecifications(everythingToShow);
+        initSearch(everythingToShow);
     }
 
     function displayError(error)
@@ -219,32 +362,6 @@ function initializeStatusPage() {
         mainContent.appendChild(successSubtree);
     }
 
-    function xhrPromise(url) {
-        return new Promise(function(resolve, reject) {
-            var xhrRequest = new XMLHttpRequest();
-            xhrRequest.responseType = "json";
-            xhrRequest.open('GET', url);
-
-            xhrRequest.onload = function() {
-                if (xhrRequest.status == 200) {
-                    if (xhrRequest.response) {
-                        resolve(xhrRequest.response);
-                    } else {
-                        reject({ request: xhrRequest, url:url});
-                    }
-                } else {
-                    reject({ request: xhrRequest, url:url});
-                }
-            };
-            xhrRequest.onerror = function() {
-                reject({ request: xhrRequest, url:url});
-            };
-            xhrRequest.send();
-        });
-    }
-
-    var loadJavaScriptCoreFeatures = xhrPromise("https://svn.webkit.org/repository/webkit/trunk/Source/JavaScriptCore/features.json");
-    var loadWebCoreFeatures = xhrPromise("https://svn.webkit.org/repository/webkit/trunk/Source/WebCore/features.json");
     Promise.all([loadJavaScriptCoreFeatures, loadWebCoreFeatures]).then(displayFeatures).catch(displayError);
 }
 
