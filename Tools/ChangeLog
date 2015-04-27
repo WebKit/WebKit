@@ -1,3 +1,14 @@
+2015-04-27  Alexey Proskuryakov  <ap@apple.com>
+
+        fast/frames/flattening/iframe-flattening-resize-event-count.html times out on Yosemite WK2
+        https://bugs.webkit.org/show_bug.cgi?id=144155
+
+        Reviewed by Tim Horton.
+
+        * WebKitTestRunner/TestController.cpp: (WTR::TestController::resetPreferencesToConsistentValues):
+        Disable App Nap. I don't have positive evidence that it's the culprit, but it could be,
+        and we clearly don't want App Nap while testing.
+
 2015-04-22  Martin Robinson  <mrobinson@igalia.com>
 
         [CMake] Autogenerate cmakeconfig.h.cmake
