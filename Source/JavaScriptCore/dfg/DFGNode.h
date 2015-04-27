@@ -1420,6 +1420,17 @@ struct Node {
         ASSERT(hasObjectMaterializationData());
         return *reinterpret_cast<ObjectMaterializationData*>(m_opInfo);
     }
+
+    bool isObjectAllocation()
+    {
+        switch (op()) {
+        case NewObject:
+        case MaterializeNewObject:
+            return true;
+        default:
+            return false;
+        }
+    }
     
     bool isPhantomObjectAllocation()
     {

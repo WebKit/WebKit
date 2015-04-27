@@ -1,3 +1,28 @@
+2015-04-27  Basile Clement  <basile_clement@apple.com>
+
+        Function allocations shouldn't sink through Put operations
+        https://bugs.webkit.org/show_bug.cgi?id=144176
+
+        Reviewed by Filip Pizlo.
+
+        By design, we don't support function allocation sinking through any
+        related operation ; however object allocation can sink through PutByOffset et
+        al.
+
+        Currently, the checks to prevent function allocation to sink through
+        these are misguided and do not prevent anything ; function allocation sinking
+        through these operations is prevented as a side effect of requiring an
+        AllocatePropertyStorage through which the function allocation is seen as
+        escaping.
+
+        This changes it so that ObjectAllocationSinkingPhase::handleNode()
+        checks properly that only object allocations sink through related write
+        operations.
+
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        (JSC::DFG::ObjectAllocationSinkingPhase::lowerNonReadingOperationsOnPhantomAllocations):
+        (JSC::DFG::ObjectAllocationSinkingPhase::handleNode):
+
 2015-04-25  Filip Pizlo  <fpizlo@apple.com>
 
         VarargsForwardingPhase should use bytecode liveness in addition to other uses to determine the last point that a candidate is used

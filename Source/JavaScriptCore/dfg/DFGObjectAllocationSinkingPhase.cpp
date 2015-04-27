@@ -511,14 +511,17 @@ private:
                 switch (node->op()) {
                 case PutByOffset: {
                     Node* target = node->child2().node();
-                    if (target->isPhantomObjectAllocation() && m_sinkCandidates.contains(target))
+                    if (m_sinkCandidates.contains(target)) {
+                        ASSERT(target->isPhantomObjectAllocation());
                         node->convertToPutByOffsetHint();
+                    }
                     break;
                 }
                     
                 case PutStructure: {
                     Node* target = node->child1().node();
-                    if (target->isPhantomObjectAllocation() && m_sinkCandidates.contains(target)) {
+                    if (m_sinkCandidates.contains(target)) {
+                        ASSERT(target->isPhantomObjectAllocation());
                         Node* structure = m_insertionSet.insertConstant(
                             nodeIndex, node->origin, JSValue(node->transition()->next));
                         node->convertToPutStructureHint(structure);
@@ -580,8 +583,10 @@ private:
                 case StoreBarrier:
                 case StoreBarrierWithNullCheck: {
                     Node* target = node->child1().node();
-                    if (target->isPhantomObjectAllocation() && m_sinkCandidates.contains(target))
+                    if (m_sinkCandidates.contains(target)) {
+                        ASSERT(target->isPhantomObjectAllocation());
                         node->convertToPhantom();
+                    }
                     break;
                 }
                     
@@ -789,22 +794,34 @@ private:
                 });
             break;
 
-        case CheckStructure:
-        case GetByOffset:
-        case MultiGetByOffset:
-        case PutStructure:
-        case GetGetterSetterByOffset:
         case MovHint:
         case Phantom:
         case Check:
-        case StoreBarrier:
-        case StoreBarrierWithNullCheck:
         case PutHint:
             break;
+
+        case PutStructure:
+        case CheckStructure:
+        case GetByOffset:
+        case MultiGetByOffset:
+        case GetGetterSetterByOffset:
+        case StoreBarrier:
+        case StoreBarrierWithNullCheck: {
+            Node* target = node->child1().node();
+            if (!target->isObjectAllocation())
+                escape(target);
+            break;
+        }
             
-        case PutByOffset:
+        case PutByOffset: {
+            Node* target = node->child2().node();
+            if (!target->isObjectAllocation()) {
+                escape(target);
+                escape(node->child1().node());
+            }
             escape(node->child3().node());
             break;
+        }
             
         case MultiPutByOffset:
             // FIXME: In the future we should be able to handle this. It's just a matter of
