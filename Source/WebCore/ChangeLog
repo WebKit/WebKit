@@ -1,3 +1,13 @@
+2015-04-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the !ENABLE(CSS_GRID_LAYOUT) build after r183370
+        https://bugs.webkit.org/show_bug.cgi?id=144255
+
+        Reviewed by Carlos Garcia Campos.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeLogicalHeight):
+
 2015-04-27  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Synchronous XMLHttpRequest should get access to AppCache resources stored as flat files
