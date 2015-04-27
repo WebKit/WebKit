@@ -1537,8 +1537,10 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
     TreePropertyList instanceMethodsTail = 0;
     TreePropertyList staticMethodsTail = 0;
     while (!match(CLOSEBRACE)) {
-        if (match(SEMICOLON))
+        if (match(SEMICOLON)) {
             next();
+            continue;
+        }
 
         JSTokenLocation methodLocation(tokenLocation());
         unsigned methodStart = tokenStart();

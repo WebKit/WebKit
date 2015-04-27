@@ -1,5 +1,19 @@
 2015-04-26  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Class body ending with a semicolon throws a SyntaxError
+        https://bugs.webkit.org/show_bug.cgi?id=144244
+
+        Reviewed by Darin Adler.
+
+        The bug was caused by parseClass's inner loop for method definitions not moving onto the next iteration
+        it encounters a semicolon. As a result, we always expected a method to appear after a semicolon. Fixed
+        it by continue'ing when it encounters a semicolon.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass):
+
+2015-04-26  Ryosuke Niwa  <rniwa@webkit.org>
+
         Getter or setter method named "prototype" or "constrcutor" should throw SyntaxError
         https://bugs.webkit.org/show_bug.cgi?id=144243
 
