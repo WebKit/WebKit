@@ -1,3 +1,14 @@
+2015-04-26  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Unreviewed EFL gardening on 27th April.
+
+        Unskip 2 tests which have been passed since r183368.
+
+        Mark editing/selection/extend-by-character-007.html to missing.
+        This needs to have new baseline for EFL port.
+
+        * platform/efl/TestExpectations:
+
 2015-04-26  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] Support for align-self and align-items in grid layout

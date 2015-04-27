@@ -1356,9 +1356,6 @@ webkit.org/b/101439 media/progress-events-generated-correctly.html [ Failure Pas
 
 webkit.org/b/101456 fast/repaint/block-selection-gap-in-table-cell.html [ Missing ]
 
-# Identical failures on GTK, EFL and Qt.
-webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
-
 # HiDPI tests are failing to render correctly.
 webkit.org/b/102097 fast/hidpi [ Skip ]
 webkit.org/b/102097 svg/as-image/animated-svg-repaints-completely-in-hidpi.html [ Skip ]
@@ -2243,6 +2240,6 @@ webkit.org/b/143878 http/tests/navigation/postredirect-goback1.html [ Failure ]
 
 webkit.org/b/144004 compositing/animation/matrix-animation.html [ ImageOnlyFailure ]
 
-webkit.org/b/144005 compositing/backgrounds/background-image-with-negative-zindex.html [ ImageOnlyFailure ]
-
 webkit.org/b/144006 compositing/backing/solid-color-with-paints-into-ancestor.html [ ImageOnlyFailure ]
+
+webkit.org/b/144246 editing/selection/extend-by-character-007.html [ Missing ]
