@@ -1,3 +1,15 @@
+2015-04-26  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Cannot make Timeline time range selection clicking inside Frames Overview
+        https://bugs.webkit.org/show_bug.cgi?id=143744
+
+        Reviewed by Timothy Hatcher.
+
+        Fixed frame rate divider element style so that it is no longer a mouse event target.
+
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.css:
+        (.timeline-overview-graph.rendering-frame > .divider):
+
 2015-04-26  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Allow Timeline tab to show resource when a go-to arrow is clicked in a recording
