@@ -454,7 +454,7 @@ static void* openFunc(const char* uri)
 
     ResourceError error;
     ResourceResponse response;
-    RefPtr<SharedBuffer> data;
+    Vector<char> data;
 
 
     {
@@ -470,10 +470,8 @@ static void* openFunc(const char* uri)
     // See <https://bugs.webkit.org/show_bug.cgi?id=21963>.
     if (!shouldAllowExternalLoad(response.url()))
         return &globalDescriptor;
-    Vector<char> buffer;
-    if (data)
-        buffer.append(data->data(), data->size());
-    return new OffsetBuffer(WTF::move(buffer));
+
+    return new OffsetBuffer(WTF::move(data));
 }
 
 static int readFunc(void* context, char* buffer, int len)

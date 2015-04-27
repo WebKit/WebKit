@@ -31,7 +31,6 @@
 #include "ApplicationCacheResource.h"
 #include "DocumentLoader.h"
 #include "DOMApplicationCache.h"
-#include "FileSystem.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
@@ -169,10 +168,10 @@ bool ApplicationCacheHost::maybeLoadResource(ResourceLoader* loader, const Resou
     ApplicationCacheResource* resource;
     if (!shouldLoadResourceFromApplicationCache(request, resource))
         return false;
-
+    
     m_documentLoader.m_pendingSubstituteResources.set(loader, resource);
     m_documentLoader.deliverSubstituteResourcesAfterDelay();
-
+        
     return true;
 }
 
@@ -203,48 +202,22 @@ bool ApplicationCacheHost::maybeLoadFallbackForError(ResourceLoader* resourceLoa
     return false;
 }
 
-URL ApplicationCacheHost::createFileURL(const String& path)
-{
-    // FIXME: Can we just use fileURLWithFileSystemPath instead?
-
-    // fileURLWithFileSystemPath function is not suitable because URL::setPath uses encodeWithURLEscapeSequences, which it notes
-    // does not correctly escape '#' and '?'. This function works for our purposes because
-    // app cache media files are always created with encodeForFileName(createCanonicalUUIDString()).
-
-#if USE(CF) && PLATFORM(WIN)
-    RetainPtr<CFURLRef> cfURL = adoptCF(CFURLCreateWithFileSystemPath(0, path.createCFString().get(), kCFURLWindowsPathStyle, false));
-    URL url(cfURL.get());
-#else
-    URL url;
-
-    url.setProtocol(ASCIILiteral("file"));
-    url.setPath(path);
-#endif
-    return url;
-}
-
-bool ApplicationCacheHost::maybeLoadSynchronously(ResourceRequest& request, ResourceError& error, ResourceResponse& response, RefPtr<SharedBuffer>& data)
+bool ApplicationCacheHost::maybeLoadSynchronously(ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     ApplicationCacheResource* resource;
     if (shouldLoadResourceFromApplicationCache(request, resource)) {
         if (resource) {
-            // FIXME: Clients proably do not need a copy of the SharedBuffer.
-            // Remove the call to copy() once we ensure SharedBuffer will not be modified.
-            if (resource->path().isEmpty())
-                data = resource->data()->copy();
-            else
-                data = SharedBuffer::createWithContentsOfFile(resource->path());
-        }
-        if (!data)
-            error = m_documentLoader.frameLoader()->client().cannotShowURLError(request);
-        else
             response = resource->response();
+            data.append(resource->data()->data(), resource->data()->size());
+        } else {
+            error = m_documentLoader.frameLoader()->client().cannotShowURLError(request);
+        }
         return true;
     }
     return false;
 }
 
-void ApplicationCacheHost::maybeLoadFallbackSynchronously(const ResourceRequest& request, ResourceError& error, ResourceResponse& response, RefPtr<SharedBuffer>& data)
+void ApplicationCacheHost::maybeLoadFallbackSynchronously(const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     // If normal loading results in a redirect to a resource with another origin (indicative of a captive portal), or a 4xx or 5xx status code or equivalent,
     // or if there were network errors (but not if the user canceled the download), then instead get, from the cache, the resource of the fallback entry
@@ -255,9 +228,8 @@ void ApplicationCacheHost::maybeLoadFallbackSynchronously(const ResourceRequest&
         ApplicationCacheResource* resource;
         if (getApplicationCacheFallbackResource(request, resource)) {
             response = resource->response();
-            // FIXME: Clients proably do not need a copy of the SharedBuffer.
-            // Remove the call to copy() once we ensure SharedBuffer will not be modified.
-            data = resource->data()->copy();
+            data.clear();
+            data.append(resource->data()->data(), resource->data()->size());
         }
     }
 }
