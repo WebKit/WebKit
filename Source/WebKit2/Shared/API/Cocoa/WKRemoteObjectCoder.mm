@@ -45,7 +45,7 @@ static const char* const objectStreamKey = "$objectStream";
 static NSString * const selectorKey = @"selector";
 static NSString * const typeStringKey = @"typeString";
 
-static PassRefPtr<API::Dictionary> createEncodedObject(WKRemoteObjectEncoder *, id);
+static RefPtr<API::Dictionary> createEncodedObject(WKRemoteObjectEncoder *, id);
 
 @interface NSMethodSignature (Details)
 - (NSString *)_typeString;
@@ -238,17 +238,17 @@ static void encodeObject(WKRemoteObjectEncoder *encoder, id object)
     [object encodeWithCoder:encoder];
 }
 
-static PassRefPtr<API::Dictionary> createEncodedObject(WKRemoteObjectEncoder *encoder, id object)
+static RefPtr<API::Dictionary> createEncodedObject(WKRemoteObjectEncoder *encoder, id object)
 {
     if (!object)
         return nil;
 
-    RefPtr<API::Dictionary> dictionary = API::Dictionary::create();
-    TemporaryChange<API::Dictionary*> dictionaryChange(encoder->_currentDictionary, dictionary.get());
+    Ref<API::Dictionary> dictionary = API::Dictionary::create();
+    TemporaryChange<API::Dictionary*> dictionaryChange(encoder->_currentDictionary, dictionary.ptr());
 
     encodeObject(encoder, object);
 
-    return dictionary;
+    return WTF::move(dictionary);
 }
 
 - (void)encodeValueOfObjCType:(const char *)type at:(const void *)address

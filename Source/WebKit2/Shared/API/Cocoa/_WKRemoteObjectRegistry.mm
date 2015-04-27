@@ -102,14 +102,14 @@ using namespace WebKit;
     RetainPtr<WKRemoteObjectEncoder> encoder = adoptNS([[WKRemoteObjectEncoder alloc] init]);
     [encoder encodeObject:invocation forKey:invocationKey];
 
-    RefPtr<API::Dictionary> body = API::Dictionary::create();
+    Ref<API::Dictionary> body = API::Dictionary::create();
     body->set(interfaceIdentifierKey, API::String::create(interface.identifier));
     body->set(encodedInvocationKey, [encoder rootObjectDictionary]);
 
     if (!_remoteObjectRegistry)
         return;
 
-    _remoteObjectRegistry->sendInvocation(UserData(body.get()));
+    _remoteObjectRegistry->sendInvocation(UserData(body.ptr()));
 }
 
 - (WebKit::RemoteObjectRegistry&)remoteObjectRegistry

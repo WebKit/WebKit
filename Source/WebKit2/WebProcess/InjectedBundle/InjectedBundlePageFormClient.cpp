@@ -138,7 +138,7 @@ void InjectedBundlePageFormClient::willSendSubmitEvent(WebPage* page, HTMLFormEl
         map.set(values[i].first, API::String::create(values[i].second));
     auto textFieldsMap = API::Dictionary::create(WTF::move(map));
 
-    m_client.willSendSubmitEvent(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), toAPI(sourceFrame), toAPI(textFieldsMap.get()), m_client.base.clientInfo);
+    m_client.willSendSubmitEvent(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), toAPI(sourceFrame), toAPI(textFieldsMap.ptr()), m_client.base.clientInfo);
 }
 
 void InjectedBundlePageFormClient::willSubmitForm(WebPage* page, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<String, String>>& values, RefPtr<API::Object>& userData)
@@ -154,7 +154,7 @@ void InjectedBundlePageFormClient::willSubmitForm(WebPage* page, HTMLFormElement
     auto textFieldsMap = API::Dictionary::create(WTF::move(map));
 
     WKTypeRef userDataToPass = 0;
-    m_client.willSubmitForm(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), toAPI(sourceFrame), toAPI(textFieldsMap.get()), &userDataToPass, m_client.base.clientInfo);
+    m_client.willSubmitForm(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), toAPI(sourceFrame), toAPI(textFieldsMap.ptr()), &userDataToPass, m_client.base.clientInfo);
     userData = adoptRef(toImpl(userDataToPass));
 }
 

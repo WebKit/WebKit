@@ -56,7 +56,7 @@ public:
     void addAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash, WebCore::SessionID);
     void didReceiveUserInteraction(unsigned plugInOriginHash, WebCore::SessionID);
 
-    PassRefPtr<API::Dictionary> autoStartOriginsTableCopy() const;
+    Ref<API::Dictionary> autoStartOriginsTableCopy() const;
     void setAutoStartOriginsTable(API::Dictionary&);
     void setAutoStartOriginsFilteringOutEntriesAddedAfterTime(API::Dictionary&, double time);
     void setAutoStartOriginsArray(API::Array&);

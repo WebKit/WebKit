@@ -87,7 +87,7 @@ SessionPlugInAutoStartOriginMap PlugInAutoStartProvider::autoStartOriginHashesCo
     return sessionMap;
 }
 
-PassRefPtr<API::Dictionary> PlugInAutoStartProvider::autoStartOriginsTableCopy() const
+Ref<API::Dictionary> PlugInAutoStartProvider::autoStartOriginsTableCopy() const
 {
     API::Dictionary::MapType map;
 

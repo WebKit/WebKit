@@ -28,7 +28,6 @@
 
 #include "APIObject.h"
 #include <wtf/HashMap.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -40,8 +39,8 @@ class Dictionary final : public ObjectImpl<Object::Type::Dictionary> {
 public:
     typedef HashMap<WTF::String, RefPtr<Object>> MapType;
 
-    static RefPtr<Dictionary> create();
-    static RefPtr<Dictionary> create(MapType);
+    static Ref<Dictionary> create();
+    static Ref<Dictionary> create(MapType);
 
     virtual ~Dictionary();
 

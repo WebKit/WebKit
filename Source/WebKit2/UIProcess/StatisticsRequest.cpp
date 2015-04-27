@@ -58,10 +58,10 @@ static void addToDictionaryFromHashMap(API::Dictionary* dictionary, const HashMa
         dictionary->set(it->key, RefPtr<API::UInt64>(API::UInt64::create(it->value)).get());
 }
 
-static PassRefPtr<API::Dictionary> createDictionaryFromHashMap(const HashMap<String, uint64_t>& map)
+static Ref<API::Dictionary> createDictionaryFromHashMap(const HashMap<String, uint64_t>& map)
 {
-    RefPtr<API::Dictionary> result = API::Dictionary::create();
-    addToDictionaryFromHashMap(result.get(), map);
+    Ref<API::Dictionary> result = API::Dictionary::create();
+    addToDictionaryFromHashMap(result.ptr(), map);
     return result;
 }
 
@@ -79,9 +79,9 @@ void StatisticsRequest::completedRequest(uint64_t requestID, const StatisticsDat
     addToDictionaryFromHashMap(m_responseDictionary.get(), data.statisticsNumbers);
 
     if (!data.javaScriptProtectedObjectTypeCounts.isEmpty())
-        m_responseDictionary->set("JavaScriptProtectedObjectTypeCounts", createDictionaryFromHashMap(data.javaScriptProtectedObjectTypeCounts).get());
+        m_responseDictionary->set("JavaScriptProtectedObjectTypeCounts", createDictionaryFromHashMap(data.javaScriptProtectedObjectTypeCounts));
     if (!data.javaScriptObjectTypeCounts.isEmpty())
-        m_responseDictionary->set("JavaScriptObjectTypeCounts", createDictionaryFromHashMap(data.javaScriptObjectTypeCounts).get());
+        m_responseDictionary->set("JavaScriptObjectTypeCounts", createDictionaryFromHashMap(data.javaScriptObjectTypeCounts));
 
     if (!data.webCoreCacheStatistics.isEmpty()) {
         Vector<RefPtr<API::Object>> cacheStatistics;

@@ -1343,13 +1343,13 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             map.set("resizable", API::Boolean::create(windowFeatures.resizable));
             map.set("fullscreen", API::Boolean::create(windowFeatures.fullscreen));
             map.set("dialog", API::Boolean::create(windowFeatures.dialog));
-            RefPtr<API::Dictionary> featuresMap = API::Dictionary::create(WTF::move(map));
+            Ref<API::Dictionary> featuresMap = API::Dictionary::create(WTF::move(map));
 
             if (!m_client.base.version)
-                return adoptRef(toImpl(m_client.createNewPage_deprecatedForUseWithV0(toAPI(page), toAPI(featuresMap.get()), toAPI(navigationActionData.modifiers), toAPI(navigationActionData.mouseButton), m_client.base.clientInfo)));
+                return adoptRef(toImpl(m_client.createNewPage_deprecatedForUseWithV0(toAPI(page), toAPI(featuresMap.ptr()), toAPI(navigationActionData.modifiers), toAPI(navigationActionData.mouseButton), m_client.base.clientInfo)));
 
             RefPtr<API::URLRequest> request = API::URLRequest::create(resourceRequest);
-            return adoptRef(toImpl(m_client.createNewPage(toAPI(page), toAPI(request.get()), toAPI(featuresMap.get()), toAPI(navigationActionData.modifiers), toAPI(navigationActionData.mouseButton), m_client.base.clientInfo)));
+            return adoptRef(toImpl(m_client.createNewPage(toAPI(page), toAPI(request.get()), toAPI(featuresMap.ptr()), toAPI(navigationActionData.modifiers), toAPI(navigationActionData.mouseButton), m_client.base.clientInfo)));
         }
 
         virtual void showPage(WebPageProxy* page) override

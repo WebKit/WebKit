@@ -33,8 +33,7 @@ using namespace WebKit;
 
 WKMutableDictionaryRef WKMutableDictionaryCreate()
 {
-    RefPtr<API::Dictionary> dictionary = API::Dictionary::create();
-    return const_cast<WKMutableDictionaryRef>(toAPI(dictionary.release().leakRef()));
+    return const_cast<WKMutableDictionaryRef>(toAPI(&API::Dictionary::create().leakRef()));
 }
 
 bool WKDictionarySetItem(WKMutableDictionaryRef dictionaryRef, WKStringRef keyRef, WKTypeRef itemRef)

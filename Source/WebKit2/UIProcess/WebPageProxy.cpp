@@ -5202,7 +5202,7 @@ void WebPageProxy::pageExtendedBackgroundColorDidChange(const Color& backgroundC
 #if ENABLE(NETSCAPE_PLUGIN_API)
 void WebPageProxy::didFailToInitializePlugin(const String& mimeType, const String& frameURLString, const String& pageURLString)
 {
-    m_loaderClient->didFailToInitializePlugin(*this, createPluginInformationDictionary(mimeType, frameURLString, pageURLString).get());
+    m_loaderClient->didFailToInitializePlugin(*this, createPluginInformationDictionary(mimeType, frameURLString, pageURLString).ptr());
 }
 
 void WebPageProxy::didBlockInsecurePluginVersion(const String& mimeType, const String& pluginURLString, const String& frameURLString, const String& pageURLString, bool replacementObscured)

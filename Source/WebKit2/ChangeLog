@@ -1,5 +1,58 @@
 2015-04-27  Zan Dobersek  <zdobersek@igalia.com>
 
+        [WK2] API::Dictionary creation functions should return Ref<>
+        https://bugs.webkit.org/show_bug.cgi?id=144221
+
+        Reviewed by Darin Adler.
+
+        Have API::Dictionary creation functions return Ref<>.
+        The call-sites are also updated, using and operating
+        on the returned Ref<> object where possible.
+
+        * Shared/API/APIDictionary.cpp:
+        (API::Dictionary::create):
+        * Shared/API/APIDictionary.h:
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (createEncodedObject):
+        * Shared/API/Cocoa/_WKRemoteObjectRegistry.mm:
+        (-[_WKRemoteObjectRegistry _sendInvocation:interface:]):
+        * Shared/API/c/WKDictionary.cpp:
+        (WKDictionaryCreate):
+        * Shared/API/c/WKMutableDictionary.cpp:
+        (WKMutableDictionaryCreate):
+        * Shared/Plugins/Netscape/PluginInformation.cpp:
+        (WebKit::createPluginInformationDictionary):
+        * Shared/Plugins/Netscape/PluginInformation.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_prefetch_dns):
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_get_snapshot):
+        * UIProcess/Plugins/PlugInAutoStartProvider.cpp:
+        (WebKit::PlugInAutoStartProvider::autoStartOriginsTableCopy):
+        * UIProcess/Plugins/PlugInAutoStartProvider.h:
+        * UIProcess/StatisticsRequest.cpp:
+        (WebKit::createDictionaryFromHashMap):
+        (WebKit::StatisticsRequest::completedRequest):
+        * UIProcess/WebFormClient.cpp:
+        (WebKit::WebFormClient::willSubmitForm):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFailToInitializePlugin):
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (didInitiateLoadForResource):
+        (willSendRequestForFrame):
+        (didReceiveResponseForResource):
+        (didReceiveContentLengthForResource):
+        (didFinishLoadForResource):
+        (didFailLoadForResource):
+        (webkitWebPageDidReceiveMessage):
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp:
+        (WebKit::InjectedBundlePageFormClient::willSendSubmitEvent):
+        (WebKit::InjectedBundlePageFormClient::willSubmitForm):
+
+2015-04-27  Zan Dobersek  <zdobersek@igalia.com>
+
         [WK2] API::Data creation functions should return Ref<>
         https://bugs.webkit.org/show_bug.cgi?id=144220
 

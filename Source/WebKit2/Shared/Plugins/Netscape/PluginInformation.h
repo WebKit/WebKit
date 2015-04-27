@@ -51,9 +51,9 @@ String pluginInformationPluginspageAttributeURLKey();
 String pluginInformationPluginURLKey();
 String plugInInformationReplacementObscuredKey();
 
-PassRefPtr<API::Dictionary> createPluginInformationDictionary(const PluginModuleInfo&);
-PassRefPtr<API::Dictionary> createPluginInformationDictionary(const PluginModuleInfo&, const String& frameURLString, const String& mimeType, const String& pageURLString, const String& pluginspageAttributeURLString, const String& pluginURLString, bool replacementObscured = false);
-PassRefPtr<API::Dictionary> createPluginInformationDictionary(const String& mimeType, const String& frameURLString, const String& pageURLString);
+Ref<API::Dictionary> createPluginInformationDictionary(const PluginModuleInfo&);
+Ref<API::Dictionary> createPluginInformationDictionary(const PluginModuleInfo&, const String& frameURLString, const String& mimeType, const String& pageURLString, const String& pluginspageAttributeURLString, const String& pluginURLString, bool replacementObscured = false);
+Ref<API::Dictionary> createPluginInformationDictionary(const String& mimeType, const String& frameURLString, const String& pageURLString);
 
 void getPluginModuleInformation(const PluginModuleInfo&, API::Dictionary::MapType&);
 void getPlatformPluginModuleInformation(const PluginModuleInfo&, API::Dictionary::MapType&);

@@ -31,14 +31,14 @@
 
 namespace API {
 
-RefPtr<Dictionary> Dictionary::create()
+Ref<Dictionary> Dictionary::create()
 {
     return create({ });
 }
 
-RefPtr<Dictionary> Dictionary::create(MapType map)
+Ref<Dictionary> Dictionary::create(MapType map)
 {
-    return adoptRef(new Dictionary(WTF::move(map)));
+    return adoptRef(*new Dictionary(WTF::move(map)));
 }
 
 Dictionary::Dictionary(MapType map)

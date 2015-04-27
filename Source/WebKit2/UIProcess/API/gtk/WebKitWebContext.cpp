@@ -1009,7 +1009,7 @@ void webkit_web_context_prefetch_dns(WebKitWebContext* context, const char* host
 
     API::Dictionary::MapType message;
     message.set(String::fromUTF8("Hostname"), API::String::create(String::fromUTF8(hostname)));
-    context->priv->context->postMessageToInjectedBundle(String::fromUTF8("PrefetchDNS"), API::Dictionary::create(WTF::move(message)).get());
+    context->priv->context->postMessageToInjectedBundle(String::fromUTF8("PrefetchDNS"), API::Dictionary::create(WTF::move(message)).ptr());
 }
 
 /**
