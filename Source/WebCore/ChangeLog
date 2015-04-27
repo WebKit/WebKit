@@ -1,5 +1,22 @@
 2015-04-27  Jer Noble  <jer.noble@apple.com>
 
+        [iOS] Video not centered in element on retina devices
+        https://bugs.webkit.org/show_bug.cgi?id=144274
+
+        Reviewed by Simon Fraser.
+
+        In r173702, a transform was added to the video layer (and a matching, inverse transform
+        in the UIProcess), but this transform affects the position property of the video layer
+        used to position the video content within the element bounds when their aspect ratios
+        do not match.
+
+        To work around this problem, pre-apply the transform during -setPosition:.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (-[WebVideoContainerLayer setPosition:]):
+
+2015-04-27  Jer Noble  <jer.noble@apple.com>
+
         Add a setting & restriction which prevents non-interactivte playback of audible media elements.
         https://bugs.webkit.org/show_bug.cgi?id=143486
 
