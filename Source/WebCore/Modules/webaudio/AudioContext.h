@@ -251,13 +251,13 @@ public:
     };
     typedef unsigned BehaviorRestrictions;
 
-    bool userGestureRequiredForAudioStart() const { return m_restrictions & RequireUserGestureForAudioStartRestriction; }
-    bool pageConsentRequiredForAudioStart() const { return m_restrictions & RequirePageConsentForAudioStartRestriction; }
-
+    BehaviorRestrictions behaviorRestrictions() const { return m_restrictions; }
     void addBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions |= restriction; }
     void removeBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions &= ~restriction; }
 
     void isPlayingAudioDidChange();
+
+    void nodeWillBeginPlayback();
 
 protected:
     explicit AudioContext(Document&);
@@ -270,6 +270,12 @@ private:
 
     void lazyInitialize();
     void uninitialize();
+
+    bool willBeginPlayback();
+    bool willPausePlayback();
+
+    bool userGestureRequiredForAudioStart() const { return m_restrictions & RequireUserGestureForAudioStartRestriction; }
+    bool pageConsentRequiredForAudioStart() const { return m_restrictions & RequirePageConsentForAudioStartRestriction; }
 
     enum class State { Suspended, Running, Interrupted, Closed };
     void setState(State);

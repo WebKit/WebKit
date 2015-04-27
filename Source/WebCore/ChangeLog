@@ -1,3 +1,62 @@
+2015-04-27  Jer Noble  <jer.noble@apple.com>
+
+        [WebAudio] AudioContext does not remove user-gesture restriction during resume()
+        https://bugs.webkit.org/show_bug.cgi?id=144211
+
+        Reviewed by Eric Carlson.
+
+        Tests: webaudio/audiocontext-restriction-audiobuffersourcenode-start.html
+               webaudio/audiocontext-restriction.html
+
+        Before the introduction of resume(), suspend(), and stop(), AudioContexts which required
+        a user-gesture would start normally, but would effectively mute their outputs. Now that
+        the AudioContext's state property is exposed to JavaScript, the AudioContext should stay
+        in the "suspended" state until the user-gesture restriction is lifted.
+
+        Add a new method, willBeginPlayback() which checks and potentially clears the context's
+        behavior restrictions before checking with the MediaSession. Call this new willBeginPlayback()
+        method when the state would transition to "running".
+
+        Because they may be called before any nodes are created, make sure to call lazyInitialize()
+        from within the JS-exposed resumePlayback(), suspendPlayback(), and stopPlayback() methods.
+
+        Instead of clearing the behavior restrictions directly, scheduled AudioNodes should instead
+        call a new method nodeWillBeginPlayback(). Because existing sites will call AudioNode.start()
+        inside a user-gesture handler to clear the user-gesture restriction, call startRendering()
+        from nodeWillBeginPlayback(). But because we don't want AudioNode.start() to resume playback
+        unconditionally, only do so when the user-gesture restriction is set.
+
+        Now that an AudioContext will not transition to "running" state without a user-gesture (if
+        that restriction is set), there's no reason to check for that restriction from inside
+        AudioDestinationNode.
+
+        Add some internal methods to set and clear AudioContext BehaviorRestrictions for testing purposes.
+
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::startPlaying):
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::nodeWillBeginPlayback):
+        (WebCore::AudioContext::willBeginPlayback):
+        (WebCore::AudioContext::willPausePlayback):
+        (WebCore::AudioContext::startRendering):
+        (WebCore::AudioContext::suspendContext):
+        (WebCore::AudioContext::resumeContext):
+        (WebCore::AudioContext::closeContext):
+        (WebCore::AudioContext::suspendPlayback):
+        (WebCore::AudioContext::mayResumePlayback):
+        * Modules/webaudio/AudioContext.h:
+        (WebCore::AudioContext::behaviorRestrictions):
+        (WebCore::AudioContext::userGestureRequiredForAudioStart):
+        (WebCore::AudioContext::pageConsentRequiredForAudioStart):
+        * Modules/webaudio/AudioDestinationNode.cpp:
+        (WebCore::AudioDestinationNode::render):
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::start):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setAudioContextRestrictions):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2015-04-27  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix.

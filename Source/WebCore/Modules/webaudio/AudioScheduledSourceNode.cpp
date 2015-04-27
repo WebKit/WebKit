@@ -146,8 +146,7 @@ void AudioScheduledSourceNode::start(double when, ExceptionCode& ec)
 {
     ASSERT(isMainThread());
 
-    if (ScriptController::processingUserGesture())
-        context()->removeBehaviorRestriction(AudioContext::RequireUserGestureForAudioStartRestriction);
+    context()->nodeWillBeginPlayback();
 
     if (m_playbackState != UNSCHEDULED_STATE) {
         ec = INVALID_STATE_ERR;

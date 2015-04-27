@@ -181,6 +181,10 @@
 #include "MockContentFilter.h"
 #endif
 
+#if ENABLE(WEB_AUDIO)
+#include "AudioContext.h"
+#endif
+
 using JSC::CodeBlock;
 using JSC::FunctionExecutable;
 using JSC::JSFunction;
@@ -2586,6 +2590,33 @@ bool Internals::elementIsBlockingDisplaySleep(Element* element) const
 }
 
 #endif // ENABLE(VIDEO)
+
+#if ENABLE(WEB_AUDIO)
+void Internals::setAudioContextRestrictions(AudioContext* context, const String &restrictionsString, ExceptionCode &ec)
+{
+    if (!context) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    AudioContext::BehaviorRestrictions restrictions = context->behaviorRestrictions();
+    context->removeBehaviorRestriction(restrictions);
+
+    restrictions = HTMLMediaSession::NoRestrictions;
+
+    Vector<String> restrictionsArray;
+    restrictionsString.split(',', false, restrictionsArray);
+    for (auto& restrictionString : restrictionsArray) {
+        if (equalIgnoringCase(restrictionString, "NoRestrictions"))
+            restrictions |= AudioContext::NoRestrictions;
+        if (equalIgnoringCase(restrictionString, "RequireUserGestureForAudioStart"))
+            restrictions |= AudioContext::RequireUserGestureForAudioStartRestriction;
+        if (equalIgnoringCase(restrictionString, "RequirePageConsentForAudioStart"))
+            restrictions |= AudioContext::RequirePageConsentForAudioStartRestriction;
+    }
+    context->addBehaviorRestriction(restrictions);
+}
+#endif
 
 void Internals::simulateSystemSleep() const
 {

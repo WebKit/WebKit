@@ -469,8 +469,7 @@ void AudioBufferSourceNode::startPlaying(BufferPlaybackMode playbackMode, double
 {
     ASSERT(isMainThread());
 
-    if (ScriptController::processingUserGesture())
-        context()->removeBehaviorRestriction(AudioContext::RequireUserGestureForAudioStartRestriction);
+    context()->nodeWillBeginPlayback();
 
     if (m_playbackState != UNSCHEDULED_STATE) {
         ec = INVALID_STATE_ERR;

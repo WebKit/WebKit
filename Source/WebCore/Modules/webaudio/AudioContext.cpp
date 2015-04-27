@@ -985,18 +985,64 @@ ScriptExecutionContext* AudioContext::scriptExecutionContext() const
     return m_isStopScheduled ? 0 : ActiveDOMObject::scriptExecutionContext();
 }
 
-void AudioContext::startRendering()
+void AudioContext::nodeWillBeginPlayback()
 {
-    if (ScriptController::processingUserGesture())
+    // Called by scheduled AudioNodes when clients schedule their start times.
+    // Prior to the introduction of suspend(), resume(), and stop(), starting
+    // a scheduled AudioNode would remove the user-gesture restriction, if present,
+    // and would thus unmute the context. Now that AudioContext stays in the
+    // "suspended" state if a user-gesture restriction is present, starting a
+    // schedule AudioNode should set the state to "running", but only if the
+    // user-gesture restriction is set.
+    if (userGestureRequiredForAudioStart())
+        startRendering();
+}
+
+bool AudioContext::willBeginPlayback()
+{
+    if (userGestureRequiredForAudioStart()) {
+        if (!ScriptController::processingUserGesture())
+            return false;
         removeBehaviorRestriction(AudioContext::RequireUserGestureForAudioStartRestriction);
+    }
 
     if (pageConsentRequiredForAudioStart()) {
         Page* page = document()->page();
-        if (page && !page->canStartMedia())
+        if (page && !page->canStartMedia()) {
             document()->addMediaCanStartListener(this);
-        else
-            removeBehaviorRestriction(AudioContext::RequirePageConsentForAudioStartRestriction);
+            return false;
+        }
+        removeBehaviorRestriction(AudioContext::RequirePageConsentForAudioStartRestriction);
     }
+
+    return m_mediaSession->clientWillBeginPlayback();
+}
+
+bool AudioContext::willPausePlayback()
+{
+    if (userGestureRequiredForAudioStart()) {
+        if (!ScriptController::processingUserGesture())
+            return false;
+        removeBehaviorRestriction(AudioContext::RequireUserGestureForAudioStartRestriction);
+    }
+
+    if (pageConsentRequiredForAudioStart()) {
+        Page* page = document()->page();
+        if (page && !page->canStartMedia()) {
+            document()->addMediaCanStartListener(this);
+            return false;
+        }
+        removeBehaviorRestriction(AudioContext::RequirePageConsentForAudioStartRestriction);
+    }
+    
+    return m_mediaSession->clientWillPausePlayback();
+}
+
+void AudioContext::startRendering()
+{
+    if (!willBeginPlayback())
+        return;
+
     destination()->startRendering();
     setState(State::Running);
 }
@@ -1077,8 +1123,10 @@ void AudioContext::suspendContext(std::function<void()> successCallback, std::fu
 
     addReaction(State::Suspended, successCallback);
 
-    if (!m_mediaSession->clientWillPausePlayback())
+    if (!willPausePlayback())
         return;
+
+    lazyInitialize();
 
     RefPtr<AudioContext> strongThis(this);
     m_destinationNode->suspend([strongThis] {
@@ -1108,8 +1156,10 @@ void AudioContext::resumeContext(std::function<void()> successCallback, std::fun
 
     addReaction(State::Running, successCallback);
 
-    if (!m_mediaSession->clientWillBeginPlayback())
+    if (!willBeginPlayback())
         return;
+
+    lazyInitialize();
 
     RefPtr<AudioContext> strongThis(this);
     m_destinationNode->resume([strongThis] {
@@ -1133,6 +1183,8 @@ void AudioContext::closeContext(std::function<void()> successCallback, std::func
 
     addReaction(State::Closed, successCallback);
 
+    lazyInitialize();
+
     RefPtr<AudioContext> strongThis(this);
     m_destinationNode->close([strongThis, successCallback] {
         strongThis->setState(State::Closed);
@@ -1152,6 +1204,8 @@ void AudioContext::suspendPlayback()
         return;
     }
 
+    lazyInitialize();
+
     RefPtr<AudioContext> strongThis(this);
     m_destinationNode->suspend([strongThis] {
         bool interrupted = strongThis->m_mediaSession->state() == MediaSession::Interrupted;
@@ -1168,6 +1222,11 @@ void AudioContext::mayResumePlayback(bool shouldResume)
         setState(State::Suspended);
         return;
     }
+
+    if (!willBeginPlayback())
+        return;
+
+    lazyInitialize();
 
     RefPtr<AudioContext> strongThis(this);
     m_destinationNode->resume([strongThis] {

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+</head>
+
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description('Basic tests for AudioNode API.');
+
+var context = null;
+var node = null;
+var calledResumeWithUserGesture = false;
+
+function runTest() {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    window.jsTestIsAsync = true;
+
+    context = new webkitAudioContext();
+
+    if (window.internals)
+        internals.setAudioContextRestrictions(context, 'RequireUserGestureForAudioStart');
+
+    shouldBe('context.state', '"suspended"');
+
+    node = context.createBufferSource();
+    evalAndLog('node.connect(context.destination)');
+
+    shouldBe('context.state', '"suspended"');
+
+    debug('Calling context.resume() without a user gesture');
+    context.resume().then(noUserGestureResumeSucceeded, noUserGestureResumeFailed);
+
+    debug('Wait for 100ms');
+    window.setTimeout(function() {
+        runWithKeyDown(function() {
+            debug('Calling context.resume() with a user gesture');
+            context.resume().then(resumeSucceeded, resumeFailed);
+            calledResumeWithUserGesture = true;
+        });
+    }, 100);
+}
+
+function noUserGestureResumeFailed() {
+    testFailed('context.resume() (without a user gesture) promise rejected');
+    finishJSTest();
+}
+
+function noUserGestureResumeSucceeded() {
+    if (!calledResumeWithUserGesture) {
+        testFailed('context.resume() (without a user gesture) suceeded incorrectly.');
+        finishJSTest();
+        return;
+    }
+    testPassed('context.resume() (without a user gesture) promise resolved');
+    shouldBe('context.state', '"running"');
+}
+
+function resumeFailed() {
+    testFailed('context.resume() (with a user gesture) promise rejected');
+    finishJSTest();
+}
+
+function resumeSucceeded() {
+    testPassed('context.resume() (with a user gesture) promise resolved');
+    shouldBe('context.state', '"running"');
+    finishJSTest();
+}
+
+runTest();
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

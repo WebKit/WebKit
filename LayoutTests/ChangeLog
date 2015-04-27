@@ -1,3 +1,17 @@
+2015-04-27  Jer Noble  <jer.noble@apple.com>
+
+        [WebAudio] AudioContext does not remove user-gesture restriction during resume()
+        https://bugs.webkit.org/show_bug.cgi?id=144211
+
+        Reviewed by Eric Carlson.
+
+        * webaudio/audiocontext-restriction-audiobuffersourcenode-start-expected.txt: Added.
+        * webaudio/audiocontext-restriction-audiobuffersourcenode-start.html: Added.
+        * webaudio/audiocontext-restriction-expected.txt: Added.
+        * webaudio/audiocontext-restriction.html: Added.
+        * webaudio/resources/audio-testing.js:
+        (runWithKeyDown):
+
 2015-04-27  Alexey Proskuryakov  <ap@apple.com>
 
         rdar://problem/16678392 Page visibility tests are broken in Yosemite

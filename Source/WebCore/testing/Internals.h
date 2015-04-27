@@ -41,6 +41,7 @@
 
 namespace WebCore {
 
+class AudioContext;
 class ClientRect;
 class ClientRectList;
 class DOMStringList;
@@ -370,6 +371,10 @@ public:
     void setMediaSessionRestrictions(const String& mediaType, const String& restrictions, ExceptionCode&);
     void postRemoteControlCommand(const String&, ExceptionCode&);
     bool elementIsBlockingDisplaySleep(Element*) const;
+#endif
+
+#if ENABLE(WEB_AUDIO)
+    void setAudioContextRestrictions(AudioContext*, const String& restrictions, ExceptionCode&);
 #endif
 
     void simulateSystemSleep() const;
