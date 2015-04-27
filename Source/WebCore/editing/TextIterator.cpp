@@ -501,6 +501,20 @@ static bool hasVisibleTextNode(RenderText& renderer)
     return false;
 }
 
+static unsigned textNodeOffsetInFlow(const Text& firstTextNodeInRange)
+{
+    // Calculate the text offset for simple lines.
+    RenderObject* renderer = firstTextNodeInRange.renderer();
+    if (!renderer)
+        return 0;
+    unsigned textOffset = 0;
+    for (renderer = renderer->previousSibling(); renderer; renderer = renderer->previousSibling()) {
+        if (is<RenderText>(renderer))
+            textOffset += downcast<RenderText>(renderer)->textLength();
+    }
+    return textOffset;
+}
+
 bool TextIterator::handleTextNode()
 {
     Text& textNode = downcast<Text>(*m_node);
@@ -551,8 +565,8 @@ bool TextIterator::handleTextNode()
         unsigned endPosition = (m_node == m_endContainer) ? static_cast<unsigned>(m_endOffset) : rendererText.length();
         const auto& blockFlow = downcast<RenderBlockFlow>(*renderer.parent());
         if (!m_flowRunResolverCache || &m_flowRunResolverCache->flow() != &blockFlow) {
+            m_previousTextLengthInFlow = m_flowRunResolverCache ? 0 : textNodeOffsetInFlow(textNode);
             m_flowRunResolverCache = std::make_unique<SimpleLineLayout::RunResolver>(blockFlow, *layout);
-            m_previousTextLengthInFlow = 0;
         } else if (previousTextNode && previousTextNode != &textNode) {
             // Simple line layout run positions are all absolute to the parent flow.
             // Offsetting is required when multiple renderers are present.

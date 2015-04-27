@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+  <title>This tests that range returns the right text when the selection starts from a sibling node.</title>
+  <script src="../../resources/js-test-pre.js"></script>
+  <script>
+    if (window.testRunner)
+      testRunner.dumpAsText();
+  </script>
+</head>
+<body>
+<div id=flow>moobar<br>foobar1<br>foobar2<br>foobar3<br>foobar4<br>foobar5</div>
+<script>
+  var f1 = document.getElementById("flow").firstChild.nextSibling.nextSibling;
+  var f2 = f1.nextSibling.nextSibling;
+  var f3 = f2.nextSibling.nextSibling;
+  var f4 = f3.nextSibling.nextSibling;
+  var f5 = f4.nextSibling.nextSibling;
+  
+  if (window.internals) {
+	var range1 = document.createRange();
+    range1.setStart(f1, 0);
+    range1.setEnd(f1, 7);
+    shouldBe("internals.rangeAsText(range1)", "'foobar1'");
+
+	var range2 = document.createRange();
+    range2.setStart(f2, 2);
+    range2.setEnd(f2, 5);
+    shouldBe("internals.rangeAsText(range2)", "'oba'");
+
+	var range3 = document.createRange();
+    range3.setStart(f3, 4);
+    range3.setEnd(f3, 5);
+    shouldBe("internals.rangeAsText(range3)", "'a'");
+
+	var range4 = document.createRange();
+    range4.setStart(f4, 0);
+    range4.setEnd(f4, 7);
+    shouldBe("internals.rangeAsText(range4)", "'foobar4'");
+
+	var range5 = document.createRange();
+    range5.setStart(f5, 7);
+    range5.setEnd(f5, 7);
+    shouldBe("internals.rangeAsText(range5)", "''");
+  }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

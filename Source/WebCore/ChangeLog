@@ -1,3 +1,24 @@
+2015-04-27  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Wrong text offsetting when range does not start from the first renderer.
+        https://bugs.webkit.org/show_bug.cgi?id=144167
+        rdar://problem/20639857
+
+        Reviewed by Simon Fraser.
+
+        This patch ensures that TextIterator returns the right text when the input range starts
+        from a sibling node.
+
+        TextIterator::m_previousTextLengthInFlow keeps track of the current node offset from the parent.
+        It is required to map simple line layout runs to RenderText positions.
+        This patch sets the offset value when the iteration start with a sibling node.
+
+        Test: fast/text/range-text-with-simple-line-layout.html
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::TextIterator):
+        (WebCore::TextIterator::handleTextNode):
+
 2015-04-27  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r183393.
