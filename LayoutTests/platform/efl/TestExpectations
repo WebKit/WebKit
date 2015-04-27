@@ -73,6 +73,9 @@ fast/events/mouse-force-changed.html [ Skip ]
 fast/events/mouse-force-down.html [ Skip ]
 fast/events/mouse-force-up.html [ Skip ]
 
+# EFL WebKitTestRunner doesn't support this test based on emoji font
+editing/selection/extend-by-character-007.html [ Skip ]
+
 # ----------------------------------------
 # Tests which also fail in other platforms
 # ----------------------------------------
@@ -2241,5 +2244,3 @@ webkit.org/b/143878 http/tests/navigation/postredirect-goback1.html [ Failure ]
 webkit.org/b/144004 compositing/animation/matrix-animation.html [ ImageOnlyFailure ]
 
 webkit.org/b/144006 compositing/backing/solid-color-with-paints-into-ancestor.html [ ImageOnlyFailure ]
-
-webkit.org/b/144246 editing/selection/extend-by-character-007.html [ Missing ]

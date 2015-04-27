@@ -39,6 +39,15 @@
 
 2015-04-26  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
+        [EFL] Unreviewed gardening fix.
+
+        Mark editing/selection/extend-by-character-007.html to skip
+        instead of missing. It is not supported by EFL port yet.
+
+        * platform/efl/TestExpectations:
+
+2015-04-26  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
         [EFL] Unreviewed EFL gardening on 27th April.
 
         Unskip 2 tests which have been passed since r183368.
