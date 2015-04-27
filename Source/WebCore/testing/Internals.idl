@@ -336,6 +336,7 @@ enum ResourceLoadPriority {
     [Conditional=VIDEO] void applicationWillEnterForeground();
     [Conditional=VIDEO] void applicationWillEnterBackground();
     [Conditional=VIDEO, RaisesException] void setMediaSessionRestrictions(DOMString mediaType, DOMString restrictions);
+    [Conditional=VIDEO, RaisesException] void setMediaElementRestrictions(HTMLMediaElement element, DOMString restrictions);
     [Conditional=WEB_AUDIO, RaisesException] void setAudioContextRestrictions(AudioContext context, DOMString restrictions);
     [Conditional=VIDEO, RaisesException] void postRemoteControlCommand(DOMString command);
     

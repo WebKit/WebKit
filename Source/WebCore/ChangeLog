@@ -1,5 +1,47 @@
 2015-04-27  Jer Noble  <jer.noble@apple.com>
 
+        Add a setting & restriction which prevents non-interactivte playback of audible media elements.
+        https://bugs.webkit.org/show_bug.cgi?id=143486
+
+        Reviewed by Eric Carlson.
+
+        Tests: media/audio-playback-restriction-autoplay.html
+               media/audio-playback-restriction-play.html
+
+        To allow clients who want to allow non-user-interactive video-only playback, but still
+        restrict playback of audible media elements, add a new setting and matching restriction
+        which disallows playback of media elements containing audible characteristics.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Set the RequireUserGestureForAudioRateChange
+            restriction if the audioPlaybackRequiresUserGesture() setting is set.
+        (WebCore::HTMLMediaElement::parseAttribute): Drive-by fix. Move the opening brace
+            out of the #if, as this confuses the heck out of diff and makes all subsequent
+            changes appear to be within HTMLMediaElement::parseAttribute.
+        (WebCore::HTMLMediaElement::autoplay): Remove the restriction check from within autoplay().
+            It is checked again immediately after every autoplay() call site.
+        (WebCore::HTMLMediaElement::pauseInternal): Remove the iOS-only #if.
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddAudioTrack): Check whether playback
+            is permitted, and if not, pause.
+        (WebCore::HTMLMediaElement::mediaPlayerCharacteristicChanged): Ditto.
+        (WebCore::HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture): Ditto.
+        * html/HTMLMediaSession.cpp:
+        (WebCore::restrictionName): Since BehaviorRestrictions is a bitfield, check each bit
+            individually.
+        (WebCore::HTMLMediaSession::removeBehaviorRestriction): Handle RequireUserGestureForAudioRateChange.
+        (WebCore::HTMLMediaSession::playbackPermitted): Check whether the element has audio and 
+            audio playback is restricted, and return false if so.
+        * html/HTMLMediaSession.h:
+        * page/Settings.cpp:
+        * page/Settings.in:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setMediaSessionRestrictions): Added. 
+        (WebCore::Internals::setMediaElementRestrictions): Added.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+2015-04-27  Jer Noble  <jer.noble@apple.com>
+
         [WebAudio] AudioContext does not remove user-gesture restriction during resume()
         https://bugs.webkit.org/show_bug.cgi?id=144211
 

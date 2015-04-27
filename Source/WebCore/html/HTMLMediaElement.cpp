@@ -364,6 +364,9 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     }
 #endif // !PLATFORM(IOS)
 
+    if (settings && settings->audioPlaybackRequiresUserGesture())
+        m_mediaSession->addBehaviorRestriction(HTMLMediaSession::RequireUserGestureForAudioRateChange);
+
 #if ENABLE(VIDEO_TRACK)
     if (document.page())
         m_captionDisplayMode = document.page()->group().captionPreferences()->captionDisplayMode();
@@ -524,11 +527,12 @@ void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomicStr
 #if PLATFORM(IOS)
         // Note, unless the restriction on requiring user action has been removed,
         // do not begin downloading data on iOS.
-        if (!value.isNull() && m_mediaSession->dataLoadingPermitted(*this)) {
+        if (!value.isNull() && m_mediaSession->dataLoadingPermitted(*this))
 #else
         // Trigger a reload, as long as the 'src' attribute is present.
-        if (!value.isNull()) {
+        if (!value.isNull())
 #endif
+        {
             clearMediaPlayer(LoadMediaResource);
             scheduleDelayedAction(LoadMediaResource);
         }
@@ -2708,16 +2712,6 @@ bool HTMLMediaElement::ended() const
 
 bool HTMLMediaElement::autoplay() const
 {
-#if PLATFORM(IOS)
-    // Unless the restriction on requiring user actions has been lifted, we do not
-    // allow playback to start just because the page has "autoplay". They are either
-    // lifted through Settings, or once the user explictly calls load() or play()
-    // because they have OK'ed us loading data. This allows playback to continue if
-    // the URL is changed while the movie is playing.
-    if (!m_mediaSession->playbackPermitted(*this) || !m_mediaSession->dataLoadingPermitted(*this))
-        return false;
-#endif
-
     return fastHasAttribute(autoplayAttr);
 }
 
@@ -2810,12 +2804,10 @@ void HTMLMediaElement::pauseInternal()
     
     // 4.8.10.9. Playing the media resource
     if (!m_player || m_networkState == NETWORK_EMPTY) {
-#if PLATFORM(IOS)
         // Unless the restriction on media requiring user action has been lifted
         // don't trigger loading if a script calls pause().
         if (!m_mediaSession->playbackPermitted(*this))
             return;
-#endif
         scheduleDelayedAction(LoadMediaResource);
     }
 
@@ -3212,6 +3204,9 @@ double HTMLMediaElement::percentLoaded() const
 
 void HTMLMediaElement::mediaPlayerDidAddAudioTrack(PassRefPtr<AudioTrackPrivate> prpTrack)
 {
+    if (isPlaying() && !m_mediaSession->playbackPermitted(*this))
+        pauseInternal();
+
     if (!RuntimeEnabledFeatures::sharedFeatures().webkitVideoTrackEnabled())
         return;
 
@@ -4349,6 +4344,9 @@ void HTMLMediaElement::mediaPlayerCharacteristicChanged(MediaPlayer*)
         mediaControls()->reset();
     if (renderer())
         renderer()->updateFromElement();
+
+    if (isPlaying() && !m_mediaSession->playbackPermitted(*this))
+        pauseInternal();
 
     document().updateIsPlayingMedia();
 
@@ -5883,12 +5881,15 @@ double HTMLMediaElement::mediaPlayerRequestedPlaybackRate() const
 
 void HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture()
 {
-    m_mediaSession->removeBehaviorRestriction(HTMLMediaSession::RequireUserGestureForLoad);
-    m_mediaSession->removeBehaviorRestriction(HTMLMediaSession::RequireUserGestureForRateChange);
-    m_mediaSession->removeBehaviorRestriction(HTMLMediaSession::RequireUserGestureForFullscreen);
+    HTMLMediaSession::BehaviorRestrictions restrictionsToRemove = HTMLMediaSession::RequireUserGestureForLoad
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    m_mediaSession->removeBehaviorRestriction(HTMLMediaSession::RequireUserGestureToShowPlaybackTargetPicker);
+        | HTMLMediaSession::RequireUserGestureToShowPlaybackTargetPicker
 #endif
+        | HTMLMediaSession::RequireUserGestureForLoad
+        | HTMLMediaSession::RequireUserGestureForRateChange
+        | HTMLMediaSession::RequireUserGestureForAudioRateChange
+        | HTMLMediaSession::RequireUserGestureForFullscreen;
+    m_mediaSession->removeBehaviorRestriction(restrictionsToRemove);
 }
 
 #if ENABLE(MEDIA_SOURCE)

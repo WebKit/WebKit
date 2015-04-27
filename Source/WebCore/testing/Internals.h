@@ -50,6 +50,7 @@ class Document;
 class Element;
 class File;
 class Frame;
+class HTMLMediaElement;
 class InspectorFrontendChannelDummy;
 class InspectorFrontendClientDummy;
 class InternalSettings;
@@ -369,6 +370,7 @@ public:
     void applicationWillEnterForeground() const;
     void applicationWillEnterBackground() const;
     void setMediaSessionRestrictions(const String& mediaType, const String& restrictions, ExceptionCode&);
+    void setMediaElementRestrictions(HTMLMediaElement*, const String& restrictions, ExceptionCode&);
     void postRemoteControlCommand(const String&, ExceptionCode&);
     bool elementIsBlockingDisplaySleep(Element*) const;
 #endif

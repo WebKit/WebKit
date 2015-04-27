@@ -88,11 +88,13 @@ public:
         RequireUserGestureToShowPlaybackTargetPicker = 1 << 5,
         WirelessVideoPlaybackDisabled =  1 << 6,
 #endif
+        RequireUserGestureForAudioRateChange = 1 << 7,
     };
     typedef unsigned BehaviorRestrictions;
 
-    void addBehaviorRestriction(BehaviorRestrictions);
-    void removeBehaviorRestriction(BehaviorRestrictions);
+    WEBCORE_EXPORT BehaviorRestrictions behaviorRestrictions() const { return m_restrictions; }
+    WEBCORE_EXPORT void addBehaviorRestriction(BehaviorRestrictions);
+    WEBCORE_EXPORT void removeBehaviorRestriction(BehaviorRestrictions);
 
 #if ENABLE(MEDIA_SOURCE)
     size_t maximumMediaSourceBufferSize(const SourceBuffer&) const;

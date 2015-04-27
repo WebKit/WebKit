@@ -51,13 +51,20 @@
 namespace WebCore {
 
 #if !LOG_DISABLED
-static const char* restrictionName(HTMLMediaSession::BehaviorRestrictions restriction)
+static String restrictionName(HTMLMediaSession::BehaviorRestrictions restriction)
 {
-#define CASE(restriction) case HTMLMediaSession::restriction: return #restriction
-    switch (restriction) {
+    StringBuilder restrictionBuilder;
+#define CASE(restrictionType) \
+    if (restriction & HTMLMediaSession::restrictionType) { \
+        if (!restrictionBuilder.isEmpty()) \
+            restrictionBuilder.append(", "); \
+        restrictionBuilder.append(#restrictionType); \
+    } \
+
     CASE(NoRestrictions);
     CASE(RequireUserGestureForLoad);
     CASE(RequireUserGestureForRateChange);
+    CASE(RequireUserGestureForAudioRateChange);
     CASE(RequireUserGestureForFullscreen);
     CASE(RequirePageConsentToLoadMedia);
     CASE(RequirePageConsentToResumeMedia);
@@ -65,10 +72,9 @@ static const char* restrictionName(HTMLMediaSession::BehaviorRestrictions restri
     CASE(RequireUserGestureToShowPlaybackTargetPicker);
     CASE(WirelessVideoPlaybackDisabled);
 #endif
-    }
+    CASE(RequireUserGestureForAudioRateChange);
 
-    ASSERT_NOT_REACHED();
-    return "";
+    return restrictionBuilder.toString();
 }
 #endif
 
@@ -101,19 +107,24 @@ void HTMLMediaSession::unregisterWithDocument(const HTMLMediaElement& element)
 
 void HTMLMediaSession::addBehaviorRestriction(BehaviorRestrictions restriction)
 {
-    LOG(Media, "HTMLMediaSession::addBehaviorRestriction - adding %s", restrictionName(restriction));
+    LOG(Media, "HTMLMediaSession::addBehaviorRestriction - adding %s", restrictionName(restriction).utf8().data());
     m_restrictions |= restriction;
 }
 
 void HTMLMediaSession::removeBehaviorRestriction(BehaviorRestrictions restriction)
 {
-    LOG(Media, "HTMLMediaSession::removeBehaviorRestriction - removing %s", restrictionName(restriction));
+    LOG(Media, "HTMLMediaSession::removeBehaviorRestriction - removing %s", restrictionName(restriction).utf8().data());
     m_restrictions &= ~restriction;
 }
 
-bool HTMLMediaSession::playbackPermitted(const HTMLMediaElement&) const
+bool HTMLMediaSession::playbackPermitted(const HTMLMediaElement& element) const
 {
     if (m_restrictions & RequireUserGestureForRateChange && !ScriptController::processingUserGesture()) {
+        LOG(Media, "HTMLMediaSession::playbackPermitted - returning FALSE");
+        return false;
+    }
+
+    if (m_restrictions & RequireUserGestureForAudioRateChange && element.hasAudio() && !ScriptController::processingUserGesture()) {
         LOG(Media, "HTMLMediaSession::playbackPermitted - returning FALSE");
         return false;
     }
