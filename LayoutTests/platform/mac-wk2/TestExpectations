@@ -504,12 +504,7 @@ webkit.org/b/138736 http/tests/appcache/auth.html [ Skip ]
 ########################################
 ### START OF (7) New WebKit2-only failures in Yosemite
 
-# FIXME: Needs bugzilla (<rdar://problem/16678392>). Perhaps skip these tests?
-[ Yosemite+ ] fast/events/page-visibility-iframe-delete-test.html [ Timeout ]
-[ Yosemite+ ] fast/events/page-visibility-iframe-move-test.html [ Timeout ]
-[ Yosemite+ ] fast/events/page-visibility-iframe-propagation-test.html [ Timeout ]
-[ Yosemite+ ] fast/events/page-visibility-transition-test.html [ Timeout ]
-media/video-background-tab-playback.html [ Failure ]
+media/video-background-tab-playback.html [ Pass Failure ]
 
 webkit.org/b/138097 [ Yosemite ] inspector-protocol/debugger/setPauseOnExceptions-uncaught.html [ Pass Failure Timeout ]
 

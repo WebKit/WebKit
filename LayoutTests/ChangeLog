@@ -1,3 +1,11 @@
+2015-04-27  Alexey Proskuryakov  <ap@apple.com>
+
+        rdar://problem/16678392 Page visibility tests are broken in Yosemite
+
+        * platform/mac-wk2/TestExpectations: They don't seem to be broken any more, unskipping.
+        Maybe <http://trac.webkit.org/changeset/181866> fixed them?
+        Also updated the next line (media/video-background-tab-playback.html), as it didn't match what bots see now.
+
 2015-04-27  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Wrong text offsetting when range does not start from the first renderer.
