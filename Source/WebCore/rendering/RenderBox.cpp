@@ -4542,8 +4542,6 @@ bool RenderBox::percentageLogicalHeightIsResolvableFromBlock(const RenderBlock* 
 bool RenderBox::hasDefiniteLogicalHeight() const
 {
     const Length& logicalHeight = style().logicalHeight();
-    if (logicalHeight.isIntrinsicOrAuto())
-        return false;
     if (logicalHeight.isFixed())
         return true;
     // The size of the containing block of an absolutely positioned element is always definite with respect to that
@@ -4554,6 +4552,8 @@ bool RenderBox::hasDefiniteLogicalHeight() const
     if (hasOverrideContainingBlockLogicalHeight())
         return overrideContainingBlockContentLogicalHeight() != -1;
 #endif
+    if (logicalHeight.isIntrinsicOrAuto())
+        return false;
 
     return percentageLogicalHeightIsResolvable(this);
 }

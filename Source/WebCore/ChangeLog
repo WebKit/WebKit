@@ -1,3 +1,18 @@
+2015-04-26  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] LayoutBox::hasDefiniteLogicalHeight() should consider abspos boxes as definite
+        https://bugs.webkit.org/show_bug.cgi?id=144144
+
+        Reviewed by Darin Adler.
+
+        Change order in hasDefiniteLogicalHeight() ifs to consider definite
+        absolutely positioned elements.
+
+        Test: fast/css-grid-layout/percent-track-breadths-regarding-container-size.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::hasDefiniteLogicalHeight):
+
 2015-04-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         SVGFilterBuilder should drive the builtin sourceAlpha from the passed sourceGraphic

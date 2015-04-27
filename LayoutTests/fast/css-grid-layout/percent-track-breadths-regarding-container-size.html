@@ -23,6 +23,10 @@
     height: 50%;
 }
 
+.absolutelyPositioned {
+    position: absolute;
+}
+
 .indefiniteSize {
     width: -webkit-fit-content;
     height: auto;
@@ -110,6 +114,22 @@
             <div class="firstRowFirstColumn sizedToGridArea" data-expected-width="100" data-expected-height="200">XX</div>
             <div class="firstRowSecondColumn sizedToGridArea" data-expected-width="250" data-expected-height="200">XXXXX</div>
             <div class="firstRowThirdColumn sizedToGridArea" data-expected-width="150" data-expected-height="200">XXX</div>
+        </div>
+    </div>
+
+    <div class="indefiniteSize">
+        <div class="grid absolutelyPositioned">
+            <div class="firstRowFirstColumn sizedToGridArea" data-expected-width="0" data-expected-height="0">XX</div>
+            <div class="firstRowSecondColumn sizedToGridArea" data-expected-width="0" data-expected-height="0">XXXXX</div>
+            <div class="firstRowThirdColumn sizedToGridArea" data-expected-width="0" data-expected-height="0">XXX</div>
+        </div>
+    </div>
+
+    <div class="unconstrainedContainer">
+        <div class="grid absolutelyPositioned">
+            <div class="firstRowFirstColumn sizedToGridArea" data-expected-width="0" data-expected-height="0">XX</div>
+            <div class="firstRowSecondColumn sizedToGridArea" data-expected-width="0" data-expected-height="0">XXXXX</div>
+            <div class="firstRowThirdColumn sizedToGridArea" data-expected-width="0" data-expected-height="0">XXX</div>
         </div>
     </div>
 
