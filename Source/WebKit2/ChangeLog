@@ -1,3 +1,17 @@
+2015-04-24  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Context menus are not reshown after an orientation change
+
+        <https://bugs.webkit.org/show_bug.cgi?id=144143>
+        <rdar://problem/20679931>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/ios/WKActionSheet.mm:
+        (-[WKActionSheet updateSheetPosition]):
+        Return early if we're still in a rotation, not if the rotation is
+        complete.
+
 2015-04-27  Zan Dobersek  <zdobersek@igalia.com>
 
         [WK2] API::Dictionary creation functions should return Ref<>

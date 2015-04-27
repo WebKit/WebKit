@@ -185,7 +185,7 @@
 
     BOOL isBeingPresented = [presentedViewController presentingViewController] || [self presentingViewController];
 
-    if (!_isRotating || !_readyToPresentAfterRotation || isBeingPresented)
+    if (_isRotating || !_readyToPresentAfterRotation || isBeingPresented)
         return;
 
     CGRect presentationRect = [_sheetDelegate initialPresentationRectInHostViewForSheet];
