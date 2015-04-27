@@ -2398,9 +2398,7 @@ String WebPage::userAgent(const URL& webCoreURL) const
 String WebPage::userAgent(WebFrame* frame, const URL& webcoreURL) const
 {
     if (frame && m_loaderClient.client().userAgentForURL) {
-        RefPtr<API::URL> url = API::URL::create(webcoreURL);
-
-        API::String* apiString = m_loaderClient.userAgentForURL(frame, url.get());
+        API::String* apiString = m_loaderClient.userAgentForURL(frame, API::URL::create(webcoreURL).ptr());
         if (apiString)
             return apiString->string();
     }

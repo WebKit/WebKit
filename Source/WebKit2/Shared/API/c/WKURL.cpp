@@ -37,12 +37,12 @@ WKTypeID WKURLGetTypeID()
 
 WKURLRef WKURLCreateWithUTF8CString(const char* string)
 {
-    return toAPI(API::URL::create(String::fromUTF8(string)).leakRef());
+    return toAPI(&API::URL::create(String::fromUTF8(string)).leakRef());
 }
 
 WKURLRef WKURLCreateWithBaseURL(WKURLRef baseURL, const char* relative)
 {
-    return toAPI(API::URL::create(toImpl(baseURL), String::fromUTF8(relative)).leakRef());
+    return toAPI(&API::URL::create(toImpl(baseURL), String::fromUTF8(relative)).leakRef());
 }
 
 WKStringRef WKURLCopyString(WKURLRef url)

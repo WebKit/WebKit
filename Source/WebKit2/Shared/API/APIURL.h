@@ -29,26 +29,26 @@
 #include "APIObject.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/URL.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
 namespace API {
 
 class URL : public ObjectImpl<Object::Type::URL> {
 public:
-    static PassRefPtr<URL> create(const WTF::String& string)
+    static Ref<URL> create(const WTF::String& string)
     {
-        return adoptRef(new URL(string));
+        return adoptRef(*new URL(string));
     }
 
-    static PassRefPtr<URL> create(const URL* baseURL, const WTF::String& relativeURL)
+    static Ref<URL> create(const URL* baseURL, const WTF::String& relativeURL)
     {
         ASSERT(baseURL);
         baseURL->parseURLIfNecessary();
         auto absoluteURL = std::make_unique<WebCore::URL>(*baseURL->m_parsedURL.get(), relativeURL);
         const WTF::String& absoluteURLString = absoluteURL->string();
 
-        return adoptRef(new URL(WTF::move(absoluteURL), absoluteURLString));
+        return adoptRef(*new URL(WTF::move(absoluteURL), absoluteURLString));
     }
 
     bool isNull() const { return m_string.isNull(); }

@@ -1,5 +1,31 @@
 2015-04-27  Zan Dobersek  <zdobersek@igalia.com>
 
+        [WK2] API::URL creation functions should return Ref<>
+        https://bugs.webkit.org/show_bug.cgi?id=144219
+
+        Reviewed by Darin Adler.
+
+        Have API::URL creation functions return Ref<>.
+        The call-sites are also updated, using and operating in the
+        returned Ref<> object, where possible.
+
+        * Shared/API/APIURL.h:
+        (API::URL::create):
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toCopiedURLAPI):
+        * Shared/API/c/WKURL.cpp:
+        (WKURLCreateWithUTF8CString):
+        (WKURLCreateWithBaseURL):
+        * UIProcess/API/gtk/WebKitWebResource.cpp:
+        (webkit_web_resource_get_data):
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::didChangeIconForPageURL):
+        (WebKit::WebIconDatabase::notifyIconDataReadyForPageURL):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::userAgent):
+
+2015-04-27  Zan Dobersek  <zdobersek@igalia.com>
+
         [WK2] API::String creation functions should return Ref<>
         https://bugs.webkit.org/show_bug.cgi?id=144218
 
