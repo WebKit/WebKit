@@ -1,3 +1,13 @@
+2015-04-24  Philippe Normand  <pnormand@igalia.com>
+
+        [JHBuild] Move to upstream OpenWebRTC
+        https://bugs.webkit.org/show_bug.cgi?id=144145
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/mediastream/openwebrtc/OpenWebRTCUtilities.cpp:
+        (WebCore::initializeOpenWebRTC): Update with new owr_init API.
+
 2015-04-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Add initial implementation of NetworkProcess disk cache

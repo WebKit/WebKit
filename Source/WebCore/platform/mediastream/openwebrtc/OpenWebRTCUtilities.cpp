@@ -44,7 +44,7 @@ namespace WebCore {
 
 void initializeOpenWebRTC()
 {
-    owr_init_with_main_context(g_main_context_default());
+    owr_init(g_main_context_default());
 }
 
 }

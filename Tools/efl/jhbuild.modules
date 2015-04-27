@@ -256,6 +256,7 @@
             repo="gstreamer"
             hash="sha256:49cd9e8f23c416b1607b43837a09833fa03e0106929d81ead2ddfde6c0ade44b"
             md5sum="0c42eca8f9e4efd56d2ce8e9249ce4a1">
+      <patch file="gst-plugins-base-rtp-rtcpbuffer-fix-typo-in-enum.patch" strip="1"/>
     </branch>
   </autotools>
 
@@ -343,14 +344,14 @@
     </branch>
   </autotools>
 
-  <autotools id="openwebrtc" autogenargs="--enable-bridge=no">
+  <autotools id="openwebrtc" autogenargs="--enable-bridge=no --enable-owr-gst=yes">
     <dependencies>
       <dep package="gst-plugins-openwebrtc"/>
       <dep package="libnice"/>
      </dependencies>
-    <branch repo="github.com" module="WebRTCinWebKit/openwebrtc/archive/1598e6f612d257196db70d0cf930ede94f83497a.tar.gz" checkoutdir="openwebrtc" version="configurable-sinks"
-            hash="sha256:584922ffd4cef9f991e6035bb6d87f6b09ded23e245d1ff15db3c0af9cddcf29"
-            md5sum="1598e6f612d257196db70d0cf930ede94f83497a.tar.gz" size="243435">
+    <branch repo="github.com" module="EricssonResearch/openwebrtc/archive/13516c7f79a0c48bb411464f7613d4b426c70f5b.tar.gz" checkoutdir="openwebrtc" version="13516c7f79a0c48bb411464f7613d4b426c70f5b"
+            hash="sha256:c849d36d97c17a198a5d9c180f13f14c7897c9236e2384ea11029e23b09b59ac"
+            md5sum="13516c7f79a0c48bb411464f7613d4b426c70f5b.tar.gz" size="258936">
     </branch>
   </autotools>
 

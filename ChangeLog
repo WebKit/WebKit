@@ -1,3 +1,13 @@
+2015-04-24  Philippe Normand  <pnormand@igalia.com>
+
+        [JHBuild] Move to upstream OpenWebRTC
+        https://bugs.webkit.org/show_bug.cgi?id=144145
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/FindOpenWebRTC.cmake: Check the presence of the
+        owr-gst library.
+
 2015-04-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement ES6 template literals

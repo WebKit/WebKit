@@ -292,6 +292,7 @@
             repo="gstreamer"
             hash="sha256:49cd9e8f23c416b1607b43837a09833fa03e0106929d81ead2ddfde6c0ade44b"
             md5sum="0c42eca8f9e4efd56d2ce8e9249ce4a1">
+      <patch file="gst-plugins-base-rtp-rtcpbuffer-fix-typo-in-enum.patch" strip="1"/>
     </branch>
   </autotools>
 
@@ -381,12 +382,12 @@
     <branch repo="freedesktop-git" module="libnice/libnice.git" tag="0.1.10" checkoutdir="libnice"/>
   </autotools>
 
-  <autotools id="openwebrtc" autogenargs="--enable-bridge=no">
+  <autotools id="openwebrtc" autogenargs="--enable-bridge=no --enable-owr-gst=yes">
     <dependencies>
       <dep package="gst-plugins-openwebrtc"/>
       <dep package="libnice"/>
      </dependencies>
-    <branch repo="github.com" module="WebRTCinWebKit/openwebrtc.git" checkoutdir="openwebrtc" tag="1598e6f612d257196db70d0cf930ede94f83497a"/>
+    <branch repo="github.com" module="EricssonResearch/openwebrtc.git" checkoutdir="openwebrtc" tag="13516c7f79a0c48bb411464f7613d4b426c70f5b"/>
   </autotools>
 
 </moduleset>
