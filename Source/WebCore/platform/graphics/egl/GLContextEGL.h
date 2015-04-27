@@ -47,7 +47,7 @@ public:
 #endif
     virtual bool isEGLContext() const { return true; }
 
-#if USE(3D_GRAPHICS)
+#if ENABLE(GRAPHICS_CONTEXT_3D)
     virtual PlatformGraphicsContext3D platformContext();
 #endif
 

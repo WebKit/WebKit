@@ -1,3 +1,36 @@
+2015-04-27  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Rename WTF_USE_3D_GRAPHICS to ENABLE_GRAPHICS_CONTEXT_3D
+        https://bugs.webkit.org/show_bug.cgi?id=144193
+
+        Reviewed by Darin Adler.
+
+        * CMakeLists.txt:
+        * platform/graphics/ANGLEWebKitBridge.cpp:
+        * platform/graphics/FormatConverter.cpp:
+        * platform/graphics/FormatConverter.h:
+        * platform/graphics/GLContext.h:
+        * platform/graphics/GraphicsContext3D.cpp:
+        * platform/graphics/GraphicsContext3DPrivate.cpp:
+        * platform/graphics/OpenGLShims.cpp:
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        * platform/graphics/egl/GLContextEGL.cpp:
+        * platform/graphics/egl/GLContextEGL.h:
+        * platform/graphics/glx/GLContextGLX.cpp:
+        * platform/graphics/glx/GLContextGLX.h:
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        * platform/graphics/opengl/Extensions3DOpenGLES.cpp:
+        * platform/graphics/opengl/GLPlatformContext.cpp:
+        * platform/graphics/opengl/GLPlatformSurface.cpp:
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        * platform/graphics/opengl/TemporaryOpenGLSetting.cpp:
+        * platform/graphics/win/GraphicsContext3DWin.cpp:
+
 2015-04-27  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Video not centered in element on retina devices

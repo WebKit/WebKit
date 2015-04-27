@@ -741,6 +741,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_WEBGL 0
 #endif
 
+#if !defined(ENABLE_GRAPHICS_CONTEXT_3D)
+#define ENABLE_GRAPHICS_CONTEXT_3D ENABLE_WEBGL
+#endif
+
 #if !defined(ENABLE_WEB_ARCHIVE)
 #define ENABLE_WEB_ARCHIVE 0
 #endif
@@ -793,6 +797,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 
 #if ENABLE(IOS_TOUCH_EVENTS) && !ENABLE(TOUCH_EVENTS)
 #error "ENABLE(IOS_TOUCH_EVENTS) requires ENABLE(TOUCH_EVENTS)"
+#endif
+
+#if ENABLE(WEBGL) && !ENABLE(GRAPHICS_CONTEXT_3D)
+#error "ENABLE(WEBGL) requires ENABLE(GRAPHICS_CONTEXT_3D)"
 #endif
 
 #endif /* WTF_FeatureDefines_h */

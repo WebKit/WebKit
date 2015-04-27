@@ -19,7 +19,7 @@
 
 #include "config.h"
 
-#if USE(3D_GRAPHICS)
+#if ENABLE(GRAPHICS_CONTEXT_3D)
 #include "GraphicsContext3DPrivate.h"
 
 #include "HostWindow.h"
@@ -151,4 +151,4 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper
 
 } // namespace WebCore
 
-#endif // USE(3D_GRAPHICS)
+#endif // ENABLE(GRAPHICS_CONTEXT_3D)

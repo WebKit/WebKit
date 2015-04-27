@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#if USE(3D_GRAPHICS)
+#if ENABLE(GRAPHICS_CONTEXT_3D)
 #include "TemporaryOpenGLSetting.h"
 
 #if USE(OPENGL_ES_2)

@@ -72,7 +72,7 @@ public:
     static void removeActiveContext(GLContext*);
     static void cleanupActiveContextsAtExit();
 
-#if USE(3D_GRAPHICS)
+#if ENABLE(GRAPHICS_CONTEXT_3D)
     virtual PlatformGraphicsContext3D platformContext() = 0;
 #endif
 };

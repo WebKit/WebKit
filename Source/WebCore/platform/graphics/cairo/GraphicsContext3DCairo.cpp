@@ -29,7 +29,7 @@
 
 #if USE(CAIRO)
 
-#if USE(3D_GRAPHICS)
+#if ENABLE(GRAPHICS_CONTEXT_3D)
 #include "GraphicsContext3D.h"
 
 #include "CairoUtilities.h"
@@ -317,6 +317,6 @@ PlatformLayer* GraphicsContext3D::platformLayer() const
 
 } // namespace WebCore
 
-#endif // USE(3D_GRAPHICS)
+#endif // ENABLE(GRAPHICS_CONTEXT_3D)
 
 #endif // USE(CAIRO)

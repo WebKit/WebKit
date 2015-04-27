@@ -310,7 +310,7 @@ cairo_device_t* GLContextEGL::cairoDevice()
 }
 #endif
 
-#if USE(3D_GRAPHICS)
+#if ENABLE(GRAPHICS_CONTEXT_3D)
 PlatformGraphicsContext3D GLContextEGL::platformContext()
 {
     return m_context;

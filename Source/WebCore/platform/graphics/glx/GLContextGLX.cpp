@@ -272,7 +272,7 @@ cairo_device_t* GLContextGLX::cairoDevice()
     return m_cairoDevice;
 }
 
-#if USE(3D_GRAPHICS)
+#if ENABLE(GRAPHICS_CONTEXT_3D)
 PlatformGraphicsContext3D GLContextGLX::platformContext()
 {
     return m_context;

@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if USE(3D_GRAPHICS)
+#if ENABLE(GRAPHICS_CONTEXT_3D)
 #include "GLPlatformContext.h"
 
 #if USE(GLX)
