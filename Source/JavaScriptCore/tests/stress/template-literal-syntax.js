@@ -1,3 +1,4 @@
+//@ skip
 
 function testSyntax(script) {
     try {
