@@ -47,7 +47,14 @@ WebInspector.TimelineTabContentView.prototype = {
 
     canShowRepresentedObject: function(representedObject)
     {
-        return representedObject instanceof WebInspector.TimelineRecording;
+        if (representedObject instanceof WebInspector.TimelineRecording)
+            return true;
+
+        // Only support showing a resource or script if we have that represented object in the sidebar.
+        if (representedObject instanceof WebInspector.Resource || representedObject instanceof WebInspector.Script)
+            return !!this.navigationSidebarPanel.treeElementForRepresentedObject(representedObject);
+
+        return false;
     },
 
     get supportsSplitContentBrowser()

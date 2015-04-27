@@ -1,5 +1,17 @@
 2015-04-26  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Allow Timeline tab to show resource when a go-to arrow is clicked in a recording
+        https://bugs.webkit.org/show_bug.cgi?id=144240
+
+        Only support showing a resource or script if we have that represented object in the Timeline sidebar.
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WebInspector.TimelineTabContentView.prototype.canShowRepresentedObject):
+
+2015-04-26  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Don't use treeElement.revealAndSelect when showing a default content view
         https://bugs.webkit.org/show_bug.cgi?id=144239
 
