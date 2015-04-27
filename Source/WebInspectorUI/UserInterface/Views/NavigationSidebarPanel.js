@@ -173,12 +173,14 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         // Implemneted by subclasses if needed to show a content view when no existing tree element is selected.
     }
 
-    showContentViewForCurrentSelection()
+    showDefaultContentViewForTreeElement(treeElement)
     {
-        // Reselect the selected tree element to cause the content view to be shown as well. <rdar://problem/10854727>
-        var selectedTreeElement = this._contentTreeOutline.selectedTreeElement;
-        if (selectedTreeElement)
-            selectedTreeElement.select();
+        console.assert(treeElement);
+        console.assert(treeElement.representedObject);
+        if (!treeElement || !treeElement.representedObject)
+            return;
+        this.contentBrowser.showContentViewForRepresentedObject(treeElement.representedObject);
+        treeElement.revealAndSelect(true, false, true, true);
     }
 
     saveStateToCookie(cookie)
@@ -688,7 +690,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         }, this);
 
         if (matchedElement) {
-            matchedElement.revealAndSelect();
+            this.showDefaultContentViewForTreeElement(matchedElement);
 
             delete this._pendingViewStateCookie;
 

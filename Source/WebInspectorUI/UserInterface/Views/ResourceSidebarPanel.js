@@ -85,7 +85,7 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
 
         var firstTreeElement = this.contentTreeOutline.children[0];
         if (firstTreeElement)
-            firstTreeElement.revealAndSelect();
+            this.showDefaultContentViewForTreeElement(firstTreeElement);
     }
 
     treeElementForRepresentedObject(representedObject)
@@ -184,7 +184,7 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
                 var treeElement = currentContentView ? this.treeElementForRepresentedObject(currentContentView.representedObject) : null;
                 if (!treeElement)
                     treeElement = this._mainFrameTreeElement;
-                treeElement.revealAndSelect(true, false, !!currentContentView, true);
+                this.showDefaultContentViewForTreeElement(treeElement);
             }
         }
 
@@ -220,7 +220,7 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
             if (!this.contentBrowser.currentContentView || wasShowingResourceContentView) {
                 // NOTE: This selection, during provisional loading, won't be saved, so it is
                 // safe to do and not-clobber cookie restoration.
-                this._mainFrameTreeElement.revealAndSelect(true, false);
+                this.showDefaultContentViewForTreeElement(this._mainFrameTreeElement);
             }
         }
 

@@ -1,3 +1,29 @@
+2015-04-26  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Don't use treeElement.revealAndSelect when showing a default content view
+        https://bugs.webkit.org/show_bug.cgi?id=144239
+
+        Using revealAndSelect will end up calling WebInspector.showRepresentedObject. That is not bad
+        is most cases, but if the select tab supports the same represented object, it can end up showing
+        the content view in the wrong tab.
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Views/ContentBrowserTabContentView.js:
+        (WebInspector.ContentBrowserTabContentView.prototype._revealAndSelectRepresentedObjectInNavigationSidebar):
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype.showDefaultContentView):
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype.showDefaultContentViewForTreeElement):
+        (WebInspector.NavigationSidebarPanel.prototype._checkElementsForPendingViewStateCookie):
+        (WebInspector.NavigationSidebarPanel):
+        (WebInspector.NavigationSidebarPanel.prototype.showContentViewForCurrentSelection): Deleted.
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype.showDefaultContentView):
+        (WebInspector.ResourceSidebarPanel.prototype._mainFrameDidChange):
+        (WebInspector.ResourceSidebarPanel.prototype._mainFrameMainResourceDidChange.delayedWork):
+        (WebInspector.ResourceSidebarPanel.prototype._mainFrameMainResourceDidChange):
+
 2015-04-26  Jono Wells  <jonowells@apple.com>
 
         Web Inspector: Vertically misaligned text in Object Trees

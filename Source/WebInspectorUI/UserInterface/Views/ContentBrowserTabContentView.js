@@ -256,7 +256,7 @@ WebInspector.ContentBrowserTabContentView.prototype = {
         var treeElement = this.navigationSidebarPanel.treeElementForRepresentedObject(representedObject);
 
         if (treeElement)
-            treeElement.revealAndSelect(true, false, false, true);
+            treeElement.revealAndSelect(true, false, true, true);
         else if (this.navigationSidebarPanel.contentTreeOutline.selectedTreeElement)
             this.navigationSidebarPanel.contentTreeOutline.selectedTreeElement.deselect(true);
     }

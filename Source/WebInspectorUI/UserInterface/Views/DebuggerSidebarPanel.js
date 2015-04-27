@@ -184,7 +184,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         var currentTreeElement = this._contentTreeOutline.children[0];
         while (currentTreeElement && !currentTreeElement.root) {
             if (currentTreeElement instanceof WebInspector.ResourceTreeElement || currentTreeElement instanceof WebInspector.ScriptTreeElement) {
-                currentTreeElement.revealAndSelect();
+                this.showDefaultContentViewForTreeElement(currentTreeElement);
                 return;
             }
 
