@@ -447,10 +447,8 @@ WebInspector.ContentViewContainer.prototype = {
         contentView._parentContainer = null;
 
         var representedObject = contentView.representedObject;
-        if (!representedObject || !representedObject.__contentViews)
-            return;
-
-        representedObject.__contentViews.remove(contentView);
+        if (representedObject && representedObject.__contentViews)
+            representedObject.__contentViews.remove(contentView);
 
         contentView.closed();
     },

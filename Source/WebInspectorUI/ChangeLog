@@ -1,3 +1,15 @@
+2015-04-27  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: TabContentView closed() isn't being called when a tab is closed / removed
+        https://bugs.webkit.org/show_bug.cgi?id=144229
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ContentViewContainer.js:
+        (WebInspector.ContentViewContainer.prototype._disassociateFromContentView):
+        TabContentViews don't have a representedObject, so returning early and not
+        calling closed() was not correct.
+
 2015-04-26  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Cannot make Timeline time range selection clicking inside Frames Overview
