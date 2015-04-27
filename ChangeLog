@@ -1,3 +1,14 @@
+2015-04-27  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] Should be possible for an option to conflict with other options
+        https://bugs.webkit.org/show_bug.cgi?id=143956
+
+        Reviewed by Martin Robinson.
+
+        Add WEBKIT_OPTION_CONFLICT macro, which fails the build if conflicting options are on.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2015-04-22  Martin Robinson  <mrobinson@igalia.com>
 
         [CMake] Autogenerate cmakeconfig.h.cmake
