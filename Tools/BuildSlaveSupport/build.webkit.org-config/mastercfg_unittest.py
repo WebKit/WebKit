@@ -514,6 +514,10 @@ class RunAndUploadPerfTestsTest(unittest.TestCase):
     def test_build_bad_preparation(self):
         self.assertResults(251, "system dependency error")
 
+    def test_buildbot_timeout(self):
+        self.assertResults(-1, "timeout")
+
+
 # FIXME: We should run this file as part of test-webkitpy.
 # Unfortunately test-webkitpy currently requires that unittests
 # be located in a directory with a valid module name.
