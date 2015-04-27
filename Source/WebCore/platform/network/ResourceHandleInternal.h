@@ -87,13 +87,7 @@ namespace WebCore {
             , m_currentRequest(request)
 #endif
 #if USE(CURL)
-            , m_handle(0)
-            , m_url(0)
-            , m_customHeaders(0)
-            , m_cancelled(false)
-            , m_authFailureCount(0)
             , m_formDataStream(loader)
-            , m_sslErrors(0)
 #endif
 #if USE(SOUP)
             , m_cancelled(false)
@@ -151,18 +145,19 @@ namespace WebCore {
         RetainPtr<CFURLStorageSessionRef> m_storageSession;
 #endif
 #if USE(CURL)
-        CURL* m_handle;
-        char* m_url;
-        struct curl_slist* m_customHeaders;
+        CURL* m_handle { nullptr };
+        char* m_url { nullptr };
+        struct curl_slist* m_customHeaders { nullptr };
         ResourceResponse m_response;
-        bool m_cancelled;
-        unsigned short m_authFailureCount;
+        bool m_cancelled { false };
+        unsigned short m_authFailureCount { 0 };
 
         FormDataStream m_formDataStream;
-        unsigned m_sslErrors;
+        unsigned m_sslErrors { 0 };
         Vector<char> m_postBytes;
 
         std::unique_ptr<MultipartHandle> m_multipartHandle;
+        bool m_addedCacheValidationHeaders { false };
 #endif
 #if USE(SOUP)
         GRefPtr<SoupMessage> m_soupMessage;

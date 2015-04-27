@@ -206,7 +206,7 @@ void CurlCacheManager::didReceiveResponse(ResourceHandle& job, ResourceResponse&
 
     removeCacheEntryClient(url, &job);
 
-    if (response.httpStatusCode() == 304) {
+    if (response.source() == ResourceResponseBase::Source::DiskCache) {
         readCachedData(url, &job, response);
         m_LRUEntryList.prependOrMoveToFirst(url);
     }

@@ -1,3 +1,22 @@
+2015-04-27  Per Arne Vollan  <peavo@outlook.com>
+
+        [Curl] Favicons loaded from disc cache are ignored.
+        https://bugs.webkit.org/show_bug.cgi?id=143953
+
+        Reviewed by Alex Christensen.
+
+        When a favicon is loaded from the Curl disc cache, the icon data is thrown away.
+        This happens because we give a 304 response, which makes the icon loader ignore
+        the response. We can solve this by responding with 200 OK.
+
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/curl/CurlCacheManager.cpp:
+        (WebCore::CurlCacheManager::didReceiveResponse):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::headerCallback):
+        (WebCore::ResourceHandleManager::initializeHandle):
+
 2015-04-27  Brady Eidson  <beidson@apple.com>
 
         Make 'enum NavigationType' be an enum class
