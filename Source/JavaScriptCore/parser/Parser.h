@@ -776,6 +776,10 @@ private:
 #if ENABLE(ES6_CLASS_SYNTAX)
     template <class TreeBuilder> NEVER_INLINE TreeClassExpression parseClass(TreeBuilder&, FunctionRequirements, ParserClassInfo<TreeBuilder>&);
 #endif
+#if ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX)
+    template <class TreeBuilder> NEVER_INLINE typename TreeBuilder::TemplateString parseTemplateString(TreeBuilder& context, bool isTemplateHead, bool& elementIsTail);
+    template <class TreeBuilder> NEVER_INLINE typename TreeBuilder::TemplateLiteral parseTemplateLiteral(TreeBuilder&);
+#endif
 
     ALWAYS_INLINE int isBinaryOperator(JSTokenType);
     bool allowAutomaticSemicolon();

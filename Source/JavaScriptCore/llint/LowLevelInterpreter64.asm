@@ -855,6 +855,22 @@ _llint_op_to_number:
     dispatch(3)
 
 
+_llint_op_to_string:
+    traceExecution()
+    loadisFromInstruction(2, t1)
+    loadisFromInstruction(1, t2)
+    loadConstantOrVariable(t1, t0)
+    btqnz t0, tagMask, .opToStringSlow
+    bbneq JSCell::m_type[t0], StringType, .opToStringSlow
+.opToStringIsString:
+    storeq t0, [cfr, t2, 8]
+    dispatch(3)
+
+.opToStringSlow:
+    callSlowPath(_slow_path_to_string)
+    dispatch(3)
+
+
 _llint_op_negate:
     traceExecution()
     loadisFromInstruction(2, t0)

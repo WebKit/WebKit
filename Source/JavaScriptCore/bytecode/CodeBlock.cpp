@@ -939,6 +939,10 @@ void CodeBlock::dumpBytecode(
             printUnaryOp(out, exec, location, it, "to_number");
             break;
         }
+        case op_to_string: {
+            printUnaryOp(out, exec, location, it, "to_string");
+            break;
+        }
         case op_negate: {
             printUnaryOp(out, exec, location, it, "negate");
             break;

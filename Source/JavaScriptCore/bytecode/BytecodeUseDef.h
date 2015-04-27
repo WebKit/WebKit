@@ -135,6 +135,7 @@ void computeUsesForBytecodeOffset(
     case op_is_object_or_null:
     case op_is_function:
     case op_to_number:
+    case op_to_string:
     case op_negate:
     case op_neq_null:
     case op_eq_null:
@@ -328,6 +329,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_is_function:
     case op_in:
     case op_to_number:
+    case op_to_string:
     case op_negate:
     case op_add:
     case op_mul:

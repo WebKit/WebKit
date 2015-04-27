@@ -96,6 +96,7 @@ enum JSTokenType {
     DOUBLE,
     IDENT,
     STRING,
+    TEMPLATE,
     SEMICOLON,
     COLON,
     DOT,
@@ -161,7 +162,9 @@ enum JSTokenType {
     INVALID_STRING_LITERAL_ERRORTOK = 9 | ErrorTokenFlag,
     INVALID_PRIVATE_NAME_ERRORTOK = 10 | ErrorTokenFlag,
     INVALID_HEX_NUMBER_ERRORTOK = 11 | ErrorTokenFlag,
-    INVALID_BINARY_NUMBER_ERRORTOK = 12 | ErrorTokenFlag
+    INVALID_BINARY_NUMBER_ERRORTOK = 12 | ErrorTokenFlag,
+    UNTERMINATED_TEMPLATE_LITERAL_ERRORTOK = 13 | ErrorTokenFlag | UnterminatedErrorTokenFlag,
+    INVALID_TEMPLATE_LITERAL_ERRORTOK = 14 | ErrorTokenFlag,
 };
 
 struct JSTextPosition {
@@ -189,6 +192,11 @@ union JSTokenData {
     };
     double doubleValue;
     const Identifier* ident;
+    struct {
+        const Identifier* cooked;
+        const Identifier* raw;
+        bool isTail;
+    };
 };
 
 struct JSTokenLocation {

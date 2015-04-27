@@ -190,6 +190,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_jneq_ptr:
     case op_typeof:
     case op_to_number:
+    case op_to_string:
     case op_switch_imm:
     case op_switch_char:
     case op_in:

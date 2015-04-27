@@ -215,6 +215,53 @@ RegisterID* ResolveNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
     return result;
 }
 
+#if ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX)
+// ------------------------------ TemplateStringNode -----------------------------------
+
+RegisterID* TemplateStringNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    if (dst == generator.ignoredResult())
+        return nullptr;
+    return generator.emitLoad(dst, JSValue(generator.addStringConstant(cooked())));
+}
+
+// ------------------------------ TemplateLiteralNode -----------------------------------
+
+RegisterID* TemplateLiteralNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    if (!m_templateExpressions) {
+        TemplateStringNode* templateString = m_templateStrings->value();
+        ASSERT_WITH_MESSAGE(!m_templateStrings->next(), "Only one template element exists because there's no expression in a given template literal.");
+        return generator.emitNode(dst, templateString);
+    }
+
+    Vector<RefPtr<RegisterID>, 16> temporaryRegisters;
+
+    TemplateStringListNode* templateString = m_templateStrings;
+    TemplateExpressionListNode* templateExpression = m_templateExpressions;
+    for (; templateExpression; templateExpression = templateExpression->next(), templateString = templateString->next()) {
+        // Evaluate TemplateString.
+        if (!templateString->value()->cooked().isEmpty()) {
+            temporaryRegisters.append(generator.newTemporary());
+            generator.emitNode(temporaryRegisters.last().get(), templateString->value());
+        }
+
+        // Evaluate Expression.
+        temporaryRegisters.append(generator.newTemporary());
+        generator.emitNode(temporaryRegisters.last().get(), templateExpression->value());
+        generator.emitToString(temporaryRegisters.last().get(), temporaryRegisters.last().get());
+    }
+
+    // Evaluate tail TemplateString.
+    if (!templateString->value()->cooked().isEmpty()) {
+        temporaryRegisters.append(generator.newTemporary());
+        generator.emitNode(temporaryRegisters.last().get(), templateString->value());
+    }
+
+    return generator.emitStrcat(generator.finalDestination(dst, temporaryRegisters[0].get()), temporaryRegisters[0].get(), temporaryRegisters.size());
+}
+#endif
+
 // ------------------------------ ArrayNode ------------------------------------
 
 RegisterID* ArrayNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)

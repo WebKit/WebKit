@@ -337,6 +337,12 @@ SLOW_PATH_DECL(slow_path_to_number)
     RETURN(jsNumber(OP_C(2).jsValue().toNumber(exec)));
 }
 
+SLOW_PATH_DECL(slow_path_to_string)
+{
+    BEGIN();
+    RETURN(OP_C(2).jsValue().toString(exec));
+}
+
 SLOW_PATH_DECL(slow_path_negate)
 {
     BEGIN();

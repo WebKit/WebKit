@@ -100,6 +100,51 @@ namespace JSC {
     {
     }
 
+#if ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX)
+    inline TemplateExpressionListNode::TemplateExpressionListNode(ExpressionNode* node)
+        : m_node(node)
+    {
+    }
+
+    inline TemplateExpressionListNode::TemplateExpressionListNode(TemplateExpressionListNode* previous, ExpressionNode* node)
+        : m_node(node)
+    {
+        previous->m_next = this;
+    }
+
+    inline TemplateStringNode::TemplateStringNode(const JSTokenLocation& location, const Identifier& cooked, const Identifier& raw)
+        : ExpressionNode(location)
+        , m_cooked(cooked)
+        , m_raw(raw)
+    {
+    }
+
+    inline TemplateStringListNode::TemplateStringListNode(TemplateStringNode* node)
+        : m_node(node)
+    {
+    }
+
+    inline TemplateStringListNode::TemplateStringListNode(TemplateStringListNode* previous, TemplateStringNode* node)
+        : m_node(node)
+    {
+        previous->m_next = this;
+    }
+
+    inline TemplateLiteralNode::TemplateLiteralNode(const JSTokenLocation& location, TemplateStringListNode* templateStrings)
+        : ExpressionNode(location)
+        , m_templateStrings(templateStrings)
+        , m_templateExpressions(nullptr)
+    {
+    }
+
+    inline TemplateLiteralNode::TemplateLiteralNode(const JSTokenLocation& location, TemplateStringListNode* templateStrings, TemplateExpressionListNode* templateExpressions)
+        : ExpressionNode(location)
+        , m_templateStrings(templateStrings)
+        , m_templateExpressions(templateExpressions)
+    {
+    }
+#endif
+
     inline RegExpNode::RegExpNode(const JSTokenLocation& location, const Identifier& pattern, const Identifier& flags)
         : ExpressionNode(location)
         , m_pattern(pattern)

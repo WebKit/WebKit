@@ -50,6 +50,7 @@ my (
     $canvasProxySupport,
     $channelMessagingSupport,
     $classSyntax,
+    $templateLiteralSyntax,
     $cspNextSupport,
     $css3ConditionalRulesSupport,
     $css3TextSupport,
@@ -171,6 +172,9 @@ my @features = (
 
     { option => "class-syntax", desc => "Toggle ES6 class syntax support",
       define => "ENABLE_ES6_CLASS_SYNTAX", default => 1, value => \$classSyntax },
+
+    { option => "template-literal-syntax", desc => "Toggle ES6 template literal syntax support",
+      define => "ENABLE_ES6_TEMPLATE_LITERAL_SYNTAX", default => 1, value => \$templateLiteralSyntax },
 
     { option => "csp-next", desc => "Toggle Content Security Policy 1.1 support",
       define => "ENABLE_CSP_NEXT", default => isGtk(), value => \$cspNextSupport },

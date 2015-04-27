@@ -99,6 +99,9 @@ public:
     int lastLineNumber() const { return m_lastLineNumber; }
     bool prevTerminator() const { return m_terminator; }
     bool scanRegExp(const Identifier*& pattern, const Identifier*& flags, UChar patternPrefix = 0);
+#if ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX)
+    JSTokenType scanTrailingTemplateString(JSToken*);
+#endif
     bool skipRegExp();
 
     // Functions for use after parsing.
@@ -202,6 +205,12 @@ private:
     };
     template <bool shouldBuildStrings> ALWAYS_INLINE StringParseResult parseString(JSTokenData*, bool strictMode);
     template <bool shouldBuildStrings> NEVER_INLINE StringParseResult parseStringSlowCase(JSTokenData*, bool strictMode);
+
+    enum class EscapeParseMode { Template, String };
+    template <bool shouldBuildStrings> ALWAYS_INLINE StringParseResult parseComplexEscape(EscapeParseMode, bool strictMode, T stringQuoteCharacter);
+#if ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX)
+    template <bool shouldBuildStrings> ALWAYS_INLINE StringParseResult parseTemplateLiteral(JSTokenData*);
+#endif
     ALWAYS_INLINE void parseHex(double& returnValue);
     ALWAYS_INLINE bool parseBinary(double& returnValue);
     ALWAYS_INLINE bool parseOctal(double& returnValue);

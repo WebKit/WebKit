@@ -1,3 +1,123 @@
+2015-04-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement ES6 template literals
+        https://bugs.webkit.org/show_bug.cgi?id=142691
+
+        Reviewed by Darin Adler.
+
+        This patch implements TemplateLiteral.
+        Since TaggedTemplate requires some global states and
+        primitive operations like GetTemplateObject,
+        we separate the patch. It will be implemented in a subsequent patch.
+
+        Template Literal Syntax is guarded by ENABLE_ES6_TEMPLATE_LITERAL_SYNTAX compile time flag.
+        By disabling it, we can disable Template Literal support.
+
+        To implement template literals, in this patch,
+        we newly introduces bytecode op_to_string.
+        In template literals, we alternately evaluate the expression and
+        perform ToString onto the result of evaluation.
+        For example,
+
+        `${f1()} ${f2()}`
+
+        In this template literal, execution order is the following,
+        1. calling f1()
+        2. ToString(the result of f1())
+        3. calling f2()
+        4. ToString(the result of f2())
+
+        op_strcat also performs ToString. However, performing ToString
+        onto expressions are batched in op_strcat, it's not the same to the
+        template literal spec. In the above example,
+        ToString(f1()) should be called before calling f2().
+
+        * Configurations/FeatureDefines.xcconfig:
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitToString):
+        (JSC::BytecodeGenerator::emitToNumber): Deleted.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::TemplateStringNode::emitBytecode):
+        (JSC::TemplateLiteralNode::emitBytecode):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_to_string):
+        (JSC::JIT::emitSlow_op_to_string):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_to_string):
+        (JSC::JIT::emitSlow_op_to_string):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createTemplateString):
+        (JSC::ASTBuilder::createTemplateStringList):
+        (JSC::ASTBuilder::createTemplateExpressionList):
+        (JSC::ASTBuilder::createTemplateLiteral):
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::Lexer):
+        (JSC::Lexer<T>::parseIdentifierSlowCase):
+        (JSC::Lexer<T>::parseString):
+        (JSC::LineNumberAdder::LineNumberAdder):
+        (JSC::LineNumberAdder::clear):
+        (JSC::LineNumberAdder::add):
+        (JSC::Lexer<T>::parseTemplateLiteral):
+        (JSC::Lexer<T>::lex):
+        (JSC::Lexer<T>::scanRegExp):
+        (JSC::Lexer<T>::scanTrailingTemplateString):
+        (JSC::Lexer<T>::parseStringSlowCase): Deleted.
+        * parser/Lexer.h:
+        * parser/NodeConstructors.h:
+        (JSC::TemplateExpressionListNode::TemplateExpressionListNode):
+        (JSC::TemplateStringNode::TemplateStringNode):
+        (JSC::TemplateStringListNode::TemplateStringListNode):
+        (JSC::TemplateLiteralNode::TemplateLiteralNode):
+        * parser/Nodes.h:
+        (JSC::TemplateExpressionListNode::value):
+        (JSC::TemplateExpressionListNode::next):
+        (JSC::TemplateStringNode::cooked):
+        (JSC::TemplateStringNode::raw):
+        (JSC::TemplateStringListNode::value):
+        (JSC::TemplateStringListNode::next):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseTemplateString):
+        (JSC::Parser<LexerType>::parseTemplateLiteral):
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        * parser/Parser.h:
+        * parser/ParserTokens.h:
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createTemplateString):
+        (JSC::SyntaxChecker::createTemplateStringList):
+        (JSC::SyntaxChecker::createTemplateExpressionList):
+        (JSC::SyntaxChecker::createTemplateLiteral):
+        (JSC::SyntaxChecker::createSpreadExpression): Deleted.
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * tests/stress/template-literal-line-terminators.js: Added.
+        (test):
+        (testEval):
+        (testEvalLineNumber):
+        * tests/stress/template-literal-syntax.js: Added.
+        (testSyntax):
+        (testSyntaxError):
+        * tests/stress/template-literal.js: Added.
+        (test):
+        (testEval):
+        (testEmbedded):
+
 2015-04-26  Jordan Harband  <ljharb@gmail.com>
 
         Set#forEach does not pass "key" or "set" arguments to callback.

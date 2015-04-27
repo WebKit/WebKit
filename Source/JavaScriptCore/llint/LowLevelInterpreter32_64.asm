@@ -994,6 +994,23 @@ _llint_op_to_number:
     dispatch(3)
 
 
+_llint_op_to_string:
+    traceExecution()
+    loadi 8[PC], t0
+    loadi 4[PC], t1
+    loadConstantOrVariable(t0, t2, t3)
+    bineq t2, CellTag, .opToStringSlow
+    bbneq JSCell::m_type[t3], StringType, .opToStringSlow
+.opToStringIsString:
+    storei t2, TagOffset[cfr, t1, 8]
+    storei t3, PayloadOffset[cfr, t1, 8]
+    dispatch(3)
+
+.opToStringSlow:
+    callSlowPath(_slow_path_to_string)
+    dispatch(3)
+
+
 _llint_op_negate:
     traceExecution()
     loadi 8[PC], t0

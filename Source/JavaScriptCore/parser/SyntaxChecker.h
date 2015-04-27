@@ -81,7 +81,8 @@ public:
         FunctionBodyResult, SpreadExpr, ArgumentsResult,
         PropertyListResult, ArgumentsListResult, ElementsListResult,
         StatementResult, FormalParameterListResult, ClauseResult,
-        ClauseListResult, CommaExpr, DeconstructingAssignment
+        ClauseListResult, CommaExpr, DeconstructingAssignment,
+        TemplateStringResult, TemplateStringListResult, TemplateExpressionListResult, TemplateExpr
     };
     typedef int ExpressionType;
 
@@ -111,6 +112,12 @@ public:
     typedef int PropertyList;
     typedef int ElementList;
     typedef int ArgumentsList;
+#if ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX)
+    typedef int TemplateExpressionList;
+    typedef int TemplateString;
+    typedef int TemplateStringList;
+    typedef int TemplateLiteral;
+#endif
     typedef int FormalParameterList;
     typedef int FunctionBody;
 #if ENABLE(ES6_CLASS_SYNTAX)
@@ -173,6 +180,16 @@ public:
     int createArguments() { return ArgumentsResult; }
     int createArguments(int) { return ArgumentsResult; }
     ExpressionType createSpreadExpression(const JSTokenLocation&, ExpressionType, int, int, int) { return SpreadExpr; }
+#if ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX)
+    TemplateString createTemplateString(const JSTokenLocation&, const Identifier&, const Identifier&) { return TemplateStringResult; }
+    TemplateStringList createTemplateStringList(TemplateString) { return TemplateStringListResult; }
+    TemplateStringList createTemplateStringList(TemplateStringList, TemplateString) { return TemplateStringListResult; }
+    TemplateExpressionList createTemplateExpressionList(Expression) { return TemplateExpressionListResult; }
+    TemplateExpressionList createTemplateExpressionList(TemplateExpressionList, Expression) { return TemplateExpressionListResult; }
+    TemplateLiteral createTemplateLiteral(const JSTokenLocation&, TemplateStringList) { return TemplateExpr; }
+    TemplateLiteral createTemplateLiteral(const JSTokenLocation&, TemplateStringList, TemplateExpressionList) { return TemplateExpr; }
+#endif
+
     int createArgumentsList(const JSTokenLocation&, int) { return ArgumentsListResult; }
     int createArgumentsList(const JSTokenLocation&, int, int) { return ArgumentsListResult; }
     Property createProperty(const Identifier* name, int, PropertyNode::Type type, PropertyNode::PutType, bool complete, SuperBinding = SuperBinding::NotNeeded)

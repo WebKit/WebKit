@@ -1,3 +1,14 @@
+2015-04-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement ES6 template literals
+        https://bugs.webkit.org/show_bug.cgi?id=142691
+
+        Reviewed by Darin Adler.
+
+        Add ENABLE_ES6_TEMPLATE_LITERAL_SYNTAX compile time flag.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2015-04-26  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         Remove PluginView::renderer().

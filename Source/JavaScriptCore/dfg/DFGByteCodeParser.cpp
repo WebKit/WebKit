@@ -3778,7 +3778,13 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             set(VirtualRegister(currentInstruction[1].u.operand), node);
             NEXT_OPCODE(op_to_number);
         }
-            
+
+        case op_to_string: {
+            Node* value = get(VirtualRegister(currentInstruction[2].u.operand));
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(ToString, value));
+            NEXT_OPCODE(op_to_string);
+        }
+
         case op_in: {
             set(VirtualRegister(currentInstruction[1].u.operand),
                 addToGraph(In, get(VirtualRegister(currentInstruction[2].u.operand)), get(VirtualRegister(currentInstruction[3].u.operand))));

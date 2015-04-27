@@ -274,7 +274,7 @@ namespace JSC {
 
         const Identifier& m_value;
     };
-    
+
     class ThrowableExpressionData {
     public:
         ThrowableExpressionData()
@@ -426,6 +426,60 @@ namespace JSC {
         uint16_t m_subexpressionLineOffset;
         uint16_t m_subexpressionLineStartOffset;
     };
+
+#if ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX)
+    class TemplateExpressionListNode : public ParserArenaFreeable {
+    public:
+        TemplateExpressionListNode(ExpressionNode*);
+        TemplateExpressionListNode(TemplateExpressionListNode*, ExpressionNode*);
+
+        ExpressionNode* value() { return m_node; }
+        TemplateExpressionListNode* next() { return m_next; }
+
+    private:
+        TemplateExpressionListNode* m_next { nullptr };
+        ExpressionNode* m_node { nullptr };
+    };
+
+    class TemplateStringNode : public ExpressionNode {
+    public:
+        TemplateStringNode(const JSTokenLocation&, const Identifier& cooked, const Identifier& raw);
+
+        const Identifier& cooked() { return m_cooked; }
+        const Identifier& raw() { return m_raw; }
+
+    private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+
+        const Identifier& m_cooked;
+        const Identifier& m_raw;
+    };
+
+    class TemplateStringListNode : public ParserArenaFreeable {
+    public:
+        TemplateStringListNode(TemplateStringNode*);
+        TemplateStringListNode(TemplateStringListNode*, TemplateStringNode*);
+
+        TemplateStringNode* value() { return m_node; }
+        TemplateStringListNode* next() { return m_next; }
+
+    private:
+        TemplateStringListNode* m_next { nullptr };
+        TemplateStringNode* m_node { nullptr };
+    };
+
+    class TemplateLiteralNode : public ExpressionNode {
+    public:
+        TemplateLiteralNode(const JSTokenLocation&, TemplateStringListNode*);
+        TemplateLiteralNode(const JSTokenLocation&, TemplateStringListNode*, TemplateExpressionListNode*);
+
+    private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+
+        TemplateStringListNode* m_templateStrings;
+        TemplateExpressionListNode* m_templateExpressions;
+    };
+#endif
 
     class RegExpNode : public ExpressionNode, public ThrowableExpressionData {
     public:
