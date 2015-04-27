@@ -183,7 +183,7 @@ EncodedJSValue JSC_HOST_CALL setProtoFuncEntries(CallFrame* callFrame)
 {
     JSSet* thisObj = jsDynamicCast<JSSet*>(callFrame->thisValue());
     if (!thisObj)
-        return JSValue::encode(throwTypeError(callFrame, ASCIILiteral("Cannot create a Set key iterator for a non-Set object.")));
+        return JSValue::encode(throwTypeError(callFrame, ASCIILiteral("Cannot create a Set entry iterator for a non-Set object.")));
     return JSValue::encode(JSSetIterator::create(callFrame->vm(), callFrame->callee()->globalObject()->setIteratorStructure(), thisObj, SetIterateKeyValue));
 }
 
