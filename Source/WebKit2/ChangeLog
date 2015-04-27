@@ -1,3 +1,59 @@
+2015-04-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WK2] API::String creation functions should return Ref<>
+        https://bugs.webkit.org/show_bug.cgi?id=144218
+
+        Reviewed by Darin Adler.
+
+        Have API::String creation functions return Ref<>.
+        The call-sites are also updated, using and operating on the returned
+        Ref<> object, where possible.
+
+        * Shared/API/APIString.h:
+        * Shared/API/c/WKPluginInformation.cpp:
+        (WKPluginInformationBundleIdentifierKey):
+        (WKPluginInformationBundleVersionKey):
+        (WKPluginInformationBundleShortVersionKey):
+        (WKPluginInformationPathKey):
+        (WKPluginInformationDisplayNameKey):
+        (WKPluginInformationDefaultLoadPolicyKey):
+        (WKPluginInformationUpdatePastLastBlockedVersionIsKnownAvailableKey):
+        (WKPluginInformationHasSandboxProfileKey):
+        (WKPluginInformationFrameURLKey):
+        (WKPluginInformationMIMETypeKey):
+        (WKPluginInformationPageURLKey):
+        (WKPluginInformationPluginspageAttributeURLKey):
+        (WKPluginInformationPluginURLKey):
+        (WKPlugInInformationReplacementObscuredKey):
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::ProxyingRefPtr::ProxyingRefPtr):
+        (WebKit::toCopiedAPI):
+        * Shared/API/c/WKString.cpp:
+        (WKStringCreateWithUTF8CString):
+        (WKStringCreateWithJSString):
+        * UIProcess/API/C/WKDatabaseManager.cpp:
+        (WKDatabaseManagerGetOriginKey):
+        (WKDatabaseManagerGetOriginQuotaKey):
+        (WKDatabaseManagerGetOriginUsageKey):
+        (WKDatabaseManagerGetDatabaseDetailsKey):
+        (WKDatabaseManagerGetDatabaseDetailsNameKey):
+        (WKDatabaseManagerGetDatabaseDetailsDisplayNameKey):
+        (WKDatabaseManagerGetDatabaseDetailsExpectedUsageKey):
+        (WKDatabaseManagerGetDatabaseDetailsCurrentUsageKey):
+        (WKDatabaseManagerGetDatabaseDetailsCreationTimeKey):
+        (WKDatabaseManagerGetDatabaseDetailsModificationTimeKey):
+        * UIProcess/API/C/WKKeyValueStorageManager.cpp:
+        (WKKeyValueStorageManagerGetOriginKey):
+        (WKKeyValueStorageManagerGetCreationTimeKey):
+        (WKKeyValueStorageManagerGetModificationTimeKey):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetSessionHistoryURLValueType):
+        (WKPageGetSessionBackForwardListItemValueType):
+        (toGenericCallbackFunction):
+        (WKPageValidateCommand):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::didReceiveInvalidMessage):
+
 2015-04-27  Brady Eidson  <beidson@apple.com>
 
         Make 'enum NavigationType' be an enum class

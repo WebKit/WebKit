@@ -363,14 +363,14 @@ void WKPageTerminate(WKPageRef pageRef)
 
 WKStringRef WKPageGetSessionHistoryURLValueType()
 {
-    static API::String* sessionHistoryURLValueType = API::String::create("SessionHistoryURL").leakRef();
-    return toAPI(sessionHistoryURLValueType);
+    static API::String& sessionHistoryURLValueType = API::String::create("SessionHistoryURL").leakRef();
+    return toAPI(&sessionHistoryURLValueType);
 }
 
 WKStringRef WKPageGetSessionBackForwardListItemValueType()
 {
-    static API::String* sessionBackForwardListValueType = API::String::create("SessionBackForwardListItem").leakRef();
-    return toAPI(sessionBackForwardListValueType);
+    static API::String& sessionBackForwardListValueType = API::String::create("SessionBackForwardListItem").leakRef();
+    return toAPI(&sessionBackForwardListValueType);
 }
 
 WKTypeRef WKPageCopySessionState(WKPageRef pageRef, void* context, WKPageSessionStateFilterCallback filter)
@@ -1954,7 +1954,7 @@ void WKPageRunJavaScriptInMainFrame_b(WKPageRef pageRef, WKStringRef scriptRef, 
 static std::function<void (const String&, WebKit::CallbackBase::Error)> toGenericCallbackFunction(void* context, void (*callback)(WKStringRef, WKErrorRef, void*))
 {
     return [context, callback](const String& returnValue, WebKit::CallbackBase::Error error) {
-        callback(toAPI(API::String::create(returnValue).get()), error != WebKit::CallbackBase::Error::None ? toAPI(API::Error::create().get()) : 0, context);
+        callback(toAPI(API::String::create(returnValue).ptr()), error != WebKit::CallbackBase::Error::None ? toAPI(API::Error::create().get()) : 0, context);
     };
 }
 
@@ -2035,7 +2035,7 @@ WKStringRef WKPageCopyStandardUserAgentWithApplicationName(WKStringRef applicati
 void WKPageValidateCommand(WKPageRef pageRef, WKStringRef command, void* context, WKPageValidateCommandCallback callback)
 {
     toImpl(pageRef)->validateCommand(toImpl(command)->string(), [context, callback](const String& commandName, bool isEnabled, int32_t state, WebKit::CallbackBase::Error error) {
-        callback(toAPI(API::String::create(commandName).get()), isEnabled, state, error != WebKit::CallbackBase::Error::None ? toAPI(API::Error::create().get()) : 0, context);
+        callback(toAPI(API::String::create(commandName).ptr()), isEnabled, state, error != WebKit::CallbackBase::Error::None ? toAPI(API::Error::create().get()) : 0, context);
     });
 }
 

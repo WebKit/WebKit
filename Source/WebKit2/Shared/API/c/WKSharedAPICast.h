@@ -145,6 +145,11 @@ public:
     {
     }
 
+    ProxyingRefPtr(Ref<ImplType>&& impl)
+        : m_impl(WTF::move(impl))
+    {
+    }
+
     operator APIType() { return toAPI(m_impl.get()); }
 
 private:
@@ -160,8 +165,7 @@ inline ProxyingRefPtr<API::String> toAPI(StringImpl* string)
 
 inline WKStringRef toCopiedAPI(const String& string)
 {
-    RefPtr<API::String> apiString = API::String::create(string);
-    return toAPI(apiString.release().leakRef());
+    return toAPI(&API::String::create(string).leakRef());
 }
 
 inline ProxyingRefPtr<API::URL> toURLRef(StringImpl* string)

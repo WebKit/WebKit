@@ -35,8 +35,8 @@ using namespace WebKit;
 WKStringRef WKPluginInformationBundleIdentifierKey()
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    static API::String* key = API::String::create(pluginInformationBundleIdentifierKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(pluginInformationBundleIdentifierKey()).leakRef();
+    return toAPI(&key);
 #else
     return 0;
 #endif
@@ -45,8 +45,8 @@ WKStringRef WKPluginInformationBundleIdentifierKey()
 WKStringRef WKPluginInformationBundleVersionKey()
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    static API::String* key = API::String::create(pluginInformationBundleVersionKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(pluginInformationBundleVersionKey()).leakRef();
+    return toAPI(&key);
 #else
     return 0;
 #endif
@@ -55,8 +55,8 @@ WKStringRef WKPluginInformationBundleVersionKey()
 WKStringRef WKPluginInformationBundleShortVersionKey()
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    static API::String* key = API::String::create(pluginInformationBundleShortVersionKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(pluginInformationBundleShortVersionKey()).leakRef();
+    return toAPI(&key);
 #else
     return 0;
 #endif
@@ -65,8 +65,8 @@ WKStringRef WKPluginInformationBundleShortVersionKey()
 WKStringRef WKPluginInformationPathKey()
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    static API::String* key = API::String::create(pluginInformationPathKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(pluginInformationPathKey()).leakRef();
+    return toAPI(&key);
 #else
     return 0;
 #endif
@@ -75,8 +75,8 @@ WKStringRef WKPluginInformationPathKey()
 WKStringRef WKPluginInformationDisplayNameKey()
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    static API::String* key = API::String::create(pluginInformationDisplayNameKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(pluginInformationDisplayNameKey()).leakRef();
+    return toAPI(&key);
 #else
     return 0;
 #endif
@@ -85,8 +85,8 @@ WKStringRef WKPluginInformationDisplayNameKey()
 WKStringRef WKPluginInformationDefaultLoadPolicyKey()
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    static API::String* key = API::String::create(pluginInformationDefaultLoadPolicyKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(pluginInformationDefaultLoadPolicyKey()).leakRef();
+    return toAPI(&key);
 #else
     return 0;
 #endif
@@ -95,8 +95,8 @@ WKStringRef WKPluginInformationDefaultLoadPolicyKey()
 WKStringRef WKPluginInformationUpdatePastLastBlockedVersionIsKnownAvailableKey()
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    static API::String* key = API::String::create(pluginInformationUpdatePastLastBlockedVersionIsKnownAvailableKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(pluginInformationUpdatePastLastBlockedVersionIsKnownAvailableKey()).leakRef();
+    return toAPI(&key);
 #else
     return 0;
 #endif
@@ -105,8 +105,8 @@ WKStringRef WKPluginInformationUpdatePastLastBlockedVersionIsKnownAvailableKey()
 WKStringRef WKPluginInformationHasSandboxProfileKey()
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    static API::String* key = API::String::create(pluginInformationHasSandboxProfileKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(pluginInformationHasSandboxProfileKey()).leakRef();
+    return toAPI(&key);
 #else
     return 0;
 #endif
@@ -115,8 +115,8 @@ WKStringRef WKPluginInformationHasSandboxProfileKey()
 WKStringRef WKPluginInformationFrameURLKey()
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    static API::String* key = API::String::create(pluginInformationFrameURLKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(pluginInformationFrameURLKey()).leakRef();
+    return toAPI(&key);
 #else
     return 0;
 #endif
@@ -125,8 +125,8 @@ WKStringRef WKPluginInformationFrameURLKey()
 WKStringRef WKPluginInformationMIMETypeKey()
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    static API::String* key = API::String::create(pluginInformationMIMETypeKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(pluginInformationMIMETypeKey()).leakRef();
+    return toAPI(&key);
 #else
     return 0;
 #endif
@@ -135,8 +135,8 @@ WKStringRef WKPluginInformationMIMETypeKey()
 WKStringRef WKPluginInformationPageURLKey()
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    static API::String* key = API::String::create(pluginInformationPageURLKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(pluginInformationPageURLKey()).leakRef();
+    return toAPI(&key);
 #else
     return 0;
 #endif
@@ -145,8 +145,8 @@ WKStringRef WKPluginInformationPageURLKey()
 WKStringRef WKPluginInformationPluginspageAttributeURLKey()
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    static API::String* key = API::String::create(pluginInformationPluginspageAttributeURLKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(pluginInformationPluginspageAttributeURLKey()).leakRef();
+    return toAPI(&key);
 #else
     return 0;
 #endif
@@ -155,8 +155,8 @@ WKStringRef WKPluginInformationPluginspageAttributeURLKey()
 WKStringRef WKPluginInformationPluginURLKey()
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    static API::String* key = API::String::create(pluginInformationPluginURLKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(pluginInformationPluginURLKey()).leakRef();
+    return toAPI(&key);
 #else
     return 0;
 #endif
@@ -165,8 +165,8 @@ WKStringRef WKPluginInformationPluginURLKey()
 WKStringRef WKPlugInInformationReplacementObscuredKey()
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    static API::String* key = API::String::create(plugInInformationReplacementObscuredKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(plugInInformationReplacementObscuredKey()).leakRef();
+    return toAPI(&key);
 #else
     return 0;
 #endif

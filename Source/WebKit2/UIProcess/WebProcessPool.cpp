@@ -565,7 +565,7 @@ void WebProcessPool::didReceiveInvalidMessage(const IPC::StringReference& messag
     messageNameStringBuilder.append('.');
     messageNameStringBuilder.append(messageName.data(), messageName.size());
 
-    s_invalidMessageCallback(toAPI(API::String::create(messageNameStringBuilder.toString()).get()));
+    s_invalidMessageCallback(toAPI(API::String::create(messageNameStringBuilder.toString()).ptr()));
 }
 
 void WebProcessPool::processDidCachePage(WebProcessProxy* process)

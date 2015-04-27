@@ -38,20 +38,20 @@ WKTypeID WKKeyValueStorageManagerGetTypeID()
 
 WKStringRef WKKeyValueStorageManagerGetOriginKey()
 {
-    static API::String* key = API::String::create(WebKeyValueStorageManager::originKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(WebKeyValueStorageManager::originKey()).leakRef();
+    return toAPI(&key);
 }
 
 WKStringRef WKKeyValueStorageManagerGetCreationTimeKey()
 {
-    static API::String* key = API::String::create(WebKeyValueStorageManager::creationTimeKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(WebKeyValueStorageManager::creationTimeKey()).leakRef();
+    return toAPI(&key);
 }
 
 WKStringRef WKKeyValueStorageManagerGetModificationTimeKey()
 {
-    static API::String* key = API::String::create(WebKeyValueStorageManager::modificationTimeKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(WebKeyValueStorageManager::modificationTimeKey()).leakRef();
+    return toAPI(&key);
 }
 
 void WKKeyValueStorageManagerGetKeyValueStorageOrigins(WKKeyValueStorageManagerRef keyValueStorageManagerRef, void* context, WKKeyValueStorageManagerGetKeyValueStorageOriginsFunction callback)

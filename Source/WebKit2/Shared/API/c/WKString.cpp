@@ -41,8 +41,7 @@ WKTypeID WKStringGetTypeID()
 
 WKStringRef WKStringCreateWithUTF8CString(const char* string)
 {
-    auto apiString = API::String::create(WTF::String::fromUTF8(string));
-    return toAPI(apiString.release().leakRef());
+    return toAPI(&API::String::create(WTF::String::fromUTF8(string)).leakRef());
 }
 
 bool WKStringIsEmpty(WKStringRef stringRef)
@@ -116,7 +115,7 @@ WKStringRef WKStringCreateWithJSString(JSStringRef jsStringRef)
 {
     auto apiString = jsStringRef ? API::String::create(jsStringRef->string()) : API::String::createNull();
 
-    return toAPI(apiString.release().leakRef());
+    return toAPI(&apiString.leakRef());
 }
 
 JSStringRef WKStringCopyJSString(WKStringRef stringRef)

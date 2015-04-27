@@ -38,62 +38,62 @@ WKTypeID WKDatabaseManagerGetTypeID()
 
 WKStringRef WKDatabaseManagerGetOriginKey()
 {
-    static API::String* key = API::String::create(WebDatabaseManagerProxy::originKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(WebDatabaseManagerProxy::originKey()).leakRef();
+    return toAPI(&key);
 }
 
 WKStringRef WKDatabaseManagerGetOriginQuotaKey()
 {
-    static API::String* key = API::String::create(WebDatabaseManagerProxy::originQuotaKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(WebDatabaseManagerProxy::originQuotaKey()).leakRef();
+    return toAPI(&key);
 }
 
 WKStringRef WKDatabaseManagerGetOriginUsageKey()
 {
-    static API::String* key = API::String::create(WebDatabaseManagerProxy::originUsageKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(WebDatabaseManagerProxy::originUsageKey()).leakRef();
+    return toAPI(&key);
 }
 
 WKStringRef WKDatabaseManagerGetDatabaseDetailsKey()
 {
-    static API::String* key = API::String::create(WebDatabaseManagerProxy::databaseDetailsKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(WebDatabaseManagerProxy::databaseDetailsKey()).leakRef();
+    return toAPI(&key);
 }
 
 WKStringRef WKDatabaseManagerGetDatabaseDetailsNameKey()
 {
-    static API::String* key = API::String::create(WebDatabaseManagerProxy::databaseDetailsNameKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(WebDatabaseManagerProxy::databaseDetailsNameKey()).leakRef();
+    return toAPI(&key);
 }
 
 WKStringRef WKDatabaseManagerGetDatabaseDetailsDisplayNameKey()
 {
-    static API::String* key = API::String::create(WebDatabaseManagerProxy::databaseDetailsDisplayNameKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(WebDatabaseManagerProxy::databaseDetailsDisplayNameKey()).leakRef();
+    return toAPI(&key);
 }
 
 WKStringRef WKDatabaseManagerGetDatabaseDetailsExpectedUsageKey()
 {
-    static API::String* key = API::String::create(WebDatabaseManagerProxy::databaseDetailsExpectedUsageKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(WebDatabaseManagerProxy::databaseDetailsExpectedUsageKey()).leakRef();
+    return toAPI(&key);
 }
 
 WKStringRef WKDatabaseManagerGetDatabaseDetailsCurrentUsageKey()
 {
-    static API::String* key = API::String::create(WebDatabaseManagerProxy::databaseDetailsCurrentUsageKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(WebDatabaseManagerProxy::databaseDetailsCurrentUsageKey()).leakRef();
+    return toAPI(&key);
 }
 
 WKStringRef WKDatabaseManagerGetDatabaseDetailsCreationTimeKey()
 {
-    static API::String* key = API::String::create(WebDatabaseManagerProxy::databaseDetailsCreationTimeKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(WebDatabaseManagerProxy::databaseDetailsCreationTimeKey()).leakRef();
+    return toAPI(&key);
 }
 
 WKStringRef WKDatabaseManagerGetDatabaseDetailsModificationTimeKey()
 {
-    static API::String* key = API::String::create(WebDatabaseManagerProxy::databaseDetailsModificationTimeKey()).leakRef();
-    return toAPI(key);
+    static API::String& key = API::String::create(WebDatabaseManagerProxy::databaseDetailsModificationTimeKey()).leakRef();
+    return toAPI(&key);
 }
 
 void WKDatabaseManagerSetClient(WKDatabaseManagerRef databaseManagerRef, const WKDatabaseManagerClientBase* wkClient)

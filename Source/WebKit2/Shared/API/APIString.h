@@ -27,7 +27,7 @@
 #define APIString_h
 
 #include "APIObject.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/UTF8.h>
@@ -36,17 +36,17 @@ namespace API {
 
 class String final : public ObjectImpl<Object::Type::String> {
 public:
-    static RefPtr<String> createNull()
+    static Ref<String> createNull()
     {
-        return adoptRef(new String);
+        return adoptRef(*new String);
     }
 
-    static RefPtr<String> create(WTF::String&& string)
+    static Ref<String> create(WTF::String&& string)
     {
-        return adoptRef(new String(string.isNull() ? WTF::String(StringImpl::empty()) : string.isolatedCopy()));
+        return adoptRef(*new String(string.isNull() ? WTF::String(StringImpl::empty()) : string.isolatedCopy()));
     }
 
-    static RefPtr<String> create(const WTF::String& string)
+    static Ref<String> create(const WTF::String& string)
     {
         return create(string.isolatedCopy());
     }
