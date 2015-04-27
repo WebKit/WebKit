@@ -467,6 +467,14 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueId) const
     case CSSValueActiveborder:
         color = convertNSColorToColor([NSColor keyboardFocusIndicatorColor]);
         break;
+    case CSSValueActivebuttontext:
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+        // There is no corresponding NSColor for this so we use a hard coded value.
+        color = 0xC0FFFFFF;
+#else
+        color = convertNSColorToColor([NSColor controlTextColor]);
+#endif
+        break;
     case CSSValueActivecaption:
         color = convertNSColorToColor([NSColor windowFrameTextColor]);
         break;
@@ -489,11 +497,6 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueId) const
         break;
     case CSSValueButtontext:
         color = convertNSColorToColor([NSColor controlTextColor]);
-        break;
-    case CSSValueActivebuttontext:
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-        color = 0xC0FFFFFF;
-#endif
         break;
     case CSSValueCaptiontext:
         color = convertNSColorToColor([NSColor textColor]);

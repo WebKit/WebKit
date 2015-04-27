@@ -1,3 +1,27 @@
+2015-04-26  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r174283): disabled default buttons use impossible-to-read white text on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=144237
+
+        Reviewed by Simon Fraser.
+
+        No test because DumpRenderTree and WebKitTestRunner don't have a good method
+        for testing behaviors that are specific to active windows. That's the same reason
+        that the change that caused this bug didn't come with a regression test.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle): Renamed "e" to "element". Added a comment to
+        clarify the meaning of the setInsideDefaultButton function, and added an
+        isDisabledFormControl check so it won't trigger on a disabled button.
+        (WebCore::RenderTheme::systemColor): Moved CSSValueActivebuttontext into
+        alphabetical order to match the rest of the switch statement ordering.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::systemColor): Moved CSSValueActivebuttontext into
+        alphabetical order to match the rest of the switch statement ordering. Also
+        fixed its behavior on older versions of OS X; it should just return the same
+        thing that CSSValueButtontext would return in that context.
+
 2015-04-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement ES6 template literals

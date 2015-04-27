@@ -79,7 +79,7 @@ RenderTheme::RenderTheme()
 {
 }
 
-void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, Element* e, bool UAHasAppearance, const BorderData& border, const FillLayer& background, const Color& backgroundColor)
+void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, Element* element, bool UAHasAppearance, const BorderData& border, const FillLayer& background, const Color& backgroundColor)
 {
     // Force inline and table display styles to be inline-block (except for table- which is block)
     ControlPart part = style.appearance();
@@ -176,9 +176,12 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
             if (style.setFontDescription(themeFont.value()))
                 style.fontCascade().update(nullptr);
         }
-        style.setInsideDefaultButton(part == DefaultButtonPart);
+
+        // Special style that tells enabled default buttons in active windows to use the ActiveButtonText color.
+        // The active window part of the test has to be done at paint time since it's not triggered by a style change.
+        style.setInsideDefaultButton(part == DefaultButtonPart && element && !element->isDisabledFormControl());
+        break;
     }
-    break;
     default:
         break;
     }
@@ -188,25 +191,25 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
     switch (style.appearance()) {
 #if !USE(NEW_THEME)
     case CheckboxPart:
-        return adjustCheckboxStyle(styleResolver, style, e);
+        return adjustCheckboxStyle(styleResolver, style, element);
     case RadioPart:
-        return adjustRadioStyle(styleResolver, style, e);
+        return adjustRadioStyle(styleResolver, style, element);
     case PushButtonPart:
     case SquareButtonPart:
     case DefaultButtonPart:
     case ButtonPart:
-        return adjustButtonStyle(styleResolver, style, e);
+        return adjustButtonStyle(styleResolver, style, element);
     case InnerSpinButtonPart:
-        return adjustInnerSpinButtonStyle(styleResolver, style, e);
+        return adjustInnerSpinButtonStyle(styleResolver, style, element);
 #endif
     case TextFieldPart:
-        return adjustTextFieldStyle(styleResolver, style, e);
+        return adjustTextFieldStyle(styleResolver, style, element);
     case TextAreaPart:
-        return adjustTextAreaStyle(styleResolver, style, e);
+        return adjustTextAreaStyle(styleResolver, style, element);
     case MenulistPart:
-        return adjustMenuListStyle(styleResolver, style, e);
+        return adjustMenuListStyle(styleResolver, style, element);
     case MenulistButtonPart:
-        return adjustMenuListButtonStyle(styleResolver, style, e);
+        return adjustMenuListButtonStyle(styleResolver, style, element);
     case MediaPlayButtonPart:
     case MediaCurrentTimePart:
     case MediaTimeRemainingPart:
@@ -214,45 +217,45 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
     case MediaExitFullscreenButtonPart:
     case MediaMuteButtonPart:
     case MediaVolumeSliderContainerPart:
-        return adjustMediaControlStyle(styleResolver, style, e);
+        return adjustMediaControlStyle(styleResolver, style, element);
     case MediaSliderPart:
     case MediaVolumeSliderPart:
     case MediaFullScreenVolumeSliderPart:
     case SliderHorizontalPart:
     case SliderVerticalPart:
-        return adjustSliderTrackStyle(styleResolver, style, e);
+        return adjustSliderTrackStyle(styleResolver, style, element);
     case SliderThumbHorizontalPart:
     case SliderThumbVerticalPart:
-        return adjustSliderThumbStyle(styleResolver, style, e);
+        return adjustSliderThumbStyle(styleResolver, style, element);
     case SearchFieldPart:
-        return adjustSearchFieldStyle(styleResolver, style, e);
+        return adjustSearchFieldStyle(styleResolver, style, element);
     case SearchFieldCancelButtonPart:
-        return adjustSearchFieldCancelButtonStyle(styleResolver, style, e);
+        return adjustSearchFieldCancelButtonStyle(styleResolver, style, element);
     case SearchFieldDecorationPart:
-        return adjustSearchFieldDecorationPartStyle(styleResolver, style, e);
+        return adjustSearchFieldDecorationPartStyle(styleResolver, style, element);
     case SearchFieldResultsDecorationPart:
-        return adjustSearchFieldResultsDecorationPartStyle(styleResolver, style, e);
+        return adjustSearchFieldResultsDecorationPartStyle(styleResolver, style, element);
     case SearchFieldResultsButtonPart:
-        return adjustSearchFieldResultsButtonStyle(styleResolver, style, e);
+        return adjustSearchFieldResultsButtonStyle(styleResolver, style, element);
     case ProgressBarPart:
-        return adjustProgressBarStyle(styleResolver, style, e);
+        return adjustProgressBarStyle(styleResolver, style, element);
 #if ENABLE(METER_ELEMENT)
     case MeterPart:
     case RelevancyLevelIndicatorPart:
     case ContinuousCapacityLevelIndicatorPart:
     case DiscreteCapacityLevelIndicatorPart:
     case RatingLevelIndicatorPart:
-        return adjustMeterStyle(styleResolver, style, e);
+        return adjustMeterStyle(styleResolver, style, element);
 #endif
 #if ENABLE(SERVICE_CONTROLS)
     case ImageControlsButtonPart:
         break;
 #endif
     case CapsLockIndicatorPart:
-        return adjustCapsLockIndicatorStyle(styleResolver, style, e);
+        return adjustCapsLockIndicatorStyle(styleResolver, style, element);
 #if ENABLE(ATTACHMENT_ELEMENT)
     case AttachmentPart:
-        return adjustAttachmentStyle(styleResolver, style, e);
+        return adjustAttachmentStyle(styleResolver, style, element);
 #endif
     default:
         break;
@@ -1220,6 +1223,8 @@ Color RenderTheme::systemColor(CSSValueID cssValueId) const
     switch (cssValueId) {
     case CSSValueActiveborder:
         return 0xFFFFFFFF;
+    case CSSValueActivebuttontext:
+        return 0xFF000000;
     case CSSValueActivecaption:
         return 0xFFCCCCCC;
     case CSSValueAppworkspace:
@@ -1233,8 +1238,6 @@ Color RenderTheme::systemColor(CSSValueID cssValueId) const
     case CSSValueButtonshadow:
         return 0xFF888888;
     case CSSValueButtontext:
-        return 0xFF000000;
-    case CSSValueActivebuttontext:
         return 0xFF000000;
     case CSSValueCaptiontext:
         return 0xFF000000;
