@@ -1,3 +1,13 @@
+2015-04-27  Brady Eidson  <beidson@apple.com>
+
+        Make 'enum NavigationType' be an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=144270
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::actionDictionary):
+
 2015-04-27  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(r182879): Images and video can no longer be downloaded

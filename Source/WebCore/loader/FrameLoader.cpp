@@ -1300,7 +1300,7 @@ void FrameLoader::load(const FrameLoadRequest& passedRequest)
     }
 
     if (request.shouldCheckNewWindowPolicy()) {
-        policyChecker().checkNewWindowPolicy(NavigationAction(request.resourceRequest(), NavigationTypeOther), request.resourceRequest(), nullptr, request.frameName(), [this](const ResourceRequest& request, PassRefPtr<FormState> formState, const String& frameName, const NavigationAction& action, bool shouldContinue) {
+        policyChecker().checkNewWindowPolicy(NavigationAction(request.resourceRequest(), NavigationType::Other), request.resourceRequest(), nullptr, request.frameName(), [this](const ResourceRequest& request, PassRefPtr<FormState> formState, const String& frameName, const NavigationAction& action, bool shouldContinue) {
             continueLoadAfterNewWindowPolicy(request, formState, frameName, action, shouldContinue, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Suppress);
         });
 
@@ -1573,7 +1573,7 @@ void FrameLoader::reload(bool endToEndReload)
 
     // If we're about to re-post, set up action so the application can warn the user.
     if (request.httpMethod() == "POST")
-        loader->setTriggeringAction(NavigationAction(request, NavigationTypeFormResubmitted));
+        loader->setTriggeringAction(NavigationAction(request, NavigationType::FormResubmitted));
 
     loader->setOverrideEncoding(m_documentLoader->overrideEncoding());
     
@@ -3209,7 +3209,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loa
             action = NavigationAction(request, loadType, false);
         } else {
             request.setCachePolicy(ReturnCacheDataElseLoad);
-            action = NavigationAction(request, NavigationTypeFormResubmitted);
+            action = NavigationAction(request, NavigationType::FormResubmitted);
         }
     } else {
         switch (loadType) {

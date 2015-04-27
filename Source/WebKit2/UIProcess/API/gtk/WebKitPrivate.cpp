@@ -56,17 +56,17 @@ unsigned toGdkModifiers(WebKit::WebEvent::Modifiers wkModifiers)
 WebKitNavigationType toWebKitNavigationType(WebCore::NavigationType type)
 {
     switch (type) {
-    case WebCore::NavigationType::NavigationTypeLinkClicked:
+    case WebCore::NavigationType::LinkClicked:
         return WEBKIT_NAVIGATION_TYPE_LINK_CLICKED;
-    case WebCore::NavigationType::NavigationTypeFormSubmitted:
+    case WebCore::NavigationType::FormSubmitted:
         return WEBKIT_NAVIGATION_TYPE_FORM_SUBMITTED;
-    case WebCore::NavigationType::NavigationTypeBackForward:
+    case WebCore::NavigationType::BackForward:
         return WEBKIT_NAVIGATION_TYPE_BACK_FORWARD;
-    case WebCore::NavigationType::NavigationTypeReload:
+    case WebCore::NavigationType::Reload:
         return WEBKIT_NAVIGATION_TYPE_RELOAD;
-    case WebCore::NavigationType::NavigationTypeFormResubmitted:
+    case WebCore::NavigationType::FormResubmitted:
         return WEBKIT_NAVIGATION_TYPE_FORM_RESUBMITTED;
-    case WebCore::NavigationType::NavigationTypeOther:
+    case WebCore::NavigationType::Other:
         return WEBKIT_NAVIGATION_TYPE_OTHER;
     default:
         ASSERT_NOT_REACHED();

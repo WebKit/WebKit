@@ -62,14 +62,14 @@ enum class NewFrameOpenerPolicy {
     Allow
 };
 
-    enum NavigationType {
-        NavigationTypeLinkClicked,
-        NavigationTypeFormSubmitted,
-        NavigationTypeBackForward,
-        NavigationTypeReload,
-        NavigationTypeFormResubmitted,
-        NavigationTypeOther
-    };
+enum class NavigationType {
+    LinkClicked,
+    FormSubmitted,
+    BackForward,
+    Reload,
+    FormResubmitted,
+    Other
+};
 
     enum ClearProvisionalItemPolicy {
         ShouldClearProvisionalItem,

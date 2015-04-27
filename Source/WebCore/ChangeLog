@@ -1,3 +1,31 @@
+2015-04-27  Brady Eidson  <beidson@apple.com>
+
+        Make 'enum NavigationType' be an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=144270
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No change in behavior).
+
+        I’ll be adding a new NavigationType for bug 144269 so it makes sense to make this
+        an enum class first.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::reload):
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+        * loader/FrameLoaderTypes.h:
+
+        * loader/NavigationAction.cpp:
+        (WebCore::navigationType):
+        (WebCore::NavigationAction::NavigationAction):
+
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+
+        * page/PerformanceNavigation.cpp:
+        (WebCore::PerformanceNavigation::type):
+
 2015-04-27  Yoav Weiss  <yoav@yoav.ws>
 
         Fix viewport units in Media Queries

@@ -1566,7 +1566,7 @@ NSDictionary *WebFrameLoaderClient::actionDictionary(const NavigationAction& act
     NSURL *originalURL = action.url();
 
     NSMutableDictionary *result = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithInt:action.type()], WebActionNavigationTypeKey,
+        [NSNumber numberWithInt:static_cast<int>(action.type())], WebActionNavigationTypeKey,
         [NSNumber numberWithInt:modifierFlags], WebActionModifierFlagsKey,
         originalURL, WebActionOriginalURLKey,
         nil];

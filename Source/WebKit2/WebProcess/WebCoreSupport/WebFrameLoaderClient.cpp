@@ -764,7 +764,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
 
     RefPtr<WebFrame> originatingFrame;
     switch (action->navigationType()) {
-    case NavigationTypeLinkClicked:
+    case NavigationType::LinkClicked:
         if (EventTarget* target = navigationAction.event()->target()) {
             if (Node* node = target->toNode()) {
                 if (Frame* frame = node->document().frame())
@@ -772,14 +772,14 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
             }
         }
         break;
-    case NavigationTypeFormSubmitted:
-    case NavigationTypeFormResubmitted:
+    case NavigationType::FormSubmitted:
+    case NavigationType::FormResubmitted:
         if (formState)
             originatingFrame = WebFrame::fromCoreFrame(*formState->sourceDocument()->frame());
         break;
-    case NavigationTypeBackForward:
-    case NavigationTypeReload:
-    case NavigationTypeOther:
+    case NavigationType::BackForward:
+    case NavigationType::Reload:
+    case NavigationType::Other:
         break;
     }
 

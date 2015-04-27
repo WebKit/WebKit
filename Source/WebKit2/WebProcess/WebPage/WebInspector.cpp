@@ -137,7 +137,7 @@ void WebInspector::openInNewTab(const String& urlString)
     Frame& inspectedMainFrame = inspectedPage->mainFrame();
     FrameLoadRequest request(inspectedMainFrame.document()->securityOrigin(), ResourceRequest(urlString), "_blank");
 
-    Page* newPage = inspectedPage->chrome().createWindow(&inspectedMainFrame, request, WindowFeatures(), NavigationAction(request.resourceRequest(), NavigationTypeLinkClicked));
+    Page* newPage = inspectedPage->chrome().createWindow(&inspectedMainFrame, request, WindowFeatures(), NavigationAction(request.resourceRequest(), NavigationType::LinkClicked));
     if (!newPage)
         return;
 

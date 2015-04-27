@@ -37,17 +37,17 @@
 static WKNavigationType toWKNavigationType(WebCore::NavigationType navigationType)
 {
     switch (navigationType) {
-    case WebCore::NavigationTypeLinkClicked:
+    case WebCore::NavigationType::LinkClicked:
         return WKNavigationTypeLinkActivated;
-    case WebCore::NavigationTypeFormSubmitted:
+    case WebCore::NavigationType::FormSubmitted:
         return WKNavigationTypeFormSubmitted;
-    case WebCore::NavigationTypeBackForward:
+    case WebCore::NavigationType::BackForward:
         return WKNavigationTypeBackForward;
-    case WebCore::NavigationTypeReload:
+    case WebCore::NavigationType::Reload:
         return WKNavigationTypeReload;
-    case WebCore::NavigationTypeFormResubmitted:
+    case WebCore::NavigationType::FormResubmitted:
         return WKNavigationTypeFormResubmitted;
-    case WebCore::NavigationTypeOther:
+    case WebCore::NavigationType::Other:
         return WKNavigationTypeOther;
     }
 

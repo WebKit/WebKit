@@ -38,25 +38,25 @@ namespace WebCore {
 static NavigationType navigationType(FrameLoadType frameLoadType, bool isFormSubmission, bool haveEvent)
 {
     if (isFormSubmission)
-        return NavigationTypeFormSubmitted;
+        return NavigationType::FormSubmitted;
     if (haveEvent)
-        return NavigationTypeLinkClicked;
+        return NavigationType::LinkClicked;
     if (frameLoadType == FrameLoadType::Reload || frameLoadType == FrameLoadType::ReloadFromOrigin)
-        return NavigationTypeReload;
+        return NavigationType::Reload;
     if (isBackForwardLoadType(frameLoadType))
-        return NavigationTypeBackForward;
-    return NavigationTypeOther;
+        return NavigationType::BackForward;
+    return NavigationType::Other;
 }
 
 NavigationAction::NavigationAction()
-    : m_type(NavigationTypeOther)
+    : m_type(NavigationType::Other)
     , m_processingUserGesture(ScriptController::processingUserGesture())
 {
 }
 
 NavigationAction::NavigationAction(const ResourceRequest& resourceRequest)
     : m_resourceRequest(resourceRequest)
-    , m_type(NavigationTypeOther)
+    , m_type(NavigationType::Other)
     , m_processingUserGesture(ScriptController::processingUserGesture())
 {
 }

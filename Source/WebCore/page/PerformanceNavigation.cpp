@@ -55,9 +55,9 @@ unsigned short PerformanceNavigation::type() const
 
     WebCore::NavigationType navigationType = documentLoader->triggeringAction().type();
     switch (navigationType) {
-    case NavigationTypeReload:
+    case NavigationType::Reload:
         return TYPE_RELOAD;
-    case NavigationTypeBackForward:
+    case NavigationType::BackForward:
         return TYPE_BACK_FORWARD;
     default:
         return TYPE_NAVIGATE;

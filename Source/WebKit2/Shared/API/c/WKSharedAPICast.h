@@ -752,22 +752,22 @@ inline WKFrameNavigationType toAPI(WebCore::NavigationType type)
     WKFrameNavigationType wkType = kWKFrameNavigationTypeOther;
 
     switch (type) {
-    case WebCore::NavigationTypeLinkClicked:
+    case WebCore::NavigationType::LinkClicked:
         wkType = kWKFrameNavigationTypeLinkClicked;
         break;
-    case WebCore::NavigationTypeFormSubmitted:
+    case WebCore::NavigationType::FormSubmitted:
         wkType = kWKFrameNavigationTypeFormSubmitted;
         break;
-    case WebCore::NavigationTypeBackForward:
+    case WebCore::NavigationType::BackForward:
         wkType = kWKFrameNavigationTypeBackForward;
         break;
-    case WebCore::NavigationTypeReload:
+    case WebCore::NavigationType::Reload:
         wkType = kWKFrameNavigationTypeReload;
         break;
-    case WebCore::NavigationTypeFormResubmitted:
+    case WebCore::NavigationType::FormResubmitted:
         wkType = kWKFrameNavigationTypeFormResubmitted;
         break;
-    case WebCore::NavigationTypeOther:
+    case WebCore::NavigationType::Other:
         wkType = kWKFrameNavigationTypeOther;
         break;
     }

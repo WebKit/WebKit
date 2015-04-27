@@ -34,7 +34,7 @@ using namespace WebCore;
 namespace WebKit {
 
 NavigationActionData::NavigationActionData()
-    : navigationType(NavigationTypeOther)
+    : navigationType(NavigationType::Other)
     , modifiers()
     , mouseButton(WebMouseEvent::NoButton)
     , isProcessingUserGesture(false)
