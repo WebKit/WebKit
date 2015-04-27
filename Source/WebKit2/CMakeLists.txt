@@ -164,10 +164,14 @@ set(NetworkProcess_SOURCES
     NetworkProcess/FileAPI/NetworkBlobRegistry.cpp
 
     NetworkProcess/cache/NetworkCache.cpp
+    NetworkProcess/cache/NetworkCacheBlobStorage.cpp
     NetworkProcess/cache/NetworkCacheCoders.cpp
-    NetworkProcess/cache/NetworkCacheEncoder.cpp
     NetworkProcess/cache/NetworkCacheDecoder.cpp
+    NetworkProcess/cache/NetworkCacheEncoder.cpp
+    NetworkProcess/cache/NetworkCacheEntry.cpp
     NetworkProcess/cache/NetworkCacheKey.cpp
+    NetworkProcess/cache/NetworkCacheStatistics.cpp
+    NetworkProcess/cache/NetworkCacheStorage.cpp
 )
 
 set(WebKit2_SOURCES

@@ -1,3 +1,53 @@
+2015-04-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Add initial implementation of NetworkProcess disk cache
+        https://bugs.webkit.org/show_bug.cgi?id=143872
+
+        Reviewed by Martin Robinson.
+
+        Implement the platform specific parts of the disk cache
+        implementation for Soup. It's mainly NetworkCache::Data and
+        NetworkCache::IOChannel.
+
+        * CMakeLists.txt:
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::dumpFileChanged):
+        (WebKit::NetworkCache::Cache::initialize):
+        * NetworkProcess/cache/NetworkCacheBlobStorage.cpp:
+        * NetworkProcess/cache/NetworkCacheData.h:
+        (WebKit::NetworkCache::Data::soupBuffer):
+        * NetworkProcess/cache/NetworkCacheDataSoup.cpp: Added.
+        (WebKit::NetworkCache::Data::Data):
+        (WebKit::NetworkCache::Data::empty):
+        (WebKit::NetworkCache::Data::data):
+        (WebKit::NetworkCache::Data::isNull):
+        (WebKit::NetworkCache::Data::apply):
+        (WebKit::NetworkCache::Data::subrange):
+        (WebKit::NetworkCache::concatenate):
+        (WebKit::NetworkCache::MapWrapper::~MapWrapper):
+        (WebKit::NetworkCache::deleteMapWrapper):
+        (WebKit::NetworkCache::mapFile):
+        (WebKit::NetworkCache::Data::adoptMap):
+        (WebKit::NetworkCache::computeSHA1):
+        (WebKit::NetworkCache::bytesEqual):
+        * NetworkProcess/cache/NetworkCacheIOChannel.h:
+        * NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp: Added.
+        (WebKit::NetworkCache::IOChannel::IOChannel):
+        (WebKit::NetworkCache::IOChannel::open):
+        (WebKit::NetworkCache::fillDataFromReadBuffer):
+        (WebKit::NetworkCache::inputStreamReadReadyCallback):
+        (WebKit::NetworkCache::IOChannel::read):
+        (WebKit::NetworkCache::IOChannel::readSync):
+        (WebKit::NetworkCache::outputStreamWriteReadyCallback):
+        (WebKit::NetworkCache::IOChannel::write):
+        * NetworkProcess/cache/NetworkCacheStorageSoup.cpp: Removed.
+        * NetworkProcess/gtk/NetworkProcessMainGtk.cpp:
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+        (WebKit::NetworkProcess::platformSetCacheModel):
+        (WebKit::NetworkProcess::clearDiskCache):
+        * PlatformGTK.cmake:
+
 2015-04-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement ES6 template literals

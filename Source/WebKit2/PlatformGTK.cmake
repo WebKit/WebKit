@@ -18,7 +18,8 @@ set(WebKit2_USE_PREFIX_HEADER ON)
 list(APPEND WebKit2_SOURCES
     DatabaseProcess/gtk/DatabaseProcessMainGtk.cpp
 
-    NetworkProcess/cache/NetworkCacheStorageSoup.cpp
+    NetworkProcess/cache/NetworkCacheDataSoup.cpp
+    NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp
 
     NetworkProcess/gtk/NetworkProcessMainGtk.cpp
 

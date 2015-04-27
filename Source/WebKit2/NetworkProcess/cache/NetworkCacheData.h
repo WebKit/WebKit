@@ -34,6 +34,10 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
+#if USE(SOUP)
+#include <WebCore/GRefPtrSoup.h>
+#endif
+
 namespace WebKit {
 namespace NetworkCache {
 
@@ -106,6 +110,9 @@ public:
 #if PLATFORM(COCOA)
     Data(DispatchPtr<dispatch_data_t>, Backing = Backing::Buffer);
 #endif
+#if USE(SOUP)
+    Data(GRefPtr<SoupBuffer>&&, Backing = Backing::Buffer);
+#endif
     bool isNull() const;
     bool isEmpty() const { return !m_size; }
 
@@ -120,9 +127,16 @@ public:
 #if PLATFORM(COCOA)
     dispatch_data_t dispatchData() const { return m_dispatchData.get(); }
 #endif
+
+#if USE(SOUP)
+    SoupBuffer* soupBuffer() const { return m_buffer.get(); }
+#endif
 private:
 #if PLATFORM(COCOA)
     mutable DispatchPtr<dispatch_data_t> m_dispatchData;
+#endif
+#if USE(SOUP)
+    mutable GRefPtr<SoupBuffer> m_buffer;
 #endif
     mutable const uint8_t* m_data { nullptr };
     size_t m_size { 0 };

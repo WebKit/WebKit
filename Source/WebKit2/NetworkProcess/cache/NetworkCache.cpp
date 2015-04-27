@@ -55,6 +55,13 @@ Cache& singleton()
     return instance;
 }
 
+#if PLATFORM(GTK)
+static void dumpFileChanged(Cache* cache)
+{
+    cache->dumpContentsToFile();
+}
+#endif
+
 bool Cache::initialize(const String& cachePath, bool enableEfficacyLogging)
 {
     m_storage = Storage::open(cachePath);
@@ -69,6 +76,15 @@ bool Cache::initialize(const String& cachePath, bool enableEfficacyLogging)
         notify_register_dispatch("com.apple.WebKit.Cache.dump", &token, dispatch_get_main_queue(), ^(int) {
             dumpContentsToFile();
         });
+    }
+#endif
+#if PLATFORM(GTK)
+    // Triggers with "touch $cachePath/dump".
+    if (m_storage) {
+        CString dumpFilePath = WebCore::fileSystemRepresentation(WebCore::pathByAppendingComponent(m_storage->basePath(), "dump"));
+        GRefPtr<GFile> dumpFile = adoptGRef(g_file_new_for_path(dumpFilePath.data()));
+        GFileMonitor* monitor = g_file_monitor_file(dumpFile.get(), G_FILE_MONITOR_NONE, nullptr, nullptr);
+        g_signal_connect_swapped(monitor, "changed", G_CALLBACK(dumpFileChanged), this);
     }
 #endif
 

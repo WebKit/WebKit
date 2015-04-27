@@ -34,6 +34,10 @@
 #include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
 
+#if USE(SOUP)
+#include <wtf/gobject/GRefPtr.h>
+#endif
+
 namespace WebKit {
 namespace NetworkCache {
 
@@ -62,6 +66,11 @@ private:
     int m_fileDescriptor { 0 };
 #if PLATFORM(COCOA)
     DispatchPtr<dispatch_io_t> m_dispatchIO;
+#endif
+#if USE(SOUP)
+    GRefPtr<GInputStream> m_inputStream;
+    GRefPtr<GOutputStream> m_outputStream;
+    GRefPtr<GFileIOStream> m_ioStream;
 #endif
 };
 

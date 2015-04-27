@@ -31,6 +31,7 @@
 #include "Logging.h"
 #include "NetworkCacheFileSystemPosix.h"
 #include <WebCore/FileSystem.h>
+#include <fcntl.h>
 #include <sys/mman.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SHA1.h>
