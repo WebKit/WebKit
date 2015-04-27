@@ -1,3 +1,35 @@
+2015-04-25  Filip Pizlo  <fpizlo@apple.com>
+
+        VarargsForwardingPhase should use bytecode liveness in addition to other uses to determine the last point that a candidate is used
+        https://bugs.webkit.org/show_bug.cgi?id=143843
+
+        Reviewed by Geoffrey Garen.
+        
+        It will soon come to pass that Phantom isn't available at the time that
+        VarargsForwardingPhase runs. So, it needs to use some other mechanism for discovering when
+        a value dies for OSR.
+        
+        This is simplified by two things:
+        
+        1) The bytecode kill analysis is now reusable. This patch makes it even more reusable than
+           before by polishing the API.
+        
+        2) This phase already operates on one node at a time and allows itself to do a full search
+           of the enclosing basic block for that node. This is fine because CreateDirectArguments
+           and friends is a rarely occurring node. The fact that it operates on one node at a time
+           makes it even easier to reason about OSR liveness - we just track the list of locals in
+           which it is live.
+        
+        This change has no effect right now but it is a necessary prerequisite to implementing
+        https://bugs.webkit.org/show_bug.cgi?id=143736.
+
+        * dfg/DFGBasicBlock.h:
+        (JSC::DFG::BasicBlock::tryAt):
+        * dfg/DFGForAllKills.h:
+        (JSC::DFG::forAllKilledOperands):
+        * dfg/DFGPhantomInsertionPhase.cpp:
+        * dfg/DFGVarargsForwardingPhase.cpp:
+
 2015-04-27  Jordan Harband  <ljharb@gmail.com>
 
         Map#entries and Map#keys error for non-Maps is swapped

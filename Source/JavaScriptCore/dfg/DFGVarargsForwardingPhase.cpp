@@ -30,6 +30,7 @@
 
 #include "DFGArgumentsUtilities.h"
 #include "DFGClobberize.h"
+#include "DFGForAllKills.h"
 #include "DFGGraph.h"
 #include "DFGPhase.h"
 #include "JSCInlines.h"
@@ -49,6 +50,8 @@ public:
     
     bool run()
     {
+        DFG_ASSERT(m_graph, nullptr, m_graph.m_form != SSA);
+        
         if (verbose) {
             dataLog("Graph before varargs forwarding:\n");
             m_graph.dump();
@@ -87,13 +90,19 @@ private:
         // Find the index of the last node in this block to use the candidate, and look for escaping
         // sites.
         unsigned lastUserIndex = candidateNodeIndex;
+        Vector<VirtualRegister, 2> relevantLocals; // This is a set. We expect it to be a small set.
         for (unsigned nodeIndex = candidateNodeIndex + 1; nodeIndex < block->size(); ++nodeIndex) {
             Node* node = block->at(nodeIndex);
+            
             switch (node->op()) {
+            case MovHint:
+                lastUserIndex = nodeIndex;
+                if (!relevantLocals.contains(node->unlinkedLocal()))
+                    relevantLocals.append(node->unlinkedLocal());
+                break;
+                
             case Phantom:
             case Check:
-            case MovHint:
-            case PutHint:
             case LoadVarargs:
                 if (m_graph.uses(node, candidate))
                     lastUserIndex = nodeIndex;
@@ -125,6 +134,18 @@ private:
                     return;
                 }
             }
+            
+            forAllKilledOperands(
+                m_graph, node, block->tryAt(nodeIndex + 1),
+                [&] (VirtualRegister reg) {
+                    for (unsigned i = 0; i < relevantLocals.size(); ++i) {
+                        if (relevantLocals[i] == reg) {
+                            relevantLocals[i--] = relevantLocals.last();
+                            relevantLocals.removeLast();
+                            lastUserIndex = nodeIndex;
+                        }
+                    }
+                });
         }
         if (verbose)
             dataLog("Selected lastUserIndex = ", lastUserIndex, ", ", block->at(lastUserIndex), "\n");

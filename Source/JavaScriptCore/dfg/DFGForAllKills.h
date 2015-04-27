@@ -75,6 +75,12 @@ template<typename Functor>
 void forAllKilledOperands(Graph& graph, Node* nodeBefore, Node* nodeAfter, const Functor& functor)
 {
     CodeOrigin before = nodeBefore->origin.forExit;
+
+    if (!nodeAfter) {
+        graph.forAllLiveInBytecode(before, functor);
+        return;
+    }
+    
     CodeOrigin after = nodeAfter->origin.forExit;
     
     VirtualRegister alreadyNoted;

@@ -61,6 +61,12 @@ struct BasicBlock : RefCounted<BasicBlock> {
     bool isEmpty() const { return !size(); }
     Node*& at(size_t i) { return m_nodes[i]; }
     Node* at(size_t i) const { return m_nodes[i]; }
+    Node* tryAt(size_t i) const
+    {
+        if (i >= size())
+            return nullptr;
+        return at(i);
+    }
     Node*& operator[](size_t i) { return at(i); }
     Node* operator[](size_t i) const { return at(i); }
     
