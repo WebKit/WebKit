@@ -117,7 +117,7 @@
     if (m_platformElement && m_platformElement != [notification object])
         return;
 
-    NSString *userInfoJSONValue = notification.userInfo[@"userInfo"];
+    NSString *userInfoJSONValue = [[notification userInfo] objectForKey:@"userInfo"];
 
     JSRetainPtr<JSStringRef> jsNotification(Adopt, [notificationName createJSStringRef]);
     JSValueRef notificationNameArgument = JSValueMakeString([mainFrame globalContext], jsNotification.get());
