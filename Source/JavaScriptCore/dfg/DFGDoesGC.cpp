@@ -55,7 +55,6 @@ bool doesGC(Graph& graph, Node* node)
     case MovHint:
     case ZombieHint:
     case Phantom:
-    case MustGenerate:
     case Upsilon:
     case Phi:
     case Flush:

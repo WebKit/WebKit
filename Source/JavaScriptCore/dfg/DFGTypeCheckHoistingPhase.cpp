@@ -244,7 +244,6 @@ private:
                 case GetIndexedPropertyStorage:
                 case GetTypedArrayByteOffset:
                 case Phantom:
-                case MustGenerate:
                 case MovHint:
                 case MultiGetByOffset:
                 case MultiPutByOffset:
@@ -337,7 +336,6 @@ private:
                 case GetArrayLength:
                 case GetIndexedPropertyStorage:
                 case Phantom:
-                case MustGenerate:
                 case MovHint:
                 case MultiGetByOffset:
                 case MultiPutByOffset:

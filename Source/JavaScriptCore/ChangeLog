@@ -1,3 +1,84 @@
+2015-04-24  Filip Pizlo  <fpizlo@apple.com>
+
+        Rationalize DFG DCE handling of nodes that perform checks that propagate through AI
+        https://bugs.webkit.org/show_bug.cgi?id=144186
+
+        Reviewed by Geoffrey Garen.
+        
+        If I do ArithAdd(Int32Use, Int32Use, CheckOverflow) then AI will prove that this returns
+        Int32. We may later perform code simplifications based on the proof that this is Int32, and
+        we may kill all DFG users of this ArithAdd. Then we may prove that there is no exit site at
+        which the ArithAdd is live. This seems like it is sufficient to then kill the ArithAdd,
+        except that we still need the overflow check!
+
+        Previously we mishandled this:
+
+        - In places where we want the overflow check we need to use MustGenerate(@ArithAdd) as a hack
+          to keep it alive. That's dirty and it's just indicative of a deeper issue.
+
+        - Our MovHint removal doesn't do Phantom canonicalization which essentially makes it
+          powerless. This was sort of hiding the bug.
+
+        - Nodes that have checks that AI leverages should always be NodeMustGenerate. You can't kill
+          something that you are relying on for subsequent simplifications.
+        
+        This fixes MovHint removal to also canonicalize Phantoms. This also adds ModeMustGenerate to
+        nodes that may perform checks that are used by AI to guarantee the result type. As a result,
+        we no longer need the weird MustGenerate node.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDCEPhase.cpp:
+        (JSC::DFG::DCEPhase::run):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::tryToRelaxRepresentation):
+        * dfg/DFGIntegerCheckCombiningPhase.cpp:
+        (JSC::DFG::IntegerCheckCombiningPhase::handleBlock):
+        (JSC::DFG::IntegerCheckCombiningPhase::insertMustAdd): Deleted.
+        * dfg/DFGMayExit.cpp:
+        (JSC::DFG::mayExit):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::willHaveCodeGenOrOSR):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        (JSC::DFG::ObjectAllocationSinkingPhase::handleNode):
+        * dfg/DFGPhantomCanonicalizationPhase.cpp:
+        (JSC::DFG::PhantomCanonicalizationPhase::run):
+        * dfg/DFGPhantomRemovalPhase.cpp:
+        (JSC::DFG::PhantomRemovalPhase::run):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantStructureChecks):
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantArrayChecks):
+        * dfg/DFGVarargsForwardingPhase.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        * tests/stress/fold-based-on-int32-proof-mul-branch.js: Added.
+        (foo):
+        * tests/stress/fold-based-on-int32-proof-mul.js: Added.
+        (foo):
+        * tests/stress/fold-based-on-int32-proof-or-zero.js: Added.
+        (foo):
+        * tests/stress/fold-based-on-int32-proof.js: Added.
+        (foo):
+
 2015-04-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Class body ending with a semicolon throws a SyntaxError

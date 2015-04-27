@@ -797,7 +797,6 @@ private:
         case MovHint:
         case Phantom:
         case Check:
-        case MustGenerate:
         case StoreBarrier:
         case StoreBarrierWithNullCheck:
         case PutHint:

@@ -147,14 +147,6 @@ public:
                     break;
                 }
                     
-                case MustGenerate: {
-                    if (node->children.isEmpty()) {
-                        m_graph.m_allocator.free(node);
-                        continue;
-                    }
-                    break;
-                }
-                    
                 default:
                     break;
                 }

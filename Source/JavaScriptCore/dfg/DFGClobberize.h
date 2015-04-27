@@ -115,7 +115,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         
     case Identity:
     case Phantom:
-    case MustGenerate:
     case Check:
     case ExtractOSREntryLocal:
     case CheckStructureImmediate:

@@ -38,7 +38,6 @@
 namespace JSC { namespace DFG {
 
 static const NodeFlags NodeNeedsPhantom = NodeMiscFlag1;
-static const NodeFlags NodeNeedsMustGenerate = NodeMiscFlag2;
 
 class PhantomCanonicalizationPhase : public Phase {
 public:
@@ -51,7 +50,7 @@ public:
     {
         ASSERT(m_graph.m_form == SSA);
         
-        m_graph.clearFlagsOnAllNodes(NodeNeedsPhantom | NodeNeedsMustGenerate | NodeRelevantToOSR);
+        m_graph.clearFlagsOnAllNodes(NodeNeedsPhantom | NodeRelevantToOSR);
         m_graph.mergeRelevantToOSR();
         
         for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
@@ -63,13 +62,11 @@ public:
             unsigned targetIndex = 0;
             while (sourceIndex < block->size()) {
                 Node* node = block->at(sourceIndex++);
-                if (node->op() == MustGenerate || node->op() == Phantom || node->op() == Check) {
+                if (node->op() == Phantom || node->op() == Check) {
                     for (unsigned i = 0; i < AdjacencyList::Size; ++i) {
                         Edge edge = node->children.child(i);
                         if (!edge)
                             break;
-                        if (node->op() == MustGenerate)
-                            edge->mergeFlags(NodeNeedsMustGenerate);
                         if ((edge->flags() & NodeRelevantToOSR) && node->op() == Phantom) {
                             // A Phantom on a node that is RelevantToOSR means that we need to keep
                             // a Phantom on this node instead of just having a Check.
@@ -101,10 +98,7 @@ public:
             
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
                 Node* node = block->at(nodeIndex);
-                if (node->flags() & NodeNeedsMustGenerate) {
-                    insertionSet.insertNode(
-                        nodeIndex + 1, SpecNone, MustGenerate, node->origin, node->defaultEdge());
-                } else if (node->flags() & NodeNeedsPhantom) {
+                if (node->flags() & NodeNeedsPhantom) {
                     insertionSet.insertNode(
                         nodeIndex + 1, SpecNone, Phantom, node->origin, node->defaultEdge());
                 }

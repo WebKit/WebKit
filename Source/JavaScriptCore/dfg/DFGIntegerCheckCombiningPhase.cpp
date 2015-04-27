@@ -236,12 +236,12 @@ private:
                 switch (data.m_key.m_kind) {
                 case Addition: {
                     if (range.m_minBound < 0) {
-                        insertMustAdd(
+                        insertAdd(
                             nodeIndex, NodeOrigin(range.m_minOrigin, node->origin.forExit),
                             data.m_key.m_source, range.m_minBound);
                     }
                     if (range.m_maxBound > 0) {
-                        insertMustAdd(
+                        insertAdd(
                             nodeIndex, NodeOrigin(range.m_maxOrigin, node->origin.forExit),
                             data.m_key.m_source, range.m_maxBound);
                     }
@@ -383,15 +383,6 @@ private:
             ArithAdd, origin, OpInfo(arithMode), source,
             m_insertionSet.insertConstantForUse(
                 nodeIndex, origin, jsNumber(addend), source.useKind()));
-    }
-    
-    Node* insertMustAdd(
-        unsigned nodeIndex, NodeOrigin origin, Edge source, int32_t addend)
-    {
-        Node* result = insertAdd(nodeIndex, origin, source, addend);
-        m_insertionSet.insertNode(
-            nodeIndex, SpecNone, MustGenerate, origin, result->defaultEdge());
-        return result;
     }
     
     typedef std::unordered_map<RangeKey, Range, HashMethod<RangeKey>> RangeMap;

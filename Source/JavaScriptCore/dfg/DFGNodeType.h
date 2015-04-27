@@ -71,7 +71,6 @@ namespace JSC { namespace DFG {
     macro(MovHint, NodeMustGenerate) \
     macro(ZombieHint, NodeMustGenerate) \
     macro(Phantom, NodeMustGenerate) \
-    macro(MustGenerate, NodeMustGenerate) /* Utility node for making soem not-usually-NodeMustGenerate node become like NodeMustGenerate. */ \
     macro(Check, NodeMustGenerate) /* Used if we want just a type check but not liveness. Non-checking uses will be removed. */\
     macro(Upsilon, NodeRelevantToOSR) \
     macro(Phi, NodeRelevantToOSR) \
@@ -130,16 +129,22 @@ namespace JSC { namespace DFG {
     /* Bogus type asserting node. Useful for testing, disappears during Fixup. */\
     macro(FiatInt52, NodeResultJS) \
     \
-    /* Nodes for arithmetic operations. */\
-    macro(ArithAdd, NodeResultNumber) \
+    /* Nodes for arithmetic operations. Note that if they do checks other than just type checks, */\
+    /* then they are MustGenerate. This is probably stricter than it needs to be - for example */\
+    /* they won't do checks if they are speculated double. Also, we could kill these if we do it */\
+    /* before AI starts eliminating downstream operations based on proofs, for example in the */\
+    /* case of "var tmp = a + b; return (tmp | 0) == tmp;". If a, b are speculated integer then */\
+    /* this is only true if we do the overflow check - hence the need to keep it alive. More */\
+    /* generally, we need to keep alive any operation whose checks cause filtration in AI. */\
+    macro(ArithAdd, NodeResultNumber | NodeMustGenerate) \
     macro(ArithClz32, NodeResultInt32) \
-    macro(ArithSub, NodeResultNumber) \
-    macro(ArithNegate, NodeResultNumber) \
-    macro(ArithMul, NodeResultNumber) \
+    macro(ArithSub, NodeResultNumber | NodeMustGenerate) \
+    macro(ArithNegate, NodeResultNumber | NodeMustGenerate) \
+    macro(ArithMul, NodeResultNumber | NodeMustGenerate) \
     macro(ArithIMul, NodeResultInt32) \
-    macro(ArithDiv, NodeResultNumber) \
-    macro(ArithMod, NodeResultNumber) \
-    macro(ArithAbs, NodeResultNumber) \
+    macro(ArithDiv, NodeResultNumber | NodeMustGenerate) \
+    macro(ArithMod, NodeResultNumber | NodeMustGenerate) \
+    macro(ArithAbs, NodeResultNumber | NodeMustGenerate) \
     macro(ArithMin, NodeResultNumber) \
     macro(ArithMax, NodeResultNumber) \
     macro(ArithFRound, NodeResultNumber) \

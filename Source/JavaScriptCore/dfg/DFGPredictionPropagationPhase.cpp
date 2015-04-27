@@ -535,7 +535,6 @@ private:
         case InvalidationPoint:
         case CheckInBounds:
         case ValueToInt32:
-        case MustGenerate:
         case DoubleRep:
         case ValueRep:
         case Int52Rep:

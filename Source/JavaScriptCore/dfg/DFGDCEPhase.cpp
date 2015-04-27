@@ -71,7 +71,7 @@ public:
             cleanVariables(m_graph.m_arguments);
         }
         
-        // Just do a basic MustGenerate/Phantom/Check clean-up.
+        // Just do a basic Phantom/Check clean-up.
         for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
             BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
@@ -82,7 +82,6 @@ public:
                 Node* node = block->at(sourceIndex++);
                 switch (node->op()) {
                 case Check:
-                case MustGenerate:
                 case Phantom:
                     if (node->children.isEmpty())
                         continue;
