@@ -29,7 +29,7 @@ namespace WebCore {
     
 class FETile : public FilterEffect {
 public:
-    static Ref<FETile> create(Filter* filter);
+    static Ref<FETile> create(Filter&);
 
     virtual void platformApplySoftware();
     virtual void dump();
@@ -41,7 +41,7 @@ public:
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
-    FETile(Filter*);
+    FETile(Filter&);
 };
 
 } // namespace WebCore

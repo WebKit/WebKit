@@ -106,12 +106,12 @@ void SVGFEColorMatrixElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-PassRefPtr<FilterEffect> SVGFEColorMatrixElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)
+RefPtr<FilterEffect> SVGFEColorMatrixElement::build(SVGFilterBuilder* filterBuilder, Filter& filter)
 {
     FilterEffect* input1 = filterBuilder->getEffectById(in1());
 
     if (!input1)
-        return 0;
+        return nullptr;
 
     Vector<float> filterValues;
     ColorMatrixType filterType = type();
@@ -139,12 +139,12 @@ PassRefPtr<FilterEffect> SVGFEColorMatrixElement::build(SVGFilterBuilder* filter
         if ((filterType == FECOLORMATRIX_TYPE_MATRIX && size != 20)
             || (filterType == FECOLORMATRIX_TYPE_HUEROTATE && size != 1)
             || (filterType == FECOLORMATRIX_TYPE_SATURATE && size != 1))
-            return 0;
+            return nullptr;
     }
 
     RefPtr<FilterEffect> effect = FEColorMatrix::create(filter, filterType, filterValues);
     effect->inputEffects().append(input1);
-    return effect.release();
+    return effect;
 }
 
 } // namespace WebCore

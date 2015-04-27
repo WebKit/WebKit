@@ -41,7 +41,7 @@ enum CompositeOperationType {
 
 class FEComposite : public FilterEffect {
 public:
-    static Ref<FEComposite> create(Filter*, const CompositeOperationType&, float, float, float, float);
+    static Ref<FEComposite> create(Filter&, const CompositeOperationType&, float, float, float, float);
 
     CompositeOperationType operation() const;
     bool setOperation(CompositeOperationType);
@@ -71,7 +71,7 @@ protected:
     virtual bool requiresValidPreMultipliedPixels() override { return m_type != FECOMPOSITE_OPERATOR_ARITHMETIC; }
 
 private:
-    FEComposite(Filter*, const CompositeOperationType&, float, float, float, float);
+    FEComposite(Filter&, const CompositeOperationType&, float, float, float, float);
 
     inline void platformArithmeticSoftware(Uint8ClampedArray* source, Uint8ClampedArray* destination,
         float k1, float k2, float k3, float k4);

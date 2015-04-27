@@ -34,8 +34,8 @@ class RenderElement;
 
 class FEImage : public FilterEffect {
 public:
-    static PassRefPtr<FEImage> createWithImage(Filter*, PassRefPtr<Image>, const SVGPreserveAspectRatio&);
-    static PassRefPtr<FEImage> createWithIRIReference(Filter*, Document&, const String&, const SVGPreserveAspectRatio&);
+    static Ref<FEImage> createWithImage(Filter&, RefPtr<Image>, const SVGPreserveAspectRatio&);
+    static Ref<FEImage> createWithIRIReference(Filter&, Document&, const String&, const SVGPreserveAspectRatio&);
 
     virtual void platformApplySoftware() override;
 #if ENABLE(OPENCL)
@@ -51,8 +51,8 @@ public:
     
 private:
     virtual ~FEImage() { }
-    FEImage(Filter*, PassRefPtr<Image>, const SVGPreserveAspectRatio&);
-    FEImage(Filter*, Document&, const String&, const SVGPreserveAspectRatio&);
+    FEImage(Filter&, RefPtr<Image>, const SVGPreserveAspectRatio&);
+    FEImage(Filter&, Document&, const String&, const SVGPreserveAspectRatio&);
     RenderElement* referencedRenderer() const;
 
     RefPtr<Image> m_image;

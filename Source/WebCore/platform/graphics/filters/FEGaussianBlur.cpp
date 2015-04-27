@@ -78,7 +78,7 @@ inline void kernelPosition(int blurIteration, unsigned& radius, int& deltaLeft, 
     }
 }
 
-FEGaussianBlur::FEGaussianBlur(Filter* filter, float x, float y, EdgeModeType edgeMode)
+FEGaussianBlur::FEGaussianBlur(Filter& filter, float x, float y, EdgeModeType edgeMode)
     : FilterEffect(filter)
     , m_stdX(x)
     , m_stdY(y)
@@ -86,7 +86,7 @@ FEGaussianBlur::FEGaussianBlur(Filter* filter, float x, float y, EdgeModeType ed
 {
 }
 
-Ref<FEGaussianBlur> FEGaussianBlur::create(Filter* filter, float x, float y, EdgeModeType edgeMode)
+Ref<FEGaussianBlur> FEGaussianBlur::create(Filter& filter, float x, float y, EdgeModeType edgeMode)
 {
     return adoptRef(*new FEGaussianBlur(filter, x, y, edgeMode));
 }

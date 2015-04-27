@@ -30,14 +30,14 @@
 
 namespace WebCore {
 
-FEOffset::FEOffset(Filter* filter, float dx, float dy)
+FEOffset::FEOffset(Filter& filter, float dx, float dy)
     : FilterEffect(filter)
     , m_dx(dx)
     , m_dy(dy)
 {
 }
 
-Ref<FEOffset> FEOffset::create(Filter* filter, float dx, float dy)
+Ref<FEOffset> FEOffset::create(Filter& filter, float dx, float dy)
 {
     return adoptRef(*new FEOffset(filter, dx, dy));
 }

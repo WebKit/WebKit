@@ -52,7 +52,7 @@ private:
     virtual void notifyFinished(CachedResource*) override;
 
     virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
-    virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*) override;
+    virtual RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) override;
 
     void clearResourceReferences();
     void requestImageResource();

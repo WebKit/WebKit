@@ -23,19 +23,17 @@
 #include "FilterEffect.h"
 #include "SourceAlpha.h"
 #include "SourceGraphic.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-SVGFilterBuilder::SVGFilterBuilder(PassRefPtr<FilterEffect> sourceGraphic, PassRefPtr<FilterEffect> sourceAlpha)
+SVGFilterBuilder::SVGFilterBuilder(RefPtr<FilterEffect> sourceGraphic)
 {
     m_builtinEffects.add(SourceGraphic::effectName(), sourceGraphic);
-    m_builtinEffects.add(SourceAlpha::effectName(), sourceAlpha);
+    m_builtinEffects.add(SourceAlpha::effectName(), SourceAlpha::create(*sourceGraphic));
     addBuiltinEffects();
 }
 
-void SVGFilterBuilder::add(const AtomicString& id, PassRefPtr<FilterEffect> effect)
+void SVGFilterBuilder::add(const AtomicString& id, RefPtr<FilterEffect> effect)
 {
     if (id.isEmpty()) {
         m_lastEffect = effect;

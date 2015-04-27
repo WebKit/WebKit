@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-FELighting::FELighting(Filter* filter, LightingType lightingType, const Color& lightingColor, float surfaceScale,
+FELighting::FELighting(Filter& filter, LightingType lightingType, const Color& lightingColor, float surfaceScale,
     float diffuseConstant, float specularConstant, float specularExponent,
     float kernelUnitLengthX, float kernelUnitLengthY, PassRefPtr<LightSource> lightSource)
     : FilterEffect(filter)

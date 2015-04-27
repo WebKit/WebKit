@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-FEComposite::FEComposite(Filter* filter, const CompositeOperationType& type, float k1, float k2, float k3, float k4)
+FEComposite::FEComposite(Filter& filter, const CompositeOperationType& type, float k1, float k2, float k3, float k4)
     : FilterEffect(filter)
     , m_type(type)
     , m_k1(k1)
@@ -43,7 +43,7 @@ FEComposite::FEComposite(Filter* filter, const CompositeOperationType& type, flo
 {
 }
 
-Ref<FEComposite> FEComposite::create(Filter* filter, const CompositeOperationType& type, float k1, float k2, float k3, float k4)
+Ref<FEComposite> FEComposite::create(Filter& filter, const CompositeOperationType& type, float k1, float k2, float k3, float k4)
 {
     return adoptRef(*new FEComposite(filter, type, k1, k2, k3, k4));
 }

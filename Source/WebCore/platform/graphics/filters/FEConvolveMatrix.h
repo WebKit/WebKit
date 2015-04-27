@@ -40,7 +40,7 @@ enum EdgeModeType {
 
 class FEConvolveMatrix : public FilterEffect {
 public:
-    static Ref<FEConvolveMatrix> create(Filter*, const IntSize&,
+    static Ref<FEConvolveMatrix> create(Filter&, const IntSize&,
             float, float, const IntPoint&, EdgeModeType, const FloatPoint&,
             bool, const Vector<float>&);
 
@@ -85,7 +85,7 @@ private:
         float bias;
     };
 
-    FEConvolveMatrix(Filter*, const IntSize&, float, float,
+    FEConvolveMatrix(Filter&, const IntSize&, float, float,
             const IntPoint&, EdgeModeType, const FloatPoint&, bool, const Vector<float>&);
 
     template<bool preserveAlphaValues>

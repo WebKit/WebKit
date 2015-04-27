@@ -176,7 +176,7 @@ void SVGFEImageElement::notifyFinished(CachedResource*)
     RenderSVGResource::markForLayoutAndParentResourceInvalidation(*parentRenderer);
 }
 
-PassRefPtr<FilterEffect> SVGFEImageElement::build(SVGFilterBuilder*, Filter* filter)
+RefPtr<FilterEffect> SVGFEImageElement::build(SVGFilterBuilder*, Filter& filter)
 {
     if (m_cachedImage)
         return FEImage::createWithImage(filter, m_cachedImage->imageForRenderer(renderer()), preserveAspectRatio());

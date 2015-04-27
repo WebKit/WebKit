@@ -40,7 +40,7 @@ Ref<SVGFEMergeElement> SVGFEMergeElement::create(const QualifiedName& tagName, D
     return adoptRef(*new SVGFEMergeElement(tagName, document));
 }
 
-PassRefPtr<FilterEffect> SVGFEMergeElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)
+RefPtr<FilterEffect> SVGFEMergeElement::build(SVGFilterBuilder* filterBuilder, Filter& filter)
 {
     RefPtr<FilterEffect> effect = FEMerge::create(filter);
     FilterEffectVector& mergeInputs = effect->inputEffects();
@@ -55,7 +55,7 @@ PassRefPtr<FilterEffect> SVGFEMergeElement::build(SVGFilterBuilder* filterBuilde
     if (mergeInputs.isEmpty())
         return nullptr;
 
-    return effect.release();
+    return effect;
 }
 
 }

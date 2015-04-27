@@ -38,7 +38,7 @@ enum ChannelSelectorType {
 
 class FEDisplacementMap : public FilterEffect {
 public:
-    static Ref<FEDisplacementMap> create(Filter*, ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float);
+    static Ref<FEDisplacementMap> create(Filter&, ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float);
 
     ChannelSelectorType xChannelSelector() const;
     bool setXChannelSelector(const ChannelSelectorType);
@@ -60,7 +60,7 @@ public:
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
-    FEDisplacementMap(Filter*, ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float);
+    FEDisplacementMap(Filter&, ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float);
 
     ChannelSelectorType m_xChannelSelector;
     ChannelSelectorType m_yChannelSelector;

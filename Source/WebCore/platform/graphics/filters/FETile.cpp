@@ -31,12 +31,12 @@
 
 namespace WebCore {
 
-FETile::FETile(Filter* filter)
+FETile::FETile(Filter& filter)
     : FilterEffect(filter)
 {
 }
 
-Ref<FETile> FETile::create(Filter* filter)
+Ref<FETile> FETile::create(Filter& filter)
 {
     return adoptRef(*new FETile(filter));
 }

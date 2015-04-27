@@ -138,20 +138,20 @@ void SVGFECompositeElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-PassRefPtr<FilterEffect> SVGFECompositeElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)
+RefPtr<FilterEffect> SVGFECompositeElement::build(SVGFilterBuilder* filterBuilder, Filter& filter)
 {
     FilterEffect* input1 = filterBuilder->getEffectById(in1());
     FilterEffect* input2 = filterBuilder->getEffectById(in2());
     
     if (!input1 || !input2)
-        return 0;
+        return nullptr;
 
     RefPtr<FilterEffect> effect = FEComposite::create(filter, svgOperator(), k1(), k2(), k3(), k4());
     FilterEffectVector& inputEffects = effect->inputEffects();
     inputEffects.reserveCapacity(2);
     inputEffects.append(input1);
     inputEffects.append(input2);    
-    return effect.release();
+    return effect;
 }
 
 }

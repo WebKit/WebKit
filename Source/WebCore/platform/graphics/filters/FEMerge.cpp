@@ -28,12 +28,12 @@
 
 namespace WebCore {
 
-FEMerge::FEMerge(Filter* filter) 
+FEMerge::FEMerge(Filter& filter)
     : FilterEffect(filter)
 {
 }
 
-Ref<FEMerge> FEMerge::create(Filter* filter)
+Ref<FEMerge> FEMerge::create(Filter& filter)
 {
     return adoptRef(*new FEMerge(filter));
 }

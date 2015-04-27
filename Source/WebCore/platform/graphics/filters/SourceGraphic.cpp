@@ -28,9 +28,9 @@
 
 namespace WebCore {
 
-PassRefPtr<SourceGraphic> SourceGraphic::create(Filter* filter)
+Ref<SourceGraphic> SourceGraphic::create(Filter& filter)
 {
-    return adoptRef(new SourceGraphic(filter));
+    return adoptRef(*new SourceGraphic(filter));
 }
 
 const AtomicString& SourceGraphic::effectName()

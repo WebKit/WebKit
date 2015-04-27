@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-FEConvolveMatrix::FEConvolveMatrix(Filter* filter, const IntSize& kernelSize,
+FEConvolveMatrix::FEConvolveMatrix(Filter& filter, const IntSize& kernelSize,
     float divisor, float bias, const IntPoint& targetOffset, EdgeModeType edgeMode,
     const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix)
     : FilterEffect(filter)
@@ -49,7 +49,7 @@ FEConvolveMatrix::FEConvolveMatrix(Filter* filter, const IntSize& kernelSize,
     ASSERT(m_kernelSize.height() > 0);
 }
 
-Ref<FEConvolveMatrix> FEConvolveMatrix::create(Filter* filter, const IntSize& kernelSize,
+Ref<FEConvolveMatrix> FEConvolveMatrix::create(Filter& filter, const IntSize& kernelSize,
     float divisor, float bias, const IntPoint& targetOffset, EdgeModeType edgeMode,
     const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix)
 {

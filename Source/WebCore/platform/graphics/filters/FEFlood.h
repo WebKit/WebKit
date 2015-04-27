@@ -30,10 +30,10 @@ namespace WebCore {
 
 class FEFlood : public FilterEffect {
 public:
-    static Ref<FEFlood> create(Filter* filter, const Color&, float);
+    static Ref<FEFlood> create(Filter&, const Color&, float);
 
     Color floodColor() const;
-    bool setFloodColor(const Color &);
+    bool setFloodColor(const Color&);
 
     float floodOpacity() const;
     bool setFloodOpacity(float);
@@ -56,7 +56,7 @@ public:
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
-    FEFlood(Filter*, const Color&, float);
+    FEFlood(Filter&, const Color&, float);
 
     Color m_floodColor;
     float m_floodOpacity;

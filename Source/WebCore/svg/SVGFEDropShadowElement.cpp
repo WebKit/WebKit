@@ -119,14 +119,14 @@ void SVGFEDropShadowElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-PassRefPtr<FilterEffect> SVGFEDropShadowElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)
+RefPtr<FilterEffect> SVGFEDropShadowElement::build(SVGFilterBuilder* filterBuilder, Filter& filter)
 {
     RenderObject* renderer = this->renderer();
     if (!renderer)
-        return 0;
+        return nullptr;
 
     if (stdDeviationX() < 0 || stdDeviationY() < 0)
-        return 0;
+        return nullptr;
 
     const SVGRenderStyle& svgStyle = renderer->style().svgStyle();
     
@@ -135,11 +135,11 @@ PassRefPtr<FilterEffect> SVGFEDropShadowElement::build(SVGFilterBuilder* filterB
 
     FilterEffect* input1 = filterBuilder->getEffectById(in1());
     if (!input1)
-        return 0;
+        return nullptr;
 
     RefPtr<FilterEffect> effect = FEDropShadow::create(filter, stdDeviationX(), stdDeviationY(), dx(), dy(), color, opacity);
     effect->inputEffects().append(input1);
-    return effect.release();
+    return effect;
 }
 
 }

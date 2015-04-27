@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-FEImage::FEImage(Filter* filter, PassRefPtr<Image> image, const SVGPreserveAspectRatio& preserveAspectRatio)
+FEImage::FEImage(Filter& filter, RefPtr<Image> image, const SVGPreserveAspectRatio& preserveAspectRatio)
     : FilterEffect(filter)
     , m_image(image)
     , m_document(0)
@@ -44,7 +44,7 @@ FEImage::FEImage(Filter* filter, PassRefPtr<Image> image, const SVGPreserveAspec
 {
 }
 
-FEImage::FEImage(Filter* filter, Document& document, const String& href, const SVGPreserveAspectRatio& preserveAspectRatio)
+FEImage::FEImage(Filter& filter, Document& document, const String& href, const SVGPreserveAspectRatio& preserveAspectRatio)
     : FilterEffect(filter)
     , m_document(&document)
     , m_href(href)
@@ -52,14 +52,14 @@ FEImage::FEImage(Filter* filter, Document& document, const String& href, const S
 {
 }
 
-PassRefPtr<FEImage> FEImage::createWithImage(Filter* filter, PassRefPtr<Image> image, const SVGPreserveAspectRatio& preserveAspectRatio)
+Ref<FEImage> FEImage::createWithImage(Filter& filter, RefPtr<Image> image, const SVGPreserveAspectRatio& preserveAspectRatio)
 {
-    return adoptRef(new FEImage(filter, image, preserveAspectRatio));
+    return adoptRef(*new FEImage(filter, image, preserveAspectRatio));
 }
 
-PassRefPtr<FEImage> FEImage::createWithIRIReference(Filter* filter, Document& document, const String& href, const SVGPreserveAspectRatio& preserveAspectRatio)
+Ref<FEImage> FEImage::createWithIRIReference(Filter& filter, Document& document, const String& href, const SVGPreserveAspectRatio& preserveAspectRatio)
 {
-    return adoptRef(new FEImage(filter, document, href, preserveAspectRatio));
+    return adoptRef(*new FEImage(filter, document, href, preserveAspectRatio));
 }
 
 void FEImage::determineAbsolutePaintRect()

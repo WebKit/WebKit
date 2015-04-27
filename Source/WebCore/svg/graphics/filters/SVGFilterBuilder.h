@@ -37,9 +37,9 @@ class SVGFilterBuilder {
 public:
     typedef HashSet<FilterEffect*> FilterEffectSet;
 
-    SVGFilterBuilder(PassRefPtr<FilterEffect> sourceGraphic, PassRefPtr<FilterEffect> sourceAlpha);
+    SVGFilterBuilder(RefPtr<FilterEffect> sourceGraphic);
 
-    void add(const AtomicString& id, PassRefPtr<FilterEffect>);
+    void add(const AtomicString& id, RefPtr<FilterEffect>);
 
     FilterEffect* getEffectById(const AtomicString& id) const;
     FilterEffect* lastEffect() const { return m_lastEffect.get(); }

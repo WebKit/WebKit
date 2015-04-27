@@ -31,7 +31,7 @@ namespace WebCore {
 
 class FEBlend : public FilterEffect {
 public:
-    static Ref<FEBlend> create(Filter*, BlendMode);
+    static Ref<FEBlend> create(Filter&, BlendMode);
 
     BlendMode blendMode() const;
     bool setBlendMode(BlendMode);
@@ -46,7 +46,7 @@ public:
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
-    FEBlend(Filter*, BlendMode);
+    FEBlend(Filter&, BlendMode);
 
     BlendMode m_mode;
 };

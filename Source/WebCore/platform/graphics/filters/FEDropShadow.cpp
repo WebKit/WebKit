@@ -31,7 +31,7 @@
 
 namespace WebCore {
     
-FEDropShadow::FEDropShadow(Filter* filter, float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity)
+FEDropShadow::FEDropShadow(Filter& filter, float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity)
     : FilterEffect(filter)
     , m_stdX(stdX)
     , m_stdY(stdY)
@@ -42,7 +42,7 @@ FEDropShadow::FEDropShadow(Filter* filter, float stdX, float stdY, float dx, flo
 {
 }
 
-Ref<FEDropShadow> FEDropShadow::create(Filter* filter, float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity)
+Ref<FEDropShadow> FEDropShadow::create(Filter& filter, float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity)
 {
     return adoptRef(*new FEDropShadow(filter, stdX, stdY, dx, dy, shadowColor, shadowOpacity));
 }

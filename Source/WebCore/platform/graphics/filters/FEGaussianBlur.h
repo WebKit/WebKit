@@ -30,7 +30,7 @@ namespace WebCore {
 
 class FEGaussianBlur : public FilterEffect {
 public:
-    static Ref<FEGaussianBlur> create(Filter*, float, float, EdgeModeType);
+    static Ref<FEGaussianBlur> create(Filter&, float, float, EdgeModeType);
 
     float stdDeviationX() const;
     void setStdDeviationX(float);
@@ -68,7 +68,7 @@ private:
 
     static void platformApplyWorker(PlatformApplyParameters*);
 
-    FEGaussianBlur(Filter*, float, float, EdgeModeType);
+    FEGaussianBlur(Filter&, float, float, EdgeModeType);
 
     inline void platformApply(Uint8ClampedArray* srcPixelArray, Uint8ClampedArray* tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize);
 

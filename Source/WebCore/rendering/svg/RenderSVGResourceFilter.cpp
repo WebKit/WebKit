@@ -39,7 +39,6 @@
 #include "SVGNames.h"
 #include "SVGRenderingContext.h"
 #include "Settings.h"
-#include "SourceAlpha.h"
 #include "SourceGraphic.h"
 
 namespace WebCore {
@@ -72,16 +71,16 @@ void RenderSVGResourceFilter::removeClientFromCache(RenderElement& client, bool 
     markClientForInvalidation(client, markForInvalidation ? BoundariesInvalidation : ParentOnlyInvalidation);
 }
 
-std::unique_ptr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(SVGFilter* filter) const
+std::unique_ptr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(SVGFilter& filter) const
 {
     static const unsigned maxCountChildNodes = 200;
     if (filterElement().countChildNodes() > maxCountChildNodes)
         return nullptr;
 
-    FloatRect targetBoundingBox = filter->targetBoundingBox();
+    FloatRect targetBoundingBox = filter.targetBoundingBox();
 
     // Add effects to the builder
-    auto builder = std::make_unique<SVGFilterBuilder>(SourceGraphic::create(filter), SourceAlpha::create(filter));
+    auto builder = std::make_unique<SVGFilterBuilder>(SourceGraphic::create(filter));
     for (auto& element : childrenOfType<SVGFilterPrimitiveStandardAttributes>(filterElement())) {
         RefPtr<FilterEffect> effect = element.build(builder.get(), filter);
         if (!effect) {
@@ -151,7 +150,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     filterData->filter = SVGFilter::create(filterData->shearFreeAbsoluteTransform, absoluteDrawingRegion, targetBoundingBox, filterData->boundaries, primitiveBoundingBoxMode);
 
     // Create all relevant filter primitives.
-    filterData->builder = buildPrimitives(filterData->filter.get());
+    filterData->builder = buildPrimitives(*filterData->filter);
     if (!filterData->builder)
         return false;
 

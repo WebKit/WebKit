@@ -29,14 +29,14 @@
 
 namespace WebCore {
 
-FEFlood::FEFlood(Filter* filter, const Color& floodColor, float floodOpacity)
+FEFlood::FEFlood(Filter& filter, const Color& floodColor, float floodOpacity)
     : FilterEffect(filter)
     , m_floodColor(floodColor)
     , m_floodOpacity(floodOpacity)
 {
 }
 
-Ref<FEFlood> FEFlood::create(Filter* filter, const Color& floodColor, float floodOpacity)
+Ref<FEFlood> FEFlood::create(Filter& filter, const Color& floodColor, float floodOpacity)
 {
     return adoptRef(*new FEFlood(filter, floodColor, floodOpacity));
 }

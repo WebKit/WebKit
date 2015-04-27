@@ -88,7 +88,7 @@ protected:
     static void platformApplyGenericWorker(PlatformApplyGenericParameters*);
     static void platformApplyNeonWorker(FELightingPaintingDataForNeon*);
 
-    FELighting(Filter*, LightingType, const Color&, float, float, float, float, float, float, PassRefPtr<LightSource>);
+    FELighting(Filter&, LightingType, const Color&, float, float, float, float, float, float, PassRefPtr<LightSource>);
 
     bool drawLighting(Uint8ClampedArray*, int, int);
     inline void inlineSetPixel(int offset, LightingData&, LightSource::PaintingData&,

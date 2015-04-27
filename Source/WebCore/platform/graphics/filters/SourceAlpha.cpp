@@ -29,9 +29,9 @@
 
 namespace WebCore {
 
-PassRefPtr<SourceAlpha> SourceAlpha::create(Filter* filter)
+Ref<SourceAlpha> SourceAlpha::create(FilterEffect& sourceEffect)
 {
-    return adoptRef(new SourceAlpha(filter));
+    return adoptRef(*new SourceAlpha(sourceEffect));
 }
 
 const AtomicString& SourceAlpha::effectName()
@@ -42,25 +42,23 @@ const AtomicString& SourceAlpha::effectName()
 
 void SourceAlpha::determineAbsolutePaintRect()
 {
-    Filter& filter = this->filter();
-    FloatRect paintRect = filter.sourceImageRect();
-    paintRect.scale(filter.filterResolution().width(), filter.filterResolution().height());
-    setAbsolutePaintRect(enclosingIntRect(paintRect));
+    inputEffect(0)->determineAbsolutePaintRect();
+    setAbsolutePaintRect(inputEffect(0)->absolutePaintRect());
 }
 
 void SourceAlpha::platformApplySoftware()
 {
     ImageBuffer* resultImage = createImageBufferResult();
-    Filter& filter = this->filter();
-    if (!resultImage || !filter.sourceImage())
+    if (!resultImage)
         return;
+    GraphicsContext* filterContext = resultImage->context();
 
-    setIsAlphaImage(true);
+    ImageBuffer* imageBuffer = inputEffect(0)->asImageBuffer();
+    ASSERT(imageBuffer);
 
     FloatRect imageRect(FloatPoint(), absolutePaintRect().size());
-    GraphicsContext* filterContext = resultImage->context();
     filterContext->fillRect(imageRect, Color::black, ColorSpaceDeviceRGB);
-    filterContext->drawImageBuffer(filter.sourceImage(), ColorSpaceDeviceRGB, IntPoint(), CompositeDestinationIn);
+    filterContext->drawImageBuffer(imageBuffer, ColorSpaceDeviceRGB, IntPoint(), CompositeDestinationIn);
 }
 
 void SourceAlpha::dump()
@@ -72,6 +70,13 @@ TextStream& SourceAlpha::externalRepresentation(TextStream& ts, int indent) cons
     writeIndent(ts, indent);
     ts << "[SourceAlpha]\n";
     return ts;
+}
+
+SourceAlpha::SourceAlpha(FilterEffect& sourceEffect)
+    : FilterEffect(sourceEffect.filter())
+{
+    setOperatingColorSpace(sourceEffect.operatingColorSpace());
+    inputEffects().append(&sourceEffect);
 }
 
 } // namespace WebCore

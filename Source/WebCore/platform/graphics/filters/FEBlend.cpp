@@ -35,13 +35,13 @@
 
 namespace WebCore {
 
-FEBlend::FEBlend(Filter* filter, BlendMode mode)
+FEBlend::FEBlend(Filter& filter, BlendMode mode)
     : FilterEffect(filter)
     , m_mode(mode)
 {
 }
 
-Ref<FEBlend> FEBlend::create(Filter* filter, BlendMode mode)
+Ref<FEBlend> FEBlend::create(Filter& filter, BlendMode mode)
 {
     return adoptRef(*new FEBlend(filter, mode));
 }

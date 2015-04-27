@@ -150,7 +150,7 @@ public:
     FloatRect effectBoundaries() const { return m_effectBoundaries; }
     void setEffectBoundaries(const FloatRect& effectBoundaries) { m_effectBoundaries = effectBoundaries; }
 
-    Filter& filter() { ASSERT(m_filter); return *m_filter; }
+    Filter& filter() { return m_filter; }
 
     bool clipsToBounds() const { return m_clipsToBounds; }
     void setClipsToBounds(bool value) { m_clipsToBounds = value; }
@@ -164,7 +164,7 @@ public:
     void transformResultColorSpace(ColorSpace);
 
 protected:
-    FilterEffect(Filter*);
+    FilterEffect(Filter&);
 
     ImageBuffer* createImageBufferResult();
     Uint8ClampedArray* createUnmultipliedImageResult();
@@ -196,7 +196,7 @@ private:
     // The maximum size of a filter primitive. In SVG this is the primitive subregion in absolute coordinate space.
     // The absolute paint rect should never be bigger than m_maxEffectRect.
     FloatRect m_maxEffectRect;
-    Filter* m_filter;
+    Filter& m_filter;
     
 private:
     inline void copyImageBytes(Uint8ClampedArray* source, Uint8ClampedArray* destination, const IntRect&);

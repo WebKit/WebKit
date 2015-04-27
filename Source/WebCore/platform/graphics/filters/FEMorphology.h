@@ -35,7 +35,7 @@ enum MorphologyOperatorType {
 
 class FEMorphology : public FilterEffect {
 public:
-    static Ref<FEMorphology> create(Filter*, MorphologyOperatorType, float radiusX, float radiusY);
+    static Ref<FEMorphology> create(Filter&, MorphologyOperatorType, float radiusX, float radiusY);
 
     MorphologyOperatorType morphologyOperator() const { return m_type; }
     bool setMorphologyOperator(MorphologyOperatorType);
@@ -76,7 +76,7 @@ public:
     inline void platformApply(PaintingData*);
     inline void platformApplyGeneric(PaintingData*, const int yStart, const int yEnd);
 private:
-    FEMorphology(Filter*, MorphologyOperatorType, float radiusX, float radiusY);
+    FEMorphology(Filter&, MorphologyOperatorType, float radiusX, float radiusY);
     bool platformApplyDegenerate(Uint8ClampedArray* dstPixelArray, const IntRect& imageRect, int radiusX, int radiusY);
     
     MorphologyOperatorType m_type;

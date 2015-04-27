@@ -27,14 +27,14 @@
 
 namespace WebCore {
 
-FESpecularLighting::FESpecularLighting(Filter* filter, const Color& lightingColor, float surfaceScale,
+FESpecularLighting::FESpecularLighting(Filter& filter, const Color& lightingColor, float surfaceScale,
     float specularConstant, float specularExponent, float kernelUnitLengthX,
     float kernelUnitLengthY, PassRefPtr<LightSource> lightSource)
     : FELighting(filter, SpecularLighting, lightingColor, surfaceScale, 0, specularConstant, specularExponent, kernelUnitLengthX, kernelUnitLengthY, lightSource)
 {
 }
 
-Ref<FESpecularLighting> FESpecularLighting::create(Filter* filter, const Color& lightingColor,
+Ref<FESpecularLighting> FESpecularLighting::create(Filter& filter, const Color& lightingColor,
     float surfaceScale, float specularConstant, float specularExponent,
     float kernelUnitLengthX, float kernelUnitLengthY, PassRefPtr<LightSource> lightSource)
 {

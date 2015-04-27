@@ -44,7 +44,6 @@
 #include "SVGElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "Settings.h"
-#include "SourceAlpha.h"
 
 #include <algorithm>
 #include <wtf/MathExtras.h>
@@ -72,7 +71,7 @@ FilterEffectRenderer::FilterEffectRenderer()
     , m_hasFilterThatMovesPixels(false)
 {
     setFilterResolution(FloatSize(1, 1));
-    m_sourceGraphic = SourceGraphic::create(this);
+    m_sourceGraphic = SourceGraphic::create(*this);
 }
 
 FilterEffectRenderer::~FilterEffectRenderer()
@@ -113,15 +112,10 @@ PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(RenderElemen
 
     RefPtr<FilterEffect> effect;
 
-    // FIXME: Figure out what to do with SourceAlpha. Right now, we're
-    // using the alpha of the original input layer, which is obviously
-    // wrong. We should probably be extracting the alpha from the 
-    // previousEffect, but this requires some more processing.  
-    // This may need a spec clarification.
-    auto builder = std::make_unique<SVGFilterBuilder>(previousEffect, SourceAlpha::create(this));
+    auto builder = std::make_unique<SVGFilterBuilder>(previousEffect);
 
     for (auto& effectElement : childrenOfType<SVGFilterPrimitiveStandardAttributes>(*filter)) {
-        effect = effectElement.build(builder.get(), this);
+        effect = effectElement.build(builder.get(), *this);
         if (!effect)
             continue;
 
@@ -176,7 +170,7 @@ bool FilterEffectRenderer::build(RenderElement* renderer, const FilterOperations
 
             lastMatrixRow(inputParameters);
 
-            effect = FEColorMatrix::create(this, FECOLORMATRIX_TYPE_MATRIX, inputParameters);
+            effect = FEColorMatrix::create(*this, FECOLORMATRIX_TYPE_MATRIX, inputParameters);
             break;
         }
         case FilterOperation::SEPIA: {
@@ -204,21 +198,21 @@ bool FilterEffectRenderer::build(RenderElement* renderer, const FilterOperations
 
             lastMatrixRow(inputParameters);
 
-            effect = FEColorMatrix::create(this, FECOLORMATRIX_TYPE_MATRIX, inputParameters);
+            effect = FEColorMatrix::create(*this, FECOLORMATRIX_TYPE_MATRIX, inputParameters);
             break;
         }
         case FilterOperation::SATURATE: {
             BasicColorMatrixFilterOperation& colorMatrixOperation = downcast<BasicColorMatrixFilterOperation>(filterOperation);
             Vector<float> inputParameters;
             inputParameters.append(narrowPrecisionToFloat(colorMatrixOperation.amount()));
-            effect = FEColorMatrix::create(this, FECOLORMATRIX_TYPE_SATURATE, inputParameters);
+            effect = FEColorMatrix::create(*this, FECOLORMATRIX_TYPE_SATURATE, inputParameters);
             break;
         }
         case FilterOperation::HUE_ROTATE: {
             BasicColorMatrixFilterOperation& colorMatrixOperation = downcast<BasicColorMatrixFilterOperation>(filterOperation);
             Vector<float> inputParameters;
             inputParameters.append(narrowPrecisionToFloat(colorMatrixOperation.amount()));
-            effect = FEColorMatrix::create(this, FECOLORMATRIX_TYPE_HUEROTATE, inputParameters);
+            effect = FEColorMatrix::create(*this, FECOLORMATRIX_TYPE_HUEROTATE, inputParameters);
             break;
         }
         case FilterOperation::INVERT: {
@@ -231,7 +225,7 @@ bool FilterEffectRenderer::build(RenderElement* renderer, const FilterOperations
             transferFunction.tableValues = transferParameters;
 
             ComponentTransferFunction nullFunction;
-            effect = FEComponentTransfer::create(this, transferFunction, transferFunction, transferFunction, nullFunction);
+            effect = FEComponentTransfer::create(*this, transferFunction, transferFunction, transferFunction, nullFunction);
             break;
         }
         case FilterOperation::OPACITY: {
@@ -244,7 +238,7 @@ bool FilterEffectRenderer::build(RenderElement* renderer, const FilterOperations
             transferFunction.tableValues = transferParameters;
 
             ComponentTransferFunction nullFunction;
-            effect = FEComponentTransfer::create(this, nullFunction, nullFunction, nullFunction, transferFunction);
+            effect = FEComponentTransfer::create(*this, nullFunction, nullFunction, nullFunction, transferFunction);
             break;
         }
         case FilterOperation::BRIGHTNESS: {
@@ -255,7 +249,7 @@ bool FilterEffectRenderer::build(RenderElement* renderer, const FilterOperations
             transferFunction.intercept = 0;
 
             ComponentTransferFunction nullFunction;
-            effect = FEComponentTransfer::create(this, transferFunction, transferFunction, transferFunction, nullFunction);
+            effect = FEComponentTransfer::create(*this, transferFunction, transferFunction, transferFunction, nullFunction);
             break;
         }
         case FilterOperation::CONTRAST: {
@@ -267,18 +261,18 @@ bool FilterEffectRenderer::build(RenderElement* renderer, const FilterOperations
             transferFunction.intercept = -0.5 * amount + 0.5;
             
             ComponentTransferFunction nullFunction;
-            effect = FEComponentTransfer::create(this, transferFunction, transferFunction, transferFunction, nullFunction);
+            effect = FEComponentTransfer::create(*this, transferFunction, transferFunction, transferFunction, nullFunction);
             break;
         }
         case FilterOperation::BLUR: {
             BlurFilterOperation& blurOperation = downcast<BlurFilterOperation>(filterOperation);
             float stdDeviation = floatValueForLength(blurOperation.stdDeviation(), 0);
-            effect = FEGaussianBlur::create(this, stdDeviation, stdDeviation, consumer == FilterProperty ? EDGEMODE_NONE : EDGEMODE_DUPLICATE);
+            effect = FEGaussianBlur::create(*this, stdDeviation, stdDeviation, consumer == FilterProperty ? EDGEMODE_NONE : EDGEMODE_DUPLICATE);
             break;
         }
         case FilterOperation::DROP_SHADOW: {
             DropShadowFilterOperation& dropShadowOperation = downcast<DropShadowFilterOperation>(filterOperation);
-            effect = FEDropShadow::create(this, dropShadowOperation.stdDeviation(), dropShadowOperation.stdDeviation(),
+            effect = FEDropShadow::create(*this, dropShadowOperation.stdDeviation(), dropShadowOperation.stdDeviation(),
                 dropShadowOperation.x(), dropShadowOperation.y(), dropShadowOperation.color(), 1);
             break;
         }

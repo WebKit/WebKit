@@ -113,19 +113,19 @@ void SVGFEGaussianBlurElement::svgAttributeChanged(const QualifiedName& attrName
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-PassRefPtr<FilterEffect> SVGFEGaussianBlurElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)
+RefPtr<FilterEffect> SVGFEGaussianBlurElement::build(SVGFilterBuilder* filterBuilder, Filter& filter)
 {
     FilterEffect* input1 = filterBuilder->getEffectById(in1());
 
     if (!input1)
-        return 0;
+        return nullptr;
 
     if (stdDeviationX() < 0 || stdDeviationY() < 0)
-        return 0;
+        return nullptr;
 
     RefPtr<FilterEffect> effect = FEGaussianBlur::create(filter, stdDeviationX(), stdDeviationY(), edgeMode());
     effect->inputEffects().append(input1);
-    return effect.release();
+    return effect;
 }
 
 }

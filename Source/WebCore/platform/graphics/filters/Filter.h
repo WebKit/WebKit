@@ -28,8 +28,6 @@
 
 namespace WebCore {
 
-class FilterEffect;
-
 class Filter : public RefCounted<Filter> {
 public:
     Filter(const AffineTransform& absoluteTransform, float filterScale = 1)

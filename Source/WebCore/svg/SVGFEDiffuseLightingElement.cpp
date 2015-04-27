@@ -172,27 +172,27 @@ void SVGFEDiffuseLightingElement::lightElementAttributeChanged(const SVGFELightE
     primitiveAttributeChanged(attrName);
 }
 
-PassRefPtr<FilterEffect> SVGFEDiffuseLightingElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)
+RefPtr<FilterEffect> SVGFEDiffuseLightingElement::build(SVGFilterBuilder* filterBuilder, Filter& filter)
 {
     FilterEffect* input1 = filterBuilder->getEffectById(in1());
 
     if (!input1)
-        return 0;
+        return nullptr;
 
     RefPtr<LightSource> lightSource = SVGFELightElement::findLightSource(this);
     if (!lightSource)
-        return 0;
+        return nullptr;
 
     RenderObject* renderer = this->renderer();
     if (!renderer)
-        return 0;
+        return nullptr;
     
     Color color = renderer->style().svgStyle().lightingColor();
 
     RefPtr<FilterEffect> effect = FEDiffuseLighting::create(filter, color, surfaceScale(), diffuseConstant(),
                                                                 kernelUnitLengthX(), kernelUnitLengthY(), lightSource.release());
     effect->inputEffects().append(input1);
-    return effect.release();
+    return effect;
 }
 
 }

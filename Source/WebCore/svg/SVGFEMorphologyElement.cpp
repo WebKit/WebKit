@@ -132,21 +132,21 @@ void SVGFEMorphologyElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-PassRefPtr<FilterEffect> SVGFEMorphologyElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)
+RefPtr<FilterEffect> SVGFEMorphologyElement::build(SVGFilterBuilder* filterBuilder, Filter& filter)
 {
     FilterEffect* input1 = filterBuilder->getEffectById(in1());
     float xRadius = radiusX();
     float yRadius = radiusY();
 
     if (!input1)
-        return 0;
+        return nullptr;
 
     if (xRadius < 0 || yRadius < 0)
-        return 0;
+        return nullptr;
 
     RefPtr<FilterEffect> effect = FEMorphology::create(filter, svgOperator(), xRadius, yRadius);
     effect->inputEffects().append(input1);
-    return effect.release();
+    return effect;
 }
 
 } // namespace WebCore

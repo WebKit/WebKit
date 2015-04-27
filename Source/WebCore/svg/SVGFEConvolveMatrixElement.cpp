@@ -231,12 +231,12 @@ void SVGFEConvolveMatrixElement::svgAttributeChanged(const QualifiedName& attrNa
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-PassRefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)
+RefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder* filterBuilder, Filter& filter)
 {
     FilterEffect* input1 = filterBuilder->getEffectById(in1());
 
     if (!input1)
-        return 0;
+        return nullptr;
 
     int orderXValue = orderX();
     int orderYValue = orderY();
@@ -246,22 +246,22 @@ PassRefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder* fil
     }
     // Spec says order must be > 0. Bail if it is not.
     if (orderXValue < 1 || orderYValue < 1)
-        return 0;
+        return nullptr;
     SVGNumberList& kernelMatrix = this->kernelMatrix();
     int kernelMatrixSize = kernelMatrix.size();
     // The spec says this is a requirement, and should bail out if fails
     if (orderXValue * orderYValue != kernelMatrixSize)
-        return 0;
+        return nullptr;
 
     int targetXValue = targetX();
     int targetYValue = targetY();
     if (hasAttribute(SVGNames::targetXAttr) && (targetXValue < 0 || targetXValue >= orderXValue))
-        return 0;
+        return nullptr;
     // The spec says the default value is: targetX = floor ( orderX / 2 ))
     if (!hasAttribute(SVGNames::targetXAttr))
         targetXValue = static_cast<int>(floorf(orderXValue / 2));
     if (hasAttribute(SVGNames::targetYAttr) && (targetYValue < 0 || targetYValue >= orderYValue))
-        return 0;
+        return nullptr;
     // The spec says the default value is: targetY = floor ( orderY / 2 ))
     if (!hasAttribute(SVGNames::targetYAttr))
         targetYValue = static_cast<int>(floorf(orderYValue / 2));
@@ -274,11 +274,11 @@ PassRefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder* fil
         kernelUnitLengthYValue = 1;
     }
     if (kernelUnitLengthXValue <= 0 || kernelUnitLengthYValue <= 0)
-        return 0;
+        return nullptr;
 
     float divisorValue = divisor();
     if (hasAttribute(SVGNames::divisorAttr) && !divisorValue)
-        return 0;
+        return nullptr;
     if (!hasAttribute(SVGNames::divisorAttr)) {
         for (int i = 0; i < kernelMatrixSize; ++i)
             divisorValue += kernelMatrix.at(i);
@@ -291,7 +291,7 @@ PassRefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder* fil
                     bias(), IntPoint(targetXValue, targetYValue), edgeMode(),
                     FloatPoint(kernelUnitLengthXValue, kernelUnitLengthYValue), preserveAlpha(), kernelMatrix);
     effect->inputEffects().append(input1);
-    return effect.release();
+    return effect;
 }
 
 } // namespace WebCore

@@ -37,7 +37,7 @@ enum TurbulenceType {
 
 class FETurbulence : public FilterEffect {
 public:
-    static Ref<FETurbulence> create(Filter*, TurbulenceType, float, float, int, float, bool);
+    static Ref<FETurbulence> create(Filter&, TurbulenceType, float, float, int, float, bool);
 
     TurbulenceType type() const;
     bool setType(TurbulenceType);
@@ -118,7 +118,7 @@ private:
 
     static void fillRegionWorker(FillRegionParameters*);
 
-    FETurbulence(Filter*, TurbulenceType, float, float, int, float, bool);
+    FETurbulence(Filter&, TurbulenceType, float, float, int, float, bool);
 
     inline void initPaint(PaintingData&);
     float noise2D(int channel, PaintingData&, StitchData&, const FloatPoint&);
