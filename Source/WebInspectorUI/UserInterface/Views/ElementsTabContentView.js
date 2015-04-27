@@ -34,9 +34,9 @@ WebInspector.ElementsTabContentView = function(identifier)
     WebInspector.ContentBrowserTabContentView.call(this, identifier || "elements", "elements", tabBarItem, null, detailsSidebarPanels, true);
 
     WebInspector.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
+    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
-    if (WebInspector.frameResourceManager.mainFrame)
-        this.contentBrowser.showContentViewForRepresentedObject(WebInspector.frameResourceManager.mainFrame.domTree);
+    this._showDOMTreeContentView();
 };
 
 WebInspector.ElementsTabContentView.prototype = {
@@ -78,18 +78,32 @@ WebInspector.ElementsTabContentView.prototype = {
     {
         WebInspector.ContentBrowserTabContentView.prototype.closed.call(this);
 
-        WebInspector.removeResourceManager.addEventListener(null, null, this);
+        WebInspector.frameResourceManager.removeEventListener(null, null, this);
+        WebInspector.Frame.removeEventListener(null, null, this);
     },
 
     // Private
 
-    _mainFrameDidChange: function(event)
+    _showDOMTreeContentView: function()
     {
         this.contentBrowser.contentViewContainer.closeAllContentViews();
 
         var mainFrame = WebInspector.frameResourceManager.mainFrame;
         if (mainFrame)
             this.contentBrowser.showContentViewForRepresentedObject(mainFrame.domTree);
+    },
+
+    _mainFrameDidChange: function(event)
+    {
+        this._showDOMTreeContentView();
+    },
+
+    _mainResourceDidChange: function(event)
+    {
+        if (!event.target.isMainFrame())
+            return;
+
+        this._showDOMTreeContentView();
     }
 };
 
