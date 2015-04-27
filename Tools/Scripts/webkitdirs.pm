@@ -1366,7 +1366,7 @@ sub launcherPath()
 {
     my $relativeScriptsPath = relativeScriptsDir();
     if (isGtk() || isEfl()) {
-        return "$relativeScriptsPath/run-launcher";
+        return "$relativeScriptsPath/run-minibrowser";
     } elsif (isAppleWebKit()) {
         return "$relativeScriptsPath/run-safari";
     }

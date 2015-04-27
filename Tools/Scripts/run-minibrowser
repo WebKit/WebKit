@@ -1,6 +1,8 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2005, 2007 Apple Inc. All rights reserved.
+# Copyright (C) 2005, 2007, 2013 Apple Inc. All rights reserved.
+# Copyright (C) 2007 Staikos Computing Services, Inc.  <info@staikos.net>
+
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -29,12 +31,29 @@
 # Simplified "run" script for launching the WebKit2 MiniBrowser.
 
 use strict;
+use warnings;
+use File::Spec::Functions qw/catdir/;
 use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
 
-printHelpAndExitForRunAndDebugWebKitAppIfNeeded();
+my $launcherPath;
+my @jhbuildWrapper;
 
 setConfiguration();
 
-exit exitStatus(runMiniBrowser());
+if (isGtk() || isEfl()) {
+    # Check to see that all the frameworks are built.
+    checkFrameworks();
+
+    $launcherPath = catdir(productDir(), "bin", "MiniBrowser");
+    die "Can't find $launcherPath" unless -x $launcherPath;
+    @jhbuildWrapper = jhbuildWrapperPrefixIfNeeded();
+    print "Starting MiniBrowser.\n";
+    exec @jhbuildWrapper, $launcherPath, @ARGV or die;
+} elsif (isAppleMacWebKit()) {
+    printHelpAndExitForRunAndDebugWebKitAppIfNeeded();
+    exit exitStatus(runMiniBrowser());
+} else {
+    die "Unsupported platform."
+}

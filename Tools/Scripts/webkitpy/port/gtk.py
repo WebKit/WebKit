@@ -32,6 +32,7 @@ import subprocess
 import uuid
 import logging
 
+from webkitpy.common.system import path
 from webkitpy.common.memoized import memoized
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.base import Port
@@ -198,13 +199,8 @@ class GtkPort(Port):
             return
         self._leakdetector.parse_and_print_leaks_detail(leaks_files)
 
-    # FIXME: We should find a way to share this implmentation with Gtk,
-    # or teach run-launcher how to call run-safari and move this down to Port.
     def show_results_html_file(self, results_filename):
-        run_launcher_args = ["file://%s" % results_filename]
-        # FIXME: old-run-webkit-tests also added ["-graphicssystem", "raster", "-style", "windows"]
-        # FIXME: old-run-webkit-tests converted results_filename path for cygwin.
-        self._run_script("run-launcher", run_launcher_args)
+        self._run_script("run-minibrowser", [path.abspath_to_uri(self.host.platform, results_filename)])
 
     def check_sys_deps(self, needs_http):
         return super(GtkPort, self).check_sys_deps(needs_http) and self._driver_class().check_driver(self)

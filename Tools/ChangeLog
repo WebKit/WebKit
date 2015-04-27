@@ -1,5 +1,29 @@
 2015-04-27  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Merge run-launcher into run-minibrowser
+        https://bugs.webkit.org/show_bug.cgi?id=141928
+
+        Reviewed by Darin Adler.
+
+        * Scripts/run-iexploder-tests:
+        (runSafariWithIExploder):
+        * Scripts/run-launcher: Removed.
+        * Scripts/run-minibrowser:
+        * Scripts/webkitdirs.pm:
+        (launcherPath):
+        * Scripts/webkitpy/port/efl.py:
+        (EflPort.show_results_html_file):
+        * Scripts/webkitpy/port/efl_unittest.py:
+        (EflPortTest.test_show_results_html_file):
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.print_leaks_summary):
+        (GtkPort.show_results_html_file):
+        (GtkPort): Deleted.
+        * Scripts/webkitpy/port/gtk_unittest.py:
+        (GtkPortTest.test_show_results_html_file):
+
+2015-04-27  Csaba Osztrogonác  <ossy@webkit.org>
+
         [buildbot] Fix the output of perf-test buildstep on timeout
         https://bugs.webkit.org/show_bug.cgi?id=144097
 

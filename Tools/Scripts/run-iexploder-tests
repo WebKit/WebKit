@@ -102,7 +102,7 @@ sub runSafariWithIExploder()
     close REDIRECT_HTML;
     
     if (!isAppleWebKit()) {
-        system "Tools/Scripts/run-launcher", "$iExploderTestDirectory/redirect.html";
+        system "Tools/Scripts/run-minibrowser", "$iExploderTestDirectory/redirect.html";
     } else {
         local %ENV;
         $ENV{DYLD_INSERT_LIBRARIES} = "/usr/lib/libgmalloc.dylib" if $guardMalloc;

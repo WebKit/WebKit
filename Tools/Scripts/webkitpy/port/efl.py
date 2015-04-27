@@ -29,6 +29,7 @@
 
 import os
 
+from webkitpy.common.system import path
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.base import Port
 from webkitpy.port.pulseaudio_sanitizer import PulseAudioSanitizer
@@ -128,12 +129,7 @@ class EflPort(Port):
         return list(reversed([self._filesystem.join(self._webkit_baseline_path(p), 'TestExpectations') for p in self._search_paths()]))
 
     def show_results_html_file(self, results_filename):
-        # FIXME: We should find a way to share this implmentation with Gtk,
-        # or teach run-launcher how to call run-safari and move this down to WebKitPort.
-        run_launcher_args = ["file://%s" % results_filename]
-        # FIXME: old-run-webkit-tests also added ["-graphicssystem", "raster", "-style", "windows"]
-        # FIXME: old-run-webkit-tests converted results_filename path for cygwin.
-        self._run_script("run-launcher", run_launcher_args)
+        self._run_script("run-minibrowser", [path.abspath_to_uri(self.host.platform, results_filename)])
 
     def check_sys_deps(self, needs_http):
         return super(EflPort, self).check_sys_deps(needs_http) and self._driver_class().check_driver(self)

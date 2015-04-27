@@ -46,7 +46,7 @@ class EflPortTest(port_testcase.PortTestCase):
     def test_show_results_html_file(self):
         port = self.make_port()
         port._executive = MockExecutive(should_log=True)
-        expected_logs = "MOCK run_command: ['Tools/Scripts/run-launcher', '--release', '--efl', 'file://test.html'], cwd=/mock-checkout\n"
+        expected_logs = "MOCK run_command: ['Tools/Scripts/run-minibrowser', '--release', '--efl', 'file://test.html'], cwd=/mock-checkout\n"
         OutputCapture().assert_outputs(self, port.show_results_html_file, ["test.html"], expected_logs=expected_logs)
 
     def test_get_crash_log(self):
