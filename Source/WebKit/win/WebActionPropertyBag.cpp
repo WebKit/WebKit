@@ -114,7 +114,7 @@ HRESULT WebActionPropertyBag::Read(LPCOLESTR pszPropName, VARIANT *pVar, IErrorL
 
     if (isEqual(pszPropName, WebActionNavigationTypeKey)) {
         V_VT(pVar) = VT_I4;
-        V_I4(pVar) = m_action.type();
+        V_I4(pVar) = static_cast<LONG>(m_action.type());
         return S_OK;
     }
     if (isEqual(pszPropName, WebActionElementKey)) {

@@ -1,3 +1,10 @@
+2015-04-27  Brady Eidson  <beidson@apple.com>
+
+        Unreviewed build fix after r183405
+
+        * WebActionPropertyBag.cpp:
+        (WebActionPropertyBag::Read): Cast the enum class to a LONG.
+
 2015-04-23  Andy Estes  <aestes@apple.com>
 
         Try to fix the Windows build after r183234.
