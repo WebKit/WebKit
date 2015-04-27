@@ -1,3 +1,17 @@
+2015-04-27  Eric Carlson  <eric.carlson@apple.com>
+
+        WirelessTargetPicker should not be visible unless a file is playable
+        https://bugs.webkit.org/show_bug.cgi?id=144271
+        <rdar://problem/20712003>
+
+        Reviewed by Jer Noble.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.isPlayable): New.
+        (Controller.prototype.setStatusHidden): Call updateWirelessTargetAvailable.
+        (Controller.prototype.updateWirelessTargetAvailable): Don't show the button until the
+            status message has been hidden.
+
 2015-04-22  Martin Robinson  <mrobinson@igalia.com>
 
         [CMake] Autogenerate cmakeconfig.h.cmake

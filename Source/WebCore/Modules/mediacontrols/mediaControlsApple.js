@@ -597,6 +597,11 @@ Controller.prototype = {
         this.setNeedsTimelineMetricsUpdate();
     },
 
+    isPlayable: function()
+    {
+        return this.video.readyState > HTMLMediaElement.HAVE_NOTHING && !this.video.error;
+    },
+
     updateStatusDisplay: function(event)
     {
         this.updateShouldListenForPlaybackTargetAvailabilityEvent();
@@ -609,7 +614,7 @@ Controller.prototype = {
         else
             this.controls.statusDisplay.innerText = '';
 
-        this.setStatusHidden(!this.isLive && this.video.readyState > HTMLMediaElement.HAVE_NOTHING && !this.video.error);
+        this.setStatusHidden(!this.isLive && this.isPlayable());
     },
 
     handleLoadStart: function(event)
@@ -1411,6 +1416,7 @@ Controller.prototype = {
             this.controls.remainingTime.classList.add(this.ClassNames.hidden);
             this.hideControls();
         }
+        this.updateWirelessTargetAvailable();
     },
 
     trackHasThumbnails: function(track)
@@ -1829,7 +1835,7 @@ Controller.prototype = {
         if (this.wirelessPlaybackDisabled)
             wirelessPlaybackTargetsAvailable = false;
 
-        if (wirelessPlaybackTargetsAvailable)
+        if (wirelessPlaybackTargetsAvailable && this.isPlayable())
             this.controls.wirelessTargetPicker.classList.remove(this.ClassNames.hidden);
         else
             this.controls.wirelessTargetPicker.classList.add(this.ClassNames.hidden);
