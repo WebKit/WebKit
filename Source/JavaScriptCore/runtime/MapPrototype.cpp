@@ -125,11 +125,12 @@ EncodedJSValue JSC_HOST_CALL mapProtoFuncForEach(CallFrame* callFrame)
     JSValue key, value;
     if (callType == CallTypeJS) {
         JSFunction* function = jsCast<JSFunction*>(callBack);
-        CachedCall cachedCall(callFrame, function, 2);
+        CachedCall cachedCall(callFrame, function, 3);
         while (iterator->nextKeyValue(key, value) && !vm->exception()) {
             cachedCall.setThis(thisValue);
             cachedCall.setArgument(0, value);
             cachedCall.setArgument(1, key);
+            cachedCall.setArgument(2, map);
             cachedCall.call();
         }
         iterator->finish();
@@ -138,6 +139,7 @@ EncodedJSValue JSC_HOST_CALL mapProtoFuncForEach(CallFrame* callFrame)
             MarkedArgumentBuffer args;
             args.append(value);
             args.append(key);
+            args.append(map);
             JSC::call(callFrame, callBack, callType, callData, thisValue, args);
         }
         iterator->finish();

@@ -1,3 +1,16 @@
+2015-04-26  Jordan Harband  <ljharb@gmail.com>
+
+        Map#forEach does not pass "map" argument to callback.
+        https://bugs.webkit.org/show_bug.cgi?id=144187
+
+        Reviewed by Darin Adler.
+
+        Per https://people.mozilla.org/~jorendorff/es6-draft.html#sec-map.prototype.foreach
+        step 7.a.i., the callback should be called with three arguments.
+
+        * runtime/MapPrototype.cpp:
+        (JSC::mapProtoFuncForEach):
+
 2015-04-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement ES6 template literals
