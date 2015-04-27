@@ -1,3 +1,13 @@
+2015-04-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] TestWebKitAPI's forwarding header generator should depend on WebKit2's generator
+        https://bugs.webkit.org/show_bug.cgi?id=143874
+
+        Reviewed by Gyuyoung Kim.
+
+        * PlatformEfl.cmake: Rename the generator to have consistent name with other generators.
+        * Scripts/generate-forwarding-headers.pl: Removed the unnecessary multiple include-path support.
+
 2015-04-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Add initial implementation of NetworkProcess disk cache

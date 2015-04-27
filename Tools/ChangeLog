@@ -1,3 +1,12 @@
+2015-04-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] TestWebKitAPI's forwarding header generator should depend on WebKit2's generator
+        https://bugs.webkit.org/show_bug.cgi?id=143874
+
+        Reviewed by Gyuyoung Kim.
+
+        * TestWebKitAPI/PlatformEfl.cmake: Add the new dependency.
+
 2015-04-24  Philippe Normand  <pnormand@igalia.com>
 
         [JHBuild] Move to upstream OpenWebRTC
