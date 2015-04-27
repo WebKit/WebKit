@@ -65,6 +65,8 @@ if (WTF_CPU_ARM64_CORTEXA53)
     endif ()
 endif ()
 
+EXPOSE_VARIABLE_TO_BUILD(WTF_CPU_ARM64_CORTEXA53)
+
 # Use ld.gold if it is available and isn't disabled explicitly
 option(USE_LD_GOLD "Use GNU gold linker" ON)
 if (USE_LD_GOLD)

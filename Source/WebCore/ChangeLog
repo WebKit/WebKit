@@ -1,3 +1,13 @@
+2015-04-22  Martin Robinson  <mrobinson@igalia.com>
+
+        [CMake] Autogenerate cmakeconfig.h.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=143997
+
+        Reviewed by Csaba Osztrogonác.
+
+        * PlatformGTK.cmake: Use the WTF_USE style variables, because those are the same
+        as the ones exposed to the build.
+
 2015-04-27  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Wrong text offsetting when range does not start from the first renderer.

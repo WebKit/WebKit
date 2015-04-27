@@ -183,3 +183,8 @@ endif ()
 # Print the features list last, for maximum visibility.
 # -----------------------------------------------------------------------------
 PRINT_WEBKIT_OPTIONS()
+
+# -----------------------------------------------------------------------------
+# Create the configuration header
+# -----------------------------------------------------------------------------
+CREATE_CONFIGURATION_HEADER()

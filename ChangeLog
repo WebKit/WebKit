@@ -1,3 +1,20 @@
+2015-04-22  Martin Robinson  <mrobinson@igalia.com>
+
+        [CMake] Autogenerate cmakeconfig.h.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=143997
+
+        Reviewed by Csaba Osztrogonác.
+
+        * CMakeLists.txt: Create the configuration header as the last part of the cmake run.
+        * Source/CMakeLists.txt: No longer use configure_file to create cmakeconfig.h.
+        * Source/cmake/OptionsCommon.cmake: Expose WTF_CPU_ARM64_CORTEXA53 to the build explicitly.
+        * Source/cmake/OptionsGTK.cmake: Expose variables to the build using SET_AND_EXPOSE_TO_BUILD.
+        Do some other miscellaneous related cleanup.
+        * Source/cmake/OptionsEFL.cmake: Expose HAVE_LLVM to the build.
+        * Source/cmake/WebKitFeatures.cmake: Expose all WebKit features to the build. Add support for
+        build exposed variables. Add a macro to generate a configuration from them.
+        * Source/cmakeconfig.h.cmake: Removed.
+
 2015-04-24  Philippe Normand  <pnormand@igalia.com>
 
         [JHBuild] Move to upstream OpenWebRTC

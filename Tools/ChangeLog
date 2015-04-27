@@ -1,3 +1,13 @@
+2015-04-22  Martin Robinson  <mrobinson@igalia.com>
+
+        [CMake] Autogenerate cmakeconfig.h.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=143997
+
+        Reviewed by Csaba Osztrogonác.
+
+        * DumpRenderTree/TestNetscapePlugIn/CMakeLists.txt: Add XP_UNIX to the command-line
+        definitions since TestNetscapePlugIn does not use cmakeconfig.h.
+
 2015-04-27  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(r182879): Images and video can no longer be downloaded

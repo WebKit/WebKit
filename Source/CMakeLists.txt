@@ -42,8 +42,3 @@ endif ()
 if (ENABLE_WEBKIT2)
     WEBKIT_SET_EXTRA_COMPILER_FLAGS(WebKit2 ${ADDITIONAL_COMPILER_FLAGS})
 endif ()
-
-# -----------------------------------------------------------------------------
-# Create the configuration file
-# -----------------------------------------------------------------------------
-configure_file(cmakeconfig.h.cmake ${CMAKE_BINARY_DIR}/cmakeconfig.h @ONLY)

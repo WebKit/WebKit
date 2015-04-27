@@ -488,6 +488,10 @@
 #define WTF_USE_WEBP 1
 #endif
 
+#if PLATFORM(GTK) && !defined(GTK_API_VERSION_2)
+#define GDK_VERSION_MIN_REQUIRED GDK_VERSION_3_6
+#endif
+
 /* On Windows, use QueryPerformanceCounter by default */
 #if OS(WINDOWS)
 #define WTF_USE_QUERY_PERFORMANCE_COUNTER  1

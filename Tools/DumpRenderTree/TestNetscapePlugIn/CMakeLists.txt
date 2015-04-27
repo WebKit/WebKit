@@ -42,6 +42,10 @@ set(WebKitTestNetscapePlugin_LIBRARIES
     ${X11_LIBRARIES}
 )
 
+if (WTF_OS_UNIX)
+    add_definitions(-DXP_UNIX)
+endif ()
+
 add_library(TestNetscapePlugin SHARED ${WebKitTestNetscapePlugin_SOURCES})
 target_link_libraries(TestNetscapePlugin ${WebKitTestNetscapePlugin_LIBRARIES})
 set_target_properties(TestNetscapePlugin PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/plugins)

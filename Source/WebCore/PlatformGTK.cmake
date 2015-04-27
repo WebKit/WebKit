@@ -327,7 +327,7 @@ if (ENABLE_VIDEO)
         ${GSTREAMER_VIDEO_LIBRARIES}
     )
 
-    if (USE_GSTREAMER_MPEGTS)
+    if (WTF_USE_GSTREAMER_MPEGTS)
         list(APPEND WebCore_INCLUDE_DIRECTORIES
             ${GSTREAMER_MPEGTS_INCLUDE_DIRS}
         )
@@ -337,7 +337,7 @@ if (ENABLE_VIDEO)
         )
     endif ()
 
-    if (USE_GSTREAMER_GL)
+    if (WTF_USE_GSTREAMER_GL)
         list(APPEND WebCore_INCLUDE_DIRECTORIES
             ${GSTREAMER_GL_INCLUDE_DIRS}
         )
