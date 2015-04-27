@@ -301,7 +301,7 @@ void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject*
         return;
 
     NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] initWithCapacity:4];
-    userInfo[NSAccessibilityTextStateChangeTypeKey] = @(AXTextStateChangeTypeEdit);
+    [userInfo setObject:@(AXTextStateChangeTypeEdit) forKey:NSAccessibilityTextStateChangeTypeKey];
 
     NSMutableArray *changes = [[NSMutableArray alloc] initWithCapacity:2];
     if (NSDictionary *change = textReplacementChangeDictionary(object, deletionType, deletedText, position))
@@ -313,7 +313,7 @@ void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject*
     [changes release];
 
     if (id wrapper = object->wrapper())
-        userInfo[NSAccessibilityTextChangeElement] = wrapper;
+        [userInfo setObject:wrapper forKey:NSAccessibilityTextChangeElement];
 
     AXPostNotificationWithUserInfo(rootWebArea()->wrapper(), NSAccessibilityValueChangedNotification, userInfo);
     AXPostNotificationWithUserInfo(object->wrapper(), NSAccessibilityValueChangedNotification, userInfo);
