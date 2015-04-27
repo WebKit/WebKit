@@ -1,3 +1,34 @@
+2015-04-27  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Synchronous XMLHttpRequest should get access to AppCache resources stored as flat files
+        https://bugs.webkit.org/show_bug.cgi?id=143711
+
+        Reviewed by Darin Adler.
+
+        This patch checks whether a substitute resource data is stored in memory or in file for synchronous loads.
+        If data is stored in file, it reads the data through SharedBuffer::createWithContentsOfFile.
+        This patch refactors some routines to replace Vector<char> by SharedBuffer to transmit response data.
+
+        Test: http/tests/appcache/simple-video-sync.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/FrameLoader.h:
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::maybeLoadResource):
+        (WebCore::ApplicationCacheHost::createFileURL):
+        (WebCore::ApplicationCacheHost::maybeLoadSynchronously):
+        (WebCore::ApplicationCacheHost::maybeLoadFallbackSynchronously):
+        * loader/appcache/ApplicationCacheHost.h:
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::docLoaderFunc):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::openFunc):
+
 2015-04-24  Philippe Normand  <pnormand@igalia.com>
 
         [JHBuild] Move to upstream OpenWebRTC

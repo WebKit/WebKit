@@ -43,6 +43,7 @@
 #include "ResourceLoadNotifier.h"
 #include "ResourceRequestBase.h"
 #include "SecurityContext.h"
+#include "SharedBuffer.h"
 #include "Timer.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
@@ -116,7 +117,7 @@ public:
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
     WEBCORE_EXPORT void loadArchive(PassRefPtr<Archive>);
 #endif
-    unsigned long loadResourceSynchronously(const ResourceRequest&, StoredCredentials, ClientCredentialPolicy, ResourceError&, ResourceResponse&, Vector<char>& data);
+    unsigned long loadResourceSynchronously(const ResourceRequest&, StoredCredentials, ClientCredentialPolicy, ResourceError&, ResourceResponse&, RefPtr<SharedBuffer>& data);
 
     void changeLocation(SecurityOrigin*, const URL&, const String& referrer, LockHistory = LockHistory::Yes,
         LockBackForwardList = LockBackForwardList::Yes, bool refresh = false, AllowNavigationToInvalidURL = AllowNavigationToInvalidURL::Yes);

@@ -375,7 +375,7 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
     }
     
     // FIXME: ThreadableLoaderOptions.sniffContent is not supported for synchronous requests.
-    Vector<char> data;
+    RefPtr<SharedBuffer> data;
     ResourceError error;
     ResourceResponse response;
     unsigned long identifier = std::numeric_limits<unsigned long>::max();
@@ -404,10 +404,8 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
 
     didReceiveResponse(identifier, response);
 
-    const char* bytes = static_cast<const char*>(data.data());
-    int len = static_cast<int>(data.size());
-    didReceiveData(identifier, bytes, len);
-
+    if (data)
+        didReceiveData(identifier, data->data(), data->size());
     didFinishLoading(identifier, 0.0);
 }
 

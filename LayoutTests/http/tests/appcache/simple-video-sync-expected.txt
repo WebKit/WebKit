@@ -1,0 +1,2 @@
+This tests that the application cache works for video retrieved by sync XMLHttpRequest
+SUCCESS
