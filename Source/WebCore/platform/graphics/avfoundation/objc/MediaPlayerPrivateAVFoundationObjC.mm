@@ -2798,8 +2798,8 @@ void MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget(bool shou
         return;
 
     AVOutputContext *newContext = shouldPlay ? m_outputContext.get() : nil;
-    AVOutputContext *currentContext = m_avPlayer.get().outputContext;
-    if ((!newContext && !currentContext) || [currentContext isEqual:newContext])
+    RetainPtr<AVOutputContext> currentContext = m_avPlayer.get().outputContext;
+    if ((!newContext && !currentContext.get()) || [currentContext.get() isEqual:newContext])
         return;
 
     setDelayCallbacks(true);
@@ -2814,10 +2814,8 @@ bool MediaPlayerPrivateAVFoundationObjC::isPlayingToWirelessPlaybackTarget()
     if (!m_avPlayer)
         return false;
 
-    if (!m_outputContext || !m_outputContext.get().deviceName)
-        return false;
-
-    return m_cachedRate;
+    RetainPtr<AVOutputContext> currentContext = m_avPlayer.get().outputContext;
+    return currentContext && currentContext.get().deviceName;
 }
 #endif // !PLATFORM(IOS)
 

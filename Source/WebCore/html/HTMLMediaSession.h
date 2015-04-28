@@ -56,7 +56,6 @@ public:
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void showPlaybackTargetPicker(const HTMLMediaElement&);
     bool currentPlaybackTargetIsWireless(const HTMLMediaElement&) const;
-    bool currentPlaybackTargetIsSupported(const HTMLMediaElement&) const;
     bool hasWirelessPlaybackTargets(const HTMLMediaElement&) const;
 
     bool wirelessVideoPlaybackDisabled(const HTMLMediaElement&) const;

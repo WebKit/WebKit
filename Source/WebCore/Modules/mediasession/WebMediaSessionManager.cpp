@@ -196,9 +196,6 @@ void WebMediaSessionManager::setPlaybackTarget(Ref<MediaPlaybackTarget>&& target
 
 void WebMediaSessionManager::externalOutputDeviceAvailableDidChange(bool available)
 {
-    if (m_externalOutputDeviceAvailable == available)
-        return;
-
     m_externalOutputDeviceAvailable = available;
     for (auto& state : m_clientState)
         state->client->externalOutputDeviceAvailableDidChange(state->contextId, available);

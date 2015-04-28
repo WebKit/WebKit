@@ -256,7 +256,7 @@ private:
 HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& document, bool createdByParser)
     : HTMLElement(tagName, document)
     , ActiveDOMObject(&document)
-    , m_loadTimer(*this, &HTMLMediaElement::loadTimerFired)
+    , m_pendingActionTimer(*this, &HTMLMediaElement::pendingActionTimerFired)
     , m_progressEventTimer(*this, &HTMLMediaElement::progressEventTimerFired)
     , m_playbackProgressTimer(*this, &HTMLMediaElement::playbackProgressTimerFired)
     , m_scanTimer(*this, &HTMLMediaElement::scanTimerFired)
@@ -694,14 +694,19 @@ void HTMLMediaElement::scheduleDelayedAction(DelayedActionType actionType)
         setFlags(m_pendingActionFlags, TextTrackChangesNotification);
 #endif
 
-    m_loadTimer.startOneShot(0);
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    if (actionType & CheckPlaybackTargetCompatablity)
+        setFlags(m_pendingActionFlags, CheckPlaybackTargetCompatablity);
+#endif
+
+    m_pendingActionTimer.startOneShot(0);
 }
 
 void HTMLMediaElement::scheduleNextSourceChild()
 {
     // Schedule the timer to try the next <source> element WITHOUT resetting state ala prepareForLoad.
     setFlags(m_pendingActionFlags, LoadMediaResource);
-    m_loadTimer.startOneShot(0);
+    m_pendingActionTimer.startOneShot(0);
 }
 
 void HTMLMediaElement::scheduleEvent(const AtomicString& eventName)
@@ -717,7 +722,7 @@ void HTMLMediaElement::scheduleEvent(const AtomicString& eventName)
     m_asyncEventQueue.enqueueEvent(event.release());
 }
 
-void HTMLMediaElement::loadTimerFired()
+void HTMLMediaElement::pendingActionTimerFired()
 {
     Ref<HTMLMediaElement> protect(*this); // loadNextSourceChild may fire 'beforeload', which can make arbitrary DOM mutations.
 
@@ -736,6 +741,13 @@ void HTMLMediaElement::loadTimerFired()
 #if USE(PLATFORM_TEXT_TRACK_MENU)
     if (RuntimeEnabledFeatures::sharedFeatures().webkitVideoTrackEnabled() && (m_pendingActionFlags & TextTrackChangesNotification))
         notifyMediaPlayerOfTextTrackChanges();
+#endif
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    if (m_pendingActionFlags & CheckPlaybackTargetCompatablity && m_player && m_player->isCurrentPlaybackTargetWireless() && !m_player->canPlayToWirelessPlaybackTarget()) {
+        LOG(Media, "HTMLMediaElement::pendingActionTimerFired(%p) - calling setShouldPlayToPlaybackTarget(false)", this);
+        m_player->setShouldPlayToPlaybackTarget(false);
+    }
 #endif
 
     m_pendingActionFlags = 0;
@@ -826,7 +838,7 @@ void HTMLMediaElement::prepareForLoad()
 
     // Perform the cleanup required for the resource load algorithm to run.
     stopPeriodicTimers();
-    m_loadTimer.stop();
+    m_pendingActionTimer.stop();
     // FIXME: Figure out appropriate place to reset LoadTextTrackResource if necessary and set m_pendingActionFlags to 0 here.
     m_pendingActionFlags &= ~LoadMediaResource;
     m_sentEndEvent = false;
@@ -2644,6 +2656,7 @@ double HTMLMediaElement::defaultPlaybackRate() const
 void HTMLMediaElement::setDefaultPlaybackRate(double rate)
 {
     if (m_defaultPlaybackRate != rate) {
+        LOG(Media, "HTMLMediaElement::setDefaultPlaybackRate(%p) - %f", this, rate);
         m_defaultPlaybackRate = rate;
         scheduleEvent(eventNames().ratechangeEvent);
     }
@@ -4709,7 +4722,7 @@ void HTMLMediaElement::clearMediaPlayer(int flags)
     m_player = nullptr;
 
     stopPeriodicTimers();
-    m_loadTimer.stop();
+    m_pendingActionTimer.stop();
 
     clearFlags(m_pendingActionFlags, flags);
     m_loadState = WaitingForSource;
@@ -4858,11 +4871,6 @@ bool HTMLMediaElement::webkitCurrentPlaybackTargetIsWireless() const
     return m_mediaSession->currentPlaybackTargetIsWireless(*this);
 }
 
-bool HTMLMediaElement::webkitCurrentPlaybackTargetIsSupported() const
-{
-    return m_mediaSession->currentPlaybackTargetIsSupported(*this);
-}
-
 void HTMLMediaElement::wirelessRoutesAvailableDidChange()
 {
     enqueuePlaybackTargetAvailabilityChangedEvent();
@@ -4873,9 +4881,15 @@ void HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged(MediaPl
     LOG(Media, "HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged(%p) - webkitCurrentPlaybackTargetIsWireless = %s", this, boolString(webkitCurrentPlaybackTargetIsWireless()));
     scheduleEvent(eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent);
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     m_mediaSession->mediaStateDidChange(*this, mediaState());
-#endif
+}
+
+bool HTMLMediaElement::dispatchEvent(PassRefPtr<Event> prpEvent)
+{
+    RefPtr<Event> event = prpEvent;
+    if (event->type() == eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent)
+        scheduleDelayedAction(CheckPlaybackTargetCompatablity);
+    return HTMLElement::dispatchEvent(event);
 }
 
 bool HTMLMediaElement::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)

@@ -139,8 +139,9 @@ public:
         ConfigureTextTracks = 1 << 1,
         TextTrackChangesNotification = 1 << 2,
         ConfigureTextTrackDisplay = 1 << 3,
+        CheckPlaybackTargetCompatablity = 1 << 4,
 
-        EveryDelayedAction = LoadMediaResource | ConfigureTextTracks | TextTrackChangesNotification | ConfigureTextTrackDisplay,
+        EveryDelayedAction = LoadMediaResource | ConfigureTextTracks | TextTrackChangesNotification | ConfigureTextTrackDisplay | CheckPlaybackTargetCompatablity,
     };
     void scheduleDelayedAction(DelayedActionType);
     
@@ -356,7 +357,6 @@ public:
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void webkitShowPlaybackTargetPicker();
     bool webkitCurrentPlaybackTargetIsWireless() const;
-    bool webkitCurrentPlaybackTargetIsSupported() const;
 
     virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture) override;
     virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) override;
@@ -562,6 +562,9 @@ private:
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     virtual void mediaPlayerCurrentPlaybackTargetIsWirelessChanged(MediaPlayer*) override;
     void enqueuePlaybackTargetAvailabilityChangedEvent();
+
+    using EventTarget::dispatchEvent;
+    virtual bool dispatchEvent(PassRefPtr<Event>) override;
 #endif
 
     virtual String mediaPlayerReferrer() const override;
@@ -604,7 +607,7 @@ private:
 
     virtual double mediaPlayerRequestedPlaybackRate() const override final;
 
-    void loadTimerFired();
+    void pendingActionTimerFired();
     void progressEventTimerFired();
     void playbackProgressTimerFired();
     void scanTimerFired();
@@ -733,7 +736,7 @@ private:
 
     void updateCaptionContainer();
 
-    Timer m_loadTimer;
+    Timer m_pendingActionTimer;
     Timer m_progressEventTimer;
     Timer m_playbackProgressTimer;
     Timer m_scanTimer;

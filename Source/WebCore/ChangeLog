@@ -1,3 +1,56 @@
+2015-04-28  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Simplify code to support media engines which do not support target playback
+        https://bugs.webkit.org/show_bug.cgi?id=144332
+
+        Reviewed by Jer Noble.
+
+        * Modules/mediasession/WebMediaSessionManager.cpp:
+        (WebCore::WebMediaSessionManager::externalOutputDeviceAvailableDidChange): Always make client
+        callback, let them decide if it is significant or not.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): m_loadTimer -> m_pendingActionTimer.
+        (WebCore::HTMLMediaElement::scheduleDelayedAction): Handle CheckPlaybackTargetCompatablity.
+        (WebCore::HTMLMediaElement::scheduleNextSourceChild): m_loadTimer -> m_pendingActionTimer.
+        (WebCore::HTMLMediaElement::loadTimerFired): Renamed pendingActionTimerFired.
+        (WebCore::HTMLMediaElement::prepareForLoad): m_loadTimer -> m_pendingActionTimer.
+        (WebCore::HTMLMediaElement::setDefaultPlaybackRate): Add logging.
+        (WebCore::HTMLMediaElement::clearMediaPlayer): m_loadTimer -> m_pendingActionTimer.
+        (WebCore::HTMLMediaElement::webkitCurrentPlaybackTargetIsSupported): Removed.
+        (WebCore::HTMLMediaElement::dispatchEvent): If a 'webkitcurrentplaybacktargetiswirelesschanged'
+        event is dispatched when the current target is wireless but the media engine does not support
+        wireless playback, tell the media engine not to play to the target.
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+
+        * html/HTMLMediaSession.cpp:
+        (WebCore::HTMLMediaSession::showPlaybackTargetPicker): Drive-by fix to disallow audio-only files.
+        (WebCore::HTMLMediaSession::currentPlaybackTargetIsSupported): Deleted.
+        * html/HTMLMediaSession.h:
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::isCurrentPlaybackTargetSupported): Deleted.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget): Use a RetainPtr
+        to explicitly manage the lifetime of the temporary object.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::isPlayingToWirelessPlaybackTarget): Ditto.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setShouldPlayToPlaybackTarget):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::isCurrentPlaybackTargetWireless):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::isCurrentPlaybackTargetSupported): Deleted.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::setShouldPlayToPlaybackTarget):
+        (WebCore::MediaPlayerPrivateQTKit::isCurrentPlaybackTargetWireless):
+        (WebCore::MediaPlayerPrivateQTKit::isCurrentPlaybackTargetSupported): Deleted.
+
 2015-04-28  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Use less memory for CombinedURLFilters.
