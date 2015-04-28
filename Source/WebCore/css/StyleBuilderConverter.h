@@ -124,6 +124,7 @@ public:
     static EGlyphOrientation convertGlyphOrientation(StyleResolver&, CSSValue&);
     static EGlyphOrientation convertGlyphOrientationOrAuto(StyleResolver&, CSSValue&);
     static Optional<Length> convertLineHeight(StyleResolver&, CSSValue&, float multiplier = 1.f);
+    static FontSynthesis convertFontSynthesis(StyleResolver&, CSSValue&);
 
 private:
     friend class StyleBuilderCustom;
@@ -1209,6 +1210,32 @@ inline Optional<Length> StyleBuilderConverter::convertLineHeight(StyleResolver& 
         return Length(primitiveValue.getDoubleValue() * multiplier * 100.0, Percent);
     }
     return Nullopt;
+}
+
+FontSynthesis StyleBuilderConverter::convertFontSynthesis(StyleResolver&, CSSValue& value)
+{
+    if (is<CSSPrimitiveValue>(value)) {
+        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone);
+        return FontSynthesisNone;
+    }
+
+    FontSynthesis result = FontSynthesisNone;
+    ASSERT(is<CSSValueList>(value));
+    for (CSSValue& v : downcast<CSSValueList>(value)) {
+        switch (downcast<CSSPrimitiveValue>(v).getValueID()) {
+        case CSSValueWeight:
+            result |= FontSynthesisWeight;
+            break;
+        case CSSValueStyle:
+            result |= FontSynthesisStyle;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+
+    return result;
 }
 
 } // namespace WebCore

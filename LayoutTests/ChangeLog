@@ -1,3 +1,15 @@
+2015-04-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Implement font-synthesis CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=144305
+
+        Reviewed by Andreas Kling.
+
+        Test all combinations of font-weight, font-style, and font-synthesis.
+
+        * fast/css3-text/font-synthesis-expected.html: Added.
+        * fast/css3-text/font-synthesis.html: Added.
+
 2015-04-28  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Temporarily disable WebGL support

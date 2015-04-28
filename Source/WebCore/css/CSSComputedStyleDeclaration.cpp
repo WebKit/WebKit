@@ -1613,13 +1613,13 @@ static Ref<CSSPrimitiveValue> fontWeightFromStyle(RenderStyle* style)
 
 static Ref<CSSValue> fontSynthesisFromStyle(RenderStyle& style)
 {
-    if (style.fontSynthesis() == FontSynthesisNone)
+    if (style.fontDescription().fontSynthesis() == FontSynthesisNone)
         return cssValuePool().createIdentifierValue(CSSValueNone);
 
     auto list = CSSValueList::createSpaceSeparated();
-    if (style.fontSynthesis() & FontSynthesisStyle)
+    if (style.fontDescription().fontSynthesis() & FontSynthesisStyle)
         list.get().append(cssValuePool().createIdentifierValue(CSSValueStyle));
-    if (style.fontSynthesis() & FontSynthesisWeight)
+    if (style.fontDescription().fontSynthesis() & FontSynthesisWeight)
         list.get().append(cssValuePool().createIdentifierValue(CSSValueWeight));
     return Ref<CSSValue>(list.get());
 }

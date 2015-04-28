@@ -694,8 +694,8 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
 
     bool isAppleColorEmoji = CTFontIsAppleColorEmoji(ctFont.get());
 
-    bool syntheticBold = (traits & kCTFontTraitBold) && !(actualTraits & kCTFontTraitBold) && !isAppleColorEmoji;
-    bool syntheticOblique = (traits & kCTFontTraitItalic) && !(actualTraits & kCTFontTraitItalic) && !isAppleColorEmoji;
+    bool syntheticBold = (fontDescription.fontSynthesis() & FontSynthesisWeight) && (traits & kCTFontTraitBold) && !(actualTraits & kCTFontTraitBold) && !isAppleColorEmoji;
+    bool syntheticOblique = (fontDescription.fontSynthesis() & FontSynthesisStyle) && (traits & kCTFontTraitItalic) && !(actualTraits & kCTFontTraitItalic) && !isAppleColorEmoji;
 
     auto result = std::make_unique<FontPlatformData>(ctFont.get(), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant());
     if (isAppleColorEmoji)

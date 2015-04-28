@@ -1,3 +1,57 @@
+2015-04-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Mac] [iOS] Implement font-synthesis CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=144305
+
+        Reviewed by Andreas Kling.
+
+        This patch is fairly straightforward, though there are some particular pieces to the patch listed below.
+
+        The implementation of this font-synthesis CSS property lives inside FontCacheIOS and FontCacheMac. We already
+        determine if we should synthesize bold and italics, this CSS property simply guards that decision.
+
+        Because FontCache interacts with FontDescriptions and not RenderStyles, this patch moves the source of truth
+        regarding font-synthesis into FontDescription (from RenderStyle).
+
+        Test: fast/css3-text/font-synthesis.html
+
+        * css/CSSPropertyNames.in: Mark font-synthesis as a FontProperty, which means that the relevant state is kept
+        inside FontDescription. This also means that the property must be marked as a "high priority" property, which
+        is enforced by it existing at the top of CSSPropertyNames.in. The move to FontDescription must be done so that
+        FontCacheIOS and FontCacheMac have access to the saved state.
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::fontSynthesisFromStyle): Update to look for state in FontDescription instead of RenderStyle.
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::CSSSegmentedFontFace::fontRanges): Guard the synthetic bold and synthic italic decision on the new
+        FontSynthesis state inside FontDescription.
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertFontSynthesis): Moved from
+        StyleBuilderCustom::applyValueFontSynthesis(). This is because of the updated options inside of
+        CSSPropertyNames.in
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueFontSynthesis): Deleted.
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::FontDescription): Moved from RenderStyle.
+        (WebCore::FontDescription::fontSynthesis): Ditto.
+        (WebCore::FontDescription::setFontSynthesis): Ditto.
+        (WebCore::FontDescription::initialFontSynthesis): Ditto.
+        (WebCore::FontDescription::operator==): Update to include new state.
+        * platform/graphics/FontCache.h:
+        (WebCore::FontDescriptionFontDataCacheKey::makeFlagKey): Make FontDescription hashes sensitive to the new
+        state inside FontDescription.
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::FontCache::createFontPlatformData): Guard the synthetic bold and synthetic italic decision on the
+        new FontSynthesis state inside FontDescription.
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::createFontPlatformData): Ditto.
+        * platform/text/TextFlags.h: Move FontSynthesis type from RenderStyleConstants.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::fontSynthesis): Moved to FontDescription.
+        (WebCore::RenderStyle::setFontSynthesis): Ditto.
+        (WebCore::RenderStyle::initialFontSynthesis): Ditto.
+        * rendering/style/RenderStyleConstants.h: Moved FontSynthesis type to TextFlags.
+        * rendering/style/StyleRareInheritedData.h: Remove state regarding font synthesis (moved to FontDescription)
+
 2015-04-28  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         SharedBuffer::copy is not computing the buffer size correctly when having m_dataArray

@@ -509,8 +509,8 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     NSInteger actualWeight = [fontManager weightOfFont:nsFont];
 
     NSFont *platformFont = [nsFont printerFont];
-    bool syntheticBold = isAppKitFontWeightBold(weight) && !isAppKitFontWeightBold(actualWeight);
-    bool syntheticOblique = (traits & NSFontItalicTrait) && !(actualTraits & NSFontItalicTrait);
+    bool syntheticBold = (fontDescription.fontSynthesis() & FontSynthesisWeight) && isAppKitFontWeightBold(weight) && !isAppKitFontWeightBold(actualWeight);
+    bool syntheticOblique = (fontDescription.fontSynthesis() & FontSynthesisStyle) && (traits & NSFontItalicTrait) && !(actualTraits & NSFontItalicTrait);
 
     return std::make_unique<FontPlatformData>(reinterpret_cast<CTFontRef>(platformFont), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant());
 }

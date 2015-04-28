@@ -79,7 +79,8 @@ struct FontDescriptionFontDataCacheKey {
     { }
     static unsigned makeFlagKey(const FontDescription& description)
     {
-        return static_cast<unsigned>(description.widthVariant()) << 4
+        return static_cast<unsigned>(description.fontSynthesis()) << 6
+            | static_cast<unsigned>(description.widthVariant()) << 4
             | static_cast<unsigned>(description.nonCJKGlyphOrientation()) << 3
             | static_cast<unsigned>(description.orientation()) << 2
             | static_cast<unsigned>(description.italic()) << 1

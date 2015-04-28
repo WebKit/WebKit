@@ -59,6 +59,14 @@ enum ExpansionBehaviorFlags {
 };
 typedef unsigned ExpansionBehavior;
 
+enum FontSynthesisValues {
+    FontSynthesisNone = 0x0,
+    FontSynthesisWeight = 0x1,
+    FontSynthesisStyle = 0x2
+};
+typedef unsigned FontSynthesis;
+const unsigned FontSynthesisWidth = 2;
+
 enum FontWidthVariant {
     RegularWidth,
     HalfWidth,

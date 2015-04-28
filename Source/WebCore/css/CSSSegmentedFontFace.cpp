@@ -113,7 +113,9 @@ FontRanges CSSSegmentedFontFace::fontRanges(const FontDescription& fontDescripti
         return FontRanges();
 
     FontTraitsMask desiredTraitsMask = fontDescription.traitsMask();
-    unsigned hashKey = ((fontDescription.computedPixelSize() + 1) << (FontTraitsMaskWidth + FontWidthVariantWidth + 1))
+    // FIXME: Unify this function with FontDescriptionFontDataCacheKey in FontCache.h (Or just use the regular FontCache instead of this)
+    unsigned hashKey = ((fontDescription.computedPixelSize() + 1) << (FontTraitsMaskWidth + FontWidthVariantWidth + FontSynthesisWidth + 1))
+        | (fontDescription.fontSynthesis() << (FontTraitsMaskWidth + FontWidthVariantWidth + 1))
         | ((fontDescription.orientation() == Vertical ? 1 : 0) << (FontTraitsMaskWidth + FontWidthVariantWidth))
         | fontDescription.widthVariant() << FontTraitsMaskWidth
         | desiredTraitsMask;
@@ -125,9 +127,11 @@ FontRanges CSSSegmentedFontFace::fontRanges(const FontDescription& fontDescripti
         for (auto& face : m_fontFaces) {
             if (!face->isValid())
                 continue;
+
             FontTraitsMask traitsMask = face->traitsMask();
-            bool syntheticBold = !(traitsMask & (FontWeight600Mask | FontWeight700Mask | FontWeight800Mask | FontWeight900Mask)) && (desiredTraitsMask & (FontWeight600Mask | FontWeight700Mask | FontWeight800Mask | FontWeight900Mask));
-            bool syntheticItalic = !(traitsMask & FontStyleItalicMask) && (desiredTraitsMask & FontStyleItalicMask);
+            bool syntheticBold = (fontDescription.fontSynthesis() & FontSynthesisWeight) && !(traitsMask & (FontWeight600Mask | FontWeight700Mask | FontWeight800Mask | FontWeight900Mask)) && (desiredTraitsMask & (FontWeight600Mask | FontWeight700Mask | FontWeight800Mask | FontWeight900Mask));
+            bool syntheticItalic = (fontDescription.fontSynthesis() & FontSynthesisStyle) && !(traitsMask & FontStyleItalicMask) && (desiredTraitsMask & FontStyleItalicMask);
+
             if (RefPtr<Font> faceFont = face->font(fontDescription, syntheticBold, syntheticItalic))
                 appendFontWithInvalidUnicodeRangeIfLoading(fontRanges, faceFont.releaseNonNull(), face->ranges());
         }

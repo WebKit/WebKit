@@ -133,8 +133,6 @@ public:
     unsigned trailingWord : 1;
 #endif
 
-    unsigned fontSynthesis : 2;
-
     AtomicString hyphenationString;
     short hyphenationLimitBefore;
     short hyphenationLimitAfter;

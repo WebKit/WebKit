@@ -417,13 +417,6 @@ enum ETextTransform {
     CAPITALIZE, UPPERCASE, LOWERCASE, TTNONE
 };
 
-enum FontSynthesisValues {
-    FontSynthesisNone = 0x0,
-    FontSynthesisWeight = 0x1,
-    FontSynthesisStyle = 0x2
-};
-typedef unsigned FontSynthesis;
-
 #if ENABLE(LETTERPRESS)
 static const size_t TextDecorationBits = 5;
 #else

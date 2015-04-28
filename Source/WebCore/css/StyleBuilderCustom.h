@@ -76,7 +76,6 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontFamily);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontSize);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontWeight);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(FontSynthesis);
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     DECLARE_PROPERTY_CUSTOM_HANDLERS(ImageResolution);
 #endif
@@ -1374,32 +1373,6 @@ inline void StyleBuilderCustom::applyValueFontWeight(StyleResolver& styleResolve
         fontDescription.setWeight(primitiveValue);
     }
     styleResolver.setFontDescription(fontDescription);
-}
-
-inline void StyleBuilderCustom::applyValueFontSynthesis(StyleResolver& styleResolver, CSSValue& value)
-{
-    if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone);
-        styleResolver.style()->setFontSynthesis(FontSynthesisNone);
-    }
-
-    FontSynthesis result = FontSynthesisNone;
-    ASSERT(is<CSSValueList>(value));
-    for (CSSValue& i : downcast<CSSValueList>(value)) {
-        switch (downcast<CSSPrimitiveValue>(i).getValueID()) {
-        case CSSValueWeight:
-            result |= FontSynthesisWeight;
-            break;
-        case CSSValueStyle:
-            result |= FontSynthesisStyle;
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            break;
-        }
-    }
-
-    styleResolver.style()->setFontSynthesis(result);
 }
 
 inline void StyleBuilderCustom::applyInitialColumnGap(StyleResolver& styleResolver)

@@ -7,14 +7,14 @@
   <div id="p"></div>
   <div id="q"><div id="r"></div></div>
   <script type="text/javascript">
-    function testEmptyIsNone(stylesheet, target) {
+    function testEmptyIsBoth(stylesheet, target) {
       cssRule = stylesheet.cssRules.item(0);
       shouldBe("cssRule.type", "cssRule.STYLE_RULE");
       declaration = cssRule.style;
       shouldBe("declaration.length", "0");
       shouldBe("declaration.getPropertyValue('font-synthesis')", "null");
       computedStyle = window.getComputedStyle(target, null);
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('font-synthesis').cssText", "none");
+      shouldBeEqualToString("computedStyle.getPropertyCSSValue('font-synthesis').cssText", "style weight");
       stylesheet.deleteRule(0);
     }
 
@@ -79,7 +79,7 @@
     var target = document.getElementById("p");
 
     stylesheet.insertRule("#p { }", 0);
-    testEmptyIsNone(stylesheet, target);
+    testEmptyIsBoth(stylesheet, target);
 
     stylesheet.insertRule("#p { font-synthesis: initial; }", 0);
     testInitialIsBoth(stylesheet, target);
@@ -103,19 +103,19 @@
     testStyleAndWeight(stylesheet, target);
 
     stylesheet.insertRule("#p { font-synthesis: garbage style }", 0);
-    testEmptyIsNone(stylesheet, target);
+    testEmptyIsBoth(stylesheet, target);
 
     stylesheet.insertRule("#p { font-synthesis: style garbage }", 0);
-    testEmptyIsNone(stylesheet, target);
+    testEmptyIsBoth(stylesheet, target);
 
     stylesheet.insertRule("#p { font-synthesis: garbage style garbage }", 0);
-    testEmptyIsNone(stylesheet, target);
+    testEmptyIsBoth(stylesheet, target);
 
     stylesheet.insertRule("#p { font-synthesis: style garbage style }", 0);
-    testEmptyIsNone(stylesheet, target);
+    testEmptyIsBoth(stylesheet, target);
 
     stylesheet.insertRule("#p { font-synthesis: weight garbage }", 0);
-    testEmptyIsNone(stylesheet, target);
+    testEmptyIsBoth(stylesheet, target);
 
   </script>
 <script src="../../resources/js-test-post.js"></script>
