@@ -1,5 +1,14 @@
 2015-04-28  Andy Estes  <aestes@apple.com>
 
+        Unreviewed Mac gardening for safari-600.6-branch.
+
+        * platform/mac-mavericks/media/controls-after-reload-expected.png: Added.
+        * platform/mac-mavericks/media/controls-after-reload-expected.txt: Added.
+        * platform/mac-wk2/media/controls-after-reload-expected.png: Added.
+        * platform/mac-wk2/media/controls-after-reload-expected.txt: Added.
+
+2015-04-28  Andy Estes  <aestes@apple.com>
+
         Add results to platform/mac-mavericks/ that were previously in a separate repository.
 
         * platform/mac-mavericks/TestExpectations: Added.
