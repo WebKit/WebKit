@@ -224,7 +224,7 @@ function initializeStatusPage() {
                     if (featureObject.contact.name) {
                         emailText = featureObject.contact.name;
                     }
-                    li.appendChild(createLinkWithHeading("span", null, emailText, featureObject.contact.email));
+                    li.appendChild(createLinkWithHeading("span", null, emailText, "mailto:" + featureObject.contact.email));
                 }
                 moreInfoList.appendChild(li);
             }
