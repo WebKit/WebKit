@@ -1,3 +1,15 @@
+2015-04-28  Per Arne Vollan  <peavo@outlook.com>
+
+        [Curl] Memory leak.
+        https://bugs.webkit.org/show_bug.cgi?id=144327
+
+        Reviewed by Brent Fulgham.
+
+        When a data url is loaded, the ResourceHandle is not released.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::startJob):
+
 2015-04-28  Andy Estes  <aestes@apple.com>
 
         Fix the Mavericks Debug build after r183467.

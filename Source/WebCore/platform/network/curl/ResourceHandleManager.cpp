@@ -953,10 +953,11 @@ void ResourceHandleManager::dispatchSynchronousJob(ResourceHandle* job)
 
 void ResourceHandleManager::startJob(ResourceHandle* job)
 {
-    URL kurl = job->firstRequest().url();
+    URL url = job->firstRequest().url();
 
-    if (kurl.protocolIsData()) {
+    if (url.protocolIsData()) {
         handleDataURL(job);
+        job->deref();
         return;
     }
 
