@@ -265,7 +265,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
                 return;
             }
 
-            RetainPtr<NSURLRequest> nsURLRequest = adoptNS(wrapper(*API::URLRequest::create(localNavigationAction->request()).leakRef()));
+            RetainPtr<NSURLRequest> nsURLRequest = adoptNS(wrapper(API::URLRequest::create(localNavigationAction->request()).leakRef()));
             if ([NSURLConnection canHandleRequest:nsURLRequest.get()]) {
                 localListener->use();
                 return;

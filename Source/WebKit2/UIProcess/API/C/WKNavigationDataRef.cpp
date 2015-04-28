@@ -55,5 +55,5 @@ WKURLRef WKNavigationDataCopyNavigationDestinationURL(WKNavigationDataRef naviga
 
 WKURLRequestRef WKNavigationDataCopyOriginalRequest(WKNavigationDataRef navigationData)
 {
-    return toAPI(API::URLRequest::create(toImpl(navigationData)->originalRequest()).leakRef());
+    return toAPI(&API::URLRequest::create(toImpl(navigationData)->originalRequest()).leakRef());
 }

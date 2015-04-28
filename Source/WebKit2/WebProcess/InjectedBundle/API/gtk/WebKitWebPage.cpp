@@ -203,17 +203,17 @@ static WKURLRequestRef willSendRequestForFrame(WKBundlePageRef page, WKBundleFra
     ResourceRequest resourceRequest;
     webkitURIRequestGetResourceRequest(request.get(), resourceRequest);
     resourceRequest.setInitiatingPageID(toImpl(page)->pageID());
-    RefPtr<API::URLRequest> newRequest = API::URLRequest::create(resourceRequest);
+    Ref<API::URLRequest> newRequest = API::URLRequest::create(resourceRequest);
 
     API::Dictionary::MapType message;
     message.set(String::fromUTF8("Page"), toImpl(page));
     message.set(String::fromUTF8("Identifier"), API::UInt64::create(identifier));
-    message.set(String::fromUTF8("Request"), newRequest.get());
+    message.set(String::fromUTF8("Request"), newRequest.ptr());
     if (!redirectResourceResponse.isNull())
         message.set(String::fromUTF8("RedirectResponse"), toImpl(wkRedirectResponse));
     WebProcess::singleton().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidSendRequestForResource"), API::Dictionary::create(WTF::move(message)).ptr());
 
-    return toAPI(newRequest.release().leakRef());
+    return toAPI(&newRequest.leakRef());
 }
 
 static void didReceiveResponseForResource(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, WKURLResponseRef response, const void*)

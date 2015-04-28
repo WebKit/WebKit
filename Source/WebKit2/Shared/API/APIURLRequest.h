@@ -39,9 +39,9 @@ namespace API {
 
 class URLRequest : public ObjectImpl<Object::Type::URLRequest> {
 public:
-    static PassRefPtr<URLRequest> create(const WebCore::ResourceRequest& request)
+    static Ref<URLRequest> create(const WebCore::ResourceRequest& request)
     {
-        return adoptRef(new URLRequest(request));
+        return adoptRef(*new URLRequest(request));
     }
 
     const WebCore::ResourceRequest& resourceRequest() const { return m_request; }

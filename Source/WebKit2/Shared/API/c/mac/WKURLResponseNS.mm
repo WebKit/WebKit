@@ -34,8 +34,7 @@ using namespace WebKit;
 WKURLResponseRef WKURLResponseCreateWithNSURLResponse(NSURLResponse* urlResponse)
 {
     RetainPtr<NSURLResponse> copiedURLResponse = adoptNS([urlResponse copy]);
-    RefPtr<API::URLResponse> response = API::URLResponse::create(copiedURLResponse.get());
-    return toAPI(response.release().leakRef());
+    return toAPI(&API::URLResponse::create(copiedURLResponse.get()).leakRef());
 }
 
 NSURLResponse* WKURLResponseCopyNSURLResponse(WKURLResponseRef urlResponse)

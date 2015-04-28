@@ -1,3 +1,44 @@
+2015-04-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WK2] API::URLRequest, API::URLResponse creation functions should return Ref<>
+        https://bugs.webkit.org/show_bug.cgi?id=144224
+
+        Reviewed by Darin Adler.
+
+        Have API::URLRequest and API::URLResponse creation functions return Ref<>.
+        The call-sites are also updated, using and operating on the returned Ref<> object
+        where possible.
+
+        * Shared/API/APIURLRequest.h:
+        (API::URLRequest::create):
+        * Shared/API/APIURLResponse.h:
+        (API::URLResponse::create):
+        * Shared/API/c/WKURLRequest.cpp:
+        (WKURLRequestCreateWithWKURL):
+        * Shared/API/c/mac/WKURLRequestNS.mm:
+        (WKURLRequestCreateWithNSURLRequest):
+        * Shared/API/c/mac/WKURLResponseNS.mm:
+        (WKURLResponseCreateWithNSURLResponse):
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetDownloadClient):
+        * UIProcess/API/C/WKDownload.cpp:
+        (WKDownloadCopyRequest):
+        * UIProcess/API/C/WKNavigationDataRef.cpp:
+        (WKNavigationDataCopyOriginalRequest):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPagePolicyClient):
+        (WKPageSetPageUIClient):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+        * UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManagerClient.cpp:
+        (WebKit::WebSoupCustomProtocolRequestManagerClient::startLoading):
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (willSendRequestForFrame):
+        * WebProcess/InjectedBundle/InjectedBundlePagePolicyClient.cpp:
+        (WebKit::InjectedBundlePagePolicyClient::decidePolicyForNavigationAction):
+        (WebKit::InjectedBundlePagePolicyClient::decidePolicyForNewWindowAction):
+        (WebKit::InjectedBundlePagePolicyClient::decidePolicyForResponse):
+
 2015-04-27  Zan Dobersek  <zdobersek@igalia.com>
 
         [WK2] API::Point, API::Size, API::Rect creation functions should return Ref<>

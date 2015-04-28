@@ -39,9 +39,9 @@ namespace API {
 
 class URLResponse : public ObjectImpl<Object::Type::URLResponse> {
 public:
-    static PassRefPtr<URLResponse> create(const WebCore::ResourceResponse& response)
+    static Ref<URLResponse> create(const WebCore::ResourceResponse& response)
     {
-        return adoptRef(new URLResponse(response));
+        return adoptRef(*new URLResponse(response));
     }
 
     const WebCore::ResourceResponse& resourceResponse() const { return m_response; }

@@ -45,7 +45,7 @@ uint64_t WKDownloadGetID(WKDownloadRef download)
 
 WKURLRequestRef WKDownloadCopyRequest(WKDownloadRef download)
 {
-    return toAPI(API::URLRequest::create(toImpl(download)->request()).leakRef());
+    return toAPI(&API::URLRequest::create(toImpl(download)->request()).leakRef());
 }
 
 WKDataRef WKDownloadGetResumeData(WKDownloadRef download)

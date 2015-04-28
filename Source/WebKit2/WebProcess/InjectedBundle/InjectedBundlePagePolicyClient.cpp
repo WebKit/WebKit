@@ -42,10 +42,10 @@ WKBundlePagePolicyAction InjectedBundlePagePolicyClient::decidePolicyForNavigati
     if (!m_client.decidePolicyForNavigationAction)
         return WKBundlePagePolicyActionPassThrough;
 
-    RefPtr<API::URLRequest> request = API::URLRequest::create(resourceRequest);
+    Ref<API::URLRequest> request = API::URLRequest::create(resourceRequest);
 
     WKTypeRef userDataToPass = 0;
-    WKBundlePagePolicyAction policy = m_client.decidePolicyForNavigationAction(toAPI(page), toAPI(frame), toAPI(action), toAPI(request.get()), &userDataToPass, m_client.base.clientInfo);
+    WKBundlePagePolicyAction policy = m_client.decidePolicyForNavigationAction(toAPI(page), toAPI(frame), toAPI(action), toAPI(request.ptr()), &userDataToPass, m_client.base.clientInfo);
     userData = adoptRef(toImpl(userDataToPass));
     return policy;
 }
@@ -55,10 +55,10 @@ WKBundlePagePolicyAction InjectedBundlePagePolicyClient::decidePolicyForNewWindo
     if (!m_client.decidePolicyForNewWindowAction)
         return WKBundlePagePolicyActionPassThrough;
 
-    RefPtr<API::URLRequest> request = API::URLRequest::create(resourceRequest);
+    Ref<API::URLRequest> request = API::URLRequest::create(resourceRequest);
 
     WKTypeRef userDataToPass = 0;
-    WKBundlePagePolicyAction policy = m_client.decidePolicyForNewWindowAction(toAPI(page), toAPI(frame), toAPI(action), toAPI(request.get()), toAPI(frameName.impl()), &userDataToPass, m_client.base.clientInfo);
+    WKBundlePagePolicyAction policy = m_client.decidePolicyForNewWindowAction(toAPI(page), toAPI(frame), toAPI(action), toAPI(request.ptr()), toAPI(frameName.impl()), &userDataToPass, m_client.base.clientInfo);
     userData = adoptRef(toImpl(userDataToPass));
     return policy;
 }
@@ -68,11 +68,11 @@ WKBundlePagePolicyAction InjectedBundlePagePolicyClient::decidePolicyForResponse
     if (!m_client.decidePolicyForResponse)
         return WKBundlePagePolicyActionPassThrough;
 
-    RefPtr<API::URLResponse> response = API::URLResponse::create(resourceResponse);
-    RefPtr<API::URLRequest> request = API::URLRequest::create(resourceRequest);
+    Ref<API::URLResponse> response = API::URLResponse::create(resourceResponse);
+    Ref<API::URLRequest> request = API::URLRequest::create(resourceRequest);
 
     WKTypeRef userDataToPass = 0;
-    WKBundlePagePolicyAction policy = m_client.decidePolicyForResponse(toAPI(page), toAPI(frame), toAPI(response.get()), toAPI(request.get()), &userDataToPass, m_client.base.clientInfo);
+    WKBundlePagePolicyAction policy = m_client.decidePolicyForResponse(toAPI(page), toAPI(frame), toAPI(response.ptr()), toAPI(request.ptr()), &userDataToPass, m_client.base.clientInfo);
     userData = adoptRef(toImpl(userDataToPass));
     return policy;
 }
