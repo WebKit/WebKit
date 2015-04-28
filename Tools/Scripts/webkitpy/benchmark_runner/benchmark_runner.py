@@ -32,7 +32,7 @@ class BenchmarkRunner(object):
                 self.httpServerDriver = HTTPServerDriverFactory.create([self.plan['http_server_driver']])
                 self.benchmarks = self.plan['benchmarks']
                 self.buildDir = os.path.abspath(buildDir)
-                self.outputFile = outputFile if outputFile else 'benchmark.result'
+                self.outputFile = outputFile
         except IOError:
             _log.error('Can not open plan file: %s' % planFile)
         except ValueError:
@@ -56,6 +56,7 @@ class BenchmarkRunner(object):
                     with timeout(benchmark['timeout']):
                         result = json.loads(self.httpServerDriver.fetchResult())
                         assert(result)
+                        results.append(result)
                 except:
                     _log.error('No result. Something went wrong. Will skip current benchmark.')
                     self.browserDriver.closeBrowsers()
@@ -64,7 +65,7 @@ class BenchmarkRunner(object):
                     self.browserDriver.closeBrowsers()
                     _log.info('End of %d iteration of current benchmark' % (x + 1))
             results = self.wrap(results)
-            self.dump(results, benchmark['output_file'] if benchmark['output_file'] else self.outputFile)
+            self.dump(results, self.outputFile if self.outputFile else benchmark['output_file'])
             benchmarkBuilder.clean()
 
     @classmethod

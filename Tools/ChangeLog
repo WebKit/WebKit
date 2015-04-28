@@ -1,3 +1,18 @@
+2015-04-27  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Add '__init__.py' and fix known bug in benchmark runner.
+        https://bugs.webkit.org/show_bug.cgi?id=144296
+
+        Reviewed by Ryosuke Niwa
+
+        * Scripts/webkitpy/benchmark_runner/__init__.py: Make python to recognize this module.
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder/__init__.py: Make python to recognize this module.
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (BenchmarkRunner.__init__):
+        (BenchmarkRunner.execute): Fix logic bug that '--output-file' option doesn't work, and empty output file bug.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/__init__.py: Make python to recognize this module.
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/__init__.py: Make python to recognize this module.
+
 2015-04-27  Alexey Proskuryakov  <ap@apple.com>
 
         More build fix.
