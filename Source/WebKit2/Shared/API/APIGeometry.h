@@ -29,7 +29,6 @@
 #include "APIObject.h"
 #include "WKGeometry.h"
 #include <WebCore/FloatRect.h>
-#include <wtf/PassRefPtr.h>
 
 namespace IPC {
 class ArgumentDecoder;
@@ -40,9 +39,9 @@ namespace API {
 
 class Size : public API::ObjectImpl<API::Object::Type::Size> {
 public:
-    static PassRefPtr<Size> create(const WKSize& size)
+    static Ref<Size> create(const WKSize& size)
     {
-        return adoptRef(new Size(size));
+        return adoptRef(*new Size(size));
     }
 
     const WKSize& size() const { return m_size; }
@@ -61,9 +60,9 @@ private:
 
 class Point : public API::ObjectImpl<API::Object::Type::Point> {
 public:
-    static PassRefPtr<Point> create(const WKPoint& point)
+    static Ref<Point> create(const WKPoint& point)
     {
-        return adoptRef(new Point(point));
+        return adoptRef(*new Point(point));
     }
 
     const WKPoint& point() const { return m_point; }
@@ -81,9 +80,9 @@ private:
 
 class Rect : public API::ObjectImpl<API::Object::Type::Rect> {
 public:
-    static PassRefPtr<Rect> create(const WKRect& rect)
+    static Ref<Rect> create(const WKRect& rect)
     {
-        return adoptRef(new Rect(rect));
+        return adoptRef(*new Rect(rect));
     }
 
     const WKRect& rect() const { return m_rect; }

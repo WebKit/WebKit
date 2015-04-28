@@ -1,5 +1,25 @@
 2015-04-27  Zan Dobersek  <zdobersek@igalia.com>
 
+        [WK2] API::Point, API::Size, API::Rect creation functions should return Ref<>
+        https://bugs.webkit.org/show_bug.cgi?id=144223
+
+        Reviewed by Darin Adler.
+
+        Have API::Point, API::Size and API::Rect creation functions return Ref<>.
+        Call-sites are also updated, using and operating on the returned Ref<> object
+        where possible.
+
+        * Shared/API/APIGeometry.h:
+        (API::Size::create):
+        (API::Point::create):
+        (API::Rect::create):
+        * Shared/API/c/WKGeometry.cpp:
+        (WKPointCreate):
+        (WKSizeCreate):
+        (WKRectCreate):
+
+2015-04-27  Zan Dobersek  <zdobersek@igalia.com>
+
         [WK2] API::Error creation functions should return Ref<>
         https://bugs.webkit.org/show_bug.cgi?id=144222
 

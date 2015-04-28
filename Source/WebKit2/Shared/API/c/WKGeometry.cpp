@@ -48,17 +48,17 @@ WKTypeID WKRectGetTypeID()
 
 WKPointRef WKPointCreate(WKPoint point)
 {
-    return toAPI(API::Point::create(point).leakRef());
+    return toAPI(&API::Point::create(point).leakRef());
 }
 
 WKSizeRef WKSizeCreate(WKSize size)
 {
-    return toAPI(API::Size::create(size).leakRef());
+    return toAPI(&API::Size::create(size).leakRef());
 }
 
 WKRectRef WKRectCreate(WKRect rect)
 {
-    return toAPI(API::Rect::create(rect).leakRef());
+    return toAPI(&API::Rect::create(rect).leakRef());
 }
 
 WKSize WKSizeGetValue(WKSizeRef size)
