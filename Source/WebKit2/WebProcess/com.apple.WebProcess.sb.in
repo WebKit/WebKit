@@ -176,6 +176,7 @@
        (global-name "com.apple.audio.VDCAssistant")
        (global-name "com.apple.audio.audiohald")
        (global-name "com.apple.audio.coreaudiod")
+       (global-name "com.apple.awdd")
        (global-name "com.apple.cookied")
        (global-name "com.apple.dock.server")
        (global-name "com.apple.system.opendirectoryd.api")
