@@ -1,3 +1,11 @@
+2015-04-28  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] fast/forms/input-search-press-escape-key.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=87168
+        rdar://problem/11508829
+
+        * platform/wk2/TestExpectations: This doesn't crash for me any more, unskipping.
+
 2015-04-28  Zalan Bujtas  <zalan@apple.com>
 
         Checkboxes on bugs.webkit.org are painted with stripes at some zoom levels.
