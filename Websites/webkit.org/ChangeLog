@@ -1,3 +1,14 @@
+2015-04-28  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Fix the link noted 'contribute to features' in status.html
+        https://bugs.webkit.org/show_bug.cgi?id=144331
+
+        Reviewed by Csaba Osztrogonác.
+
+        Fix the href of the link to http://www.webkit.org/coding/contributing.html.
+
+        * status.html:
+
 2015-04-28  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         Add naver to team.html
