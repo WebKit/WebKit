@@ -57,6 +57,7 @@ std::unique_ptr<ResourceRequest> ResourceRequestBase::adopt(std::unique_ptr<Cros
     request->setFirstPartyForCookies(data->m_firstPartyForCookies);
     request->setHTTPMethod(data->m_httpMethod);
     request->setPriority(data->m_priority);
+    request->setRequester(data->m_requester);
 
     request->updateResourceRequest();
     request->m_httpHeaderFields.adopt(WTF::move(data->m_httpHeaders));
@@ -90,6 +91,7 @@ std::unique_ptr<CrossThreadResourceRequestData> ResourceRequestBase::copyData() 
     data->m_httpMethod = httpMethod().isolatedCopy();
     data->m_httpHeaders = httpHeaderFields().copyData();
     data->m_priority = priority();
+    data->m_requester = m_requester;
 
     data->m_responseContentDispositionEncodingFallbackArray.reserveInitialCapacity(m_responseContentDispositionEncodingFallbackArray.size());
     size_t encodingArraySize = m_responseContentDispositionEncodingFallbackArray.size();
@@ -494,6 +496,9 @@ bool equalIgnoringHeaderFields(const ResourceRequestBase& a, const ResourceReque
         return false;
     
     if (a.priority() != b.priority())
+        return false;
+
+    if (a.requester() != b.requester())
         return false;
 
     FormData* formDataA = a.httpBody();

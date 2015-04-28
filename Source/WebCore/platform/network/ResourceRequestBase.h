@@ -147,6 +147,10 @@ namespace WebCore {
         bool hiddenFromInspector() const { return m_hiddenFromInspector; }
         void setHiddenFromInspector(bool hiddenFromInspector) { m_hiddenFromInspector = hiddenFromInspector; }
 
+        enum class Requester { Unspecified, Main, XHR };
+        WEBCORE_EXPORT Requester requester() const { return m_requester; }
+        WEBCORE_EXPORT void setRequester(Requester requester) { m_requester = requester; }
+
 #if !PLATFORM(COCOA)
         bool encodingRequiresPlatformData() const { return true; }
 #endif
@@ -224,6 +228,7 @@ namespace WebCore {
         unsigned m_reportRawHeaders : 1;
         unsigned m_hiddenFromInspector : 1;
         unsigned m_priority : 4;
+        Requester m_requester { Requester::Unspecified };
 
     private:
         const ResourceRequest& asResourceRequest() const;
@@ -255,6 +260,7 @@ namespace WebCore {
         RefPtr<FormData> m_httpBody;
         bool m_allowCookies;
         ResourceLoadPriority m_priority;
+        ResourceRequestBase::Requester m_requester;
     };
     
     unsigned initializeMaximumHTTPConnectionCountPerHost();
@@ -276,6 +282,7 @@ void ResourceRequestBase::encodeWithoutPlatformData(Encoder& encoder) const
     encoder.encodeEnum(m_cachePolicy);
     encoder << m_allowCookies;
     encoder.encodeEnum(m_priority);
+    encoder.encodeEnum(m_requester);
 }
 
 template<class Decoder>
@@ -317,6 +324,9 @@ bool ResourceRequestBase::decodeWithoutPlatformData(Decoder& decoder)
     if (!decoder.decodeEnum(priority))
         return false;
     m_priority = priority;
+
+    if (!decoder.decodeEnum(m_requester))
+        return false;
 
     return true;
 }

@@ -373,6 +373,11 @@ String DiagnosticLoggingKeys::sourceKey()
     return ASCIILiteral("sourceKey");
 }
 
+String DiagnosticLoggingKeys::streamingMedia()
+{
+    return ASCIILiteral("streamingMedia");
+}
+
 String DiagnosticLoggingKeys::styleSheetKey()
 {
     return ASCIILiteral("styleSheet");

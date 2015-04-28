@@ -42,7 +42,6 @@ CachedRawResource::CachedRawResource(ResourceRequest& resourceRequest, Type type
     , m_identifier(0)
     , m_allowEncodedDataReplacement(true)
 {
-    // FIXME: The wrong CachedResource::Type here may cause a bad cast elsewhere.
     ASSERT(isMainOrRawResource());
 }
 

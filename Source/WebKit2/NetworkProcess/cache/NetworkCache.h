@@ -71,7 +71,8 @@ enum class StoreDecision {
     NoDueToNoStoreResponse,
     NoDueToHTTPStatusCode,
     NoDueToNoStoreRequest,
-    NoDueToUnlikelyToReuse
+    NoDueToUnlikelyToReuse,
+    NoDueToStreamingMedia
 };
 
 enum class UseDecision {

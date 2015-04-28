@@ -244,6 +244,8 @@ static String storeDecisionToDiagnosticKey(StoreDecision storeDecision)
         return WebCore::DiagnosticLoggingKeys::uncacheableStatusCodeKey();
     case StoreDecision::NoDueToUnlikelyToReuse:
         return WebCore::DiagnosticLoggingKeys::unlikelyToReuseKey();
+    case StoreDecision::NoDueToStreamingMedia:
+        return WebCore::DiagnosticLoggingKeys::streamingMedia();
     case StoreDecision::Yes:
         // It was stored but could not be retrieved so it must have been pruned from the cache.
         return WebCore::DiagnosticLoggingKeys::noLongerInCacheKey();

@@ -84,6 +84,7 @@ void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder& encoder
 
     // The fallback array is part of CFURLRequest, but it is not encoded by WKCFURLRequestCreateSerializableRepresentation.
     encoder << resourceRequest.responseContentDispositionEncodingFallbackArray();
+    encoder.encodeEnum(resourceRequest.requester());
 }
 #else
 void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder& encoder, const ResourceRequest& resourceRequest)
@@ -109,6 +110,7 @@ void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder& encoder
 
     // The fallback array is part of NSURLRequest, but it is not encoded by WKNSURLRequestCreateSerializableRepresentation.
     encoder << resourceRequest.responseContentDispositionEncodingFallbackArray();
+    encoder.encodeEnum(resourceRequest.requester());
 }
 #endif
 
@@ -150,6 +152,11 @@ bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder& decoder
         responseContentDispositionEncodingFallbackArray.size() > 1 ? responseContentDispositionEncodingFallbackArray[1] : String(),
         responseContentDispositionEncodingFallbackArray.size() > 2 ? responseContentDispositionEncodingFallbackArray[2] : String()
     );
+
+    ResourceRequest::Requester requester;
+    if (!decoder.decodeEnum(requester))
+        return false;
+    resourceRequest.setRequester(requester);
 
     return true;
 }

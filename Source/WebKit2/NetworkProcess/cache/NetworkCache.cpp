@@ -267,6 +267,15 @@ static bool isStatusCodePotentiallyCacheable(int statusCode)
     }
 }
 
+static bool isMediaMIMEType(const String& mimeType)
+{
+    if (mimeType.startsWith("video/", /*caseSensitive*/ false))
+        return true;
+    if (mimeType.startsWith("audio/", /*caseSensitive*/ false))
+        return true;
+    return false;
+}
+
 static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceResponse& response)
 {
     if (!originalRequest.url().protocolIsInHTTPFamily() || !response.isHTTP())
@@ -290,8 +299,8 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
             return StoreDecision::NoDueToHTTPStatusCode;
     }
 
-    // Main resource has ResourceLoadPriorityVeryHigh.
-    bool storeUnconditionallyForHistoryNavigation = originalRequest.priority() == WebCore::ResourceLoadPriorityVeryHigh;
+    bool isMainResource = originalRequest.requester() == WebCore::ResourceRequest::Requester::Main;
+    bool storeUnconditionallyForHistoryNavigation = isMainResource || originalRequest.priority() == WebCore::ResourceLoadPriorityVeryHigh;
     if (!storeUnconditionallyForHistoryNavigation) {
         auto now = std::chrono::system_clock::now();
         bool hasNonZeroLifetime = !response.cacheControlContainsNoCache() && WebCore::computeFreshnessLifetimeForHTTPFamily(response, now) > 0_ms;
@@ -300,6 +309,14 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
         if (!possiblyReusable)
             return StoreDecision::NoDueToUnlikelyToReuse;
     }
+
+    // Media loaded via XHR is likely being used for MSE streaming (YouTube and Netflix for example).
+    // Streaming media fills the cache quickly and is unlikely to be reused.
+    // FIXME: We should introduce a separate media cache partition that doesn't affect other resources.
+    // FIXME: We should also make sure make the MSE paths are copy-free so we can use mapped buffers from disk effectively.
+    bool isLikelyStreamingMedia = originalRequest.requester() == WebCore::ResourceRequest::Requester::XHR && isMediaMIMEType(response.mimeType());
+    if (isLikelyStreamingMedia)
+        return StoreDecision::NoDueToStreamingMedia;
 
     return StoreDecision::Yes;
 }

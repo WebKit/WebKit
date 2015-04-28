@@ -173,7 +173,6 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Cach
     // If there is no WebFrame then this resource cannot be authenticated with the client.
     loadParameters.clientCredentialPolicy = (webFrame && webPage && resourceLoader->isAllowedToAskUserForCredentials()) ? AskClientForAllCredentials : DoNotAskClientForAnyCredentials;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect;
-    loadParameters.isMainResource = resource && resource->type() == CachedResource::MainResource;
     loadParameters.defersLoading = resourceLoader->defersLoading();
     loadParameters.needsCertificateInfo = resourceLoader->shouldIncludeCertificateInfo();
     loadParameters.maximumBufferingTime = maximumBufferingTime(resource);

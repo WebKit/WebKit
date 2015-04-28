@@ -934,11 +934,6 @@ void DocumentLoader::clearMainResourceLoader()
 {
     m_loadingMainResource = false;
 
-#if PLATFORM(IOS)
-    // FIXME: Remove PLATFORM(IOS)-guard once we upstream the iOS changes to ResourceRequest.h.
-    m_request.deprecatedSetMainResourceRequest(false);
-#endif
-
     if (this == frameLoader()->activeDocumentLoader())
         checkLoadComplete();
 }
@@ -1403,12 +1398,9 @@ void DocumentLoader::startLoadingMainResource()
         return;
     }
 
-#if PLATFORM(IOS)
-    // FIXME: Remove PLATFORM(IOS)-guard once we upstream the iOS changes to ResourceRequest.h.
-    m_request.deprecatedSetMainResourceRequest(true);
-#endif
-
     ResourceRequest request(m_request);
+    request.setRequester(ResourceRequest::Requester::Main);
+    
     static NeverDestroyed<ResourceLoaderOptions> mainResourceLoadOptions(SendCallbacks, SniffContent, BufferData, AllowStoredCredentials, AskClientForAllCredentials, SkipSecurityCheck, UseDefaultOriginRestrictionsForType, IncludeCertificateInfo);
     CachedResourceRequest cachedResourceRequest(request, mainResourceLoadOptions);
     cachedResourceRequest.setInitiator(*this);

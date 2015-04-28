@@ -363,8 +363,8 @@ void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader* loader, unsig
     NSURLRequest *newURLRequest = currentURLRequest;
     ResourceLoadPriority priority = request.priority();
     bool isHiddenFromInspector = request.hiddenFromInspector();
+    auto requester = request.requester();
 #if PLATFORM(IOS)
-    bool isMainResourceRequest = request.deprecatedIsMainResourceRequest();
     if (implementations->webThreadWillSendRequestFunc) {
         newURLRequest = (NSURLRequest *)CallResourceLoadDelegateInWebThread(implementations->webThreadWillSendRequestFunc, webView, @selector(webThreadWebView:resource:willSendRequest:redirectResponse:fromDataSource:), [webView _objectForIdentifier:identifier], currentURLRequest, redirectResponse.nsURLResponse(), dataSource(loader));
     } else
@@ -375,10 +375,8 @@ void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader* loader, unsig
     if (newURLRequest != currentURLRequest)
         request = newURLRequest;
     request.setHiddenFromInspector(isHiddenFromInspector);
-#if PLATFORM(IOS)
-    request.deprecatedSetMainResourceRequest(isMainResourceRequest);
-#endif
     request.setPriority(priority);
+    request.setRequester(requester);
 }
 
 bool WebFrameLoaderClient::shouldUseCredentialStorage(DocumentLoader* loader, unsigned long identifier)

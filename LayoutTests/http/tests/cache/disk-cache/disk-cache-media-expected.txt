@@ -1,0 +1,29 @@
+Tests that media resources loaded via XHR is not cached.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+running 6 tests
+
+response headers: {"Cache-control":"max-age=0","Content-Type":"text/plain"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100","Content-Type":"text/plain"}
+response source: Disk cache
+
+response headers: {"Cache-control":"max-age=0","Content-Type":"video/mp4"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100","Content-Type":"video/mp4"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=0","Content-Type":"audio/mp4"}
+response source: Network
+
+response headers: {"Cache-control":"max-age=100","Content-Type":"audio/mp4"}
+response source: Network
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

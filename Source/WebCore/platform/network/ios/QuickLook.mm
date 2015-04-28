@@ -459,7 +459,7 @@ QuickLookHandle::QuickLookHandle(NSURL *firstRequestURL, NSURLConnection *connec
 std::unique_ptr<QuickLookHandle> QuickLookHandle::create(ResourceHandle* handle, NSURLConnection *connection, NSURLResponse *nsResponse, id delegate)
 {
     ASSERT_ARG(handle, handle);
-    if (!handle->firstRequest().deprecatedIsMainResourceRequest() || ![WebCore::QLPreviewGetSupportedMIMETypesSet() containsObject:[nsResponse MIMEType]])
+    if (handle->firstRequest().requester() != ResourceRequest::Requester::Main || ![WebCore::QLPreviewGetSupportedMIMETypesSet() containsObject:[nsResponse MIMEType]])
         return nullptr;
 
     std::unique_ptr<QuickLookHandle> quickLookHandle(new QuickLookHandle([handle->firstRequest().nsURLRequest(DoNotUpdateHTTPBody) URL], connection, nsResponse, delegate));
@@ -471,7 +471,7 @@ std::unique_ptr<QuickLookHandle> QuickLookHandle::create(ResourceHandle* handle,
 std::unique_ptr<QuickLookHandle> QuickLookHandle::create(ResourceHandle* handle, SynchronousResourceHandleCFURLConnectionDelegate* connectionDelegate, CFURLResponseRef cfResponse)
 {
     ASSERT_ARG(handle, handle);
-    if (!handle->firstRequest().deprecatedIsMainResourceRequest() || ![WebCore::QLPreviewGetSupportedMIMETypesSet() containsObject:(NSString *)CFURLResponseGetMIMEType(cfResponse)])
+    if (handle->firstRequest().requester() != ResourceRequest::Requester::Main || ![WebCore::QLPreviewGetSupportedMIMETypesSet() containsObject:(NSString *)CFURLResponseGetMIMEType(cfResponse)])
         return nullptr;
 
     NSURLResponse *nsResponse = [NSURLResponse _responseWithCFURLResponse:cfResponse];

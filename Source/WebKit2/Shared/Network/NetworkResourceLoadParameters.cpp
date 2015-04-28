@@ -45,7 +45,6 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters()
     , allowStoredCredentials(DoNotAllowStoredCredentials)
     , clientCredentialPolicy(DoNotAskClientForAnyCredentials)
     , shouldClearReferrerOnHTTPSToHTTPRedirect(true)
-    , isMainResource(false)
     , defersLoading(false)
     , needsCertificateInfo(false)
     , maximumBufferingTime(0_ms)
@@ -94,7 +93,6 @@ void NetworkResourceLoadParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder.encodeEnum(allowStoredCredentials);
     encoder.encodeEnum(clientCredentialPolicy);
     encoder << shouldClearReferrerOnHTTPSToHTTPRedirect;
-    encoder << isMainResource;
     encoder << defersLoading;
     encoder << needsCertificateInfo;
     encoder << maximumBufferingTime;
@@ -150,8 +148,6 @@ bool NetworkResourceLoadParameters::decode(IPC::ArgumentDecoder& decoder, Networ
     if (!decoder.decodeEnum(result.clientCredentialPolicy))
         return false;
     if (!decoder.decode(result.shouldClearReferrerOnHTTPSToHTTPRedirect))
-        return false;
-    if (!decoder.decode(result.isMainResource))
         return false;
     if (!decoder.decode(result.defersLoading))
         return false;

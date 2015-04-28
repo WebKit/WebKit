@@ -1,3 +1,52 @@
+2015-04-28  Antti Koivisto  <antti@apple.com>
+
+        Network Cache: Disk cache getting filled by YouTube video data
+        https://bugs.webkit.org/show_bug.cgi?id=144259
+
+        Reviewed by Darin Adler.
+
+        MSE media is loaded via XHR and tends to eventually fill the cache.
+
+        YouTube serves the media chunks cacheable, however they are rarely (if ever) reused.
+        We can reduce disk writes and keep more useful resources around by not caching them
+
+        Test: http/tests/cache/disk-cache/disk-cache-media.html
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::startLoadingMainResource):
+
+            Set the requester.
+
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::CachedRawResource):
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::streamingMedia):
+        * page/DiagnosticLoggingKeys.h:
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::adopt):
+        (WebCore::ResourceRequestBase::copyData):
+        (WebCore::equalIgnoringHeaderFields):
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::requester):
+        (WebCore::ResourceRequestBase::setRequester):
+
+            Add requester type to the request object. Currently this is main resource, xhr or unspecified.
+
+        (WebCore::ResourceRequestBase::encodeWithoutPlatformData):
+        (WebCore::ResourceRequestBase::decodeWithoutPlatformData):
+        * platform/network/cf/ResourceRequest.h:
+        (WebCore::ResourceRequest::deprecatedSetMainResourceRequest): Deleted.
+        (WebCore::ResourceRequest::deprecatedIsMainResourceRequest): Deleted.
+
+            Replace this iOS only field with shared mechanism.
+
+        * platform/network/ios/QuickLook.mm:
+        (WebCore::QuickLookHandle::create):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createRequest):
+
+            Set the requester.
+
 2015-04-28  Namhoon Kim  <nakim@ea.com>
 
         Fix windows build error in WebCore related to bulk build.

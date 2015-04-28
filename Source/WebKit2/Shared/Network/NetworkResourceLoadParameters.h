@@ -61,7 +61,6 @@ public:
     WebCore::StoredCredentials allowStoredCredentials;
     WebCore::ClientCredentialPolicy clientCredentialPolicy;
     bool shouldClearReferrerOnHTTPSToHTTPRedirect;
-    bool isMainResource;
     bool defersLoading;
     bool needsCertificateInfo;
     std::chrono::milliseconds maximumBufferingTime;

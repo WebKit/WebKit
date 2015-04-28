@@ -106,6 +106,7 @@ public:
     static String sameLoadKey();
     static String scriptKey();
     static String sourceKey();
+    WEBCORE_EXPORT static String streamingMedia();
     static String styleSheetKey();
     static String svgDocumentKey();
     WEBCORE_EXPORT static String uncacheableStatusCodeKey();

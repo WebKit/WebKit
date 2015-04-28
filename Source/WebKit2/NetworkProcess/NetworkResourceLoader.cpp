@@ -253,17 +253,18 @@ void NetworkResourceLoader::didReceiveResponseAsync(ResourceHandle* handle, cons
     shouldSendDidReceiveResponse = !m_cacheEntryForValidation;
 #endif
 
+    bool shouldWaitContinueDidReceiveResponse = originalRequest().requester() == ResourceRequest::Requester::Main;
     if (shouldSendDidReceiveResponse) {
         if (isSynchronous())
             m_synchronousLoadData->response = m_response;
         else {
-            if (!sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponse(m_response, m_parameters.isMainResource)))
+            if (!sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponse(m_response, shouldWaitContinueDidReceiveResponse)))
                 return;
         }
     }
 
     // For main resources, the web process is responsible for sending back a NetworkResourceLoader::ContinueDidReceiveResponse message.
-    bool shouldContinueDidReceiveResponse = !m_parameters.isMainResource;
+    bool shouldContinueDidReceiveResponse = !shouldWaitContinueDidReceiveResponse;
 #if ENABLE(NETWORK_CACHE)
     shouldContinueDidReceiveResponse = shouldContinueDidReceiveResponse || m_cacheEntryForValidation;
 #endif
@@ -543,7 +544,8 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
         m_synchronousLoadData->response = entry->response();
         sendReplyToSynchronousRequest(*m_synchronousLoadData, entry->buffer());
     } else {
-        sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponse(entry->response(), m_parameters.isMainResource));
+        bool needsContinueDidReceiveResponseMessage = originalRequest().requester() == ResourceRequest::Requester::Main;
+        sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponse(entry->response(), needsContinueDidReceiveResponseMessage));
 
 #if ENABLE(SHAREABLE_RESOURCE)
         if (!entry->shareableResourceHandle().isNull())

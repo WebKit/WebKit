@@ -745,6 +745,7 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
     m_uploadEventsAllowed = m_sameOriginRequest || uploadEvents || !isSimpleCrossOriginAccessRequest(m_method, m_requestHeaders);
 
     ResourceRequest request(m_url);
+    request.setRequester(ResourceRequest::Requester::XHR);
     request.setHTTPMethod(m_method);
 
     if (m_requestEntityBody) {
