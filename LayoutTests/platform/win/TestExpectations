@@ -1885,6 +1885,7 @@ svg/text/lengthAdjust-text-metrics.html [ Failure ]
 ################             WebGL Issues                   ####################
 ################################################################################
 # Skip all webgl tests on Windows for now since they don't seem to work consistently
+webkit.org/b/144292 fast/events/constructors/webgl-context-event-constructor.html [ Skip ]
 webgl/ [ Skip ]
 fast/canvas/webgl/ [ Skip ]
 http/tests/webgl/ [ Skip ]
