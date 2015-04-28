@@ -1,3 +1,25 @@
+2015-04-28  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Use less memory for CombinedURLFilters.
+        https://bugs.webkit.org/show_bug.cgi?id=144290
+
+        Reviewed by Andreas Kling.
+
+        * contentextensions/CombinedURLFilters.cpp:
+        (WebCore::ContentExtensions::recursiveMemoryUsed):
+        (WebCore::ContentExtensions::CombinedURLFilters::addPattern):
+        (WebCore::ContentExtensions::generateNFAForSubtree):
+        (WebCore::ContentExtensions::CombinedURLFilters::createNFAs):
+        * contentextensions/NFA.cpp:
+        (WebCore::ContentExtensions::NFA::memoryUsed):
+        (WebCore::ContentExtensions::NFA::setActions):
+        * contentextensions/NFA.h:
+        * contentextensions/NFANode.h:
+        * contentextensions/Term.h:
+        (WebCore::ContentExtensions::Term::Term::generateGraph):
+        (WebCore::ContentExtensions::Term::generateSubgraphForAtom):
+        Use Vectors instead of HashTables in PrefixTreeVertex because the sets stay small and need to be more memory efficient.
+
 2015-04-28  Brady Eidson  <beidson@apple.com>
 
         Consolidate most "frame load" arguments into FrameLoadRequest.

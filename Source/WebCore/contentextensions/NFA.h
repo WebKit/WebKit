@@ -38,8 +38,6 @@ namespace ContentExtensions {
 
 class NFAToDFA;
 
-typedef HashSet<uint64_t, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> ActionSet;
-
 // The NFA provides a way to build a NFA graph with characters or epsilon as transitions.
 // The nodes are accessed through an identifier.
 class NFA {
@@ -51,13 +49,13 @@ public:
     void addTransition(unsigned from, unsigned to, char character);
     void addEpsilonTransition(unsigned from, unsigned to);
     void addTransitionsOnAnyCharacter(unsigned from, unsigned to);
-    void setActions(unsigned node, const ActionSet& finalActions);
+    void setActions(unsigned node, const ActionList& finalActions);
 
     unsigned graphSize() const;
     void restoreToGraphSize(unsigned);
 
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-    void addRuleId(unsigned node, const ActionSet& ruleIds);
+    void addRuleId(unsigned node, const ActionList& ruleIds);
 
     void debugPrintDot() const;
 #else

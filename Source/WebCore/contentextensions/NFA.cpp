@@ -51,6 +51,8 @@ size_t NFA::memoryUsed() const
 {
     size_t size = 0;
     for (const NFANode& node : m_nodes) {
+        for (const auto& transition : node.transitions)
+            size += transition.value.capacity() * sizeof(unsigned);
         size += sizeof(node)
             + node.transitions.capacity() * sizeof(std::pair<uint16_t, NFANodeIndexSet>)
             + node.transitionsOnAnyCharacter.capacity() * sizeof(unsigned)
@@ -93,7 +95,7 @@ void NFA::addTransitionsOnAnyCharacter(unsigned from, unsigned to)
         transitionSlot.value.remove(to);
 }
 
-void NFA::setActions(unsigned node, const ActionSet& actions)
+void NFA::setActions(unsigned node, const ActionList& actions)
 {
     ASSERT_WITH_MESSAGE(m_nodes[node].finalRuleIds.isEmpty(), "The final state should only be defined once.");
     copyToVector(actions, m_nodes[node].finalRuleIds);

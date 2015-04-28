@@ -83,7 +83,7 @@ public:
 
     void quantify(const AtomQuantifier&);
 
-    unsigned generateGraph(NFA&, unsigned start, const ActionSet& finalActions) const;
+    unsigned generateGraph(NFA&, unsigned start, const ActionList& finalActions) const;
 
     bool isEndOfLineAssertion() const;
 
@@ -335,7 +335,7 @@ inline void Term::quantify(const AtomQuantifier& quantifier)
     m_quantifier = quantifier;
 }
 
-inline unsigned Term::Term::generateGraph(NFA& nfa, unsigned start, const ActionSet& finalActions) const
+inline unsigned Term::Term::generateGraph(NFA& nfa, unsigned start, const ActionList& finalActions) const
 {
     ASSERT(isValid());
 
@@ -581,7 +581,7 @@ inline unsigned Term::generateSubgraphForAtom(NFA& nfa, unsigned source) const
     case TermType::Group: {
         unsigned lastTarget = source;
         for (const Term& term : m_atomData.group.terms)
-            lastTarget = term.generateGraph(nfa, lastTarget, ActionSet());
+            lastTarget = term.generateGraph(nfa, lastTarget, ActionList());
         return lastTarget;
     }
     }

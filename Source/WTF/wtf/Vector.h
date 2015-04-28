@@ -581,7 +581,7 @@ struct UnsafeVectorOverflow {
     }
 };
 
-template<typename T, size_t inlineCapacity = 0, typename OverflowHandler = CrashOnOverflow>
+template<typename T, size_t inlineCapacity = 0, typename OverflowHandler = CrashOnOverflow, size_t minCapacity = 16>
 class Vector : private VectorBuffer<T, inlineCapacity> {
     WTF_MAKE_FAST_ALLOCATED;
 private:
@@ -754,7 +754,7 @@ public:
 
     MallocPtr<T> releaseBuffer();
 
-    void swap(Vector<T, inlineCapacity, OverflowHandler>& other)
+    void swap(Vector<T, inlineCapacity, OverflowHandler, minCapacity>& other)
     {
 #if ASAN_ENABLED
         if (this == std::addressof(other)) // ASan will crash if we try to restrict access to the same buffer twice.
@@ -804,8 +804,8 @@ private:
 #endif
 };
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-Vector<T, inlineCapacity, OverflowHandler>::Vector(const Vector& other)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+Vector<T, inlineCapacity, OverflowHandler, minCapacity>::Vector(const Vector& other)
     : Base(other.capacity(), other.size())
 {
     asanSetInitialBufferSizeTo(other.size());
@@ -814,9 +814,9 @@ Vector<T, inlineCapacity, OverflowHandler>::Vector(const Vector& other)
         TypeOperations::uninitializedCopy(other.begin(), other.end(), begin());
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
 template<size_t otherCapacity, typename otherOverflowBehaviour>
-Vector<T, inlineCapacity, OverflowHandler>::Vector(const Vector<T, otherCapacity, otherOverflowBehaviour>& other)
+Vector<T, inlineCapacity, OverflowHandler, minCapacity>::Vector(const Vector<T, otherCapacity, otherOverflowBehaviour>& other)
     : Base(other.capacity(), other.size())
 {
     asanSetInitialBufferSizeTo(other.size());
@@ -825,8 +825,8 @@ Vector<T, inlineCapacity, OverflowHandler>::Vector(const Vector<T, otherCapacity
         TypeOperations::uninitializedCopy(other.begin(), other.end(), begin());
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-Vector<T, inlineCapacity, OverflowHandler>& Vector<T, inlineCapacity, OverflowHandler>::operator=(const Vector<T, inlineCapacity, OverflowHandler>& other)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+Vector<T, inlineCapacity, OverflowHandler, minCapacity>& Vector<T, inlineCapacity, OverflowHandler, minCapacity>::operator=(const Vector<T, inlineCapacity, OverflowHandler, minCapacity>& other)
 {
     if (&other == this)
         return *this;
@@ -850,9 +850,9 @@ Vector<T, inlineCapacity, OverflowHandler>& Vector<T, inlineCapacity, OverflowHa
 
 inline bool typelessPointersAreEqual(const void* a, const void* b) { return a == b; }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
 template<size_t otherCapacity, typename otherOverflowBehaviour>
-Vector<T, inlineCapacity, OverflowHandler>& Vector<T, inlineCapacity, OverflowHandler>::operator=(const Vector<T, otherCapacity, otherOverflowBehaviour>& other)
+Vector<T, inlineCapacity, OverflowHandler, minCapacity>& Vector<T, inlineCapacity, OverflowHandler, minCapacity>::operator=(const Vector<T, otherCapacity, otherOverflowBehaviour>& other)
 {
     // If the inline capacities match, we should call the more specific
     // template.  If the inline capacities don't match, the two objects
@@ -876,29 +876,29 @@ Vector<T, inlineCapacity, OverflowHandler>& Vector<T, inlineCapacity, OverflowHa
     return *this;
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-inline Vector<T, inlineCapacity, OverflowHandler>::Vector(Vector<T, inlineCapacity, OverflowHandler>&& other)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+inline Vector<T, inlineCapacity, OverflowHandler, minCapacity>::Vector(Vector<T, inlineCapacity, OverflowHandler, minCapacity>&& other)
 {
     swap(other);
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-inline Vector<T, inlineCapacity, OverflowHandler>& Vector<T, inlineCapacity, OverflowHandler>::operator=(Vector<T, inlineCapacity, OverflowHandler>&& other)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+inline Vector<T, inlineCapacity, OverflowHandler, minCapacity>& Vector<T, inlineCapacity, OverflowHandler, minCapacity>::operator=(Vector<T, inlineCapacity, OverflowHandler, minCapacity>&& other)
 {
     swap(other);
     return *this;
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
 template<typename U>
-bool Vector<T, inlineCapacity, OverflowHandler>::contains(const U& value) const
+bool Vector<T, inlineCapacity, OverflowHandler, minCapacity>::contains(const U& value) const
 {
     return find(value) != notFound;
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
 template<typename U>
-size_t Vector<T, inlineCapacity, OverflowHandler>::find(const U& value) const
+size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity>::find(const U& value) const
 {
     for (size_t i = 0; i < size(); ++i) {
         if (at(i) == value)
@@ -907,9 +907,9 @@ size_t Vector<T, inlineCapacity, OverflowHandler>::find(const U& value) const
     return notFound;
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
 template<typename U>
-size_t Vector<T, inlineCapacity, OverflowHandler>::reverseFind(const U& value) const
+size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity>::reverseFind(const U& value) const
 {
     for (size_t i = 1; i <= size(); ++i) {
         const size_t index = size() - i;
@@ -919,8 +919,8 @@ size_t Vector<T, inlineCapacity, OverflowHandler>::reverseFind(const U& value) c
     return notFound;
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-void Vector<T, inlineCapacity, OverflowHandler>::fill(const T& val, size_t newSize)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::fill(const T& val, size_t newSize)
 {
     if (size() > newSize)
         shrink(newSize);
@@ -937,22 +937,22 @@ void Vector<T, inlineCapacity, OverflowHandler>::fill(const T& val, size_t newSi
     m_size = newSize;
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
 template<typename Iterator>
-void Vector<T, inlineCapacity, OverflowHandler>::appendRange(Iterator start, Iterator end)
+void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::appendRange(Iterator start, Iterator end)
 {
     for (Iterator it = start; it != end; ++it)
         append(*it);
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-void Vector<T, inlineCapacity, OverflowHandler>::expandCapacity(size_t newMinCapacity)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::expandCapacity(size_t newMinCapacity)
 {
-    reserveCapacity(std::max(newMinCapacity, std::max(static_cast<size_t>(16), capacity() + capacity() / 4 + 1)));
+    reserveCapacity(std::max(newMinCapacity, std::max(static_cast<size_t>(minCapacity), capacity() + capacity() / 4 + 1)));
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-T* Vector<T, inlineCapacity, OverflowHandler>::expandCapacity(size_t newMinCapacity, T* ptr)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+T* Vector<T, inlineCapacity, OverflowHandler, minCapacity>::expandCapacity(size_t newMinCapacity, T* ptr)
 {
     if (ptr < begin() || ptr >= end()) {
         expandCapacity(newMinCapacity);
@@ -963,14 +963,14 @@ T* Vector<T, inlineCapacity, OverflowHandler>::expandCapacity(size_t newMinCapac
     return begin() + index;
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-bool Vector<T, inlineCapacity, OverflowHandler>::tryExpandCapacity(size_t newMinCapacity)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+bool Vector<T, inlineCapacity, OverflowHandler, minCapacity>::tryExpandCapacity(size_t newMinCapacity)
 {
-    return tryReserveCapacity(std::max(newMinCapacity, std::max(static_cast<size_t>(16), capacity() + capacity() / 4 + 1)));
+    return tryReserveCapacity(std::max(newMinCapacity, std::max(static_cast<size_t>(minCapacity), capacity() + capacity() / 4 + 1)));
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-const T* Vector<T, inlineCapacity, OverflowHandler>::tryExpandCapacity(size_t newMinCapacity, const T* ptr)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+const T* Vector<T, inlineCapacity, OverflowHandler, minCapacity>::tryExpandCapacity(size_t newMinCapacity, const T* ptr)
 {
     if (ptr < begin() || ptr >= end()) {
         if (!tryExpandCapacity(newMinCapacity))
@@ -983,15 +983,15 @@ const T* Vector<T, inlineCapacity, OverflowHandler>::tryExpandCapacity(size_t ne
     return begin() + index;
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler> template<typename U>
-inline U* Vector<T, inlineCapacity, OverflowHandler>::expandCapacity(size_t newMinCapacity, U* ptr)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> template<typename U>
+inline U* Vector<T, inlineCapacity, OverflowHandler, minCapacity>::expandCapacity(size_t newMinCapacity, U* ptr)
 {
     expandCapacity(newMinCapacity);
     return ptr;
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-inline void Vector<T, inlineCapacity, OverflowHandler>::resize(size_t size)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::resize(size_t size)
 {
     if (size <= m_size) {
         TypeOperations::destruct(begin() + size, end());
@@ -1007,15 +1007,15 @@ inline void Vector<T, inlineCapacity, OverflowHandler>::resize(size_t size)
     m_size = size;
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-void Vector<T, inlineCapacity, OverflowHandler>::resizeToFit(size_t size)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::resizeToFit(size_t size)
 {
     reserveCapacity(size);
     resize(size);
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-void Vector<T, inlineCapacity, OverflowHandler>::shrink(size_t size)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::shrink(size_t size)
 {
     ASSERT(size <= m_size);
     TypeOperations::destruct(begin() + size, end());
@@ -1023,8 +1023,8 @@ void Vector<T, inlineCapacity, OverflowHandler>::shrink(size_t size)
     m_size = size;
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-void Vector<T, inlineCapacity, OverflowHandler>::grow(size_t size)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::grow(size_t size)
 {
     ASSERT(size >= m_size);
     if (size > capacity())
@@ -1035,8 +1035,8 @@ void Vector<T, inlineCapacity, OverflowHandler>::grow(size_t size)
     m_size = size;
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-inline void Vector<T, inlineCapacity, OverflowHandler>::asanSetInitialBufferSizeTo(size_t size)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::asanSetInitialBufferSizeTo(size_t size)
 {
 #if ASAN_ENABLED
     if (!buffer())
@@ -1051,8 +1051,8 @@ inline void Vector<T, inlineCapacity, OverflowHandler>::asanSetInitialBufferSize
 #endif
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-inline void Vector<T, inlineCapacity, OverflowHandler>::asanSetBufferSizeToFullCapacity()
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::asanSetBufferSizeToFullCapacity()
 {
 #if ASAN_ENABLED
     if (!buffer())
@@ -1063,8 +1063,8 @@ inline void Vector<T, inlineCapacity, OverflowHandler>::asanSetBufferSizeToFullC
 #endif
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-inline void Vector<T, inlineCapacity, OverflowHandler>::asanBufferSizeWillChangeTo(size_t newSize)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::asanBufferSizeWillChangeTo(size_t newSize)
 {
 #if ASAN_ENABLED
     if (!buffer())
@@ -1077,8 +1077,8 @@ inline void Vector<T, inlineCapacity, OverflowHandler>::asanBufferSizeWillChange
 #endif
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-void Vector<T, inlineCapacity, OverflowHandler>::reserveCapacity(size_t newCapacity)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::reserveCapacity(size_t newCapacity)
 {
     if (newCapacity <= capacity())
         return;
@@ -1096,8 +1096,8 @@ void Vector<T, inlineCapacity, OverflowHandler>::reserveCapacity(size_t newCapac
     Base::deallocateBuffer(oldBuffer);
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-bool Vector<T, inlineCapacity, OverflowHandler>::tryReserveCapacity(size_t newCapacity)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+bool Vector<T, inlineCapacity, OverflowHandler, minCapacity>::tryReserveCapacity(size_t newCapacity)
 {
     if (newCapacity <= capacity())
         return true;
@@ -1119,8 +1119,8 @@ bool Vector<T, inlineCapacity, OverflowHandler>::tryReserveCapacity(size_t newCa
     return true;
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-inline void Vector<T, inlineCapacity, OverflowHandler>::reserveInitialCapacity(size_t initialCapacity)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::reserveInitialCapacity(size_t initialCapacity)
 {
     ASSERT(!m_size);
     ASSERT(capacity() == inlineCapacity);
@@ -1128,8 +1128,8 @@ inline void Vector<T, inlineCapacity, OverflowHandler>::reserveInitialCapacity(s
         Base::allocateBuffer(initialCapacity);
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-void Vector<T, inlineCapacity, OverflowHandler>::shrinkCapacity(size_t newCapacity)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::shrinkCapacity(size_t newCapacity)
 {
     if (newCapacity >= capacity())
         return;
@@ -1162,8 +1162,8 @@ void Vector<T, inlineCapacity, OverflowHandler>::shrinkCapacity(size_t newCapaci
 // Templatizing these is better than just letting the conversion happen implicitly,
 // because for instance it allows a PassRefPtr to be appended to a RefPtr vector
 // without refcount thrash.
-template<typename T, size_t inlineCapacity, typename OverflowHandler> template<typename U>
-void Vector<T, inlineCapacity, OverflowHandler>::append(const U* data, size_t dataSize)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> template<typename U>
+void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::append(const U* data, size_t dataSize)
 {
     size_t newSize = m_size + dataSize;
     if (newSize > capacity()) {
@@ -1178,8 +1178,8 @@ void Vector<T, inlineCapacity, OverflowHandler>::append(const U* data, size_t da
     m_size = newSize;
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler> template<typename U>
-bool Vector<T, inlineCapacity, OverflowHandler>::tryAppend(const U* data, size_t dataSize)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> template<typename U>
+bool Vector<T, inlineCapacity, OverflowHandler, minCapacity>::tryAppend(const U* data, size_t dataSize)
 {
     size_t newSize = m_size + dataSize;
     if (newSize > capacity()) {
@@ -1197,8 +1197,8 @@ bool Vector<T, inlineCapacity, OverflowHandler>::tryAppend(const U* data, size_t
     return true;
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler> template<typename U>
-ALWAYS_INLINE void Vector<T, inlineCapacity, OverflowHandler>::append(U&& value)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> template<typename U>
+ALWAYS_INLINE void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::append(U&& value)
 {
     if (size() != capacity()) {
         asanBufferSizeWillChangeTo(m_size + 1);
@@ -1210,8 +1210,8 @@ ALWAYS_INLINE void Vector<T, inlineCapacity, OverflowHandler>::append(U&& value)
     appendSlowCase(std::forward<U>(value));
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler> template<typename U>
-void Vector<T, inlineCapacity, OverflowHandler>::appendSlowCase(U&& value)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> template<typename U>
+void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::appendSlowCase(U&& value)
 {
     ASSERT(size() == capacity());
 
@@ -1227,8 +1227,8 @@ void Vector<T, inlineCapacity, OverflowHandler>::appendSlowCase(U&& value)
 // This version of append saves a branch in the case where you know that the
 // vector's capacity is large enough for the append to succeed.
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler> template<typename U>
-inline void Vector<T, inlineCapacity, OverflowHandler>::uncheckedAppend(U&& value)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> template<typename U>
+inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::uncheckedAppend(U&& value)
 {
     ASSERT(size() < capacity());
 
@@ -1239,14 +1239,14 @@ inline void Vector<T, inlineCapacity, OverflowHandler>::uncheckedAppend(U&& valu
     ++m_size;
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler> template<typename U, size_t otherCapacity>
-inline void Vector<T, inlineCapacity, OverflowHandler>::appendVector(const Vector<U, otherCapacity>& val)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> template<typename U, size_t otherCapacity>
+inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::appendVector(const Vector<U, otherCapacity>& val)
 {
     append(val.begin(), val.size());
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler> template<typename U>
-void Vector<T, inlineCapacity, OverflowHandler>::insert(size_t position, const U* data, size_t dataSize)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> template<typename U>
+void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::insert(size_t position, const U* data, size_t dataSize)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(position <= size());
     size_t newSize = m_size + dataSize;
@@ -1263,8 +1263,8 @@ void Vector<T, inlineCapacity, OverflowHandler>::insert(size_t position, const U
     m_size = newSize;
 }
  
-template<typename T, size_t inlineCapacity, typename OverflowHandler> template<typename U>
-inline void Vector<T, inlineCapacity, OverflowHandler>::insert(size_t position, U&& value)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> template<typename U>
+inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::insert(size_t position, U&& value)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(position <= size());
 
@@ -1282,14 +1282,14 @@ inline void Vector<T, inlineCapacity, OverflowHandler>::insert(size_t position, 
     ++m_size;
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler> template<typename U, size_t c>
-inline void Vector<T, inlineCapacity, OverflowHandler>::insertVector(size_t position, const Vector<U, c>& val)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> template<typename U, size_t c>
+inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::insertVector(size_t position, const Vector<U, c>& val)
 {
     insert(position, val.begin(), val.size());
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-inline void Vector<T, inlineCapacity, OverflowHandler>::remove(size_t position)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::remove(size_t position)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(position < size());
     T* spot = begin() + position;
@@ -1299,8 +1299,8 @@ inline void Vector<T, inlineCapacity, OverflowHandler>::remove(size_t position)
     --m_size;
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-inline void Vector<T, inlineCapacity, OverflowHandler>::remove(size_t position, size_t length)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::remove(size_t position, size_t length)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(position <= size());
     ASSERT_WITH_SECURITY_IMPLICATION(position + length <= size());
@@ -1312,18 +1312,18 @@ inline void Vector<T, inlineCapacity, OverflowHandler>::remove(size_t position, 
     m_size -= length;
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
 template<typename U>
-inline bool Vector<T, inlineCapacity, OverflowHandler>::removeFirst(const U& value)
+inline bool Vector<T, inlineCapacity, OverflowHandler, minCapacity>::removeFirst(const U& value)
 {
     return removeFirstMatching([&value] (const T& current) {
         return current == value;
     });
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
 template<typename MatchFunction>
-inline bool Vector<T, inlineCapacity, OverflowHandler>::removeFirstMatching(const MatchFunction& matches)
+inline bool Vector<T, inlineCapacity, OverflowHandler, minCapacity>::removeFirstMatching(const MatchFunction& matches)
 {
     for (size_t i = 0; i < size(); ++i) {
         if (matches(at(i))) {
@@ -1334,18 +1334,18 @@ inline bool Vector<T, inlineCapacity, OverflowHandler>::removeFirstMatching(cons
     return false;
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
 template<typename U>
-inline unsigned Vector<T, inlineCapacity, OverflowHandler>::removeAll(const U& value)
+inline unsigned Vector<T, inlineCapacity, OverflowHandler, minCapacity>::removeAll(const U& value)
 {
     return removeAllMatching([&value] (const T& current) {
         return current == value;
     });
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
 template<typename MatchFunction>
-inline unsigned Vector<T, inlineCapacity, OverflowHandler>::removeAllMatching(const MatchFunction& matches)
+inline unsigned Vector<T, inlineCapacity, OverflowHandler, minCapacity>::removeAllMatching(const MatchFunction& matches)
 {
     iterator holeBegin = end();
     iterator holeEnd = end();
@@ -1370,15 +1370,15 @@ inline unsigned Vector<T, inlineCapacity, OverflowHandler>::removeAllMatching(co
     return matchCount;
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-inline void Vector<T, inlineCapacity, OverflowHandler>::reverse()
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::reverse()
 {
     for (size_t i = 0; i < m_size / 2; ++i)
         std::swap(at(i), at(m_size - 1 - i));
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-inline MallocPtr<T> Vector<T, inlineCapacity, OverflowHandler>::releaseBuffer()
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+inline MallocPtr<T> Vector<T, inlineCapacity, OverflowHandler, minCapacity>::releaseBuffer()
 {
     // FIXME: Find a way to preserve annotations on the returned buffer.
     // ASan requires that all annotations are removed before deallocation,
@@ -1399,8 +1399,8 @@ inline MallocPtr<T> Vector<T, inlineCapacity, OverflowHandler>::releaseBuffer()
     return buffer;
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-inline void Vector<T, inlineCapacity, OverflowHandler>::checkConsistency()
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::checkConsistency()
 {
 #if !ASSERT_DISABLED
     for (size_t i = 0; i < size(); ++i)
@@ -1408,14 +1408,14 @@ inline void Vector<T, inlineCapacity, OverflowHandler>::checkConsistency()
 #endif
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-inline void swap(Vector<T, inlineCapacity, OverflowHandler>& a, Vector<T, inlineCapacity, OverflowHandler>& b)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+inline void swap(Vector<T, inlineCapacity, OverflowHandler, minCapacity>& a, Vector<T, inlineCapacity, OverflowHandler, minCapacity>& b)
 {
     a.swap(b);
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-bool operator==(const Vector<T, inlineCapacity, OverflowHandler>& a, const Vector<T, inlineCapacity, OverflowHandler>& b)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+bool operator==(const Vector<T, inlineCapacity, OverflowHandler, minCapacity>& a, const Vector<T, inlineCapacity, OverflowHandler, minCapacity>& b)
 {
     if (a.size() != b.size())
         return false;
@@ -1423,8 +1423,8 @@ bool operator==(const Vector<T, inlineCapacity, OverflowHandler>& a, const Vecto
     return VectorTypeOperations<T>::compare(a.data(), b.data(), a.size());
 }
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler>
-inline bool operator!=(const Vector<T, inlineCapacity, OverflowHandler>& a, const Vector<T, inlineCapacity, OverflowHandler>& b)
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
+inline bool operator!=(const Vector<T, inlineCapacity, OverflowHandler, minCapacity>& a, const Vector<T, inlineCapacity, OverflowHandler, minCapacity>& b)
 {
     return !(a == b);
 }
