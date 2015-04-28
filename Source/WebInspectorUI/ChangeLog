@@ -1,3 +1,15 @@
+2015-04-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Cannot scroll Timeline Overview horizontally, scrollbar cannot be interacted with
+        https://bugs.webkit.org/show_bug.cgi?id=144302
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineOverview.css:
+        (.timeline-overview > .scroll-container):
+        Increase the z-index of the scroll container over anything in the
+        overview so that it can be interacted with.
+
 2015-04-27  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Attempt to workaround exception in TimelineRuler

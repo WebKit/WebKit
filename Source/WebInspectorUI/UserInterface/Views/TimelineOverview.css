@@ -32,6 +32,9 @@
     overflow-x: auto;
     overflow-y: hidden;
     opacity: 0;
+
+ /* Allows the horizontal scroll bar to be interacted with. */
+    z-index: 1000;
 }
 
 .timeline-overview:hover > .scroll-container {
