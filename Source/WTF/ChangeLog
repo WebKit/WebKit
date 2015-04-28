@@ -1,3 +1,14 @@
+2015-04-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Fully replace ENABLE_LLINT_C_LOOP with ENABLE_JIT
+        https://bugs.webkit.org/show_bug.cgi?id=144304
+
+        Reviewed by Geoffrey Garen.
+
+        No longer check ENABLE_LLINT_C_LOOP to determine the value of ENABLE_JIT.
+
+        * wtf/Platform.h:
+
 2015-04-28  Alex Christensen  <achristensen@webkit.org>
 
         Properly reset deleted count when clearing HashTables.

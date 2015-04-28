@@ -1,3 +1,15 @@
+2015-04-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Fully replace ENABLE_LLINT_C_LOOP with ENABLE_JIT
+        https://bugs.webkit.org/show_bug.cgi?id=144304
+
+        Reviewed by Geoffrey Garen.
+
+        * Scripts/build-jsc: Use ENABLE_JIT instead of ENABLE_LLINT_C_LOOP on Mac. Perform sanity-
+        checking to ensure --cloop and --ftl-jit cannot be combined. Always explicitly set the value
+        of ENABLE_JIT and ENABLE_FTL_JIT to avoid assumptions about the default value.
+        * Scripts/webkitperl/FeatureList.pm: Add --jit option to build-webkit.
+
 2015-04-28  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [CMake] Remove unnecessary include paths in TestWebKitAPI cmake files
