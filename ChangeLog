@@ -1,5 +1,21 @@
 2015-04-27  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] Add one single option to control all OpenGL-related options
+        https://bugs.webkit.org/show_bug.cgi?id=144105
+
+        Reviewed by Martin Robinson.
+
+        Add public ENABLE_OPENGL option, which is mandatory for ENABLE_3D_TRANSFORMS,
+        ENABLE_ACCELERATED_2D_CANVAS, ENABLE_GLES2, ENABLE_THREADED_COMPOSITOR, ENABLE_WEBGL,
+        USE_REDIRECTED_XCOMPOSITE_WINDOW, and USE_GSTREAMER_GL. Make ENABLE_GLES2 a proper WebKit
+        option and move code around accordingly. Use WEBKIT_OPTION_DEPEND and rely on it. Add a
+        large comment to explain why default value of ENABLE_ACCELERATED_2D_CANVAS is based on the
+        presence of CairoGL.
+
+        * Source/cmake/OptionsGTK.cmake:
+
+2015-04-27  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] ENABLE_SMOOTH_SCROLLING should be private
         https://bugs.webkit.org/show_bug.cgi?id=144306
 

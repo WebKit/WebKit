@@ -1,3 +1,14 @@
+2015-04-27  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Add one single option to control all OpenGL-related options
+        https://bugs.webkit.org/show_bug.cgi?id=144105
+
+        Reviewed by Martin Robinson.
+
+        Test WTF_USE_TEXTURE_MAPPER since USE_TEXTURE_MAPPER has been removed.
+
+        * PlatformGTK.cmake:
+
 2015-04-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Consolidate one-line flag-related header files into TextFlags.h

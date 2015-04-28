@@ -1,3 +1,4 @@
+include(CMakePushCheckState)
 include(GNUInstallDirs)
 
 set(PROJECT_VERSION_MAJOR 2)
@@ -15,7 +16,6 @@ set(ENABLE_GTKDOC OFF CACHE BOOL "Whether or not to use generate gtkdoc.")
 set(ENABLE_X11_TARGET ON CACHE BOOL "Whether to enable support for the X11 windowing target.")
 set(ENABLE_WAYLAND_TARGET OFF CACHE BOOL "Whether to enable support for the Wayland windowing target.")
 set(ENABLE_INTROSPECTION ON CACHE BOOL "Whether to enable GObject introspection.")
-set(ENABLE_GLES2 OFF CACHE BOOL "Whether to enable OpenGL ES 2.0.")
 
 # These are shared variables, but we special case their definition so that we can use the
 # CMAKE_INSTALL_* variables that are populated by the GNUInstallDirs macro.
@@ -45,23 +45,15 @@ find_package(ZLIB REQUIRED)
 find_package(ATK REQUIRED)
 find_package(WebP REQUIRED)
 find_package(ATSPI 2.5.3)
-find_package(GObjectIntrospection)
 find_package(EGL)
+find_package(GObjectIntrospection)
 find_package(GeoClue2 2.1.5)
 find_package(GnuTLS 3.0.0)
 find_package(LibNotify)
+find_package(OpenGL)
 
 if (NOT GEOCLUE2_FOUND)
     find_package(GeoClue)
-endif ()
-
-if (ENABLE_GLES2)
-    find_package(OpenGLES2 REQUIRED)
-    if (OPENGLES2_FOUND AND NOT(EGL_FOUND))
-        message(FATAL_ERROR "EGL is needed for OpenGL ES 2.0.")
-    endif ()
-else ()
-    find_package(OpenGL)
 endif ()
 
 if (ENABLE_X11_TARGET)
@@ -69,10 +61,6 @@ if (ENABLE_X11_TARGET)
     # variable won't be set thus the X11 linker flags won't be added and the build
     # will fail.
     find_package(X11 REQUIRED)
-    if (OPENGL_FOUND)
-        # We don't use find_package for GLX because it is part of -lGL, unlike EGL.
-        check_include_files("GL/glx.h" GLX_FOUND)
-    endif ()
 endif ()
 
 if (ENABLE_WAYLAND_TARGET)
@@ -80,44 +68,26 @@ if (ENABLE_WAYLAND_TARGET)
 endif ()
 
 WEBKIT_OPTION_BEGIN()
+
+WEBKIT_OPTION_DEFINE(ENABLE_GLES2 "Whether to enable OpenGL ES 2.0." PUBLIC OFF)
+WEBKIT_OPTION_DEFINE(ENABLE_OPENGL "Whether to use OpenGL." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_PLUGIN_PROCESS_GTK2 "Whether to build WebKitPluginProcess2 to load GTK2 based plugins." PUBLIC ON)
+
+WEBKIT_OPTION_DEFINE(USE_GSTREAMER_GL "Whether to enable support for GStreamer GL" PRIVATE OFF)
 WEBKIT_OPTION_DEFINE(USE_REDIRECTED_XCOMPOSITE_WINDOW "Whether to use a Redirected XComposite Window for accelerated compositing in X11." PRIVATE ON)
 
-if ((OPENGL_FOUND OR OPENGLES2_FOUND) AND (GLX_FOUND OR EGL_FOUND))
-    WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBGL PRIVATE ON)
+# FIXME: Can we use cairo-glesv2 to avoid this conflict?
+WEBKIT_OPTION_CONFLICT(ENABLE_ACCELERATED_2D_CANVAS ENABLE_GLES2)
 
-    if (ENABLE_X11_TARGET)
-        WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_REDIRECTED_XCOMPOSITE_WINDOW PRIVATE ON)
-    else ()
-        WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_REDIRECTED_XCOMPOSITE_WINDOW PRIVATE OFF)
-    endif ()
-
-    if (OPENGL_FOUND)
-        if (GLX_FOUND)
-            list(APPEND CAIRO_GL_COMPONENTS cairo-glx)
-        endif ()
-        if (EGL_FOUND)
-            list(APPEND CAIRO_GL_COMPONENTS cairo-egl)
-        endif ()
-        find_package(CairoGL 1.10.2 COMPONENTS ${CAIRO_GL_COMPONENTS})
-        if (CAIRO_GL_FOUND)
-            WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ACCELERATED_2D_CANVAS PRIVATE ON)
-        else ()
-            WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ACCELERATED_2D_CANVAS PRIVATE OFF)
-        endif ()
-    else ()
-        # FIXME: Should we search for cairo-glesv2 instead of cairo-gl in this case?
-        WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ACCELERATED_2D_CANVAS PRIVATE OFF)
-    endif ()
-else ()
-    WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBGL PRIVATE OFF)
-    WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ACCELERATED_2D_CANVAS PRIVATE OFF)
-    WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_REDIRECTED_XCOMPOSITE_WINDOW PRIVATE OFF)
-endif ()
-
-if (ENABLE_ACCELERATED_2D_CANVAS AND NOT(CAIRO_GL_FOUND))
-    message(FATAL_ERROR "cairo-gl is needed for Accelerated 2D Canvas support")
-endif ()
+WEBKIT_OPTION_DEPEND(ENABLE_3D_TRANSFORMS ENABLE_OPENGL)
+WEBKIT_OPTION_DEPEND(ENABLE_ACCELERATED_2D_CANVAS ENABLE_OPENGL)
+WEBKIT_OPTION_DEPEND(ENABLE_GLES2 ENABLE_OPENGL)
+WEBKIT_OPTION_DEPEND(ENABLE_THREADED_COMPOSITOR ENABLE_OPENGL)
+WEBKIT_OPTION_DEPEND(ENABLE_WEBGL ENABLE_OPENGL)
+WEBKIT_OPTION_DEPEND(USE_REDIRECTED_XCOMPOSITE_WINDOW ENABLE_OPENGL)
+WEBKIT_OPTION_DEPEND(USE_REDIRECTED_XCOMPOSITE_WINDOW ENABLE_X11_TARGET)
+WEBKIT_OPTION_DEPEND(USE_GSTREAMER_GL ENABLE_OPENGL)
+WEBKIT_OPTION_DEPEND(USE_GSTREAMER_GL ENABLE_VIDEO)
 
 if (GNUTLS_FOUND)
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_SUBTLE_CRYPTO PUBLIC ON)
@@ -151,6 +121,37 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux")
 else ()
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEMORY_SAMPLER PUBLIC OFF)
 endif ()
+
+if (OPENGL_FOUND)
+    # We don't use find_package for GLX because it is part of -lGL, unlike EGL. We need to
+    # have OPENGL_INCLUDE_DIR as part of the directories check_include_files() looks for in
+    # case OpenGL is installed into a non-standard location.
+    CMAKE_PUSH_CHECK_STATE()
+    set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${OPENGL_INCLUDE_DIR})
+    check_include_files("GL/glx.h" GLX_FOUND)
+    CMAKE_POP_CHECK_STATE()
+
+    if (GLX_FOUND)
+        list(APPEND CAIRO_GL_COMPONENTS cairo-glx)
+    endif ()
+    if (EGL_FOUND)
+        list(APPEND CAIRO_GL_COMPONENTS cairo-egl)
+    endif ()
+    find_package(CairoGL 1.10.2 COMPONENTS ${CAIRO_GL_COMPONENTS})
+endif ()
+
+# Normally we do not set the value of options automatically. However, CairoGL is special. Currently
+# most major distros compile Cario with --enable-gl, but Debian and derivitives are a major
+# exception. You very probably want accelerated 2D canvas if Cario has been compiled with CarioGL,
+# and very probably do not want to recompile Cario otherwise. So we expect some major distros will
+# enable this feature, and others will not, and that is just fine for the time being. Once Debian
+# enables CairoGL, then it will be time to force this ON by default. Note that if GLX is installed,
+# EGL is not, and ENABLE_X11_TARGET is OFF, this guess is wrong and the user must override it. We
+# can't check ENABLE_X11_TARGET at this point because we don't know whether it's enabled until
+# WEBKIT_OPTION_END has been called, and at that point it's too late to change default values.
+#
+# FIXME The above is not quite true yet because ENABLE_X11_TARGET is not yet an option, bug #144106.
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ACCELERATED_2D_CANVAS PUBLIC ${CAIRO_GL_FOUND})
 
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_CREDENTIAL_STORAGE PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_DRAG_SUPPORT PUBLIC ON)
@@ -208,9 +209,13 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_VIBRATION PRIVATE OFF)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_VIDEO_TRACK PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_VIEW_MODE_CSS_MEDIA PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEB_TIMING PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBGL PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_XHR_TIMEOUT PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_NETWORK_PROCESS PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_THREADED_COMPOSITOR PRIVATE OFF)
+
+# Finalize the value for all options. Do not attempt to use an option before
+# this point, and do not attempt to change any option after this point.
 WEBKIT_OPTION_END()
 
 if (ENABLE_PLUGIN_PROCESS_GTK2)
@@ -252,6 +257,40 @@ add_definitions(-DUSER_AGENT_GTK_MAJOR_VERSION=601)
 add_definitions(-DUSER_AGENT_GTK_MINOR_VERSION=1)
 add_definitions(-DWEBKITGTK_API_VERSION_STRING="${WEBKITGTK_API_VERSION}")
 
+if (ENABLE_OPENGL)
+    # ENABLE_OPENGL is true if either WTF_USE_OPENGL or ENABLE_GLES2 is true.
+    # But WTF_USE_OPENGL is the opposite of ENABLE_GLES2.
+    if (ENABLE_GLES2)
+        find_package(OpenGLES2 REQUIRED)
+        SET_AND_EXPOSE_TO_BUILD(WTF_USE_OPENGL_ES_2 TRUE)
+
+        if (NOT EGL_FOUND)
+            message(FATAL_ERROR "EGL is needed for ENABLE_GLES2.")
+        endif ()
+    else ()
+        if (NOT OPENGL_FOUND)
+            message(FATAL_ERROR "Either OpenGL or OpenGLES2 is needed for ENABLE_OPENGL.")
+        endif ()
+        SET_AND_EXPOSE_TO_BUILD(WTF_USE_OPENGL TRUE)
+    endif ()
+
+    if (NOT EGL_FOUND AND (NOT ENABLE_X11_TARGET OR NOT GLX_FOUND))
+        message(FATAL_ERROR "Either GLX or EGL is needed for ENABLE_OPENGL.")
+    endif ()
+
+    SET_AND_EXPOSE_TO_BUILD(ENABLE_GRAPHICS_CONTEXT_3D TRUE)
+
+    SET_AND_EXPOSE_TO_BUILD(WTF_USE_TEXTURE_MAPPER TRUE)
+    SET_AND_EXPOSE_TO_BUILD(WTF_USE_TEXTURE_MAPPER_GL TRUE)
+
+    SET_AND_EXPOSE_TO_BUILD(WTF_USE_EGL ${EGL_FOUND})
+    SET_AND_EXPOSE_TO_BUILD(WTF_USE_GLX (${ENABLE_X11_TARGET} AND ${GLX_FOUND}))
+
+    SET_AND_EXPOSE_TO_BUILD(WTF_USE_TILED_BACKING_STORE ${ENABLE_THREADED_COMPOSITOR})
+    SET_AND_EXPOSE_TO_BUILD(WTF_USE_COORDINATED_GRAPHICS ${ENABLE_THREADED_COMPOSITOR})
+    SET_AND_EXPOSE_TO_BUILD(WTF_USE_COORDINATED_GRAPHICS_THREADED ${ENABLE_THREADED_COMPOSITOR})
+endif ()
+
 if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     set(GSTREAMER_COMPONENTS app pbutils)
     SET_AND_EXPOSE_TO_BUILD(WTF_USE_GSTREAMER TRUE)
@@ -268,6 +307,13 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
 
     if (PC_GSTREAMER_MPEGTS_FOUND)
         SET_AND_EXPOSE_TO_BUILD(WTF_USE_GSTREAMER_MPEGTS TRUE)
+    endif ()
+
+    if (USE_GSTREAMER_GL)
+        if (NOT PC_GSTREAMER_GL_FOUND)
+            message(FATAL_ERROR "GStreamerGL is needed for USE_GSTREAMER_GL.")
+        endif ()
+        SET_AND_EXPOSE_TO_BUILD(WTF_USE_GSTREAMER_GL TRUE)
     endif ()
 endif ()
 
@@ -308,46 +354,8 @@ endif ()
 
 SET_AND_EXPOSE_TO_BUILD(HAVE_GTK_GESTURES ${GTK_SUPPORTS_GESTURES})
 
-# This part can be simplified once CMake 2.8.6 is required and
-# CMakePushCheckState can be used. We need to have OPENGL_INCLUDE_DIR as part
-# of the directories check_include_files() looks for in case OpenGL is
-# installed into a non-standard location.
-if (ENABLE_X11_TARGET)
-    set(REQUIRED_INCLUDES_OLD ${CMAKE_REQUIRED_INCLUDES})
-    set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${OPENGL_INCLUDE_DIR})
-    set(CMAKE_REQUIRED_INCLUDES ${REQUIRED_INCLUDES_OLD})
-endif ()
-
 if (ENABLE_SPELLCHECK)
     find_package(Enchant REQUIRED)
-endif ()
-
-if ((OPENGL_FOUND OR OPENGLES2_FOUND) AND (GLX_FOUND OR EGL_FOUND))
-    set(ENABLE_TEXTURE_MAPPER 1)
-
-    SET_AND_EXPOSE_TO_BUILD(ENABLE_GRAPHICS_CONTEXT_3D TRUE)
-    SET_AND_EXPOSE_TO_BUILD(WTF_USE_TEXTURE_MAPPER TRUE)
-    SET_AND_EXPOSE_TO_BUILD(WTF_USE_TEXTURE_MAPPER_GL TRUE)
-    set(ENABLE_3D_RENDERING ON) # This is already exposed by WEBKIT_OPTION_DEFINE.
-
-    if (ENABLE_X11_TARGET AND USE_REDIRECTED_XCOMPOSITE_WINDOW)
-        add_definitions(-DWTF_USE_REDIRECTED_XCOMPOSITE_WINDOW=1)
-    endif ()
-
-    if (OPENGLES2_FOUND)
-        SET_AND_EXPOSE_TO_BUILD(WTF_USE_OPENGL_ES_2 TRUE)
-    else ()
-        SET_AND_EXPOSE_TO_BUILD(WTF_USE_OPENGL TRUE)
-    endif ()
-
-    SET_AND_EXPOSE_TO_BUILD(WTF_USE_EGL ${EGL_FOUND})
-    SET_AND_EXPOSE_TO_BUILD(WTF_USE_GLX ${GLX_FOUND})
-
-    SET_AND_EXPOSE_TO_BUILD(WTF_USE_TILED_BACKING_STORE ${ENABLE_THREADED_COMPOSITOR})
-    SET_AND_EXPOSE_TO_BUILD(WTF_USE_COORDINATED_GRAPHICS ${ENABLE_THREADED_COMPOSITOR})
-    SET_AND_EXPOSE_TO_BUILD(WTF_USE_COORDINATED_GRAPHICS_THREADED ${ENABLE_THREADED_COMPOSITOR})
-
-    SET_AND_EXPOSE_TO_BUILD(WTF_USE_GSTREAMER_GL ${PC_GSTREAMER_GL_FOUND})
 endif ()
 
 if (ENABLE_GAMEPAD_DEPRECATED)

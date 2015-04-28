@@ -368,7 +368,7 @@ if (ENABLE_MEDIA_STREAM)
     )
 endif ()
 
-if (ENABLE_TEXTURE_MAPPER)
+if (WTF_USE_TEXTURE_MAPPER)
     list(APPEND WebCore_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/graphics/texmap"
     )
