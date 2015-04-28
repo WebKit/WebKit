@@ -47,6 +47,7 @@
 #include "ContextDestructionObserver.cpp"
 #include "CustomEvent.cpp"
 #include "DOMCoreException.cpp"
+#include "DOMError.cpp"
 #include "DOMImplementation.cpp"
 #include "DOMNamedFlowCollection.cpp"
 #include "DOMStringList.cpp"

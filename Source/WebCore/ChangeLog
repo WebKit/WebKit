@@ -1,3 +1,15 @@
+2015-04-28  Namhoon Kim  <nakim@ea.com>
+
+        Fix windows build error in WebCore related to bulk build.
+        https://bugs.webkit.org/show_bug.cgi?id=144313
+
+        Reviewed by Csaba Osztrogonác.
+
+        No new tests because there is no behavior change.
+
+        * css/CSSAllInOne.cpp:
+        * dom/DOMAllInOne.cpp:
+
 2015-04-27  Simon Fraser  <simon.fraser@apple.com>
 
         Eliminate styleDidChange with StyleDifferenceEqual when updates are actually necessary
