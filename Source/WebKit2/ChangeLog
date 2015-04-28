@@ -1,3 +1,14 @@
+2015-04-27  Sungmann Cho  <sungmann.cho@navercorp.com>
+
+        [GTK] Remove unnecessary semicolon from WebKitNotificationProvider.h.
+        https://bugs.webkit.org/show_bug.cgi?id=144312
+
+        Reviewed by Martin Robinson.
+
+        No new tests, no behavior change.
+
+        * UIProcess/API/gtk/WebKitNotificationProvider.h:
+
 2015-04-27  Brent Fulgham  <bfulgham@apple.com>
 
         PDF action menu fixes

@@ -28,7 +28,7 @@
 
 namespace API {
 class Array;
-};
+}
 
 namespace WebKit {
 
