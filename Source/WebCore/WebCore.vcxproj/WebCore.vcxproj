@@ -19972,7 +19972,6 @@
     <ClInclude Include="..\platform\win\SoftLinking.h" />
     <ClInclude Include="..\platform\win\StructuredExceptionHandlerSuppressor.h" />
     <ClInclude Include="..\platform\win\SystemInfo.h" />
-    <ClInclude Include="..\platform\graphics\TextRenderingMode.h" />
     <ClInclude Include="..\platform\win\WCDataObject.h" />
     <ClInclude Include="..\platform\win\WebCoreBundleWin.h" />
     <ClInclude Include="..\platform\win\WebCoreInstanceHandle.h" />
@@ -20009,10 +20008,7 @@
     <ClInclude Include="..\platform\graphics\FontMetrics.h" />
     <ClInclude Include="..\platform\graphics\FontPlatformData.h" />
     <ClInclude Include="..\platform\graphics\FontRanges.h" />
-    <ClInclude Include="..\platform\graphics\FontRenderingMode.h" />
     <ClInclude Include="..\platform\graphics\FontSelector.h" />
-    <ClInclude Include="..\platform\graphics\FontSmoothingMode.h" />
-    <ClInclude Include="..\platform\graphics\FontTraitsMask.h" />
     <ClInclude Include="..\platform\graphics\GeneratedImage.h" />
     <ClInclude Include="..\platform\graphics\GeometryUtilities.h" />
     <ClInclude Include="..\platform\graphics\Glyph.h" />

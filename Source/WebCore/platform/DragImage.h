@@ -27,9 +27,9 @@
 #define DragImage_h
 
 #include "FloatSize.h"
-#include "FontRenderingMode.h"
 #include "ImageOrientation.h"
 #include "IntSize.h"
+#include "TextFlags.h"
 #include <wtf/Forward.h>
 
 #if PLATFORM(IOS)

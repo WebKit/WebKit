@@ -24,9 +24,7 @@
 
 #if USE(CAIRO)
 
-#include "FontOrientation.h"
-#include "FontRenderingMode.h"
-#include "FontWidthVariant.h"
+#include "TextFlags.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 

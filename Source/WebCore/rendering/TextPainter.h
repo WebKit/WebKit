@@ -25,8 +25,8 @@
 
 #include "AffineTransform.h"
 #include "DashArray.h"
-#include "FontOrientation.h"
 #include "RenderText.h"
+#include "TextFlags.h"
 
 namespace WebCore {
 

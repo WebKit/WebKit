@@ -1,3 +1,42 @@
+2015-04-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Consolidate one-line flag-related header files into TextFlags.h
+        https://bugs.webkit.org/show_bug.cgi?id=144295
+
+        Reviewed by Tim Horton.
+
+        There were a collection of single-line header files throughout platform/ which contain
+        single-line type declaractions of flags related to text layout & rendering. This patch
+        consolidates all these single-line headers into TextFlags.h
+
+        No new tests because there is no behavior change.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSFontFace.h:
+        * css/CSSPrimitiveValueMappings.h:
+        * loader/cache/CachedFont.h:
+        * loader/cache/CachedTextTrack.h:
+        * page/Settings.h:
+        * platform/DragImage.h:
+        * platform/graphics/FontDescription.h:
+        * platform/graphics/FontOrientation.h: Removed.
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/FontRenderingMode.h: Removed.
+        * platform/graphics/FontSmoothingMode.h: Removed.
+        * platform/graphics/FontTraitsMask.h: Removed.
+        * platform/graphics/FontWidthVariant.h: Removed.
+        * platform/graphics/TextRenderingMode.h: Removed.
+        * platform/graphics/cairo/FontCustomPlatformData.h:
+        * platform/graphics/freetype/FontPlatformData.h:
+        * platform/graphics/mac/FontCustomPlatformData.h:
+        * platform/graphics/win/FontCustomPlatformData.h:
+        * platform/text/NonCJKGlyphOrientation.h: Removed.
+        * platform/text/TextFlags.h:
+        * rendering/TextPainter.h:
+        * style/StyleFontSizeFunctions.h:
+
 2015-04-27  Daniel Bates  <dabates@apple.com>
 
         Form control may be associated with the wrong HTML Form element after form id change

@@ -28,7 +28,7 @@
 
 #include "CSSFontFaceRule.h"
 #include "CSSFontFaceSource.h"
-#include "FontTraitsMask.h"
+#include "TextFlags.h"
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>

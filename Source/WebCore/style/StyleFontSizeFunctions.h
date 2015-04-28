@@ -26,8 +26,7 @@
 #ifndef StyleFontSizeFunctions_h
 #define StyleFontSizeFunctions_h
 
-#include "FontOrientation.h"
-#include "NonCJKGlyphOrientation.h"
+#include "TextFlags.h"
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {

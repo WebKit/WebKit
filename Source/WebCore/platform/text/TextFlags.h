@@ -30,6 +30,18 @@ namespace WebCore {
 
 enum TextDirection { RTL, LTR };
 
+enum TextRenderingMode { AutoTextRendering, OptimizeSpeed, OptimizeLegibility, GeometricPrecision };
+
+enum FontSmoothingMode { AutoSmoothing, NoSmoothing, Antialiased, SubpixelAntialiased };
+
+// This setting is used to provide ways of switching between multiple rendering modes that may have different
+// metrics. It is used to switch between CG and GDI text on Windows.
+enum FontRenderingMode { NormalRenderingMode, AlternateRenderingMode };
+
+enum FontOrientation { Horizontal, Vertical };
+
+enum NonCJKGlyphOrientation { NonCJKGlyphOrientationVerticalRight, NonCJKGlyphOrientationUpright };
+
 inline bool isLeftToRightDirection(TextDirection direction) { return direction == LTR; }
 
 // Here, "Leading" and "Trailing" are relevant after the line has been rearranged for bidi.
@@ -45,8 +57,81 @@ enum ExpansionBehaviorFlags {
     ForceLeadingExpansion = 2 << 2,
     LeadingExpansionMask = 3 << 2,
 };
-
 typedef unsigned ExpansionBehavior;
+
+enum FontWidthVariant {
+    RegularWidth,
+    HalfWidth,
+    ThirdWidth,
+    QuarterWidth,
+    LastFontWidthVariant = QuarterWidth
+};
+
+const unsigned FontWidthVariantWidth = 2;
+
+COMPILE_ASSERT(!(LastFontWidthVariant >> FontWidthVariantWidth), FontWidthVariantWidth_is_correct);
+
+enum FontWeight {
+    FontWeight100,
+    FontWeight200,
+    FontWeight300,
+    FontWeight400,
+    FontWeight500,
+    FontWeight600,
+    FontWeight700,
+    FontWeight800,
+    FontWeight900,
+    FontWeightNormal = FontWeight400,
+    FontWeightBold = FontWeight700
+};
+
+enum FontItalic {
+    FontItalicOff = 0,
+    FontItalicOn = 1
+};
+
+enum FontSmallCaps {
+    FontSmallCapsOff = 0,
+    FontSmallCapsOn = 1
+};
+
+enum {
+    FontStyleNormalBit = 0,
+    FontStyleItalicBit,
+    FontVariantNormalBit,
+    FontVariantSmallCapsBit,
+    FontWeight100Bit,
+    FontWeight200Bit,
+    FontWeight300Bit,
+    FontWeight400Bit,
+    FontWeight500Bit,
+    FontWeight600Bit,
+    FontWeight700Bit,
+    FontWeight800Bit,
+    FontWeight900Bit,
+    FontTraitsMaskWidth
+};
+
+enum FontTraitsMask {
+    FontStyleNormalMask = 1 << FontStyleNormalBit,
+    FontStyleItalicMask = 1 << FontStyleItalicBit,
+    FontStyleMask = FontStyleNormalMask | FontStyleItalicMask,
+
+    FontVariantNormalMask = 1 << FontVariantNormalBit,
+    FontVariantSmallCapsMask = 1 << FontVariantSmallCapsBit,
+    FontVariantMask = FontVariantNormalMask | FontVariantSmallCapsMask,
+
+    FontWeight100Mask = 1 << FontWeight100Bit,
+    FontWeight200Mask = 1 << FontWeight200Bit,
+    FontWeight300Mask = 1 << FontWeight300Bit,
+    FontWeight400Mask = 1 << FontWeight400Bit,
+    FontWeight500Mask = 1 << FontWeight500Bit,
+    FontWeight600Mask = 1 << FontWeight600Bit,
+    FontWeight700Mask = 1 << FontWeight700Bit,
+    FontWeight800Mask = 1 << FontWeight800Bit,
+    FontWeight900Mask = 1 << FontWeight900Bit,
+    FontWeightMask = FontWeight100Mask | FontWeight200Mask | FontWeight300Mask | FontWeight400Mask | FontWeight500Mask | FontWeight600Mask | FontWeight700Mask | FontWeight800Mask | FontWeight900Mask
+};
 
 }
 

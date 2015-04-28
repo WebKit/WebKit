@@ -29,9 +29,7 @@
 #include "CachedResource.h"
 #include "CachedResourceClient.h"
 #include "Font.h"
-#include "FontOrientation.h"
-#include "FontRenderingMode.h"
-#include "FontWidthVariant.h"
+#include "TextFlags.h"
 
 namespace WebCore {
 

@@ -28,12 +28,12 @@
 
 #include "FontCache.h"
 #include "FontDescription.h"
-#include "FontOrientation.h"
 #include "GlyphBuffer.h"
 #include "HarfBuzzFace.h"
 #include "OpenTypeVerticalData.h"
 #include "RefPtrCairo.h"
 #include "SharedBuffer.h"
+#include "TextFlags.h"
 #include <wtf/Forward.h>
 #include <wtf/HashFunctions.h>
 

@@ -30,8 +30,7 @@
 #ifndef FontPlatformData_h
 #define FontPlatformData_h
 
-#include "FontOrientation.h"
-#include "FontWidthVariant.h"
+#include "TextFlags.h"
 
 #if PLATFORM(WIN)
 #include "SharedGDIObject.h"

@@ -21,9 +21,7 @@
 #ifndef FontCustomPlatformData_h
 #define FontCustomPlatformData_h
 
-#include "FontOrientation.h"
-#include "FontRenderingMode.h"
-#include "FontWidthVariant.h"
+#include "TextFlags.h"
 #include <windows.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>

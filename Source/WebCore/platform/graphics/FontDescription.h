@@ -27,13 +27,7 @@
 
 #include "CSSValueKeywords.h"
 #include "FontFeatureSettings.h"
-#include "FontOrientation.h"
-#include "FontRenderingMode.h"
-#include "FontSmoothingMode.h"
-#include "FontTraitsMask.h"
-#include "FontWidthVariant.h"
-#include "NonCJKGlyphOrientation.h"
-#include "TextRenderingMode.h"
+#include "TextFlags.h"
 #include "WebKitFontFamilyNames.h"
 #include <unicode/uscript.h>
 #include <wtf/MathExtras.h>
@@ -43,30 +37,6 @@
 namespace WebCore {
 
 using namespace WebKitFontFamilyNames;
-
-enum FontWeight {
-    FontWeight100,
-    FontWeight200,
-    FontWeight300,
-    FontWeight400,
-    FontWeight500,
-    FontWeight600,
-    FontWeight700,
-    FontWeight800,
-    FontWeight900,
-    FontWeightNormal = FontWeight400,
-    FontWeightBold = FontWeight700
-};
-
-enum FontItalic {
-    FontItalicOff = 0,
-    FontItalicOn = 1
-};
-
-enum FontSmallCaps {
-    FontSmallCapsOff = 0,
-    FontSmallCapsOn = 1
-};
 
 class FontDescription {
 public:

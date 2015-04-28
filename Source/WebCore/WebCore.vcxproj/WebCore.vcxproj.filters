@@ -8400,9 +8400,6 @@
     <ClInclude Include="..\platform\win\SystemInfo.h">
       <Filter>platform\win</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\graphics\TextRenderingMode.h">
-      <Filter>platform\win</Filter>
-    </ClInclude>
     <ClInclude Include="..\platform\win\WCDataObject.h">
       <Filter>platform\win</Filter>
     </ClInclude>
@@ -12286,16 +12283,7 @@
     <ClInclude Include="..\platform\graphics\FontPlatformData.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\graphics\FontRenderingMode.h">
-      <Filter>platform\graphics</Filter>
-    </ClInclude>
     <ClInclude Include="..\platform\graphics\FontSelector.h">
-      <Filter>platform\graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\FontSmoothingMode.h">
-      <Filter>platform\graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\FontTraitsMask.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\page\MouseEventWithHitTestResults.h">
