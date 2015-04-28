@@ -1,3 +1,36 @@
+2015-04-27  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Add support for typed arrays to the Array profiling
+        https://bugs.webkit.org/show_bug.cgi?id=143913
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds ArrayModes for every typed arrays. Having that information
+        let us generate better GetByVal and PutByVal when the type speculation
+        are not good enough.
+
+        A typical case where this is useful is any basic block for which the type
+        of the object is always more restrictive than the speculation (for example, 
+        a basic block gated by a branch only taken for on type).
+
+        * bytecode/ArrayProfile.cpp:
+        (JSC::dumpArrayModes):
+        * bytecode/ArrayProfile.h:
+        (JSC::arrayModeFromStructure):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::fromObserved):
+        (JSC::DFG::ArrayMode::refine):
+        Maintain the refine() semantic. We do not support OutOfBounds access
+        for GetByVal on typed array.
+
+        * runtime/IndexingType.h:
+        * tests/stress/typed-array-get-by-val-profiling.js: Added.
+        (testArray.testCode):
+        (testArray):
+        * tests/stress/typed-array-put-by-val-profiling.js: Added.
+        (testArray.testCode):
+        (testArray):
+
 2015-04-27  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll out r183438 "RegExp matches arrays should use contiguous indexing". It

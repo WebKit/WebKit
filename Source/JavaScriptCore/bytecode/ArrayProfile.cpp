@@ -73,6 +73,25 @@ void dumpArrayModes(PrintStream& out, ArrayModes arrayModes)
         out.print(comma, "ArrayWithArrayStorage");
     if (arrayModes & asArrayModes(ArrayWithSlowPutArrayStorage))
         out.print(comma, "ArrayWithSlowPutArrayStorage");
+
+    if (arrayModes & Int8ArrayMode)
+        out.print(comma, "Int8ArrayMode");
+    if (arrayModes & Int16ArrayMode)
+        out.print(comma, "Int16ArrayMode");
+    if (arrayModes & Int32ArrayMode)
+        out.print(comma, "Int32ArrayMode");
+    if (arrayModes & Uint8ArrayMode)
+        out.print(comma, "Uint8ArrayMode");
+    if (arrayModes & Uint8ClampedArrayMode)
+        out.print(comma, "Uint8ClampedArrayMode");
+    if (arrayModes & Uint16ArrayMode)
+        out.print(comma, "Uint16ArrayMode");
+    if (arrayModes & Uint32ArrayMode)
+        out.print(comma, "Uint32ArrayMode");
+    if (arrayModes & Float32ArrayMode)
+        out.print(comma, "Float32ArrayMode");
+    if (arrayModes & Float64ArrayMode)
+        out.print(comma, "Float64ArrayMode");
 }
 
 void ArrayProfile::computeUpdatedPrediction(const ConcurrentJITLocker&, CodeBlock* codeBlock)

@@ -1,3 +1,13 @@
+2015-04-27  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Add support for typed arrays to the Array profiling
+        https://bugs.webkit.org/show_bug.cgi?id=143913
+
+        Reviewed by Filip Pizlo.
+
+        * js/regress/script-tests/typed-array-get-set-by-val-profiling.js: Added.
+        * js/regress/typed-array-get-set-by-val-profiling.html: Added.
+
 2015-04-27  Doug Russell  <d_russell@apple.com>
 
         Break up select text into multiple tests

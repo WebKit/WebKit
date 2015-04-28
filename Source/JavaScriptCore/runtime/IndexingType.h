@@ -38,8 +38,8 @@ namespace JSC {
 
     struct IndexingType {
         uint8_t isArray:1;                    // bit 0
-        uint8_t shape:4;                      // bit 1 - 4
-        uint8_t mayHaveIndexedAccessors:1;    // bit 5
+        uint8_t shape:4;                      // bit 1 - 3
+        uint8_t mayHaveIndexedAccessors:1;    // bit 4
     };
 
     The shape values (e.g. Int32Shape, ContiguousShape, etc) are an enumeration of
@@ -53,21 +53,21 @@ typedef uint8_t IndexingType;
 static const IndexingType IsArray                  = 0x01;
 
 // The shape of the indexed property storage.
-static const IndexingType IndexingShapeMask        = 0x1E;
+static const IndexingType IndexingShapeMask        = 0x0E;
 static const IndexingType NoIndexingShape          = 0x00;
 static const IndexingType UndecidedShape           = 0x02; // Only useful for arrays.
-static const IndexingType Int32Shape               = 0x14;
-static const IndexingType DoubleShape              = 0x16;
-static const IndexingType ContiguousShape          = 0x1A;
-static const IndexingType ArrayStorageShape        = 0x1C;
-static const IndexingType SlowPutArrayStorageShape = 0x1E;
+static const IndexingType Int32Shape               = 0x04;
+static const IndexingType DoubleShape              = 0x06;
+static const IndexingType ContiguousShape          = 0x08;
+static const IndexingType ArrayStorageShape        = 0x0A;
+static const IndexingType SlowPutArrayStorageShape = 0x0C;
 
 static const IndexingType IndexingShapeShift       = 1;
-static const IndexingType NumberOfIndexingShapes   = 16;
+static const IndexingType NumberOfIndexingShapes   = 7;
 
 // Additional flags for tracking the history of the type. These are usually
 // masked off unless you ask for them directly.
-static const IndexingType MayHaveIndexedAccessors  = 0x20;
+static const IndexingType MayHaveIndexedAccessors  = 0x10;
 
 // List of acceptable array types.
 static const IndexingType NonArray                        = 0x0;
@@ -162,10 +162,10 @@ void dumpIndexingType(PrintStream&, IndexingType);
 MAKE_PRINT_ADAPTOR(IndexingTypeDump, IndexingType, dumpIndexingType);
 
 // Mask of all possible types.
-static const IndexingType AllArrayTypes            = 31;
+static const IndexingType AllArrayTypes            = IndexingShapeMask | IsArray;
 
 // Mask of all possible types including the history.
-static const IndexingType AllArrayTypesAndHistory  = 127;
+static const IndexingType AllArrayTypesAndHistory  = AllArrayTypes | MayHaveIndexedAccessors;
 
 } // namespace JSC
 

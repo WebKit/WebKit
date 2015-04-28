@@ -97,6 +97,24 @@ ArrayMode ArrayMode::fromObserved(const ConcurrentJITLocker& locker, ArrayProfil
     case asArrayModes(NonArrayWithSlowPutArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage):
     case asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage):
         return ArrayMode(Array::SlowPutArrayStorage, Array::PossiblyArray, Array::AsIs).withProfile(locker, profile, makeSafe);
+    case Int8ArrayMode:
+        return ArrayMode(Array::Int8Array, nonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
+    case Int16ArrayMode:
+        return ArrayMode(Array::Int16Array, nonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
+    case Int32ArrayMode:
+        return ArrayMode(Array::Int32Array, nonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
+    case Uint8ArrayMode:
+        return ArrayMode(Array::Uint8Array, nonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
+    case Uint8ClampedArrayMode:
+        return ArrayMode(Array::Uint8ClampedArray, nonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
+    case Uint16ArrayMode:
+        return ArrayMode(Array::Uint16Array, nonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
+    case Uint32ArrayMode:
+        return ArrayMode(Array::Uint32Array, nonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
+    case Float32ArrayMode:
+        return ArrayMode(Array::Float32Array, nonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
+    case Float64ArrayMode:
+        return ArrayMode(Array::Float64Array, nonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
 
     default:
         if ((observed & asArrayModes(NonArray)) && profile->mayInterceptIndexedAccesses(locker))
@@ -189,7 +207,25 @@ ArrayMode ArrayMode::refine(
         if (doesConversion() && (flags & NodeBytecodeUsesAsInt))
             return withConversion(Array::RageConvert);
         return *this;
-        
+
+    case Array::Int8Array:
+    case Array::Int16Array:
+    case Array::Int32Array:
+    case Array::Uint8Array:
+    case Array::Uint8ClampedArray:
+    case Array::Uint16Array:
+    case Array::Uint32Array:
+    case Array::Float32Array:
+    case Array::Float64Array:
+        switch (node->op()) {
+        case PutByVal:
+            if (graph.hasExitSite(node->origin.semantic, OutOfBounds) || !isInBounds())
+                return withSpeculation(Array::OutOfBounds);
+            return withSpeculation(Array::InBounds);
+        default:
+            return withSpeculation(Array::InBounds);
+        }
+        return *this;
     case Array::Unprofiled:
     case Array::SelectUsingPredictions: {
         base &= ~SpecOther;

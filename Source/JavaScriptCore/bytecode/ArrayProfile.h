@@ -37,12 +37,35 @@ namespace JSC {
 class CodeBlock;
 class LLIntOffsetsExtractor;
 
-// This is a bitfield where each bit represents an IndexingType that we have seen.
-// There are 32 indexing types, so an unsigned is enough.
+// This is a bitfield where each bit represents an type of array access that we have seen.
+// There are 16 indexing types that use the lower bits.
+// There are 9 typed array types taking the bits 16 to 25.
 typedef unsigned ArrayModes;
+
+const ArrayModes Int8ArrayMode = 1 << 16;
+const ArrayModes Int16ArrayMode = 1 << 17;
+const ArrayModes Int32ArrayMode = 1 << 18;
+const ArrayModes Uint8ArrayMode = 1 << 19;
+const ArrayModes Uint8ClampedArrayMode = 1 << 20;
+const ArrayModes Uint16ArrayMode = 1 << 21;
+const ArrayModes Uint32ArrayMode = 1 << 22;
+const ArrayModes Float32ArrayMode = 1 << 23;
+const ArrayModes Float64ArrayMode = 1 << 24;
 
 #define asArrayModes(type) \
     (static_cast<unsigned>(1) << static_cast<unsigned>(type))
+
+#define ALL_TYPED_ARRAY_MODES \
+    (Int8ArrayMode            \
+    | Int16ArrayMode          \
+    | Int32ArrayMode          \
+    | Uint8ArrayMode          \
+    | Uint8ClampedArrayMode   \
+    | Uint16ArrayMode         \
+    | Uint32ArrayMode         \
+    | Float32ArrayMode        \
+    | Float64ArrayMode        \
+    )
 
 #define ALL_NON_ARRAY_ARRAY_MODES                       \
     (asArrayModes(NonArray)                             \
@@ -50,7 +73,8 @@ typedef unsigned ArrayModes;
     | asArrayModes(NonArrayWithDouble)                  \
     | asArrayModes(NonArrayWithContiguous)              \
     | asArrayModes(NonArrayWithArrayStorage)            \
-    | asArrayModes(NonArrayWithSlowPutArrayStorage))
+    | asArrayModes(NonArrayWithSlowPutArrayStorage)     \
+    | ALL_TYPED_ARRAY_MODES)
 
 #define ALL_ARRAY_ARRAY_MODES                           \
     (asArrayModes(ArrayClass)                           \
@@ -65,6 +89,29 @@ typedef unsigned ArrayModes;
 
 inline ArrayModes arrayModeFromStructure(Structure* structure)
 {
+    switch (structure->classInfo()->typedArrayStorageType) {
+    case TypeInt8:
+        return Int8ArrayMode;
+    case TypeUint8:
+        return Uint8ArrayMode;
+    case TypeUint8Clamped:
+        return Uint8ClampedArrayMode;
+    case TypeInt16:
+        return Int16ArrayMode;
+    case TypeUint16:
+        return Uint16ArrayMode;
+    case TypeInt32:
+        return Int32ArrayMode;
+    case TypeUint32:
+        return Uint32ArrayMode;
+    case TypeFloat32:
+        return Float32ArrayMode;
+    case TypeFloat64:
+        return Float64ArrayMode;
+    case TypeDataView:
+    case NotTypedArray:
+        break;
+    }
     return asArrayModes(structure->indexingType());
 }
 
