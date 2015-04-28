@@ -1,3 +1,14 @@
+2015-04-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Deactivate WebGL until Windows tests work properly
+        https://bugs.webkit.org/show_bug.cgi?id=144291
+        <rdar://problem/20707307>
+
+        Reviewed by Zalan Bujtas.
+
+        * win/tools/vsprops/FeatureDefines.props: Turn off the WEB_GL
+        feature for the Apple Windows port.
+
 2015-04-28  Per Arne Vollan  <peavo@outlook.com>
 
         [Win] Enable ES6 template literals

@@ -7,6 +7,7 @@
     <Import Project="$(WebKit_Libraries)\tools\vsprops\WinCairo.props" />
     <Import Project="$(WebKit_Libraries)\tools\vsprops\cURL.props" />
     <Import Project="$(WebKit_Libraries)\tools\vsprops\GStreamerCommon.props" />
+    <Import Project="WebKitANGLE.props" />
     <Import Project="WebKitCFLite.props" />
     <Import Project="WebKitCommon.props" />
     <Import Project="WebKitDirectX.props" />

@@ -1,3 +1,18 @@
+2015-04-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Deactivate WebGL until Windows tests work properly
+        https://bugs.webkit.org/show_bug.cgi?id=144291
+        <rdar://problem/20707307>
+
+        Reviewed by Zalan Bujtas.
+
+        * WebKit.vcxproj/WebKit/WebKitANGLE.props: Added.
+        * WebKit.vcxproj/WebKit/WebKitCommon.props: Remove ANGLE link
+        libraries from common property sheet.
+        * WebKit.vcxproj/WebKit/WebKitDebugWinCairo.props: Reference
+        the WebKitANGLE property sheet.
+        * WebKit.vcxproj/WebKit/WebKitReleaseWinCairo.props: Ditto.
+
 2015-04-24  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Remove native window dock controls

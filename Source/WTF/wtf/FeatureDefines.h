@@ -264,7 +264,7 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #if defined(BUILDING_WITH_CMAKE)
 #define ENABLE_WEBGL 0
 #else
-#define ENABLE_WEBGL 1
+#define ENABLE_WEBGL 0
 #endif
 #endif
 
