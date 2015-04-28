@@ -116,12 +116,16 @@ body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .
     top: 0;
 }
 
+.panel.timeline .navigation-bar.timelines-view {
+    justify-content: flex-end;
+}
+
 .sidebar > .panel.navigation.timeline > .title-bar {
     position: absolute;
     left: 0;
     right: 0;
 
-    height: 22px;
+    height: 29px;
 
     border-bottom: 1px solid rgb(179, 179, 179);
     background-color: rgb(242, 242, 242);
@@ -140,6 +144,8 @@ body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .
 }
 
 body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .title-bar {
+    height: 22px;
+
     background-color: transparent;
     background-image: linear-gradient(to bottom, rgb(238, 240, 244), rgb(224, 226, 230));
     text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
@@ -147,6 +153,22 @@ body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .title-bar {
 
 .sidebar > .panel.navigation.timeline > .title-bar.timelines {
     top: 29px;
+    padding: 8px 9px;
+}
+
+.sidebar > .panel.navigation.timeline > .navigation-bar-container {
+    position: absolute;
+    top: 29px;
+    left: 0;
+    right: 0;
+}
+
+.sidebar > .panel.navigation.timeline > .navigation-bar-container > .navigation-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    align-content: center;
 }
 
 body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .title-bar.timelines {
@@ -156,16 +178,16 @@ body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .title-bar.time
 .sidebar > .panel.navigation.timeline > .title-bar.timeline-events {
     height: 23px;
     border-top: 1px solid rgb(179, 179, 179);
-    top: 159px;
+    top: 166px;
 }
 
 body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .title-bar.timeline-events {
-    top: 152px;
+    top: 159px;
 }
 
 .sidebar > .panel.navigation.timeline > .timelines-content {
     position: absolute;
-    top: 51px;
+    top: 58px;
     height: 108px;
     left: 0;
     right: 0;
@@ -232,11 +254,11 @@ body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .timelines-cont
 
 .sidebar > .panel.navigation.timeline > .content,
 .sidebar > .panel.navigation.timeline > .empty-content-placeholder {
-    top: 182px;
+    top: 189px;
 }
 
 body.mac-platform.legacy .sidebar > .panel.navigation.timeline > :matches(.content, .empty-content-placeholder) {
-    top: 175px;
+    top: 182px;
 }
 
 .sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing > .content {

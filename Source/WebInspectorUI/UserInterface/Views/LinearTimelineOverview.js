@@ -23,49 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.timeline-record-frame {
-    position: absolute;
-    height: 108px;
-    min-width: 4px;
-    width: 4px;
+WebInspector.LinearTimelineOverview = function(timelineRecording)
+{
+    // FIXME: Convert this to a WebInspector.TimelineOverview subclass, and call super().
 
-    overflow: hidden;
+    var defaultSettingsValues = {
+        durationPerPixel: 0.01,
+        selectionStartValue: 0,
+        selectionDuration: 5
+    };
 
-    -webkit-mask-image: -webkit-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 10%);
-}
+    WebInspector.TimelineOverview.call(this, "linear", timelineRecording, 0.0001, 60, defaultSettingsValues);
+};
 
-.timeline-record-frame > .frame {
-    position: absolute;
-    z-index: 1;
-    bottom: 1px;
-    min-width: 4px;
-    width: 100%;
+WebInspector.LinearTimelineOverview.prototype = {
+    constructor: WebInspector.LinearTimelineOverview,
+    __proto__: WebInspector.TimelineOverview.prototype,
 
-    padding-left: 1px;
+    // Protected
 
-    box-sizing: border-box;
-}
-
-.timeline-record-frame > .frame > .duration {
-    box-sizing: border-box;
-
-    background-color: rgb(221, 221, 221);
-
-    border-bottom: solid 1px rgb(245, 245, 245);
-}
-
-.timeline-record-frame > .frame > .duration:last-child {
-    border-bottom-style: none;
-}
-
-.timeline-record-frame > .frame > .duration.timeline-record-type-network {
-    background-color: rgb(61, 147, 200);
-}
-
-.timeline-record-frame > .frame > .duration.timeline-record-type-layout {
-    background-color: rgb(212, 108, 108);
-}
-
-.timeline-record-frame > .frame > .duration.timeline-record-type-script {
-    background-color: rgb(153, 113, 185);
-}
+    canShowTimeline: function(timeline)
+    {
+        return timeline.type !== WebInspector.TimelineRecord.Type.RenderingFrame;
+    }
+};

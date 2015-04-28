@@ -49,6 +49,7 @@ WebInspector.TimelineRuler = function()
     this._endTimePinned = false;
     this._allowsClippedLabels = false;
     this._allowsTimeRangeSelection = false;
+    this._formatLabelCallback = null;
 
     this._markerElementMap = new Map;
 };
@@ -96,6 +97,18 @@ WebInspector.TimelineRuler.prototype = {
             return;
 
         this._allowsClippedLabels = x || false;
+
+        this._needsLayout();
+    },
+
+    set formatLabelCallback(x)
+    {
+        console.assert(typeof x === "function" || !x, x);
+
+        if (this._formatLabelCallback === x)
+            return;
+
+        this._formatLabelCallback = x || null;
 
         this._needsLayout();
     },
@@ -403,7 +416,7 @@ WebInspector.TimelineRuler.prototype = {
 
             console.assert(dividerElement.firstChild.classList.contains(WebInspector.TimelineRuler.DividerLabelElementStyleClassName));
 
-            dividerElement.firstChild.textContent = isNaN(dividerTime) ? "" : Number.secondsToString(dividerTime - this._zeroTime, true);
+            dividerElement.firstChild.textContent = isNaN(dividerTime) ? "" : this._formatDividerLabelText(dividerTime - this._zeroTime);
             dividerElement = dividerElement.nextSibling;
         }
 
@@ -590,6 +603,14 @@ WebInspector.TimelineRuler.prototype = {
 
         if (this._timeRangeSelectionChanged)
             this._dispatchTimeRangeSelectionChangedEvent();
+    },
+
+    _formatDividerLabelText: function(value)
+    {
+        if (this._formatLabelCallback)
+            return this._formatLabelCallback(value);
+
+        return Number.secondsToString(value, true);
     },
 
     _dispatchTimeRangeSelectionChangedEvent: function()

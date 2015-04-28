@@ -34,6 +34,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         this._timelineEventsTitleBarElement = document.createElement("div");
         this._timelineEventsTitleBarElement.classList.add(WebInspector.TimelineSidebarPanel.TitleBarStyleClass);
         this._timelineEventsTitleBarElement.classList.add(WebInspector.TimelineSidebarPanel.TimelineEventsTitleBarStyleClass);
+
         this.element.insertBefore(this._timelineEventsTitleBarElement, this.element.firstChild);
 
         this.contentTreeOutlineLabel = "";
@@ -44,6 +45,8 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
         this._displayedRecording = null;
         this._displayedContentView = null;
+        this._viewMode = null;
+        this._previousTimelineSelection = null;
 
         // Maintain an invisible tree outline containing tree elements for all recordings.
         // The visible recording's tree element is selected when the content view changes.
@@ -62,11 +65,26 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
         this._timelineTreeElementMap = new Map;
 
-        var timelinesTitleBarElement = document.createElement("div");
-        timelinesTitleBarElement.textContent = WebInspector.UIString("Timelines");
-        timelinesTitleBarElement.classList.add(WebInspector.TimelineSidebarPanel.TitleBarStyleClass);
-        timelinesTitleBarElement.classList.add(WebInspector.TimelineSidebarPanel.TimelinesTitleBarStyleClass);
-        this.element.insertBefore(timelinesTitleBarElement, this.element.firstChild);
+        // COMPATIBILITY (iOS 8): TimelineAgent.EventType.RenderingFrame did not exist.
+        this._renderingFramesSupported = window.TimelineAgent && TimelineAgent.EventType.RenderingFrame;
+
+        if (this._renderingFramesSupported) {
+            var timelinesNavigationItem = new WebInspector.RadioButtonNavigationItem(WebInspector.TimelineSidebarPanel.ViewMode.Timelines, WebInspector.UIString("Timelines"))
+            var renderingFramesNavigationItem = new WebInspector.RadioButtonNavigationItem(WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames, WebInspector.UIString("Rendering Frames"))
+            this._viewModeNavigationBar = new WebInspector.NavigationBar(null, [timelinesNavigationItem, renderingFramesNavigationItem], "tablist");
+            this._viewModeNavigationBar.addEventListener(WebInspector.NavigationBar.Event.NavigationItemSelected, this._viewModeSelected, this);
+
+            var container = document.createElement("div");
+            container.className = "navigation-bar-container";
+            container.appendChild(this._viewModeNavigationBar.element);
+            this.element.insertBefore(container, this.element.firstChild);
+        } else {
+            var timelinesTitleBarElement = document.createElement("div");
+            timelinesTitleBarElement.textContent = WebInspector.UIString("Timelines");
+            timelinesTitleBarElement.classList.add(WebInspector.TimelineSidebarPanel.TitleBarStyleClass);
+            timelinesTitleBarElement.classList.add(WebInspector.TimelineSidebarPanel.TimelinesTitleBarStyleClass);
+            this.element.insertBefore(timelinesTitleBarElement, this.element.firstChild);
+        }
 
         var statusBarElement = this._statusBarElement = document.createElement("div");
         statusBarElement.classList.add(WebInspector.TimelineSidebarPanel.StatusBarStyleClass);
@@ -85,16 +103,16 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
         WebInspector.showReplayInterfaceSetting.addEventListener(WebInspector.Setting.Event.Changed, this._updateReplayInterfaceVisibility, this);
 
-        // We always create a navigation bar; its visibility is controlled by WebInspector.showReplayInterfaceSetting.
-        this._navigationBar = new WebInspector.NavigationBar;
-        this.element.appendChild(this._navigationBar.element);
+        // We always create a replay navigation bar; its visibility is controlled by WebInspector.showReplayInterfaceSetting.
+        this._replayNavigationBar = new WebInspector.NavigationBar;
+        this.element.appendChild(this._replayNavigationBar.element);
 
         var toolTip = WebInspector.UIString("Begin Capturing");
         var altToolTip = WebInspector.UIString("End Capturing");
         this._replayCaptureButtonItem = new WebInspector.ActivateButtonNavigationItem("replay-capture", toolTip, altToolTip, "Images/Circle.svg", 16, 16);
         this._replayCaptureButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._replayCaptureButtonClicked, this);
         this._replayCaptureButtonItem.enabled = true;
-        this._navigationBar.addNavigationItem(this._replayCaptureButtonItem);
+        this._replayNavigationBar.addNavigationItem(this._replayCaptureButtonItem);
 
         var pauseImage, resumeImage;
         if (WebInspector.Platform.isLegacyMacOS) {
@@ -110,13 +128,13 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         this._replayPauseResumeButtonItem = new WebInspector.ToggleButtonNavigationItem("replay-pause-resume", toolTip, altToolTip, resumeImage.src, pauseImage.src, pauseImage.width, pauseImage.height, true);
         this._replayPauseResumeButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._replayPauseResumeButtonClicked, this);
         this._replayPauseResumeButtonItem.enabled = false;
-        this._navigationBar.addNavigationItem(this._replayPauseResumeButtonItem);
+        this._replayNavigationBar.addNavigationItem(this._replayPauseResumeButtonItem);
 
         WebInspector.replayManager.addEventListener(WebInspector.ReplayManager.Event.CaptureStarted, this._captureStarted, this);
         WebInspector.replayManager.addEventListener(WebInspector.ReplayManager.Event.CaptureStopped, this._captureStopped, this);
 
         this._statusBarElement.oncontextmenu = this._contextMenuNavigationBarOrStatusBar.bind(this);
-        this._navigationBar.element.oncontextmenu = this._contextMenuNavigationBarOrStatusBar.bind(this);
+        this._replayNavigationBar.element.oncontextmenu = this._contextMenuNavigationBarOrStatusBar.bind(this);
         this._updateReplayInterfaceVisibility();
 
         WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.RecordingCreated, this._recordingCreated, this);
@@ -135,6 +153,11 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
         if (this._displayedContentView)
             this.contentBrowser.showContentView(this._displayedContentView);
+    }
+
+    get viewMode()
+    {
+        return this._viewMode;
     }
 
     showDefaultContentView()
@@ -239,17 +262,28 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
         this._displayedContentView.showOverviewTimelineView();
         this.contentBrowser.showContentView(this._displayedContentView);
+
+        var selectedByUser = false;
+        this._changeViewMode(this._viewModeForTimeline(null), selectedByUser);
     }
 
     showTimelineViewForTimeline(timeline)
     {
         console.assert(timeline instanceof WebInspector.Timeline, timeline);
-        console.assert(this._timelineTreeElementMap.has(timeline), "Cannot show timeline because it does not belong to the shown recording.", timeline);
+        console.assert(this._displayedRecording.timelines.has(timeline.type), "Cannot show timeline because it does not belong to the shown recording.", timeline.type);
 
-        // Defer showing the relevant timeline to the onselect handler of the timelines tree element.
-        var wasSelectedByUser = true;
-        var shouldSuppressOnSelect = false;
-        this._timelineTreeElementMap.get(timeline).select(true, wasSelectedByUser, shouldSuppressOnSelect, true);
+        if (this._timelineTreeElementMap.has(timeline)) {
+            // Defer showing the relevant timeline to the onselect handler of the timelines tree element.
+            var wasSelectedByUser = true;
+            var shouldSuppressOnSelect = false;
+            this._timelineTreeElementMap.get(timeline).select(true, wasSelectedByUser, shouldSuppressOnSelect, true);
+        } else {
+            this._displayedContentView.showTimelineViewForTimeline(timeline);
+            this.contentBrowser.showContentView(this._displayedContentView);
+        }
+
+        var selectedByUser = false;
+        this._changeViewMode(this._viewModeForTimeline(timeline), selectedByUser);
     }
 
     // Protected
@@ -288,11 +322,15 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
         cookie[WebInspector.TimelineSidebarPanel.ShowingTimelineRecordingContentViewCookieKey] = this.contentBrowser.currentContentView instanceof WebInspector.TimelineRecordingContentView;
 
-        var selectedTreeElement = this._timelinesTreeOutline.selectedTreeElement;
-        if (selectedTreeElement)
-            cookie[WebInspector.TimelineSidebarPanel.SelectedTimelineViewIdentifierCookieKey] = selectedTreeElement.representedObject.type;
-        else
-            cookie[WebInspector.TimelineSidebarPanel.SelectedTimelineViewIdentifierCookieKey] = WebInspector.TimelineSidebarPanel.OverviewTimelineIdentifierCookieValue;
+        if (this._viewMode === WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames)
+            cookie[WebInspector.TimelineSidebarPanel.SelectedTimelineViewIdentifierCookieKey] = WebInspector.TimelineRecord.Type.RenderingFrame;
+        else {
+            var selectedTreeElement = this._timelinesTreeOutline.selectedTreeElement;
+            if (selectedTreeElement)
+                cookie[WebInspector.TimelineSidebarPanel.SelectedTimelineViewIdentifierCookieKey] = selectedTreeElement.representedObject.type;
+            else
+                cookie[WebInspector.TimelineSidebarPanel.SelectedTimelineViewIdentifierCookieKey] = WebInspector.TimelineSidebarPanel.OverviewTimelineIdentifierCookieValue;    
+        }
 
         super.saveStateToCookie(cookie);
     }
@@ -311,9 +349,10 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         this._restoredShowingTimelineRecordingContentView = cookie[WebInspector.TimelineSidebarPanel.ShowingTimelineRecordingContentViewCookieKey];
 
         var selectedTimelineViewIdentifier = cookie[WebInspector.TimelineSidebarPanel.SelectedTimelineViewIdentifierCookieKey];
-        if (!selectedTimelineViewIdentifier || selectedTimelineViewIdentifier === WebInspector.TimelineSidebarPanel.OverviewTimelineIdentifierCookieValue)
-            this.showTimelineOverview();
-        else if (this._displayedRecording.timelines.has(selectedTimelineViewIdentifier))
+        if (selectedTimelineViewIdentifier === WebInspector.TimelineRecord.Type.RenderingFrame && !this._renderingFramesSupported)
+            selectedTimelineViewIdentifier = null;
+
+        if (selectedTimelineViewIdentifier && this._displayedRecording.timelines.has(selectedTimelineViewIdentifier))
             this.showTimelineViewForTimeline(this._displayedRecording.timelines.get(selectedTimelineViewIdentifier));
         else
             this.showTimelineOverview();
@@ -409,6 +448,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         console.assert(recording instanceof WebInspector.TimelineRecording, recording);
 
         var oldRecording = this._displayedRecording || null;
+
         if (oldRecording) {
             oldRecording.removeEventListener(WebInspector.TimelineRecording.Event.TimelineAdded, this._timelineAdded, this);
             oldRecording.removeEventListener(WebInspector.TimelineRecording.Event.TimelineRemoved, this._timelineRemoved, this);
@@ -442,10 +482,10 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             timeline = timelineOrEvent.data.timeline;
 
         console.assert(timeline instanceof WebInspector.Timeline, timeline);
-        if (!WebInspector.TimelineManager.shouldShowViewForTimeline(timeline))
-            return;
-
         console.assert(!this._timelineTreeElementMap.has(timeline), timeline);
+
+        if (this._viewModeForTimeline(timeline) !== WebInspector.TimelineSidebarPanel.ViewMode.Timelines)
+            return;
 
         var timelineTreeElement = new WebInspector.GeneralTreeElement([timeline.iconClassName, WebInspector.TimelineSidebarPanel.LargeIconStyleClass], timeline.displayName, null, timeline);
         var tooltip = WebInspector.UIString("Close %s timeline view").format(timeline.displayName);
@@ -464,7 +504,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
     {
         var timeline = event.data.timeline;
         console.assert(timeline instanceof WebInspector.Timeline, timeline);
-        if (!WebInspector.TimelineManager.shouldShowViewForTimeline(timeline))
+        if (this._viewModeForTimeline(timeline) !== WebInspector.TimelineSidebarPanel.ViewMode.Timelines)
             return;
 
         console.assert(this._timelineTreeElementMap.has(timeline), timeline);
@@ -491,9 +531,10 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         }
 
         var timelineHeight = 36;
-        var eventTitleBarOffset = 51;
-        var contentElementOffset = 74;
+        var eventTitleBarOffset = 58;
+        var contentElementOffset = 81;
         var timelineCount = this._timelineTreeElementMap.size;
+
         this._timelinesContentContainerElement.style.height = (timelineHeight * timelineCount) + "px";
         this._timelineEventsTitleBarElement.style.top = (timelineHeight * timelineCount + eventTitleBarOffset) + "px";
         this.contentElement.style.top = (timelineHeight * timelineCount + contentElementOffset) + "px";
@@ -535,6 +576,54 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         }
     }
 
+    _viewModeSelected(event)
+    {
+        console.assert(event.target.selectedNavigationItem);
+        if (!event.target.selectedNavigationItem)
+            return;
+
+        var selectedNavigationItem = event.target.selectedNavigationItem;
+        var selectedByUser = true;
+        this._changeViewMode(selectedNavigationItem.identifier, selectedByUser);
+    }
+
+    _viewModeForTimeline(timeline)
+    {
+        if (timeline && timeline.type === WebInspector.TimelineRecord.Type.RenderingFrame)
+            return WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames;
+
+        return WebInspector.TimelineSidebarPanel.ViewMode.Timelines;
+    }
+
+    _changeViewMode(mode, selectedByUser)
+    {
+        if (!this._renderingFramesSupported || this._viewMode === mode)
+            return;
+
+        this._viewMode = mode;
+        this._viewModeNavigationBar.selectedNavigationItem = this._viewMode;
+
+        if (this._viewMode === WebInspector.TimelineSidebarPanel.ViewMode.Timelines)
+            this._timelinesTreeOutline.element.classList.remove(WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementHiddenStyleClassName);
+        else
+            this._timelinesTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementHiddenStyleClassName);
+
+        if (!selectedByUser)
+            return;
+
+        if (this._viewMode === WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames) {
+            if (this._timelinesTreeOutline.selectedTreeElement)
+                this._previousTimelineSelection = this._timelinesTreeOutline.selectedTreeElement.representedObject;
+
+            console.assert(this._displayedRecording);
+            this.showTimelineViewForTimeline(this._displayedRecording.timelines.get(WebInspector.TimelineRecord.Type.RenderingFrame));
+        } else if (this._previousTimelineSelection) {
+            this.showTimelineViewForTimeline(this._previousTimelineSelection);
+            this._previousTimelineSelection = null;
+        } else
+            this.showTimelineOverview();
+    }
+
     // These methods are only used when ReplayAgent is available.
 
     _updateReplayInterfaceVisibility()
@@ -542,7 +631,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         var shouldShowReplayInterface = window.ReplayAgent && WebInspector.showReplayInterfaceSetting.value;
 
         this._statusBarElement.classList.toggle(WebInspector.TimelineSidebarPanel.HiddenStyleClassName, shouldShowReplayInterface);
-        this._navigationBar.element.classList.toggle(WebInspector.TimelineSidebarPanel.HiddenStyleClassName, !shouldShowReplayInterface);
+        this._replayNavigationBar.element.classList.toggle(WebInspector.TimelineSidebarPanel.HiddenStyleClassName, !shouldShowReplayInterface);
     }
 
     _contextMenuNavigationBarOrStatusBar()
@@ -607,6 +696,11 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
     {
         this._replayPauseResumeButtonItem.toggled = false;
     }
+};
+
+WebInspector.TimelineSidebarPanel.ViewMode = {
+    Timelines: "timeline-sidebar-panel-view-mode-timelines",
+    RenderingFrames: "timeline-sidebar-panel-view-mode-frames"
 };
 
 WebInspector.TimelineSidebarPanel.HiddenStyleClassName = "hidden";

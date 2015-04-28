@@ -32,21 +32,26 @@ WebInspector.RenderingFrameTimelineRecord = class RenderingFrameTimelineRecord e
         this._children = children || [];
         this._durationByRecordType = new Map;
         this._durationRemainder = NaN;
-        this._frameNumber = WebInspector.RenderingFrameTimelineRecord._nextFrameNumber++;
+        this._frameIndex = WebInspector.RenderingFrameTimelineRecord._nextFrameIndex++;
     }
 
     // Static
 
-    static resetFrameNumber()
+    static resetFrameIndex()
     {
-        WebInspector.RenderingFrameTimelineRecord._nextFrameNumber = 1;
+        WebInspector.RenderingFrameTimelineRecord._nextFrameIndex = 0;
     }
 
     // Public
 
+    get frameIndex()
+    {
+        return this._frameIndex;
+    }
+
     get frameNumber()
     {
-        return this._frameNumber;
+        return this._frameIndex + 1;
     }
 
     get children()
@@ -98,4 +103,4 @@ WebInspector.RenderingFrameTimelineRecord = class RenderingFrameTimelineRecord e
 
 WebInspector.RenderingFrameTimelineRecord.TypeIdentifier = "rendering-frame-timeline-record";
 
-WebInspector.RenderingFrameTimelineRecord._nextFrameNumber = 1;
+WebInspector.RenderingFrameTimelineRecord._nextFrameIndex = 0;

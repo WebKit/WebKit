@@ -695,6 +695,7 @@
     <None Include="..\UserInterface\Legacy\6.0\InspectorBackendCommands.js" />
     <None Include="..\UserInterface\Legacy\7.0\InspectorBackendCommands.js" />
     <None Include="..\UserInterface\Legacy\8.0\InspectorBackendCommands.js" />
+    <None Include="..\UserInterface\LinearTimelineOverview.js" />
     <None Include="..\UserInterface\LoadInspectorBackendCommands.js" />
     <None Include="..\UserInterface\LoadLocalizedStrings.js" />
     <None Include="..\UserInterface\LogContentView.css" />
@@ -739,6 +740,7 @@
     <None Include="..\UserInterface\RemoteObject.js" />
     <None Include="..\UserInterface\RenderingFrameDetailsSidebarPanel.js" />
     <None Include="..\UserInterface\RenderingFrameTimeDataGridNode.js" />
+    <None Include="..\UserInterface\RenderingFrameTimelineOverview.js" />
     <None Include="..\UserInterface\RenderingFrameTimelineOverviewGraph.css" />
     <None Include="..\UserInterface\RenderingFrameTimelineOverviewGraph.js" />
     <None Include="..\UserInterface\RenderingFrameTimelineRecord.js" />

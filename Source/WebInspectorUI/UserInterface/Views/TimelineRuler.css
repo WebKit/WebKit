@@ -44,6 +44,10 @@
     top: 0;
     left: 0;
     right: 0;
+    height: 29px;
+}
+
+body.mac-platform.legacy .timeline-ruler > .header {
     height: 22px;
 }
 
@@ -58,7 +62,7 @@
 
 .timeline-ruler > .header > .divider > .label {
     position: absolute;
-    top: 5px;
+    top: 8px;
     right: 5px;
     font-size: 9px;
     color: rgb(128, 128, 128);
@@ -129,9 +133,13 @@
 .timeline-ruler > .selection-drag {
     position: absolute;
     top: 0;
-    height: 22px;
+    height: 29px;
     cursor: -webkit-grab;
     pointer-events: all;
+}
+
+body.mac-platform.legacy .timeline-ruler > .selection-drag {
+    height: 22px;
 }
 
 .timeline-ruler > .selection-drag:active {
@@ -142,13 +150,17 @@
     position: absolute;
     top: 0;
     width: 8px;
-    height: 21px;
+    height: 28px;
     border-radius: 5px;
     background-color: rgb(164, 164, 164);
     border: 1px solid white;
     cursor: col-resize;
     pointer-events: all;
     z-index: 15;
+}
+
+body.mac-platform.legacy .timeline-ruler > .selection-handle {
+    height: 21px;
 }
 
 .timeline-ruler > .selection-handle.left {

@@ -23,49 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.timeline-record-frame {
-    position: absolute;
-    height: 108px;
-    min-width: 4px;
-    width: 4px;
+WebInspector.RenderingFrameTimelineOverview = function(timelineRecording)
+{
+    // FIXME: Convert this to a WebInspector.TimelineOverview subclass, and call super().
 
-    overflow: hidden;
+    var minimumDurationPerPixel = 1 / WebInspector.TimelineRecordFrame.MaximumWidthPixels;
+    var maximumDurationPerPixel = 1 / WebInspector.TimelineRecordFrame.MinimumWidthPixels;
+    var defaultSettingsValues = {
+        durationPerPixel: minimumDurationPerPixel,
+        selectionStartValue: 0,
+        selectionDuration: 100
+    };
 
-    -webkit-mask-image: -webkit-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 10%);
-}
+    WebInspector.TimelineOverview.call(this, "frames", timelineRecording, minimumDurationPerPixel, maximumDurationPerPixel, defaultSettingsValues);
 
-.timeline-record-frame > .frame {
-    position: absolute;
-    z-index: 1;
-    bottom: 1px;
-    min-width: 4px;
-    width: 100%;
+    this.timelineRuler.formatLabelCallback = function(value) {
+        return value.toFixed(0);
+    };
+};
 
-    padding-left: 1px;
+WebInspector.RenderingFrameTimelineOverview.prototype = {
+    constructor: WebInspector.RenderingFrameTimelineOverview,
+    __proto__: WebInspector.TimelineOverview.prototype,
 
-    box-sizing: border-box;
-}
+    // Protected
 
-.timeline-record-frame > .frame > .duration {
-    box-sizing: border-box;
-
-    background-color: rgb(221, 221, 221);
-
-    border-bottom: solid 1px rgb(245, 245, 245);
-}
-
-.timeline-record-frame > .frame > .duration:last-child {
-    border-bottom-style: none;
-}
-
-.timeline-record-frame > .frame > .duration.timeline-record-type-network {
-    background-color: rgb(61, 147, 200);
-}
-
-.timeline-record-frame > .frame > .duration.timeline-record-type-layout {
-    background-color: rgb(212, 108, 108);
-}
-
-.timeline-record-frame > .frame > .duration.timeline-record-type-script {
-    background-color: rgb(153, 113, 185);
-}
+    canShowTimeline: function(timeline)
+    {
+        return timeline.type === WebInspector.TimelineRecord.Type.RenderingFrame;
+    }
+};

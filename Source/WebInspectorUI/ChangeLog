@@ -1,3 +1,182 @@
+2015-04-28  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: add a separate overview for the Rendering Frames timeline
+        https://bugs.webkit.org/show_bug.cgi?id=144245
+
+        Reviewed by Timothy Hatcher.
+
+        The Timelines tab now supports two view modes, labeled "Timelines" and "Rendering Frames", with each mode
+        having a seperate timeline overview and selected range. The Timelines mode displays the original time-based
+        graphs (Network, Layout, and Script), and switching to the Rendering Frames mode displays a frames graph
+        with a timeline ruler which shows frame indices.
+
+        If the rendering frames timeline is supported by the backend, a navigation bar is added to the timelines
+        sidebar with controls for switching between view modes. In addition to user-triggered view mode changes, the
+        timelines sidebar will automatically change the current view mode in response to content view changes that
+        are triggered elsewhere in the UI (for example, when a timeline that does not belong to the current view
+        mode is selected via the navigation path).
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype.get activeRecording): Deleted.
+        (WebInspector.TimelineManager.prototype.get recordings): Deleted.
+        Removed unused code.
+
+        * UserInterface/Main.html:
+        New files.
+
+        * UserInterface/Models/RenderingFrameTimelineRecord.js:
+        (WebInspector.RenderingFrameTimelineRecord):
+        (WebInspector.RenderingFrameTimelineRecord.resetFrameIndex):
+        (WebInspector.RenderingFrameTimelineRecord.prototype.get frameIndex):
+        (WebInspector.RenderingFrameTimelineRecord.prototype.get frameNumber):
+        * UserInterface/Models/TimelineRecording.js:
+        (WebInspector.TimelineRecording.prototype.reset):
+        Frame number is now derived from frame index.
+
+        * UserInterface/Views/LinearTimelineOverview.js:
+        (WebInspector.LinearTimelineOverview):
+        (WebInspector.LinearTimelineOverview.prototype.canShowTimeline):
+        New overview class for time-based timeline graphs.
+
+        * UserInterface/Views/RenderingFrameDetailsSidebarPanel.js:
+        (WebInspector.RenderingFrameDetailsSidebarPanel):
+        (WebInspector.RenderingFrameDetailsSidebarPanel.prototype.updateRangeSelection):
+        (WebInspector.RenderingFrameDetailsSidebarPanel.prototype._getSelectedRecords):
+        Changed type of selected range from time to frame indices.
+
+        * UserInterface/Views/RenderingFrameTimelineOverview.js:
+        (WebInspector.RenderingFrameTimelineOverview.this.timelineRuler.formatLabelCallback):
+        (WebInspector.RenderingFrameTimelineOverview):
+        (WebInspector.RenderingFrameTimelineOverview.prototype.canShowTimeline):
+        New overview class for frame-based timeline graphs.
+
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.css:
+        (.timeline-overview > .graphs-container > .timeline-overview-graph.rendering-frame):
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.js:
+        (WebInspector.RenderingFrameTimelineOverviewGraph):
+        (WebInspector.RenderingFrameTimelineOverviewGraph.prototype._updateDividers.createDividerAtPosition.get if):
+        Updated to use frame index ruler and removed frame combining logic.
+
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WebInspector.RenderingFrameTimelineView):
+        Increased column widths.
+
+        * UserInterface/Views/TimelineOverview.css:
+        (.timeline-overview > .graphs-container):
+        (body.mac-platform.legacy .timeline-overview > .graphs-container):
+        Updated for new ruler height.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview):
+        (WebInspector.TimelineOverview.prototype.get secondsPerPixel):
+        (WebInspector.TimelineOverview.prototype.set secondsPerPixel):
+        (WebInspector.TimelineOverview.prototype.get visibleDuration):
+        (WebInspector.TimelineOverview.prototype.set selectionDuration):
+        (WebInspector.TimelineOverview.prototype.updateLayout):
+        (WebInspector.TimelineOverview.prototype.get timelineRuler):
+        (WebInspector.TimelineOverview.prototype.canShowTimeline):
+        (WebInspector.TimelineOverview.prototype._handleScrollEvent):
+        (WebInspector.TimelineOverview.prototype._handleWheelEvent):
+        (WebInspector.TimelineOverview.prototype._timelineRemoved):
+        (WebInspector.TimelineOverview.prototype._timeRangeSelectionChanged):
+        (WebInspector.TimelineOverview.prototype.set currentTime): Deleted.
+        (WebInspector.TimelineOverview.prototype.updateLayoutIfNeeded): Deleted.
+        (WebInspector.TimelineOverview.prototype._needsLayout): Deleted.
+        Converted to base class. Derived classes provide settings and permitted timeline types.
+
+        * UserInterface/Views/TimelineRecordFrame.css:
+        (.timeline-record-frame):
+        (.timeline-record-frame > .frame):
+        (.timeline-record-frame > .frame > .duration):
+        (.timeline-record-frame > .frame > .duration.timeline-record-type-network):
+        (.timeline-record-frame > .frame > .duration.timeline-record-type-layout):
+        (.timeline-record-frame > .frame > .duration.timeline-record-type-script):
+        (.timeline-record-frame > .frame > .duration:last-child): Deleted.
+        New graph frames styles.
+
+        * UserInterface/Views/TimelineRecordFrame.js:
+        (WebInspector.TimelineRecordFrame):
+        (WebInspector.TimelineRecordFrame.prototype.get record):
+        (WebInspector.TimelineRecordFrame.prototype.set record):
+        (WebInspector.TimelineRecordFrame.prototype._updateChildElements.createDurationElement):
+        (WebInspector.TimelineRecordFrame.prototype.get element): Deleted.
+        Updated to use frame index ruler.
+        Removed dropped frames and frame combining logic.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView):
+        (WebInspector.TimelineRecordingContentView.prototype.shown):
+        (WebInspector.TimelineRecordingContentView.prototype.hidden):
+        (WebInspector.TimelineRecordingContentView.prototype.updateLayout):
+        (WebInspector.TimelineRecordingContentView.prototype._currentContentViewDidChange):
+        (WebInspector.TimelineRecordingContentView.prototype._updateTimes):
+        (WebInspector.TimelineRecordingContentView.prototype._updateTimelineOverviewHeight):
+        (WebInspector.TimelineRecordingContentView.prototype._getRenderingFrameTimeline):
+        (WebInspector.TimelineRecordingContentView.prototype._timelineRemoved):
+        (WebInspector.TimelineRecordingContentView.prototype._timelineCountChanged):
+        (WebInspector.TimelineRecordingContentView.prototype._recordingReset):
+        (WebInspector.TimelineRecordingContentView.prototype._timeRangeSelectionChanged):
+        (WebInspector.TimelineRecordingContentView.prototype.get currentTimelineView): Deleted.
+        (WebInspector.TimelineRecordingContentView.prototype.goForward): Deleted.
+        (WebInspector.TimelineRecordingContentView.prototype.matchTreeElementAgainstCustomFilters): Deleted.
+        (WebInspector.TimelineRecordingContentView.prototype._contentViewSupplementalRepresentedObjectsDidChange): Deleted.
+        (WebInspector.TimelineRecordingContentView.prototype._update): Deleted.
+        (WebInspector.TimelineRecordingContentView.prototype._debuggerPaused): Deleted.
+        (WebInspector.TimelineRecordingContentView.prototype._debuggerResumed): Deleted.
+        (WebInspector.TimelineRecordingContentView.prototype._recordingTimesUpdated): Deleted.
+        Maintains two timeline overviews, switching between them based on the current content view.
+        Updated tree element filtering to support both overview rulers.
+
+        * UserInterface/Views/TimelineRuler.css:
+        (.timeline-ruler > .header):
+        (body.mac-platform.legacy .timeline-ruler > .header):
+        (.timeline-ruler > .header > .divider > .label):
+        (.timeline-ruler > .selection-drag):
+        (body.mac-platform.legacy .timeline-ruler > .selection-drag):
+        (.timeline-ruler > .selection-handle):
+        (body.mac-platform.legacy .timeline-ruler > .selection-handle):
+        (.timeline-ruler > .header > .divider): Deleted.
+        (.timeline-ruler > .selection-drag:active): Deleted.
+        Updated for new ruler height.
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler):
+        (WebInspector.TimelineRuler.prototype.set formatLabelCallback):
+        (WebInspector.TimelineRuler.prototype.updateLayout):
+        (WebInspector.TimelineRuler.prototype._formatDividerLabelText):
+        (WebInspector.TimelineRuler.prototype.set allowsClippedLabels): Deleted.
+        (WebInspector.TimelineRuler.prototype._updateSelection): Deleted.
+        Added ability to customize label formatting.
+
+        * UserInterface/Views/TimelineSidebarPanel.css:
+        (.panel.timeline .navigation-bar.timelines-view):
+        (.sidebar > .panel.navigation.timeline > .title-bar):
+        (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .title-bar):
+        (.sidebar > .panel.navigation.timeline > .title-bar.timelines):
+        (.sidebar > .panel.navigation.timeline > .navigation-bar-container):
+        (.sidebar > .panel.navigation.timeline > .navigation-bar-container > .navigation-bar):
+        (.sidebar > .panel.navigation.timeline > .title-bar.timeline-events):
+        (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .title-bar.timeline-events):
+        (.sidebar > .panel.navigation.timeline > .timelines-content):
+        (.sidebar > .panel.navigation.timeline > .empty-content-placeholder):
+        (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > :matches(.content, .empty-content-placeholder)):
+        (.sidebar > .panel.navigation.timeline > .timelines-content li.item.selected + li.item): Deleted.
+        (body.window-inactive .sidebar > .panel.navigation.timeline > .timelines-content li.item.selected + li.item): Deleted.
+        Updated for new navigation bar and ruler height.
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel):
+        (WebInspector.TimelineSidebarPanel.prototype.get viewMode):
+        (WebInspector.TimelineSidebarPanel.prototype.canShowTimeline):
+        (WebInspector.TimelineSidebarPanel.showTimelineViewForTimeline.this._timelineTreeElementMap.get select):
+        (WebInspector.TimelineSidebarPanel.get this):
+        (WebInspector.TimelineSidebarPanel._timelineAdded.set this):
+        Added support for two view modes: Timelines and Rendering Frames.
+
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj.filters:
+        New files.
+
 2015-04-27  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Add new tab button to make it easy to bring a closed tab back

@@ -109,7 +109,7 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         for (var timeline of this._timelines.values())
             timeline.reset(suppressEvents);
 
-        WebInspector.RenderingFrameTimelineRecord.resetFrameNumber();
+        WebInspector.RenderingFrameTimelineRecord.resetFrameIndex();
 
         if (!suppressEvents) {
             this.dispatchEventToListeners(WebInspector.TimelineRecording.Event.Reset);

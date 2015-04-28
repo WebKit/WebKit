@@ -654,6 +654,9 @@
     <None Include="..\UserInterface\LayoutTimelineRecord.js">
       <Filter>UserInterface</Filter>
     </None>
+    <None Include="..\UserInterface\LinearTimelineOverview.js">
+      <Filter>UserInterface</Filter>
+    </None>
     <None Include="..\UserInterface\LoadInspectorBackendCommands.js">
       <Filter>UserInterface</Filter>
     </None>
@@ -784,6 +787,9 @@
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\RenderingFrameTimelineDataGridNode.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\RenderingFrameTimelineOverview.js">
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\RenderingFrameTimelineOverviewGraph.css">

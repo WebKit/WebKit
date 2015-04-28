@@ -30,11 +30,11 @@ WebInspector.RenderingFrameTimelineOverviewGraph = function(timeline)
     this.element.classList.add(WebInspector.RenderingFrameTimelineOverviewGraph.StyleClassName);
 
     this._renderingFrameTimeline = timeline;
+    this._renderingFrameTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._timelineRecordAdded, this);
+
     this._timelineRecordFrames = [];
     this._graphHeightSeconds = NaN;
-    this._framesPerSecondDividers = new Map;
-
-    this._renderingFrameTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._timelineRecordAdded, this);
+    this._framesPerSecondDividerMap = new Map;
 
     this.reset();
 };
@@ -70,7 +70,7 @@ WebInspector.RenderingFrameTimelineOverviewGraph.prototype = {
 
         this.element.removeChildren();
 
-        this._framesPerSecondDividers.clear();
+        this._framesPerSecondDividerMap.clear();
     },
 
     updateLayout()
@@ -80,28 +80,29 @@ WebInspector.RenderingFrameTimelineOverviewGraph.prototype = {
         if (!this._renderingFrameTimeline.records.length)
             return;
 
-        var secondsPerPixel = this.timelineOverview.secondsPerPixel;
+        var records = this._renderingFrameTimeline.records;
+        var startIndex = Math.floor(this.startTime);
+        var endIndex = Math.min(Math.floor(this.endTime), records.length - 1);
         var recordFrameIndex = 0;
 
-        function createFrame(records)
-        {
+        for (var i = startIndex; i <= endIndex; ++i) {
+            var record = records[i];
             var timelineRecordFrame = this._timelineRecordFrames[recordFrameIndex];
             if (!timelineRecordFrame)
-                timelineRecordFrame = this._timelineRecordFrames[recordFrameIndex] = new WebInspector.TimelineRecordFrame(this, records);
+                timelineRecordFrame = this._timelineRecordFrames[recordFrameIndex] = new WebInspector.TimelineRecordFrame(this, record);
             else
-                timelineRecordFrame.records = records;
+                timelineRecordFrame.record = record;
 
             timelineRecordFrame.refresh(this);
             if (!timelineRecordFrame.element.parentNode)
                 this.element.appendChild(timelineRecordFrame.element);
+
             ++recordFrameIndex;
         }
 
-        WebInspector.TimelineRecordFrame.createCombinedFrames(this._renderingFrameTimeline.records, secondsPerPixel, this, createFrame.bind(this));
-
         // Remove the remaining unused TimelineRecordFrames.
         for (; recordFrameIndex < this._timelineRecordFrames.length; ++recordFrameIndex) {
-            this._timelineRecordFrames[recordFrameIndex].records = null;
+            this._timelineRecordFrames[recordFrameIndex].record = null;
             this._timelineRecordFrames[recordFrameIndex].element.remove();
         }
 
@@ -131,7 +132,7 @@ WebInspector.RenderingFrameTimelineOverviewGraph.prototype = {
             if (dividerTop < 0.01 || dividerTop >= 1)
                 return;
 
-            var divider = this._framesPerSecondDividers.get(framesPerSecond);
+            var divider = this._framesPerSecondDividerMap.get(framesPerSecond);
             if (!divider) {
                 divider = document.createElement("div");
                 divider.classList.add("divider");
@@ -143,7 +144,7 @@ WebInspector.RenderingFrameTimelineOverviewGraph.prototype = {
 
                 this.element.appendChild(divider);
 
-                this._framesPerSecondDividers.set(framesPerSecond, divider);
+                this._framesPerSecondDividerMap.set(framesPerSecond, divider);
             }
 
             divider.style.marginTop = (dividerTop * overviewGraphHeight).toFixed(2) + "px";

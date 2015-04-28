@@ -55,10 +55,14 @@
 
 .timeline-overview > .graphs-container {
     position: absolute;
-    top: 22px;
+    top: 29px;
     left: 0;
     bottom: 0;
     right: 0;
+}
+
+body.mac-platform.legacy .timeline-overview > .graphs-container {
+    top: 22px;
 }
 
 .timeline-overview > .graphs-container > .timeline-overview-graph {

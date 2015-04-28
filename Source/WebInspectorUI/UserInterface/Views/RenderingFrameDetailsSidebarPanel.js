@@ -50,8 +50,8 @@ WebInspector.RenderingFrameDetailsSidebarPanel = class RenderingFrameDetailsSide
         this.contentElement.appendChild(detailsSection.element);
 
         this._renderingFrameTimeline = null;
-        this._startTime = 0;
-        this._endTime = 0;
+        this._startFrameIndex = 0;
+        this._endFrameIndex = 0;
 
         this._emptyValuePlaceholderString = "\u2014";
 
@@ -70,13 +70,13 @@ WebInspector.RenderingFrameDetailsSidebarPanel = class RenderingFrameDetailsSide
         return !!this._renderingFrameTimeline;
     }
 
-    updateRangeSelection(startTime, endTime)
+    updateRangeSelection(startFrameIndex, endFrameIndex)
     {
-        if (this._startTime === startTime && this._endTime === endTime)
+        if (this._startFrameIndex === startFrameIndex && this._endFrameIndex === endFrameIndex)
             return;
 
-        this._startTime = startTime || 0;
-        this._endTime = endTime || 0;
+        this._startFrameIndex = startFrameIndex || 0;
+        this._endFrameIndex = endFrameIndex || 0;
 
         this.needsRefresh();
     }
@@ -173,12 +173,12 @@ WebInspector.RenderingFrameDetailsSidebarPanel = class RenderingFrameDetailsSide
         for (var record of this._renderingFrameTimeline.records) {
             console.assert(record instanceof WebInspector.RenderingFrameTimelineRecord);
             // If this frame is completely before the bounds of the graph, skip this record.
-            if (record.endTime < this._startTime)
+            if (record.frameIndex < Math.floor(this._startFrameIndex))
                 continue;
 
             // If this record is completely after the end time, break out now.
             // Records are sorted, so all records after this will be beyond the end time too.
-            if (record.startTime > this._endTime)
+            if (record.frameIndex > this._endFrameIndex)
                 break;
 
             records.push(record);
