@@ -1,3 +1,14 @@
+2015-04-28  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Update the features.json for WeakSet, WeakMap, Template literals, Tagged templates
+        https://bugs.webkit.org/show_bug.cgi?id=144328
+
+        Reviewed by Andreas Kling.
+
+        Update the status of ES6 features.
+
+        * features.json:
+
 2015-04-28  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should not use or preserve Phantoms during transformations

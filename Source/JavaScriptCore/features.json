@@ -114,7 +114,43 @@
         "url": "https://people.mozilla.org/~jorendorff/es6-draft.html#sec-symbol-objects",
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=140435",
-        "specification": "ES6"
+        "specification": "ES6",
+        "contact": {
+            "name": "Yusuke Suzuki",
+            "email": "utatane.tea@gmail.com"
+        }
+    },
+    {
+        "name": "Tagged templates",
+        "status": {
+            "status": "In Development",
+            "enabled-by-default": true
+        },
+        "url": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tagged-templates",
+        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/template_strings",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=143183",
+        "description": "The tagged-templates (like String.raw`Hello ${World}`) provides a way to modify the produced string from a given template-literals with a function.",
+        "specification": "ES6",
+        "contact": {
+            "name": "Yusuke Suzuki",
+            "email": "utatane.tea@gmail.com"
+        }
+    },
+    {
+        "name": "Template literals",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literals",
+        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/template_strings",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=142691",
+        "description": "The template-literals (like `Hello ${World}`) provides string interpolation feature. Line terminators are also allowed in the template-literals.",
+        "specification": "ES6",
+        "contact": {
+            "name": "Yusuke Suzuki",
+            "email": "utatane.tea@gmail.com"
+        }
     },
     {
         "name": "WeakMap",
@@ -125,8 +161,24 @@
         "url": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-weakmap-objects",
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=120912",
-        "description": "Map provides an <a href=\"https://en.wikipedia.org/wiki/Associative_array\">associative array data</a> structure that maps keys to values. WeakMap's keys must be objects.",
+        "description": "WeakMap provides an <a href=\"https://en.wikipedia.org/wiki/Associative_array\">associative array data</a> structure that maps keys to values. WeakMap's keys must be objects.",
         "specification": "ES6"
+    },
+    {
+        "name": "WeakSet",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-weakset-objects",
+        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=142408",
+        "description": "WeakSet is a collection of unique objects. Keys stored in WeakSet are referenced weakly.",
+        "specification": "ES6",
+        "contact": {
+            "name": "Yusuke Suzuki",
+            "email": "utatane.tea@gmail.com"
+        }
     },
     {
         "name": "for...of loops",
