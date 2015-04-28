@@ -1,3 +1,17 @@
+2015-04-28  Andy Estes  <aestes@apple.com>
+
+        Unreviewed Mac gardening for safari-600.6-branch.
+
+        * platform/mac-mavericks/media/audio-controls-rendering-expected.txt: Added.
+        * platform/mac-mavericks/media/controls-strict-expected.txt: Added.
+        * platform/mac-mavericks/media/video-no-audio-expected.txt: Added.
+        * platform/mac-mavericks/platform/mac/fast/text/systemFont-expected.txt: Added.
+        * platform/mac-mavericks/platform/mac/fast/text/vertical-no-sideways-expected.txt: Added.
+        * platform/mac-mountainlion/media/video-colorspace-yuv420-expected.png: Added.
+        * platform/mac-mountainlion/media/video-colorspace-yuv420-expected.txt: Added.
+        * platform/mac-mountainlion/media/video-colorspace-yuv422-expected.png: Added.
+        * platform/mac-mountainlion/media/video-colorspace-yuv422-expected.txt: Added.
+
 2015-04-27  Andy Estes  <aestes@apple.com>
 
         Unreviewed Mac gardening for safari-600.6-branch.
