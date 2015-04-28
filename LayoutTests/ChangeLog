@@ -1,3 +1,14 @@
+2015-04-28  Andreas Kling  <akling@apple.com>
+
+        DFG should generate efficient code for branching on a string's boolean value.
+        <https://webkit.org/b/144317>
+
+        Reviewed by Geoff Garen & Filip Pizlo.
+
+        * js/regress/branch-on-string-as-boolean-expected.txt: Added.
+        * js/regress/branch-on-string-as-boolean.html: Added.
+        * js/regress/script-tests/branch-on-string-as-boolean.js: Added.
+
 2015-04-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Implement font-synthesis CSS property

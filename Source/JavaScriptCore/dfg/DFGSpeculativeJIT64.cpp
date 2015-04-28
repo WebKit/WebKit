@@ -1742,6 +1742,11 @@ void SpeculativeJIT::emitBranch(Node* node)
         return;
     }
 
+    case StringUse: {
+        emitStringBranch(node->child1(), taken, notTaken);
+        return;
+    }
+
     case UntypedUse:
     case BooleanUse: {
         JSValueOperand value(this, node->child1(), ManualOperandSpeculation);

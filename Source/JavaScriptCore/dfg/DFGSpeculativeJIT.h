@@ -2103,6 +2103,7 @@ public:
     void compileMiscStrictEq(Node*);
 
     void emitObjectOrOtherBranch(Edge value, BasicBlock* taken, BasicBlock* notTaken);
+    void emitStringBranch(Edge value, BasicBlock* taken, BasicBlock* notTaken);
     void emitBranch(Node*);
     
     struct StringSwitchCase {

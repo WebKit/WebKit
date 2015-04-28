@@ -737,6 +737,8 @@ private:
                 fixEdge<Int32Use>(node->child1());
             else if (node->child1()->shouldSpeculateNumber())
                 fixEdge<DoubleRepUse>(node->child1());
+            else if (node->child1()->shouldSpeculateString())
+                fixEdge<StringUse>(node->child1());
             break;
         }
             

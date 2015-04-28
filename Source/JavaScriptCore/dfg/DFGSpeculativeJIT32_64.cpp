@@ -1573,7 +1573,12 @@ void SpeculativeJIT::emitBranch(Node* node)
         emitObjectOrOtherBranch(node->child1(), taken, notTaken);
         return;
     }
-    
+
+    case StringUse: {
+        emitStringBranch(node->child1(), taken, notTaken);
+        return;
+    }
+
     case DoubleRepUse:
     case Int32Use: {
         if (node->child1().useKind() == Int32Use) {

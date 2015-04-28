@@ -4040,6 +4040,15 @@ void SpeculativeJIT::compileStringZeroLength(Node* node)
     unblessedBooleanResult(eqGPR, node);
 }
 
+void SpeculativeJIT::emitStringBranch(Edge nodeUse, BasicBlock* taken, BasicBlock* notTaken)
+{
+    SpeculateCellOperand str(this, nodeUse);
+    speculateString(nodeUse, str.gpr());
+    branchTest32(JITCompiler::NonZero, MacroAssembler::Address(str.gpr(), JSString::offsetOfLength()), taken);
+    jump(notTaken);
+    noResult(m_currentNode);
+}
+
 void SpeculativeJIT::compileConstantStoragePointer(Node* node)
 {
     GPRTemporary storage(this);

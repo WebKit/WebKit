@@ -1,3 +1,28 @@
+2015-04-28  Andreas Kling  <akling@apple.com>
+
+        DFG+FTL should generate efficient code for branching on a string's boolean value.
+        <https://webkit.org/b/144317>
+
+        Reviewed by Geoff Garen & Filip Pizlo
+
+        Teach Branch nodes about StringUse and have them generate an efficient zero-length string check
+        instead of dropping out to C++ whenever we branch on a string.
+
+        The FTL JIT already handled Branch nodes with StringUse through its use of boolify(), so only
+        the DFG JIT gets some new codegen logic in this patch.
+
+        Test: js/regress/branch-on-string-as-boolean.js (~4.5x speedup)
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitStringBranch):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+
 2015-04-28  Filip Pizlo  <fpizlo@apple.com>
 
         VarargsForwardingPhase should only consider MovHints that have the candidate as a child
