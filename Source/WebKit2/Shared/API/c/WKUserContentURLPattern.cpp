@@ -39,8 +39,7 @@ WKTypeID WKUserContentURLPatternGetTypeID()
 
 WKUserContentURLPatternRef WKUserContentURLPatternCreate(WKStringRef patternRef)
 {
-    RefPtr<API::UserContentURLPattern> userContentURLPattern = API::UserContentURLPattern::create(toImpl(patternRef)->string());
-    return toAPI(userContentURLPattern.release().leakRef());
+    return toAPI(&API::UserContentURLPattern::create(toImpl(patternRef)->string()).leakRef());
 }
 
 WKStringRef WKUserContentURLPatternCopyHost(WKUserContentURLPatternRef urlPatternRef)

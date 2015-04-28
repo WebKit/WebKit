@@ -1,5 +1,21 @@
 2015-04-28  Zan Dobersek  <zdobersek@igalia.com>
 
+        [WK2] API::UserContentURLPattern creation functions should return Ref<>
+        https://bugs.webkit.org/show_bug.cgi?id=144225
+
+        Reviewed by Darin Adler.
+
+        Have API::UserContentURLPattern creation functions return Ref<>.
+        Call-sites are also updated, using and operating on the returned Ref<>
+        object where possible.
+
+        * Shared/API/APIUserContentURLPattern.h:
+        (API::UserContentURLPattern::create):
+        * Shared/API/c/WKUserContentURLPattern.cpp:
+        (WKUserContentURLPatternCreate):
+
+2015-04-28  Zan Dobersek  <zdobersek@igalia.com>
+
         [WK2] API::URLRequest, API::URLResponse creation functions should return Ref<>
         https://bugs.webkit.org/show_bug.cgi?id=144224
 

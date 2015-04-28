@@ -30,15 +30,14 @@
 
 #include <WebCore/URL.h>
 #include <WebCore/UserContentURLPattern.h>
-#include <wtf/RefPtr.h>
 
 namespace API {
 
 class UserContentURLPattern : public API::ObjectImpl<API::Object::Type::UserContentURLPattern> {
 public:
-    static PassRefPtr<UserContentURLPattern> create(const WTF::String& pattern)
+    static Ref<UserContentURLPattern> create(const WTF::String& pattern)
     {
-        return adoptRef(new UserContentURLPattern(pattern));
+        return adoptRef(*new UserContentURLPattern(pattern));
     }
 
     const WTF::String& host() const { return m_pattern.host(); }
