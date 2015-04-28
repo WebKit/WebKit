@@ -1,5 +1,13 @@
 2015-04-28  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Unreviewed, fix typo in previous commit
+
+        libsecretr -> libsecret in the error message.
+
+        * Source/cmake/OptionsGTK.cmake:
+
+2015-04-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] Clean up feature detection and make it hard to accidentally build without optional features
         https://bugs.webkit.org/show_bug.cgi?id=143546
 

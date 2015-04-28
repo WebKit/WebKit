@@ -248,7 +248,7 @@ find_package(GLIB 2.33.2 REQUIRED COMPONENTS ${glib_components})
 if (ENABLE_CREDENTIAL_STORAGE)
     find_package(Libsecret)
     if (NOT LIBSECRET_FOUND)
-        message(FATAL_ERROR "libsecretr is needed for ENABLE_CREDENTIAL_STORAGE")
+        message(FATAL_ERROR "libsecret is needed for ENABLE_CREDENTIAL_STORAGE")
     endif ()
 endif ()
 
