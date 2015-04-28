@@ -155,3 +155,5 @@ webkit.org/b/144043 fast/multicol/filter-in-columns.html [ ImageOnlyFailure ]
 webkit.org/b/144044 fast/ruby/ruby-justification-hittest.html [ Failure ]
 webkit.org/b/144044 fast/ruby/ruby-justification.html [ ImageOnlyFailure ]
 
+# fast/text/ruby-justification-flush.html fails on safari-600.6-branch
+webkit.org/b/144294 fast/text/ruby-justification-flush.html [ ImageOnlyFailure ]
