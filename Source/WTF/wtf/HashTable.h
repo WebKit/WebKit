@@ -1150,6 +1150,7 @@ namespace WTF {
         m_tableSize = 0;
         m_tableSizeMask = 0;
         m_keyCount = 0;
+        m_deletedCount = 0;
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>

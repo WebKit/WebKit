@@ -1,5 +1,16 @@
 2015-04-28  Alex Christensen  <achristensen@webkit.org>
 
+        Properly reset deleted count when clearing HashTables.
+        https://bugs.webkit.org/show_bug.cgi?id=144343
+
+        Reviewed by Andreas Kling.
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::clear):
+        Reset m_deletedCount, which appears to have been forgotten.
+
+2015-04-28  Alex Christensen  <achristensen@webkit.org>
+
         [Content Extensions] Use less memory for CombinedURLFilters.
         https://bugs.webkit.org/show_bug.cgi?id=144290
 
