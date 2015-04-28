@@ -1,3 +1,61 @@
+2015-04-27  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Add new tab button to make it easy to bring a closed tab back
+        https://bugs.webkit.org/show_bug.cgi?id=144297
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        (WebInspector.isTabTypeAllowed):
+        (WebInspector._tabContentViewForType):
+        (WebInspector._rememberOpenTabs):
+        (WebInspector._updateNewTabButtonState):
+        (WebInspector._newTabItemClicked):
+        (WebInspector.isNewTabWithTypeAllowed):
+        (WebInspector.createNewTab):
+        (WebInspector.activateExtraDomains):
+        (WebInspector._restoreCookieForOpenTabs):
+        (WebInspector._saveCookieForOpenTabs):
+        (WebInspector._isTabTypeAllowed): Deleted.
+        * UserInterface/Images/NewTab.svg: Added.
+        * UserInterface/Images/NewTabPlus.svg:
+        * UserInterface/Main.html:
+        * UserInterface/Views/NewTabContentView.css: Added.
+        (.new-tab.tab.content-view):
+        (.new-tab.tab.content-view > .tab-item):
+        (.new-tab.tab.content-view > .tab-item.disabled):
+        (.new-tab.tab.content-view > .tab-item > .box):
+        (.new-tab.tab.content-view > .tab-item:not(.disabled):active > .box):
+        (.new-tab.tab.content-view > .tab-item > .box > img):
+        (.new-tab.tab.content-view > .tab-item > label):
+        * UserInterface/Views/NewTabContentView.js: Added.
+        (WebInspector.NewTabContentView):
+        (WebInspector.NewTabContentView.prototype.get type):
+        (WebInspector.NewTabContentView.prototype._createNewTab):
+        * UserInterface/Views/TabBar.css:
+        (.tab-bar > .item:not(.disabled).selected):
+        (.tab-bar > .item.new-tab-button:not(.disabled):hover):
+        (.tab-bar:not(.animating) > .item:not(.selected, .disabled):hover + .item):
+        (.tab-bar > .item.disabled > .icon):
+        (.tab-bar > .item.new-tab-button:not(.disabled):hover > .icon):
+        (.tab-bar > .item.selected): Deleted.
+        (.tab-bar > .item.new-tab-button:hover): Deleted.
+        (.tab-bar:not(.animating) > .item:not(.selected):hover + .item): Deleted.
+        (.tab-bar > .item.new-tab-button:hover > .icon): Deleted.
+        * UserInterface/Views/TabBar.js:
+        (WebInspector.TabBar.prototype.set selectedTabBarItem):
+        (WebInspector.TabBar.prototype._handleMouseDown):
+        * UserInterface/Views/TabBarItem.js:
+        (WebInspector.TabBarItem.prototype.get disabled):
+        (WebInspector.TabBarItem.prototype.set disabled):
+        * UserInterface/Views/TabBrowser.js:
+        (WebInspector.TabBrowser):
+        (WebInspector.TabBrowser.prototype.addTabForContentView):
+        (WebInspector.TabBrowser.prototype.showTabForContentView):
+        (WebInspector.TabBrowser.prototype.closeTabForContentView):
+
 2015-04-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Cannot scroll Timeline Overview horizontally, scrollbar cannot be interacted with

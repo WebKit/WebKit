@@ -351,6 +351,8 @@ WebInspector.TabBar = class TabBar extends WebInspector.Object
     set selectedTabBarItem(tabBarItemOrIndex)
     {
         var tabBarItem = this._findTabBarItem(tabBarItemOrIndex);
+        if (tabBarItem === this._newTabItem)
+            tabBarItem = this._tabBarItems[this._tabBarItems.length - 2];
 
         if (this._selectedTabBarItem === tabBarItem)
             return;
@@ -498,8 +500,16 @@ WebInspector.TabBar = class TabBar extends WebInspector.Object
             return;
 
         var tabBarItem = itemElement[WebInspector.TabBarItem.ElementReferenceSymbol];
-        if (!tabBarItem || tabBarItem === this._newTabItem)
+        if (!tabBarItem)
             return;
+
+        if (tabBarItem.disabled)
+            return;
+
+        if (tabBarItem === this._newTabItem) {
+            this.dispatchEventToListeners(WebInspector.TabBar.Event.NewTabItemClicked);
+            return;
+        }
 
         var closeButtonElement = event.target.enclosingNodeOrSelfWithClass(WebInspector.TabBarItem.CloseButtonStyleClassName);
         if (closeButtonElement) {
@@ -668,5 +678,6 @@ WebInspector.TabBar.Event = {
     TabBarItemSelected: "tab-bar-tab-bar-item-selected",
     TabBarItemAdded: "tab-bar-tab-bar-item-added",
     TabBarItemRemoved: "tab-bar-tab-bar-item-removed",
-    TabBarItemsReordered: "tab-bar-tab-bar-items-reordered"
+    TabBarItemsReordered: "tab-bar-tab-bar-items-reordered",
+    NewTabItemClicked: "tab-bar-new-tab-item-clicked"
 };

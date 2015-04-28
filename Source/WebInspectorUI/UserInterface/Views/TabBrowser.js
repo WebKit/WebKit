@@ -50,8 +50,7 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.Object
         this._contentViewContainer = new WebInspector.ContentViewContainer;
         this._element.appendChild(this._contentViewContainer.element);
 
-        // FIXME: Support creating new tabs.
-        // this._tabBar.newTabItem = new WebInspector.TabBarItem(platformImagePath("NewTabPlus.svg"), WebInspector.UIString("Create a new tab"), true);
+        this._tabBar.newTabItem = new WebInspector.TabBarItem(platformImagePath("NewTabPlus.svg"), WebInspector.UIString("Create a new tab"), true);
 
         this._tabBar.addEventListener(WebInspector.TabBar.Event.TabBarItemSelected, this._tabBarItemSelected, this);
         this._tabBar.addEventListener(WebInspector.TabBar.Event.TabBarItemRemoved, this._tabBarItemRemoved, this);
@@ -116,7 +115,7 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.Object
         return null;
     }
 
-    addTabForContentView(tabContentView, doNotAnimate)
+    addTabForContentView(tabContentView, doNotAnimate, insertionIndex)
     {
         console.assert(tabContentView instanceof WebInspector.TabContentView);
         if (!(tabContentView instanceof WebInspector.TabContentView))
@@ -143,7 +142,10 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.Object
         else
             this._recentTabContentViews.push(tabContentView);
 
-        this._tabBar.addTabBarItem(tabBarItem, doNotAnimate);
+        if (typeof insertionIndex === "number")
+            this._tabBar.insertTabBarItem(tabBarItem, insertionIndex, doNotAnimate);
+        else
+            this._tabBar.addTabBarItem(tabBarItem, doNotAnimate);
 
         console.assert(this._recentTabContentViews.length === this._tabBar.tabBarItems.length - (this._tabBar.newTabItem ? 1 : 0));
         console.assert(!this.selectedTabContentView || this.selectedTabContentView === this._recentTabContentViews[0]);
@@ -151,9 +153,9 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.Object
         return true;
     }
 
-    showTabForContentView(tabContentView, doNotAnimate)
+    showTabForContentView(tabContentView, doNotAnimate, insertionIndex)
     {
-        if (!this.addTabForContentView(tabContentView, doNotAnimate))
+        if (!this.addTabForContentView(tabContentView, doNotAnimate, insertionIndex))
             return false;
 
         this._tabBar.selectedTabBarItem = tabContentView.tabBarItem;
@@ -171,10 +173,10 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.Object
         if (!(tabContentView.tabBarItem instanceof WebInspector.TabBarItem))
             return false;
 
-        if (tabBarItem.parentTabBar !== this._tabBar)
+        if (tabContentView.tabBarItem.parentTabBar !== this._tabBar)
             return false;
 
-        this._tabBar.removeTabBarItem(tabBarItem, doNotAnimate);
+        this._tabBar.removeTabBarItem(tabContentView.tabBarItem, doNotAnimate);
 
         console.assert(this._recentTabContentViews.length === this._tabBar.tabBarItems.length - (this._tabBar.newTabItem ? 1 : 0));
         console.assert(!this.selectedTabContentView || this.selectedTabContentView === this._recentTabContentViews[0]);

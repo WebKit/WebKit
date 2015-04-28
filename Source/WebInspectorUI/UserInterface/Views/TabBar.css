@@ -106,20 +106,20 @@ body.window-inactive .tab-bar > .top-border {
     justify-content: center;
 }
 
-.tab-bar > .item.selected {
+.tab-bar > .item:not(.disabled).selected {
     border-top-color: rgb(190, 190, 190);
     background-image: linear-gradient(to bottom, rgb(222, 222, 222), rgb(211, 211, 211));
     background-size: 100% 100%;
 }
 
-.tab-bar:not(.animating) > .item:not(.selected):hover,
-.tab-bar > .item.new-tab-button:hover {
+.tab-bar:not(.animating) > .item:not(.selected, .disabled):hover,
+.tab-bar > .item.new-tab-button:not(.disabled):hover {
     background-position: 0 100%;
     border-top-color: rgb(152, 152, 152);
     border-left-color: rgb(152, 152, 152);
 }
 
-.tab-bar:not(.animating) > .item:not(.selected):hover + .item {
+.tab-bar:not(.animating) > .item:not(.selected, .disabled):hover + .item {
     border-left-color: rgb(152, 152, 152);
 }
 
@@ -201,8 +201,12 @@ body:not(.window-inactive) .tab-bar:not(.single-tab) > .item:not(.hide-close-but
     opacity: 0.7;
 }
 
-.tab-bar:not(.animating) > .item:not(.selected):hover > .icon,
-.tab-bar > .item.new-tab-button:hover > .icon {
+.tab-bar > .item.disabled > .icon {
+    opacity: 0.35;
+}
+
+.tab-bar:not(.animating) > .item:not(.selected, .disabled):hover > .icon,
+.tab-bar > .item.new-tab-button:not(.disabled):hover > .icon {
     opacity: 0.6;
 }
 

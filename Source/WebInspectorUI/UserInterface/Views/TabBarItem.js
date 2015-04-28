@@ -100,6 +100,16 @@ WebInspector.TabBarItem = class TabBarItem extends WebInspector.Object
         this._element.classList.toggle("selected", selected);
     }
 
+    get disabled()
+    {
+        return this._element.classList.contains("disabled");
+    }
+
+    set disabled(disabled)
+    {
+        this._element.classList.toggle("disabled", disabled);
+    }
+
     get hideCloseButton()
     {
         return this._element.classList.contains("hide-close-button");

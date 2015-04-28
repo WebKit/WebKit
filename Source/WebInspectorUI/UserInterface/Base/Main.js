@@ -197,6 +197,7 @@ WebInspector.contentLoaded = function()
     this.toolbar.sizeMode = WebInspector.Toolbar.SizeMode.Small;
 
     this.tabBar = new WebInspector.TabBar(document.getElementById("tab-bar"));
+    this.tabBar.addEventListener(WebInspector.TabBar.Event.NewTabItemClicked, this._newTabItemClicked, this);
 
     var contentElement = document.getElementById("content");
     contentElement.setAttribute("role", "main");
@@ -227,6 +228,9 @@ WebInspector.contentLoaded = function()
 
     this.tabBrowser = new WebInspector.TabBrowser(document.getElementById("tab-browser"), this.tabBar, this.navigationSidebar, this.detailsSidebar);
     this.tabBrowser.addEventListener(WebInspector.TabBrowser.Event.SelectedTabContentViewDidChange, this._tabBrowserSelectedTabContentViewDidChange, this);
+
+    this.tabBar.addEventListener(WebInspector.TabBar.Event.TabBarItemAdded, this._updateNewTabButtonState, this);
+    this.tabBar.addEventListener(WebInspector.TabBar.Event.TabBarItemRemoved, this._updateNewTabButtonState, this);
 
     this._reloadPageKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "R", this._reloadPage.bind(this));
     this._reloadPageIgnoringCacheKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, "R", this._reloadPageIgnoringCache.bind(this));
@@ -329,7 +333,7 @@ WebInspector.contentLoaded = function()
     this._pendingOpenTabTypes = [];
 
     for (var tabType of this._openTabsSetting.value) {
-        if (!this._isTabTypeAllowed(tabType)) {
+        if (!this.isTabTypeAllowed(tabType)) {
             this._pendingOpenTabTypes.push(tabType);
             continue;
         }
@@ -369,7 +373,7 @@ WebInspector.contentLoaded = function()
     this.runBootstrapOperations();
 };
 
-WebInspector._isTabTypeAllowed = function(tabType)
+WebInspector.isTabTypeAllowed = function(tabType)
 {
     switch (tabType) {
     case WebInspector.ElementsTabContentView.Type:
@@ -396,6 +400,8 @@ WebInspector._tabContentViewForType = function(tabType)
         return new WebInspector.ConsoleTabContentView;
     case WebInspector.SearchTabContentView.Type:
         return new WebInspector.SearchTabContentView;
+    case WebInspector.NewTabTabContentView.Type:
+        return new WebInspector.NewTabTabContentView;
     default:
         console.error("Unknown tab type", tabType);
     }
@@ -409,13 +415,62 @@ WebInspector._rememberOpenTabs = function()
 
     for (var tabBarItem of this.tabBar.tabBarItems) {
         var tabContentView = tabBarItem.representedObject;
-        if (tabContentView instanceof WebInspector.SettingsTabContentView)
+        if (!(tabContentView instanceof WebInspector.TabContentView))
+            continue;
+        if (tabContentView instanceof WebInspector.SettingsTabContentView || tabContentView instanceof WebInspector.NewTabContentView)
             continue;
         console.assert(tabContentView.type, "Tab type can't be null, undefined, or empty string", tabContentView.type, tabContentView);
         openTabs.push(tabContentView.type);
     }
 
     this._openTabsSetting.value = openTabs;
+};
+
+WebInspector._updateNewTabButtonState = function(event)
+{
+    var newTabAllowed = this.isNewTabWithTypeAllowed(WebInspector.ConsoleTabContentView.Type) || this.isNewTabWithTypeAllowed(WebInspector.ElementsTabContentView.Type);
+    this.tabBar.newTabItem.disabled = !newTabAllowed;
+};
+
+WebInspector._newTabItemClicked = function(event)
+{
+    var tabContentView = this.tabBrowser.bestTabContentViewForClass(WebInspector.NewTabContentView);
+    if (!tabContentView)
+        tabContentView = new WebInspector.NewTabContentView;
+    this.tabBrowser.showTabForContentView(tabContentView);
+};
+
+WebInspector.isNewTabWithTypeAllowed = function(tabType)
+{
+    if (!this.isTabTypeAllowed(tabType))
+        return false;
+
+    // Only allow one tab per class for now.
+    for (var tabBarItem of this.tabBar.tabBarItems) {
+        var tabContentView = tabBarItem.representedObject;
+        if (!(tabContentView instanceof WebInspector.TabContentView))
+            continue;
+        if (tabContentView.type === tabType)
+            return false;
+    }
+
+    return true;
+};
+
+WebInspector.createNewTab = function(tabType, newTabContentViewToReplace)
+{
+    console.assert(this.isNewTabWithTypeAllowed(tabType));
+
+    var tabContentView = this._tabContentViewForType(tabType);
+
+    if (newTabContentViewToReplace) {
+        var insertionIndex = this.tabBar.tabBarItems.indexOf(newTabContentViewToReplace.tabBarItem);
+        this.tabBrowser.closeTabForContentView(newTabContentViewToReplace, true);
+        this.tabBrowser.showTabForContentView(tabContentView, true, insertionIndex);
+        return;
+    }
+
+    this.tabBrowser.showTabForContentView(tabContentView);
 };
 
 WebInspector.activateExtraDomains = function(domains)
@@ -437,7 +492,7 @@ WebInspector.activateExtraDomains = function(domains)
 
     var stillPendingOpenTabTypes = [];
     for (var tabType of this._pendingOpenTabTypes) {
-        if (!this._isTabTypeAllowed(tabType)) {
+        if (!this.isTabTypeAllowed(tabType)) {
             stillPendingOpenTabTypes.push(tabType);
             continue;
         }
@@ -1061,6 +1116,8 @@ WebInspector._restoreCookieForOpenTabs = function(causedByReload)
 {
     for (var tabBarItem of this.tabBar.tabBarItems) {
         var tabContentView = tabBarItem.representedObject;
+        if (!(tabContentView instanceof WebInspector.TabContentView))
+            continue;
         tabContentView.restoreStateFromCookie(causedByReload);
     }
 };
@@ -1069,6 +1126,8 @@ WebInspector._saveCookieForOpenTabs = function()
 {
     for (var tabBarItem of this.tabBar.tabBarItems) {
         var tabContentView = tabBarItem.representedObject;
+        if (!(tabContentView instanceof WebInspector.TabContentView))
+            continue;
         tabContentView.saveStateToCookie();
     }
 };
