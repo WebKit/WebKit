@@ -1,3 +1,11 @@
+2015-04-28  Andy Estes  <aestes@apple.com>
+
+        Add expectations for tests added in r183428 and r183450.
+
+        * js/regress/typed-array-get-set-by-val-profiling-expected.txt: Added.
+        * media/audio-playback-restriction-autoplay-expected.txt: Added.
+        * media/audio-playback-restriction-play-expected.txt: Added.
+
 2015-04-28  Antti Koivisto  <antti@apple.com>
 
         Network Cache: Disk cache getting filled by YouTube video data
