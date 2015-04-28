@@ -110,7 +110,7 @@ public:
     // m_counter.
     float m_totalCount;
 
-    // This is the threshold we were originally targetting, without any correction for
+    // This is the threshold we were originally targeting, without any correction for
     // the memory usage heuristics.
     int32_t m_activeThreshold;
 };

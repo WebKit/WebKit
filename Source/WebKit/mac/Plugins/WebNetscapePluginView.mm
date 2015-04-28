@@ -1731,7 +1731,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }
         
     if (cTarget || JSString) {
-        // Make when targetting a frame or evaluating a JS string, perform the request after a delay because we don't
+        // Make when targeting a frame or evaluating a JS string, perform the request after a delay because we don't
         // want to potentially kill the plug-in inside of its URL request.
         
         if (JSString && target && [frame findFrameNamed:target] != frame) {

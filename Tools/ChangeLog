@@ -1,3 +1,13 @@
+2015-04-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix common typo "targetting" => "targeting"
+        https://bugs.webkit.org/show_bug.cgi?id=144349
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitdirs.pm:
+        (execMacWebKitAppForDebugging):
+
 2015-04-28  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK][jhbuild] Mesa build failure with llvm 3.6

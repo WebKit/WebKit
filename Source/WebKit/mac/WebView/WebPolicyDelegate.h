@@ -88,7 +88,7 @@ extern NSString *WebActionOriginalURLKey; // NSURL
     called with an appropriate error. 
 
     <p>If a new window is going to be created for this navigation as a
-    result of frame targetting, then it will be created once you call
+    result of frame targeting, then it will be created once you call
     this method.
 */
 - (void)use;
