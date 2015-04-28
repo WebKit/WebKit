@@ -401,14 +401,13 @@ void RenderElement::setStyle(Ref<RenderStyle>&& style, StyleDifference minimalSt
     // and remove the check of m_hasInitializedStyle below too.
     ASSERT(m_hasInitializedStyle || isRenderView());
 
-    if (m_style.ptr() == style.ptr()) {
+    if (m_style.ptr() == style.ptr() && minimalStyleDifference != StyleDifferenceEqual) {
         // FIXME: Can we change things so we never hit this code path?
         // We need to run through adjustStyleDifference() for iframes, plugins, and canvas so
         // style sharing is disabled for them. That should ensure that we never hit this code path.
         ASSERT(!isRenderIFrame());
         ASSERT(!isEmbeddedObject());
         ASSERT(!isCanvas());
-        ASSERT(minimalStyleDifference == StyleDifferenceEqual);
         return;
     }
 

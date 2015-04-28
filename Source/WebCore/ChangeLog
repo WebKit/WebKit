@@ -1,3 +1,15 @@
+2015-04-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Eliminate styleDidChange with StyleDifferenceEqual when updates are actually necessary
+        https://bugs.webkit.org/show_bug.cgi?id=144198
+
+        Followup: fix assertions seen in fullscreen and pseudo-element tests. These code
+        paths set the style to the existing pointer, but with a SyntheticStyleChange.
+        We have to avoid an early return in this case.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::setStyle):
+
 2015-04-25  Simon Fraser  <simon.fraser@apple.com>
 
         Eliminate styleDidChange with StyleDifferenceEqual when updates are actually necessary
