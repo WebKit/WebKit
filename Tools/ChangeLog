@@ -1,3 +1,14 @@
+2015-04-28  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK][jhbuild] Mesa build failure with llvm 3.6
+        https://bugs.webkit.org/show_bug.cgi?id=144250
+
+        Reviewed by Žan Doberšek.
+
+        Bump the version of Mesa to 10.5.4
+
+        * gtk/jhbuild.modules:
+
 2015-04-27  Dewei Zhu  <dewei_zhu@apple.com>
 
         Add '__init__.py' and fix known bug in benchmark runner.
