@@ -244,8 +244,9 @@ PassRefPtr<SharedBuffer> SharedBuffer::copy() const
         clone->m_buffer->data.append(segment, segmentSize);
 #else
     for (auto& data : m_dataArray)
-        clone->append(data.get());
+        clone->m_dataArray.append(data.get());
 #endif
+    ASSERT(clone->size() == size());
 
     return clone.release();
 }

@@ -1,3 +1,15 @@
+2015-04-28  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        SharedBuffer::copy is not computing the buffer size correctly when having m_dataArray
+        https://bugs.webkit.org/show_bug.cgi?id=144321
+
+        Reviewed by Darin Adler.
+
+        Patch correctness covered by existing tests.
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::copy): Direct appending to m_dataArray and not using append method as this method updates the SharedBuffer size.
+
 2015-04-28  Per Arne Vollan  <peavo@outlook.com>
 
         [Curl] Memory leak.
