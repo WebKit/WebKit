@@ -1957,7 +1957,13 @@ static NSRect rectInViewSpaceForRectInLayoutSpace(PDFLayerController* pdfLayerCo
 
 WebCore::FloatRect PDFPlugin::viewRectForSelection(PDFSelection *selection) const
 {
-    PDFPage *currentPage = [m_pdfLayerController currentPage];
+    PDFPage *currentPage = nil;
+    NSArray* pages = selection.pages;
+    if (pages.count)
+        currentPage = (PDFPage *)[pages objectAtIndex:0];
+
+    if (!currentPage)
+        currentPage = [m_pdfLayerController currentPage];
     
     NSRect rectInPageSpace = [selection boundsForPage:currentPage];
     NSRect rectInLayoutSpace = [[m_pdfLayerController layout] convertRect:rectInPageSpace fromPage:currentPage forScaleFactor:1.0];

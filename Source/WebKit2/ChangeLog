@@ -1,3 +1,29 @@
+2015-04-27  Brent Fulgham  <bfulgham@apple.com>
+
+        PDF action menu fixes
+        https://bugs.webkit.org/show_bug.cgi?id=144299
+        <rdar://problem/20702215>
+
+        Reviewed by Tim Horton.
+
+        Make two corrections to how PDFs are handled:
+        1. When calculating the view rect for the user's selection, make sure
+        that we get coordinates for the correct PDF page. The existing code assumed
+        that the current PDFLayerControler's current page was correct, but this will
+        not be true if you zoom the PDF out so that several pages are displayed at
+        once. Each selection keeps track of the page it is referenced against.
+        
+        2. Revise the offsets calculated for the TextIndicator to take into account
+        the font descender (as well as the ascender), and to adjust by the scaled
+        amount of margin around the selected text.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::viewRectForSelection): Use correct page for calculating
+        the coordinates.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::dictionaryPopupInfoForSelectionInPDFPlugin): Include font 'descendant'
+        and (scaled) margin when adjusting the hit target for the TextIndicator to draw.
+
 2015-04-27  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Rename WTF_USE_3D_GRAPHICS to ENABLE_GRAPHICS_CONTEXT_3D
