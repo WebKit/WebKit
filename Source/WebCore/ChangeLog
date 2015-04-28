@@ -1,3 +1,60 @@
+2015-04-28  Brady Eidson  <beidson@apple.com>
+
+        Consolidate most "frame load" arguments into FrameLoadRequest.
+        https://bugs.webkit.org/show_bug.cgi?id=144276
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests (No change in behavior).
+        
+        This patch starts the long overdue process of wrangling the insane load methods in FrameLoader.
+        
+        Humble beginnings of this long process:
+        - Put most of the various "frame load" arguments that are passed around within FrameLoader on FrameLoadRequest.
+        - Get rid of the "easy" constructors of FrameLoadRequest, forcing users to actually think about what they're doing.
+        - Change a private FrameLoader load method (urlSelected) to take a FrameLoadRequest instead of argument gobbledygook.
+        - Change a public FrameLoader load methods (changeLocation) to take a FrameLoadRequest instead of gobbledygook.
+        
+        These cover the straightforward changes where it was easy to figure out what the values of the FrameLoadRequest
+        arguments were from these various call sites.
+        
+        Further refactoring can be done in much smaller patches, handling fewer cases at a time. Little by little we will be
+        able to reduce the number of "load" methods on FrameLoader and make sure that they mainly only take a FrameLoadRequest
+        as an argument.
+
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::openInNewTab):
+        
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::navigate):
+        
+        * loader/FrameLoadRequest.cpp:
+        (WebCore::FrameLoadRequest::FrameLoadRequest):
+        * loader/FrameLoadRequest.h:
+        (WebCore::FrameLoadRequest::FrameLoadRequest):
+        (WebCore::FrameLoadRequest::lockHistory):
+        (WebCore::FrameLoadRequest::lockBackForwardList):
+        (WebCore::FrameLoadRequest::shouldSendReferrer):
+        (WebCore::FrameLoadRequest::allowNavigationToInvalidURL):
+        (WebCore::FrameLoadRequest::newFrameOpenerPolicy):
+        (WebCore::FrameLoadRequest::shouldReplaceDocumentIfJavaScriptURL):
+        
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::changeLocation):
+        (WebCore::FrameLoader::urlSelected):
+        (WebCore::FrameLoader::loadFrameRequest):
+        * loader/FrameLoader.h:
+        
+        * loader/NavigationScheduler.cpp:
+        (WebCore::NavigationScheduler::scheduleLocationChange):
+        
+        * page/ContextMenuController.cpp:
+        (WebCore::openNewWindow):
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::createWindow):
+
 2015-04-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Mac] [iOS] Implement font-synthesis CSS property

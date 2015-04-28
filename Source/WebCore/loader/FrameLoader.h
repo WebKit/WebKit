@@ -108,8 +108,7 @@ public:
 
     // FIXME: These are all functions which start loads. We have too many.
     WEBCORE_EXPORT void loadURLIntoChildFrame(const URL&, const String& referer, Frame*);
-    WEBCORE_EXPORT void loadFrameRequest(const FrameLoadRequest&, LockHistory, LockBackForwardList, // Called by submitForm, calls loadPostRequest and loadURL.
-        PassRefPtr<Event>, PassRefPtr<FormState>, ShouldSendReferrer, AllowNavigationToInvalidURL, NewFrameOpenerPolicy);
+    WEBCORE_EXPORT void loadFrameRequest(const FrameLoadRequest&, PassRefPtr<Event>, PassRefPtr<FormState>); // Called by submitForm, calls loadPostRequest and loadURL.
 
     WEBCORE_EXPORT void load(const FrameLoadRequest&);
 
@@ -118,8 +117,7 @@ public:
 #endif
     unsigned long loadResourceSynchronously(const ResourceRequest&, StoredCredentials, ClientCredentialPolicy, ResourceError&, ResourceResponse&, Vector<char>& data);
 
-    void changeLocation(SecurityOrigin*, const URL&, const String& referrer, LockHistory = LockHistory::Yes,
-        LockBackForwardList = LockBackForwardList::Yes, bool refresh = false, AllowNavigationToInvalidURL = AllowNavigationToInvalidURL::Yes);
+    void changeLocation(const FrameLoadRequest&);
     WEBCORE_EXPORT void urlSelected(const URL&, const String& target, PassRefPtr<Event>, LockHistory, LockBackForwardList, ShouldSendReferrer);
     void submitForm(PassRefPtr<FormSubmission>);
 
@@ -342,7 +340,7 @@ private:
 
     void dispatchDidCommitLoad();
 
-    WEBCORE_EXPORT void urlSelected(const FrameLoadRequest&, PassRefPtr<Event>, LockHistory, LockBackForwardList, ShouldSendReferrer, ShouldReplaceDocumentIfJavaScriptURL, AllowNavigationToInvalidURL);
+    void urlSelected(const FrameLoadRequest&, PassRefPtr<Event>);
 
     void loadWithDocumentLoader(DocumentLoader*, FrameLoadType, PassRefPtr<FormState>, AllowNavigationToInvalidURL); // Calls continueLoadAfterNavigationPolicy
     void load(DocumentLoader*);                                                         // Calls loadWithDocumentLoader   

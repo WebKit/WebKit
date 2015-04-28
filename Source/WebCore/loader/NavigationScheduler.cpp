@@ -110,7 +110,11 @@ protected:
     virtual void fire(Frame& frame) override
     {
         UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
-        frame.loader().changeLocation(m_securityOrigin.get(), m_url, m_referrer, lockHistory(), lockBackForwardList(), false);
+
+        ResourceRequest resourceRequest(m_url, m_referrer, UseProtocolCachePolicy);
+        FrameLoadRequest frameRequest(m_securityOrigin.get(), resourceRequest, lockHistory(), lockBackForwardList(), MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow);
+
+        frame.loader().changeLocation(frameRequest);
     }
 
     virtual void didStartTimer(Frame& frame, Timer& timer) override
@@ -165,7 +169,10 @@ public:
     {
         UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
         bool refresh = equalIgnoringFragmentIdentifier(frame.document()->url(), url());
-        frame.loader().changeLocation(securityOrigin(), url(), referrer(), lockHistory(), lockBackForwardList(), refresh, AllowNavigationToInvalidURL::No);
+        ResourceRequest resourceRequest(url(), referrer(), refresh ? ReloadIgnoringCacheData : UseProtocolCachePolicy);
+        FrameLoadRequest frameRequest(securityOrigin(), resourceRequest, lockHistory(), lockBackForwardList(), MaybeSendReferrer, AllowNavigationToInvalidURL::No, NewFrameOpenerPolicy::Allow);
+
+        frame.loader().changeLocation(frameRequest);
     }
 };
 
@@ -177,7 +184,10 @@ public:
     virtual void fire(Frame& frame) override
     {
         UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
-        frame.loader().changeLocation(securityOrigin(), url(), referrer(), lockHistory(), lockBackForwardList(), false, AllowNavigationToInvalidURL::No);
+
+        ResourceRequest resourceRequest(url(), referrer(), UseProtocolCachePolicy);
+        FrameLoadRequest frameRequest(securityOrigin(), resourceRequest, lockHistory(), lockBackForwardList(), MaybeSendReferrer, AllowNavigationToInvalidURL::No, NewFrameOpenerPolicy::Allow);
+        frame.loader().changeLocation(frameRequest);
     }
 };
 
@@ -191,7 +201,10 @@ public:
     virtual void fire(Frame& frame) override
     {
         UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
-        frame.loader().changeLocation(securityOrigin(), url(), referrer(), lockHistory(), lockBackForwardList(), true);
+
+        ResourceRequest resourceRequest(url(), referrer(), ReloadIgnoringCacheData);
+        FrameLoadRequest frameRequest(securityOrigin(), resourceRequest, lockHistory(), lockBackForwardList(), MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow);
+        frame.loader().changeLocation(frameRequest);
     }
 };
 
@@ -244,9 +257,9 @@ public:
         Document* requestingDocument = m_submission->state()->sourceDocument();
         if (!requestingDocument->canNavigate(&frame))
             return;
-        FrameLoadRequest frameRequest(requestingDocument->securityOrigin());
+        FrameLoadRequest frameRequest(requestingDocument->securityOrigin(), lockHistory(), lockBackForwardList(), MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow);
         m_submission->populateFrameLoadRequest(frameRequest);
-        frame.loader().loadFrameRequest(frameRequest, lockHistory(), lockBackForwardList(), m_submission->event(), m_submission->state(), MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow);
+        frame.loader().loadFrameRequest(frameRequest, m_submission->event(), m_submission->state());
     }
     
     virtual void didStartTimer(Frame& frame, Timer& timer) override
@@ -387,7 +400,9 @@ void NavigationScheduler::scheduleLocationChange(SecurityOrigin* securityOrigin,
     // If the URL we're going to navigate to is the same as the current one, except for the
     // fragment part, we don't need to schedule the location change.
     if (url.hasFragmentIdentifier() && equalIgnoringFragmentIdentifier(m_frame.document()->url(), url)) {
-        loader.changeLocation(securityOrigin, m_frame.document()->completeURL(url), referrer, lockHistory, lockBackForwardList, false, AllowNavigationToInvalidURL::No);
+        ResourceRequest resourceRequest(m_frame.document()->completeURL(url), referrer, UseProtocolCachePolicy);
+        FrameLoadRequest frameRequest(securityOrigin, resourceRequest, emptyString(), lockHistory, lockBackForwardList, MaybeSendReferrer, AllowNavigationToInvalidURL::No, NewFrameOpenerPolicy::Allow, ReplaceDocumentIfJavaScriptURL);
+        loader.changeLocation(frameRequest);
         return;
     }
 

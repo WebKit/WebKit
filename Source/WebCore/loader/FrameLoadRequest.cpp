@@ -41,6 +41,12 @@ FrameLoadRequest::FrameLoadRequest(Frame* frame, const ResourceRequest& resource
     , m_resourceRequest(resourceRequest)
     , m_shouldCheckNewWindowPolicy(false)
     , m_substituteData(substituteData)
+    , m_lockHistory(LockHistory::No)
+    , m_lockBackForwardList(LockBackForwardList::No)
+    , m_shouldSendReferrer(MaybeSendReferrer)
+    , m_allowNavigationToInvalidURL(AllowNavigationToInvalidURL::Yes)
+    , m_newFrameOpenerPolicy(NewFrameOpenerPolicy::Allow)
+    , m_shouldReplaceDocumentIfJavaScriptURL(ReplaceDocumentIfJavaScriptURL)
 {
 }
 

@@ -45,6 +45,7 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
+#include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "FrameSnapshotting.h"
 #include "FrameView.h"
@@ -416,7 +417,10 @@ void InspectorPageAgent::navigate(ErrorString&, const String& url)
 {
     UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
     Frame& frame = m_page->mainFrame();
-    frame.loader().changeLocation(frame.document()->securityOrigin(), frame.document()->completeURL(url), "", LockHistory::No, LockBackForwardList::No);
+
+    ResourceRequest resourceRequest(frame.document()->completeURL(url));
+    FrameLoadRequest frameRequest(frame.document()->securityOrigin(), resourceRequest, emptyString(), LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::No, NewFrameOpenerPolicy::Allow, ShouldReplaceDocumentIfJavaScriptURL::ReplaceDocumentIfJavaScriptURL);
+    frame.loader().changeLocation(frameRequest);
 }
 
 static Ref<Inspector::Protocol::Page::Cookie> buildObjectForCookie(const Cookie& cookie)

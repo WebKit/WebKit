@@ -1,3 +1,13 @@
+2015-04-28  Brady Eidson  <beidson@apple.com>
+
+        Consolidate most "frame load" arguments into FrameLoadRequest.
+        https://bugs.webkit.org/show_bug.cgi?id=144276
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView PDFViewWillClickOnLink:withURL:]):
+
 2015-04-27  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/20721931> REGRESSION (r178753): All legacy framework headers are missing availability annotations

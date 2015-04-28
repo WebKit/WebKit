@@ -210,7 +210,7 @@ void InspectorFrontendClientLocal::openInNewTab(const String& url)
 {
     UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
     Frame& mainFrame = m_inspectorController->inspectedPage().mainFrame();
-    FrameLoadRequest request(mainFrame.document()->securityOrigin(), ResourceRequest(), "_blank");
+    FrameLoadRequest request(mainFrame.document()->securityOrigin(), ResourceRequest(), "_blank", LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, ReplaceDocumentIfJavaScriptURL);
 
     bool created;
     WindowFeatures windowFeatures;
@@ -222,7 +222,9 @@ void InspectorFrontendClientLocal::openInNewTab(const String& url)
     frame->page()->setOpenedByDOM();
 
     // FIXME: Why does one use mainFrame and the other frame?
-    frame->loader().changeLocation(mainFrame.document()->securityOrigin(), frame->document()->completeURL(url), "", LockHistory::No, LockBackForwardList::No);
+    ResourceRequest resourceRequest(frame->document()->completeURL(url));
+    FrameLoadRequest frameRequest(mainFrame.document()->securityOrigin(), resourceRequest, emptyString(), LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, ReplaceDocumentIfJavaScriptURL);
+    frame->loader().changeLocation(frameRequest);
 }
 
 void InspectorFrontendClientLocal::moveWindowBy(float x, float y)
