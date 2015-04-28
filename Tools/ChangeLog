@@ -1,3 +1,10 @@
+2015-04-28  Andy Estes  <aestes@apple.com>
+
+        Tell mac.py about 'mac-yosemite' so that fallback to 'mac-mavericks' works properly.
+
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort):
+
 2015-03-05  Chris Dumez  <cdumez@apple.com>
 
         run-webkit-tests and run-perf-tests should use WebKitTestRunner by default
