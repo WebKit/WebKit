@@ -1,3 +1,13 @@
+2015-04-28  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [CMake] Remove unnecessary include paths in TestWebKitAPI cmake files
+        https://bugs.webkit.org/show_bug.cgi?id=144319
+
+        Reviewed by Csaba Osztrogonác.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/PlatformEfl.cmake:
+
 2015-04-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix common typo "targetting" => "targeting"

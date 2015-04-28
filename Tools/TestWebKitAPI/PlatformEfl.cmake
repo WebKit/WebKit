@@ -12,10 +12,6 @@ include_directories(
     ${WEBKIT2_DIR}/UIProcess/API/C/efl
     ${WEBKIT2_DIR}/UIProcess/API/efl
     ${ECORE_EVAS_INCLUDE_DIRS}
-    ${ECORE_INCLUDE_DIRS}
-    ${EINA_INCLUDE_DIRS}
-    ${EO_INCLUDE_DIRS}
-    ${EVAS_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
     ${LIBSOUP_INCLUDE_DIRS}
 )

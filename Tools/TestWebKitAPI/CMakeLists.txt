@@ -9,15 +9,6 @@ include_directories(${CMAKE_BINARY_DIR}
     ${JAVASCRIPTCORE_DIR}
     ${JAVASCRIPTCORE_DIR}/API
     ${JAVASCRIPTCORE_DIR}/ForwardingHeaders
-    ${JAVASCRIPTCORE_DIR}/assembler
-    ${JAVASCRIPTCORE_DIR}/bytecode
-    ${JAVASCRIPTCORE_DIR}/disassembler
-    ${JAVASCRIPTCORE_DIR}/interpreter
-    ${JAVASCRIPTCORE_DIR}/heap
-    ${JAVASCRIPTCORE_DIR}/jit
-    ${JAVASCRIPTCORE_DIR}/llint
-    ${JAVASCRIPTCORE_DIR}/parser
-    ${JAVASCRIPTCORE_DIR}/runtime
     ${THIRDPARTY_DIR}/gtest/include
     ${WEBCORE_DIR}/css
     ${WEBCORE_DIR}/dom
@@ -29,7 +20,6 @@ include_directories(${CMAKE_BINARY_DIR}
     ${WEBCORE_DIR}/platform/text
     ${WEBCORE_DIR}/platform/network
     ${WEBCORE_DIR}/platform/network/soup
-    ${WEBCORE_DIR}/rendering
     ${WEBCORE_DIR}/rendering/style
     ${WEBKIT2_DIR}/Platform/IPC
     ${WEBKIT2_DIR}/Shared
