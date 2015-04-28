@@ -1,3 +1,12 @@
+2015-04-27  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/20721931> REGRESSION (r178753): All legacy framework headers are missing availability annotations
+        https://bugs.webkit.org/show_bug.cgi?id=144311
+
+        Reviewed by Adele Peterson.
+
+        * postprocess-headers.sh: Changed “macsox” to “macosx”.
+
 2015-04-27  Brady Eidson  <beidson@apple.com>
 
         Make 'enum NavigationType' be an enum class

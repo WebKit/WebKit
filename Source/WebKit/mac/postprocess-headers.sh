@@ -28,7 +28,7 @@ postProcessInDirectory()
         fi
     done
 
-    if [[ ${PLATFORM_NAME} == macsox ]]; then
+    if [[ ${PLATFORM_NAME} == macosx ]]; then
         sedExpression='s/WEBKIT_((CLASS_|ENUM_)?AVAILABLE|DEPRECATED)/NS_\1/g';
     else
         sedExpression='s/ *WEBKIT_((CLASS_|ENUM_)?AVAILABLE|DEPRECATED)_MAC\([^)]+\)//g';
