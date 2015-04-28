@@ -1,3 +1,15 @@
+2015-04-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Make all options actually options
+        https://bugs.webkit.org/show_bug.cgi?id=144106
+
+        Reviewed by Martin Robinson.
+
+        Use WEBKIT_OPTION_DEFINE to set ENABLE_GTKDOC, ENABLE_INTROSPECTION, ENABLE_X11_TARGET, and
+        ENABLE_WAYLAND_TARGET.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2015-04-28  Michael Catanzaro <mcatanzaro@igalia.com>
 
         Unreviewed, fix GTK build after r183452

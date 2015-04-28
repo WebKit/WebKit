@@ -12,11 +12,6 @@ set(WEBKITGTK_API_VERSION 4.0)
 CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT2 42 0 5)
 CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(JAVASCRIPTCORE 19 3 1)
 
-set(ENABLE_GTKDOC OFF CACHE BOOL "Whether or not to use generate gtkdoc.")
-set(ENABLE_X11_TARGET ON CACHE BOOL "Whether to enable support for the X11 windowing target.")
-set(ENABLE_WAYLAND_TARGET OFF CACHE BOOL "Whether to enable support for the Wayland windowing target.")
-set(ENABLE_INTROSPECTION ON CACHE BOOL "Whether to enable GObject introspection.")
-
 # These are shared variables, but we special case their definition so that we can use the
 # CMAKE_INSTALL_* variables that are populated by the GNUInstallDirs macro.
 set(LIB_INSTALL_DIR "${CMAKE_INSTALL_FULL_LIBDIR}" CACHE PATH "Absolute path to library installation directory")
@@ -56,28 +51,24 @@ if (NOT GEOCLUE2_FOUND)
     find_package(GeoClue)
 endif ()
 
-if (ENABLE_X11_TARGET)
-    # With cmake 3.2.x we have to explicitly ask for X11 otherwise the X11_X11_LIB
-    # variable won't be set thus the X11 linker flags won't be added and the build
-    # will fail.
-    find_package(X11 REQUIRED)
-endif ()
-
-if (ENABLE_WAYLAND_TARGET)
-    find_package(Wayland REQUIRED)
-endif ()
-
 WEBKIT_OPTION_BEGIN()
 
 WEBKIT_OPTION_DEFINE(ENABLE_GLES2 "Whether to enable OpenGL ES 2.0." PUBLIC OFF)
+WEBKIT_OPTION_DEFINE(ENABLE_GTKDOC "Whether or not to use generate gtkdoc." PUBLIC OFF)
+WEBKIT_OPTION_DEFINE(ENABLE_INTROSPECTION "Whether to enable GObject introspection." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_OPENGL "Whether to use OpenGL." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_PLUGIN_PROCESS_GTK2 "Whether to build WebKitPluginProcess2 to load GTK2 based plugins." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(ENABLE_X11_TARGET "Whether to enable support for the X11 windowing target." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(ENABLE_WAYLAND_TARGET "Whether to enable support for the Wayland windowing target." PUBLIC OFF)
 
 WEBKIT_OPTION_DEFINE(USE_GSTREAMER_GL "Whether to enable support for GStreamer GL" PRIVATE OFF)
 WEBKIT_OPTION_DEFINE(USE_REDIRECTED_XCOMPOSITE_WINDOW "Whether to use a Redirected XComposite Window for accelerated compositing in X11." PRIVATE ON)
 
 # FIXME: Can we use cairo-glesv2 to avoid this conflict?
 WEBKIT_OPTION_CONFLICT(ENABLE_ACCELERATED_2D_CANVAS ENABLE_GLES2)
+
+# FIXME: Should be possible to build with support for both X11 and Wayland.
+WEBKIT_OPTION_CONFLICT(ENABLE_WAYLAND_TARGET ENABLE_X11_TARGET)
 
 WEBKIT_OPTION_DEPEND(ENABLE_3D_TRANSFORMS ENABLE_OPENGL)
 WEBKIT_OPTION_DEPEND(ENABLE_ACCELERATED_2D_CANVAS ENABLE_OPENGL)
@@ -149,8 +140,6 @@ endif ()
 # EGL is not, and ENABLE_X11_TARGET is OFF, this guess is wrong and the user must override it. We
 # can't check ENABLE_X11_TARGET at this point because we don't know whether it's enabled until
 # WEBKIT_OPTION_END has been called, and at that point it's too late to change default values.
-#
-# FIXME The above is not quite true yet because ENABLE_X11_TARGET is not yet an option, bug #144106.
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ACCELERATED_2D_CANVAS PUBLIC ${CAIRO_GL_FOUND})
 
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_CREDENTIAL_STORAGE PUBLIC ON)
@@ -256,6 +245,14 @@ add_definitions(-DDATA_DIR="${CMAKE_INSTALL_DATADIR}")
 add_definitions(-DUSER_AGENT_GTK_MAJOR_VERSION=601)
 add_definitions(-DUSER_AGENT_GTK_MINOR_VERSION=1)
 add_definitions(-DWEBKITGTK_API_VERSION_STRING="${WEBKITGTK_API_VERSION}")
+
+if (ENABLE_X11_TARGET)
+    find_package(X11 REQUIRED)
+endif ()
+
+if (ENABLE_WAYLAND_TARGET)
+    find_package(Wayland REQUIRED)
+endif ()
 
 if (ENABLE_OPENGL)
     # ENABLE_OPENGL is true if either WTF_USE_OPENGL or ENABLE_GLES2 is true.
