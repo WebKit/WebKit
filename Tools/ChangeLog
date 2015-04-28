@@ -1,5 +1,14 @@
 2015-04-28  Andy Estes  <aestes@apple.com>
 
+        Fix webkitpy tests after r183471.
+
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (test_baseline_search_path): Taught about mac-mavericks.
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaselineTest.test_baseline_directory): Ditto.
+
+2015-04-28  Andy Estes  <aestes@apple.com>
+
         Tell mac.py about 'mac-yosemite' so that fallback to 'mac-mavericks' works properly.
 
         * Scripts/webkitpy/port/mac.py:
