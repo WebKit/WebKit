@@ -406,6 +406,20 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&)
     return false;
 }
 
+void WebPage::getLookupContextAtPoint(const WebCore::IntPoint point, uint64_t callbackID)
+{
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    VisiblePosition position = frame.visiblePositionForPoint(point);
+    String resultString;
+    if (!position.isNull()) {
+        // As context, we are going to use 250 characters of text before and after the point.
+        RefPtr<Range> fullCharacterRange = rangeExpandedAroundPositionByCharacters(position, 250);
+        if (fullCharacterRange)
+            resultString = plainText(fullCharacterRange.get());
+    }
+    send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
+}
+
 NSObject *WebPage::accessibilityObjectForMainFramePlugin()
 {
     if (!m_page)

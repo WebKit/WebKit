@@ -501,6 +501,7 @@ public:
     void viewportMetaTagWidthDidChange(float width);
     void didFinishDrawingPagesToPDF(const IPC::DataReference&);
     void contentSizeCategoryDidChange(const String& contentSizeCategory);
+    void getLookupContextAtPoint(const WebCore::IntPoint&, std::function<void(const String&, CallbackBase::Error)>);
 #endif
 
     void didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction&);
