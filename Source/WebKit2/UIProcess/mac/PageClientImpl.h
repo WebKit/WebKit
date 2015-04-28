@@ -127,7 +127,8 @@ private:
     virtual PassRefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&) override;
 #endif
 
-    virtual void setTextIndicator(PassRefPtr<WebCore::TextIndicator>, bool fadeOut) override;
+    virtual void setTextIndicator(Ref<WebCore::TextIndicator>, WebCore::TextIndicatorLifetime = WebCore::TextIndicatorLifetime::Permanent) override;
+    virtual void clearTextIndicator(WebCore::TextIndicatorDismissalAnimation = WebCore::TextIndicatorDismissalAnimation::FadeOut) override;
     virtual void setTextIndicatorAnimationProgress(float) override;
 
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) override;
@@ -145,7 +146,7 @@ private:
     virtual void makeFirstResponder() override;
     
     virtual void didPerformDictionaryLookup(const DictionaryPopupInfo&) override;
-    virtual void dismissContentRelativeChildWindows() override;
+    virtual void dismissContentRelativeChildWindows(bool withAnimation = true) override;
 
     virtual void showCorrectionPanel(WebCore::AlternativeTextType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings) override;
     virtual void dismissCorrectionPanel(WebCore::ReasonForDismissingAlternativeText) override;

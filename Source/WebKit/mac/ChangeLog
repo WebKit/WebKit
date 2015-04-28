@@ -1,3 +1,35 @@
+2015-04-28  Timothy Horton  <timothy_horton@apple.com>
+
+        [TextIndicator] Yellow highlight takes too long to fade out on scroll
+        https://bugs.webkit.org/show_bug.cgi?id=144358
+        <rdar://problem/19451011>
+
+        Reviewed by Beth Dakin.
+
+        * WebView/WebActionMenuController.mm:
+        (-[WebActionMenuController _showTextIndicator]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView quickLookWithEvent:]):
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController _defaultAnimationController]):
+        (-[WebImmediateActionController _animationControllerForDataDetectedText]):
+        (-[WebImmediateActionController _animationControllerForDataDetectedLink]):
+        Pull _clearTextIndicatorWithAnimation out, make it avoid using a dismissal animation
+        if we're called from didHandleScrollWheel.
+
+        * WebView/WebView.mm:
+        (-[WebView _animationControllerForDictionaryLookupPopupInfo:]):
+        (-[WebView _setTextIndicator:]):
+        (-[WebView _setTextIndicator:withLifetime:]):
+        (-[WebView _clearTextIndicator]):
+        (-[WebView _showDictionaryLookupPopup:]):
+        (-[WebView _dictionaryLookupPopoverWillClose:]):
+        (-[WebView _setTextIndicator:fadeOut:]): Deleted.
+        * WebView/WebViewInternal.h:
+        Make _setTextIndicator take a reference.
+        Add a variant of _setTextIndicator that takes a Lifetime.
+        Make _clearTextIndicatorWithAnimation take a DismissalAnimation.
+
 2015-04-28  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Fully replace ENABLE_LLINT_C_LOOP with ENABLE_JIT

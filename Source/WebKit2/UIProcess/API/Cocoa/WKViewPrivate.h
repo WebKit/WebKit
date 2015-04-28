@@ -149,6 +149,7 @@
 - (void)_completeImmediateActionAnimation;
 
 - (void)_dismissContentRelativeChildWindows;
+- (void)_dismissContentRelativeChildWindowsWithAnimation:(BOOL)withAnimation;
 
 - (void)_didChangeContentSize:(NSSize)newSize;
 #endif

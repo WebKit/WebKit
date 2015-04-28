@@ -453,7 +453,11 @@ PassRefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPagePr
     return 0;
 }
 
-void PageClientImpl::setTextIndicator(PassRefPtr<TextIndicator> textIndicator, bool fadeOut)
+void PageClientImpl::setTextIndicator(Ref<TextIndicator> textIndicator, TextIndicatorLifetime)
+{
+}
+
+void PageClientImpl::clearTextIndicator(TextIndicatorDismissalAnimation)
 {
 }
 

@@ -503,9 +503,14 @@ PassRefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page,
 }
 #endif
 
-void PageClientImpl::setTextIndicator(PassRefPtr<TextIndicator> textIndicator, bool fadeOut)
+void PageClientImpl::setTextIndicator(Ref<TextIndicator> textIndicator, WebCore::TextIndicatorLifetime lifetime)
 {
-    [m_wkView _setTextIndicator:textIndicator fadeOut:fadeOut];
+    [m_wkView _setTextIndicator:textIndicator.get() withLifetime:lifetime];
+}
+
+void PageClientImpl::clearTextIndicator(WebCore::TextIndicatorDismissalAnimation dismissalAnimation)
+{
+    [m_wkView _clearTextIndicatorWithAnimation:dismissalAnimation];
 }
 
 void PageClientImpl::setTextIndicatorAnimationProgress(float progress)
@@ -589,16 +594,16 @@ void PageClientImpl::didPerformDictionaryLookup(const DictionaryPopupInfo& dicti
     RetainPtr<NSMutableDictionary> mutableOptions = adoptNS([(NSDictionary *)dictionaryPopupInfo.options.get() mutableCopy]);
 
     if (canLoadLUTermOptionDisableSearchTermIndicator() && dictionaryPopupInfo.textIndicator.contentImage) {
-        [m_wkView _setTextIndicator:TextIndicator::create(dictionaryPopupInfo.textIndicator) fadeOut:NO];
+        [m_wkView _setTextIndicator:*TextIndicator::create(dictionaryPopupInfo.textIndicator) withLifetime:TextIndicatorLifetime::Permanent];
         [mutableOptions setObject:@YES forKey:getLUTermOptionDisableSearchTermIndicator()];
         [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.string.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
     } else
         [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.string.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
 }
 
-void PageClientImpl::dismissContentRelativeChildWindows()
+void PageClientImpl::dismissContentRelativeChildWindows(bool withAnimation)
 {
-    [m_wkView _dismissContentRelativeChildWindows];
+    [m_wkView _dismissContentRelativeChildWindowsWithAnimation:withAnimation];
 }
 
 void PageClientImpl::showCorrectionPanel(AlternativeTextType type, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)

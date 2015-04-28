@@ -348,18 +348,13 @@ namespace WebCore {
 
 TextIndicatorWindow::TextIndicatorWindow(NSView *targetView)
     : m_targetView(targetView)
-    , m_startFadeOutTimer(RunLoop::main(), this, &TextIndicatorWindow::startFadeOut)
+    , m_temporaryTextIndicatorTimer(RunLoop::main(), this, &TextIndicatorWindow::startFadeOut)
 {
 }
 
 TextIndicatorWindow::~TextIndicatorWindow()
 {
-    if (m_textIndicator->wantsManualAnimation() && [m_textIndicatorView hasCompletedAnimation]) {
-        startFadeOut();
-        return;
-    }
-
-    closeWindow();
+    clearTextIndicator(TextIndicatorDismissalAnimation::FadeOut);
 }
 
 void TextIndicatorWindow::setAnimationProgress(float progress)
@@ -370,17 +365,29 @@ void TextIndicatorWindow::setAnimationProgress(float progress)
     [m_textIndicatorView setAnimationProgress:progress];
 }
 
-void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicator, CGRect textBoundingRectInScreenCoordinates, bool fadeOut)
+void TextIndicatorWindow::clearTextIndicator(TextIndicatorDismissalAnimation animation)
 {
-    if (m_textIndicator == textIndicator)
+    RefPtr<TextIndicator> textIndicator = WTF::move(m_textIndicator);
+
+    if (m_fadingOut)
         return;
 
-    m_textIndicator = textIndicator;
+    if (textIndicator && textIndicator->wantsManualAnimation() && [m_textIndicatorView hasCompletedAnimation] && animation == TextIndicatorDismissalAnimation::FadeOut) {
+        startFadeOut();
+        return;
+    }
 
     closeWindow();
+}
 
-    if (!m_textIndicator)
+void TextIndicatorWindow::setTextIndicator(Ref<TextIndicator> textIndicator, CGRect textBoundingRectInScreenCoordinates, TextIndicatorLifetime lifetime)
+{
+    if (m_textIndicator == textIndicator.ptr())
         return;
+
+    m_textIndicator = textIndicator.ptr();
+
+    closeWindow();
 
     CGFloat horizontalMargin = dropShadowBlurRadius * 2 + horizontalBorder;
     CGFloat verticalMargin = dropShadowBlurRadius * 2 + verticalBorder;
@@ -410,8 +417,8 @@ void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicat
     if (m_textIndicator->presentationTransition() != TextIndicatorPresentationTransition::None)
         [m_textIndicatorView present];
 
-    if (fadeOut)
-        m_startFadeOutTimer.startOneShot(timeBeforeFadeStarts);
+    if (lifetime == TextIndicatorLifetime::Temporary)
+        m_temporaryTextIndicatorTimer.startOneShot(timeBeforeFadeStarts);
 }
 
 void TextIndicatorWindow::closeWindow()
@@ -419,7 +426,10 @@ void TextIndicatorWindow::closeWindow()
     if (!m_textIndicatorWindow)
         return;
 
-    m_startFadeOutTimer.stop();
+    if (m_fadingOut)
+        return;
+
+    m_temporaryTextIndicatorTimer.stop();
 
     [[m_textIndicatorWindow parentWindow] removeChildWindow:m_textIndicatorWindow.get()];
     [m_textIndicatorWindow close];
@@ -428,6 +438,7 @@ void TextIndicatorWindow::closeWindow()
 
 void TextIndicatorWindow::startFadeOut()
 {
+    m_fadingOut = true;
     RetainPtr<NSWindow> indicatorWindow = m_textIndicatorWindow;
     [m_textIndicatorView hideWithCompletionHandler:[indicatorWindow] {
         [[indicatorWindow parentWindow] removeChildWindow:indicatorWindow.get()];

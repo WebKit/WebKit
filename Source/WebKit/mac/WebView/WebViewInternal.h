@@ -40,6 +40,7 @@
 #import <WebCore/HTMLMediaElement.h>
 #import <WebCore/LayoutMilestones.h>
 #import <WebCore/TextAlternativeWithRange.h>
+#import <WebCore/TextIndicatorWindow.h>
 #import <WebCore/WebCoreKeyboardUIMode.h>
 #import <functional>
 #import <wtf/Forward.h>
@@ -258,8 +259,9 @@ OBJC_CLASS NSTextAlternatives;
 - (void)_setMaintainsInactiveSelection:(BOOL)shouldMaintainInactiveSelection;
 
 #if PLATFORM(MAC) && defined(__cplusplus)
-- (void)_setTextIndicator:(WebCore::TextIndicator*)textIndicator fadeOut:(BOOL)fadeOut;
-- (void)_clearTextIndicator;
+- (void)_setTextIndicator:(WebCore::TextIndicator&)textIndicator;
+- (void)_setTextIndicator:(WebCore::TextIndicator&)textIndicator withLifetime:(WebCore::TextIndicatorLifetime)lifetime;
+- (void)_clearTextIndicatorWithAnimation:(WebCore::TextIndicatorDismissalAnimation)animation;
 - (void)_setTextIndicatorAnimationProgress:(float)progress;
 - (void)_showDictionaryLookupPopup:(const DictionaryPopupInfo&)dictionaryPopupInfo;
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000

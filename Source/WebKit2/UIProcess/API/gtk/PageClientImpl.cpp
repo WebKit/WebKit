@@ -235,7 +235,12 @@ PassRefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page,
     return WebColorPickerGtk::create(*page, color, rect);
 }
 
-void PageClientImpl::setTextIndicator(PassRefPtr<WebCore::TextIndicator>, bool /* fadeOut */)
+void PageClientImpl::setTextIndicator(Ref<WebCore::TextIndicator>, WebCore::TextIndicatorLifetime)
+{
+    notImplemented();
+}
+
+void PageClientImpl::clearTextIndicator(WebCore::TextIndicatorDismissalAnimation)
 {
     notImplemented();
 }

@@ -220,7 +220,8 @@ public:
     virtual PassRefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&) = 0;
 #endif
 
-    virtual void setTextIndicator(PassRefPtr<WebCore::TextIndicator>, bool fadeOut) = 0;
+    virtual void setTextIndicator(Ref<WebCore::TextIndicator>, WebCore::TextIndicatorLifetime = WebCore::TextIndicatorLifetime::Permanent) = 0;
+    virtual void clearTextIndicator(WebCore::TextIndicatorDismissalAnimation = WebCore::TextIndicatorDismissalAnimation::FadeOut) = 0;
     virtual void setTextIndicatorAnimationProgress(float) = 0;
 
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) = 0;
@@ -231,7 +232,7 @@ public:
     virtual void pluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus) = 0;
     virtual void setPluginComplexTextInputState(uint64_t pluginComplexTextInputIdentifier, PluginComplexTextInputState) = 0;
     virtual void didPerformDictionaryLookup(const DictionaryPopupInfo&) = 0;
-    virtual void dismissContentRelativeChildWindows() = 0;
+    virtual void dismissContentRelativeChildWindows(bool withAnimation = true) = 0;
     virtual void showCorrectionPanel(WebCore::AlternativeTextType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings) = 0;
     virtual void dismissCorrectionPanel(WebCore::ReasonForDismissingAlternativeText) = 0;
     virtual String dismissCorrectionPanelSoon(WebCore::ReasonForDismissingAlternativeText) = 0;

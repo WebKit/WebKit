@@ -85,7 +85,9 @@ struct WebPageConfiguration;
 - (void)_setIntrinsicContentSize:(NSSize)intrinsicContentSize;
 - (NSRect)_convertToDeviceSpace:(NSRect)rect;
 - (NSRect)_convertToUserSpace:(NSRect)rect;
-- (void)_setTextIndicator:(PassRefPtr<WebCore::TextIndicator>)textIndicator fadeOut:(BOOL)fadeOut;
+- (void)_setTextIndicator:(WebCore::TextIndicator&)textIndicator;
+- (void)_setTextIndicator:(WebCore::TextIndicator&)textIndicator withLifetime:(WebCore::TextIndicatorLifetime)lifetime;
+- (void)_clearTextIndicatorWithAnimation:(WebCore::TextIndicatorDismissalAnimation)animation;
 - (void)_setTextIndicatorAnimationProgress:(float)progress;
 - (void)_selectionChanged;
 

@@ -1,3 +1,63 @@
+2015-04-28  Timothy Horton  <timothy_horton@apple.com>
+
+        [TextIndicator] Yellow highlight takes too long to fade out on scroll
+        https://bugs.webkit.org/show_bug.cgi?id=144358
+        <rdar://problem/19451011>
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView renewGState]):
+        (-[WKView viewDidMoveToWindow]):
+        (-[WKView _dictionaryLookupPopoverWillClose:]):
+        (-[WKView _setTextIndicator:]):
+        (-[WKView _setTextIndicator:withLifetime:]):
+        (-[WKView _clearTextIndicatorWithAnimation:]):
+        (-[WKView magnifyWithEvent:]):
+        (-[WKView smartMagnifyWithEvent:]):
+        (-[WKView setMagnification:centeredAtPoint:]):
+        (-[WKView setMagnification:]):
+        (-[WKView _dismissContentRelativeChildWindows]):
+        (-[WKView _dismissContentRelativeChildWindowsWithAnimation:]):
+        (-[WKView _setTextIndicator:fadeOut:]): Deleted.
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::pageDidScroll):
+        (WebKit::WebPageProxy::setTextIndicator):
+        (WebKit::WebPageProxy::clearTextIndicator):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::setTextIndicator):
+        (WebKit::PageClientImpl::clearTextIndicator):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::setTextIndicator):
+        (WebKit::PageClientImpl::clearTextIndicator):
+        (WebKit::PageClientImpl::didPerformDictionaryLookup):
+        (WebKit::PageClientImpl::dismissContentRelativeChildWindows):
+        * UIProcess/mac/WKActionMenuController.mm:
+        (-[WKActionMenuController _defaultMenuItemsForDataDetectedText]):
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController _defaultAnimationController]):
+        (-[WKImmediateActionController _animationControllerForDataDetectedText]):
+        (-[WKImmediateActionController _animationControllerForDataDetectedLink]):
+        (-[WKImmediateActionController _animationControllerForText]):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindIndicator):
+        Make _setTextIndicator take a reference.
+        Add a variant of _setTextIndicator that takes a Lifetime.
+        Make _clearTextIndicatorWithAnimation take a DismissalAnimation.
+        Make dismissContentRelativeChildWindows take a parameter indicating
+        whether the dismissal should include animation or not (currently
+        only applies to TextIndicator).
+        Don't animate when dismissal occurs because of scrolling, zooming,
+        or other things in which the content will have changed significantly
+        underneath the indicator and shouldn't have a slowly-fading-out yellow highlight.
+
 2015-04-28  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Fully replace ENABLE_LLINT_C_LOOP with ENABLE_JIT

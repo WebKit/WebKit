@@ -3646,7 +3646,7 @@ void WebPageProxy::pageDidScroll()
 {
     m_uiClient->pageDidScroll(this);
 #if PLATFORM(MAC)
-    m_pageClient.dismissContentRelativeChildWindows();
+    m_pageClient.dismissContentRelativeChildWindows(false);
 #endif
 }
 
@@ -3899,14 +3899,14 @@ void WebPageProxy::didGetImageForFindMatch(const ShareableBitmap::Handle& conten
     m_findMatchesClient.didGetImageForMatchResult(this, WebImage::create(ShareableBitmap::create(contentImageHandle)).get(), matchIndex);
 }
 
-void WebPageProxy::setTextIndicator(const TextIndicatorData& indicatorData, bool fadeOut)
+void WebPageProxy::setTextIndicator(const TextIndicatorData& indicatorData, uint64_t lifetime)
 {
-    m_pageClient.setTextIndicator(TextIndicator::create(indicatorData), fadeOut);
+    m_pageClient.setTextIndicator(*TextIndicator::create(indicatorData), static_cast<TextIndicatorLifetime>(lifetime));
 }
 
 void WebPageProxy::clearTextIndicator()
 {
-    m_pageClient.setTextIndicator(nullptr, false);
+    m_pageClient.clearTextIndicator();
 }
 
 void WebPageProxy::setTextIndicatorAnimationProgress(float progress)

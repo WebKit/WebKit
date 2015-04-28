@@ -97,12 +97,14 @@ using namespace WebCore;
 - (void)webView:(WebView *)webView willHandleMouseDown:(NSEvent *)event
 {
     [self _clearImmediateActionState];
+    [_webView _clearTextIndicatorWithAnimation:TextIndicatorDismissalAnimation::FadeOut];
 }
 
 - (void)webView:(WebView *)webView didHandleScrollWheel:(NSEvent *)event
 {
     [_currentQLPreviewMenuItem close];
     [self _clearImmediateActionState];
+    [_webView _clearTextIndicatorWithAnimation:TextIndicatorDismissalAnimation::None];
 }
 
 - (NSImmediateActionGestureRecognizer *)immediateActionRecognizer
@@ -117,11 +119,11 @@ using namespace WebCore;
     [_immediateActionRecognizer setEnabled:YES];
 
     [self _clearImmediateActionState];
+    [_webView _clearTextIndicatorWithAnimation:TextIndicatorDismissalAnimation::FadeOut];
 }
 
 - (void)_clearImmediateActionState
 {
-    [_webView _clearTextIndicator];
     DDActionsManager *actionsManager = [getDDActionsManagerClass() sharedManager];
     if ([actionsManager respondsToSelector:@selector(requestBubbleClosureUnanchorOnFailure:)])
         [actionsManager requestBubbleClosureUnanchorOnFailure:YES];
@@ -196,6 +198,7 @@ using namespace WebCore;
 
     [_webView _setTextIndicatorAnimationProgress:0];
     [self _clearImmediateActionState];
+    [_webView _clearTextIndicatorWithAnimation:TextIndicatorDismissalAnimation::None];
     [_webView _setMaintainsInactiveSelection:NO];
 }
 
@@ -230,7 +233,7 @@ using namespace WebCore;
 
             RefPtr<Range> linkRange = rangeOfContents(*_hitTestResult.URLElement());
             RefPtr<TextIndicator> indicator = TextIndicator::createWithRange(*linkRange, TextIndicatorPresentationTransition::FadeIn);
-            [_webView _setTextIndicator:indicator.get() fadeOut:NO];
+            [_webView _setTextIndicator:*indicator withLifetime:TextIndicatorLifetime::Permanent];
 
             QLPreviewMenuItem *item = [NSMenuItem standardQuickLookMenuItem];
             item.previewStyle = QLPreviewStylePopover;
@@ -303,6 +306,7 @@ using namespace WebCore;
 - (void)menuItemDidClose:(NSMenuItem *)menuItem
 {
     [self _clearImmediateActionState];
+    [_webView _clearTextIndicatorWithAnimation:TextIndicatorDismissalAnimation::FadeOut];
 }
 
 static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
@@ -383,9 +387,9 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
 
     _currentActionContext = [actionContext contextForView:_webView altMode:YES interactionStartedHandler:^() {
     } interactionChangedHandler:^() {
-        [_webView _setTextIndicator:detectedDataTextIndicator.get() fadeOut:NO];
+        [_webView _setTextIndicator:*detectedDataTextIndicator withLifetime:TextIndicatorLifetime::Permanent];
     } interactionStoppedHandler:^() {
-        [_webView _clearTextIndicator];
+        [_webView _clearTextIndicatorWithAnimation:TextIndicatorDismissalAnimation::FadeOut];
     }];
 
     [_currentActionContext setHighlightFrame:[_webView.window convertRectToScreen:detectedDataBoundingBox]];
@@ -414,9 +418,9 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
 
     _currentActionContext = [actionContext contextForView:_webView altMode:YES interactionStartedHandler:^() {
     } interactionChangedHandler:^() {
-        [_webView _setTextIndicator:indicator.get() fadeOut:NO];
+        [_webView _setTextIndicator:*indicator withLifetime:TextIndicatorLifetime::Permanent];
     } interactionStoppedHandler:^() {
-        [_webView _clearTextIndicator];
+        [_webView _clearTextIndicatorWithAnimation:TextIndicatorDismissalAnimation::FadeOut];
     }];
 
     [_currentActionContext setHighlightFrame:[_webView.window convertRectToScreen:elementBoundingBoxInWindowCoordinatesFromNode(_hitTestResult.URLElement())]];

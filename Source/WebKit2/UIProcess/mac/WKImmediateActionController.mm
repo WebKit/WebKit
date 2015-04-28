@@ -294,7 +294,7 @@ using namespace WebKit;
             _currentQLPreviewMenuItem = item;
 
             if (TextIndicator *textIndicator = _hitTestResultData.linkTextIndicator.get())
-                _page->setTextIndicator(textIndicator->data(), false);
+                _page->setTextIndicator(textIndicator->data());
 
             return (id<NSImmediateActionAnimationController>)item;
         }
@@ -406,7 +406,7 @@ using namespace WebKit;
         page->send(Messages::WebPage::DataDetectorsDidPresentUI(overlayID));
     } interactionChangedHandler:^() {
         if (_hitTestResultData.detectedDataTextIndicator)
-            page->setTextIndicator(_hitTestResultData.detectedDataTextIndicator->data(), false);
+            page->setTextIndicator(_hitTestResultData.detectedDataTextIndicator->data());
         page->send(Messages::WebPage::DataDetectorsDidChangeUI(overlayID));
     } interactionStoppedHandler:^() {
         page->send(Messages::WebPage::DataDetectorsDidHideUI(overlayID));
@@ -437,7 +437,7 @@ using namespace WebKit;
     _currentActionContext = [actionContext contextForView:_wkView altMode:YES interactionStartedHandler:^() {
     } interactionChangedHandler:^() {
         if (_hitTestResultData.linkTextIndicator)
-            page->setTextIndicator(_hitTestResultData.linkTextIndicator->data(), false);
+            page->setTextIndicator(_hitTestResultData.linkTextIndicator->data());
     } interactionStoppedHandler:^() {
         [self _clearImmediateActionState];
     }];
@@ -474,7 +474,8 @@ using namespace WebKit;
 
     RetainPtr<NSMutableDictionary> mutableOptions = adoptNS([(NSDictionary *)dictionaryPopupInfo.options.get() mutableCopy]);
     if (canLoadLUTermOptionDisableSearchTermIndicator() && dictionaryPopupInfo.textIndicator.contentImage) {
-        [_wkView _setTextIndicator:TextIndicator::create(dictionaryPopupInfo.textIndicator) fadeOut:NO];
+        RefPtr<TextIndicator> indicator = TextIndicator::create(dictionaryPopupInfo.textIndicator);
+        [_wkView _setTextIndicator:*indicator withLifetime:TextIndicatorLifetime::Permanent];
         [mutableOptions setObject:@YES forKey:getLUTermOptionDisableSearchTermIndicator()];
         return [getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.attributedString.string.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
     }

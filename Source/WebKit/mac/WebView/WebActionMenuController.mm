@@ -121,6 +121,7 @@ using namespace WebCore;
 - (void)webView:(WebView *)webView didHandleScrollWheel:(NSEvent *)event
 {
     [self _dismissActionMenuPopovers];
+    [self _hideTextIndicatorWithAnimation:TextIndicatorDismissalAnimation::None];
 }
 
 - (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event
@@ -133,6 +134,7 @@ using namespace WebCore;
         return;
 
     [self _dismissActionMenuPopovers];
+    [self _hideTextIndicatorWithAnimation:TextIndicatorDismissalAnimation::FadeOut];
     [actionMenu removeAllItems];
 
     WebElementDictionary *hitTestResult = [self performHitTestAtPoint:event.locationInWindow];
@@ -549,7 +551,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     } interactionChangedHandler:^() {
         [self _showTextIndicator];
     } interactionStoppedHandler:^() {
-        [self _hideTextIndicator];
+        [self _hideTextIndicatorWithAnimation:TextIndicatorDismissalAnimation::FadeOut];
     }];
     _currentDetectedDataRange = detectedDataRange;
 
@@ -813,17 +815,17 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         return;
 
     if (_type == WebActionMenuDataDetectedItem && _currentDetectedDataTextIndicator) {
-        [_webView _setTextIndicator:_currentDetectedDataTextIndicator.get() fadeOut:NO];
+        [_webView _setTextIndicator:*_currentDetectedDataTextIndicator withLifetime:TextIndicatorLifetime::Permanent];
         _isShowingTextIndicator = YES;
     }
 }
 
-- (void)_hideTextIndicator
+- (void)_hideTextIndicatorWithAnimation:(TextIndicatorDismissalAnimation)animation
 {
     if (!_isShowingTextIndicator)
         return;
 
-    [_webView _clearTextIndicator];
+    [_webView _clearTextIndicatorWithAnimation:animation];
     _isShowingTextIndicator = NO;
 }
 
@@ -832,8 +834,6 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
     DDActionsManager *actionsManager = [getDDActionsManagerClass() sharedManager];
     if ([actionsManager respondsToSelector:@selector(requestBubbleClosureUnanchorOnFailure:)])
         [actionsManager requestBubbleClosureUnanchorOnFailure:YES];
-
-    [self _hideTextIndicator];
 }
 
 @end

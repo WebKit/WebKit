@@ -602,7 +602,7 @@ struct WKViewInterpretKeyEventsParameters {
 - (void)renewGState
 {
     if (_data->_textIndicatorWindow)
-        [self _dismissContentRelativeChildWindows];
+        [self _dismissContentRelativeChildWindowsWithAnimation:NO];
 
     // Update the view frame.
     if ([self window])
@@ -2760,7 +2760,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
         [NSEvent removeMonitor:_data->_flagsChangedEventMonitor];
         _data->_flagsChangedEventMonitor = nil;
 
-        [self _dismissContentRelativeChildWindows];
+        [self _dismissContentRelativeChildWindowsWithAnimation:NO];
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
         if (_data->_immediateActionGestureRecognizer)
@@ -2896,7 +2896,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 - (void)_dictionaryLookupPopoverWillClose:(NSNotification *)notification
 {
-    [self _setTextIndicator:nil fadeOut:NO];
+    [self _clearTextIndicatorWithAnimation:TextIndicatorDismissalAnimation::None];
 }
 
 - (void)_accessibilityRegisterUIProcessTokens
@@ -3282,18 +3282,25 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     }
 }
 
-- (void)_setTextIndicator:(PassRefPtr<TextIndicator>)textIndicator fadeOut:(BOOL)fadeOut
+- (void)_setTextIndicator:(TextIndicator&)textIndicator
 {
-    if (!textIndicator) {
-        _data->_textIndicatorWindow = nullptr;
-        return;
-    }
+    [self _setTextIndicator:textIndicator withLifetime:TextIndicatorLifetime::Permanent];
+}
 
+- (void)_setTextIndicator:(TextIndicator&)textIndicator withLifetime:(TextIndicatorLifetime)lifetime
+{
     if (!_data->_textIndicatorWindow)
         _data->_textIndicatorWindow = std::make_unique<TextIndicatorWindow>(self);
 
-    NSRect textBoundingRectInScreenCoordinates = [self.window convertRectToScreen:[self convertRect:textIndicator->textBoundingRectInRootViewCoordinates() toView:nil]];
-    _data->_textIndicatorWindow->setTextIndicator(textIndicator, NSRectToCGRect(textBoundingRectInScreenCoordinates), fadeOut);
+    NSRect textBoundingRectInScreenCoordinates = [self.window convertRectToScreen:[self convertRect:textIndicator.textBoundingRectInRootViewCoordinates() toView:nil]];
+    _data->_textIndicatorWindow->setTextIndicator(textIndicator, NSRectToCGRect(textBoundingRectInScreenCoordinates), lifetime);
+}
+
+- (void)_clearTextIndicatorWithAnimation:(TextIndicatorDismissalAnimation)animation
+{
+    if (_data->_textIndicatorWindow)
+        _data->_textIndicatorWindow->clearTextIndicator(animation);
+    _data->_textIndicatorWindow = nullptr;
 }
 
 - (void)_setTextIndicatorAnimationProgress:(float)progress
@@ -4538,7 +4545,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         return;
     }
 
-    [self _dismissContentRelativeChildWindows];
+    [self _dismissContentRelativeChildWindowsWithAnimation:NO];
 
     [self _ensureGestureController];
 
@@ -4555,7 +4562,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         return;
     }
 
-    [self _dismissContentRelativeChildWindows];
+    [self _dismissContentRelativeChildWindowsWithAnimation:NO];
 
     [self _ensureGestureController];
 
@@ -4567,7 +4574,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     if (magnification <= 0 || isnan(magnification) || isinf(magnification))
         [NSException raise:NSInvalidArgumentException format:@"Magnification should be a positive number"];
 
-    [self _dismissContentRelativeChildWindows];
+    [self _dismissContentRelativeChildWindowsWithAnimation:NO];
 
     _data->_page->scalePageInViewCoordinates(magnification, roundedIntPoint(point));
 }
@@ -4577,7 +4584,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     if (magnification <= 0 || isnan(magnification) || isinf(magnification))
         [NSException raise:NSInvalidArgumentException format:@"Magnification should be a positive number"];
 
-    [self _dismissContentRelativeChildWindows];
+    [self _dismissContentRelativeChildWindowsWithAnimation:NO];
 
     FloatPoint viewCenter(NSMidX([self bounds]), NSMidY([self bounds]));
     _data->_page->scalePageInViewCoordinates(magnification, roundedIntPoint(viewCenter));
@@ -4675,9 +4682,9 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     // FIXME: We don't know which panel we are dismissing, it may not even be in the current page (see <rdar://problem/13875766>).
     if ([[self window] isKeyWindow]
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    || [_data->_immediateActionController hasActiveImmediateAction]
+        || [_data->_immediateActionController hasActiveImmediateAction]
 #endif
-    ) {
+        ) {
         if (Class lookupDefinitionModuleClass = getLULookupDefinitionModuleClass())
             [lookupDefinitionModuleClass hideDefinition];
 
@@ -4686,13 +4693,21 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
             [actionsManager requestBubbleClosureUnanchorOnFailure:YES];
     }
 
-    [self _setTextIndicator:nullptr fadeOut:NO];
+    [self _clearTextIndicatorWithAnimation:TextIndicatorDismissalAnimation::FadeOut];
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [_data->_immediateActionController dismissContentRelativeChildWindows];
 #endif
 
     static_cast<PageClient&>(*_data->_pageClient).dismissCorrectionPanel(ReasonForDismissingAlternativeTextIgnored);
+}
+
+- (void)_dismissContentRelativeChildWindowsWithAnimation:(BOOL)withAnimation
+{
+    // Calling _clearTextIndicatorWithAnimation here will win out over the animated clear in _dismissContentRelativeChildWindows.
+    // We can't invert these because clients can override (and have overridden) _dismissContentRelativeChildWindows, so it needs to be called.
+    [self _clearTextIndicatorWithAnimation:withAnimation ? TextIndicatorDismissalAnimation::FadeOut : TextIndicatorDismissalAnimation::None];
+    [self _dismissContentRelativeChildWindows];
 }
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000

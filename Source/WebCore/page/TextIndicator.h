@@ -56,6 +56,19 @@ enum class TextIndicatorPresentationTransition {
     Crossfade
 };
 
+enum class TextIndicatorLifetime {
+    // The TextIndicator should indicate the text until dismissed.
+    Permanent,
+
+    // The TextIndicator should briefly indicate the text and then automatically dismiss.
+    Temporary
+};
+
+enum class TextIndicatorDismissalAnimation {
+    None,
+    FadeOut
+};
+
 struct TextIndicatorData {
     FloatRect selectionRectInRootViewCoordinates;
     FloatRect textBoundingRectInRootViewCoordinates;
@@ -78,8 +91,8 @@ public:
     FloatRect textBoundingRectInRootViewCoordinates() const { return m_data.textBoundingRectInRootViewCoordinates; }
     const Vector<FloatRect>& textRectsInBoundingRectCoordinates() const { return m_data.textRectsInBoundingRectCoordinates; }
     float contentImageScaleFactor() const { return m_data.contentImageScaleFactor; }
-    Image *contentImageWithHighlight() const { return m_data.contentImageWithHighlight.get(); }
-    Image *contentImage() const { return m_data.contentImage.get(); }
+    Image* contentImageWithHighlight() const { return m_data.contentImageWithHighlight.get(); }
+    Image* contentImage() const { return m_data.contentImage.get(); }
 
     TextIndicatorPresentationTransition presentationTransition() const { return m_data.presentationTransition; }
     void setPresentationTransition(TextIndicatorPresentationTransition transition) { m_data.presentationTransition = transition; }

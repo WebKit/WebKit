@@ -322,7 +322,7 @@ bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOve
         return false;
 
     m_findIndicatorRect = enclosingIntRect(indicator->selectionRectInRootViewCoordinates());
-    m_webPage->send(Messages::WebPageProxy::SetTextIndicator(indicator->data(), !isShowingOverlay));
+    m_webPage->send(Messages::WebPageProxy::SetTextIndicator(indicator->data(), static_cast<uint64_t>(isShowingOverlay ? TextIndicatorLifetime::Permanent : TextIndicatorLifetime::Temporary)));
     m_isShowingFindIndicator = true;
 
     return true;
