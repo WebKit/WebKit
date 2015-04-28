@@ -76,7 +76,7 @@ void WKPluginSiteDataManagerClearSiteData(WKPluginSiteDataManagerRef managerRef,
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     toImpl(managerRef)->clearSiteData(toImpl(sitesRef), toNPClearSiteDataFlags(flags), maxAgeInSeconds, [context, function](CallbackBase::Error error) {
-        function(error == CallbackBase::Error::None ? nullptr : toAPI(API::Error::create().get()), context);
+        function(error == CallbackBase::Error::None ? nullptr : toAPI(API::Error::create().ptr()), context);
     });
 #else
     UNUSED_PARAM(managerRef);
@@ -92,7 +92,7 @@ void WKPluginSiteDataManagerClearAllSiteData(WKPluginSiteDataManagerRef managerR
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     toImpl(managerRef)->clearSiteData(0, NP_CLEAR_ALL, std::numeric_limits<uint64_t>::max(), [context, function](CallbackBase::Error error) {
-        function(error == CallbackBase::Error::None ? nullptr : toAPI(API::Error::create().get()), context);
+        function(error == CallbackBase::Error::None ? nullptr : toAPI(API::Error::create().ptr()), context);
     });
 #else
     UNUSED_PARAM(managerRef);

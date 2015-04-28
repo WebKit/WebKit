@@ -44,20 +44,20 @@ void WKOriginDataManagerGetOrigins(WKOriginDataManagerRef originDataManagerRef, 
 void WKOriginDataManagerDeleteEntriesForOrigin(WKOriginDataManagerRef originDataManagerRef, WKOriginDataTypes types, WKSecurityOriginRef originRef, void* context, WKOriginDataManagerDeleteEntriesCallbackFunction callback)
 {
     toImpl(originDataManagerRef)->deleteEntriesForOrigin(types, toImpl(originRef), [context, callback](CallbackBase::Error error) {
-        callback(error != CallbackBase::Error::None ? toAPI(API::Error::create().get()) : 0, context);
+        callback(error != CallbackBase::Error::None ? toAPI(API::Error::create().ptr()) : 0, context);
     });
 }
 
 void WKOriginDataManagerDeleteEntriesModifiedBetweenDates(WKOriginDataManagerRef originDataManagerRef, WKOriginDataTypes types, double startDate, double endDate, void* context, WKOriginDataManagerDeleteEntriesCallbackFunction callback)
 {
     toImpl(originDataManagerRef)->deleteEntriesModifiedBetweenDates(types, startDate, endDate, [context, callback](CallbackBase::Error error) {
-        callback(error != CallbackBase::Error::None ? toAPI(API::Error::create().get()) : 0, context);
+        callback(error != CallbackBase::Error::None ? toAPI(API::Error::create().ptr()) : 0, context);
     });
 }
 
 void WKOriginDataManagerDeleteAllEntries(WKOriginDataManagerRef originDataManagerRef, WKOriginDataTypes types, void* context, WKOriginDataManagerDeleteEntriesCallbackFunction callback)
 {
     toImpl(originDataManagerRef)->deleteAllEntries(types, [context, callback](CallbackBase::Error error) {
-        callback(error != CallbackBase::Error::None ? toAPI(API::Error::create().get()) : 0, context);
+        callback(error != CallbackBase::Error::None ? toAPI(API::Error::create().ptr()) : 0, context);
     });
 }

@@ -4681,8 +4681,7 @@ void WebPageProxy::printFinishedCallback(const ResourceError& printError, uint64
         return;
     }
 
-    RefPtr<API::Error> error = API::Error::create(printError);
-    callback->performCallbackWithReturnValue(error.get());
+    callback->performCallbackWithReturnValue(API::Error::create(printError).ptr());
 }
 #endif
 

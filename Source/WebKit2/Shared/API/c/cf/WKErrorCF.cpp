@@ -34,8 +34,7 @@ using namespace WebKit;
 
 WKErrorRef WKErrorCreateWithCFError(CFErrorRef cfError)
 {
-    RefPtr<API::Error> error = API::Error::create(ResourceError(cfError));
-    return toAPI(error.release().leakRef());
+    return toAPI(&API::Error::create(ResourceError(cfError)).leakRef());
 }
 
 CFErrorRef WKErrorCopyCFError(CFAllocatorRef alloc, WKErrorRef error)

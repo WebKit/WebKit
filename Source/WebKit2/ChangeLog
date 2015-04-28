@@ -1,3 +1,35 @@
+2015-04-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WK2] API::Error creation functions should return Ref<>
+        https://bugs.webkit.org/show_bug.cgi?id=144222
+
+        Reviewed by Darin Adler.
+
+        Have API::Error creation functions return Ref<>.
+        The call-sites are also updated, using and operating
+        on the returned Ref<> object where possible.
+
+        * Shared/API/APIError.h:
+        (API::Error::create):
+        * Shared/API/c/cf/WKErrorCF.cpp:
+        (WKErrorCreateWithCFError):
+        * UIProcess/API/C/WKOriginDataManager.cpp:
+        (WKOriginDataManagerDeleteEntriesForOrigin):
+        (WKOriginDataManagerDeleteEntriesModifiedBetweenDates):
+        (WKOriginDataManagerDeleteAllEntries):
+        * UIProcess/API/C/WKPage.cpp:
+        (toGenericCallbackFunction):
+        (WKPageForceRepaint):
+        (WKPageValidateCommand):
+        (WKPageComputePagesForPrinting):
+        * UIProcess/API/C/WKPluginSiteDataManager.cpp:
+        (WKPluginSiteDataManagerClearSiteData):
+        (WKPluginSiteDataManagerClearAllSiteData):
+        * UIProcess/GenericCallback.h:
+        (WebKit::toGenericCallbackFunction):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::printFinishedCallback):
+
 2015-04-27  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         [GTK] Remove unnecessary semicolon from WebKitNotificationProvider.h.

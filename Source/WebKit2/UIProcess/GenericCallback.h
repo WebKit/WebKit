@@ -150,7 +150,7 @@ template<typename APIReturnValueType, typename InternalReturnValueType = typenam
 static typename GenericCallback<InternalReturnValueType>::CallbackFunction toGenericCallbackFunction(void* context, void (*callback)(APIReturnValueType, WKErrorRef, void*))
 {
     return [context, callback](InternalReturnValueType returnValue, CallbackBase::Error error) {
-        callback(toAPI(returnValue), error != CallbackBase::Error::None ? toAPI(API::Error::create().get()) : 0, context);
+        callback(toAPI(returnValue), error != CallbackBase::Error::None ? toAPI(API::Error::create().ptr()) : 0, context);
     };
 }
 

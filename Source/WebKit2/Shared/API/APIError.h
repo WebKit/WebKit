@@ -28,7 +28,6 @@
 
 #include "APIObject.h"
 #include <WebCore/ResourceError.h>
-#include <wtf/PassRefPtr.h>
 
 namespace IPC {
 class ArgumentDecoder;
@@ -39,14 +38,14 @@ namespace API {
 
 class Error : public ObjectImpl<Object::Type::Error> {
 public:
-    static PassRefPtr<Error> create()
+    static Ref<Error> create()
     {
-        return adoptRef(new Error);
+        return adoptRef(*new Error);
     }
 
-    static PassRefPtr<Error> create(const WebCore::ResourceError& error)
+    static Ref<Error> create(const WebCore::ResourceError& error)
     {
-        return adoptRef(new Error(error));
+        return adoptRef(*new Error(error));
     }
 
     static const WTF::String& webKitErrorDomain();

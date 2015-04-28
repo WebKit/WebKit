@@ -1954,7 +1954,7 @@ void WKPageRunJavaScriptInMainFrame_b(WKPageRef pageRef, WKStringRef scriptRef, 
 static std::function<void (const String&, WebKit::CallbackBase::Error)> toGenericCallbackFunction(void* context, void (*callback)(WKStringRef, WKErrorRef, void*))
 {
     return [context, callback](const String& returnValue, WebKit::CallbackBase::Error error) {
-        callback(toAPI(API::String::create(returnValue).ptr()), error != WebKit::CallbackBase::Error::None ? toAPI(API::Error::create().get()) : 0, context);
+        callback(toAPI(API::String::create(returnValue).ptr()), error != WebKit::CallbackBase::Error::None ? toAPI(API::Error::create().ptr()) : 0, context);
     };
 }
 
@@ -1998,7 +1998,7 @@ void WKPageGetContentsAsMHTMLData(WKPageRef pageRef, bool useBinaryEncoding, voi
 void WKPageForceRepaint(WKPageRef pageRef, void* context, WKPageForceRepaintFunction callback)
 {
     toImpl(pageRef)->forceRepaint(VoidCallback::create([context, callback](WebKit::CallbackBase::Error error) {
-        callback(error == WebKit::CallbackBase::Error::None ? nullptr : toAPI(API::Error::create().get()), context);
+        callback(error == WebKit::CallbackBase::Error::None ? nullptr : toAPI(API::Error::create().ptr()), context);
     }));
 }
 
@@ -2035,7 +2035,7 @@ WKStringRef WKPageCopyStandardUserAgentWithApplicationName(WKStringRef applicati
 void WKPageValidateCommand(WKPageRef pageRef, WKStringRef command, void* context, WKPageValidateCommandCallback callback)
 {
     toImpl(pageRef)->validateCommand(toImpl(command)->string(), [context, callback](const String& commandName, bool isEnabled, int32_t state, WebKit::CallbackBase::Error error) {
-        callback(toAPI(API::String::create(commandName).ptr()), isEnabled, state, error != WebKit::CallbackBase::Error::None ? toAPI(API::Error::create().get()) : 0, context);
+        callback(toAPI(API::String::create(commandName).ptr()), isEnabled, state, error != WebKit::CallbackBase::Error::None ? toAPI(API::Error::create().ptr()) : 0, context);
     });
 }
 
@@ -2060,7 +2060,7 @@ void WKPageComputePagesForPrinting(WKPageRef page, WKFrameRef frame, WKPrintInfo
         Vector<WKRect> wkRects(rects.size());
         for (size_t i = 0; i < rects.size(); ++i)
             wkRects[i] = toAPI(rects[i]);
-        callback(wkRects.data(), wkRects.size(), scaleFactor, error != WebKit::CallbackBase::Error::None ? toAPI(API::Error::create().get()) : 0, context);
+        callback(wkRects.data(), wkRects.size(), scaleFactor, error != WebKit::CallbackBase::Error::None ? toAPI(API::Error::create().ptr()) : 0, context);
     }));
 }
 
