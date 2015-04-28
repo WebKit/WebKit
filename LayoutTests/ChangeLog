@@ -1,3 +1,36 @@
+2015-04-27  Doug Russell  <d_russell@apple.com>
+
+        Break up select text into multiple tests
+        https://bugs.webkit.org/show_bug.cgi?id=144301
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/mac/TestExpectations:
+        * platform/mac/accessibility/select-text-expected.txt: Removed.
+        * platform/mac/accessibility/select-text.html: Removed.
+        * platform/mac/accessibility/select-text/select-text-1-expected.txt: Added.
+        * platform/mac/accessibility/select-text/select-text-1.html: Added.
+        * platform/mac/accessibility/select-text/select-text-135546-expected.txt: Added.
+        * platform/mac/accessibility/select-text/select-text-135546.html: Added.
+        * platform/mac/accessibility/select-text/select-text-135575-expected.txt: Added.
+        * platform/mac/accessibility/select-text/select-text-135575.html: Added.
+        * platform/mac/accessibility/select-text/select-text-2-expected.txt: Added.
+        * platform/mac/accessibility/select-text/select-text-2.html: Added.
+        * platform/mac/accessibility/select-text/select-text-3-expected.txt: Added.
+        * platform/mac/accessibility/select-text/select-text-3.html: Added.
+        * platform/mac/accessibility/select-text/select-text-4-expected.txt: Added.
+        * platform/mac/accessibility/select-text/select-text-4.html: Added.
+        * platform/mac/accessibility/select-text/select-text-5-expected.txt: Added.
+        * platform/mac/accessibility/select-text/select-text-5.html: Added.
+        * platform/mac/accessibility/select-text/select-text-6-expected.txt: Added.
+        * platform/mac/accessibility/select-text/select-text-6.html: Added.
+        * platform/mac/accessibility/select-text/select-text-7-expected.txt: Added.
+        * platform/mac/accessibility/select-text/select-text-7.html: Added.
+        * platform/mac/accessibility/select-text/select-text-8-expected.txt: Added.
+        * platform/mac/accessibility/select-text/select-text-8.html: Added.
+        * platform/mac/accessibility/select-text/select-text-9-expected.txt: Added.
+        * platform/mac/accessibility/select-text/select-text-9.html: Added.
+
 2015-04-27  Daniel Bates  <dabates@apple.com>
 
         Form control may be associated with the wrong HTML Form element after form id change
