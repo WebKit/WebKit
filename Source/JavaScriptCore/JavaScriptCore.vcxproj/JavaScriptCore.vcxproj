@@ -380,6 +380,7 @@
     <ClCompile Include="..\dfg\DFGCapabilities.cpp" />
     <ClCompile Include="..\dfg\DFGCFAPhase.cpp" />
     <ClCompile Include="..\dfg\DFGCFGSimplificationPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGCleanUpPhase.cpp" />
     <ClCompile Include="..\dfg\DFGClobberize.cpp" />
     <ClCompile Include="..\dfg\DFGClobberSet.cpp" />
     <ClCompile Include="..\dfg\DFGCommon.cpp" />
@@ -446,9 +447,7 @@
     <ClCompile Include="..\dfg\DFGOSRExitPreparation.cpp" />
     <ClCompile Include="..\dfg\DFGObjectAllocationSinkingPhase.cpp" />
     <ClCompile Include="..\dfg\DFGObjectMaterializationData.cpp" />
-    <ClCompile Include="..\dfg\DFGPhantomCanonicalizationPhase.cpp" />
     <ClCompile Include="..\dfg\DFGPhantomInsertionPhase.cpp" />
-    <ClCompile Include="..\dfg\DFGPhantomRemovalPhase.cpp" />
     <ClCompile Include="..\dfg\DFGPhase.cpp" />
     <ClCompile Include="..\dfg\DFGPhiChildren.cpp" />
     <ClCompile Include="..\dfg\DFGPlan.cpp" />
@@ -458,7 +457,6 @@
     <ClCompile Include="..\dfg\DFGPromotedHeapLocation.cpp" />
     <ClCompile Include="..\dfg\DFGPureValue.cpp" />
     <ClCompile Include="..\dfg\DFGPutStackSinkingPhase.cpp" />
-    <ClCompile Include="..\dfg\DFGResurrectionForValidationPhase.cpp" />
     <ClCompile Include="..\dfg\DFGSafepoint.cpp" />
     <ClCompile Include="..\dfg\DFGSpeculativeJIT.cpp" />
     <ClCompile Include="..\dfg\DFGSpeculativeJIT32_64.cpp" />
@@ -1062,6 +1060,7 @@
     <ClInclude Include="..\dfg\DFGCCallHelpers.h" />
     <ClInclude Include="..\dfg\DFGCFAPhase.h" />
     <ClInclude Include="..\dfg\DFGCFGSimplificationPhase.h" />
+    <ClInclude Include="..\dfg\DFGCleanUpPhase.h" />
     <ClInclude Include="..\dfg\DFGClobberize.h" />
     <ClInclude Include="..\dfg\DFGClobberSet.h" />
     <ClInclude Include="..\dfg\DFGCommon.h" />
@@ -1142,9 +1141,7 @@
     <ClInclude Include="..\dfg\DFGOSRExitCompilerCommon.h" />
     <ClInclude Include="..\dfg\DFGOSRExitJumpPlaceholder.h" />
     <ClInclude Include="..\dfg\DFGOSRExitPreparation.h" />
-    <ClInclude Include="..\dfg\DFGPhantomCanonicalizationPhase.h" />
     <ClInclude Include="..\dfg\DFGPhantomInsertionPhase.h" />
-    <ClInclude Include="..\dfg\DFGPhantomRemovalPhase.h" />
     <ClInclude Include="..\dfg\DFGPhase.h" />
     <ClInclude Include="..\dfg\DFGPhiChildren.h" />
     <ClInclude Include="..\dfg\DFGPlan.h" />
@@ -1158,7 +1155,6 @@
     <ClInclude Include="..\dfg\DFGPutStackSinkingPhase.h" />
     <ClInclude Include="..\dfg\DFGRegisterBank.h" />
     <ClInclude Include="..\dfg\DFGRegisterSet.h" />
-    <ClInclude Include="..\dfg\DFGResurrectionForValidationPhase.h" />
     <ClInclude Include="..\dfg\DFGSafeToExecute.h" />
     <ClInclude Include="..\dfg\DFGSafepoint.h" />
     <ClInclude Include="..\dfg\DFGSaneStringGetByValSlowPathGenerator.h" />

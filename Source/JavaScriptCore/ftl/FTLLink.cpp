@@ -98,8 +98,6 @@ void link(State& state)
             
             for (size_t nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
                 Node* node = block->at(nodeIndex);
-                if (!node->willHaveCodeGenOrOSR() && !Options::showAllDFGNodes())
-                    continue;
                 
                 Profiler::OriginStack stack;
                 

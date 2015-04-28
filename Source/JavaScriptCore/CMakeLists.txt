@@ -138,6 +138,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGCPSRethreadingPhase.cpp
     dfg/DFGCSEPhase.cpp
     dfg/DFGCapabilities.cpp
+    dfg/DFGCleanUpPhase.cpp
     dfg/DFGClobberSet.cpp
     dfg/DFGClobberize.cpp
     dfg/DFGCommon.cpp
@@ -202,9 +203,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGObjectAllocationSinkingPhase.cpp
     dfg/DFGObjectMaterializationData.cpp
     dfg/DFGOperations.cpp
-    dfg/DFGPhantomCanonicalizationPhase.cpp
     dfg/DFGPhantomInsertionPhase.cpp
-    dfg/DFGPhantomRemovalPhase.cpp
     dfg/DFGPhase.cpp
     dfg/DFGPhiChildren.cpp
     dfg/DFGPlan.cpp
@@ -214,7 +213,6 @@ set(JavaScriptCore_SOURCES
     dfg/DFGPromotedHeapLocation.cpp
     dfg/DFGPureValue.cpp
     dfg/DFGPutStackSinkingPhase.cpp
-    dfg/DFGResurrectionForValidationPhase.cpp
     dfg/DFGSSACalculator.cpp
     dfg/DFGSSAConversionPhase.cpp
     dfg/DFGSSALoweringPhase.cpp

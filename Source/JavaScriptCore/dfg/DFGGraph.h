@@ -452,8 +452,6 @@ public:
     void determineReachability();
     void resetReachability();
     
-    void mergeRelevantToOSR();
-    
     void computeRefCounts();
     
     unsigned varArgNumChildren(Node* node)

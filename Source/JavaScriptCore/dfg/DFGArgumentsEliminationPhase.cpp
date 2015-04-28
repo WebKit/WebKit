@@ -159,7 +159,6 @@ private:
                     escape(node->child3());
                     break;
 
-                case Phantom:
                 case Check:
                 case MovHint:
                 case PutHint:
@@ -353,7 +352,6 @@ private:
                         break;
                     
                     node->setOpAndDefaultFlags(PhantomDirectArguments);
-                    insertionSet.insertNode(nodeIndex + 1, SpecNone, Phantom, node->origin, Edge(node));
                     break;
                     
                 case CreateClonedArguments:
@@ -361,7 +359,6 @@ private:
                         break;
                     
                     node->setOpAndDefaultFlags(PhantomClonedArguments);
-                    insertionSet.insertNode(nodeIndex + 1, SpecNone, Phantom, node->origin, Edge(node));
                     break;
                     
                 case GetFromArguments: {
@@ -485,7 +482,7 @@ private:
                                 nodeIndex, SpecNone, PutStack, node->origin, OpInfo(data), Edge(value));
                         }
                         
-                        node->convertToPhantom();
+                        node->remove();
                         break;
                     }
                     
@@ -536,7 +533,7 @@ private:
                 case GetButterfly: {
                     if (!m_candidates.contains(node->child1().node()))
                         break;
-                    node->convertToPhantom();
+                    node->remove();
                     break;
                 }
                     

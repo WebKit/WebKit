@@ -585,7 +585,7 @@ private:
                     Node* target = node->child1().node();
                     if (m_sinkCandidates.contains(target)) {
                         ASSERT(target->isPhantomObjectAllocation());
-                        node->convertToPhantom();
+                        node->remove();
                     }
                     break;
                 }
@@ -795,7 +795,6 @@ private:
             break;
 
         case MovHint:
-        case Phantom:
         case Check:
         case PutHint:
             break;

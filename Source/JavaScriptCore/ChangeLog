@@ -1,3 +1,147 @@
+2015-04-28  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should not use or preserve Phantoms during transformations
+        https://bugs.webkit.org/show_bug.cgi?id=143736
+
+        Reviewed by Geoffrey Garen.
+        
+        Since http://trac.webkit.org/changeset/183207 and http://trac.webkit.org/changeset/183406, it is
+        no longer necessary to preserve Phantoms during transformations. They are still useful just
+        before FixupPhase to support backwards propagation analyses. They are still inserted late in the
+        game in the DFG backend. But transformations don't need to worry about them. Inside a basic
+        block, we can be sure that so long as the IR pinpoints the place where the value becomes
+        available in a bytecode register (using MovHint) and so long as there is a SetLocal anytime some
+        other block would need the value (either for OSR or for DFG execution), then we don't need any
+        liveness markers.
+        
+        So, this removes any places where we inserted Phantoms just for liveness during transformation
+        and it replaces convertToPhantom() with remove(), which just converts the node to a Check. A
+        Check node only keeps its children so long as those children have checks.
+        
+        The fact that we no longer convertToPhantom() means that we have to be more careful when
+        constant-folding GetLocal. Previously we would convertToPhantom() and use the fact that
+        Phantom(Phi) was a valid construct. It's not valid anymore. So, when constant folding encounters
+        a GetLocal it needs to insert a PhantomLocal directly. This allows us to simplify
+        Graph::convertToConstant() a bit. Luckily, none of the other users of this method would see
+        GetLocals.
+        
+        The only Phantom-like cruft left over after this patch is:
+        
+        - Phantoms before FixupPhase. I kind of like these. It means that before FixupPhase, we can do
+          backwards analyses and rely on the fact that the users of a node in DFG IR are a superset of
+          the users of the original local's live range in bytecode. This is essential for supporting our
+          BackwardsPropagationPhase, which is an important optimization for things like asm.js.
+        
+        - PhantomLocals and GetLocals being NodeMustGenerate. See discussion in
+          https://bugs.webkit.org/show_bug.cgi?id=144086. It appears that this is not as evil as the
+          alternatives. The best long-term plan is to simply ditch the ThreadedCPS IR entirely and have
+          the DFG use SSA. For now, so long as any new DFG optimizations we add are block-local and
+          treat GetLocal/SetLocal conservatively, this should all be sound.
+        
+        This change should be perf-neutral although it does reduce the total work that the compiler
+        does.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAdjacencyList.h:
+        (JSC::DFG::AdjacencyList::justChecks):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGBasicBlock.cpp:
+        (JSC::DFG::BasicBlock::replaceTerminal):
+        * dfg/DFGBasicBlock.h:
+        (JSC::DFG::BasicBlock::findTerminal):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::keepOperandAlive):
+        (JSC::DFG::CFGSimplificationPhase::mergeBlocks):
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        (JSC::DFG::CPSRethreadingPhase::CPSRethreadingPhase):
+        (JSC::DFG::CPSRethreadingPhase::clearVariables):
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeFlushOrPhantomLocalFor):
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeLocalsInBlock):
+        * dfg/DFGCSEPhase.cpp:
+        * dfg/DFGCleanUpPhase.cpp: Copied from Source/JavaScriptCore/dfg/DFGPhantomRemovalPhase.cpp.
+        (JSC::DFG::CleanUpPhase::CleanUpPhase):
+        (JSC::DFG::CleanUpPhase::run):
+        (JSC::DFG::performCleanUp):
+        (JSC::DFG::PhantomRemovalPhase::PhantomRemovalPhase): Deleted.
+        (JSC::DFG::PhantomRemovalPhase::run): Deleted.
+        (JSC::DFG::performPhantomRemoval): Deleted.
+        * dfg/DFGCleanUpPhase.h: Copied from Source/JavaScriptCore/dfg/DFGPhantomRemovalPhase.h.
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (JSC::DFG::ConstantFoldingPhase::addBaseCheck):
+        (JSC::DFG::ConstantFoldingPhase::fixUpsilons):
+        * dfg/DFGDCEPhase.cpp:
+        (JSC::DFG::DCEPhase::run):
+        (JSC::DFG::DCEPhase::fixupBlock):
+        (JSC::DFG::DCEPhase::cleanVariables):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupBlock):
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::convertStringAddUse):
+        (JSC::DFG::FixupPhase::attemptToMakeFastStringAdd):
+        (JSC::DFG::FixupPhase::checkArray):
+        (JSC::DFG::FixupPhase::fixIntConvertingEdge):
+        (JSC::DFG::FixupPhase::fixIntOrBooleanEdge):
+        (JSC::DFG::FixupPhase::fixDoubleOrBooleanEdge):
+        (JSC::DFG::FixupPhase::injectTypeConversionsInBlock):
+        (JSC::DFG::FixupPhase::tryToRelaxRepresentation):
+        (JSC::DFG::FixupPhase::injectTypeConversionsForEdge):
+        (JSC::DFG::FixupPhase::addRequiredPhantom): Deleted.
+        (JSC::DFG::FixupPhase::addPhantomsIfNecessary): Deleted.
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::convertToConstant):
+        (JSC::DFG::Graph::mergeRelevantToOSR): Deleted.
+        * dfg/DFGGraph.h:
+        * dfg/DFGInsertionSet.h:
+        (JSC::DFG::InsertionSet::insertCheck):
+        * dfg/DFGIntegerCheckCombiningPhase.cpp:
+        (JSC::DFG::IntegerCheckCombiningPhase::handleBlock):
+        * dfg/DFGLICMPhase.cpp:
+        (JSC::DFG::LICMPhase::attemptHoist):
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::Node::remove):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::replaceWith):
+        (JSC::DFG::Node::convertToPhantom): Deleted.
+        (JSC::DFG::Node::convertToCheck): Deleted.
+        (JSC::DFG::Node::willHaveCodeGenOrOSR): Deleted.
+        * dfg/DFGNodeFlags.h:
+        * dfg/DFGNodeType.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        (JSC::DFG::ObjectAllocationSinkingPhase::lowerNonReadingOperationsOnPhantomAllocations):
+        (JSC::DFG::ObjectAllocationSinkingPhase::handleNode):
+        * dfg/DFGPhantomCanonicalizationPhase.cpp: Removed.
+        * dfg/DFGPhantomCanonicalizationPhase.h: Removed.
+        * dfg/DFGPhantomRemovalPhase.cpp: Removed.
+        * dfg/DFGPhantomRemovalPhase.h: Removed.
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPutStackSinkingPhase.cpp:
+        * dfg/DFGResurrectionForValidationPhase.cpp: Removed.
+        * dfg/DFGResurrectionForValidationPhase.h: Removed.
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        * dfg/DFGStoreBarrierElisionPhase.cpp:
+        (JSC::DFG::StoreBarrierElisionPhase::elideBarrier):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        (JSC::DFG::StrengthReductionPhase::convertToIdentityOverChild):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+        (JSC::DFG::Validate::validateCPS):
+        (JSC::DFG::Validate::validateSSA):
+        * dfg/DFGVarargsForwardingPhase.cpp:
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileNoOp):
+        (JSC::FTL::LowerDFGToLLVM::compilePhantom): Deleted.
+
 2015-04-28  Andreas Kling  <akling@apple.com>
 
         DFG+FTL should generate efficient code for branching on a string's boolean value.

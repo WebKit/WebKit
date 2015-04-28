@@ -495,7 +495,7 @@ public:
                 
                 insertionSet.insertNode(
                     nodeIndex, SpecNone, KillStack, node->origin, OpInfo(node->stackAccessData()->local.offset()));
-                node->convertToPhantom();
+                node->remove();
             }
             
             insertionSet.execute(block);

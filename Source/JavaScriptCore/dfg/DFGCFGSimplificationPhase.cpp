@@ -272,8 +272,13 @@ private:
         NodeType nodeType;
         if (livenessNode->flags() & NodeIsFlushed)
             nodeType = Flush;
-        else
+        else {
+            // This seems like it shouldn't be necessary because we could just rematerialize
+            // PhantomLocals or something similar using bytecode liveness. However, in ThreadedCPS, it's
+            // worth the sanity to maintain this eagerly. See
+            // https://bugs.webkit.org/show_bug.cgi?id=144086
             nodeType = PhantomLocal;
+        }
         block->appendNode(
             m_graph, SpecNone, nodeType, nodeOrigin, 
             OpInfo(livenessNode->variableAccessData()));
@@ -317,11 +322,11 @@ private:
         // kept alive.
         
         // Remove the terminal of firstBlock since we don't need it anymore. Well, we don't
-        // really remove it; we actually turn it into a Phantom.
+        // really remove it; we actually turn it into a check.
         Node* terminal = firstBlock->terminal();
         ASSERT(terminal->isTerminal());
         NodeOrigin boundaryNodeOrigin = terminal->origin;
-        terminal->convertToPhantom();
+        terminal->remove();
         ASSERT(terminal->refCount() == 1);
         
         for (unsigned i = jettisonedBlocks.size(); i--;) {

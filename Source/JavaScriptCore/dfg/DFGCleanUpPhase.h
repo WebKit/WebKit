@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGPhantomCanonicalizationPhase_h
-#define DFGPhantomCanonicalizationPhase_h
+#ifndef DFGCleanUpPhase_h
+#define DFGCleanUpPhase_h
 
 #if ENABLE(DFG_JIT)
 
@@ -32,20 +32,12 @@ namespace JSC { namespace DFG {
 
 class Graph;
 
-// Replaces all pre-existing Phantoms with Checks or removes them if the Check is unnecessary. If
-// the Phantom was necessary (it uses a node that is relevant to OSR) then the Phantom is hoisted
-// to just below the node.
-//
-// This phase is only valid in SSA, because it's only in SSA that Phantoms are ignored for the
-// purpose of liveness-at-some-point and are only used for absolute liveness.
-//
-// This phase makes a lot of things easier, like CFG simplification: you don't have to insert any
-// phantoms when jettisoning a CFG edge.
+// Cleans up unneeded nodes, like empty Checks and Phantoms.
 
-bool performPhantomCanonicalization(Graph&);
+bool performCleanUp(Graph&);
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
 
-#endif // DFGPhantomCanonicalizationPhase_h
+#endif // DFGCleanUpPhase_h

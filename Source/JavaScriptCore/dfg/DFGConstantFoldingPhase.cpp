@@ -108,7 +108,7 @@ private:
                     set = node->structureSet();
                 if (value.m_structure.isSubsetOf(set)) {
                     m_interpreter.execute(indexInBlock); // Catch the fact that we may filter on cell.
-                    node->convertToPhantom();
+                    node->remove();
                     eliminated = true;
                     break;
                 }
@@ -133,8 +133,7 @@ private:
                 m_interpreter.execute(indexInBlock);
                 eliminated = true;
                 
-                m_insertionSet.insertNode(
-                    indexInBlock, SpecNone, Phantom, node->origin, node->children);
+                m_insertionSet.insertCheck(indexInBlock, node->origin, node->children);
                 node->convertToConstantStoragePointer(view->vector());
                 break;
             }
@@ -147,7 +146,7 @@ private:
                     if (Structure* structure = jsDynamicCast<Structure*>(value.value())) {
                         if (set.contains(structure)) {
                             m_interpreter.execute(indexInBlock);
-                            node->convertToPhantom();
+                            node->remove();
                             eliminated = true;
                             break;
                         }
@@ -167,7 +166,7 @@ private:
                         });
                     if (allGood) {
                         m_interpreter.execute(indexInBlock);
-                        node->convertToPhantom();
+                        node->remove();
                         eliminated = true;
                         break;
                     }
@@ -179,7 +178,7 @@ private:
             case Arrayify: {
                 if (!node->arrayMode().alreadyChecked(m_graph, node, m_state.forNode(node->child1())))
                     break;
-                node->convertToPhantom();
+                node->remove();
                 eliminated = true;
                 break;
             }
@@ -188,7 +187,7 @@ private:
                 if (m_state.forNode(node->child1()).m_structure.onlyStructure() != node->transition()->next)
                     break;
                 
-                node->convertToPhantom();
+                node->remove();
                 eliminated = true;
                 break;
             }
@@ -196,7 +195,7 @@ private:
             case CheckCell: {
                 if (m_state.forNode(node->child1()).value() != node->cellOperand()->value())
                     break;
-                node->convertToPhantom();
+                node->remove();
                 eliminated = true;
                 break;
             }
@@ -204,7 +203,7 @@ private:
             case CheckNotEmpty: {
                 if (m_state.forNode(node->child1()).m_type & SpecEmpty)
                     break;
-                node->convertToPhantom();
+                node->remove();
                 eliminated = true;
                 break;
             }
@@ -214,7 +213,7 @@ private:
                 JSValue right = m_state.forNode(node->child2()).value();
                 if (left && right && left.isInt32() && right.isInt32()
                     && static_cast<uint32_t>(left.asInt32()) < static_cast<uint32_t>(right.asInt32())) {
-                    node->convertToPhantom();
+                    node->remove();
                     eliminated = true;
                     break;
                 }
@@ -512,14 +511,16 @@ private:
             if (!*value)
                 continue;
             
-            NodeOrigin origin = node->origin;
-            AdjacencyList children = node->children;
-            
-            m_graph.convertToConstant(node, value);
-            if (!children.isEmpty()) {
+            if (node->op() == GetLocal) {
+                // Need to preserve bytecode liveness in ThreadedCPS form. This wouldn't be necessary
+                // if it wasn't for https://bugs.webkit.org/show_bug.cgi?id=144086.
                 m_insertionSet.insertNode(
-                    indexInBlock, SpecNone, Phantom, origin, children);
-            }
+                    indexInBlock, SpecNone, PhantomLocal, node->origin,
+                    OpInfo(node->variableAccessData()));
+                m_graph.dethread();
+            } else
+                m_insertionSet.insertCheck(indexInBlock, node->origin, node->children);
+            m_graph.convertToConstant(node, value);
             
             changed = true;
         }
@@ -640,10 +641,8 @@ private:
             return;
         }
         
-        if (baseValue.m_type & ~SpecCell) {
-            m_insertionSet.insertNode(
-                indexInBlock, SpecNone, Phantom, node->origin, node->child1());
-        }
+        if (baseValue.m_type & ~SpecCell)
+            m_insertionSet.insertCheck(indexInBlock, node->origin, node->child1());
     }
     
     void addChecks(
@@ -683,7 +682,7 @@ private:
             case JSConstant:
             case DoubleConstant:
             case Int52Constant:
-                node->convertToPhantom();
+                node->remove();
                 break;
             default:
                 DFG_CRASH(m_graph, node, "Bad Upsilon phi() pointer");

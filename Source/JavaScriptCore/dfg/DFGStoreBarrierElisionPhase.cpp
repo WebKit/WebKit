@@ -95,7 +95,7 @@ private:
     void elideBarrier(Node* node)
     {
         ASSERT(node->isStoreBarrier());
-        node->convertToPhantom();
+        node->remove();
     }
 
     void handleNode(HashSet<Node*>& dontNeedBarriers, Node* node)

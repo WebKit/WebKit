@@ -125,6 +125,26 @@ public:
         return insertConstantForUse(index, origin, jsUndefined(), useKind);
     }
     
+    Node* insertCheck(size_t index, NodeOrigin origin, AdjacencyList children)
+    {
+        children = children.justChecks();
+        if (children.isEmpty())
+            return nullptr;
+        return insertNode(index, SpecNone, Check, origin, children);
+    }
+    
+    Node* insertCheck(size_t index, Node* node)
+    {
+        return insertCheck(index, node->origin, node->children);
+    }
+    
+    Node* insertCheck(size_t index, NodeOrigin origin, Edge edge)
+    {
+        if (edge.willHaveCheck())
+            return insertNode(index, SpecNone, Check, origin, edge);
+        return nullptr;
+    }
+    
     void execute(BasicBlock* block)
     {
         executeInsertions(*block, m_insertions);

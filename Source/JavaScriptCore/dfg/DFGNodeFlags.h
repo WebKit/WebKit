@@ -65,12 +65,11 @@ namespace JSC { namespace DFG {
 
 #define NodeArithFlagsMask               (NodeBehaviorMask | NodeBytecodeBackPropMask)
 
-#define NodeRelevantToOSR               0x10000
+#define NodeIsFlushed                   0x10000 // Computed by CPSRethreadingPhase, will tell you which local nodes are backwards-reachable from a Flush.
 
-#define NodeIsFlushed                   0x20000 // Computed by CPSRethreadingPhase, will tell you which local nodes are backwards-reachable from a Flush.
-
-#define NodeMiscFlag1                   0x40000
-#define NodeMiscFlag2                   0x80000
+#define NodeMiscFlag1                   0x20000
+#define NodeMiscFlag2                   0x40000
+#define NodeMiscFlag3                   0x80000
 
 typedef uint32_t NodeFlags;
 

@@ -463,9 +463,8 @@ private:
         case PutStack:
             compilePutStack();
             break;
-        case Phantom:
         case Check:
-            compilePhantom();
+            compileNoOp();
             break;
         case ToThis:
             compileToThis();
@@ -1162,7 +1161,7 @@ private:
         }
     }
     
-    void compilePhantom()
+    void compileNoOp()
     {
         DFG_NODE_DO_TO_CHILDREN(m_graph, m_node, speculate);
     }

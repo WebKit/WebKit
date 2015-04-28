@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,53 +24,66 @@
  */
 
 #include "config.h"
-#include "DFGResurrectionForValidationPhase.h"
+#include "DFGCleanUpPhase.h"
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGBasicBlockInlines.h"
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
+#include "DFGPredictionPropagationPhase.h"
+#include "DFGVariableAccessDataDump.h"
 #include "JSCInlines.h"
 
 namespace JSC { namespace DFG {
 
-class ResurrectionForValidationPhase : public Phase {
+class CleanUpPhase : public Phase {
 public:
-    ResurrectionForValidationPhase(Graph& graph)
-        : Phase(graph, "resurrection for validation")
+    CleanUpPhase(Graph& graph)
+        : Phase(graph, "clean up")
     {
     }
     
     bool run()
     {
-        InsertionSet insertionSet(m_graph);
+        bool changed = false;
         
-        for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
-            BasicBlock* block = m_graph.block(blockIndex);
-            if (!block)
-                continue;
-
-            for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
-                Node* node = block->at(nodeIndex);
-                if (!node->hasResult())
-                    continue;
-                insertionSet.insertNode(
-                    nodeIndex + 1, SpecNone, Phantom, node->origin, node->defaultEdge());
+        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+            unsigned sourceIndex = 0;
+            unsigned targetIndex = 0;
+            while (sourceIndex < block->size()) {
+                Node* node = block->at(sourceIndex++);
+                bool kill = false;
+                
+                if (node->op() == Check)
+                    node->children = node->children.justChecks();
+                
+                switch (node->op()) {
+                case Phantom:
+                case Check:
+                    if (node->children.isEmpty())
+                        kill = true;
+                    break;
+                default:
+                    break;
+                }
+                
+                if (kill)
+                    m_graph.m_allocator.free(node);
+                else
+                    block->at(targetIndex++) = node;
             }
-            
-            insertionSet.execute(block);
+            block->resize(targetIndex);
         }
         
-        return true;
+        return changed;
     }
 };
-
-bool performResurrectionForValidation(Graph& graph)
+    
+bool performCleanUp(Graph& graph)
 {
-    SamplingRegion samplingRegion("DFG Resurrection For Validation Phase");
-    return runPhase<ResurrectionForValidationPhase>(graph);
+    SamplingRegion samplingRegion("DFG Clean Up Phase");
+    return runPhase<CleanUpPhase>(graph);
 }
 
 } } // namespace JSC::DFG

@@ -60,7 +60,8 @@ namespace JSC { namespace DFG {
     /* basic block might have read a local variable in bytecode. We only remove GetLocals if it */\
     /* is redundant because of an earlier GetLocal or SetLocal in the same block. We could make */\
     /* these not MustGenerate and use a more sophisticated analysis to insert PhantomLocals in */\
-    /* the same way that we insert Phantoms. https://bugs.webkit.org/show_bug.cgi?id=144086 */\
+    /* the same way that we insert Phantoms. That's hard and probably not profitable. See */\
+    /* https://bugs.webkit.org/show_bug.cgi?id=144086 */\
     macro(GetLocal, NodeResultJS | NodeMustGenerate) \
     macro(SetLocal, 0) \
     \
@@ -72,8 +73,8 @@ namespace JSC { namespace DFG {
     macro(ZombieHint, NodeMustGenerate) \
     macro(Phantom, NodeMustGenerate) \
     macro(Check, NodeMustGenerate) /* Used if we want just a type check but not liveness. Non-checking uses will be removed. */\
-    macro(Upsilon, NodeRelevantToOSR) \
-    macro(Phi, NodeRelevantToOSR) \
+    macro(Upsilon, 0) \
+    macro(Phi, 0) \
     macro(Flush, NodeMustGenerate) \
     macro(PhantomLocal, NodeMustGenerate) \
     \
@@ -281,10 +282,10 @@ namespace JSC { namespace DFG {
     macro(CreateActivation, NodeResultJS) \
     \
     macro(CreateDirectArguments, NodeResultJS) \
-    macro(PhantomDirectArguments, NodeResultJS) \
+    macro(PhantomDirectArguments, NodeResultJS | NodeMustGenerate) \
     macro(CreateScopedArguments, NodeResultJS) \
     macro(CreateClonedArguments, NodeResultJS) \
-    macro(PhantomClonedArguments, NodeResultJS) \
+    macro(PhantomClonedArguments, NodeResultJS | NodeMustGenerate) \
     macro(GetFromArguments, NodeResultJS) \
     macro(PutToArguments, NodeMustGenerate) \
     \

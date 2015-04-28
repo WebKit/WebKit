@@ -1068,6 +1068,12 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
         }
         
         DataFormat spillFormat = info.spillFormat();
+        if (spillFormat != DataFormatDouble) {
+            DFG_CRASH(
+                m_jit.graph(), m_currentNode, toCString(
+                    "Expected ", edge, " to have double format but instead it is spilled as ",
+                    dataFormatToString(spillFormat)).data());
+        }
         DFG_ASSERT(m_jit.graph(), m_currentNode, spillFormat == DataFormatDouble);
         FPRReg fpr = fprAllocate();
         m_jit.loadDouble(JITCompiler::addressFor(virtualRegister), fpr);

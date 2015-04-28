@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -154,6 +154,21 @@ public:
     AdjacencyList sanitized() const
     {
         return AdjacencyList(Fixed, child1().sanitized(), child2().sanitized(), child3().sanitized());
+    }
+    
+    AdjacencyList justChecks() const
+    {
+        AdjacencyList result(Fixed);
+        unsigned sourceIndex = 0;
+        unsigned targetIndex = 0;
+        while (sourceIndex < AdjacencyList::Size) {
+            Edge edge = child(sourceIndex++);
+            if (!edge)
+                break;
+            if (edge.willHaveCheck())
+                result.child(targetIndex++) = edge;
+        }
+        return result;
     }
     
     unsigned hash() const

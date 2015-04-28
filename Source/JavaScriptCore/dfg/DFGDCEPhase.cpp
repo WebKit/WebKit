@@ -50,27 +50,11 @@ public:
         
         m_graph.computeRefCounts();
         
-        if (m_graph.m_form == SSA) {
-            for (BasicBlock* block : m_graph.blocksInPreOrder())
-                fixupBlock(block);
-            
-            // This is like cleanVariables, but has a much simpler approach to GetLocal.
-            for (unsigned i = m_graph.m_arguments.size(); i--;) {
-                Node* node = m_graph.m_arguments[i];
-                if (!node)
-                    continue;
-                if (node->op() != Phantom && node->op() != Check && node->shouldGenerate())
-                    continue;
-                m_graph.m_arguments[i] = nullptr;
-            }
-        } else {
-            RELEASE_ASSERT(m_graph.m_form == ThreadedCPS);
-            
-            for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex)
-                fixupBlock(m_graph.block(blockIndex));
-            cleanVariables(m_graph.m_arguments);
-        }
+        for (BasicBlock* block : m_graph.blocksInPreOrder())
+            fixupBlock(block);
         
+        cleanVariables(m_graph.m_arguments);
+
         // Just do a basic Phantom/Check clean-up.
         for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
             BasicBlock* block = m_graph.block(blockIndex);
@@ -104,22 +88,12 @@ private:
     {
         if (!block)
             return;
-        
-        switch (m_graph.m_form) {
-        case SSA:
-            break;
-            
-        case ThreadedCPS: {
-            // Clean up variable links for the block. We need to do this before the actual DCE
-            // because we need to see GetLocals, so we can bypass them in situations where the
-            // vars-at-tail point to a GetLocal, the GetLocal is dead, but the Phi it points
-            // to is alive.
-            
+
+        if (m_graph.m_form == ThreadedCPS) {
             for (unsigned phiIndex = 0; phiIndex < block->phis.size(); ++phiIndex) {
-                if (!block->phis[phiIndex]->shouldGenerate()) {
-                    // FIXME: We could actually free nodes here. Except that it probably
-                    // doesn't matter, since we don't add any nodes after this phase.
-                    // https://bugs.webkit.org/show_bug.cgi?id=126239
+                Node* phi = block->phis[phiIndex];
+                if (!phi->shouldGenerate()) {
+                    m_graph.m_allocator.free(phi);
                     block->phis[phiIndex--] = block->phis.last();
                     block->phis.removeLast();
                 }
@@ -127,12 +101,6 @@ private:
             
             cleanVariables(block->variablesAtHead);
             cleanVariables(block->variablesAtTail);
-            break;
-        }
-            
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            return;
         }
 
         // This has to be a forward loop because we are using the insertion set.
@@ -141,40 +109,24 @@ private:
             if (node->shouldGenerate())
                 continue;
                 
-            switch (node->op()) {
-            case MovHint:
-            case ZombieHint:
-                // These are not killable. (They once were.)
-                RELEASE_ASSERT_NOT_REACHED();
-                
-            default: {
-                if (node->flags() & NodeHasVarArgs) {
-                    for (unsigned childIdx = node->firstChild(); childIdx < node->firstChild() + node->numChildren(); childIdx++) {
-                        Edge edge = m_graph.m_varArgChildren[childIdx];
-
-                        if (!edge || edge.isProved() || edge.willNotHaveCheck())
-                            continue;
-
-                        m_insertionSet.insertNode(indexInBlock, SpecNone, Check, node->origin, edge);
-                    }
-
-                    node->convertToPhantom();
-                    node->children.reset();
-                    node->setRefCount(1);
-                    break;
-                }
-
-                node->convertToCheck();
-                for (unsigned i = 0; i < AdjacencyList::Size; ++i) {
-                    Edge edge = node->children.child(i);
-                    if (!edge)
+            if (node->flags() & NodeHasVarArgs) {
+                for (unsigned childIdx = node->firstChild(); childIdx < node->firstChild() + node->numChildren(); childIdx++) {
+                    Edge edge = m_graph.m_varArgChildren[childIdx];
+                    
+                    if (!edge || edge.willNotHaveCheck())
                         continue;
-                    if (edge.isProved() || edge.willNotHaveCheck())
-                        node->children.removeEdge(i--);
+                    
+                    m_insertionSet.insertNode(indexInBlock, SpecNone, Check, node->origin, edge);
                 }
+                
+                node->setOpAndDefaultFlags(Check);
+                node->children.reset();
                 node->setRefCount(1);
-                break;
-            } }
+                continue;
+            }
+            
+            node->remove();
+            node->setRefCount(1);
         }
 
         m_insertionSet.execute(block);
@@ -187,19 +139,9 @@ private:
             Node* node = variables[i];
             if (!node)
                 continue;
-            if (node->op() != Phantom && node->op() != Check && node->shouldGenerate())
+            if (node->op() != Check && node->shouldGenerate())
                 continue;
-            if (node->op() == GetLocal) {
-                node = node->child1().node();
-                
-                ASSERT(node->op() == Phi || node->op() == SetArgument);
-                
-                if (node->shouldGenerate()) {
-                    variables[i] = node;
-                    continue;
-                }
-            }
-            variables[i] = 0;
+            variables[i] = nullptr;
         }
     }
     

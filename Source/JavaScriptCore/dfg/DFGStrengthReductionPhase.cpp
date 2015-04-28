@@ -139,7 +139,7 @@ private:
                 if (yOperandValue == 1) {
                     convertToIdentityOverChild1();
                 } else if (yOperandValue == 0.5) {
-                    m_insertionSet.insertNode(m_nodeIndex, SpecNone, Phantom, m_node->origin, m_node->children);
+                    m_insertionSet.insertCheck(m_nodeIndex, m_node);
                     m_node->convertToArithSqrt();
                     m_changed = true;
                 }
@@ -166,8 +166,7 @@ private:
             for (Node* node = m_node->child1().node(); ; node = node->child1().node()) {
                 if (canonicalResultRepresentation(node->result()) ==
                     canonicalResultRepresentation(m_node->result())) {
-                    m_insertionSet.insertNode(
-                        m_nodeIndex, SpecNone, Phantom, m_node->origin, m_node->child1());
+                    m_insertionSet.insertCheck(m_nodeIndex, m_node);
                     if (hadInt32Check) {
                         // FIXME: Consider adding Int52RepInt32Use or even DoubleRepInt32Use,
                         // which would be super weird. The latter would only arise in some
@@ -175,9 +174,8 @@ private:
                         if (canonicalResultRepresentation(node->result()) != NodeResultJS)
                             break;
                         
-                        m_insertionSet.insertNode(
-                            m_nodeIndex, SpecNone, Phantom, m_node->origin,
-                            Edge(node, Int32Use));
+                        m_insertionSet.insertCheck(
+                            m_nodeIndex, m_node->origin, Edge(node, Int32Use));
                     }
                     m_node->child1() = node->defaultEdge();
                     m_node->convertToIdentity();
@@ -239,8 +237,7 @@ private:
             
     void convertToIdentityOverChild(unsigned childIndex)
     {
-        m_insertionSet.insertNode(
-            m_nodeIndex, SpecNone, Phantom, m_node->origin, m_node->children);
+        m_insertionSet.insertCheck(m_nodeIndex, m_node);
         m_node->children.removeEdge(childIndex ^ 1);
         m_node->convertToIdentity();
         m_changed = true;

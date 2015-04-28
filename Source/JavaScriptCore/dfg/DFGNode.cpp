@@ -85,6 +85,15 @@ bool Node::hasVariableAccessData(Graph& graph)
     }
 }
 
+void Node::remove()
+{
+    ASSERT(!(flags() & NodeHasVarArgs));
+    
+    children = children.justChecks();
+    
+    setOpAndDefaultFlags(Check);
+}
+
 void Node::convertToIdentity()
 {
     RELEASE_ASSERT(child1());

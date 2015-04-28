@@ -104,7 +104,6 @@ private:
                     relevantLocals.append(node->unlinkedLocal());
                 break;
                 
-            case Phantom:
             case Check:
             case LoadVarargs:
                 if (m_graph.uses(node, candidate))
@@ -237,7 +236,6 @@ private:
         for (unsigned nodeIndex = candidateNodeIndex + 1; nodeIndex <= lastUserIndex; ++nodeIndex) {
             Node* node = block->at(nodeIndex);
             switch (node->op()) {
-            case Phantom:
             case Check:
             case MovHint:
             case PutHint:

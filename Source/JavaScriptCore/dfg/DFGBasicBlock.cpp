@@ -78,7 +78,7 @@ void BasicBlock::replaceTerminal(Node* node)
         append(node);
     else {
         m_nodes.insert(result.index + 1, node);
-        result.node->convertToPhantom();
+        result.node->remove();
     }
     
     ASSERT(terminal());

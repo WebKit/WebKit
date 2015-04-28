@@ -593,26 +593,6 @@ void Graph::resetReachability()
     determineReachability();
 }
 
-void Graph::mergeRelevantToOSR()
-{
-    for (BasicBlock* block : blocksInNaturalOrder()) {
-        for (Node* node : *block) {
-            switch (node->op()) {
-            case MovHint:
-                node->child1()->mergeFlags(NodeRelevantToOSR);
-                break;
-                
-            case PutHint:
-                node->child2()->mergeFlags(NodeRelevantToOSR);
-                break;
-                
-            default:
-                break;
-            }
-        }
-    }
-}
-
 namespace {
 
 class RefCountCalculator {
@@ -625,12 +605,6 @@ public:
     void calculate()
     {
         // First reset the counts to 0 for all nodes.
-        //
-        // Also take this opportunity to pretend that Check nodes are not NodeMustGenerate. Check
-        // nodes are MustGenerate because they are executed for effect, but they follow the same
-        // DCE rules as nodes that aren't MustGenerate: they only contribute to the ref count of
-        // their children if the edges require checks. Non-checking edges are removed. Note that
-        // for any Checks left over, this phase will turn them back into NodeMustGenerate.
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
             BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
@@ -654,11 +628,6 @@ public:
                 DFG_NODE_DO_TO_CHILDREN(m_graph, node, findTypeCheckRoot);
                 if (!(node->flags() & NodeMustGenerate))
                     continue;
-                if (node->op() == Check) {
-                    // We don't treat Check nodes as MustGenerate. We will gladly
-                    // kill them off in this phase.
-                    continue;
-                }
                 if (!node->postfixRef())
                     m_worklist.append(node);
             }
@@ -1263,12 +1232,6 @@ void Graph::convertToConstant(Node* node, FrozenValue* value)
 {
     if (value->structure())
         assertIsRegistered(value->structure());
-    if (m_form == ThreadedCPS) {
-        if (node->op() == GetLocal)
-            dethread();
-        else
-            ASSERT(!node->hasVariableAccessData(*this));
-    }
     node->convertToConstant(value);
 }
 

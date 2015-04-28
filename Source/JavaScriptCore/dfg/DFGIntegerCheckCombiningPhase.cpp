@@ -292,7 +292,7 @@ private:
                 break;
                 
             case ArrayBounds:
-                node->convertToPhantom();
+                node->remove();
                 m_changed = true;
                 break;
                 

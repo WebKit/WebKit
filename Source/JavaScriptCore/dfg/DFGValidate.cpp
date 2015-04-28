@@ -146,31 +146,6 @@ public:
                             break;
                         VALIDATE((node, edge), edge->variableAccessData() == node->variableAccessData());
                         break;
-                    case Phantom:
-                        switch (m_graph.m_form) {
-                        case LoadStore:
-                            if (j) {
-                                VALIDATE((node, edge), edge->hasResult());
-                                break;
-                            }
-                            switch (edge->op()) {
-                            case Phi:
-                            case SetArgument:
-                            case SetLocal:
-                                break;
-                            default:
-                                VALIDATE((node, edge), edge->hasResult());
-                                break;
-                            }
-                            break;
-                        case ThreadedCPS:
-                            VALIDATE((node, edge), edge->hasResult());
-                            break;
-                        case SSA:
-                            RELEASE_ASSERT_NOT_REACHED();
-                            break;
-                        }
-                        break;
                     default:
                         VALIDATE((node, edge), edge->hasResult());
                         break;
@@ -196,7 +171,7 @@ public:
                     foundTerminal = true;
                     for (size_t j = i + 1; j < block->size(); ++j) {
                         node = block->at(j);
-                        VALIDATE((node), node->op() == Phantom || node->op() == PhantomLocal || node->op() == Flush);
+                        VALIDATE((node), node->op() == Phantom || node->op() == PhantomLocal || node->op() == Flush || node->op() == Check);
                         m_graph.doToChildren(
                             node,
                             [&] (Edge edge) {
@@ -437,10 +412,6 @@ private:
                     case GetLocal:
                     case Flush:
                         break;
-                    case Phantom:
-                        if (m_graph.m_form == LoadStore && !j)
-                            break;
-                        FALLTHROUGH;
                     default:
                         VALIDATE((node, edge), !phisInThisBlock.contains(edge.node()));
                         break;
@@ -461,6 +432,9 @@ private:
                 case KillStack:
                 case GetStack:
                     VALIDATE((node), !"unexpected node type in CPS");
+                    break;
+                case Phantom:
+                    VALIDATE((node), m_graph.m_fixpointState != FixpointNotConverged);
                     break;
                 default:
                     break;
@@ -541,6 +515,7 @@ private:
                 case SetLocal:
                 case GetLocalUnlinked:
                 case SetArgument:
+                case Phantom:
                     VALIDATE((node), !"bad node type for SSA");
                     break;
                     
