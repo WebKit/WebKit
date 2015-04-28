@@ -148,8 +148,8 @@ namespace WebCore {
         void setHiddenFromInspector(bool hiddenFromInspector) { m_hiddenFromInspector = hiddenFromInspector; }
 
         enum class Requester { Unspecified, Main, XHR };
-        WEBCORE_EXPORT Requester requester() const { return m_requester; }
-        WEBCORE_EXPORT void setRequester(Requester requester) { m_requester = requester; }
+        Requester requester() const { return m_requester; }
+        void setRequester(Requester requester) { m_requester = requester; }
 
 #if !PLATFORM(COCOA)
         bool encodingRequiresPlatformData() const { return true; }

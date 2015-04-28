@@ -1,3 +1,11 @@
+2015-04-28  Andy Estes  <aestes@apple.com>
+
+        Fix the Mavericks Debug build after r183467.
+
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::requester): Removed WEBCORE_EXPORT.
+        (WebCore::ResourceRequestBase::setRequester): Ditto.
+
 2015-04-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove make-file-arrays.py
