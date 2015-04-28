@@ -1,3 +1,12 @@
+2015-04-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove make-file-arrays.py
+        https://bugs.webkit.org/show_bug.cgi?id=144324
+
+        Reviewed by Gyuyoung Kim.
+
+        * make-file-arrays.py: Removed.
+
 2015-04-28  Antti Koivisto  <antti@apple.com>
 
         Build fix.
