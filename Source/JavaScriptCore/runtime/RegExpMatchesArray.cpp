@@ -35,16 +35,16 @@ JSArray* createRegExpMatchesArray(ExecState* exec, JSString* input, RegExp* regE
 {
     ASSERT(result);
     VM& vm = exec->vm();
-    JSArray* array = JSArray::tryCreateUninitialized(vm, exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(ContiguousShape), regExp->numSubpatterns() + 1);
+    JSArray* array = JSArray::tryCreateUninitialized(vm, exec->lexicalGlobalObject()->regExpMatchesArrayStructure(), regExp->numSubpatterns() + 1);
     RELEASE_ASSERT(array);
 
     SamplingRegion samplingRegion("Reifying substring properties");
 
-    array->initializeIndex(vm, 0, jsSubstring(exec, input, result.start, result.end - result.start), ContiguousShape);
+    array->putDirectIndex(exec, 0, jsSubstring(exec, input, result.start, result.end - result.start));
 
     if (unsigned numSubpatterns = regExp->numSubpatterns()) {
         Vector<int, 32> subpatternResults;
-        int position = regExp->match(vm, input->value(exec), result.start, subpatternResults);
+        int position = regExp->match(exec->vm(), input->value(exec), result.start, subpatternResults);
         ASSERT_UNUSED(position, position >= 0 && static_cast<size_t>(position) == result.start);
         ASSERT(result.start == static_cast<size_t>(subpatternResults[0]));
         ASSERT(result.end == static_cast<size_t>(subpatternResults[1]));
@@ -52,14 +52,14 @@ JSArray* createRegExpMatchesArray(ExecState* exec, JSString* input, RegExp* regE
         for (unsigned i = 1; i <= numSubpatterns; ++i) {
             int start = subpatternResults[2 * i];
             if (start >= 0)
-                array->initializeIndex(vm, i, jsSubstring(exec, input, start, subpatternResults[2 * i + 1] - start), ContiguousShape);
+                array->putDirectIndex(exec, i, jsSubstring(exec, input, start, subpatternResults[2 * i + 1] - start));
             else
-                array->initializeIndex(vm, i, jsUndefined(), ContiguousShape);
+                array->putDirectIndex(exec, i, jsUndefined());
         }
     }
 
-    array->putDirect(vm, vm.propertyNames->index, jsNumber(result.start));
-    array->putDirect(vm, vm.propertyNames->input, input);
+    array->putDirect(exec->vm(), exec->propertyNames().index, jsNumber(result.start));
+    array->putDirect(exec->vm(), exec->propertyNames().input, input);
 
     return array;
 }

@@ -1,3 +1,18 @@
+2015-04-27  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out r183438 "RegExp matches arrays should use contiguous indexing". It
+        causes many debug test failures.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::regExpMatchesArrayStructure):
+        * runtime/JSObject.h:
+        (JSC::JSObject::initializeIndex):
+        * runtime/RegExpMatchesArray.cpp:
+        (JSC::createRegExpMatchesArray):
+
 2015-04-27  Andreas Kling  <akling@apple.com>
 
         RegExp matches arrays should use contiguous indexing.

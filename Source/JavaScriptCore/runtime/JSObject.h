@@ -364,15 +364,10 @@ public:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
-
+        
     void initializeIndex(VM& vm, unsigned i, JSValue v)
     {
-        initializeIndex(vm, i, v, indexingType());
-    }
-
-    void initializeIndex(VM& vm, unsigned i, JSValue v, IndexingType indexingType)
-    {
-        switch (indexingType) {
+        switch (indexingType()) {
         case ALL_UNDECIDED_INDEXING_TYPES: {
             setIndexQuicklyToUndecided(vm, i, v);
             break;
