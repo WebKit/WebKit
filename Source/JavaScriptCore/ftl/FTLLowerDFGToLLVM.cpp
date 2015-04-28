@@ -3010,7 +3010,6 @@ private:
         m_out.store32(length.value, fastObject, m_heaps.DirectArguments_length);
         m_out.store32(m_out.constInt32(minCapacity), fastObject, m_heaps.DirectArguments_minCapacity);
         m_out.storePtr(m_out.intPtrZero, fastObject, m_heaps.DirectArguments_overrides);
-        m_out.storePtr(getCurrentCallee(), fastObject, m_heaps.DirectArguments_callee);
         
         ValueFromBlock fastResult = m_out.anchor(fastObject);
         m_out.jump(continuation);
@@ -3024,6 +3023,8 @@ private:
         
         m_out.appendTo(continuation, lastNext);
         LValue result = m_out.phi(m_out.intPtr, fastResult, slowResult);
+
+        m_out.storePtr(getCurrentCallee(), result, m_heaps.DirectArguments_callee);
         
         if (length.isKnown) {
             VirtualRegister start = AssemblyHelpers::argumentsStart(m_node->origin.semantic);

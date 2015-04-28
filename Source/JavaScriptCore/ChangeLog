@@ -1,3 +1,18 @@
+2015-04-27  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL failed to initialize arguments.callee on the slow path as well as the fast path
+        https://bugs.webkit.org/show_bug.cgi?id=144293
+
+        Reviewed by Mark Lam.
+        
+        The slow path doesn't fully initialize DirectArguments - it leaves callee blank. So, we need
+        to initialize the callee on the common path after the fast and slow path.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileCreateDirectArguments):
+        * tests/stress/arguments-callee-uninitialized.js: Added.
+        (foo):
+
 2015-04-27  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Add support for typed arrays to the Array profiling
