@@ -1,0 +1,12 @@
+
+This tests that the AXPressAction comes first for activatable items instead of the scroll to visible action. This is needed for screenreaders to operate correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Button supported actions: AXPress,AXShowMenu,AXScrollToVisible
+Link supported actions: AXPress,AXShowMenu,AXScrollToVisible
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

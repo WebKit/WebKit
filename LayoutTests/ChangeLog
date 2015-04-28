@@ -1,5 +1,39 @@
 2015-04-28  Andy Estes  <aestes@apple.com>
 
+        Add results to platform/mac-mavericks/ that were previously in a separate repository.
+
+        * platform/mac-mavericks/TestExpectations: Added.
+        * platform/mac-mavericks/accessibility/aria-readonly-expected.txt: Added.
+        * platform/mac-mavericks/canvas/philip/tests/2d.line.join.parallel-expected.txt: Added.
+        * platform/mac-mavericks/css2.1/t0905-c5525-flthw-00-c-g-expected.txt: Added.
+        * platform/mac-mavericks/css2.1/t0905-c5526-flthw-00-c-g-expected.txt: Added.
+        * platform/mac-mavericks/fast/js/global-constructors-attributes-expected.txt: Added.
+        * platform/mac-mavericks/fast/replaced/width-and-height-of-positioned-replaced-elements-expected.txt: Added.
+        * platform/mac-mavericks/fast/text/hyphenate-locale-expected.txt: Added.
+        * platform/mac-mavericks/fast/text/international/bold-bengali-expected.txt: Added.
+        * platform/mac-mavericks/fast/text/international/cjk-segmentation-expected.txt: Added.
+        * platform/mac-mavericks/fast/text/international/hindi-spacing-expected.txt: Added.
+        * platform/mac-mavericks/fast/text/international/khmer-selection-expected.txt: Added.
+        * platform/mac-mavericks/fast/writing-mode/text-orientation-basic-expected.txt: Added.
+        * platform/mac-mavericks/fast/xsl/xslt-missing-namespace-in-xslt-expected.txt: Added.
+        * platform/mac-mavericks/fonts/cursive-expected.txt: Added.
+        * platform/mac-mavericks/http/tests/cache/partitioned-cache-expected.txt: Added.
+        * platform/mac-mavericks/http/tests/cache/partitioned-cache-iframe-expected.txt: Added.
+        * platform/mac-mavericks/http/tests/xmlhttprequest/head-redirection-expected.txt: Added.
+        * platform/mac-mavericks/media/video-controls-captions-trackmenu-includes-enabled-track-expected.txt: Added.
+        * platform/mac-mavericks/platform/mac-wk2/TestExpectations: Added.
+        * platform/mac-mavericks/platform/mac/accessibility/form-control-value-settable-expected.txt: Added.
+        * platform/mac-mavericks/platform/mac/accessibility/press-action-is-first-expected.txt: Added.
+        * platform/mac-mavericks/platform/mac/editing/spelling/removing-underline-after-accepting-autocorrection-using-punctuation-expected.txt: Added.
+        * platform/mac-mavericks/platform/mac/fast/loader/file-url-mimetypes-expected.txt: Added.
+        * platform/mac-mavericks/platform/mac/fast/text/systemFont-expected.png: Added.
+        * platform/mac-mavericks/svg/W3C-SVG-1.1/paths-data-03-f-expected.txt: Added.
+        * platform/mac-mavericks/svg/custom/use-on-symbol-inside-pattern-expected.txt: Added.
+        * platform/mac-mavericks/svg/hixie/intrinsic/003-expected.txt: Added.
+        * platform/mac-mavericks/transitions/default-timing-function-expected.txt: Added.
+
+2015-04-28  Andy Estes  <aestes@apple.com>
+
         Unreviewed Mac gardening for safari-600.6-branch.
 
         * platform/mac-mavericks/media/audio-controls-rendering-expected.txt: Added.
