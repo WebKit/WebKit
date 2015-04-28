@@ -294,11 +294,12 @@ void GraphicsContext::drawLine(const FloatPoint& point1, const FloatPoint& point
     CGContextRef context = platformContext();
     StrokeStyle strokeStyle = this->strokeStyle();
     float cornerWidth = 0;
+    bool drawsDashedLine = strokeStyle == DottedStroke || strokeStyle == DashedStroke;
 
-    if (strokeStyle == DottedStroke || strokeStyle == DashedStroke) {
+    if (drawsDashedLine) {
+        CGContextSaveGState(context);
         // Figure out end points to ensure we always paint corners.
         cornerWidth = strokeStyle == DottedStroke ? thickness : std::min(2 * thickness, std::max(thickness, strokeWidth / 3));
-        CGContextSaveGState(context);
         setCGFillColor(context, strokeColor(), strokeColorSpace());
         if (isVerticalLine) {
             CGContextFillRect(context, FloatRect(point1.x(), point1.y(), thickness, cornerWidth));
@@ -307,12 +308,13 @@ void GraphicsContext::drawLine(const FloatPoint& point1, const FloatPoint& point
             CGContextFillRect(context, FloatRect(point1.x(), point1.y(), cornerWidth, thickness));
             CGContextFillRect(context, FloatRect(point2.x() - cornerWidth, point1.y(), cornerWidth, thickness));
         }
-        CGContextRestoreGState(context);
         strokeWidth -= 2 * cornerWidth;
         float patternWidth = strokeStyle == DottedStroke ? thickness : std::min(3 * thickness, std::max(thickness, strokeWidth / 3));
         // Check if corner drawing sufficiently covers the line.
-        if (strokeWidth <= patternWidth + 1)
+        if (strokeWidth <= patternWidth + 1) {
+            CGContextRestoreGState(context);
             return;
+        }
 
         // Pattern starts with full fill and ends with the empty fill.
         // 1. Let's start with the empty phase after the corner.
@@ -360,6 +362,8 @@ void GraphicsContext::drawLine(const FloatPoint& point1, const FloatPoint& point
     CGContextMoveToPoint(context, p1.x(), p1.y());
     CGContextAddLineToPoint(context, p2.x(), p2.y());
     CGContextStrokePath(context);
+    if (drawsDashedLine)
+        CGContextRestoreGState(context);
     if (shouldAntialias())
         CGContextSetShouldAntialias(context, true);
 }
