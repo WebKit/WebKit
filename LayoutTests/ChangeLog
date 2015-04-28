@@ -1,3 +1,13 @@
+2015-04-28  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] PHP scripts fail if HTTP_ORIGIN is not set.
+        https://bugs.webkit.org/show_bug.cgi?id=144333
+
+        Rubberstamped by Brady Eidson.
+
+        * http/tests/security/resources/cors-post-redirect-target.php: Check
+        that HTTP_ORIGIN key exists before using it to avoid PHP error.
+
 2015-04-28  Andy Estes  <aestes@apple.com>
 
         Add expectations for tests added in r183428 and r183450.
