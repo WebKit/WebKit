@@ -864,13 +864,34 @@ void ScrollView::scrollContentsSlowPath(const IntRect& updateRect)
     hostWindow()->invalidateContentsForSlowScroll(updateRect);
 }
 
+IntPoint ScrollView::viewToContents(const IntPoint& point) const
+{
+    return point + documentScrollOffsetRelativeToViewOrigin();
+}
+
+IntPoint ScrollView::contentsToView(const IntPoint& point) const
+{
+    return point - documentScrollOffsetRelativeToViewOrigin();
+}
+
+IntRect ScrollView::viewToContents(IntRect rect) const
+{
+    rect.move(documentScrollOffsetRelativeToViewOrigin());
+    return rect;
+}
+
+IntRect ScrollView::contentsToView(IntRect rect) const
+{
+    rect.move(-documentScrollOffsetRelativeToViewOrigin());
+    return rect;
+}
+
 IntPoint ScrollView::rootViewToContents(const IntPoint& rootViewPoint) const
 {
     if (delegatesScrolling())
         return convertFromRootView(rootViewPoint);
 
-    IntPoint viewPoint = convertFromRootView(rootViewPoint);
-    return viewPoint + documentScrollOffsetRelativeToViewOrigin();
+    return viewToContents(convertFromRootView(rootViewPoint));
 }
 
 IntPoint ScrollView::contentsToRootView(const IntPoint& contentsPoint) const
@@ -878,8 +899,7 @@ IntPoint ScrollView::contentsToRootView(const IntPoint& contentsPoint) const
     if (delegatesScrolling())
         return convertToRootView(contentsPoint);
 
-    IntPoint viewPoint = contentsPoint + IntSize(0, headerHeight() + topContentInset(TopContentInsetType::WebCoreOrPlatformContentInset)) - scrollOffset();
-    return convertToRootView(viewPoint);  
+    return convertToRootView(contentsToView(contentsPoint));
 }
 
 IntRect ScrollView::rootViewToContents(const IntRect& rootViewRect) const
@@ -887,19 +907,7 @@ IntRect ScrollView::rootViewToContents(const IntRect& rootViewRect) const
     if (delegatesScrolling())
         return convertFromRootView(rootViewRect);
 
-    IntRect viewRect = convertFromRootView(rootViewRect);
-    viewRect.move(documentScrollOffsetRelativeToViewOrigin());
-    return viewRect;
-}
-
-IntRect ScrollView::contentsToRootView(const IntRect& contentsRect) const
-{
-    if (delegatesScrolling())
-        return convertToRootView(contentsRect);
-
-    IntRect viewRect = contentsRect;
-    viewRect.move(-scrollOffset() + IntSize(0, headerHeight() + topContentInset(TopContentInsetType::WebCoreOrPlatformContentInset)));
-    return convertToRootView(viewRect);
+    return viewToContents(convertFromRootView(rootViewRect));
 }
 
 IntPoint ScrollView::rootViewToTotalContents(const IntPoint& rootViewPoint) const
@@ -908,7 +916,16 @@ IntPoint ScrollView::rootViewToTotalContents(const IntPoint& rootViewPoint) cons
         return convertFromRootView(rootViewPoint);
 
     IntPoint viewPoint = convertFromRootView(rootViewPoint);
+    // Like rootViewToContents(), but ignores headerHeight.
     return viewPoint + scrollOffset() - IntSize(0, topContentInset(TopContentInsetType::WebCoreOrPlatformContentInset));
+}
+
+IntRect ScrollView::contentsToRootView(const IntRect& contentsRect) const
+{
+    if (delegatesScrolling())
+        return convertToRootView(contentsRect);
+
+    return convertToRootView(contentsToView(contentsRect));
 }
 
 IntPoint ScrollView::windowToContents(const IntPoint& windowPoint) const
@@ -916,8 +933,7 @@ IntPoint ScrollView::windowToContents(const IntPoint& windowPoint) const
     if (delegatesScrolling())
         return convertFromContainingWindow(windowPoint);
 
-    IntPoint viewPoint = convertFromContainingWindow(windowPoint);
-    return viewPoint + documentScrollOffsetRelativeToViewOrigin();
+    return viewToContents(convertFromContainingWindow(windowPoint));
 }
 
 IntPoint ScrollView::contentsToWindow(const IntPoint& contentsPoint) const
@@ -925,8 +941,7 @@ IntPoint ScrollView::contentsToWindow(const IntPoint& contentsPoint) const
     if (delegatesScrolling())
         return convertToContainingWindow(contentsPoint);
 
-    IntPoint viewPoint = contentsPoint + IntSize(0, headerHeight() + topContentInset(TopContentInsetType::WebCoreOrPlatformContentInset)) - scrollOffset();
-    return convertToContainingWindow(viewPoint);  
+    return convertToContainingWindow(contentsToView(contentsPoint));
 }
 
 IntRect ScrollView::windowToContents(const IntRect& windowRect) const
@@ -934,9 +949,7 @@ IntRect ScrollView::windowToContents(const IntRect& windowRect) const
     if (delegatesScrolling())
         return convertFromContainingWindow(windowRect);
 
-    IntRect viewRect = convertFromContainingWindow(windowRect);
-    viewRect.move(documentScrollOffsetRelativeToViewOrigin());
-    return viewRect;
+    return viewToContents(convertFromContainingWindow(windowRect));
 }
 
 IntRect ScrollView::contentsToWindow(const IntRect& contentsRect) const
@@ -944,9 +957,7 @@ IntRect ScrollView::contentsToWindow(const IntRect& contentsRect) const
     if (delegatesScrolling())
         return convertToContainingWindow(contentsRect);
 
-    IntRect viewRect = contentsRect;
-    viewRect.move(-scrollOffset() + IntSize(0, headerHeight() + topContentInset(TopContentInsetType::WebCoreOrPlatformContentInset)));
-    return convertToContainingWindow(viewRect);
+    return convertToContainingWindow(contentsToView(contentsRect));
 }
 
 IntRect ScrollView::contentsToScreen(const IntRect& rect) const

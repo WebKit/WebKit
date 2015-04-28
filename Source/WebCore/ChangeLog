@@ -1,3 +1,31 @@
+2015-04-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Provide contentsToView() and viewToContents() functions on ScrollView, and use them
+        https://bugs.webkit.org/show_bug.cgi?id=144357
+
+        Reviewed by Tim Horton.
+
+        Too much code was consulting topContentInset() and headerHeight() directly. Replace
+        with calls to new contentsToView() and viewToContents() functions, which wrap the
+        exisiting documentScrollOffsetRelativeToViewOrigin().
+        
+        Use the new functions in FrameView and ScrollView coordinate mapping functions.
+        
+        No behavior change.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::convertFromRendererToContainingView):
+        (WebCore::FrameView::convertFromContainingViewToRenderer):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::viewToContents):
+        (WebCore::ScrollView::contentsToView):
+        (WebCore::ScrollView::rootViewToContents):
+        (WebCore::ScrollView::contentsToRootView):
+        (WebCore::ScrollView::rootViewToTotalContents):
+        (WebCore::ScrollView::windowToContents):
+        (WebCore::ScrollView::contentsToWindow):
+        * platform/ScrollView.h:
+
 2015-04-28  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Simplify code to support media engines which do not support target playback

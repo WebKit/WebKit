@@ -292,6 +292,12 @@ public:
     IntRect rootViewToContents(const IntRect&) const;
     WEBCORE_EXPORT IntRect contentsToRootView(const IntRect&) const;
 
+    IntPoint viewToContents(const IntPoint&) const;
+    IntPoint contentsToView(const IntPoint&) const;
+
+    IntRect viewToContents(IntRect) const;
+    IntRect contentsToView(IntRect) const;
+
     WEBCORE_EXPORT IntPoint rootViewToTotalContents(const IntPoint&) const;
 
     // Event coordinates are assumed to be in the coordinate space of a window that contains
