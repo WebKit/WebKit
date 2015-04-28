@@ -1,3 +1,24 @@
+2015-04-28  Filip Pizlo  <fpizlo@apple.com>
+
+        VarargsForwardingPhase should only consider MovHints that have the candidate as a child
+        https://bugs.webkit.org/show_bug.cgi?id=144340
+
+        Reviewed by Michael Saboff and Mark Lam.
+        
+        Since we were considering all MovHints, we'd assume that the CreateDirectArguments or
+        CreateClosedArguments node was live so long as any MovHinted bytecode variable was alive.
+        Basically, we'd keep it alive until the end of the block. This maximized the chances of
+        there being an interfering operation, which would prevent elimination.
+        
+        The fix is to only consider MovHints that have the arguments candidate as a child. We only
+        care to track the liveness of those bytecode locals that would need an arguments object
+        recovery on OSR exit.
+        
+        This is a speed-up on V8Spider/raytrace and Octane/raytrace because it undoes the regression
+        introduced in http://trac.webkit.org/changeset/183406.
+
+        * dfg/DFGVarargsForwardingPhase.cpp:
+
 2015-04-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove WinCE cruft from cmake build system

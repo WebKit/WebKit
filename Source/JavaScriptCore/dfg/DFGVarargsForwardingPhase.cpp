@@ -34,6 +34,7 @@
 #include "DFGGraph.h"
 #include "DFGPhase.h"
 #include "JSCInlines.h"
+#include <wtf/ListDump.h>
 
 namespace JSC { namespace DFG {
 
@@ -96,6 +97,8 @@ private:
             
             switch (node->op()) {
             case MovHint:
+                if (node->child1() != candidate)
+                    break;
                 lastUserIndex = nodeIndex;
                 if (!relevantLocals.contains(node->unlinkedLocal()))
                     relevantLocals.append(node->unlinkedLocal());
@@ -138,6 +141,8 @@ private:
             forAllKilledOperands(
                 m_graph, node, block->tryAt(nodeIndex + 1),
                 [&] (VirtualRegister reg) {
+                    if (verbose)
+                        dataLog("    Killing ", reg, " while we are interested in ", listDump(relevantLocals), "\n");
                     for (unsigned i = 0; i < relevantLocals.size(); ++i) {
                         if (relevantLocals[i] == reg) {
                             relevantLocals[i--] = relevantLocals.last();
