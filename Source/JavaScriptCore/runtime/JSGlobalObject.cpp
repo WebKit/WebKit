@@ -305,8 +305,6 @@ void JSGlobalObject::init(VM& vm)
     for (unsigned i = 0; i < NumberOfIndexingShapes; ++i)
         m_arrayStructureForIndexingShapeDuringAllocation[i] = m_originalArrayStructureForIndexingShape[i];
 
-    m_regExpMatchesArrayStructure.set(vm, this, Structure::create(vm, this, m_arrayPrototype.get(), TypeInfo(ObjectType, StructureFlags), JSArray::info(), ArrayWithSlowPutArrayStorage));
-    
     RegExp* emptyRegex = RegExp::create(vm, "", NoFlags);
     
     m_regExpPrototype.set(vm, this, RegExpPrototype::create(vm, RegExpPrototype::createStructure(vm, this, m_objectPrototype.get()), emptyRegex));
@@ -764,7 +762,6 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_boundFunctionStructure);
     visitor.append(&thisObject->m_namedFunctionStructure);
     visitor.append(&thisObject->m_symbolObjectStructure);
-    visitor.append(&thisObject->m_regExpMatchesArrayStructure);
     visitor.append(&thisObject->m_regExpStructure);
     visitor.append(&thisObject->m_consoleStructure);
     visitor.append(&thisObject->m_dollarVMStructure);
