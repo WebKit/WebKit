@@ -1,3 +1,12 @@
+2015-04-28  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        Add naver to team.html
+        https://bugs.webkit.org/show_bug.cgi?id=144298
+
+        Reviewed by Gyuyoung Kim.
+
+        * team.html:
+
 2015-04-27  Benjamin Poulain  <bpoulain@apple.com>
 
         Status page: fix the email links
