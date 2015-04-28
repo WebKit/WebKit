@@ -1,3 +1,10 @@
+2015-04-28  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed gardening; add results for new tests.
+
+        * media/audio-playback-restriction-autoplay-expected.txt: Added.
+        * media/audio-playback-restriction-play-expected.txt: Added.
+
 2015-04-28  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] PHP scripts fail if HTTP_ORIGIN is not set.
