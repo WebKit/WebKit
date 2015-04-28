@@ -39,11 +39,19 @@ static void setDefaultsToConsistentValuesForTesting()
     [[NSUserDefaults standardUserDefaults] setValuesForKeysWithDictionary:dict];
 }
 
+static void disableAppNapInUIProcess()
+{
+    NSActivityOptions options = (NSActivityUserInitiatedAllowingIdleSystemSleep | NSActivityLatencyCritical) & ~(NSActivitySuddenTerminationDisabled | NSActivityAutomaticTerminationDisabled);
+    static id assertion = [[[NSProcessInfo processInfo] beginActivityWithOptions:options reason:@"WebKitTestRunner should not be subject to process suppression"] retain];
+    ASSERT_UNUSED(assertion, assertion);
+}
+
 int main(int argc, const char* argv[])
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [NSApplication sharedApplication];
     setDefaultsToConsistentValuesForTesting();
+    disableAppNapInUIProcess(); // For secondary processes, app nap is disabled using WKPreferencesSetPageVisibilityBasedProcessSuppressionEnabled().
 
     {
         WTR::TestController controller(argc, argv);

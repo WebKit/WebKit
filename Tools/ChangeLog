@@ -1,3 +1,14 @@
+2015-04-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Disable App Nap in WebKitTestRunner UI process
+        https://bugs.webkit.org/show_bug.cgi?id=144308
+
+        Reviewed by Daniel Bates.
+
+        * WebKitTestRunner/mac/main.mm:
+        (disableAppNapInUIProcess):
+        (main):
+
 2015-04-28  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
 
         [GTK] Update JHBuild Mesa download directory
