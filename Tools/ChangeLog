@@ -1,5 +1,13 @@
 2015-04-27  Alexey Proskuryakov  <ap@apple.com>
 
+        More build fix.
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityNotificationHandler.mm:
+        (-[AccessibilityNotificationHandler _notificationReceived:]):
+        Use -objectForKey:, not array subscript.
+
+2015-04-27  Alexey Proskuryakov  <ap@apple.com>
+
         Catch unexpected exits in DumpRenderTree
         https://bugs.webkit.org/show_bug.cgi?id=144288
 

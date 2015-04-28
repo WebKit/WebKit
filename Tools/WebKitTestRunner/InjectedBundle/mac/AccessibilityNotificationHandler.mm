@@ -125,7 +125,7 @@
     if (m_platformElement && m_platformElement != [notification object])
         return;
 
-    NSString *userInfoJSONValue = notification.userInfo[@"userInfo"];
+    NSString *userInfoJSONValue = [[notification userInfo] objectForKey:@"userInfo"];
 
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(WTR::InjectedBundle::singleton().page()->page());
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
