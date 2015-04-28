@@ -39,7 +39,6 @@ namespace WebCore {
 
 ResourceRequest::ResourceRequest(NSURLRequest *nsRequest)
     : ResourceRequestBase()
-    , m_mainResourceRequest(false)
     , m_cfRequest([nsRequest _CFURLRequest])
     , m_nsRequest(nsRequest)
 {

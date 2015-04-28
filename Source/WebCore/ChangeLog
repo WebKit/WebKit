@@ -1,5 +1,12 @@
 2015-04-28  Antti Koivisto  <antti@apple.com>
 
+        Build fix.
+
+        * platform/network/ios/ResourceRequestIOS.mm:
+        (WebCore::ResourceRequest::ResourceRequest):
+
+2015-04-28  Antti Koivisto  <antti@apple.com>
+
         Network Cache: Disk cache getting filled by YouTube video data
         https://bugs.webkit.org/show_bug.cgi?id=144259
 
