@@ -1,5 +1,12 @@
 2015-04-27  Andy Estes  <aestes@apple.com>
 
+        Unreviewed Mac gardening for safari-600.6-branch.
+
+        * fast/multicol/pagination/LeftToRight-tb-hittest-expected.txt:
+        * fast/multicol/pagination/RightToLeft-rl-hittest-expected.txt:
+
+2015-04-27  Andy Estes  <aestes@apple.com>
+
         Marked platform/mac/fast/text/multiple-codeunit-vertical-upright.html as ImageOnlyFailure
         https://bugs.webkit.org/show_bug.cgi?id=144303
 
