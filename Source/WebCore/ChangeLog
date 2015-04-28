@@ -1,3 +1,38 @@
+2015-04-27  Daniel Bates  <dabates@apple.com>
+
+        Form control may be associated with the wrong HTML Form element after form id change
+        https://bugs.webkit.org/show_bug.cgi?id=133456
+        <rdar://problem/17095055>
+
+        Reviewed by Andy Estes.
+
+        Fixes an issue where a form control may be associated with the wrong HTML Form element
+        after the id of the HTML Form element associated with the form control is changed when
+        there is more than one HTML Form element with the same id in the document. Specifically,
+        a form control that has an HTML form attribute value X will always be associated with
+        some HTML Form element f where f.id = X regardless of whether f.id is subsequently
+        changed.
+
+        Tests: fast/forms/change-form-id-to-be-unique-then-submit-form.html
+               fast/forms/change-form-id-to-be-unique.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged): Notify observers when the id of an element changed.
+        (WebCore::Element::updateId): Added parameter NotifyObservers (defaults to NotifyObservers::Yes),
+        as to whether we should notify observers of the id change.
+        (WebCore::Element::updateIdForTreeScope): Ditto.
+        (WebCore::Element::willModifyAttribute): Do not notify observers of the id change immediately. As
+        indicated by the name of this method, we plan to modify the DOM attribute id of the element, but
+        we have not actually modified it when this method is called. Instead we will notify observers
+        in Element::attributeChanged(), which is called after the DOM attribute id is modified.
+        (WebCore::Element::cloneAttributesFromElement): Ditto.
+        * dom/Element.h: Defined enum class NotifyObservers.
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::addElementById): Added boolean parameter notifyObservers (defaults to true)
+        as to whether we should dispatch a notification to all observers.
+        (WebCore::TreeScope::removeElementById): Ditto.
+        * dom/TreeScope.h:
+
 2015-04-27  Alex Christensen  <achristensen@webkit.org>
 
         Reduce allocations and memory usage when compiling content extensions.
