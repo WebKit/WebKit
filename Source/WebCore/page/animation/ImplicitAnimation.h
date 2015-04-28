@@ -54,7 +54,7 @@ public:
     virtual void pauseAnimation(double timeOffset) override;
     virtual void endAnimation() override;
 
-    virtual void animate(CompositeAnimation*, RenderElement*, const RenderStyle* currentStyle, RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle) override;
+    virtual bool animate(CompositeAnimation*, RenderElement*, const RenderStyle* currentStyle, RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle) override;
     virtual void getAnimatedStyle(RefPtr<RenderStyle>& animatedStyle) override;
     virtual void reset(RenderStyle* to);
 

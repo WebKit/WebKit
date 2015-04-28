@@ -1,3 +1,68 @@
+2015-04-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Eliminate styleDidChange with StyleDifferenceEqual when updates are actually necessary
+        https://bugs.webkit.org/show_bug.cgi?id=144198
+
+        Reviewed by Darin Adler, Antti Koivisto.
+        
+        SyntheticStyleChange style recalcs are triggered for cases where behavior depends
+        on state which is outside of RenderStyle; this includes triggering compositing for
+        animations, for video and canvas, and for iframes with composited content.
+        
+        In these cases, we'd run through RenderElement::setStyle() and its fan-out, but
+        with diff == StyleDifferenceEqual, and so be unable to determine if there
+        is actual work to be done.
+        
+        This patch enforces the contract that the diff is never StyleDifferenceEqual if
+        compositing or other work has to happen from setStyle(). This is achieved by
+        passing in a 'hasSideEffects' flag, which causes the diff to become at least
+        StyleDifferenceRecompositeLayer.
+        
+        RenderLayerCompositor::layerStyleChanged() can now safely early return
+        if the diff is equal. Future patches will reduce redundant work even more.
+
+        Test: compositing/animation/no-style-recalc-during-accelerated-animation.html
+
+        * page/animation/AnimationBase.h:
+        (WebCore::AnimationBase::animate): Returns a bool now if the state changed.
+        (WebCore::AnimationBase::state):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationController::updateAnimations): bool out param which indicates
+        whether any animations changed state.
+        * page/animation/AnimationController.h:
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::animate): If any transitions or animations changed
+        state, set the animationStateChanged out param to true.
+        * page/animation/CompositeAnimation.h:
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::animate): Return true if the state changed.
+        * page/animation/ImplicitAnimation.h:
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::animate): Return true if the state changed.
+        * page/animation/KeyframeAnimation.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::adjustStyleDifference): We may enter here now with diff
+        != StyleDifferenceEqual, but still need to do the check to see if layers changed.
+        (WebCore::RenderElement::initializeStyle): When setting style for the first time,
+        don't use StyleDifferenceEqual.
+        (WebCore::RenderElement::setStyle): Additional flag to indicate whether this style
+        change involves side effects. If the diff is equal but the flag is set, change
+        the diff to StyleDifferenceRecompositeLayer (the "lowest" non-zero diff).
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::setAnimatableStyle): Pass true to setStyle() if hasSideEffects
+        is true, or if animation state changed.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::styleChanged): Pass the diff down.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::layerStyleChanged): Return if the diff is equal.
+        * rendering/RenderLayerCompositor.h:
+        * rendering/style/RenderStyleConstants.h: StyleDifferenceNewStyle is used when
+        setting style for the first time.
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::createRendererIfNeeded): Provide animationsChanged bool (which is unused).
+        (WebCore::Style::resolveLocal): If the style change is synthetic, set the flag that
+        says there are side-effects.
+
 2015-04-27  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Add one single option to control all OpenGL-related options

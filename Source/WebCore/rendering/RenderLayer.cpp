@@ -6693,7 +6693,7 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
 
     updateNeedsCompositedScrolling();
 
-    compositor().layerStyleChanged(*this, oldStyle);
+    compositor().layerStyleChanged(diff, *this, oldStyle);
 
     updateOrRemoveFilterEffectRenderer();
 

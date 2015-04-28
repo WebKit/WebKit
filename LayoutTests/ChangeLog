@@ -1,3 +1,16 @@
+2015-04-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Eliminate styleDidChange with StyleDifferenceEqual when updates are actually necessary
+        https://bugs.webkit.org/show_bug.cgi?id=144198
+
+        Reviewed by Darin Adler, Antti Koivisto.
+        
+        New test that detects whether a "hardware" animation is firing the style recalc
+        timer on every frame, which happened during development of this patch.
+
+        * compositing/animation/no-style-recalc-during-accelerated-animation-expected.txt: Added.
+        * compositing/animation/no-style-recalc-during-accelerated-animation.html: Added.
+
 2015-04-27  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Add support for typed arrays to the Array profiling

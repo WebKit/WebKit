@@ -171,7 +171,7 @@ public:
     void layerWasAdded(RenderLayer& parent, RenderLayer& child);
     void layerWillBeRemoved(RenderLayer& parent, RenderLayer& child);
 
-    void layerStyleChanged(RenderLayer&, const RenderStyle* oldStyle);
+    void layerStyleChanged(StyleDifference, RenderLayer&, const RenderStyle* oldStyle);
 
     static bool canCompositeClipPath(const RenderLayer&);
 

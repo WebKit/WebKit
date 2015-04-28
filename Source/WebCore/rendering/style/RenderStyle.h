@@ -1063,6 +1063,8 @@ public:
 
     AnimationList* animations() { return rareNonInheritedData->m_animations.get(); }
     AnimationList* transitions() { return rareNonInheritedData->m_transitions.get(); }
+    
+    bool hasAnimationsOrTransitions() const { return rareNonInheritedData->hasAnimationsOrTransitions(); }
 
     AnimationList& ensureAnimations();
     AnimationList& ensureTransitions();

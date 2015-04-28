@@ -55,7 +55,8 @@ enum StyleDifference {
     StyleDifferenceLayoutPositionedMovementOnly,
     StyleDifferenceSimplifiedLayout,
     StyleDifferenceSimplifiedLayoutAndPositionedMovement,
-    StyleDifferenceLayout
+    StyleDifferenceLayout,
+    StyleDifferenceNewStyle
 };
 
 // When some style properties change, different amounts of work have to be done depending on

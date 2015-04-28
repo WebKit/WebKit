@@ -201,7 +201,9 @@ static void createRendererIfNeeded(Element& element, RenderStyle& inheritedStyle
 
     // FIXME: There's probably a better way to factor this.
     // This just does what setAnimatedStyle() does, except with setStyleInternal() instead of setStyle().
-    newRenderer->setStyleInternal(newRenderer->animation().updateAnimations(*newRenderer, newRenderer->style()));
+    Ref<RenderStyle> animatedStyle = newRenderer->style();
+    newRenderer->animation().updateAnimations(*newRenderer, animatedStyle, animatedStyle);
+    newRenderer->setStyleInternal(WTF::move(animatedStyle));
 
     newRenderer->initializeStyle();
 
@@ -630,7 +632,7 @@ static Change resolveLocal(Element& current, RenderStyle& inheritedStyle, Render
 
     if (RenderElement* renderer = current.renderer()) {
         if (localChange != NoChange || pseudoStyleCacheIsInvalid(renderer, newStyle.get()) || (inheritedChange == Force && renderer->requiresForcedStyleRecalcPropagation()) || current.styleChangeType() == SyntheticStyleChange)
-            renderer->setAnimatableStyle(*newStyle);
+            renderer->setAnimatableStyle(*newStyle, current.styleChangeType() == SyntheticStyleChange ? StyleDifferenceRecompositeLayer : StyleDifferenceEqual);
         else if (current.needsStyleRecalc()) {
             // Although no change occurred, we use the new style so that the cousin style sharing code won't get
             // fooled into believing this style is the same.

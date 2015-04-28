@@ -296,7 +296,7 @@ StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, unsig
     // The answer to requiresLayer() for plugins, iframes, and canvas can change without the actual
     // style changing, since it depends on whether we decide to composite these elements. When the
     // layer status of one of these elements changes, we need to force a layout.
-    if (diff == StyleDifferenceEqual && isRenderLayerModelObject()) {
+    if (diff < StyleDifferenceLayout && isRenderLayerModelObject()) {
         if (hasLayer() != downcast<RenderLayerModelObject>(*this).requiresLayer())
             diff = StyleDifferenceLayout;
     }
@@ -366,7 +366,7 @@ void RenderElement::updateShapeImage(const ShapeValue* oldShapeValue, const Shap
 
 void RenderElement::initializeStyle()
 {
-    styleWillChange(StyleDifferenceEqual, style());
+    styleWillChange(StyleDifferenceNewStyle, style());
 
     m_hasInitializedStyle = true;
 
@@ -385,7 +385,7 @@ void RenderElement::initializeStyle()
     if (m_style->outlineWidth() > 0 && m_style->outlineSize() > maximalOutlineSize(PaintPhaseOutline))
         view().setMaximalOutlineSize(std::max(theme().platformFocusRingMaxWidth(), static_cast<int>(m_style->outlineSize())));
 
-    styleDidChange(StyleDifferenceEqual, nullptr);
+    styleDidChange(StyleDifferenceNewStyle, nullptr);
 
     // We shouldn't have any text children that would need styleDidChange at this point.
     ASSERT(!childrenOfType<RenderText>(*this).first());
@@ -394,7 +394,7 @@ void RenderElement::initializeStyle()
     // have their parent set before getting a call to initializeStyle() :|
 }
 
-void RenderElement::setStyle(Ref<RenderStyle>&& style)
+void RenderElement::setStyle(Ref<RenderStyle>&& style, StyleDifference minimalStyleDifference)
 {
     // FIXME: Should change RenderView so it can use initializeStyle too.
     // If we do that, we can assert m_hasInitializedStyle unconditionally,
@@ -408,6 +408,7 @@ void RenderElement::setStyle(Ref<RenderStyle>&& style)
         ASSERT(!isRenderIFrame());
         ASSERT(!isEmbeddedObject());
         ASSERT(!isCanvas());
+        ASSERT(minimalStyleDifference == StyleDifferenceEqual);
         return;
     }
 
@@ -415,6 +416,8 @@ void RenderElement::setStyle(Ref<RenderStyle>&& style)
     unsigned contextSensitiveProperties = ContextSensitivePropertyNone;
     if (m_hasInitializedStyle)
         diff = m_style->diff(style.get(), contextSensitiveProperties);
+
+    diff = std::max(diff, minimalStyleDifference);
 
     diff = adjustStyleDifference(diff, contextSensitiveProperties);
 

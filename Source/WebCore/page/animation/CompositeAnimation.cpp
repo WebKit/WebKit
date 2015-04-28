@@ -297,21 +297,22 @@ void CompositeAnimation::updateKeyframeAnimations(RenderElement* renderer, Rende
         m_keyframeAnimations.remove(nameForRemoval);
 }
 
-Ref<RenderStyle> CompositeAnimation::animate(RenderElement& renderer, RenderStyle* currentStyle, RenderStyle& targetStyle)
+bool CompositeAnimation::animate(RenderElement& renderer, RenderStyle* currentStyle, RenderStyle& targetStyle, Ref<RenderStyle>& blendedStyle)
 {
-    RefPtr<RenderStyle> resultStyle;
-
     // We don't do any transitions if we don't have a currentStyle (on startup).
     updateTransitions(&renderer, currentStyle, &targetStyle);
     updateKeyframeAnimations(&renderer, currentStyle, &targetStyle);
     m_keyframeAnimations.checkConsistency();
 
+    RefPtr<RenderStyle> animatedStyle;
+    bool animationStateChanged = false;
+
     if (currentStyle) {
         // Now that we have transition objects ready, let them know about the new goal state.  We want them
         // to fill in a RenderStyle*& only if needed.
-        if (!m_transitions.isEmpty()) {
-            for (auto& transition : m_transitions.values())
-                transition->animate(this, &renderer, currentStyle, &targetStyle, resultStyle);
+        for (auto& transition : m_transitions.values()) {
+            if (transition->animate(this, &renderer, currentStyle, &targetStyle, animatedStyle))
+                animationStateChanged = true;
         }
     }
 
@@ -319,14 +320,16 @@ Ref<RenderStyle> CompositeAnimation::animate(RenderElement& renderer, RenderStyl
     // to fill in a RenderStyle*& only if needed.
     for (auto& name : m_keyframeAnimationOrderMap) {
         RefPtr<KeyframeAnimation> keyframeAnim = m_keyframeAnimations.get(name);
-        if (keyframeAnim)
-            keyframeAnim->animate(this, &renderer, currentStyle, &targetStyle, resultStyle);
+        if (keyframeAnim && keyframeAnim->animate(this, &renderer, currentStyle, &targetStyle, animatedStyle))
+            animationStateChanged = true;
     }
 
-    if (resultStyle)
-        return resultStyle.releaseNonNull();
+    if (animatedStyle)
+        blendedStyle = animatedStyle.releaseNonNull();
+    else
+        blendedStyle = targetStyle;
 
-    return targetStyle;
+    return animationStateChanged;
 }
 
 PassRefPtr<RenderStyle> CompositeAnimation::getAnimatedStyle() const

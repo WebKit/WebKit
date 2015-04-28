@@ -44,14 +44,18 @@ public:
 
     void initializeStyle();
 
-    void setStyle(Ref<RenderStyle>&&);
+    // Calling with minimalStyleDifference > StyleDifferenceEqual indicates that
+    // out-of-band state (e.g. animations) requires that styleDidChange processing
+    // continue even if the style isn't different from the current style.
+    void setStyle(Ref<RenderStyle>&&, StyleDifference minimalStyleDifference = StyleDifferenceEqual);
+
     // Called to update a style that is allowed to trigger animations.
-    void setAnimatableStyle(Ref<RenderStyle>&&);
+    void setAnimatableStyle(Ref<RenderStyle>&&, StyleDifference minimalStyleDifference);
 
     // The pseudo element style can be cached or uncached.  Use the cached method if the pseudo element doesn't respect
     // any pseudo classes (and therefore has no concept of changing state).
-    RenderStyle* getCachedPseudoStyle(PseudoId, RenderStyle* parentStyle = 0) const;
-    PassRefPtr<RenderStyle> getUncachedPseudoStyle(const PseudoStyleRequest&, RenderStyle* parentStyle = 0, RenderStyle* ownStyle = 0) const;
+    RenderStyle* getCachedPseudoStyle(PseudoId, RenderStyle* parentStyle = nullptr) const;
+    PassRefPtr<RenderStyle> getUncachedPseudoStyle(const PseudoStyleRequest&, RenderStyle* parentStyle = nullptr, RenderStyle* ownStyle = nullptr) const;
 
     // This is null for anonymous renderers.
     Element* element() const { return downcast<Element>(RenderObject::node()); }
@@ -88,8 +92,8 @@ public:
     bool isRenderNamedFlowFragmentContainer() const;
 
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const { return true; }
-    virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
-    virtual void addChildIgnoringContinuation(RenderObject* newChild, RenderObject* beforeChild = 0) { return addChild(newChild, beforeChild); }
+    virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = nullptr);
+    virtual void addChildIgnoringContinuation(RenderObject* newChild, RenderObject* beforeChild = nullptr) { return addChild(newChild, beforeChild); }
     virtual void removeChild(RenderObject&);
 
     // The following functions are used when the render tree hierarchy changes to make sure layers get
@@ -322,9 +326,13 @@ private:
     static bool s_noLongerAffectsParentBlock;
 };
 
-inline void RenderElement::setAnimatableStyle(Ref<RenderStyle>&& style)
+inline void RenderElement::setAnimatableStyle(Ref<RenderStyle>&& style, StyleDifference minimalStyleDifference)
 {
-    setStyle(animation().updateAnimations(*this, WTF::move(style)));
+    Ref<RenderStyle> animatedStyle = WTF::move(style);
+    if (animation().updateAnimations(*this, animatedStyle, animatedStyle))
+        minimalStyleDifference = std::max(minimalStyleDifference, StyleDifferenceRecompositeLayer);
+    
+    setStyle(WTF::move(animatedStyle), minimalStyleDifference);
 }
 
 inline RenderStyle& RenderElement::firstLineStyle() const

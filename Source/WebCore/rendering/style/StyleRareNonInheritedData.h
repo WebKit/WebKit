@@ -99,6 +99,8 @@ public:
 #endif
     bool hasOpacity() const { return opacity < 1; }
 
+    bool hasAnimationsOrTransitions() const { return m_animations || m_transitions; }
+
     float opacity;
 
     float m_aspectRatioDenominator;

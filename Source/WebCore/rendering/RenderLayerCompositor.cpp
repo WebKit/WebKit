@@ -915,8 +915,11 @@ static bool styleChangeRequiresLayerRebuild(const RenderLayer& layer, const Rend
     return false;
 }
 
-void RenderLayerCompositor::layerStyleChanged(RenderLayer& layer, const RenderStyle* oldStyle)
+void RenderLayerCompositor::layerStyleChanged(StyleDifference diff, RenderLayer& layer, const RenderStyle* oldStyle)
 {
+    if (diff == StyleDifferenceEqual)
+        return;
+
     const RenderStyle& newStyle = layer.renderer().style();
     if (updateLayerCompositingState(layer) || (oldStyle && styleChangeRequiresLayerRebuild(layer, *oldStyle, newStyle)))
         setCompositingLayersNeedRebuild();

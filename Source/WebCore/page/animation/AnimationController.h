@@ -49,7 +49,7 @@ public:
     ~AnimationController();
 
     void cancelAnimations(RenderElement&);
-    Ref<RenderStyle> updateAnimations(RenderElement&, Ref<RenderStyle>&& newStyle);
+    bool updateAnimations(RenderElement&, RenderStyle& newStyle, Ref<RenderStyle>& animatedStyle);
     PassRefPtr<RenderStyle> getAnimatedStyleForRenderer(RenderElement&);
 
     // If possible, compute the visual extent of any transform animation on the given renderer

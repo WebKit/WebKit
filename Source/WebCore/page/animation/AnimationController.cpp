@@ -568,20 +568,18 @@ void AnimationController::cancelAnimations(RenderElement& renderer)
         element->setNeedsStyleRecalc(SyntheticStyleChange);
 }
 
-Ref<RenderStyle> AnimationController::updateAnimations(RenderElement& renderer, Ref<RenderStyle>&& newStyle)
+bool AnimationController::updateAnimations(RenderElement& renderer, RenderStyle& newStyle, Ref<RenderStyle>& animatedStyle)
 {
-    // Don't do anything if we're in the cache
-    if (renderer.document().inPageCache())
-        return WTF::move(newStyle);
-
     RenderStyle* oldStyle = renderer.hasInitializedStyle() ? &renderer.style() : nullptr;
+    if ((!oldStyle || (!oldStyle->animations() && !oldStyle->transitions())) && (!newStyle.animations() && !newStyle.transitions()))
+        return false;
 
-    if ((!oldStyle || (!oldStyle->animations() && !oldStyle->transitions())) && (!newStyle.get().animations() && !newStyle.get().transitions()))
-        return WTF::move(newStyle);
+    if (renderer.document().inPageCache())
+        return false;
 
     // Don't run transitions when printing.
     if (renderer.view().printing())
-        return WTF::move(newStyle);
+        return false;
 
     // Fetch our current set of implicit animations from a hashtable.  We then compare them
     // against the animations in the style and make sure we're in sync.  If destination values
@@ -591,26 +589,24 @@ Ref<RenderStyle> AnimationController::updateAnimations(RenderElement& renderer, 
     // We don't support anonymous pseudo elements like :first-line or :first-letter.
     ASSERT(renderer.element());
 
-    Ref<RenderStyle> newStyleBeforeAnimation(WTF::move(newStyle));
-
     CompositeAnimation& rendererAnimations = m_data->ensureCompositeAnimation(renderer);
-    auto blendedStyle = rendererAnimations.animate(renderer, oldStyle, newStyleBeforeAnimation);
+    bool animationStateChanged = rendererAnimations.animate(renderer, oldStyle, newStyle, animatedStyle);
 
-    if (renderer.parent() || newStyleBeforeAnimation->animations() || (oldStyle && oldStyle->animations())) {
+    if (renderer.parent() || newStyle.animations() || (oldStyle && oldStyle->animations())) {
         m_data->updateAnimationTimerForRenderer(renderer);
 #if ENABLE(REQUEST_ANIMATION_FRAME)
         renderer.view().frameView().scheduleAnimation();
 #endif
     }
 
-    if (blendedStyle.ptr() != newStyleBeforeAnimation.ptr()) {
+    if (animatedStyle.ptr() != &newStyle) {
         // If the animations/transitions change opacity or transform, we need to update
         // the style to impose the stacking rules. Note that this is also
         // done in StyleResolver::adjustRenderStyle().
-        if (blendedStyle.get().hasAutoZIndex() && (blendedStyle.get().opacity() < 1.0f || blendedStyle.get().hasTransform()))
-            blendedStyle.get().setZIndex(0);
+        if (animatedStyle.get().hasAutoZIndex() && (animatedStyle.get().opacity() < 1.0f || animatedStyle.get().hasTransform()))
+            animatedStyle.get().setZIndex(0);
     }
-    return blendedStyle;
+    return animationStateChanged;
 }
 
 PassRefPtr<RenderStyle> AnimationController::getAnimatedStyleForRenderer(RenderElement& renderer)

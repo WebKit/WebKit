@@ -118,7 +118,7 @@ void KeyframeAnimation::fetchIntervalEndpointsForProperty(CSSPropertyID property
     prog = progress(scale, offset, prevKeyframe.timingFunction(name()));
 }
 
-void KeyframeAnimation::animate(CompositeAnimation* compositeAnimation, RenderElement*, const RenderStyle*, RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle)
+bool KeyframeAnimation::animate(CompositeAnimation* compositeAnimation, RenderElement*, const RenderStyle*, RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle)
 {
     // Fire the start timeout if needed
     fireAnimationEventsIfNeeded();
@@ -132,7 +132,7 @@ void KeyframeAnimation::animate(CompositeAnimation* compositeAnimation, RenderEl
     if (postActive()) {
         if (!animatedStyle)
             animatedStyle = const_cast<RenderStyle*>(targetStyle);
-        return;
+        return false;
     }
 
     // If we are waiting for the start timer, we don't want to change the style yet.
@@ -141,13 +141,15 @@ void KeyframeAnimation::animate(CompositeAnimation* compositeAnimation, RenderEl
     // Special case 2 - if there is a backwards fill mode, then we want to continue
     // through to the style blend so that we get the fromStyle.
     if (waitingToStart() && m_animation->delay() > 0 && !m_animation->fillsBackwards())
-        return;
+        return false;
     
     // If we have no keyframes, don't animate.
     if (!m_keyframes.size()) {
         updateStateMachine(AnimationStateInput::EndAnimation, -1);
-        return;
+        return false;
     }
+
+    AnimationState oldState = state();
 
     // Run a cycle of animation.
     // We know we will need a new render style, so make one if needed.
@@ -168,8 +170,11 @@ void KeyframeAnimation::animate(CompositeAnimation* compositeAnimation, RenderEl
             // If we are running an accelerated animation, set a flag in the style
             // to indicate it. This can be used to make sure we get an updated
             // style for hit testing, etc.
+            // FIXME: still need this?
             animatedStyle->setIsRunningAcceleratedAnimation();
     }
+    
+    return state() != oldState;
 }
 
 void KeyframeAnimation::getAnimatedStyle(RefPtr<RenderStyle>& animatedStyle)
