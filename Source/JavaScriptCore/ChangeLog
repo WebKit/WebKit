@@ -1,3 +1,35 @@
+2015-04-27  Andreas Kling  <akling@apple.com>
+
+        RegExp matches arrays should use contiguous indexing.
+        <https://webkit.org/b/144286>
+
+        Reviewed by Geoffrey Garen.
+
+        We had a custom Structure being used for RegExp matches arrays that would
+        put the arrays into SlowPutArrayStorageShape mode. This was just left
+        from when matches arrays were custom, lazily initialized objects.
+
+        This change removes that Structure and switches the matches arrays to
+        using the default ContiguousShape Structure. This allows the FTL JIT
+        to compile the inner loop of the Octane/regexp benchmark.
+
+        Also made a version of initializeIndex() [inline] that takes the indexing
+        type in an argument, allowing createRegExpMatchesArray() to initialize
+        the entire array without branching on the indexing type for each entry.
+
+        ~3% progression on Octane/regexp.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::mapStructure):
+        (JSC::JSGlobalObject::regExpMatchesArrayStructure): Deleted.
+        * runtime/JSObject.h:
+        (JSC::JSObject::initializeIndex):
+        * runtime/RegExpMatchesArray.cpp:
+        (JSC::createRegExpMatchesArray):
+
 2015-04-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r183373): ASSERT failed in wtf/SHA1.h
