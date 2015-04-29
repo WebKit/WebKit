@@ -1,3 +1,28 @@
+2015-04-29  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Web process spins endlessly below layoutSimpleLines.
+        https://bugs.webkit.org/show_bug.cgi?id=144403
+        rdar://problem/20742783
+
+        Reviewed by Antti Koivisto.
+
+        When a text fragment overlaps multiple renderes and it does not fit the current line,
+        we revert the text fragment iterator position so that the overlapping content
+        gets processed again for the next line.
+        However, TextFragmentIterator::revertToFragment() was reverting too much and
+        we started processing old content all over again -> infinite loop.
+
+        This patch ensures that text fragment iterator is reverted to the right position.
+
+        Test: fast/text/simple-line-layout-wrapping-multiple-renderers-hang.html
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::createLineRuns):
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::revertToEndOfFragment):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::revertToFragment): Deleted.
+        * rendering/SimpleLineLayoutTextFragmentIterator.h:
+
 2015-04-29  Filip Pizlo  <fpizlo@apple.com>
 
         JSTypeInfo should have an inline type flag to indicate of getCallData() has been overridden

@@ -567,8 +567,8 @@ static bool createLineRuns(LineState& line, const LineState& previousLine, Layou
             // Non-breakable non-whitespace fragment when there's already content on the line. Push it to the next line.
             if (line.lastFragment().overlapsToNextRenderer()) {
                 // Check if this fragment is a continuation of a previous segment. In such cases, we need to remove them all.
-                const auto& currentFragment = line.revertToLastCompleteFragment(runs);
-                textFragmentIterator.revertToFragment(currentFragment);
+                const auto& lastCompleteFragment = line.revertToLastCompleteFragment(runs);
+                textFragmentIterator.revertToEndOfFragment(lastCompleteFragment);
                 break;
             }
             line.setOverflowedFragment(fragment);

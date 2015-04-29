@@ -98,15 +98,14 @@ TextFragmentIterator::TextFragment TextFragmentIterator::findNextTextFragment(fl
     return TextFragment(startPosition, endPosition, width, TextFragment::NonWhitespace, endPosition == segmentEndPosition, overlappingFragment, false, false, m_style.breakWordOnOverflow);
 }
 
-void TextFragmentIterator::revertToFragment(const TextFragment& fragment)
+void TextFragmentIterator::revertToEndOfFragment(const TextFragment& fragment)
 {
     ASSERT(m_position >= fragment.end());
-    // Revert segment first.
-    while (m_currentSegment->start > fragment.start())
+    while (m_currentSegment->start > fragment.end())
         --m_currentSegment;
     // TODO: It reverts to the last fragment on the same position, but that's ok for now as we don't need to
     // differentiate multiple renderers on the same position.
-    m_position = fragment.start();
+    m_position = fragment.end();
     m_atEndOfSegment = false;
 }
 

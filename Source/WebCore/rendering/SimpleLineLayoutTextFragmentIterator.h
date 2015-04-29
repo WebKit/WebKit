@@ -95,7 +95,7 @@ public:
         bool m_isBreakable { false };
     };
     TextFragment nextTextFragment(float xPosition = 0);
-    void revertToFragment(const TextFragment&);
+    void revertToEndOfFragment(const TextFragment&);
     float textWidth(unsigned startPosition, unsigned endPosition, float xPosition) const;
 
     struct Style {
