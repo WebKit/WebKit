@@ -1,3 +1,9 @@
+2015-04-29  Antti Koivisto  <antti@apple.com>
+
+        Mark newly added http/tests/cache/main-resource-304-reload.html failing on Windows.
+
+        * platform/win/TestExpectations:
+
 2015-04-28  Geoffrey Garen  <ggaren@apple.com>
 
         It shouldn't take 1846 lines of code and 5 FIXMEs to sort an array.
