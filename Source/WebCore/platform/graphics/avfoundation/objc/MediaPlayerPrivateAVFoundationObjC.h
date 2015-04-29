@@ -76,7 +76,7 @@ public:
 
     static void registerMediaEngine(MediaEngineRegistrar);
 
-    void setAsset(id);
+    void setAsset(RetainPtr<id>);
     virtual void tracksChanged() override;
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
