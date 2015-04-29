@@ -2081,8 +2081,7 @@ void RenderLayerCompositor::updateRootLayerPosition()
     if (m_rootContentLayer) {
         const IntRect& documentRect = m_renderView.documentRect();
         m_rootContentLayer->setSize(documentRect.size());        
-        m_rootContentLayer->setPosition(FloatPoint(documentRect.x(), documentRect.y()
-            + FrameView::yPositionForRootContentLayer(m_renderView.frameView().scrollPosition(), m_renderView.frameView().topContentInset(), m_renderView.frameView().headerHeight())));
+        m_rootContentLayer->setPosition(FloatPoint(documentRect.x(), documentRect.y() + m_renderView.frameView().yPositionForRootContentLayer()));
         m_rootContentLayer->setAnchorPoint(FloatPoint3D());
     }
     if (m_clipLayer) {

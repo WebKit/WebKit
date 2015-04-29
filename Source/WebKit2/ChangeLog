@@ -1,3 +1,17 @@
+2015-04-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Make a non-static version of FrameView::yPositionForRootContentLayer()
+        https://bugs.webkit.org/show_bug.cgi?id=144375
+
+        Reviewed by Andy Estes.
+
+        There were two calls to the static FrameView::yPositionForRootContentLayer()
+        which passed in all the arguments for the same FrameView. Make a member
+        function for convenience.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::shadowLayerPositionForFrame):
+
 2015-04-28  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [CoordinatedGraphics] Merge TILED_BACKING_STORE guard with COORDINATED_GRAPHICS

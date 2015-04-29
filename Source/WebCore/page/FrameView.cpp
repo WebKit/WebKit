@@ -1688,6 +1688,11 @@ float FrameView::yPositionForFooterLayer(const FloatPoint& scrollPosition, float
     return yPositionForHeaderLayer(scrollPosition, topContentInset) + totalContentsHeight - footerHeight;
 }
 
+float FrameView::yPositionForRootContentLayer() const
+{
+    return yPositionForRootContentLayer(scrollPosition(), topContentInset(), headerHeight());
+}
+
 #if PLATFORM(IOS)
 LayoutRect FrameView::rectForViewportConstrainedObjects(const LayoutRect& visibleContentRect, const LayoutSize& totalContentsSize, float frameScaleFactor, bool fixedElementsLayoutRelativeToFrame, ScrollBehaviorForFixedElements scrollBehavior)
 {

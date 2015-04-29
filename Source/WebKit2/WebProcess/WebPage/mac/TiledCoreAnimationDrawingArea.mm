@@ -572,8 +572,7 @@ PlatformCALayer* TiledCoreAnimationDrawingArea::shadowLayerForTransientZoom() co
     
 static FloatPoint shadowLayerPositionForFrame(FrameView& frameView, FloatPoint origin)
 {
-    FloatPoint position = frameView.renderView()->documentRect().location() + FloatPoint(0, FrameView::yPositionForRootContentLayer(frameView.scrollPosition(), frameView.topContentInset(), frameView.headerHeight()));
-
+    FloatPoint position = frameView.renderView()->documentRect().location() + FloatPoint(0, frameView.yPositionForRootContentLayer());
     return position + origin.expandedTo(FloatPoint());
 }
 
