@@ -1,3 +1,15 @@
+2015-04-29  Jake Nielsen  <jacob_nielsen@apple.com>
+
+        Failure when building WebKit for appletvsimulator.
+        https://bugs.webkit.org/show_bug.cgi?id=144356
+
+        Reviewed by Alexey Proskuryakov.
+
+        Changes Makefile logic to check for "not OS X" rather than "is iOS" to
+        make TVOS and WatchOS behave correctly.
+
+        * Source/Makefile:
+
 2015-04-29  Martin Robinson  <mrobinson@igalia.com>
 
         [CMake] [GTK] Organize and clean up unused CMake variables
