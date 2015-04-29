@@ -199,15 +199,15 @@ struct AbstractValue {
     void set(Graph&, Structure*);
     void set(Graph&, const StructureSet&);
     
+    // Set this value to represent the given set of types as precisely as possible.
+    void setType(Graph&, SpeculatedType);
+    
+    // As above, but only valid for non-cell types.
     void setType(SpeculatedType type)
     {
-        if (type & SpecCell) {
-            m_structure.makeTop();
-            m_arrayModes = ALL_ARRAY_MODES;
-        } else {
-            m_structure.clear();
-            m_arrayModes = 0;
-        }
+        RELEASE_ASSERT(!(type & SpecCell));
+        m_structure.clear();
+        m_arrayModes = 0;
         m_type = type;
         m_value = JSValue();
         checkConsistency();

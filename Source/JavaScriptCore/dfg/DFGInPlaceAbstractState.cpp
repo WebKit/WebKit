@@ -118,7 +118,7 @@ void InPlaceAbstractState::initialize()
             root->valuesAtHead.argument(i).setType(SpecBoolean);
             break;
         case FlushedCell:
-            root->valuesAtHead.argument(i).setType(SpecCell);
+            root->valuesAtHead.argument(i).setType(m_graph, SpecCell);
             break;
         case FlushedJSValue:
             root->valuesAtHead.argument(i).makeHeapTop();

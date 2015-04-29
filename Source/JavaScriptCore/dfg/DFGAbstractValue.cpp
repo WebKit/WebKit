@@ -118,6 +118,24 @@ void AbstractValue::set(Graph& graph, const StructureSet& set)
     assertIsRegistered(graph);
 }
 
+void AbstractValue::setType(Graph& graph, SpeculatedType type)
+{
+    SpeculatedType cellType = type & SpecCell;
+    if (cellType) {
+        if (!(cellType & ~SpecString))
+            m_structure = graph.m_vm.stringStructure.get();
+        else
+            m_structure.makeTop();
+        m_arrayModes = ALL_ARRAY_MODES;
+    } else {
+        m_structure.clear();
+        m_arrayModes = 0;
+    }
+    m_type = type;
+    m_value = JSValue();
+    checkConsistency();
+}
+
 void AbstractValue::fixTypeForRepresentation(NodeFlags representation)
 {
     if (representation == NodeResultDouble) {

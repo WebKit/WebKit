@@ -1,3 +1,38 @@
+2015-04-28  Filip Pizlo  <fpizlo@apple.com>
+
+        TypeOf should return SpecStringIdent and the DFG should know this
+        https://bugs.webkit.org/show_bug.cgi?id=144376
+
+        Reviewed by Andreas Kling.
+        
+        Make TypeOf return atomic strings. That's a simple change in SmallStrings.
+        
+        Make the DFG know this and use it for optimization. This makes Switch(TypeOf) a bit less
+        bad.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::setType):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::setType):
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::initialize):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::initialize):
+        * tests/stress/switch-typeof-indirect.js: Added.
+        (bar):
+        (foo):
+        (test):
+        * tests/stress/switch-typeof-slightly-indirect.js: Added.
+        (foo):
+        (test):
+        * tests/stress/switch-typeof.js: Added.
+        (foo):
+        (test):
+
 2015-04-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(181868): Windows Live SkyDrive cannot open an excel file

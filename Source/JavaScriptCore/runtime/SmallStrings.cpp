@@ -130,7 +130,7 @@ StringImpl* SmallStrings::singleCharacterStringRep(unsigned char character)
 
 void SmallStrings::initialize(VM* vm, JSString*& string, const char* value)
 {
-    string = JSString::create(*vm, StringImpl::create(value));
+    string = JSString::create(*vm, Identifier::fromString(vm, value).impl());
     m_needsToBeVisited = true;
 }
 
