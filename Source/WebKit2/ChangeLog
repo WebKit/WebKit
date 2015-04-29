@@ -1,3 +1,17 @@
+2015-04-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r183467): [SOUP] isMainResource is no longer passed as resource load parameters to the network process
+        https://bugs.webkit.org/show_bug.cgi?id=144381
+
+        Reviewed by Darin Adler.
+
+        A requester enum value is passed now as part of the
+        ResourceRequest, but it's not encoded/decoded for soup.
+
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (IPC::ArgumentCoder<ResourceRequest>::encodePlatformData): Encode requester.
+        (IPC::ArgumentCoder<ResourceRequest>::decodePlatformData): Decode requester.
+
 2015-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Use xattrs to get/set the creation time of disk cache files

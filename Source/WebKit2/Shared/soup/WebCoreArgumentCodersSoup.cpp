@@ -58,6 +58,7 @@ void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder& encoder
     encoder << resourceRequest.allowCookies();
     encoder.encodeEnum(resourceRequest.priority());
     encoder.encodeEnum(resourceRequest.cachePolicy());
+    encoder.encodeEnum(resourceRequest.requester());
 
     encoder << static_cast<uint32_t>(resourceRequest.soupMessageFlags());
     encoder << resourceRequest.initiatingPageID();
@@ -114,6 +115,11 @@ bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder& decoder
     if (!decoder.decodeEnum(cachePolicy))
         return false;
     resourceRequest.setCachePolicy(cachePolicy);
+
+    ResourceRequest::Requester requester;
+    if (!decoder.decodeEnum(requester))
+        return false;
+    resourceRequest.setRequester(requester);
 
     uint32_t soupMessageFlags;
     if (!decoder.decode(soupMessageFlags))
