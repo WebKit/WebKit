@@ -461,17 +461,17 @@ void Internals::setOverrideCachePolicy(const String& policy)
 static ResourceLoadPriority stringToResourceLoadPriority(const String& policy)
 {
     if (policy == "ResourceLoadPriorityVeryLow")
-        return ResourceLoadPriorityVeryLow;
+        return ResourceLoadPriority::VeryLow;
     if (policy == "ResourceLoadPriorityLow")
-        return ResourceLoadPriorityLow;
+        return ResourceLoadPriority::Low;
     if (policy == "ResourceLoadPriorityMedium")
-        return ResourceLoadPriorityMedium;
+        return ResourceLoadPriority::Medium;
     if (policy == "ResourceLoadPriorityHigh")
-        return ResourceLoadPriorityHigh;
+        return ResourceLoadPriority::High;
     if (policy == "ResourceLoadPriorityVeryHigh")
-        return ResourceLoadPriorityVeryHigh;
+        return ResourceLoadPriority::VeryHigh;
     ASSERT_NOT_REACHED();
-    return ResourceLoadPriorityLow;
+    return ResourceLoadPriority::Low;
 }
 
 void Internals::setOverrideResourceLoadPriority(const String& priority)

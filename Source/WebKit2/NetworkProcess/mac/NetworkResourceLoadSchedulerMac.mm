@@ -49,8 +49,8 @@ void NetworkResourceLoadScheduler::platformInitializeNetworkSettings()
         ResourceRequest::setHTTPPipeliningEnabled(prefValue);
 
     if (ResourceRequest::resourcePrioritiesEnabled()) {
-        WKSetHTTPRequestMaximumPriority(toPlatformRequestPriority(ResourceLoadPriorityHighest));
-        WKSetHTTPRequestMinimumFastLanePriority(toPlatformRequestPriority(ResourceLoadPriorityMedium));
+        WKSetHTTPRequestMaximumPriority(toPlatformRequestPriority(ResourceLoadPriority::Highest));
+        WKSetHTTPRequestMinimumFastLanePriority(toPlatformRequestPriority(ResourceLoadPriority::Medium));
     }
 }
 

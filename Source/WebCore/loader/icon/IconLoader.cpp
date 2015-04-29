@@ -60,7 +60,7 @@ void IconLoader::startLoading()
 
     CachedResourceRequest request(ResourceRequest(m_frame.loader().icon().url()), ResourceLoaderOptions(SendCallbacks, SniffContent, BufferData, DoNotAllowStoredCredentials, DoNotAskClientForAnyCredentials, DoSecurityCheck, UseDefaultOriginRestrictionsForType, DoNotIncludeCertificateInfo));
 
-    request.mutableResourceRequest().setPriority(ResourceLoadPriorityLow);
+    request.mutableResourceRequest().setPriority(ResourceLoadPriority::Low);
     request.setInitiator(cachedResourceRequestInitiators().icon);
 
     m_resource = m_frame.document()->cachedResourceLoader().requestRawResource(request);

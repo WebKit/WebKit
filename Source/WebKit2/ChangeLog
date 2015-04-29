@@ -1,3 +1,26 @@
+2015-04-29  Antti Koivisto  <antti@apple.com>
+
+        ResourceLoadPriority should be enum class
+        https://bugs.webkit.org/show_bug.cgi?id=144326
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::servePendingRequests): Deleted.
+
+            Remove this unused message.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::makeStoreDecision):
+        (WebKit::NetworkCache::Cache::retrieve):
+        * NetworkProcess/mac/NetworkResourceLoadSchedulerMac.mm:
+        (WebKit::NetworkResourceLoadScheduler::platformInitializeNetworkSettings):
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::servePendingRequests):
+        * WebProcess/Network/WebResourceLoadScheduler.h:
+
 2015-04-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [OS X] Use CTFontCreateForCSS instead of doing font search ourselves

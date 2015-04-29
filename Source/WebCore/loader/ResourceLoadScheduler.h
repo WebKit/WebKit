@@ -27,6 +27,7 @@
 #include "ResourceLoaderOptions.h"
 #include "ResourceLoadPriority.h"
 #include "Timer.h"
+#include <array>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -56,7 +57,7 @@ public:
     virtual void setDefersLoading(ResourceLoader*, bool);
     virtual void crossOriginRedirectReceived(ResourceLoader*, const URL& redirectURL);
     
-    WEBCORE_EXPORT virtual void servePendingRequests(ResourceLoadPriority minimumPriority = ResourceLoadPriorityVeryLow);
+    WEBCORE_EXPORT virtual void servePendingRequests(ResourceLoadPriority minimumPriority = ResourceLoadPriority::VeryLow);
     WEBCORE_EXPORT virtual void suspendPendingRequests();
     WEBCORE_EXPORT virtual void resumePendingRequests();
     
@@ -93,17 +94,19 @@ private:
         ~HostInformation();
         
         const String& name() const { return m_name; }
-        void schedule(ResourceLoader*, ResourceLoadPriority = ResourceLoadPriorityVeryLow);
+        void schedule(ResourceLoader*, ResourceLoadPriority = ResourceLoadPriority::VeryLow);
         void addLoadInProgress(ResourceLoader*);
         void remove(ResourceLoader*);
         bool hasRequests() const;
         bool limitRequests(ResourceLoadPriority) const;
 
         typedef Deque<RefPtr<ResourceLoader>> RequestQueue;
-        RequestQueue& requestsPending(ResourceLoadPriority priority) { return m_requestsPending[priority]; }
+        RequestQueue& requestsPending(ResourceLoadPriority priority) { return m_requestsPending[priorityToIndex(priority)]; }
 
-    private:                    
-        RequestQueue m_requestsPending[ResourceLoadPriorityHighest + 1];
+    private:
+        static unsigned priorityToIndex(ResourceLoadPriority);
+
+        std::array<RequestQueue, resourceLoadPriorityCount> m_requestsPending;
         typedef HashSet<RefPtr<ResourceLoader>> RequestMap;
         RequestMap m_requestsLoading;
         const String m_name;

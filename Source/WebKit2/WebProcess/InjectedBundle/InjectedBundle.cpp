@@ -637,7 +637,7 @@ void InjectedBundle::setCSSCompositingEnabled(bool enabled)
 
 void InjectedBundle::dispatchPendingLoadRequests()
 {
-    resourceLoadScheduler()->servePendingRequests();
+    // FIXME: This should be removed along with the bundle API.
 }
 
 } // namespace WebKit

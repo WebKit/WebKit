@@ -112,7 +112,7 @@ bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const URL& href,
         if (relAttribute.isLinkSubresource) {
             // We only make one request to the cached resource loader if multiple rel types are specified;
             // this is the higher priority, which should overwrite the lower priority.
-            priority = ResourceLoadPriorityLow;
+            priority = ResourceLoadPriority::Low;
             type = CachedResource::LinkSubresource;
         }
         CachedResourceRequest linkRequest(ResourceRequest(document.completeURL(href)), priority);

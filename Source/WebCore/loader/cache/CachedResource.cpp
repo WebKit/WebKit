@@ -68,37 +68,37 @@ static ResourceLoadPriority defaultPriorityForResourceType(CachedResource::Type 
 {
     switch (type) {
     case CachedResource::MainResource:
-        return ResourceLoadPriorityVeryHigh;
+        return ResourceLoadPriority::VeryHigh;
     case CachedResource::CSSStyleSheet:
-        return ResourceLoadPriorityHigh;
+        return ResourceLoadPriority::High;
     case CachedResource::Script:
 #if ENABLE(SVG_FONTS)
     case CachedResource::SVGFontResource:
 #endif
     case CachedResource::FontResource:
     case CachedResource::RawResource:
-        return ResourceLoadPriorityMedium;
+        return ResourceLoadPriority::Medium;
     case CachedResource::ImageResource:
-        return ResourceLoadPriorityLow;
+        return ResourceLoadPriority::Low;
 #if ENABLE(XSLT)
     case CachedResource::XSLStyleSheet:
-        return ResourceLoadPriorityHigh;
+        return ResourceLoadPriority::High;
 #endif
     case CachedResource::SVGDocumentResource:
-        return ResourceLoadPriorityLow;
+        return ResourceLoadPriority::Low;
 #if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
-        return ResourceLoadPriorityVeryLow;
+        return ResourceLoadPriority::VeryLow;
     case CachedResource::LinkSubresource:
-        return ResourceLoadPriorityVeryLow;
+        return ResourceLoadPriority::VeryLow;
 #endif
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
-        return ResourceLoadPriorityLow;
+        return ResourceLoadPriority::Low;
 #endif
     }
     ASSERT_NOT_REACHED();
-    return ResourceLoadPriorityLow;
+    return ResourceLoadPriority::Low;
 }
 
 static std::chrono::milliseconds deadDecodedDataDeletionIntervalForResourceType(CachedResource::Type type)

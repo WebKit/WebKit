@@ -300,7 +300,7 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
     }
 
     bool isMainResource = originalRequest.requester() == WebCore::ResourceRequest::Requester::Main;
-    bool storeUnconditionallyForHistoryNavigation = isMainResource || originalRequest.priority() == WebCore::ResourceLoadPriorityVeryHigh;
+    bool storeUnconditionallyForHistoryNavigation = isMainResource || originalRequest.priority() == WebCore::ResourceLoadPriority::VeryHigh;
     if (!storeUnconditionallyForHistoryNavigation) {
         auto now = std::chrono::system_clock::now();
         bool hasNonZeroLifetime = !response.cacheControlContainsNoCache() && WebCore::computeFreshnessLifetimeForHTTPFamily(response, now) > 0_ms;
@@ -342,7 +342,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& originalRequest, uint64_t w
     }
 
     auto startTime = std::chrono::system_clock::now();
-    unsigned priority = originalRequest.priority();
+    auto priority = static_cast<unsigned>(originalRequest.priority());
 
     m_storage->retrieve(storageKey, priority, [this, originalRequest, completionHandler, startTime, storageKey, webPageID](std::unique_ptr<Storage::Record> record) {
         if (!record) {

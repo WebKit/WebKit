@@ -73,7 +73,7 @@ void WebCoreAVCFResourceLoader::startLoading()
 
     CachedResourceRequest request(ResourceRequest(requestURL), ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, BufferData, DoNotAllowStoredCredentials, DoNotAskClientForCrossOriginCredentials, DoSecurityCheck, UseDefaultOriginRestrictionsForType, DoNotIncludeCertificateInfo));
 
-    request.mutableResourceRequest().setPriority(ResourceLoadPriorityLow);
+    request.mutableResourceRequest().setPriority(ResourceLoadPriority::Low);
     CachedResourceLoader* loader = m_parent->player()->cachedResourceLoader();
     m_resource = loader ? loader->requestRawResource(request) : 0;
     if (m_resource)

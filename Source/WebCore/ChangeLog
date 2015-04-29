@@ -1,3 +1,63 @@
+2015-04-29  Antti Koivisto  <antti@apple.com>
+
+        ResourceLoadPriority should be enum class
+        https://bugs.webkit.org/show_bug.cgi?id=144326
+
+        Reviewed by Darin Adler.
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::loadLink):
+        * loader/ResourceLoadScheduler.cpp:
+        (WebCore::ResourceLoadScheduler::scheduleLoad):
+        (WebCore::ResourceLoadScheduler::servePendingRequests):
+        (WebCore::ResourceLoadScheduler::HostInformation::~HostInformation):
+        (WebCore::ResourceLoadScheduler::HostInformation::priorityToIndex):
+        (WebCore::ResourceLoadScheduler::HostInformation::schedule):
+        (WebCore::ResourceLoadScheduler::HostInformation::remove):
+        (WebCore::ResourceLoadScheduler::HostInformation::hasRequests):
+        (WebCore::ResourceLoadScheduler::HostInformation::limitRequests):
+        * loader/ResourceLoadScheduler.h:
+        (WebCore::ResourceLoadScheduler::HostInformation::requestsPending):
+
+            Modernize ResourceLoadScheduler code a bit while switching to enum class.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::defaultPriorityForResourceType):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading):
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::WebCoreAVFResourceLoader::startLoading):
+        * platform/network/ResourceLoadPriority.h:
+        (WebCore::operator++):
+        (WebCore::operator--):
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::adopt):
+        (WebCore::ResourceRequestBase::copyData):
+        (WebCore::ResourceRequestBase::cachePolicy):
+        (WebCore::ResourceRequestBase::priority):
+        (WebCore::ResourceRequestBase::setPriority):
+        * platform/network/ResourceRequestBase.h:
+
+            Remove bitfields. ResourceRequests are not present in large enough numbers to require this kind of optimization.
+            Use modern initialization syntax.
+
+        (WebCore::ResourceRequestBase::ResourceRequestBase):
+        (WebCore::CrossThreadResourceRequestDataBase::CrossThreadResourceRequestDataBase): Deleted.
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::initializeMaximumHTTPConnectionCountPerHost):
+        (WebCore::initializeHTTPConnectionSettingsOnStartup):
+        * platform/network/cf/ResourceRequestCFNet.h:
+        (WebCore::toResourceLoadPriority):
+        (WebCore::toPlatformRequestPriority):
+        * platform/network/soup/ResourceRequest.h:
+        (WebCore::toSoupMessagePriority):
+        * testing/Internals.cpp:
+        (WebCore::stringToResourceLoadPriority):
+
 2015-04-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [OS X] Use CTFontCreateForCSS instead of doing font search ourselves

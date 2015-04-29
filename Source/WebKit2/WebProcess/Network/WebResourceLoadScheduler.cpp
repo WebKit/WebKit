@@ -244,16 +244,10 @@ void WebResourceLoadScheduler::crossOriginRedirectReceived(ResourceLoader*, cons
     // We override this call in the WebProcess to make it a no-op.
 }
 
-void WebResourceLoadScheduler::servePendingRequests(ResourceLoadPriority minimumPriority)
+void WebResourceLoadScheduler::servePendingRequests(ResourceLoadPriority)
 {
-    LOG(NetworkScheduling, "(WebProcess) WebResourceLoadScheduler::servePendingRequests");
-    
-    // The NetworkProcess scheduler is good at making sure loads are serviced until there are no more pending requests.
-    // If this WebProcess isn't expecting requests to be served then we can ignore messaging the NetworkProcess right now.
-    if (m_suspendPendingRequestsCount)
-        return;
-
-    WebProcess::singleton().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::ServePendingRequests(minimumPriority), 0);
+    // This overrides the base class version.
+    // We don't need to do anything as this is handled by the network process.
 }
 
 void WebResourceLoadScheduler::suspendPendingRequests()

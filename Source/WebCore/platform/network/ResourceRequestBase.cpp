@@ -51,32 +51,32 @@ inline const ResourceRequest& ResourceRequestBase::asResourceRequest() const
 std::unique_ptr<ResourceRequest> ResourceRequestBase::adopt(std::unique_ptr<CrossThreadResourceRequestData> data)
 {
     auto request = std::make_unique<ResourceRequest>();
-    request->setURL(data->m_url);
-    request->setCachePolicy(data->m_cachePolicy);
-    request->setTimeoutInterval(data->m_timeoutInterval);
-    request->setFirstPartyForCookies(data->m_firstPartyForCookies);
-    request->setHTTPMethod(data->m_httpMethod);
-    request->setPriority(data->m_priority);
-    request->setRequester(data->m_requester);
+    request->setURL(data->url);
+    request->setCachePolicy(data->cachePolicy);
+    request->setTimeoutInterval(data->timeoutInterval);
+    request->setFirstPartyForCookies(data->firstPartyForCookies);
+    request->setHTTPMethod(data->httpMethod);
+    request->setPriority(data->priority);
+    request->setRequester(data->requester);
 
     request->updateResourceRequest();
-    request->m_httpHeaderFields.adopt(WTF::move(data->m_httpHeaders));
+    request->m_httpHeaderFields.adopt(WTF::move(data->httpHeaders));
 
-    size_t encodingCount = data->m_responseContentDispositionEncodingFallbackArray.size();
+    size_t encodingCount = data->responseContentDispositionEncodingFallbackArray.size();
     if (encodingCount > 0) {
-        String encoding1 = data->m_responseContentDispositionEncodingFallbackArray[0];
+        String encoding1 = data->responseContentDispositionEncodingFallbackArray[0];
         String encoding2;
         String encoding3;
         if (encodingCount > 1) {
-            encoding2 = data->m_responseContentDispositionEncodingFallbackArray[1];
+            encoding2 = data->responseContentDispositionEncodingFallbackArray[1];
             if (encodingCount > 2)
-                encoding3 = data->m_responseContentDispositionEncodingFallbackArray[2];
+                encoding3 = data->responseContentDispositionEncodingFallbackArray[2];
         }
         ASSERT(encodingCount <= 3);
         request->setResponseContentDispositionEncodingFallbackArray(encoding1, encoding2, encoding3);
     }
-    request->setHTTPBody(data->m_httpBody);
-    request->setAllowCookies(data->m_allowCookies);
+    request->setHTTPBody(data->httpBody);
+    request->setAllowCookies(data->allowCookies);
     request->doPlatformAdopt(WTF::move(data));
     return request;
 }
@@ -84,23 +84,23 @@ std::unique_ptr<ResourceRequest> ResourceRequestBase::adopt(std::unique_ptr<Cros
 std::unique_ptr<CrossThreadResourceRequestData> ResourceRequestBase::copyData() const
 {
     auto data = std::make_unique<CrossThreadResourceRequestData>();
-    data->m_url = url().copy();
-    data->m_cachePolicy = cachePolicy();
-    data->m_timeoutInterval = timeoutInterval();
-    data->m_firstPartyForCookies = firstPartyForCookies().copy();
-    data->m_httpMethod = httpMethod().isolatedCopy();
-    data->m_httpHeaders = httpHeaderFields().copyData();
-    data->m_priority = priority();
-    data->m_requester = m_requester;
+    data->url = url().copy();
+    data->cachePolicy = m_cachePolicy;
+    data->timeoutInterval = timeoutInterval();
+    data->firstPartyForCookies = firstPartyForCookies().copy();
+    data->httpMethod = httpMethod().isolatedCopy();
+    data->httpHeaders = httpHeaderFields().copyData();
+    data->priority = m_priority;
+    data->requester = m_requester;
 
-    data->m_responseContentDispositionEncodingFallbackArray.reserveInitialCapacity(m_responseContentDispositionEncodingFallbackArray.size());
+    data->responseContentDispositionEncodingFallbackArray.reserveInitialCapacity(m_responseContentDispositionEncodingFallbackArray.size());
     size_t encodingArraySize = m_responseContentDispositionEncodingFallbackArray.size();
     for (size_t index = 0; index < encodingArraySize; ++index) {
-        data->m_responseContentDispositionEncodingFallbackArray.append(m_responseContentDispositionEncodingFallbackArray[index].isolatedCopy());
+        data->responseContentDispositionEncodingFallbackArray.append(m_responseContentDispositionEncodingFallbackArray[index].isolatedCopy());
     }
     if (m_httpBody)
-        data->m_httpBody = m_httpBody->deepCopy();
-    data->m_allowCookies = m_allowCookies;
+        data->httpBody = m_httpBody->deepCopy();
+    data->allowCookies = m_allowCookies;
     return asResourceRequest().doPlatformCopyData(WTF::move(data));
 }
 
@@ -151,7 +151,7 @@ ResourceRequestCachePolicy ResourceRequestBase::cachePolicy() const
 {
     updateResourceRequest(); 
     
-    return static_cast<ResourceRequestCachePolicy>(m_cachePolicy);
+    return m_cachePolicy;
 }
 
 void ResourceRequestBase::setCachePolicy(ResourceRequestCachePolicy cachePolicy)
@@ -438,7 +438,7 @@ ResourceLoadPriority ResourceRequestBase::priority() const
 {
     updateResourceRequest();
 
-    return static_cast<ResourceLoadPriority>(m_priority);
+    return m_priority;
 }
 
 void ResourceRequestBase::setPriority(ResourceLoadPriority priority)
@@ -449,7 +449,6 @@ void ResourceRequestBase::setPriority(ResourceLoadPriority priority)
         return;
 
     m_priority = priority;
-    ASSERT(static_cast<ResourceLoadPriority>(m_priority) == priority); // Make sure it fits in the bitfield.
 
     if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;

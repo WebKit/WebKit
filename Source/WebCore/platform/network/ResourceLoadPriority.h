@@ -28,15 +28,29 @@
 
 namespace WebCore {
 
-enum ResourceLoadPriority {
-    ResourceLoadPriorityVeryLow,
-    ResourceLoadPriorityLow,
-    ResourceLoadPriorityMedium,
-    ResourceLoadPriorityHigh,
-    ResourceLoadPriorityVeryHigh,
-    ResourceLoadPriorityLowest = ResourceLoadPriorityVeryLow,
-    ResourceLoadPriorityHighest = ResourceLoadPriorityVeryHigh,
+enum class ResourceLoadPriority {
+    VeryLow,
+    Low,
+    Medium,
+    High,
+    VeryHigh,
+    Lowest = VeryLow,
+    Highest = VeryHigh,
 };
+
+static const unsigned resourceLoadPriorityCount { static_cast<unsigned>(ResourceLoadPriority::Highest) + 1 };
+
+inline ResourceLoadPriority& operator++(ResourceLoadPriority& priority)
+{
+    ASSERT(priority != ResourceLoadPriority::Highest);
+    return priority = static_cast<ResourceLoadPriority>(static_cast<int>(priority) + 1);
+}
+
+inline ResourceLoadPriority& operator--(ResourceLoadPriority& priority)
+{
+    ASSERT(priority != ResourceLoadPriority::Lowest);
+    return priority = static_cast<ResourceLoadPriority>(static_cast<int>(priority) - 1);
+}
 
 }
 

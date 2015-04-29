@@ -151,10 +151,6 @@ void NetworkConnectionToWebProcess::setDefersLoading(ResourceLoadIdentifier iden
     loader->setDefersLoading(defers);
 }
 
-void NetworkConnectionToWebProcess::servePendingRequests(uint32_t)
-{
-}
-
 void NetworkConnectionToWebProcess::setSerialLoadingEnabled(bool enabled)
 {
     m_serialLoadingEnabled = enabled;

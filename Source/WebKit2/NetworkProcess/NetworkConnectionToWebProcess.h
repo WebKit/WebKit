@@ -78,7 +78,6 @@ private:
     void removeLoadIdentifier(ResourceLoadIdentifier);
     void setDefersLoading(ResourceLoadIdentifier, bool);
     void crossOriginRedirectReceived(ResourceLoadIdentifier, const WebCore::URL& redirectURL);
-    void servePendingRequests(uint32_t resourceLoadPriority);
     void setSerialLoadingEnabled(bool);
     void startDownload(WebCore::SessionID, uint64_t downloadID, const WebCore::ResourceRequest&);
     void convertMainResourceLoadToDownload(uint64_t mainResourceLoadIdentifier, uint64_t downloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
