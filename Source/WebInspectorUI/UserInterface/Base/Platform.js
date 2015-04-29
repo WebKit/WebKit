@@ -25,7 +25,6 @@
 
 WebInspector.Platform = {
     name: InspectorFrontendHost.platform(),
-    isLegacyMacOS: false,
     isNightlyBuild: false,
     version: {
         base: 0,
@@ -51,12 +50,10 @@ WebInspector.Platform = {
             case "9":
                 WebInspector.Platform.version.name = "mavericks";
                 WebInspector.Platform.version.release = 9;
-                WebInspector.Platform.isLegacyMacOS = true;
                 break;
             case "8":
                 WebInspector.Platform.version.name = "mountain-lion";
                 WebInspector.Platform.version.release = 8;
-                WebInspector.Platform.isLegacyMacOS = true;
                 break;
             default:
                 WebInspector.Platform.version.name = "unknown-mac";

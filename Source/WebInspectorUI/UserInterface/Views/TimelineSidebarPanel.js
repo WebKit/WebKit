@@ -114,18 +114,9 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         this._replayCaptureButtonItem.enabled = true;
         this._replayNavigationBar.addNavigationItem(this._replayCaptureButtonItem);
 
-        var pauseImage, resumeImage;
-        if (WebInspector.Platform.isLegacyMacOS) {
-            pauseImage = {src: "Images/Legacy/Pause.svg", width: 16, height: 16};
-            resumeImage = {src: "Images/Legacy/Resume.svg", width: 16, height: 16};
-        } else {
-            pauseImage = {src: "Images/Pause.svg", width: 15, height: 15};
-            resumeImage = {src: "Images/Resume.svg", width: 15, height: 15};
-        }
-
         toolTip = WebInspector.UIString("Start Playback");
         altToolTip = WebInspector.UIString("Pause Playback");
-        this._replayPauseResumeButtonItem = new WebInspector.ToggleButtonNavigationItem("replay-pause-resume", toolTip, altToolTip, resumeImage.src, pauseImage.src, pauseImage.width, pauseImage.height, true);
+        this._replayPauseResumeButtonItem = new WebInspector.ToggleButtonNavigationItem("replay-pause-resume", toolTip, altToolTip, "Images/Resume.svg", "Images/Pause.svg", 15, 15, true);
         this._replayPauseResumeButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._replayPauseResumeButtonClicked, this);
         this._replayPauseResumeButtonItem.enabled = false;
         this._replayNavigationBar.addNavigationItem(this._replayPauseResumeButtonItem);
@@ -489,7 +480,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
         var timelineTreeElement = new WebInspector.GeneralTreeElement([timeline.iconClassName, WebInspector.TimelineSidebarPanel.LargeIconStyleClass], timeline.displayName, null, timeline);
         var tooltip = WebInspector.UIString("Close %s timeline view").format(timeline.displayName);
-        wrappedSVGDocument(platformImagePath("CloseLarge.svg"), WebInspector.TimelineSidebarPanel.CloseButtonStyleClass, tooltip, function(element) {
+        wrappedSVGDocument("Images/CloseLarge.svg", WebInspector.TimelineSidebarPanel.CloseButtonStyleClass, tooltip, function(element) {
             var button = new WebInspector.TreeElementStatusButton(element);
             button.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, this.showTimelineOverview, this);
             timelineTreeElement.status = button.element;

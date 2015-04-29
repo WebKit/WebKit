@@ -184,8 +184,6 @@ WebInspector.contentLoaded = function()
     document.body.classList.add(WebInspector.Platform.name + "-platform");
     if (WebInspector.Platform.isNightlyBuild)
         document.body.classList.add("nightly-build");
-    if (WebInspector.Platform.isLegacyMacOS)
-        document.body.classList.add("legacy");
     if (WebInspector.Platform.version.name)
         document.body.classList.add(WebInspector.Platform.version.name);
 
@@ -254,7 +252,7 @@ WebInspector.contentLoaded = function()
     this.stepIntoAlternateKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, WebInspector.KeyboardShortcut.Key.Semicolon, this.debuggerStepInto.bind(this));
     this.stepOutAlternateKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Shift | WebInspector.KeyboardShortcut.Modifier.CommandOrControl, WebInspector.KeyboardShortcut.Key.Semicolon, this.debuggerStepOut.bind(this));
 
-    this._closeToolbarButton = new WebInspector.ControlToolbarItem("dock-close", WebInspector.UIString("Close"), platformImagePath("Close.svg"), 16, 14);
+    this._closeToolbarButton = new WebInspector.ControlToolbarItem("dock-close", WebInspector.UIString("Close"), "Images/Close.svg", 16, 14);
     this._closeToolbarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this.close, this);
 
     this._undockToolbarButton = new WebInspector.ButtonToolbarItem("undock", WebInspector.UIString("Detach into separate window"), null, "Images/Undock.svg");
@@ -1232,7 +1230,7 @@ WebInspector._sidebarWidthDidChange = function(event)
 
 WebInspector._updateToolbarHeight = function()
 {
-    if (WebInspector.Platform.isLegacyMacOS)
+    if (WebInspector.Platform.name === "mac" && WebInspector.Platform.version.release < 10)
         InspectorFrontendHost.setToolbarHeight(this.toolbar.element.offsetHeight);
 };
 

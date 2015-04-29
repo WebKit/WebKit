@@ -31,7 +31,3 @@
     background-repeat: no-repeat;
     background-position: center;
 }
-
-body.mac-platform.legacy .navigation-bar .item.divider {
-    background-size: 100% 13px;
-}

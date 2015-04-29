@@ -53,11 +53,6 @@ body.javascript .toolbar .dashboard.default > .item.resourcesCount {
     border: 1px solid transparent;
 }
 
-body.mac-platform.legacy .toolbar .dashboard.default > .item {
-    font-family: -webkit-system-font, sans-serif;
-    font-weight: bold;
-}
-
 .toolbar .dashboard.default > .item.enabled:hover {
     border: 1px solid rgba(0, 0, 0, 0.1);
 }
@@ -119,22 +114,6 @@ body.mac-platform.legacy .toolbar .dashboard.default > .item {
     opacity: 0.9;
 }
 
-body.mac-platform.legacy .toolbar .dashboard.default > .resourcesCount > img {
-    content: url(../Images/Legacy/Resources.svg);
-}
-
-body.mac-platform.legacy .toolbar .dashboard.default > .logs > img {
-    content: url(../Images/Legacy/Logs.svg);
-}
-
-body.mac-platform.legacy .toolbar .dashboard.default > .errors > img {
-    content: url(../Images/Legacy/Errors.svg);
-}
-
-body.mac-platform.legacy .toolbar .dashboard.default > .errors.enabled > img {
-    content: url(../Images/Legacy/ErrorsEnabled.svg);
-}
-
 .toolbar .dashboard.default > .errors.enabled:hover > img {
     opacity: 1;
 }
@@ -154,14 +133,6 @@ body.mac-platform.legacy .toolbar .dashboard.default > .errors.enabled > img {
 .toolbar .dashboard.default > .issues.enabled > img {
     content: url(../Images/IssuesEnabled.svg);
     opacity: 0.9;
-}
-
-body.mac-platform.legacy .toolbar .dashboard.default > .issues > img {
-    content: url(../Images/Legacy/Issues.svg);
-}
-
-body.mac-platform.legacy .toolbar .dashboard.default > .issues.enabled > img {
-    content: url(../Images/Legacy/IssuesEnabled.svg);
 }
 
 .toolbar .dashboard.default > .issues.enabled:hover > img {

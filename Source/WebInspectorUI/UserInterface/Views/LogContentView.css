@@ -154,10 +154,6 @@
     padding-left: 4px;
 }
 
-body.mac-platform.legacy .search-bar.log-search-bar > input[type="search"] {
-    padding-left: 0;
-}
-
 .search-in-progress .console-item.filtered-out-by-search {
     display: none;
 }

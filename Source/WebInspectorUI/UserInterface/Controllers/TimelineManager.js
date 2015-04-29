@@ -442,7 +442,6 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         if (oldRecording)
             oldRecording.unloaded();
 
-        this._legacyFirstRecordedTimestamp = NaN;
         this._activeRecording = newRecording;
         this.dispatchEventToListeners(WebInspector.TimelineManager.Event.RecordingLoaded, {oldRecording});
     }

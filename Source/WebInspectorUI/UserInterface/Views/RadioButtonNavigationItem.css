@@ -36,26 +36,9 @@
     background-color: rgba(34, 131, 246, 0.5);
 }
 
-body.mac-platform.legacy .navigation-bar .item.radio.button.text-only:hover {
-    color: rgb(0, 0, 0);
-    background-color: transparent;
-}
-
 .navigation-bar .item.radio.button.text-only.selected {
     color: white;
     background-color: rgba(34, 131, 246, 1);
-}
-
-body.mac-platform.legacy .navigation-bar .item.radio.button.text-only.selected {
-    color: rgb(0, 0, 0);
-    font-weight: bold;
-
-    background-repeat: no-repeat;
-    background-color: transparent;
-    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.09) 12%, rgba(0, 0, 0, 0.06) 12%, transparent), linear-gradient(to bottom, rgba(0, 0, 0, 0.45), transparent),
-        linear-gradient(to bottom, rgba(0, 0, 0, 0.45), transparent);
-    background-size: 100% 100%, 1px 100%, 1px 100%;
-    background-position: left top, left top, right top;
 }
 
 .navigation-bar .item.radio.button.text-only:active {
@@ -65,10 +48,4 @@ body.mac-platform.legacy .navigation-bar .item.radio.button.text-only.selected {
 
 .navigation-bar .item.radio.button.text-only.selected:active {
     background-color: rgba(31, 105, 238, 1);
-}
-
-body.mac-platform.legacy .navigation-bar .item.radio.button.text-only:active,
-body.mac-platform.legacy .navigation-bar .item.radio.button.text-only.selected:active {
-    color: rgb(0, 0, 0);
-    background-color: transparent;
 }

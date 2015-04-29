@@ -1098,24 +1098,12 @@ WebInspector.DataGrid.prototype = {
 
         WebInspector.DataGrid._generatedSortIndicatorImages = true;
 
-        var specifications = {};
+        var specifications = {arrow: {
+            fillColor: [81, 81, 81],
+        }};
 
-        if (WebInspector.Platform.isLegacyMacOS) {
-            specifications["arrow"] = {
-                fillColor: [81, 81, 81],
-                shadowColor: [255, 255, 255, 0.5],
-                shadowOffsetX: 0,
-                shadowOffsetY: 1,
-                shadowBlur: 0
-            };
-        } else {
-            specifications["arrow"] = {
-                fillColor: [81, 81, 81],
-            };
-        }
-
-        generateColoredImagesForCSS(platformImagePath("SortIndicatorDownArrow.svg"), specifications, 9, 8, "data-grid-sort-indicator-down-");
-        generateColoredImagesForCSS(platformImagePath("SortIndicatorUpArrow.svg"), specifications, 9, 8, "data-grid-sort-indicator-up-");
+        generateColoredImagesForCSS("Images/SortIndicatorDownArrow.svg", specifications, 9, 8, "data-grid-sort-indicator-down-");
+        generateColoredImagesForCSS("Images/SortIndicatorUpArrow.svg", specifications, 9, 8, "data-grid-sort-indicator-up-");
     },
 
     _mouseDownInDataTable: function(event)

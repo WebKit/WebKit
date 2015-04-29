@@ -29,17 +29,9 @@
     background-color: rgb(242, 242, 242);
 }
 
-body.mac-platform.legacy .sidebar {
-    background-color: rgb(227, 231, 235);
-}
-
 .sidebar.collapsed {
     width: 0 !important;
     border: none !important;
-}
-
-body.mac-platform.legacy.window-inactive .sidebar {
-    background-color: rgb(231, 231, 231);
 }
 
 .sidebar > .navigation-bar {
@@ -98,8 +90,4 @@ body.window-inactive .sidebar.left {
 
 body.window-inactive .sidebar.right {
     border-left-color: rgb(219, 219, 219);
-}
-
-body.mac-platform.legacy .sidebar.right {
-    background-color: rgb(231, 231, 231);
 }

@@ -111,13 +111,6 @@ function _prefetchCachedImagesAndUpdate()
     }, _logSQLTransactionError);
 }
 
-function platformImagePath(fileName)
-{
-    if (WebInspector.Platform.isLegacyMacOS)
-        return "Images/Legacy/" + fileName;
-    return "Images/" + fileName;
-}
-
 function saveImageToStorage(storageKey, context, width, height, imageVersion)
 {
     console.assert(storageKey);
@@ -498,148 +491,39 @@ function generateEmbossedImages(src, width, height, states, canvasIdentifierCall
 
     function generateImage(state)
     {
-        function generateModernImage()
-        {
-            const context = document.getCSSCanvasContext("2d", canvasIdentifierCallback(state), scaledWidth, scaledHeight);
-            context.save();
-            context.scale(scaleFactor, scaleFactor);
+        const context = document.getCSSCanvasContext("2d", canvasIdentifierCallback(state), scaledWidth, scaledHeight);
+        context.save();
+        context.scale(scaleFactor, scaleFactor);
 
-            context.clearRect(0, 0, width, height);
+        context.clearRect(0, 0, width, height);
 
-            var gradient = context.createLinearGradient(0, 0, 0, height);
-            if (state === states.Active) {
-                gradient.addColorStop(0, "rgb(65, 65, 65)");
-                gradient.addColorStop(1, "rgb(70, 70, 70)");
-            } else if (state === states.Focus) {
-                gradient.addColorStop(0, "rgb(0, 123, 247)");
-                gradient.addColorStop(1, "rgb(0, 128, 252)");
-            } else if (state === states.ActiveFocus) {
-                gradient.addColorStop(0, "rgb(0, 62, 210)");
-                gradient.addColorStop(1, "rgb(0, 67, 215)");
-            } else {
-                gradient.addColorStop(0, "rgb(75, 75, 75)");
-                gradient.addColorStop(1, "rgb(80, 80, 80)");
-            }
-
-            context.fillStyle = gradient;
-            context.fillRect(0, 0, width, height);
-
-            // Apply the mask to keep just the inner shape of the glyph.
-            _applyImageMask(context, image);
-
-            if (!ignoreCache) {
-                const storageKey = storageKeyPrefix + canvasIdentifierCallback(state);
-                saveImageToStorage(storageKey, context, scaledWidth, scaledHeight, imageVersion);
-            }
-
-            context.restore();
+        var gradient = context.createLinearGradient(0, 0, 0, height);
+        if (state === states.Active) {
+            gradient.addColorStop(0, "rgb(65, 65, 65)");
+            gradient.addColorStop(1, "rgb(70, 70, 70)");
+        } else if (state === states.Focus) {
+            gradient.addColorStop(0, "rgb(0, 123, 247)");
+            gradient.addColorStop(1, "rgb(0, 128, 252)");
+        } else if (state === states.ActiveFocus) {
+            gradient.addColorStop(0, "rgb(0, 62, 210)");
+            gradient.addColorStop(1, "rgb(0, 67, 215)");
+        } else {
+            gradient.addColorStop(0, "rgb(75, 75, 75)");
+            gradient.addColorStop(1, "rgb(80, 80, 80)");
         }
 
-        function generateLegacyImage()
-        {
-            const depth = 1 * scaleFactor;
-            const shadowDepth = depth;
-            const shadowBlur = depth - 1;
-            const glowBlur = 2;
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, width, height);
 
-            const context = document.getCSSCanvasContext("2d", canvasIdentifierCallback(state), scaledWidth, scaledHeight);
-            context.save();
-            context.scale(scaleFactor, scaleFactor);
+        // Apply the mask to keep just the inner shape of the glyph.
+        _applyImageMask(context, image);
 
-            context.clearRect(0, 0, width, height);
-
-            if (depth > 0) {
-                // Use scratch canvas so we can apply the draw the white drop shadow
-                // to the whole glyph at the end.
-
-                var scratchCanvas = document.createElement("canvas");
-                scratchCanvas.width = scaledWidth;
-                scratchCanvas.height = scaledHeight;
-
-                var scratchContext = scratchCanvas.getContext("2d");
-                scratchContext.scale(scaleFactor, scaleFactor);
-            } else
-                var scratchContext = context;
-
-            var gradient = scratchContext.createLinearGradient(0, 0, 0, height);
-            if (state === states.Active) {
-                gradient.addColorStop(0, "rgb(60, 60, 60)");
-                gradient.addColorStop(1, "rgb(100, 100, 100)");
-            } else if (state === states.Focus) {
-                gradient.addColorStop(0, "rgb(50, 135, 200)");
-                gradient.addColorStop(1, "rgb(60, 155, 225)");
-            } else if (state === states.ActiveFocus) {
-                gradient.addColorStop(0, "rgb(30, 115, 185)");
-                gradient.addColorStop(1, "rgb(40, 135, 200)");
-            } else {
-                gradient.addColorStop(0, "rgb(90, 90, 90)");
-                gradient.addColorStop(1, "rgb(145, 145, 145)");
-            }
-
-            scratchContext.fillStyle = gradient;
-            scratchContext.fillRect(0, 0, width, height);
-
-            if (depth > 0) {
-                // Invert the image to use as a reverse image mask for the inner shadows.
-                // Pass in the color to use for the opaque areas to prevent "black halos"
-                // later when applying the final image mask.
-
-                if (state === states.Active)
-                    var invertedImage = _invertMaskImage(image, 60, 60, 60);
-                else if (state === states.Focus)
-                    var invertedImage = _invertMaskImage(image, 45, 145, 210);
-                else if (state === states.ActiveFocus)
-                    var invertedImage = _invertMaskImage(image, 35, 125, 195);
-                else
-                    var invertedImage = _invertMaskImage(image, 90, 90, 90);
-
-                if (state === states.Focus) {
-                    // Double draw the blurry inner shadow to get the right effect.
-                    _drawImageShadow(scratchContext, 0, 0, shadowDepth, "rgb(10, 95, 150)", invertedImage);
-                    _drawImageShadow(scratchContext, 0, 0, shadowDepth, "rgb(10, 95, 150)", invertedImage);
-
-                    // Draw the inner shadow.
-                    _drawImageShadow(scratchContext, 0, shadowDepth, shadowBlur, "rgb(0, 80, 170)", invertedImage);
-                } else if (state === states.ActiveFocus) {
-                    // Double draw the blurry inner shadow to get the right effect.
-                    _drawImageShadow(scratchContext, 0, 0, shadowDepth, "rgb(0, 80, 100)", invertedImage);
-                    _drawImageShadow(scratchContext, 0, 0, shadowDepth, "rgb(0, 80, 100)", invertedImage);
-
-                    // Draw the inner shadow.
-                    _drawImageShadow(scratchContext, 0, shadowDepth, shadowBlur, "rgb(0, 65, 150)", invertedImage);
-                } else {
-                    // Double draw the blurry inner shadow to get the right effect.
-                    _drawImageShadow(scratchContext, 0, 0, shadowDepth, "rgba(0, 0, 0, 1)", invertedImage);
-                    _drawImageShadow(scratchContext, 0, 0, shadowDepth, "rgba(0, 0, 0, 1)", invertedImage);
-
-                    // Draw the inner shadow.
-                    _drawImageShadow(scratchContext, 0, shadowDepth, shadowBlur, "rgba(0, 0, 0, 0.6)", invertedImage);
-                }
-            }
-
-            // Apply the mask to keep just the inner shape of the glyph.
-            _applyImageMask(scratchContext, image);
-
-            // Draw the white drop shadow.
-            if (depth > 0)
-                _drawImageShadow(context, 0, shadowDepth, shadowBlur, "rgba(255, 255, 255, 0.6)", scratchCanvas);
-
-            // Draw a subtle glow for the focus states.
-            if (state === states.Focus || state === states.ActiveFocus)
-                _drawImageShadow(context, 0, 0, glowBlur, "rgba(20, 100, 220, 0.4)", scratchCanvas);
-
-            if (!ignoreCache) {
-                const storageKey = storageKeyPrefix + canvasIdentifierCallback(state);
-                saveImageToStorage(storageKey, context, scaledWidth, scaledHeight, imageVersion);
-            }
-
-            context.restore();
+        if (!ignoreCache) {
+            const storageKey = storageKeyPrefix + canvasIdentifierCallback(state);
+            saveImageToStorage(storageKey, context, scaledWidth, scaledHeight, imageVersion);
         }
 
-        if (WebInspector.Platform.isLegacyMacOS)
-            generateLegacyImage();
-        else
-            generateModernImage();
+        context.restore();
     }
 
     function _drawImageShadow(context, xOffset, yOffset, blur, color, image) {

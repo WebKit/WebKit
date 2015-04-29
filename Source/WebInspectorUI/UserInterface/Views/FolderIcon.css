@@ -26,7 +26,3 @@
 .folder-icon .icon {
     content: -webkit-image-set(url(../Images/FolderGeneric.png) 1x, url(../Images/FolderGeneric@2x.png) 2x);
 }
-
-body.mac-platform.legacy .folder-icon .icon {
-    content: -webkit-image-set(url(../Images/Legacy/FolderGeneric.png) 1x, url(../Images/Legacy/FolderGeneric@2x.png) 2x);
-}

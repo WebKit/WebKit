@@ -267,7 +267,7 @@ WebInspector.TimelineView.prototype = {
             return;
         }
 
-        wrappedSVGDocument(platformImagePath("Close.svg"), null, WebInspector.UIString("Close resource view"), function(element) {
+        wrappedSVGDocument("Images/Close.svg", null, WebInspector.UIString("Close resource view"), function(element) {
             this._closeStatusButton = new WebInspector.TreeElementStatusButton(element);
             this._closeStatusButton.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, this._closeStatusButtonClicked, this);
             if (treeElement === this.navigationSidebarTreeOutline.selectedTreeElement)

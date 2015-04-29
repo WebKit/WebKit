@@ -200,7 +200,7 @@ WebInspector.Popover = class Popover extends WebInspector.Object
             this._preferredSize = new WebInspector.Size(Math.ceil(popoverBounds.width), Math.ceil(popoverBounds.height));
         }
 
-        var titleBarOffset = WebInspector.Platform.name === "mac" && !WebInspector.Platform.isLegacyMacOS ? 22 : 0;
+        var titleBarOffset = WebInspector.Platform.name === "mac" && WebInspector.Platform.version.release >= 10 ? 22 : 0;
         var containerFrame = new WebInspector.Rect(0, titleBarOffset, window.innerWidth, window.innerHeight - titleBarOffset);
         // The frame of the window with a little inset to make sure we have room for shadows.
         containerFrame = containerFrame.inset(WebInspector.Popover.ShadowEdgeInsets);

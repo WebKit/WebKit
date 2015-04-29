@@ -73,16 +73,7 @@ WebInspector.IndexedDatabaseObjectStoreContentView = function(objectStoreOrIndex
 
     this._fetchMoreData();
 
-    var refreshSource, refreshSize;
-    if (WebInspector.Platform.isLegacyMacOS) {
-        refreshSource = "Images/Legacy/Reload.svg";
-        refreshSize = 16;
-    } else {
-        refreshSource = "Images/ReloadFull.svg";
-        refreshSize = 13;
-    }
-
-    this._refreshButtonNavigationItem = new WebInspector.ButtonNavigationItem("indexed-database-object-store-refresh", WebInspector.UIString("Refresh"), refreshSource, refreshSize, refreshSize);
+    this._refreshButtonNavigationItem = new WebInspector.ButtonNavigationItem("indexed-database-object-store-refresh", WebInspector.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
     this._refreshButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._refreshButtonClicked, this);
 };
 

@@ -32,10 +32,6 @@
     opacity: 0.7;
 }
 
-body.mac-platform.legacy .toolbar .item.control {
-    opacity: 0.5;
-}
-
 .toolbar.small-size .item.control {
     padding: 2px;
 }
@@ -46,10 +42,6 @@ body.mac-platform.legacy .toolbar .item.control {
 
 .toolbar .item.control:hover {
     opacity: 0.9;
-}
-
-body.mac-platform.legacy .toolbar .item.control:hover {
-    opacity: 0.8;
 }
 
 .toolbar .item.control:active {

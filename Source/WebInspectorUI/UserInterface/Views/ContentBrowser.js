@@ -57,21 +57,12 @@ WebInspector.ContentBrowser = function(element, delegate, disableBackForward)
         this._backKeyboardShortcut.disabled = true;
         this._forwardKeyboardShortcut.disabled = true;
 
-        var forwardArrow, backArrow;
-        if (WebInspector.Platform.isLegacyMacOS) {
-            forwardArrow = {src: "Images/Legacy/ForwardArrow.svg", width: 9, height: 9};
-            backArrow = {src: "Images/Legacy/BackArrow.svg", width: 9, height: 9};
-        } else {
-            forwardArrow = {src: "Images/ForwardArrow.svg", width: 8, height: 13};
-            backArrow = {src: "Images/BackArrow.svg", width: 8, height: 13};
-        }
-
-        this._backButtonNavigationItem = new WebInspector.ButtonNavigationItem("back", WebInspector.UIString("Back (%s)").format(this._backKeyboardShortcut.displayName), backArrow.src, backArrow.width, backArrow.height);
+        this._backButtonNavigationItem = new WebInspector.ButtonNavigationItem("back", WebInspector.UIString("Back (%s)").format(this._backKeyboardShortcut.displayName), "Images/BackArrow.svg", 8, 13);
         this._backButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._backButtonClicked, this);
         this._backButtonNavigationItem.enabled = false;
         this._navigationBar.addNavigationItem(this._backButtonNavigationItem);
 
-        this._forwardButtonNavigationItem = new WebInspector.ButtonNavigationItem("forward", WebInspector.UIString("Forward (%s)").format(this._forwardKeyboardShortcut.displayName), forwardArrow.src, forwardArrow.width, forwardArrow.height);
+        this._forwardButtonNavigationItem = new WebInspector.ButtonNavigationItem("forward", WebInspector.UIString("Forward (%s)").format(this._forwardKeyboardShortcut.displayName), "Images/ForwardArrow.svg", 8, 13);
         this._forwardButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._forwardButtonClicked, this);
         this._forwardButtonNavigationItem.enabled = false;
         this._navigationBar.addNavigationItem(this._forwardButtonNavigationItem);

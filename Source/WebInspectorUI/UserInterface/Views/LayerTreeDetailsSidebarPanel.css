@@ -27,10 +27,6 @@
     bottom: 28px;
 }
 
-body.mac-platform.legacy .sidebar > .panel.details.layer-tree > .content {
-    bottom: 22px;
-}
-
 .panel.details.layer-tree .data-grid {
     border-right: none;
     border-left: none;
@@ -66,10 +62,6 @@ body.mac-platform.legacy .sidebar > .panel.details.layer-tree > .content {
     background-color: white;
 }
 
-body.mac-platform.legacy .panel.details.layer-tree .bottom-bar {
-    height: 23px;
-}
-
 .panel.details.layer-tree .bottom-bar > div {
     padding: 4px 6px;
 
@@ -83,21 +75,12 @@ body.mac-platform.legacy .panel.details.layer-tree .bottom-bar {
     flex: 1;
 }
 
-body.mac-platform.legacy .panel.details.layer-tree .bottom-bar > div {
-    line-height: inherit;
-    text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
-}
-
 .panel.details.layer-tree .layers-memory-label {
     justify-content: flex-end;
 }
 
 .layer-tree-popover {
     padding: 5px;
-}
-
-body.mac-platform.legacy .layer-tree-popover {
-    text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
 }
 
 .layer-tree-popover p {

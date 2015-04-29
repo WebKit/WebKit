@@ -39,10 +39,6 @@
     font-family: Menlo, monospace;
 }
 
-body.mac-platform.legacy .quick-console {
-    padding: 0;
-}
-
 body.window-inactive .quick-console {
     border-top-color: rgb(219, 219, 219);
 }

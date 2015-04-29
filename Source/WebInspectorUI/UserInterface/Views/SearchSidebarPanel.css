@@ -27,10 +27,6 @@
     top: 28px;
 }
 
-body.mac-platform.legacy .sidebar > .panel.navigation.search > :matches(.content, .empty-content-placeholder) {
-    top: 21px;
-}
-
 .sidebar > .panel.navigation.search > .search-bar {
     position: absolute;
     top: 0;
@@ -47,19 +43,10 @@ body.mac-platform.legacy .sidebar > .panel.navigation.search > :matches(.content
     overflow: hidden;
 }
 
-body.mac-platform.legacy .sidebar > .panel.navigation.search > .search-bar {
-    height: 21px;
-}
-
 .sidebar > .panel.navigation.search > .search-bar > input[type="search"] {
     display: flex;
     flex: 1;
 
     margin: 3px 6px;
     padding-left: 4px;
-}
-
-body.mac-platform.legacy .sidebar > .panel.navigation.search > .search-bar > input[type="search"] {
-    margin: 1px 6px;
-    padding-left: 0;
 }

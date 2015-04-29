@@ -27,10 +27,6 @@
     top: 29px;
 }
 
-body.mac-platform.legacy .sidebar > .panel.navigation.debugger > .content {
-    top: 22px;
-}
-
 .sidebar > .panel.navigation.debugger > .navigation-bar {
     position: absolute;
     top: 0;

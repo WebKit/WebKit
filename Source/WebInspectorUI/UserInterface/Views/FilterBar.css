@@ -32,10 +32,6 @@
     overflow: hidden;
 }
 
-body.mac-platform.legacy .filter-bar {
-    height: 21px;
-}
-
 .filter-bar > .navigation-bar > .item {
     padding: 0 0 3px 8px;
 }
@@ -59,15 +55,6 @@ body.mac-platform.legacy .filter-bar {
     height: 22px;
 }
 
-body.mac-platform.legacy .filter-bar > input[type="search"] {
-    border: 1px solid rgba(0, 0, 0, 0.35);
-    border-radius: 10px;
-    box-shadow: inset rgba(0, 0, 0, 0.1) 0 1px 0;
-
-    height: 19px;
-    transition: background-color 200ms ease-in-out;
-}
-
 .filter-bar > input[type="search"]::-webkit-input-placeholder {
     color: rgba(0, 0, 0, 0.35);
 }
@@ -86,8 +73,4 @@ body.mac-platform.legacy .filter-bar > input[type="search"] {
     background-image: url(../Images/FilterFieldGlyph.svg);
 
     -webkit-appearance: none;
-}
-
-body.mac-platform.legacy .filter-bar > input[type="search"]::-webkit-search-decoration {
-    background-image: url(../Images/Legacy/FilterFieldGlyph.svg);
 }

@@ -42,17 +42,6 @@
     justify-content: center;
 }
 
-body.mac-platform.legacy .navigation-bar .item.button.text-only {
-    padding: 0 10px;
-    margin: 0;
-
-    text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
-    line-height: 20px;
-    border: none;
-    text-align: inherit;
-    height: 28px;
-}
-
 .navigation-bar .item.button > .glyph {
     width: 100%;
     height: 100%;

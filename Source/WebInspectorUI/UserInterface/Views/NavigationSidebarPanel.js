@@ -420,11 +420,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
             return;
         }
 
-        if (WebInspector.Platform.isLegacyMacOS)
-            var edgeThreshold = 10;
-        else
-            var edgeThreshold = 1;
-
+        var edgeThreshold = 1;
         var scrollTop = this.contentElement.scrollTop;
 
         var topCoverage = Math.min(scrollTop, edgeThreshold);
@@ -557,32 +553,13 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         WebInspector.NavigationSidebarPanel._generatedDisclosureTriangles = true;
 
         var specifications = {};
+        specifications[WebInspector.NavigationSidebarPanel.DisclosureTriangleNormalCanvasIdentifierSuffix] = {
+            fillColor: [140, 140, 140]
+        };
 
-        if (WebInspector.Platform.isLegacyMacOS) {
-            specifications[WebInspector.NavigationSidebarPanel.DisclosureTriangleNormalCanvasIdentifierSuffix] = {
-                fillColor: [112, 126, 139],
-                shadowColor: [255, 255, 255, 0.8],
-                shadowOffsetX: 0,
-                shadowOffsetY: 1,
-                shadowBlur: 0
-            };
-
-            specifications[WebInspector.NavigationSidebarPanel.DisclosureTriangleSelectedCanvasIdentifierSuffix] = {
-                fillColor: [255, 255, 255],
-                shadowColor: [61, 91, 110, 0.8],
-                shadowOffsetX: 0,
-                shadowOffsetY: 1,
-                shadowBlur: 2
-            };
-        } else {
-            specifications[WebInspector.NavigationSidebarPanel.DisclosureTriangleNormalCanvasIdentifierSuffix] = {
-                fillColor: [140, 140, 140]
-            };
-
-            specifications[WebInspector.NavigationSidebarPanel.DisclosureTriangleSelectedCanvasIdentifierSuffix] = {
-                fillColor: [255, 255, 255]
-            };
-        }
+        specifications[WebInspector.NavigationSidebarPanel.DisclosureTriangleSelectedCanvasIdentifierSuffix] = {
+            fillColor: [255, 255, 255]
+        };
 
         generateColoredImagesForCSS("Images/DisclosureTriangleSmallOpen.svg", specifications, 13, 13, WebInspector.NavigationSidebarPanel.DisclosureTriangleOpenCanvasIdentifier);
         generateColoredImagesForCSS("Images/DisclosureTriangleSmallClosed.svg", specifications, 13, 13, WebInspector.NavigationSidebarPanel.DisclosureTriangleClosedCanvasIdentifier);

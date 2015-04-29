@@ -1,3 +1,270 @@
+2015-04-29  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Remove Legacy images and styles
+        https://bugs.webkit.org/show_bug.cgi?id=144390
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/ImageUtilities.js:
+        (.generateImage):
+        (.generateImage.generateLegacyImage): Deleted.
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        (WebInspector._updateToolbarHeight):
+        * UserInterface/Base/Platform.js:
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype._loadNewRecording):
+        * UserInterface/Images/Legacy/BackArrow.svg: Removed.
+        * UserInterface/Images/Legacy/Breakpoints.svg: Removed.
+        * UserInterface/Images/Legacy/Close.svg: Removed.
+        * UserInterface/Images/Legacy/CloseLarge.svg: Removed.
+        * UserInterface/Images/Legacy/Colors.png: Removed.
+        * UserInterface/Images/Legacy/Colors@2x.png: Removed.
+        * UserInterface/Images/Legacy/ColorsLarge.png: Removed.
+        * UserInterface/Images/Legacy/ColorsLarge@2x.png: Removed.
+        * UserInterface/Images/Legacy/DockBottom.svg: Removed.
+        * UserInterface/Images/Legacy/DockRight.svg: Removed.
+        * UserInterface/Images/Legacy/DownloadArrow.svg: Removed.
+        * UserInterface/Images/Legacy/Errors.svg: Removed.
+        * UserInterface/Images/Legacy/ErrorsEnabled.svg: Removed.
+        * UserInterface/Images/Legacy/FilterFieldGlyph.svg: Removed.
+        * UserInterface/Images/Legacy/FolderGeneric.png: Removed.
+        * UserInterface/Images/Legacy/FolderGeneric@2x.png: Removed.
+        * UserInterface/Images/Legacy/ForwardArrow.svg: Removed.
+        * UserInterface/Images/Legacy/Issues.svg: Removed.
+        * UserInterface/Images/Legacy/IssuesEnabled.svg: Removed.
+        * UserInterface/Images/Legacy/LayerBorders.svg: Removed.
+        * UserInterface/Images/Legacy/Logs.svg: Removed.
+        * UserInterface/Images/Legacy/NavigationItemCurleyBraces.svg: Removed.
+        * UserInterface/Images/Legacy/NavigationItemTrash.svg: Removed.
+        * UserInterface/Images/Legacy/Network.png: Removed.
+        * UserInterface/Images/Legacy/Network@2x.png: Removed.
+        * UserInterface/Images/Legacy/NetworkLarge.png: Removed.
+        * UserInterface/Images/Legacy/NetworkLarge@2x.png: Removed.
+        * UserInterface/Images/Legacy/Pause.svg: Removed.
+        * UserInterface/Images/Legacy/Plus.svg: Removed.
+        * UserInterface/Images/Legacy/Recording.png: Removed.
+        * UserInterface/Images/Legacy/Recording@2x.png: Removed.
+        * UserInterface/Images/Legacy/RecordingHovered.png: Removed.
+        * UserInterface/Images/Legacy/RecordingHovered@2x.png: Removed.
+        * UserInterface/Images/Legacy/RecordingStopped.png: Removed.
+        * UserInterface/Images/Legacy/RecordingStopped@2x.png: Removed.
+        * UserInterface/Images/Legacy/Reload.svg: Removed.
+        * UserInterface/Images/Legacy/Resources.svg: Removed.
+        * UserInterface/Images/Legacy/Resume.svg: Removed.
+        * UserInterface/Images/Legacy/ShadowDOM.svg: Removed.
+        * UserInterface/Images/Legacy/SortIndicatorDownArrow.svg: Removed.
+        * UserInterface/Images/Legacy/SortIndicatorUpArrow.svg: Removed.
+        * UserInterface/Images/Legacy/SplitToggleDown.svg: Removed.
+        * UserInterface/Images/Legacy/SplitToggleUp.svg: Removed.
+        * UserInterface/Images/Legacy/StepInto.svg: Removed.
+        * UserInterface/Images/Legacy/StepOut.svg: Removed.
+        * UserInterface/Images/Legacy/StepOver.svg: Removed.
+        * UserInterface/Images/Legacy/Time.svg: Removed.
+        * UserInterface/Images/Legacy/Undock.svg: Removed.
+        * UserInterface/Images/Legacy/UpDownArrows.svg: Removed.
+        * UserInterface/Images/Legacy/Weight.svg: Removed.
+        * UserInterface/Views/ButtonNavigationItem.css:
+        (body.mac-platform.legacy .navigation-bar .item.button.text-only): Deleted.
+        * UserInterface/Views/ButtonToolbarItem.css:
+        (body.mac-platform.legacy .toolbar .item.button > .label): Deleted.
+        * UserInterface/Views/CSSStyleDeclarationSection.css:
+        (body.mac-platform.legacy .style-declaration-section): Deleted.
+        (body.mac-platform.legacy .style-declaration-section + .style-declaration-section): Deleted.
+        (body.mac-platform.legacy .style-declaration-section.last-in-group): Deleted.
+        (body.mac-platform.legacy .style-declaration-section.last-in-group + .style-declaration-section): Deleted.
+        (body.mac-platform.legacy .style-declaration-section.last-in-group + .style-declaration-section:matches(.last-in-group, :last-child)): Deleted.
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.css:
+        (body.mac-platform.legacy .sidebar > .panel.details.css-style > .content): Deleted.
+        * UserInterface/Views/ContentBrowser.js:
+        (WebInspector.ContentBrowser):
+        * UserInterface/Views/ControlToolbarItem.css:
+        (body.mac-platform.legacy .toolbar .item.control): Deleted.
+        (body.mac-platform.legacy .toolbar .item.control:hover): Deleted.
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WebInspector.DOMTreeContentView):
+        * UserInterface/Views/DOMTreeOutline.css:
+        (body.mac-platform.legacy .dom-tree-outline li.hovered:not(.selected) .selection): Deleted.
+        (body.mac-platform.legacy .dom-tree-outline li.elements-drag-over .selection): Deleted.
+        (body.mac-platform.legacy .dom-tree-outline:focus li.selected .selection): Deleted.
+        * UserInterface/Views/DashboardContainerView.css:
+        (body.mac-platform.legacy .toolbar .dashboard-container): Deleted.
+        (body.mac-platform.legacy.window-inactive .toolbar .dashboard-container): Deleted.
+        (body.mac-platform.legacy.window-inactive .toolbar .dashboard): Deleted.
+        (body.mac-platform.legacy .dashboard-container .advance-arrow): Deleted.
+        * UserInterface/Views/DataGrid.css:
+        (body.mac-platform.legacy .data-grid:focus tr.selected td:not(:last-child)): Deleted.
+        (body.mac-platform.legacy .data-grid:focus tr.selected): Deleted.
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype.get _generateSortIndicatorImagesIfNeeded):
+        * UserInterface/Views/DatabaseTableContentView.js:
+        (WebInspector.DatabaseTableContentView):
+        * UserInterface/Views/DebuggerDashboardView.js:
+        (WebInspector.DebuggerDashboardView):
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        (body.mac-platform.legacy .sidebar > .panel.navigation.debugger > .content): Deleted.
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        * UserInterface/Views/DefaultDashboardView.css:
+        (body.mac-platform.legacy .toolbar .dashboard.default > .item): Deleted.
+        (body.mac-platform.legacy .toolbar .dashboard.default > .resourcesCount > img): Deleted.
+        (body.mac-platform.legacy .toolbar .dashboard.default > .logs > img): Deleted.
+        (body.mac-platform.legacy .toolbar .dashboard.default > .errors > img): Deleted.
+        (body.mac-platform.legacy .toolbar .dashboard.default > .errors.enabled > img): Deleted.
+        (body.mac-platform.legacy .toolbar .dashboard.default > .issues > img): Deleted.
+        (body.mac-platform.legacy .toolbar .dashboard.default > .issues.enabled > img): Deleted.
+        * UserInterface/Views/DetailsSection.css:
+        (body.mac-platform.legacy .details-section): Deleted.
+        (body.mac-platform.legacy .details-section .details-section): Deleted.
+        (body.mac-platform.legacy .details-section .details-section:first-child): Deleted.
+        (body.mac-platform.legacy .details-section > .header): Deleted.
+        (body.mac-platform.legacy .details-section .details-section > .header): Deleted.
+        (body.mac-platform.legacy .details-section .details-section.collapsed > .header): Deleted.
+        (body.mac-platform.legacy .details-section:not(.collapsed) .data-grid.inline): Deleted.
+        (body.mac-platform.legacy .details-section.computed-style-properties:not(.collapsed) > .header): Deleted.
+        (body.mac-platform.legacy .details-section > .content > .group): Deleted.
+        (body.mac-platform.legacy .details-section > .content > .group:nth-child(even)): Deleted.
+        (body.mac-platform.legacy .details-section > .content > .group:matches(:nth-child(even), :last-child) > .row.simple:last-child > *): Deleted.
+        (body.mac-platform.legacy .details-section > .content > .group > .row:matches(.empty, .text)): Deleted.
+        * UserInterface/Views/DividerNavigationItem.css:
+        (.navigation-bar .item.divider):
+        (body.mac-platform.legacy .navigation-bar .item.divider): Deleted.
+        * UserInterface/Views/FilterBar.css:
+        (.filter-bar > input[type="search"]::-webkit-search-decoration):
+        (body.mac-platform.legacy .filter-bar): Deleted.
+        (body.mac-platform.legacy .filter-bar > input[type="search"]): Deleted.
+        (body.mac-platform.legacy .filter-bar > input[type="search"]::-webkit-search-decoration): Deleted.
+        * UserInterface/Views/FindBanner.css:
+        (body.mac-platform.legacy .find-banner > input[type="search"]): Deleted.
+        (body.mac-platform.legacy .find-banner > button > .glyph): Deleted.
+        (body.mac-platform.legacy .find-banner > button.segmented.left > .glyph): Deleted.
+        (body.mac-platform.legacy .find-banner > button.segmented.right > .glyph): Deleted.
+        (body.mac-platform.legacy .find-banner > button.segmented): Deleted.
+        * UserInterface/Views/FindBanner.js:
+        (WebInspector.FindBanner.prototype._generateButtonsGlyphsIfNeeded):
+        (WebInspector.FindBanner):
+        * UserInterface/Views/FolderIcon.css:
+        (.folder-icon .icon):
+        (body.mac-platform.legacy .folder-icon .icon): Deleted.
+        * UserInterface/Views/HierarchicalPathComponent.css:
+        (body.mac-platform.legacy .hierarchical-path-component > .selector-arrows): Deleted.
+        * UserInterface/Views/IndexedDatabaseObjectStoreContentView.js:
+        (WebInspector.IndexedDatabaseObjectStoreContentView):
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.css:
+        (body.mac-platform.legacy .sidebar > .panel.details.layer-tree > .content): Deleted.
+        (body.mac-platform.legacy .panel.details.layer-tree .bottom-bar): Deleted.
+        (body.mac-platform.legacy .panel.details.layer-tree .bottom-bar > div): Deleted.
+        (body.mac-platform.legacy .layer-tree-popover): Deleted.
+        * UserInterface/Views/LogContentView.css:
+        (body.mac-platform.legacy .search-bar.log-search-bar > input[type="search"]): Deleted.
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView):
+        * UserInterface/Views/Main.css:
+        (body.mac-platform.legacy:not(.docked)): Deleted.
+        (body.docked.bottom.mac-platform.legacy): Deleted.
+        (body.docked.right.mac-platform.legacy): Deleted.
+        (body.mac-platform.legacy #split-content-browser > .navigation-bar): Deleted.
+        * UserInterface/Views/NavigationBar.css:
+        (.navigation-bar .item):
+        (body.mac-platform.legacy .navigation-bar): Deleted.
+        (body.mac-platform.legacy .navigation-bar .item): Deleted.
+        * UserInterface/Views/NavigationSidebarPanel.css:
+        (body.mac-platform.legacy .sidebar > .panel.navigation > .content): Deleted.
+        (body.mac-platform.legacy .sidebar > .panel.navigation > .overflow-shadow): Deleted.
+        (body.mac-platform.legacy .sidebar > .panel.navigation > .overflow-shadow.top): Deleted.
+        (body.mac-platform.legacy .sidebar > .panel.navigation > .empty-content-placeholder): Deleted.
+        (body.mac-platform.legacy .navigation-sidebar-panel-content-tree-outline .item.selected): Deleted.
+        (body.mac-platform.legacy .navigation-sidebar-panel-content-tree-outline:focus .item.selected): Deleted.
+        (body.mac-platform.legacy.window-inactive .navigation-sidebar-panel-content-tree-outline .item.selected): Deleted.
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype._updateContentOverflowShadowVisibility):
+        (WebInspector.NavigationSidebarPanel.prototype._generateDisclosureTrianglesIfNeeded):
+        * UserInterface/Views/Popover.js:
+        * UserInterface/Views/ProbeDetailsSidebarPanel.css:
+        (body.mac-platform.legacy .details-section.probe-set .options > .probe-clear-samples): Deleted.
+        (body.mac-platform.legacy .details-section.probe-set .options > .probe-remove): Deleted.
+        (body.mac-platform.legacy .details-section.probe-set .options > .probe-add): Deleted.
+        * UserInterface/Views/QuickConsole.css:
+        (body.mac-platform.legacy .quick-console): Deleted.
+        * UserInterface/Views/RadioButtonNavigationItem.css:
+        (.navigation-bar .item.radio.button.text-only.selected:active):
+        (body.mac-platform.legacy .navigation-bar .item.radio.button.text-only:hover): Deleted.
+        (body.mac-platform.legacy .navigation-bar .item.radio.button.text-only.selected): Deleted.
+        (body.mac-platform.legacy .navigation-bar .item.radio.button.text-only.selected:active): Deleted.
+        * UserInterface/Views/RulesStyleDetailsPanel.css:
+        (body.mac-platform.legacy .sidebar > .panel.details.css-style .rules .label + .style-declaration-section): Deleted.
+        (body.mac-platform.legacy .sidebar > .panel.details.css-style .rules .new-rule): Deleted.
+        (body.mac-platform.legacy .sidebar > .panel.details.css-style .rules .new-rule + .style-declaration-section): Deleted.
+        (body.mac-platform.legacy .sidebar > .panel.details.css-style .rules .new-rule img): Deleted.
+        * UserInterface/Views/ScopeBar.css:
+        (.scope-bar > li.selected:active):
+        (body.mac-platform.legacy .scope-bar > li): Deleted.
+        (body.mac-platform.legacy .scope-bar > li:hover): Deleted.
+        (body.mac-platform.legacy .scope-bar > li.selected): Deleted.
+        (body.mac-platform.legacy .scope-bar > li:active): Deleted.
+        (body.mac-platform.legacy .scope-bar > li.selected:active): Deleted.
+        * UserInterface/Views/ScriptContentView.js:
+        (WebInspector.ScriptContentView):
+        * UserInterface/Views/SearchBar.css:
+        (body.mac-platform.legacy .search-bar > input[type="search"]): Deleted.
+        * UserInterface/Views/SearchSidebarPanel.css:
+        (.sidebar > .panel.navigation.search > .search-bar > input[type="search"]):
+        (body.mac-platform.legacy .sidebar > .panel.navigation.search > :matches(.content, .empty-content-placeholder)): Deleted.
+        (body.mac-platform.legacy .sidebar > .panel.navigation.search > .search-bar): Deleted.
+        (body.mac-platform.legacy .sidebar > .panel.navigation.search > .search-bar > input[type="search"]): Deleted.
+        * UserInterface/Views/Sidebar.css:
+        (body.window-inactive .sidebar.right):
+        (body.mac-platform.legacy .sidebar): Deleted.
+        (body.mac-platform.legacy.window-inactive .sidebar): Deleted.
+        (body.mac-platform.legacy .sidebar.right): Deleted.
+        * UserInterface/Views/TextContentView.js:
+        (WebInspector.TextContentView):
+        * UserInterface/Views/TextResourceContentView.js:
+        (WebInspector.TextResourceContentView):
+        * UserInterface/Views/TimelineDataGrid.css:
+        (body.mac-platform.legacy .data-grid.timeline > .navigation-bar-container > .navigation-bar): Deleted.
+        * UserInterface/Views/TimelineIcons.css:
+        (body.mac-platform.legacy .network-icon .icon): Deleted.
+        (body.mac-platform.legacy .network-icon.large .icon): Deleted.
+        (body.mac-platform.legacy .colors-icon .icon): Deleted.
+        (body.mac-platform.legacy .colors-icon.large .icon): Deleted.
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView):
+        * UserInterface/Views/TimelineRuler.css:
+        (body.mac-platform.legacy .timeline-ruler > .header): Deleted.
+        (body.mac-platform.legacy .timeline-ruler > .selection-drag): Deleted.
+        (body.mac-platform.legacy .timeline-ruler > .selection-handle): Deleted.
+        * UserInterface/Views/TimelineSidebarPanel.css:
+        (.sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing > .content):
+        (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar): Deleted.
+        (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph): Deleted.
+        (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording): Deleted.
+        (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph:hover): Deleted.
+        (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording:hover): Deleted.
+        (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.forced): Deleted.
+        (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording.forced): Deleted.
+        (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-status): Deleted.
+        (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .title-bar): Deleted.
+        (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .title-bar.timelines): Deleted.
+        (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .title-bar.timeline-events): Deleted.
+        (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .timelines-content): Deleted.
+        (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .timelines-content .close-button): Deleted.
+        (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .timelines-content li.item.selected + li.item): Deleted.
+        (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .timelines-content :focus li.item.selected + li.item): Deleted.
+        (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > :matches(.content, .empty-content-placeholder)): Deleted.
+        (body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .content .item > .status > .status-button): Deleted.
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel):
+        * UserInterface/Views/Toolbar.css:
+        (body.mac-platform:not(.docked) .toolbar):
+        (body.mac-platform:not(.legacy, .docked) .toolbar): Deleted.
+        (body.mac-platform.legacy .toolbar): Deleted.
+        (body.mac-platform.legacy.docked .toolbar): Deleted.
+        (body.mac-platform.legacy:not(.docked) .toolbar .item.button > .label): Deleted.
+        (body.mac-platform.legacy.window-inactive .toolbar): Deleted.
+        * UserInterface/Views/TreeElementStatusButton.css:
+        (body.mac-platform.legacy .item > .status > .status-button > svg .filled): Deleted.
+        (body.mac-platform.legacy .item > .status > .status-button > svg .stroked): Deleted.
+
 2015-04-29  Andres Gomez  <agomez@igalia.com>
 
         [GTK] Web Inspector: Optimize SVG images

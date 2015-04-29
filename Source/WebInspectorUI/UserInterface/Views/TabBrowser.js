@@ -50,7 +50,7 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.Object
         this._contentViewContainer = new WebInspector.ContentViewContainer;
         this._element.appendChild(this._contentViewContainer.element);
 
-        this._tabBar.newTabItem = new WebInspector.TabBarItem(platformImagePath("NewTabPlus.svg"), WebInspector.UIString("Create a new tab"), true);
+        this._tabBar.newTabItem = new WebInspector.TabBarItem("Images/NewTabPlus.svg", WebInspector.UIString("Create a new tab"), true);
 
         this._tabBar.addEventListener(WebInspector.TabBar.Event.TabBarItemSelected, this._tabBarItemSelected, this);
         this._tabBar.addEventListener(WebInspector.TabBar.Event.TabBarItemRemoved, this._tabBarItemRemoved, this);

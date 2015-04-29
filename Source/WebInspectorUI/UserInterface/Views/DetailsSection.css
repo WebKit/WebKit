@@ -29,20 +29,8 @@
     border-bottom: 1px solid rgb(179, 179, 179);
 }
 
-body.mac-platform.legacy .details-section {
-    margin-top: -1px;
-    margin-bottom: -1px;
-
-    border-bottom: none;
-    background-color: transparent;
-}
-
 .details-section .details-section {
     background-color: rgb(255, 255, 255);
-}
-
-body.mac-platform.legacy .details-section .details-section {
-    background-color: transparent;
 }
 
 .details-section .details-section:last-child {
@@ -51,10 +39,6 @@ body.mac-platform.legacy .details-section .details-section {
 
 .details-section .details-section:first-child {
     border-top: 1px solid rgb(179, 179, 179);
-}
-
-body.mac-platform.legacy .details-section .details-section:first-child {
-    border-top: none;
 }
 
 .details-section > .header {
@@ -78,17 +62,6 @@ body.mac-platform.legacy .details-section .details-section:first-child {
     z-index: 200;
 }
 
-body.mac-platform.legacy .details-section > .header {
-    border-bottom: 1px solid rgb(179, 179, 179);
-    box-shadow: inset rgba(255, 255, 255, 0.2) 0 1px 0;
-    background-color: transparent;
-    background-image: linear-gradient(to bottom, rgb(238, 240, 244), rgb(224, 226, 230));
-
-    border-top: 1px solid rgb(179, 179, 179);
-
-    text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
-}
-
 .details-section .details-section > .header {
     top: 21px;
     background-color: rgb(255, 255, 255);
@@ -101,26 +74,8 @@ body.mac-platform.legacy .details-section > .header {
     border-bottom: 1px solid rgb(222, 222, 222);
 }
 
-body.mac-platform.legacy .details-section .details-section > .header {
-    background-color: transparent;
-    background-image: linear-gradient(to bottom, rgb(250, 250, 250), rgb(240, 240, 240));
-    box-shadow: none;
-}
-
-body.mac-platform.legacy .details-section .details-section.collapsed > .header {
-    box-shadow: none;
-}
-
-body.mac-platform.legacy .details-section:not(.collapsed) .data-grid.inline {
-    border-top: none;
-}
-
 .details-section.computed-style-properties:not(.collapsed) > .header {
     background-color: rgb(255, 255, 255);
-}
-
-body.mac-platform.legacy .details-section.computed-style-properties:not(.collapsed) > .header {
-    background-color: transparent;
 }
 
 .details-section > .header::before {
@@ -193,10 +148,6 @@ body.mac-platform.legacy .details-section.computed-style-properties:not(.collaps
     border-bottom: 1px solid rgb(179, 179, 179);
 }
 
-body.mac-platform.legacy .details-section > .content > .group {
-    border-bottom: none;
-}
-
 .details-section > .content > .group:last-child {
     border-bottom: none;
 }
@@ -205,17 +156,8 @@ body.mac-platform.legacy .details-section > .content > .group {
     background-color: rgb(233, 233, 233);
 }
 
-body.mac-platform.legacy .details-section > .content > .group:nth-child(even) {
-    background-color: rgb(222, 222, 222);
-}
-
 .details-section > .content > .group:nth-child(even) > .row:matches(.simple:first-child > *, :not(.simple):first-child) {
     border-top: 1px solid rgb(179, 179, 179);
-}
-
-body.mac-platform.legacy .details-section > .content > .group:matches(:nth-child(even), :last-child) > .row:not(.simple):last-child,
-body.mac-platform.legacy .details-section > .content > .group:matches(:nth-child(even), :last-child) > .row.simple:last-child > * {
-    border-bottom: 1px solid rgb(179, 179, 179);
 }
 
 .details-section > .content > .group > .row.simple {
@@ -290,10 +232,6 @@ body.mac-platform.legacy .details-section > .content > .group:matches(:nth-child
     padding: 0 6px 7px 6px;
     text-align: center;
     color: gray;
-}
-
-body.mac-platform.legacy .details-section > .content > .group > .row:matches(.empty, .text) {
-    padding: 6px;
 }
 
 .details-section > .content > .group > .row.text {

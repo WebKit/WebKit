@@ -57,10 +57,6 @@ body {
     tab-size: 4; /* FIXME: This should be controlled by a setting. <rdar://problem/10593948> */
 }
 
-body.mac-platform.legacy:not(.docked) {
-    background-color: transparent;
-}
-
 body.docked.bottom {
     border-top: 1px solid rgb(200, 200, 200);
 }
@@ -75,14 +71,6 @@ body.window-inactive.docked.bottom {
 
 body.window-inactive.docked.right {
     border-left-color: rgb(219, 219, 219);
-}
-
-body.docked.bottom.mac-platform.legacy {
-    border-top-color: rgb(85, 85, 85);
-}
-
-body.docked.right.mac-platform.legacy {
-    border-left-color: rgb(85, 85, 85);
 }
 
 #docked-resizer {
@@ -164,10 +152,6 @@ body.window-inactive #split-content-browser {
     cursor: row-resize;
 
     background-color: rgb(242, 242, 242);
-}
-
-body.mac-platform.legacy #split-content-browser > .navigation-bar {
-    background-image: linear-gradient(to bottom, rgb(248, 248, 248), rgb(226, 226, 226));
 }
 
 #split-content-browser > .navigation-bar .item:not(.flexible-space) {

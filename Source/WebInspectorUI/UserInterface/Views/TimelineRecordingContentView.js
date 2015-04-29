@@ -49,13 +49,7 @@ WebInspector.TimelineRecordingContentView = function(recording, extraArguments)
     this._contentViewContainer.addEventListener(WebInspector.ContentViewContainer.Event.CurrentContentViewDidChange, this._currentContentViewDidChange, this);
     this.element.appendChild(this._contentViewContainer.element);
 
-    var trashImage;
-    if (WebInspector.Platform.isLegacyMacOS)
-        trashImage = {src: "Images/Legacy/NavigationItemTrash.svg", width: 16, height: 16};
-    else
-        trashImage = {src: "Images/NavigationItemTrash.svg", width: 15, height: 15};
-
-    this._clearTimelineNavigationItem = new WebInspector.ButtonNavigationItem("clear-timeline", WebInspector.UIString("Clear Timeline"), trashImage.src, trashImage.width, trashImage.height);
+    this._clearTimelineNavigationItem = new WebInspector.ButtonNavigationItem("clear-timeline", WebInspector.UIString("Clear Timeline"), "Images/NavigationItemTrash.svg", 15, 15);
     this._clearTimelineNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._clearTimeline, this);
 
     this._overviewTimelineView = new WebInspector.OverviewTimelineView(recording, {timelineSidebarPanel: this._timelineSidebarPanel});

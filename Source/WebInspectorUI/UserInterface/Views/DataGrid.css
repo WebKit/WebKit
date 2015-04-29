@@ -146,10 +146,6 @@
     border-right-color: rgb(0, 102, 204);
 }
 
-body.mac-platform.legacy .data-grid:focus tr.selected td:not(:last-child) {
-    border-right-color: rgb(53, 109, 189);
-}
-
 .data-grid :matches(th, td) > div {
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -250,10 +246,6 @@ body.mac-platform.legacy .data-grid:focus tr.selected td:not(:last-child) {
 .data-grid:focus tr.selected {
     background-color: rgb(0, 128, 252) !important;
     color: white !important;
-}
-
-body.mac-platform.legacy .data-grid:focus tr.selected {
-    background-color: rgb(56, 121, 217) !important;
 }
 
 .data-grid tr:not(.parent) td.disclosure {
