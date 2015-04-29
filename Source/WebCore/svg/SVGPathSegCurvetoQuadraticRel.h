@@ -28,9 +28,9 @@ namespace WebCore {
 
 class SVGPathSegCurvetoQuadraticRel : public SVGPathSegCurvetoQuadratic {
 public:
-    static PassRefPtr<SVGPathSegCurvetoQuadraticRel> create(SVGPathElement* element, SVGPathSegRole role, float x, float y, float x1, float y1)
+    static Ref<SVGPathSegCurvetoQuadraticRel> create(SVGPathElement* element, SVGPathSegRole role, float x, float y, float x1, float y1)
     {
-        return adoptRef(new SVGPathSegCurvetoQuadraticRel(element, role, x, y, x1, y1));
+        return adoptRef(*new SVGPathSegCurvetoQuadraticRel(element, role, x, y, x1, y1));
     }
 
 private:

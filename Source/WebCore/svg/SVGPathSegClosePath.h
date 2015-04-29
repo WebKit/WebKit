@@ -27,9 +27,9 @@ namespace WebCore {
 
 class SVGPathSegClosePath : public SVGPathSegWithContext {
 public:
-    static PassRefPtr<SVGPathSegClosePath> create(SVGPathElement* element, SVGPathSegRole role)
+    static Ref<SVGPathSegClosePath> create(SVGPathElement* element, SVGPathSegRole role)
     {
-        return adoptRef(new SVGPathSegClosePath(element, role));
+        return adoptRef(*new SVGPathSegClosePath(element, role));
     }
 
 private:

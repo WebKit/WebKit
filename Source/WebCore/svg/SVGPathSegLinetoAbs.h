@@ -28,9 +28,9 @@ namespace WebCore {
 
 class SVGPathSegLinetoAbs : public SVGPathSegSingleCoordinate {
 public:
-    static PassRefPtr<SVGPathSegLinetoAbs> create(SVGPathElement* element, SVGPathSegRole role, float x, float y)
+    static Ref<SVGPathSegLinetoAbs> create(SVGPathElement* element, SVGPathSegRole role, float x, float y)
     {
-        return adoptRef(new SVGPathSegLinetoAbs(element, role, x, y));
+        return adoptRef(*new SVGPathSegLinetoAbs(element, role, x, y));
     }
 
 private:

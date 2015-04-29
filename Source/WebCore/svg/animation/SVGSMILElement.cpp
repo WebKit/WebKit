@@ -51,9 +51,9 @@ static const double invalidCachedTime = -1.;
     
 class ConditionEventListener : public EventListener {
 public:
-    static PassRefPtr<ConditionEventListener> create(SVGSMILElement* animation, SVGSMILElement::Condition* condition)
+    static Ref<ConditionEventListener> create(SVGSMILElement* animation, SVGSMILElement::Condition* condition)
     {
-        return adoptRef(new ConditionEventListener(animation, condition));
+        return adoptRef(*new ConditionEventListener(animation, condition));
     }
 
     static const ConditionEventListener* cast(const EventListener* listener)

@@ -39,7 +39,7 @@ struct GlyphMapNode : public RefCounted<GlyphMapNode> {
 private:
     GlyphMapNode() { }
 public:
-    static PassRefPtr<GlyphMapNode> create() { return adoptRef(new GlyphMapNode); }
+    static Ref<GlyphMapNode> create() { return adoptRef(*new GlyphMapNode); }
 
     Vector<SVGGlyph> glyphs;
 

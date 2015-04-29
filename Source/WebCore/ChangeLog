@@ -1,3 +1,95 @@
+2015-04-29  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Purge PassRefPtr from createSVGPathSegFoo factory functions
+        https://bugs.webkit.org/show_bug.cgi?id=144374
+
+        Reviewed by Darin Adler.
+
+        Use Ref instead of PassRefPtr in createSVGPathSegFoo functions because
+        those factory functions can't return null. Additionally let's remove unnecessary
+        #include<PassRefPtr.h> there.
+
+        No new tests, no behavior changes.
+
+        * svg/SVGColor.cpp:
+        (WebCore::SVGColor::cloneForCSSOM):
+        * svg/SVGColor.h:
+        * svg/SVGGlyphMap.h:
+        (WebCore::GlyphMapNode::create):
+        * svg/SVGPaint.cpp:
+        (WebCore::SVGPaint::cloneForCSSOM):
+        * svg/SVGPaint.h:
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::createSVGPathSegClosePath):
+        (WebCore::SVGPathElement::createSVGPathSegMovetoAbs):
+        (WebCore::SVGPathElement::createSVGPathSegMovetoRel):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoAbs):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoRel):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicAbs):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicRel):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticAbs):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticRel):
+        (WebCore::SVGPathElement::createSVGPathSegArcAbs):
+        (WebCore::SVGPathElement::createSVGPathSegArcRel):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoHorizontalAbs):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoHorizontalRel):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoVerticalAbs):
+        (WebCore::SVGPathElement::createSVGPathSegLinetoVerticalRel):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicSmoothAbs):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicSmoothRel):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticSmoothAbs):
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticSmoothRel):
+        * svg/SVGPathElement.h:
+        * svg/SVGPathSegArcAbs.h:
+        (WebCore::SVGPathSegArcAbs::create):
+        * svg/SVGPathSegArcRel.h:
+        (WebCore::SVGPathSegArcRel::create):
+        * svg/SVGPathSegClosePath.h:
+        (WebCore::SVGPathSegClosePath::create):
+        * svg/SVGPathSegCurvetoCubicAbs.h:
+        (WebCore::SVGPathSegCurvetoCubicAbs::create):
+        * svg/SVGPathSegCurvetoCubicRel.h:
+        (WebCore::SVGPathSegCurvetoCubicRel::create):
+        * svg/SVGPathSegCurvetoCubicSmoothAbs.h:
+        (WebCore::SVGPathSegCurvetoCubicSmoothAbs::create):
+        * svg/SVGPathSegCurvetoCubicSmoothRel.h:
+        (WebCore::SVGPathSegCurvetoCubicSmoothRel::create):
+        * svg/SVGPathSegCurvetoQuadraticAbs.h:
+        (WebCore::SVGPathSegCurvetoQuadraticAbs::create):
+        * svg/SVGPathSegCurvetoQuadraticRel.h:
+        (WebCore::SVGPathSegCurvetoQuadraticRel::create):
+        * svg/SVGPathSegCurvetoQuadraticSmoothAbs.h:
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothAbs::create):
+        * svg/SVGPathSegCurvetoQuadraticSmoothRel.h:
+        (WebCore::SVGPathSegCurvetoQuadraticSmoothRel::create):
+        * svg/SVGPathSegLinetoAbs.h:
+        (WebCore::SVGPathSegLinetoAbs::create):
+        * svg/SVGPathSegLinetoHorizontalAbs.h:
+        (WebCore::SVGPathSegLinetoHorizontalAbs::create):
+        * svg/SVGPathSegLinetoHorizontalRel.h:
+        (WebCore::SVGPathSegLinetoHorizontalRel::create):
+        * svg/SVGPathSegLinetoRel.h:
+        (WebCore::SVGPathSegLinetoRel::create):
+        * svg/SVGPathSegLinetoVerticalAbs.h:
+        (WebCore::SVGPathSegLinetoVerticalAbs::create):
+        * svg/SVGPathSegLinetoVerticalRel.h:
+        (WebCore::SVGPathSegLinetoVerticalRel::create):
+        * svg/SVGPathSegMovetoAbs.h:
+        (WebCore::SVGPathSegMovetoAbs::create):
+        * svg/SVGPathSegMovetoRel.h:
+        (WebCore::SVGPathSegMovetoRel::create):
+        * svg/SVGViewSpec.h:
+        (WebCore::SVGViewSpec::create):
+        * svg/animation/SMILTimeContainer.h:
+        (WebCore::SMILTimeContainer::create):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::ConditionEventListener::create):
+        * svg/graphics/SVGImage.h:
+        * svg/graphics/SVGImageForContainer.h:
+        * svg/graphics/filters/SVGFilter.cpp:
+        (WebCore::SVGFilter::create):
+        * svg/graphics/filters/SVGFilter.h:
+
 2015-04-28  Simon Fraser  <simon.fraser@apple.com>
 
         Make a non-static version of FrameView::yPositionForRootContentLayer()

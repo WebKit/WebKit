@@ -28,9 +28,9 @@ namespace WebCore {
 
 class SVGPathSegMovetoAbs : public SVGPathSegSingleCoordinate {
 public:
-    static PassRefPtr<SVGPathSegMovetoAbs> create(SVGPathElement* element, SVGPathSegRole role, float x, float y)
+    static Ref<SVGPathSegMovetoAbs> create(SVGPathElement* element, SVGPathSegRole role, float x, float y)
     {
-        return adoptRef(new SVGPathSegMovetoAbs(element, role, x, y));
+        return adoptRef(*new SVGPathSegMovetoAbs(element, role, x, y));
     }
 
 private:

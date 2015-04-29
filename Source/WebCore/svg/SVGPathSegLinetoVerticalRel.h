@@ -28,9 +28,9 @@ namespace WebCore {
 
 class SVGPathSegLinetoVerticalRel : public SVGPathSegLinetoVertical {
 public:
-    static PassRefPtr<SVGPathSegLinetoVerticalRel> create(SVGPathElement* element, SVGPathSegRole role, float y)
+    static Ref<SVGPathSegLinetoVerticalRel> create(SVGPathElement* element, SVGPathSegRole role, float y)
     {
-        return adoptRef(new SVGPathSegLinetoVerticalRel(element, role, y));
+        return adoptRef(*new SVGPathSegLinetoVerticalRel(element, role, y));
     }
 
 private:

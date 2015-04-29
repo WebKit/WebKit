@@ -40,9 +40,9 @@ public:
     using RefCounted<SVGViewSpec>::ref;
     using RefCounted<SVGViewSpec>::deref;
 
-    static PassRefPtr<SVGViewSpec> create(SVGElement* contextElement)
+    static Ref<SVGViewSpec> create(SVGElement* contextElement)
     {
-        return adoptRef(new SVGViewSpec(contextElement));
+        return adoptRef(*new SVGViewSpec(contextElement));
     }
 
     bool parseViewSpec(const String&);

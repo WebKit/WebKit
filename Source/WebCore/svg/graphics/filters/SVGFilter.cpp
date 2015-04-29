@@ -48,9 +48,9 @@ float SVGFilter::applyVerticalScale(float value) const
     return Filter::applyVerticalScale(value) * m_absoluteFilterRegion.height() / m_filterRegion.height();
 }
 
-PassRefPtr<SVGFilter> SVGFilter::create(const AffineTransform& absoluteTransform, const FloatRect& absoluteSourceDrawingRegion, const FloatRect& targetBoundingBox, const FloatRect& filterRegion, bool effectBBoxMode)
+Ref<SVGFilter> SVGFilter::create(const AffineTransform& absoluteTransform, const FloatRect& absoluteSourceDrawingRegion, const FloatRect& targetBoundingBox, const FloatRect& filterRegion, bool effectBBoxMode)
 {
-    return adoptRef(new SVGFilter(absoluteTransform, absoluteSourceDrawingRegion, targetBoundingBox, filterRegion, effectBBoxMode));
+    return adoptRef(*new SVGFilter(absoluteTransform, absoluteSourceDrawingRegion, targetBoundingBox, filterRegion, effectBBoxMode));
 }
 
 } // namespace WebCore

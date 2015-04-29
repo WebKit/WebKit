@@ -90,7 +90,7 @@ public:
 
     String customCSSText() const;
 
-    PassRefPtr<SVGPaint> cloneForCSSOM() const;
+    Ref<SVGPaint> cloneForCSSOM() const;
 
     bool equals(const SVGPaint&) const;
 

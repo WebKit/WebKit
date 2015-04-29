@@ -97,9 +97,9 @@ SVGColor::SVGColor(ClassType classType, const SVGColor& cloneFrom)
 {
 }
 
-PassRefPtr<SVGColor> SVGColor::cloneForCSSOM() const
+Ref<SVGColor> SVGColor::cloneForCSSOM() const
 {
-    return adoptRef(new SVGColor(SVGColorClass, *this));
+    return adoptRef(*new SVGColor(SVGColorClass, *this));
 }
 
 bool SVGColor::equals(const SVGColor& other) const

@@ -28,9 +28,9 @@ namespace WebCore {
 
 class SVGPathSegCurvetoCubicSmoothAbs : public SVGPathSegCurvetoCubicSmooth {
 public:
-    static PassRefPtr<SVGPathSegCurvetoCubicSmoothAbs> create(SVGPathElement* element, SVGPathSegRole role, float x, float y, float x2, float y2)
+    static Ref<SVGPathSegCurvetoCubicSmoothAbs> create(SVGPathElement* element, SVGPathSegRole role, float x, float y, float x2, float y2)
     {
-        return adoptRef(new SVGPathSegCurvetoCubicSmoothAbs(element, role, x, y, x2, y2));
+        return adoptRef(*new SVGPathSegCurvetoCubicSmoothAbs(element, role, x, y, x2, y2));
     }
 
 private:

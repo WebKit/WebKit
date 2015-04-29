@@ -27,7 +27,6 @@
 #include "FloatRect.h"
 #include "FloatSize.h"
 
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
@@ -36,7 +35,7 @@ namespace WebCore {
 
 class SVGFilter : public Filter {
 public:
-    static PassRefPtr<SVGFilter> create(const AffineTransform&, const FloatRect&, const FloatRect&, const FloatRect&, bool);
+    static Ref<SVGFilter> create(const AffineTransform&, const FloatRect&, const FloatRect&, const FloatRect&, bool);
 
     FloatRect filterRegionInUserSpace() const { return m_filterRegion; }
     virtual FloatRect filterRegion() const override { return m_absoluteFilterRegion; }

@@ -45,9 +45,9 @@ class SVGImageForContainer;
 
 class SVGImage final : public Image {
 public:
-    static PassRefPtr<SVGImage> create(ImageObserver* observer)
+    static Ref<SVGImage> create(ImageObserver* observer)
     {
-        return adoptRef(new SVGImage(observer));
+        return adoptRef(*new SVGImage(observer));
     }
 
     RenderBox* embeddedContentBox() const;

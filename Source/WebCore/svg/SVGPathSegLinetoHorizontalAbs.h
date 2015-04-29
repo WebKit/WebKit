@@ -28,9 +28,9 @@ namespace WebCore {
 
 class SVGPathSegLinetoHorizontalAbs : public SVGPathSegLinetoHorizontal {
 public:
-    static PassRefPtr<SVGPathSegLinetoHorizontalAbs> create(SVGPathElement* element, SVGPathSegRole role, float x)
+    static Ref<SVGPathSegLinetoHorizontalAbs> create(SVGPathElement* element, SVGPathSegRole role, float x)
     {
-        return adoptRef(new SVGPathSegLinetoHorizontalAbs(element, role, x));
+        return adoptRef(*new SVGPathSegLinetoHorizontalAbs(element, role, x));
     }
 
 private:
