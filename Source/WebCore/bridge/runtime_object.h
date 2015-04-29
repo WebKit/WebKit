@@ -35,7 +35,7 @@ namespace Bindings {
 class WEBCORE_EXPORT RuntimeObject : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames | TypeOfShouldCallGetCallData;
 
     static RuntimeObject* create(VM& vm, Structure* structure, PassRefPtr<Instance> instance)
     {

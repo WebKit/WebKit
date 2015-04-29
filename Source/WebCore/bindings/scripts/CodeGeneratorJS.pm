@@ -900,6 +900,9 @@ sub GenerateHeader
     if ($interface->extendedAttributes->{"NewImpurePropertyFiresWatchpoints"}) {
         $structureFlags{"JSC::NewImpurePropertyFiresWatchpoints"} = 1;
     }
+    if ($interface->extendedAttributes->{"CustomCall"}) {
+        $structureFlags{"JSC::TypeOfShouldCallGetCallData"} = 1;
+    }
 
     # Getters
     if ($hasGetter) {

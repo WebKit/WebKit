@@ -44,7 +44,7 @@ class NPRuntimeObjectMap;
 class JSNPObject : public JSC::JSDestructibleObject {
 public:
     typedef JSC::JSDestructibleObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | JSC::OverridesGetOwnPropertySlot | JSC::OverridesGetPropertyNames;
+    static const unsigned StructureFlags = Base::StructureFlags | JSC::OverridesGetOwnPropertySlot | JSC::OverridesGetPropertyNames | JSC::TypeOfShouldCallGetCallData;
 
     static JSNPObject* create(JSC::JSGlobalObject* globalObject, NPRuntimeObjectMap* objectMap, NPObject* npObject)
     {

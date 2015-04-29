@@ -1,3 +1,28 @@
+2015-04-29  Filip Pizlo  <fpizlo@apple.com>
+
+        JSTypeInfo should have an inline type flag to indicate of getCallData() has been overridden
+        https://bugs.webkit.org/show_bug.cgi?id=144397
+
+        Reviewed by Andreas Kling.
+        
+        Add the flag to JSTypeInfo. It's an inline flag so that it's fast to query. Slap the flag on
+        callback objects and internal functions. Modify the TypeOf operation to use this flag to avoid
+        making a getCallData() call if it isn't necessary.
+
+        * API/JSCallbackObject.h:
+        * runtime/InternalFunction.h:
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::typeOfShouldCallGetCallData):
+        * runtime/Operations.cpp:
+        (JSC::jsTypeStringForValue):
+        * tests/stress/type-of-functions-and-objects.js: Added.
+        (foo):
+        (bar):
+        (baz):
+        (fuzz):
+        (expect):
+        (test):
+
 2015-04-28  Geoffrey Garen  <ggaren@apple.com>
 
         It shouldn't take 1846 lines of code and 5 FIXMEs to sort an array.

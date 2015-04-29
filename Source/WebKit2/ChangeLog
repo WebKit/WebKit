@@ -1,3 +1,15 @@
+2015-04-29  Filip Pizlo  <fpizlo@apple.com>
+
+        JSTypeInfo should have an inline type flag to indicate if getCallData() has been overridden
+        https://bugs.webkit.org/show_bug.cgi?id=144397
+
+        Reviewed by Andreas Kling.
+
+        If you override getCallData() and you want to be called a "function", then you need to use the
+        new TypeOfShouldCallGetCallData flag.
+
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+
 2015-04-29  Antti Koivisto  <antti@apple.com>
 
         ResourceLoadPriority should be enum class

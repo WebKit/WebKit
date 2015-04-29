@@ -34,7 +34,7 @@ class FunctionPrototype;
 class InternalFunction : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | ImplementsHasInstance;
+    static const unsigned StructureFlags = Base::StructureFlags | ImplementsHasInstance | TypeOfShouldCallGetCallData;
 
     DECLARE_EXPORT_INFO;
 

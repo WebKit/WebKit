@@ -40,6 +40,7 @@ static const unsigned MasqueradesAsUndefined = 1; // WebCore uses MasqueradesAsU
 static const unsigned ImplementsHasInstance = 1 << 1;
 static const unsigned OverridesHasInstance = 1 << 2;
 static const unsigned ImplementsDefaultHasInstance = 1 << 3;
+static const unsigned TypeOfShouldCallGetCallData = 1 << 4; // Need this flag if you override getCallData() and you want typeof to use this to determine if it should say "function". Currently we always set this flag when we override getCallData().
 static const unsigned OverridesGetOwnPropertySlot = 1 << 5;
 static const unsigned InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero = 1 << 6;
 static const unsigned StructureIsImmortal = 1 << 7;
@@ -83,6 +84,7 @@ public:
     bool implementsHasInstance() const { return isSetOnFlags1(ImplementsHasInstance); }
     bool overridesHasInstance() const { return isSetOnFlags1(OverridesHasInstance); }
     bool implementsDefaultHasInstance() const { return isSetOnFlags1(ImplementsDefaultHasInstance); }
+    bool typeOfShouldCallGetCallData() const { return isSetOnFlags1(TypeOfShouldCallGetCallData); }
     bool overridesGetOwnPropertySlot() const { return overridesGetOwnPropertySlot(inlineTypeFlags()); }
     static bool overridesGetOwnPropertySlot(InlineTypeFlags flags) { return flags & OverridesGetOwnPropertySlot; }
     bool interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero() const { return isSetOnFlags1(InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero); }
