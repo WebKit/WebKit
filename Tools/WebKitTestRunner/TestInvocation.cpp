@@ -245,9 +245,15 @@ void TestInvocation::dump(const char* textToStdout, const char* textToStderr, bo
     fflush(stderr);
 }
 
-void TestInvocation::forceRepaintDoneCallback(WKErrorRef, void* context)
+void TestInvocation::forceRepaintDoneCallback(WKErrorRef error, void* context)
 {
+    // The context may not be valid any more, e.g. if WebKit is invalidating callbacks at process exit.
+    if (error)
+        return;
+
     TestInvocation* testInvocation = static_cast<TestInvocation*>(context);
+    RELEASE_ASSERT(TestController::singleton().isCurrentInvocation(testInvocation));
+
     testInvocation->m_gotRepaint = true;
     TestController::singleton().notifyDone();
 }

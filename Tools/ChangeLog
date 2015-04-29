@@ -1,3 +1,16 @@
+2015-04-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Use-after-free when invalidating WKPageForceRepaint callback
+        https://bugs.webkit.org/show_bug.cgi?id=144401
+        rdar://problem/20741111
+
+        Reviewed by Tim Horton.
+
+        * WebKitTestRunner/TestController.h: (WTR::TestController::isCurrentInvocation): Added.
+
+        * WebKitTestRunner/TestInvocation.cpp: (WTR::TestInvocation::forceRepaintDoneCallback):
+        Don't do anything on error, because the context may be a stale pointer now.
+
 2015-04-29  David Kilzer  <ddkilzer@apple.com>
 
         check-webkit-style: Don't complain about returning value from Objective-C method call in header

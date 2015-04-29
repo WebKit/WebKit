@@ -117,6 +117,8 @@ public:
 
     void setShouldLogHistoryClientCallbacks(bool shouldLog) { m_shouldLogHistoryClientCallbacks = shouldLog; }
 
+    bool isCurrentInvocation(TestInvocation* invocation) const { return invocation == m_currentInvocation.get(); }
+
 private:
     void initialize(int argc, const char* argv[]);
     void createWebViewWithOptions(WKDictionaryRef);
