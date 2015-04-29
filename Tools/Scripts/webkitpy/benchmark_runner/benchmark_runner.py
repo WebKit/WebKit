@@ -30,43 +30,45 @@ class BenchmarkRunner(object):
                 self.plan = json.load(fp)
                 self.browserDriver = BrowserDriverFactory.create([platform, browser])
                 self.httpServerDriver = HTTPServerDriverFactory.create([self.plan['http_server_driver']])
-                self.benchmarks = self.plan['benchmarks']
                 self.buildDir = os.path.abspath(buildDir)
                 self.outputFile = outputFile
         except IOError:
             _log.error('Can not open plan file: %s' % planFile)
         except ValueError:
-            _log.error('Plan file:%s may not follow json format' % planFile)
+            _log.error('Plan file:%s may not follow JSON format' % planFile)
         except:
             raise
 
     def execute(self):
         _log.info('Start to execute the plan')
-        for benchmark in self.benchmarks:
-            _log.info('Start a new benchmark')
-            results = []
-            benchmarkBuilder = BenchmarkBuilderFactory.create([benchmark['benchmark_builder']])
-            webRoot = benchmarkBuilder.prepare(benchmark['original_benchmark'], benchmark['benchmark_patch'] if 'benchmark_patch' in benchmark else None)
-            for x in xrange(int(benchmark['count'])):
-                _log.info('Start the iteration %d of current benchmark' % (x + 1))
-                self.httpServerDriver.serve(webRoot)
-                self.browserDriver.prepareEnv()
-                self.browserDriver.launchUrl(urlparse.urljoin(self.httpServerDriver.baseUrl(), benchmark['entry_point']), self.buildDir)
-                try:
-                    with timeout(benchmark['timeout']):
-                        result = json.loads(self.httpServerDriver.fetchResult())
-                        assert(result)
-                        results.append(result)
-                except:
-                    _log.error('No result. Something went wrong. Will skip current benchmark.')
-                    self.browserDriver.closeBrowsers()
-                    break
-                finally:
-                    self.browserDriver.closeBrowsers()
-                    _log.info('End of %d iteration of current benchmark' % (x + 1))
-            results = self.wrap(results)
-            self.dump(results, self.outputFile if self.outputFile else benchmark['output_file'])
-            benchmarkBuilder.clean()
+        _log.info('Start a new benchmark')
+        results = []
+        benchmarkBuilder = BenchmarkBuilderFactory.create([self.plan['benchmark_builder']])
+        webRoot = benchmarkBuilder.prepare(self.plan['original_benchmark'], self.plan['benchmark_patch'] if 'benchmark_patch' in self.plan else None)
+        for x in xrange(int(self.plan['count'])):
+            _log.info('Start the iteration %d of current benchmark' % (x + 1))
+            self.httpServerDriver.serve(webRoot)
+            self.browserDriver.prepareEnv()
+            self.browserDriver.launchUrl(urlparse.urljoin(self.httpServerDriver.baseUrl(), self.plan['entry_point']), self.buildDir)
+            try:
+                with timeout(self.plan['timeout']):
+                    result = json.loads(self.httpServerDriver.fetchResult())
+                assert(not self.httpServerDriver.getReturnCode())
+                assert(result)
+                results.append(result)
+            except:
+                _log.error('No result or server crashes. Something went wrong. Will skip current benchmark.')
+                self.browserDriver.closeBrowsers()
+                self.httpServerDriver.killServer()
+                benchmarkBuilder.clean()
+                return 1
+            finally:
+                self.browserDriver.closeBrowsers()
+                _log.info('End of %d iteration of current benchmark' % (x + 1))
+        results = self.wrap(results)
+        self.dump(results, self.outputFile if self.outputFile else self.plan['output_file'])
+        benchmarkBuilder.clean()
+        return 0
 
     @classmethod
     def dump(cls, results, outputFile):

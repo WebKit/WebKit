@@ -1,14 +1,10 @@
 {
     "http_server_driver": "SimpleHTTPServerDriver", 
-    "benchmarks": [
-        {
-            "timeout" : 600,
-            "count": 5,
-            "benchmark_builder": "JetStreamBenchmarkBuilder",
-            "original_benchmark": "../../../../PerformanceTests/JetStream",
-            "benchmark_patch": "data/patches/JetStream.patch",
-            "entry_point": "JetStream/JetStream-1.0.1/index.html",
-            "output_file": "jetstream.result"
-        }
-    ]
+    "timeout" : 600,
+    "count": 5,
+    "benchmark_builder": "JetStreamBenchmarkBuilder",
+    "original_benchmark": "../../../../PerformanceTests/JetStream",
+    "benchmark_patch": "data/patches/JetStream.patch",
+    "entry_point": "JetStream/JetStream-1.0.1/index.html",
+    "output_file": "jetstream.result"
 }

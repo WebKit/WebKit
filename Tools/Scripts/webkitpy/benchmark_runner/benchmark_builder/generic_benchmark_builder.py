@@ -6,7 +6,7 @@ import os
 import shutil
 import subprocess
 
-from webkitpy.benchmark_runner.utils import getPathFromProjectRoot
+from webkitpy.benchmark_runner.utils import getPathFromProjectRoot, forceRemove
 
 
 _log = logging.getLogger(__name__)
@@ -40,4 +40,4 @@ class GenericBenchmarkBuilder(object):
     def clean(self):
         _log.info('Cleanning Benchmark')
         if self.webRoot:
-            shutil.rmtree(self.webRoot)
+            forceRemove(self.webRoot)

@@ -11,3 +11,11 @@ class HTTPServerDriver(object):
     @abstractmethod
     def fetchResult(self):
         pass
+
+    @abstractmethod
+    def killServer(self):
+        pass
+
+    @abstractmethod
+    def getReturnCode(self):
+        pass

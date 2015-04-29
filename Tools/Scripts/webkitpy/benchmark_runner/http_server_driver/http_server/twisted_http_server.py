@@ -16,6 +16,7 @@ class ServerControl(Resource):
 
     def render_POST(self, request):
         sys.stdout.write(request.content.getvalue())
+        sys.stdout.flush()
         return 'OK'
 
 

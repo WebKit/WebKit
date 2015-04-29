@@ -1,3 +1,39 @@
+2015-04-28  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Increase stablility of run-benchmark script
+        https://bugs.webkit.org/show_bug.cgi?id=144361
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/run-benchmark:
+        (main):
+        * Scripts/webkitpy/benchmark_runner/README.md: Update readme due to changes.
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder/generic_benchmark_builder.py:
+        (GenericBenchmarkBuilder.clean):
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py: Improve error handling and remove an unnecessary loop.
+        (BenchmarkRunner.__init__):
+        (BenchmarkRunner.execute):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        (OSXSafariDriver.prepareEnv): Remove saved sessions of Safari.
+        * Scripts/webkitpy/benchmark_runner/data/patches/JetStream.patch: Upload 'results' rather than 'time'.
+        * Scripts/webkitpy/benchmark_runner/data/plans/jetstream.plan: Update formate.
+        * Scripts/webkitpy/benchmark_runner/data/plans/speedometer.plan: Update formate.
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server/twisted_http_server.py: 
+        (ServerControl.render_POST): Flush the buffer to make sure we can pass the result to stdout.
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server_driver.py:
+        (HTTPServerDriver.fetchResult):
+        (HTTPServerDriver):
+        (HTTPServerDriver.killServer): Add kill server interface.
+        (HTTPServerDriver.getReturnCode): Add get return code interface.
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/simple_http_server_driver.py: Adjust to support new interfaces.
+        (SimpleHTTPServerDriver.serve):
+        (SimpleHTTPServerDriver.fetchResult):
+        (SimpleHTTPServerDriver):
+        (SimpleHTTPServerDriver.killServer):
+        (SimpleHTTPServerDriver.getReturnCode):
+        * Scripts/webkitpy/benchmark_runner/utils.py:
+        (forceRemove): Provide python version of 'rm -rf'.
+
 2015-04-28  Sam Weinig  <sam@webkit.org>
 
         [Content Extensions] Process NFAs individually to avoid having all NFAs live at the same time

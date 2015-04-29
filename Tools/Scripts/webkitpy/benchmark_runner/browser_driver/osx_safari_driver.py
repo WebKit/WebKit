@@ -8,6 +8,7 @@ import time
 # We assume that this handle can only be used when the platform is OSX.
 from AppKit import NSRunningApplication
 from browser_driver import BrowserDriver
+from webkitpy.benchmark_runner.utils import forceRemove
 
 
 _log = logging.getLogger(__name__)
@@ -17,6 +18,8 @@ class OSXSafariDriver(BrowserDriver):
 
     def prepareEnv(self):
         self.closeBrowsers()
+        forceRemove(os.path.join(os.path.expanduser('~'), 'Library/Saved Application State/com.apple.Safari.savedState'))
+        forceRemove(os.path.join(os.path.expanduser('~'), 'Library/Safari/LastSession.plist'))
         self.safariPreferences = ["-HomePage", "about:blank", "-WarnAboutFraudulentWebsites", "0", "-ExtensionsEnabled", "0", "-ShowStatusBar", "0", "-NewWindowBehavior", "1", "-NewTabBehavior", "1"]
 
     def launchUrl(self, url, browserBuildPath=None):

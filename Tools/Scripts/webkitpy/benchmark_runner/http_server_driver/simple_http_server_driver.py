@@ -30,11 +30,11 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
             _log.error('Cannot get the ip address of current machine')
             raise
 
-    def serve(self, webroot):
+    def serve(self, webRoot):
         oldWorkingDirectory = os.getcwd()
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
-        _log.info('Lauchning an http server')
-        self.serverProcess = subprocess.Popen(['/usr/bin/python', 'http_server/twisted_http_server.py', webroot], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        _log.info('Launching an http server')
+        self.serverProcess = subprocess.Popen(['/usr/bin/python', 'http_server/twisted_http_server.py', webRoot], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         os.chdir(oldWorkingDirectory)
         maxAttempt = 5
         interval = 0.5
@@ -77,3 +77,12 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
 
     def fetchResult(self):
         return self.serverProcess.communicate()[0]
+
+    def killServer(self):
+        try:
+            self.serverProcess.terminate()
+        except OSError:
+            _log.info('Invalid pid, server may exit properly')
+
+    def getReturnCode(self):
+        return self.serverProcess.returncode

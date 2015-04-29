@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import signal
+import shutil
 
 
 _log = logging.getLogger(__name__)
@@ -36,6 +37,13 @@ def loadJSONFromFile(filePath):
     except:
         raise Exception("Invalid json format or empty json was found in %s" % (filePath))
 
+
+def forceRemove(path):
+    try:
+        shutil.rmtree(path)
+    except:
+        # Directory/file does not exist or privilege issue, just ignore it
+        pass
 
 # Borrow this code from
 # 'http://stackoverflow.com/questions/2281850/timeout-function-if-it-takes-too-long-to-finish'
