@@ -44,10 +44,18 @@ WebInspector.ApplicationCacheManager = class ApplicationCacheManager extends Web
 
     initialize()
     {
-        this._applicationCacheObjects = [];
+        this._applicationCacheObjects = {};
 
         if (window.ApplicationCacheAgent)
             ApplicationCacheAgent.getFramesWithManifests(this._framesWithManifestsLoaded.bind(this));
+    }
+
+    get applicationCacheObjects()
+    {
+        var applicationCacheObjects = [];
+        for (var id in this._applicationCacheObjects)
+            applicationCacheObjects.push(this._applicationCacheObjects[id]);
+        return applicationCacheObjects;
     }
 
     networkStateUpdated(isNowOnline)

@@ -60,6 +60,29 @@ WebInspector.StorageManager = class StorageManager extends WebInspector.Object
         this._cookieStorageObjects = {};
     }
 
+    get domStorageObjects()
+    {
+        return this._domStorageObjects;
+    }
+
+    get databases()
+    {
+        return this._databaseObjects;
+    }
+
+    get indexedDatabases()
+    {
+        return this._indexedDatabases;
+    }
+
+    get cookieStorageObjects()
+    {
+        var cookieStorageObjects = [];
+        for (var host in this._cookieStorageObjects)
+            cookieStorageObjects.push(this._cookieStorageObjects[host]);
+        return cookieStorageObjects;
+    }
+
     domStorageWasAdded(id, host, isLocalStorage)
     {
         var domStorage = new WebInspector.DOMStorageObject(id, host, isLocalStorage);

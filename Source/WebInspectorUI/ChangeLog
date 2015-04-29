@@ -1,5 +1,78 @@
 2015-04-29  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Split Storage from Resources tab
+        https://bugs.webkit.org/show_bug.cgi?id=144404
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        (WebInspector.isTabTypeAllowed):
+        (WebInspector._tabContentViewForType):
+        (WebInspector._updateNewTabButtonState):
+        (WebInspector.showStorageTab):
+        (WebInspector._storageWasInspected):
+        * UserInterface/Controllers/ApplicationCacheManager.js:
+        (WebInspector.ApplicationCacheManager.prototype.initialize):
+        (WebInspector.ApplicationCacheManager.prototype.get applicationCacheObjects):
+        * UserInterface/Controllers/StorageManager.js:
+        (WebInspector.StorageManager.prototype.get domStorageObjects):
+        (WebInspector.StorageManager.prototype.get databases):
+        (WebInspector.StorageManager.prototype.get indexedDatabases):
+        (WebInspector.StorageManager.prototype.get cookieStorageObjects):
+        * UserInterface/Images/Storage.svg: Added.
+        * UserInterface/Main.html:
+        * UserInterface/Views/DatabaseTableContentView.js:
+        (WebInspector.DatabaseTableContentView.prototype._queryFinished): Clear _dataGrid,
+        since it might have been allocated but still be empty. This avoids an exception in
+        updateLayout next time layout is updated.
+        * UserInterface/Views/NewTabContentView.js:
+        (WebInspector.NewTabContentView):
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel):
+        (WebInspector.ResourceSidebarPanel.prototype._treeElementSelected):
+        (WebInspector.ResourceSidebarPanel.prototype._domStorageObjectWasAdded): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype._domStorageObjectWasInspected): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype._databaseWasAdded): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype._databaseWasInspected): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype._indexedDatabaseWasAdded): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype._cookieStorageObjectWasAdded): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype._frameManifestAdded): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype._frameManifestRemoved): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype._addStorageChild): Deleted.
+        (WebInspector.ResourceSidebarPanel.prototype._storageCleared): Deleted.
+        * UserInterface/Views/ResourcesTabContentView.js:
+        (WebInspector.ResourcesTabContentView):
+        (WebInspector.ResourcesTabContentView.prototype.canShowRepresentedObject):
+        * UserInterface/Views/StorageSidebarPanel.js: Added.
+        (WebInspector.StorageSidebarPanel):
+        (WebInspector.StorageSidebarPanel.prototype.showDefaultContentView):
+        (WebInspector.StorageSidebarPanel.prototype.closed):
+        (WebInspector.StorageSidebarPanel.prototype._treeElementSelected):
+        (WebInspector.StorageSidebarPanel.prototype._domStorageObjectWasAdded):
+        (WebInspector.StorageSidebarPanel.prototype._addDOMStorageObject):
+        (WebInspector.StorageSidebarPanel.prototype._domStorageObjectWasInspected):
+        (WebInspector.StorageSidebarPanel.prototype._databaseWasAdded):
+        (WebInspector.StorageSidebarPanel.prototype._addDatabase):
+        (WebInspector.StorageSidebarPanel.prototype._databaseWasInspected):
+        (WebInspector.StorageSidebarPanel.prototype._indexedDatabaseWasAdded):
+        (WebInspector.StorageSidebarPanel.prototype._addIndexedDatabase):
+        (WebInspector.StorageSidebarPanel.prototype._cookieStorageObjectWasAdded):
+        (WebInspector.StorageSidebarPanel.prototype._addCookieStorageObject):
+        (WebInspector.StorageSidebarPanel.prototype._frameManifestAdded):
+        (WebInspector.StorageSidebarPanel.prototype._addFrameManifest):
+        (WebInspector.StorageSidebarPanel.prototype._frameManifestRemoved):
+        (WebInspector.StorageSidebarPanel.prototype._compareTreeElements):
+        (WebInspector.StorageSidebarPanel.prototype._addStorageChild):
+        (WebInspector.StorageSidebarPanel.prototype._storageCleared):
+        * UserInterface/Views/StorageTabContentView.js: Copied from Source/WebInspectorUI/UserInterface/Views/ResourcesTabContentView.js.
+        (WebInspector.StorageTabContentView):
+        (WebInspector.StorageTabContentView.prototype.get type):
+        (WebInspector.StorageTabContentView.prototype.canShowRepresentedObject):
+
+2015-04-29  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Remove Legacy images and styles
         https://bugs.webkit.org/show_bug.cgi?id=144390
 

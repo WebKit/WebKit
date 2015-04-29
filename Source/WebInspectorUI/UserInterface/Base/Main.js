@@ -140,7 +140,7 @@ WebInspector.loaded = function()
     this._showingSplitConsoleSetting = new WebInspector.Setting("showing-split-console", false);
     this._splitConsoleHeightSetting = new WebInspector.Setting("split-console-height", 150);
 
-    this._openTabsSetting = new WebInspector.Setting("open-tabs", ["elements", "resources", "timeline", "debugger", "console"]);
+    this._openTabsSetting = new WebInspector.Setting("open-tabs", ["elements", "resources", "timeline", "debugger", "storage", "console"]);
     this._selectedTabIndexSetting = new WebInspector.Setting("selected-tab-index", 0);
 
     this.showShadowDOMSetting = new WebInspector.Setting("show-shadow-dom", false);
@@ -376,6 +376,8 @@ WebInspector.isTabTypeAllowed = function(tabType)
     switch (tabType) {
     case WebInspector.ElementsTabContentView.Type:
         return !!window.DOMAgent;
+    case WebInspector.StorageTabContentView.Type:
+        return !!window.DOMStorageAgent || !!window.DatabaseAgent || !!window.IndexedDBAgent;
     case WebInspector.TimelineTabContentView.Type:
         return !!window.TimelineAgent;
     }
@@ -386,20 +388,22 @@ WebInspector.isTabTypeAllowed = function(tabType)
 WebInspector._tabContentViewForType = function(tabType)
 {
     switch (tabType) {
-    case WebInspector.ElementsTabContentView.Type:
-        return new WebInspector.ElementsTabContentView;
-    case WebInspector.ResourcesTabContentView.Type:
-        return new WebInspector.ResourcesTabContentView;
-    case WebInspector.TimelineTabContentView.Type:
-        return new WebInspector.TimelineTabContentView;
-    case WebInspector.DebuggerTabContentView.Type:
-        return new WebInspector.DebuggerTabContentView;
     case WebInspector.ConsoleTabContentView.Type:
         return new WebInspector.ConsoleTabContentView;
+    case WebInspector.DebuggerTabContentView.Type:
+        return new WebInspector.DebuggerTabContentView;
+    case WebInspector.ElementsTabContentView.Type:
+        return new WebInspector.ElementsTabContentView;
+    case WebInspector.NewTabContentView.Type:
+        return new WebInspector.NewTabContentView;
+    case WebInspector.ResourcesTabContentView.Type:
+        return new WebInspector.ResourcesTabContentView;
     case WebInspector.SearchTabContentView.Type:
         return new WebInspector.SearchTabContentView;
-    case WebInspector.NewTabTabContentView.Type:
-        return new WebInspector.NewTabTabContentView;
+    case WebInspector.StorageTabContentView.Type:
+        return new WebInspector.StorageTabContentView;
+    case WebInspector.TimelineTabContentView.Type:
+        return new WebInspector.TimelineTabContentView;
     default:
         console.error("Unknown tab type", tabType);
     }
@@ -426,7 +430,8 @@ WebInspector._rememberOpenTabs = function()
 
 WebInspector._updateNewTabButtonState = function(event)
 {
-    var newTabAllowed = this.isNewTabWithTypeAllowed(WebInspector.ConsoleTabContentView.Type) || this.isNewTabWithTypeAllowed(WebInspector.ElementsTabContentView.Type);
+    var newTabAllowed = this.isNewTabWithTypeAllowed(WebInspector.ConsoleTabContentView.Type) || this.isNewTabWithTypeAllowed(WebInspector.ElementsTabContentView.Type)
+         || this.isNewTabWithTypeAllowed(WebInspector.StorageTabContentView.Type);
     this.tabBar.newTabItem.disabled = !newTabAllowed;
 };
 
@@ -750,6 +755,14 @@ WebInspector.showResourcesTab = function()
     var tabContentView = this.tabBrowser.bestTabContentViewForClass(WebInspector.ResourcesTabContentView);
     if (!tabContentView)
         tabContentView = new WebInspector.ResourcesTabContentView;
+    this.tabBrowser.showTabForContentView(tabContentView);
+};
+
+WebInspector.showStorageTab = function()
+{
+    var tabContentView = this.tabBrowser.bestTabContentViewForClass(WebInspector.StorageTabContentView);
+    if (!tabContentView)
+        tabContentView = new WebInspector.StorageTabContentView;
     this.tabBrowser.showTabForContentView(tabContentView);
 };
 
@@ -1440,8 +1453,7 @@ WebInspector._moveWindowMouseDown = function(event)
 
 WebInspector._storageWasInspected = function(event)
 {
-    // FIXME: This should show a Storage tab when we have one.
-    this.showResourcesTab();
+    this.showStorageTab();
 };
 
 WebInspector._domNodeWasInspected = function(event)

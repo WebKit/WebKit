@@ -23,37 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourcesTabContentView = function(identifier)
+WebInspector.StorageTabContentView = function(identifier)
 {
-    var tabBarItem = new WebInspector.TabBarItem("Images/Resources.svg", WebInspector.UIString("Resources"));
-    var detailsSidebarPanels = [WebInspector.resourceDetailsSidebarPanel, WebInspector.probeDetailsSidebarPanel];
+    var tabBarItem = new WebInspector.TabBarItem("Images/Storage.svg", WebInspector.UIString("Storage"));
+    var detailsSidebarPanels = [WebInspector.applicationCacheDetailsSidebarPanel];
 
-    // FIXME: Until ContentFlows are moved to the Elements tab, these details sidebar panels need to be included.
-    detailsSidebarPanels = detailsSidebarPanels.concat([WebInspector.domNodeDetailsSidebarPanel, WebInspector.cssStyleDetailsSidebarPanel]);
-    if (WebInspector.layerTreeDetailsSidebarPanel)
-        detailsSidebarPanels.push(WebInspector.layerTreeDetailsSidebarPanel);
-
-    // FIME: Until ResourceSidebarPanel supports instantiating after inspector launch, disable closing.
-    tabBarItem.hideCloseButton = true;
-
-    WebInspector.ContentBrowserTabContentView.call(this, identifier || "resources", "resources", tabBarItem, WebInspector.ResourceSidebarPanel, detailsSidebarPanels);
+    WebInspector.ContentBrowserTabContentView.call(this, identifier || "storage", "storage", tabBarItem, WebInspector.StorageSidebarPanel, detailsSidebarPanels);
 };
 
-WebInspector.ResourcesTabContentView.prototype = {
-    constructor: WebInspector.ResourcesTabContentView,
+WebInspector.StorageTabContentView.prototype = {
+    constructor: WebInspector.StorageTabContentView,
     __proto__: WebInspector.ContentBrowserTabContentView.prototype,
 
     // Public
 
     get type()
     {
-        return WebInspector.ResourcesTabContentView.Type;
+        return WebInspector.StorageTabContentView.Type;
     },
 
     canShowRepresentedObject: function(representedObject)
     {
-        return representedObject instanceof WebInspector.Frame || representedObject instanceof WebInspector.Resource || representedObject instanceof WebInspector.Script;
+        return representedObject instanceof WebInspector.DOMStorageObject || representedObject instanceof WebInspector.CookieStorageObject ||
+            representedObject instanceof WebInspector.DatabaseTableObject || representedObject instanceof WebInspector.DatabaseObject ||
+            representedObject instanceof WebInspector.ApplicationCacheFrame || representedObject instanceof WebInspector.IndexedDatabaseObjectStore ||
+            representedObject instanceof WebInspector.IndexedDatabaseObjectStoreIndex;
     }
 };
 
-WebInspector.ResourcesTabContentView.Type = "resources";
+WebInspector.StorageTabContentView.Type = "storage";

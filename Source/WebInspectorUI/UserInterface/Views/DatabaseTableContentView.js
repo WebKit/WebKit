@@ -90,6 +90,8 @@ WebInspector.DatabaseTableContentView.prototype = {
 
         this._dataGrid = new WebInspector.DataGrid.createSortableDataGrid(columnNames, values);
         if (!this._dataGrid || !this._dataGrid.element) {
+            this._dataGrid = undefined;
+
             // If the DataGrid is empty, then we were returned a table with no columns. This can happen when a table has
             // no data, the SELECT query only returns column names when there is data.
             this.element.removeChildren();
