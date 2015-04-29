@@ -94,6 +94,11 @@ void WebContextMenuClient::searchWithSpotlight()
     m_page->send(Messages::WebPageProxy::SearchWithSpotlight(selectedString));
 }
 
+ContextMenuItem WebContextMenuClient::shareMenuItem(const HitTestResult&)
+{
+    return ContextMenuItem(SubmenuType, ContextMenuItemTagShareMenu, emptyString());
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(CONTEXT_MENUS)

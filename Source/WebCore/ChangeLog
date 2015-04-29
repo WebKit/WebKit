@@ -1,3 +1,19 @@
+2015-04-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r182573): [GTK] The default context menu contains an empty item since r182573
+        https://bugs.webkit.org/show_bug.cgi?id=144388
+
+        Reviewed by Brady Eidson.
+
+        There used to be a method in ContextMenuItem to check if share
+        menu item was supported or not, but since r182573, there's a
+        method to get the share menu item. If the returned menu item is
+        null, it's not added to the menu, but we are not returning a null
+        ContextMenu item even though we don't support share menu item.
+
+        * platform/gtk/ContextMenuItemGtk.cpp:
+        (WebCore::ContextMenuItem::shareMenuItem): Return a null ContextMenuItem.
+
 2015-04-29  Zan Dobersek  <zdobersek@igalia.com>
 
         Switch to std::function<>, std::bind() in MediaPlayerPrivateAVFoundationObjC

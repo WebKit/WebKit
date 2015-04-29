@@ -1,5 +1,25 @@
 2015-04-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r182573): [GTK] The default context menu contains an empty item since r182573
+        https://bugs.webkit.org/show_bug.cgi?id=144388
+
+        Reviewed by Brady Eidson.
+
+        Move the WebContextMenuClient::shareMenuItem() implementation to
+        platform files, since platforms not supporting share menu item
+        should return a null ContextMenuIem instead.
+
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        (WebKit::WebContextMenuClient::shareMenuItem): Deleted.
+        * WebProcess/WebCoreSupport/efl/WebContextMenuClientEfl.cpp:
+        (WebKit::WebContextMenuClient::shareMenuItem):
+        * WebProcess/WebCoreSupport/gtk/WebContextMenuClientGtk.cpp:
+        (WebKit::WebContextMenuClient::shareMenuItem):
+        * WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm:
+        (WebKit::WebContextMenuClient::shareMenuItem):
+
+2015-04-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         REGRESSION(r183467): [SOUP] isMainResource is no longer passed as resource load parameters to the network process
         https://bugs.webkit.org/show_bug.cgi?id=144381
 

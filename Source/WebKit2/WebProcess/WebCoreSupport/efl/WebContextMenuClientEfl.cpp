@@ -56,5 +56,10 @@ void WebContextMenuClient::stopSpeaking()
     notImplemented();
 }
 
+ContextMenuItem WebContextMenuClient::shareMenuItem(const HitTestResult&)
+{
+    return ContextMenuItem();
+}
+
 } // namespace WebKit
 #endif // ENABLE(CONTEXT_MENUS)

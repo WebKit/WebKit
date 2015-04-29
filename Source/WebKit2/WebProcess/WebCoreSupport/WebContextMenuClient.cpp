@@ -74,11 +74,6 @@ void WebContextMenuClient::downloadURL(const URL&)
     ASSERT_NOT_REACHED();
 }
 
-ContextMenuItem WebContextMenuClient::shareMenuItem(const HitTestResult&)
-{
-    return ContextMenuItem(SubmenuType, ContextMenuItemTagShareMenu, emptyString());
-}
-
 #if !PLATFORM(COCOA)
 void WebContextMenuClient::searchWithGoogle(const Frame* frame)
 {

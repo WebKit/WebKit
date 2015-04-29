@@ -290,7 +290,7 @@ GtkAction* ContextMenuItem::gtkAction() const
 
 ContextMenuItem ContextMenuItem::shareMenuItem(const URL&, const URL&, Image*, const String&)
 {
-    return ContextMenuItem(SubmenuType, ContextMenuItemTagShareMenu, emptyString());
+    return ContextMenuItem();
 }
 
 }
