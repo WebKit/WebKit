@@ -1,3 +1,13 @@
+2015-04-29  Alex Christensen  <achristensen@webkit.org>
+
+        Fix non-cygwin incremental builds on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=143264
+
+        Reviewed by Brent Fulgham.
+
+        * generate-js-builtins:
+        Remove stale headers before calling os.rename to replace them.
+
 2015-04-29  Filip Pizlo  <fpizlo@apple.com>
 
         JSTypeInfo should have an inline type flag to indicate of getCallData() has been overridden

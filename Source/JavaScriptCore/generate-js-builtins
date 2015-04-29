@@ -280,11 +280,15 @@ builtinsHeader.close()
 builtinsImplementation.close()
 
 if (not os.path.exists(output_base + ".h")) or (not filecmp.cmp(output_base + ".h.tmp", output_base + ".h", shallow=False)):
+    if (os.path.exists(output_base + ".h")):
+        os.remove(output_base + ".h")
     os.rename(output_base + ".h.tmp", output_base + ".h")
 else:
     os.remove(output_base + ".h.tmp")
 
 if (not os.path.exists(output_base + ".cpp")) or (not filecmp.cmp(output_base + ".cpp.tmp", output_base + ".cpp", shallow=False)):
+    if (os.path.exists(output_base + ".cpp")):
+        os.remove(output_base + ".cpp")
     os.rename(output_base + ".cpp.tmp", output_base + ".cpp")
 else:
     os.remove(output_base + ".cpp.tmp")
