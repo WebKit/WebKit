@@ -1,3 +1,16 @@
+2015-04-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [GTK] Add --enable-shared option to LLVM to build mesa
+        https://bugs.webkit.org/show_bug.cgi?id=144393
+
+        Reviewed by Martin Robinson.
+
+        The updated mesa requires the shared LLVM libraries.
+        To build mesa with LLVM in FTL build, this patch added `--enable-shared` option
+        to LLVM configure script. It will provide shared libraries in addition to static libraries.
+
+        * gtk/jhbuild-optional.modules:
+
 2015-04-29  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add support for automatic hyphenation

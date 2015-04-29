@@ -45,7 +45,7 @@
   </autotools>
 
   <autotools id="llvm"
-             autogenargs="--enable-optimized --disable-terminfo --disable-zlib --enable-targets=host --disable-backtraces --disable-crash-overrides --disable-expensive-checks --disable-debug-runtime --disable-assertions">
+             autogenargs="--enable-optimized --disable-terminfo --disable-zlib --enable-targets=host --disable-backtraces --disable-crash-overrides --disable-expensive-checks --disable-debug-runtime --disable-assertions --enable-shared">
     <branch repo="llvm.org"
             module="/releases/3.5.0/llvm-3.5.0.src.tar.xz" version="3.5.0" checkoutdir="llvm-3.5.0"
             hash="sha256:28e199f368ef0a4666708f31c7991ad3bcc3a578342b0306526dd35f07595c03">
