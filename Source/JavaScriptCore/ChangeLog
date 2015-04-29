@@ -1,3 +1,15 @@
+2015-04-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Deadlock on applications using JSContext on non-main thread
+        https://bugs.webkit.org/show_bug.cgi?id=144370
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::singleton):
+        Prevent a possible deadlock by assuming we can synchronously
+        run something on the main queue at this time.
+
 2015-04-28  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should fully support Switch (it currently lacks the SwitchString variant)

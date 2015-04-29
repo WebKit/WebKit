@@ -93,8 +93,12 @@ RemoteInspector& RemoteInspector::singleton()
 
             if ([NSThread isMainThread])
                 initialize();
-            else
-                dispatch_sync(dispatch_get_main_queue(), initialize);
+            else {
+                // FIXME: This means that we may miss an auto-attach to a JSContext created on a non-main thread.
+                // The main thread initialization is required for certain WTF values that need to be initialized
+                // on the "real" main thread. We should investigate a better way to handle this.
+                dispatch_async(dispatch_get_main_queue(), initialize);
+            }
         }
     });
 
