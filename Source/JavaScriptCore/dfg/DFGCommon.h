@@ -297,6 +297,10 @@ struct NodeAndIndex {
     unsigned index;
 };
 
+// A less-than operator for strings that is useful for generating string switches. Sorts by <
+// relation on characters. Ensures that if a is a prefix of b, then a < b.
+bool stringLessThan(StringImpl& a, StringImpl& b);
+
 } } // namespace JSC::DFG
 
 namespace WTF {

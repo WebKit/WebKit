@@ -1,3 +1,42 @@
+2015-04-28  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should fully support Switch (it currently lacks the SwitchString variant)
+        https://bugs.webkit.org/show_bug.cgi?id=144348
+
+        Reviewed by Benjamin Poulain.
+        
+        This adds SwitchString support to the FTL. This is already tested by switch microbenchmarks
+        in LayoutTests/js/regress.
+
+        * dfg/DFGCommon.cpp:
+        (JSC::DFG::stringLessThan):
+        * dfg/DFGCommon.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::StringSwitchCase::operator<): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::StringSwitchCase::operator<):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileSwitch):
+        (JSC::FTL::LowerDFGToLLVM::switchString):
+        (JSC::FTL::LowerDFGToLLVM::StringSwitchCase::StringSwitchCase):
+        (JSC::FTL::LowerDFGToLLVM::StringSwitchCase::operator<):
+        (JSC::FTL::LowerDFGToLLVM::CharacterCase::CharacterCase):
+        (JSC::FTL::LowerDFGToLLVM::CharacterCase::operator<):
+        (JSC::FTL::LowerDFGToLLVM::switchStringRecurse):
+        (JSC::FTL::LowerDFGToLLVM::switchStringSlow):
+        (JSC::FTL::LowerDFGToLLVM::appendOSRExit):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::check):
+        * ftl/FTLOutput.h:
+        * ftl/FTLWeight.h:
+        (JSC::FTL::Weight::inverse):
+        * jit/JITOperations.h:
+
 2015-04-28  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Fully replace ENABLE_LLINT_C_LOOP with ENABLE_JIT

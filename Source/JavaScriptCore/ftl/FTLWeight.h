@@ -62,6 +62,16 @@ public:
         return static_cast<unsigned>(result);
     }
     
+    // Inverse weight for a two-target branch.
+    Weight inverse() const
+    {
+        if (!isSet())
+            return Weight();
+        if (value())
+            return Weight(0);
+        return Weight(1);
+    }
+    
 private:
     float m_value;
 };

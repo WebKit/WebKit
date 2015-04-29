@@ -46,6 +46,17 @@ bool isCrashing()
     return crashLock.isLocked();
 }
 
+bool stringLessThan(StringImpl& a, StringImpl& b)
+{
+    unsigned minLength = std::min(a.length(), b.length());
+    for (unsigned i = 0; i < minLength; ++i) {
+        if (a[i] == b[i])
+            continue;
+        return a[i] < b[i];
+    }
+    return a.length() < b.length();
+}
+
 } } // namespace JSC::DFG
 
 namespace WTF {

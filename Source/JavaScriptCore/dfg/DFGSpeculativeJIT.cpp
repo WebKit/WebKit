@@ -5634,18 +5634,6 @@ void SpeculativeJIT::emitSwitchChar(Node* node, SwitchData* data)
     }
 }
 
-bool SpeculativeJIT::StringSwitchCase::operator<(
-    const SpeculativeJIT::StringSwitchCase& other) const
-{
-    unsigned minLength = std::min(string->length(), other.string->length());
-    for (unsigned i = 0; i < minLength; ++i) {
-        if (string->at(i) == other.string->at(i))
-            continue;
-        return string->at(i) < other.string->at(i);
-    }
-    return string->length() < other.string->length();
-}
-
 namespace {
 
 struct CharacterCase {

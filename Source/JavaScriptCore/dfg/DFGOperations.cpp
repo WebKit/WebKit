@@ -1077,6 +1077,14 @@ char* JIT_OPERATION operationSwitchString(ExecState* exec, size_t tableIndex, JS
     return static_cast<char*>(exec->codeBlock()->stringSwitchJumpTable(tableIndex).ctiForValue(string->value(exec).impl()).executableAddress());
 }
 
+int32_t JIT_OPERATION operationSwitchStringAndGetBranchOffset(ExecState* exec, size_t tableIndex, JSString* string)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    return exec->codeBlock()->stringSwitchJumpTable(tableIndex).offsetForValue(string->value(exec).impl(), std::numeric_limits<int32_t>::min());
+}
+
 void JIT_OPERATION operationNotifyWrite(ExecState* exec, WatchpointSet* set)
 {
     VM& vm = exec->vm();

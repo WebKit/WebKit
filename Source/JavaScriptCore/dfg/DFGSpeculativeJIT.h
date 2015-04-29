@@ -2115,7 +2115,10 @@ public:
         {
         }
         
-        bool operator<(const StringSwitchCase& other) const;
+        bool operator<(const StringSwitchCase& other) const
+        {
+            return stringLessThan(*string, *other.string);
+        }
         
         StringImpl* string;
         BasicBlock* target;
