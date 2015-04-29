@@ -1,3 +1,15 @@
+2015-04-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        fast/text/ruby-justification-flush.html fails on safari-600.6-branch
+        https://bugs.webkit.org/show_bug.cgi?id=144294
+
+        Reviewed by Andy Estes.
+
+        Simply adjust the numbers to make floating point math divide easier.
+
+        * fast/text/ruby-justification-flush-expected.html:
+        * fast/text/ruby-justification-flush.html:
+
 2015-04-28  Andy Estes  <aestes@apple.com>
 
         Unreviewed Mac gardening for safari-600.6-branch.
