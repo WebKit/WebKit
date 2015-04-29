@@ -169,15 +169,6 @@ find_package(Eina ${EFL_REQUIRED_VERSION} REQUIRED CONFIG)
 find_package(Eo ${EFL_REQUIRED_VERSION} REQUIRED CONFIG)
 find_package(Evas ${EFL_REQUIRED_VERSION} REQUIRED CONFIG)
 
-find_package(Freetype2 2.4.2 REQUIRED)
-find_package(GLIB 2.38.0 REQUIRED COMPONENTS ${GLIB_COMPONENTS})
-find_package(HarfBuzz 0.9.2 REQUIRED)
-find_package(LibSoup 2.42.0 REQUIRED)
-
-if (ENABLE_BATTERY_STATUS)
-    find_package(Eldbus ${EFL_REQUIRED_VERSION} CONFIG)
-endif ()
-
 if (ENABLE_GEOLOCATION)
     list(APPEND GLIB_COMPONENTS gio-unix)
     find_package(GeoClue2 2.1.5)
@@ -187,6 +178,15 @@ if (ENABLE_GEOLOCATION)
       find_package(GeoClue)
       set(WTF_USE_GEOCLUE2 0)
     endif ()
+endif ()
+
+find_package(Freetype2 2.4.2 REQUIRED)
+find_package(GLIB 2.38.0 REQUIRED COMPONENTS ${GLIB_COMPONENTS})
+find_package(HarfBuzz 0.9.2 REQUIRED)
+find_package(LibSoup 2.42.0 REQUIRED)
+
+if (ENABLE_BATTERY_STATUS)
+    find_package(Eldbus ${EFL_REQUIRED_VERSION} CONFIG)
 endif ()
 
 if (ENABLE_MEDIA_STREAM)
