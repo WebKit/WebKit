@@ -1,3 +1,31 @@
+2015-04-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Use new device picker menu API
+        https://bugs.webkit.org/show_bug.cgi?id=144392
+
+        Reviewed by Jer Noble.
+
+        * Modules/mediasession/WebMediaSessionManager.cpp:
+        (WebCore::WebMediaSessionManager::showPlaybackTargetPicker): Pass the route state to the picker.
+        * platform/graphics/MediaPlaybackTargetPicker.h:
+
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.h:
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm:
+        (WebCore::MediaPlaybackTargetPickerMac::MediaPlaybackTargetPickerMac):  m_deviceChangeTimer -> m_pendingActionTimer.
+        (WebCore::MediaPlaybackTargetPickerMac::~MediaPlaybackTargetPickerMac): Ditto.
+        (WebCore::MediaPlaybackTargetPickerMac::pendingActionTimerFired): Renamed from 
+        outputeDeviceAvailabilityChangedTimerFired.
+        (WebCore::MediaPlaybackTargetPickerMac::availableDevicesDidChange): Use addPendingAction.
+        (WebCore::MediaPlaybackTargetPickerMac::showPlaybackTargetPicker): Call new picker API if it is
+        available. New API returns true if a target is chosen, so call currentDeviceDidChange in that case.
+        (WebCore::MediaPlaybackTargetPickerMac::addPendingAction): New.
+        (WebCore::MediaPlaybackTargetPickerMac::currentDeviceDidChange): Make asynchronous because it 
+        can now be called from showPlaybackTargetPicker.
+        (WebCore::MediaPlaybackTargetPickerMac::outputeDeviceAvailabilityChangedTimerFired): Renamed
+        pendingActionTimerFired.
+
+        * platform/spi/cocoa/AVKitSPI.h: Add new SPI.
+
 2015-04-29  Antti Koivisto  <antti@apple.com>
 
         Main resource loaded via 304 response becomes empty if reloaded by user

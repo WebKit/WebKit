@@ -139,6 +139,7 @@ NS_CLASS_AVAILABLE_MAC(10_11)
 @property (readonly, getter=isExternalOutputDevicePicked) BOOL externalOutputDevicePicked;
 
 - (void)showMenuForRect:(NSRect)screenRect appearanceName:(NSString *)appearanceName;
+- (BOOL)showMenuForRect:(NSRect)screenRect appearanceName:(NSString *)appearanceName allowReselectionOfSelectedOutputDevice:(BOOL)allowReselectionOfSelectedOutputDevice;
 
 @end
 

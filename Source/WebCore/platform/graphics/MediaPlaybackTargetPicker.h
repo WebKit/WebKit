@@ -50,7 +50,7 @@ public:
 
     virtual ~MediaPlaybackTargetPicker();
 
-    virtual void showPlaybackTargetPicker(const FloatRect&, bool);
+    virtual void showPlaybackTargetPicker(const FloatRect&, bool checkActiveRoute);
     virtual void startingMonitoringPlaybackTargets();
     virtual void stopMonitoringPlaybackTargets();
 

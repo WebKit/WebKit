@@ -44,7 +44,7 @@ public:
 
     WEBCORE_EXPORT static std::unique_ptr<MediaPlaybackTargetPickerMac> create(MediaPlaybackTargetPicker::Client&);
 
-    virtual void showPlaybackTargetPicker(const FloatRect&, bool) override;
+    virtual void showPlaybackTargetPicker(const FloatRect&, bool checkActiveRoute) override;
     virtual void startingMonitoringPlaybackTargets() override;
     virtual void stopMonitoringPlaybackTargets() override;
     
@@ -55,11 +55,20 @@ private:
     explicit MediaPlaybackTargetPickerMac(MediaPlaybackTargetPicker::Client&);
 
     AVOutputDeviceMenuController *devicePicker();
-    void outputeDeviceAvailabilityChangedTimerFired();
 
+    enum ActionType {
+        OutputDeviceAvailabilityChanged = 1 << 0,
+        CurrentDeviceDidChange = 1 << 1,
+    };
+    typedef unsigned PendingActionFlags;
+
+    void addPendingAction(PendingActionFlags);
+    void pendingActionTimerFired();
+
+    PendingActionFlags m_pendingActionFlags { 0 };
     RetainPtr<AVOutputDeviceMenuController> m_outputDeviceMenuController;
     RetainPtr<WebAVOutputDeviceMenuControllerHelper> m_outputDeviceMenuControllerDelegate;
-    RunLoop::Timer<MediaPlaybackTargetPickerMac> m_deviceChangeTimer;
+    RunLoop::Timer<MediaPlaybackTargetPickerMac> m_pendingActionTimer;
 };
 
 } // namespace WebCore
