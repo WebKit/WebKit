@@ -1,3 +1,25 @@
+2015-04-29  Mark Lam  <mark.lam@apple.com>
+
+        Safari WebKit crash when loading Google Spreadsheet.
+        https://bugs.webkit.org/show_bug.cgi?id=144020
+
+        Reviewed by Filip Pizlo.
+
+        The bug is that the object allocation sinking phase did not account for a case
+        where a property of a sunken object is only initialized on one path and not
+        another.  As a result, on the path where the property is not initialized, we'll
+        encounter an Upsilon with a BottomValue (which is not allowed by definition).
+
+        The fix is to use a JSConstant(undefined) as the bottom value instead (of
+        BottomValue).  If the property is uninitialized, it should still be accessible
+        and have the value undefined.
+
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        (JSC::DFG::ObjectAllocationSinkingPhase::promoteSunkenFields):
+        * tests/stress/object-allocation-sinking-with-uninitialized-property-on-one-path.js: Added.
+        (foo):
+        (foo2):
+
 2015-04-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         REGRESSION (r183373): ASSERT failed in wtf/SHA1.h
