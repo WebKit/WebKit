@@ -1,3 +1,15 @@
+2015-04-28  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(180076): [Mac, iOS] Correct possible null dereference in printing code
+        https://bugs.webkit.org/show_bug.cgi?id=144366
+        <rdar://problem/20533513>
+
+        Reviewed by Dean Jackson.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::needsAppleMailPaginationQuirk): Check if the document settings is a nullptr
+        before attempting to dereference it. 
+
 2015-04-28  Andreas Kling  <akling@apple.com>
 
         Simplify DOM wrapper destruction, don't deref() in finalizers.
