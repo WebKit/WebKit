@@ -1,53 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   version="1.1"
-   width="16"
-   height="16"
-   id="svg3946">
-  <defs
-     id="defs3948" />
-  <metadata
-     id="metadata3951">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
-        <dc:title></dc:title>
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     transform="matrix(0.99997967,0,0,0.99997967,0.00235437,-6.0239598e-5)"
-     id="layer1-2">
-    <path
-       d="M 12.90625,1.96875 C 12.86397,1.9764663 12.822187,1.9869119 12.78125,2 12.334096,2.1001409 11.98897,2.5419023 12,3 l 0,1.6875 C 11.617752,4.10954 11.15073,3.60527 10.59375,3.1875 9.43812,2.32073 8.0617648,1.93523 6.71875,2 6.5268907,2.009 6.3465225,2.0353 6.15625,2.0625 4.63407,2.27991 3.1781,3.08554 2.1875,4.40625 0.20631,7.04769 0.76483,10.8313 3.40625,12.8125 6.04772,14.79372 9.83129,14.23517 11.8125,11.59375 11.935176,11.422061 12.001825,11.211005 12,11 c 0.004,-0.05198 0.004,-0.104272 0,-0.15625 L 12,10 11.1875,10 11.09375,10 C 11.062523,9.9985438 11.031227,9.9985438 11,10 10.685846,9.9985471 10.37483,10.154055 10.1875,10.40625 8.85485,12.18299 6.37048,12.52012 4.59375,11.1875 2.81701,9.85486 2.47985,7.37051 3.8125,5.59375 5.14515,3.81701 7.6295,3.47986 9.40625,4.8125 9.8357139,5.13462 10.175795,5.54545 10.4375,6 L 9,6 C 8.4764155,6.0000524 8.0000524,6.4764155 8,7 7.99201,7.072625 7.99201,7.1461254 8,7.21875 L 8,8 8.84375,8 9,8 l 4,0 1,0 0,-1 c 0,-1.6666667 0,-3.3612728 0,-5.0279395 -0.364602,0.0034 -0.729177,-0.00179 -1.09375,-0.00326 z"
-       id="path4597-1"
-       style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#bebebe;fill-opacity:1;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" />
-  </g>
+<!-- Licensed under the Creative Commons Attribution-Share Alike 3.0 United States License (http://creativecommons.org/licenses/by-sa/3.0/) -->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 16 16">
+ <g transform="matrix(.99998 0 0 .99998 .0023544 -.000060240)">
+  <path style="block-progression:tb;text-indent:0;color:#bebebe;text-transform:none" d="m12.906 1.9688c-0.042 0.0077-0.084 0.0181-0.125 0.0312-0.447 0.1001-0.792 0.5419-0.781 1v1.6875c-0.382-0.578-0.849-1.0822-1.406-1.5-1.1559-0.8668-2.5322-1.2523-3.8752-1.1875-0.1919 0.009-0.3723 0.0353-0.5626 0.0625-1.5221 0.2174-2.9781 1.023-3.9687 2.3437-1.9812 2.6415-1.4227 6.4248 1.2187 8.4058 2.6415 1.982 6.4251 1.423 8.4058-1.218 0.123-0.172 0.19-0.383 0.188-0.594 0.004-0.05198 0.004-0.10427 0-0.15625v-0.844h-0.812-0.094c-0.031-0.0015-0.063-0.0015-0.094 0-0.314-0.0015-0.625 0.154-0.812 0.406-1.3332 1.777-3.8175 2.114-5.5942 0.782-1.7768-1.3331-2.114-3.8175-0.7813-5.5942 1.3327-1.7768 3.817-2.1139 5.5937-0.7813 0.4295 0.3221 0.7698 0.7329 1.0318 1.1875h-1.438c-0.5236 0.0001-0.9999 0.4764-1 1-0.008 0.0726-0.008 0.1461 0 0.2188v0.7812h0.8438 0.1562 4 1v-1-5.0279c-0.3646 0.0034-0.72918-0.00179-1.0938-0.00326z"/>
+ </g>
 </svg>

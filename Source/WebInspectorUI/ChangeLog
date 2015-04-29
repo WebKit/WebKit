@@ -1,3 +1,149 @@
+2015-04-29  Andres Gomez  <agomez@igalia.com>
+
+        [GTK] Web Inspector: Optimize SVG images
+        https://bugs.webkit.org/show_bug.cgi?id=143476
+
+        SVG images optimized with a combination of sed replacements and
+        the usage of the scour tool (http://www.codedread.com/scour/).
+
+        Also, modified the spelling of the license word to use the US one
+        in the copyright files.
+
+        Reviewed by Martin Robinson.
+
+        * UserInterface/Images/gtk/BackArrow.svg:
+        * UserInterface/Images/gtk/BottomUpTree.svg:
+        * UserInterface/Images/gtk/BreakpointActionAdd.svg:
+        * UserInterface/Images/gtk/BreakpointActionRemove.svg:
+        * UserInterface/Images/gtk/BreakpointButton.svg:
+        * UserInterface/Images/gtk/BreakpointInactiveButton.svg:
+        * UserInterface/Images/gtk/Breakpoints.svg:
+        * UserInterface/Images/gtk/COPYING:
+        * UserInterface/Images/gtk/COPYING_CCBYSA3:
+        * UserInterface/Images/gtk/Checkers.svg:
+        * UserInterface/Images/gtk/Circle.svg:
+        * UserInterface/Images/gtk/Close.svg:
+        * UserInterface/Images/gtk/CloseLarge.svg:
+        * UserInterface/Images/gtk/CloseWhite.svg:
+        * UserInterface/Images/gtk/ContentFlow.svg:
+        * UserInterface/Images/gtk/Crosshair.svg:
+        * UserInterface/Images/gtk/DOMCharacterData.svg:
+        * UserInterface/Images/gtk/DOMComment.svg:
+        * UserInterface/Images/gtk/DOMDocument.svg:
+        * UserInterface/Images/gtk/DOMDocumentType.svg:
+        * UserInterface/Images/gtk/DOMElement.svg:
+        * UserInterface/Images/gtk/DOMNode.svg:
+        * UserInterface/Images/gtk/DOMTextNode.svg:
+        * UserInterface/Images/gtk/DOMTree.svg:
+        * UserInterface/Images/gtk/DisclosureTriangleSmallClosed.svg:
+        * UserInterface/Images/gtk/DisclosureTriangleSmallOpen.svg:
+        * UserInterface/Images/gtk/DisclosureTriangleTinyClosed.svg:
+        * UserInterface/Images/gtk/DisclosureTriangleTinyOpen.svg:
+        * UserInterface/Images/gtk/DockBottom.svg:
+        * UserInterface/Images/gtk/DockRight.svg:
+        * UserInterface/Images/gtk/DownloadArrow.svg:
+        * UserInterface/Images/gtk/Error.svg:
+        * UserInterface/Images/gtk/Errors.svg:
+        * UserInterface/Images/gtk/ErrorsEnabled.svg:
+        * UserInterface/Images/gtk/EventListener.svg:
+        * UserInterface/Images/gtk/Exception.svg:
+        * UserInterface/Images/gtk/Eye.svg:
+        * UserInterface/Images/gtk/FilterFieldGlyph.svg:
+        * UserInterface/Images/gtk/ForwardArrow.svg:
+        * UserInterface/Images/gtk/Function.svg:
+        * UserInterface/Images/gtk/GoToArrow.svg:
+        * UserInterface/Images/gtk/HierarchicalNavigationItemChevron.svg:
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner1.svg:
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner10.svg:
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner11.svg:
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner12.svg:
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner2.svg:
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner3.svg:
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner4.svg:
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner5.svg:
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner6.svg:
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner7.svg:
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner8.svg:
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner9.svg:
+        * UserInterface/Images/gtk/Issues.svg:
+        * UserInterface/Images/gtk/IssuesEnabled.svg:
+        * UserInterface/Images/gtk/LayerBorders.svg:
+        * UserInterface/Images/gtk/Locked.svg:
+        * UserInterface/Images/gtk/Logs.svg:
+        * UserInterface/Images/gtk/Native.svg:
+        * UserInterface/Images/gtk/NavigationItemAngleBrackets.svg:
+        * UserInterface/Images/gtk/NavigationItemBrushAndRuler.svg:
+        * UserInterface/Images/gtk/NavigationItemBug.svg:
+        * UserInterface/Images/gtk/NavigationItemCurleyBraces.svg:
+        * UserInterface/Images/gtk/NavigationItemFile.svg:
+        * UserInterface/Images/gtk/NavigationItemLayers.svg:
+        * UserInterface/Images/gtk/NavigationItemLog.svg:
+        * UserInterface/Images/gtk/NavigationItemProbes.svg:
+        * UserInterface/Images/gtk/NavigationItemStopwatch.svg:
+        * UserInterface/Images/gtk/NavigationItemStorage.svg:
+        * UserInterface/Images/gtk/NavigationItemTrash.svg:
+        * UserInterface/Images/gtk/NavigationItemTypes.svg:
+        * UserInterface/Images/gtk/NavigationItemVariable.svg:
+        * UserInterface/Images/gtk/PaintFlashing.svg:
+        * UserInterface/Images/gtk/Pause.svg:
+        * UserInterface/Images/gtk/PausedBreakpoint.svg:
+        * UserInterface/Images/gtk/Percent.svg:
+        * UserInterface/Images/gtk/Plus.svg:
+        * UserInterface/Images/gtk/PseudoElement.svg:
+        * UserInterface/Images/gtk/Record.svg:
+        * UserInterface/Images/gtk/Reflection.svg:
+        * UserInterface/Images/gtk/Reload.svg:
+        * UserInterface/Images/gtk/ReloadFull.svg:
+        * UserInterface/Images/gtk/ReplayPauseButton.svg:
+        * UserInterface/Images/gtk/ReplayPlayButton.svg:
+        * UserInterface/Images/gtk/ReplayRecordingButton.svg:
+        * UserInterface/Images/gtk/Request.svg:
+        * UserInterface/Images/gtk/Resources.svg:
+        * UserInterface/Images/gtk/Response.svg:
+        * UserInterface/Images/gtk/ResultLine.svg:
+        * UserInterface/Images/gtk/Resume.svg:
+        * UserInterface/Images/gtk/ShadowDOM.svg:
+        * UserInterface/Images/gtk/SortIndicatorDownArrow.svg:
+        * UserInterface/Images/gtk/SortIndicatorUpArrow.svg:
+        * UserInterface/Images/gtk/SourceCode.svg:
+        * UserInterface/Images/gtk/SplitToggleDown.svg:
+        * UserInterface/Images/gtk/SplitToggleUp.svg:
+        * UserInterface/Images/gtk/StepInto.svg:
+        * UserInterface/Images/gtk/StepOut.svg:
+        * UserInterface/Images/gtk/StepOver.svg:
+        * UserInterface/Images/gtk/Stop.svg:
+        * UserInterface/Images/gtk/StyleRuleAuthor.svg:
+        * UserInterface/Images/gtk/StyleRuleInherited.svg:
+        * UserInterface/Images/gtk/StyleRuleInheritedElement.svg:
+        * UserInterface/Images/gtk/StyleRuleInspector.svg:
+        * UserInterface/Images/gtk/StyleRuleUser.svg:
+        * UserInterface/Images/gtk/StyleRuleUserAgent.svg:
+        * UserInterface/Images/gtk/Time.svg:
+        * UserInterface/Images/gtk/TimelineRecordAnimation.svg:
+        * UserInterface/Images/gtk/TimelineRecordConsoleProfile.svg:
+        * UserInterface/Images/gtk/TimelineRecordEvent.svg:
+        * UserInterface/Images/gtk/TimelineRecordLayout.svg:
+        * UserInterface/Images/gtk/TimelineRecordPaint.svg:
+        * UserInterface/Images/gtk/TimelineRecordProbeSampled.svg:
+        * UserInterface/Images/gtk/TimelineRecordScriptEvaluated.svg:
+        * UserInterface/Images/gtk/TimelineRecordStyle.svg:
+        * UserInterface/Images/gtk/TimelineRecordTimer.svg:
+        * UserInterface/Images/gtk/TypeBoolean.svg:
+        * UserInterface/Images/gtk/TypeNull.svg:
+        * UserInterface/Images/gtk/TypeNumber.svg:
+        * UserInterface/Images/gtk/TypeObject.svg:
+        * UserInterface/Images/gtk/TypeRegex.svg:
+        * UserInterface/Images/gtk/TypeString.svg:
+        * UserInterface/Images/gtk/TypeSymbol.svg:
+        * UserInterface/Images/gtk/TypeUndefined.svg:
+        * UserInterface/Images/gtk/Undock.svg:
+        * UserInterface/Images/gtk/UpDownArrows.svg:
+        * UserInterface/Images/gtk/UserInputPrompt.svg:
+        * UserInterface/Images/gtk/UserInputPromptPrevious.svg:
+        * UserInterface/Images/gtk/UserInputResult.svg:
+        * UserInterface/Images/gtk/Warning.svg:
+        * UserInterface/Images/gtk/Weight.svg:
+
 2015-04-29  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Navigation bar often looses last button when full

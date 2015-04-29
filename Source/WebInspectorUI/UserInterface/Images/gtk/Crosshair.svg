@@ -1,57 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   version="1.1"
-   width="16"
-   height="16"
-   id="svg3791">
-  <defs
-     id="defs3793" />
-  <metadata
-     id="metadata3796">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     transform="matrix(1.0639146,0,0,1.0639146,-0.51036497,-0.49067596)"
-     id="g3222">
-    <path
-       d="M 7.90625,0.46875 C 7.677428,0.51245 7.495897,0.73545 7.5,0.96875 l 0,0.59375 C 4.339213,1.80832 1.823631,4.31572 1.5625,7.46875 l -0.5,0 c -0.03105,-0.003 -0.0627,-0.003 -0.09375,0 C 0.706803,7.49255 0.475471,7.76894 0.5,8.03125 0.52456,8.29356 0.80070315,8.49413 1.0625,8.46875 l 0.5,0 c 0.232558,3.18201 2.7558951,5.75257 5.9375,6 l 0,0.5 C 7.496,15.23291 7.7362559,15.5 8,15.5 c 0.263744,0 0.503724,-0.26709 0.5,-0.53125 l 0,-0.5 c 3.202607,-0.23774 5.750163,-2.82717 5.96875,-6.03125 l 0.53125,0 c 0.263724,0.004 0.5,-0.23582 0.5,-0.5 0,-0.26418 -0.236276,-0.50374 -0.5,-0.5 l -0.53125,0 C 14.192873,4.29142 11.660933,1.79715 8.5,1.5625 l 0,-0.59375 C 8.505,0.67258 8.19673,0.4132 7.90625,0.46875 z m -0.4375,3.125 0,0.5 c -0.004,0.263724 0.23582,0.5 0.5,0.5 0.26418,0 0.50374,-0.236276 0.5,-0.5 l 0,-0.5 C 10.567141,3.8107419 12.203443,5.4112782 12.4375,7.5 l -0.53125,0 c -0.263724,-0.00374 -0.5,0.23582 -0.5,0.5 0,0.26418 0.236276,0.504 0.5,0.5 l 0.53125,0 c -0.22717,2.100544 -1.864105,3.748532 -3.96875,3.96875 l 0,-0.53125 c 0.00374,-0.263724 -0.23582,-0.5 -0.5,-0.5 -0.26418,0 -0.504,0.236276 -0.5,0.5 l 0,0.5 C 5.3889066,12.191828 3.7760764,10.558927 3.5625,8.46875 l 0.5,0 c 0.263724,0.004 0.5,-0.23582 0.5,-0.5 0,-0.26418 -0.236276,-0.50374 -0.5,-0.5 l -0.46875,0 c 0.2524781,-2.0409981 1.8277243,-3.63631 3.875,-3.875 z"
-       id="path4640"
-       style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill-opacity:1;stroke:none;stroke-width:2.15649271;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" />
-    <path
-       d="m 8.981204,7.9569 a 1,1 0 0 1 -2,0 1,1 0 1 1 2,0 z"
-       id="path5428"
-       style="color:#000000;fill-opacity:1;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:new" />
-  </g>
+<!-- Licensed under the Creative Commons Attribution-Share Alike 3.0 United States License (http://creativecommons.org/licenses/by-sa/3.0/) -->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 16 16">
+ <g transform="matrix(1.0639 0 0 1.0639 -.51036 -.49068)">
+  <path style="block-progression:tb;text-indent:0;color:#000000;text-transform:none" d="m7.9062 0.46875c-0.2288 0.0437-0.4103 0.2667-0.4062 0.5v0.59375c-3.1608 0.2458-5.6764 2.7532-5.9375 5.9063h-0.5c-0.03105-0.003-0.0627-0.003-0.09375 0-0.26195 0.0238-0.49328 0.3001-0.46875 0.5624 0.02456 0.2624 0.3007 0.4629 0.5625 0.4376h0.5c0.23256 3.182 2.7559 5.7526 5.9375 6v0.5c-0.004 0.264 0.2363 0.531 0.5 0.531 0.26374 0 0.50372-0.26709 0.5-0.53125v-0.5c3.2026-0.23774 5.7502-2.8272 5.9688-6.0312h0.53125c0.26372 0.004 0.5-0.23582 0.5-0.5s-0.23628-0.50374-0.5-0.5h-0.53125c-0.276-3.1464-2.808-5.6406-5.969-5.8753v-0.59375c0.005-0.29617-0.3033-0.55555-0.5938-0.5zm-0.4375 3.125v0.5c-0.004 0.26372 0.23582 0.5 0.5 0.5s0.50374-0.23628 0.5-0.5v-0.5c2.0983 0.2169 3.7343 1.8175 3.9693 3.9062h-0.53125c-0.26372-0.00374-0.5 0.23582-0.5 0.5s0.23628 0.504 0.5 0.5h0.53125c-0.22717 2.1005-1.8641 3.7485-3.9688 3.9688v-0.53125c0.00374-0.26372-0.23582-0.5-0.5-0.5s-0.504 0.23628-0.5 0.5v0.5c-2.0803-0.246-3.6931-1.879-3.9067-3.9692h0.5c0.26372 0.004 0.5-0.23582 0.5-0.5s-0.23628-0.50374-0.5-0.5h-0.46875c0.25248-2.041 1.8277-3.6363 3.875-3.875z"/>
+  <path style="color:#000000;enable-background:new" d="m8.9812 7.9569a1 1 0 0 1 -2 0 1 1 0 1 1 2 0z"/>
+ </g>
 </svg>
