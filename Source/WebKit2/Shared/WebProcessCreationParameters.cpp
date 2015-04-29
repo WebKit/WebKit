@@ -104,6 +104,7 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << shouldAlwaysUseComplexTextCodePath;
     encoder << shouldEnableMemoryPressureReliefLogging;
     encoder << shouldUseFontSmoothing;
+    encoder << fontWhitelist;
     encoder << iconDatabaseEnabled;
     encoder << terminationTimeout;
     encoder << languages;
@@ -231,6 +232,8 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
     if (!decoder.decode(parameters.shouldEnableMemoryPressureReliefLogging))
         return false;
     if (!decoder.decode(parameters.shouldUseFontSmoothing))
+        return false;
+    if (!decoder.decode(parameters.fontWhitelist))
         return false;
     if (!decoder.decode(parameters.iconDatabaseEnabled))
         return false;

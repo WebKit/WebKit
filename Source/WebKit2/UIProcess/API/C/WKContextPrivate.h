@@ -91,6 +91,8 @@ WK_EXPORT void WKContextSetInvalidMessageFunction(WKContextInvalidMessageFunctio
     
 WK_EXPORT void WKContextSetMemoryCacheDisabled(WKContextRef, bool disabled);
 
+WK_EXPORT void WKContextSetFontWhitelist(WKContextRef, WKArrayRef);
+
 #ifdef __cplusplus
 }
 #endif

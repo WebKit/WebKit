@@ -414,6 +414,7 @@ static NSSet *allowedFontFamilySet()
     return fontFamilySet;
 }
 
+#if !ENABLE(PLATFORM_FONT_LOOKUP)
 static IMP appKitAvailableFontFamiliesIMP;
 static IMP appKitAvailableFontsIMP;
 
@@ -472,6 +473,29 @@ static void swizzleNSFontManagerMethods()
     
     appKitAvailableFontsIMP = method_setImplementation(availableFontsMethod, (IMP)drt_NSFontManager_availableFonts);
 }
+
+#else
+
+static NSArray *fontWhitelist()
+{
+    static NSArray *availableFonts;
+    if (availableFonts)
+        return availableFonts;
+
+    NSMutableArray *availableFontList = [[NSMutableArray alloc] init];
+    for (NSString *fontFamily in allowedFontFamilySet()) {
+        NSArray* fontsForFamily = [[NSFontManager sharedFontManager] availableMembersOfFontFamily:fontFamily];
+        [availableFontList addObject:fontFamily];
+        for (NSArray* fontInfo in fontsForFamily) {
+            // Font name is the first entry in the array.
+            [availableFontList addObject:[fontInfo objectAtIndex:0]];
+        }
+    }
+
+    availableFonts = availableFontList;
+    return availableFonts;
+}
+#endif
 
 // Activating system copies of these fonts overrides any others that could be preferred, such as ones
 // in /Library/Fonts/Microsoft, and which don't always have the same metrics.
@@ -549,7 +573,9 @@ static void activateTestingFonts()
 
 static void adjustFonts()
 {
+#if !ENABLE(PLATFORM_FONT_LOOKUP)
     swizzleNSFontManagerMethods();
+#endif
     activateSystemCoreWebFonts();
     activateTestingFonts();
 }
@@ -732,6 +758,10 @@ WebView *createWebViewAndOffscreenWindow()
     [WebView registerURLSchemeAsLocal:@"feeds"];
     [WebView registerURLSchemeAsLocal:@"feedsearch"];
     
+#if PLATFORM(MAC) && ENABLE(PLATFORM_FONT_LOOKUP)
+    [WebView _setFontWhitelist:fontWhitelist()];
+#endif
+
 #if !PLATFORM(IOS)
     [webView setContinuousSpellCheckingEnabled:YES];
     [webView setAutomaticQuoteSubstitutionEnabled:NO];

@@ -1456,4 +1456,15 @@ void WebProcessPool::setMemoryCacheDisabled(bool disabled)
     sendToAllProcesses(Messages::WebProcess::SetMemoryCacheDisabled(disabled));
 }
 
+void WebProcessPool::setFontWhitelist(API::Array* array)
+{
+    m_fontWhitelist.clear();
+    if (array) {
+        for (size_t i = 0; i < array->size(); ++i) {
+            if (API::String* font = array->at<API::String>(i))
+                m_fontWhitelist.append(font->string());
+        }
+    }
+}
+
 } // namespace WebKit

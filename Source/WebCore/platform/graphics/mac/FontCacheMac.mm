@@ -33,6 +33,7 @@
 #if !PLATFORM(IOS)
 
 #import "CoreGraphicsSPI.h"
+#import "CoreTextSPI.h"
 #import "Font.h"
 #import "FontCascade.h"
 #import "FontPlatformData.h"
@@ -47,6 +48,8 @@
 #import <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
+
+#if !ENABLE(PLATFORM_FONT_LOOKUP)
 
 #define SYNTHESIZED_FONT_TRAITS (NSBoldFontMask | NSItalicFontMask)
 
@@ -108,6 +111,8 @@ static bool betterChoice(NSFontTraitMask desiredTraits, int desiredWeight, NSFon
     return candidateWeightDeltaMagnitude < chosenWeightDeltaMagnitude;
 }
 
+#endif
+
 static inline FontTraitsMask toTraitsMask(NSFontTraitMask appKitTraits, NSInteger appKitWeight)
 {
     return static_cast<FontTraitsMask>(((appKitTraits & NSFontItalicTrait) ? FontStyleItalicMask : FontStyleNormalMask)
@@ -132,6 +137,7 @@ static NSMutableDictionary* desiredFamilyToAvailableFamilyDictionary()
     return dictionary;
 }
 
+#if !ENABLE(PLATFORM_FONT_LOOKUP)
 static inline void rememberDesiredFamilyToAvailableFamilyMapping(NSString* desiredFamily, NSString* availableFamily)
 {
     static const NSUInteger maxCacheSize = 128;
@@ -147,18 +153,67 @@ static inline void rememberDesiredFamilyToAvailableFamilyMapping(NSString* desir
     [familyMapping setObject:value forKey:desiredFamily];
 }
 
+#else
+
+static uint16_t toCoreTextFontWeight(FontWeight fontWeight)
+{
+    static int coreTextFontWeights[] = {
+        100, // FontWeight100
+        200, // FontWeight200
+        300, // FontWeight300
+        400, // FontWeight400
+        500, // FontWeight500
+        600, // FontWeight600
+        700, // FontWeight700
+        800, // FontWeight800
+        900, // FontWeight900
+    };
+    return coreTextFontWeights[fontWeight];
+}
+#endif
+
+typedef HashSet<String, CaseFoldingHash> Whitelist;
+static Whitelist& fontWhitelist()
+{
+    static NeverDestroyed<Whitelist> whitelist;
+    return whitelist;
+}
+
+void FontCache::setFontWhitelist(const Vector<String>& inputWhitelist)
+{
+    Whitelist& whitelist = fontWhitelist();
+    whitelist.clear();
+    for (auto& item : inputWhitelist)
+        whitelist.add(item);
+}
+
+static int toAppKitFontWeight(FontWeight fontWeight)
+{
+    static int appKitFontWeights[] = {
+        2, // FontWeight100
+        3, // FontWeight200
+        4, // FontWeight300
+        5, // FontWeight400
+        6, // FontWeight500
+        8, // FontWeight600
+        9, // FontWeight700
+        10, // FontWeight800
+        12, // FontWeight900
+    };
+    return appKitFontWeights[fontWeight];
+}
+
 // Family name is somewhat of a misnomer here. We first attempt to find an exact match
 // comparing the desiredFamily to the PostScript name of the installed fonts. If that fails
 // we then do a search based on the family names of the installed fonts.
-static NSFont *fontWithFamily(NSString *desiredFamily, NSFontTraitMask desiredTraits, int desiredWeight, float size)
+static NSFont *fontWithFamily(const AtomicString& family, NSFontTraitMask desiredTraits, FontWeight weight, float size)
 {
-    if (stringIsCaseInsensitiveEqualToString(desiredFamily, @"-webkit-system-font")
-        || stringIsCaseInsensitiveEqualToString(desiredFamily, @"-apple-system-font")) {
+    if (equalIgnoringASCIICase(family.string(), String(@"-webkit-system-font")) || equalIgnoringASCIICase(family.string(), String(@"-apple-system-font"))) {
         // We ignore italic for system font.
-        return (desiredWeight >= 7) ? [NSFont boldSystemFontOfSize:size] : [NSFont systemFontOfSize:size];
+        return (weight >= FontWeight600) ? [NSFont boldSystemFontOfSize:size] : [NSFont systemFontOfSize:size];
     }
 
-    if (stringIsCaseInsensitiveEqualToString(desiredFamily, @"-apple-system-font-monospaced-numbers")) {
+    if (equalIgnoringASCIICase(family.string(), String(@"-apple-system-font-monospaced-numbers"))) {
         NSArray *featureArray = @[ @{ NSFontFeatureTypeIdentifierKey : @(kNumberSpacingType),
             NSFontFeatureSelectorIdentifierKey : @(kMonospacedNumbersSelector) } ];
 
@@ -167,14 +222,37 @@ static NSFont *fontWithFamily(NSString *desiredFamily, NSFontTraitMask desiredTr
         return [NSFont fontWithDescriptor:desc size:size];
     }
 
+    NSFontManager *fontManager = [NSFontManager sharedFontManager];
+    NSString *desiredFamily = family;
+    NSString *availableFamily;
+    int chosenWeight;
+    NSFont *font;
+
+#if ENABLE(PLATFORM_FONT_LOOKUP)
+
+    if (family.length() > 0 && family[0] == '.')
+        return [NSFont fontWithName:desiredFamily size:size];
+    const auto& whitelist = fontWhitelist();
+    if (whitelist.size() && !whitelist.contains(family.lower()))
+        return nil;
+    CTFontSymbolicTraits requestedTraits = 0;
+    if (desiredTraits & NSFontItalicTrait)
+        requestedTraits |= kCTFontItalicTrait;
+    if (weight >= FontWeight600)
+        requestedTraits |= kCTFontBoldTrait;
+    font = CFBridgingRelease(CTFontCreateForCSS((CFStringRef)desiredFamily, toCoreTextFontWeight(weight), requestedTraits, size));
+    availableFamily = [font familyName];
+    chosenWeight = [fontManager weightOfFont:font];
+
+#else
+
     id cachedAvailableFamily = [desiredFamilyToAvailableFamilyDictionary() objectForKey:desiredFamily];
     if (cachedAvailableFamily == [NSNull null]) {
         // We already know this font is not available.
         return nil;
     }
 
-    NSFontManager *fontManager = [NSFontManager sharedFontManager];
-    NSString *availableFamily = cachedAvailableFamily;
+    availableFamily = cachedAvailableFamily;
     if (!availableFamily) {
         // Do a simple case insensitive search for a matching font family.
         // NSFontManager requires exact name matches.
@@ -187,7 +265,7 @@ static NSFont *fontWithFamily(NSString *desiredFamily, NSFontTraitMask desiredTr
         if (!availableFamily) {
             // Match by PostScript name.
             NSFont *nameMatchedFont = nil;
-            NSFontTraitMask desiredTraitsForNameMatch = desiredTraits | (desiredWeight >= 7 ? NSBoldFontMask : 0);
+            NSFontTraitMask desiredTraitsForNameMatch = desiredTraits | (weight >= FontWeight600 ? NSBoldFontMask : 0);
             for (NSString *availableFont in [fontManager availableFonts]) {
                 if ([desiredFamily caseInsensitiveCompare:availableFont] == NSOrderedSame) {
                     nameMatchedFont = [NSFont fontWithName:availableFont size:size];
@@ -214,10 +292,11 @@ static NSFont *fontWithFamily(NSString *desiredFamily, NSFontTraitMask desiredTr
 
     // Found a family, now figure out what weight and traits to use.
     bool choseFont = false;
-    int chosenWeight = 0;
+    chosenWeight = 0;
     NSFontTraitMask chosenTraits = 0;
     NSString *chosenFullName = 0;
 
+    int appKitDesiredWeight = toAppKitFontWeight(weight);
     NSArray *fonts = [fontManager availableMembersOfFontFamily:availableFamily];
     for (NSArray *fontInfo in fonts) {
         // Array indices must be hard coded because of lame AppKit API.
@@ -229,7 +308,7 @@ static NSFont *fontWithFamily(NSString *desiredFamily, NSFontTraitMask desiredTr
         if (!choseFont)
             newWinner = acceptableChoice(desiredTraits, fontTraits);
         else
-            newWinner = betterChoice(desiredTraits, desiredWeight, chosenTraits, chosenWeight, fontTraits, fontWeight);
+            newWinner = betterChoice(desiredTraits, appKitDesiredWeight, chosenTraits, chosenWeight, fontTraits, fontWeight);
 
         if (newWinner) {
             choseFont = YES;
@@ -237,7 +316,7 @@ static NSFont *fontWithFamily(NSString *desiredFamily, NSFontTraitMask desiredTr
             chosenTraits = fontTraits;
             chosenFullName = fontFullName;
 
-            if (chosenWeight == desiredWeight && (chosenTraits & IMPORTANT_FONT_TRAITS) == (desiredTraits & IMPORTANT_FONT_TRAITS))
+            if (chosenWeight == appKitDesiredWeight && (chosenTraits & IMPORTANT_FONT_TRAITS) == (desiredTraits & IMPORTANT_FONT_TRAITS))
                 break;
         }
     }
@@ -245,7 +324,9 @@ static NSFont *fontWithFamily(NSString *desiredFamily, NSFontTraitMask desiredTr
     if (!choseFont)
         return nil;
 
-    NSFont *font = [NSFont fontWithName:chosenFullName size:size];
+    font = [NSFont fontWithName:chosenFullName size:size];
+
+#endif
 
     if (!font)
         return nil;
@@ -255,7 +336,7 @@ static NSFont *fontWithFamily(NSString *desiredFamily, NSFontTraitMask desiredTr
         actualTraits = [fontManager traitsOfFont:font];
     int actualWeight = [fontManager weightOfFont:font];
 
-    bool syntheticBold = desiredWeight >= 7 && actualWeight < 7;
+    bool syntheticBold = toAppKitFontWeight(weight) >= 7 && actualWeight < 7;
     bool syntheticOblique = (desiredTraits & NSFontItalicTrait) && !(actualTraits & NSFontItalicTrait);
 
     // There are some malformed fonts that will be correctly returned by -fontWithFamily:traits:weight:size: as a match for a particular trait,
@@ -301,22 +382,6 @@ static void fontCacheRegisteredFontsChangedNotificationCallback(CFNotificationCe
 void FontCache::platformInit()
 {
     CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, fontCacheRegisteredFontsChangedNotificationCallback, kCTFontManagerRegisteredFontsChangedNotification, 0, CFNotificationSuspensionBehaviorDeliverImmediately);
-}
-
-static int toAppKitFontWeight(FontWeight fontWeight)
-{
-    static int appKitFontWeights[] = {
-        2,  // FontWeight100
-        3,  // FontWeight200
-        4,  // FontWeight300
-        5,  // FontWeight400
-        6,  // FontWeight500
-        8,  // FontWeight600
-        9,  // FontWeight700
-        10, // FontWeight800
-        12, // FontWeight900
-    };
-    return appKitFontWeights[fontWeight];
 }
 
 static inline bool isAppKitFontWeightBold(NSInteger appKitFontWeight)
@@ -485,10 +550,9 @@ void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigne
 std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
 {
     NSFontTraitMask traits = fontDescription.italic() ? NSFontItalicTrait : 0;
-    NSInteger weight = toAppKitFontWeight(fontDescription.weight());
     float size = fontDescription.computedPixelSize();
 
-    NSFont *nsFont = fontWithFamily(family, traits, weight, size);
+    NSFont *nsFont = fontWithFamily(family, traits, fontDescription.weight(), size);
     if (!nsFont) {
         if (!shouldAutoActivateFontIfNeeded(family))
             return nullptr;
@@ -497,7 +561,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
         // Ignore the result because we want to use our own algorithm to actually find the font.
         [NSFont fontWithName:family size:size];
 
-        nsFont = fontWithFamily(family, traits, weight, size);
+        nsFont = fontWithFamily(family, traits, fontDescription.weight(), size);
         if (!nsFont)
             return nullptr;
     }
@@ -509,7 +573,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     NSInteger actualWeight = [fontManager weightOfFont:nsFont];
 
     NSFont *platformFont = [nsFont printerFont];
-    bool syntheticBold = (fontDescription.fontSynthesis() & FontSynthesisWeight) && isAppKitFontWeightBold(weight) && !isAppKitFontWeightBold(actualWeight);
+    bool syntheticBold = (fontDescription.fontSynthesis() & FontSynthesisWeight) && isAppKitFontWeightBold(toAppKitFontWeight(fontDescription.weight())) && !isAppKitFontWeightBold(actualWeight);
     bool syntheticOblique = (fontDescription.fontSynthesis() & FontSynthesisStyle) && (traits & NSFontItalicTrait) && !(actualTraits & NSFontItalicTrait);
 
     return std::make_unique<FontPlatformData>(reinterpret_cast<CTFontRef>(platformFont), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant());

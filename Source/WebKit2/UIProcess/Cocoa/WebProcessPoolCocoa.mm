@@ -218,6 +218,8 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
     }
 #endif
 
+    parameters.fontWhitelist = m_fontWhitelist;
+
     if (m_bundleParameters) {
         auto data = adoptNS([[NSMutableData alloc] init]);
         auto keyedArchiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);

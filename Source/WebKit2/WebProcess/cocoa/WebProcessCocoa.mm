@@ -44,6 +44,7 @@
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/CFNetworkSPI.h>
 #import <WebCore/FileSystem.h>
+#import <WebCore/FontCache.h>
 #import <WebCore/FontCascade.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MemoryCache.h>
@@ -169,6 +170,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
             diskCapacity:parameters.nsURLCacheDiskCapacity
             diskPath:parameters.diskCacheDirectory]).get()];
     }
+#endif
+
+#if PLATFORM(MAC)
+    WebCore::FontCache::setFontWhitelist(parameters.fontWhitelist);
 #endif
 
     m_compositingRenderServerPort = WTF::move(parameters.acceleratedCompositingPort);

@@ -1,3 +1,25 @@
+2015-04-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OS X] Use CTFontCreateForCSS instead of doing font search ourselves
+        https://bugs.webkit.org/show_bug.cgi?id=132159
+
+        Reviewed by Darin Adler.
+
+        Make DumpRenderTree and WebKitTestRunner use the new font whitelist instead of
+        swizzling NSFontManager methods. This is predicated on ENABLE(PLATFORM_FONT_LOOKUP).
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (fontWhitelist):
+        (adjustFonts):
+        (createWebViewAndOffscreenWindow):
+        * WebKitTestRunner/InjectedBundle/cocoa/ActivateFontsCocoa.mm:
+        (WTR::activateFonts):
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::allowedFontFamilySet):
+        (WTR::systemHiddenFontFamilySet):
+        (WTR::generateWhitelist):
+        (WTR::TestController::platformInitializeContext):
+
 2015-04-29  Alexey Proskuryakov  <ap@apple.com>
 
         fast/frames/flattening/iframe-flattening-resize-event-count.html times out on Yosemite WK2

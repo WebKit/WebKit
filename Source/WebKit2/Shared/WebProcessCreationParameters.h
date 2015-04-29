@@ -110,6 +110,8 @@ struct WebProcessCreationParameters {
     bool shouldEnableMemoryPressureReliefLogging;
     bool shouldUseFontSmoothing;
 
+    Vector<String> fontWhitelist;
+
     bool iconDatabaseEnabled;
 
     double terminationTimeout;

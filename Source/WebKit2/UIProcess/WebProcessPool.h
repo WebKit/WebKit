@@ -347,6 +347,7 @@ public:
 #endif
 
     void setMemoryCacheDisabled(bool);
+    void setFontWhitelist(API::Array*);
 
     UserObservablePageToken userObservablePageCount()
     {
@@ -470,6 +471,8 @@ private:
 
     bool m_alwaysUsesComplexTextCodePath;
     bool m_shouldUseFontSmoothing;
+
+    Vector<String> m_fontWhitelist;
 
     // Messages that were posted before any pages were created.
     // The client should use initialization messages instead, so that a restarted process would get the same state.

@@ -1,3 +1,16 @@
+2015-04-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OS X] Use CTFontCreateForCSS instead of doing font search ourselves
+        https://bugs.webkit.org/show_bug.cgi?id=132159
+
+        Reviewed by Darin Adler.
+
+        Add SPI to set the font whitelist.
+
+        * WebView/WebView.mm:
+        (+[WebView _setFontWhitelist:]):
+        * WebView/WebViewPrivate.h:
+
 2015-04-28  Timothy Horton  <timothy_horton@apple.com>
 
         [TextIndicator] Yellow highlight takes too long to fade out on scroll

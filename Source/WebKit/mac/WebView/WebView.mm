@@ -133,6 +133,7 @@
 #import <WebCore/EventHandler.h>
 #import <WebCore/ExceptionHandlers.h>
 #import <WebCore/FocusController.h>
+#import <WebCore/FontCache.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameSelection.h>
 #import <WebCore/FrameTree.h>
@@ -8815,6 +8816,20 @@ bool LayerFlushController::flushLayers()
     return static_cast<WebNotificationClient*>(NotificationController::clientFrom(_private->page))->notificationIDForTesting(notification);
 #else
     return 0;
+#endif
+}
+@end
+
+@implementation WebView (WebViewFontSelection)
++ (void)_setFontWhitelist:(NSArray *)whitelist
+{
+#if !PLATFORM(MAC)
+    UNUSED_PARAM(whitelist);
+#else
+    Vector<String> vector;
+    for (NSString *string in whitelist)
+        vector.append(string);
+    WebCore::FontCache::setFontWhitelist(vector);
 #endif
 }
 @end

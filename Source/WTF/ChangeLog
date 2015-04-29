@@ -1,3 +1,14 @@
+2015-04-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OS X] Use CTFontCreateForCSS instead of doing font search ourselves
+        https://bugs.webkit.org/show_bug.cgi?id=132159
+
+        Reviewed by Darin Adler.
+
+        * wtf/Platform.h:
+
+        Opt-in using ENABLE(PLATFORM_FONT_LOOKUP)
+
 2015-04-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         REGRESSION (r183373): ASSERT failed in wtf/SHA1.h

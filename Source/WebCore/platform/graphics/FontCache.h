@@ -119,6 +119,9 @@ public:
 #if PLATFORM(IOS)
     static float weightOfCTFont(CTFontRef);
 #endif
+#if PLATFORM(MAC)
+    WEBCORE_EXPORT static void setFontWhitelist(const Vector<String>&);
+#endif
 #if PLATFORM(WIN)
     IMLangFontLinkType* getFontLinkInterface();
     static void comInitialize();

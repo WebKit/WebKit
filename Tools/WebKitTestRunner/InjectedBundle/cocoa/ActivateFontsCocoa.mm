@@ -45,6 +45,7 @@ namespace WTR {
 
 #if USE(APPKIT)
 
+#if !ENABLE(PLATFORM_FONT_LOOKUP)
 static NSSet *allowedFontFamilySet()
 {
     static NSSet *fontFamilySet = [[NSSet setWithObjects:
@@ -240,6 +241,7 @@ static void swizzleNSFontManagerMethods()
     
     appKitAvailableFontsIMP = method_setImplementation(availableFontsMethod, (IMP)wtr_NSFontManager_availableFonts);
 }
+#endif
 
 // Activating system copies of these fonts overrides any others that could be preferred, such as ones
 // in /Library/Fonts/Microsoft, and which don't always have the same metrics.
@@ -317,7 +319,9 @@ void activateFonts()
     }
 
 #if USE(APPKIT)
+#if !ENABLE(PLATFORM_FONT_LOOKUP)
     swizzleNSFontManagerMethods();
+#endif
     activateSystemCoreWebFonts();
 #endif // USE(APPKIT)
 }

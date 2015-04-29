@@ -1039,6 +1039,10 @@ Could be worth adding to the API.
 - (uint64_t)_notificationIDForTesting:(JSValueRef)jsNotification;
 @end
 
+@interface WebView (WebViewFontSelection)
++ (void)_setFontWhitelist:(NSArray *)whitelist;
+@end
+
 #if TARGET_OS_IPHONE
 @interface WebView (WebViewIOSPDF)
 + (Class)_getPDFRepresentationClass;

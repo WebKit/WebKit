@@ -604,3 +604,8 @@ void WKContextSetMemoryCacheDisabled(WKContextRef contextRef, bool disabled)
 {
     toImpl(contextRef)->setMemoryCacheDisabled(disabled);
 }
+
+void WKContextSetFontWhitelist(WKContextRef contextRef, WKArrayRef arrayRef)
+{
+    toImpl(contextRef)->setFontWhitelist(toImpl(arrayRef));
+}
