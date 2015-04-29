@@ -124,18 +124,19 @@ static xmlDocPtr docLoaderFunc(const xmlChar* uri,
         ResourceError error;
         ResourceResponse response;
 
-        Vector<char> data;
+        RefPtr<SharedBuffer> data;
 
         bool requestAllowed = globalCachedResourceLoader->frame() && globalCachedResourceLoader->document()->securityOrigin()->canRequest(url);
         if (requestAllowed) {
             globalCachedResourceLoader->frame()->loader().loadResourceSynchronously(url, AllowStoredCredentials, DoNotAskClientForCrossOriginCredentials, error, response, data);
             if (error.isNull())
                 requestAllowed = globalCachedResourceLoader->document()->securityOrigin()->canRequest(response.url());
-            else
-                data.clear();
+            else if (data)
+                data = nullptr;
         }
         if (!requestAllowed) {
-            data.clear();
+            if (data)
+                data = nullptr;
             globalCachedResourceLoader->printAccessDeniedMessage(url);
         }
 
@@ -148,7 +149,7 @@ static xmlDocPtr docLoaderFunc(const xmlChar* uri,
 
         // We don't specify an encoding here. Neither Gecko nor WinIE respects
         // the encoding specified in the HTTP headers.
-        xmlDocPtr doc = xmlReadMemory(data.data(), data.size(), (const char*)uri, 0, options);
+        xmlDocPtr doc = xmlReadMemory(data ? data->data() : nullptr, data ? data->size() : 0, (const char*)uri, 0, options);
 
         xmlSetStructuredErrorFunc(0, 0);
         xmlSetGenericErrorFunc(0, 0);

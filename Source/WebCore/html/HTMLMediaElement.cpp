@@ -1079,25 +1079,6 @@ void HTMLMediaElement::loadNextSourceChild()
     loadResource(mediaURL, contentType, keySystem);
 }
 
-static URL createFileURLForApplicationCacheResource(const String& path)
-{
-    // URL should have a function to create a url from a path, but it does not. This function
-    // is not suitable because URL::setPath uses encodeWithURLEscapeSequences, which it notes
-    // does not correctly escape '#' and '?'. This function works for our purposes because
-    // app cache media files are always created with encodeForFileName(createCanonicalUUIDString()).
-
-#if USE(CF) && PLATFORM(WIN)
-    RetainPtr<CFURLRef> cfURL = adoptCF(CFURLCreateWithFileSystemPath(0, path.createCFString().get(), kCFURLWindowsPathStyle, false));
-    URL url(cfURL.get());
-#else
-    URL url;
-
-    url.setProtocol(ASCIILiteral("file"));
-    url.setPath(path);
-#endif
-    return url;
-}
-
 void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentType, const String& keySystem)
 {
     ASSERT(isSafeToLoadURL(initialURL, Complain));
@@ -1162,7 +1143,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
     m_currentSrc = url;
 
     if (resource) {
-        url = createFileURLForApplicationCacheResource(resource->path());
+        url = ApplicationCacheHost::createFileURL(resource->path());
         LOG(Media, "HTMLMediaElement::loadResource(%p) - will load from app cache -> %s", this, urlForLoggingMedia(url).utf8().data());
     }
 

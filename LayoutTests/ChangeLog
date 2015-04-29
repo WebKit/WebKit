@@ -1,3 +1,15 @@
+2015-04-29  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Synchronous XMLHttpRequest should get access to AppCache resources stored as flat files
+        https://bugs.webkit.org/show_bug.cgi?id=143711
+
+        Reviewed by Darin Adler.
+
+        * http/tests/appcache/resources/fake-video.mp4: Added.
+        * http/tests/appcache/resources/simple-video-sync.manifest: Added.
+        * http/tests/appcache/simple-video-sync-expected.txt: Added.
+        * http/tests/appcache/simple-video-sync.html: Added.
+
 2015-04-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(181868): Windows Live SkyDrive cannot open an excel file
