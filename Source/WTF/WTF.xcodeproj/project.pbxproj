@@ -107,7 +107,6 @@
 		A8A47386151A825B004123FF /* Assertions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A4725B151A825A004123FF /* Assertions.cpp */; };
 		A8A47387151A825B004123FF /* Assertions.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4725C151A825A004123FF /* Assertions.h */; };
 		A8A47388151A825B004123FF /* Atomics.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4725D151A825A004123FF /* Atomics.h */; };
-		A8A47389151A825B004123FF /* AVLTree.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4725E151A825A004123FF /* AVLTree.h */; };
 		A8A4738A151A825B004123FF /* Bitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4725F151A825A004123FF /* Bitmap.h */; };
 		A8A4738B151A825B004123FF /* BitVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A47260151A825A004123FF /* BitVector.cpp */; };
 		A8A4738C151A825B004123FF /* BitVector.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47261151A825A004123FF /* BitVector.h */; };
@@ -392,7 +391,6 @@
 		A8A4725B151A825A004123FF /* Assertions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Assertions.cpp; sourceTree = "<group>"; };
 		A8A4725C151A825A004123FF /* Assertions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Assertions.h; sourceTree = "<group>"; };
 		A8A4725D151A825A004123FF /* Atomics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Atomics.h; sourceTree = "<group>"; };
-		A8A4725E151A825A004123FF /* AVLTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVLTree.h; sourceTree = "<group>"; };
 		A8A4725F151A825A004123FF /* Bitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bitmap.h; sourceTree = "<group>"; };
 		A8A47260151A825A004123FF /* BitVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitVector.cpp; sourceTree = "<group>"; };
 		A8A47261151A825A004123FF /* BitVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitVector.h; sourceTree = "<group>"; };
@@ -696,7 +694,6 @@
 				A8A4725D151A825A004123FF /* Atomics.h */,
 				1469419A16EAB10A0024E146 /* AutodrainedPool.h */,
 				1469419B16EAB10A0024E146 /* AutodrainedPoolMac.mm */,
-				A8A4725E151A825A004123FF /* AVLTree.h */,
 				0FB14E18180FA218009B6B4D /* Bag.h */,
 				0FB14E1A1810E1DA009B6B4D /* BagToHashMap.h */,
 				A8A4725F151A825A004123FF /* Bitmap.h */,
@@ -1039,7 +1036,6 @@
 				A8A47438151A825B004123FF /* AtomicStringImpl.h in Headers */,
 				9BD8F40B176C2B470002D865 /* AtomicStringTable.h in Headers */,
 				1469419C16EAB10A0024E146 /* AutodrainedPool.h in Headers */,
-				A8A47389151A825B004123FF /* AVLTree.h in Headers */,
 				8134013915B092FD001FF0B8 /* Base64.h in Headers */,
 				A8A473A9151A825B004123FF /* bignum-dtoa.h in Headers */,
 				A8A473AB151A825B004123FF /* bignum.h in Headers */,

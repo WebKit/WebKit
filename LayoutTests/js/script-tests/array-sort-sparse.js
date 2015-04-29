@@ -10,3 +10,14 @@ function testSort(x)
 
 shouldBeTrue("testSort([,undefined,0,1])");
 shouldBeTrue("testSort({length:4,1:undefined,2:0,3:1})");
+
+var array = [ , undefined ];
+array.sort();
+shouldBeTrue("0 in array");
+shouldBeFalse("1 in array");
+
+var array = [ , 1, , ];
+array.sort();
+shouldBeTrue("0 in array");
+shouldBeFalse("1 in array");
+shouldBeFalse("2 in array");

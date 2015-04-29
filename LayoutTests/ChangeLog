@@ -1,3 +1,42 @@
+2015-04-28  Geoffrey Garen  <ggaren@apple.com>
+
+        It shouldn't take 1846 lines of code and 5 FIXMEs to sort an array.
+        https://bugs.webkit.org/show_bug.cgi?id=144013
+
+        Reviewed by Mark Lam.
+
+        * js/script-tests/array-holes.js: 
+        * js/array-holes-expected.txt: This result now matches Firefox. We see
+        'peekaboo', which is a prototype property, rather than a hole, because
+        sorting uses [[Get]], which sees prototype properties.
+
+        The ES6 spec says that sorting should use [[Get]], so this new result
+        matches the spec a little better -- although the spec also says that the
+        result of sorting is undefined in this case because of the presence of
+        an indexed property in the prototype chain.
+
+        * js/dom/array-prototype-properties-expected.txt: Updated error message
+        to match other array prototype error messages.
+
+        * js/comparefn-sort-stability-expected.txt:
+        * js/script-tests/comparefn-sort-stability.js: Made this test bigger in
+        order to demonstrate that Firefox and Safari use a stable sort, and
+        Chrome does not.
+
+        * js/script-tests/array-sort-sparse.js:
+        * js/array-sort-sparse-expected.txt: Added some tests for things I got
+        wrong in this patch.
+
+        * script-tests/sort-with-side-effecting-comparisons.js: Made this test
+        shorter so that it wouldn't hang debug builds. This test is O(N^2). It
+        used to terminate sooner because our sort implementation would (sometimes)
+        terminate sooner if you shrank the array. Our new sort does not accept
+        intermediate updates to the array's length, matching Firefox. I spoke
+        to Gavin and Alexey about this, and we think that going out of our way
+        to honor length changes mid-sort doesn't make much sense because it's
+        not possible to honor the general case of value changes in a predictable
+        way.
+
 2015-04-29  Antti Koivisto  <antti@apple.com>
 
         Main resource loaded via 304 response becomes empty if reloaded by user

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -276,4 +276,186 @@ function includes(searchElement /*, fromIndex*/) {
             return true;
     }
     return false;
+}
+
+function sort(comparator)
+{
+    "use strict";
+
+    function min(a, b)
+    {
+        return a < b ? a : b;
+    }
+
+    function stringComparator(a, b)
+    {
+        var aString = @String(a);
+        var bString = @String(b);
+
+        var aLength = aString.length;
+        var bLength = bString.length;
+        var length = min(aLength, bLength);
+
+        for (var i = 0; i < length; ++i) {
+            var aCharCode = aString.@charCodeAt(i);
+            var bCharCode = bString.@charCodeAt(i);
+
+            if (aCharCode == bCharCode)
+                continue;
+
+            if (aCharCode < bCharCode)
+                return -1;
+
+            return 1;
+        }
+
+        if (aLength == bLength)
+            return 0;
+
+        if (aLength < bLength)
+            return -1;
+
+        return 1;
+    }
+
+    // Move undefineds and holes to the end of a sparse array. Result is [values..., undefineds..., holes...].
+    function compactSparse(array, dst, src, length)
+    {
+        var values = [ ];
+        var seen = { };
+        var valueCount = 0;
+        var undefinedCount = 0;
+
+        // Clean up after the in-progress non-sparse compaction that failed.
+        for (var i = dst; i < src; ++i)
+            delete array[i];
+
+        for (var object = array; object; object = @Object.@getPrototypeOf(object)) {
+            var propertyNames = @Object.@getOwnPropertyNames(object);
+            for (var i = 0; i < propertyNames.length; ++i) {
+                var index = propertyNames[i];
+                if (index < length) { // Exclude non-numeric properties and properties past length.
+                    if (seen[index]) // Exclude duplicates.
+                        continue;
+                    seen[index] = 1;
+
+                    var value = array[index];
+                    delete array[index];
+
+                    if (value === undefined) {
+                        ++undefinedCount;
+                        continue;
+                    }
+
+                    array[valueCount++] = value;
+                }
+            }
+        }
+
+        for (var i = valueCount; i < valueCount + undefinedCount; ++i)
+            array[i] = undefined;
+
+        return valueCount;
+    }
+
+    // Move undefineds and holes to the end of an array. Result is [values..., undefineds..., holes...].
+    function compact(array, length)
+    {
+        var holeCount = 0;
+
+        for (var dst = 0, src = 0; src < length; ++src) {
+            if (!(src in array)) {
+                ++holeCount;
+                if (holeCount < 256)
+                    continue;
+                return compactSparse(array, dst, src, length);
+            }
+
+            var value = array[src];
+            if (value === undefined)
+                continue;
+            array[dst++] = value;
+        }
+
+        var valueCount = dst;
+        var undefinedCount = length - valueCount - holeCount;
+
+        for (var i = valueCount; i < valueCount + undefinedCount; ++i)
+            array[i] = undefined;
+
+        for (var i = valueCount + undefinedCount; i < length; ++i)
+            delete array[i];
+
+        return valueCount;
+    }
+
+    function merge(dst, src, srcIndex, srcEnd, width, comparator)
+    {
+        var left = srcIndex;
+        var leftEnd = min(left + width, srcEnd);
+        var right = leftEnd;
+        var rightEnd = min(right + width, srcEnd);
+
+        for (var dstIndex = left; dstIndex < rightEnd; ++dstIndex) {
+            if (right < rightEnd) {
+                if (left >= leftEnd || comparator(src[left], src[right]) > 0) {
+                    dst[dstIndex] = src[right++];
+                    continue;
+                }
+            }
+
+            dst[dstIndex] = src[left++];
+        }
+    }
+
+    function mergeSort(array, valueCount, comparator)
+    {
+        var buffer = [ ];
+        buffer.length = valueCount;
+
+        var dst = buffer;
+        var src = array;
+        for (var width = 1; width < valueCount; width *= 2) {
+            for (var srcIndex = 0; srcIndex < valueCount; srcIndex += 2 * width)
+                merge(dst, src, srcIndex, valueCount, width, comparator);
+
+            var tmp = src;
+            src = dst;
+            dst = tmp;
+        }
+
+        if (src != array) {
+            for(var i = 0; i < valueCount; i++)
+                array[i] = src[i];
+        }
+    }
+
+    function comparatorSort(array, comparator)
+    {
+        var length = array.length >>> 0;
+
+        // For compatibility with Firefox and Chrome, do nothing observable
+        // to the target array if it has 0 or 1 sortable properties.
+        if (length < 2)
+            return;
+
+        var valueCount = compact(array, length);
+        mergeSort(array, valueCount, comparator);
+    }
+
+    if (this === null)
+        throw new @TypeError("Array.prototype.sort requires that |this| not be null");
+
+    if (this === undefined)
+        throw new @TypeError("Array.prototype.sort requires that |this| not be undefined");
+
+    if (typeof this == "string")
+        throw new @TypeError("Attempted to assign to readonly property.");
+
+    if (typeof comparator !== "function")
+        comparator = stringComparator;
+
+    var array = @Object(this);
+    comparatorSort(array, comparator);
+    return array;
 }

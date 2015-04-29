@@ -1,3 +1,134 @@
+2015-04-28  Geoffrey Garen  <ggaren@apple.com>
+
+        It shouldn't take 1846 lines of code and 5 FIXMEs to sort an array.
+        https://bugs.webkit.org/show_bug.cgi?id=144013
+
+        Reviewed by Mark Lam.
+
+        This patch implements Array.prototype.sort in JavaScript, removing the
+        C++ implementations. It is simpler and less error-prone to express our
+        operations in JavaScript, which provides memory safety, exception safety,
+        and recursion safety.
+
+        The performance result is mixed, but net positive in my opinion. It's
+        difficult to enumerate all the results, since we used to have so many
+        different sorting modes, and there are lots of different data patterns
+        across which you might want to measure sorting. Suffice it to say:
+
+            (*) The benchmarks we track are faster or unchanged.
+
+            (*) Sorting random input using a comparator -- which we think is
+            common -- is 3X faster.
+
+            (*) Sorting random input in a non-array object -- which jQuery does
+            -- is 4X faster.
+
+            (*) Sorting random input in a compact array of integers using a
+            trivial pattern-matchable comparator is 2X *slower*.
+
+        * builtins/Array.prototype.js:
+        (sort.min):
+        (sort.stringComparator):
+        (sort.compactSparse): Special case compaction for sparse arrays because
+        we don't want to hang when sorting new Array(BIG).
+
+        (sort.compact):
+        (sort.merge):
+        (sort.mergeSort): Use merge sort because it's a reasonably efficient
+        stable sort. We have evidence that some sites depend on stable sort,
+        even though the ES6 spec does not mandate it. (See
+        <http://trac.webkit.org/changeset/33967>.)
+
+        This is a textbook implementation of merge sort with three optimizations:
+
+            (1) Use iteration instead of recursion;
+
+            (2) Use array subscripting instead of array copying in order to
+            create logical sub-lists without creating physical sub-lists;
+
+            (3) Swap src and dst at each iteration instead of copying src into
+            dst, and only copy src into the subject array at the end if src is
+            not the subject array.
+
+        (sort.inflate):
+        (sort.comparatorSort):
+        (sort): Sort in JavaScript for the win.
+
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createExecutableInternal): Allow non-private
+        names so we can use helper functions.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::isNumericCompareFunction): Deleted.
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::setIsNumericCompareFunction): Deleted.
+        (JSC::UnlinkedCodeBlock::isNumericCompareFunction): Deleted.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::setIsNumericCompareFunction): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionNode::emitBytecode): We don't do this special casing based
+        on pattern matching anymore. This was mainly an optimization to avoid 
+        the overhead of calling from C++ to JS, which we now avoid by
+        sorting in JS.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        (JSC::Heap::pushTempSortVector): Deleted.
+        (JSC::Heap::popTempSortVector): Deleted.
+        (JSC::Heap::visitTempSortVectors): Deleted.
+        * heap/Heap.h: We don't have temp sort vectors anymore because we sort
+        in JavaScript using a normal JavaScript array for our temporary storage.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner): Allow capturing so we can use
+        helper functions.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::isNumericCompareFunction): Deleted.
+        (JSC::attemptFastSort): Deleted.
+        (JSC::performSlowSort): Deleted.
+        (JSC::arrayProtoFuncSort): Deleted.
+
+        * runtime/CommonIdentifiers.h: New strings used by sort.
+
+        * runtime/JSArray.cpp:
+        (JSC::compareNumbersForQSortWithInt32): Deleted.
+        (JSC::compareNumbersForQSortWithDouble): Deleted.
+        (JSC::compareNumbersForQSort): Deleted.
+        (JSC::compareByStringPairForQSort): Deleted.
+        (JSC::JSArray::sortNumericVector): Deleted.
+        (JSC::JSArray::sortNumeric): Deleted.
+        (JSC::ContiguousTypeAccessor::getAsValue): Deleted.
+        (JSC::ContiguousTypeAccessor::setWithValue): Deleted.
+        (JSC::ContiguousTypeAccessor::replaceDataReference): Deleted.
+        (JSC::ContiguousTypeAccessor<ArrayWithDouble>::getAsValue): Deleted.
+        (JSC::ContiguousTypeAccessor<ArrayWithDouble>::setWithValue): Deleted.
+        (JSC::ContiguousTypeAccessor<ArrayWithDouble>::replaceDataReference): Deleted.
+        (JSC::JSArray::sortCompactedVector): Deleted.
+        (JSC::JSArray::sort): Deleted.
+        (JSC::AVLTreeAbstractorForArrayCompare::get_less): Deleted.
+        (JSC::AVLTreeAbstractorForArrayCompare::set_less): Deleted.
+        (JSC::AVLTreeAbstractorForArrayCompare::get_greater): Deleted.
+        (JSC::AVLTreeAbstractorForArrayCompare::set_greater): Deleted.
+        (JSC::AVLTreeAbstractorForArrayCompare::get_balance_factor): Deleted.
+        (JSC::AVLTreeAbstractorForArrayCompare::set_balance_factor): Deleted.
+        (JSC::AVLTreeAbstractorForArrayCompare::compare_key_key): Deleted.
+        (JSC::AVLTreeAbstractorForArrayCompare::compare_key_node): Deleted.
+        (JSC::AVLTreeAbstractorForArrayCompare::compare_node_node): Deleted.
+        (JSC::AVLTreeAbstractorForArrayCompare::null): Deleted.
+        (JSC::JSArray::sortVector): Deleted.
+        (JSC::JSArray::compactForSorting): Deleted.
+        * runtime/JSArray.h:
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::finishCreation): Provide some builtins used
+        by sort.
+
 2015-04-29  Mark Lam  <mark.lam@apple.com>
 
         Safari WebKit crash when loading Google Spreadsheet.

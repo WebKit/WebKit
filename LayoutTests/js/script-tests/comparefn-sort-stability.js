@@ -2,30 +2,25 @@ description(
 "This tests that sort(compareFn) is a stable sort."
 );
 
-function clone(source, target) {
-    for (i = 0; i < source.length; i++) {
-        target[i] = source[i];
-    }
+var count = 100;
+
+var ones = [];
+for (var i = 0; i < count; ++i)
+	ones.push(new Number(1));
+
+var twos = [];
+for (var i = 0; i < count; ++i)
+	twos.push(new Number(2));
+
+var array = [];
+for (var i = 0; i < count; ++i) {
+	array.push(ones[i]);
+	array.push(twos[i]);
 }
 
-var arr = [];
-arr[0] = new Number(1);
-arr[1] = new Number(2);
-arr[2] = new Number(1);
-arr[3] = new Number(2);
+array.sort(function(a,b) { return a - b; });
+for (var i = 0; i < count; ++i)
+	shouldBe('array[i]', 'ones[i]');
 
-var sortArr = [];
-clone(arr, sortArr);
-sortArr.sort(function(a,b) { return a - b; });
-
-shouldBe('arr[0]', 'sortArr[0]');
-shouldBe('arr[1]', 'sortArr[2]');
-shouldBe('arr[2]', 'sortArr[1]');
-shouldBe('arr[3]', 'sortArr[3]');
-
-// Just try again...
-sortArr.sort(function(a,b) { return a - b; });
-shouldBe('arr[0]', 'sortArr[0]');
-shouldBe('arr[1]', 'sortArr[2]');
-shouldBe('arr[2]', 'sortArr[1]');
-shouldBe('arr[3]', 'sortArr[3]');
+for (var i = 0; i < count; ++i)
+	shouldBe('array[count + i]', 'twos[i]');
