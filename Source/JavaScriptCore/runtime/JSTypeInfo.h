@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,6 @@ static const unsigned MasqueradesAsUndefined = 1; // WebCore uses MasqueradesAsU
 static const unsigned ImplementsHasInstance = 1 << 1;
 static const unsigned OverridesHasInstance = 1 << 2;
 static const unsigned ImplementsDefaultHasInstance = 1 << 3;
-static const unsigned IsEnvironmentRecord = 1 << 4;
 static const unsigned OverridesGetOwnPropertySlot = 1 << 5;
 static const unsigned InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero = 1 << 6;
 static const unsigned StructureIsImmortal = 1 << 7;
@@ -49,6 +48,7 @@ static const unsigned OverridesGetPropertyNames = 1 << 8;
 static const unsigned ProhibitsPropertyCaching = 1 << 9;
 static const unsigned HasImpureGetOwnPropertySlot = 1 << 10;
 static const unsigned NewImpurePropertyFiresWatchpoints = 1 << 11;
+static const unsigned IsEnvironmentRecord = 1 << 12;
 
 class TypeInfo {
 public:
@@ -81,17 +81,17 @@ public:
     unsigned flags() const { return (static_cast<unsigned>(m_flags2) << 8) | static_cast<unsigned>(m_flags); }
     bool masqueradesAsUndefined() const { return isSetOnFlags1(MasqueradesAsUndefined); }
     bool implementsHasInstance() const { return isSetOnFlags1(ImplementsHasInstance); }
-    bool isEnvironmentRecord() const { return isSetOnFlags1(IsEnvironmentRecord); }
     bool overridesHasInstance() const { return isSetOnFlags1(OverridesHasInstance); }
     bool implementsDefaultHasInstance() const { return isSetOnFlags1(ImplementsDefaultHasInstance); }
     bool overridesGetOwnPropertySlot() const { return overridesGetOwnPropertySlot(inlineTypeFlags()); }
     static bool overridesGetOwnPropertySlot(InlineTypeFlags flags) { return flags & OverridesGetOwnPropertySlot; }
     bool interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero() const { return isSetOnFlags1(InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero); }
+    bool structureIsImmortal() const { return isSetOnFlags1(StructureIsImmortal); }
     bool overridesGetPropertyNames() const { return isSetOnFlags2(OverridesGetPropertyNames); }
     bool prohibitsPropertyCaching() const { return isSetOnFlags2(ProhibitsPropertyCaching); }
     bool hasImpureGetOwnPropertySlot() const { return isSetOnFlags2(HasImpureGetOwnPropertySlot); }
     bool newImpurePropertyFiresWatchpoints() const { return isSetOnFlags2(NewImpurePropertyFiresWatchpoints); }
-    bool structureIsImmortal() const { return isSetOnFlags1(StructureIsImmortal); }
+    bool isEnvironmentRecord() const { return isSetOnFlags2(IsEnvironmentRecord); }
 
     static ptrdiff_t flagsOffset()
     {
