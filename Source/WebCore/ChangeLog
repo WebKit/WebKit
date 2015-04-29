@@ -1,3 +1,10 @@
+2015-04-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Unreviewed build fix.
+
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::fontWithFamily):
+
 2015-04-29  Eric Carlson  <eric.carlson@apple.com>
 
         Some media tests assert after r183096

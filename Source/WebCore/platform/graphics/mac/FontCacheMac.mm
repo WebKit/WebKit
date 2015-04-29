@@ -230,7 +230,7 @@ static NSFont *fontWithFamily(const AtomicString& family, NSFontTraitMask desire
 
 #if ENABLE(PLATFORM_FONT_LOOKUP)
 
-    if (family.length() > 0 && family[0] == '.')
+    if (family.length() > 0 && family.string().at(0) == '.')
         return [NSFont fontWithName:desiredFamily size:size];
     const auto& whitelist = fontWhitelist();
     if (whitelist.size() && !whitelist.contains(family.lower()))
