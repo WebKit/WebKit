@@ -1,3 +1,18 @@
+2015-04-29  Hyungwook Lee  <hyungwook.lee@navercorp.com>
+
+        Fix crash in WebCore::LogicalSelectionOffsetCaches::ContainingBlockInfo::setBlock().
+        https://bugs.webkit.org/show_bug.cgi?id=140261
+
+        Reviewed by Darin Adler.
+
+        We need to check whether RenderObject is valid in RenderView::fooSubtreeSelection functions
+        because invalid object has caused a crash. This patch adds isValidObjectForNewSelection(), and use it.
+
+        * rendering/RenderView.cpp:
+        (WebCore::isValidObjectForNewSelection):
+        (WebCore::RenderView::clearSubtreeSelection):
+        (WebCore::RenderView::applySubtreeSelection):
+
 2015-04-29  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Synchronous XMLHttpRequest should get access to AppCache resources stored as flat files
