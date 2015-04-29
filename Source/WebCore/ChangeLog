@@ -1,3 +1,35 @@
+2015-04-28  Jer Noble  <jer.noble@apple.com>
+
+        Replace HTMLMediaElement's seek timer with a task queue.
+        https://bugs.webkit.org/show_bug.cgi?id=144353
+
+        Reviewed by Eric Carlson.
+
+        No change in functionality, so no new tests added.
+
+        Replace a zero-length timer with an explicit task queue, backed by Document's postTask(). To
+        make enqueued tasks cancellable, add a new GenericTaskQueue class modelled on
+        GenericEventQueue which can cancel enqueued but not-yet-executed tasks.
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/GenericTaskQueue.cpp: Added.
+        (WebCore::GenericTaskQueue::GenericTaskQueue): Initialize ivars.
+        (WebCore::GenericTaskQueue::enqueueTask): Wrap the task and pass it to the ScriptExecutionContext.
+        (WebCore::GenericTaskQueue::close): Assert that the task queue will not accept any additional tasks.
+        (WebCore::GenericTaskQueue::cancelAllTasks): Revoke outstanding weak pointers, thereby cancelling tasks.
+        * dom/GenericTaskQueue.h: Added.
+        (WebCore::GenericTaskQueue::hasPendingTasks):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize the task queue.
+        (WebCore::HTMLMediaElement::~HTMLMediaElement): Close the task queue.
+        (WebCore::HTMLMediaElement::seekWithTolerance): Post a task, rather than start a timer.
+        (WebCore::HTMLMediaElement::seekTask): Renamed from seekTimerFired().
+        (WebCore::HTMLMediaElement::seekTimerFired): Deleted.
+        * html/HTMLMediaElement.h:
+
 2015-04-28  David Kilzer  <ddkilzer@apple.com>
 
         Switch QuickLook soft-linking to use QuickLookSoftLink.{h,mm}

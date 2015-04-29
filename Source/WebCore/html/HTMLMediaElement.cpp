@@ -260,7 +260,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_progressEventTimer(*this, &HTMLMediaElement::progressEventTimerFired)
     , m_playbackProgressTimer(*this, &HTMLMediaElement::playbackProgressTimerFired)
     , m_scanTimer(*this, &HTMLMediaElement::scanTimerFired)
-    , m_seekTimer(*this, &HTMLMediaElement::seekTimerFired)
+    , m_seekTaskQueue(document)
     , m_playedTimeRanges()
     , m_asyncEventQueue(*this)
     , m_requestedPlaybackRate(1)
@@ -427,6 +427,8 @@ HTMLMediaElement::~HTMLMediaElement()
     if (m_isolatedWorld)
         m_isolatedWorld->clearWrappers();
 #endif
+
+    m_seekTaskQueue.close();
 
     m_completelyLoaded = true;
 }
@@ -2336,8 +2338,8 @@ void HTMLMediaElement::seekWithTolerance(const MediaTime& inTime, const MediaTim
     // 3 - If the element's seeking IDL attribute is true, then another instance of this algorithm is
     // already running. Abort that other instance of the algorithm without waiting for the step that
     // it is running to complete.
-    if (m_seekTimer.isActive()) {
-        m_seekTimer.stop();
+    if (m_seekTaskQueue.hasPendingTasks()) {
+        m_seekTaskQueue.cancelAllTasks();
         m_pendingSeek = nullptr;
     }
 
@@ -2354,12 +2356,12 @@ void HTMLMediaElement::seekWithTolerance(const MediaTime& inTime, const MediaTim
     // the script. The remainder of these steps must be run asynchronously.
     m_pendingSeek = std::make_unique<PendingSeek>(now, time, negativeTolerance, positiveTolerance);
     if (fromDOM)
-        m_seekTimer.startOneShot(0);
+        m_seekTaskQueue.enqueueTask(std::bind(&HTMLMediaElement::seekTask, this));
     else
-        seekTimerFired();
+        seekTask();
 }
 
-void HTMLMediaElement::seekTimerFired()
+void HTMLMediaElement::seekTask()
 {
     if (!m_player) {
         m_seeking = false;

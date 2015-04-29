@@ -30,6 +30,7 @@
 #include "HTMLElement.h"
 #include "ActiveDOMObject.h"
 #include "GenericEventQueue.h"
+#include "GenericTaskQueue.h"
 #include "HTMLMediaSession.h"
 #include "MediaCanStartListener.h"
 #include "MediaControllerInterface.h"
@@ -611,7 +612,7 @@ private:
     void progressEventTimerFired();
     void playbackProgressTimerFired();
     void scanTimerFired();
-    void seekTimerFired();
+    void seekTask();
     void startPlaybackProgressTimer();
     void startProgressEventTimer();
     void stopPeriodicTimers();
@@ -740,7 +741,7 @@ private:
     Timer m_progressEventTimer;
     Timer m_playbackProgressTimer;
     Timer m_scanTimer;
-    Timer m_seekTimer;
+    GenericTaskQueue m_seekTaskQueue;
     RefPtr<TimeRanges> m_playedTimeRanges;
     GenericEventQueue m_asyncEventQueue;
 

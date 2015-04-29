@@ -13399,6 +13399,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\dom\GenericEventQueue.cpp" />
+    <ClCompile Include="..\dom\GenericTaskQueue.cpp" />
     <ClCompile Include="..\dom\IdTargetObserver.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -20978,6 +20979,7 @@
     <ClInclude Include="..\dom\ExceptionCode.h" />
     <ClInclude Include="..\dom\ExceptionCodePlaceholder.h" />
     <ClInclude Include="..\dom\GenericEventQueue.h" />
+    <ClInclude Include="..\dom\GenericTaskQueue.h" />
     <ClInclude Include="..\dom\HashChangeEvent.h" />
     <ClInclude Include="..\dom\IconURL.h" />
     <ClInclude Include="..\dom\IdTargetObserver.h" />

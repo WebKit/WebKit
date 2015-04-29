@@ -3180,6 +3180,9 @@
     <ClCompile Include="..\dom\GenericEventQueue.cpp">
       <Filter>dom</Filter>
     </ClCompile>
+    <ClCompile Include="..\dom\GenericTaskQueue.cpp">
+      <Filter>dom</Filter>
+    </ClCompile>
     <ClCompile Include="..\dom\IdTargetObserver.cpp">
       <Filter>dom</Filter>
     </ClCompile>
@@ -10285,6 +10288,9 @@
       <Filter>dom</Filter>
     </ClInclude>
     <ClInclude Include="..\dom\GenericEventQueue.h">
+      <Filter>dom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dom\GenericTaskQueue.h">
       <Filter>dom</Filter>
     </ClInclude>
     <ClInclude Include="..\dom\HashChangeEvent.h">
