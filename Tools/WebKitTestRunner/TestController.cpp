@@ -764,7 +764,7 @@ static bool shouldUseFixedLayout(const TestInvocation& test)
         return true;
 #endif
 
-#if USE(TILED_BACKING_STORE) && PLATFORM(EFL)
+#if USE(COORDINATED_GRAPHICS) && PLATFORM(EFL)
     if (test.urlContains("sticky/") || test.urlContains("sticky\\"))
         return true;
 #endif

@@ -20,7 +20,7 @@
 #ifndef TiledBackingStoreBackend_h
 #define TiledBackingStoreBackend_h
 
-#if USE(TILED_BACKING_STORE)
+#if USE(COORDINATED_GRAPHICS)
 
 #include "Tile.h"
 

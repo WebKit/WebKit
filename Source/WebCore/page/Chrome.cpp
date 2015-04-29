@@ -97,7 +97,7 @@ void Chrome::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, con
     InspectorInstrumentation::didScroll(m_page);
 }
 
-#if USE(TILED_BACKING_STORE)
+#if USE(COORDINATED_GRAPHICS)
 void Chrome::delegatedScrollRequested(const IntPoint& scrollPoint)
 {
     m_client.delegatedScrollRequested(scrollPoint);

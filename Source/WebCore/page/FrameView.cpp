@@ -92,7 +92,7 @@
 #include <wtf/Ref.h>
 #include <wtf/TemporaryChange.h>
 
-#if USE(TILED_BACKING_STORE)
+#if USE(COORDINATED_GRAPHICS)
 #include "TiledBackingStore.h"
 #endif
 
@@ -2054,7 +2054,7 @@ void FrameView::delegatesScrollingDidChange()
         clearBackingStores();
 }
 
-#if USE(TILED_BACKING_STORE)
+#if USE(COORDINATED_GRAPHICS)
 void FrameView::setFixedVisibleContentRect(const IntRect& visibleContentRect)
 {
     bool visibleContentSizeDidChange = false;
@@ -2237,7 +2237,7 @@ bool FrameView::requestScrollPositionUpdate(const IntPoint& position)
         tiledBacking->prepopulateRect(FloatRect(position, visibleContentRect().size()));
 #endif
 
-#if ENABLE(ASYNC_SCROLLING) || USE(TILED_BACKING_STORE)
+#if ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
     if (Page* page = frame().page()) {
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
             return scrollingCoordinator->requestScrollPositionUpdate(*this, position);

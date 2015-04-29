@@ -6766,8 +6766,8 @@
     <ClCompile Include="..\platform\graphics\GraphicsLayerTransform.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\TiledBackingStore.cpp">
-      <Filter>platform\graphics</Filter>
+    <ClCompile Include="..\platform\graphics\texmap\coordinated\TiledBackingStore.cpp">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
     </ClCompile>
     <ClCompile Include="..\page\scrolling\ScrollingStateFixedNode.cpp">
       <Filter>page\scrolling</Filter>
@@ -14180,14 +14180,14 @@
     <ClInclude Include="..\platform\graphics\TiledBacking.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\graphics\TiledBackingStore.h">
-      <Filter>platform\graphics</Filter>
+    <ClInclude Include="..\platform\graphics\texmap\coordinated\TiledBackingStore.h">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\graphics\TiledBackingStoreBackend.h">
-      <Filter>platform\graphics</Filter>
+    <ClInclude Include="..\platform\graphics\texmap\coordinated\TiledBackingStoreBackend.h">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\graphics\TiledBackingStoreClient.h">
-      <Filter>platform\graphics</Filter>
+    <ClInclude Include="..\platform\graphics\texmap\coordinated\TiledBackingStoreClient.h">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
     </ClInclude>
     <ClInclude Include="..\page\scrolling\ScrollingStateFixedNode.h">
       <Filter>page\scrolling</Filter>

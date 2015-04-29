@@ -65,7 +65,7 @@ void CoordinatedLayerTreeHostProxy::commitCoordinatedGraphicsState(const Coordin
     });
 
     updateViewport();
-#if USE(TILED_BACKING_STORE)
+#if USE(COORDINATED_GRAPHICS)
     m_drawingAreaProxy->page().didRenderFrame(graphicsState.contentsSize, graphicsState.coveredRect);
 #endif
 }

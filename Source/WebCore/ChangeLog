@@ -1,3 +1,46 @@
+2015-04-28  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [CoordinatedGraphics] Merge TILED_BACKING_STORE guard with COORDINATED_GRAPHICS
+        https://bugs.webkit.org/show_bug.cgi?id=143001
+
+        Reviewed by Gyuyoung Kim.
+
+        TiledBackingStore has only been used by Coordinated Graphics since Qt and WebKit1/Efl were dropped.
+        So, this patch replaces USE(TILED_BACKING_STORE) with USE(COORDINATED_GRAPHICS) to merge the features.
+
+        In addition, this moves TiledBackingStore and related files from platform to platform/texmap/coordinated
+        where other coordinated graphics files are located.
+
+        * CMakeLists.txt: Move TiledBackingStore.cpp because this is not common file.
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * WebCore.vcxproj/WebCore.vcxproj: Follow new location of TiledBackingStore* files.
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * loader/EmptyClients.h:
+        * page/Chrome.cpp:
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::createView):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::requestScrollPositionUpdate):
+        * page/FrameView.h:
+        * page/Page.cpp:
+        (WebCore::Page::setPageScaleFactor):
+        * platform/HostWindow.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::unscaledVisibleContentSizeIncludingObscuredArea):
+        (WebCore::ScrollView::unscaledUnobscuredVisibleContentSize):
+        (WebCore::ScrollView::visibleContentRectInternal):
+        (WebCore::ScrollView::scrollTo):
+        * platform/ScrollView.h:
+        * platform/graphics/cairo/TileCairo.h: Removed because it is dead code since r169328
+        * platform/graphics/texmap/coordinated/Tile.h: Renamed from Source/WebCore/platform/graphics/Tile.h.
+        * platform/graphics/texmap/coordinated/TiledBackingStore.cpp: Renamed from Source/WebCore/platform/graphics/TiledBackingStore.cpp.
+        * platform/graphics/texmap/coordinated/TiledBackingStore.h: Renamed from Source/WebCore/platform/graphics/TiledBackingStore.h.
+        * platform/graphics/texmap/coordinated/TiledBackingStoreBackend.h: Renamed from Source/WebCore/platform/graphics/TiledBackingStoreBackend.h.
+        * platform/graphics/texmap/coordinated/TiledBackingStoreClient.h: Renamed from Source/WebCore/platform/graphics/TiledBackingStoreClient.h.
+
 2015-04-28  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(180076): [Mac, iOS] Correct possible null dereference in printing code

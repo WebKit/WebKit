@@ -17,39 +17,30 @@
  Boston, MA 02110-1301, USA.
  */
 
-#ifndef Tile_h
-#define Tile_h
-
-#if USE(TILED_BACKING_STORE)
-
-#include "IntPoint.h"
-#include "IntPointHash.h"
-#include "IntRect.h"
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
+#ifndef TiledBackingStoreClient_h
+#define TiledBackingStoreClient_h
 
 namespace WebCore {
 
+#if USE(COORDINATED_GRAPHICS)
+
+class Color;
 class GraphicsContext;
 
-class Tile : public RefCounted<Tile> {
+class TiledBackingStoreClient {
 public:
-    typedef IntPoint Coordinate;
-
-    virtual ~Tile() { }
-
-    virtual bool isDirty() const = 0;
-    virtual void invalidate(const IntRect&) = 0;
-    virtual Vector<IntRect> updateBackBuffer() = 0;
-    virtual void swapBackBufferToFront() = 0;
-    virtual bool isReadyToPaint() const = 0;
-    virtual void paint(GraphicsContext*, const IntRect&) = 0;
-
-    virtual const Tile::Coordinate& coordinate() const = 0;
-    virtual const IntRect& rect() const = 0;
-    virtual void resize(const WebCore::IntSize&) = 0;
+    virtual ~TiledBackingStoreClient() { }
+    virtual void tiledBackingStorePaintBegin() = 0;
+    virtual void tiledBackingStorePaint(GraphicsContext*, const IntRect&) = 0;
+    virtual void tiledBackingStorePaintEnd(const Vector<IntRect>& paintedArea) = 0;
+    virtual void tiledBackingStoreHasPendingTileCreation() { }
+    virtual IntRect tiledBackingStoreContentsRect() = 0;
+    virtual IntRect tiledBackingStoreVisibleRect() = 0;
+    virtual Color tiledBackingStoreBackgroundColor() const = 0;
 };
 
-}
 #endif
+
+}
+
 #endif

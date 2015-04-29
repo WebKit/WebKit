@@ -112,7 +112,7 @@ private:
     virtual void invalidateContentsAndRootView(const WebCore::IntRect&) override;
     virtual void invalidateContentsForSlowScroll(const WebCore::IntRect&) override;
     virtual void scroll(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& scrollRect, const WebCore::IntRect& clipRect) override;
-#if USE(TILED_BACKING_STORE)
+#if USE(COORDINATED_GRAPHICS)
     virtual void delegatedScrollRequested(const WebCore::IntPoint& scrollOffset) override;
 #endif
     virtual WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) const override;

@@ -20,7 +20,7 @@
 #include "config.h"
 #include "TiledBackingStore.h"
 
-#if USE(TILED_BACKING_STORE)
+#if USE(COORDINATED_GRAPHICS)
 
 #include "GraphicsContext.h"
 #include "TiledBackingStoreClient.h"
@@ -344,8 +344,7 @@ void TiledBackingStore::computeCoverAndKeepRect(const IntRect& visibleRect, IntR
 
             // Unite the visible rect with a "ghost" of the visible rect moved in the direction of the trajectory vector.
             coverRect = visibleRect;
-            coverRect.move(coverRect.width() * m_trajectoryVector.x() * trajectoryVectorMultiplier,
-                           coverRect.height() * m_trajectoryVector.y() * trajectoryVectorMultiplier);
+            coverRect.move(coverRect.width() * m_trajectoryVector.x() * trajectoryVectorMultiplier, coverRect.height() * m_trajectoryVector.y() * trajectoryVectorMultiplier);
 
             coverRect.unite(visibleRect);
         }
@@ -444,9 +443,9 @@ IntRect TiledBackingStore::mapFromContents(const IntRect& rect) const
 IntRect TiledBackingStore::tileRectForCoordinate(const Tile::Coordinate& coordinate) const
 {
     IntRect rect(coordinate.x() * m_tileSize.width(),
-                 coordinate.y() * m_tileSize.height(),
-                 m_tileSize.width(),
-                 m_tileSize.height());
+        coordinate.y() * m_tileSize.height(),
+        m_tileSize.width(),
+        m_tileSize.height());
 
     rect.intersect(m_rect);
     return rect;

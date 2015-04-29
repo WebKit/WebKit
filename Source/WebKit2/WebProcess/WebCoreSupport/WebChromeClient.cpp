@@ -475,7 +475,7 @@ void WebChromeClient::scroll(const IntSize& scrollDelta, const IntRect& scrollRe
     m_page->drawingArea()->scroll(intersection(scrollRect, clipRect), scrollDelta);
 }
 
-#if USE(TILED_BACKING_STORE)
+#if USE(COORDINATED_GRAPHICS)
 void WebChromeClient::delegatedScrollRequested(const IntPoint& scrollOffset)
 {
     m_page->pageDidRequestScroll(scrollOffset);
@@ -962,7 +962,7 @@ void WebChromeClient::dispatchViewportPropertiesDidChange(const ViewportArgument
 #if PLATFORM(IOS)
     m_page->viewportPropertiesDidChange(viewportArguments);
 #endif
-#if USE(TILED_BACKING_STORE)
+#if USE(COORDINATED_GRAPHICS)
     if (!m_page->useFixedLayout())
         return;
 

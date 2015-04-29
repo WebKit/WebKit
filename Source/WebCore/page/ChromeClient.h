@@ -162,7 +162,7 @@ public:
     virtual void invalidateContentsAndRootView(const IntRect&) = 0;
     virtual void invalidateContentsForSlowScroll(const IntRect&) = 0;
     virtual void scroll(const IntSize&, const IntRect&, const IntRect&) = 0;
-#if USE(TILED_BACKING_STORE)
+#if USE(COORDINATED_GRAPHICS)
     virtual void delegatedScrollRequested(const IntPoint&) = 0;
 #endif
     virtual IntPoint screenToRootView(const IntPoint&) const = 0;
@@ -344,7 +344,7 @@ public:
     virtual void setRootFullScreenLayer(GraphicsLayer*) { }
 #endif
 
-#if USE(TILED_BACKING_STORE)
+#if USE(COORDINATED_GRAPHICS)
     virtual IntRect visibleRectForTiledBackingStore() const { return IntRect(); }
 #endif
 

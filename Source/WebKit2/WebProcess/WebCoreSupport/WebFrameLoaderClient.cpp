@@ -585,7 +585,7 @@ void WebFrameLoaderClient::dispatchDidLayout(LayoutMilestones milestones)
         }
 #endif
 
-#if USE(TILED_BACKING_STORE)
+#if USE(COORDINATED_GRAPHICS)
         // Make sure viewport properties are dispatched on the main frame by the time the first layout happens.
         ASSERT(!webPage->useFixedLayout() || m_frame != m_frame->page()->mainWebFrame() || m_frame->coreFrame()->document()->didDispatchViewportPropertiesChanged());
 #endif
@@ -1261,7 +1261,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     bool shouldHideScrollbars = shouldDisableScrolling;
     IntRect fixedVisibleContentRect;
 
-#if USE(TILED_BACKING_STORE)
+#if USE(COORDINATED_GRAPHICS)
     if (m_frame->coreFrame()->view())
         fixedVisibleContentRect = m_frame->coreFrame()->view()->fixedVisibleContentRect();
     if (shouldUseFixedLayout)
@@ -1297,7 +1297,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     if (webPage->scrollPinningBehavior() != DoNotPin)
         m_frame->coreFrame()->view()->setScrollPinningBehavior(webPage->scrollPinningBehavior());
 
-#if USE(TILED_BACKING_STORE)
+#if USE(COORDINATED_GRAPHICS)
     if (shouldUseFixedLayout) {
         m_frame->coreFrame()->view()->setDelegatesScrolling(shouldUseFixedLayout);
         m_frame->coreFrame()->view()->setPaintsEntireContents(shouldUseFixedLayout);

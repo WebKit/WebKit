@@ -192,6 +192,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/texmap/coordinated/CoordinatedImageBacking.cpp
     platform/graphics/texmap/coordinated/CoordinatedSurface.cpp
     platform/graphics/texmap/coordinated/CoordinatedTile.cpp
+    platform/graphics/texmap/coordinated/TiledBackingStore.cpp
     platform/graphics/texmap/coordinated/UpdateAtlas.cpp
 
     platform/image-decoders/ImageDecoder.cpp

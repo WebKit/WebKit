@@ -7838,7 +7838,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\TiledBackingStore.cpp" />
+    <ClCompile Include="..\platform\graphics\texmap\coordinated\TiledBackingStore.cpp" />
     <ClCompile Include="..\platform\graphics\win\GraphicsContext3DWin.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
@@ -19877,9 +19877,9 @@
     <ClInclude Include="..\platform\graphics\texmap\TextureMapperTile.h" />
     <ClInclude Include="..\platform\graphics\texmap\TextureMapperTiledBackingStore.h" />
     <ClInclude Include="..\platform\graphics\TiledBacking.h" />
-    <ClInclude Include="..\platform\graphics\TiledBackingStore.h" />
-    <ClInclude Include="..\platform\graphics\TiledBackingStoreBackend.h" />
-    <ClInclude Include="..\platform\graphics\TiledBackingStoreClient.h" />
+    <ClInclude Include="..\platform\graphics\texmap\coordinated\TiledBackingStore.h" />
+    <ClInclude Include="..\platform\graphics\texmap\coordinated\TiledBackingStoreBackend.h" />
+    <ClInclude Include="..\platform\graphics\texmap\coordinated\TiledBackingStoreClient.h" />
     <ClInclude Include="..\platform\graphics\TrackBasePrivate.h" />
     <ClInclude Include="..\platform\graphics\VideoTrackPrivate.h" />
     <ClInclude Include="..\platform\graphics\win\MediaPlayerPrivateMediaFoundation.h" />

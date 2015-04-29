@@ -134,10 +134,6 @@ public:
     // to do an eager layout before the drawing.
     virtual void scheduleCompositingLayerFlush();
 
-#if USE(TILED_BACKING_STORE)
-    virtual void delegatedScrollRequested(const WebCore::IntPoint&) { }
-#endif
-
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
     virtual WebCore::GraphicsDeviceAdapter* graphicsDeviceAdapter() const override;
 #endif

@@ -20,7 +20,7 @@
 #ifndef TiledBackingStore_h
 #define TiledBackingStore_h
 
-#if USE(TILED_BACKING_STORE)
+#if USE(COORDINATED_GRAPHICS)
 
 #include "FloatPoint.h"
 #include "IntPoint.h"
@@ -81,8 +81,8 @@ private:
     void setKeepRect(const IntRect&);
 
     PassRefPtr<Tile> tileAt(const Tile::Coordinate&) const;
-    void setTile(const Tile::Coordinate& coordinate, PassRefPtr<Tile> tile);
-    void removeTile(const Tile::Coordinate& coordinate);
+    void setTile(const Tile::Coordinate&, PassRefPtr<Tile>);
+    void removeTile(const Tile::Coordinate&);
 
     IntRect visibleRect() const;
 
