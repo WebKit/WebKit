@@ -33,7 +33,7 @@ use File::Path qw(make_path);
 use File::Spec;
 
 # Not all build environments have the webkitdirs module installed.
-my $NUMCPUS = 2;
+my $NUMCPUS = 8;
 eval "use webkitdirs";
 unless ($@) {
     $NUMCPUS = numberOfCPUs();
