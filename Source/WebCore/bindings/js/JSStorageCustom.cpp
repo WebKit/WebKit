@@ -37,6 +37,9 @@ namespace WebCore {
 
 bool JSStorage::canGetItemsForName(ExecState* exec, Storage* impl, PropertyName propertyName)
 {
+    if (propertyName.isSymbol())
+        return false;
+
     ExceptionCode ec = 0;
     bool result = impl->contains(propertyNameToString(propertyName), ec);
     setDOMException(exec, ec);
@@ -50,6 +53,9 @@ EncodedJSValue JSStorage::nameGetter(ExecState* exec, JSObject* slotBase, Encode
     PropertySlot slot(thisObject);
     if (prototype.isObject() && asObject(prototype)->getPropertySlot(exec, propertyName, slot))
         return JSValue::encode(slot.getValue(exec, propertyName));
+
+    if (propertyName.isSymbol())
+        return false;
 
     ExceptionCode ec = 0;
     JSValue result = jsStringOrNull(exec, thisObject->impl().getItem(propertyNameToString(propertyName), ec));
@@ -65,11 +71,14 @@ bool JSStorage::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prope
     // the native property slots manually.
     PropertySlot slot(thisObject);
     if (getStaticValueSlot<JSStorage, Base>(exec, *s_info.staticPropHashTable, thisObject, propertyName, slot))
-        return false;
-        
+        return Base::deleteProperty(thisObject, exec, propertyName);
+
     JSValue prototype = thisObject->prototype();
     if (prototype.isObject() && asObject(prototype)->getPropertySlot(exec, propertyName, slot))
-        return false;
+        return Base::deleteProperty(thisObject, exec, propertyName);
+
+    if (propertyName.isSymbol())
+        return Base::deleteProperty(thisObject, exec, propertyName);
 
     ExceptionCode ec = 0;
     thisObject->m_impl->removeItem(propertyNameToString(propertyName), ec);
@@ -113,10 +122,13 @@ bool JSStorage::putDelegate(ExecState* exec, PropertyName propertyName, JSValue 
     if (prototype.isObject() && asObject(prototype)->getPropertySlot(exec, propertyName, slot))
         return false;
 
+    if (propertyName.isSymbol())
+        return false;
+
     String stringValue = value.toString(exec)->value(exec);
     if (exec->hadException())
         return true;
-    
+
     ExceptionCode ec = 0;
     impl().setItem(propertyNameToString(propertyName), stringValue, ec);
     setDOMException(exec, ec);

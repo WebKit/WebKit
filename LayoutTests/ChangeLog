@@ -1,3 +1,21 @@
+2015-04-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        NodeList has issues with Symbol and empty string
+        https://bugs.webkit.org/show_bug.cgi?id=144310
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/StyleSheet/stylesheet-symbol-names-expected.txt: Added.
+        * fast/dom/StyleSheet/stylesheet-symbol-names.html: Added.
+        * fast/dom/dataset-name-getter-symbols-expected.txt: Added.
+        * fast/dom/dataset-name-getter-symbols.html: Added.
+        * fast/dom/named-items-with-empty-name-expected.txt: Added.
+        * fast/dom/named-items-with-empty-name.html: Added.
+        * fast/dom/named-items-with-symbol-name-expected.txt: Added.
+        * fast/dom/named-items-with-symbol-name.html: Added.
+        * storage/domstorage/localstorage/named-items-expected.txt: Added.
+        * storage/domstorage/localstorage/named-items.html: Added.
+
 2015-04-29  Simon Fraser  <simon.fraser@apple.com>
 
         Allow testing of plug-ins that handle wheel events.

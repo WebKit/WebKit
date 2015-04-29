@@ -37,6 +37,8 @@ namespace WebCore {
 
 bool JSStyleSheetList::canGetItemsForName(ExecState*, StyleSheetList* styleSheetList, PropertyName propertyName)
 {
+    if (propertyName.isSymbol())
+        return false;
     return styleSheetList->getNamedItem(propertyNameToString(propertyName));
 }
 

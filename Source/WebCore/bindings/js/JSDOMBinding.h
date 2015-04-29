@@ -567,12 +567,13 @@ JSC::EncodedJSValue objectToStringFunctionGetter(JSC::ExecState*, JSC::JSObject*
 
 inline String propertyNameToString(JSC::PropertyName propertyName)
 {
-    return propertyName.publicName();
+    ASSERT(!propertyName.isSymbol());
+    return propertyName.uid() ? propertyName.uid() : propertyName.publicName();
 }
 
 inline AtomicString propertyNameToAtomicString(JSC::PropertyName propertyName)
 {
-    return AtomicString(propertyName.publicName());
+    return AtomicString(propertyName.uid() ? propertyName.uid() : propertyName.publicName());
 }
 
 template<typename DOMClass> inline const JSC::HashTableValue* getStaticValueSlotEntryWithoutCaching(JSC::ExecState* exec, JSC::PropertyName propertyName)

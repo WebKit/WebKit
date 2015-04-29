@@ -37,6 +37,8 @@ namespace WebCore {
 
 bool JSDOMStringMap::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
+    if (propertyName.isSymbol())
+        return false;
     bool nameIsValid;
     const AtomicString& item = impl().item(propertyNameToString(propertyName), nameIsValid);
     if (nameIsValid) {
@@ -58,9 +60,11 @@ void JSDOMStringMap::getOwnPropertyNames(JSObject* object, ExecState* exec, Prop
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
-bool JSDOMStringMap::deleteProperty(JSCell* cell, ExecState*, PropertyName propertyName)
+bool JSDOMStringMap::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
     JSDOMStringMap* thisObject = jsCast<JSDOMStringMap*>(cell);
+    if (propertyName.isSymbol())
+        return Base::deleteProperty(thisObject, exec, propertyName);
     return thisObject->m_impl->deleteItem(propertyNameToString(propertyName));
 }
 
@@ -71,9 +75,13 @@ bool JSDOMStringMap::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsign
 
 bool JSDOMStringMap::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot&)
 {
+    if (propertyName.isSymbol())
+        return false;
+
     String stringValue = value.toString(exec)->value(exec);
     if (exec->hadException())
         return false;
+
     ExceptionCode ec = 0;
     impl().setItem(propertyNameToString(propertyName), stringValue, ec);
     setDOMException(exec, ec);

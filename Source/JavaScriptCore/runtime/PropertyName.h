@@ -52,6 +52,11 @@ public:
         ASSERT(m_impl->isSymbol());
     }
 
+    bool isSymbol()
+    {
+        return m_impl && m_impl->isSymbol();
+    }
+
     AtomicStringImpl* uid() const
     {
         return m_impl;

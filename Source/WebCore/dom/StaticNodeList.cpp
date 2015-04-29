@@ -45,6 +45,8 @@ Node* StaticNodeList::item(unsigned index) const
 
 Node* StaticNodeList::namedItem(const AtomicString& elementId) const
 {
+    if (elementId.isEmpty())
+        return nullptr;
     for (unsigned i = 0, length = m_nodes.size(); i < length; ++i) {
         Node& node = const_cast<Node&>(m_nodes[i].get());
         if (is<Element>(node) && downcast<Element>(node).getIdAttribute() == elementId)
@@ -67,6 +69,8 @@ Node* StaticElementList::item(unsigned index) const
 
 Node* StaticElementList::namedItem(const AtomicString& elementId) const
 {
+    if (elementId.isEmpty())
+        return nullptr;
     for (unsigned i = 0, length = m_elements.size(); i < length; ++i) {
         Element& element = const_cast<Element&>(m_elements[i].get());
         if (element.getIdAttribute() == elementId)

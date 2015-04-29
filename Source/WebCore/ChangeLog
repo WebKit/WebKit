@@ -1,3 +1,49 @@
+2015-04-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        NodeList has issues with Symbol and empty string
+        https://bugs.webkit.org/show_bug.cgi?id=144310
+
+        Reviewed by Darin Adler.
+
+        Tests: fast/dom/StyleSheet/stylesheet-symbol-names.html
+               fast/dom/dataset-name-getter-symbols.html
+               fast/dom/named-items-with-empty-name.html
+               fast/dom/named-items-with-symbol-name.html
+               storage/domstorage/localstorage/named-items.html
+
+        Test different bindings objects with custom named setter
+        and getter handlers. Ensure that they handle Symbol properties
+        gracefully. Often times avoiding the string path.
+
+        * dom/StaticNodeList.cpp:
+        (WebCore::StaticNodeList::namedItem):
+        (WebCore::StaticElementList::namedItem):
+        Better handle the empty string. It should not match an item.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::propertyNameToString):
+        In cases where we would use this, we should have handled
+        Symbol properties.
+
+        (WebCore::propertyNameToAtomicString):
+        For Symbols, use the unique string. This should result
+        in no matches for a Symbol property.
+
+        * bindings/js/JSDOMStringMapCustom.cpp:
+        (WebCore::JSDOMStringMap::getOwnPropertySlotDelegate):
+        (WebCore::JSDOMStringMap::deleteProperty):
+        (WebCore::JSDOMStringMap::putDelegate):
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::canGetItemsForName):
+        (WebCore::JSStorage::nameGetter):
+        (WebCore::JSStorage::deleteProperty):
+        (WebCore::JSStorage::putDelegate):
+        * bindings/js/JSStyleSheetListCustom.cpp:
+        (WebCore::JSStyleSheetList::canGetItemsForName):
+        Treat Symbol properties as private properties. They just
+        go directly through to the Object, and avoid the string
+        getter/setter property path.
+
 2015-04-29  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Register with device picker whenever a page has <video>

@@ -1,3 +1,14 @@
+2015-04-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        NodeList has issues with Symbol and empty string
+        https://bugs.webkit.org/show_bug.cgi?id=144310
+
+        Reviewed by Darin Adler.
+
+        * runtime/PropertyName.h:
+        (JSC::PropertyName::isSymbol):
+        Helper to check if the PropertyName is a string or symbol property.
+
 2015-04-29  Alex Christensen  <achristensen@webkit.org>
 
         Fix non-cygwin incremental builds on Windows.
