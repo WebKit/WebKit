@@ -46,7 +46,7 @@ from ..filter import FilterConfiguration
 
 # This class works as an error collector and replaces cpp_style.Error
 # function for the unit tests.  We also verify each category we see
-# is in STYLE_CATEGORIES, to help keep that list up to date.
+# is in CppChecker.categories, to help keep that list up to date.
 class ErrorCollector:
     _all_style_categories = CppChecker.categories
     # This is a list including all categories seen in any unit test.
@@ -65,7 +65,7 @@ class ErrorCollector:
     def __call__(self, line_number, category, confidence, message):
         self._assert_fn(category in self._all_style_categories,
                         'Message "%s" has category "%s",'
-                        ' which is not in STYLE_CATEGORIES' % (message, category))
+                        ' which is not in CppChecker.categories' % (message, category))
 
         if self._lines_to_check and not line_number in self._lines_to_check:
             return False
@@ -1729,6 +1729,14 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('    { }', '')
         self.assert_lint('    {}', 'Missing space inside { }.  [whitespace/braces] [5]')
         self.assert_lint('    {   }', 'Too many spaces inside { }.  [whitespace/braces] [5]')
+
+    def test_spacing_before_brackets(self):
+        self.assert_lint('delete [] base;', '')
+        # See SOFT_LINK_CLASS_FOR_HEADER() macro in SoftLinking.h.
+        self.assert_lint('        return [get_##framework##_##className##Class() alloc]; \\', '')
+        self.assert_lint('        m_taskFunction = [callee, method, arguments...] {', '')
+        self.assert_lint('int main(int argc, char* agrv [])', 'Extra space before [.  [whitespace/brackets] [5]')
+        self.assert_lint('    str [strLength] = \'\\0\';', 'Extra space before [.  [whitespace/brackets] [5]')
 
     def test_spacing_around_else(self):
         self.assert_lint('}else {', 'Missing space before else'

@@ -2005,9 +2005,9 @@ def check_spacing(file_extension, clean_lines, line_number, error):
     # 'delete []' or 'new char * []'. Objective-C can't follow this rule
     # because of method calls.
     if file_extension != 'mm' and file_extension != 'm':
-        if search(r'\w\s+\[', line) and not search(r'delete\s+\[', line):
-            error(line_number, 'whitespace/braces', 5,
-                  'Extra space before [')
+        if search(r'\w\s+\[', line) and not search(r'(delete|return)\s+\[', line):
+            error(line_number, 'whitespace/brackets', 5,
+                  'Extra space before [.')
 
     # There should always be a single space in between braces on the same line.
     if search(r'\{\}', line):
@@ -3895,6 +3895,7 @@ class CppChecker(object):
         'runtime/wtf_move',
         'whitespace/blank_line',
         'whitespace/braces',
+        'whitespace/brackets',
         'whitespace/colon',
         'whitespace/comma',
         'whitespace/comments',
