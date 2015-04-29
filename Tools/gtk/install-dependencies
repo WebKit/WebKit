@@ -78,6 +78,7 @@ function installDependenciesWithApt {
         libicu-dev \
         libjpeg-dev \
         libmpg123-dev \
+        libnotify-dev \
         libopus-dev \
         liborc-0.4-dev \
         libpango1.0-dev \
