@@ -311,6 +311,22 @@ Object.defineProperty(Node.prototype, "rangeOfWord",
     }
 });
 
+Object.defineProperty(Element.prototype, "realOffsetWidth",
+{
+    get: function()
+    {
+        return this.getBoundingClientRect().width;
+    }
+});
+
+Object.defineProperty(Element.prototype, "realOffsetHeight",
+{
+    get: function()
+    {
+        return this.getBoundingClientRect().height;
+    }
+});
+
 Object.defineProperty(Element.prototype, "totalOffsetLeft",
 {
     get: function()

@@ -171,14 +171,14 @@ WebInspector.Toolbar.prototype = {
 
         function isOverflowingToolbar()
         {
-            var controlSectionWidth = this._controlSectionElement.getBoundingClientRect().width;
-            var leftSectionWidth = this._leftSectionElement.getBoundingClientRect().width;
-            var centerLeftSectionWidth = this._centerLeftSectionElement.getBoundingClientRect().width;
-            var centerSectionWidth = this._centerSectionElement.getBoundingClientRect().width;
-            var centerRightSectionWidth = this._centerRightSectionElement.getBoundingClientRect().width;
-            var rightSectionWidth = this._rightSectionElement.getBoundingClientRect().width;
+            var controlSectionWidth = this._controlSectionElement.realOffsetWidth;
+            var leftSectionWidth = this._leftSectionElement.realOffsetWidth;
+            var centerLeftSectionWidth = this._centerLeftSectionElement.realOffsetWidth;
+            var centerSectionWidth = this._centerSectionElement.realOffsetWidth;
+            var centerRightSectionWidth = this._centerRightSectionElement.realOffsetWidth;
+            var rightSectionWidth = this._rightSectionElement.realOffsetWidth;
 
-            var toolbarWidth = Math.round(this.element.getBoundingClientRect().width);
+            var toolbarWidth = Math.round(this.element.realOffsetWidth);
             return Math.round(controlSectionWidth + leftSectionWidth + centerLeftSectionWidth + centerSectionWidth + centerRightSectionWidth + rightSectionWidth) > toolbarWidth;
         }
 

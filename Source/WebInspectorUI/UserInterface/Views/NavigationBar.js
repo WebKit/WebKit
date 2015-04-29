@@ -179,10 +179,10 @@ WebInspector.NavigationBar.prototype = {
             if (this._navigationItems[i] instanceof WebInspector.FlexibleSpaceNavigationItem)
                 continue;
 
-            totalItemWidth += this._navigationItems[i].element.offsetWidth;
+            totalItemWidth += this._navigationItems[i].element.realOffsetWidth;
         }
 
-        var barWidth = this._element.offsetWidth;
+        var barWidth = this._element.realOffsetWidth;
 
         // Add the collapsed class back if the items are wider than the bar.
         if (totalItemWidth > barWidth)
@@ -439,7 +439,7 @@ WebInspector.NavigationBar.prototype = {
             // Skip flexible space items since they can take up no space at the minimum width.
             if (this._navigationItems[i] instanceof WebInspector.FlexibleSpaceNavigationItem)
                 continue;
-            totalItemWidth += this._navigationItems[i].element.offsetWidth;
+            totalItemWidth += this._navigationItems[i].element.realOffsetWidth;
         }
 
         // Remove the collapsed style class if we were not collapsed before.

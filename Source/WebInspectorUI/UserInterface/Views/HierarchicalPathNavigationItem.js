@@ -116,21 +116,21 @@ WebInspector.HierarchicalPathNavigationItem = class HierarchicalPathNavigationIt
             if (navigationBar.navigationItems[i] instanceof WebInspector.FlexibleSpaceNavigationItem)
                 continue;
 
-            totalOtherItemsWidth += navigationBar.navigationItems[i].element.offsetWidth;
+            totalOtherItemsWidth += navigationBar.navigationItems[i].element.realOffsetWidth;
         }
 
         // Calculate the width for all the components.
         var thisItemWidth = 0;
         var componentWidths = [];
         for (var i = 0; i < this._components.length; ++i) {
-            var componentWidth = this._components[i].element.offsetWidth;
+            var componentWidth = this._components[i].element.realOffsetWidth;
             componentWidths.push(componentWidth);
             thisItemWidth += componentWidth;
         }
 
         // If all our components fit with the other navigation items in the width of the bar,
         // then we don't need to collapse any components.
-        var barWidth = navigationBar.element.offsetWidth;
+        var barWidth = navigationBar.element.realOffsetWidth;
         if (totalOtherItemsWidth + thisItemWidth <= barWidth)
             return;
 

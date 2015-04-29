@@ -571,7 +571,7 @@ WebInspector.TabBar = class TabBar extends WebInspector.Object
 
         this._selectedTabBarItem.element.style.left = newLeft + "px";
 
-        var selectedTabMidX = newLeft + (this._selectedTabBarItem.element.getBoundingClientRect().width / 2);
+        var selectedTabMidX = newLeft + (this._selectedTabBarItem.element.realOffsetWidth / 2);
 
         var currentIndex = this._tabBarItems.indexOf(this._selectedTabBarItem);
         var newIndex = currentIndex;

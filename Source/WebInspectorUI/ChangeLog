@@ -1,3 +1,28 @@
+2015-04-29  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Navigation bar often looses last button when full
+        https://bugs.webkit.org/show_bug.cgi?id=144385
+
+        Added helpers to get the subpixel width and height of an element.
+        Adopt them in the NavigationBar layout methods to get precise widths
+        that don't accumulate rounding errors which lead to items overflowing.
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Utilities.js:
+        (Element.prototype.realOffsetWidth): Added.
+        (Element.prototype.realOffsetHeight): Added.
+        * UserInterface/Views/HierarchicalPathNavigationItem.js:
+        (WebInspector.HierarchicalPathNavigationItem.prototype.updateLayout):
+        * UserInterface/Views/NavigationBar.js:
+        (WebInspector.NavigationBar.prototype.updateLayout):
+        (WebInspector.NavigationBar.prototype._calculateMinimumWidth):
+        * UserInterface/Views/TabBar.js:
+        (WebInspector.TabBar.prototype._handleMouseMoved):
+        * UserInterface/Views/Toolbar.js:
+        (WebInspector.Toolbar.prototype.customUpdateLayout.isOverflowingToolbar):
+        (WebInspector.Toolbar.prototype.customUpdateLayout):
+
 2015-04-28  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: add a separate overview for the Rendering Frames timeline
