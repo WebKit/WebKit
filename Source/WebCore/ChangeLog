@@ -1,3 +1,21 @@
+2015-04-29  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r183553 and r183561.
+        https://bugs.webkit.org/show_bug.cgi?id=144406
+
+        broke the iOS build (Requested by thorton__ on #webkit).
+
+        Reverted changesets:
+
+        "Switch QuickLook soft-linking to use
+        QuickLookSoftLink.{h,mm}"
+        https://bugs.webkit.org/show_bug.cgi?id=144362
+        http://trac.webkit.org/changeset/183553
+
+        "Unreviewed iOS build fix after r183553: fix declaration of
+        QLPreviewScheme"
+        http://trac.webkit.org/changeset/183561
+
 2015-04-29  Antti Koivisto  <antti@apple.com>
 
         ResourceLoadPriority should be enum class

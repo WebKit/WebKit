@@ -1599,9 +1599,7 @@
 		44311CD912E4E257000A8D19 /* DOMDocumentFragmentPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 44311CD412E4E22D000A8D19 /* DOMDocumentFragmentPrivate.h */; };
 		44311F8212E4E66C000A8D19 /* DOMDocumentFragmentInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E711450AC5D5340053270F /* DOMDocumentFragmentInternal.h */; };
 		443817FF1A91B2F8006E04F2 /* CoreMediaSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 443817FD1A91B2F8006E04F2 /* CoreMediaSoftLink.cpp */; };
-		443917FF1A91B2F8006E04F2 /* QuickLookSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 443917FD1A91B2F8006E04F2 /* QuickLookSoftLink.mm */; };
 		443818001A91B2F8006E04F2 /* CoreMediaSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 443817FE1A91B2F8006E04F2 /* CoreMediaSoftLink.h */; };
-		443918001A91B2F8006E04F2 /* QuickLookSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 443917FE1A91B2F8006E04F2 /* QuickLookSoftLink.h */; };
 		443F04270E75C8FB007E5407 /* NetworkStateNotifierIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 443F04260E75C8FB007E5407 /* NetworkStateNotifierIOS.mm */; };
 		4449A4051A964B0000B64AD5 /* CoreMediaSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4449A4041A964B0000B64AD5 /* CoreMediaSPI.h */; };
 		444D4E230F708B2E003158E0 /* WebCoreURLResponseIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 444D4E210F708B2E003158E0 /* WebCoreURLResponseIOS.mm */; };
@@ -8765,9 +8763,7 @@
 		44311CD412E4E22D000A8D19 /* DOMDocumentFragmentPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMDocumentFragmentPrivate.h; sourceTree = "<group>"; };
 		44311CD512E4E22D000A8D19 /* DOMDocumentPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMDocumentPrivate.h; sourceTree = "<group>"; };
 		443817FD1A91B2F8006E04F2 /* CoreMediaSoftLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoreMediaSoftLink.cpp; sourceTree = "<group>"; };
-		443917FD1A91B2F8006E04F2 /* QuickLookSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ios/QuickLookSoftLink.mm; sourceTree = "<group>"; };
 		443817FE1A91B2F8006E04F2 /* CoreMediaSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreMediaSoftLink.h; sourceTree = "<group>"; };
-		443917FE1A91B2F8006E04F2 /* QuickLookSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ios/QuickLookSoftLink.h; sourceTree = "<group>"; };
 		443F04260E75C8FB007E5407 /* NetworkStateNotifierIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkStateNotifierIOS.mm; sourceTree = "<group>"; };
 		4449A4041A964B0000B64AD5 /* CoreMediaSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreMediaSPI.h; sourceTree = "<group>"; };
 		444D4E210F708B2E003158E0 /* WebCoreURLResponseIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreURLResponseIOS.mm; sourceTree = "<group>"; };
@@ -18851,8 +18847,6 @@
 				C5278B0B17F212EA003A2998 /* PlatformPasteboardIOS.mm */,
 				E45390320EAFD637003695C8 /* PlatformScreenIOS.mm */,
 				AAE3755D17429BCC006200C2 /* PlatformSpeechSynthesizerIOS.mm */,
-				443917FE1A91B2F8006E04F2 /* QuickLookSoftLink.h */,
-				443917FD1A91B2F8006E04F2 /* QuickLookSoftLink.mm */,
 				CDFC360118CA61630026E56F /* RemoteCommandListenerIOS.h */,
 				CDFC360218CA61630026E56F /* RemoteCommandListenerIOS.mm */,
 				44C363EE0FAA7BB30097F8CC /* RuntimeApplicationChecksIOS.h */,
@@ -26054,7 +26048,6 @@
 				550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */,
 				CE12523D1A1676CD00864480 /* QuartzCoreSPI.h in Headers */,
 				442AF7A9102CDDEA008FD4D3 /* QuickLook.h in Headers */,
-				443918001A91B2F8006E04F2 /* QuickLookSoftLink.h in Headers */,
 				A149786F1ABAF33800CEF7E4 /* ContentFilter.h in Headers */,
 				CE1252391A166FA000864480 /* QuickLookSPI.h in Headers */,
 				A10DBF4718F92317000D70C6 /* QuickLookHandleClient.h in Headers */,
@@ -29554,7 +29547,6 @@
 				CDEE393717974259001D7580 /* PublicURLManager.cpp in Sources */,
 				550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */,
 				442AF7AA102CDDEA008FD4D3 /* QuickLook.mm in Sources */,
-				443917FF1A91B2F8006E04F2 /* QuickLookSoftLink.mm in Sources */,
 				072AE1E6183C0741000A5988 /* QuickTimePluginReplacement.mm in Sources */,
 				379E371613736A6600B9E919 /* QuotedPrintable.cpp in Sources */,
 				5A574F28131DB96D00471B88 /* QuotesData.cpp in Sources */,

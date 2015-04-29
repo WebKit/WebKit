@@ -317,42 +317,6 @@
     } \
     }
 
-#define SOFT_LINK_CLASS_FOR_HEADER(functionNamespace, framework, className) \
-    @class className; \
-    namespace functionNamespace { \
-    extern Class (*get_##framework##_##className##Class)(); \
-    className *alloc##className##Instance(); \
-    inline className *alloc##className##Instance() \
-    { \
-        return [get_##framework##_##className##Class() alloc]; \
-    } \
-    }
-
-#define SOFT_LINK_CLASS_FOR_SOURCE(functionNamespace, framework, className) \
-    @class className; \
-    namespace functionNamespace { \
-    static Class init##className(); \
-    Class (*get_##framework##_##className##Class)() = init##className; \
-    static Class class##className; \
-    \
-    static Class className##Function() \
-    { \
-        return class##className; \
-    } \
-    \
-    static Class init##className() \
-    { \
-        static dispatch_once_t once; \
-        dispatch_once(&once, ^{ \
-            framework##Library(); \
-            class##className = objc_getClass(#className); \
-            RELEASE_ASSERT(class##className); \
-            get_##framework##_##className##Class = className##Function; \
-        }); \
-        return class##className; \
-    } \
-    }
-
 #define SOFT_LINK_CONSTANT_FOR_HEADER(functionNamespace, framework, variableName, variableType) \
     WTF_EXTERN_C_BEGIN \
     extern const variableType variableName; \
