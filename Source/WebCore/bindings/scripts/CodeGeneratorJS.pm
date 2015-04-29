@@ -1086,14 +1086,7 @@ sub GenerateHeader
 
     if (!$hasParent) {
         push(@headerContent, "    $implType& impl() const { return *m_impl; }\n");
-        push(@headerContent, "    void releaseImpl() { m_impl->deref(); m_impl = 0; }\n\n");
-        push(@headerContent, "    void releaseImplIfNotNull()\n");
-        push(@headerContent, "    {\n");
-        push(@headerContent, "        if (m_impl) {\n");
-        push(@headerContent, "            m_impl->deref();\n");
-        push(@headerContent, "            m_impl = 0;\n");
-        push(@headerContent, "        }\n");
-        push(@headerContent, "    }\n\n");
+        push(@headerContent, "    void releaseImpl() { std::exchange(m_impl, nullptr)->deref(); }\n\n");
         push(@headerContent, "private:\n");
         push(@headerContent, "    $implType* m_impl;\n");
     } else {
@@ -2077,23 +2070,15 @@ sub GenerateImplementation
     }
 
     if (!$hasParent) {
-        # FIXME: This destroy function should not be necessary, as 
-        # a finalizer should be called for each DOM object wrapper.
-        # However, that seems not to be the case, so this has been
-        # added back to avoid leaking while we figure out why the
-        # finalizers are not always getting called. The work tracking
-        # the finalizer issue is being tracked in http://webkit.org/b/75451
         push(@implContent, "void ${className}::destroy(JSC::JSCell* cell)\n");
         push(@implContent, "{\n");
         push(@implContent, "    ${className}* thisObject = static_cast<${className}*>(cell);\n");
         push(@implContent, "    thisObject->${className}::~${className}();\n");
         push(@implContent, "}\n\n");
 
-        # We also need a destructor for the allocateCell to work properly with the destructor-free part of the heap.
-        # Otherwise, these destroy functions/destructors won't get called.
         push(@implContent, "${className}::~${className}()\n");
         push(@implContent, "{\n");
-        push(@implContent, "    releaseImplIfNotNull();\n");
+        push(@implContent, "    releaseImpl();\n");
         push(@implContent, "}\n\n");
     }
 
@@ -3004,7 +2989,6 @@ sub GenerateImplementation
         push(@implContent, "    auto* js${interfaceName} = jsCast<JS${interfaceName}*>(handle.slot()->asCell());\n");
         push(@implContent, "    auto& world = *static_cast<DOMWrapperWorld*>(context);\n");
         push(@implContent, "    uncacheWrapper(world, &js${interfaceName}->impl(), js${interfaceName});\n");
-        push(@implContent, "    js${interfaceName}->releaseImpl();\n");
         push(@implContent, "}\n\n");
     }
 

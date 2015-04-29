@@ -216,7 +216,7 @@ void JSTestOverloadedConstructors::destroy(JSC::JSCell* cell)
 
 JSTestOverloadedConstructors::~JSTestOverloadedConstructors()
 {
-    releaseImplIfNotNull();
+    releaseImpl();
 }
 
 EncodedJSValue jsTestOverloadedConstructorsConstructor(ExecState* exec, JSObject* baseValue, EncodedJSValue, PropertyName)
@@ -244,7 +244,6 @@ void JSTestOverloadedConstructorsOwner::finalize(JSC::Handle<JSC::Unknown> handl
     auto* jsTestOverloadedConstructors = jsCast<JSTestOverloadedConstructors*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsTestOverloadedConstructors->impl(), jsTestOverloadedConstructors);
-    jsTestOverloadedConstructors->releaseImpl();
 }
 
 #if ENABLE(BINDING_INTEGRITY)

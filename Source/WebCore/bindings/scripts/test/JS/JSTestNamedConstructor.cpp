@@ -207,7 +207,7 @@ void JSTestNamedConstructor::destroy(JSC::JSCell* cell)
 
 JSTestNamedConstructor::~JSTestNamedConstructor()
 {
-    releaseImplIfNotNull();
+    releaseImpl();
 }
 
 EncodedJSValue jsTestNamedConstructorConstructor(ExecState* exec, JSObject* baseValue, EncodedJSValue, PropertyName)
@@ -242,7 +242,6 @@ void JSTestNamedConstructorOwner::finalize(JSC::Handle<JSC::Unknown> handle, voi
     auto* jsTestNamedConstructor = jsCast<JSTestNamedConstructor*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsTestNamedConstructor->impl(), jsTestNamedConstructor);
-    jsTestNamedConstructor->releaseImpl();
 }
 
 #if ENABLE(BINDING_INTEGRITY)

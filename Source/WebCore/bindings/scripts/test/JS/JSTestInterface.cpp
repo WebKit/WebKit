@@ -434,7 +434,7 @@ void JSTestInterface::destroy(JSC::JSCell* cell)
 
 JSTestInterface::~JSTestInterface()
 {
-    releaseImplIfNotNull();
+    releaseImpl();
 }
 
 bool JSTestInterface::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -951,7 +951,6 @@ void JSTestInterfaceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* cont
     auto* jsTestInterface = jsCast<JSTestInterface*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsTestInterface->impl(), jsTestInterface);
-    jsTestInterface->releaseImpl();
 }
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestInterface* impl)

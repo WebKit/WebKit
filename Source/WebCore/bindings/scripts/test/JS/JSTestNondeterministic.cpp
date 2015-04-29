@@ -165,7 +165,7 @@ void JSTestNondeterministic::destroy(JSC::JSCell* cell)
 
 JSTestNondeterministic::~JSTestNondeterministic()
 {
-    releaseImplIfNotNull();
+    releaseImpl();
 }
 
 EncodedJSValue jsTestNondeterministicNondeterministicReadonlyAttr(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
@@ -495,7 +495,6 @@ void JSTestNondeterministicOwner::finalize(JSC::Handle<JSC::Unknown> handle, voi
     auto* jsTestNondeterministic = jsCast<JSTestNondeterministic*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsTestNondeterministic->impl(), jsTestNondeterministic);
-    jsTestNondeterministic->releaseImpl();
 }
 
 #if ENABLE(BINDING_INTEGRITY)

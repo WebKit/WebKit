@@ -153,7 +153,7 @@ void JSTestException::destroy(JSC::JSCell* cell)
 
 JSTestException::~JSTestException()
 {
-    releaseImplIfNotNull();
+    releaseImpl();
 }
 
 bool JSTestException::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -200,7 +200,6 @@ void JSTestExceptionOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* cont
     auto* jsTestException = jsCast<JSTestException*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsTestException->impl(), jsTestException);
-    jsTestException->releaseImpl();
 }
 
 #if ENABLE(BINDING_INTEGRITY)

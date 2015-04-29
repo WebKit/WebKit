@@ -140,7 +140,7 @@ void JSattribute::destroy(JSC::JSCell* cell)
 
 JSattribute::~JSattribute()
 {
-    releaseImplIfNotNull();
+    releaseImpl();
 }
 
 EncodedJSValue jsattributeReadonly(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
@@ -185,7 +185,6 @@ void JSattributeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
     auto* jsattribute = jsCast<JSattribute*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsattribute->impl(), jsattribute);
-    jsattribute->releaseImpl();
 }
 
 #if ENABLE(BINDING_INTEGRITY)

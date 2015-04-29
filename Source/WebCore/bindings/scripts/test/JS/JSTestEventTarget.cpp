@@ -168,7 +168,7 @@ void JSTestEventTarget::destroy(JSC::JSCell* cell)
 
 JSTestEventTarget::~JSTestEventTarget()
 {
-    releaseImplIfNotNull();
+    releaseImpl();
 }
 
 bool JSTestEventTarget::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -326,7 +326,6 @@ void JSTestEventTargetOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* co
     auto* jsTestEventTarget = jsCast<JSTestEventTarget*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsTestEventTarget->impl(), jsTestEventTarget);
-    jsTestEventTarget->releaseImpl();
 }
 
 #if ENABLE(BINDING_INTEGRITY)

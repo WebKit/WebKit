@@ -156,7 +156,7 @@ void JSTestCustomNamedGetter::destroy(JSC::JSCell* cell)
 
 JSTestCustomNamedGetter::~JSTestCustomNamedGetter()
 {
-    releaseImplIfNotNull();
+    releaseImpl();
 }
 
 bool JSTestCustomNamedGetter::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -224,7 +224,6 @@ void JSTestCustomNamedGetterOwner::finalize(JSC::Handle<JSC::Unknown> handle, vo
     auto* jsTestCustomNamedGetter = jsCast<JSTestCustomNamedGetter*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsTestCustomNamedGetter->impl(), jsTestCustomNamedGetter);
-    jsTestCustomNamedGetter->releaseImpl();
 }
 
 #if ENABLE(BINDING_INTEGRITY)

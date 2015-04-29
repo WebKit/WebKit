@@ -135,7 +135,7 @@ void JSTestGenerateIsReachable::destroy(JSC::JSCell* cell)
 
 JSTestGenerateIsReachable::~JSTestGenerateIsReachable()
 {
-    releaseImplIfNotNull();
+    releaseImpl();
 }
 
 EncodedJSValue jsTestGenerateIsReachableConstructor(ExecState* exec, JSObject* baseValue, EncodedJSValue, PropertyName)
@@ -172,7 +172,6 @@ void JSTestGenerateIsReachableOwner::finalize(JSC::Handle<JSC::Unknown> handle, 
     auto* jsTestGenerateIsReachable = jsCast<JSTestGenerateIsReachable*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsTestGenerateIsReachable->impl(), jsTestGenerateIsReachable);
-    jsTestGenerateIsReachable->releaseImpl();
 }
 
 #if ENABLE(BINDING_INTEGRITY)

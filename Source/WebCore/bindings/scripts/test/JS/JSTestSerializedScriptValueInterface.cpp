@@ -155,7 +155,7 @@ void JSTestSerializedScriptValueInterface::destroy(JSC::JSCell* cell)
 
 JSTestSerializedScriptValueInterface::~JSTestSerializedScriptValueInterface()
 {
-    releaseImplIfNotNull();
+    releaseImpl();
 }
 
 EncodedJSValue jsTestSerializedScriptValueInterfaceValue(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
@@ -323,7 +323,6 @@ void JSTestSerializedScriptValueInterfaceOwner::finalize(JSC::Handle<JSC::Unknow
     auto* jsTestSerializedScriptValueInterface = jsCast<JSTestSerializedScriptValueInterface*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsTestSerializedScriptValueInterface->impl(), jsTestSerializedScriptValueInterface);
-    jsTestSerializedScriptValueInterface->releaseImpl();
 }
 
 #if ENABLE(BINDING_INTEGRITY)

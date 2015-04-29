@@ -143,7 +143,7 @@ void JSTestMediaQueryListListener::destroy(JSC::JSCell* cell)
 
 JSTestMediaQueryListListener::~JSTestMediaQueryListListener()
 {
-    releaseImplIfNotNull();
+    releaseImpl();
 }
 
 EncodedJSValue jsTestMediaQueryListListenerConstructor(ExecState* exec, JSObject* baseValue, EncodedJSValue, PropertyName)
@@ -188,7 +188,6 @@ void JSTestMediaQueryListListenerOwner::finalize(JSC::Handle<JSC::Unknown> handl
     auto* jsTestMediaQueryListListener = jsCast<JSTestMediaQueryListListener*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsTestMediaQueryListListener->impl(), jsTestMediaQueryListListener);
-    jsTestMediaQueryListListener->releaseImpl();
 }
 
 #if ENABLE(BINDING_INTEGRITY)

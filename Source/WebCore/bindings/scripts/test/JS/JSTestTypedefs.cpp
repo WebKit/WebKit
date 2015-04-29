@@ -238,7 +238,7 @@ void JSTestTypedefs::destroy(JSC::JSCell* cell)
 
 JSTestTypedefs::~JSTestTypedefs()
 {
-    releaseImplIfNotNull();
+    releaseImpl();
 }
 
 bool JSTestTypedefs::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -730,7 +730,6 @@ void JSTestTypedefsOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* conte
     auto* jsTestTypedefs = jsCast<JSTestTypedefs*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsTestTypedefs->impl(), jsTestTypedefs);
-    jsTestTypedefs->releaseImpl();
 }
 
 #if ENABLE(BINDING_INTEGRITY)

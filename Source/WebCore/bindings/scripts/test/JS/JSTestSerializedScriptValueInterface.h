@@ -58,15 +58,7 @@ public:
     static void visitChildren(JSCell*, JSC::SlotVisitor&);
 
     TestSerializedScriptValueInterface& impl() const { return *m_impl; }
-    void releaseImpl() { m_impl->deref(); m_impl = 0; }
-
-    void releaseImplIfNotNull()
-    {
-        if (m_impl) {
-            m_impl->deref();
-            m_impl = 0;
-        }
-    }
+    void releaseImpl() { std::exchange(m_impl, nullptr)->deref(); }
 
 private:
     TestSerializedScriptValueInterface* m_impl;

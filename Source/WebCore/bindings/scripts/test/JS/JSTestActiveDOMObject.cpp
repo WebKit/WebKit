@@ -163,7 +163,7 @@ void JSTestActiveDOMObject::destroy(JSC::JSCell* cell)
 
 JSTestActiveDOMObject::~JSTestActiveDOMObject()
 {
-    releaseImplIfNotNull();
+    releaseImpl();
 }
 
 bool JSTestActiveDOMObject::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -250,7 +250,6 @@ void JSTestActiveDOMObjectOwner::finalize(JSC::Handle<JSC::Unknown> handle, void
     auto* jsTestActiveDOMObject = jsCast<JSTestActiveDOMObject*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsTestActiveDOMObject->impl(), jsTestActiveDOMObject);
-    jsTestActiveDOMObject->releaseImpl();
 }
 
 #if ENABLE(BINDING_INTEGRITY)

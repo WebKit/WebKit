@@ -135,7 +135,7 @@ void JSreadonly::destroy(JSC::JSCell* cell)
 
 JSreadonly::~JSreadonly()
 {
-    releaseImplIfNotNull();
+    releaseImpl();
 }
 
 EncodedJSValue jsreadonlyConstructor(ExecState* exec, JSObject* baseValue, EncodedJSValue, PropertyName)
@@ -163,7 +163,6 @@ void JSreadonlyOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
     auto* jsreadonly = jsCast<JSreadonly*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, &jsreadonly->impl(), jsreadonly);
-    jsreadonly->releaseImpl();
 }
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, readonly* impl)
