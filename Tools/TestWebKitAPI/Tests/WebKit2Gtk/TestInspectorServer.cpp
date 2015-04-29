@@ -237,12 +237,12 @@ static void openRemoteDebuggingSession(InspectorServerTest* test, gconstpointer)
     test->loadURI(resolvedURL.utf8().data());
     test->waitUntilLoadFinished();
 
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.document.getElementsByTagName('li')[0].title", &error.outPtr());
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.title", &error.outPtr());
     g_assert(javascriptResult);
     g_assert(!error.get());
 
     GUniquePtr<char> title(WebViewTest::javascriptResultToCString(javascriptResult));
-    g_assert_cmpstr(title.get(), ==, "http://127.0.0.1:2999/");
+    g_assert_cmpstr(title.get(), ==, "127.0.0.1");
 }
 
 static void sendIncompleteRequest(InspectorServerTest* test, gconstpointer)

@@ -1,3 +1,16 @@
+2015-04-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix /webkit2/WebKitWebInspectorServer/test-open-debugging-session.
+
+        Latest changes in the inspector UI made this test fail. We were
+        relying that the sidebar was always visible and the first 'li'
+        element of the inspector was the one containing the title. This is
+        no longer true, so better use document title that is not likely
+        to change.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestInspectorServer.cpp:
+        (openRemoteDebuggingSession):
+
 2015-04-29  Andres Gomez  <agomez@igalia.com>
 
         Unreviewed. Re-sorted my contributor's mails to help bugzilla on showing the proper one.
