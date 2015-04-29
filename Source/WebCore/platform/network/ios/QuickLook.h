@@ -57,10 +57,6 @@ class ResourceLoader;
 class ResourceResponse;
 class SynchronousResourceHandleCFURLConnectionDelegate;
 
-Class QLPreviewConverterClass();
-NSString *QLTypeCopyBestMimeTypeForFileNameAndMimeType(NSString *fileName, NSString *mimeType);
-NSString *QLTypeCopyBestMimeTypeForURLAndMimeType(NSURL *, NSString *mimeType);
-
 WEBCORE_EXPORT NSSet *QLPreviewGetSupportedMIMETypesSet();
 
 // Used for setting the permissions on the saved QL content
