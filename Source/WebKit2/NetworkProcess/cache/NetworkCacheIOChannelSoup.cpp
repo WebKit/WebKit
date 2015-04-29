@@ -29,6 +29,7 @@
 #if ENABLE(NETWORK_CACHE)
 
 #include "NetworkCacheFileSystemPosix.h"
+#include <wtf/gobject/GUniquePtr.h>
 
 namespace WebKit {
 namespace NetworkCache {
@@ -42,11 +43,14 @@ IOChannel::IOChannel(const String& filePath, Type type)
     auto path = WebCore::fileSystemRepresentation(filePath);
     GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(path.data()));
     switch (m_type) {
-    case Type::Create:
+    case Type::Create: {
         g_file_delete(file.get(), nullptr, nullptr);
         m_outputStream = adoptGRef(G_OUTPUT_STREAM(g_file_create(file.get(), static_cast<GFileCreateFlags>(G_FILE_CREATE_PRIVATE), nullptr, nullptr)));
         ASSERT(m_outputStream);
+        GUniquePtr<char> birthtimeString(g_strdup_printf("%" G_GUINT64_FORMAT, std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())));
+        g_file_set_attribute_string(file.get(), "xattr::birthtime", birthtimeString.get(), G_FILE_QUERY_INFO_NONE, nullptr, nullptr);
         break;
+    }
     case Type::Write: {
         m_ioStream = adoptGRef(g_file_open_readwrite(file.get(), nullptr, nullptr));
         ASSERT(m_ioStream);

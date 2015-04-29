@@ -1,5 +1,24 @@
 2015-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [SOUP] Use xattrs to get/set the creation time of disk cache files
+        https://bugs.webkit.org/show_bug.cgi?id=144251
+
+        Reviewed by Martin Robinson.
+
+        The network process disk cache uses the creation time to compute a
+        worth value used to determine the order in which cached resources
+        are deleted when the cache is shrunk. In some operating systems
+        like Linux there's no st_birthtime in struct stat, but since cache
+        files are always created and deleted by us, we could use a custom
+        xattr to store and retrieve the creation time of cached resources.
+
+        * NetworkProcess/cache/NetworkCacheFileSystemPosix.h:
+        (WebKit::NetworkCache::fileTimes):
+        * NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp:
+        (WebKit::NetworkCache::IOChannel::IOChannel):
+
+2015-04-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Network Cache: Do not create a SharedBuffer for mapped resources unless explicitly requested
         https://bugs.webkit.org/show_bug.cgi?id=144337
 
