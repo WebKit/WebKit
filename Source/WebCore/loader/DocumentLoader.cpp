@@ -1400,7 +1400,9 @@ void DocumentLoader::startLoadingMainResource()
 
     ResourceRequest request(m_request);
     request.setRequester(ResourceRequest::Requester::Main);
-    
+    // If this is a reload the cache layer might have made the previous request conditional. DocumentLoader can't handle 304 responses itself.
+    request.makeUnconditional();
+
     static NeverDestroyed<ResourceLoaderOptions> mainResourceLoadOptions(SendCallbacks, SniffContent, BufferData, AllowStoredCredentials, AskClientForAllCredentials, SkipSecurityCheck, UseDefaultOriginRestrictionsForType, IncludeCertificateInfo);
     CachedResourceRequest cachedResourceRequest(request, mainResourceLoadOptions);
     cachedResourceRequest.setInitiator(*this);

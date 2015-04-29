@@ -1,3 +1,14 @@
+2015-04-29  Antti Koivisto  <antti@apple.com>
+
+        Main resource loaded via 304 response becomes empty if reloaded by user
+        https://bugs.webkit.org/show_bug.cgi?id=144386
+
+        Reviewed by Darin Adler.
+
+        * http/tests/cache/main-resource-304-reload-expected.txt: Added.
+        * http/tests/cache/main-resource-304-reload.html: Added.
+        * http/tests/cache/resources/iframe304body.php: Added.
+
 2015-04-29  Darin Adler  <darin@apple.com>
 
         [ES6] Implement Unicode code point escapes

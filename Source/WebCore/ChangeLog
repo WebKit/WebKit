@@ -1,3 +1,23 @@
+2015-04-29  Antti Koivisto  <antti@apple.com>
+
+        Main resource loaded via 304 response becomes empty if reloaded by user
+        https://bugs.webkit.org/show_bug.cgi?id=144386
+
+        Reviewed by Darin Adler.
+
+        Memory cache layer may make a main resource request conditional (add If-modified-since/If-none-match header).
+        DocumentLoader stores the final ResourceRequest associated with document. If user triggered reload for
+        conditionally loaded document DocumentLoader would include the same conditionals to the new request as well.
+        Since these were not added by the memory cache it would pass any 304 response back to the DocumentLoader.
+        However DocumentLoader has no code to handle 304 so we would end up with an empty document.
+
+        Test: http/tests/cache/main-resource-304-reload.html
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::startLoadingMainResource):
+
+            Ensure DocumentLoader doesn't issue conditional requests.
+
 2015-04-28  Jer Noble  <jer.noble@apple.com>
 
         Replace HTMLMediaElement's seek timer with a task queue.
