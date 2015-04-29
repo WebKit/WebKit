@@ -105,7 +105,7 @@ static EncodedJSValue JSC_HOST_CALL stringFromCodePoint(ExecState* exec)
 
         uint32_t codePoint = static_cast<uint32_t>(codePointAsDouble);
 
-        if (codePoint != codePointAsDouble || codePoint > 0x10FFFF)
+        if (codePoint != codePointAsDouble || codePoint > UCHAR_MAX_VALUE)
             return throwVMError(exec, createRangeError(exec, ASCIILiteral("Arguments contain a value that is out of range of code points")));
 
         if (U_IS_BMP(codePoint))

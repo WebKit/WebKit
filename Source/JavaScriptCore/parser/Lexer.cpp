@@ -610,22 +610,60 @@ ALWAYS_INLINE T Lexer<T>::peek(int offset) const
     return (code < m_codeEnd) ? *code : 0;
 }
 
-template <typename T>
-typename Lexer<T>::UnicodeHexValue Lexer<T>::parseFourDigitUnicodeHex()
+struct ParsedUnicodeEscapeValue {
+    ParsedUnicodeEscapeValue(UChar32 value)
+        : m_value(value)
+    {
+        ASSERT(isValid());
+    }
+
+    enum SpecialValueType { Incomplete = -2, Invalid = -1 };
+    ParsedUnicodeEscapeValue(SpecialValueType type)
+        : m_value(type)
+    {
+    }
+
+    bool isValid() const { return m_value >= 0; }
+    bool isIncomplete() const { return m_value == Incomplete; }
+
+    UChar32 value() const
+    {
+        ASSERT(isValid());
+        return m_value;
+    }
+
+private:
+    UChar32 m_value;
+};
+
+template<typename CharacterType> ParsedUnicodeEscapeValue Lexer<CharacterType>::parseUnicodeEscape()
 {
-    T char1 = peek(1);
-    T char2 = peek(2);
-    T char3 = peek(3);
+    if (m_current == '{') {
+        shift();
+        UChar32 codePoint = 0;
+        do {
+            if (!isASCIIHexDigit(m_current))
+                return m_current ? ParsedUnicodeEscapeValue::Invalid : ParsedUnicodeEscapeValue::Incomplete;
+            codePoint = (codePoint << 4) | toASCIIHexValue(m_current);
+            if (codePoint > UCHAR_MAX_VALUE)
+                return ParsedUnicodeEscapeValue::Invalid;
+            shift();
+        } while (m_current != '}');
+        shift();
+        return codePoint;
+    }
 
-    if (UNLIKELY(!isASCIIHexDigit(m_current) || !isASCIIHexDigit(char1) || !isASCIIHexDigit(char2) || !isASCIIHexDigit(char3)))
-        return UnicodeHexValue((m_code + 4) >= m_codeEnd ? UnicodeHexValue::IncompleteHex : UnicodeHexValue::InvalidHex);
-
-    int result = convertUnicode(m_current, char1, char2, char3);
+    auto character2 = peek(1);
+    auto character3 = peek(2);
+    auto character4 = peek(3);
+    if (UNLIKELY(!isASCIIHexDigit(m_current) || !isASCIIHexDigit(character2) || !isASCIIHexDigit(character3) || !isASCIIHexDigit(character4)))
+        return (m_code + 4) >= m_codeEnd ? ParsedUnicodeEscapeValue::Incomplete : ParsedUnicodeEscapeValue::Invalid;
+    auto result = convertUnicode(m_current, character2, character3, character4);
     shift();
     shift();
     shift();
     shift();
-    return UnicodeHexValue(result);
+    return result;
 }
 
 template <typename T>
@@ -665,18 +703,24 @@ static ALWAYS_INLINE bool isLatin1(UChar c)
     return c < 256;
 }
 
+static ALWAYS_INLINE bool isLatin1(UChar32 c)
+{
+    return !(c & ~0xFF);
+}
+
 static inline bool isIdentStart(LChar c)
 {
     return typesOfLatin1Characters[c] == CharacterIdentifierStart;
 }
 
-static inline bool isIdentStart(UChar c)
+static inline bool isIdentStart(UChar32 c)
 {
     return isLatin1(c) ? isIdentStart(static_cast<LChar>(c)) : isNonLatin1IdentStart(c);
 }
 
-static NEVER_INLINE bool isNonLatin1IdentPart(int c)
+static NEVER_INLINE bool isNonLatin1IdentPart(UChar32 c)
 {
+    // FIXME: ES6 says this should be based on the Unicode property ID_Continue now instead.
     return (U_GET_GC_MASK(c) & (U_GC_L_MASK | U_GC_MN_MASK | U_GC_MC_MASK | U_GC_ND_MASK | U_GC_PC_MASK)) || c == 0x200C || c == 0x200D;
 }
 
@@ -688,39 +732,59 @@ static ALWAYS_INLINE bool isIdentPart(LChar c)
     return typesOfLatin1Characters[c] <= CharacterNumber;
 }
 
-static ALWAYS_INLINE bool isIdentPart(UChar c)
+static ALWAYS_INLINE bool isIdentPart(UChar32 c)
 {
     return isLatin1(c) ? isIdentPart(static_cast<LChar>(c)) : isNonLatin1IdentPart(c);
 }
 
-template <typename T>
-bool isUnicodeEscapeIdentPart(const T* code)
+static ALWAYS_INLINE bool isIdentPart(UChar c)
 {
-    T char1 = code[0];
-    T char2 = code[1];
-    T char3 = code[2];
-    T char4 = code[3];
-    
-    if (!isASCIIHexDigit(char1) || !isASCIIHexDigit(char2) || !isASCIIHexDigit(char3) || !isASCIIHexDigit(char4))
+    return isIdentPart(static_cast<UChar32>(c));
+}
+
+template<typename CharacterType> ALWAYS_INLINE bool isIdentPartIncludingEscapeTemplate(const CharacterType* code, const CharacterType* codeEnd)
+{
+    if (isIdentPart(code[0]))
+        return true;
+
+    // Shortest sequence handled below is \u{0}, which is 5 characters.
+    if (!(code[0] == '\\' && codeEnd - code >= 5 && code[1] == 'u'))
         return false;
-    
-    return isIdentPart(Lexer<T>::convertUnicode(char1, char2, char3, char4));
+
+    if (code[2] == '{') {
+        UChar32 codePoint = 0;
+        const CharacterType* pointer;
+        for (pointer = &code[3]; pointer < codeEnd; ++pointer) {
+            auto digit = *pointer;
+            if (!isASCIIHexDigit(digit))
+                break;
+            codePoint = (codePoint << 4) | toASCIIHexValue(digit);
+            if (codePoint > UCHAR_MAX_VALUE)
+                return false;
+        }
+        return isIdentPart(codePoint) && pointer < codeEnd && *pointer == '}';
+    }
+
+    // Shortest sequence handled below is \uXXXX, which is 6 characters.
+    if (codeEnd - code < 6)
+        return false;
+
+    auto character1 = code[2];
+    auto character2 = code[3];
+    auto character3 = code[4];
+    auto character4 = code[5];
+    return isASCIIHexDigit(character1) && isASCIIHexDigit(character2) && isASCIIHexDigit(character3) && isASCIIHexDigit(character4)
+        && isIdentPart(Lexer<LChar>::convertUnicode(character1, character2, character3, character4));
 }
 
 static ALWAYS_INLINE bool isIdentPartIncludingEscape(const LChar* code, const LChar* codeEnd)
 {
-    if (isIdentPart(*code))
-        return true;
-
-    return (*code == '\\' && ((codeEnd - code) >= 6) && code[1] == 'u' && isUnicodeEscapeIdentPart(code+2));
+    return isIdentPartIncludingEscapeTemplate(code, codeEnd);
 }
 
 static ALWAYS_INLINE bool isIdentPartIncludingEscape(const UChar* code, const UChar* codeEnd)
 {
-    if (isIdentPart(*code))
-        return true;
-    
-    return (*code == '\\' && ((codeEnd - code) >= 6) && code[1] == 'u' && isUnicodeEscapeIdentPart(code+2));
+    return isIdentPartIncludingEscapeTemplate(code, codeEnd);
 }
 
 static inline LChar singleEscape(int c)
@@ -799,6 +863,18 @@ inline void Lexer<T>::record16(int c)
     m_buffer16.append(static_cast<UChar>(c));
 }
     
+template<typename CharacterType> inline void Lexer<CharacterType>::recordUnicodeCodePoint(UChar32 codePoint)
+{
+    ASSERT(codePoint >= 0);
+    ASSERT(codePoint <= UCHAR_MAX_VALUE);
+    if (U_IS_BMP(codePoint))
+        record16(codePoint);
+    else {
+        UChar codeUnits[2] = { U16_LEAD(codePoint), U16_TRAIL(codePoint) };
+        append16(codeUnits, 2);
+    }
+}
+
 #if !ASSERT_DISABLED
 bool isSafeBuiltinIdentifier(VM& vm, const Identifier* ident)
 {
@@ -807,6 +883,7 @@ bool isSafeBuiltinIdentifier(VM& vm, const Identifier* ident)
     /* Just block any use of suspicious identifiers.  This is intended to
      * be used as a safety net while implementing builtins.
      */
+    // FIXME: How can a debug-only assertion be a safety net?
     if (*ident == vm.propertyNames->builtinNames().callPublicName())
         return false;
     if (*ident == vm.propertyNames->builtinNames().applyPublicName())
@@ -960,11 +1037,10 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::p
     return IDENT;
 }
 
-template <typename T>
-template <bool shouldCreateIdentifier> JSTokenType Lexer<T>::parseIdentifierSlowCase(JSTokenData* tokenData, unsigned lexerFlags, bool strictMode)
+template<typename CharacterType> template<bool shouldCreateIdentifier> JSTokenType Lexer<CharacterType>::parseIdentifierSlowCase(JSTokenData* tokenData, unsigned lexerFlags, bool strictMode)
 {
     const ptrdiff_t remaining = m_codeEnd - m_code;
-    const T* identifierStart = currentSourcePtr();
+    auto identifierStart = currentSourcePtr();
     bool bufferRequired = false;
 
     while (true) {
@@ -983,19 +1059,18 @@ template <bool shouldCreateIdentifier> JSTokenType Lexer<T>::parseIdentifierSlow
         if (UNLIKELY(m_current != 'u'))
             return atEnd() ? UNTERMINATED_IDENTIFIER_ESCAPE_ERRORTOK : INVALID_IDENTIFIER_ESCAPE_ERRORTOK;
         shift();
-        UnicodeHexValue character = parseFourDigitUnicodeHex();
+        auto character = parseUnicodeEscape();
         if (UNLIKELY(!character.isValid()))
-            return character.valueType() == UnicodeHexValue::IncompleteHex ? UNTERMINATED_IDENTIFIER_UNICODE_ESCAPE_ERRORTOK : INVALID_IDENTIFIER_UNICODE_ESCAPE_ERRORTOK;
-        UChar ucharacter = static_cast<UChar>(character.value());
-        if (UNLIKELY(m_buffer16.size() ? !isIdentPart(ucharacter) : !isIdentStart(ucharacter)))
+            return character.isIncomplete() ? UNTERMINATED_IDENTIFIER_UNICODE_ESCAPE_ERRORTOK : INVALID_IDENTIFIER_UNICODE_ESCAPE_ERRORTOK;
+        if (UNLIKELY(m_buffer16.size() ? !isIdentPart(character.value()) : !isIdentStart(character.value())))
             return INVALID_IDENTIFIER_UNICODE_ESCAPE_ERRORTOK;
         if (shouldCreateIdentifier)
-            record16(ucharacter);
+            recordUnicodeCodePoint(character.value());
         identifierStart = currentSourcePtr();
     }
 
     int identifierLength;
-    const Identifier* ident = 0;
+    const Identifier* ident = nullptr;
     if (shouldCreateIdentifier) {
         if (!bufferRequired) {
             identifierLength = currentSourcePtr() - identifierStart;
@@ -1008,7 +1083,7 @@ template <bool shouldCreateIdentifier> JSTokenType Lexer<T>::parseIdentifierSlow
 
         tokenData->ident = ident;
     } else
-        tokenData->ident = 0;
+        tokenData->ident = nullptr;
 
     if (LIKELY(!bufferRequired && !(lexerFlags & LexerFlagsIgnoreReservedWords))) {
         ASSERT(shouldCreateIdentifier);
@@ -1125,12 +1200,6 @@ template <bool shouldBuildStrings> ALWAYS_INLINE auto Lexer<T>::parseComplexEsca
 
     if (m_current == 'u') {
         shift();
-        UnicodeHexValue character = parseFourDigitUnicodeHex();
-        if (character.isValid()) {
-            if (shouldBuildStrings)
-                record16(character.value());
-            return StringParsedSuccessfully;
-        }
 
         if (escapeParseMode == EscapeParseMode::String && m_current == stringQuoteCharacter) {
             if (shouldBuildStrings)
@@ -1138,8 +1207,15 @@ template <bool shouldBuildStrings> ALWAYS_INLINE auto Lexer<T>::parseComplexEsca
             return StringParsedSuccessfully;
         }
 
+        auto character = parseUnicodeEscape();
+        if (character.isValid()) {
+            if (shouldBuildStrings)
+                recordUnicodeCodePoint(character.value());
+            return StringParsedSuccessfully;
+        }
+
         m_lexErrorMessage = ASCIILiteral("\\u can only be followed by a Unicode character sequence");
-        return character.valueType() == UnicodeHexValue::IncompleteHex ? StringUnterminated : StringCannotBeParsed;
+        return character.isIncomplete() ? StringUnterminated : StringCannotBeParsed;
     }
 
     if (strictMode) {

@@ -30,6 +30,7 @@
 
 #include "SegmentedString.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
@@ -115,7 +116,7 @@ private:
                     m_nextInputCharacter = source.currentChar();
                     goto ProcessAgain;
                 }
-                m_nextInputCharacter = 0xFFFD;
+                m_nextInputCharacter = replacementCharacter;
             }
         }
         return true;

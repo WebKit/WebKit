@@ -1,3 +1,34 @@
+2015-04-29  Darin Adler  <darin@apple.com>
+
+        [ES6] Implement Unicode code point escapes
+        https://bugs.webkit.org/show_bug.cgi?id=144377
+
+        Reviewed by Antti Koivisto.
+
+        Test: js/unicode-escape-sequences.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseEscape): Use ICU's UCHAR_MAX_VALUE instead of writing
+        out 0x10FFFF; clearer this way. Also use our replacementCharacter instead of
+        writing out 0xFFFD.
+
+        * html/parser/HTMLEntityParser.cpp:
+        (WebCore::isAlphaNumeric): Deleted.
+        (WebCore::HTMLEntityParser::legalEntityFor): Use ICU's UCHAR_MAX_VALUE and
+        U_IS_SURROGATE instead of writing the code out. Didn't use U_IS_UNICODE_CHAR
+        because that also includes U_IS_UNICODE_NONCHAR and thus would change behavior,
+        but maye it's something we want to do in the future.
+        (WebCore::HTMLEntityParser::consumeNamedEntity): Use isASCIIAlphanumeric instead
+        of a the function in this file that does the same thing less efficiently.
+
+        * html/parser/InputStreamPreprocessor.h:
+        (WebCore::InputStreamPreprocessor::processNextInputCharacter): Use
+        replacementCharacter from CharacterNames.h instead of writing out 0xFFFd.
+
+        * xml/parser/CharacterReferenceParserInlines.h:
+        (WebCore::consumeCharacterReference): Use ICU's UCHAR_MAX_VALUE instead of
+        defining our own local highestValidCharacter constant.
+
 2015-04-29  Martin Robinson  <mrobinson@igalia.com>
 
         [CMake] [GTK] Organize and clean up unused CMake variables

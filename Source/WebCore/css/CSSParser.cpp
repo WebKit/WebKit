@@ -10762,9 +10762,8 @@ unsigned CSSParser::parseEscape(CharacterType*& src)
             unicode = (unicode << 4) + toASCIIHexValue(*src++);
         } while (--length && isASCIIHexDigit(*src));
 
-        // Characters above 0x10ffff are not handled.
-        if (unicode > 0x10ffff)
-            unicode = 0xfffd;
+        if (unicode > UCHAR_MAX_VALUE)
+            unicode = replacementCharacter;
 
         // Optional space after the escape sequence.
         if (isHTMLSpace(*src))

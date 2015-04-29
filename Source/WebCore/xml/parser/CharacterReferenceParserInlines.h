@@ -54,7 +54,6 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
     } state = Initial;
     UChar32 result = 0;
     bool overflow = false;
-    const UChar32 highestValidCharacter = 0x10FFFF;
     StringBuilder consumedCharacters;
     
     while (!source.isEmpty()) {
@@ -107,7 +106,7 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
         Hex:
             if (isASCIIHexDigit(character)) {
                 result = result * 16 + toASCIIHexValue(character);
-                if (result > highestValidCharacter)
+                if (result > UCHAR_MAX_VALUE)
                     overflow = true;
                 break;
             }
@@ -126,7 +125,7 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
         Decimal:
             if (isASCIIDigit(character)) {
                 result = result * 10 + character - '0';
-                if (result > highestValidCharacter)
+                if (result > UCHAR_MAX_VALUE)
                     overflow = true;
                 break;
             }

@@ -1,3 +1,45 @@
+2015-04-29  Darin Adler  <darin@apple.com>
+
+        [ES6] Implement Unicode code point escapes
+        https://bugs.webkit.org/show_bug.cgi?id=144377
+
+        Reviewed by Antti Koivisto.
+
+        * parser/Lexer.cpp: Moved the UnicodeHexValue class in here from
+        the header. Made it a non-member class so it doesn't need to be part
+        of a template. Made it use UChar32 instead of int for the value to
+        make it clearer what goes into this class.
+        (JSC::ParsedUnicodeEscapeValue::isIncomplete): Added. Replaces the
+        old type() function.
+        (JSC::Lexer<CharacterType>::parseUnicodeEscape): Renamed from
+        parseFourDigitUnicodeHex and added support for code point escapes.
+        (JSC::isLatin1): Added an overload for UChar32.
+        (JSC::isIdentStart): Changed this to take UChar32; no caller tries
+        to call it with a UChar, so no need to overload for that type for now.
+        (JSC::isNonLatin1IdentPart): Changed argument type to UChar32 for clarity.
+        Also added FIXME about a subtle ES6 change that we might want to make later.
+        (JSC::isIdentPart): Changed this to take UChar32; no caller tries
+        to call it with a UChar, so no need to overload for that type for now.
+        (JSC::isIdentPartIncludingEscapeTemplate): Made this a template so that we
+        don't need to repeat the code twice. Added code to handle code point escapes.
+        (JSC::isIdentPartIncludingEscape): Call the template instead of having the
+        code in line.
+        (JSC::Lexer<CharacterType>::recordUnicodeCodePoint): Added.
+        (JSC::Lexer<CharacterType>::parseIdentifierSlowCase): Made small tweaks and
+        updated to call parseUnicodeEscape instead of parseFourDigitUnicodeHex.
+        (JSC::Lexer<CharacterType>::parseComplexEscape): Call parseUnicodeEscape
+        instead of parseFourDigitUnicodeHex. Move the code to handle "\u" before
+        the code that handles the escapes, since the code point escape code now
+        consumes characters while parsing rather than peeking ahead. Test case
+        covers this: Symptom would be that "\u{" would evaluate to "u" instead of
+        giving a syntax error.
+
+        * parser/Lexer.h: Updated for above changes.
+
+        * runtime/StringConstructor.cpp:
+        (JSC::stringFromCodePoint): Use ICU's UCHAR_MAX_VALUE instead of writing
+        out 0x10FFFF; clearer this way.
+
 2015-04-29  Martin Robinson  <mrobinson@igalia.com>
 
         [CMake] [GTK] Organize and clean up unused CMake variables

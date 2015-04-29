@@ -32,8 +32,7 @@
 #include "HTMLEntitySearch.h"
 #include "HTMLEntityTable.h"
 #include <wtf/text/StringBuilder.h>
-
-using namespace WTF;
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
@@ -44,17 +43,12 @@ static const UChar windowsLatin1ExtensionArray[32] = {
     0x02DC, 0x2122, 0x0161, 0x203A, 0x0153, 0x009D, 0x017E, 0x0178, // 98-9F
 };
 
-static inline bool isAlphaNumeric(UChar cc)
-{
-    return (cc >= '0' && cc <= '9') || (cc >= 'a' && cc <= 'z') || (cc >= 'A' && cc <= 'Z');
-}
-
 class HTMLEntityParser {
 public:
     static UChar32 legalEntityFor(UChar32 value)
     {
-        if (value <= 0 || value > 0x10FFFF || (value >= 0xD800 && value <= 0xDFFF))
-            return 0xFFFD;
+        if (value <= 0 || value > UCHAR_MAX_VALUE || U_IS_SURROGATE(value))
+            return replacementCharacter;
         if ((value & ~0x1F) != 0x80)
             return value;
         return windowsLatin1ExtensionArray[value - 0x80];
@@ -104,7 +98,7 @@ public:
         }
         if (entitySearch.mostRecentMatch()->lastCharacter() == ';'
             || !additionalAllowedCharacter
-            || !(isAlphaNumeric(cc) || cc == '=')) {
+            || !(isASCIIAlphanumeric(cc) || cc == '=')) {
             decodedEntity.append(entitySearch.mostRecentMatch()->firstValue);
             if (entitySearch.mostRecentMatch()->secondValue)
                 decodedEntity.append(entitySearch.mostRecentMatch()->secondValue);
