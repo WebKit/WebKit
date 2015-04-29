@@ -1,3 +1,14 @@
+2015-04-29  Martin Robinson  <mrobinson@igalia.com>
+
+        [CMake] [GTK] Organize and clean up unused CMake variables
+        https://bugs.webkit.org/show_bug.cgi?id=144364
+
+        Reviewed by Gyuyoung Kim.
+
+        * PlatformGTK.cmake: Add variables specific to this project.
+        * webkit2gtk-web-extension.pc.in: Hardcode the GTK+ API version. It rarely changes.
+        * webkit2gtk.pc.in: Ditto.
+
 2015-04-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r182573): [GTK] The default context menu contains an empty item since r182573

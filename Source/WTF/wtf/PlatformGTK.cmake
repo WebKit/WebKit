@@ -1,3 +1,6 @@
+set(WTF_LIBRARY_TYPE STATIC)
+set(WTF_OUTPUT_NAME WTFGTK)
+
 list(APPEND WTF_SOURCES
     gobject/GMainLoopSource.cpp
     gobject/GRefPtr.cpp

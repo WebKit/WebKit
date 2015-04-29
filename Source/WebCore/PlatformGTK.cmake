@@ -1,3 +1,5 @@
+set(WebCore_OUTPUT_NAME WebCoreGTK)
+
 list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/accessibility/atk"
     "${WEBCORE_DIR}/editing/atk"

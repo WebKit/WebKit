@@ -1,3 +1,9 @@
+set(WebKit2_OUTPUT_NAME webkit2gtk-${WEBKITGTK_API_VERSION})
+set(WebKit2_WebProcess_OUTPUT_NAME WebKitWebProcess)
+set(WebKit2_NetworkProcess_OUTPUT_NAME WebKitNetworkProcess)
+set(WebKit2_PluginProcess_OUTPUT_NAME WebKitPluginProcess)
+set(WebKit2_DatabaseProcess_OUTPUT_NAME WebKitDatabaseProcess)
+
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKIT2_DIR})
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WEBKIT2GTK_DIR})
