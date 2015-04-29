@@ -1,3 +1,21 @@
+2015-04-29  Eric Carlson  <eric.carlson@apple.com>
+
+        Some media tests assert after r183096
+        https://bugs.webkit.org/show_bug.cgi?id=144098
+
+        Reviewed by Brent Fulgham.
+
+        Never assert when a MediaPlaybackTargetClient client calls one of the methods on Document
+        after it has been unregistered. A media element unregisters itself when it is removed from the 
+        document, but scripts can still run and modify state that results in a call to
+        playbackTargetPickerClientStateDidChange. Remove the asserts instead of adding checks to
+        the various call sites.
+
+        * dom/Document.cpp:
+        (WebCore::Document::showPlaybackTargetPicker): Don't assert if the client has already
+        been unregistered.
+        (WebCore::Document::playbackTargetPickerClientStateDidChange): Ditto.
+
 2015-04-29  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Web process spins endlessly below layoutSimpleLines.

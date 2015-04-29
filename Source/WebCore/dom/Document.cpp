@@ -6571,7 +6571,6 @@ void Document::showPlaybackTargetPicker(MediaPlaybackTargetClient& client, bool 
         return;
 
     auto it = m_clientToIDMap.find(&client);
-    ASSERT(it != m_clientToIDMap.end());
     if (it == m_clientToIDMap.end())
         return;
 
@@ -6585,7 +6584,6 @@ void Document::playbackTargetPickerClientStateDidChange(MediaPlaybackTargetClien
         return;
 
     auto it = m_clientToIDMap.find(&client);
-    ASSERT(it != m_clientToIDMap.end());
     if (it == m_clientToIDMap.end())
         return;
 
