@@ -1,3 +1,18 @@
+2015-04-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Register with device picker whenever a page has <video>
+        https://bugs.webkit.org/show_bug.cgi?id=144408
+
+        Reviewed by Jer Noble.
+
+        * Modules/mediasession/WebMediaSessionManager.cpp:
+        (WebCore::WebMediaSessionManager::setPlaybackTarget): Drive-by fix: don't tell a client to play
+        to the target when it has not routes.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaState): Set RequiresPlaybackTargetMonitoring whenever the 
+        element is <video> with a video track that does not block wireless playback.
+
 2015-04-29  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add support for automatic hyphenation

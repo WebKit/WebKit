@@ -191,7 +191,7 @@ void WebMediaSessionManager::setPlaybackTarget(Ref<MediaPlaybackTarget>&& target
         return;
 
     auto& state = m_clientState[indexThatRequestedPicker];
-    state->client->setShouldPlayToPlaybackTarget(state->contextId, true);
+    state->client->setShouldPlayToPlaybackTarget(state->contextId, m_playbackTarget && m_playbackTarget->hasActiveRoute());
     state->requestedPicker = false;
 }
 
