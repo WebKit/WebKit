@@ -1,3 +1,16 @@
+2015-04-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow testing of plug-ins that handle wheel events.
+        https://bugs.webkit.org/show_bug.cgi?id=144413
+
+        Reviewed by Tim Horton.
+        
+        Allow the Test Netscape Plug-in to pretend to handle wheel events,
+        so layout tests can use it.
+
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::NetscapePluginModule::determineQuirks):
+
 2015-04-29  Filip Pizlo  <fpizlo@apple.com>
 
         JSTypeInfo should have an inline type flag to indicate if getCallData() has been overridden

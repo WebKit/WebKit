@@ -534,7 +534,7 @@ void NetscapePluginModule::determineQuirks()
     }
 #endif
 
-    if (plugin.bundleIdentifier == "com.adobe.acrobat.pdfviewerNPAPI") {
+    if (plugin.bundleIdentifier == "com.adobe.acrobat.pdfviewerNPAPI" || plugin.bundleIdentifier == "com.apple.testnetscapeplugin") {
         // The Adobe Reader plug-in wants wheel events.
         m_pluginQuirks.add(PluginQuirks::WantsWheelEvents);
     }

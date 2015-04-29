@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .box {
+            height: 100px;
+            width: 100px;
+            margin: 10px 20px;
+            background-color: blue;
+            box-shadow: 0 0 10px black;
+        }
+        
+    </style>
+    <script src="resources/wheel-handler-region-helper.js"></script>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        if (window.internals) {
+            internals.setTopContentInset(60);
+            internals.setHeaderHeight(23);
+        }
+
+        function doTest()
+        {
+            window.setTimeout(function() {
+                // Scroll to test the mapping from document to view coords.
+                document.body.scrollTop = 195;
+                dumpRegion();
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0)
+        }
+
+        window.addEventListener('load', doTest);
+    </script>
+</head>
+<body>
+
+<p>Wheel event rect:</p>
+<div class="box" onmousewheel="(void)0"></div>
+
+<pre id="output"></pre>
+
+</body>
+</html>

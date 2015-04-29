@@ -1,3 +1,19 @@
+2015-04-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow testing of plug-ins that handle wheel events.
+        https://bugs.webkit.org/show_bug.cgi?id=144413
+
+        Reviewed by Tim Horton.
+        
+        Test the non-fast scrollable region with top content inset and header height, and with a plug-in.
+
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/top-content-inset-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/top-content-inset-header-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/top-content-inset-header.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/top-content-inset.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/wheel-event-plugin-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/wheel-event-plugin.html: Added.
+
 2015-04-29  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add support for automatic hyphenation
