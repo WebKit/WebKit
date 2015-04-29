@@ -1,3 +1,12 @@
+2015-04-29  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo] Turn on WebGL.
+        https://bugs.webkit.org/show_bug.cgi?id=144389
+
+        Reviewed by Brent Fulgham.
+
+        * win/tools/vsprops/FeatureDefinesCairo.props:
+
 2015-04-27  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Deactivate WebGL until Windows tests work properly
