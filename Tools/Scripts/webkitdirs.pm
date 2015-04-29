@@ -716,7 +716,7 @@ sub determinePassedConfiguration
         $passedConfiguration = "Profiling";
     }
 
-    $passedConfiguration .= "_WinCairo" if (defined($passedConfiguration) && isWinCairo() && isCygwin());
+    $passedConfiguration .= "_WinCairo" if (defined($passedConfiguration) && isWinCairo());
 }
 
 sub passedConfiguration

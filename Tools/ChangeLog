@@ -1,3 +1,11 @@
+2015-04-29  Alex Christensen  <achristensen@webkit.org>
+
+        Fix WinCairo bot.
+
+        * Scripts/webkitdirs.pm:
+        (determinePassedConfiguration):
+        WinCairo bot doesn't use cygwin, but it needs Release_WinCairo for its configuration.
+
 2015-04-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [OS X] Use CTFontCreateForCSS instead of doing font search ourselves
