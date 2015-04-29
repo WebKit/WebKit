@@ -33,6 +33,7 @@ from webkitpy.common.system import path
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.base import Port
 from webkitpy.port.pulseaudio_sanitizer import PulseAudioSanitizer
+from webkitpy.port.xorgdriver import XorgDriver
 from webkitpy.port.xvfbdriver import XvfbDriver
 from webkitpy.port.linux_get_crash_log import GDBCrashLogGenerator
 
@@ -97,8 +98,8 @@ class EflPort(Port):
         return [TestConfiguration(version=self._version, architecture='x86', build_type=build_type) for build_type in self.ALL_BUILD_TYPES]
 
     def _driver_class(self):
-        if os.environ.get("DISABLE_XVFB_DRIVER"):
-            return Port._driver_class(self)
+        if os.environ.get("USE_NATIVE_XDISPLAY"):
+            return XorgDriver
         return XvfbDriver
 
     def _path_to_driver(self):

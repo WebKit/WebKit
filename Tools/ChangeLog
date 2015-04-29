@@ -1,3 +1,16 @@
+2015-04-29  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL] Allow to run the tests on the native X display
+        https://bugs.webkit.org/show_bug.cgi?id=144247
+
+        Reviewed by Gyuyoung Kim.
+
+        Added the USE_NATIVE_XDISPLAY option for the WTR.
+        We can select the Xorg driver if environment variable is set up before running the tests.
+
+        * Scripts/webkitpy/port/efl.py:
+        (EflPort._driver_class):
+
 2015-04-29  Joonghun Park  <jh718.park@samsung.com>
 
         [GTK] Add libnotify-dev in gtk install-dependencies
