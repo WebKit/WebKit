@@ -695,6 +695,8 @@ bool TestController::resetStateToConsistentValues()
 
     WKPageGroupRemoveAllUserContentFilters(WKPageGetPageGroup(m_mainWebView->page()));
 
+    setHidden(false);
+
     // Reset main page back to about:blank
     m_doneResetting = false;
 
