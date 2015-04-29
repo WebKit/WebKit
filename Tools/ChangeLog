@@ -1,5 +1,11 @@
 2015-04-29  Andres Gomez  <agomez@igalia.com>
 
+        Unreviewed. Re-sorted my contributor's mails to help bugzilla on showing the proper one.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
+2015-04-29  Andres Gomez  <agomez@igalia.com>
+
         Unreviewed. Created a new watchlist for changes in WebInspectorUI images and added myself to it.
 
         * Scripts/webkitpy/common/config/watchlist:
