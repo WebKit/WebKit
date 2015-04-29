@@ -572,7 +572,12 @@ void RemoteInspector::receivedSetupMessage(NSDictionary *userInfo)
     RemoteInspectorDebuggableInfo debuggableInfo = it->value.second;
     RefPtr<RemoteInspectorDebuggableConnection> connection = adoptRef(new RemoteInspectorDebuggableConnection(debuggable, connectionIdentifier, sender, debuggableInfo.type));
     bool isAutomaticInspection = m_automaticInspectionCandidateIdentifier == debuggable->identifier();
-    bool automaticallyPause = [[userInfo objectForKey:WIRAutomaticallyPause] boolValue];
+
+    bool automaticallyPause = false;
+    NSNumber *automaticallyPauseObject = [userInfo objectForKey:WIRAutomaticallyPause];
+    if ([automaticallyPauseObject isKindOfClass:[NSNumber class]])
+        automaticallyPause = [automaticallyPauseObject boolValue];
+
     if (!connection->setup(isAutomaticInspection, automaticallyPause)) {
         connection->close();
         return;

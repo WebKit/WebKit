@@ -1,5 +1,15 @@
 2015-04-29  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Gracefully handle missing auto pause key on remote inspector setup
+        https://bugs.webkit.org/show_bug.cgi?id=144411
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::receivedSetupMessage):
+
+2015-04-29  Joseph Pecoraro  <pecoraro@apple.com>
+
         NodeList has issues with Symbol and empty string
         https://bugs.webkit.org/show_bug.cgi?id=144310
 
