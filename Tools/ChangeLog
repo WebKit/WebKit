@@ -1,3 +1,19 @@
+2015-04-28  Sam Weinig  <sam@webkit.org>
+
+        [Content Extensions] Process NFAs individually to avoid having all NFAs live at the same time
+        https://bugs.webkit.org/show_bug.cgi?id=144363
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::createNFAs):
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebCore/DFAMinimizer.cpp:
+        (TestWebKitAPI::countLiveNodes):
+        (TestWebKitAPI::createNFAs):
+        (TestWebKitAPI::buildDFAFromPatterns):
+        Update tests to use a hand rolled createNFAs function on top of CombinedURLFilters::processNFAs.
+
 2015-04-28  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Fully replace ENABLE_LLINT_C_LOOP with ENABLE_JIT

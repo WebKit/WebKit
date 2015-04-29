@@ -163,6 +163,17 @@ ContentExtensions::ContentExtensionsBackend makeBackend(const char* json)
     return backend;
 }
 
+static Vector<ContentExtensions::NFA> createNFAs(ContentExtensions::CombinedURLFilters& combinedURLFilters)
+{
+    Vector<ContentExtensions::NFA> nfas;
+
+    combinedURLFilters.processNFAs([&](ContentExtensions::NFA&& nfa) {
+        nfas.append(WTF::move(nfa));
+    });
+
+    return nfas;
+}
+
 TEST_F(ContentExtensionTest, Basic)
 {
     auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\"}}]");
@@ -599,7 +610,7 @@ TEST_F(ContentExtensionTest, StrictPrefixSeparatedMachines1Partitioning)
     // Not this one.
     EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("^[ab]+bang", false, 0));
 
-    EXPECT_EQ(2ul, combinedURLFilters.createNFAs().size());
+    EXPECT_EQ(2ul, createNFAs(combinedURLFilters).size());
 }
 
 TEST_F(ContentExtensionTest, StrictPrefixSeparatedMachines2)
@@ -632,7 +643,7 @@ TEST_F(ContentExtensionTest, StrictPrefixSeparatedMachines2Partitioning)
     EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("[a-c]+b+oom", false, 3));
 
     // "^foo" and "^webkit:" can be grouped, the other two have a variable prefix.
-    EXPECT_EQ(3ul, combinedURLFilters.createNFAs().size());
+    EXPECT_EQ(3ul, createNFAs(combinedURLFilters).size());
 }
 
 static void testPatternStatus(String pattern, ContentExtensions::URLFilterParser::ParseStatus status)

@@ -42,9 +42,10 @@ class WEBCORE_EXPORT CombinedURLFilters {
 public:
     CombinedURLFilters();
     ~CombinedURLFilters();
+
     void addPattern(uint64_t patternId, const Vector<Term>& pattern);
 
-    Vector<NFA> createNFAs() const;
+    void processNFAs(std::function<void(NFA&&)> handler) const;
     void clear();
 
     size_t memoryUsed() const;

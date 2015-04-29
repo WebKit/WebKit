@@ -43,7 +43,7 @@ public:
     }
 };
 
-unsigned countLiveNodes(const ContentExtensions::DFA& dfa)
+static unsigned countLiveNodes(const ContentExtensions::DFA& dfa)
 {
     unsigned counter = 0;
     for (const auto& node : dfa.nodes) {
@@ -53,6 +53,17 @@ unsigned countLiveNodes(const ContentExtensions::DFA& dfa)
     return counter;
 }
 
+static Vector<ContentExtensions::NFA> createNFAs(ContentExtensions::CombinedURLFilters& combinedURLFilters)
+{
+    Vector<ContentExtensions::NFA> nfas;
+
+    combinedURLFilters.processNFAs([&](ContentExtensions::NFA&& nfa) {
+        nfas.append(WTF::move(nfa));
+    });
+
+    return nfas;
+}
+
 ContentExtensions::DFA buildDFAFromPatterns(Vector<const char*> patterns)
 {
     ContentExtensions::CombinedURLFilters combinedURLFilters;
@@ -60,7 +71,7 @@ ContentExtensions::DFA buildDFAFromPatterns(Vector<const char*> patterns)
 
     for (const char* pattern : patterns)
         parser.addPattern(pattern, false, 0);
-    Vector<ContentExtensions::NFA> nfas = combinedURLFilters.createNFAs();
+    Vector<ContentExtensions::NFA> nfas = createNFAs(combinedURLFilters);
     return ContentExtensions::NFAToDFA::convert(nfas[0]);
 }
 

@@ -169,12 +169,10 @@ static void generateNFAForSubtree(NFA& nfa, unsigned rootId, const PrefixTreeVer
     }
 }
 
-Vector<NFA> CombinedURLFilters::createNFAs() const
+void CombinedURLFilters::processNFAs(std::function<void(NFA&&)> handler) const
 {
     Vector<ActiveSubtree> activeStack;
     activeStack.append(ActiveSubtree({ m_prefixTreeRoot.get(), m_prefixTreeRoot->edges.begin() }));
-
-    Vector<NFA> nfas;
 
     while (true) {
     ProcessSubtree:
@@ -202,23 +200,24 @@ Vector<NFA> CombinedURLFilters::createNFAs() const
         }
 
         if (needToGenerate) {
-            nfas.append(NFA());
-            NFA& generatingNFA = nfas.last();
+            NFA nfa;
 
-            unsigned prefixEnd = generatingNFA.root();
+            unsigned prefixEnd = nfa.root();
 
             for (unsigned i = 0; i < activeStack.size() - 1; ++i) {
                 const Term& term = activeStack[i].iterator->first;
-                prefixEnd = term.generateGraph(generatingNFA, prefixEnd, activeStack[i].iterator->second->finalActions);
+                prefixEnd = term.generateGraph(nfa, prefixEnd, activeStack[i].iterator->second->finalActions);
             }
 
             for (const auto& edge : activeSubtree.vertex->edges) {
                 if (!edge.second->inVariableLengthPrefix) {
                     const Term& term = edge.first;
-                    unsigned newSubtreeStart = term.generateGraph(generatingNFA, prefixEnd, edge.second->finalActions);
-                    generateNFAForSubtree(generatingNFA, newSubtreeStart, *edge.second);
+                    unsigned newSubtreeStart = term.generateGraph(nfa, prefixEnd, edge.second->finalActions);
+                    generateNFAForSubtree(nfa, newSubtreeStart, *edge.second);
                 }
             }
+            
+            handler(WTF::move(nfa));
         }
 
         // We have processed all the subtrees of this level, pop the stack and move on to the next sibling.
@@ -227,8 +226,6 @@ Vector<NFA> CombinedURLFilters::createNFAs() const
             break;
         ++activeStack.last().iterator;
     }
-
-    return nfas;
 }
 
 } // namespace ContentExtensions

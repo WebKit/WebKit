@@ -1,3 +1,29 @@
+2015-04-28  Sam Weinig  <sam@webkit.org>
+
+        [Content Extensions] Process NFAs individually to avoid having all NFAs live at the same time
+        https://bugs.webkit.org/show_bug.cgi?id=144363
+
+        Reviewed by Alex Christensen.
+
+        This brings dirty memory use when compiling our test content extension down from ~300MB to ~100MB.
+
+        * contentextensions/CombinedURLFilters.cpp:
+        (WebCore::ContentExtensions::CombinedURLFilters::processNFAs):
+        (WebCore::ContentExtensions::CombinedURLFilters::createNFAs): Deleted.
+        * contentextensions/CombinedURLFilters.h:
+        Replace function that creates a Vector of all the NFAs with one that allows incremental processing
+        as they are created.
+
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::addUniversalActionsToDFA):
+        Extract code to add universal actions into a helper, since we need to call it in two places now.
+
+        (WebCore::ContentExtensions::compileRuleList):
+        Adopt CombinedURLFilters::processNFAs. Now that we don't have a Vector of NFAs, we need to keep track
+        of whether or not any NFAs were processed and if we are currently processing the first NFA so we can
+        ensure that we have some bytecode generated event for empty rule sets, and that universal actions are
+        placed on the first DFA.
+
 2015-04-28  Timothy Horton  <timothy_horton@apple.com>
 
         [TextIndicator] Yellow highlight takes too long to fade out on scroll
