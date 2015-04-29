@@ -26,6 +26,8 @@
 #include "config.h"
 #include "Hyphenation.h"
 
+#if !USE(LIBHYPHEN)
+
 #include "NotImplemented.h"
 #include <wtf/text/StringView.h>
 
@@ -43,3 +45,5 @@ size_t lastHyphenLocation(StringView, size_t /* beforeIndex */, const AtomicStri
 }
 
 } // namespace WebCore
+
+#endif // !USE(LIBHYPHEN)

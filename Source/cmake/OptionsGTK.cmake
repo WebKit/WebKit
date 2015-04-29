@@ -53,6 +53,7 @@ WEBKIT_OPTION_DEFINE(ENABLE_PLUGIN_PROCESS_GTK2 "Whether to build WebKitPluginPr
 WEBKIT_OPTION_DEFINE(ENABLE_X11_TARGET "Whether to enable support for the X11 windowing target." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_WAYLAND_TARGET "Whether to enable support for the Wayland windowing target." PUBLIC OFF)
 WEBKIT_OPTION_DEFINE(USE_LIBNOTIFY "Whether to enable the default web notification implementation." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(USE_LIBHYPHEN "Whether to enable the default automatic hyphenation implementation." PUBLIC ON)
 
 WEBKIT_OPTION_DEFINE(USE_GSTREAMER_GL "Whether to enable support for GStreamer GL" PRIVATE OFF)
 WEBKIT_OPTION_DEFINE(USE_GSTREAMER_MPEGTS "Whether to enable support for MPEG-TS" PRIVATE OFF)
@@ -376,6 +377,14 @@ if (USE_LIBNOTIFY)
        message(FATAL_ERROR "libnotify is needed for USE_LIBNOTIFY.")
     endif ()
     SET_AND_EXPOSE_TO_BUILD(WTF_USE_LIBNOTIFY TRUE)
+endif ()
+
+if (HYPHEN_FOUND)
+    find_package(Hyphen)
+    if (NOT LIBHYPHEN_FOUND)
+       message(FATAL_ERROR "libhyphen is needed for USE_LIBHYPHEN.")
+    endif ()
+    SET_AND_EXPOSE_TO_BUILD(WTF_USE_LIBHYPHEN 1)
 endif ()
 
 set(DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR ${DERIVED_SOURCES_DIR}/webkitdom)

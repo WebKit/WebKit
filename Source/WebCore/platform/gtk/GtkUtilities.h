@@ -19,6 +19,8 @@
 #ifndef GtkUtilities_h 
 #define GtkUtilities_h 
 
+#include <wtf/text/CString.h>
+
 namespace WebCore {
 
 class IntPoint;
@@ -32,6 +34,10 @@ enum class DisplaySystemType {
 };
 
 DisplaySystemType getDisplaySystemType();
+
+#if defined(DEVELOPMENT_BUILD)
+CString webkitBuildDirectory();
+#endif
 
 } // namespace WebCore
 

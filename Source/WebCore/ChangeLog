@@ -1,3 +1,38 @@
+2015-04-29  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add support for automatic hyphenation
+        https://bugs.webkit.org/show_bug.cgi?id=44478
+
+        Reviewed by Carlos Garcia Campos.
+
+        No new tests. This patch unskips and updates results for existing hyphenation tests.
+
+        * PlatformGTK.cmake: Add the libhypen implementation to the source list.
+        * platform/gtk/GtkUtilities.cpp:
+        (WebCore::topLevelPath): Add this helper function taken from the test harness.
+        (WebCore::getWebKitBuildDirectory): Ditto.
+        * platform/gtk/GtkUtilities.h: Add function declarations for the helper functions.
+        * platform/text/Hyphenation.cpp: Surround this implementation with !USE(LIBHYPHEN),
+          so that it can still be shared.
+        * platform/text/gtk/HyphenationLibHyphen.cpp: Added.
+        (WebCore::extractLocaleFromDictionaryFilePath): Take in a dictionary filename and
+        determine the locale that it covers.
+        (WebCore::scanDirectoryForDicionaries): Look for all installed dictionaries as well
+        as ones in the JHBuild root for testing.
+        (WebCore::scanTestDictionariesDirectoryIfNecessary): Try to scan the dictionaries installed
+        in the JHBuild root.
+        (WebCore::availableLocales): Getter for global hash of installed dictionaries.
+        (WebCore::canHyphenate): Added libhyphen implementation.
+        (WebCore::HyphenationDictionary): Helper class that properly manages the memory of
+        an open libhyphen dictionary. This is useful so that they can be stored in an MRU
+        cache. This is a similar approach to the CoreFoundation implementation.
+        (WebCore::AtomicStringKeyedMRUCache<RefPtr<HyphenationDictionary>>::createValueForNullKey): MRU cache
+        helper.
+        (WebCore::AtomicStringKeyedMRUCache<RefPtr<HyphenationDictionary>>::createValueForKey): Ditto.
+        (WebCore::hyphenDictionaryCache): A cache for opened hyphenation dictionaries.
+        (WebCore::countLeadingSpaces): Count leading spaces, since WebCore often passes words with them.
+        (WebCore::lastHyphenLocation): Added libhyphen implementation.
+
 2015-04-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unreviewed build fix.

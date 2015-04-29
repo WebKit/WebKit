@@ -91,6 +91,11 @@
     <branch repo="github.com" module="mrobinson/webkitgtk-test-fonts.git" checkoutdir="webkitgtk-test-fonts" tag="0.0.5"/>
   </autotools>
 
+  <autotools id="dicts"
+             skip-autogen="true">
+    <branch repo="github.com" module="mrobinson/webkitgtk-test-dicts.git" checkoutdir="webkitgtk-test-dicts" tag="0.0.1"/>
+  </autotools>
+
   <autotools id="freetype6" autogen-sh="configure">
     <branch module="freetype/freetype-2.4.11.tar.bz2" version="2.4.11"
             repo="savannah.gnu.org"

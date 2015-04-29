@@ -1,3 +1,14 @@
+2015-04-29  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add support for automatic hyphenation
+        https://bugs.webkit.org/show_bug.cgi?id=44478
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/FindHyphen.cmake: Added. A CMake module for finding libhyphen.
+        * Source/cmake/OptionsGTK.cmake: Look for libhyphen and enable hyphenation if found.
+        * Source/cmakeconfig.h.cmake: Pass through the whether libhyphen is enabled.
+
 2015-04-29  Jake Nielsen  <jacob_nielsen@apple.com>
 
         Failure when building WebKit for appletvsimulator.

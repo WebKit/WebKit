@@ -1676,13 +1676,6 @@ webkit.org/b/53959 fast/dom/Window/window-resize.html [ Failure Timeout Pass ]
 # keygen element rendering is broken
 webkit.org/b/54136 http/tests/misc/submit-post-keygen.html [ Failure ]
 
-# [GTK] GTK+ does not support hyphenation
-webkit.org/b/44478 fast/text/hyphenate-character.html [ Skip ]
-webkit.org/b/44478 fast/text/hyphens.html [ Skip ]
-webkit.org/b/44478 fast/text/hyphenate-first-word.html [ Skip ]
-webkit.org/b/44478 fast/text/hyphenate-locale.html [ Skip ]
-webkit.org/b/44478 fast/text/hyphen-min-preferred-width.html [ Skip ]
-
 webkit.org/b/122021 media/video-controls-captions-trackmenu.html [ Failure ]
 webkit.org/b/123097 media/track/track-user-preferences.html [ Skip ]
 webkit.org/b/121995 media/video-controls-captions-trackmenu-includes-enabled-track.html [ Failure ]
@@ -2417,6 +2410,8 @@ webkit.org/b/85594 fast/dom/navigator-detached-no-crash.html [ Failure ]
 
 webkit.org/b/143471 canvas/philip/tests/2d.drawImage.animated.poster.html [ Failure ]
 webkit.org/b/143871 svg/W3C-SVG-1.1-SE/linking-uri-01-b.svg [ Failure ]
+
+webkit.org/b/143924 fast/text/hyphen-min-preferred-width.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
