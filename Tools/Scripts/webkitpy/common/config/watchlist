@@ -205,6 +205,9 @@
                         r"|Tools/Scripts/generate-inspector-protocol-bindings.py"
                         r"|Tools/Scripts/webkitpy/inspector",
         },
+        "WebInspectorUIImages": {
+            "filename": r"Source/WebInspectorUI/UserInterface/Images",
+        },
         "WebReplayGenerator": {
             "filename": r"Source/JavaScriptCore/replay/scripts"
                         r"|Tools/Scripts/webkitpy/replay",
@@ -381,6 +384,7 @@
         "WebIDL": [ "esprehn+autocc@chromium.org", "dchris@gmail.com", "kondapallykalyan@gmail.com" ],
         "WebInspectorAPI": [ "timothy@apple.com", "joepeck@webkit.org", "graouts@webkit.org" ],
         "WebInspectorGenerator": [ "burg@cs.washington.edu", "joepeck@webkit.org" ],
+        "WebInspectorUIImages": [ "agomez@igalia.com" ],
         "WebReplayGenerator": [ "burg@cs.washington.edu" ],
         "WebKitGTKTranslations": [ "gns@gnome.org", "mrobinson@webkit.org", "berto@igalia.com", "cgarcia@igalia.com", "mcatanzaro@igalia.com" ],
         "WebSocket": [ "yutak@chromium.org", "toyoshim+watchlist@chromium.org" ],

@@ -1,3 +1,9 @@
+2015-04-29  Andres Gomez  <agomez@igalia.com>
+
+        Unreviewed. Created a new watchlist for changes in WebInspectorUI images and added myself to it.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2015-04-29  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL] Allow to run the tests on the native X display
