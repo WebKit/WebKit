@@ -102,19 +102,28 @@ std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storage
     return entry;
 }
 
-void Entry::initializeBufferFromStorageRecord() const
+#if ENABLE(SHAREABLE_RESOURCE)
+void Entry::initializeShareableResourceHandleFromStorageRecord() const
 {
     auto* data = m_sourceStorageRecord.body.data();
     size_t size = m_sourceStorageRecord.body.size();
-#if ENABLE(SHAREABLE_RESOURCE)
     RefPtr<SharedMemory> sharedMemory = m_sourceStorageRecord.body.isMap() ? SharedMemory::create(const_cast<uint8_t*>(data), size, SharedMemory::Protection::ReadOnly) : nullptr;
-    RefPtr<ShareableResource> shareableResource = sharedMemory ? ShareableResource::create(sharedMemory.release(), 0, m_sourceStorageRecord.body.size()) : nullptr;
-
-    if (shareableResource && shareableResource->createHandle(m_shareableResourceHandle))
-        m_buffer = m_shareableResourceHandle.tryWrapInSharedBuffer();
+    RefPtr<ShareableResource> shareableResource = sharedMemory ? ShareableResource::create(sharedMemory.release(), 0, size) : nullptr;
+    if (shareableResource)
+        shareableResource->createHandle(m_shareableResourceHandle);
+}
 #endif
-    if (!m_buffer)
-        m_buffer = WebCore::SharedBuffer::create(data, size);
+
+void Entry::initializeBufferFromStorageRecord() const
+{
+#if ENABLE(SHAREABLE_RESOURCE)
+    if (!shareableResourceHandle().isNull()) {
+        m_buffer = m_shareableResourceHandle.tryWrapInSharedBuffer();
+        if (m_buffer)
+            return;
+    }
+#endif
+    m_buffer = WebCore::SharedBuffer::create(m_sourceStorageRecord.body.data(), m_sourceStorageRecord.body.size());
 }
 
 WebCore::SharedBuffer* Entry::buffer() const
@@ -128,8 +137,8 @@ WebCore::SharedBuffer* Entry::buffer() const
 #if ENABLE(SHAREABLE_RESOURCE)
 ShareableResource::Handle& Entry::shareableResourceHandle() const
 {
-    if (!m_buffer)
-        initializeBufferFromStorageRecord();
+    if (m_shareableResourceHandle.isNull())
+        initializeShareableResourceHandleFromStorageRecord();
 
     return m_shareableResourceHandle;
 }

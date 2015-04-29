@@ -70,6 +70,9 @@ public:
 private:
     Entry(const Storage::Record&);
     void initializeBufferFromStorageRecord() const;
+#if ENABLE(SHAREABLE_RESOURCE)
+    void initializeShareableResourceHandleFromStorageRecord() const;
+#endif
 
     Key m_key;
     std::chrono::system_clock::time_point m_timeStamp;
