@@ -3379,7 +3379,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
     CGSWindowCaptureOptions options = kCGSCaptureIgnoreGlobalClipShape;
     RetainPtr<CFArrayRef> windowSnapshotImages = adoptCF(CGSHWCaptureWindowList(CGSMainConnectionID(), &windowID, 1, options));
-    if (!CFArrayGetCount(windowSnapshotImages.get()))
+    if (!windowSnapshotImages || !CFArrayGetCount(windowSnapshotImages.get()))
         return nullptr;
 
     RetainPtr<CGImageRef> windowSnapshotImage = (CGImageRef)CFArrayGetValueAtIndex(windowSnapshotImages.get(), 0);
@@ -3389,7 +3389,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     if (CGImageGetWidth(windowSnapshotImage.get()) != desiredSnapshotWidth) {
         options |= kCGSWindowCaptureNominalResolution;
         windowSnapshotImages = adoptCF(CGSHWCaptureWindowList(CGSMainConnectionID(), &windowID, 1, options));
-        if (!CFArrayGetCount(windowSnapshotImages.get()))
+        if (!windowSnapshotImages || !CFArrayGetCount(windowSnapshotImages.get()))
             return nullptr;
         windowSnapshotImage = (CGImageRef)CFArrayGetValueAtIndex(windowSnapshotImages.get(), 0);
     }
