@@ -1,4 +1,3 @@
-//@ skip
 
 function test(actual, expected) {
     if (actual !== expected)

@@ -1,3 +1,13 @@
+2015-04-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        REGRESSION (r183373): ASSERT failed in wtf/SHA1.h
+        https://bugs.webkit.org/show_bug.cgi?id=144257
+
+        Reviewed by Darin Adler.
+
+        * wtf/SHA1.h:
+        (WTF::SHA1::addBytes):
+
 2015-04-29  Martin Robinson  <mrobinson@igalia.com>
 
         [CMake] [GTK] Organize and clean up unused CMake variables

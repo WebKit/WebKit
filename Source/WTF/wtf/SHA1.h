@@ -52,11 +52,6 @@ public:
     void addBytes(const CString& input)
     {
         const char* string = input.data();
-        // Make sure that the creator of the CString didn't make the mistake
-        // of forcing length() to be the size of the buffer used to create the
-        // string, prior to inserting the null terminator earlier in the
-        // sequence.
-        ASSERT(input.length() == strlen(string));
         addBytes(reinterpret_cast<const uint8_t*>(string), input.length());
     }
     WTF_EXPORT_PRIVATE void addBytes(const uint8_t* input, size_t length);

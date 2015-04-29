@@ -1,3 +1,42 @@
+2015-04-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        REGRESSION (r183373): ASSERT failed in wtf/SHA1.h
+        https://bugs.webkit.org/show_bug.cgi?id=144257
+
+        Reviewed by Darin Adler.
+
+        SHA1 is used to calculate CodeBlockHash.
+        To calculate hash value, we pass the source code UTF-8 CString to SHA1::addBytes.
+        However, the source code can contain null character.
+        So when performing `strlen` on the source code's CString, it returns the incorrect length.
+        In SHA1::addBytes, there's assertion `input.length() == strlen(string)` and it fails.
+
+        In the template-literal-syntax.js, we perform `eval` with the script contains "\0".
+        As the result, `strlen(string)` accidentally shortened by the contained "\0", and assertion fails.
+
+        CString will be changed not to contain a null-character[1]. However, inserting the assertion here
+        is not correct. Because
+
+        1. If CString should not contain a null character, this should be asserted in CString side instead of SHA1::addBytes.
+        2. If CString can contain a null character, this assertion becomes incorrect.
+
+        So this patch just drops the assertion.
+
+        In the current implementation, we once convert the entire source code to the newly allocated
+        UTF-8 string and pass it to the SHA1 processing. However, this is memory consuming.
+        Ideally, we should stream the decoded bytes into the SHA1 processing iteratively.
+        We'll implement it in the separate patch[2].
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=144339
+        [2]: https://bugs.webkit.org/show_bug.cgi?id=144263
+
+        * tests/stress/eval-script-contains-null-character.js: Added.
+        (shouldBe):
+        (test):
+        * tests/stress/template-literal-line-terminators.js:
+        * tests/stress/template-literal-syntax.js:
+        * tests/stress/template-literal.js:
+
 2015-04-29  Filip Pizlo  <fpizlo@apple.com>
 
         Evict IsEnvironmentRecord from inline type flags
