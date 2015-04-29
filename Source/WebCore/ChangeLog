@@ -1,3 +1,9 @@
+2015-04-29  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed iOS build fix after r183553: fix declaration of QLPreviewScheme
+
+        * platform/ios/QuickLookSoftLink.mm:
+
 2015-04-29  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Use new device picker menu API
