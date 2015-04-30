@@ -134,8 +134,6 @@ using namespace WebCore;
 
 @end // implementation WebSimpleLayer
 
-// MARK: -
-
 #ifndef NDEBUG
 
 @implementation CALayer(ExtendedDescription)

@@ -1,3 +1,17 @@
+2015-04-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Fixed elements end up in the middle of the view with pageScale < 1
+        https://bugs.webkit.org/show_bug.cgi?id=144428
+        rdar://problem/20404982
+
+        Reviewed by Tim Horton.
+
+        Encode/decode fixedElementsLayoutRelativeToFrame.
+
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::decode):
+
 2015-04-30  Tim Horton  <timothy_horton@apple.com>
 
         Asynchronous (or timed-out synchronous) resize flashes white instead of page background color

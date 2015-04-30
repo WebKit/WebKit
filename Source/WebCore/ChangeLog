@@ -1,3 +1,35 @@
+2015-04-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Fixed elements end up in the middle of the view with pageScale < 1
+        https://bugs.webkit.org/show_bug.cgi?id=144428
+        rdar://problem/20404982
+
+        Reviewed by Tim Horton.
+
+        When pageScale is < 1, we used fixed layout mode, and FrameView::fixedElementsLayoutRelativeToFrame()
+        returns true. However, the scrolling thread was calling the static scrollOffsetForFixedPosition()
+        hardcoding 'false' for this parameter.
+        
+        Fix by sending the value of fixedElementsLayoutRelativeToFrame over to the scrolling thread,
+        so we can use it when doing scrolling-thread fixed position stuff.
+
+        Not testable.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated):
+        * page/scrolling/ScrollingStateFrameScrollingNode.cpp:
+        (WebCore::ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode):
+        (WebCore::ScrollingStateFrameScrollingNode::setFixedElementsLayoutRelativeToFrame):
+        * page/scrolling/ScrollingStateFrameScrollingNode.h:
+        * page/scrolling/ScrollingTreeFrameScrollingNode.cpp:
+        (WebCore::ScrollingTreeFrameScrollingNode::ScrollingTreeFrameScrollingNode):
+        (WebCore::ScrollingTreeFrameScrollingNode::updateBeforeChildren):
+        * page/scrolling/ScrollingTreeFrameScrollingNode.h:
+        (WebCore::ScrollingTreeFrameScrollingNode::fixedElementsLayoutRelativeToFrame):
+        (WebCore::ScrollingTreeFrameScrollingNode::shouldUpdateScrollLayerPositionSynchronously): Deleted.
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition):
+
 2015-04-30  Beth Dakin  <bdakin@apple.com>
 
         Remove invalid assertion from MouseEvent::create()

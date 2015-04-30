@@ -54,6 +54,7 @@ public:
 
     SynchronousScrollingReasons synchronousScrollingReasons() const { return m_synchronousScrollingReasons; }
     bool shouldUpdateScrollLayerPositionSynchronously() const { return m_synchronousScrollingReasons; }
+    bool fixedElementsLayoutRelativeToFrame() const { return m_fixedElementsLayoutRelativeToFrame; }
 
     FloatSize viewToContentsOffset(const FloatPoint& scrollOffset) const;
 
@@ -71,14 +72,16 @@ protected:
     ScrollBehaviorForFixedElements scrollBehaviorForFixedElements() const { return m_behaviorForFixed; }
     
 private:
-    float m_frameScaleFactor;
+    float m_frameScaleFactor { 1 };
+    float m_topContentInset { 0 };
 
-    int m_headerHeight;
-    int m_footerHeight;
-    float m_topContentInset;
+    int m_headerHeight { 0 };
+    int m_footerHeight { 0 };
     
-    SynchronousScrollingReasons m_synchronousScrollingReasons;
-    ScrollBehaviorForFixedElements m_behaviorForFixed;
+    SynchronousScrollingReasons m_synchronousScrollingReasons { 0 };
+    ScrollBehaviorForFixedElements m_behaviorForFixed { StickToDocumentBounds };
+    
+    bool m_fixedElementsLayoutRelativeToFrame { false };
 };
 
 } // namespace WebCore

@@ -60,7 +60,8 @@ public:
         FooterLayer,
         PainterForScrollbar,
         BehaviorForFixedElements,
-        TopContentInset
+        TopContentInset,
+        FixedElementsLayoutRelativeToFrame,
     };
 
     float frameScaleFactor() const { return m_frameScaleFactor; }
@@ -109,6 +110,9 @@ public:
     const LayerRepresentation& footerLayer() const { return m_footerLayer; }
     WEBCORE_EXPORT void setFooterLayer(const LayerRepresentation&);
 
+    bool fixedElementsLayoutRelativeToFrame() const { return m_fixedElementsLayoutRelativeToFrame; }
+    WEBCORE_EXPORT void setFixedElementsLayoutRelativeToFrame(bool);
+
 #if PLATFORM(MAC)
     ScrollbarPainter verticalScrollbarPainter() const { return m_verticalScrollbarPainter.get(); }
     ScrollbarPainter horizontalScrollbarPainter() const { return m_horizontalScrollbarPainter.get(); }
@@ -134,14 +138,15 @@ private:
 #endif
 
     Region m_nonFastScrollableRegion;
-    float m_frameScaleFactor;
-    SynchronousScrollingReasons m_synchronousScrollingReasons;
-    ScrollBehaviorForFixedElements m_behaviorForFixed;
-    int m_headerHeight;
-    int m_footerHeight;
     FloatPoint m_requestedScrollPosition;
-    bool m_requestedScrollPositionRepresentsProgrammaticScroll;
-    float m_topContentInset;
+    float m_frameScaleFactor { 1 };
+    float m_topContentInset { 0 };
+    int m_headerHeight { 0 };
+    int m_footerHeight { 0 };
+    SynchronousScrollingReasons m_synchronousScrollingReasons { 0 };
+    ScrollBehaviorForFixedElements m_behaviorForFixed { StickToDocumentBounds };
+    bool m_requestedScrollPositionRepresentsProgrammaticScroll { false };
+    bool m_fixedElementsLayoutRelativeToFrame { false };
 };
 
 } // namespace WebCore
