@@ -32,12 +32,11 @@
 #import "FileSystemIOS.h"
 #import "Logging.h"
 #import "NSFileManagerSPI.h"
-#import "QuickLookSPI.h"
+#import "QuickLookSoftLink.h"
 #import "ResourceError.h"
 #import "ResourceHandle.h"
 #import "ResourceLoader.h"
 #import "RuntimeApplicationChecksIOS.h"
-#import "SoftLinking.h"
 #import "SynchronousResourceHandleCFURLConnectionDelegate.h"
 #import "WebCoreURLResponseIOS.h"
 #import <Foundation/Foundation.h>
@@ -56,58 +55,12 @@
 @end
 #endif
 
-SOFT_LINK_FRAMEWORK_OPTIONAL(QuickLook)
-SOFT_LINK_CLASS(QuickLook, QLPreviewConverter)
-SOFT_LINK_MAY_FAIL(QuickLook, QLPreviewGetSupportedMIMETypes, NSSet *, (), ())
-SOFT_LINK_MAY_FAIL(QuickLook, QLTypeCopyBestMimeTypeForFileNameAndMimeType, NSString *, (NSString *fileName, NSString *mimeType), (fileName, mimeType))
-SOFT_LINK_MAY_FAIL(QuickLook, QLTypeCopyBestMimeTypeForURLAndMimeType, NSString *, (NSURL *url, NSString *mimeType), (url, mimeType))
-SOFT_LINK_MAY_FAIL(QuickLook, QLTypeCopyUTIForURLAndMimeType, NSString *, (NSURL *url, NSString *mimeType), (url, mimeType))
-SOFT_LINK_CONSTANT_MAY_FAIL(QuickLook, QLPreviewScheme, NSString *)
-
-namespace WebCore {
-    NSString *QLTypeCopyUTIForURLAndMimeType(NSURL *url, NSString *mimeType);
-}
-
 using namespace WebCore;
-
-Class WebCore::QLPreviewConverterClass()
-{
-#define QLPreviewConverter getQLPreviewConverterClass()
-    return QLPreviewConverter;
-#undef QLPreviewConverter
-}
-
-NSString *WebCore::QLTypeCopyBestMimeTypeForFileNameAndMimeType(NSString *fileName, NSString *mimeType)
-{
-    if (!canLoadQLTypeCopyBestMimeTypeForFileNameAndMimeType())
-        return nil;
-
-    return ::QLTypeCopyBestMimeTypeForFileNameAndMimeType(fileName, mimeType);
-}
-
-NSString *WebCore::QLTypeCopyBestMimeTypeForURLAndMimeType(NSURL *url, NSString *mimeType)
-{
-    if (!canLoadQLTypeCopyBestMimeTypeForURLAndMimeType())
-        return nil;
-
-    return ::QLTypeCopyBestMimeTypeForURLAndMimeType(url, mimeType);
-}
 
 NSSet *WebCore::QLPreviewGetSupportedMIMETypesSet()
 {
-    if (!canLoadQLPreviewGetSupportedMIMETypes())
-        return nil;
-
-    static NSSet *set = adoptNS(::QLPreviewGetSupportedMIMETypes()).leakRef();
-    return set;
-}
-
-NSString *WebCore::QLTypeCopyUTIForURLAndMimeType(NSURL *url, NSString *mimeType)
-{
-    if (!canLoadQLTypeCopyUTIForURLAndMimeType())
-        return nil;
-
-    return ::QLTypeCopyUTIForURLAndMimeType(url, mimeType);
+    static NeverDestroyed<RetainPtr<NSSet>> set = QLPreviewGetSupportedMIMETypes();
+    return set.get().get();
 }
 
 NSDictionary *WebCore::QLFileAttributes()
@@ -190,12 +143,12 @@ void WebCore::removeQLPreviewConverterForURL(NSURL *url)
 
 RetainPtr<NSURLRequest> WebCore::registerQLPreviewConverterIfNeeded(NSURL *url, NSString *mimeType, NSData *data)
 {
-    RetainPtr<NSString> updatedMIMEType = adoptNS(WebCore::QLTypeCopyBestMimeTypeForURLAndMimeType(url, mimeType));
+    RetainPtr<NSString> updatedMIMEType = adoptNS(QLTypeCopyBestMimeTypeForURLAndMimeType(url, mimeType));
 
-    if ([WebCore::QLPreviewGetSupportedMIMETypesSet() containsObject:updatedMIMEType.get()]) {
-        RetainPtr<NSString> uti = adoptNS(WebCore::QLTypeCopyUTIForURLAndMimeType(url, updatedMIMEType.get()));
+    if ([QLPreviewGetSupportedMIMETypesSet() containsObject:updatedMIMEType.get()]) {
+        RetainPtr<NSString> uti = adoptNS(QLTypeCopyUTIForURLAndMimeType(url, updatedMIMEType.get()));
 
-        RetainPtr<id> converter = adoptNS([allocQLPreviewConverterInstance() initWithData:data name:nil uti:uti.get() options:nil]);
+        RetainPtr<QLPreviewConverter> converter = adoptNS([allocQLPreviewConverterInstance() initWithData:data name:nil uti:uti.get() options:nil]);
         NSURLRequest *request = [converter previewRequest];
 
         // We use [request URL] here instead of url since it will be
@@ -228,18 +181,13 @@ const URL WebCore::safeQLURLForDocumentURLAndResourceURL(const URL& documentURL,
 static Vector<char> createQLPreviewProtocol()
 {
     Vector<char> previewProtocol;
-#define QLPreviewScheme getQLPreviewScheme()
     const char* qlPreviewScheme = [QLPreviewScheme UTF8String];
-#undef QLPreviewScheme
     previewProtocol.append(qlPreviewScheme, strlen(qlPreviewScheme) + 1);
     return previewProtocol;
 }
 
 const char* WebCore::QLPreviewProtocol()
 {
-    if (!canLoadQLPreviewScheme())
-        return "";
-
     static NeverDestroyed<Vector<char>> previewProtocol(createQLPreviewProtocol());
     return previewProtocol.get().data();
 }
@@ -459,7 +407,7 @@ QuickLookHandle::QuickLookHandle(NSURL *firstRequestURL, NSURLConnection *connec
 std::unique_ptr<QuickLookHandle> QuickLookHandle::create(ResourceHandle* handle, NSURLConnection *connection, NSURLResponse *nsResponse, id delegate)
 {
     ASSERT_ARG(handle, handle);
-    if (handle->firstRequest().requester() != ResourceRequest::Requester::Main || ![WebCore::QLPreviewGetSupportedMIMETypesSet() containsObject:[nsResponse MIMEType]])
+    if (handle->firstRequest().requester() != ResourceRequest::Requester::Main || ![QLPreviewGetSupportedMIMETypesSet() containsObject:[nsResponse MIMEType]])
         return nullptr;
 
     std::unique_ptr<QuickLookHandle> quickLookHandle(new QuickLookHandle([handle->firstRequest().nsURLRequest(DoNotUpdateHTTPBody) URL], connection, nsResponse, delegate));
@@ -471,7 +419,7 @@ std::unique_ptr<QuickLookHandle> QuickLookHandle::create(ResourceHandle* handle,
 std::unique_ptr<QuickLookHandle> QuickLookHandle::create(ResourceHandle* handle, SynchronousResourceHandleCFURLConnectionDelegate* connectionDelegate, CFURLResponseRef cfResponse)
 {
     ASSERT_ARG(handle, handle);
-    if (handle->firstRequest().requester() != ResourceRequest::Requester::Main || ![WebCore::QLPreviewGetSupportedMIMETypesSet() containsObject:(NSString *)CFURLResponseGetMIMEType(cfResponse)])
+    if (handle->firstRequest().requester() != ResourceRequest::Requester::Main || ![QLPreviewGetSupportedMIMETypesSet() containsObject:(NSString *)CFURLResponseGetMIMEType(cfResponse)])
         return nullptr;
 
     NSURLResponse *nsResponse = [NSURLResponse _responseWithCFURLResponse:cfResponse];
@@ -489,7 +437,7 @@ CFURLResponseRef QuickLookHandle::cfResponse()
 
 bool QuickLookHandle::shouldCreateForMIMEType(const String& mimeType)
 {
-    return [WebCore::QLPreviewGetSupportedMIMETypesSet() containsObject:mimeType];
+    return [QLPreviewGetSupportedMIMETypesSet() containsObject:mimeType];
 }
 
 std::unique_ptr<QuickLookHandle> QuickLookHandle::create(ResourceLoader& loader, const ResourceResponse& response)

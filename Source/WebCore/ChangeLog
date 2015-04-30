@@ -1,3 +1,50 @@
+2015-04-29  David Kilzer  <ddkilzer@apple.com>
+
+        Attempt #2: Switch QuickLook soft-linking to use QuickLookSoftLink.{h,mm}
+        <http://webkit.org/b/144362>
+
+        Reviewed by Andy Estes.
+
+        This patch switches soft-linking of QuickLook.framework to
+        QuickLookSoftLink.{h,mm} so that we stop exporting unintended
+        symbols.
+
+        No new tests since no change in behavior.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        - Add QuickLookSoftLinking.{h,mm} to the project.
+
+        * platform/ios/QuickLookSoftLink.h: Added.
+        * platform/ios/QuickLookSoftLink.mm: Added.
+        * platform/mac/SoftLinking.h:
+        (SOFT_LINK_CLASS_FOR_HEADER): Add macro.
+        (SOFT_LINK_CLASS_FOR_SOURCE): Add macro.
+        (SOFT_LINK_POINTER_FOR_HEADER): Add macro.
+        (SOFT_LINK_POINTER_FOR_SOURCE): Add macro.
+
+        * platform/network/ios/QuickLook.h:
+        - Remove unused declarations.
+
+        * platform/network/ios/QuickLook.mm:
+        (WebCore::QLPreviewConverterClass): Deleted.
+        (WebCore::QLTypeCopyBestMimeTypeForFileNameAndMimeType): Deleted.
+        (WebCore::QLTypeCopyBestMimeTypeForURLAndMimeType): Deleted.
+        (WebCore::QLTypeCopyUTIForURLAndMimeType): Deleted.
+        - Remove SOFT_LINK macros and unused methods after switching to
+          new QuickLookSoftLink.{h,mm}.
+        (WebCore::QLPreviewGetSupportedMIMETypesSet):
+        - Switch to use NeverDestroyed<>.
+        (WebCore::registerQLPreviewConverterIfNeeded):
+        (createQLPreviewProtocol):
+        (WebCore::QLPreviewProtocol):
+        (WebCore::QuickLookHandle::QuickLookHandle):
+        (WebCore::QuickLookHandle::create):
+        (WebCore::QuickLookHandle::shouldCreateForMIMEType):
+        - Simplify code when using QuickLookSoftLink.h.
+
+        * platform/network/ios/WebCoreURLResponseIOS.mm:
+        - Include QuickLookSoftLink.h header.
+
 2015-04-29  Simon Fraser  <simon.fraser@apple.com>
 
         Compute the non-fast-scrollable region in main-document coordinates

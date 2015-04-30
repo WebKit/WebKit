@@ -317,6 +317,42 @@
     } \
     }
 
+#define SOFT_LINK_CLASS_FOR_HEADER(functionNamespace, framework, className) \
+    @class className; \
+    namespace functionNamespace { \
+    extern Class (*get_##framework##_##className##Class)(); \
+    className *alloc##className##Instance(); \
+    inline className *alloc##className##Instance() \
+    { \
+        return [get_##framework##_##className##Class() alloc]; \
+    } \
+    }
+
+#define SOFT_LINK_CLASS_FOR_SOURCE(functionNamespace, framework, className) \
+    @class className; \
+    namespace functionNamespace { \
+    static Class init##className(); \
+    Class (*get_##framework##_##className##Class)() = init##className; \
+    static Class class##className; \
+    \
+    static Class className##Function() \
+    { \
+        return class##className; \
+    } \
+    \
+    static Class init##className() \
+    { \
+        static dispatch_once_t once; \
+        dispatch_once(&once, ^{ \
+            framework##Library(); \
+            class##className = objc_getClass(#className); \
+            RELEASE_ASSERT(class##className); \
+            get_##framework##_##className##Class = className##Function; \
+        }); \
+        return class##className; \
+    } \
+    }
+
 #define SOFT_LINK_CONSTANT_FOR_HEADER(functionNamespace, framework, variableName, variableType) \
     WTF_EXTERN_C_BEGIN \
     extern const variableType variableName; \
@@ -371,6 +407,35 @@
             RELEASE_ASSERT_WITH_MESSAGE(softLink##framework##functionName, "%s", dlerror()); \
         }); \
         return softLink##framework##functionName parameterNames; \
+    } \
+    }
+
+#define SOFT_LINK_POINTER_FOR_HEADER(functionNamespace, framework, variableName, variableType) \
+    namespace functionNamespace { \
+    extern variableType (*get_##framework##_##variableName)(); \
+    }
+
+#define SOFT_LINK_POINTER_FOR_SOURCE(functionNamespace, framework, variableName, variableType) \
+    namespace functionNamespace { \
+    static variableType init##framework##variableName(); \
+    variableType (*get_##framework##_##variableName)() = init##framework##variableName; \
+    static variableType pointer##framework##variableName; \
+    \
+    static variableType pointer##framework##variableName##Function() \
+    { \
+        return pointer##framework##variableName; \
+    } \
+    \
+    static variableType init##framework##variableName() \
+    { \
+        static dispatch_once_t once; \
+        dispatch_once(&once, ^{ \
+            void** pointer = static_cast<void**>(dlsym(framework##Library(), #variableName)); \
+            RELEASE_ASSERT_WITH_MESSAGE(pointer, "%s", dlerror()); \
+            pointer##framework##variableName = static_cast<variableType>(*pointer); \
+            get_##framework##_##variableName = pointer##framework##variableName##Function; \
+        }); \
+        return pointer##framework##variableName; \
     } \
     }
 
