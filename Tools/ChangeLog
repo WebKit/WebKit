@@ -1,3 +1,18 @@
+2015-04-30  Alexey Proskuryakov  <ap@apple.com>
+
+        r183355 didn't trigger Mac tests
+        https://bugs.webkit.org/show_bug.cgi?id=144464
+
+        Reviewed by Simon Fraser.
+
+        Update badly neglected filters and unit tests.
+
+        * BuildSlaveSupport/build.webkit.org-config/wkbuild.py:
+        (_should_file_trigger_build):
+        * BuildSlaveSupport/build.webkit.org-config/wkbuild_unittest.py:
+        (ShouldBuildTest):
+        (ShouldBuildTest.test_should_build):
+
 2015-04-30  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] Add libhyphen-dev to the build dependencies

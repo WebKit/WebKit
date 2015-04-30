@@ -27,28 +27,29 @@ import wkbuild
 class ShouldBuildTest(unittest.TestCase):
     _should_build_tests = [
         (["ChangeLog", "Source/WebCore/ChangeLog", "Source/WebKit2/ChangeLog-2011-02-11"], []),
-        (["GNUmakefile.am", "Source/WebCore/GNUmakefile.am"], ["gtk"]),
         (["Websites/bugs.webkit.org/foo", "Source/WebCore/bar"], ["*"]),
         (["Websites/bugs.webkit.org/foo"], []),
-        (["Source/JavaScriptCore/JavaScriptCore.xcodeproj/foo"], ["mac-leopard", "mac-lion",  "mac-mountainlion", "mac-snowleopard"]),
+        (["Source/JavaScriptCore/JavaScriptCore.xcodeproj/foo"], ["mac-mavericks", "mac-yosemite"]),
         (["Source/JavaScriptCore/JavaScriptCore.vcproj/foo", "Source/WebKit2/win/WebKit2.vcproj", "Source/WebKit/win/WebKit.sln", "Tools/WebKitTestRunner/Configurations/WebKitTestRunnerCommon.vsprops"], ["win"]),
         (["LayoutTests/platform/mac/foo", "Source/WebCore/bar"], ["*"]),
         (["LayoutTests/foo"], ["*"]),
         (["LayoutTests/canvas/philip/tests/size.attributes.parse.exp-expected.txt", "LayoutTests/canvas/philip/tests/size.attributes.parse.exp.html"], ["*"]),
-        (["LayoutTests/platform/mac-leopard/foo"], ["mac-leopard"]),
-        (["LayoutTests/platform/mac-lion/foo"], ["mac-leopard", "mac-lion", "mac-snowleopard", "win"]),
-        (["LayoutTests/platform/mac-snowleopard/foo"], ["mac-leopard", "mac-snowleopard"]),
-        (["LayoutTests/platform/mac-wk2/Skipped"], ["mac-lion",  "mac-mountainlion", "mac-snowleopard", "win"]),
-        (["LayoutTests/platform/mac/foo"], ["mac-leopard", "mac-lion", "mac-mountainlion", "mac-snowleopard", "win"]),
+        (["LayoutTests/platform/mac-mavericks/foo"], ["mac-mavericks"]),
+        (["LayoutTests/platform/mac-yosemite/foo"], ["mac-mavericks", "mac-yosemite"]),
+        (["LayoutTests/platform/wk2/Skipped"], ["mac-mavericks", "mac-yosemite"]),
+        (["LayoutTests/platform/mac-wk2/Skipped"], ["mac-mavericks", "mac-yosemite"]),
+        (["LayoutTests/platform/mac-wk1/compositing/tiling/transform-origin-tiled-expected.txt"], ["mac-mavericks", "mac-yosemite"]),
+        (["LayoutTests/platform/mac/foo"], ["mac-mavericks", "mac-yosemite", "win"]),
+        (["LayoutTests/platform/mac-wk2/platform/mac/editing/spelling/autocorrection-contraction-expected.txt"], ["mac-mavericks", "mac-yosemite"]),
         (["LayoutTests/platform/win-xp/foo"], ["win"]),
-        (["LayoutTests/platform/win-wk2/foo"], ["win"]),
+        (["LayoutTests/platform/win-wk1/foo"], ["win"]),
         (["LayoutTests/platform/win/foo"], ["win"]),
-        (["Source/WebKit/mac/WebKit.exp"], ["mac-leopard", "mac-lion",  "mac-mountainlion", "mac-snowleopard"]),
-        (["Source/WebCore/mac/foo"], ["mac-leopard", "mac-lion",  "mac-mountainlion", "mac-snowleopard"]),
+        (["Source/WebKit/mac/WebKit.mac.exp"], ["mac-mavericks", "mac-yosemite"]),
+        (["Source/WebCore/mac/foo"], ["mac-mavericks", "mac-yosemite"]),
         (["Source/WebCore/win/foo"], ["win"]),
-        (["Source/WebCore/platform/graphics/gpu/foo"], ["mac-leopard", "mac-lion",  "mac-mountainlion", "mac-snowleopard"]),
         (["Source/WebCore/platform/wx/wxcode/win/foo"], []),
-        (["Source/WebCore/rendering/RenderThemeMac.mm", "Source/WebCore/rendering/RenderThemeMac.h"], ["mac-leopard", "mac-lion",  "mac-mountainlion", "mac-snowleopard"]),
+        (["Source/WebCore/accessibility/ios/AXObjectCacheIOS.mm"], []),
+        (["Source/WebCore/rendering/RenderThemeMac.mm", "Source/WebCore/rendering/RenderThemeMac.h"], ["mac-mavericks", "mac-yosemite"]),
         (["Tools/BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksViewer.js"], []),
     ]
 
@@ -56,7 +57,7 @@ class ShouldBuildTest(unittest.TestCase):
         for files, platforms in self._should_build_tests:
             # FIXME: We should test more platforms here once
             # wkbuild._should_file_trigger_build is implemented for them.
-            for platform in ["mac-leopard", "mac-lion",  "mac-mavericks", "mac-mountainlion", "mac-snowleopard", "win"]:
+            for platform in ["mac-mavericks", "mac-yosemite", "win"]:
                 should_build = platform in platforms or "*" in platforms
                 self.assertEqual(wkbuild.should_build(platform, files), should_build, "%s should%s have built but did%s (files: %s)" % (platform, "" if should_build else "n't", "n't" if should_build else "", str(files)))
 
