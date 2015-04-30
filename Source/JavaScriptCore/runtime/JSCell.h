@@ -112,6 +112,12 @@ public:
     JS_EXPORT_PRIVATE JSObject* getObject(); // NULL if not an object
     const JSObject* getObject() const; // NULL if not an object
         
+    // Returns information about how to call/construct this cell as a function/constructor. May tell
+    // you that the cell is not callable or constructor (default is that it's not either). If it
+    // says that the function is callable, and the TypeOfShouldCallGetCallData type flag is set, and
+    // this is an object, then typeof will return "function" instead of "object". These methods
+    // cannot change their minds and must be thread-safe. They are sometimes called from compiler
+    // threads.
     JS_EXPORT_PRIVATE static CallType getCallData(JSCell*, CallData&);
     JS_EXPORT_PRIVATE static ConstructType getConstructData(JSCell*, ConstructData&);
 

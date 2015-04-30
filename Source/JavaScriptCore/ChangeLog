@@ -1,3 +1,12 @@
+2015-04-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Add a comment clarifying the behavior and semantics of getCallData/getConstructData, in
+        particular that they cannot change their minds and may be called from compiler threads.
+
+        Rubber stamped by Geoffrey Garen.
+
+        * runtime/JSCell.h:
+
 2015-04-29  Filip Pizlo  <fpizlo@apple.com>
 
         DFG Is<Blah> versions of TypeOf should fold based on proven input type
