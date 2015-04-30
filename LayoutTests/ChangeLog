@@ -1,3 +1,30 @@
+2015-04-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Unskip 3D transformation tests for WebKitGTK+
+
+        Unreviewed. This is gardening.
+
+        These tests should run reasonably well on the testing bots, now that
+        they use llvmpipe to run OpenGL.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/transforms/3d/general/background-visibility-layers-expected.png: Added.
+        * platform/gtk/transforms/3d/general/cssmatrix-3d-zoom-expected.png: Added.
+        * platform/gtk/transforms/3d/general/matrix-with-zoom-3d-expected.png: Added.
+        * platform/gtk/transforms/3d/general/perspective-non-layer-expected.png: Added.
+        * platform/gtk/transforms/3d/general/perspective-units-expected.png: Added.
+        * platform/gtk/transforms/3d/general/transform-origin-z-change-expected.png: Added.
+        * platform/gtk/transforms/3d/hit-testing/backface-hit-test-expected.png: Added.
+        * platform/gtk/transforms/3d/hit-testing/backface-no-transform-hit-test-expected.png: Added.
+        * platform/gtk/transforms/3d/point-mapping/3d-point-mapping-2-expected.png: Added.
+        * platform/gtk/transforms/3d/point-mapping/3d-point-mapping-3-expected.png: Added.
+        * platform/gtk/transforms/3d/point-mapping/3d-point-mapping-coplanar-expected.png: Added.
+        * platform/gtk/transforms/3d/point-mapping/3d-point-mapping-deep-expected.png: Added.
+        * platform/gtk/transforms/3d/point-mapping/3d-point-mapping-expected.png: Added.
+        * platform/gtk/transforms/3d/point-mapping/3d-point-mapping-origins-expected.png: Added.
+        * platform/gtk/transforms/3d/point-mapping/3d-point-mapping-overlapping-expected.png: Added.
+        * platform/gtk/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.png: Added.
+
 2015-04-29  Simon Fraser  <simon.fraser@apple.com>
 
         Rebaseline after r183597.

@@ -307,7 +307,6 @@ webkit.org/b/71849 http/tests/security/webgl-remote-read-remote-image-allowed-wi
 webkit.org/b/71849 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [ Skip ]
 webkit.org/b/71849 webkit.org/b/124486 http/tests/webgl [ Skip ]
 webkit.org/b/71849 webkit.org/b/111477 inspector-protocol/layers [ Skip ]
-webkit.org/b/71849 transforms/3d [ Skip ]
 webkit.org/b/71849 webgl [ Skip ]
 
 # LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
