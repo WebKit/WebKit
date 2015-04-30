@@ -1,3 +1,16 @@
+2015-04-30  Filip Pizlo  <fpizlo@apple.com>
+
+        js/regress/is-string-fold-tricky.html and js/regress/is-string-fold.html are crashing
+        https://bugs.webkit.org/show_bug.cgi?id=144463
+
+        Reviewed by Benjamin Poulain.
+        
+        Unskip now that the bug is fixed.
+
+        * TestExpectations:
+        * js/regress/script-tests/is-string-fold-tricky.js:
+        * js/regress/script-tests/is-string-fold.js:
+
 2015-04-30  Brady Eidson  <beidson@apple.com>
 
         Javascript using WebSQL can create their own WebKit info table.

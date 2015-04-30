@@ -1,6 +1,3 @@
-// webkit.org/b/144463
-//@ skip
-
 var value1 = "hello";
 var value2 = 42;
 (function() {

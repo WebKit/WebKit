@@ -1,5 +1,34 @@
 2015-04-30  Filip Pizlo  <fpizlo@apple.com>
 
+        js/regress/is-string-fold-tricky.html and js/regress/is-string-fold.html are crashing
+        https://bugs.webkit.org/show_bug.cgi?id=144463
+
+        Reviewed by Benjamin Poulain.
+        
+        Fixup phase was super cleverly folding an IsString(@x) when @x is predicted SpecString
+        into a Check(String:@x) followed by JSConstant(true). Then in these tests the
+        ValueAdd(IsString(@x), @stuff) would try to turn this into an integer add by cleverly
+        converting the boolean into an integer. But as part of doing that, it would try to
+        short-circuit any profiling by leveraging the fact that the IsString is now a constant,
+        and it would try to figure out if the addition might overflow. Part of that logic
+        involved checking if the immediate is either a boolean or a sufficiently small integer.
+        But: it would check if it's a sufficiently small integer before checking if it was a
+        boolean, so it would try to call asNumber() on the boolean.
+        
+        All of this cleverness was very deliberate, but apparently the @stuff + booleanConstant
+        case was previously never hit until I wrote these tests, and so we never knew that
+        calling asNumber() on a boolean was wrong.
+        
+        The fix is super simple: the expression should just check for boolean first.
+        
+        This bug was benign in release builds. JSValue::asNumber() on a boolean would return
+        garbage, and that's OK, since we'd take the boolean case anyway.
+
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::addImmediateShouldSpeculateInt32):
+
+2015-04-30  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, add a FIXME comment referencing https://bugs.webkit.org/show_bug.cgi?id=144458.
 
         * jit/JITOperations.cpp:
