@@ -1,3 +1,19 @@
+2015-04-29  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG Is<Blah> versions of TypeOf should fold based on proven input type
+        https://bugs.webkit.org/show_bug.cgi?id=144409
+
+        Reviewed by Geoffrey Garen.
+        
+        We were missing some obvious folding opportunities here. I don't know how this affects real
+        code, but in general, we like to ensure that our constant folding is comprehensive. So this
+        is more about placating my static analysis OCD than anything else.
+        
+        I added a bunch of speed/correctness tests for this in LayoutTests/js/regress.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2015-04-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use the default hash value for Symbolized StringImpl

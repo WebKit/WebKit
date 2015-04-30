@@ -1,3 +1,77 @@
+2015-04-29  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG Is<Blah> versions of TypeOf should fold based on proven input type
+        https://bugs.webkit.org/show_bug.cgi?id=144409
+
+        Reviewed by Geoffrey Garen.
+
+        * js/regress/is-boolean-fold-expected.txt: Added.
+        * js/regress/is-boolean-fold-tricky-expected.txt: Added.
+        * js/regress/is-boolean-fold-tricky.html: Added.
+        * js/regress/is-boolean-fold.html: Added.
+        * js/regress/is-function-fold-expected.txt: Added.
+        * js/regress/is-function-fold-tricky-expected.txt: Added.
+        * js/regress/is-function-fold-tricky-internal-function-expected.txt: Added.
+        * js/regress/is-function-fold-tricky-internal-function.html: Added.
+        * js/regress/is-function-fold-tricky.html: Added.
+        * js/regress/is-function-fold.html: Added.
+        * js/regress/is-number-fold-expected.txt: Added.
+        * js/regress/is-number-fold-tricky-expected.txt: Added.
+        * js/regress/is-number-fold-tricky.html: Added.
+        * js/regress/is-number-fold.html: Added.
+        * js/regress/is-object-or-null-fold-expected.txt: Added.
+        * js/regress/is-object-or-null-fold-functions-expected.txt: Added.
+        * js/regress/is-object-or-null-fold-functions.html: Added.
+        * js/regress/is-object-or-null-fold-less-tricky-expected.txt: Added.
+        * js/regress/is-object-or-null-fold-less-tricky.html: Added.
+        * js/regress/is-object-or-null-fold-tricky-expected.txt: Added.
+        * js/regress/is-object-or-null-fold-tricky.html: Added.
+        * js/regress/is-object-or-null-fold.html: Added.
+        * js/regress/is-object-or-null-trickier-function-expected.txt: Added.
+        * js/regress/is-object-or-null-trickier-function.html: Added.
+        * js/regress/is-object-or-null-trickier-internal-function-expected.txt: Added.
+        * js/regress/is-object-or-null-trickier-internal-function.html: Added.
+        * js/regress/is-object-or-null-tricky-function-expected.txt: Added.
+        * js/regress/is-object-or-null-tricky-function.html: Added.
+        * js/regress/is-object-or-null-tricky-internal-function-expected.txt: Added.
+        * js/regress/is-object-or-null-tricky-internal-function.html: Added.
+        * js/regress/is-string-fold-expected.txt: Added.
+        * js/regress/is-string-fold-tricky-expected.txt: Added.
+        * js/regress/is-string-fold-tricky.html: Added.
+        * js/regress/is-string-fold.html: Added.
+        * js/regress/is-undefined-fold-expected.txt: Added.
+        * js/regress/is-undefined-fold-tricky-expected.txt: Added.
+        * js/regress/is-undefined-fold-tricky.html: Added.
+        * js/regress/is-undefined-fold.html: Added.
+        * js/regress/script-tests/is-boolean-fold-tricky.js: Added.
+        * js/regress/script-tests/is-boolean-fold.js: Added.
+        * js/regress/script-tests/is-function-fold-tricky-internal-function.js: Added.
+        * js/regress/script-tests/is-function-fold-tricky.js: Added.
+        (func):
+        (func2):
+        * js/regress/script-tests/is-function-fold.js: Added.
+        (value1):
+        * js/regress/script-tests/is-number-fold-tricky.js: Added.
+        * js/regress/script-tests/is-number-fold.js: Added.
+        * js/regress/script-tests/is-object-or-null-fold-functions.js: Added.
+        (value2):
+        * js/regress/script-tests/is-object-or-null-fold-less-tricky.js: Added.
+        * js/regress/script-tests/is-object-or-null-fold-tricky.js: Added.
+        * js/regress/script-tests/is-object-or-null-fold.js: Added.
+        * js/regress/script-tests/is-object-or-null-trickier-function.js: Added.
+        (func):
+        (func2):
+        * js/regress/script-tests/is-object-or-null-trickier-internal-function.js: Added.
+        * js/regress/script-tests/is-object-or-null-tricky-function.js: Added.
+        (func):
+        * js/regress/script-tests/is-object-or-null-tricky-internal-function.js: Added.
+        * js/regress/script-tests/is-string-fold-tricky.js: Added.
+        * js/regress/script-tests/is-string-fold.js: Added.
+        * js/regress/script-tests/is-undefined-fold-tricky.js: Added.
+        * js/regress/script-tests/is-undefined-fold.js: Added.
+        * js/regress/sink-function-expected.txt: Added.
+        * js/regress/sink-function.html: Added.
+
 2015-04-30  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Expand test infrastructure to support scrolling tests (Part 3)
