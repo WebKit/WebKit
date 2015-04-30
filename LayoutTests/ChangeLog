@@ -1,3 +1,10 @@
+2015-04-29  Alexey Proskuryakov  <ap@apple.com>
+
+        fast/frames/flattening/iframe-flattening-resize-event-count.html times out on Yosemite WK2
+        https://bugs.webkit.org/show_bug.cgi?id=144155
+
+        * fast/frames/flattening/resources/iframe-to-resize.html: Added more logging to the test.
+
 2015-04-29  Martin Robinson  <mrobinson@igalia.com>
 
         Unskip 3D transformation tests for WebKitGTK+

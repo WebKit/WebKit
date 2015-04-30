@@ -38,6 +38,7 @@
       console.log("Timer was throttled.");
     if (window.performance)
       console.log("Timers were scheduled at: " + timerScheduleTimes);
+    console.log("document.hidden = " + document.hidden + "; document.visibilityState = " + document.visibilityState);
     if (window.testRunner)
       testRunner.notifyDone();
   }, 20000);
