@@ -1,5 +1,36 @@
 2015-04-29  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Remove some unused Images
+        https://bugs.webkit.org/show_bug.cgi?id=144412
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Images/BottomUpTree.svg: Removed.
+        * UserInterface/Images/Log.png: Removed.
+        * UserInterface/Images/Log@2x.png: Removed.
+        * UserInterface/Images/NavigationItemAngleBrackets.svg: Removed.
+        * UserInterface/Images/NavigationItemBrushAndRuler.svg: Removed.
+        * UserInterface/Images/NavigationItemBug.svg: Removed.
+        * UserInterface/Images/NavigationItemDoughnutChart.svg: Removed.
+        * UserInterface/Images/NavigationItemFile.svg: Removed.
+        * UserInterface/Images/NavigationItemLayers.svg: Removed.
+        * UserInterface/Images/NavigationItemLog.svg: Removed.
+        * UserInterface/Images/NavigationItemProbes.svg: Removed.
+        * UserInterface/Images/NavigationItemStopwatch.svg: Removed.
+        * UserInterface/Images/NavigationItemStorage.svg: Removed.
+        * UserInterface/Images/NavigationItemVariable.svg: Removed.
+        * UserInterface/Images/NetworkBarLabelCalloutLeft.svg: Removed.
+        * UserInterface/Images/NetworkBarLabelCalloutRight.svg: Removed.
+        * UserInterface/Images/NetworkBarLabelCalloutWhiteLeft.svg: Removed.
+        * UserInterface/Images/NetworkBarLabelCalloutWhiteRight.svg: Removed.
+        * UserInterface/Images/Percent.svg: Removed.
+        * UserInterface/Images/Reload.svg: Removed.
+        * UserInterface/Images/SplitToggleDown.svg: Removed.
+        * UserInterface/Images/Time.svg: Removed.
+        * UserInterface/Images/Weight.svg: Removed.
+
+2015-04-29  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Split Storage from Resources tab
         https://bugs.webkit.org/show_bug.cgi?id=144404
 
