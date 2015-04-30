@@ -290,15 +290,28 @@ macro(SET_AND_EXPOSE_TO_BUILD _variable_name)
     EXPOSE_VARIABLE_TO_BUILD(${_variable_name})
 endmacro()
 
+macro(_ADD_CONFIGURATION_LINE_TO_HEADER_STRING _string _variable_name _output_variable_name)
+    if (${${_variable_name}})
+        set(${_string} "${_file_contents}#define ${_output_variable_name} 1\n")
+    else ()
+        set(${_string} "${_file_contents}#define ${_output_variable_name} 0\n")
+    endif ()
+endmacro()
+
 macro(CREATE_CONFIGURATION_HEADER)
     list(SORT _WEBKIT_CONFIG_FILE_VARIABLES)
     set(_file_contents "#ifndef CMAKECONFIG_H\n")
     set(_file_contents "${_file_contents}#define CMAKECONFIG_H\n\n")
+
     foreach (_variable_name ${_WEBKIT_CONFIG_FILE_VARIABLES})
-        if (${${_variable_name}})
-            set(_file_contents "${_file_contents}#define ${_variable_name} 1\n")
-        else ()
-            set(_file_contents "${_file_contents}#define ${_variable_name} 0\n")
+        _ADD_CONFIGURATION_LINE_TO_HEADER_STRING(_file_contents ${_variable_name} ${_variable_name})
+
+        # WebKit looks for WTF_USE_FOO when calling the USE(FOO) macro. Automatically exposing
+        # this definition when USE_FOO is exposed, prevents us from having to expose both (or
+        # forgetting to do so).
+        string(FIND ${_variable_name} "USE_" _use_string_location)
+        if (${_use_string_location} EQUAL 0)
+            _ADD_CONFIGURATION_LINE_TO_HEADER_STRING(_file_contents ${_variable_name} "WTF_${_variable_name}")
         endif ()
     endforeach ()
     set(_file_contents "${_file_contents}\n#endif /* CMAKECONFIG_H */\n")

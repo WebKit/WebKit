@@ -1,3 +1,19 @@
+2015-04-30  Martin Robinson  <mrobinson@igalia.com>
+
+        [CMake] Automatically expose WTF_USE_FOO to the build when USE_FOO is exposed
+        https://bugs.webkit.org/show_bug.cgi?id=144394
+
+        Reviewed by Carlos Garcia Campos.
+
+        Automatically expose WTF_USE_FOO when USE_FOO is exposed. A side-effect of this change
+        is that it fixes the redirected XComposite window for GTK+, which was accidentally
+        disabled in previous reworking of the CMake configuration.
+
+        * Source/cmake/OptionsGTK.cmake: We no longer need to expose the WTF_ prefixed
+        version of USE variables.
+        * Source/cmake/WebKitFeatures.cmake: Automatically expose WTF_USE_FOO when USE_FOO
+        is exposed to the build.
+
 2015-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Bump GTK+ version numbers.
