@@ -1,3 +1,29 @@
+2015-04-30  Andres Gomez  <agomez@igalia.com>
+
+        [GTK] Web Inspector: Remove some unused Images
+        https://bugs.webkit.org/show_bug.cgi?id=144445
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UserInterface/Images/gtk/BottomUpTree.svg: Removed.
+        * UserInterface/Images/gtk/Log.png: Removed.
+        * UserInterface/Images/gtk/Log@2x.png: Removed.
+        * UserInterface/Images/gtk/NavigationItemAngleBrackets.svg: Removed.
+        * UserInterface/Images/gtk/NavigationItemBrushAndRuler.svg: Removed.
+        * UserInterface/Images/gtk/NavigationItemBug.svg: Removed.
+        * UserInterface/Images/gtk/NavigationItemFile.svg: Removed.
+        * UserInterface/Images/gtk/NavigationItemLayers.svg: Removed.
+        * UserInterface/Images/gtk/NavigationItemLog.svg: Removed.
+        * UserInterface/Images/gtk/NavigationItemProbes.svg: Removed.
+        * UserInterface/Images/gtk/NavigationItemStopwatch.svg: Removed.
+        * UserInterface/Images/gtk/NavigationItemStorage.svg: Removed.
+        * UserInterface/Images/gtk/NavigationItemVariable.svg: Removed.
+        * UserInterface/Images/gtk/Percent.svg: Removed.
+        * UserInterface/Images/gtk/Reload.svg: Removed.
+        * UserInterface/Images/gtk/SplitToggleDown.svg: Removed.
+        * UserInterface/Images/gtk/Time.svg: Removed.
+        * UserInterface/Images/gtk/Weight.svg: Removed.
+
 2015-04-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Copy not working in Console
