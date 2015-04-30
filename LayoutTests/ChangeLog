@@ -1,3 +1,10 @@
+2015-04-30  Martin Robinson  <mrobinson@igalia.com>
+
+        Unskip isolated words tests on WebKitGTK+
+
+        * platform/gtk/TestExpectations: Unskip tests. We've been able to run these
+        since the switch to WebKitTestRunner.
+
 2015-04-30  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, skip new tests js/regress/is-string-fold.html and js/regress/is-string-fold-tricky.html because they are crashing in RJST as well.

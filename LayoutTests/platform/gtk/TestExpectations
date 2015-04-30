@@ -378,16 +378,6 @@ webkit.org/b/79203 fast/events/constructors/media-stream-event-constructor.html 
 webkit.org/b/79203 webaudio/mediastreamaudiodestinationnode.html [ Skip ]
 webkit.org/b/79203 webaudio/mediastreamaudiosourcenode.html [ Skip ]
 
-# New test infrastructure required -- need isolated worlds
-webkit.org/b/31508 http/tests/security/isolatedWorld [ Skip ]
-webkit.org/b/31508 plugins/npruntime/overrides-all-properties.html [ Skip ]
-webkit.org/b/31508 storage/websql/open-database-creation-callback-isolated-world.html [ Skip ]
-webkit.org/b/31508 storage/websql/statement-error-callback-isolated-world.html [ Skip ]
-webkit.org/b/31508 storage/websql/statement-success-callback-isolated-world.html [ Skip ]
-webkit.org/b/31508 storage/websql/transaction-callback-isolated-world.html [ Skip ]
-webkit.org/b/31508 storage/websql/transaction-error-callback-isolated-world.html [ Skip ]
-webkit.org/b/31508 storage/websql/transaction-success-callback-isolated-world.html [ Skip ]
-
 # Text Autosizing is not yet enabled.
 webkit.org/b/99063 fast/text-autosizing [ Skip ]
 
@@ -641,6 +631,9 @@ webkit.org/b/143703 fast/forms/listbox-visible-size.html [ Failure ]
 fast/events/mouse-force-changed.html [ Skip ]
 fast/events/mouse-force-down.html [ Skip ]
 fast/events/mouse-force-up.html [ Skip ]
+
+# JSC does not support setIsolatedWorldSecurityOrigin
+webkit.org/b/61540 http/tests/security/isolatedWorld/cross-origin-xhr.html
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
