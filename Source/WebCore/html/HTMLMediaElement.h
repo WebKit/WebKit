@@ -741,7 +741,7 @@ private:
     Timer m_progressEventTimer;
     Timer m_playbackProgressTimer;
     Timer m_scanTimer;
-    GenericTaskQueue m_seekTaskQueue;
+    GenericTaskQueue<ScriptExecutionContext> m_seekTaskQueue;
     RefPtr<TimeRanges> m_playedTimeRanges;
     GenericEventQueue m_asyncEventQueue;
 

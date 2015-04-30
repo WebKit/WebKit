@@ -26,26 +26,100 @@
 #ifndef GenericTaskQueue_h
 #define GenericTaskQueue_h
 
+#include "Timer.h"
 #include <wtf/Deque.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class ScriptExecutionContext;
+template <typename T>
+class TaskDispatcher {
+public:
+    TaskDispatcher(T& context)
+        : m_context(context)
+    {
+    }
 
+    void postTask(std::function<void()> f)
+    {
+        m_context.postTask(f);
+    }
+
+private:
+    T& m_context;
+};
+
+template<>
+class TaskDispatcher<Timer> {
+public:
+    TaskDispatcher()
+        : m_timer(*this, &TaskDispatcher<Timer>::timerFired)
+    {
+    }
+
+    void postTask(std::function<void()> function)
+    {
+        m_queue.append(function);
+        m_timer.startOneShot(0);
+    }
+
+    void timerFired()
+    {
+        Deque<std::function<void()>> queue;
+        queue.swap(m_queue);
+        for (std::function<void()>& function : queue)
+            function();
+    }
+
+    Timer m_timer;
+    Deque<std::function<void()>> m_queue;
+};
+
+template <typename T>
 class GenericTaskQueue {
 public:
-    GenericTaskQueue(ScriptExecutionContext&);
+    GenericTaskQueue()
+        : m_weakPtrFactory(this)
+        , m_dispatcher()
+    {
+    }
 
-    void enqueueTask(std::function<void()>);
-    void close();
+    GenericTaskQueue(T& t)
+        : m_weakPtrFactory(this)
+        , m_dispatcher(t)
+    {
+    }
 
-    void cancelAllTasks();
+    typedef std::function<void()> TaskFunction;
+
+    void enqueueTask(TaskFunction task)
+    {
+        ASSERT(!m_isClosed);
+        ++m_pendingTasks;
+        auto weakThis = m_weakPtrFactory.createWeakPtr();
+        m_dispatcher.postTask([weakThis, task] {
+            if (!weakThis)
+                return;
+            task();
+        });
+    }
+
+    void close()
+    {
+        cancelAllTasks();
+        m_isClosed = true;
+    }
+
+    void cancelAllTasks()
+    {
+        m_weakPtrFactory.revokeAll();
+        m_pendingTasks = 0;
+    }
     bool hasPendingTasks() const { return m_pendingTasks; }
 
 private:
-    ScriptExecutionContext& m_context;
     WeakPtrFactory<GenericTaskQueue> m_weakPtrFactory;
+    TaskDispatcher<T> m_dispatcher;
     unsigned m_pendingTasks { 0 };
     bool m_isClosed { false };
 };

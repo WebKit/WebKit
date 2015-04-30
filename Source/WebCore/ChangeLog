@@ -1,3 +1,30 @@
+2015-04-29  Jer Noble  <jer.noble@apple.com>
+
+        Make GenericTaskQueue even more generic (and usable inside platform/)
+        https://bugs.webkit.org/show_bug.cgi?id=144414
+
+        Reviewed by Eric Carlson.
+
+        Templatize GenericTaskQueue so that it can be used from within platform/.
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/GenericTaskQueue.cpp: Removed.
+        * html/HTMLMediaElement.h:
+        * platform/GenericTaskQueue.h: Renamed from Source/WebCore/dom/GenericTaskQueue.h.
+        (WebCore::TaskDispatcher::TaskDispatcher): Added default templatized class which just calls the parameter's postTask().
+        (WebCore::TaskDispatcher::postTask): Call context's postTask().
+        (WebCore::TaskDispatcher<Timer>::TaskDispatcher): Add a timer version which does not require a context.
+        (WebCore::TaskDispatcher<Timer>::postTask): Set the timer.
+        (WebCore::TaskDispatcher<Timer>::timerFired): Call the task.
+        (WebCore::GenericTaskQueue::GenericTaskQueue): Moved from .cpp.
+        (WebCore::GenericTaskQueue::enqueueTask): Ditto.
+        (WebCore::GenericTaskQueue::close): Ditto.
+        (WebCore::GenericTaskQueue::cancelAllTasks): Ditto.
+        (WebCore::GenericTaskQueue::hasPendingTasks): Ditto.
+
 2015-04-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed build fix. WebCore has a weak symbol.
