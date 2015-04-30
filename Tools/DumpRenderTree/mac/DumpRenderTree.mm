@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2009, 2015 Apple Inc. All rights reserved.
  *           (C) 2007 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -205,6 +205,7 @@ static int useTimeoutWatchdog = YES;
 static int forceComplexText;
 static int useAcceleratedDrawing;
 static int gcBetweenTests;
+static int showWebView = NO;
 static BOOL printSeparators;
 static RetainPtr<CFStringRef> persistentUserStyleSheetLocation;
 static std::set<std::string> allowedHosts;
@@ -784,13 +785,16 @@ WebView *createWebViewAndOffscreenWindow()
     // To make things like certain NSViews, dragging, and plug-ins work, put the WebView a window, but put it off-screen so you don't see it.
     // Put it at -10000, -10000 in "flipped coordinates", since WebCore and the DOM use flipped coordinates.
     NSScreen *firstScreen = [[NSScreen screens] firstObject];
-    NSRect windowRect = NSOffsetRect(rect, -10000, [firstScreen frame].size.height - rect.size.height + 10000);
+    NSRect windowRect = (showWebView) ? NSOffsetRect(rect, 100, 100) : NSOffsetRect(rect, -10000, [firstScreen frame].size.height - rect.size.height + 10000);
     DumpRenderTreeWindow *window = [[DumpRenderTreeWindow alloc] initWithContentRect:windowRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
 
     [window setColorSpace:[firstScreen colorSpace]];
     [window setCollectionBehavior:NSWindowCollectionBehaviorStationary];
     [[window contentView] addSubview:webView];
-    [window orderBack:nil];
+    if (showWebView)
+        [window orderFront:nil];
+    else
+        [window orderBack:nil];
     [window setAutodisplay:NO];
 
     [window startListeningForAcceleratedCompositingChanges];
@@ -1121,6 +1125,7 @@ static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[]
         {"gc-between-tests", no_argument, &gcBetweenTests, YES},
         {"no-timeout", no_argument, &useTimeoutWatchdog, NO},
         {"allowed-host", required_argument, nullptr, 'a'},
+        {"show-webview", no_argument, &showWebView, YES},
         {nullptr, 0, nullptr, 0}
     };
     

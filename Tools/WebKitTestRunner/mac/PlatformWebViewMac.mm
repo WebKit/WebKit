@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -141,14 +141,21 @@ PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGro
     m_view = [[TestRunnerWKView alloc] initWithFrame:rect contextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:relatedPage useThreadedScrolling:useThreadedScrolling];
     [m_view setWindowOcclusionDetectionEnabled:NO];
 
+    WKRetainPtr<WKStringRef> shouldShowWebViewKey(AdoptWK, WKStringCreateWithUTF8CString("ShouldShowWebView"));
+    WKTypeRef shouldShowWebViewValue = options ? WKDictionaryGetItemForKey(options, shouldShowWebViewKey.get()) : NULL;
+    bool shouldShowWebView = shouldShowWebViewValue && WKBooleanGetValue(static_cast<WKBooleanRef>(shouldShowWebViewValue));
+
     NSScreen *firstScreen = [[NSScreen screens] objectAtIndex:0];
-    NSRect windowRect = NSOffsetRect(rect, -10000, [firstScreen frame].size.height - rect.size.height + 10000);
+    NSRect windowRect = (shouldShowWebView) ? NSOffsetRect(rect, 100, 100) : NSOffsetRect(rect, -10000, [firstScreen frame].size.height - rect.size.height + 10000);
     m_window = [[WebKitTestRunnerWindow alloc] initWithContentRect:windowRect styleMask:NSBorderlessWindowMask backing:(NSBackingStoreType)_NSBackingStoreUnbuffered defer:YES];
     m_window.platformWebView = this;
     [m_window setColorSpace:[firstScreen colorSpace]];
     [m_window setCollectionBehavior:NSWindowCollectionBehaviorStationary];
     [[m_window contentView] addSubview:m_view];
-    [m_window orderBack:nil];
+    if (shouldShowWebView)
+        [m_window orderFront:nil];
+    else
+        [m_window orderBack:nil];
     [m_window setReleasedWhenClosed:NO];
 }
 

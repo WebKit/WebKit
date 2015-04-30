@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,7 +74,9 @@ public:
     bool useWaitToDumpWatchdogTimer() { return m_useWaitToDumpWatchdogTimer; }
     void runUntil(bool& done, double timeoutSeconds);
     void notifyDone();
-    
+
+    bool shouldShowWebView() const { return m_shouldShowWebView; }
+
     void configureViewForTest(const TestInvocation&);
     
     bool beforeUnloadReturnValue() const { return m_beforeUnloadReturnValue; }
@@ -269,6 +271,7 @@ private:
     bool m_shouldUseRemoteLayerTree;
 
     bool m_shouldLogHistoryClientCallbacks;
+    bool m_shouldShowWebView;
 
     std::unique_ptr<EventSenderProxy> m_eventSenderProxy;
 

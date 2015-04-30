@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2013 University of Szeged. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,6 +47,7 @@ struct Options {
     bool forceComplexText;
     bool shouldUseAcceleratedDrawing;
     bool shouldUseRemoteLayerTree;
+    bool shouldShowWebView;
     std::vector<std::string> paths;
     std::vector<std::string> allowedHosts;
 };

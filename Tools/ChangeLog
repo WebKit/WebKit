@@ -1,3 +1,34 @@
+2015-04-30  Brent Fulgham  <bfulgham@apple.com>
+
+        Provide a runtime flag to run-webkit-tests that shows the test view
+        https://bugs.webkit.org/show_bug.cgi?id=144079.
+
+        Reviewed by Dean Jackson.
+
+        Add a new flag (--show-webview) that causes DumpRenderTree and WebKitTestRunner to display
+        their WebViews on-screen. This can be used when running tests via the "--additional-drt-flag"
+        option:
+        
+        --additional-drt-flag="--show-webview"
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow): Use an on-screen window rect if the user passed the
+        '--show-webview' flag.
+        (initializeGlobalsFromCommandLineOptions): Recognize the "--show-webview" option.
+        * WebKitTestRunner/Options.cpp:
+        (WTR::Options::Options):
+        (WTR::handleOptionShowWebView):
+        (WTR::OptionsHandler::OptionsHandler): Recognize the new "--show-webview" option.
+        * WebKitTestRunner/Options.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::TestController::initialize): Use value of 'shouldShowWebView' from the Options bundle.
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::shouldShowWebView):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::PlatformWebView): Retrieve the value of the 'ShouldShowWebView' key from the
+        options dictionary. If it is true, display the web view while running the test.
+
 2015-04-30  Alexey Proskuryakov  <ap@apple.com>
 
         r183355 didn't trigger Mac tests

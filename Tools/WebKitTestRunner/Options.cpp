@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2013 University of Szeged. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +42,7 @@ Options::Options()
     , forceComplexText(false)
     , shouldUseAcceleratedDrawing(false)
     , shouldUseRemoteLayerTree(false)
+    , shouldShowWebView(false)
 {
 }
 
@@ -93,6 +95,12 @@ bool handleOptionRemoteLayerTree(Options& options, const char*, const char*)
     return true;
 }
 
+bool handleOptionShowWebView(Options& options, const char*, const char*)
+{
+    options.shouldShowWebView = true;
+    return true;
+}
+
 bool handleOptionAllowedHost(Options& options, const char*, const char* host)
 {
     options.allowedHosts.push_back(host);
@@ -120,6 +128,7 @@ OptionsHandler::OptionsHandler(Options& o)
     optionList.append(Option("--accelerated-drawing", "Use accelerated drawing.", handleOptionAcceleratedDrawing));
     optionList.append(Option("--remote-layer-tree", "Use remote layer tree.", handleOptionRemoteLayerTree));
     optionList.append(Option("--allowed-host", "Allows access to the specified host from tests.", handleOptionAllowedHost, true));
+    optionList.append(Option("--show-webview", "Show the WebView during test runs (for Debugging)", handleOptionShowWebView));
 
     optionList.append(Option(0, 0, handleOptionUnmatched));
 }
