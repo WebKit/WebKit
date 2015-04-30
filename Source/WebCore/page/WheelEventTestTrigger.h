@@ -32,12 +32,13 @@
 #include <mutex>
 #include <set>
 #include <wtf/HashMap.h>
+#include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
-class WheelEventTestTrigger {
+class WheelEventTestTrigger : public ThreadSafeRefCounted<WheelEventTestTrigger> {
     WTF_MAKE_NONCOPYABLE(WheelEventTestTrigger); WTF_MAKE_FAST_ALLOCATED;
 public:
     WheelEventTestTrigger();
@@ -51,20 +52,16 @@ public:
         ScrollingThreadSyncNeeded,
         ContentScrollInProgress
     };
-    typedef void* ScrollableAreaIdentifier;
-    void deferTestsForReason(ScrollableAreaIdentifier, DeferTestTriggerReason);
-    void removeTestDeferralForReason(ScrollableAreaIdentifier, DeferTestTriggerReason);
+    typedef const void* ScrollableAreaIdentifier;
+    void WEBCORE_EXPORT deferTestsForReason(ScrollableAreaIdentifier, DeferTestTriggerReason);
+    void WEBCORE_EXPORT removeTestDeferralForReason(ScrollableAreaIdentifier, DeferTestTriggerReason);
     void triggerTestTimerFired();
-
-    WeakPtr<WheelEventTestTrigger> createWeakPtr();
 
 private:
     std::function<void()> m_testNotificationCallback;
     RunLoop::Timer<WheelEventTestTrigger> m_testTriggerTimer;
     mutable std::mutex m_testTriggerMutex;
-    WTF::HashMap<void*, std::set<DeferTestTriggerReason>> m_deferTestTriggerReasons;
-
-    WeakPtrFactory<WheelEventTestTrigger> m_weakPtrFactory;
+    WTF::HashMap<ScrollableAreaIdentifier, std::set<DeferTestTriggerReason>> m_deferTestTriggerReasons;
 };
 
 }

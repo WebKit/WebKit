@@ -37,7 +37,6 @@ class PageOverlayController;
 class ScrollLatchingState;
 class ServicesOverlayController;
 class WheelEventDeltaTracker;
-class WheelEventTestTrigger;
 
 class MainFrame final : public Frame {
 public:
@@ -64,10 +63,6 @@ public:
 
     WEBCORE_EXPORT DiagnosticLoggingClient& diagnosticLoggingClient() const;
 
-    WEBCORE_EXPORT WheelEventTestTrigger* testTrigger() const;
-    WEBCORE_EXPORT WheelEventTestTrigger* ensureTestTrigger();
-    WEBCORE_EXPORT void clearTrigger();
-
 private:
     MainFrame(Page&, PageConfiguration&);
 
@@ -81,7 +76,6 @@ private:
     std::unique_ptr<ServicesOverlayController> m_servicesOverlayController;
 #endif
 #endif
-    std::unique_ptr<WheelEventTestTrigger> m_testTrigger;
 
     std::unique_ptr<WheelEventDeltaTracker> m_recentWheelEventDeltaTracker;
     std::unique_ptr<PageOverlayController> m_pageOverlayController;

@@ -154,6 +154,12 @@ using namespace std;
 - (BOOL)_flushCompositingChanges;
 @end
 
+#if !PLATFORM(IOS)
+@interface WebView (WebViewInternalForTesting)
+- (WebCore::Frame*)_mainCoreFrame;
+@end
+#endif
+
 static void runTest(const string& testURL);
 
 // Deciding when it's OK to dump out the state is a bit tricky.  All these must be true:
@@ -1822,6 +1828,11 @@ static void resetWebViewToConsistentStateBeforeTesting()
         // in the case that a test using the chrome input field failed, be sure to clean up for the next test
         gTestRunner->removeChromeInputField();
     }
+
+#if !PLATFORM(IOS)
+    if (WebCore::Frame* frame = [webView _mainCoreFrame])
+        WebCoreTestSupport::clearWheelEventTestTrigger(*frame);
+#endif
 
 #if !PLATFORM(IOS)
     [webView setContinuousSpellCheckingEnabled:YES];

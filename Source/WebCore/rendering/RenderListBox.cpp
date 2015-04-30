@@ -53,11 +53,13 @@
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "ScrollAnimator.h"
 #include "Scrollbar.h"
 #include "ScrollbarTheme.h"
 #include "Settings.h"
 #include "SpatialNavigation.h"
 #include "StyleResolver.h"
+#include "WheelEventTestTrigger.h"
 #include <math.h>
 #include <wtf/StackStats.h>
 
@@ -661,13 +663,25 @@ int RenderListBox::scrollTop() const
     return m_indexOffset * itemHeight();
 }
 
+static void setupWheelEventTestTrigger(RenderListBox& renderer, Frame* frame)
+{
+    if (!frame)
+        return;
+
+    Page* page = frame->page();
+    if (!page || !page->expectsWheelEventTriggers())
+        return;
+
+    renderer.scrollAnimator().setWheelEventTestTrigger(page->testTrigger());
+}
+
 void RenderListBox::setScrollTop(int newTop)
 {
     // Determine an index and scroll to it.    
     int index = newTop / itemHeight();
     if (index < 0 || index >= numItems() || index == m_indexOffset)
         return;
-    
+    setupWheelEventTestTrigger(*this, document().frame());
     scrollToOffsetWithoutAnimation(VerticalScrollbar, index);
 }
 
@@ -806,6 +820,10 @@ PassRefPtr<Scrollbar> RenderListBox::createScrollbar()
     else {
         widget = Scrollbar::createNativeScrollbar(*this, VerticalScrollbar, theme().scrollbarControlSizeForPart(ListboxPart));
         didAddScrollbar(widget.get(), VerticalScrollbar);
+        if (Page* page = frame().page()) {
+            if (page->expectsWheelEventTriggers())
+                scrollAnimator().setWheelEventTestTrigger(page->testTrigger());
+        }
     }
     view().frameView().addChild(widget.get());
     return widget.release();

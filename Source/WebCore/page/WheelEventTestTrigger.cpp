@@ -33,13 +33,7 @@ namespace WebCore {
 
 WheelEventTestTrigger::WheelEventTestTrigger()
     : m_testTriggerTimer(RunLoop::current(), this, &WheelEventTestTrigger::triggerTestTimerFired)
-    , m_weakPtrFactory(this)
 {
-}
-
-WeakPtr<WheelEventTestTrigger> WheelEventTestTrigger::createWeakPtr()
-{
-    return m_weakPtrFactory.createWeakPtr();
 }
 
 void WheelEventTestTrigger::clearAllTestDeferrals()

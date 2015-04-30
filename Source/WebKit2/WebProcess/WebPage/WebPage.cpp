@@ -4903,4 +4903,12 @@ void WebPage::postSynchronousMessage(const String& messageName, API::Object* mes
         returnData = webProcess.transformHandlesToObjects(returnUserData.object());
 }
 
+void WebPage::clearWheelEventTestTrigger()
+{
+    if (!m_page)
+        return;
+
+    m_page->clearTrigger();
+}
+
 } // namespace WebKit

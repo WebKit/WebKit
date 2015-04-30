@@ -582,7 +582,7 @@ void WKBundlePageStartMonitoringScrollOperations(WKBundlePageRef pageRef)
     if (!page)
         return;
 
-    page->mainFrame().ensureTestTrigger();
+    page->ensureTestTrigger();
 }
 
 void WKBundlePageRegisterScrollOperationCompletionCallback(WKBundlePageRef pageRef, WKBundlePageTestNotificationCallback callback, void* context)
@@ -592,12 +592,10 @@ void WKBundlePageRegisterScrollOperationCompletionCallback(WKBundlePageRef pageR
     
     WebKit::WebPage* webPage = toImpl(pageRef);
     WebCore::Page* page = webPage ? webPage->corePage() : nullptr;
-    
-    if (!page)
+    if (!page || !page->expectsWheelEventTriggers())
         return;
     
-    WebCore::WheelEventTestTrigger* trigger = page->mainFrame().ensureTestTrigger();
-    trigger->setTestCallbackAndStartNotificationTimer([=]() {
+    page->ensureTestTrigger().setTestCallbackAndStartNotificationTimer([=]() {
         callback(context);
     });
 }

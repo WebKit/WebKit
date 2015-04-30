@@ -36,6 +36,7 @@
 #include "LayoutUnit.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollTypes.h"
+#include "WheelEventTestTrigger.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 
@@ -49,6 +50,7 @@ class FloatPoint;
 class PlatformTouchEvent;
 class ScrollableArea;
 class Scrollbar;
+class WheelEventTestTrigger;
 
 #if (ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)) && PLATFORM(MAC)
 class ScrollAnimator : private ScrollControllerClient {
@@ -117,6 +119,11 @@ public:
 
     virtual bool isRubberBandInProgress() const { return false; }
 
+    void setWheelEventTestTrigger(RefPtr<WheelEventTestTrigger>&& testTrigger) { m_wheelEventTestTrigger = testTrigger; }
+#if (ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)) && PLATFORM(MAC)
+    WheelEventTestTrigger* testTrigger() const override { return m_wheelEventTestTrigger.get(); }
+#endif
+    
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
     bool processWheelEventForScrollSnap(const PlatformWheelEvent&);
     void updateScrollAnimatorsAndTimers();
@@ -128,6 +135,7 @@ protected:
     virtual void notifyPositionChanged(const FloatSize& delta);
 
     ScrollableArea& m_scrollableArea;
+    RefPtr<WheelEventTestTrigger> m_wheelEventTestTrigger;
 #if (ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)) && PLATFORM(MAC)
     ScrollController m_scrollController;
 #endif

@@ -5794,4 +5794,12 @@ void WebPageProxy::didChangeBackgroundColor()
     m_pageClient.didChangeBackgroundColor();
 }
 
+void WebPageProxy::clearWheelEventTestTrigger()
+{
+    if (!isValid())
+        return;
+    
+    m_process->send(Messages::WebPage::ClearWheelEventTestTrigger(), m_pageID);
+}
+
 } // namespace WebKit

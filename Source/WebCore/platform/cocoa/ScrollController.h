@@ -42,6 +42,7 @@ namespace WebCore {
 
 class PlatformWheelEvent;
 class ScrollableArea;
+class WheelEventTestTrigger;
 
 class ScrollControllerClient {
 protected:
@@ -74,6 +75,8 @@ public:
     // If the current scroll position is within the overhang area, this function will cause
     // the page to scroll to the nearest boundary point.
     virtual void adjustScrollPositionToBoundsIfNecessary() = 0;
+
+    virtual WheelEventTestTrigger* testTrigger() const { return nullptr; }
 
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
     virtual LayoutUnit scrollOffsetOnAxis(ScrollEventAxis) const = 0;

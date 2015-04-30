@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011, 2015 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +45,7 @@ void injectInternalsObject(JSContextRef) TEST_SUPPORT_EXPORT;
 void resetInternalsObject(JSContextRef) TEST_SUPPORT_EXPORT;
 void monitorWheelEvents(WebCore::Frame&) TEST_SUPPORT_EXPORT;
 void setTestCallbackAndStartNotificationTimer(WebCore::Frame&, JSContextRef, JSObjectRef) TEST_SUPPORT_EXPORT;
+void clearWheelEventTestTrigger(WebCore::Frame&) TEST_SUPPORT_EXPORT;
 
 } // namespace WebCore
 

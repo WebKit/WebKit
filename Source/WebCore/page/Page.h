@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2010, 2013, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
@@ -36,6 +36,7 @@
 #include "Supplementable.h"
 #include "ViewState.h"
 #include "ViewportArguments.h"
+#include "WheelEventTestTrigger.h"
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -439,6 +440,11 @@ public:
     WEBCORE_EXPORT void setShouldPlayToPlaybackTarget(uint64_t, bool);
 #endif
 
+    WEBCORE_EXPORT RefPtr<WheelEventTestTrigger> testTrigger() const;
+    WEBCORE_EXPORT WheelEventTestTrigger& ensureTestTrigger();
+    WEBCORE_EXPORT void clearTrigger();
+    WEBCORE_EXPORT bool expectsWheelEventTriggers() const { return !!m_testTrigger; }
+
 private:
     WEBCORE_EXPORT void initGroup();
 
@@ -586,6 +592,7 @@ private:
     Ref<StorageNamespaceProvider> m_storageNamespaceProvider;
     RefPtr<UserContentController> m_userContentController;
     Ref<VisitedLinkStore> m_visitedLinkStore;
+    RefPtr<WheelEventTestTrigger> m_testTrigger;
 
     HashSet<ViewStateChangeObserver*> m_viewStateChangeObservers;
 

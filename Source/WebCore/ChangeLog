@@ -1,3 +1,76 @@
+2015-04-29  Brent Fulgham  <bfulgham@apple.com>
+
+        Expand test infrastructure to support scrolling tests
+        https://bugs.webkit.org/show_bug.cgi?id=143684
+        <rdar://problem/20375516>
+
+        Reviewed by Simon Fraser.
+
+        Tested by various fast/scrolling and platform/mac-wk2/tiled-drawing/scrolling tests.
+
+        This series of changes adds a new singleton class, 'WheelEventTestTrigger', which encapsulates a
+        function object to be fired when scroll events are finished. The object also keeps track of reasons
+        why the test should not yet fire (e.g., 'rubberbanding' is active) so that tests do not incorrectly
+        check rendering state in the middle of an animation.
+
+        Switch from the original WeakPtr design to ThreadSafeRefPtr, because WeakPtr cannot be shared
+        across multiple threads.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout): Make sure ScrollAnimator knows about any active test trigger.
+        (WebCore::FrameView::setScrollPosition): Ditto.
+        (WebCore::FrameView::didAddScrollbar): Ditto.
+        * page/MainFrame.cpp:
+        (WebCore::MainFrame::testTrigger): Moved to Page.
+        (WebCore::MainFrame::ensureTestTrigger): Ditto.
+        * page/MainFrame.h:
+        * page/Page.cpp:
+        (WebCore::Page::testTrigger): Moved from MainFrame, and converted to use RefPtr.
+        (WebCore::Page::ensureTestTrigger): Ditto.
+        * page/Page.h:
+        * page/WheelEventTestTrigger.cpp:
+        (WebCore::WheelEventTestTrigger::WheelEventTestTrigger): Remove WeakPtr code.
+        (WebCore::WheelEventTestTrigger::createWeakPtr): Deleted.
+        * page/WheelEventTestTrigger.h:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::platformPrepareForWheelEvents): Make sure the scroll animator knows about
+        any active test trigger object.
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll): Notify WheelEventTestTrigger
+        that the scrolling thread is synced with the main thread.
+        * platform/ScrollAnimator.h: Hold a RefPtr to the WheelEventTestTrigger. 
+        (WebCore::ScrollAnimator::ScrollAnimator::setWheelEventTestTrigger):
+        * platform/cocoa/ScrollController.h:
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::ScrollController::startSnapRubberbandTimer): Notify test trigger to hold tests until rubber band
+        snapping is complete.
+        (WebCore::ScrollController::stopSnapRubberbandTimer): Notify test trigger that rubber band snapping is done.
+        (WebCore::ScrollController::startScrollSnapTimer): Notify test trigger to hold tests until scroll snapping
+        is complete.
+        (WebCore::ScrollController::stopScrollSnapTimer): Notify test trigger that scroll snapping is done.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::didBeginScrollGesture): Notify test trigger that a content scroll is in progress.
+        (WebCore::ScrollAnimatorMac::didEndScrollGesture): Notify test trigger that a content scroll is finished.
+        (WebCore::ScrollAnimatorMac::sendContentAreaScrolledSoon): Notify test trigger to hold tests until the content
+        scrolling is complete.
+        (WebCore::ScrollAnimatorMac::sendContentAreaScrolledTimerFired): Notify test trigger that content scrolling is done.
+        * rendering/RenderBox.cpp:
+        (WebCore::connectScrollAnimatorToTestTrigger): Helper function.
+        (WebCore::RenderBox::setScrollLeft): Call 'connectScrollAnimatorToTestTrigger' to connect the ScrollAnimator
+        to the WheelEventTestTrigger so that future scroll operations can notify the test infrastructure.
+        (WebCore::RenderBox::setScrollTop): Ditto.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::createScrollbar): Make sure the ScrollAnimator knows about any active test triggers.
+        * rendering/RenderListBox.cpp:
+        (WebCore::connectScrollAnimatorToTestTrigger): Helper function.
+        (WebCore::RenderListBox::setScrollLeft): Call 'connectScrollAnimatorToTestTrigger' to connect the ScrollAnimator
+        to the WheelEventTestTrigger so that future scroll operations can notify the test infrastructure.
+        (WebCore::RenderListBox::setScrollTop): Ditto.
+        (WebCore::RenderListBox::createScrollbar): Ditto.
+        * testing/js/WebCoreTestSupport.cpp:
+        (WebCoreTestSupport::monitorWheelEvents): Look for WheelEventTestTrigger in Page, rather than MainFrame.
+        (WebCoreTestSupport::setTestCallbackAndStartNotificationTimer): Ditto.
+
 2015-04-29  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Box Alignment] Unifying alignment data in a single class

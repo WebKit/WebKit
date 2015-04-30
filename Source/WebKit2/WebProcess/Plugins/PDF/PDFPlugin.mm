@@ -68,15 +68,18 @@
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTMLPlugInElement.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/MainFrame.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/Page.h>
 #import <WebCore/Pasteboard.h>
 #import <WebCore/PluginData.h>
 #import <WebCore/PluginDocument.h>
 #import <WebCore/RenderBoxModelObject.h>
+#import <WebCore/ScrollAnimator.h>
 #import <WebCore/ScrollbarTheme.h>
 #import <WebCore/Settings.h>
 #import <WebCore/UUID.h>
+#import <WebCore/WheelEventTestTrigger.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/CurrentTime.h>
 
@@ -660,6 +663,12 @@ PassRefPtr<Scrollbar> PDFPlugin::createScrollbar(ScrollbarOrientation orientatio
         [m_containerLayer addSublayer:m_verticalScrollbarLayer.get()];
     }
     didAddScrollbar(widget.get(), orientation);
+    if (Frame* frame = webFrame()->coreFrame()) {
+        if (Page* page = frame->page()) {
+            if (page->expectsWheelEventTriggers())
+                scrollAnimator().setWheelEventTestTrigger(page->testTrigger());
+        }
+    }
     pluginView()->frame()->view()->addChild(widget.get());
     return widget.release();
 }

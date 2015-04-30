@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2006-2015  Apple Inc. All Rights Reserved.
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
@@ -1723,5 +1723,24 @@ void Page::setShouldPlayToPlaybackTarget(uint64_t clientId, bool shouldPlay)
         frame->document()->setShouldPlayToPlaybackTarget(clientId, shouldPlay);
 }
 #endif
+
+RefPtr<WheelEventTestTrigger> Page::testTrigger() const
+{
+    return m_testTrigger;
+}
+
+WheelEventTestTrigger& Page::ensureTestTrigger()
+{
+    if (!m_testTrigger)
+        m_testTrigger = adoptRef(new WheelEventTestTrigger());
+
+    return *m_testTrigger;
+}
+
+void Page::clearTrigger()
+{
+    m_testTrigger = nullptr;
+}
+    
 
 } // namespace WebCore

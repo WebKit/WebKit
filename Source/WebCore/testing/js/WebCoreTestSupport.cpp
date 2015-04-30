@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011, 2015 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,7 @@
 #include "Internals.h"
 #include "JSDocument.h"
 #include "JSInternals.h"
-#include "MainFrame.h"
+#include "Page.h"
 #include "WheelEventTestTrigger.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSValueRef.h>
@@ -67,18 +67,34 @@ void resetInternalsObject(JSContextRef context)
 
 void monitorWheelEvents(WebCore::Frame& frame)
 {
-    frame.mainFrame().ensureTestTrigger();
+    Page* page = frame.page();
+    if (!page)
+        return;
+
+    page->ensureTestTrigger();
 }
 
 void setTestCallbackAndStartNotificationTimer(WebCore::Frame& frame, JSContextRef context, JSObjectRef jsCallbackFunction)
 {
-    WheelEventTestTrigger* trigger = frame.mainFrame().ensureTestTrigger();
+    Page* page = frame.page();
+    if (!page || !page->expectsWheelEventTriggers())
+        return;
+
     JSValueProtect(context, jsCallbackFunction);
     
-    trigger->setTestCallbackAndStartNotificationTimer([=](void) {
+    page->ensureTestTrigger().setTestCallbackAndStartNotificationTimer([=](void) {
         JSObjectCallAsFunction(context, jsCallbackFunction, nullptr, 0, nullptr, nullptr);
         JSValueUnprotect(context, jsCallbackFunction);
     });
+}
+
+void clearWheelEventTestTrigger(WebCore::Frame& frame)
+{
+    Page* page = frame.page();
+    if (!page)
+        return;
+    
+    page->clearTrigger();
 }
 
 }

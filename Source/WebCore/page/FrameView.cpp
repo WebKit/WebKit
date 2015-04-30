@@ -87,6 +87,7 @@
 #include "TextResourceDecoder.h"
 #include "TextStream.h"
 #include "TiledBacking.h"
+#include "WheelEventTestTrigger.h"
 
 #include <wtf/CurrentTime.h>
 #include <wtf/Ref.h>
@@ -1265,7 +1266,9 @@ void FrameView::layout(bool allowSubtree)
                     // Set the initial hMode to AlwaysOff if we're auto.
                     if (hMode == ScrollbarAuto)
                         setHorizontalScrollbarMode(ScrollbarAlwaysOff); // This causes a horizontal scrollbar to disappear.
-
+                    Page* page = frame().page();
+                    if (page && page->expectsWheelEventTriggers())
+                        scrollAnimator().setWheelEventTestTrigger(page->testTrigger());
                     setScrollbarModes(hMode, vMode);
                     setScrollbarsSuppressed(false, true);
                 } else
@@ -2049,6 +2052,9 @@ void FrameView::setScrollPosition(const IntPoint& scrollPoint)
 {
     TemporaryChange<bool> changeInProgrammaticScroll(m_inProgrammaticScroll, true);
     m_maintainScrollPositionAnchor = nullptr;
+    Page* page = frame().page();
+    if (page && page->expectsWheelEventTriggers())
+        scrollAnimator().setWheelEventTestTrigger(page->testTrigger());
     ScrollView::setScrollPosition(scrollPoint);
 }
 
@@ -4561,6 +4567,9 @@ void FrameView::setScrollingPerformanceLoggingEnabled(bool flag)
 void FrameView::didAddScrollbar(Scrollbar* scrollbar, ScrollbarOrientation orientation)
 {
     ScrollableArea::didAddScrollbar(scrollbar, orientation);
+    Page* page = frame().page();
+    if (page && page->expectsWheelEventTriggers())
+        scrollAnimator().setWheelEventTestTrigger(page->testTrigger());
     if (AXObjectCache* cache = axObjectCache())
         cache->handleScrollbarUpdate(this);
 }

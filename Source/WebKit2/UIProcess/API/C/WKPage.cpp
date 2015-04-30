@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2200,6 +2200,12 @@ bool WKPageIsPlayingAudio(WKPageRef page)
 {
     return toImpl(page)->isPlayingAudio();
 }
+
+void WKPageClearWheelEventTestTrigger(WKPageRef pageRef)
+{
+    toImpl(pageRef)->clearWheelEventTestTrigger();
+}
+
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 

@@ -425,4 +425,5 @@ messages -> WebPage LegacyReceiver {
     SetShouldPlayToPlaybackTarget(uint64_t contextId, bool shouldPlay)
 #endif
 
+    ClearWheelEventTestTrigger()
 }

@@ -1037,6 +1037,8 @@ public:
     void didChangeBackgroundColor();
     void didLayoutForCustomContentProvider();
 
+    void clearWheelEventTestTrigger();
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, const WebPageConfiguration&);
     void platformInitialize();

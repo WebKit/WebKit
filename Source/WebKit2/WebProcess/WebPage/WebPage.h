@@ -1118,6 +1118,8 @@ private:
     void setShouldPlayToPlaybackTarget(uint64_t, bool);
 #endif
 
+    void clearWheelEventTestTrigger();
+
     uint64_t m_pageID;
 
     std::unique_ptr<WebCore::Page> m_page;

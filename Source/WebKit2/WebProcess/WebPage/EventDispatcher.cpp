@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/Page.h>
+#include <WebCore/WheelEventTestTrigger.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 
@@ -87,6 +88,17 @@ void EventDispatcher::initializeConnection(IPC::Connection* connection)
     connection->addWorkQueueMessageReceiver(Messages::EventDispatcher::messageReceiverName(), &m_queue.get(), this);
 }
 
+static void updateWheelEventTestTriggersIfNeeded(uint64_t pageID)
+{
+    WebPage* webPage = WebProcess::singleton().webPage(pageID);
+    Page* page = webPage ? webPage->corePage() : nullptr;
+
+    if (!page || !page->expectsWheelEventTriggers())
+        return;
+
+    page->testTrigger()->deferTestsForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(page), WheelEventTestTrigger::ScrollingThreadSyncNeeded);
+}
+
 void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEvent, bool canRubberBandAtLeft, bool canRubberBandAtRight, bool canRubberBandAtTop, bool canRubberBandAtBottom)
 {
     PlatformWheelEvent platformWheelEvent = platform(wheelEvent);
@@ -131,6 +143,12 @@ void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEven
         }
 
         ScrollingTree::EventResult result = scrollingTree->tryToHandleWheelEvent(platformWheelEvent);
+
+#if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
+        if (result == ScrollingTree::DidHandleEvent)
+            updateWheelEventTestTriggersIfNeeded(pageID);
+#endif
+
         if (result == ScrollingTree::DidHandleEvent || result == ScrollingTree::DidNotHandleEvent) {
             sendDidReceiveEvent(pageID, wheelEvent, result == ScrollingTree::DidHandleEvent);
             return;

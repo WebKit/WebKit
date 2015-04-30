@@ -889,6 +889,11 @@ void ScrollAnimatorMac::didBeginScrollGesture() const
         return;
 
     [m_scrollbarPainterController beginScrollGesture];
+
+#if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
+    if (m_wheelEventTestTrigger)
+        m_wheelEventTestTrigger->deferTestsForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(this), WheelEventTestTrigger::ContentScrollInProgress);
+#endif
 }
 
 void ScrollAnimatorMac::didEndScrollGesture() const
@@ -897,6 +902,11 @@ void ScrollAnimatorMac::didEndScrollGesture() const
         return;
 
     [m_scrollbarPainterController endScrollGesture];
+
+#if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
+    if (m_wheelEventTestTrigger)
+        m_wheelEventTestTrigger->removeTestDeferralForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(this), WheelEventTestTrigger::ContentScrollInProgress);
+#endif
 }
 
 void ScrollAnimatorMac::mayBeginScrollGesture() const
@@ -1349,6 +1359,9 @@ void ScrollAnimatorMac::sendContentAreaScrolledSoon(const FloatSize& delta)
 
     if (!m_sendContentAreaScrolledTimer.isActive())
         m_sendContentAreaScrolledTimer.startOneShot(0);
+
+    if (m_wheelEventTestTrigger)
+        m_wheelEventTestTrigger->deferTestsForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(this), WheelEventTestTrigger::ContentScrollInProgress);
 }
 
 void ScrollAnimatorMac::sendContentAreaScrolled(const FloatSize& delta)
@@ -1363,6 +1376,9 @@ void ScrollAnimatorMac::sendContentAreaScrolledTimerFired()
 {
     sendContentAreaScrolled(m_contentAreaScrolledTimerScrollDelta);
     m_contentAreaScrolledTimerScrollDelta = FloatSize();
+
+    if (m_wheelEventTestTrigger)
+        m_wheelEventTestTrigger->removeTestDeferralForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(this), WheelEventTestTrigger::ContentScrollInProgress);
 }
 
 void ScrollAnimatorMac::setVisibleScrollerThumbRect(const IntRect& scrollerThumb)

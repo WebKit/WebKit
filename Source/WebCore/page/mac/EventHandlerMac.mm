@@ -59,6 +59,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "WebCoreSystemInterface.h"
+#include "WheelEventTestTrigger.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ObjcRuntimeExtras.h>
@@ -882,6 +883,10 @@ void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheel
         }
     }
     
+    Page* page = m_frame.page();
+    if (scrollableArea && page && page->expectsWheelEventTriggers())
+        scrollableArea->scrollAnimator().setWheelEventTestTrigger(page->testTrigger());
+
     ScrollLatchingState* latchingState = m_frame.mainFrame().latchingState();
     if (wheelEvent.shouldConsiderLatching()) {
         if (scrollableContainer && scrollableArea) {
