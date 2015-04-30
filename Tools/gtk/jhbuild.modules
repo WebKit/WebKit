@@ -7,6 +7,7 @@
     <dependencies>
       <dep package="cairo"/>
       <dep package="fonts"/>
+      <dep package="dicts"/>
       <dep package="fontconfig"/>
       <dep package="freetype6"/>
       <dep package="harfbuzz"/>
