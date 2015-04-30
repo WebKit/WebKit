@@ -1534,8 +1534,12 @@ WebInspector._showConsoleTab = function(event)
 
 WebInspector._focusedContentView = function()
 {
-    if (this.tabBrowser.element.isSelfOrAncestor(this.currentFocusElement))
-        return this.tabBrowser.selectedTabContentView;
+    if (this.tabBrowser.element.isSelfOrAncestor(this.currentFocusElement)) {
+        var tabContentView = this.tabBrowser.selectedTabContentView;
+        if (tabContentView instanceof WebInspector.ContentBrowserTabContentView)
+            return tabContentView.contentBrowser.currentContentView;
+        return tabContentView;
+    }
     if (this.splitContentBrowser.element.isSelfOrAncestor(this.currentFocusElement))
         return  this.splitContentBrowser.currentContentView;
     return null;

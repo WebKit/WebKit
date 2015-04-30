@@ -1,3 +1,15 @@
+2015-04-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Copy not working in Console
+        https://bugs.webkit.org/show_bug.cgi?id=144354
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector._focusedContentView):
+        Select the inner most content view to check if handleCopyEvent exists.
+        Previously we were stopping at the top level TabContentView.
+
 2015-04-29  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Remove some unused Images
