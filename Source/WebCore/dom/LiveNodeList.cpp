@@ -65,6 +65,9 @@ Node* LiveNodeList::namedItem(const AtomicString& elementId) const
         // In the case of multiple nodes with the same name, just fall through.
     }
 
+    if (elementId.isEmpty())
+        return nullptr;
+
     unsigned length = this->length();
     for (unsigned i = 0; i < length; i++) {
         Node* node = item(i);

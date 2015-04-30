@@ -14,6 +14,15 @@ shouldBeTrue("document.querySelectorAll('div')[''] === undefined");
 shouldBeTrue("document.getElementsByTagName('div')[''] === undefined");
 shouldBeTrue("document.body.children[''] === undefined");
 shouldBeTrue("document.all[''] === undefined");
+
+// Collections not in the document.
+var container = document.createElement("div");
+var div = document.createElement("div");
+div.id = "";
+container.appendChild(div);
+shouldBeTrue("container.querySelectorAll('div')[''] === undefined");
+shouldBeTrue("container.getElementsByTagName('div')[''] === undefined");
+shouldBeTrue("container.children[''] === undefined");
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>

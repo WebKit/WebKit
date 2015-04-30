@@ -1,3 +1,13 @@
+2015-04-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        LiveNodeList may unexpectedly return an element for empty string
+        https://bugs.webkit.org/show_bug.cgi?id=144429
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/named-items-with-empty-name-expected.txt:
+        * fast/dom/named-items-with-empty-name.html:
+
 2015-04-29  Dean Jackson  <dino@apple.com>
 
         Create a named CSS property for system colors
