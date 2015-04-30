@@ -1,3 +1,14 @@
+2015-04-29  Alex Christensen  <achristensen@webkit.org>
+
+        Run javascriptcore tests on Windows without cygwin
+        https://bugs.webkit.org/show_bug.cgi?id=144419
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests):
+        Just call ruby, not /usr/bin/env ruby.
+
 2015-04-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [GTK] Add --enable-shared option to LLVM to build mesa
