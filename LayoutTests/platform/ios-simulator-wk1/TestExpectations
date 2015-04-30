@@ -1439,3 +1439,10 @@ security/block-test.html
 # Animation tests that fail:
 animations/combo-transform-translate+scale.html [ Failure ]
 animations/suspend-resume-animation-events.html [ Failure ]
+
+# IndexedDB is not supported on iOS WK1.
+storage/indexeddb
+crypto/subtle/rsa-indexeddb-non-exportable.html
+crypto/subtle/rsa-indexeddb.html
+fast/history/page-cache-indexed-closed-db.html
+fast/history/page-cache-indexed-opened-db.html

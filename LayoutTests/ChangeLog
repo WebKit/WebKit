@@ -1,3 +1,16 @@
+2015-04-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed, ios-simulator gardening
+
+        * Address linter warnings.
+        * Unskip some tests that pass.
+        * More generically skip unsupported iOS features.
+        * Address FIXMEs.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2015-04-30  Filip Pizlo  <fpizlo@apple.com>
 
         js/regress/is-string-fold-tricky.html and js/regress/is-string-fold.html are crashing

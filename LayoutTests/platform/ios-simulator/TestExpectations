@@ -82,14 +82,8 @@ webkit.org/b/136452 http/tests/security/contentTypeOptions
 # webkit.org/b/61138, webkit.org/b/84893, webkit.org/b/133321
 http/tests/w3c/webperf
 
-# FIXME: Move this skip list to ios-simulator-wk1/TestExpectations.
-# IndexedDB is not supported on iOS WK1.
-storage/indexeddb
-inspector-protocol/indexeddb/basics.html
-crypto/subtle/rsa-indexeddb-non-exportable.html
-crypto/subtle/rsa-indexeddb.html
-fast/history/page-cache-indexed-closed-db.html
-fast/history/page-cache-indexed-opened-db.html
+# IndexedDB tests have numerous unexpected failures on iOS
+webkit.org/b/144475 storage/indexeddb
 
 # Quota API is not supported on iOS
 storage/domstorage/quota.html
@@ -102,15 +96,8 @@ storage/storagequota-request-quota.html
 storage/websql/quota-tracking.html
 
 # iOS doesn't have a local inspector
-inspector/event-listener-set.html
-inspector/protocol-promise-result.html
-inspector/event-listener.html
-inspector/test-harness-trivially-works.html
-inspector/model/parse-script-syntax-tree.html
-inspector/page/main-frame-resource.html
-inspector/css/selector-specificity.html
-inspector/css/matched-style-properties.html
-inspector/css/pseudo-element-matches.html
+inspector/ [ Skip ]
+http/tests/inspector/ [ Skip ]
 
 # ShadowDOM is not enabled on iOS
 fast/dom/shadow
@@ -311,7 +298,6 @@ webkit.org/b/137530 canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html [ Failur
 webkit.org/b/137530 canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html [ Failure ]
 webkit.org/b/137530 canvas/philip/tests/2d.missingargs.html [ Failure ]
 webkit.org/b/137530 canvas/philip/tests/2d.path.rect.winding.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.pattern.image.incomplete.omitted.html [ Failure ]
 webkit.org/b/137530 canvas/philip/tests/2d.text.draw.baseline.bottom.html [ Failure ]
 webkit.org/b/137530 canvas/philip/tests/2d.text.draw.baseline.hanging.html [ Failure ]
 webkit.org/b/137530 canvas/philip/tests/2d.text.draw.baseline.ideographic.html [ Failure ]
@@ -1291,15 +1277,6 @@ tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody.html [ Failu
 tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr.html [ Failure ]
 tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell_sibling.html [ Failure ]
 tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row.html [ Failure ]
-
-
-# <rdar://problem/19223896> ASSERT(structureID && structureID < m_capacity) fails in JSC::StructureIDTable::get
-inspector-protocol/debugger/setBreakpoint-dfg.html
-
-# Inspector protocol tests that fail:
-inspector-protocol/debugger/nested-inspectors.html [ Failure ]
-inspector-protocol/debugger/regress-133182.html [ Failure ]
-inspector-protocol/dom/getAccessibilityPropertiesForNode.html [ Failure ]
 
 # Scrolling coordinator tests that fail:
 scrollingcoordinator/non-fast-scrollable-region-scaled-iframe.html [ Failure ]
@@ -2623,6 +2600,4 @@ webkit.org/b/104954 http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyF
 webkit.org/b/138970 fast/css/line-height-text-autosizing.html [ Pass ]
 
 # Skipped for mac as well:
-webkit.org/b/141118 inspector/css/selector-dynamic-specificity.html [ Skip ]
-webkit.org/b/141601 inspector/css/stylesheet-with-mutations.html [ Skip ]
 webkit.org/b/129758 js/dom/create-lots-of-workers.html [ Skip ]
