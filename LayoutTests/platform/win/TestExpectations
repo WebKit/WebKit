@@ -1843,6 +1843,7 @@ webkit.org/b/140705 imported/mozilla/svg/stroke-width-percentage-02a.svg [ Image
 webkit.org/b/116564 transitions/svg-text-shadow-transition.html [ Failure ]
 webkit.org/b/117322 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
 webkit.org/b/117322 svg/filters/feDisplacementMap-filterUnits.svg [ ImageOnlyFailure ]
+webkit.org/b/144417 svg/filters/sourceAlpha-input-filter-effect.html [ ImageOnlyFailure ]
 
 # Subpixel rendering: borders are reporting float values.
 webkit.org/b/128061 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ Failure ]
