@@ -111,6 +111,8 @@ protected:
     virtual String mediaControlsScript() override;
 #endif
 
+    virtual Color systemColor(CSSValueID) const override;
+
 private:
     RenderThemeIOS();
     virtual ~RenderThemeIOS() { }
@@ -120,6 +122,8 @@ private:
 
     String m_mediaControlsScript;
     String m_mediaControlsStyleSheet;
+
+    mutable HashMap<int, RGBA32> m_systemColorCache;
 };
 
 }

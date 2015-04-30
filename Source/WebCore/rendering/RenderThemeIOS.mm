@@ -56,6 +56,7 @@
 #import "RenderThemeIOS.h"
 #import "RenderView.h"
 #import "SoftLinking.h"
+#import "UIColorSPI.h"
 #import "UserAgentScripts.h"
 #import "UserAgentStyleSheets.h"
 #import "WebCoreThreadRun.h"
@@ -65,15 +66,18 @@
 #import <wtf/RefPtr.h>
 #import <wtf/StdLibExtras.h>
 
-@interface UIApplication
-+ (UIApplication *)sharedApplication;
-@property(nonatomic,copy) NSString *preferredContentSizeCategory;
-@end
-
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIApplication)
+SOFT_LINK_CLASS(UIKit, UIColor)
 SOFT_LINK_CONSTANT(UIKit, UIContentSizeCategoryDidChangeNotification, CFStringRef)
 #define UIContentSizeCategoryDidChangeNotification getUIContentSizeCategoryDidChangeNotification()
+
+#if !USE(APPLE_INTERNAL_SDK)
+@interface UIApplication
++ (UIApplication *)sharedApplication;
+@property (nonatomic, copy) NSString *preferredContentSizeCategory;
+@end
+#endif
 
 @interface WebCoreRenderThemeBundle : NSObject
 @end
@@ -1306,6 +1310,50 @@ String RenderThemeIOS::mediaControlsScript()
 #endif
 }
 #endif // ENABLE(VIDEO)
+
+Color RenderThemeIOS::systemColor(CSSValueID cssValueId) const
+{
+    {
+        auto it = m_systemColorCache.find(cssValueId);
+        if (it != m_systemColorCache.end())
+            return it->value;
+    }
+
+    Color color;
+    switch (cssValueId) {
+    case CSSValueAppleSystemBlue:
+        color = [getUIColorClass() systemBlueColor].CGColor;
+        break;
+    case CSSValueAppleSystemGray:
+        color = [getUIColorClass() systemGrayColor].CGColor;
+        break;
+    case CSSValueAppleSystemGreen:
+        color = [getUIColorClass() systemGreenColor].CGColor;
+        break;
+    case CSSValueAppleSystemOrange:
+        color = [getUIColorClass() systemOrangeColor].CGColor;
+        break;
+    case CSSValueAppleSystemPink:
+        color = [getUIColorClass() systemPinkColor].CGColor;
+        break;
+    case CSSValueAppleSystemRed:
+        color = [getUIColorClass() systemRedColor].CGColor;
+        break;
+    case CSSValueAppleSystemYellow:
+        color = [getUIColorClass() systemYellowColor].CGColor;
+        break;
+    default:
+        break;
+    }
+
+    if (!color.isValid())
+        color = RenderTheme::systemColor(cssValueId);
+
+    if (color.isValid())
+        m_systemColorCache.set(cssValueId, color.rgb());
+
+    return color;
+}
 
 }
 

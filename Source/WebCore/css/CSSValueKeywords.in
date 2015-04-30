@@ -186,6 +186,15 @@ threedshadow
 window
 windowframe
 windowtext
+-apple-system-blue
+-apple-system-brown
+-apple-system-gray
+-apple-system-green
+-apple-system-orange
+-apple-system-pink
+-apple-system-purple
+-apple-system-red
+-apple-system-yellow
 -webkit-focus-ring-color
 currentcolor
 //

@@ -33,6 +33,11 @@
 
 namespace WebCore {
 
+static bool isValidSystemControlColorValue(CSSValueID id)
+{
+    return id >= CSSValueActiveborder && CSSParser::isValidSystemColorValue(id);
+}
+
 bool CSSParser::parseSVGValue(CSSPropertyID propId, bool important)
 {
     if (!m_valueList->current())
@@ -187,7 +192,7 @@ bool CSSParser::parseSVGValue(CSSPropertyID propId, bool important)
                 parsedValue = SVGPaint::createNone();
             else if (id == CSSValueCurrentcolor)
                 parsedValue = SVGPaint::createCurrentColor();
-            else if ((id >= CSSValueActiveborder && id <= CSSValueWindowtext) || id == CSSValueMenu)
+            else if (isValidSystemControlColorValue(id) || id == CSSValueMenu)
                 parsedValue = SVGPaint::createColor(RenderTheme::defaultTheme()->systemColor(id));
             else if (valueWithCalculation.value().unit == CSSPrimitiveValue::CSS_URI) {
                 RGBA32 c = Color::transparent;
@@ -210,8 +215,8 @@ bool CSSParser::parseSVGValue(CSSPropertyID propId, bool important)
     case CSSPropertyStopColor: // TODO : icccolor
     case CSSPropertyFloodColor:
     case CSSPropertyLightingColor:
-        if ((id >= CSSValueAqua && id <= CSSValueWindowtext) ||
-           (id >= CSSValueAliceblue && id <= CSSValueYellowgreen))
+        if (CSSParser::isValidSystemColorValue(id)
+            || (id >= CSSValueAliceblue && id <= CSSValueYellowgreen))
             parsedValue = SVGColor::createFromString(valueWithCalculation.value().string);
         else if (id == CSSValueCurrentcolor)
             parsedValue = SVGColor::createCurrentColor();
