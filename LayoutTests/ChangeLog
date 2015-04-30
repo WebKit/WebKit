@@ -1,3 +1,11 @@
+2015-04-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Win] Update baselines after r183610.
+
+        Unreviewed Gardening.
+
+        * platform/win/fast/css/apple-system-colors-expected.txt: Added.
+
 2015-04-29  Simon Fraser  <simon.fraser@apple.com>
 
         Crash at WebCore::Document::absoluteRegionForEventTargets 
