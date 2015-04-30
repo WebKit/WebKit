@@ -1728,7 +1728,7 @@ static ItemPosition resolveSelfAlignmentAuto(ItemPosition position, OverflowAlig
         return ItemPositionStart;
 
     overflow = parent->style().alignItemsOverflowAlignment();
-    return resolveContainerAlignmentAuto(parent->style().alignItems(), parent);
+    return resolveContainerAlignmentAuto(parent->style().alignItemsPosition(), parent);
 }
 
 PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropertyID propertyID, EUpdateLayout updateLayout) const
@@ -2186,10 +2186,10 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyAlignContent:
             return cssValuePool().createValue(style->alignContent());
         case CSSPropertyAlignItems:
-            return valueForItemPositionWithOverflowAlignment(resolveContainerAlignmentAuto(style->alignItems(), renderer), style->alignItemsOverflowAlignment(), NonLegacyPosition);
+            return valueForItemPositionWithOverflowAlignment(resolveContainerAlignmentAuto(style->alignItemsPosition(), renderer), style->alignItemsOverflowAlignment(), NonLegacyPosition);
         case CSSPropertyAlignSelf: {
             OverflowAlignment overflow = style->alignSelfOverflowAlignment();
-            ItemPosition alignSelf = resolveSelfAlignmentAuto(style->alignSelf(), overflow, renderer);
+            ItemPosition alignSelf = resolveSelfAlignmentAuto(style->alignSelfPosition(), overflow, renderer);
             return valueForItemPositionWithOverflowAlignment(alignSelf, overflow, NonLegacyPosition);
         }
         case CSSPropertyFlex:
@@ -2209,10 +2209,10 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyJustifyContent:
             return cssValuePool().createValue(style->justifyContent());
         case CSSPropertyJustifyItems:
-            return valueForItemPositionWithOverflowAlignment(resolveContainerAlignmentAuto(style->justifyItems(), renderer), style->justifyItemsOverflowAlignment(), style->justifyItemsPositionType());
+            return valueForItemPositionWithOverflowAlignment(resolveContainerAlignmentAuto(style->justifyItemsPosition(), renderer), style->justifyItemsOverflowAlignment(), style->justifyItemsPositionType());
         case CSSPropertyJustifySelf: {
             OverflowAlignment overflow = style->justifySelfOverflowAlignment();
-            ItemPosition justifySelf = resolveSelfAlignmentAuto(style->justifySelf(), overflow, renderer);
+            ItemPosition justifySelf = resolveSelfAlignmentAuto(style->justifySelfPosition(), overflow, renderer);
             return valueForItemPositionWithOverflowAlignment(justifySelf, overflow, NonLegacyPosition);
         }
         case CSSPropertyOrder:

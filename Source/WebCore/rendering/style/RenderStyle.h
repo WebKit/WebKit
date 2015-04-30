@@ -910,20 +910,24 @@ public:
     float flexShrink() const { return rareNonInheritedData->m_flexibleBox->m_flexShrink; }
     const Length& flexBasis() const { return rareNonInheritedData->m_flexibleBox->m_flexBasis; }
     EAlignContent alignContent() const { return static_cast<EAlignContent>(rareNonInheritedData->m_alignContent); }
-    ItemPosition alignItems() const { return static_cast<ItemPosition>(rareNonInheritedData->m_alignItems); }
-    OverflowAlignment alignItemsOverflowAlignment() const { return static_cast<OverflowAlignment>(rareNonInheritedData->m_alignItemsOverflowAlignment); }
-    ItemPosition alignSelf() const { return static_cast<ItemPosition>(rareNonInheritedData->m_alignSelf); }
-    OverflowAlignment alignSelfOverflowAlignment() const { return static_cast<OverflowAlignment>(rareNonInheritedData->m_alignSelfOverflowAlignment); }
+    const StyleSelfAlignmentData& alignItems() const { return rareNonInheritedData->m_alignItems; }
+    ItemPosition alignItemsPosition() const { return rareNonInheritedData->m_alignItems.position(); }
+    OverflowAlignment alignItemsOverflowAlignment() const { return rareNonInheritedData->m_alignItems.overflow(); }
+    const StyleSelfAlignmentData& alignSelf() const { return rareNonInheritedData->m_alignSelf; }
+    ItemPosition alignSelfPosition() const { return rareNonInheritedData->m_alignSelf.position(); }
+    OverflowAlignment alignSelfOverflowAlignment() const { return rareNonInheritedData->m_alignSelf.overflow(); }
     EFlexDirection flexDirection() const { return static_cast<EFlexDirection>(rareNonInheritedData->m_flexibleBox->m_flexDirection); }
     bool isColumnFlexDirection() const { return flexDirection() == FlowColumn || flexDirection() == FlowColumnReverse; }
     bool isReverseFlexDirection() const { return flexDirection() == FlowRowReverse || flexDirection() == FlowColumnReverse; }
     EFlexWrap flexWrap() const { return static_cast<EFlexWrap>(rareNonInheritedData->m_flexibleBox->m_flexWrap); }
     EJustifyContent justifyContent() const { return static_cast<EJustifyContent>(rareNonInheritedData->m_justifyContent); }
-    ItemPosition justifyItems() const { return static_cast<ItemPosition>(rareNonInheritedData->m_justifyItems); }
-    OverflowAlignment justifyItemsOverflowAlignment() const { return static_cast<OverflowAlignment>(rareNonInheritedData->m_justifyItemsOverflowAlignment); }
-    ItemPositionType justifyItemsPositionType() const { return static_cast<ItemPositionType>(rareNonInheritedData->m_justifyItemsPositionType); }
-    ItemPosition justifySelf() const { return static_cast<ItemPosition>(rareNonInheritedData->m_justifySelf); }
-    OverflowAlignment justifySelfOverflowAlignment() const { return static_cast<OverflowAlignment>(rareNonInheritedData->m_justifySelfOverflowAlignment); }
+    const StyleSelfAlignmentData& justifyItems() const { return rareNonInheritedData->m_justifyItems; }
+    ItemPosition justifyItemsPosition() const { return rareNonInheritedData->m_justifyItems.position(); }
+    OverflowAlignment justifyItemsOverflowAlignment() const { return rareNonInheritedData->m_justifyItems.overflow(); }
+    ItemPositionType justifyItemsPositionType() const { return rareNonInheritedData->m_justifyItems.positionType(); }
+    const StyleSelfAlignmentData& justifySelf() const { return rareNonInheritedData->m_justifySelf; }
+    ItemPosition justifySelfPosition() const { return rareNonInheritedData->m_justifySelf.position(); }
+    OverflowAlignment justifySelfOverflowAlignment() const { return rareNonInheritedData->m_justifySelf.overflow(); }
 
 #if ENABLE(CSS_GRID_LAYOUT)
     const Vector<GridTrackSize>& gridColumns() const { return rareNonInheritedData->m_grid->m_gridColumns; }
@@ -1496,18 +1500,22 @@ public:
     void setFlexBasis(Length length) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexBasis, WTF::move(length)); }
     void setOrder(int o) { SET_VAR(rareNonInheritedData, m_order, o); }
     void setAlignContent(EAlignContent p) { SET_VAR(rareNonInheritedData, m_alignContent, p); }
-    void setAlignItems(ItemPosition a) { SET_VAR(rareNonInheritedData, m_alignItems, a); }
-    void setAlignItemsOverflowAlignment(OverflowAlignment overflowAlignment) { SET_VAR(rareNonInheritedData, m_alignItemsOverflowAlignment, overflowAlignment); }
-    void setAlignSelf(ItemPosition a) { SET_VAR(rareNonInheritedData, m_alignSelf, a); }
-    void setAlignSelfOverflowAlignment(OverflowAlignment overflowAlignment) { SET_VAR(rareNonInheritedData, m_alignSelfOverflowAlignment, overflowAlignment); }
+    void setAlignItems(const StyleSelfAlignmentData& data) { SET_VAR(rareNonInheritedData, m_alignItems, data); }
+    void setAlignItemsPosition(ItemPosition position) { rareNonInheritedData.access()->m_alignItems.setPosition(position); }
+    void setAlignItemsOverflow(OverflowAlignment overflow) { rareNonInheritedData.access()->m_alignItems.setOverflow(overflow); }
+    void setAlignSelf(const StyleSelfAlignmentData& data) { SET_VAR(rareNonInheritedData, m_alignSelf, data); }
+    void setAlignSelfPosition(ItemPosition position) { rareNonInheritedData.access()->m_alignSelf.setPosition(position); }
+    void setAlignSelfOverflow(OverflowAlignment overflow) { rareNonInheritedData.access()->m_alignSelf.setOverflow(overflow); }
     void setFlexDirection(EFlexDirection direction) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexDirection, direction); }
     void setFlexWrap(EFlexWrap w) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexWrap, w); }
     void setJustifyContent(EJustifyContent p) { SET_VAR(rareNonInheritedData, m_justifyContent, p); }
-    void setJustifyItems(ItemPosition justifyItems) { SET_VAR(rareNonInheritedData, m_justifyItems, justifyItems); }
-    void setJustifyItemsOverflowAlignment(OverflowAlignment overflowAlignment) { SET_VAR(rareNonInheritedData, m_justifyItemsOverflowAlignment, overflowAlignment); }
-    void setJustifyItemsPositionType(ItemPositionType positionType) { SET_VAR(rareNonInheritedData, m_justifyItemsPositionType, positionType); }
-    void setJustifySelf(ItemPosition p) { SET_VAR(rareNonInheritedData, m_justifySelf, p); }
-    void setJustifySelfOverflowAlignment(OverflowAlignment overflowAlignment) { SET_VAR(rareNonInheritedData, m_justifySelfOverflowAlignment, overflowAlignment); }
+    void setJustifyItems(const StyleSelfAlignmentData& data) { SET_VAR(rareNonInheritedData, m_justifyItems, data); }
+    void setJustifyItemsPosition(ItemPosition position) { rareNonInheritedData.access()->m_justifyItems.setPosition(position); }
+    void setJustifyItemsOverflow(OverflowAlignment overflow) { rareNonInheritedData.access()->m_justifyItems.setOverflow(overflow); }
+    void setJustifyItemsPositionType(ItemPositionType positionType) { rareNonInheritedData.access()->m_justifyItems.setPositionType(positionType); }
+    void setJustifySelf(const StyleSelfAlignmentData& data) { SET_VAR(rareNonInheritedData, m_justifySelf, data); }
+    void setJustifySelfPosition(ItemPosition position) { rareNonInheritedData.access()->m_justifySelf.setPosition(position); }
+    void setJustifySelfOverflow(OverflowAlignment overflow) { rareNonInheritedData.access()->m_justifySelf.setOverflow(overflow); }
 #if ENABLE(CSS_GRID_LAYOUT)
     void setGridAutoColumns(const GridTrackSize& length) { SET_VAR(rareNonInheritedData.access()->m_grid, m_gridAutoColumns, length); }
     void setGridAutoRows(const GridTrackSize& length) { SET_VAR(rareNonInheritedData.access()->m_grid, m_gridAutoRows, length); }
@@ -1917,18 +1925,10 @@ public:
     static Length initialFlexBasis() { return Length(Auto); }
     static int initialOrder() { return 0; }
     static EAlignContent initialAlignContent() { return AlignContentStretch; }
-    static ItemPosition initialAlignItems() { return ItemPositionAuto; }
-    static OverflowAlignment initialAlignItemsOverflowAlignment() { return OverflowAlignmentDefault; }
-    static ItemPosition initialAlignSelf() { return ItemPositionAuto; }
-    static OverflowAlignment initialAlignSelfOverflowAlignment() { return OverflowAlignmentDefault; }
+    static StyleSelfAlignmentData initialSelfAlignment() { return StyleSelfAlignmentData(ItemPositionAuto, OverflowAlignmentDefault); }
     static EFlexDirection initialFlexDirection() { return FlowRow; }
     static EFlexWrap initialFlexWrap() { return FlexNoWrap; }
     static EJustifyContent initialJustifyContent() { return JustifyFlexStart; }
-    static ItemPosition initialJustifyItems() { return ItemPositionAuto; }
-    static OverflowAlignment initialJustifyItemsOverflowAlignment() { return OverflowAlignmentDefault; }
-    static ItemPositionType initialJustifyItemsPositionType() { return NonLegacyPosition; }
-    static ItemPosition initialJustifySelf() { return ItemPositionAuto; }
-    static OverflowAlignment initialJustifySelfOverflowAlignment() { return OverflowAlignmentDefault; }
     static int initialMarqueeLoopCount() { return -1; }
     static int initialMarqueeSpeed() { return 85; }
     static Length initialMarqueeIncrement() { return Length(6, Fixed); }

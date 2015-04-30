@@ -1,3 +1,76 @@
+2015-04-29  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Box Alignment] Unifying alignment data in a single class
+        https://bugs.webkit.org/show_bug.cgi?id=144384
+
+        Reviewed by David Hyatt.
+
+        The new CSS Box Alignment specification introduces more complex
+        values and syntax for defining alignment properties. Most of the
+        alignment values were just keyword identifiers, but the new syntax
+        allows different combinations of identifiers to determine the
+        alignment behavior (eg. overflow-alignment keyword).
+
+        This patch wll help to implement later overflow handling and
+        specially Content Dstribution alignment, the most complex case by
+        far. It will be more consistent against style changes and repaint,
+        snce we will have just one field to monitoring for value
+        modfications.
+
+        No new tests, because no new functionality was added; it's just a
+        code refactoring which is just expected to pass current tests.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::resolveSelfAlignmentAuto):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSPropertyNames.in:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertSelfOrDefaultAlignmentData):
+        (WebCore::StyleBuilderConverter::convertSVGColor): Deleted.
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyInitialWebkitMaskImage): Deleted.
+        (WebCore::StyleBuilderCustom::applyInheritWebkitMaskImage): Deleted.
+        (WebCore::ApplyPropertyBorderImageModifier::applyInheritValue): Deleted.
+        (WebCore::ApplyPropertyBorderImageModifier::applyInitialValue): Deleted.
+        (WebCore::ApplyPropertyBorderImageModifier::applyValue): Deleted.
+        (WebCore::ApplyPropertyBorderImageModifier::getValue): Deleted.
+        (WebCore::ApplyPropertyBorderImageModifier::setValue): Deleted.
+        (WebCore::StyleBuilderCustom::applyInheritLineHeight): Deleted.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        * mathml/MathMLTextElement.cpp:
+        (WebCore::MathMLTextElement::createElementRenderer):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::styleDidChange):
+        * rendering/RenderFullScreen.cpp:
+        (WebCore::createFullScreenStyle):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::adjustInnerStyle):
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::updateStyle):
+        * rendering/mathml/RenderMathMLScripts.cpp:
+        (WebCore::RenderMathMLScripts::fixAnonymousStyleForSubSupPair):
+        (WebCore::RenderMathMLScripts::fixAnonymousStyles):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::resolveAlignment):
+        (WebCore::RenderStyle::resolveJustification):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        (WebCore::StyleRareNonInheritedData::contentDataEquivalent): Deleted.
+        * rendering/style/StyleRareNonInheritedData.h:
+        * rendering/style/StyleSelfAlignmentData.h: Added.
+        (WebCore::StyleSelfAlignmentData::StyleSelfAlignmentData):
+        (WebCore::StyleSelfAlignmentData::setPosition):
+        (WebCore::StyleSelfAlignmentData::setPositionType):
+        (WebCore::StyleSelfAlignmentData::setOverflow):
+        (WebCore::StyleSelfAlignmentData::position):
+        (WebCore::StyleSelfAlignmentData::positionType):
+        (WebCore::StyleSelfAlignmentData::overflow):
+        (WebCore::StyleSelfAlignmentData::operator==):
+        (WebCore::StyleSelfAlignmentData::operator!=):
+
 2015-04-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         NodeList has issues with Symbol and empty string

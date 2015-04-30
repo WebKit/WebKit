@@ -174,16 +174,16 @@ ALWAYS_INLINE RenderStyle::RenderStyle(const RenderStyle& o)
 ItemPosition RenderStyle::resolveAlignment(const RenderStyle& parentStyle, const RenderStyle& childStyle, ItemPosition resolvedAutoPositionForRenderer)
 {
     // The auto keyword computes to the parent's align-items computed value, or to "stretch", if not set or "auto".
-    if (childStyle.alignSelf() == ItemPositionAuto)
-        return (parentStyle.alignItems() == ItemPositionAuto) ? resolvedAutoPositionForRenderer : parentStyle.alignItems();
-    return childStyle.alignSelf();
+    if (childStyle.alignSelfPosition() == ItemPositionAuto)
+        return (parentStyle.alignItemsPosition() == ItemPositionAuto) ? resolvedAutoPositionForRenderer : parentStyle.alignItemsPosition();
+    return childStyle.alignSelfPosition();
 }
 
 ItemPosition RenderStyle::resolveJustification(const RenderStyle& parentStyle, const RenderStyle& childStyle, ItemPosition resolvedAutoPositionForLayoutObject)
 {
-    if (childStyle.justifySelf() == ItemPositionAuto)
-        return (parentStyle.justifyItems() == ItemPositionAuto) ? resolvedAutoPositionForLayoutObject : parentStyle.justifyItems();
-    return childStyle.justifySelf();
+    if (childStyle.justifySelfPosition() == ItemPositionAuto)
+        return (parentStyle.justifyItemsPosition() == ItemPositionAuto) ? resolvedAutoPositionForLayoutObject : parentStyle.justifyItemsPosition();
+    return childStyle.justifySelfPosition();
 }
 
 void RenderStyle::inheritFrom(const RenderStyle* inheritParent, IsAtShadowBoundary isAtShadowBoundary)

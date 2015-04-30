@@ -1437,10 +1437,8 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
 
     // If the inherited value of justify-items includes the legacy keyword, 'auto'
     // computes to the the inherited value.
-    if (parentStyle.justifyItemsPositionType() == LegacyPosition && style.justifyItems() == ItemPositionAuto) {
+    if (parentStyle.justifyItemsPositionType() == LegacyPosition && style.justifyItemsPosition() == ItemPositionAuto)
         style.setJustifyItems(parentStyle.justifyItems());
-        style.setJustifyItemsPositionType(parentStyle.justifyItemsPositionType());
-    }
 }
 
 bool StyleResolver::checkRegionStyle(Element* regionElement)
