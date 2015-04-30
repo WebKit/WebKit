@@ -1,3 +1,19 @@
+2015-04-30  Oliver Hunt  <oliver@apple.com>
+
+        DOM bindings should not be using a reference type to point to a temporary object
+        https://bugs.webkit.org/show_bug.cgi?id=144474
+
+        Reviewed by Beth Dakin.
+
+        The DOM bindings will currently try and use a local reference to point
+        to a temporary object. This currently works as a by product of the compiler's
+        stack layout. This patch removes the dependency on undefined behaviour
+        by ensuring that we use a value rather than reference type.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheck):
+        (GetNativeTypeForCallbacks):
+
 2015-04-30  Brady Eidson  <beidson@apple.com>
 
         Javascript using WebSQL can create their own WebKit info table.
