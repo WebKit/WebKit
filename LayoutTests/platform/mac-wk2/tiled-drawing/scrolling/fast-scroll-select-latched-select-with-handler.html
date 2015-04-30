@@ -52,9 +52,6 @@ function checkForScroll()
     var pageScrollPositionAfter = document.body.scrollTop;
     var selectScrollPositionAfter = selectTarget.scrollTop;
 
-    debug("Page before: " + pageScrollPositionBefore + ", select before: " + selectScrollPositionBefore);
-    debug("Page after:  " + pageScrollPositionAfter + ", select after: " + selectScrollPositionAfter);
-
     if (pageScrollPositionBefore != pageScrollPositionAfter)
         testFailed("Page received wheel events.");
     else
@@ -79,6 +76,7 @@ function scrollTest()
 
     selectScrollPositionBefore = selectTarget.scrollTop;
 
+    // Scroll the #source until we reach the #target.
     var startPosX = Math.round(selectTarget.offsetLeft) + 20;
     debug("div display height = " + Math.round(selectTarget.clientHeight));
     var startPosY = Math.round(selectTarget.offsetTop) + Math.round(selectTarget.clientHeight) - 42;
@@ -94,7 +92,7 @@ function scrollTest()
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
-    checkForScroll();
+    eventSender.callAfterScrollingCompletes(checkForScroll);
 }
 
 function setupTopLevel()
@@ -103,6 +101,7 @@ function setupTopLevel()
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
 
+        eventSender.monitorWheelEvents();
         setTimeout(scrollTest, 0);
     } else {
         var messageLocation = document.getElementById('parent');

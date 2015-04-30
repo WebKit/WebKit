@@ -14,11 +14,9 @@ var continueCount = 5;
 
 function checkForScroll()
 {
+    // The IFrame should not have scrolled at all.
     var pageScrollPositionAfter = document.body.scrollTop;
     var iFrameScrollPositionAfter = window.frames['target'].document.body.scrollTop;
-
-    debug("Page before: " + pageScrollPositionBefore + ", IFrame before: " + iFrameScrollPositionBefore);
-    debug("Page after:  " + pageScrollPositionAfter + ", IFrame after: " + iFrameScrollPositionAfter);
 
     if (pageScrollPositionBefore != pageScrollPositionAfter)
         testFailed("Page received wheel events.");
@@ -44,11 +42,10 @@ function scrollTest()
 
     iFrameScrollPositionBefore = iFrameBody.scrollTop;
 
-    var startPosX = iframeTarget.offsetLeft + 20;
-    debug("IFrame display height = " + iframeTarget.clientHeight);
-    var startPosY = iframeTarget.offsetTop + iframeTarget.clientHeight - 42;
+    // Scroll the #source until we reach the #target.
+    var startPosX = Math.round(iframeTarget.offsetLeft) + 20;
+    var startPosY = Math.round(iframeTarget.offsetTop) + 100;
     eventSender.mouseMoveTo(startPosX, startPosY);
-    debug("Mouse moved to (" + startPosX + ", " + startPosY + ")");
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
@@ -59,7 +56,7 @@ function scrollTest()
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
-    checkForScroll();
+    eventSender.callAfterScrollingCompletes(checkForScroll);
 }
 
 function setupTopLevel()
@@ -68,6 +65,7 @@ function setupTopLevel()
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
 
+        eventSender.monitorWheelEvents();
         setTimeout(scrollTest, 0);
     } else {
         var messageLocation = document.getElementById('parent');

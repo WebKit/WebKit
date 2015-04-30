@@ -52,15 +52,10 @@ function checkForScroll()
     var pageScrollPositionAfter = document.body.scrollTop;
     var divScrollPositionAfter = divTarget.scrollTop;
 
-    debug("Page before: " + pageScrollPositionBefore + ", div before: " + divScrollPositionBefore);
-    debug("Page after:  " + pageScrollPositionAfter + ", div after: " + divScrollPositionAfter);
-
     if (pageScrollPositionBefore != pageScrollPositionAfter)
         testFailed("Page received wheel events.");
     else
         testPassed("Page did not receive wheel events.");
-
-    debug("Document was initial target for " + wheelCount + " of the wheel events.");
 
     if (window.internals) {
         document.getElementById('layers').innerText = internals.layerTreeAsText(document,
@@ -81,10 +76,8 @@ function scrollTest()
 
     // Scroll the #source until we reach the #target.
     var startPosX = Math.round(divTarget.offsetLeft) + 20;
-    debug("div display height = " + Math.round(divTarget.clientHeight));
-    var startPosY = Math.round(divTarget.offsetTop) + Math.round(divTarget.clientHeight) - 42; // One wheel turn before end.
+    var startPosY = Math.round(divTarget.offsetTop) + 100; // One wheel turn before end.
     eventSender.mouseMoveTo(startPosX, startPosY);
-    debug("Mouse moved to (" + startPosX + ", " + startPosY + ")");
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
@@ -95,7 +88,7 @@ function scrollTest()
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
-    checkForScroll();
+    eventSender.callAfterScrollingCompletes(checkForScroll);
 }
 
 function setupTopLevel()
@@ -103,6 +96,8 @@ function setupTopLevel()
     if (window.eventSender) {
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
+
+        eventSender.monitorWheelEvents();
         setTimeout(scrollTest, 0);
     } else {
         var messageLocation = document.getElementById('parent');
@@ -121,7 +116,7 @@ function setupTopLevel()
     </div>
     <div class="scrollable_region">
         <h3>Scrollable Region</h3>
-        <div id="target" style='overflow-y: auto; overflow-x: hidden; height: 350px;'>
+        <div id="target" style='overflow-y: auto; overflow-x: hidden; max-height: 350px;'>
             <table class="table" style='width: 99%'>
                 <tr><th>Count</th><th>DATA</th><th>Rev Count</th></tr>
                 <tr><td>TOP TOP TOP TOP TOP</td><td>TOP TOP TOP TOP TOP</td><td>TOP TOP TOP TOP TOP</td></tr>

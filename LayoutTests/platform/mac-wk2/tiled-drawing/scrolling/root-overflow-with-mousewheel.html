@@ -32,7 +32,7 @@ function scrollTest()
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
-    setTimeout(checkForScroll, 500);
+    eventSender.callAfterScrollingCompletes(checkForScroll);
 }
 
 function onLoad() {
@@ -41,6 +41,7 @@ function onLoad() {
     if (window.eventSender) {
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
+        eventSender.monitorWheelEvents();
         setTimeout(scrollTest, 0);
     }
 }

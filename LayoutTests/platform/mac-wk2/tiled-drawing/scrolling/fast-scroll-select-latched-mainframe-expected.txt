@@ -10,20 +10,17 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS successfullyParsed is true
 
 TEST COMPLETE
-Mouse moved to (30, 127)
-Page before: 0, select before: 0
-Page after:  70, select after: 0
 PASS Select did not receive wheel events.
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 2008.00 2311.00)
+  (bounds 2008.00 2266.00)
   (visible rect 0.00, 70.00 785.00 x 585.00)
   (coverage rect 0.00, 70.00 785.00 x 585.00)
   (intersects coverage rect 1)
   (contentsScale 1.00)
   (children 1
     (GraphicsLayer
-      (bounds 2008.00 2311.00)
+      (bounds 2008.00 2266.00)
       (contentsOpaque 1)
       (visible rect 0.00, 70.00 785.00 x 585.00)
       (coverage rect 0.00, 0.00 1570.00 x 1755.00)

@@ -59,15 +59,10 @@ function checkForScroll()
     var pageScrollPositionAfter = document.body.scrollTop;
     var selectScrollPositionAfter = selectTarget.scrollTop;
 
-    debug("Page before: " + pageScrollPositionBefore + ", select before: " + selectScrollPositionBefore);
-    debug("Page after:  " + pageScrollPositionAfter + ", select after: " + selectScrollPositionAfter);
-
     if (selectScrollPositionBefore != selectScrollPositionAfter)
         testFailed("Select consumed wheel events.");
     else
         testPassed("Select did not receive wheel events.");
-
-    debug("Document was initial target for " + wheelCount + " of the wheel events.");
 
     if (window.internals) {
         document.getElementById('layers').innerText = internals.layerTreeAsText(document,
@@ -85,10 +80,10 @@ function scrollTest()
 
     selectScrollPositionBefore = selectTarget.scrollTop;
 
+    // Scroll the #source until we reach the #target.
     var startPosX = Math.round(selectTarget.offsetLeft) + 20;
     var startPosY = Math.round(selectTarget.offsetTop) - 42;
     eventSender.mouseMoveTo(startPosX, startPosY);
-    debug("Mouse moved to (" + startPosX + ", " + startPosY + ")");
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
@@ -99,9 +94,9 @@ function scrollTest()
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+    eventSender.callAfterScrollingCompletes(checkForScroll);
 
     // We should finish via the scroll event; this will fire in the case of failure when the page doesn't scroll.
-    setTimeout(checkForScroll, 500);
 }
 
 function setupTopLevel()
@@ -110,6 +105,7 @@ function setupTopLevel()
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
 
+        eventSender.monitorWheelEvents();
         setTimeout(scrollTest, 0);
     } else {
         var messageLocation = document.getElementById('parent');

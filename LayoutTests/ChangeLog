@@ -1,3 +1,40 @@
+2015-04-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] Expand test infrastructure to support scrolling tests (Part 3)
+        https://bugs.webkit.org/show_bug.cgi?id=144131
+
+        Reviewed by Eric Carlson.
+
+        Update the WK2 scrolling tests to use the new scroll trigger infrastructure to reduce the use of
+        timeouts.
+
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-div-latched-div-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-div-latched-div-with-handler-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-div-latched-div-with-handler.html:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-div-latched-div.html:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-div-latched-mainframe-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-div-latched-mainframe-with-handler-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-div-latched-mainframe-with-handler.html:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-div-latched-mainframe.html:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-iframe-latched-iframe-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-iframe-latched-iframe-with-handler-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-iframe-latched-iframe-with-handler.html:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-iframe-latched-iframe.html:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe-with-handler-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe-with-handler.html:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe.html:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-select-latched-mainframe-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-select-latched-mainframe-with-handler-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-select-latched-mainframe-with-handler.html:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-select-latched-mainframe.html:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-select-latched-select-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-select-latched-select-with-handler-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-select-latched-select-with-handler.html:
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-select-latched-select.html:
+        * platform/mac-wk2/tiled-drawing/scrolling/overflow-scroll-zero-delta-wheel-events.html:
+        * platform/mac-wk2/tiled-drawing/scrolling/root-overflow-with-mousewheel.html:
+
 2015-04-30  Antti Koivisto  <antti@apple.com>
 
         These should be saying HTTP/1.1 not HTTP/1.0

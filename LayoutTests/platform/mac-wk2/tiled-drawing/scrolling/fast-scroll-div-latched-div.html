@@ -46,9 +46,6 @@ function checkForScroll()
     var pageScrollPositionAfter = document.body.scrollTop;
     var divScrollPositionAfter = divTarget.scrollTop;
 
-    debug("Page before: " + pageScrollPositionBefore + ", div before: " + divScrollPositionBefore);
-    debug("Page after:  " + pageScrollPositionAfter + ", div after: " + divScrollPositionAfter);
-
     if (pageScrollPositionBefore != pageScrollPositionAfter)
         testFailed("Page received wheel events.");
     else
@@ -73,10 +70,8 @@ function scrollTest()
 
     // Scroll the #source until we reach the #target.
     var startPosX = Math.round(divTarget.offsetLeft) + 20;
-    debug("div display height = " + Math.round(divTarget.clientHeight));
-    var startPosY = Math.round(divTarget.offsetTop) + Math.round(divTarget.clientHeight) - 42; // One wheel turn before end.
+    var startPosY = Math.round(divTarget.offsetTop) + 100; // One wheel turn before end.
     eventSender.mouseMoveTo(startPosX, startPosY);
-    debug("Mouse moved to (" + startPosX + ", " + startPosY + ")");
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
@@ -87,7 +82,7 @@ function scrollTest()
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
-    checkForScroll();
+    eventSender.callAfterScrollingCompletes(checkForScroll);
 }
 
 function setupTopLevel()
@@ -96,6 +91,7 @@ function setupTopLevel()
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
 
+        eventSender.monitorWheelEvents();
         setTimeout(scrollTest, 0);
     } else {
         var messageLocation = document.getElementById('parent');

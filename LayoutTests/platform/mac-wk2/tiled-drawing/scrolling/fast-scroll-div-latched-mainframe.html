@@ -53,9 +53,6 @@ function checkForScroll()
     var pageScrollPositionAfter = document.body.scrollTop;
     var divScrollPositionAfter = divTarget.scrollTop;
 
-    debug("Page before: " + pageScrollPositionBefore + ", div before: " + divScrollPositionBefore);
-    debug("Page after:  " + pageScrollPositionAfter + ", div after: " + divScrollPositionAfter);
-
     if (divScrollPositionBefore != divScrollPositionAfter)
         testFailed("Scrollable div consumed wheel events.");
     else
@@ -81,7 +78,6 @@ function scrollTest()
     var startPosX = Math.round(divTarget.offsetLeft) + 20;
     var startPosY = Math.round(divTarget.offsetTop) - 42;
     eventSender.mouseMoveTo(startPosX, startPosY);
-    debug("Mouse moved to (" + startPosX + ", " + startPosY + ")");
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
@@ -92,9 +88,8 @@ function scrollTest()
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
-
+    eventSender.callAfterScrollingCompletes(checkForScroll);
     // We should finish via the scroll event; this will fire in the case of failure when the page doesn't scroll.
-    setTimeout(checkForScroll, 500);
 }
 
 function setupTopLevel()
@@ -103,6 +98,7 @@ function setupTopLevel()
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
 
+        eventSender.monitorWheelEvents();
         setTimeout(scrollTest, 0);
     } else {
         var messageLocation = document.getElementById('parent');

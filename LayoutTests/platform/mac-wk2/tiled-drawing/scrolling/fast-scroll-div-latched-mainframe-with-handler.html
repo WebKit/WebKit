@@ -59,15 +59,10 @@ function checkForScroll()
     var pageScrollPositionAfter = document.body.scrollTop;
     var divScrollPositionAfter = divTarget.scrollTop;
 
-    debug("Page before: " + pageScrollPositionBefore + ", div before: " + divScrollPositionBefore);
-    debug("Page after:  " + pageScrollPositionAfter + ", div after: " + divScrollPositionAfter);
-
     if (divScrollPositionBefore != divScrollPositionAfter)
         testFailed("Scrollable div consumed wheel events.");
     else
         testPassed("Scrollable div did not receive wheel events.");
-
-    debug("Document was initial target for " + wheelCount + " of the wheel events.");
 
     if (window.internals) {
         document.getElementById('layers').innerText = internals.layerTreeAsText(document,
@@ -100,9 +95,8 @@ function scrollTest()
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
     eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
-
+    eventSender.callAfterScrollingCompletes(checkForScroll);
     // We should finish via the scroll event; this will fire in the case of failure when the page doesn't scroll.
-    setTimeout(checkForScroll, 500);
 }
 
 function setupTopLevel()
@@ -111,6 +105,7 @@ function setupTopLevel()
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
 
+        eventSender.monitorWheelEvents();
         setTimeout(scrollTest, 0);
     } else {
         var messageLocation = document.getElementById('parent');
