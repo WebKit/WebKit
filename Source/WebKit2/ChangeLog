@@ -1,3 +1,16 @@
+2015-04-30  Enrica Casucci  <enrica@apple.com>
+
+        [iOS] tapping in the middle of a word in editable content should not select the word.
+        https://bugs.webkit.org/show_bug.cgi?id=144421
+        rdar://problem/20710948
+
+        Reviewed by Tim Horton.
+
+        Reverting to the original behavior.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::selectWithGesture):
+
 2015-04-29  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         Fix the EFL build after r183595

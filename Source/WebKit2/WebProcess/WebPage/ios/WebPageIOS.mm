@@ -964,11 +964,13 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
             // Don't cross line boundaries.
             result = position;
         } else if (withinTextUnitOfGranularity(position, WordGranularity, DirectionForward)) {
-            // The position lies within a word, we want to select the word.
-            if (frame.selection().isCaret())
-                range = enclosingTextUnitOfGranularity(position, WordGranularity, DirectionForward);
-            else if (frame.selection().isRange() && (position < frame.selection().selection().start() || position > frame.selection().selection().end()))
-                result = position;
+            // The position lies within a word.
+            RefPtr<Range> wordRange = enclosingTextUnitOfGranularity(position, WordGranularity, DirectionForward);
+            if (wordRange) {
+                result = wordRange->startPosition();
+                if (distanceBetweenPositions(position, result) > 1)
+                    result = wordRange->endPosition();
+            }
         } else if (atBoundaryOfGranularity(position, WordGranularity, DirectionBackward)) {
             // The position is at the end of a word.
             result = position;
