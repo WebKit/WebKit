@@ -1,3 +1,9 @@
+2015-04-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, skip new tests js/regress/is-string-fold.html and js/regress/is-string-fold-tricky.html because they are crashing.
+
+        * TestExpectations:
+
 2015-04-30  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Add image failure expectation for
