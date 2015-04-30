@@ -1,5 +1,11 @@
 2015-04-30  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, add a FIXME comment referencing https://bugs.webkit.org/show_bug.cgi?id=144458.
+
+        * jit/JITOperations.cpp:
+
+2015-04-30  Filip Pizlo  <fpizlo@apple.com>
+
         Add a comment clarifying the behavior and semantics of getCallData/getConstructData, in
         particular that they cannot change their minds and may be called from compiler threads.
 

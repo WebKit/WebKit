@@ -721,8 +721,12 @@ inline char* linkFor(
     
     JSValue calleeAsValue = execCallee->calleeAsValue();
     JSCell* calleeAsFunctionCell = getJSFunction(calleeAsValue);
-    if (!calleeAsFunctionCell)
+    if (!calleeAsFunctionCell) {
+        // FIXME: We should cache these kinds of calls. They can be common and currently they are
+        // expensive.
+        // https://bugs.webkit.org/show_bug.cgi?id=144458
         return reinterpret_cast<char*>(handleHostCall(execCallee, calleeAsValue, kind));
+    }
 
     JSFunction* callee = jsCast<JSFunction*>(calleeAsFunctionCell);
     JSScope* scope = callee->scopeUnchecked();
