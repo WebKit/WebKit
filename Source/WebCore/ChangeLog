@@ -1,3 +1,16 @@
+2015-04-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed build fix. WebCore has a weak symbol.
+
+        WebCore has a weak external symbol in it. A common cause of weak external
+        symbols is when an inline function is listed in the linker export file.
+        ERROR: symbol __ZNK7WebCore4Page25expectsWheelEventTriggersEv
+
+        * page/Page.cpp:
+        (WebCore::Page::expectsWheelEventTriggers):
+        * page/Page.h:
+        (WebCore::Page::expectsWheelEventTriggers): Deleted.
+
 2015-04-29  Simon Fraser  <simon.fraser@apple.com>
 
         Crash at WebCore::Document::absoluteRegionForEventTargets 

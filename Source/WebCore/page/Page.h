@@ -443,7 +443,7 @@ public:
     WEBCORE_EXPORT RefPtr<WheelEventTestTrigger> testTrigger() const;
     WEBCORE_EXPORT WheelEventTestTrigger& ensureTestTrigger();
     WEBCORE_EXPORT void clearTrigger();
-    WEBCORE_EXPORT bool expectsWheelEventTriggers() const { return !!m_testTrigger; }
+    WEBCORE_EXPORT bool expectsWheelEventTriggers() const;
 
 private:
     WEBCORE_EXPORT void initGroup();

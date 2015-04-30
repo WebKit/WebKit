@@ -1742,6 +1742,10 @@ void Page::clearTrigger()
 {
     m_testTrigger = nullptr;
 }
-    
+
+bool Page::expectsWheelEventTriggers() const
+{
+    return !!m_testTrigger;
+}
 
 } // namespace WebCore
