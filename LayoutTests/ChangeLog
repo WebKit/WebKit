@@ -1,3 +1,10 @@
+2015-04-30  Antti Koivisto  <antti@apple.com>
+
+        These should be saying HTTP/1.1 not HTTP/1.0
+
+        * http/tests/cache/resources/iframe304.php:
+        * http/tests/cache/resources/iframe304body.php:
+
 2015-04-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Win] Update baselines after r183610.

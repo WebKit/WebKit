@@ -4,7 +4,7 @@ require_once '../../resources/portabilityLayer.php';
 clearstatcache();
 
 if ($_SERVER["HTTP_IF_MODIFIED_SINCE"]) {
-    header("HTTP/1.0 304 Not Modified");
+    header("HTTP/1.1 304 Not Modified");
     exit();
 }
 header('Cache-Control: no-cache');
