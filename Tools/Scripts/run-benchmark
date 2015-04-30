@@ -2,6 +2,8 @@
 
 import argparse
 import logging
+import sys
+
 from webkitpy.benchmark_runner.benchmark_runner import BenchmarkRunner
 
 
@@ -34,4 +36,4 @@ def main():
     return runner.execute()
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

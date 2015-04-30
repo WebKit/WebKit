@@ -1,3 +1,19 @@
+2015-04-30  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Fix return code issue, check return code of safari process and dump results to log
+        https://bugs.webkit.org/show_bug.cgi?id=144436
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/run-benchmark:
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (BenchmarkRunner.dump): Correct typo.
+        (BenchmarkRunner.wrap): Add results to console.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py: Check return code to detect Safari crashes.
+        (OSXSafariDriver.prepareEnv):
+        (OSXSafariDriver.launchUrl):
+        (OSXSafariDriver.closeBrowsers):
+
 2015-04-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Should no longer need to worry about very old versions of Xcode

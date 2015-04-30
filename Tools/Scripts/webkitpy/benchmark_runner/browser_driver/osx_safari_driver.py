@@ -17,6 +17,7 @@ _log = logging.getLogger(__name__)
 class OSXSafariDriver(BrowserDriver):
 
     def prepareEnv(self):
+        self.safariProcess = None
         self.closeBrowsers()
         forceRemove(os.path.join(os.path.expanduser('~'), 'Library/Saved Application State/com.apple.Safari.savedState'))
         forceRemove(os.path.join(os.path.expanduser('~'), 'Library/Safari/LastSession.plist'))
@@ -26,7 +27,7 @@ class OSXSafariDriver(BrowserDriver):
         args = [os.path.join(browserBuildPath, 'Safari.app/Contents/MacOS/Safari')]
         args.extend(self.safariPreferences)
         _log.info('Launching safari: %s with url: %s' % (args[0], url))
-        subprocess.Popen(args, env={'DYLD_FRAMEWORK_PATH': browserBuildPath, 'DYLD_LIBRARY_PATH': browserBuildPath}, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        self.safariProcess = subprocess.Popen(args, env={'DYLD_FRAMEWORK_PATH': browserBuildPath, 'DYLD_LIBRARY_PATH': browserBuildPath}, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # Stop for initialization of the safari process, otherwise, open
         # command may use the system safari.
         time.sleep(3)
@@ -37,3 +38,7 @@ class OSXSafariDriver(BrowserDriver):
         safariInstances = NSRunningApplication.runningApplicationsWithBundleIdentifier_('com.apple.Safari')
         for safariInstance in safariInstances:
             safariInstance.terminate()
+        if self.safariProcess:
+            _log.info('Safari process console output:\nstdout: %s\nstderr: %s' % self.safariProcess.communicate())
+            if self.safariProcess.returncode:
+                _log.error('Safari Crashed!')
