@@ -1,3 +1,9 @@
+2015-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Bump GTK+ version numbers.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2015-04-29  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [EFL] CMake should be failed if openwebrtc package does not exist but ENABLE_MEDIA_STREAM is ON
