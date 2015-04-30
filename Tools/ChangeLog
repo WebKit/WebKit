@@ -1,3 +1,13 @@
+2015-04-30  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] Add libhyphen-dev to the build dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=144452
+
+        Reviewed by Martin Robinson.
+
+        * gtk/install-dependencies: Added libhyphen-dev to the WebKitGTK+
+        build dependencies.
+
 2015-04-30  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Testing dictionaries are not installed automatically

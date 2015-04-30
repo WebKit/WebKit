@@ -75,6 +75,7 @@ function installDependenciesWithApt {
         libgtk-3-dev \
         libgudev-1.0-dev \
         libharfbuzz-dev \
+        libhyphen-dev \
         libicu-dev \
         libjpeg-dev \
         libmpg123-dev \
