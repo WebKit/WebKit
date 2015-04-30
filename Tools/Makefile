@@ -1,7 +1,9 @@
 MODULES = DumpRenderTree WebKitTestRunner MiniBrowser ../Source/ThirdParty/gtest/xcode TestWebKitAPI
 
-ifeq (,$(findstring macosx,$(SDKROOT)))
-	MODULES = DumpRenderTree WebKitTestRunner ../Source/ThirdParty/gtest/xcode TestWebKitAPI
+ifneq (,$(SDKROOT))
+	ifeq (,$(findstring macosx,$(SDKROOT)))
+		MODULES = DumpRenderTree WebKitTestRunner ../Source/ThirdParty/gtest/xcode TestWebKitAPI
+	endif
 endif
 
 all:

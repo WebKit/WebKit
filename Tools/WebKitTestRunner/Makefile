@@ -5,9 +5,11 @@ BUILD_WEBKITTESTRUNNER = $(shell (( $(OSX_VERSION) >= 6 )) && echo "YES" )
 
 ifeq "$(BUILD_WEBKITTESTRUNNER)" "YES"
 
-ifeq (,$(findstring macosx,$(SDKROOT)))
-	ifeq (,$(findstring clean,$(MAKECMDGOALS)))
-		OTHER_OPTIONS += -target WebKitTestRunnerApp
+ifneq (,$(SDKROOT))
+	ifeq (,$(findstring macosx,$(SDKROOT)))
+		ifeq (,$(findstring clean,$(MAKECMDGOALS)))
+			OTHER_OPTIONS += -target WebKitTestRunnerApp
+		endif
 	endif
 endif
 
