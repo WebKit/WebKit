@@ -73,6 +73,11 @@ function otherStatementsCallback(tx)
     // Rename the table back to its original name
     executeStatement(tx, "ALTER TABLE TestTable RENAME To Test;", "SQLITE_ALTER_TABLE");
 
+    // These should always fail, as nobody gets to mess with the info table.
+    executeStatement(tx, "ALTER TABLE __WebKitDatabaseInfoTable__ RENAME TO TestTable;", "SQLITE_ALTER_INFO_TABLE");
+    executeStatement(tx, "ALTER TABLE main.__WebKitDatabaseInfoTable__ RENAME TO TestTable;", "SQLITE_ALTER_INFO_TABLE");
+    executeStatement(tx, "ALTER TABLE Test RENAME TO __WebKitDatabaseInfoTable__;", "SQLITE_ALTER_INFO_TABLE");
+
     executeStatement(tx, "BEGIN TRANSACTION;", "SQLITE_TRANSACTION");
     executeStatement(tx, "ATTACH main AS TestMain;", "SQLITE_ATTACH");
     executeStatement(tx, "DETACH TestMain;", "SQLITE_DETACH");

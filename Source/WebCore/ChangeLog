@@ -1,3 +1,20 @@
+2015-04-30  Brady Eidson  <beidson@apple.com>
+
+        Javascript using WebSQL can create their own WebKit info table.
+        <rdar://problem/20688792> and https://bugs.webkit.org/show_bug.cgi?id=144466
+
+        Reviewed by Alex Christensen.
+
+        Test: storage/websql/alter-to-info-table.html
+
+        * Modules/webdatabase/DatabaseBackendBase.cpp:
+        (WebCore::DatabaseBackendBase::databaseInfoTableName): Return the info table name.
+        (WebCore::fullyQualifiedInfoTableName): Append "main." to the info table name.
+        (WebCore::DatabaseBackendBase::DatabaseBackendBase): Use the fully qualified name.
+        (WebCore::DatabaseBackendBase::performOpenAndVerify): Ditto.
+        (WebCore::DatabaseBackendBase::getVersionFromDatabase): Ditto.
+        (WebCore::DatabaseBackendBase::setVersionInDatabase): Ditto.
+
 2015-04-30  Beth Dakin  <bdakin@apple.com>
 
         Should choose UIScrollView indicatorStyle based on the document background color
