@@ -1,5 +1,16 @@
 2015-04-29  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Should no longer need to worry about very old versions of Xcode
+        https://bugs.webkit.org/show_bug.cgi?id=144437
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/check-for-exit-time-destructors:
+        * Scripts/check-for-global-initializers:
+        * Scripts/check-for-weak-vtables-and-externals:
+
+2015-04-29  Joseph Pecoraro  <pecoraro@apple.com>
+
         REGRESSION(183583): [Mac] make without SDKROOT has issues
         https://bugs.webkit.org/show_bug.cgi?id=144431
 

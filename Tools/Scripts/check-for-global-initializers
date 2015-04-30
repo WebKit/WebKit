@@ -46,9 +46,6 @@ my $variant = $ENV{'CURRENT_VARIANT'};
 my $coverageBuild = $ENV{'WEBKIT_COVERAGE_BUILD'};
 my $debugRoot = $ENV{'WEBKIT_DEBUG_ROOT'};
 
-$arch = $ENV{'NATIVE_ARCH'} if !$arch; # for Xcode 2.1, which does not have CURRENT_ARCH
-$variant = "normal" if !$variant; # for Xcode 2.1, which does not have CURRENT_VARIANT
-
 my $executablePath = "$ENV{'TARGET_BUILD_DIR'}/$ENV{'EXECUTABLE_PATH'}";
 
 my $buildTimestampPath = $ENV{'TARGET_TEMP_DIR'} . "/" . basename($0) . ".timestamp";
