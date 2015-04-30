@@ -146,3 +146,14 @@ fast/inline/hidpi-selection-gap-overlaps-inline-selection.html [ Skip ]
 webkit.org/b/136078 fast/borders/border-painting-dashed.html [ ImageOnlyFailure ]
 webkit.org/b/136078 fast/borders/border-painting-dotted.html [ ImageOnlyFailure ]
 webkit.org/b/136078 fast/borders/border-painting-double.html [ ImageOnlyFailure ]
+
+# Tests added in r178380 have image differences in safari-600.5-branch
+webkit.org/b/144043 fast/multicol/clip-in-columns.html [ ImageOnlyFailure ]
+webkit.org/b/144043 fast/multicol/filter-in-columns.html [ ImageOnlyFailure ]
+
+# Tests added in r174489 have image and text differences in safari-600.5-branch
+webkit.org/b/144044 fast/ruby/ruby-justification-hittest.html [ Failure ]
+webkit.org/b/144044 fast/ruby/ruby-justification.html [ ImageOnlyFailure ]
+
+# fast/text/ruby-justification-flush.html fails on safari-600.6-branch
+webkit.org/b/144294 fast/text/ruby-justification-flush.html [ ImageOnlyFailure ]
