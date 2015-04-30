@@ -95,8 +95,7 @@ enum Speculation {
 };
 enum Conversion {
     AsIs,
-    Convert,
-    RageConvert
+    Convert
 };
 } // namespace Array
 
@@ -222,7 +221,7 @@ public:
         return ArrayMode(type, arrayClass(), speculation(), conversion);
     }
     
-    ArrayMode refine(Graph&, Node*, SpeculatedType base, SpeculatedType index, SpeculatedType value = SpecNone, NodeFlags = 0) const;
+    ArrayMode refine(Graph&, Node*, SpeculatedType base, SpeculatedType index, SpeculatedType value = SpecNone) const;
     
     bool alreadyChecked(Graph&, Node*, AbstractValue&) const;
     

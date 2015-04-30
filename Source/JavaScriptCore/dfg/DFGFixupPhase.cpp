@@ -517,7 +517,7 @@ private:
                     m_graph, node,
                     node->child1()->prediction(),
                     node->child2()->prediction(),
-                    SpecNone, node->flags()));
+                    SpecNone));
             
             blessArrayOperation(node->child1(), node->child2(), node->child3());
             
@@ -1105,7 +1105,7 @@ private:
                     m_graph, node,
                     node->child1()->prediction(),
                     node->child2()->prediction(),
-                    SpecNone, node->flags()));
+                    SpecNone));
             
             blessArrayOperation(node->child1(), node->child2(), node->child3());
             fixEdge<CellUse>(node->child1());

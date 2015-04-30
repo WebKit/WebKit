@@ -689,18 +689,7 @@ public:
             
         return ensureContiguousSlow(vm);
     }
-        
-    // Same as ensureContiguous(), except that if the indexed storage is in
-    // double mode, then it does a rage conversion to contiguous: it
-    // attempts to convert each double to an int32.
-    ContiguousJSValues rageEnsureContiguous(VM& vm)
-    {
-        if (LIKELY(hasContiguous(indexingType())))
-            return m_butterfly->contiguous();
-            
-        return rageEnsureContiguousSlow(vm);
-    }
-        
+
     // Ensure that the object is in a mode where it has array storage. Use
     // this if you're about to perform actions that would have required the
     // object to be converted to have array storage, if it didn't have it
@@ -797,7 +786,6 @@ protected:
     ArrayStorage* convertInt32ToArrayStorage(VM&);
     
     ContiguousJSValues convertDoubleToContiguous(VM&);
-    ContiguousJSValues rageConvertDoubleToContiguous(VM&);
     ArrayStorage* convertDoubleToArrayStorage(VM&, NonPropertyTransition);
     ArrayStorage* convertDoubleToArrayStorage(VM&);
         
@@ -983,14 +971,8 @@ private:
     ContiguousJSValues ensureInt32Slow(VM&);
     ContiguousDoubles ensureDoubleSlow(VM&);
     ContiguousJSValues ensureContiguousSlow(VM&);
-    ContiguousJSValues rageEnsureContiguousSlow(VM&);
     JS_EXPORT_PRIVATE ArrayStorage* ensureArrayStorageSlow(VM&);
-    
-    enum DoubleToContiguousMode { EncodeValueAsDouble, RageConvertDoubleToValue };
-    template<DoubleToContiguousMode mode>
-    ContiguousJSValues genericConvertDoubleToContiguous(VM&);
-    ContiguousJSValues ensureContiguousSlow(VM&, DoubleToContiguousMode);
-    
+
 protected:
     CopyWriteBarrier<Butterfly> m_butterfly;
 #if USE(JSVALUE32_64)

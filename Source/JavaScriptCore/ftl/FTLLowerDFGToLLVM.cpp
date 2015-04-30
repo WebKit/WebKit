@@ -1943,10 +1943,7 @@ private:
             vmCall(m_out.operation(operationEnsureDouble), m_callFrame, cell);
             break;
         case Array::Contiguous:
-            if (m_node->arrayMode().conversion() == Array::RageConvert)
-                vmCall(m_out.operation(operationRageEnsureContiguous), m_callFrame, cell);
-            else
-                vmCall(m_out.operation(operationEnsureContiguous), m_callFrame, cell);
+            vmCall(m_out.operation(operationEnsureContiguous), m_callFrame, cell);
             break;
         case Array::ArrayStorage:
         case Array::SlowPutArrayStorage:

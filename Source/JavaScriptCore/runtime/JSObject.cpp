@@ -836,8 +836,7 @@ ArrayStorage* JSObject::convertInt32ToArrayStorage(VM& vm)
     return convertInt32ToArrayStorage(vm, structure(vm)->suggestedArrayStorageTransition());
 }
 
-template<JSObject::DoubleToContiguousMode mode>
-ContiguousJSValues JSObject::genericConvertDoubleToContiguous(VM& vm)
+ContiguousJSValues JSObject::convertDoubleToContiguous(VM& vm)
 {
     ASSERT(hasDouble(indexingType()));
     
@@ -849,35 +848,12 @@ ContiguousJSValues JSObject::genericConvertDoubleToContiguous(VM& vm)
             currentAsValue->clear();
             continue;
         }
-        JSValue v;
-        switch (mode) {
-        case EncodeValueAsDouble:
-            v = JSValue(JSValue::EncodeAsDouble, value);
-            break;
-        case RageConvertDoubleToValue:
-            v = jsNumber(value);
-            break;
-        default:
-            v = JSValue();
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        }
-        ASSERT(v.isNumber());
+        JSValue v = JSValue(JSValue::EncodeAsDouble, value);
         currentAsValue->setWithoutWriteBarrier(v);
     }
     
     setStructure(vm, Structure::nonPropertyTransition(vm, structure(vm), AllocateContiguous));
     return m_butterfly->contiguous();
-}
-
-ContiguousJSValues JSObject::convertDoubleToContiguous(VM& vm)
-{
-    return genericConvertDoubleToContiguous<EncodeValueAsDouble>(vm);
-}
-
-ContiguousJSValues JSObject::rageConvertDoubleToContiguous(VM& vm)
-{
-    return genericConvertDoubleToContiguous<RageConvertDoubleToValue>(vm);
 }
 
 ArrayStorage* JSObject::convertDoubleToArrayStorage(VM& vm, NonPropertyTransition transition)
@@ -1049,7 +1025,7 @@ ContiguousDoubles JSObject::ensureDoubleSlow(VM& vm)
     }
 }
 
-ContiguousJSValues JSObject::ensureContiguousSlow(VM& vm, DoubleToContiguousMode mode)
+ContiguousJSValues JSObject::ensureContiguousSlow(VM& vm)
 {
     ASSERT(inherits(info()));
     
@@ -1066,8 +1042,6 @@ ContiguousJSValues JSObject::ensureContiguousSlow(VM& vm, DoubleToContiguousMode
         return convertInt32ToContiguous(vm);
         
     case ALL_DOUBLE_INDEXING_TYPES:
-        if (mode == RageConvertDoubleToValue)
-            return rageConvertDoubleToContiguous(vm);
         return convertDoubleToContiguous(vm);
         
     case ALL_ARRAY_STORAGE_INDEXING_TYPES:
@@ -1077,16 +1051,6 @@ ContiguousJSValues JSObject::ensureContiguousSlow(VM& vm, DoubleToContiguousMode
         CRASH();
         return ContiguousJSValues();
     }
-}
-
-ContiguousJSValues JSObject::ensureContiguousSlow(VM& vm)
-{
-    return ensureContiguousSlow(vm, EncodeValueAsDouble);
-}
-
-ContiguousJSValues JSObject::rageEnsureContiguousSlow(VM& vm)
-{
-    return ensureContiguousSlow(vm, RageConvertDoubleToValue);
 }
 
 ArrayStorage* JSObject::ensureArrayStorageSlow(VM& vm)

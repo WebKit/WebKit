@@ -951,17 +951,6 @@ char* JIT_OPERATION operationEnsureContiguous(ExecState* exec, JSCell* cell)
     return reinterpret_cast<char*>(asObject(cell)->ensureContiguous(vm).data());
 }
 
-char* JIT_OPERATION operationRageEnsureContiguous(ExecState* exec, JSCell* cell)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-    
-    if (!cell->isObject())
-        return 0;
-    
-    return reinterpret_cast<char*>(asObject(cell)->rageEnsureContiguous(vm).data());
-}
-
 char* JIT_OPERATION operationEnsureArrayStorage(ExecState* exec, JSCell* cell)
 {
     VM& vm = exec->vm();

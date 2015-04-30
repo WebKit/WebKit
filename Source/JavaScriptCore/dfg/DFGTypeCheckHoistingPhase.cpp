@@ -228,7 +228,9 @@ private:
                     noticeStructureCheck(variable, node->structureSet());
                     break;
                 }
-                    
+
+                case ArrayifyToStructure:
+                case Arrayify:
                 case GetByOffset:
                 case PutByOffset:
                 case PutStructure:
@@ -248,22 +250,6 @@ private:
                 case MultiGetByOffset:
                 case MultiPutByOffset:
                     // Don't count these uses.
-                    break;
-                    
-                case ArrayifyToStructure:
-                case Arrayify:
-                    if (node->arrayMode().conversion() == Array::RageConvert) {
-                        // Rage conversion changes structures. We should avoid tying to do
-                        // any kind of hoisting when rage conversion is in play.
-                        Node* child = node->child1().node();
-                        if (child->op() != GetLocal)
-                            break;
-                        VariableAccessData* variable = child->variableAccessData();
-                        variable->vote(VoteOther);
-                        if (!shouldConsiderForHoisting<StructureTypeCheck>(variable))
-                            break;
-                        noticeStructureCheck(variable, 0);
-                    }
                     break;
                     
                 case SetLocal: {

@@ -1686,8 +1686,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             m_state.setFoundConstants(true);
             break;
         }
-        ASSERT(node->arrayMode().conversion() == Array::Convert
-            || node->arrayMode().conversion() == Array::RageConvert);
+        ASSERT(node->arrayMode().conversion() == Array::Convert);
         clobberStructures(clobberLimit);
         filterArrayModes(node->child1(), node->arrayMode().arrayModesThatPassFiltering());
         break;

@@ -101,10 +101,7 @@ protected:
             jit->callOperation(operationEnsureDouble, m_tempGPR, m_baseGPR);
             break;
         case Array::Contiguous:
-            if (m_arrayMode.conversion() == Array::RageConvert)
-                jit->callOperation(operationRageEnsureContiguous, m_tempGPR, m_baseGPR);
-            else
-                jit->callOperation(operationEnsureContiguous, m_tempGPR, m_baseGPR);
+            jit->callOperation(operationEnsureContiguous, m_tempGPR, m_baseGPR);
             break;
         case Array::ArrayStorage:
         case Array::SlowPutArrayStorage:

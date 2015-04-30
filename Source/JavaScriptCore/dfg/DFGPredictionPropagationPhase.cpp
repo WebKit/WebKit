@@ -391,7 +391,7 @@ private:
                 m_graph, node,
                 node->child1()->prediction(),
                 node->child2()->prediction(),
-                SpecNone, node->flags());
+                SpecNone);
             
             switch (arrayMode.type()) {
             case Array::Double:

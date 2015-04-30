@@ -1,3 +1,57 @@
+2015-04-29  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Remove RageConvert array conversion
+        https://bugs.webkit.org/show_bug.cgi?id=144433
+
+        Reviewed by Filip Pizlo.
+
+        RageConvert was causing a subtle bug that was hitting the Kraken crypto tests
+        pretty hard:
+        -The indexing types shows that the array access varies between Int32 and DoubleArray.
+        -ArrayMode::fromObserved() decided to use the most generic type: DoubleArray.
+         An Arrayify node would convert the Int32 to that type.
+        -Somewhere, a GetByVal or PutByVal would have the flag NodeBytecodeUsesAsInt. That
+         node would use RageConvert instead of Convert.
+        -The Arrayify for that GetByVal with RageConvert would not convert the array to
+         Contiguous.
+        -All the following array access that do not have the flag NodeBytecodeUsesAsInt would
+         now expect a DoubleArray and always get a Contiguous Array. The CheckStructure
+         fail systematically and we never get to run the later code.
+
+        Getting rid of RageConvert fixes the problem and does not seems to have any
+        negative side effect on other benchmarks.
+
+        The improvments on Kraken are:
+            -stanford-crypto-aes: definitely 1.0915x faster.
+            -stanford-crypto-pbkdf2: definitely 1.2446x faster.
+            -stanford-crypto-sha256-iterative: definitely 1.0544x faster.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::refine):
+        (JSC::DFG::arrayConversionToString):
+        * dfg/DFGArrayMode.h:
+        * dfg/DFGArrayifySlowPathGenerator.h:
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantStructureChecks):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileArrayifyToStructure):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::convertDoubleToContiguous):
+        (JSC::JSObject::ensureContiguousSlow):
+        (JSC::JSObject::genericConvertDoubleToContiguous): Deleted.
+        (JSC::JSObject::rageConvertDoubleToContiguous): Deleted.
+        (JSC::JSObject::rageEnsureContiguousSlow): Deleted.
+        * runtime/JSObject.h:
+        (JSC::JSObject::rageEnsureContiguous): Deleted.
+
 2015-04-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Gracefully handle missing auto pause key on remote inspector setup
