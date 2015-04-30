@@ -54,8 +54,6 @@ Ref<MouseEvent> MouseEvent::create(const AtomicString& type, const MouseEventIni
 
 Ref<MouseEvent> MouseEvent::create(const AtomicString& eventType, PassRefPtr<AbstractView> view, const PlatformMouseEvent& event, int detail, PassRefPtr<Node> relatedTarget)
 {
-    ASSERT(event.type() == PlatformEvent::MouseMoved || event.button() != NoButton);
-
     bool isMouseEnterOrLeave = eventType == eventNames().mouseenterEvent || eventType == eventNames().mouseleaveEvent;
     bool isCancelable = eventType != eventNames().mousemoveEvent && !isMouseEnterOrLeave;
     bool canBubble = !isMouseEnterOrLeave;

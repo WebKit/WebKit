@@ -1,3 +1,15 @@
+2015-04-30  Beth Dakin  <bdakin@apple.com>
+
+        Remove invalid assertion from MouseEvent::create()
+        https://bugs.webkit.org/show_bug.cgi?id=144477
+
+        Reviewed by Tim Horton.
+
+        mouseforcechanged events and mouseforcewillbegin trigger this assertion. The 
+        assertion does not seem valuable, so rather than changing it, just remove it.
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::create):
+
 2015-04-30  Dean Jackson  <dino@apple.com>
 
         -apple-system-font-monospaced-numbers doesn't work on iOS
