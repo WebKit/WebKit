@@ -1,3 +1,16 @@
+2015-04-30  Beth Dakin  <bdakin@apple.com>
+
+        Should choose UIScrollView indicatorStyle based on the document background color
+        https://bugs.webkit.org/show_bug.cgi?id=144473
+        -and corresponding-
+        rdar://problem/19897699
+
+        Reviewed by Simon Fraser.
+
+        Update the indicator style whenever the background color changes.  
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _updateScrollViewBackground]):
+
 2015-04-30  Enrica Casucci  <enrica@apple.com>
 
         [iOS] tapping in the middle of a word in editable content should not select the word.

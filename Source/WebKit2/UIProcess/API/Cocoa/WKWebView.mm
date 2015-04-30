@@ -795,6 +795,14 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
 
     auto uiBackgroundColor = adoptNS([[UIColor alloc] initWithCGColor:cachedCGColor(color, WebCore::ColorSpaceDeviceRGB)]);
     [_scrollView setBackgroundColor:uiBackgroundColor.get()];
+
+    // Update the indicator style based on the lightness/darkness of the background color.
+    double hue, saturation, lightness;
+    color.getHSL(hue, saturation, lightness);
+    if (lightness <= .5 && color.alpha() > 0)
+        [_scrollView setIndicatorStyle:UIScrollViewIndicatorStyleWhite];
+    else
+        [_scrollView setIndicatorStyle:UIScrollViewIndicatorStyleDefault];
 }
 
 - (CGPoint)_adjustedContentOffset:(CGPoint)point
