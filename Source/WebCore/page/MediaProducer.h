@@ -36,6 +36,7 @@ public:
         IsPlayingVideo = 1 << 1,
         IsPlayingToExternalDevice = 1 << 2,
         RequiresPlaybackTargetMonitoring = 1 << 3,
+        ExternalDeviceAutoPlayCandidate = 1 << 4,
     };
     typedef unsigned MediaStateFlags;
 

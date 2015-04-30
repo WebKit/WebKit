@@ -144,7 +144,10 @@ void WebMediaSessionManager::clientStateDidChange(WebMediaSessionManagerClient& 
     if (!flagsAreSet(oldFlags, MediaProducer::RequiresPlaybackTargetMonitoring) && flagsAreSet(newFlags, MediaProducer::RequiresPlaybackTargetMonitoring))
         configurePlaybackTargetMonitoring();
 
-    if (!flagsAreSet(newFlags, MediaProducer::IsPlayingVideo))
+    if (!flagsAreSet(newFlags, MediaProducer::IsPlayingVideo) || !flagsAreSet(newFlags, MediaProducer::ExternalDeviceAutoPlayCandidate))
+        return;
+
+    if (!m_playbackTarget || !m_playbackTarget->hasActiveRoute())
         return;
 
     // Do not interrupt another element already playing to a device.
@@ -156,16 +159,13 @@ void WebMediaSessionManager::clientStateDidChange(WebMediaSessionManagerClient& 
             return;
     }
 
-    if (m_playbackTarget && m_playbackTarget->hasActiveRoute()) {
-
-        for (auto& state : m_clientState) {
-            if (state->contextId == contextId && state->client == &client)
-                continue;
-            state->client->setShouldPlayToPlaybackTarget(state->contextId, false);
-        }
-
-        changedClientState->client->setShouldPlayToPlaybackTarget(changedClientState->contextId, true);
+    for (auto& state : m_clientState) {
+        if (state->contextId == contextId && state->client == &client)
+            continue;
+        state->client->setShouldPlayToPlaybackTarget(state->contextId, false);
     }
+
+    changedClientState->client->setShouldPlayToPlaybackTarget(changedClientState->contextId, true);
 
     if (index && m_clientState.size() > 1)
         std::swap(m_clientState.at(index), m_clientState.at(0));

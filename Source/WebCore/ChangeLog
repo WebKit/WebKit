@@ -1,3 +1,21 @@
+2015-04-29  Eric Carlson  <eric.carlson@apple.com>
+
+        Not all videos should automatically play to playback target
+        https://bugs.webkit.org/show_bug.cgi?id=144430
+        <rdar://problem/20718523>
+
+        Reviewed by Darin Adler.
+
+        * Modules/mediasession/WebMediaSessionManager.cpp:
+        (WebCore::WebMediaSessionManager::clientStateDidChange): Consider ExternalDeviceAutoPlayCandidate.
+        Minor cleanup.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaState): Set ExternalDeviceAutoPlayCandidate when a <video>
+        has a file with an audio track that does not loop.
+
+        * page/MediaProducer.h: Add ExternalDeviceAutoPlayCandidate.
+
 2015-04-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         LiveNodeList may unexpectedly return an element for empty string

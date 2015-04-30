@@ -6189,6 +6189,7 @@ MediaProducer::MediaStateFlags HTMLMediaElement::mediaState() const
     MediaStateFlags state = IsNotPlaying;
 
     bool hasActiveVideo = isVideo() && hasVideo();
+    bool hasAudio = this->hasAudio();
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     if (isPlayingToWirelessPlaybackTarget())
         state |= IsPlayingToExternalDevice;
@@ -6197,12 +6198,16 @@ MediaProducer::MediaStateFlags HTMLMediaElement::mediaState() const
         if ((m_hasPlaybackTargetAvailabilityListeners || hasActiveVideo) && m_player->canPlayToWirelessPlaybackTarget())
             state |= RequiresPlaybackTargetMonitoring;
     }
+
+    if (hasActiveVideo && hasAudio && !loop())
+        state |= ExternalDeviceAutoPlayCandidate;
+
 #endif
 
     if (!isPlaying())
         return state;
 
-    if (hasAudio() && !muted())
+    if (hasAudio && !muted())
         state |= IsPlayingAudio;
 
     if (hasActiveVideo)
