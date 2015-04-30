@@ -1,3 +1,25 @@
+2015-04-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Crash at WebCore::Document::absoluteRegionForEventTargets 
+        https://bugs.webkit.org/show_bug.cgi?id=144426
+        rdar://problem/20502166
+
+        Reviewed by Tim Horton.
+
+        When a frame had wheel event handlers, we would register the document itself
+        as a handler in its parent document. This is problematic, because there's not
+        code path that removes it when the frame is destroyed.
+        
+        It turns out we don't need to do this at all; the non-fast scrollable region
+        already takes handlers in subframes into account.
+
+        Tests: fast/events/wheelevent-in-frame.html
+               fast/events/wheelevent-in-reattached-frame.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::didAddWheelEventHandler):
+        (WebCore::Document::didRemoveWheelEventHandler):
+
 2015-04-29  Eric Carlson  <eric.carlson@apple.com>
 
         Not all videos should automatically play to playback target

@@ -1,3 +1,20 @@
+2015-04-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Crash at WebCore::Document::absoluteRegionForEventTargets 
+        https://bugs.webkit.org/show_bug.cgi?id=144426
+        rdar://problem/20502166
+
+        Reviewed by Tim Horton.
+
+        Test that disconnects a frame with a wheel event handler then GCs, and one that
+        disconnects are reconnects. In both case, the parent document should have zero
+        wheel event handlers registered on it.
+
+        * fast/events/wheelevent-in-frame-expected.txt: Added.
+        * fast/events/wheelevent-in-frame.html: Added.
+        * fast/events/wheelevent-in-reattached-frame-expected.txt: Added.
+        * fast/events/wheelevent-in-reattached-frame.html: Added.
+
 2015-04-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         LiveNodeList may unexpectedly return an element for empty string
