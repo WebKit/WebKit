@@ -1,3 +1,38 @@
+2015-04-29  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Remove PassRefPtr in SVGFEFooElement classes
+        https://bugs.webkit.org/show_bug.cgi?id=144425
+
+        Reviewed by Darin Adler.
+
+        As a step to use Ref instead of PassRefPtr, this patch purges PassRefPtr
+        in SVGFEFooElement.
+
+        No new tests, no behavior changes.
+
+        * css/RGBColor.cpp:
+        (WebCore::RGBColor::create):
+        * css/RGBColor.h:
+        * platform/graphics/filters/PointLightSource.h:
+        (WebCore::PointLightSource::create):
+        * platform/graphics/filters/SpotLightSource.h:
+        (WebCore::SpotLightSource::create):
+        * svg/SVGColor.cpp:
+        (WebCore::SVGColor::rgbColor):
+        * svg/SVGColor.h:
+        * svg/SVGFEDistantLightElement.cpp:
+        (WebCore::SVGFEDistantLightElement::lightSource):
+        * svg/SVGFEDistantLightElement.h:
+        * svg/SVGFELightElement.cpp:
+        (WebCore::SVGFELightElement::findLightSource):
+        * svg/SVGFELightElement.h:
+        * svg/SVGFEPointLightElement.cpp:
+        (WebCore::SVGFEPointLightElement::lightSource):
+        * svg/SVGFEPointLightElement.h:
+        * svg/SVGFESpotLightElement.cpp:
+        (WebCore::SVGFESpotLightElement::lightSource):
+        * svg/SVGFESpotLightElement.h:
+
 2015-04-29  Dean Jackson  <dino@apple.com>
 
         Create a named CSS property for system colors

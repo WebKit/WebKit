@@ -74,7 +74,7 @@ SVGFELightElement* SVGFELightElement::findLightElement(const SVGElement* svgElem
     return nullptr;
 }
 
-PassRefPtr<LightSource> SVGFELightElement::findLightSource(const SVGElement* svgElement)
+RefPtr<LightSource> SVGFELightElement::findLightSource(const SVGElement* svgElement)
 {
     SVGFELightElement* lightNode = findLightElement(svgElement);
     if (!lightNode)

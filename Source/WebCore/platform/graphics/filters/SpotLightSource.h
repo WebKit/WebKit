@@ -29,10 +29,10 @@ namespace WebCore {
 
 class SpotLightSource : public LightSource {
 public:
-    static PassRefPtr<SpotLightSource> create(const FloatPoint3D& position,
+    static Ref<SpotLightSource> create(const FloatPoint3D& position,
         const FloatPoint3D& direction, float specularExponent, float limitingConeAngle)
     {
-        return adoptRef(new SpotLightSource(position, direction, specularExponent, limitingConeAngle));
+        return adoptRef(*new SpotLightSource(position, direction, specularExponent, limitingConeAngle));
     }
 
     const FloatPoint3D& position() const { return m_position; }

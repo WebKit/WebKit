@@ -59,7 +59,7 @@ public:
 
     const Color& color() const { return m_color; }
     const SVGColorType& colorType() const { return m_colorType; }
-    PassRefPtr<RGBColor> rgbColor() const;
+    Ref<RGBColor> rgbColor() const;
 
     static Color colorFromRGBColorString(const String&);
 

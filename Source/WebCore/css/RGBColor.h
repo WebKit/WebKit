@@ -36,7 +36,7 @@ namespace WebCore {
 
     class RGBColor : public RefCounted<RGBColor> {
     public:
-        static PassRefPtr<RGBColor> create(unsigned rgbColor);
+        static Ref<RGBColor> create(unsigned rgbColor);
 
         PassRefPtr<CSSPrimitiveValue> red();
         PassRefPtr<CSSPrimitiveValue> green();

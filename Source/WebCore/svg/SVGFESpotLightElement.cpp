@@ -36,7 +36,7 @@ Ref<SVGFESpotLightElement> SVGFESpotLightElement::create(const QualifiedName& ta
     return adoptRef(*new SVGFESpotLightElement(tagName, document));
 }
 
-PassRefPtr<LightSource> SVGFESpotLightElement::lightSource() const
+Ref<LightSource> SVGFESpotLightElement::lightSource() const
 {
     FloatPoint3D pos(x(), y(), z());
     FloatPoint3D direction(pointsAtX(), pointsAtY(), pointsAtZ());

@@ -36,7 +36,7 @@ Ref<SVGFEPointLightElement> SVGFEPointLightElement::create(const QualifiedName& 
     return adoptRef(*new SVGFEPointLightElement(tagName, document));
 }
 
-PassRefPtr<LightSource> SVGFEPointLightElement::lightSource() const
+Ref<LightSource> SVGFEPointLightElement::lightSource() const
 {
     return PointLightSource::create(FloatPoint3D(x(), y(), z()));
 }

@@ -30,9 +30,9 @@ namespace WebCore {
 
 class SVGFELightElement : public SVGElement {
 public:
-    virtual PassRefPtr<LightSource> lightSource() const = 0;
+    virtual Ref<LightSource> lightSource() const = 0;
     static SVGFELightElement* findLightElement(const SVGElement*);
-    static PassRefPtr<LightSource> findLightSource(const SVGElement*);
+    static RefPtr<LightSource> findLightSource(const SVGElement*);
 
 protected:
     SVGFELightElement(const QualifiedName&, Document&);

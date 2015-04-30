@@ -40,7 +40,7 @@ SVGColor::SVGColor(ClassType classType, const SVGColorType& colorType)
 {
 }
 
-PassRefPtr<RGBColor> SVGColor::rgbColor() const
+Ref<RGBColor> SVGColor::rgbColor() const
 {
     return RGBColor::create(m_color.rgb());
 }
