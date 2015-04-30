@@ -1,3 +1,23 @@
+2015-04-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use the default hash value for Symbolized StringImpl
+        https://bugs.webkit.org/show_bug.cgi?id=144347
+
+        Reviewed by Darin Adler.
+
+        Use a default hash value calculation for symbolized StringImpl.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::createSymbol):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StringImpl):
+        (WTF::StringImpl::symbolAwareHash):
+        (WTF::StringImpl::existingSymbolAwareHash):
+        (WTF::StringImpl::hashForSymbol):
+        * wtf/text/StringStatics.cpp:
+        (WTF::StringImpl::nextHashForSymbol):
+        (WTF::StringImpl::hashAndFlagsForSymbol): Deleted.
+
 2015-04-29  Alexey Proskuryakov  <ap@apple.com>
 
         LazyNeverDestroyed is not thread safe in debug builds, causing assertions

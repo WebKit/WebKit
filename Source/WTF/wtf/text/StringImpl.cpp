@@ -298,7 +298,8 @@ Ref<StringImpl> StringImpl::createSymbol(PassRefPtr<StringImpl> rep)
     // 1. the StringImpl struct
     // 2. the pointer to the owner string
     // 3. the pointer to the symbol registry
-    StringImpl* stringImpl = static_cast<StringImpl*>(fastMalloc(allocationSize<StringImpl*>(2)));
+    // 4. the placeholder for symbol aware hash value (allocated size is pointer size, but only 4 bytes are used)
+    StringImpl* stringImpl = static_cast<StringImpl*>(fastMalloc(allocationSize<StringImpl*>(3)));
     if (rep->is8Bit())
         return adoptRef(*new (NotNull, stringImpl) StringImpl(CreateSymbol, rep->m_data8, rep->length(), ownerRep));
     return adoptRef(*new (NotNull, stringImpl) StringImpl(CreateSymbol, rep->m_data16, rep->length(), ownerRep));

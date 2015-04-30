@@ -280,8 +280,8 @@ ALWAYS_INLINE Optional<uint32_t> parseIndex(const Identifier& identifier)
 }
 
 struct IdentifierRepHash : PtrHash<RefPtr<StringImpl>> {
-    static unsigned hash(const RefPtr<StringImpl>& key) { return key->existingHash(); }
-    static unsigned hash(StringImpl* key) { return key->existingHash(); }
+    static unsigned hash(const RefPtr<StringImpl>& key) { return key->existingSymbolAwareHash(); }
+    static unsigned hash(StringImpl* key) { return key->existingSymbolAwareHash(); }
 };
 
 struct IdentifierMapIndexHashTraits : HashTraits<int> {

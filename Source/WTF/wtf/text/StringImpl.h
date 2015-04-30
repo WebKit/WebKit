@@ -299,7 +299,7 @@ private:
         : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data8(characters)
-        , m_hashAndFlags(hashAndFlagsForSymbol(s_hashFlag8BitBuffer | StringSymbol | BufferSubstring))
+        , m_hashAndFlags(s_hashFlag8BitBuffer | StringSymbol | BufferSubstring)
     {
         ASSERT(is8Bit());
         ASSERT(m_data8);
@@ -307,6 +307,7 @@ private:
 
         substringBuffer() = base.leakRef();
         symbolRegistry() = nullptr;
+        hashForSymbol() = nextHashForSymbol();
 
         STRING_STATS_ADD_8BIT_STRING2(m_length, true);
     }
@@ -316,7 +317,7 @@ private:
         : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data16(characters)
-        , m_hashAndFlags(hashAndFlagsForSymbol(StringSymbol | BufferSubstring))
+        , m_hashAndFlags(StringSymbol | BufferSubstring)
     {
         ASSERT(!is8Bit());
         ASSERT(m_data16);
@@ -324,6 +325,7 @@ private:
 
         substringBuffer() = base.leakRef();
         symbolRegistry() = nullptr;
+        hashForSymbol() = nextHashForSymbol();
 
         STRING_STATS_ADD_16BIT_STRING2(m_length, true);
     }
@@ -560,7 +562,21 @@ public:
             return existingHash();
         return hashSlowCase();
     }
-    
+
+    unsigned symbolAwareHash() const
+    {
+        if (isSymbol())
+            return hashForSymbol();
+        return hash();
+    }
+
+    unsigned existingSymbolAwareHash() const
+    {
+        if (isSymbol())
+            return hashForSymbol();
+        return existingHash();
+    }
+
     bool isStatic() const { return m_refCount & s_refCountFlagIsStaticString; }
 
     inline size_t refCount() const
@@ -780,6 +796,17 @@ public:
         return *(tailPointer<SymbolRegistry*>() + 1);
     }
 
+    const unsigned& hashForSymbol() const
+    {
+        return const_cast<StringImpl*>(this)->hashForSymbol();
+    }
+
+    unsigned& hashForSymbol()
+    {
+        ASSERT(isSymbol());
+        return *reinterpret_cast<unsigned*>((tailPointer<SymbolRegistry*>() + 2));
+    }
+
 private:
     bool requiresCopy() const
     {
@@ -846,7 +873,7 @@ private:
     template <typename CharType> static Ref<StringImpl> reallocateInternal(PassRefPtr<StringImpl>, unsigned, CharType*&);
     template <typename CharType> static Ref<StringImpl> createInternal(const CharType*, unsigned);
     WTF_EXPORT_PRIVATE NEVER_INLINE unsigned hashSlowCase() const;
-    WTF_EXPORT_PRIVATE static unsigned hashAndFlagsForSymbol(unsigned flags);
+    WTF_EXPORT_PRIVATE static unsigned nextHashForSymbol();
 
     // The bottom bit in the ref count indicates a static (immortal) string.
     static const unsigned s_refCountFlagIsStaticString = 0x1;

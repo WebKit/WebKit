@@ -47,18 +47,18 @@ StringImpl* StringImpl::empty()
     return &emptyString.get();
 }
 
-// Set the hash early, so that all symbol StringImpls have a hash,
-// and don't use the normal hashing algorithm - the unique nature of these
-// keys means that we don't need them to match any other string (in fact,
-// that's exactly the oposite of what we want!), and the normal hash would
-// lead to lots of conflicts.
-unsigned StringImpl::hashAndFlagsForSymbol(unsigned flags)
+// In addition to the normal hash value, store specialized hash value for
+// symbolized StringImpl*. And don't use the normal hash value for symbolized
+// StringImpl* when they are treated as Identifiers. Unique nature of these
+// symbolized StringImpl* keys means that we don't need them to match any other
+// string (in fact, that's exactly the oposite of what we want!), and the
+// normal hash would lead to lots of conflicts.
+unsigned StringImpl::nextHashForSymbol()
 {
-    static unsigned s_nextHashAndFlagsForSymbol = 0;
-    s_nextHashAndFlagsForSymbol += 1 << s_flagCount;
-    s_nextHashAndFlagsForSymbol |= 1 << 31;
-    unsigned flagsForSymbol = ((flags & s_flagMask) & (~s_hashMaskStringKind)) | StringSymbol;
-    return s_nextHashAndFlagsForSymbol | flagsForSymbol;
+    static unsigned s_nextHashForSymbol = 0;
+    s_nextHashForSymbol += 1 << s_flagCount;
+    s_nextHashForSymbol |= 1 << 31;
+    return s_nextHashForSymbol;
 }
 
 WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, nullAtom)

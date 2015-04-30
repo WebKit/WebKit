@@ -1,3 +1,35 @@
+2015-04-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use the default hash value for Symbolized StringImpl
+        https://bugs.webkit.org/show_bug.cgi?id=144347
+
+        Reviewed by Darin Adler.
+
+        Before this patch, symbolized StringImpl* has a special hash value
+        to avoid the hash collision with the other normal StringImpl*.
+        I guess that it is introduced when private symbols are introduced.
+        However, it prevents using symbolized StringImpl* in the other place
+        For example, using it as WTFString cause a problem because of its special hash value.
+
+        When only using private symbols, they are not exposed to the outside of JSC,
+        so we can handle it carefully. But now, it's extended to symbols.
+        So I think storing a special hash value in StringImpl* causes an error.
+
+        To avoid this, I propose using the usual hash value in symbolized StringImpl*.
+        And to provide significantly different hash value when using it as symbol,
+        store the additional hash value in symbolized StringImpl*. It is used when
+        the hash value is required by IdentifierRepHash.
+
+        * runtime/Identifier.h:
+        (JSC::IdentifierRepHash::hash):
+        * runtime/Lookup.h:
+        (JSC::HashTable::entry):
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyTable::find):
+        (JSC::PropertyTable::get):
+        * runtime/Structure.cpp:
+        (JSC::PropertyTable::checkConsistency):
+
 2015-04-29  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Remove RageConvert array conversion

@@ -1162,7 +1162,7 @@ void PropertyTable::checkConsistency()
         if (rep == PROPERTY_MAP_DELETED_ENTRY_KEY)
             continue;
         ++nonEmptyEntryCount;
-        unsigned i = rep->existingHash();
+        unsigned i = IdentifierRepHash::hash(rep);
         unsigned k = 0;
         unsigned entryIndex;
         while (1) {
@@ -1171,7 +1171,7 @@ void PropertyTable::checkConsistency()
             if (rep == table()[entryIndex - 1].key)
                 break;
             if (k == 0)
-                k = 1 | doubleHash(rep->existingHash());
+                k = 1 | doubleHash(IdentifierRepHash::hash(rep));
             i += k;
         }
         ASSERT(entryIndex == c + 1);

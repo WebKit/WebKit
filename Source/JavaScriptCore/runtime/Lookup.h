@@ -103,7 +103,7 @@ struct HashTable {
 
         ASSERT(keys);
 
-        int indexEntry = impl->existingHash() & indexMask;
+        int indexEntry = IdentifierRepHash::hash(impl) & indexMask;
         int valueIndex = index[indexEntry].value;
         if (valueIndex == -1)
             return 0;
