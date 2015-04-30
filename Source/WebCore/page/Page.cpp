@@ -369,18 +369,19 @@ String Page::synchronousScrollingReasonsAsText()
     return String();
 }
 
-Ref<ClientRectList> Page::nonFastScrollableRects(const Frame& frame)
+Ref<ClientRectList> Page::nonFastScrollableRects()
 {
     if (Document* document = m_mainFrame->document())
         document->updateLayout();
 
     Vector<IntRect> rects;
     if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
-        rects = scrollingCoordinator->computeNonFastScrollableRegion(frame, IntPoint()).rects();
+        rects = scrollingCoordinator->absoluteNonFastScrollableRegion().rects();
 
     Vector<FloatQuad> quads(rects.size());
     for (size_t i = 0; i < rects.size(); ++i)
         quads[i] = FloatRect(rects[i]);
+
     return ClientRectList::create(quads);
 }
 

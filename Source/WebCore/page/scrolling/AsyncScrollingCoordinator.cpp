@@ -95,7 +95,7 @@ void AsyncScrollingCoordinator::updateNonFastScrollableRegion()
     if (!m_scrollingStateTree->rootStateNode())
         return;
 
-    m_scrollingStateTree->rootStateNode()->setNonFastScrollableRegion(computeNonFastScrollableRegion(m_page->mainFrame(), IntPoint()));
+    m_scrollingStateTree->rootStateNode()->setNonFastScrollableRegion(absoluteNonFastScrollableRegion());
     m_nonFastScrollableRegionDirty = false;
 }
 
@@ -113,7 +113,7 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView& frameView)
     // frame view whose layout was updated is not the main frame.
     // In the future, we may want to have the ability to set non-fast scrolling regions for more than
     // just the root node. But right now, this concept only applies to the root.
-    m_scrollingStateTree->rootStateNode()->setNonFastScrollableRegion(computeNonFastScrollableRegion(m_page->mainFrame(), IntPoint()));
+    m_scrollingStateTree->rootStateNode()->setNonFastScrollableRegion(absoluteNonFastScrollableRegion());
     m_nonFastScrollableRegionDirty = false;
 
     if (!coordinatesScrollingForFrameView(frameView))
@@ -544,7 +544,7 @@ String AsyncScrollingCoordinator::scrollingStateTreeAsText() const
 {
     if (m_scrollingStateTree->rootStateNode()) {
         if (m_nonFastScrollableRegionDirty)
-            m_scrollingStateTree->rootStateNode()->setNonFastScrollableRegion(computeNonFastScrollableRegion(m_page->mainFrame(), IntPoint()));
+            m_scrollingStateTree->rootStateNode()->setNonFastScrollableRegion(absoluteNonFastScrollableRegion());
         return m_scrollingStateTree->rootStateNode()->scrollingStateTreeAsText();
     }
 

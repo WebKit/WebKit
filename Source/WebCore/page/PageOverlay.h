@@ -105,6 +105,8 @@ public:
     WEBCORE_EXPORT IntRect frame() const;
     WEBCORE_EXPORT void setFrame(IntRect);
 
+    WEBCORE_EXPORT IntSize viewToOverlayOffset() const;
+
     RGBA32 backgroundColor() const { return m_backgroundColor; }
     void setBackgroundColor(RGBA32);
 

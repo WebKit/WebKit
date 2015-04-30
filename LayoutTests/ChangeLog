@@ -1,3 +1,15 @@
+2015-04-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Compute the non-fast-scrollable region in main-document coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=144420
+
+        Reviewed by Tim Horton.
+
+        We now report the non-fast region in document coordinates, so these two results change.
+
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/top-content-inset-expected.txt:
+        * platform/mac-wk2/tiled-drawing/scrolling/non-fast-region/top-content-inset-header-expected.txt:
+
 2015-04-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         NodeList has issues with Symbol and empty string

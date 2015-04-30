@@ -101,7 +101,7 @@ IntRect PageOverlay::bounds() const
     }
     case OverlayType::Document:
         return IntRect(IntPoint(), frameView->contentsSize());
-    };
+    }
 
     ASSERT_NOT_REACHED();
     return IntRect(IntPoint(), frameView->contentsSize());
@@ -124,6 +124,20 @@ void PageOverlay::setFrame(IntRect frame)
 
     if (auto pageOverlayController = controller())
         pageOverlayController->didChangeOverlayFrame(*this);
+}
+
+IntSize PageOverlay::viewToOverlayOffset() const
+{
+    switch (m_overlayType) {
+    case OverlayType::View:
+        return IntSize();
+
+    case OverlayType::Document: {
+        FrameView* frameView = m_page->mainFrame().view();
+        return frameView ? toIntSize(frameView->viewToContents(IntPoint())) : IntSize();
+    }
+    }
+    return IntSize();
 }
 
 void PageOverlay::setBackgroundColor(RGBA32 backgroundColor)

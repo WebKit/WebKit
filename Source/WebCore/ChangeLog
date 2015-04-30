@@ -1,3 +1,56 @@
+2015-04-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Compute the non-fast-scrollable region in main-document coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=144420
+
+        Reviewed by Tim Horton.
+
+        Compute the non-fast-scrollable region in document coordinates, to make it easier
+        to reason about. Previously, it was document coordinates offset by top content inset.
+
+        * page/DebugPageOverlays.cpp:
+        (WebCore::MouseWheelRegionOverlay::updateRegion): Traverse all frames to compute the wheel
+        event handler region, mapping each to root view coords, and then mapping back into document
+        coords at the end.
+        (WebCore::NonFastScrollableRegionOverlay::updateRegion): No offset needed here; the
+        overlay and region are both document coordinates.
+        * page/FrameView.h: Make some mapping function overrides public, and expose widgetsInRenderTree().
+        * page/Page.cpp:
+        (WebCore::Page::nonFastScrollableRects): Remove frame argument.
+        * page/Page.h:
+        * page/PageOverlay.cpp:
+        (WebCore::PageOverlay::bounds):
+        (WebCore::PageOverlay::viewToOverlayOffset): Convenience function to map between
+        view and overlay coordinates.
+        * page/PageOverlay.h:
+        * page/scrolling/AsyncScrollingCoordinator.cpp: New computeNonFastScrollableRegion() signature.
+        (WebCore::AsyncScrollingCoordinator::updateNonFastScrollableRegion):
+        (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated):
+        (WebCore::AsyncScrollingCoordinator::scrollingStateTreeAsText):
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::absoluteNonFastScrollableRegionForFrame): This function
+        recurses on frames, computing an absolute (document-relative) region per frame. This
+        removes the confusing offsetting through top content inset.
+        Change how we get to plugins that want wheel events; we can't get from PluginViewBase
+        to renderers, so use FrameView's list of Widgets, and their RenderWidgets. This fixes
+        regions for transformed plugin-ins.
+        For subframes, we get a region in the subframe's document coords. Map to that sub-frame,
+        then to our frame, then to our document.
+        (WebCore::ScrollingCoordinator::absoluteNonFastScrollableRegion): Wrapper that hides
+        the recursive function.
+        (WebCore::ScrollingCoordinator::computeNonFastScrollableRegion): Deleted.
+        * page/scrolling/ScrollingCoordinator.h:
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::shouldHandleWheelEventSynchronously): Map the event point
+        from view coordinates to document coordinates for testing against the non-fast region.
+        We previously assert that the root note is a FrameScrolling node.
+        * page/scrolling/ScrollingTreeFrameScrollingNode.cpp:
+        (WebCore::ScrollingTreeFrameScrollingNode::viewToContentsOffset): Similar to ScrollView::viewToContents()
+        for the scrolling tree.
+        * page/scrolling/ScrollingTreeFrameScrollingNode.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::nonFastScrollableRects): No need for frame arg.
+
 2015-04-29  Brent Fulgham  <bfulgham@apple.com>
 
         Expand test infrastructure to support scrolling tests

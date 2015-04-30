@@ -92,6 +92,11 @@ void ScrollingTreeFrameScrollingNode::setScrollPosition(const FloatPoint& scroll
     setScrollPositionWithoutContentEdgeConstraints(newScrollPosition);
 }
 
+FloatSize ScrollingTreeFrameScrollingNode::viewToContentsOffset(const FloatPoint& scrollOffset) const
+{
+    return toFloatSize(scrollOffset) - FloatSize(0, headerHeight() + topContentInset());
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)

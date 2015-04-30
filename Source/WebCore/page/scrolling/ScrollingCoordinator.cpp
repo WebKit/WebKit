@@ -95,7 +95,7 @@ bool ScrollingCoordinator::coordinatesScrollingForFrameView(const FrameView& fra
     return renderView->usesCompositing();
 }
 
-Region ScrollingCoordinator::computeNonFastScrollableRegion(const Frame& frame, const IntPoint& frameLocation) const
+Region ScrollingCoordinator::absoluteNonFastScrollableRegionForFrame(const Frame& frame) const
 {
     RenderView* renderView = frame.contentRenderer();
     if (!renderView || renderView->documentBeingDestroyed())
@@ -128,34 +128,44 @@ Region ScrollingCoordinator::computeNonFastScrollableRegion(const Frame& frame, 
     // FIXME: should ASSERT(!frameView->needsLayout()) here, but need to fix DebugPageOverlays
     // to not ask for regions at bad times.
 
-    IntPoint offset = frameLocation;
-    offset.moveBy(frameView->frameRect().location());
-    offset.move(0, frameView->topContentInset());
-
     if (const FrameView::ScrollableAreaSet* scrollableAreas = frameView->scrollableAreas()) {
         for (FrameView::ScrollableAreaSet::const_iterator it = scrollableAreas->begin(), end = scrollableAreas->end(); it != end; ++it) {
             ScrollableArea* scrollableArea = *it;
             // Composited scrollable areas can be scrolled off the main thread.
             if (scrollableArea->usesAsyncScrolling())
                 continue;
+
             IntRect box = scrollableArea->scrollableAreaBoundingBox();
-            box.moveBy(offset);
             nonFastScrollableRegion.unite(box);
         }
     }
 
-    for (const auto& child : frameView->children()) {
-        if (!is<PluginViewBase>(*child))
+    for (auto& widget : frameView->widgetsInRenderTree()) {
+        RenderWidget* renderWidget = RenderWidget::find(widget);
+        if (!renderWidget || !is<PluginViewBase>(*widget))
             continue;
-        PluginViewBase& pluginViewBase = downcast<PluginViewBase>(*child);
-        if (pluginViewBase.wantsWheelEvents())
-            nonFastScrollableRegion.unite(pluginViewBase.frameRect());
+    
+        if (downcast<PluginViewBase>(*widget).wantsWheelEvents())
+            nonFastScrollableRegion.unite(renderWidget->absoluteBoundingBoxRect());
+    }
+    
+    // FIXME: if we've already accounted for this subframe as a scrollable area, we can avoid recursing into it here.
+    for (Frame* subframe = frame.tree().firstChild(); subframe; subframe = subframe->tree().nextSibling()) {
+        FrameView* subframeView = subframe->view();
+        if (!subframeView)
+            continue;
+
+        Region subframeRegion = absoluteNonFastScrollableRegionForFrame(*subframe);
+        // Map from the frame document to our document.
+        IntPoint offset = subframeView->contentsToView(IntPoint());
+        offset = subframeView->convertToContainingView(offset);
+        offset = frameView->viewToContents(offset);
+
+        // FIXME: this translation ignores non-trival transforms on the frame.
+        subframeRegion.translate(toIntSize(offset));
+        nonFastScrollableRegion.unite(subframeRegion);
     }
 
-    for (Frame* subframe = frame.tree().firstChild(); subframe; subframe = subframe->tree().nextSibling())
-        nonFastScrollableRegion.unite(computeNonFastScrollableRegion(*subframe, offset));
-
-    // Include wheel event handler region for the main frame.
     Document::RegionFixedPair wheelHandlerRegion = frame.document()->absoluteRegionForEventTargets(frame.document()->wheelEventTargets());
     bool wheelHandlerInFixedContent = wheelHandlerRegion.second;
     if (wheelHandlerInFixedContent) {
@@ -165,11 +175,17 @@ Region ScrollingCoordinator::computeNonFastScrollableRegion(const Frame& frame, 
         bool inFixed;
         wheelHandlerRegion.first.unite(enclosingIntRect(frame.document()->absoluteEventHandlerBounds(inFixed)));
     }
-    wheelHandlerRegion.first.translate(toIntSize(offset));
+    
     nonFastScrollableRegion.unite(wheelHandlerRegion.first);
 
+    // FIXME: If this is not the main frame, we could clip the region to the frame's bounds.
     return nonFastScrollableRegion;
 #endif
+}
+
+Region ScrollingCoordinator::absoluteNonFastScrollableRegion() const
+{
+    return absoluteNonFastScrollableRegionForFrame(m_page->mainFrame());
 }
 
 void ScrollingCoordinator::frameViewHasSlowRepaintObjectsDidChange(FrameView& frameView)

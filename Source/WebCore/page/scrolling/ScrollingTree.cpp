@@ -30,6 +30,7 @@
 
 #include "PlatformWheelEvent.h"
 #include "ScrollingStateTree.h"
+#include "ScrollingTreeFrameScrollingNode.h"
 #include "ScrollingTreeNode.h"
 #include "ScrollingTreeOverflowScrollingNode.h"
 #include "ScrollingTreeScrollingNode.h"
@@ -72,10 +73,11 @@ bool ScrollingTree::shouldHandleWheelEventSynchronously(const PlatformWheelEvent
     if (shouldSetLatch)
         m_latchedNode = 0;
     
-    if (!m_nonFastScrollableRegion.isEmpty()) {
+    if (!m_nonFastScrollableRegion.isEmpty() && m_rootNode) {
+        ScrollingTreeFrameScrollingNode& frameScrollingNode = downcast<ScrollingTreeFrameScrollingNode>(*m_rootNode);
         // FIXME: This is not correct for non-default scroll origins.
         FloatPoint position = wheelEvent.position();
-        position.moveBy(m_mainFrameScrollPosition);
+        position.move(frameScrollingNode.viewToContentsOffset(m_mainFrameScrollPosition));
         if (m_nonFastScrollableRegion.contains(roundedIntPoint(position)))
             return true;
     }

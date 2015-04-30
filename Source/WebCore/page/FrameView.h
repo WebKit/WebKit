@@ -402,6 +402,12 @@ public:
     WEBCORE_EXPORT IntPoint convertFromRendererToContainingView(const RenderElement*, const IntPoint&) const;
     WEBCORE_EXPORT IntPoint convertFromContainingViewToRenderer(const RenderElement*, const IntPoint&) const;
 
+    // Override ScrollView methods to do point conversion via renderers, in order to take transforms into account.
+    virtual IntRect convertToContainingView(const IntRect&) const override;
+    virtual IntRect convertFromContainingView(const IntRect&) const override;
+    virtual IntPoint convertToContainingView(const IntPoint&) const override;
+    virtual IntPoint convertFromContainingView(const IntPoint&) const override;
+
     bool isFrameViewScrollCorner(RenderScrollbarPart* scrollCorner) const { return m_scrollCorner == scrollCorner; }
 
     // isScrollable() takes an optional Scrollability parameter that allows the caller to define what they mean by 'scrollable.'
@@ -508,6 +514,8 @@ public:
     void didAddWidgetToRenderTree(Widget&);
     void willRemoveWidgetFromRenderTree(Widget&);
 
+    const HashSet<Widget*>& widgetsInRenderTree() const { return m_widgetsInRenderTree; }
+
     void addTrackedRepaintRect(const FloatRect&);
 
     // exposedRect represents WebKit's understanding of what part
@@ -587,13 +595,6 @@ private:
     virtual void addedOrRemovedScrollbar() override;
 
     virtual void delegatesScrollingDidChange() override;
-
-    // Override ScrollView methods to do point conversion via renderers, in order to
-    // take transforms into account.
-    virtual IntRect convertToContainingView(const IntRect&) const override;
-    virtual IntRect convertFromContainingView(const IntRect&) const override;
-    virtual IntPoint convertToContainingView(const IntPoint&) const override;
-    virtual IntPoint convertFromContainingView(const IntPoint&) const override;
 
     // ScrollableArea interface
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) override;

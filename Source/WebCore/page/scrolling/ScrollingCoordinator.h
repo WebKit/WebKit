@@ -199,7 +199,7 @@ public:
     static String synchronousScrollingReasonsAsText(SynchronousScrollingReasons);
     String synchronousScrollingReasonsAsText() const;
 
-    Region computeNonFastScrollableRegion(const Frame&, const IntPoint& frameLocation) const;
+    Region absoluteNonFastScrollableRegion() const;
 
 protected:
     explicit ScrollingCoordinator(Page*);
@@ -223,6 +223,8 @@ private:
 
     virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(const FrameView&) const;
     void updateSynchronousScrollingReasons(FrameView&);
+
+    Region absoluteNonFastScrollableRegionForFrame(const Frame&) const;
     
     bool m_forceSynchronousScrollLayerPositionUpdates { false };
 };

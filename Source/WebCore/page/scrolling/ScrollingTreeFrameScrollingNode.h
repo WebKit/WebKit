@@ -55,6 +55,8 @@ public:
     SynchronousScrollingReasons synchronousScrollingReasons() const { return m_synchronousScrollingReasons; }
     bool shouldUpdateScrollLayerPositionSynchronously() const { return m_synchronousScrollingReasons; }
 
+    FloatSize viewToContentsOffset(const FloatPoint& scrollOffset) const;
+
 protected:
     ScrollingTreeFrameScrollingNode(ScrollingTree&, ScrollingNodeID);
 
