@@ -56,6 +56,23 @@ WebInspector.DebuggerTabContentView.prototype = {
         return representedObject.type === WebInspector.Resource.Type.Document || representedObject.type === WebInspector.Resource.Type.Script;
     },
 
+    showDetailsSidebarPanels: function()
+    {
+        WebInspector.ContentBrowserTabContentView.prototype.showDetailsSidebarPanels.call(this);
+
+        if (!this._showScopeChainDetailsSidebarPanel || !WebInspector.scopeChainDetailsSidebarPanel.parentSidebar)
+            return;
+
+        WebInspector.scopeChainDetailsSidebarPanel.show();
+
+        this._showScopeChainDetailsSidebarPanel = false;
+    },
+
+    showScopeChainDetailsSidebarPanel: function()
+    {
+        this._showScopeChainDetailsSidebarPanel = true;
+    },
+
     revealAndSelectBreakpoint: function(breakpoint)
     {
         console.assert(breakpoint instanceof WebInspector.Breakpoint);

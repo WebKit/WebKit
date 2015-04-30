@@ -38,7 +38,7 @@ WebInspector.ContentBrowserTabContentView = function(identifier, styleClassNames
     this._lastSelectedDetailsSidebarPanelSetting = new WebInspector.Setting(identifier + "-last-selected-details-sidebar-panel", null);
 
     this._contentBrowser = contentBrowser;
-    this._contentBrowser.addEventListener(WebInspector.ContentBrowser.Event.CurrentRepresentedObjectsDidChange, this._contentBrowserRepresentedObjectsDidChange, this);
+    this._contentBrowser.addEventListener(WebInspector.ContentBrowser.Event.CurrentRepresentedObjectsDidChange, this.showDetailsSidebarPanels, this);
     this._contentBrowser.addEventListener(WebInspector.ContentBrowser.Event.CurrentContentViewDidChange, this._contentBrowserCurrentContentViewDidChange, this);
 
     if (navigationSidebarPanel) {
@@ -128,59 +128,6 @@ WebInspector.ContentBrowserTabContentView.prototype = {
 
     showDetailsSidebarPanels: function()
     {
-        this._contentBrowserRepresentedObjectsDidChange();
-    },
-
-    showRepresentedObject: function(representedObject, cookie)
-    {
-        this.contentBrowser.showContentViewForRepresentedObject(representedObject, cookie);
-    },
-
-    // ContentBrowser Delegate
-
-    contentBrowserTreeElementForRepresentedObject: function(contentBrowser, representedObject)
-    {
-        if (this.navigationSidebarPanel)
-            return this.navigationSidebarPanel.treeElementForRepresentedObject(representedObject);
-        return null;
-    },
-
-    // Private
-
-    _navigationSidebarCollapsedStateDidChange: function(event)
-    {
-        this._showNavigationSidebarItem.activated = !WebInspector.navigationSidebar.collapsed;
-    },
-
-    _detailsSidebarCollapsedStateDidChange: function(event)
-    {
-        if (!this.visible)
-            return;
-
-        this._showDetailsSidebarItem.activated = !WebInspector.detailsSidebar.collapsed;
-        this._showDetailsSidebarItem.enabled = WebInspector.detailsSidebar.sidebarPanels.length;
-
-        if (this._ignoreDetailsSidebarPanelCollapsedEvent)
-            return;
-
-        this.detailsSidebarCollapsedSetting.value = WebInspector.detailsSidebar.collapsed;
-    },
-
-    _detailsSidebarPanelSelected: function(event)
-    {
-        if (!this.visible)
-            return;
-
-        this._showDetailsSidebarItem.enabled = WebInspector.detailsSidebar.sidebarPanels.length;
-
-        if (!WebInspector.detailsSidebar.selectedSidebarPanel || this._ignoreDetailsSidebarPanelSelectedEvent)
-            return;
-
-        this._lastSelectedDetailsSidebarPanelSetting.value = WebInspector.detailsSidebar.selectedSidebarPanel.identifier;
-    },
-
-    _contentBrowserRepresentedObjectsDidChange: function()
-    {
         if (!this.visible)
             return;
 
@@ -229,6 +176,54 @@ WebInspector.ContentBrowserTabContentView.prototype = {
             return;
 
         this._showDetailsSidebarItem.enabled = WebInspector.detailsSidebar.sidebarPanels.length;
+    },
+
+    showRepresentedObject: function(representedObject, cookie)
+    {
+        this.contentBrowser.showContentViewForRepresentedObject(representedObject, cookie);
+    },
+
+    // ContentBrowser Delegate
+
+    contentBrowserTreeElementForRepresentedObject: function(contentBrowser, representedObject)
+    {
+        if (this.navigationSidebarPanel)
+            return this.navigationSidebarPanel.treeElementForRepresentedObject(representedObject);
+        return null;
+    },
+
+    // Private
+
+    _navigationSidebarCollapsedStateDidChange: function(event)
+    {
+        this._showNavigationSidebarItem.activated = !WebInspector.navigationSidebar.collapsed;
+    },
+
+    _detailsSidebarCollapsedStateDidChange: function(event)
+    {
+        if (!this.visible)
+            return;
+
+        this._showDetailsSidebarItem.activated = !WebInspector.detailsSidebar.collapsed;
+        this._showDetailsSidebarItem.enabled = WebInspector.detailsSidebar.sidebarPanels.length;
+
+        if (this._ignoreDetailsSidebarPanelCollapsedEvent)
+            return;
+
+        this.detailsSidebarCollapsedSetting.value = WebInspector.detailsSidebar.collapsed;
+    },
+
+    _detailsSidebarPanelSelected: function(event)
+    {
+        if (!this.visible)
+            return;
+
+        this._showDetailsSidebarItem.enabled = WebInspector.detailsSidebar.sidebarPanels.length;
+
+        if (!WebInspector.detailsSidebar.selectedSidebarPanel || this._ignoreDetailsSidebarPanelSelectedEvent)
+            return;
+
+        this._lastSelectedDetailsSidebarPanelSetting.value = WebInspector.detailsSidebar.selectedSidebarPanel.identifier;
     },
 
     _contentBrowserCurrentContentViewDidChange: function(event)

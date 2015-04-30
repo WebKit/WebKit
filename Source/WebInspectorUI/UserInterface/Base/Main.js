@@ -738,7 +738,7 @@ WebInspector.showElementsTab = function()
     this.tabBrowser.showTabForContentView(tabContentView);
 };
 
-WebInspector.showDebuggerTab = function(breakpointToSelect)
+WebInspector.showDebuggerTab = function(breakpointToSelect, showScopeChainDetailsSidebarPanel)
 {
     var tabContentView = this.tabBrowser.bestTabContentViewForClass(WebInspector.DebuggerTabContentView);
     if (!tabContentView)
@@ -746,6 +746,9 @@ WebInspector.showDebuggerTab = function(breakpointToSelect)
 
     if (breakpointToSelect instanceof WebInspector.Breakpoint)
         tabContentView.revealAndSelectBreakpoint(breakpointToSelect);
+
+    if (showScopeChainDetailsSidebarPanel)
+        tabContentView.showScopeChainDetailsSidebarPanel();
 
     this.tabBrowser.showTabForContentView(tabContentView);
 };
@@ -1068,7 +1071,7 @@ WebInspector._captureDidStart = function(event)
 
 WebInspector._debuggerDidPause = function(event)
 {
-    this.showDebuggerTab();
+    this.showDebuggerTab(null, true);
 
     this._dashboardContainer.showDashboardViewForRepresentedObject(this.dashboardManager.dashboards.debugger);
 

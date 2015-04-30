@@ -1,3 +1,24 @@
+2015-04-30  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Scope Chain sidebar should be selected immediately when paused
+        https://bugs.webkit.org/show_bug.cgi?id=144352
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.showDebuggerTab): Added showScopeChainDetailsSidebarPanel argument.
+        (WebInspector._debuggerDidPause): Pass true for showScopeChainDetailsSidebarPanel.
+        * UserInterface/Views/ContentBrowserTabContentView.js:
+        (WebInspector.ContentBrowserTabContentView): Wire the event to showDetailsSidebarPanels instead of
+        _contentBrowserRepresentedObjectsDidChange, allowing subclasses to do work during the event.
+        (WebInspector.ContentBrowserTabContentView.prototype.showDetailsSidebarPanels): Moved content of
+        _contentBrowserRepresentedObjectsDidChange here.
+        (WebInspector.ContentBrowserTabContentView.prototype._contentBrowserRepresentedObjectsDidChange): Deleted.
+        * UserInterface/Views/DebuggerTabContentView.js:
+        (WebInspector.DebuggerTabContentView.prototype.showDetailsSidebarPanels): Added. Show the scope sidebar panel
+        if it is available and it was requested by showScopeChainDetailsSidebarPanel().
+        (WebInspector.DebuggerTabContentView.prototype.showScopeChainDetailsSidebarPanel): Added.
+
 2015-04-30  Andres Gomez  <agomez@igalia.com>
 
         [GTK] Web Inspector: New Images for ObjectTreeView - Setter
