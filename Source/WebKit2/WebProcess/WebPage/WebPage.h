@@ -500,6 +500,7 @@ public:
     void moveSelectionByOffset(int32_t offset, uint64_t callbackID);
     void selectTextWithGranularityAtPoint(const WebCore::IntPoint&, uint32_t granularity, uint64_t callbackID);
     void selectPositionAtBoundaryWithDirection(const WebCore::IntPoint&, uint32_t granularity, uint32_t direction, uint64_t callbackID);
+    void moveSelectionAtBoundaryWithDirection(uint32_t granularity, uint32_t direction, uint64_t callbackID);
     void selectPositionAtPoint(const WebCore::IntPoint&, uint64_t callbackID);
     void beginSelectionInDirection(uint32_t direction, uint64_t callbackID);
     void updateSelectionWithExtentPoint(const WebCore::IntPoint&, uint64_t callbackID);

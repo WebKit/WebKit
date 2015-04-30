@@ -1974,30 +1974,52 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)selectPositionAtPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler
 {
+    _usingGestureForSelection = YES;
     UIWKSelectionCompletionHandler selectionHandler = [completionHandler copy];
+    RetainPtr<WKContentView> view = self;
     
-    _page->selectPositionAtPoint(WebCore::IntPoint(point), [selectionHandler](WebKit::CallbackBase::Error error) {
+    _page->selectPositionAtPoint(WebCore::IntPoint(point), [view, selectionHandler](WebKit::CallbackBase::Error error) {
         selectionHandler();
+        view->_usingGestureForSelection = NO;
         [selectionHandler release];
     });
 }
 
 - (void)selectPositionAtBoundary:(UITextGranularity)granularity inDirection:(UITextDirection)direction fromPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler
 {
+    _usingGestureForSelection = YES;
     UIWKSelectionCompletionHandler selectionHandler = [completionHandler copy];
+    RetainPtr<WKContentView> view = self;
     
-    _page->selectPositionAtBoundaryWithDirection(WebCore::IntPoint(point), toWKTextGranularity(granularity), toWKSelectionDirection(direction), [selectionHandler](WebKit::CallbackBase::Error error) {
+    _page->selectPositionAtBoundaryWithDirection(WebCore::IntPoint(point), toWKTextGranularity(granularity), toWKSelectionDirection(direction), [view, selectionHandler](WebKit::CallbackBase::Error error) {
         selectionHandler();
+        view->_usingGestureForSelection = NO;
+        [selectionHandler release];
+    });
+}
+
+- (void)moveSelectionAtBoundary:(UITextGranularity)granularity inDirection:(UITextDirection)direction completionHandler:(void (^)(void))completionHandler
+{
+    _usingGestureForSelection = YES;
+    UIWKSelectionCompletionHandler selectionHandler = [completionHandler copy];
+    RetainPtr<WKContentView> view = self;
+    
+    _page->moveSelectionAtBoundaryWithDirection(toWKTextGranularity(granularity), toWKSelectionDirection(direction), [view, selectionHandler](WebKit::CallbackBase::Error error) {
+        selectionHandler();
+        view->_usingGestureForSelection = NO;
         [selectionHandler release];
     });
 }
 
 - (void)selectTextWithGranularity:(UITextGranularity)granularity atPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler
 {
+    _usingGestureForSelection = YES;
     UIWKSelectionCompletionHandler selectionHandler = [completionHandler copy];
+    RetainPtr<WKContentView> view = self;
 
-    _page->selectTextWithGranularityAtPoint(WebCore::IntPoint(point), toWKTextGranularity(granularity), [selectionHandler](WebKit::CallbackBase::Error error) {
+    _page->selectTextWithGranularityAtPoint(WebCore::IntPoint(point), toWKTextGranularity(granularity), [view, selectionHandler](WebKit::CallbackBase::Error error) {
         selectionHandler();
+        view->_usingGestureForSelection = NO;
         [selectionHandler release];
     });
 }

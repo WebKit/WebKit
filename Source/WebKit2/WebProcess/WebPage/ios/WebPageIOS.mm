@@ -1695,6 +1695,20 @@ void WebPage::selectPositionAtBoundaryWithDirection(const WebCore::IntPoint& poi
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
+void WebPage::moveSelectionAtBoundaryWithDirection(uint32_t granularity, uint32_t direction, uint64_t callbackID)
+{
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    
+    if (!frame.selection().selection().isNone()) {
+        bool isForward = (direction == DirectionForward || direction == DirectionRight);
+        VisiblePosition position = (isForward) ? frame.selection().selection().visibleEnd() : frame.selection().selection().visibleStart();
+        position = positionOfNextBoundaryOfGranularity(position, static_cast<WebCore::TextGranularity>(granularity), static_cast<SelectionDirection>(direction));
+        if (position.isNotNull())
+            frame.selection().setSelectedRange(Range::create(*frame.document(), position, position).ptr(), isForward? UPSTREAM : DOWNSTREAM, true);
+    }
+    send(Messages::WebPageProxy::VoidCallback(callbackID));
+}
+
 void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, uint32_t granularity, uint64_t callbackID)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();

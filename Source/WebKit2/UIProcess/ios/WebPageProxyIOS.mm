@@ -452,6 +452,17 @@ void WebPageProxy::selectPositionAtBoundaryWithDirection(const WebCore::IntPoint
     m_process->send(Messages::WebPage::SelectPositionAtBoundaryWithDirection(point, static_cast<uint32_t>(granularity), static_cast<uint32_t>(direction), callbackID), m_pageID);
 }
 
+void WebPageProxy::moveSelectionAtBoundaryWithDirection(WebCore::TextGranularity granularity, WebCore::SelectionDirection direction, std::function<void(CallbackBase::Error)> callbackFunction)
+{
+    if (!isValid()) {
+        callbackFunction(CallbackBase::Error::Unknown);
+        return;
+    }
+    
+    uint64_t callbackID = m_callbacks.put(WTF::move(callbackFunction), m_process->throttler().backgroundActivityToken());
+    m_process->send(Messages::WebPage::MoveSelectionAtBoundaryWithDirection(static_cast<uint32_t>(granularity), static_cast<uint32_t>(direction), callbackID), m_pageID);
+}
+    
 void WebPageProxy::selectPositionAtPoint(const WebCore::IntPoint point, std::function<void (CallbackBase::Error)> callbackFunction)
 {
     if (!isValid()) {
