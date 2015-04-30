@@ -102,6 +102,9 @@ public:
 
     LayoutRect viewRect() const;
 
+    bool hasFlippedBlockDescendants() const { return m_hasFlippedBlockDescendants; }
+    void setHasFlippedBlockDescendants(bool b) { m_hasFlippedBlockDescendants = b; }
+
     // layoutDelta is used transiently during layout to store how far an object has moved from its
     // last layout location, in order to repaint correctly.
     // If we're doing a full repaint m_layoutState will be 0, but in that case layoutDelta doesn't matter.
@@ -356,6 +359,7 @@ private:
 
     bool m_selectionWasCaret;
     bool m_hasSoftwareFilters;
+    bool m_hasFlippedBlockDescendants;
 
     HashSet<RenderElement*> m_renderersWithPausedImageAnimation;
 

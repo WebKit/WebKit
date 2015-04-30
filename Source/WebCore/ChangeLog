@@ -1,3 +1,30 @@
+2015-04-29  David Hyatt  <hyatt@apple.com>
+
+        Avoid containingBlock() calls when no writing mode flipping is needed.
+        https://bugs.webkit.org/show_bug.cgi?id=144407
+
+        Reviewed by Simon Fraser.
+
+        Add a bool to RenderView that indicates whether or not any flipped blocks have been
+        added to the view. Once tainted, the view just stays dirty forever. If no flipped
+        blocks are ever seen, we can then optimize away calls to containingBlock().
+
+        The motivation for this patch is to improve layer position updating, which makes many
+        calls to topLeftLocationOffset(), one of the functions that can be optimized by this
+        change.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::layoutOverflowRectForPropagation):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::updateFromStyle):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::rangeIntersectsRect):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        * rendering/RenderView.h:
+
 2015-04-29  Jer Noble  <jer.noble@apple.com>
 
         Make GenericTaskQueue even more generic (and usable inside platform/)

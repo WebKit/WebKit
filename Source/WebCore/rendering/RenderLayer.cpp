@@ -5819,11 +5819,13 @@ LayoutRect RenderLayer::localBoundingBox(CalculateLayerBoundsFlags flags) const
 LayoutRect RenderLayer::boundingBox(const RenderLayer* ancestorLayer, const LayoutSize& offsetFromRoot, CalculateLayerBoundsFlags flags) const
 {    
     LayoutRect result = localBoundingBox(flags);
-    if (renderer().isBox())
-        renderBox()->flipForWritingMode(result);
-    else
-        renderer().containingBlock()->flipForWritingMode(result);
-    
+    if (renderer().view().hasFlippedBlockDescendants()) {
+        if (renderer().isBox())
+            renderBox()->flipForWritingMode(result);
+        else
+            renderer().containingBlock()->flipForWritingMode(result);
+    }
+
     PaginationInclusionMode inclusionMode = ExcludeCompositedPaginatedLayers;
     if (flags & UseFragmentBoxesIncludingCompositing)
         inclusionMode = IncludeCompositedPaginatedLayers;
@@ -5899,10 +5901,12 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
 
     LayoutRect boundingBoxRect = localBoundingBox(flags);
 
-    if (is<RenderBox>(renderer()))
-        downcast<RenderBox>(renderer()).flipForWritingMode(boundingBoxRect);
-    else
-        renderer().containingBlock()->flipForWritingMode(boundingBoxRect);
+    if (renderer().view().hasFlippedBlockDescendants()) {
+        if (is<RenderBox>(renderer()))
+            downcast<RenderBox>(renderer()).flipForWritingMode(boundingBoxRect);
+        else
+            renderer().containingBlock()->flipForWritingMode(boundingBoxRect);
+    }
 
     if (renderer().isRoot()) {
         // If the root layer becomes composited (e.g. because some descendant with negative z-index is composited),
