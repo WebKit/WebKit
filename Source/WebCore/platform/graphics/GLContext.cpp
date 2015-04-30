@@ -17,6 +17,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(GRAPHICS_CONTEXT_3D)
+
 #include "GLContext.h"
 
 #if USE(EGL)
@@ -197,4 +200,4 @@ GLContext* GLContext::getCurrent()
 
 } // namespace WebCore
 
-
+#endif

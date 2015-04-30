@@ -1,3 +1,14 @@
+2015-04-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Allow WebKit to build without ANGLE support
+        https://bugs.webkit.org/show_bug.cgi?id=144459
+        <rdar://problem/20707307>
+
+        Reviewed by Dean Jackson.
+
+        * platform/graphics/GLContext.cpp: Use the ENABLE(GRAPHICS_CONTEXT_3D)
+        macro to avoid compiling this code if not using WEBGL/3D contexts.
+
 2015-04-29  David Hyatt  <hyatt@apple.com>
 
         Avoid containingBlock() calls when no writing mode flipping is needed.
