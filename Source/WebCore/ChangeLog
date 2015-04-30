@@ -1,3 +1,19 @@
+2015-04-30  Dean Jackson  <dino@apple.com>
+
+        -apple-system-font-monospaced-numbers doesn't work on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=144478
+        <rdar://problem/20544940>
+
+        Reviewed by Brent Fulgham.
+
+        Make sure to start from the system font descriptor when
+        asking for a monospaced numeric alternate.
+
+        Test: platform/ios-simulator/fast/text/system-monospaced-numbers.html
+
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::createCTFontWithFamilyNameAndWeight):
+
 2015-04-30  Oliver Hunt  <oliver@apple.com>
 
         DOM bindings should not be using a reference type to point to a temporary object

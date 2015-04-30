@@ -625,11 +625,9 @@ static CTFontRef createCTFontWithFamilyNameAndWeight(const String& familyName, C
 
     static NeverDestroyed<AtomicString> systemUIMonospacedNumbersFontWithApplePrefix("-apple-system-font-monospaced-numbers", AtomicString::ConstructFromLiteral);
     if (equalIgnoringCase(familyName, systemUIMonospacedNumbersFontWithApplePrefix)) {
-        NSDictionary *attributes = @{ (NSString *)kCTFontFeatureTypeIdentifierKey : @(kNumberSpacingType),
-            (NSString *)kCTFontFeatureSelectorIdentifierKey : @(kMonospacedNumbersSelector) };
-
-        RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontDescriptorCreateWithAttributesAndOptions((CFDictionaryRef)attributes, kCTFontDescriptorOptionSystemUIFont | kCTFontDescriptorOptionPreferAppleSystemFont));
-        return CTFontCreateWithFontDescriptor(fontDescriptor.get(), size, nullptr);
+        RetainPtr<CTFontDescriptorRef> systemFontDescriptor = adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontSystem, size, nullptr));
+        RetainPtr<CTFontDescriptorRef> monospaceFontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithFeature(systemFontDescriptor.get(), (CFNumberRef)@(kNumberSpacingType), (CFNumberRef)@(kMonospacedNumbersSelector)));
+        return CTFontCreateWithFontDescriptor(monospaceFontDescriptor.get(), size, nullptr);
     }
 
 

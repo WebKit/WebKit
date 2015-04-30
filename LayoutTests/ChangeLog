@@ -1,3 +1,17 @@
+2015-04-30  Dean Jackson  <dino@apple.com>
+
+        -apple-system-font-monospaced-numbers doesn't work on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=144478
+        <rdar://problem/20544940>
+
+        Reviewed by Brent Fulgham.
+
+        A test that draws two lines of different numbers and checks
+        they are the same width.
+
+        * platform/ios-simulator/fast/text/system-monospaced-numbers-expected.txt: Added.
+        * platform/ios-simulator/fast/text/system-monospaced-numbers.html: Added.
+
 2015-04-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed, ios-simulator gardening
