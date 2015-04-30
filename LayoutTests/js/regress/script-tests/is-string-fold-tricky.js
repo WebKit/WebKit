@@ -1,3 +1,6 @@
+// webkit.org/b/144463
+//@ skip
+
 var object = {};
 (function() {
     var result = 0;

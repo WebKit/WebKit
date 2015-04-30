@@ -1,3 +1,10 @@
+2015-04-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, skip new tests js/regress/is-string-fold.html and js/regress/is-string-fold-tricky.html because they are crashing in RJST as well.
+
+        * js/regress/script-tests/is-string-fold-tricky.js:
+        * js/regress/script-tests/is-string-fold.js:
+
 2015-04-30  Martin Robinson  <mrobinson@igalia.com>
 
         Rebaseline some editing tests for WebKitGTK+
