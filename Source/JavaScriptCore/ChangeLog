@@ -1,3 +1,28 @@
+2015-05-01  Basile Clement  <basile_clement@apple.com>
+
+        Function allocation sinking shouldn't be performed on singleton functions
+        https://bugs.webkit.org/show_bug.cgi?id=144166
+
+        Reviewed by Geoffrey Garen.
+
+        Function allocations usually are free of any other side effects, but
+        this is not the case for allocations performed while the underlying
+        FunctionExecutable is still a singleton (as this allogation will fire
+        watchpoints invalidating code that depends on it being a singleton).
+        As the object allocation sinking phase assumes object allocation is
+        free of side-effects, sinking these allocations is not correct.
+
+        This also means that when materializing a function allocation on OSR
+        exit, that function's executable will never be a singleton, and we don't have
+        to worry about its watchpoint, allowing us to use
+        JSFunction::createWithInvalidatedRellocationWatchpoint instead of
+        JSFunction::create.
+
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        (JSC::DFG::ObjectAllocationSinkingPhase::handleNode):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationMaterializeObjectInOSR):
+
 2015-04-30  Jon Davis  <jond@apple.com>
 
         Web Inspector: console should show an icon for console.info() messages

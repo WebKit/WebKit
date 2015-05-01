@@ -106,7 +106,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
         }
         RELEASE_ASSERT(executable && activation);
 
-        JSFunction* result = JSFunction::create(vm, executable, activation);
+        JSFunction* result = JSFunction::createWithInvalidatedReallocationWatchpoint(vm, executable, activation);
 
         return result;
     }

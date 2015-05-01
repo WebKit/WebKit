@@ -786,7 +786,8 @@ private:
             break;
 
         case NewFunction:
-            sinkCandidate();
+            if (!node->castOperand<FunctionExecutable*>()->singletonFunction()->isStillValid())
+                sinkCandidate();
             m_graph.doToChildren(
                 node,
                 [&] (Edge edge) {
