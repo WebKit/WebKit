@@ -36,7 +36,7 @@
 #define CONTENT_EXTENSIONS_PAGE_SIZE 16384
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
-#define LOG_LARGE_STRUCTURES(name, size) if (size > 1000000) { WTFLogAlways("NAME: %s SIZE %d", #name, (int)(size)); };
+#define LOG_LARGE_STRUCTURES(name, size) if (size > 1000000) { dataLogF("NAME: %s SIZE %d", #name, (int)(size)); };
 #else
 #define LOG_LARGE_STRUCTURES(name, size)
 #endif

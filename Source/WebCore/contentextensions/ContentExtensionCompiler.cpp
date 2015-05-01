@@ -214,7 +214,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
         double dfaBuildTimeEnd = monotonicallyIncreasingTime();
-        dataLogF("    Time spent building the DFA %zu: %f\n", i, (dfaBuildTimeEnd - dfaBuildTimeStart));
+        dataLogF("    Time spent building the DFA: %f\n", (dfaBuildTimeEnd - dfaBuildTimeStart));
 #endif
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
@@ -223,11 +223,11 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
         dfa.minimize();
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
         double dfaMinimizationTimeEnd = monotonicallyIncreasingTime();
-        dataLogF("    Time spent miniminizing the DFA %zu: %f\n", i, (dfaMinimizationTimeEnd - dfaMinimizationTimeStart));
+        dataLogF("    Time spent miniminizing the DFA: %f\n", (dfaMinimizationTimeEnd - dfaMinimizationTimeStart));
 #endif
 
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-        WTFLogAlways("DFA %zu", i);
+        WTFLogAlways("DFA");
         dfa.debugPrintDot();
 #endif
         ASSERT_WITH_MESSAGE(!dfa.nodes[dfa.root].hasActions(), "All actions on the DFA root should come from regular expressions that match everything.");
@@ -266,7 +266,6 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
     double totalNFAToByteCodeBuildTimeEnd = monotonicallyIncreasingTime();
     dataLogF("    Time spent building and compiling the DFAs: %f\n", (totalNFAToByteCodeBuildTimeEnd - totalNFAToByteCodeBuildTimeStart));
     dataLogF("    Bytecode size %zu\n", bytecode.size());
-    dataLogF("    DFA count %zu\n", nfas.size());
 #endif
 
     LOG_LARGE_STRUCTURES(bytecode, bytecode.capacity() * sizeof(uint8_t));

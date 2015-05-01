@@ -102,7 +102,11 @@ private:
 
 // FIXME: Pack this down to 12.
 // It's probably already 12 on ARMv7.
+#if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
+COMPILE_ASSERT(sizeof(DFANode) <= 16 + sizeof(Vector<unsigned>), Keep the DFANodes small);
+#else
 COMPILE_ASSERT(sizeof(DFANode) <= 16, Keep the DFANodes small);
+#endif
 
 }
 

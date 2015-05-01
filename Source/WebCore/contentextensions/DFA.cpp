@@ -137,22 +137,22 @@ static void printRange(bool firstRange, char rangeStart, char rangeEnd)
         dataLogF("\\\\%d-\\\\%d", rangeStart, rangeEnd);
 }
 
-static void printTransitions(const Vector<DFANode>& graph, unsigned sourceNodeId)
+static void printTransitions(const DFA& dfa, unsigned sourceNodeId)
 {
-    const DFANode& sourceNode = graph[sourceNodeId];
-    const DFANodeTransitions& transitions = sourceNode.transitions;
+    const DFANode& sourceNode = dfa.nodes[sourceNodeId];
+    auto transitions = sourceNode.transitions(dfa);
 
-    if (transitions.isEmpty() && !sourceNode.hasFallbackTransition)
+    if (transitions.isEmpty() && !sourceNode.hasFallbackTransition())
         return;
 
     HashMap<unsigned, Vector<uint16_t>, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> transitionsPerTarget;
 
     // First, we build the list of transitions coming to each target node.
     for (const auto& transition : transitions) {
-        unsigned target = transition.value;
+        unsigned target = transition.second;
         transitionsPerTarget.add(target, Vector<uint16_t>());
 
-        transitionsPerTarget.find(target)->value.append(transition.key);
+        transitionsPerTarget.find(target)->value.append(transition.first);
     }
 
     // Then we go over each one an display the ranges one by one.
@@ -180,8 +180,8 @@ static void printTransitions(const Vector<DFANode>& graph, unsigned sourceNodeId
         dataLogF("\"];\n");
     }
 
-    if (sourceNode.hasFallbackTransition)
-        dataLogF("        %d -> %d [label=\"[fallback]\"];\n", sourceNodeId, sourceNode.fallbackTransition);
+    if (sourceNode.hasFallbackTransition())
+        dataLogF("        %d -> %d [label=\"[fallback]\"];\n", sourceNodeId, sourceNode.fallbackTransitionDestination(dfa));
 }
 
 void DFA::debugPrintDot() const
@@ -190,12 +190,12 @@ void DFA::debugPrintDot() const
     dataLogF("    rankdir=LR;\n");
     dataLogF("    node [shape=circle];\n");
     dataLogF("    {\n");
-    for (unsigned i = 0; i < m_nodes.size(); ++i) {
-        if (m_nodes[i].isKilled)
+    for (unsigned i = 0; i < nodes.size(); ++i) {
+        if (nodes[i].isKilled())
             continue;
 
         dataLogF("         %d [label=<Node %d", i, i);
-        const Vector<uint64_t>& actions = m_nodes[i].actions;
+        const Vector<uint64_t>& actions = nodes[i].actions(*this);
         if (!actions.isEmpty()) {
             dataLogF("<BR/>Actions: ");
             for (unsigned actionIndex = 0; actionIndex < actions.size(); ++actionIndex) {
@@ -205,7 +205,7 @@ void DFA::debugPrintDot() const
             }
         }
 
-        Vector<unsigned> correspondingNFANodes = m_nodes[i].correspondingNFANodes;
+        Vector<unsigned> correspondingNFANodes = nodes[i].correspondingNFANodes;
         ASSERT(!correspondingNFANodes.isEmpty());
         dataLogF("<BR/>NFA Nodes: ");
         for (unsigned correspondingDFANodeIndex = 0; correspondingDFANodeIndex < correspondingNFANodes.size(); ++correspondingDFANodeIndex) {
@@ -224,8 +224,8 @@ void DFA::debugPrintDot() const
     dataLogF("    }\n");
 
     dataLogF("    {\n");
-    for (unsigned i = 0; i < m_nodes.size(); ++i)
-        printTransitions(m_nodes, i);
+    for (unsigned i = 0; i < nodes.size(); ++i)
+        printTransitions(*this, i);
 
     dataLogF("    }\n");
     dataLogF("}\n");

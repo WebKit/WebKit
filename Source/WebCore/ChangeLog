@@ -1,3 +1,18 @@
+2015-04-30  Alex Christensen  <achristensen@webkit.org>
+
+        Compile fix when using content extensions debugging code.
+
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::compileRuleList):
+        * contentextensions/ContentExtensionsDebugging.h:
+        * contentextensions/DFA.cpp:
+        (WebCore::ContentExtensions::printTransitions):
+        (WebCore::ContentExtensions::DFA::debugPrintDot):
+        * contentextensions/DFANode.h:
+        * contentextensions/NFA.cpp:
+        (WebCore::ContentExtensions::NFA::memoryUsed):
+        (WebCore::ContentExtensions::NFA::debugPrintDot):
+
 2015-04-30  Dan Bernstein  <mitz@apple.com>
 
         Fixed the build for <rdar://problem/20758514>

@@ -49,7 +49,7 @@ unsigned NFA::createNode()
 
 size_t NFA::memoryUsed() const
 {
-    size_t size = 0;
+    size_t size = sizeof(NFA);
     for (const NFANode& node : m_nodes) {
         for (const auto& transition : node.transitions)
             size += transition.value.capacity() * sizeof(unsigned);
@@ -188,7 +188,7 @@ void NFA::debugPrintDot() const
     for (unsigned i = 0; i < m_nodes.size(); ++i) {
         dataLogF("         %d [label=<Node %d", i, i);
 
-        const Vector<uint64_t>& finalRules = m_nodes[i].finalRuleIds;
+        const ActionList& finalRules = m_nodes[i].finalRuleIds;
         if (!finalRules.isEmpty()) {
             dataLogF("<BR/>(Final: ");
             for (unsigned ruleIndex = 0; ruleIndex < finalRules.size(); ++ruleIndex) {
