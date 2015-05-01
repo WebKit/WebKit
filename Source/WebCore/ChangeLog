@@ -1,3 +1,19 @@
+2015-05-01  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] REGRESSION: accessibility/canvas-fallback-content.html now crashes
+        https://bugs.webkit.org/show_bug.cgi?id=144481
+
+        Reviewed by Chris Fleizach.
+
+        Canvas fallback content is allowed to be focusable if the canvas is displayed
+        and visible. Update the style when creating an accessible object for a node in
+        a canvas subtree and before Element::isFocusable() gets called.
+
+        No new tests. The existing, crashing test no longer crashes.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::getOrCreate):
+
 2015-05-01  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Add CombinedURLFilters debugging code.

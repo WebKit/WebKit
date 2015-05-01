@@ -397,6 +397,11 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
     if (!inCanvasSubtree && !isHidden && !insideMeterElement)
         return nullptr;
 
+    // Fallback content is only focusable as long as the canvas is displayed and visible.
+    // Update the style before Element::isFocusable() gets called.
+    if (inCanvasSubtree)
+        node->document().updateStyleIfNeeded();
+
     RefPtr<AccessibilityObject> newObj = createFromNode(node);
 
     // Will crash later if we have two objects for the same node.
