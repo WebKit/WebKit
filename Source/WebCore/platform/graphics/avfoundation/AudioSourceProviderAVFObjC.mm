@@ -172,7 +172,7 @@ void AudioSourceProviderAVFObjC::destroyMix()
 {
     if (m_avPlayerItem)
         [m_avPlayerItem setAudioMix:nil];
-    [m_avAudioMix setInputParameters:nil];
+    [m_avAudioMix setInputParameters:@[ ]];
     m_avAudioMix.clear();
     m_tap.clear();
 }

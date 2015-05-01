@@ -1,3 +1,11 @@
+2015-04-30  Dan Bernstein  <mitz@apple.com>
+
+        Fixed the build for <rdar://problem/20758514>
+
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+        (WebCore::AudioSourceProviderAVFObjC::destroyMix): Don’t pass nil to
+        -[AVMutableAudioMix setInputParameters:].
+
 2015-04-30  Daniel Bates  <dabates@apple.com>
 
         Clean up: Remove unnecessary runtime computation of string length
