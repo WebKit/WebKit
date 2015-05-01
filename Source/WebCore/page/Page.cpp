@@ -1725,27 +1725,12 @@ void Page::setShouldPlayToPlaybackTarget(uint64_t clientId, bool shouldPlay)
 }
 #endif
 
-RefPtr<WheelEventTestTrigger> Page::testTrigger() const
-{
-    return m_testTrigger;
-}
-
 WheelEventTestTrigger& Page::ensureTestTrigger()
 {
     if (!m_testTrigger)
         m_testTrigger = adoptRef(new WheelEventTestTrigger());
 
     return *m_testTrigger;
-}
-
-void Page::clearTrigger()
-{
-    m_testTrigger = nullptr;
-}
-
-bool Page::expectsWheelEventTriggers() const
-{
-    return !!m_testTrigger;
 }
 
 } // namespace WebCore

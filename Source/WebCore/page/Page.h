@@ -440,10 +440,10 @@ public:
     WEBCORE_EXPORT void setShouldPlayToPlaybackTarget(uint64_t, bool);
 #endif
 
-    WEBCORE_EXPORT RefPtr<WheelEventTestTrigger> testTrigger() const;
+    RefPtr<WheelEventTestTrigger> testTrigger() const { return m_testTrigger; }
     WEBCORE_EXPORT WheelEventTestTrigger& ensureTestTrigger();
-    WEBCORE_EXPORT void clearTrigger();
-    WEBCORE_EXPORT bool expectsWheelEventTriggers() const;
+    void clearTrigger() { m_testTrigger = nullptr; }
+    bool expectsWheelEventTriggers() const { return !!m_testTrigger; }
 
 private:
     WEBCORE_EXPORT void initGroup();
