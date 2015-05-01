@@ -1,3 +1,34 @@
+2015-04-30  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout] overflow-position keyword for align and justify properties.
+        https://bugs.webkit.org/show_bug.cgi?id=144235
+
+        Reviewed by Sergio Villar Senin.
+
+        When the alignment subject is larger than the alignment container,
+        it will overflow. Some alignment modes, if honored in this
+        situation, may cause data loss; an overflow alignment mode can be
+        explicitly specified to avoid this.
+
+        This patch implements overflow-keyword handling for Grid Layout on
+        align-self and justify-self properties.
+
+        Test: fast/css-grid-layout/grid-align-justify-overflow.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::computeOverflowAlignmentOffset):
+        (WebCore::RenderGrid::rowPositionForChild):
+        (WebCore::RenderGrid::columnPositionForChild):
+        (WebCore::RenderGrid::rowAxisPositionForChild): Deleted.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::resolveAlignmentData):
+        (WebCore::resolveJustificationData):
+        (WebCore::RenderStyle::resolveAlignment):
+        (WebCore::RenderStyle::resolveAlignmentOverflow):
+        (WebCore::RenderStyle::resolveJustification):
+        (WebCore::RenderStyle::resolveJustificationOverflow):
+        * rendering/style/RenderStyle.h:
+
 2015-04-30  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Rebaseline bindings tests results after r183648.

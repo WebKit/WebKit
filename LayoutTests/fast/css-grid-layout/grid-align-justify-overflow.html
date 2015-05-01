@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href="resources/grid.css" rel="stylesheet">
+<script src="../../resources/check-layout.js"></script>
+<style>
+body {
+    margin: 0;
+}
+.grid {
+    -webkit-grid-template-columns: 150px 150px;
+    -webkit-grid-template-rows: 120px 120px 120px;
+    width: -webkit-fit-content;
+    margin-bottom: 20px;
+}
+.cellOverflowWidth {
+    width: 180px;
+    height: 40px;
+}
+.cellOverflowHeight {
+    width: 50px;
+    height: 150px;
+}
+.cellWithNoOverflow {
+    width: 50px;
+    height: 40px;
+}
+.alignItemsCenter { align-items: center; }
+.alignItemsCenterSafe { align-items: center safe; }
+.alignItemsCenterTrue { align-items: center true; }
+.alignItemsEnd { align-items: end; }
+.alignItemsEndSafe { align-items: end safe; }
+.alignItemsEndTrue { align-items: end true; }
+.alignSelfCenter { align-self: center; }
+.alignSelfCenterSafe { align-self: center safe; }
+.alignSelfCenterTrue { align-self: center true; }
+.alignSelfEnd { align-self: end; }
+.alignSelfEndSafe { align-self: end safe; }
+.alignSelfEndTrue { align-self: end true; }
+.justifyItemsCenter { justify-items: center; }
+.justifyItemsCenterSafe { justify-items: center safe; }
+.justifyItemsCenterTrue { justify-items: center true; }
+.justifyItemsEnd { justify-items: end; }
+.justifyItemsEndSafe { justify-items: end safe; }
+.justifyItemsEndTrue { justify-items: end true; }
+.justifySelfCenter { justify-self: center; }
+.justifySelfCenterSafe { justify-self: center safe; }
+.justifySelfCenterTrue { justify-self: center true; }
+.justifySelfEnd { justify-self: end; }
+.thirdRowFirstColumn {
+    background-color: green;
+    -webkit-grid-column: 1;
+    -webkit-grid-row: 3;
+}
+</style>
+</head>
+<body onload="checkLayout('.grid')">
+
+<p>This test checks that the 'overflow' keyword is applied correctly for 'align' and 'justify' properties.</p>
+
+<div style="position: relative">
+    <div class="grid alignItemsCenter justifyItemsCenter" data-expected-width="300" data-expected-height="360">
+        <div class="cellOverflowWidth  firstRowFirstColumn" data-offset-x="-15" data-offset-y="40" data-expected-width="180" data-expected-height="40"></div>
+        <div class="cellWithNoOverflow secondRowFirstColumn" data-offset-x="50" data-offset-y="160" data-expected-width="50" data-expected-height="40"></div>
+        <div class="cellWithNoOverflow thirdRowFirstColumn" data-offset-x="50" data-offset-y="280" data-expected-width="50" data-expected-height="40"></div>
+        <div class="cellWithNoOverflow firstRowSecondColumn" data-offset-x="200" data-offset-y="40" data-expected-width="50" data-expected-height="40"></div>
+        <div class="cellOverflowWidth  secondRowSecondColumn" data-offset-x="135" data-offset-y="160" data-expected-width="180" data-expected-height="40"></div>
+        <div class="cellWithNoOverflow thirdRowSecondColumn" data-offset-x="200" data-offset-y="280" data-expected-width="50" data-expected-height="40"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid alignItemsCenterTrue justifyItemsCenterTrue" data-expected-width="300" data-expected-height="360">
+        <div class="cellOverflowHeight firstRowFirstColumn" data-offset-x="50" data-offset-y="-15" data-expected-width="50" data-expected-height="150"></div>
+        <div class="cellWithNoOverflow secondRowFirstColumn" data-offset-x="50" data-offset-y="160" data-expected-width="50" data-expected-height="40"></div>
+        <div class="cellWithNoOverflow thirdRowFirstColumn" data-offset-x="50" data-offset-y="280" data-expected-width="50" data-expected-height="40"></div>
+        <div class="cellWithNoOverflow firstRowSecondColumn" data-offset-x="200" data-offset-y="40" data-expected-width="50" data-expected-height="40"></div>
+        <div class="cellOverflowHeight secondRowSecondColumn" data-offset-x="200" data-offset-y="105" data-expected-width="50" data-expected-height="150"></div>
+        <div class="cellWithNoOverflow thirdRowSecondColumn" data-offset-x="200" data-offset-y="280" data-expected-width="50" data-expected-height="40"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid alignItemsCenterSafe justifyItemsCenterSafe" data-expected-width="300" data-expected-height="360">
+        <div class="cellOverflowWidth  firstRowFirstColumn" data-offset-x="0" data-offset-y="40" data-expected-width="180" data-expected-height="40"></div>
+        <div class="cellWithNoOverflow secondRowFirstColumn" data-offset-x="50" data-offset-y="160" data-expected-width="50" data-expected-height="40"></div>
+        <div class="cellWithNoOverflow thirdRowFirstColumn" data-offset-x="50" data-offset-y="280" data-expected-width="50" data-expected-height="40"></div>
+        <div class="cellWithNoOverflow firstRowSecondColumn" data-offset-x="200" data-offset-y="40" data-expected-width="50" data-expected-height="40"></div>
+        <div class="cellOverflowWidth  secondRowSecondColumn" data-offset-x="150" data-offset-y="160" data-expected-width="180" data-expected-height="40"></div>
+        <div class="cellWithNoOverflow thirdRowSecondColumn" data-offset-x="200" data-offset-y="280" data-expected-width="50" data-expected-height="40"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid alignItemsCenterSafe justifyItemsCenterSafe" data-expected-width="300" data-expected-height="360">
+        <div class="cellOverflowHeight firstRowFirstColumn" data-offset-x="50" data-offset-y="0" data-expected-width="50" data-expected-height="150"></div>
+        <div class="cellWithNoOverflow secondRowFirstColumn" data-offset-x="50" data-offset-y="160" data-expected-width="50" data-expected-height="40"></div>
+        <div class="cellWithNoOverflow thirdRowFirstColumn" data-offset-x="50" data-offset-y="280" data-expected-width="50" data-expected-height="40"></div>
+        <div class="cellWithNoOverflow firstRowSecondColumn" data-offset-x="200" data-offset-y="40" data-expected-width="50" data-expected-height="40"></div>
+        <div class="cellOverflowHeight secondRowSecondColumn alignSelfCenterSafe justifySelfCenterSafe" data-offset-x="200" data-offset-y="120" data-expected-width="50" data-expected-height="150"></div>
+        <div class="cellWithNoOverflow thirdRowSecondColumn" data-offset-x="200" data-offset-y="280" data-expected-width="50" data-expected-height="40"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid alignItemsEnd justifyItemsEnd" data-expected-width="300" data-expected-height="360">
+        <div class="cellOverflowWidth  firstRowFirstColumn" data-offset-x="-30" data-offset-y="80" data-expected-width="180" data-expected-height="40"></div>
+        <div class="cellWithNoOverflow secondRowFirstColumn justifySelfCenter" data-offset-x="50" data-offset-y="200" data-expected-width="50" data-expected-height="40"></div>
+        <div class="cellWithNoOverflow thirdRowFirstColumn" data-offset-x="100" data-offset-y="320" data-expected-width="50" data-expected-height="40"></div>
+        <div class="cellWithNoOverflow firstRowSecondColumn" data-offset-x="250" data-offset-y="80" data-expected-width="50" data-expected-height="40"></div>
+        <div class="cellOverflowWidth  secondRowSecondColumn" data-offset-x="120" data-offset-y="200" data-expected-width="180" data-expected-height="40"></div>
+        <div class="cellWithNoOverflow thirdRowSecondColumn" data-offset-x="250" data-offset-y="320" data-expected-width="50" data-expected-height="40"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid alignItemsEndTrue justifyItemsEndTrue" data-expected-width="300" data-expected-height="360">
+        <div class="cellOverflowHeight firstRowFirstColumn" data-offset-x="100" data-offset-y="-30" data-expected-width="50" data-expected-height="150"></div>
+        <div class="cellWithNoOverflow secondRowFirstColumn" data-offset-x="100" data-offset-y="200" data-expected-width="50" data-expected-height="40"></div>
+        <div class="cellWithNoOverflow thirdRowFirstColumn" data-offset-x="100" data-offset-y="320" data-expected-width="50" data-expected-height="40"></div>
+        <div class="cellWithNoOverflow firstRowSecondColumn alignSelfCenter" data-offset-x="250" data-offset-y="40" data-expected-width="50" data-expected-height="40"></div>
+        <div class="cellOverflowHeight secondRowSecondColumn" data-offset-x="250" data-offset-y="90" data-expected-width="50" data-expected-height="150"></div>
+        <div class="cellWithNoOverflow thirdRowSecondColumn" data-offset-x="250" data-offset-y="320" data-expected-width="50" data-expected-height="40"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid alignItemsEndSafe justifyItemsEndSafe" data-expected-width="300" data-expected-height="360">
+        <div class="cellOverflowWidth  firstRowFirstColumn" data-offset-x="0" data-offset-y="80" data-expected-width="180" data-expected-height="40"></div>
+        <div class="cellWithNoOverflow secondRowFirstColumn justifySelfCenterTrue" data-offset-x="50" data-offset-y="200" data-expected-width="50" data-expected-height="40"></div>
+        <div class="cellWithNoOverflow thirdRowFirstColumn" data-offset-x="100" data-offset-y="320" data-expected-width="50" data-expected-height="40"></div>
+        <div class="cellWithNoOverflow firstRowSecondColumn" data-offset-x="250" data-offset-y="80" data-expected-width="50" data-expected-height="40"></div>
+        <div class="cellOverflowWidth  secondRowSecondColumn" data-offset-x="150" data-offset-y="200" data-expected-width="180" data-expected-height="40"></div>
+        <div class="cellWithNoOverflow thirdRowSecondColumn" data-offset-x="250" data-offset-y="320" data-expected-width="50" data-expected-height="40"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid alignItemsEndSafe justifyItemsEndSafe" data-expected-width="300" data-expected-height="360">
+        <div class="cellOverflowHeight firstRowFirstColumn" data-offset-x="100" data-offset-y="0" data-expected-width="50" data-expected-height="150"></div>
+        <div class="cellWithNoOverflow secondRowFirstColumn" data-offset-x="100" data-offset-y="200" data-expected-width="50" data-expected-height="40"></div>
+        <div class="cellWithNoOverflow thirdRowFirstColumn" data-offset-x="100" data-offset-y="320" data-expected-width="50" data-expected-height="40"></div>
+        <div class="cellWithNoOverflow firstRowSecondColumn alignSelfCenterTrue" data-offset-x="250" data-offset-y="40" data-expected-width="50" data-expected-height="40"></div>
+        <div class="cellOverflowHeight secondRowSecondColumn" data-offset-x="250" data-offset-y="120" data-expected-width="50" data-expected-height="150"></div>
+        <div class="cellWithNoOverflow thirdRowSecondColumn" data-offset-x="250" data-offset-y="320" data-expected-width="50" data-expected-height="40"></div>
+    </div>
+</div>
+
+</body>
+</html>

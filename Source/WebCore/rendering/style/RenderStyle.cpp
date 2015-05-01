@@ -39,6 +39,7 @@
 #include "StyleInheritedData.h"
 #include "StyleResolver.h"
 #include "StyleScrollSnapPoints.h"
+#include "StyleSelfAlignmentData.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 #include <algorithm>
@@ -171,19 +172,40 @@ ALWAYS_INLINE RenderStyle::RenderStyle(const RenderStyle& o)
 {
 }
 
-ItemPosition RenderStyle::resolveAlignment(const RenderStyle& parentStyle, const RenderStyle& childStyle, ItemPosition resolvedAutoPositionForRenderer)
+static inline StyleSelfAlignmentData resolveAlignmentData(const RenderStyle& parentStyle, const RenderStyle& childStyle, ItemPosition resolvedAutoPositionForRenderer)
 {
     // The auto keyword computes to the parent's align-items computed value, or to "stretch", if not set or "auto".
     if (childStyle.alignSelfPosition() == ItemPositionAuto)
-        return (parentStyle.alignItemsPosition() == ItemPositionAuto) ? resolvedAutoPositionForRenderer : parentStyle.alignItemsPosition();
-    return childStyle.alignSelfPosition();
+        return (parentStyle.alignItemsPosition() == ItemPositionAuto) ? StyleSelfAlignmentData(resolvedAutoPositionForRenderer, OverflowAlignmentDefault) : parentStyle.alignItems();
+    return childStyle.alignSelf();
 }
 
-ItemPosition RenderStyle::resolveJustification(const RenderStyle& parentStyle, const RenderStyle& childStyle, ItemPosition resolvedAutoPositionForLayoutObject)
+static inline StyleSelfAlignmentData resolveJustificationData(const RenderStyle& parentStyle, const RenderStyle& childStyle, ItemPosition resolvedAutoPositionForRenderer)
 {
+    // The auto keyword computes to the parent's justify-items computed value, or to "stretch", if not set or "auto".
     if (childStyle.justifySelfPosition() == ItemPositionAuto)
-        return (parentStyle.justifyItemsPosition() == ItemPositionAuto) ? resolvedAutoPositionForLayoutObject : parentStyle.justifyItemsPosition();
-    return childStyle.justifySelfPosition();
+        return (parentStyle.justifyItemsPosition() == ItemPositionAuto) ? StyleSelfAlignmentData(resolvedAutoPositionForRenderer, OverflowAlignmentDefault) : parentStyle.justifyItems();
+    return childStyle.justifySelf();
+}
+
+ItemPosition RenderStyle::resolveAlignment(const RenderStyle& parentStyle, const RenderStyle& childStyle, ItemPosition resolvedAutoPositionForRenderer)
+{
+    return resolveAlignmentData(parentStyle, childStyle, resolvedAutoPositionForRenderer).position();
+}
+
+OverflowAlignment RenderStyle::resolveAlignmentOverflow(const RenderStyle& parentStyle, const RenderStyle& childStyle)
+{
+    return resolveJustificationData(parentStyle, childStyle, ItemPositionStretch).overflow();
+}
+
+ItemPosition RenderStyle::resolveJustification(const RenderStyle& parentStyle, const RenderStyle& childStyle, ItemPosition resolvedAutoPositionForRenderer)
+{
+    return resolveJustificationData(parentStyle, childStyle, resolvedAutoPositionForRenderer).position();
+}
+
+OverflowAlignment RenderStyle::resolveJustificationOverflow(const RenderStyle& parentStyle, const RenderStyle& childStyle)
+{
+    return resolveJustificationData(parentStyle, childStyle, ItemPositionStretch).overflow();
 }
 
 void RenderStyle::inheritFrom(const RenderStyle* inheritParent, IsAtShadowBoundary isAtShadowBoundary)
