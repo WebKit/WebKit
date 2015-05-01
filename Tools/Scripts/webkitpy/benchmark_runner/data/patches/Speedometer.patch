@@ -11,10 +11,10 @@ index 419b9f2..0b04c69 100644
  </head>
  <body>
 diff --git a/Speedometer/resources/benchmark-report.js b/Speedometer/resources/benchmark-report.js
-index c4b4c64..c4453cd 100644
+index c4b4c64..874f597 100644
 --- a/Speedometer/resources/benchmark-report.js
 +++ b/Speedometer/resources/benchmark-report.js
-@@ -1,16 +1,9 @@
+@@ -1,30 +1,26 @@
  // This file can be customized to report results as needed.
  
  (function () {
@@ -28,10 +28,32 @@ index c4b4c64..c4453cd 100644
 -    scriptElement.src = '../resources/runner.js';
 -    document.head.appendChild(scriptElement);
 -
-     var styleElement = document.createElement('style');
-     styleElement.textContent = 'pre { padding-top: 600px; }';
-     document.head.appendChild(styleElement);
-@@ -36,10 +29,8 @@
+-    var styleElement = document.createElement('style');
+-    styleElement.textContent = 'pre { padding-top: 600px; }';
+-    document.head.appendChild(styleElement);
+-
++    showSection('running')
+     var createTest;
+     var valuesByIteration = new Array;
++    var timeValues = new Array;
+ 
+     window.onload = function () {
+-        document.body.removeChild(document.querySelector('main'));
+         startBenchmark();
+     }
+ 
+     window.benchmarkClient = {
+         iterationCount: 5, // Use 4 different instances of DRT/WTR to run 5 iterations.
++        willAddTestFrame: function (frame) {
++            var main = document.querySelector('main');
++            var style = getComputedStyle(main);
++            frame.style.left = main.offsetLeft + parseInt(style.borderLeftWidth) + parseInt(style.paddingLeft) + 'px';
++            frame.style.top = main.offsetTop + parseInt(style.borderTopWidth) + parseInt(style.paddingTop) + 'px';
++        },
+         willStartFirstIteration: function (iterationCount) {
+             createTest = function (name, aggregator, isLastTest) {
+                 return {
+@@ -36,15 +32,12 @@
                      name: name,
                      aggregator: aggregator};
              }
@@ -40,22 +62,28 @@ index c4b4c64..c4453cd 100644
          didRunSuites: function (measuredValues) {
 -            PerfTestRunner.measureValueAsync(measuredValues.total);
              valuesByIteration.push(measuredValues.tests);
++            timeValues.push(measuredValues.total);
          },
          didFinishLastIteration: function () {
-@@ -52,19 +43,30 @@
+-            document.head.removeChild(document.querySelector('style'));
+-
+             var measuredValuesByFullName = {};
+             function addToMeasuredValue(value, fullName, aggregator) {
+                 var values = measuredValuesByFullName[fullName] || new Array;
+@@ -52,19 +45,30 @@
                  values.push(value);
                  values.aggregator = aggregator;
              }
 -
 +            var dict = {}
++            var scores= timeValues.map(computeScore);
 +            function addToDictionaryValue(value, suiteName, testName, subtestName) {
-+                dict["Speedometer"] = dict["Speedometer"] || { "metrics" : { "Time" : [ "Total", ] }, "tests" : {}};
++                dict["Speedometer"] = dict["Speedometer"] || { "metrics" : { "Time" : [ "Total", ], "Score": { "current" : [scores] } }, "tests" : {}};
 +                dict["Speedometer"]["tests"][suiteName] = dict["Speedometer"]["tests"][suiteName] || {"metrics" : { "Time" : [ "Total", ] }, "tests" : {}};
 +                dict["Speedometer"]["tests"][suiteName]["tests"][testName] = dict["Speedometer"]["tests"][suiteName]["tests"][testName] || { "metrics" : { "Time" : [ "Total", ] }, "tests" : {}};
 +                dict["Speedometer"]["tests"][suiteName]["tests"][testName]["tests"][subtestName] = dict["Speedometer"]["tests"][suiteName]["tests"][testName]["tests"][subtestName] || { "metrics" : { "Time" : { "current" : [[]] } }};
 +                dict["Speedometer"]["tests"][suiteName]["tests"][testName]["tests"][subtestName]["metrics"]["Time"]["current"][0].push(value);
 +            }
-+            
              valuesByIteration.forEach(function (measuredValues) {
                  for (var suiteName in measuredValues) {
                      var suite = measuredValues[suiteName];
@@ -75,7 +103,7 @@ index c4b4c64..c4453cd 100644
  
              var fullNames = new Array;
              for (var fullName in measuredValuesByFullName)
-@@ -72,8 +74,22 @@
+@@ -72,8 +76,22 @@
  
              for (var i = 0; i < fullNames.length; i++) {
                  var values = measuredValuesByFullName[fullNames[i]];
@@ -83,11 +111,11 @@ index c4b4c64..c4453cd 100644
              }
 +            var xhr = new XMLHttpRequest();
 +            xhr.open("POST", "/report");
-+ 
++
 +            xhr.setRequestHeader("Content-type", "application/json");
 +            xhr.setRequestHeader("Content-length", results.length);
 +            xhr.setRequestHeader("Connection", "close");
-+ 
++
 +            xhr.onreadystatechange = function() {
 +                if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
 +                    var closeRequest = new XMLHttpRequest();

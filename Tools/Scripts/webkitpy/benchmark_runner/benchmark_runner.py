@@ -96,9 +96,7 @@ class BenchmarkRunner(object):
         assert(isinstance(a, type(b)))
         argType = type(a)
         # special handle for list type, and should be handle before equal check
-        if argType == types.ListType:
-            return a + b
-        if a == b:
+        if argType == types.ListType and len(a) and (type(a[0]) == types.StringType or type(a[0]) == types.UnicodeType):
             return a
         if argType == types.DictType:
             result = {}

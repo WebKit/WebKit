@@ -52,7 +52,7 @@ window.benchmarkClient = {
         function totalTimeInDisplayUnit(time) {
             if (displayUnit == 'ms')
                 return time;
-            return 60 * 1000 * suitesCount / time;
+            return computerScore(time);
         }
 
         function sigFigFromPercentDelta(percentDelta) {
@@ -156,6 +156,10 @@ function startBenchmark() {
     benchmarkClient.suitesCount = enabledSuites.length;
     var runner = new BenchmarkRunner(Suites, benchmarkClient);
     runner.runMultipleIterations(benchmarkClient.iterationCount);
+}
+
+function computeScore(time) {
+    return 60 * 1000 * benchmarkClient.suitesCount / time;
 }
 
 function showSection(sectionIdentifier, pushState) {
