@@ -1,3 +1,23 @@
+2015-04-29  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Remove FrameContentView.js
+        https://bugs.webkit.org/show_bug.cgi?id=144415
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Images/DOMTree.svg: Removed.
+        * UserInterface/Images/SourceCode.svg: Removed.
+        * UserInterface/Main.html: Removed FrameContentView.js.
+        * UserInterface/Views/FrameContentView.js: Removed.
+        * UserInterface/Views/PathComponentIcons.css:
+        (.source-code-icon .icon): Deleted.
+        (.dom-tree-icon .icon): Deleted.
+
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype._mainFrameMainResourceDidChange.delayedWork):
+        (WebInspector.ResourceSidebarPanel.prototype._mainFrameMainResourceDidChange):
+        Simplify the code here. We don't need these checks now with tabs and the Storage tab.
+
 2015-04-30  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION: Web Inspector: Console message repeat count overlapped by icon

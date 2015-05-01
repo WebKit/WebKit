@@ -179,20 +179,13 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
 
     _mainFrameMainResourceDidChange(event)
     {
-        var wasShowingResourceSidebar = this.selected;
-        var currentContentView = this.contentBrowser.currentContentView;
-        var wasShowingResourceContentView = currentContentView instanceof WebInspector.ResourceContentView
-            || currentContentView instanceof WebInspector.ResourceClusterContentView
-            || currentContentView instanceof WebInspector.FrameContentView
-            || currentContentView instanceof WebInspector.ScriptContentView;
-
         this.contentBrowser.contentViewContainer.closeAllContentViews();
 
         function delayedWork()
         {
-            // Show the main frame since there is no content view showing or we were showing a resource before.
+            // Show the main frame since there is no content view showing.
             // Cookie restoration will attempt to re-select the resource we were showing.
-            if (!this.contentBrowser.currentContentView || wasShowingResourceContentView) {
+            if (!this.contentBrowser.currentContentView) {
                 // NOTE: This selection, during provisional loading, won't be saved, so it is
                 // safe to do and not-clobber cookie restoration.
                 this.showDefaultContentViewForTreeElement(this._mainFrameTreeElement);
