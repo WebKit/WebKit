@@ -369,6 +369,10 @@ WK_EXPORT bool WKPreferencesGetAntialiasedFontDilationEnabled(WKPreferencesRef p
 WK_EXPORT void WKPreferencesSetJavaScriptRuntimeFlags(WKPreferencesRef preferences, WKJavaScriptRuntimeFlagSet javascriptRuntimeFlagSet);
 WK_EXPORT WKJavaScriptRuntimeFlagSet WKPreferencesGetJavaScriptRuntimeFlags(WKPreferencesRef preferences);
 
+// Defaults to true.
+WK_EXPORT void WKPreferencesSetMetaRefreshEnabled(WKPreferencesRef preferences, bool enabled);
+WK_EXPORT bool WKPreferencesGetMetaRefreshEnabled(WKPreferencesRef preferences);
+
 #ifdef __cplusplus
 }
 #endif

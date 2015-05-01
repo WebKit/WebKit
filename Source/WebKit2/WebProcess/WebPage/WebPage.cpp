@@ -2757,6 +2757,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setInteractiveFormValidationEnabled(store.getBoolValueForKey(WebPreferencesKey::interactiveFormValidationEnabledKey()));
     settings.setSpatialNavigationEnabled(store.getBoolValueForKey(WebPreferencesKey::spatialNavigationEnabledKey()));
 
+    settings.setMetaRefreshEnabled(store.getBoolValueForKey(WebPreferencesKey::metaRefreshEnabledKey()));
+
     DatabaseManager::singleton().setIsAvailable(store.getBoolValueForKey(WebPreferencesKey::databasesEnabledKey()));
 
 #if ENABLE(FULLSCREEN_API)

@@ -928,6 +928,8 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setLoadsSiteIconsIgnoringImageLoadingPreference:NO];
     [preferences setFrameFlatteningEnabled:NO];
     [preferences setSpatialNavigationEnabled:NO];
+    [preferences setMetaRefreshEnabled:YES];
+
     if (persistentUserStyleSheetLocation) {
         [preferences setUserStyleSheetLocation:[NSURL URLWithString:(NSString *)(persistentUserStyleSheetLocation.get())]];
         [preferences setUserStyleSheetEnabled:YES];

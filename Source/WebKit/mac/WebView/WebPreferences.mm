@@ -444,6 +444,7 @@ public:
 #endif
         [NSNumber numberWithBool:YES],  WebKitPluginsEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitDatabasesEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitMetaRefreshEnabledPreferenceKey,
 #if PLATFORM(IOS)
         [NSNumber numberWithBool:NO],   WebKitStorageTrackerEnabledPreferenceKey,
 #endif
@@ -2494,6 +2495,16 @@ static NSString *classIBCreatorID = nil;
 - (BOOL)antialiasedFontDilationEnabled
 {
     return [self _boolValueForKey:WebKitAntialiasedFontDilationEnabledKey];
+}
+
+- (void)setMetaRefreshEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitMetaRefreshEnabledPreferenceKey];
+}
+
+- (BOOL)metaRefreshEnabled
+{
+    return [self _boolValueForKey:WebKitMetaRefreshEnabledPreferenceKey];
 }
 
 - (BOOL)javaScriptMarkupEnabled

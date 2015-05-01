@@ -1,3 +1,15 @@
+2015-05-01  Brady Eidson  <beidson@apple.com>
+
+        Add API to disable meta refreshes.
+        <rdar://problem/20333198> and https://bugs.webkit.org/show_bug.cgi?id=144269
+
+        Reviewed by Alexey Proskuryakov.
+
+        * loader/meta-refresh-disabled-expected.txt: Added.
+        * loader/meta-refresh-disabled.html: Added.
+        * loader/resources/notify-done.html: Added.
+        * platform/win/TestExpectations:
+
 2015-05-01  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed gardening for WebKitGTK+

@@ -1,3 +1,21 @@
+2015-05-01  Brady Eidson  <beidson@apple.com>
+
+        Add API to disable meta refreshes.
+        <rdar://problem/20333198> and https://bugs.webkit.org/show_bug.cgi?id=144269
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a preference to enable/disable meta refreshes, enabled by default.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences setMetaRefreshEnabled:]):
+        (-[WebPreferences metaRefreshEnabled]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2015-04-30  Jon Davis  <jond@apple.com>
 
         Web Inspector: console should show an icon for console.info() messages

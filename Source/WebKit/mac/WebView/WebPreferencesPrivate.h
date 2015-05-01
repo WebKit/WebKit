@@ -439,6 +439,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setAntialiasedFontDilationEnabled:(BOOL)flag;
 - (BOOL)antialiasedFontDilationEnabled;
 
+- (void)setMetaRefreshEnabled:(BOOL)flag;
+- (BOOL)metaRefreshEnabled;
+
 @property (nonatomic) BOOL javaScriptMarkupEnabled;
 
 #if TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED < 80000
