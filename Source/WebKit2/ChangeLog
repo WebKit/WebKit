@@ -1,3 +1,48 @@
+2015-05-01  Antti Koivisto  <antti@apple.com>
+
+        Remove network process load serialization code
+        https://bugs.webkit.org/show_bug.cgi?id=144448
+
+        Reviewed by Alexey Proskuryakov.
+
+        TestRunner.setSerializeHTTPLoads is used by a few tests but it is unnecessary
+        with network process. We don't reorder loads anyway so test results are consistent.
+        There or no other clients for this code.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::NetworkConnectionToWebProcess):
+        (WebKit::NetworkConnectionToWebProcess::setSerialLoadingEnabled): Deleted.
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        (WebKit::NetworkConnectionToWebProcess::isSerialLoadingEnabled): Deleted.
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::getNetworkProcessStatistics):
+        * NetworkProcess/NetworkResourceLoadScheduler.cpp:
+        (WebKit::NetworkResourceLoadScheduler::scheduleLoader):
+        (WebKit::NetworkResourceLoadScheduler::removeLoader):
+        (WebKit::NetworkResourceLoadScheduler::loadsPendingCount): Deleted.
+        * NetworkProcess/NetworkResourceLoadScheduler.h:
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetTabKeyCyclesThroughElements):
+        (WKBundleSetSerialLoadingEnabled): Deleted.
+        (WKBundleDispatchPendingLoadRequests): Deleted.
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setSerialLoadingEnabled): Deleted.
+        (WebKit::InjectedBundle::dispatchPendingLoadRequests): Deleted.
+
+            Remove also this as it does nothing.
+
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::WebResourceLoadScheduler):
+        (WebKit::WebResourceLoadScheduler::suspendPendingRequests):
+        (WebKit::WebResourceLoadScheduler::resumePendingRequests):
+
+            Remove implementation, it does nothing.
+
+        (WebKit::WebResourceLoadScheduler::setSerialLoadingEnabled):
+        * WebProcess/Network/WebResourceLoadScheduler.h:
+
 2015-04-30  Timothy Horton  <timothy_horton@apple.com>
 
         Remove long-deprecated unused WKView minimumLayoutWidth properties

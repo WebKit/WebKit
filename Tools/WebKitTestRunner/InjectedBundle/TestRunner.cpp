@@ -645,12 +645,12 @@ void TestRunner::setTabKeyCyclesThroughElements(bool enabled)
 
 void TestRunner::setSerializeHTTPLoads()
 {
-    WKBundleSetSerialLoadingEnabled(InjectedBundle::singleton().bundle(), true);
+    // WK2 doesn't reorder loads.
 }
 
 void TestRunner::dispatchPendingLoadRequests()
 {
-    WKBundleDispatchPendingLoadRequests(InjectedBundle::singleton().bundle());
+    // WK2 doesn't keep pending requests.
 }
 
 void TestRunner::setCacheModel(int model)

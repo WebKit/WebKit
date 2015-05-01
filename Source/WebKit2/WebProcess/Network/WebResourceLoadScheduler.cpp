@@ -60,7 +60,6 @@ namespace WebKit {
 
 WebResourceLoadScheduler::WebResourceLoadScheduler()
     : m_internallyFailedLoadTimer(RunLoop::main(), this, &WebResourceLoadScheduler::internallyFailedLoadTimerFired)
-    , m_suspendPendingRequestsCount(0)
 {
 }
 
@@ -252,18 +251,17 @@ void WebResourceLoadScheduler::servePendingRequests(ResourceLoadPriority)
 
 void WebResourceLoadScheduler::suspendPendingRequests()
 {
-    ++m_suspendPendingRequestsCount;
+    // Network process does keep requests in pending state.
 }
 
 void WebResourceLoadScheduler::resumePendingRequests()
 {
-    ASSERT(m_suspendPendingRequestsCount);
-    --m_suspendPendingRequestsCount;
+    // Network process does keep requests in pending state.
 }
 
-void WebResourceLoadScheduler::setSerialLoadingEnabled(bool enabled)
+void WebResourceLoadScheduler::setSerialLoadingEnabled(bool)
 {
-    WebProcess::singleton().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::SetSerialLoadingEnabled(enabled), Messages::NetworkConnectionToWebProcess::SetSerialLoadingEnabled::Reply(), 0);
+    // Network process does not reorder loads.
 }
 
 void WebResourceLoadScheduler::networkProcessCrashed()

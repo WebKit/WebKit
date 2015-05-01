@@ -1,3 +1,16 @@
+2015-05-01  Antti Koivisto  <antti@apple.com>
+
+        Remove network process load serialization code
+        https://bugs.webkit.org/show_bug.cgi?id=144448
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setSerializeHTTPLoads):
+        (WTR::TestRunner::dispatchPendingLoadRequests):
+
 2015-05-01  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] Add libhyphen-dev to the build dependencies

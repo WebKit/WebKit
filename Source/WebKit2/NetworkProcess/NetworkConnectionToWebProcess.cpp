@@ -53,7 +53,6 @@ PassRefPtr<NetworkConnectionToWebProcess> NetworkConnectionToWebProcess::create(
 }
 
 NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(IPC::Connection::Identifier connectionIdentifier)
-    : m_serialLoadingEnabled(false)
 {
     m_connection = IPC::Connection::createServerConnection(connectionIdentifier, *this, RunLoop::main());
     m_connection->open();
@@ -149,11 +148,6 @@ void NetworkConnectionToWebProcess::setDefersLoading(ResourceLoadIdentifier iden
         return;
 
     loader->setDefersLoading(defers);
-}
-
-void NetworkConnectionToWebProcess::setSerialLoadingEnabled(bool enabled)
-{
-    m_serialLoadingEnabled = enabled;
 }
 
 static NetworkStorageSession& storageSession(SessionID sessionID)

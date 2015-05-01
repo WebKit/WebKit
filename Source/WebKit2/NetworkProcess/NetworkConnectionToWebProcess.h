@@ -53,8 +53,6 @@ public:
 
     IPC::Connection* connection() const { return m_connection.get(); }
 
-    bool isSerialLoadingEnabled() const { return m_serialLoadingEnabled; }
-
     void didCleanupResourceLoader(NetworkResourceLoader&);
 
 private:
@@ -78,7 +76,6 @@ private:
     void removeLoadIdentifier(ResourceLoadIdentifier);
     void setDefersLoading(ResourceLoadIdentifier, bool);
     void crossOriginRedirectReceived(ResourceLoadIdentifier, const WebCore::URL& redirectURL);
-    void setSerialLoadingEnabled(bool);
     void startDownload(WebCore::SessionID, uint64_t downloadID, const WebCore::ResourceRequest&);
     void convertMainResourceLoadToDownload(uint64_t mainResourceLoadIdentifier, uint64_t downloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
@@ -99,8 +96,6 @@ private:
     RefPtr<IPC::Connection> m_connection;
 
     HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader>> m_networkResourceLoaders;
-
-    bool m_serialLoadingEnabled;
 };
 
 } // namespace WebKit

@@ -46,14 +46,12 @@ public:
     void removeLoader(NetworkResourceLoader*);
 
     // For NetworkProcess statistics reporting.
-    uint64_t loadsPendingCount() const;
     uint64_t loadsActiveCount() const;
 
 private:
     static void platformInitializeNetworkSettings();
 
     HashSet<RefPtr<NetworkResourceLoader>> m_activeLoaders;
-    Vector<RefPtr<NetworkResourceLoader>> m_pendingSerialLoaders;
 };
 
 } // namespace WebKit

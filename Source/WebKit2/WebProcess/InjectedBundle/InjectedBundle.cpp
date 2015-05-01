@@ -603,11 +603,6 @@ void InjectedBundle::setTabKeyCyclesThroughElements(WebPage* page, bool enabled)
     page->corePage()->setTabKeyCyclesThroughElements(enabled);
 }
 
-void InjectedBundle::setSerialLoadingEnabled(bool enabled)
-{
-    resourceLoadScheduler()->setSerialLoadingEnabled(enabled);
-}
-
 void InjectedBundle::setCSSAnimationTriggersEnabled(bool enabled)
 {
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
@@ -633,11 +628,6 @@ void InjectedBundle::setCSSCompositingEnabled(bool enabled)
 #else
     UNUSED_PARAM(enabled);
 #endif
-}
-
-void InjectedBundle::dispatchPendingLoadRequests()
-{
-    // FIXME: This should be removed along with the bundle API.
 }
 
 } // namespace WebKit

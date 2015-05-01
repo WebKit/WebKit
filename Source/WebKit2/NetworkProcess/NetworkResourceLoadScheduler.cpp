@@ -31,10 +31,6 @@ void NetworkResourceLoadScheduler::scheduleLoader(PassRefPtr<NetworkResourceLoad
     if (!loader->connectionToWebProcess())
         return;
 
-    if (loader->connectionToWebProcess()->isSerialLoadingEnabled() && !m_activeLoaders.isEmpty()) {
-        m_pendingSerialLoaders.append(loader);
-        return;
-    }
     m_activeLoaders.add(loader.get());
 
     loader->start();
@@ -47,14 +43,6 @@ void NetworkResourceLoadScheduler::removeLoader(NetworkResourceLoader* loader)
     LOG(NetworkScheduling, "(NetworkProcess) NetworkResourceLoadScheduler::removeLoader resource '%s'", loader->originalRequest().url().string().utf8().data());
 
     m_activeLoaders.remove(loader);
-
-    while (!m_pendingSerialLoaders.isEmpty() && m_activeLoaders.isEmpty())
-        scheduleLoader(m_pendingSerialLoaders.takeLast());
-}
-
-uint64_t NetworkResourceLoadScheduler::loadsPendingCount() const
-{
-    return m_pendingSerialLoaders.size();
 }
 
 uint64_t NetworkResourceLoadScheduler::loadsActiveCount() const

@@ -72,9 +72,6 @@ private:
     RunLoop::Timer<WebResourceLoadScheduler> m_internallyFailedLoadTimer;
     
     HashMap<unsigned long, RefPtr<WebResourceLoader>> m_webResourceLoaders;
-    
-    unsigned m_suspendPendingRequestsCount;
-
 };
 
 } // namespace WebKit
