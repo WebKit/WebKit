@@ -77,8 +77,6 @@
 
 + (void)hideWordDefinitionWindow;
 
-@property (readwrite) CGFloat minimumLayoutWidth;
-@property (readwrite) CGFloat minimumWidthForAutoLayout;
 @property (readwrite) NSSize minimumSizeForAutoLayout;
 @property (readwrite) BOOL shouldClipToVisibleRect;
 @property (readwrite) BOOL shouldExpandToViewHeightForAutoLayout;

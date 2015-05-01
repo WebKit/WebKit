@@ -1,3 +1,18 @@
+2015-04-30  Timothy Horton  <timothy_horton@apple.com>
+
+        Remove long-deprecated unused WKView minimumLayoutWidth properties
+        https://bugs.webkit.org/show_bug.cgi?id=144480
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView minimumLayoutWidth]): Deleted.
+        (-[WKView setMinimumLayoutWidth:]): Deleted.
+        (-[WKView minimumWidthForAutoLayout]): Deleted.
+        (-[WKView setMinimumWidthForAutoLayout:]): Deleted.
+        These were replaced with minimumSizeForAutoLayout long ago.
+
 2015-04-30  Simon Fraser  <simon.fraser@apple.com>
 
         Fixed elements end up in the middle of the view with pageScale < 1

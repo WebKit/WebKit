@@ -4149,40 +4149,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [getLULookupDefinitionModuleClass() hideDefinition];
 }
 
-- (CGFloat)minimumLayoutWidth
-{
-    static BOOL loggedDeprecationWarning = NO;
-
-    if (!loggedDeprecationWarning) {
-        NSLog(@"Please use minimumSizeForAutoLayout instead of minimumLayoutWidth.");
-        loggedDeprecationWarning = YES;
-    }
-
-    return self.minimumSizeForAutoLayout.width;
-}
-
-- (void)setMinimumLayoutWidth:(CGFloat)minimumLayoutWidth
-{
-    static BOOL loggedDeprecationWarning = NO;
-
-    if (!loggedDeprecationWarning) {
-        NSLog(@"Please use setMinimumSizeForAutoLayout: instead of setMinimumLayoutWidth:.");
-        loggedDeprecationWarning = YES;
-    }
-
-    [self setMinimumWidthForAutoLayout:minimumLayoutWidth];
-}
-
-- (CGFloat)minimumWidthForAutoLayout
-{
-    return self.minimumSizeForAutoLayout.width;
-}
-
-- (void)setMinimumWidthForAutoLayout:(CGFloat)minimumLayoutWidth
-{
-    self.minimumSizeForAutoLayout = NSMakeSize(minimumLayoutWidth, self.minimumSizeForAutoLayout.height);
-}
-
 - (NSSize)minimumSizeForAutoLayout
 {
     return _data->_page->minimumLayoutSize();
