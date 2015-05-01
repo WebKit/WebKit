@@ -1,3 +1,55 @@
+2015-05-01  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] REGRESSION(183368): It made editing tests assert
+        https://bugs.webkit.org/show_bug.cgi?id=144447
+
+        Reviewed by Chris Fleizach.
+
+        Don't notify platforms of editing actions of type EditActionUnspecified.
+        If we don't know what the action is, platform accessibility APIs certainly
+        won't.
+
+        Add AXTextEditTypeAttributesChange and AXTextAttributesChanged as catch-alls
+        for formatting changes. ATK lacks finely-grained signals through which to
+        specify which text attributes have changed. If other platforms have such
+        signals, new types can always be added.
+
+        Don't post an accessible replacement notification for AXTextEditTypeCut.
+        The notification is handled by DeleteSelectionCommand. It is possible for
+        white space to be inserted in preparation for a cut which was triggering
+        a not-reached assert, but insertion of whitespace in preparation for a
+        cut does not seem notification-worthy.
+
+        Treat AXTextEditTypeDictation the same as other insertion types (insert,
+        paste, typing) with respect to replacement notifications.
+
+        No new tests. The hundreds of editing tests that had been crashing seem sufficient.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::showIntent):
+        (WebCore::AXObjectCache::textChangeForEditType):
+        * accessibility/AXObjectCache.h:
+        * accessibility/AXTextStateChangeIntent.h:
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::nodeTextChangePlatformNotification):
+        * editing/AppendNodeCommand.cpp:
+        (WebCore::AppendNodeCommand::doApply):
+        (WebCore::AppendNodeCommand::doUnapply):
+        * editing/DeleteFromTextNodeCommand.cpp:
+        (WebCore::DeleteFromTextNodeCommand::doApply):
+        (WebCore::DeleteFromTextNodeCommand::doUnapply):
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::applyEditType):
+        (WebCore::EditCommand::unapplyEditType):
+        * editing/InsertIntoTextNodeCommand.cpp:
+        (WebCore::InsertIntoTextNodeCommand::doApply):
+        (WebCore::InsertIntoTextNodeCommand::doUnapply):
+        * editing/InsertNodeBeforeCommand.cpp:
+        (WebCore::InsertNodeBeforeCommand::doApply):
+        (WebCore::InsertNodeBeforeCommand::doUnapply):
+        * editing/ReplaceInsertIntoTextNodeCommand.cpp:
+        (WebCore::ReplaceInsertIntoTextNodeCommand::notifyAccessibilityForTextChange):
+
 2015-05-01  Brady Eidson  <beidson@apple.com>
 
         Add API to disable meta refreshes.

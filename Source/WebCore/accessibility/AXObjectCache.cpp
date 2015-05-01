@@ -916,6 +916,9 @@ void AXObjectCache::showIntent(const AXTextStateChangeIntent &intent)
         case AXTextEditTypePaste:
             dataLog("Paste");
             break;
+        case AXTextEditTypeAttributesChange:
+            dataLog("AttributesChange");
+            break;
         }
         break;
     case AXTextStateChangeTypeSelectionMove:
@@ -1342,6 +1345,8 @@ AXTextChange AXObjectCache::textChangeForEditType(AXTextEditType type)
     case AXTextEditTypeTyping:
     case AXTextEditTypePaste:
         return AXTextInserted;
+    case AXTextEditTypeAttributesChange:
+        return AXTextAttributesChanged;
     case AXTextEditTypeUnknown:
         break;
     }

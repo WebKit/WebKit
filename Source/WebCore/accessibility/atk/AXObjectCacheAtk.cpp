@@ -274,6 +274,9 @@ void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject* obje
     case AXTextDeleted:
         detail = "text-remove";
         break;
+    case AXTextAttributesChanged:
+        detail = "text-attributes-changed";
+        break;
     }
 
     String textToEmit = text;

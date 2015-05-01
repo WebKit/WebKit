@@ -40,21 +40,20 @@ ReplaceInsertIntoTextNodeCommand::ReplaceInsertIntoTextNodeCommand(RefPtr<Text>&
 
 void ReplaceInsertIntoTextNodeCommand::notifyAccessibilityForTextChange(Node* node, AXTextEditType type, const String& text, const VisiblePosition& position)
 {
-    if (!AXObjectCache::accessibilityEnabled())
+    if (!shouldPostAccessibilityNotification())
         return;
     AXObjectCache* cache = document().existingAXObjectCache();
     if (!cache)
         return;
     switch (type) {
-    case AXTextEditTypeUnknown:
-        break;
+    case AXTextEditTypeAttributesChange:
     case AXTextEditTypeCut:
-    case AXTextEditTypeDictation:
-        ASSERT_NOT_REACHED();
+    case AXTextEditTypeUnknown:
         break;
     case AXTextEditTypeDelete:
         cache->postTextReplacementNotification(node, AXTextEditTypeDelete, text, AXTextEditTypeInsert, m_deletedText, position);
         break;
+    case AXTextEditTypeDictation:
     case AXTextEditTypeInsert:
     case AXTextEditTypePaste:
     case AXTextEditTypeTyping:

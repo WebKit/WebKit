@@ -63,6 +63,8 @@ public:
     AXTextEditType applyEditType() const;
     AXTextEditType unapplyEditType() const;
 
+    bool shouldPostAccessibilityNotification() const;
+
 protected:
     explicit EditCommand(Document&, EditAction = EditActionUnspecified);
     EditCommand(Document&, const VisibleSelection&, const VisibleSelection&);

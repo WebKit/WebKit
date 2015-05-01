@@ -129,6 +129,36 @@ AXTextEditType EditCommand::applyEditType() const
         return AXTextEditTypePaste;
     case EditActionTyping:
         return AXTextEditTypeTyping;
+    case EditActionSetColor:
+    case EditActionSetBackgroundColor:
+    case EditActionTurnOffKerning:
+    case EditActionTightenKerning:
+    case EditActionLoosenKerning:
+    case EditActionUseStandardKerning:
+    case EditActionTurnOffLigatures:
+    case EditActionUseStandardLigatures:
+    case EditActionUseAllLigatures:
+    case EditActionRaiseBaseline:
+    case EditActionLowerBaseline:
+    case EditActionSetTraditionalCharacterShape:
+    case EditActionSetFont:
+    case EditActionChangeAttributes:
+    case EditActionAlignLeft:
+    case EditActionAlignRight:
+    case EditActionCenter:
+    case EditActionJustify:
+    case EditActionSetWritingDirection:
+    case EditActionSubscript:
+    case EditActionSuperscript:
+    case EditActionUnderline:
+    case EditActionOutline:
+    case EditActionUnscript:
+    case EditActionBold:
+    case EditActionItalics:
+    case EditActionFormatBlock:
+    case EditActionIndent:
+    case EditActionOutdent:
+        return AXTextEditTypeAttributesChange;
     // Include default case for unhandled EditAction cases.
     default:
         break;
@@ -149,8 +179,15 @@ AXTextEditType EditCommand::unapplyEditType() const
     case AXTextEditTypeDictation:
     case AXTextEditTypePaste:
         return AXTextEditTypeDelete;
+    case AXTextEditTypeAttributesChange:
+        return AXTextEditTypeAttributesChange;
     }
     return AXTextEditTypeUnknown;
+}
+
+bool EditCommand::shouldPostAccessibilityNotification() const
+{
+    return AXObjectCache::accessibilityEnabled() && editingAction() != EditActionUnspecified;
 }
 
 SimpleEditCommand::SimpleEditCommand(Document& document, EditAction editingAction)

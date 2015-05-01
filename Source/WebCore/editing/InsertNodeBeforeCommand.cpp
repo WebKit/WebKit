@@ -26,7 +26,6 @@
 #include "config.h"
 #include "InsertNodeBeforeCommand.h"
 
-#include "AXObjectCache.h"
 #include "Document.h"
 #include "ExceptionCodePlaceholder.h"
 #include "Text.h"
@@ -57,7 +56,7 @@ void InsertNodeBeforeCommand::doApply()
 
     parent->insertBefore(m_insertChild.get(), m_refChild.get(), IGNORE_EXCEPTION);
 
-    if (AXObjectCache::accessibilityEnabled()) {
+    if (shouldPostAccessibilityNotification()) {
         Position position = is<Text>(m_insertChild.get()) ? Position(downcast<Text>(m_insertChild.get()), 0) : createLegacyEditingPosition(m_insertChild.get(), 0);
         notifyAccessibilityForTextChange(m_insertChild.get(), applyEditType(), m_insertChild->nodeValue(), VisiblePosition(position));
     }
@@ -69,7 +68,7 @@ void InsertNodeBeforeCommand::doUnapply()
         return;
 
     // Need to notify this before actually deleting the text
-    if (AXObjectCache::accessibilityEnabled()) {
+    if (shouldPostAccessibilityNotification()) {
         Position position = is<Text>(m_insertChild.get()) ? Position(downcast<Text>(m_insertChild.get()), 0) : createLegacyEditingPosition(m_insertChild.get(), 0);
         notifyAccessibilityForTextChange(m_insertChild.get(), unapplyEditType(), m_insertChild->nodeValue(), VisiblePosition(position));
     }

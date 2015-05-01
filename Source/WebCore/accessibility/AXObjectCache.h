@@ -70,7 +70,7 @@ private:
 };
 
 #if !PLATFORM(COCOA)
-enum AXTextChange { AXTextInserted, AXTextDeleted };
+enum AXTextChange { AXTextInserted, AXTextDeleted, AXTextAttributesChanged };
 #endif
 
 enum PostTarget { TargetElement, TargetObservableParent };

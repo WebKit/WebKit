@@ -42,7 +42,8 @@ enum AXTextEditType {
     AXTextEditTypeTyping, // Insert via typing
     AXTextEditTypeDictation, // Insert via dictation
     AXTextEditTypeCut, // Delete via Cut
-    AXTextEditTypePaste // Insert via Paste
+    AXTextEditTypePaste, // Insert via Paste
+    AXTextEditTypeAttributesChange // Change font, style, alignment, color, etc.
 };
 
 enum AXTextSelectionDirection {

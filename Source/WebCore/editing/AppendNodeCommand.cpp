@@ -52,9 +52,6 @@ static void sendAXTextChangedIgnoringLineBreaks(Node* node, AXTextEditType type)
     if (!node)
         return;
 
-    if (!AXObjectCache::accessibilityEnabled())
-        return;
-
     String text = node->nodeValue();
     // Don't consider linebreaks in this command
     if (text == "\n")
@@ -73,7 +70,8 @@ void AppendNodeCommand::doApply()
 
     m_parent->appendChild(m_node.get(), IGNORE_EXCEPTION);
 
-    sendAXTextChangedIgnoringLineBreaks(m_node.get(), applyEditType());
+    if (shouldPostAccessibilityNotification())
+        sendAXTextChangedIgnoringLineBreaks(m_node.get(), applyEditType());
 }
 
 void AppendNodeCommand::doUnapply()
@@ -82,7 +80,8 @@ void AppendNodeCommand::doUnapply()
         return;
 
     // Need to notify this before actually deleting the text
-    sendAXTextChangedIgnoringLineBreaks(m_node.get(), unapplyEditType());
+    if (shouldPostAccessibilityNotification())
+        sendAXTextChangedIgnoringLineBreaks(m_node.get(), unapplyEditType());
 
     m_node->remove(IGNORE_EXCEPTION);
 }
