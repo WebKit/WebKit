@@ -1,3 +1,12 @@
+2015-04-30  Jon Davis  <jond@apple.com>
+
+        Web Inspector: console should show an icon for console.info() messages
+        https://bugs.webkit.org/show_bug.cgi?id=18530
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/console/console-api-expected.txt:
+
 2015-04-30  Dean Jackson  <dino@apple.com>
 
         -apple-system-font-monospaced-numbers doesn't work on iOS

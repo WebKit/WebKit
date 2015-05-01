@@ -1,3 +1,20 @@
+2015-04-30  Jon Davis  <jond@apple.com>
+
+        Web Inspector: console should show an icon for console.info() messages
+        https://bugs.webkit.org/show_bug.cgi?id=18530
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/ConsoleMessage.cpp:
+        (Inspector::messageLevelValue):
+        * inspector/protocol/Console.json:
+        * runtime/ConsoleClient.cpp:
+        (JSC::appendMessagePrefix):
+        * runtime/ConsolePrototype.cpp:
+        (JSC::ConsolePrototype::finishCreation):
+        (JSC::consoleProtoFuncInfo):
+        * runtime/ConsoleTypes.h:
+
 2015-04-30  Filip Pizlo  <fpizlo@apple.com>
 
         Move all of the branchIs<type> helpers from SpeculativeJIT into AssemblyHelpers

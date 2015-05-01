@@ -163,6 +163,18 @@
     padding-right: 0;
 }
 
+.console-log-level::before {
+    content: url(../Images/Log.svg);
+}
+
+.console-info-level::before {
+    content: url(../Images/Info.svg);
+}
+
+.console-debug-level::before {
+    content: url(../Images/Debug.svg);
+}
+
 .console-error-level::before {
     content: url(../Images/Error.svg);
 }
@@ -175,16 +187,12 @@
     content: url(../Images/UserInputPromptPrevious.svg);
 }
 
-.console-debug-level::before {
-    background-color: blue;
-}
-
-:matches(.console-warning-level, .console-error-level, .console-log-level).console-message {
+:matches(.console-warning-level, .console-error-level, .console-log-level, .console-info-level, .console-debug-level).console-message {
  /* Move non-monospace log/warning/error text up a bit. */
     padding: 3px 12px 3px 20px;
 }
 
-:matches(.console-warning-level, .console-error-level, .console-log-level)::before {
+:matches(.console-warning-level, .console-error-level, .console-log-level, .console-info-level, .console-debug-level)::before {
  /* Re-center log/warning/error icons. */
     padding-top: 1px;
 }

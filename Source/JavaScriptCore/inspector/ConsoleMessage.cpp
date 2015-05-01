@@ -170,6 +170,7 @@ static Inspector::Protocol::Console::ConsoleMessage::Level messageLevelValue(Mes
 {
     switch (level) {
     case MessageLevel::Log: return Inspector::Protocol::Console::ConsoleMessage::Level::Log;
+    case MessageLevel::Info: return Inspector::Protocol::Console::ConsoleMessage::Level::Info;
     case MessageLevel::Warning: return Inspector::Protocol::Console::ConsoleMessage::Level::Warning;
     case MessageLevel::Error: return Inspector::Protocol::Console::ConsoleMessage::Level::Error;
     case MessageLevel::Debug: return Inspector::Protocol::Console::ConsoleMessage::Level::Debug;

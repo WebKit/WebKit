@@ -50,6 +50,10 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
             this._element.classList.add("console-log-level");
             this._element.setAttribute("data-labelprefix", WebInspector.UIString("Log: "));
             break;
+        case WebInspector.ConsoleMessage.MessageLevel.Info:
+            this._element.classList.add("console-info-level");
+            this._element.setAttribute("data-labelprefix", WebInspector.UIString("Info: "));
+            break;
         case WebInspector.ConsoleMessage.MessageLevel.Debug:
             this._element.classList.add("console-debug-level");
             this._element.setAttribute("data-labelprefix", WebInspector.UIString("Debug: "));
@@ -743,6 +747,8 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
         switch (this._message.level) {
         case WebInspector.ConsoleMessage.MessageLevel.Log:
             return "Log";
+        case WebInspector.ConsoleMessage.MessageLevel.Info:
+            return "Info";
         case WebInspector.ConsoleMessage.MessageLevel.Warning:
             return "Warning";
         case WebInspector.ConsoleMessage.MessageLevel.Debug:

@@ -169,6 +169,7 @@ extern NSString *WebConsoleMessageOtherMessageSource;
 // Message Levels.
 extern NSString *WebConsoleMessageDebugMessageLevel;
 extern NSString *WebConsoleMessageLogMessageLevel;
+extern NSString *WebConsoleMessageInfoMessageLevel;
 extern NSString *WebConsoleMessageWarningMessageLevel;
 extern NSString *WebConsoleMessageErrorMessageLevel;
 

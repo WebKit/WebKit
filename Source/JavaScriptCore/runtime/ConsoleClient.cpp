@@ -105,6 +105,9 @@ static void appendMessagePrefix(StringBuilder& builder, MessageSource source, Me
     case MessageLevel::Log:
         levelString = "LOG";
         break;
+    case MessageLevel::Info:
+        levelString = "INFO";
+        break;
     case MessageLevel::Warning:
         levelString = "WARN";
         break;

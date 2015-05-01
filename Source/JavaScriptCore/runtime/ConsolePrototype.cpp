@@ -41,6 +41,7 @@ const ClassInfo ConsolePrototype::s_info = { "ConsolePrototype", &Base::s_info, 
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncDebug(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncError(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncLog(ExecState*);
+static EncodedJSValue JSC_HOST_CALL consoleProtoFuncInfo(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncWarn(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncClear(ExecState*);
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncDir(ExecState*);
@@ -70,7 +71,7 @@ void ConsolePrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_FUNCTION("debug", consoleProtoFuncDebug, None, 0);
     JSC_NATIVE_FUNCTION("error", consoleProtoFuncError, None, 0);
     JSC_NATIVE_FUNCTION("log", consoleProtoFuncLog, None, 0);
-    JSC_NATIVE_FUNCTION("info", consoleProtoFuncLog, None, 0); // "info" is an alias of "log".
+    JSC_NATIVE_FUNCTION("info", consoleProtoFuncInfo, None, 0);
     JSC_NATIVE_FUNCTION("warn", consoleProtoFuncWarn, None, 0);
 
     JSC_NATIVE_FUNCTION("clear", consoleProtoFuncClear, None, 0);
@@ -125,6 +126,11 @@ static EncodedJSValue JSC_HOST_CALL consoleProtoFuncError(ExecState* exec)
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncLog(ExecState* exec)
 {
     return consoleLogWithLevel(exec, MessageLevel::Log);
+}
+
+static EncodedJSValue JSC_HOST_CALL consoleProtoFuncInfo(ExecState* exec)
+{
+    return consoleLogWithLevel(exec, MessageLevel::Info);
 }
 
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncWarn(ExecState* exec)

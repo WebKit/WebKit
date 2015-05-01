@@ -138,6 +138,7 @@ WebInspector.ConsoleMessage.MessageType = {
 
 WebInspector.ConsoleMessage.MessageLevel = {
     Log: "log",
+    Info: "info",
     Warning: "warning",
     Error: "error",
     Debug: "debug",

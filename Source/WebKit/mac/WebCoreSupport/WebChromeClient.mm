@@ -113,6 +113,7 @@ NSString *WebConsoleMessageOtherMessageSource = @"OtherMessageSource";
 
 NSString *WebConsoleMessageDebugMessageLevel = @"DebugMessageLevel";
 NSString *WebConsoleMessageLogMessageLevel = @"LogMessageLevel";
+NSString *WebConsoleMessageInfoMessageLevel = @"InfoMessageLevel";
 NSString *WebConsoleMessageWarningMessageLevel = @"WarningMessageLevel";
 NSString *WebConsoleMessageErrorMessageLevel = @"ErrorMessageLevel";
 
@@ -400,6 +401,8 @@ inline static NSString *stringForMessageLevel(MessageLevel level)
         return WebConsoleMessageDebugMessageLevel;
     case MessageLevel::Log:
         return WebConsoleMessageLogMessageLevel;
+    case MessageLevel::Info:
+        return WebConsoleMessageInfoMessageLevel;
     case MessageLevel::Warning:
         return WebConsoleMessageWarningMessageLevel;
     case MessageLevel::Error:

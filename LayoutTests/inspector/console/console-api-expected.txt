@@ -108,7 +108,7 @@ STEP: console.debug('console.debug')
 STEP: console.info('console.info')
 {
   "_source": "console-api",
-  "_level": "log",
+  "_level": "info",
   "_messageText": "console.info",
   "_type": "log",
   "_url": null,
@@ -382,7 +382,7 @@ STEP: console.debug('message', object)
 STEP: console.info('message', object)
 {
   "_source": "console-api",
-  "_level": "log",
+  "_level": "info",
   "_messageText": "message",
   "_type": "log",
   "_url": null,
