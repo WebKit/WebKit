@@ -1,6 +1,7 @@
-description("This test checks the ES6 string functions startsWith(), endsWith() and includes().");
+description("This test checks the ES6 string functions startsWith(), endsWith(), and includes().");
 
 // Test includes
+shouldBe("String.prototype.includes.name", "'includes'");
 shouldBe("String.prototype.includes.length", "1");
 shouldBe("'foo bar'.includes('bar')", "true");
 shouldBe("'foo bar'.includes('bar', 4)", "true");
@@ -30,8 +31,16 @@ shouldBe("'foo 1e+100 bar'.includes(1e+100)", "true");
 shouldBe("'foo 1e100 bar'.includes(1e100)", "false");
 shouldBe("'フーバー'.includes('ーバ')", "true");
 shouldBe("'フーバー'.includes('クー')", "false");
+shouldBeFalse("'abc'.includes('a', 'abc'.length)");
+shouldBeFalse("'abc'.includes('a', Math.pow(2, 33))");
+shouldBeFalse("'abc'.includes('a', Infinity)");
+shouldBeTrue("'abc'.includes('ab', -Infinity)");
+shouldBeFalse("'abc'.includes('cd', -Infinity)");
+shouldBeTrue("'abc'.includes('ab', 0)");
+shouldBeFalse("'abc'.includes('cd', 0)");
 
 // Test startsWith
+shouldBe("String.prototype.startsWith.name", "'startsWith'");
 shouldBe("String.prototype.startsWith.length", "1");
 shouldBe("'foo bar'.startsWith('foo')", "true");
 shouldBe("'foo bar'.startsWith('foo', 0)", "true");
@@ -60,8 +69,15 @@ shouldBe("'フーバー'.startsWith('abc')", "false");
 shouldBe("'フーバー'.startsWith('abc', 1)", "false");
 shouldBe("'foo bar'.startsWith('フー')", "false");
 shouldBe("'foo bar'.startsWith('フー', 1)", "false");
+shouldBeFalse("'abc'.startsWith('a', Infinity)");
+shouldBeFalse("'abc'.startsWith('a', 1)");
+shouldBeTrue("'abc'.startsWith('b', 1)");
+shouldBeFalse("'abc'.startsWith('b', 2)");
+shouldBeTrue("'abc'.startsWith('c', 2)");
+shouldBeFalse("'abc'.startsWith('a', Math.pow(2, 33))");
 
 // Test endsWith
+shouldBe("String.prototype.endsWith.name", "'endsWith'");
 shouldBe("String.prototype.endsWith.length", "1");
 shouldBe("'foo bar'.endsWith('bar')", "true");
 shouldBe("'foo bar'.endsWith('ba', 6)", "true");
@@ -93,6 +109,14 @@ shouldBe("'フーバー'.endsWith('abc')", "false");
 shouldBe("'フーバー'.endsWith('abc')", "false");
 shouldBe("'foo bar'.endsWith('フー')", "false");
 shouldBe("'foo bar'.endsWith('フー', 3)", "false");
+shouldBeTrue("'abc'.endsWith('bc', Infinity)");
+shouldBeTrue("'abc'.endsWith('bc', Math.pow(2, 33))");
+shouldBeFalse("'abc'.endsWith('a', 0)");
+shouldBeTrue("'abc'.endsWith('a', 1)");
+shouldBeFalse("'abc'.endsWith('b', 1)");
+shouldBeTrue("'abc'.endsWith('b', 2)");
+shouldBeFalse("'abc'.endsWith('bc', 2)");
+shouldBeTrue("'abc'.endsWith('bc', 3)");
 
 // Call functions with an environment record as 'this'.
 shouldThrow("(function() { var f = String.prototype.startsWith; (function() { f('a'); })(); })()");

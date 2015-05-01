@@ -1669,6 +1669,15 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncTrimRight(ExecState* exec)
     return JSValue::encode(trimString(exec, thisValue, TrimRight));
 }
 
+static inline unsigned clampAndTruncateToUnsigned(double value, unsigned min, unsigned max)
+{
+    if (value < min)
+        return min;
+    if (value > max)
+        return max;
+    return static_cast<unsigned>(value);
+}
+
 EncodedJSValue JSC_HOST_CALL stringProtoFuncStartsWith(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
@@ -1687,9 +1696,16 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncStartsWith(ExecState* exec)
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    unsigned start = std::max(0, exec->argument(1).toInt32(exec));
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
+    JSValue positionArg = exec->argument(1);
+    unsigned start = 0;
+    if (positionArg.isInt32())
+        start = std::max(0, positionArg.asInt32());
+    else {
+        unsigned length = stringToSearchIn.length();
+        start = clampAndTruncateToUnsigned(positionArg.toInteger(exec), 0, length);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+    }
 
     return JSValue::encode(jsBoolean(stringToSearchIn.hasInfixStartingAt(searchString, start)));
 }
@@ -1713,13 +1729,18 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncEndsWith(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     unsigned length = stringToSearchIn.length();
-    JSValue a1 = exec->argument(1);
-    int pos = a1.isUndefined() ? length : a1.toInt32(exec);
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
-    unsigned end = std::min<unsigned>(std::max(pos, 0), length);
 
-    return JSValue::encode(jsBoolean(stringToSearchIn.hasInfixEndingAt(searchString, end)));
+    JSValue endPositionArg = exec->argument(1);
+    unsigned end = length;
+    if (endPositionArg.isInt32())
+        end = std::max(0, endPositionArg.asInt32());
+    else if (!endPositionArg.isUndefined()) {
+        end = clampAndTruncateToUnsigned(endPositionArg.toInteger(exec), 0, length);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+    }
+
+    return JSValue::encode(jsBoolean(stringToSearchIn.hasInfixEndingAt(searchString, std::min(end, length))));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncIncludes(ExecState* exec)
@@ -1740,9 +1761,16 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIncludes(ExecState* exec)
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    unsigned start = std::max(0, exec->argument(1).toInt32(exec));
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
+    JSValue positionArg = exec->argument(1);
+    unsigned start = 0;
+    if (positionArg.isInt32())
+        start = std::max(0, positionArg.asInt32());
+    else {
+        unsigned length = stringToSearchIn.length();
+        start = clampAndTruncateToUnsigned(positionArg.toInteger(exec), 0, length);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+    }
 
     return JSValue::encode(jsBoolean(stringToSearchIn.contains(searchString, true, start)));
 }

@@ -1,3 +1,21 @@
+2015-05-01  Jordan Harband  <ljharb@gmail.com>
+
+        String#startsWith/endsWith/includes don't handle Infinity position/endPosition args correctly
+        https://bugs.webkit.org/show_bug.cgi?id=144314
+
+        Reviewed by Darin Adler.
+
+        Fixing handling of Infinity position args, per
+        https://people.mozilla.org/~jorendorff/es6-draft.html#sec-string.prototype.includes
+        https://people.mozilla.org/~jorendorff/es6-draft.html#sec-string.prototype.startswith
+        https://people.mozilla.org/~jorendorff/es6-draft.html#sec-string.prototype.endswith
+
+        * runtime/StringPrototype.cpp:
+        (JSC::clampInt32):
+        (JSC::stringProtoFuncStartsWith):
+        (JSC::stringProtoFuncEndsWith):
+        (JSC::stringProtoFuncIncludes):
+
 2015-05-01  Basile Clement  <basile_clement@apple.com>
 
         Math.abs() returns negative
