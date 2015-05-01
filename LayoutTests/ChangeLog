@@ -1,5 +1,77 @@
 2015-05-01  Martin Robinson  <mrobinson@igalia.com>
 
+        Unreviewed gardening for WebKitGTK+
+
+        Unskip some passing tests. Add new baselines. Properly organize some
+        failures in the TestExpectations file.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/editing/execCommand/print-expected.png: Added.
+        * platform/gtk/editing/execCommand/print-expected.txt: Added.
+        * platform/gtk/fast/attachment/attachment-progress-expected.txt: Added.
+        * platform/gtk/fast/attachment/attachment-select-on-click-expected.txt: Added.
+        * platform/gtk/fast/attachment/attachment-select-on-click-inside-user-select-all-expected.txt: Added.
+        * platform/gtk/fast/attachment/attachment-subtitle-expected.txt: Added.
+        * platform/gtk/fast/attachment/attachment-title-expected.txt: Added.
+        * platform/gtk/fast/box-shadow/hidpi-webkit-box-shadow-subpixel-position-expected.txt: Added.
+        * platform/gtk/fast/css/focus-ring-exists-for-search-field-expected.png: Added.
+        * platform/gtk/fast/css/focus-ring-exists-for-search-field-expected.txt: Added.
+        * platform/gtk/fast/multicol/scrolling-column-rules-expected.png: Added.
+        * platform/gtk/fast/multicol/scrolling-column-rules-expected.txt: Added.
+        * platform/gtk/printing/allowed-page-breaks-expected.txt: Added.
+        * platform/gtk/printing/compositing-layer-printing-expected.png: Added.
+        * platform/gtk/printing/compositing-layer-printing-expected.txt:
+        * platform/gtk/printing/css2.1/page-break-after-000-expected.txt: Added.
+        * platform/gtk/printing/css2.1/page-break-after-001-expected.txt: Added.
+        * platform/gtk/printing/css2.1/page-break-after-002-expected.txt: Added.
+        * platform/gtk/printing/css2.1/page-break-after-003-expected.txt: Added.
+        * platform/gtk/printing/css2.1/page-break-after-004-expected.txt: Added.
+        * platform/gtk/printing/css2.1/page-break-before-000-expected.txt: Added.
+        * platform/gtk/printing/css2.1/page-break-before-001-expected.txt: Added.
+        * platform/gtk/printing/css2.1/page-break-before-002-expected.txt: Added.
+        * platform/gtk/printing/css2.1/page-break-inside-000-expected.txt: Added.
+        * platform/gtk/printing/iframe-print-expected.png: Added.
+        * platform/gtk/printing/iframe-print-expected.txt: Added.
+        * platform/gtk/printing/media-queries-print-expected.png: Added.
+        * platform/gtk/printing/media-queries-print-expected.txt:
+        * platform/gtk/printing/no-content-empty-pages-expected.txt: Added.
+        * platform/gtk/printing/numberOfPages-expected.txt: Added.
+        * platform/gtk/printing/page-break-after-avoid-expected.txt: Added.
+        * platform/gtk/printing/page-break-always-expected.txt: Added.
+        * platform/gtk/printing/page-break-avoid-expected.txt: Added.
+        * platform/gtk/printing/page-break-before-avoid-expected.txt: Added.
+        * platform/gtk/printing/page-break-display-none-expected.txt: Added.
+        * platform/gtk/printing/page-break-inside-avoid-expected.txt: Added.
+        * platform/gtk/printing/page-break-margin-collapsed-expected.txt: Added.
+        * platform/gtk/printing/page-break-orphans-and-widows-expected.txt: Added.
+        * platform/gtk/printing/page-break-orphans-expected.txt: Added.
+        * platform/gtk/printing/page-break-widows-expected.txt: Added.
+        * platform/gtk/printing/page-count-layout-overflow-expected.txt: Added.
+        * platform/gtk/printing/page-count-percentage-height-expected.txt: Added.
+        * platform/gtk/printing/page-count-relayout-shrink-expected.txt: Added.
+        * platform/gtk/printing/page-count-with-one-word-expected.txt: Added.
+        * platform/gtk/printing/page-format-data-display-none-expected.txt: Added.
+        * platform/gtk/printing/page-format-data-expected.txt: Added.
+        * platform/gtk/printing/page-rule-css-text-expected.txt: Added.
+        * platform/gtk/printing/page-rule-in-media-query-expected.png: Added.
+        * platform/gtk/printing/page-rule-in-media-query-expected.txt: Added.
+        * platform/gtk/printing/pageNumerForElementById-expected.txt: Added.
+        * platform/gtk/printing/print-close-crash-expected.txt: Added.
+        * platform/gtk/printing/pseudo-class-outside-page-expected.txt: Added.
+        * platform/gtk/printing/return-from-printing-mode-expected.png: Added.
+        * platform/gtk/printing/return-from-printing-mode-expected.txt:
+        * platform/gtk/printing/setPrinting-expected.png: Added.
+        * platform/gtk/printing/setPrinting-expected.txt: Added.
+        * platform/gtk/printing/simultaneous-position-float-change-expected.png: Added.
+        * platform/gtk/printing/simultaneous-position-float-change-expected.txt: Added.
+        * platform/gtk/printing/single-line-must-not-be-split-into-two-pages-expected.txt: Added.
+        * platform/gtk/printing/stretch-to-view-height-expected.txt: Added.
+        * platform/gtk/printing/width-overflow-expected.png: Added.
+        * platform/gtk/printing/width-overflow-expected.txt: Added.
+        * platform/gtk/printing/zoomed-document-expected.txt: Added.
+
+2015-05-01  Martin Robinson  <mrobinson@igalia.com>
+
         [Freetype] Properly support synthetic oblique in vertical text
         https://bugs.webkit.org/show_bug.cgi?id=144492
 

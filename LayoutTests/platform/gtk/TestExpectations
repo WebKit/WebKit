@@ -35,14 +35,11 @@
 # test harness support.
 #
 # 8. TESTS FAILING
-# Each test should (eventually) have a bug. Missing DRT features also go here.
+# Each test should (eventually) have a bug. Missing test harness features also go here.
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # Tests that require new results.
 #////////////////////////////////////////////////////////////////////////////////////////
-
-webkit.org/b/132275 fast/multicol/scrolling-column-rules.html [ Missing ]
-webkit.org/b/143474 fast/css/focus-ring-exists-for-search-field.html [ Missing ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # Expected failures
@@ -631,6 +628,30 @@ fast/events/mouse-force-up.html [ Skip ]
 
 # JSC does not support setIsolatedWorldSecurityOrigin
 webkit.org/b/61540 http/tests/security/isolatedWorld/cross-origin-xhr.html
+
+# Path::addPath needs to be implemented
+webkit.org/b/130464 fast/canvas/canvas-path-addPath.html
+
+# Needs grammar checking implementation.
+Bug(GTK) editing/spelling/grammar.html [ Skip ]
+Bug(GTK) editing/spelling/grammar-edit-word.html [ Skip ]
+Bug(GTK) editing/spelling/grammar-markers.html [ Skip ]
+Bug(GTK) editing/spelling/grammar-markers-hidpi.html [ Skip ]
+Bug(GTK) editing/spelling/grammar-paste.html [ Skip ]
+Bug(GTK) editing/spelling/inline-spelling-markers.html [ Skip ]
+Bug(GTK) editing/spelling/inline-spelling-markers-hidpi.html [ Skip ]
+Bug(GTK) editing/spelling/markers.html [ Skip ]
+
+# Missing asynchronous spellchecking implementation.
+Bug(GTK) editing/spelling/design-mode-spellcheck-off.html [ Skip ]
+Bug(GTK) editing/spelling/spelling-insert-html.html [ Skip ]
+Bug(GTK) editing/spelling/spelling-hasspellingmarker.html [ Skip ]
+
+# Requires ENABLE(MEDIA_CAPTURE)
+webkit.org/b/85958 fast/forms/file/file-input-capture.html [ Failure ]
+
+# CURSOR_VISIBILITY is not enabled in gtk
+webkit.org/b/107601 fullscreen/video-cursor-auto-hide.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
@@ -1356,6 +1377,15 @@ webkit.org/b/143987 media/auto-play-in-sandbox-with-allow-scripts.html [ Timeout
 webkit.org/b/143990 media/track/track-css-matching-timestamps.html [ Timeout Pass ]
 webkit.org/b/143992 media/track/track-cue-overlap-snap-to-lines-not-set.html [ Timeout Pass ]
 
+webkit.org/b/132055 media/track/track-datacue.html  [ Timeout ]
+
+webkit.org/b/130971 media/track/track-remove-track.html [ Timeout ]
+
+# After webkit.org/b/123097 we flag these tests that also fail in mac
+webkit.org/b/123097 media/video-controls-toggling.html [ Timeout ]
+
+webkit.org/b/109469 fast/events/mouse-cursor-image-set.html [ Crash Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1617,9 +1647,6 @@ webkit.org/b/123431 http/tests/local/link-stylesheet-load-order.html [ Failure ]
 # Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
 
-# Path::addPath needs to be implemented
-webkit.org/b/130464 fast/canvas/canvas-path-addPath.html
-
 webkit.org/b/73766 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
 
 webkit.org/b/79757 fast/selectors/selection-window-inactive.html [ ImageOnlyFailure ]
@@ -1695,10 +1722,6 @@ webkit.org/b/53986 svg/text/caret-in-svg-text.xhtml [ Failure ]
 # Need to add functionality to DumpRenderTree to handle error pages
 Bug(GTK) fast/history/back-forward-reset-after-error-handling.html [ Failure ]
 
-# Needs platform specific API implemented in DRT, maybe not relevant for non-Mac and non-Windows ports
-Bug(GTK) fast/loader/api-test-new-window-data-load-base-url.html [ Failure ]
-Bug(GTK) fast/loader/api-test-go-to-current-back-forward-item.html [ Failure ]
-
 # Paged continuousMouseScrollBy() events are not supported in GTK.
 Bug(GTK) fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html [ Failure Timeout ]
 Bug(GTK) fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html [ Failure ]
@@ -1713,9 +1736,6 @@ Bug(GTK) fast/events/platform-wheelevent-paging-y-in-scrolling-page.html [ Failu
 
 # Need to add functionality to DumpRenderTree to handle scrollbar policy changes
 Bug(GTK) fast/overflow/scrollbar-restored-and-then-locked.html [ Failure ]
-
-webkit.org/b/37613 webkit.org/b/20011 printing [ Skip ]
-webkit.org/b/37613 editing/execCommand/print.html [ Skip ]
 
 # DRT doesn't dispatch an event for the second call eventSender.contextClick().
 webkit.org/b/39102 editing/spelling/context-menu-suggestions.html [ Failure ]
@@ -1772,30 +1792,8 @@ Bug(GTK) sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T6.
 webkit.org/b/44316 platform/gtk/accessibility/object-attributes.html [ Failure ]
 webkit.org/b/44316 platform/gtk/accessibility/title-and-alt.html [ Failure ]
 
-# The following tests requires the DRT's dumpUserGestureInFrameLoadCallbacks
-# method. But that method is not implemented in gtk port since gtk port can't
-# not get user gesture in frameload callbacks.
-# The related bugs are https://bugs.webkit.org/show_bug.cgi?id=47849/47817.
-Bug(GTK) fast/frames/location-redirect-user-gesture.html [ Failure ]
-Bug(GTK) fast/frames/meta-refresh-user-gesture.html [ Failure Timeout ]
-
 # Rounding color problems inside pixman
 webkit.org/b/49964 fast/canvas/canvas-fillPath-shadow.html [ Failure ]
-
-# Needs grammar checking implementation.
-Bug(GTK) editing/spelling/grammar.html [ Skip ]
-Bug(GTK) editing/spelling/grammar-edit-word.html [ Skip ]
-Bug(GTK) editing/spelling/grammar-markers.html [ Skip ]
-Bug(GTK) editing/spelling/grammar-markers-hidpi.html [ Skip ]
-Bug(GTK) editing/spelling/grammar-paste.html [ Skip ]
-Bug(GTK) editing/spelling/inline-spelling-markers.html [ Skip ]
-Bug(GTK) editing/spelling/inline-spelling-markers-hidpi.html [ Skip ]
-Bug(GTK) editing/spelling/markers.html [ Skip ]
-
-# Missing asynchronous spellchecking implementation.
-Bug(GTK) editing/spelling/design-mode-spellcheck-off.html [ Skip ]
-Bug(GTK) editing/spelling/spelling-insert-html.html [ Skip ]
-Bug(GTK) editing/spelling/spelling-hasspellingmarker.html [ Skip ]
 
 # testRunner.overridePreference("WebKitDefaultFontSize"...) does not take into account screen DPI
 webkit.org/b/57160 fast/harness/override-preferences-2.html [ Failure ]
@@ -1848,9 +1846,6 @@ webkit.org/b/84771 ietestcenter/css3/multicolumn/column-width-applies-to-009.htm
 webkit.org/b/84772 ietestcenter/css3/multicolumn/column-width-applies-to-010.htm [ ImageOnlyFailure ]
 webkit.org/b/84773 ietestcenter/css3/multicolumn/column-width-applies-to-012.htm [ ImageOnlyFailure ]
 webkit.org/b/84777 ietestcenter/css3/multicolumn/column-width-applies-to-015.htm [ ImageOnlyFailure ]
-
-# Requires ENABLE(MEDIA_CAPTURE)
-webkit.org/b/85958 fast/forms/file/file-input-capture.html [ Failure ]
 
 # Interferes with the rAF tests that are enabled
 webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Skip ]
@@ -1922,7 +1917,7 @@ webkit.org/b/98146 accessibility/svg-bounds.html [ Failure ]
 webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
 
 # Leaking state into the next test.
-webkit.org/b/85522 http/tests/security/sandboxed-iframe-form-top.html [ Skip ]
+#webkit.org/b/85522 http/tests/security/sandboxed-iframe-form-top.html [ Skip ]
 
 webkit.org/b/128420 accessibility/roles-computedRoleString.html [ Skip ]
 
@@ -1948,17 +1943,10 @@ webkit.org/b/108973 fast/css/negative-text-indent-in-inline-block.html [ ImageOn
 webkit.org/b/109353 fast/flexbox/line-clamp-link-after-ellipsis.html [ Failure ]
 
 webkit.org/b/109469 fast/css/cursor-parsing-image-set.html [ Failure ]
-webkit.org/b/109469 fast/events/mouse-cursor-image-set.html [ Crash Timeout ]
 
 webkit.org/b/110090 fast/events/clientXY-in-zoom-and-scroll.html [ Failure ]
 
 webkit.org/b/110446 svg/as-background-image/svg-transformed-background.html [ ImageOnlyFailure ]
-
-# Need support for ResourceHandle::didChangePriority and DRT support
-webkit.org/b/111016 http/tests/loading/promote-img-preload-priority.html [ Failure ]
-
-# CURSOR_VISIBILITY is not enabled in gtk
-webkit.org/b/107601 fullscreen/video-cursor-auto-hide.html [ Failure ]
 
 webkit.org/b/111606 fast/borders/border-fit.html [ Failure ]
 webkit.org/b/111606 fast/borders/border-fit-2.html [ Failure ]
@@ -2069,9 +2057,6 @@ webkit.org/b/128061 svg/zoom/page/zoom-svg-through-object-with-auto-size.html [ 
 webkit.org/b/128061 tables/mozilla_expected_failures/bugs/bug1055-2.html [ Failure ]
 # End of subpixel failures.
 
-# After webkit.org/b/123097 we flag these tests that also fail in mac
-webkit.org/b/123097 media/video-controls-toggling.html [ Timeout ]
-
 # Regressions in svg/clip-path
 webkit.org/b/129180 svg/clip-path/clip-path-on-svg-001.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/129180 svg/clip-path/clip-path-on-svg-002.svg [ ImageOnlyFailure Pass ]
@@ -2173,15 +2158,11 @@ webkit.org/b/131498 fast/css/cascade/box-shadow-and-webkit-box-shadow-cascade-or
 
 webkit.org/b/131501 fast/css3-text/css3-text-decoration/text-decoration-skip/glyph-inside-underline.html [ ImageOnlyFailure ]
 
-webkit.org/b/130971 media/track/track-remove-track.html [ Timeout ]
-
 webkit.org/b/117756 media/track/media-element-enqueue-event-crash.html [ Timeout Pass Crash ]
 
 webkit.org/b/132046 svg/css/svg-resource-fragment-identifier-img-src.html  [ ImageOnlyFailure ]
 
 webkit.org/b/132054 js/dom/global-constructors-attributes.html  [ Failure ]
-
-webkit.org/b/132055 media/track/track-datacue.html  [ Timeout ]
 
 webkit.org/b/132056 webaudio/codec-tests/mp3/128kbps-44khz.html  [ Failure ]
 
@@ -2398,6 +2379,10 @@ webkit.org/b/143471 canvas/philip/tests/2d.drawImage.animated.poster.html [ Fail
 webkit.org/b/143871 svg/W3C-SVG-1.1-SE/linking-uri-01-b.svg [ Failure ]
 
 webkit.org/b/143924 fast/text/hyphen-min-preferred-width.html [ Skip ]
+
+webkit.org/b/144494 printing/quirks-percentage-height-body.html [ ImageOnlyFailure ]
+webkit.org/b/144494 printing/quirks-percentage-height.html [ ImageOnlyFailure ]
+webkit.org/b/144494 printing/standards-percentage-heights.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
