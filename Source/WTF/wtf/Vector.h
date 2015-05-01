@@ -581,7 +581,7 @@ struct UnsafeVectorOverflow {
     }
 };
 
-template<typename T, size_t inlineCapacity = 0, typename OverflowHandler = CrashOnOverflow, size_t minCapacity = 16>
+template<typename T, size_t inlineCapacity = 0, typename OverflowHandler = CrashOnOverflow, size_t minCapacity = 4>
 class Vector : private VectorBuffer<T, inlineCapacity> {
     WTF_MAKE_FAST_ALLOCATED;
 private:

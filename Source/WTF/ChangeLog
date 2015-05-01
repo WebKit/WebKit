@@ -1,3 +1,13 @@
+2015-04-30  Alex Christensen  <achristensen@webkit.org>
+
+        Decrease minimum Vector size.
+        https://bugs.webkit.org/show_bug.cgi?id=144453
+
+        Reviewed by Andreas Kling.
+
+        * wtf/Vector.h:
+        Make the default min size 4 to save memory on small Vectors.
+
 2015-04-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use the default hash value for Symbolized StringImpl
