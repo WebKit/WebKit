@@ -1,3 +1,18 @@
+2015-05-01  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] accessibility/secure-textfield-title-ui.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=98375
+
+        Reviewed by Chris Fleizach.
+
+        Modify the test to check the childrenCount of the titleUIElement in order
+        to determine where the element text is exposed. On the Mac, it's exposed
+        in StaticText children; in ATK, in the element itself. The test was failing
+        because it assumed the text was in the first child of the element.
+
+        * accessibility/secure-textfield-title-ui.html: Modified.
+        * platform/gtk/TestExpectations: Unskipped the failing test.
+
 2015-05-01  Brady Eidson  <beidson@apple.com>
 
         Add API to disable meta refreshes.
