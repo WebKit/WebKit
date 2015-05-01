@@ -1,3 +1,17 @@
+2015-05-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OS X] Text dilation parameters are not restored after being set
+        https://bugs.webkit.org/show_bug.cgi?id=144507
+        <rdar://problem/19446938>
+
+        Reviewed by Simon Fraser and Ned Holbrook.
+
+        See below.
+
+        * fast/text/dilation-save-restore-expected.html: Added. Never sets dilation parameters, draws two strings.
+        * fast/text/dilation-save-restore.html: Added. Draws one string without dilation, sets the dilation, then draws a
+        second string. If saving and restoring doesn't work correctly, these two lines will appear different.
+
 2015-05-01  Jordan Harband  <ljharb@gmail.com>
 
         String#startsWith/endsWith/includes don't handle Infinity position/endPosition args correctly

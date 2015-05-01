@@ -144,6 +144,7 @@ void CGContextSetCompositeOperation(CGContextRef, CGCompositeOperation);
 void CGContextSetShouldAntialiasFonts(CGContextRef, bool shouldAntialiasFonts);
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 void CGContextSetFontDilation(CGContextRef, CGSize);
+void CGContextSetFontRenderingStyle(CGContextRef, CGFontRenderingStyle);
 #endif
 
 CFStringRef CGFontCopyFamilyName(CGFontRef);
