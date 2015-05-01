@@ -1,5 +1,19 @@
 2015-05-01  Martin Robinson  <mrobinson@igalia.com>
 
+        [Freetype] Add support for the font-synthesis property
+        https://bugs.webkit.org/show_bug.cgi?id=144472
+
+        Reviewed by Sergio Villar Senin.
+
+        No new tests. This causes fast/css3-text/font-synthesis.html to pass
+        for WebKitGTK+.
+
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Only use synthetic bold when the font description allows it.
+        (WebCore::FontPlatformData::initializeWithFontFace): Ditto for synthetic oblique.
+
+2015-05-01  Martin Robinson  <mrobinson@igalia.com>
+
         [GTK] New CORS tests from r183280 fail on WebKitGTK+
         https://bugs.webkit.org/show_bug.cgi?id=144469
 

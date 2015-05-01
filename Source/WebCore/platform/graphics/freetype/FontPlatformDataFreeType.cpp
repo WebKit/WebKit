@@ -161,7 +161,8 @@ FontPlatformData::FontPlatformData(FcPattern* pattern, const FontDescription& fo
     if (FcPatternGetInteger(pattern, FC_SPACING, 0, &spacing) == FcResultMatch && spacing == FC_MONO)
         m_fixedWidth = true;
 
-    if (fontDescription.weight() >= FontWeightBold) {
+    bool descriptionAllowsSyntheticBold = fontDescription.fontSynthesis() & FontSynthesisWeight;
+    if (descriptionAllowsSyntheticBold && fontDescription.weight() >= FontWeightBold) {
         // The FC_EMBOLDEN property instructs us to fake the boldness of the font.
         FcBool fontConfigEmbolden = FcFalse;
         if (FcPatternGetBool(pattern, FC_EMBOLDEN, 0, &fontConfigEmbolden) == FcResultMatch)
@@ -327,8 +328,11 @@ void FontPlatformData::initializeWithFontFace(cairo_font_face_t* fontFace, const
 
     // We requested an italic font, but Fontconfig gave us one that was neither oblique nor italic.
     int actualFontSlant;
-    if (fontDescription.italic() && FcPatternGetInteger(optionsPattern, FC_SLANT, 0, &actualFontSlant) == FcResultMatch)
+    bool descriptionAllowsSyntheticOblique = fontDescription.fontSynthesis() & FontSynthesisStyle;
+    if (descriptionAllowsSyntheticOblique && fontDescription.italic()
+        && FcPatternGetInteger(optionsPattern, FC_SLANT, 0, &actualFontSlant) == FcResultMatch) {
         m_syntheticOblique = actualFontSlant == FC_SLANT_ROMAN;
+    }
 
     // The matrix from FontConfig does not include the scale. 
     cairo_matrix_scale(&fontMatrix, realSize, realSize);
