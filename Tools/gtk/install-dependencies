@@ -180,6 +180,7 @@ function installDependenciesWithPacman {
         grep \
         groff \
         gzip \
+        hyphen \
         libtool \
         m4 \
         make \
@@ -313,6 +314,7 @@ function installFedoraDependencies {
         gtk2-devel \
         gtk3-devel \
         harfbuzz-devel \
+        hyphen-devel \
 	json-glib-devel \
         libXt-devel \
         libXtst-devel \

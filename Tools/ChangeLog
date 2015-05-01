@@ -1,3 +1,13 @@
+2015-05-01  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] Add libhyphen-dev to the build dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=144452
+
+        Reviewed by Martin Robinson.
+
+        * gtk/install-dependencies: Added hyphen as Fedora and Arch
+        dependencies.
+
 2015-04-30  Brent Fulgham  <bfulgham@apple.com>
 
         Provide a runtime flag to run-webkit-tests that shows the test view
