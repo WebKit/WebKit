@@ -234,20 +234,13 @@ Vector<RefPtr<AudioTrack>> CaptionUserPreferences::sortedTrackListForMenu(AudioT
 
 int CaptionUserPreferences::textTrackSelectionScore(TextTrack* track, HTMLMediaElement*) const
 {
-    int trackScore = 0;
-
     if (track->kind() != TextTrack::captionsKeyword() && track->kind() != TextTrack::subtitlesKeyword())
-        return trackScore;
+        return 0;
     
     if (!userPrefersSubtitles() && !userPrefersCaptions())
-        return trackScore;
+        return 0;
     
-    if (track->kind() == TextTrack::subtitlesKeyword() && userPrefersSubtitles())
-        trackScore = 1;
-    else if (track->kind() == TextTrack::captionsKeyword() && userPrefersCaptions())
-        trackScore = 1;
-    
-    return trackScore + textTrackLanguageSelectionScore(track, preferredLanguages());
+    return textTrackLanguageSelectionScore(track, preferredLanguages()) + 1;
 }
 
 int CaptionUserPreferences::textTrackLanguageSelectionScore(TextTrack* track, const Vector<String>& preferredLanguages) const
@@ -255,13 +248,15 @@ int CaptionUserPreferences::textTrackLanguageSelectionScore(TextTrack* track, co
     if (track->language().isEmpty())
         return 0;
 
-    size_t languageMatchIndex = indexOfBestMatchingLanguageInList(track->language(), preferredLanguages);
+    bool exactMatch;
+    size_t languageMatchIndex = indexOfBestMatchingLanguageInList(track->language(), preferredLanguages, exactMatch);
     if (languageMatchIndex >= preferredLanguages.size())
         return 0;
 
     // Matching a track language is more important than matching track type, so this multiplier must be
     // greater than the maximum value returned by textTrackSelectionScore.
-    return (preferredLanguages.size() - languageMatchIndex) * 10;
+    int bonus = exactMatch ? 1 : 0;
+    return (preferredLanguages.size() + bonus - languageMatchIndex) * 10;
 }
 
 void CaptionUserPreferences::setCaptionsStyleSheetOverride(const String& override)

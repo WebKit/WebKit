@@ -105,22 +105,25 @@ static String canonicalLanguageIdentifier(const String& languageCode)
     return lowercaseLanguageCode;
 }
 
-size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<String>& languageList)
+size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<String>& languageList, bool& exactMatch)
 {
+    String lowercaseLanguage = language.lower();
     String languageWithoutLocaleMatch;
     String languageMatchButNotLocale;
     size_t languageWithoutLocaleMatchIndex = 0;
     size_t languageMatchButNotLocaleMatchIndex = 0;
-    bool canMatchLanguageOnly = (language.length() == 2 || (language.length() >= 3 && language[2] == '-'));
+    bool canMatchLanguageOnly = (lowercaseLanguage.length() == 2 || (lowercaseLanguage.length() >= 3 && lowercaseLanguage[2] == '-'));
 
     for (size_t i = 0; i < languageList.size(); ++i) {
         String canonicalizedLanguageFromList = canonicalLanguageIdentifier(languageList[i]);
 
-        if (language == canonicalizedLanguageFromList)
+        if (lowercaseLanguage == canonicalizedLanguageFromList) {
+            exactMatch = true;
             return i;
+        }
 
         if (canMatchLanguageOnly && canonicalizedLanguageFromList.length() >= 2) {
-            if (language[0] == canonicalizedLanguageFromList[0] && language[1] == canonicalizedLanguageFromList[1]) {
+            if (lowercaseLanguage[0] == canonicalizedLanguageFromList[0] && lowercaseLanguage[1] == canonicalizedLanguageFromList[1]) {
                 if (!languageWithoutLocaleMatch.length() && canonicalizedLanguageFromList.length() == 2) {
                     languageWithoutLocaleMatch = languageList[i];
                     languageWithoutLocaleMatchIndex = i;
@@ -132,6 +135,8 @@ size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<St
             }
         }
     }
+
+    exactMatch = false;
 
     // If we have both a language-only match and a languge-but-not-locale match, return the
     // languge-only match as is considered a "better" match. For example, if the list

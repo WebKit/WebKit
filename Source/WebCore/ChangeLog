@@ -1,3 +1,30 @@
+2015-05-01  Eric Carlson  <eric.carlson@apple.com>
+
+        Fix text track language selection logic
+        https://bugs.webkit.org/show_bug.cgi?id=144467
+
+        Reviewed by Brent Fulgham.
+
+        No new tests, media/track/track-language-preference.html was updated.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::configureTextTrackGroup): Correct a minor style typo.
+        (WebCore::HTMLMediaElement::configureTextTrackDisplay): Update logging.
+
+        * page/CaptionUserPreferences.cpp:
+        (WebCore::CaptionUserPreferences::textTrackSelectionScore): Minor cleanup.
+        (WebCore::CaptionUserPreferences::textTrackLanguageSelectionScore): Give exact matches a
+        higher score.
+
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::textTrackSelectionScore): Update for 
+        indexOfBestMatchingLanguageInList change.
+
+        * platform/Language.cpp:
+        (WebCore::indexOfBestMatchingLanguageInList): Add parameter for exact match. Convert the
+        passed language to lower case as we do with the preferred languages.
+        * platform/Language.h:
+
 2015-05-01  Martin Robinson  <mrobinson@igalia.com>
 
         [Freetype] Add support for the font-synthesis property

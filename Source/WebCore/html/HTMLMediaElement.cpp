@@ -3563,7 +3563,7 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
     LOG(Media, "HTMLMediaElement::configureTextTrackGroup(%p)", this);
 
     Page* page = document().page();
-    CaptionUserPreferences* captionPreferences = page? page->group().captionPreferences() : 0;
+    CaptionUserPreferences* captionPreferences = page ? page->group().captionPreferences() : 0;
     CaptionUserPreferences::CaptionDisplayMode displayMode = captionPreferences ? captionPreferences->captionDisplayMode() : CaptionUserPreferences::Automatic;
 
     // First, find the track in the group that should be enabled (if any).
@@ -5357,10 +5357,11 @@ void HTMLMediaElement::configureTextTrackDisplay(TextTrackVisibilityCheckType ch
     if (m_processingPreferenceChange)
         return;
 
-    LOG(Media, "HTMLMediaElement::configureTextTrackDisplay(%p)", this);
+    LOG(Media, "HTMLMediaElement::configureTextTrackDisplay(%p) - checkType = %s", this, checkType == CheckTextTrackVisibility ? "check-visibility" : "assume-visibility-changed");
 
     bool haveVisibleTextTrack = false;
     for (unsigned i = 0; i < m_textTracks->length(); ++i) {
+        LOG(Media, "     track[%i]->mode = %s", i, String(m_textTracks->item(i)->mode()).utf8().data());
         if (m_textTracks->item(i)->mode() == TextTrack::showingKeyword()) {
             haveVisibleTextTrack = true;
             break;

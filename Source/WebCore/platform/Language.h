@@ -35,7 +35,7 @@ WEBCORE_EXPORT String defaultLanguage();
 WEBCORE_EXPORT Vector<String> userPreferredLanguages();
 Vector<String> userPreferredLanguagesOverride();
 WEBCORE_EXPORT void overrideUserPreferredLanguages(const Vector<String>&);
-size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<String>& languageList);
+size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<String>& languageList, bool& exactMatch);
 
 // The observer function will be called when system language changes.
 typedef void (*LanguageChangeObserverFunction)(void* context);

@@ -11,7 +11,6 @@
         <script>
 
             var timer = null;
-            var expectedLanguage;
             var testList = 
             {
                 current : -1,
@@ -37,6 +36,11 @@
                         languages : ['fa', 'ru', 'no'], 
                         expectedLanguage : "fa", 
                     },
+                    {
+                        description: "a track language without locale matches one of the user's preferred languages exactly when another language matches locale only", 
+                        languages : ['pt-BR', 'nl-NL', 'pt-PT'], 
+                        expectedLanguage : "pt-PT", 
+                    },
                 ]
             };
 
@@ -45,8 +49,6 @@
                 consoleWrite("");
                 testList.current++;
                 if (testList.current >= testList.tests.length) {
-                    var tracks = document.querySelectorAll('track');
-                    testExpected("video.textTracks.length", tracks.length);
                     endTest();
                     return;
                 }
@@ -59,12 +61,10 @@
             {
                 consoleWrite("EVENT(load)");
                 
-                // Don't log the event name because the order of the two events in not predictable.
                 track = event.target;
                 testExpected("track.readyState", HTMLTrackElement.LOADED);
                 testExpected("track.srclang", testList.tests[testList.current].expectedLanguage);
-
-                timer = setTimeout(runNextTest, 200);
+                timer = setTimeout(runNextTest, 100);
             }
 
             function setPreferences()
@@ -76,7 +76,7 @@
 
                 consoleWrite("<i>**Set track preferences and user preferred languages<" + "/i>");
                 run("internals.settings.setShouldDisplayTrackKind('Captions', true)");
-                run("internals.setUserPreferredLanguages(['jp', 'es-ES', 'en', 'fr'])");
+                run("internals.setUserPreferredLanguages(['jp', 'es-ES', 'en', 'fr', 'pt-PT'])");
             }
             
             function createTrackElement(language, src)
@@ -102,18 +102,18 @@
 
             function setup()
             {
-                findMediaElement();
-
+                setCaptionDisplayMode('AlwaysOn');
                 setPreferences("Subtitles", true);
 
-                runNextTest();
+                findMediaElement();
+                video.src = findMediaFile('video', '../content/test');
+                waitForEvent('canplaythrough', runNextTest);
             }
 
         </script>
     </head>
     <body onload="setup()">
         <p>Tests that the user's preferred languages are honored.</p>
-        <video>
-        </video>
+        <video></video>
     </body>
 </html>
