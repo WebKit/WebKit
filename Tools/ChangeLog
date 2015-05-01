@@ -1,3 +1,14 @@
+2015-05-01  Martin Robinson  <mrobinson@igalia.com>
+
+        USE(...) macro should expect unprefixed variables
+        https://bugs.webkit.org/show_bug.cgi?id=144454
+
+        Reviewed by Daniel Bates.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Replace all occurrences WTF_USE with USE.
+        * DumpRenderTree/config.h: Ditto.
+        * TestWebKitAPI/config.h: Ditto.
+
 2015-05-01  Basile Clement  <basile_clement@apple.com>
 
         Unreviewed. Add myself as a commiter in contributors.json.

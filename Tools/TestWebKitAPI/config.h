@@ -47,16 +47,16 @@
 #endif
 
 #if PLATFORM(WIN_CAIRO)
-#undef WTF_USE_CG
-#define WTF_USE_CAIRO 1
-#define WTF_USE_CURL 1
+#undef USE_CG
+#define USE_CAIRO 1
+#define USE_CURL 1
 #ifndef _WINSOCKAPI_
 #define _WINSOCKAPI_ // Prevent inclusion of winsock.h in windows.h
 #endif
 #else
-#define WTF_USE_CG 1
-#undef WTF_USE_CAIRO
-#undef WTF_USE_CURL
+#define USE_CG 1
+#undef USE_CAIRO
+#undef USE_CURL
 #endif
 
 #endif // PLATFORM(WIN)

@@ -50,7 +50,7 @@
 #if USE(CF)
 #include <CoreFoundation/CFString.h>
 #if PLATFORM(COCOA)
-#define WTF_USE_APPLE_SYSTEM_LOG 1
+#define USE_APPLE_SYSTEM_LOG 1
 #include <asl.h>
 #endif
 #endif // USE(CF)
@@ -262,10 +262,10 @@ void WTFReportBacktrace()
 #if OS(DARWIN) || OS(LINUX)
 #  if PLATFORM(GTK)
 #    if defined(__GLIBC__) && !defined(__UCLIBC__)
-#      define WTF_USE_BACKTRACE_SYMBOLS 1
+#      define USE_BACKTRACE_SYMBOLS 1
 #    endif
 #  else
-#    define WTF_USE_DLADDR 1
+#    define USE_DLADDR 1
 #  endif
 #endif
 
@@ -302,8 +302,8 @@ void WTFPrintBacktrace(void** stack, int size)
 #endif
 }
 
-#undef WTF_USE_BACKTRACE_SYMBOLS
-#undef WTF_USE_DLADDR
+#undef USE_BACKTRACE_SYMBOLS
+#undef USE_DLADDR
 
 static WTFCrashHookFunction globalHook = 0;
 

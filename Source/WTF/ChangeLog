@@ -1,3 +1,15 @@
+2015-05-01  Martin Robinson  <mrobinson@igalia.com>
+
+        USE(...) macro should expect unprefixed variables
+        https://bugs.webkit.org/show_bug.cgi?id=144454
+
+        Reviewed by Daniel Bates.
+
+        * wtf/Assertions.cpp: Replace all occurrences WTF_USE with USE.
+        * wtf/Platform.h: Replace all occurrences WTF_USE with USE. Modify the USE
+        macro to look for unprefixed variables.
+        * wtf/WTFThreadData.h: Replace all occurrences WTF_USE with USE.
+
 2015-05-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Enable ENABLE_ES6_TEMPLATE_LITERAL_SYNTAX by default on all ports (Windows was missed)

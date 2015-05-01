@@ -37,7 +37,7 @@
 #include <wtf/CryptographicUtilities.h>
 #include <wtf/RetainPtr.h>
 
-#define WTF_USE_KEYCHAIN_ACCESS_CONTROL_LISTS (!PLATFORM(IOS))
+#define USE_KEYCHAIN_ACCESS_CONTROL_LISTS (!PLATFORM(IOS))
 
 namespace WebCore {
 

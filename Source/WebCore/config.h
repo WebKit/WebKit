@@ -26,7 +26,7 @@
 #include <wtf/Platform.h>
 
 #if PLATFORM(COCOA)
-#define WTF_USE_FILE_LOCK 1
+#define USE_FILE_LOCK 1
 #endif
 
 #if PLATFORM(WIN) && !USE(WINGDI)
@@ -88,21 +88,21 @@
 
 #if PLATFORM(WIN)
 #if PLATFORM(WIN_CAIRO)
-#undef WTF_USE_CG
-#define WTF_USE_CAIRO 1
-#define WTF_USE_CURL 1
+#undef USE_CG
+#define USE_CAIRO 1
+#define USE_CURL 1
 #ifndef _WINSOCKAPI_
 #define _WINSOCKAPI_ // Prevent inclusion of winsock.h in windows.h
 #endif
 #elif !USE(WINGDI)
-#define WTF_USE_CG 1
-#undef WTF_USE_CAIRO
-#undef WTF_USE_CURL
+#define USE_CG 1
+#undef USE_CAIRO
+#undef USE_CURL
 #endif
 #endif
 
 #if PLATFORM(MAC)
-#define WTF_USE_NEW_THEME 1
+#define USE_NEW_THEME 1
 #endif
 
 #if USE(CG)
@@ -121,13 +121,13 @@ typedef float CGFloat;
 #define WEBCORE_NAVIGATOR_VENDOR wkGetVendorNameForNavigator();
 #endif
 
-// FIXME: Move this to JavaScriptCore/wtf/Platform.h, which is where we define WTF_USE_AVFOUNDATION on the Mac.
+// FIXME: Move this to JavaScriptCore/wtf/Platform.h, which is where we define USE_AVFOUNDATION on the Mac.
 // https://bugs.webkit.org/show_bug.cgi?id=67334
 #if PLATFORM(WIN) && USE(CG) && HAVE(AVCF)
-#define WTF_USE_AVFOUNDATION 1
+#define USE_AVFOUNDATION 1
 
 #if HAVE(AVCF_LEGIBLE_OUTPUT)
-#define WTF_USE_AVFOUNDATION 1
+#define USE_AVFOUNDATION 1
 #define HAVE_AVFOUNDATION_MEDIA_SELECTION_GROUP 1
 #define HAVE_AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT 1
 #define HAVE_MEDIA_ACCESSIBILITY_FRAMEWORK 1

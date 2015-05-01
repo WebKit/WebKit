@@ -1,3 +1,12 @@
+2015-05-01  Martin Robinson  <mrobinson@igalia.com>
+
+        USE(...) macro should expect unprefixed variables
+        https://bugs.webkit.org/show_bug.cgi?id=144454
+
+        Reviewed by Daniel Bates.
+
+        * Misc/WebDownload.h: Replace all occurrences WTF_USE with USE.
+
 2015-05-01  Brady Eidson  <beidson@apple.com>
 
         Add API to disable meta refreshes.

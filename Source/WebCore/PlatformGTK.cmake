@@ -229,7 +229,7 @@ list(APPEND WebCorePlatformGTK_SOURCES
     rendering/RenderThemeGtk.cpp
 )
 
-if (WTF_USE_GEOCLUE2)
+if (USE_GEOCLUE2)
     list(APPEND WebCore_SOURCES
         ${DERIVED_SOURCES_WEBCORE_DIR}/Geoclue2Interface.c
     )
@@ -331,7 +331,7 @@ if (ENABLE_VIDEO)
         ${GSTREAMER_VIDEO_LIBRARIES}
     )
 
-    if (WTF_USE_GSTREAMER_MPEGTS)
+    if (USE_GSTREAMER_MPEGTS)
         list(APPEND WebCore_INCLUDE_DIRECTORIES
             ${GSTREAMER_MPEGTS_INCLUDE_DIRS}
         )
@@ -341,7 +341,7 @@ if (ENABLE_VIDEO)
         )
     endif ()
 
-    if (WTF_USE_GSTREAMER_GL)
+    if (USE_GSTREAMER_GL)
         list(APPEND WebCore_INCLUDE_DIRECTORIES
             ${GSTREAMER_GL_INCLUDE_DIRS}
         )
@@ -372,7 +372,7 @@ if (ENABLE_MEDIA_STREAM)
     )
 endif ()
 
-if (WTF_USE_TEXTURE_MAPPER)
+if (USE_TEXTURE_MAPPER)
     list(APPEND WebCore_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/graphics/texmap"
     )
@@ -413,20 +413,20 @@ if (ENABLE_THREADED_COMPOSITOR)
     )
 endif ()
 
-if (WTF_USE_EGL)
+if (USE_EGL)
     list(APPEND WebCore_LIBRARIES
         ${EGL_LIBRARY}
     )
 endif ()
 
-if (WTF_USE_OPENGL_ES_2)
+if (USE_OPENGL_ES_2)
     list(APPEND WebCore_SOURCES
         platform/graphics/opengl/Extensions3DOpenGLES.cpp
         platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp
     )
 endif ()
 
-if (WTF_USE_OPENGL)
+if (USE_OPENGL)
     list(APPEND WebCore_SOURCES
         platform/graphics/OpenGLShims.cpp
 

@@ -54,7 +54,7 @@
 
 // FIXME: <rdar://problem/6669434> Switch from using NSGeometry methods to CGGeometry methods
 //
-// We explicitly use __has_include() instead of the macro define WTF_USE_APPLE_INTERNAL_SDK as
+// We explicitly use __has_include() instead of the macro define USE_APPLE_INTERNAL_SDK as
 // the condition for including the header Foundation/NSGeometry.h to support internal Apple
 // clients that build without header wtf/Platform.h.
 #if __has_include(<Foundation/NSGeometry.h>)

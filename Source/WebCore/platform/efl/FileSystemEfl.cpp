@@ -53,7 +53,7 @@ CString fileSystemRepresentation(const String& path)
 {
 // WARNING: this is just used by platform/network/soup, thus must be GLIB!!!
 // TODO: move this to CString and use it instead in both, being more standard
-#if !PLATFORM(WIN_OS) && defined(WTF_USE_SOUP)
+#if !PLATFORM(WIN_OS) && defined(USE_SOUP)
     char* filename = g_uri_unescape_string(path.utf8().data(), 0);
     CString cfilename(filename);
     g_free(filename);

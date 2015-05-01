@@ -305,14 +305,6 @@ macro(CREATE_CONFIGURATION_HEADER)
 
     foreach (_variable_name ${_WEBKIT_CONFIG_FILE_VARIABLES})
         _ADD_CONFIGURATION_LINE_TO_HEADER_STRING(_file_contents ${_variable_name} ${_variable_name})
-
-        # WebKit looks for WTF_USE_FOO when calling the USE(FOO) macro. Automatically exposing
-        # this definition when USE_FOO is exposed, prevents us from having to expose both (or
-        # forgetting to do so).
-        string(FIND ${_variable_name} "USE_" _use_string_location)
-        if (${_use_string_location} EQUAL 0)
-            _ADD_CONFIGURATION_LINE_TO_HEADER_STRING(_file_contents ${_variable_name} "WTF_${_variable_name}")
-        endif ()
     endforeach ()
     set(_file_contents "${_file_contents}\n#endif /* CMAKECONFIG_H */\n")
 

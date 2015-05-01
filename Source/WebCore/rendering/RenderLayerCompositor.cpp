@@ -81,7 +81,7 @@ WEBCORE_EXPORT bool WebCoreHas3DRendering = true;
 #endif
 
 #if !PLATFORM(MAC) && !PLATFORM(IOS)
-#define WTF_USE_COMPOSITING_FOR_SMALL_CANVASES 1
+#define USE_COMPOSITING_FOR_SMALL_CANVASES 1
 #endif
 
 namespace WebCore {

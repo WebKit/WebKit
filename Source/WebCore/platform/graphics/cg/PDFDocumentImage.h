@@ -34,7 +34,7 @@
 #if USE(CG)
 
 #if PLATFORM(MAC)
-#define WTF_USE_PDFKIT_FOR_PDFDOCUMENTIMAGE 1
+#define USE_PDFKIT_FOR_PDFDOCUMENTIMAGE 1
 #endif
 
 typedef struct CGPDFDocument *CGPDFDocumentRef;

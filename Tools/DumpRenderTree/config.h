@@ -34,17 +34,17 @@
 #endif
 
 #if PLATFORM(COCOA)
-#define WTF_USE_CF 1
+#define USE_CF 1
 #endif
 
 #if PLATFORM(WIN)
-#define WTF_USE_CF 1 
+#define USE_CF 1 
 #if PLATFORM(WIN_CAIRO)
-#define WTF_USE_CAIRO 1
-#define WTF_USE_CURL 1
+#define USE_CAIRO 1
+#define USE_CURL 1
 #else
-#define WTF_USE_CG 1
-#define WTF_USE_CFNETWORK 1
+#define USE_CG 1
+#define USE_CFNETWORK 1
 #endif
 
 #undef _WIN32_WINNT

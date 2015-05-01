@@ -31,7 +31,7 @@
 #include <wtf/RetainPtr.h>
 
 #if PLATFORM(COCOA) && USE(CA) && !PLATFORM(IOS_SIMULATOR)
-#define WTF_USE_IOSURFACE_CANVAS_BACKING_STORE 1
+#define USE_IOSURFACE_CANVAS_BACKING_STORE 1
 #endif
 
 typedef struct CGColorSpace *CGColorSpaceRef;

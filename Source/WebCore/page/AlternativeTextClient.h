@@ -33,7 +33,7 @@
 
 #if PLATFORM(MAC)
 // Some platforms provide UI for suggesting alternative dictation text.
-#define WTF_USE_DICTATION_ALTERNATIVES 1
+#define USE_DICTATION_ALTERNATIVES 1
 #endif // PLATFORM(MAC)
 
 namespace WebCore {

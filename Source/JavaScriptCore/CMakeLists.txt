@@ -627,7 +627,7 @@ set(JavaScriptCore_LIBRARIES
     ${ICU_I18N_LIBRARIES}
 )
 
-if (WTF_USE_UDIS86)
+if (USE_UDIS86)
     set(UDIS_GEN_DEP
         disassembler/udis86/ud_opcode.py
         disassembler/udis86/ud_optable.py

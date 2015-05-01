@@ -25,19 +25,19 @@
 
 // FIXME: On Windows, we require all WebKit source files to include config.h
 // before including any other files. Failing to include config.h will leave
-// WTF_USE_CF undefined, causing build failures in this
+// USE_CF undefined, causing build failures in this
 // file. But Mac doesn't have a config.h for WebKit, so we can't include the
-// Windows one here. For now we can just define WTF_USE_CF and
-// WTF_USE_CFNETWORK manually, but we need a better long-term solution.
-#ifndef WTF_USE_CF
-#define WTF_USE_CF 1
+// Windows one here. For now we can just define USE_CF and
+// USE_CFNETWORK manually, but we need a better long-term solution.
+#ifndef USE_CF
+#define USE_CF 1
 #endif
 
 #include <wtf/Platform.h>
 
 #if PLATFORM(WIN)
-#ifndef WTF_USE_CG
-#define WTF_USE_CG 1
+#ifndef USE_CG
+#define USE_CG 1
 #endif
 #endif
 
