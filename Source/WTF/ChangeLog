@@ -1,3 +1,13 @@
+2015-05-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Enable ENABLE_ES6_TEMPLATE_LITERAL_SYNTAX by default on all ports (Windows was missed)
+        https://bugs.webkit.org/show_bug.cgi?id=144495
+
+        Reviewed by Csaba Osztrogonác.
+
+        * wtf/FeatureDefines.h:
+        This covers all ports that haven't defined the flag otherwise.
+
 2015-04-30  Alex Christensen  <achristensen@webkit.org>
 
         Decrease minimum Vector size.
