@@ -1,5 +1,20 @@
 2015-05-01  Basile Clement  <basile_clement@apple.com>
 
+        Math.abs() returns negative
+        https://bugs.webkit.org/show_bug.cgi?id=137827
+
+        Reviewed by Michael Saboff.
+
+        Math.abs() on doubles was mistakenly assumed by the DFG AI to be the
+        identity function.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * tests/stress/math-abs-positive.js: Added, was previously failing.
+        (foo):
+
+2015-05-01  Basile Clement  <basile_clement@apple.com>
+
         Function allocation sinking shouldn't be performed on singleton functions
         https://bugs.webkit.org/show_bug.cgi?id=144166
 
