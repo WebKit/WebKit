@@ -1,3 +1,15 @@
+2015-05-01  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] New CORS tests from r183280 fail on WebKitGTK+
+        https://bugs.webkit.org/show_bug.cgi?id=144469
+
+        Reviewed by Sergio Villar Senin.
+
+        No new tests. This causes failing tests to pass.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::doRedirect): Clear the origin header on cross-origin redirects.
+
 2015-04-30  Alex Christensen  <achristensen@webkit.org>
 
         Compile fix when using content extensions debugging code.
