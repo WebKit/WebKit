@@ -1,3 +1,14 @@
+2015-05-01  Brent Fulgham  <bfulgham@apple.com>
+
+        Provide a runtime flag to run-webkit-tests that shows the test view
+        https://bugs.webkit.org/show_bug.cgi?id=144079.
+
+        Unreviewed correction to r183651.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize): Make sure the state of the '--show-webview'
+        flag is included in the options dictionary passed to the PlatformWebView.
+
 2015-05-01  Antti Koivisto  <antti@apple.com>
 
         Remove network process load serialization code

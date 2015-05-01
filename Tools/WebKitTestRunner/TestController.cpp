@@ -439,6 +439,14 @@ void TestController::initialize(int argc, const char* argv[])
         WKDictionarySetItem(viewOptions.get(), useRemoteLayerTreeKey.get(), useRemoteLayerTreeValue.get());
     }
 
+    if (m_shouldShowWebView) {
+        if (!viewOptions)
+            viewOptions = adoptWK(WKMutableDictionaryCreate());
+        WKRetainPtr<WKStringRef> shouldShowWebViewKey = adoptWK(WKStringCreateWithUTF8CString("ShouldShowWebView"));
+        WKRetainPtr<WKBooleanRef> shouldShowWebViewValue = adoptWK(WKBooleanCreate(m_shouldShowWebView));
+        WKDictionarySetItem(viewOptions.get(), shouldShowWebViewKey.get(), shouldShowWebViewValue.get());
+    }
+
     createWebViewWithOptions(viewOptions.get());
 }
 
