@@ -1,5 +1,17 @@
 2015-04-30  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Unreviewed gardening. Update results of inspector tests.
+
+        * inspector-protocol/debugger/breakpoint-eval-with-exception-expected.txt:
+        * inspector-protocol/debugger/regress-133182-expected.txt:
+        * inspector-protocol/debugger/regress-133182.html:
+        * inspector-protocol/debugger/setBreakpoint-actions-expected.txt:
+        * inspector-protocol/debugger/terminate-dedicated-worker-while-paused-expected.txt:
+        * inspector-protocol/page/deny-X-FrameOption-expected.txt:
+        * inspector/debugger/search-scripts-expected.txt:
+
+2015-04-30  Joseph Pecoraro  <pecoraro@apple.com>
+
         Unreviewed gardening. Remove skipped and broken inspector test.
 
         This is the last test relying on the old model interface.

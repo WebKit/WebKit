@@ -13,8 +13,8 @@ RESULTS: 2
 
 SCRIPT: LayoutTests/inspector/debugger/search-scripts.html
 RESULTS: 1
-  LINE: 0
-  CONTENT: (function(event) {runTest(); // SEARCHTEST: onload attribute string
+  LINE: 1
+  CONTENT: runTest(); // SEARCHTEST: onload attribute string
 
 SCRIPT: eval1.js
 RESULTS: 1

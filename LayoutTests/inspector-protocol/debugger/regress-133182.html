@@ -21,7 +21,6 @@ function test()
 
     function triggerNextUncaughtException()
     {
-
         // Evaluate statement and expect to pause.
         if (testIndex < statementsWithUncaughtExceptions.length) {
             var statement = statementsWithUncaughtExceptions[testIndex++];
@@ -33,7 +32,6 @@ function test()
         InspectorTest.log("PASS - paused for each uncaught exception");
         InspectorTest.completeTest();
     }
-
 
     InspectorTest.sendCommand("Debugger.enable", {});
     InspectorTest.sendCommand("Debugger.setPauseOnExceptions", {state: "uncaught"}, function(responseObject) {
