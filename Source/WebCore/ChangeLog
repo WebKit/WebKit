@@ -1,3 +1,36 @@
+2015-05-01  Dan Bernstein  <mitz@apple.com>
+
+        WebCore part of <rdar://problem/8636045> Back/forward navigation to an error page in Safari breaks the back-forward list
+        https://bugs.webkit.org/show_bug.cgi?id=144501
+
+        Reviewed by Darin Adler.
+
+        Test: TestWebKitAPI/Tests/WebKit2Cocoa/LoadAlternateHTMLString.mm
+
+        Normally, loading substitute data (such as an error page) creates a new back-forward list
+        item. FrameLoader has a mechanism that detects when a substitute data load occurs during
+        handling of a provisional load error and prevents the creation of a new back-forwards list
+        item in that case if the unreachable URL is the same as the failing provisional URL. This
+        mechanism was broken in WebKit2, where handling the provisional load error is asynchronous.
+
+        The fix is to capture some state (namely, the failing provisional URL) when dispatching the
+        load error and allow it to be restored when loading the substitute data.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader): Removed initialization of
+        m_delegateIsHandlingProvisionalLoadError.
+        (WebCore::FrameLoader::shouldReloadToHandleUnreachableURL): Instead of checking
+        m_delegateIsHandlingProvisionalLoadError and if true using the provisional document loader’s
+        URL, check m_provisionalLoadErrorBeingHandledURL.
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame): Instead of checking and setting
+        m_delegateIsHandlingProvisionalLoadError, use m_provisionalLoadErrorBeingHandledURL.
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::provisionalLoadErrorBeingHandledURL): Added this getter. The client
+        can call this from its override of dispatchDidFailProvisionalLoad and store the result.
+        (WebCore::FrameLoader::setProvisionalLoadErrorBeingHandledURL): Added this setter. The
+        client can call this prior to loading substitute data if it’s done as part of handling a
+        previously-dispatched didFailProvisionalLoad.
+
 2015-05-01  Martin Robinson  <mrobinson@igalia.com>
 
         USE(...) macro should expect unprefixed variables

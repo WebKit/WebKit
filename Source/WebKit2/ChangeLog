@@ -1,3 +1,34 @@
+2015-05-01  Dan Bernstein  <mitz@apple.com>
+
+        WebKit2 part of <rdar://problem/8636045> Back/forward navigation to an error page in Safari breaks the back-forward list
+        https://bugs.webkit.org/show_bug.cgi?id=144501
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadAlternateHTMLString): If this is called during
+        didFailProvisionalLoadForFrame, send back the provisional URL captured at the time of
+        failure.
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrame): Get the provisioinal URL and keep
+        it in new member variable m_failingProvisionalLoadURL for the duration of the client’s
+        handling of this message.
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/WebPageProxy.messages.in: Added provisionalURL parameter to
+        DidFailProvisionalLoadForFrame.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidFailProvisionalLoad): Send the URL for this error
+        to the UI process.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadAlternateHTMLString): Temporarily restore the loader’s state to
+        reflect the provisional load error being handled.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Added provisionalLoadErrorURL parameter to
+        LoadAlternateHTMLString.
+
 2015-05-01  Martin Robinson  <mrobinson@igalia.com>
 
         USE(...) macro should expect unprefixed variables
