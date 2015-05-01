@@ -1182,17 +1182,17 @@ void SpeculativeJIT::compilePeepHoleObjectEquality(Node* node, Node* branchNode)
     if (masqueradesAsUndefinedWatchpointIsStillValid()) {
         if (m_state.forNode(node->child1()).m_type & ~SpecObject) {
             speculationCheck(
-                BadType, JSValueSource::unboxedCell(op1GPR), node->child1(), branchNotObject(op1GPR));
+                BadType, JSValueSource::unboxedCell(op1GPR), node->child1(), m_jit.branchIfNotObject(op1GPR));
         }
         if (m_state.forNode(node->child2()).m_type & ~SpecObject) {
             speculationCheck(
-                BadType, JSValueSource::unboxedCell(op2GPR), node->child2(), branchNotObject(op2GPR));
+                BadType, JSValueSource::unboxedCell(op2GPR), node->child2(), m_jit.branchIfNotObject(op2GPR));
         }
     } else {
         if (m_state.forNode(node->child1()).m_type & ~SpecObject) {
             speculationCheck(
                 BadType, JSValueSource::unboxedCell(op1GPR), node->child1(),
-                branchNotObject(op1GPR));
+                m_jit.branchIfNotObject(op1GPR));
         }
         speculationCheck(BadType, JSValueSource::unboxedCell(op1GPR), node->child1(),
             m_jit.branchTest8(
@@ -1203,7 +1203,7 @@ void SpeculativeJIT::compilePeepHoleObjectEquality(Node* node, Node* branchNode)
         if (m_state.forNode(node->child2()).m_type & ~SpecObject) {
             speculationCheck(
                 BadType, JSValueSource::unboxedCell(op2GPR), node->child2(),
-                branchNotObject(op2GPR));
+                m_jit.branchIfNotObject(op2GPR));
         }
         speculationCheck(BadType, JSValueSource::unboxedCell(op2GPR), node->child2(),
             m_jit.branchTest8(
@@ -1897,7 +1897,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
                 JITCompiler::Jump isNumber = m_jit.branchTest64(MacroAssembler::NonZero, gpr, GPRInfo::tagTypeNumberRegister);
                 
                 DFG_TYPE_CHECK(
-                    JSValueRegs(gpr), node->child1(), ~SpecCell, branchIsCell(JSValueRegs(gpr)));
+                    JSValueRegs(gpr), node->child1(), ~SpecCell, m_jit.branchIfCell(JSValueRegs(gpr)));
                 
                 // It's not a cell: so true turns into 1 and all else turns into 0.
                 m_jit.compare64(JITCompiler::Equal, gpr, TrustedImm32(ValueTrue), resultGpr);
@@ -1953,7 +1953,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
                     
                     DFG_TYPE_CHECK(
                         op1.jsValueRegs(), node->child1(), ~SpecCell,
-                        branchIsCell(op1.jsValueRegs()));
+                        m_jit.branchIfCell(op1.jsValueRegs()));
                     
                     // It's not a cell: so true turns into 1 and all else turns into 0.
                     JITCompiler::Jump isBoolean = m_jit.branch32(JITCompiler::Equal, tagGPR, TrustedImm32(JSValue::BooleanTag));
@@ -2543,7 +2543,7 @@ void SpeculativeJIT::compilePutByValForFloatTypedArray(GPRReg base, GPRReg prope
 void SpeculativeJIT::compileInstanceOfForObject(Node*, GPRReg valueReg, GPRReg prototypeReg, GPRReg scratchReg, GPRReg scratch2Reg)
 {
     // Check that prototype is an object.
-    speculationCheck(BadType, JSValueRegs(), 0, m_jit.branchIfCellNotObject(prototypeReg));
+    speculationCheck(BadType, JSValueRegs(), 0, m_jit.branchIfNotObject(prototypeReg));
     
     // Initialize scratchReg with the value being checked.
     m_jit.move(valueReg, scratchReg);
@@ -2554,7 +2554,7 @@ void SpeculativeJIT::compileInstanceOfForObject(Node*, GPRReg valueReg, GPRReg p
     m_jit.loadPtr(MacroAssembler::Address(scratchReg, Structure::prototypeOffset() + CellPayloadOffset), scratchReg);
     MacroAssembler::Jump isInstance = m_jit.branchPtr(MacroAssembler::Equal, scratchReg, prototypeReg);
 #if USE(JSVALUE64)
-    branchIsCell(JSValueRegs(scratchReg)).linkTo(loop, &m_jit);
+    m_jit.branchIfCell(JSValueRegs(scratchReg)).linkTo(loop, &m_jit);
 #else
     m_jit.branchTestPtr(MacroAssembler::NonZero, scratchReg).linkTo(loop, &m_jit);
 #endif
@@ -2593,7 +2593,7 @@ void SpeculativeJIT::compileInstanceOf(Node* node)
         GPRReg scratchReg = scratch.gpr();
         GPRReg scratch2Reg = scratch2.gpr();
         
-        MacroAssembler::Jump isCell = branchIsCell(value.jsValueRegs());
+        MacroAssembler::Jump isCell = m_jit.branchIfCell(value.jsValueRegs());
         GPRReg valueReg = value.jsValueRegs().payloadGPR();
         moveFalseTo(scratchReg);
 
@@ -3958,14 +3958,14 @@ void SpeculativeJIT::compileStringToUntypedEquality(Node* node, Edge stringEdge,
     JITCompiler::JumpList fastTrue;
     JITCompiler::JumpList fastFalse;
     
-    fastFalse.append(branchNotCell(rightRegs));
+    fastFalse.append(m_jit.branchIfNotCell(rightRegs));
     
     // It's safe to branch around the type check below, since proving that the values are
     // equal does indeed prove that the right value is a string.
     fastTrue.append(m_jit.branchPtr(
         MacroAssembler::Equal, leftGPR, rightRegs.payloadGPR()));
     
-    fastFalse.append(branchNotString(rightRegs.payloadGPR()));
+    fastFalse.append(m_jit.branchIfNotString(rightRegs.payloadGPR()));
     
     compileStringEquality(
         node, leftGPR, rightRegs.payloadGPR(), lengthGPR, leftTempGPR, rightTempGPR, leftTemp2GPR,
@@ -4012,8 +4012,8 @@ void SpeculativeJIT::compileStringIdentToNotStringVarEquality(
 
     moveFalseTo(rightTempGPR);
     JITCompiler::JumpList notString;
-    notString.append(branchNotCell(rightRegs));
-    notString.append(branchNotString(rightRegs.payloadGPR()));
+    notString.append(m_jit.branchIfNotCell(rightRegs));
+    notString.append(m_jit.branchIfNotString(rightRegs.payloadGPR()));
     
     speculateStringIdentAndLoadStorage(notStringVarEdge, rightRegs.payloadGPR(), rightTempGPR);
     
@@ -4234,7 +4234,7 @@ void SpeculativeJIT::compileGetByValOnScopedArguments(Node* node)
             baseReg, scratch2Reg, MacroAssembler::TimesEight,
             ScopedArguments::overflowStorageOffset()),
         resultRegs);
-    speculationCheck(ExoticObjectMode, JSValueSource(), nullptr, m_jit.branchIsEmpty(resultRegs));
+    speculationCheck(ExoticObjectMode, JSValueSource(), nullptr, m_jit.branchIfEmpty(resultRegs));
     
     done.link(&m_jit);
     
@@ -4965,7 +4965,7 @@ void SpeculativeJIT::compileToStringOrCallStringConstructorOnCell(Node* node)
         flushRegisters();
         JITCompiler::Jump done;
         if (node->child1()->prediction() & SpecString) {
-            JITCompiler::Jump needCall = branchNotString(op1GPR);
+            JITCompiler::Jump needCall = m_jit.branchIfNotString(op1GPR);
             m_jit.move(op1GPR, resultGPR);
             done = m_jit.jump();
             needCall.link(&m_jit);
@@ -5194,7 +5194,7 @@ void SpeculativeJIT::speculateObject(Edge edge)
     SpeculateCellOperand operand(this, edge);
     GPRReg gpr = operand.gpr();
     DFG_TYPE_CHECK(
-        JSValueSource::unboxedCell(gpr), edge, SpecObject, branchNotObject(gpr));
+        JSValueSource::unboxedCell(gpr), edge, SpecObject, m_jit.branchIfNotObject(gpr));
 }
 
 void SpeculativeJIT::speculateFunction(Edge edge)
@@ -5223,16 +5223,16 @@ void SpeculativeJIT::speculateObjectOrOther(Edge edge)
     JSValueOperand operand(this, edge, ManualOperandSpeculation);
     GPRTemporary temp(this);
     GPRReg tempGPR = temp.gpr();
-    MacroAssembler::Jump notCell = branchNotCell(operand.jsValueRegs());
+    MacroAssembler::Jump notCell = m_jit.branchIfNotCell(operand.jsValueRegs());
     GPRReg gpr = operand.jsValueRegs().payloadGPR();
     DFG_TYPE_CHECK(
-        operand.jsValueRegs(), edge, (~SpecCell) | SpecObject, branchNotObject(gpr));
+        operand.jsValueRegs(), edge, (~SpecCell) | SpecObject, m_jit.branchIfNotObject(gpr));
     MacroAssembler::Jump done = m_jit.jump();
     notCell.link(&m_jit);
     if (needsTypeCheck(edge, SpecCell | SpecOther)) {
         typeCheck(
             operand.jsValueRegs(), edge, SpecCell | SpecOther,
-            branchNotOther(operand.jsValueRegs(), tempGPR));
+            m_jit.branchIfNotOther(operand.jsValueRegs(), tempGPR));
     }
     done.link(&m_jit);
 }
@@ -5240,7 +5240,7 @@ void SpeculativeJIT::speculateObjectOrOther(Edge edge)
 void SpeculativeJIT::speculateString(Edge edge, GPRReg cell)
 {
     DFG_TYPE_CHECK(
-        JSValueSource::unboxedCell(cell), edge, SpecString | ~SpecCell, branchNotString(cell));
+        JSValueSource::unboxedCell(cell), edge, SpecString | ~SpecCell, m_jit.branchIfNotString(cell));
 }
 
 void SpeculativeJIT::speculateStringIdentAndLoadStorage(Edge edge, GPRReg string, GPRReg storage)
@@ -5342,10 +5342,10 @@ void SpeculativeJIT::speculateNotStringVar(Edge edge)
     GPRTemporary temp(this);
     GPRReg tempGPR = temp.gpr();
     
-    JITCompiler::Jump notCell = branchNotCell(operand.jsValueRegs());
+    JITCompiler::Jump notCell = m_jit.branchIfNotCell(operand.jsValueRegs());
     GPRReg cell = operand.jsValueRegs().payloadGPR();
     
-    JITCompiler::Jump notString = branchNotString(cell);
+    JITCompiler::Jump notString = m_jit.branchIfNotString(cell);
     
     speculateStringIdentAndLoadStorage(edge, cell, tempGPR);
     
@@ -5359,7 +5359,7 @@ void SpeculativeJIT::speculateNotCell(Edge edge)
         return;
     
     JSValueOperand operand(this, edge, ManualOperandSpeculation); 
-    typeCheck(operand.jsValueRegs(), edge, ~SpecCell, branchIsCell(operand.jsValueRegs()));
+    typeCheck(operand.jsValueRegs(), edge, ~SpecCell, m_jit.branchIfCell(operand.jsValueRegs()));
 }
 
 void SpeculativeJIT::speculateOther(Edge edge)
@@ -5372,7 +5372,7 @@ void SpeculativeJIT::speculateOther(Edge edge)
     GPRReg tempGPR = temp.gpr();
     typeCheck(
         operand.jsValueRegs(), edge, SpecOther,
-        branchNotOther(operand.jsValueRegs(), tempGPR));
+        m_jit.branchIfNotOther(operand.jsValueRegs(), tempGPR));
 }
 
 void SpeculativeJIT::speculateMisc(Edge edge, JSValueRegs regs)
@@ -5619,9 +5619,9 @@ void SpeculativeJIT::emitSwitchChar(Node* node, SwitchData* data)
         
         op1.use();
         
-        addBranch(branchNotCell(op1Regs), data->fallThrough.block);
+        addBranch(m_jit.branchIfNotCell(op1Regs), data->fallThrough.block);
         
-        addBranch(branchNotString(op1Regs.payloadGPR()), data->fallThrough.block);
+        addBranch(m_jit.branchIfNotString(op1Regs.payloadGPR()), data->fallThrough.block);
         
         emitSwitchCharStringJump(data, op1Regs.payloadGPR(), tempGPR);
         noResult(node, UseChildrenCalledExplicitly);
@@ -5892,9 +5892,9 @@ void SpeculativeJIT::emitSwitchString(Node* node, SwitchData* data)
         
         op1.use();
         
-        addBranch(branchNotCell(op1Regs), data->fallThrough.block);
+        addBranch(m_jit.branchIfNotCell(op1Regs), data->fallThrough.block);
         
-        addBranch(branchNotString(op1Regs.payloadGPR()), data->fallThrough.block);
+        addBranch(m_jit.branchIfNotString(op1Regs.payloadGPR()), data->fallThrough.block);
         
         emitSwitchStringOnString(data, op1Regs.payloadGPR());
         noResult(node, UseChildrenCalledExplicitly);
@@ -5942,38 +5942,6 @@ void SpeculativeJIT::linkBranches()
         BranchRecord& branch = m_branches[i];
         branch.jump.linkTo(m_jit.blockHeads()[branch.destination->index], &m_jit);
     }
-}
-
-JITCompiler::Jump SpeculativeJIT::branchIsObject(GPRReg cellGPR)
-{
-    return m_jit.branch8(
-        MacroAssembler::AboveOrEqual,
-        MacroAssembler::Address(cellGPR, JSCell::typeInfoTypeOffset()),
-        MacroAssembler::TrustedImm32(ObjectType));
-}
-
-JITCompiler::Jump SpeculativeJIT::branchNotObject(GPRReg cellGPR)
-{
-    return m_jit.branch8(
-        MacroAssembler::Below,
-        MacroAssembler::Address(cellGPR, JSCell::typeInfoTypeOffset()),
-        MacroAssembler::TrustedImm32(ObjectType));
-}
-
-JITCompiler::Jump SpeculativeJIT::branchIsString(GPRReg cellGPR)
-{
-    return m_jit.branchStructurePtr(
-        MacroAssembler::Equal,
-        MacroAssembler::Address(cellGPR, JSCell::structureIDOffset()),
-        m_jit.vm()->stringStructure.get());
-}
-
-JITCompiler::Jump SpeculativeJIT::branchNotString(GPRReg cellGPR)
-{
-    return m_jit.branchStructurePtr(
-        MacroAssembler::NotEqual,
-        MacroAssembler::Address(cellGPR, JSCell::structureIDOffset()),
-        m_jit.vm()->stringStructure.get());
 }
 
 #if ENABLE(GGC)

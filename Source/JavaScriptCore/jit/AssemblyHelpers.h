@@ -385,7 +385,77 @@ public:
 #endif
     }
     
-    Jump branchIsEmpty(JSValueRegs regs)
+    Jump branchIfCell(GPRReg reg)
+    {
+#if USE(JSVALUE64)
+        return branchTest64(MacroAssembler::Zero, reg, GPRInfo::tagMaskRegister);
+#else
+        return branch32(MacroAssembler::Equal, reg, TrustedImm32(JSValue::CellTag));
+#endif
+    }
+    Jump branchIfCell(JSValueRegs regs)
+    {
+#if USE(JSVALUE64)
+        return branchIfCell(regs.gpr());
+#else
+        return branchIfCell(regs.tagGPR());
+#endif
+    }
+    
+    Jump branchIfOther(JSValueRegs regs, GPRReg tempGPR)
+    {
+#if USE(JSVALUE64)
+        move(regs.gpr(), tempGPR);
+        and64(TrustedImm32(~TagBitUndefined), tempGPR);
+        return branch64(Equal, tempGPR, TrustedImm64(ValueNull));
+#else
+        or32(TrustedImm32(1), regs.tagGPR(), tempGPR);
+        return branch32(Equal, tempGPR, TrustedImm32(JSValue::NullTag));
+#endif
+    }
+    
+    Jump branchIfNotOther(JSValueRegs regs, GPRReg tempGPR)
+    {
+#if USE(JSVALUE64)
+        move(regs.gpr(), tempGPR);
+        and64(TrustedImm32(~TagBitUndefined), tempGPR);
+        return branch64(NotEqual, tempGPR, TrustedImm64(ValueNull));
+#else
+        or32(TrustedImm32(1), regs.tagGPR(), tempGPR);
+        return branch32(NotEqual, tempGPR, TrustedImm32(JSValue::NullTag));
+#endif
+    }
+    
+    Jump branchIfObject(GPRReg cellGPR)
+    {
+        return branch8(
+            AboveOrEqual, Address(cellGPR, JSCell::typeInfoTypeOffset()), TrustedImm32(ObjectType));
+    }
+    
+    Jump branchIfNotObject(GPRReg cellGPR)
+    {
+        return branch8(
+            Below, Address(cellGPR, JSCell::typeInfoTypeOffset()), TrustedImm32(ObjectType));
+    }
+    
+    Jump branchIfType(GPRReg cellGPR, JSType type)
+    {
+        return branch8(Equal, Address(cellGPR, JSCell::typeInfoTypeOffset()), TrustedImm32(type));
+    }
+    
+    Jump branchIfNotType(GPRReg cellGPR, JSType type)
+    {
+        return branch8(NotEqual, Address(cellGPR, JSCell::typeInfoTypeOffset()), TrustedImm32(type));
+    }
+    
+    Jump branchIfString(GPRReg cellGPR) { return branchIfType(cellGPR, StringType); }
+    Jump branchIfNotString(GPRReg cellGPR) { return branchIfNotType(cellGPR, StringType); }
+    Jump branchIfSymbol(GPRReg cellGPR) { return branchIfType(cellGPR, SymbolType); }
+    Jump branchIfNotSymbol(GPRReg cellGPR) { return branchIfNotType(cellGPR, SymbolType); }
+    Jump branchIfFunction(GPRReg cellGPR) { return branchIfType(cellGPR, JSFunctionType); }
+    Jump branchIfNotFunction(GPRReg cellGPR) { return branchIfNotType(cellGPR, JSFunctionType); }
+    
+    Jump branchIfEmpty(JSValueRegs regs)
     {
 #if USE(JSVALUE64)
         return branchTest64(Zero, regs.gpr());
@@ -473,11 +543,6 @@ public:
     static Address calleeFrameCallerFrame()
     {
         return calleeFrameSlot(0).withOffset(CallFrame::callerFrameOffset());
-    }
-
-    Jump branchIfCellNotObject(GPRReg cellReg)
-    {
-        return branch8(Below, Address(cellReg, JSCell::typeInfoTypeOffset()), TrustedImm32(ObjectType));
     }
 
     static GPRReg selectScratchGPR(GPRReg preserve1 = InvalidGPRReg, GPRReg preserve2 = InvalidGPRReg, GPRReg preserve3 = InvalidGPRReg, GPRReg preserve4 = InvalidGPRReg, GPRReg preserve5 = InvalidGPRReg)

@@ -1130,7 +1130,7 @@ JIT::JumpList JIT::emitScopedArgumentsGetByVal(Instruction*, PatchableJump& badT
     sub32(property, scratch2);
     neg32(scratch2);
     loadValue(BaseIndex(base, scratch2, TimesEight, ScopedArguments::overflowStorageOffset()), result);
-    slowCases.append(branchIsEmpty(result));
+    slowCases.append(branchIfEmpty(result));
     done.link(this);
     
     return slowCases;

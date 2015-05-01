@@ -1,5 +1,94 @@
 2015-04-30  Filip Pizlo  <fpizlo@apple.com>
 
+        Move all of the branchIs<type> helpers from SpeculativeJIT into AssemblyHelpers
+        https://bugs.webkit.org/show_bug.cgi?id=144462
+
+        Reviewed by Geoffrey Garen and Mark Lam.
+        
+        At some point we started adding representation-agnostic helpers for doing common type tests.
+        We added some in SpeculativeJIT, and then some in AssemblyHelpers. Prior to this change,
+        they had overlapping powers, though SpeculativeJIT was a bit better.
+        
+        This removes SpeculativeJIT's helpers and strengthens AssemblyHelpers' helpers. This is
+        better because now all of these helpers can be used in all of the assembly-based JITs, not
+        just the DFG. It also settles on what I find to be a slightly better naming convention.
+        For example where we previously would have said branchIsString, now we say
+        branchIfString. Similarly, branchNotString becomes branchIfNotString.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        (JSC::DFG::SpeculativeJIT::compileInstanceOfForObject):
+        (JSC::DFG::SpeculativeJIT::compileInstanceOf):
+        (JSC::DFG::SpeculativeJIT::compileStringToUntypedEquality):
+        (JSC::DFG::SpeculativeJIT::compileStringIdentToNotStringVarEquality):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnScopedArguments):
+        (JSC::DFG::SpeculativeJIT::compileToStringOrCallStringConstructorOnCell):
+        (JSC::DFG::SpeculativeJIT::speculateObject):
+        (JSC::DFG::SpeculativeJIT::speculateObjectOrOther):
+        (JSC::DFG::SpeculativeJIT::speculateString):
+        (JSC::DFG::SpeculativeJIT::speculateNotStringVar):
+        (JSC::DFG::SpeculativeJIT::speculateNotCell):
+        (JSC::DFG::SpeculativeJIT::speculateOther):
+        (JSC::DFG::SpeculativeJIT::emitSwitchChar):
+        (JSC::DFG::SpeculativeJIT::emitSwitchString):
+        (JSC::DFG::SpeculativeJIT::branchIsObject): Deleted.
+        (JSC::DFG::SpeculativeJIT::branchNotObject): Deleted.
+        (JSC::DFG::SpeculativeJIT::branchIsString): Deleted.
+        (JSC::DFG::SpeculativeJIT::branchNotString): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::branchIsCell): Deleted.
+        (JSC::DFG::SpeculativeJIT::branchNotCell): Deleted.
+        (JSC::DFG::SpeculativeJIT::branchIsOther): Deleted.
+        (JSC::DFG::SpeculativeJIT::branchNotOther): Deleted.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::writeBarrier):
+        (JSC::DFG::SpeculativeJIT::branchIsCell): Deleted.
+        (JSC::DFG::SpeculativeJIT::branchNotCell): Deleted.
+        (JSC::DFG::SpeculativeJIT::branchIsOther): Deleted.
+        (JSC::DFG::SpeculativeJIT::branchNotOther): Deleted.
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchIfCell):
+        (JSC::AssemblyHelpers::branchIfOther):
+        (JSC::AssemblyHelpers::branchIfNotOther):
+        (JSC::AssemblyHelpers::branchIfObject):
+        (JSC::AssemblyHelpers::branchIfNotObject):
+        (JSC::AssemblyHelpers::branchIfType):
+        (JSC::AssemblyHelpers::branchIfNotType):
+        (JSC::AssemblyHelpers::branchIfString):
+        (JSC::AssemblyHelpers::branchIfNotString):
+        (JSC::AssemblyHelpers::branchIfSymbol):
+        (JSC::AssemblyHelpers::branchIfNotSymbol):
+        (JSC::AssemblyHelpers::branchIfFunction):
+        (JSC::AssemblyHelpers::branchIfNotFunction):
+        (JSC::AssemblyHelpers::branchIfEmpty):
+        (JSC::AssemblyHelpers::branchIsEmpty): Deleted.
+        (JSC::AssemblyHelpers::branchIfCellNotObject): Deleted.
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitScopedArgumentsGetByVal):
+
+2015-04-30  Filip Pizlo  <fpizlo@apple.com>
+
         js/regress/is-string-fold-tricky.html and js/regress/is-string-fold.html are crashing
         https://bugs.webkit.org/show_bug.cgi?id=144463
 
