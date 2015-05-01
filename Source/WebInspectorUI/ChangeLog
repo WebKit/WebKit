@@ -1,3 +1,13 @@
+2015-04-30  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION: Web Inspector: Console message repeat count overlapped by icon
+        https://bugs.webkit.org/show_bug.cgi?id=144344
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ConsoleMessageView.css:
+        (.console-message .repeat-count):
+
 2015-04-30  Jon Davis  <jond@apple.com>
 
         Web Inspector: console should show an icon for console.info() messages
