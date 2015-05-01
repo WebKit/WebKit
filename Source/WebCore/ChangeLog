@@ -1,3 +1,29 @@
+2015-05-01  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Add CombinedURLFilters debugging code.
+        https://bugs.webkit.org/show_bug.cgi?id=144491
+
+        Reviewed by Daniel Bates.
+
+        No change in behavior.
+
+        * contentextensions/CombinedURLFilters.cpp:
+        (WebCore::ContentExtensions::recursiveMemoryUsed):
+        (WebCore::ContentExtensions::CombinedURLFilters::memoryUsed):
+        (WebCore::ContentExtensions::prefixTreeVertexToString):
+        (WebCore::ContentExtensions::recursivePrint):
+        (WebCore::ContentExtensions::CombinedURLFilters::print):
+        (WebCore::ContentExtensions::CombinedURLFilters::addPattern):
+        (WebCore::ContentExtensions::generateNFAForSubtree):
+        (WebCore::ContentExtensions::CombinedURLFilters::processNFAs):
+        * contentextensions/CombinedURLFilters.h:
+        * contentextensions/NFA.cpp:
+        (WebCore::ContentExtensions::NFA::memoryUsed):
+        * contentextensions/NFA.h:
+        * contentextensions/Term.h:
+        (WebCore::ContentExtensions::quantifierToString):
+        (WebCore::ContentExtensions::Term::toString):
+
 2015-05-01  Eric Carlson  <eric.carlson@apple.com>
 
         Fix text track language selection logic

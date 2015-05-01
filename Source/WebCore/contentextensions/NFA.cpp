@@ -47,6 +47,7 @@ unsigned NFA::createNode()
     return nextId;
 }
 
+#if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
 size_t NFA::memoryUsed() const
 {
     size_t size = sizeof(NFA);
@@ -56,10 +57,11 @@ size_t NFA::memoryUsed() const
         size += sizeof(node)
             + node.transitions.capacity() * sizeof(std::pair<uint16_t, NFANodeIndexSet>)
             + node.transitionsOnAnyCharacter.capacity() * sizeof(unsigned)
-            + node.finalRuleIds.size() * sizeof(uint64_t);
+            + node.finalRuleIds.capacity() * sizeof(uint64_t);
     }
     return size;
 }
+#endif
 
 void NFA::addTransition(unsigned from, unsigned to, char character)
 {

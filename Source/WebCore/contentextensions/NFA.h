@@ -61,7 +61,9 @@ public:
 #else
     void addRuleId(unsigned, uint64_t) { }
 #endif
+#if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     size_t memoryUsed() const;
+#endif
 
 private:
     friend class NFAToDFA;
