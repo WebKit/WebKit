@@ -1,3 +1,20 @@
+2015-04-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed gardening. Remove skipped and broken inspector test.
+
+        This is the last test relying on the old model interface.
+
+        * TestExpectations:
+        * http/tests/inspector-protocol/resources/InspectorTest.js:
+        (InspectorTest.initializeInspectorModels.console.error.window.onerror): Deleted.
+        (InspectorTest.initializeInspectorModels.console.assert): Deleted.
+        (InspectorTest.initializeInspectorModels): Deleted.
+        * inspector-protocol/indexeddb/basics-expected.txt: Removed.
+        * inspector-protocol/indexeddb/basics.html: Removed.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+
 2015-04-30  Dean Jackson  <dino@apple.com>
 
         Expose -apple-system as a font family
