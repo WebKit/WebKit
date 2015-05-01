@@ -1,3 +1,9 @@
+2015-05-01  Mario Sanchez Prada  <mario@endlessm.com>
+
+        Unreviewed, updated my list of email addresses.
+
+        * Scripts/webkitpy/common/config/contributors.json: Updated.
+
 2015-05-01  Martin Robinson  <mrobinson@igalia.com>
 
         USE(...) macro should expect unprefixed variables
