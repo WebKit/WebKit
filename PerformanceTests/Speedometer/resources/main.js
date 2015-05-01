@@ -52,7 +52,7 @@ window.benchmarkClient = {
         function totalTimeInDisplayUnit(time) {
             if (displayUnit == 'ms')
                 return time;
-            return computerScore(time);
+            return computeScore(time);
         }
 
         function sigFigFromPercentDelta(percentDelta) {
