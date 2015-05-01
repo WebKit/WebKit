@@ -606,12 +606,6 @@ webkit.org/b/141074 accessibility/auto-filled-value.html [ Missing ]
 
 webkit.org/b/142819 fast/text/baseline-inline-block.html [ ImageOnlyFailure ]
 
-webkit.org/b/142823 fast/attachment/attachment-progress.html [ Missing ]
-webkit.org/b/142823 fast/attachment/attachment-select-on-click-inside-user-select-all.html [ Missing ]
-webkit.org/b/142823 fast/attachment/attachment-select-on-click.html [ Missing ]
-webkit.org/b/142823 fast/attachment/attachment-subtitle.html [ Missing ]
-webkit.org/b/142823 fast/attachment/attachment-title.html [ Missing ]
-
 webkit.org/b/142670 media/video-background-tab-playback.html [ Failure ]
 webkit.org/b/143233 media/media-source/media-source-append-buffer-with-append-window.html [ Pass Failure ]
 
@@ -1708,9 +1702,6 @@ Bug(GTK) media/video-size-intrinsic-scale.html [ Failure ]
 
 # eventSender.keyDown call does not get executed from the TestNetscapePlugin
 webkit.org/b/90383 http/tests/plugins/plugin-document-has-focus.html [ Skip ]
-
-# Missing resource load callback ability in DRT
-webkit.org/b/27905 http/tests/loading/redirect-methods.html [ Failure ]
 
 webkit.org/b/30577 editing/selection/move-left-right.html [ Failure ]
 

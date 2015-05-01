@@ -1,3 +1,10 @@
+2015-05-01  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed gardening for GTK+.
+
+        * platform/gtk/TestExpectations: Remove some inaccurate missing results
+        and unskip a passing test.
+
 2015-05-01  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] accessibility/secure-textfield-title-ui.html is failing
