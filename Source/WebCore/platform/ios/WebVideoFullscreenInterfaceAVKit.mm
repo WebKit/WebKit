@@ -1040,7 +1040,7 @@ void WebVideoFullscreenInterfaceAVKit::enterFullscreenStandard()
 {
     LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::enterFullscreenStandard(%p)", this);
     RefPtr<WebVideoFullscreenInterfaceAVKit> strongThis(this);
-    [m_playerViewController enterFullScreenWithCompletionHandler:[this, strongThis] (BOOL succeeded, NSError*) {
+    [m_playerViewController enterFullScreenAnimated:YES completionHandler:[this, strongThis] (BOOL succeeded, NSError*) {
         UNUSED_PARAM(succeeded);
         LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::enterFullscreenStandard - lambda(%p) - succeeded(%s)", this, boolString(succeeded));
         [m_playerViewController setShowsPlaybackControls:YES];
@@ -1095,7 +1095,7 @@ void WebVideoFullscreenInterfaceAVKit::exitFullscreenInternal(const WebCore::Int
         }];
     } else if (isMode(HTMLMediaElement::VideoFullscreenModeStandard)) {
         RefPtr<WebVideoFullscreenInterfaceAVKit> strongThis(this);
-        [m_playerViewController exitFullScreenWithCompletionHandler:[strongThis] (BOOL, NSError*) {
+        [m_playerViewController exitFullScreenAnimated:YES completionHandler:[strongThis] (BOOL, NSError*) {
             strongThis->m_exitCompleted = true;
 
             [CATransaction begin];
