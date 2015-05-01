@@ -97,7 +97,7 @@ static const char* fullyQualifiedInfoTableName()
     static std::once_flag onceFlag;
     std::call_once(onceFlag, []{
         strcpy(qualifiedName, qualifier);
-        strcpy(qualifiedName + strlen(qualifier), unqualifiedInfoTableName);
+        strcpy(qualifiedName + sizeof(qualifier) - 1, unqualifiedInfoTableName);
     });
 
     return qualifiedName;

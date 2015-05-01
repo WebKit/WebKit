@@ -1,3 +1,18 @@
+2015-04-30  Daniel Bates  <dabates@apple.com>
+
+        Clean up: Remove unnecessary runtime computation of string length
+        https://bugs.webkit.org/show_bug.cgi?id=144483
+
+        Reviewed by Joseph Pecoraro.
+
+        Following <http://trac.webkit.org/changeset/183649>, WebCore::fullyQualifiedInfoTableName()
+        computes strlen() of the first string literal as part of concatenating two string literals.
+        It is sufficient to use sizeof() - 1 instead of strlen() to compute the length of the first
+        string literal because the size of the string literal is known at compile time.
+
+        * Modules/webdatabase/DatabaseBackendBase.cpp:
+        (WebCore::fullyQualifiedInfoTableName):
+
 2015-04-30  Dean Jackson  <dino@apple.com>
 
         Expose -apple-system as a font family
