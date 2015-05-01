@@ -339,8 +339,9 @@ void FontPlatformData::initializeWithFontFace(cairo_font_face_t* fontFace, const
 
     if (syntheticOblique()) {
         static const float syntheticObliqueSkew = -tanf(14 * acosf(0) / 90);
-        cairo_matrix_t skew = {1, 0, syntheticObliqueSkew, 1, 0, 0};
-        cairo_matrix_multiply(&fontMatrix, &skew, &fontMatrix);
+        static const cairo_matrix_t skew = {1, 0, syntheticObliqueSkew, 1, 0, 0};
+        static const cairo_matrix_t verticalSkew = {1, -syntheticObliqueSkew, 0, 1, 0, 0};
+        cairo_matrix_multiply(&fontMatrix, m_orientation == Vertical ? &verticalSkew : &skew, &fontMatrix);
     }
 
     m_horizontalOrientationMatrix = fontMatrix;

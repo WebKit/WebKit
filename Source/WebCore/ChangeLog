@@ -1,3 +1,16 @@
+2015-05-01  Martin Robinson  <mrobinson@igalia.com>
+
+        [Freetype] Properly support synthetic oblique in vertical text
+        https://bugs.webkit.org/show_bug.cgi?id=144492
+
+        Reviewed by Sergio Villar Senin.
+
+        No new tests. Covered by existing tests.
+
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::FontPlatformData::initializeWithFontFace): Skew vertical when using synthetic
+        oblique for vertical text.
+
 2015-05-01  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] REGRESSION: accessibility/canvas-fallback-content.html now crashes
