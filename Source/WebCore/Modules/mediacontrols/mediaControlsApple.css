@@ -498,7 +498,7 @@ audio::-webkit-media-controls-time-remaining-display {
     text-decoration: none;
     position: relative;
     bottom: 0.5px;
-    font-family: -apple-system-font-monospaced-numbers;
+    font-family: -apple-system-monospaced-numbers;
     -webkit-text-size-adjust:none;
     mix-blend-mode: plus-lighter;
 }

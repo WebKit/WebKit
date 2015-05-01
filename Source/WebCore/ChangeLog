@@ -1,3 +1,31 @@
+2015-04-30  Dean Jackson  <dino@apple.com>
+
+        Expose -apple-system as a font family
+        https://bugs.webkit.org/show_bug.cgi?id=144484
+        <rdar://problem/20767330>
+
+        Reviewed by Tim Horton.
+
+        Accept "-apple-system" for the font-family property, and
+        rename "-apple-system-font-monospaced-numbers" to
+        "-apple-system-monospaced-numbers".
+
+        Also change the media controls to use the new name.
+
+        Covered by existing tests and this new one:
+            fast/text/system-font-legacy-name.html
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (audio::-webkit-media-controls-time-remaining-display):
+        * Modules/mediacontrols/mediaControlsiOS.css:
+        (::-webkit-media-controls):
+        (audio::-webkit-media-controls-time-remaining-display):
+        (audio::-webkit-media-controls-status-display):
+        * platform/graphics/ios/FontCacheIOS.mm: Add support for the new name.
+        (WebCore::createCTFontWithFamilyNameAndWeight):
+        * platform/graphics/mac/FontCacheMac.mm: Ditto.
+        (WebCore::fontWithFamily):
+
 2015-04-30  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] overflow-position keyword for align and justify properties.

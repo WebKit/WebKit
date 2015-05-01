@@ -1,8 +1,8 @@
-layer at (0,0) size 785x2092
+layer at (0,0) size 785x2036
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x2092
-  RenderBlock {HTML} at (0,0) size 785x2092
-    RenderBody {BODY} at (8,8) size 769x2076
+layer at (0,0) size 785x2036
+  RenderBlock {HTML} at (0,0) size 785x2036
+    RenderBody {BODY} at (8,8) size 769x2020
       RenderBlock {DIV} at (0,0) size 769x897
         RenderBlock {DIV} at (0,0) size 769x28
           RenderText {#text} at (0,0) size 438x28
@@ -41,58 +41,57 @@ layer at (0,0) size 785x2092
           RenderText {#text} at (0,0) size 762x170
             text run at (0,0) width 551: "This is a test for -"
             text run at (0,85) width 762: "webkit-system-font font"
-      RenderBlock {DIV} at (0,897) size 769x897
+      RenderBlock {DIV} at (0,897) size 769x841
         RenderBlock {DIV} at (0,0) size 769x28
-          RenderText {#text} at (0,0) size 427x28
-            text run at (0,0) width 427: "This is a test for -apple-system-font font"
+          RenderText {#text} at (0,0) size 376x28
+            text run at (0,0) width 376: "This is a test for -apple-system font"
         RenderBlock {DIV} at (0,28) size 769x35
-          RenderText {#text} at (0,0) size 533x35
-            text run at (0,0) width 533: "This is a test for -apple-system-font font"
+          RenderText {#text} at (0,0) size 470x35
+            text run at (0,0) width 470: "This is a test for -apple-system font"
         RenderBlock {DIV} at (0,63) size 769x35
-          RenderText {#text} at (0,0) size 533x35
-            text run at (0,0) width 533: "This is a test for -apple-system-font font"
+          RenderText {#text} at (0,0) size 470x35
+            text run at (0,0) width 470: "This is a test for -apple-system font"
         RenderBlock {DIV} at (0,98) size 769x43
-          RenderInline {B} at (0,0) size 686x43
-            RenderText {#text} at (0,0) size 686x43
-              text run at (0,0) width 686: "This is a test for -apple-system-font font"
+          RenderInline {B} at (0,0) size 604x43
+            RenderText {#text} at (0,0) size 604x43
+              text run at (0,0) width 604: "This is a test for -apple-system font"
         RenderBlock {DIV} at (0,141) size 769x50
-          RenderInline {I} at (0,0) size 747x50
-            RenderText {#text} at (0,0) size 747x50
-              text run at (0,0) width 747: "This is a test for -apple-system-font font"
-        RenderBlock {DIV} at (0,191) size 769x112
-          RenderText {#text} at (0,0) size 758x112
-            text run at (0,0) width 758: "This is a test for -apple-system-font"
-            text run at (0,56) width 83: "font"
-        RenderBlock {DIV} at (0,303) size 769x126
-          RenderText {#text} at (0,0) size 759x126
-            text run at (0,0) width 759: "This is a test for -apple-system-"
-            text run at (0,63) width 201: "font font"
-        RenderBlock {DIV} at (0,429) size 769x142
+          RenderInline {I} at (0,0) size 658x50
+            RenderText {#text} at (0,0) size 658x50
+              text run at (0,0) width 658: "This is a test for -apple-system font"
+        RenderBlock {DIV} at (0,191) size 769x56
+          RenderText {#text} at (0,0) size 752x56
+            text run at (0,0) width 752: "This is a test for -apple-system font"
+        RenderBlock {DIV} at (0,247) size 769x126
+          RenderText {#text} at (0,0) size 739x126
+            text run at (0,0) width 739: "This is a test for -apple-system"
+            text run at (0,63) width 93: "font"
+        RenderBlock {DIV} at (0,373) size 769x142
           RenderText {#text} at (0,0) size 630x142
             text run at (0,0) width 630: "This is a test for -apple-"
-            text run at (0,71) width 437: "system-font font"
-        RenderBlock {DIV} at (0,571) size 769x156
+            text run at (0,71) width 311: "system font"
+        RenderBlock {DIV} at (0,515) size 769x156
           RenderText {#text} at (0,0) size 693x156
             text run at (0,0) width 693: "This is a test for -apple-"
-            text run at (0,78) width 481: "system-font font"
-        RenderBlock {DIV} at (0,727) size 769x170
+            text run at (0,78) width 342: "system font"
+        RenderBlock {DIV} at (0,671) size 769x170
           RenderText {#text} at (0,0) size 756x170
             text run at (0,0) width 756: "This is a test for -apple-"
-            text run at (0,85) width 525: "system-font font"
-      RenderBlock {DIV} at (0,1794) size 769x282
+            text run at (0,85) width 373: "system font"
+      RenderBlock {DIV} at (0,1738) size 769x282
         RenderBlock {DIV} at (0,0) size 769x56
-          RenderText {#text} at (0,0) size 695x56
-            text run at (0,0) width 695: "This is a test for -apple-system-font-monospaced-numbers font -"
+          RenderText {#text} at (0,0) size 644x56
+            text run at (0,0) width 644: "This is a test for -apple-system-monospaced-numbers font -"
             text run at (0,28) width 126: "00:11:22:33"
         RenderBlock {DIV} at (0,56) size 769x70
-          RenderText {#text} at (0,0) size 672x70
-            text run at (0,0) width 672: "This is a test for -apple-system-font-monospaced-"
-            text run at (0,35) width 362: "numbers font - 00:11:22:33"
+          RenderText {#text} at (0,0) size 726x70
+            text run at (0,0) width 726: "This is a test for -apple-system-monospaced-numbers"
+            text run at (0,35) width 237: "font - 00:11:22:33"
         RenderBlock {DIV} at (0,126) size 769x70
-          RenderText {#text} at (0,0) size 672x70
-            text run at (0,0) width 672: "This is a test for -apple-system-font-monospaced-"
-            text run at (0,35) width 362: "numbers font - 00:11:22:33"
+          RenderText {#text} at (0,0) size 726x70
+            text run at (0,0) width 726: "This is a test for -apple-system-monospaced-numbers"
+            text run at (0,35) width 237: "font - 00:11:22:33"
         RenderBlock {DIV} at (0,196) size 769x86
-          RenderText {#text} at (0,0) size 658x86
-            text run at (0,0) width 582: "This is a test for -apple-system-font-"
-            text run at (0,43) width 658: "monospaced-numbers font - 00:11:22:33"
+          RenderText {#text} at (0,0) size 730x86
+            text run at (0,0) width 730: "This is a test for -apple-system-monospaced-"
+            text run at (0,43) width 434: "numbers font - 00:11:22:33"

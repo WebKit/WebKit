@@ -1,3 +1,29 @@
+2015-04-30  Dean Jackson  <dino@apple.com>
+
+        Expose -apple-system as a font family
+        https://bugs.webkit.org/show_bug.cgi?id=144484
+        <rdar://problem/20767330>
+
+        Reviewed by Tim Horton.
+
+        Change a bunch of tests to use "-apple-system" instead
+        of "-apple-system-font" for font-family.
+
+        Add a test to make sure the old name still works.
+
+        * fast/text/system-font-legacy-name.html
+        * platform/ios-simulator/fast/text/system-monospaced-numbers.html:
+        * platform/ios-simulator/ios/fast/text/apple-logo-expected.txt:
+        * platform/ios-simulator/ios/fast/text/apple-logo.html:
+        * platform/ios-simulator/ios/fast/text/opticalFont-expected.txt:
+        * platform/ios-simulator/ios/fast/text/opticalFont.html:
+        * platform/ios-simulator/ios/fast/text/opticalFontWithWeight-expected.txt:
+        * platform/ios-simulator/ios/fast/text/opticalFontWithWeight.html:
+        * platform/ios-simulator/ios/fast/text/underline-scaling-expected.txt:
+        * platform/ios-simulator/ios/fast/text/underline-scaling.html:
+        * platform/mac/fast/text/systemFont-expected.txt:
+        * platform/mac/fast/text/systemFont.html:
+
 2015-04-30  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] overflow-position keyword for align and justify properties.

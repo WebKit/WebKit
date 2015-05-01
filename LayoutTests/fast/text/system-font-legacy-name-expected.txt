@@ -1,0 +1,7 @@
+These next two lines should be the same width
+
+This is some text
+
+This is some text
+
+PASS: widths were the same
