@@ -1,3 +1,11 @@
+2015-05-01  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed gardening. Rebaseline some tests for WebKitGTK+.
+
+        * platform/gtk/editing/execCommand/nsresponder-outdent-expected.txt: Rebaseline.
+        * platform/gtk/inspector-protocol/debugger/regress-133182-expected.txt: Removed. The
+        platform-independent baseline should be good enough.
+
 2015-04-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed gardening. Update results of inspector tests.
