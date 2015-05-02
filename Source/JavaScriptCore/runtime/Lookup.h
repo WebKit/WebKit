@@ -97,19 +97,22 @@ struct HashTable {
     {
         initializeIfNeeded();
 
-        StringImpl* impl = propertyName.uid();
-        if (!impl)
-            return 0;
+        if (propertyName.isSymbol())
+            return nullptr;
+
+        StringImpl* uid = propertyName.uid();
+        if (!uid)
+            return nullptr;
 
         ASSERT(keys);
 
-        int indexEntry = IdentifierRepHash::hash(impl) & indexMask;
+        int indexEntry = IdentifierRepHash::hash(uid) & indexMask;
         int valueIndex = index[indexEntry].value;
         if (valueIndex == -1)
-            return 0;
+            return nullptr;
 
         while (true) {
-            if (WTF::equal(impl, keys[valueIndex]))
+            if (WTF::equal(uid, keys[valueIndex]))
                 return &values[valueIndex];
 
             indexEntry = index[indexEntry].next;

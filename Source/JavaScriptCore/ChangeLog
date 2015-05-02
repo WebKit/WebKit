@@ -1,3 +1,21 @@
+2015-05-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Static property hashtable should only lookup with non-symbol key
+        https://bugs.webkit.org/show_bug.cgi?id=144438
+
+        Reviewed by Darin Adler.
+
+        Static property hashtable compares the Identifier's uid
+        with the normal C string without interning it.
+        So this comparison is performed in their contents.
+        As the result, in this comparison, symbol-ness is not considered.
+
+        So if accidentally the hash collision occur with the symbol and the string
+        and they have the same contents, the hash table entry is looked up incorrectly.
+
+        * runtime/Lookup.h:
+        (JSC::HashTable::entry):
+
 2015-05-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Class syntax should allow string and numeric identifiers for method names
