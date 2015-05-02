@@ -1,3 +1,21 @@
+2015-05-01  Roger Fong  <roger_fong@apple.com>
+
+        Media control volume slider should be vertical to avoid flickering issues.
+        https://bugs.webkit.org/show_bug.cgi?id=144496.
+        <rdar://problem/20451328>
+
+        Reviewed by Darin Adler.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        Resize and reposition the volume box so that it does not have to rotated via a transform.
+        (audio::-webkit-media-controls-panel):
+        (audio::-webkit-media-controls-panel .volume-box): Also set overflow: hidden so we can't interact
+             with the volume slider while the volume box is hidden.
+        (audio::-webkit-media-controls-panel .volume-box:active):
+        Rotate and position the volume slider via transforms. Make sure it's not transformed in the fullscreen controls.
+        (video::-webkit-media-controls-volume-slider):
+        (video:-webkit-full-screen::-webkit-media-controls-volume-slider):
+
 2015-05-01  Brent Fulgham  <bfulgham@apple.com>
 
         Expand test infrastructure to support scrolling tests (Part 4): Scroll Snap Support

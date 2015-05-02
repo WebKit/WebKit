@@ -213,16 +213,13 @@ video::-webkit-media-controls-panel .volume-box,
 audio::-webkit-media-controls-panel .volume-box {
     position: absolute;
     box-sizing: border-box;
-    height: 63px;
-    bottom: 0;
-    left: 0;
+    width: 63px;
+    bottom: 5px;
+    left: -25px;
     
-    -webkit-clip-path: inset(20px 20px 20px 20px round 0px 4px 4px 0px);
-    -webkit-transform: rotate(-90deg) translateY(-51.5px) translateX(31.5px);
-
+    -webkit-clip-path: inset(20px 20px 20px 20px round 4px 4px 0px 0px);
     background-color: transparent;
-    border-bottom-right-radius: 4px;
-    border-top-right-radius: 4px;
+    overflow: hidden;
 
     display: -webkit-flex;
     -webkit-flex-direction: row;
@@ -230,8 +227,8 @@ audio::-webkit-media-controls-panel .volume-box {
     -webkit-justify-content: flex-end;
 
     opacity: 0;
-    /* make zero width (rather than display:none) for AX and FKA */
-    width: 0; /* will become 101px when shown */
+    /* make zero height (rather than display:none) for AX and FKA */
+    height: 0px; /* will become 116px when shown */
 
 }
 
@@ -274,7 +271,7 @@ audio::-webkit-media-controls-panel .volume-box:hover,
 audio::-webkit-media-controls-panel .volume-box:active {
     opacity: 1;
     /* resize to usable amount (rather than display:none) for AX and FKA */
-    width: 116px;
+    height: 116px;
 }
 
 audio::-webkit-media-controls-volume-slider,
@@ -282,13 +279,16 @@ video::-webkit-media-controls-volume-slider {
     -webkit-appearance: none !important;
     box-sizing: border-box !important;
     height: 9px !important;
+    min-width: 64px !important;
     width: 64px !important;
     padding: 0 !important;
-    margin-right: 30px !important;
+    margin: 0 !important;
 
     background-color: transparent !important;
     background-size: 100% 100%;
     background-repeat: no-repeat;
+    -webkit-transform-origin: 0 0;
+    -webkit-transform: rotate(-90deg) translateY(28px) translateX(-40px);
     mix-blend-mode: plus-lighter;
 }
 
@@ -669,8 +669,11 @@ video:-webkit-full-screen::-webkit-media-controls-panel .volume-box {
 }
 
 video:-webkit-full-screen::-webkit-media-controls-volume-slider {
+    -webkit-transform: none;
     background-color: transparent;
+    min-width: 60px !important;
     width: 60px !important;
+    height: 9px !important;
     margin: 0 !important;
 }
 
