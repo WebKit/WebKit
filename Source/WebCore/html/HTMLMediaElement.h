@@ -884,6 +884,8 @@ private:
 
     CueList m_currentlyActiveCues;
     int m_ignoreTrackDisplayUpdate;
+
+    bool m_requireCaptionPreferencesChangedCallbacks { false };
 #endif
 
 #if ENABLE(WEB_AUDIO)

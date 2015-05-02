@@ -1,3 +1,13 @@
+2015-05-01  Eric Carlson  <eric.carlson@apple.com>
+
+        Postpone caption style sheet creation
+        https://bugs.webkit.org/show_bug.cgi?id=144499
+
+        Reviewed by Simon Fraser.
+
+        * media/track/track-user-stylesheet-expected.txt: Added.
+        * media/track/track-user-stylesheet.html: Added.
+
 2015-05-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [OS X] Text dilation parameters are not restored after being set

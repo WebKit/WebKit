@@ -1,0 +1,29 @@
+Test that caption preferences change notifications work
+
+RUN(internals.setCaptionDisplayMode('AlwaysOn'))
+RUN(internals.setCaptionsStyleSheetOverride('video::cue { color: blue; background-color: yellow; }'))
+RUN(internals.settings.setShouldDisplayTrackKind('Captions', true))
+
+EVENT(canplaythrough)
+
+RUN(video.currentTime = .5)
+
+EVENT(seeked)
+
+** Track should be visible, cue should be styled appropriately. **
+EXPECTED (video.textTracks[0].mode == 'showing') OK
+EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'cue')).color == 'rgb(0, 0, 255)') OK
+EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'cue')).backgroundColor == 'rgb(255, 255, 0)') OK
+
+** Remove the video from the document, add it back. **
+RUN(video.parentNode.removeChild(video))
+RUN(document.body.appendChild(video))
+
+** Change caption display mode to generate a notification. **
+RUN(setCaptionDisplayMode('ForcedOnly'))
+
+** Track should not be visible. **
+EXPECTED (video.textTracks[0].mode == 'disabled') OK
+
+END OF TEST
+

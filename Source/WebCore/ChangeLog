@@ -1,3 +1,27 @@
+2015-05-01  Eric Carlson  <eric.carlson@apple.com>
+
+        Postpone caption style sheet creation
+        https://bugs.webkit.org/show_bug.cgi?id=144499
+
+        Reviewed by Simon Fraser.
+        
+        Generating and inserting the caption user style sheet is expensive so don't do it until
+        we see a text track, and only do it for the first video element in a PageGroup.
+
+        Test: media/track/track-user-stylesheet.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::registerWithDocument): Only register for caption preferences
+        changes if we have done so before.
+        (WebCore::HTMLMediaElement::unregisterWithDocument): Only unregister for caption preferences
+        changes if we registered for them.
+        (WebCore::HTMLMediaElement::addTextTrack): Register for caption preference changes.
+        * html/HTMLMediaElement.h:
+
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::setInterestedInCaptionPreferenceChanges): Only
+        generate the style sheet when called for the first time.
+
 2015-05-01  Dean Jackson  <dino@apple.com>
 
         [iOS] Scrubber display is broken if the buffered range is empty

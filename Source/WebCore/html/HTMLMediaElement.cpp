@@ -448,7 +448,8 @@ void HTMLMediaElement::registerWithDocument(Document& document)
     document.registerForVisibilityStateChangedCallbacks(this);
 
 #if ENABLE(VIDEO_TRACK)
-    document.registerForCaptionPreferencesChangedCallbacks(this);
+    if (m_requireCaptionPreferencesChangedCallbacks)
+        document.registerForCaptionPreferencesChangedCallbacks(this);
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
@@ -475,7 +476,8 @@ void HTMLMediaElement::unregisterWithDocument(Document& document)
     document.unregisterForVisibilityStateChangedCallbacks(this);
 
 #if ENABLE(VIDEO_TRACK)
-    document.unregisterForCaptionPreferencesChangedCallbacks(this);
+    if (m_requireCaptionPreferencesChangedCallbacks)
+        document.unregisterForCaptionPreferencesChangedCallbacks(this);
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
@@ -3362,6 +3364,11 @@ void HTMLMediaElement::addTextTrack(PassRefPtr<TextTrack> track)
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().webkitVideoTrackEnabled())
         return;
+
+    if (!m_requireCaptionPreferencesChangedCallbacks) {
+        m_requireCaptionPreferencesChangedCallbacks = true;
+        document().registerForCaptionPreferencesChangedCallbacks(this);
+    }
 
     textTracks()->append(track);
 

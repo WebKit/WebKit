@@ -185,23 +185,22 @@ void CaptionUserPreferencesMediaAF::updateTimerFired()
 
 void CaptionUserPreferencesMediaAF::setInterestedInCaptionPreferenceChanges()
 {
+    if (m_listeningForPreferenceChanges)
+        return;
+
     if (!MediaAccessibilityLibrary())
         return;
 
     if (!kMAXCaptionAppearanceSettingsChangedNotification)
         return;
 
-    if (!m_listeningForPreferenceChanges) {
-        m_listeningForPreferenceChanges = true;
-        m_registeringForNotification = true;
-        CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, userCaptionPreferencesChangedNotificationCallback, kMAXCaptionAppearanceSettingsChangedNotification, 0, CFNotificationSuspensionBehaviorCoalesce);
-        m_registeringForNotification = false;
-    }
+    m_listeningForPreferenceChanges = true;
+    m_registeringForNotification = true;
+    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, userCaptionPreferencesChangedNotificationCallback, kMAXCaptionAppearanceSettingsChangedNotification, 0, CFNotificationSuspensionBehaviorCoalesce);
+    m_registeringForNotification = false;
 
     // Generating and registering the caption stylesheet can be expensive and this method is called indirectly when the parser creates an audio or
     // video element, so do it after a brief pause.
-    if (m_updateStyleSheetTimer.isActive())
-        m_updateStyleSheetTimer.stop();
     m_updateStyleSheetTimer.startOneShot(0);
 }
 
