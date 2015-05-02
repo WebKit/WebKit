@@ -180,6 +180,8 @@ WebInspector.ContentBrowserTabContentView.prototype = {
 
     showRepresentedObject: function(representedObject, cookie)
     {
+        if (this.navigationSidebarPanel)
+            this.navigationSidebarPanel.cancelRestoringState();
         this.contentBrowser.showContentViewForRepresentedObject(representedObject, cookie);
     },
 

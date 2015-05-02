@@ -1092,7 +1092,14 @@ WebInspector._frameWasAdded = function(event)
     if (frame.id !== this._frameIdentifierToShowSourceCodeWhenAvailable)
         return;
 
-    this.showSourceCodeForFrame(frame.id);
+    function delayedWork()
+    {
+        this.showSourceCodeForFrame(frame.id);
+    }
+
+    // Delay showing the frame since FrameWasAdded is called before MainFrameChanged.
+    // Calling showSourceCodeForFrame before MainFrameChanged will show the frame then close it.
+    setTimeout(delayedWork.bind(this));
 };
 
 WebInspector._mainFrameDidChange = function(event)

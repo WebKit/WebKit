@@ -33,7 +33,7 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
 
         this.filterBar.placeholder = WebInspector.UIString("Filter Resource List");
 
-        this._waitingForInitialMainFrame = true;
+        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
         WebInspector.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
 
@@ -110,8 +110,10 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
             return treeElement;
 
         // Only special case Script objects.
-        if (!(representedObject instanceof WebInspector.Script))
+        if (!(representedObject instanceof WebInspector.Script)) {
+            console.error("Didn't find a TreeElement for representedObject", representedObject);
             return null;
+        }
 
         // If the Script has a URL we should have found it earlier.
         if (representedObject.url) {
@@ -139,21 +141,36 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
 
     // Private
 
+    _mainResourceDidChange(event)
+    {
+        if (!event.target.isMainFrame())
+            return;
+
+        this._mainFrameMainResourceDidChange(event.target);
+    }
+
     _mainFrameDidChange(event)
     {
+        this._mainFrameMainResourceDidChange(WebInspector.frameResourceManager.mainFrame);
+    }
+
+    _mainFrameMainResourceDidChange(mainFrame)
+    {
+        this.contentBrowser.contentViewContainer.closeAllContentViews();
+
         if (this._mainFrameTreeElement) {
-            this._mainFrameTreeElement.frame.removeEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainFrameMainResourceDidChange, this);
             this.contentTreeOutline.removeChild(this._mainFrameTreeElement);
             this._mainFrameTreeElement = null;
         }
 
-        var newFrame = WebInspector.frameResourceManager.mainFrame;
-        if (newFrame) {
-            newFrame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainFrameMainResourceDidChange, this);
-            this._mainFrameTreeElement = new WebInspector.FrameTreeElement(newFrame);
-            this.contentTreeOutline.insertChild(this._mainFrameTreeElement, 0);
+        if (!mainFrame)
+            return;
 
-            // Select a tree element by default. Allow onselect if we aren't showing a content view.
+        this._mainFrameTreeElement = new WebInspector.FrameTreeElement(mainFrame);
+        this.contentTreeOutline.insertChild(this._mainFrameTreeElement, 0);
+
+        function delayedWork()
+        {
             if (!this.contentTreeOutline.selectedTreeElement) {
                 var currentContentView = this.contentBrowser.currentContentView;
                 var treeElement = currentContentView ? this.treeElementForRepresentedObject(currentContentView.representedObject) : null;
@@ -163,38 +180,9 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
             }
         }
 
-        // The navigation path needs update when the main frame changes, since all resources are under the main frame.
-        this.contentBrowser.updateHierarchicalPathForCurrentContentView();
-
-        // We only care about the first time the main frame changes.
-        if (!this._waitingForInitialMainFrame)
-            return;
-
-        // Only if there is a main frame.
-        if (!newFrame)
-            return;
-
-        this._waitingForInitialMainFrame = false;
-    }
-
-    _mainFrameMainResourceDidChange(event)
-    {
-        this.contentBrowser.contentViewContainer.closeAllContentViews();
-
-        function delayedWork()
-        {
-            // Show the main frame since there is no content view showing.
-            // Cookie restoration will attempt to re-select the resource we were showing.
-            if (!this.contentBrowser.currentContentView) {
-                // NOTE: This selection, during provisional loading, won't be saved, so it is
-                // safe to do and not-clobber cookie restoration.
-                this.showDefaultContentViewForTreeElement(this._mainFrameTreeElement);
-            }
-        }
-
-        // Delay this work because other listeners of this event might not have fired yet. So selecting the main frame
-        // before those listeners do their work might cause the content of the old page to show instead of the new page.
-        setTimeout(delayedWork.bind(this), 0);
+        // Cookie restoration will attempt to re-select the resource we were showing.
+        // Give it time to do that before selecting the main frame resource.
+        setTimeout(delayedWork.bind(this));
     }
 
     _scriptWasAdded(event)

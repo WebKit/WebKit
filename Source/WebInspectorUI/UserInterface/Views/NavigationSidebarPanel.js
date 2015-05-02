@@ -139,6 +139,15 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         return this._restoringState;
     }
 
+    cancelRestoringState()
+    {
+        if (!this._finalAttemptToRestoreViewStateTimeout)
+            return;
+
+        clearTimeout(this._finalAttemptToRestoreViewStateTimeout);
+        this._finalAttemptToRestoreViewStateTimeout = undefined;
+    }
+
     createContentTreeOutline(dontHideByDefault, suppressFiltering)
     {
         var contentTreeOutlineElement = document.createElement("ol");

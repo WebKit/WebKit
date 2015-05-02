@@ -114,6 +114,11 @@ WebInspector.ContentViewContainer.prototype = {
         if (!contentView)
             return null;
 
+        // The representedObject can change in the constructor for ContentView. Remember the
+        // contentViews on the real representedObject and not the one originally supplied.
+        // The main case for this is a Frame being passed in and the main Resource being used.
+        representedObject = contentView.representedObject;
+
         // Remember this content view for future calls.
         if (!representedObject.__contentViews)
             representedObject.__contentViews = [];

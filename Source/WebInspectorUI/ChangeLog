@@ -1,3 +1,40 @@
+2015-05-02  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: REGRESSION: Resources section doesn't update after changes are made to a local file
+        https://bugs.webkit.org/show_bug.cgi?id=144512
+
+        The content view was being associated with the wrong represented object. This caused the code to use
+        the old main resource when showing the frame again.
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector._frameWasAdded.delayedWork):
+        (WebInspector._frameWasAdded):
+        With the changes in ResourceSidebarPanel, we need to delay showing the frame.
+
+        * UserInterface/Views/ContentBrowserTabContentView.js:
+        (WebInspector.ContentBrowserTabContentView.prototype.showRepresentedObject):
+        Avoid restoring state by calling cancelRestoringState(). Not fully related to this bug,
+        but it was preventing testing the cases.
+
+        * UserInterface/Views/ContentViewContainer.js:
+        (WebInspector.ContentViewContainer.prototype.contentViewForRepresentedObject):
+        This fixes the bug. Don't associate the content view with the Frame, associate it with
+        the Resource that we actually show.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype.cancelRestoringState): Added.
+
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel): Remove unused _waitingForInitialMainFrame.
+        (WebInspector.ResourceSidebarPanel.prototype.treeElementForRepresentedObject):
+        (WebInspector.ResourceSidebarPanel.prototype._mainResourceDidChange):
+        (WebInspector.ResourceSidebarPanel.prototype._mainFrameDidChange):
+        (WebInspector.ResourceSidebarPanel.prototype._mainFrameMainResourceDidChange.delayedWork):
+        (WebInspector.ResourceSidebarPanel.prototype._mainFrameMainResourceDidChange):
+        Clean up how we show the main frame in the sidebar. This was a two step mess before.
+
 2015-04-29  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Remove FrameContentView.js
