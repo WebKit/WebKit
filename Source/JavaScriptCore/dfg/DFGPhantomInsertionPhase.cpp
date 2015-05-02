@@ -81,6 +81,20 @@ public:
 private:
     void handleBlock(BasicBlock* block)
     {
+        // FIXME: For blocks that have low register pressure, it would make the most sense to
+        // simply insert Phantoms at the last point possible since that would obviate the need to
+        // query bytecode liveness:
+        //
+        // - If we MovHint @x into loc42 then put a Phantom on the last MovHinted value in loc42.
+        // - At the end of the block put Phantoms for each MovHinted value.
+        //
+        // This will definitely not work if there are any phantom allocations. For those blocks
+        // where this would be legal, it remains to be seen how profitable it would be even if there
+        // was high register pressure. After all, a Phantom would cause a spill but it wouldn't
+        // cause a fill.
+        //
+        // https://bugs.webkit.org/show_bug.cgi?id=144524
+        
         m_values.fill(nullptr);
 
         Epoch currentEpoch = Epoch::first();

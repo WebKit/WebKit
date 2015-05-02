@@ -213,6 +213,10 @@ private:
             return false;
         }
         
+        // FIXME: At this point if the hoisting of the full node fails but the node has type checks,
+        // we could still hoist just the checks.
+        // https://bugs.webkit.org/show_bug.cgi?id=144525
+        
         if (readsOverlap(m_graph, node, data.writes)) {
             if (verbose) {
                 dataLog(
