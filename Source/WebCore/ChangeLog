@@ -1,3 +1,17 @@
+2015-05-01  Dean Jackson  <dino@apple.com>
+
+        [iOS] Scrubber display is broken if the buffered range is empty
+        https://bugs.webkit.org/show_bug.cgi?id=144511
+
+        Reviewed by Eric Carlson.
+
+        Make sure that if video.buffered returns an empty list, we
+        still draw the scrubber background correctly.
+
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.drawTimelineBackground): Ensure that buffered
+        is always at least as big as the current time.
+
 2015-05-01  Roger Fong  <roger_fong@apple.com>
 
         Media control volume slider should be vertical to avoid flickering issues.
