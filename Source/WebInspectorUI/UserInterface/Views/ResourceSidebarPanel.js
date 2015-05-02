@@ -47,9 +47,20 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
 
         if (WebInspector.debuggableType === WebInspector.DebuggableType.JavaScript)
             this.contentTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName);
+
+        if (WebInspector.frameResourceManager.mainFrame)
+            this._mainFrameMainResourceDidChange(WebInspector.frameResourceManager.mainFrame);
     }
 
     // Public
+
+    closed()
+    {
+        WebInspector.Frame.removeEventListener(null, null, this);
+        WebInspector.frameResourceManager.removeEventListener(null, null, this);
+        WebInspector.debuggerManager.removeEventListener(null, null, this);
+        WebInspector.notifications.removeEventListener(null, null, this);
+    }
 
     showDefaultContentView()
     {

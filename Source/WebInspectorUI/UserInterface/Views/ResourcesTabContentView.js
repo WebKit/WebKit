@@ -33,9 +33,6 @@ WebInspector.ResourcesTabContentView = function(identifier)
     if (WebInspector.layerTreeDetailsSidebarPanel)
         detailsSidebarPanels.push(WebInspector.layerTreeDetailsSidebarPanel);
 
-    // FIME: Until ResourceSidebarPanel supports instantiating after inspector launch, disable closing.
-    tabBarItem.hideCloseButton = true;
-
     WebInspector.ContentBrowserTabContentView.call(this, identifier || "resources", "resources", tabBarItem, WebInspector.ResourceSidebarPanel, detailsSidebarPanels);
 };
 
