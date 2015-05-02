@@ -467,6 +467,10 @@ void Settings::setMinimumDOMTimerInterval(double interval)
 
 void Settings::setDOMTimerAlignmentInterval(double alignmentInterval)
 {
+#ifndef NDEBUG
+    // Temporary logging for <https://bugs.webkit.org/show_bug.cgi?id=144155>.
+    WTFLogAlways("Settings %p setDOMTimerAlignmentInterval %g\n", this, alignmentInterval);
+#endif
     m_domTimerAlignmentInterval = alignmentInterval;
 }
 
