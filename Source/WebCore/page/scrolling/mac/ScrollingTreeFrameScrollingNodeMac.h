@@ -79,6 +79,9 @@ private:
 
     bool isAlreadyPinnedInDirectionOfGesture(const PlatformWheelEvent&, ScrollEventAxis);
 
+    void deferTestsForReason(WheelEventTestTrigger::ScrollableAreaIdentifier, WheelEventTestTrigger::DeferTestTriggerReason) const override;
+    void removeTestDeferralForReason(WheelEventTestTrigger::ScrollableAreaIdentifier, WheelEventTestTrigger::DeferTestTriggerReason) const override;
+
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
     LayoutUnit scrollOffsetOnAxis(ScrollEventAxis) const override;
     void immediateScrollOnAxis(ScrollEventAxis, float delta) override;
@@ -99,8 +102,9 @@ private:
     RetainPtr<ScrollbarPainter> m_verticalScrollbarPainter;
     RetainPtr<ScrollbarPainter> m_horizontalScrollbarPainter;
     FloatPoint m_probableMainThreadScrollPosition;
-    bool m_lastScrollHadUnfilledPixels;
-    bool m_hadFirstUpdate;
+    bool m_lastScrollHadUnfilledPixels { false };
+    bool m_hadFirstUpdate { false };
+    bool m_expectsWheelEventTestTrigger { false };
 };
 
 } // namespace WebCore

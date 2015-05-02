@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -122,6 +122,29 @@ void ThreadedScrollingTree::handleWheelEventPhase(PlatformWheelEventPhase phase)
         scrollingCoordinator->handleWheelEventPhase(phase);
     });
 }
+
+void ThreadedScrollingTree::deferTestsForReason(WheelEventTestTrigger::ScrollableAreaIdentifier identifier, WheelEventTestTrigger::DeferTestTriggerReason reason)
+{
+    if (!m_scrollingCoordinator)
+        return;
+
+    RefPtr<AsyncScrollingCoordinator> scrollingCoordinator = m_scrollingCoordinator;
+    RunLoop::main().dispatch([scrollingCoordinator, identifier, reason] {
+        scrollingCoordinator->deferTestsForReason(identifier, reason);
+    });
+}
+
+void ThreadedScrollingTree::removeTestDeferralForReason(WheelEventTestTrigger::ScrollableAreaIdentifier identifier, WheelEventTestTrigger::DeferTestTriggerReason reason)
+{
+    if (!m_scrollingCoordinator)
+        return;
+    
+    RefPtr<AsyncScrollingCoordinator> scrollingCoordinator = m_scrollingCoordinator;
+    RunLoop::main().dispatch([scrollingCoordinator, identifier, reason] {
+        scrollingCoordinator->removeTestDeferralForReason(identifier, reason);
+    });
+}
+
 #endif
 
 } // namespace WebCore

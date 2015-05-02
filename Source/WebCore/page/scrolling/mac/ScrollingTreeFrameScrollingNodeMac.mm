@@ -29,6 +29,7 @@
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
 #import "FrameView.h"
+#import "Logging.h"
 #import "NSScrollerImpDetails.h"
 #import "PlatformWheelEvent.h"
 #import "ScrollingCoordinator.h"
@@ -56,10 +57,8 @@ PassRefPtr<ScrollingTreeFrameScrollingNode> ScrollingTreeFrameScrollingNodeMac::
 ScrollingTreeFrameScrollingNodeMac::ScrollingTreeFrameScrollingNodeMac(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
     : ScrollingTreeFrameScrollingNode(scrollingTree, nodeID)
     , m_scrollController(*this)
-    , m_verticalScrollbarPainter(0)
-    , m_horizontalScrollbarPainter(0)
-    , m_lastScrollHadUnfilledPixels(false)
-    , m_hadFirstUpdate(false)
+    , m_verticalScrollbarPainter(nullptr)
+    , m_horizontalScrollbarPainter(nullptr)
 {
 }
 
@@ -139,6 +138,9 @@ void ScrollingTreeFrameScrollingNodeMac::updateBeforeChildren(const ScrollingSta
         m_scrollController.updateScrollSnapPoints(ScrollEventAxis::Vertical, convertToLayoutUnits(scrollingStateNode.verticalSnapOffsets()));
 #endif
 
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ExpectsWheelEventTestTrigger))
+        m_expectsWheelEventTestTrigger = scrollingStateNode.expectsWheelEventTestTrigger();
+
     m_hadFirstUpdate = true;
 }
 
@@ -171,6 +173,15 @@ void ScrollingTreeFrameScrollingNodeMac::handleWheelEvent(const PlatformWheelEve
         [m_verticalScrollbarPainter setUsePresentationValue:NO];
         [m_horizontalScrollbarPainter setUsePresentationValue:NO];
     }
+
+#if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
+    if (m_expectsWheelEventTestTrigger) {
+        if (scrollingTree().shouldHandleWheelEventSynchronously(wheelEvent))
+            removeTestDeferralForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(scrollingNodeID()), WheelEventTestTrigger::ScrollingThreadSyncNeeded);
+        else
+            deferTestsForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(scrollingNodeID()), WheelEventTestTrigger::ScrollingThreadSyncNeeded);
+    }
+#endif
 
     m_scrollController.handleWheelEvent(wheelEvent);
     scrollingTree().setOrClearLatchedNode(wheelEvent, scrollingNodeID());
@@ -560,6 +571,24 @@ float ScrollingTreeFrameScrollingNodeMac::pageScaleFactor() const
     return frameScaleFactor();
 }
 #endif
+
+void ScrollingTreeFrameScrollingNodeMac::deferTestsForReason(WheelEventTestTrigger::ScrollableAreaIdentifier identifier, WheelEventTestTrigger::DeferTestTriggerReason reason) const
+{
+    if (!m_expectsWheelEventTestTrigger)
+        return;
+
+    LOG(WheelEventTestTriggers, "  ScrollingTreeFrameScrollingNodeMac::deferTestsForReason: STARTING deferral for %p because of %d", identifier, reason);
+    scrollingTree().deferTestsForReason(identifier, reason);
+}
+    
+void ScrollingTreeFrameScrollingNodeMac::removeTestDeferralForReason(WheelEventTestTrigger::ScrollableAreaIdentifier identifier, WheelEventTestTrigger::DeferTestTriggerReason reason) const
+{
+    if (!m_expectsWheelEventTestTrigger)
+        return;
+    
+    LOG(WheelEventTestTriggers, "   ScrollingTreeFrameScrollingNodeMac::deferTestsForReason: ENDING deferral for %p because of %d", identifier, reason);
+    scrollingTree().removeTestDeferralForReason(identifier, reason);
+}
 
 } // namespace WebCore
 

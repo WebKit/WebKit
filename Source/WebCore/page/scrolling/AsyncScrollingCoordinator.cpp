@@ -32,6 +32,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsLayer.h"
+#include "Logging.h"
 #include "MainFrame.h"
 #include "Page.h"
 #include "ScrollAnimator.h"
@@ -145,6 +146,14 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView& frameView)
 
     if (const Vector<LayoutUnit>* verticalSnapOffsets = frameView.verticalSnapOffsets())
         setStateScrollingNodeSnapOffsetsAsFloat(*node, ScrollEventAxis::Vertical, *verticalSnapOffsets, m_page->deviceScaleFactor());
+#endif
+
+#if PLATFORM(COCOA)
+    Page* page = frameView.frame().page();
+    if (page && page->expectsWheelEventTriggers()) {
+        LOG(WheelEventTestTriggers, "    AsyncScrollingCoordinator::frameViewLayoutUpdated: Expects wheel event test trigger=%d", page->expectsWheelEventTriggers());
+        node->setExpectsWheelEventTestTrigger(page->expectsWheelEventTriggers());
+    }
 #endif
 
     ScrollableAreaParameters scrollParameters;
@@ -361,7 +370,7 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
         if (m_page->expectsWheelEventTriggers()) {
             frameView.scrollAnimator().setWheelEventTestTrigger(m_page->testTrigger());
             if (const auto& trigger = m_page->testTrigger())
-                trigger->removeTestDeferralForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(m_page), WheelEventTestTrigger::ScrollingThreadSyncNeeded);
+                trigger->removeTestDeferralForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(scrollingNodeID), WheelEventTestTrigger::ScrollingThreadSyncNeeded);
         }
 #endif
         
@@ -380,7 +389,7 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
         if (m_page->expectsWheelEventTriggers()) {
             frameView.scrollAnimator().setWheelEventTestTrigger(m_page->testTrigger());
             if (const auto& trigger = m_page->testTrigger())
-                trigger->removeTestDeferralForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(m_page), WheelEventTestTrigger::ScrollingThreadSyncNeeded);
+                trigger->removeTestDeferralForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(scrollingNodeID), WheelEventTestTrigger::ScrollingThreadSyncNeeded);
         }
 #endif
     }
@@ -551,6 +560,30 @@ String AsyncScrollingCoordinator::scrollingStateTreeAsText() const
 
     return String();
 }
+
+#if PLATFORM(COCOA)
+void AsyncScrollingCoordinator::deferTestsForReason(WheelEventTestTrigger::ScrollableAreaIdentifier identifier, WheelEventTestTrigger::DeferTestTriggerReason reason) const
+{
+    if (!m_page || !m_page->expectsWheelEventTriggers())
+        return;
+
+    if (const auto& trigger = m_page->testTrigger()) {
+        LOG(WheelEventTestTriggers, "    (!) AsyncScrollingCoordinator::deferTestsForReason: Deferring %p for reason %d.", identifier, reason);
+        trigger->deferTestsForReason(identifier, reason);
+    }
+}
+
+void AsyncScrollingCoordinator::removeTestDeferralForReason(WheelEventTestTrigger::ScrollableAreaIdentifier identifier, WheelEventTestTrigger::DeferTestTriggerReason reason) const
+{
+    if (!m_page || !m_page->expectsWheelEventTriggers())
+        return;
+
+    if (const auto& trigger = m_page->testTrigger()) {
+        LOG(WheelEventTestTriggers, "    (!) AsyncScrollingCoordinator::removeTestDeferralForReason: Deferring %p for reason %d.", identifier, reason);
+        trigger->removeTestDeferralForReason(identifier, reason);
+    }
+}
+#endif
 
 } // namespace WebCore
 

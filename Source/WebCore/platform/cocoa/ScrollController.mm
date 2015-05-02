@@ -130,10 +130,6 @@ ScrollController::ScrollController(ScrollControllerClient& client)
     , m_horizontalScrollSnapTimer(RunLoop::current(), this, &ScrollController::horizontalScrollSnapTimerFired)
     , m_verticalScrollSnapTimer(RunLoop::current(), this, &ScrollController::verticalScrollSnapTimerFired)
 #endif
-    , m_inScrollGesture(false)
-    , m_momentumScrollInProgress(false)
-    , m_ignoreMomentumScrolls(false)
-    , m_snapRubberbandTimerIsActive(false)
 {
 }
 
@@ -413,8 +409,7 @@ void ScrollController::startSnapRubberbandTimer()
     m_client.startSnapRubberbandTimer();
     m_snapRubberbandTimer.startRepeating(1.0 / 60.0);
 
-    if (auto* trigger = m_client.testTrigger())
-        trigger->deferTestsForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(this), WheelEventTestTrigger::RubberbandInProgress);
+    m_client.deferTestsForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(this), WheelEventTestTrigger::RubberbandInProgress);
 }
 
 void ScrollController::stopSnapRubberbandTimer()
@@ -423,8 +418,7 @@ void ScrollController::stopSnapRubberbandTimer()
     m_snapRubberbandTimer.stop();
     m_snapRubberbandTimerIsActive = false;
     
-    if (auto* trigger = m_client.testTrigger())
-        trigger->removeTestDeferralForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(this), WheelEventTestTrigger::RubberbandInProgress);
+    m_client.removeTestDeferralForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(this), WheelEventTestTrigger::RubberbandInProgress);
 }
 
 void ScrollController::snapRubberBand()
@@ -624,8 +618,7 @@ void ScrollController::startScrollSnapTimer(ScrollEventAxis axis)
     if (!m_horizontalScrollSnapTimer.isActive() && !m_verticalScrollSnapTimer.isActive())
         return;
 
-    if (auto* trigger = m_client.testTrigger())
-        trigger->deferTestsForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(this), WheelEventTestTrigger::ScrollSnapInProgress);
+    m_client.deferTestsForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(this), WheelEventTestTrigger::ScrollSnapInProgress);
 }
 
 void ScrollController::stopScrollSnapTimer(ScrollEventAxis axis)
@@ -637,8 +630,7 @@ void ScrollController::stopScrollSnapTimer(ScrollEventAxis axis)
     if (m_horizontalScrollSnapTimer.isActive() || m_verticalScrollSnapTimer.isActive())
         return;
 
-    if (auto* trigger = m_client.testTrigger())
-        trigger->removeTestDeferralForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(this), WheelEventTestTrigger::ScrollSnapInProgress);
+    m_client.removeTestDeferralForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(this), WheelEventTestTrigger::ScrollSnapInProgress);
 }
 
 void ScrollController::horizontalScrollSnapTimerFired()

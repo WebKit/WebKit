@@ -1,3 +1,76 @@
+2015-05-01  Brent Fulgham  <bfulgham@apple.com>
+
+        Expand test infrastructure to support scrolling tests (Part 4): Scroll Snap Support
+        https://bugs.webkit.org/show_bug.cgi?id=144482
+
+        Reviewed by Simon Fraser.
+
+        New tests will be landed in a second patch.
+
+        The new WheelEventTestTriggers do not work properly with scroll snap points, because some test deferral notifications
+        need to be triggered for state changes on the scrolling thread. This required the following changes:
+        1. A flag indicating that we want to know about WheelEvent state changes needed to be propagated to the scrolling thread,
+           so that tests could be deferred until Scrolling thread rubberband or scroll-snap animations had completed.
+        2. The ScrollingNodeID needed to be used for registering and clearing deferrals.
+        3. The scrolling thread needed a way to dispatch messages to the main thread indicating that we should (or should not)
+           defer tests due to scrolling actions.
+
+        Note that a future patch will extend this support to include the RemoteScrollingTree.
+
+        * page/WheelEventTestTrigger.cpp:
+        (WebCore::WheelEventTestTrigger::deferTestsForReason): Added some logging features.
+        (WebCore::WheelEventTestTrigger::removeTestDeferralForReason): Ditto.
+        (WebCore::dumpState): Helper function for logging test deferral state.
+        (WebCore::WheelEventTestTrigger::triggerTestTimerFired): Added some logging features.
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated): Make sure that the scrolling thread is
+        told that it needs to send scrolling state back to the main thread. Only do this if we are in testing mode.
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll): The scrollingNodeID should be
+        used as the identifier for this operation, not the page address.
+        (WebCore::AsyncScrollingCoordinator::deferTestsForReason): Added. receives messages from the scrolling thread
+        and notifies the testing infrastructure.
+        (WebCore::AsyncScrollingCoordinator::removeTestDeferralForReason): Ditto.
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode): When cloning the ScrollingStateScrollingNode,
+        include the testing mode state.
+        (WebCore::ScrollingStateScrollingNode::setExpectsWheelEventTestTrigger): Added.
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        (WebCore::ScrollingStateScrollingNode::expectsWheelEventTestTrigger): Added.
+        * page/scrolling/ScrollingTree.h:
+        (WebCore::ScrollingTree::deferTestsForReason): Added stub.
+        (WebCore::ScrollingTree::removeTestDeferralForReason): Ditto.
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::deferTestsForReason): Added. Dispatches messages from the scrolling thread to the
+        main thread.
+        (WebCore::ThreadedScrollingTree::removeTestDeferralForReason): Ditto.
+        * page/scrolling/ThreadedScrollingTree.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::ScrollingTreeFrameScrollingNodeMac): Initialize testing state flag.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::updateBeforeChildren): If the 'ExpectsWheelEventTestTrigger' flag is
+        set, update local state.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::handleWheelEvent): If we are testing, and the wheel event should be handled
+        asynchronously, tell the testing infrastructure we need to wait for the thread state to sync.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::deferTestsForReason): Added. Notifies test system we need to defer tests
+        until we notify them. Also used by the ScrollController during animations.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::removeTestDeferralForReason): Ditto.
+        * platform/Logging.h:
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::deferTestsForReason): Added. Used by ScrollController during animation. This updates the
+        testing infrastructure directly, since it is running in the same process and main thread.
+        (WebCore::ScrollAnimator::removeTestDeferralForReason): Ditto.
+        * platform/ScrollAnimator.h:
+        * platform/cocoa/ScrollController.h:
+        (WebCore::ScrollControllerClient::deferTestsForReason): Change client API.
+        (WebCore::ScrollControllerClient::removeTestDeferralForReason): Ditto.
+        (WebCore::ScrollControllerClient::testTrigger): Deleted.
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::ScrollController::startSnapRubberbandTimer): Use new client API.
+        (WebCore::ScrollController::stopSnapRubberbandTimer): Ditto.
+        (WebCore::ScrollController::startScrollSnapTimer): Ditto.
+        (WebCore::ScrollController::stopScrollSnapTimer): Ditto.
+
 2015-05-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Inline some small methods instead of them being EXPORT'd and out of line

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006, 2013, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -76,6 +76,7 @@ namespace WebCore {
     M(WebAudio) \
     M(WebGL) \
     M(WebReplay) \
+    M(WheelEventTestTriggers) \
 
 #define DECLARE_LOG_CHANNEL(name) \
     WEBCORE_EXPORT extern WTFLogChannel JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, name);

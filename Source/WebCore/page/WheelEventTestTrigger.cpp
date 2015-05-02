@@ -29,6 +29,13 @@
 #include "config.h"
 #include "WheelEventTestTrigger.h"
 
+#include "Logging.h"
+
+#if !LOG_DISABLED
+#include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
+#endif
+
 namespace WebCore {
 
 WheelEventTestTrigger::WheelEventTestTrigger()
@@ -42,6 +49,7 @@ void WheelEventTestTrigger::clearAllTestDeferrals()
     m_deferTestTriggerReasons.clear();
     m_testNotificationCallback = std::function<void()>();
     m_testTriggerTimer.stop();
+    LOG(WheelEventTestTriggers, "      (=) WheelEventTestTrigger::clearAllTestDeferrals: cleared all test state.");
 }
 
 void WheelEventTestTrigger::setTestCallbackAndStartNotificationTimer(std::function<void()> functionCallback)
@@ -62,6 +70,7 @@ void WheelEventTestTrigger::deferTestsForReason(ScrollableAreaIdentifier identif
     if (it == m_deferTestTriggerReasons.end())
         it = m_deferTestTriggerReasons.add(identifier, std::set<DeferTestTriggerReason>()).iterator;
     
+    LOG(WheelEventTestTriggers, "      (=) WheelEventTestTrigger::deferTestsForReason: id=%p, reason=%d", identifier, reason);
     it->value.insert(reason);
 }
 
@@ -72,20 +81,43 @@ void WheelEventTestTrigger::removeTestDeferralForReason(ScrollableAreaIdentifier
     if (it == m_deferTestTriggerReasons.end())
         return;
 
+    LOG(WheelEventTestTriggers, "      (=) WheelEventTestTrigger::removeTestDeferralForReason: id=%p, reason=%d", identifier, reason);
     it->value.erase(reason);
     
     if (it->value.empty())
         m_deferTestTriggerReasons.remove(it);
 }
 
+#if !LOG_DISABLED
+static void dumpState(WTF::HashMap<WheelEventTestTrigger::ScrollableAreaIdentifier, std::set<WheelEventTestTrigger::DeferTestTriggerReason>> reasons)
+{
+    LOG(WheelEventTestTriggers, "   WheelEventTestTrigger::dumpState:");
+    for (const auto& scrollRegion : reasons) {
+        LOG(WheelEventTestTriggers, "   For scroll region %p", scrollRegion.key);
+        StringBuilder reasons;
+        for (const auto& reason : scrollRegion.value) {
+            if (!reasons.isEmpty())
+                reasons.append(", ");
+            reasons.append(String::number(reason));
+        }
+        LOG(WheelEventTestTriggers, "     Reasons: %s", reasons.toString().utf8().data());
+    }
+}
+#endif
+    
 void WheelEventTestTrigger::triggerTestTimerFired()
 {
     std::function<void()> functionCallback;
 
     {
         std::lock_guard<std::mutex> lock(m_testTriggerMutex);
-        if (!m_deferTestTriggerReasons.isEmpty())
+        if (!m_deferTestTriggerReasons.isEmpty()) {
+#if !LOG_DISABLED
+            if (isLogChannelEnabled("WheelEventTestTrigger"))
+                dumpState(m_deferTestTriggerReasons);
+#endif
             return;
+        }
 
         functionCallback = WTF::move(m_testNotificationCallback);
         m_testNotificationCallback = std::function<void()>();
@@ -93,6 +125,7 @@ void WheelEventTestTrigger::triggerTestTimerFired()
 
     m_testTriggerTimer.stop();
 
+    LOG(WheelEventTestTriggers, "  WheelEventTestTrigger::triggerTestTimerFired: FIRING TEST");
     if (functionCallback)
         functionCallback();
 }

@@ -192,4 +192,22 @@ void ScrollAnimator::immediateScrollOnAxis(ScrollEventAxis axis, float delta)
 }
 #endif
 
+#if (ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)) && PLATFORM(MAC)
+void ScrollAnimator::deferTestsForReason(WheelEventTestTrigger::ScrollableAreaIdentifier identifier, WheelEventTestTrigger::DeferTestTriggerReason reason) const
+{
+    if (!m_wheelEventTestTrigger)
+        return;
+
+    m_wheelEventTestTrigger->deferTestsForReason(identifier, reason);
+}
+
+void ScrollAnimator::removeTestDeferralForReason(WheelEventTestTrigger::ScrollableAreaIdentifier identifier, WheelEventTestTrigger::DeferTestTriggerReason reason) const
+{
+    if (!m_wheelEventTestTrigger)
+        return;
+    
+    m_wheelEventTestTrigger->removeTestDeferralForReason(identifier, reason);
+}
+#endif
+
 } // namespace WebCore
