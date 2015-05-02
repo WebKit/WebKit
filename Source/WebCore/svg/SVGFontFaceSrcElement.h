@@ -31,7 +31,7 @@ class SVGFontFaceSrcElement final : public SVGElement {
 public:
     static Ref<SVGFontFaceSrcElement> create(const QualifiedName&, Document&);
 
-    PassRefPtr<CSSValueList> srcValue() const;
+    Ref<CSSValueList> srcValue() const;
     
 private:
     SVGFontFaceSrcElement(const QualifiedName&, Document&);
