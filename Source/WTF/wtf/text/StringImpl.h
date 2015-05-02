@@ -892,7 +892,7 @@ public:
         unsigned m_hashAndFlags;
 
         // These values mimic ConstructFromLiteral.
-        static const unsigned s_initialRefCount = s_refCountFlagIsStaticString;
+        static const unsigned s_initialRefCount = s_refCountIncrement;
         static const unsigned s_initialFlags = s_hashFlag8BitBuffer | StringNormal | BufferInternal;
         static const unsigned s_hashShift = s_flagCount;
     };
