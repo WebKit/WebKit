@@ -1216,36 +1216,40 @@ static bool checkNeedsStyleInvalidationForIdChange(const AtomicString& oldId, co
 
 void Element::attributeChanged(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason)
 {
+    bool valueIsSameAsBefore = oldValue == newValue;
+
+    StyleResolver* styleResolver = document().styleResolverIfExists();
+    bool testShouldInvalidateStyle = inRenderedDocument() && styleResolver && styleChangeType() < FullStyleChange;
+
+    bool shouldInvalidateStyle = false;
+
+    if (!valueIsSameAsBefore) {
+        if (name == HTMLNames::idAttr) {
+            if (!oldValue.isEmpty())
+                treeScope().idTargetObserverRegistry().notifyObservers(*oldValue.impl());
+            if (!newValue.isEmpty())
+                treeScope().idTargetObserverRegistry().notifyObservers(*newValue.impl());
+
+            AtomicString oldId = elementData()->idForStyleResolution();
+            AtomicString newId = makeIdForStyleResolution(newValue, document().inQuirksMode());
+            if (newId != oldId) {
+                elementData()->setIdForStyleResolution(newId);
+                shouldInvalidateStyle = testShouldInvalidateStyle && checkNeedsStyleInvalidationForIdChange(oldId, newId, styleResolver);
+            }
+        } else if (name == classAttr)
+            classAttributeChanged(newValue);
+        else if (name == HTMLNames::nameAttr)
+            elementData()->setHasNameAttribute(!newValue.isNull());
+        else if (name == HTMLNames::pseudoAttr)
+            shouldInvalidateStyle |= testShouldInvalidateStyle && isInShadowTree();
+    }
+
     parseAttribute(name, newValue);
 
     document().incDOMTreeVersion();
 
-    if (oldValue == newValue)
+    if (valueIsSameAsBefore)
         return;
-
-    StyleResolver* styleResolver = document().styleResolverIfExists();
-    bool testShouldInvalidateStyle = inRenderedDocument() && styleResolver && styleChangeType() < FullStyleChange;
-    bool shouldInvalidateStyle = false;
-
-    if (name == HTMLNames::idAttr) {
-        if (!oldValue.isEmpty())
-            treeScope().idTargetObserverRegistry().notifyObservers(*oldValue.impl());
-        if (!newValue.isEmpty())
-            treeScope().idTargetObserverRegistry().notifyObservers(*newValue.impl());
-
-        AtomicString oldId = elementData()->idForStyleResolution();
-        AtomicString newId = makeIdForStyleResolution(newValue, document().inQuirksMode());
-        if (newId != oldId) {
-            elementData()->setIdForStyleResolution(newId);
-            shouldInvalidateStyle = testShouldInvalidateStyle && checkNeedsStyleInvalidationForIdChange(oldId, newId, styleResolver);
-        }
-    } else if (name == classAttr)
-        classAttributeChanged(newValue);
-    else if (name == HTMLNames::nameAttr)
-        elementData()->setHasNameAttribute(!newValue.isNull());
-    else if (name == HTMLNames::pseudoAttr)
-        shouldInvalidateStyle |= testShouldInvalidateStyle && isInShadowTree();
-
 
     invalidateNodeListAndCollectionCachesInAncestors(&name, this);
 

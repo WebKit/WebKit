@@ -1,3 +1,24 @@
+2015-05-01  Andreas Kling  <akling@apple.com>
+
+        Reproducible crash removing name attribute from <img> node
+        <https://webkit.org/b/144371>
+        <rdar://problem/17198583>
+
+        Reviewed by Darin Adler.
+
+        The problem here was with HTMLImageElement::getNameAttribute(), which relies
+        on Element::hasName() to avoid slow attribute lookups when the attribute
+        is already known not to be present. Unfortunately hasName() uses an ElementData
+        flag that wasn't getting updated until after the call to parseAttribute().
+
+        This patch fixes the issue by moving the code that updates the hasName() flag
+        before the parseAttribute() virtual dispatch.
+
+        Test: fast/dom/HTMLImageElement/remove-name-id-attribute-from-image.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+
 2015-05-01  Eric Carlson  <eric.carlson@apple.com>
 
         Postpone caption style sheet creation
