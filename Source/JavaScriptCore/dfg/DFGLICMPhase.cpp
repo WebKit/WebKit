@@ -217,6 +217,43 @@ private:
         // we could still hoist just the checks.
         // https://bugs.webkit.org/show_bug.cgi?id=144525
         
+        // FIXME: If a node has a type check - even something like a CheckStructure - then we should
+        // only hoist the node if we know that it will execute on every loop iteration or if we know
+        // that the type check will always succeed at the loop pre-header through some other means
+        // (like looking at prediction propagation results). Otherwise, we might make a mistake like
+        // this:
+        //
+        // var o = ...; // sometimes null and sometimes an object with structure S1.
+        // for (...) {
+        //     if (o)
+        //         ... = o.f; // CheckStructure and GetByOffset, which we will currently hoist.
+        // }
+        //
+        // When we encounter such code, we'll hoist the CheckStructure and GetByOffset and then we
+        // will have a recompile. We'll then end up thinking that the get_by_id needs to be
+        // polymorphic, which is false.
+        //
+        // We can counter this by either having a control flow equivalence check, or by consulting
+        // prediction propagation to see if the check would always succeed. Prediction propagation
+        // would not be enough for things like:
+        //
+        // var p = ...; // some boolean predicate
+        // var o = {};
+        // if (p)
+        //     o.f = 42;
+        // for (...) {
+        //     if (p)
+        //         ... = o.f;
+        // }
+        //
+        // Prediction propagation can't tell us anything about the structure, and the CheckStructure
+        // will appear to be hoistable because the loop doesn't clobber structures. The cell check
+        // in the CheckStructure will be hoistable though, since prediction propagation can tell us
+        // that o is always SpecFinalObject. In cases like this, control flow equivalence is the
+        // only effective guard.
+        //
+        // https://bugs.webkit.org/show_bug.cgi?id=144527
+        
         if (readsOverlap(m_graph, node, data.writes)) {
             if (verbose) {
                 dataLog(
