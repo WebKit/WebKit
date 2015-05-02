@@ -119,6 +119,9 @@ public:
     // created, destroyed or re-parented).
     void setCompositingLayersNeedRebuild(bool needRebuild = true);
     bool compositingLayersNeedRebuild() const { return m_compositingLayersNeedRebuild; }
+    
+    void willRecalcStyle();
+    void didRecalcStyleWithNoPendingLayout();
 
     // GraphicsLayers buffer state, which gets pushed to the underlying platform layers
     // at specific times.
@@ -311,6 +314,9 @@ public:
     WEBCORE_EXPORT void startTrackingLayerFlushes();
     WEBCORE_EXPORT unsigned layerFlushCount() const;
 
+    WEBCORE_EXPORT void startTrackingCompositingUpdates();
+    WEBCORE_EXPORT unsigned compositingUpdateCount() const;
+
 private:
     class OverlapMap;
     struct CompositingState;
@@ -498,6 +504,7 @@ private:
     int m_compositedLayerCount { 0 };
     unsigned m_layersWithTiledBackingCount { 0 };
     unsigned m_layerFlushCount { 0 };
+    unsigned m_compositingUpdateCount { 0 };
 
     RootLayerAttachment m_rootLayerAttachment;
 
@@ -534,6 +541,7 @@ private:
     bool m_layerFlushThrottlingEnabled;
     bool m_layerFlushThrottlingTemporarilyDisabledForInteraction;
     bool m_hasPendingLayerFlush;
+    bool m_layerNeedsCompositingUpdate { false };
 
     Timer m_paintRelatedMilestonesTimer;
 

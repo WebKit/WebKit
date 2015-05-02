@@ -728,6 +728,15 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
     }    
 }
 
+void FrameView::willRecalcStyle()
+{
+    RenderView* renderView = this->renderView();
+    if (!renderView)
+        return;
+
+    renderView->compositor().willRecalcStyle();
+}
+
 void FrameView::updateCompositingLayersAfterStyleChange()
 {
     RenderView* renderView = this->renderView();
@@ -738,10 +747,7 @@ void FrameView::updateCompositingLayersAfterStyleChange()
     if (inPreLayoutStyleUpdate() || layoutPending() || renderView->needsLayout())
         return;
 
-    RenderLayerCompositor& compositor = renderView->compositor();
-    // This call will make sure the cached hasAcceleratedCompositing is updated from the pref
-    compositor.cacheAcceleratedCompositingFlags();
-    compositor.updateCompositingLayers(CompositingUpdateAfterStyleChange);
+    renderView->compositor().didRecalcStyleWithNoPendingLayout();
 }
 
 void FrameView::updateCompositingLayersAfterLayout()

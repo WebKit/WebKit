@@ -2114,6 +2114,28 @@ unsigned long Internals::styleRecalcCount(ExceptionCode& ec)
     return document->styleRecalcCount();
 }
 
+void Internals::startTrackingCompositingUpdates(ExceptionCode& ec)
+{
+    Document* document = contextDocument();
+    if (!document || !document->renderView()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    document->renderView()->compositor().startTrackingCompositingUpdates();
+}
+
+unsigned long Internals::compositingUpdateCount(ExceptionCode& ec)
+{
+    Document* document = contextDocument();
+    if (!document || !document->renderView()) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+    
+    return document->renderView()->compositor().compositingUpdateCount();
+}
+
 void Internals::updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(ExceptionCode& ec)
 {
     updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(nullptr, ec);

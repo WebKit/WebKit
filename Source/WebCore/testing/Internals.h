@@ -303,6 +303,9 @@ public:
     void startTrackingStyleRecalcs(ExceptionCode&);
     unsigned long styleRecalcCount(ExceptionCode&);
 
+    void startTrackingCompositingUpdates(ExceptionCode&);
+    unsigned long compositingUpdateCount(ExceptionCode&);
+
     void updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(ExceptionCode&);
     void updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(Node*, ExceptionCode&);
 

@@ -1,3 +1,43 @@
+2015-05-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid compositing updates after style recalcs which have no compositing implications
+        https://bugs.webkit.org/show_bug.cgi?id=144502
+
+        Reviewed by Darin Adler.
+        
+        After r183461, we have reliable information about whether a style change with zero
+        diff can be reliably ignored. Use that information to track whether a given
+        recalcStyle() does anything which should force a compositing update.
+        
+        This eliminates up to 40% of the post-recalcStyle compositing updates on some pages.
+        
+        Add Internals API to test.
+
+        Test: compositing/updates/no-style-change-updates.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle): Tell the FrameView we're going to recalc style.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::willRecalcStyle): Pass it on to the compositor.
+        (WebCore::FrameView::updateCompositingLayersAfterStyleChange): Move the code
+        that was here into RenderLayerCompositor::didRecalcStyleWithNoPendingLayout().
+        * page/FrameView.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::willRecalcStyle): Reset the m_layerNeedsCompositingUpdate flag.
+        (WebCore::RenderLayerCompositor::didRecalcStyleWithNoPendingLayout): Bail on the update if
+        no layers changed.
+        (WebCore::RenderLayerCompositor::updateCompositingLayers): Logging. Increment m_compositingUpdateCount,
+        which is used for testing.
+        (WebCore::RenderLayerCompositor::layerStyleChanged): Set the m_layerNeedsCompositingUpdate flag.
+        (WebCore::RenderLayerCompositor::startTrackingCompositingUpdates): Reset the counter.
+        (WebCore::RenderLayerCompositor::compositingUpdateCount):
+        * rendering/RenderLayerCompositor.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::startTrackingCompositingUpdates):
+        (WebCore::Internals::compositingUpdateCount):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2015-05-01  Andreas Kling  <akling@apple.com>
 
         Reproducible crash removing name attribute from <img> node

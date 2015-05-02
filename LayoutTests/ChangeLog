@@ -1,3 +1,17 @@
+2015-05-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid compositing updates after style recalcs which have no compositing implications
+        https://bugs.webkit.org/show_bug.cgi?id=144502
+
+        Reviewed by Darin Adler.
+        
+        Use internals.compositingUpdateCount() to see if various document mutations
+        cause a compositing update. Doesn't actually detect any behavior change
+        from this patch, but seems useful in general.
+
+        * compositing/updates/no-style-change-updates-expected.txt: Added.
+        * compositing/updates/no-style-change-updates.html: Added.
+
 2015-05-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Class syntax should allow string and numeric identifiers for method names

@@ -1748,6 +1748,8 @@ void Document::recalcStyle(Style::Change change)
 
     m_styleSheetCollection.flushPendingUpdates();
 
+    frameView.willRecalcStyle();
+
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRecalculateStyle(*this);
 
     // FIXME: We never reset this flags.
