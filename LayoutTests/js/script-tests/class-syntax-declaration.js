@@ -33,7 +33,7 @@ shouldThrow("class", "'SyntaxError: Unexpected end of script'");
 shouldThrow("class [", "'SyntaxError: Unexpected token \\'[\\''");
 shouldThrow("class {", "'SyntaxError: Class statements must have a name.'");
 shouldThrow("class X {", "'SyntaxError: Unexpected end of script'");
-shouldThrow("class X { ( }", "'SyntaxError: Unexpected token \\'(\\'. Expected an identifier.'");
+shouldThrow("class X { ( }", "'SyntaxError: Unexpected token \\'(\\''");
 shouldNotThrow("class X {}");
 
 shouldThrow("class X { constructor() {} constructor() {} }", "'SyntaxError: Cannot declare multiple constructors in a single class.'");

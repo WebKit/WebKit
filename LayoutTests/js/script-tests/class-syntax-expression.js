@@ -31,7 +31,7 @@ shouldBe("A.prototype.constructor", "A");
 
 shouldThrow("x = class", "'SyntaxError: Unexpected end of script'");
 shouldThrow("x = class {", "'SyntaxError: Unexpected end of script'");
-shouldThrow("x = class { ( }", "'SyntaxError: Unexpected token \\'(\\'. Expected an identifier.'");
+shouldThrow("x = class { ( }", "'SyntaxError: Unexpected token \\'(\\''");
 shouldNotThrow("x = class {}");
 
 shouldThrow("x = class { constructor() {} constructor() {} }", "'SyntaxError: Cannot declare multiple constructors in a single class.'");

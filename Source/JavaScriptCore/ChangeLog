@@ -1,3 +1,28 @@
+2015-05-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Class syntax should allow string and numeric identifiers for method names
+        https://bugs.webkit.org/show_bug.cgi?id=144254
+
+        Reviewed by Darin Adler.
+
+        Added the support for string and numeric identifiers in class syntax.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseFunctionInfo): Instead of using ConstructorKind to indicate whether we're
+        inside a class or not, use the newly added SuperBinding argument instead. ConstructorKind is now None
+        outside a class constructor as it should be.
+        (JSC::Parser<LexerType>::parseFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseClass): No longer expects an identifier at the beginning of every class
+        element to allow numeric and string method names. For both of those method names, parse it here instead
+        of parseFunctionInfo since it doesn't support either type. Also pass in SuperBinding::Needed.
+        (JSC::Parser<LexerType>::parsePropertyMethod): Call parseFunctionInfo with SuperBinding::NotNeeded since
+        this function is never used to parse a class method.
+        (JSC::Parser<LexerType>::parseGetterSetter): Pass in superBinding argument to parseFunctionInfo.
+        (JSC::Parser<LexerType>::parsePrimaryExpression): Call parseFunctionInfo with SuperBinding::NotNeeded.
+        * parser/Parser.h:
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createProperty):
+
 2015-05-01  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should use AI more
