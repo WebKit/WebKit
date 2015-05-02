@@ -83,6 +83,11 @@ BitmapImage::~BitmapImage()
     stopAnimation();
 }
 
+void BitmapImage::clearTimer()
+{
+    m_frameTimer = nullptr;
+}
+
 #if !USE(CG)
 bool BitmapImage::decodedDataIsPurgeable() const
 {
@@ -554,7 +559,7 @@ void BitmapImage::startAnimation(CatchUpAnimation catchUpIfNecessary)
                 break;
 
             // Yes; skip over it without notifying our observers.
-            if (!internalAdvanceAnimation(true))
+            if (!internalAdvanceAnimation(SkippingFramesToCatchUp))
                 return;
             m_desiredFrameStartTime = frameAfterNextStartTime;
             nextFrame = frameAfterNext;
@@ -564,7 +569,7 @@ void BitmapImage::startAnimation(CatchUpAnimation catchUpIfNecessary)
         // may be in the past, meaning the next time through this function we'll
         // kick off the next advancement sooner than this frame's duration would
         // suggest.
-        if (internalAdvanceAnimation(false)) {
+        if (internalAdvanceAnimation()) {
             // The image region has been marked dirty, but once we return to our
             // caller, draw() will clear it, and nothing will cause the
             // animation to advance again.  We need to start the timer for the
@@ -590,7 +595,7 @@ void BitmapImage::stopAnimation()
 {
     // This timer is used to animate all occurrences of this image.  Don't invalidate
     // the timer unless all renderers have stopped drawing.
-    m_frameTimer = nullptr;
+    clearTimer();
 }
 
 void BitmapImage::resetAnimation()
@@ -643,16 +648,15 @@ void BitmapImage::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, 
 
 void BitmapImage::advanceAnimation()
 {
-    internalAdvanceAnimation(false);
+    internalAdvanceAnimation();
     // At this point the image region has been marked dirty, and if it's
     // onscreen, we'll soon make a call to draw(), which will call
     // startAnimation() again to keep the animation moving.
 }
 
-bool BitmapImage::internalAdvanceAnimation(bool skippingFrames)
+bool BitmapImage::internalAdvanceAnimation(AnimationAdvancement advancement)
 {
-    // Stop the animation.
-    stopAnimation();
+    clearTimer();
     
     ++m_currentFrame;
     bool advancedAnimation = true;
@@ -679,8 +683,9 @@ bool BitmapImage::internalAdvanceAnimation(bool skippingFrames)
 
     // We need to draw this frame if we advanced to it while not skipping, or if
     // while trying to skip frames we hit the last frame and thus had to stop.
-    if (skippingFrames != advancedAnimation)
+    if ((advancement == Normal && advancedAnimation) || (advancement == SkippingFramesToCatchUp && !advancedAnimation))
         imageObserver()->animationAdvanced(this);
+
     return advancedAnimation;
 }
 

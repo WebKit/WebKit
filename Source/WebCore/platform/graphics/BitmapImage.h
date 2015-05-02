@@ -265,7 +265,8 @@ protected:
     // a bunch of animation frames, so we should not do things like decode each
     // one or notify our observers.
     // Returns whether the animation was advanced.
-    bool internalAdvanceAnimation(bool skippingFrames);
+    enum AnimationAdvancement { Normal, SkippingFramesToCatchUp };
+    bool internalAdvanceAnimation(AnimationAdvancement = Normal);
 
     // Handle platform-specific data
     void invalidatePlatformData();
@@ -284,6 +285,7 @@ protected:
 
 private:
     virtual bool decodedDataIsPurgeable() const override;
+    void clearTimer();
 
     ImageSource m_source;
     mutable IntSize m_size; // The size to use for the overall image (will just be the size of the first image).

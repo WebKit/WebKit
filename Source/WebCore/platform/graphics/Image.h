@@ -76,7 +76,7 @@ class Image : public RefCounted<Image> {
 public:
     virtual ~Image();
     
-    static PassRefPtr<Image> create(ImageObserver* = 0);
+    static PassRefPtr<Image> create(ImageObserver* = nullptr);
     WEBCORE_EXPORT static PassRefPtr<Image> loadPlatformResource(const char* name);
     WEBCORE_EXPORT static bool supportsType(const String&);
 
@@ -181,7 +181,7 @@ public:
         m_space = space;
     }
 protected:
-    Image(ImageObserver* = 0);
+    Image(ImageObserver* = nullptr);
 
     static void fillWithSolidColor(GraphicsContext*, const FloatRect& dstRect, const Color&, ColorSpace styleColorSpace, CompositeOperator);
 
