@@ -223,7 +223,7 @@ public:
     
     ArrayMode refine(Graph&, Node*, SpeculatedType base, SpeculatedType index, SpeculatedType value = SpecNone) const;
     
-    bool alreadyChecked(Graph&, Node*, AbstractValue&) const;
+    bool alreadyChecked(Graph&, Node*, const AbstractValue&) const;
     
     void dump(PrintStream&) const;
     
@@ -469,7 +469,7 @@ private:
         return arrayMode1 | arrayMode2;
     }
 
-    bool alreadyChecked(Graph&, Node*, AbstractValue&, IndexingType shape) const;
+    bool alreadyChecked(Graph&, Node*, const AbstractValue&, IndexingType shape) const;
     
     union {
         struct {

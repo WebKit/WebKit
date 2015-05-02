@@ -328,7 +328,7 @@ Structure* ArrayMode::originalArrayStructure(Graph& graph, Node* node) const
     return originalArrayStructure(graph, node->origin.semantic);
 }
 
-bool ArrayMode::alreadyChecked(Graph& graph, Node* node, AbstractValue& value, IndexingType shape) const
+bool ArrayMode::alreadyChecked(Graph& graph, Node* node, const AbstractValue& value, IndexingType shape) const
 {
     switch (arrayClass()) {
     case Array::OriginalArray: {
@@ -375,7 +375,7 @@ bool ArrayMode::alreadyChecked(Graph& graph, Node* node, AbstractValue& value, I
     } }
 }
 
-bool ArrayMode::alreadyChecked(Graph& graph, Node* node, AbstractValue& value) const
+bool ArrayMode::alreadyChecked(Graph& graph, Node* node, const AbstractValue& value) const
 {
     switch (type()) {
     case Array::Generic:

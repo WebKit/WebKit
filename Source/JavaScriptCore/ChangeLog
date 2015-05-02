@@ -1,3 +1,81 @@
+2015-05-01  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should use AI more
+        https://bugs.webkit.org/show_bug.cgi?id=144500
+
+        Reviewed by Oliver Hunt.
+        
+        This makes our type check folding even more comprehensive by ensuring that even if the FTL
+        decides to emit some checks, it will still do another query to the abstract interpreter to
+        see if the check is necessary. This helps with cases where we decided early on to speculate
+        one way, but later proved a more specific type of the value in question, and the constant
+        folder didn't catch it.
+        
+        This also makes it more natural to query the abstract interpreter. For example, if you just
+        want the proven type, you can now say provenType(node) or provenType(edge).
+
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::alreadyChecked):
+        * dfg/DFGArrayMode.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileBooleanToNumber):
+        (JSC::FTL::LowerDFGToLLVM::compileToThis):
+        (JSC::FTL::LowerDFGToLLVM::compileValueAdd):
+        (JSC::FTL::LowerDFGToLLVM::compileArithAddOrSub):
+        (JSC::FTL::LowerDFGToLLVM::compileArithPow):
+        (JSC::FTL::LowerDFGToLLVM::compileArithNegate):
+        (JSC::FTL::LowerDFGToLLVM::compileGetById):
+        (JSC::FTL::LowerDFGToLLVM::compileCheckArray):
+        (JSC::FTL::LowerDFGToLLVM::compilePutByVal):
+        (JSC::FTL::LowerDFGToLLVM::compileToStringOrCallStringConstructor):
+        (JSC::FTL::LowerDFGToLLVM::compileToPrimitive):
+        (JSC::FTL::LowerDFGToLLVM::compileStringCharAt):
+        (JSC::FTL::LowerDFGToLLVM::compileStringCharCodeAt):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareStrictEq):
+        (JSC::FTL::LowerDFGToLLVM::compileSwitch):
+        (JSC::FTL::LowerDFGToLLVM::compileIsBoolean):
+        (JSC::FTL::LowerDFGToLLVM::compileIsNumber):
+        (JSC::FTL::LowerDFGToLLVM::compileIsString):
+        (JSC::FTL::LowerDFGToLLVM::compileIsObject):
+        (JSC::FTL::LowerDFGToLLVM::compileInstanceOf):
+        (JSC::FTL::LowerDFGToLLVM::numberOrNotCellToInt32):
+        (JSC::FTL::LowerDFGToLLVM::baseIndex):
+        (JSC::FTL::LowerDFGToLLVM::compareEqObjectOrOtherToObject):
+        (JSC::FTL::LowerDFGToLLVM::typedArrayLength):
+        (JSC::FTL::LowerDFGToLLVM::boolify):
+        (JSC::FTL::LowerDFGToLLVM::equalNullOrUndefined):
+        (JSC::FTL::LowerDFGToLLVM::lowInt32):
+        (JSC::FTL::LowerDFGToLLVM::lowInt52):
+        (JSC::FTL::LowerDFGToLLVM::lowCell):
+        (JSC::FTL::LowerDFGToLLVM::lowBoolean):
+        (JSC::FTL::LowerDFGToLLVM::lowDouble):
+        (JSC::FTL::LowerDFGToLLVM::isCellOrMisc):
+        (JSC::FTL::LowerDFGToLLVM::isNotCellOrMisc):
+        (JSC::FTL::LowerDFGToLLVM::isNumber):
+        (JSC::FTL::LowerDFGToLLVM::isNotNumber):
+        (JSC::FTL::LowerDFGToLLVM::isNotCell):
+        (JSC::FTL::LowerDFGToLLVM::isCell):
+        (JSC::FTL::LowerDFGToLLVM::isNotMisc):
+        (JSC::FTL::LowerDFGToLLVM::isMisc):
+        (JSC::FTL::LowerDFGToLLVM::isNotBoolean):
+        (JSC::FTL::LowerDFGToLLVM::isBoolean):
+        (JSC::FTL::LowerDFGToLLVM::isNotOther):
+        (JSC::FTL::LowerDFGToLLVM::isOther):
+        (JSC::FTL::LowerDFGToLLVM::isProvenValue):
+        (JSC::FTL::LowerDFGToLLVM::isObject):
+        (JSC::FTL::LowerDFGToLLVM::isNotObject):
+        (JSC::FTL::LowerDFGToLLVM::isNotString):
+        (JSC::FTL::LowerDFGToLLVM::isString):
+        (JSC::FTL::LowerDFGToLLVM::isFunction):
+        (JSC::FTL::LowerDFGToLLVM::isNotFunction):
+        (JSC::FTL::LowerDFGToLLVM::speculateObjectOrOther):
+        (JSC::FTL::LowerDFGToLLVM::speculateStringObjectForStructureID):
+        (JSC::FTL::LowerDFGToLLVM::speculateNotStringVar):
+        (JSC::FTL::LowerDFGToLLVM::abstractValue):
+        (JSC::FTL::LowerDFGToLLVM::provenType):
+        (JSC::FTL::LowerDFGToLLVM::provenValue):
+        (JSC::FTL::LowerDFGToLLVM::abstractStructure):
+
 2015-05-01  Martin Robinson  <mrobinson@igalia.com>
 
         USE(...) macro should expect unprefixed variables

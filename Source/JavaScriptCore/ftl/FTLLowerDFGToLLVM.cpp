@@ -1067,7 +1067,9 @@ private:
             LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("BooleanToNumber continuation"));
             
             ValueFromBlock notBooleanResult = m_out.anchor(value);
-            m_out.branch(isBoolean(value), unsure(booleanCase), unsure(continuation));
+            m_out.branch(
+                isBoolean(value, provenType(m_node->child1())),
+                unsure(booleanCase), unsure(continuation));
             
             LBasicBlock lastNext = m_out.appendTo(booleanCase, continuation);
             ValueFromBlock booleanResult = m_out.anchor(m_out.bitOr(
@@ -1174,7 +1176,8 @@ private:
         LBasicBlock slowCase = FTL_NEW_BLOCK(m_out, ("ToThis slow case"));
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ToThis continuation"));
         
-        m_out.branch(isCell(value), usually(isCellCase), rarely(slowCase));
+        m_out.branch(
+            isCell(value, provenType(m_node->child1())), usually(isCellCase), rarely(slowCase));
         
         LBasicBlock lastNext = m_out.appendTo(isCellCase, slowCase);
         ValueFromBlock fastResult = m_out.anchor(value);
@@ -1197,8 +1200,8 @@ private:
     void compileValueAdd()
     {
         J_JITOperation_EJJ operation;
-        if (!(m_state.forNode(m_node->child1()).m_type & SpecFullNumber)
-            && !(m_state.forNode(m_node->child2()).m_type & SpecFullNumber))
+        if (!(provenType(m_node->child1()) & SpecFullNumber)
+            && !(provenType(m_node->child2()) & SpecFullNumber))
             operation = operationValueAddNotNumber;
         else
             operation = operationValueAdd;
@@ -1258,8 +1261,8 @@ private:
         }
             
         case Int52RepUse: {
-            if (!m_state.forNode(m_node->child1()).couldBeType(SpecInt52)
-                && !m_state.forNode(m_node->child2()).couldBeType(SpecInt52)) {
+            if (!abstractValue(m_node->child1()).couldBeType(SpecInt52)
+                && !abstractValue(m_node->child2()).couldBeType(SpecInt52)) {
                 Int52Kind kind;
                 LValue left = lowWhicheverInt52(m_node->child1(), kind);
                 LValue right = lowInt52(m_node->child2(), kind);
@@ -1719,7 +1722,7 @@ private:
             // If y is NaN, the result is NaN.
             m_out.appendTo(doubleExponentPowBlockEntry, nanExceptionExponentIsInfinity);
             LValue exponentIsNaN;
-            if (m_state.forNode(m_node->child2()).m_type & SpecDoubleNaN)
+            if (provenType(m_node->child2()) & SpecDoubleNaN)
                 exponentIsNaN = m_out.doubleNotEqualOrUnordered(exponent, exponent);
             else
                 exponentIsNaN = m_out.booleanFalse;
@@ -1785,7 +1788,7 @@ private:
         }
             
         case Int52RepUse: {
-            if (!m_state.forNode(m_node->child1()).couldBeType(SpecInt52)) {
+            if (!abstractValue(m_node->child1()).couldBeType(SpecInt52)) {
                 Int52Kind kind;
                 LValue value = lowWhicheverInt52(m_node->child1(), kind);
                 LValue result = m_out.neg(value);
@@ -2000,7 +2003,8 @@ private:
             LBasicBlock notCellCase = FTL_NEW_BLOCK(m_out, ("GetById untyped not cell case"));
             LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("GetById untyped continuation"));
             
-            m_out.branch(isCell(value), unsure(cellCase), unsure(notCellCase));
+            m_out.branch(
+                isCell(value, provenType(m_node->child1())), unsure(cellCase), unsure(notCellCase));
             
             LBasicBlock lastNext = m_out.appendTo(cellCase, notCellCase);
             ValueFromBlock cellResult = m_out.anchor(getById(value));
@@ -2096,7 +2100,7 @@ private:
         Edge edge = m_node->child1();
         LValue cell = lowCell(edge);
         
-        if (m_node->arrayMode().alreadyChecked(m_graph, m_node, m_state.forNode(edge)))
+        if (m_node->arrayMode().alreadyChecked(m_graph, m_node, abstractValue(edge)))
             return;
         
         speculate(
@@ -2555,7 +2559,7 @@ private:
                 TypedPointer elementPointer = m_out.baseIndex(
                     m_node->arrayMode().type() == Array::Int32 ?
                     m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties,
-                    storage, m_out.zeroExtPtr(index), m_state.forNode(child2).m_value);
+                    storage, m_out.zeroExtPtr(index), provenValue(child2));
                 
                 if (m_node->op() == PutByValAlias) {
                     m_out.store64(value, elementPointer);
@@ -2581,7 +2585,7 @@ private:
                 
                 TypedPointer elementPointer = m_out.baseIndex(
                     m_heaps.indexedDoubleProperties, storage, m_out.zeroExtPtr(index),
-                    m_state.forNode(child2).m_value);
+                    provenValue(child2));
                 
                 if (m_node->op() == PutByValAlias) {
                     m_out.storeDouble(value, elementPointer);
@@ -3391,14 +3395,14 @@ private:
             if (m_node->child1().useKind() == CellUse)
                 isCellPredicate = m_out.booleanTrue;
             else
-                isCellPredicate = this->isCell(value);
+                isCellPredicate = this->isCell(value, provenType(m_node->child1()));
             m_out.branch(isCellPredicate, unsure(isCell), unsure(notString));
             
             LBasicBlock lastNext = m_out.appendTo(isCell, notString);
             ValueFromBlock simpleResult = m_out.anchor(value);
             LValue isStringPredicate;
             if (m_node->child1()->prediction() & SpecString) {
-                isStringPredicate = isString(value);
+                isStringPredicate = isString(value, provenType(m_node->child1()));
             } else
                 isStringPredicate = m_out.booleanFalse;
             m_out.branch(isStringPredicate, unsure(continuation), unsure(notString));
@@ -3434,11 +3438,14 @@ private:
         Vector<ValueFromBlock, 3> results;
         
         results.append(m_out.anchor(value));
-        m_out.branch(isCell(value), unsure(isCellCase), unsure(continuation));
+        m_out.branch(
+            isCell(value, provenType(m_node->child1())), unsure(isCellCase), unsure(continuation));
         
         LBasicBlock lastNext = m_out.appendTo(isCellCase, isObjectCase);
         results.append(m_out.anchor(value));
-        m_out.branch(isObject(value), unsure(isObjectCase), unsure(continuation));
+        m_out.branch(
+            isObject(value, provenType(m_node->child1())),
+            unsure(isObjectCase), unsure(continuation));
         
         m_out.appendTo(isObjectCase, continuation);
         results.append(m_out.anchor(vmCall(
@@ -3554,7 +3561,7 @@ private:
         ValueFromBlock char8Bit = m_out.anchor(m_out.zeroExt(
             m_out.load8(m_out.baseIndex(
                 m_heaps.characters8, storage, m_out.zeroExtPtr(index),
-                m_state.forNode(m_node->child2()).m_value)),
+                provenValue(m_node->child2()))),
             m_out.int32));
         m_out.jump(bitsContinuation);
             
@@ -3563,7 +3570,7 @@ private:
         ValueFromBlock char16Bit = m_out.anchor(m_out.zeroExt(
             m_out.load16(m_out.baseIndex(
                 m_heaps.characters16, storage, m_out.zeroExtPtr(index),
-                m_state.forNode(m_node->child2()).m_value)),
+                provenValue(m_node->child2()))),
             m_out.int32));
         m_out.branch(
             m_out.aboveOrEqual(char16Bit.value(), m_out.constInt32(0x100)),
@@ -3644,7 +3651,7 @@ private:
         ValueFromBlock char8Bit = m_out.anchor(m_out.zeroExt(
             m_out.load8(m_out.baseIndex(
                 m_heaps.characters8, storage, m_out.zeroExtPtr(index),
-                m_state.forNode(m_node->child2()).m_value)),
+                provenValue(m_node->child2()))),
             m_out.int32));
         m_out.jump(continuation);
             
@@ -3653,7 +3660,7 @@ private:
         ValueFromBlock char16Bit = m_out.anchor(m_out.zeroExt(
             m_out.load16(m_out.baseIndex(
                 m_heaps.characters16, storage, m_out.zeroExtPtr(index),
-                m_state.forNode(m_node->child2()).m_value)),
+                provenValue(m_node->child2()))),
             m_out.int32));
         m_out.jump(continuation);
         
@@ -4006,11 +4013,15 @@ private:
             LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("CompareStrictEq StringIdent to NotStringVar continuation"));
             
             ValueFromBlock notCellResult = m_out.anchor(m_out.booleanFalse);
-            m_out.branch(isCell(rightValue), unsure(isCellCase), unsure(continuation));
+            m_out.branch(
+                isCell(rightValue, provenType(rightEdge)),
+                unsure(isCellCase), unsure(continuation));
             
             LBasicBlock lastNext = m_out.appendTo(isCellCase, isStringCase);
             ValueFromBlock notStringResult = m_out.anchor(m_out.booleanFalse);
-            m_out.branch(isString(rightValue), unsure(isStringCase), unsure(continuation));
+            m_out.branch(
+                isString(rightValue, provenType(rightEdge)),
+                unsure(isStringCase), unsure(continuation));
             
             m_out.appendTo(isStringCase, continuation);
             LValue right = m_out.loadPtr(rightValue, m_heaps.JSString_value);
@@ -4323,7 +4334,7 @@ private:
                 
                 m_out.appendTo(isNotInt, isDouble);
                 m_out.branch(
-                    isCellOrMisc(boxedValue),
+                    isCellOrMisc(boxedValue, provenType(m_node->child1())),
                     usually(lowBlock(data->fallThrough.block)), rarely(isDouble));
                 
                 m_out.appendTo(isDouble, innerLastNext);
@@ -4368,13 +4379,13 @@ private:
                 LBasicBlock isStringCase = FTL_NEW_BLOCK(m_out, ("Switch/SwitchChar is string"));
                 
                 m_out.branch(
-                    isNotCell(unboxedValue),
+                    isNotCell(unboxedValue, provenType(m_node->child1())),
                     unsure(lowBlock(data->fallThrough.block)), unsure(isCellCase));
                 
                 LBasicBlock lastNext = m_out.appendTo(isCellCase, isStringCase);
                 LValue cellValue = unboxedValue;
                 m_out.branch(
-                    isNotString(cellValue),
+                    isNotString(cellValue, provenType(m_node->child1())),
                     unsure(lowBlock(data->fallThrough.block)), unsure(isStringCase));
                 
                 m_out.appendTo(isStringCase, lastNext);
@@ -4466,12 +4477,13 @@ private:
                 LBasicBlock isStringBlock = FTL_NEW_BLOCK(m_out, ("Switch/SwitchString Untyped string case"));
                 
                 m_out.branch(
-                    isCell(value), unsure(isCellBlock), unsure(lowBlock(data->fallThrough.block)));
+                    isCell(value, provenType(m_node->child1())),
+                    unsure(isCellBlock), unsure(lowBlock(data->fallThrough.block)));
                 
                 LBasicBlock lastNext = m_out.appendTo(isCellBlock, isStringBlock);
                 
                 m_out.branch(
-                    isString(value),
+                    isString(value, provenType(m_node->child1())),
                     unsure(isStringBlock), unsure(lowBlock(data->fallThrough.block)));
                 
                 m_out.appendTo(isStringBlock, lastNext);
@@ -4499,7 +4511,8 @@ private:
                 LValue value = lowJSValue(m_node->child1());
                 LBasicBlock cellCase = FTL_NEW_BLOCK(m_out, ("Switch/SwitchCell cell case"));
                 m_out.branch(
-                    isCell(value), unsure(cellCase), unsure(lowBlock(data->fallThrough.block)));
+                    isCell(value, provenType(m_node->child1())),
+                    unsure(cellCase), unsure(lowBlock(data->fallThrough.block)));
                 m_out.appendTo(cellCase);
                 cell = value;
                 break;
@@ -4562,12 +4575,12 @@ private:
     
     void compileIsBoolean()
     {
-        setBoolean(isBoolean(lowJSValue(m_node->child1())));
+        setBoolean(isBoolean(lowJSValue(m_node->child1()), provenType(m_node->child1())));
     }
     
     void compileIsNumber()
     {
-        setBoolean(isNumber(lowJSValue(m_node->child1())));
+        setBoolean(isNumber(lowJSValue(m_node->child1()), provenType(m_node->child1())));
     }
     
     void compileIsString()
@@ -4578,10 +4591,11 @@ private:
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("IsString continuation"));
         
         ValueFromBlock notCellResult = m_out.anchor(m_out.booleanFalse);
-        m_out.branch(isCell(value), unsure(isCellCase), unsure(continuation));
+        m_out.branch(
+            isCell(value, provenType(m_node->child1())), unsure(isCellCase), unsure(continuation));
         
         LBasicBlock lastNext = m_out.appendTo(isCellCase, continuation);
-        ValueFromBlock cellResult = m_out.anchor(isString(value));
+        ValueFromBlock cellResult = m_out.anchor(isString(value, provenType(m_node->child1())));
         m_out.jump(continuation);
         
         m_out.appendTo(continuation, lastNext);
@@ -4596,10 +4610,11 @@ private:
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("IsObject continuation"));
 
         ValueFromBlock notCellResult = m_out.anchor(m_out.booleanFalse);
-        m_out.branch(isCell(value), unsure(isCellCase), unsure(continuation));
+        m_out.branch(
+            isCell(value, provenType(m_node->child1())), unsure(isCellCase), unsure(continuation));
 
         LBasicBlock lastNext = m_out.appendTo(isCellCase, continuation);
-        ValueFromBlock cellResult = m_out.anchor(isObject(value));
+        ValueFromBlock cellResult = m_out.anchor(isObject(value, provenType(m_node->child1())));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
@@ -4674,7 +4689,7 @@ private:
         
         LValue condition;
         if (m_node->child1().useKind() == UntypedUse)
-            condition = isCell(cell);
+            condition = isCell(cell, provenType(m_node->child1()));
         else
             condition = m_out.booleanTrue;
         
@@ -4683,7 +4698,7 @@ private:
         
         LBasicBlock lastNext = m_out.appendTo(isCellCase, loop);
         
-        speculate(BadType, noValue(), 0, isNotObject(prototype));
+        speculate(BadType, noValue(), 0, isNotObject(prototype, provenType(m_node->child2())));
         
         ValueFromBlock originalValue = m_out.anchor(cell);
         m_out.jump(loop);
@@ -5368,7 +5383,8 @@ private:
             m_out.jump(continuation);
         } else {
             m_out.appendTo(notIntCase, doubleCase);
-            m_out.branch(isCellOrMisc(value), unsure(notNumberCase), unsure(doubleCase));
+            m_out.branch(
+                isCellOrMisc(value, provenType(edge)), unsure(notNumberCase), unsure(doubleCase));
             
             m_out.appendTo(doubleCase, notNumberCase);
             results.append(m_out.anchor(doubleToInt32(unboxDouble(value))));
@@ -5534,7 +5550,7 @@ private:
     TypedPointer baseIndex(IndexedAbstractHeap& heap, LValue storage, LValue index, Edge edge, ptrdiff_t offset = 0)
     {
         return m_out.baseIndex(
-            heap, storage, m_out.zeroExtPtr(index), m_state.forNode(edge).m_value, offset);
+            heap, storage, m_out.zeroExtPtr(index), provenValue(edge), offset);
     }
     
     void compare(
@@ -5582,7 +5598,9 @@ private:
         LBasicBlock leftNotCellCase = FTL_NEW_BLOCK(m_out, ("CompareEqObjectOrOtherToObject left not cell case"));
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("CompareEqObjectOrOtherToObject continuation"));
         
-        m_out.branch(isCell(leftValue), unsure(leftCellCase), unsure(leftNotCellCase));
+        m_out.branch(
+            isCell(leftValue, provenType(leftChild)),
+            unsure(leftCellCase), unsure(leftNotCellCase));
         
         LBasicBlock lastNext = m_out.appendTo(leftCellCase, leftNotCellCase);
         speculateTruthyObject(leftChild, leftValue, SpecObject | (~SpecCell));
@@ -5871,8 +5889,7 @@ private:
     
     LValue typedArrayLength(Edge baseEdge, ArrayMode arrayMode, LValue base)
     {
-        JSArrayBufferView* view = m_graph.tryGetFoldableView(
-            m_state.forNode(baseEdge).m_value, arrayMode);
+        JSArrayBufferView* view = m_graph.tryGetFoldableView(provenValue(baseEdge), arrayMode);
         if (view)
             return m_out.constInt32(view->length());
         return m_out.load32NonNegative(base, m_heaps.JSArrayBufferView_length);
@@ -5909,7 +5926,9 @@ private:
             LBasicBlock fastCase = FTL_NEW_BLOCK(m_out, ("Boolify untyped fast case"));
             LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Boolify untyped continuation"));
             
-            m_out.branch(isNotBoolean(value), rarely(slowCase), usually(fastCase));
+            m_out.branch(
+                isNotBoolean(value, provenType(m_node->child1())),
+                rarely(slowCase), usually(fastCase));
             
             LBasicBlock lastNext = m_out.appendTo(fastCase, slowCase);
             ValueFromBlock fastResult = m_out.anchor(unboxBoolean(value));
@@ -5951,7 +5970,7 @@ private:
         LBasicBlock primitiveCase = FTL_NEW_BLOCK(m_out, ("EqualNullOrUndefined primitive case"));
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("EqualNullOrUndefined continuation"));
         
-        m_out.branch(isNotCell(value), unsure(primitiveCase), unsure(cellCase));
+        m_out.branch(isNotCell(value, provenType(edge)), unsure(primitiveCase), unsure(cellCase));
         
         LBasicBlock lastNext = m_out.appendTo(cellCase, primitiveCase);
         
@@ -6003,7 +6022,7 @@ private:
             primitiveResult = m_out.equal(value, m_out.constInt64(ValueUndefined));
             break;
         case EqualNullOrUndefined:
-            primitiveResult = isOther(value);
+            primitiveResult = isOther(value, provenType(edge));
             break;
         case SpeculateNullOrUndefined:
             FTL_TYPE_CHECK(
@@ -6471,7 +6490,7 @@ private:
             return result;
         }
 
-        DFG_ASSERT(m_graph, m_node, !(m_state.forNode(edge).m_type & SpecInt32));
+        DFG_ASSERT(m_graph, m_node, !(provenType(edge) & SpecInt32));
         terminate(Uncountable);
         return m_out.int32Zero;
     }
@@ -6505,7 +6524,7 @@ private:
             break;
         }
 
-        DFG_ASSERT(m_graph, m_node, !m_state.forNode(edge).m_type);
+        DFG_ASSERT(m_graph, m_node, !provenType(edge));
         terminate(Uncountable);
         return m_out.int64Zero;
     }
@@ -6572,7 +6591,7 @@ private:
             return uncheckedValue;
         }
         
-        DFG_ASSERT(m_graph, m_node, !(m_state.forNode(edge).m_type & SpecCell));
+        DFG_ASSERT(m_graph, m_node, !(provenType(edge) & SpecCell));
         terminate(Uncountable);
         return m_out.intPtrZero;
     }
@@ -6641,7 +6660,7 @@ private:
             return result;
         }
         
-        DFG_ASSERT(m_graph, m_node, !(m_state.forNode(edge).m_type & SpecBoolean));
+        DFG_ASSERT(m_graph, m_node, !(provenType(edge) & SpecBoolean));
         terminate(Uncountable);
         return m_out.booleanFalse;
     }
@@ -6653,7 +6672,7 @@ private:
         LoweredNodeValue value = m_doubleValues.get(edge.node());
         if (isValid(value))
             return value.value();
-        DFG_ASSERT(m_graph, m_node, !m_state.forNode(edge).m_type);
+        DFG_ASSERT(m_graph, m_node, !provenType(edge));
         terminate(Uncountable);
         return m_out.doubleZero;
     }
@@ -6765,12 +6784,16 @@ private:
         return m_out.add(m_out.zeroExt(value, m_out.int64), m_tagTypeNumber);
     }
     
-    LValue isCellOrMisc(LValue jsValue)
+    LValue isCellOrMisc(LValue jsValue, SpeculatedType type = SpecFullTop)
     {
+        if (LValue proven = isProvenValue(type, SpecCell | SpecMisc))
+            return proven;
         return m_out.testIsZero64(jsValue, m_tagTypeNumber);
     }
-    LValue isNotCellOrMisc(LValue jsValue)
+    LValue isNotCellOrMisc(LValue jsValue, SpeculatedType type = SpecFullTop)
     {
+        if (LValue proven = isProvenValue(type, ~(SpecCell | SpecMisc)))
+            return proven;
         return m_out.testNonZero64(jsValue, m_tagTypeNumber);
     }
     
@@ -6864,43 +6887,59 @@ private:
         return possibleResult;
     }
     
-    LValue isNumber(LValue jsValue)
+    LValue isNumber(LValue jsValue, SpeculatedType type = SpecFullTop)
     {
+        if (LValue proven = isProvenValue(type, SpecFullNumber))
+            return proven;
         return isNotCellOrMisc(jsValue);
     }
-    LValue isNotNumber(LValue jsValue)
+    LValue isNotNumber(LValue jsValue, SpeculatedType type = SpecFullTop)
     {
+        if (LValue proven = isProvenValue(type, ~SpecFullNumber))
+            return proven;
         return isCellOrMisc(jsValue);
     }
     
-    LValue isNotCell(LValue jsValue)
+    LValue isNotCell(LValue jsValue, SpeculatedType type = SpecFullTop)
     {
+        if (LValue proven = isProvenValue(type, ~SpecCell))
+            return proven;
         return m_out.testNonZero64(jsValue, m_tagMask);
     }
     
-    LValue isCell(LValue jsValue)
+    LValue isCell(LValue jsValue, SpeculatedType type = SpecFullTop)
     {
+        if (LValue proven = isProvenValue(type, SpecCell))
+            return proven;
         return m_out.testIsZero64(jsValue, m_tagMask);
     }
     
-    LValue isNotMisc(LValue value)
+    LValue isNotMisc(LValue value, SpeculatedType type = SpecFullTop)
     {
+        if (LValue proven = isProvenValue(type, ~SpecMisc))
+            return proven;
         return m_out.above(value, m_out.constInt64(TagBitTypeOther | TagBitBool | TagBitUndefined));
     }
     
-    LValue isMisc(LValue value)
+    LValue isMisc(LValue value, SpeculatedType type = SpecFullTop)
     {
+        if (LValue proven = isProvenValue(type, SpecMisc))
+            return proven;
         return m_out.bitNot(isNotMisc(value));
     }
     
-    LValue isNotBoolean(LValue jsValue)
+    LValue isNotBoolean(LValue jsValue, SpeculatedType type = SpecFullTop)
     {
+        if (LValue proven = isProvenValue(type, ~SpecBoolean))
+            return proven;
         return m_out.testNonZero64(
             m_out.bitXor(jsValue, m_out.constInt64(ValueFalse)),
             m_out.constInt64(~1));
     }
-    LValue isBoolean(LValue jsValue)
+    LValue isBoolean(LValue jsValue, SpeculatedType type = SpecFullTop)
     {
+        if (LValue proven = isProvenValue(type, SpecBoolean))
+            return proven;
         return m_out.bitNot(isNotBoolean(jsValue));
     }
     LValue unboxBoolean(LValue jsValue)
@@ -6915,17 +6954,30 @@ private:
             value, m_out.constInt64(ValueTrue), m_out.constInt64(ValueFalse));
     }
     
-    LValue isNotOther(LValue value)
+    LValue isNotOther(LValue value, SpeculatedType type = SpecFullTop)
     {
+        if (LValue proven = isProvenValue(type, ~SpecOther))
+            return proven;
         return m_out.notEqual(
             m_out.bitAnd(value, m_out.constInt64(~TagBitUndefined)),
             m_out.constInt64(ValueNull));
     }
-    LValue isOther(LValue value)
+    LValue isOther(LValue value, SpeculatedType type = SpecFullTop)
     {
+        if (LValue proven = isProvenValue(type, SpecOther))
+            return proven;
         return m_out.equal(
             m_out.bitAnd(value, m_out.constInt64(~TagBitUndefined)),
             m_out.constInt64(ValueNull));
+    }
+    
+    LValue isProvenValue(SpeculatedType provenType, SpeculatedType wantedType)
+    {
+        if (!(provenType & ~wantedType))
+            return m_out.booleanTrue;
+        if (!(provenType & wantedType))
+            return m_out.booleanFalse;
+        return nullptr;
     }
 
     void speculate(Edge edge)
@@ -7027,29 +7079,37 @@ private:
         jsValueToStrictInt52(edge, lowJSValue(edge, ManualOperandSpeculation));
     }
     
-    LValue isObject(LValue cell)
+    LValue isObject(LValue cell, SpeculatedType type = SpecFullTop)
     {
+        if (LValue proven = isProvenValue(type & SpecCell, SpecObject))
+            return proven;
         return m_out.aboveOrEqual(
             m_out.load8(cell, m_heaps.JSCell_typeInfoType),
             m_out.constInt8(ObjectType));
     }
 
-    LValue isNotObject(LValue cell)
+    LValue isNotObject(LValue cell, SpeculatedType type = SpecFullTop)
     {
+        if (LValue proven = isProvenValue(type & SpecCell, ~SpecObject))
+            return proven;
         return m_out.below(
             m_out.load8(cell, m_heaps.JSCell_typeInfoType),
             m_out.constInt8(ObjectType));
     }
 
-    LValue isNotString(LValue cell)
+    LValue isNotString(LValue cell, SpeculatedType type = SpecFullTop)
     {
+        if (LValue proven = isProvenValue(type & SpecCell, ~SpecString))
+            return proven;
         return m_out.notEqual(
             m_out.load32(cell, m_heaps.JSCell_structureID),
             m_out.constInt32(vm().stringStructure->id()));
     }
     
-    LValue isString(LValue cell)
+    LValue isString(LValue cell, SpeculatedType type = SpecFullTop)
     {
+        if (LValue proven = isProvenValue(type & SpecCell, SpecString))
+            return proven;
         return m_out.equal(
             m_out.load32(cell, m_heaps.JSCell_structureID),
             m_out.constInt32(vm().stringStructure->id()));
@@ -7105,8 +7165,18 @@ private:
         }
     }
     
-    LValue isFunction(LValue cell) { return isType(cell, JSFunctionType); }
-    LValue isNotFunction(LValue cell) { return isNotType(cell, JSFunctionType); }
+    LValue isFunction(LValue cell, SpeculatedType type = SpecFullTop)
+    {
+        if (LValue proven = isProvenValue(type & SpecCell, SpecFunction))
+            return proven;
+        return isType(cell, JSFunctionType);
+    }
+    LValue isNotFunction(LValue cell, SpeculatedType type = SpecFullTop)
+    {
+        if (LValue proven = isProvenValue(type & SpecCell, ~SpecFunction))
+            return proven;
+        return isNotType(cell, JSFunctionType);
+    }
     
     LValue isType(LValue cell, JSType type)
     {
@@ -7151,7 +7221,7 @@ private:
         LBasicBlock primitiveCase = FTL_NEW_BLOCK(m_out, ("speculateObjectOrOther primitive case"));
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("speculateObjectOrOther continuation"));
         
-        m_out.branch(isNotCell(value), unsure(primitiveCase), unsure(cellCase));
+        m_out.branch(isNotCell(value, provenType(edge)), unsure(primitiveCase), unsure(cellCase));
         
         LBasicBlock lastNext = m_out.appendTo(cellCase, primitiveCase);
         
@@ -7251,7 +7321,7 @@ private:
         Structure* stringObjectStructure =
             m_graph.globalObjectFor(m_node->origin.semantic)->stringObjectStructure();
         
-        if (m_state.forNode(edge).m_structure.isSubsetOf(StructureSet(stringObjectStructure)))
+        if (abstractStructure(edge).isSubsetOf(StructureSet(stringObjectStructure)))
             return;
         
         speculate(
@@ -7314,10 +7384,10 @@ private:
         LBasicBlock isStringCase = FTL_NEW_BLOCK(m_out, ("Speculate NotStringVar is string case"));
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Speculate NotStringVar continuation"));
         
-        m_out.branch(isCell(value), unsure(isCellCase), unsure(continuation));
+        m_out.branch(isCell(value, provenType(edge)), unsure(isCellCase), unsure(continuation));
         
         LBasicBlock lastNext = m_out.appendTo(isCellCase, isStringCase);
-        m_out.branch(isString(value), unsure(isStringCase), unsure(continuation));
+        m_out.branch(isString(value, provenType(edge)), unsure(isStringCase), unsure(continuation));
         
         m_out.appendTo(isStringCase, continuation);
         speculateStringIdent(edge, value, m_out.loadPtr(value, m_heaps.JSString_value));
@@ -7858,6 +7928,42 @@ private:
     TypedPointer tagFor(VirtualRegister operand)
     {
         return addressFor(operand, TagOffset);
+    }
+    
+    AbstractValue abstractValue(Node* node)
+    {
+        return m_state.forNode(node);
+    }
+    AbstractValue abstractValue(Edge edge)
+    {
+        return abstractValue(edge.node());
+    }
+    
+    SpeculatedType provenType(Node* node)
+    {
+        return abstractValue(node).m_type;
+    }
+    SpeculatedType provenType(Edge edge)
+    {
+        return provenType(edge.node());
+    }
+    
+    JSValue provenValue(Node* node)
+    {
+        return abstractValue(node).m_value;
+    }
+    JSValue provenValue(Edge edge)
+    {
+        return provenValue(edge.node());
+    }
+    
+    StructureAbstractValue abstractStructure(Node* node)
+    {
+        return abstractValue(node).m_structure;
+    }
+    StructureAbstractValue abstractStructure(Edge edge)
+    {
+        return abstractStructure(edge.node());
     }
     
     void crash()
