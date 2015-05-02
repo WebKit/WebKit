@@ -1,5 +1,19 @@
 2015-05-01  Mario Sanchez Prada  <mario@endlessm.com>
 
+        check-webkit-style fails due to system pylint
+        https://bugs.webkit.org/show_bug.cgi?id=144360
+
+        Reviewed by Darin Adler.
+
+        Make sure that the directory containing third party autoinstalled modules
+        is at the beginning of the search path, to avoid conflicts with other
+        versions of the same modules installed in the system (e.g. pylint).
+
+        * Scripts/webkitpy/thirdparty/__init__.py: Prepend the autoinstalled
+        modules directory to sys.path, instead of appending it.
+
+2015-05-01  Mario Sanchez Prada  <mario@endlessm.com>
+
         Unreviewed, updated my list of email addresses.
 
         * Scripts/webkitpy/common/config/contributors.json: Updated.

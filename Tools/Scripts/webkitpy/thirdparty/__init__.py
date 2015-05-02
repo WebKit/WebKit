@@ -68,7 +68,7 @@ class AutoinstallImportHook(object):
     def _ensure_autoinstalled_dir_is_in_sys_path(self):
         # Some packages require that the are being put somewhere under a directory in sys.path.
         if not _AUTOINSTALLED_DIR in sys.path:
-            sys.path.append(_AUTOINSTALLED_DIR)
+            sys.path.insert(0, _AUTOINSTALLED_DIR)
 
     def find_module(self, fullname, _):
         # This method will run before each import. See http://www.python.org/dev/peps/pep-0302/
