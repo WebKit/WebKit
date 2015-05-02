@@ -1,3 +1,110 @@
+2015-05-02  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Relocate the selected range details in the Rendering Frames timeline UI
+        https://bugs.webkit.org/show_bug.cgi?id=144346
+
+        This patch removes the details sidebar used by the rendering frames view, and relocates the frame selection
+        chart the Timelines navigation sidebar.
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        RenderingFramesDetailsSidebar is no longer used.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype._loadNewRecording):
+        Reordered timelines.
+
+        * UserInterface/Main.html:
+        Removed references to deleted files.
+
+        * UserInterface/Views/ChartDetailsSectionLegendRow.js: Removed.
+        No longer used. The legend is now a child element of the chart.
+
+        * UserInterface/Views/ChartDetailsSectionRow.css:
+        (.details-section > .content > .group > .row.chart > .title):
+        (.details-section > .content > .group > .row.chart > .chart-content):
+        (.details-section > .content > .group > .row.chart > .chart-content > .legend):
+        (.details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item):
+        (.details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > .label > .color-swatch):
+        (.details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > .label):
+        (.details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > .value):
+        (.details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > *):
+        New chart and legend styles.
+
+        * UserInterface/Views/ChartDetailsSectionRow.js:
+        (WebInspector.ChartDetailsSectionRow):
+        (WebInspector.ChartDetailsSectionRow.prototype.set title):
+        (WebInspector.ChartDetailsSectionRow.prototype.set innerLabel):
+        (WebInspector.ChartDetailsSectionRow.prototype.set innerRadius):
+        (WebInspector.ChartDetailsSectionRow.prototype.get total):
+        (WebInspector.ChartDetailsSectionRow.set data):
+        (WebInspector.ChartDetailsSectionRow.prototype.set data):
+        (WebInspector.ChartDetailsSectionRow.prototype._createLegendItem):
+        (WebInspector.ChartDetailsSectionRow.prototype._refresh):
+
+        A few changes have been made to the appearance and behavior of the chart. A chart title can now be set,
+        and the legend appears to the right of the chart rather than in a separate details group.
+
+        The chart now has better support for adding empty data points, ensuring that a meaningful legend is shown even
+        when no rendering frames are selected in the timeline overview graph. This ensures that the task associated
+        with each colored frame segment is apparent, without having to make a selection or record a timeline.
+
+        * UserInterface/Views/RenderingFrameDetailsSidebarPanel.js: Removed.
+        No longer used.
+
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.js:
+        Reduced maximum timeline height to increase the height of short frames.
+
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WebInspector.RenderingFrameTimelineView.prototype.shown):
+        (WebInspector.RenderingFrameTimelineView.prototype.hidden):
+        RenderingFramesDetailsSidebar is no longer used.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView):
+        (WebInspector.TimelineRecordingContentView.prototype._updateTimes):
+        (WebInspector.TimelineRecordingContentView.prototype._updateTimelineOverviewHeight):
+        (WebInspector.TimelineRecordingContentView.prototype._timelineRemoved):
+        (WebInspector.TimelineRecordingContentView.prototype._timeRangeSelectionChanged):
+        (WebInspector.TimelineRecordingContentView.prototype._updateFrameSelection):
+        Improved logic for updating the frame selection.
+
+        * UserInterface/Views/TimelineSidebarPanel.css:
+        (.sidebar > .panel.navigation.timeline > .timelines-content > .details-section > div.header):
+        (.sidebar > .panel.navigation.timeline > .timelines-content > .details-section > .content > .group > .row.chart):
+        (.sidebar > .panel.navigation.timeline > .timelines-content > .details-section > .content > .group > .row.chart > .chart-content > .chart):
+        (.sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing > .content): Deleted.
+        New chart styles.
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel):
+        (WebInspector.TimelineSidebarPanel.prototype.shown):
+        (WebInspector.TimelineSidebarPanel._timelineAdded.set this):
+        (WebInspector.TimelineSidebarPanel.this._timelineTreeElementMap.get select):
+        (WebInspector.TimelineSidebarPanel.get else):
+        (WebInspector.TimelineSidebarPanel._refreshFrameSelectionChart.getSelectedRecords.get var):
+        (WebInspector.TimelineSidebarPanel._refreshFrameSelectionChart.getSelectedRecords):
+        (WebInspector.TimelineSidebarPanel.showTimelineViewForTimeline.this._timelineTreeElementMap.get select):
+        (WebInspector.TimelineSidebarPanel.prototype.treeElementForRepresentedObject.get if.get if):
+        (WebInspector.TimelineSidebarPanel.prototype.treeElementForRepresentedObject.get if):
+        (WebInspector.TimelineSidebarPanel._refreshFrameSelectionChart.durationForRecordType):
+        (WebInspector.TimelineSidebarPanel.prototype.treeElementForRepresentedObject):
+        (WebInspector.TimelineSidebarPanel.set contentTreeOutlineLabel): Deleted.
+        (WebInspector.TimelineSidebarPanel._recordingCreated.set this): Deleted.
+        (WebInspector.TimelineSidebarPanel.get this): Deleted.
+        Moved the selected frames chart to the navigation sidebar.
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WebInspector.TimelineTabContentView):
+        RenderingFramesDetailsSidebar is no longer used.
+
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj.filters:
+        Removed references to deleted files.
+
 2015-05-02  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Allow closing and reopening the Resources tab

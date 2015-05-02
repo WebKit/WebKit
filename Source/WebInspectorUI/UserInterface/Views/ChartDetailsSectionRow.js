@@ -25,100 +25,137 @@
 
 WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebInspector.DetailsSectionRow
 {
-    constructor(formatValueCallback)
+    constructor(delegate)
     {
         super(WebInspector.UIString("No Chart Available"));
 
         this.element.classList.add("chart");
 
-        this._legendGroup = new WebInspector.DetailsSectionGroup;
-        this._formatValueCallback = formatValueCallback;
-        this._chartItems = [];
-        this._innerLabel = "";
-        this._innerRadius = 0.5;
-        this._innerLabelFontSize = 11;
-        this._shadowColor = "rgba(0, 0, 0, 0.5)";
-        this._total = 0;
+        this._titleElement = document.createElement("div");
+        this._titleElement.className = "title";
+        this.element.appendChild(this._titleElement);
 
-        this._refresh();
+        var chartContentElement = document.createElement("div");
+        chartContentElement.className = "chart-content";
+        this.element.appendChild(chartContentElement);
+
+        this._canvas = document.createElement("canvas");
+        this._canvas.className = "chart";
+        chartContentElement.appendChild(this._canvas);
+
+        this._legendElement = document.createElement("div");
+        this._legendElement.className = "legend";
+        chartContentElement.appendChild(this._legendElement);
+
+        this._delegate = delegate;
+        this._items = [];
+        this._title = "";
+        this._innerLabel = "";
+        this._innerRadius = 0;
+        this._innerLabelFontSize = 11;
+        this._shadowColor = "rgba(0, 0, 0, 0.6)";
+        this._total = 0;
     }
 
     // Public
 
-    get legendGroup()
+    set title(title)
     {
-        return this._legendGroup;
-    }
-
-    set innerLabel(x)
-    {
-        if (this._innerLabel === x)
+        if (this._title === title)
             return;
 
-        this._innerLabel = x;
+        this._title = title;
+        this._titleElement.textContent = title;
+    }
+
+    set innerLabel(label)
+    {
+        if (this._innerLabel === label)
+            return;
+
+        this._innerLabel = label;
 
         this._refresh();
     }
 
-    addChartValue(label, value, color)
+    set innerRadius(radius)
     {
-        console.assert(value >= 0);
-        if (value < 0)
+        if (this._innerRadius === radius)
             return;
 
-        this._chartItems.push({label, value, color});
-        this._total += value
+        this._innerRadius = radius;
 
         this._refresh();
-
-        if (!this._legendGroup)
-            return;
-
-        var rows = this._legendGroup.rows;
-        var formattedValue = this._formatValueCallback ? this._formatValueCallback(value) : value;
-        rows.push(new WebInspector.ChartDetailsSectionLegendRow(label, formattedValue, color));
-        this._legendGroup.rows = rows;
     }
 
-    clearChart()
+    get total()
     {
-        this._chartItems = [];
-        this._total = 0;
+        return this._total;
+    }
 
-        this._refresh();
+    set data(items)
+    {
+        if (!(items instanceof Array))
+            items = [items];
 
-        if (!this._legendGroup)
+        items = items.filter(function(item) { return item.value >= 0; });
+        if (!this._items.length && !items.length)
             return;
 
-        this._legendGroup.rows = [];
+        if (this._items.length === items.length && this._items.every(function(item, index) { return JSON.stringify(item) === JSON.stringify(items[index]); }))
+            return;
+
+        this._items = items;
+        this._total = this._items.reduce(function(previousValue, currentValue) { return previousValue + currentValue.value; }, 0);;
+
+        this._legendElement.removeChildren();
+        this._items.forEach(function(item) { this._legendElement.appendChild(this._createLegendItem(item)); }, this);
+
+        this._refresh();
     }
 
     // Private
 
+    _createLegendItem(item)
+    {
+        var colorSwatchElement = document.createElement("div");
+        colorSwatchElement.className = "color-swatch";
+        colorSwatchElement.style.backgroundColor = item.color;
+
+        var labelElement = document.createElement("div");
+        labelElement.className = "label";
+        labelElement.appendChild(colorSwatchElement);
+        labelElement.appendChild(document.createTextNode(item.label));
+
+        var valueElement = document.createElement("div");
+        valueElement.className = "value";
+
+        if (this._delegate && typeof this._delegate.formatChartValue === "function")
+            valueElement.textContent = this._delegate.formatChartValue(item.value);
+        else
+            valueElement.textContent = item.value;
+
+        var legendItemElement = document.createElement("div");
+        legendItemElement.className = "legend-item";
+        legendItemElement.appendChild(labelElement);
+        legendItemElement.appendChild(valueElement);
+
+        return legendItemElement;
+    }
+
     _refresh()
     {
-        if (!this._chartItems.length) {
-            this._canvas = null;
-            this.showEmptyMessage();
-            return;
-        }
-
-        if (!this._canvas) {
-            this.hideEmptyMessage();
-
-            this._canvas = document.createElement("canvas");
-            this.element.appendChild(this._canvas);
-
-            this._canvas.width = this._canvas.offsetWidth * window.devicePixelRatio;
-            this._canvas.height = this._canvas.offsetHeight * window.devicePixelRatio;
-        }
+        var width = this._canvas.clientWidth * window.devicePixelRatio;
+        var height = this._canvas.clientHeight * window.devicePixelRatio;
+        this._canvas.width = width;
+        this._canvas.height = height;
 
         var context = this._canvas.getContext("2d");
-        context.clearRect(0, 0, this._canvas.width, this._canvas.height);
+        context.clearRect(0, 0, width, height);
 
-        var centerX = Math.floor(this._canvas.width / 2);
-        var centerY = Math.floor(this._canvas.height / 2);
-        var radius = Math.floor(Math.min(centerX, centerY) * 0.96);   // Add a small margin to prevent clipping of the chart shadow.
+        var x = Math.floor(width / 2);
+        var y = Math.floor(height / 2);
+        var radius = Math.floor(Math.min(x, y) * 0.96);   // Add a small margin to prevent clipping of the chart shadow.
         var innerRadius = Math.floor(radius * this._innerRadius);
         var startAngle = 1.5 * Math.PI;
         var endAngle = startAngle;
@@ -138,12 +175,14 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
         context.shadowBlur = 2 * window.devicePixelRatio;
         context.shadowOffsetY = window.devicePixelRatio;
         context.shadowColor = this._shadowColor;
-        drawSlice(centerX, centerY, 0, 2.0 * Math.PI, "rgb(255, 255, 255)");
+        drawSlice(x, y, 0, 2.0 * Math.PI, "rgb(242, 242, 242)");
         context.restore();
 
-        for (var item of this._chartItems) {
+        for (var item of this._items) {
+            if (item.value === 0)
+                continue;
             endAngle += (item.value / this._total) * 2.0 * Math.PI;
-            drawSlice(centerX, centerY, startAngle, endAngle, item.color);
+            drawSlice(x, y, startAngle, endAngle, item.color);
             startAngle = endAngle;
         }
 

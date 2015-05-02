@@ -78,6 +78,19 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             container.className = "navigation-bar-container";
             container.appendChild(this._viewModeNavigationBar.element);
             this.element.insertBefore(container, this.element.firstChild);
+
+            this._chartColors = {
+                layout: "rgb(212, 108, 108)",
+                script: "rgb(153, 113, 185)",
+                other: "rgb(221, 221, 221)",
+                idle: "rgb(255, 255, 255)"
+            };
+
+            this._frameSelectionChartRow = new WebInspector.ChartDetailsSectionRow(this);
+
+            var chartGroup = new WebInspector.DetailsSectionGroup([this._frameSelectionChartRow]);
+            this._frameSelectionChartSection = new WebInspector.DetailsSection("frames-selection-chart", WebInspector.UIString("Selected Frames"), [chartGroup], null, true);
+            this._timelinesContentContainerElement.appendChild(this._frameSelectionChartSection.element);
         } else {
             var timelinesTitleBarElement = document.createElement("div");
             timelinesTitleBarElement.textContent = WebInspector.UIString("Timelines");
@@ -144,6 +157,9 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
         if (this._displayedContentView)
             this.contentBrowser.showContentView(this._displayedContentView);
+
+        if (this.viewMode === WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames)
+            this._refreshFrameSelectionChart();
     }
 
     get viewMode()
@@ -255,13 +271,17 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         this.contentBrowser.showContentView(this._displayedContentView);
 
         var selectedByUser = false;
-        this._changeViewMode(this._viewModeForTimeline(null), selectedByUser);
+        this._changeViewMode(WebInspector.TimelineSidebarPanel.ViewMode.Timelines, selectedByUser);
     }
 
     showTimelineViewForTimeline(timeline)
     {
         console.assert(timeline instanceof WebInspector.Timeline, timeline);
         console.assert(this._displayedRecording.timelines.has(timeline.type), "Cannot show timeline because it does not belong to the shown recording.", timeline.type);
+
+        // The sidebar view mode must be in the correct state before changing the content view.
+        var selectedByUser = false;
+        this._changeViewMode(this._viewModeForTimeline(timeline), selectedByUser);
 
         if (this._timelineTreeElementMap.has(timeline)) {
             // Defer showing the relevant timeline to the onselect handler of the timelines tree element.
@@ -272,9 +292,27 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             this._displayedContentView.showTimelineViewForTimeline(timeline);
             this.contentBrowser.showContentView(this._displayedContentView);
         }
+    }
 
-        var selectedByUser = false;
-        this._changeViewMode(this._viewModeForTimeline(timeline), selectedByUser);
+    updateFrameSelection(startFrameIndex, endFrameIndex)
+    {
+        console.assert(startFrameIndex <= endFrameIndex);
+        console.assert(this.viewMode === WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames, this._viewMode);
+
+        startFrameIndex = Math.floor(startFrameIndex);
+        endFrameIndex = Math.floor(endFrameIndex);
+        if (this._startFrameIndex === startFrameIndex && this._endFrameIndex === endFrameIndex)
+            return;
+
+        this._startFrameIndex = startFrameIndex;
+        this._endFrameIndex = endFrameIndex;
+
+        this._refreshFrameSelectionChart();
+    }
+
+    formatChartValue(value)
+    {
+        return this._frameSelectionChartRow.total === 0 ? "" : Number.secondsToString(value);
     }
 
     // Protected
@@ -373,6 +411,12 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         this.updateFilter();
     }
 
+    _renderingFrameTimelineTimesUpdated(event)
+    {
+        if (this.viewMode === WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames)
+            this._refreshFrameSelectionChart();
+    }
+
     _timelinesTreeElementSelected(treeElement, selectedByUser)
     {
         console.assert(this._timelineTreeElementMap.get(treeElement.representedObject) === treeElement, treeElement);
@@ -395,6 +439,9 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
     {
         var didShowTimelineRecordingContentView = this.contentBrowser.currentContentView instanceof WebInspector.TimelineRecordingContentView;
         this.element.classList.toggle(WebInspector.TimelineSidebarPanel.TimelineRecordingContentViewShowingStyleClass, didShowTimelineRecordingContentView);
+
+        if (this.viewMode === WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames)
+            this._refreshFrameSelectionChart();
     }
 
     _capturingStarted(event)
@@ -475,8 +522,10 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         console.assert(timeline instanceof WebInspector.Timeline, timeline);
         console.assert(!this._timelineTreeElementMap.has(timeline), timeline);
 
-        if (this._viewModeForTimeline(timeline) !== WebInspector.TimelineSidebarPanel.ViewMode.Timelines)
+        if (timeline.type === WebInspector.TimelineRecord.Type.RenderingFrame) {
+            timeline.addEventListener(WebInspector.Timeline.Event.TimesUpdated, this._renderingFrameTimelineTimesUpdated, this);
             return;
+        }
 
         var timelineTreeElement = new WebInspector.GeneralTreeElement([timeline.iconClassName, WebInspector.TimelineSidebarPanel.LargeIconStyleClass], timeline.displayName, null, timeline);
         var tooltip = WebInspector.UIString("Close %s timeline view").format(timeline.displayName);
@@ -495,8 +544,11 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
     {
         var timeline = event.data.timeline;
         console.assert(timeline instanceof WebInspector.Timeline, timeline);
-        if (this._viewModeForTimeline(timeline) !== WebInspector.TimelineSidebarPanel.ViewMode.Timelines)
+
+        if (timeline.type === WebInspector.TimelineRecord.Type.RenderingFrame) {
+            timeline.removeEventListener(WebInspector.Timeline.Event.TimesUpdated, this._renderingFrameTimelineTimesUpdated, this);
             return;
+        }
 
         console.assert(this._timelineTreeElementMap.has(timeline), timeline);
 
@@ -594,10 +646,13 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         this._viewMode = mode;
         this._viewModeNavigationBar.selectedNavigationItem = this._viewMode;
 
-        if (this._viewMode === WebInspector.TimelineSidebarPanel.ViewMode.Timelines)
+        if (this._viewMode === WebInspector.TimelineSidebarPanel.ViewMode.Timelines) {
             this._timelinesTreeOutline.element.classList.remove(WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementHiddenStyleClassName);
-        else
+            this._frameSelectionChartSection.collapsed = true;
+        } else {
             this._timelinesTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.ContentTreeOutlineElementHiddenStyleClassName);
+            this._frameSelectionChartSection.collapsed = false;
+        }
 
         if (!selectedByUser)
             return;
@@ -613,6 +668,80 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             this._previousTimelineSelection = null;
         } else
             this.showTimelineOverview();
+    }
+
+    _refreshFrameSelectionChart()
+    {
+        if (!this.visible)
+            return;
+
+        function getSelectedRecords()
+        {
+            console.assert(this._displayedRecording);
+            console.assert(this._displayedRecording.timelines.has(WebInspector.TimelineRecord.Type.RenderingFrame), "Cannot find rendering frames timeline in displayed recording");
+
+            var timeline = this._displayedRecording.timelines.get(WebInspector.TimelineRecord.Type.RenderingFrame);
+            var selectedRecords = [];
+            for (var record of timeline.records) {
+                console.assert(record instanceof WebInspector.RenderingFrameTimelineRecord);
+                // If this frame is completely before the bounds of the graph, skip this record.
+                if (record.frameIndex < this._startFrameIndex)
+                    continue;
+
+                // If this record is completely after the end time, break out now.
+                // Records are sorted, so all records after this will be beyond the end time too.
+                if (record.frameIndex > this._endFrameIndex)
+                    break;
+
+                selectedRecords.push(record);
+            }
+
+            return selectedRecords;
+        }
+
+        var chart = this._frameSelectionChartRow;
+        var records = getSelectedRecords.call(this);
+        if (!records.length) {
+            this._frameSelectionChartRow.title = WebInspector.UIString("Frames: None Selected");
+            this._frameSelectionChartRow.data = [
+                {label: WebInspector.UIString("Layout"), value: 0, color: this._chartColors.layout},
+                {label: WebInspector.UIString("Script"), value: 0, color: this._chartColors.script},
+                {label: WebInspector.UIString("Other"), value: 0, color: this._chartColors.other},
+                {label: WebInspector.UIString("Idle"), value: 0, color: this._chartColors.idle}
+            ];
+            return;
+        }
+
+        var firstRecord = records[0];
+        var lastRecord = records.lastValue;
+
+        if (records.length > 1) {
+            this._frameSelectionChartRow.title = WebInspector.UIString("Frames: %d – %d (%s – %s)").format(firstRecord.frameNumber, lastRecord.frameNumber,
+                Number.secondsToString(firstRecord.startTime), Number.secondsToString(lastRecord.endTime));
+        } else {
+            this._frameSelectionChartRow.title = WebInspector.UIString("Frame: %d (%s – %s)").format(firstRecord.frameNumber,
+                Number.secondsToString(firstRecord.startTime), Number.secondsToString(lastRecord.endTime));
+        }
+
+        function durationForRecordType(type)
+        {
+            return records.reduce(function(previousValue, currentValue) {
+                return previousValue + (type ? currentValue.durationForRecords(type) : currentValue.durationRemainder);
+            }, 0);
+        }
+
+        var totalTime = lastRecord.endTime - firstRecord.startTime;
+        var layoutTime = durationForRecordType(WebInspector.TimelineRecord.Type.Layout);
+        var scriptTime = durationForRecordType(WebInspector.TimelineRecord.Type.Script);
+        var otherTime = durationForRecordType();
+        var idleTime = totalTime - layoutTime - scriptTime - otherTime;
+
+        this._frameSelectionChartRow.data = [
+            {label: WebInspector.UIString("Layout"), value: layoutTime, color: this._chartColors.layout},
+            {label: WebInspector.UIString("Script"), value: scriptTime, color: this._chartColors.script},
+            {label: WebInspector.UIString("Other"), value: otherTime, color: this._chartColors.other},
+            {label: WebInspector.UIString("Idle"), value: idleTime, color: this._chartColors.idle}
+        ];
     }
 
     // These methods are only used when ReplayAgent is available.

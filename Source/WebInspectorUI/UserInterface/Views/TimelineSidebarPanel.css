@@ -192,3 +192,16 @@ body.window-inactive .sidebar > .panel.navigation.timeline > .timelines-content 
     padding-right: 16px;
     right: -16px;
 }
+
+.sidebar > .panel.navigation.timeline > .timelines-content > .details-section > div.header {
+    display: none;
+}
+
+.sidebar > .panel.navigation.timeline > .timelines-content > .details-section > .content > .group > .row.chart {
+    height: 108px;
+}
+
+.sidebar > .panel.navigation.timeline > .timelines-content > .details-section > .content > .group > .row.chart > .chart-content > .chart {
+    width: 76px;
+    height: 76px;
+}

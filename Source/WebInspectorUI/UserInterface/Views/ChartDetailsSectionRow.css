@@ -23,24 +23,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.details-section .row.chart {
+.details-section > .content > .group > .row.chart > .title {
+    color: rgb(57, 57, 57);
+
+    white-space: nowrap;
+    overflow: hidden;
     text-align: center;
+    text-overflow: ellipsis;
+
+    font-size: 11px;
+
+    padding: 4px 5px 0px 9px;
 }
 
-.details-section .row.chart canvas {
-    width: 150px;
-    height: 150px;
+.details-section > .content > .group > .row.chart > .chart-content {
+    display: flex;
+    justify-content: center;
+    padding: 8px 5px 0px 12px;
 }
 
-.details-section .row.chart.empty canvas {
-    display: none;
+.details-section > .content > .group > .row.chart > .chart-content > .legend {
+    display: table;
+    margin-left: 12px;
 }
 
-.details-section > .content > .group > .row.legend-item > .label > .color-swatch {
+.details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item {
+    display: table-row;
+    height: 16px;
+}
+
+.details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > .label > .color-swatch {
     display: inline-block;
-    margin-left: 6px;
+
     width: 8px;
     height: 8px;
+    margin-right: 6px;
 
-    border: solid 1px #666;
+    border: solid 1px rgb(102, 102, 102);
+}
+
+.details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > .label {
+    color: rgb(51, 51, 51);
+}
+
+.details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > .value {
+    padding-left: 8px;
+}
+
+.details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > * {
+    display: table-cell;
+    vertical-align: middle;
 }

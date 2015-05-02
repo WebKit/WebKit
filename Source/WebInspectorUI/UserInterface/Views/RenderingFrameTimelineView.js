@@ -86,15 +86,11 @@ WebInspector.RenderingFrameTimelineView.prototype = {
     {
         WebInspector.ContentView.prototype.shown.call(this);
 
-        WebInspector.renderingFrameDetailsSidebarPanel.renderingFrameTimeline = this.representedObject;
-
         this._dataGrid.shown();
     },
 
     hidden: function()
     {
-        WebInspector.renderingFrameDetailsSidebarPanel.renderingFrameTimeline = null;
-
         this._dataGrid.hidden();
 
         WebInspector.ContentView.prototype.hidden.call(this);

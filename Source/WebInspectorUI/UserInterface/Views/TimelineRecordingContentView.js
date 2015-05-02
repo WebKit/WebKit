@@ -62,6 +62,7 @@ WebInspector.TimelineRecordingContentView = function(recording, extraArguments)
     this._currentTime = NaN;
     this._lastUpdateTimestamp = NaN;
     this._startTimeNeedsReset = true;
+    this._renderingFrameTimeline = null;
 
     this._recording.addEventListener(WebInspector.TimelineRecording.Event.TimelineAdded, this._timelineAdded, this);
     this._recording.addEventListener(WebInspector.TimelineRecording.Event.TimelineRemoved, this._timelineRemoved, this);
@@ -260,19 +261,19 @@ WebInspector.TimelineRecordingContentView.prototype = {
         var currentTime = this._currentTime || this._recording.startTime;
 
         if (this._timelineSidebarPanel.viewMode === WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames) {
-            var timeline = this._getRenderingFrameTimeline();
-            console.assert(timeline);
+            console.assert(this._renderingFrameTimeline);
 
-            if (timeline && timeline.records.length) {
+            if (this._renderingFrameTimeline && this._renderingFrameTimeline.records.length) {
+                var records = this._renderingFrameTimeline.records;
                 var startIndex = Math.floor(startTime);
-                if (startIndex >= timeline.records.length)
+                if (startIndex >= records.length)
                     return false;
 
-                var endIndex = Math.min(Math.floor(endTime), timeline.records.length - 1);
+                var endIndex = Math.min(Math.floor(endTime), records.length - 1);
                 console.assert(startIndex <= endIndex, startIndex);
 
-                startTime = timeline.records[startIndex].startTime;
-                endTime = timeline.records[endIndex].endTime;
+                startTime = records[startIndex].startTime;
+                endTime = records[endIndex].endTime;
             }
         }
 
@@ -425,9 +426,10 @@ WebInspector.TimelineRecordingContentView.prototype = {
         if (this.currentTimelineView)
             this.currentTimelineView.currentTime = currentTime;
 
-        var timeline = this._getRenderingFrameTimeline();
-        if (timeline)
-            this._renderingFrameTimelineOverview.endTime = timeline.records.length;
+        if (this._renderingFrameTimeline && this.currentTimelineView.representedObject.type === WebInspector.TimelineRecord.Type.RenderingFrame) {
+            var oldEndTime = this._renderingFrameTimelineOverview.endTime;
+            this._renderingFrameTimelineOverview.endTime = this._renderingFrameTimeline.records.length;
+        }
 
         this._timelineSidebarPanel.updateFilter();
 
@@ -536,7 +538,7 @@ WebInspector.TimelineRecordingContentView.prototype = {
             overviewHeight = renderingFramesTimelineHeight;
         else {
             var timelineCount = this._timelineViewMap.size;
-            if (this._getRenderingFrameTimeline())
+            if (this._renderingFrameTimeline)
                 timelineCount--;
 
             overviewHeight = timelineCount * timelineHeight;
@@ -545,16 +547,6 @@ WebInspector.TimelineRecordingContentView.prototype = {
         var styleValue = (rulerHeight + overviewHeight) + "px";
         this._currentTimelineOverview.element.style.height = styleValue;
         this._contentViewContainer.element.style.top = styleValue;
-    },
-
-    _getRenderingFrameTimeline: function()
-    {
-        for (var timeline of this._timelineViewMap.keys()) {
-            if (timeline.type === WebInspector.TimelineRecord.Type.RenderingFrame)
-                return timeline;
-        }
-
-        return null;
     },
 
     _timelineAdded: function(timelineOrEvent)
@@ -567,6 +559,8 @@ WebInspector.TimelineRecordingContentView.prototype = {
         console.assert(!this._timelineViewMap.has(timeline), timeline);
 
         this._timelineViewMap.set(timeline, new WebInspector.ContentView(timeline, {timelineSidebarPanel: this._timelineSidebarPanel}));
+        if (timeline.type === WebInspector.TimelineRecord.Type.RenderingFrame)
+            this._renderingFrameTimeline = timeline;
 
         var pathComponent = new WebInspector.HierarchicalPathComponent(timeline.displayName, timeline.iconClassName, timeline);
         pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this._pathComponentSelected, this);
@@ -584,6 +578,8 @@ WebInspector.TimelineRecordingContentView.prototype = {
         var timelineView = this._timelineViewMap.take(timeline);
         if (this.currentTimelineView === timelineView)
             this.showOverviewTimelineView();
+        if (timeline.type === WebInspector.TimelineRecord.Type.RenderingFrame)
+            this._renderingFrameTimeline = null;
 
         this._pathComponentMap.delete(timeline);
 
@@ -643,7 +639,7 @@ WebInspector.TimelineRecordingContentView.prototype = {
             this.currentTimelineView.endTime = this._currentTimelineOverview.selectionStartTime + this._currentTimelineOverview.selectionDuration;
 
             if (this.currentTimelineView.representedObject.type === WebInspector.TimelineRecord.Type.RenderingFrame)
-                WebInspector.renderingFrameDetailsSidebarPanel.updateRangeSelection(this.currentTimelineView.startTime, this.currentTimelineView.endTime);
+                this._updateFrameSelection();
         }
 
         // Delay until the next frame to stay in sync with the current timeline view's time-based layout changes.
@@ -656,5 +652,16 @@ WebInspector.TimelineRecordingContentView.prototype = {
             if (selectedTreeElement && selectedTreeElement.hidden !== selectionWasHidden)
                 this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
         }.bind(this));
+    },
+
+    _updateFrameSelection: function()
+    {
+        console.assert(this._renderingFrameTimeline);
+        if (!this._renderingFrameTimeline)
+            return;
+
+        var startIndex = this._renderingFrameTimelineOverview.selectionStartTime;
+        var endIndex = startIndex + this._renderingFrameTimelineOverview.selectionDuration;
+        this._timelineSidebarPanel.updateFrameSelection(startIndex, endIndex);
     }
 };

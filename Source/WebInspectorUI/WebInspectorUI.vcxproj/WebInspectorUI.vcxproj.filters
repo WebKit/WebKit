@@ -141,9 +141,6 @@
     <None Include="..\UserInterface\CanvasProfileView.js">
       <Filter>UserInterface</Filter>
     </None>
-    <None Include="..\UserInterface\ChartDetailsSectionLegendRow.js">
-      <Filter>UserInterface</Filter>
-    </None>
     <None Include="..\UserInterface\ChartDetailsSectionRow.js">
       <Filter>UserInterface</Filter>
     </None>
@@ -781,9 +778,6 @@
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\RemoteObject.js">
-      <Filter>UserInterface</Filter>
-    </None>
-    <None Include="..\UserInterface\RenderingFrameDetailsSidebarPanel.js">
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\RenderingFrameTimelineDataGridNode.js">

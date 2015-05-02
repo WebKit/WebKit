@@ -297,7 +297,6 @@
     <None Include="..\UserInterface\CanvasProfileObject.js" />
     <None Include="..\UserInterface\CanvasProfileType.js" />
     <None Include="..\UserInterface\CanvasProfileView.js" />
-    <None Include="..\UserInterface\ChartDetailsSectionLegendRow.js" />
     <None Include="..\UserInterface\ChartDetailsSectionRow.js" />
     <None Include="..\UserInterface\ChartDetailsSectionRow.css" />
     <None Include="..\UserInterface\ClusterContentView.css" />
@@ -738,7 +737,6 @@
     <None Include="..\UserInterface\RadioButtonNavigationItem.css" />
     <None Include="..\UserInterface\RadioButtonNavigationItem.js" />
     <None Include="..\UserInterface\RemoteObject.js" />
-    <None Include="..\UserInterface\RenderingFrameDetailsSidebarPanel.js" />
     <None Include="..\UserInterface\RenderingFrameTimeDataGridNode.js" />
     <None Include="..\UserInterface\RenderingFrameTimelineOverview.js" />
     <None Include="..\UserInterface\RenderingFrameTimelineOverviewGraph.css" />

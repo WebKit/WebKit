@@ -26,7 +26,7 @@
 WebInspector.TimelineTabContentView = function(identifier)
 {
     var tabBarItem = new WebInspector.TabBarItem("Images/Timeline.svg", WebInspector.UIString("Timelines"));
-    var detailsSidebarPanels = [WebInspector.resourceDetailsSidebarPanel, WebInspector.probeDetailsSidebarPanel, WebInspector.renderingFrameDetailsSidebarPanel];
+    var detailsSidebarPanels = [WebInspector.resourceDetailsSidebarPanel, WebInspector.probeDetailsSidebarPanel];
 
     // FIME: Until TimelineSidebarPanel supports instantiating after inspector launch, disable closing.
     tabBarItem.hideCloseButton = true;

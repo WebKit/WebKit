@@ -40,7 +40,7 @@ WebInspector.RenderingFrameTimelineOverviewGraph = function(timeline)
 };
 
 WebInspector.RenderingFrameTimelineOverviewGraph.StyleClassName = "rendering-frame";
-WebInspector.RenderingFrameTimelineOverviewGraph.MaximumGraphHeightSeconds = 0.05;
+WebInspector.RenderingFrameTimelineOverviewGraph.MaximumGraphHeightSeconds = 0.037;
 WebInspector.RenderingFrameTimelineOverviewGraph.MinimumGraphHeightSeconds = 0.0185;
 
 WebInspector.RenderingFrameTimelineOverviewGraph.prototype = {
