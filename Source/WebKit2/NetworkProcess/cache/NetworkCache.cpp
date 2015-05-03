@@ -387,7 +387,14 @@ void Cache::store(const WebCore::ResourceRequest& originalRequest, const WebCore
     ASSERT(isEnabled());
     ASSERT(responseData);
 
-    LOG(NetworkCache, "(NetworkProcess) storing %s, partition %s", originalRequest.url().string().latin1().data(), originalRequest.cachePartition().latin1().data());
+#if !LOG_DISABLED
+#if ENABLE(CACHE_PARTITIONING)
+    CString partition = originalRequest.cachePartition().latin1();
+#else
+    CString partition = "No partition";
+#endif
+    LOG(NetworkCache, "(NetworkProcess) storing %s, partition %s", originalRequest.url().string().latin1().data(), partition.data());
+#endif // !LOG_DISABLED
 
     StoreDecision storeDecision = makeStoreDecision(originalRequest, response);
     if (storeDecision != StoreDecision::Yes) {

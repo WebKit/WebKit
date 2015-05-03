@@ -1,3 +1,10 @@
+2015-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix Debug build with NETWORK_CACHE enabled and CACHE_PARTITIONING disabled.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::store):
+
 2015-05-01  Dan Bernstein  <mitz@apple.com>
 
         WebKit2 part of <rdar://problem/8636045> Back/forward navigation to an error page in Safari breaks the back-forward list
