@@ -1180,7 +1180,10 @@ void StyleResolver::adjustStyleForMaskImages()
 
             oldMaskLayer = oldMaskLayer->next();
         }
-        
+
+        if (oldStyleMaskImages.isEmpty())
+            return;
+
         // Try to match the new mask objects through the list from the old style.
         // This should work perfectly and optimal when the list of masks remained
         // the same and also work correctly (but slower) when they were reordered.

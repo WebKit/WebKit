@@ -1,3 +1,21 @@
+2015-05-02  Andreas Kling  <akling@apple.com>
+
+        Style recalc always causes detach from shared StyleRareNonInheritedData.
+        <https://webkit.org/b/144530>
+
+        Reviewed by Darin Adler.
+
+        StyleResolver::adjustStyleForMaskImages() was always calling RenderStyle::ensureMaskLayers()
+        when we were in style recalc. This caused the RenderStyle to COW off from the previously
+        shared StyleRareNonInheritedData even if nothing actually changes.
+
+        This patch adds an early return to adjustStyleForMaskImages() when the previous style had
+        no mask images. Further refinements could be made, but this covers the most common case where
+        we don't have any mask images at all.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustStyleForMaskImages):
+
 2015-05-02  Alexey Proskuryakov  <ap@apple.com>
 
         fast/frames/flattening/iframe-flattening-resize-event-count.html times out on Yosemite WK2
