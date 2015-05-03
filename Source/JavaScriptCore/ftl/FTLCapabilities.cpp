@@ -189,6 +189,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetMyArgumentByVal:
     case ForwardVarargs:
     case Switch:
+    case TypeOf:
         // These are OK.
         break;
     case Identity:

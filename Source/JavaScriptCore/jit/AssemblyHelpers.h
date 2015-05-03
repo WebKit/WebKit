@@ -33,6 +33,7 @@
 #include "GPRInfo.h"
 #include "JITCode.h"
 #include "MacroAssembler.h"
+#include "TypeofType.h"
 #include "VM.h"
 
 namespace JSC {
@@ -367,6 +368,36 @@ public:
         storePtr(tag, Address(stackPointerRegister, entry * static_cast<ptrdiff_t>(sizeof(Register)) - prologueStackPointerDelta() + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
     }
 #endif
+    
+    JumpList branchIfNotEqual(JSValueRegs regs, JSValue value)
+    {
+#if USE(JSVALUE64)
+        return branch64(NotEqual, regs.gpr(), TrustedImm64(JSValue::encode(value)));
+#else
+        JumpList result;
+        result.append(branch32(NotEqual, regs.tagGPR(), TrustedImm32(value.tag())));
+        if (value.isEmpty() || value.isUndefinedOrNull())
+            return result; // These don't have anything interesting in the payload.
+        result.append(branch32(NotEqual, regs.payloadGPR(), TrustedImm32(value.payload())));
+        return result;
+#endif
+    }
+    
+    Jump branchIfEqual(JSValueRegs regs, JSValue value)
+    {
+#if USE(JSVALUE64)
+        return branch64(Equal, regs.gpr(), TrustedImm64(JSValue::encode(value)));
+#else
+        Jump notEqual;
+        // These don't have anything interesting in the payload.
+        if (!value.isEmpty() && !value.isUndefinedOrNull())
+            notEqual = branch32(NotEqual, regs.payloadGPR(), TrustedImm32(value.payload()));
+        Jump result = branch32(Equal, regs.tagGPR(), TrustedImm32(value.tag()));
+        if (notEqual.isSet())
+            notEqual.link(this);
+        return result;
+#endif
+    }
 
     Jump branchIfNotCell(GPRReg reg)
     {
@@ -423,6 +454,56 @@ public:
 #else
         or32(TrustedImm32(1), regs.tagGPR(), tempGPR);
         return branch32(NotEqual, tempGPR, TrustedImm32(JSValue::NullTag));
+#endif
+    }
+    
+    // Note that the tempGPR is not used in 64-bit mode.
+    Jump branchIfNumber(JSValueRegs regs, GPRReg tempGPR)
+    {
+#if USE(JSVALUE64)
+        UNUSED_PARAM(tempGPR);
+        return branchTest64(NonZero, regs.gpr(), GPRInfo::tagTypeNumberRegister);
+#else
+        add32(TrustedImm32(1), regs.tagGPR(), tempGPR);
+        return branch32(Below, tempGPR, TrustedImm32(JSValue::LowestTag + 1));
+#endif
+    }
+    
+    // Note that the tempGPR is not used in 64-bit mode.
+    Jump branchIfNotNumber(JSValueRegs regs, GPRReg tempGPR)
+    {
+#if USE(JSVALUE64)
+        UNUSED_PARAM(tempGPR);
+        return branchTest64(Zero, regs.gpr(), GPRInfo::tagTypeNumberRegister);
+#else
+        add32(TrustedImm32(1), regs.tagGPR(), tempGPR);
+        return branch32(AboveOrEqual, tempGPR, TrustedImm32(JSValue::LowestTag + 1));
+#endif
+    }
+
+    // Note that the tempGPR is not used in 32-bit mode.
+    Jump branchIfBoolean(JSValueRegs regs, GPRReg tempGPR)
+    {
+#if USE(JSVALUE64)
+        move(regs.gpr(), tempGPR);
+        xor64(TrustedImm32(static_cast<int32_t>(ValueFalse)), tempGPR);
+        return branchTest64(Zero, tempGPR, TrustedImm32(static_cast<int32_t>(~1)));
+#else
+        UNUSED_PARAM(tempGPR);
+        return branch32(Equal, regs.tagGPR(), TrustedImm32(JSValue::BooleanTag));
+#endif
+    }
+    
+    // Note that the tempGPR is not used in 32-bit mode.
+    Jump branchIfNotBoolean(JSValueRegs regs, GPRReg tempGPR)
+    {
+#if USE(JSVALUE64)
+        move(regs.gpr(), tempGPR);
+        xor64(TrustedImm32(static_cast<int32_t>(ValueFalse)), tempGPR);
+        return branchTest64(NonZero, tempGPR, TrustedImm32(static_cast<int32_t>(~1)));
+#else
+        UNUSED_PARAM(tempGPR);
+        return branch32(NotEqual, regs.tagGPR(), TrustedImm32(JSValue::BooleanTag));
 #endif
     }
     
@@ -707,6 +788,23 @@ public:
     }
 #endif
     
+    void boxBooleanPayload(GPRReg boolGPR, GPRReg payloadGPR)
+    {
+#if USE(JSVALUE64)
+        add32(TrustedImm32(ValueFalse), boolGPR, payloadGPR);
+#else
+        move(boolGPR, payloadGPR);
+#endif
+    }
+
+    void boxBoolean(GPRReg boolGPR, JSValueRegs boxedRegs)
+    {
+        boxBooleanPayload(boolGPR, boxedRegs.payloadGPR());
+#if USE(JSVALUE32_64)
+        move(TrustedImm32(JSValue::BooleanTag), boxedRegs.tagGPR());
+#endif
+    }
+    
     void callExceptionFuzz();
     
     enum ExceptionCheckKind { NormalExceptionCheck, InvertedExceptionCheck };
@@ -842,6 +940,82 @@ public:
     {
         uint8_t* address = reinterpret_cast<uint8_t*>(cell) + JSCell::gcDataOffset();
         return branchTest8(MacroAssembler::NonZero, MacroAssembler::AbsoluteAddress(address));
+    }
+    
+    // Emits the branch structure for typeof. The code emitted by this doesn't fall through. The
+    // functor is called at those points where we have pinpointed a type. One way to use this is to
+    // have the functor emit the code to put the type string into an appropriate register and then
+    // jump out. A secondary functor is used for the call trap and masquerades-as-undefined slow
+    // case. It is passed the unlinked jump to the slow case.
+    template<typename Functor, typename SlowPathFunctor>
+    void emitTypeOf(
+        JSValueRegs regs, GPRReg tempGPR, const Functor& functor,
+        const SlowPathFunctor& slowPathFunctor)
+    {
+        // Implements the following branching structure:
+        //
+        // if (is cell) {
+        //     if (is object) {
+        //         if (is function) {
+        //             return function;
+        //         } else if (doesn't have call trap and doesn't masquerade as undefined) {
+        //             return object
+        //         } else {
+        //             return slowPath();
+        //         }
+        //     } else if (is string) {
+        //         return string
+        //     } else {
+        //         return symbol
+        //     }
+        // } else if (is number) {
+        //     return number
+        // } else if (is null) {
+        //     return object
+        // } else if (is boolean) {
+        //     return boolean
+        // } else {
+        //     return undefined
+        // }
+        
+        Jump notCell = branchIfNotCell(regs);
+        
+        GPRReg cellGPR = regs.payloadGPR();
+        Jump notObject = branchIfNotObject(cellGPR);
+        
+        Jump notFunction = branchIfNotFunction(cellGPR);
+        functor(TypeofType::Function, false);
+        
+        notFunction.link(this);
+        slowPathFunctor(
+            branchTest8(
+                NonZero,
+                Address(cellGPR, JSCell::typeInfoFlagsOffset()),
+                TrustedImm32(MasqueradesAsUndefined | TypeOfShouldCallGetCallData)));
+        functor(TypeofType::Object, false);
+        
+        notObject.link(this);
+        
+        Jump notString = branchIfNotString(cellGPR);
+        functor(TypeofType::String, false);
+        notString.link(this);
+        functor(TypeofType::Symbol, false);
+        
+        notCell.link(this);
+
+        Jump notNumber = branchIfNotNumber(regs, tempGPR);
+        functor(TypeofType::Number, false);
+        notNumber.link(this);
+        
+        JumpList notNull = branchIfNotEqual(regs, jsNull());
+        functor(TypeofType::Object, false);
+        notNull.link(this);
+        
+        Jump notBoolean = branchIfNotBoolean(regs, tempGPR);
+        functor(TypeofType::Boolean, false);
+        notBoolean.link(this);
+        
+        functor(TypeofType::Undefined, true);
     }
 
     Vector<BytecodeAndMachineOffset>& decodedCodeMapFor(CodeBlock*);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +23,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLSwitchCase_h
-#define FTLSwitchCase_h
+#include "config.h"
+#include "TypeofType.h"
 
-#if ENABLE(FTL_JIT)
+namespace WTF {
 
-#include "FTLAbbreviatedTypes.h"
-#include "FTLWeight.h"
+using namespace JSC;
 
-namespace JSC { namespace FTL {
-
-class SwitchCase {
-public:
-    SwitchCase()
-        : m_value(nullptr)
-        , m_target(nullptr)
-    {
+void printInternal(PrintStream& out, TypeofType type)
+{
+    switch (type) {
+    case TypeofType::Undefined:
+        out.print("undefined");
+        return;
+    case TypeofType::Boolean:
+        out.print("boolean");
+        return;
+    case TypeofType::Number:
+        out.print("number");
+        return;
+    case TypeofType::String:
+        out.print("string");
+        return;
+    case TypeofType::Symbol:
+        out.print("symbol");
+        return;
+    case TypeofType::Object:
+        out.print("object");
+        return;
+    case TypeofType::Function:
+        out.print("function");
+        return;
     }
+    
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
-    SwitchCase(LValue value, LBasicBlock target, Weight weight = Weight())
-        : m_value(value)
-        , m_target(target)
-        , m_weight(weight)
-    {
-    }
-
-    LValue value() const { return m_value; }
-    LBasicBlock target() const { return m_target; }
-    Weight weight() const { return m_weight; }
-
-private:
-    LValue m_value;
-    LBasicBlock m_target;
-    Weight m_weight;
-};
-
-} } // namespace JSC::FTL
-
-#endif // ENABLE(FTL_JIT)
-
-#endif // FTLSwitchCase_h
+} // namespace WTF
 

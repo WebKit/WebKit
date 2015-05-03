@@ -1,3 +1,82 @@
+2015-05-01  Filip Pizlo  <fpizlo@apple.com>
+
+        TypeOf should be fast
+        https://bugs.webkit.org/show_bug.cgi?id=144396
+
+        Reviewed by Geoffrey Garen.
+        
+        Adds comprehensive support for fast typeof to the optimizing JITs. Calls into the runtime
+        are only used for very exotic objects - they must have either the MasqueradesAsUndefined or
+        TypeOfShouldCallGetCallData type flags set. All other cases are handled inline.
+        
+        This means optimizing IsObjectOrNull, IsFunction, and TypeOf - all node types that used to
+        rely heavily on C++ calls to fulfill their function.
+        
+        Because TypeOf is now so fast, we no longer need to do any speculations on this node.
+        
+        In the FTL, we take this further by querying AI for each branch in the TypeOf decision tree.
+        This means that if the TypeOf is dominated by any type checks, we will automatically prune
+        out cases that are redundant.
+        
+        This patch anticipates the addition of SwitchTypeOf or something like that. So, the TypeOf
+        code generation is designed to be reusable.
+        
+        This is a speed-up on most typeof benchmarks. But, it is a slow-down on benchmarks that take
+        the exotic call trap hook. That hook is now in a deeper slow path than before.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize): TypeOf was pure all along, but we failed to realize this.
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIsObjectOrNull):
+        (JSC::DFG::SpeculativeJIT::compileIsFunction):
+        (JSC::DFG::SpeculativeJIT::compileTypeOf):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::blessedBooleanResult):
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileIsObjectOrNull):
+        (JSC::FTL::LowerDFGToLLVM::compileIsFunction):
+        (JSC::FTL::LowerDFGToLLVM::compileTypeOf):
+        (JSC::FTL::LowerDFGToLLVM::buildTypeOf): Reusable TypeOf building for the FTL.
+        (JSC::FTL::LowerDFGToLLVM::isExoticForTypeof):
+        * ftl/FTLSwitchCase.h:
+        (JSC::FTL::SwitchCase::SwitchCase):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchIfNotEqual):
+        (JSC::AssemblyHelpers::branchIfEqual):
+        (JSC::AssemblyHelpers::branchIfNumber):
+        (JSC::AssemblyHelpers::branchIfNotNumber):
+        (JSC::AssemblyHelpers::branchIfBoolean):
+        (JSC::AssemblyHelpers::branchIfNotBoolean):
+        (JSC::AssemblyHelpers::boxBooleanPayload):
+        (JSC::AssemblyHelpers::boxBoolean):
+        (JSC::AssemblyHelpers::emitTypeOf): Reusable TypeOf building for assembly JITs.
+        * jit/JITOperations.h:
+        * runtime/SmallStrings.h:
+        (JSC::SmallStrings::typeString):
+        * runtime/TypeofType.cpp: Added.
+        (WTF::printInternal):
+        * runtime/TypeofType.h: Added.
+        * tests/stress/type-of-functions-and-objects.js: Modified this test to give more comprehensive feedback.
+
 2015-05-02  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, add a FIXME referencing https://bugs.webkit.org/show_bug.cgi?id=144527.

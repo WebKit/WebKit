@@ -841,6 +841,7 @@
     <ClCompile Include="..\runtime\TestRunnerUtils.cpp" />
     <ClCompile Include="..\runtime\TypedArrayController.cpp" />
     <ClCompile Include="..\runtime\TypedArrayType.cpp" />
+    <ClCompile Include="..\runtime\TypeofType.cpp" />
     <ClCompile Include="..\runtime\TypeLocationCache.cpp" />
     <ClCompile Include="..\runtime\TypeProfiler.cpp" />
     <ClCompile Include="..\runtime\TypeProfilerLog.cpp" />
@@ -1688,6 +1689,7 @@
     <ClInclude Include="..\runtime\TypedArrayController.h" />
     <ClInclude Include="..\runtime\TypedArrayInlines.h" />
     <ClInclude Include="..\runtime\TypedArrayType.h" />
+    <ClInclude Include="..\runtime\TypeofType.h" />
     <ClInclude Include="..\runtime\TypeLocationCache.h" />
     <ClInclude Include="..\runtime\TypeProfiler.h" />
     <ClInclude Include="..\runtime\TypeProfilerLog.h" />

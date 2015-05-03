@@ -860,21 +860,84 @@ JSCell* JIT_OPERATION operationCreateClonedArgumentsDuringExit(ExecState* exec, 
     return result;
 }
 
-size_t JIT_OPERATION operationIsObjectOrNull(ExecState* exec, EncodedJSValue value)
-{
-    return jsIsObjectTypeOrNull(exec, JSValue::decode(value));
-}
-
-size_t JIT_OPERATION operationIsFunction(EncodedJSValue value)
-{
-    return jsIsFunctionType(JSValue::decode(value));
-}
-
-JSCell* JIT_OPERATION operationTypeOf(ExecState* exec, JSCell* value)
+size_t JIT_OPERATION operationObjectIsObject(ExecState* exec, JSGlobalObject* globalObject, JSCell* object)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    return jsTypeStringForValue(exec, JSValue(value)).asCell();
+
+    ASSERT(jsDynamicCast<JSObject*>(object));
+    
+    if (object->structure(vm)->masqueradesAsUndefined(globalObject))
+        return false;
+    if (object->type() == JSFunctionType)
+        return false;
+    if (object->inlineTypeFlags() & TypeOfShouldCallGetCallData) {
+        CallData callData;
+        if (object->methodTable(vm)->getCallData(object, callData) != CallTypeNone)
+            return false;
+    }
+    
+    return true;
+}
+
+size_t JIT_OPERATION operationObjectIsFunction(ExecState* exec, JSGlobalObject* globalObject, JSCell* object)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    ASSERT(jsDynamicCast<JSObject*>(object));
+    
+    if (object->structure(vm)->masqueradesAsUndefined(globalObject))
+        return false;
+    if (object->type() == JSFunctionType)
+        return true;
+    if (object->inlineTypeFlags() & TypeOfShouldCallGetCallData) {
+        CallData callData;
+        if (object->methodTable(vm)->getCallData(object, callData) != CallTypeNone)
+            return true;
+    }
+    
+    return false;
+}
+
+JSCell* JIT_OPERATION operationTypeOfObject(ExecState* exec, JSGlobalObject* globalObject, JSCell* object)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    ASSERT(jsDynamicCast<JSObject*>(object));
+    
+    if (object->structure(vm)->masqueradesAsUndefined(globalObject))
+        return vm.smallStrings.undefinedString();
+    if (object->type() == JSFunctionType)
+        return vm.smallStrings.functionString();
+    if (object->inlineTypeFlags() & TypeOfShouldCallGetCallData) {
+        CallData callData;
+        if (object->methodTable(vm)->getCallData(object, callData) != CallTypeNone)
+            return vm.smallStrings.functionString();
+    }
+    
+    return vm.smallStrings.objectString();
+}
+
+int32_t JIT_OPERATION operationTypeOfObjectAsTypeofType(ExecState* exec, JSGlobalObject* globalObject, JSCell* object)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    ASSERT(jsDynamicCast<JSObject*>(object));
+    
+    if (object->structure(vm)->masqueradesAsUndefined(globalObject))
+        return static_cast<int32_t>(TypeofType::Undefined);
+    if (object->type() == JSFunctionType)
+        return static_cast<int32_t>(TypeofType::Function);
+    if (object->inlineTypeFlags() & TypeOfShouldCallGetCallData) {
+        CallData callData;
+        if (object->methodTable(vm)->getCallData(object, callData) != CallTypeNone)
+            return static_cast<int32_t>(TypeofType::Function);
+    }
+    
+    return static_cast<int32_t>(TypeofType::Object);
 }
 
 char* JIT_OPERATION operationAllocatePropertyStorageWithInitialCapacity(ExecState* exec)

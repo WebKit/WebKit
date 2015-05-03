@@ -4107,86 +4107,16 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case IsObjectOrNull: {
-        JSValueOperand value(this, node->child1());
-        GPRReg valueTagGPR = value.tagGPR();
-        GPRReg valuePayloadGPR = value.payloadGPR();
-        GPRFlushedCallResult result(this);
-        GPRReg resultGPR = result.gpr();
-        flushRegisters();
-        callOperation(operationIsObjectOrNull, resultGPR, valueTagGPR, valuePayloadGPR);
-        booleanResult(result.gpr(), node);
+        compileIsObjectOrNull(node);
         break;
     }
 
     case IsFunction: {
-        JSValueOperand value(this, node->child1());
-        GPRReg valueTagGPR = value.tagGPR();
-        GPRReg valuePayloadGPR = value.payloadGPR();
-        GPRFlushedCallResult result(this);
-        GPRReg resultGPR = result.gpr();
-        flushRegisters();
-        callOperation(operationIsFunction, resultGPR, valueTagGPR, valuePayloadGPR);
-        booleanResult(result.gpr(), node);
+        compileIsFunction(node);
         break;
     }
     case TypeOf: {
-        JSValueOperand value(this, node->child1(), ManualOperandSpeculation);
-        GPRReg tagGPR = value.tagGPR();
-        GPRReg payloadGPR = value.payloadGPR();
-        GPRTemporary temp(this);
-        GPRReg tempGPR = temp.gpr();
-        GPRFlushedCallResult result(this);
-        GPRReg resultGPR = result.gpr();
-        JITCompiler::JumpList doneJumps;
-
-        flushRegisters();
-
-        ASSERT(node->child1().useKind() == UntypedUse || node->child1().useKind() == CellUse || node->child1().useKind() == StringUse);
-
-        JITCompiler::Jump isNotCell = m_jit.branchIfNotCell(value.jsValueRegs());
-        if (node->child1().useKind() != UntypedUse)
-            DFG_TYPE_CHECK(JSValueRegs(tagGPR, payloadGPR), node->child1(), SpecCell, isNotCell);
-
-        if (!node->child1()->shouldSpeculateObject() || node->child1().useKind() == StringUse) {
-            JITCompiler::Jump notString = m_jit.branchIfNotString(payloadGPR);
-            if (node->child1().useKind() == StringUse)
-                DFG_TYPE_CHECK(JSValueRegs(tagGPR, payloadGPR), node->child1(), SpecString, notString);
-            m_jit.move(TrustedImmPtr(m_jit.vm()->smallStrings.stringString()), resultGPR);
-            doneJumps.append(m_jit.jump());
-            if (node->child1().useKind() != StringUse) {
-                notString.link(&m_jit);
-                callOperation(operationTypeOf, resultGPR, payloadGPR);
-                doneJumps.append(m_jit.jump());
-            }
-        } else {
-            callOperation(operationTypeOf, resultGPR, payloadGPR);
-            doneJumps.append(m_jit.jump());
-        }
-
-        if (node->child1().useKind() == UntypedUse) {
-            isNotCell.link(&m_jit);
-
-            m_jit.add32(TrustedImm32(1), tagGPR, tempGPR);
-            JITCompiler::Jump notNumber = m_jit.branch32(JITCompiler::AboveOrEqual, tempGPR, JITCompiler::TrustedImm32(JSValue::LowestTag + 1));
-            m_jit.move(TrustedImmPtr(m_jit.vm()->smallStrings.numberString()), resultGPR);
-            doneJumps.append(m_jit.jump());
-            notNumber.link(&m_jit);
-
-            JITCompiler::Jump notUndefined = m_jit.branch32(JITCompiler::NotEqual, tagGPR, TrustedImm32(JSValue::UndefinedTag));
-            m_jit.move(TrustedImmPtr(m_jit.vm()->smallStrings.undefinedString()), resultGPR);
-            doneJumps.append(m_jit.jump());
-            notUndefined.link(&m_jit);
-
-            JITCompiler::Jump notNull = m_jit.branch32(JITCompiler::NotEqual, tagGPR, TrustedImm32(JSValue::NullTag));
-            m_jit.move(TrustedImmPtr(m_jit.vm()->smallStrings.objectString()), resultGPR);
-            doneJumps.append(m_jit.jump());
-            notNull.link(&m_jit);
-
-            // Only boolean left
-            m_jit.move(TrustedImmPtr(m_jit.vm()->smallStrings.booleanString()), resultGPR);
-        }
-        doneJumps.link(&m_jit);
-        cellResult(resultGPR, node);
+        compileTypeOf(node);
         break;
     }
 

@@ -792,13 +792,7 @@ public:
 #if USE(JSVALUE64)
         jsValueResult(reg, node, DataFormatJSBoolean, mode);
 #else
-        if (mode == CallUseChildren)
-            useChildren(node);
-
-        VirtualRegister virtualRegister = node->virtualRegister();
-        m_gprs.retain(reg, virtualRegister, SpillOrderBoolean);
-        GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
-        info.initBoolean(node, node->refCount(), reg);
+        booleanResult(reg, node, mode);
 #endif
     }
     void unblessedBooleanResult(GPRReg reg, Node* node, UseChildrenMode mode = CallUseChildren)
@@ -1057,6 +1051,18 @@ public:
     JITCompiler::Call callOperation(S_JITOperation_ECC operation, GPRReg result, GPRReg arg1, GPRReg arg2)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2);
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
+
+    JITCompiler::Call callOperation(S_JITOperation_EGC operation, GPRReg result, JSGlobalObject* globalObject, GPRReg arg2)
+    {
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(globalObject), arg2);
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
+
+    JITCompiler::Call callOperation(C_JITOperation_EGC operation, GPRReg result, JSGlobalObject* globalObject, GPRReg arg2)
+    {
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(globalObject), arg2);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
 
@@ -2214,6 +2220,9 @@ public:
     void compileCreateClonedArguments(Node*);
     void compileNotifyWrite(Node*);
     bool compileRegExpExec(Node*);
+    void compileIsObjectOrNull(Node*);
+    void compileIsFunction(Node*);
+    void compileTypeOf(Node*);
     
     void moveTrueTo(GPRReg);
     void moveFalseTo(GPRReg);

@@ -346,14 +346,6 @@ private:
             break;
         }
             
-        case TypeOf: {
-            if (node->child1()->shouldSpeculateString())
-                fixEdge<StringUse>(node->child1());
-            else if (node->child1()->shouldSpeculateCell())
-                fixEdge<CellUse>(node->child1());
-            break;
-        }
-            
         case CompareEqConstant: {
             break;
         }
@@ -1241,6 +1233,7 @@ private:
         case MovHint:
         case ZombieHint:
         case BottomValue:
+        case TypeOf:
             break;
 #else
         default:

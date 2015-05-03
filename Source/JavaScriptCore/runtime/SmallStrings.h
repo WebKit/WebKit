@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #ifndef SmallStrings_h
 #define SmallStrings_h
 
+#include "TypeofType.h"
 #include "WriteBarrier.h"
 #include <wtf/Noncopyable.h>
 
@@ -85,6 +86,29 @@ public:
     }
     JSC_COMMON_STRINGS_EACH_NAME(JSC_COMMON_STRINGS_ACCESSOR_DEFINITION)
 #undef JSC_COMMON_STRINGS_ACCESSOR_DEFINITION
+    
+    JSString* typeString(TypeofType type) const
+    {
+        switch (type) {
+        case TypeofType::Undefined:
+            return undefinedString();
+        case TypeofType::Boolean:
+            return booleanString();
+        case TypeofType::Number:
+            return numberString();
+        case TypeofType::String:
+            return stringString();
+        case TypeofType::Symbol:
+            return symbolString();
+        case TypeofType::Object:
+            return objectString();
+        case TypeofType::Function:
+            return functionString();
+        }
+        
+        RELEASE_ASSERT_NOT_REACHED();
+        return nullptr;
+    }
 
     JSString* nullObjectString() const { return m_nullObjectString; }
     JSString* undefinedObjectString() const { return m_undefinedObjectString; }

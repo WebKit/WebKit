@@ -63,6 +63,7 @@ extern "C" {
     D: double
     E: ExecState*
     F: CallFrame*
+    G: JSGlobalObject*
     I: StringImpl*
     Icf: InlineCallFrame*
     Idc: const Identifier*
@@ -127,6 +128,7 @@ typedef JSCell* JIT_OPERATION (*C_JITOperation_EC)(ExecState*, JSCell*);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_ECZ)(ExecState*, JSCell*, int32_t);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_ECZC)(ExecState*, JSCell*, int32_t, JSCell*);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_ECC)(ExecState*, JSCell*, JSCell*);
+typedef JSCell* JIT_OPERATION (*C_JITOperation_EGC)(ExecState*, JSGlobalObject*, JSCell*);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EIcf)(ExecState*, InlineCallFrame*);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EJ)(ExecState*, EncodedJSValue);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EJsc)(ExecState*, JSScope*);
@@ -157,10 +159,12 @@ typedef int64_t JIT_OPERATION(*Q_JITOperation_D)(double);
 typedef int32_t JIT_OPERATION (*Z_JITOperation_D)(double);
 typedef int32_t JIT_OPERATION (*Z_JITOperation_E)(ExecState*);
 typedef int32_t JIT_OPERATION (*Z_JITOperation_EC)(ExecState*, JSCell*);
+typedef int32_t JIT_OPERATION (*Z_JITOperation_EGC)(ExecState*, JSGlobalObject*, JSCell*);
 typedef int32_t JIT_OPERATION (*Z_JITOperation_ESJss)(ExecState*, size_t, JSString*);
 typedef int32_t JIT_OPERATION (*Z_JITOperation_EJZ)(ExecState*, EncodedJSValue, int32_t);
 typedef int32_t JIT_OPERATION (*Z_JITOperation_EJZZ)(ExecState*, EncodedJSValue, int32_t, int32_t);
 typedef size_t JIT_OPERATION (*S_JITOperation_ECC)(ExecState*, JSCell*, JSCell*);
+typedef size_t JIT_OPERATION (*S_JITOperation_EGC)(ExecState*, JSGlobalObject*, JSCell*);
 typedef size_t JIT_OPERATION (*S_JITOperation_EJ)(ExecState*, EncodedJSValue);
 typedef size_t JIT_OPERATION (*S_JITOperation_EJJ)(ExecState*, EncodedJSValue, EncodedJSValue);
 typedef size_t JIT_OPERATION (*S_JITOperation_EOJss)(ExecState*, JSObject*, JSString*);

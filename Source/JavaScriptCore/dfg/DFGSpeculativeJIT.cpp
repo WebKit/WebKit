@@ -4815,6 +4815,118 @@ bool SpeculativeJIT::compileRegExpExec(Node* node)
     return true;
 }
 
+void SpeculativeJIT::compileIsObjectOrNull(Node* node)
+{
+    JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
+    
+    JSValueOperand value(this, node->child1());
+    JSValueRegs valueRegs = value.jsValueRegs();
+    
+    GPRTemporary result(this);
+    GPRReg resultGPR = result.gpr();
+    
+    JITCompiler::Jump isCell = m_jit.branchIfCell(valueRegs);
+    
+    JITCompiler::Jump isNull = m_jit.branchIfEqual(valueRegs, jsNull());
+    JITCompiler::Jump isNonNullNonCell = m_jit.jump();
+    
+    isCell.link(&m_jit);
+    JITCompiler::Jump isFunction = m_jit.branchIfFunction(valueRegs.payloadGPR());
+    JITCompiler::Jump notObject = m_jit.branchIfNotObject(valueRegs.payloadGPR());
+    
+    JITCompiler::Jump slowPath = m_jit.branchTest8(
+        JITCompiler::NonZero,
+        JITCompiler::Address(valueRegs.payloadGPR(), JSCell::typeInfoFlagsOffset()),
+        TrustedImm32(MasqueradesAsUndefined | TypeOfShouldCallGetCallData));
+    
+    isNull.link(&m_jit);
+    m_jit.move(TrustedImm32(1), resultGPR);
+    JITCompiler::Jump done = m_jit.jump();
+    
+    isNonNullNonCell.link(&m_jit);
+    isFunction.link(&m_jit);
+    notObject.link(&m_jit);
+    m_jit.move(TrustedImm32(0), resultGPR);
+    
+    addSlowPathGenerator(
+        slowPathCall(
+            slowPath, this, operationObjectIsObject, resultGPR, globalObject,
+            valueRegs.payloadGPR()));
+    
+    done.link(&m_jit);
+    
+    unblessedBooleanResult(resultGPR, node);
+}
+
+void SpeculativeJIT::compileIsFunction(Node* node)
+{
+    JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
+    
+    JSValueOperand value(this, node->child1());
+    JSValueRegs valueRegs = value.jsValueRegs();
+    
+    GPRTemporary result(this);
+    GPRReg resultGPR = result.gpr();
+    
+    JITCompiler::Jump notCell = m_jit.branchIfNotCell(valueRegs);
+    JITCompiler::Jump isFunction = m_jit.branchIfFunction(valueRegs.payloadGPR());
+    JITCompiler::Jump notObject = m_jit.branchIfNotObject(valueRegs.payloadGPR());
+    
+    JITCompiler::Jump slowPath = m_jit.branchTest8(
+        JITCompiler::NonZero,
+        JITCompiler::Address(valueRegs.payloadGPR(), JSCell::typeInfoFlagsOffset()),
+        TrustedImm32(MasqueradesAsUndefined | TypeOfShouldCallGetCallData));
+    
+    notCell.link(&m_jit);
+    notObject.link(&m_jit);
+    m_jit.move(TrustedImm32(0), resultGPR);
+    JITCompiler::Jump done = m_jit.jump();
+    
+    isFunction.link(&m_jit);
+    m_jit.move(TrustedImm32(1), resultGPR);
+    
+    addSlowPathGenerator(
+        slowPathCall(
+            slowPath, this, operationObjectIsFunction, resultGPR, globalObject,
+            valueRegs.payloadGPR()));
+    
+    done.link(&m_jit);
+    
+    unblessedBooleanResult(resultGPR, node);
+}
+
+void SpeculativeJIT::compileTypeOf(Node* node)
+{
+    JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
+    
+    JSValueOperand value(this, node->child1());
+    JSValueRegs valueRegs = value.jsValueRegs();
+    
+    GPRTemporary result(this);
+    GPRReg resultGPR = result.gpr();
+    
+    JITCompiler::JumpList done;
+    JITCompiler::Jump slowPath;
+    m_jit.emitTypeOf(
+        valueRegs, resultGPR,
+        [&] (TypeofType type, bool fallsThrough) {
+            m_jit.move(TrustedImmPtr(m_jit.vm()->smallStrings.typeString(type)), resultGPR);
+            if (!fallsThrough)
+                done.append(m_jit.jump());
+        },
+        [&] (JITCompiler::Jump theSlowPath) {
+            slowPath = theSlowPath;
+        });
+    done.link(&m_jit);
+
+    addSlowPathGenerator(
+        slowPathCall(
+            slowPath, this, operationTypeOfObject, resultGPR, globalObject,
+            valueRegs.payloadGPR()));
+    
+    cellResult(resultGPR, node);
+}
+
 void SpeculativeJIT::compileAllocatePropertyStorage(Node* node)
 {
     if (node->transition()->previous->couldHaveIndexingHeader()) {

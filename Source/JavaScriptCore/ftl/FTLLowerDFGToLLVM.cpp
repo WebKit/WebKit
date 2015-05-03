@@ -796,6 +796,9 @@ private:
         case IsFunction:
             compileIsFunction();
             break;
+        case TypeOf:
+            compileTypeOf();
+            break;
         case CheckHasInstance:
             compileCheckHasInstance();
             break;
@@ -4623,16 +4626,117 @@ private:
 
     void compileIsObjectOrNull()
     {
-        LValue pointerResult = vmCall(
-            m_out.operation(operationIsObjectOrNull), m_callFrame, lowJSValue(m_node->child1()));
-        setBoolean(m_out.notNull(pointerResult));
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
+        
+        Edge child = m_node->child1();
+        LValue value = lowJSValue(child);
+        
+        LBasicBlock cellCase = FTL_NEW_BLOCK(m_out, ("IsObjectOrNull cell case"));
+        LBasicBlock notFunctionCase = FTL_NEW_BLOCK(m_out, ("IsObjectOrNull not function case"));
+        LBasicBlock objectCase = FTL_NEW_BLOCK(m_out, ("IsObjectOrNull object case"));
+        LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("IsObjectOrNull slow path"));
+        LBasicBlock notCellCase = FTL_NEW_BLOCK(m_out, ("IsObjectOrNull not cell case"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("IsObjectOrNull continuation"));
+        
+        m_out.branch(isCell(value, provenType(child)), unsure(cellCase), unsure(notCellCase));
+        
+        LBasicBlock lastNext = m_out.appendTo(cellCase, notFunctionCase);
+        ValueFromBlock isFunctionResult = m_out.anchor(m_out.booleanFalse);
+        m_out.branch(
+            isFunction(value, provenType(child)),
+            unsure(continuation), unsure(notFunctionCase));
+        
+        m_out.appendTo(notFunctionCase, objectCase);
+        ValueFromBlock notObjectResult = m_out.anchor(m_out.booleanFalse);
+        m_out.branch(
+            isObject(value, provenType(child)),
+            unsure(objectCase), unsure(continuation));
+        
+        m_out.appendTo(objectCase, slowPath);
+        ValueFromBlock objectResult = m_out.anchor(m_out.booleanTrue);
+        m_out.branch(
+            isExoticForTypeof(value, provenType(child)),
+            rarely(slowPath), usually(continuation));
+        
+        m_out.appendTo(slowPath, notCellCase);
+        LValue slowResultValue = vmCall(
+            m_out.operation(operationObjectIsObject), m_callFrame, weakPointer(globalObject),
+            value);
+        ValueFromBlock slowResult = m_out.anchor(m_out.notNull(slowResultValue));
+        m_out.jump(continuation);
+        
+        m_out.appendTo(notCellCase, continuation);
+        LValue notCellResultValue = m_out.equal(value, m_out.constInt64(JSValue::encode(jsNull())));
+        ValueFromBlock notCellResult = m_out.anchor(notCellResultValue);
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+        LValue result = m_out.phi(
+            m_out.boolean,
+            isFunctionResult, notObjectResult, objectResult, slowResult, notCellResult);
+        setBoolean(result);
     }
     
     void compileIsFunction()
     {
-        LValue pointerResult = vmCall(
-            m_out.operation(operationIsFunction), lowJSValue(m_node->child1()));
-        setBoolean(m_out.notNull(pointerResult));
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
+        
+        Edge child = m_node->child1();
+        LValue value = lowJSValue(child);
+        
+        LBasicBlock cellCase = FTL_NEW_BLOCK(m_out, ("IsFunction cell case"));
+        LBasicBlock notFunctionCase = FTL_NEW_BLOCK(m_out, ("IsFunction not function case"));
+        LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("IsFunction slow path"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("IsFunction continuation"));
+        
+        ValueFromBlock notCellResult = m_out.anchor(m_out.booleanFalse);
+        m_out.branch(
+            isCell(value, provenType(child)), unsure(cellCase), unsure(continuation));
+        
+        LBasicBlock lastNext = m_out.appendTo(cellCase, notFunctionCase);
+        ValueFromBlock functionResult = m_out.anchor(m_out.booleanTrue);
+        m_out.branch(
+            isFunction(value, provenType(child)),
+            unsure(continuation), unsure(notFunctionCase));
+        
+        m_out.appendTo(notFunctionCase, slowPath);
+        ValueFromBlock objectResult = m_out.anchor(m_out.booleanFalse);
+        m_out.branch(
+            isExoticForTypeof(value, provenType(child)),
+            rarely(slowPath), usually(continuation));
+        
+        m_out.appendTo(slowPath, continuation);
+        LValue slowResultValue = vmCall(
+            m_out.operation(operationObjectIsFunction), m_callFrame, weakPointer(globalObject),
+            value);
+        ValueFromBlock slowResult = m_out.anchor(m_out.notNull(slowResultValue));
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+        LValue result = m_out.phi(
+            m_out.boolean, notCellResult, functionResult, objectResult, slowResult);
+        setBoolean(result);
+    }
+    
+    void compileTypeOf()
+    {
+        Edge child = m_node->child1();
+        LValue value = lowJSValue(child);
+        
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("TypeOf continuation"));
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(continuation);
+        
+        Vector<ValueFromBlock> results;
+        
+        buildTypeOf(
+            child, value,
+            [&] (TypeofType type) {
+                results.append(m_out.anchor(weakPointer(vm().smallStrings.typeString(type))));
+                m_out.jump(continuation);
+            });
+        
+        m_out.appendTo(continuation, lastNext);
+        setJSValue(m_out.phi(m_out.int64, results));
     }
     
     void compileIn()
@@ -6356,6 +6460,143 @@ private:
             Weight(data->fallThrough.count));
     }
     
+    // Calls the functor at the point of code generation where we know what the result type is.
+    // You can emit whatever code you like at that point. Expects you to terminate the basic block.
+    // When buildTypeOf() returns, it will have terminated all basic blocks that it created. So, if
+    // you aren't using this as the terminator of a high-level block, you should create your own
+    // contination and set it as the nextBlock (m_out.insertNewBlocksBefore(continuation)) before
+    // calling this. For example:
+    //
+    // LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("My continuation"));
+    // LBasicBlock lastNext = m_out.insertNewBlocksBefore(continuation);
+    // buildTypeOf(
+    //     child, value,
+    //     [&] (TypeofType type) {
+    //          do things;
+    //          m_out.jump(continuation);
+    //     });
+    // m_out.appendTo(continuation, lastNext);
+    template<typename Functor>
+    void buildTypeOf(Edge child, LValue value, const Functor& functor)
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
+        
+        // Implements the following branching structure:
+        //
+        // if (is cell) {
+        //     if (is object) {
+        //         if (is function) {
+        //             return function;
+        //         } else if (doesn't have call trap and doesn't masquerade as undefined) {
+        //             return object
+        //         } else {
+        //             return slowPath();
+        //         }
+        //     } else if (is string) {
+        //         return string
+        //     } else {
+        //         return symbol
+        //     }
+        // } else if (is number) {
+        //     return number
+        // } else if (is null) {
+        //     return object
+        // } else if (is boolean) {
+        //     return boolean
+        // } else {
+        //     return undefined
+        // }
+        
+        LBasicBlock cellCase = FTL_NEW_BLOCK(m_out, ("buildTypeOf cell case"));
+        LBasicBlock objectCase = FTL_NEW_BLOCK(m_out, ("buildTypeOf object case"));
+        LBasicBlock functionCase = FTL_NEW_BLOCK(m_out, ("buildTypeOf function case"));
+        LBasicBlock notFunctionCase = FTL_NEW_BLOCK(m_out, ("buildTypeOf not function case"));
+        LBasicBlock reallyObjectCase = FTL_NEW_BLOCK(m_out, ("buildTypeOf really object case"));
+        LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("buildTypeOf slow path"));
+        LBasicBlock unreachable = FTL_NEW_BLOCK(m_out, ("buildTypeOf unreachable"));
+        LBasicBlock notObjectCase = FTL_NEW_BLOCK(m_out, ("buildTypeOf not object case"));
+        LBasicBlock stringCase = FTL_NEW_BLOCK(m_out, ("buildTypeOf string case"));
+        LBasicBlock symbolCase = FTL_NEW_BLOCK(m_out, ("buildTypeOf symbol case"));
+        LBasicBlock notCellCase = FTL_NEW_BLOCK(m_out, ("buildTypeOf not cell case"));
+        LBasicBlock numberCase = FTL_NEW_BLOCK(m_out, ("buildTypeOf number case"));
+        LBasicBlock notNumberCase = FTL_NEW_BLOCK(m_out, ("buildTypeOf not number case"));
+        LBasicBlock notNullCase = FTL_NEW_BLOCK(m_out, ("buildTypeOf not null case"));
+        LBasicBlock booleanCase = FTL_NEW_BLOCK(m_out, ("buildTypeOf boolean case"));
+        LBasicBlock undefinedCase = FTL_NEW_BLOCK(m_out, ("buildTypeOf undefined case"));
+        
+        m_out.branch(isCell(value, provenType(child)), unsure(cellCase), unsure(notCellCase));
+        
+        LBasicBlock lastNext = m_out.appendTo(cellCase, objectCase);
+        m_out.branch(isObject(value, provenType(child)), unsure(objectCase), unsure(notObjectCase));
+        
+        m_out.appendTo(objectCase, functionCase);
+        m_out.branch(
+            isFunction(value, provenType(child) & SpecObject),
+            unsure(functionCase), unsure(notFunctionCase));
+        
+        m_out.appendTo(functionCase, notFunctionCase);
+        functor(TypeofType::Function);
+        
+        m_out.appendTo(notFunctionCase, reallyObjectCase);
+        m_out.branch(
+            isExoticForTypeof(value, provenType(child) & (SpecObject - SpecFunction)),
+            rarely(slowPath), usually(reallyObjectCase));
+        
+        m_out.appendTo(reallyObjectCase, slowPath);
+        functor(TypeofType::Object);
+        
+        m_out.appendTo(slowPath, unreachable);
+        LValue result = vmCall(
+            m_out.operation(operationTypeOfObjectAsTypeofType), m_callFrame,
+            weakPointer(globalObject), value);
+        Vector<SwitchCase, 3> cases;
+        cases.append(SwitchCase(m_out.constInt32(static_cast<int32_t>(TypeofType::Undefined)), undefinedCase));
+        cases.append(SwitchCase(m_out.constInt32(static_cast<int32_t>(TypeofType::Object)), reallyObjectCase));
+        cases.append(SwitchCase(m_out.constInt32(static_cast<int32_t>(TypeofType::Function)), functionCase));
+        m_out.switchInstruction(result, cases, unreachable, Weight());
+        
+        m_out.appendTo(unreachable, notObjectCase);
+        m_out.unreachable();
+        
+        m_out.appendTo(notObjectCase, stringCase);
+        m_out.branch(
+            isString(value, provenType(child) & (SpecCell - SpecObject)),
+            unsure(stringCase), unsure(symbolCase));
+        
+        m_out.appendTo(stringCase, symbolCase);
+        functor(TypeofType::String);
+        
+        m_out.appendTo(symbolCase, notCellCase);
+        functor(TypeofType::Symbol);
+        
+        m_out.appendTo(notCellCase, numberCase);
+        m_out.branch(
+            isNumber(value, provenType(child) & ~SpecCell),
+            unsure(numberCase), unsure(notNumberCase));
+        
+        m_out.appendTo(numberCase, notNumberCase);
+        functor(TypeofType::Number);
+        
+        m_out.appendTo(notNumberCase, notNullCase);
+        LValue isNull;
+        if (provenType(child) & SpecOther)
+            isNull = m_out.equal(value, m_out.constInt64(ValueNull));
+        else
+            isNull = m_out.booleanFalse;
+        m_out.branch(isNull, unsure(reallyObjectCase), unsure(notNullCase));
+        
+        m_out.appendTo(notNullCase, booleanCase);
+        m_out.branch(
+            isBoolean(value, provenType(child) & ~(SpecCell | SpecFullNumber)),
+            unsure(booleanCase), unsure(undefinedCase));
+        
+        m_out.appendTo(booleanCase, undefinedCase);
+        functor(TypeofType::Boolean);
+        
+        m_out.appendTo(undefinedCase, lastNext);
+        functor(TypeofType::Undefined);
+    }
+    
     LValue doubleToInt32(LValue doubleValue, double low, double high, bool isSigned = true)
     {
         LBasicBlock greatEnough = FTL_NEW_BLOCK(m_out, ("doubleToInt32 greatEnough"));
@@ -7176,6 +7417,15 @@ private:
         if (LValue proven = isProvenValue(type & SpecCell, ~SpecFunction))
             return proven;
         return isNotType(cell, JSFunctionType);
+    }
+            
+    LValue isExoticForTypeof(LValue cell, SpeculatedType type = SpecFullTop)
+    {
+        if (!(type & SpecObjectOther))
+            return m_out.booleanFalse;
+        return m_out.testNonZero8(
+            m_out.load8(cell, m_heaps.JSCell_typeInfoFlags),
+            m_out.constInt8(MasqueradesAsUndefined | TypeOfShouldCallGetCallData));
     }
     
     LValue isType(LValue cell, JSType type)

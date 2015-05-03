@@ -581,6 +581,7 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/TypeSet.cpp
     runtime/TypedArrayController.cpp
     runtime/TypedArrayType.cpp
+    runtime/TypeofType.cpp
     runtime/VM.cpp
     runtime/VMEntryScope.cpp
     runtime/VarOffset.cpp

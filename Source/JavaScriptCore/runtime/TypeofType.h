@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLSwitchCase_h
-#define FTLSwitchCase_h
+#ifndef TypeofType_h
+#define TypeofType_h
 
-#if ENABLE(FTL_JIT)
+#include <wtf/PrintStream.h>
 
-#include "FTLAbbreviatedTypes.h"
-#include "FTLWeight.h"
+namespace JSC {
 
-namespace JSC { namespace FTL {
-
-class SwitchCase {
-public:
-    SwitchCase()
-        : m_value(nullptr)
-        , m_target(nullptr)
-    {
-    }
-
-    SwitchCase(LValue value, LBasicBlock target, Weight weight = Weight())
-        : m_value(value)
-        , m_target(target)
-        , m_weight(weight)
-    {
-    }
-
-    LValue value() const { return m_value; }
-    LBasicBlock target() const { return m_target; }
-    Weight weight() const { return m_weight; }
-
-private:
-    LValue m_value;
-    LBasicBlock m_target;
-    Weight m_weight;
+enum class TypeofType {
+    Undefined,
+    Boolean,
+    Number,
+    String,
+    Symbol,
+    Object,
+    Function    
 };
 
-} } // namespace JSC::FTL
+} // namespace JSC
 
-#endif // ENABLE(FTL_JIT)
+namespace WTF {
 
-#endif // FTLSwitchCase_h
+void printInternal(PrintStream& out, JSC::TypeofType);
+
+} // namespace WTF
+
+#endif // TypeofType_h
 

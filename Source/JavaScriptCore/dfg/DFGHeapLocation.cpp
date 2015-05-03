@@ -68,10 +68,6 @@ void printInternal(PrintStream& out, LocationKind kind)
         out.print("IsFunctionLoc");
         return;
         
-    case TypeOfLoc:
-        out.print("TypeOfLoc");
-        return;
-        
     case GetterLoc:
         out.print("GetterLoc");
         return;
