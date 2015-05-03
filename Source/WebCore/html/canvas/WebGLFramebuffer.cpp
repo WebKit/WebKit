@@ -45,7 +45,7 @@ namespace {
 
     class WebGLRenderbufferAttachment : public WebGLFramebuffer::WebGLAttachment {
     public:
-        static PassRefPtr<WebGLFramebuffer::WebGLAttachment> create(WebGLRenderbuffer*);
+        static Ref<WebGLFramebuffer::WebGLAttachment> create(WebGLRenderbuffer*);
 
     private:
         WebGLRenderbufferAttachment(WebGLRenderbuffer*);
@@ -66,9 +66,9 @@ namespace {
         RefPtr<WebGLRenderbuffer> m_renderbuffer;
     };
 
-    PassRefPtr<WebGLFramebuffer::WebGLAttachment> WebGLRenderbufferAttachment::create(WebGLRenderbuffer* renderbuffer)
+    Ref<WebGLFramebuffer::WebGLAttachment> WebGLRenderbufferAttachment::create(WebGLRenderbuffer* renderbuffer)
     {
-        return adoptRef(new WebGLRenderbufferAttachment(renderbuffer));
+        return adoptRef(*new WebGLRenderbufferAttachment(renderbuffer));
     }
 
     WebGLRenderbufferAttachment::WebGLRenderbufferAttachment(WebGLRenderbuffer* renderbuffer)
@@ -139,7 +139,7 @@ namespace {
 
     class WebGLTextureAttachment : public WebGLFramebuffer::WebGLAttachment {
     public:
-        static PassRefPtr<WebGLFramebuffer::WebGLAttachment> create(WebGLTexture*, GC3Denum target, GC3Dint level);
+        static Ref<WebGLFramebuffer::WebGLAttachment> create(WebGLTexture*, GC3Denum target, GC3Dint level);
 
     private:
         WebGLTextureAttachment(WebGLTexture*, GC3Denum target, GC3Dint level);
@@ -162,9 +162,9 @@ namespace {
         GC3Dint m_level;
     };
 
-    PassRefPtr<WebGLFramebuffer::WebGLAttachment> WebGLTextureAttachment::create(WebGLTexture* texture, GC3Denum target, GC3Dint level)
+    Ref<WebGLFramebuffer::WebGLAttachment> WebGLTextureAttachment::create(WebGLTexture* texture, GC3Denum target, GC3Dint level)
     {
-        return adoptRef(new WebGLTextureAttachment(texture, target, level));
+        return adoptRef(*new WebGLTextureAttachment(texture, target, level));
     }
 
     WebGLTextureAttachment::WebGLTextureAttachment(WebGLTexture* texture, GC3Denum target, GC3Dint level)
@@ -269,9 +269,9 @@ WebGLFramebuffer::WebGLAttachment::~WebGLAttachment()
 {
 }
 
-PassRefPtr<WebGLFramebuffer> WebGLFramebuffer::create(WebGLRenderingContextBase* ctx)
+Ref<WebGLFramebuffer> WebGLFramebuffer::create(WebGLRenderingContextBase* ctx)
 {
-    return adoptRef(new WebGLFramebuffer(ctx));
+    return adoptRef(*new WebGLFramebuffer(ctx));
 }
 
 WebGLFramebuffer::WebGLFramebuffer(WebGLRenderingContextBase* ctx)

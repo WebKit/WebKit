@@ -34,9 +34,9 @@
 
 namespace WebCore {
 
-PassRefPtr<WebGLRenderbuffer> WebGLRenderbuffer::create(WebGLRenderingContextBase* ctx)
+Ref<WebGLRenderbuffer> WebGLRenderbuffer::create(WebGLRenderingContextBase* ctx)
 {
-    return adoptRef(new WebGLRenderbuffer(ctx));
+    return adoptRef(*new WebGLRenderbuffer(ctx));
 }
 
 WebGLRenderbuffer::~WebGLRenderbuffer()

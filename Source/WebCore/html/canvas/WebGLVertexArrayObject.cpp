@@ -33,9 +33,9 @@
 
 namespace WebCore {
     
-PassRefPtr<WebGLVertexArrayObject> WebGLVertexArrayObject::create(WebGLRenderingContextBase* ctx, VAOType type)
+Ref<WebGLVertexArrayObject> WebGLVertexArrayObject::create(WebGLRenderingContextBase* ctx, VAOType type)
 {
-    return adoptRef(new WebGLVertexArrayObject(ctx, type));
+    return adoptRef(*new WebGLVertexArrayObject(ctx, type));
 }
 
 WebGLVertexArrayObject::~WebGLVertexArrayObject()

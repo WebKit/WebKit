@@ -37,7 +37,7 @@ class WebGLQuery final : public WebGLSharedObject {
 public:
     virtual ~WebGLQuery();
 
-    static PassRefPtr<WebGLQuery> create(WebGLRenderingContextBase*);
+    static Ref<WebGLQuery> create(WebGLRenderingContextBase*);
 
 protected:
     WebGLQuery(WebGLRenderingContextBase*);

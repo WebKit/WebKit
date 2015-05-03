@@ -33,9 +33,9 @@
 
 namespace WebCore {
     
-PassRefPtr<WebGLSampler> WebGLSampler::create(WebGLRenderingContextBase* ctx)
+Ref<WebGLSampler> WebGLSampler::create(WebGLRenderingContextBase* ctx)
 {
-    return adoptRef(new WebGLSampler(ctx));
+    return adoptRef(*new WebGLSampler(ctx));
 }
 
 WebGLSampler::~WebGLSampler()

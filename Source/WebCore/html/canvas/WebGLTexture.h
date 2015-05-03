@@ -44,7 +44,7 @@ public:
 
     virtual ~WebGLTexture();
 
-    static PassRefPtr<WebGLTexture> create(WebGLRenderingContextBase*);
+    static Ref<WebGLTexture> create(WebGLRenderingContextBase*);
 
     void setTarget(GC3Denum target, GC3Dint maxLevel);
     void setParameteri(GC3Denum pname, GC3Dint param);

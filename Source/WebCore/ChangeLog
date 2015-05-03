@@ -1,3 +1,71 @@
+2015-05-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Purge PassRefPtr create() factory functions in html 
+        https://bugs.webkit.org/show_bug.cgi?id=144522
+
+        Reviewed by Darin Adler.
+
+        Return Ref instead of PassRefPtr in create() factory functions in html, because the factory
+        can't return null. This patch is a first step to purge in html. Following patch is going to
+        be uploaded.
+
+        No new tests, no behavior changes.
+
+        * html/FileInputType.cpp:
+        (WebCore::UploadButtonElement::create):
+        (WebCore::UploadButtonElement::createForMultiple):
+        * html/MediaController.cpp:
+        (MediaController::create):
+        * html/MediaController.h:
+        * html/canvas/WebGLBuffer.cpp:
+        (WebCore::WebGLBuffer::create):
+        * html/canvas/WebGLBuffer.h:
+        * html/canvas/WebGLContextAttributes.cpp:
+        (WebCore::WebGLContextAttributes::create):
+        * html/canvas/WebGLContextAttributes.h:
+        * html/canvas/WebGLContextGroup.cpp:
+        (WebCore::WebGLContextGroup::create):
+        * html/canvas/WebGLContextGroup.h:
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::create):
+        * html/canvas/WebGLFramebuffer.h:
+        * html/canvas/WebGLProgram.cpp:
+        (WebCore::WebGLProgram::create):
+        * html/canvas/WebGLProgram.h:
+        * html/canvas/WebGLQuery.cpp:
+        (WebCore::WebGLQuery::create):
+        * html/canvas/WebGLQuery.h:
+        * html/canvas/WebGLRenderbuffer.cpp:
+        (WebCore::WebGLRenderbuffer::create):
+        * html/canvas/WebGLRenderbuffer.h:
+        * html/canvas/WebGLSampler.cpp:
+        (WebCore::WebGLSampler::create):
+        * html/canvas/WebGLSampler.h:
+        * html/canvas/WebGLShader.cpp:
+        (WebCore::WebGLShader::create):
+        * html/canvas/WebGLShader.h:
+        * html/canvas/WebGLShaderPrecisionFormat.cpp:
+        (WebCore::WebGLShaderPrecisionFormat::create):
+        * html/canvas/WebGLShaderPrecisionFormat.h:
+        * html/canvas/WebGLSync.cpp:
+        (WebCore::WebGLSync::create):
+        * html/canvas/WebGLSync.h:
+        * html/canvas/WebGLTexture.cpp:
+        (WebCore::WebGLTexture::create):
+        * html/canvas/WebGLTexture.h:
+        * html/canvas/WebGLTransformFeedback.cpp:
+        (WebCore::WebGLTransformFeedback::create):
+        * html/canvas/WebGLTransformFeedback.h:
+        * html/canvas/WebGLUniformLocation.cpp:
+        (WebCore::WebGLUniformLocation::create):
+        * html/canvas/WebGLUniformLocation.h:
+        * html/canvas/WebGLVertexArrayObject.cpp:
+        (WebCore::WebGLVertexArrayObject::create):
+        * html/canvas/WebGLVertexArrayObject.h:
+        * html/canvas/WebGLVertexArrayObjectOES.cpp:
+        (WebCore::WebGLVertexArrayObjectOES::create):
+        * html/canvas/WebGLVertexArrayObjectOES.h:
+
 2015-05-02  Andreas Kling  <akling@apple.com>
 
         Style recalc always causes detach from shared StyleRareNonInheritedData.

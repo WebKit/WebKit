@@ -32,9 +32,9 @@
 
 namespace WebCore {
 
-PassRefPtr<WebGLUniformLocation> WebGLUniformLocation::create(WebGLProgram* program, GC3Dint location, GC3Denum type)
+Ref<WebGLUniformLocation> WebGLUniformLocation::create(WebGLProgram* program, GC3Dint location, GC3Denum type)
 {
-    return adoptRef(new WebGLUniformLocation(program, location, type));
+    return adoptRef(*new WebGLUniformLocation(program, location, type));
 }
 
 WebGLUniformLocation::WebGLUniformLocation(WebGLProgram* program, GC3Dint location, GC3Denum type)

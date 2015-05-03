@@ -33,9 +33,9 @@
 namespace WebCore {
 
 // static
-PassRefPtr<WebGLShaderPrecisionFormat> WebGLShaderPrecisionFormat::create(GC3Dint rangeMin, GC3Dint rangeMax, GC3Dint precision)
+Ref<WebGLShaderPrecisionFormat> WebGLShaderPrecisionFormat::create(GC3Dint rangeMin, GC3Dint rangeMax, GC3Dint precision)
 {
-    return adoptRef(new WebGLShaderPrecisionFormat(rangeMin, rangeMax, precision));
+    return adoptRef(*new WebGLShaderPrecisionFormat(rangeMin, rangeMax, precision));
 }
 
 GC3Dint WebGLShaderPrecisionFormat::rangeMin() const

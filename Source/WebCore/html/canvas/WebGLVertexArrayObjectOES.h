@@ -36,7 +36,7 @@ namespace WebCore {
 
 class WebGLVertexArrayObjectOES final : public WebGLVertexArrayObjectBase {
 public:
-    static PassRefPtr<WebGLVertexArrayObjectOES> create(WebGLRenderingContextBase*, VAOType);
+    static Ref<WebGLVertexArrayObjectOES> create(WebGLRenderingContextBase*, VAOType);
     virtual ~WebGLVertexArrayObjectOES();
 private:
     WebGLVertexArrayObjectOES(WebGLRenderingContextBase*, VAOType);

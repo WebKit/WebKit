@@ -34,9 +34,9 @@
 
 namespace WebCore {
 
-PassRefPtr<WebGLShader> WebGLShader::create(WebGLRenderingContextBase* ctx, GC3Denum type)
+Ref<WebGLShader> WebGLShader::create(WebGLRenderingContextBase* ctx, GC3Denum type)
 {
-    return adoptRef(new WebGLShader(ctx, type));
+    return adoptRef(*new WebGLShader(ctx, type));
 }
 
 WebGLShader::WebGLShader(WebGLRenderingContextBase* ctx, GC3Denum type)

@@ -35,9 +35,9 @@
 
 namespace WebCore {
 
-PassRefPtr<WebGLTexture> WebGLTexture::create(WebGLRenderingContextBase* ctx)
+Ref<WebGLTexture> WebGLTexture::create(WebGLRenderingContextBase* ctx)
 {
-    return adoptRef(new WebGLTexture(ctx));
+    return adoptRef(*new WebGLTexture(ctx));
 }
 
 WebGLTexture::WebGLTexture(WebGLRenderingContextBase* ctx)

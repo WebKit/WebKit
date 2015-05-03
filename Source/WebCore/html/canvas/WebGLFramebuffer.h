@@ -61,7 +61,7 @@ public:
 
     virtual ~WebGLFramebuffer();
 
-    static PassRefPtr<WebGLFramebuffer> create(WebGLRenderingContextBase*);
+    static Ref<WebGLFramebuffer> create(WebGLRenderingContextBase*);
 
     void setAttachmentForBoundFramebuffer(GC3Denum attachment, GC3Denum texTarget, WebGLTexture*, GC3Dint level);
     void setAttachmentForBoundFramebuffer(GC3Denum attachment, WebGLRenderbuffer*);

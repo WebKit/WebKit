@@ -41,7 +41,7 @@ class WebGLBuffer final : public WebGLSharedObject {
 public:
     virtual ~WebGLBuffer();
 
-    static PassRefPtr<WebGLBuffer> create(WebGLRenderingContextBase*);
+    static Ref<WebGLBuffer> create(WebGLRenderingContextBase*);
 
     bool associateBufferData(GC3Dsizeiptr size);
     bool associateBufferData(JSC::ArrayBuffer*);

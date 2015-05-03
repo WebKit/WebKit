@@ -37,7 +37,7 @@ class WebGLTransformFeedback final : public WebGLSharedObject {
 public:
     virtual ~WebGLTransformFeedback();
 
-    static PassRefPtr<WebGLTransformFeedback> create(WebGLRenderingContextBase*);
+    static Ref<WebGLTransformFeedback> create(WebGLRenderingContextBase*);
 
 protected:
     WebGLTransformFeedback(WebGLRenderingContextBase*);

@@ -34,9 +34,9 @@
 
 namespace WebCore {
 
-PassRefPtr<WebGLProgram> WebGLProgram::create(WebGLRenderingContextBase* ctx)
+Ref<WebGLProgram> WebGLProgram::create(WebGLRenderingContextBase* ctx)
 {
-    return adoptRef(new WebGLProgram(ctx));
+    return adoptRef(*new WebGLProgram(ctx));
 }
 
 WebGLProgram::WebGLProgram(WebGLRenderingContextBase* ctx)

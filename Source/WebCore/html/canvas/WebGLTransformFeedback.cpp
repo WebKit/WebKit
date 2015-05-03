@@ -33,9 +33,9 @@
 
 namespace WebCore {
     
-PassRefPtr<WebGLTransformFeedback> WebGLTransformFeedback::create(WebGLRenderingContextBase* ctx)
+Ref<WebGLTransformFeedback> WebGLTransformFeedback::create(WebGLRenderingContextBase* ctx)
 {
-    return adoptRef(new WebGLTransformFeedback(ctx));
+    return adoptRef(*new WebGLTransformFeedback(ctx));
 }
 
 WebGLTransformFeedback::~WebGLTransformFeedback()

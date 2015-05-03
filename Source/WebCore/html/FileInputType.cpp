@@ -47,25 +47,25 @@ using namespace HTMLNames;
 
 class UploadButtonElement final : public HTMLInputElement {
 public:
-    static PassRefPtr<UploadButtonElement> create(Document&);
-    static PassRefPtr<UploadButtonElement> createForMultiple(Document&);
+    static Ref<UploadButtonElement> create(Document&);
+    static Ref<UploadButtonElement> createForMultiple(Document&);
 
 private:
     UploadButtonElement(Document&);
 };
 
-PassRefPtr<UploadButtonElement> UploadButtonElement::create(Document& document)
+Ref<UploadButtonElement> UploadButtonElement::create(Document& document)
 {
-    RefPtr<UploadButtonElement> button = adoptRef(new UploadButtonElement(document));
+    Ref<UploadButtonElement> button = adoptRef(*new UploadButtonElement(document));
     button->setValue(fileButtonChooseFileLabel());
-    return button.release();
+    return button;
 }
 
-PassRefPtr<UploadButtonElement> UploadButtonElement::createForMultiple(Document& document)
+Ref<UploadButtonElement> UploadButtonElement::createForMultiple(Document& document)
 {
-    RefPtr<UploadButtonElement> button = adoptRef(new UploadButtonElement(document));
+    Ref<UploadButtonElement> button = adoptRef(*new UploadButtonElement(document));
     button->setValue(fileButtonChooseMultipleFilesLabel());
-    return button.release();
+    return button;
 }
 
 UploadButtonElement::UploadButtonElement(Document& document)

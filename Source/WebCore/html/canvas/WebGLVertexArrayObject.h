@@ -39,7 +39,7 @@ class WebGL2RenderingContext;
 
 class WebGLVertexArrayObject final : public WebGLVertexArrayObjectBase {
 public:
-    static PassRefPtr<WebGLVertexArrayObject> create(WebGLRenderingContextBase*, VAOType);
+    static Ref<WebGLVertexArrayObject> create(WebGLRenderingContextBase*, VAOType);
     virtual ~WebGLVertexArrayObject();
 private:
     WebGLVertexArrayObject(WebGLRenderingContextBase*, VAOType);

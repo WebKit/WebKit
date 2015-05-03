@@ -35,10 +35,9 @@
 
 namespace WebCore {
 
-PassRefPtr<WebGLContextGroup> WebGLContextGroup::create()
+Ref<WebGLContextGroup> WebGLContextGroup::create()
 {
-    RefPtr<WebGLContextGroup> contextGroup = adoptRef(new WebGLContextGroup());
-    return contextGroup.release();
+    return adoptRef(*new WebGLContextGroup());
 }
 
 WebGLContextGroup::WebGLContextGroup()

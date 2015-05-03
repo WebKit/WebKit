@@ -36,7 +36,7 @@ class WebGLShader final : public WebGLSharedObject {
 public:
     virtual ~WebGLShader();
 
-    static PassRefPtr<WebGLShader> create(WebGLRenderingContextBase*, GC3Denum);
+    static Ref<WebGLShader> create(WebGLRenderingContextBase*, GC3Denum);
 
     GC3Denum getType() const { return m_type; }
     const String& getSource() const { return m_source; }

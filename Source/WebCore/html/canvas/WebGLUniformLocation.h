@@ -38,7 +38,7 @@ class WebGLUniformLocation final : public RefCounted<WebGLUniformLocation> {
 public:
     ~WebGLUniformLocation() { }
 
-    static PassRefPtr<WebGLUniformLocation> create(WebGLProgram*, GC3Dint location, GC3Denum type);
+    static Ref<WebGLUniformLocation> create(WebGLProgram*, GC3Dint location, GC3Denum type);
 
     WebGLProgram* program() const;
 

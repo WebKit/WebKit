@@ -33,9 +33,9 @@
 
 namespace WebCore {
     
-PassRefPtr<WebGLSync> WebGLSync::create(WebGLRenderingContextBase* ctx)
+Ref<WebGLSync> WebGLSync::create(WebGLRenderingContextBase* ctx)
 {
-    return adoptRef(new WebGLSync(ctx));
+    return adoptRef(*new WebGLSync(ctx));
 }
 
 WebGLSync::~WebGLSync()

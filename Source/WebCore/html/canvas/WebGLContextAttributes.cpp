@@ -32,14 +32,14 @@
 
 namespace WebCore {
 
-PassRefPtr<WebGLContextAttributes> WebGLContextAttributes::create()
+Ref<WebGLContextAttributes> WebGLContextAttributes::create()
 {
-    return adoptRef(new WebGLContextAttributes());
+    return adoptRef(*new WebGLContextAttributes());
 }
 
-PassRefPtr<WebGLContextAttributes> WebGLContextAttributes::create(GraphicsContext3D::Attributes attributes)
+Ref<WebGLContextAttributes> WebGLContextAttributes::create(GraphicsContext3D::Attributes attributes)
 {
-    return adoptRef(new WebGLContextAttributes(attributes));
+    return adoptRef(*new WebGLContextAttributes(attributes));
 }
 
 WebGLContextAttributes::WebGLContextAttributes()

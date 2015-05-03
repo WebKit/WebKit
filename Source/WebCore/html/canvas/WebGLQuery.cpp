@@ -33,9 +33,9 @@
 
 namespace WebCore {
     
-PassRefPtr<WebGLQuery> WebGLQuery::create(WebGLRenderingContextBase* ctx)
+Ref<WebGLQuery> WebGLQuery::create(WebGLRenderingContextBase* ctx)
 {
-    return adoptRef(new WebGLQuery(ctx));
+    return adoptRef(*new WebGLQuery(ctx));
 }
 
 WebGLQuery::~WebGLQuery()
