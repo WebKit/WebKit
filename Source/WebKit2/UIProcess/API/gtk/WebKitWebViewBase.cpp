@@ -54,6 +54,7 @@
 #include <WebCore/GtkVersioning.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PasteboardHelper.h>
+#include <WebCore/PlatformDisplay.h>
 #include <WebCore/RefPtrCairo.h>
 #include <WebCore/Region.h>
 #include <gdk/gdk.h>
@@ -320,8 +321,7 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
     WebKitWebViewBasePrivate* priv = webView->priv;
 
 #if USE(REDIRECTED_XCOMPOSITE_WINDOW)
-    GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
-    if (GDK_IS_X11_DISPLAY(display)) {
+    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11) {
         priv->redirectedWindow = RedirectedXCompositeWindow::create(
             gtk_widget_get_parent_window(widget),
             [webView] {
@@ -1133,8 +1133,7 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebPro
 #if PLATFORM(WAYLAND)
     // FIXME: Accelerated compositing under Wayland is not yet supported.
     // https://bugs.webkit.org/show_bug.cgi?id=115803
-    GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
-    if (GDK_IS_WAYLAND_DISPLAY(display))
+    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
         preferences->setAcceleratedCompositingEnabled(false);
 #endif
 

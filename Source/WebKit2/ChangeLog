@@ -1,5 +1,23 @@
 2015-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][EFL] Unify platform display handling
+        https://bugs.webkit.org/show_bug.cgi?id=144517
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseRealize): Use PlatformDisplay::sharedDisplay()
+        to checkt the display type.
+        (webkitWebViewBaseCreateWebPage): Ditto.
+        * UIProcess/cairo/BackingStoreCairo.cpp:
+        (WebKit::BackingStore::createBackend): Pass the native X11 shared
+        display to BackingStoreBackendCairoX11.
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::NetscapePlugin::x11HostDisplay): Return the native X11
+        shared display.
+
+2015-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix Debug build with NETWORK_CACHE enabled and CACHE_PARTITIONING disabled.
 
         * NetworkProcess/cache/NetworkCache.cpp:

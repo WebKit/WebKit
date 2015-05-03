@@ -26,6 +26,8 @@
 #include "config.h"
 #include "X11Helper.h"
 
+#include "PlatformDisplayX11.h"
+
 namespace WebCore {
 
 // Used for handling XError.
@@ -52,25 +54,6 @@ static int handleXPixmapCreationError(Display*, XErrorEvent* event)
 
     return 0;
 }
-
-struct DisplayConnection {
-    DisplayConnection()
-    {
-        m_display = XOpenDisplay(0);
-
-        if (!m_display)
-            LOG_ERROR("Failed to make connection with X");
-    }
-
-    ~DisplayConnection()
-    {
-        XCloseDisplay(m_display);
-    }
-
-    Display* display() { return m_display; }
-private:
-    Display* m_display;
-};
 
 struct OffScreenRootWindow {
 
@@ -331,9 +314,7 @@ bool X11Helper::isXRenderExtensionSupported()
 
 Display* X11Helper::nativeDisplay()
 {
-    // Display connection will only be broken at program shutdown.
-    static DisplayConnection displayConnection;
-    return displayConnection.display();
+    return downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
 }
 
 Window X11Helper::offscreenRootWindow()

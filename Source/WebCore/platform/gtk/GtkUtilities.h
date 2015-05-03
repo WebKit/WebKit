@@ -28,13 +28,6 @@ class IntPoint;
 IntPoint convertWidgetPointToScreenPoint(GtkWidget*, const IntPoint&);
 bool widgetIsOnscreenToplevelWindow(GtkWidget*);
 
-enum class DisplaySystemType {
-    X11,
-    Wayland
-};
-
-DisplaySystemType getDisplaySystemType();
-
 #if defined(DEVELOPMENT_BUILD)
 CString webkitBuildDirectory();
 #endif

@@ -23,15 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef  WaylandDisplay_h
-#define  WaylandDisplay_h
+#ifndef  PlatformDisplayWayland_h
+#define  PlatformDisplayWayland_h
 
 #if PLATFORM(WAYLAND)
 
+#include "PlatformDisplay.h"
 #include "WebKitGtkWaylandClientProtocol.h"
 #include <memory>
 #include <wayland-client.h>
-
 #include <wayland-egl.h>
 #include <EGL/egl.h>
 
@@ -41,11 +41,12 @@ class GLContextEGL;
 class IntSize;
 class WaylandSurface;
 
-class WaylandDisplay {
+class PlatformDisplayWayland final: public PlatformDisplay {
 public:
-    static WaylandDisplay* instance();
+    static std::unique_ptr<PlatformDisplayWayland> create();
+    virtual ~PlatformDisplayWayland();
 
-    struct wl_display* nativeDisplay() const { return m_display; }
+    struct wl_display* native() const { return m_display; }
     EGLDisplay eglDisplay() const { return m_eglDisplay; }
 
     std::unique_ptr<WaylandSurface> createSurface(const IntSize&, int widgetID);
@@ -57,8 +58,10 @@ private:
     static void globalCallback(void* data, struct wl_registry*, uint32_t name, const char* interface, uint32_t version);
     static void globalRemoveCallback(void* data, struct wl_registry*, uint32_t name);
 
-    WaylandDisplay(struct wl_display*);
+    PlatformDisplayWayland(struct wl_display*);
     bool isInitialized() { return m_compositor && m_webkitgtk && m_eglDisplay != EGL_NO_DISPLAY && m_eglConfigChosen; }
+
+    Type type() const override { return PlatformDisplay::Type::Wayland; }
 
     struct wl_display* m_display;
     struct wl_registry* m_registry;
@@ -74,4 +77,4 @@ private:
 
 #endif // PLATFORM(WAYLAND)
 
-#endif // WaylandDisplay_h
+#endif // PlatformDisplayWayland_h

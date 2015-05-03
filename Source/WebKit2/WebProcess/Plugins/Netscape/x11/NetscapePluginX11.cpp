@@ -33,6 +33,7 @@
 #include "WebEvent.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/PlatformDisplayX11.h>
 
 #if PLATFORM(GTK)
 #include <gtk/gtk.h>
@@ -103,13 +104,7 @@ static inline unsigned long rootWindowID()
 
 Display* NetscapePlugin::x11HostDisplay()
 {
-#if PLATFORM(GTK)
-    return GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
-#elif PLATFORM(EFL) && defined(HAVE_ECORE_X)
-    return static_cast<Display*>(ecore_x_display_get());
-#else
-    return 0;
-#endif
+    return downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
 }
 
 #if PLATFORM(GTK)

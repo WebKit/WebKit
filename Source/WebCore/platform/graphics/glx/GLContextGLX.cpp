@@ -22,6 +22,7 @@
 #if USE(GLX)
 #include "GraphicsContext3D.h"
 #include "OpenGLShims.h"
+#include "PlatformDisplayX11.h"
 #include <GL/glx.h>
 #include <cairo.h>
 
@@ -33,7 +34,7 @@ namespace WebCore {
 
 std::unique_ptr<GLContextGLX> GLContextGLX::createWindowContext(XID window, GLContext* sharingContext)
 {
-    Display* display = sharedX11Display();
+    Display* display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
     XWindowAttributes attributes;
     if (!XGetWindowAttributes(display, window, &attributes))
         return nullptr;
@@ -72,7 +73,7 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createPbufferContext(GLXContext shar
     };
 
     int returnedElements;
-    Display* display = sharedX11Display();
+    Display* display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
     GLXFBConfig* configs = glXChooseFBConfig(display, 0, fbConfigAttributes, &returnedElements);
     if (!returnedElements) {
         XFree(configs);
@@ -112,7 +113,7 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createPixmapContext(GLXContext shari
         0
     };
 
-    Display* display = sharedX11Display();
+    Display* display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
     XVisualInfo* visualInfo = glXChooseVisual(display, DefaultScreen(display), visualAttributes);
     if (!visualInfo)
         return nullptr;
@@ -142,9 +143,6 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createPixmapContext(GLXContext shari
 
 std::unique_ptr<GLContextGLX> GLContextGLX::createContext(XID window, GLContext* sharingContext)
 {
-    if (!sharedX11Display())
-        return nullptr;
-
     static bool initialized = false;
     static bool success = true;
     if (!initialized) {
@@ -191,24 +189,25 @@ GLContextGLX::~GLContextGLX()
     if (m_cairoDevice)
         cairo_device_destroy(m_cairoDevice);
 
+    Display* display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
     if (m_context) {
         // This may be necessary to prevent crashes with NVidia's closed source drivers. Originally
         // from Mozilla's 3D canvas implementation at: http://bitbucket.org/ilmari/canvas3d/
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-        glXMakeCurrent(sharedX11Display(), None, None);
-        glXDestroyContext(sharedX11Display(), m_context);
+        glXMakeCurrent(display, None, None);
+        glXDestroyContext(display, m_context);
     }
 
     if (m_pbuffer) {
-        glXDestroyPbuffer(sharedX11Display(), m_pbuffer);
+        glXDestroyPbuffer(display, m_pbuffer);
         m_pbuffer = 0;
     }
     if (m_glxPixmap) {
-        glXDestroyGLXPixmap(sharedX11Display(), m_glxPixmap);
+        glXDestroyGLXPixmap(display, m_glxPixmap);
         m_glxPixmap = 0;
     }
     if (m_pixmap) {
-        XFreePixmap(sharedX11Display(), m_pixmap);
+        XFreePixmap(display, m_pixmap);
         m_pixmap = 0;
     }
 }
@@ -226,7 +225,8 @@ IntSize GLContextGLX::defaultFrameBufferSize()
     int x, y;
     Window rootWindow;
     unsigned int width, height, borderWidth, depth;
-    if (!XGetGeometry(sharedX11Display(), m_window, &rootWindow, &x, &y, &width, &height, &borderWidth, &depth))
+    Display* display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
+    if (!XGetGeometry(display, m_window, &rootWindow, &x, &y, &width, &height, &borderWidth, &depth))
         return IntSize();
 
     return IntSize(width, height);
@@ -240,19 +240,20 @@ bool GLContextGLX::makeContextCurrent()
     if (glXGetCurrentContext() == m_context)
         return true;
 
+    Display* display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
     if (m_window)
-        return glXMakeCurrent(sharedX11Display(), m_window, m_context);
+        return glXMakeCurrent(display, m_window, m_context);
 
     if (m_pbuffer)
-        return glXMakeCurrent(sharedX11Display(), m_pbuffer, m_context);
+        return glXMakeCurrent(display, m_pbuffer, m_context);
 
-    return ::glXMakeCurrent(sharedX11Display(), m_glxPixmap, m_context);
+    return ::glXMakeCurrent(display, m_glxPixmap, m_context);
 }
 
 void GLContextGLX::swapBuffers()
 {
     if (m_window)
-        glXSwapBuffers(sharedX11Display(), m_window);
+        glXSwapBuffers(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native(), m_window);
 }
 
 void GLContextGLX::waitNative()
@@ -266,7 +267,7 @@ cairo_device_t* GLContextGLX::cairoDevice()
         return m_cairoDevice;
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
-    m_cairoDevice = cairo_glx_device_create(sharedX11Display(), m_context);
+    m_cairoDevice = cairo_glx_device_create(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native(), m_context);
 #endif
 
     return m_cairoDevice;

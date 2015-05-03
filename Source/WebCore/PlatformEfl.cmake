@@ -17,6 +17,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/surfaces/glx"
     "${WEBCORE_DIR}/platform/graphics/texmap"
     "${WEBCORE_DIR}/platform/graphics/texmap/coordinated"
+    "${WEBCORE_DIR}/platform/graphics/x11"
     "${WEBCORE_DIR}/platform/linux"
     "${WEBCORE_DIR}/platform/mediastream/openwebrtc"
     "${WEBCORE_DIR}/platform/mock/mediasource"
@@ -107,6 +108,7 @@ list(APPEND WebCore_SOURCES
     platform/geoclue/GeolocationProviderGeoclue2.cpp
 
     platform/graphics/ImageSource.cpp
+    platform/graphics/PlatformDisplay.cpp
     platform/graphics/WOFFFileFormat.cpp
 
     platform/graphics/cairo/BackingStoreBackendCairoImpl.cpp
@@ -194,6 +196,8 @@ list(APPEND WebCore_SOURCES
     platform/graphics/texmap/coordinated/CoordinatedTile.cpp
     platform/graphics/texmap/coordinated/TiledBackingStore.cpp
     platform/graphics/texmap/coordinated/UpdateAtlas.cpp
+
+    platform/graphics/x11/PlatformDisplayX11.cpp
 
     platform/image-decoders/ImageDecoder.cpp
 

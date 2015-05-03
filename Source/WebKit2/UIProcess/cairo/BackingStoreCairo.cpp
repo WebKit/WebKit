@@ -38,6 +38,7 @@
 
 #if PLATFORM(GTK) && PLATFORM(X11) && defined(GDK_WINDOWING_X11)
 #include <WebCore/BackingStoreBackendCairoX11.h>
+#include <WebCore/PlatformDisplayX11.h>
 #include <gdk/gdkx.h>
 #endif
 
@@ -48,11 +49,12 @@ namespace WebKit {
 std::unique_ptr<BackingStoreBackendCairo> BackingStore::createBackend()
 {
 #if PLATFORM(GTK) && PLATFORM(X11)
-    GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
-    if (GDK_IS_X11_DISPLAY(display)) {
+    const auto& sharedDisplay = PlatformDisplay::sharedDisplay();
+    if (is<PlatformDisplayX11>(sharedDisplay)) {
         GdkVisual* visual = gtk_widget_get_visual(m_webPageProxy.viewWidget());
         GdkScreen* screen = gdk_visual_get_screen(visual);
-        return std::make_unique<BackingStoreBackendCairoX11>(GDK_SCREEN_XDISPLAY(screen), GDK_WINDOW_XID(gdk_screen_get_root_window(screen)),
+        ASSERT(downcast<PlatformDisplayX11>(sharedDisplay).native() == GDK_SCREEN_XDISPLAY(screen));
+        return std::make_unique<BackingStoreBackendCairoX11>(downcast<PlatformDisplayX11>(sharedDisplay).native(), GDK_WINDOW_XID(gdk_screen_get_root_window(screen)),
             GDK_VISUAL_XVISUAL(visual), gdk_visual_get_depth(visual), m_size, m_deviceScaleFactor);
     }
 #endif

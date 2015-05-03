@@ -17,6 +17,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/opengl"
     "${WEBCORE_DIR}/platform/graphics/opentype"
     "${WEBCORE_DIR}/platform/graphics/wayland"
+    "${WEBCORE_DIR}/platform/graphics/x11"
     "${WEBCORE_DIR}/platform/linux"
     "${WEBCORE_DIR}/platform/mediastream/openwebrtc"
     "${WEBCORE_DIR}/platform/mock/mediasource"
@@ -63,6 +64,7 @@ list(APPEND WebCore_SOURCES
     platform/geoclue/GeolocationProviderGeoclue1.cpp
     platform/geoclue/GeolocationProviderGeoclue2.cpp
 
+    platform/graphics/GLContext.cpp
     platform/graphics/GraphicsContext3DPrivate.cpp
     platform/graphics/ImageSource.cpp
     platform/graphics/WOFFFileFormat.cpp
@@ -87,10 +89,14 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cairo/RefPtrCairo.cpp
     platform/graphics/cairo/TransformationMatrixCairo.cpp
 
+    platform/graphics/egl/GLContextEGL.cpp
+
     platform/graphics/freetype/FontCacheFreeType.cpp
     platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp
     platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp
     platform/graphics/freetype/SimpleFontDataFreeType.cpp
+
+    platform/graphics/glx/GLContextGLX.cpp
 
     platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp
     platform/graphics/gstreamer/GRefPtrGStreamer.cpp
@@ -118,6 +124,8 @@ list(APPEND WebCore_SOURCES
     platform/graphics/opengl/TemporaryOpenGLSetting.cpp
 
     platform/graphics/opentype/OpenTypeVerticalData.cpp
+
+    platform/graphics/x11/PlatformDisplayX11.cpp
 
     platform/gtk/ErrorsGtk.cpp
     platform/gtk/EventLoopGtk.cpp
@@ -191,13 +199,9 @@ list(APPEND WebCorePlatformGTK_SOURCES
     page/gtk/DragControllerGtk.cpp
     page/gtk/EventHandlerGtk.cpp
 
-    platform/graphics/GLContext.cpp
-
-    platform/graphics/egl/GLContextEGL.cpp
+    platform/graphics/PlatformDisplay.cpp
 
     platform/graphics/freetype/FontPlatformDataFreeType.cpp
-
-    platform/graphics/glx/GLContextGLX.cpp
 
     platform/graphics/gtk/ColorGtk.cpp
     platform/graphics/gtk/GdkCairoUtilities.cpp
@@ -472,7 +476,7 @@ add_custom_command(
 
 if (ENABLE_WAYLAND_TARGET)
     list(APPEND WebCorePlatformGTK_SOURCES
-        platform/graphics/wayland/WaylandDisplay.cpp
+        platform/graphics/wayland/PlatformDisplayWayland.cpp
         platform/graphics/wayland/WaylandEventSource.cpp
         platform/graphics/wayland/WaylandSurface.cpp
 

@@ -1,5 +1,76 @@
 2015-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][EFL] Unify platform display handling
+        https://bugs.webkit.org/show_bug.cgi?id=144517
+
+        Reviewed by Martin Robinson.
+
+        There are several places were we are handling the X display
+        connection:
+
+        - GLContext::sharedX11Display() creates a new connection.
+        - X11Helper::nativeDisplay() creates a new connection.
+        - BackingStoreBackendCairoX11 uses the GTK+ shared connection.
+        - NetscapePlugin::x11HostDisplay() uses the GTK+/ecore shared connection
+        - The rest of the GTK+ code uses the shared GTK+ connection
+
+        And then we also have WaylandDisplay and the code to check if the
+        current display is wayland or X11.
+        We could unify all these to share the same connection to reduce
+        the amount of ifdefs and ensure a single connection. That will
+        also allow us to use "smart pointers" for the X resources that
+        need a Display* to be freed.
+
+        * PlatformEfl.cmake: Add new files to compilation.
+        * PlatformGTK.cmake: Move some files to WebCore_SOURCES sinc ethey
+        don't use GTK+ anymore, and add new files to compilation.
+        * platform/graphics/GLContext.cpp:
+        (WebCore::GLContext::cleanupActiveContextsAtExit): Remove the
+        custom X11 connection.
+        (WebCore::GLContext::createContextForWindow): Check if the shared
+        display is Wayland to create a EGL context in such case.
+        * platform/graphics/PlatformDisplay.cpp: Added.
+        (WebCore::PlatformDisplay::createPlatformDisplay): Creates the
+        shared display, using the GTK+/ecore shared connection.
+        (WebCore::PlatformDisplay::sharedDisplay): Return the shared display.
+        * platform/graphics/PlatformDisplay.h: Added.
+        * platform/graphics/egl/GLContextEGL.cpp:
+        (WebCore::sharedEGLDisplay): Use PlatformDisplay::sharedDisplay()
+        to get the native display.
+        (WebCore::GLContextEGL::createPixmapContext): Ditto.
+        * platform/graphics/glx/GLContextGLX.cpp:
+        (WebCore::GLContextGLX::createWindowContext): Ditto.
+        (WebCore::GLContextGLX::createPbufferContext): Ditto.
+        (WebCore::GLContextGLX::createPixmapContext): Ditto.
+        (WebCore::GLContextGLX::createContext): Ditto.
+        (WebCore::GLContextGLX::~GLContextGLX): Ditto.
+        (WebCore::GLContextGLX::defaultFrameBufferSize): Ditto.
+        (WebCore::GLContextGLX::makeContextCurrent): Ditto.
+        (WebCore::GLContextGLX::swapBuffers): Ditto.
+        (WebCore::GLContextGLX::cairoDevice): Ditto.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::ensureGstGLContext): Ditto.
+        * platform/graphics/surfaces/glx/X11Helper.cpp:
+        (WebCore::X11Helper::nativeDisplay): Ditto.
+        * platform/graphics/wayland/PlatformDisplayWayland.cpp: Renamed from Source/WebCore/platform/graphics/wayland/WaylandDisplay.cpp.
+        (WebCore::PlatformDisplayWayland::globalCallback):
+        (WebCore::PlatformDisplayWayland::globalRemoveCallback):
+        (WebCore::PlatformDisplayWayland::create): Renamed instance() as
+        create() since the single instance is now handled by PlatformDisplay.
+        (WebCore::PlatformDisplayWayland::PlatformDisplayWayland):
+        (WebCore::PlatformDisplayWayland::createSurface):
+        (WebCore::PlatformDisplayWayland::createSharingGLContext):
+        * platform/graphics/wayland/PlatformDisplayWayland.h: Renamed from Source/WebCore/platform/graphics/wayland/WaylandDisplay.h.
+        * platform/graphics/x11/PlatformDisplayX11.cpp: Added.
+        (WebCore::PlatformDisplayX11::PlatformDisplayX11):
+        (WebCore::PlatformDisplayX11::~PlatformDisplayX11):
+        * platform/graphics/x11/PlatformDisplayX11.h: Added.
+        * platform/gtk/GtkUtilities.cpp:
+        (WebCore::getDisplaySystemType): Deleted.
+        * platform/gtk/GtkUtilities.h:
+
+2015-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] API tests crashing on debug builds due to extra unref
         https://bugs.webkit.org/show_bug.cgi?id=144508
 
