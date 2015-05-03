@@ -526,3 +526,5 @@ webkit.org/b/142937 ietestcenter/Javascript/15.2.3.14-1-3.html [ Failure ]
 webkit.org/b/143778 streams/reference-implementation/readable-stream.html [ Pass Failure ]
 
 webkit.org/b/144258 [ Debug ] js/class-syntax-semicolon.html [ Skip ]
+
+webkit.org/b/144540 fast/frames/flattening/crash-remove-iframe-during-object-beforeload.html [ Skip ]

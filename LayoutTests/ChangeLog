@@ -1,3 +1,10 @@
+2015-05-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Skip fast/frames/flattening/crash-remove-iframe-during-object-beforeload.html
+        https://bugs.webkit.org/show_bug.cgi?id=144540
+
+        * TestExpectations:
+
 2015-05-01  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid compositing updates after style recalcs which have no compositing implications
