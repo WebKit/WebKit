@@ -1,3 +1,23 @@
+2015-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] API tests crashing on debug builds due to extra unref
+        https://bugs.webkit.org/show_bug.cgi?id=144508
+
+        Reviewed by Mario Sanchez Prada.
+
+        The problem is that we were assuming that when a new DOMWindow is
+        created, the DOM object cache was notified about the previous
+        DOMWindow being destroyed before objects for the new DOMWindow are
+        added to the cache. However, that's not always the case and we
+        only create a DOMWindowObserver for the first DOMWindow. We need
+        to keep a pointer to the DOMWindow being observed to clear() the
+        cache and create a new DOMWindowObserver when it changes in the
+        Frame.
+
+        Fixes crashes in several unit tests in debug builds.
+
+        * bindings/gobject/DOMObjectCache.cpp:
+
 2015-05-03  Alexey Proskuryakov  <ap@apple.com>
 
         Remove timer alignment logging that I added earler today.
