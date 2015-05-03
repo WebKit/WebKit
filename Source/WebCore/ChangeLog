@@ -1,3 +1,9 @@
+2015-05-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove timer alignment logging that I added earler today.
+
+        * page/Settings.cpp: (WebCore::Settings::setDOMTimerAlignmentInterval):
+
 2015-05-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Purge PassRefPtr create() factory functions in html 
