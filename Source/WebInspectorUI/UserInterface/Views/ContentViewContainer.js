@@ -174,11 +174,12 @@ WebInspector.ContentViewContainer.prototype = {
         // Disassociate with the removed content views.
         for (var i = 0; i < removedEntries.length; ++i) {
             // Skip disassociation if this content view is still in the back/forward list.
-            var shouldDissociateContentView = this._backForwardList.some(function(existingEntry) {
+            var shouldDissociateContentView = !this._backForwardList.some(function(existingEntry) {
                 return existingEntry.contentView === removedEntries[i].contentView;
             });
+
             if (shouldDissociateContentView)
-                this._disassociateFromContentView(removedEntries[i]);
+                this._disassociateFromContentView(removedEntries[i].contentView);
         }
 
         // Associate with the new content view.

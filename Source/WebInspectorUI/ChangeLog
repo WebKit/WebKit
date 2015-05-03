@@ -1,3 +1,16 @@
+2015-05-03  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Exception under ContentViewContainer _disassociateFromContentView
+        https://bugs.webkit.org/show_bug.cgi?id=144546
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/ContentViewContainer.js:
+        (WebInspector.ContentViewContainer.prototype.showContentView):
+        Make sure to pass the ContentView to _disassociateFromContentView. Also negate the result
+        of the _backForwardList.some(), since we don't want to dissociate if the content view is
+        still in the back-forward list.
+
 2015-05-02  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Relocate the selected range details in the Rendering Frames timeline UI
