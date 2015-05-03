@@ -136,8 +136,8 @@ public:
     virtual bool dataChanged(bool allDataReceived) override;
     virtual String filenameExtension() const override;
 
-    // It may look unusual that there is no start animation call as public API.  This is because
-    // we start and stop animating lazily.  Animation begins whenever someone draws the image.  It will
+    // It may look unusual that there is no start animation call as public API. This is because
+    // we start and stop animating lazily. Animation begins whenever someone draws the image. It will
     // automatically pause once all observers no longer want to render the image anywhere.
     virtual void stopAnimation() override;
     virtual void resetAnimation() override;
@@ -228,10 +228,10 @@ protected:
     // Called before accessing m_frames[index] for info without decoding. Returns false on index out of bounds.
     bool ensureFrameIsCached(size_t index, ImageFrameCaching = CacheMetadataAndFrame);
 
-    // Called to invalidate cached data.  When |destroyAll| is true, we wipe out
+    // Called to invalidate cached data. When |destroyAll| is true, we wipe out
     // the entire frame buffer cache and tell the image source to destroy
     // everything; this is used when e.g. we want to free some room in the image
-    // cache.  If |destroyAll| is false, we only delete frames up to the current
+    // cache. If |destroyAll| is false, we only delete frames up to the current
     // one; this is used while animating large images to keep memory footprint
     // low without redecoding the whole image on every frame.
     virtual void destroyDecodedData(bool destroyAll = true) override;
@@ -249,7 +249,7 @@ protected:
     bool isSizeAvailable();
 
     // Called after asking the source for any information that may require
-    // decoding part of the image (e.g., the image size).  We need to report
+    // decoding part of the image (e.g., the image size). We need to report
     // the partially decoded data to our observer so it has an accurate
     // account of the BitmapImage's memory usage.
     void didDecodeProperties() const;
@@ -260,7 +260,7 @@ protected:
     virtual void startAnimation(CatchUpAnimation = CatchUp) override;
     void advanceAnimation();
 
-    // Function that does the real work of advancing the animation.  When
+    // Function that does the real work of advancing the animation. When
     // skippingFrames is true, we're in the middle of a loop trying to skip over
     // a bunch of animation frames, so we should not do things like decode each
     // one or notify our observers.
@@ -271,7 +271,7 @@ protected:
     // Handle platform-specific data
     void invalidatePlatformData();
 
-    // Checks to see if the image is a 1x1 solid color.  We optimize these images and just do a fill rect instead.
+    // Checks to see if the image is a 1x1 solid color. We optimize these images and just do a fill rect instead.
     // This check should happen regardless whether m_checkedForSolidColor is already set, as the frame may have
     // changed.
     void checkForSolidColor();
@@ -286,6 +286,7 @@ protected:
 private:
     virtual bool decodedDataIsPurgeable() const override;
     void clearTimer();
+    void startTimer(double delay);
 
     ImageSource m_source;
     mutable IntSize m_size; // The size to use for the overall image (will just be the size of the first image).
@@ -300,7 +301,7 @@ private:
     Vector<FrameData, 1> m_frames; // An array of the cached frames of the animation. We have to ref frames to pin them in the cache.
 
     std::unique_ptr<Timer> m_frameTimer;
-    int m_repetitionCount; // How many total animation loops we should do.  This will be cAnimationNone if this image type is incapable of animation.
+    int m_repetitionCount; // How many total animation loops we should do. This will be cAnimationNone if this image type is incapable of animation.
     RepetitionCountStatus m_repetitionCountStatus;
     int m_repetitionsComplete;  // How many repetitions we've finished.
     double m_desiredFrameStartTime;  // The system time at which we hope to see the next call to startAnimation().
@@ -309,7 +310,7 @@ private:
     mutable RetainPtr<NSImage> m_nsImage; // A cached NSImage of frame 0. Only built lazily if someone actually queries for one.
 #endif
 #if USE(CG)
-    mutable RetainPtr<CFDataRef> m_tiffRep; // Cached TIFF rep for frame 0.  Only built lazily if someone queries for one.
+    mutable RetainPtr<CFDataRef> m_tiffRep; // Cached TIFF rep for frame 0. Only built lazily if someone queries for one.
 #endif
 
     Color m_solidColor;  // If we're a 1x1 solid color, this is the color to use to fill.
@@ -335,6 +336,7 @@ private:
     bool m_sizeAvailable : 1; // Whether or not we can obtain the size of the first image frame yet from ImageIO.
     mutable bool m_hasUniformFrameSize : 1;
     mutable bool m_haveFrameCount : 1;
+    bool m_animationFinishedWhenCatchingUp : 1;
 
     RefPtr<Image> m_cachedImage;
 };

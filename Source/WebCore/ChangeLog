@@ -1,3 +1,47 @@
+2015-05-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Assertion failure (!needsLayout()) loading inkedmag.com
+        https://bugs.webkit.org/show_bug.cgi?id=144528
+        rdar://problem/20788681
+
+        Reviewed by Darin Adler.
+        
+        When animated GIFs get into catch-up mode, which is common on inkedmag.com,
+        BitmapImage::advanceAnimation() can synchronously call it's observer's
+        animationAdvanced(). This could cause RenderImage::repaintOrMarkForLayout()
+        to repaint or mark itself as needing layout in the middle of painting.
+        If painting multiple tiles, this could occur when painting the first tile,
+        and then painting the second tile would assert in RenderView::paint().
+        
+        It's always wrong to synchronously call the observer when advancing
+        the animation, since this happens when painting, and you can't repaint
+        when painting. The long comment and call to startAnimation(DoNotCatchUp)
+        was required to explain and work around this, but it's simpler to just
+        advance the animation on a zero-delay timer.
+        
+        Special handling is required for the case where internalAdvanceAnimation()
+        is catching up, and reaches the end of a non-repeating image; there, we
+        have to set a flag and do the notify on a zero-delay timer.
+        
+        Lots of comment cleanup.
+
+        Test: fast/images/set-needs-layout-in-painting.html
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::startTimer): Utility to create and start the timer.
+        (WebCore::BitmapImage::repetitionCount):
+        (WebCore::BitmapImage::startAnimation): Early return in the DoNotCatchUp clause.
+        If skipping, and internalAdvanceAnimation() returns false (meaning it must have
+        reached the end), then queue up a notify. Change the normal behavior to just
+        start the timer.
+        (WebCore::BitmapImage::stopAnimation):
+        (WebCore::BitmapImage::internalAdvanceAnimation): Notify if the flag is set.
+        * platform/graphics/BitmapImage.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint): Add a SetLayoutNeededForbiddenScope to
+        detect setNeedsLayouts when painting replaced elements, including images.
+
 2015-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][EFL] Unify platform display handling

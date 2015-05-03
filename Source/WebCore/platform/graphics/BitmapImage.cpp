@@ -73,7 +73,7 @@ BitmapImage::BitmapImage(ImageObserver* observer)
     , m_sizeAvailable(false)
     , m_hasUniformFrameSize(true)
     , m_haveFrameCount(false)
-    , m_cachedImage(0)
+    , m_animationFinishedWhenCatchingUp(false)
 {
 }
 
@@ -86,6 +86,13 @@ BitmapImage::~BitmapImage()
 void BitmapImage::clearTimer()
 {
     m_frameTimer = nullptr;
+}
+
+void BitmapImage::startTimer(double delay)
+{
+    ASSERT(!m_frameTimer);
+    m_frameTimer = std::make_unique<Timer>(*this, &BitmapImage::advanceAnimation);
+    m_frameTimer->startOneShot(delay);
 }
 
 #if !USE(CG)
@@ -473,7 +480,7 @@ bool BitmapImage::notSolidColor()
 int BitmapImage::repetitionCount(bool imageKnownToBeComplete)
 {
     if ((m_repetitionCountStatus == Unknown) || ((m_repetitionCountStatus == Uncertain) && imageKnownToBeComplete)) {
-        // Snag the repetition count.  If |imageKnownToBeComplete| is false, the
+        // Snag the repetition count. If |imageKnownToBeComplete| is false, the
         // repetition count may not be accurate yet for GIFs; in this case the
         // decoder will default to cAnimationLoopOnce, and we'll try and read
         // the count again once the whole image is decoded.
@@ -505,13 +512,13 @@ void BitmapImage::startAnimation(CatchUpAnimation catchUpIfNecessary)
         return;
 
     // Don't advance past the last frame if we haven't decoded the whole image
-    // yet and our repetition count is potentially unset.  The repetition count
+    // yet and our repetition count is potentially unset. The repetition count
     // in a GIF can potentially come after all the rest of the image data, so
     // wait on it.
     if (!m_allDataReceived && repetitionCount(false) == cAnimationLoopOnce && m_currentFrame >= (frameCount() - 1))
         return;
 
-    // Determine time for next frame to start.  By ignoring paint and timer lag
+    // Determine time for next frame to start. By ignoring paint and timer lag
     // in this calculation, we make the animation appear to run at its desired
     // rate regardless of how fast it's being repainted.
     const double currentDuration = frameDurationAtIndex(m_currentFrame);
@@ -520,7 +527,7 @@ void BitmapImage::startAnimation(CatchUpAnimation catchUpIfNecessary)
 #if !PLATFORM(IOS)
     // When an animated image is more than five minutes out of date, the
     // user probably doesn't care about resyncing and we could burn a lot of
-    // time looping through frames below.  Just reset the timings.
+    // time looping through frames below. Just reset the timings.
     const double cAnimationResyncCutoff = 5 * 60;
     if ((time - m_desiredFrameStartTime) > cAnimationResyncCutoff)
         m_desiredFrameStartTime = time + currentDuration;
@@ -533,7 +540,7 @@ void BitmapImage::startAnimation(CatchUpAnimation catchUpIfNecessary)
     // The image may load more slowly than it's supposed to animate, so that by
     // the time we reach the end of the first repetition, we're well behind.
     // Clamp the desired frame start time in this case, so that we don't skip
-    // frames (or whole iterations) trying to "catch up".  This is a tradeoff:
+    // frames (or whole iterations) trying to "catch up". This is a tradeoff:
     // It guarantees users see the whole animation the second time through and
     // don't miss any repetitions, and is closer to what other browsers do; on
     // the other hand, it makes animations "less accurate" for pages that try to
@@ -545,55 +552,42 @@ void BitmapImage::startAnimation(CatchUpAnimation catchUpIfNecessary)
 
     if (catchUpIfNecessary == DoNotCatchUp || time < m_desiredFrameStartTime) {
         // Haven't yet reached time for next frame to start; delay until then.
-        m_frameTimer = std::make_unique<Timer>(*this, &BitmapImage::advanceAnimation);
-        m_frameTimer->startOneShot(std::max(m_desiredFrameStartTime - time, 0.));
-    } else {
-        // We've already reached or passed the time for the next frame to start.
-        // See if we've also passed the time for frames after that to start, in
-        // case we need to skip some frames entirely.  Remember not to advance
-        // to an incomplete frame.
-        for (size_t frameAfterNext = (nextFrame + 1) % frameCount(); frameIsCompleteAtIndex(frameAfterNext); frameAfterNext = (nextFrame + 1) % frameCount()) {
-            // Should we skip the next frame?
-            double frameAfterNextStartTime = m_desiredFrameStartTime + frameDurationAtIndex(nextFrame);
-            if (time < frameAfterNextStartTime)
-                break;
-
-            // Yes; skip over it without notifying our observers.
-            if (!internalAdvanceAnimation(SkippingFramesToCatchUp))
-                return;
-            m_desiredFrameStartTime = frameAfterNextStartTime;
-            nextFrame = frameAfterNext;
-        }
-
-        // Draw the next frame immediately.  Note that m_desiredFrameStartTime
-        // may be in the past, meaning the next time through this function we'll
-        // kick off the next advancement sooner than this frame's duration would
-        // suggest.
-        if (internalAdvanceAnimation()) {
-            // The image region has been marked dirty, but once we return to our
-            // caller, draw() will clear it, and nothing will cause the
-            // animation to advance again.  We need to start the timer for the
-            // next frame running, or the animation can hang.  (Compare this
-            // with when advanceAnimation() is called, and the region is dirtied
-            // while draw() is not in the callstack, meaning draw() gets called
-            // to update the region and thus startAnimation() is reached again.)
-            // NOTE: For large images with slow or heavily-loaded systems,
-            // throwing away data as we go (see destroyDecodedData()) means we
-            // can spend so much time re-decoding data above that by the time we
-            // reach here we're behind again.  If we let startAnimation() run
-            // the catch-up code again, we can get long delays without painting
-            // as we race the timer, or even infinite recursion.  In this
-            // situation the best we can do is to simply change frames as fast
-            // as possible, so force startAnimation() to set a zero-delay timer
-            // and bail out if we're not caught up.
-            startAnimation(DoNotCatchUp);
-        }
+        startTimer(std::max<double>(m_desiredFrameStartTime - time, 0));
+        return;
     }
+
+    ASSERT(!m_frameTimer);
+
+    // We've already reached or passed the time for the next frame to start.
+    // See if we've also passed the time for frames after that to start, in
+    // case we need to skip some frames entirely. Remember not to advance
+    // to an incomplete frame.
+    for (size_t frameAfterNext = (nextFrame + 1) % frameCount(); frameIsCompleteAtIndex(frameAfterNext); frameAfterNext = (nextFrame + 1) % frameCount()) {
+        // Should we skip the next frame?
+        double frameAfterNextStartTime = m_desiredFrameStartTime + frameDurationAtIndex(nextFrame);
+        if (time < frameAfterNextStartTime)
+            break;
+
+        // Yes; skip over it without notifying our observers. If we hit the end while catching up,
+        // tell the observer asynchronously.
+        if (!internalAdvanceAnimation(SkippingFramesToCatchUp)) {
+            m_animationFinishedWhenCatchingUp = true;
+            startTimer(0);
+            return;
+        }
+        m_desiredFrameStartTime = frameAfterNextStartTime;
+        nextFrame = frameAfterNext;
+    }
+
+    // Draw the next frame as soon as possible. Note that m_desiredFrameStartTime
+    // may be in the past, meaning the next time through this function we'll
+    // kick off the next advancement sooner than this frame's duration would suggest.
+    startTimer(0);
 }
 
 void BitmapImage::stopAnimation()
 {
-    // This timer is used to animate all occurrences of this image.  Don't invalidate
+    // This timer is used to animate all occurrences of this image. Don't invalidate
     // the timer unless all renderers have stopped drawing.
     clearTimer();
 }
@@ -657,6 +651,12 @@ void BitmapImage::advanceAnimation()
 bool BitmapImage::internalAdvanceAnimation(AnimationAdvancement advancement)
 {
     clearTimer();
+
+    if (m_animationFinishedWhenCatchingUp) {
+        imageObserver()->animationAdvanced(this);
+        m_animationFinishedWhenCatchingUp = false;
+        return false;
+    }
     
     ++m_currentFrame;
     bool advancedAnimation = true;
@@ -664,7 +664,7 @@ bool BitmapImage::internalAdvanceAnimation(AnimationAdvancement advancement)
     if (m_currentFrame >= frameCount()) {
         ++m_repetitionsComplete;
 
-        // Get the repetition count again.  If we weren't able to get a
+        // Get the repetition count again. If we weren't able to get a
         // repetition count before, we should have decoded the whole image by
         // now, so it should now be available.
         // Note that we don't need to special-case cAnimationLoopOnce here
@@ -683,7 +683,7 @@ bool BitmapImage::internalAdvanceAnimation(AnimationAdvancement advancement)
 
     // We need to draw this frame if we advanced to it while not skipping, or if
     // while trying to skip frames we hit the last frame and thus had to stop.
-    if ((advancement == Normal && advancedAnimation) || (advancement == SkippingFramesToCatchUp && !advancedAnimation))
+    if (advancement == Normal && advancedAnimation)
         imageObserver()->animationAdvanced(this);
 
     return advancedAnimation;

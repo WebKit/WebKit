@@ -1,3 +1,17 @@
+2015-05-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Assertion failure (!needsLayout()) loading inkedmag.com
+        https://bugs.webkit.org/show_bug.cgi?id=144528
+        rdar://problem/20788681
+
+        Reviewed by Darin Adler.
+        
+        Test that sleeps for a while to force an image into catchup mode.
+
+        * fast/images/resources/spinner.gif: Added.
+        * fast/images/set-needs-layout-in-painting-expected.txt: Added.
+        * fast/images/set-needs-layout-in-painting.html: Added.
+
 2015-05-03  Alexey Proskuryakov  <ap@apple.com>
 
         Skip fast/frames/flattening/crash-remove-iframe-during-object-beforeload.html

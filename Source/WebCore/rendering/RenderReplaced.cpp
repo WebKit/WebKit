@@ -139,7 +139,10 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (!shouldPaint(paintInfo, paintOffset))
         return;
-    
+
+#ifndef NDEBUG
+    SetLayoutNeededForbiddenScope scope(this);
+#endif
     LayoutPoint adjustedPaintOffset = paintOffset + location();
     
     if (hasBoxDecorations() && paintInfo.phase == PaintPhaseForeground)
