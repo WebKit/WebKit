@@ -49,7 +49,7 @@ const uint16_t ucs2CharacterSet13[] = { 0x03a6u, 0x03c6u, 0x03d5u, 0 };
 const uint16_t ucs2CharacterSet14[] = { 0x1e60u, 0x1e61u, 0x1e9bu, 0 };
 
 static const size_t UCS2_CANONICALIZATION_SETS = 15;
-const uint16_t* characterSetInfo[UCS2_CANONICALIZATION_SETS] = {
+const uint16_t* const characterSetInfo[UCS2_CANONICALIZATION_SETS] = {
     ucs2CharacterSet0,
     ucs2CharacterSet1,
     ucs2CharacterSet2,

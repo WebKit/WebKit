@@ -44,7 +44,7 @@ enum UCS2CanonicalizationType {
 };
 struct UCS2CanonicalizationRange { uint16_t begin, end, value, type; };
 extern const size_t UCS2_CANONICALIZATION_RANGES;
-extern const uint16_t* characterSetInfo[];
+extern const uint16_t* const characterSetInfo[];
 extern const UCS2CanonicalizationRange rangeInfo[];
 
 // This table is similar to the full rangeInfo table, however this maps from UCS2 codepoints to

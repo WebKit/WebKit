@@ -1,3 +1,15 @@
+2015-05-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Make some static data const
+        https://bugs.webkit.org/show_bug.cgi?id=144552
+
+        Reviewed by Andreas Kling.
+        
+        Turn characterSetInfo into const data.
+
+        * yarr/YarrCanonicalizeUCS2.cpp:
+        * yarr/YarrCanonicalizeUCS2.h:
+
 2015-05-01  Filip Pizlo  <fpizlo@apple.com>
 
         TypeOf should be fast

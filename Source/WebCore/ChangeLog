@@ -1,3 +1,14 @@
+2015-05-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Make some static data const
+        https://bugs.webkit.org/show_bug.cgi?id=144552
+
+        Reviewed by Andreas Kling.
+
+        Turn baseTable and shiftTable into const data.
+
+        * platform/graphics/FormatConverter.cpp:
+
 2015-05-02  Simon Fraser  <simon.fraser@apple.com>
 
         Assertion failure (!needsLayout()) loading inkedmag.com
