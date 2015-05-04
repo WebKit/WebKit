@@ -96,6 +96,7 @@ static bool gcBetweenTests = false;
 static bool printSeparators = false;
 static bool leakChecking = false;
 static bool printSupportedFeatures = false;
+static bool showWebView = false;
 static RetainPtr<CFStringRef> persistentUserStyleSheetLocation;
 
 volatile bool done;
@@ -1204,8 +1205,8 @@ IWebView* createWebViewAndOffscreenWindow(HWND* webViewWindow)
 {
     int maxViewWidth = TestRunner::viewWidth;
     int maxViewHeight = TestRunner::viewHeight;
-    HWND hostWindow = CreateWindowEx(WS_EX_TOOLWINDOW, kDumpRenderTreeClassName, TEXT("DumpRenderTree"), WS_POPUP,
-      -maxViewWidth, -maxViewHeight, maxViewWidth, maxViewHeight, 0, 0, GetModuleHandle(0), 0);
+    HWND hostWindow = (showWebView) ? CreateWindowEx(WS_EX_TOOLWINDOW, kDumpRenderTreeClassName, TEXT("DumpRenderTree"), WS_POPUP, 100, 100, maxViewWidth, maxViewHeight, 0, 0, ::GetModuleHandle(0), nullptr)
+        : CreateWindowEx(WS_EX_TOOLWINDOW, kDumpRenderTreeClassName, TEXT("DumpRenderTree"), WS_POPUP, -maxViewWidth, -maxViewHeight, maxViewWidth, maxViewHeight, 0, 0, ::GetModuleHandle(0), nullptr);
 
     IWebView* webView = nullptr;
     HRESULT hr = WebKitCreateInstance(CLSID_WebView, 0, IID_IWebView, (void**)&webView);
@@ -1351,6 +1352,11 @@ static Vector<const char*> initializeGlobalsFromCommandLineOptions(int argc, con
 
         if (!stricmp(argv[i], "--print-supported-features")) {
             printSupportedFeatures = true;
+            continue;
+        }
+
+        if (!stricmp(argv[i], "--show-webview")) {
+            showWebView = true;
             continue;
         }
 
