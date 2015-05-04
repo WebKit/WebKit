@@ -22,6 +22,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import argparse
 import filecmp
 import fnmatch
 import os
@@ -30,6 +31,12 @@ import shutil
 import sys
 import datetime
 import json
+
+parser = argparse.ArgumentParser()
+parser.add_argument('input_file', nargs='*', help='Input JS files which builtins generated from')
+parser.add_argument('--input-directory', help='All JS files will be used as input from this directory.')
+parser.add_argument('--output', help='path to output cpp or h file')
+args = parser.parse_args()
 
 copyrightText = """ *
  * Redistribution and use in source and binary forms, with or without
@@ -151,13 +158,14 @@ def mangleName(object, name):
     return mangledName
 
 builtins = []
-
-baseName = sys.argv[-1]
-builtin_definitions = sys.argv[1:-1]
-(output_base, _) = os.path.splitext(sys.argv[-1])
-
 copyrights = []
-for file in builtin_definitions:
+(output_base, _) = os.path.splitext(args.output)
+
+if args.input_directory:
+    for file in os.listdir(args.input_directory):
+        args.input_file.append(os.path.join(args.input_directory, file))
+
+for file in args.input_file:
     if fnmatch.fnmatch(file, '*.js'):
         (baseName, functions, objectCopyrights) = generateCode(file)
         copyrights.extend(objectCopyrights)

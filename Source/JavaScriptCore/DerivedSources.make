@@ -80,8 +80,8 @@ endif
 # --------
 
 JSCBuiltins: $(JavaScriptCore)/generate-js-builtins JSCBuiltins.h JSCBuiltins.cpp
-JSCBuiltins.h: $(JavaScriptCore)/generate-js-builtins $(JavaScriptCore)/builtins/*.js
-	$(PYTHON) $^ $@
+JSCBuiltins.h: $(JavaScriptCore)/generate-js-builtins $(JavaScriptCore)/builtins
+	$(PYTHON) $(JavaScriptCore)/generate-js-builtins --input-directory $(JavaScriptCore)/builtins --output $@
 																				 
 JSCBuiltins.cpp: JSCBuiltins.h
 
