@@ -62,6 +62,7 @@ public:
     void store(const Record&, MappedBodyHandler&&);
 
     void remove(const Key&);
+    void clear(std::chrono::system_clock::time_point modifiedSinceTime, std::function<void ()>&& completionHandler);
 
     struct RecordInfo {
         size_t bodySize { 0 };
@@ -74,12 +75,12 @@ public:
         ShareCount = 1 << 1,
     };
     typedef unsigned TraverseFlags;
+    typedef std::function<void (const Record*, const RecordInfo&)> TraverseHandler;
     // Null record signals end.
-    void traverse(TraverseFlags, std::function<void (const Record*, const RecordInfo&)>&&);
+    void traverse(TraverseFlags, TraverseHandler&&);
 
     void setCapacity(size_t);
     size_t approximateSize() const;
-    void clear();
 
     static const unsigned version = 3;
 

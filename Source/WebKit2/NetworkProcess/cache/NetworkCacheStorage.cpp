@@ -657,9 +657,15 @@ void Storage::store(const Record& record, MappedBodyHandler&& mappedBodyHandler)
     dispatchPendingWriteOperations();
 }
 
-void Storage::traverse(TraverseFlags flags, std::function<void (const Record*, const RecordInfo&)>&& traverseHandler)
+void Storage::traverse(TraverseFlags flags, TraverseHandler&& traverseHandler)
 {
-    ioQueue().dispatch([this, flags, traverseHandler] {
+    ASSERT(RunLoop::isMain());
+    ASSERT(traverseHandler);
+    // Avoid non-thread safe std::function copies.
+    auto* traverseHandlerPtr = new TraverseHandler(WTF::move(traverseHandler));
+    
+    ioQueue().dispatch([this, flags, traverseHandlerPtr] {
+        auto& traverseHandler = *traverseHandlerPtr;
         traverseCacheFiles(recordsPath(), [this, flags, &traverseHandler](const String& fileName, const String& partitionPath) {
             if (fileName.length() != Key::hashStringLength())
                 return;
@@ -684,8 +690,9 @@ void Storage::traverse(TraverseFlags flags, std::function<void (const Record*, c
                 }
             });
         });
-        RunLoop::main().dispatch([this, traverseHandler] {
-            traverseHandler(nullptr, { });
+        RunLoop::main().dispatch([this, traverseHandlerPtr] {
+            (*traverseHandlerPtr)(nullptr, { });
+            delete traverseHandlerPtr;
         });
     });
 }
@@ -708,7 +715,7 @@ void Storage::setCapacity(size_t capacity)
     shrinkIfNeeded();
 }
 
-void Storage::clear()
+void Storage::clear(std::chrono::system_clock::time_point modifiedSinceTime, std::function<void ()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     LOG(NetworkCacheStorage, "(NetworkProcess) clearing cache");
@@ -719,18 +726,34 @@ void Storage::clear()
         m_bodyFilter->clear();
     m_approximateRecordsSize = 0;
 
-    ioQueue().dispatch([this] {
+    // Avoid non-thread safe std::function copies.
+    auto* completionHandlerPtr = completionHandler ? new std::function<void ()>(WTF::move(completionHandler)) : nullptr;
+
+    ioQueue().dispatch([this, modifiedSinceTime, completionHandlerPtr] {
         auto recordsPath = this->recordsPath();
-        traverseDirectory(recordsPath, DT_DIR, [&recordsPath](const String& subdirName) {
+        traverseDirectory(recordsPath, DT_DIR, [&recordsPath, modifiedSinceTime](const String& subdirName) {
             String subdirPath = WebCore::pathByAppendingComponent(recordsPath, subdirName);
-            traverseDirectory(subdirPath, DT_REG, [&subdirPath](const String& fileName) {
-                WebCore::deleteFile(WebCore::pathByAppendingComponent(subdirPath, fileName));
+            traverseDirectory(subdirPath, DT_REG, [&subdirPath, modifiedSinceTime](const String& fileName) {
+                auto filePath = WebCore::pathByAppendingComponent(subdirPath, fileName);
+                if (modifiedSinceTime > std::chrono::system_clock::time_point::min()) {
+                    auto times = fileTimes(filePath);
+                    if (times.modification < modifiedSinceTime)
+                        return;
+                }
+                WebCore::deleteFile(filePath);
             });
             WebCore::deleteEmptyDirectory(subdirPath);
         });
 
         // This cleans unreferences blobs.
         m_blobStorage.synchronize();
+
+        if (completionHandlerPtr) {
+            RunLoop::main().dispatch([completionHandlerPtr] {
+                (*completionHandlerPtr)();
+                delete completionHandlerPtr;
+            });
+        }
     });
 }
 

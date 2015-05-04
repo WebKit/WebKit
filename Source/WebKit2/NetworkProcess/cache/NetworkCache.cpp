@@ -40,6 +40,7 @@
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RunLoop.h>
 #include <wtf/text/StringBuilder.h>
 
 #if PLATFORM(COCOA)
@@ -524,20 +525,33 @@ void Cache::dumpContentsToFile()
     });
 }
 
-void Cache::clear()
+void Cache::deleteDumpFile()
+{
+    auto queue = WorkQueue::create("com.apple.WebKit.Cache.delete");
+    StringCapture dumpFilePathCapture(dumpFilePath());
+    queue->dispatch([dumpFilePathCapture] {
+        WebCore::deleteFile(dumpFilePathCapture.string());
+    });
+}
+
+void Cache::clear(std::chrono::system_clock::time_point modifiedSince, std::function<void ()>&& completionHandler)
 {
     LOG(NetworkCache, "(NetworkProcess) clearing cache");
-    if (m_storage) {
-        m_storage->clear();
+    deleteDumpFile();
 
-        auto queue = WorkQueue::create("com.apple.WebKit.Cache.delete");
-        StringCapture dumpFilePathCapture(dumpFilePath());
-        queue->dispatch([dumpFilePathCapture] {
-            WebCore::deleteFile(dumpFilePathCapture.string());
-        });
-    }
     if (m_statistics)
         m_statistics->clear();
+
+    if (!m_storage) {
+        RunLoop::main().dispatch(completionHandler);
+        return;
+    }
+    m_storage->clear(modifiedSince, WTF::move(completionHandler));
+}
+
+void Cache::clear()
+{
+    clear(std::chrono::system_clock::time_point::min(), nullptr);
 }
 
 String Cache::recordsPath() const

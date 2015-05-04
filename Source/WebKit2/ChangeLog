@@ -1,3 +1,34 @@
+2015-05-04  Antti Koivisto  <antti@apple.com>
+
+        Network Cache: Support time based cache clearing
+        https://bugs.webkit.org/show_bug.cgi?id=144568
+        <rdar://problem/19769820>
+
+        Reviewed by Andreas Kling.
+
+        Support clearing cache entries newer than given time only.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::deleteDumpFile):
+        (WebKit::NetworkCache::Storage::traverse):
+
+            Also fix thread safety of traverse handler function.
+
+        (WebKit::NetworkCache::Cache::clear):
+
+            Also add completion handler to support the API properly.
+
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::clear):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::clearNSURLCache):
+
+            Factor to a function.
+
+        (WebKit::NetworkProcess::clearDiskCache):
+
 2015-05-04  Zan Dobersek  <zdobersek@igalia.com>
 
         [WTF] Remove Functional.h inclusions
