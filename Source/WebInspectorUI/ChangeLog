@@ -1,5 +1,17 @@
 2015-05-04  Timothy Hatcher  <timothy@apple.com>
 
+        REGRESSION: Web Inspector: FrameTreeElement does not folders properly when loading a page
+        https://bugs.webkit.org/show_bug.cgi?id=144535
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/FolderizedTreeElement.js:
+        (WebInspector.FolderizedTreeElement.prototype.addChildForRepresentedObject): Fix an exception if not in a tree.
+        (WebInspector.FolderizedTreeElement.prototype.prepareToPopulate):
+        (WebInspector.FolderizedTreeElement.prototype._populateFromNewChildQueue):
+
+2015-05-04  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Allow closing and reopening the Timelines tab
         https://bugs.webkit.org/show_bug.cgi?id=144520
 

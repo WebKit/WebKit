@@ -96,6 +96,12 @@ WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInsp
             return;
         }
 
+        if (!this.treeOutline) {
+            // Just mark as needing to update to avoid doing work that might not be needed.
+            this.shouldRefreshChildren = true;
+            return;
+        }
+
         var childTreeElement = this.treeOutline.getCachedTreeElement(representedObject);
         if (!childTreeElement)
             childTreeElement = new settings.treeElementConstructor(representedObject);
@@ -154,8 +160,12 @@ WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInsp
 
     prepareToPopulate()
     {
-        if (!this._groupedIntoFolders && this._shouldGroupIntoFolders())
+        if (!this._groupedIntoFolders && this._shouldGroupIntoFolders()) {
             this._groupedIntoFolders = true;
+            return true;
+        }
+
+        return false;
     }
 
     // Private
@@ -177,7 +187,12 @@ WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInsp
             return;
         }
 
-        this.prepareToPopulate();
+        if (this.prepareToPopulate()) {
+            // Will now folderize, repopulate children.
+            this._clearNewChildQueue();
+            this.shouldRefreshChildren = true;
+            return;
+        }
 
         for (var i = 0; i < this._newChildQueue.length; ++i)
             this.addChildForRepresentedObject(this._newChildQueue[i]);
