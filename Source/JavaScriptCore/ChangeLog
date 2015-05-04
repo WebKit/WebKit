@@ -1,3 +1,26 @@
+2015-05-04  Basile Clement  <basile_clement@apple.com>
+
+        Allocation sinking is prohibiting the creation of phis between a Phantom object and its materialization
+        https://bugs.webkit.org/show_bug.cgi?id=144587
+
+        Rubber stamped by Filip Pizlo.
+
+        When sinking object allocations, we ensure in
+        determineMaterializationPoints that whenever an allocation is
+        materialized on a path to a block, it is materialized in all such
+        paths. Thus when running the SSA calculator to place Phis in
+        placeMaterializationPoints, we can't encounter a situation where some
+        Upsilons are referring to a materialization while others are referring
+        to the phantom object.
+
+        This replaces the code that was adding a materialization late in
+        placeMaterializationPoints to handle that case by an assertion that it
+        does not happen, which will make
+        https://bugs.webkit.org/show_bug.cgi?id=143073 easier to implement.
+
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        (JSC::DFG::ObjectAllocationSinkingPhase::placeMaterializationPoints):
+
 2015-05-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Extending undefined in class syntax should throw a TypeError

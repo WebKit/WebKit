@@ -471,19 +471,8 @@ private:
                     SSACalculator::Variable* variable = phiDef->variable();
                     Node* allocation = indexToNode[variable->index()];
                     
-                    Node* originalIncoming = mapping.get(allocation);
-                    Node* incoming;
-                    if (originalIncoming == allocation) {
-                        // If we have a Phi that combines materializations with the original
-                        // phantom object, then the path with the phantom object must materialize.
-                        
-                        incoming = createMaterialize(allocation, upsilonWhere);
-                        m_insertionSet.insert(upsilonInsertionPoint, incoming);
-                        insertOSRHintsForUpdate(
-                            m_insertionSet, upsilonInsertionPoint, upsilonOrigin,
-                            availabilityCalculator.m_availability, originalIncoming, incoming);
-                    } else
-                        incoming = originalIncoming;
+                    Node* incoming = mapping.get(allocation);
+                    DFG_ASSERT(m_graph, incoming, incoming != allocation);
                     
                     m_insertionSet.insertNode(
                         upsilonInsertionPoint, SpecNone, Upsilon, upsilonOrigin,
