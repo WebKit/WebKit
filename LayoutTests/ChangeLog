@@ -1,3 +1,10 @@
+2015-05-04  Alexey Proskuryakov  <ap@apple.com>
+
+        storage/indexeddb/mozilla/cursor-update-updates-indexes.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=144590
+
+        * platform/mac-wk2/TestExpectations: Marking as such.
+
 2015-05-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Extending undefined in class syntax should throw a TypeError

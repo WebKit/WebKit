@@ -341,6 +341,7 @@ webkit.org/b/142726 [ Yosemite ] fast/images/animated-png.html [ Skip ]
 
 # Mozilla test failures.
 storage/indexeddb/mozilla/global-data.html [ Skip ]
+storage/indexeddb/mozilla/cursor-update-updates-indexes.html [ Pass Failure ]
 
 # Blink tests with unexplained timeouts
 storage/indexeddb/exceptions.html [ Skip ]
