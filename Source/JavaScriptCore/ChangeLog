@@ -1,5 +1,20 @@
 2015-05-04  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Extending undefined in class syntax should throw a TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=144284
+
+        Reviewed by Darin Adler.
+
+        The bug was caused by op_eq_null evaluating to true when compared to undefined.
+        Explicitly check op_eq_undefined first to detect the case where we're extending undefined.
+
+        We also had bogus test cases checked in class-syntax-extends.html. This patch also fixes them.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ClassExprNode::emitBytecode):
+
+2015-05-04  Ryosuke Niwa  <rniwa@webkit.org>
+
         new super should be a syntax error
         https://bugs.webkit.org/show_bug.cgi?id=144282
 

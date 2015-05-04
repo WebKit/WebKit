@@ -2937,12 +2937,17 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
         generator.emitLoad(protoParent.get(), jsNull());
 
         RefPtr<RegisterID> tempRegister = generator.newTemporary();
+
+        // FIXME: Throw TypeError if it's a generator function.
+        RefPtr<Label> superclassIsUndefinedLabel = generator.newLabel();
+        generator.emitJumpIfTrue(generator.emitIsUndefined(tempRegister.get(), superclass.get()), superclassIsUndefinedLabel.get());
+
         RefPtr<Label> superclassIsNullLabel = generator.newLabel();
         generator.emitJumpIfTrue(generator.emitUnaryOp(op_eq_null, tempRegister.get(), superclass.get()), superclassIsNullLabel.get());
 
-        // FIXME: Throw TypeError if it's a generator function.
         RefPtr<Label> superclassIsObjectLabel = generator.newLabel();
         generator.emitJumpIfTrue(generator.emitIsObject(tempRegister.get(), superclass.get()), superclassIsObjectLabel.get());
+        generator.emitLabel(superclassIsUndefinedLabel.get());
         generator.emitThrowTypeError(ASCIILiteral("The superclass is not an object."));
         generator.emitLabel(superclassIsObjectLabel.get());
         generator.emitGetById(protoParent.get(), superclass.get(), generator.propertyNames().prototype);

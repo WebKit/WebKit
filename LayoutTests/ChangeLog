@@ -1,5 +1,18 @@
 2015-05-04  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Extending undefined in class syntax should throw a TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=144284
+
+        Reviewed by Darin Adler.
+
+        Fixed the expectation for extending undefined and removed irrelevant test cases for extending undefined
+        since we'll never get to instantiate these classes now.
+
+        * js/class-syntax-extends-expected.txt:
+        * js/script-tests/class-syntax-extends.js:
+
+2015-05-04  Ryosuke Niwa  <rniwa@webkit.org>
+
         ES6 classes: Invalid test for constructor property
         https://bugs.webkit.org/show_bug.cgi?id=144278
 

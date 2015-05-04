@@ -70,10 +70,8 @@ shouldBe('x = 1; namespace = {}; namespace.A = class { constructor() { } }; try 
 
 shouldBe('Object.getPrototypeOf((class { constructor () { } }).prototype)', 'Object.prototype');
 shouldBe('Object.getPrototypeOf((class extends null { constructor () { super(); } }).prototype)', 'null');
-shouldThrow('new (class extends undefined { constructor () { this } })', '"ReferenceError: Cannot access uninitialized variable."');
-shouldThrow('new (class extends undefined { constructor () { super(); } })', '"TypeError: undefined is not an object (evaluating \'super()\')"');
-shouldBe('x = {}; new (class extends undefined { constructor () { return x; } })', 'x');
-shouldThrow('y = 12; new (class extends undefined { constructor () { return y; } })', '"TypeError: Cannot return a non-object type in the constructor of a derived class."');
+shouldThrow('new (class extends undefined { constructor () { this } })', '"TypeError: The superclass is not an object."');
+shouldThrow('x = undefined; new (class extends x { constructor () { super(); } })', '"TypeError: The superclass is not an object."');
 shouldBeTrue ('class x {}; new (class extends null { constructor () { return new x; } }) instanceof x');
 shouldThrow('new (class extends null { constructor () { this; } })', '"ReferenceError: Cannot access uninitialized variable."');
 shouldThrow('new (class extends null { constructor () { super(); } })', '"TypeError: undefined is not an object (evaluating \'super()\')"');
