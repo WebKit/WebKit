@@ -184,7 +184,8 @@ WebInspector.TimelineOverview.prototype = {
     {
         if (isNaN(this._cachedScrollContainerWidth)) {
             this._cachedScrollContainerWidth = this._scrollContainerElement.offsetWidth;
-            console.assert(this._cachedScrollContainerWidth > 0);
+            if (!this._cachedScrollContainerWidth)
+                this._cachedScrollContainerWidth = NaN;
         }
 
         return this._cachedScrollContainerWidth * this._durationPerPixel;

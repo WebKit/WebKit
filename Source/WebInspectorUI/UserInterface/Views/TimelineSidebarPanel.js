@@ -395,20 +395,8 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
     _recordingsTreeElementSelected(treeElement, selectedByUser)
     {
         console.assert(treeElement.representedObject instanceof WebInspector.TimelineRecording);
-        console.assert(!selectedByUser, "Recording tree elements should be hidden and only programmatically selectable.");
 
         this._recordingSelected(treeElement.representedObject);
-
-        // Deselect or re-select the timeline tree element for the timeline view being displayed.
-        var currentTimelineView = this._displayedContentView.currentTimelineView;
-        if (currentTimelineView && currentTimelineView.representedObject instanceof WebInspector.Timeline) {
-            var wasSelectedByUser = false; // This is a simulated selection.
-            var shouldSuppressOnSelect = false;
-            this._timelineTreeElementMap.get(currentTimelineView.representedObject).select(true, wasSelectedByUser, shouldSuppressOnSelect, true);
-        } else if (this._timelinesTreeOutline.selectedTreeElement)
-            this._timelinesTreeOutline.selectedTreeElement.deselect();
-
-        this.updateFilter();
     }
 
     _renderingFrameTimelineTimesUpdated(event)
@@ -503,9 +491,32 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         for (var timeline of recording.timelines.values())
             this._timelineAdded(timeline);
 
-        this._displayedContentView = this.contentBrowser.contentViewForRepresentedObject(this._displayedRecording, false, {timelineSidebarPanel: this});
-        if (this.selected)
-            this.contentBrowser.showContentView(this._displayedContentView);
+        // Save the current state incase we need to restore it to a new recording.
+        var cookie = {};
+        this.saveStateToCookie(cookie);
+
+        // Try to get the recording content view if it exists already, if it does we don't want to restore the cookie.
+        var onlyExisting = true;
+        this._displayedContentView = this.contentBrowser.contentViewForRepresentedObject(this._displayedRecording, onlyExisting, {timelineSidebarPanel: this});
+        if (this._displayedContentView) {
+            // Show the timeline that was being shown to update the sidebar tree state.
+            var currentTimelineView = this._displayedContentView.currentTimelineView;
+            if (currentTimelineView && currentTimelineView.representedObject instanceof WebInspector.Timeline)
+                this.showTimelineViewForTimeline(currentTimelineView.representedObject);
+            else
+                this.showTimelineOverview();
+
+            this.updateFilter();
+            return;
+        }
+
+        onlyExisting = false;
+        this._displayedContentView = this.contentBrowser.contentViewForRepresentedObject(this._displayedRecording, onlyExisting, {timelineSidebarPanel: this});
+
+        // Restore the cookie to carry over the previous recording view state to the new recording.
+        this.restoreStateFromCookie(cookie);
+
+        this.updateFilter();
     }
 
     _recordingLoaded(event)
@@ -534,6 +545,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             button.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, this.showTimelineOverview, this);
             timelineTreeElement.status = button.element;
         }.bind(this));
+
         this._timelinesTreeOutline.appendChild(timelineTreeElement);
         this._timelineTreeElementMap.set(timeline, timelineTreeElement);
 

@@ -573,7 +573,7 @@ WebInspector.ContentBrowser.prototype = {
         if (!treeElement)
             return;
 
-        this.showContentViewForRepresentedObject(treeElement.representedObject);
+        treeElement.revealAndSelect();
     }
 };
 

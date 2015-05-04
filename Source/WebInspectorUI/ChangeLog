@@ -1,3 +1,26 @@
+2015-05-04  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Switching recordings in the Timeline navigation bar is broken
+        https://bugs.webkit.org/show_bug.cgi?id=144519
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ContentBrowser.js:
+        (WebInspector.ContentBrowser.prototype._hierarchicalPathComponentWasSelected): Use revealAndSelect
+        on the TreeElement instead of showing the representedObject directly. This fixes an exception in
+        TimelineRecordingContentView where it wouldn't be initialized with the TimelineSidebarPanel extra argument.
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview.prototype.get visibleDuration): Fix an annoying assert. We show the view
+        early in construction, before it is in the document. Future updateLayout calls work and fix this.
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype.shown): Call _currentContentViewDidChange
+        to trigger the sidebar to update when this recording view is shown.
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.prototype._recordingsTreeElementSelected): Moved code from here...
+        (WebInspector.TimelineSidebarPanel.prototype._recordingSelected): ... to here. Take two different paths
+        to state restoration here. If the view existed before, use its state. If now, use the current state that
+        is captured by the cookie logic and explicitly restore it.
+
 2015-05-03  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Exception under ContentViewContainer _disassociateFromContentView

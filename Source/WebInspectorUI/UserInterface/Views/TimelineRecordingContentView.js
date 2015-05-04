@@ -170,6 +170,8 @@ WebInspector.TimelineRecordingContentView.prototype = {
         this._contentViewContainer.shown();
         this._clearTimelineNavigationItem.enabled = this._recording.isWritable();
 
+        this._currentContentViewDidChange();
+
         if (!this._updating && WebInspector.timelineManager.activeRecording === this._recording && WebInspector.timelineManager.isCapturing())
             this._startUpdatingCurrentTime();
     },
