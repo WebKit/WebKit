@@ -2433,6 +2433,7 @@ webkit.org/b/59062 [ Release ] fast/images/animated-gif-restored-from-bfcache.ht
 webkit.org/b/59062 [ Debug ] fast/images/animated-gif-restored-from-bfcache.html [ Skip ] # Timeout
 [ Debug ] fast/images/animated-gif-iframe-webkit-transform.html [ Skip ] # Timeout
 [ Debug ] fast/images/animated-gif-webkit-transform.html [ Skip ] # Timeout
+fast/images/animated-gif-body-outside-viewport.html [ Skip ] # Timeout
 fast/images/animated-gif-window-resizing.html [ Skip ] # Timeout
 fast/images/animated-gif-zooming.html [ Skip ] # Timeout
 webkit.org/b/140211 fast/xsl/sort-locale.xml [ Failure ]

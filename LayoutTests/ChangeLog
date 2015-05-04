@@ -1,3 +1,12 @@
+2015-05-04  Simon Fraser  <simon.fraser@apple.com>
+
+       Skip fast/images/animated-gif-body-outside-viewport.html on Windows. It
+       started failing after r183732, but like the other fast/images/animated-gif* tests,
+       it's sensitive to window display timing. These tests were already skipped for Mac
+       WK1, probably because we disable window autodisplay on the Mac.
+
+        * platform/win/TestExpectations:
+
 2015-05-04  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Box Alignment] Upgrade justify-content parsing to CSS3 Box Alignment spec.
