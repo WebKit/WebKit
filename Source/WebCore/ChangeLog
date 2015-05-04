@@ -1,5 +1,16 @@
 2015-05-04  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Remove move-js-headers.sh
+        https://bugs.webkit.org/show_bug.cgi?id=144323
+
+        Reviewed by Daniel Bates.
+
+        move-js-headers.sh was only used by the Wx port, which has been removed from trunk long ago.
+
+        * move-js-headers.sh: Removed.
+
+2015-05-04  Csaba Osztrogonác  <ossy@webkit.org>
+
         [ARM] Don't compare unsigned chars to EOF (-1)
         https://bugs.webkit.org/show_bug.cgi?id=144439
 
