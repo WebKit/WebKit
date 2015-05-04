@@ -36,7 +36,6 @@
 #include <fcntl.h>
 #include <poll.h>
 #include <wtf/Assertions.h>
-#include <wtf/Functional.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UniStdExtras.h>
 

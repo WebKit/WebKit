@@ -49,7 +49,6 @@
 #include "RealtimeMediaSourceCenter.h"
 #include "SecurityOrigin.h"
 #include "UserMediaController.h"
-#include <wtf/Functional.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {

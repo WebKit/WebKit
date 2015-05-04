@@ -32,7 +32,6 @@
 #include "WebProcess.h"
 #include <WebCore/DisplayRefreshMonitor.h>
 #include <WebCore/TransformationMatrix.h>
-#include <wtf/Functional.h>
 
 // Subclasses
 #if PLATFORM(COCOA)

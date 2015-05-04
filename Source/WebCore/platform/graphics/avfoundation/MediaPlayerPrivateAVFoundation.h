@@ -33,7 +33,6 @@
 #include "MediaPlayerPrivate.h"
 #include "Timer.h"
 #include <functional>
-#include <wtf/Functional.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 

@@ -26,9 +26,10 @@
 #ifndef DispatchQueueEfl_h
 #define DispatchQueueEfl_h
 
+#include <functional>
 #include <time.h>
-#include <wtf/Functional.h>
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadingPrimitives.h>
 #include <wtf/Vector.h>
 
 class TimerWorkItem;

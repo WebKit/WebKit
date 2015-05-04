@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WorkQueue.h"
 
+#include "Ref.h"
+
 namespace WTF {
 
 Ref<WorkQueue> WorkQueue::create(const char* name, Type type, QOS qos)

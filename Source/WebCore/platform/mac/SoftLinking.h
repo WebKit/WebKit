@@ -27,10 +27,7 @@
 
 #import <wtf/Assertions.h>
 #import <dlfcn.h>
-
-#if PLATFORM(IOS)
 #import <objc/runtime.h>
-#endif
 
 #pragma mark - Soft-link macros for use within a single source file
 

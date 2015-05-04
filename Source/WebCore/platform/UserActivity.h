@@ -29,6 +29,7 @@
 #include "HysteresisActivity.h"
 
 #if HAVE(NS_ACTIVITY)
+#include <objc/objc.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
 OBJC_CLASS NSString;

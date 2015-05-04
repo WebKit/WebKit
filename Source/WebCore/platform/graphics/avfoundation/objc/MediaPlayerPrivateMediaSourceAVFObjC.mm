@@ -40,7 +40,6 @@
 #import <AVFoundation/AVTime.h>
 #import <QuartzCore/CALayer.h>
 #import <objc_runtime.h>
-#import <wtf/Functional.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 

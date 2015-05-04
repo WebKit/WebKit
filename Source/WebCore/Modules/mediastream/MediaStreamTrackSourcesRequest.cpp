@@ -33,7 +33,6 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "SourceInfo.h"
-#include <wtf/Functional.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {

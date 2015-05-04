@@ -1,3 +1,17 @@
+2015-05-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WTF] Remove Functional.h inclusions
+        https://bugs.webkit.org/show_bug.cgi?id=144400
+
+        Reviewed by Darin Adler.
+
+        Remove unnecessary inclusions of the <wtf/Functional.h> header in WebKit2.
+
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm: Import the <objc/runtime.h>
+        header that was previously indirectly included through the Functional.h header.
+        * WebProcess/WebPage/DrawingArea.cpp:
+
 2015-05-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         [ARM] Don't compare unsigned chars to EOF (-1)

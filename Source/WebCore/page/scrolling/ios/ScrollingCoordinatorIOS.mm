@@ -39,7 +39,6 @@
 #include "ScrollingTreeFrameScrollingNodeIOS.h"
 #include "ScrollingTreeStickyNode.h"
 #include "ScrollingTreeIOS.h"
-#include <wtf/Functional.h>
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
 

@@ -31,7 +31,6 @@
 #include <functional>
 #include <wtf/Forward.h>
 #include <wtf/FunctionDispatcher.h>
-#include <wtf/Functional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Threading.h>
 

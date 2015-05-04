@@ -45,7 +45,6 @@
 #include "MediaTrackConstraints.h"
 #include "NotImplemented.h"
 #include "RealtimeMediaSourceCenter.h"
-#include <wtf/Functional.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

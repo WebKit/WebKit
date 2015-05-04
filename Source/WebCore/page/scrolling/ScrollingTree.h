@@ -32,7 +32,6 @@
 #include "Region.h"
 #include "ScrollingCoordinator.h"
 #include "WheelEventTestTrigger.h"
-#include <wtf/Functional.h>
 #include <wtf/HashMap.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>

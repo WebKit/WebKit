@@ -39,7 +39,6 @@
 #include "WorkerThread.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/Functional.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {

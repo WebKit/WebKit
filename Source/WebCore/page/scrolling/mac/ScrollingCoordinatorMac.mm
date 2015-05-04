@@ -41,7 +41,6 @@
 #include "ScrollingTreeMac.h"
 #include "ScrollingTreeStickyNode.h"
 #include "TiledBacking.h"
-#include <wtf/Functional.h>
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
 

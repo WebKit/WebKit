@@ -1,3 +1,26 @@
+2015-05-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WTF] Remove Functional.h inclusions
+        https://bugs.webkit.org/show_bug.cgi?id=144400
+
+        Reviewed by Darin Adler.
+
+        Remove unnecessary inclusions of the <wtf/Functional.h> header in WebCore.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        * Modules/mediastream/MediaStreamTrackSourcesRequest.cpp:
+        * Modules/mediastream/UserMediaRequest.cpp:
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ios/ScrollingCoordinatorIOS.mm:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        * platform/MemoryPressureHandler.cpp:
+        * platform/UserActivity.h: Include the <objc/objc.h> header that was previously
+        indirectly included through Functional.h.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        * platform/mac/SoftLinking.h: Unconditionally include the <objc/runtime.h> header
+        that was previously included for the Mac port through Functional.h.
+
 2015-05-04  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] Refactor ReadableJSStream and ReadableStreamJSSource

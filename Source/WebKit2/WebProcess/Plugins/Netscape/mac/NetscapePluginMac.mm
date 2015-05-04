@@ -37,6 +37,7 @@
 #import <WebCore/MachSendRight.h>
 #import <WebCore/NotImplemented.h>
 #import <WebKitSystemInterface.h>
+#import <objc/runtime.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/text/StringView.h>
 

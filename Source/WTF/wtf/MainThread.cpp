@@ -31,8 +31,8 @@
 
 #include "CurrentTime.h"
 #include "Deque.h"
-#include "Functional.h"
 #include "StdLibExtras.h"
+#include "Threading.h"
 #include <mutex>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ThreadSpecific.h>
