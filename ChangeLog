@@ -1,3 +1,12 @@
+2015-05-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [cmake] Disable GNU Gold linker on Cortex A53
+        https://bugs.webkit.org/show_bug.cgi?id=144382
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/OptionsCommon.cmake:
+
 2015-05-01  Martin Robinson  <mrobinson@igalia.com>
 
         USE(...) macro should expect unprefixed variables
