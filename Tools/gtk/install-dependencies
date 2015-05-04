@@ -211,6 +211,7 @@ function installDependenciesWithPacman {
         mpg123 \
         opus \
         pango \
+        libnotify \
         libpng \
         libpulse \
         librsvg \
@@ -321,6 +322,7 @@ function installFedoraDependencies {
         libgudev1-devel \
         libicu-devel \
         libjpeg-turbo-devel \
+        libnotify-devel \
         libpng-devel \
         libsecret-devel \
         libsoup-devel \
