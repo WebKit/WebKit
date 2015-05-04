@@ -80,12 +80,12 @@ void RenderImageControls::computeLogicalHeight(LayoutUnit logicalHeight, LayoutU
     computedValues.m_extent = downcast<RenderImage>(*renderer).logicalHeight();
 }
 
-PassRefPtr<ImageControlsRootElement> ImageControlsRootElement::maybeCreate(Document& document)
+RefPtr<ImageControlsRootElement> ImageControlsRootElement::maybeCreate(Document& document)
 {
     if (!document.page())
         return nullptr;
 
-    RefPtr<ImageControlsRootElementMac> controls = adoptRef(new ImageControlsRootElementMac(document));
+    RefPtr<ImageControlsRootElementMac> controls = adoptRef(*new ImageControlsRootElementMac(document));
     controls->setAttribute(HTMLNames::classAttr, "x-webkit-image-controls");
 
     controls->appendChild(ImageControlsButtonElementMac::maybeCreate(document));

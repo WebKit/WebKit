@@ -53,7 +53,7 @@ private:
 
 class MeterInnerElement final : public MeterShadowElement {
 public:
-    static PassRefPtr<MeterInnerElement> create(Document&);
+    static Ref<MeterInnerElement> create(Document&);
 
 private:
     MeterInnerElement(Document&);
@@ -62,14 +62,14 @@ private:
     virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
 };
 
-inline PassRefPtr<MeterInnerElement> MeterInnerElement::create(Document& document)
+inline Ref<MeterInnerElement> MeterInnerElement::create(Document& document)
 {
-    return adoptRef(new MeterInnerElement(document));
+    return adoptRef(*new MeterInnerElement(document));
 }
 
 class MeterBarElement final : public MeterShadowElement {
 public:
-    static PassRefPtr<MeterBarElement> create(Document&);
+    static Ref<MeterBarElement> create(Document&);
 
 private:
     MeterBarElement(Document& document)
@@ -80,14 +80,14 @@ private:
     }
 };
 
-inline PassRefPtr<MeterBarElement> MeterBarElement::create(Document& document)
+inline Ref<MeterBarElement> MeterBarElement::create(Document& document)
 {
-    return adoptRef(new MeterBarElement(document));
+    return adoptRef(*new MeterBarElement(document));
 }
 
 class MeterValueElement final : public MeterShadowElement {
 public:
-    static PassRefPtr<MeterValueElement> create(Document&);
+    static Ref<MeterValueElement> create(Document&);
     void setWidthPercentage(double);
     void updatePseudo() { setPseudo(valuePseudoId()); }
 
@@ -101,9 +101,9 @@ private:
     const AtomicString& valuePseudoId() const;
 };
 
-inline PassRefPtr<MeterValueElement> MeterValueElement::create(Document& document)
+inline Ref<MeterValueElement> MeterValueElement::create(Document& document)
 {
-    return adoptRef(new MeterValueElement(document));
+    return adoptRef(*new MeterValueElement(document));
 }
 
 }

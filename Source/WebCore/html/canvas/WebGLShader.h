@@ -28,8 +28,6 @@
 
 #include "WebGLSharedObject.h"
 
-#include <wtf/PassRefPtr.h>
-
 namespace WebCore {
 
 class WebGLShader final : public WebGLSharedObject {

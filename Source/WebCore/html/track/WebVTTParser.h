@@ -67,7 +67,7 @@ public:
 class WebVTTCueData final : public RefCounted<WebVTTCueData> {
 public:
 
-    static PassRefPtr<WebVTTCueData> create() { return adoptRef(new WebVTTCueData()); }
+    static Ref<WebVTTCueData> create() { return adoptRef(*new WebVTTCueData()); }
     ~WebVTTCueData() { }
 
     MediaTime startTime() const { return m_startTime; }

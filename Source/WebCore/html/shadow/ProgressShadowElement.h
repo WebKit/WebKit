@@ -52,7 +52,7 @@ private:
 
 class ProgressInnerElement final : public ProgressShadowElement {
 public:
-    static PassRefPtr<ProgressInnerElement> create(Document&);
+    static Ref<ProgressInnerElement> create(Document&);
 
 private:
     ProgressInnerElement(Document&);
@@ -61,40 +61,40 @@ private:
     virtual bool rendererIsNeeded(const RenderStyle&) override;
 };
 
-inline PassRefPtr<ProgressInnerElement> ProgressInnerElement::create(Document& document)
+inline Ref<ProgressInnerElement> ProgressInnerElement::create(Document& document)
 {
-    RefPtr<ProgressInnerElement> result = adoptRef(new ProgressInnerElement(document));
+    Ref<ProgressInnerElement> result = adoptRef(*new ProgressInnerElement(document));
     result->setPseudo(AtomicString("-webkit-progress-inner-element", AtomicString::ConstructFromLiteral));
     return result;
 }
 
 class ProgressBarElement final : public ProgressShadowElement {
 public:
-    static PassRefPtr<ProgressBarElement> create(Document&);
+    static Ref<ProgressBarElement> create(Document&);
 
 private:
     ProgressBarElement(Document&);
 };
 
-inline PassRefPtr<ProgressBarElement> ProgressBarElement::create(Document& document)
+inline Ref<ProgressBarElement> ProgressBarElement::create(Document& document)
 {
-    RefPtr<ProgressBarElement> result = adoptRef(new ProgressBarElement(document));
+    Ref<ProgressBarElement> result = adoptRef(*new ProgressBarElement(document));
     result->setPseudo(AtomicString("-webkit-progress-bar", AtomicString::ConstructFromLiteral));
     return result;
 }
 
 class ProgressValueElement final : public ProgressShadowElement {
 public:
-    static PassRefPtr<ProgressValueElement> create(Document&);
+    static Ref<ProgressValueElement> create(Document&);
     void setWidthPercentage(double);
 
 private:
     ProgressValueElement(Document&);
 };
 
-inline PassRefPtr<ProgressValueElement> ProgressValueElement::create(Document& document)
+inline Ref<ProgressValueElement> ProgressValueElement::create(Document& document)
 {
-    RefPtr<ProgressValueElement> result = adoptRef(new ProgressValueElement(document));
+    Ref<ProgressValueElement> result = adoptRef(*new ProgressValueElement(document));
     result->setPseudo(AtomicString("-webkit-progress-value", AtomicString::ConstructFromLiteral));
     return result;
 }

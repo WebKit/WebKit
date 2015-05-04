@@ -1,3 +1,103 @@
+2015-05-03  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Purge PassRefPtr in WebCore/html
+        https://bugs.webkit.org/show_bug.cgi?id=144543
+
+        Reviewed by Andreas Kling.
+
+        Change PassRefPtr in create() factory functions with Ref. In some functions,
+        it returns RefPtr when it might have a chance to return nullptr.
+
+        No new tests, no behavior changes.
+
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::sendError):
+        * html/DOMFormData.h:
+        (WebCore::DOMFormData::create):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerCreateResourceLoader):
+        * html/HTMLMediaElement.h:
+        * html/MediaError.h:
+        (WebCore::MediaError::create):
+        * html/MediaKeyError.h:
+        (WebCore::MediaKeyError::create):
+        * html/canvas/CanvasGradient.h:
+        * html/canvas/CanvasProxy.cpp:
+        (WebCore::CanvasProxy::create):
+        * html/canvas/CanvasProxy.h:
+        * html/canvas/WebGLActiveInfo.h:
+        (WebCore::WebGLActiveInfo::create):
+        * html/canvas/WebGLContextAttributes.h:
+        * html/canvas/WebGLContextGroup.h:
+        * html/canvas/WebGLProgram.h:
+        * html/canvas/WebGLQuery.h:
+        * html/canvas/WebGLRenderbuffer.h:
+        * html/canvas/WebGLSampler.h:
+        * html/canvas/WebGLShader.h:
+        * html/canvas/WebGLShaderPrecisionFormat.h:
+        * html/canvas/WebGLSync.h:
+        * html/canvas/WebGLTexture.h:
+        * html/canvas/WebGLTransformFeedback.h:
+        * html/canvas/WebGLUniformLocation.h:
+        * html/canvas/WebGLVertexArrayObjectOES.h:
+        * html/shadow/ImageControlsRootElement.cpp:
+        (WebCore::ImageControlsRootElement::maybeCreate):
+        * html/shadow/ImageControlsRootElement.h:
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlPanelElement::create):
+        (WebCore::MediaControlPanelEnclosureElement::create):
+        (WebCore::MediaControlOverlayEnclosureElement::create):
+        (WebCore::MediaControlTimelineContainerElement::create):
+        (WebCore::MediaControlVolumeSliderContainerElement::create):
+        (WebCore::MediaControlStatusDisplayElement::create):
+        (WebCore::MediaControlPanelMuteButtonElement::create):
+        (WebCore::MediaControlVolumeSliderMuteButtonElement::create):
+        (WebCore::MediaControlPlayButtonElement::create):
+        (WebCore::MediaControlOverlayPlayButtonElement::create):
+        (WebCore::MediaControlSeekForwardButtonElement::create):
+        (WebCore::MediaControlSeekBackButtonElement::create):
+        (WebCore::MediaControlRewindButtonElement::create):
+        (WebCore::MediaControlReturnToRealtimeButtonElement::create):
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::create):
+        (WebCore::MediaControlClosedCaptionsContainerElement::create):
+        (WebCore::MediaControlClosedCaptionsTrackListElement::create):
+        (WebCore::MediaControlTimelineElement::create):
+        (WebCore::MediaControlPanelVolumeSliderElement::create):
+        (WebCore::MediaControlFullscreenVolumeSliderElement::create):
+        (WebCore::MediaControlFullscreenButtonElement::create):
+        (WebCore::MediaControlFullscreenVolumeMinButtonElement::create):
+        (WebCore::MediaControlFullscreenVolumeMaxButtonElement::create):
+        (WebCore::MediaControlTimeRemainingDisplayElement::create):
+        (WebCore::MediaControlCurrentTimeDisplayElement::create):
+        * html/shadow/MediaControlElements.h:
+        * html/shadow/MediaControlsApple.h:
+        (WebCore::MediaControlsAppleEventListener::create):
+        * html/shadow/MeterShadowElement.h:
+        (WebCore::MeterInnerElement::create):
+        (WebCore::MeterBarElement::create):
+        (WebCore::MeterValueElement::create):
+        * html/shadow/ProgressShadowElement.h:
+        (WebCore::ProgressInnerElement::create):
+        (WebCore::ProgressBarElement::create):
+        (WebCore::ProgressValueElement::create):
+        * html/shadow/mac/ImageControlsRootElementMac.cpp:
+        (WebCore::ImageControlsRootElement::maybeCreate):
+        * html/track/TextTrackCueList.h:
+        (WebCore::TextTrackCueList::create):
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCue::create):
+        * html/track/VTTCue.h:
+        (WebCore::VTTCue::create):
+        * html/track/VTTRegion.h:
+        * html/track/VideoTrack.h:
+        * html/track/VideoTrackList.h:
+        * html/track/WebVTTElement.cpp:
+        (WebCore::WebVTTElement::create):
+        * html/track/WebVTTElement.h:
+        * html/track/WebVTTParser.h:
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerCreateResourceLoader):
+
 2015-05-03  Simon Fraser  <simon.fraser@apple.com>
 
         Make some static data const

@@ -30,8 +30,6 @@
 #include "WebGLContextObject.h"
 #include "WebGLVertexArrayObjectBase.h"
 
-#include <wtf/PassRefPtr.h>
-
 namespace WebCore {
 
 class WebGLVertexArrayObjectOES final : public WebGLVertexArrayObjectBase {

@@ -48,9 +48,9 @@ class VTTScanner;
 
 class VTTRegion final : public RefCounted<VTTRegion>, public ContextDestructionObserver {
 public:
-    static PassRefPtr<VTTRegion> create(ScriptExecutionContext& context)
+    static Ref<VTTRegion> create(ScriptExecutionContext& context)
     {
-        return adoptRef(new VTTRegion(context));
+        return adoptRef(*new VTTRegion(context));
     }
 
     virtual ~VTTRegion();

@@ -37,9 +37,9 @@ namespace WebCore {
 
 class TextTrackCueList : public RefCounted<TextTrackCueList> {
 public:
-    static PassRefPtr<TextTrackCueList> create()
+    static Ref<TextTrackCueList> create()
     {
-        return adoptRef(new TextTrackCueList);
+        return adoptRef(*new TextTrackCueList);
     }
 
     ~TextTrackCueList() { }

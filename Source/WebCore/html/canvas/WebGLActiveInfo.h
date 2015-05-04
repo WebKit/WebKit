@@ -35,9 +35,9 @@ namespace WebCore {
 
 class WebGLActiveInfo : public RefCounted<WebGLActiveInfo> {
 public:
-    static PassRefPtr<WebGLActiveInfo> create(const String& name, GC3Denum type, GC3Dint size)
+    static Ref<WebGLActiveInfo> create(const String& name, GC3Denum type, GC3Dint size)
     {
-        return adoptRef(new WebGLActiveInfo(name, type, size));
+        return adoptRef(*new WebGLActiveInfo(name, type, size));
     }
     String name() const { return m_name; }
     GC3Denum type() const { return m_type; }

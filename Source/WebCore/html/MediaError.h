@@ -45,7 +45,7 @@ public:
 #endif
     };
 
-    static PassRefPtr<MediaError> create(Code code) { return adoptRef(new MediaError(code)); }
+    static Ref<MediaError> create(Code code) { return adoptRef(*new MediaError(code)); }
 
     Code code() const { return m_code; }
 

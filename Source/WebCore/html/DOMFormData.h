@@ -44,8 +44,8 @@ class TextEncoding;
 
 class DOMFormData : public FormDataList, public RefCounted<DOMFormData> {
 public:
-    static PassRefPtr<DOMFormData> create(HTMLFormElement* form) { return adoptRef(new DOMFormData(form)); }
-    static PassRefPtr<DOMFormData> create(const TextEncoding& encoding) { return adoptRef(new DOMFormData(encoding)); }
+    static Ref<DOMFormData> create(HTMLFormElement* form) { return adoptRef(*new DOMFormData(form)); }
+    static Ref<DOMFormData> create(const TextEncoding& encoding) { return adoptRef(*new DOMFormData(encoding)); }
 
     void append(const String& name, const String& value);
     void append(const String& name, Blob*, const String& filename = String());

@@ -221,8 +221,8 @@ void MediaKeySession::sendMessage(Uint8Array* message, String destinationURL)
 
 void MediaKeySession::sendError(CDMSessionClient::MediaKeyErrorCode errorCode, unsigned long systemCode)
 {
-    RefPtr<MediaKeyError> error = MediaKeyError::create(errorCode, systemCode).get();
-    setError(error.get());
+    Ref<MediaKeyError> error = MediaKeyError::create(errorCode, systemCode).get();
+    setError(error.ptr());
 
     RefPtr<Event> keyerrorEvent = Event::create(eventNames().webkitkeyerrorEvent, false, false);
     keyerrorEvent->setTarget(this);

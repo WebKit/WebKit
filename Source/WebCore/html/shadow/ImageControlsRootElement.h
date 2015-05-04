@@ -38,7 +38,7 @@ class ImageControlsRootElement : public HTMLDivElement {
 public:
     virtual ~ImageControlsRootElement();
 
-    static PassRefPtr<ImageControlsRootElement> maybeCreate(Document&);
+    static RefPtr<ImageControlsRootElement> maybeCreate(Document&);
 
 protected:
     explicit ImageControlsRootElement(Document&);

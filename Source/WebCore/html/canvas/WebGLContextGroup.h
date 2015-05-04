@@ -28,7 +28,6 @@
 
 #include "WebGLRenderingContextBase.h"
 #include <wtf/HashSet.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

@@ -34,7 +34,7 @@ namespace WebCore {
 
 class CanvasProxy : public RefCounted<CanvasProxy> {
 public:
-    static PassRefPtr<CanvasProxy> create();
+    static Ref<CanvasProxy> create();
 
     virtual ~CanvasProxy();
 

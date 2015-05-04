@@ -46,7 +46,7 @@ public:
     };
     typedef unsigned short Code;
 
-    static PassRefPtr<MediaKeyError> create(Code code, unsigned long systemCode = 0) { return adoptRef(new MediaKeyError(code, systemCode)); }
+    static Ref<MediaKeyError> create(Code code, unsigned long systemCode = 0) { return adoptRef(*new MediaKeyError(code, systemCode)); }
 
     Code code() const { return m_code; }
     unsigned long systemCode() { return m_systemCode; }

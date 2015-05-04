@@ -37,7 +37,7 @@ class MediaControlsApple;
 
 class MediaControlsAppleEventListener : public EventListener {
 public:
-    static PassRefPtr<MediaControlsAppleEventListener> create(MediaControlsApple* mediaControls) { return adoptRef(new MediaControlsAppleEventListener(mediaControls)); }
+    static Ref<MediaControlsAppleEventListener> create(MediaControlsApple* mediaControls) { return adoptRef(*new MediaControlsAppleEventListener(mediaControls)); }
     static const MediaControlsAppleEventListener* cast(const EventListener* listener)
     {
         return listener->type() == MediaControlsAppleEventListenerType

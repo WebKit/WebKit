@@ -36,9 +36,9 @@ class VideoTrack;
 
 class VideoTrackList final : public TrackListBase {
 public:
-    static PassRefPtr<VideoTrackList> create(HTMLMediaElement* owner, ScriptExecutionContext* context)
+    static Ref<VideoTrackList> create(HTMLMediaElement* owner, ScriptExecutionContext* context)
     {
-        return adoptRef(new VideoTrackList(owner, context));
+        return adoptRef(*new VideoTrackList(owner, context));
     }
     virtual ~VideoTrackList();
 

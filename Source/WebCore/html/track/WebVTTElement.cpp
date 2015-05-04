@@ -75,9 +75,9 @@ WebVTTElement::WebVTTElement(WebVTTNodeType nodeType, Document& document)
 {
 }
 
-PassRefPtr<WebVTTElement> WebVTTElement::create(WebVTTNodeType nodeType, Document& document)
+Ref<WebVTTElement> WebVTTElement::create(WebVTTNodeType nodeType, Document& document)
 {
-    return adoptRef(new WebVTTElement(nodeType, document));
+    return adoptRef(*new WebVTTElement(nodeType, document));
 }
 
 RefPtr<Element> WebVTTElement::cloneElementWithoutAttributesAndChildren(Document& targetDocument)

@@ -29,7 +29,6 @@
 
 #include "CanvasContextAttributes.h"
 #include "GraphicsContext3D.h"
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 

@@ -32,9 +32,9 @@
 
 namespace WebCore {
 
-PassRefPtr<CanvasProxy> CanvasProxy::create()
+Ref<CanvasProxy> CanvasProxy::create()
 {
-    return adoptRef(new CanvasProxy());
+    return adoptRef(*new CanvasProxy());
 }
 
 CanvasProxy::CanvasProxy()

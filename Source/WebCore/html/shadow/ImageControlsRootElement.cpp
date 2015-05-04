@@ -31,9 +31,9 @@
 namespace WebCore {
 
 #if !PLATFORM(MAC)
-PassRefPtr<ImageControlsRootElement> ImageControlsRootElement::maybeCreate(Document& document)
+Ref<ImageControlsRootElement> ImageControlsRootElement::maybeCreate(Document& document)
 {
-    return adoptRef(new ImageControlsRootElement(document));
+    return adoptRef(*new ImageControlsRootElement(document));
 }
 #endif
 
