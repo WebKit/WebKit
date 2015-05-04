@@ -53,6 +53,7 @@ void WeakSet::sweep()
             // to the Heap so we don't pin down the entire 64kB MarkedBlock.
             m_blocks.remove(block);
             heap()->addLogicallyEmptyWeakBlock(block);
+            block->disconnectMarkedBlock();
         }
         block = nextBlock;
     }
@@ -84,7 +85,7 @@ WeakBlock::FreeCell* WeakSet::tryFindAllocator()
 
 WeakBlock::FreeCell* WeakSet::addAllocator()
 {
-    WeakBlock* block = WeakBlock::create();
+    WeakBlock* block = WeakBlock::create(m_markedBlock);
     heap()->didAllocate(WeakBlock::blockSize);
     m_blocks.append(block);
     WeakBlock::SweepResult sweepResult = block->takeSweepResult();

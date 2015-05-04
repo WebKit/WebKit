@@ -164,6 +164,7 @@ namespace JSC {
         bool testAndSetMarked(const void*);
         bool isLive(const JSCell*);
         bool isLiveCell(const void*);
+        bool isMarkedOrNewlyAllocated(const JSCell*);
         void setMarked(const void*);
         void clearMarked(const void*);
 
@@ -176,6 +177,7 @@ namespace JSC {
         void setNewlyAllocated(const void*);
         void clearNewlyAllocated(const void*);
 
+        bool isAllocated() const;
         bool needsSweeping();
         void didRetireBlock(const FreeList&);
         void willRemoveBlock();
@@ -410,6 +412,12 @@ namespace JSC {
         return false;
     }
 
+    inline bool MarkedBlock::isMarkedOrNewlyAllocated(const JSCell* cell)
+    {
+        ASSERT(m_state == Retired || m_state == Marked);
+        return m_marks.get(atomNumber(cell)) || (m_newlyAllocated && isNewlyAllocated(cell));
+    }
+
     inline bool MarkedBlock::isLive(const JSCell* cell)
     {
         switch (m_state) {
@@ -418,7 +426,7 @@ namespace JSC {
 
         case Retired:
         case Marked:
-            return m_marks.get(atomNumber(cell)) || (m_newlyAllocated && isNewlyAllocated(cell));
+            return isMarkedOrNewlyAllocated(cell);
 
         case New:
         case FreeListed:
@@ -484,6 +492,11 @@ namespace JSC {
     inline bool MarkedBlock::needsSweeping()
     {
         return m_state == Marked;
+    }
+
+    inline bool MarkedBlock::isAllocated() const
+    {
+        return m_state == Allocated;
     }
 
 } // namespace JSC

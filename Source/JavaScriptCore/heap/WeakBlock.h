@@ -36,6 +36,7 @@ namespace JSC {
 
 class HeapRootVisitor;
 class JSValue;
+class MarkedBlock;
 class WeakHandleOwner;
 
 class WeakBlock : public DoublyLinkedListNode<WeakBlock> {
@@ -55,7 +56,7 @@ public:
         FreeCell* freeList { nullptr };
     };
 
-    static WeakBlock* create();
+    static WeakBlock* create(MarkedBlock&);
     static void destroy(WeakBlock*);
 
     static WeakImpl* asWeakImpl(FreeCell*);
@@ -70,17 +71,19 @@ public:
     void reap();
 
     void lastChanceToFinalize();
+    void disconnectMarkedBlock() { m_markedBlock = nullptr; }
 
 private:
     static FreeCell* asFreeCell(WeakImpl*);
 
-    WeakBlock();
+    explicit WeakBlock(MarkedBlock&);
     WeakImpl* firstWeakImpl();
     void finalize(WeakImpl*);
     WeakImpl* weakImpls();
     size_t weakImplCount();
     void addToFreeList(FreeCell**, WeakImpl*);
 
+    MarkedBlock* m_markedBlock;
     WeakBlock* m_prev;
     WeakBlock* m_next;
     SweepResult m_sweepResult;

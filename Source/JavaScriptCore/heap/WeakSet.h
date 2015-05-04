@@ -31,6 +31,7 @@
 namespace JSC {
 
 class Heap;
+class MarkedBlock;
 class WeakImpl;
 
 class WeakSet {
@@ -40,7 +41,7 @@ public:
     static WeakImpl* allocate(JSValue, WeakHandleOwner* = 0, void* context = 0);
     static void deallocate(WeakImpl*);
 
-    WeakSet(VM*);
+    WeakSet(VM*, MarkedBlock&);
     ~WeakSet();
     void lastChanceToFinalize();
 
@@ -65,12 +66,14 @@ private:
     WeakBlock* m_nextAllocator;
     DoublyLinkedList<WeakBlock> m_blocks;
     VM* m_vm;
+    MarkedBlock& m_markedBlock;
 };
 
-inline WeakSet::WeakSet(VM* vm)
+inline WeakSet::WeakSet(VM* vm, MarkedBlock& markedBlock)
     : m_allocator(0)
     , m_nextAllocator(0)
     , m_vm(vm)
+    , m_markedBlock(markedBlock)
 {
 }
 

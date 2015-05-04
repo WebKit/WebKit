@@ -1,3 +1,58 @@
+2015-05-04  Andreas Kling  <akling@apple.com>
+
+        Optimize WeakBlock's "reap" and "visit" operations.
+        <https://webkit.org/b/144585>
+
+        Reviewed by Geoffrey Garen.
+
+        WeakBlock was using Heap::isLive(void*) to determine the liveness of weak pointees.
+        That function was really written with conservative roots marking in mind, and will do a bunch
+        of sanity and bounds checks.
+
+        For weaks, we know that the pointer will have been a valid cell pointer into a block
+        of appropriate cell size, so we can skip a lot of the checks.
+
+        We now keep a pointer to the MarkedBlock in each WeakBlock. That way we no longer have to do
+        MarkedBlock::blockFor() for every single cell when iterating.
+
+        Note that a WeakBlock's MarkedBlock pointer becomes null when we detach a logically empty
+        WeakBlock from its WeakSet and transfer ownership to Heap. At that point, the block will never
+        be pointing to any live cells, and the only operation that will run on the block is sweep().
+
+        Finally, MarkedBlock allows liveness queries in three states: Marked, Retired, and Allocated.
+        In Allocated state, all cells are reported as live. This state will reset to Marked on next GC.
+        This patch uses that knowledge to avoid branching on the MarkedBlock's state for every cell.
+
+        This is a ~3x speedup of visit() and a ~2x speedup of reap() on Dromaeo/dom-modify, netting
+        what looks like a 1% speedup locally.
+
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::MarkedBlock): Pass *this to the WeakSet's ctor.
+
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::isMarkedOrNewlyAllocated): Added, stripped-down version of isLive() when the
+        block's state is known to be either Marked or Retired.
+
+        (JSC::MarkedBlock::isAllocated): Added, tells WeakBlock it's okay to skip reap/visit since isLive()
+        would report that all cells are live anyway.
+
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::create):
+        (JSC::WeakBlock::WeakBlock): Stash a MarkedBlock* on each WeakBlock.
+
+        (JSC::WeakBlock::visit):
+        (JSC::WeakBlock::reap): Optimized these two to avoid a bunch of pointer arithmetic and branches.
+
+        * heap/WeakBlock.h:
+        (JSC::WeakBlock::disconnectMarkedBlock): Added.
+        * heap/WeakSet.cpp:
+        (JSC::WeakSet::sweep): Call the above when removing a WeakBlock from WeakSet and transferring
+        ownership to Heap until it can die peacefully.
+
+        (JSC::WeakSet::addAllocator):
+        * heap/WeakSet.h:
+        (JSC::WeakSet::WeakSet): Give WeakSet a MarkedBlock& for passing on to WeakBlocks.
+
 2015-05-04  Basile Clement  <basile_clement@apple.com>
 
         Allocation sinking is prohibiting the creation of phis between a Phantom object and its materialization
