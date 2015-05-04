@@ -102,19 +102,24 @@ static void startReadableStreamAsync(ReadableStream& readableStream)
     });
 }
 
-void ReadableStreamJSSource::start(JSC::ExecState* exec, JSReadableStream* readableStream)
+JSDOMGlobalObject* ReadableStreamJSSource::globalObject()
 {
-    JSLockHolder lock(exec);
+    return jsDynamicCast<JSDOMGlobalObject*>(m_source->globalObject());
+}
 
-    Ref<ReadableStreamController> controller = ReadableStreamController::create(static_cast<ReadableJSStream&>(readableStream->impl()));
-    m_controller.set(exec->vm(), jsDynamicCast<JSReadableStreamController*>(toJS(exec, readableStream->globalObject(), controller)));
+void ReadableStreamJSSource::start(ExecState& exec, ReadableJSStream& readableStream)
+{
+    JSLockHolder lock(&exec);
 
-    JSValue startFunction = getPropertyFromObject(exec, m_source.get(), "start");
+    Ref<ReadableStreamController> controller = ReadableStreamController::create(readableStream);
+    m_controller.set(exec.vm(), jsDynamicCast<JSReadableStreamController*>(toJS(&exec, globalObject(), controller)));
+
+    JSValue startFunction = getPropertyFromObject(&exec, m_source.get(), "start");
     if (!startFunction.isFunction()) {
         if (!startFunction.isUndefined())
-            throwVMError(exec, createTypeError(exec, ASCIILiteral("ReadableStream constructor object start property should be a function.")));
+            throwVMError(&exec, createTypeError(&exec, ASCIILiteral("ReadableStream constructor object start property should be a function.")));
         else
-            startReadableStreamAsync(readableStream->impl());
+            startReadableStreamAsync(readableStream);
         return;
     }
 
@@ -122,27 +127,28 @@ void ReadableStreamJSSource::start(JSC::ExecState* exec, JSReadableStream* reada
     arguments.append(m_controller.get());
 
     JSValue exception;
-    callFunction(exec, startFunction, m_source.get(), arguments, &exception);
+    callFunction(&exec, startFunction, m_source.get(), arguments, &exception);
 
     if (exception) {
-        throwVMError(exec, exception);
+        throwVMError(&exec, exception);
         return;
     }
 
     // FIXME: Implement handling promise as result of calling start function.
-    startReadableStreamAsync(readableStream->impl());
+    startReadableStreamAsync(readableStream);
 }
 
-Ref<ReadableJSStream> ReadableJSStream::create(ScriptExecutionContext& scriptExecutionContext, Ref<ReadableStreamJSSource>&& source)
+Ref<ReadableJSStream> ReadableJSStream::create(ExecState& exec, ScriptExecutionContext& scriptExecutionContext)
 {
-    auto readableStream = adoptRef(*new ReadableJSStream(scriptExecutionContext, WTF::move(source)));
+    Ref<ReadableStreamJSSource> source = ReadableStreamJSSource::create(&exec);
+    Ref<ReadableJSStream> readableStream = adoptRef(*new ReadableJSStream(scriptExecutionContext, WTF::move(source)));
+    readableStream->jsSource().start(exec, readableStream.get());
     return readableStream;
 }
 
 Ref<ReadableStreamReader> ReadableJSStream::createReader()
 {
-    RefPtr<ReadableStreamReader> reader = ReadableJSStreamReader::create(*this);
-    return reader.releaseNonNull();
+    return Reader::create(*this);
 }
 
 ReadableJSStream::ReadableJSStream(ScriptExecutionContext& scriptExecutionContext, Ref<ReadableStreamJSSource>&& source)
@@ -150,13 +156,17 @@ ReadableJSStream::ReadableJSStream(ScriptExecutionContext& scriptExecutionContex
 {
 }
 
-Ref<ReadableJSStreamReader> ReadableJSStreamReader::create(ReadableJSStream& stream)
+ReadableStreamJSSource& ReadableJSStream::jsSource()
 {
-    auto readableStreamReader = adoptRef(*new ReadableJSStreamReader(stream));
-    return readableStreamReader;
+    return static_cast<ReadableStreamJSSource&>(source());
 }
 
-ReadableJSStreamReader::ReadableJSStreamReader(ReadableJSStream& readableStream)
+Ref<ReadableJSStream::Reader> ReadableJSStream::Reader::create(ReadableJSStream& stream)
+{
+    return adoptRef(*new Reader(stream));
+}
+
+ReadableJSStream::Reader::Reader(ReadableJSStream& readableStream)
     : ReadableStreamReader(readableStream)
 {
 }

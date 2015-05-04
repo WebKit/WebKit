@@ -78,18 +78,9 @@ EncodedJSValue JSC_HOST_CALL constructJSReadableStream(ExecState* exec)
 
     DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec->callee());
     ASSERT(jsConstructor);
-    ScriptExecutionContext* scriptExecutionContext = jsConstructor->scriptExecutionContext();
 
-    Ref<ReadableStreamJSSource> source = ReadableStreamJSSource::create(exec);
-    RefPtr<ReadableStream> readableStream = ReadableJSStream::create(*scriptExecutionContext, Ref<ReadableStreamJSSource>(source.get()));
-
-    VM& vm = exec->vm();
-    JSGlobalObject* globalObject = exec->callee()->globalObject();
-    JSReadableStream* jsReadableStream = JSReadableStream::create(JSReadableStream::createStructure(vm, globalObject, JSReadableStream::createPrototype(vm, globalObject)), jsCast<JSDOMGlobalObject*>(globalObject), readableStream.releaseNonNull());
-
-    source->start(exec, jsReadableStream);
-
-    return JSValue::encode(jsReadableStream);
+    Ref<ReadableJSStream> readableStream = ReadableJSStream::create(*exec, *jsConstructor->scriptExecutionContext());
+    return JSValue::encode(toJS(exec, jsCast<JSDOMGlobalObject*>(exec->callee()->globalObject()), WTF::move(readableStream)));
 }
 
 } // namespace WebCore

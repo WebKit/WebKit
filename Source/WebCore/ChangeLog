@@ -1,3 +1,29 @@
+2015-05-04  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Streams API] Refactor ReadableJSStream and ReadableStreamJSSource
+        https://bugs.webkit.org/show_bug.cgi?id=144387
+
+        Reviewed by Darin Adler.
+
+        Made ReadableStreamReader a private class of ReadableJSStream.
+        Simplified ReadableJSStream construction so that binding constructor does not need to know about ReadableStreamJSSource. 
+
+        No functional change, existing tests cover the changes.
+
+        * Modules/streams/ReadableStream.h:
+        (WebCore::ReadableStream::source): Added to implement jsSource(), needed by ReadableJSStream.
+        * bindings/js/JSReadableStreamCustom.cpp:
+        (WebCore::constructJSReadableStream): Simplified to not have to handle source creation.
+        * bindings/js/ReadableStreamJSSource.cpp:
+        (WebCore::ReadableStreamJSSource::globalObject): Helper function to be used in other future methods.
+        (WebCore::ReadableStreamJSSource::start):
+        (WebCore::ReadableJSStream::create):
+        (WebCore::ReadableJSStream::createReader):
+        (WebCore::ReadableJSStream::jsSource):
+        (WebCore::ReadableJSStream::Reader::create):
+        (WebCore::ReadableJSStream::Reader::Reader):
+        * bindings/js/ReadableStreamJSSource.h:
+
 2015-05-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove move-js-headers.sh

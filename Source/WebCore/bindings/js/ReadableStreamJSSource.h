@@ -44,14 +44,13 @@
 
 namespace WebCore {
 
-class JSReadableStream;
-
 class ReadableStreamJSSource: public ReadableStreamSource {
 public:
     static Ref<ReadableStreamJSSource> create(JSC::ExecState*);
     ~ReadableStreamJSSource();
 
-    void start(JSC::ExecState*, JSReadableStream*);
+    JSDOMGlobalObject* globalObject();
+    void start(JSC::ExecState&, ReadableJSStream&);
 
 private:
     ReadableStreamJSSource(JSC::ExecState*);
@@ -64,17 +63,19 @@ private:
 
 class ReadableJSStream: public ReadableStream {
 public:
-    static Ref<ReadableJSStream> create(ScriptExecutionContext&, Ref<ReadableStreamJSSource>&&);
+    static Ref<ReadableJSStream> create(JSC::ExecState&, ScriptExecutionContext&);
     virtual Ref<ReadableStreamReader> createReader() override;
+    ReadableStreamJSSource& jsSource();
+
 private:
     ReadableJSStream(ScriptExecutionContext&, Ref<ReadableStreamJSSource>&&);
-};
 
-class ReadableJSStreamReader: public ReadableStreamReader {
-public:
-    static Ref<ReadableJSStreamReader> create(ReadableJSStream&);
-private:
-    ReadableJSStreamReader(ReadableJSStream&);
+    class Reader: public ReadableStreamReader {
+    public:
+        static Ref<Reader> create(ReadableJSStream&);
+    private:
+        explicit Reader(ReadableJSStream&);
+    };
 };
 
 void setInternalSlotToObject(JSC::ExecState*, JSC::JSValue, JSC::PrivateName&, JSC::JSValue);
