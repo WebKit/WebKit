@@ -1,3 +1,38 @@
+2015-05-04  Chris Dumez  <cdumez@apple.com>
+
+        Crash at com.apple.WebKit.WebContent at com.apple.WebCore: WebCore::createWindow + 185
+        https://bugs.webkit.org/show_bug.cgi?id=144597
+        <rdar://problem/20361579>
+
+        Reviewed by Andreas Kling.
+
+        Test: fast/dom/Window/window-open-activeWindow-null-frame.html
+
+        In our implementation of window.open(), we make sure that the window
+        which window.open() is called has a frame. However, we did not have the
+        same check for the activeDOMWindow (i.e. the lexicalGlobalObject) causing
+        us to crash in WebCore::createWindow() when dereferencing it.
+
+        This patch updates WebCore::createWindow() takes a reference to the
+        openerFrame instead of a pointer to make it clear the implementation
+        expects it to be non-null. A null check is then added for the frame
+        at the call site: DOMWindow::createWindow().
+
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::openInNewTab):
+        * loader/FrameLoader.cpp:
+        (WebCore::isDocumentSandboxed):
+        (WebCore::FrameLoader::submitForm):
+        (WebCore::createWindow):
+        Take a reference to openerFrame instead of a pointer as the
+        implementation expects it to be non-null.
+
+        * loader/FrameLoader.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::createWindow):
+        Add null check for activeFrame before passing it to
+        WebCore::createWindow().
+
 2015-05-04  Dean Jackson  <dino@apple.com>
 
         Create a named CSS property for system colors

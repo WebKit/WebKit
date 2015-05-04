@@ -214,7 +214,7 @@ void InspectorFrontendClientLocal::openInNewTab(const String& url)
 
     bool created;
     WindowFeatures windowFeatures;
-    RefPtr<Frame> frame = WebCore::createWindow(&mainFrame, &mainFrame, request, windowFeatures, created);
+    RefPtr<Frame> frame = WebCore::createWindow(mainFrame, &mainFrame, request, windowFeatures, created);
     if (!frame)
         return;
 
