@@ -1,3 +1,15 @@
+2015-05-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        new super should be a syntax error
+        https://bugs.webkit.org/show_bug.cgi?id=144282
+
+        Reviewed by Joseph Pecoraro.
+
+        Disallow "new super" as ES6 spec doesn't allow this.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseMemberExpression):
+
 2015-05-04  Saam Barati  <saambarati1@gmail.com>
 
         JSCallbackObject does not maintain symmetry between accesses for getOwnPropertySlot and put

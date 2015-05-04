@@ -2524,6 +2524,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
 
 #if ENABLE(ES6_CLASS_SYNTAX)
     bool baseIsSuper = match(SUPER);
+    semanticFailIfTrue(baseIsSuper && newCount, "Cannot use new with super");
 #else
     bool baseIsSuper = false;
 #endif
@@ -2587,7 +2588,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
         baseIsSuper = false;
     }
 endMemberExpression:
-    semanticFailIfTrue(baseIsSuper && !newCount, "Cannot reference super");
+    semanticFailIfTrue(baseIsSuper, "Cannot reference super");
     while (newCount--)
         base = context.createNewExpr(location, base, expressionStart, lastTokenEndPosition());
     return base;

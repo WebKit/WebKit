@@ -16,9 +16,7 @@ PASS (new SecondDerived).chainMethod() is ["base", "derived", "secondDerived"]
 PASS x = class extends Base { constructor() { super(); } super() {} } threw exception SyntaxError: Unexpected keyword 'super'.
 PASS x = class extends Base { constructor() { super(); } method() { super() } } threw exception SyntaxError: Cannot call super() outside of a class constructor..
 PASS x = class extends Base { constructor() { super(); } method() { super } } threw exception SyntaxError: Cannot reference super..
-PASS x = class extends Base { constructor() { super(); } method() { return new super } } did not throw exception.
-PASS (new x).method() instanceof Base is true
-PASS (new x).method() instanceof x is false
+PASS x = class extends Base { constructor() { super(); } method() { return new super } } threw exception SyntaxError: Cannot use new with super..
 PASS x = class extends Base { constructor() { super(); } method1() { delete (super.foo) } method2() { delete super["foo"] } } did not throw exception.
 PASS (new x).method1() threw exception ReferenceError: Cannot delete a super property.
 PASS (new x).method2() threw exception ReferenceError: Cannot delete a super property.
