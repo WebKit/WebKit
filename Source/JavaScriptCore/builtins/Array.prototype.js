@@ -398,7 +398,7 @@ function sort(comparator)
 
         for (var dstIndex = left; dstIndex < rightEnd; ++dstIndex) {
             if (right < rightEnd) {
-                if (left >= leftEnd || comparator(src[left], src[right]) > 0) {
+                if (left >= leftEnd || comparator(src[right], src[left]) < 0) {
                     dst[dstIndex] = src[right++];
                     continue;
                 }

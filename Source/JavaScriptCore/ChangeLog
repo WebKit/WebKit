@@ -1,3 +1,56 @@
+2015-05-01  Geoffrey Garen  <ggaren@apple.com>
+
+        REGRESSION(r183570): jslib-traverse-jquery is 22% slower
+        https://bugs.webkit.org/show_bug.cgi?id=144476
+
+        Reviewed by Sam Weinig.
+
+        jslib-traverse-jquery is now 31% faster than its unregressed baseline.
+
+        The jQuery algorithm for sorting DOM nodes is so pathologically slow that,
+        to my knowledge, the topic of how to optimize it is not covered in any
+        literature about sorting.
+
+        On the slowest jQuery sorting test -- prevAll -- our new
+        Array.prototype.sort, compared to its predecessor, performed 12% fewer
+        comparisons and requireed 10X less overhead per comparison. Yet, it was
+        slower.
+
+        It was slower because it inadvertantly increased the average cost of the
+        comparison function by 2X. jQuery uses compareDocumentPosition to compare
+        DOM nodes, and compareDocumentPosition(a, b) is O(N) in the distance
+        required to traverse backwards from b to a. In prevAll, we encounter the
+        worst case for merge sort of compareDocumentPosition: A long list of DOM
+        nodes in mostly reverse order. In this case, merge sort will sequentially
+        compareDocumentPosition(a, b), where a is not reachable backwards from
+        b, and therefore compareDocumentPosition will traverse the whole sibling
+        list.
+
+        The solution is simple enough: Call compareDocumentPosition(b, a) instead.
+
+        This is a pretty silly thing to do, but it is harmless, and jQuery is
+        popular, so let's do it.
+
+        We do not risk suffering the same problem in reverse when sorting a long
+        list of DOM nodes in forward order. (We still have a 37% speedup on the
+        nextAll benchmark.) The reason is that merge sort performs 2X fewer
+        comparisons when the list is already sorted, so we can worry less about
+        the cost of each comparison.
+
+        A fully principled soultion to this problem would probably do something
+        like Python's timsort, which special-cases ordered ranges to perform
+        only O(n) comparisons. But that would contradict our original
+        goal of just having something simple that works.
+
+        Another option is for elements to keep a compareDocumentPosition cache,
+        like a node list cache, which allows you to determine the absolute
+        position of a node using a hash lookup. I will leave this as an exercise
+        for kling.
+
+        * builtins/Array.prototype.js:
+        (sort.merge): Compare in an order that is favorable to a comparator
+        that calls compareDocumentPosition.
+
 2015-05-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         [cmake] Fix generate-js-builtins related incremental build issue
