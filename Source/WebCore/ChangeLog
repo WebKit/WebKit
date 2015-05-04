@@ -1,3 +1,11 @@
+2015-05-04  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Fix build breakage caused by API deprecation
+        https://bugs.webkit.org/show_bug.cgi?id=144593
+
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm:
+        (WebCore::MediaPlaybackTargetPickerMac::showPlaybackTargetPicker): Suppress warnings.
+
 2015-05-04  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r178156): CSS Parser incorrectly rejects valid calc() in padding-right property
