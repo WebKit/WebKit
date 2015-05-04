@@ -1,3 +1,19 @@
+2015-05-04  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Wrong computed style for named grid lines in implicit tracks
+        https://bugs.webkit.org/show_bug.cgi?id=144449
+
+        Reviewed by Sergio Villar Senin.
+
+        If there're implicit tracks then trackPositions is bigger than
+        trackSizes, so we need to use the proper index to append the trailing
+        <ident>s in valueForGridTrackList().
+
+        Test: fast/css-grid-layout/named-grid-lines-computed-style-implicit-tracks.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForGridTrackList):
+
 2015-05-03  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Purge PassRefPtr in WebCore/html

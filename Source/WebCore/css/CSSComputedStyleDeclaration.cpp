@@ -1053,6 +1053,7 @@ static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, R
     }
 
     auto list = CSSValueList::createSpaceSeparated();
+    unsigned insertionIndex;
     if (isRenderGrid) {
         const Vector<LayoutUnit>& trackPositions = direction == ForColumns ? downcast<RenderGrid>(*renderer).columnPositions() : downcast<RenderGrid>(*renderer).rowPositions();
         // There are at least #tracks + 1 grid lines (trackPositions). Apart from that, the grid container can generate implicit grid tracks,
@@ -1063,15 +1064,17 @@ static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, R
             addValuesForNamedGridLinesAtIndex(orderedNamedGridLines, i, list.get());
             list.get().append(zoomAdjustedPixelValue(trackPositions[i + 1] - trackPositions[i], style));
         }
+        insertionIndex = trackPositions.size() - 1;
     } else {
         for (unsigned i = 0; i < trackSizes.size(); ++i) {
             addValuesForNamedGridLinesAtIndex(orderedNamedGridLines, i, list.get());
             list.get().append(specifiedValueForGridTrackSize(trackSizes[i], style));
         }
+        insertionIndex = trackSizes.size();
     }
 
     // Those are the trailing <ident>* allowed in the syntax.
-    addValuesForNamedGridLinesAtIndex(orderedNamedGridLines, trackSizes.size(), list.get());
+    addValuesForNamedGridLinesAtIndex(orderedNamedGridLines, insertionIndex, list.get());
     return WTF::move(list);
 }
 
