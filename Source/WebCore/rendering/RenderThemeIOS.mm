@@ -1311,16 +1311,14 @@ String RenderThemeIOS::mediaControlsScript()
 }
 #endif // ENABLE(VIDEO)
 
-Color RenderThemeIOS::systemColor(CSSValueID cssValueId) const
+Color RenderThemeIOS::systemColor(CSSValueID cssValueID) const
 {
-    {
-        auto it = m_systemColorCache.find(cssValueId);
-        if (it != m_systemColorCache.end())
-            return it->value;
-    }
+    auto addResult = m_systemColorCache.add(cssValueID, Color());
+    if (!addResult.isNewEntry)
+        return addResult.iterator->value;
 
     Color color;
-    switch (cssValueId) {
+    switch (cssValueID) {
     case CSSValueAppleSystemBlue:
         color = [getUIColorClass() systemBlueColor].CGColor;
         break;
@@ -1347,12 +1345,11 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueId) const
     }
 
     if (!color.isValid())
-        color = RenderTheme::systemColor(cssValueId);
+        color = RenderTheme::systemColor(cssValueID);
 
-    if (color.isValid())
-        m_systemColorCache.set(cssValueId, color.rgb());
+    addResult.iterator->value = color;
 
-    return color;
+    return addResult.iterator->value;
 }
 
 }

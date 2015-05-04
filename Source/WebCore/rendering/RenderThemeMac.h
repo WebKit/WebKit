@@ -96,7 +96,6 @@ public:
     virtual double animationDurationForProgressBar(RenderProgress&) const override;
     virtual IntRect progressBarRectForBounds(const RenderObject&, const IntRect&) const override;
 
-    virtual Color systemColor(CSSValueID) const override;
     // Controls color values returned from platformFocusRingColor(). systemColor() will be used when false.
     bool usesTestModeFocusRingColor() const;
     // A view associated to the contained document.
@@ -179,6 +178,8 @@ private:
 
     FloatRect convertToPaintingRect(const RenderObject& inputRenderer, const RenderObject& partRenderer, const FloatRect& inputRect, const IntRect&) const;
 
+    virtual Color systemColor(CSSValueID) const override;
+
     // Get the control size based off the font. Used by some of the controls (like buttons).
     NSControlSize controlSizeForFont(RenderStyle&) const;
     NSControlSize controlSizeForSystemFont(RenderStyle&) const;
@@ -247,7 +248,7 @@ private:
     bool m_isSliderThumbHorizontalPressed;
     bool m_isSliderThumbVerticalPressed;
 
-    mutable HashMap<int, RGBA32> m_systemColorCache;
+    mutable HashMap<int, Color> m_systemColorCache;
 
     RetainPtr<WebCoreRenderThemeNotificationObserver> m_notificationObserver;
 

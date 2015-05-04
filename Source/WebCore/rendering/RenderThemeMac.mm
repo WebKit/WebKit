@@ -455,16 +455,14 @@ void RenderThemeMac::platformColorsDidChange()
     RenderTheme::platformColorsDidChange();
 }
 
-Color RenderThemeMac::systemColor(CSSValueID cssValueId) const
+Color RenderThemeMac::systemColor(CSSValueID cssValueID) const
 {
-    {
-        auto it = m_systemColorCache.find(cssValueId);
-        if (it != m_systemColorCache.end())
-            return it->value;
-    }
+    auto addResult = m_systemColorCache.add(cssValueID, Color());
+    if (!addResult.isNewEntry)
+        return addResult.iterator->value;
 
     Color color;
-    switch (cssValueId) {
+    switch (cssValueID) {
     case CSSValueActiveborder:
         color = convertNSColorToColor([NSColor keyboardFocusIndicatorColor]);
         break;
@@ -602,12 +600,11 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueId) const
     }
 
     if (!color.isValid())
-        color = RenderTheme::systemColor(cssValueId);
+        color = RenderTheme::systemColor(cssValueID);
 
-    if (color.isValid())
-        m_systemColorCache.set(cssValueId, color.rgb());
+    addResult.iterator->value = color;
 
-    return color;
+    return addResult.iterator->value;
 }
 
 bool RenderThemeMac::usesTestModeFocusRingColor() const

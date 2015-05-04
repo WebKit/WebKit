@@ -1,3 +1,18 @@
+2015-05-04  Dean Jackson  <dino@apple.com>
+
+        Create a named CSS property for system colors
+        https://bugs.webkit.org/show_bug.cgi?id=144423
+
+        Follow-up comments from Darin Adler.
+
+        * rendering/RenderThemeIOS.h: Cache a Color rather than an RGBA32.
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::systemColor): Use "add" to avoid multiple hits on the HashMap, and
+        cache invalid responses so that we don't have to keep looking for non-existent colors.
+        * rendering/RenderThemeMac.h: Same as iOS.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::systemColor):
+
 2015-05-04  Simon Fraser  <simon.fraser@apple.com>
 
         display:none iframes cause repeated compositing flushing
