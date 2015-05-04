@@ -186,6 +186,9 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
         postLayoutData.isReplaceAllowed = result.isContentEditable && !result.isInPasswordField && !selectedText.containsOnlyWhitespace();
     }
     if (!selection.isNone()) {
+        if (m_assistedNode && m_assistedNode->renderer())
+            postLayoutData.selectionClipRect = view->contentsToRootView(m_assistedNode->renderer()->absoluteBoundingBoxRect());
+        
         Node* nodeToRemove;
         if (RenderStyle* style = Editor::styleForSelectionStart(&frame, nodeToRemove)) {
             CTFontRef font = style->fontCascade().primaryFont().getCTFont();

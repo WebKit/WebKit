@@ -111,6 +111,7 @@ bool EditorState::decode(IPC::ArgumentDecoder& decoder, EditorState& result)
 #if PLATFORM(IOS)
 void EditorState::PostLayoutData::encode(IPC::ArgumentEncoder& encoder) const
 {
+    encoder << selectionClipRect;
     encoder << selectionRects;
     encoder << caretRectAtStart;
     encoder << caretRectAtEnd;
@@ -126,6 +127,8 @@ void EditorState::PostLayoutData::encode(IPC::ArgumentEncoder& encoder) const
 
 bool EditorState::PostLayoutData::decode(IPC::ArgumentDecoder& decoder, PostLayoutData& result)
 {
+    if (!decoder.decode(result.selectionClipRect))
+        return false;
     if (!decoder.decode(result.selectionRects))
         return false;
     if (!decoder.decode(result.caretRectAtStart))

@@ -61,6 +61,7 @@ struct EditorState {
     String markedText;
 
     struct PostLayoutData {
+        WebCore::IntRect selectionClipRect;
         Vector<WebCore::SelectionRect> selectionRects;
         WebCore::IntRect caretRectAtStart;
         WebCore::IntRect caretRectAtEnd;

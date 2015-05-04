@@ -818,7 +818,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius)
 {
     if (_assistedNodeInformation.elementType == InputType::None)
         return CGRectZero;
-    return _assistedNodeInformation.elementRect;
+    return _page->editorState().postLayoutData().selectionClipRect;
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)preventingGestureRecognizer canPreventGestureRecognizer:(UIGestureRecognizer *)preventedGestureRecognizer
