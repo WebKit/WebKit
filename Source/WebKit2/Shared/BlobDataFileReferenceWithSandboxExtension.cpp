@@ -42,12 +42,14 @@ BlobDataFileReferenceWithSandboxExtension::~BlobDataFileReferenceWithSandboxExte
 
 void BlobDataFileReferenceWithSandboxExtension::prepareForFileAccess()
 {
-    m_sandboxExtension->consume();
+    if (m_sandboxExtension)
+        m_sandboxExtension->consume();
 }
 
 void BlobDataFileReferenceWithSandboxExtension::revokeFileAccess()
 {
-    m_sandboxExtension->revoke();
+    if (m_sandboxExtension)
+        m_sandboxExtension->revoke();
 }
 
 }

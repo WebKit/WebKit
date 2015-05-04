@@ -1,3 +1,18 @@
+2015-05-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Crash in SandboxExtension::consume when uploading iWork -tef documents to iCloud
+        https://bugs.webkit.org/show_bug.cgi?id=144509
+        rdar://problem/18731910
+
+        Reviewed by Daniel Bates.
+
+        No test, because testRunner.beginDragWithFiles doesn't work in WKTR, and making
+        it work is hard.
+
+        * Shared/BlobDataFileReferenceWithSandboxExtension.cpp:
+        (WebKit::BlobDataFileReferenceWithSandboxExtension::prepareForFileAccess):
+        (WebKit::BlobDataFileReferenceWithSandboxExtension::revokeFileAccess):
+
 2015-05-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][EFL] Unify platform display handling
