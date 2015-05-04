@@ -1159,6 +1159,8 @@ void WebVideoFullscreenInterfaceAVKit::cleanupFullscreenInternal()
     [m_videoLayerContainer setPlayerViewController:nil];
     [[m_viewController view] removeFromSuperview];
 
+    [m_layerHostWrapper setModel:nullptr];
+
     m_layerHostWrapper = nil;
     m_videoLayer = nil;
     m_videoLayerContainer = nil;
