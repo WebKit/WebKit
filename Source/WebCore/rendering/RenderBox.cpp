@@ -425,6 +425,9 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
         
         if (rootStyleChanged && is<RenderBlockFlow>(rootRenderer) && downcast<RenderBlockFlow>(*rootRenderer).multiColumnFlowThread())
             downcast<RenderBlockFlow>(*rootRenderer).updateStylesForColumnChildren();
+
+        if (diff != StyleDifferenceEqual)
+            view().compositor().rootBackgroundTransparencyChanged();
     }
 
 #if ENABLE(CSS_SHAPES)

@@ -987,6 +987,17 @@ void Internals::setScrollViewPosition(long x, long y, ExceptionCode& ec)
     frameView->setConstrainsScrollingToContentEdge(constrainsScrollingToContentEdgeOldValue);
 }
 
+void Internals::setViewBaseBackgroundColor(const String& colorValue, ExceptionCode& ec)
+{
+    Document* document = contextDocument();
+    if (!document || !document->view()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    document->view()->setBaseBackgroundColor(Color(colorValue));
+}
+
 void Internals::setPagination(const String& mode, int gap, int pageLength, ExceptionCode& ec)
 {
     Document* document = contextDocument();

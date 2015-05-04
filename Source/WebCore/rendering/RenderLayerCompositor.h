@@ -165,6 +165,9 @@ public:
     bool needsFixedRootBackgroundLayer(const RenderLayer&) const;
     GraphicsLayer* fixedRootBackgroundLayer() const;
     
+    // Called after the view transparency, or the document or base background color change.
+    void rootBackgroundTransparencyChanged();
+    
     // Repaint the appropriate layers when the given RenderLayer starts or stops being composited.
     void repaintOnCompositingChange(RenderLayer&);
     
@@ -554,6 +557,7 @@ private:
 #endif
 
     Color m_rootExtendedBackgroundColor;
+    Color m_lastDocumentBackgroundColor;
 
     HashMap<ScrollingNodeID, RenderLayer*> m_scrollingNodeToLayerMap;
 };

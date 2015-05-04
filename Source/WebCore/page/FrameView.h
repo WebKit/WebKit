@@ -648,6 +648,7 @@ private:
     bool isFrameFlatteningValidForThisFrame() const;
 
     bool qualifiesAsVisuallyNonEmpty() const;
+    bool isViewForDocumentInFrame() const;
 
     AXObjectCache* axObjectCache() const;
     void notifyWidgetsInAllFrames(WidgetNotification);

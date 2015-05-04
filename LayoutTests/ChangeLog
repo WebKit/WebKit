@@ -1,3 +1,17 @@
+2015-05-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix updating of tiled backing opaquenss when the page background color changes
+        https://bugs.webkit.org/show_bug.cgi?id=144600
+        rdar://problem/20723035
+
+        Reviewed by Tim Horton.
+
+        Test that dumps layers with various baseBackgroundColor and body background color
+        combinations.
+
+        * platform/mac-wk2/tiled-drawing/background-transparency-toggle-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/background-transparency-toggle.html: Added.
+
 2015-05-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix the test after r183758 since shouldNotBe is not supported in the standalone testing.

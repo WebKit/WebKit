@@ -1,3 +1,50 @@
+2015-05-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix updating of tiled backing opaquenss when the page background color changes
+        https://bugs.webkit.org/show_bug.cgi?id=144600
+        rdar://problem/20723035
+
+        Reviewed by Tim Horton.
+
+        RenderLayerCompositor makes the page tiles opaque or not based on the result of
+        viewHasTransparentBackground(), which consults the view transparency, and
+        FrameView::documentBackgroundColor(). documentBackgroundColor() in turn is based
+        on the root and/or body background colors.
+
+        We thus need to re-evaluate whether page tiles are opaque when any of these inputs
+        change, but were failing to do so for the FrameView's baseBackgroundColor, and
+        the page root background color.
+        
+        Fix by having FrameView::setBaseBackgroundColor(), and RenderBox::styleDidChange()
+        (for the root) trigger a compositing update when necessary.
+
+        Added setViewBaseBackgroundColor() on Internals for testing.
+
+        Test: platform/mac-wk2/tiled-drawing/background-transparency-toggle.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setTransparent): Use the isViewForDocumentInFrame() helper.
+        (WebCore::FrameView::setBaseBackgroundColor): Bail if we're not the view for the 
+        frame's document, and trigger a compositing update check if the alpha changed.
+        (WebCore::FrameView::isViewForDocumentInFrame): Helper that checks to see if
+        this FrameView is associated with the Document being displayed in the FrameView's
+        Frame. This returns false when we're setting up a new FrameView (its Frame still
+        points to the old document, so renderView() returns the RenderView for the Frame's
+        existing Document).
+        * page/FrameView.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange): Have the compositor check to see if it needs
+        to do an update.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::rootBackgroundTransparencyChanged): If the result
+        of documentBackgroundColor() changed in alpha since the last time, trigger a compositing
+        update.
+        * rendering/RenderLayerCompositor.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setViewBaseBackgroundColor):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2015-05-04  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Crash in -[WebCALayerHostWrapper resolveBounds]

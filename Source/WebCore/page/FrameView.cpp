@@ -2678,20 +2678,14 @@ void FrameView::setTransparent(bool isTransparent)
 
     m_isTransparent = isTransparent;
 
-    RenderView* renderView = this->renderView();
-    if (!renderView)
-        return;
-
     // setTransparent can be called in the window between FrameView initialization
     // and switching in the new Document; this means that the RenderView that we
     // retrieve is actually attached to the previous Document, which is going away,
     // and must not update compositing layers.
-    if (&renderView->frameView() != this)
+    if (!isViewForDocumentInFrame())
         return;
 
-    RenderLayerCompositor& compositor = renderView->compositor();
-    compositor.setCompositingLayersNeedRebuild();
-    compositor.scheduleCompositingLayerUpdate();
+    renderView()->compositor().rootBackgroundTransparencyChanged();
 }
 
 bool FrameView::hasOpaqueBackground() const
@@ -2706,12 +2700,20 @@ Color FrameView::baseBackgroundColor() const
 
 void FrameView::setBaseBackgroundColor(const Color& backgroundColor)
 {
+    bool hadAlpha = m_baseBackgroundColor.hasAlpha();
+    
     if (!backgroundColor.isValid())
         m_baseBackgroundColor = Color::white;
     else
         m_baseBackgroundColor = backgroundColor;
 
+    if (!isViewForDocumentInFrame())
+        return;
+
     recalculateScrollbarOverlayStyle();
+
+    if (m_baseBackgroundColor.hasAlpha() != hadAlpha)
+        renderView()->compositor().rootBackgroundTransparencyChanged();
 }
 
 void FrameView::updateBackgroundRecursively(const Color& backgroundColor, bool transparent)
@@ -4108,6 +4110,15 @@ void FrameView::updateIsVisuallyNonEmpty()
         return;
     m_isVisuallyNonEmpty = true;
     adjustTiledBackingCoverage();
+}
+
+bool FrameView::isViewForDocumentInFrame() const
+{
+    RenderView* renderView = this->renderView();
+    if (!renderView)
+        return false;
+
+    return &renderView->frameView() == this;
 }
 
 void FrameView::enableAutoSizeMode(bool enable, const IntSize& minSize, const IntSize& maxSize)

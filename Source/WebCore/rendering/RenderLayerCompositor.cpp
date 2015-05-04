@@ -3214,6 +3214,17 @@ bool RenderLayerCompositor::viewHasTransparentBackground(Color* backgroundColor)
     return documentBackgroundColor.hasAlpha();
 }
 
+void RenderLayerCompositor::rootBackgroundTransparencyChanged()
+{
+    Color documentBackgroundColor = m_renderView.frameView().documentBackgroundColor();
+    if (m_lastDocumentBackgroundColor.isValid() && documentBackgroundColor.hasAlpha() == m_lastDocumentBackgroundColor.hasAlpha())
+        return;
+
+    // FIXME: We should do something less expensive than a full layer rebuild.
+    setCompositingLayersNeedRebuild();
+    scheduleCompositingLayerUpdate();
+}
+
 void RenderLayerCompositor::setRootExtendedBackgroundColor(const Color& color)
 {
     if (color == m_rootExtendedBackgroundColor)

@@ -122,6 +122,8 @@ enum ResourceLoadPriority {
 
     [RaisesException] void setScrollViewPosition(long x, long y);
 
+    [RaisesException] void setViewBaseBackgroundColor(DOMString colorValue);
+
     [RaisesException] void setPagination(DOMString mode, long gap, optional long pageLength);
 
     [RaisesException] DOMString configurationForViewport(unrestricted float devicePixelRatio,
