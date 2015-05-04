@@ -74,6 +74,20 @@ function globalStaticFunction()
 
 shouldBe("globalStaticValue", 3);
 shouldBe("globalStaticFunction()", 4);
+shouldBe("this.globalStaticFunction()", 4);
+
+function globalStaticFunction2() {
+    return 10;
+}
+shouldBe("globalStaticFunction2();", 10);
+this.globalStaticFunction2 = function() { return 20; }
+shouldBe("globalStaticFunction2();", 20);
+shouldBe("this.globalStaticFunction2();", 20);
+
+function iAmNotAStaticFunction() { return 10; }
+shouldBe("iAmNotAStaticFunction();", 10);
+this.iAmNotAStaticFunction = function() { return 20; }
+shouldBe("iAmNotAStaticFunction();", 20);
 
 shouldBe("typeof MyObject", "function"); // our object implements 'call'
 MyObject.cantFind = 1;

@@ -1,3 +1,24 @@
+2015-05-04  Saam Barati  <saambarati1@gmail.com>
+
+        JSCallbackObject does not maintain symmetry between accesses for getOwnPropertySlot and put
+        https://bugs.webkit.org/show_bug.cgi?id=144265
+
+        Reviewed by Geoffrey Garen.
+
+        JSCallbackObject will defer to a parent's implementation of getOwnPropertySlot
+        for a static function if the parent has that property slot. JSCallbackObject::put 
+        did not maintain this symmetry of also calling ::put on the parent if the parent 
+        has the property. We should ensure that this symmetry exists.
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::put):
+        * API/tests/testapi.c:
+        * API/tests/testapi.js:
+        (globalStaticFunction2):
+        (this.globalStaticFunction2):
+        (iAmNotAStaticFunction):
+        (this.iAmNotAStaticFunction):
+
 2015-05-04  Andreas Kling  <akling@apple.com>
 
         Make ExecState::vm() branchless in release builds.

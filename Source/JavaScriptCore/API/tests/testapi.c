@@ -960,6 +960,7 @@ static JSStaticValue globalObject_staticValues[] = {
 
 static JSStaticFunction globalObject_staticFunctions[] = {
     { "globalStaticFunction", globalObject_call, kJSPropertyAttributeNone },
+    { "globalStaticFunction2", globalObject_call, kJSPropertyAttributeNone },
     { "gc", functionGC, kJSPropertyAttributeNone },
     { 0, 0, 0 }
 };
