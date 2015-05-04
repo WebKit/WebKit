@@ -1,5 +1,29 @@
 2015-05-04  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Allow closing and reopening the Debugger tab
+        https://bugs.webkit.org/show_bug.cgi?id=144536
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector._updateNewTabButtonState):
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel):
+        (WebInspector.DebuggerSidebarPanel.prototype.closed):
+        (WebInspector.DebuggerSidebarPanel.prototype._addIssuesForSourceCode):
+        (WebInspector.DebuggerSidebarPanel.prototype._addResourcesRecursivelyForFrame):
+        (WebInspector.DebuggerSidebarPanel.prototype._resourceAdded):
+        (WebInspector.DebuggerSidebarPanel.prototype._addResource):
+        (WebInspector.DebuggerSidebarPanel.prototype._mainResourceChanged):
+        (WebInspector.DebuggerSidebarPanel.prototype._scriptAdded):
+        (WebInspector.DebuggerSidebarPanel.prototype._addScript):
+        * UserInterface/Views/DebuggerTabContentView.js:
+        (WebInspector.DebuggerTabContentView):
+        * UserInterface/Views/NewTabContentView.js:
+        (WebInspector.NewTabContentView):
+
+2015-05-04  Timothy Hatcher  <timothy@apple.com>
+
         REGRESSION: Web Inspector: FrameTreeElement does not folders properly when loading a page
         https://bugs.webkit.org/show_bug.cgi?id=144535
 

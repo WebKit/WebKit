@@ -28,9 +28,6 @@ WebInspector.DebuggerTabContentView = function(identifier)
     var tabBarItem = new WebInspector.TabBarItem("Images/Debugger.svg", WebInspector.UIString("Debugger"));
     var detailsSidebarPanels = [WebInspector.resourceDetailsSidebarPanel, WebInspector.scopeChainDetailsSidebarPanel, WebInspector.probeDetailsSidebarPanel];
 
-    // FIME: Until DebuggerSidebarPanel supports instantiating after inspector launch, disable closing.
-    tabBarItem.hideCloseButton = true;
-
     WebInspector.ContentBrowserTabContentView.call(this, identifier || "debugger", "debugger", tabBarItem, WebInspector.DebuggerSidebarPanel, detailsSidebarPanels);
 };
 
