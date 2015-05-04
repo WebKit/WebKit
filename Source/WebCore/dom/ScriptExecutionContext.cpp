@@ -81,6 +81,8 @@ ScriptExecutionContext::ScriptExecutionContext()
     , m_timerNestingLevel(0)
 #if !ASSERT_DISABLED
     , m_inScriptExecutionContextDestructor(false)
+#endif
+#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
     , m_activeDOMObjectRemovalForbidden(false)
 #endif
 {
@@ -181,7 +183,7 @@ bool ScriptExecutionContext::canSuspendActiveDOMObjectsForPageCache(Vector<Activ
     bool canSuspend = true;
 
     m_activeDOMObjectAdditionForbidden = true;
-#if !ASSERT_DISABLED
+#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
     m_activeDOMObjectRemovalForbidden = true;
 #endif
 
@@ -201,7 +203,7 @@ bool ScriptExecutionContext::canSuspendActiveDOMObjectsForPageCache(Vector<Activ
     }
 
     m_activeDOMObjectAdditionForbidden = false;
-#if !ASSERT_DISABLED
+#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
     m_activeDOMObjectRemovalForbidden = false;
 #endif
 
@@ -220,7 +222,7 @@ void ScriptExecutionContext::suspendActiveDOMObjects(ActiveDOMObject::ReasonForS
 #endif
 
     m_activeDOMObjectAdditionForbidden = true;
-#if !ASSERT_DISABLED
+#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
     m_activeDOMObjectRemovalForbidden = true;
 #endif
 
@@ -233,7 +235,7 @@ void ScriptExecutionContext::suspendActiveDOMObjects(ActiveDOMObject::ReasonForS
         activeDOMObject->suspend(why);
 
     m_activeDOMObjectAdditionForbidden = false;
-#if !ASSERT_DISABLED
+#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
     m_activeDOMObjectRemovalForbidden = false;
 #endif
 
@@ -250,7 +252,7 @@ void ScriptExecutionContext::resumeActiveDOMObjects(ActiveDOMObject::ReasonForSu
     m_activeDOMObjectsAreSuspended = false;
 
     m_activeDOMObjectAdditionForbidden = true;
-#if !ASSERT_DISABLED
+#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
     m_activeDOMObjectRemovalForbidden = true;
 #endif
 
@@ -263,7 +265,7 @@ void ScriptExecutionContext::resumeActiveDOMObjects(ActiveDOMObject::ReasonForSu
         activeDOMObject->resume();
 
     m_activeDOMObjectAdditionForbidden = false;
-#if !ASSERT_DISABLED
+#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
     m_activeDOMObjectRemovalForbidden = false;
 #endif
 }

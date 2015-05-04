@@ -237,6 +237,8 @@ private:
 
 #if !ASSERT_DISABLED
     bool m_inScriptExecutionContextDestructor;
+#endif
+#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
     bool m_activeDOMObjectRemovalForbidden;
 #endif
 };

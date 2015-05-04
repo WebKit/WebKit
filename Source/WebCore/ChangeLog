@@ -1,3 +1,15 @@
+2015-05-04  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed. Fix build with SECURITY_ASSERTIONS enabled.
+        <rdar://problem/20653104>
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::ScriptExecutionContext):
+        (WebCore::ScriptExecutionContext::canSuspendActiveDOMObjectsForPageCache):
+        (WebCore::ScriptExecutionContext::suspendActiveDOMObjects):
+        (WebCore::ScriptExecutionContext::resumeActiveDOMObjects):
+        * dom/ScriptExecutionContext.h:
+
 2015-05-04  Simon Fraser  <simon.fraser@apple.com>
 
         Fix updating of tiled backing opaquenss when the page background color changes
