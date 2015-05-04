@@ -1,3 +1,17 @@
+2015-05-04  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r183661.
+        https://bugs.webkit.org/show_bug.cgi?id=144594
+
+        Caused ~3.5MB regression on membuster(!) (Requested by kling_
+        on #webkit).
+
+        Reverted changeset:
+
+        "Decrease minimum Vector size."
+        https://bugs.webkit.org/show_bug.cgi?id=144453
+        http://trac.webkit.org/changeset/183661
+
 2015-05-04  Zan Dobersek  <zdobersek@igalia.com>
 
         [WTF] Remove Functional.h inclusions
