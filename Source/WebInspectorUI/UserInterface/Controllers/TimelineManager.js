@@ -33,24 +33,25 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
 
-        this._recordings = [];
-        this._activeRecording = null;
         this._isCapturing = false;
-
-        this._nextRecordingIdentifier = 1;
-
         this._boundStopCapturing = this.stopCapturing.bind(this);
 
-        function delayedWork()
-        {
-            this._loadNewRecording();
-        }
-
-        // Allow other code to set up listeners before firing the initial RecordingLoaded event.
-        setTimeout(delayedWork.bind(this), 0);
+        this.reset();
     }
 
     // Public
+
+    reset()
+    {
+        if (this._isCapturing)
+            this.stopCapturing();
+
+        this._recordings = [];
+        this._activeRecording = null;
+        this._nextRecordingIdentifier = 1;
+
+        this._loadNewRecording();
+    }
 
     // The current recording that new timeline records will be appended to, if any.
     get activeRecording()

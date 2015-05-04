@@ -125,6 +125,12 @@ WebInspector.NetworkTimelineView.prototype = {
         WebInspector.ContentView.prototype.hidden.call(this);
     },
 
+    closed: function()
+    {
+        console.assert(this.representedObject instanceof WebInspector.Timeline);
+        this.representedObject.removeEventListener(null, null, this);
+    },
+
     updateLayout: function()
     {
         WebInspector.TimelineView.prototype.updateLayout.call(this);

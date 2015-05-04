@@ -188,7 +188,7 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.Object
 
     _tabBarItemSelected(event)
     {
-        var tabContentView = this._tabBar.selectedTabBarItem.representedObject;
+        var tabContentView = this._tabBar.selectedTabBarItem ? this._tabBar.selectedTabBarItem.representedObject : null;
 
         if (tabContentView) {
             this._recentTabContentViews.remove(tabContentView);

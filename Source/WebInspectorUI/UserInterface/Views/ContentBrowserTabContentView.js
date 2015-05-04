@@ -41,6 +41,10 @@ WebInspector.ContentBrowserTabContentView = function(identifier, styleClassNames
     this._contentBrowser.addEventListener(WebInspector.ContentBrowser.Event.CurrentRepresentedObjectsDidChange, this.showDetailsSidebarPanels, this);
     this._contentBrowser.addEventListener(WebInspector.ContentBrowser.Event.CurrentContentViewDidChange, this._contentBrowserCurrentContentViewDidChange, this);
 
+    // If any content views were shown during sidebar construction, contentBrowserTreeElementForRepresentedObject() would have returned null.
+    // Explicitly update the path for the navigation bar to prevent it from showing up as blank.
+    this._contentBrowser.updateHierarchicalPathForCurrentContentView();
+
     if (navigationSidebarPanel) {
         var showToolTip = WebInspector.UIString("Show the navigation sidebar (%s)").format(WebInspector.navigationSidebarKeyboardShortcut.displayName);
         var hideToolTip = WebInspector.UIString("Hide the navigation sidebar (%s)").format(WebInspector.navigationSidebarKeyboardShortcut.displayName);
@@ -110,6 +114,9 @@ WebInspector.ContentBrowserTabContentView.prototype = {
 
         WebInspector.navigationSidebar.removeEventListener(null, null, this);
         WebInspector.detailsSidebar.removeEventListener(null, null, this);
+
+        if (this.navigationSidebarPanel && typeof this.navigationSidebarPanel.closed === "function")
+            this.navigationSidebarPanel.closed();
 
         this._contentBrowser.contentViewContainer.closeAllContentViews();
     },

@@ -88,6 +88,12 @@ WebInspector.OverviewTimelineView.prototype = {
         this._treeOutlineDataGridSynchronizer.synchronize();
     },
 
+    closed: function()
+    {
+        this._networkTimeline.removeEventListener(null, null, this);
+        this._recording.removeEventListener(null, null, this);
+    },
+
     updateLayout: function()
     {
         WebInspector.TimelineView.prototype.updateLayout.call(this);

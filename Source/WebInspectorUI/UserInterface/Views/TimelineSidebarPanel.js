@@ -147,6 +147,14 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         this.contentBrowser.addEventListener(WebInspector.ContentBrowser.Event.CurrentContentViewDidChange, this._contentBrowserCurrentContentViewDidChange, this);
         WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStarted, this._capturingStarted, this);
         WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.Event.CapturingStopped, this._capturingStopped, this);
+
+        for (var recording of WebInspector.timelineManager.recordings)
+            this._addRecording(recording);
+
+        this._recordingCountChanged();
+
+        if (WebInspector.timelineManager.activeRecording)
+            this._recordingLoaded();
     }
 
     // Public
@@ -160,6 +168,15 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
         if (this.viewMode === WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames)
             this._refreshFrameSelectionChart();
+    }
+
+    closed()
+    {
+        WebInspector.showReplayInterfaceSetting.removeEventListener(null, null, this);
+        WebInspector.replayManager.removeEventListener(null, null, this);
+        WebInspector.timelineManager.removeEventListener(null, null, this);
+
+        WebInspector.timelineManager.reset();
     }
 
     get viewMode()
@@ -446,14 +463,17 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
     _recordingCreated(event)
     {
-        var recording = event.data.recording;
+        this._addRecording(event.data.recording)
+        this._recordingCountChanged();
+    }
+
+    _addRecording(recording)
+    {
         console.assert(recording instanceof WebInspector.TimelineRecording, recording);
 
         var recordingTreeElement = new WebInspector.GeneralTreeElement(WebInspector.TimelineSidebarPanel.StopwatchIconStyleClass, recording.displayName, null, recording);
         this._recordingTreeElementMap.set(recording, recordingTreeElement);
         this._recordingsTreeOutline.appendChild(recordingTreeElement);
-
-        this._recordingCountChanged();
     }
 
     _recordingCountChanged()
