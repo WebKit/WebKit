@@ -1,3 +1,105 @@
+2015-05-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Toggling underline or strike through affects each other
+        https://bugs.webkit.org/show_bug.cgi?id=27818
+
+        Reviewed by Darin Adler.
+
+        This patch introduces a new mechanism to apply and remove text decorations. This is necessary because text
+        decorations are always additive and we can't differentiate whether we're adding or removing a text decoration.
+        Conceptually, we need four values for text decorations: adding underline, removing underline, adding
+        line-through, and removing line-through but we have only three: underline, line-through, none.
+
+        After this patch, there are three mechanism by which text decorations states are kept tracked. While applying
+        or removing text decorations, we use newly added m_underlineChange and m_strikeThroughChange in EditingStyle.
+        For the typing style, we use -webkit-text-decorations-in-effect to store the state since we need to preserve
+        every type of text decorations such as overline in addition to underline and line-through. Once applied, all
+        text decorations should be expressed in terms of the standard text-decoration property.
+
+        Test: editing/execCommand/toggle-mixed-text-decorations.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyBlockStyle):
+        (WebCore::ApplyStyleCommand::removeCSSStyle): conflictsWithInlineStyleOfElement now creates a new inline style
+        instead of a list of properties to remove.
+        (WebCore::ApplyStyleCommand::addBlockStyle):
+        (WebCore::ApplyStyleCommand::applyInlineStyleChange): Merge inline styles instead of adding as string.
+        Otherwise it would generate style content attribute with multiple text-decoration properties.
+
+        * editing/EditingStyle.cpp:
+        (WebCore::HTMLElementEquivalent::matches):
+        (WebCore::HTMLElementEquivalent::propertyExistsInStyle): Takes an EditingStyle instead of StyleProperties.
+        (WebCore::HTMLElementEquivalent::valueIsPresentInStyle):
+        (WebCore::HTMLTextDecorationEquivalent::HTMLTextDecorationEquivalent): 
+        (WebCore::HTMLTextDecorationEquivalent::propertyExistsInStyle): Respect newly added m_strikeThroughChange and
+        m_underlineChange in EditingStyle.
+        (WebCore::HTMLTextDecorationEquivalent::valueIsPresentInStyle): Ditto.
+        (WebCore::HTMLTextDecorationEquivalent::changeInStyle): Added. Retrieves the change enum for the associated
+        type of text-decoration (underline or strike through).
+        (WebCore::HTMLAttributeEquivalent::matches):
+        (WebCore::HTMLAttributeEquivalent::valueIsPresentInStyle):
+        (WebCore::EditingStyle::EditingStyle): Initialize m_underlineChange and m_strikeThroughChange. Also use the
+        delegating constructor elsewhere. Also added the missing call to extractFontSizeDelta() in the variant that
+        takes CSSPropertyID and String, and added a variant that takes CSSPropertyID and CSSValueID.
+        (WebCore::EditingStyle::isEmpty): Return false when m_underlineChange and m_strikeThroughChange are not "none".
+        (WebCore::applyTextDecorationChangeToValueList): Added.
+        (WebCore::EditingStyle::overrideTypingStyleAt): Added. Used by Editor::computeAndSetTypingStyle to set a new
+        typing style. Resolve m_underlineChange and m_strikeThroughChange into -webkit-text-decorations-in-effect.
+        (WebCore::EditingStyle::clear): Clear m_underlineChange and m_strikeThroughChange.
+        (WebCore::EditingStyle::copy): Copy m_underlineChange and m_strikeThroughChange.
+        (WebCore::textDecorationValueList): Added.
+        (WebCore::EditingStyle::conflictsWithInlineStyleOfElement): Now takes a pointer to MutableStyleProperties
+        instead of a vector. This was necessary we can't simply remove text-decoration property in ApplyStyleCommand's
+        removeCSSStyle as that would result in unrelated text decorations also getting removed. Also added the code
+        for m_underlineChange and m_strikeThroughChange. Only removing text decoration changes can cause a conflict
+        since text decorations are always additive.
+        (WebCore::EditingStyle::conflictsWithImplicitStyleOfElement): Check isEmpty() instead of the nullity of
+        m_mutableStyle to respect m_underlineChange and m_strikeThroughChange.
+        (WebCore::EditingStyle::conflictsWithImplicitStyleOfAttributes):
+        (WebCore::EditingStyle::extractConflictingImplicitStyleOfAttributes):
+        (WebCore::EditingStyle::styleIsPresentInComputedStyleOfNode): Respect the values of m_underlineChange and
+        m_strikeThroughChange. Here, the style is considered present if it has text decorations that are being added.
+        (WebCore::EditingStyle::elementIsStyledSpanOrHTMLEquivalent):
+        (WebCore::elementMatchesAndPropertyIsNotInInlineStyleDecl): Takes EditingStyle instead of StyleProperties to
+        respect m_underlineChange and m_strikeThroughChange.
+        (WebCore::EditingStyle::mergeInlineAndImplicitStyleOfElement):
+        (WebCore::mergeTextDecorationValues):
+        (WebCore::EditingStyle::mergeStyle): Make a copy of CSSValueList before modifying it since CSSValueList's are
+        shared with other immutable StyleProperties.
+        (WebCore::StyleChange::StyleChange): Set m_applyUnderline, m_applyLineThrough, and m_cssStyle if either
+        m_underlineChange or m_strikeThroughChange are TextDecorationChange::Add in EditingStyle if the current position
+        doesn't already have the matching style.
+        (WebCore::StyleChange::operator==): Moved from the header file. Also added the logic to compare m_cssStyle now
+        that it's a StyleProperties instead of String.
+
+        * editing/EditingStyle.h: Added TextDecorationChange.
+        (WebCore::EditingStyle::create): Added a variant that takes CSSPropertyID and CSSValueID.
+        (WebCore::EditingStyle::conflictsWithInlineStyleOfElement):
+        (WebCore::EditingStyle::setUnderlineChange): Added.
+        (WebCore::EditingStyle::underlineChange): Added.
+        (WebCore::EditingStyle::setStrikeThroughChange): Added.
+        (WebCore::EditingStyle::strikeThroughChange): Added.
+        (WebCore::StyleChange::cssStyle): Now returns StyleProperties* instead of String so that ApplyStyleCommand's
+        applyInlineStyleChange could merge inline styles instead of just appending it to the end.
+        (WebCore::StyleChange::operator==): Moved into the cpp file.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::applyStyle): Added. This variant takes EditingStyle instead of StyleProperties.
+        (WebCore::Editor::applyStyleToSelection): Ditto.
+        (WebCore::Editor::computeAndSetTypingStyle): Added a variant for EditingStyle. Also use overrideTypingStyleAt
+        to set -webkit-text-decorations-in-effect based on m_underlineChange and m_strikeThroughChange 
+
+        * editing/Editor.h:
+        * editing/EditorCommand.cpp:
+        (WebCore::applyCommandToFrame):
+        (WebCore::isStylePresent): Extracted from executeToggleStyle.
+        (WebCore::executeApplyStyle):
+        (WebCore::executeToggleStyle):
+        (WebCore::executeToggleStyleInList): Deleted.
+        (WebCore::textDecorationChangeForToggling): Added. Used in executeStrikethrough and executeUnderline.
+        (WebCore::executeStrikethrough):
+        (WebCore::executeUnderline):
+
 2015-05-04  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Fix build breakage caused by API deprecation

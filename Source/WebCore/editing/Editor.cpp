@@ -887,11 +887,27 @@ void Editor::applyStyle(StyleProperties* style, EditAction editingAction)
         // do nothing
         break;
     case VisibleSelection::CaretSelection:
-        computeAndSetTypingStyle(style, editingAction);
+        computeAndSetTypingStyle(EditingStyle::create(style), editingAction);
         break;
     case VisibleSelection::RangeSelection:
         if (style)
             applyCommand(ApplyStyleCommand::create(document(), EditingStyle::create(style).ptr(), editingAction));
+        break;
+    }
+}
+
+void Editor::applyStyle(RefPtr<EditingStyle>&& style, EditAction editingAction)
+{
+    switch (m_frame.selection().selection().selectionType()) {
+    case VisibleSelection::NoSelection:
+        // do nothing
+        break;
+    case VisibleSelection::CaretSelection:
+        computeAndSetTypingStyle(*style, editingAction);
+        break;
+    case VisibleSelection::RangeSelection:
+        if (style)
+            applyCommand(ApplyStyleCommand::create(document(), style.get(), editingAction));
         break;
     }
 }
@@ -920,8 +936,21 @@ void Editor::applyStyleToSelection(StyleProperties* style, EditAction editingAct
     if (!style || style->isEmpty() || !canEditRichly())
         return;
 
-    if (client() && client()->shouldApplyStyle(style, m_frame.selection().toNormalizedRange().get()))
-        applyStyle(style, editingAction);
+    if (!client() || !client()->shouldApplyStyle(style, m_frame.selection().toNormalizedRange().get()))
+        return;
+    applyStyle(style, editingAction);
+}
+
+void Editor::applyStyleToSelection(RefPtr<EditingStyle>&& style, EditAction editingAction)
+{
+    if (!style || style->isEmpty() || !canEditRichly())
+        return;
+
+    // FIXME: This is wrong for text decorations since m_mutableStyle is empty.
+    if (!client() || !client()->shouldApplyStyle(style->style(), m_frame.selection().toNormalizedRange().get()))
+        return;
+
+    applyStyle(WTF::move(style), editingAction);
 }
 
 void Editor::applyParagraphStyleToSelection(StyleProperties* style, EditAction editingAction)
@@ -2952,22 +2981,20 @@ bool Editor::shouldChangeSelection(const VisibleSelection& oldSelection, const V
     return client() && client()->shouldChangeSelectedRange(oldSelection.toNormalizedRange().get(), newSelection.toNormalizedRange().get(), affinity, stillSelecting);
 }
 
-void Editor::computeAndSetTypingStyle(StyleProperties* style, EditAction editingAction)
+void Editor::computeAndSetTypingStyle(EditingStyle& style, EditAction editingAction)
 {
-    if (!style || style->isEmpty()) {
+    if (style.isEmpty()) {
         m_frame.selection().clearTypingStyle();
         return;
     }
 
     // Calculate the current typing style.
     RefPtr<EditingStyle> typingStyle;
-    if (m_frame.selection().typingStyle()) {
-        typingStyle = m_frame.selection().typingStyle()->copy();
-        typingStyle->overrideWithStyle(style);
-    } else
-        typingStyle = EditingStyle::create(style);
-
-    typingStyle->prepareToApplyAt(m_frame.selection().selection().visibleStart().deepEquivalent(), EditingStyle::PreserveWritingDirection);
+    if (auto existingTypingStyle = m_frame.selection().typingStyle())
+        typingStyle = existingTypingStyle->copy();
+    else
+        typingStyle = EditingStyle::create();
+    typingStyle->overrideTypingStyleAt(style, m_frame.selection().selection().visibleStart().deepEquivalent());
 
     // Handle block styles, substracting these from the typing style.
     RefPtr<EditingStyle> blockStyle = typingStyle->extractAndRemoveBlockProperties();
@@ -2976,6 +3003,11 @@ void Editor::computeAndSetTypingStyle(StyleProperties* style, EditAction editing
 
     // Set the remaining style as the typing style.
     m_frame.selection().setTypingStyle(typingStyle);
+}
+
+void Editor::computeAndSetTypingStyle(StyleProperties& properties, EditAction editingAction)
+{
+    return computeAndSetTypingStyle(EditingStyle::create(&properties), editingAction);
 }
 
 void Editor::textFieldDidBeginEditing(Element* e)

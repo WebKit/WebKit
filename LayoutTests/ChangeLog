@@ -1,3 +1,21 @@
+2015-05-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Toggling underline or strike through affects each other
+        https://bugs.webkit.org/show_bug.cgi?id=27818
+
+        Reviewed by Darin Adler.
+
+        Added a regression test and rebaselined various tests as explained below.
+
+        * editing/execCommand/script-tests/toggle-style-2.js: The order in which u and strike elements appear have switched.
+        * editing/execCommand/script-tests/toggle-text-decorations.js: Ditto for line-through and overline.
+        * editing/execCommand/toggle-mixed-text-decorations-expected.txt: Added.
+        * editing/execCommand/toggle-mixed-text-decorations.html: Added.
+        * editing/execCommand/toggle-style-2-expected.txt: Rebaselined.
+        * editing/execCommand/toggle-text-decorations-expected.txt: Rebaselined.
+        * editing/undo/remove-css-property-and-remove-style-expected.txt: The order in which color and font-weight properties
+        appear have switched.
+
 2015-05-04  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r178156): CSS Parser incorrectly rejects valid calc() in padding-right property

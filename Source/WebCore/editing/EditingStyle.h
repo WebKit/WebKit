@@ -34,8 +34,10 @@
 
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "StyleProperties.h"
 #include "WritingDirection.h"
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TriState.h>
@@ -60,6 +62,8 @@ class RenderStyle;
 class StyleProperties;
 class StyledElement;
 class VisibleSelection;
+
+enum class TextDecorationChange { None, Add, Remove };
 
 class EditingStyle : public RefCounted<EditingStyle> {
 public:
@@ -95,6 +99,11 @@ public:
         return adoptRef(*new EditingStyle(propertyID, value));
     }
 
+    static Ref<EditingStyle> create(CSSPropertyID propertyID, CSSValueID value)
+    {
+        return adoptRef(*new EditingStyle(propertyID, value));
+    }
+
     WEBCORE_EXPORT ~EditingStyle();
 
     MutableStyleProperties* style() { return m_mutableStyle.get(); }
@@ -102,6 +111,7 @@ public:
     bool isEmpty() const;
     void setStyle(PassRefPtr<MutableStyleProperties>);
     void overrideWithStyle(const StyleProperties*);
+    void overrideTypingStyleAt(const EditingStyle&, const Position&);
     void clear();
     PassRefPtr<EditingStyle> copy() const;
     PassRefPtr<EditingStyle> extractAndRemoveBlockProperties();
@@ -115,9 +125,10 @@ public:
     TriState triStateOfStyle(EditingStyle*) const;
     TriState triStateOfStyle(const VisibleSelection&) const;
     bool conflictsWithInlineStyleOfElement(StyledElement* element) const { return conflictsWithInlineStyleOfElement(element, 0, 0); }
-    bool conflictsWithInlineStyleOfElement(StyledElement* element, EditingStyle* extractedStyle, Vector<CSSPropertyID>& conflictingProperties) const
+    bool conflictsWithInlineStyleOfElement(StyledElement* element, RefPtr<MutableStyleProperties>& newInlineStyle,
+        EditingStyle* extractedStyle) const
     {
-        return conflictsWithInlineStyleOfElement(element, extractedStyle, &conflictingProperties);
+        return conflictsWithInlineStyleOfElement(element, &newInlineStyle, extractedStyle);
     }
     bool conflictsWithImplicitStyleOfElement(HTMLElement*, EditingStyle* extractedStyle = 0, ShouldExtractMatchingStyle = DoNotExtractMatchingStyle) const;
     bool conflictsWithImplicitStyleOfAttributes(HTMLElement*) const;
@@ -144,6 +155,11 @@ public:
     float fontSizeDelta() const { return m_fontSizeDelta; }
     bool hasFontSizeDelta() const { return m_fontSizeDelta != NoFontDelta; }
     bool shouldUseFixedDefaultFontSize() const { return m_shouldUseFixedDefaultFontSize; }
+    
+    void setUnderlineChange(TextDecorationChange change) { m_underlineChange = static_cast<unsigned>(change); }
+    TextDecorationChange underlineChange() const { return static_cast<TextDecorationChange>(m_underlineChange); }
+    void setStrikeThroughChange(TextDecorationChange change) { m_strikeThroughChange = static_cast<unsigned>(change); }
+    TextDecorationChange strikeThroughChange() const { return static_cast<TextDecorationChange>(m_strikeThroughChange); }
 
     static PassRefPtr<EditingStyle> styleAtSelectionStart(const VisibleSelection&, bool shouldUseBackgroundColorInEffect = false);
     static WritingDirection textDirectionForSelection(const VisibleSelection&, EditingStyle* typingStyle, bool& hasNestedOrMultipleEmbeddings);
@@ -153,37 +169,33 @@ private:
     EditingStyle(const Position&, PropertiesToInclude);
     explicit EditingStyle(const StyleProperties*);
     EditingStyle(CSSPropertyID, const String& value);
+    EditingStyle(CSSPropertyID, CSSValueID);
     void init(Node*, PropertiesToInclude);
     void removeTextFillAndStrokeColorsIfNeeded(RenderStyle*);
     void setProperty(CSSPropertyID, const String& value, bool important = false);
     void extractFontSizeDelta();
     template<typename T> TriState triStateOfStyle(T& styleToCompare, ShouldIgnoreTextOnlyProperties) const;
-    bool conflictsWithInlineStyleOfElement(StyledElement*, EditingStyle* extractedStyle, Vector<CSSPropertyID>* conflictingProperties) const;
+    bool conflictsWithInlineStyleOfElement(StyledElement*, RefPtr<MutableStyleProperties>* newInlineStyle, EditingStyle* extractedStyle) const;
     void mergeInlineAndImplicitStyleOfElement(StyledElement*, CSSPropertyOverrideMode, PropertiesToInclude);
     void mergeStyle(const StyleProperties*, CSSPropertyOverrideMode);
 
     RefPtr<MutableStyleProperties> m_mutableStyle;
-    bool m_shouldUseFixedDefaultFontSize;
-    float m_fontSizeDelta;
+    unsigned m_shouldUseFixedDefaultFontSize : 1;
+    unsigned m_underlineChange : 2;
+    unsigned m_strikeThroughChange : 2;
+    float m_fontSizeDelta = NoFontDelta;
 
     friend class HTMLElementEquivalent;
     friend class HTMLAttributeEquivalent;
+    friend class HTMLTextDecorationEquivalent;
 };
 
 class StyleChange {
 public:
-    StyleChange()
-        : m_applyBold(false)
-        , m_applyItalic(false)
-        , m_applyUnderline(false)
-        , m_applyLineThrough(false)
-        , m_applySubscript(false)
-        , m_applySuperscript(false)
-    { }
-
+    StyleChange() { }
     StyleChange(EditingStyle*, const Position&);
 
-    String cssStyle() const { return m_cssStyle; }
+    const StyleProperties* cssStyle() const { return m_cssStyle.get(); }
     bool applyBold() const { return m_applyBold; }
     bool applyItalic() const { return m_applyItalic; }
     bool applyUnderline() const { return m_applyUnderline; }
@@ -198,19 +210,7 @@ public:
     String fontFace() { return m_applyFontFace; }
     String fontSize() { return m_applyFontSize; }
 
-    bool operator==(const StyleChange& other)
-    {
-        return m_cssStyle == other.m_cssStyle
-            && m_applyBold == other.m_applyBold
-            && m_applyItalic == other.m_applyItalic
-            && m_applyUnderline == other.m_applyUnderline
-            && m_applyLineThrough == other.m_applyLineThrough
-            && m_applySubscript == other.m_applySubscript
-            && m_applySuperscript == other.m_applySuperscript
-            && m_applyFontColor == other.m_applyFontColor
-            && m_applyFontFace == other.m_applyFontFace
-            && m_applyFontSize == other.m_applyFontSize;
-    }
+    bool operator==(const StyleChange&);
     bool operator!=(const StyleChange& other)
     {
         return !(*this == other);
@@ -218,13 +218,13 @@ public:
 private:
     void extractTextStyles(Document*, MutableStyleProperties&, bool shouldUseFixedFontDefaultSize);
 
-    String m_cssStyle;
-    bool m_applyBold;
-    bool m_applyItalic;
-    bool m_applyUnderline;
-    bool m_applyLineThrough;
-    bool m_applySubscript;
-    bool m_applySuperscript;
+    RefPtr<MutableStyleProperties> m_cssStyle;
+    bool m_applyBold = false;
+    bool m_applyItalic = false;
+    bool m_applyUnderline = false;
+    bool m_applyLineThrough = false;
+    bool m_applySubscript = false;
+    bool m_applySuperscript = false;
     String m_applyFontColor;
     String m_applyFontFace;
     String m_applyFontSize;

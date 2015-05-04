@@ -19,7 +19,8 @@ function testSingleToggle(toggleCommand, initialContents, expectedContents)
 
 testSingleToggle("underline", "test", "<span style=\"text-decoration: underline;\">test</span>");
 testSingleToggle("underline", "<span style=\"text-decoration: underline;\">test</span>", "test");
-testSingleToggle("underline", "<span style=\"text-decoration: underline line-through overline;\">test</span>", "<span style=\"text-decoration: overline line-through;\">test</span>");
+testSingleToggle("underline", "<span style=\"text-decoration: underline line-through overline;\">test</span>",
+    "<span style=\"text-decoration: line-through overline;\">test</span>");
 testSingleToggle("strikethrough", "test", "<span style=\"text-decoration: line-through;\">test</span>");
 testSingleToggle("strikethrough", "<span style=\"text-decoration: line-through;\">test</span>", "test");
 testSingleToggle("strikethrough", "<span style=\"text-decoration: underline line-through overline;\">test</span>", "<span style=\"text-decoration: underline overline;\">test</span>");

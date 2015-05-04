@@ -98,77 +98,46 @@ static Frame* targetFrame(Frame& frame, Event* event)
     return node->document().frame();
 }
 
-static bool applyCommandToFrame(Frame& frame, EditorCommandSource source, EditAction action, StyleProperties* style)
+static bool applyCommandToFrame(Frame& frame, EditorCommandSource source, EditAction action, RefPtr<EditingStyle>&& style)
 {
     // FIXME: We don't call shouldApplyStyle when the source is DOM; is there a good reason for that?
     switch (source) {
     case CommandFromMenuOrKeyBinding:
-        frame.editor().applyStyleToSelection(style, action);
+        frame.editor().applyStyleToSelection(WTF::move(style), action);
         return true;
     case CommandFromDOM:
     case CommandFromDOMWithUserInterface:
-        frame.editor().applyStyle(style);
+        frame.editor().applyStyle(WTF::move(style), EditActionUnspecified);
         return true;
     }
     ASSERT_NOT_REACHED();
     return false;
 }
 
+static bool isStylePresent(Editor& editor, CSSPropertyID propertyID, const char* onValue)
+{
+    // Style is considered present when
+    // Mac: present at the beginning of selection
+    // Windows: present throughout the selection
+    if (editor.behavior().shouldToggleStyleBasedOnStartOfSelection())
+        return editor.selectionStartHasStyle(propertyID, onValue);
+    return editor.selectionHasStyle(propertyID, onValue) == TrueTriState;
+}
+
 static bool executeApplyStyle(Frame& frame, EditorCommandSource source, EditAction action, CSSPropertyID propertyID, const String& propertyValue)
 {
-    RefPtr<MutableStyleProperties> style = MutableStyleProperties::create();
-    style->setProperty(propertyID, propertyValue);
-    return applyCommandToFrame(frame, source, action, style.get());
+    return applyCommandToFrame(frame, source, action, EditingStyle::create(propertyID, propertyValue));
 }
 
 static bool executeApplyStyle(Frame& frame, EditorCommandSource source, EditAction action, CSSPropertyID propertyID, CSSValueID propertyValue)
 {
-    RefPtr<MutableStyleProperties> style = MutableStyleProperties::create();
-    style->setProperty(propertyID, propertyValue);
-    return applyCommandToFrame(frame, source, action, style.get());
-}
-
-// FIXME: executeToggleStyleInList does not handle complicated cases such as <b><u>hello</u>world</b> properly.
-//        This function must use Editor::selectionHasStyle to determine the current style but we cannot fix this
-//        until https://bugs.webkit.org/show_bug.cgi?id=27818 is resolved.
-static bool executeToggleStyleInList(Frame& frame, EditorCommandSource source, EditAction action, CSSPropertyID propertyID, CSSValue* value)
-{
-    RefPtr<EditingStyle> selectionStyle = EditingStyle::styleAtSelectionStart(frame.selection().selection());
-    if (!selectionStyle || !selectionStyle->style())
-        return false;
-
-    RefPtr<CSSValue> selectedCSSValue = selectionStyle->style()->getPropertyCSSValue(propertyID);
-    String newStyle = ASCIILiteral("none");
-    if (is<CSSValueList>(*selectedCSSValue)) {
-        RefPtr<CSSValueList> selectedCSSValueList = downcast<CSSValueList>(selectedCSSValue.get());
-        if (!selectedCSSValueList->removeAll(value))
-            selectedCSSValueList->append(*value);
-        if (selectedCSSValueList->length())
-            newStyle = selectedCSSValueList->cssText();
-
-    } else if (selectedCSSValue->cssText() == "none")
-        newStyle = value->cssText();
-
-    // FIXME: We shouldn't be having to convert new style into text.  We should have setPropertyCSSValue.
-    RefPtr<MutableStyleProperties> newMutableStyle = MutableStyleProperties::create();
-    newMutableStyle->setProperty(propertyID, newStyle);
-    return applyCommandToFrame(frame, source, action, newMutableStyle.get());
+    return applyCommandToFrame(frame, source, action, EditingStyle::create(propertyID, propertyValue));
 }
 
 static bool executeToggleStyle(Frame& frame, EditorCommandSource source, EditAction action, CSSPropertyID propertyID, const char* offValue, const char* onValue)
 {
-    // Style is considered present when
-    // Mac: present at the beginning of selection
-    // other: present throughout the selection
-
-    bool styleIsPresent;
-    if (frame.editor().behavior().shouldToggleStyleBasedOnStartOfSelection())
-        styleIsPresent = frame.editor().selectionStartHasStyle(propertyID, onValue);
-    else
-        styleIsPresent = frame.editor().selectionHasStyle(propertyID, onValue) == TrueTriState;
-
-    RefPtr<EditingStyle> style = EditingStyle::create(propertyID, styleIsPresent ? offValue : onValue);
-    return applyCommandToFrame(frame, source, action, style->style());
+    bool styleIsPresent = isStylePresent(frame.editor(), propertyID, onValue);
+    return applyCommandToFrame(frame, source, action, EditingStyle::create(propertyID, styleIsPresent ? offValue : onValue));
 }
 
 static bool executeApplyParagraphStyle(Frame& frame, EditorCommandSource source, EditAction action, CSSPropertyID propertyID, const String& propertyValue)
@@ -1058,10 +1027,17 @@ static bool executeSetMark(Frame& frame, Event*, EditorCommandSource, const Stri
     return true;
 }
 
+static TextDecorationChange textDecorationChangeForToggling(Editor& editor, CSSPropertyID propertyID, const char* onValue)
+{
+    return isStylePresent(editor, propertyID, onValue) ? TextDecorationChange::Remove : TextDecorationChange::Add;
+}
+
 static bool executeStrikethrough(Frame& frame, Event*, EditorCommandSource source, const String&)
 {
-    RefPtr<CSSPrimitiveValue> lineThrough = CSSPrimitiveValue::createIdentifier(CSSValueLineThrough);
-    return executeToggleStyleInList(frame, source, EditActionUnderline, CSSPropertyWebkitTextDecorationsInEffect, lineThrough.get());
+    RefPtr<EditingStyle> style = EditingStyle::create();
+    style->setStrikeThroughChange(textDecorationChangeForToggling(frame.editor(), CSSPropertyWebkitTextDecorationsInEffect, "line-through"));
+    // FIXME: Needs a new EditAction!
+    return applyCommandToFrame(frame, source, EditActionUnderline, WTF::move(style));
 }
 
 static bool executeStyleWithCSS(Frame& frame, Event*, EditorCommandSource, const String& value)
@@ -1125,8 +1101,10 @@ static bool executeTranspose(Frame& frame, Event*, EditorCommandSource, const St
 
 static bool executeUnderline(Frame& frame, Event*, EditorCommandSource source, const String&)
 {
-    RefPtr<CSSPrimitiveValue> underline = CSSPrimitiveValue::createIdentifier(CSSValueUnderline);
-    return executeToggleStyleInList(frame, source, EditActionUnderline, CSSPropertyWebkitTextDecorationsInEffect, underline.get());
+    RefPtr<EditingStyle> style = EditingStyle::create();
+    TextDecorationChange change = textDecorationChangeForToggling(frame.editor(), CSSPropertyWebkitTextDecorationsInEffect, "underline");
+    style->setUnderlineChange(change);
+    return applyCommandToFrame(frame, source, EditActionUnderline, WTF::move(style));
 }
 
 static bool executeUndo(Frame& frame, Event*, EditorCommandSource, const String&)

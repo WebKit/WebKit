@@ -263,7 +263,7 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle *style)
     VisiblePosition beyondEnd(endOfParagraph(visibleEnd).next());
     while (paragraphStart.isNotNull() && paragraphStart != beyondEnd) {
         StyleChange styleChange(style, paragraphStart.deepEquivalent());
-        if (styleChange.cssStyle().length() || m_removeOnly) {
+        if (styleChange.cssStyle() || m_removeOnly) {
             RefPtr<Node> block = enclosingBlock(paragraphStart.deepEquivalent().deprecatedNode());
             if (!m_removeOnly) {
                 RefPtr<Node> newBlock = moveParagraphContentsToNewBlockIfNecessary(paragraphStart.deepEquivalent());
@@ -945,17 +945,14 @@ bool ApplyStyleCommand::removeCSSStyle(EditingStyle* style, HTMLElement* element
     if (mode == RemoveNone)
         return style->conflictsWithInlineStyleOfElement(element);
 
-    Vector<CSSPropertyID> properties;
-    if (!style->conflictsWithInlineStyleOfElement(element, extractedStyle, properties))
+    RefPtr<MutableStyleProperties> newInlineStyle;
+    if (!style->conflictsWithInlineStyleOfElement(element, newInlineStyle, extractedStyle))
         return false;
 
-    // FIXME: We should use a mass-removal function here but we don't have an undoable one yet.
-    for (size_t i = 0; i < properties.size(); i++)
-        removeCSSProperty(element, properties[i]);
-
-    // No need to serialize <foo style=""> if we just removed the last css property
-    if (element->inlineStyle()->isEmpty())
+    if (newInlineStyle->isEmpty())
         removeNodeAttribute(element, styleAttr);
+    else
+        setNodeAttribute(element, styleAttr, newInlineStyle->asText());
 
     if (isSpanWithoutAttributesOrUnstyledStyleSpan(element))
         removeNodePreservingChildren(element);
@@ -1370,12 +1367,13 @@ void ApplyStyleCommand::surroundNodeRangeWithElement(PassRefPtr<Node> passedStar
 
 void ApplyStyleCommand::addBlockStyle(const StyleChange& styleChange, HTMLElement* block)
 {
+    ASSERT(styleChange.cssStyle());
     // Do not check for legacy styles here. Those styles, like <B> and <I>, only apply for
     // inline content.
     if (!block)
         return;
         
-    String cssStyle = styleChange.cssStyle();
+    String cssStyle = styleChange.cssStyle()->asText();
     StringBuilder cssText;
     cssText.append(cssStyle);
     if (const StyleProperties* decl = block->inlineStyle()) {
@@ -1456,21 +1454,17 @@ void ApplyStyleCommand::applyInlineStyleChange(PassRefPtr<Node> passedStart, Pas
         }
     }
 
-    if (styleChange.cssStyle().length()) {
+    if (auto styleToMerge = styleChange.cssStyle()) {
         if (styleContainer) {
-            if (const StyleProperties* existingStyle = styleContainer->inlineStyle()) {
-                String existingText = existingStyle->asText();
-                StringBuilder cssText;
-                cssText.append(existingText);
-                if (!existingText.isEmpty())
-                    cssText.append(' ');
-                cssText.append(styleChange.cssStyle());
-                setNodeAttribute(styleContainer, styleAttr, cssText.toString());
+            if (auto existingStyle = styleContainer->inlineStyle()) {
+                auto inlineStyle = EditingStyle::create(existingStyle);
+                inlineStyle->overrideWithStyle(styleToMerge);
+                setNodeAttribute(styleContainer, styleAttr, inlineStyle->style()->asText());
             } else
-                setNodeAttribute(styleContainer, styleAttr, styleChange.cssStyle());
+                setNodeAttribute(styleContainer, styleAttr, styleToMerge->asText());
         } else {
             RefPtr<Element> styleElement = createStyleSpanElement(document());
-            styleElement->setAttribute(styleAttr, styleChange.cssStyle());
+            styleElement->setAttribute(styleAttr, styleToMerge->asText());
             surroundNodeRangeWithElement(startNode, endNode, styleElement.release());
         }
     }

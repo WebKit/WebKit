@@ -1,3 +1,13 @@
+2015-05-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Toggling underline or strike through affects each other
+        https://bugs.webkit.org/show_bug.cgi?id=27818
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _setTypingStyle:withUndoAction:]):
+
 2015-05-01  Martin Robinson  <mrobinson@igalia.com>
 
         USE(...) macro should expect unprefixed variables
