@@ -1,3 +1,17 @@
+2015-05-04  Andreas Kling  <akling@apple.com>
+
+        Make ExecState::vm() branchless in release builds.
+        <https://webkit.org/b/144586>
+
+        Reviewed by Geoffrey Garen.
+
+        Avoid null checking the ExecState's callee() before getting the
+        VM from it. The code was already dereferencing it anyway, since we
+        know it's not gonna be null.
+
+        * runtime/JSCellInlines.h:
+        (JSC::ExecState::vm):
+
 2015-05-04  Basile Clement  <basile_clement@apple.com>
 
         Object allocation not sinking properly through CheckStructure

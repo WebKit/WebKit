@@ -120,8 +120,9 @@ inline VM* JSCell::vm() const
 
 inline VM& ExecState::vm() const
 {
+    ASSERT(callee());
     ASSERT(callee()->vm());
-    return *callee()->vm();
+    return *calleeAsValue().asCell()->vm();
 }
 
 template<typename T>
