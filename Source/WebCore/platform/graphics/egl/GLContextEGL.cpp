@@ -66,14 +66,13 @@ static EGLDisplay sharedEGLDisplay()
     if (!initialized) {
         initialized = true;
 
-        const auto& sharedDisplay = PlatformDisplay::sharedDisplay();
 #if PLATFORM(WAYLAND)
-        if (is<PlatformDisplayWayland>(sharedDisplay))
-            gSharedEGLDisplay = eglGetDisplay(downcast<PlatformDisplayWayland>(sharedDisplay).native());
+        if (is<PlatformDisplayWayland>(PlatformDisplay::sharedDisplay()))
+            gSharedEGLDisplay = eglGetDisplay(downcast<PlatformDisplayWayland>(PlatformDisplay::sharedDisplay()).native());
         else // Note that this branch continutes outside this #if-guarded segment.
 #endif
 #if PLATFORM(X11)
-            gSharedEGLDisplay = eglGetDisplay(downcast<PlatformDisplayX11>(sharedDisplay).native());
+            gSharedEGLDisplay = eglGetDisplay(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native());
 #else
             gSharedEGLDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 #endif
