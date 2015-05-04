@@ -1,3 +1,33 @@
+2015-05-04  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r178156): CSS Parser incorrectly rejects valid calc() in padding-right property
+        https://bugs.webkit.org/show_bug.cgi?id=144584
+        <rdar://problem/20796829>
+
+        Reviewed by Darin Adler.
+
+        The CSS parser was rejecting calculated values at parsing time if it
+        considered the value was negative and the CSS property did not allow
+        negative values. However, doing so at this point will not always work
+        because we don't necessarily know the font-size yet (for e.g. for
+        calc(0.5em - 2px). Also, rejecting negative calculated values is not
+        the right behavior as the the specification. The specification says
+        we should clamp:
+        http://dev.w3.org/csswg/css-values-3/#calc-range
+
+        This patch updates validateCalculationUnit() to stop marking the value
+        as invalid if it is negative. Instead, let the CSSCalcValue's permitted
+        range clamp the value as needed.
+
+        This bug was causing the bottom graphic on aldentrio.com to not be
+        rendered properly.
+
+        Test: fast/css/negative-calc-values.html
+              fast/css/padding-calc-value.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::validateCalculationUnit):
+
 2015-05-04  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Show wireless playback placard even when an element has custom controls

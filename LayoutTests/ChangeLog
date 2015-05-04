@@ -1,3 +1,31 @@
+2015-05-04  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r178156): CSS Parser incorrectly rejects valid calc() in padding-right property
+        https://bugs.webkit.org/show_bug.cgi?id=144584
+        <rdar://problem/20796829>
+
+        Reviewed by Darin Adler.
+
+        * fast/css/negative-calc-values-expected.txt: Added.
+        * fast/css/negative-calc-values.html: Added.
+        Add a layout test that assigns negative calc() values to properties
+        whose values cannot be negative to verify that values are clamped as
+        per the specification:
+        http://dev.w3.org/csswg/css-values-3/#calc-range
+
+        * fast/css/padding-calc-value-expected.txt: Added.
+        * fast/css/padding-calc-value.html: Added.
+        Add a layout test to test that using calc(.5em - 2px) for padding-right
+        CSS property works as intended. It used to be resolved as 0px instead
+        of "2*font-size - 2px".
+
+        * fast/css/text-shadow-calc-value-expected.txt:
+        * fast/css/text-shadow-calc-value.html:
+        Update test to match what the specification says:
+        http://dev.w3.org/csswg/css-values-3/#calc-range
+        "width: calc(5px - 10px);" is equivalent to "width: 0px;" since widths
+        smaller than 0px are not allowed.
+
 2015-05-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed gardening. Fix lint error on mac-wk1.

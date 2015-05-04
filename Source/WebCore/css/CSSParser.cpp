@@ -1670,18 +1670,12 @@ bool CSSParser::validateCalculationUnit(ValueWithCalculation& valueWithCalculati
             isValid = true;
         if (!isValid && (unitFlags & FPositiveInteger) && calculation->isInt() && calculation->isPositive())
             isValid = true;
-        if (isValid && mustBeNonNegative && calculation->isNegative())
-            isValid = false;
         break;
     case CalcLength:
         isValid = (unitFlags & FLength);
-        if (isValid && mustBeNonNegative && calculation->isNegative())
-            isValid = false;
         break;
     case CalcPercent:
         isValid = (unitFlags & FPercent);
-        if (isValid && mustBeNonNegative && calculation->isNegative())
-            isValid = false;
         break;
     case CalcPercentLength:
         isValid = (unitFlags & FPercent) && (unitFlags & FLength);

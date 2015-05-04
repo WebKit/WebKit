@@ -92,7 +92,6 @@ public:
     CalculationCategory category() const { return m_expression->category(); }
     bool isInt() const { return m_expression->isInteger(); }
     double doubleValue() const;
-    bool isNegative() const { return m_expression->doubleValue() < 0; }
     bool isPositive() const { return m_expression->doubleValue() > 0; }
     double computeLengthPx(const CSSToLengthConversionData&) const;
     unsigned short primitiveType() const { return m_expression->primitiveType(); }
