@@ -1,5 +1,12 @@
 2015-05-04  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix the test after r183758 since shouldNotBe is not supported in the standalone testing.
+
+        * js/class-syntax-default-constructor-expected.txt:
+        * js/script-tests/class-syntax-default-constructor.js:
+
+2015-05-04  Ryosuke Niwa  <rniwa@webkit.org>
+
         Toggling underline or strike through affects each other
         https://bugs.webkit.org/show_bug.cgi?id=27818
 
