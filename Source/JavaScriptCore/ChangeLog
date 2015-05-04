@@ -1,3 +1,30 @@
+2015-05-04  Basile Clement  <basile_clement@apple.com>
+
+        Object allocation not sinking properly through CheckStructure
+        https://bugs.webkit.org/show_bug.cgi?id=144465
+
+        Reviewed by Filip Pizlo.
+
+        Currently, sinking an allocation through a CheckStructure will
+        completely ignore all structure checking, which is obviously wrong.
+
+        A CheckStructureImmediate node type was present for that purpose, but
+        the CheckStructures were not properly replaced.  This ensures that
+        CheckStructure nodes are replaced by CheckStructureImmediate nodes when
+        sunk through, and that structure checking happens correctly.
+
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToCheckStructureImmediate): Added.
+        (JSC::DFG::Node::hasStructureSet):
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        (JSC::DFG::ObjectAllocationSinkingPhase::promoteSunkenFields):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileCheckStructure):
+        (JSC::FTL::LowerDFGToLLVM::compileCheckStructureImmediate):
+        (JSC::FTL::LowerDFGToLLVM::checkStructure):
+        * tests/stress/sink_checkstructure.js: Added.
+        (foo):
+
 2015-05-01  Geoffrey Garen  <ggaren@apple.com>
 
         REGRESSION(r183570): jslib-traverse-jquery is 22% slower

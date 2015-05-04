@@ -1882,7 +1882,11 @@ private:
         
         LValue structureID = m_out.load32(cell, m_heaps.JSCell_structureID);
         
-        checkStructure(structureID, jsValueValue(cell), exitKind, m_node->structureSet());
+        checkStructure(
+            structureID, jsValueValue(cell), exitKind, m_node->structureSet(),
+            [this] (Structure* structure) {
+                return weakStructureID(structure);
+            });
     }
     
     void compileCheckCell()
@@ -5089,8 +5093,12 @@ private:
     
     void compileCheckStructureImmediate()
     {
-        LValue structureID = lowCell(m_node->child1());
-        checkStructure(structureID, noValue(), BadCache, m_node->structureSet());
+        LValue structure = lowCell(m_node->child1());
+        checkStructure(
+            structure, noValue(), BadCache, m_node->structureSet(),
+            [this] (Structure* structure) {
+                return weakStructure(structure);
+            });
     }
     
     void compileMaterializeNewObject()
@@ -5430,14 +5438,15 @@ private:
         return getArgumentsStart(m_node->origin.semantic.inlineCallFrame);
     }
     
+    template<typename Functor>
     void checkStructure(
-        LValue structureID, const FormattedValue& formattedValue, ExitKind exitKind,
-        const StructureSet& set)
+        LValue structureDiscriminant, const FormattedValue& formattedValue, ExitKind exitKind,
+        const StructureSet& set, const Functor& weakStructureDiscriminant)
     {
         if (set.size() == 1) {
             speculate(
                 exitKind, formattedValue, 0,
-                m_out.notEqual(structureID, weakStructureID(set[0])));
+                m_out.notEqual(structureDiscriminant, weakStructureDiscriminant(set[0])));
             return;
         }
         
@@ -5447,14 +5456,14 @@ private:
         for (unsigned i = 0; i < set.size() - 1; ++i) {
             LBasicBlock nextStructure = FTL_NEW_BLOCK(m_out, ("checkStructure nextStructure"));
             m_out.branch(
-                m_out.equal(structureID, weakStructureID(set[i])),
+                m_out.equal(structureDiscriminant, weakStructureDiscriminant(set[i])),
                 unsure(continuation), unsure(nextStructure));
             m_out.appendTo(nextStructure);
         }
         
         speculate(
             exitKind, formattedValue, 0,
-            m_out.notEqual(structureID, weakStructureID(set.last())));
+            m_out.notEqual(structureDiscriminant, weakStructureDiscriminant(set.last())));
         
         m_out.jump(continuation);
         m_out.appendTo(continuation, lastNext);

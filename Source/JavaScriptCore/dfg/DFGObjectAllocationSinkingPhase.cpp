@@ -728,8 +728,17 @@ private:
                             m_localMapping.set(location, value.node());
                     },
                     [&] (PromotedHeapLocation location) {
-                        if (m_sinkCandidates.contains(location.base()))
-                            node->replaceWith(resolve(block, location));
+                        if (m_sinkCandidates.contains(location.base())) {
+                            switch (node->op()) {
+                            case CheckStructure:
+                                node->convertToCheckStructureImmediate(resolve(block, location));
+                                break;
+
+                            default:
+                                node->replaceWith(resolve(block, location));
+                                break;
+                            }
+                        }
                     });
             }
             

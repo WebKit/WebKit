@@ -414,6 +414,13 @@ struct Node {
         setOpAndDefaultFlags(CheckStructure);
         m_opInfo = bitwise_cast<uintptr_t>(set); 
     }
+
+    void convertToCheckStructureImmediate(Node* structure)
+    {
+        ASSERT(op() == CheckStructure);
+        m_op = CheckStructureImmediate;
+        children.setChild1(Edge(structure, CellUse));
+    }
     
     void replaceWith(Node* other)
     {
@@ -1334,6 +1341,7 @@ struct Node {
     {
         switch (op()) {
         case CheckStructure:
+        case CheckStructureImmediate:
             return true;
         default:
             return false;
