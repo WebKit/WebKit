@@ -1066,8 +1066,10 @@ bool FrameView::isEnclosedInCompositingLayer() const
 bool FrameView::flushCompositingStateIncludingSubframes()
 {
     bool allFramesFlushed = flushCompositingStateForThisFrame(&frame());
-    
-    for (Frame* child = frame().tree().firstChild(); child; child = child->tree().traverseNext(m_frame.ptr())) {
+
+    for (Frame* child = frame().tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered(m_frame.ptr())) {
+        if (!child->view())
+            continue;
         bool flushed = child->view()->flushCompositingStateForThisFrame(&frame());
         allFramesFlushed &= flushed;
     }
@@ -2593,16 +2595,8 @@ bool FrameView::needsStyleRecalcOrLayout(bool includeSubframes) const
     if (!includeSubframes)
         return false;
 
-    // Find child frames via the Widget tree, as updateLayoutAndStyleIfNeededRecursive() does.
-    Vector<Ref<FrameView>, 16> childViews;
-    childViews.reserveInitialCapacity(children().size());
-    for (auto& widget : children()) {
-        if (is<FrameView>(*widget))
-            childViews.uncheckedAppend(downcast<FrameView>(*widget));
-    }
-
-    for (unsigned i = 0; i < childViews.size(); ++i) {
-        if (childViews[i]->needsStyleRecalcOrLayout())
+    for (auto& frameView : renderedChildFrameViews()) {
+        if (frameView->needsStyleRecalcOrLayout())
             return true;
     }
 
@@ -4036,6 +4030,17 @@ void FrameView::paintOverhangAreas(GraphicsContext* context, const IntRect& hori
     ScrollView::paintOverhangAreas(context, horizontalOverhangArea, verticalOverhangArea, dirtyRect);
 }
 
+FrameView::FrameViewList FrameView::renderedChildFrameViews() const
+{
+    FrameViewList childViews;
+    for (Frame* frame = m_frame->tree().firstRenderedChild(); frame; frame = frame->tree().nextRenderedSibling()) {
+        if (frame->view())
+            childViews.append(*frame->view());
+    }
+    
+    return childViews;
+}
+
 void FrameView::updateLayoutAndStyleIfNeededRecursive()
 {
     // We have to crawl our entire tree looking for any FrameViews that need
@@ -4054,20 +4059,10 @@ void FrameView::updateLayoutAndStyleIfNeededRecursive()
     if (needsLayout())
         layout();
 
-    // Grab a copy of the children() set, as it may be mutated by the following updateLayoutAndStyleIfNeededRecursive
-    // calls, as they can potentially re-enter a layout of the parent frame view, which may add/remove scrollbars
-    // and thus mutates the children() set.
-    // We use the Widget children because walking the Frame tree would include display:none frames.
-    // FIXME: use FrameTree::traverseNextRendered().
-    Vector<Ref<FrameView>, 16> childViews;
-    childViews.reserveInitialCapacity(children().size());
-    for (auto& widget : children()) {
-        if (is<FrameView>(*widget))
-            childViews.uncheckedAppend(downcast<FrameView>(*widget));
-    }
-
-    for (unsigned i = 0; i < childViews.size(); ++i)
-        childViews[i]->updateLayoutAndStyleIfNeededRecursive();
+    // Grab a copy of the child views, as the list may be mutated by the following updateLayoutAndStyleIfNeededRecursive
+    // calls, as they can potentially re-enter a layout of the parent frame view.
+    for (auto& frameView : renderedChildFrameViews())
+        frameView->updateLayoutAndStyleIfNeededRecursive();
 
     // A child frame may have dirtied us during its layout.
     frame().document()->updateStyleIfNeeded();

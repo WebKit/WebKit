@@ -55,6 +55,9 @@ namespace WebCore {
         Frame* firstChild() const { return m_firstChild.get(); }
         Frame* lastChild() const { return m_lastChild; }
 
+        Frame* firstRenderedChild() const;
+        Frame* nextRenderedSibling() const;
+
         WEBCORE_EXPORT bool isDescendantOf(const Frame* ancestor) const;
         
         WEBCORE_EXPORT Frame* traverseNext(const Frame* stayWithin = nullptr) const;
@@ -89,9 +92,6 @@ namespace WebCore {
         Frame* scopedChild(unsigned index, TreeScope*) const;
         Frame* scopedChild(const AtomicString& name, TreeScope*) const;
         unsigned scopedChildCount(TreeScope*) const;
-
-        Frame* firstRenderedChild() const;
-        Frame* nextRenderedSibling() const;
 
         Frame& m_thisFrame;
 

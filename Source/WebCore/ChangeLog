@@ -1,3 +1,37 @@
+2015-05-04  Simon Fraser  <simon.fraser@apple.com>
+
+        display:none iframes cause repeated compositing flushing
+        https://bugs.webkit.org/show_bug.cgi?id=144529
+
+        Reviewed by Darin Adler.
+        
+        FrameView::updateLayoutAndStyleIfNeededRecursive() only forces layout on rendered
+        frames, by virtue of using its Widget children which are FrameViews.
+        
+        However, FrameView::flushCompositingStateIncludingSubframes() iterated over
+        all frames, and return false if any subframe needed layout. Thus, if it saw
+        non-rendered frames (which are never laid out), it would return false,
+        which causes the CFRunLoopObserver that drives flushing to run again.
+        
+        Fix by having FrameView::flushCompositingStateIncludingSubframes() only check
+        rendered frames, using FrameTree::traverseNextRendered() (which needs to be public).
+        
+        Also change FrameView::needsStyleRecalcOrLayout() and FrameView::updateLayoutAndStyleIfNeededRecursive()
+        to fetch the list of FrameViews using FrameTree's nextRenderedSibling(), rather than using
+        the Widget tree, since we'd like to eventually remove Widgets, and using the Frame
+        tree matches flushCompositingStateIncludingSubframes() and other code.
+
+        Test: compositing/iframes/display-none-subframe.html
+
+        * page/FrameTree.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::flushCompositingStateIncludingSubframes):
+        (WebCore::FrameView::needsStyleRecalcOrLayout):
+        (WebCore::FrameView::renderedChildFrameViews): Helper that returns a vector
+        of Ref<FrameView>s for rendered frames only.
+        (WebCore::FrameView::updateLayoutAndStyleIfNeededRecursive):
+        * page/FrameView.h:
+
 2015-05-04  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed. Fix build with SECURITY_ASSERTIONS enabled.

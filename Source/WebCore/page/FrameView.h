@@ -517,6 +517,9 @@ public:
 
     const HashSet<Widget*>& widgetsInRenderTree() const { return m_widgetsInRenderTree; }
 
+    typedef Vector<Ref<FrameView>, 16> FrameViewList;
+    FrameViewList renderedChildFrameViews() const;
+
     void addTrackedRepaintRect(const FloatRect&);
 
     // exposedRect represents WebKit's understanding of what part

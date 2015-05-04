@@ -1,5 +1,18 @@
 2015-05-04  Simon Fraser  <simon.fraser@apple.com>
 
+        display:none iframes cause repeated compositing flushing
+        https://bugs.webkit.org/show_bug.cgi?id=144529
+
+        Reviewed by Darin Adler.
+        
+        Test with a display:none iframe that triggers a single compositing flush,
+        then counts how many occur in 10ms.
+
+        * compositing/iframes/display-none-subframe-expected.txt: Added.
+        * compositing/iframes/display-none-subframe.html: Added.
+
+2015-05-04  Simon Fraser  <simon.fraser@apple.com>
+
         Fix updating of tiled backing opaquenss when the page background color changes
         https://bugs.webkit.org/show_bug.cgi?id=144600
         rdar://problem/20723035
