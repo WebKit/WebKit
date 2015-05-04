@@ -1,3 +1,11 @@
+2015-05-04  Dan Bernstein  <mitz@apple.com>
+
+        Fixed the build.
+
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm:
+        (WebCore::MediaPlaybackTargetPickerMac::showPlaybackTargetPicker): Moved off of a deprecated
+        method to a non-deprecated equivalent.
+
 2015-05-04  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Box Alignment] Upgrade justify-content parsing to CSS3 Box Alignment spec.

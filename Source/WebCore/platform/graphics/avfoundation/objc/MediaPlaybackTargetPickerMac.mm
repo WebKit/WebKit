@@ -140,7 +140,7 @@ void MediaPlaybackTargetPickerMac::showPlaybackTargetPicker(const FloatRect& loc
         if ([picker showMenuForRect:location appearanceName:NSAppearanceNameVibrantLight allowReselectionOfSelectedOutputDevice:!checkActiveRoute])
             currentDeviceDidChange();
     } else
-        [picker showMenuForRect:location appearanceName:NSAppearanceNameVibrantLight];
+        [picker showMenuForRect:location appearanceName:NSAppearanceNameVibrantLight allowReselectionOfSelectedOutputDevice:NO];
 }
 
 void MediaPlaybackTargetPickerMac::addPendingAction(PendingActionFlags action)
