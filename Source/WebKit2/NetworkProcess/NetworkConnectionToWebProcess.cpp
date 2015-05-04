@@ -115,16 +115,16 @@ void NetworkConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection&, I
 
 void NetworkConnectionToWebProcess::scheduleResourceLoad(const NetworkResourceLoadParameters& loadParameters)
 {
-    RefPtr<NetworkResourceLoader> loader = NetworkResourceLoader::create(loadParameters, this);
-    m_networkResourceLoaders.add(loadParameters.identifier, loader);
-    NetworkProcess::singleton().networkResourceLoadScheduler().scheduleLoader(loader.get());
+    auto loader = NetworkResourceLoader::create(loadParameters, this);
+    m_networkResourceLoaders.add(loadParameters.identifier, loader.ptr());
+    loader->start();
 }
 
 void NetworkConnectionToWebProcess::performSynchronousLoad(const NetworkResourceLoadParameters& loadParameters, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply> reply)
 {
-    RefPtr<NetworkResourceLoader> loader = NetworkResourceLoader::create(loadParameters, this, reply);
-    m_networkResourceLoaders.add(loadParameters.identifier, loader);
-    NetworkProcess::singleton().networkResourceLoadScheduler().scheduleLoader(loader.get());
+    auto loader = NetworkResourceLoader::create(loadParameters, this, reply);
+    m_networkResourceLoaders.add(loadParameters.identifier, loader.ptr());
+    loader->start();
 }
 
 void NetworkConnectionToWebProcess::removeLoadIdentifier(ResourceLoadIdentifier identifier)

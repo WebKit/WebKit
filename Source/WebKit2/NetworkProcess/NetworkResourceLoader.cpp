@@ -204,8 +204,6 @@ void NetworkResourceLoader::cleanup()
 
     invalidateSandboxExtensions();
 
-    NetworkProcess::singleton().networkResourceLoadScheduler().removeLoader(this);
-
     m_handle = nullptr;
 
     // This will cause NetworkResourceLoader to be destroyed and therefore we do it last.

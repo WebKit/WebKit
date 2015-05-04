@@ -32,7 +32,6 @@
 #include "ChildProcess.h"
 #include "DownloadManager.h"
 #include "MessageReceiverMap.h"
-#include "NetworkResourceLoadScheduler.h"
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/SessionID.h>
 #include <memory>
@@ -74,8 +73,6 @@ public:
     }
 
     void removeNetworkConnectionToWebProcess(NetworkConnectionToWebProcess*);
-
-    NetworkResourceLoadScheduler& networkResourceLoadScheduler() { return m_networkResourceLoadScheduler; }
 
     AuthenticationManager& authenticationManager();
     DownloadManager& downloadManager();
@@ -156,8 +153,6 @@ private:
 
     // Connections to WebProcesses.
     Vector<RefPtr<NetworkConnectionToWebProcess>> m_webProcessConnections;
-
-    NetworkResourceLoadScheduler m_networkResourceLoadScheduler;
 
     String m_diskCacheDirectory;
     bool m_hasSetCacheModel;

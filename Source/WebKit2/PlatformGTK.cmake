@@ -30,7 +30,6 @@ list(APPEND WebKit2_SOURCES
     NetworkProcess/gtk/NetworkProcessMainGtk.cpp
 
     NetworkProcess/soup/NetworkProcessSoup.cpp
-    NetworkProcess/soup/NetworkResourceLoadSchedulerSoup.cpp
     NetworkProcess/soup/RemoteNetworkingContextSoup.cpp
 
     Platform/IPC/unix/AttachmentUnix.cpp

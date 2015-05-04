@@ -475,12 +475,9 @@ void NetworkProcess::setCanHandleHTTPSServerTrustEvaluation(bool value)
 
 void NetworkProcess::getNetworkProcessStatistics(uint64_t callbackID)
 {
-    NetworkResourceLoadScheduler& scheduler = NetworkProcess::singleton().networkResourceLoadScheduler();
-
     StatisticsData data;
 
     auto& networkProcess = NetworkProcess::singleton();
-    data.statisticsNumbers.set("LoadsActiveCount", scheduler.loadsActiveCount());
     data.statisticsNumbers.set("DownloadsActiveCount", networkProcess.downloadManager().activeDownloadCount());
     data.statisticsNumbers.set("OutstandingAuthenticationChallengesCount", networkProcess.authenticationManager().outstandingAuthenticationChallengeCount());
 

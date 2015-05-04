@@ -1,3 +1,35 @@
+2015-05-04  Antti Koivisto  <antti@apple.com>
+
+        Remove NetworkResourceLoadScheduler
+        https://bugs.webkit.org/show_bug.cgi?id=144550
+
+        Reviewed by Sam Weinig.
+
+        It doesn't really do anything.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::scheduleResourceLoad):
+        (WebKit::NetworkConnectionToWebProcess::performSynchronousLoad):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::getNetworkProcessStatistics):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::networkResourceLoadScheduler): Deleted.
+        * NetworkProcess/NetworkResourceLoadScheduler.cpp: Removed.
+        * NetworkProcess/NetworkResourceLoadScheduler.h: Removed.
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::cleanup):
+        * NetworkProcess/NetworkResourceLoader.h:
+        (WebKit::NetworkResourceLoader::create):
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::initializeNetworkSettings):
+
+            Moved from NetworkResourceLoadSchedulerMac.mm.
+
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * NetworkProcess/mac/NetworkResourceLoadSchedulerMac.mm: Removed.
+        * NetworkProcess/soup/NetworkResourceLoadSchedulerSoup.cpp: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-05-03  Alexey Proskuryakov  <ap@apple.com>
 
         Crash in SandboxExtension::consume when uploading iWork -tef documents to iCloud

@@ -158,7 +158,6 @@ set(NetworkProcess_SOURCES
     NetworkProcess/NetworkConnectionToWebProcess.cpp
     NetworkProcess/NetworkProcess.cpp
     NetworkProcess/NetworkProcessPlatformStrategies.cpp
-    NetworkProcess/NetworkResourceLoadScheduler.cpp
     NetworkProcess/NetworkResourceLoader.cpp
 
     NetworkProcess/FileAPI/NetworkBlobRegistry.cpp

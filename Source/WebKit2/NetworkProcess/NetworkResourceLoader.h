@@ -61,14 +61,14 @@ class SandboxExtension;
 
 class NetworkResourceLoader : public RefCounted<NetworkResourceLoader>, public WebCore::ResourceHandleClient, public IPC::MessageSender {
 public:
-    static RefPtr<NetworkResourceLoader> create(const NetworkResourceLoadParameters& parameters, NetworkConnectionToWebProcess* connection)
+    static Ref<NetworkResourceLoader> create(const NetworkResourceLoadParameters& parameters, NetworkConnectionToWebProcess* connection)
     {
-        return adoptRef(new NetworkResourceLoader(parameters, connection, nullptr));
+        return adoptRef(*new NetworkResourceLoader(parameters, connection, nullptr));
     }
     
-    static RefPtr<NetworkResourceLoader> create(const NetworkResourceLoadParameters& parameters, NetworkConnectionToWebProcess* connection, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply> reply)
+    static Ref<NetworkResourceLoader> create(const NetworkResourceLoadParameters& parameters, NetworkConnectionToWebProcess* connection, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply> reply)
     {
-        return adoptRef(new NetworkResourceLoader(parameters, connection, reply));
+        return adoptRef(*new NetworkResourceLoader(parameters, connection, reply));
     }    
     ~NetworkResourceLoader();
 

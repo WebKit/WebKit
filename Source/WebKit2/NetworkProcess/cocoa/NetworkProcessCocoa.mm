@@ -33,6 +33,8 @@
 #import "NetworkResourceLoader.h"
 #import "SandboxExtension.h"
 #import <WebCore/CFNetworkSPI.h>
+#import <WebCore/ResourceRequestCFNet.h>
+#import <WebKitSystemInterface.h>
 #import <wtf/RAMSize.h>
 
 namespace WebKit {
@@ -41,6 +43,23 @@ void NetworkProcess::platformLowMemoryHandler(bool)
 {
     CFURLConnectionInvalidateConnectionCache();
     _CFURLCachePurgeMemoryCache(adoptCF(CFURLCacheCopySharedURLCache()).get());
+}
+
+static void initializeNetworkSettings()
+{
+    static const unsigned preferredConnectionCount = 6;
+
+    WKInitializeMaximumHTTPConnectionCountPerHost(preferredConnectionCount);
+
+    Boolean keyExistsAndHasValidFormat = false;
+    Boolean prefValue = CFPreferencesGetAppBooleanValue(CFSTR("WebKitEnableHTTPPipelining"), kCFPreferencesCurrentApplication, &keyExistsAndHasValidFormat);
+    if (keyExistsAndHasValidFormat)
+        WebCore::ResourceRequest::setHTTPPipeliningEnabled(prefValue);
+
+    if (WebCore::ResourceRequest::resourcePrioritiesEnabled()) {
+        WKSetHTTPRequestMaximumPriority(toPlatformRequestPriority(WebCore::ResourceLoadPriority::Highest));
+        WKSetHTTPRequestMinimumFastLanePriority(toPlatformRequestPriority(WebCore::ResourceLoadPriority::Medium));
+    }
 }
 
 void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters& parameters)
@@ -55,6 +74,8 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
 #if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
     _CFNetworkSetATSContext(parameters.networkATSContext.get());
 #endif
+
+    initializeNetworkSettings();
 
     // FIXME: Most of what this function does for cache size gets immediately overridden by setCacheModel().
     // - memory cache size passed from UI process is always ignored;

@@ -894,7 +894,6 @@
 		512A9761180E031D0039A149 /* DatabaseProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 512A975F180E03160039A149 /* DatabaseProcessMessages.h */; };
 		512A9769180E09B80039A149 /* DatabaseProcessProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512A9767180E09B80039A149 /* DatabaseProcessProxyMessageReceiver.cpp */; };
 		512A976A180E09B80039A149 /* DatabaseProcessProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 512A9768180E09B80039A149 /* DatabaseProcessProxyMessages.h */; };
-		512C069016390E6900ABB911 /* NetworkResourceLoadSchedulerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 512C068F16390E6900ABB911 /* NetworkResourceLoadSchedulerMac.mm */; };
 		512E34E4130B4D0500ABD19A /* WKApplicationCacheManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A33B3130B308C00F80CB5 /* WKApplicationCacheManager.cpp */; };
 		512E34E5130B4D0500ABD19A /* WKApplicationCacheManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A33B4130B308C00F80CB5 /* WKApplicationCacheManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		512E3524130B550600ABD19A /* WebApplicationCacheManagerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512E3520130B550100ABD19A /* WebApplicationCacheManagerProxy.cpp */; };
@@ -970,8 +969,6 @@
 		517DD5C5180DC3E10081660B /* DatabaseProcessProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517DD5C4180DC3E10081660B /* DatabaseProcessProxyMac.mm */; };
 		5180C715180CCA3100FDA612 /* XPCServiceMain.Development.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839716B480F600A278FE /* XPCServiceMain.Development.mm */; };
 		5180C717180CCA3100FDA612 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
-		51829DA51637C70C000953D6 /* NetworkResourceLoadScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51829DA31637C70C000953D6 /* NetworkResourceLoadScheduler.cpp */; };
-		51829DA61637C70C000953D6 /* NetworkResourceLoadScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 51829DA41637C70C000953D6 /* NetworkResourceLoadScheduler.h */; };
 		51834592134532E90092B696 /* WebIconDatabaseClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51834590134532E80092B696 /* WebIconDatabaseClient.cpp */; };
 		51834593134532E90092B696 /* WebIconDatabaseClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51834591134532E80092B696 /* WebIconDatabaseClient.h */; };
 		518353DA1885BF8C00D9FE44 /* IDBSerialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518353D81885BF8C00D9FE44 /* IDBSerialization.cpp */; };
@@ -3086,7 +3083,6 @@
 		512A9766180E05D20039A149 /* DatabaseProcessProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = DatabaseProcessProxy.messages.in; path = Databases/DatabaseProcessProxy.messages.in; sourceTree = "<group>"; };
 		512A9767180E09B80039A149 /* DatabaseProcessProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseProcessProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		512A9768180E09B80039A149 /* DatabaseProcessProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseProcessProxyMessages.h; sourceTree = "<group>"; };
-		512C068F16390E6900ABB911 /* NetworkResourceLoadSchedulerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkResourceLoadSchedulerMac.mm; sourceTree = "<group>"; };
 		512E3520130B550100ABD19A /* WebApplicationCacheManagerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebApplicationCacheManagerProxy.cpp; sourceTree = "<group>"; };
 		512E3521130B550100ABD19A /* WebApplicationCacheManagerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebApplicationCacheManagerProxy.h; sourceTree = "<group>"; };
 		512E352B130B55AF00ABD19A /* WebApplicationCacheManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebApplicationCacheManager.cpp; path = ApplicationCache/WebApplicationCacheManager.cpp; sourceTree = "<group>"; };
@@ -3156,8 +3152,6 @@
 		517DD5BD180DA7D30081660B /* DatabaseProcessProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DatabaseProcessProxy.h; path = Databases/DatabaseProcessProxy.h; sourceTree = "<group>"; };
 		517DD5C4180DC3E10081660B /* DatabaseProcessProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DatabaseProcessProxyMac.mm; path = Databases/mac/DatabaseProcessProxyMac.mm; sourceTree = "<group>"; };
 		5180C71D180CCA3100FDA612 /* com.apple.WebKit.Databases.Development.xpc */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = com.apple.WebKit.Databases.Development.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
-		51829DA31637C70C000953D6 /* NetworkResourceLoadScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkResourceLoadScheduler.cpp; path = NetworkProcess/NetworkResourceLoadScheduler.cpp; sourceTree = "<group>"; };
-		51829DA41637C70C000953D6 /* NetworkResourceLoadScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkResourceLoadScheduler.h; path = NetworkProcess/NetworkResourceLoadScheduler.h; sourceTree = "<group>"; };
 		51834590134532E80092B696 /* WebIconDatabaseClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebIconDatabaseClient.cpp; sourceTree = "<group>"; };
 		51834591134532E80092B696 /* WebIconDatabaseClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIconDatabaseClient.h; sourceTree = "<group>"; };
 		518353D81885BF8C00D9FE44 /* IDBSerialization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBSerialization.cpp; sourceTree = "<group>"; };
@@ -5573,8 +5567,6 @@
 				51FD18B31651FBAD00DBE1CE /* NetworkResourceLoader.cpp */,
 				51FD18B41651FBAD00DBE1CE /* NetworkResourceLoader.h */,
 				E1525517170109FB003D7ADB /* NetworkResourceLoader.messages.in */,
-				51829DA31637C70C000953D6 /* NetworkResourceLoadScheduler.cpp */,
-				51829DA41637C70C000953D6 /* NetworkResourceLoadScheduler.h */,
 				E1B78470163F24690007B692 /* RemoteNetworkingContext.h */,
 			);
 			name = NetworkProcess;
@@ -5588,7 +5580,6 @@
 				5167EE9F170377BF007681CA /* NetworkDiskCacheMonitor.mm */,
 				51A8A6151627F3F9000D90E9 /* NetworkProcessMac.mm */,
 				51E3B67E16F266B3009968DC /* NetworkResourceLoaderMac.mm */,
-				512C068F16390E6900ABB911 /* NetworkResourceLoadSchedulerMac.mm */,
 				E1B78472163F253E0007B692 /* RemoteNetworkingContext.mm */,
 			);
 			name = mac;
@@ -7839,7 +7830,6 @@
 				51FD18B61651FBAD00DBE1CE /* NetworkResourceLoader.h in Headers */,
 				E152551B17011819003D7ADB /* NetworkResourceLoaderMessages.h in Headers */,
 				51CBBA10165219B6005BE8FD /* NetworkResourceLoadParameters.h in Headers */,
-				51829DA61637C70C000953D6 /* NetworkResourceLoadScheduler.h in Headers */,
 				31A2EC5614899C0900810D71 /* NotificationPermissionRequest.h in Headers */,
 				3131261F148FF82C00BA2A39 /* NotificationPermissionRequestManager.h in Headers */,
 				31A2EC521489981900810D71 /* NotificationPermissionRequestManagerProxy.h in Headers */,
@@ -9607,8 +9597,6 @@
 				51E3B67F16F266B3009968DC /* NetworkResourceLoaderMac.mm in Sources */,
 				E152551A17011819003D7ADB /* NetworkResourceLoaderMessageReceiver.cpp in Sources */,
 				51CBBA0F165219B6005BE8FD /* NetworkResourceLoadParameters.cpp in Sources */,
-				51829DA51637C70C000953D6 /* NetworkResourceLoadScheduler.cpp in Sources */,
-				512C069016390E6900ABB911 /* NetworkResourceLoadSchedulerMac.mm in Sources */,
 				BC8283AC16B4BF3F00A278FE /* NetworkServiceEntryPoint.mm in Sources */,
 				31A2EC551489982E00810D71 /* NotificationPermissionRequest.cpp in Sources */,
 				3131261E148FF82C00BA2A39 /* NotificationPermissionRequestManager.cpp in Sources */,
