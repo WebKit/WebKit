@@ -66,7 +66,7 @@ static inline String nextToken(FILE* file)
     char buffer[maxBuffer] = {0, };
     unsigned int index = 0;
     while (index < maxBuffer) {
-        char ch = fgetc(file);
+        int ch = fgetc(file);
         if (ch == EOF || (isASCIISpace(ch) && index)) // Break on non-initial ASCII space.
             break;
         if (!isASCIISpace(ch)) {

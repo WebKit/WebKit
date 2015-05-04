@@ -1,3 +1,13 @@
+2015-05-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [ARM] Don't compare unsigned chars to EOF (-1)
+        https://bugs.webkit.org/show_bug.cgi?id=144439
+
+        Reviewed by Geoffrey Garen.
+
+        * Shared/linux/WebMemorySamplerLinux.cpp:
+        (WebKit::nextToken): Don't cast return value of fgetc() to char.
+
 2015-05-04  Antti Koivisto  <antti@apple.com>
 
         Remove NetworkResourceLoadScheduler
