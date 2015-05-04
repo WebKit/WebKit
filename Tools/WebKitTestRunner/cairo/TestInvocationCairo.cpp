@@ -106,14 +106,9 @@ static void paintRepaintRectOverlay(cairo_surface_t* surface, WKArrayRef repaint
     cairo_destroy(context);
 }
 
-void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef wkImage, WKArrayRef repaintRects)
+void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef, WKArrayRef repaintRects)
 {
-#if PLATFORM(EFL) || PLATFORM(GTK)
-    UNUSED_PARAM(wkImage);
     cairo_surface_t* surface = WKImageCreateCairoSurface(TestController::singleton().mainWebView()->windowSnapshotImage().get());
-#else
-    cairo_surface_t* surface = WKImageCreateCairoSurface(wkImage);
-#endif
 
     if (repaintRects)
         paintRepaintRectOverlay(surface, repaintRects);
