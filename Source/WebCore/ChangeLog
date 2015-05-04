@@ -1,3 +1,27 @@
+2015-05-04  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Show wireless playback placard even when an element has custom controls
+        https://bugs.webkit.org/show_bug.cgi?id=144548
+
+        Reviewed by Brent Fulgham.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.shouldHaveAnyUI): Return true when playing to wireless target.
+        (Controller.prototype.reconnectControls): Add controls when playing to wireless target.
+        (Controller.prototype.setPlaying): Return early when there is no 'controls' attribute.
+        (Controller.prototype.showControls): Ditto.
+        (Controller.prototype.updateWirelessPlaybackStatus): Call updateBase when playing to wireless
+        target to ensure that controls have been set up.
+        (Controller.prototype.handleWirelessPlaybackChange): Call reconnectControls when playing
+        to wireless target when there is no 'controls' attribute.
+        (Controller.prototype.showInlinePlaybackPlaceholderOnly): New.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged): Call configureMediaControls.
+        (WebCore::HTMLMediaElement::configureMediaControls): Require controls when playing
+        to wireless target.
+        (WebCore::HTMLMediaElement::configureTextTrackDisplay): Remove some unhelpful, noisy, logging.
+
 2015-05-04  Dan Bernstein  <mitz@apple.com>
 
         Fixed the build.
