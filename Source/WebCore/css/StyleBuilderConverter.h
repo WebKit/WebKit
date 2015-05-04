@@ -29,6 +29,7 @@
 
 #include "BasicShapeFunctions.h"
 #include "CSSCalculationValue.h"
+#include "CSSContentDistributionValue.h"
 #include "CSSFontFeatureValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSGridLineNamesValue.h"
@@ -122,6 +123,7 @@ public:
     static String convertSVGURIReference(StyleResolver&, CSSValue&);
     static Color convertSVGColor(StyleResolver&, CSSValue&);
     static StyleSelfAlignmentData convertSelfOrDefaultAlignmentData(StyleResolver&, CSSValue&);
+    static StyleContentAlignmentData convertContentAlignmentData(StyleResolver&, CSSValue&);
     static EGlyphOrientation convertGlyphOrientation(StyleResolver&, CSSValue&);
     static EGlyphOrientation convertGlyphOrientationOrAuto(StyleResolver&, CSSValue&);
     static Optional<Length> convertLineHeight(StyleResolver&, CSSValue&, float multiplier = 1.f);
@@ -1185,6 +1187,19 @@ inline StyleSelfAlignmentData StyleBuilderConverter::convertSelfOrDefaultAlignme
         }
     } else
         alignmentData.setPosition(primitiveValue);
+    return alignmentData;
+}
+
+inline StyleContentAlignmentData StyleBuilderConverter::convertContentAlignmentData(StyleResolver&, CSSValue& value)
+{
+    StyleContentAlignmentData alignmentData = RenderStyle::initialContentAlignment();
+    auto& contentValue = downcast<CSSContentDistributionValue>(value);
+    if (contentValue.distribution()->getValueID() != CSSValueInvalid)
+        alignmentData.setDistribution(contentValue.distribution().get());
+    if (contentValue.position()->getValueID() != CSSValueInvalid)
+        alignmentData.setPosition(contentValue.position().get());
+    if (contentValue.overflow()->getValueID() != CSSValueInvalid)
+        alignmentData.setOverflow(contentValue.overflow().get());
     return alignmentData;
 }
 

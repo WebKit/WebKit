@@ -89,7 +89,7 @@ static Ref<RenderStyle> createFullScreenStyle()
     fullscreenStyle.get().fontCascade().update(nullptr);
 
     fullscreenStyle.get().setDisplay(FLEX);
-    fullscreenStyle.get().setJustifyContent(JustifyCenter);
+    fullscreenStyle.get().setJustifyContentPosition(ContentPositionCenter);
     fullscreenStyle.get().setAlignItemsPosition(ItemPositionCenter);
     fullscreenStyle.get().setFlexDirection(FlowColumn);
     

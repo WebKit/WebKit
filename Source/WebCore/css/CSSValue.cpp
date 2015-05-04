@@ -33,6 +33,7 @@
 #include "CSSBorderImageSliceValue.h"
 #include "CSSCalculationValue.h"
 #include "CSSCanvasValue.h"
+#include "CSSContentDistributionValue.h"
 #include "CSSCrossfadeValue.h"
 #include "CSSCursorImageValue.h"
 #include "CSSFilterImageValue.h"
@@ -231,6 +232,8 @@ bool CSSValue::equals(const CSSValue& other) const
         case AnimationTriggerScrollClass:
             return compareCSSValues<CSSAnimationTriggerScrollValue>(*this, other);
 #endif
+        case CSSContentDistributionClass:
+            return compareCSSValues<CSSContentDistributionValue>(*this, other);
         default:
             ASSERT_NOT_REACHED();
             return false;
@@ -323,6 +326,8 @@ String CSSValue::cssText() const
 #endif
     case WebKitCSSResourceClass:
         return downcast<WebKitCSSResourceValue>(*this).customCSSText();
+    case CSSContentDistributionClass:
+        return downcast<CSSContentDistributionValue>(*this).customCSSText();
     }
     ASSERT_NOT_REACHED();
     return String();
@@ -442,6 +447,9 @@ void CSSValue::destroy()
 #endif
     case WebKitCSSResourceClass:
         delete downcast<WebKitCSSResourceValue>(this);
+        return;
+    case CSSContentDistributionClass:
+        delete downcast<CSSContentDistributionValue>(this);
         return;
     }
     ASSERT_NOT_REACHED();

@@ -473,7 +473,7 @@ flex-shrink
 -webkit-flex-shrink = flex-shrink
 flex-wrap
 -webkit-flex-wrap = flex-wrap
-justify-content
+justify-content [Initial=initialContentAlignment, Converter=ContentAlignmentData]
 -webkit-justify-content = justify-content
 #if defined(ENABLE_FILTERS_LEVEL_2) && ENABLE_FILTERS_LEVEL_2
 -webkit-backdrop-filter [ConditionalConverter=FilterOperations]

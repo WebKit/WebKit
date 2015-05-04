@@ -1,3 +1,99 @@
+2015-05-04  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Box Alignment] Upgrade justify-content parsing to CSS3 Box Alignment spec.
+        https://bugs.webkit.org/show_bug.cgi?id=144442
+
+        Reviewed by David Hyatt.
+
+        Upgrade the justify-content property to the last CSS3 Box
+        Alignment specification. It defines a different enumeration for
+        Positional and Distribution alignment, which requires changes in
+        the FlexibleBox implementation.
+
+        A new parsing function has been implemented to replace the basic
+        keyword IDs validation. Because of the complexity of the new
+        values, a new CSSPrimitiveValue derived class has been defined
+        which simplifies considerably the parsing logic.
+
+        We will follow the same approach than for Self Alignment, defining
+        a single class to hold all the related alignment data. This makes
+        possible to use a StyleBuilderConverter function instead of custom
+        builder functions for these properties.
+
+        Test: css3/parse-justify-content.html
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::resolveContentAlignmentAuto):
+        (WebCore::valueForContentPositionAndDistributionWithOverflowAlignment):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        (WebCore::valueForItemPositionWithOverflowAlignment): Deleted.
+        * css/CSSContentDistributionValue.cpp: Added.
+        (WebCore::CSSContentDistributionValue::CSSContentDistributionValue):
+        (WebCore::CSSContentDistributionValue::~CSSContentDistributionValue):
+        (WebCore::CSSContentDistributionValue::customCSSText):
+        (WebCore::CSSContentDistributionValue::equals):
+        * css/CSSContentDistributionValue.h: Added.
+        (WebCore::CSSContentDistributionValue::create):
+        (WebCore::CSSContentDistributionValue::distribution):
+        (WebCore::CSSContentDistributionValue::position):
+        (WebCore::CSSContentDistributionValue::overflow):
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::isKeywordPropertyID):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::isContentDistributionKeyword):
+        (WebCore::isContentPositionKeyword):
+        (WebCore::isAlignmentOverflowKeyword):
+        (WebCore::CSSParser::parseContentDistributionOverflowPosition):
+        (WebCore::CSSParser::parseItemPositionOverflowPosition):
+        (WebCore::CSSParser::parseLegacyPosition): Deleted.
+        * css/CSSParser.h:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator ContentPosition):
+        (WebCore::CSSPrimitiveValue::operator ContentDistributionType):
+        (WebCore::CSSPrimitiveValue::operator EFlexDirection): Deleted.
+        * css/CSSPropertyNames.in:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals):
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isContentDistributionValue):
+        (WebCore::CSSValue::isWebKitCSSFilterValue): Deleted.
+        * css/CSSValueKeywords.in:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertContentAlignmentData):
+        (WebCore::StyleBuilderConverter::convertSelfOrDefaultAlignmentData): Deleted.
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::initialJustifyContentOffset):
+        (WebCore::justifyContentSpaceBetweenChildren):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren):
+        (WebCore::RenderFlexibleBox::layoutColumnReverse):
+        * rendering/RenderFullScreen.cpp:
+        (WebCore::createFullScreenStyle):
+        * rendering/mathml/RenderMathMLScripts.cpp:
+        (WebCore::RenderMathMLScripts::fixAnonymousStyleForSubSupPair):
+        (WebCore::RenderMathMLScripts::fixAnonymousStyles):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleContentAlignmentData.h: Added.
+        (WebCore::StyleContentAlignmentData::StyleContentAlignmentData):
+        (WebCore::StyleContentAlignmentData::setPosition):
+        (WebCore::StyleContentAlignmentData::setDistribution):
+        (WebCore::StyleContentAlignmentData::setOverflow):
+        (WebCore::StyleContentAlignmentData::position):
+        (WebCore::StyleContentAlignmentData::distribution):
+        (WebCore::StyleContentAlignmentData::overflow):
+        (WebCore::StyleContentAlignmentData::operator==):
+        (WebCore::StyleContentAlignmentData::operator!=):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2015-05-04  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo] Compile error in sharedEGLDisplay() method.

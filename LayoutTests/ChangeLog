@@ -1,3 +1,23 @@
+2015-05-04  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Box Alignment] Upgrade justify-content parsing to CSS3 Box Alignment spec.
+        https://bugs.webkit.org/show_bug.cgi?id=144442
+
+        Reviewed by David Hyatt.
+
+        Upgrade the justify-content property to the last CSS3 Box
+        Alignment specification. It defines a different enumeration for
+        Positional and Distribution alignment, which requires changes in
+        the FlexibleBox implementation.
+
+        Some minor changes in some Flexbox related test cases for adapting
+        them to the new parsing logic. New layout tests, not Flexbox
+        specific, to verify the parsing of the new values.
+
+        * css3/flexbox/css-properties.html:
+        * css3/parse-justify-content-expected.txt: Added.
+        * css3/parse-justify-content.html: Added.
+
 2015-05-04  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Wrong computed style for named grid lines in implicit tracks

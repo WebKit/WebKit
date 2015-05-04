@@ -34,6 +34,7 @@
 #include "LineClampValue.h"
 #include "NinePieceImage.h"
 #include "ShapeValue.h"
+#include "StyleContentAlignmentData.h"
 #include "StyleSelfAlignmentData.h"
 #include <memory>
 #include <wtf/PassRefPtr.h>
@@ -178,6 +179,7 @@ public:
 
     StyleSelfAlignmentData m_alignItems;
     StyleSelfAlignmentData m_alignSelf;
+    StyleContentAlignmentData m_justifyContent;
     StyleSelfAlignmentData m_justifyItems;
     StyleSelfAlignmentData m_justifySelf;
 
@@ -196,7 +198,6 @@ public:
     unsigned m_backfaceVisibility : 1; // EBackfaceVisibility
 
     unsigned m_alignContent : 3; // EAlignContent
-    unsigned m_justifyContent : 3; // EJustifyContent
 
     unsigned userDrag : 2; // EUserDrag
     unsigned textOverflow : 1; // Whether or not lines that spill out should be truncated with "..."

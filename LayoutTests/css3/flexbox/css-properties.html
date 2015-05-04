@@ -51,6 +51,8 @@ flexitem.style.webkitOrder = '';
 shouldBeEqualToString('flexitem.style.webkitOrder', '');
 
 
+flexbox.style.display = '-webkit-flex';
+
 shouldBeEqualToString('flexbox.style.webkitJustifyContent', '');
 // The initial value is 'flex-start'.
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'flex-start');
@@ -77,8 +79,6 @@ shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyConte
 flexbox.style.webkitJustifyContent = '';
 shouldBeEqualToString('flexbox.style.webkitJustifyContent', '');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'flex-start');
-
-flexbox.style.display = '-webkit-flex';
 
 shouldBeEqualToString('flexbox.style.webkitAlignSelf', '');
 // The initial value is 'auto', which will be resolved depending on parent's style (except for the 'document' element).

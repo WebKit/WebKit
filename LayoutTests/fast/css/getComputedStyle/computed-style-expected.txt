@@ -151,7 +151,7 @@ align-items: start;
 align-self: start;
 flex-direction: row;
 flex-wrap: nowrap;
-justify-content: flex-start;
+justify-content: start;
 justify-self: start;
 justify-items: start;
 -webkit-font-kerning: auto;

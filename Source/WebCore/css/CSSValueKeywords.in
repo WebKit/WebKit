@@ -545,6 +545,7 @@ flex-end
 // center
 space-between
 space-around
+space-evenly
 // stretch
 
 // CSS_PROP_ALIGN_ITEMS / CSS_PROP_ALIGN_SELF
@@ -556,11 +557,15 @@ last-baseline
 // stretch
 
 // CSS_PROP_JUSTIFY_CONTENT
+// start
+// end
 // flex-start
 // flex-end
 // center
 // space-between
 // space-around
+// space-evenly
+// stretch
 
 // CSS_PROP_JUSTIFY_ITEMS / CSS_PROP_JUSTIFY_SELF
 // auto

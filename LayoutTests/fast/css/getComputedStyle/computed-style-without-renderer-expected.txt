@@ -150,7 +150,7 @@ align-items: auto
 align-self: auto
 flex-direction: row
 flex-wrap: nowrap
-justify-content: flex-start
+justify-content: auto
 justify-self: auto
 justify-items: auto
 -webkit-font-kerning: auto

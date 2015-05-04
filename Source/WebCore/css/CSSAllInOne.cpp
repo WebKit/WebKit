@@ -32,6 +32,7 @@
 #include "CSSCanvasValue.cpp"
 #include "CSSCharsetRule.cpp"
 #include "CSSComputedStyleDeclaration.cpp"
+#include "CSSContentDistributionValue.cpp"
 #include "CSSCrossfadeValue.cpp"
 #include "CSSCursorImageValue.cpp"
 #include "CSSDefaultStyleSheets.cpp"
