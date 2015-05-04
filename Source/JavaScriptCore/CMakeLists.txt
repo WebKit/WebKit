@@ -52,8 +52,12 @@ set(JavaScriptCore_SOURCES
     API/JSWeakObjectMapRefPrivate.cpp
     API/OpaqueJSString.cpp
 
+    assembler/ARMAssembler.cpp
+    assembler/ARMv7Assembler.cpp
     assembler/LinkBuffer.cpp
     assembler/MacroAssembler.cpp
+    assembler/MacroAssemblerARM.cpp
+    assembler/MacroAssemblerARMv7.cpp
     assembler/MacroAssemblerX86Common.cpp
 
     bindings/ScriptFunctionCall.cpp
@@ -1154,11 +1158,6 @@ if (ENABLE_WEB_REPLAY)
 endif ()
 
 if (WTF_CPU_ARM)
-    list(APPEND JavaScriptCore_SOURCES
-        assembler/ARMAssembler.cpp
-        assembler/ARMv7Assembler.cpp
-        assembler/MacroAssemblerARM.cpp
-    )
 elseif (WTF_CPU_ARM64)
 elseif (WTF_CPU_HPPA)
 elseif (WTF_CPU_PPC)
