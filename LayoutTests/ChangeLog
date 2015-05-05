@@ -1,3 +1,10 @@
+2015-05-05  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Some assertion failures in compositing code after r183820.
+        https://bugs.webkit.org/show_bug.cgi?id=144630.
+
+        * platform/mac/TestExpectations:
+
 2015-05-05  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] platform/gtk/accessibility/unknown-roles-not-exposed.html is flaky

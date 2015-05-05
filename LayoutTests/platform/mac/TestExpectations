@@ -1262,10 +1262,3 @@ webkit.org/b/17022 [ MountainLion Mavericks ] fast/images/animated-png.html [ Sk
 # OS X 10.10.3+ has the necessary glyphs.
 webkit.org/b/142548 [ Yosemite+ ] editing/selection/extend-by-character-007.html [ Pass ]
 webkit.org/b/141661 [ Yosemite+ ] fast/text/emoji.html [ Pass ]
-
-# Some assertion failures in compositing code after r183687
-webkit.org/b/144630 [ Debug ] compositing/regions/transform-transparent-positioned-video-inside-region.html [ Crash ]
-webkit.org/b/144630 [ Debug ] compositing/regions/video-in-overflow-region.html [ Crash ]
-webkit.org/b/144630 [ Debug ] fast/regions/fullscreen/full-screen-video-from-region.html [ Crash ]
-webkit.org/b/144630 [ Debug ] fast/regions/fullscreen/full-screen-video-in-region-crash.html [ Crash ]
-webkit.org/b/144630 [ Debug ] fast/regions/inline-block-inside-anonymous-overflow.html [ Crash ]
