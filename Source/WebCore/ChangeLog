@@ -1,3 +1,17 @@
+2015-05-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Small cleanup in RenderText::computePreferredLogicalWidths()
+        https://bugs.webkit.org/show_bug.cgi?id=144615
+
+        Reviewed by Simon Fraser.
+
+        A little bit of cleanup before I tackle dependent widths in this function.
+
+        No new tests because there is no behavior change.
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::computePreferredLogicalWidths):
+
 2015-05-05  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] AX: figure out platform difference for ATK to make accessibility/table-cell-display-block.html work

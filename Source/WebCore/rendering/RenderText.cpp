@@ -692,7 +692,6 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
     m_endMinWidth = 0;
     m_maxWidth = 0;
 
-    float currMinWidth = 0;
     float currMaxWidth = 0;
     m_hasBreakableChar = false;
     m_hasBreak = false;
@@ -735,7 +734,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
             minimumSuffixLength = 2;
     }
 
-    int firstGlyphLeftOverflow = -1;
+    Optional<int> firstGlyphLeftOverflow;
 
     bool breakNBSP = style.autoWrap() && style.nbspMode() == SPACE;
     bool breakAll = (style.wordBreak() == BreakAllWordBreak || style.wordBreak() == BreakWordBreak) && style.autoWrap();
@@ -768,11 +767,8 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
         if ((isSpace || isNewline) && i == len - 1)
             m_hasEndWS = true;
 
-        if (!ignoringSpaces && style.collapseWhiteSpace() && previousCharacterIsSpace && isSpace)
-            ignoringSpaces = true;
-
-        if (ignoringSpaces && !isSpace)
-            ignoringSpaces = false;
+        ignoringSpaces |= style.collapseWhiteSpace() && previousCharacterIsSpace && isSpace;
+        ignoringSpaces &= isSpace;
 
         // Ignore spaces and soft hyphens
         if (ignoringSpaces) {
@@ -781,7 +777,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
             continue;
         } else if (c == softHyphen && style.hyphens() != HyphensNone) {
             currMaxWidth += widthFromCache(font, lastWordBoundary, i - lastWordBoundary, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow, style);
-            if (firstGlyphLeftOverflow < 0)
+            if (!firstGlyphLeftOverflow)
                 firstGlyphLeftOverflow = glyphOverflow.left;
             lastWordBoundary = i + 1;
             continue;
@@ -805,6 +801,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
 
         int wordLen = j - i;
         if (wordLen) {
+            float currMinWidth = 0;
             bool isSpace = (j < len) && isSpaceAccordingToStyle(c, style);
             float w;
             if (wordTrailingSpaceWidth && isSpace)
@@ -812,7 +809,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
             else {
                 w = widthFromCache(font, i, wordLen, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow, style);
                 if (c == softHyphen && style.hyphens() != HyphensNone)
-                    currMinWidth += hyphenWidth(this, font);
+                    currMinWidth = hyphenWidth(this, font);
             }
 
             if (w > maxWordWidth) {
@@ -834,7 +831,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
                     maxWordWidth = w;
             }
 
-            if (firstGlyphLeftOverflow < 0)
+            if (!firstGlyphLeftOverflow)
                 firstGlyphLeftOverflow = glyphOverflow.left;
             currMinWidth += w;
             if (betweenWords) {
@@ -851,7 +848,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
 
             // Add in wordSpacing to our currMaxWidth, but not if this is the last word on a line or the
             // last word in the run.
-            if (wordSpacing && (isSpace || isCollapsibleWhiteSpace) && !containsOnlyWhitespace(j, len-j))
+            if ((isSpace || isCollapsibleWhiteSpace) && !containsOnlyWhitespace(j, len-j))
                 currMaxWidth += wordSpacing;
 
             if (firstWord) {
@@ -865,9 +862,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
             }
             m_endMinWidth = currMinWidth;
 
-            if (currMinWidth > m_minWidth)
-                m_minWidth = currMinWidth;
-            currMinWidth = 0;
+            m_minWidth = std::max(currMinWidth, m_minWidth);
 
             i += wordLen - 1;
         } else {
@@ -875,10 +870,6 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
             // breakable character boolean. Pre can only be broken if we encounter a newline.
             if (style.autoWrap() || isNewline)
                 m_hasBreakableChar = true;
-
-            if (currMinWidth > m_minWidth)
-                m_minWidth = currMinWidth;
-            currMinWidth = 0;
 
             if (isNewline) { // Only set if preserveNewline was true and we saw a newline.
                 if (firstLine) {
@@ -907,13 +898,11 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
         }
     }
 
-    if (firstGlyphLeftOverflow > 0)
-        glyphOverflow.left = firstGlyphLeftOverflow;
+    glyphOverflow.left = firstGlyphLeftOverflow.valueOr(glyphOverflow.left);
 
     if ((needsWordSpacing && len > 1) || (ignoringSpaces && !firstWord))
         currMaxWidth += wordSpacing;
 
-    m_minWidth = std::max(currMinWidth, m_minWidth);
     m_maxWidth = std::max(currMaxWidth, m_maxWidth);
 
     if (!style.autoWrap())
