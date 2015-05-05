@@ -6715,9 +6715,6 @@
     <ClCompile Include="..\platform\graphics\texmap\TextureMapperGL.cpp">
       <Filter>platform\graphics\texmap</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\texmap\TextureMapperImageBuffer.cpp">
-      <Filter>platform\graphics\texmap</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\graphics\texmap\TextureMapperLayer.cpp">
       <Filter>platform\graphics\texmap</Filter>
     </ClCompile>
@@ -7265,9 +7262,6 @@
       <Filter>rendering</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\texmap\BitmapTextureGL.cpp">
-      <Filter>platform\graphics\texmap</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\texmap\BitmapTextureImageBuffer.cpp">
       <Filter>platform\graphics\texmap</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\texmap\BitmapTexturePool.cpp">

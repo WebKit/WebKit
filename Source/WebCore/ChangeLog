@@ -1,5 +1,12 @@
 2015-05-05  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Unreviewed, speculative WinCairo buildfix after r183807.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+
+2015-05-05  Csaba Osztrogonác  <ossy@webkit.org>
+
         Remove TextureMapperImageBuffer
         https://bugs.webkit.org/show_bug.cgi?id=143561
 
