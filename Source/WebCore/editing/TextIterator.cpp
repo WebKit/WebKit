@@ -515,6 +515,11 @@ static unsigned textNodeOffsetInFlow(const Text& firstTextNodeInRange)
     return textOffset;
 }
 
+static bool isNewLineOrTabCharacter(UChar character)
+{
+    return character == '\n' || character == '\t';
+}
+
 bool TextIterator::handleTextNode()
 {
     Text& textNode = downcast<Text>(*m_node);
@@ -607,16 +612,21 @@ bool TextIterator::handleTextNode()
                 return false;
             }
         }
-        // \n \t single whitespace characters need replacing so that the new line/tab character won't show up.
+        // \n \t single whitespace characters need replacing so that the new line/tab characters don't show up.
         unsigned stopPosition = contentStart;
-        while (stopPosition < contentEnd) {
-            if (rendererText[stopPosition] == '\n' || rendererText[stopPosition] == '\t') {
-                emitText(textNode, renderer, contentStart, stopPosition);
-                m_offset = stopPosition + 1;
-                m_nextRunNeedsWhitespace = true;
+        while (stopPosition < contentEnd && !isNewLineOrTabCharacter(rendererText[stopPosition]))
+            ++stopPosition;
+        // Emit the text up to the new line/tab character.
+        if (stopPosition < contentEnd) {
+            if (stopPosition == contentStart) {
+                emitCharacter(' ', textNode, nullptr, contentStart, contentStart + 1);
+                m_offset = contentStart + 1;
                 return false;
             }
-            ++stopPosition;
+            emitText(textNode, renderer, contentStart, stopPosition);
+            m_offset = stopPosition + 1;
+            m_nextRunNeedsWhitespace = true;
+            return false;
         }
         emitText(textNode, renderer, contentStart, contentEnd);
         // When line ending with collapsed whitespace is present, we need to carry over one whitespace: foo(end of line)bar -> foo bar (otherwise we would end up with foobar).

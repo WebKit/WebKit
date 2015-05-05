@@ -1,3 +1,25 @@
+2015-05-05  Zalan Bujtas  <zalan@apple.com>
+
+        Navigating to www.apple.com hits assertion in WebCore::TextIteratorCopyableText::set()
+        https://bugs.webkit.org/show_bug.cgi?id=144629
+        rdar://problem/20689877
+
+        Reviewed by Andreas Kling.
+
+        This patch ensures that we don't emit empty text for the text iterator.
+        In TextIterator::handleTextNode before emitting a string, certain characters (\n \t) need to
+        be replaced with space. When such character is found, we emit the string we've processed so far and
+        handle the replacement during the next callback.
+        When the first character in the string needs replacing, there's nothing to emit. However if we don't
+        handle at least one character, TextIterator::advance believes that processing is done and never calls  
+        TextIterator::handleTextNode back with the rest of the string. 
+
+        Test: fast/text/simple-line-layout-innerText-with-newline.html
+
+        * editing/TextIterator.cpp:
+        (WebCore::isNewLineOrTabCharacter):
+        (WebCore::TextIterator::handleTextNode):
+
 2015-05-05  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Use less memory to store the json input.
