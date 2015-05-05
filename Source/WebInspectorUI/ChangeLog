@@ -1,5 +1,26 @@
 2015-05-05  Andres Gomez  <agomez@igalia.com>
 
+        [GTK] Web Inspector: New Images added in r183339, r183338, r183332, r183323, r182660, and r182186
+        https://bugs.webkit.org/show_bug.cgi?id=144329
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Images/gtk/Console.svg: Added.
+        * UserInterface/Images/gtk/Debugger.svg: Added.
+        * UserInterface/Images/gtk/Elements.svg: Added.
+        * UserInterface/Images/gtk/Gear.svg: Added.
+        * UserInterface/Images/gtk/NewTab.svg: Added.
+        * UserInterface/Images/gtk/NewTabPlus.svg: Added.
+        * UserInterface/Images/gtk/ReloadToolbar.svg: Added.
+        * UserInterface/Images/gtk/SearchResults.svg: Added.
+        * UserInterface/Images/gtk/Storage.svg: Added.
+        * UserInterface/Images/gtk/Timeline.svg: Added.
+        * UserInterface/Images/gtk/TimelineRecordRenderingFrame.svg: Added.
+        * UserInterface/Images/gtk/ToggleLeftSidebar.svg: Added.
+        * UserInterface/Images/gtk/ToggleRightSidebar.svg: Added.
+
+2015-05-05  Andres Gomez  <agomez@igalia.com>
+
         [GTK] Web Inspector: icons for console.info() messages
         https://bugs.webkit.org/show_bug.cgi?id=144461
 
