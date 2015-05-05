@@ -235,7 +235,7 @@ audio::-webkit-media-controls-optimized-fullscreen-button {
     -webkit-mask-repeat: no-repeat;
     -webkit-mask-origin: border-box;
     background-color: black;
-    transition: background-color 700ms;
+    transition: background-color 250ms;
 }
 
 video::-webkit-media-controls-play-button:active,
