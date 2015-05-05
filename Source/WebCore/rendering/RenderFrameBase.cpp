@@ -54,13 +54,13 @@ inline bool shouldExpandFrame(LayoutUnit width, LayoutUnit height, bool hasFixed
 
 void RenderFrameBase::layoutWithFlattening(bool hasFixedWidth, bool hasFixedHeight)
 {
-    FrameView* childFrameView = childView();
-    RenderView* childRoot = childFrameView ? childFrameView->frame().contentRenderer() : 0;
+    view().protectRenderWidgetUntilLayoutIsDone(*this);
+    RenderView* childRoot = childView() ? childView()->frame().contentRenderer() : 0;
 
     if (!childRoot || !shouldExpandFrame(width(), height(), hasFixedWidth, hasFixedHeight)) {
         updateWidgetPosition();
-        if (childFrameView)
-            childFrameView->layout();
+        if (childView())
+            childView()->layout();
         clearNeedsLayout();
         return;
     }
@@ -83,18 +83,20 @@ void RenderFrameBase::layoutWithFlattening(bool hasFixedWidth, bool hasFixedHeig
         setWidth(std::max(width(), childRoot->minPreferredLogicalWidth() + hBorder));
         // update again to pass the new width to the child frame
         updateWidgetPosition();
-        childFrameView->layout();
+        if (childView())
+            childView()->layout();
     }
 
-    // expand the frame by setting frame height = content height
-    if (isScrollable || !hasFixedHeight || childRoot->isFrameSet())
-        setHeight(std::max<LayoutUnit>(height(), childFrameView->contentsHeight() + vBorder));
-    if (isScrollable || !hasFixedWidth || childRoot->isFrameSet())
-        setWidth(std::max<LayoutUnit>(width(), childFrameView->contentsWidth() + hBorder));
-
+    if (childView()) {
+        // expand the frame by setting frame height = content height
+        if (isScrollable || !hasFixedHeight || childRoot->isFrameSet())
+            setHeight(std::max<LayoutUnit>(height(), childView()->contentsHeight() + vBorder));
+        if (isScrollable || !hasFixedWidth || childRoot->isFrameSet())
+            setWidth(std::max<LayoutUnit>(width(), childView()->contentsWidth() + hBorder));
+    }
     updateWidgetPosition();
 
-    ASSERT(!childFrameView->layoutPending());
+    ASSERT(!childView()->layoutPending());
     ASSERT(!childRoot->needsLayout());
     ASSERT(!childRoot->firstChild() || !childRoot->firstChild()->firstChildSlow() || !childRoot->firstChild()->firstChildSlow()->needsLayout());
 

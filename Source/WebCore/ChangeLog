@@ -1,3 +1,31 @@
+2015-05-04  Zalan Bujtas  <zalan@apple.com>
+
+        RenderWidget::setWidgetGeometry() can end up destroying *this*.
+        https://bugs.webkit.org/show_bug.cgi?id=144601
+
+        Reviewed by Andreas Kling.
+
+        This is a speculative fix to ensure we don't crash on an invalid *this* renderer
+        while flattening the current iframe.
+        Calling RenderWidget::setWidgetGeometry() can result in destroying the current renderer.
+        While it is not a issue in case of normal layout flow as widget positions are updated at post layout,
+        frame flattening initiates this action in the middle of layout.
+        This patch re-introduces refcount model for RenderWidgets so that the renderer is protected during layout
+        when frame flattening is in use.
+
+        * rendering/RenderFrameBase.cpp:
+        (WebCore::RenderFrameBase::layoutWithFlattening): Let's be paranoid about child view.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::destroy):
+        * rendering/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * rendering/RenderView.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::~RenderWidget):
+        * rendering/RenderWidget.h:
+        (WebCore::RenderWidget::ref):
+        (WebCore::RenderWidget::deref):
+
 2015-05-04  Doug Russell  <d_russell@apple.com>
 
         AX: setting focus via accessibility object needs to set isSynchronizing in resulting selection intent
