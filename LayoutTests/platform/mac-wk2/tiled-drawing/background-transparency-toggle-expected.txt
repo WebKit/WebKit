@@ -46,7 +46,6 @@ Page tiles should be transparent if the body's background has alpha.
     (GraphicsLayer
       (bounds 785.00 648.00)
       (contentsOpaque 1)
-      (backgroundColor #CCCCCC)
       (tile cache coverage 0, 0 785 x 648)
       (tile size 512 x 512)
       (top left tile 0, 0 tiles grid 2 x 2)

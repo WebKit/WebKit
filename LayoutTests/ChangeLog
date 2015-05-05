@@ -1,3 +1,11 @@
+2015-05-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix assertions in WK1 tests after r183777.
+        
+        Behavior difference with the change to RenderLayerCompositor::rootBackgroundTransparencyChanged().
+
+        * platform/mac-wk2/tiled-drawing/background-transparency-toggle-expected.txt:
+
 2015-05-04  Doug Russell  <d_russell@apple.com>
 
         AX: setting focus via accessibility object needs to set isSynchronizing in resulting selection intent

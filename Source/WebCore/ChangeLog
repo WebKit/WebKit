@@ -1,3 +1,19 @@
+2015-05-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix assertions in WK1 tests after r183777.
+        
+        Two issues with the original change:
+        
+        If not in compositing mode, we shouldn't schedule layer flushes, since
+        Document::documentWillSuspendForPageCache() only only calls cancelCompositingLayerUpdate()
+        if in compositing mode.
+        
+        Second, RenderLayerCompositor::rootBackgroundTransparencyChanged() never stored the
+        new color, resulting in too many triggered compositing updates.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::rootBackgroundTransparencyChanged):
+
 2015-05-04  Zalan Bujtas  <zalan@apple.com>
 
         RenderWidget::setWidgetGeometry() can end up destroying *this*.
