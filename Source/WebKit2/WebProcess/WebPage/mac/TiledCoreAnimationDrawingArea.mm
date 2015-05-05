@@ -43,6 +43,7 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/GraphicsLayerCA.h>
+#import <WebCore/MachSendRight.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformCAAnimationMac.h>
@@ -408,7 +409,7 @@ void TiledCoreAnimationDrawingArea::updateScrolledExposedRect()
     frameView->setExposedRect(m_scrolledExposedRect);
 }
 
-void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, const IntSize& layerPosition)
+void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, const IntSize& layerPosition, bool flushSynchronously)
 {
     m_inUpdateGeometry = true;
 
@@ -439,9 +440,11 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, cons
     [m_hostingLayer setFrame:CGRectMake(layerPosition.width(), layerPosition.height(), viewSize.width(), viewSize.height())];
 
     [CATransaction commit];
-    
-    [CATransaction flush];
-    [CATransaction synchronize];
+
+    if (flushSynchronously) {
+        [CATransaction flush];
+        [CATransaction synchronize];
+    }
 
     m_webPage.send(Messages::DrawingAreaProxy::DidUpdateGeometry());
 
@@ -736,6 +739,11 @@ void TiledCoreAnimationDrawingArea::applyTransientZoomToPage(double scale, Float
     m_webPage.scalePage(scale / m_webPage.viewScaleFactor(), roundedIntPoint(-unscrolledOrigin));
     m_transientZoomScale = 1;
     flushLayers();
+}
+
+void TiledCoreAnimationDrawingArea::addFence(const MachSendRight& fencePort)
+{
+    m_layerHostingContext->setFencePort(fencePort.sendRight());
 }
 
 } // namespace WebKit

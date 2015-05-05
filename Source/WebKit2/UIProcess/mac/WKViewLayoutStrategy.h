@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,53 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LayerHostingContext_h
-#define LayerHostingContext_h
+#ifndef WKViewLayoutStrategy_h
+#define WKViewLayoutStrategy_h
 
-#include "LayerTreeContext.h"
-#include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/RetainPtr.h>
+#if PLATFORM(MAC)
 
-OBJC_CLASS CALayer;
-OBJC_CLASS CAContext;
-
-namespace WebCore {
-class MachSendRight;
-}
+#import "WKLayoutMode.h"
 
 namespace WebKit {
+class WebPageProxy;
+}
 
-class LayerHostingContext {
-    WTF_MAKE_NONCOPYABLE(LayerHostingContext);
-public:
-    static std::unique_ptr<LayerHostingContext> createForPort(const WebCore::MachSendRight& serverPort);
-#if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
-    static std::unique_ptr<LayerHostingContext> createForExternalHostingProcess();
-#endif
+@class WKView;
 
-    LayerHostingContext();
-    ~LayerHostingContext();
+@interface WKViewLayoutStrategy : NSObject {
+@package
+    WebKit::WebPageProxy *_page;
+    WKView *_wkView;
 
-    void setRootLayer(CALayer *);
-    CALayer *rootLayer() const;
+    WKLayoutMode _layoutMode;
+    unsigned _frameSizeUpdatesDisabledCount;
+}
 
-    uint32_t contextID() const;
-    void invalidate();
++ (instancetype)layoutStrategyWithPage:(WebKit::WebPageProxy&)page view:(WKView *)wkView mode:(WKLayoutMode)mode;
 
-    LayerHostingMode layerHostingMode() { return m_layerHostingMode; }
+- (void)willDestroyView:(WKView *)view;
 
-    void setColorSpace(CGColorSpaceRef);
-    CGColorSpaceRef colorSpace() const;
+- (void)enableFrameSizeUpdates;
+- (void)disableFrameSizeUpdates;
+- (BOOL)frameSizeUpdatesDisabled;
 
-    // This only works on iOS and OS 10.10+
-    void setFencePort(mach_port_t);
+- (void)didChangeViewScale;
+- (void)didChangeMinimumViewSize;
+- (void)willStartLiveResize;
+- (void)didEndLiveResize;
+- (void)didChangeFrameSize;
+- (void)willChangeLayoutStrategy;
 
-private:
-    LayerHostingMode m_layerHostingMode;
-    RetainPtr<CAContext> m_context;
-};
+@property (nonatomic, readonly) WKLayoutMode layoutMode;
 
-} // namespace WebKit
+@end
 
-#endif // LayerHostingContext_h
+#endif // PLATFORM(MAC)
+
+#endif // WKViewLayoutStrategy_h

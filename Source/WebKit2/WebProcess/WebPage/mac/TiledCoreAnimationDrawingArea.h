@@ -90,12 +90,13 @@ private:
     virtual bool flushLayers() override;
 
     // Message handlers.
-    virtual void updateGeometry(const WebCore::IntSize& viewSize, const WebCore::IntSize& layerPosition) override;
+    virtual void updateGeometry(const WebCore::IntSize& viewSize, const WebCore::IntSize& layerPosition, bool flushSynchronously) override;
     virtual void setDeviceScaleFactor(float) override;
     void suspendPainting();
     void resumePainting();
     void setLayerHostingMode(LayerHostingMode) override;
     virtual void setColorSpace(const ColorSpaceData&) override;
+    virtual void addFence(const WebCore::MachSendRight&) override;
 
     virtual void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
     virtual void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;

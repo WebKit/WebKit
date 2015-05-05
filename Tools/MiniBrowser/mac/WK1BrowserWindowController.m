@@ -229,6 +229,11 @@
     _zoomTextOnly = !_zoomTextOnly;
 }
 
+- (IBAction)toggleUseMinimumViewSize:(id)sender
+{
+
+}
+
 - (IBAction)find:(id)sender
 {
 }

@@ -91,6 +91,8 @@ public:
 
     virtual void hideContentUntilNextUpdate() { ASSERT_NOT_REACHED(); }
 
+    virtual void willSendUpdateGeometry() { }
+
 protected:
     explicit DrawingAreaProxy(DrawingAreaType, WebPageProxy&);
 

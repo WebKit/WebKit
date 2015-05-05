@@ -1,3 +1,19 @@
+2015-05-05  Timothy Horton  <timothy_horton@apple.com>
+
+        Add a layout mode for computing fixed layout size from a minimum size
+        https://bugs.webkit.org/show_bug.cgi?id=144610
+        <rdar://problem/19790341>
+
+        Reviewed by Simon Fraser.
+
+        * MiniBrowser/mac/BrowserWindow.xib:
+        * MiniBrowser/mac/BrowserWindowController.h:
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController toggleUseMinimumViewSize:]):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController toggleUseMinimumViewSize:]):
+        Add a optional toolbar item to toggle a minimum view size of 1024x0.
+
 2015-05-05  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Release input NSString when finished copying it.

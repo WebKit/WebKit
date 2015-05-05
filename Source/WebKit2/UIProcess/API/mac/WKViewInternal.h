@@ -148,7 +148,9 @@ struct WebPageConfiguration;
 
 @property (readonly) NSWindow *_targetWindowForMovePreparation;
 
-@property (nonatomic, setter=_setAutomaticallyComputesFixedLayoutSizeFromViewScale:) BOOL _automaticallyComputesFixedLayoutSizeFromViewScale;
-- (void)_updateAutomaticallyComputedFixedLayoutSize;
+// For WKViewLayoutStrategy and subclasses:
+- (void)_setDrawingAreaSize:(NSSize)size;
+- (void)_updateViewExposedRect;
+- (CALayer *)_rootLayer;
 
 @end

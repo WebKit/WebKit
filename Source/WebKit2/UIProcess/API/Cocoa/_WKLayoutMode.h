@@ -30,7 +30,13 @@
 typedef NS_ENUM(NSUInteger, _WKLayoutMode) {
     _WKLayoutModeViewSize,
     _WKLayoutModeFixedSize,
-    _WKLayoutModeDynamicSizeComputedFromViewScale
+
+    // Lay out the view with its frame scaled by the inverse viewScale.
+    _WKLayoutModeDynamicSizeComputedFromViewScale,
+
+    // Lay out the view at a heuristically-determined size based on the minimum view size.
+    _WKLayoutModeDynamicSizeWithMinimumViewSize
+
 } WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 #endif

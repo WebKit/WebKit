@@ -1,3 +1,124 @@
+2015-05-05  Timothy Horton  <timothy_horton@apple.com>
+
+        Add a layout mode for computing fixed layout size from a minimum size
+        https://bugs.webkit.org/show_bug.cgi?id=144610
+        <rdar://problem/19790341>
+
+        Reviewed by Simon Fraser.
+
+        Add a layout mode where WebKit determines the layout size with a set of
+        (still in flux) heuristics, trying hard to keep the page usable below a
+        particular client-defined threshold view size.
+
+        This can mean that WebKit will start scaling down the page inside the view
+        to make the whole page fit, using the viewScale mechanism.
+
+        * UIProcess/API/C/WKLayoutMode.h:
+        * UIProcess/API/Cocoa/_WKLayoutMode.h:
+        Add the new layout mode, and documentation for the two complicated ones.
+        
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _layoutMode]):
+        (-[WKWebView _setLayoutMode:]):
+        (-[WKWebView _setViewScale:]):
+        (-[WKWebView _setMinimumViewSize:]):
+        (-[WKWebView _minimumViewSize]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        Forward the layoutMode and viewScale parameters to WKView if we have one.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView dealloc]):
+        (-[WKView viewWillStartLiveResize]):
+        (-[WKView viewDidEndLiveResize]):
+        (-[WKView setFrameSize:]):
+        (-[WKView initWithFrame:processPool:configuration:webView:]):
+        (-[WKView disableFrameSizeUpdates]):
+        (-[WKView enableFrameSizeUpdates]):
+        (-[WKView frameSizeUpdatesDisabled]):
+        (-[WKView _layoutMode]):
+        (-[WKView _setLayoutMode:]):
+        (-[WKView _setViewScale:]):
+        (-[WKView _setMinimumViewSize:]):
+        (-[WKView _minimumViewSize]):
+        Store the minimum view size, and update the fixed layout size if needed.
+
+        (-[WKView _updateAutomaticallyComputedFixedLayoutSize]): Deleted.
+        (-[WKView _setAutomaticallyComputesFixedLayoutSizeFromViewScale:]): Deleted.
+        (-[WKView _automaticallyComputesFixedLayoutSizeFromViewScale]): Deleted.
+        Store the WKLayoutMode on the WKViewLayoutStrategy instead of having a
+        bunch of things like _automaticallyComputesFixedLayoutSizeFromViewScale.
+
+        * UIProcess/API/mac/WKViewInternal.h:
+
+        * UIProcess/mac/WKViewLayoutStrategy.h: Added.
+        * UIProcess/mac/WKViewLayoutStrategy.mm: Added.
+        (+[WKViewLayoutStrategy layoutStrategyWithPage:view:mode:]):
+        (-[WKViewLayoutStrategy initWithPage:view:mode:]):
+        (-[WKViewLayoutStrategy willDestroyView:]):
+        (-[WKViewLayoutStrategy layoutMode]):
+        (-[WKViewLayoutStrategy updateLayout]):
+        (-[WKViewLayoutStrategy disableFrameSizeUpdates]):
+        (-[WKViewLayoutStrategy enableFrameSizeUpdates]):
+        (-[WKViewLayoutStrategy frameSizeUpdatesDisabled]):
+        (-[WKViewLayoutStrategy didChangeViewScale]):
+        (-[WKViewLayoutStrategy didChangeMinimumViewSize]):
+        (-[WKViewLayoutStrategy willStartLiveResize]):
+        (-[WKViewLayoutStrategy didEndLiveResize]):
+        (-[WKViewLayoutStrategy didChangeFrameSize]):
+        (-[WKViewLayoutStrategy willChangeLayoutStrategy]):
+        (-[WKViewViewSizeLayoutStrategy initWithPage:view:mode:]):
+        (-[WKViewViewSizeLayoutStrategy updateLayout]):
+        (-[WKViewFixedSizeLayoutStrategy initWithPage:view:mode:]):
+        (-[WKViewFixedSizeLayoutStrategy updateLayout]):
+        (-[WKViewDynamicSizeComputedFromViewScaleLayoutStrategy initWithPage:view:mode:]):
+        (-[WKViewDynamicSizeComputedFromViewScaleLayoutStrategy updateLayout]):
+        (-[WKViewDynamicSizeComputedFromViewScaleLayoutStrategy didChangeViewScale]):
+        (-[WKViewDynamicSizeComputedFromViewScaleLayoutStrategy didChangeFrameSize]):
+        Move the existing layout strategies from WKView into WKViewLayoutStrategy subclasses.
+
+        (-[WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy initWithPage:view:mode:]):
+        (-[WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy updateLayout]):
+        (-[WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy didChangeMinimumViewSize]):
+        (-[WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy willStartLiveResize]):
+        (-[WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy didEndLiveResize]):
+        While in live resize with the new layout mode, disable frame size updates.
+        The new layout mode will do a live scale during part of the resize, and
+        we don't always want to send the new view size to the Web process.
+
+        (-[WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy didChangeFrameSize]):
+        (-[WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy willChangeLayoutStrategy]):
+        While in the new layout mode, maintain the viewScale as the minimum of the
+        scale required to fit the current view frame size inside the minimumViewSize.
+        If no scaling is required, carry on as usual, pushing the new view frame size
+        to the DrawingArea and on to the Web process.
+        If scaling is required, apply a transform to the view in the UI process,
+        until the live resize completes, in which case we send a fenced viewScale
+        adjustment to the Web process (so that the tiles paint at the new viewScale
+        synchronized with the removal of the transform in the UI process).
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::scaleViewFenced):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::addFence):
+        (WebKit::DrawingArea::acceleratedAnimationDidEnd): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scaleViewAndUpdateGeometryFenced):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::addFence):
+        Add scaleViewAndUpdateGeometryFenced and the ability to install CoreAnimation fences on
+        TiledCoreAnimationDrawingArea's CAContext.
+
+        Add the ability to send updateGeometry out-of-band, so that
+        we can send it synchronously inside the message along with the CA fence.
+        We have to both change the viewScale and updateGeometry simultaneously
+        in the same CA commit that we install the fence into, in order to ensure
+        that there is no flash.
+
 2015-05-05  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Release input NSString when finished copying it.

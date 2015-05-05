@@ -2247,6 +2247,19 @@ void WebPageProxy::scaleView(double scale)
     m_process->send(Messages::WebPage::ScaleView(scale), m_pageID);
 }
 
+#if PLATFORM(COCOA)
+void WebPageProxy::scaleViewAndUpdateGeometryFenced(double scale, IntSize viewSize, const MachSendRight& fencePort)
+{
+    if (!isValid())
+        return;
+
+    m_viewScaleFactor = scale;
+    if (m_drawingArea)
+        m_drawingArea->willSendUpdateGeometry();
+    m_process->send(Messages::WebPage::ScaleViewAndUpdateGeometryFenced(scale, viewSize, fencePort), m_pageID);
+}
+#endif
+
 void WebPageProxy::setIntrinsicDeviceScaleFactor(float scaleFactor)
 {
     if (m_intrinsicDeviceScaleFactor == scaleFactor)

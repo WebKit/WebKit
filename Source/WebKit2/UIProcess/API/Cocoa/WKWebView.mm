@@ -47,6 +47,7 @@
 #import "WKBrowsingContextHandleInternal.h"
 #import "WKErrorInternal.h"
 #import "WKHistoryDelegatePrivate.h"
+#import "WKLayoutMode.h"
 #import "WKNSData.h"
 #import "WKNSURLExtras.h"
 #import "WKNavigationDelegate.h"
@@ -2290,22 +2291,45 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (_WKLayoutMode)_layoutMode
 {
-    if (_page->useFixedLayout()) {
 #if PLATFORM(MAC)
-        if ([_wkView _automaticallyComputesFixedLayoutSizeFromViewScale])
-            return _WKLayoutModeDynamicSizeComputedFromViewScale;
-#endif
+    switch ([_wkView _layoutMode]) {
+    case kWKLayoutModeFixedSize:
         return _WKLayoutModeFixedSize;
+    case kWKLayoutModeDynamicSizeComputedFromViewScale:
+        return _WKLayoutModeDynamicSizeComputedFromViewScale;
+    case kWKLayoutModeDynamicSizeWithMinimumViewSize:
+        return _WKLayoutModeDynamicSizeWithMinimumViewSize;
+    case kWKLayoutModeViewSize:
+    default:
+        return _WKLayoutModeViewSize;
     }
-    return _WKLayoutModeViewSize;
+#else
+    return _page->useFixedLayout() ? _WKLayoutModeFixedSize : _WKLayoutModeViewSize;
+#endif
 }
 
 - (void)_setLayoutMode:(_WKLayoutMode)layoutMode
 {
-    _page->setUseFixedLayout(layoutMode == _WKLayoutModeFixedSize || layoutMode == _WKLayoutModeDynamicSizeComputedFromViewScale);
-
 #if PLATFORM(MAC)
-    [_wkView _setAutomaticallyComputesFixedLayoutSizeFromViewScale:(layoutMode == _WKLayoutModeDynamicSizeComputedFromViewScale)];
+    WKLayoutMode wkViewLayoutMode;
+    switch (layoutMode) {
+    case _WKLayoutModeFixedSize:
+        wkViewLayoutMode = kWKLayoutModeFixedSize;
+        break;
+    case _WKLayoutModeDynamicSizeComputedFromViewScale:
+        wkViewLayoutMode = kWKLayoutModeDynamicSizeComputedFromViewScale;
+        break;
+    case _WKLayoutModeDynamicSizeWithMinimumViewSize:
+        wkViewLayoutMode = kWKLayoutModeDynamicSizeWithMinimumViewSize;
+        break;
+    case _WKLayoutModeViewSize:
+    default:
+        wkViewLayoutMode = kWKLayoutModeViewSize;
+        break;
+    }
+    [_wkView _setLayoutMode:wkViewLayoutMode];
+#else
+    _page->setUseFixedLayout(layoutMode == _WKLayoutModeFixedSize || layoutMode == _WKLayoutModeDynamicSizeComputedFromViewScale);
 #endif
 }
 
@@ -2326,14 +2350,29 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (void)_setViewScale:(CGFloat)viewScale
 {
+#if PLATFORM(MAC)
+    [_wkView _setViewScale:viewScale];
+#else
     if (viewScale <= 0 || isnan(viewScale) || isinf(viewScale))
         [NSException raise:NSInvalidArgumentException format:@"View scale should be a positive number"];
 
     _page->scaleView(viewScale);
+#endif
+}
 
+- (void)_setMinimumViewSize:(CGSize)minimumViewSize
+{
 #if PLATFORM(MAC)
-    if ([_wkView _automaticallyComputesFixedLayoutSizeFromViewScale])
-        [_wkView _updateAutomaticallyComputedFixedLayoutSize];
+    [_wkView _setMinimumViewSize:minimumViewSize];
+#endif
+}
+
+- (CGSize)_minimumViewSize
+{
+#if PLATFORM(MAC)
+    return [_wkView _minimumViewSize];
+#else
+    return CGSizeZero;
 #endif
 }
 

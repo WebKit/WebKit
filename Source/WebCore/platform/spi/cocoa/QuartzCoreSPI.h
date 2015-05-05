@@ -66,6 +66,7 @@ extern "C" {
 - (void)invalidate;
 - (mach_port_t)createFencePort;
 - (void)setFencePort:(mach_port_t)port;
+- (void)setFencePort:(mach_port_t)port commitHandler:(void(^)(void))block;
 @property (readonly) uint32_t contextId;
 @property (strong) CALayer *layer;
 @property CGColorSpaceRef colorSpace;

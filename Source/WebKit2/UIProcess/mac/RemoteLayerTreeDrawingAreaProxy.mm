@@ -155,7 +155,7 @@ void RemoteLayerTreeDrawingAreaProxy::didUpdateGeometry()
 
     // If the WKView was resized while we were waiting for a DidUpdateGeometry reply from the web process,
     // we need to resend the new size here.
-    if (m_lastSentSize != m_size || m_lastSentLayerPosition != m_layerPosition)
+    if (m_lastSentSize != m_size)
         sendUpdateGeometry();
 }
 
@@ -174,8 +174,7 @@ FloatRect RemoteLayerTreeDrawingAreaProxy::scaledExposedRect() const
 void RemoteLayerTreeDrawingAreaProxy::sendUpdateGeometry()
 {
     m_lastSentSize = m_size;
-    m_lastSentLayerPosition = m_layerPosition;
-    m_webPageProxy.process().send(Messages::DrawingArea::UpdateGeometry(m_size, m_layerPosition), m_webPageProxy.pageID());
+    m_webPageProxy.process().send(Messages::DrawingArea::UpdateGeometry(m_size, IntSize(), false), m_webPageProxy.pageID());
     m_isWaitingForDidUpdateGeometry = true;
 }
 

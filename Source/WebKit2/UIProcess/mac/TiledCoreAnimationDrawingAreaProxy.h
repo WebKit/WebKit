@@ -54,6 +54,8 @@ private:
 
     virtual void waitForDidUpdateViewState() override;
 
+    virtual void willSendUpdateGeometry() override;
+
     // Message handlers.
     virtual void didUpdateGeometry() override;
     virtual void intrinsicContentSizeDidChange(const WebCore::IntSize&) override;
@@ -65,7 +67,6 @@ private:
 
     // The last size we sent to the web process.
     WebCore::IntSize m_lastSentSize;
-    WebCore::IntSize m_lastSentLayerPosition;
 
     // The last minimum layout size we sent to the web process.
     WebCore::IntSize m_lastSentMinimumLayoutSize;

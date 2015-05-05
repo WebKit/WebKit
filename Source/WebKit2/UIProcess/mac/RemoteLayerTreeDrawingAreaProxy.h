@@ -93,7 +93,6 @@ private:
     bool m_isWaitingForDidUpdateGeometry;
 
     WebCore::IntSize m_lastSentSize;
-    WebCore::IntSize m_lastSentLayerPosition;
 
     std::unique_ptr<RemoteLayerTreeHost> m_debugIndicatorLayerTreeHost;
     RetainPtr<CALayer> m_tileMapHostLayer;
