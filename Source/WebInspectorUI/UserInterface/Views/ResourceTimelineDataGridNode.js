@@ -116,16 +116,7 @@ WebInspector.ResourceTimelineDataGridNode.prototype = {
             return value ? WebInspector.UIString("Yes") : WebInspector.UIString("No");
 
         case "domain":
-            var fragment = document.createDocumentFragment();
-
-            var goToButton = WebInspector.createGoToArrowButton();
-            goToButton.addEventListener("click", this._goToResource.bind(this));
-            fragment.appendChild(goToButton);
-
-            var text = document.createTextNode(value || emptyValuePlaceholderString);
-            fragment.appendChild(text);
-
-            return fragment;
+            return value || emptyValuePlaceholderString;
 
         case "size":
         case "transferSize":
@@ -165,11 +156,6 @@ WebInspector.ResourceTimelineDataGridNode.prototype = {
             return;
 
         this._scheduledRefreshIdentifier = requestAnimationFrame(this.refresh.bind(this));
-    },
-
-    _goToResource: function(event)
-    {
-        WebInspector.showSourceCode(this._resource);
     },
 
     _timelineRecordUpdated: function(event)

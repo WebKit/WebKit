@@ -354,8 +354,39 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         return this._displayedContentView.matchTreeElementAgainstCustomFilters(treeElement);
     }
 
+    treeElementAddedOrChanged(treeElement)
+    {
+        if (treeElement.status)
+            return;
+
+        if (!treeElement.treeOutline || typeof treeElement.treeOutline.__canShowContentViewForTreeElement !== "function")
+            return;
+
+        if (!treeElement.treeOutline.__canShowContentViewForTreeElement(treeElement))
+            return;
+
+        wrappedSVGDocument("Images/Close.svg", null, WebInspector.UIString("Close resource view"), function(element) {
+            var fragment = document.createDocumentFragment();
+
+            var closeButton = new WebInspector.TreeElementStatusButton(element);
+            closeButton.element.classList.add("close");
+            closeButton.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, this._treeElementCloseButtonClicked, this);
+            fragment.appendChild(closeButton.element);
+
+            var goToButton = new WebInspector.TreeElementStatusButton(WebInspector.createGoToArrowButton());
+            goToButton.__treeElement = treeElement;
+            goToButton.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, this._treeElementGoToArrowWasClicked, this);
+            fragment.appendChild(goToButton.element);
+
+            treeElement.status = fragment;
+        }.bind(this));
+    }
+
     canShowDifferentContentView()
     {
+        if (this._clickedTreeElementGoToArrow)
+            return true;
+
         if (this.contentBrowser.currentContentView instanceof WebInspector.TimelineRecordingContentView)
             return false;
 
@@ -408,6 +439,27 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
     }
 
     // Private
+
+    _treeElementGoToArrowWasClicked(event)
+    {
+        this._clickedTreeElementGoToArrow = true;
+
+        var treeElement = event.target.__treeElement;
+        console.assert(treeElement instanceof WebInspector.TreeElement);
+
+        treeElement.select(true, true);
+
+        this._clickedTreeElementGoToArrow = false;
+    }
+
+    _treeElementCloseButtonClicked(event)
+    {
+        var currentTimelineView = this._displayedContentView ? this._displayedContentView.currentTimelineView : null;
+        if (currentTimelineView && currentTimelineView.representedObject instanceof WebInspector.Timeline)
+            this.showTimelineViewForTimeline(currentTimelineView.representedObject);
+        else
+            this.showTimelineOverview();
+    }
 
     _recordingsTreeElementSelected(treeElement, selectedByUser)
     {

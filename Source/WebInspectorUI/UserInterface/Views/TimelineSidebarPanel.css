@@ -193,6 +193,19 @@ body.window-inactive .sidebar > .panel.navigation.timeline > .timelines-content 
     right: -16px;
 }
 
+.sidebar > .panel.navigation.timeline .item:not(:hover, .selected) .status .status-button,
+.sidebar > .panel.navigation.timeline .item:hover:not(.selected) .status .close.status-button {
+    display: none;
+}
+
+.sidebar > .panel.navigation.timeline:not(.timeline-recording-content-view-showing) .status .go-to-arrow.status-button {
+    display: none;
+}
+
+.sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing .status .close.status-button {
+    display: none;
+}
+
 .sidebar > .panel.navigation.timeline > .timelines-content > .details-section > div.header {
     display: none;
 }

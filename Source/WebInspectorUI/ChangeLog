@@ -1,5 +1,69 @@
 2015-05-05  Timothy Hatcher  <timothy@apple.com>
 
+        REGRESSION: Web Inspector: no way to navigate to a resource/source location from overview timeline view
+        https://bugs.webkit.org/show_bug.cgi?id=144539
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/GeneralTreeElement.js:
+        (WebInspector.GeneralTreeElement.prototype.set status): Call didChange() so the onchange event fires. This allows
+        TimelineSidebarPanel to update the status element when it goes from a spinner to empty for ResourceTreeElements.
+        (WebInspector.GeneralTreeElement.prototype.onattach): Don't call _updateStatusElement, just append it if needed.
+        Calling _updateStatusElement caused DOMNodeFragments as status elements to be appended a second time and fail.
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype.treeElementAddedOrChanged):
+        (WebInspector.NavigationSidebarPanel.prototype._treeElementAddedOrChanged):
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView.prototype.canShowContentViewForTreeElement):
+        (WebInspector.NetworkTimelineView.prototype.showContentViewForTreeElement):
+        (WebInspector.NetworkTimelineView.prototype.treeElementSelected):
+        (WebInspector.NetworkTimelineView.prototype._dataGridNodeSelected):
+        (WebInspector.NetworkTimelineView.prototype._updateTreeElementWithCloseButton): Deleted.
+        (WebInspector.NetworkTimelineView.prototype._closeStatusButtonClicked): Deleted.
+        * UserInterface/Views/OverviewTimelineView.js:
+        (WebInspector.OverviewTimelineView.prototype.canShowContentViewForTreeElement):
+        (WebInspector.OverviewTimelineView.prototype.showContentViewForTreeElement):
+        (WebInspector.OverviewTimelineView.prototype._dataGridNodeSelected):
+        (WebInspector.OverviewTimelineView.prototype._treeElementDeselected): Deleted.
+        (WebInspector.OverviewTimelineView.prototype._treeElementSelected): Deleted.
+        (WebInspector.OverviewTimelineView.prototype._updateTreeElementWithCloseButton): Deleted.
+        (WebInspector.OverviewTimelineView.prototype._closeStatusButtonClicked): Deleted.
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WebInspector.RenderingFrameTimelineView.prototype.canShowContentViewForTreeElement):
+        (WebInspector.RenderingFrameTimelineView.prototype.showContentViewForTreeElement):
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WebInspector.ResourceTimelineDataGridNode.prototype.createCellContent): Don't show a go-to arrow in the Domain column.
+        (WebInspector.ResourceTimelineDataGridNode.prototype._goToResource): Deleted.
+        * UserInterface/Views/ScriptTimelineView.js:
+        (WebInspector.ScriptTimelineView.prototype.canShowContentViewForTreeElement):
+        (WebInspector.ScriptTimelineView.prototype.showContentViewForTreeElement):
+        (WebInspector.ScriptTimelineView.prototype.treeElementSelected):
+        * UserInterface/Views/TimelineRecordTreeElement.js:
+        (WebInspector.TimelineRecordTreeElement.prototype.get sourceCodeLocation):
+        * UserInterface/Views/TimelineSidebarPanel.css:
+        (.sidebar > .panel.navigation.timeline .item:hover:not(.selected) .status .close.status-button):
+        (.sidebar > .panel.navigation.timeline:not(.timeline-recording-content-view-showing) .status .go-to-arrow.status-button):
+        (.sidebar > .panel.navigation.timeline.timeline-recording-content-view-showing .status .close.status-button):
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.prototype.treeElementAddedOrChanged): Added.
+        (WebInspector.TimelineSidebarPanel.prototype.canShowDifferentContentView):
+        (WebInspector.TimelineSidebarPanel.prototype._treeElementGoToArrowWasClicked): Added.
+        (WebInspector.TimelineSidebarPanel.prototype._treeElementCloseButtonClicked): Added.
+        * UserInterface/Views/TimelineView.js:
+        (WebInspector.TimelineView):
+        (WebInspector.TimelineView.prototype.canShowContentViewForTreeElement):
+        (WebInspector.TimelineView.prototype.showContentViewForTreeElement):
+        (WebInspector.TimelineView.prototype.treeElementDeselected):
+        (WebInspector.TimelineView.prototype.treeElementSelected):
+        (WebInspector.TimelineView.prototype.needsLayout):
+        (WebInspector.TimelineView.prototype._closeStatusButtonClicked): Deleted.
+        (WebInspector.TimelineView.prototype._updateTreeElementWithCloseButton): Deleted.
+        * UserInterface/Views/TreeElementStatusButton.css:
+        (.item > .status > .status-button): Fix an alignment issue with close and go-to arrows being side-by-side.
+        Does not happen in the final patch because they are mutually exclusive, but still good to fix.
+
+2015-05-05  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Fix some issues with Search tabs
         https://bugs.webkit.org/show_bug.cgi?id=144531
 

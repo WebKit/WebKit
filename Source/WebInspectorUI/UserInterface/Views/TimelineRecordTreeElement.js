@@ -133,6 +133,11 @@ WebInspector.TimelineRecordTreeElement = class TimelineRecordTreeElement extends
         return {text: [this.mainTitle, url || "", this._record.details || ""]};
     }
 
+    get sourceCodeLocation()
+    {
+        return this._sourceCodeLocation;
+    }
+
     // Protected
 
     onattach()

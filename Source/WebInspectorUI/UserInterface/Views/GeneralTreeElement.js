@@ -188,6 +188,7 @@ WebInspector.GeneralTreeElement = class GeneralTreeElement extends WebInspector.
 
         this._status = x || "";
         this._updateStatusElement();
+        this.didChange();
     }
 
     get filterableData()
@@ -219,9 +220,8 @@ WebInspector.GeneralTreeElement = class GeneralTreeElement extends WebInspector.
 
         this._listItemNode.classList.add("item");
 
-        if (this._classNames) {
+        if (this._classNames)
             this._listItemNode.classList.add(...this._classNames);
-        }
 
         if (this._small)
             this._listItemNode.classList.add(WebInspector.GeneralTreeElement.SmallStyleClassName);
@@ -231,6 +231,8 @@ WebInspector.GeneralTreeElement = class GeneralTreeElement extends WebInspector.
 
         this._listItemNode.appendChild(this._disclosureButton);
         this._listItemNode.appendChild(this._iconElement);
+        if (this._statusElement)
+            this._listItemNode.appendChild(this._statusElement);
         this._listItemNode.appendChild(this._titlesElement);
 
         if (this.oncontextmenu && typeof this.oncontextmenu === "function") {
@@ -242,8 +244,6 @@ WebInspector.GeneralTreeElement = class GeneralTreeElement extends WebInspector.
             this._boundContextMenuEventHandler = function(event) { this.treeOutline.oncontextmenu(event, this); }.bind(this);
             this._listItemNode.addEventListener("contextmenu", this._boundContextMenuEventHandler);
         }
-
-        this._updateStatusElement();
     }
 
     ondetach()
