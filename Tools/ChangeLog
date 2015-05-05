@@ -1,3 +1,18 @@
+2015-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Async operations running in the WorkQueue thread should schedule their sources to the WorkQueue main lopp
+        https://bugs.webkit.org/show_bug.cgi?id=144541
+
+        Reviewed by Žan Doberšek.
+
+        Add a test case to WorkQueue unit test, to check that sources of
+        asynchronous IO operations running in the WorkQueue thread are
+        dispatched by the WorkQueue main loop.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/Tests/WTF/gtk/WorkQueueGtk.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2015-05-04  Brent Fulgham  <bfulgham@apple.com>
 
         Correct '--show-webview' option for Tiled Drawing tests

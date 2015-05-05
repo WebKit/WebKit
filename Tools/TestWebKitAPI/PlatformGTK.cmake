@@ -134,4 +134,5 @@ set_target_properties(TestWebCore PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TESTWEBK
 list(APPEND TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/gobject/GMainLoopSource.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/gobject/GUniquePtr.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/gtk/WorkQueueGtk.cpp
 )

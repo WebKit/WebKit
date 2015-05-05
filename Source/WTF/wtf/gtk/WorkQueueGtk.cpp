@@ -56,7 +56,11 @@ void WorkQueue::platformInitialize(const char* name, Type, QOS)
         threadName += strlen(threadName) - kVisualStudioThreadNameLimit;
 
     RefPtr<WorkQueue> protector(this);
-    m_workQueueThread = createThread(threadName, [protector] { g_main_loop_run(protector->m_eventLoop.get()); });
+    m_workQueueThread = createThread(threadName, [protector] {
+        g_main_context_push_thread_default(protector->m_eventContext.get());
+        g_main_loop_run(protector->m_eventLoop.get());
+        g_main_context_pop_thread_default(protector->m_eventContext.get());
+    });
 }
 
 void WorkQueue::platformInvalidate()
