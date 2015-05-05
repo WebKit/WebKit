@@ -1424,7 +1424,14 @@ struct Node {
     
     bool hasObjectMaterializationData()
     {
-        return op() == MaterializeNewObject;
+        switch (op()) {
+        case MaterializeNewObject:
+        case MaterializeCreateActivation:
+            return true;
+
+        default:
+            return false;
+        }
     }
     
     ObjectMaterializationData& objectMaterializationData()

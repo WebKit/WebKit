@@ -1,3 +1,17 @@
+2015-05-05  Basile Clement  <basile_clement@apple.com>
+
+        Fix debug builds after r183812
+        https://bugs.webkit.org/show_bug.cgi?id=144300
+
+        Rubber stamped by Andreas Kling and Filip Pizlo.
+
+        hasObjectMaterializationData() didn't treat MaterializeCreateActivation
+        as having materialization data, which was causing an assertion failure when
+        sinking CreateActivations on debug builds.
+
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasObjectMaterializationData):
+
 2015-05-04  Basile Clement  <basile_clement@apple.com>
 
         Allow CreateActivation sinking
