@@ -1,3 +1,14 @@
+2015-05-05  Andres Gomez  <agomez@igalia.com>
+
+        [GTK] Web Inspector: icons for console.info() messages
+        https://bugs.webkit.org/show_bug.cgi?id=144461
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Images/gtk/Debug.svg: Added.
+        * UserInterface/Images/gtk/Info.svg: Added.
+        * UserInterface/Images/gtk/Log.svg: Added.
+
 2015-05-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Always expand initial top level DOM tree nodes when not including the root (frame views)
