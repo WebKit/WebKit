@@ -1,3 +1,134 @@
+2015-05-05  Andres Gomez  <agomez@igalia.com>
+
+        [GTK] Web Inspector: Further optimize SVG images
+        https://bugs.webkit.org/show_bug.cgi?id=144441
+
+        SVG images optimized with a combination of sed replacements, the
+        usage of the scour tool (http://www.codedread.com/scour/) and a
+        forked version of the svgo tool (https://github.com/tanty/svgo).
+
+        Also, added the class attribute to the shape elements following
+        the convention used in Apple's images.
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Images/gtk/BackArrow.svg: Optimized.
+        * UserInterface/Images/gtk/BreakpointActionAdd.svg: Optimized.
+        * UserInterface/Images/gtk/BreakpointActionRemove.svg: Optimized.
+        * UserInterface/Images/gtk/BreakpointButton.svg: Optimized.
+        * UserInterface/Images/gtk/BreakpointInactiveButton.svg: Optimized.
+        * UserInterface/Images/gtk/Breakpoints.svg: Optimized.
+        * UserInterface/Images/gtk/Checkers.svg: Optimized.
+        * UserInterface/Images/gtk/Circle.svg: Optimized.
+        * UserInterface/Images/gtk/Close.svg: Optimized.
+        * UserInterface/Images/gtk/CloseLarge.svg: Optimized.
+        * UserInterface/Images/gtk/CloseWhite.svg: Optimized.
+        * UserInterface/Images/gtk/ContentFlow.svg: Optimized.
+        * UserInterface/Images/gtk/Crosshair.svg: Optimized.
+        * UserInterface/Images/gtk/DOMCharacterData.svg: Optimized.
+        * UserInterface/Images/gtk/DOMComment.svg: Optimized.
+        * UserInterface/Images/gtk/DOMDocument.svg: Optimized.
+        * UserInterface/Images/gtk/DOMDocumentType.svg: Optimized.
+        * UserInterface/Images/gtk/DOMElement.svg: Optimized.
+        * UserInterface/Images/gtk/DOMNode.svg: Optimized.
+        * UserInterface/Images/gtk/DOMTextNode.svg: Optimized.
+        * UserInterface/Images/gtk/DisclosureTriangleSmallClosed.svg: Optimized.
+        * UserInterface/Images/gtk/DisclosureTriangleSmallOpen.svg: Optimized.
+        * UserInterface/Images/gtk/DisclosureTriangleTinyClosed.svg: Optimized.
+        * UserInterface/Images/gtk/DisclosureTriangleTinyOpen.svg: Optimized.
+        * UserInterface/Images/gtk/DockBottom.svg: Optimized.
+        * UserInterface/Images/gtk/DockRight.svg: Optimized.
+        * UserInterface/Images/gtk/DownloadArrow.svg: Optimized.
+        * UserInterface/Images/gtk/Error.svg: Optimized.
+        * UserInterface/Images/gtk/Errors.svg: Optimized.
+        * UserInterface/Images/gtk/ErrorsEnabled.svg: Optimized.
+        * UserInterface/Images/gtk/EventListener.svg: Optimized.
+        * UserInterface/Images/gtk/Exception.svg: Optimized.
+        * UserInterface/Images/gtk/Eye.svg: Optimized.
+        * UserInterface/Images/gtk/FilterFieldGlyph.svg: Optimized.
+        * UserInterface/Images/gtk/ForwardArrow.svg: Optimized.
+        * UserInterface/Images/gtk/Function.svg: Optimized.
+        * UserInterface/Images/gtk/GoToArrow.svg: Optimized.
+        * UserInterface/Images/gtk/HierarchicalNavigationItemChevron.svg: Optimized.
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner1.svg: Optimized.
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner10.svg: Optimized.
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner11.svg: Optimized.
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner12.svg: Optimized.
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner2.svg: Optimized.
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner3.svg: Optimized.
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner4.svg: Optimized.
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner5.svg: Optimized.
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner6.svg: Optimized.
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner7.svg: Optimized.
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner8.svg: Optimized.
+        * UserInterface/Images/gtk/IndeterminateProgressSpinner9.svg: Optimized.
+        * UserInterface/Images/gtk/Issues.svg: Optimized.
+        * UserInterface/Images/gtk/IssuesEnabled.svg: Optimized.
+        * UserInterface/Images/gtk/LayerBorders.svg: Optimized.
+        * UserInterface/Images/gtk/Locked.svg: Optimized.
+        * UserInterface/Images/gtk/Logs.svg: Optimized.
+        * UserInterface/Images/gtk/Native.svg: Optimized.
+        * UserInterface/Images/gtk/NavigationItemCurleyBraces.svg: Optimized.
+        * UserInterface/Images/gtk/NavigationItemTrash.svg: Optimized.
+        * UserInterface/Images/gtk/NavigationItemTypes.svg: Optimized.
+        * UserInterface/Images/gtk/PaintFlashing.svg: Optimized.
+        * UserInterface/Images/gtk/Pause.svg: Optimized.
+        * UserInterface/Images/gtk/PausedBreakpoint.svg: Optimized.
+        * UserInterface/Images/gtk/Pencil.svg: Optimized.
+        * UserInterface/Images/gtk/Plus.svg: Optimized. Text element
+        converted into a shape.
+        * UserInterface/Images/gtk/PseudoElement.svg: Optimized.
+        * UserInterface/Images/gtk/Record.svg: Optimized.
+        * UserInterface/Images/gtk/Reflection.svg: Optimized.
+        * UserInterface/Images/gtk/ReloadFull.svg: Optimized.
+        * UserInterface/Images/gtk/ReplayPauseButton.svg: Optimized.
+        * UserInterface/Images/gtk/ReplayPlayButton.svg: Optimized.
+        * UserInterface/Images/gtk/ReplayRecordingButton.svg: Optimized.
+        * UserInterface/Images/gtk/Request.svg: Optimized.
+        * UserInterface/Images/gtk/Resources.svg: Optimized.
+        * UserInterface/Images/gtk/Response.svg: Optimized.
+        * UserInterface/Images/gtk/ResultLine.svg: Optimized.
+        * UserInterface/Images/gtk/Resume.svg: Optimized.
+        * UserInterface/Images/gtk/ShadowDOM.svg: Optimized.
+        * UserInterface/Images/gtk/SortIndicatorDownArrow.svg: Optimized.
+        * UserInterface/Images/gtk/SortIndicatorUpArrow.svg: Optimized.
+        * UserInterface/Images/gtk/SplitToggleUp.svg: Optimized.
+        * UserInterface/Images/gtk/StepInto.svg: Optimized.
+        * UserInterface/Images/gtk/StepOut.svg: Optimized.
+        * UserInterface/Images/gtk/StepOver.svg: Optimized.
+        * UserInterface/Images/gtk/Stop.svg: Optimized.
+        * UserInterface/Images/gtk/StyleRuleAuthor.svg: Optimized.
+        * UserInterface/Images/gtk/StyleRuleInherited.svg: Optimized.
+        * UserInterface/Images/gtk/StyleRuleInheritedElement.svg: Optimized.
+        * UserInterface/Images/gtk/StyleRuleInspector.svg: Optimized.
+        * UserInterface/Images/gtk/StyleRuleUser.svg: Optimized.
+        * UserInterface/Images/gtk/StyleRuleUserAgent.svg: Optimized.
+        * UserInterface/Images/gtk/TimelineRecordAnimation.svg: Optimized.
+        * UserInterface/Images/gtk/TimelineRecordConsoleProfile.svg: Optimized.
+        * UserInterface/Images/gtk/TimelineRecordEvent.svg: Optimized.
+        * UserInterface/Images/gtk/TimelineRecordLayout.svg: Optimized.
+        * UserInterface/Images/gtk/TimelineRecordPaint.svg: Optimized.
+        * UserInterface/Images/gtk/TimelineRecordProbeSampled.svg: Optimized.
+        * UserInterface/Images/gtk/TimelineRecordScriptEvaluated.svg: Optimized.
+        * UserInterface/Images/gtk/TimelineRecordStyle.svg: Optimized.
+        * UserInterface/Images/gtk/TimelineRecordTimer.svg: Optimized.
+        * UserInterface/Images/gtk/TypeBoolean.svg: Optimized.
+        * UserInterface/Images/gtk/TypeNull.svg: Optimized.
+        * UserInterface/Images/gtk/TypeNumber.svg: Optimized.
+        * UserInterface/Images/gtk/TypeObject.svg: Optimized.
+        * UserInterface/Images/gtk/TypeRegex.svg: Optimized. Removed
+        mistaken extra shape.
+        * UserInterface/Images/gtk/TypeString.svg: Optimized.
+        * UserInterface/Images/gtk/TypeSymbol.svg: Optimized. Removed
+        mistaken extra shape.
+        * UserInterface/Images/gtk/TypeUndefined.svg: Optimized.
+        * UserInterface/Images/gtk/Undock.svg: Optimized.
+        * UserInterface/Images/gtk/UpDownArrows.svg: Optimized.
+        * UserInterface/Images/gtk/UserInputPrompt.svg: Optimized.
+        * UserInterface/Images/gtk/UserInputPromptPrevious.svg: Optimized.
+        * UserInterface/Images/gtk/UserInputResult.svg: Optimized.
+        * UserInterface/Images/gtk/Warning.svg: Optimized.
+
 2015-05-05  Timothy Hatcher  <timothy@apple.com>
 
         REGRESSION: Web Inspector: no way to navigate to a resource/source location from overview timeline view

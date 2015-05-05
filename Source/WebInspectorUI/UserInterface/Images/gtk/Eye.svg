@@ -1,48 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- Licensed under the Creative Commons Attribution-Share Alike 3.0 United States License (http://creativecommons.org/licenses/by-sa/3.0/) -->
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 16 11">
- <g display="none" transform="translate(0,-5)">
-  <path style="block-progression:tb;text-indent:0;color:#000000;enable-background:new;text-transform:none" d="m2 2.9882c-1.0524 0-2 0.84508-2 1.9375v9.1363c0 1.093 0.94763 1.938 2 1.938h11c1.0524 0 2-0.84508 2-1.9375v-9.1368c0-1.0924-0.94763-1.9375-2-1.9375zm0 3.0118h3.0312v2h-3.0312zm4.0312 0h2.9688v2h-2.9688zm3.9688 0h3v2h-3zm-8 3h3.0312v2h-3.0312zm4.0312 0h2.9688v2h-2.9688zm3.9688 0h3v2h-3zm-8 3h3.0312v2h-3.0312zm4.0312 0h2.9688v2h-2.9688zm3.9688 0h3v2h-3z" display="inline"/>
-  <g transform="translate(21.103 -1.464)">
-   <g transform="translate(.65192 4.7199)">
-    <rect height="1" width="1" y="1.4201" x="-3.897"/>
-    <rect height="1" width="1" y=".42012" x="-2.897"/>
-    <rect height="1" width="1" y="1.4201" x="-1.897"/>
-   </g>
-   <g transform="translate(.65192 6.7199)">
-    <rect height="1" width="1" y="1.4201" x="-3.897"/>
-    <rect height="1" width="1" y=".42012" x="-2.897"/>
-    <rect height="1" width="1" y="1.4201" x="-1.897"/>
-   </g>
-   <g transform="translate(0 4)">
-    <g transform="translate(.65192 4.7199)">
-     <rect height="1" width="1" y="1.4201" x="-3.897"/>
-     <rect height="1" width="1" y=".42012" x="-2.897"/>
-     <rect height="1" width="1" y="1.4201" x="-1.897"/>
-    </g>
-    <g transform="translate(.65192 6.7199)">
-     <rect height="1" width="1" y="1.4201" x="-3.897"/>
-     <rect height="1" width="1" y=".42012" x="-2.897"/>
-     <rect height="1" width="1" y="1.4201" x="-1.897"/>
-    </g>
-   </g>
-   <g transform="translate(0 8)">
-    <g transform="translate(.65192 4.7199)">
-     <rect height="1" width="1" y="1.4201" x="-3.897"/>
-     <rect height="1" width="1" y=".42012" x="-2.897"/>
-     <rect height="1" width="1" y="1.4201" x="-1.897"/>
-    </g>
-    <g transform="translate(.65192 6.7199)">
-     <rect height="1" width="1" y="1.4201" x="-3.897"/>
-     <rect height="1" width="1" y=".42012" x="-2.897"/>
-     <rect height="1" width="1" y="1.4201" x="-1.897"/>
-    </g>
-   </g>
-  </g>
-  <rect style="color:#000000" height="11.788" width="2.8367" stroke="#000" display="inline" y="3.7942" x="6.0816" stroke-width=".83536"/>
-  <path style="block-progression:tb;text-indent:0;color:#000000;enable-background:new;text-transform:none" d="m-1.4538 14.454v-1h-1v1h-1v-1h1v-1h-1v-1h1v-1h-1v-1h1v-1h-1v-1h1v-1h1v1h1v1h-1v1h1v1h-1v1h1v1h-1v1h1v1h-1m5 2c1.0524 0 2-0.84508 2-1.9375v-9.125c0-1.0924-0.94763-1.9375-2-1.9375h-11c-1.0524 0-2 0.84508-2 1.9375v9.125c0 1.0924 0.94763 1.9375 2 1.9375m6-4v-1h-1v1zm0-2v-1h-1v1zm0-2v-1h-1v1zm0-2h-1zm-6 0h3.0312v2h-3.0312zm8 0h3v2h-3zm-8 3h3.0312v2h-3.0312zm8 0h3v2h-3zm-8 3h3.0312v2h-3.0312zm8 0h3v2h-3z" display="inline"/>
- </g>
- <g transform="translate(0,-2)">
-  <path d="m8 2.5c-3.6819 0-6.6667 5-6.6667 5s2.9848 5 6.6667 5 6.6667-5 6.6667-5-2.9848-5-6.6667-5zm0 1.6667c3.222 0 5 3.3333 5 3.3333s-1.7783 3.3333-5 3.3333-5-3.3333-5-3.3333 1.7783-3.3333 5-3.3333zm0 0.83333c-1.3807 0-2.5 1.1193-2.5 2.5s1.1193 2.5 2.5 2.5 2.5-1.1193 2.5-2.5-1.1193-2.5-2.5-2.5zm0 1.276c0.65606 0 1.1979 0.54507 1.1979 1.224 0 0.67889-0.54186 1.25-1.1979 1.25-0.65606 0-1.1979-0.57111-1.1979-1.25s0.54186-1.224 1.1979-1.224z"/>
- </g>
+ <path d="m8 0.5c-3.6819 0-6.6562 5-6.6562 5s2.9744 5 6.6562 5c3.6819 0 6.6562-5 6.6562-5s-2.9744-5-6.6562-5zm0 1.6562c3.2217 0 5 3.3438 5 3.3438s-1.7783 3.3438-5 3.3438-5-3.3438-5-3.3438 1.7783-3.3438 5-3.3438z" class="filled"/>
+ <path d="m8 3c-1.3807 0-2.5 1.1193-2.5 2.5s1.1193 2.5 2.5 2.5 2.5-1.1193 2.5-2.5-1.1193-2.5-2.5-2.5zm0 1.2812c0.6561 0 1.1875 0.5399 1.1875 1.2188s-0.5314 1.25-1.1875 1.25-1.1875-0.5711-1.1875-1.25 0.5314-1.2188 1.1875-1.2188z" class="filled"/>
 </svg>
