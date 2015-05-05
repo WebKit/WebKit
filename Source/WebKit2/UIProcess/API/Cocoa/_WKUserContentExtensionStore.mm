@@ -50,7 +50,11 @@
 {
     auto handler = adoptNS([completionHandler copy]);
 
-    _userContentExtensionStore->compileContentExtension(identifier, encodedContentExtension, [handler](RefPtr<API::UserContentExtension> contentExtension, std::error_code error) {
+    String json(encodedContentExtension);
+    [encodedContentExtension release];
+    encodedContentExtension = nil;
+
+    _userContentExtensionStore->compileContentExtension(identifier, WTF::move(json), [handler](RefPtr<API::UserContentExtension> contentExtension, std::error_code error) {
         if (error) {
             auto rawHandler = (void (^)(_WKUserContentFilter *, NSError *))handler.get();
             

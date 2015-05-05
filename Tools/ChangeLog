@@ -1,3 +1,14 @@
+2015-05-05  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Release input NSString when finished copying it.
+        https://bugs.webkit.org/show_bug.cgi?id=144642
+
+        Reviewed by Brian Weinstein.
+
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::platformConfigureViewForTest):
+        Use alloc and initWithContentsOfURL to prevent over-releasing an autoreleased object.
+
 2015-05-05  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test fix after r183798.

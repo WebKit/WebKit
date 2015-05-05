@@ -113,6 +113,7 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
 
     ensureViewSupportsOptions(viewOptions.get());
 
+#if WK_API_ENABLED
     if (!test.urlContains("contentextensions/"))
         return;
 
@@ -120,11 +121,10 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
     NSURL *filterURL = [(NSURL *)testURL.get() URLByAppendingPathExtension:@"json"];
 
     NSStringEncoding encoding;
-    NSString *contentExtensionString = [NSString stringWithContentsOfURL:filterURL usedEncoding:&encoding error:NULL];
+    NSString *contentExtensionString = [[NSString alloc] initWithContentsOfURL:filterURL usedEncoding:&encoding error:NULL];
     if (!contentExtensionString)
         return;
     
-#if WK_API_ENABLED
     __block bool doneCompiling = false;
     [[_WKUserContentExtensionStore defaultStore] compileContentExtensionForIdentifier:@"TestContentExtensions" encodedContentExtension:contentExtensionString completionHandler:^(_WKUserContentFilter *filter, NSError *error)
     {
