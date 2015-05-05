@@ -1,3 +1,6 @@
+// https://bugs.webkit.org/show_bug.cgi?id=144609
+//@ skip
+
 function foo(x) {
     return new Array(x);
 }

@@ -1,3 +1,35 @@
+2015-05-04  Filip Pizlo  <fpizlo@apple.com>
+
+        Large array shouldn't be slow
+        https://bugs.webkit.org/show_bug.cgi?id=144617
+
+        Reviewed by Geoffrey Garen.
+        
+        Decouple MIN_SPARSE_ARRAY_INDEX, which is the threshold for storing to the sparse map when
+        you're already using ArrayStorage mode, from the minimul array length required to use
+        ArrayStorage in a new Array(length) allocation.
+        
+        Lift the array allocation length threshold to something very high. If this works, we'll
+        probably remove that threshold entirely.
+        
+        This is a 27% speed-up on JetStream/hash-map. Because run-jsc-benchmarks still can't run
+        JetStream as a discrete suite, this adds hash-map to LongSpider so that we run it somewhere
+        for now.
+
+        * dfg/DFGCallArrayAllocatorSlowPathGenerator.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNewArrayWithSize):
+        * runtime/ArrayConventions.h:
+        * runtime/JSArray.h:
+        (JSC::JSArray::create):
+        * runtime/JSGlobalObject.h:
+        (JSC::constructEmptyArray):
+        * tests/stress/new-array-storage-array-with-size.js: Skip this test until we fix https://bugs.webkit.org/show_bug.cgi?id=144609.
+
 2015-05-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Add backed intrinsics to private functions exposed with private symbols in global object

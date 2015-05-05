@@ -96,7 +96,7 @@ protected:
         for (unsigned i = 0; i < m_plans.size(); ++i)
             jit->silentSpill(m_plans[i]);
         GPRReg scratchGPR = AssemblyHelpers::selectScratchGPR(m_sizeGPR);
-        MacroAssembler::Jump bigLength = jit->m_jit.branch32(MacroAssembler::AboveOrEqual, m_sizeGPR, MacroAssembler::TrustedImm32(MIN_SPARSE_ARRAY_INDEX));
+        MacroAssembler::Jump bigLength = jit->m_jit.branch32(MacroAssembler::AboveOrEqual, m_sizeGPR, MacroAssembler::TrustedImm32(MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH));
         jit->m_jit.move(MacroAssembler::TrustedImmPtr(m_contiguousStructure), scratchGPR);
         MacroAssembler::Jump done = jit->m_jit.jump();
         bigLength.link(&jit->m_jit);

@@ -58,7 +58,14 @@ namespace JSC {
 
 // These values have to be macros to be used in max() and min() without introducing
 // a PIC branch in Mach-O binaries, see <rdar://problem/5971391>.
+
+// If you grow an ArrayStorage array by more than this, then the array will go sparse. Note that we
+// could probably make this smaller (it's large because it used to be conflated with
+// MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH).
 #define MIN_SPARSE_ARRAY_INDEX 100000U
+// If you try to allocate a contiguous array larger than this, then we will allocate an ArrayStorage
+// array instead. We allow for an array that occupies 1GB of VM.
+#define MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH 1024 * 1024 * 1024 / 8
 #define MAX_STORAGE_VECTOR_INDEX (MAX_STORAGE_VECTOR_LENGTH - 1)
 // 0xFFFFFFFF is a bit weird -- is not an array index even though it's an integer.
 #define MAX_ARRAY_INDEX 0xFFFFFFFEU

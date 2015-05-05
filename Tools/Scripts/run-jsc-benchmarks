@@ -2897,7 +2897,7 @@ begin
    "access-fannkuch", "access-nbody", "access-nsieve",
    "bitops-3bit-bits-in-byte", "bitops-bits-in-byte", "bitops-nsieve-bits",
    "controlflow-recursive", "crypto-aes", "crypto-md5", "crypto-sha1",
-   "date-format-tofte", "date-format-xparb", "math-cordic",
+   "date-format-tofte", "date-format-xparb", "hash-map", "math-cordic",
    "math-partial-sums", "math-spectral-norm", "string-base64",
    "string-fasta", "string-tagcloud"].each {
     | name |
