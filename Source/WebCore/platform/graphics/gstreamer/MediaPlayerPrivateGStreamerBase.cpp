@@ -530,9 +530,6 @@ void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext* context, const Floa
 #if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
 void MediaPlayerPrivateGStreamerBase::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity)
 {
-    if (textureMapper->accelerationMode() != TextureMapper::OpenGLMode)
-        return;
-
     if (!m_player->visible())
         return;
 

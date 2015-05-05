@@ -72,7 +72,7 @@ CoordinatedGraphicsScene::~CoordinatedGraphicsScene()
 void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatrix& matrix, float opacity, const FloatRect& clipRect, const Color& backgroundColor, bool drawsBackground, const FloatPoint& contentPosition, TextureMapper::PaintFlags PaintFlags)
 {
     if (!m_textureMapper) {
-        m_textureMapper = TextureMapper::create(TextureMapper::OpenGLMode);
+        m_textureMapper = TextureMapper::create();
         static_cast<TextureMapperGL*>(m_textureMapper.get())->setEnableEdgeDistanceAntialiasing(true);
     }
 

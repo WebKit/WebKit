@@ -106,8 +106,6 @@ PassRefPtr<BitmapTexture> BitmapTexturePool::createTexture()
 #if USE(TEXTURE_MAPPER_GL)
     BitmapTextureGL* texture = new BitmapTextureGL(m_context3D);
     return adoptRef(texture);
-#else
-    return BitmapTextureImageBuffer::create();
 #endif
 }
 

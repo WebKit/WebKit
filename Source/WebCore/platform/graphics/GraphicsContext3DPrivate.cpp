@@ -89,45 +89,6 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper
 
     m_context->markLayerComposited();
 
-    // FIXME: We do not support mask for the moment with TextureMapperImageBuffer.
-    if (textureMapper->accelerationMode() != TextureMapper::OpenGLMode) {
-        GraphicsContext* context = textureMapper->graphicsContext();
-        context->save();
-        context->platformContext()->setGlobalAlpha(opacity);
-
-        const int height = m_context->m_currentHeight;
-        const int width = m_context->m_currentWidth;
-        int totalBytes = width * height * 4;
-
-        auto pixels = std::make_unique<unsigned char[]>(totalBytes);
-        if (!pixels)
-            return;
-
-        // OpenGL keeps the pixels stored bottom up, so we need to flip the image here.
-        context->translate(0, height);
-        context->scale(FloatSize(1, -1));
-
-        context->concatCTM(matrix.toAffineTransform());
-
-        m_context->readRenderingResults(pixels.get(), totalBytes);
-
-        // Premultiply alpha.
-        for (int i = 0; i < totalBytes; i += 4)
-            if (pixels[i + 3] != 255) {
-                pixels[i + 0] = min(255, pixels[i + 0] * pixels[i + 3] / 255);
-                pixels[i + 1] = min(255, pixels[i + 1] * pixels[i + 3] / 255);
-                pixels[i + 2] = min(255, pixels[i + 2] * pixels[i + 3] / 255);
-            }
-
-        RefPtr<cairo_surface_t> imageSurface = adoptRef(cairo_image_surface_create_for_data(
-            const_cast<unsigned char*>(pixels.get()), CAIRO_FORMAT_ARGB32, width, height, width * 4));
-
-        context->platformContext()->drawSurfaceToContext(imageSurface.get(), targetRect, IntRect(0, 0, width, height), context);
-
-        context->restore();
-        return;
-    }
-
 #if USE(TEXTURE_MAPPER_GL)
     if (m_context->m_attrs.antialias && m_context->m_state.boundFBO == m_context->m_multisampleFBO) {
         GLContext* previousActiveContext = GLContext::getCurrent();

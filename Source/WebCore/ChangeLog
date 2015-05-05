@@ -1,3 +1,42 @@
+2015-05-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove TextureMapperImageBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=143561
+
+        Reviewed by Žan Doberšek.
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * PlatformWinCairo.cmake:
+        * platform/graphics/GraphicsContext3DPrivate.cpp:
+        (WebCore::GraphicsContext3DPrivate::paintToTextureMapper):
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBufferData::paintToTextureMapper):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::paintToTextureMapper):
+        * platform/graphics/texmap/BitmapTextureImageBuffer.cpp: Removed.
+        * platform/graphics/texmap/BitmapTextureImageBuffer.h: Removed.
+        * platform/graphics/texmap/BitmapTexturePool.cpp:
+        (WebCore::BitmapTexturePool::createTexture):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::setFilters):
+        * platform/graphics/texmap/TextureMapper.cpp:
+        (WebCore::TextureMapper::create):
+        (WebCore::TextureMapper::TextureMapper):
+        * platform/graphics/texmap/TextureMapper.h:
+        (WebCore::TextureMapper::accelerationMode): Deleted.
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::TextureMapperGL):
+        * platform/graphics/texmap/TextureMapperImageBuffer.cpp: Removed.
+        * platform/graphics/texmap/TextureMapperImageBuffer.h: Removed.
+        * platform/graphics/texmap/coordinated/CompositingCoordinator.cpp:
+        (WebCore::CompositingCoordinator::CompositingCoordinator):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::supportsContentsTiling):
+        (WebCore::CoordinatedGraphicsLayer::setShouldSupportContentsTiling): Deleted.
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+
 2015-05-05  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Box Alignment] Upgrade align-content parsing to CSS3 Box Alignment spec

@@ -396,11 +396,6 @@ String ImageBuffer::toDataURL(const String& mimeType, const double*, CoordinateS
 #if ENABLE(ACCELERATED_2D_CANVAS)
 void ImageBufferData::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity)
 {
-    if (textureMapper->accelerationMode() != TextureMapper::OpenGLMode) {
-        notImplemented();
-        return;
-    }
-
     ASSERT(m_texture);
 
     // Cairo may change the active context, so we make sure to change it back after flushing.

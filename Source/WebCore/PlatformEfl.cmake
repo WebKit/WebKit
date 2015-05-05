@@ -182,7 +182,6 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/texmap/BitmapTexture.cpp
     platform/graphics/texmap/BitmapTextureGL.cpp
-    platform/graphics/texmap/BitmapTextureImageBuffer.cpp
     platform/graphics/texmap/BitmapTexturePool.cpp
     platform/graphics/texmap/GraphicsLayerTextureMapper.cpp
     platform/graphics/texmap/TextureMapperGL.cpp

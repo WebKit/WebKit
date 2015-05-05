@@ -375,7 +375,7 @@ void LayerTreeHostGtk::setNativeSurfaceHandleForCompositing(uint64_t handle)
 
     ASSERT(m_isValid);
     ASSERT(!m_textureMapper);
-    m_textureMapper = TextureMapper::create(TextureMapper::OpenGLMode);
+    m_textureMapper = TextureMapper::create();
     static_cast<TextureMapperGL*>(m_textureMapper.get())->setEnableEdgeDistanceAntialiasing(true);
     downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().setTextureMapper(m_textureMapper.get());
 
