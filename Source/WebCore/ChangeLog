@@ -1,3 +1,17 @@
+2015-05-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Crash under WebCore::domWindowFromExecState reloading page with inspector open
+        https://bugs.webkit.org/show_bug.cgi?id=144636
+
+        Reviewed by Mark Lam.
+
+        This ensures we create an InjectedScript for the execution context
+        (frame) preventing the global object / exec state from getting garbage
+        collected before we remove it from our map.
+
+        * inspector/PageRuntimeAgent.cpp:
+        (WebCore::PageRuntimeAgent::notifyContextCreated):
+
 2015-05-05  Dean Jackson  <dino@apple.com>
 
         [iOS] AirPlay placeholder in inline videos uses Helvetica or Times, should be system font
