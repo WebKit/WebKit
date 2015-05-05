@@ -1,3 +1,28 @@
+2015-05-05  Sungmann Cho  <sungmann.cho@navercorp.com>
+
+        Make all FrameLoadState data members private.
+        https://bugs.webkit.org/show_bug.cgi?id=144562
+
+        Reviewed by Darin Adler.
+
+        Previously, all of the data members in FrameLoadState were public and accessed directly
+        from outside the class. But these should all be private as noted in FrameLoadState.h
+        for better encapsulation.
+
+        No new tests, no behavior change.
+
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameGetFrameLoadState):
+        * UIProcess/FrameLoadState.h:
+        (WebKit::FrameLoadState::state):
+        (WebKit::FrameLoadState::url):
+        (WebKit::FrameLoadState::provisionalURL):
+        (WebKit::FrameLoadState::unreachableURL):
+        * UIProcess/WebFrameProxy.h:
+        (WebKit::WebFrameProxy::url):
+        (WebKit::WebFrameProxy::provisionalURL):
+        (WebKit::WebFrameProxy::unreachableURL):
+
 2015-05-05  Alexey Proskuryakov  <ap@apple.com>
 
         Crashes in SandboxExtension::consumePermanently when uploading

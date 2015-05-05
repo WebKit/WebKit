@@ -51,10 +51,14 @@ public:
 
     void didSameDocumentNotification(const String&);
 
-    void setUnreachableURL(const String&);
+    State state() const { return m_state; }
+    const String& url() const { return m_url; }
+    const String& provisionalURL() const { return m_provisionalURL; }
 
-    // FIXME: These should all be private, and FrameLoadState should
-    // provide state transition member functions.
+    void setUnreachableURL(const String&);
+    const String& unreachableURL() const { return m_unreachableURL; }
+
+private:
     State m_state;
     String m_url;
     String m_provisionalURL;

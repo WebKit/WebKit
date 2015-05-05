@@ -47,7 +47,7 @@ bool WKFrameIsMainFrame(WKFrameRef frameRef)
 WKFrameLoadState WKFrameGetFrameLoadState(WKFrameRef frameRef)
 {
     WebFrameProxy* frame = toImpl(frameRef);
-    switch (frame->frameLoadState().m_state) {
+    switch (frame->frameLoadState().state()) {
     case FrameLoadState::State::Provisional:
         return kWKFrameLoadStateProvisional;
     case FrameLoadState::State::Committed:
