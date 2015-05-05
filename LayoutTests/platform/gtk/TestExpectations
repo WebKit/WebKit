@@ -753,8 +753,6 @@ webkit.org/b/87363 fast/frames/flattening/iframe-tiny.html [ Failure Pass ]
 
 webkit.org/b/73772 fast/table/multiple-captions-display.xhtml [ Failure Pass ]
 
-webkit.org/b/74493 platform/gtk/accessibility/unknown-roles-not-exposed.html [ Failure Pass ]
-
 webkit.org/b/76385 tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody.html [ Failure Pass ]
 
 webkit.org/b/78344 fast/text/international/inline-plaintext-relayout-with-leading-neutrals.html [ ImageOnlyFailure Pass ]

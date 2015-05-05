@@ -1,3 +1,21 @@
+2015-05-05  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] platform/gtk/accessibility/unknown-roles-not-exposed.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=74493
+
+        Reviewed by Chris Fleizach.
+
+        Make the test more reliable by searching for a child with an unknown role
+        rather than depending on an exact hierarchy. This makes the test applicable
+        to other platforms as at least Efl and Mac also do not expose children with
+        unknown roles, so it's now part of the shared accessibility tests.
+
+        * accessibility/unknown-roles-not-exposed-expected.txt: Added.
+        * accessibility/unknown-roles-not-exposed.html: Added.
+        * platform/gtk/TestExpectations: Removed skipped test.
+        * platform/gtk/accessibility/unknown-roles-not-exposed-expected.txt: Removed.
+        * platform/gtk/accessibility/unknown-roles-not-exposed.html: Removed.
+
 2015-05-05  Zalan Bujtas  <zalan@apple.com>
 
         Navigating to www.apple.com hits assertion in WebCore::TextIteratorCopyableText::set()
