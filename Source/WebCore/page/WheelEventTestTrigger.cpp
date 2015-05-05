@@ -113,7 +113,7 @@ void WheelEventTestTrigger::triggerTestTimerFired()
         std::lock_guard<std::mutex> lock(m_testTriggerMutex);
         if (!m_deferTestTriggerReasons.isEmpty()) {
 #if !LOG_DISABLED
-            if (isLogChannelEnabled("WheelEventTestTrigger"))
+            if (isLogChannelEnabled("WheelEventTestTriggers"))
                 dumpState(m_deferTestTriggerReasons);
 #endif
             return;

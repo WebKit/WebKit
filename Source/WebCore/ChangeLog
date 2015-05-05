@@ -1,3 +1,10 @@
+2015-05-05  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed logging fix.
+
+        * page/WheelEventTestTrigger.cpp:
+        (WebCore::WheelEventTestTrigger::triggerTestTimerFired): Fix typo in logging channel.
+
 2015-05-04  Roger Fong  <roger_fong@apple.com>
 
         Media control volume slider is opaque.
