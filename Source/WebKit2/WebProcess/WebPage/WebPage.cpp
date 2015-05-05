@@ -3293,7 +3293,11 @@ void WebPage::didCancelForOpenPanel()
 #if ENABLE(SANDBOX_EXTENSIONS)
 void WebPage::extendSandboxForFileFromOpenPanel(const SandboxExtension::Handle& handle)
 {
-    SandboxExtension::create(handle)->consumePermanently();
+    bool result = SandboxExtension::consumePermanently(handle);
+    if (!result) {
+        // We have reports of cases where this fails for some unknown reason, <rdar://problem/10156710>.
+        WTFLogAlways("WebPage::extendSandboxForFileFromOpenPanel(): Could not consume a sandbox extension");
+    }
 }
 #endif
 

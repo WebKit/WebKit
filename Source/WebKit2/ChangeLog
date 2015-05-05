@@ -1,3 +1,25 @@
+2015-05-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Crashes in SandboxExtension::consumePermanently when uploading
+        https://bugs.webkit.org/show_bug.cgi?id=144611
+        rdar://problem/10156710
+
+        Reviewed by Darin Adler.
+
+        This only fixes the crashes, uploading still won't work.
+        Added null checks and some logging that may help us get to the root cause eventually.
+
+        * Shared/SandboxExtension.h:
+        (WebKit::SandboxExtension::createHandle):
+        (WebKit::SandboxExtension::createHandleForReadWriteDirectory):
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtension::createHandle):
+        (WebKit::SandboxExtension::createHandleForReadWriteDirectory):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChooseFilesForOpenPanel):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::extendSandboxForFileFromOpenPanel):
+
 2015-05-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove TextureMapperImageBuffer
