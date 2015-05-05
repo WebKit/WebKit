@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<script src='../resources/testharness.js'></script>
+<script src='../resources/testharnessreport.js'></script>
+<script src='../resources/gc.js'></script>
+<script>
+
+function garbageCollectAndDo(task)
+{
+    var timeout = 50;
+    if (window.GCController)
+        window.GCController.collect();
+    else if (window.gc)
+        window.gc();
+    else
+        timeout = 400;
+    setTimeout(task, timeout);
+}
+
+t1 = async_test('Readable stream controller methods should continue working properly when scripts are loosing reference to the readable stream');
+t1.step(function() {
+    var controller;
+    new ReadableStream({
+        start: function(c) {
+            controller = c;
+        }
+    });
+
+    garbageCollectAndDo(t1.step_func(function() {
+        controller.close();
+        assert_throws(new TypeError(), function() { controller.close(); });
+        assert_throws(new TypeError(), function() { controller.error(); });
+        t1.done();
+    }));
+});
+
+</script>

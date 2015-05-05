@@ -1,0 +1,3 @@
+
+PASS Readable stream controller methods should continue working properly when scripts are loosing reference to the readable stream 
+

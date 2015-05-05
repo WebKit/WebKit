@@ -1,3 +1,33 @@
+2015-05-05  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        streams/readable-stream.html is very flaky
+        https://bugs.webkit.org/show_bug.cgi?id=144455
+
+        Reviewed by Darin Adler.
+
+        Changed the link between readadable stream and controller.
+        Controller ref()/deref() now increments/decrements its stream ref counter.
+        This ensures that even if JS scripts do not keep track of the readable stream,
+        the readable stream will not be disposed as long as the JS script has access to its controller.
+
+        Test: streams/readable-stream-gc.html
+
+        * Modules/streams/ReadableStreamController.h:
+        (WebCore::ReadableStreamController::ReadableStreamController):
+        (WebCore::ReadableStreamController::ref):
+        (WebCore::ReadableStreamController::deref):
+        (WebCore::ReadableStreamController::create): Deleted.
+        (WebCore::ReadableStreamController::stream): Deleted.
+        * bindings/js/JSReadableStreamControllerCustom.cpp:
+        (WebCore::JSReadableStreamController::close):
+        (WebCore::JSReadableStreamController::enqueue):
+        (WebCore::JSReadableStreamController::error):
+        * bindings/js/ReadableStreamJSSource.cpp:
+        (WebCore::ReadableStreamJSSource::~ReadableStreamJSSource):
+        (WebCore::ReadableStreamJSSource::start):
+        (WebCore::ReadableJSStream::jsController):
+        * bindings/js/ReadableStreamJSSource.h:
+
 2015-05-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Small cleanup in RenderText::computePreferredLogicalWidths()

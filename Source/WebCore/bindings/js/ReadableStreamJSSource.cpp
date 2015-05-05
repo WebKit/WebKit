@@ -35,6 +35,7 @@
 #include "DOMWrapperWorld.h"
 #include "JSDOMPromise.h"
 #include "JSReadableStream.h"
+#include "JSReadableStreamController.h"
 #include "NotImplemented.h"
 #include "ScriptExecutionContext.h"
 #include <runtime/Error.h>
@@ -90,8 +91,6 @@ ReadableStreamJSSource::ReadableStreamJSSource(JSC::ExecState* exec)
 
 ReadableStreamJSSource::~ReadableStreamJSSource()
 {
-    if (m_controller)
-        m_controller.get()->impl().resetStream();
 }
 
 static void startReadableStreamAsync(ReadableStream& readableStream)
@@ -111,9 +110,6 @@ void ReadableStreamJSSource::start(ExecState& exec, ReadableJSStream& readableSt
 {
     JSLockHolder lock(&exec);
 
-    Ref<ReadableStreamController> controller = ReadableStreamController::create(readableStream);
-    m_controller.set(exec.vm(), jsDynamicCast<JSReadableStreamController*>(toJS(&exec, globalObject(), controller)));
-
     JSValue startFunction = getPropertyFromObject(&exec, m_source.get(), "start");
     if (!startFunction.isFunction()) {
         if (!startFunction.isUndefined())
@@ -124,7 +120,7 @@ void ReadableStreamJSSource::start(ExecState& exec, ReadableJSStream& readableSt
     }
 
     MarkedArgumentBuffer arguments;
-    arguments.append(m_controller.get());
+    arguments.append(readableStream.jsController(exec, globalObject()));
 
     JSValue exception;
     callFunction(&exec, startFunction, m_source.get(), arguments, &exception);
@@ -159,6 +155,13 @@ ReadableJSStream::ReadableJSStream(ScriptExecutionContext& scriptExecutionContex
 ReadableStreamJSSource& ReadableJSStream::jsSource()
 {
     return static_cast<ReadableStreamJSSource&>(source());
+}
+
+JSValue ReadableJSStream::jsController(ExecState& exec, JSDOMGlobalObject* globalObject)
+{
+    if (!m_controller)
+        m_controller = std::make_unique<ReadableStreamController>(*this);
+    return toJS(&exec, globalObject, m_controller.get());
 }
 
 Ref<ReadableJSStream::Reader> ReadableJSStream::Reader::create(ReadableJSStream& stream)

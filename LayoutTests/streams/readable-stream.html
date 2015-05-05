@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <script src='../resources/testharness.js'></script>
 <script src='../resources/testharnessreport.js'></script>
-<script src='../resources/gc.js'></script>
 <script>
 test(function() {
     assert_throws(new TypeError(), function() {
@@ -58,20 +57,4 @@ test(function()
     assert_true(isStartCalled);
 }, 'ReadableStream should be able to call start method within prototype chain of its source');
 
-t1 = async_test('A readable stream controller methods should throw if its readablestream is collected');
-t1.step(function() {
-    var controller;
-    new ReadableStream({
-        start: function(c) {
-            controller = c;
-        }
-    });
-    setTimeout(t1.step_func(function() {
-        window.gc();
-        assert_throws(new TypeError(), function() { controller.close(); });
-        assert_throws(new TypeError(), function() { controller.error(); });
-        assert_throws(new TypeError(), function() { controller.enqueue(); });
-        t1.done();
-    }), 10);
-});
 </script>

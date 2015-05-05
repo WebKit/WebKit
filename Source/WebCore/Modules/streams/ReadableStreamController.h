@@ -32,32 +32,25 @@
 
 #if ENABLE(STREAMS_API)
 
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
+#include "ReadableStreamJSSource.h"
 
 namespace WebCore {
-
-class ReadableJSStream;
 
 // This class is only used for JS source readable streams to allow enqueuing, closing or erroring a readable stream.
 // Its definition is at https://streams.spec.whatwg.org/#rs-controller-class.
 // Note that its constructor is taking a ReadableJSStream as it should only be used for JS sources.
-class ReadableStreamController : public RefCounted<ReadableStreamController> {
+class ReadableStreamController {
 public:
-    static Ref<ReadableStreamController> create(ReadableJSStream& stream)
-    {
-        auto controller = adoptRef(*new ReadableStreamController(stream));
-        return controller;
-    }
-    ~ReadableStreamController() { }
+    explicit ReadableStreamController(ReadableJSStream& stream)
+        : m_stream(stream) { }
 
-    void resetStream() { m_stream = nullptr; }
-    ReadableJSStream* stream() { return m_stream; }
+    ReadableJSStream& stream() { return m_stream; }
+
+    void ref() { m_stream.ref(); }
+    void deref() { m_stream.deref(); }
 
 private:
-    ReadableStreamController(ReadableJSStream& stream) { m_stream = &stream; }
-
-    ReadableJSStream* m_stream;
+    ReadableJSStream& m_stream;
 };
 
 }

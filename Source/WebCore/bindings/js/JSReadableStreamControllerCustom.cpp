@@ -43,31 +43,24 @@ namespace WebCore {
 
 JSValue JSReadableStreamController::close(ExecState* exec)
 {
-    ReadableJSStream* stream = impl().stream();
-    if (!stream)
-        return exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Controller has no readablestream")));
+    ReadableJSStream& stream = impl().stream();
     // FIXME: Handle the case of draining.
-    if (stream->internalState() != ReadableStream::State::Readable)
+    if (stream.internalState() != ReadableStream::State::Readable)
         return exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Calling close on a stream which is not readable")));
-    stream->changeStateToClosed();
+    stream.changeStateToClosed();
     return jsUndefined();
 }
 
-JSValue JSReadableStreamController::enqueue(ExecState* exec)
+JSValue JSReadableStreamController::enqueue(ExecState*)
 {
-    ReadableJSStream* stream = impl().stream();
-    if (!stream)
-        return exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Controller has no readablestream")));
     notImplemented();
     return jsBoolean(false);
 }
 
 JSValue JSReadableStreamController::error(ExecState* exec)
 {
-    ReadableJSStream* stream = impl().stream();
-    if (!stream)
-        return exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Controller has no readablestream")));
-    if (stream->internalState() != ReadableStream::State::Readable)
+    ReadableJSStream& stream = impl().stream();
+    if (stream.internalState() != ReadableStream::State::Readable)
         return exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Calling error on a stream which is not readable")));
     notImplemented();
     return jsUndefined();

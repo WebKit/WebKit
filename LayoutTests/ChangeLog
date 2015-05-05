@@ -1,3 +1,18 @@
+2015-05-05  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        streams/readable-stream.html is very flaky
+        https://bugs.webkit.org/show_bug.cgi?id=144455
+
+        Reviewed by Darin Adler.
+
+        Moved flaky test to streams/readable-stream-gc.html.
+        Updated flaky test to check that the controller methods work well even if readable stream reference is lost by script.
+
+        * streams/readable-stream-expected.txt:
+        * streams/readable-stream-gc-expected.txt: Added.
+        * streams/readable-stream-gc.html: Added.
+        * streams/readable-stream.html:
+
 2015-05-05  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
 
         [GTK] Gardening 4th May
