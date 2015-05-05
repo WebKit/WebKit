@@ -1914,7 +1914,7 @@ PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarker()
 
 bool AccessibilityUIElement::setSelectedVisibleTextRange(AccessibilityTextMarkerRange*)
 {
-    return nullptr;
+    return false;
 }
 
 void AccessibilityUIElement::scrollToMakeVisible()
