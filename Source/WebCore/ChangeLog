@@ -1,3 +1,20 @@
+2015-05-05  Brent Fulgham  <bfulgham@apple.com>
+
+        iOS] Scroll snap points trigger reentrant layout
+        https://bugs.webkit.org/show_bug.cgi?id=144644
+        <rdar://problem/20366547>
+
+        Reviewed by Simon Fraser.
+
+        Covered by scroll-snap-mandatory.html test.
+
+        We had an iOS code path in 'appendChildSnapOffsets' that used offsetLeft and offsetTop. This code
+        was sometimes called during layout, which triggered a reentrant layout call, resulting in a debug
+        assertion.
+
+        * page/scrolling/AxisScrollSnapOffsets.cpp:
+        (WebCore::appendChildSnapOffsets): Remove iOS codepath.
+
 2015-05-05  Roger Fong  <roger_fong@apple.com>
 
         Blurry media control icons on non retina displays.
