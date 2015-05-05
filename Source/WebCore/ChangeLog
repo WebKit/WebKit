@@ -1,3 +1,21 @@
+2015-05-04  Andreas Kling  <akling@apple.com>
+
+        Record the reference time when Performance is constructed.
+        <https://webkit.org/b/144616>
+
+        Reviewed by Geoffrey Garen.
+
+        This is a merge of Blink's r156613 by simonjam@chromium.org.
+
+        Cache a copy of the DocumentLoader's reference timestamp when constructing
+        the Performance object. That way we don't have to jump through a bunch of scary
+        hoops to access it when now() is called later on.
+
+        * page/Performance.cpp:
+        (WebCore::Performance::Performance):
+        (WebCore::Performance::now): Deleted.
+        * page/Performance.h:
+
 2015-05-04  Simon Fraser  <simon.fraser@apple.com>
 
         Fix assertions in WK1 tests after r183777.

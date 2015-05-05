@@ -103,6 +103,8 @@ private:
     unsigned m_resourceTimingBufferSize;
 #endif
 
+    double m_referenceTime;
+
 #if ENABLE(USER_TIMING)
     RefPtr<UserTiming> m_userTiming;
 #endif // ENABLE(USER_TIMING)
