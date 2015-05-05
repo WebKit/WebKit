@@ -1,3 +1,16 @@
+2015-05-05  Eric Carlson  <eric.carlson@apple.com>
+
+        Prevent recursive calls to show target picker menu.
+        https://bugs.webkit.org/show_bug.cgi?id=144637
+        <rdar://problem/20824726>
+
+        Reviewed by Jer Noble.
+
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.h: Add m_showingMenu.
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm:
+        (WebCore::MediaPlaybackTargetPickerMac::showPlaybackTargetPicker): Do nothing if the menu
+        is already showing.
+
 2015-05-05  Dean Jackson  <dino@apple.com>
 
         Use system blue for Airplay Glyph

@@ -69,6 +69,7 @@ private:
     RetainPtr<AVOutputDeviceMenuController> m_outputDeviceMenuController;
     RetainPtr<WebAVOutputDeviceMenuControllerHelper> m_outputDeviceMenuControllerDelegate;
     RunLoop::Timer<MediaPlaybackTargetPickerMac> m_pendingActionTimer;
+    bool m_showingMenu { false };
 };
 
 } // namespace WebCore
