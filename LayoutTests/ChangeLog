@@ -1,3 +1,13 @@
+2015-05-05  Roger Fong  <roger_fong@apple.com>
+
+        Media control volume slider is opaque.
+        https://bugs.webkit.org/show_bug.cgi?id=144470.
+        <rdar://problem/20770350>
+
+        * platform/mac/TestExpectations:
+        Some tests generate assertion failures after this change, though the tests pass in release.
+        Marking them as crashing in debug for now. Tracking failures here: https://bugs.webkit.org/show_bug.cgi?id=144630.
+
 2015-05-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed gardening, unskip passing compositing tests since USE_NATIVE_XDISPLAY=1
