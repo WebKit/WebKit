@@ -307,7 +307,6 @@ video::-webkit-media-controls-volume-min-button {
 
 video::-webkit-media-controls-wireless-playback-picker-button,
 audio::-webkit-media-controls-wireless-playback-picker-button {
-    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 15" stroke="rgba(255,255,255,0.45)"><defs> <clipPath fill-rule="evenodd" id="cut-hole"><path d="M 0,0.5 L 16,0.5 L 16,15.5 L 0,15.5 z M 0,14.5 L 16,14.5 L 8,5 z"/></clipPath></defs><rect fill="none" clip-path="url(#cut-hole)" x="0.5" y="2" width="15" height="8"/><path stroke="none" fill="rgba(255,255,255,0.45)" d="M 3.5,13.25 L 12.5,13.25 L 8,8 z"/></svg>');
     margin-right: 16px;
     width: 16px;
     min-width: 16px;
@@ -315,7 +314,7 @@ audio::-webkit-media-controls-wireless-playback-picker-button {
 
 video::-webkit-media-controls-wireless-playback-picker-button.playing,
 audio::-webkit-media-controls-wireless-playback-picker-button.playing {
-    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 15" stroke="rgb(0,172,245)"><defs> <clipPath fill-rule="evenodd" id="cut-hole"><path d="M 0,0.5 L 16,0.5 L 16,15.5 L 0,15.5 z M 0,14.5 L 16,14.5 L 8,5 z"/></clipPath></defs><rect fill="none" clip-path="url(#cut-hole)" x="0.5" y="2" width="15" height="8"/><path stroke="none" fill="rgb(0,172,245)" d="M 3.5,13.25 L 12.5,13.25 L 8,8 z"/></svg>');
+    mix-blend-mode: normal;
 }
 
 video::-webkit-media-controls-toggle-closed-captions-button,
@@ -419,7 +418,7 @@ audio::-webkit-media-controls-closed-captions-container li.selected:hover::befor
 
 video::-webkit-media-controls-fullscreen-button,
 audio::-webkit-media-controls-fullscreen-button {
-    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 15" stroke="rgba(255,255,255,0.45)" stroke-width="1.25" fill="none"><path d="M 7,1.5 L 12.5,1.5 L 12.5,7"/><path d="M 0.5,8 L 0.5,13.5 L 6,13.5"/><path stroke-linecap="round" d="M 12.5,1.5 L 7.5,6.5"/><path stroke-linecap="round" d="M 0.5,13.5 L 5.5,8.5"/></svg>');
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 15" stroke="rgba(255,255,255,0.45)" fill="none"><path d="M 7,1.5 L 12.5,1.5 L 12.5,7"/><path d="M 0.5,8 L 0.5,13.5 L 6,13.5"/><path stroke-linecap="round" d="M 12.5,1.5 L 7.5,6.5"/><path stroke-linecap="round" d="M 0.5,13.5 L 5.5,8.5"/></svg>');
     margin-right: 7px;
     width: 14px;
     min-width: 14px;
@@ -427,7 +426,7 @@ audio::-webkit-media-controls-fullscreen-button {
 
 video::-webkit-media-controls-fullscreen-button.exit,
 audio::-webkit-media-controls-fullscreen-button.exit {
-    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 15" stroke="rgba(255,255,255,0.45)" stroke-width="1.25" fill="none"><path d="M 7.5,0.5 L 7.5,6 L 13,6"/><path d="M 0,8 L 5.5,8 L 5.5,13.5"/><path stroke-linecap="round" d="M 7.5,6 L 12.5,1"/><path stroke-linecap="round" d="M 5.5,8 L 0.5,13"/></svg>');
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 15" stroke="rgba(255,255,255,0.45)" fill="none"><path d="M 7.5,1 L 7.5,6.5 L 13,6.5"/><path d="M 0,8.5 L 5.5,8.5 L 5.5,14"/><path stroke-linecap="round" d="M 7.5,6.5 L 12.5,1.5"/><path stroke-linecap="round" d="M 5.5,8.5 L 0.5,13.5"/></svg>');
     margin-right: 11px;
     margin-top: 6px;
 }
@@ -907,12 +906,12 @@ video:-webkit-full-screen::-webkit-media-controls-seek-forward-button:active {
 
 video::-webkit-media-controls-fullscreen-button:active,
 audio::-webkit-media-controls-fullscreen-button:active {
-    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 15" stroke="white" stroke-width="1.25" fill="none"><path d="M 7,1.5 L 12.5,1.5 L 12.5,7"/><path d="M 0.5,8 L 0.5,13.5 L 6,13.5"/><path stroke-linecap="round" d="M 12.5,1.5 L 7.5,6.5"/><path stroke-linecap="round" d="M 0.5,13.5 L 5.5,8.5"/></svg>');
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 15" stroke="white" fill="none"><path d="M 7,1.5 L 12.5,1.5 L 12.5,7"/><path d="M 0.5,8 L 0.5,13.5 L 6,13.5"/><path stroke-linecap="round" d="M 12.5,1.5 L 7.5,6.5"/><path stroke-linecap="round" d="M 0.5,13.5 L 5.5,8.5"/></svg>');
 }
 
 video::-webkit-media-controls-panel button.exit:active,
 audio::-webkit-media-controls-panel button.exit:active {
-    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 15" stroke="white" stroke-width="1.25" fill="none"><path d="M 7.5,0.5 L 7.5,6 L 13,6"/><path d="M 0,8 L 5.5,8 L 5.5,13.5"/><path stroke-linecap="round" d="M 7.5,6 L 12.5,1"/><path stroke-linecap="round" d="M 5.5,8 L 0.5,13"/></svg>');
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 15" stroke="white" fill="none"><path d="M 7.5,1 L 7.5,6.5 L 13,6.5"/><path d="M 0,8.5 L 5.5,8.5 L 5.5,14"/><path stroke-linecap="round" d="M 7.5,6.5 L 12.5,1.5"/><path stroke-linecap="round" d="M 5.5,8.5 L 0.5,13.5"/></svg>');
 }
 
 video::-webkit-media-controls-wireless-playback-picker-button:active,

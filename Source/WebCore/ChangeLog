@@ -1,3 +1,28 @@
+2015-05-05  Roger Fong  <roger_fong@apple.com>
+
+        Blurry media control icons on non retina displays.
+        https://bugs.webkit.org/show_bug.cgi?id=144638.
+        <rdar://problem/20526166>
+
+        Reviewed by Dean Jackson.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        Adjust fullscreen buttons so that they look good on both 1x and 2x displays.
+        (audio::-webkit-media-controls-fullscreen-button):
+        (audio::-webkit-media-controls-fullscreen-button.exit):
+        (audio::-webkit-media-controls-fullscreen-button:active):
+        (audio::-webkit-media-controls-panel button.exit:active):
+        Handle wireless playback picker button background in mediaControlsApple.js
+        (audio::-webkit-media-controls-wireless-playback-picker-button):
+        (audio::-webkit-media-controls-wireless-playback-picker-button.playing): Deleted.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        Update wireless playback picker button based on display type.
+        (Controller.prototype.UIString):
+        (Controller.prototype.handleReadyStateChange):
+        (Controller.prototype.updateWirelessTargetPickerButton):
+        (Controller.prototype.updateWirelessPlaybackStatus):
+
 2015-05-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Crash under WebCore::domWindowFromExecState reloading page with inspector open

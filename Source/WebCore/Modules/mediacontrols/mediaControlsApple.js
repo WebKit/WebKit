@@ -655,6 +655,7 @@ Controller.prototype = {
         this.updateCaptionButton();
         this.updateCaptionContainer();
         this.updateFullscreenButtons();
+        this.updateWirelessTargetPickerButton();
         this.updateProgress();
     },
 
@@ -1005,6 +1006,18 @@ Controller.prototype = {
         else
             this.video.webkitEnterFullscreen();
         return true;
+    },
+    
+    updateWirelessTargetPickerButton: function() {
+        var wirelessTargetPickerColor;
+        if (this.controls.wirelessTargetPicker.classList.contains('playing'))
+            wirelessTargetPickerColor = "-apple-system-blue";
+        else
+            wirelessTargetPickerColor = "rgba(255,255,255,0.45)";
+        if (window.devicePixelRatio == 2)
+            this.controls.wirelessTargetPicker.style.backgroundImage = "url(\"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 15' stroke='" + wirelessTargetPickerColor + "'><defs> <clipPath fill-rule='evenodd' id='cut-hole'><path d='M 0,0.5 L 16,0.5 L 16,15.5 L 0,15.5 z M 0,14.5 L 16,14.5 L 8,5 z'/></clipPath></defs><rect fill='none' clip-path='url(#cut-hole)' x='0.5' y='2' width='15' height='8'/><path stroke='none' fill='" + wirelessTargetPickerColor +"' d='M 3.5,13.25 L 12.5,13.25 L 8,8 z'/></svg>\")";
+        else
+            this.controls.wirelessTargetPicker.style.backgroundImage = "url(\"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 15' stroke='" + wirelessTargetPickerColor + "'><defs> <clipPath fill-rule='evenodd' id='cut-hole'><path d='M 0,1 L 16,1 L 16,16 L 0,16 z M 0,15 L 16,15 L 8,5.5 z'/></clipPath></defs><rect fill='none' clip-path='url(#cut-hole)' x='0.5' y='2.5' width='15' height='8'/><path stroke='none' fill='" + wirelessTargetPickerColor +"' d='M 2.75,14 L 13.25,14 L 8,8.75 z'/></svg>\")";
     },
 
     handleControlsChange: function()
@@ -1832,6 +1845,7 @@ Controller.prototype = {
             else
                 this.controls.muteBox.style.display = "-webkit-flex";
         }
+        this.updateWirelessTargetPickerButton();
     },
 
     updateWirelessTargetAvailable: function() {
