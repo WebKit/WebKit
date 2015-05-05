@@ -502,12 +502,16 @@ bool JSGlobalObject::defineOwnProperty(JSObject* object, ExecState* exec, Proper
     return Base::defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
 }
 
-void JSGlobalObject::addGlobalVar(const Identifier& ident, ConstantMode constantMode)
+JSGlobalObject::NewGlobalVar JSGlobalObject::addGlobalVar(const Identifier& ident, ConstantMode constantMode)
 {
     ConcurrentJITLocker locker(symbolTable()->m_lock);
     SymbolTableEntry entry = symbolTable()->get(locker, ident.impl());
-    if (!entry.isNull())
-        return;
+    if (!entry.isNull()) {
+        NewGlobalVar result;
+        result.offset = entry.scopeOffset();
+        result.set = entry.watchpointSet();
+        return result;
+    }
     
     ScopeOffset offset = symbolTable()->takeNextScopeOffset(locker);
     SymbolTableEntry newEntry(VarOffset(offset), (constantMode == IsConstant) ? ReadOnly : 0);
@@ -519,13 +523,21 @@ void JSGlobalObject::addGlobalVar(const Identifier& ident, ConstantMode constant
     
     ScopeOffset offsetForAssert = addVariables(1);
     RELEASE_ASSERT(offsetForAssert == offset);
+
+    NewGlobalVar var;
+    var.offset = offset;
+    var.set = newEntry.watchpointSet();
+    return var;
 }
 
-void JSGlobalObject::addFunction(ExecState* exec, const Identifier& propertyName)
+void JSGlobalObject::addFunction(ExecState* exec, const Identifier& propertyName, JSValue value)
 {
     VM& vm = exec->vm();
     removeDirect(vm, propertyName); // Newly declared functions overwrite existing properties.
-    addGlobalVar(propertyName, IsVariable);
+    NewGlobalVar var = addGlobalVar(propertyName, IsVariable);
+    variableAt(var.offset).set(exec->vm(), this, value);
+    if (var.set)
+        var.set->touch(VariableWriteFireDetail(this, propertyName));
 }
 
 static inline JSObject* lastInPrototypeChain(JSObject* object)

@@ -338,7 +338,11 @@ protected:
         setGlobalThis(vm, thisValue);
     }
 
-    void addGlobalVar(const Identifier&, ConstantMode);
+    struct NewGlobalVar {
+        ScopeOffset offset;
+        WatchpointSet* set;
+    };
+    NewGlobalVar addGlobalVar(const Identifier&, ConstantMode);
 
 public:
     JS_EXPORT_PRIVATE ~JSGlobalObject();
@@ -370,7 +374,7 @@ public:
         if (!hasProperty(exec, propertyName))
             addGlobalVar(propertyName, IsConstant);
     }
-    void addFunction(ExecState*, const Identifier&);
+    void addFunction(ExecState*, const Identifier&, JSValue);
 
     // The following accessors return pristine values, even if a script 
     // replaces the global object's associated property.
