@@ -793,6 +793,7 @@ bool AccessibilityNodeObject::supportsRequiredAttribute() const
     case ButtonRole:
         return isFileUploadButton();
     case CellRole:
+    case ColumnHeaderRole:
     case CheckBoxRole:
     case ComboBoxRole:
     case GridRole:

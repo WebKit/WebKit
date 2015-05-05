@@ -107,34 +107,21 @@ bool AccessibilityTableCell::isTableCell() const
     
 AccessibilityRole AccessibilityTableCell::determineAccessibilityRole()
 {
-    // Always call determineAccessibleRole so that the ARIA role is set.
-    // Even though this object reports a Cell role, the ARIA role will be used
-    // to determine if it's a column header.
+    // AccessibilityRenderObject::determineAccessibleRole provides any ARIA-supplied
+    // role, falling back on the role to be used if we determine here that the element
+    // should not be exposed as a cell. Thus if we already know it's a cell, return that.
     AccessibilityRole defaultRole = AccessibilityRenderObject::determineAccessibilityRole();
-#if !PLATFORM(EFL) && !PLATFORM(GTK)
+    if (defaultRole == ColumnHeaderRole || defaultRole == RowHeaderRole || defaultRole == CellRole)
+        return defaultRole;
+
     if (!isTableCell())
         return defaultRole;
+    if (isColumnHeaderCell())
+        return ColumnHeaderRole;
+    if (isRowHeaderCell())
+        return RowHeaderRole;
+
     return CellRole;
-#endif
-
-    // If AccessibilityRenderObject::determineAccessibilityRole returns the type of CellRole,
-    // which is derived from the role attribute, it does not change anything.
-    if (defaultRole != UnknownRole) {
-        AccessibilityRole ariaRole = ariaRoleAttribute();
-        if (ariaRole == CellRole || ariaRole == RowHeaderRole || ariaRole == ColumnHeaderRole)
-            return ariaRole;
-    }
-
-    // Here there is a more precide definition of the type of CellRole than was possible
-    // at the level of AccessibilityRenderObject.
-    if (defaultRole == ColumnHeaderRole || defaultRole == CellRole || defaultRole == RowHeaderRole) {
-        if (isColumnHeaderCell())
-            return ColumnHeaderRole;
-        if (isRowHeaderCell())
-            return RowHeaderRole;
-        return CellRole;
-    }
-    return defaultRole;
 }
     
 bool AccessibilityTableCell::isTableHeaderCell() const

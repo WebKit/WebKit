@@ -2573,28 +2573,15 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (node && (node->hasTagName(rpTag) || node->hasTagName(rtTag)))
         return AnnotationRole;
 
+    // This return value is what will be used if AccessibilityTableCell determines
+    // the cell should not be treated as a cell (e.g. because it is a layout table.
+    // In ATK, there is a distinction between generic text block elements and other
+    // generic containers; AX API does not make this distinction.
+    if (node && (node->hasTagName(tdTag) || node->hasTagName(thTag)))
 #if PLATFORM(GTK) || PLATFORM(EFL)
-    // Gtk ATs expect all tables, data and layout, to be exposed as tables.
-    if (node && (node->hasTagName(tdTag)))
-        return CellRole;
-
-    if (node && (node->hasTagName(thTag))) {
-        for (Node* parentNode = node->parentNode(); parentNode; parentNode = parentNode->parentNode()) {
-            if (parentNode->hasTagName(theadTag))
-                return ColumnHeaderRole;
-            if (parentNode->hasTagName(tbodyTag) || parentNode->hasTagName(tfootTag))
-                return RowHeaderRole;
-            if (parentNode->hasTagName(tableTag))
-                return CellRole;
-        }
-        return CellRole;
-    }
-
-    if (node && node->hasTagName(trTag))
-        return RowRole;
-
-    if (is<HTMLTableElement>(node))
-        return TableRole;
+        return DivRole;
+#else
+        return GroupRole;
 #endif
 
     // Table sections should be ignored.

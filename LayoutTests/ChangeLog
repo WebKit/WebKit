@@ -1,3 +1,20 @@
+2015-05-05  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] AX: figure out platform difference for ATK to make accessibility/table-cell-display-block.html work
+        https://bugs.webkit.org/show_bug.cgi?id=143083
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/roles-computedRoleString-expected.txt: Updated to reflect fixed FIXME.
+        * accessibility/roles-computedRoleString.html: Updated to reflect fixed FIXME.
+        * accessibility/table-cell-display-block-expected.txt: Modified to be more platform agnostic.
+        * accessibility/table-cell-display-block.html: Modified to be more platform agnostic.
+        * platform/efl/accessibility/table-detection-expected.txt: Updated to reflect mapping change.
+        * platform/gtk/TestExpectations: Unskip failing test from opening report.
+        * platform/gtk/accessibility/table-detection-expected.txt: Updated to reflect mapping change.
+        * platform/mac/accessibility/rowheader-outside-table-role-expected.txt: Updated to reflect mapping change.
+        * platform/mac/accessibility/rowheader-outside-table-role.html: Updated to reflect mapping change.
+
 2015-05-04  Simon Fraser  <simon.fraser@apple.com>
 
         Fix assertions in WK1 tests after r183777.

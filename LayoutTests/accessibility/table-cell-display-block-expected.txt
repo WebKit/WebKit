@@ -7,7 +7,7 @@ PASS cell1a.isEqual(cell1b) is true
 PASS cell1a.role is 'AXRole: AXCell'
 PASS domCell1.style.display is 'block'
 PASS table2.role is 'AXRole: AXGroup'
-PASS cell2.role is 'AXRole: AXStaticText'
+PASS cell2.role == 'AXRole: AXCell' is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

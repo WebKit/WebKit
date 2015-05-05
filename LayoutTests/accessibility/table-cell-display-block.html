@@ -39,7 +39,7 @@
         var table2 = accessibilityController.accessibleElementById("table2");
         shouldBe("table2.role", "'AXRole: AXGroup'");
         var cell2 = table2.childAtIndex(0).childAtIndex(0);
-        shouldBe("cell2.role", "'AXRole: AXStaticText'");
+        shouldBeFalse("cell2.role == 'AXRole: AXCell'");
 
         document.getElementById("content").style.visibility = "hidden";
     }
