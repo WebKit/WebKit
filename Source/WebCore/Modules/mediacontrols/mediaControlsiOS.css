@@ -570,7 +570,7 @@ audio::-webkit-media-controls-wireless-playback-status {
     background-position: 50% calc(.5 * (100% - 25px) - 21pt);
     background-size: 131px auto;
     color: rgb(145,145,145);
-    font: -webkit-small-control;
+    font: -apple-system;
     vertical-align: text-bottom;
 }
 

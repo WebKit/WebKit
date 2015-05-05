@@ -1,3 +1,15 @@
+2015-05-05  Dean Jackson  <dino@apple.com>
+
+        [iOS] AirPlay placeholder in inline videos uses Helvetica or Times, should be system font
+        https://bugs.webkit.org/show_bug.cgi?id=144643
+
+        Reviewed by Brent Fulgham.
+
+        The Airplay placard should use "-apple-system" as a font-family.
+
+        * Modules/mediacontrols/mediaControlsiOS.css:
+        (audio::-webkit-media-controls-wireless-playback-status):
+
 2015-05-05  Zalan Bujtas  <zalan@apple.com>
 
         Navigating to www.apple.com hits assertion in WebCore::TextIteratorCopyableText::set()
