@@ -90,6 +90,14 @@ void printInternal(PrintStream& out, PromotedLocationKind kind)
     case FunctionActivationPLoc:
         out.print("FunctionActivationPLoc");
         return;
+
+    case ActivationScopePLoc:
+        out.print("ActivationScopePLoc");
+        return;
+
+    case ClosureVarPLoc:
+        out.print("ClosureVarPLoc");
+        return;
     }
     
     RELEASE_ASSERT_NOT_REACHED();

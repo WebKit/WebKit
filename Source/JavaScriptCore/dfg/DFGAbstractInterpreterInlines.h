@@ -1495,6 +1495,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
     case PhantomNewObject:
     case PhantomNewFunction:
+    case PhantomCreateActivation:
     case PhantomDirectArguments:
     case PhantomClonedArguments:
     case BottomValue:
@@ -1517,8 +1518,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).set(m_graph, set);
         break;
     }
-        
+
     case CreateActivation:
+    case MaterializeCreateActivation:
         forNode(node).set(
             m_graph, m_codeBlock->globalObjectFor(node->origin.semantic)->activationStructure());
         break;

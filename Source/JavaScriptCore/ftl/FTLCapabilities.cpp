@@ -181,9 +181,11 @@ inline CapabilityLevel canCompile(Node* node)
     case BottomValue:
     case PhantomNewObject:
     case PhantomNewFunction:
+    case PhantomCreateActivation:
     case PutHint:
     case CheckStructureImmediate:
     case MaterializeNewObject:
+    case MaterializeCreateActivation:
     case PhantomDirectArguments:
     case PhantomClonedArguments:
     case GetMyArgumentByVal:

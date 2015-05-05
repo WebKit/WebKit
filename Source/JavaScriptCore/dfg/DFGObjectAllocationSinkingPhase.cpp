@@ -506,6 +506,15 @@ private:
                     }
                     break;
                 }
+
+                case PutClosureVar: {
+                    Node* target = node->child1().node();
+                    if (m_sinkCandidates.contains(target)) {
+                        ASSERT(target->isPhantomActivationAllocation());
+                        node->convertToPutClosureVarHint();
+                    }
+                    break;
+                }
                     
                 case PutStructure: {
                     Node* target = node->child1().node();
@@ -569,11 +578,43 @@ private:
                     break;
                 }
 
+                case CreateActivation: {
+                    if (m_sinkCandidates.contains(node)) {
+                        m_insertionSet.insert(
+                            nodeIndex + 1,
+                            PromotedHeapLocation(ActivationScopePLoc, node).createHint(
+                                m_graph, node->origin, node->child1().node()));
+                        node->convertToPhantomCreateActivation();
+                    }
+                    break;
+                }
+
+                case MaterializeCreateActivation: {
+                    if (m_sinkCandidates.contains(node)) {
+                        m_insertionSet.insert(
+                            nodeIndex + 1,
+                            PromotedHeapLocation(ActivationScopePLoc, node).createHint(
+                                m_graph, node->origin, m_graph.varArgChild(node, 0).node()));
+                        ObjectMaterializationData& data = node->objectMaterializationData();
+                        for (unsigned i = 0; i < data.m_properties.size(); ++i) {
+                            unsigned identifierNumber = data.m_properties[i].m_identifierNumber;
+                            m_insertionSet.insert(
+                                nodeIndex + 1,
+                                PromotedHeapLocation(
+                                    ClosureVarPLoc, node, identifierNumber).createHint(
+                                    m_graph, node->origin,
+                                    m_graph.varArgChild(node, i + 1).node()));
+                        }
+                        node->convertToPhantomCreateActivation();
+                    }
+                    break;
+                }
+
                 case StoreBarrier:
                 case StoreBarrierWithNullCheck: {
                     Node* target = node->child1().node();
                     if (m_sinkCandidates.contains(target)) {
-                        ASSERT(target->isPhantomObjectAllocation());
+                        ASSERT(target->isPhantomAllocation());
                         node->remove();
                     }
                     break;
@@ -775,6 +816,7 @@ private:
         switch (node->op()) {
         case NewObject:
         case MaterializeNewObject:
+        case MaterializeCreateActivation:
             sinkCandidate();
             m_graph.doToChildren(
                 node,
@@ -793,18 +835,28 @@ private:
                 });
             break;
 
+        case CreateActivation:
+            if (!m_graph.symbolTableFor(node->origin.semantic)->singletonScope()->isStillValid())
+                sinkCandidate();
+            m_graph.doToChildren(
+                node,
+                [&] (Edge edge) {
+                    escape(edge.node());
+                });
+            break;
+
         case MovHint:
         case Check:
         case PutHint:
+        case StoreBarrier:
+        case StoreBarrierWithNullCheck:
             break;
 
         case PutStructure:
         case CheckStructure:
         case GetByOffset:
         case MultiGetByOffset:
-        case GetGetterSetterByOffset:
-        case StoreBarrier:
-        case StoreBarrierWithNullCheck: {
+        case GetGetterSetterByOffset: {
             Node* target = node->child1().node();
             if (!target->isObjectAllocation())
                 escape(target);
@@ -818,6 +870,14 @@ private:
                 escape(node->child1().node());
             }
             escape(node->child3().node());
+            break;
+        }
+
+        case PutClosureVar: {
+            Node* target = node->child1().node();
+            if (!target->isActivationAllocation())
+                escape(target);
+            escape(node->child2().node());
             break;
         }
             
@@ -868,6 +928,19 @@ private:
                 OpInfo(escapee->cellOperand()),
                 escapee->child1());
             break;
+
+        case CreateActivation:
+        case MaterializeCreateActivation: {
+            ObjectMaterializationData* data = m_graph.m_objectMaterializationData.add();
+
+            result = m_graph.addNode(
+                escapee->prediction(), Node::VarArg, MaterializeCreateActivation,
+                NodeOrigin(
+                    escapee->origin.semantic,
+                    where->origin.forExit),
+                OpInfo(data), OpInfo(), 0, 0);
+            break;
+        }
 
         default:
             DFG_CRASH(m_graph, escapee, "Bad escapee op");
@@ -922,6 +995,46 @@ private:
                 }
             }
             
+            node->children = AdjacencyList(
+                AdjacencyList::Variable,
+                firstChild, m_graph.m_varArgChildren.size() - firstChild);
+            break;
+        }
+
+        case MaterializeCreateActivation: {
+            ObjectMaterializationData& data = node->objectMaterializationData();
+
+            unsigned firstChild = m_graph.m_varArgChildren.size();
+
+            Vector<PromotedHeapLocation> locations = m_locationsForAllocation.get(escapee);
+
+            PromotedHeapLocation scope(ActivationScopePLoc, escapee);
+            ASSERT(locations.contains(scope));
+
+            m_graph.m_varArgChildren.append(Edge(resolve(block, scope), KnownCellUse));
+
+            for (unsigned i = 0; i < locations.size(); ++i) {
+                switch (locations[i].kind()) {
+                case ActivationScopePLoc: {
+                    ASSERT(locations[i] == scope);
+                    break;
+                }
+
+                case ClosureVarPLoc: {
+                    Node* value = resolve(block, locations[i]);
+                    if (value->op() == BottomValue)
+                        break;
+
+                    data.m_properties.append(PhantomPropertyValue(locations[i].info()));
+                    m_graph.m_varArgChildren.append(value);
+                    break;
+                }
+
+                default:
+                    DFG_CRASH(m_graph, node, "Bad location kind");
+                }
+            }
+
             node->children = AdjacencyList(
                 AdjacencyList::Variable,
                 firstChild, m_graph.m_varArgChildren.size() - firstChild);

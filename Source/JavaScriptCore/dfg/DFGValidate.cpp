@@ -424,10 +424,12 @@ private:
                 case CheckInBounds:
                 case PhantomNewObject:
                 case PhantomNewFunction:
+                case PhantomCreateActivation:
                 case GetMyArgumentByVal:
                 case PutHint:
                 case CheckStructureImmediate:
                 case MaterializeNewObject:
+                case MaterializeCreateActivation:
                 case PutStack:
                 case KillStack:
                 case GetStack:

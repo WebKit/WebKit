@@ -569,6 +569,7 @@ struct Node {
     
     void convertToPutByOffsetHint();
     void convertToPutStructureHint(Node* structure);
+    void convertToPutClosureVarHint();
     
     void convertToPhantomNewObject()
     {
@@ -585,6 +586,17 @@ struct Node {
     {
         ASSERT(m_op == NewFunction);
         m_op = PhantomNewFunction;
+        m_flags |= NodeMustGenerate;
+        m_opInfo = 0;
+        m_opInfo2 = 0;
+        children = AdjacencyList();
+    }
+
+    void convertToPhantomCreateActivation()
+    {
+        ASSERT(m_op == CreateActivation || m_op == MaterializeCreateActivation);
+        m_op = PhantomCreateActivation;
+        m_flags &= ~NodeHasVarArgs;
         m_flags |= NodeMustGenerate;
         m_opInfo = 0;
         m_opInfo2 = 0;
@@ -1442,6 +1454,27 @@ struct Node {
         }
     }
     
+    bool isActivationAllocation()
+    {
+        switch (op()) {
+        case CreateActivation:
+        case MaterializeCreateActivation:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    bool isPhantomActivationAllocation()
+    {
+        switch (op()) {
+        case PhantomCreateActivation:
+            return true;
+        default:
+            return false;
+        }
+    }
+
     bool isPhantomAllocation()
     {
         switch (op()) {
@@ -1449,6 +1482,7 @@ struct Node {
         case PhantomDirectArguments:
         case PhantomClonedArguments:
         case PhantomNewFunction:
+        case PhantomCreateActivation:
             return true;
         default:
             return false;

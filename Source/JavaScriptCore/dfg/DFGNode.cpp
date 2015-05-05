@@ -158,6 +158,14 @@ void Node::convertToPutByOffsetHint()
         child2().node(), child3().node());
 }
 
+void Node::convertToPutClosureVarHint()
+{
+    ASSERT(m_op == PutClosureVar);
+    convertToPutHint(
+        PromotedLocationDescriptor(ClosureVarPLoc, scopeOffset().offset()),
+        child1().node(), child2().node());
+}
+
 PromotedLocationDescriptor Node::promotedLocationDescriptor()
 {
     return PromotedLocationDescriptor(static_cast<PromotedLocationKind>(m_opInfo), m_opInfo2);

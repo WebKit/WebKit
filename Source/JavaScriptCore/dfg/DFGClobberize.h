@@ -854,6 +854,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case PhantomNewObject:
     case MaterializeNewObject:
     case PhantomNewFunction:
+    case PhantomCreateActivation:
+    case MaterializeCreateActivation:
         read(HeapObjectCount);
         write(HeapObjectCount);
         return;

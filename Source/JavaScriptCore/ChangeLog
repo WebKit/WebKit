@@ -1,3 +1,69 @@
+2015-05-04  Basile Clement  <basile_clement@apple.com>
+
+        Allow CreateActivation sinking
+        https://bugs.webkit.org/show_bug.cgi?id=144300
+
+        Reviewed by Filip Pizlo.
+
+        This pursues the work started in
+        https://bugs.webkit.org/show_bug.cgi?id=144016 to expand the set of
+        allocations we are able to sink by allowing sinking of CreateActivation
+        node.
+
+        This is achieved by following closely the way NewObject is currently
+        sunk: we add a new PhantomCreateActivation node to record the initial
+        position of the CreateActivation node, new ClosureVarPLoc promoted heap
+        locations to keep track of the variables put in the activation, and a
+        new MaterializeCreateActivation node to allocate and populate the sunk
+        activation.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::Node::convertToPutClosureVarHint):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToPhantomCreateActivation):
+        (JSC::DFG::Node::isActivationAllocation):
+        (JSC::DFG::Node::isPhantomActivationAllocation):
+        (JSC::DFG::Node::isPhantomAllocation):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        (JSC::DFG::ObjectAllocationSinkingPhase::lowerNonReadingOperationsOnPhantomAllocations):
+        (JSC::DFG::ObjectAllocationSinkingPhase::handleNode):
+        (JSC::DFG::ObjectAllocationSinkingPhase::createMaterialize):
+        (JSC::DFG::ObjectAllocationSinkingPhase::populateMaterialize):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGPromotedHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGPromotedHeapLocation.h:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validateCPS):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileMaterializeCreateActivation):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * tests/stress/activation-sink-osrexit.js: Added.
+        (bar):
+        (foo.set result):
+        * tests/stress/activation-sink.js: Added.
+        (bar):
+
 2015-05-04  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix stale comment.

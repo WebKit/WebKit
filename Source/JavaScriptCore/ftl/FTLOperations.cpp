@@ -31,6 +31,7 @@
 #include "ClonedArguments.h"
 #include "DirectArguments.h"
 #include "JSCInlines.h"
+#include "JSLexicalEnvironment.h"
 
 namespace JSC { namespace FTL {
 
@@ -107,6 +108,36 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
         RELEASE_ASSERT(executable && activation);
 
         JSFunction* result = JSFunction::createWithInvalidatedReallocationWatchpoint(vm, executable, activation);
+
+        return result;
+    }
+
+    case PhantomCreateActivation: {
+        // Figure out where the scope is
+        JSScope* scope = nullptr;
+        for (unsigned i = materialization->properties().size(); i--;) {
+            const ExitPropertyValue& property = materialization->properties()[i];
+            if (property.location() != PromotedLocationDescriptor(ActivationScopePLoc))
+                continue;
+            scope = jsCast<JSScope*>(JSValue::decode(values[i]));
+        }
+        RELEASE_ASSERT(scope);
+
+        CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(
+            materialization->origin(), exec->codeBlock());
+        SymbolTable* table = codeBlock->symbolTable();
+        Structure* structure = codeBlock->globalObject()->activationStructure();
+
+        JSLexicalEnvironment* result = JSLexicalEnvironment::create(vm, structure, scope, table);
+
+        // Figure out what to populate the activation with
+        for (unsigned i = materialization->properties().size(); i--;) {
+            const ExitPropertyValue& property = materialization->properties()[i];
+            if (property.location().kind() != ClosureVarPLoc)
+                continue;
+
+            result->variableAt(ScopeOffset(property.location().info())).set(exec->vm(), result, JSValue::decode(values[i]));
+        }
 
         return result;
     }

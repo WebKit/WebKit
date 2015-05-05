@@ -543,6 +543,7 @@ private:
         case BooleanToNumber:
         case PhantomNewObject:
         case PhantomNewFunction:
+        case PhantomCreateActivation:
         case PhantomDirectArguments:
         case PhantomClonedArguments:
         case GetMyArgumentByVal:
@@ -550,6 +551,7 @@ private:
         case PutHint:
         case CheckStructureImmediate:
         case MaterializeNewObject:
+        case MaterializeCreateActivation:
         case PutStack:
         case KillStack:
         case GetStack: {

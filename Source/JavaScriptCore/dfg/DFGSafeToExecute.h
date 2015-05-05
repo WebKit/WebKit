@@ -273,9 +273,11 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case ToIndexString:
     case PhantomNewObject:
     case PhantomNewFunction:
+    case PhantomCreateActivation:
     case PutHint:
     case CheckStructureImmediate:
     case MaterializeNewObject:
+    case MaterializeCreateActivation:
     case PhantomDirectArguments:
     case PhantomClonedArguments:
     case GetMyArgumentByVal:
