@@ -1,3 +1,28 @@
+2015-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Network Cache: IOChannel operations are not sent to the right thread
+        https://bugs.webkit.org/show_bug.cgi?id=144542
+
+        Reviewed by Darin Adler.
+
+        We are ignoring the given WorkQueue and running the async
+        operations in the current thread. Check the given WorkQueue
+        instead and schedule the operation to the given queue. If the
+        given queue is nullptr, which means the operation should be run in
+        the main context, the operation is run directly if the current
+        context is the main one or sent to the main context using a
+        GMainLoopSource.
+
+        Fixes crashes due to asserts when running disk-cache layout tests
+        in a Debug build.
+
+        * NetworkProcess/cache/NetworkCacheIOChannel.h:
+        * NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp:
+        (WebKit::NetworkCache::runTaskInQueue):
+        (WebKit::NetworkCache::IOChannel::read):
+        (WebKit::NetworkCache::IOChannel::readSync):
+        (WebKit::NetworkCache::IOChannel::write):
+
 2015-05-04  Dan Bernstein  <mitz@apple.com>
 
         WebKit always goes through LaunchServices for main frame navigation actions
