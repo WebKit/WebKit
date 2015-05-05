@@ -197,7 +197,6 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
     double totalNFAToByteCodeBuildTimeStart = monotonicallyIncreasingTime();
 #endif
 
-    Vector<DFABytecode> bytecode;
     bool firstNFASeen = false;
     combinedURLFilters.processNFAs([&](NFA&& nfa) {
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
@@ -237,8 +236,11 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
             addUniversalActionsToDFA(dfa, universalActionLocations);
         }
 
+        Vector<DFABytecode> bytecode;
         DFABytecodeCompiler compiler(dfa, bytecode);
         compiler.compile();
+        LOG_LARGE_STRUCTURES(bytecode, bytecode.capacity() * sizeof(uint8_t));
+        client.writeBytecode(WTF::move(bytecode));
 
         firstNFASeen = true;
     });
@@ -252,8 +254,11 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
 
         addUniversalActionsToDFA(dummyDFA, universalActionLocations);
 
+        Vector<DFABytecode> bytecode;
         DFABytecodeCompiler compiler(dummyDFA, bytecode);
         compiler.compile();
+        LOG_LARGE_STRUCTURES(bytecode, bytecode.capacity() * sizeof(uint8_t));
+        client.writeBytecode(WTF::move(bytecode));
     }
 
     // FIXME: combinedURLFilters should be cleared incrementally as it is processing NFAs. 
@@ -268,9 +273,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
     dataLogF("    Bytecode size %zu\n", bytecode.size());
 #endif
 
-    LOG_LARGE_STRUCTURES(bytecode, bytecode.capacity() * sizeof(uint8_t));
-    client.writeBytecode(WTF::move(bytecode));
-    bytecode.clear();
+    client.finalize();
 
     return { };
 }

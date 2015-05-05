@@ -81,20 +81,30 @@ public:
     InMemoryContentExtensionCompilationClient(WebCore::ContentExtensions::CompiledContentExtensionData& data)
         : m_data(data)
     {
+        EXPECT_EQ(data.bytecode.size(), 0ull);
+        EXPECT_EQ(data.actions.size(), 0ull);
     }
 
     virtual void writeBytecode(Vector<WebCore::ContentExtensions::DFABytecode>&& bytecode) override
     {
-        m_data.bytecode = WTF::move(bytecode);
+        EXPECT_FALSE(finalized);
+        m_data.bytecode.appendVector(bytecode);
     }
     
     virtual void writeActions(Vector<WebCore::ContentExtensions::SerializedActionByte>&& actions) override
     {
-        m_data.actions = WTF::move(actions);
+        EXPECT_FALSE(finalized);
+        m_data.actions.appendVector(actions);
+    }
+    
+    virtual void finalize() override
+    {
+        finalized = true;
     }
 
 private:
     WebCore::ContentExtensions::CompiledContentExtensionData& m_data;
+    bool finalized { false };
 };
 
 class InMemoryCompiledContentExtension : public ContentExtensions::CompiledContentExtension {

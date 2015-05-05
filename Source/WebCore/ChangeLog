@@ -1,3 +1,21 @@
+2015-05-04  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Use less memory when writing byte code to file
+        https://bugs.webkit.org/show_bug.cgi?id=144602
+
+        Reviewed by Darin Adler.
+
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::compileRuleList):
+        * contentextensions/ContentExtensionCompiler.h:
+        Compile one DFA at a time so we don't need to keep all the bytecode in memory at the same time.
+        * contentextensions/DFABytecodeInterpreter.cpp:
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::interpret):
+        Jumps are now relative to the current DFA because we don't know about other DFAs that
+        have been compiling when linking the DFA bytecode.  This will also make the DFA bytecode
+        easier to minimize because more of the values are small in the DFAs after the first DFA.
+        * platform/FileSystem.h:
+
 2015-05-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, speculative WinCairo buildfix after r183807.

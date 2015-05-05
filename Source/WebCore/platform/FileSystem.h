@@ -168,7 +168,7 @@ WEBCORE_EXPORT String openTemporaryFile(const String& prefix, PlatformFileHandle
 WEBCORE_EXPORT PlatformFileHandle openFile(const String& path, FileOpenMode);
 WEBCORE_EXPORT void closeFile(PlatformFileHandle&);
 // Returns the resulting offset from the beginning of the file if successful, -1 otherwise.
-long long seekFile(PlatformFileHandle, long long offset, FileSeekOrigin);
+WEBCORE_EXPORT long long seekFile(PlatformFileHandle, long long offset, FileSeekOrigin);
 bool truncateFile(PlatformFileHandle, long long offset);
 // Returns number of bytes actually read if successful, -1 otherwise.
 WEBCORE_EXPORT int writeToFile(PlatformFileHandle, const char* data, int length);

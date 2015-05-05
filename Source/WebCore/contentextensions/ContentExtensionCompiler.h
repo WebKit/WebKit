@@ -47,6 +47,7 @@ public:
     
     virtual void writeBytecode(Vector<DFABytecode>&&) = 0;
     virtual void writeActions(Vector<SerializedActionByte>&&) = 0;
+    virtual void finalize() = 0;
 };
 
 WEBCORE_EXPORT std::error_code compileRuleList(ContentExtensionCompilationClient&, const String&);

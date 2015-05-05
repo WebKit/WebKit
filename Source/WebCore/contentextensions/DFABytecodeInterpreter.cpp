@@ -114,7 +114,7 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
             if (programCounter >= m_bytecodeLength)
                 return actions;
         } else {
-            ASSERT_WITH_MESSAGE(static_cast<DFABytecodeInstruction>(m_bytecode[programCounter]) != DFABytecodeInstruction::AppendAction 
+            ASSERT_WITH_MESSAGE(static_cast<DFABytecodeInstruction>(m_bytecode[programCounter]) != DFABytecodeInstruction::AppendAction
                 && static_cast<DFABytecodeInstruction>(m_bytecode[programCounter]) != DFABytecodeInstruction::TestFlagsAndAppendAction, 
                 "Triggers that match everything should only be in the first DFA.");
         }
@@ -137,7 +137,7 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
                 // Check to see if the next character in the url is the value stored with the bytecode.
                 char character = url[urlIndex];
                 if (character == getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode), m_pagesUsed)) {
-                    programCounter = getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint8_t), m_pagesUsed);
+                    programCounter = dfaStart + getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint8_t), m_pagesUsed);
                     if (!character)
                         urlIndexIsAfterEndOfString = true;
                     urlIndex++; // This represents an edge in the DFA.
@@ -153,7 +153,7 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
                 // Check to see if the next character in the url is the value stored with the bytecode.
                 char character = toASCIILower(url[urlIndex]);
                 if (character == getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode), m_pagesUsed)) {
-                    programCounter = getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint8_t), m_pagesUsed);
+                    programCounter = dfaStart + getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint8_t), m_pagesUsed);
                     if (!character)
                         urlIndexIsAfterEndOfString = true;
                     urlIndex++; // This represents an edge in the DFA.
@@ -169,7 +169,7 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
                 char character = url[urlIndex];
                 if (character >= getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode), m_pagesUsed)
                     && character <= getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint8_t), m_pagesUsed)) {
-                    programCounter = getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint8_t) + sizeof(uint8_t), m_pagesUsed);
+                    programCounter = dfaStart + getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint8_t) + sizeof(uint8_t), m_pagesUsed);
                     if (!character)
                         urlIndexIsAfterEndOfString = true;
                     urlIndex++; // This represents an edge in the DFA.
@@ -185,7 +185,7 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
                 char character = toASCIILower(url[urlIndex]);
                 if (character >= getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode), m_pagesUsed)
                     && character <= getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint8_t), m_pagesUsed)) {
-                    programCounter = getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint8_t) + sizeof(uint8_t), m_pagesUsed);
+                    programCounter = dfaStart + getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint8_t) + sizeof(uint8_t), m_pagesUsed);
                     if (!character)
                         urlIndexIsAfterEndOfString = true;
                     urlIndex++; // This represents an edge in the DFA.
@@ -198,7 +198,7 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
                 if (!url[urlIndex] || urlIndexIsAfterEndOfString)
                     goto nextDFA;
                 
-                programCounter = getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode), m_pagesUsed);
+                programCounter = dfaStart + getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode), m_pagesUsed);
                 urlIndex++; // This represents an edge in the DFA.
                 break;
                     

@@ -1,3 +1,19 @@
+2015-05-04  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Use less memory when writing byte code to file
+        https://bugs.webkit.org/show_bug.cgi?id=144602
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/APIUserContentExtensionStore.cpp:
+        (API::decodeContentExtensionMetaData):
+        (API::writeDataToFile):
+        (API::compiledToFile):
+        (API::createExtension):
+        Compile and write each DFA to file, then come back and write the header when finalizing.
+        Also don't copy the DFA bytecode. This way, we don't need to keep more than one DFA's
+        bytecode in memory at a time.
+
 2015-05-05  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         Make all FrameLoadState data members private.
