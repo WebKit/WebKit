@@ -1,3 +1,13 @@
+2015-05-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Always expand initial top level DOM tree nodes when not including the root (frame views)
+        https://bugs.webkit.org/show_bug.cgi?id=144607
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WebInspector.DOMTreeOutline.prototype.update):
+
 2015-05-04  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Allow closing and reopening the Debugger tab
