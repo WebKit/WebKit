@@ -1,3 +1,21 @@
+2015-05-05  Brent Fulgham  <bfulgham@apple.com>
+
+        Add overflow scroll-snap tests
+        https://bugs.webkit.org/show_bug.cgi?id=144591
+
+        Reviewed by Simon Fraser.
+
+        * platform/mac-wk2/TextExpectations: Mark overflow test as flaky while I investigate.
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/resources: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/resources/horizontal-mainframe.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/resources/vertical-mainframe.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-destination-lock-up-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-destination-lock-up.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-iframe-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-iframe.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-overflow-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-overflow.html: Added.
+
 2015-05-05  Roger Fong  <roger_fong@apple.com>
 
         Media control volume slider is opaque.
