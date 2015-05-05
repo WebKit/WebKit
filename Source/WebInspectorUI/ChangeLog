@@ -1,5 +1,29 @@
 2015-05-05  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Fix some issues with Search tabs
+        https://bugs.webkit.org/show_bug.cgi?id=144531
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView):
+        (WebInspector.ContentView.isViewable):
+        Support DOMSearchMatchObject and SourceCodeSearchMatchObject representedObjects. These are usually
+        handled at a higher level, but cookie restoring requires ContentView to handle them.
+
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WebInspector.DOMTreeContentView):
+        (WebInspector.DOMTreeContentView.prototype.selectAndRevealDOMNode):
+        (WebInspector.DOMTreeContentView.prototype.selectLastSelectedNode):
+        (WebInspector.DOMTreeContentView.prototype._restoreSelectedNodeAfterUpdate):
+        Don't allow restoring the previous selected node when another not has already been selected.
+
+        * UserInterface/Views/SearchTabContentView.js:
+        (WebInspector.SearchTabContentView.prototype.canShowRepresentedObject):
+        Allow Script objects to be shown in the Search tab.
+
+2015-05-05  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Source/WebInspectorUI/UserInterface/Images/Logs.svg has unknown attribute "fille"
         https://bugs.webkit.org/show_bug.cgi?id=144627
 

@@ -56,7 +56,7 @@ WebInspector.SearchTabContentView.prototype = {
 
     canShowRepresentedObject: function(representedObject)
     {
-        return representedObject instanceof WebInspector.Resource || representedObject instanceof WebInspector.DOMTree;
+        return representedObject instanceof WebInspector.Resource || representedObject instanceof WebInspector.Script || representedObject instanceof WebInspector.DOMTree;
     },
 
     focusSearchField: function()

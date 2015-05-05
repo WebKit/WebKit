@@ -81,6 +81,28 @@ WebInspector.ContentView = function(representedObject, extraArguments)
         if (representedObject instanceof WebInspector.DOMTree)
             return new WebInspector.FrameDOMTreeContentView(representedObject, extraArguments);
 
+        if (representedObject instanceof WebInspector.DOMSearchMatchObject) {
+            var resultView = new WebInspector.FrameDOMTreeContentView(WebInspector.frameResourceManager.mainFrame.domTree, extraArguments);
+            resultView.restoreFromCookie({nodeToSelect: representedObject.domNode});
+            return resultView;
+        }
+
+        if (representedObject instanceof WebInspector.SourceCodeSearchMatchObject) {
+            var resultView;
+            if (representedObject.sourceCode instanceof WebInspector.Resource)
+                resultView = new WebInspector.ResourceClusterContentView(representedObject.sourceCode, extraArguments);
+            else if (representedObject.sourceCode instanceof WebInspector.Script)
+                resultView = new WebInspector.ScriptContentView(representedObject.sourceCode, extraArguments);
+            else
+                console.error("Unknown SourceCode", representedObject.sourceCode);
+
+            var textRangeToSelect = representedObject.sourceCodeTextRange.formattedTextRange;
+            var startPosition = textRangeToSelect.startPosition();
+            resultView.restoreFromCookie({lineNumber: startPosition.lineNumber, columnNumber: startPosition.columnNumber});
+
+            return resultView;
+        }
+
         if (representedObject instanceof WebInspector.LogObject)
             return new WebInspector.LogContentView(representedObject, extraArguments);
 
@@ -140,6 +162,10 @@ WebInspector.ContentView.isViewable = function(representedObject)
     if (representedObject instanceof WebInspector.ApplicationCacheFrame)
         return true;
     if (representedObject instanceof WebInspector.DOMTree)
+        return true;
+    if (representedObject instanceof WebInspector.DOMSearchMatchObject)
+        return true;
+    if (representedObject instanceof WebInspector.SourceCodeSearchMatchObject)
         return true;
     if (representedObject instanceof WebInspector.LogObject)
         return true;
