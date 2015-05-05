@@ -1,3 +1,9 @@
+2015-05-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed. Make myself a WebKit reviewer.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2015-05-05  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] r183783 breaks build

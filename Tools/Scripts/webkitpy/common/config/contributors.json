@@ -2887,15 +2887,6 @@
          ],
          "expertise" : "JavaScriptCore"
       },
-      "Yusuke Suzuki" : {
-         "emails" : [
-            "utatane.tea@gmail.com"
-         ],
-         "expertise" : "JIT Compilers, CSS JIT, JavaScript/ECMAScript",
-         "nicks" : [
-            "yusukesuzuki"
-         ]
-      },
       "Yuzo Fujishima" : {
          "emails" : [
             "yuzo@google.com"
@@ -4775,6 +4766,15 @@
          "expertise" : "Developer Tools, Web Inspector",
          "nicks" : [
             "yurys"
+         ]
+      },
+      "Yusuke Suzuki" : {
+         "emails" : [
+            "utatane.tea@gmail.com"
+         ],
+         "expertise" : "JIT Compilers, CSS JIT, JavaScript/ECMAScript",
+         "nicks" : [
+            "yusukesuzuki"
          ]
       },
       "Yuta Kitamura" : {
