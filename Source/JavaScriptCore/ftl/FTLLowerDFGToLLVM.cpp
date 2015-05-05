@@ -52,6 +52,7 @@
 #include <atomic>
 #include <dlfcn.h>
 #include <llvm/InitializeLLVM.h>
+#include <unordered_set>
 #include <wtf/ProcessID.h>
 
 #if ENABLE(FTL_NATIVE_CALL_INLINING)
@@ -6476,6 +6477,8 @@ private:
         
         Vector<SwitchCase> switchCases;
         for (unsigned i = 0; i < characterCases.size(); ++i) {
+            if (i)
+                DFG_ASSERT(m_graph, m_node, characterCases[i - 1].character < characterCases[i].character);
             switchCases.append(SwitchCase(
                 m_out.constInt8(characterCases[i].character), characterBlocks[i], Weight()));
         }
@@ -6506,12 +6509,47 @@ private:
         StringJumpTable& table = codeBlock()->stringSwitchJumpTable(data->switchTableIndex);
         
         Vector<SwitchCase> cases;
+        std::unordered_set<int32_t> alreadyHandled; // These may be negative, or zero, or probably other stuff, too. We don't want to mess with HashSet's corner cases and we don't really care about throughput here.
         for (unsigned i = 0; i < data->cases.size(); ++i) {
+            // FIXME: The fact that we're using the bytecode's switch table means that the
+            // following DFG IR transformation would be invalid.
+            //
+            // Original code:
+            //     switch (v) {
+            //     case "foo":
+            //     case "bar":
+            //         things();
+            //         break;
+            //     default:
+            //         break;
+            //     }
+            //
+            // New code:
+            //     switch (v) {
+            //     case "foo":
+            //         instrumentFoo();
+            //         goto _things;
+            //     case "bar":
+            //         instrumentBar();
+            //     _things:
+            //         things();
+            //         break;
+            //     default:
+            //         break;
+            //     }
+            //
+            // Luckily, we don't currently do any such transformation. But it's kind of silly that
+            // this is an issue.
+            // https://bugs.webkit.org/show_bug.cgi?id=144635
+            
             DFG::SwitchCase myCase = data->cases[i];
             StringJumpTable::StringOffsetTable::iterator iter =
                 table.offsetTable.find(myCase.value.stringImpl());
             DFG_ASSERT(m_graph, m_node, iter != table.offsetTable.end());
             
+            if (!alreadyHandled.insert(iter->value.branchOffset).second)
+                continue;
+
             cases.append(SwitchCase(
                 m_out.constInt32(iter->value.branchOffset),
                 lowBlock(myCase.target.block), Weight(myCase.target.count)));

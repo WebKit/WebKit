@@ -46,7 +46,12 @@ BinarySwitch::BinarySwitch(GPRReg value, const Vector<int64_t>& cases, Type type
     
     for (unsigned i = 0; i < cases.size(); ++i)
         m_cases.append(Case(cases[i], i));
+    
     std::sort(m_cases.begin(), m_cases.end());
+    
+    for (unsigned i = 1; i < m_cases.size(); ++i)
+        RELEASE_ASSERT(m_cases[i - 1] < m_cases[i]);
+    
     build(0, false, m_cases.size());
 }
 

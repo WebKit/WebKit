@@ -27,6 +27,7 @@
 #include "CallVariant.h"
 
 #include "JSCInlines.h"
+#include <wtf/ListDump.h>
 
 namespace JSC {
 
@@ -68,6 +69,19 @@ CallVariantList variantListWithVariant(const CallVariantList& list, CallVariant 
     }
     if (!!variantToAdd)
         result.append(variantToAdd);
+    
+    if (!ASSERT_DISABLED) {
+        for (unsigned i = 0; i < result.size(); ++i) {
+            for (unsigned j = i + 1; j < result.size(); ++j) {
+                if (result[i] != result[j])
+                    continue;
+                
+                dataLog("variantListWithVariant(", listDump(list), ", ", variantToAdd, ") failed: got duplicates in result: ", listDump(result), "\n");
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+        }
+    }
+    
     return result;
 }
 

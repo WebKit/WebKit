@@ -49,6 +49,7 @@
 #include "StructureRareDataInlines.h"
 #include "StructureStubClearingWatchpoint.h"
 #include "ThunkGenerators.h"
+#include <wtf/CommaPrinter.h>
 #include <wtf/ListDump.h>
 #include <wtf/StringPrintStream.h>
 
@@ -1828,15 +1829,35 @@ void linkPolymorphicCall(
     if (callerCodeBlock->jitType() != JITCode::topTierJIT())
         fastCounts = std::make_unique<uint32_t[]>(callCases.size());
     
-    for (size_t i = callCases.size(); i--;) {
+    for (size_t i = 0; i < callCases.size(); ++i) {
         if (fastCounts)
             fastCounts[i] = 0;
         
         CallVariant variant = callCases[i].variant();
+        int64_t newCaseValue;
         if (isClosureCall)
-            caseValues[i] = bitwise_cast<intptr_t>(variant.executable());
+            newCaseValue = bitwise_cast<intptr_t>(variant.executable());
         else
-            caseValues[i] = bitwise_cast<intptr_t>(variant.function());
+            newCaseValue = bitwise_cast<intptr_t>(variant.function());
+        
+        if (!ASSERT_DISABLED) {
+            for (size_t j = 0; j < i; ++j) {
+                if (caseValues[j] != newCaseValue)
+                    continue;
+
+                dataLog("ERROR: Attempt to add duplicate case value.\n");
+                dataLog("Existing case values: ");
+                CommaPrinter comma;
+                for (size_t k = 0; k < i; ++k)
+                    dataLog(comma, caseValues[k]);
+                dataLog("\n");
+                dataLog("Attempting to add: ", newCaseValue, "\n");
+                dataLog("Variant list: ", listDump(callCases), "\n");
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+        }
+        
+        caseValues[i] = newCaseValue;
     }
     
     GPRReg fastCountsBaseGPR =

@@ -1,3 +1,26 @@
+2015-05-05  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL SwitchString slow case creates duplicate switch cases
+        https://bugs.webkit.org/show_bug.cgi?id=144634
+
+        Reviewed by Geoffrey Garen.
+        
+        The problem of duplicate switches is sufficiently annoying that I fixed the issue and also
+        added mostly-debug-only asserts to catch such issues earlier.
+
+        * bytecode/CallVariant.cpp:
+        (JSC::variantListWithVariant): Assertion to prevent similar bugs.
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::switchStringRecurse): Assertion to prevent similar bugs.
+        (JSC::FTL::LowerDFGToLLVM::switchStringSlow): This is the bug.
+        * jit/BinarySwitch.cpp:
+        (JSC::BinarySwitch::BinarySwitch): Assertion to prevent similar bugs.
+        * jit/Repatch.cpp:
+        (JSC::linkPolymorphicCall): Assertion to prevent similar bugs.
+        * tests/stress/ftl-switch-string-slow-duplicate-cases.js: Added. This tests the FTL SwitchString bug. It was previously crashing every time.
+        (foo):
+        (cat):
+
 2015-05-05  Basile Clement  <basile_clement@apple.com>
 
         Fix debug builds after r183812
