@@ -250,6 +250,8 @@ static _bstr_t convertToDRTLabel(const _bstr_t roleName)
         return _bstr_t(L"AXWebArea");
     if (!wcscmp(roleName, L"column"))
         return _bstr_t(L"AXColumn");
+    if (!wcscmp(roleName, L"column header"))
+        return _bstr_t(L"AXCell");
     if (!wcscmp(roleName, L"combo box"))
         return _bstr_t(L"AXComboBox");
     if (!wcscmp(roleName, L"grouping"))

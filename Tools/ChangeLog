@@ -1,3 +1,11 @@
+2015-05-05  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed test fix after r183798.
+
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (convertToDRTLabel): Mimic behavior of Mac accessibility output
+        so we can share results.
+
 2015-05-05  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Use less memory to store the json input.
