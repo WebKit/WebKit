@@ -490,7 +490,6 @@ webkit.org/b/131347 fast/borders/hidpi-border-image-gradient-on-subpixels.html [
 webkit.org/b/131347 fast/borders/hidpi-border-radius-with-subpixel-margin-not-renderable.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/borders/hidpi-double-border-with-border-radius-always-produce-solid-line.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/borders/hidpi-simple-hairline-border-painting.html [ ImageOnlyFailure ]
-webkit.org/b/131347 fast/box-shadow/hidpi-webkit-box-shadow-subpixel-position.html [ Missing ]
 webkit.org/b/131347 fast/hidpi/clip-text-in-hidpi.html [ Failure Pass Missing ]
 webkit.org/b/131347 fast/hidpi/image-set-background-dynamic.html [ Failure Pass Missing ]
 webkit.org/b/131347 fast/hidpi/image-set-border-image-dynamic.html [ Failure Pass Missing ]
@@ -557,13 +556,11 @@ webkit.org/b/141700 fast/dom/Element/getClientRects.html [ Failure ]
 webkit.org/b/141700 fast/dom/Range/getClientRects.html [ Failure ]
 
 webkit.org/b/141705 media/video-fullscreeen-only-controls.html [ Failure ]
-webkit.org/b/141706 fast/forms/color/input-appearance-color.html [ Failure ]
 webkit.org/b/141709 http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients.html [ Failure ]
 webkit.org/b/141709 http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW.html [ Failure ]
 
 webkit.org/b/141831 svg/animations/animate-text-nested-transforms.html [ Failure ]
 webkit.org/b/98653  svg/text/lengthAdjust-text-metrics.html [ Failure ]
-webkit.org/b/141835 media/video-controls-no-scripting.html [ Failure ]
 
 webkit.org/b/141837 fast/borders/border-painting-correctness-dashed.html [ ImageOnlyFailure ]
 webkit.org/b/141837 fast/borders/border-painting-correctness-dotted.html [ ImageOnlyFailure ]
@@ -584,7 +581,6 @@ webkit.org/b/141458 imported/mozilla/svg/pattern-scale-01c.svg [ ImageOnlyFailur
 webkit.org/b/141458 imported/mozilla/svg/symbol-01.svg [ ImageOnlyFailure ]
 
 webkit.org/b/141961 fast/multicol/span/span-as-immediate-columns-child.html [ Failure ]
-webkit.org/b/141591 inspector-protocol/debugger/breakpoint-eval-with-exception.html [ Failure ]
 
 webkit.org/b/118126 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
 
@@ -595,8 +591,6 @@ webkit.org/b/142142 media/video-volume-slider.html [ Failure ]
 
 webkit.org/b/127109 media/video-object-fit.html [ ImageOnlyFailure ]
 webkit.org/b/142283 fast/regions/overflow/overflow-first-and-last-regions.html [ ImageOnlyFailure ]
-webkit.org/b/142286 fast/regions/scrolling/wheel-scroll-abspos.html [ ImageOnlyFailure ]
-webkit.org/b/142286 fast/regions/scrolling/wheel-scroll.html [ ImageOnlyFailure ]
 webkit.org/b/142287 svg/clip-path/clip-path-line-use-before-defined.svg [ ImageOnlyFailure ]
 webkit.org/b/142288 css3/masking/mask-svg-clipped-fragmentId.html [ ImageOnlyFailure ]
 webkit.org/b/142289 fast/text/font-kerning.html [ ImageOnlyFailure ]
@@ -1165,6 +1159,11 @@ webkit.org/b/143988 css3/masking/mask-svg-no-fragmentId.html [ ImageOnlyFailure 
 webkit.org/b/143991 fast/table/multiple-captions-crash3.html [ ImageOnlyFailure Pass ]
 webkit.org/b/143995 fast/canvas/canvas-composite-text-alpha.html [ Failure Pass ]
 
+Bug(GTK) http/tests/xmlhttprequest/logout.html [ Failure Pass ]
+
+webkit.org/b/144579 transforms/2d/preserve3d-not-fixed-container.html [ ImageOnlyFailure Pass ]
+webkit.org/b/144582 fast/inline/layout-after-inserting-nested-br.html [ ImageOnlyFailure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1632,9 +1631,9 @@ webkit.org/b/138688 http/tests/navigation/ping-cookie.html [ Skip ]
 webkit.org/b/138736 http/tests/appcache/auth.html [ Skip ]
 
 # There is no network load scheduling or prioritization with NetworkProcess.
-webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Failure ]
+webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Failure Pass ]
 webkit.org/b/123431 http/tests/local/link-stylesheet-load-order-preload.html [ Failure ]
-webkit.org/b/123431 http/tests/local/link-stylesheet-load-order.html [ Failure ]
+webkit.org/b/123431 http/tests/local/link-stylesheet-load-order.html [ Failure Pass ]
 
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1694,8 +1693,6 @@ Bug(GTK) http/tests/media/video-play-stall-seek.html [ Skip ]
 
 Bug(GTK) http/tests/misc/acid3.html [ Failure ]
 Bug(GTK) http/tests/misc/redirect-to-external-url.html [ Failure ]
-
-Bug(GTK) http/tests/xmlhttprequest/logout.html [ Failure ]
 
 Bug(GTK) media/video-size-intrinsic-scale.html [ Failure ]
 
@@ -2340,8 +2337,6 @@ webkit.org/b/142479 svg/text/select-textLength-spacingAndGlyphs-stretch-3.svg [ 
 
 webkit.org/b/142482 http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Failure ]
 
-webkit.org/b/142487 fast/regions/region-overflow-break.html [ ImageOnlyFailure ]
-
 webkit.org/b/142666 fast/forms/input-auto-fill-button.html [ Failure ]
 webkit.org/b/142667 fast/forms/search-vertical-alignment.html [ Failure ]
 webkit.org/b/142667 fast/forms/textfield-overflow-by-value-update.html [ Failure ]
@@ -2372,6 +2367,16 @@ webkit.org/b/143924 fast/text/hyphen-min-preferred-width.html [ Skip ]
 webkit.org/b/144494 printing/quirks-percentage-height-body.html [ ImageOnlyFailure ]
 webkit.org/b/144494 printing/quirks-percentage-height.html [ ImageOnlyFailure ]
 webkit.org/b/144494 printing/standards-percentage-heights.html [ ImageOnlyFailure ]
+
+webkit.org/b/144572 fast/forms/button-line-height.html [ ImageOnlyFailure ]
+webkit.org/b/144573 fast/text/international/synthesized-italic-vertical.html [ ImageOnlyFailure ]
+
+webkit.org/b/144574 imported/mozilla/svg/objectBoundingBox-and-mask.svg [ ImageOnlyFailure ]
+webkit.org/b/144574 imported/mozilla/svg/text/mask-applied.svg [ ImageOnlyFailure ]
+webkit.org/b/144574 svg/masking/mask-negative-scale.svg [ ImageOnlyFailure ]
+
+webkit.org/b/144575 http/tests/loading/promote-img-preload-priority.html [ Failure ]
+webkit.org/b/144576 editing/execCommand/nsresponder-outdent.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

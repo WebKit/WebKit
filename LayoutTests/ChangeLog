@@ -1,3 +1,18 @@
+2015-05-05  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
+
+        [GTK] Gardening 4th May
+        https://bugs.webkit.org/show_bug.cgi?id=144571
+
+        Unreviewed.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/forms/color/input-appearance-color-expected.png: Added.
+        * platform/gtk/fast/forms/color/input-appearance-color-expected.txt:
+        * platform/gtk/fast/regions/region-overflow-break-expected.html: Added.
+        * platform/gtk/fast/regions/scrolling/wheel-scroll-abspos-expected.html: Added.
+        * platform/gtk/fast/regions/scrolling/wheel-scroll-expected.html: Added.
+        * platform/gtk/fast/text/font-kerning-expected.html: Added.
+
 2015-05-05  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] AX: figure out platform difference for ATK to make accessibility/table-cell-display-block.html work
