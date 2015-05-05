@@ -107,6 +107,10 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
     auto useRemoteLayerTreeValue = adoptWK(WKBooleanCreate(shouldUseRemoteLayerTree()));
     WKDictionarySetItem(viewOptions.get(), useRemoteLayerTreeKey.get(), useRemoteLayerTreeValue.get());
 
+    auto shouldShowWebViewKey = adoptWK(WKStringCreateWithUTF8CString("ShouldShowWebView"));
+    auto shouldShowWebViewValue = adoptWK(WKBooleanCreate(shouldShowWebView()));
+    WKDictionarySetItem(viewOptions.get(), shouldShowWebViewKey.get(), shouldShowWebViewValue.get());
+
     ensureViewSupportsOptions(viewOptions.get());
 
     if (!test.urlContains("contentextensions/"))

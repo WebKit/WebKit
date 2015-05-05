@@ -1,3 +1,17 @@
+2015-05-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct '--show-webview' option for Tiled Drawing tests
+        https://bugs.webkit.org/show_bug.cgi?id=144621
+
+        Reviewed by Simon Fraser.
+
+        The scrolling thread/tiled drawing tests recreate the standard test runner web view. My earlier patch did not make
+        sure that the state of the '--show-webview' option was propagated to this additional view creation routine.
+
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::platformConfigureViewForTest): Include the value of the 'shouldShowWebView' state in the
+        WKMutableDictionary passed to the 'ensureViewSupportsOptions' method.
+
 2015-05-04  Filip Pizlo  <fpizlo@apple.com>
 
         Large array shouldn't be slow
