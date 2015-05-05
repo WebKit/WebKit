@@ -986,10 +986,14 @@ Controller.prototype = {
         return true;
     },
 
+    hasVideo: function()
+    {
+        return this.video.videoTracks && this.video.videoTracks.length;
+    },
+
     updateFullscreenButtons: function()
     {
-        var hasVisualMedia = this.video.videoTracks && this.video.videoTracks.length > 0;
-        var shouldBeHidden = !this.video.webkitSupportsFullscreen || !hasVisualMedia;
+        var shouldBeHidden = !this.video.webkitSupportsFullscreen || !this.hasVideo();
         this.controls.fullscreenButton.classList.toggle(this.ClassNames.hidden, shouldBeHidden);
         this.controls.optimizedFullscreenButton.classList.toggle(this.ClassNames.hidden, shouldBeHidden);
     },
@@ -1725,7 +1729,7 @@ Controller.prototype = {
 
     updateHasVideo: function()
     {
-        if (this.video.videoTracks.length)
+        if (this.hasVideo())
             this.controls.panel.classList.remove(this.ClassNames.noVideo);
         else
             this.controls.panel.classList.add(this.ClassNames.noVideo);
@@ -1838,7 +1842,7 @@ Controller.prototype = {
         if (this.wirelessPlaybackDisabled)
             wirelessPlaybackTargetsAvailable = false;
 
-        if (wirelessPlaybackTargetsAvailable && this.isPlayable())
+        if (wirelessPlaybackTargetsAvailable && this.isPlayable() && this.hasVideo())
             this.controls.wirelessTargetPicker.classList.remove(this.ClassNames.hidden);
         else
             this.controls.wirelessTargetPicker.classList.add(this.ClassNames.hidden);
