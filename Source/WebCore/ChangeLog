@@ -1,3 +1,20 @@
+2015-05-05  Eric Carlson  <eric.carlson@apple.com>
+
+        Only autoplay videos should not automatically play to playback target
+        https://bugs.webkit.org/show_bug.cgi?id=144633
+
+        Reviewed by Jer Noble.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Set RequireUserGestureToAutoplayToExternalDevice.
+        (WebCore::HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture): Remove
+        RequireUserGestureToAutoplayToExternalDevice.
+        (WebCore::HTMLMediaElement::mediaState): Set ExternalDeviceAutoPlayCandidate if playback
+        was started from a user gesture, even if the video loops and/or doesn't have audio.
+
+        * html/HTMLMediaSession.h: Define RequireUserGestureToAutoplayToExternalDevice.
+        (WebCore::HTMLMediaSession::hasBehaviorRestriction): New.
+
 2015-05-05  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed logging fix.

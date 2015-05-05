@@ -83,17 +83,19 @@ public:
         RequireUserGestureForFullscreen = 1 << 2,
         RequirePageConsentToLoadMedia = 1 << 3,
         RequirePageConsentToResumeMedia = 1 << 4,
+        RequireUserGestureForAudioRateChange = 1 << 5,
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-        RequireUserGestureToShowPlaybackTargetPicker = 1 << 5,
-        WirelessVideoPlaybackDisabled =  1 << 6,
+        RequireUserGestureToShowPlaybackTargetPicker = 1 << 6,
+        WirelessVideoPlaybackDisabled =  1 << 7,
+        RequireUserGestureToAutoplayToExternalDevice = 1 << 8,
 #endif
-        RequireUserGestureForAudioRateChange = 1 << 7,
     };
     typedef unsigned BehaviorRestrictions;
 
     WEBCORE_EXPORT BehaviorRestrictions behaviorRestrictions() const { return m_restrictions; }
     WEBCORE_EXPORT void addBehaviorRestriction(BehaviorRestrictions);
     WEBCORE_EXPORT void removeBehaviorRestriction(BehaviorRestrictions);
+    bool hasBehaviorRestriction(BehaviorRestrictions restriction) const { return restriction & m_restrictions; }
 
 #if ENABLE(MEDIA_SOURCE)
     size_t maximumMediaSourceBufferSize(const SourceBuffer&) const;

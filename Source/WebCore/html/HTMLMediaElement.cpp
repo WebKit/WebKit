@@ -341,6 +341,9 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
 
     m_mediaSession->addBehaviorRestriction(HTMLMediaSession::RequireUserGestureForFullscreen);
     m_mediaSession->addBehaviorRestriction(HTMLMediaSession::RequirePageConsentToLoadMedia);
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    m_mediaSession->addBehaviorRestriction(HTMLMediaSession::RequireUserGestureToAutoplayToExternalDevice);
+#endif
 
     // FIXME: We should clean up and look to better merge the iOS and non-iOS code below.
     Settings* settings = document.settings();
@@ -5892,6 +5895,7 @@ void HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture()
     HTMLMediaSession::BehaviorRestrictions restrictionsToRemove = HTMLMediaSession::RequireUserGestureForLoad
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
         | HTMLMediaSession::RequireUserGestureToShowPlaybackTargetPicker
+        | HTMLMediaSession::RequireUserGestureToAutoplayToExternalDevice
 #endif
         | HTMLMediaSession::RequireUserGestureForLoad
         | HTMLMediaSession::RequireUserGestureForRateChange
@@ -6210,9 +6214,9 @@ MediaProducer::MediaStateFlags HTMLMediaElement::mediaState() const
             state |= RequiresPlaybackTargetMonitoring;
     }
 
-    if (hasActiveVideo && hasAudio && !loop())
+    bool requireUserGesture = m_mediaSession->hasBehaviorRestriction(HTMLMediaSession::RequireUserGestureToAutoplayToExternalDevice);
+    if (hasActiveVideo && (!requireUserGesture || (hasAudio && !loop())))
         state |= ExternalDeviceAutoPlayCandidate;
-
 #endif
 
     if (!isPlaying())
