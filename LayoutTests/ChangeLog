@@ -1,3 +1,10 @@
+2015-05-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed gardening, unskip passing compositing tests since USE_NATIVE_XDISPLAY=1
+        is set on the EFL bots and mark the remaining failing compositing tests properly.
+
+        * platform/efl/TestExpectations:
+
 2015-05-04  Basile Clement  <basile_clement@apple.com>
 
         Allow CreateActivation sinking

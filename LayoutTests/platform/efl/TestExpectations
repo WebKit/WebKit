@@ -1499,7 +1499,6 @@ webkit.org/b/114920 fast/repaint/moving-shadow-on-path.html [ Failure ]
 # Compositing reftests added in r148172 fail on EFL
 webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-contain.html [ ImageOnlyFailure Crash ]
 webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-cover.html [ ImageOnlyFailure Crash ]
-webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-padding.html [ ImageOnlyFailure Crash ]
 webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-position.html [ ImageOnlyFailure Crash ]
 webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-size.html [ ImageOnlyFailure Crash ]
 webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-contain-no-repeat.html [ Pass Crash ]
@@ -1692,10 +1691,6 @@ webkit.org/b/110054 compositing/geometry/limit-layer-bounds-fixed.html [ Failure
 
 # Failing media query test.
 webkit.org/b/114916 fast/media/mq-resolution.html [ Failure ]
-
-# Regression(r148748).
-webkit.org/b/114946 compositing/patterns/direct-pattern-compositing-add-text.html [ ImageOnlyFailure Crash ]
-webkit.org/b/114946 compositing/patterns/direct-pattern-compositing.html [ ImageOnlyFailure Crash ]
 
 compositing/patterns/direct-pattern-compositing-load.html [ ImageOnlyFailure Pass ]
 
@@ -2179,27 +2174,6 @@ webkit.org/b/143354 fast/ruby/ruby-expansion-cjk-5.html [ ImageOnlyFailure ]
 # [EFL] r182307 broke 87 layouttests
 webkit.org/b/143364 fast/fixed-layout [ Skip ]
 
-# [EFL] Fix 18 crashing compositing tests after r182101
-# https://bugs.webkit.org/show_bug.cgi?id=143214
-compositing/clipping/border-radius-stacking-context-clip.html [ Crash ]
-compositing/contents-opaque/opaque-with-clip-path.html [ Crash ]
-compositing/masks/become-tiled-mask.html [ Crash ]
-compositing/masks/cease-tiled-mask.html [ Crash ]
-compositing/masks/compositing-clip-path-and-mask.html [ Crash ]
-compositing/masks/compositing-clip-path-change-no-repaint.html [ Crash Failure ]
-compositing/masks/compositing-clip-path-mask-change.html [ Crash ]
-compositing/masks/compositing-clip-path.html [ Crash ]
-compositing/masks/direct-image-mask.html [ Crash Pass ]
-compositing/masks/mask-layer-size.html [ Crash Pass ]
-compositing/masks/masked-ancestor.html [ Crash Pass ]
-compositing/masks/reference-clip-path-on-composited.html [ Crash ]
-compositing/masks/solid-color-masked.html [ Crash ]
-compositing/masks/tiled-mask.html [ Crash ]
-compositing/masks/toggle-mask.html [ Crash Pass ]
-compositing/overlap-blending/nested-overlap-overflow.html [ Crash ]
-compositing/reflections/nested-reflection-on-overflow.html [ Crash Pass ]
-compositing/text-on-scaled-surface.html [ Crash ]
-
 webkit.org/b/143415 fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]
 webkit.org/b/143416 fast/text/baseline-inline-block.html [ ImageOnlyFailure ]
 
@@ -2240,6 +2214,12 @@ webkit.org/b/143878 http/tests/navigation/javascriptlink-frames.html [ Failure ]
 webkit.org/b/143878 http/tests/navigation/postredirect-basic.html [ Failure ]
 webkit.org/b/143878 http/tests/navigation/postredirect-goback1.html [ Failure ]
 
-webkit.org/b/144004 compositing/animation/matrix-animation.html [ ImageOnlyFailure ]
-
 webkit.org/b/144006 compositing/backing/solid-color-with-paints-into-ancestor.html [ ImageOnlyFailure ]
+
+# New failing compositing tests, needs more investigation
+compositing/masks/compositing-clip-path-change-no-repaint.html [ Failure ]
+compositing/tiling/transform-origin-tiled.html [ Failure ]
+compositing/background-color/background-color-change-to-text.html [ ImageOnlyFailure ]
+compositing/masks/compositing-clip-path-mask-change.html [ ImageOnlyFailure ]
+compositing/overlap-blending/nested-overlap-overflow.html [ ImageOnlyFailure ]
+compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
