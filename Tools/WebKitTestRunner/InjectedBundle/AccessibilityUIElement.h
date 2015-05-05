@@ -248,6 +248,7 @@ public:
     PassRefPtr<AccessibilityTextMarker> textMarkerForIndex(int);
     PassRefPtr<AccessibilityTextMarker> startTextMarker();
     PassRefPtr<AccessibilityTextMarker> endTextMarker();
+    bool setSelectedVisibleTextRange(AccessibilityTextMarkerRange*);
 
     // Returns an ordered list of supported actions for an element.
     JSRetainPtr<JSStringRef> supportedActions() const;

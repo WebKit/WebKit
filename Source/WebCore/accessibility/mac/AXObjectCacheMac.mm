@@ -224,7 +224,7 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
         return;
 
     NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] initWithCapacity:5];
-    if (intent.isSynchronizing)
+    if (m_isSynchronizingSelection)
         [userInfo setObject:[NSNumber numberWithBool:YES] forKey:NSAccessibilityTextStateSyncKey];
     if (intent.type != AXTextStateChangeTypeUnknown) {
         [userInfo setObject:[NSNumber numberWithInt:intent.type] forKey:NSAccessibilityTextStateChangeTypeKey];

@@ -1,3 +1,36 @@
+2015-05-04  Doug Russell  <d_russell@apple.com>
+
+        AX: setting focus via accessibility object needs to set isSynchronizing in resulting selection intent
+        https://bugs.webkit.org/show_bug.cgi?id=144489
+
+        Reviewed by Chris Fleizach.
+
+        Resolves infinite looping when navigating rapidly between controls with the search API and then focusing
+        on the returned control.
+        Remove isSynchronizing flag from AXTextStateChangeIntent and put it on AXObjectCache.
+        Move AXTextStateChangeIntent logic in AccessibilityRenderObject into a helper method.
+        Call new AXTextStateChangeIntent helper from AccessibilityRenderObject::setFocus().
+        Add support for setSelectedVisibleTextRange() in accessibility tests.
+
+        Test: platform/mac/accessibility/selection-sync.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::showIntent):
+        (WebCore::AXObjectCache::setTextSelectionIntent):
+        (WebCore::AXObjectCache::setIsSynchronizingSelection):
+        (WebCore::AXObjectCache::postTextStateChangeNotification):
+        * accessibility/AXObjectCache.h:
+        * accessibility/AXTextStateChangeIntent.h:
+        (WebCore::AXTextStateChangeIntent::AXTextStateChangeIntent):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::setTextSelectionIntent):
+        (WebCore::AccessibilityRenderObject::setSelectedTextRange):
+        (WebCore::AccessibilityRenderObject::setFocused):
+        (WebCore::AccessibilityRenderObject::setSelectedVisiblePositionRange):
+        (WebCore::AccessibilityRenderObject::boundsForVisiblePositionRange): Deleted.
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postTextStateChangePlatformNotification):
+
 2015-05-04  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Audio-only files should not have a device picker

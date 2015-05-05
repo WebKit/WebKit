@@ -254,6 +254,7 @@ public:
     AccessibilityTextMarker endTextMarker();
     AccessibilityTextMarkerRange selectedTextMarkerRange();
     void resetSelectedTextMarkerRange();
+    bool setSelectedVisibleTextRange(AccessibilityTextMarkerRange*);
     
     JSStringRef stringForTextMarkerRange(AccessibilityTextMarkerRange*);
     int textMarkerRangeLength(AccessibilityTextMarkerRange*);

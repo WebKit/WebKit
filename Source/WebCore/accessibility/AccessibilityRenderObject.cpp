@@ -1488,11 +1488,20 @@ PlainTextRange AccessibilityRenderObject::selectedTextRange() const
     return documentBasedSelectedTextRange();
 }
 
+static void setTextSelectionIntent(const AccessibilityRenderObject& renderObject, AXTextStateChangeType type)
+{
+    AXObjectCache* cache = renderObject.axObjectCache();
+    if (!cache)
+        return;
+    AXTextStateChangeIntent intent(type, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityUnknown });
+    cache->setTextSelectionIntent(intent);
+    cache->setIsSynchronizingSelection(true);
+}
+
 void AccessibilityRenderObject::setSelectedTextRange(const PlainTextRange& range)
 {
     if (isNativeTextControl()) {
-        if (AXObjectCache* cache = axObjectCache())
-            cache->setTextSelectionIntent(AXTextStateChangeIntent(range.length ? AXTextStateChangeTypeSelectionExtend : AXTextStateChangeTypeSelectionMove, true));
+        setTextSelectionIntent(*this, range.length ? AXTextStateChangeTypeSelectionExtend : AXTextStateChangeTypeSelectionMove);
         HTMLTextFormControlElement& textControl = downcast<RenderTextControl>(*m_renderer).textFormControlElement();
         textControl.setSelectionRange(range.start, range.start + range.length);
         return;
@@ -1500,8 +1509,8 @@ void AccessibilityRenderObject::setSelectedTextRange(const PlainTextRange& range
 
     Node* node = m_renderer->node();
     VisibleSelection newSelection(Position(node, range.start, Position::PositionIsOffsetInAnchor), Position(node, range.start + range.length, Position::PositionIsOffsetInAnchor), DOWNSTREAM);
-    AXTextStateChangeIntent newIntent(range.length ? AXTextStateChangeTypeSelectionExtend : AXTextStateChangeTypeSelectionMove, true);
-    m_renderer->frame().selection().setSelection(newSelection, FrameSelection::defaultSetSelectionOptions(), newIntent);
+    setTextSelectionIntent(*this, range.length ? AXTextStateChangeTypeSelectionExtend : AXTextStateChangeTypeSelectionMove);
+    m_renderer->frame().selection().setSelection(newSelection, FrameSelection::defaultSetSelectionOptions());
 }
 
 URL AccessibilityRenderObject::url() const
@@ -1655,6 +1664,7 @@ void AccessibilityRenderObject::setFocused(bool on)
     if (document->focusedElement() == node)
         document->setFocusedElement(nullptr);
 
+    setTextSelectionIntent(*this, AXTextStateChangeTypeSelectionMove);
     downcast<Element>(*node).focus();
 }
 
@@ -1969,13 +1979,13 @@ void AccessibilityRenderObject::setSelectedVisiblePositionRange(const VisiblePos
 
     // make selection and tell the document to use it. if it's zero length, then move to that position
     if (range.start == range.end) {
-        if (AXObjectCache* cache = axObjectCache())
-            cache->setTextSelectionIntent(AXTextStateChangeIntent(AXTextStateChangeTypeSelectionMove, true));
+        setTextSelectionIntent(*this, AXTextStateChangeTypeSelectionMove);
         m_renderer->frame().selection().moveTo(range.start, UserTriggered);
     }
     else {
+        setTextSelectionIntent(*this, AXTextStateChangeTypeSelectionExtend);
         VisibleSelection newSelection = VisibleSelection(range.start, range.end);
-        m_renderer->frame().selection().setSelection(newSelection, FrameSelection::defaultSetSelectionOptions(), AXTextStateChangeIntent(AXTextStateChangeTypeSelectionExtend, true));
+        m_renderer->frame().selection().setSelection(newSelection, FrameSelection::defaultSetSelectionOptions());
     }
 }
 

@@ -199,7 +199,8 @@ public:
     void showIntent(const AXTextStateChangeIntent&);
 #endif
 
-    void setTextSelectionIntent(AXTextStateChangeIntent);
+    void setTextSelectionIntent(const AXTextStateChangeIntent&);
+    void setIsSynchronizingSelection(bool);
 
     void postTextStateChangeNotification(Node*, AXTextEditType, const String&, const VisiblePosition&);
     void postTextReplacementNotification(Node*, AXTextEditType deletionType, const String& deletedText, AXTextEditType insertionType, const String& insertedText, const VisiblePosition&);
@@ -285,6 +286,7 @@ private:
     ListHashSet<RefPtr<AccessibilityObject>> m_passwordNotificationsToPost;
 
     AXTextStateChangeIntent m_textSelectionIntent;
+    bool m_isSynchronizingSelection { false };
 };
 
 class AXAttributeCacheEnabler

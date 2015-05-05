@@ -562,6 +562,11 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::selectedTextRange()
     return JSStringCreateWithCharacters(0, 0);
 }
 
+bool AccessibilityUIElement::setSelectedVisibleTextRange(AccessibilityTextMarkerRange*)
+{
+    return false;
+}
+
 bool AccessibilityUIElement::setSelectedTextRange(unsigned location, unsigned length)
 {
     return false;
