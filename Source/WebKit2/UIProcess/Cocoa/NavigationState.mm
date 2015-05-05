@@ -317,6 +317,12 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
 #pragma clang diagnostic pop
             localListener->download();
             break;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wswitch"
+        case _WKNavigationActionPolicyAllowWithoutTryingAppLink:
+#pragma clang diagnostic pop
+            localListener->use();
+            break;
         }
     }];
 }

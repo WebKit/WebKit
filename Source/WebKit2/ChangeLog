@@ -1,3 +1,16 @@
+2015-05-04  Dan Bernstein  <mitz@apple.com>
+
+        WebKit always goes through LaunchServices for main frame navigation actions
+        https://bugs.webkit.org/show_bug.cgi?id=144608
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h: Defined
+        _WKNavigationActionPolicyAllowWithoutTryingAppLink.
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction): If the policy
+        is _WKNavigationActionPolicyAllowWithoutTryingAppLink, don’t go through tryAppLink.
+
 2015-05-04  Enrica Casucci  <enrica@apple.com>
 
         [iOS WK2] editorState should include information about selection clipping rectangle.
