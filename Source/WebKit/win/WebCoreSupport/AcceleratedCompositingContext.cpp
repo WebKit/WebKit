@@ -106,7 +106,7 @@ void AcceleratedCompositingContext::initialize()
 
     m_context->makeContextCurrent();
 
-    m_textureMapper = TextureMapperGL::create(TextureMapper::OpenGLMode);
+    m_textureMapper = TextureMapperGL::create();
     downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().setTextureMapper(m_textureMapper.get());
 
     scheduleLayerFlush();
@@ -266,7 +266,7 @@ bool AcceleratedCompositingContext::acceleratedCompositingAvailable()
 
     context->makeContextCurrent();
 
-    std::unique_ptr<WebCore::TextureMapper> textureMapper = TextureMapperGL::create(TextureMapper::OpenGLMode);
+    std::unique_ptr<WebCore::TextureMapper> textureMapper = TextureMapperGL::create();
 
     if (!textureMapper) {
         ::DestroyWindow(testWindow);

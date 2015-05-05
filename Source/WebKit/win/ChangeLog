@@ -1,3 +1,11 @@
+2015-05-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed WinCairo buildfix after r183807.
+
+        * WebCoreSupport/AcceleratedCompositingContext.cpp:
+        (AcceleratedCompositingContext::initialize):
+        (AcceleratedCompositingContext::acceleratedCompositingAvailable):
+
 2015-04-28  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [CoordinatedGraphics] Merge TILED_BACKING_STORE guard with COORDINATED_GRAPHICS
