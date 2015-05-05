@@ -1,3 +1,14 @@
+2015-05-05  Andreas Kling  <akling@apple.com>
+
+        Fix up fast/performance/performance-now-crash-on-navigated-window.html after r183795.
+
+        Unreviewed fix for the bots. Since performance.now doesn't bail out and return 0 in
+        disconnected frames anymore, we have to adjust the expectations. This test was all
+        about catching a crash anyway.
+
+        * fast/performance/performance-now-crash-on-navigated-window-expected.txt:
+        * fast/performance/performance-now-crash-on-navigated-window.html:
+
 2015-05-05  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Box Alignment] Upgrade align-content parsing to CSS3 Box Alignment spec
