@@ -109,11 +109,11 @@ private:
 
 class InMemoryCompiledContentExtension : public ContentExtensions::CompiledContentExtension {
 public:
-    static RefPtr<InMemoryCompiledContentExtension> createFromFilter(const String& filter)
+    static RefPtr<InMemoryCompiledContentExtension> createFromFilter(String&& filter)
     {
         WebCore::ContentExtensions::CompiledContentExtensionData extensionData;
         InMemoryContentExtensionCompilationClient client(extensionData);
-        auto compilerError = ContentExtensions::compileRuleList(client, filter);
+        auto compilerError = ContentExtensions::compileRuleList(client, WTF::move(filter));
         if (compilerError)
             return nullptr;
 

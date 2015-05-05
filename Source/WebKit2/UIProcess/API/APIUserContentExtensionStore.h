@@ -54,7 +54,7 @@ public:
     explicit UserContentExtensionStore(const WTF::String& storePath);
     virtual ~UserContentExtensionStore();
 
-    void compileContentExtension(const WTF::String& identifier, const WTF::String& json, std::function<void(RefPtr<API::UserContentExtension>, std::error_code)>);
+    void compileContentExtension(const WTF::String& identifier, WTF::String&& json, std::function<void(RefPtr<API::UserContentExtension>, std::error_code)>);
     void lookupContentExtension(const WTF::String& identifier, std::function<void(RefPtr<API::UserContentExtension>, std::error_code)>);
     void removeContentExtension(const WTF::String& identifier, std::function<void(std::error_code)>);
 

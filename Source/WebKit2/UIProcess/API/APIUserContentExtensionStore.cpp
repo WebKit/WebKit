@@ -153,7 +153,7 @@ static bool writeDataToFile(const Data& fileData, WebCore::PlatformFileHandle fd
     return success;
 }
 
-static std::error_code compiledToFile(const String& json, const String& finalFilePath, ContentExtensionMetaData& metaData, Data& mappedData)
+static std::error_code compiledToFile(String&& json, const String& finalFilePath, ContentExtensionMetaData& metaData, Data& mappedData)
 {
     using namespace WebCore::ContentExtensions;
 
@@ -223,7 +223,7 @@ static std::error_code compiledToFile(const String& json, const String& finalFil
 
     CompilationClient compilationClient(temporaryFileHandle, metaData);
     
-    if (auto compilerError = compileRuleList(compilationClient, json))
+    if (auto compilerError = compileRuleList(compilationClient, WTF::move(json)))
         return compilerError;
     if (compilationClient.hadErrorWhileWritingToFile())
         return UserContentExtensionStore::Error::CompileFailed;
@@ -280,19 +280,19 @@ void UserContentExtensionStore::lookupContentExtension(const WTF::String& identi
     });
 }
 
-void UserContentExtensionStore::compileContentExtension(const WTF::String& identifier, const WTF::String& json, std::function<void(RefPtr<API::UserContentExtension>, std::error_code)> completionHandler)
+void UserContentExtensionStore::compileContentExtension(const WTF::String& identifier, WTF::String&& json, std::function<void(RefPtr<API::UserContentExtension>, std::error_code)> completionHandler)
 {
     RefPtr<UserContentExtensionStore> self(this);
     StringCapture identifierCapture(identifier);
-    StringCapture jsonCapture(json);
+    StringCapture jsonCapture(WTF::move(json));
     StringCapture pathCapture(m_storePath);
 
-    m_compileQueue->dispatch([self, identifierCapture, jsonCapture, pathCapture, completionHandler] {
+    m_compileQueue->dispatch([self, identifierCapture, jsonCapture, pathCapture, completionHandler] () mutable {
         auto path = constructedPath(pathCapture.string(), identifierCapture.string());
 
         ContentExtensionMetaData metaData;
         Data fileData;
-        auto error = compiledToFile(jsonCapture.string(), path, metaData, fileData);
+        auto error = compiledToFile(jsonCapture.releaseString(), path, metaData, fileData);
         if (error) {
             RunLoop::main().dispatch([self, error, completionHandler] {
                 completionHandler(nullptr, error);

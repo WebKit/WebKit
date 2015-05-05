@@ -1,3 +1,17 @@
+2015-05-05  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Use less memory to store the json input.
+        https://bugs.webkit.org/show_bug.cgi?id=144604
+
+        Reviewed by Benjamin Poulain.
+
+        * MiniBrowser/mac/ExtensionManagerWindowController.m:
+        (-[ExtensionManagerWindowController add:]):
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::InMemoryCompiledContentExtension::createFromFilter):
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::platformConfigureViewForTest):
+
 2015-05-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed. Make myself a WebKit reviewer.

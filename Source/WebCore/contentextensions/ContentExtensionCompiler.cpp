@@ -136,10 +136,11 @@ static void addUniversalActionsToDFA(DFA& dfa, const UniversalActionLocationsSet
     dfa.nodes[dfa.root].setActions(actionsStart, static_cast<uint16_t>(actionsLength));
 }
 
-std::error_code compileRuleList(ContentExtensionCompilationClient& client, const String& ruleList)
+std::error_code compileRuleList(ContentExtensionCompilationClient& client, String&& ruleList)
 {
     Vector<ContentExtensionRule> parsedRuleList;
     auto parserError = parseRuleList(ruleList, parsedRuleList);
+    ruleList = String();
     if (parserError)
         return parserError;
 

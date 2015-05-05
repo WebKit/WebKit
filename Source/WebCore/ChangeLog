@@ -1,3 +1,16 @@
+2015-05-05  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Use less memory to store the json input.
+        https://bugs.webkit.org/show_bug.cgi?id=144604
+
+        Reviewed by Benjamin Poulain.
+
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::compileRuleList):
+        * contentextensions/ContentExtensionCompiler.h:
+        (WebCore::ContentExtensions::loadEncodedRules):
+        Don't copy strings as much or keep them alive after done using them.
+
 2015-05-05  Eric Carlson  <eric.carlson@apple.com>
 
         Prevent recursive calls to show target picker menu.
