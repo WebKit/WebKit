@@ -1,3 +1,17 @@
+2015-05-04  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Videos on apple.com flash when touching to show or hide the controls
+        https://bugs.webkit.org/show_bug.cgi?id=144598
+
+        Reviewed by Eric Carlson.
+
+        The apple.com site will add a "selection" rectangle atop a playing video when it recieves a touchstart
+        event. The default media controls use touchstart to signal the controls to become visible. Stop the touch
+        from propagating down to the page in this case.
+
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.handleWrapperTouchStart):
+
 2015-05-04  Andreas Kling  <akling@apple.com>
 
         Record the reference time when Performance is constructed.
