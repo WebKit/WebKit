@@ -51,6 +51,9 @@ protected:
     void finishCreation(VM&, JSGlobalObject*);
 };
 
+EncodedJSValue JSC_HOST_CALL mathProtoFuncAbs(ExecState*);
+EncodedJSValue JSC_HOST_CALL mathProtoFuncFloor(ExecState*);
+
 } // namespace JSC
 
 #endif // MathObject_h

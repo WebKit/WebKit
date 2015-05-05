@@ -36,7 +36,6 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(MathObject);
 
-EncodedJSValue JSC_HOST_CALL mathProtoFuncAbs(ExecState*);
 EncodedJSValue JSC_HOST_CALL mathProtoFuncACos(ExecState*);
 EncodedJSValue JSC_HOST_CALL mathProtoFuncACosh(ExecState*);
 EncodedJSValue JSC_HOST_CALL mathProtoFuncASin(ExecState*);
@@ -51,7 +50,6 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncCos(ExecState*);
 EncodedJSValue JSC_HOST_CALL mathProtoFuncCosh(ExecState*);
 EncodedJSValue JSC_HOST_CALL mathProtoFuncExp(ExecState*);
 EncodedJSValue JSC_HOST_CALL mathProtoFuncExpm1(ExecState*);
-EncodedJSValue JSC_HOST_CALL mathProtoFuncFloor(ExecState*);
 EncodedJSValue JSC_HOST_CALL mathProtoFuncFround(ExecState*);
 EncodedJSValue JSC_HOST_CALL mathProtoFuncHypot(ExecState*);
 EncodedJSValue JSC_HOST_CALL mathProtoFuncLog(ExecState*);

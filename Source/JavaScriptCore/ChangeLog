@@ -1,3 +1,26 @@
+2015-05-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Add backed intrinsics to private functions exposed with private symbols in global object
+        https://bugs.webkit.org/show_bug.cgi?id=144545
+
+        Reviewed by Darin Adler.
+
+        Math.abs and Math.floor have ASM intrinsics And it is further accelerated in DFG/FTL layers.
+        This patch adds intrinsic to private functions exposed with private symbols in global object,
+        @floor and @abs.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalPrivateFuncAbs): Deleted.
+        (JSC::globalPrivateFuncFloor): Deleted.
+        * runtime/MathObject.cpp:
+        * runtime/MathObject.h:
+        * tests/stress/array-from-abs-and-floor.js: Added.
+        (target1):
+        (target2):
+        (target3):
+
 2015-05-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         [cmake] ARM related build system cleanup
