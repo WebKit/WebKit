@@ -1,3 +1,40 @@
+2015-05-05  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Box Alignment] Upgrade align-content parsing to CSS3 Box Alignment spec
+        https://bugs.webkit.org/show_bug.cgi?id=144443
+
+        Reviewed by Darin Adler.
+
+        Upgrade the align-content property to the last CSS3 Box
+        Alignment specification. As it uses a different enumeration for
+        Positional and Distribution alignment, it implies some changes in
+        the FlexibleBox implementation.
+
+        Test: css3/parse-align-content.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::resolveContentAlignmentAuto):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::isKeywordPropertyID):
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPropertyNames.in:
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren):
+        (WebCore::RenderFlexibleBox::layoutColumnReverse):
+        (WebCore::initialAlignContentOffset):
+        (WebCore::alignContentSpaceBetweenChildren):
+        (WebCore::RenderFlexibleBox::alignFlexLines):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::resolveContentAlignment):
+        (WebCore::RenderStyle::resolveContentJustification):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2015-05-05  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         streams/readable-stream.html is very flaky

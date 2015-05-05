@@ -491,6 +491,8 @@ public:
     // Create a RenderStyle for generated content by inheriting from a pseudo style.
     static Ref<RenderStyle> createStyleInheritingFromPseudoStyle(const RenderStyle& pseudoStyle);
 
+    static void resolveContentAlignment(const RenderStyle&, ContentPosition&, ContentDistributionType&);
+    static void resolveContentJustification(const RenderStyle&, ContentPosition&);
     static ItemPosition resolveAlignment(const RenderStyle& parentStyle, const RenderStyle& childStyle, ItemPosition resolvedAutoPositionForRenderer);
     static OverflowAlignment resolveAlignmentOverflow(const RenderStyle& parentStyle, const RenderStyle& childStyle);
     static ItemPosition resolveJustification(const RenderStyle& parentStyle, const RenderStyle& childStyle, ItemPosition resolvedAutoPositionForRenderer);
@@ -911,7 +913,10 @@ public:
     float flexGrow() const { return rareNonInheritedData->m_flexibleBox->m_flexGrow; }
     float flexShrink() const { return rareNonInheritedData->m_flexibleBox->m_flexShrink; }
     const Length& flexBasis() const { return rareNonInheritedData->m_flexibleBox->m_flexBasis; }
-    EAlignContent alignContent() const { return static_cast<EAlignContent>(rareNonInheritedData->m_alignContent); }
+    const StyleContentAlignmentData& alignContent() const { return rareNonInheritedData->m_alignContent; }
+    ContentPosition alignContentPosition() const { return rareNonInheritedData->m_alignContent.position(); }
+    ContentDistributionType alignContentDistribution() const { return rareNonInheritedData->m_alignContent.distribution(); }
+    OverflowAlignment alignContentOverflowAlignment() const { return rareNonInheritedData->m_alignContent.overflow(); }
     const StyleSelfAlignmentData& alignItems() const { return rareNonInheritedData->m_alignItems; }
     ItemPosition alignItemsPosition() const { return rareNonInheritedData->m_alignItems.position(); }
     OverflowAlignment alignItemsOverflowAlignment() const { return rareNonInheritedData->m_alignItems.overflow(); }
@@ -1504,7 +1509,10 @@ public:
     void setFlexShrink(float f) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexShrink, f); }
     void setFlexBasis(Length length) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexBasis, WTF::move(length)); }
     void setOrder(int o) { SET_VAR(rareNonInheritedData, m_order, o); }
-    void setAlignContent(EAlignContent p) { SET_VAR(rareNonInheritedData, m_alignContent, p); }
+    void setAlignContent(const StyleContentAlignmentData& data) { SET_VAR(rareNonInheritedData, m_alignContent, data); }
+    void setAlignContentPosition(ContentPosition position) { rareNonInheritedData.access()->m_alignContent.setPosition(position); }
+    void setAlignContentOverflow(OverflowAlignment overflow) { rareNonInheritedData.access()->m_alignContent.setOverflow(overflow); }
+    void setAlignContentDistribution(ContentDistributionType distribution) { rareNonInheritedData.access()->m_alignContent.setDistribution(distribution); }
     void setAlignItems(const StyleSelfAlignmentData& data) { SET_VAR(rareNonInheritedData, m_alignItems, data); }
     void setAlignItemsPosition(ItemPosition position) { rareNonInheritedData.access()->m_alignItems.setPosition(position); }
     void setAlignItemsOverflow(OverflowAlignment overflow) { rareNonInheritedData.access()->m_alignItems.setOverflow(overflow); }
@@ -1933,7 +1941,6 @@ public:
     static float initialFlexShrink() { return 1; }
     static Length initialFlexBasis() { return Length(Auto); }
     static int initialOrder() { return 0; }
-    static EAlignContent initialAlignContent() { return AlignContentStretch; }
     static StyleSelfAlignmentData initialSelfAlignment() { return StyleSelfAlignmentData(ItemPositionAuto, OverflowAlignmentDefault); }
     static StyleContentAlignmentData initialContentAlignment() { return StyleContentAlignmentData(ContentPositionAuto, ContentDistributionDefault, OverflowAlignmentDefault); }
     static EFlexDirection initialFlexDirection() { return FlowRow; }

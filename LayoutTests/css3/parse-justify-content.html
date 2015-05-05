@@ -294,7 +294,7 @@ checkValues(element, "justifyContent", "justify-content",  "auto", "start");
 
 element.style.display = "-webkit-flex";
 element.style.justifyContent = "auto";
-checkValues(element, "justifyContent", "justify-content",  "auto", "flex-start");
+checkValues(element, "justifyContent", "justify-content",  "auto", "stretch");
 
 element.style.display = "-webkit-grid";
 element.style.justifyContent = "auto";
@@ -343,7 +343,7 @@ checkInitialValues(element, "justifyContent", "justify-content", "space-between 
 debug("");
 debug("Test the value 'initial' for flex containers");
 element.style.display = "-webkit-flex";
-checkInitialValues(element, "justifyContent", "justify-content", "right true", "flex-start");
+checkInitialValues(element, "justifyContent", "justify-content", "right true", "stretch");
 
 debug("");
 debug("Test the value 'inherit'");

@@ -453,7 +453,7 @@ mix-blend-mode [NameForMethods=BlendMode]
 isolation
 #endif
 -webkit-filter [ConditionalConverter=FilterOperations]
-align-content
+align-content [Initial=initialContentAlignment, Converter=ContentAlignmentData]
 -webkit-align-content = align-content
 align-items [Initial=initialSelfAlignment, Converter=SelfOrDefaultAlignmentData]
 -webkit-align-items = align-items

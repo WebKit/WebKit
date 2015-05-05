@@ -290,8 +290,8 @@ rect: style.getPropertyValue(column-span) : none
 rect: style.getPropertyCSSValue(column-span) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(column-width) : auto
 rect: style.getPropertyCSSValue(column-width) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(align-content) : stretch
-rect: style.getPropertyCSSValue(align-content) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(align-content) : start
+rect: style.getPropertyCSSValue(align-content) : [object CSSValueList]
 rect: style.getPropertyValue(align-items) : start
 rect: style.getPropertyCSSValue(align-items) : [object CSSValueList]
 rect: style.getPropertyValue(align-self) : start
@@ -808,8 +808,8 @@ g: style.getPropertyValue(column-span) : none
 g: style.getPropertyCSSValue(column-span) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(column-width) : auto
 g: style.getPropertyCSSValue(column-width) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(align-content) : stretch
-g: style.getPropertyCSSValue(align-content) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(align-content) : start
+g: style.getPropertyCSSValue(align-content) : [object CSSValueList]
 g: style.getPropertyValue(align-items) : start
 g: style.getPropertyCSSValue(align-items) : [object CSSValueList]
 g: style.getPropertyValue(align-self) : start

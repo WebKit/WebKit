@@ -880,11 +880,6 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueAuto || valueID == CSSValueBalance)
             return true;
         break;
-    case CSSPropertyAlignContent:
-        // FIXME: Per CSS alignment, this property should accept an optional <overflow-position>. We should share this parsing code with 'justify-self'.
-        if (valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueSpaceBetween || valueID == CSSValueSpaceAround || valueID == CSSValueStretch)
-            return true;
-        break;
     case CSSPropertyFlexDirection:
         if (valueID == CSSValueRow || valueID == CSSValueRowReverse || valueID == CSSValueColumn || valueID == CSSValueColumnReverse)
             return true;
@@ -1121,7 +1116,6 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitColumnBreakInside:
     case CSSPropertyColumnFill:
     case CSSPropertyColumnRuleStyle:
-    case CSSPropertyAlignContent:
     case CSSPropertyFlexDirection:
     case CSSPropertyFlexWrap:
     case CSSPropertyWebkitFontKerning:
@@ -3043,6 +3037,9 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         parsedValue = parseImageResolution();
         break;
 #endif
+    case CSSPropertyAlignContent:
+        parsedValue = parseContentDistributionOverflowPosition();
+        break;
     case CSSPropertyAlignSelf:
         return parseItemPositionOverflowPosition(propId, important);
 
@@ -3108,7 +3105,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitColumnBreakInside:
     case CSSPropertyColumnFill:
     case CSSPropertyColumnRuleStyle:
-    case CSSPropertyAlignContent:
     case CSSPropertyFlexDirection:
     case CSSPropertyFlexWrap:
     case CSSPropertyWebkitFontKerning:

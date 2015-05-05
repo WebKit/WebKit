@@ -146,7 +146,7 @@ column-rule-style: none;
 column-rule-width: 0px;
 column-span: none;
 column-width: auto;
-align-content: stretch;
+align-content: start;
 align-items: start;
 align-self: start;
 flex-direction: row;

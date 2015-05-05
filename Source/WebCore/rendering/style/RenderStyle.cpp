@@ -208,6 +208,28 @@ OverflowAlignment RenderStyle::resolveJustificationOverflow(const RenderStyle& p
     return resolveJustificationData(parentStyle, childStyle, ItemPositionStretch).overflow();
 }
 
+void RenderStyle::resolveContentAlignment(const RenderStyle& style, ContentPosition& position, ContentDistributionType& distribution)
+{
+    if (position != ContentPositionAuto || distribution != ContentDistributionDefault)
+        return;
+
+    if (style.isDisplayFlexibleBox())
+        distribution = ContentDistributionStretch;
+    else
+        position = ContentPositionStart;
+}
+
+void RenderStyle::resolveContentJustification(const RenderStyle& style, ContentPosition& position)
+{
+    if (position != ContentPositionAuto || style.justifyContentDistribution() != ContentDistributionDefault)
+        return;
+
+    if (style.isDisplayFlexibleBox())
+        position = ContentPositionFlexStart;
+    else
+        position = ContentPositionStart;
+}
+
 void RenderStyle::inheritFrom(const RenderStyle* inheritParent, IsAtShadowBoundary isAtShadowBoundary)
 {
     if (isAtShadowBoundary == AtShadowBoundary) {

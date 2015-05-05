@@ -71,6 +71,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_order(RenderStyle::initialOrder())
     , m_flowThread(RenderStyle::initialFlowThread())
     , m_regionThread(RenderStyle::initialRegionThread())
+    , m_alignContent(RenderStyle::initialContentAlignment())
     , m_alignItems(RenderStyle::initialSelfAlignment())
     , m_alignSelf(RenderStyle::initialSelfAlignment())
     , m_justifyContent(RenderStyle::initialContentAlignment())
@@ -86,7 +87,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_pageSizeType(PAGE_SIZE_AUTO)
     , m_transformStyle3D(RenderStyle::initialTransformStyle3D())
     , m_backfaceVisibility(RenderStyle::initialBackfaceVisibility())
-    , m_alignContent(RenderStyle::initialAlignContent())
     , userDrag(RenderStyle::initialUserDrag())
     , textOverflow(RenderStyle::initialTextOverflow())
     , marginBeforeCollapse(MCOLLAPSE)
@@ -159,6 +159,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , m_order(o.m_order)
     , m_flowThread(o.m_flowThread)
     , m_regionThread(o.m_regionThread)
+    , m_alignContent(o.m_alignContent)
     , m_alignItems(o.m_alignItems)
     , m_alignSelf(o.m_alignSelf)
     , m_justifyContent(o.m_justifyContent)
@@ -174,7 +175,6 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , m_pageSizeType(o.m_pageSizeType)
     , m_transformStyle3D(o.m_transformStyle3D)
     , m_backfaceVisibility(o.m_backfaceVisibility)
-    , m_alignContent(o.m_alignContent)
     , userDrag(o.userDrag)
     , textOverflow(o.textOverflow)
     , marginBeforeCollapse(o.marginBeforeCollapse)
@@ -256,6 +256,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_visitedLinkBorderBottomColor == o.m_visitedLinkBorderBottomColor
         && m_order == o.m_order
         && m_flowThread == o.m_flowThread
+        && m_alignContent == o.m_alignContent
         && m_alignItems == o.m_alignItems
         && m_alignSelf == o.m_alignSelf
         && m_justifyContent == o.m_justifyContent
@@ -269,7 +270,6 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_pageSizeType == o.m_pageSizeType
         && m_transformStyle3D == o.m_transformStyle3D
         && m_backfaceVisibility == o.m_backfaceVisibility
-        && m_alignContent == o.m_alignContent
         && userDrag == o.userDrag
         && textOverflow == o.textOverflow
         && marginBeforeCollapse == o.marginBeforeCollapse

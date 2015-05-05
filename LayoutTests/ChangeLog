@@ -1,3 +1,18 @@
+2015-05-05  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Box Alignment] Upgrade align-content parsing to CSS3 Box Alignment spec
+        https://bugs.webkit.org/show_bug.cgi?id=144443
+
+        Reviewed by Darin Adler.
+
+        Tests to verify the align-content parsing logic. The new Box Alignment spec
+        requires some changes in the flexbox tests.
+
+        * css3/flexbox/css-properties-expected.txt:
+        * css3/flexbox/css-properties.html:
+        * css3/parse-align-content-expected.txt: Added.
+        * css3/parse-align-content.html: Added.
+
 2015-05-05  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         streams/readable-stream.html is very flaky

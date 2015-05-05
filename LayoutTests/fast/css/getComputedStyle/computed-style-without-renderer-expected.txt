@@ -145,7 +145,7 @@ column-rule-style: none
 column-rule-width: 0px
 column-span: none
 column-width: auto
-align-content: stretch
+align-content: auto
 align-items: auto
 align-self: auto
 flex-direction: row

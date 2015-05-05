@@ -177,6 +177,7 @@ public:
     AtomicString m_flowThread;
     AtomicString m_regionThread;
 
+    StyleContentAlignmentData m_alignContent;
     StyleSelfAlignmentData m_alignItems;
     StyleSelfAlignmentData m_alignSelf;
     StyleContentAlignmentData m_justifyContent;
@@ -197,7 +198,6 @@ public:
     unsigned m_transformStyle3D : 1; // ETransformStyle3D
     unsigned m_backfaceVisibility : 1; // EBackfaceVisibility
 
-    unsigned m_alignContent : 3; // EAlignContent
 
     unsigned userDrag : 2; // EUserDrag
     unsigned textOverflow : 1; // Whether or not lines that spill out should be truncated with "..."

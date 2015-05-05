@@ -1057,10 +1057,14 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, cons
 {
     ASSERT(childSizes.size() == children.size());
 
+    ContentPosition position = style().justifyContentPosition();
+    ContentDistributionType distribution = style().justifyContentDistribution();
+    RenderStyle::resolveContentJustification(style(), position);
+
     size_t numberOfChildrenForJustifyContent = numberOfInFlowPositionedChildren(children);
     LayoutUnit autoMarginOffset = autoMarginOffsetInMainAxis(children, availableFreeSpace);
     LayoutUnit mainAxisOffset = flowAwareBorderStart() + flowAwarePaddingStart();
-    mainAxisOffset += initialJustifyContentOffset(availableFreeSpace, style().justifyContentPosition(), style().justifyContentDistribution(), numberOfChildrenForJustifyContent);
+    mainAxisOffset += initialJustifyContentOffset(availableFreeSpace, position, distribution, numberOfChildrenForJustifyContent);
     if (style().flexDirection() == FlowRowReverse)
         mainAxisOffset += isHorizontalFlow() ? verticalScrollbarWidth() : horizontalScrollbarHeight();
 
@@ -1117,7 +1121,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, cons
 
         ++seenInFlowPositionedChildren;
         if (seenInFlowPositionedChildren < numberOfChildrenForJustifyContent)
-            mainAxisOffset += justifyContentSpaceBetweenChildren(availableFreeSpace, style().justifyContentDistribution(), numberOfChildrenForJustifyContent);
+            mainAxisOffset += justifyContentSpaceBetweenChildren(availableFreeSpace, distribution, numberOfChildrenForJustifyContent);
     }
 
     if (isColumnFlow())
@@ -1138,12 +1142,16 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, cons
 
 void RenderFlexibleBox::layoutColumnReverse(const OrderedFlexItemList& children, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace)
 {
+    ContentPosition position = style().justifyContentPosition();
+    ContentDistributionType distribution = style().justifyContentDistribution();
+    RenderStyle::resolveContentJustification(style(), position);
+
     // This is similar to the logic in layoutAndPlaceChildren, except we place the children
     // starting from the end of the flexbox. We also don't need to layout anything since we're
     // just moving the children to a new position.
     size_t numberOfChildrenForJustifyContent = numberOfInFlowPositionedChildren(children);
     LayoutUnit mainAxisOffset = logicalHeight() - flowAwareBorderEnd() - flowAwarePaddingEnd();
-    mainAxisOffset -= initialJustifyContentOffset(availableFreeSpace, style().justifyContentPosition(), style().justifyContentDistribution(), numberOfChildrenForJustifyContent);
+    mainAxisOffset -= initialJustifyContentOffset(availableFreeSpace, position, distribution, numberOfChildrenForJustifyContent);
     mainAxisOffset -= isHorizontalFlow() ? verticalScrollbarWidth() : horizontalScrollbarHeight();
 
     size_t seenInFlowPositionedChildren = 0;
@@ -1161,17 +1169,17 @@ void RenderFlexibleBox::layoutColumnReverse(const OrderedFlexItemList& children,
 
         ++seenInFlowPositionedChildren;
         if (seenInFlowPositionedChildren < numberOfChildrenForJustifyContent)
-            mainAxisOffset -= justifyContentSpaceBetweenChildren(availableFreeSpace, style().justifyContentDistribution(), numberOfChildrenForJustifyContent);
+            mainAxisOffset -= justifyContentSpaceBetweenChildren(availableFreeSpace, distribution, numberOfChildrenForJustifyContent);
     }
 }
 
-static LayoutUnit initialAlignContentOffset(LayoutUnit availableFreeSpace, EAlignContent alignContent, unsigned numberOfLines)
+static LayoutUnit initialAlignContentOffset(LayoutUnit availableFreeSpace, ContentPosition alignContent, ContentDistributionType alignContentDistribution, unsigned numberOfLines)
 {
-    if (alignContent == AlignContentFlexEnd)
+    if (alignContent == ContentPositionFlexEnd)
         return availableFreeSpace;
-    if (alignContent == AlignContentCenter)
+    if (alignContent == ContentPositionCenter)
         return availableFreeSpace / 2;
-    if (alignContent == AlignContentSpaceAround) {
+    if (alignContentDistribution == ContentDistributionSpaceAround) {
         if (availableFreeSpace > 0 && numberOfLines)
             return availableFreeSpace / (2 * numberOfLines);
         if (availableFreeSpace < 0)
@@ -1180,12 +1188,12 @@ static LayoutUnit initialAlignContentOffset(LayoutUnit availableFreeSpace, EAlig
     return 0;
 }
 
-static LayoutUnit alignContentSpaceBetweenChildren(LayoutUnit availableFreeSpace, EAlignContent alignContent, unsigned numberOfLines)
+static LayoutUnit alignContentSpaceBetweenChildren(LayoutUnit availableFreeSpace, ContentDistributionType alignContentDistribution, unsigned numberOfLines)
 {
     if (availableFreeSpace > 0 && numberOfLines > 1) {
-        if (alignContent == AlignContentSpaceBetween)
+        if (alignContentDistribution == ContentDistributionSpaceBetween)
             return availableFreeSpace / (numberOfLines - 1);
-        if (alignContent == AlignContentSpaceAround || alignContent == AlignContentStretch)
+        if (alignContentDistribution == ContentDistributionSpaceAround || alignContentDistribution == ContentDistributionStretch)
             return availableFreeSpace / numberOfLines;
     }
     return 0;
@@ -1193,7 +1201,11 @@ static LayoutUnit alignContentSpaceBetweenChildren(LayoutUnit availableFreeSpace
 
 void RenderFlexibleBox::alignFlexLines(Vector<LineContext>& lineContexts)
 {
-    if (!isMultiline() || style().alignContent() == AlignContentFlexStart)
+    ContentPosition position = style().alignContentPosition();
+    ContentDistributionType distribution = style().alignContentDistribution();
+    RenderStyle::resolveContentAlignment(style(), position, distribution);
+
+    if (!isMultiline() || position == ContentPositionFlexStart)
         return;
 
     LayoutUnit availableCrossAxisSpace = crossAxisContentExtent();
@@ -1201,16 +1213,16 @@ void RenderFlexibleBox::alignFlexLines(Vector<LineContext>& lineContexts)
         availableCrossAxisSpace -= lineContexts[i].crossAxisExtent;
 
     RenderBox* child = m_orderIterator.first();
-    LayoutUnit lineOffset = initialAlignContentOffset(availableCrossAxisSpace, style().alignContent(), lineContexts.size());
+    LayoutUnit lineOffset = initialAlignContentOffset(availableCrossAxisSpace, position, distribution, lineContexts.size());
     for (unsigned lineNumber = 0; lineNumber < lineContexts.size(); ++lineNumber) {
         lineContexts[lineNumber].crossAxisOffset += lineOffset;
         for (size_t childNumber = 0; childNumber < lineContexts[lineNumber].numberOfChildren; ++childNumber, child = m_orderIterator.next())
             adjustAlignmentForChild(*child, lineOffset);
 
-        if (style().alignContent() == AlignContentStretch && availableCrossAxisSpace > 0)
+        if (distribution == ContentDistributionStretch && availableCrossAxisSpace > 0)
             lineContexts[lineNumber].crossAxisExtent += availableCrossAxisSpace / static_cast<unsigned>(lineContexts.size());
 
-        lineOffset += alignContentSpaceBetweenChildren(availableCrossAxisSpace, style().alignContent(), lineContexts.size());
+        lineOffset += alignContentSpaceBetweenChildren(availableCrossAxisSpace, distribution, lineContexts.size());
     }
 }
 

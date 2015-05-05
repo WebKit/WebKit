@@ -54,8 +54,8 @@ shouldBeEqualToString('flexitem.style.webkitOrder', '');
 flexbox.style.display = '-webkit-flex';
 
 shouldBeEqualToString('flexbox.style.webkitJustifyContent', '');
-// The initial value is 'flex-start'.
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'flex-start');
+// The initial value is 'auto' which, will be resolve to 'stretch' for flexbox containes (behaving like 'flex-start' for the justify-content property).
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'stretch');
 
 flexbox.style.webkitJustifyContent = 'foo';
 shouldBeEqualToString('flexbox.style.webkitJustifyContent', '');
@@ -78,7 +78,7 @@ shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyConte
 
 flexbox.style.webkitJustifyContent = '';
 shouldBeEqualToString('flexbox.style.webkitJustifyContent', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'flex-start');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitJustifyContent', 'stretch');
 
 shouldBeEqualToString('flexbox.style.webkitAlignSelf', '');
 // The initial value is 'auto', which will be resolved depending on parent's style (except for the 'document' element).
@@ -276,6 +276,8 @@ for (var i = 0; i < computedStyle.length; ++i) {
         foundFlexFlow = true;
 }
 shouldBeFalse('foundFlexFlow');
+
+flexbox.style.display = '-webkit-flex';
 
 // The initial value is 'stretch'.
 shouldBeEqualToString('flexbox.style.webkitAlignContent', '');

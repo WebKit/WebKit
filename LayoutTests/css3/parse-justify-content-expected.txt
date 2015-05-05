@@ -55,7 +55,7 @@ PASS window.getComputedStyle(element, '').getPropertyValue('justify-content') is
 PASS element.style.justifyContent is "auto"
 PASS window.getComputedStyle(element, '').getPropertyValue('justify-content') is "start"
 PASS element.style.justifyContent is "auto"
-PASS window.getComputedStyle(element, '').getPropertyValue('justify-content') is "flex-start"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-content') is "stretch"
 PASS element.style.justifyContent is "auto"
 PASS window.getComputedStyle(element, '').getPropertyValue('justify-content') is "start"
 PASS element.style.justifyContent is "flex-end"
@@ -121,7 +121,7 @@ Test the value 'initial' for flex containers
 PASS element.style.justifyContent is "right true"
 PASS window.getComputedStyle(element, '').getPropertyValue('justify-content') is "right true"
 PASS element.style.justifyContent is "initial"
-PASS window.getComputedStyle(element, '').getPropertyValue('justify-content') is "flex-start"
+PASS window.getComputedStyle(element, '').getPropertyValue('justify-content') is "stretch"
 
 Test the value 'inherit'
 PASS element.style.justifyContent is "end"
