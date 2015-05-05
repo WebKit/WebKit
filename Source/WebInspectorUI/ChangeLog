@@ -1,3 +1,12 @@
+2015-05-05  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Source/WebInspectorUI/UserInterface/Images/Logs.svg has unknown attribute "fille"
+        https://bugs.webkit.org/show_bug.cgi?id=144627
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Images/Logs.svg: Change "fille" to "fill".
+
 2015-05-05  Andres Gomez  <agomez@igalia.com>
 
         [GTK] Web Inspector: New Images added in r183339, r183338, r183332, r183323, r182660, and r182186
