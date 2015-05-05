@@ -46,8 +46,8 @@ public:
 
     void addPattern(uint64_t patternId, const Vector<Term>& pattern);
 
-    void processNFAs(std::function<void(NFA&&)> handler) const;
-    void clear();
+    void processNFAs(std::function<void(NFA&&)> handler);
+    bool isEmpty();
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     size_t memoryUsed() const;

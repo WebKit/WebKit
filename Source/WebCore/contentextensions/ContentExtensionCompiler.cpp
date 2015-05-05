@@ -198,6 +198,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
 #endif
 
     bool firstNFASeen = false;
+    // FIXME: Combine small NFAs to reduce the number of NFAs.
     combinedURLFilters.processNFAs([&](NFA&& nfa) {
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
         nfa.debugPrintDot();
@@ -244,6 +245,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
 
         firstNFASeen = true;
     });
+    ASSERT(combinedURLFilters.isEmpty());
 
     if (!firstNFASeen) {
         // Our bytecode interpreter expects to have at least one DFA, so if we haven't seen any
@@ -260,9 +262,6 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, const
         LOG_LARGE_STRUCTURES(bytecode, bytecode.capacity() * sizeof(uint8_t));
         client.writeBytecode(WTF::move(bytecode));
     }
-
-    // FIXME: combinedURLFilters should be cleared incrementally as it is processing NFAs. 
-    combinedURLFilters.clear();
 
     LOG_LARGE_STRUCTURES(universalActionLocations, universalActionLocations.capacity() * sizeof(unsigned));
     universalActionLocations.clear();

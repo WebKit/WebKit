@@ -1,3 +1,25 @@
+2015-05-05  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Combine NFAs properly and free memory as we compile.
+        https://bugs.webkit.org/show_bug.cgi?id=144485
+
+        Reviewed by Benjamin Poulain.
+
+        This patch correctly combines all regular expressions with a common prefix up to
+        the last quantified term into the same NFA.  It also deletes the prefix tree as it 
+        creates NFAs, thus reducing the maximum memory used when compiling.
+
+        * contentextensions/CombinedURLFilters.cpp:
+        (WebCore::ContentExtensions::CombinedURLFilters::isEmpty):
+        (WebCore::ContentExtensions::CombinedURLFilters::addPattern):
+        (WebCore::ContentExtensions::generateNFAForSubtree):
+        (WebCore::ContentExtensions::CombinedURLFilters::processNFAs):
+        (WebCore::ContentExtensions::CombinedURLFilters::clear): Deleted.
+        * contentextensions/CombinedURLFilters.h:
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::compileRuleList):
+        * contentextensions/ContentExtensionsDebugging.h:
+
 2015-05-04  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Use less memory when writing byte code to file

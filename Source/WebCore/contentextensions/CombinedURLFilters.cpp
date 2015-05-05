@@ -47,7 +47,6 @@ typedef Vector<PrefixTreeEdge, 0, WTF::CrashOnOverflow, 1> PrefixTreeEdges;
 struct PrefixTreeVertex {
     PrefixTreeEdges edges;
     ActionList finalActions;
-    bool inVariableLengthPrefix { false };
 };
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
@@ -116,9 +115,9 @@ CombinedURLFilters::~CombinedURLFilters()
 {
 }
 
-void CombinedURLFilters::clear()
+bool CombinedURLFilters::isEmpty()
 {
-    m_prefixTreeRoot = std::make_unique<PrefixTreeVertex>();
+    return m_prefixTreeRoot->edges.isEmpty();
 }
 
 void CombinedURLFilters::addPattern(uint64_t actionId, const Vector<Term>& pattern)
@@ -128,13 +127,8 @@ void CombinedURLFilters::addPattern(uint64_t actionId, const Vector<Term>& patte
     if (pattern.isEmpty())
         return;
 
-    Vector<PrefixTreeVertex*, 128> prefixTreeVerticesForPattern;
-    prefixTreeVerticesForPattern.reserveInitialCapacity(pattern.size() + 1);
-
     // Extend the prefix tree with the new pattern.
-    bool hasNewTerm = false;
     PrefixTreeVertex* lastPrefixTree = m_prefixTreeRoot.get();
-    prefixTreeVerticesForPattern.append(lastPrefixTree);
 
     for (const Term& term : pattern) {
         size_t nextEntryIndex = WTF::notFound;
@@ -147,129 +141,125 @@ void CombinedURLFilters::addPattern(uint64_t actionId, const Vector<Term>& patte
         if (nextEntryIndex != WTF::notFound)
             lastPrefixTree = lastPrefixTree->edges[nextEntryIndex].child.get();
         else {
-            hasNewTerm = true;
-
             lastPrefixTree->edges.append(PrefixTreeEdge({term, std::make_unique<PrefixTreeVertex>()}));
             lastPrefixTree = lastPrefixTree->edges.last().child.get();
         }
-        prefixTreeVerticesForPattern.append(lastPrefixTree);
     }
 
-    ActionList& actions = prefixTreeVerticesForPattern.last()->finalActions;
+    ActionList& actions = lastPrefixTree->finalActions;
     if (actions.find(actionId) == WTF::notFound)
         actions.append(actionId);
-
-    if (!hasNewTerm)
-        return;
-
-    bool hasSeenVariableLengthTerms = false;
-    for (unsigned i = pattern.size(); i--;) {
-        const Term& term = pattern[i];
-        hasSeenVariableLengthTerms |= !term.hasFixedLength();
-        prefixTreeVerticesForPattern[i + 1]->inVariableLengthPrefix |= hasSeenVariableLengthTerms;
-    }
-    prefixTreeVerticesForPattern[0]->inVariableLengthPrefix |= hasSeenVariableLengthTerms;
 }
 
-struct ActiveSubtree {
-    const PrefixTreeVertex* vertex;
-    PrefixTreeEdges::const_iterator iterator;
-};
-
-static void generateNFAForSubtree(NFA& nfa, unsigned rootId, const PrefixTreeVertex& prefixTreeVertex)
+static void generateNFAForSubtree(NFA& nfa, unsigned nfaRootId, PrefixTreeVertex& root)
 {
-    ASSERT_WITH_MESSAGE(!prefixTreeVertex.inVariableLengthPrefix, "This code assumes the subtrees with variable prefix length have already been handled.");
-
-    struct ActiveNFASubtree : ActiveSubtree {
-        ActiveNFASubtree(const PrefixTreeVertex* vertex, PrefixTreeEdges::const_iterator iterator, unsigned nodeIndex)
-            : ActiveSubtree({ vertex, iterator })
-            , lastNodeIndex(nodeIndex)
+    // This recurses the subtree of the prefix tree.
+    // For each edge that has fixed length (no quantifiers like ?, *, or +) it generates the nfa graph,
+    // recurses into children, and deletes any processed leaf nodes.
+    struct ActiveSubtree {
+        ActiveSubtree(PrefixTreeVertex& vertex, unsigned nfaNodeId, unsigned edgeIndex)
+            : vertex(vertex)
+            , nfaNodeId(nfaNodeId)
+            , edgeIndex(edgeIndex)
         {
         }
-        unsigned lastNodeIndex;
+        PrefixTreeVertex& vertex;
+        unsigned nfaNodeId;
+        unsigned edgeIndex;
     };
+    Vector<ActiveSubtree> stack;
+    if (!root.edges.isEmpty())
+        stack.append(ActiveSubtree(root, nfaRootId, 0));
+    
+    // Generate graphs for each subtree that does not contain any quantifiers.
+    while (!stack.isEmpty()) {
+        PrefixTreeVertex& vertex = stack.last().vertex;
+        const unsigned edgeIndex = stack.last().edgeIndex;
 
-    Vector<ActiveNFASubtree> activeStack;
-    activeStack.append(ActiveNFASubtree(&prefixTreeVertex, prefixTreeVertex.edges.begin(), rootId));
-
-    while (true) {
-    ProcessSubtree:
-        for (ActiveNFASubtree& activeSubtree = activeStack.last(); activeSubtree.iterator != activeSubtree.vertex->edges.end(); ++activeSubtree.iterator) {
-            if (activeSubtree.iterator->child->inVariableLengthPrefix)
+        if (edgeIndex < vertex.edges.size()) {
+            auto& edge = vertex.edges[edgeIndex];
+            
+            // Quantified edges in the subtree will be a part of another NFA.
+            if (!edge.term.hasFixedLength()) {
+                stack.last().edgeIndex++;
                 continue;
-
-            const Term& term = activeSubtree.iterator->term;
-            unsigned newEndNodeIndex = term.generateGraph(nfa, activeSubtree.lastNodeIndex, activeSubtree.iterator->child->finalActions);
-
-            PrefixTreeVertex* prefixTreeVertex = activeSubtree.iterator->child.get();
-            if (!prefixTreeVertex->edges.isEmpty()) {
-                activeStack.append(ActiveNFASubtree(prefixTreeVertex, prefixTreeVertex->edges.begin(), newEndNodeIndex));
-                goto ProcessSubtree;
+            }
+            
+            unsigned subtreeRootId = edge.term.generateGraph(nfa, stack.last().nfaNodeId, edge.child->finalActions);
+            ASSERT(edge.child.get());
+            stack.append(ActiveSubtree(*edge.child.get(), subtreeRootId, 0));
+        } else {
+            ASSERT(edgeIndex == vertex.edges.size());
+            vertex.edges.removeAllMatching([](PrefixTreeEdge& edge)
+            {
+                return edge.term.isDeletedValue();
+            });
+            stack.removeLast();
+            if (!stack.isEmpty()) {
+                auto& activeSubtree = stack.last();
+                auto& edge = activeSubtree.vertex.edges[stack.last().edgeIndex];
+                if (edge.child->edges.isEmpty())
+                    edge.term = Term(Term::DeletedValue); // Mark this leaf for deleting.
+                activeSubtree.edgeIndex++;
             }
         }
-
-        activeStack.removeLast();
-        if (activeStack.isEmpty())
-            break;
-        ++activeStack.last().iterator;
     }
 }
 
-void CombinedURLFilters::processNFAs(std::function<void(NFA&&)> handler) const
+void CombinedURLFilters::processNFAs(std::function<void(NFA&&)> handler)
 {
-    Vector<ActiveSubtree> activeStack;
-    activeStack.append(ActiveSubtree({ m_prefixTreeRoot.get(), m_prefixTreeRoot->edges.begin() }));
-
+#if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
+    print();
+#endif
     while (true) {
-    ProcessSubtree:
-        ActiveSubtree& activeSubtree = activeStack.last();
-
-        // We go depth first into the subtrees with variable prefix. Find the next subtree.
-        for (; activeSubtree.iterator != activeSubtree.vertex->edges.end(); ++activeSubtree.iterator) {
-            PrefixTreeVertex* prefixTreeVertex = activeSubtree.iterator->child.get();
-            if (prefixTreeVertex->inVariableLengthPrefix) {
-                activeStack.append(ActiveSubtree({ prefixTreeVertex, prefixTreeVertex->edges.begin() }));
-                goto ProcessSubtree;
-            }
+        // Traverse out to a leaf.
+        Vector<PrefixTreeVertex*, 128> stack;
+        PrefixTreeVertex* vertex = m_prefixTreeRoot.get();
+        while (true) {
+            ASSERT(vertex);
+            stack.append(vertex);
+            if (vertex->edges.isEmpty())
+                break;
+            vertex = vertex->edges.last().child.get();
         }
-
-        // After we reached here, we know that all the subtrees with variable prefixes have been processed,
-        // time to generate the NFA for the graph rooted here.
-        bool needToGenerate = activeSubtree.vertex->edges.isEmpty() && !activeSubtree.vertex->finalActions.isEmpty();
-        if (!needToGenerate) {
-            for (const auto& edge : activeSubtree.vertex->edges) {
-                if (!edge.child->inVariableLengthPrefix) {
-                    needToGenerate = true;
-                    break;
-                }
-            }
+        if (stack.size() == 1)
+            break; // We're done once we have processed and removed all the edges in the prefix tree.
+        
+        // Find the prefix root for this NFA. This is the vertex after the last term with a quantifier if there is one,
+        // or the root if there are no quantifiers left.
+        while (stack.size() > 1) {
+            if (!stack[stack.size() - 2]->edges.last().term.hasFixedLength())
+                break;
+            stack.removeLast();
         }
-
-        if (needToGenerate) {
-            NFA nfa;
-
-            unsigned prefixEnd = nfa.root();
-
-            for (unsigned i = 0; i < activeStack.size() - 1; ++i) {
-                const Term& term = activeStack[i].iterator->term;
-                prefixEnd = term.generateGraph(nfa, prefixEnd, activeStack[i].iterator->child->finalActions);
-            }
-
-            for (const auto& edge : activeSubtree.vertex->edges) {
-                if (!edge.child->inVariableLengthPrefix) {
-                    unsigned newSubtreeStart = edge.term.generateGraph(nfa, prefixEnd, edge.child->finalActions);
-                    generateNFAForSubtree(nfa, newSubtreeStart, *edge.child);
-                }
-            }
-            
-            handler(WTF::move(nfa));
+        ASSERT_WITH_MESSAGE(!stack.isEmpty(), "At least the root should be in the stack");
+        
+        // Make an NFA with the subtrees for whom this is also the last quantifier (or who also have no quantifier).
+        NFA nfa;
+        // Put the prefix into the NFA.
+        unsigned prefixEnd = nfa.root();
+        for (unsigned i = 0; i < stack.size() - 1; ++i) {
+            ASSERT(!stack[i]->edges.isEmpty());
+            const PrefixTreeEdge& edge = stack[i]->edges.last();
+            prefixEnd = edge.term.generateGraph(nfa, prefixEnd, edge.child->finalActions);
         }
-
-        // We have processed all the subtrees of this level, pop the stack and move on to the next sibling.
-        activeStack.removeLast();
-        if (activeStack.isEmpty())
-            break;
-        ++activeStack.last().iterator;
+        // Put the non-quantified vertices in the subtree into the NFA and delete them.
+        ASSERT(stack.last());
+        generateNFAForSubtree(nfa, prefixEnd, *stack.last());
+        
+        handler(WTF::move(nfa));
+        
+        // Clean up any processed leaf nodes.
+        while (true) {
+            if (stack.size() > 1) {
+                if (stack[stack.size() - 1]->edges.isEmpty()) {
+                    stack[stack.size() - 2]->edges.removeLast();
+                    stack.removeLast();
+                } else
+                    break; // Vertex is not a leaf.
+            } else
+                break; // Leave the empty root.
+        }
     }
 }
 

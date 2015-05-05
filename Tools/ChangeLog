@@ -1,3 +1,15 @@
+2015-05-05  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Combine NFAs properly and free memory as we compile.
+        https://bugs.webkit.org/show_bug.cgi?id=144485
+
+        Reviewed by Benjamin Poulain.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::TEST_F):
+        Added tests for correctly splitting up NFAs with unquantified terms after quantified terms.
+        Added tests for deep NFAs.
+
 2015-05-04  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Use less memory when writing byte code to file
