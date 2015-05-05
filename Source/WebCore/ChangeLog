@@ -1,3 +1,33 @@
+2015-05-04  Dean Jackson  <dino@apple.com>
+
+        [iOS] Use system blue for Airplay Glyph
+        https://bugs.webkit.org/show_bug.cgi?id=144614
+
+        Reviewed by Eric Carlson.
+
+        Revert to using masks for the glyphs in the media controls,
+        which allows us to:
+        - use the system blue color when Airplay is active <rdar://problem/20245297>
+        - fade out from the active state <rdar://problem/20245487>
+        - allow the play button to give touch feedback <rdar://problem/17849930>
+
+        While those are three separate bugs, they all get addressed by
+        this single change.
+
+        * Modules/mediacontrols/mediaControlsiOS.css:
+        (audio::-webkit-media-controls-optimized-fullscreen-button):
+        (audio::-webkit-media-controls-optimized-fullscreen-button:active):
+        (video::-webkit-media-controls-play-button):
+        (video::-webkit-media-controls-play-button.paused):
+        (video::-webkit-media-controls-fullscreen-button):
+        (video::-webkit-media-controls-wireless-playback-picker-button):
+        (video::-webkit-media-controls-wireless-playback-picker-button.playing):
+        (video::-webkit-media-controls-optimized-fullscreen-button):
+        (video::-webkit-media-controls-play-button:active): Deleted.
+        (video::-webkit-media-controls-play-button.paused:active): Deleted.
+        (video::-webkit-media-controls-fullscreen-button:active): Deleted.
+        (video::-webkit-media-controls-wireless-playback-picker-button:active): Deleted.
+
 2015-05-05  Eric Carlson  <eric.carlson@apple.com>
 
         Only autoplay videos should not automatically play to playback target
