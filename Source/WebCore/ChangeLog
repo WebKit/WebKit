@@ -1,3 +1,13 @@
+2015-05-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Introducing the Platform Abstraction Layer (PAL)
+        https://bugs.webkit.org/show_bug.cgi?id=143358
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.xcodeproj/project.pbxproj: Let the project know about the .a
+        * Configurations/FeatureDefines.xcconfig: Updated
+
 2015-05-06  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] remove some unnecessary iOS-only media code

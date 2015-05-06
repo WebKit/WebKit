@@ -1,3 +1,12 @@
+2015-05-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Introducing the Platform Abstraction Layer (PAL)
+        https://bugs.webkit.org/show_bug.cgi?id=143358
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/build-webkit: Add it to build-webkit.
+
 2015-05-06  Alex Christensen  <achristensen@webkit.org>
 
         Fix api tests after r183877.
