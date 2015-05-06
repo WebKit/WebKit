@@ -51,7 +51,7 @@ inline void CopiedBlock::reportLiveBytes(SpinLockHolder&, JSCell* owner, CopyTok
 #endif
     m_liveBytes += bytes;
     checkConsistency();
-    ASSERT(m_liveBytes <= CopiedBlock::blockSize);
+    ASSERT(m_liveBytes <= m_capacity);
 
     if (isPinned())
         return;
