@@ -2,6 +2,13 @@
 
         Fix the build.
 
+        * Platform/mac/LayerHostingContext.mm:
+        (WebKit::LayerHostingContext::setFencePort):
+
+2015-05-05  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
         * UIProcess/mac/WKViewLayoutStrategy.mm:
         (-[WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy updateLayout]):
 
