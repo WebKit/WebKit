@@ -8,6 +8,9 @@
 
 description("Test to make sure we can toggle underline and strike through separately.")
 
+if (window.internals)
+    internals.settings.setEditingBehavior('mac');
+
 var testContainer = document.createElement("div");
 testContainer.contentEditable = true;
 document.body.appendChild(testContainer);

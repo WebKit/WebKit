@@ -13,11 +13,12 @@
 <script>
 
 function editingTest() {
+    if (window.internals)
+        internals.settings.setEditingBehavior('mac');
 
     for (i = 0; i < 21; i++) {
-            execExtendSelectionForwardByCharacterCommand();
-            execStrikethroughCommand();
-            
+        execExtendSelectionForwardByCharacterCommand();
+        execStrikethroughCommand();
     }
  }
 

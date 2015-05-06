@@ -1,3 +1,10 @@
+2015-05-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix tests after r183770 on non-Mac ports. These tests are expecting Mac editing behavior.
+
+        * editing/execCommand/strikethroughSelection.html:
+        * editing/execCommand/toggle-mixed-text-decorations.html:
+
 2015-05-05  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Some assertion failures in compositing code after r183820.
