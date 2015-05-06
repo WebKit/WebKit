@@ -1,3 +1,10 @@
+2015-05-06  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed GTK+ gardening
+
+        * platform/gtk/TestExpectations: Remove a couple expectations tests.
+        * platform/gtk/editing/execCommand/nsresponder-outdent-expected.txt:
+
 2015-05-06  Alexey Proskuryakov  <ap@apple.com>
 
         Update expectations for fast/forms/button-line-height.html
