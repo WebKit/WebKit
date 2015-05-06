@@ -134,16 +134,6 @@ static FcPattern* getDefaultFontconfigOptions()
     return pattern;
 }
 
-static void rotateCairoMatrixForVerticalOrientation(cairo_matrix_t* matrix)
-{
-    // The resulting transformation matrix for vertical glyphs (V) is a
-    // combination of rotation (R) and translation (T) applied on the
-    // horizontal matrix (H). V = H . R . T, where R rotates by -90 degrees
-    // and T translates by font size towards y axis.
-    cairo_matrix_rotate(matrix, -piOverTwoDouble);
-    cairo_matrix_translate(matrix, 0.0, 1.0);
-}
-
 FontPlatformData::FontPlatformData(FcPattern* pattern, const FontDescription& fontDescription)
     : m_pattern(pattern)
     , m_fallbacks(nullptr)
@@ -154,8 +144,8 @@ FontPlatformData::FontPlatformData(FcPattern* pattern, const FontDescription& fo
     , m_scaledFont(nullptr)
     , m_orientation(fontDescription.orientation())
 {
+    ASSERT(m_pattern);
     RefPtr<cairo_font_face_t> fontFace = adoptRef(cairo_ft_font_face_create_for_pattern(m_pattern.get()));
-    initializeWithFontFace(fontFace.get(), fontDescription);
 
     int spacing;
     if (FcPatternGetInteger(pattern, FC_SPACING, 0, &spacing) == FcResultMatch && spacing == FC_MONO)
@@ -173,6 +163,16 @@ FontPlatformData::FontPlatformData(FcPattern* pattern, const FontDescription& fo
         if (!m_syntheticBold && FcPatternGetInteger(pattern, FC_WEIGHT, 0, &weight) == FcResultMatch)
             m_syntheticBold = m_syntheticBold || weight < FC_WEIGHT_DEMIBOLD;
     }
+
+    // We requested an italic font, but Fontconfig gave us one that was neither oblique nor italic.
+    int actualFontSlant;
+    bool descriptionAllowsSyntheticOblique = fontDescription.fontSynthesis() & FontSynthesisStyle;
+    if (descriptionAllowsSyntheticOblique && fontDescription.italic()
+        && FcPatternGetInteger(pattern, FC_SLANT, 0, &actualFontSlant) == FcResultMatch) {
+        m_syntheticOblique = actualFontSlant == FC_SLANT_ROMAN;
+    }
+
+    buildScaledFont(fontFace.get());
 }
 
 FontPlatformData::FontPlatformData(float size, bool bold, bool italic)
@@ -196,7 +196,7 @@ FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, float size, bool
     , m_scaledFont(nullptr)
     , m_orientation(orientation)
 {
-    initializeWithFontFace(fontFace);
+    buildScaledFont(fontFace);
 
     FT_Face fontConfigFace = cairo_ft_scaled_font_lock_face(m_scaledFont);
     if (fontConfigFace) {
@@ -217,7 +217,6 @@ FontPlatformData& FontPlatformData::operator=(const FontPlatformData& other)
     m_fixedWidth = other.m_fixedWidth;
     m_pattern = other.m_pattern;
     m_orientation = other.m_orientation;
-    m_horizontalOrientationMatrix = other.m_horizontalOrientationMatrix;
 
     if (m_fallbacks) {
         FcFontSetDestroy(m_fallbacks);
@@ -252,7 +251,7 @@ FontPlatformData::FontPlatformData(const FontPlatformData& other, float size)
     // We need to reinitialize the instance, because the difference in size 
     // necessitates a new scaled font instance.
     m_size = size;
-    initializeWithFontFace(cairo_scaled_font_get_font_face(m_scaledFont));
+    buildScaledFont(cairo_scaled_font_get_font_face(m_scaledFont));
 }
 
 FontPlatformData::~FontPlatformData()
@@ -301,7 +300,7 @@ String FontPlatformData::description() const
 }
 #endif
 
-void FontPlatformData::initializeWithFontFace(cairo_font_face_t* fontFace, const FontDescription& fontDescription)
+void FontPlatformData::buildScaledFont(cairo_font_face_t* fontFace)
 {
     cairo_font_options_t* options = getDefaultCairoFontOptions();
     FcPattern* optionsPattern = m_pattern ? m_pattern.get() : getDefaultFontconfigOptions();
@@ -309,10 +308,6 @@ void FontPlatformData::initializeWithFontFace(cairo_font_face_t* fontFace, const
 
     cairo_matrix_t ctm;
     cairo_matrix_init_identity(&ctm);
-
-    // Scaling a font with width zero size leads to a failed cairo_scaled_font_t instantiations.
-    // Instead we scale we scale the font to a very tiny size and just abort rendering later on.
-    float realSize = m_size ? m_size : 1;
 
     // FontConfig may return a list of transformation matrices with the pattern, for instance,
     // for fonts that are oblique. We use that to initialize the cairo font matrix.
@@ -326,15 +321,10 @@ void FontPlatformData::initializeWithFontFace(cairo_font_face_t* fontFace, const
     cairo_matrix_init(&fontMatrix, fontConfigMatrix.xx, -fontConfigMatrix.yx,
         -fontConfigMatrix.xy, fontConfigMatrix.yy, 0, 0);
 
-    // We requested an italic font, but Fontconfig gave us one that was neither oblique nor italic.
-    int actualFontSlant;
-    bool descriptionAllowsSyntheticOblique = fontDescription.fontSynthesis() & FontSynthesisStyle;
-    if (descriptionAllowsSyntheticOblique && fontDescription.italic()
-        && FcPatternGetInteger(optionsPattern, FC_SLANT, 0, &actualFontSlant) == FcResultMatch) {
-        m_syntheticOblique = actualFontSlant == FC_SLANT_ROMAN;
-    }
-
-    // The matrix from FontConfig does not include the scale. 
+    // The matrix from FontConfig does not include the scale. Scaling a font with width zero size leads
+    // to a failed cairo_scaled_font_t instantiations. Instead we scale we scale the font to a very tiny
+    // size and just abort rendering later on.
+    float realSize = m_size ? m_size : 1;
     cairo_matrix_scale(&fontMatrix, realSize, realSize);
 
     if (syntheticOblique()) {
@@ -344,9 +334,17 @@ void FontPlatformData::initializeWithFontFace(cairo_font_face_t* fontFace, const
         cairo_matrix_multiply(&fontMatrix, m_orientation == Vertical ? &verticalSkew : &skew, &fontMatrix);
     }
 
-    m_horizontalOrientationMatrix = fontMatrix;
-    if (m_orientation == Vertical)
-        rotateCairoMatrixForVerticalOrientation(&fontMatrix);
+    if (m_orientation == Vertical) {
+        // The resulting transformation matrix for vertical glyphs (V) is a
+        // combination of rotation (R) and translation (T) applied on the
+        // horizontal matrix (H). V = H . R . T, where R rotates by -90 degrees
+        // and T translates by font size towards y axis.
+        cairo_matrix_rotate(&fontMatrix, -piOverTwoDouble);
+        cairo_matrix_translate(&fontMatrix, 0.0, 1.0);
+    }
+
+    if (m_scaledFont && m_scaledFont != hashTableDeletedFontValue())
+        cairo_scaled_font_destroy(m_scaledFont);
 
     m_scaledFont = cairo_scaled_font_create(fontFace, &fontMatrix, &ctm, options);
     cairo_font_options_destroy(options);
@@ -397,31 +395,22 @@ PassRefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
 
 void FontPlatformData::setOrientation(FontOrientation orientation)
 {
-    ASSERT(m_scaledFont);
-
     if (!m_scaledFont || (m_orientation == orientation))
         return;
 
-    cairo_matrix_t transformationMatrix;
-    cairo_matrix_init_identity(&transformationMatrix);
-
-    cairo_matrix_t fontMatrix;
-    cairo_scaled_font_get_font_matrix(m_scaledFont, &fontMatrix);
-
-    cairo_font_options_t* options = getDefaultCairoFontOptions();
-
-    // In case of vertical orientation, rotate the transformation matrix.
-    // Otherwise restore the horizontal orientation matrix.
-    if (orientation == Vertical)
-        rotateCairoMatrixForVerticalOrientation(&fontMatrix);
-    else
-        fontMatrix = m_horizontalOrientationMatrix;
-
-    cairo_font_face_t* fontFace = cairo_scaled_font_get_font_face(m_scaledFont);
-    cairo_scaled_font_destroy(m_scaledFont);
-    m_scaledFont = cairo_scaled_font_create(fontFace, &fontMatrix, &transformationMatrix, options);
-    cairo_font_options_destroy(options);
+    ASSERT(m_scaledFont);
     m_orientation = orientation;
+    buildScaledFont(cairo_scaled_font_get_font_face(m_scaledFont));
+}
+
+void FontPlatformData::setSyntheticOblique(bool newSyntheticObliqueValue)
+{
+    if (newSyntheticObliqueValue == syntheticOblique())
+        return;
+
+    ASSERT(m_scaledFont);
+    m_syntheticOblique = newSyntheticObliqueValue;
+    buildScaledFont(cairo_scaled_font_get_font_face(m_scaledFont));
 }
 
 }

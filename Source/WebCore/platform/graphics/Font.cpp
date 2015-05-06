@@ -335,8 +335,8 @@ PassRefPtr<Font> Font::nonSyntheticItalicFont() const
         m_derivedFontData = std::make_unique<DerivedFontData>(isCustomFont());
     if (!m_derivedFontData->nonSyntheticItalic) {
         FontPlatformData nonSyntheticItalicFontPlatformData(m_platformData);
-#if PLATFORM(COCOA)
-        nonSyntheticItalicFontPlatformData.m_syntheticOblique = false;
+#if PLATFORM(COCOA) || USE(CAIRO)
+        nonSyntheticItalicFontPlatformData.setSyntheticOblique(false);
 #endif
         m_derivedFontData->nonSyntheticItalic = create(nonSyntheticItalicFontPlatformData, isCustomFont());
     }

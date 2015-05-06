@@ -1,5 +1,14 @@
 2015-05-06  Martin Robinson  <mrobinson@igalia.com>
 
+        [FreeType] Vertical CJK glyphs should not be rendered with synthetic oblique
+        https://bugs.webkit.org/show_bug.cgi?id=144612
+
+        Reviewed by Darin Adler.
+
+        * platform/gtk/TestExpectations: Remove expectation for failing test.
+
+2015-05-06  Martin Robinson  <mrobinson@igalia.com>
+
         Unreviewed GTK+ gardening
 
         * platform/gtk/TestExpectations: Remove a couple expectations tests.

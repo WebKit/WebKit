@@ -1,3 +1,38 @@
+2015-05-06  Martin Robinson  <mrobinson@igalia.com>
+
+        [FreeType] Vertical CJK glyphs should not be rendered with synthetic oblique
+        https://bugs.webkit.org/show_bug.cgi?id=144612
+
+        Reviewed by Darin Adler.
+
+        No new tests. This causes fast/text/international/synthesized-italic-vertical.html to pass.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::nonSyntheticItalicFont): Compile this method for Cairo as well.
+        * platform/graphics/FontCascadeFonts.cpp:
+        (WebCore::FontCascadeFonts::glyphDataForSystemFallback): When searching for the system fallback,
+        ensure that we do not use synthetic oblique when rendering vertical CJK glyphs.
+        (WebCore::FontCascadeFonts::glyphDataForNormalVariant): Extend the CJK fix to Cairo ports.
+        * platform/graphics/FontPlatformData.h:
+        (WebCore::FontPlatformData::setSyntheticOblique): Added this helper method, because
+        Freetype/Cairo ports needs to be able to recreate the scaled font matrix when the
+        synthetic oblique settings changes.
+        * platform/graphics/freetype/FontPlatformData.h: Rename initializeWithFontFace to buildScaledFont.
+        Remove the now unused m_horizontalOrientationMatrix member.
+        (WebCore::FontPlatformData::setSyntheticOblique): Added the helper here as well.
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Calculate whether or not to use synthetic oblique here,
+        before buildScaledFont is called. Call buildScaledFont instead of initializeWithFontFace.
+        (WebCore::FontPlatformData::operator=):
+        (WebCore::FontPlatformData::buildScaledFont): Renamed from initializeWithFontFace, does
+        the same thing, except calculate whether or not to use synthetic oblique. Instead just
+        reads the value.
+        (WebCore::FontPlatformData::setOrientation): Instead of adjusting the font matrix, recreate
+        the entire font.
+        (WebCore::FontPlatformData::setSyntheticOblique): Added.
+        (WebCore::rotateCairoMatrixForVerticalOrientation): Deleted.
+        (WebCore::FontPlatformData::initializeWithFontFace): Deleted.
+
 2015-05-06  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Test splitting NFAs by max NFA size.

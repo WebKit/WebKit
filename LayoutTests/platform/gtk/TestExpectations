@@ -2363,8 +2363,6 @@ webkit.org/b/144494 printing/quirks-percentage-height-body.html [ ImageOnlyFailu
 webkit.org/b/144494 printing/quirks-percentage-height.html [ ImageOnlyFailure ]
 webkit.org/b/144494 printing/standards-percentage-heights.html [ ImageOnlyFailure ]
 
-webkit.org/b/144573 fast/text/international/synthesized-italic-vertical.html [ ImageOnlyFailure ]
-
 webkit.org/b/144574 imported/mozilla/svg/objectBoundingBox-and-mask.svg [ ImageOnlyFailure ]
 webkit.org/b/144574 imported/mozilla/svg/text/mask-applied.svg [ ImageOnlyFailure ]
 webkit.org/b/144574 svg/masking/mask-negative-scale.svg [ ImageOnlyFailure ]

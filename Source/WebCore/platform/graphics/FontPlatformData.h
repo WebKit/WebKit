@@ -139,6 +139,7 @@ public:
     FontWidthVariant widthVariant() const { return m_widthVariant; }
 
     void setOrientation(FontOrientation orientation) { m_orientation = orientation; }
+    void setSyntheticOblique(bool syntheticOblique) { m_syntheticOblique = syntheticOblique; }
 
 #if USE(CAIRO)
     cairo_scaled_font_t* scaledFont() const { return m_scaledFont; }

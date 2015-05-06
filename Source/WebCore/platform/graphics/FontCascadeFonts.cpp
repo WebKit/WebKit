@@ -218,7 +218,7 @@ static bool shouldIgnoreRotation(UChar32 character)
     return false;
 }
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(CAIRO)
 static GlyphData glyphDataForCJKCharacterWithoutSyntheticItalic(UChar32 character, GlyphData& data)
 {
     GlyphData nonItalicData = data.font->nonSyntheticItalicFont()->glyphDataForCharacter(character);
@@ -273,9 +273,13 @@ GlyphData FontCascadeFonts::glyphDataForSystemFallback(UChar32 c, const FontDesc
     else
         fallbackGlyphData = systemFallbackFont->variantFont(description, variant)->glyphDataForCharacter(c);
 
-    if (variant == NormalVariant && fallbackGlyphData.font) {
-        if (!FontCascade::isCJKIdeographOrSymbol(c) && fallbackGlyphData.font->platformData().orientation() == Vertical && !fallbackGlyphData.font->isTextOrientationFallback())
+    if (fallbackGlyphData.font && fallbackGlyphData.font->platformData().orientation() == Vertical && !fallbackGlyphData.font->isTextOrientationFallback()) {
+        if (variant == NormalVariant && !FontCascade::isCJKIdeographOrSymbol(c))
             fallbackGlyphData = glyphDataForNonCJKCharacterWithGlyphOrientation(c, description.nonCJKGlyphOrientation(), fallbackGlyphData);
+#if PLATFORM(COCOA) || USE(CAIRO)
+        if (fallbackGlyphData.font->platformData().syntheticOblique() && FontCascade::isCJKIdeographOrSymbol(c))
+            fallbackGlyphData = glyphDataForCJKCharacterWithoutSyntheticItalic(c, fallbackGlyphData);
+#endif
     }
 
     // Keep the system fallback fonts we use alive.
@@ -330,7 +334,7 @@ GlyphData FontCascadeFonts::glyphDataForNormalVariant(UChar32 c, const FontDescr
                     // to make sure you get a square (even for broken glyphs like symbols used for punctuation).
                     return glyphDataForVariant(c, description, BrokenIdeographVariant, fallbackIndex);
                 }
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(CAIRO)
                 if (data.font->platformData().syntheticOblique())
                     return glyphDataForCJKCharacterWithoutSyntheticItalic(c, data);
 #endif
