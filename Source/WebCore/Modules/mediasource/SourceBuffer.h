@@ -148,7 +148,7 @@ private:
     virtual bool sourceBufferPrivateHasAudio(const SourceBufferPrivate*) const override;
     virtual bool sourceBufferPrivateHasVideo(const SourceBufferPrivate*) const override;
     virtual void sourceBufferPrivateDidBecomeReadyForMoreSamples(SourceBufferPrivate*, AtomicString trackID) override;
-    virtual MediaTime sourceBufferPrivateFastSeekTimeForMediaTime(SourceBufferPrivate*, const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
+    virtual MediaTime sourceBufferPrivateFastSeekTimeForMediaTime(SourceBufferPrivate*, const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold) override;
     virtual void sourceBufferPrivateAppendComplete(SourceBufferPrivate*, AppendResult) override;
     virtual void sourceBufferPrivateDidReceiveRenderingError(SourceBufferPrivate*, int errorCode) override;
 

@@ -47,8 +47,8 @@ public:
     static PassRefPtr<RTCVoidRequestImpl> create(ScriptExecutionContext*, PassRefPtr<VoidCallback>, PassRefPtr<RTCPeerConnectionErrorCallback>);
     virtual ~RTCVoidRequestImpl();
 
-    virtual void requestSucceeded();
-    virtual void requestFailed(const String& error);
+    virtual void requestSucceeded() override;
+    virtual void requestFailed(const String& error) override;
 
 private:
     RTCVoidRequestImpl(ScriptExecutionContext*, PassRefPtr<VoidCallback>, PassRefPtr<RTCPeerConnectionErrorCallback>);

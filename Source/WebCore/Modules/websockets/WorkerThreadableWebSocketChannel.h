@@ -119,8 +119,8 @@ public:
     using RefCounted<WorkerThreadableWebSocketChannel>::deref;
 
 protected:
-    virtual void refThreadableWebSocketChannel() { ref(); }
-    virtual void derefThreadableWebSocketChannel() { deref(); }
+    virtual void refThreadableWebSocketChannel() override { ref(); }
+    virtual void derefThreadableWebSocketChannel() override { deref(); }
 
 private:
     // Bridge for Peer.  Running on the worker thread.

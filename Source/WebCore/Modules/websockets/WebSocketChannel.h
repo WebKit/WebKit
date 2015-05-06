@@ -109,17 +109,17 @@ public:
     };
 
     // FileReaderLoaderClient functions.
-    virtual void didStartLoading();
-    virtual void didReceiveData();
-    virtual void didFinishLoading();
-    virtual void didFail(int errorCode);
+    virtual void didStartLoading() override;
+    virtual void didReceiveData() override;
+    virtual void didFinishLoading() override;
+    virtual void didFail(int errorCode) override;
 
     using RefCounted<WebSocketChannel>::ref;
     using RefCounted<WebSocketChannel>::deref;
 
 protected:
-    virtual void refThreadableWebSocketChannel() { ref(); }
-    virtual void derefThreadableWebSocketChannel() { deref(); }
+    virtual void refThreadableWebSocketChannel() override { ref(); }
+    virtual void derefThreadableWebSocketChannel() override { deref(); }
 
 private:
     WebSocketChannel(Document*, WebSocketChannelClient*);

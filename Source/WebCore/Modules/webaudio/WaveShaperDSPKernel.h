@@ -43,8 +43,8 @@ public:
     explicit WaveShaperDSPKernel(WaveShaperProcessor*);
 
     // AudioDSPKernel
-    virtual void process(const float* source, float* dest, size_t framesToProcess);
-    virtual void reset();
+    virtual void process(const float* source, float* dest, size_t framesToProcess) override;
+    virtual void reset() override;
     virtual double tailTime() const override { return 0; }
     virtual double latencyTime() const override;
 

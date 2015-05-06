@@ -121,9 +121,9 @@ private:
     virtual void derefEventTarget() override final { deref(); }
 
     // MediaStreamTrackPrivateClient
-    void trackReadyStateChanged();
-    void trackMutedChanged();
-    void trackEnabledChanged();
+    void trackReadyStateChanged() override;
+    void trackMutedChanged() override;
+    void trackEnabledChanged() override;
 
     Vector<RefPtr<Event>> m_scheduledEvents;
 

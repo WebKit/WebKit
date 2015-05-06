@@ -46,8 +46,8 @@ public:
     MediaStream* stream() { return m_stream.get(); }
 
     // AudioNode.
-    virtual void process(size_t framesToProcess);
-    virtual void reset();
+    virtual void process(size_t framesToProcess) override;
+    virtual void reset() override;
     
     RealtimeMediaSource* mediaStreamSource();
 
