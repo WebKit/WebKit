@@ -1,3 +1,29 @@
+2015-05-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: SourceCodeTextEditor shows "undefined" instead of resource content when pausing during resource load
+        https://bugs.webkit.org/show_bug.cgi?id=144662
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackend.Command.prototype.promise):
+        Start standardizing on rejecting Promises with Error objects.
+
+        * UserInterface/Views/ResourceContentView.js:
+        (WebInspector.ResourceContentView):
+        (WebInspector.ResourceContentView.prototype._protocolError):
+        When there is a protocol error, show a nice UI string for the error.
+
+        (WebInspector.ResourceContentView.prototype._contentAvailable):
+        (WebInspector.ResourceContentView.prototype._contentError):
+        (WebInspector.ResourceContentView.prototype._hasContent):
+        Whenever we hit an error case in ResourceContentView, check to make sure
+        that a subclass hasn't already populated the content view with content.
+        This can happen when a TextResourceContentView populates a Resource with
+        Script content while paused, because the Resource content would be
+        unavailable. We check that content has loaded by checking that the
+        indeterminate spinner is no longer showing.
+
 2015-05-05  Andres Gomez  <agomez@igalia.com>
 
         [GTK] Web Inspector: Further optimize SVG images

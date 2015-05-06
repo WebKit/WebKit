@@ -42,7 +42,7 @@ WebInspector.ResourceContentView = function(resource, styleClassName)
     this.element.addEventListener("click", this._mouseWasClicked.bind(this), false);
 
     // Request content last so the spinner will always be removed in case the content is immediately available.
-    resource.requestContent().then(this._contentAvailable.bind(this)).catch(this._contentError.bind(this));
+    resource.requestContent().then(this._contentAvailable.bind(this)).catch(this._protocolError.bind(this));
 
     if (!this.managesOwnIssues) {
         WebInspector.issueManager.addEventListener(WebInspector.IssueManager.Event.IssueWasAdded, this._issueWasAdded, this);
@@ -87,22 +87,32 @@ WebInspector.ResourceContentView.prototype = {
     _contentAvailable: function(parameters)
     {
         if (parameters.error) {
-            this._contentError({ message: parameters.error });
+            this._contentError(parameters.error);
             return;
         }
 
         // Content is ready to show, call the public method now.
+        console.assert(!this._hasContent());
         this.contentAvailable(parameters.content, parameters.base64Encoded);
     },
 
     _contentError: function(error)
     {
-        // Don't show an error message if there is already an error message showing (like one added by addIssue.)
-        if (this.element.querySelector(".message-text-view.error"))
+        if (this._hasContent())
             return;
 
         this.element.removeChildren();
-        this.element.appendChild(WebInspector.createMessageTextView(error.message, true));
+        this.element.appendChild(WebInspector.createMessageTextView(error, true));
+    },
+
+    _protocolError: function(error)
+    {
+        this._contentError(WebInspector.UIString("An error occurred trying to load the resource."));
+    },
+
+    _hasContent: function()
+    {
+        return !this.element.querySelector(WebInspector.IndeterminateProgressSpinner.StyleClassName);
     },
 
     _issueWasAdded: function(event)
