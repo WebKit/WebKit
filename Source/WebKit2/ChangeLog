@@ -1,3 +1,27 @@
+2015-05-06  Brady Eidson  <beidson@apple.com>
+
+        Crash executing null AsyncRequest in IDB code.
+        <rdar://problem/18854856> and https://bugs.webkit.org/show_bug.cgi?id=144715
+
+        Reviewed by Darin Adler.
+
+        When UniqueIDBDatabase fails to execute an operation on the database work queue it usually
+        dispatches an AsyncRequest ID back to the main thread with an error callback.
+
+        For two of its operations it would then also dispatch the success callback.
+
+        In those cases the main thread would first take the AsyncRequest for the error callback out
+        of a map and then execute it.
+
+        It would then try to take the same AsyncRequest out of the map again, fail to do so, then
+        execute a null AsyncRequest.
+
+        This patch fixes the two functions to not dispatch both an error and success callback.
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::countInBackingStore): Return after dispatching the error callback.
+        (WebKit::UniqueIDBDatabase::deleteRangeInBackingStore): Ditto.
+
 2015-05-06  Dean Jackson  <dino@apple.com>
 
         Handle backdrop views that have to tile

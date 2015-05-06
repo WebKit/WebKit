@@ -1042,6 +1042,8 @@ void UniqueIDBDatabase::countInBackingStore(uint64_t requestID, const IDBIdentif
     if (!m_backingStore->count(transactionIdentifier, objectStoreID, indexID, keyRangeData, count)) {
         LOG_ERROR("Failed to get count from backing store.");
         postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didCountInBackingStore, requestID, 0, IDBDatabaseException::UnknownError, ASCIILiteral("Failed to get count from backing store")));
+
+        return;
     }
 
     postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didCountInBackingStore, requestID, count, 0, String(StringImpl::empty())));
@@ -1060,6 +1062,8 @@ void UniqueIDBDatabase::deleteRangeInBackingStore(uint64_t requestID, const IDBI
     if (!m_backingStore->deleteRange(transactionIdentifier, objectStoreID, keyRangeData)) {
         LOG_ERROR("Failed to delete range from backing store.");
         postMainThreadTask(createAsyncTask(*this, &UniqueIDBDatabase::didDeleteRangeInBackingStore, requestID, IDBDatabaseException::UnknownError, ASCIILiteral("Failed to get count from backing store")));
+
+        return;
     }
 
     m_backingStore->notifyCursorsOfChanges(transactionIdentifier, objectStoreID);
