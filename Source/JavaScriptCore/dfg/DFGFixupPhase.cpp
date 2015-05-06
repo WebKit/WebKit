@@ -1051,12 +1051,8 @@ private:
             Node* globalObjectNode = m_insertionSet.insertNode(
                 m_indexInBlock, SpecNone, JSConstant, node->origin, 
                 OpInfo(m_graph.freeze(m_graph.globalObjectFor(node->origin.semantic))));
-            // FIXME: This probably shouldn't have an unconditional barrier.
-            // https://bugs.webkit.org/show_bug.cgi?id=133104
-            Node* barrierNode = m_graph.addNode(
-                SpecNone, StoreBarrier, m_currentNode->origin, 
-                Edge(globalObjectNode, KnownCellUse));
-            m_insertionSet.insert(m_indexInBlock, barrierNode);
+            insertStoreBarrier(
+                m_indexInBlock, Edge(globalObjectNode, KnownCellUse), node->child1());
             break;
         }
 

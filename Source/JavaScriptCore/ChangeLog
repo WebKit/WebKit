@@ -1,5 +1,18 @@
 2015-05-05  Filip Pizlo  <fpizlo@apple.com>
 
+        PutGlobalVar shouldn't have an unconditional store barrier
+        https://bugs.webkit.org/show_bug.cgi?id=133104
+
+        Reviewed by Benjamin Poulain.
+        
+        We don't need a store barrier on PutGlobalVar if the value being stored can be
+        speculated to not be a cell.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
+2015-05-05  Filip Pizlo  <fpizlo@apple.com>
+
         CopiedBlock::reportLiveBytes() should be totally cool with oversize blocks
         https://bugs.webkit.org/show_bug.cgi?id=144667
 
