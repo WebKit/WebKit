@@ -238,10 +238,8 @@ inline void SlotVisitor::copyLater(JSCell* owner, CopyToken token, void* ptr, si
 {
     ASSERT(bytes);
     CopiedBlock* block = CopiedSpace::blockFor(ptr);
-    if (block->isOversize()) {
+    if (block->isOversize())
         m_shared.m_copiedSpace->pin(block);
-        return;
-    }
 
     ASSERT(heap()->m_storageSpace.contains(block));
 
