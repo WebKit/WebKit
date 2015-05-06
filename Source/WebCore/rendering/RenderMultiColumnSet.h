@@ -117,7 +117,7 @@ public:
 
     LayoutPoint columnTranslationForOffset(const LayoutUnit&) const;
     
-    void paintColumnRules(PaintInfo&, const LayoutPoint& paintOffset);
+    void paintColumnRules(PaintInfo&, const LayoutPoint& paintOffset) override;
 
     enum ColumnHitTestTranslationMode {
         ClampHitTestTranslationToColumns,

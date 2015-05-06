@@ -53,7 +53,7 @@ private:
 
     virtual bool requiresForcedStyleRecalcPropagation() const override final { return true; }
 
-    virtual bool shadowControlsNeedCustomLayoutMetrics() const { return true; }
+    virtual bool shadowControlsNeedCustomLayoutMetrics() const override { return true; }
 };
 
 } // namespace WebCore

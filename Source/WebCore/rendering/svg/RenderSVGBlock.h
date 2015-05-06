@@ -45,7 +45,7 @@ private:
 
     virtual bool isRenderSVGBlock() const override final { return true; }
 
-    virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const;
+    virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const override;
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override final;
 };

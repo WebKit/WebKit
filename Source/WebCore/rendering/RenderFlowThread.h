@@ -244,7 +244,7 @@ protected:
 
     virtual RenderFlowThread* locateFlowThreadContainingBlock() const override { return const_cast<RenderFlowThread*>(this); }
 
-    virtual const char* renderName() const = 0;
+    virtual const char* renderName() const override = 0;
 
     // Overridden by columns/pages to set up an initial logical width of the page width even when
     // no regions have been generated yet.

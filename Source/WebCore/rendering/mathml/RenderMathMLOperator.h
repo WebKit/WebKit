@@ -74,7 +74,7 @@ public:
 
     virtual void updateStyle() override final;
 
-    virtual void paint(PaintInfo&, const LayoutPoint&);
+    virtual void paint(PaintInfo&, const LayoutPoint&) override;
 
     void updateTokenContent(const String& operatorString);
     virtual void updateTokenContent() override final;

@@ -55,7 +55,7 @@ protected:
 private:
     virtual void installFlowThread() override final;
 
-    virtual const char* renderName() const = 0;
+    virtual const char* renderName() const override = 0;
     
     virtual bool isRenderRegionSet() const override final { return true; }
 };
