@@ -1,3 +1,15 @@
+2015-05-05  Žan Doberšek  <zdobersek@igalia.com>
+
+        EventHandler::m_eventHandlerWillResetCapturingMouseEventsElement is incorrectly initialized
+        https://bugs.webkit.org/show_bug.cgi?id=144583
+
+        Reviewed by Daniel Bates.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler): The
+        m_eventHandlerWillResetCapturingMouseEventsElement is a boolean,
+        so initialize it to false, instead of to nullptr.
+
 2015-05-05  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] grid-template-areas should accept none value
