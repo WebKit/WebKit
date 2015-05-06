@@ -3615,6 +3615,14 @@ private:
             JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
                 
             if (globalObject->stringPrototypeChainIsSane()) {
+                // FIXME: This could be captured using a Speculation mode that means
+                // "out-of-bounds loads return a trivial value", something like
+                // SaneChainOutOfBounds.
+                // https://bugs.webkit.org/show_bug.cgi?id=144668
+                
+                m_graph.watchpoints().addLazily(globalObject->stringPrototype()->structure()->transitionWatchpointSet());
+                m_graph.watchpoints().addLazily(globalObject->objectPrototype()->structure()->transitionWatchpointSet());
+                
                 LBasicBlock negativeIndex = FTL_NEW_BLOCK(m_out, ("GetByVal String negative index"));
                     
                 results.append(m_out.anchor(m_out.constInt64(JSValue::encode(jsUndefined()))));

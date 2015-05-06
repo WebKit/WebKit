@@ -34,6 +34,14 @@
 #include "DFGPhase.h"
 #include "JSCInlines.h"
 
+// FIXME: Remove this phase entirely by moving the addLazily() calls into either the backend or
+// into the phase that performs the optimization. Moving the calls into the backend makes the most
+// sense when the intermediate phases don't need to know that the watchpoint was set. Moving the
+// calls earlier usually only makes sense if the node's only purpose was to convey the need for
+// the watchpoint (like VarInjectionWatchpoint). But, it can also make sense if the fact that the
+// watchpoint was set enables other optimizations.
+// https://bugs.webkit.org/show_bug.cgi?id=144669
+
 namespace JSC { namespace DFG {
 
 class WatchpointCollectionPhase : public Phase {
@@ -83,21 +91,6 @@ private:
                 handleMasqueradesAsUndefined();
             break;
             
-        case GetByVal:
-            if (m_node->arrayMode().type() == Array::Double
-                && m_node->arrayMode().isSaneChain()) {
-                addLazily(globalObject()->arrayPrototype()->structure()->transitionWatchpointSet());
-                addLazily(globalObject()->objectPrototype()->structure()->transitionWatchpointSet());
-            }
-            
-            if (m_node->arrayMode().type() == Array::String)
-                handleStringGetByVal();
-            break;
-            
-        case StringCharAt:
-            handleStringGetByVal();
-            break;
-            
         case NewArray:
         case NewArrayWithSize:
         case NewArrayBuffer:
@@ -120,16 +113,6 @@ private:
             addLazily(globalObject()->masqueradesAsUndefinedWatchpoint());
     }
     
-    void handleStringGetByVal()
-    {
-        if (!m_node->arrayMode().isOutOfBounds())
-            return;
-        if (!globalObject()->stringPrototypeChainIsSane())
-            return;
-        addLazily(globalObject()->stringPrototype()->structure()->transitionWatchpointSet());
-        addLazily(globalObject()->objectPrototype()->structure()->transitionWatchpointSet());
-    }
-
     void addLazily(WatchpointSet* set)
     {
         m_graph.watchpoints().addLazily(set);

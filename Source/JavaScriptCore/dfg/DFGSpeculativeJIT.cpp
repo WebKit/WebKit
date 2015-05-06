@@ -1756,6 +1756,15 @@ void SpeculativeJIT::compileGetByValOnString(Node* node)
 
         JSGlobalObject* globalObject = m_jit.globalObjectFor(node->origin.semantic);
         if (globalObject->stringPrototypeChainIsSane()) {
+            // FIXME: This could be captured using a Speculation mode that means "out-of-bounds
+            // loads return a trivial value". Something like SaneChainOutOfBounds. This should
+            // speculate that we don't take negative out-of-bounds, or better yet, it should rely
+            // on a stringPrototypeChainIsSane() guaranteeing that the prototypes have no negative
+            // indexed properties either.
+            // https://bugs.webkit.org/show_bug.cgi?id=144668
+            m_jit.graph().watchpoints().addLazily(globalObject->stringPrototype()->structure()->transitionWatchpointSet());
+            m_jit.graph().watchpoints().addLazily(globalObject->objectPrototype()->structure()->transitionWatchpointSet());
+            
 #if USE(JSVALUE64)
             addSlowPathGenerator(std::make_unique<SaneStringGetByValSlowPathGenerator>(
                 outOfBounds, this, JSValueRegs(scratchReg), baseReg, propertyReg));

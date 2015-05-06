@@ -1,3 +1,24 @@
+2015-05-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Sane chain and string watchpoints should be set in FixupPhase or the backend rather than WatchpointCollectionPhase
+        https://bugs.webkit.org/show_bug.cgi?id=144665
+
+        Reviewed by Michael Saboff.
+        
+        This is a step towards getting rid of WatchpointCollectionPhase. It's also a step towards
+        extending SaneChain to all indexing shapes.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode): Set the watchpoints here so that we don't need a case in WatchpointCollectionPhase.
+        (JSC::DFG::FixupPhase::checkArray): Clarify the need for checking the structure. We often forget why we do this instead of always using CheckArray.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString): Set the watchpoints here so that we don't need a case in WatchpointCollectionPhase.
+        * dfg/DFGWatchpointCollectionPhase.cpp:
+        (JSC::DFG::WatchpointCollectionPhase::handle): Remove some code.
+        (JSC::DFG::WatchpointCollectionPhase::handleStringGetByVal): Deleted.
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileStringCharAt): Set the watchpoints here so that we don't need a case in WatchpointCollectionPhase.
+
 2015-04-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Introducing the Platform Abstraction Layer (PAL)
