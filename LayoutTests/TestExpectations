@@ -20,6 +20,8 @@ webkit.org/b/118301 fast/dom/timer-throttling-hidden-page.html [ Skip ]
 
 webkit.org/b/119094 fast/forms/color/input-color-onchange-event.html [ Crash Pass ]
 
+webkit.org/b/144673 fast/forms/button-line-height.html [ Skip ]
+
 # This test will run slowly in debug mode, but is plenty fast in release.
 [ Debug ] js/slow-stress/emscripten-memops.html [ Skip ]
 

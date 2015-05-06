@@ -1,3 +1,10 @@
+2015-05-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        LayoutTests/fast/forms/button-line-height.html is broken on non-Mac/non-iOS ports
+        https://bugs.webkit.org/show_bug.cgi?id=144673
+
+        * TestExpectations: Skip broken test.
+
 2015-05-05  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] grid-template-areas should accept none value
