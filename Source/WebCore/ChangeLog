@@ -1,5 +1,11 @@
 2015-05-06  Jessie Berlin  <jberlin@webkit.org>
 
+        More build fixing.
+
+        * page/mac/TextIndicatorWindow.mm:
+
+2015-05-06  Jessie Berlin  <jberlin@webkit.org>
+
         32-bit build fix after r183859 and r183860.
 
         * page/mac/TextIndicatorWindow.mm:

@@ -72,6 +72,7 @@ using namespace WebCore;
     RetainPtr<NSArray> _bounceLayers;
     NSSize _margin;
     bool _hasCompletedAnimation;
+    BOOL _fadingOut;
 }
 
 - (instancetype)initWithFrame:(NSRect)frame textIndicator:(PassRefPtr<TextIndicator>)textIndicator margin:(NSSize)margin;
