@@ -1,3 +1,10 @@
+2015-05-05  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
+        * UIProcess/mac/WKViewLayoutStrategy.mm:
+        (-[WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy updateLayout]):
+
 2015-05-05  Timothy Horton  <timothy_horton@apple.com>
 
         Add a layout mode for computing fixed layout size from a minimum size

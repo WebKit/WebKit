@@ -258,7 +258,7 @@ using namespace WebKit;
     CGFloat fixedLayoutWidth = _wkView.frame.size.width;
     CGFloat fixedLayoutHeight = _wkView.frame.size.height;
 
-    if (CGRectIsEmpty(_wkView.frame))
+    if (NSIsEmptyRect(_wkView.frame))
         return;
 
     if (_wkView.frame.size.width < minimumViewWidth) {
