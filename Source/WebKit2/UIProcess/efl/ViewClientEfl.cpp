@@ -126,12 +126,10 @@ void ViewClientEfl::didCompletePageTransition(WKViewRef, const void* clientInfo)
 void ViewClientEfl::didChangeViewportAttributes(WKViewRef, WKViewportAttributesRef attributes, const void* clientInfo)
 {
     EwkView* ewkView = toEwkView(clientInfo);
-    if (WKPageUseFixedLayout(ewkView->wkPage())) {
-        // FIXME: pageViewportController should accept WKViewportAttributesRef.
-        ewkView->pageViewportController().didChangeViewportAttributes(toImpl(attributes)->originalAttributes());
-        return;
-    }
-    ewkView->scheduleUpdateDisplay();
+    ASSERT(WKPageUseFixedLayout(ewkView->wkPage()));
+
+    // FIXME: pageViewportController should accept WKViewportAttributesRef.
+    ewkView->pageViewportController().didChangeViewportAttributes(toImpl(attributes)->originalAttributes());
 }
 
 void ViewClientEfl::didChangeTooltip(WKViewRef, WKStringRef tooltip, const void* clientInfo)
