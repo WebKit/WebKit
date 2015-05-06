@@ -480,9 +480,6 @@ webkit.org/b/128172 fast/events/touch/touch-target.html [ Timeout ]
 webkit.org/b/128172 fast/events/touch/touch-target-limited.html [ Crash Timeout ]
 webkit.org/b/128172 fast/events/touch/send-oncancel-event.html [ Timeout ]
 
-# The WebKit network disk cache is not enabled on the GTK port.
-webkit.org/b/142821 http/tests/cache/disk-cache [ Skip ]
-
 # HighDPI support is not enabled
 webkit.org/b/131347 fast/backgrounds/hidpi-bitmap-background-repeat-on-subpixel-position.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/backgrounds/hidpi-generated-gradient-background-on-subpixel-position.html [ ImageOnlyFailure Pass ]
