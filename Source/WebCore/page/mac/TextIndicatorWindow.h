@@ -62,8 +62,6 @@ private:
     RetainPtr<WebTextIndicatorView> m_textIndicatorView;
 
     RunLoop::Timer<TextIndicatorWindow> m_temporaryTextIndicatorTimer;
-
-    bool m_fadingOut { false };
 };
 
 } // namespace WebKit
