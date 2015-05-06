@@ -348,6 +348,14 @@ EditingStyle::EditingStyle(const Position& position, PropertiesToInclude propert
     init(position.deprecatedNode(), propertiesToInclude);
 }
 
+EditingStyle::EditingStyle(const CSSStyleDeclaration* style)
+    : EditingStyle()
+{
+    if (style)
+        m_mutableStyle = style->copyProperties();
+    extractFontSizeDelta();
+}
+
 EditingStyle::EditingStyle(const StyleProperties* style)
     : EditingStyle()
 {

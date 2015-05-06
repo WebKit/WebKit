@@ -94,6 +94,11 @@ public:
         return adoptRef(*new EditingStyle(style));
     }
 
+    static Ref<EditingStyle> create(const CSSStyleDeclaration* style)
+    {
+        return adoptRef(*new EditingStyle(style));
+    }
+
     static Ref<EditingStyle> create(CSSPropertyID propertyID, const String& value)
     {
         return adoptRef(*new EditingStyle(propertyID, value));
@@ -167,6 +172,7 @@ private:
     EditingStyle();
     EditingStyle(Node*, PropertiesToInclude);
     EditingStyle(const Position&, PropertiesToInclude);
+    WEBCORE_EXPORT explicit EditingStyle(const CSSStyleDeclaration*);
     explicit EditingStyle(const StyleProperties*);
     EditingStyle(CSSPropertyID, const String& value);
     EditingStyle(CSSPropertyID, CSSValueID);

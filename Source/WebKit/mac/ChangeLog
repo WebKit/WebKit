@@ -1,3 +1,18 @@
+2015-05-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Toggling underline on font panel removes strike through
+        https://bugs.webkit.org/show_bug.cgi?id=144670
+        <rdar://problem/3790443>
+
+        Reviewed by Darin Adler.
+
+        Use setStrikeThroughChange and setUnderlineChange added in r183770 to toggle underline and strike through.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _applyEditingStyleToSelection:withUndoAction:]):
+        (-[WebHTMLView _styleForAttributeChange:]):
+        (-[WebHTMLView changeAttributes:]):
+
 2015-05-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Toggling underline or strike through affects each other

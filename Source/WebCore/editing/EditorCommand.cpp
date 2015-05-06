@@ -98,7 +98,7 @@ static Frame* targetFrame(Frame& frame, Event* event)
     return node->document().frame();
 }
 
-static bool applyCommandToFrame(Frame& frame, EditorCommandSource source, EditAction action, RefPtr<EditingStyle>&& style)
+static bool applyCommandToFrame(Frame& frame, EditorCommandSource source, EditAction action, Ref<EditingStyle>&& style)
 {
     // FIXME: We don't call shouldApplyStyle when the source is DOM; is there a good reason for that?
     switch (source) {
@@ -1034,7 +1034,7 @@ static TextDecorationChange textDecorationChangeForToggling(Editor& editor, CSSP
 
 static bool executeStrikethrough(Frame& frame, Event*, EditorCommandSource source, const String&)
 {
-    RefPtr<EditingStyle> style = EditingStyle::create();
+    Ref<EditingStyle> style = EditingStyle::create();
     style->setStrikeThroughChange(textDecorationChangeForToggling(frame.editor(), CSSPropertyWebkitTextDecorationsInEffect, "line-through"));
     // FIXME: Needs a new EditAction!
     return applyCommandToFrame(frame, source, EditActionUnderline, WTF::move(style));
@@ -1101,7 +1101,7 @@ static bool executeTranspose(Frame& frame, Event*, EditorCommandSource, const St
 
 static bool executeUnderline(Frame& frame, Event*, EditorCommandSource source, const String&)
 {
-    RefPtr<EditingStyle> style = EditingStyle::create();
+    Ref<EditingStyle> style = EditingStyle::create();
     TextDecorationChange change = textDecorationChangeForToggling(frame.editor(), CSSPropertyWebkitTextDecorationsInEffect, "underline");
     style->setUnderlineChange(change);
     return applyCommandToFrame(frame, source, EditActionUnderline, WTF::move(style));

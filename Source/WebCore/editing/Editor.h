@@ -186,7 +186,7 @@ public:
     void applyStyle(RefPtr<EditingStyle>&&, EditAction);
     void applyParagraphStyle(StyleProperties*, EditAction = EditActionUnspecified);
     WEBCORE_EXPORT void applyStyleToSelection(StyleProperties*, EditAction);
-    void applyStyleToSelection(RefPtr<EditingStyle>&&, EditAction);
+    WEBCORE_EXPORT void applyStyleToSelection(Ref<EditingStyle>&&, EditAction);
     void applyParagraphStyleToSelection(StyleProperties*, EditAction);
 
     void appliedEditing(PassRefPtr<CompositeEditCommand>);

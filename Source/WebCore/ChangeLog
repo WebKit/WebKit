@@ -1,3 +1,23 @@
+2015-05-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Toggling underline on font panel removes strike through
+        https://bugs.webkit.org/show_bug.cgi?id=144670
+        <rdar://problem/3790443>
+
+        Reviewed by Darin Adler.
+
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::EditingStyle): Added a variant that takes CSSStyleDeclaration.
+        * editing/EditingStyle.h:
+        (WebCore::EditingStyle::create): Ditto.
+        * editing/Editor.cpp:
+        (WebCore::Editor::applyStyleToSelection): Takes Ref<EditingStyle>&& instead of RefPtr<EditingStyle>&&.
+        * editing/Editor.h:
+        * editing/EditorCommand.cpp:
+        (WebCore::applyCommandToFrame): Ditto.
+        (WebCore::executeStrikethrough):
+        (WebCore::executeUnderline):
+
 2015-05-06  Jessie Berlin  <jberlin@webkit.org>
 
         More build fixing.

@@ -941,9 +941,9 @@ void Editor::applyStyleToSelection(StyleProperties* style, EditAction editingAct
     applyStyle(style, editingAction);
 }
 
-void Editor::applyStyleToSelection(RefPtr<EditingStyle>&& style, EditAction editingAction)
+void Editor::applyStyleToSelection(Ref<EditingStyle>&& style, EditAction editingAction)
 {
-    if (!style || style->isEmpty() || !canEditRichly())
+    if (style->isEmpty() || !canEditRichly())
         return;
 
     // FIXME: This is wrong for text decorations since m_mutableStyle is empty.

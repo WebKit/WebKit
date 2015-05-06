@@ -4795,6 +4795,12 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
     }
 }
 
+- (void)_applyEditingStyleToSelection:(Ref<EditingStyle>&&)editingStyle withUndoAction:(EditAction)undoAction
+{
+    if (Frame* coreFrame = core([self _frame]))
+        coreFrame->editor().applyStyleToSelection(WTF::move(editingStyle), undoAction);
+}
+
 #if !PLATFORM(IOS)
 - (BOOL)_handleStyleKeyEquivalent:(NSEvent *)event
 {
@@ -4985,7 +4991,7 @@ static NSString *fontNameForDescription(NSString *familyName, BOOL italic, BOOL 
     [self _applyStyleToSelection:[self _styleFromFontManagerOperation] withUndoAction:EditActionSetFont];
 }
 
-- (DOMCSSStyleDeclaration *)_styleForAttributeChange:(id)sender
+- (Ref<EditingStyle>)_styleForAttributeChange:(id)sender
 {
     DOMCSSStyleDeclaration *style = [self _emptyStyle];
 
@@ -5032,19 +5038,8 @@ static NSString *fontNameForDescription(NSString *familyName, BOOL italic, BOOL 
     else if ([b objectForKey:NSShadowAttributeName] == nil)
         [style setTextShadow:@"none"];
 
-    int sa = [[a objectForKey:NSStrikethroughStyleAttributeName] intValue];
-    int sb = [[b objectForKey:NSStrikethroughStyleAttributeName] intValue];
-    if (sa == sb) {
-        if (sa == NSUnderlineStyleNone)
-            [style setProperty:@"-webkit-text-decorations-in-effect" value:@"none" priority:@""];
-            // we really mean "no line-through" rather than "none"
-        else
-            [style setProperty:@"-webkit-text-decorations-in-effect" value:@"line-through" priority:@""];
-            // we really mean "add line-through" rather than "line-through"
-    }
-
-    sa = [[a objectForKey:NSSuperscriptAttributeName] intValue];
-    sb = [[b objectForKey:NSSuperscriptAttributeName] intValue];
+    int sa = [[a objectForKey:NSSuperscriptAttributeName] intValue];
+    int sb = [[b objectForKey:NSSuperscriptAttributeName] intValue];
     if (sa == sb) {
         if (sa > 0)
             [style setVerticalAlign:@"super"];
@@ -5053,26 +5048,31 @@ static NSString *fontNameForDescription(NSString *familyName, BOOL italic, BOOL 
         else
             [style setVerticalAlign:@"baseline"];
     }
+    
+    auto editingStyle = EditingStyle::create(core(style));
+
+    int strikeThroughA = [[a objectForKey:NSStrikethroughStyleAttributeName] intValue];
+    int strikeThroughB = [[b objectForKey:NSStrikethroughStyleAttributeName] intValue];
+    if (strikeThroughA == strikeThroughB) {
+        bool shouldRemoveStrikeThrough = strikeThroughA == NSUnderlineStyleNone;
+        editingStyle->setStrikeThroughChange(shouldRemoveStrikeThrough ? TextDecorationChange::Remove : TextDecorationChange::Add);
+    }
 
     int ua = [[a objectForKey:NSUnderlineStyleAttributeName] intValue];
     int ub = [[b objectForKey:NSUnderlineStyleAttributeName] intValue];
     if (ua == ub) {
-        if (ua == NSUnderlineStyleNone)
-            [style setProperty:@"-webkit-text-decorations-in-effect" value:@"none" priority:@""];
-            // we really mean "no underline" rather than "none"
-        else
-            [style setProperty:@"-webkit-text-decorations-in-effect" value:@"underline" priority:@""];
-            // we really mean "add underline" rather than "underline"
+        bool shouldRemoveUnderline = ua == NSUnderlineStyleNone;
+        editingStyle->setUnderlineChange(shouldRemoveUnderline ? TextDecorationChange::Remove : TextDecorationChange::Add);
     }
 
-    return style;
+    return editingStyle;
 }
 
 - (void)changeAttributes:(id)sender
 {
     COMMAND_PROLOGUE
 
-    [self _applyStyleToSelection:[self _styleForAttributeChange:sender] withUndoAction:EditActionChangeAttributes];
+    [self _applyEditingStyleToSelection:[self _styleForAttributeChange:sender] withUndoAction:EditActionChangeAttributes];
 }
 
 - (DOMCSSStyleDeclaration *)_styleFromColorPanelWithSelector:(SEL)selector
