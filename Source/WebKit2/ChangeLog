@@ -1,5 +1,16 @@
 2015-05-05  Tim Horton  <timothy_horton@apple.com>
 
+        Views get stuck with viewScale < 1 after switching from DynamicSizeWithMinimumViewSize to ViewSize
+        https://bugs.webkit.org/show_bug.cgi?id=144656
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/mac/WKViewLayoutStrategy.mm:
+        (-[WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy willChangeLayoutStrategy]):
+        Reset the viewScale when we leave the DynamicSizeWithMinimumViewSize strategy.
+
+2015-05-05  Tim Horton  <timothy_horton@apple.com>
+
         Fix the build.
 
         * Platform/mac/LayerHostingContext.mm:

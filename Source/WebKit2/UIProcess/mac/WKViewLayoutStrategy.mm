@@ -333,6 +333,7 @@ using namespace WebKit;
 - (void)willChangeLayoutStrategy
 {
     _wkView._rootLayer.transform = CATransform3DIdentity;
+    _page->scaleView(1);
 }
 
 @end
