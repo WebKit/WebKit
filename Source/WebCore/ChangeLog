@@ -1,5 +1,24 @@
 2015-05-06  David Hyatt  <hyatt@apple.com>
 
+        Avoid copies in scrollOffsetForFixedPosition() and inline it.
+        https://bugs.webkit.org/show_bug.cgi?id=144709
+
+        Reviewed by Simon Fraser.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::frameScaleFactor):
+        Added so that scrollOffsetForFixedPosition() can be inlined without having to
+        reference Frame's implementation.
+
+        (WebCore::FrameView::scrollOffsetForFixedPosition): Deleted.
+        Moved this to the header.
+
+        * page/FrameView.h:
+        Inline scrollOffsetForFixedPosition() and get rid of all the copying
+        it was doing.
+
+2015-05-06  David Hyatt  <hyatt@apple.com>
+
         RenderLayer::currentTransform computes a pixel snapped rect it doesn't use.
         https://bugs.webkit.org/show_bug.cgi?id=144708
 
