@@ -1,3 +1,19 @@
+2015-05-06  Jon Lee  <jonlee@apple.com>
+
+        Expose more font weights for -apple-system
+        https://bugs.webkit.org/show_bug.cgi?id=144707
+
+        Reviewed by Dean Jackson.
+
+        Update to platform/mac/fast/text/systemFont.html
+
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::toNSFontWeight): New static method to map font weights to NSFontWeight constants available on
+        Yosemite and later.
+        (WebCore::fontWithFamily): Request the system font with a mapped weight on Yosemite and later.
+        * platform/spi/mac/NSFontSPI.h: Add [NSFont systemFontWithSize:weight:], and the proper NSFontWeight
+        constants.
+
 2015-05-06  Dean Jackson  <dino@apple.com>
 
         Handle backdrop views that have to tile

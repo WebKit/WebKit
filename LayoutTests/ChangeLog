@@ -1,3 +1,13 @@
+2015-05-06  Jon Lee  <jonlee@apple.com>
+
+        Expose more font weights for -apple-system
+        https://bugs.webkit.org/show_bug.cgi?id=144707
+
+        Reviewed by Dean Jackson.
+
+        * platform/mac/fast/text/systemFont.html: Update test to include font weights for -apple-system.
+        * platform/mac/fast/text/systemFont-expected.txt: Update expectations.
+
 2015-05-06  Dean Jackson  <dino@apple.com>
 
         Handle backdrop views that have to tile
