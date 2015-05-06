@@ -1,3 +1,21 @@
+2015-05-06  David Hyatt  <hyatt@apple.com>
+
+        Optimize relativePositionOffset() to avoid doing unnecessary work
+        https://bugs.webkit.org/show_bug.cgi?id=144698
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::relativePositionOffset):
+
+        Patch relativePositionOffset to avoid doing unnecessary work in the common case where
+        all values of top/left/right/bottom are either auto or fixed. We no longer fetch
+        containingBlock() into a local always, but instead just invoke the function only
+        when necessary.
+
+        Also avoid computing the percentage-relative maximum for the top/right/bottom/left lengths
+        when they are fixed values, since that maximum won't be examined at all.
+
 2015-05-06  Martin Robinson  <mrobinson@igalia.com>
 
         [FreeType] Vertical CJK glyphs should not be rendered with synthetic oblique
