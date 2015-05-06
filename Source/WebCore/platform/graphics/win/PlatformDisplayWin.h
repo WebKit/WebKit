@@ -23,66 +23,24 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformDisplay_h
-#define PlatformDisplay_h
+#ifndef PlatformDisplayWin_h
+#define PlatformDisplayWin_h
 
-#include <wtf/Noncopyable.h>
-#include <wtf/TypeCasts.h>
+#if PLATFORM(WIN)
 
-#if USE(EGL)
-typedef void *EGLDisplay;
-#endif
+#include "PlatformDisplay.h"
 
 namespace WebCore {
 
-class PlatformDisplay {
-    WTF_MAKE_NONCOPYABLE(PlatformDisplay); WTF_MAKE_FAST_ALLOCATED;
-public:
-    static PlatformDisplay& sharedDisplay();
-    virtual ~PlatformDisplay();
-
-    enum class Type {
-#if PLATFORM(X11)
-        X11,
-#endif
-#if PLATFORM(WAYLAND)
-        Wayland,
-#endif
-#if PLATFORM(WIN)
-        Windows,
-#endif
-    };
-
-    virtual Type type() const = 0;
-
-#if USE(EGL)
-    EGLDisplay eglDisplay() const;
-#endif
-
-protected:
-    PlatformDisplay();
-
-#if USE(EGL)
-    virtual void initializeEGLDisplay();
-
-    EGLDisplay m_eglDisplay;
-#endif
-
+class PlatformDisplayWin final : public PlatformDisplay {
 private:
-    static std::unique_ptr<PlatformDisplay> createPlatformDisplay();
-
-#if USE(EGL)
-    void terminateEGLDisplay();
-
-    bool m_eglDisplayInitialized { false };
-#endif
+    virtual Type type() const override { return PlatformDisplay::Type::Windows; }
 };
 
 } // namespace WebCore
 
-#define SPECIALIZE_TYPE_TRAITS_PLATFORM_DISPLAY(ToClassName, DisplayType) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToClassName) \
-    static bool isType(const WebCore::PlatformDisplay& display) { return display.type() == WebCore::PlatformDisplay::Type::DisplayType; } \
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_PLATFORM_DISPLAY(PlatformDisplayWin, Windows)
 
-#endif // PltformDisplay_h
+#endif // PLATFORM(WIN)
+
+#endif // PlatformDisplayWin

@@ -37,6 +37,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/GLContext.cpp
     platform/graphics/GraphicsLayer.cpp
     platform/graphics/ImageSource.cpp
+    platform/graphics/PlatformDisplay.cpp
     platform/graphics/ShadowBlur.cpp
     platform/graphics/WOFFFileFormat.cpp
 

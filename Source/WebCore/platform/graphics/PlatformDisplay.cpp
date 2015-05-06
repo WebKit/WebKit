@@ -37,6 +37,10 @@
 #include "PlatformDisplayWayland.h"
 #endif
 
+#if PLATFORM(WIN)
+#include "PlatformDisplayWin.h"
+#endif
+
 #if PLATFORM(GTK)
 #include <gdk/gdkx.h>
 #endif
@@ -69,6 +73,8 @@ std::unique_ptr<PlatformDisplay> PlatformDisplay::createPlatformDisplay()
 #endif
 #elif PLATFORM(EFL) && defined(HAVE_ECORE_X)
     return std::make_unique<PlatformDisplayX11>(static_cast<Display*>(ecore_x_display_get()));
+#elif PLATFORM(WIN)
+    return std::make_unique<PlatformDisplayWin>();
 #endif
 
 #if PLATFORM(X11)
