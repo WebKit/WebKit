@@ -293,11 +293,16 @@ using namespace WebKit;
         _wkView._rootLayer.transform = transform;
     } else if (scale != _page->viewScaleFactor()) {
         CAContext *context = [_wkView.layer context];
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
         MachSendRight fencePort = MachSendRight::adopt([context createFencePort]);
         _page->scaleViewAndUpdateGeometryFenced(scale, IntSize(_wkView.frame.size), fencePort);
         [context setFencePort:fencePort.sendRight() commitHandler:^{
             _wkView._rootLayer.transform = CATransform3DIdentity;
         }];
+#else
+        _page->scaleView(scale);
+        _wkView._rootLayer.transform = CATransform3DIdentity;
+#endif
     }
 }
 

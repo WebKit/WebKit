@@ -1,3 +1,9 @@
+2015-05-06  Timothy Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
+        * platform/spi/cocoa/QuartzCoreSPI.h:
+
 2015-05-06  David Hyatt  <hyatt@apple.com>
 
         Optimize topLeftLocationOffset() addition in updateLayerPosition
