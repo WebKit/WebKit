@@ -1,3 +1,24 @@
+2015-05-06  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r183467): Unable to start downloads in private browsing mode
+        https://bugs.webkit.org/show_bug.cgi?id=144533
+
+        Reviewed by Darin Adler.
+
+        If willSendRequest delegate mutated the request we would lose the requester field value from the original.
+
+        No test runner support for mutating requests.
+
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::updateFromDelegatePreservingOldProperties):
+
+            This needs to keep the requester too.
+
+        * platform/network/cocoa/ResourceRequestCocoa.mm:
+        (WebCore::ResourceRequest::updateFromDelegatePreservingOldProperties): Deleted.
+
+            Share implementations.
+
 2015-05-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Toggling underline on font panel removes strike through

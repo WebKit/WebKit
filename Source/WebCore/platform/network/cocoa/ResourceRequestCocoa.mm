@@ -205,19 +205,6 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
     }
 }
 
-void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRequest& delegateProvidedRequest)
-{
-    ResourceLoadPriority oldPriority = priority();
-    RefPtr<FormData> oldHTTPBody = httpBody();
-    bool isHiddenFromInspector = hiddenFromInspector();
-
-    *this = delegateProvidedRequest;
-
-    setPriority(oldPriority);
-    setHTTPBody(oldHTTPBody.release());
-    setHiddenFromInspector(isHiddenFromInspector);
-}
-
 #if !PLATFORM(IOS)
 void ResourceRequest::applyWebArchiveHackForMail()
 {
