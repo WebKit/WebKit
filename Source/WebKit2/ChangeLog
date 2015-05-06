@@ -1,5 +1,37 @@
 2015-05-06  Brady Eidson  <beidson@apple.com>
 
+        Addition review followup for:
+        Crash executing null AsyncRequest in IDB code.
+        <rdar://problem/18854856> and https://bugs.webkit.org/show_bug.cgi?id=144715
+
+        Reviewed by Darin Adler.
+
+        This patch adds a layer on top of the UniqueIDBDatabase request map to catch this coding mistake in the future. 
+ 
+         * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::didCompleteBoolRequest): Get rid of the ASSERT and the temporary variable,
+          make it a single line which reads better.
+        (WebKit::UniqueIDBDatabase::didPutRecordInBackingStore): Ditto.
+        (WebKit::UniqueIDBDatabase::didGetRecordFromBackingStore): Ditto.
+        (WebKit::UniqueIDBDatabase::didOpenCursorInBackingStore): Ditto.
+        (WebKit::UniqueIDBDatabase::didAdvanceCursorInBackingStore): Ditto.
+        (WebKit::UniqueIDBDatabase::didIterateCursorInBackingStore): Ditto.
+        (WebKit::UniqueIDBDatabase::didCountInBackingStore): Ditto.
+        (WebKit::UniqueIDBDatabase::didDeleteRangeInBackingStore): Ditto.
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h: Ditto.
+
+        Add the class AsyncRequestMap which shadows a HashMap but does aggressive runtime checks
+        in ::take() to make sure the same request was not dispatched twice in a row, and makes sure we
+        never try to execute a null AsyncRequest by way of a RELEASE_ASSERT.
+        * Shared/AsyncRequest.h:
+        (WebKit::AsyncRequestMap::AsyncRequestMap):
+        (WebKit::AsyncRequestMap::take):
+        (WebKit::AsyncRequestMap::add):
+        (WebKit::AsyncRequestMap::clear):
+        (WebKit::AsyncRequestMap::values):
+
+2015-05-06  Brady Eidson  <beidson@apple.com>
+
         Crash executing null AsyncRequest in IDB code.
         <rdar://problem/18854856> and https://bugs.webkit.org/show_bug.cgi?id=144715
 

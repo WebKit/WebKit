@@ -28,6 +28,7 @@
 #define AsyncRequest_h
 
 #include <functional>
+#include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -103,6 +104,49 @@ template<typename... Arguments> void AsyncRequest::completeRequest(Arguments&&..
     request->completeRequest(std::forward<Arguments>(arguments)...);
     m_abortHandler = nullptr;
 }
+
+class AsyncRequestMap {
+public:
+    AsyncRequestMap()
+#ifndef NDEBUG
+        : m_lastRequestIDTaken(std::numeric_limits<uint64_t>::max())
+#endif
+    { }
+
+    Ref<AsyncRequest> take(uint64_t requestID)
+    {
+#ifndef NDEBUG
+        ASSERT_WITH_MESSAGE(requestID != m_lastRequestIDTaken, "Attempt to take the same AsyncRequest twice in a row. A background queue might have dispatched both an error callback and a success callback?");
+        m_lastRequestIDTaken = requestID;
+#endif
+
+        RefPtr<AsyncRequest> request = m_requestMap.take(requestID);
+        RELEASE_ASSERT(request);
+
+        return adoptRef(*request.leakRef());
+    }
+
+    void add(uint64_t requestID, PassRefPtr<AsyncRequest> request)
+    {
+        m_requestMap.add(requestID, request);
+    }
+
+    void clear()
+    {
+        m_requestMap.clear();
+    }
+
+    WTF::IteratorRange<HashMap<uint64_t, RefPtr<AsyncRequest>>::iterator::Values> values()
+    {
+        return m_requestMap.values();
+    }
+
+private:
+    HashMap<uint64_t, RefPtr<AsyncRequest>> m_requestMap;
+#ifndef NDEBUG
+    uint64_t m_lastRequestIDTaken;
+#endif
+};
 
 } // namespace WebKit
 
