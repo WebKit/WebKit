@@ -1,3 +1,16 @@
+2015-05-06  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] remove some unnecessary iOS-only media code
+        https://bugs.webkit.org/show_bug.cgi?id=144697
+        <rdar://problem/20229914>
+
+        Reviewed by Jer Noble.
+
+        * html/HTMLAttributeNames.in: Remove data-youtube-id.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem): Remove dataYouTubeID.
+
 2015-05-06  David Hyatt  <hyatt@apple.com>
 
         Optimize relativePositionOffset() to avoid doing unnecessary work

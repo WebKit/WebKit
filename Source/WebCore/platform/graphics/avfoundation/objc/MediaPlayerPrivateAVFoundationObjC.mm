@@ -135,13 +135,6 @@ template <> struct iterator_traits<HashSet<RefPtr<WebCore::MediaSelectionOptionA
 @end
 #endif
 
-#if PLATFORM(IOS)
-@class AVPlayerItem;
-@interface AVPlayerItem (WebKitExtensions)
-@property (nonatomic, copy) NSString* dataYouTubeID;
-@end
-#endif
-
 @interface AVURLAsset (WebKitExtensions)
 @property (nonatomic, readonly) NSURL *resolvedURL;
 @end
@@ -984,12 +977,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
 
     if (m_avPlayer)
         setAVPlayerItem(m_avPlayerItem.get());
-
-#if PLATFORM(IOS)
-    AtomicString value;
-    if (player()->doesHaveAttribute("data-youtube-id", &value))
-        [m_avPlayerItem.get() setDataYouTubeID: value];
-#endif
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
     const NSTimeInterval legibleOutputAdvanceInterval = 2;
