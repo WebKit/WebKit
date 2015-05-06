@@ -40,7 +40,7 @@ class WebGL2RenderingContext final : public WebGLRenderingContextBase {
 public:
     WebGL2RenderingContext(HTMLCanvasElement*, GraphicsContext3D::Attributes);
     WebGL2RenderingContext(HTMLCanvasElement*, PassRefPtr<GraphicsContext3D>, GraphicsContext3D::Attributes);
-    virtual bool isWebGL2() const { return true; }
+    virtual bool isWebGL2() const override { return true; }
 
     /* Buffer objects */
     void copyBufferSubData(GC3Denum readTarget, GC3Denum writeTarget, GC3Dint64 readOffset, GC3Dint64 writeOffset, GC3Dint64 size);

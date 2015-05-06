@@ -34,7 +34,7 @@ class WebGLRenderingContext final : public WebGLRenderingContextBase {
 public:
     WebGLRenderingContext(HTMLCanvasElement*, GraphicsContext3D::Attributes);
     WebGLRenderingContext(HTMLCanvasElement*, PassRefPtr<GraphicsContext3D>, GraphicsContext3D::Attributes);
-    virtual bool isWebGL1() const { return true; }
+    virtual bool isWebGL1() const override { return true; }
     
     virtual WebGLExtension* getExtension(const String&) override;
     virtual WebGLGetInfo getParameter(GC3Denum pname, ExceptionCode&) override;

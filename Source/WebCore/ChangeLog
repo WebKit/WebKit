@@ -1,5 +1,20 @@
 2015-05-05  Žan Doberšek  <zdobersek@igalia.com>
 
+        Add missing vtable override specifiers under Source/WebCore/html
+        https://bugs.webkit.org/show_bug.cgi?id=144578
+
+        Reviewed by Daniel Bates.
+
+        Update virtual method overrides under Source/WebCore/html
+        which are missing the override specifier.
+
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGLRenderingContext.h:
+        * html/track/InbandTextTrack.h:
+        * html/track/TrackListBase.h:
+
+2015-05-05  Žan Doberšek  <zdobersek@igalia.com>
+
         Add missing vtable override specifiers under Source/WebCore/rendering
         https://bugs.webkit.org/show_bug.cgi?id=144570
 

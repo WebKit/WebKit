@@ -49,7 +49,7 @@ public:
     virtual void setMode(const AtomicString&) override;
     size_t inbandTrackIndex();
 
-    virtual AtomicString inBandMetadataTrackDispatchType() const;
+    virtual AtomicString inBandMetadataTrackDispatchType() const override;
 
     void setPrivate(PassRefPtr<InbandTextTrackPrivate>);
 
@@ -84,7 +84,7 @@ private:
     virtual void parseWebVTTCueData(InbandTextTrackPrivate*, const char*, unsigned) override { ASSERT_NOT_REACHED(); }
     virtual void parseWebVTTCueData(InbandTextTrackPrivate*, const ISOWebVTTCue&) override { ASSERT_NOT_REACHED(); }
 
-    virtual MediaTime startTimeVariance() const;
+    virtual MediaTime startTimeVariance() const override;
 
 #if USE(PLATFORM_TEXT_TRACK_MENU)
     virtual InbandTextTrackPrivate* privateTrack() override { return m_private.get(); }
