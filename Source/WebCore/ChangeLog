@@ -1,3 +1,17 @@
+2015-05-06  David Hyatt  <hyatt@apple.com>
+
+        RenderLayer::currentTransform computes a pixel snapped rect it doesn't use.
+        https://bugs.webkit.org/show_bug.cgi?id=144708
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::currentTransform):
+
+        Only compute a pixel snapped rect if we actually end up needing it. The common case
+        is that this rect is not needed, so pushing it inside the two if statements
+        speeds up the common case.
+
 2015-05-06  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the build.
