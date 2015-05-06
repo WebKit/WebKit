@@ -1317,7 +1317,7 @@ bool RenderLayer::updateLayerPosition()
     } else if (RenderBox* box = renderBox()) {
         // FIXME: Is snapping the size really needed here for the RenderBox case?
         setSize(box->pixelSnappedSize());
-        localPoint += box->topLeftLocationOffset();
+        box->applyTopLeftLocationOffset(localPoint);
     }
 
     RenderElement* ancestor;
@@ -5819,7 +5819,7 @@ LayoutRect RenderLayer::localBoundingBox(CalculateLayerBoundsFlags flags) const
 LayoutRect RenderLayer::boundingBox(const RenderLayer* ancestorLayer, const LayoutSize& offsetFromRoot, CalculateLayerBoundsFlags flags) const
 {    
     LayoutRect result = localBoundingBox(flags);
-    if (renderer().view().hasFlippedBlockDescendants()) {
+    if (renderer().view().frameView().hasFlippedBlockRenderers()) {
         if (renderer().isBox())
             renderBox()->flipForWritingMode(result);
         else
@@ -5901,7 +5901,7 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
 
     LayoutRect boundingBoxRect = localBoundingBox(flags);
 
-    if (renderer().view().hasFlippedBlockDescendants()) {
+    if (renderer().view().frameView().hasFlippedBlockRenderers()) {
         if (is<RenderBox>(renderer()))
             downcast<RenderBox>(renderer()).flipForWritingMode(boundingBoxRect);
         else

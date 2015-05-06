@@ -4831,7 +4831,7 @@ void RenderBox::flipForWritingMode(FloatRect& rect) const
 
 LayoutPoint RenderBox::topLeftLocation() const
 {
-    if (!view().hasFlippedBlockDescendants())
+    if (!view().frameView().hasFlippedBlockRenderers())
         return location();
     
     RenderBlock* containerBlock = containingBlock();
@@ -4842,8 +4842,8 @@ LayoutPoint RenderBox::topLeftLocation() const
 
 LayoutSize RenderBox::topLeftLocationOffset() const
 {
-    if (!view().hasFlippedBlockDescendants())
-        return LayoutSize(m_frameRect.x(), m_frameRect.y());
+    if (!view().frameView().hasFlippedBlockRenderers())
+        return locationOffset();
 
     RenderBlock* containerBlock = containingBlock();
     if (!containerBlock || containerBlock == this)
@@ -4852,6 +4852,19 @@ LayoutSize RenderBox::topLeftLocationOffset() const
     LayoutRect rect(frameRect());
     containerBlock->flipForWritingMode(rect); // FIXME: This is wrong if we are an absolutely positioned object enclosed by a relative-positioned inline.
     return LayoutSize(rect.x(), rect.y());
+}
+
+void RenderBox::applyTopLeftLocationOffsetWithFlipping(LayoutPoint& point) const
+{
+    RenderBlock* containerBlock = containingBlock();
+    if (!containerBlock || containerBlock == this) {
+        point.move(m_frameRect.x(), m_frameRect.y());
+        return;
+    }
+    
+    LayoutRect rect(frameRect());
+    containerBlock->flipForWritingMode(rect); // FIXME: This is wrong if we are an absolutely positioned object  enclosed by a relative-positioned inline.
+    point.move(rect.x(), rect.y());
 }
 
 bool RenderBox::hasRelativeDimensions() const

@@ -1,3 +1,46 @@
+2015-05-06  David Hyatt  <hyatt@apple.com>
+
+        Optimize topLeftLocationOffset() addition in updateLayerPosition
+        https://bugs.webkit.org/show_bug.cgi?id=144704
+
+        Reviewed by Dean Jackson.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        * page/FrameView.h:
+        Move the hasFlippedBlocks bit to FrameView instead of RenderView. Works better for inlining
+        the check in any renderer header, and it also makes more sense conceptually, since the RenderView
+        itself could be a flipped block.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::layoutOverflowRectForPropagation):
+        Change over to the FrameView bit.
+
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::applyTopLeftLocationOffset):
+        Add a new inlined function that can apply the top left location offset to a point without
+        multiple LayoutSize creations and copies. It invokes a helper for flipping that is not
+        inlined only in the case where actual flipped blocks exist in the render tree.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::updateFromStyle):
+        Set the bit on the FrameView now instead of the RenderView.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+        Call the new applyTopLeftLocationOffset function so that the point can have offsets added
+        in without any extra copies.
+
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::rangeIntersectsRect):
+        Switch over to the bit on the FrameView.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        * rendering/RenderView.h:
+        Get rid of the bit on the RenderView.
+
 2015-05-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Introducing the Platform Abstraction Layer (PAL)
