@@ -1,3 +1,18 @@
+2015-05-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf dashboard treats Speedometer and JetStream as smaller is better
+        https://bugs.webkit.org/show_bug.cgi?id=144711
+
+        Reviewed by Chris Dumez.
+
+        Added the support for "Score" metric.
+
+        * public/js/helper-classes.js:
+        (PerfTestRuns):
+        * public/v2/data.js:
+        (RunsData.unitFromMetricName):
+        (RunsData.isSmallerBetter):
+
 2015-04-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r183232.
