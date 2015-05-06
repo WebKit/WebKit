@@ -394,7 +394,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
         if (!std::isfinite(number))
             builder.appendLiteral("null");
         else
-            builder.append(String::numberToStringECMAScript(number));
+            builder.appendECMAScriptNumber(number);
         return StringifySucceeded;
     }
 

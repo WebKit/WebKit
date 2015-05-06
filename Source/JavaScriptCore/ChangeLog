@@ -1,3 +1,20 @@
+2015-05-06  Andreas Kling  <akling@apple.com>
+
+        Don't allocate a StringImpl for every Number JSValue in JSON.stringify().
+        <https://webkit.org/b/144676>
+
+        Reviewed by Darin Adler.
+
+        We were creating a new String for every number JSValue passing through the JSON stringifier.
+        These StringImpl allocations were dominating one of the Kraken JSON benchmarks.
+        Optimize this by using StringBuilder::appendECMAScriptNumber() which uses a stack buffer
+        for the conversion instead.
+
+        13% progression on Kraken/json-stringify-tinderbox.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::appendStringifiedValue):
+
 2015-05-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r183847.
