@@ -15,6 +15,9 @@ PASS getComputedStyle(gridWithHorizontalRectangle).getPropertyValue('-webkit-gri
 PASS getComputedStyle(gridWithVerticalRectangle).getPropertyValue('-webkit-grid-template-areas') is "\"a a\" \"a a\" \"a a\""
 Test grid-template-areas: initial
 PASS getComputedStyle(element).getPropertyValue('-webkit-grid-template-areas') is "\"foobar\""
+PASS getComputedStyle(element).getPropertyValue('-webkit-grid-template-areas') is "none"
+PASS getComputedStyle(element).getPropertyValue('-webkit-grid-template-areas') is "\"foobar\""
+PASS getComputedStyle(element).getPropertyValue('-webkit-grid-template-areas') is "none"
 Test grid-template-areas: inherit
 PASS getComputedStyle(parentElement).getPropertyValue('-webkit-grid-template-areas') is "\"foo bar\""
 PASS getComputedStyle(element).getPropertyValue('-webkit-grid-template-areas') is "\"foo bar\""

@@ -83,6 +83,11 @@
     element.style.webkitGridTemplateAreas = "'foobar'";
     testJSGridTemplateAreas(element, '"foobar"');
     element.style.webkitGridTemplateAreas = "initial";
+    testJSGridTemplateAreas(element, 'none');
+    element.style.webkitGridTemplateAreas = "'foobar'";
+    testJSGridTemplateAreas(element, '"foobar"');
+    element.style.webkitGridTemplateAreas = "none";
+    testJSGridTemplateAreas(element, 'none');
     document.body.removeChild(element);
 
     debug("Test grid-template-areas: inherit");

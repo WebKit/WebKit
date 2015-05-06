@@ -6012,6 +6012,11 @@ bool CSSParser::parseGridTemplateAreasRow(NamedGridAreaMap& gridAreaMap, const u
 
 PassRefPtr<CSSValue> CSSParser::parseGridTemplateAreas()
 {
+    if (m_valueList->current() && m_valueList->current()->id == CSSValueNone) {
+        m_valueList->next();
+        return cssValuePool().createIdentifierValue(CSSValueNone);
+    }
+
     NamedGridAreaMap gridAreaMap;
     unsigned rowCount = 0;
     unsigned columnCount = 0;

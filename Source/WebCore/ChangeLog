@@ -1,3 +1,23 @@
+2015-05-05  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] grid-template-areas should accept none value
+        https://bugs.webkit.org/show_bug.cgi?id=144624
+
+        Reviewed by Darin Adler.
+
+        Default value for grid-template-areas property is "none":
+        http://dev.w3.org/csswg/css-grid/#propdef-grid-template-areas
+
+        Currently if you set the property to "none" from JavaScript, the value
+        doesn't get reseted and it keeps the old value.
+
+        Update fast/css-grid-layout/grid-template-areas-get-set.html adding a
+        new test case.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridTemplateAreas): Add support to parse
+        "none" successfully.
+
 2015-05-05  Zalan Bujtas  <zalan@apple.com>
 
         Remove unused RenderLayerBacking::hasContentsLayer().
