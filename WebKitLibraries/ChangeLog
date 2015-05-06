@@ -1,3 +1,13 @@
+2015-05-05  daegyu lee  <daegyu.lee@navercorp.com>
+
+        Remove the remaining vestiges of SVG feature define
+        https://bugs.webkit.org/show_bug.cgi?id=144655
+
+        Reviewed by Alexey Proskuryakov.
+
+        * win/tools/vsprops/FeatureDefines.props:
+        * win/tools/vsprops/FeatureDefinesCairo.props:
+
 2015-04-29  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo] Turn on WebGL.

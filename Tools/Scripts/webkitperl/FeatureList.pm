@@ -126,7 +126,6 @@ my (
     $suidLinuxSandbox,
     $svgDOMObjCBindingsSupport,
     $svgFontsSupport,
-    $svgSupport,
     $systemMallocSupport,
     $templateElementSupport,
     $textAutosizingSupport,

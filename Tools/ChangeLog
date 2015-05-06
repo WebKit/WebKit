@@ -1,3 +1,12 @@
+2015-05-05  daegyu lee  <daegyu.lee@navercorp.com>
+
+        Remove the remaining vestiges of SVG feature define
+        https://bugs.webkit.org/show_bug.cgi?id=144655
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2015-05-05  Timothy Horton  <timothy_horton@apple.com>
 
         Add a layout mode for computing fixed layout size from a minimum size
