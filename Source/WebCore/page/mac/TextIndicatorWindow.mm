@@ -82,7 +82,7 @@ using namespace WebCore;
 - (void)setAnimationProgress:(float)progress;
 - (BOOL)hasCompletedAnimation;
 
-@property (nonatomic, setter=setFadingOut:) BOOL isFadingOut;
+@property (nonatomic, getter=isFadingOut) BOOL fadingOut;
 
 @end
 
