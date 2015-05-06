@@ -1,14 +1,11 @@
+// https://bugs.webkit.org/show_bug.cgi?id=144609
+//@ skip
+
 function foo(x) {
     return new Array(x);
 }
 
 noInline(foo);
-
-// Warm up up to create array storage.
-for (var i = 0; i < 10000; ++i) {
-    var array = foo(10);
-    array.__defineSetter__(0, function(v) { });
-}
 
 function test(size) {
     var result = foo(size);
@@ -25,5 +22,5 @@ function test(size) {
 }
 
 for (var i = 0; i < 100000; ++i) {
-    test(10);
+    test(1000000);
 }

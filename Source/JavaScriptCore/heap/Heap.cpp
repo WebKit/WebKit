@@ -816,14 +816,15 @@ void Heap::updateObjectCounts(double gcStartTime)
 #endif
         dataLogF("\nNumber of live Objects after GC %lu, took %.6f secs\n", static_cast<unsigned long>(visitCount), WTF::monotonicallyIncreasingTime() - gcStartTime);
     }
-    
-    if (m_operationInProgress == FullCollection) {
-        m_totalBytesVisited = 0;
-        m_totalBytesCopied = 0;
-    }
 
-    m_totalBytesVisited += m_slotVisitor.bytesVisited();
-    m_totalBytesCopied += m_slotVisitor.bytesCopied();
+    if (m_operationInProgress == EdenCollection) {
+        m_totalBytesVisited += m_slotVisitor.bytesVisited();
+        m_totalBytesCopied += m_slotVisitor.bytesCopied();
+    } else {
+        ASSERT(m_operationInProgress == FullCollection);
+        m_totalBytesVisited = m_slotVisitor.bytesVisited();
+        m_totalBytesCopied = m_slotVisitor.bytesCopied();
+    }
 #if ENABLE(PARALLEL_GC)
     m_totalBytesVisited += m_sharedData.childBytesVisited();
     m_totalBytesCopied += m_sharedData.childBytesCopied();

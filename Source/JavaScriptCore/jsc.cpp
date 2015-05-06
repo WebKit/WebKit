@@ -447,7 +447,6 @@ static EncodedJSValue JSC_HOST_CALL functionJSCStack(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionGCAndSweep(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionFullGC(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionEdenGC(ExecState*);
-static EncodedJSValue JSC_HOST_CALL functionHeapSize(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDeleteAllCompiledCode(ExecState*);
 #ifndef NDEBUG
 static EncodedJSValue JSC_HOST_CALL functionReleaseExecutableMemory(ExecState*);
@@ -586,7 +585,6 @@ protected:
         addFunction(vm, "gc", functionGCAndSweep, 0);
         addFunction(vm, "fullGC", functionFullGC, 0);
         addFunction(vm, "edenGC", functionEdenGC, 0);
-        addFunction(vm, "gcHeapSize", functionHeapSize, 0);
         addFunction(vm, "deleteAllCompiledCode", functionDeleteAllCompiledCode, 0);
 #ifndef NDEBUG
         addFunction(vm, "dumpCallFrame", functionDumpCallFrame, 0);
@@ -833,27 +831,21 @@ EncodedJSValue JSC_HOST_CALL functionGCAndSweep(ExecState* exec)
 {
     JSLockHolder lock(exec);
     exec->heap()->collectAllGarbage();
-    return JSValue::encode(jsNumber(exec->heap()->sizeAfterLastFullCollection()));
+    return JSValue::encode(jsUndefined());
 }
 
 EncodedJSValue JSC_HOST_CALL functionFullGC(ExecState* exec)
 {
     JSLockHolder lock(exec);
     exec->heap()->collect(FullCollection);
-    return JSValue::encode(jsNumber(exec->heap()->sizeAfterLastFullCollection()));
+    return JSValue::encode(jsUndefined());
 }
 
 EncodedJSValue JSC_HOST_CALL functionEdenGC(ExecState* exec)
 {
     JSLockHolder lock(exec);
     exec->heap()->collect(EdenCollection);
-    return JSValue::encode(jsNumber(exec->heap()->sizeAfterLastEdenCollection()));
-}
-
-EncodedJSValue JSC_HOST_CALL functionHeapSize(ExecState* exec)
-{
-    JSLockHolder lock(exec);
-    return JSValue::encode(jsNumber(exec->heap()->size()));
+    return JSValue::encode(jsUndefined());
 }
 
 EncodedJSValue JSC_HOST_CALL functionDeleteAllCompiledCode(ExecState* exec)
