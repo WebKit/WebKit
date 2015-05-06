@@ -198,9 +198,12 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
     double totalNFAToByteCodeBuildTimeStart = monotonicallyIncreasingTime();
 #endif
 
+    // FIXME: This can be tuned. More NFAs take longer to interpret, fewer use more memory and time to compile.
+    const unsigned maxNFASize = 50000;
+    
     bool firstNFASeen = false;
     // FIXME: Combine small NFAs to reduce the number of NFAs.
-    combinedURLFilters.processNFAs([&](NFA&& nfa) {
+    combinedURLFilters.processNFAs(maxNFASize, [&](NFA&& nfa) {
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
         nfa.debugPrintDot();
 #endif

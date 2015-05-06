@@ -39,7 +39,7 @@ namespace WebCore {
     
 namespace ContentExtensions {
 
-class DFABytecodeInterpreter {
+class WEBCORE_EXPORT DFABytecodeInterpreter {
 public:
     DFABytecodeInterpreter(const DFABytecode* bytecode, unsigned bytecodeLength, Vector<bool>& pagesUsed)
         : m_bytecode(bytecode)

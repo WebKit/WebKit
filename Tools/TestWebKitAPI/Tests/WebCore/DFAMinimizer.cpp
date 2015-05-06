@@ -57,7 +57,7 @@ static Vector<ContentExtensions::NFA> createNFAs(ContentExtensions::CombinedURLF
 {
     Vector<ContentExtensions::NFA> nfas;
 
-    combinedURLFilters.processNFAs([&](ContentExtensions::NFA&& nfa) {
+    combinedURLFilters.processNFAs(std::numeric_limits<size_t>::max(), [&](ContentExtensions::NFA&& nfa) {
         nfas.append(WTF::move(nfa));
     });
 

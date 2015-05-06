@@ -31,7 +31,11 @@
 #include <WebCore/ContentExtensionCompiler.h>
 #include <WebCore/ContentExtensionError.h>
 #include <WebCore/ContentExtensionsBackend.h>
+#include <WebCore/DFA.h>
+#include <WebCore/DFABytecodeCompiler.h>
+#include <WebCore/DFABytecodeInterpreter.h>
 #include <WebCore/NFA.h>
+#include <WebCore/NFAToDFA.h>
 #include <WebCore/ResourceLoadInfo.h>
 #include <WebCore/URL.h>
 #include <WebCore/URLFilterParser.h>
@@ -177,7 +181,7 @@ static Vector<ContentExtensions::NFA> createNFAs(ContentExtensions::CombinedURLF
 {
     Vector<ContentExtensions::NFA> nfas;
 
-    combinedURLFilters.processNFAs([&](ContentExtensions::NFA&& nfa) {
+    combinedURLFilters.processNFAs(std::numeric_limits<size_t>::max(), [&](ContentExtensions::NFA&& nfa) {
         nfas.append(WTF::move(nfa));
     });
 
@@ -717,6 +721,45 @@ TEST_F(ContentExtensionTest, StrictPrefixSeparatedMachines3Partitioning)
     EXPECT_EQ(2ul, createNFAs(combinedURLFilters).size());
 }
 
+TEST_F(ContentExtensionTest, SplittingLargeNFAs)
+{
+    const size_t expectedNFACounts[16] = {3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 1, 1, 1};
+    
+    for (size_t i = 0; i < 16; i++) {
+        ContentExtensions::CombinedURLFilters combinedURLFilters;
+        ContentExtensions::URLFilterParser parser(combinedURLFilters);
+        
+        EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("A+BBB", false, 1));
+        EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("A+CCC", false, 2));
+        EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("A+DDD", false, 2));
+        
+        Vector<ContentExtensions::NFA> nfas;
+        combinedURLFilters.processNFAs(i, [&](ContentExtensions::NFA&& nfa) {
+            nfas.append(WTF::move(nfa));
+        });
+        EXPECT_EQ(nfas.size(), expectedNFACounts[i]);
+
+        Vector<ContentExtensions::DFABytecode> combinedBytecode;
+        for (auto& nfa : nfas) {
+            Vector<ContentExtensions::DFABytecode> bytecode;
+            ContentExtensions::DFABytecodeCompiler compiler(ContentExtensions::NFAToDFA::convert(nfa), bytecode);
+            compiler.compile();
+            combinedBytecode.appendVector(bytecode);
+        }
+        
+        Vector<bool> pagesUsed;
+        ContentExtensions::DFABytecodeInterpreter interpreter(&combinedBytecode[0], combinedBytecode.size(), pagesUsed);
+        
+        EXPECT_EQ(interpreter.interpret("ABBBX", 0).size(), 1ull);
+        EXPECT_EQ(interpreter.interpret("ACCCX", 0).size(), 1ull);
+        EXPECT_EQ(interpreter.interpret("ADDDX", 0).size(), 1ull);
+        EXPECT_EQ(interpreter.interpret("XBBBX", 0).size(), 0ull);
+        EXPECT_EQ(interpreter.interpret("ABBX", 0).size(), 0ull);
+        EXPECT_EQ(interpreter.interpret("ACCX", 0).size(), 0ull);
+        EXPECT_EQ(interpreter.interpret("ADDX", 0).size(), 0ull);
+    }
+}
+    
 TEST_F(ContentExtensionTest, QuantifierInGroup)
 {
     ContentExtensions::CombinedURLFilters combinedURLFilters;

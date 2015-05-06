@@ -1,3 +1,16 @@
+2015-05-06  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Test splitting NFAs by max NFA size.
+        https://bugs.webkit.org/show_bug.cgi?id=144659
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::createNFAs):
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebCore/DFAMinimizer.cpp:
+        (TestWebKitAPI::createNFAs):
+
 2015-05-05  daegyu lee  <daegyu.lee@navercorp.com>
 
         Remove the remaining vestiges of SVG feature define

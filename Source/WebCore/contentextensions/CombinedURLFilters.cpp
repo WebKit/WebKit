@@ -151,7 +151,7 @@ void CombinedURLFilters::addPattern(uint64_t actionId, const Vector<Term>& patte
         actions.append(actionId);
 }
 
-static void generateNFAForSubtree(NFA& nfa, unsigned nfaRootId, PrefixTreeVertex& root)
+static void generateNFAForSubtree(NFA& nfa, unsigned nfaRootId, PrefixTreeVertex& root, size_t maxNFASize)
 {
     // This recurses the subtree of the prefix tree.
     // For each edge that has fixed length (no quantifiers like ?, *, or +) it generates the nfa graph,
@@ -176,9 +176,6 @@ static void generateNFAForSubtree(NFA& nfa, unsigned nfaRootId, PrefixTreeVertex
     while (!stack.isEmpty()) {
         PrefixTreeVertex& vertex = stack.last().vertex;
         const unsigned edgeIndex = stack.last().edgeIndex;
-
-        // FIXME: This can be tuned. More NFAs take longer to interpret, fewer use more memory and time to compile.
-        const unsigned maxNFASize = 50000;
         
         // Only stop generating an NFA at a leaf to ensure we have a correct NFA. We could go slightly over the maxNFASize.
         if (vertex.edges.isEmpty() && nfa.graphSize() > maxNFASize)
@@ -220,7 +217,7 @@ static void generateNFAForSubtree(NFA& nfa, unsigned nfaRootId, PrefixTreeVertex
     }
 }
 
-void CombinedURLFilters::processNFAs(std::function<void(NFA&&)> handler)
+void CombinedURLFilters::processNFAs(size_t maxNFASize, std::function<void(NFA&&)> handler)
 {
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
     print();
@@ -259,7 +256,7 @@ void CombinedURLFilters::processNFAs(std::function<void(NFA&&)> handler)
         }
         // Put the non-quantified vertices in the subtree into the NFA and delete them.
         ASSERT(stack.last());
-        generateNFAForSubtree(nfa, prefixEnd, *stack.last());
+        generateNFAForSubtree(nfa, prefixEnd, *stack.last(), maxNFASize);
         
         handler(WTF::move(nfa));
         
