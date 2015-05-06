@@ -32,7 +32,7 @@
 
 #if ENABLE(STREAMS_API)
 
-#include "ReadableStreamJSSource.h"
+#include "ReadableJSStream.h"
 
 namespace WebCore {
 

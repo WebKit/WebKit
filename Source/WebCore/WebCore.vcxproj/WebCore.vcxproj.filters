@@ -4425,7 +4425,7 @@
     <ClCompile Include="..\bindings\js\JSReadableStreamReaderCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\ReadableStreamJSSource.cpp">
+    <ClCompile Include="..\bindings\js\ReadableJSStream.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
     <ClCompile Include="..\bindings\js\JSRequestAnimationFrameCallbackCustom.cpp">

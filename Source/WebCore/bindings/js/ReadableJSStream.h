@@ -27,8 +27,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ReadableStreamJSSource_h
-#define ReadableStreamJSSource_h
+#ifndef ReadableJSStream_h
+#define ReadableJSStream_h
 
 #if ENABLE(STREAMS_API)
 
@@ -44,41 +44,39 @@
 namespace WebCore {
 
 class JSDOMGlobalObject;
-class ReadableJSStream;
 class ReadableStreamController;
 
-class ReadableStreamJSSource: public ReadableStreamSource {
-public:
-    static Ref<ReadableStreamJSSource> create(JSC::ExecState*);
-    ~ReadableStreamJSSource();
-
-    JSDOMGlobalObject* globalObject();
-    void start(JSC::ExecState&, ReadableJSStream&);
-
-private:
-    ReadableStreamJSSource(JSC::ExecState*);
-
-    // Object passed to constructor.
-    JSC::Strong<JSC::JSObject> m_source;
-};
-
 class ReadableJSStream: public ReadableStream {
-public:
-    static Ref<ReadableJSStream> create(JSC::ExecState&, ScriptExecutionContext&);
-    virtual Ref<ReadableStreamReader> createReader() override;
-
-    ReadableStreamJSSource& jsSource();
-    JSC::JSValue jsController(JSC::ExecState&, JSDOMGlobalObject*);
-
 private:
-    ReadableJSStream(ScriptExecutionContext&, Ref<ReadableStreamJSSource>&&);
-
     class Reader: public ReadableStreamReader {
     public:
         static Ref<Reader> create(ReadableJSStream&);
     private:
         explicit Reader(ReadableJSStream&);
     };
+
+    class Source: public ReadableStreamSource {
+    public:
+        static Ref<Source> create(JSC::ExecState&);
+
+        JSDOMGlobalObject* globalObject();
+        void start(JSC::ExecState&, ReadableJSStream&);
+
+    private:
+        Source(JSC::ExecState&);
+
+        JSC::Strong<JSC::JSObject> m_source;
+    };
+
+public:
+    static Ref<ReadableJSStream> create(JSC::ExecState&, ScriptExecutionContext&);
+    virtual Ref<ReadableStreamReader> createReader() override;
+
+    ReadableJSStream::Source& jsSource();
+    JSC::JSValue jsController(JSC::ExecState&, JSDOMGlobalObject*);
+
+private:
+    ReadableJSStream(ScriptExecutionContext&, Ref<ReadableJSStream::Source>&&);
 
     std::unique_ptr<ReadableStreamController> m_controller;
 };
@@ -90,4 +88,4 @@ JSC::JSValue getInternalSlotFromObject(JSC::ExecState*, JSC::JSValue, JSC::Priva
 
 #endif // ENABLE(STREAMS_API)
 
-#endif // ReadableStreamJSSource_h
+#endif // ReadableJSStream_h

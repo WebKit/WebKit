@@ -28,7 +28,7 @@
  */
 
 #include "config.h"
-#include "ReadableStreamJSSource.h"
+#include "ReadableJSStream.h"
 
 #if ENABLE(STREAMS_API)
 
@@ -77,20 +77,21 @@ static inline JSValue callFunction(ExecState* exec, JSValue jsFunction, JSValue 
     return call(exec, jsFunction, callType, callData, thisValue, arguments, exception);
 }
 
-Ref<ReadableStreamJSSource> ReadableStreamJSSource::create(JSC::ExecState* exec)
+Ref<ReadableJSStream::Source> ReadableJSStream::Source::create(ExecState& exec)
 {
-    return adoptRef(*new ReadableStreamJSSource(exec));
+    return adoptRef(*new Source(exec));
 }
 
-ReadableStreamJSSource::ReadableStreamJSSource(JSC::ExecState* exec)
+ReadableJSStream::Source::Source(ExecState& exec)
 {
-    ASSERT_WITH_MESSAGE(!exec->argumentCount() || exec->argument(0).isObject(), "Caller of ReadableStreamJSSource constructor should ensure that passed argument if any is an object.");
-    JSObject* source =  exec->argumentCount() ? exec->argument(0).getObject() : JSFinalObject::create(exec->vm(), JSFinalObject::createStructure(exec->vm(), exec->callee()->globalObject(), jsNull(), 1));
-    m_source.set(exec->vm(), source);
+    ASSERT_WITH_MESSAGE(!exec.argumentCount() || exec.argument(0).isObject(), "Caller of ReadableJSStream::Source constructor should ensure that passed argument if any is an object.");
+    JSObject* source =  exec.argumentCount() ? exec.argument(0).getObject() : JSFinalObject::create(exec.vm(), JSFinalObject::createStructure(exec.vm(), exec.callee()->globalObject(), jsNull(), 1));
+    m_source.set(exec.vm(), source);
 }
 
-ReadableStreamJSSource::~ReadableStreamJSSource()
+JSDOMGlobalObject* ReadableJSStream::Source::globalObject()
 {
+    return jsDynamicCast<JSDOMGlobalObject*>(m_source->globalObject());
 }
 
 static void startReadableStreamAsync(ReadableStream& readableStream)
@@ -101,12 +102,7 @@ static void startReadableStreamAsync(ReadableStream& readableStream)
     });
 }
 
-JSDOMGlobalObject* ReadableStreamJSSource::globalObject()
-{
-    return jsDynamicCast<JSDOMGlobalObject*>(m_source->globalObject());
-}
-
-void ReadableStreamJSSource::start(ExecState& exec, ReadableJSStream& readableStream)
+void ReadableJSStream::Source::start(ExecState& exec, ReadableJSStream& readableStream)
 {
     JSLockHolder lock(&exec);
 
@@ -136,9 +132,10 @@ void ReadableStreamJSSource::start(ExecState& exec, ReadableJSStream& readableSt
 
 Ref<ReadableJSStream> ReadableJSStream::create(ExecState& exec, ScriptExecutionContext& scriptExecutionContext)
 {
-    Ref<ReadableStreamJSSource> source = ReadableStreamJSSource::create(&exec);
+    Ref<ReadableJSStream::Source> source = ReadableJSStream::Source::create(exec);
     Ref<ReadableJSStream> readableStream = adoptRef(*new ReadableJSStream(scriptExecutionContext, WTF::move(source)));
-    readableStream->jsSource().start(exec, readableStream.get());
+
+    static_cast<ReadableJSStream::Source&>(readableStream->source()).start(exec, readableStream.get());
     return readableStream;
 }
 
@@ -147,14 +144,14 @@ Ref<ReadableStreamReader> ReadableJSStream::createReader()
     return Reader::create(*this);
 }
 
-ReadableJSStream::ReadableJSStream(ScriptExecutionContext& scriptExecutionContext, Ref<ReadableStreamJSSource>&& source)
+ReadableJSStream::ReadableJSStream(ScriptExecutionContext& scriptExecutionContext, Ref<ReadableJSStream::Source>&& source)
     : ReadableStream(scriptExecutionContext, WTF::move(source))
 {
 }
 
-ReadableStreamJSSource& ReadableJSStream::jsSource()
+ReadableJSStream::Source& ReadableJSStream::jsSource()
 {
-    return static_cast<ReadableStreamJSSource&>(source());
+    return static_cast<ReadableJSStream::Source&>(source());
 }
 
 JSValue ReadableJSStream::jsController(ExecState& exec, JSDOMGlobalObject* globalObject)

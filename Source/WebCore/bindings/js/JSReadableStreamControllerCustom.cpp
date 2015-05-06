@@ -34,7 +34,7 @@
 
 #include "JSDOMBinding.h"
 #include "NotImplemented.h"
-#include "ReadableStreamJSSource.h"
+#include "ReadableJSStream.h"
 #include <runtime/Error.h>
 
 using namespace JSC;

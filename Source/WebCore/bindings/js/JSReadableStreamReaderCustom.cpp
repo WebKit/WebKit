@@ -35,7 +35,7 @@
 #include "ExceptionCode.h"
 #include "JSDOMPromise.h"
 #include "JSReadableStream.h"
-#include "ReadableStreamJSSource.h"
+#include "ReadableJSStream.h"
 #include <runtime/Error.h>
 #include <wtf/NeverDestroyed.h>
 

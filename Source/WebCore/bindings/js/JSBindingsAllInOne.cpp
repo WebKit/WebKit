@@ -115,7 +115,7 @@
 #include "JSReadableStreamControllerCustom.cpp"
 #include "JSReadableStreamCustom.cpp"
 #include "JSReadableStreamReaderCustom.cpp"
-#include "ReadableStreamJSSource.cpp"
+#include "ReadableJSStream.cpp"
 #endif
 #include "JSRequestAnimationFrameCallbackCustom.cpp"
 #include "JSSQLResultSetRowListCustom.cpp"
