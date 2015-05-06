@@ -47,7 +47,6 @@ public:
     virtual ~PlatformDisplayWayland();
 
     struct wl_display* native() const { return m_display; }
-    EGLDisplay eglDisplay() const { return m_eglDisplay; }
 
     std::unique_ptr<WaylandSurface> createSurface(const IntSize&, int widgetID);
 
@@ -68,7 +67,6 @@ private:
     struct wl_compositor* m_compositor;
     struct wl_webkitgtk* m_webkitgtk;
 
-    EGLDisplay m_eglDisplay;
     EGLConfig m_eglConfig;
     bool m_eglConfigChosen;
 };

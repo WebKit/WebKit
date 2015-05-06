@@ -1,3 +1,68 @@
+2015-05-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [EGL] Move EGLDisplay handling to PlatformDisplay and remove PlatformDisplay definition from GLDefs.h
+        https://bugs.webkit.org/show_bug.cgi?id=144685
+
+        Reviewed by Martin Robinson.
+
+        The EGL display is also initialized in multiple places, and could
+        be unified in PlatformDisplay. Remove the PlatformDisplay
+        definition from platform/graphics/opengl/GLDefs.h to avoid conflicts.
+
+        * platform/graphics/PlatformDisplay.cpp:
+        (WebCore::PlatformDisplay::PlatformDisplay): Initialize m_eglDisplay.
+        (WebCore::PlatformDisplay::~PlatformDisplay): Call terminateEGLDisplay().
+        (WebCore::PlatformDisplay::eglDisplay): Lazy intialize the EGL
+        display and return it.
+        (WebCore::PlatformDisplay::initializeEGLDisplay):
+        (WebCore::PlatformDisplay::terminateEGLDisplay):
+        * platform/graphics/PlatformDisplay.h:
+        * platform/graphics/egl/GLContextEGL.cpp:
+        (WebCore::sharedEGLDisplay): Use PlatformDisplay::eglDisplay().
+        * platform/graphics/opengl/GLDefs.h: Remove unneeded definitions.
+        * platform/graphics/opengl/GLPlatformSurface.cpp:
+        (WebCore::GLPlatformSurface::GLPlatformSurface): Remove
+        m_sharedDisplay member, PlatformDisplay::sharedDisplay() can be used instead.
+        (WebCore::GLPlatformSurface::sharedDisplay): Deleted.
+        * platform/graphics/opengl/GLPlatformSurface.h:
+        * platform/graphics/surfaces/egl/EGLConfigSelector.h: Use
+        EGLDisplay instead of PlatformDisplay.
+        * platform/graphics/surfaces/egl/EGLContext.cpp:
+        (WebCore::EGLOffScreenContext::initialize): Use PlatformDisplay::eglDisplay().
+        * platform/graphics/surfaces/egl/EGLHelper.cpp: Remove the
+        EGLDisplayConnection clas and use PlatformDisplay instead.
+        (WebCore::EGLHelper::eglDisplay):
+        (WebCore::EGLHelper::currentDisplay):
+        (WebCore::EGLDisplayConnection::EGLDisplayConnection): Deleted.
+        (WebCore::EGLDisplayConnection::~EGLDisplayConnection): Deleted.
+        (WebCore::EGLDisplayConnection::display): Deleted.
+        (WebCore::EGLDisplayConnection::terminate): Deleted.
+        * platform/graphics/surfaces/egl/EGLHelper.h:
+        * platform/graphics/surfaces/egl/EGLSurface.cpp:
+        (WebCore::EGLTransportSurface::EGLTransportSurface): Use EGLHelper::eglDisplay().
+        (WebCore::EGLTransportSurface::destroy): Ditto.
+        (WebCore::EGLOffScreenSurface::EGLOffScreenSurface): Ditto.
+        (WebCore::EGLOffScreenSurface::destroy): Ditto.
+        * platform/graphics/surfaces/egl/EGLXSurface.cpp:
+        (WebCore::EGLWindowTransportSurface::EGLWindowTransportSurface):
+        Use PlatformDisplay::eglDisplay().
+        (WebCore::EGLWindowTransportSurface::swapBuffers): Ditto.
+        (WebCore::EGLPixmapSurface::EGLPixmapSurface): Ditto.
+        * platform/graphics/surfaces/glx/GLXContext.cpp:
+        (WebCore::GLXOffScreenContext::initialize): Use X11Helper::nativeDisplay().
+        * platform/graphics/surfaces/glx/GLXSurface.cpp:
+        (WebCore::GLXTransportSurface::GLXTransportSurface): Do not use m_sharedDisplay.
+        (WebCore::GLXOffScreenSurface::initialize): Ditto.
+        * platform/graphics/wayland/PlatformDisplayWayland.cpp:
+        (WebCore::PlatformDisplayWayland::PlatformDisplayWayland): Call
+        PlatformDisplay::initializeEGLDisplay() to insialize the EGL display.
+        * platform/graphics/wayland/PlatformDisplayWayland.h:
+        * platform/graphics/x11/PlatformDisplayX11.cpp:
+        (WebCore::PlatformDisplayX11::initializeEGLDisplay): Override
+        PlatformDisplay::initializeEGLDisplay() to initialize the
+        m_eglDisplay member.
+        * platform/graphics/x11/PlatformDisplayX11.h:
+
 2015-05-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: DOMStorage exception and issue with sessionStorage

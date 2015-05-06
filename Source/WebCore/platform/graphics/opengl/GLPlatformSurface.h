@@ -59,8 +59,6 @@ public:
 
     PlatformDrawable drawable() const;
 
-    PlatformDisplay sharedDisplay() const;
-
     virtual SurfaceAttributes attributes() const;
 
     virtual void swapBuffers();
@@ -84,7 +82,6 @@ public:
 protected:
     GLPlatformSurface(SurfaceAttributes);
 
-    PlatformDisplay m_sharedDisplay;
     PlatformDrawable m_drawable;
     PlatformBufferHandle m_bufferHandle;
     IntRect m_rect;

@@ -28,89 +28,22 @@
 
 #if USE(EGL)
 
+#include "PlatformDisplay.h"
 #include <opengl/GLPlatformContext.h>
 
-#if PLATFORM(X11)
-#include "X11Helper.h"
-#endif
 
 namespace WebCore {
-
-#if PLATFORM(X11)
-typedef X11Helper NativeWrapper;
-typedef Display NativeSharedDisplay;
-#else
-typedef void NativeSharedDisplay;
-#endif
 
 static PFNEGLCREATEIMAGEKHRPROC eglCreateImageKHR = 0;
 static PFNEGLDESTROYIMAGEKHRPROC eglDestroyImageKHR = 0;
 static PFNGLEGLIMAGETARGETTEXTURE2DOESPROC eglImageTargetTexture2DOES = 0;
 
-struct EGLDisplayConnection {
-
-    EGLDisplayConnection(NativeSharedDisplay* display = 0)
-    {
-        if (display)
-            m_eglDisplay = eglGetDisplay(reinterpret_cast<EGLNativeDisplayType>(display));
-        else
-            m_eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-
-        if (m_eglDisplay == EGL_NO_DISPLAY) {
-            LOG_ERROR("EGLDisplay Initialization failed.");
-            return;
-        }
-
-        EGLBoolean success;
-        success = eglInitialize(m_eglDisplay, 0, 0);
-
-        if (success != EGL_TRUE) {
-            LOG_ERROR("EGLInitialization failed.");
-            terminate();
-            return;
-        }
-
-        success = eglBindAPI(eglAPIVersion);
-
-        if (success != EGL_TRUE) {
-            LOG_ERROR("Failed to set EGL API(%d).", eglGetError());
-            terminate();
-            return;
-        }
-    }
-
-    ~EGLDisplayConnection()
-    {
-        terminate();
-    }
-
-    EGLDisplay display() { return m_eglDisplay; }
-
-private:
-    void terminate()
-    {
-        if (m_eglDisplay == EGL_NO_DISPLAY)
-            return;
-
-        eglTerminate(m_eglDisplay);
-        m_eglDisplay = EGL_NO_DISPLAY;
-    }
-
-    EGLDisplay m_eglDisplay;
-};
-
-PlatformDisplay EGLHelper::eglDisplay()
+EGLDisplay EGLHelper::eglDisplay()
 {
-    // Display connection will only be broken at program shutdown.
-#if PLATFORM(X11)
-    static EGLDisplayConnection displayConnection(NativeWrapper::nativeDisplay());
-#else
-    static EGLDisplayConnection displayConnection;
-#endif
-    return displayConnection.display();
+    PlatformDisplay::sharedDisplay().eglDisplay();
 }
 
-PlatformDisplay EGLHelper::currentDisplay()
+EGLDisplay EGLHelper::currentDisplay()
 {
     EGLDisplay display = eglGetCurrentDisplay();
 

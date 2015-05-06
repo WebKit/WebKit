@@ -29,13 +29,17 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/TypeCasts.h>
 
+#if USE(EGL)
+typedef void *EGLDisplay;
+#endif
+
 namespace WebCore {
 
 class PlatformDisplay {
     WTF_MAKE_NONCOPYABLE(PlatformDisplay); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PlatformDisplay& sharedDisplay();
-    virtual ~PlatformDisplay() = default;
+    virtual ~PlatformDisplay();
 
     enum class Type {
 #if PLATFORM(X11)
@@ -48,11 +52,27 @@ public:
 
     virtual Type type() const = 0;
 
+#if USE(EGL)
+    EGLDisplay eglDisplay() const;
+#endif
+
 protected:
-    PlatformDisplay() = default;
+    PlatformDisplay();
+
+#if USE(EGL)
+    virtual void initializeEGLDisplay();
+
+    EGLDisplay m_eglDisplay;
+#endif
 
 private:
     static std::unique_ptr<PlatformDisplay> createPlatformDisplay();
+
+#if USE(EGL)
+    void terminateEGLDisplay();
+
+    bool m_eglDisplayInitialized { false };
+#endif
 };
 
 } // namespace WebCore

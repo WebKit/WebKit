@@ -57,22 +57,14 @@ typedef uint32_t PlatformBufferHandle;
 
 #if USE(GLX)
 typedef GLXContext PlatformContext;
-typedef Display* PlatformDisplay;
 typedef GLXFBConfig PlatformSurfaceConfig;
 typedef GLXDrawable PlatformDrawable;
 #elif USE(EGL)
-#if USE(OPENGL_ES_2)
-static const EGLenum eglAPIVersion = EGL_OPENGL_ES_API;
-#else
-static const EGLenum eglAPIVersion = EGL_OPENGL_API;
-#endif
 typedef EGLContext PlatformContext;
-typedef EGLDisplay PlatformDisplay;
 typedef EGLConfig PlatformSurfaceConfig;
 typedef EGLSurface PlatformDrawable;
 #else
 typedef void* PlatformContext;
-typedef void* PlatformDisplay;
 typedef void* PlatformSurfaceConfig;
 typedef void* PlatformDrawable;
 #endif

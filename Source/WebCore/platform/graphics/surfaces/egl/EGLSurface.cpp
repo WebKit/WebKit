@@ -75,9 +75,7 @@ std::unique_ptr<GLTransportSurfaceClient> EGLTransportSurface::createTransportSu
 EGLTransportSurface::EGLTransportSurface(const IntSize& size, SurfaceAttributes attributes)
     : GLTransportSurface(size, attributes)
 {
-    m_sharedDisplay = EGLHelper::eglDisplay();
-
-    if (m_sharedDisplay == EGL_NO_DISPLAY)
+    if (EGLHelper::eglDisplay() == EGL_NO_DISPLAY)
         return;
 
     m_configSelector = std::make_unique<EGLConfigSelector>(attributes);
@@ -94,13 +92,13 @@ EGLTransportSurface::~EGLTransportSurface()
 
 void EGLTransportSurface::destroy()
 {
-    if (m_drawable == EGL_NO_SURFACE || m_sharedDisplay == EGL_NO_DISPLAY)
+    if (m_drawable == EGL_NO_SURFACE || EGLHelper::eglDisplay() == EGL_NO_DISPLAY)
         return;
 
     GLTransportSurface::destroy();
 
     if (m_drawable) {
-        eglDestroySurface(m_sharedDisplay, m_drawable);
+        eglDestroySurface(EGLHelper::eglDisplay(), m_drawable);
         m_drawable = EGL_NO_SURFACE;
     }
 
@@ -125,9 +123,7 @@ std::unique_ptr<GLPlatformSurface> EGLOffScreenSurface::createOffScreenSurface(S
 EGLOffScreenSurface::EGLOffScreenSurface(SurfaceAttributes surfaceAttributes)
     : GLPlatformSurface(surfaceAttributes)
 {
-    m_sharedDisplay = EGLHelper::eglDisplay();
-
-    if (m_sharedDisplay == EGL_NO_DISPLAY)
+    if (EGLHelper::eglDisplay() == EGL_NO_DISPLAY)
         return;
 
     m_configSelector = std::make_unique<EGLConfigSelector>(surfaceAttributes);
@@ -149,11 +145,11 @@ PlatformSurfaceConfig EGLOffScreenSurface::configuration()
 
 void EGLOffScreenSurface::destroy()
 {
-    if (m_sharedDisplay == EGL_NO_DISPLAY || m_drawable == EGL_NO_SURFACE)
+    if (EGLHelper::eglDisplay() == EGL_NO_DISPLAY || m_drawable == EGL_NO_SURFACE)
         return;
 
     if (m_drawable) {
-        eglDestroySurface(m_sharedDisplay, m_drawable);
+        eglDestroySurface(EGLHelper::eglDisplay(), m_drawable);
         m_drawable = EGL_NO_SURFACE;
     }
 

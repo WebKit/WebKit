@@ -87,20 +87,9 @@ PlatformDisplayWayland::PlatformDisplayWayland(struct wl_display* wlDisplay)
     };
 
     m_eglDisplay = eglGetDisplay(m_display);
-    if (m_eglDisplay == EGL_NO_DISPLAY) {
-        g_warning("PlatformDisplayWayland initialization: failed to acquire EGL display.");
+    PlatformDisplay::initializeEGLDisplay();
+    if (m_eglDisplay == EGL_NO_DISPLAY)
         return;
-    }
-
-    if (eglInitialize(m_eglDisplay, 0, 0) == EGL_FALSE) {
-        g_warning("PlatformDisplayWayland initialization: failed to initialize the EGL display.");
-        return;
-    }
-
-    if (eglBindAPI(EGL_OPENGL_ES_API) == EGL_FALSE) {
-        g_warning("PlatformDisplayWayland initialization: failed to set EGL_OPENGL_ES_API as the rendering API.");
-        return;
-    }
 
     EGLint numberOfConfigs;
     if (!eglChooseConfig(m_eglDisplay, configAttributes, &m_eglConfig, 1, &numberOfConfigs) || numberOfConfigs != 1) {

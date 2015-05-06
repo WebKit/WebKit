@@ -31,6 +31,7 @@
 #include "EGLConfigSelector.h"
 #include "EGLHelper.h"
 #include "GLPlatformContext.h"
+#include "PlatformDisplay.h"
 
 namespace WebCore {
 
@@ -59,7 +60,7 @@ EGLWindowTransportSurface::EGLWindowTransportSurface(const IntSize& size, GLPlat
         return;
     }
 
-    m_drawable = eglCreateWindowSurface(m_sharedDisplay, m_configSelector->surfaceContextConfig(), static_cast<EGLNativeWindowType>(m_bufferHandle), 0);
+    m_drawable = eglCreateWindowSurface(PlatformDisplay::sharedDisplay().eglDisplay(), m_configSelector->surfaceContextConfig(), static_cast<EGLNativeWindowType>(m_bufferHandle), 0);
 
     if (m_drawable == EGL_NO_SURFACE) {
         LOG_ERROR("Failed to create EGL surface(%d).", eglGetError());
@@ -73,7 +74,7 @@ EGLWindowTransportSurface::~EGLWindowTransportSurface()
 
 void EGLWindowTransportSurface::swapBuffers()
 {
-    if (!eglSwapBuffers(m_sharedDisplay, m_drawable))
+    if (!eglSwapBuffers(PlatformDisplay::sharedDisplay().eglDisplay(), m_drawable))
         LOG_ERROR("Failed to SwapBuffers(%d).", eglGetError());
 }
 
@@ -116,7 +117,7 @@ EGLPixmapSurface::EGLPixmapSurface(GLPlatformSurface::SurfaceAttributes surfaceA
         return;
     }
 
-    m_drawable = eglCreatePixmapSurface(m_sharedDisplay, config, static_cast<EGLNativePixmapType>(m_bufferHandle), 0);
+    m_drawable = eglCreatePixmapSurface(PlatformDisplay::sharedDisplay().eglDisplay(), config, static_cast<EGLNativePixmapType>(m_bufferHandle), 0);
 
     if (m_drawable == EGL_NO_SURFACE) {
         LOG_ERROR("Failed to create EGL surface(%d).", eglGetError());

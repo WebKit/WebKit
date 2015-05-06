@@ -45,6 +45,10 @@ public:
 private:
     virtual Type type() const override { return PlatformDisplay::Type::X11; }
 
+#if USE(EGL)
+    void initializeEGLDisplay() override;
+#endif
+
     Display* m_display;
     bool m_ownedDisplay;
 };

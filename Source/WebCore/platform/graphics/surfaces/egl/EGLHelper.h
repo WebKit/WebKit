@@ -34,8 +34,8 @@ namespace WebCore {
 
 class EGLHelper {
 public:
-    static PlatformDisplay eglDisplay();
-    static PlatformDisplay currentDisplay();
+    static EGLDisplay eglDisplay();
+    static EGLDisplay currentDisplay();
     static void resolveEGLBindings();
     static void createEGLImage(EGLImageKHR*, GLenum, const EGLClientBuffer, const EGLint* = 0);
     static void destroyEGLImage(const EGLImageKHR);

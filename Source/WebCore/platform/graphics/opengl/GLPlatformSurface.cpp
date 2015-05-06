@@ -61,8 +61,7 @@ std::unique_ptr<GLPlatformSurface> GLPlatformSurface::createOffScreenSurface(Sur
 }
 
 GLPlatformSurface::GLPlatformSurface(SurfaceAttributes)
-    : m_sharedDisplay(0)
-    , m_drawable(0)
+    : m_drawable(0)
     , m_bufferHandle(0)
 {
 }
@@ -86,11 +85,6 @@ PlatformDrawable GLPlatformSurface::drawable() const
 const IntRect& GLPlatformSurface::geometry() const
 {
     return m_rect;
-}
-
-PlatformDisplay GLPlatformSurface::sharedDisplay() const
-{
-    return m_sharedDisplay;
 }
 
 PlatformSurfaceConfig GLPlatformSurface::configuration()

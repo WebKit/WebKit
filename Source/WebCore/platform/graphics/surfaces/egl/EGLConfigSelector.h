@@ -61,7 +61,7 @@ protected:
     EGLConfig m_pixmapFBConfig;
     EGLConfig m_surfaceContextFBConfig;
     unsigned m_attributes : 3;
-    PlatformDisplay m_sharedDisplay;
+    EGLDisplay m_sharedDisplay;
 };
 
 }

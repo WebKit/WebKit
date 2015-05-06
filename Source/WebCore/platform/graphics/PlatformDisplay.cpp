@@ -45,6 +45,10 @@
 #include <Ecore_X.h>
 #endif
 
+#if USE(EGL)
+#include <EGL/egl.h>
+#endif
+
 namespace WebCore {
 
 std::unique_ptr<PlatformDisplay> PlatformDisplay::createPlatformDisplay()
@@ -84,5 +88,64 @@ PlatformDisplay& PlatformDisplay::sharedDisplay()
     });
     return *display;
 }
+
+PlatformDisplay::PlatformDisplay()
+#if USE(EGL)
+    : m_eglDisplay(EGL_NO_DISPLAY)
+#endif
+{
+}
+
+PlatformDisplay::~PlatformDisplay()
+{
+#if USE(EGL)
+    terminateEGLDisplay();
+#endif
+}
+
+#if USE(EGL)
+EGLDisplay PlatformDisplay::eglDisplay() const
+{
+    if (!m_eglDisplayInitialized)
+        const_cast<PlatformDisplay*>(this)->initializeEGLDisplay();
+    return m_eglDisplay;
+}
+
+void PlatformDisplay::initializeEGLDisplay()
+{
+    m_eglDisplayInitialized = true;
+
+    if (m_eglDisplay == EGL_NO_DISPLAY) {
+        m_eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+        if (m_eglDisplay == EGL_NO_DISPLAY)
+            return;
+    }
+
+    if (eglInitialize(m_eglDisplay, 0, 0) == EGL_FALSE) {
+        LOG_ERROR("EGLDisplay Initialization failed.");
+        terminateEGLDisplay();
+        return;
+    }
+
+#if USE(OPENGL_ES_2)
+    static const EGLenum eglAPIVersion = EGL_OPENGL_ES_API;
+#else
+    static const EGLenum eglAPIVersion = EGL_OPENGL_API;
+#endif
+    if (eglBindAPI(eglAPIVersion) == EGL_FALSE) {
+        LOG_ERROR("Failed to set EGL API(%d).", eglGetError());
+        terminateEGLDisplay();
+        return;
+    }
+}
+
+void PlatformDisplay::terminateEGLDisplay()
+{
+    if (m_eglDisplay == EGL_NO_DISPLAY)
+        return;
+    eglTerminate(m_eglDisplay);
+    m_eglDisplay = EGL_NO_DISPLAY;
+}
+#endif // USE(EGL)
 
 } // namespace WebCore

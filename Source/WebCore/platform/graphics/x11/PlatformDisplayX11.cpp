@@ -29,6 +29,10 @@
 #if PLATFORM(X11)
 #include <X11/Xlib.h>
 
+#if USE(EGL)
+#include <EGL/egl.h>
+#endif
+
 namespace WebCore {
 
 PlatformDisplayX11::PlatformDisplayX11()
@@ -48,6 +52,14 @@ PlatformDisplayX11::~PlatformDisplayX11()
     if (m_ownedDisplay)
         XCloseDisplay(m_display);
 }
+
+#if USE(EGL)
+void PlatformDisplayX11::initializeEGLDisplay()
+{
+    m_eglDisplay = eglGetDisplay(m_display);
+    PlatformDisplay::initializeEGLDisplay();
+}
+#endif
 
 } // namespace WebCore
 

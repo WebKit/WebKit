@@ -28,6 +28,7 @@
 
 #if USE(EGL)
 
+#include "PlatformDisplay.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -72,12 +73,7 @@ bool EGLOffScreenContext::initialize(GLPlatformSurface* surface, PlatformContext
     if (!surface)
         return false;
 
-    if (!eglBindAPI(eglAPIVersion)) {
-        LOG_ERROR("Failed to set EGL API(%d).", eglGetError());
-        return false;
-    }
-
-    m_display = surface->sharedDisplay();
+    m_display = PlatformDisplay::sharedDisplay().eglDisplay();
     if (!m_display)
         return false;
 

@@ -22,6 +22,7 @@
 #if USE(EGL)
 
 #include "GraphicsContext3D.h"
+#include "PlatformDisplay.h"
 
 #if USE(CAIRO)
 #include <cairo.h>
@@ -38,10 +39,6 @@
 #include "PlatformDisplayX11.h"
 #endif
 
-#if PLATFORM(WAYLAND)
-#include "PlatformDisplayWayland.h"
-#endif
-
 #if ENABLE(ACCELERATED_2D_CANVAS)
 // cairo-gl.h includes some definitions from GLX that conflict with
 // the ones provided by us. Since GLContextEGL doesn't use any GLX
@@ -52,34 +49,9 @@
 
 namespace WebCore {
 
-static EGLDisplay gSharedEGLDisplay = EGL_NO_DISPLAY;
-
-#if USE(OPENGL_ES_2)
-static const EGLenum gGLAPI = EGL_OPENGL_ES_API;
-#else
-static const EGLenum gGLAPI = EGL_OPENGL_API;
-#endif
-
 static EGLDisplay sharedEGLDisplay()
 {
-    static bool initialized = false;
-    if (!initialized) {
-        initialized = true;
-
-#if PLATFORM(WAYLAND)
-        if (is<PlatformDisplayWayland>(PlatformDisplay::sharedDisplay()))
-            gSharedEGLDisplay = eglGetDisplay(downcast<PlatformDisplayWayland>(PlatformDisplay::sharedDisplay()).native());
-        else // Note that this branch continutes outside this #if-guarded segment.
-#endif
-#if PLATFORM(X11)
-            gSharedEGLDisplay = eglGetDisplay(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native());
-#else
-            gSharedEGLDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-#endif
-        if (gSharedEGLDisplay != EGL_NO_DISPLAY && (!eglInitialize(gSharedEGLDisplay, 0, 0) || !eglBindAPI(gGLAPI)))
-            gSharedEGLDisplay = EGL_NO_DISPLAY;
-    }
-    return gSharedEGLDisplay;
+    return PlatformDisplay::sharedDisplay().eglDisplay();
 }
 
 static const EGLint gContextAttributes[] = {
