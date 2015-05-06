@@ -3055,6 +3055,8 @@ webkit.org/b/139968 fast/regions/overflow/overflow-first-and-last-regions.html [
 # rdar://problem/20656948
 accessibility/treeitem-child-exposed.html [ Failure ]
 
+webkit.org/b/144673 fast/forms/button-line-height.html [ ImageOnlyFailure ]
+
 ################################################################################
 ######################### End list of UNREVIEWED failures ##########################
 ################################################################################

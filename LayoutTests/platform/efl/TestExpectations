@@ -2223,3 +2223,5 @@ compositing/background-color/background-color-change-to-text.html [ ImageOnlyFai
 compositing/masks/compositing-clip-path-mask-change.html [ ImageOnlyFailure ]
 compositing/overlap-blending/nested-overlap-overflow.html [ ImageOnlyFailure ]
 compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
+
+webkit.org/b/144673 fast/forms/button-line-height.html [ ImageOnlyFailure ]

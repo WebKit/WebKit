@@ -2373,6 +2373,8 @@ webkit.org/b/144574 svg/masking/mask-negative-scale.svg [ ImageOnlyFailure ]
 webkit.org/b/144575 http/tests/loading/promote-img-preload-priority.html [ Failure ]
 webkit.org/b/144576 editing/execCommand/nsresponder-outdent.html [ Failure ]
 
+webkit.org/b/144673 fast/forms/button-line-height.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

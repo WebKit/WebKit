@@ -1,3 +1,12 @@
+2015-05-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Update expectations for fast/forms/button-line-height.html
+
+        * TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+
 2015-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WK2] The WebKit network disk cache is not enabled
