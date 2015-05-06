@@ -738,11 +738,15 @@ TEST_F(ContentExtensionTest, SplittingLargeNFAs)
             nfas.append(WTF::move(nfa));
         });
         EXPECT_EQ(nfas.size(), expectedNFACounts[i]);
-
+        
+        Vector<ContentExtensions::DFA> dfas;
+        for (auto& nfa : nfas)
+            dfas.append(ContentExtensions::NFAToDFA::convert(nfa));
+        
         Vector<ContentExtensions::DFABytecode> combinedBytecode;
-        for (auto& nfa : nfas) {
+        for (const auto& dfa : dfas) {
             Vector<ContentExtensions::DFABytecode> bytecode;
-            ContentExtensions::DFABytecodeCompiler compiler(ContentExtensions::NFAToDFA::convert(nfa), bytecode);
+            ContentExtensions::DFABytecodeCompiler compiler(dfa, bytecode);
             compiler.compile();
             combinedBytecode.appendVector(bytecode);
         }

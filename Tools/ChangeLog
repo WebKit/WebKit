@@ -1,3 +1,11 @@
+2015-05-06  Alex Christensen  <achristensen@webkit.org>
+
+        Fix api tests after r183877.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::TEST_F):
+        Generate all DFAs before compiling them.
+
 2015-05-06  Alexey Proskuryakov  <ap@apple.com>
 
         Do not link tools to WebKit2.framework
