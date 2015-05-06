@@ -1,5 +1,14 @@
 2015-05-06  Jon Lee  <jonlee@apple.com>
 
+        CoreTextSPI.h uses wrong version number to denote Yosemite
+        https://bugs.webkit.org/show_bug.cgi?id=144701
+
+        Reviewed by Dean Jackson.
+
+        * platform/spi/cocoa/CoreTextSPI.h: Should 101000 not 10100.
+
+2015-05-06  Jon Lee  <jonlee@apple.com>
+
         Expose more font weights for -apple-system
         https://bugs.webkit.org/show_bug.cgi?id=144707
 
