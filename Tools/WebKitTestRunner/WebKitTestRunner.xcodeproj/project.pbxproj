@@ -93,12 +93,10 @@
 		A664BC7613A5F3A9009A7B25 /* libWebCoreTestSupport.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 41230E16138C78BF00BCCFCA /* libWebCoreTestSupport.dylib */; };
 		BC14E4DB120E02D000826C0C /* GCController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC14E4D9120E02D000826C0C /* GCController.cpp */; };
 		BC14E4EA120E03D800826C0C /* JSGCController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC14E4E8120E03D800826C0C /* JSGCController.cpp */; };
-		BC25193F11D15D8B002EBC01 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC7934AB1190658C005EA8E2 /* WebKit2.framework */; };
 		BC25194011D15D8B002EBC01 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */; };
 		BC251A3E11D16831002EBC01 /* InjectedBundleMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC25184611D15767002EBC01 /* InjectedBundleMain.cpp */; };
 		BC793400118F7C84005EA8E2 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC7933FF118F7C84005EA8E2 /* main.mm */; };
 		BC793431118F7F19005EA8E2 /* TestController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC793430118F7F19005EA8E2 /* TestController.cpp */; };
-		BC7934AC1190658C005EA8E2 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC7934AB1190658C005EA8E2 /* WebKit2.framework */; };
 		BC7934E811906846005EA8E2 /* PlatformWebViewMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC7934E711906846005EA8E2 /* PlatformWebViewMac.mm */; };
 		BC8C795C11D2785D004535A1 /* TestControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8C795B11D2785D004535A1 /* TestControllerMac.mm */; };
 		BC8DAD7B1316D91000EC96FC /* InjectedBundleMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8DAD771316D7B900EC96FC /* InjectedBundleMac.mm */; };
@@ -249,7 +247,6 @@
 		BC79342F118F7F19005EA8E2 /* TestController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestController.h; sourceTree = "<group>"; };
 		BC793430118F7F19005EA8E2 /* TestController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestController.cpp; sourceTree = "<group>"; };
 		BC7934A411906584005EA8E2 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
-		BC7934AB1190658C005EA8E2 /* WebKit2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC7934DD119066EC005EA8E2 /* PlatformWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformWebView.h; sourceTree = "<group>"; };
 		BC7934E711906846005EA8E2 /* PlatformWebViewMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformWebViewMac.mm; sourceTree = "<group>"; };
 		BC8C795B11D2785D004535A1 /* TestControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestControllerMac.mm; sourceTree = "<group>"; };
@@ -307,7 +304,6 @@
 			files = (
 				BCDA2B9A1191051F00C3BC47 /* JavaScriptCore.framework in Frameworks */,
 				0F5169CB1445222D00E0A9D7 /* WebKit.framework in Frameworks */,
-				BC7934AC1190658C005EA8E2 /* WebKit2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -318,7 +314,6 @@
 				BC25194011D15D8B002EBC01 /* JavaScriptCore.framework in Frameworks */,
 				A664BC7613A5F3A9009A7B25 /* libWebCoreTestSupport.dylib in Frameworks */,
 				0F5169CC1445222D00E0A9D7 /* WebKit.framework in Frameworks */,
-				BC25193F11D15D8B002EBC01 /* WebKit2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -382,7 +377,6 @@
 				41230E16138C78BF00BCCFCA /* libWebCoreTestSupport.dylib */,
 				4181731B138AD39D0057AAA4 /* WebCoreTestSupport.h */,
 				0F5169CA1445222D00E0A9D7 /* WebKit.framework */,
-				BC7934AB1190658C005EA8E2 /* WebKit2.framework */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";

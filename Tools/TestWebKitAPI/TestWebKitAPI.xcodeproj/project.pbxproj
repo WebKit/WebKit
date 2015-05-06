@@ -639,7 +639,6 @@
 		BC909779125571AB00083756 /* PageLoadBasic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageLoadBasic.cpp; sourceTree = "<group>"; };
 		BC90995D12567BC100083756 /* WKString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKString.cpp; sourceTree = "<group>"; };
 		BC9099931256ACF100083756 /* WKStringJSString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKStringJSString.cpp; sourceTree = "<group>"; };
-		BCA61DB411700EFD00460D1E /* WebKit2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCAA485514A021640088FAC4 /* simple-tall.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "simple-tall.html"; sourceTree = "<group>"; };
 		BCAA485714A044D40088FAC4 /* EditorCommands.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EditorCommands.mm; sourceTree = "<group>"; };
 		BCB6803F126FBFE100642A61 /* DocumentStartUserScriptAlertCrash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentStartUserScriptAlertCrash.cpp; sourceTree = "<group>"; };
@@ -792,7 +791,6 @@
 				BC90964D1255620C00083756 /* JavaScriptCore.framework */,
 				F3FC3EE213678B7300126A65 /* libgtest.a */,
 				C081224813FC1B0300DC39AE /* WebKit.framework */,
-				BCA61DB411700EFD00460D1E /* WebKit2.framework */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";

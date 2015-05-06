@@ -84,7 +84,6 @@
 		BC329497116A941B008635D0 /* WK2BrowserWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WK2BrowserWindowController.m; path = mac/WK2BrowserWindowController.m; sourceTree = "<group>"; };
 		BC3294A2116A9852008635D0 /* BrowserWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = BrowserWindow.xib; path = mac/BrowserWindow.xib; sourceTree = "<group>"; };
 		BC72B89A11E57E8A001EB4EA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = mac/Info.plist; sourceTree = "<group>"; };
-		BC8FB5A7116AA1FE0080D413 /* WebKit2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCA8CBDD11E578A000812FB7 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		BCA8CBDE11E578A000812FB7 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		BCA8CBDF11E578A000812FB7 /* MiniBrowser.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = MiniBrowser.xcconfig; sourceTree = "<group>"; };
@@ -140,7 +139,6 @@
 			children = (
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
 				0F7EB6E2134113C300F4D865 /* WebKit.framework */,
-				BC8FB5A7116AA1FE0080D413 /* WebKit2.framework */,
 			);
 			name = "Linked Frameworks";
 			sourceTree = "<group>";

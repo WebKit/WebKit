@@ -1,3 +1,14 @@
+2015-05-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Do not link tools to WebKit2.framework
+        https://bugs.webkit.org/show_bug.cgi?id=144699
+
+        Reviewed by Tim Horton.
+
+        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
 2015-05-06  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Test splitting NFAs by max NFA size.
