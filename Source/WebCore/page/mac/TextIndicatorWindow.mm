@@ -88,6 +88,8 @@ using namespace WebCore;
 
 @implementation WebTextIndicatorView
 
+@synthesize fadingOut = _fadingOut;
+
 - (instancetype)initWithFrame:(NSRect)frame textIndicator:(PassRefPtr<TextIndicator>)textIndicator margin:(NSSize)margin
 {
     if (!(self = [super initWithFrame:frame]))

@@ -1,3 +1,10 @@
+2015-05-06  Jessie Berlin  <jberlin@webkit.org>
+
+        32-bit build fix after r183859 and r183860.
+
+        * page/mac/TextIndicatorWindow.mm:
+        Autosynthesis isn't available for our 32-bit builds.
+
 2015-05-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [EGL] Move EGLDisplay handling to PlatformDisplay and remove PlatformDisplay definition from GLDefs.h
