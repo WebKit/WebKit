@@ -1,3 +1,14 @@
+2015-05-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Do not link tools to WebKit2.framework
+        https://bugs.webkit.org/show_bug.cgi?id=144699
+
+        Unreviewed build fix.
+
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+        * WebKitTestRunner/Configurations/WebKitTestRunner.xcconfig:
+        These linked to WebKit2 in two ways, eliminating the other one.
+
 2015-05-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Introducing the Platform Abstraction Layer (PAL)

@@ -26,7 +26,7 @@
 PRODUCT_NAME = WebKitTestRunner
 GCC_ENABLE_OBJC_EXCEPTIONS = YES
 
-OTHER_LDFLAGS_BASE = -l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY) -framework WebKit2;
+OTHER_LDFLAGS_BASE = -l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY);
 OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_BASE) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
 OTHER_LDFLAGS_iphoneos = -framework JavaScriptCore -framework CoreGraphics -framework ImageIO -framework UIKit;
 OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_iphoneos);
