@@ -1,3 +1,14 @@
+2015-05-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: DOMStorage exception and issue with sessionStorage
+        https://bugs.webkit.org/show_bug.cgi?id=144646
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::findStorageArea):
+        Return session storage if the identifier says not local storage.
+
 2015-05-06  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Move ReadableStreamJSSource.h/.cpp to ReadableJSStream.h/.cpp

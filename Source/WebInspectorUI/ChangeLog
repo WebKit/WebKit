@@ -1,5 +1,39 @@
 2015-05-06  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: DOMStorage exception and issue with sessionStorage
+        https://bugs.webkit.org/show_bug.cgi?id=144646
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DOMStorageContentView.js:
+        (WebInspector.DOMStorageContentView):
+        (WebInspector.DOMStorageContentView.prototype._populate):
+        (WebInspector.DOMStorageContentView.prototype.reset): Deleted.
+        Always have the datagrid be available with a default sort.
+
+        (WebInspector.DOMStorageContentView.prototype._sortDataGrid.comparator):
+        (WebInspector.DOMStorageContentView.prototype._sortDataGrid):
+        Simplify and correct the order.
+
+        (WebInspector.DOMStorageContentView.prototype.cleanup):
+        Cleanup some uses of delete.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype.sortNodesImmediately):
+        Provide a way to sort immediately without a visible delay.
+
+        (WebInspector.DataGrid.prototype._sortNodesCallback):
+        Cleanup some dead code to simplify sorting.
+
+        (WebInspector.DataGridNode.prototype._attach):
+        When sorting, the children list does not match the child node list,
+        so ensure that placeholder nodes are added to the end.
+
+        (WebInspector.PlaceholderDataGridNode.prototype.makeNormal):
+        Cleanup some uses of delete.
+
+2015-05-06  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: SourceCodeTextEditor shows "undefined" instead of resource content when pausing during resource load
         https://bugs.webkit.org/show_bug.cgi?id=144662
 

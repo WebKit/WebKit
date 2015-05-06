@@ -832,22 +832,28 @@ WebInspector.DataGrid.prototype = {
         this._sortNodesRequestId = window.requestAnimationFrame(this._sortNodesCallback.bind(this, comparator));
     },
 
+    sortNodesImmediately: function(comparator)
+    {
+        this._sortNodesCallback(comparator);
+    },
+
     _sortNodesCallback: function(comparator)
     {
         function comparatorWrapper(aRow, bRow)
         {
-            var reverseFactor = this.sortOrder !== WebInspector.DataGrid.SortOrder.Ascending ? -1 : 1;
             var aNode = aRow._dataGridNode;
             var bNode = bRow._dataGridNode;
-            if (aNode._data.summaryRow || aNode.isPlaceholderNode)
+
+            if (aNode.isPlaceholderNode)
                 return 1;
-            if (bNode._data.summaryRow || bNode.isPlaceholderNode)
+            if (bNode.isPlaceholderNode)
                 return -1;
 
+            var reverseFactor = this.sortOrder !== WebInspector.DataGrid.SortOrder.Ascending ? -1 : 1;
             return reverseFactor * comparator(aNode, bNode);
         }
 
-        delete this._sortNodesRequestId;
+        this._sortNodesRequestId = undefined;
 
         if (this._editing) {
             this._sortAfterEditingCallback = this.sortNodes.bind(this, comparator);
@@ -1823,11 +1829,13 @@ WebInspector.DataGridNode.prototype = {
 
         var nextElement = null;
 
-        var previousGridNode = this.traversePreviousNode(true, true);
-        if (previousGridNode && previousGridNode.element.parentNode)
-            nextElement = previousGridNode.element.nextSibling;
-        else if (!previousGridNode)
-            nextElement = this.dataGrid.dataTableBodyElement.firstChild;
+        if (!this.isPlaceholderNode) {
+            var previousGridNode = this.traversePreviousNode(true, true);
+            if (previousGridNode && previousGridNode.element.parentNode)
+                nextElement = previousGridNode.element.nextSibling;
+            else if (!previousGridNode)
+                nextElement = this.dataGrid.dataTableBodyElement.firstChild;
+        }
 
         // If there is no next grid node, then append before the last child since the last child is the filler row.
         console.assert(this.dataGrid.dataTableBodyElement.lastChild.classList.contains("filler"));
@@ -1896,7 +1904,6 @@ WebInspector.PlaceholderDataGridNode.prototype = {
 
     makeNormal: function()
     {
-        delete this.isPlaceholderNode;
-        delete this.makeNormal;
+        this.isPlaceholderNode = false;
     }
 }

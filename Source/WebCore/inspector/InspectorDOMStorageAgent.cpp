@@ -42,6 +42,7 @@
 #include "PageGroup.h"
 #include "SecurityOrigin.h"
 #include "Storage.h"
+#include "StorageNamespace.h"
 #include "StorageNamespaceProvider.h"
 #include "VoidCallback.h"
 #include <inspector/InspectorFrontendDispatchers.h>
@@ -198,6 +199,8 @@ RefPtr<StorageArea> InspectorDOMStorageAgent::findStorageArea(ErrorString& error
         return nullptr;
     }
 
+    if (!isLocalStorage)
+        return m_pageAgent->page()->sessionStorage()->storageArea(targetFrame->document()->securityOrigin());
     return m_pageAgent->page()->storageNamespaceProvider().localStorageArea(*targetFrame->document());
 }
 

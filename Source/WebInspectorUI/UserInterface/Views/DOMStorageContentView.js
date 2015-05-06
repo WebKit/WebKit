@@ -35,7 +35,18 @@ WebInspector.DOMStorageContentView = function(representedObject)
     representedObject.addEventListener(WebInspector.DOMStorageObject.Event.ItemRemoved, this.itemRemoved, this);
     representedObject.addEventListener(WebInspector.DOMStorageObject.Event.ItemUpdated, this.itemUpdated, this);
 
-    this.reset();
+    var columns = {};
+    columns.key = {title: WebInspector.UIString("Key"), sortable: true};
+    columns.value = {title: WebInspector.UIString("Value"), sortable: true};
+
+    this._dataGrid = new WebInspector.DataGrid(columns, this._editingCallback.bind(this), this._deleteCallback.bind(this));
+    this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
+    this._dataGrid.sortColumnIdentifier = "key";
+    this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SortChanged, this._sortDataGrid, this);
+
+    this.element.appendChild(this._dataGrid.element);
+
+    this._populate();
 };
 
 WebInspector.DOMStorageContentView.StyleClassName = "dom-storage";
@@ -49,40 +60,6 @@ WebInspector.DOMStorageContentView.prototype = {
     __proto__: WebInspector.ContentView.prototype,
 
     // Public
-
-    reset: function()
-    {
-        this.representedObject.getEntries(function(error, entries) {
-            if (error)
-                return;
-
-            if (!this._dataGrid) {
-                var columns = {};
-                columns.key = {title: WebInspector.UIString("Key"), sortable: true};
-                columns.value = {title: WebInspector.UIString("Value"), sortable: true};
-
-                this._dataGrid = new WebInspector.DataGrid(columns, this._editingCallback.bind(this), this._deleteCallback.bind(this));
-                this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SortChanged, this._sortDataGrid, this);
-
-                this.element.appendChild(this._dataGrid.element);
-            }
-
-            console.assert(this._dataGrid);
-
-            var nodes = [];
-            for (var entry of entries) {
-                if (!entry[0] || !entry[1])
-                    continue;
-                var data = {key: entry[0], value: entry[1]};
-                var node = new WebInspector.DataGridNode(data, false);
-                this._dataGrid.appendChild(node);
-            }
-
-            this._sortDataGrid();
-            this._dataGrid.addPlaceholderNode();
-            this._dataGrid.updateLayout();
-        }.bind(this));
-    },
 
     saveToCookie: function(cookie)
     {
@@ -158,19 +135,37 @@ WebInspector.DOMStorageContentView.prototype = {
 
     // Private
 
+    _populate: function()
+    {
+        this.representedObject.getEntries(function(error, entries) {
+            if (error)
+                return;
+
+            var nodes = [];
+            for (var entry of entries) {
+                if (!entry[0] || !entry[1])
+                    continue;
+                var data = {key: entry[0], value: entry[1]};
+                var node = new WebInspector.DataGridNode(data, false);
+                this._dataGrid.appendChild(node);
+            }
+
+            this._sortDataGrid();
+            this._dataGrid.addPlaceholderNode();
+            this._dataGrid.updateLayout();
+        }.bind(this));
+    },
+
     _sortDataGrid: function()
     {
-        if (!this._dataGrid.sortOrder)
-            return;
-
         var sortColumnIdentifier = this._dataGrid.sortColumnIdentifier || "key";
 
         function comparator(a, b)
         {
-            return b.data[sortColumnIdentifier].localeCompare(a.data[sortColumnIdentifier]);
+            return a.data[sortColumnIdentifier].localeCompare(b.data[sortColumnIdentifier]);
         }
 
-        this._dataGrid.sortNodes(comparator, this._dataGrid.sortOrder);
+        this._dataGrid.sortNodesImmediately(comparator);
     },
 
     _deleteCallback: function(node)
@@ -210,9 +205,9 @@ WebInspector.DOMStorageContentView.prototype = {
             editingNode.element.classList.remove(WebInspector.DOMStorageContentView.MissingKeyStyleClassName);
             editingNode.element.classList.remove(WebInspector.DOMStorageContentView.MissingValueStyleClassName);
             editingNode.element.classList.remove(WebInspector.DOMStorageContentView.DuplicateKeyStyleClassName);
-            delete editingNode.__hasUncommittedEdits;
-            delete editingNode.__originalKey;
-            delete editingNode.__originalValue;
+            editingNode.__hasUncommittedEdits = undefined;
+            editingNode.__originalKey = undefined;
+            editingNode.__originalValue = undefined;
         }
 
         function restoreOriginalValues()
