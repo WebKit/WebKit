@@ -292,8 +292,8 @@ using namespace WebKit;
 
         _wkView._rootLayer.transform = transform;
     } else if (scale != _page->viewScaleFactor()) {
-        CAContext *context = [_wkView.layer context];
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+        CAContext *context = [_wkView.layer context];
         MachSendRight fencePort = MachSendRight::adopt([context createFencePort]);
         _page->scaleViewAndUpdateGeometryFenced(scale, IntSize(_wkView.frame.size), fencePort);
         [context setFencePort:fencePort.sendRight() commitHandler:^{
