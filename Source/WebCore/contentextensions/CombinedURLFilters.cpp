@@ -170,14 +170,28 @@ static void generateNFAForSubtree(NFA& nfa, unsigned nfaRootId, PrefixTreeVertex
     Vector<ActiveSubtree> stack;
     if (!root.edges.isEmpty())
         stack.append(ActiveSubtree(root, nfaRootId, 0));
+    bool nfaTooBig = false;
     
     // Generate graphs for each subtree that does not contain any quantifiers.
     while (!stack.isEmpty()) {
         PrefixTreeVertex& vertex = stack.last().vertex;
         const unsigned edgeIndex = stack.last().edgeIndex;
 
+        // FIXME: This can be tuned. More NFAs take longer to interpret, fewer use more memory and time to compile.
+        const unsigned maxNFASize = 50000;
+        
+        // Only stop generating an NFA at a leaf to ensure we have a correct NFA. We could go slightly over the maxNFASize.
+        if (vertex.edges.isEmpty() && nfa.graphSize() > maxNFASize)
+            nfaTooBig = true;
+        
         if (edgeIndex < vertex.edges.size()) {
             auto& edge = vertex.edges[edgeIndex];
+            
+            // Clean up any processed leaves and return early if we are past the maxNFASize.
+            if (nfaTooBig) {
+                stack.last().edgeIndex = stack.last().vertex.edges.size();
+                continue;
+            }
             
             // Quantified edges in the subtree will be a part of another NFA.
             if (!edge.term.hasFixedLength()) {

@@ -1,3 +1,18 @@
+2015-05-05  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Limit NFA size.
+        https://bugs.webkit.org/show_bug.cgi?id=144649
+
+        Reviewed by Benjamin Poulain.
+
+        * contentextensions/CombinedURLFilters.cpp:
+        (WebCore::ContentExtensions::generateNFAForSubtree):
+        (WebCore::ContentExtensions::CombinedURLFilters::processNFAs):
+        Add a maximum NFA size to ensure that we do not use too much memory when compiling.
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::compileRuleList):
+        Remove debugging code that doesn't compile any more.
+
 2015-05-05  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Some assertion failures in compositing code after r183820.

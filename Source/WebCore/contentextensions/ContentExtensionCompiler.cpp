@@ -207,25 +207,10 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
 
         LOG_LARGE_STRUCTURES(nfa, nfa.memoryUsed());
 
-#if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
-        double dfaBuildTimeStart = monotonicallyIncreasingTime();
-#endif
         DFA dfa = NFAToDFA::convert(nfa);
         LOG_LARGE_STRUCTURES(dfa, dfa.memoryUsed());
 
-#if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
-        double dfaBuildTimeEnd = monotonicallyIncreasingTime();
-        dataLogF("    Time spent building the DFA: %f\n", (dfaBuildTimeEnd - dfaBuildTimeStart));
-#endif
-
-#if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
-        double dfaMinimizationTimeStart = monotonicallyIncreasingTime();
-#endif
         dfa.minimize();
-#if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
-        double dfaMinimizationTimeEnd = monotonicallyIncreasingTime();
-        dataLogF("    Time spent miniminizing the DFA: %f\n", (dfaMinimizationTimeEnd - dfaMinimizationTimeStart));
-#endif
 
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
         WTFLogAlways("DFA");
@@ -270,7 +255,6 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     double totalNFAToByteCodeBuildTimeEnd = monotonicallyIncreasingTime();
     dataLogF("    Time spent building and compiling the DFAs: %f\n", (totalNFAToByteCodeBuildTimeEnd - totalNFAToByteCodeBuildTimeStart));
-    dataLogF("    Bytecode size %zu\n", bytecode.size());
 #endif
 
     client.finalize();
