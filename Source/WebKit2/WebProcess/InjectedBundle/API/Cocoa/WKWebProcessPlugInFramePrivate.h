@@ -39,6 +39,8 @@
 @property (nonatomic, readonly) NSArray *_certificateChain;
 @property (nonatomic, readonly) NSURL *_provisionalURL;
 
+@property (nonatomic, readonly) WKWebProcessPlugInFrame *_parentFrame;
+
 @end
 
 #endif // WK_API_ENABLED

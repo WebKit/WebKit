@@ -1,3 +1,15 @@
+2015-05-06  Dan Bernstein  <mitz@apple.com>
+
+        No way to get a WKWebProcessPlugInFrame’s parent frame
+        https://bugs.webkit.org/show_bug.cgi?id=144705
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        (-[WKWebProcessPlugInFrame _parentFrame]): Added this getter.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFramePrivate.h: Declared new
+        _parentFrame property.
+
 2015-05-06  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the build.

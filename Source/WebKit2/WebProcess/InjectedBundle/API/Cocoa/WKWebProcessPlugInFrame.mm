@@ -103,6 +103,12 @@ using namespace WebKit;
     return [wrapper(API::FrameHandle::create(_frame->frameID()).leakRef()) autorelease];
 }
 
+- (WKWebProcessPlugInFrame *)_parentFrame
+{
+    WebFrame *parentFrame = _frame->parentFrame();
+    return parentFrame ? wrapper(*parentFrame) : nil;
+}
+
 - (BOOL)_hasCustomContentProvider
 {
     if (!_frame->isMainFrame())
