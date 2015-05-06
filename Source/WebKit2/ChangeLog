@@ -1,3 +1,17 @@
+2015-05-06  Chris Dumez  <cdumez@apple.com>
+
+        Disable network cache efficacy logging
+        https://bugs.webkit.org/show_bug.cgi?id=144703
+        <rdar://problem/20439143>
+
+        Reviewed by Andreas Kling.
+
+        Disable network cache efficacy logging by default as we have sufficient
+        data for now.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::registerUserDefaultsIfNeeded):
+
 2015-05-06  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the build.
