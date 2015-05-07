@@ -52,7 +52,7 @@ struct BlobRegistryContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     BlobRegistryContext(const URL& url, Vector<BlobPart> blobParts, const String& contentType)
-        : url(url.copy())
+        : url(url.isolatedCopy())
         , contentType(contentType.isolatedCopy())
         , blobParts(WTF::move(blobParts))
     {
@@ -61,18 +61,18 @@ public:
     }
 
     BlobRegistryContext(const URL& url, const URL& srcURL)
-        : url(url.copy())
-        , srcURL(srcURL.copy())
+        : url(url.isolatedCopy())
+        , srcURL(srcURL.isolatedCopy())
     {
     }
 
     BlobRegistryContext(const URL& url)
-        : url(url.copy())
+        : url(url.isolatedCopy())
     {
     }
 
     BlobRegistryContext(const URL& url, const String& path, const String& contentType)
-        : url(url.copy())
+        : url(url.isolatedCopy())
         , path(path.isolatedCopy())
         , contentType(contentType.isolatedCopy())
     {

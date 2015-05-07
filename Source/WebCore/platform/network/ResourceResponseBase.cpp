@@ -83,7 +83,7 @@ std::unique_ptr<ResourceResponse> ResourceResponseBase::adopt(std::unique_ptr<Cr
 std::unique_ptr<CrossThreadResourceResponseData> ResourceResponseBase::copyData() const
 {
     auto data = std::make_unique<CrossThreadResourceResponseData>();
-    data->m_url = url().copy();
+    data->m_url = url().isolatedCopy();
     data->m_mimeType = mimeType().isolatedCopy();
     data->m_expectedContentLength = expectedContentLength();
     data->m_textEncodingName = textEncodingName().isolatedCopy();

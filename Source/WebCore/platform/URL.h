@@ -83,9 +83,8 @@ public:
 
     // Makes a deep copy. Helpful only if you need to use a URL on another
     // thread. Since the underlying StringImpl objects are immutable, there's
-    // no other reason to ever prefer copy() over plain old assignment.
-    // FIXME: Rename to isolatedCopy to match String.
-    URL copy() const;
+    // no other reason to ever prefer isolatedCopy() over plain old assignment.
+    URL isolatedCopy() const;
 
     bool isNull() const;
     bool isEmpty() const;
@@ -381,7 +380,7 @@ inline URLCapture::URLCapture(URL&& url)
 }
 
 inline URLCapture::URLCapture(const URLCapture& other)
-    : m_URL(other.m_URL.copy())
+    : m_URL(other.m_URL.isolatedCopy())
 {
 }
 

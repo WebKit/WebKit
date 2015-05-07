@@ -76,7 +76,7 @@ public:
 
     void detachFromCurrentThread()
     {
-        m_url = m_url.copy();
+        m_url = m_url.isolatedCopy();
     }
 
 private:

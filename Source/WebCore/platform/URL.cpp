@@ -648,7 +648,7 @@ void URL::init(const URL& base, const String& relative, const TextEncoding& enco
     }
 }
 
-URL URL::copy() const
+URL URL::isolatedCopy() const
 {
     URL result = *this;
     result.m_string = result.m_string.isolatedCopy();

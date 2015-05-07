@@ -140,7 +140,7 @@ const URL& WebSocketHandshake::url() const
 
 void WebSocketHandshake::setURL(const URL& url)
 {
-    m_url = url.copy();
+    m_url = url.isolatedCopy();
 }
 
 const String WebSocketHandshake::host() const
@@ -383,7 +383,7 @@ void WebSocketHandshake::addExtensionProcessor(std::unique_ptr<WebSocketExtensio
 
 URL WebSocketHandshake::httpURLForAuthenticationAndCookies() const
 {
-    URL url = m_url.copy();
+    URL url = m_url.isolatedCopy();
     bool couldSetProtocol = url.setProtocol(m_secure ? "https" : "http");
     ASSERT_UNUSED(couldSetProtocol, couldSetProtocol);
     return url;

@@ -84,10 +84,10 @@ std::unique_ptr<ResourceRequest> ResourceRequestBase::adopt(std::unique_ptr<Cros
 std::unique_ptr<CrossThreadResourceRequestData> ResourceRequestBase::copyData() const
 {
     auto data = std::make_unique<CrossThreadResourceRequestData>();
-    data->url = url().copy();
+    data->url = url().isolatedCopy();
     data->cachePolicy = m_cachePolicy;
     data->timeoutInterval = timeoutInterval();
-    data->firstPartyForCookies = firstPartyForCookies().copy();
+    data->firstPartyForCookies = firstPartyForCookies().isolatedCopy();
     data->httpMethod = httpMethod().isolatedCopy();
     data->httpHeaders = httpHeaderFields().copyData();
     data->priority = m_priority;

@@ -36,7 +36,7 @@ public:
     PreloadRequest(const String& initiator, const String& resourceURL, const URL& baseURL, CachedResource::Type resourceType, const String& mediaAttribute)
         : m_initiator(initiator)
         , m_resourceURL(resourceURL)
-        , m_baseURL(baseURL.copy())
+        , m_baseURL(baseURL.isolatedCopy())
         , m_resourceType(resourceType)
         , m_mediaAttribute(mediaAttribute)
         , m_crossOriginModeAllowsCookies(false)

@@ -244,7 +244,7 @@ void XSSAuditor::init(Document* document, XSSAuditorDelegate* auditorDelegate)
     if (!m_isEnabled)
         return;
 
-    m_documentURL = document->url().copy();
+    m_documentURL = document->url().isolatedCopy();
 
     // In theory, the Document could have detached from the Frame after the
     // XSSAuditor was constructed.
@@ -300,7 +300,7 @@ void XSSAuditor::init(Document* document, XSSAuditorDelegate* auditorDelegate)
         m_xssProtection = combineXSSProtectionHeaderAndCSP(xssProtectionHeader, cspHeader);
         // FIXME: Combine the two report URLs in some reasonable way.
         if (auditorDelegate)
-            auditorDelegate->setReportURL(xssProtectionReportURL.copy());
+            auditorDelegate->setReportURL(xssProtectionReportURL.isolatedCopy());
         FormData* httpBody = documentLoader->originalRequest().httpBody();
         if (httpBody && !httpBody->isEmpty()) {
             httpBodyAsString = httpBody->flattenToString();

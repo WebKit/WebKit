@@ -52,7 +52,7 @@ namespace WebCore {
 
 CrossThreadCopierBase<false, false, URL>::Type CrossThreadCopierBase<false, false, URL>::copy(const URL& url)
 {
-    return url.copy();
+    return url.isolatedCopy();
 }
 
 CrossThreadCopierBase<false, false, String>::Type CrossThreadCopierBase<false, false, String>::copy(const String& str)
