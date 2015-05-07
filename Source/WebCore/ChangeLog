@@ -1,3 +1,11 @@
+2015-05-07  Anders Carlsson  <andersca@apple.com>
+
+        Build fix.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::dataInRTFDFormat):
+        (WebCore::dataInRTFFormat):
+
 2015-05-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Applying a filter on an SVG element, which is larger than 4096 pixels, causes this element to be rendered shifted to the left
