@@ -1,5 +1,14 @@
 2015-05-07  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [EFL] Mouseevent/hover tests fail with XorgDriver
+        https://bugs.webkit.org/show_bug.cgi?id=144741
+
+        Unreviewed gardening, mark failing tests, skip timeouting tests.
+
+        * platform/efl/TestExpectations:
+
+2015-05-07  Csaba Osztrogonác  <ossy@webkit.org>
+
         [EFL] REGRESSION(r183907): It made all inspector-protocol test crash
         https://bugs.webkit.org/show_bug.cgi?id=144737
 

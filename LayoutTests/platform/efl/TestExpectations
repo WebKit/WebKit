@@ -2229,3 +2229,52 @@ webkit.org/b/144673 fast/forms/button-line-height.html [ ImageOnlyFailure ]
 # [EFL] REGRESSION(r183907): It made all inspector-protocol test crash
 webkit.org/b/144737 inspector-protocol [ Skip ]
 webkit.org/b/144737 http/tests/inspector-protocol [ Skip ]
+
+# [EFL] Mouseevent/hover tests fail with XorgDriver
+# https://bugs.webkit.org/show_bug.cgi?id=144741
+fast/css/hover-active-drag.html [ Failure ]
+fast/css/hover-affects-ancestor.html [ Failure ]
+fast/css/hover-affects-child.html [ Failure ]
+fast/css/hover-display-block.html [ Failure ]
+fast/css/hover-subselector.html [ Failure ]
+fast/css/nested-layers-with-hover.html [ Failure ]
+fast/css/unknown-pseudo-element-matching.html [ Failure ]
+fast/dom/Window/window-resize-and-move-arguments.html [ Failure ]
+fast/dynamic/hovered-detach.html [ Failure ]
+fast/events/event-sender-mouse-moved.html [ Failure ]
+fast/events/frame-scroll-fake-mouse-move.html [ Failure ]
+fast/events/ghostly-mousemoves-in-subframe.html [ Failure ]
+fast/events/mouse-cursor-change.html [ Failure ]
+fast/events/mouse-cursor-multiframecur.html [ Failure ]
+fast/events/mouse-cursor-no-mousemove.html [ Failure ]
+fast/events/mouseenter-mouseleave-capture.html [ Failure ]
+fast/events/mouseenter-mouseleave.html [ Failure ]
+fast/events/mouseenterleave-on-subframe.html [ Failure ]
+fast/events/mousemove-after-drag-over-scrollbar.html [ Failure ]
+fast/events/mouseout-dead-node.html [ Failure ]
+fast/events/mouseover-button.html [ Failure ]
+fast/events/mouseover-mouseout.html [ Failure ]
+fast/events/mouseover-mouseout2.html [ Failure ]
+fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure ]
+fast/events/touch/touch-before-pressing-spin-button.html [ Failure ]
+fast/events/wheelevent-basic.html [ Failure ]
+fast/events/wheelevent-mousewheel-interaction.html [ Failure ]
+fast/forms/input-step-as-double.html [ Failure ]
+fast/regions/repaint/repaint-absolute-pushed-to-next-region.html [ Failure ]
+fast/replaced/image-map-2.html [ Failure ]
+fast/selectors/hover-strict.html [ Failure ]
+http/tests/security/cross-frame-access-put.html [ Failure ]
+media/video-initially-hidden-volume-slider-up.html [ Failure ]
+scrollbars/overflow-custom-scrollbar-crash.html [ Failure ]
+scrollbars/scroll-rtl-or-bt-layer.html [ Failure ]
+fast/css/pseudo-element-selector-scrollbar-hover.html [ ImageOnlyFailure ]
+fast/frames/flattening/scrolling-in-object.html [ ImageOnlyFailure ]
+fast/regions/multicol/regions-in-multicol-hover-overflow.html [ ImageOnlyFailure ]
+fast/css/hover-update.html [ Skip ] #[ Timeout ]
+fast/events/iframe-onmousemove.html [ Skip ] #timeout
+fast/events/mouse-moved-remove-frame-crash.html [ Skip ] #timeout
+fast/events/mouseout-dead-subframe.html [ Skip ] #timeout
+fast/events/wheelevent-in-text-node.html [ Skip ] #timeout
+fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ Skip ] #timeout
+fast/text/simple-lines-hover-after.html [ Skip ] #timeout
+media/click-volume-bar-not-pausing.html [ Skip ] #timeout
