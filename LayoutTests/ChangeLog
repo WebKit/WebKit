@@ -1,3 +1,14 @@
+2015-05-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove the WK1-only code path for independently composited iframes
+        https://bugs.webkit.org/show_bug.cgi?id=144722
+
+        Reviewed by Dean Jackson.
+        
+        Results different from WK2, because WK1 does not make layers for scrollbars.
+
+        * platform/mac-wk1/compositing/visible-rect/iframe-no-layers-expected.txt: Added.
+
 2015-05-06  Dean Jackson  <dino@apple.com>
 
         Handle backdrop views that have to tile

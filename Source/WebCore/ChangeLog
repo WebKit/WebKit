@@ -1,3 +1,70 @@
+2015-05-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove the WK1-only code path for independently composited iframes
+        https://bugs.webkit.org/show_bug.cgi?id=144722
+
+        Reviewed by Dean Jackson.
+
+        In WebKit1 on Mac, we allowed iframes to be composited independently of their
+        parent document, relying on the fact that the frame's platform view can host
+        a layer-backed view. However, this ran into bugs (rdar://problem/18862298),
+        and triggers the assertion at the end of FrameView::updateLayoutAndStyleIfNeededRecursive(),
+        because the compositing update after a layout can dirty style in notifyIFramesOfCompositingChange().
+        
+        Removing the WK1-only code path solves these problems. It also eliminates the need
+        to do compositing-specific frame overlap testing.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setIsOverlapped): No need to do compositing-related things here.
+        Any iframe that gets composited will participate in the normal compositing overlap
+        testing in its parent frame.
+        (WebCore::FrameView::hasCompositedContentIncludingDescendants): Deleted.
+        (WebCore::FrameView::hasCompositingAncestor): Deleted.
+        * page/FrameView.h:
+        * rendering/RenderLayerCompositor.cpp: Replace ownerElement() checks in this file
+        with an isMainFrameCompositor() for readability. Some 0->nullptr.
+        (WebCore::RenderLayerCompositor::cacheAcceleratedCompositingFlags):
+        (WebCore::RenderLayerCompositor::chromeClient):
+        (WebCore::RenderLayerCompositor::enclosingCompositorFlushingLayers):
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        (WebCore::RenderLayerCompositor::appendDocumentOverlayLayers):
+        (WebCore::RenderLayerCompositor::updateBacking):
+        (WebCore::RenderLayerCompositor::layerTreeAsText):
+        (WebCore::RenderLayerCompositor::frameContentsCompositor):
+        (WebCore::RenderLayerCompositor::setIsInWindow):
+        (WebCore::RenderLayerCompositor::requiresCompositingForScrollableFrame):
+        (WebCore::RenderLayerCompositor::requiresCompositingForFrame): frameRenderer.requiresAcceleratedCompositing()
+        already bails on no content RenderView, so the shouldPropagateCompositingToEnclosingFrame() check does
+        nothing and is removed.
+        (WebCore::RenderLayerCompositor::isAsyncScrollableStickyLayer):
+        (WebCore::RenderLayerCompositor::requiresScrollLayer):
+        (WebCore::RenderLayerCompositor::documentUsesTiledBacking):
+        (WebCore::RenderLayerCompositor::isMainFrameCompositor):
+        (WebCore::RenderLayerCompositor::shouldCompositeOverflowControls):
+        (WebCore::RenderLayerCompositor::requiresOverhangAreasLayer):
+        (WebCore::RenderLayerCompositor::requiresContentShadowLayer):
+        (WebCore::RenderLayerCompositor::updateLayerForTopOverhangArea):
+        (WebCore::RenderLayerCompositor::updateLayerForBottomOverhangArea):
+        (WebCore::RenderLayerCompositor::updateLayerForHeader):
+        (WebCore::RenderLayerCompositor::updateLayerForFooter):
+        (WebCore::RenderLayerCompositor::ensureRootLayer): Main frame attaches via ChromeClient,
+        all other frames attach via parent frame.
+        (WebCore::RenderLayerCompositor::notifyIFramesOfCompositingChange): This call to
+        scheduleSetNeedsStyleRecalc(SyntheticStyleChange) was the source of dirtying style after
+        layout, but is no longer needed so remove it.
+        (WebCore::RenderLayerCompositor::registerAllViewportConstrainedLayers):
+        (WebCore::RenderLayerCompositor::unregisterAllViewportConstrainedLayers):
+        (WebCore::RenderLayerCompositor::scrollingCoordinator):
+        (WebCore::RenderLayerCompositor::graphicsLayerFactory):
+        (WebCore::RenderLayerCompositor::allowsIndependentlyCompositedFrames): Deleted.
+        (WebCore::RenderLayerCompositor::shouldPropagateCompositingToEnclosingFrame): Deleted.
+        (WebCore::RenderLayerCompositor::mainFrameBackingIsTiled): Deleted. This was mis-named;
+        it really asks whether the document uses tiled backing, but does not check for main frame.
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paintContents): No need to do frame overlap testing for
+        compositing now.
+
 2015-05-06  Dean Jackson  <dino@apple.com>
 
         Handle backdrop views that have to tile
