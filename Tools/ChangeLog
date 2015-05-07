@@ -1,3 +1,11 @@
+2015-05-06  Alexey Proskuryakov  <ap@apple.com>
+
+        iOS build fix attempt
+
+        Link WebKitTestRunnerApp to WebKit, now that we don't have WebKit2.
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
 2015-05-06  Matt Baker  <mattbaker@apple.com>
 
         Unreviewed, updated my list of email addresses.
