@@ -260,7 +260,8 @@ using namespace WebCore;
 
             RefPtr<Range> linkRange = rangeOfContents(*_hitTestResult.URLElement());
             RefPtr<TextIndicator> indicator = TextIndicator::createWithRange(*linkRange, TextIndicatorPresentationTransition::FadeIn);
-            [_webView _setTextIndicator:*indicator withLifetime:TextIndicatorLifetime::Permanent];
+            if (indicator)
+                [_webView _setTextIndicator:*indicator withLifetime:TextIndicatorLifetime::Permanent];
 
             QLPreviewMenuItem *item = [NSMenuItem standardQuickLookMenuItem];
             item.previewStyle = QLPreviewStylePopover;
@@ -419,7 +420,8 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
 
     _currentActionContext = [actionContext contextForView:_webView altMode:YES interactionStartedHandler:^() {
     } interactionChangedHandler:^() {
-        [_webView _setTextIndicator:*detectedDataTextIndicator withLifetime:TextIndicatorLifetime::Permanent];
+        if (detectedDataTextIndicator)
+            [_webView _setTextIndicator:*detectedDataTextIndicator withLifetime:TextIndicatorLifetime::Permanent];
     } interactionStoppedHandler:^() {
         [_webView _clearTextIndicatorWithAnimation:TextIndicatorDismissalAnimation::FadeOut];
     }];
@@ -450,7 +452,8 @@ static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
 
     _currentActionContext = [actionContext contextForView:_webView altMode:YES interactionStartedHandler:^() {
     } interactionChangedHandler:^() {
-        [_webView _setTextIndicator:*indicator withLifetime:TextIndicatorLifetime::Permanent];
+        if (indicator)
+            [_webView _setTextIndicator:*indicator withLifetime:TextIndicatorLifetime::Permanent];
     } interactionStoppedHandler:^() {
         [_webView _clearTextIndicatorWithAnimation:TextIndicatorDismissalAnimation::FadeOut];
     }];

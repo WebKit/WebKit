@@ -1,3 +1,17 @@
+2015-05-07  Timothy Horton  <timothy_horton@apple.com>
+
+        Occasional null deref in WebImmediateActionController
+        https://bugs.webkit.org/show_bug.cgi?id=144772
+        <rdar://problem/20811128>
+
+        Reviewed by Beth Dakin.
+
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController _defaultAnimationController]):
+        (-[WebImmediateActionController _animationControllerForDataDetectedText]):
+        (-[WebImmediateActionController _animationControllerForDataDetectedLink]):
+        Null-check TextIndicators before dereferencing.
+
 2015-05-07  Beth Dakin  <bdakin@apple.com>
 
         New force-related DOM events should fire in WK1 views
