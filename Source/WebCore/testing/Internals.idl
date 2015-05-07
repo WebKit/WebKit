@@ -357,6 +357,7 @@ enum ResourceLoadPriority {
     
     File createFile(DOMString url);
     void queueMicroTask(long testNumber);
+    boolean testPreloaderSettingViewport();
 
     [Conditional=CONTENT_FILTERING] readonly attribute MockContentFilterSettings mockContentFilterSettings;
 

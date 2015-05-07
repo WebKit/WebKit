@@ -58,6 +58,8 @@ TokenPreloadScanner::TagId TokenPreloadScanner::tagIdFor(const HTMLToken::DataVe
         return TagId::Base;
     if (tagName == templateTag)
         return TagId::Template;
+    if (tagName == metaTag)
+        return TagId::Meta;
     return TagId::Unknown;
 }
 
@@ -76,6 +78,7 @@ String TokenPreloadScanner::initiatorFor(TagId tagId)
     case TagId::Style:
     case TagId::Base:
     case TagId::Template:
+    case TagId::Meta:
         ASSERT_NOT_REACHED();
         return "unknown";
     }
@@ -88,6 +91,7 @@ public:
     explicit StartTagScanner(TagId tagId, float deviceScaleFactor = 1.0)
         : m_tagId(tagId)
         , m_linkIsStyleSheet(false)
+        , m_metaIsViewport(false)
         , m_inputIsImage(false)
         , m_deviceScaleFactor(deviceScaleFactor)
     {
@@ -116,6 +120,9 @@ public:
             ImageCandidate imageCandidate = bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute, sourceSize);
             setUrlToLoad(imageCandidate.string.toString(), true);
         }
+
+        if (m_metaIsViewport && !m_metaContent.isNull())
+            document.processViewport(m_metaContent, ViewportArguments::ViewportMeta);
     }
 
     std::unique_ptr<PreloadRequest> createPreloadRequest(const URL& predictedBaseURL)
@@ -166,6 +173,11 @@ private:
                 setUrlToLoad(attributeValue);
             else if (match(attributeName, typeAttr))
                 m_inputIsImage = equalIgnoringCase(attributeValue, InputTypeNames::image());
+        } else if (m_tagId == TagId::Meta) {
+            if (match(attributeName, contentAttr))
+                m_metaContent = attributeValue;
+            else if (match(attributeName, nameAttr))
+                m_metaIsViewport = equalIgnoringCase(attributeValue, "viewport");
         }
     }
 
@@ -236,6 +248,8 @@ private:
     String m_crossOriginMode;
     bool m_linkIsStyleSheet;
     String m_mediaAttribute;
+    String m_metaContent;
+    bool m_metaIsViewport;
     bool m_inputIsImage;
     float m_deviceScaleFactor;
 };
@@ -345,6 +359,17 @@ void HTMLPreloadScanner::scan(HTMLResourcePreloader& preloader, Document& docume
     }
 
     preloader.preload(WTF::move(requests));
+}
+
+bool testPreloadScannerViewportSupport(Document* document)
+{
+    ASSERT(document);
+    HTMLParserOptions options(*document);
+    HTMLPreloadScanner scanner(options, document->url());
+    HTMLResourcePreloader preloader(*document);
+    scanner.appendToEnd(String("<meta name=viewport content='width=400'>"));
+    scanner.scan(preloader, *document);
+    return (document->viewportArguments().width == 400);
 }
 
 }

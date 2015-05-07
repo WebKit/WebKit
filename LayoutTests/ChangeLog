@@ -1,3 +1,16 @@
+2015-05-07  Yoav Weiss  <yoav@yoav.ws>
+
+        Handle meta viewport in HTMLPreloadScanner
+        https://bugs.webkit.org/show_bug.cgi?id=144640
+
+        Reviewed by Dean Jackson.
+
+        Added a layout test that is simply calling an internals method
+        that tests the HTMLPreloadScanner.
+
+        * fast/dom/HTMLMetaElement/meta-preloader-expected.txt: Added.
+        * fast/dom/HTMLMetaElement/meta-preloader.html: Added.
+
 2015-05-07  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r164449): Subpixel rendering: http://www.apple.com/iphone-6/ "Faster wireless." image displays vertical black line on 1x displays at specific window width.

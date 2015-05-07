@@ -49,6 +49,7 @@ private:
         Input,
         Link,
         Script,
+        Meta,
 
         // These tags are not scanned by the StartTagScanner.
         Unknown,
@@ -89,6 +90,8 @@ private:
     SegmentedString m_source;
     HTMLTokenizer m_tokenizer;
 };
+
+WEBCORE_EXPORT bool testPreloadScannerViewportSupport(Document*);
 
 }
 

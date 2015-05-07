@@ -58,6 +58,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
+#include "HTMLPreloadScanner.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLVideoElement.h"
@@ -2833,5 +2834,10 @@ String Internals::scrollSnapOffsets(Element* element, ExceptionCode& ec)
     return result.toString();
 }
 #endif
+
+bool Internals::testPreloaderSettingViewport()
+{
+    return testPreloadScannerViewportSupport(contextDocument());
+}
 
 }
