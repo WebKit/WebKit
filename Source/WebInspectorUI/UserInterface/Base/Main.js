@@ -324,6 +324,8 @@ WebInspector.contentLoaded = function()
     this.toolbar.element.addEventListener("mousedown", this._toolbarMouseDown.bind(this));
     document.getElementById("docked-resizer").addEventListener("mousedown", this._dockedResizerMouseDown.bind(this));
 
+    this._dockingAvailable = false;
+
     this._updateDockNavigationItems();
     this._updateToolbarHeight();
 
@@ -547,6 +549,13 @@ WebInspector.updateWindowTitle = function()
     // The name "inspectedURLChanged" sounds like the whole URL is required, however this is only
     // used for updating the window title and it can be any string.
     InspectorFrontendHost.inspectedURLChanged(title);
+};
+
+WebInspector.updateDockingAvailability = function(available)
+{
+    this._dockingAvailable = available;
+
+    this._updateDockNavigationItems();
 };
 
 WebInspector.updateDockedState = function(side)
@@ -1228,10 +1237,17 @@ WebInspector._dockRight = function(event)
 
 WebInspector._updateDockNavigationItems = function()
 {
-    this._closeToolbarButton.hidden = !this.docked;
-    this._undockToolbarButton.hidden = this._dockSide === "undocked";
-    this._dockBottomToolbarButton.hidden = this._dockSide === "bottom";
-    this._dockRightToolbarButton.hidden = this._dockSide === "right";
+    if (this._dockingAvailable || this.docked) {
+        this._closeToolbarButton.hidden = !this.docked;
+        this._undockToolbarButton.hidden = this._dockSide === "undocked";
+        this._dockBottomToolbarButton.hidden = this._dockSide === "bottom";
+        this._dockRightToolbarButton.hidden = this._dockSide === "right";
+    } else {
+        this._closeToolbarButton.hidden = true;
+        this._undockToolbarButton.hidden = true;
+        this._dockBottomToolbarButton.hidden = true;
+        this._dockRightToolbarButton.hidden = true;
+    }
 };
 
 WebInspector._tabBrowserSizeDidChange = function()

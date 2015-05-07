@@ -91,9 +91,8 @@ WebInspector.UIString = function(string)
 }
 
 // Add stubs that are called by the frontend API.
-WebInspector.updateDockedState = function()
-{
-}
+WebInspector.updateDockedState = function() {};
+WebInspector.updateDockingAvailability = function() {};
 
 // InspectorTest contains extra methods that are only available to test code running
 // in the Web Inspector page. They rely on equivalents in the actual test page

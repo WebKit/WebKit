@@ -164,6 +164,11 @@ void WebInspectorUI::setDockSide(DockSide side)
     evaluateCommandOnLoad(ASCIILiteral("setDockSide"), ASCIILiteral(sideString));
 }
 
+void WebInspectorUI::setDockingUnavailable(bool unavailable)
+{
+    evaluateCommandOnLoad(ASCIILiteral("setDockingUnavailable"), unavailable);
+}
+
 void WebInspectorUI::changeAttachedWindowHeight(unsigned height)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::SetAttachedWindowHeight(height), m_inspectedPageIdentifier);

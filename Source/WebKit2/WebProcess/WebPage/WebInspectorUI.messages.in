@@ -26,6 +26,7 @@ messages -> WebInspectorUI {
     AttachedBottom()
     AttachedRight()
     Detached()
+    SetDockingUnavailable(bool unavailable)
 
     ShowConsole()
     ShowResources()

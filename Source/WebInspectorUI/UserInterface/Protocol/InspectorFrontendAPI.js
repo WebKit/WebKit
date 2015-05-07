@@ -55,6 +55,11 @@ InspectorFrontendAPI = {
         }
     },
 
+    setDockingUnavailable: function(unavailable)
+    {
+        WebInspector.updateDockingAvailability(!unavailable);
+    },
+
     setDockSide: function(side)
     {
         WebInspector.updateDockedState(side);

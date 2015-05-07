@@ -67,6 +67,7 @@ public:
     void detached() { setDockSide(DockSide::Undocked); }
 
     void setDockSide(DockSide);
+    void setDockingUnavailable(bool);
 
     void didSave(const String& url);
     void didAppend(const String& url);

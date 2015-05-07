@@ -1,3 +1,20 @@
+2015-05-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Docking Toolbar Buttons do not respect Docking Availability
+        https://bugs.webkit.org/show_bug.cgi?id=144714
+
+        Reviewed by Timothy Hatcher.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::createInspectorPage):
+        (WebKit::WebInspectorProxy::attachAvailabilityChanged):
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::setDockingUnavailable):
+        * WebProcess/WebPage/WebInspectorUI.h:
+        * WebProcess/WebPage/WebInspectorUI.messages.in:
+        When docking availability changes, inform the inspector page
+        so it can respond by updating its UI.
+
 2015-05-06  Joonghun Park  <jh718.park@samsung.com>
 
         [WK2] Simplify AsyncRequestImpl::ArgumentType parameters
