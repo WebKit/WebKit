@@ -39,8 +39,6 @@
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 
-static int kMaxImageBufferSize = 4096;
-
 namespace WebCore {
 
 static inline bool isRenderingMaskImage(const RenderObject& object)
@@ -204,14 +202,13 @@ static AffineTransform& currentContentTransformation()
 
 float SVGRenderingContext::calculateScreenFontSizeScalingFactor(const RenderObject& renderer)
 {
-    AffineTransform ctm;
-    calculateTransformationToOutermostCoordinateSystem(renderer, ctm);
+    AffineTransform ctm = calculateTransformationToOutermostCoordinateSystem(renderer);
     return narrowPrecisionToFloat(sqrt((pow(ctm.xScale(), 2) + pow(ctm.yScale(), 2)) / 2));
 }
 
-void SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(const RenderObject& renderer, AffineTransform& absoluteTransform)
+AffineTransform SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(const RenderObject& renderer)
 {
-    absoluteTransform = currentContentTransformation();
+    AffineTransform absoluteTransform = currentContentTransformation();
 
     float deviceScaleFactor = renderer.document().deviceScaleFactor();
     // Walk up the render tree, accumulating SVG transforms.
@@ -237,53 +234,53 @@ void SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(con
     }
 
     absoluteTransform.scale(deviceScaleFactor);
+    return absoluteTransform;
 }
 
-bool SVGRenderingContext::createImageBuffer(const FloatRect& targetRect, const AffineTransform& absoluteTransform, std::unique_ptr<ImageBuffer>& imageBuffer, ColorSpace colorSpace, RenderingMode renderingMode)
+std::unique_ptr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatRect& targetRect, const AffineTransform& absoluteTransform, ColorSpace colorSpace, RenderingMode renderingMode)
 {
     IntRect paintRect = calculateImageBufferRect(targetRect, absoluteTransform);
     // Don't create empty ImageBuffers.
     if (paintRect.isEmpty())
-        return false;
+        return nullptr;
 
-    IntSize clampedSize = clampedAbsoluteSize(paintRect.size());
-    std::unique_ptr<ImageBuffer> image = ImageBuffer::create(clampedSize, 1, colorSpace, renderingMode);
-    if (!image)
-        return false;
+    FloatSize scale;
+    FloatSize clampedSize = ImageBuffer::clampedSize(paintRect.size(), scale);
 
-    GraphicsContext* imageContext = image->context();
+    auto imageBuffer = ImageBuffer::create(clampedSize, 1, colorSpace, renderingMode);
+    if (!imageBuffer)
+        return nullptr;
+
+    AffineTransform transform;
+    transform.scale(scale).translate(-paintRect.location()).multiply(absoluteTransform);
+
+    GraphicsContext* imageContext = imageBuffer->context();
     ASSERT(imageContext);
+    imageContext->concatCTM(transform);
 
-    imageContext->scale(FloatSize(static_cast<float>(clampedSize.width()) / paintRect.width(),
-                                  static_cast<float>(clampedSize.height()) / paintRect.height()));
-    imageContext->translate(-paintRect.x(), -paintRect.y());
-    imageContext->concatCTM(absoluteTransform);
-
-    imageBuffer = WTF::move(image);
-    return true;
+    return imageBuffer;
 }
 
-bool SVGRenderingContext::createImageBufferForPattern(const FloatRect& absoluteTargetRect, const FloatRect& clampedAbsoluteTargetRect, std::unique_ptr<ImageBuffer>& imageBuffer, ColorSpace colorSpace, RenderingMode renderingMode)
+std::unique_ptr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatRect& targetRect, const FloatRect& clampedRect, ColorSpace colorSpace, RenderingMode renderingMode)
 {
-    IntSize imageSize(roundedIntSize(clampedAbsoluteTargetRect.size()));
-    IntSize unclampedImageSize(roundedIntSize(absoluteTargetRect.size()));
+    IntSize clampedSize = roundedIntSize(clampedRect.size());
+    IntSize unclampedSize = roundedIntSize(targetRect.size());
 
     // Don't create empty ImageBuffers.
-    if (imageSize.isEmpty())
-        return false;
+    if (clampedSize.isEmpty())
+        return nullptr;
 
-    std::unique_ptr<ImageBuffer> image = ImageBuffer::create(imageSize, 1, colorSpace, renderingMode);
-    if (!image)
-        return false;
+    auto imageBuffer = ImageBuffer::create(clampedSize, 1, colorSpace, renderingMode);
+    if (!imageBuffer)
+        return nullptr;
 
-    GraphicsContext* imageContext = image->context();
+    GraphicsContext* imageContext = imageBuffer->context();
     ASSERT(imageContext);
 
     // Compensate rounding effects, as the absolute target rect is using floating-point numbers and the image buffer size is integer.
-    imageContext->scale(FloatSize(unclampedImageSize.width() / absoluteTargetRect.width(), unclampedImageSize.height() / absoluteTargetRect.height()));
+    imageContext->scale(FloatSize(unclampedSize.width() / targetRect.width(), unclampedSize.height() / targetRect.height()));
 
-    imageBuffer = WTF::move(image);
-    return true;
+    return imageBuffer;
 }
 
 void SVGRenderingContext::renderSubtreeToImageBuffer(ImageBuffer* image, RenderElement& item, const AffineTransform& subtreeContentTransformation)
@@ -320,18 +317,6 @@ void SVGRenderingContext::clipToImageBuffer(GraphicsContext* context, const Affi
     // resulting image buffer as the parent resource already caches the result.
     if (safeToClear && !currentContentTransformation().isIdentity())
         imageBuffer.reset();
-}
-
-FloatRect SVGRenderingContext::clampedAbsoluteTargetRect(const FloatRect& absoluteTargetRect)
-{
-    const FloatSize maxImageBufferSize(kMaxImageBufferSize, kMaxImageBufferSize);
-    return FloatRect(absoluteTargetRect.location(), absoluteTargetRect.size().shrunkTo(maxImageBufferSize));
-}
-
-IntSize SVGRenderingContext::clampedAbsoluteSize(const IntSize& absoluteSize)
-{
-    const IntSize maxImageBufferSize(kMaxImageBufferSize, kMaxImageBufferSize);
-    return absoluteSize.shrunkTo(maxImageBufferSize);
 }
 
 void SVGRenderingContext::clear2DRotation(AffineTransform& transform)

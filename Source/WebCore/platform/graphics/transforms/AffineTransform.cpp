@@ -172,6 +172,16 @@ AffineTransform& AffineTransform::scale(double sx, double sy)
     return *this;
 }
 
+AffineTransform& AffineTransform::scaleNonUniform(double sx, double sy)
+{
+    return scale(sx, sy);
+}
+
+AffineTransform& AffineTransform::scale(const FloatSize& s)
+{
+    return scale(s.width(), s.height());
+}
+
 // *this = *this * translation
 AffineTransform& AffineTransform::translate(double tx, double ty)
 {
@@ -186,9 +196,9 @@ AffineTransform& AffineTransform::translate(double tx, double ty)
     return *this;
 }
 
-AffineTransform& AffineTransform::scaleNonUniform(double sx, double sy)
+AffineTransform& AffineTransform::translate(const FloatPoint& t)
 {
-    return scale(sx, sy);
+    return translate(t.x(), t.y());
 }
 
 AffineTransform& AffineTransform::rotateFromVector(double x, double y)

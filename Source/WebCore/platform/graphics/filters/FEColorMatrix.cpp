@@ -149,7 +149,7 @@ void FEColorMatrix::platformApplySoftware()
 
     resultImage->context()->drawImageBuffer(in->asImageBuffer(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()));
 
-    IntRect imageRect(IntPoint(), absolutePaintRect().size());
+    IntRect imageRect(IntPoint(), resultImage->logicalSize());
     RefPtr<Uint8ClampedArray> pixelArray = resultImage->getUnmultipliedImageData(imageRect);
 
     switch (m_type) {

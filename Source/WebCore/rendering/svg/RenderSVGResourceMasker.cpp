@@ -63,16 +63,14 @@ bool RenderSVGResourceMasker::applySVGMask(RenderElement& renderer, GraphicsCont
         m_masker.set(&renderer, std::make_unique<MaskerData>());
 
     MaskerData* maskerData = m_masker.get(&renderer);
-
-    AffineTransform absoluteTransform;
-    SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer, absoluteTransform);
-
+    AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
     FloatRect repaintRect = renderer.repaintRectInLocalCoordinates();
 
     if (!maskerData->maskImage && !repaintRect.isEmpty()) {
         const SVGRenderStyle& svgStyle = style().svgStyle();
         ColorSpace colorSpace = svgStyle.colorInterpolation() == CI_LINEARRGB ? ColorSpaceLinearRGB : ColorSpaceDeviceRGB;
-        if (!SVGRenderingContext::createImageBuffer(repaintRect, absoluteTransform, maskerData->maskImage, colorSpace, Unaccelerated))
+        maskerData->maskImage = SVGRenderingContext::createImageBuffer(repaintRect, absoluteTransform, colorSpace, Unaccelerated);
+        if (!maskerData->maskImage)
             return false;
 
         if (!drawContentIntoMaskImage(maskerData, colorSpace, &renderer))

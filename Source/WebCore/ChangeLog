@@ -1,3 +1,109 @@
+2015-05-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Applying a filter on an SVG element, which is larger than 4096 pixels, causes this element to be rendered shifted to the left
+        https://bugs.webkit.org/show_bug.cgi?id=144335
+
+        Reviewed by Darin Adler.
+
+        When the SVG element is larger than 4096x4096 pixels and it has a filter,
+        a clipper or a masker, the ImageBuffer which is created for drawing the
+        sourceGraphicBuffer has to be clamped to this size. The reason for this
+        clamping is the FilterEffect simply ignores processing any ImageBuffer
+        larger than this size.
+        
+        The bug was happening because we did not propagate the clamping logic to
+        the FilterEffect. The FilterEffect result ImageBuffer was not clamped as
+        what we do for drawing the sourceGraphicBuffer. If only the destination
+        point is specified, the GraphicsContext::drawImageBuffer() assumes the
+        source and the destination images have the same size which is not true
+        with the clamping.
+        
+        The fix is to add the clamping logic to the FilterEffect. Two places we
+        need to change. (1) FilterEffect::createImageBufferResult() has to apply
+        the same clamping we do in SVGRenderingContext::createImageBuffer(). (2)
+        FilterEffect::drawingRegionOfInputImage() has to consider the clamping 
+        when mapping from absolute coordinates to the ImageBuffer coordinates.
+        
+        Tests: svg/filters/big-sized-off-viewport-filter.svg
+
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::ImageBuffer::isSizeClamped):
+        (WebCore::ImageBuffer::clampedSize):
+        (WebCore::ImageBuffer::clampedRect):
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::setSpaceSize): Move all the clamping helper methods
+        from SVGRenderingContext and RenderSVGResourceFilter to the ImageBuffer.
+
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        (WebCore::FEColorMatrix::platformApplySoftware): Use logicalSize() of the
+        result image instead of using absolutePaintRect(). The later returns the
+        rectangle of the element without clamping.
+        
+        * platform/graphics/filters/FETile.cpp:
+        (WebCore::FETile::platformApplySoftware):
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::applyClippingToContext):
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::applyResource):
+        (WebCore::RenderSVGResourceFilter::fitsInMaximumImageSize): Deleted.
+        * rendering/svg/RenderSVGResourceFilter.h:
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::createMaskAndSwapContextForTextGradient):
+        (WebCore::clipToTextMask):
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::applySVGMask):
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::buildPattern):
+        (WebCore::RenderSVGResourcePattern::createTileImage): Make the modifications
+        which are needed because of moving the clamping helper methods to ImageBuffer
+        and because of changing the prototype of SVGRenderingContext methods.
+
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::drawingRegionOfInputImage): Consider the clamping
+        when mapping from absolute coordinates to the ImageBuffer coordinates.
+
+        (WebCore::FilterEffect::createImageBufferResult): Apply the same clamping
+        we do in SVGRenderingContext::createImageBuffer() when creating the 
+        FilterEffect result ImageBuffer.
+        
+        (WebCore::FilterEffect::apply):
+        (WebCore::FilterEffect::asUnmultipliedImage):
+        (WebCore::FilterEffect::asPremultipliedImage):
+        (WebCore::FilterEffect::copyUnmultipliedImage):
+        (WebCore::FilterEffect::copyPremultipliedImage):
+        (WebCore::FilterEffect::createUnmultipliedImageResult):
+        (WebCore::FilterEffect::createPremultipliedImageResult):
+        (WebCore::FilterEffect::maxFilterArea): Deleted.
+        (WebCore::FilterEffect::isFilterSizeValid): Deleted.
+        * platform/graphics/filters/FilterEffect.h: Use the new ImageBuffer clamping
+        helper methods and delete the local ones.
+
+        * platform/graphics/transforms/AffineTransform.cpp:
+        (WebCore::AffineTransform::scaleNonUniform):
+        (WebCore::AffineTransform::scale):
+        (WebCore::AffineTransform::translate):
+        * platform/graphics/transforms/AffineTransform.h: Add new scale and translate
+        overloads to AffineTransform.
+        
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::updateBackingStoreRect):
+        (WebCore::FilterEffectRendererHelper::beginFilterEffect): Code clean up.
+        
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::calculateScreenFontSizeScalingFactor):
+        (WebCore::SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem):
+        Return the AffineTransform instead of passing it through the reference of
+        an argument.
+        
+        (WebCore::SVGRenderingContext::createImageBuffer):
+        (WebCore::SVGRenderingContext::createImageBufferForPattern): Deleted.
+        Code clean up and method rename.
+        
+        (WebCore::SVGRenderingContext::clampedAbsoluteTargetRect): Deleted.
+        (WebCore::SVGRenderingContext::clampedAbsoluteSize): Deleted.
+        * rendering/svg/SVGRenderingContext.h: Move the clamping helper methods to
+        the ImageBuffer class.
+    
 2015-05-07  Beth Dakin  <bdakin@apple.com>
 
         New force-related DOM events should fire in WK1 views

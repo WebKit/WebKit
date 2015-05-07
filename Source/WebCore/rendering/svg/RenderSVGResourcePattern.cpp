@@ -70,20 +70,19 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderElement& renderer, uns
 
     // If we couldn't determine the pattern content element root, stop here.
     if (!m_attributes.patternContentElement())
-        return 0;
+        return nullptr;
 
     // An empty viewBox disables rendering.
     if (m_attributes.hasViewBox() && m_attributes.viewBox().isEmpty())
-        return 0;
+        return nullptr;
 
     // Compute all necessary transformations to build the tile image & the pattern.
     FloatRect tileBoundaries;
     AffineTransform tileImageTransform;
     if (!buildTileImageTransform(renderer, m_attributes, patternElement(), tileBoundaries, tileImageTransform))
-        return 0;
+        return nullptr;
 
-    AffineTransform absoluteTransformIgnoringRotation;
-    SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer, absoluteTransformIgnoringRotation);
+    AffineTransform absoluteTransformIgnoringRotation = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
 
     // Ignore 2D rotation, as it doesn't affect the size of the tile.
     SVGRenderingContext::clear2DRotation(absoluteTransformIgnoringRotation);
@@ -95,13 +94,13 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderElement& renderer, uns
         static_cast<float>(m_attributes.patternTransform().yScale()));
 
     // Build tile image.
-    std::unique_ptr<ImageBuffer> tileImage = createTileImage(m_attributes, tileBoundaries, absoluteTileBoundaries, tileImageTransform, clampedAbsoluteTileBoundaries);
+    auto tileImage = createTileImage(m_attributes, tileBoundaries, absoluteTileBoundaries, tileImageTransform, clampedAbsoluteTileBoundaries);
     if (!tileImage)
-        return 0;
+        return nullptr;
 
     RefPtr<Image> copiedImage = tileImage->copyImage(CopyBackingStore);
     if (!copiedImage)
-        return 0;
+        return nullptr;
 
     // Build pattern.
     auto patternData = std::make_unique<PatternData>();
@@ -233,11 +232,9 @@ bool RenderSVGResourcePattern::buildTileImageTransform(RenderElement& renderer,
 
 std::unique_ptr<ImageBuffer> RenderSVGResourcePattern::createTileImage(const PatternAttributes& attributes, const FloatRect& tileBoundaries, const FloatRect& absoluteTileBoundaries, const AffineTransform& tileImageTransform, FloatRect& clampedAbsoluteTileBoundaries) const
 {
-    clampedAbsoluteTileBoundaries = SVGRenderingContext::clampedAbsoluteTargetRect(absoluteTileBoundaries);
-
-    std::unique_ptr<ImageBuffer> tileImage;
-
-    if (!SVGRenderingContext::createImageBufferForPattern(absoluteTileBoundaries, clampedAbsoluteTileBoundaries, tileImage, ColorSpaceDeviceRGB, Unaccelerated))
+    clampedAbsoluteTileBoundaries = ImageBuffer::clampedRect(absoluteTileBoundaries);
+    auto tileImage = SVGRenderingContext::createImageBuffer(absoluteTileBoundaries, clampedAbsoluteTileBoundaries, ColorSpaceDeviceRGB, Unaccelerated);
+    if (!tileImage)
         return nullptr;
 
     GraphicsContext* tileImageContext = tileImage->context();

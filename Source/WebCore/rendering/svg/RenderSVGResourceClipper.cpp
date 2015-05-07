@@ -138,11 +138,11 @@ bool RenderSVGResourceClipper::applyClippingToContext(RenderElement& renderer, c
     if (shouldCreateClipperMaskImage && pathOnlyClipping(context, animatedLocalTransform, objectBoundingBox))
         return true;
 
-    AffineTransform absoluteTransform;
-    SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer, absoluteTransform);
+    AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
 
     if (shouldCreateClipperMaskImage && !repaintRect.isEmpty()) {
-        if (!SVGRenderingContext::createImageBuffer(repaintRect, absoluteTransform, clipperMaskImage, ColorSpaceDeviceRGB, Unaccelerated))
+        clipperMaskImage = SVGRenderingContext::createImageBuffer(repaintRect, absoluteTransform, ColorSpaceDeviceRGB, Unaccelerated);
+        if (!clipperMaskImage)
             return false;
 
         GraphicsContext* maskContext = clipperMaskImage->context();

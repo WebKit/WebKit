@@ -1,3 +1,15 @@
+2015-05-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Applying a filter on an SVG element, which is larger than 4096 pixels, causes this element to be rendered shifted to the left
+        https://bugs.webkit.org/show_bug.cgi?id=144335
+
+        Reviewed by Darin Adler.
+
+        * svg/filters/big-sized-off-viewport-filter-expected.svg: Added.
+        * svg/filters/big-sized-off-viewport-filter.svg: Added.
+        Ensure when applying a filter on a large SVG element, the viewport of the
+        SVG includes the correct drawing part of this element.
+
 2015-05-07  Yoav Weiss  <yoav@yoav.ws>
 
         Handle meta viewport in HTMLPreloadScanner

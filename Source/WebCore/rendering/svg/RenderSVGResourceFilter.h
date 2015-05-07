@@ -91,8 +91,6 @@ private:
     virtual const char* renderName() const override { return "RenderSVGResourceFilter"; }
     virtual bool isSVGResourceFilter() const override { return true; }
 
-    bool fitsInMaximumImageSize(const FloatSize&, FloatSize&);
-
     HashMap<RenderObject*, std::unique_ptr<FilterData>> m_filter;
 };
 

@@ -58,9 +58,6 @@ class FilterEffect : public RefCounted<FilterEffect> {
 public:
     virtual ~FilterEffect();
 
-    static bool isFilterSizeValid(const FloatRect&);
-    static float maxFilterArea();
-
     void clearResult();
     void clearResultsRecursive();
 
