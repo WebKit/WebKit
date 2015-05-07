@@ -216,7 +216,7 @@ static inline WebKitProcessModel toWebKitProcessModel(WebKit::ProcessModel proce
 
 static const char* injectedBundleDirectory()
 {
-#if defined(DEVELOPMENT_BUILD)
+#if defined(DEVELOPER_MODE)
     const char* bundleDirectory = g_getenv("WEBKIT_INJECTED_BUNDLE_PATH");
     if (bundleDirectory && g_file_test(bundleDirectory, G_FILE_TEST_IS_DIR))
         return bundleDirectory;

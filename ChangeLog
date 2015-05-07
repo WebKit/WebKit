@@ -1,3 +1,15 @@
+2015-05-07  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Checks for DEVELOPMENT_BUILD are all wrong
+        https://bugs.webkit.org/show_bug.cgi?id=144746
+
+        Reviewed by Martin Robinson.
+
+        Don't set DEVELOPMENT_BUILD. We check whether it is defined for conditional compilation, not
+        what it is defined to, so defining it to 0 effectively turned it on always.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2015-05-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Revert "Introducing the Platform Abstraction Layer (PAL)"

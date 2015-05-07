@@ -1,3 +1,19 @@
+2015-05-07  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Checks for DEVELOPMENT_BUILD are all wrong
+        https://bugs.webkit.org/show_bug.cgi?id=144746
+
+        Reviewed by Martin Robinson.
+
+        Use DEVELOPER_MODE rather than DEVELOPMENT_BUILD.
+
+        * Shared/gtk/ProcessExecutablePathGtk.cpp:
+        (WebKit::findWebKitProcess):
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (injectedBundleDirectory):
+        * UIProcess/gtk/TextCheckerGtk.cpp:
+        (WebKit::enchantTextChecker):
+
 2015-05-06  Dean Jackson  <dino@apple.com>
 
         Handle backdrop views that have to tile

@@ -44,7 +44,7 @@ static WebCore::TextCheckerEnchant& enchantTextChecker()
 {
     static NeverDestroyed<WebCore::TextCheckerEnchant> checker;
 
-#if defined(DEVELOPMENT_BUILD)
+#if defined(DEVELOPER_MODE)
     // This is a bit of a hack, but ensures that for testing purposes,
     // spell checking is properly initialized in WebKitTestRunner while
     // running layout tests. We should consider replacing this with some
