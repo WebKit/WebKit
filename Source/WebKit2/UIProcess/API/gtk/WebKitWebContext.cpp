@@ -23,6 +23,8 @@
 #include "APIDownloadClient.h"
 #include "APIProcessPoolConfiguration.h"
 #include "APIString.h"
+#include "TextChecker.h"
+#include "TextCheckerState.h"
 #include "WebBatteryManagerProxy.h"
 #include "WebCertificateInfo.h"
 #include "WebCookieManagerProxy.h"
@@ -40,7 +42,6 @@
 #include "WebKitRequestManagerClient.h"
 #include "WebKitSecurityManagerPrivate.h"
 #include "WebKitSettingsPrivate.h"
-#include "WebKitTextChecker.h"
 #include "WebKitURISchemeRequestPrivate.h"
 #include "WebKitUserContentManagerPrivate.h"
 #include "WebKitWebContextPrivate.h"
@@ -172,9 +173,6 @@ struct _WebKitWebContextPrivate {
 #if ENABLE(NOTIFICATIONS)
     RefPtr<WebKitNotificationProvider> notificationProvider;
 #endif
-#if ENABLE(SPELLCHECK)
-    std::unique_ptr<WebKitTextChecker> textChecker;
-#endif
     CString faviconDatabaseDirectory;
     WebKitTLSErrorsPolicy tlsErrorsPolicy;
 
@@ -289,9 +287,6 @@ static void webkitWebContextConstructed(GObject* object)
 #endif
 #if ENABLE(NOTIFICATIONS)
     priv->notificationProvider = WebKitNotificationProvider::create(priv->context->supplement<WebNotificationManagerProxy>());
-#endif
-#if ENABLE(SPELLCHECK)
-    priv->textChecker = std::make_unique<WebKitTextChecker>();
 #endif
 }
 
@@ -802,7 +797,7 @@ gboolean webkit_web_context_get_spell_checking_enabled(WebKitWebContext* context
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), FALSE);
 
 #if ENABLE(SPELLCHECK)
-    return context->priv->textChecker->isSpellCheckingEnabled();
+    return TextChecker::state().isContinuousSpellCheckingEnabled;
 #else
     return false;
 #endif
@@ -820,7 +815,7 @@ void webkit_web_context_set_spell_checking_enabled(WebKitWebContext* context, gb
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
 
 #if ENABLE(SPELLCHECK)
-    context->priv->textChecker->setSpellCheckingEnabled(enabled);
+    TextChecker::setContinuousSpellCheckingEnabled(enabled);
 #endif
 }
 
@@ -839,10 +834,20 @@ void webkit_web_context_set_spell_checking_enabled(WebKitWebContext* context, gb
  */
 const gchar* const* webkit_web_context_get_spell_checking_languages(WebKitWebContext* context)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), 0);
+    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), nullptr);
 
 #if ENABLE(SPELLCHECK)
-    return context->priv->textChecker->getSpellCheckingLanguages();
+    Vector<String> spellCheckingLanguages = TextChecker::loadedSpellCheckingLanguages();
+    if (spellCheckingLanguages.isEmpty())
+        return nullptr;
+
+    static GRefPtr<GPtrArray> languagesToReturn;
+    languagesToReturn = adoptGRef(g_ptr_array_new_with_free_func(g_free));
+    for (const auto& language : spellCheckingLanguages)
+        g_ptr_array_add(languagesToReturn.get(), g_strdup(language.utf8().data()));
+    g_ptr_array_add(languagesToReturn.get(), nullptr);
+
+    return reinterpret_cast<char**>(languagesToReturn->pdata);
 #else
     return 0;
 #endif
@@ -871,7 +876,10 @@ void webkit_web_context_set_spell_checking_languages(WebKitWebContext* context, 
     g_return_if_fail(languages);
 
 #if ENABLE(SPELLCHECK)
-    context->priv->textChecker->setSpellCheckingLanguages(languages);
+    Vector<String> spellCheckingLanguages;
+    for (size_t i = 0; languages[i]; ++i)
+        spellCheckingLanguages.append(String::fromUTF8(languages[i]));
+    TextChecker::setSpellCheckingLanguages(spellCheckingLanguages);
 #endif
 }
 

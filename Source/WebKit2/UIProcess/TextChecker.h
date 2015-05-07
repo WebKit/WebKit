@@ -62,6 +62,11 @@ public:
     static void toggleSubstitutionsPanelIsShowing();
 #endif
 
+#if PLATFORM(GTK)
+    static void setSpellCheckingLanguages(const Vector<String>&);
+    static Vector<String> loadedSpellCheckingLanguages();
+#endif
+
     static void continuousSpellCheckingEnabledStateChanged(bool);
     static void grammarCheckingEnabledStateChanged(bool);
     static int64_t uniqueSpellDocumentTag(WebPageProxy*);

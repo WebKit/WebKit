@@ -1,3 +1,12 @@
+2015-05-07  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] All spell checking layout tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=144648
+
+        Reviewed by Carlos Garcia Campos.
+
+        * wtf/Platform.h: Activate UNIFIED_TEXT_CHECKING for GTK+.
+
 2015-05-07  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/19317140> [Xcode] Remove usage of AspenFamily.xcconfig in Source/

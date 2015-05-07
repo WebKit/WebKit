@@ -1,3 +1,32 @@
+2015-05-07  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] All spell checking layout tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=144648
+
+        Reviewed by Carlos Garcia Campos.
+
+        Simplify and complete the GTK+ spell-checking implementation. Instead of using
+        the EFL/GTK+ only WKTextChecker interface, directly implement Enchant spell-checking
+        in TextCheckerGtk. The per-context spell checking API is an illusion, since all
+        WKTextChecker implementations will adjust the same singleton. This can be a first step
+        toward removing it entirely.
+
+        Also complete the implementation of the TextChecker interface by duplicating the EFL code,
+        which reuses other methods in the same class. Eventually this duplication will collapse,
+        once GTK+ and EFL can share an Enchant implementation.
+
+        * PlatformGTK.cmake:
+        * UIProcess/API/gtk/WebKitPrivate.h:
+        * UIProcess/API/gtk/WebKitTextChecker.cpp: Removed.
+        * UIProcess/API/gtk/WebKitTextChecker.h: Removed.
+        * UIProcess/API/gtk/WebKitWebContext.cpp: Remove WebTextChecker usage and
+        replace it with calls directly to the TextChecker singleton via static methods.
+        * UIProcess/TextChecker.h:
+        * UIProcess/gtk/TextCheckerGtk.cpp: Move the WebTextChecker enchant implementation
+        here and reuse the EFL version of WebKit::TextChecker::requestCheckingOfString.
+        Also initialize languages properly when building for developer builds. This
+        allows WebKitTestRunner to work even when it doesn't explicitly set the languages.
+
 2015-05-07  Ada Chan  <adachan@apple.com>
 
         Fix a couple of cases where the backForwardListState's currentIndex is not set correctly in WebBackForwardList::backForwardListState().

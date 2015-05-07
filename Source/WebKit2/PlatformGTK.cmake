@@ -214,8 +214,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitSettings.cpp
     UIProcess/API/gtk/WebKitSettings.h
     UIProcess/API/gtk/WebKitSettingsPrivate.h
-    UIProcess/API/gtk/WebKitTextChecker.cpp
-    UIProcess/API/gtk/WebKitTextChecker.h
     UIProcess/API/gtk/WebKitUIClient.cpp
     UIProcess/API/gtk/WebKitUIClient.h
     UIProcess/API/gtk/WebKitURIRequest.cpp

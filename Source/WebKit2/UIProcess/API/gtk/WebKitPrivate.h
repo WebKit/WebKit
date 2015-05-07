@@ -41,7 +41,6 @@
 #include <WebKit/WKSerializedScriptValue.h>
 #include <WebKit/WKSoupCustomProtocolRequestManager.h>
 #include <WebKit/WKString.h>
-#include <WebKit/WKTextChecker.h>
 #include <WebKit/WKUserMediaPermissionRequest.h>
 #include <WebKit/WebKit2_C.h>
 #include <glib.h>

@@ -627,11 +627,6 @@ Bug(GTK) editing/spelling/inline-spelling-markers.html [ Skip ]
 Bug(GTK) editing/spelling/inline-spelling-markers-hidpi.html [ Skip ]
 Bug(GTK) editing/spelling/markers.html [ Skip ]
 
-# Missing asynchronous spellchecking implementation.
-Bug(GTK) editing/spelling/design-mode-spellcheck-off.html [ Skip ]
-Bug(GTK) editing/spelling/spelling-insert-html.html [ Skip ]
-Bug(GTK) editing/spelling/spelling-hasspellingmarker.html [ Skip ]
-
 # Requires ENABLE(MEDIA_CAPTURE)
 webkit.org/b/85958 fast/forms/file/file-input-capture.html [ Failure ]
 
@@ -1283,11 +1278,6 @@ webkit.org/b/122571 inspector-protocol/page/frameScheduledNavigation.html [ Time
 webkit.org/b/122571 inspector-protocol/page/setEmulatedMedia.html [ Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/css/getSupportedCSSProperties.html [ Timeout Pass ]
 
-webkit.org/b/130411 editing/spelling/spellcheck-paste.html [ Timeout ]
-webkit.org/b/130411 editing/spelling/spelling-changed-text.html [ Timeout ]
-webkit.org/b/130411 editing/spelling/spellcheck-paste-disabled.html [ Timeout ]
-webkit.org/b/130411 editing/spelling/spellcheck-paste-continuous-disabled.html [ Timeout ]
-
 Bug(GTK) plugins/reloadplugins-and-pages.html [ Timeout ]
 
 Bug(GTK) fast/forms/select/menulist-popup-crash.html [ Timeout ]
@@ -1479,26 +1469,6 @@ webkit.org/b/93980 http/tests/appcache/load-from-appcache-defer-resume-crash.htm
 webkit.org/b/42194 fast/events/5056619.html [ Failure ]
 webkit.org/b/42194 http/tests/security/drag-drop-same-unique-origin.html [ Failure ]
 
-# Missing TextChecker::requestCheckingOfString() implementation for Gtk.
-webkit.org/b/73003 editing/spelling/delete-into-misspelled-word.html [ Skip ]
-webkit.org/b/73003 editing/spelling/editing-multiple-words-with-markers.html [ Skip ]
-webkit.org/b/73003 editing/spelling/editing-word-with-marker-2.html [ Skip ]
-webkit.org/b/73003 editing/spelling/move-cursor-around-misspelled-word.html [ Skip ]
-webkit.org/b/73003 editing/spelling/spellcheck-async-mutation.html [ Skip ]
-webkit.org/b/73003 editing/spelling/spellcheck-async-remove-frame.html [ Skip ]
-webkit.org/b/73003 editing/spelling/spellcheck-async.html [ Skip ]
-webkit.org/b/73003 editing/spelling/spellcheck-queue.html [ Skip ]
-webkit.org/b/73003 editing/spelling/spellcheck-sequencenum.html [ Skip ]
-webkit.org/b/73003 editing/spelling/spelling-backward.html [ Skip ]
-webkit.org/b/73003 editing/spelling/spelling-marker-description.html [ Skip ]
-
-# Spellcheck tests don't seem to work.
-Bug(GTK) editing/spelling/spelling-backspace-between-lines.html [ Skip ]
-Bug(GTK) editing/spelling/spellcheck-attribute.html [ Skip ]
-Bug(GTK) editing/spelling/spelling-attribute-at-child.html [ Skip ]
-Bug(GTK) editing/spelling/spelling-attribute-change.html [ Skip ]
-Bug(GTK) editing/spelling/spelling-linebreak.html [ Skip ]
-
 # Context menu problems.
 webkit.org/b/120401 fast/events [ Skip ]
 webkit.org/b/120401 editing/selection [ Skip ]
@@ -1580,9 +1550,6 @@ Bug(GTK) plugins/resize-from-plugin.html [ Failure ]
 # Selection doesn't work properly.
 Bug(GTK) editing/selection/context-menu-text-selection.html [ Failure Pass ]
 Bug(GTK) editing/selection/context-menu-text-selection-lookup.html [ Failure Pass ]
-
-# An oncontextmenu attribute is not called.
-Bug(GTK) editing/spelling/spellcheck-input-search-crash.html [ Failure ]
 
 Bug(GTK) http/tests/misc/iframe-beforeunload-dialog-matching-ancestor-securityorigin.html [ Failure ]
 
@@ -1718,9 +1685,6 @@ Bug(GTK) fast/events/platform-wheelevent-paging-y-in-scrolling-page.html [ Failu
 # Need to add functionality to DumpRenderTree to handle scrollbar policy changes
 Bug(GTK) fast/overflow/scrollbar-restored-and-then-locked.html [ Failure ]
 
-# DRT doesn't dispatch an event for the second call eventSender.contextClick().
-webkit.org/b/39102 editing/spelling/context-menu-suggestions.html [ Failure ]
-
 # Some input type=range tests fail because of the size
 # of the slider thumb in GTK+ themes.
 Bug(GTK) fast/forms/range/slider-mouse-events.html [ Failure ]
@@ -1799,8 +1763,6 @@ webkit.org/b/105693 http/tests/multipart/multipart-wait-before-boundary.html [ S
 
 # Does not render the rectangle as it should, even though the multiple parts seem to work
 webkit.org/b/54251 http/tests/multipart/invalid-image-data.html [ Failure ]
-
-webkit.org/b/72248 editing/spelling/spelling-unified-emulation.html [ Failure ]
 
 webkit.org/b/62204 svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml [ Failure ]
 webkit.org/b/62204 svg/custom/use-on-symbol-inside-pattern.svg [ Failure ]
@@ -1908,14 +1870,6 @@ webkit.org/b/103927 http/tests/w3c/webperf/submission/Google/resource-timing/htm
 webkit.org/b/103927 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_frame_initiator_type.html [ Failure ]
 webkit.org/b/103927 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_initiator_types.html [ Failure ]
 webkit.org/b/103927 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_redirects.html [ Failure ]
-
-# Spellchecker behavior tests.
-webkit.org/b/108370 editing/spelling/context-menu-suggestions-multiword-selection.html [ Skip ]
-webkit.org/b/108370 editing/spelling/context-menu-suggestions-subword-selection.html [ Skip ]
-webkit.org/b/108370 editing/spelling/spelling-double-clicked-word.html [ Skip ]
-webkit.org/b/108370 editing/spelling/spelling-exactly-selected-word.html [ Skip ]
-webkit.org/b/108370 editing/spelling/spelling-with-punctuation-selection.html [ Skip ]
-webkit.org/b/108370 editing/spelling/spelling-with-whitespace-selection.html [ Skip ]
 
 webkit.org/b/107118 fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
 
@@ -2370,6 +2324,14 @@ webkit.org/b/144574 svg/masking/mask-negative-scale.svg [ ImageOnlyFailure ]
 webkit.org/b/144575 http/tests/loading/promote-img-preload-priority.html [ Failure ]
 
 webkit.org/b/144673 fast/forms/button-line-height.html [ ImageOnlyFailure ]
+
+webkit.org/b/144690 editing/spelling/context-menu-suggestions-multiword-selection.html [ Timeout ]
+webkit.org/b/144690 editing/spelling/context-menu-suggestions-subword-selection.html [ Timeout ]
+webkit.org/b/144690 editing/spelling/spelling-exactly-selected-word.html [ Timeout ]
+webkit.org/b/144690 editing/spelling/spelling-with-punctuation-selection.html [ Timeout ]
+webkit.org/b/144690 editing/spelling/context-menu-suggestions.html [ Failure ]
+webkit.org/b/144690 editing/spelling/spelling-double-clicked-word.html [ Failure ]
+webkit.org/b/144690 editing/spelling/delete-into-misspelled-word.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
