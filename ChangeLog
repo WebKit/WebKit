@@ -1,3 +1,17 @@
+2015-05-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Cleanup after r183940
+        https://bugs.webkit.org/show_bug.cgi?id=144768
+
+        Unreviewed.
+
+        Looks like the empty directories were not deleted.
+
+        * Source/PAL: Removed.
+        * Source/PAL/Configurations: Removed.
+        * Source/PAL/PAL.xcodeproj: Removed.
+        * Source/PAL/graphics: Removed.
+
 2015-05-07  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Checks for DEVELOPMENT_BUILD are all wrong
