@@ -1,5 +1,25 @@
 2015-05-07  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Expanding Object with only __proto__ looks poor should have a label
+        https://bugs.webkit.org/show_bug.cgi?id=144755
+
+        Reviewed by Timothy Hatcher.
+
+        Better handle cases where expanding an object has only a __proto__
+        and no other properties.
+
+        * UserInterface/Views/ObjectTreePropertyTreeElement.js:
+        (WebInspector.ObjectTreePropertyTreeElement.mode.prototype.this.children.length):
+        (WebInspector.ObjectTreePropertyTreeElement):
+        * UserInterface/Views/ObjectTreeView.css:
+        (.object-tree-outline li .empty-message):
+        * UserInterface/Views/ObjectTreeView.js:
+        (WebInspector.ObjectTreeView.createEmptyMessageElement):
+        (WebInspector.ObjectTreeView.comparePropertyDescriptors):
+        (WebInspector.ObjectTreeView.prototype._updateProperties):
+
+2015-05-07  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Fix querySelector in ResourceContentView.js, caught by assertion
         https://bugs.webkit.org/show_bug.cgi?id=144756
 

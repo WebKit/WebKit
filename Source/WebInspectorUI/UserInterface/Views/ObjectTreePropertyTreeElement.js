@@ -363,6 +363,7 @@ WebInspector.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement
                 prototypeName = this._sanitizedPrototypeString(resolvedValue);
         }
 
+        var hadProto = false;
         for (var propertyDescriptor of properties) {
             // FIXME: If this is a pure API ObjectTree, we should show the native getters.
             // For now, just skip native binding getters in API mode, since we likely
@@ -377,11 +378,14 @@ WebInspector.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement
                     this.appendChild(new WebInspector.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, mode, prototypeName));
             } else
                 this.appendChild(new WebInspector.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, mode, prototypeName));
+
+            if (propertyDescriptor.name === "__proto__")
+                hadProto = true;
         }
 
-        if (!this.children.length) {
+        if (!this.children.length || (hadProto && this.children.length === 1)) {
             var emptyMessageElement = WebInspector.ObjectTreeView.createEmptyMessageElement(WebInspector.UIString("No Properties."));
-            this.appendChild(new WebInspector.TreeElement(emptyMessageElement, null, false));
+            this.insertChild(new WebInspector.TreeElement(emptyMessageElement, null, false), 0);
         }
     }
 };

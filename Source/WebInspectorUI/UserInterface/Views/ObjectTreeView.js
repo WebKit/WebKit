@@ -94,7 +94,7 @@ WebInspector.ObjectTreeView = class ObjectTreeView extends WebInspector.Object
         emptyMessageElement.className = "empty-message";
         emptyMessageElement.textContent = message;
         return emptyMessageElement;
-    };
+    }
 
     static comparePropertyDescriptors(propertyA, propertyB)
     {
@@ -153,7 +153,7 @@ WebInspector.ObjectTreeView = class ObjectTreeView extends WebInspector.Object
             b = b.substring(chunkb.length);
         }
         return diff;
-    };
+    }
 
     // Public
 
@@ -289,6 +289,7 @@ WebInspector.ObjectTreeView = class ObjectTreeView extends WebInspector.Object
         var isArray = this._object.isArray();
         var isPropertyMode = this._mode === WebInspector.ObjectTreeView.Mode.Properties;
 
+        var hadProto = false;
         for (var propertyDescriptor of properties) {
             if (isArray && isPropertyMode) {
                 if (propertyDescriptor.isIndexProperty())
@@ -297,11 +298,14 @@ WebInspector.ObjectTreeView = class ObjectTreeView extends WebInspector.Object
                     this._outline.appendChild(new WebInspector.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, this._mode));
             } else
                 this._outline.appendChild(new WebInspector.ObjectTreePropertyTreeElement(propertyDescriptor, propertyPath, this._mode));
+
+            if (propertyDescriptor.name === "__proto__")
+                hadProto = true;
         }
 
-        if (!this._outline.children.length) {
+        if (!this._outline.children.length || (hadProto && this._outline.children.length === 1)) {
             var emptyMessageElement = WebInspector.ObjectTreeView.createEmptyMessageElement(WebInspector.UIString("No Properties."));
-            this._outline.appendChild(new WebInspector.TreeElement(emptyMessageElement, null, false));
+            this._outline.insertChild(new WebInspector.TreeElement(emptyMessageElement, null, false), 0);
         }
     }
 
