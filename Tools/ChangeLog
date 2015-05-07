@@ -1,3 +1,19 @@
+2015-05-07  Ada Chan  <adachan@apple.com>
+
+        Add a test for WKPageCopySessionState() with filtering.
+        https://bugs.webkit.org/show_bug.cgi?id=144666
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/WKPageCopySessionStateWithFiltering.cpp: Added.
+        (TestWebKitAPI::didFinishLoadForFrame):
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::filterFirstItemCallback):
+        (TestWebKitAPI::filterAllItemsCallback):
+        (TestWebKitAPI::createSessionStates):
+        (TestWebKitAPI::TEST):
+
 2015-05-06  Alexey Proskuryakov  <ap@apple.com>
 
         iOS build fix attempt

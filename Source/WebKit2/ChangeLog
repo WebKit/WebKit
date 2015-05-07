@@ -1,3 +1,15 @@
+2015-05-07  Ada Chan  <adachan@apple.com>
+
+        Fix a couple of cases where the backForwardListState's currentIndex is not set correctly in WebBackForwardList::backForwardListState().
+        https://bugs.webkit.org/show_bug.cgi?id=144666
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::backForwardListState):
+        If the first item is filtered out and the currentIndex is 0, don't decrement currentIndex.
+        If all the items are filtered out, set currentIndex to the uninitialized value.
+
 2015-05-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         [WK2] Remove Windows cruft
