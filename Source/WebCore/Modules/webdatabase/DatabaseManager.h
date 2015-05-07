@@ -103,6 +103,8 @@ public:
     WEBCORE_EXPORT bool deleteOrigin(SecurityOrigin*);
     WEBCORE_EXPORT bool deleteDatabase(SecurityOrigin*, const String& name);
 
+    WEBCORE_EXPORT void setPauseAllDatabases(bool);
+
     void interruptAllDatabasesForContext(ScriptExecutionContext*);
 
 private:

@@ -60,6 +60,8 @@ public:
     virtual bool deleteOrigin(SecurityOrigin*);
     virtual bool deleteDatabase(SecurityOrigin*, const String& name);
 
+    void setPauseAllDatabases(bool) override;
+
     virtual void interruptAllDatabasesForContext(const DatabaseContext*);
 
 protected:

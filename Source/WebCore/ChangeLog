@@ -1,3 +1,25 @@
+2015-05-06  Daniel Bates  <dabates@apple.com>
+
+        [iOS][WK2] Pause/resume database thread when UIProcess enters/leaves the background
+        https://bugs.webkit.org/show_bug.cgi?id=144657
+        <rdar://problem/18894598>
+
+        Reviewed by Andy Estes.
+
+        Export WebCore functionality to pause and resume the database thread so that we can
+        make use of this functionality from WebKit2.
+
+        * Modules/webdatabase/AbstractDatabaseServer.h:
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::setPauseAllDatabases): Added; turns around and calls DatabaseServer::setPauseAllDatabases().
+        * Modules/webdatabase/DatabaseManager.h:
+        * Modules/webdatabase/DatabaseServer.cpp:
+        (WebCore::DatabaseServer::setPauseAllDatabases): Added; turns around and calls
+        DatabaseTracker::tracker().setDatabasesPaused() to pause or resume the database thread.
+        For now, we guard this call with PLATFORM(IOS). We'll look to remove this guard once
+        we fix <https://bugs.webkit.org/show_bug.cgi?id=144660>.
+        * Modules/webdatabase/DatabaseServer.h:
+
 2015-05-06  Brent Fulgham  <bfulgham@apple.com>
 
         Scroll-snap points do not handle margins and padding propertly
