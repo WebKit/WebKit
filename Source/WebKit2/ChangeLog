@@ -1,3 +1,21 @@
+2015-05-06  Jer Noble  <jer.noble@apple.com>
+
+        [WK2][Fullscreen] Elements whose children extend beyond their bounds are clipped in fullscreen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=144716
+
+        Reviewed by Darin Adler.
+
+        We create a mask animation for the transition between windowed and fullscreen modes, on the
+        assumption that the element being taken into fullscreen mode does not have visible children
+        who extend beyond that elements bounds. This assumption breaks down in the case where div
+        with absolutely positioned children is taken fullscreen. While we can't necessarily make the
+        transition look correct in this case, we can remove the mask after the transition completes.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]):
+        * WebProcess/MediaCache/WebMediaKeyStorageManager.cpp:
+        (WebKit::removeAllMediaKeyStorageForOriginPath):
+
 2015-05-06  Jinwoo Jeong  <jw00.jeong@samsung.com>
 
         Fix a build break on EFL debug build

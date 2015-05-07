@@ -297,6 +297,11 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
         [self _manager]->didEnterFullScreen();
         [self _manager]->setAnimatingFullScreen(false);
 
+        NSView *contentView = [[self window] contentView];
+        [contentView.layer removeAllAnimations];
+        [[_clipView layer] removeAllAnimations];
+        [[_clipView layer].mask removeAllAnimations];
+
         [_webViewPlaceholder setExitWarningVisible:YES];
         [_webViewPlaceholder setTarget:self];
     } else {
