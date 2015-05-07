@@ -1,3 +1,9 @@
+2015-05-07  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the build.
+
+        * Configurations/WebCoreTestSupport.xcconfig:
+
 2015-05-07  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] The pre element should be mapped to ATK_ROLE_SECTION; not ATK_ROLE_PANEL

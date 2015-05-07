@@ -31,7 +31,8 @@ PRIVATE_HEADERS_FOLDER_PATH_Production = $(INSTALL_PATH_PREFIX)/usr/local/includ
 
 // Use [sdk=] selectors to override settings in WebCore.xcconfig.
 INSTALL_PATH_PREFIX[sdk=iphonesimulator8.*] = $(DEVELOPER_INSTALL_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/$(SDK_DIR:file);
-INSTALL_PATH = $(INSTALL_PATH_PREFIX)$(INSTALL_PATH_ACTUAL);
+INSTALL_PATH[sdk=iphone*] = $(INSTALL_PATH_PREFIX)$(INSTALL_PATH_ACTUAL);
+INSTALL_PATH[sdk=macosx*] = $(INSTALL_PATH_PREFIX)$(INSTALL_PATH_ACTUAL);
 INSTALL_PATH_ACTUAL = $(INSTALL_PATH_WebCoreTestSupport_$(CONFIGURATION));
 INSTALL_PATH_WebCoreTestSupport_Production = /usr/local/lib;
 
