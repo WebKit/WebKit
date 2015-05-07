@@ -73,6 +73,8 @@ private:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_PLATFORM_DISPLAY(PlatformDisplayWayland, Wayland)
+
 #endif // PLATFORM(WAYLAND)
 
 #endif // PlatformDisplayWayland_h

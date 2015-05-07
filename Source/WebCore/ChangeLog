@@ -1,3 +1,14 @@
+2015-05-07  Žan Doberšek  <zdobersek@igalia.com>
+
+        Add missing type traits specialization for PlatformDisplayWayland
+        https://bugs.webkit.org/show_bug.cgi?id=144671
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/graphics/wayland/PlatformDisplayWayland.h:
+        Add missing type traits specialization for the PlatformDisplayWayland
+        class via the SPECIALIZE_TYPE_TRAITS_PLATFORM_DISPLAY macro.
+
 2015-05-06  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Mark grid shorthands as layout dependent
