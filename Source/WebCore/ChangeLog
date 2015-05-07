@@ -1,3 +1,23 @@
+2015-05-06  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Mark grid shorthands as layout dependent
+        https://bugs.webkit.org/show_bug.cgi?id=144687
+
+        Reviewed by Darin Adler.
+
+        grid-template and grid shorthands were not marked us layout dependent,
+        so you can end up calling them before the grid has been laid out and
+        you'll get a crash at valueForGridTrackList() because of trackPositions
+        won't be initialized yet.
+
+        Tests: fast/css-grid-layout/grid-shorthand-computed-style-crash.html
+               fast/css-grid-layout/grid-template-shorthand-computed-style-crash.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::isLayoutDependent): Add the grid shorthands only if the object
+        is a RenderGrid as otherwise it's not needed (using the same condition
+        for grid-template-columns and grid-template-rows properties too).
+
 2015-05-06  Daniel Bates  <dabates@apple.com>
 
         [iOS][WK2] Pause/resume database thread when UIProcess enters/leaves the background

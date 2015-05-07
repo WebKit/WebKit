@@ -1652,10 +1652,6 @@ static bool isLayoutDependent(CSSPropertyID propertyID, RenderStyle* style, Rend
     switch (propertyID) {
     case CSSPropertyWidth:
     case CSSPropertyHeight:
-#if ENABLE(CSS_GRID_LAYOUT)
-    case CSSPropertyWebkitGridTemplateColumns:
-    case CSSPropertyWebkitGridTemplateRows:
-#endif
     case CSSPropertyPerspectiveOrigin:
     case CSSPropertyTransformOrigin:
     case CSSPropertyTransform:
@@ -1692,6 +1688,13 @@ static bool isLayoutDependent(CSSPropertyID propertyID, RenderStyle* style, Rend
         return paddingOrMarginIsRendererDependent<&RenderStyle::paddingBottom>(style, renderer);
     case CSSPropertyPaddingLeft:
         return paddingOrMarginIsRendererDependent<&RenderStyle::paddingLeft>(style, renderer); 
+#if ENABLE(CSS_GRID_LAYOUT)
+    case CSSPropertyWebkitGridTemplateColumns:
+    case CSSPropertyWebkitGridTemplateRows:
+    case CSSPropertyWebkitGridTemplate:
+    case CSSPropertyWebkitGrid:
+        return renderer && renderer->isRenderGrid();
+#endif
     default:
         return false;
     }
