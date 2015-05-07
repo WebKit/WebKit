@@ -1,4 +1,15 @@
 =================
+WebKitGTK+  2.9.1
+=================
+
+What's new in WebKitGTK+ 2.9.1?
+
+  - New disk cache implementation when using the network process.
+  - Web inspector UI has been redesigned.
+  - Add support for automatic hyphenation using libhyphen when it's available.
+  - Fix network redirection to a non HTTP destination.
+
+=================
 WebKitGTK+  2.7.4
 =================
 
