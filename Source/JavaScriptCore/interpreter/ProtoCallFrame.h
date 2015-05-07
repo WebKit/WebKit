@@ -44,8 +44,8 @@ struct ProtoCallFrame {
     CodeBlock* codeBlock() const { return codeBlockValue.Register::codeBlock(); }
     void setCodeBlock(CodeBlock* codeBlock) { codeBlockValue = codeBlock; }
 
-    JSObject* callee() const { return calleeValue.Register::function(); }
-    void setCallee(JSObject* callee) { calleeValue = Register::withCallee(callee); }
+    JSObject* callee() const { return calleeValue.Register::object(); }
+    void setCallee(JSObject* callee) { calleeValue = callee; }
 
     int argumentCountIncludingThis() const { return argCountAndCodeOriginValue.payload(); }
     int argumentCount() const { return argumentCountIncludingThis() - 1; }

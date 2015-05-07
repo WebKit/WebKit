@@ -1,3 +1,32 @@
+2015-05-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Don't branch when accessing the callee
+        https://bugs.webkit.org/show_bug.cgi?id=144645
+
+        Reviewed by Michael Saboff.
+
+        The branch was added in <http://trac.webkit.org/changeset/81040> without
+        explanation.
+
+        kling found it to be a performance problem. See <https://webkit.org/b/144586>.
+
+        Our theory of access to Registers is that it's up to the client to access
+        them in the right way. So, let's do that.
+
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::callee):
+        (JSC::ExecState::setCallee): Call the field object instead of function
+        because nothing guarantees that it's a function.
+        * interpreter/ProtoCallFrame.h:
+        (JSC::ProtoCallFrame::callee):
+        (JSC::ProtoCallFrame::setCallee):
+        * interpreter/Register.h:
+        * runtime/JSObject.h:
+        (JSC::Register::object): Just do a cast like our other accessors do.
+        (JSC::Register::operator=):
+        (JSC::Register::function): Deleted.
+        (JSC::Register::withCallee): Deleted.
+
 2015-05-07  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/19317140> [Xcode] Remove usage of AspenFamily.xcconfig in Source/

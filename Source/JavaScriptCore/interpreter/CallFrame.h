@@ -43,7 +43,7 @@ namespace JSC  {
     class ExecState : private Register {
     public:
         JSValue calleeAsValue() const { return this[JSStack::Callee].jsValue(); }
-        JSObject* callee() const { return this[JSStack::Callee].function(); }
+        JSObject* callee() const { return this[JSStack::Callee].object(); }
         CodeBlock* codeBlock() const { return this[JSStack::CodeBlock].Register::codeBlock(); }
         JSScope* scope(int scopeRegisterOffset) const
         {
@@ -259,7 +259,7 @@ namespace JSC  {
         static CallFrame* noCaller() { return 0; }
 
         void setArgumentCountIncludingThis(int count) { static_cast<Register*>(this)[JSStack::ArgumentCount].payload() = count; }
-        void setCallee(JSObject* callee) { static_cast<Register*>(this)[JSStack::Callee] = Register::withCallee(callee); }
+        void setCallee(JSObject* callee) { static_cast<Register*>(this)[JSStack::Callee] = callee; }
         void setCodeBlock(CodeBlock* codeBlock) { static_cast<Register*>(this)[JSStack::CodeBlock] = codeBlock; }
         void setReturnPC(void* value) { callerFrameAndPC().pc = reinterpret_cast<Instruction*>(value); }
 

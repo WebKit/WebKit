@@ -1452,18 +1452,15 @@ inline JSValue JSObject::toPrimitive(ExecState* exec, PreferredPrimitiveType pre
     return methodTable()->defaultValue(this, exec, preferredType);
 }
 
-ALWAYS_INLINE JSObject* Register::function() const
+ALWAYS_INLINE JSObject* Register::object() const
 {
-    if (!jsValue())
-        return 0;
     return asObject(jsValue());
 }
 
-ALWAYS_INLINE Register Register::withCallee(JSObject* callee)
+ALWAYS_INLINE Register& Register::operator=(JSObject* object)
 {
-    Register r;
-    r = JSValue(callee);
-    return r;
+    u.value = JSValue::encode(JSValue(object));
+    return *this;
 }
 
 inline size_t offsetInButterfly(PropertyOffset offset)
