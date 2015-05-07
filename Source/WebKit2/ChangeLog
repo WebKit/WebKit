@@ -1,3 +1,15 @@
+2015-05-06  Joonghun Park  <jh718.park@samsung.com>
+
+        [WK2] Simplify AsyncRequestImpl::ArgumentType parameters
+        https://bugs.webkit.org/show_bug.cgi?id=144689
+
+        Reviewed by Darin Adler.
+
+        Remove duplicated typename and ::type from AsyncRequestImpl related
+        function parameters.
+
+        * Shared/AsyncRequest.h:
+
 2015-05-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r183894.

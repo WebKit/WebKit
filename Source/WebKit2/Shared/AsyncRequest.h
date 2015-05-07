@@ -58,14 +58,14 @@ private:
 template <typename... Arguments>
 class AsyncRequestImpl final : public AsyncRequest {
 public:
-    template<typename T> using ArgumentType = std::conditional<std::is_integral<T>::value, T, const T&>;
+    template<typename T> using ArgumentType = typename std::conditional<std::is_integral<T>::value, T, const T&>::type;
 
-    static PassRefPtr<AsyncRequest> create(std::function<void (typename ArgumentType<Arguments>::type...)> completionHandler)
+    static PassRefPtr<AsyncRequest> create(std::function<void (ArgumentType<Arguments>...)> completionHandler)
     {
         return adoptRef(new AsyncRequestImpl<Arguments...>(WTF::move(completionHandler), nullptr));
     }
 
-    static PassRefPtr<AsyncRequest> create(std::function<void (typename ArgumentType<Arguments>::type...)> completionHandler, std::function<void ()> abortHandler)
+    static PassRefPtr<AsyncRequest> create(std::function<void (ArgumentType<Arguments>...)> completionHandler, std::function<void ()> abortHandler)
     {
         return adoptRef(new AsyncRequestImpl<Arguments...>(WTF::move(completionHandler), WTF::move(abortHandler)));
     }
@@ -83,7 +83,7 @@ public:
     }
 
 private:
-    AsyncRequestImpl(std::function<void (typename ArgumentType<Arguments>::type...)> completionHandler, std::function<void ()> abortHandler)
+    AsyncRequestImpl(std::function<void (ArgumentType<Arguments>...)> completionHandler, std::function<void ()> abortHandler)
         : AsyncRequest(WTF::move(abortHandler))
         , m_completionHandler(WTF::move(completionHandler))
     {
@@ -95,7 +95,7 @@ private:
         m_completionHandler = nullptr;
     }
 
-    std::function<void (typename ArgumentType<Arguments>::type...)> m_completionHandler;
+    std::function<void (ArgumentType<Arguments>...)> m_completionHandler;
 };
 
 template<typename... Arguments> void AsyncRequest::completeRequest(Arguments&&... arguments)
