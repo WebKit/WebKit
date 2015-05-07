@@ -910,6 +910,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         RetainPtr<NSImmediateActionGestureRecognizer> recognizer = adoptNS([(NSImmediateActionGestureRecognizer *)[gestureClass alloc] initWithTarget:nil action:NULL]);
         _private->immediateActionController = [[WebImmediateActionController alloc] initWithWebView:self recognizer:recognizer.get()];
         [recognizer setDelegate:_private->immediateActionController];
+        [recognizer setDelaysPrimaryMouseButtonEvents:NO];
     }
 #endif
 
@@ -8600,6 +8601,16 @@ bool LayerFlushController::flushLayers()
     return [getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.attributedString.get() atLocation:textBaselineOrigin options:dictionaryPopupInfo.options.get()];
 }
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+
+- (NSEvent *)_pressureEvent
+{
+    return _private->pressureEvent.get();
+}
+
+- (void)_setPressureEvent:(NSEvent *)event
+{
+    _private->pressureEvent = event;
+}
 
 - (void)_setTextIndicator:(TextIndicator&)textIndicator
 {

@@ -45,12 +45,12 @@
     RetainPtr<DDActionContext> _currentActionContext;
     BOOL _isShowingTextIndicator;
     BOOL _hasActivatedActionContext;
+    BOOL _contentPreventsDefault;
 }
 
 - (instancetype)initWithWebView:(WebView *)webView recognizer:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer;
 - (void)webViewClosed;
 
-- (void)webView:(WebView *)webView willHandleMouseDown:(NSEvent *)event;
 - (void)webView:(WebView *)webView didHandleScrollWheel:(NSEvent *)event;
 
 - (NSImmediateActionGestureRecognizer *)immediateActionRecognizer;

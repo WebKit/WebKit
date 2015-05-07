@@ -1768,7 +1768,7 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
             context:[[NSApp currentEvent] context]
             eventNumber:0 clickCount:0 pressure:0];
         if (Frame* lastHitCoreFrame = core([lastHitView _frame]))
-            lastHitCoreFrame->eventHandler().mouseMoved(event);
+            lastHitCoreFrame->eventHandler().mouseMoved(event, [[self _webView] _pressureEvent]);
     }
 
     lastHitView = view;
@@ -1787,9 +1787,9 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
                 || [[self _webView] _dashboardBehavior:WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows]
 #endif
                 ) {
-                coreFrame->eventHandler().mouseMoved(event);
+                coreFrame->eventHandler().mouseMoved(event, [[self _webView] _pressureEvent]);
             } else
-                coreFrame->eventHandler().passMouseMovedEventToScrollbars(event);
+                coreFrame->eventHandler().passMouseMovedEventToScrollbars(event, [[self _webView] _pressureEvent]);
         }
 
         [view release];
@@ -3303,7 +3303,7 @@ WEBCORE_COMMAND(toggleUnderline)
     [super rightMouseUp:event];
 
     if (Frame* coreframe = core([self _frame]))
-        coreframe->eventHandler().mouseUp(event);
+        coreframe->eventHandler().mouseUp(event, [[self _webView] _pressureEvent]);
 }
 
 static void setMenuItemTarget(NSMenuItem* menuItem)
@@ -3348,8 +3348,8 @@ static void setMenuTargets(NSMenu* menu)
     // Match behavior of other browsers by sending a mousedown event for right clicks.
     _private->handlingMouseDownEvent = YES;
     page->contextMenuController().clearContextMenu();
-    coreFrame->eventHandler().mouseDown(event);
-    BOOL handledEvent = coreFrame->eventHandler().sendContextMenuEvent(PlatformEventFactory::createPlatformMouseEvent(event, page->chrome().platformPageClient()));
+    coreFrame->eventHandler().mouseDown(event, [[self _webView] _pressureEvent]);
+    BOOL handledEvent = coreFrame->eventHandler().sendContextMenuEvent(PlatformEventFactory::createPlatformMouseEvent(event, [[self _webView] _pressureEvent], page->chrome().platformPageClient()));
     _private->handlingMouseDownEvent = NO;
 
     if (!handledEvent)
@@ -3777,7 +3777,7 @@ static void setMenuTargets(NSMenu* menu)
             if ([hitHTMLView _isSelectionEvent:event]) {
 #if ENABLE(DRAG_SUPPORT)
                 if (Page* page = coreFrame->page())
-                    result = coreFrame->eventHandler().eventMayStartDrag(PlatformEventFactory::createPlatformMouseEvent(event, page->chrome().platformPageClient()));
+                    result = coreFrame->eventHandler().eventMayStartDrag(PlatformEventFactory::createPlatformMouseEvent(event, [[self _webView] _pressureEvent], page->chrome().platformPageClient()));
 #endif
             } else if ([hitHTMLView _isScrollBarEvent:event])
                 result = true;
@@ -3804,7 +3804,7 @@ static void setMenuTargets(NSMenu* menu)
 #if ENABLE(DRAG_SUPPORT)
             if (Frame* coreFrame = core([hitHTMLView _frame])) {
                 if (Page* page = coreFrame->page())
-                    result = coreFrame->eventHandler().eventMayStartDrag(PlatformEventFactory::createPlatformMouseEvent(event, page->chrome().platformPageClient()));
+                    result = coreFrame->eventHandler().eventMayStartDrag(PlatformEventFactory::createPlatformMouseEvent(event, [[self _webView] _pressureEvent], page->chrome().platformPageClient()));
             }
 #endif
             [hitHTMLView _setMouseDownEvent:nil];
@@ -3841,7 +3841,6 @@ static void setMenuTargets(NSMenu* menu)
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [[[self _webView] _actionMenuController] webView:[self _webView] willHandleMouseDown:event];
-    [[[self _webView] _immediateActionController] webView:[self _webView] willHandleMouseDown:event];
 #endif
 
 #if PLATFORM(IOS)
@@ -3872,7 +3871,7 @@ static void setMenuTargets(NSMenu* menu)
             // Let WebCore get a chance to deal with the event. This will call back to us
             // to start the autoscroll timer if appropriate.
             if (Frame* coreframe = core([self _frame]))
-                coreframe->eventHandler().mouseDown(event);
+                coreframe->eventHandler().mouseDown(event, [[self _webView] _pressureEvent]);
         }
     }
 #pragma clang diagnostic pop
@@ -3925,7 +3924,7 @@ static void setMenuTargets(NSMenu* menu)
     if (!_private->ignoringMouseDraggedEvents) {
         if (Frame* frame = core([self _frame])) {
             if (Page* page = frame->page())
-                page->mainFrame().eventHandler().mouseDragged(event);
+                page->mainFrame().eventHandler().mouseDragged(event, [[self _webView] _pressureEvent]);
         }
     }
 
@@ -4064,8 +4063,13 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
 
     [self _stopAutoscrollTimer];
     if (Frame* frame = core([self _frame])) {
-        if (Page* page = frame->page())
+        if (Page* page = frame->page()) {
+#if PLATFORM(IOS)
             page->mainFrame().eventHandler().mouseUp(event);
+#else
+            page->mainFrame().eventHandler().mouseUp(event, [[self _webView] _pressureEvent]);
+#endif
+        }
     }
 #if !PLATFORM(IOS)
     [self _updateMouseoverWithFakeEvent];
@@ -4080,6 +4084,22 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
     [self _updateMouseoverWithEvent:event];
 }
 #endif
+
+- (void)pressureChangeWithEvent:(NSEvent *)event
+{
+#if defined(__LP64__) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
+    NSEvent *lastPressureEvent = [[self _webView] _pressureEvent];
+    if (event.phase != NSEventPhaseChanged && event.phase != NSEventPhaseBegan && event.phase != NSEventPhaseEnded)
+        return;
+
+    RefPtr<Frame> coreFrame = core([self _frame]);
+    if (!coreFrame)
+        return;
+
+    coreFrame->eventHandler().pressureChange(event, lastPressureEvent);
+    [[self _webView] _setPressureEvent:event];
+#endif
+}
 
 #if !PLATFORM(IOS)
 // returning YES from this method is the way we tell AppKit that it is ok for this view

@@ -1,3 +1,51 @@
+2015-05-07  Beth Dakin  <bdakin@apple.com>
+
+        New force-related DOM events should fire in WK1 views
+        https://bugs.webkit.org/show_bug.cgi?id=144663
+        -and corresponding-
+        rdar://problem/20281886
+
+        Reviewed by Sam Weinig.
+
+        All of the WK1 mouse events need to take the correspondingPressureEvent.
+        * page/EventHandler.h:
+
+        Make correspondingPressureEvent a part of CurrentEventScope. This is needed to 
+        have accurate pressure information for all of the mouse events in subframes.
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::correspondingPressureEventSlot):
+        (WebCore::EventHandler::correspondingPressureEvent):
+        (WebCore::CurrentEventScope::CurrentEventScope):
+        (WebCore::CurrentEventScope::~CurrentEventScope):
+
+        These events don’t have an associated pressure, so send nil for the 
+        correspondingPressureEvent.
+        (WebCore::EventHandler::wheelEvent):
+        (WebCore::EventHandler::keyEvent):
+
+        Pipe through correspondingPressureEvent.
+        (WebCore::EventHandler::mouseDown):
+        (WebCore::EventHandler::mouseDragged):
+        (WebCore::EventHandler::mouseUp):
+        (WebCore::EventHandler::mouseMoved):
+
+        New function to handle pressure change events.
+        (WebCore::EventHandler::pressureChange):
+
+        Pipe through correspondingPressureEvent.
+        (WebCore::EventHandler::passMouseMovedEventToScrollbars):
+        (WebCore::EventHandler::currentPlatformMouseEvent):
+
+        Take the correspondingPressureEvent in order to build a PlatformMouseEvent with 
+        the correct pressure information.
+        * platform/mac/PlatformEventFactoryMac.h:
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::globalPointForEvent):
+        (WebCore::pointForEvent):
+        (WebCore::mouseButtonForEvent):
+        (WebCore::PlatformMouseEventBuilder::PlatformMouseEventBuilder):
+        (WebCore::PlatformEventFactory::createPlatformMouseEvent):
+
 2015-05-06  Roger Fong  <roger_fong@apple.com>
 
         Media Controls: Scrubber should be independent of actual video time, causes scrubber to be jumpy.

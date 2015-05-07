@@ -266,10 +266,11 @@ public:
 
 #if PLATFORM(COCOA) && defined(__OBJC__)
 #if !PLATFORM(IOS)
-    WEBCORE_EXPORT void mouseDown(NSEvent *);
-    WEBCORE_EXPORT void mouseDragged(NSEvent *);
-    WEBCORE_EXPORT void mouseUp(NSEvent *);
-    WEBCORE_EXPORT void mouseMoved(NSEvent *);
+    WEBCORE_EXPORT void mouseDown(NSEvent *, NSEvent *correspondingPressureEvent);
+    WEBCORE_EXPORT void mouseDragged(NSEvent *, NSEvent *correspondingPressureEvent);
+    WEBCORE_EXPORT void mouseUp(NSEvent *, NSEvent *correspondingPressureEvent);
+    WEBCORE_EXPORT void mouseMoved(NSEvent *, NSEvent *correspondingPressureEvent);
+    WEBCORE_EXPORT void pressureChange(NSEvent *, NSEvent* correspondingPressureEvent);
     WEBCORE_EXPORT bool keyEvent(NSEvent *);
     WEBCORE_EXPORT bool wheelEvent(NSEvent *);
 #else
@@ -285,7 +286,7 @@ public:
 #endif
 
 #if !PLATFORM(IOS)
-    WEBCORE_EXPORT void passMouseMovedEventToScrollbars(NSEvent *);
+    WEBCORE_EXPORT void passMouseMovedEventToScrollbars(NSEvent *, NSEvent* correspondingPressureEvent);
 
     WEBCORE_EXPORT void sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent);
 #endif
@@ -294,6 +295,7 @@ public:
     void setActivationEventNumber(int num) { m_activationEventNumber = num; }
 
     WEBCORE_EXPORT static NSEvent *currentNSEvent();
+    static NSEvent *correspondingPressureEvent();
 #else
     static WebEvent *currentEvent();
 #endif // !PLATFORM(IOS)

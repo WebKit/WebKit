@@ -52,7 +52,7 @@ static void buildAndPerformTest(NSEventType buttonEvent, NSEventModifierFlags mo
                                       clickCount:0
                                         pressure:0];
     
-    auto pme = WebCore::PlatformEventFactory::createPlatformMouseEvent(event, webView.get());
+    auto pme = WebCore::PlatformEventFactory::createPlatformMouseEvent(event, nil, webView.get());
     
     EXPECT_EQ(expectedButton, pme.button());
     EXPECT_TRUE(!modifierFlags || pme.modifierFlags() & modifierFlags);
