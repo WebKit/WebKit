@@ -1,3 +1,19 @@
+2015-05-07  Yoav Weiss  <yoav@yoav.ws>
+
+        Fix <script srcset> being loaded by the preloader.
+        https://bugs.webkit.org/show_bug.cgi?id=144675
+
+        Reviewed by Darin Adler.
+
+        Fix HTMLPreloadScanner to make sure that srcset is only loaded
+        when it is present on an <img>.
+
+        Tests: http/tests/loading/preload-script-src.html
+               http/tests/loading/preload-script-srcset-ignored.html
+
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttributes):
+
 2015-05-07  Žan Doberšek  <zdobersek@igalia.com>
 
         Add missing type traits specialization for PlatformDisplayWayland

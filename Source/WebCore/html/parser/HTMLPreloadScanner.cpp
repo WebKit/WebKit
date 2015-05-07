@@ -105,8 +105,8 @@ public:
             processAttribute(attributeName, attributeValue);
         }
 
-        // Resolve between src and srcSet if we have them.
-        if (!m_srcSetAttribute.isEmpty()) {
+        // Resolve between src and srcSet if we have them and the tag is img.
+        if (m_tagId == TagId::Img && !m_srcSetAttribute.isEmpty()) {
             unsigned sourceSize = 0;
 #if ENABLE(PICTURE_SIZES)
             sourceSize = parseSizesAttribute(m_sizesAttribute, document.renderView(), document.frame());

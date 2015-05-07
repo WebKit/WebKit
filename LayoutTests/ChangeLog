@@ -1,3 +1,18 @@
+2015-05-07  Yoav Weiss  <yoav@yoav.ws>
+
+        Fix <script srcset> being loaded by the preloader.
+        https://bugs.webkit.org/show_bug.cgi?id=144675
+
+        Reviewed by Darin Adler.
+
+        Add preloader tests to make sure that <script src> is preloaded,
+        and <script srcset> is not.
+
+        * http/tests/loading/preload-script-src-expected.txt: Added.
+        * http/tests/loading/preload-script-src.html: Added.
+        * http/tests/loading/preload-script-srcset-ignored-expected.txt: Added.
+        * http/tests/loading/preload-script-srcset-ignored.html: Added.
+
 2015-05-06  Yoav Weiss  <yoav@yoav.ws>
 
         Add srcset preloader tests
