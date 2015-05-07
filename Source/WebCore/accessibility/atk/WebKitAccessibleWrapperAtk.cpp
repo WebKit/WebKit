@@ -633,6 +633,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
         return ATK_ROLE_BLOCK_QUOTE;
 #endif
     case DivRole:
+    case PreRole:
         return ATK_ROLE_SECTION;
     case FooterRole:
         return ATK_ROLE_FOOTER;
@@ -1080,7 +1081,7 @@ static GType GetAtkInterfaceTypeFromWAIType(WAIType type)
 static bool roleIsTextType(AccessibilityRole role)
 {
     return role == ParagraphRole || role == HeadingRole || role == DivRole || role == CellRole
-        || role == LinkRole || role == WebCoreLinkRole || role == ListItemRole;
+        || role == LinkRole || role == WebCoreLinkRole || role == ListItemRole || role == PreRole;
 }
 
 static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)

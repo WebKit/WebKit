@@ -48,7 +48,7 @@ PASS: nav -> navigation.
 PASS: ol -> list. 
 PASS: li -> listitem. 
 PASS: p -> . 
-PASS: pre -> group. 
+PASS: pre -> . 
 PASS: progress -> progressbar. 
 PASS: section -> region. 
 PASS: select:not([multiple]) -> . 

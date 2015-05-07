@@ -157,7 +157,7 @@ bool AccessibilityObject::allowsTextRanges() const
 
     // Check roles as the last fallback mechanism.
     AccessibilityRole role = roleValue();
-    return role == ParagraphRole || role == LabelRole || role == DivRole || role == FormRole;
+    return role == ParagraphRole || role == LabelRole || role == DivRole || role == FormRole || role == PreRole;
 }
 
 unsigned AccessibilityObject::getLengthForTextRange() const

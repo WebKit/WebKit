@@ -1,3 +1,27 @@
+2015-05-07  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] The pre element should be mapped to ATK_ROLE_SECTION; not ATK_ROLE_PANEL
+        https://bugs.webkit.org/show_bug.cgi?id=144702
+
+        Reviewed by Chris Fleizach.
+
+        Add a new PreRole AccessibilityRole so that per-platform mapping is possible.
+        Map PreRole to ATK_ROLE_SECTION for Efl and Gtk; to NSAccessibilityGroupRole
+        for the Mac. Add PreRole to the list of "text type" ATK roles.
+
+        No new tests. Existing tests were updated to reflect the corrected mapping.
+
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        * accessibility/atk/AccessibilityObjectAtk.cpp:
+        (WebCore::AccessibilityObject::allowsTextRanges):
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole):
+        (roleIsTextType):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (createAccessibilityRoleMap):
+
 2015-05-07  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/19317140> [Xcode] Remove usage of AspenFamily.xcconfig in Source/

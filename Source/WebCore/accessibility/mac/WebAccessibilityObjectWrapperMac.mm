@@ -1959,6 +1959,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { BlockquoteRole, NSAccessibilityGroupRole },
         { SwitchRole, NSAccessibilityCheckBoxRole },
         { SearchFieldRole, NSAccessibilityTextFieldRole },
+        { PreRole, NSAccessibilityGroupRole },
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
     

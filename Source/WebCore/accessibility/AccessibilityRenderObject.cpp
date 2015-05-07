@@ -2630,6 +2630,9 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (node && node->hasTagName(captionTag))
         return CaptionRole;
 
+    if (node && node->hasTagName(preTag))
+        return PreRole;
+
 #if ENABLE(VIDEO)
     if (is<HTMLVideoElement>(node))
         return VideoRole;

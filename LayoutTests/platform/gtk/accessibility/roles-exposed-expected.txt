@@ -335,7 +335,7 @@ p
       AXRole: AXParagraph
       
 pre
-      AXRole: AXGroup
+      AXRole: AXSection
       
 progress
       AXRole: AXProgressIndicator

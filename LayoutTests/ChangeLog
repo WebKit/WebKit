@@ -1,3 +1,19 @@
+2015-05-07  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] The pre element should be mapped to ATK_ROLE_SECTION; not ATK_ROLE_PANEL
+        https://bugs.webkit.org/show_bug.cgi?id=144702
+
+        Reviewed by Chris Fleizach.
+
+        In addition to updating the platform expectations for Efl and Gtk, the computed
+        roles test needed to be updated because there is not a one-to-one mapping between
+        the HTML pre element and any ARIA role type.
+
+        * accessibility/roles-computedRoleString-expected.txt: Updated.
+        * accessibility/roles-computedRoleString.html: Updated.
+        * platform/efl/accessibility/roles-exposed-expected.txt: Updated.
+        * platform/gtk/accessibility/roles-exposed-expected.txt: Updated.
+
 2015-05-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Unreviewed gardening.
