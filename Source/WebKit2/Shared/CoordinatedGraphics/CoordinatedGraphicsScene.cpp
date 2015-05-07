@@ -76,7 +76,6 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
         static_cast<TextureMapperGL*>(m_textureMapper.get())->setEnableEdgeDistanceAntialiasing(true);
     }
 
-    ASSERT(m_textureMapper->accelerationMode() == TextureMapper::OpenGLMode);
     syncRemoteContent();
 
     adjustPositionForFixedLayers(contentPosition);
@@ -122,7 +121,6 @@ void CoordinatedGraphicsScene::paintToGraphicsContext(PlatformGraphicsContext* p
 {
     if (!m_textureMapper)
         m_textureMapper = TextureMapper::create();
-    ASSERT(m_textureMapper->accelerationMode() == TextureMapper::SoftwareMode);
     syncRemoteContent();
     TextureMapperLayer* layer = rootLayer();
 
