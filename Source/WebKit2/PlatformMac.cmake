@@ -32,6 +32,10 @@ set(WebProcess_SOURCES
      WebProcess/mac/SecItemShimLibrary.mm
 )
 
+list(APPEND NetworkProcess_SOURCES
+     ${NetworkProcess_COMMON_SOURCES}
+)
+
 add_definitions("-include WebKit2Prefix.h")
 
 set(WebKit2_FORWARDING_HEADERS_FILES

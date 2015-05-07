@@ -1,3 +1,21 @@
+2015-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r182032): [GTK] Production build is broken after r182032
+        https://bugs.webkit.org/show_bug.cgi?id=144736
+
+        Reviewed by Martin Robinson.
+
+        The problem is that r182032 moved the NetworkProcess sources from
+        WebKit2 sources to NetworkProcess sources. That's not a problem
+        for developer builds where all internal symbols are exported, but
+        doesn't work for production builds because all those internal
+        symbols are private.
+
+        * CMakeLists.txt: Use a different name for common network process
+        sources variable.
+        * PlatformMac.cmake: Append common network process sources to the
+        network process source list for Mac.
+
 2015-05-07  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/19317140> [Xcode] Remove usage of AspenFamily.xcconfig in Source/

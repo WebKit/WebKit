@@ -154,7 +154,7 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
     )
 endif ()
 
-set(NetworkProcess_SOURCES
+set(NetworkProcess_COMMON_SOURCES
     NetworkProcess/NetworkConnectionToWebProcess.cpp
     NetworkProcess/NetworkProcess.cpp
     NetworkProcess/NetworkProcessPlatformStrategies.cpp
@@ -625,7 +625,7 @@ set(WebKit2_SOURCES
     WebProcess/WebPage/VisitedLinkTableController.cpp
     WebProcess/WebPage/WebUndoStep.cpp
 
-    ${NetworkProcess_SOURCES}
+    ${NetworkProcess_COMMON_SOURCES}
 )
 
 set(WebKit2_MESSAGES_IN_FILES
