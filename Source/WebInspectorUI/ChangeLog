@@ -1,3 +1,17 @@
+2015-05-06  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: The text in the left pane overlaps the "Filter Time Events" field in the Timeline after the Web Inspector is resized
+        https://bugs.webkit.org/show_bug.cgi?id=144720
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/FilterBar.css:
+        (.filter-bar):
+        (.filter-bar > .navigation-bar):
+        (.filter-bar > input[type="search"]):
+        (.filter-bar > .navigation-bar > .item): Deleted.
+        Filter bar now has opaque background and height updated to the ubiquitous 29px.
+
 2015-05-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: DOMStorage exception and issue with sessionStorage

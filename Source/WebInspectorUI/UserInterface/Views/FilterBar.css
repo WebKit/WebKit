@@ -26,10 +26,16 @@
 .filter-bar {
     display: flex;
 
-    height: 26px;
+    height: 29px;
 
     white-space: nowrap;
     overflow: hidden;
+
+    background-color: rgb(242, 242, 242);
+}
+
+.filter-bar > .navigation-bar {
+    margin-top: 1px;
 }
 
 .filter-bar > .navigation-bar > .item {
@@ -40,7 +46,7 @@
     display: flex;
     flex: 1;
 
-    margin: 1px 6px;
+    margin: 3px 6px 4px;
     padding-top: 0;
 
     outline: none;
