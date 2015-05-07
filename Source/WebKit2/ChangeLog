@@ -1,3 +1,18 @@
+2015-05-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Followup fixes to r183936
+
+        I neglected to include a few review comments when I landed the patch.
+
+        * UIProcess/gtk/TextCheckerGtk.cpp:
+        (WebKit::checkerState): Remove double semicolons.
+        (WebKit::updateStateForAllProcessPools): Use range-based-for loop here and
+        give the function a better name.
+        (WebKit::TextChecker::setContinuousSpellCheckingEnabled): Use new function name
+        (WebKit::TextChecker::setGrammarCheckingEnabled):Use new function name
+        (WebKit::TextChecker::ignoreWord): Fix unused parameter warning.
+        (WebKit::updateStateForAllContexts): Deleted.
+
 2015-05-07  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Checks for DEVELOPMENT_BUILD are all wrong

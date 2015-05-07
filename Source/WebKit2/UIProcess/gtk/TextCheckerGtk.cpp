@@ -63,8 +63,8 @@ TextCheckerState& checkerState()
     static TextCheckerState textCheckerState;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        textCheckerState.isContinuousSpellCheckingEnabled = false;;
-        textCheckerState.isGrammarCheckingEnabled = false;;
+        textCheckerState.isContinuousSpellCheckingEnabled = false;
+        textCheckerState.isGrammarCheckingEnabled = false;
     });
 
     return textCheckerState;
@@ -75,11 +75,10 @@ const TextCheckerState& TextChecker::state()
     return checkerState();
 }
 
-static void updateStateForAllContexts()
+static void updateStateForAllProcessPools()
 {
-    const Vector<WebProcessPool*>& contexts = WebProcessPool::allProcessPools();
-    for (size_t i = 0; i < contexts.size(); ++i)
-        contexts[i]->textCheckerStateChanged();
+    for (const auto& processPool : WebProcessPool::allProcessPools())
+        processPool->textCheckerStateChanged();
 }
 
 bool TextChecker::isContinuousSpellCheckingAllowed()
@@ -92,7 +91,7 @@ void TextChecker::setContinuousSpellCheckingEnabled(bool isContinuousSpellChecki
     if (checkerState().isContinuousSpellCheckingEnabled == isContinuousSpellCheckingEnabled)
         return;
     checkerState().isContinuousSpellCheckingEnabled = isContinuousSpellCheckingEnabled;
-    updateStateForAllContexts();
+    updateStateForAllProcessPools();
 }
 
 void TextChecker::setGrammarCheckingEnabled(bool isGrammarCheckingEnabled)
@@ -100,7 +99,7 @@ void TextChecker::setGrammarCheckingEnabled(bool isGrammarCheckingEnabled)
     if (checkerState().isGrammarCheckingEnabled == isGrammarCheckingEnabled)
         return;
     checkerState().isGrammarCheckingEnabled = isGrammarCheckingEnabled;
-    updateStateForAllContexts();
+    updateStateForAllProcessPools();
 }
 
 void TextChecker::continuousSpellCheckingEnabledStateChanged(bool enabled)
@@ -160,7 +159,7 @@ void TextChecker::learnWord(int64_t /* spellDocumentTag */, const String& word)
     enchantTextChecker().learnWord(word);
 }
 
-void TextChecker::ignoreWord(int64_t spellDocumentTag, const String& word)
+void TextChecker::ignoreWord(int64_t /* spellDocumentTag */, const String& word)
 {
     enchantTextChecker().ignoreWord(word);
 }
