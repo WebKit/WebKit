@@ -1,3 +1,17 @@
+2015-05-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ToT WebKit crashes while loading ES6 compatibility table
+        https://bugs.webkit.org/show_bug.cgi?id=144726
+
+        Reviewed by Filip Pizlo.
+
+        The bug was caused by parseClass superfluously avoiding to build up the string after seeing {.
+
+        Always build the identifier here as it could be a method name.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass):
+
 2015-05-05  Filip Pizlo  <fpizlo@apple.com>
 
         Sane chain and string watchpoints should be set in FixupPhase or the backend rather than WatchpointCollectionPhase

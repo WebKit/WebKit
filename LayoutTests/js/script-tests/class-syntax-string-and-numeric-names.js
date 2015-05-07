@@ -51,3 +51,6 @@ shouldBe("X = class { static set 6(x) { } static get 6() { return 26 } }; X[6]",
 shouldBe("(new X)[6]", "undefined");
 shouldBe("setterValue = 0; X = class { static set 7(x) { setterValue = x } static get 7() { } }; X[7] = 27; setterValue", "27");
 shouldBe("(new X)[7] = 28; setterValue", "27");
+
+shouldBe("function x() { return class { 'foo bar'() { return 29; } } }; (new (x()))['foo bar']()", "29");
+shouldBe("function x() { return class { 30() { return 30; } } }; (new (x()))[30]()", "30");

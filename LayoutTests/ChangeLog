@@ -1,3 +1,15 @@
+2015-05-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ToT WebKit crashes while loading ES6 compatibility table
+        https://bugs.webkit.org/show_bug.cgi?id=144726
+
+        Reviewed by Filip Pizlo.
+
+        Added new test cases.
+
+        * js/class-syntax-string-and-numeric-names-expected.txt:
+        * js/script-tests/class-syntax-string-and-numeric-names.js:
+
 2015-05-06  Brent Fulgham  <bfulgham@apple.com>
 
         Scroll-snap points do not handle margins and padding propertly

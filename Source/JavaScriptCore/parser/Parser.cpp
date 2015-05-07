@@ -1529,7 +1529,7 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
     }
     const ConstructorKind constructorKind = parentClass ? ConstructorKind::Derived : ConstructorKind::Base;
 
-    consumeOrFailWithFlags(OPENBRACE, TreeBuilder::DontBuildStrings, "Expected opening '{' at the start of a class body");
+    consumeOrFail(OPENBRACE, "Expected opening '{' at the start of a class body");
 
     TreeExpression constructor = 0;
     TreePropertyList staticMethods = 0;
@@ -1558,16 +1558,19 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
         switch (m_token.m_type) {
         case STRING:
             ident = m_token.m_data.ident;
+            ASSERT(ident);
             next();
             break;
         case IDENT:
             ident = m_token.m_data.ident;
             isGetter = *ident == propertyNames.get;
             isSetter = *ident == propertyNames.set;
+            ASSERT(ident);
             break;
         case DOUBLE:
         case INTEGER:
             ident = &m_parserArena.identifierArena().makeNumericIdentifier(const_cast<VM*>(m_vm), m_token.m_data.doubleValue);
+            ASSERT(ident);
             next();
             break;
         default:
