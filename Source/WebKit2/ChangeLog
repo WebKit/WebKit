@@ -1,3 +1,20 @@
+2015-05-07  Sungmann Cho  <sungmann.cho@navercorp.com>
+
+        Add PLUGIN_ARCHITECTURE(X11) around m_frameRectInWindowCoordinates in NetscapePlugin.
+        https://bugs.webkit.org/show_bug.cgi?id=144490
+
+        Reviewed by Darin Adler.
+
+        m_frameRectInWindowCoordinates in NetscapePlugin is currently being used only for
+        the windowed plugins, and the windowed plugins are only supported on X11. So we can
+        guard it with PLUGIN_ARCHITECTURE(X11).
+
+        No new tests, no behavior change.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::geometryDidChange):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+
 2015-05-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Revert "Introducing the Platform Abstraction Layer (PAL)"
