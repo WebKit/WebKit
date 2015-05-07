@@ -1,3 +1,18 @@
+2015-05-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [WK2] Remove Windows cruft
+        https://bugs.webkit.org/show_bug.cgi?id=144745
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::getMemorySize):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (IPC::ArgumentCoder<WebCore::GraphicsSurfaceToken>::encode):
+        (IPC::ArgumentCoder<WebCore::GraphicsSurfaceToken>::decode):
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::getMemorySize):
+
 2015-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r182032): [GTK] Production build is broken after r182032

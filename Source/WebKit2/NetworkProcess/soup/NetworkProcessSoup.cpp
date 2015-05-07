@@ -62,7 +62,6 @@ static uint64_t getCacheDiskFreeSize(SoupCache* cache)
 static uint64_t getMemorySize()
 {
     static uint64_t kDefaultMemorySize = 512;
-#if !OS(WINDOWS)
     long pageSize = sysconf(_SC_PAGESIZE);
     if (pageSize == -1)
         return kDefaultMemorySize;
@@ -72,10 +71,6 @@ static uint64_t getMemorySize()
         return kDefaultMemorySize;
 
     return ((pageSize / 1024) * physPages) / 1024;
-#else
-    // Fallback to default for other platforms.
-    return kDefaultMemorySize;
-#endif
 }
 
 void NetworkProcess::userPreferredLanguagesChanged(const Vector<String>& languages)

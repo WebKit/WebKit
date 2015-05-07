@@ -61,7 +61,6 @@ static uint64_t getCacheDiskFreeSize(SoupCache* cache)
 static uint64_t getMemorySize()
 {
     static uint64_t kDefaultMemorySize = 512;
-#if !OS(WINDOWS)
     long pageSize = sysconf(_SC_PAGESIZE);
     if (pageSize == -1)
         return kDefaultMemorySize;
@@ -71,10 +70,6 @@ static uint64_t getMemorySize()
         return kDefaultMemorySize;
 
     return ((pageSize / 1024LL) * physPages) / 1024LL;
-#else
-    // Fallback to default for other platforms.
-    return kDefaultMemorySize;
-#endif
 }
 
 void WebProcess::platformSetCacheModel(CacheModel cacheModel)
