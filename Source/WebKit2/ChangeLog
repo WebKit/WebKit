@@ -1,3 +1,21 @@
+2015-05-07  Jer Noble  <jer.noble@apple.com>
+
+        [WK2][Fullscreen] Fullscreen video does not enter low-power mode.
+        https://bugs.webkit.org/show_bug.cgi?id=144744
+
+        Reviewed by Darin Adler.
+
+        One of the requirements of entering low-power compositing mode is that no masking layers
+        are present in any of the ancestors of the fullscreen video layer. So once our fullscreen
+        transition animation completes, remove the mask layer entirely from our clipping layer.
+        This means it needs to be re-created and added when entering fullscreen, rather than just
+        at initialization time.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController initWithWindow:webView:]):
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]):
+        (-[WKFullScreenWindowController _startEnterFullScreenAnimationWithDuration:]):
+
 2015-05-07  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] All spell checking layout tests fail
