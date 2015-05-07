@@ -666,7 +666,6 @@ public:
     RemoteLayerTreeTextStream& operator<<(const FilterOperations&);
     RemoteLayerTreeTextStream& operator<<(const PlatformCAAnimationRemote::Properties&);
     RemoteLayerTreeTextStream& operator<<(const RemoteLayerBackingStore&);
-    RemoteLayerTreeTextStream& operator<<(const WebCore::GraphicsLayer::CustomAppearance&);
     RemoteLayerTreeTextStream& operator<<(BlendMode);
     RemoteLayerTreeTextStream& operator<<(PlatformCAAnimation::AnimationType);
     RemoteLayerTreeTextStream& operator<<(PlatformCAAnimation::FillModeType);
@@ -834,19 +833,6 @@ RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const FilterOpe
     case FilterOperation::NONE:
         ts << "none";
         break;
-    }
-    return ts;
-}
-
-RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const WebCore::GraphicsLayer::CustomAppearance& customAppearance)
-{
-    RemoteLayerTreeTextStream& ts = *this;
-    switch (customAppearance) {
-    case WebCore::GraphicsLayer::CustomAppearance::NoCustomAppearance: ts << "none"; break;
-    case WebCore::GraphicsLayer::CustomAppearance::ScrollingOverhang: ts << "scrolling-overhang"; break;
-    case WebCore::GraphicsLayer::CustomAppearance::ScrollingShadow: ts << "scrolling-shadow"; break;
-    case WebCore::GraphicsLayer::CustomAppearance::LightBackdropAppearance: ts << "light-backdrop"; break;
-    case WebCore::GraphicsLayer::CustomAppearance::DarkBackdropAppearance: ts << "dark-backdrop"; break;
     }
     return ts;
 }

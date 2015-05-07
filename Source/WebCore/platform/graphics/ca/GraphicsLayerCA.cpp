@@ -1438,10 +1438,10 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     bool needBackdropLayerType = (customAppearance() == LightBackdropAppearance || customAppearance() == DarkBackdropAppearance);
     PlatformCALayer::LayerType neededLayerType = m_layer->layerType();
 
-    if (needBackdropLayerType)
-        neededLayerType = layerTypeForCustomBackdropAppearance(customAppearance());
-    else if (needTiledLayer)
+    if (needTiledLayer)
         neededLayerType = PlatformCALayer::LayerTypeTiledBackingLayer;
+    else if (needBackdropLayerType)
+        neededLayerType = layerTypeForCustomBackdropAppearance(customAppearance());
     else if (isCustomBackdropLayerType(m_layer->layerType()) || m_usingTiledBacking)
         neededLayerType = PlatformCALayer::LayerTypeWebLayer;
 
