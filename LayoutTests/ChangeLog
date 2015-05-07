@@ -1,3 +1,21 @@
+2015-05-07  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r164449): Subpixel rendering: http://www.apple.com/iphone-6/ "Faster wireless." image displays vertical black line on 1x displays at specific window width.
+        https://bugs.webkit.org/show_bug.cgi?id=144723
+        rdar://problem/18307094
+
+        Reviewed by Simon Fraser.
+
+        This patch ensures that the backing store's graphics layer is always positioned on a device pixel boundary.
+
+        While calculating the backing store's graphics layer location, its ancestor layer's compositing bounds is taken into account.
+        However the compositing bounds is an unsnapped value, so in order to place the graphics layer properly,
+        we need to pixel align the ancestor compositing bounds before using it to adjust the child's graphics layer position.
+
+        * compositing/ancestor-compositing-layer-is-on-subpixel-position-expected.html: Added.
+        * compositing/ancestor-compositing-layer-is-on-subpixel-position.html: Added.
+        * platform/mac/compositing/layer-creation/overlap-animation-container-expected.txt: progression.
+
 2015-05-07  Yoav Weiss  <yoav@yoav.ws>
 
         Fix sizes crash and add invalid value tests.
