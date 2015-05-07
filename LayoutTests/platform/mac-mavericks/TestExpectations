@@ -5,3 +5,7 @@ http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html
 fast/events/mouse-force-changed.html [ Skip ]
 fast/events/mouse-force-down.html [ Skip ]
 fast/events/mouse-force-up.html [ Skip ]
+
+# No support for Filters Level 2
+compositing/media-controls-bar-appearance.html [ Skip ]
+compositing/media-controls-bar-appearance-big.html [ Skip ]

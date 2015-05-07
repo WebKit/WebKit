@@ -1,3 +1,21 @@
+2015-05-06  Dean Jackson  <dino@apple.com>
+
+        Handle backdrop views that have to tile
+        https://bugs.webkit.org/show_bug.cgi?id=142317
+        <rdar://problem/20049088>
+
+        Reviewed by Simon Fraser.
+
+        Take 2 - this was rolled out because Mavericks was crashing.
+
+        A test that creates some backdrop views, then makes them
+        big enough that it would trigger tiling (which we don't want
+        to happen).
+
+        * compositing/media-controls-bar-appearance-big-expected.txt: Added.
+        * compositing/media-controls-bar-appearance-big.html: Added.
+        * platform/mac-mavericks/TestExpectations: Skip tests on Mavericks.
+
 2015-05-07  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] All spell checking layout tests fail

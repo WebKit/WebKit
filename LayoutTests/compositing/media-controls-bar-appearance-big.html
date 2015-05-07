@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        div {
+            position: relative;
+            height: 100px;
+            width: 100px;
+        }
+        .big {
+            width: 2048px;
+            height: 2048px;
+        }
+        .media-controls {
+            -webkit-transform: translate3d(0, 0, 0); /* The element has to request a layer for the appearance to work */
+        }
+        .dark {
+            -webkit-appearance: media-controls-dark-bar-background;
+        }
+        .light {
+            -webkit-appearance: media-controls-light-bar-background;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function change()
+        {
+            var elements = document.querySelectorAll(".media-controls");
+            for (var i = 0; i < elements.length; ++i)
+                elements[i].classList.add("big");
+            setTimeout(dumpLayers, 0);
+        }
+
+        function dumpLayers()
+        {
+            var layersResult = document.getElementById('layers');
+            if (window.testRunner) {
+                layersResult.innerText = window.internals.layerTreeAsText(document);
+                testRunner.notifyDone();
+            }
+        }
+        window.addEventListener('load', change, false)
+    </script>
+</head>
+<body>
+    <div class="media-controls dark">
+    </div>
+    <div class="media-controls light">
+    </div>
+<pre id="layers"></pre>
+</body>
+</html>

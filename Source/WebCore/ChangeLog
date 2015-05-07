@@ -1,3 +1,26 @@
+2015-05-06  Dean Jackson  <dino@apple.com>
+
+        Handle backdrop views that have to tile
+        https://bugs.webkit.org/show_bug.cgi?id=142317
+        <rdar://problem/20049088>
+
+        Reviewed by Simon Fraser.
+
+        Take 2 - this was rolled out because Mavericks was crashing.
+
+        Make sure backdrop layers don't tile. If they are big
+        enough, we'll leave it to the platform compositor to handle.
+
+        This also fixes a bug where if a layer changed from a backdrop
+        type to a tiled type, it would still retain its custom appearance
+        and we'd try to add children to the wrong layer.
+
+        Test: compositing/media-controls-bar-appearance-big.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers): Check if
+        a layer needs a backdrop before checking if it needs to tile.
+
 2015-05-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Revert "Introducing the Platform Abstraction Layer (PAL)"
