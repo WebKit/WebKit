@@ -112,10 +112,6 @@ void* Allocator::reallocate(void* object, size_t newSize)
     if (!m_isBmallocEnabled)
         return realloc(object, newSize);
 
-    void* result = allocate(newSize);
-    if (!object)
-        return result;
-
     size_t oldSize = 0;
     switch (objectType(object)) {
     case Small: {
@@ -129,20 +125,48 @@ void* Allocator::reallocate(void* object, size_t newSize)
         break;
     }
     case Large: {
-        std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
+        std::unique_lock<StaticMutex> lock(PerProcess<Heap>::mutex());
         LargeObject largeObject(object);
         oldSize = largeObject.size();
+
+        if (newSize < oldSize && newSize > mediumMax) {
+            newSize = roundUpToMultipleOf<largeAlignment>(newSize);
+            if (oldSize - newSize >= largeMin) {
+                std::pair<LargeObject, LargeObject> split = largeObject.split(newSize);
+                
+                lock.unlock();
+                m_deallocator.deallocate(split.second.begin());
+                lock.lock();
+            }
+            return object;
+        }
         break;
     }
     case XLarge: {
-        std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
-        Range range = PerProcess<Heap>::getFastCase()->findXLarge(lock, object);
-        RELEASE_BASSERT(range);
+        BASSERT(objectType(nullptr) == XLarge);
+        if (!object)
+            break;
+
+        std::unique_lock<StaticMutex> lock(PerProcess<Heap>::mutex());
+        Range& range = PerProcess<Heap>::getFastCase()->findXLarge(lock, object);
         oldSize = range.size();
+
+        if (newSize < oldSize && newSize > largeMax) {
+            newSize = roundUpToMultipleOf<xLargeAlignment>(newSize);
+            if (oldSize - newSize >= xLargeAlignment) {
+                lock.unlock();
+                vmDeallocate(static_cast<char*>(object) + oldSize, oldSize - newSize);
+                lock.lock();
+
+                range = Range(object, newSize);
+            }
+            return object;
+        }
         break;
     }
     }
 
+    void* result = allocate(newSize);
     size_t copySize = std::min(oldSize, newSize);
     memcpy(result, object, copySize);
     m_deallocator.deallocate(object);

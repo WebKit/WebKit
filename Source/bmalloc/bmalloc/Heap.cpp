@@ -306,7 +306,7 @@ void* Heap::tryAllocateXLarge(std::lock_guard<StaticMutex>&, size_t alignment, s
     return result;
 }
 
-Range Heap::findXLarge(std::lock_guard<StaticMutex>&, void* object)
+Range& Heap::findXLarge(std::unique_lock<StaticMutex>&, void* object)
 {
     for (auto& range : m_xLargeObjects) {
         if (range.begin() != object)
@@ -314,23 +314,17 @@ Range Heap::findXLarge(std::lock_guard<StaticMutex>&, void* object)
         return range;
     }
 
-    return Range();
+    RELEASE_BASSERT(false);
+    return *static_cast<Range*>(nullptr); // Silence compiler error.
 }
 
 void Heap::deallocateXLarge(std::unique_lock<StaticMutex>& lock, void* object)
 {
-    for (auto& range : m_xLargeObjects) {
-        if (range.begin() != object)
-            continue;
+    Range toDeallocate = m_xLargeObjects.pop(&findXLarge(lock, object));
 
-        Range toDeallocate = m_xLargeObjects.pop(&range);
-
-        lock.unlock();
-        vmDeallocate(toDeallocate.begin(), toDeallocate.size());
-        lock.lock();
-        
-        break;
-    }
+    lock.unlock();
+    vmDeallocate(toDeallocate.begin(), toDeallocate.size());
+    lock.lock();
 }
 
 void* Heap::allocateLarge(std::lock_guard<StaticMutex>&, LargeObject& largeObject, size_t size)

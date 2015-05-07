@@ -1,3 +1,31 @@
+2015-05-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Release assert in com.apple.WebKit.WebContent under JavaScriptCore: JSC::JSONProtoFuncStringify
+        https://bugs.webkit.org/show_bug.cgi?id=144758
+
+        Reviewed by Andreas Kling.
+
+        This was an out-of-memory error when trying to shrink a string builder.
+        bmalloc was missing the optimization that allowed realloc() to shrink
+        without copying. So, let's add it.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::reallocate): Added Large and XLarge cases for
+        shrinking without copying. This isn't possible for small and medium
+        objects, and probably not very profitable, either.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::findXLarge):
+        (bmalloc::Heap::deallocateXLarge):
+        * bmalloc/Heap.h: Refactored this code to return a reference to an
+        XLarge range. This makes the code reusable, and also makes it easier
+        for realloc() to update metadata.
+
+        * bmalloc/LargeObject.h:
+        (bmalloc::LargeObject::split): Allow allocated objects to split because
+        that's what realloc() wants to do, and there's nothing intrinsically
+        wrong with it.
+
 2015-05-07  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/19317140> [Xcode] Remove usage of AspenFamily.xcconfig in Source/
