@@ -21,7 +21,6 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
-#include "<DEVELOPER_DIR>/AppleInternal/XcodeConfig/AspenFamily.xcconfig"
 #include "../../../../Internal/Configurations/HaveInternalSDK.xcconfig"
 
 USE_INTERNAL_SDK = $(USE_INTERNAL_SDK_$(CONFIGURATION));
@@ -105,6 +104,7 @@ DEAD_CODE_STRIPPING_debug = NO;
 DEAD_CODE_STRIPPING_normal = YES;
 DEAD_CODE_STRIPPING = $(DEAD_CODE_STRIPPING_$(CURRENT_VARIANT));
 
+INSTALL_PATH_PREFIX[sdk=iphonesimulator8.*] = $(DEVELOPER_INSTALL_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/$(SDK_DIR:file);
 INSTALL_PATH = $(INSTALL_PATH_PREFIX)$(INSTALL_PATH_ACTUAL);
 
 SDKROOT = macosx.internal;

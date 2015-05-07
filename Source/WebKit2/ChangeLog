@@ -1,3 +1,16 @@
+2015-05-07  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/19317140> [Xcode] Remove usage of AspenFamily.xcconfig in Source/
+        https://bugs.webkit.org/show_bug.cgi?id=144727
+
+        Reviewed by Darin Adler.
+
+        * Configurations/Base.xcconfig: Don’t include AspenFamily.xcconfig, and define
+        INSTALL_PATH_PREFIX and LD_DYLIB_INSTALL_NAME for the iOS 8.x Simulator.
+        * Configurations/WebKit2.xcconfig: Define INSTALL_PATH_ACTUAL and let INSTALL_PATH be
+        derived from it and INSTALL_PATH_PREFIX. Don’t override DYLIB_INSTALL_NAME_BASE for iOS,
+        because we define LD_DYLIB_INSTALL_NAME directly where needed.
+
 2015-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.9.1 release.

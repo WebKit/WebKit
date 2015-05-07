@@ -1,4 +1,3 @@
-#include "<DEVELOPER_DIR>/AppleInternal/XcodeConfig/AspenFamily.xcconfig"
 #include "../../../../../Internal/Configurations/HaveInternalSDK.xcconfig"
 
 USE_INTERNAL_SDK = $(USE_INTERNAL_SDK_$(CONFIGURATION));
@@ -48,6 +47,7 @@ SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx;
 
 TARGET_MAC_OS_X_VERSION_MAJOR = $(MAC_OS_X_VERSION_MAJOR);
 
+INSTALL_PATH_PREFIX[sdk=iphonesimulator8.*] = $(DEVELOPER_INSTALL_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/$(SDK_DIR:file);
 INSTALL_PATH = $(INSTALL_PATH_PREFIX)$(INSTALL_PATH_ACTUAL);
 
 SDKROOT = macosx.internal;

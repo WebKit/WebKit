@@ -42,9 +42,9 @@ WEBKITADDITIONS_HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include/We
 
 HEADER_SEARCH_PATHS = ForwardingHeaders icu /usr/include/libxslt /usr/include/libxml2 "$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore" "$(BUILT_PRODUCTS_DIR)/usr/local/include" $(WEBKITADDITIONS_HEADER_SEARCH_PATHS) $(HEADER_SEARCH_PATHS);
 INFOPLIST_FILE = Info.plist;
-INSTALL_PATH[sdk=iphoneos*] = $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
+INSTALL_PATH_PREFIX[sdk=iphonesimulator8.*] = $(DEVELOPER_INSTALL_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/$(SDK_DIR:file);
+INSTALL_PATH = $(INSTALL_PATH_PREFIX)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
 INSTALL_PATH[sdk=macosx*] = $(WEBCORE_FRAMEWORKS_DIR);
-INSTALL_PATH_ACTUAL[sdk=iphonesimulator*] = $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
 DYLIB_INSTALL_NAME_BASE = $(DYLIB_INSTALL_NAME_BASE_PLATFORM);
 DYLIB_INSTALL_NAME_BASE_PLATFORM[sdk=iphone*] = $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
 DYLIB_INSTALL_NAME_BASE_PLATFORM[sdk=macosx*] = $(NORMAL_WEBCORE_FRAMEWORKS_DIR);
