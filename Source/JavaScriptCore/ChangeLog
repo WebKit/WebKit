@@ -1,3 +1,31 @@
+2015-05-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        FunctionCallBracketNode should store the base value to the temporary when subscript has assignment
+        https://bugs.webkit.org/show_bug.cgi?id=144678
+
+        Reviewed by Geoffrey Garen.
+
+        Currently, FunctionCallBracketNode directly use the RegisterID returned by emitNode.
+        But if the base part is the local register and the subscript part has assignment to it, the base result is accidentally rewritten.
+
+        function t() { var ok = {null: function () { } }; ok[ok = null](); }
+        t();  // Should not throw error.
+
+        This patch takes care about `subscriptHasAssignment`.
+        By using `emitNodeForLeftHandSide`, when there's assignment to local variables in RHS,
+        it correctly moves the LHS value to a temporary register.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionCallBracketNode::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::makeFunctionCallNode):
+        * parser/NodeConstructors.h:
+        (JSC::FunctionCallBracketNode::FunctionCallBracketNode):
+        * parser/Nodes.h:
+        * tests/stress/assignment-in-function-call-bracket-node.js: Added.
+        (shouldBe):
+        (shouldBe.):
+
 2015-05-07  Basile Clement  <basile_clement@apple.com>
 
         Unreviewed, add missing braces on a single-line if that got expanded in r183939

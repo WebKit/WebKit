@@ -702,10 +702,28 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_putByValDirect(BytecodeGenerat
 RegisterID* FunctionCallBracketNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     bool baseIsSuper = m_base->isSuperNode();
-    RefPtr<RegisterID> base = baseIsSuper ? emitSuperBaseForCallee(generator) : generator.emitNode(m_base);
-    RefPtr<RegisterID> property = generator.emitNode(m_subscript);
-    generator.emitExpressionInfo(subexpressionDivot(), subexpressionStart(), subexpressionEnd());
-    RefPtr<RegisterID> function = generator.emitGetByVal(generator.tempDestination(dst), base.get(), property.get());
+    bool subscriptIsString = m_subscript->isString();
+
+    RefPtr<RegisterID> base;
+    if (baseIsSuper)
+        base = emitSuperBaseForCallee(generator);
+    else {
+        if (subscriptIsString)
+            base = generator.emitNode(m_base);
+        else
+            base = generator.emitNodeForLeftHandSide(m_base, m_subscriptHasAssignments, m_subscript->isPure(generator));
+    }
+
+    RefPtr<RegisterID> function;
+    if (subscriptIsString) {
+        generator.emitExpressionInfo(subexpressionDivot(), subexpressionStart(), subexpressionEnd());
+        function = generator.emitGetById(generator.tempDestination(dst), base.get(), static_cast<StringNode*>(m_subscript)->value());
+    } else {
+        RefPtr<RegisterID> property = generator.emitNode(m_subscript);
+        generator.emitExpressionInfo(subexpressionDivot(), subexpressionStart(), subexpressionEnd());
+        function = generator.emitGetByVal(generator.tempDestination(dst), base.get(), property.get());
+    }
+
     RefPtr<RegisterID> returnValue = generator.finalDestination(dst, function.get());
     CallArguments callArguments(generator, m_args);
     if (baseIsSuper)

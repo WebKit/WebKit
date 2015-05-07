@@ -1028,7 +1028,7 @@ ExpressionNode* ASTBuilder::makeFunctionCallNode(const JSTokenLocation& location
     }
     if (func->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(func);
-        FunctionCallBracketNode* node = new (m_parserArena) FunctionCallBracketNode(location, bracket->base(), bracket->subscript(), args, divot, divotStart, divotEnd);
+        FunctionCallBracketNode* node = new (m_parserArena) FunctionCallBracketNode(location, bracket->base(), bracket->subscript(), bracket->subscriptHasAssignments(), args, divot, divotStart, divotEnd);
         node->setSubexpressionInfo(bracket->divot(), bracket->divotEnd().offset);
         return node;
     }

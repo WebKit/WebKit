@@ -727,7 +727,7 @@ namespace JSC {
     
     class FunctionCallBracketNode : public ExpressionNode, public ThrowableSubExpressionData {
     public:
-        FunctionCallBracketNode(const JSTokenLocation&, ExpressionNode* base, ExpressionNode* subscript, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
+        FunctionCallBracketNode(const JSTokenLocation&, ExpressionNode* base, ExpressionNode* subscript, bool subscriptHasAssignments, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
@@ -735,6 +735,7 @@ namespace JSC {
         ExpressionNode* m_base;
         ExpressionNode* m_subscript;
         ArgumentsNode* m_args;
+        bool m_subscriptHasAssignments;
     };
 
     class FunctionCallDotNode : public ExpressionNode, public ThrowableSubExpressionData {
