@@ -151,7 +151,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
 
     // Determine scale factor for filter. The size of intermediate ImageBuffers shouldn't be bigger than kMaxFilterSize.
     FloatRect tempSourceRect = absoluteDrawingRegion;
-    ImageBuffer::isSizeClamped(tempSourceRect.size(), scale);
+    ImageBuffer::sizeNeedsClamping(tempSourceRect.size(), scale);
     tempSourceRect.scale(scale.width(), scale.height());
 
     // Set the scale level in SVGFilter.
@@ -166,7 +166,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     FloatRect subRegion = lastEffect->maxEffectRect();
     // At least one FilterEffect has a too big image size,
     // recalculate the effect sizes with new scale factors.
-    if (!ImageBuffer::isSizeClamped(subRegion.size(), scale)) {
+    if (ImageBuffer::sizeNeedsClamping(subRegion.size(), scale)) {
         filterData->filter->setFilterResolution(scale);
         RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion(*lastEffect);
     }

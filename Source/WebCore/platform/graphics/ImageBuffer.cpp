@@ -36,29 +36,26 @@ namespace WebCore {
 static const float MaxClampedLength = 4096;
 static const float MaxClampedArea = MaxClampedLength * MaxClampedLength;
 
-bool ImageBuffer::isSizeClamped(const FloatSize& size)
+bool ImageBuffer::sizeNeedsClamping(const FloatSize& size)
 {
-    if (size.width() < 0 && size.height() < 0)
+    if (size.isEmpty())
         return false;
 
-    if (size.isEmpty())
-        return true;
-
-    return floorf(size.height()) * floorf(size.width()) <= MaxClampedArea;
+    return floorf(size.height()) * floorf(size.width()) > MaxClampedArea;
 }
 
-bool ImageBuffer::isSizeClamped(const FloatSize& size, FloatSize& scale)
+bool ImageBuffer::sizeNeedsClamping(const FloatSize& size, FloatSize& scale)
 {
     FloatSize scaledSize(size);
     scaledSize.scale(scale.width(), scale.height());
 
-    if (isSizeClamped(scaledSize))
-        return true;
+    if (!sizeNeedsClamping(scaledSize))
+        return false;
 
     // The area of scaled size is bigger than the upper limit, adjust the scale to fit.
     scale.scale(sqrtf(MaxClampedArea / (scaledSize.width() * scaledSize.height())));
-    ASSERT(isSizeClamped(size, scale));
-    return false;
+    ASSERT(!sizeNeedsClamping(size, scale));
+    return true;
 }
 
 FloatSize ImageBuffer::clampedSize(const FloatSize& size)
@@ -73,8 +70,8 @@ FloatSize ImageBuffer::clampedSize(const FloatSize& size, FloatSize& scale)
 
     FloatSize clampedSize = ImageBuffer::clampedSize(size);
     scale = FloatSize(clampedSize.width() / size.width(), clampedSize.height() / size.height());
-    ASSERT(isSizeClamped(clampedSize));
-    ASSERT(isSizeClamped(size, scale));
+    ASSERT(!sizeNeedsClamping(clampedSize));
+    ASSERT(!sizeNeedsClamping(size, scale));
     return clampedSize;
 }
 

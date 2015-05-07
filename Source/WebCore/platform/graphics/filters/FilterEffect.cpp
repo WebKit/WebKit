@@ -147,7 +147,7 @@ void FilterEffect::apply()
     determineAbsolutePaintRect();
     setResultColorSpace(m_operatingColorSpace);
 
-    if (m_absolutePaintRect.isEmpty() || !ImageBuffer::isSizeClamped(m_absolutePaintRect.size()))
+    if (m_absolutePaintRect.isEmpty() || ImageBuffer::sizeNeedsClamping(m_absolutePaintRect.size()))
         return;
 
     if (requiresValidPreMultipliedPixels()) {
@@ -313,7 +313,7 @@ ImageBuffer* FilterEffect::openCLImageToImageBuffer()
 PassRefPtr<Uint8ClampedArray> FilterEffect::asUnmultipliedImage(const IntRect& rect)
 {
     IntSize scaledSize(rect.size());
-    ASSERT(ImageBuffer::isSizeClamped(scaledSize));
+    ASSERT(!ImageBuffer::sizeNeedsClamping(scaledSize));
     scaledSize.scale(m_filter.filterScale());
     RefPtr<Uint8ClampedArray> imageData = Uint8ClampedArray::createUninitialized(scaledSize.width() * scaledSize.height() * 4);
     copyUnmultipliedImage(imageData.get(), rect);
@@ -323,7 +323,7 @@ PassRefPtr<Uint8ClampedArray> FilterEffect::asUnmultipliedImage(const IntRect& r
 PassRefPtr<Uint8ClampedArray> FilterEffect::asPremultipliedImage(const IntRect& rect)
 {
     IntSize scaledSize(rect.size());
-    ASSERT(ImageBuffer::isSizeClamped(scaledSize));
+    ASSERT(!ImageBuffer::sizeNeedsClamping(scaledSize));
     scaledSize.scale(m_filter.filterScale());
     RefPtr<Uint8ClampedArray> imageData = Uint8ClampedArray::createUninitialized(scaledSize.width() * scaledSize.height() * 4);
     copyPremultipliedImage(imageData.get(), rect);
@@ -389,7 +389,7 @@ void FilterEffect::copyUnmultipliedImage(Uint8ClampedArray* destination, const I
             m_unmultipliedImageResult = m_imageBufferResult->getUnmultipliedImageData(IntRect(IntPoint(), m_absolutePaintRect.size()));
         else {
             IntSize inputSize(m_absolutePaintRect.size());
-            ASSERT(ImageBuffer::isSizeClamped(inputSize));
+            ASSERT(!ImageBuffer::sizeNeedsClamping(inputSize));
             inputSize.scale(m_filter.filterScale());
             m_unmultipliedImageResult = Uint8ClampedArray::createUninitialized(inputSize.width() * inputSize.height() * 4);
             unsigned char* sourceComponent = m_premultipliedImageResult->data();
@@ -425,7 +425,7 @@ void FilterEffect::copyPremultipliedImage(Uint8ClampedArray* destination, const 
             m_premultipliedImageResult = m_imageBufferResult->getPremultipliedImageData(IntRect(IntPoint(), m_absolutePaintRect.size()));
         else {
             IntSize inputSize(m_absolutePaintRect.size());
-            ASSERT(ImageBuffer::isSizeClamped(inputSize));
+            ASSERT(!ImageBuffer::sizeNeedsClamping(inputSize));
             inputSize.scale(m_filter.filterScale());
             m_premultipliedImageResult = Uint8ClampedArray::createUninitialized(inputSize.width() * inputSize.height() * 4);
             unsigned char* sourceComponent = m_unmultipliedImageResult->data();
@@ -469,7 +469,7 @@ Uint8ClampedArray* FilterEffect::createUnmultipliedImageResult()
         return nullptr;
 
     IntSize resultSize(m_absolutePaintRect.size());
-    ASSERT(ImageBuffer::isSizeClamped(resultSize));
+    ASSERT(!ImageBuffer::sizeNeedsClamping(resultSize));
     resultSize.scale(m_filter.filterScale());
     m_unmultipliedImageResult = Uint8ClampedArray::createUninitialized(resultSize.width() * resultSize.height() * 4);
     return m_unmultipliedImageResult.get();
@@ -483,7 +483,7 @@ Uint8ClampedArray* FilterEffect::createPremultipliedImageResult()
         return nullptr;
 
     IntSize resultSize(m_absolutePaintRect.size());
-    ASSERT(ImageBuffer::isSizeClamped(resultSize));
+    ASSERT(!ImageBuffer::sizeNeedsClamping(resultSize));
     resultSize.scale(m_filter.filterScale());
     m_premultipliedImageResult = Uint8ClampedArray::createUninitialized(resultSize.width() * resultSize.height() * 4);
     return m_premultipliedImageResult.get();

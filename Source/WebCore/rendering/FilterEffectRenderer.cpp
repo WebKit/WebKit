@@ -305,7 +305,7 @@ bool FilterEffectRenderer::build(RenderElement* renderer, const FilterOperations
 
 bool FilterEffectRenderer::updateBackingStoreRect(const FloatRect& filterRect)
 {
-    if (filterRect.isEmpty() || !ImageBuffer::isSizeClamped(filterRect.size()))
+    if (filterRect.isEmpty() || ImageBuffer::sizeNeedsClamping(filterRect.size()))
         return false;
 
     if (filterRect == sourceImageRect())
@@ -401,7 +401,7 @@ bool FilterEffectRendererHelper::beginFilterEffect()
     filter->allocateBackingStoreIfNeeded();
     // Paint into the context that represents the SourceGraphic of the filter.
     GraphicsContext* sourceGraphicsContext = filter->inputContext();
-    if (!sourceGraphicsContext || filter->filterRegion().isEmpty() || !ImageBuffer::isSizeClamped(filter->filterRegion().size())) {
+    if (!sourceGraphicsContext || filter->filterRegion().isEmpty() || ImageBuffer::sizeNeedsClamping(filter->filterRegion().size())) {
         // Disable the filters and continue.
         m_haveFilterEffect = false;
         return false;

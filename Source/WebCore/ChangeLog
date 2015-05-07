@@ -1,3 +1,36 @@
+2015-05-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Applying a filter on an SVG element, which is larger than 4096 pixels, causes this element to be rendered shifted to the left
+        https://bugs.webkit.org/show_bug.cgi?id=144335
+
+        Reviewed by Daniel Bates.
+
+        Address comments raised by Darin Adler in review.
+
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::ImageBuffer::sizeNeedsClamping):
+        (WebCore::ImageBuffer::clampedSize):
+        (WebCore::ImageBuffer::isSizeClamped): Deleted.
+        * platform/graphics/ImageBuffer.h:
+        The condition for the negative width/height in isSizeClamped() was wrong. Use
+        FloatSize::isEmpty() instead and rename the function to sizeNeedsClamping().
+        The new function should return the opposite of the old function return value.
+        
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::apply):
+        (WebCore::FilterEffect::asUnmultipliedImage):
+        (WebCore::FilterEffect::asPremultipliedImage):
+        (WebCore::FilterEffect::copyUnmultipliedImage):
+        (WebCore::FilterEffect::copyPremultipliedImage):
+        (WebCore::FilterEffect::createUnmultipliedImageResult):
+        (WebCore::FilterEffect::createPremultipliedImageResult):
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::updateBackingStoreRect):
+        (WebCore::FilterEffectRendererHelper::beginFilterEffect):
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::applyResource):
+        Call the new function and negate the condition for the return value.
+
 2015-05-07  Anders Carlsson  <andersca@apple.com>
 
         Build fix.
