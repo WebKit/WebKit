@@ -1,3 +1,14 @@
+2015-05-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Revert "Introducing the Platform Abstraction Layer (PAL)"
+        https://bugs.webkit.org/show_bug.cgi?id=144751
+
+        Unreviewed.
+
+        PAL should be a new target inside WebCore, rather than a top-level folder.
+
+        * Configurations/FeatureDefines.xcconfig: Updated
+
 2015-05-07  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/19317140> [Xcode] Remove usage of AspenFamily.xcconfig in Source/
