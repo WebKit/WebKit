@@ -1,3 +1,20 @@
+2015-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove dock button from Web Inspector window
+        https://bugs.webkit.org/show_bug.cgi?id=144728
+
+        Reviewed by Sergio Villar Senin.
+
+        We added the dock buttons to the headerbar, because they were
+        removed from the inspector toolbar, but with the new tabbed
+        design, the dock buttons are back in the toolbar and look redundant.
+
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::createInspectorWindow):
+        (WebKit::WebInspectorProxy::platformAttachAvailabilityChanged):
+        (WebKit::WebInspectorProxy::dockButtonClicked): Deleted.
+
 2015-05-06  Jer Noble  <jer.noble@apple.com>
 
         [WK2][Fullscreen] Elements whose children extend beyond their bounds are clipped in fullscreen mode.

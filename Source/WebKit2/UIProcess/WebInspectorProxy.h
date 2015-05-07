@@ -216,7 +216,6 @@ private:
 
 #if PLATFORM(GTK)
     void updateInspectorWindowTitle() const;
-    static void dockButtonClicked(GtkWidget*, WebInspectorProxy*);
 #endif
 
     static const unsigned minimumWindowWidth;
@@ -252,8 +251,6 @@ private:
     GtkWidget* m_inspectorView {nullptr};
     GtkWidget* m_inspectorWindow {nullptr};
     GtkWidget* m_headerBar {nullptr};
-    GtkWidget* m_dockBottomButton {nullptr};
-    GtkWidget* m_dockRightButton {nullptr};
     String m_inspectedURLString;
 #elif PLATFORM(EFL)
     Evas_Object* m_inspectorView {nullptr};
