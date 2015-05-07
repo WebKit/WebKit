@@ -1,3 +1,29 @@
+2015-05-07  Žan Doberšek  <zdobersek@igalia.com>
+
+        [GTK] Clean up RunLoop implementation
+        https://bugs.webkit.org/show_bug.cgi?id=144729
+
+        Reviewed by Carlos Garcia Campos.
+
+        Clean up the RunLoop implementation for the GTK port,
+        removing unnecessary methods and using simpler variable names.
+
+        Nested GMainLoops in RunLoop::run() are now created for the
+        RunLoop's GMainContext, and not for the default context (enforced
+        through the null argument to g_main_loop_new()).
+
+        * wtf/RunLoop.h:
+        * wtf/gtk/RunLoopGtk.cpp:
+        (WTF::RunLoop::RunLoop):
+        (WTF::RunLoop::~RunLoop):
+        (WTF::RunLoop::run):
+        (WTF::RunLoop::stop):
+        (WTF::RunLoop::wakeUp):
+        (WTF::RunLoop::TimerBase::start):
+        (WTF::RunLoop::innermostLoop): Deleted.
+        (WTF::RunLoop::pushNestedMainLoop): Deleted.
+        (WTF::RunLoop::popNestedMainLoop): Deleted.
+
 2015-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Async operations running in the WorkQueue thread should schedule their sources to the WorkQueue main lopp
