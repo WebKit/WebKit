@@ -396,6 +396,11 @@ static void fixFunctionBasedOnStackMaps(
             if (verboseCompilationEnabled()) {
                 DumpContext context;
                 dataLog("    Exit values: ", inContext(exit.m_values, &context), "\n");
+                if (!exit.m_materializations.isEmpty()) {
+                    dataLog("    Materializations: \n");
+                    for (ExitTimeObjectMaterialization* materialization : exit.m_materializations)
+                        dataLog("        Materialize(", pointerDump(materialization), ")\n");
+                }
             }
         }
         

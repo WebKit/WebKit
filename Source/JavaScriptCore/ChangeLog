@@ -1,3 +1,26 @@
+2015-05-07  Basile Clement  <basile_clement@apple.com>
+
+        Dumping OSR ExitValue should expand materializations only once
+        https://bugs.webkit.org/show_bug.cgi?id=144694
+
+        Reviewed by Filip Pizlo.
+
+        Currently, dumping OSR exit values will print the full materialization
+        information each time it is encountered. We change it to print only a
+        brief description (only the materialization's address), and print the
+        whole set of materializations later on.
+
+        This makes the dump less confusing (less likely to think that two
+        instances of the same materialization are different), and will be a
+        necessary change if/when we support materialization cycles.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLExitValue.cpp:
+        (JSC::FTL::ExitValue::dumpInContext):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::buildExitArguments):
+
 2015-05-07  Andreas Kling  <akling@apple.com>
 
         Worker threads leak WeakBlocks (as seen on leaks bot)

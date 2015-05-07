@@ -7987,6 +7987,11 @@ private:
         
         if (verboseCompilationEnabled())
             dataLog("        Exit values: ", exit.m_values, "\n");
+            if (!exit.m_materializations.isEmpty()) {
+                dataLog("        Materializations: \n");
+                for (ExitTimeObjectMaterialization* materialization : exit.m_materializations)
+                    dataLog("            Materialize(", pointerDump(materialization), ")\n");
+            }
     }
     
     void callStackmap(OSRExit& exit, ExitArgumentList& arguments)
