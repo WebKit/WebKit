@@ -1,3 +1,14 @@
+2015-05-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Fix querySelector in ResourceContentView.js, caught by assertion
+        https://bugs.webkit.org/show_bug.cgi?id=144756
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ResourceContentView.js:
+        (WebInspector.ResourceContentView.prototype._hasContent):
+        Ensure querySelector call is using the class name correctly.
+
 2015-05-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Docking Toolbar Buttons do not respect Docking Availability

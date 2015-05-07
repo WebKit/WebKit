@@ -112,7 +112,7 @@ WebInspector.ResourceContentView.prototype = {
 
     _hasContent: function()
     {
-        return !this.element.querySelector(WebInspector.IndeterminateProgressSpinner.StyleClassName);
+        return !this.element.querySelector("." + WebInspector.IndeterminateProgressSpinner.StyleClassName);
     },
 
     _issueWasAdded: function(event)
