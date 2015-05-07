@@ -444,7 +444,7 @@ public:
     }
 
     // Use these two methods with caution.
-    RenderBox* renderBox() const;
+    WEBCORE_EXPORT RenderBox* renderBox() const;
     RenderBoxModelObject* renderBoxModelObject() const;
     
     // Wrapper for nodes that don't have a renderer, but still cache the style (like HTMLOptionElement).

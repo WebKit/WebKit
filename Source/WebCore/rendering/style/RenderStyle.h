@@ -1112,7 +1112,7 @@ public:
     const ScrollSnapPoints* scrollSnapPointsX() const;
     const ScrollSnapPoints* scrollSnapPointsY() const;
     const LengthSize& scrollSnapDestination() const;
-    const Vector<LengthSize>& scrollSnapCoordinates() const;
+    WEBCORE_EXPORT const Vector<LengthSize>& scrollSnapCoordinates() const;
 #endif
 
 #if ENABLE(TOUCH_EVENTS)

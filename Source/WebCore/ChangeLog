@@ -1,3 +1,39 @@
+2015-05-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Scroll-snap points do not handle margins and padding propertly
+        https://bugs.webkit.org/show_bug.cgi?id=144647
+        <rdar://problem/20829473>
+
+        Reviewed by Simon Fraser.
+
+        The calculation of scroll snap points was incorrect because it did not account for margins or padding.
+        This was fixed by using the "paddingBoxRect" to represent the overall size of the view area, and
+        subtracting the relevant padding when computing the size of the scroll snap offsets.
+
+        Extend testing internals with accessor methods to retrieve string representations of the scroll snap
+        offsets and scroll snap coordinates computed during layout. These values are used in the new
+        'css3/scroll-snap/scroll-snap-offsets-and-coordinates.html' test.
+
+        New tests:
+        * css3/scroll-snap/scroll-snap-offsets-and-coordinates.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-borders.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-padding.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-rotated.html: Added.
+
+        * css/LengthFunctions.h: Expose the 'valueForLength' method so we can use it in WebCoreTestSupport.
+        * dom/Node.h: Expose the 'renderBox' method so we can use it in WebCoreTestSupport.
+        * page/scrolling/AxisScrollSnapOffsets.cpp:
+        (WebCore::appendChildSnapOffsets): Use 'contentBoxRect' for overall size, so that we don't use padding
+        as part of our offset calculations.
+        (WebCore::updateSnapOffsetsForScrollableArea): Ditto.
+        * rendering/RenderBox.h: Expose 'canBeScrolledAndHasScrollableArea' for use in WebCoreTestSupport.
+        * rendering/style/RenderStyle.h: Expose 'scrollSnapCoordinates' for use in WebCoreTestSupport.
+        * testing/Internals.cpp:
+        (WebCore::appendOffsets): Helper function.
+        (WebCore::Internals::scrollSnapOffsets): Added.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2015-05-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Clean up TextRun constructors

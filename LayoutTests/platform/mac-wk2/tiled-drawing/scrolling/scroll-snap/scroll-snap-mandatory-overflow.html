@@ -105,8 +105,10 @@
                 dy = -1;
             }
 
-            var startPosX = divTarget.offsetLeft + 20;
-            var startPosY = divTarget.offsetTop + 20;
+            var windowPosition = locationInWindowCoordinates(divTarget);
+
+            var startPosX = windowPosition.x + 0.5 * divTarget.clientWidth;
+            var startPosY = windowPosition.y + 0.5 * divTarget.clientHeight;
             eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
             eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'began', 'none', false);
             eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'changed', 'none', false);
@@ -152,8 +154,8 @@
 
             var windowPosition = locationInWindowCoordinates(divTarget);
 
-            var startPosX = windowPosition.x + divTarget.clientWidth - 10;
-            var startPosY = windowPosition.y + 50;
+            var startPosX = windowPosition.x + 0.5 * divTarget.clientWidth;
+            var startPosY = windowPosition.y + 0.5 * divTarget.clientHeight;
             eventSender.mouseMoveTo(startPosX, startPosY);
             eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'began', 'none', false);
             eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'changed', 'none', false);

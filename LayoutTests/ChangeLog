@@ -1,3 +1,29 @@
+2015-05-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Scroll-snap points do not handle margins and padding propertly
+        https://bugs.webkit.org/show_bug.cgi?id=144647
+        <rdar://problem/20829473>
+
+        Reviewed by Simon Fraser.
+
+        Add new scroll-snap tests that cover elements with borders, padding, and rotation. Also correct the
+        cause of the 'scroll-snap-mandatory-overflow.html' test flakiness by making sure the mouse is always
+        inside the element when starting new wheel gestures.
+
+        Also add a new 'generic' test that confirms that we have expected results for scroll-snap coordinates
+        and calculated scroll-snap-offset values.
+ 
+        * css3/scroll-snap/scroll-snap-offsets.html: Added.
+        * platform/mac-wk2/TestExpectations: Remove flakiness annotation for scroll-snap-mandatory-overflow.
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-iframe.html:
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-borders-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-borders.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-overflow.html:
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-padding-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-padding.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-rotated-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-rotated.html: Added.
+
 2015-05-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r183894.

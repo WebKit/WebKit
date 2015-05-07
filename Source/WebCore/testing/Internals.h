@@ -400,6 +400,10 @@ public:
     MockContentFilterSettings& mockContentFilterSettings();
 #endif
 
+#if ENABLE(CSS_SCROLL_SNAP)
+    String scrollSnapOffsets(Element*, ExceptionCode&);
+#endif
+
 private:
     explicit Internals(Document*);
     Document* contextDocument() const;

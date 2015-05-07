@@ -2777,4 +2777,61 @@ MockContentFilterSettings& Internals::mockContentFilterSettings()
 }
 #endif
 
+#if ENABLE(CSS_SCROLL_SNAP)
+static void appendOffsets(StringBuilder& builder, const Vector<LayoutUnit>& snapOffsets)
+{
+    bool justStarting = true;
+
+    builder.append("{ ");
+    for (auto& coordinate : snapOffsets) {
+        if (!justStarting)
+            builder.append(", ");
+        else
+            justStarting = false;
+        
+        builder.append(String::number(coordinate.toUnsigned()));
+    }
+    builder.append(" }");
+}
+    
+String Internals::scrollSnapOffsets(Element* element, ExceptionCode& ec)
+{
+    if (!element) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+
+    if (!element->renderBox())
+        return String();
+
+    RenderBox& box = *element->renderBox();
+    if (!box.canBeScrolledAndHasScrollableArea()) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+
+    if (!box.layer())
+        return String();
+    
+    ScrollableArea& scrollableArea = *box.layer();
+    
+    StringBuilder result;
+
+    if (scrollableArea.horizontalSnapOffsets()) {
+        result.append("horizontal = ");
+        appendOffsets(result, *scrollableArea.horizontalSnapOffsets());
+    }
+
+    if (scrollableArea.verticalSnapOffsets()) {
+        if (result.length())
+            result.append(", ");
+
+        result.append("vertical = ");
+        appendOffsets(result, *scrollableArea.verticalSnapOffsets());
+    }
+
+    return result.toString();
+}
+#endif
+
 }

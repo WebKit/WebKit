@@ -523,10 +523,3 @@ webkit.org/b/141085 [ Yosemite ] http/tests/media/video-query-url.html [ Pass Ti
 ########################################
 
 http/tests/contentextensions [ Pass ]
-
-########################################
-### START OF (1) New scroll-snap flake
-platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-overflow.html [ Timeout Pass ]
-
-### END OF (1) scroll-snap flake
-########################################

@@ -359,4 +359,8 @@ enum ResourceLoadPriority {
     void queueMicroTask(long testNumber);
 
     [Conditional=CONTENT_FILTERING] readonly attribute MockContentFilterSettings mockContentFilterSettings;
+
+#if defined(ENABLE_CSS_SCROLL_SNAP) && ENABLE_CSS_SCROLL_SNAP
+    [RaisesException] DOMString scrollSnapOffsets(Element element);
+#endif
 };
