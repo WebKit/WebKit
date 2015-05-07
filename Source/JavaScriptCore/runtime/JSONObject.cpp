@@ -390,11 +390,15 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     }
 
     if (value.isNumber()) {
-        double number = value.asNumber();
-        if (!std::isfinite(number))
-            builder.appendLiteral("null");
-        else
-            builder.appendECMAScriptNumber(number);
+        if (value.isInt32())
+            builder.appendNumber(value.asInt32());
+        else {
+            double number = value.asNumber();
+            if (!std::isfinite(number))
+                builder.appendLiteral("null");
+            else
+                builder.appendECMAScriptNumber(number);
+        }
         return StringifySucceeded;
     }
 

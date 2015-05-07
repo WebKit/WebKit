@@ -1,3 +1,18 @@
+2015-05-07  Andreas Kling  <akling@apple.com>
+
+        Special-case Int32 values in JSON.stringify().
+        <https://webkit.org/b/144731>
+
+        Reviewed by Michael Saboff.
+
+        Add a fast path for serializing Int32 values to JSON. This is far faster than dragging
+        simple integers through the full-blown dtoa() machinery.
+
+        ~50% speedup on Kraken/json-stringify-tinderbox.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::appendStringifiedValue):
+
 2015-05-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         ToT WebKit crashes while loading ES6 compatibility table
