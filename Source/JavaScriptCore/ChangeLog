@@ -1,3 +1,19 @@
+2015-05-07  Andreas Kling  <akling@apple.com>
+
+        Worker threads leak WeakBlocks (as seen on leaks bot)
+        <https://webkit.org/b/144721>
+        <rdar://problem/20848288>
+
+        Reviewed by Darin Adler.
+
+        Nuke any remaining empty WeakBlocks when the Heap is being torn down.
+        Trying to peek into these blocks after the VM is dead would be a bug anyway.
+
+        This fixes a ~750 KB leak seen on the leaks bot.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::~Heap):
+
 2015-05-05  Geoffrey Garen  <ggaren@apple.com>
 
         Don't branch when accessing the callee

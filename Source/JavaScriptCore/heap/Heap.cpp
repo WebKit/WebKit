@@ -369,6 +369,8 @@ Heap::Heap(VM* vm, HeapType heapType)
 
 Heap::~Heap()
 {
+    for (WeakBlock* block : m_logicallyEmptyWeakBlocks)
+        WeakBlock::destroy(block);
 }
 
 bool Heap::isPagedOut(double deadline)
