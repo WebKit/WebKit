@@ -204,21 +204,16 @@ public:
         return obj->isFloating() || (obj->isOutOfFlowPositioned() && !obj->style().isOriginalDisplayInlineType() && !obj->container()->isRenderInline());
     }
 
+    static TextRun constructTextRun(RenderObject* context, const FontCascade&, StringView, const RenderStyle&,
+        ExpansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextRunFlags = DefaultTextRunFlags);
     static TextRun constructTextRun(RenderObject* context, const FontCascade&, const String&, const RenderStyle&,
         ExpansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextRunFlags = DefaultTextRunFlags);
-
     static TextRun constructTextRun(RenderObject* context, const FontCascade&, const RenderText*, const RenderStyle&,
         ExpansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion);
-
     static TextRun constructTextRun(RenderObject* context, const FontCascade&, const RenderText*, unsigned offset, unsigned length, const RenderStyle&,
         ExpansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion);
-
-    static TextRun constructTextRun(RenderObject* context, const FontCascade&, const RenderText*, unsigned offset, const RenderStyle&,
-        ExpansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion);
-
     static TextRun constructTextRun(RenderObject* context, const FontCascade&, const LChar* characters, int length, const RenderStyle&,
         ExpansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion);
-
     static TextRun constructTextRun(RenderObject* context, const FontCascade&, const UChar* characters, int length, const RenderStyle&,
         ExpansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion);
     

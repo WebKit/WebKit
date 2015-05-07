@@ -302,7 +302,7 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const LayoutPoint
     FloatRect replacementTextRect;
     FloatRect arrowRect;
     FontCascade font;
-    TextRun run("");
+    TextRun run(emptyString());
     float textWidth;
     if (!getReplacementTextGeometry(paintOffset, contentRect, indicatorRect, replacementTextRect, arrowRect, font, run, textWidth))
         return;
@@ -395,7 +395,7 @@ LayoutRect RenderEmbeddedObject::unavailablePluginIndicatorBounds(const LayoutPo
     FloatRect replacementTextRect;
     FloatRect arrowRect;
     FontCascade font;
-    TextRun run("", 0);
+    TextRun run(emptyString());
     float textWidth;
     if (getReplacementTextGeometry(accumulatedOffset, contentRect, indicatorRect, replacementTextRect, arrowRect, font, run, textWidth))
         return LayoutRect(indicatorRect);
@@ -586,7 +586,7 @@ bool RenderEmbeddedObject::isInUnavailablePluginIndicator(const FloatPoint& poin
     FloatRect replacementTextRect;
     FloatRect arrowRect;
     FontCascade font;
-    TextRun run("");
+    TextRun run(emptyString());
     float textWidth;
     return getReplacementTextGeometry(IntPoint(), contentRect, indicatorRect, replacementTextRect, arrowRect, font, run, textWidth)
         && indicatorRect.contains(point);

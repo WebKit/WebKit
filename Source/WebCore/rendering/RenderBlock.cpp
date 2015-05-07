@@ -3674,23 +3674,7 @@ const char* RenderBlock::renderName() const
     return "RenderBlock";
 }
 
-template <typename CharacterType>
-static inline TextRun constructTextRunInternal(RenderObject* context, const FontCascade& font, const CharacterType* characters, int length, const RenderStyle& style, ExpansionBehavior expansion)
-{
-    TextDirection textDirection = LTR;
-    bool directionalOverride = style.rtlOrdering() == VisualOrder;
-
-    TextRun run(characters, length, 0, 0, expansion, textDirection, directionalOverride);
-    if (font.primaryFont().isSVGFont()) {
-        ASSERT(context); // FIXME: Thread a RenderObject& to this point so we don't have to dereference anything.
-        run.setRenderingContext(SVGTextRunRenderingContext::create(*context));
-    }
-
-    return run;
-}
-
-template <typename CharacterType>
-static inline TextRun constructTextRunInternal(RenderObject* context, const FontCascade& font, const CharacterType* characters, int length, const RenderStyle& style, ExpansionBehavior expansion, TextRunFlags flags)
+TextRun RenderBlock::constructTextRun(RenderObject* context, const FontCascade& font, StringView stringView, const RenderStyle& style, ExpansionBehavior expansion, TextRunFlags flags)
 {
     TextDirection textDirection = LTR;
     bool directionalOverride = style.rtlOrdering() == VisualOrder;
@@ -3700,7 +3684,7 @@ static inline TextRun constructTextRunInternal(RenderObject* context, const Font
         if (flags & RespectDirectionOverride)
             directionalOverride |= isOverride(style.unicodeBidi());
     }
-    TextRun run(characters, length, 0, 0, expansion, textDirection, directionalOverride);
+    TextRun run(stringView, 0, 0, expansion, textDirection, directionalOverride);
     if (font.primaryFont().isSVGFont()) {
         ASSERT(context); // FIXME: Thread a RenderObject& to this point so we don't have to dereference anything.
         run.setRenderingContext(SVGTextRunRenderingContext::create(*context));
@@ -3709,38 +3693,31 @@ static inline TextRun constructTextRunInternal(RenderObject* context, const Font
     return run;
 }
 
-TextRun RenderBlock::constructTextRun(RenderObject* context, const FontCascade& font, const LChar* characters, int length, const RenderStyle& style, ExpansionBehavior expansion)
+TextRun RenderBlock::constructTextRun(RenderObject* context, const FontCascade& font, const String& string, const RenderStyle& style, ExpansionBehavior expansion, TextRunFlags flags)
 {
-    return constructTextRunInternal(context, font, characters, length, style, expansion);
-}
-
-TextRun RenderBlock::constructTextRun(RenderObject* context, const FontCascade& font, const UChar* characters, int length, const RenderStyle& style, ExpansionBehavior expansion)
-{
-    return constructTextRunInternal(context, font, characters, length, style, expansion);
+    return constructTextRun(context, font, StringView(string), style, expansion, flags);
 }
 
 TextRun RenderBlock::constructTextRun(RenderObject* context, const FontCascade& font, const RenderText* text, const RenderStyle& style, ExpansionBehavior expansion)
 {
-    if (text->is8Bit())
-        return constructTextRunInternal(context, font, text->characters8(), text->textLength(), style, expansion);
-    return constructTextRunInternal(context, font, text->characters16(), text->textLength(), style, expansion);
+    return constructTextRun(context, font, text->stringView(), style, expansion);
 }
 
 TextRun RenderBlock::constructTextRun(RenderObject* context, const FontCascade& font, const RenderText* text, unsigned offset, unsigned length, const RenderStyle& style, ExpansionBehavior expansion)
 {
-    ASSERT(offset + length <= text->textLength());
-    if (text->is8Bit())
-        return constructTextRunInternal(context, font, text->characters8() + offset, length, style, expansion);
-    return constructTextRunInternal(context, font, text->characters16() + offset, length, style, expansion);
+    unsigned stop = offset + length;
+    ASSERT(stop <= text->textLength());
+    return constructTextRun(context, font, text->stringView(offset, stop), style, expansion);
 }
 
-TextRun RenderBlock::constructTextRun(RenderObject* context, const FontCascade& font, const String& string, const RenderStyle& style, ExpansionBehavior expansion, TextRunFlags flags)
+TextRun RenderBlock::constructTextRun(RenderObject* context, const FontCascade& font, const LChar* characters, int length, const RenderStyle& style, ExpansionBehavior expansion)
 {
-    unsigned length = string.length();
+    return constructTextRun(context, font, StringView(characters, length), style, expansion);
+}
 
-    if (!length || string.is8Bit())
-        return constructTextRunInternal(context, font, string.characters8(), length, style, expansion, flags);
-    return constructTextRunInternal(context, font, string.characters16(), length, style, expansion, flags);
+TextRun RenderBlock::constructTextRun(RenderObject* context, const FontCascade& font, const UChar* characters, int length, const RenderStyle& style, ExpansionBehavior expansion)
+{
+    return constructTextRun(context, font, StringView(characters, length), style, expansion);
 }
 
 RenderBlock* RenderBlock::createAnonymousWithParentRendererAndDisplay(const RenderObject* parent, EDisplay display)

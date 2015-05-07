@@ -52,60 +52,6 @@ public:
 
     typedef unsigned RoundingHacks;
 
-    TextRun(const LChar* c, unsigned len, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
-        : m_text(c, len)
-        , m_charactersLength(len)
-        , m_tabSize(0)
-        , m_xpos(xpos)
-        , m_horizontalGlyphStretch(1)
-        , m_expansion(expansion)
-        , m_expansionBehavior(expansionBehavior)
-        , m_allowTabs(false)
-        , m_direction(direction)
-        , m_directionalOverride(directionalOverride)
-        , m_characterScanForCodePath(characterScanForCodePath)
-        , m_applyRunRounding((roundingHacks & RunRounding) && s_allowsRoundingHacks)
-        , m_applyWordRounding((roundingHacks & WordRounding) && s_allowsRoundingHacks)
-        , m_disableSpacing(false)
-    {
-    }
-
-    TextRun(const UChar* c, unsigned len, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
-        : m_text(c, len)
-        , m_charactersLength(len)
-        , m_tabSize(0)
-        , m_xpos(xpos)
-        , m_horizontalGlyphStretch(1)
-        , m_expansion(expansion)
-        , m_expansionBehavior(expansionBehavior)
-        , m_allowTabs(false)
-        , m_direction(direction)
-        , m_directionalOverride(directionalOverride)
-        , m_characterScanForCodePath(characterScanForCodePath)
-        , m_applyRunRounding((roundingHacks & RunRounding) && s_allowsRoundingHacks)
-        , m_applyWordRounding((roundingHacks & WordRounding) && s_allowsRoundingHacks)
-        , m_disableSpacing(false)
-    {
-    }
-    
-    explicit TextRun(const String& s, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
-        : m_text(StringView(s))
-        , m_charactersLength(s.length())
-        , m_tabSize(0)
-        , m_xpos(xpos)
-        , m_horizontalGlyphStretch(1)
-        , m_expansion(expansion)
-        , m_expansionBehavior(expansionBehavior)
-        , m_allowTabs(false)
-        , m_direction(direction)
-        , m_directionalOverride(directionalOverride)
-        , m_characterScanForCodePath(characterScanForCodePath)
-        , m_applyRunRounding((roundingHacks & RunRounding) && s_allowsRoundingHacks)
-        , m_applyWordRounding((roundingHacks & WordRounding) && s_allowsRoundingHacks)
-        , m_disableSpacing(false)
-    {
-    }
-
     explicit TextRun(StringView s, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
         : m_text(s)
         , m_charactersLength(s.length())
@@ -121,6 +67,21 @@ public:
         , m_applyRunRounding((roundingHacks & RunRounding) && s_allowsRoundingHacks)
         , m_applyWordRounding((roundingHacks & WordRounding) && s_allowsRoundingHacks)
         , m_disableSpacing(false)
+    {
+    }
+
+    explicit TextRun(const String& s)
+        : TextRun(StringView(s))
+    {
+    }
+
+    TextRun(const LChar* c, unsigned len)
+        : TextRun(StringView(c, len))
+    {
+    }
+
+    TextRun(const UChar* c, unsigned len)
+        : TextRun(StringView(c, len))
     {
     }
 
@@ -213,7 +174,8 @@ private:
 
     // m_xpos is the x position relative to the left start of the text line, not relative to the left
     // start of the containing block. In the case of right alignment or center alignment, left start of
-    // the text line is not the same as left start of the containing block.
+    // the text line is not the same as left start of the containing block. This variable is only used
+    // to calculate the width of \t
     float m_xpos;  
     float m_horizontalGlyphStretch;
 

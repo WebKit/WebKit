@@ -150,8 +150,8 @@ DragImageRef createDragImageForLink(URL& url, const String& inLabel, FontRenderi
     }
 
     // First step in drawing the link drag image width.
-    TextRun labelRun(label.impl());
-    TextRun urlRun(urlString.impl());
+    TextRun labelRun(label);
+    TextRun urlRun(urlString);
     IntSize labelSize(labelFont->width(labelRun), labelFont->fontMetrics().ascent() + labelFont->fontMetrics().descent());
 
     if (labelSize.width() > MaxDragLabelStringWidth) {

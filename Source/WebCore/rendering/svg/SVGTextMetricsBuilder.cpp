@@ -29,7 +29,7 @@ namespace WebCore {
 
 SVGTextMetricsBuilder::SVGTextMetricsBuilder()
     : m_text(0)
-    , m_run(static_cast<const UChar*>(0), 0)
+    , m_run(StringView())
     , m_textPosition(0)
     , m_isComplexText(false)
     , m_totalWidth(0)

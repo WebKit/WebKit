@@ -129,8 +129,8 @@ void MathMLMencloseElement::collectStyleForPresentationAttribute(const Qualified
 String MathMLMencloseElement::longDivLeftPadding() const
 {
     StringBuilder padding;
-    String closingBrace = ")";
-    TextRun run(closingBrace.impl(), closingBrace.length());
+    String closingBrace(")", String::ConstructFromLiteral);
+    TextRun run(closingBrace);
     Node* node = parentNode();
     if (node && node->renderer()) {
         const FontCascade& font = node->renderer()->style().fontCascade();
