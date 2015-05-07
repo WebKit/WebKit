@@ -613,7 +613,11 @@ static void ewkViewPageContentsAsMHTMLCallback(WKDataRef wkData, WKErrorRef, voi
     EINA_SAFETY_ON_NULL_RETURN(context);
 
     auto contentsContext = std::unique_ptr<Ewk_Page_Contents_Context>(static_cast<Ewk_Page_Contents_Context*>(context));
-    contentsContext->callback(contentsContext->type, reinterpret_cast<const char*>(WKDataGetBytes(wkData)), contentsContext->userData);
+    contentsContext->callback(
+        contentsContext->type,
+        CString(reinterpret_cast<const char*>(WKDataGetBytes(wkData)), WKDataGetSize(wkData)).data(),
+        contentsContext->userData);
+
 }
 
 /**
