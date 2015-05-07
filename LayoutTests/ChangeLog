@@ -1,3 +1,16 @@
+2015-05-07  Yoav Weiss  <yoav@yoav.ws>
+
+        Fix sizes crash and add invalid value tests.
+        https://bugs.webkit.org/show_bug.cgi?id=144739
+
+        Reviewed by Darin Adler.
+
+        Add tests that make sure that invalid values are properly handled, and a 100vw
+        source-size length is being used for srcset and for intrinsic dimension calculation.
+
+        * fast/dom/HTMLImageElement/sizes/image-sizes-invalids-expected.txt: Added.
+        * fast/dom/HTMLImageElement/sizes/image-sizes-invalids.html: Added.
+
 2015-05-07  Simon Fraser  <simon.fraser@apple.com>
 
         Remove the WK1-only code path for independently composited iframes

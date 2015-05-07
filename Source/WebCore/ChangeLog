@@ -1,3 +1,20 @@
+2015-05-07  Yoav Weiss  <yoav@yoav.ws>
+
+        Fix sizes crash and add invalid value tests.
+        https://bugs.webkit.org/show_bug.cgi?id=144739
+
+        Reviewed by Darin Adler.
+
+        Make sure that only CSS length are allowed when the sizes parser is calling computeLength.
+        Also make sure that for invalid lengths, the 100vw default is used instead.
+
+        Test: fast/dom/HTMLImageElement/sizes/image-sizes-invalids.html
+
+        * css/SourceSizeList.cpp:
+        (WebCore::computeLength):
+        (WebCore::defaultLength):
+        (WebCore::parseSizesAttribute):
+
 2015-05-07  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Checks for DEVELOPMENT_BUILD are all wrong
