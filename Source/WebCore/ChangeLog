@@ -1,3 +1,19 @@
+2015-05-06  Roger Fong  <roger_fong@apple.com>
+
+        Media Controls: Scrubber should be independent of actual video time, causes scrubber to be jumpy.
+        https://bugs.webkit.org/show_bug.cgi?id=144700.
+        <rdar://problem/19997548>
+
+        Reviewed by Jer Noble.
+
+        Update time and timeline during the timeline input event instead of the wrapper's mousemove.
+        (Controller.prototype.handleWrapperMouseMove):
+        (Controller.prototype.handleTimelineMouseMove):
+        (Controller.prototype.drawTimelineBackground): 
+
+        (Controller.prototype.updateControlsWhileScrubbing): 
+        Updates time and scrubber to reflect timeline user input.
+
 2015-05-07  Yoav Weiss  <yoav@yoav.ws>
 
         Handle meta viewport in HTMLPreloadScanner
