@@ -353,6 +353,7 @@ GraphicsLayerCA::GraphicsLayerCA(Type layerType, GraphicsLayerClient& client)
     : GraphicsLayer(layerType, client)
     , m_needsFullRepaint(false)
     , m_usingBackdropLayerType(false)
+    , m_allowsBackingStoreDetachment(true)
     , m_intersectsCoverageRect(true)
 {
 }
@@ -1252,7 +1253,7 @@ bool GraphicsLayerCA::adjustCoverageRect(VisibleAndCoverageRects& rects, const F
     return true;
 }
 
-void GraphicsLayerCA::setVisibleAndCoverageRects(const VisibleAndCoverageRects& rects)
+void GraphicsLayerCA::setVisibleAndCoverageRects(const VisibleAndCoverageRects& rects, bool allowBackingStoreDetachment)
 {
     bool visibleRectChanged = rects.visibleRect != m_visibleRect;
     bool coverageRectChanged = rects.coverageRect != m_coverageRect;
@@ -1275,7 +1276,7 @@ void GraphicsLayerCA::setVisibleAndCoverageRects(const VisibleAndCoverageRects& 
         m_coverageRect = rects.coverageRect;
 
         // FIXME: we need to take reflections into account when determining whether this layer intersects the coverage rect.
-        m_intersectsCoverageRect = m_coverageRect.intersects(FloatRect(m_boundsOrigin, size()));
+        m_intersectsCoverageRect = !allowBackingStoreDetachment || m_coverageRect.intersects(FloatRect(m_boundsOrigin, size()));
 
         if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer)) {
             maskLayer->m_uncommittedChanges |= CoverageRectChanged;
@@ -1300,7 +1301,7 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
             localState.setLastPlanarSecondaryQuad(&secondaryQuad);
         }
     }
-    setVisibleAndCoverageRects(rects);
+    setVisibleAndCoverageRects(rects, m_allowsBackingStoreDetachment && commitState.ancestorsAllowBackingStoreDetachment);
 
 #ifdef VISIBLE_TILE_WASH
     // Use having a transform as a key to making the tile wash layer. If every layer gets a wash,
@@ -1343,6 +1344,8 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
         childCommitState.ancestorHasTransformAnimation = true;
         affectedByTransformAnimation = true;
     }
+    
+    childCommitState.ancestorsAllowBackingStoreDetachment &= m_allowsBackingStoreDetachment;
 
     if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer))
         maskLayer->commitLayerChangesBeforeSublayers(childCommitState, pageScaleFactor, baseRelativePosition);
@@ -3623,6 +3626,15 @@ void GraphicsLayerCA::updateOpacityOnLayer()
             clone.value->setOpacity(m_opacity);
         }
     }
+}
+
+void GraphicsLayerCA::setAllowsBackingStoreDetachment(bool allowDetachment)
+{
+    if (allowDetachment == m_allowsBackingStoreDetachment)
+        return;
+
+    m_allowsBackingStoreDetachment = allowDetachment;
+    noteLayerPropertyChanged(CoverageRectChanged);
 }
 
 void GraphicsLayerCA::deviceOrPageScaleFactorChanged()

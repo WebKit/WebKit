@@ -126,11 +126,14 @@ public:
             break;
         case ViewportConstrained:
             m_viewportConstrainedNodeID = nodeID;
+            setIsScrollCoordinatedWithViewportConstrainedRole(nodeID);
             break;
         }
     }
     
     ScrollingNodeID scrollingNodeIDForChildren() const { return m_scrollingNodeID ? m_scrollingNodeID : m_viewportConstrainedNodeID; }
+
+    void setIsScrollCoordinatedWithViewportConstrainedRole(bool);
 
     bool hasMaskLayer() const { return m_maskLayer != 0; }
     bool hasChildClippingMaskLayer() const { return m_childClippingMaskLayer != nullptr; }

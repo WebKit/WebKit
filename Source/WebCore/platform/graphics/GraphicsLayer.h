@@ -490,6 +490,10 @@ public:
 
     float pageScaleFactor() const { return m_client.pageScaleFactor(); }
     float deviceScaleFactor() const { return m_client.deviceScaleFactor(); }
+    
+    // Whether this layer (and descendants) can detach backing store when outside the coverage area.
+    virtual void setAllowsBackingStoreDetachment(bool) { }
+    virtual bool allowsBackingStoreDetachment() const { return true; }
 
     virtual void deviceOrPageScaleFactorChanged() { }
     WEBCORE_EXPORT void noteDeviceOrPageScaleFactorChangedIncludingDescendants();

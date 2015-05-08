@@ -1,3 +1,38 @@
+2015-05-07  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r183300): Fixed elements flash when scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=144778
+        rdar://problem/20769741
+
+        Reviewed by Dean Jackson.
+
+        After r183300 we can detached layer backing store when outside the coverage region.
+        However, position:fixed layers are moved around by the ScrollingCoordinator behind
+        GraphicsLayer's back, so we can do layer flushes with stale information about layer
+        geometry.
+        
+        To avoid dropping backing store for layers in this situation, prevent backing
+        store detachment on layers registered with the ScrollingCoordinator as viewport-constrained
+        layers. Preventing detachment on a layer also prevents detachment on all descendant
+        layers.
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::setAllowsBackingStoreDetachment):
+        (WebCore::GraphicsLayer::allowsBackingStoreDetachment):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA):
+        (WebCore::GraphicsLayerCA::setVisibleAndCoverageRects): Set m_intersectsCoverageRect to true
+        if backing store detachment is prevented.
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges): Set a bit in the CommitState to 
+        communicate to descendants that detachment is prevented.
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::CommitState::CommitState): Deleted.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::setIsScrollCoordinatedWithViewportConstrainedRole):
+        * rendering/RenderLayerBacking.h:
+        (WebCore::RenderLayerBacking::setScrollingNodeIDForRole): If registering with a non-zero
+        nodeID for the ViewportConstrained role, turn off backing store detachment.
+
 2015-05-07  Sam Weinig  <sam@webkit.org>
 
         Consider implementing Document.scrollingElement

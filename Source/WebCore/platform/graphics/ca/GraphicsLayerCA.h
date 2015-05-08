@@ -148,12 +148,9 @@ public:
     virtual FloatSize pixelAlignmentOffset() const override { return m_pixelAlignmentOffset; }
 
     struct CommitState {
-        bool ancestorHasTransformAnimation;
-        int treeDepth;
-        CommitState()
-            : ancestorHasTransformAnimation(false)
-            , treeDepth(0)
-        { }
+        int treeDepth { 0 };
+        bool ancestorHasTransformAnimation { false };
+        bool ancestorsAllowBackingStoreDetachment { true };
     };
     void recursiveCommitChanges(const CommitState&, const TransformState&, float pageScaleFactor = 1, const FloatPoint& positionRelativeToBase = FloatPoint(), bool affectedByPageScale = false);
 
@@ -196,6 +193,9 @@ private:
     WEBCORE_EXPORT virtual bool platformCALayerShouldTemporarilyRetainTileCohorts(PlatformCALayer*) const override;
 
     virtual bool isCommittingChanges() const override { return m_isCommittingChanges; }
+
+    WEBCORE_EXPORT virtual void setAllowsBackingStoreDetachment(bool) override;
+    WEBCORE_EXPORT virtual bool allowsBackingStoreDetachment() const override { return m_allowsBackingStoreDetachment; }
 
     WEBCORE_EXPORT virtual double backingStoreMemoryEstimate() const override;
 
@@ -293,7 +293,7 @@ private:
     const FloatRect& visibleRect() const { return m_visibleRect; }
     const FloatRect& coverageRect() const { return m_coverageRect; }
 
-    void setVisibleAndCoverageRects(const VisibleAndCoverageRects&);
+    void setVisibleAndCoverageRects(const VisibleAndCoverageRects&, bool allowBackingStoreDetachment);
     
     static FloatRect adjustTiledLayerVisibleRect(TiledBacking*, const FloatRect& oldVisibleRect, const FloatRect& newVisibleRect, const FloatSize& oldSize, const FloatSize& newSize);
 
@@ -510,6 +510,7 @@ private:
     ContentsLayerPurpose m_contentsLayerPurpose { NoContentsLayer };
     bool m_needsFullRepaint : 1;
     bool m_usingBackdropLayerType : 1;
+    bool m_allowsBackingStoreDetachment : 1;
     bool m_intersectsCoverageRect : 1;
 
     Color m_contentsSolidColor;
