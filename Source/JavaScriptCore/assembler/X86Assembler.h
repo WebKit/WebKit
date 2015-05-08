@@ -1805,13 +1805,13 @@ public:
         m_formatter.twoByteOp(OP2_MOVD_VdEd, (RegisterID)dst, src);
     }
 
+#if CPU(X86_64)
     void movmskpd_rr(XMMRegisterID src, RegisterID dst)
     {
         m_formatter.prefix(PRE_SSE_66);
         m_formatter.twoByteOp64(OP2_MOVMSKPD_VdEd, dst, (RegisterID)src);
     }
 
-#if CPU(X86_64)
     void movq_rr(XMMRegisterID src, RegisterID dst)
     {
         m_formatter.prefix(PRE_SSE_66);
