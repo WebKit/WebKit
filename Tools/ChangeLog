@@ -1,3 +1,15 @@
+2015-05-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] Bump EFL version to 1.14.0
+        https://bugs.webkit.org/show_bug.cgi?id=144743
+
+        Reviewed by Darin Adler.
+
+        Bump EFL and elementary version to 1.14.0 and removed
+        md5sum, because it isn't used at all if hash is present.
+
+        * efl/jhbuild.modules:
+
 2015-05-07  Saam Barati  <saambarati1@gmail.com>
 
         exceptionFuzz tests should explicitly initialize the exceptionFuzz boolean in JavaScript code through a function in jsc.cpp
