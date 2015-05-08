@@ -71,7 +71,7 @@ if (shift @ARGV) {
     die "Ignoring garbage arguments; only the first non-option argument is used as the command string.";
 }
 
-open (my $testInput, "$commandString --enableExceptionFuzz=true |") or fail("Cannot execute initial command when getting check count");
+open (my $testInput, "$commandString |") or fail("Cannot execute initial command when getting check count");
 while (my $inputLine = <$testInput>) {
     chomp($inputLine);
     my $handled = 0;
@@ -104,7 +104,7 @@ for (my $iteration = 0; $iteration < $repeat; ++$iteration) {
     if ($verbose) {
         print "iteration($iteration) target($target): Running.\n";
     }
-    open ($testInput, "$commandString --enableExceptionFuzz=true --fireExceptionFuzzAt=$target |") or fail("Cannot execute command on iteration $iteration");
+    open ($testInput, "$commandString --fireExceptionFuzzAt=$target |") or fail("Cannot execute command on iteration $iteration");
     my $state = "waiting";
     while (my $inputLine = <$testInput>) {
         chomp($inputLine);

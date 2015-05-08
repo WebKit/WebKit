@@ -4,6 +4,9 @@ try {
 // http://www.speich.net/computer/moztesting/3d.htm
 // Created by Simon Speich
 
+enableExceptionFuzz();
+
+
 var Q = new Array();
 var MTrans = new Array();  // transformation matrix
 var MQube = new Array();  // position information of qube

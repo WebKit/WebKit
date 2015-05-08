@@ -13,6 +13,9 @@ try {
  * details.
  */
 
+enableExceptionFuzz();
+
+
 Date.parseFunctions = {count:0};
 Date.parseRegexes = [];
 Date.formatFunctions = {count:0};

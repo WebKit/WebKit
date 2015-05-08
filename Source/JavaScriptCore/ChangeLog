@@ -1,3 +1,23 @@
+2015-05-07  Saam Barati  <saambarati1@gmail.com>
+
+        exceptionFuzz tests should explicitly initialize the exceptionFuzz boolean in JavaScript code through a function in jsc.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=144753
+
+        Reviewed by Mark Lam.
+
+        This allows the BytecodeGenerator to freely emit startup code that "may"
+        throw exceptions without worrying that this startup code will trigger
+        the exceptionFuzz exception. The exceptionFuzz counter will only begin
+        ticking when the 'enableExceptionFuzz' function is explicitly called in 
+        the exceptionFuzz tests.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionEnableExceptionFuzz):
+        * tests/exceptionFuzz/3d-cube.js:
+        * tests/exceptionFuzz/date-format-xparb.js:
+        * tests/exceptionFuzz/earley-boyer.js:
+
 2015-05-07  Andreas Kling  <akling@apple.com>
 
         Optimize serialization of quoted JSON strings.

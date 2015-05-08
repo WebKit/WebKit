@@ -1,3 +1,12 @@
+2015-05-07  Saam Barati  <saambarati1@gmail.com>
+
+        exceptionFuzz tests should explicitly initialize the exceptionFuzz boolean in JavaScript code through a function in jsc.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=144753
+
+        Reviewed by Mark Lam.
+
+        * Scripts/jsc-stress-test-helpers/js-exception-fuzz:
+
 2015-05-07  Beth Dakin  <bdakin@apple.com>
 
         New force-related DOM events should fire in WK1 views

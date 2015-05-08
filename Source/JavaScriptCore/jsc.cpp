@@ -478,6 +478,7 @@ static EncodedJSValue JSC_HOST_CALL functionFindTypeForExpression(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionReturnTypeFor(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDumpBasicBlockExecutionRanges(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionHasBasicBlockExecuted(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionEnableExceptionFuzz(ExecState*);
 
 #if ENABLE(SAMPLING_FLAGS)
 static EncodedJSValue JSC_HOST_CALL functionSetSamplingFlags(ExecState*);
@@ -635,6 +636,8 @@ protected:
 
         addFunction(vm, "dumpBasicBlockExecutionRanges", functionDumpBasicBlockExecutionRanges , 0);
         addFunction(vm, "hasBasicBlockExecuted", functionHasBasicBlockExecuted, 2);
+
+        addFunction(vm, "enableExceptionFuzz", functionEnableExceptionFuzz, 0);
         
         JSArray* array = constructEmptyArray(globalExec(), 0);
         for (size_t i = 0; i < arguments.size(); ++i)
@@ -1127,6 +1130,12 @@ EncodedJSValue JSC_HOST_CALL functionHasBasicBlockExecuted(ExecState* exec)
     
     bool hasExecuted = exec->vm().controlFlowProfiler()->hasBasicBlockAtTextOffsetBeenExecuted(offset, executable->sourceID(), exec->vm());
     return JSValue::encode(jsBoolean(hasExecuted));
+}
+
+EncodedJSValue JSC_HOST_CALL functionEnableExceptionFuzz(ExecState*)
+{
+    Options::enableExceptionFuzz() = true;
+    return JSValue::encode(jsUndefined());
 }
 
 // Use SEH for Release builds only to get rid of the crash report dialog
