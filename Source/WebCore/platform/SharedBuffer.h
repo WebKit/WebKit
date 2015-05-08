@@ -145,7 +145,7 @@ private:
     void duplicateDataBufferIfNecessary() const;
     void clearDataBuffer();
 
-    unsigned m_size;
+    unsigned m_size { 0 };
     mutable RefPtr<DataBuffer> m_buffer;
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)

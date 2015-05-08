@@ -61,8 +61,7 @@ static inline void freeSegment(char* p)
 #endif
 
 SharedBuffer::SharedBuffer()
-    : m_size(0)
-    , m_buffer(adoptRef(new DataBuffer))
+    : m_buffer(adoptRef(new DataBuffer))
 {
 }
 
@@ -73,15 +72,13 @@ SharedBuffer::SharedBuffer(unsigned size)
 }
 
 SharedBuffer::SharedBuffer(const char* data, unsigned size)
-    : m_size(0)
-    , m_buffer(adoptRef(new DataBuffer))
+    : m_buffer(adoptRef(new DataBuffer))
 {
     append(data, size);
 }
 
 SharedBuffer::SharedBuffer(const unsigned char* data, unsigned size)
-    : m_size(0)
-    , m_buffer(adoptRef(new DataBuffer))
+    : m_buffer(adoptRef(new DataBuffer))
 {
     append(reinterpret_cast<const char*>(data), size);
 }

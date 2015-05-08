@@ -33,8 +33,7 @@
 namespace WebCore {
 
 SharedBuffer::SharedBuffer(CFDataRef cfData)
-    : m_size(0)
-    , m_buffer(adoptRef(new DataBuffer))
+    : m_buffer(adoptRef(new DataBuffer))
     , m_cfData(cfData)
 {
 }
@@ -116,8 +115,7 @@ PassRefPtr<SharedBuffer> SharedBuffer::wrapCFDataArray(CFArrayRef cfDataArray)
 }
 
 SharedBuffer::SharedBuffer(CFArrayRef cfDataArray)
-    : m_size(0)
-    , m_buffer(adoptRef(new DataBuffer))
+    : m_buffer(adoptRef(new DataBuffer))
     , m_cfData(nullptr)
 {
     CFIndex dataArrayCount = CFArrayGetCount(cfDataArray);
