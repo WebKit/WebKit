@@ -1,5 +1,18 @@
 2015-05-08  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r183649.
+
+    2015-04-30  Brady Eidson  <beidson@apple.com>
+
+            Build fix after r183646 for less enlightened platforms.
+
+            Unreviewed.
+
+            * Modules/webdatabase/DatabaseBackendBase.cpp:
+            (WebCore::fullyQualifiedInfoTableName): Windows doesn’t have stpcpy :(
+
+2015-05-08  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r183646.
 
     2015-04-30  Brady Eidson  <beidson@apple.com>
