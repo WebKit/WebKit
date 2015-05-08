@@ -1449,11 +1449,11 @@ void WebPage::scaleView(double scale)
 
 
 #if PLATFORM(COCOA)
-void WebPage::scaleViewAndUpdateGeometryFenced(double scale, IntSize viewSize, const MachSendRight& fencePort)
+void WebPage::scaleViewAndUpdateGeometryFenced(double scale, IntSize viewSize, uint64_t callbackID)
 {
     scaleView(scale);
     m_drawingArea->updateGeometry(viewSize, IntSize(), false);
-    m_drawingArea->addFence(fencePort);
+    m_drawingArea->replyWithFenceAfterNextFlush(callbackID);
 }
 #endif
 

@@ -242,6 +242,10 @@ typedef GenericCallback<const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t> 
 typedef GenericCallback<const WebCore::IntPoint&, uint32_t> TouchesCallback;
 #endif
 
+#if PLATFORM(COCOA)
+typedef GenericCallback<const WebCore::MachSendRight&> MachSendRightCallback;
+#endif
+
 struct WebPageConfiguration {
     WebPageGroup* pageGroup = nullptr;
     WebPreferences* preferences = nullptr;
@@ -649,7 +653,7 @@ public:
     double viewScaleFactor() const { return m_viewScaleFactor; }
     void scaleView(double scale);
 #if PLATFORM(COCOA)
-    void scaleViewAndUpdateGeometryFenced(double scale, WebCore::IntSize viewSize, const WebCore::MachSendRight& fencePort);
+    void scaleViewAndUpdateGeometryFenced(double scale, WebCore::IntSize viewSize, std::function<void (const WebCore::MachSendRight&, CallbackBase::Error)>);
 #endif
 
     float deviceScaleFactor() const;
@@ -1313,6 +1317,9 @@ private:
     void validateCommandCallback(const String&, bool, int, uint64_t);
     void unsignedCallback(uint64_t, uint64_t);
     void editingRangeCallback(const EditingRange&, uint64_t);
+#if PLATFORM(COCOA)
+    void machSendRightCallback(const WebCore::MachSendRight&, uint64_t);
+#endif
     void rectForCharacterRangeCallback(const WebCore::IntRect&, const EditingRange&, uint64_t);
 #if PLATFORM(MAC)
     void attributedStringForCharacterRangeCallback(const AttributedString&, const EditingRange&, uint64_t);

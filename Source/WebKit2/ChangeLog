@@ -1,3 +1,53 @@
+2015-05-08  Timothy Horton  <timothy_horton@apple.com>
+
+        Flip the direction of the fence in scaleViewAndUpdateGeometryFenced
+        https://bugs.webkit.org/show_bug.cgi?id=144810
+
+        Reviewed by Simon Fraser.
+
+        Send the fence from the Web process to the UI process, instead of vice versa.
+        This means that we won't keep the UI process CAContext blocked for the whole
+        time that the Web process is doing layout/painting/etc. Instead, we'll start
+        blocking the Web process CAContext immediately after flushing and before committing,
+        and send the fence to the UI process to be applied immediately. This minimizes
+        the amount of time in both processes spent blocked on the fence.
+
+        * Platform/mac/LayerHostingContext.h:
+        * Platform/mac/LayerHostingContext.mm:
+        (WebKit::LayerHostingContext::createFencePort):
+        Add createFencePort, which creates a MachSendRight wrapping a CA fence port.
+        Note that you must setFencePort() with this port if you want the LayerHostingContext's
+        CAContext to block on it!
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::scaleViewAndUpdateGeometryFenced):
+        (WebKit::WebPageProxy::machSendRightCallback):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        Create a callback and send it to the Web process along with scaleViewAndUpdateGeometryFenced.
+
+        * UIProcess/mac/WKViewLayoutStrategy.mm:
+        (-[WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy updateLayout]):
+        When called back, install the fence port in our CAContext; when the commit goes through,
+        remove the transient scale as we did previously.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::replyWithFenceAfterNextFlush):
+        (WebKit::DrawingArea::updateGeometry): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scaleViewAndUpdateGeometryFenced):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Instead of installing a fence created in the UI process, tell the DrawingArea
+        to create one and reply to the UI process with it after the next flush.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        (WebKit::TiledCoreAnimationDrawingArea::replyWithFenceAfterNextFlush):
+        After flushing, before committing, create a fence and reply to any
+        callbacks that requested fences, and install it in our context.
+
 2015-05-08  Michael Catanzaro  <mcatanzaro@igalia.com>, Martin Robinson <mrobinson@igalia.com>
 
         [GTK] Checks for DEVELOPMENT_BUILD are all wrong

@@ -86,6 +86,8 @@ private:
 
     virtual void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
 
+    virtual void replyWithFenceAfterNextFlush(uint64_t callbackID) override;
+
     // WebCore::LayerFlushSchedulerClient
     virtual bool flushLayers() override;
 
@@ -146,6 +148,8 @@ private:
     bool m_wantsDidUpdateViewState;
 
     WebCore::GraphicsLayer* m_viewOverlayRootLayer;
+
+    Vector<uint64_t> m_fenceCallbacksForAfterNextFlush;
 };
 
 } // namespace WebKit

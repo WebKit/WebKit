@@ -329,6 +329,16 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
         if (m_transientZoomScale != 1)
             applyTransientZoomToLayers(m_transientZoomScale, m_transientZoomOrigin);
 
+        if (!m_fenceCallbacksForAfterNextFlush.isEmpty()) {
+            MachSendRight fencePort = m_layerHostingContext->createFencePort();
+
+            for (auto callbackID : m_fenceCallbacksForAfterNextFlush)
+                m_webPage.send(Messages::WebPageProxy::MachSendRightCallback(fencePort, callbackID));
+            m_fenceCallbacksForAfterNextFlush.clear();
+
+            m_layerHostingContext->setFencePort(fencePort.sendRight());
+        }
+
         return returnValue;
     }
 }
@@ -744,6 +754,11 @@ void TiledCoreAnimationDrawingArea::applyTransientZoomToPage(double scale, Float
 void TiledCoreAnimationDrawingArea::addFence(const MachSendRight& fencePort)
 {
     m_layerHostingContext->setFencePort(fencePort.sendRight());
+}
+
+void TiledCoreAnimationDrawingArea::replyWithFenceAfterNextFlush(uint64_t callbackID)
+{
+    m_fenceCallbacksForAfterNextFlush.append(callbackID);
 }
 
 } // namespace WebKit
