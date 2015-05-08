@@ -1,3 +1,16 @@
+015-05-08  Michael Catanzaro  <mcatanzaro@igalia.com>, Martin Robinson <mrobinson@igalia.com>
+
+        [GTK] Checks for DEVELOPMENT_BUILD are all wrong
+        https://bugs.webkit.org/show_bug.cgi?id=144746
+
+        Reviewed by Carlos Garcia Campos.
+
+        Don't set DEVELOPMENT_BUILD. We check whether it is defined for conditional compilation, not
+        what it is defined to, so defining it to 0 effectively turned it on always. Instead set
+        ENABLE_DEVELOPER_MODE so that we can use the ENABLE macro inside WebKit source code.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2015-05-08  Daniel Bates  <dabates@apple.com>
 
         [iOS] WebSQL operations are not performed after device is locked

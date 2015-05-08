@@ -256,7 +256,7 @@ aboutURISchemeRequestCallback(WebKitURISchemeRequest *request, gpointer userData
 int main(int argc, char *argv[])
 {
     gtk_init(&argc, &argv);
-#if defined(DEVELOPMENT_BUILD)
+#if ENABLE_DEVELOPER_MODE
     g_setenv("WEBKIT_INJECTED_BUNDLE_PATH", WEBKIT_INJECTED_BUNDLE_PATH, FALSE);
 #endif
 
