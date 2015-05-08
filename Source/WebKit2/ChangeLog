@@ -1,5 +1,23 @@
 2015-05-08  Timothy Horton  <timothy_horton@apple.com>
 
+        Periodically repaint during resize while using the DynamicSizeWithMinimumViewSize layout strategy
+        https://bugs.webkit.org/show_bug.cgi?id=144816
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/mac/WKViewLayoutStrategy.mm:
+        (-[WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy initWithPage:view:mode:]):
+        (-[WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy _updateTransientScale:]):
+        (-[WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy updateLayout]):
+        Factor out _updateTransientScale from updateLayout.
+        Keep track of the last viewScaleFactor that we know is being displayed
+        (_lastCommittedViewScale) and use that for computing the transient scale,
+        so that we can recompute the transient scale while the UI process's notion
+        of the actual view scale might have moved ahead of what the Web process has
+        painted.
+
+2015-05-08  Timothy Horton  <timothy_horton@apple.com>
+
         Fix the build.
 
         * UIProcess/WebPageProxy.cpp:

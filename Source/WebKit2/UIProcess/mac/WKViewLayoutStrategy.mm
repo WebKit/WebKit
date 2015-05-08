@@ -45,7 +45,11 @@ using namespace WebKit;
 @interface WKViewDynamicSizeComputedFromViewScaleLayoutStrategy : WKViewLayoutStrategy
 @end
 
-@interface WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy : WKViewLayoutStrategy
+@interface WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy : WKViewLayoutStrategy {
+    BOOL _isWaitingForCommit;
+    BOOL _hasPendingLayout;
+    CGFloat _lastCommittedViewScale;
+}
 @end
 
 @implementation WKViewLayoutStrategy
@@ -244,12 +248,27 @@ using namespace WebKit;
         return nil;
 
     page.setUseFixedLayout(true);
+    _lastCommittedViewScale = _page->viewScaleFactor();
 
     return self;
 }
 
+- (void)_updateTransientScale:(CGFloat)scale
+{
+    float topContentInset = _page->topContentInset();
+
+    CGFloat relativeScale = scale / _lastCommittedViewScale;
+
+    CATransform3D transform = CATransform3DMakeTranslation(0, topContentInset - (topContentInset * relativeScale), 0);
+    transform = CATransform3DScale(transform, relativeScale, relativeScale, 1);
+
+    _wkView._rootLayer.transform = transform;
+}
+
 - (void)updateLayout
 {
+    _hasPendingLayout = NO;
+
     CGFloat scale = 1;
 
     CGFloat minimumViewWidth = _wkView._minimumViewSize.width;
@@ -271,40 +290,51 @@ using namespace WebKit;
         fixedLayoutWidth = minimumViewHeight;
     }
 
-    // Send frame size updates if we're the only ones disabling them,
-    // if we're not scaling down. That way, everything will behave like a normal
-    // resize except in the critical section.
-    if ([_wkView inLiveResize] && scale == 1 && _frameSizeUpdatesDisabledCount == 1) {
+    _page->setFixedLayoutSize(IntSize(fixedLayoutWidth, fixedLayoutHeight));
+
+    [self _updateTransientScale:scale];
+
+    if (_isWaitingForCommit) {
+        _hasPendingLayout = YES;
+        return;
+    }
+
+    if ([_wkView inLiveResize] && _lastCommittedViewScale == 1 && scale == 1 && _frameSizeUpdatesDisabledCount == 1) {
+        // Send frame size updates if we're the only ones disabling them,
+        // if we're not scaling down. That way, everything will behave like a normal
+        // resize except in the critical section.
         if (_wkView.shouldClipToVisibleRect)
             [_wkView _updateViewExposedRect];
         [_wkView _setDrawingAreaSize:[_wkView frame].size];
+        return;
     }
 
-    _page->setFixedLayoutSize(IntSize(fixedLayoutWidth, fixedLayoutHeight));
+    if (_lastCommittedViewScale == scale)
+        return;
 
-    if ([_wkView inLiveResize]) {
-        float topContentInset = _page->topContentInset();
+    _isWaitingForCommit = YES;
 
-        CGFloat relativeScale = scale / _page->viewScaleFactor();
-
-        CATransform3D transform = CATransform3DMakeTranslation(0, topContentInset - (topContentInset * relativeScale), 0);
-        transform = CATransform3DScale(transform, relativeScale, relativeScale, 1);
-
-        _wkView._rootLayer.transform = transform;
-    } else if (scale != _page->viewScaleFactor()) {
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-        RetainPtr<CAContext> context = [_wkView.layer context];
-        RetainPtr<WKView> retainedWKView = _wkView;
-        _page->scaleViewAndUpdateGeometryFenced(scale, IntSize(_wkView.frame.size), [retainedWKView, context] (const WebCore::MachSendRight& fencePort, CallbackBase::Error) {
-            [context setFencePort:fencePort.sendRight() commitHandler:^{
-                [retainedWKView _rootLayer].transform = CATransform3DIdentity;
-            }];
-        });
+    RetainPtr<CAContext> context = [_wkView.layer context];
+    RetainPtr<WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy> retainedSelf = self;
+    _page->scaleViewAndUpdateGeometryFenced(scale, IntSize(_wkView.frame.size), [retainedSelf, context, scale] (const WebCore::MachSendRight& fencePort, CallbackBase::Error error) {
+        if (error != CallbackBase::Error::None)
+            return;
+
+        [context setFencePort:fencePort.sendRight() commitHandler:[retainedSelf, scale] {
+            WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy *layoutStrategy = retainedSelf.get();
+            layoutStrategy->_lastCommittedViewScale = scale;
+            [layoutStrategy _updateTransientScale:scale];
+            layoutStrategy->_isWaitingForCommit = NO;
+
+            if (layoutStrategy->_hasPendingLayout)
+                [layoutStrategy updateLayout];
+        }];
+    });
 #else
-        _page->scaleView(scale);
-        _wkView._rootLayer.transform = CATransform3DIdentity;
+    _page->scaleView(scale);
+    _wkView._rootLayer.transform = CATransform3DIdentity;
 #endif
-    }
 }
 
 - (void)didChangeMinimumViewSize
