@@ -1,3 +1,11 @@
+2015-05-08  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Unreviewed EFL gardening on 8th May.
+
+        Mark flaky tests and timeout tests after using xorgdriver on EFL port.
+
+        * platform/efl/TestExpectations:
+
 2015-05-08  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet <youenn.fablet@crf.canon.fr>
 
         [Streams API] ReadableStream constructor start function should be able to error the stream

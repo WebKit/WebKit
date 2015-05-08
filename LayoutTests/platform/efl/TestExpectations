@@ -937,6 +937,12 @@ webkit.org/b/141458 imported/w3c/canvas/2d.line.cap.round.html [ Failure Pass Im
 
 webkit.org/b/142766 fast/overflow/overflow-height-float-not-removed-crash2.html [ Crash Pass ]
 
+webkit.org/b/144802 fast/forms/number/number-large-padding.html [ Failure Pass ]
+webkit.org/b/144802 fast/forms/number/number-spinbutton-capturing.html [ Failure Pass ]
+webkit.org/b/144802 fast/forms/number/number-spinbutton-change-and-input-events.html [ Failure Pass ]
+webkit.org/b/144802 fast/forms/number/number-spinbutton-click-in-iframe.html [ Failure Pass ]
+webkit.org/b/144802 fast/forms/number/number-spinbutton-in-multi-column.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2275,3 +2281,8 @@ fast/events/wheelevent-in-text-node.html [ Skip ] #timeout
 fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ Skip ] #timeout
 fast/text/simple-lines-hover-after.html [ Skip ] #timeout
 media/click-volume-bar-not-pausing.html [ Skip ] #timeout
+
+webkit.org/b/144803 css3/viewport-percentage-lengths/viewport-percentage-lengths-anonymous-block.html [ Timeout ]
+webkit.org/b/144803 css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child.html [ Timeout ]
+webkit.org/b/144803 css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html [ Timeout ]
+webkit.org/b/144803 css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html [ Timeout ]
