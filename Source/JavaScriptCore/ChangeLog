@@ -1,5 +1,21 @@
 2015-05-08  Andreas Kling  <akling@apple.com>
 
+        Micro-optimize JSON serialization of string primitives.
+        <https://webkit.org/b/144800>
+
+        Reviewed by Sam Weinig.
+
+        Don't use the out-of-line JSValue::getString() to grab at string primitives
+        in serialization. Just check if it's a JSString and then downcast to grab at
+        the WTF::String inside.
+
+        2% progression on Kraken/json-stringify-tinderbox.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::appendStringifiedValue):
+
+2015-05-08  Andreas Kling  <akling@apple.com>
+
         Optimize serialization of quoted JSON strings.
         <https://webkit.org/b/144754>
 

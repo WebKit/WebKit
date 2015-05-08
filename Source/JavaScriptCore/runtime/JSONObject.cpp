@@ -315,9 +315,8 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
         return StringifySucceeded;
     }
 
-    String stringValue;
-    if (value.getString(m_exec, stringValue)) {
-        builder.appendQuotedJSONString(stringValue);
+    if (value.isString()) {
+        builder.appendQuotedJSONString(asString(value)->value(m_exec));
         return StringifySucceeded;
     }
 
