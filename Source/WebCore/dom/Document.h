@@ -948,6 +948,9 @@ public:
 
     virtual void postTask(Task) override final; // Executes the task on context's thread asynchronously.
 
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+    ScriptedAnimationController* scriptedAnimationController() { return m_scriptedAnimationController.get(); }
+#endif
     void suspendScriptedAnimationControllerCallbacks();
     void resumeScriptedAnimationControllerCallbacks();
     void scriptedAnimationControllerSetThrottled(bool);

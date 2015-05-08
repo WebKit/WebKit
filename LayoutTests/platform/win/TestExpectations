@@ -2496,6 +2496,10 @@ webkit.org/b/140250 fast/loader/stateobjects/replacestate-in-iframe.html [ Failu
 webkit.org/b/138676 imported/w3c/canvas/2d.line.join.parallel.html [ Failure ]
 webkit.org/b/138676 imported/w3c/canvas/2d.strokeRect.zero.5.html [ Failure ]
 
+# requestAnimationFrame throttling does not work on Windows because USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR) is disabled.
+webkit.org/b/144718 fast/animation/request-animation-frame-throttle-subframe-display-none.html [ Skip ]
+webkit.org/b/144718 fast/animation/request-animation-frame-throttle-subframe.html [ Skip ]
+
 ################################################################################
 ######################### Start list of UNREVIEWED failures ########################
 ################################################################################

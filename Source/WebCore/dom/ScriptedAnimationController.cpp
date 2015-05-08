@@ -34,6 +34,8 @@
 #include "DocumentLoader.h"
 #include "FrameView.h"
 #include "InspectorInstrumentation.h"
+#include "Logging.h"
+#include "MainFrame.h"
 #include "RequestAnimationFrameCallback.h"
 #include "Settings.h"
 #include <wtf/Ref.h>
@@ -84,6 +86,8 @@ void ScriptedAnimationController::setThrottled(bool isThrottled)
     if (m_isThrottled == isThrottled)
         return;
 
+    LOG(Animations, "%p - Setting RequestAnimationFrame throttling state to %d in frame %p (isMainFrame: %d)", this, isThrottled, m_document->frame(), m_document->frame() ? m_document->frame()->isMainFrame() : 0);
+
     m_isThrottled = isThrottled;
     if (m_animationTimer.isActive()) {
         m_animationTimer.stop();
@@ -91,6 +95,15 @@ void ScriptedAnimationController::setThrottled(bool isThrottled)
     }
 #else
     UNUSED_PARAM(isThrottled);
+#endif
+}
+
+bool ScriptedAnimationController::isThrottled() const
+{
+#if USE(REQUEST_ANIMATION_FRAME_TIMER) && USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    return m_isThrottled;
+#else
+    return false;
 #endif
 }
 
