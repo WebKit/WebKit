@@ -1,3 +1,23 @@
+2015-05-07  Dean Jackson  <dino@apple.com>
+
+        [iOS] While scrubbing and holding down, video continues to play
+        https://bugs.webkit.org/show_bug.cgi?id=144776
+        <rdar://problem/20863757>
+
+        Reviewed by Simon Fraser.
+
+        When we are scrubbing a video, we should pause playback. As we
+        let go of the scrubber playback can resume (but only if it was
+        playing originally).
+
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.createControls): Listen for touchstart on the scrubber.
+        (ControllerIOS.prototype.handleTimelineInput): Call the prototype, but pause if necessary.
+        (ControllerIOS.prototype.handleTimelineChange): Just moved this to be with the other timeline functions.
+        (ControllerIOS.prototype.handleTimelineTouchStart): Add the listeners for end and cancel. Remember that we are
+        potentially about to scrub.
+        (ControllerIOS.prototype.handleTimelineTouchEnd): Remove the listeners.
+
 2015-05-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Applying a filter on an SVG element, which is larger than 4096 pixels, causes this element to be rendered shifted to the left
