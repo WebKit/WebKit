@@ -27,9 +27,7 @@
 #include "config.h"
 #include "StringBuilder.h"
 
-#include "ASCIICType.h"
 #include "IntegerToStringConversion.h"
-#include "MathExtras.h"
 #include "WTFString.h"
 #include <wtf/dtoa.h>
 
@@ -359,91 +357,6 @@ void StringBuilder::shrinkToFit()
         else
             reallocateBuffer<UChar>(m_length);
         m_string = m_buffer.release();
-    }
-}
-
-template <typename OutputCharacterType, typename InputCharacterType>
-static void appendQuotedJSONStringInternal(OutputCharacterType*& output, const InputCharacterType* input, unsigned length)
-{
-    for (const InputCharacterType* end = input + length; input != end; ++input) {
-        if (*input > 0x1F && *input != '"' && *input != '\\') {
-            *output++ = *input;
-            continue;
-        }
-        switch (*input) {
-        case '\t':
-            *output++ = '\\';
-            *output++ = 't';
-            break;
-        case '\r':
-            *output++ = '\\';
-            *output++ = 'r';
-            break;
-        case '\n':
-            *output++ = '\\';
-            *output++ = 'n';
-            break;
-        case '\f':
-            *output++ = '\\';
-            *output++ = 'f';
-            break;
-        case '\b':
-            *output++ = '\\';
-            *output++ = 'b';
-            break;
-        case '"':
-            *output++ = '\\';
-            *output++ = '"';
-            break;
-        case '\\':
-            *output++ = '\\';
-            *output++ = '\\';
-            break;
-        default:
-            ASSERT((*input & 0xFF00) == 0);
-            *output++ = '\\';
-            *output++ = 'u';
-            *output++ = '0';
-            *output++ = '0';
-            *output++ = upperNibbleToASCIIHexDigit(*input);
-            *output++ = lowerNibbleToASCIIHexDigit(*input);
-            break;
-        }
-    }
-}
-
-void StringBuilder::appendQuotedJSONString(const String& string)
-{
-    // Make sure we have enough buffer space to append this string without having
-    // to worry about reallocating in the middle.
-    // The 2 is for the '"' quotes on each end.
-    // The 'maximumOutputCharactersPerInputCharacter' is 6 for 16-bit characters
-    // since they may need \uNNNN-style representation. 2 for 8-bit strings.
-    unsigned maximumOutputCharactersPerInputCharacter = string.is8Bit() ? 2 : 6;
-    size_t maximumCapacityRequired = length() + 2 + (string.length() * maximumOutputCharactersPerInputCharacter);
-    RELEASE_ASSERT(maximumCapacityRequired < std::numeric_limits<unsigned>::max());
-
-    if (is8Bit() && !string.is8Bit())
-        allocateBufferUpConvert(m_bufferCharacters8, roundUpToPowerOfTwo(maximumCapacityRequired));
-    else
-        reserveCapacity(roundUpToPowerOfTwo(maximumCapacityRequired));
-
-    if (is8Bit()) {
-        ASSERT(string.is8Bit());
-        LChar* output = m_bufferCharacters8 + m_length;
-        *output++ = '"';
-        appendQuotedJSONStringInternal(output, string.characters8(), string.length());
-        *output++ = '"';
-        m_length = output - m_bufferCharacters8;
-    } else {
-        UChar* output = m_bufferCharacters16 + m_length;
-        *output++ = '"';
-        if (string.is8Bit())
-            appendQuotedJSONStringInternal(output, string.characters8(), string.length());
-        else
-            appendQuotedJSONStringInternal(output, string.characters16(), string.length());
-        *output++ = '"';
-        m_length = output - m_bufferCharacters16;
     }
 }
 

@@ -30,6 +30,7 @@
 #include "NetworkCacheCoders.h"
 #include "NetworkCacheDecoder.h"
 #include "NetworkCacheEncoder.h"
+#include <JavaScriptCore/JSONObject.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/text/StringBuilder.h>
@@ -158,7 +159,7 @@ void Entry::asJSON(StringBuilder& json, const Storage::RecordInfo& info) const
 {
     json.appendLiteral("{\n");
     json.appendLiteral("\"hash\": ");
-    json.appendQuotedJSONString(m_key.hashAsString());
+    JSC::appendQuotedJSONStringToBuilder(json, m_key.hashAsString());
     json.appendLiteral(",\n");
     json.appendLiteral("\"bodySize\": ");
     json.appendNumber(info.bodySize);
@@ -167,16 +168,16 @@ void Entry::asJSON(StringBuilder& json, const Storage::RecordInfo& info) const
     json.appendNumber(info.worth);
     json.appendLiteral(",\n");
     json.appendLiteral("\"partition\": ");
-    json.appendQuotedJSONString(m_key.partition());
+    JSC::appendQuotedJSONStringToBuilder(json, m_key.partition());
     json.appendLiteral(",\n");
     json.appendLiteral("\"timestamp\": ");
     json.appendNumber(std::chrono::duration_cast<std::chrono::milliseconds>(m_timeStamp.time_since_epoch()).count());
     json.appendLiteral(",\n");
     json.appendLiteral("\"URL\": ");
-    json.appendQuotedJSONString(m_response.url().string());
+    JSC::appendQuotedJSONStringToBuilder(json, m_response.url().string());
     json.appendLiteral(",\n");
     json.appendLiteral("\"bodyHash\": ");
-    json.appendQuotedJSONString(info.bodyHash);
+    JSC::appendQuotedJSONStringToBuilder(json, info.bodyHash);
     json.appendLiteral(",\n");
     json.appendLiteral("\"bodyShareCount\": ");
     json.appendNumber(info.bodyShareCount);
@@ -188,9 +189,9 @@ void Entry::asJSON(StringBuilder& json, const Storage::RecordInfo& info) const
             json.appendLiteral(",\n");
         firstHeader = false;
         json.appendLiteral("    ");
-        json.appendQuotedJSONString(header.key);
+        JSC::appendQuotedJSONStringToBuilder(json, header.key);
         json.appendLiteral(": ");
-        json.appendQuotedJSONString(header.value);
+        JSC::appendQuotedJSONStringToBuilder(json, header.value);
     }
     json.appendLiteral("\n}\n");
     json.appendLiteral("}");
