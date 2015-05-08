@@ -1443,7 +1443,6 @@ webkit.org/b/63706 editing/pasteboard/cleanup-on-move.html [ Failure ]
 webkit.org/b/63706 editing/pasteboard/drag-list-item.html [ Failure ]
 
 # WebKit2 needs testRunner.setEditingBehaviour and other issues.
-webkit.org/b/40601 editing/selection/5354455-1.html [ Failure ]
 Bug(GTK) editing/selection/extend-after-mouse-selection.html [ Failure ]
 
 # WebKit2 needs textInputController.selectedRange

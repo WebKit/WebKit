@@ -277,6 +277,8 @@ int getGDKKeySymForKeyRef(WKStringRef keyRef, unsigned location, guint* modifier
         return GDK_KEY_Tab;
     if (charCode == '\x8')
         return GDK_KEY_BackSpace;
+    if (charCode == 0x001B)
+        return GDK_KEY_Escape;
 
     if (WTF::isASCIIUpper(charCode))
         *modifiers |= GDK_SHIFT_MASK;

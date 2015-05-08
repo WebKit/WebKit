@@ -1,3 +1,14 @@
+2015-05-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WTR doesn't correctly handle the Escape key
+        https://bugs.webkit.org/show_bug.cgi?id=144788
+
+        Reviewed by Martin Robinson.
+
+        Unskip editing/selection/5354455-1.html.
+
+        * platform/gtk/TestExpectations:
+
 2015-05-08  Hyungwook Lee  <hyungwook.lee@navercorp.com>
 
         [Win] Unskip passing test case after r183981
