@@ -71,7 +71,7 @@
           (drawsContent 1)
           (visible rect 0.00, 0.00 0.00 x 0.00)
           (coverage rect -597.00, -196.00 341.30 x 254.35)
-          (intersects coverage rect 0)
+          (intersects coverage rect 1)
           (contentsScale 2.30)
         )
         (GraphicsLayer
@@ -80,7 +80,7 @@
           (drawsContent 1)
           (visible rect 0.00, 0.00 0.00 x 0.00)
           (coverage rect 4.00, -497.00 341.30 x 254.35)
-          (intersects coverage rect 0)
+          (intersects coverage rect 1)
           (contentsScale 2.30)
         )
       )

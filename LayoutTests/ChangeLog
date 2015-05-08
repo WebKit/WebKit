@@ -1,3 +1,10 @@
+2015-05-07  Simon Fraser  <simon.fraser@apple.com>
+
+        New results after r183970. Fixed elements are now always considered to intersect
+        the coverage rect.
+
+        * platform/mac-wk2/tiled-drawing/scrolling/fixed/four-bars-zoomed-expected.txt:
+
 2015-05-07  Sam Weinig  <sam@webkit.org>
 
         Consider implementing Document.scrollingElement
