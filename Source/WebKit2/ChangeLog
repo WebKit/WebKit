@@ -1,3 +1,28 @@
+2015-05-07  Conrad Shultz  <conrad_shultz@apple.com>
+
+        Don't register for Lookup notifications until needed
+        https://bugs.webkit.org/show_bug.cgi?id=144783
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/mac/WKView.mm:
+        Add a WKViewData ivar to track whether we've already registered for popover notifications.
+        (-[WKView _prepareForDictionaryLookup]):
+        Added; moved notification registration from -[WKView initWithFrame:processPool:configuration:webView:.
+        (-[WKView initWithFrame:processPool:configuration:webView:]):
+        Move notification registration to -_prepareForDictionaryLookup.
+
+        * UIProcess/API/mac/WKViewInternal.h:
+        Expose -_prepareForDictionaryLookup.
+
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didPerformDictionaryLookup):
+        Send -[WKView _prepareForDictionaryLookup].
+
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController _animationControllerForText]):
+        Ditto.
+
 2015-05-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r183961.
