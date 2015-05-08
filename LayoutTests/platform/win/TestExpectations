@@ -2680,7 +2680,6 @@ fast/filter-image/filter-image.html [ ImageOnlyFailure ]
 
 fast/flexbox/001.html [ Pass Failure ]
 
-webkit.org/b/140517 [ Debug ] fast/forms/button-first-line-first-letter.html [ Skip ]  # Crashing
 webkit.org/b/140506 fast/forms/textfield-lastchange-was-useredit.html [ Skip ]  # Crashing
 webkit.org/b/140519 [ Debug ] fast/flexbox/flexing-overflow-scroll-item.html [ Skip ]  # Crashing
 
