@@ -91,15 +91,16 @@ template<typename Entry, typename JSIterator>
 template <typename Map, typename Key>
 inline Entry* MapDataImpl<Entry, JSIterator>::add(ExecState* exec, JSCell* owner, Map& map, Key key, KeyType keyValue)
 {
-    typename Map::iterator location = map.find(key);
-    if (location != map.end())
-        return &m_entries[location->value];
-
-    if (!ensureSpaceForAppend(exec, owner))
-        return 0;
-
     auto result = map.add(key, m_size);
-    RELEASE_ASSERT(result.isNewEntry);
+    if (!result.isNewEntry)
+        return &m_entries[result.iterator->value];
+
+    if (!ensureSpaceForAppend(exec, owner)) {
+        map.remove(result.iterator);
+        return 0;
+    }
+
+    result.iterator->value = m_size;
     Entry* entry = &m_entries[m_size++];
     new (entry) Entry();
     entry->setKey(exec->vm(), owner, keyValue.value);
@@ -174,7 +175,9 @@ inline void MapDataImpl<Entry, JSIterator>::replaceAndPackBackingStore(Entry* de
 {
     ASSERT(shouldPack());
     int32_t newEnd = 0;
-    RELEASE_ASSERT(newCapacity > 0);
+    ASSERT(newCapacity > 0);
+    RELEASE_ASSERT(newCapacity > m_size);
+
     for (int32_t i = 0; i < m_size; i++) {
         Entry& entry = m_entries[i];
         if (!entry.key()) {
@@ -194,14 +197,22 @@ inline void MapDataImpl<Entry, JSIterator>::replaceAndPackBackingStore(Entry* de
     }
 
     // Fixup for the hashmaps
-    for (auto ptr = m_valueKeyedTable.begin(); ptr != m_valueKeyedTable.end(); ++ptr)
-        ptr->value = m_entries[ptr->value].key().get().asInt32();
-    for (auto ptr = m_cellKeyedTable.begin(); ptr != m_cellKeyedTable.end(); ++ptr)
-        ptr->value = m_entries[ptr->value].key().get().asInt32();
-    for (auto ptr = m_stringKeyedTable.begin(); ptr != m_stringKeyedTable.end(); ++ptr)
-        ptr->value = m_entries[ptr->value].key().get().asInt32();
-    for (auto ptr = m_symbolKeyedTable.begin(); ptr != m_symbolKeyedTable.end(); ++ptr)
-        ptr->value = m_entries[ptr->value].key().get().asInt32();
+    for (auto ptr = m_valueKeyedTable.begin(); ptr != m_valueKeyedTable.end(); ++ptr) {
+        if (ptr->value < m_size)
+            ptr->value = m_entries[ptr->value].key().get().asInt32();
+    }
+    for (auto ptr = m_cellKeyedTable.begin(); ptr != m_cellKeyedTable.end(); ++ptr) {
+        if (ptr->value < m_size)
+            ptr->value = m_entries[ptr->value].key().get().asInt32();
+    }
+    for (auto ptr = m_stringKeyedTable.begin(); ptr != m_stringKeyedTable.end(); ++ptr) {
+        if (ptr->value < m_size)
+            ptr->value = m_entries[ptr->value].key().get().asInt32();
+    }
+    for (auto ptr = m_symbolKeyedTable.begin(); ptr != m_symbolKeyedTable.end(); ++ptr) {
+        if (ptr->value < m_size)
+            ptr->value = m_entries[ptr->value].key().get().asInt32();
+    }
 
     ASSERT((m_size - newEnd) == m_deletedCount);
     m_deletedCount = 0;

@@ -1,3 +1,16 @@
+2015-05-08  Oliver Hunt  <oliver@apple.com>
+
+        MapDataImpl::add() shouldn't do the same hash lookup twice.
+        https://bugs.webkit.org/show_bug.cgi?id=144759
+
+        Reviewed by Gavin Barraclough.
+
+        We don't actually need to do a double lookup here, all we need to
+        do is update the index to point to the correct m_size.
+
+        * runtime/MapDataInlines.h:
+        (JSC::JSIterator>::add):
+
 2015-05-08  Andreas Kling  <akling@apple.com>
 
         Micro-optimize JSON serialization of string primitives.
