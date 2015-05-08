@@ -411,6 +411,39 @@ static void testWebContextSecurityPolicy(SecurityPolicyTest* test, gconstpointer
         | SecurityPolicyTest::CORSEnabled | SecurityPolicyTest::EmptyDocument);
 }
 
+static void testWebContextSecurityFileXHR(WebViewTest* test, gconstpointer)
+{
+    GUniquePtr<char> fileURL(g_strdup_printf("file://%s/simple.html", Test::getResourcesDir(Test::WebKit2Resources).data()));
+    test->loadURI(fileURL.get());
+    test->waitUntilLoadFinished();
+
+    GUniquePtr<char> jsonURL(g_strdup_printf("file://%s/simple.json", Test::getResourcesDir().data()));
+    GUniquePtr<char> xhr(g_strdup_printf("var xhr = new XMLHttpRequest; xhr.open(\"GET\", \"%s\"); xhr.send();", jsonURL.get()));
+
+    // By default file access is not allowed, this will fail with a cross-origin error.
+    GUniqueOutPtr<GError> error;
+    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished(xhr.get(), &error.outPtr());
+    g_assert(!javascriptResult);
+    g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
+
+    // Allow file access from file URLs.
+    webkit_settings_set_allow_file_access_from_file_urls(webkit_web_view_get_settings(test->m_webView), TRUE);
+    test->loadURI(fileURL.get());
+    test->waitUntilLoadFinished();
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished(xhr.get(), &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error);
+
+    // It isn't still possible to load file from an HTTP URL.
+    test->loadURI(kServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished();
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished(xhr.get(), &error.outPtr());
+    g_assert(!javascriptResult);
+    g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
+
+    webkit_settings_set_allow_file_access_from_file_urls(webkit_web_view_get_settings(test->m_webView), FALSE);
+}
+
 void beforeAll()
 {
     kServer = new WebKitTestServer();
@@ -423,6 +456,7 @@ void beforeAll()
     Test::add("WebKitWebContext", "spell-checker", testWebContextSpellChecker);
     WebViewTest::add("WebKitWebContext", "languages", testWebContextLanguages);
     SecurityPolicyTest::add("WebKitSecurityManager", "security-policy", testWebContextSecurityPolicy);
+    WebViewTest::add("WebKitSecurityManager", "file-xhr", testWebContextSecurityFileXHR);
 }
 
 void afterAll()

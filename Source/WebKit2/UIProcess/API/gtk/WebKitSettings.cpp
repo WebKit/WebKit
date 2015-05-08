@@ -143,7 +143,8 @@ enum {
     PROP_ENABLE_WRITE_CONSOLE_MESSAGES_TO_STDOUT,
     PROP_ENABLE_MEDIA_STREAM,
     PROP_ENABLE_SPATIAL_NAVIGATION,
-    PROP_ENABLE_MEDIASOURCE
+    PROP_ENABLE_MEDIASOURCE,
+    PROP_ALLOW_FILE_ACCESS_FROM_FILE_URLS
 };
 
 static void webKitSettingsConstructed(GObject* object)
@@ -309,6 +310,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
     case PROP_ENABLE_MEDIASOURCE:
         webkit_settings_set_enable_mediasource(settings, g_value_get_boolean(value));
         break;
+    case PROP_ALLOW_FILE_ACCESS_FROM_FILE_URLS:
+        webkit_settings_set_allow_file_access_from_file_urls(settings, g_value_get_boolean(value));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
         break;
@@ -464,7 +468,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
     case PROP_ENABLE_MEDIASOURCE:
         g_value_set_boolean(value, webkit_settings_get_enable_mediasource(settings));
         break;
-
+    case PROP_ALLOW_FILE_ACCESS_FROM_FILE_URLS:
+        g_value_set_boolean(value, webkit_settings_get_allow_file_access_from_file_urls(settings));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
         break;
@@ -1215,6 +1221,25 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
         g_param_spec_boolean("enable-mediasource",
             _("Enable MediaSource"),
             _("Whether MediaSource should be enabled."),
+            FALSE,
+            readWriteConstructParamFlags));
+
+    /**
+     * WebKitSettings:allow-file-access-from-file-urls:
+     *
+     * Whether file access is allowed from file URLs. By default, when
+     * something is loaded in a #WebKitWebView using a file URI, cross
+     * origin requests to other file resources are not allowed. This
+     * setting allows you to change that behaviour, so that it would be
+     * possible to do a XMLHttpRequest of a local file, for example.
+     *
+     * Since: 2.10
+     */
+    g_object_class_install_property(gObjectClass,
+        PROP_ALLOW_FILE_ACCESS_FROM_FILE_URLS,
+        g_param_spec_boolean("allow-file-access-from-file-urls",
+            _("Allow file access from file URLs"),
+            _("Whether file access is allowed from file URLs."),
             FALSE,
             readWriteConstructParamFlags));
 }
@@ -2998,4 +3023,42 @@ void webkit_settings_set_enable_mediasource(WebKitSettings* settings, gboolean e
 
     priv->preferences->setMediaSourceEnabled(enabled);
     g_object_notify(G_OBJECT(settings), "enable-mediasource");
+}
+
+/**
+ * webkit_settings_get_allow_file_access_from_file_urls:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:allow-file-access-from-file-urls property.
+ *
+ * Returns: %TRUE If file access from file URLs is allowed or %FALSE otherwise.
+ *
+ * Since: 2.10
+ */
+gboolean webkit_settings_get_allow_file_access_from_file_urls(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return settings->priv->preferences->allowFileAccessFromFileURLs();
+}
+
+/**
+ * webkit_settings_set_allow_file_access_from_file_urls:
+ * @settings: a #WebKitSettings
+ * @allowed: Value to be set
+ *
+ * Set the #WebKitSettings:allow-file-access-from-file-urls property.
+ *
+ * Since: 2.10
+ */
+void webkit_settings_set_allow_file_access_from_file_urls(WebKitSettings* settings, gboolean allowed)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    if (priv->preferences->allowFileAccessFromFileURLs() == allowed)
+        return;
+
+    priv->preferences->setAllowFileAccessFromFileURLs(allowed);
+    g_object_notify(G_OBJECT(settings), "allow-file-access-from-file-urls");
 }
