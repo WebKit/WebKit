@@ -66,6 +66,7 @@ my $programName = basename($0);
 my $buildJSCDefault = $buildJSC ? "will check" : "will not check";
 my $testapiDefault = $runTestAPI ? "will run" : "will not run";
 my $jscStressDefault = $runJSCStress ? "will run" : " will not run";
+my $filter;
 my $usage = <<EOF;
 Usage: $programName [options] [options to pass to build system]
   --help                        Show this help message
@@ -89,6 +90,7 @@ Usage: $programName [options] [options to pass to build system]
   --shell-runner                Uses the shell-based test runner instead of the default make-based runner.
                                 In general the shell runner is slower than the make runner.
   --make-runner                 Uses the faster make-based runner.
+  --filter                      Only run tests whose name matches the given regular expression.
 
 EOF
 
@@ -106,6 +108,7 @@ GetOptions(
     'child-processes=s' => \$childProcesses,
     'shell-runner' => \$shellRunner,
     'make-runner' => \$makeRunner,
+    'filter=s' => \$filter,
     'help' => \$showHelp
 );
 
@@ -312,6 +315,11 @@ sub runJSCStressTests
 
     if ($makeRunner) {
         push(@jscStressDriverCmd, "--make-runner");
+    }
+    
+    if ($filter) {
+        push(@jscStressDriverCmd, "--filter");
+        push(@jscStressDriverCmd, $filter);
     }
 
     # End option processing, the rest of the arguments are tests

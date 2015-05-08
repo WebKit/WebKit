@@ -38,6 +38,7 @@ CopiedSpace::CopiedSpace(Heap* heap)
     , m_inCopyingPhase(false)
     , m_shouldDoCopyPhase(false)
     , m_numberOfLoanedBlocks(0)
+    , m_bytesRemovedFromOldSpaceDueToReallocation(0)
 {
 }
 
@@ -155,9 +156,13 @@ CheckedBoolean CopiedSpace::tryReallocateOversize(void** ptr, size_t oldSize, si
 
     CopiedBlock* oldBlock = CopiedSpace::blockFor(oldPtr);
     if (oldBlock->isOversize()) {
-        if (oldBlock->isOld())
+        // FIXME: Eagerly deallocating the old space block probably buys more confusion than
+        // value.
+        // https://bugs.webkit.org/show_bug.cgi?id=144750
+        if (oldBlock->isOld()) {
+            m_bytesRemovedFromOldSpaceDueToReallocation += oldBlock->size();
             m_oldGen.oversizeBlocks.remove(oldBlock);
-        else
+        } else
             m_newGen.oversizeBlocks.remove(oldBlock);
         m_blockSet.remove(oldBlock);
         CopiedBlock::destroy(oldBlock);

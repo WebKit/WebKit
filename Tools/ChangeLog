@@ -1,3 +1,20 @@
+2015-05-07  Filip Pizlo  <fpizlo@apple.com>
+
+        GC has trouble with pathologically large array allocations
+        https://bugs.webkit.org/show_bug.cgi?id=144609
+
+        Reviewed by Geoffrey Garen.
+        
+        Add a --filter option that restricts the set of tests we run. I needed it to fix this bug
+        and it's a frequently requested feature.
+        
+        Also add the ability to run a test pretending that your system has a particular RAM size.
+        This is useful for GC tests, and the new GC test that I added uses this.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests):
+        * Scripts/run-jsc-stress-tests:
+
 2015-05-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Bump EFL version to 1.14.0

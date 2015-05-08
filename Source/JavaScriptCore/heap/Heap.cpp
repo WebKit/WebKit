@@ -314,7 +314,7 @@ inline std::unique_ptr<TypeCountSet> RecordType::returnValue()
 
 Heap::Heap(VM* vm, HeapType heapType)
     : m_heapType(heapType)
-    , m_ramSize(ramSize())
+    , m_ramSize(Options::forceRAMSize() ? Options::forceRAMSize() : ramSize())
     , m_minBytesPerCycle(minHeapSize(m_heapType, m_ramSize))
     , m_sizeAfterLastCollect(0)
     , m_sizeAfterLastFullCollect(0)
@@ -818,15 +818,18 @@ void Heap::updateObjectCounts(double gcStartTime)
 #endif
         dataLogF("\nNumber of live Objects after GC %lu, took %.6f secs\n", static_cast<unsigned long>(visitCount), WTF::monotonicallyIncreasingTime() - gcStartTime);
     }
-
-    if (m_operationInProgress == EdenCollection) {
-        m_totalBytesVisited += m_slotVisitor.bytesVisited();
-        m_totalBytesCopied += m_slotVisitor.bytesCopied();
-    } else {
-        ASSERT(m_operationInProgress == FullCollection);
-        m_totalBytesVisited = m_slotVisitor.bytesVisited();
-        m_totalBytesCopied = m_slotVisitor.bytesCopied();
-    }
+    
+    size_t bytesRemovedFromOldSpaceDueToReallocation =
+        m_storageSpace.takeBytesRemovedFromOldSpaceDueToReallocation();
+    
+    if (m_operationInProgress == FullCollection) {
+        m_totalBytesVisited = 0;
+        m_totalBytesCopied = 0;
+    } else
+        m_totalBytesCopied -= bytesRemovedFromOldSpaceDueToReallocation;
+    
+    m_totalBytesVisited += m_slotVisitor.bytesVisited();
+    m_totalBytesCopied += m_slotVisitor.bytesCopied();
 #if ENABLE(PARALLEL_GC)
     m_totalBytesVisited += m_sharedData.childBytesVisited();
     m_totalBytesCopied += m_sharedData.childBytesCopied();

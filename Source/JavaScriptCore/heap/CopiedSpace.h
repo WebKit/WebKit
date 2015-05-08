@@ -86,6 +86,13 @@ public:
     static CopiedBlock* blockFor(void*);
 
     Heap* heap() const { return m_heap; }
+    
+    size_t takeBytesRemovedFromOldSpaceDueToReallocation()
+    {
+        size_t result = 0;
+        std::swap(m_bytesRemovedFromOldSpaceDueToReallocation, result);
+        return result;
+    }
 
 private:
     static bool isOversize(size_t);
@@ -135,6 +142,8 @@ private:
     Mutex m_loanedBlocksLock; 
     ThreadCondition m_loanedBlocksCondition;
     size_t m_numberOfLoanedBlocks;
+    
+    size_t m_bytesRemovedFromOldSpaceDueToReallocation;
 
     static const size_t s_maxAllocationSize = CopiedBlock::blockSize / 2;
     static const size_t s_initialBlockNum = 16;

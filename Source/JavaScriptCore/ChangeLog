@@ -1,3 +1,55 @@
+2015-05-07  Filip Pizlo  <fpizlo@apple.com>
+
+        GC has trouble with pathologically large array allocations
+        https://bugs.webkit.org/show_bug.cgi?id=144609
+
+        Reviewed by Geoffrey Garen.
+
+        The bug was that SlotVisitor::copyLater() would return early for oversize blocks (right
+        after pinning them), and would skip the accounting. The GC calculates the size of the heap
+        in tandem with the scan to save time, and that accounting was part of how the GC would
+        know how big the heap was. The GC would then think that oversize copied blocks use no
+        memory, and would then mess up its scheduling of the next GC.
+        
+        Fixing this bug is harder than it seems. When running an eden GC, we figure out the heap
+        size by summing the size from the last collection and the size by walking the eden heap.
+        But this breaks when we eagerly delete objects that the last collection touched. We can do
+        that in one corner case: copied block reallocation. The old block will be deleted from old
+        space during the realloc and a new block will be allocated in new space. In order for the
+        GC to know that the size of old space actually shrank, we need a field to tell us how much
+        such shrinkage could occur. Since this is a very dirty corner case and it only works for
+        very particular reasons arising from the special properties of copied space (single owner,
+        and the realloc is used in places where the compiler already knows that it cannot register
+        allocate a pointer to the old block), I opted for an equally dirty shrinkage counter
+        devoted just to this case. It's called bytesRemovedFromOldSpaceDueToReallocation.
+        
+        To test this, I needed to add an Option to force a particular RAM size in the GC. This
+        allows us to write tests that assert that the GC heap size is some value X, without
+        worrying about machine-to-machine variations due to GC heuristics changing based on RAM
+        size.
+
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::CopiedSpace): Initialize the dirty shrinkage counter.
+        (JSC::CopiedSpace::tryReallocateOversize): Bump the dirty shrinkage counter.
+        * heap/CopiedSpace.h:
+        (JSC::CopiedSpace::takeBytesRemovedFromOldSpaceDueToReallocation): Swap out the counter. Used by the GC when it does its accounting.
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap): Allow the user to force the RAM size.
+        (JSC::Heap::updateObjectCounts): Use the dirty shrinkage counter to good effect. Also, make this code less confusing.
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::copyLater): The early return for isOversize() was the bug. We still need to report these bytes as live. Otherwise the GC doesn't know that it owns this memory.
+        * jsc.cpp: Add size measuring hooks to write the largeish test.
+        (GlobalObject::finishCreation):
+        (functionGCAndSweep):
+        (functionFullGC):
+        (functionEdenGC):
+        (functionHeapSize):
+        * runtime/Options.h:
+        * tests/stress/new-array-storage-array-with-size.js: Fix this so that it actually allocates ArrayStorage arrays and tests the thing it was supposed to test.
+        * tests/stress/new-largeish-contiguous-array-with-size.js: Added. This tests what the other test accidentally started testing, but does so without running your system out of memory.
+        (foo):
+        (test):
+
 2015-05-07  Saam Barati  <saambarati1@gmail.com>
 
         Global functions should be initialized as JSFunctions in byte code

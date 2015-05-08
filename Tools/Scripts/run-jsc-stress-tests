@@ -105,6 +105,7 @@ $remotePort = nil
 $remoteDirectory = nil
 $architecture = nil
 $hostOS = nil
+$filter = nil
 
 
 def usage
@@ -130,6 +131,7 @@ def usage
     puts "--remote                    Specify a remote host on which to run tests from command line argument."
     puts "--remote-config-file        Specify a remote host on which to run tests from JSON file."
     puts "--child-processes    (-c)   Specify the number of child processes."
+    puts "--filter                    Only run tests whose name matches the given regular expression."
     puts "--help               (-h)   Print this message."
     exit 1
 end
@@ -152,6 +154,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--remote', GetoptLong::REQUIRED_ARGUMENT],
                ['--remote-config-file', GetoptLong::REQUIRED_ARGUMENT],
                ['--child-processes', '-c', GetoptLong::REQUIRED_ARGUMENT],
+               ['--filter', GetoptLong::REQUIRED_ARGUMENT],
                ['--verbose', '-v', GetoptLong::NO_ARGUMENT]).each {
     | opt, arg |
     case opt
@@ -191,6 +194,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $remoteConfigFile = arg
     when '--child-processes'
         $numChildProcesses = arg.to_i
+    when '--filter'
+        $filter = Regexp.new(arg)
     when '--arch'
         $architecture = arg
     when '--os'
@@ -594,7 +599,11 @@ end
 
 def addRunCommand(kind, command, outputHandler, errorHandler)
     $didAddRunCommand = true
-    plan = Plan.new($benchmarkDirectory, command, baseOutputName(kind), outputHandler, errorHandler)
+    name = baseOutputName(kind)
+    if $filter and name !~ $filter
+        return
+    end
+    plan = Plan.new($benchmarkDirectory, command, name, outputHandler, errorHandler)
     if $numChildProcesses > 1 and $runCommandOptions[:isSlow]
         $runlist.unshift plan
     else
@@ -642,6 +651,10 @@ end
 
 def runDefault
     run("default")
+end
+
+def runWithRAMSize(size)
+    run("ram-size-#{size}", "--forceRAMSize=#{size}")
 end
 
 def runNoLLInt
