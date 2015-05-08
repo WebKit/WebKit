@@ -2,6 +2,12 @@
 
         Fix the build.
 
+        * UIProcess/WebPageProxy.cpp:
+
+2015-05-08  Timothy Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
         * Platform/mac/LayerHostingContext.mm:
         (WebKit::LayerHostingContext::createFencePort):
 

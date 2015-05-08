@@ -140,6 +140,7 @@
 #include "RemoteLayerTreeDrawingAreaProxy.h"
 #include "RemoteLayerTreeScrollingPerformanceData.h"
 #include "ViewSnapshotStore.h"
+#include <WebCore/MachSendRight.h>
 #include <WebCore/RunLoopObserver.h>
 #endif
 
