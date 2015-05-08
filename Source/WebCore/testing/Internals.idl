@@ -279,8 +279,6 @@ enum ResourceLoadPriority {
     // Query if a timer is currently throttled, to debug timer throttling.
     [RaisesException] boolean isTimerThrottled(long timerHandle);
 
-    boolean isRequestAnimationFrameThrottled();
-
     [RaisesException] void startTrackingStyleRecalcs();
     [RaisesException] unsigned long styleRecalcCount();
 

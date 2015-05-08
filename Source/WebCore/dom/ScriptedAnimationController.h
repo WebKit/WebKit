@@ -68,7 +68,6 @@ public:
     void suspend();
     void resume();
     void setThrottled(bool);
-    WEBCORE_EXPORT bool isThrottled() const;
 
     void windowScreenDidChange(PlatformDisplayID);
 
