@@ -1,3 +1,22 @@
+2015-05-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Crashes in SocketStreamHandleBase::close
+        https://bugs.webkit.org/show_bug.cgi?id=144767
+        rdar://problem/20486538
+
+        Reviewed by Brady Eidson.
+
+        This is a speculative fix, I could not reproduce the crash.
+
+        * Modules/websockets/WebSocketChannel.cpp: (WebCore::WebSocketChannel::processFrame):
+        Normally, processOutgoingFrameQueue() closes the handle in the end when called in
+        OutgoingFrameQueueClosing state. But there is no definitive protection against
+        processing two CLOSE frames, in which case we'd try to close the handle twice.
+
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::readStreamCallback): Passing empty data to the client
+        results in the socket being closed, which makes no sense here.
+
 2015-05-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r183996.
