@@ -1,3 +1,15 @@
+2015-05-08  Beth Dakin  <bdakin@apple.com>
+
+        Fix performance tests after r183954
+        https://bugs.webkit.org/show_bug.cgi?id=144805
+
+        Reviewed by Alexey Proskuryakov.
+
+        Web* is traditionally a WK1 prefix, so use the WK2 prefix instead in WK2 so that 
+        we don’t have two classes with the same name in the two projects.
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController _defaultAnimationController]):
+
 2015-05-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Expose allowFileAccessFromFileURLs setting to WebKit2 GTK+ API
