@@ -299,6 +299,10 @@ public:
     TouchPointState phase() const { return static_cast<TouchPointState>(m_phase); }
     TouchPointState state() const { return phase(); }
 
+#if ENABLE(IOS_TOUCH_EVENTS)
+#include <WebKitAdditions/WebEventIOS.h>
+#endif
+
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebPlatformTouchPoint&);
 
