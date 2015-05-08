@@ -510,12 +510,11 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
     BatchedTransitionOptimizer optimizer(vm, globalObject);
 
     const UnlinkedProgramCodeBlock::VariableDeclations& variableDeclarations = unlinkedCodeBlock->variableDeclarations();
-    const UnlinkedProgramCodeBlock::FunctionDeclations& functionDeclarations = unlinkedCodeBlock->functionDeclarations();
 
-    for (size_t i = 0; i < functionDeclarations.size(); ++i) {
-        UnlinkedFunctionExecutable* unlinkedFunctionExecutable = functionDeclarations[i].second.get();
-        JSValue value = JSFunction::create(vm, unlinkedFunctionExecutable->link(vm, m_source), scope);
-        globalObject->addFunction(callFrame, functionDeclarations[i].first, value);
+    for (size_t i = 0, numberOfFunctions = unlinkedCodeBlock->numberOfFunctionDecls(); i < numberOfFunctions; ++i) {
+        UnlinkedFunctionExecutable* unlinkedFunctionExecutable = unlinkedCodeBlock->functionDecl(i);
+        ASSERT(!unlinkedFunctionExecutable->name().isEmpty());
+        globalObject->addFunction(callFrame, unlinkedFunctionExecutable->name());
         if (vm.typeProfiler() || vm.controlFlowProfiler()) {
             vm.functionHasExecutedCache()->insertUnexecutedRange(sourceID(), 
                 unlinkedFunctionExecutable->typeProfilingStartOffset(), 

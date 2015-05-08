@@ -654,21 +654,14 @@ public:
 
     static void destroy(JSCell*);
 
-    void addFunctionDeclaration(VM& vm, const Identifier& name, UnlinkedFunctionExecutable* functionExecutable)
-    {
-        m_functionDeclarations.append(std::make_pair(name, WriteBarrier<UnlinkedFunctionExecutable>(vm, this, functionExecutable)));
-    }
-
     void addVariableDeclaration(const Identifier& name, bool isConstant)
     {
         m_varDeclarations.append(std::make_pair(name, isConstant));
     }
 
     typedef Vector<std::pair<Identifier, bool>> VariableDeclations;
-    typedef Vector<std::pair<Identifier, WriteBarrier<UnlinkedFunctionExecutable>> > FunctionDeclations;
 
     const VariableDeclations& variableDeclarations() const { return m_varDeclarations; }
-    const FunctionDeclations& functionDeclarations() const { return m_functionDeclarations; }
 
     static void visitChildren(JSCell*, SlotVisitor&);
 
@@ -679,7 +672,6 @@ private:
     }
 
     VariableDeclations m_varDeclarations;
-    FunctionDeclations m_functionDeclarations;
 
 public:
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)

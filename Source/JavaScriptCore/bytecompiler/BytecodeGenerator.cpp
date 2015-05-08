@@ -77,9 +77,17 @@ ParserError BytecodeGenerator::generate()
 
     {
         RefPtr<RegisterID> temp = newTemporary();
-        for (FunctionBodyNode* functionBody : m_functionsToInitialize) {
+        RefPtr<RegisterID> globalScope = scopeRegister(); // FIXME: With lexical scoping, this won't always be the global object: https://bugs.webkit.org/show_bug.cgi?id=142944 
+        for (auto functionPair : m_functionsToInitialize) {
+            FunctionBodyNode* functionBody = functionPair.first;
+            FunctionVariableType functionType = functionPair.second;
             emitNewFunction(temp.get(), functionBody);
-            initializeVariable(variable(functionBody->ident()), temp.get());
+            if (functionType == NormalFunctionVariable)
+                initializeVariable(variable(functionBody->ident()) , temp.get());
+            else if (functionType == GlobalFunctionVariable)
+                emitPutToScope(globalScope.get(), Variable(functionBody->ident()), temp.get(), ThrowIfNotFound);
+            else
+                RELEASE_ASSERT_NOT_REACHED();
         }
     }
     
@@ -163,8 +171,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
 
     for (size_t i = 0; i < functionStack.size(); ++i) {
         FunctionBodyNode* function = functionStack[i];
-        UnlinkedFunctionExecutable* unlinkedFunction = makeFunction(function);
-        codeBlock->addFunctionDeclaration(*m_vm, function->ident(), unlinkedFunction);
+        m_functionsToInitialize.append(std::make_pair(function, GlobalFunctionVariable));
     }
 
     for (size_t i = 0; i < varStack.size(); ++i)
@@ -384,7 +391,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     for (FunctionBodyNode* function : functionNode->functionStack()) {
         const Identifier& ident = function->ident();
         createVariable(ident, varKind(ident.impl()), IsVariable);
-        m_functionsToInitialize.append(function);
+        m_functionsToInitialize.append(std::make_pair(function, NormalFunctionVariable));
     }
     for (auto& entry : functionNode->varStack()) {
         ConstantMode constantMode = modeForIsConstant(entry.second & DeclarationStacks::IsConstant);

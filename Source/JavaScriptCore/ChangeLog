@@ -1,3 +1,31 @@
+2015-05-07  Saam Barati  <saambarati1@gmail.com>
+
+        Global functions should be initialized as JSFunctions in byte code
+        https://bugs.webkit.org/show_bug.cgi?id=144178
+
+        Reviewed by Geoffrey Garen.
+
+        This patch makes the initialization of global functions more explicit by
+        moving initialization into bytecode. It also prepares JSC for having ES6
+        style lexical scoping because initializing global functions in bytecode
+        easily allows global functions to be initialized with the proper scope that
+        will have access to global lexical variables. Global lexical variables
+        should be visible to global functions but don't live on the global object.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedProgramCodeBlock::visitChildren):
+        * bytecode/UnlinkedCodeBlock.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * bytecompiler/BytecodeGenerator.h:
+        * runtime/Executable.cpp:
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::addGlobalVar):
+        (JSC::JSGlobalObject::addFunction):
+        * runtime/JSGlobalObject.h:
+
 2015-05-07  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix the x86 32bits build
