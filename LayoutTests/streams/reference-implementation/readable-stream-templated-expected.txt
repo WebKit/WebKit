@@ -28,7 +28,7 @@ FAIL getReader() should return a reader that acts errored read is not implemente
 PASS Running templatedRSErroredSyncOnly with ReadableStream (errored via call in start) 
 FAIL cancel() should return a distinct rejected promise each time cancel is not implemented
 FAIL reader cancel() should return a distinct rejected promise each time cancel is not implemented
-FAIL should be able to acquire multiple readers, since they are all auto-released ReadableStream is locked
+PASS should be able to acquire multiple readers, since they are all auto-released 
 PASS Running templatedRSErrored with ReadableStream (errored via returning a rejected promise in start) 
 FAIL getReader() should return a reader that acts errored read is not implemented
 PASS Running templatedRSErroredReader with ReadableStream (errored via returning a rejected promise in start) reader 

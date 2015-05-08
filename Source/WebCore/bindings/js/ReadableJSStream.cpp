@@ -141,7 +141,10 @@ Ref<ReadableJSStream> ReadableJSStream::create(ExecState& exec, ScriptExecutionC
 
 Ref<ReadableStreamReader> ReadableJSStream::createReader()
 {
-    return Reader::create(*this);
+    Ref<Reader> reader = Reader::create(*this);
+    if (m_error)
+        reader->storeError(*jsSource().globalObject()->globalExec(), m_error.get());
+    return static_reference_cast<ReadableStreamReader>(reader);
 }
 
 ReadableJSStream::ReadableJSStream(ScriptExecutionContext& scriptExecutionContext, Ref<ReadableJSStream::Source>&& source)
@@ -161,6 +164,19 @@ JSValue ReadableJSStream::jsController(ExecState& exec, JSDOMGlobalObject* globa
     return toJS(&exec, globalObject, m_controller.get());
 }
 
+void ReadableJSStream::storeError(JSC::ExecState& exec)
+{
+    if (m_error)
+        return;
+    JSValue error = exec.argumentCount() ? exec.argument(0) : createError(&exec, ASCIILiteral("Error function called."));
+    m_error.set(exec.vm(), error);
+
+    if (auto reader = static_cast<Reader*>(this->reader()))
+        reader->storeError(exec, error);
+
+    changeStateToErrored();
+}
+
 Ref<ReadableJSStream::Reader> ReadableJSStream::Reader::create(ReadableJSStream& stream)
 {
     return adoptRef(*new Reader(stream));
@@ -169,6 +185,11 @@ Ref<ReadableJSStream::Reader> ReadableJSStream::Reader::create(ReadableJSStream&
 ReadableJSStream::Reader::Reader(ReadableJSStream& readableStream)
     : ReadableStreamReader(readableStream)
 {
+}
+
+void ReadableJSStream::Reader::storeError(JSC::ExecState& exec, JSValue error)
+{
+    m_error.set(exec.vm(), error);
 }
 
 } // namespace WebCore

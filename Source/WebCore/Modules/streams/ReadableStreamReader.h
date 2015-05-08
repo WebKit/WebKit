@@ -36,6 +36,7 @@
 #include "ReadableStream.h"
 #include "ScriptWrappable.h"
 #include <functional>
+#include <runtime/JSCJSValue.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -61,6 +62,9 @@ public:
     void closed(ClosedSuccessCallback, ClosedErrorCallback);
 
     void changeStateToClosed();
+    void changeStateToErrored();
+
+    virtual JSC::JSValue error() = 0;
 
 protected:
     ReadableStreamReader(ReadableStream&);
@@ -77,6 +81,7 @@ private:
     State m_state { State::Readable };
 
     ClosedSuccessCallback m_closedSuccessCallback;
+    ClosedErrorCallback m_closedErrorCallback;
 };
 
 }

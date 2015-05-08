@@ -75,8 +75,7 @@ JSValue JSReadableStreamReader::closed(ExecState* exec) const
         wrapper.resolve(jsUndefined());
     };
     auto failureCallback = [this, wrapper]() mutable {
-        // FIXME: return stored error.
-        wrapper.reject(&impl());
+        wrapper.reject(impl().error());
     };
 
     impl().closed(WTF::move(successCallback), WTF::move(failureCallback));

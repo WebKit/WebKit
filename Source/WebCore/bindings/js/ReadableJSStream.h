@@ -51,8 +51,13 @@ private:
     class Reader: public ReadableStreamReader {
     public:
         static Ref<Reader> create(ReadableJSStream&);
+        void storeError(JSC::ExecState&, JSC::JSValue);
+        JSC::JSValue error() { return m_error.get(); }
+
     private:
         explicit Reader(ReadableJSStream&);
+
+        JSC::Strong<JSC::Unknown> m_error;
     };
 
     class Source: public ReadableStreamSource {
@@ -75,10 +80,14 @@ public:
     ReadableJSStream::Source& jsSource();
     JSC::JSValue jsController(JSC::ExecState&, JSDOMGlobalObject*);
 
+    void storeError(JSC::ExecState&);
+    JSC::JSValue error() { return m_error.get(); }
+
 private:
     ReadableJSStream(ScriptExecutionContext&, Ref<ReadableJSStream::Source>&&);
 
     std::unique_ptr<ReadableStreamController> m_controller;
+    JSC::Strong<JSC::Unknown> m_error;
 };
 
 void setInternalSlotToObject(JSC::ExecState*, JSC::JSValue, JSC::PrivateName&, JSC::JSValue);

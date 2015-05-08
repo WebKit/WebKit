@@ -21,7 +21,7 @@ PASS Underlying source: calling close twice on an empty stream should throw the 
 FAIL Underlying source: calling close twice on a non-empty stream should throw the second time read is not implemented
 FAIL Underlying source: calling close on an empty canceled stream should not throw cancel is not implemented
 FAIL Underlying source: calling close on a non-empty canceled stream should not throw cancel is not implemented
-TIMEOUT Underlying source: calling close after error should throw Test timed out
-TIMEOUT Underlying source: calling error twice should throw the second time Test timed out
+PASS Underlying source: calling close after error should throw 
+PASS Underlying source: calling error twice should throw the second time 
 PASS Underlying source: calling error after close should throw 
 

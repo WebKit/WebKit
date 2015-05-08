@@ -69,6 +69,7 @@ public:
 
     void start();
     void changeStateToClosed();
+    void changeStateToErrored();
 
     ReadableStreamSource& source() { return m_source.get(); }
 

@@ -68,6 +68,16 @@ void ReadableStream::changeStateToClosed()
     ASSERT(!m_reader);
 }
 
+void ReadableStream::changeStateToErrored()
+{
+    if (m_state != State::Readable)
+        return;
+    m_state = State::Errored;
+    if (m_reader)
+        m_reader->changeStateToErrored();
+    ASSERT(!m_reader);
+}
+
 void ReadableStream::start()
 {
     notImplemented();

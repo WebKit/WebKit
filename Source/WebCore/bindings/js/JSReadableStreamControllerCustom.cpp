@@ -62,7 +62,7 @@ JSValue JSReadableStreamController::error(ExecState* exec)
     ReadableJSStream& stream = impl().stream();
     if (stream.internalState() != ReadableStream::State::Readable)
         return exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Calling error on a stream which is not readable")));
-    notImplemented();
+    stream.storeError(*exec);
     return jsUndefined();
 }
 

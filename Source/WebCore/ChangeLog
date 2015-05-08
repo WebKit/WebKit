@@ -1,3 +1,40 @@
+2015-05-08  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet <youenn.fablet@crf.canon.fr>
+
+        [Streams API] ReadableStream constructor start function should be able to error the stream
+        https://bugs.webkit.org/show_bug.cgi?id=141162
+
+        Reviewed by Darin Adler.
+
+        This patch implements the functionality of the ReadableStreamController error function.
+        It basically changes the state of the stream to errored, resolves the ready promise and rejects the closed promise.
+        Adding support to reject promise with any JSValue.
+
+        Support for storing the error is added to both reader and stream.
+
+        Test: streams/readable-stream-controller-error.html and rebased tests
+
+        * Modules/streams/ReadableStream.cpp:
+        (WebCore::ReadableStream::changeStateToErrored):
+        * Modules/streams/ReadableStream.h:
+        * Modules/streams/ReadableStreamReader.cpp:
+        (WebCore::ReadableStreamReader::initialize):
+        (WebCore::ReadableStreamReader::closed):
+        (WebCore::ReadableStreamReader::changeStateToClosed):
+        (WebCore::ReadableStreamReader::changeStateToErrored):
+        * Modules/streams/ReadableStreamReader.h:
+        * bindings/js/JSDOMPromise.h:
+        (WebCore::DeferredWrapper::reject):
+        * bindings/js/JSReadableStreamControllerCustom.cpp:
+        (WebCore::JSReadableStreamController::error):
+        * bindings/js/JSReadableStreamReaderCustom.cpp:
+        (WebCore::JSReadableStreamReader::closed):
+        * bindings/js/ReadableJSStream.cpp:
+        (WebCore::ReadableJSStream::createReader):
+        (WebCore::ReadableJSStream::storeError):
+        (WebCore::ReadableJSStream::Reader::storeError):
+        (WebCore::ReadableJSStream::jsController): Deleted.
+        * bindings/js/ReadableJSStream.h:
+
 2015-05-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r183985.
