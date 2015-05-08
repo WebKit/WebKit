@@ -254,6 +254,13 @@ webkit.org/b/127473 editing/selection/context-menu-text-selection.html [ Skip ]
 webkit.org/b/127473 editing/selection/context-menu-text-selection-lookup.html [ Skip ]
 webkit.org/b/143380 fast/events/context-nodrag.html [ Skip ]
 
+# Flaky scroll-snap tests
+webkit.org/b/144811 platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-iframe.html [ Pass Timeout ]
+webkit.org/b/144811 platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-borders.html [ Pass Timeout ]
+webkit.org/b/144811 platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-overflow.html [ Pass Timeout ]
+webkit.org/b/144811 platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-padding.html [ Pass Timeout ]
+webkit.org/b/144811 platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-rotated.html [ Pass Timeout ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 

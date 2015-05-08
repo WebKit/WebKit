@@ -1,3 +1,10 @@
+2015-05-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2] Scroll-snap tests timeout intermittently for overflow scroll cases
+        https://bugs.webkit.org/show_bug.cgi?id=144811
+
+        * platform/mac-wk2/TestExpectations: Mark tests as flaky.
+
 2015-05-08  Chris Dumez  <cdumez@apple.com>
 
         Throttle RequestAnimationFrame in subframes that are outside the viewport
