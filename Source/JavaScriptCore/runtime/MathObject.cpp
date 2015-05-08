@@ -268,9 +268,7 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncRandom(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncRound(ExecState* exec)
 {
-    double arg = exec->argument(0).toNumber(exec);
-    double integer = ceil(arg);
-    return JSValue::encode(jsNumber(integer - (integer - arg > 0.5)));
+    return JSValue::encode(jsNumber(jsRound(exec->argument(0).toNumber(exec))));
 }
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncSign(ExecState* exec)

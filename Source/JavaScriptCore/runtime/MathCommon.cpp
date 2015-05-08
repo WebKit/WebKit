@@ -420,4 +420,12 @@ double JIT_OPERATION operationMathPow(double x, double y)
     return mathPowInternal(x, y);
 }
 
+extern "C" {
+double jsRound(double value)
+{
+    double integer = ceil(value);
+    return integer - (integer - value > 0.5);
+}
+}
+
 } // namespace JSC

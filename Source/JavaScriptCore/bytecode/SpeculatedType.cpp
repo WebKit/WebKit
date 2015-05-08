@@ -507,7 +507,7 @@ SpeculatedType typeOfDoubleAbs(SpeculatedType value)
     return typeOfDoubleNegation(value);
 }
 
-SpeculatedType typeOfDoubleFRound(SpeculatedType value)
+SpeculatedType typeOfDoubleRounding(SpeculatedType value)
 {
     // We might lose bits, which leads to a NaN being purified.
     if (value & SpecDoubleImpureNaN)

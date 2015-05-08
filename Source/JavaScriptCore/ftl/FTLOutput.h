@@ -139,6 +139,10 @@ public:
     
     LValue insertElement(LValue vector, LValue element, LValue index) { return buildInsertElement(m_builder, vector, element, index); }
 
+    LValue ceil64(LValue operand)
+    {
+        return call(ceil64Intrinsic(), operand);
+    }
     LValue ctlz32(LValue xOperand, LValue yOperand)
     {
         return call(ctlz32Intrinsic(), xOperand, yOperand);

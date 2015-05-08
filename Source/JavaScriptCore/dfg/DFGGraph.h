@@ -314,6 +314,12 @@ public:
             && !hasExitSite(negate, Int52Overflow)
             && negate->canSpeculateInt52(pass);
     }
+
+    bool roundShouldSpeculateInt32(Node* arithRound, PredictionPass pass)
+    {
+        ASSERT(arithRound->op() == ArithRound);
+        return arithRound->canSpeculateInt32(pass) && !hasExitSite(arithRound->origin.semantic, Overflow) && !hasExitSite(arithRound->origin.semantic, NegativeZero);
+    }
     
     static const char *opName(NodeType);
     

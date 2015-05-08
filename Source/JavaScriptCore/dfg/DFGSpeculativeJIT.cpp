@@ -3544,6 +3544,31 @@ void SpeculativeJIT::compileArithMod(Node* node)
     }
 }
 
+void SpeculativeJIT::compileArithRound(Node* node)
+{
+    ASSERT(node->child1().useKind() == DoubleRepUse);
+
+    SpeculateDoubleOperand value(this, node->child1());
+    FPRReg valueFPR = value.fpr();
+    flushRegisters();
+    FPRResult roundedResultAsDouble(this);
+    FPRReg resultFPR = roundedResultAsDouble.fpr();
+    callOperation(jsRound, resultFPR, valueFPR);
+
+    if (producesInteger(node->arithRoundingMode())) {
+        GPRTemporary roundedResultAsInt32(this);
+        FPRTemporary scratch(this);
+        FPRReg scratchFPR = scratch.fpr();
+        GPRReg resultGPR = roundedResultAsInt32.gpr();
+        JITCompiler::JumpList failureCases;
+        m_jit.branchConvertDoubleToInt32(resultFPR, resultGPR, failureCases, scratchFPR, shouldCheckNegativeZero(node->arithRoundingMode()));
+        speculationCheck(Overflow, JSValueRegs(), node, failureCases);
+
+        int32Result(resultGPR, node);
+    } else
+        doubleResult(resultFPR, node);
+}
+
 void SpeculativeJIT::compileArithSqrt(Node* node)
 {
     SpeculateDoubleOperand op1(this, node->child1());

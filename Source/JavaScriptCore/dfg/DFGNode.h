@@ -872,7 +872,7 @@ struct Node {
     NodeFlags arithNodeFlags()
     {
         NodeFlags result = m_flags & NodeArithFlagsMask;
-        if (op() == ArithMul || op() == ArithDiv || op() == ArithMod || op() == ArithNegate || op() == ArithPow || op() == DoubleAsInt32)
+        if (op() == ArithMul || op() == ArithDiv || op() == ArithMod || op() == ArithNegate || op() == ArithPow || op() == ArithRound || op() == DoubleAsInt32)
             return result;
         return result & ~NodeBytecodeNeedsNegZero;
     }
@@ -1242,6 +1242,7 @@ struct Node {
     bool hasHeapPrediction()
     {
         switch (op()) {
+        case ArithRound:
         case GetDirectPname:
         case GetById:
         case GetByIdFlush:
@@ -1562,6 +1563,23 @@ struct Node {
     void setArithMode(Arith::Mode mode)
     {
         m_opInfo = mode;
+    }
+
+    bool hasArithRoundingMode()
+    {
+        return op() == ArithRound;
+    }
+
+    Arith::RoundingMode arithRoundingMode()
+    {
+        ASSERT(hasArithRoundingMode());
+        return static_cast<Arith::RoundingMode>(m_opInfo);
+    }
+
+    void setArithRoundingMode(Arith::RoundingMode mode)
+    {
+        ASSERT(hasArithRoundingMode());
+        m_opInfo = static_cast<uintptr_t>(mode);
     }
     
     bool hasVirtualRegister()

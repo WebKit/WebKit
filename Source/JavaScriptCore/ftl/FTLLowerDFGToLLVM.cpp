@@ -443,6 +443,9 @@ private:
         case DoubleRep:
             compileDoubleRep();
             break;
+        case DoubleAsInt32:
+            compileDoubleAsInt32();
+            break;
         case ValueRep:
             compileValueRep();
             break;
@@ -504,6 +507,9 @@ private:
             break;
         case ArithPow:
             compileArithPow();
+            break;
+        case ArithRound:
+            compileArithRound();
             break;
         case ArithSqrt:
             compileArithSqrt();
@@ -970,7 +976,13 @@ private:
             DFG_CRASH(m_graph, m_node, "Bad use kind");
         }
     }
-    
+
+    void compileDoubleAsInt32()
+    {
+        LValue integerValue = convertDoubleToInt32(lowDouble(m_node->child1()), shouldCheckNegativeZero(m_node->arithMode()));
+        setInt32(integerValue);
+    }
+
     void compileValueRep()
     {
         switch (m_node->child1().useKind()) {
@@ -1759,6 +1771,34 @@ private:
             m_out.appendTo(continuation, lastNext);
             setDouble(m_out.phi(m_out.doubleType, powDoubleIntResult, powResult, pureNan));
         }
+    }
+
+    void compileArithRound()
+    {
+        LBasicBlock realPartIsMoreThanHalf = FTL_NEW_BLOCK(m_out, ("ArithRound should round down"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ArithRound continuation"));
+
+        LValue value = lowDouble(m_node->child1());
+        LValue integerValue = m_out.ceil64(value);
+        ValueFromBlock integerValueResult = m_out.anchor(integerValue);
+
+        LValue realPart = m_out.doubleSub(integerValue, value);
+
+        m_out.branch(m_out.doubleGreaterThanOrUnordered(realPart, m_out.constDouble(0.5)), unsure(realPartIsMoreThanHalf), unsure(continuation));
+
+        LBasicBlock lastNext = m_out.appendTo(realPartIsMoreThanHalf, continuation);
+        LValue integerValueRoundedDown = m_out.doubleSub(integerValue, m_out.constDouble(1));
+        ValueFromBlock integerValueRoundedDownResult = m_out.anchor(integerValueRoundedDown);
+        m_out.jump(continuation);
+        m_out.appendTo(continuation, lastNext);
+
+        LValue result = m_out.phi(m_out.doubleType, integerValueResult, integerValueRoundedDownResult);
+
+        if (producesInteger(m_node->arithRoundingMode())) {
+            LValue integerValue = convertDoubleToInt32(result, shouldCheckNegativeZero(m_node->arithRoundingMode()));
+            setInt32(integerValue);
+        } else
+            setDouble(result);
     }
 
     void compileArithSqrt() { setDouble(m_out.doubleSqrt(lowDouble(m_node->child1()))); }
@@ -7235,7 +7275,31 @@ private:
         
         return possibleResult;
     }
-    
+
+    LValue convertDoubleToInt32(LValue value, bool shouldCheckNegativeZero)
+    {
+        LValue integerValue = m_out.fpToInt32(value);
+        LValue integerValueConvertedToDouble = m_out.intToDouble(integerValue);
+        LValue valueNotConvertibleToInteger = m_out.doubleNotEqualOrUnordered(value, integerValueConvertedToDouble);
+        speculate(Overflow, FormattedValue(ValueFormatDouble, value), m_node, valueNotConvertibleToInteger);
+
+        if (shouldCheckNegativeZero) {
+            LBasicBlock valueIsZero = FTL_NEW_BLOCK(m_out, ("ConvertDoubleToInt32 on zero"));
+            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ConvertDoubleToInt32 continuation"));
+            m_out.branch(m_out.isZero32(integerValue), unsure(valueIsZero), unsure(continuation));
+
+            LBasicBlock lastNext = m_out.appendTo(valueIsZero, continuation);
+
+            LValue doubleBitcastToInt64 = m_out.bitCast(value, m_out.int64);
+            LValue signBitSet = m_out.lessThan(doubleBitcastToInt64, m_out.constInt64(0));
+
+            speculate(NegativeZero, FormattedValue(ValueFormatDouble, value), m_node, signBitSet);
+            m_out.jump(continuation);
+            m_out.appendTo(continuation, lastNext);
+        }
+        return integerValue;
+    }
+
     LValue isNumber(LValue jsValue, SpeculatedType type = SpecFullTop)
     {
         if (LValue proven = isProvenValue(type, SpecFullNumber))

@@ -253,6 +253,7 @@ private:
         OP2_CVTSS2SD_VsdWsd = 0x5A,
         OP2_SUBSD_VsdWsd    = 0x5C,
         OP2_DIVSD_VsdWsd    = 0x5E,
+        OP2_MOVMSKPD_VdEd   = 0x50,
         OP2_SQRTSD_VsdWsd   = 0x51,
         OP2_ANDNPD_VpdWpd   = 0x55,
         OP2_XORPD_VpdWpd    = 0x57,
@@ -1802,6 +1803,12 @@ public:
     {
         m_formatter.prefix(PRE_SSE_66);
         m_formatter.twoByteOp(OP2_MOVD_VdEd, (RegisterID)dst, src);
+    }
+
+    void movmskpd_rr(XMMRegisterID src, RegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp64(OP2_MOVMSKPD_VdEd, dst, (RegisterID)src);
     }
 
 #if CPU(X86_64)

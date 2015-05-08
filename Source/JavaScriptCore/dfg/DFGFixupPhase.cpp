@@ -322,6 +322,28 @@ private:
             fixDoubleOrBooleanEdge(node->child2());
             break;
         }
+
+        case ArithRound: {
+            if (node->child1()->shouldSpeculateInt32OrBooleanForArithmetic() && node->canSpeculateInt32(FixupPass)) {
+                fixIntOrBooleanEdge(node->child1());
+                insertCheck<Int32Use>(m_indexInBlock, node->child1().node());
+                node->convertToIdentity();
+                break;
+            }
+            fixDoubleOrBooleanEdge(node->child1());
+
+            if (isInt32OrBooleanSpeculation(node->getHeapPrediction()) && m_graph.roundShouldSpeculateInt32(node, FixupPass)) {
+                node->setResult(NodeResultInt32);
+                if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+                    node->setArithRoundingMode(Arith::RoundingMode::Int32);
+                else
+                    node->setArithRoundingMode(Arith::RoundingMode::Int32WithNegativeZeroCheck);
+            } else {
+                node->setResult(NodeResultDouble);
+                node->setArithRoundingMode(Arith::RoundingMode::Double);
+            }
+            break;
+        }
             
         case ArithSqrt:
         case ArithFRound:

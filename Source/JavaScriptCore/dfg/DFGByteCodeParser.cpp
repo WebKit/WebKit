@@ -2044,7 +2044,21 @@ bool ByteCodeParser::handleIntrinsic(int resultOperand, Intrinsic intrinsic, int
         
         return true;
     }
-
+    case RoundIntrinsic: {
+        if (argumentCountIncludingThis == 1) {
+            insertChecks();
+            set(VirtualRegister(resultOperand), addToGraph(JSConstant, OpInfo(m_constantNaN)));
+            return true;
+        }
+        if (argumentCountIncludingThis == 2) {
+            insertChecks();
+            Node* operand = get(virtualRegisterForArgument(1, registerOffset));
+            Node* roundNode = addToGraph(ArithRound, OpInfo(0), OpInfo(prediction), operand);
+            set(VirtualRegister(resultOperand), roundNode);
+            return true;
+        }
+        return false;
+    }
     case IMulIntrinsic: {
         if (argumentCountIncludingThis != 3)
             return false;

@@ -761,6 +761,36 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).setType(typeOfDoublePow(forNode(node->child1()).m_type, forNode(node->child2()).m_type));
         break;
     }
+
+    case ArithRound: {
+        JSValue operand = forNode(node->child1()).value();
+        if (operand && operand.isNumber()) {
+            double roundedValue = jsRound(operand.asNumber());
+
+            if (producesInteger(node->arithRoundingMode())) {
+                int32_t roundedValueAsInt32 = static_cast<int32_t>(roundedValue);
+                if (roundedValueAsInt32 == roundedValue) {
+                    if (shouldCheckNegativeZero(node->arithRoundingMode())) {
+                        if (roundedValueAsInt32 || !std::signbit(roundedValue)) {
+                            setConstant(node, jsNumber(roundedValueAsInt32));
+                            break;
+                        }
+                    } else {
+                        setConstant(node, jsNumber(roundedValueAsInt32));
+                        break;
+                    }
+                }
+            } else {
+                setConstant(node, jsDoubleNumber(roundedValue));
+                break;
+            }
+        }
+        if (producesInteger(node->arithRoundingMode()))
+            forNode(node).setType(SpecInt32);
+        else
+            forNode(node).setType(typeOfDoubleRounding(forNode(node->child1()).m_type));
+        break;
+    }
             
     case ArithSqrt: {
         JSValue child = forNode(node->child1()).value();
@@ -778,7 +808,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setConstant(node, jsDoubleNumber(static_cast<float>(child.asNumber())));
             break;
         }
-        forNode(node).setType(typeOfDoubleFRound(forNode(node->child1()).m_type));
+        forNode(node).setType(typeOfDoubleRounding(forNode(node->child1()).m_type));
         break;
     }
         

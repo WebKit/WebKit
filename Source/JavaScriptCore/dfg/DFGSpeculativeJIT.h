@@ -2199,6 +2199,7 @@ public:
     void compileArithDiv(Node*);
     void compileArithMod(Node*);
     void compileArithPow(Node*);
+    void compileArithRound(Node*);
     void compileArithSqrt(Node*);
     void compileArithLog(Node*);
     void compileConstantStoragePointer(Node*);

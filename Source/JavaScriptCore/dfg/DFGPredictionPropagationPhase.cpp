@@ -347,7 +347,15 @@ private:
             changed |= setPrediction(SpecBytecodeDouble);
             break;
         }
-            
+
+        case ArithRound: {
+            if (isInt32OrBooleanSpeculation(node->getHeapPrediction()) && m_graph.roundShouldSpeculateInt32(node, m_pass))
+                changed |= setPrediction(SpecInt32);
+            else
+                changed |= setPrediction(SpecBytecodeDouble);
+            break;
+        }
+
         case ArithAbs: {
             SpeculatedType child = node->child1()->prediction();
             if (isInt32OrBooleanSpeculationForArithmetic(child)

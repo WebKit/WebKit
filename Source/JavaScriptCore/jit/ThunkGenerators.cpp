@@ -32,6 +32,7 @@
 #include "JSArray.h"
 #include "JSArrayIterator.h"
 #include "JSStack.h"
+#include "MathCommon.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "JSCInlines.h"
 #include "SpecializedThunkJIT.h"
@@ -683,16 +684,6 @@ MacroAssemblerCodeRef sqrtThunkGenerator(VM* vm)
 #define UnaryDoubleOpWrapper(function) function##Wrapper
 enum MathThunkCallingConvention { };
 typedef MathThunkCallingConvention(*MathThunk)(MathThunkCallingConvention);
-extern "C" {
-
-double jsRound(double) REFERENCED_FROM_ASM;
-double jsRound(double d)
-{
-    double integer = ceil(d);
-    return integer - (integer - d > 0.5);
-}
-
-}
 
 #if CPU(X86_64) && COMPILER(GCC) && (OS(DARWIN) || OS(LINUX))
 

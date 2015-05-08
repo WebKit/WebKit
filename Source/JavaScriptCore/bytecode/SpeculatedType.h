@@ -422,7 +422,7 @@ SpeculatedType typeOfDoubleQuotient(SpeculatedType, SpeculatedType);
 SpeculatedType typeOfDoubleMinMax(SpeculatedType, SpeculatedType);
 SpeculatedType typeOfDoubleNegation(SpeculatedType);
 SpeculatedType typeOfDoubleAbs(SpeculatedType);
-SpeculatedType typeOfDoubleFRound(SpeculatedType);
+SpeculatedType typeOfDoubleRounding(SpeculatedType);
 SpeculatedType typeOfDoublePow(SpeculatedType, SpeculatedType);
 
 // This conservatively models the behavior of arbitrary double operations.

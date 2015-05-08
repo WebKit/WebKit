@@ -1,3 +1,95 @@
+2015-05-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Add basic DFG/FTL support for Math.round
+        https://bugs.webkit.org/show_bug.cgi?id=144725
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds two optimizations targeting Math.round():
+        -Add a DFGNode ArithRound corresponding to the intrinsic RoundIntrinsic.
+        -Change the MacroAssembler to be stricter on how we fail to convert a double
+         to ingeter. Previously, any number valued zero would fail, now we only
+         fail for -0.
+
+        Since ArithRound speculate it produces int32, the MacroAssembler assembler
+        part became necessary because zero is a pretty common output of Math.round()
+        and we would OSR exit a lot (and eventually recompile for doubles).
+
+        The implementation itself of the inline Math.round() is exactly the same
+        as the C function that exists for Math.round(). We can very likely do better
+        but it is a good start known to be valid and inlining alone alread provides
+        significant speedups.
+
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::movmskpd_rr):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::branchConvertDoubleToInt32):
+        When we have a zero, get the sign bit out of the double and check if is one.
+
+        I'll look into doing the same improvement for ARM.
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::typeOfDoubleRounding):
+        (JSC::typeOfDoubleFRound): Deleted.
+        * bytecode/SpeculatedType.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::roundShouldSpeculateInt32):
+        (JSC::DFG::Graph::negateShouldSpeculateMachineInt): Deleted.
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::arithNodeFlags):
+        (JSC::DFG::Node::hasHeapPrediction):
+        (JSC::DFG::Node::hasArithMode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithRound):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::convertDoubleToInt32):
+        (JSC::FTL::LowerDFGToLLVM::compileDoubleAsInt32):
+        (JSC::FTL::LowerDFGToLLVM::compileArithRound):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::ceil64):
+        * jit/ThunkGenerators.cpp:
+        * runtime/MathCommon.cpp:
+        * runtime/MathCommon.h:
+        * runtime/MathObject.cpp:
+        (JSC::mathProtoFuncRound):
+        * tests/stress/math-round-basics.js: Added.
+        (mathRoundOnIntegers):
+        (mathRoundOnDoubles):
+        (mathRoundOnBooleans):
+        (uselessMathRound):
+        (mathRoundWithOverflow):
+        (mathRoundConsumedAsDouble):
+        (mathRoundDoesNotCareAboutMinusZero):
+        (mathRoundNoArguments):
+        (mathRoundTooManyArguments):
+        (testMathRoundOnConstants):
+        (mathRoundStructTransition):
+        (Math.round):
+
 2015-05-07  Saam Barati  <saambarati1@gmail.com>
 
         exceptionFuzz tests should explicitly initialize the exceptionFuzz boolean in JavaScript code through a function in jsc.cpp

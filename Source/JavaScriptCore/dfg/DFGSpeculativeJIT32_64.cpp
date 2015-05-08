@@ -2170,6 +2170,10 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case ArithRound:
+        compileArithRound(node);
+        break;
+
     case ArithSin: {
         SpeculateDoubleOperand op1(this, node->child1());
         FPRReg op1FPR = op1.fpr();

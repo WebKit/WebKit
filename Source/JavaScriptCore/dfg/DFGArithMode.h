@@ -40,6 +40,14 @@ enum Mode {
     CheckOverflowAndNegativeZero, // Check for both overflow and negative zero.
     DoOverflow // Up-convert to the smallest type that soundly represents all possible results after input type speculation.
 };
+
+// Define the type of operation the rounding operation will perform.
+enum class RoundingMode {
+    Int32, // The round operation produces a integer and -0 is considered as 0.
+    Int32WithNegativeZeroCheck, // The round operation produces a integer and checks for -0.
+    Double // The round operation produce a double. The result can be -0, NaN or (+/-)Infinity.
+};
+
 } // namespace Arith
 
 inline bool doesOverflow(Arith::Mode mode)
@@ -120,6 +128,16 @@ inline bool subsumes(Arith::Mode earlier, Arith::Mode later)
     default:
         return earlier == later;
     }
+}
+
+inline bool producesInteger(Arith::RoundingMode mode)
+{
+    return mode == Arith::RoundingMode::Int32WithNegativeZeroCheck || mode == Arith::RoundingMode::Int32;
+}
+
+inline bool shouldCheckNegativeZero(Arith::RoundingMode mode)
+{
+    return mode == Arith::RoundingMode::Int32WithNegativeZeroCheck;
 }
 
 } } // namespace JSC::DFG

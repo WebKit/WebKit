@@ -921,8 +921,17 @@ public:
         m_assembler.cvttsd2si_rr(src, dest);
 
         // If the result is zero, it might have been -0.0, and the double comparison won't catch this!
+#if CPU(X86_64)
+        if (negZeroCheck) {
+            Jump valueIsNonZero = branchTest32(NonZero, dest);
+            m_assembler.movmskpd_rr(src, scratchRegister);
+            failureCases.append(branchTest32(NonZero, scratchRegister, TrustedImm32(1)));
+            valueIsNonZero.link(this);
+        }
+#else
         if (negZeroCheck)
             failureCases.append(branchTest32(Zero, dest));
+#endif
 
         // Convert the integer result back to float & compare to the original value - if not equal or unordered (NaN) then jump.
         convertInt32ToDouble(dest, fpTemp);

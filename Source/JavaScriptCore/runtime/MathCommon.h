@@ -54,6 +54,10 @@ inline int clz32(uint32_t number)
 #endif
 }
 
+extern "C" {
+double JIT_OPERATION jsRound(double value) REFERENCED_FROM_ASM WTF_INTERNAL;
+}
+
 }
 
 #endif // MathCommon_h
