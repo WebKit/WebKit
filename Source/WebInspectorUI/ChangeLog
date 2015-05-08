@@ -1,3 +1,36 @@
+2015-05-08  Tobias Reiss  <tobi+webkit@basecode.de>
+
+        Web Inspector: Styles sidebar editing with incomplete property looks poor in UI
+        https://bugs.webkit.org/show_bug.cgi?id=141692
+
+        Reviewed by Timothy Hatcher.
+
+        Add "css-rule" Formatter that breaks CSS declarations into multiple lines,
+        keeps comments and invalid styles and adds whitespace.
+
+        * Tools/PrettyPrinting/css-rule-tests/*.css: Added.
+        Add test cases.
+
+        * Tools/PrettyPrinting/index.html:
+        Enable Test setup to be able to run "css-rule" Formatter tests.
+
+        * UserInterface/Controllers/Formatter.js:
+        (Formatter.prototype._handleToken):
+        * UserInterface/Controllers/FormatterContentBuilder.js:
+        (FormatterContentBuilder.prototype.removeLastNewline):
+        (FormatterContentBuilder.prototype.removeLastWhitespace):
+        (FormatterContentBuilder.prototype._popFormattedContent):
+        (FormatterContentBuilder.prototype._popNewLine): Deleted.
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._formattedContentFromEditor):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._resetContent.update.set this):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._resetContent.update.get this):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._resetContent.update):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._resetContent):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._resetContent.update.countNewLineCharacters): Deleted.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._resetContent.update.else): Deleted.
+        * UserInterface/Views/CodeMirrorFormatters.js:
+
 2015-05-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Expanding Object with only __proto__ looks poor should have a label

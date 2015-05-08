@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Tobias Reiss <tobi+webkit@basecode.de>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -137,9 +138,23 @@ class FormatterContentBuilder
         console.assert(this.lastTokenWasNewline);
         console.assert(this._formattedContent.lastValue === "\n");
         if (this.lastTokenWasNewline) {
-            this._popNewLine();
+            this._popFormattedContent();
+            this._formattedLineEndings.pop();
             this._startOfLine = false;
             this.lastTokenWasNewline = false;
+            this.lastTokenWasWhitespace = false;
+        }
+    }
+
+    removeLastWhitespace()
+    {
+        console.assert(this.lastTokenWasWhitespace);
+        console.assert(this._formattedContent.lastValue === " ");
+        if (this.lastTokenWasWhitespace) {
+            this._popFormattedContent();
+            // No need to worry about `_startOfLine` and `lastTokenWasNewline`
+            // because `appendSpace` takes care of not adding whitespace
+            // to the beginning of a line.
             this.lastTokenWasWhitespace = false;
         }
     }
@@ -170,11 +185,10 @@ class FormatterContentBuilder
 
     // Private
 
-    _popNewLine()
+    _popFormattedContent()
     {
         var removed = this._formattedContent.pop();
         this._formattedContentLength -= removed.length;
-        this._formattedLineEndings.pop();
     }
 
     _append(str)

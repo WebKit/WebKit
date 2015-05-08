@@ -89,7 +89,7 @@ class Formatter
         if (startOfNewLine)
             this._builder.appendNewline();
 
-        // Whitespace. Collapse to a single space.
+        // Whitespace. Remove all spaces or collapse to a single space.
         if (isWhiteSpace) {
             this._builder.appendSpace();
             return;
@@ -100,6 +100,10 @@ class Formatter
 
         if (mode.modifyStateForTokenPre)
             mode.modifyStateForTokenPre(this._lastToken, this._lastContent, token, state, content, isComment);
+
+        // Should we remove the last whitespace?
+        if (this._builder.lastTokenWasWhitespace && mode.removeLastWhitespace(this._lastToken, this._lastContent, token, state, content, isComment))
+            this._builder.removeLastWhitespace();
 
         // Should we remove the last newline?
         if (this._builder.lastTokenWasNewline && mode.removeLastNewline(this._lastToken, this._lastContent, token, state, content, isComment, firstTokenOnLine))

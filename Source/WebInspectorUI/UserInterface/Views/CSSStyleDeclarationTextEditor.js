@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Tobias Reiss <tobi+webkit@basecode.de>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -776,6 +777,20 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         }
     }
 
+    _formattedContentFromEditor()
+    {
+        var mapping = {original: [0], formatted: [0]};
+        // FIXME: <rdar://problem/10593948> Provide a way to change the tab width in the Web Inspector
+        var indentString = "    ";
+        var builder = new FormatterContentBuilder(mapping, [], [], 0, 0, indentString);
+        var formatter = new Formatter(this._codeMirror, builder);
+        var start = {line: 0, ch: 0};
+        var end = {line: this._codeMirror.lineCount() - 1};
+        formatter.format(start, end);
+
+        return builder.formattedContent.trim();
+    }
+
     _resetContent()
     {
         if (this._commitChangesTimeout) {
@@ -816,114 +831,62 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             // Remember the cursor position/selection.
             var selectionAnchor = this._codeMirror.getCursor("anchor");
             var selectionHead = this._codeMirror.getCursor("head");
+            var isEditorReadOnly = this._codeMirror.getOption("readOnly");
+            var styleText = this._style.text.trim();
+            var findWhitespace = /\s+/g;
 
-            function countNewLineCharacters(text)
-            {
-                var matches = text.match(/\n/g);
-                return matches ? matches.length : 0;
+            // Only format non-empty styles. Keep in mind that styleText is always empty
+            // for "readOnly" Editors. But prepare Checkbox placeholders in any case.
+            // Because that will indent the cursor when the User starts typing.
+            if (!styleText && !isEditorReadOnly) {
+                this._markLinesWithCheckboxPlaceholder();
+                return;
             }
 
-            var styleText = this._style.text;
+            // Set non-optimized, valid and invalid styles in preparation for the Formatter.
+            // Set empty string in case of readonly styles.
+            this._codeMirror.setValue(styleText);
 
-            // Pretty print the content if there are more properties than there are lines.
-            // This could be an option exposed to the user; however, it is almost always
-            // desired in this case.
-
-            if (styleText && this._style.visibleProperties.length <= countNewLineCharacters(styleText.trim()) + 1) {
-                // This style has formatted text content, so use it for a high-fidelity experience.
-
-                var prefixWhitespaceMatch = styleText.match(/^[ \t]*\n/);
-                this._prefixWhitespace = prefixWhitespaceMatch ? prefixWhitespaceMatch[0] : "";
-
-                var suffixWhitespaceMatch = styleText.match(/\n[ \t]*$/);
-                this._suffixWhitespace = suffixWhitespaceMatch ? suffixWhitespaceMatch[0] : "";
-
-                this._codeMirror.setValue(styleText);
-
-                if (this._prefixWhitespace)
-                    this._codeMirror.replaceRange("", {line: 0, ch: 0}, {line: 1, ch: 0});
-
-                if (this._suffixWhitespace) {
-                    var lineCount = this._codeMirror.lineCount();
-                    this._codeMirror.replaceRange("", {line: lineCount - 2}, {line: lineCount - 1});
-                }
-
-                this._linePrefixWhitespace = "";
-
-                var linesToStrip = [];
-
-                // Remember the whitespace so it can be restored on commit.
-                var lineCount = this._codeMirror.lineCount();
-                for (var i = 0; i < lineCount; ++i) {
-                    var lineContent = this._codeMirror.getLine(i);
-                    var prefixWhitespaceMatch = lineContent.match(/^\s+/);
-
-                    // If there is no prefix whitespace (except for empty lines) then the prefix
-                    // whitespace of all other lines will be retained as is. Update markers and return.
-                    if (!prefixWhitespaceMatch) {
-                        if (!lineContent)
-                            continue;
-                        this._linePrefixWhitespace = "";
-                        this._updateTextMarkers(true);
-                        return;
-                    }
-
-                    linesToStrip.push(i);
-
-                    // Only remember the shortest whitespace so we don't loose any of the
-                    // original author's whitespace if their indentation lengths differed.
-                    // Using the shortest also makes the adjustment work in _updateTextMarkers.
-
-                    // FIXME: This messes up if there is a mix of spaces and tabs. A tab
-                    // is treated the same as a space when prefix whitespace is omitted,
-                    // so if the shortest prefixed whitespace is, say, two tab characters,
-                    // lines that begin with four spaces will only have a two space indent.
-                    if (!this._linePrefixWhitespace || prefixWhitespaceMatch[0].length < this._linePrefixWhitespace.length)
-                        this._linePrefixWhitespace = prefixWhitespaceMatch[0];
-                }
-
-                // Strip the whitespace from the beginning of each line.
-                for (var i = 0; i < linesToStrip.length; ++i) {
-                    var lineNumber = linesToStrip[i];
-                    var from = {line: lineNumber, ch: 0};
-                    var to = {line: lineNumber, ch: this._linePrefixWhitespace.length};
-                    this._codeMirror.replaceRange("", from, to);
-                }
-
-                // Update all the text markers.
-                this._updateTextMarkers(true);
-            } else {
-                // This style does not have text content or it is minified, so we want to synthesize the text content.
-
-                this._prefixWhitespace = "";
-                this._suffixWhitespace = "";
-                this._linePrefixWhitespace = "";
-
-                this._codeMirror.setValue("");
-
+            if (isEditorReadOnly) {
                 var lineNumber = 0;
-
-                // Iterate only visible properties if we have original style text. That way we known we only synthesize
-                // what was originaly in the style text.
-                this._iterateOverProperties(styleText ? true : false, function(property) {
-                    // Some property text can have line breaks, so consider that in the ranges below.
-                    var propertyText = property.synthesizedText;
-                    var propertyLineCount = countNewLineCharacters(propertyText);
-
+                this._iterateOverProperties(false, function(property) {
                     var from = {line: lineNumber, ch: 0};
-                    var to = {line: lineNumber + propertyLineCount};
-
-                    this._codeMirror.replaceRange((lineNumber ? "\n" : "") + propertyText, from);
+                    var to = {line: lineNumber};
+                    // Readonly properties are pretty printed by `synthesizedText` and not the Formatter.
+                    this._codeMirror.replaceRange((lineNumber ? "\n" : "") + property.synthesizedText, from);
                     this._createTextMarkerForPropertyIfNeeded(from, to, property);
-
-                    lineNumber += propertyLineCount + 1;
+                    lineNumber++;
                 });
 
-                // Look for colors and make swatches.
-                this._createColorSwatches(true);
+                return;
             }
 
-            this._markLinesWithCheckboxPlaceholder();
+            // Now the Formatter pretty prints the styles.
+            this._codeMirror.setValue(this._formattedContentFromEditor());
+
+            // We need to workaround the fact that...
+            // 1) `this._style.properties` only holds valid CSSProperty instances but not
+            // comments and invalid properties like `color;`.
+            // 2) `_createTextMarkerForPropertyIfNeeded` relies on CSSProperty instances.
+            var cssPropertiesMap = new Map();
+            this._iterateOverProperties(false, function(cssProperty) {
+                cssPropertiesMap.set(cssProperty.text.replace(findWhitespace, ""), cssProperty);
+            });
+
+            // Go through the Editor line by line and create TextMarker when a
+            // CSSProperty instance for that property exists. If not, then don't create a TextMarker.
+            this._codeMirror.eachLine(function(lineHandler) {
+                var lineNumber = lineHandler.lineNo();
+                var lineContentSansWhitespace = lineHandler.text.replace(findWhitespace, "");
+                if (cssPropertiesMap.has(lineContentSansWhitespace)) {
+                    var from = {line: lineNumber, ch: 0};
+                    var to = {line: lineNumber};
+                    this._createTextMarkerForPropertyIfNeeded(from, to, cssPropertiesMap.get(lineContentSansWhitespace));
+                }
+            }.bind(this));
+
+            // Look for colors and make swatches.
+            this._createColorSwatches(true);
 
             // Restore the cursor position/selection.
             this._codeMirror.setSelection(selectionAnchor, selectionHead);
@@ -934,6 +897,8 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
             // Mark the editor as clean (unedited state).
             this._codeMirror.markClean();
+
+            this._markLinesWithCheckboxPlaceholder();
         }
 
         // This needs to be done first and as a separate operation to avoid an exception in CodeMirror.
