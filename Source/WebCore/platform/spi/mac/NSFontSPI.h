@@ -25,7 +25,6 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#import <AppKit/NSFontDescriptor_Private.h>
 #import <AppKit/NSFont_Private.h>
 
 #else
@@ -33,20 +32,6 @@
 @interface NSFont (Private)
 + (NSFont *)findFontLike:(NSFont *)aFont forCharacter:(UInt32)c inLanguage:(id) language;
 + (NSFont *)findFontLike:(NSFont *)aFont forString:(NSString *)string withRange:(NSRange)range inLanguage:(id) language;
-
-+ (NSFont *)systemFontOfSize:(CGFloat)size weight:(CGFloat)weight;
 @end
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-extern const CGFloat NSFontWeightUltraLight;
-extern const CGFloat NSFontWeightThin;
-extern const CGFloat NSFontWeightLight;
-extern const CGFloat NSFontWeightRegular;
-extern const CGFloat NSFontWeightMedium;
-extern const CGFloat NSFontWeightSemibold;
-extern const CGFloat NSFontWeightBold;
-extern const CGFloat NSFontWeightHeavy;
-extern const CGFloat NSFontWeightBlack;
-#endif
 
 #endif

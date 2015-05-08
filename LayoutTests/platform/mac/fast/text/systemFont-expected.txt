@@ -1,8 +1,8 @@
-layer at (0,0) size 785x2198
+layer at (0,0) size 785x2036
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x2198
-  RenderBlock {HTML} at (0,0) size 785x2198
-    RenderBody {BODY} at (8,8) size 769x2182
+layer at (0,0) size 785x2036
+  RenderBlock {HTML} at (0,0) size 785x2036
+    RenderBody {BODY} at (8,8) size 769x2020
       RenderBlock {DIV} at (0,0) size 769x897
         RenderBlock {DIV} at (0,0) size 769x28
           RenderText {#text} at (0,0) size 438x28
@@ -78,35 +78,7 @@ layer at (0,0) size 785x2198
           RenderText {#text} at (0,0) size 756x170
             text run at (0,0) width 756: "This is a test for -apple-"
             text run at (0,85) width 373: "system font"
-      RenderBlock {DIV} at (0,1738) size 769x162
-        RenderBlock {DIV} at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 302x18
-            text run at (0,0) width 302: "This is a font weight test for -apple-system font"
-        RenderBlock {DIV} at (0,18) size 769x18
-          RenderText {#text} at (0,0) size 316x18
-            text run at (0,0) width 316: "This is a font weight test for -apple-system font"
-        RenderBlock {DIV} at (0,36) size 769x18
-          RenderText {#text} at (0,0) size 335x18
-            text run at (0,0) width 335: "This is a font weight test for -apple-system font"
-        RenderBlock {DIV} at (0,54) size 769x18
-          RenderText {#text} at (0,0) size 350x18
-            text run at (0,0) width 350: "This is a font weight test for -apple-system font"
-        RenderBlock {DIV} at (0,72) size 769x18
-          RenderText {#text} at (0,0) size 362x18
-            text run at (0,0) width 362: "This is a font weight test for -apple-system font"
-        RenderBlock {DIV} at (0,90) size 769x18
-          RenderText {#text} at (0,0) size 374x18
-            text run at (0,0) width 374: "This is a font weight test for -apple-system font"
-        RenderBlock {DIV} at (0,108) size 769x18
-          RenderText {#text} at (0,0) size 374x18
-            text run at (0,0) width 374: "This is a font weight test for -apple-system font"
-        RenderBlock {DIV} at (0,126) size 769x18
-          RenderText {#text} at (0,0) size 396x18
-            text run at (0,0) width 396: "This is a font weight test for -apple-system font"
-        RenderBlock {DIV} at (0,144) size 769x18
-          RenderText {#text} at (0,0) size 396x18
-            text run at (0,0) width 396: "This is a font weight test for -apple-system font"
-      RenderBlock {DIV} at (0,1900) size 769x282
+      RenderBlock {DIV} at (0,1738) size 769x282
         RenderBlock {DIV} at (0,0) size 769x56
           RenderText {#text} at (0,0) size 644x56
             text run at (0,0) width 644: "This is a test for -apple-system-monospaced-numbers font -"

@@ -1,3 +1,16 @@
+2015-05-07  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r183895.
+        https://bugs.webkit.org/show_bug.cgi?id=144786
+
+        Many tests became flaky (Requested by ap on #webkit).
+
+        Reverted changeset:
+
+        "Expose more font weights for -apple-system"
+        https://bugs.webkit.org/show_bug.cgi?id=144707
+        http://trac.webkit.org/changeset/183895
+
 2015-05-07  Hyungwook Lee  <hyungwook.lee@navercorp.com>
 
         Add first-letter assert exception in RenderButton::setupInnerStyle().
