@@ -460,6 +460,10 @@ void HTMLMediaElement::registerWithDocument(Document& document)
         document.registerForPageScaleFactorChangedCallbacks(this);
 #endif
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    document.registerForPageCacheSuspensionCallbacks(this);
+#endif
+
     document.addAudioProducer(this);
     addElementToDocumentMap(*this, document);
 }
@@ -488,6 +492,10 @@ void HTMLMediaElement::unregisterWithDocument(Document& document)
         document.unregisterForPageScaleFactorChangedCallbacks(this);
 #endif
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    document.unregisterForPageCacheSuspensionCallbacks(this);
+#endif
+
     document.removeAudioProducer(this);
     removeElementFromDocumentMap(*this, document);
 }
@@ -508,6 +516,18 @@ void HTMLMediaElement::didMoveToNewDocument(Document* oldDocument)
 
     HTMLElement::didMoveToNewDocument(oldDocument);
 }
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+void HTMLMediaElement::documentWillSuspendForPageCache()
+{
+    m_mediaSession->unregisterWithDocument(*this);
+}
+
+void HTMLMediaElement::documentDidResumeFromPageCache()
+{
+    m_mediaSession->registerWithDocument(*this);
+}
+#endif
 
 bool HTMLMediaElement::hasCustomFocusLogic() const
 {

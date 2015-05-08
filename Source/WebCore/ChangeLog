@@ -1,3 +1,19 @@
+2015-05-08  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Playback target clients do not unregister on page reload
+        https://bugs.webkit.org/show_bug.cgi?id=144761
+
+        Reviewed by Brady Eidson.
+
+        * dom/Document.cpp:
+        (WebCore::Document::prepareForDestruction): Unregister all target picker clients.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::registerWithDocument): Register for page cache callback.
+        (WebCore::HTMLMediaElement::unregisterWithDocument): Unregister for page cache callback.
+        (WebCore::HTMLMediaElement::documentWillSuspendForPageCache): New.
+        (WebCore::HTMLMediaElement::documentDidResumeFromPageCache): New.
+
 2015-05-08  Chris Dumez  <cdumez@apple.com>
 
         Throttle RequestAnimationFrame in subframes that are outside the viewport

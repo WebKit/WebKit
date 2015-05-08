@@ -2252,6 +2252,15 @@ void Document::prepareForDestruction()
     if (m_mediaQueryMatcher)
         m_mediaQueryMatcher->documentDestroyed();
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    if (!m_clientToIDMap.isEmpty() && page()) {
+        Vector<WebCore::MediaPlaybackTargetClient*> clients;
+        copyKeysToVector(m_clientToIDMap, clients);
+        for (auto client : clients)
+            removePlaybackTargetPickerClient(*client);
+    }
+#endif
+
     disconnectFromFrame();
 
     m_hasPreparedForDestruction = true;
