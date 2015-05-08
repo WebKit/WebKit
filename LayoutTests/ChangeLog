@@ -1,3 +1,18 @@
+2015-05-08  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r183646.
+
+    2015-04-30  Brady Eidson  <beidson@apple.com>
+
+            Javascript using WebSQL can create their own WebKit info table.
+            <rdar://problem/20688792> and https://bugs.webkit.org/show_bug.cgi?id=144466
+
+            Reviewed by Alex Christensen.
+
+            * storage/websql/alter-to-info-table-expected.txt: Added.
+            * storage/websql/alter-to-info-table.html: Added.
+            * storage/websql/alter-to-info-table.js: Added.
+
 2015-04-29  Andy Estes  <aestes@apple.com>
 
         Merge r183106, r183108, r183135, r183137, r183171, r183437, r183444, r183445, r183464, r183470, r183484, and r183549.
