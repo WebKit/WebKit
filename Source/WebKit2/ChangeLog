@@ -1,3 +1,20 @@
+2015-05-07  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION when pasting text into the WebInspector console
+        https://bugs.webkit.org/show_bug.cgi?id=144774
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix assertion in didChangeSelection() meant to check that calling
+        editorState() does not cause a synchronous layout. The assertion
+        was not correct as it was relying on FrameView::needsLayout() and
+        we would hit it if calling editorState() would schedule a layout.
+        Instead, the new assertion relies on FrameView::layoutCount(),
+        which is more accurate.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didChangeSelection):
+
 2015-05-07  Andreas Kling  <akling@apple.com>
 
         Optimize serialization of quoted JSON strings.
