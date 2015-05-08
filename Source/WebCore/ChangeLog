@@ -1,3 +1,30 @@
+2015-05-07  Yoav Weiss  <yoav@yoav.ws>
+
+        Calculate source-size length as a float
+        https://bugs.webkit.org/show_bug.cgi?id=144766
+
+        Reviewed by Dean Jackson.
+
+        Make sure that the source-size length is calculated as a float,
+        to align with the spec.
+
+        Test: fast/dom/HTMLImageElement/sizes/image-sizes-1x.html
+              fast/dom/HTMLImageElement/sizes/image-sizes-2x.html
+
+        * css/SourceSizeList.cpp:
+        (WebCore::parseSizesAttribute):
+        (WebCore::defaultLength):
+        (WebCore::computeLength):
+        * css/SourceSizeList.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttributes):
+        * html/parser/HTMLSrcsetParser.cpp:
+        (WebCore::pickBestImageCandidate):
+        (WebCore::bestFitSourceForImageAttributes):
+        * html/parser/HTMLSrcsetParser.h:
+
 2015-05-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r183895.

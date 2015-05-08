@@ -35,6 +35,8 @@
         shouldBe('currentSrcFileName("half_size")', '"image-set-2x.png"');
         shouldBe('document.getElementById("infitisimal_sizes").clientWidth', '(window.innerWidth/100)');
         shouldBe('currentSrcFileName("infitisimal_sizes")', '"image-set-2x.png"');
+        shouldBe('document.getElementById("fractional_sizes").clientWidth', '799');
+        shouldBe('currentSrcFileName("fractional_sizes")', '"image-set-2x.png"');
     }, false);
 </script>
 <img id="simple" src="" sizes="(max-width: 300px) 400px, 800px" srcset="../../../hidpi/resources/image-set-1x.png 400w, ../../../hidpi/resources/image-set-2x.png 800w">
@@ -56,3 +58,4 @@
 <!-- The intrinsic size should be identical to the 'sizes' value -->
 <img id="half_size" sizes="50vw" srcset="../../../hidpi/resources/image-set-2x.png 800w, ../resources/image-set-4x.png 16000w">
 <img id="infitisimal_sizes" sizes="1vw" srcset="../../../hidpi/resources/image-set-2x.png 800w, ../resources/image-set-4x.png 16000w">
+<img id="fractional_sizes" sizes="99.875vw" srcset="../../../hidpi/resources/image-set-2x.png 800w, ../resources/image-set-4x.png 16000w">

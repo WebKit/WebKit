@@ -28,7 +28,7 @@ namespace WebCore {
 class Frame;
 class RenderView;
 
-unsigned parseSizesAttribute(StringView sizesAttribute, RenderView*, Frame*);
+float parseSizesAttribute(StringView sizesAttribute, RenderView*, Frame*);
 
 } // namespace WebCore
 

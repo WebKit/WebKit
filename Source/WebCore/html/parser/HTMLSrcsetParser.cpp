@@ -229,7 +229,7 @@ Vector<ImageCandidate> parseImageCandidatesFromSrcsetAttribute(StringView attrib
         return parseImageCandidatesFromSrcsetAttribute<UChar>(attribute.characters16(), attribute.length());
 }
 
-static ImageCandidate pickBestImageCandidate(float deviceScaleFactor, Vector<ImageCandidate>& imageCandidates, unsigned sourceSize)
+static ImageCandidate pickBestImageCandidate(float deviceScaleFactor, Vector<ImageCandidate>& imageCandidates, float sourceSize)
 {
 #if !ENABLE(PICTURE_SIZES)
     UNUSED_PARAM(sourceSize);
@@ -243,7 +243,7 @@ static ImageCandidate pickBestImageCandidate(float deviceScaleFactor, Vector<Ima
     for (auto& candidate : imageCandidates) {
 #if ENABLE(PICTURE_SIZES)
         if (candidate.resourceWidth > 0) {
-            candidate.density = static_cast<float>(candidate.resourceWidth) / static_cast<float>(sourceSize);
+            candidate.density = static_cast<float>(candidate.resourceWidth) / sourceSize;
             ignoreSrc = true;
         } else
 #endif
@@ -274,7 +274,7 @@ static ImageCandidate pickBestImageCandidate(float deviceScaleFactor, Vector<Ima
     return imageCandidates[winner];
 }
 
-ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, const AtomicString& srcAttribute, const AtomicString& srcsetAttribute, unsigned sourceSize)
+ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, const AtomicString& srcAttribute, const AtomicString& srcsetAttribute, float sourceSize)
 {
     if (srcsetAttribute.isNull()) {
         if (srcAttribute.isNull())
