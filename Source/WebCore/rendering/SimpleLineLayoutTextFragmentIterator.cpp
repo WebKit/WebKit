@@ -40,7 +40,7 @@ TextFragmentIterator::Style::Style(const RenderStyle& style)
     , preserveNewline(style.preserveNewline())
     , wrapLines(style.autoWrap())
     , breakWordOnOverflow(style.overflowWrap() == BreakOverflowWrap && (wrapLines || preserveNewline))
-    , spaceWidth(font.width(TextRun(StringView(&space, 1))))
+    , spaceWidth(font.width(TextRun(&space, 1)))
     , tabWidth(collapseWhitespace ? 0 : style.tabSize())
     , locale(style.locale())
 {
@@ -197,7 +197,7 @@ float TextFragmentIterator::runWidth(const FlowContents::Segment& segment, unsig
     bool measureWithEndSpace = m_style.collapseWhitespace && segmentTo < segment.text.length() && segment.text[segmentTo] == ' ';
     if (measureWithEndSpace)
         ++segmentTo;
-    TextRun run(StringView(segment.text.substring(segmentFrom, segmentTo - segmentFrom)));
+    TextRun run(segment.text.characters<CharacterType>() + segmentFrom, segmentTo - segmentFrom);
     run.setXPos(xPosition);
     run.setTabSize(!!m_style.tabWidth, m_style.tabWidth);
     float width = m_style.font.width(run);

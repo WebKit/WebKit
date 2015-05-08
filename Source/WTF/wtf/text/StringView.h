@@ -58,7 +58,6 @@ public:
 
     StringView(const String&);
     StringView(const StringImpl&);
-    StringView(const StringImpl*);
     StringView(const LChar*, unsigned length);
     StringView(const UChar*, unsigned length);
 
@@ -270,18 +269,6 @@ inline StringView::StringView(const StringImpl& string)
         initialize(string.characters8(), string.length());
     else
         initialize(string.characters16(), string.length());
-}
-
-inline StringView::StringView(const StringImpl* string)
-{
-    if (!string)
-        return;
-
-    setUnderlyingString(string);
-    if (string->is8Bit())
-        initialize(string->characters8(), string->length());
-    else
-        initialize(string->characters16(), string->length());
 }
 
 inline StringView::StringView(const String& string)

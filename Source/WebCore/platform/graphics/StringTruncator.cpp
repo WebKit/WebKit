@@ -194,7 +194,7 @@ static unsigned leftTruncateToBuffer(const String& string, unsigned length, unsi
 
 static float stringWidth(const FontCascade& renderer, const UChar* characters, unsigned length, bool disableRoundingHacks)
 {
-    TextRun run(StringView(characters, length));
+    TextRun run(characters, length);
     if (disableRoundingHacks)
         run.disableRoundingHacks();
     return renderer.width(run);

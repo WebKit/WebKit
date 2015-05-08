@@ -1051,7 +1051,7 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
         StringBuilder result;
         result.reserveCapacity(6 + m_value.string->length());
         result.appendLiteral("attr(");
-        result.append(String(m_value.string));
+        result.append(m_value.string);
         result.append(')');
 
         return result.toString();
