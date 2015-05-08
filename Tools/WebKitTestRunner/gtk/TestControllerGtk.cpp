@@ -27,6 +27,7 @@
 #include "config.h"
 #include "TestController.h"
 
+#include "PlatformWebView.h"
 #include <gtk/gtk.h>
 #include <wtf/Platform.h>
 #include <wtf/gobject/GMainLoopSource.h>
@@ -107,6 +108,17 @@ void TestController::runModal(PlatformWebView*)
 const char* TestController::platformLibraryPathForTesting()
 {
     return 0;
+}
+
+void TestController::platformConfigureViewForTest(const TestInvocation&)
+{
+}
+
+void TestController::platformResetPreferencesToConsistentValues()
+{
+    if (!m_mainWebView)
+        return;
+    m_mainWebView->dismissAllPopupMenus();
 }
 
 } // namespace WTR

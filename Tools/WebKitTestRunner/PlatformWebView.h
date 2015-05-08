@@ -85,6 +85,10 @@ public:
 
     void changeWindowScaleIfNeeded(float newScale);
 
+#if PLATFORM(GTK)
+    void dismissAllPopupMenus();
+#endif
+
 private:
     void forceWindowFramesChanged();
 

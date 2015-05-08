@@ -31,6 +31,7 @@
 #include <WebKit/WKImageCairo.h>
 #include <WebKit/WKViewPrivate.h>
 #include <gtk/gtk.h>
+#include <wtf/Assertions.h>
 
 namespace WTR {
 
@@ -138,6 +139,17 @@ WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
 
 void PlatformWebView::didInitializeClients()
 {
+}
+
+void PlatformWebView::dismissAllPopupMenus()
+{
+    // gtk_menu_popdown doesn't modify the GList of attached menus, so it should
+    // be safe to walk this list while calling it.
+    GList* attachedMenusList = gtk_menu_get_for_attach_widget(GTK_WIDGET(m_view));
+    g_list_foreach(attachedMenusList, [] (void* data, void*) {
+        ASSERT(data);
+        gtk_menu_popdown(GTK_MENU(data));
+    }, nullptr);
 }
 
 } // namespace WTR

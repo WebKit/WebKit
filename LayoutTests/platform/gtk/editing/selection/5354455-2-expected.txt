@@ -20,4 +20,4 @@ layer at (8,8) size 612x137
         text run at (0,34) width 577: "click on the empty space outside and to the right of the black border, the selection should be"
         text run at (0,51) width 59: "removed."
       RenderText {#text} at (0,0) size 0x0
-caret: position 118 of child 2 {#text} of body
+caret: position 0 of child 0 {#text} of child 1 {H1} of body

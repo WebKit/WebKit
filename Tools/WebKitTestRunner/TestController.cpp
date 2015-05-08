@@ -797,7 +797,7 @@ void TestController::updateLayoutTypeForTest(const TestInvocation& test)
     ensureViewSupportsOptions(viewOptions.get());
 }
 
-#if !PLATFORM(COCOA)
+#if !PLATFORM(COCOA) && !PLATFORM(GTK)
 void TestController::platformConfigureViewForTest(const TestInvocation&)
 {
 }

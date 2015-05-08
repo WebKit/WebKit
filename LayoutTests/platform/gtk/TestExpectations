@@ -711,6 +711,7 @@ webkit.org/b/135051 fast/regions/repaint/region-painting-invalidation.html [ Cra
 
 webkit.org/b/129050 fast/sub-pixel/compositing-layers-on-subpixel-position.html [ ImageOnlyFailure Crash Pass ]
 
+webkit.org/b/144771 editing/selection/selection-invalid-offset.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -1238,8 +1239,6 @@ webkit.org/b/61826 fast/events/drag-image-filename.html [ Timeout ]
 
 webkit.org/b/108925 http/tests/media/video-play-stall.html [ Failure Timeout ]
 
-webkit.org/b/114789 fast/events/page-visibility-transition-test.html [ Timeout ]
-
 webkit.org/b/116956 fast/events/event-view-toString.html [ Timeout ]
 
 webkit.org/b/116957 media/track/track-automatic-subtitles.html [ Timeout ]
@@ -1441,8 +1440,15 @@ webkit.org/b/63706 plugins/mouse-events-fixedpos.html [ Failure ]
 webkit.org/b/63706 plugins/mouse-events.html [ Failure ]
 webkit.org/b/63706 editing/pasteboard/cleanup-on-move.html [ Failure ]
 webkit.org/b/63706 editing/pasteboard/drag-list-item.html [ Failure ]
+webkit.org/b/63706 fast/events/ondragenter.html [ Failure ]
+webkit.org/b/63706 fast/events/drag-and-drop-autoscroll-inner-frame.html [ Timeout ]
+webkit.org/b/63706 fast/events/drag-customData.html  [ Timeout ]
 
-# WebKit2 needs testRunner.setEditingBehaviour and other issues.
+# Need support for internals.settings.setDeviceSupportsMouse
+fast/events/touch/scroll-without-mouse-lacks-mousemove-events.html
+
+# WebKit2 testRunner.setEditingBehaviour appears broken sometimes.
+webkit.org/b/144764 editing/selection/move-by-word-visually-mac.html [ Failure ]
 Bug(GTK) editing/selection/extend-after-mouse-selection.html [ Failure ]
 
 # WebKit2 needs textInputController.selectedRange
@@ -1463,10 +1469,6 @@ webkit.org/b/93980 http/tests/appcache/load-from-appcache-defer-resume-crash.htm
 # https://bugs.webkit.org/show_bug.cgi?id=42194
 webkit.org/b/42194 fast/events/5056619.html [ Failure ]
 webkit.org/b/42194 http/tests/security/drag-drop-same-unique-origin.html [ Failure ]
-
-# Context menu problems.
-webkit.org/b/120401 fast/events [ Skip ]
-webkit.org/b/120401 editing/selection [ Skip ]
 
 webkit.org/b/106340 accessibility/img-fallsback-to-title.html [ Failure ]
 
@@ -1685,11 +1687,6 @@ Bug(GTK) fast/overflow/scrollbar-restored-and-then-locked.html [ Failure ]
 Bug(GTK) fast/forms/range/slider-mouse-events.html [ Failure ]
 Bug(GTK) fast/forms/range/slider-zoomed.html [ Failure ]
 
-# Tests failing because the context menu is grabbing mouse events.
-webkit.org/b/40601 fast/events/mouse-click-events.html [ Failure ]
-webkit.org/b/40601 fast/events/mouseup-from-button2.html [ Failure ]
-webkit.org/b/40601 fast/events/right-click-focus.html [ Failure ]
-
 # Tests that fail across all platforms.
 # Even though some platforms don't skip these tests, there are platform-specific
 # results generated that make these tests 'pass'.
@@ -1834,9 +1831,6 @@ webkit.org/b/98613 css3/masking/clip-path-reference-userSpaceOnUse.html [ ImageO
 webkit.org/b/98613 css3/masking/clip-path-reference.html [ ImageOnlyFailure ]
 
 webkit.org/b/98950 transitions/blendmode-transitions.html [ Failure ]
-
-webkit.org/b/100424 editing/selection/user-select-all-selection.html [ Failure ]
-webkit.org/b/100424 editing/selection/user-select-all-with-shift.html [ Failure ]
 
 webkit.org/b/100846 inspector-protocol/debugger/pause-dedicated-worker.html [ Skip ]
 webkit.org/b/100846 inspector-protocol/debugger/terminate-dedicated-worker-while-paused.html [ Skip ]
@@ -2327,6 +2321,21 @@ webkit.org/b/144690 editing/spelling/spelling-with-punctuation-selection.html [ 
 webkit.org/b/144690 editing/spelling/context-menu-suggestions.html [ Failure ]
 webkit.org/b/144690 editing/spelling/spelling-double-clicked-word.html [ Failure ]
 webkit.org/b/144690 editing/spelling/delete-into-misspelled-word.html [ Timeout Pass ]
+
+# Touch events not working
+webkit.org/b/144765 fast/events/event-attribute.html  [ Failure ]
+webkit.org/b/144765 fast/events/touch/touch-slider.html [ Failure ]
+webkit.org/b/144765 fast/events/touch/touch-inside-iframe-scrolled.html [ Failure ]
+webkit.org/b/144765 fast/events/touch/touch-slider-no-js-touch-listener.html [ Failure ]
+webkit.org/b/144765 fast/events/touch/touch-inside-iframe.html [ Timeout ]
+
+# Need support for adjusting page visibility in the test harness.
+webkit.org/b/114789 fast/events/page-visibility-iframe-delete-test.html [ Timeout ]
+webkit.org/b/114789 fast/events/page-visibility-iframe-move-test.html [ Timeout ]
+webkit.org/b/114789 fast/events/page-visibility-iframe-propagation-test.html [ Timeout ]
+webkit.org/b/114789 fast/events/page-visibility-transition-test.html [ Timeout ]
+
+webkit.org/b/144763 fast/events/scroll-in-scaled-page-with-overflow-hidden.html
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

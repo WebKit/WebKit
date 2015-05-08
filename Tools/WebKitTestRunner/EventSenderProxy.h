@@ -97,6 +97,7 @@ private:
 
 #if PLATFORM(GTK)
     void sendOrQueueEvent(GdkEvent*);
+    void dispatchEvent(GdkEvent*);
     GdkEvent* createMouseButtonEvent(GdkEventType, unsigned button, WKEventModifiers);
     GUniquePtr<GdkEvent> createTouchEvent(GdkEventType, int id);
     void sendUpdatedTouchEvents();

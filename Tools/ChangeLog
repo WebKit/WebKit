@@ -1,3 +1,27 @@
+2015-05-08  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Some tests fail because they do not assume the popup menu captures click events
+        https://bugs.webkit.org/show_bug.cgi?id=40601
+
+        Reviewed by Carlos Garcia Campos.
+
+        Popdown all attached menus when moving between tests and between each new
+        event sent to the WebView. This prevents context and popup menus from eating
+        events.
+
+        * WebKitTestRunner/PlatformWebView.h: Added a helper method to do menu popdown.
+        * WebKitTestRunner/TestController.cpp: Add a specialization of these methods for GTK+.
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+        (WTR::dispatchEvent): Popdown all menus between dispatching events.
+        (WTR::EventSenderProxy::replaySavedEvents): Pass the view when dispatching events.
+        (WTR::EventSenderProxy::sendOrQueueEvent): Pass the view when dispatching events.
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::hideAllPopupMenus): Added this helper.
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        (WTR::TestController::platformConfigureViewForTest): Added this stub, which is no
+        longer in the platform-independent file.
+        (WTR::TestController::platformResetPreferencesToConsistentValues): Popdown menus.
+
 015-05-08  Michael Catanzaro  <mcatanzaro@igalia.com>, Martin Robinson <mrobinson@igalia.com>
 
         [GTK] Checks for DEVELOPMENT_BUILD are all wrong
