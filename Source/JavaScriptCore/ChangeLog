@@ -1,3 +1,17 @@
+2015-05-08  Michael Saboff  <msaboff@apple.com>
+
+        Creating a large MarkedBlock sometimes results in more than one cell in the block
+        https://bugs.webkit.org/show_bug.cgi?id=144815
+
+        Reviewed by Mark Lam.
+
+        Large MarkedBlocks should have one and only one cell.  Changed the calculation of
+        m_endAtom for large blocks to use the location of the first cell + 1.  This
+        assures that large blocks only have one cell.
+
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::MarkedBlock):
+
 2015-05-08  Oliver Hunt  <oliver@apple.com>
 
         MapDataImpl::add() shouldn't do the same hash lookup twice.
