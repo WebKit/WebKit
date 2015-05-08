@@ -1,3 +1,13 @@
+2015-05-08  Daniel Bates  <dabates@apple.com>
+
+        Fix the iOS Simulator external SDK build following <http://trac.webkit.org/changeset/181918>
+
+        Remove unused iOS Simulator-variant of CARenderServerRenderLayerWithTransform(). Also guard
+        IOSurfaceRef-variant of CARenderServerRenderLayerWithTransform() with USE(IOSURFACE)
+        since it is only applicable on platforms that use IOSurface.
+
+        * platform/spi/cocoa/QuartzCoreSPI.h:
+
 2015-05-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove convenience constructors for TextRun
