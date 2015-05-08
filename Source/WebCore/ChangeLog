@@ -1,3 +1,21 @@
+2015-05-07  Dean Jackson  <dino@apple.com>
+
+        [iOS] MediaControls: disappear while scrubbing
+        https://bugs.webkit.org/show_bug.cgi?id=144777
+        <rdar://problem/20065572>
+
+        Reviewed by Eric Carlson.
+
+        If we are scrubbing we shouldn't hide the controls.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.hideControls): Return early if we are scrubbing.
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype): Add initial value for _potentiallyScrubbing and
+        rename from non-underscored value throughout the file.
+        (ControllerIOS.prototype.handleTimelineTouchEnd): When we finish scrubbing, reset
+        the timer to hide the controls.
+
 2015-05-07  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r183300): Fixed elements flash when scrolling
