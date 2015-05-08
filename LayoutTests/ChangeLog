@@ -1,3 +1,21 @@
+2015-05-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Remove touchadjustment tests
+        https://bugs.webkit.org/show_bug.cgi?id=144780
+
+        Reviewed by Daniel Bates.
+
+        These tests test a feature that has been removed from WebKit entirely and all
+        ports skip the tests. This code was removed in http://trac.webkit.org/changeset/162231.
+
+        * platform/efl/TestExpectations: Remove expectations.
+        * platform/gtk/TestExpectations: Ditto.
+        * platform/ios-simulator/TestExpectations: Ditto.
+        * platform/mac/TestExpectations: Ditto.
+        * platform/win/TestExpectations: Ditto.
+        * platform/wincairo/TestExpectations:
+        * touchadjustment: Removed all files in this directory.
+
 2015-05-07  Simon Fraser  <simon.fraser@apple.com>
 
         New results after r183970. Fixed elements are now always considered to intersect

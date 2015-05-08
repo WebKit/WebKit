@@ -46,7 +46,6 @@ gamepad
 java
 mhtml
 proximity
-touchadjustment
 vibration
 
 # ENABLE(MEDIA_CAPTURE) is not enabled

@@ -501,9 +501,6 @@ http/tests/pointer-lock/ [ Skip ]
 # TODO Vibration API is not implemented.
 vibration/ [ Skip ]
 
-# Touch adjustment not enabled on Windows (or mac)
-webkit.org/b/78801 touchadjustment/ [ Skip ]
-
 # Needs BatteryClient implementation.
 webkit.org/b/62698 batterystatus/ [ Skip ]
 

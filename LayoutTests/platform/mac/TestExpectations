@@ -297,9 +297,6 @@ webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Failure
 # Needs PageClients::vibrationClient() implementation.
 webkit.org/b/72010 vibration
 
-# Touch adjustment not enabled
-webkit.org/b/78801 touchadjustment
-
 # <rdar://problem/11059777>
 webkit.org/b/81289 canvas/philip/tests/2d.line.cap.round.html [ Failure ]
 

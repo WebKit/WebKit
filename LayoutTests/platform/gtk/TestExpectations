@@ -325,10 +325,6 @@ webkit.org/b/99036 http/tests/pointer-lock [ Skip ]
 webkit.org/b/95582 batterystatus [ Failure ]
 webkit.org/b/95582 batterystatus/event-after-navigation.html [ Timeout ]
 
-# Touch adjustment not enabled
-webkit.org/b/99054 touchadjustment [ Failure ]
-webkit.org/b/99054 touchadjustment/iframe.html [ Timeout ]
-
 # IETC flexbox failures
 webkit.org/b/85211 ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ ImageOnlyFailure ]
 webkit.org/b/85212 ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
