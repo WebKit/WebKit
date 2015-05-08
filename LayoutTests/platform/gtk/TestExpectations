@@ -48,16 +48,8 @@
 # Color bleeds through; might work with newer cairo (works when running with Fedora 20's system cairo).
 Bug(GTK) fast/backgrounds/background-opaque-images-over-color.html [ ImageOnlyFailure ]
 
-# Ignored because we do not have OBJC bindings (via Chromium).
-Bug(GTK) editing/pasteboard/paste-RTFD.html [ WontFix Missing ]
-Bug(GTK) editing/pasteboard/paste-TIFF.html [ WontFix Missing ]
-
 # This test assumes we cannot play RTSP, but we can.
 Bug(GTK) media/unsupported-rtsp.html [ WontFix Timeout ]
-
-# We have no need to support Dashboard compatibility mode. (via Chromium).
-Bug(GTK) fast/canvas/canvas-gradient-addStop-error.html [ WontFix Failure ]
-Bug(GTK) http/tests/xmlhttprequest/default-content-type-dashboard.html [ WontFix Failure ]
 
 # ENABLE(DRAGGABLE_REGION) is disabled
 Bug(GTK) fast/css/draggable-region-parser.html [ Failure ]
@@ -135,9 +127,6 @@ media/media-captions.html [ WontFix Failure ]
 media/media-fullscreen-inline.html [ WontFix Pass ]
 media/media-fullscreen-not-in-document.html [ WontFix Timeout Crash ]
 
-# Pre-HMTL5 parser quirks only apply to the mac port for now.
-fast/parser/pre-html5-parser-quirks.html [ WontFix Failure ]
-
 # Features that we want eventually:
 # DeviceMotion and DeviceOrientation are not enabled by default.
 webkit.org/b/98927 fast/dom/Window/window-properties-device-orientation.html [ Skip ]
@@ -198,11 +187,6 @@ webkit.org/b/98940 fast/events/drag-dataTransferItemList-file-handling.html [ Sk
 # by Google while implementing a different pasteboard API that was only being used by
 # Chromium and Qt, might make sense to remove.
 webkit.org/b/99068 editing/pasteboard/clipboard-customData.html [ Failure ]
-
-# setAutomaticLinkDetectionEnabled is not yet implemented.
-webkit.org/b/99069 editing/inserting/typing-space-to-trigger-smart-link.html [ Failure ]
-webkit.org/b/99069 editing/inserting/smart-link-when-caret-is-moved-before-URL.html [ Failure ]
-webkit.org/b/99069 editing/inserting/smart-quote-with-all-configurations.html [ Failure ]
 
 # Quota API is not supported.
 webkit.org/b/98942 storage/storageinfo-missing-arguments.html [ Failure ]
@@ -311,9 +295,6 @@ Bug(GTK) compositing/visible-rect [ Skip ]
 
 # Vibration API support not yet.
 webkit.org/b/99029 vibration [ Failure ]
-
-# DumpRenderTree code to enable Java is currently a no-op
-webkit.org/b/99031 java [ Skip ]
 
 # Pointer Lock is not implemented.
 webkit.org/b/99036 pointer-lock [ Skip ]
@@ -726,14 +707,11 @@ webkit.org/b/55126 media/video-aspect-ratio.html [ Failure Crash Timeout Pass ]
 webkit.org/b/122481 svg/animations/svglengthlist-animation-3.html [ Failure Pass ]
 webkit.org/b/62204 svg/custom/circular-marker-reference-4.svg [ Failure Pass ]
 
-webkit.org/b/89097 plugins/plugin-initiate-popup-window.html [ Failure Pass ]
-
 webkit.org/b/119735 [ Debug ] plugins/unavailable-plugin-indicator-obscurity.html [ Skip ]
 
 webkit.org/b/71777 fast/lists/inlineBoxWrapperNullCheck.html [ Failure Pass ]
 
 webkit.org/b/71655 fast/frames/flattening/frameset-flattening-simple.html [ Failure Pass ]
-webkit.org/b/80129 fast/frames/flattening/frameset-flattening-subframesets.html [ Failure Pass ]
 webkit.org/b/80129 fast/frames/flattening/iframe-flattening-fixed-width.html [ Failure Pass ]
 webkit.org/b/80129 fast/frames/flattening/iframe-flattening-offscreen.html [ Failure Pass ]
 webkit.org/b/80129 fast/frames/flattening/frameset-flattening-grid.html [ Failure Pass ]
@@ -835,8 +813,6 @@ webkit.org/b/114254 css2.1/20110323/absolute-non-replaced-height-001.htm [ Timeo
 webkit.org/b/114254 css2.1/t09-c5526c-display-00-e.html [ Crash Timeout Pass ]
 
 webkit.org/b/114735 svg/filters/filter-hidden-content.svg [ Failure Pass ]
-
-webkit.org/b/115630 fast/images/support-broken-image-delegate.html [ Failure Pass ]
 
 webkit.org/b/116960 perf/adding-radio-buttons.html [ Failure Pass ]
 webkit.org/b/116961 perf/show-hide-table-rows.html [ Failure Pass ]
@@ -942,7 +918,6 @@ webkit.org/b/131535 media/audio-mpeg-supported.html [ Timeout Pass ]
 
 webkit.org/b/131934 fast/dom/Window/mozilla-focus-blur.html [ Failure Timeout Pass ]
 
-webkit.org/b/132181 fast/loader/submit-form-while-parsing-2.html [ Failure Pass ]
 webkit.org/b/132182 css3/calc/transitions-dependent.html [ Failure Pass ]
 webkit.org/b/132183 fast/dom/adopt-node-crash-2.html [ Failure Pass ]
 webkit.org/b/132184 fast/multicol/span/span-as-immediate-columns-child-dynamic.html [ Failure Pass ]
@@ -1076,7 +1051,6 @@ webkit.org/b/134761 svg/custom/animate-initial-pause-unpause.html [ Failure Pass
 
 webkit.org/b/134994 fast/forms/select/listbox-click-on-scrollbar.html [ Failure Pass ]
 
-webkit.org/b/134996 fast/parser/document-open-in-unload.html [ Crash Pass ]
 webkit.org/b/134981 fast/parser/document-write-during-load.html [ Timeout Pass Crash ]
 
 webkit.org/b/81604 media/video-loop.html [ Timeout Pass ]
@@ -1480,16 +1454,12 @@ webkit.org/b/42457 svg/custom/svg-allowed-in-dashboard-object.html [ Failure ]
 Bug(GTK) svg/custom/gradient-attr-update.svg [ Failure Pass ]
 Bug(GTK) svg/custom/pointer-events-on-svg-with-pointer.xhtml [ Failure Pass ]
 Bug(GTK) svg/custom/pointer-events-on-svg-without-pointer.xhtml [ Failure Pass ]
-Bug(WK2) svg/hixie/cascade/002.xml [ Failure ]
 Bug(GTK) svg/text/select-textLength-spacingAndGlyphs-squeeze-1.svg [ Failure Pass ]
 Bug(GTK) svg/text/select-textLength-spacingAndGlyphs-stretch-1.svg [ Failure Pass ]
 Bug(GTK) svg/text/select-textLength-spacing-squeeze-3.svg [ Failure Pass ]
 Bug(GTK) svg/text/select-textLength-spacing-stretch-1.svg [ Failure Pass ]
 Bug(GTK) svg/text/select-x-list-1.svg [ Failure Pass ]
 Bug(GTK) svg/text/select-x-list-with-tspans-1.svg [ Failure Pass ]
-
-# tables/ failures
-Bug(WK2) tables/mozilla_expected_failures/bugs/bug8499.html [ Failure ]
 
 # [Qt][WK2] New http/tests/security/cross-origin-plugin* tests fail
 # https://bugs.webkit.org/show_bug.cgi?id=95935
@@ -1601,14 +1571,11 @@ webkit.org/b/123431 http/tests/local/link-stylesheet-load-order.html [ Failure P
 
 webkit.org/b/73766 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
 
-webkit.org/b/79757 fast/selectors/selection-window-inactive.html [ ImageOnlyFailure ]
-
 # Need platform specific update to test to make it run.
 
 webkit.org/b/98357 accessibility/aria-readonly.html [ Failure ]
 webkit.org/b/98359 accessibility/aria-text-role.html [ Failure ]
 webkit.org/b/98363 accessibility/canvas-fallback-content-2.html [ Failure ]
-webkit.org/b/98371 accessibility/loading-iframe-updates-axtree.html [ Failure ]
 webkit.org/b/98372 accessibility/onclick-handlers.html [ Failure ]
 webkit.org/b/98377 accessibility/textarea-insertion-point-line-number.html [ Failure ]
 webkit.org/b/98380 accessibility/th-as-title-ui.html [ Failure ]
@@ -1619,18 +1586,12 @@ webkit.org/b/125506 accessibility/alt-tag-on-image-with-nonimage-role.html [ Fai
 webkit.org/b/116971 accessibility/poorly-formed-aria-table.html [ Failure ]
 
 # Blur and focus events are not received for the following tests.
-Bug(GTK) fast/events/blur-focus-window-should-blur-focus-element.html [ Failure ]
-Bug(GTK) fast/dom/HTMLDocument/hasFocus.html [ Failure ]
-Bug(GTK) fast/dom/Window/window-onFocus.html [ Failure ]
 Bug(GTK) fast/events/frame-tab-focus.html [ Failure ]
 
 Bug(GTK) fast/history/go-back-to-iframe-with-plugin.html [ Timeout Pass ]
 
 # Looks like a bug in the testRunner global history support due to missing API.
 Bug(GTK) fast/history/window-open.html [ Failure ]
-
-# All of these IDN encoding tests seem to fail.
-Bug(GTK) fast/encoding/idn-security.html [ Failure ]
 
 # These failures appear to be bugs in the EventSender
 webkit.org/b/53964 fast/forms/listbox-onchange.html [ Failure ]
@@ -1646,19 +1607,14 @@ webkit.org/b/122021 media/video-controls-captions-trackmenu.html [ Failure ]
 webkit.org/b/123097 media/track/track-user-preferences.html [ Skip ]
 webkit.org/b/121995 media/video-controls-captions-trackmenu-includes-enabled-track.html [ Failure ]
 
-Bug(GTK) http/tests/loading/bad-scheme-subframe.html [ Failure ]
-
 Bug(GTK) http/tests/media/video-play-stall-seek.html [ Skip ]
 
 Bug(GTK) http/tests/misc/acid3.html [ Failure ]
-Bug(GTK) http/tests/misc/redirect-to-external-url.html [ Failure ]
 
 Bug(GTK) media/video-size-intrinsic-scale.html [ Failure ]
 
 # eventSender.keyDown call does not get executed from the TestNetscapePlugin
 webkit.org/b/90383 http/tests/plugins/plugin-document-has-focus.html [ Skip ]
-
-webkit.org/b/30577 editing/selection/move-left-right.html [ Failure ]
 
 webkit.org/b/30620 fast/xsl/sort-locale.xml [ Failure ]
 
@@ -1732,9 +1688,6 @@ webkit.org/b/44316 platform/gtk/accessibility/title-and-alt.html [ Failure ]
 # Rounding color problems inside pixman
 webkit.org/b/49964 fast/canvas/canvas-fillPath-shadow.html [ Failure ]
 
-# testRunner.overridePreference("WebKitDefaultFontSize"...) does not take into account screen DPI
-webkit.org/b/57160 fast/harness/override-preferences-2.html [ Failure ]
-
 # Expose title direction in WebKit API
 webkit.org/b/58845 fast/dom/title-directionality.html [ Failure ]
 webkit.org/b/58845 fast/dom/title-directionality-removeChild.html [ Failure ]
@@ -1799,13 +1752,7 @@ webkit.org/b/86443 plugins/npruntime/delete-plugin-within-setProperty.html [ Fai
 
 webkit.org/b/86971 svg/hittest/svg-shapes-non-scale-stroke.html [ Failure ]
 
-Bug(GTK) http/tests/misc/favicon-loads-with-icon-loading-override.html [ Failure ]
-
-webkit.org/b/88138 http/tests/media/video-buffered.html [ Failure ]
-
 webkit.org/b/51027 [ Release ] plugins/refcount-leaks.html [ Failure ]
-
-webkit.org/b/83800 plugins/get-url-with-blank-target.html [ Failure ]
 
 webkit.org/b/84037 fast/text/international/spaces-combined-in-vertical-text.html [ Failure ]
 
