@@ -98,6 +98,7 @@
 #include "RenderedDocumentMarker.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SchemeRegistry.h"
+#include "ScriptedAnimationController.h"
 #include "ScrollingCoordinator.h"
 #include "SerializedScriptValue.h"
 #include "Settings.h"
@@ -764,6 +765,18 @@ bool Internals::isTimerThrottled(int timeoutId, ExceptionCode& ec)
         return false;
     }
     return timer->m_throttleState == DOMTimer::ShouldThrottle;
+}
+
+bool Internals::isRequestAnimationFrameThrottled() const
+{
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+    auto* scriptedAnimationController = contextDocument()->scriptedAnimationController();
+    if (!scriptedAnimationController)
+        return false;
+    return scriptedAnimationController->isThrottled();
+#else
+    return false;
+#endif
 }
 
 String Internals::visiblePlaceholder(Element* element)
