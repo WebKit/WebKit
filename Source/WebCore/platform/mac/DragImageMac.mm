@@ -192,7 +192,7 @@ static float widthWithFont(NSString *string, NSFont *font)
     
     if (canUseFastRenderer(buffer.data(), length)) {
         FontCascade webCoreFont(FontPlatformData(reinterpret_cast<CTFontRef>(font), [font pointSize]));
-        TextRun run(buffer.data(), length);
+        TextRun run(StringView(buffer.data(), length));
         run.disableRoundingHacks();
         return webCoreFont.width(run);
     }
@@ -224,7 +224,7 @@ static void drawAtPoint(NSString *string, NSPoint point, NSFont *font, NSColor *
             CGContextScaleCTM(cgContext, 1, -1);
             
         FontCascade webCoreFont(FontPlatformData(reinterpret_cast<CTFontRef>(font), [font pointSize]), Antialiased);
-        TextRun run(buffer.data(), length);
+        TextRun run(StringView(buffer.data(), length));
         run.disableRoundingHacks();
 
         CGFloat red;
