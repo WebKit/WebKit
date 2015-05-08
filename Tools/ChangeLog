@@ -1,3 +1,18 @@
+2015-05-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix.
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/mac/DumpRenderTreeDraggingInfo.h:
+        * DumpRenderTree/mac/DumpRenderTreeDraggingInfo.mm:
+        (-[DumpRenderTreeDraggingInfo springLoadingHighlight]):
+        (-[DumpRenderTreeDraggingInfo resetSpringLoading]):
+        * WebKitTestRunner/mac/WebKitTestRunnerDraggingInfo.h:
+        * WebKitTestRunner/mac/WebKitTestRunnerDraggingInfo.mm:
+        (-[WebKitTestRunnerDraggingInfo springLoadingHighlight]):
+        (-[WebKitTestRunnerDraggingInfo resetSpringLoading]):
+
 2015-05-08  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Some tests fail because they do not assume the popup menu captures click events
