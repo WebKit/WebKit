@@ -1,0 +1,18 @@
+Tests the behavior of document.scrollingElement in quirks mode.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+In quirks mode the scrolling element is `BODY`
+PASS document.scrollingElement is document.body
+PASS document.scrollingElement is document.body
+PASS document.scrollingElement is document.body
+In quirks mode, if the `BODY` is scrollable, the scrolling element is `null`
+INTENTIONAL FAILURE. This can be fixed once https://bugs.webkit.org/show_bug.cgi?id=106133 is fixed.
+FAIL document.scrollingElement.scrollingElement should be null (of type object). Was undefined (of type undefined).
+In quirks mode, if the `BODY` is `display: none`, the scrolling element is `BODY`
+PASS document.scrollingElement is document.body
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

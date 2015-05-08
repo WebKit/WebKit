@@ -341,5 +341,7 @@
 
     // http://www.w3.org/TR/2014/WD-dom-20140204/#dom-document-origin
     readonly attribute DOMString origin;
+
+    readonly attribute Element scrollingElement;
 };
 

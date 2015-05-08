@@ -1,3 +1,16 @@
+2015-05-07  Sam Weinig  <sam@webkit.org>
+
+        Consider implementing Document.scrollingElement
+        <rdar://problem/20845213>
+        https://bugs.webkit.org/show_bug.cgi?id=143609
+
+        Reviewed by Simon Fraser.
+
+        * fast/dom/Document/scrollingElement-quirks-mode-expected.txt: Added.
+        * fast/dom/Document/scrollingElement-quirks-mode.html: Added.
+        * fast/dom/Document/scrollingElement-standards-mode-expected.txt: Added.
+        * fast/dom/Document/scrollingElement-standards-mode.html: Added.
+
 2015-05-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Applying a filter on an SVG element, which is larger than 4096 pixels, causes this element to be rendered shifted to the left

@@ -1,0 +1,38 @@
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("Tests the behavior of document.scrollingElement in quirks mode.");
+
+debug("In quirks mode the scrolling element is `BODY`");
+shouldBe("document.scrollingElement", "document.body");
+
+document.documentElement.setAttribute('style', 'overflow: scroll');
+document.body.setAttribute('style', 'overflow: visible');
+shouldBe("document.scrollingElement", "document.body");
+
+document.documentElement.setAttribute('style', 'overflow: visible');
+document.body.setAttribute('style', 'overflow: scroll');
+shouldBe("document.scrollingElement", "document.body");
+
+debug("In quirks mode, if the `BODY` is scrollable, the scrolling element is `null`");
+debug("INTENTIONAL FAILURE. This can be fixed once https://bugs.webkit.org/show_bug.cgi?id=106133 is fixed.");
+document.documentElement.setAttribute('style', 'overflow: scroll');
+document.body.setAttribute('style', 'overflow: scroll');
+shouldBeNull("document.scrollingElement.scrollingElement");
+
+debug("In quirks mode, if the `BODY` is `display: none`, the scrolling element is `BODY`");
+document.documentElement.setAttribute('style', 'overflow: scroll');
+document.body.setAttribute('style', 'overflow: scroll; display: none');
+shouldBe("document.scrollingElement", "document.body");
+
+document.body.setAttribute('style', '');
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

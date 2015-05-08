@@ -381,6 +381,8 @@ public:
     RefPtr<Range> caretRangeFromPoint(int x, int y);
     RefPtr<Range> caretRangeFromPoint(const LayoutPoint& clientPoint);
 
+    Element* scrollingElement();
+
     String readyState() const;
 
     String defaultCharset() const;
