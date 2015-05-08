@@ -1,3 +1,27 @@
+2015-05-08  Andreas Kling  <akling@apple.com>
+
+        Optimize serialization of quoted JSON strings.
+        <https://webkit.org/b/144754>
+
+        Reviewed by Darin Adler.
+
+        Optimized the serialization of quoted strings into JSON by moving the logic into
+        StringBuilder so it can make smarter decisions about buffering.
+
+        12% progression on Kraken/json-stringify-tinderbox (on my Mac Pro.)
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ObjectPatternNode::toString): Use the new StringBuilder API.
+
+        * runtime/JSONObject.h:
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Holder::appendNextProperty):
+        (JSC::appendStringToStringBuilder): Deleted.
+        (JSC::appendQuotedJSONStringToBuilder): Deleted.
+        (JSC::Stringifier::appendQuotedString): Deleted.
+        (JSC::Stringifier::appendStringifiedValue): Moved the bulk of this logic
+        to StringBuilder and call that from here.
+
 2015-05-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r183961.

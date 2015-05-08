@@ -1,3 +1,31 @@
+2015-05-08  Andreas Kling  <akling@apple.com>
+
+        Optimize serialization of quoted JSON strings.
+        <https://webkit.org/b/144754>
+
+        Reviewed by Darin Adler.
+
+        Add a StringBuilder API for appending a quoted JSON string. This is used by
+        JSON.stringify() to implement efficient appending of strings while escaping
+        quotes, control characters and \uNNNN-style characters.
+
+        The main benefit comes from only doing a single buffer expansion up front,
+        instead of doing it every time we append something. The fudge factor is pretty
+        large, since the maximum number of output characters per input character is 6.
+
+        The first landing of this patch had two bugs in it:
+
+        - Made \uNNNN escapes uppercase hexadecimal instead of lowercase.
+        - Didn't preallocate enough space for 8-bit input strings.
+
+        Both were caught by existing tests on our bots, and both were due to last-minute
+        changes before landing. :/
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::appendQuotedJSONStringInternal):
+        (WTF::StringBuilder::appendQuotedJSONString):
+        * wtf/text/StringBuilder.h:
+
 2015-05-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r183961.
