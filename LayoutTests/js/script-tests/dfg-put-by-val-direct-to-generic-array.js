@@ -1,3 +1,7 @@
+// REGRESSION(r183072): dfg-put-by-id-prototype-check.js.layout-dfg-eager-no-cjit fails on AArch64 Linux
+// https://bugs.webkit.org/show_bug.cgi?id=144256
+//@ skip if $architecture == "arm64" and $hostOS == "linux"
+
 description(
 "Test that a generic array (object) accepts DFG PutByValueDirect operation."
 );
