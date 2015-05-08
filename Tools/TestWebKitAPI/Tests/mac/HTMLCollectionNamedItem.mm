@@ -63,18 +63,18 @@ TEST(WebKit1, HTMLCollectionNamedItemTest)
     DOMDocument *document = webView.get().mainFrameDocument;
     RetainPtr<DOMHTMLCollection> collection = [[document body] children];
 
-    EXPECT_EQ([collection.get() length], (unsigned)4);
-    EXPECT_WK_STREQ([[collection.get() item:0] value], @"firstItem");
-    EXPECT_WK_STREQ([[collection.get() item:1] value], @"secondItem");
-    EXPECT_WK_STREQ([[collection.get() namedItem:@"idForTwoTextFields"] value], @"firstItem");
-    EXPECT_WK_STREQ([[collection.get() item:1] value], @"secondItem");
-    EXPECT_WK_STREQ([[collection.get() item:0] value], @"firstItem");
+    EXPECT_EQ([collection length], (unsigned)4);
+    EXPECT_WK_STREQ([(DOMHTMLInputElement *)[collection item:0] value], @"firstItem");
+    EXPECT_WK_STREQ([(DOMHTMLInputElement *)[collection item:1] value], @"secondItem");
+    EXPECT_WK_STREQ([(DOMHTMLInputElement *)[collection namedItem:@"idForTwoTextFields"] value], @"firstItem");
+    EXPECT_WK_STREQ([(DOMHTMLInputElement *)[collection item:1] value], @"secondItem");
+    EXPECT_WK_STREQ([(DOMHTMLInputElement *)[collection item:0] value], @"firstItem");
 
-    EXPECT_WK_STREQ([(DOMHTMLElement*)[collection.get() item:2] title], @"thirdItem");
-    EXPECT_WK_STREQ([(DOMHTMLElement*)[collection.get() item:3] title], @"fourthItem");
-    EXPECT_WK_STREQ([(DOMHTMLElement*)[collection.get() namedItem:@"nameForTwoImages"] title], @"thirdItem");
-    EXPECT_WK_STREQ([(DOMHTMLElement*)[collection.get() item:3] title], @"fourthItem");
-    EXPECT_WK_STREQ([(DOMHTMLElement*)[collection.get() item:2] title], @"thirdItem");
+    EXPECT_WK_STREQ([(DOMHTMLElement *)[collection item:2] title], @"thirdItem");
+    EXPECT_WK_STREQ([(DOMHTMLElement *)[collection item:3] title], @"fourthItem");
+    EXPECT_WK_STREQ([(DOMHTMLElement *)[collection namedItem:@"nameForTwoImages"] title], @"thirdItem");
+    EXPECT_WK_STREQ([(DOMHTMLElement *)[collection item:3] title], @"fourthItem");
+    EXPECT_WK_STREQ([(DOMHTMLElement *)[collection item:2] title], @"thirdItem");
 }
 
 } // namespace TestWebKitAPI

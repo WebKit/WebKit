@@ -1,3 +1,17 @@
+2015-05-07  Anders Carlsson  <andersca@apple.com>
+
+        Build fixes.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:processPool:configuration:webView:]):
+        Use the regular init method.
+
+        * UIProcess/mac/WKSharingServicePickerDelegate.mm:
+        (-[WKSharingServicePickerDelegate sharingService:didShareItems:]):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::handleSelectionServiceClick):
+        Pass empty dictionaries instead of nil.
+
 2015-05-07  Chris Dumez  <cdumez@apple.com>
 
         ASSERTION when pasting text into the WebInspector console

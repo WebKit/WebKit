@@ -1,3 +1,13 @@
+2015-05-07  Anders Carlsson  <andersca@apple.com>
+
+        Build fixes.
+
+        * TestWebKitAPI/Tests/mac/HTMLCollectionNamedItem.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/HTMLFormCollectionNamedItem.mm:
+        (TestWebKitAPI::TEST):
+        Add casts.
+
 2015-05-07  Filip Pizlo  <fpizlo@apple.com>
 
         GC has trouble with pathologically large array allocations

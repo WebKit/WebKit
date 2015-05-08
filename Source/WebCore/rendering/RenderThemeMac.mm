@@ -1542,11 +1542,13 @@ bool RenderThemeMac::paintSliderThumb(const RenderObject& o, const PaintInfo& pa
     else
         m_isSliderThumbHorizontalPressed = pressed;
 
+    NSView *view = documentViewFor(o);
+
     if (pressed != oldPressed) {
         if (pressed)
-            [sliderThumbCell startTrackingAt:NSPoint() inView:nil];
+            [sliderThumbCell startTrackingAt:NSPoint() inView:view];
         else
-            [sliderThumbCell stopTracking:NSPoint() at:NSPoint() inView:nil mouseIsUp:YES];
+            [sliderThumbCell stopTracking:NSPoint() at:NSPoint() inView:view mouseIsUp:YES];
     }
 
     FloatRect bounds = r;
@@ -1566,7 +1568,7 @@ bool RenderThemeMac::paintSliderThumb(const RenderObject& o, const PaintInfo& pa
         paintInfo.context->translate(-unzoomedRect.x(), -unzoomedRect.y());
     }
 
-    [sliderThumbCell drawInteriorWithFrame:unzoomedRect inView:documentViewFor(o)];
+    [sliderThumbCell drawInteriorWithFrame:unzoomedRect inView:view];
     [sliderThumbCell setControlView:nil];
 
     return false;

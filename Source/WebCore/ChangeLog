@@ -1,3 +1,21 @@
+2015-05-07  Anders Carlsson  <andersca@apple.com>
+
+        Build fixes.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper doAXRTFForRange:]):
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::_addMarkersToList):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::writeFileWrapperAsRTFDAttachment):
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::PlatformPasteboard::setTypes):
+        Pass empty arrays and dictionaries instead of nil.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSliderThumb):
+        Pass the document view to the AppKit paint method.
+
 2015-05-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Purge PassRefPtr in WebCore/html - 3

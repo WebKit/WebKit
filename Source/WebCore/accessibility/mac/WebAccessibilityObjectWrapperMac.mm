@@ -3482,7 +3482,7 @@ static RenderObject* rendererForView(NSView* view)
 - (NSData*)doAXRTFForRange:(NSRange)range
 {
     NSAttributedString* attrString = [self doAXAttributedStringForRange:range];
-    return [attrString RTFFromRange: NSMakeRange(0, [attrString length]) documentAttributes: nil];
+    return [attrString RTFFromRange: NSMakeRange(0, [attrString length]) documentAttributes:@{ }];
 }
 
 - (id)accessibilityAttributeValue:(NSString*)attribute forParameter:(id)parameter

@@ -126,7 +126,7 @@ long PlatformPasteboard::addTypes(const Vector<String>& pasteboardTypes)
 long PlatformPasteboard::setTypes(const Vector<String>& pasteboardTypes)
 {
     if (pasteboardTypes.isEmpty())
-        return [m_pasteboard.get() declareTypes:nil owner:nil];
+        return [m_pasteboard declareTypes:@[] owner:nil];
 
     RetainPtr<NSMutableArray> types = adoptNS([[NSMutableArray alloc] init]);
     for (size_t i = 0; i < pasteboardTypes.size(); ++i)

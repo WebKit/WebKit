@@ -1,3 +1,20 @@
+2015-05-07  Anders Carlsson  <andersca@apple.com>
+
+        Build fixes.
+
+        * Misc/WebNSPasteboardExtras.mm:
+        (-[NSPasteboard _web_writeFileWrapperAsRTFDAttachment:]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _writeSelectionWithPasteboardTypes:toPasteboard:cachedAttributedString:]):
+        (-[WebHTMLView _selectionStartFontAttributesAsRTF]):
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView writeSelectionWithPasteboardTypes:toPasteboard:]):
+        Pass empty arrays and dictionaries instead of nil.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        Use the regular init method.
+
 2015-05-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Fix iPhone 6 iOS simulator Build.

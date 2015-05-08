@@ -1118,7 +1118,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         if (attributedString == nil) {
             attributedString = [self selectedAttributedString];
         }        
-        NSData *RTFDData = [attributedString RTFDFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
+        NSData *RTFDData = [attributedString RTFDFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:@{ }];
         [pasteboard setData:RTFDData forType:NSRTFDPboardType];
     }        
     if ([types containsObject:NSRTFPboardType]) {
@@ -1126,7 +1126,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
             attributedString = [self selectedAttributedString];
         if ([attributedString containsAttachments])
             attributedString = attributedStringByStrippingAttachmentCharacters(attributedString);
-        NSData *RTFData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
+        NSData *RTFData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:@{ }];
         [pasteboard setData:RTFData forType:NSRTFPboardType];
     }
     
@@ -4680,7 +4680,7 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
     Frame* coreFrame = core([self _frame]);
     NSAttributedString *string = [[NSAttributedString alloc] initWithString:@"x"
         attributes:coreFrame ? coreFrame->editor().fontAttributesForSelectionStart() : nil];
-    NSData *data = [string RTFFromRange:NSMakeRange(0, [string length]) documentAttributes:nil];
+    NSData *data = [string RTFFromRange:NSMakeRange(0, [string length]) documentAttributes:@{ }];
     [string release];
     return data;
 }

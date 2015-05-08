@@ -194,7 +194,7 @@ static NSArray *_writableTypesForImageWithArchive (void)
     NSAttributedString *string = [NSAttributedString attributedStringWithAttachment:attachment];
     [attachment release];
     
-    NSData *RTFDData = [string RTFDFromRange:NSMakeRange(0, [string length]) documentAttributes:nil];
+    NSData *RTFDData = [string RTFDFromRange:NSMakeRange(0, [string length]) documentAttributes:@{ }];
     [self setData:RTFDData forType:NSRTFDPboardType];
 }
 

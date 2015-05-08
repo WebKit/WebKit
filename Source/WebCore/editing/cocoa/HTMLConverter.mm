@@ -2144,9 +2144,9 @@ void HTMLConverter::_addMarkersToList(NSTextList *list, NSRange range)
                     [newStyle addTabStop:tab];
                     [tab release];
 #if PLATFORM(IOS)
-                    tab = [[PlatformNSTextTab alloc] initWithTextAlignment:NSTextAlignmentNatural location:listLocation options:nil];
+                    tab = [[PlatformNSTextTab alloc] initWithTextAlignment:NSTextAlignmentNatural location:listLocation options:@{ }];
 #else
-                    tab = [[PlatformNSTextTab alloc] initWithTextAlignment:NSNaturalTextAlignment location:listLocation options:nil];
+                    tab = [[PlatformNSTextTab alloc] initWithTextAlignment:NSNaturalTextAlignment location:listLocation options:@{ }];
 #endif
                     [newStyle addTabStop:tab];
                     [tab release];
