@@ -28,7 +28,7 @@ class IntPoint;
 IntPoint convertWidgetPointToScreenPoint(GtkWidget*, const IntPoint&);
 bool widgetIsOnscreenToplevelWindow(GtkWidget*);
 
-#if defined(DEVELOPER_MODE)
+#if defined(DEVELOPMENT_BUILD)
 CString webkitBuildDirectory();
 #endif
 

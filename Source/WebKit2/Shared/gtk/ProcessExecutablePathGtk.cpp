@@ -30,7 +30,7 @@
 #include <WebCore/FileSystem.h>
 #include <glib.h>
 
-#if defined(DEVELOPER_MODE)
+#if defined(DEVELOPMENT_BUILD)
 #include <wtf/gobject/GlibUtilities.h>
 #endif
 
@@ -38,7 +38,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-#if defined(DEVELOPER_MODE)
+#if defined(DEVELOPMENT_BUILD)
 static String getExecutablePath()
 {
     CString executablePath = getCurrentExecutablePath();
@@ -50,7 +50,7 @@ static String getExecutablePath()
 
 static String findWebKitProcess(const char* processName)
 {
-#if defined(DEVELOPER_MODE)
+#if defined(DEVELOPMENT_BUILD)
     static const char* execDirectory = g_getenv("WEBKIT_EXEC_PATH");
     if (execDirectory) {
         String processPath = pathByAppendingComponent(filenameToString(execDirectory), processName);

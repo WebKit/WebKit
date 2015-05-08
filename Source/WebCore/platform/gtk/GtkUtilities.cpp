@@ -54,7 +54,7 @@ bool widgetIsOnscreenToplevelWindow(GtkWidget* widget)
     return gtk_widget_is_toplevel(widget) && GTK_IS_WINDOW(widget) && !GTK_IS_OFFSCREEN_WINDOW(widget);
 }
 
-#if defined(DEVELOPER_MODE)
+#if defined(DEVELOPMENT_BUILD)
 static CString topLevelPath()
 {
     if (const char* topLevelDirectory = g_getenv("WEBKIT_TOP_LEVEL"))

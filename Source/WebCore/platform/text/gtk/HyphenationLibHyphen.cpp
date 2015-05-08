@@ -63,7 +63,7 @@ static void scanDirectoryForDicionaries(const char* directoryPath, HashMap<Atomi
         availableLocales.set(AtomicString(extractLocaleFromDictionaryFilePath(filePath)), filePath);
 }
 
-#if defined(DEVELOPER_MODE)
+#if defined(DEVELOPMENT_BUILD)
 static void scanTestDictionariesDirectoryIfNecessary(HashMap<AtomicString, String>& availableLocales)
 {
     // It's unfortunate that we need to look for the dictionaries this way, but
@@ -91,7 +91,7 @@ static HashMap<AtomicString, String>& availableLocales()
         for (size_t i = 0; i < WTF_ARRAY_LENGTH(gDictionaryDirectories); i++)
             scanDirectoryForDicionaries(gDictionaryDirectories[i], availableLocales);
 
-#if defined(DEVELOPER_MODE)
+#if defined(DEVELOPMENT_BUILD)
         scanTestDictionariesDirectoryIfNecessary(availableLocales);
 #endif
 
