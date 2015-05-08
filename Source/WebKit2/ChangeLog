@@ -1,3 +1,16 @@
+2015-05-08  Anders Carlsson  <andersca@apple.com>
+
+        Fix ProcessLauncher port leak
+        https://bugs.webkit.org/show_bug.cgi?id=144807
+        rdar://problem/20593291
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::connectToService):
+        xpc_dictionary_set_mach_send increments the send right count so make sure to
+        balance it with a call to mach_port_deallocate.
+
 2015-05-08  Beth Dakin  <bdakin@apple.com>
 
         Fix performance tests after r183954
