@@ -1,3 +1,17 @@
+2015-05-07  Hyungwook Lee  <hyungwook.lee@navercorp.com>
+
+        Add first-letter assert exception in RenderButton::setupInnerStyle().
+        https://bugs.webkit.org/show_bug.cgi?id=140517OB
+
+        Reviewed by Darin Adler.
+
+        StyleResolver references inner block's render style temporary in
+        RenderBlock::styleDidChange() when we have first-letter css pseudo
+        element.
+
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::setupInnerStyle):
+
 2015-05-07  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix build after r183970.

@@ -127,7 +127,7 @@ void RenderButton::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
 
 void RenderButton::setupInnerStyle(RenderStyle* innerStyle) 
 {
-    ASSERT(innerStyle->refCount() == 1);
+    ASSERT(style().hasPseudoStyle(FIRST_LETTER) || innerStyle->refCount() == 1);
     // RenderBlock::createAnonymousBlock creates a new RenderStyle, so this is
     // safe to modify.
     // FIXME: I don't see how the comment above is accurate when this is called
