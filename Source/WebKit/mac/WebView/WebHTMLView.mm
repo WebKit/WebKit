@@ -4087,7 +4087,7 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
 
 - (void)pressureChangeWithEvent:(NSEvent *)event
 {
-#if defined(__LP64__) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
+#if PLATFORM(MAC) && defined(__LP64__) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
     NSEvent *lastPressureEvent = [[self _webView] _pressureEvent];
     if (event.phase != NSEventPhaseChanged && event.phase != NSEventPhaseBegan && event.phase != NSEventPhaseEnded)
         return;

@@ -1,3 +1,13 @@
+2015-05-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Fix iPhone 6 iOS simulator Build.
+        following http://trac.webkit.org/changeset/183954.
+
+        Reviewed by Daniel Bates.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView pressureChangeWithEvent:]):
+
 2015-05-07  Timothy Horton  <timothy_horton@apple.com>
 
         Occasional null deref in WebImmediateActionController
