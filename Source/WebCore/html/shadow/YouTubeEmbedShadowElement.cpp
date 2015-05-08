@@ -30,9 +30,9 @@
 
 namespace WebCore {
 
-PassRefPtr<YouTubeEmbedShadowElement> YouTubeEmbedShadowElement::create(Document& doc)
+Ref<YouTubeEmbedShadowElement> YouTubeEmbedShadowElement::create(Document& doc)
 {
-    return adoptRef(new YouTubeEmbedShadowElement(doc));
+    return adoptRef(*new YouTubeEmbedShadowElement(doc));
 }
 
 YouTubeEmbedShadowElement::YouTubeEmbedShadowElement(Document& document)

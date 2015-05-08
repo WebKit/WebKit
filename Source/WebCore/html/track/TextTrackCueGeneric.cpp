@@ -49,9 +49,9 @@ const static int DEFAULTCAPTIONFONTSIZE = 10;
 
 class TextTrackCueGenericBoxElement final : public VTTCueBox {
 public:
-    static PassRefPtr<TextTrackCueGenericBoxElement> create(Document& document, TextTrackCueGeneric& cue)
+    static Ref<TextTrackCueGenericBoxElement> create(Document& document, TextTrackCueGeneric& cue)
     {
-        return adoptRef(new TextTrackCueGenericBoxElement(document, cue));
+        return adoptRef(*new TextTrackCueGenericBoxElement(document, cue));
     }
     
     virtual void applyCSSProperties(const IntSize&) override;

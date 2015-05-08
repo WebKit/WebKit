@@ -40,9 +40,9 @@ class LoadableTextTrack;
 
 class LoadableTextTrack final : public TextTrack, private TextTrackLoaderClient {
 public:
-    static PassRefPtr<LoadableTextTrack> create(HTMLTrackElement* track, const String& kind, const String& label, const String& language)
+    static Ref<LoadableTextTrack> create(HTMLTrackElement* track, const String& kind, const String& label, const String& language)
     {
-        return adoptRef(new LoadableTextTrack(track, kind, label, language));
+        return adoptRef(*new LoadableTextTrack(track, kind, label, language));
     }
     virtual ~LoadableTextTrack();
 

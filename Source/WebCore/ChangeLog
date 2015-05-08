@@ -1,3 +1,57 @@
+2015-05-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Purge PassRefPtr in WebCore/html - 3
+        https://bugs.webkit.org/show_bug.cgi?id=144686
+
+        Reviewed by Andreas Kling.
+
+        Replace PassRefPtr with Ref in create() factory functions, because
+        it doesn't have to change to be null.
+
+        No new tests, no behavior changes.
+
+        * html/FTPDirectoryDocument.h:
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::DetailsContentElement::create):
+        * html/HTMLKeygenElement.cpp:
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::SummaryContentElement::create):
+        * html/TimeRanges.cpp:
+        (WebCore::TimeRanges::create):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderContainerElement::create):
+        * html/shadow/SliderThumbElement.h:
+        (WebCore::SliderThumbElement::create):
+        * html/shadow/SpinButtonElement.cpp:
+        (WebCore::SpinButtonElement::create):
+        * html/shadow/SpinButtonElement.h:
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerContainer::create):
+        (WebCore::TextControlInnerElement::create):
+        (WebCore::TextControlInnerTextElement::create):
+        (WebCore::SearchFieldResultsButtonElement::create):
+        (WebCore::SearchFieldCancelButtonElement::create):
+        * html/shadow/TextControlInnerElements.h:
+        * html/shadow/YouTubeEmbedShadowElement.cpp:
+        (WebCore::YouTubeEmbedShadowElement::create):
+        * html/track/InbandDataTextTrack.cpp:
+        (WebCore::InbandDataTextTrack::create):
+        * html/track/InbandDataTextTrack.h:
+        * html/track/InbandGenericTextTrack.cpp:
+        (WebCore::InbandGenericTextTrack::create):
+        * html/track/InbandGenericTextTrack.h:
+        * html/track/InbandWebVTTTextTrack.cpp:
+        (WebCore::InbandWebVTTTextTrack::create):
+        * html/track/InbandWebVTTTextTrack.h:
+        * html/track/LoadableTextTrack.h:
+        * html/track/TextTrack.h:
+        (WebCore::TextTrack::create):
+        * html/track/TextTrackCueGeneric.cpp:
+        * html/track/TextTrackCueGeneric.h:
+        * html/track/TextTrackList.h:
+        * html/track/VTTRegionList.h:
+        (WebCore::VTTRegionList::create):
+
 2015-05-07  Dean Jackson  <dino@apple.com>
 
         [iOS] MediaControls: disappear while scrubbing

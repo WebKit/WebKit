@@ -40,9 +40,9 @@
 
 namespace WebCore {
 
-PassRefPtr<InbandTextTrack> InbandWebVTTTextTrack::create(ScriptExecutionContext* context, TextTrackClient* client, PassRefPtr<InbandTextTrackPrivate> playerPrivate)
+Ref<InbandTextTrack> InbandWebVTTTextTrack::create(ScriptExecutionContext* context, TextTrackClient* client, PassRefPtr<InbandTextTrackPrivate> playerPrivate)
 {
-    return adoptRef(new InbandWebVTTTextTrack(context, client, playerPrivate));
+    return adoptRef(*new InbandWebVTTTextTrack(context, client, playerPrivate));
 }
 
 InbandWebVTTTextTrack::InbandWebVTTTextTrack(ScriptExecutionContext* context, TextTrackClient* client, PassRefPtr<InbandTextTrackPrivate> trackPrivate)

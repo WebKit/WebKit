@@ -45,7 +45,7 @@ class TouchEvent;
 
 class SliderThumbElement final : public HTMLDivElement {
 public:
-    static PassRefPtr<SliderThumbElement> create(Document&);
+    static Ref<SliderThumbElement> create(Document&);
 
     void setPositionFromValue();
     void dragFrom(const LayoutPoint&);
@@ -107,9 +107,9 @@ private:
 #endif
 };
 
-inline PassRefPtr<SliderThumbElement> SliderThumbElement::create(Document& document)
+inline Ref<SliderThumbElement> SliderThumbElement::create(Document& document)
 {
-    return adoptRef(new SliderThumbElement(document));
+    return adoptRef(*new SliderThumbElement(document));
 }
 
 // --------------------------------
@@ -127,7 +127,7 @@ private:
 
 class SliderContainerElement final : public HTMLDivElement {
 public:
-    static PassRefPtr<SliderContainerElement> create(Document&);
+    static Ref<SliderContainerElement> create(Document&);
 
 private:
     SliderContainerElement(Document&);

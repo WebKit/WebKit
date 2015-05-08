@@ -33,7 +33,7 @@ namespace WebCore {
 
 class YouTubeEmbedShadowElement final : public HTMLDivElement {
 public:
-    static PassRefPtr<YouTubeEmbedShadowElement> create(Document&);
+    static Ref<YouTubeEmbedShadowElement> create(Document&);
 
 private:
     YouTubeEmbedShadowElement(Document&);

@@ -36,7 +36,7 @@ class RenderTextControlInnerBlock;
 
 class TextControlInnerContainer final : public HTMLDivElement {
 public:
-    static PassRefPtr<TextControlInnerContainer> create(Document&);
+    static Ref<TextControlInnerContainer> create(Document&);
 protected:
     TextControlInnerContainer(Document&);
     virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
@@ -44,7 +44,7 @@ protected:
 
 class TextControlInnerElement final : public HTMLDivElement {
 public:
-    static PassRefPtr<TextControlInnerElement> create(Document&);
+    static Ref<TextControlInnerElement> create(Document&);
 
 protected:
     TextControlInnerElement(Document&);
@@ -56,7 +56,7 @@ private:
 
 class TextControlInnerTextElement final : public HTMLDivElement {
 public:
-    static PassRefPtr<TextControlInnerTextElement> create(Document&);
+    static Ref<TextControlInnerTextElement> create(Document&);
 
     virtual void defaultEventHandler(Event*) override;
 
@@ -72,7 +72,7 @@ private:
 
 class SearchFieldResultsButtonElement final : public HTMLDivElement {
 public:
-    static PassRefPtr<SearchFieldResultsButtonElement> create(Document&);
+    static Ref<SearchFieldResultsButtonElement> create(Document&);
 
     virtual void defaultEventHandler(Event*) override;
 #if !PLATFORM(IOS)
@@ -86,7 +86,7 @@ private:
 
 class SearchFieldCancelButtonElement final : public HTMLDivElement {
 public:
-    static PassRefPtr<SearchFieldCancelButtonElement> create(Document&);
+    static Ref<SearchFieldCancelButtonElement> create(Document&);
 
     virtual void defaultEventHandler(Event*) override;
     virtual bool isSearchFieldCancelButtonElement() const override { return true; }

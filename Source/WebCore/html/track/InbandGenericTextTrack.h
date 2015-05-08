@@ -62,7 +62,7 @@ private:
 
 class InbandGenericTextTrack final : public InbandTextTrack, private WebVTTParserClient {
 public:
-    static PassRefPtr<InbandGenericTextTrack> create(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
+    static Ref<InbandGenericTextTrack> create(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
     virtual ~InbandGenericTextTrack();
 
 private:

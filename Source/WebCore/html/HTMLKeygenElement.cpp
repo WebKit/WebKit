@@ -44,9 +44,9 @@ using namespace HTMLNames;
 
 class KeygenSelectElement final : public HTMLSelectElement {
 public:
-    static RefPtr<KeygenSelectElement> create(Document& document)
+    static Ref<KeygenSelectElement> create(Document& document)
     {
-        return adoptRef(new KeygenSelectElement(document));
+        return adoptRef(*new KeygenSelectElement(document));
     }
 
 protected:

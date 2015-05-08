@@ -52,12 +52,12 @@ static std::string ToString(const TimeRanges& ranges)
 
 TEST(TimeRanges, Empty)
 {
-    ASSERT_RANGE("{ }", TimeRanges::create());
+    ASSERT_RANGE("{ }", TimeRanges::create().ptr());
 }
 
 TEST(TimeRanges, SingleRange)
 {
-    ASSERT_RANGE("{ [1,2) }", TimeRanges::create(1, 2));
+    ASSERT_RANGE("{ [1,2) }", TimeRanges::create(1, 2).ptr());
 }
 
 TEST(TimeRanges, AddOrder)

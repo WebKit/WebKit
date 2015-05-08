@@ -38,9 +38,9 @@ namespace WebCore {
 
 class VTTRegionList : public RefCounted<VTTRegionList> {
 public:
-    static PassRefPtr<VTTRegionList> create()
+    static Ref<VTTRegionList> create()
     {
-        return adoptRef(new VTTRegionList());
+        return adoptRef(*new VTTRegionList);
     }
 
     ~VTTRegionList() { }

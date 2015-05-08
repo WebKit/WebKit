@@ -33,9 +33,9 @@ class DOMImplementation;
     
 class FTPDirectoryDocument final : public HTMLDocument {
 public:
-    static RefPtr<FTPDirectoryDocument> create(Frame* frame, const URL& url)
+    static Ref<FTPDirectoryDocument> create(Frame* frame, const URL& url)
     {
-        return adoptRef(new FTPDirectoryDocument(frame, url));
+        return adoptRef(*new FTPDirectoryDocument(frame, url));
     }
 
 private:

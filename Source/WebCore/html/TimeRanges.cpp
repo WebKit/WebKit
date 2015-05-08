@@ -32,19 +32,19 @@
 
 namespace WebCore {
 
-PassRefPtr<TimeRanges> TimeRanges::create()
+Ref<TimeRanges> TimeRanges::create()
 {
-    return adoptRef(new TimeRanges);
+    return adoptRef(*new TimeRanges);
 }
 
-PassRefPtr<TimeRanges> TimeRanges::create(double start, double end)
+Ref<TimeRanges> TimeRanges::create(double start, double end)
 {
-    return adoptRef(new TimeRanges(start, end));
+    return adoptRef(*new TimeRanges(start, end));
 }
 
-PassRefPtr<TimeRanges> TimeRanges::create(const PlatformTimeRanges& other)
+Ref<TimeRanges> TimeRanges::create(const PlatformTimeRanges& other)
 {
-    return adoptRef(new TimeRanges(other));
+    return adoptRef(*new TimeRanges(other));
 }
 
 TimeRanges::TimeRanges()

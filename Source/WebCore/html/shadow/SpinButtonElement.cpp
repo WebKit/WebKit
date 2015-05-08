@@ -55,9 +55,9 @@ inline SpinButtonElement::SpinButtonElement(Document& document, SpinButtonOwner&
     setPseudo(AtomicString("-webkit-inner-spin-button", AtomicString::ConstructFromLiteral));
 }
 
-PassRefPtr<SpinButtonElement> SpinButtonElement::create(Document& document, SpinButtonOwner& spinButtonOwner)
+Ref<SpinButtonElement> SpinButtonElement::create(Document& document, SpinButtonOwner& spinButtonOwner)
 {
-    return adoptRef(new SpinButtonElement(document, spinButtonOwner));
+    return adoptRef(*new SpinButtonElement(document, spinButtonOwner));
 }
 
 void SpinButtonElement::willDetachRenderers()

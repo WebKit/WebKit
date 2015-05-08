@@ -38,9 +38,9 @@ typedef int ExceptionCode;
 
 class TimeRanges : public RefCounted<TimeRanges> {
 public:
-    WEBCORE_EXPORT static PassRefPtr<TimeRanges> create();
-    WEBCORE_EXPORT static PassRefPtr<TimeRanges> create(double start, double end);
-    static PassRefPtr<TimeRanges> create(const PlatformTimeRanges&);
+    WEBCORE_EXPORT static Ref<TimeRanges> create();
+    WEBCORE_EXPORT static Ref<TimeRanges> create(double start, double end);
+    static Ref<TimeRanges> create(const PlatformTimeRanges&);
 
     WEBCORE_EXPORT double start(unsigned index, ExceptionCode&) const;
     WEBCORE_EXPORT double end(unsigned index, ExceptionCode&) const;

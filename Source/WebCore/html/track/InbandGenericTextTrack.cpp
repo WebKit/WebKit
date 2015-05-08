@@ -92,9 +92,9 @@ void GenericTextTrackCueMap::remove(TextTrackCue* cue)
     }
 }
 
-PassRefPtr<InbandGenericTextTrack> InbandGenericTextTrack::create(ScriptExecutionContext* context, TextTrackClient* client, PassRefPtr<InbandTextTrackPrivate> playerPrivate)
+Ref<InbandGenericTextTrack> InbandGenericTextTrack::create(ScriptExecutionContext* context, TextTrackClient* client, PassRefPtr<InbandTextTrackPrivate> playerPrivate)
 {
-    return adoptRef(new InbandGenericTextTrack(context, client, playerPrivate));
+    return adoptRef(*new InbandGenericTextTrack(context, client, playerPrivate));
 }
 
 InbandGenericTextTrack::InbandGenericTextTrack(ScriptExecutionContext* context, TextTrackClient* client, PassRefPtr<InbandTextTrackPrivate> trackPrivate)
