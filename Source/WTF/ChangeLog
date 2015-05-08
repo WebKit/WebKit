@@ -1,3 +1,24 @@
+2015-05-07  Andreas Kling  <akling@apple.com>
+
+        Optimize serialization of quoted JSON strings.
+        <https://webkit.org/b/144754>
+
+        Reviewed by Darin Adler.
+
+        Add a StringBuilder API for appending a quoted JSON string. This is used by
+        JSON.stringify() to implement efficient appending of strings while escaping
+        quotes, control characters and \uNNNN-style characters.
+
+        The main benefit comes from only doing a single buffer expansion up front,
+        instead of doing it every time we append something. The fudge factor is pretty
+        large for 16-bit strings, since the maximum number of output characters per
+        input character is 6.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::appendQuotedJSONStringInternal):
+        (WTF::StringBuilder::appendQuotedJSONString):
+        * wtf/text/StringBuilder.h:
+
 2015-05-07  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] All spell checking layout tests fail

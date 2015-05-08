@@ -1,3 +1,13 @@
+2015-05-07  Andreas Kling  <akling@apple.com>
+
+        Optimize serialization of quoted JSON strings.
+        <https://webkit.org/b/144754>
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::asJSON): Use the new StringBuilder API.
+
 2015-05-07  Martin Robinson  <mrobinson@igalia.com>
 
         Followup fixes to r183936
