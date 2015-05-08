@@ -1,3 +1,21 @@
+2015-05-08  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/20757196> NSInternalInconsistencyException raised in -[NSString encodeWithCoder:] beneath createEncodedObject when using WKRemoteObjectEncoder for Safari AutoFill
+        https://bugs.webkit.org/show_bug.cgi?id=144818
+
+        Reviewed by Anders Carlsson.
+
+        Allow NSString instances that contain unpaired surrogates to be encoded by
+        WKRemoteObjectCoder by encoding them directly rather than using
+        -[NSString encodeWithCoder:].
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (encodeString): Added. Sets an API::String as the object to encode.
+        (encodeObject): Changed to use encodeString for NSString instances.
+        (decodeString): Added. Gets an API::String from the dictionary and returns it as an
+        NSString.
+        (decodeObject): Changed to use decodeString for NSString instances.
+
 2015-05-08  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the build.
