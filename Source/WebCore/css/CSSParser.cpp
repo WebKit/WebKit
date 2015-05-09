@@ -1494,8 +1494,6 @@ std::unique_ptr<MediaQuery> CSSParser::parseMediaQuery(const String& string)
     return WTF::move(m_mediaQuery);
 }
 
-#if ENABLE(PICTURE_SIZES)
-
 Vector<CSSParser::SourceSize> CSSParser::parseSizesAttribute(StringView string)
 {
     Vector<SourceSize> result;
@@ -1545,8 +1543,6 @@ CSSParser::SourceSize CSSParser::sourceSize(std::unique_ptr<MediaQueryExp>&& exp
     // For other compilers, we did not need to define the constructors and we could use aggregate initialization syntax.
     return SourceSize(WTF::move(expression), WTF::move(value));
 }
-
-#endif
 
 static inline void filterProperties(bool important, const CSSParser::ParsedPropertyVector& input, Vector<CSSProperty, 256>& output, size_t& unusedEntries, std::bitset<numCSSProperties>& seenProperties)
 {
@@ -11571,10 +11567,8 @@ inline void CSSParser::detectAtToken(int length, bool hasEscape)
         case 18:
             if (isEqualToCSSIdentifier(name + 2, "webkit-keyframes"))
                 m_token = KEYFRAMES_SYM;
-#if ENABLE(PICTURE_SIZES)
             else if (isEqualToCSSIdentifier(name + 2, "webkit-sizesattr"))
                 m_token = WEBKIT_SIZESATTR_SYM;
-#endif
             return;
 
         case 19:

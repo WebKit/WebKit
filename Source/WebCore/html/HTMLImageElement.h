@@ -48,9 +48,7 @@ public:
 
     int naturalWidth() const;
     int naturalHeight() const;
-#if ENABLE(PICTURE_SIZES)
     const AtomicString& currentSrc() const { return m_currentSrc; }
-#endif
 
     bool isServerMap() const;
 
@@ -126,9 +124,7 @@ private:
     HTMLFormElement* m_form;
     CompositeOperator m_compositeOperator;
     AtomicString m_bestFitImageURL;
-#if ENABLE(PICTURE_SIZES)
     AtomicString m_currentSrc;
-#endif
     AtomicString m_lowercasedUsemap;
     float m_imageDevicePixelRatio;
     bool m_experimentalImageMenuEnabled;

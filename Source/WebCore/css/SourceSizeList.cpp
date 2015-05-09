@@ -32,15 +32,6 @@
 
 namespace WebCore {
 
-#if !ENABLE(PICTURE_SIZES)
-
-float parseSizesAttribute(StringView, RenderView*, Frame*)
-{
-    return 0;
-}
-
-#else
-
 static bool match(std::unique_ptr<MediaQueryExp>&& expression, RenderStyle& style, Frame* frame)
 {
     if (expression->mediaFeature().isEmpty())
@@ -88,7 +79,5 @@ float parseSizesAttribute(StringView sizesAttribute, RenderView* view, Frame* fr
     }
     return defaultLength(style, view);
 }
-
-#endif
 
 } // namespace WebCore

@@ -1,3 +1,14 @@
+2015-05-09  Yoav Weiss  <yoav@yoav.ws>
+
+        Remove the PICTURE_SIZES build flag
+        https://bugs.webkit.org/show_bug.cgi?id=144679
+
+        Reviewed by Benjamin Poulain.
+
+        Removed the PICTURE_SIZES build time flag.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2015-05-08  Beth Dakin  <bdakin@apple.com>
 
         Shuffle touch-related code to keep the internal builds working
