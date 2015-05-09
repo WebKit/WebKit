@@ -1,3 +1,14 @@
+2015-05-08  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] [CMake] Check for required X libraries
+        https://bugs.webkit.org/show_bug.cgi?id=144823
+
+        Reviewed by Martin Robinson.
+
+        Error out if missing libXcomposite, libXdamage, libXrender, or libXt.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 015-05-08  Michael Catanzaro  <mcatanzaro@igalia.com>, Martin Robinson <mrobinson@igalia.com>
 
         [GTK] Checks for DEVELOPMENT_BUILD are all wrong
