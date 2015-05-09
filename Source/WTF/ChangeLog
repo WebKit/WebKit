@@ -1,3 +1,16 @@
+2015-05-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove convenience constructors for TextRun
+        https://bugs.webkit.org/show_bug.cgi?id=144752
+
+        Reviewed by Anders Carlsson.
+
+        No reason why StringView shouldn't have a StringImpl* constructor.
+
+        Test: StringView8Bit in TestWebKitAPI
+
+        * wtf/text/StringView.h: Add the constructor.
+
 2015-05-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r183996.

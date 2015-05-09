@@ -52,9 +52,9 @@ public:
 
     typedef unsigned RoundingHacks;
 
-    explicit TextRun(StringView s, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
-        : m_text(s)
-        , m_charactersLength(s.length())
+    explicit TextRun(StringView text, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
+        : m_text(text)
+        , m_charactersLength(text.length())
         , m_tabSize(0)
         , m_xpos(xpos)
         , m_horizontalGlyphStretch(1)
@@ -67,21 +67,6 @@ public:
         , m_applyRunRounding((roundingHacks & RunRounding) && s_allowsRoundingHacks)
         , m_applyWordRounding((roundingHacks & WordRounding) && s_allowsRoundingHacks)
         , m_disableSpacing(false)
-    {
-    }
-
-    explicit TextRun(const String& s)
-        : TextRun(StringView(s))
-    {
-    }
-
-    TextRun(const LChar* c, unsigned len)
-        : TextRun(StringView(c, len))
-    {
-    }
-
-    TextRun(const UChar* c, unsigned len)
-        : TextRun(StringView(c, len))
     {
     }
 

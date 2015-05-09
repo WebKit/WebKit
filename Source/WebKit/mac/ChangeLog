@@ -1,3 +1,19 @@
+2015-05-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove convenience constructors for TextRun
+        https://bugs.webkit.org/show_bug.cgi?id=144752
+
+        These convenience constructors are unnecessary. Moving the code that makes the StringView
+        back to the call site will also help us make things more elegant in future refactoring.
+
+        Reviewed by Darin Adler.
+
+        No new tests because there is no behavior change.
+
+        * Misc/WebKitNSStringExtras.mm:
+        (-[NSString _web_drawAtPoint:font:textColor:allowingFontSmoothing:]):
+        (-[NSString _web_widthWithFont:]):
+
 2015-05-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r183996.

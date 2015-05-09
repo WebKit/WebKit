@@ -697,4 +697,23 @@ TEST(WTF, StringViewEndsWithIgnoringASCIICaseWithLatin1Characters)
     EXPECT_FALSE(referenceUTF8.endsWithIgnoringASCIICase(reference));
 }
 
+TEST(WTF, StringView8Bit)
+{
+    StringView nullView;
+    StringView emptyView = StringView::empty();
+    EXPECT_TRUE(StringView().is8Bit());
+    EXPECT_TRUE(StringView::empty().is8Bit());
+
+    LChar* lcharPtr = nullptr;
+    UChar* ucharPtr = nullptr;
+    EXPECT_TRUE(StringView(lcharPtr, 0).is8Bit());
+    EXPECT_FALSE(StringView(ucharPtr, 0).is8Bit());
+
+    EXPECT_TRUE(StringView(String(lcharPtr, 0)).is8Bit());
+    EXPECT_TRUE(StringView(String(ucharPtr, 0)).is8Bit());
+
+    EXPECT_TRUE(StringView(String().impl()).is8Bit());
+    EXPECT_TRUE(StringView(emptyString().impl()).is8Bit());
+}
+
 } // namespace TestWebKitAPI

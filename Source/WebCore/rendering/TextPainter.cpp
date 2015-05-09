@@ -170,7 +170,7 @@ void TextPainter::paintText()
         if (!m_emphasisMark.isEmpty()) {
             updateGraphicsContext(m_context, m_textPaintStyle, UseEmphasisMarkColor);
 
-            static NeverDestroyed<TextRun> objectReplacementCharacterTextRun(&objectReplacementCharacter, 1);
+            static NeverDestroyed<TextRun> objectReplacementCharacterTextRun(StringView(&objectReplacementCharacter, 1));
             TextRun& emphasisMarkTextRun = m_combinedText ? objectReplacementCharacterTextRun.get() : m_textRun;
             FloatPoint emphasisMarkTextOrigin = m_combinedText ? FloatPoint(boxOrigin.x() + m_boxRect.width() / 2, boxOrigin.y() + m_font.fontMetrics().ascent()) : m_textOrigin;
             if (m_combinedText)
@@ -196,7 +196,7 @@ void TextPainter::paintText()
         if (!m_emphasisMark.isEmpty()) {
             updateGraphicsContext(m_context, m_selectionPaintStyle, UseEmphasisMarkColor);
 
-            DEPRECATED_DEFINE_STATIC_LOCAL(TextRun, objectReplacementCharacterTextRun, (&objectReplacementCharacter, 1));
+            DEPRECATED_DEFINE_STATIC_LOCAL(TextRun, objectReplacementCharacterTextRun, (StringView(&objectReplacementCharacter, 1)));
             TextRun& emphasisMarkTextRun = m_combinedText ? objectReplacementCharacterTextRun : m_textRun;
             FloatPoint emphasisMarkTextOrigin = m_combinedText ? FloatPoint(boxOrigin.x() + m_boxRect.width() / 2, boxOrigin.y() + m_font.fontMetrics().ascent()) : m_textOrigin;
             if (m_combinedText)

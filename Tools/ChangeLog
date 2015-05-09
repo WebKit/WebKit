@@ -1,3 +1,15 @@
+2015-05-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove convenience constructors for TextRun
+        https://bugs.webkit.org/show_bug.cgi?id=144752
+
+        Reviewed by Anders Carlsson.
+
+        Test the StringView which takes a StringImpl*.
+
+        * TestWebKitAPI/Tests/WTF/StringView.cpp:
+        (StringView8Bit): Testing is8Bit() on StringView
+
 2015-05-07  Sam Weinig  <sam@webkit.org>
 
         [Content Extensions] Add simple tester that takes an extension and compiles it
