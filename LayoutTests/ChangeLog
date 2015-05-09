@@ -2,6 +2,14 @@
 
         Unreviewed GTK+ gardening
 
+        * platform/gtk/TestExpectations: Unskip a test that was failing only because the shared
+        baseline had a failure in it.
+        * platform/gtk/fast/events/event-attribute-expected.txt: Added.
+
+2015-05-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed GTK+ gardening
+
         * platform/gtk/TestExpectations: Un-expectation some tests that are now passing.
 
 2015-05-08  Martin Robinson  <mrobinson@igalia.com>
