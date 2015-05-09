@@ -362,7 +362,7 @@ test14.step(function() {
     }));
 });
 
-var test15 = async_test('Underlying source: calling close twice on an empty stream should throw the second time', { timeout: 50 });
+var test15 = async_test('Underlying source: calling close twice on an empty stream should throw the second time');
 test15.step(function() {
     new ReadableStream({
         start: function(c) {

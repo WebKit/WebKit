@@ -1,3 +1,15 @@
+2015-05-08  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet <youenn.fablet@crf.canon.fr>
+
+        streams/reference-implementation/readable-stream-reader.html and streams/reference-implementation/bad-underlying-sources.html are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=144813
+
+        Reviewed by Alexey Proskuryakov.
+
+        Removed small timeouts for tests that went from TIMEOUT to PASS thanks to other patches.
+
+        * streams/reference-implementation/bad-underlying-sources.html:
+        * streams/reference-implementation/readable-stream-reader.html:
+
 2015-05-08  Alexey Proskuryakov  <ap@apple.com>
 
         Update results after Sam's patch, the order of properties changed.

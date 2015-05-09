@@ -146,7 +146,7 @@ test2.step(function() {
         test2.step_func(function(e) { assert_unreached('reader.cancel() should not reject'); }));
 });
 
-var test3 = async_test('closed should be fulfilled after stream is closed (.closed access before acquiring)', { timeout: 50 });
+var test3 = async_test('closed should be fulfilled after stream is closed (.closed access before acquiring)');
 test3.step(function() {
     var controller;
     var rs = new ReadableStream({
