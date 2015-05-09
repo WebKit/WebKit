@@ -129,6 +129,11 @@ void MemoryPressureHandler::releaseCriticalMemory()
         ReliefLogger log("Discard all JIT-compiled code");
         gcController().discardAllCompiledCode();
     }
+
+    {
+        ReliefLogger log("Invalidate font cache");
+        FontCache::singleton().invalidate();
+    }
 }
 
 void MemoryPressureHandler::releaseMemory(bool critical)
