@@ -2263,7 +2263,14 @@ private:
             
             if (m_node->arrayMode().isInBounds()) {
                 LValue result = m_out.load64(baseIndex(heap, storage, index, m_node->child2()));
-                speculate(LoadFromHole, noValue(), 0, m_out.isZero64(result));
+                LValue isHole = m_out.isZero64(result);
+                if (m_node->arrayMode().isSaneChain()) {
+                    DFG_ASSERT(
+                        m_graph, m_node, m_node->arrayMode().type() == Array::Contiguous);
+                    result = m_out.select(
+                        isHole, m_out.constInt64(JSValue::encode(jsUndefined())), result);
+                } else
+                    speculate(LoadFromHole, noValue(), 0, isHole);
                 setJSValue(result);
                 return;
             }

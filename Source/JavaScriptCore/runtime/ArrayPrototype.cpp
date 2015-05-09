@@ -32,12 +32,13 @@
 #include "Interpreter.h"
 #include "JIT.h"
 #include "JSArrayIterator.h"
+#include "JSCBuiltins.h"
+#include "JSCInlines.h"
 #include "JSStringBuilder.h"
 #include "JSStringJoiner.h"
 #include "Lookup.h"
 #include "ObjectConstructor.h"
 #include "ObjectPrototype.h"
-#include "JSCInlines.h"
 #include "StringRecursionChecker.h"
 #include <algorithm>
 #include <wtf/Assertions.h>
@@ -63,47 +64,9 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncLastIndexOf(ExecState*);
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncKeys(ExecState*);
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncEntries(ExecState*);
 
-}
-
-#include "ArrayPrototype.lut.h"
-
-namespace JSC {
-
 // ------------------------------ ArrayPrototype ----------------------------
 
-const ClassInfo ArrayPrototype::s_info = {"Array", &JSArray::s_info, &arrayPrototypeTable, CREATE_METHOD_TABLE(ArrayPrototype)};
-
-/* Source for ArrayPrototype.lut.h
-@begin arrayPrototypeTable 16
-  toString       arrayProtoFuncToString       DontEnum|Function 0
-  toLocaleString arrayProtoFuncToLocaleString DontEnum|Function 0
-  concat         arrayProtoFuncConcat         DontEnum|Function 1
-  fill           arrayProtoFuncFill           DontEnum|Function 1
-  join           arrayProtoFuncJoin           DontEnum|Function 1
-  pop            arrayProtoFuncPop            DontEnum|Function 0
-  push           arrayProtoFuncPush           DontEnum|Function 1
-  reverse        arrayProtoFuncReverse        DontEnum|Function 0
-  shift          arrayProtoFuncShift          DontEnum|Function 0
-  slice          arrayProtoFuncSlice          DontEnum|Function 2
-  sort           arrayProtoFuncSort           DontEnum|Function 1
-  splice         arrayProtoFuncSplice         DontEnum|Function 2
-  unshift        arrayProtoFuncUnShift        DontEnum|Function 1
-  every          arrayProtoFuncEvery          DontEnum|Function 1
-  forEach        arrayProtoFuncForEach        DontEnum|Function 1
-  some           arrayProtoFuncSome           DontEnum|Function 1
-  indexOf        arrayProtoFuncIndexOf        DontEnum|Function 1
-  lastIndexOf    arrayProtoFuncLastIndexOf    DontEnum|Function 1
-  filter         arrayProtoFuncFilter         DontEnum|Function 1
-  reduce         arrayProtoFuncReduce         DontEnum|Function 1
-  reduceRight    arrayProtoFuncReduceRight    DontEnum|Function 1
-  map            arrayProtoFuncMap            DontEnum|Function 1
-  entries        arrayProtoFuncEntries        DontEnum|Function 0
-  keys           arrayProtoFuncKeys           DontEnum|Function 0
-  find           arrayProtoFuncFind           DontEnum|Function 1
-  findIndex      arrayProtoFuncFindIndex      DontEnum|Function 1
-  includes       arrayProtoFuncIncludes       DontEnum|Function 1
-@end
-*/
+const ClassInfo ArrayPrototype::s_info = {"Array", &JSArray::s_info, nullptr, CREATE_METHOD_TABLE(ArrayPrototype)};
 
 ArrayPrototype* ArrayPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
@@ -126,7 +89,35 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
     putDirectWithoutTransition(vm, vm.propertyNames->values, globalObject->arrayProtoValuesFunction(), DontEnum);
     putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, globalObject->arrayProtoValuesFunction(), DontEnum);
-
+    
+    JSC_NATIVE_FUNCTION(vm.propertyNames->toString, arrayProtoFuncToString, DontEnum, 0);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->toLocaleString, arrayProtoFuncToLocaleString, DontEnum, 0);
+    JSC_NATIVE_FUNCTION("concat", arrayProtoFuncConcat, DontEnum, 1);
+    JSC_BUILTIN_FUNCTION("fill", arrayPrototypeFillCodeGenerator, DontEnum);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->join, arrayProtoFuncJoin, DontEnum, 1);
+    JSC_NATIVE_INTRINSIC_FUNCTION("pop", arrayProtoFuncPop, DontEnum, 0, ArrayPopIntrinsic);
+    JSC_NATIVE_INTRINSIC_FUNCTION("push", arrayProtoFuncPush, DontEnum, 1, ArrayPushIntrinsic);
+    JSC_NATIVE_FUNCTION("reverse", arrayProtoFuncReverse, DontEnum, 0);
+    JSC_NATIVE_FUNCTION("shift", arrayProtoFuncShift, DontEnum, 0);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->slice, arrayProtoFuncSlice, DontEnum, 2);
+    JSC_BUILTIN_FUNCTION("sort", arrayPrototypeSortCodeGenerator, DontEnum);
+    JSC_NATIVE_FUNCTION("splice", arrayProtoFuncSplice, DontEnum, 2);
+    JSC_NATIVE_FUNCTION("unshift", arrayProtoFuncUnShift, DontEnum, 1);
+    JSC_BUILTIN_FUNCTION("every", arrayPrototypeEveryCodeGenerator, DontEnum);
+    JSC_BUILTIN_FUNCTION("forEach", arrayPrototypeForEachCodeGenerator, DontEnum);
+    JSC_BUILTIN_FUNCTION("some", arrayPrototypeSomeCodeGenerator, DontEnum);
+    JSC_NATIVE_FUNCTION("indexOf", arrayProtoFuncIndexOf, DontEnum, 1);
+    JSC_NATIVE_FUNCTION("lastIndexOf", arrayProtoFuncLastIndexOf, DontEnum, 1);
+    JSC_BUILTIN_FUNCTION("filter", arrayPrototypeFilterCodeGenerator, DontEnum);
+    JSC_NATIVE_FUNCTION("reduce", arrayProtoFuncReduce, DontEnum, 1);
+    JSC_NATIVE_FUNCTION("reduceRight", arrayProtoFuncReduceRight, DontEnum, 1);
+    JSC_BUILTIN_FUNCTION("map", arrayPrototypeMapCodeGenerator, DontEnum);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->entries, arrayProtoFuncEntries, DontEnum, 0);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->keys, arrayProtoFuncKeys, DontEnum, 0);
+    JSC_BUILTIN_FUNCTION("find", arrayPrototypeFindCodeGenerator, DontEnum);
+    JSC_BUILTIN_FUNCTION("findIndex", arrayPrototypeFindIndexCodeGenerator, DontEnum);
+    JSC_BUILTIN_FUNCTION("includes", arrayPrototypeIncludesCodeGenerator, DontEnum);
+    
     if (!globalObject->runtimeFlags().isSymbolDisabled()) {
         JSObject* unscopables = constructEmptyObject(globalObject->globalExec(), globalObject->nullPrototypeObjectStructure());
         const char* unscopableNames[] = {
@@ -142,11 +133,6 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
             unscopables->putDirect(vm, Identifier::fromString(&vm, unscopableName), jsBoolean(true));
         putDirectWithoutTransition(vm, vm.propertyNames->unscopablesSymbol, unscopables, DontEnum | ReadOnly);
     }
-}
-
-bool ArrayPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    return getStaticFunctionSlot<JSArray>(exec, arrayPrototypeTable, jsCast<ArrayPrototype*>(object), propertyName, slot);
 }
 
 // ------------------------------ Array Functions ----------------------------

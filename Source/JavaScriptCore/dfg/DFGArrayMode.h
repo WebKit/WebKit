@@ -89,6 +89,7 @@ enum Class {
 
 enum Speculation {
     SaneChain, // In bounds and the array prototype chain is still intact, i.e. loading a hole doesn't require special treatment.
+    
     InBounds, // In bounds and not loading a hole.
     ToHole, // Potentially storing to a hole.
     OutOfBounds // Out-of-bounds access and anything can happen.

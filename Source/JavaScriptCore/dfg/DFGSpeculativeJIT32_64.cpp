@@ -2309,21 +2309,46 @@ void SpeculativeJIT::compile(Node* node)
             
                 GPRTemporary resultPayload(this);
                 if (node->arrayMode().type() == Array::Int32) {
+                    ASSERT(!node->arrayMode().isSaneChain());
+                    
                     speculationCheck(
                         OutOfBounds, JSValueRegs(), 0,
                         m_jit.branch32(
                             MacroAssembler::Equal,
-                            MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)),
+                            MacroAssembler::BaseIndex(
+                                storageReg, propertyReg, MacroAssembler::TimesEight, TagOffset),
                             TrustedImm32(JSValue::EmptyValueTag)));
-                    m_jit.load32(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)), resultPayload.gpr());
+                    m_jit.load32(
+                        MacroAssembler::BaseIndex(
+                            storageReg, propertyReg, MacroAssembler::TimesEight, PayloadOffset),
+                        resultPayload.gpr());
                     int32Result(resultPayload.gpr(), node);
                     break;
                 }
                 
                 GPRTemporary resultTag(this);
-                m_jit.load32(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)), resultTag.gpr());
-                speculationCheck(LoadFromHole, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::Equal, resultTag.gpr(), TrustedImm32(JSValue::EmptyValueTag)));
-                m_jit.load32(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)), resultPayload.gpr());
+                m_jit.load32(
+                    MacroAssembler::BaseIndex(
+                        storageReg, propertyReg, MacroAssembler::TimesEight, TagOffset),
+                    resultTag.gpr());
+                m_jit.load32(
+                    MacroAssembler::BaseIndex(
+                        storageReg, propertyReg, MacroAssembler::TimesEight, PayloadOffset),
+                    resultPayload.gpr());
+                if (node->arrayMode().isSaneChain()) {
+                    JITCompiler::Jump notHole = m_jit.branch32(
+                        MacroAssembler::NotEqual, resultTag.gpr(),
+                        TrustedImm32(JSValue::EmptyValueTag));
+                    m_jit.move(TrustedImm32(JSValue::UndefinedTag), resultTag.gpr());
+                    m_jit.move(TrustedImm32(0), resultPayload.gpr());
+                    notHole.link(&m_jit);
+                } else {
+                    speculationCheck(
+                        LoadFromHole, JSValueRegs(), 0,
+                        m_jit.branch32(
+                            MacroAssembler::Equal, resultTag.gpr(),
+                            TrustedImm32(JSValue::EmptyValueTag)));
+                }
                 jsValueResult(resultTag.gpr(), resultPayload.gpr(), node);
                 break;
             }

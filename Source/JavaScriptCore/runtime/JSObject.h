@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2012, 2013, 2014 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2009, 2012-2015 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -1556,6 +1556,12 @@ ALWAYS_INLINE Identifier makeIdentifier(VM&, const Identifier& name)
 // intrinsic.
 #define JSC_NATIVE_FUNCTION(jsName, cppName, attributes, length) \
     JSC_NATIVE_INTRINSIC_FUNCTION(jsName, cppName, (attributes), (length), NoIntrinsic)
+
+// Identical helpers but for builtins. Note that currently, we don't support builtins that are
+// also intrinsics, but we probably will do that eventually.
+#define JSC_BUILTIN_FUNCTION(jsName, generatorName, attributes) \
+    putDirectBuiltinFunction(\
+        vm, globalObject, makeIdentifier(vm, (jsName)), (generatorName)(vm), (attributes))
 
 } // namespace JSC
 

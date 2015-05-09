@@ -2447,7 +2447,17 @@ void SpeculativeJIT::compile(Node* node)
                 
                 GPRTemporary result(this);
                 m_jit.load64(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight), result.gpr());
-                speculationCheck(LoadFromHole, JSValueRegs(), 0, m_jit.branchTest64(MacroAssembler::Zero, result.gpr()));
+                if (node->arrayMode().isSaneChain()) {
+                    ASSERT(node->arrayMode().type() == Array::Contiguous);
+                    JITCompiler::Jump notHole = m_jit.branchTest64(
+                        MacroAssembler::NonZero, result.gpr());
+                    m_jit.move(TrustedImm64(JSValue::encode(jsUndefined())), result.gpr());
+                    notHole.link(&m_jit);
+                } else {
+                    speculationCheck(
+                        LoadFromHole, JSValueRegs(), 0,
+                        m_jit.branchTest64(MacroAssembler::Zero, result.gpr()));
+                }
                 jsValueResult(result.gpr(), node, node->arrayMode().type() == Array::Int32 ? DataFormatJSInt32 : DataFormatJS);
                 break;
             }

@@ -605,7 +605,6 @@ list(APPEND JavaScriptCore_SOURCES
 set(JavaScriptCore_LUT_FILES
     runtime/ArrayConstructor.cpp
     runtime/ArrayIteratorPrototype.cpp
-    runtime/ArrayPrototype.cpp
     runtime/BooleanPrototype.cpp
     runtime/DateConstructor.cpp
     runtime/DatePrototype.cpp

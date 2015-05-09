@@ -1,3 +1,43 @@
+2015-05-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Extend the SaneChain optimization to Contiguous arrays
+        https://bugs.webkit.org/show_bug.cgi?id=144664
+
+        Reviewed by Mark Lam.
+        
+        Previously if you loaded from a hole, you'd either have to take slow path for the array
+        load (which means C++ calls and prototype chain walks) or you'd exit (if you hadn't
+        gathered the necessary profiling yet). But that's unnecessary if we know that the
+        prototype chain is sane - i.e. has no indexed properties. Then we can just return
+        Undefined for the hole.
+        
+        Making this change requires setting more watchpoints on the array prototype chain. But
+        that hit a horrible bug: ArrayPrototype still uses the static lookup tables and builds
+        itself up lazily. This means that this increased the number of recompilations we'd get
+        due to the array prototype chain being built up.
+        
+        So, this change also removes the laziness and static tables from ArrayPrototype.
+        
+        But to make that change, I also had to add a helper for eagerly building up a prototype
+        that has builtin functions.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * dfg/DFGArrayMode.h:
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileGetByVal):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+        (JSC::ArrayPrototype::getOwnPropertySlot): Deleted.
+        * runtime/ArrayPrototype.h:
+        * runtime/JSObject.h:
+
 2015-05-08  Michael Saboff  <msaboff@apple.com>
 
         Creating a large MarkedBlock sometimes results in more than one cell in the block
