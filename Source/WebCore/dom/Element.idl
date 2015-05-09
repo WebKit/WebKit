@@ -127,12 +127,16 @@
     [RaisesException] Element closest(DOMString selectors);    
     [ImplementedAs=matches, RaisesException] boolean webkitMatchesSelector(DOMString selectors);
 
-    // ElementTraversal API
+    // From the ParentNode interface - https://dom.spec.whatwg.org/#interface-parentnode
+    // FIXME: Move this to a seperate ParentNode IDL file when one exists.
     readonly attribute Element firstElementChild;
     readonly attribute Element lastElementChild;
+    readonly attribute unsigned long childElementCount;
+
+    // From the NonDocumentTypeChildNode interface - https://dom.spec.whatwg.org/#nondocumenttypechildnode
+    // FIXME: Move this to a seperate NonDocumentTypeChildNode IDL file when one exists.
     readonly attribute Element previousElementSibling;
     readonly attribute Element nextElementSibling;
-    readonly attribute unsigned long childElementCount;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     // CSSOM View Module API

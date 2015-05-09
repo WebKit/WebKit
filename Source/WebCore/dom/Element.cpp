@@ -2619,38 +2619,6 @@ void Element::clearAfterPseudoElement()
     elementRareData()->setAfterPseudoElement(nullptr);
 }
 
-// ElementTraversal API
-Element* Element::firstElementChild() const
-{
-    return ElementTraversal::firstChild(*this);
-}
-
-Element* Element::lastElementChild() const
-{
-    return ElementTraversal::lastChild(*this);
-}
-
-Element* Element::previousElementSibling() const
-{
-    return ElementTraversal::previousSibling(*this);
-}
-
-Element* Element::nextElementSibling() const
-{
-    return ElementTraversal::nextSibling(*this);
-}
-
-unsigned Element::childElementCount() const
-{
-    unsigned count = 0;
-    Node* n = firstChild();
-    while (n) {
-        count += n->isElementNode();
-        n = n->nextSibling();
-    }
-    return count;
-}
-
 bool Element::matchesReadWritePseudoClass() const
 {
     return false;

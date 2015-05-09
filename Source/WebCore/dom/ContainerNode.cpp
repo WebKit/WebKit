@@ -911,4 +911,31 @@ RefPtr<RadioNodeList> ContainerNode::radioNodeList(const AtomicString& name)
     return ensureRareData().ensureNodeLists().addCacheWithAtomicName<RadioNodeList>(*this, name);
 }
 
+Element* ContainerNode::firstElementChild() const
+{
+    ASSERT(is<Document>(*this) || is<DocumentFragment>(*this) || is<Element>(*this));
+
+    return ElementTraversal::firstChild(*this);
+}
+
+Element* ContainerNode::lastElementChild() const
+{
+    ASSERT(is<Document>(*this) || is<DocumentFragment>(*this) || is<Element>(*this));
+
+    return ElementTraversal::lastChild(*this);
+}
+
+unsigned ContainerNode::childElementCount() const
+{
+    ASSERT(is<Document>(*this) || is<DocumentFragment>(*this) || is<Element>(*this));
+
+    unsigned count = 0;
+    Node* n = firstChild();
+    while (n) {
+        count += n->isElementNode();
+        n = n->nextSibling();
+    }
+    return count;
+}
+
 } // namespace WebCore

@@ -1,3 +1,56 @@
+2015-05-08  Sam Weinig  <sam@webkit.org>
+
+        Element Traversal is not just Elements anymore
+        https://bugs.webkit.org/show_bug.cgi?id=144822
+
+        Reviewed by Simon Fraser.
+
+        Match other browsers and the new DOM spec at https://dom.spec.whatwg.org by
+        exposing the element traversal methods on non-Elements.
+
+        - Makes firstElementChild, lastElementChild and childElementCount available on
+          Document and DocumentFragment in addition to Element.
+        - Makes nextElementSibling and previousElementSibling available on CharacterData
+          in addition to Element.
+
+        Tests: fast/dom/element-traversal-on-character-data.html
+               fast/dom/element-traversal-on-document-fragment.html
+               fast/dom/element-traversal-on-document.html
+
+        * dom/CharacterData.idl:
+        Expose nextElementSibling and previousElementSibling.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::firstElementChild):
+        (WebCore::ContainerNode::lastElementChild):
+        (WebCore::ContainerNode::childElementCount):
+        * dom/ContainerNode.h:
+        Move implementations of firstElementChild, lastElementChild and childElementCount here
+        from Element to make them shareable.
+
+        * dom/Document.idl:
+        * dom/DocumentFragment.idl:
+        Expose firstElementChild, lastElementChild and childElementCount.
+
+        * dom/Element.cpp:
+        (WebCore::Element::firstElementChild): Deleted.
+        (WebCore::Element::lastElementChild): Deleted.
+        (WebCore::Element::previousElementSibling): Deleted.
+        (WebCore::Element::nextElementSibling): Deleted.
+        (WebCore::Element::childElementCount): Deleted.
+        * dom/Element.h:
+        Move element traversal functions down to Node and ContainerNode.
+
+        * dom/Element.idl:
+        Update comments to indicate where these functions are defined now.
+
+        * dom/Node.cpp:
+        (WebCore::Node::previousElementSibling):
+        (WebCore::Node::nextElementSibling):
+        * dom/Node.h:
+        Move implementations of nextElementSibling and previousElementSibling here
+        from Element to make them shareable.
+
 2015-05-08  Michael Catanzaro  <mcatanzaro@igalia.com>, Martin Robinson <mrobinson@igalia.com>
 
         [GTK] Checks for DEVELOPMENT_BUILD are all wrong

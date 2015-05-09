@@ -1,3 +1,19 @@
+2015-05-08  Sam Weinig  <sam@webkit.org>
+
+        Element Traversal is not just Elements anymore
+        https://bugs.webkit.org/show_bug.cgi?id=144822
+
+        Reviewed by Simon Fraser.
+
+        Add new tests for element traversal functions on Document, DocumentFragment and CharacterData.
+
+        * fast/dom/element-traversal-on-character-data-expected.txt: Added.
+        * fast/dom/element-traversal-on-character-data.html: Added.
+        * fast/dom/element-traversal-on-document-expected.txt: Added.
+        * fast/dom/element-traversal-on-document-fragment-expected.txt: Added.
+        * fast/dom/element-traversal-on-document-fragment.html: Added.
+        * fast/dom/element-traversal-on-document.html: Added.
+
 2015-05-08  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed GTK+ gardening

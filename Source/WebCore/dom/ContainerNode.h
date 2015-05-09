@@ -145,6 +145,11 @@ public:
     RefPtr<NodeList> getElementsByClassName(const AtomicString& classNames);
     RefPtr<RadioNodeList> radioNodeList(const AtomicString&);
 
+    // From the ParentNode interface - https://dom.spec.whatwg.org/#interface-parentnode
+    Element* firstElementChild() const;
+    Element* lastElementChild() const;
+    unsigned childElementCount() const;
+
 protected:
     explicit ContainerNode(Document&, ConstructionType = CreateContainer);
 

@@ -43,6 +43,7 @@
 #include "DocumentType.h"
 #include "ElementIterator.h"
 #include "ElementRareData.h"
+#include "ElementTraversal.h"
 #include "EventDispatcher.h"
 #include "EventException.h"
 #include "EventHandler.h"
@@ -427,6 +428,20 @@ Node* Node::firstDescendant() const
     while (n && n->firstChild())
         n = n->firstChild();
     return n;
+}
+
+Element* Node::previousElementSibling() const
+{
+    ASSERT(is<CharacterData>(*this) || is<Element>(*this));
+
+    return ElementTraversal::previousSibling(*this);
+}
+
+Element* Node::nextElementSibling() const
+{
+    ASSERT(is<CharacterData>(*this) || is<Element>(*this));
+
+    return ElementTraversal::nextSibling(*this);
 }
 
 bool Node::insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode& ec)
