@@ -1,3 +1,9 @@
+2015-05-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Update results after Sam's patch, the order of properties changed.
+
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+
 2015-05-08  Sam Weinig  <sam@webkit.org>
 
         Element Traversal is not just Elements anymore

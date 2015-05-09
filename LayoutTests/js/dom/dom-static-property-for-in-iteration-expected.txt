@@ -67,9 +67,9 @@ PASS a["classList"] is
 PASS a["dataset"] is [object DOMStringMap]
 PASS a["firstElementChild"] is null
 PASS a["lastElementChild"] is null
+PASS a["childElementCount"] is 0
 PASS a["previousElementSibling"] is [object HTMLDivElement]
 PASS a["nextElementSibling"] is [object HTMLScriptElement]
-PASS a["childElementCount"] is 0
 PASS a["uiactions"] is 
 PASS a["webkitRegionOverset"] is undefined
 PASS a["ALLOW_KEYBOARD_INPUT"] is 1
