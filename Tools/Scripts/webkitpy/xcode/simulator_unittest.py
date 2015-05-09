@@ -241,3 +241,37 @@ iOS 8.0 Internal (8.0 - Unknown) (com.apple.CoreSimulator.SimRuntime.iOS-8-0-Int
         self.assertEqual(True, runtime_ios_8_internal.is_internal_runtime)
         self.assertEqual(tuple([8, 0]), runtime_ios_8_internal.version)
         self.assertEqual(0, len(runtime_ios_8_internal.devices))
+
+    def test_device_pairs(self):
+        """ Tests that Device Pairs header does not cause parsing exception """
+        self._set_expected_xcrun_simctl_list('''== Device Types ==
+iPhone 4s (com.apple.CoreSimulator.SimDeviceType.iPhone-4s)
+== Runtimes ==
+iOS 8.0 (8.0 - 12A465) (com.apple.CoreSimulator.SimRuntime.iOS-8-0)
+iOS 8.0 Internal (8.0 - Unknown) (com.apple.CoreSimulator.SimRuntime.iOS-8-0-Internal) (unavailable, runtime path not found)
+== Devices ==
+-- iOS 8.0 --
+    iPhone 4s (271BBEAC-1826-4CE1-B3AF-83F35CDD1D82) (Shutdown)
+== Device Pairs ==
+''')
+        simulator = Simulator(host=self._host)
+        self.assertEqual(1, len(simulator.device_types))
+
+        device_type_iphone_4s = simulator.device_types[0]
+        self.assertEqual('iPhone 4s', device_type_iphone_4s.name)
+        self.assertEqual('com.apple.CoreSimulator.SimDeviceType.iPhone-4s', device_type_iphone_4s.identifier)
+
+        self.assertEqual(2, len(simulator.runtimes))
+
+        runtime_ios_8 = simulator.runtimes[0]
+        self.assertEqual('com.apple.CoreSimulator.SimRuntime.iOS-8-0', runtime_ios_8.identifier)
+        self.assertEqual(True, runtime_ios_8.available)
+        self.assertEqual(False, runtime_ios_8.is_internal_runtime)
+        self.assertEqual(tuple([8, 0]), runtime_ios_8.version)
+        self.assertEqual(1, len(runtime_ios_8.devices))
+
+        device_iphone_4s = runtime_ios_8.devices[0]
+        self.assertEqual('iPhone 4s', device_iphone_4s.name)
+        self.assertEqual('271BBEAC-1826-4CE1-B3AF-83F35CDD1D82', device_iphone_4s.udid)
+        self.assertEqual(True, device_iphone_4s.available)
+        self.assertEqual(runtime_ios_8, device_iphone_4s.runtime)

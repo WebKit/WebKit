@@ -368,7 +368,9 @@ class Simulator(object):
 
             device_match = self.devices_re.match(line)
             if not device_match:
-                raise RuntimeError('Expected an iOS Simulator device line, got "{}"'.format(line))
+                if line != '== Device Pairs ==':
+                    raise RuntimeError('Expected == Device Pairs == header but got: "{}"'.format(line))
+                break
             if current_runtime:
                 device = Device(name=device_match.group('name').rstrip(),
                                 udid=device_match.group('udid'),
