@@ -2,6 +2,12 @@
 
         Unreviewed GTK+ gardening
 
+        * platform/gtk/TestExpectations: Un-expectation some tests that are now passing.
+
+2015-05-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed GTK+ gardening
+
         Remove expectations for tests that are also skipped for all WebKit2
         ports. This will more easily allow us to handle them when they are
         eventually (if at all) unskipped for WebKit2.

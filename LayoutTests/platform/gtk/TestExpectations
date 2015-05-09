@@ -567,7 +567,6 @@ webkit.org/b/127109 media/video-object-fit.html [ ImageOnlyFailure ]
 webkit.org/b/142283 fast/regions/overflow/overflow-first-and-last-regions.html [ ImageOnlyFailure ]
 webkit.org/b/142287 svg/clip-path/clip-path-line-use-before-defined.svg [ ImageOnlyFailure ]
 webkit.org/b/142288 css3/masking/mask-svg-clipped-fragmentId.html [ ImageOnlyFailure ]
-webkit.org/b/142289 fast/text/font-kerning.html [ ImageOnlyFailure ]
 webkit.org/b/142289 mathml/presentation/scripts-subsup.html [ ImageOnlyFailure ]
 
 webkit.org/b/141074 accessibility/auto-filled-value.html [ Missing ]
@@ -2252,10 +2251,6 @@ webkit.org/b/143924 fast/text/hyphen-min-preferred-width.html [ Skip ]
 webkit.org/b/144494 printing/quirks-percentage-height-body.html [ ImageOnlyFailure ]
 webkit.org/b/144494 printing/quirks-percentage-height.html [ ImageOnlyFailure ]
 webkit.org/b/144494 printing/standards-percentage-heights.html [ ImageOnlyFailure ]
-
-webkit.org/b/144574 imported/mozilla/svg/objectBoundingBox-and-mask.svg [ ImageOnlyFailure ]
-webkit.org/b/144574 imported/mozilla/svg/text/mask-applied.svg [ ImageOnlyFailure ]
-webkit.org/b/144574 svg/masking/mask-negative-scale.svg [ ImageOnlyFailure ]
 
 webkit.org/b/144575 http/tests/loading/promote-img-preload-priority.html [ Failure ]
 
