@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "SoftLinking.h"
-#import <objc/runtime.h>
+#import <WebCore/DataDetectorsCoreSPI.h>
+#import <WebCore/SoftLinking.h>
 
-// FIXME: This header should include various DataDetectors SPI headers if using the internal SDK.
+#if USE(APPLE_INTERNAL_SDK)
 
-typedef struct __DDScanner DDScanner, *DDScannerRef;
-typedef struct __DDScanQuery *DDScanQueryRef;
-typedef struct __DDResult *DDResultRef;
-typedef struct __DDHighlight DDHighlight, *DDHighlightRef;
+// Can't include DDAction.h because as of this writing it is a private header that includes a non-private header with an "" include.
+#import <DataDetectors/DDActionContext.h>
+#import <DataDetectors/DDActionsManager.h>
+#import <DataDetectors/DDHighlightDrawing.h>
 
-typedef enum {
-    DDScannerTypeStandard = 0,
-} DDScannerType;
-
-enum {
-    DDScannerOptionStopAtFirstMatch = 1,
-};
-typedef CFIndex DDScannerOptions;
-
-enum {
-    DDScannerCopyResultsOptionsNone = 0,
-    DDScannerCopyResultsOptionsNoOverlap = 1 << 0,
-};
-typedef CFIndex DDScannerCopyResultsOptions;
-
-SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(DataDetectors)
-SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(DataDetectorsCore)
-
-extern "C" {
-
-SOFT_LINK(DataDetectorsCore, DDScannerCreate, DDScannerRef, (DDScannerType type, DDScannerOptions options, CFErrorRef* errorRef), (type, options, errorRef))
-SOFT_LINK(DataDetectorsCore, DDScanQueryCreateFromString, DDScanQueryRef, (CFAllocatorRef allocator, CFStringRef string, CFRange range), (allocator, string, range))
-SOFT_LINK(DataDetectorsCore, DDScannerScanQuery, DDScanQueryRef, (DDScannerRef scanner, DDScanQueryRef query), (scanner, query))
-SOFT_LINK(DataDetectorsCore, DDScannerCopyResultsWithOptions, CFArrayRef, (DDScannerRef scanner, DDScannerCopyResultsOptions options), (scanner, options))
-SOFT_LINK(DataDetectorsCore, DDResultGetRange, CFRange, (DDResultRef result), (result))
-SOFT_LINK(DataDetectorsCore, DDResultGetType, CFStringRef, (DDResultRef result), (result))
-
-}
-
-#if PLATFORM(MAC)
-SOFT_LINK_CLASS(DataDetectors, DDActionContext)
+#else // !USE(APPLE_INTERNAL_SDK)
 
 @interface DDActionContext : NSObject <NSCopying, NSSecureCoding>
 
@@ -74,6 +44,22 @@ SOFT_LINK_CLASS(DataDetectors, DDActionContext)
 @property (assign) BOOL immediate;
 
 - (DDActionContext *)contextForView:(NSView *)view altMode:(BOOL)altMode interactionStartedHandler:(void (^)(void))interactionStartedHandler interactionChangedHandler:(void (^)(void))interactionChangedHandler interactionStoppedHandler:(void (^)(void))interactionStoppedHandler;
+
+@end
+
+@interface DDActionsManager : NSObject
+
++ (DDActionsManager *)sharedManager;
+- (NSArray *)menuItemsForResult:(DDResultRef)result actionContext:(DDActionContext *)context;
+- (NSArray *)menuItemsForTargetURL:(NSString *)targetURL actionContext:(DDActionContext *)context;
+- (void)requestBubbleClosureUnanchorOnFailure:(BOOL)unanchorOnFailure;
+
++ (BOOL)shouldUseActionsWithContext:(DDActionContext *)context;
++ (void)didUseActions;
+
+- (BOOL)hasActionsForResult:(DDResultRef)result actionContext:(DDActionContext *)actionContext;
+
+- (NSArray *)menuItemsForValue:(NSString *)value type:(CFStringRef)type service:(NSString *)service context:(DDActionContext *)context;
 
 @end
 
@@ -88,24 +74,29 @@ enum {
 };
 
 enum {
-    DDHighlightStyleButtonShowAlways  = (1 << 24),
+    DDHighlightStyleButtonShowAlways = (1 << 24),
 };
 
+#endif // !USE(APPLE_INTERNAL_SDK)
+
+typedef struct __DDHighlight *DDHighlightRef;
 typedef NSUInteger DDHighlightStyle;
-#endif
 
-SOFT_LINK_CLASS(DataDetectors, DDActionsManager)
+@interface DDAction : NSObject
 
-@interface DDActionsManager : NSObject
-
-+ (DDActionsManager *)sharedManager;
-- (NSArray *)menuItemsForResult:(DDResultRef)result actionContext:(DDActionContext *)context;
-- (NSArray *)menuItemsForTargetURL:(NSString *)targetURL actionContext:(DDActionContext *)context;
-- (void)requestBubbleClosureUnanchorOnFailure:(BOOL)unanchorOnFailure;
-
-+ (BOOL)shouldUseActionsWithContext:(DDActionContext *)context;
-+ (void)didUseActions;
-
-- (BOOL)hasActionsForResult:(DDResultRef)result actionContext:(DDActionContext *)actionContext;
+@property (readonly) NSString *actionUTI;
 
 @end
+
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(DataDetectors)
+
+SOFT_LINK_CLASS(DataDetectors, DDAction)
+SOFT_LINK_CLASS(DataDetectors, DDActionContext)
+SOFT_LINK_CLASS(DataDetectors, DDActionsManager)
+
+SOFT_LINK_CONSTANT(DataDetectors, DDBinderPhoneNumberKey, CFStringRef)
+
+SOFT_LINK(DataDetectors, DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection, DDHighlightRef, (CFAllocatorRef allocator, CGRect* rects, CFIndex count, CGRect globalVisibleRect, DDHighlightStyle style, Boolean withArrow, NSWritingDirection writingDirection, Boolean endsWithEOL, Boolean flipped), (allocator, rects, count, globalVisibleRect, style, withArrow, writingDirection, endsWithEOL, flipped))
+SOFT_LINK(DataDetectors, DDHighlightGetLayerWithContext, CGLayerRef, (DDHighlightRef highlight, CGContextRef context), (highlight, context))
+SOFT_LINK(DataDetectors, DDHighlightGetBoundingRect, CGRect, (DDHighlightRef highlight), (highlight))
+SOFT_LINK(DataDetectors, DDHighlightPointIsOnHighlight, Boolean, (DDHighlightRef highlight, CGPoint point, Boolean* onButton), (highlight, point, onButton))

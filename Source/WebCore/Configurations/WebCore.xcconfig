@@ -30,7 +30,7 @@ FRAMEWORK_SEARCH_PATHS[sdk=iphone*] = $(FRAMEWORK_SEARCH_PATHS_ios_$(CONFIGURATI
 FRAMEWORK_SEARCH_PATHS_ios_Debug = $(BUILT_PRODUCTS_DIR) $(PRODUCTION_FRAMEWORKS_DIR);
 FRAMEWORK_SEARCH_PATHS_ios_Release = $(FRAMEWORK_SEARCH_PATHS_ios_Debug);
 FRAMEWORK_SEARCH_PATHS_ios_Production = $(PRODUCTION_FRAMEWORKS_DIR);
-FRAMEWORK_SEARCH_PATHS[sdk=macosx*] = $(STAGED_FRAMEWORKS_SEARCH_PATH) $(FRAMEWORK_SEARCH_PATHS);
+FRAMEWORK_SEARCH_PATHS[sdk=macosx*] = $(STAGED_FRAMEWORKS_SEARCH_PATH) $(FRAMEWORK_SEARCH_PATHS) $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
 
 OTHER_CFLAGS = $(inherited) -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks -iframework $(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
 OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS);
@@ -57,7 +57,7 @@ OTHER_LDFLAGS_BASE = -lsqlite3 -lobjc -lANGLE;
 OTHER_LDFLAGS_BASE_ios = $(OTHER_LDFLAGS_BASE) -framework CFNetwork -framework CoreGraphics -framework CoreText -framework Foundation -framework GraphicsServices -framework ImageIO -framework OpenGLES -lMobileGestalt;
 OTHER_LDFLAGS_PLATFORM[sdk=iphoneos*] = $(OTHER_LDFLAGS_BASE_ios) -framework IOSurface;
 OTHER_LDFLAGS_PLATFORM[sdk=iphonesimulator*] = $(OTHER_LDFLAGS_BASE_ios);
-OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = $(OTHER_LDFLAGS_BASE) -sub_library libobjc -umbrella WebKit -allowable_client WebCoreTestSupport -allowable_client WebKit2 -allowable_client WebKitLegacy -framework ApplicationServices -framework AudioUnit -framework Carbon -framework Cocoa -framework IOSurface -framework OpenGL;
+OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = $(OTHER_LDFLAGS_BASE) -sub_library libobjc -umbrella WebKit -allowable_client WebCoreTestSupport -allowable_client WebKit2 -allowable_client WebKitLegacy -framework ApplicationServices -framework AudioUnit -framework Carbon -framework Cocoa -framework DataDetectorsCore -framework IOSurface -framework OpenGL;
 
 SECTORDER_FLAGS = $(SECTORDER_FLAGS_$(CONFIGURATION));
 SECTORDER_FLAGS_Production[sdk=iphoneos*] = -Wl,-order_file,$(SDKROOT)/AppleInternal/OrderFiles/WebCore.order;

@@ -58,7 +58,6 @@
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/BackForwardController.h>
 #import <WebCore/DataDetection.h>
-#import <WebCore/DataDetectorsSPI.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/FocusController.h>

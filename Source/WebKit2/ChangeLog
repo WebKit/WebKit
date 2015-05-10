@@ -1,3 +1,15 @@
+2015-05-10  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Don't soft link DataDetectorsCore
+        https://bugs.webkit.org/show_bug.cgi?id=144837
+
+        Reviewed by Dan Bernstein.
+
+        * Platform/mac/MenuUtilities.mm: Use DataDetectorsSPI.h instead of doing it here.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm: Removed unneeded include of unused header,
+        DataDetectorsSPI.h.
+
 2015-05-09  Dan Bernstein  <mitz@apple.com>
 
         Deployment-target __NSi_ and __NSd_ definitions in WKFoundation.h are redundant

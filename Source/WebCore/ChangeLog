@@ -1,3 +1,41 @@
+2015-05-10  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Don't soft link DataDetectorsCore
+        https://bugs.webkit.org/show_bug.cgi?id=144837
+
+        Reviewed by Dan Bernstein.
+
+        Linking this in the normal way should slightly speed up the web process
+        startup time. We don't need to soft link it: It's present in the
+        OS X base system and there is no reference cycle with WebKit.
+
+        * Configurations/WebCore.xcconfig: Added PrivateFrameworks to
+        FRAMEWORK_SEARCH_PATHS for Mac and added DataDetectorsCore to
+        OTHER_LDFLAGS_PLATFORM for Mac. We may want to do this later for iOS too.
+
+        * WebCore.xcodeproj/project.pbxproj: Added DataDetectorsCoreSPI.h.
+
+        * editing/mac/DataDetection.mm:
+        (WebCore::DataDetection::detectItemAroundHitTestResult): Removed check to see
+        if DataDetectorsCore is available.
+
+        * page/mac/ServicesOverlayController.h: Simplified a forward declaration to
+        only declare what we actually use.
+        * page/mac/ServicesOverlayController.mm: Moved SOFT_LINK from here to the
+        DataDetectorsSPI.h header.
+
+        * platform/spi/cocoa/DataDetectorsCoreSPI.h: Added. This is the low level
+        DataDetectorsCore framework, which has no reference cycle with WebKit, and
+        which we can link to normally. Moved the content here from DataDetectorsSPI.h,
+        added a USE(APPLE_INTERNAL_SDK) path that uses the system headers, and fixed
+        the incorrect return type on DDScannerScanQuery, which was detected when
+        using the system headers in conjunction with this file.
+
+        * platform/spi/mac/DataDetectorsSPI.h: Removed the content of this file that
+        was actually about DataDetectorsCore. Also added a USE(APPLE_INTERNAL_SDK)
+        path that uses the system headers and moved a few stray DataDetectors SPI
+        definitions from elsewhere into this header.
+
 2015-05-10  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Don't expose elements as data tables just because they use display: table
