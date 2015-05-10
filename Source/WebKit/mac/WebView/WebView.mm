@@ -2008,29 +2008,29 @@ static bool fastDocumentTeardownEnabled()
     // type.  (See behavior matrix at the top of WebFramePrivate.)  So we copy all the items
     // in the back forward list, and go to the current one.
 
-    BackForwardClient* backForwardClient = _private->page->backForward().client();
-    ASSERT(!backForwardClient->currentItem()); // destination list should be empty
+    BackForwardController& backForward = _private->page->backForward();
+    ASSERT(!backForward.currentItem()); // destination list should be empty
 
-    BackForwardClient* otherBackForwardClient = otherView->_private->page->backForward().client();
-    if (!otherBackForwardClient->currentItem())
+    BackForwardController& otherBackForward = otherView->_private->page->backForward();
+    if (!otherBackForward.currentItem())
         return; // empty back forward list, bail
     
     HistoryItem* newItemToGoTo = nullptr;
 
-    int lastItemIndex = otherBackForwardClient->forwardListCount();
-    for (int i = -otherBackForwardClient->backListCount(); i <= lastItemIndex; ++i) {
+    int lastItemIndex = otherBackForward.forwardCount();
+    for (int i = -otherBackForward.backCount(); i <= lastItemIndex; ++i) {
         if (i == 0) {
             // If this item is showing , save away its current scroll and form state,
             // since that might have changed since loading and it is normally not saved
             // until we leave that page.
             otherView->_private->page->mainFrame().loader().history().saveDocumentAndScrollState();
         }
-        Ref<HistoryItem> newItem = otherBackForwardClient->itemAtIndex(i)->copy();
+        Ref<HistoryItem> newItem = otherBackForward.itemAtIndex(i)->copy();
         if (i == 0) 
             newItemToGoTo = newItem.ptr();
-        backForwardClient->addItem(WTF::move(newItem));
+        backForward.client()->addItem(WTF::move(newItem));
     }
-    
+
     ASSERT(newItemToGoTo);
     _private->page->goToItem(*newItemToGoTo, FrameLoadType::IndexedBackForward);
 }
