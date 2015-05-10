@@ -1,3 +1,13 @@
+2015-05-10  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Fix paths and resort WebCore project file
+        https://bugs.webkit.org/show_bug.cgi?id=144838
+
+        Reviewed by Dan Bernstein.
+
+        * WebCore.xcodeproj/project.pbxproj: Re-sorted this file with the
+        sort-Xcode-project-file script and fixed the paths in the platform/ios directory.
+
 2015-05-10  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet <youenn.fablet@crf.canon.fr>
 
         [Streams API] Refactor ReadableStreamReader close promise callback cleaning
