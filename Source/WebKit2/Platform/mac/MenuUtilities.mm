@@ -26,18 +26,20 @@
 #import "config.h"
 #import "MenuUtilities.h"
 
+#if PLATFORM(MAC)
+
 #import "StringUtilities.h"
 #import <WebCore/DataDetectorsSPI.h>
 #import <WebCore/LocalizedStrings.h>
 #import <objc/runtime.h>
 
-#if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 #import <WebCore/TUCallSPI.h>
 #endif
 
 namespace WebKit {
 
-#if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+#if ENABLE(TELEPHONE_NUMBER_DETECTION) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
 NSString *menuItemTitleForTelephoneNumberGroup()
 {
@@ -108,3 +110,5 @@ RetainPtr<NSMenu> menuForTelephoneNumber(const String& telephoneNumber)
 #endif
 
 } // namespace WebKit
+
+#endif

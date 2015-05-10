@@ -1,3 +1,9 @@
+2015-05-10  Dan Bernstein  <mitz@apple.com>
+
+        iOS internal build fix.
+
+        * Platform/mac/MenuUtilities.mm:
+
 2015-05-10  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         Remove unnecessary semicolons.
