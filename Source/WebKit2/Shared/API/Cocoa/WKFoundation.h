@@ -24,7 +24,6 @@
  */
 
 #import <Availability.h>
-#import <CoreFoundation/CoreFoundation.h>
 #import <TargetConditionals.h>
 
 #if !defined(WK_API_ENABLED)
@@ -39,10 +38,6 @@
 #define WK_EXTERN extern "C" __attribute__((visibility ("default")))
 #else
 #define WK_EXTERN extern __attribute__((visibility ("default")))
-#endif
-
-#ifdef WK_FRAMEWORK_HEADER_POSTPROCESSING_ENABLED
-// Do not remove or change this comment. POSTPROCESSING_INSERTS_DEPLOYMENT_TARGET_AVAILABILITY_DEFINITION_HERE
 #endif
 
 #ifndef WK_FRAMEWORK_HEADER_POSTPROCESSING_ENABLED
