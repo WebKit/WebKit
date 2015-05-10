@@ -69,13 +69,13 @@ public:
 protected:
     ReadableStreamReader(ReadableStream&);
 
-    void releaseStream();
-
 private:
     // ActiveDOMObject API.
     const char* activeDOMObjectName() const override;
     bool canSuspendForPageCache() const override;
+
     void initialize();
+    void releaseStreamAndClean();
 
     RefPtr<ReadableStream> m_stream;
     State m_state { State::Readable };

@@ -1,3 +1,21 @@
+2015-05-10  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet <youenn.fablet@crf.canon.fr>
+
+        [Streams API] Refactor ReadableStreamReader close promise callback cleaning
+        https://bugs.webkit.org/show_bug.cgi?id=144799
+
+        Reviewed by Darin Adler.
+
+        Moved close callback cleaning to releaseStream, which is now releaseStreamAndClean.
+        Moved that method to private as it is no longer needed by subclasses.
+
+        No behavior changes.
+
+        * Modules/streams/ReadableStreamReader.cpp:
+        (WebCore::ReadableStreamReader::releaseStreamAndClean):
+        (WebCore::ReadableStreamReader::changeStateToClosed):
+        (WebCore::ReadableStreamReader::changeStateToErrored):
+        * Modules/streams/ReadableStreamReader.h:
+
 2015-05-10  Darin Adler  <darin@apple.com>
 
         [Cocoa] Don't soft link DataDetectorsCore

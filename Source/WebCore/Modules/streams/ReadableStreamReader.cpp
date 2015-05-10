@@ -75,11 +75,14 @@ void ReadableStreamReader::initialize()
     }
 }
 
-void ReadableStreamReader::releaseStream()
+void ReadableStreamReader::releaseStreamAndClean()
 {
     ASSERT(m_stream);
     m_stream->release();
     m_stream = nullptr;
+
+    m_closedSuccessCallback = nullptr;
+    m_closedErrorCallback = nullptr;
 }
 
 void ReadableStreamReader::closed(ClosedSuccessCallback successCallback, ClosedErrorCallback errorCallback)
@@ -101,16 +104,12 @@ void ReadableStreamReader::changeStateToClosed()
     ASSERT(m_state == State::Readable);
     m_state = State::Closed;
 
-    if (m_closedSuccessCallback) {
-        ClosedSuccessCallback closedSuccessCallback = WTF::move(m_closedSuccessCallback);
-        closedSuccessCallback();
-    }
-    ASSERT(!m_closedSuccessCallback);
-    m_closedErrorCallback = nullptr;
+    if (m_closedSuccessCallback)
+        m_closedSuccessCallback();
 
     // FIXME: Implement read promise fulfilling.
 
-    releaseStream();
+    releaseStreamAndClean();
 }
 
 void ReadableStreamReader::changeStateToErrored()
@@ -118,16 +117,12 @@ void ReadableStreamReader::changeStateToErrored()
     ASSERT(m_state == State::Readable);
     m_state = State::Errored;
 
-    if (m_closedErrorCallback) {
-        ClosedErrorCallback closedErrorCallback = WTF::move(m_closedErrorCallback);
-        closedErrorCallback();
-    }
-    ASSERT(!m_closedErrorCallback);
-    m_closedSuccessCallback = nullptr;
+    if (m_closedErrorCallback)
+        m_closedErrorCallback();
 
     // FIXME: Implement read promise rejection.
 
-    releaseStream();
+    releaseStreamAndClean();
 }
 
 const char* ReadableStreamReader::activeDOMObjectName() const
