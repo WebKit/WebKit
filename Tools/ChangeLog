@@ -1,3 +1,37 @@
+2015-05-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make arguments of run-benchmark more user friendly
+        https://bugs.webkit.org/show_bug.cgi?id=144835
+
+        Reviewed by Darin Adler.
+
+        Made --build-directory optional since I don't expect a typical WebKit developer to have a local build
+        of Chrome and Firefox. Also made --plan accept just a filename so that we can just say "speedometer"
+        instead of "Tools/Scripts/webkitpy/benchmark_runner/data/plans/speedometer.plan". Finally, removed
+        default values from --platform and --browser as they are required arguments.
+
+        * Scripts/run-benchmark:
+        (main): Made --build-directory optional, and removed default values from --platform and --browser.
+        Also added help text for --build-directory and --plan. In addition, the list of platforms and browsers
+        are not dynamically obtained via BrowserDriverFactory.
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (BenchmarkRunner.__init__): Raise when we can't find the plan file or the plan file is not a valid JSON
+        file instead of suppressing the error here and blowing up later mysteriously since we won't be able to
+        run any benchmark in that case.
+        (BenchmarkRunner._findPlanFile): Added. Look for the plan in webkitpy/benchmark_runner/data/plans if
+        the specified file isn't a valid relative or an absolute path.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/browser_driver_factory.py:
+        (BrowserDriverFactory.available_platforms): Added. Used in main to provide the list of valid platforms
+        and browsers.
+        (BrowserDriverFactory.available_browsers): Ditto.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_chrome_driver.py:
+        (OSXChromeDriver.launchUrl): browserBuildPath is never optional since BenchmarkRunner.execute always
+        calls launchUrl with this argument so removed the default value. Also added a fallback path for when
+        browserBuildPath was None.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        (OSXSafariDriver.launchUrl): Ditto. We also fallback when the build directory doesn't contain Safari
+        so that we can use locally built WebKit to launch Safari.
+
 2015-05-09  Yoav Weiss  <yoav@yoav.ws>
 
         Remove the PICTURE_SIZES build flag

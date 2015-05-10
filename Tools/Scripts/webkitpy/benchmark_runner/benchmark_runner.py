@@ -26,18 +26,30 @@ class BenchmarkRunner(object):
     def __init__(self, planFile, buildDir, outputFile, platform, browser):
         _log.info('Initializing benchmark running')
         try:
+            planFile = self._findPlanFile(planFile)
             with open(planFile, 'r') as fp:
                 self.plan = json.load(fp)
                 self.browserDriver = BrowserDriverFactory.create([platform, browser])
                 self.httpServerDriver = HTTPServerDriverFactory.create([self.plan['http_server_driver']])
-                self.buildDir = os.path.abspath(buildDir)
+                self.buildDir = os.path.abspath(buildDir) if buildDir else None
                 self.outputFile = outputFile
         except IOError:
             _log.error('Can not open plan file: %s' % planFile)
+            raise
         except ValueError:
             _log.error('Plan file:%s may not follow JSON format' % planFile)
-        except:
             raise
+
+    def _findPlanFile(self, planFile):
+        if not os.path.exists(planFile):
+            absPath = os.path.join(os.path.dirname(__file__), 'data/plans', planFile)
+            if os.path.exists(absPath):
+                return absPath
+            if not absPath.endswith('.plan'):
+                absPath += '.plan'
+            if os.path.exists(absPath):
+                return absPath
+        return planFile
 
     def execute(self):
         _log.info('Start to execute the plan')

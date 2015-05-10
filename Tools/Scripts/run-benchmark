@@ -2,9 +2,11 @@
 
 import argparse
 import logging
+import platform
 import sys
 
 from webkitpy.benchmark_runner.benchmark_runner import BenchmarkRunner
+from webkitpy.benchmark_runner.browser_driver.browser_driver_factory import BrowserDriverFactory
 
 
 _log = logging.getLogger()
@@ -18,14 +20,14 @@ _log.addHandler(ch)
 def main():
     parser = argparse.ArgumentParser(description='Automate the browser based performance benchmarks')
     parser.add_argument('--output-file', dest='output', default=None)
-    parser.add_argument('--build-directory', dest='buildDir', required=True)
-    parser.add_argument('--plan', dest='plan', required=True)
-    parser.add_argument('--platform', dest='platform', default='osx', choices=['osx', 'ios', 'windows'], required=True)
+    parser.add_argument('--build-directory', dest='buildDir', help='Path to the browser executable. e.g. WebKitBuild/Release/')
+    parser.add_argument('--plan', dest='plan', required=True, help='Benchmark plan to run. e.g. speedometer, jetstream')
+    parser.add_argument('--platform', dest='platform', required=True, choices=BrowserDriverFactory.available_platforms())
     # FIXME: Should we add chrome as an option? Well, chrome uses webkit in iOS.
-    parser.add_argument('--browser', dest='browser', default='safari', choices=['safari', 'chrome'], required=True)
+    parser.add_argument('--browser', dest='browser', required=True, choices=BrowserDriverFactory.available_browsers())
     parser.add_argument('--debug', action='store_true')
     args = parser.parse_args()
-    
+
     if args.debug:
         _log.setLevel(logging.DEBUG)
     _log.debug('Initializing program with following parameters')
@@ -34,6 +36,7 @@ def main():
     _log.debug('\tplan name\t: %s', args.plan)
     runner = BenchmarkRunner(args.plan, args.buildDir, args.output, args.platform, args.browser)
     return runner.execute()
+
 
 if __name__ == '__main__':
     sys.exit(main())
