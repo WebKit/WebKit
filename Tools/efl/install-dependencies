@@ -82,7 +82,7 @@ function installDependenciesWithApt {
         libsqlite3-dev \
         libssl-dev \
         libtheora-dev \
-        libtiff4-dev \
+        libtiff5-dev \
         libudev-dev \
         libvorbis-dev \
         libwebp-dev \
