@@ -831,7 +831,7 @@ RefPtr<API::Object> WebProcessProxy::transformHandlesToObjects(API::Object* obje
 
 #if PLATFORM(COCOA)
             case API::Object::Type::ObjCObjectGraph:
-                return m_webProcessProxy.transformHandlesToObjects(static_cast<ObjCObjectGraph&>(object));;
+                return m_webProcessProxy.transformHandlesToObjects(static_cast<ObjCObjectGraph&>(object));
 #endif
             default:
                 return &object;

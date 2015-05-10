@@ -324,7 +324,7 @@ String Pasteboard::readString(const String& type)
     } else if ([cocoaType isEqualToString:(NSString *)kUTTypeText]) {
         String value = strategy.readStringFromPasteboard(0, kUTTypeText);
         if (!value.isNull())
-            cocoaValue = [(NSString *)value precomposedStringWithCanonicalMapping];;
+            cocoaValue = [(NSString *)value precomposedStringWithCanonicalMapping];
     } else if (cocoaType) {
         if (RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(0, cocoaType.get()))
             cocoaValue = [[[NSString alloc] initWithData:buffer->createNSData().get() encoding:NSUTF8StringEncoding] autorelease];

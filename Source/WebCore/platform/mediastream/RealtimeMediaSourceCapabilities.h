@@ -121,7 +121,7 @@ public:
     void setVolumeRange(const RealtimeMediaSourceCapabilityRange& volume) { m_volume = volume; }
 
     bool hasVideoSource() { return m_videoSource; }
-    void setHasVideoSource(bool isVideo) { m_videoSource = isVideo;; }
+    void setHasVideoSource(bool isVideo) { m_videoSource = isVideo; }
 
 private:
     RealtimeMediaSourceCapabilities()

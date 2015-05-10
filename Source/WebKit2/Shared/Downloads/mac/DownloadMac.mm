@@ -265,7 +265,7 @@ static void dispatchOnMainThread(void (^block)())
             returnValue = YES;
     });
 
-    return returnValue;;
+    return returnValue;
 }
 
 - (void)download:(NSURLDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename

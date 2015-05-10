@@ -289,7 +289,7 @@ NSError *ResourceError::nsError() const
     }
 
     if (!m_platformError)
-        m_platformError = createNSErrorFromResourceErrorBase(*this);;
+        m_platformError = createNSErrorFromResourceErrorBase(*this);
 
     return m_platformError.get();
 }

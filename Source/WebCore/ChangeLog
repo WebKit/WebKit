@@ -1,5 +1,25 @@
 2015-05-10  Sungmann Cho  <sungmann.cho@navercorp.com>
 
+        Remove unnecessary semicolons.
+        https://bugs.webkit.org/show_bug.cgi?id=144844
+
+        Reviewed by Darin Adler.
+
+        No new tests, no behavior change.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::supportsType):
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::readString):
+        * platform/mediastream/RealtimeMediaSourceCapabilities.h:
+        (WebCore::RealtimeMediaSourceCapabilities::setHasVideoSource):
+        * platform/network/mac/ResourceErrorMac.mm:
+        (WebCore::ResourceError::nsError):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::getSharedFunctionRef):
+
+2015-05-10  Sungmann Cho  <sungmann.cho@navercorp.com>
+
         Remove unnecessary forward declarations in StyleProperties.h
         https://bugs.webkit.org/show_bug.cgi?id=144843
 

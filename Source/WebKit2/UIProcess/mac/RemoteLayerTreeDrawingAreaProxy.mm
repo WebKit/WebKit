@@ -269,7 +269,7 @@ FloatPoint RemoteLayerTreeDrawingAreaProxy::indicatorLocation() const
 #else
         FloatPoint tiledMapLocation = exposedRect().location();
         tiledMapLocation += FloatSize(indicatorInset, indicatorInset);
-        float scale = 1 / m_webPageProxy.pageScaleFactor();;
+        float scale = 1 / m_webPageProxy.pageScaleFactor();
         tiledMapLocation.scale(scale, scale);
 #endif
         return tiledMapLocation;

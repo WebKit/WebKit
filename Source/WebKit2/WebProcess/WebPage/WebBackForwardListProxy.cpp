@@ -57,7 +57,7 @@ typedef HashMap<RefPtr<HistoryItem>, ItemAndPageID> HistoryItemToIDMap;
 
 static IDToHistoryItemMap& idToHistoryItemMap()
 {
-    static NeverDestroyed<IDToHistoryItemMap> map;;
+    static NeverDestroyed<IDToHistoryItemMap> map;
     return map;
 }
 

@@ -136,7 +136,7 @@ static CGFunctionRef getSharedFunctionRef(IOSGradientRef gradient, Interpolation
     CGFunctionRef function = nullptr;
 
     static HashMap<IOSGradientRef, CGFunctionRef>* linearFunctionRefs;
-    static HashMap<IOSGradientRef, CGFunctionRef>* exponentialFunctionRefs;;
+    static HashMap<IOSGradientRef, CGFunctionRef>* exponentialFunctionRefs;
 
     if (interpolation == LinearInterpolation) {
         if (!linearFunctionRefs)
