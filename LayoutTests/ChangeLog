@@ -1,3 +1,13 @@
+2015-05-10  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Don't expose elements as data tables just because they use display: table
+        https://bugs.webkit.org/show_bug.cgi?id=144804
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/css-table-ignored-expected.txt: Added.
+        * accessibility/css-table-ignored.html: Added.
+
 2015-05-09  Chris Dumez  <cdumez@apple.com>
 
         Introduce ParentNode.idl / NonDocumentTypeChildNode.idl

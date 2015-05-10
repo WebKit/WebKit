@@ -150,6 +150,10 @@ bool AccessibilityTable::isDataTable() const
         }
     }
     
+    // The following checks should only apply if this is a real <table> element.
+    if (!hasTagName(tableTag))
+        return false;
+    
     RenderTable& table = downcast<RenderTable>(*m_renderer);
     // go through the cell's and check for tell-tale signs of "data" table status
     // cells have borders, or use attributes like headers, abbr, scope or axis
