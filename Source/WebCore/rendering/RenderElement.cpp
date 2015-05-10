@@ -1216,7 +1216,7 @@ static bool mustRepaintFillLayers(const RenderElement& renderer, const FillLayer
 
     if (sizeType == SizeLength) {
         LengthSize size = layer->sizeLength();
-        if (size.width().isPercent() || size.height().isPercent())
+        if (size.width().isPercentOrCalculated() || size.height().isPercentOrCalculated())
             return true;
         // If the image has neither an intrinsic width nor an intrinsic height, its size is determined as for 'contain'.
         if ((size.width().isAuto() || size.height().isAuto()) && image->isGeneratedImage())

@@ -286,7 +286,7 @@ bool SVGImage::hasRelativeWidth() const
     SVGSVGElement* rootElement = this->rootElement();
     if (!rootElement)
         return false;
-    return rootElement->intrinsicWidth().isPercent();
+    return rootElement->intrinsicWidth().isPercentOrCalculated();
 }
 
 bool SVGImage::hasRelativeHeight() const
@@ -294,7 +294,7 @@ bool SVGImage::hasRelativeHeight() const
     SVGSVGElement* rootElement = this->rootElement();
     if (!rootElement)
         return false;
-    return rootElement->intrinsicHeight().isPercent();
+    return rootElement->intrinsicHeight().isPercentOrCalculated();
 }
 
 void SVGImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)

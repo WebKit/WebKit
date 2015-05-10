@@ -778,8 +778,8 @@ bool AnimationBase::computeTransformedExtentViaTransformList(const FloatRect& re
     
     bool applyTransformOrigin = containsRotation(style.transform().operations()) || style.transform().affectedByTransformOrigin();
     if (applyTransformOrigin) {
-        float offsetX = style.transformOriginX().isPercentNotCalculated() ? rendererBox.x() : 0;
-        float offsetY = style.transformOriginY().isPercentNotCalculated() ? rendererBox.y() : 0;
+        float offsetX = style.transformOriginX().isPercent() ? rendererBox.x() : 0;
+        float offsetY = style.transformOriginY().isPercent() ? rendererBox.y() : 0;
 
         transformOrigin.setX(floatValueForLength(style.transformOriginX(), rendererBox.width()) + offsetX);
         transformOrigin.setY(floatValueForLength(style.transformOriginY(), rendererBox.height()) + offsetY);

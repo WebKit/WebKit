@@ -543,7 +543,7 @@ static inline bool objectIsRelayoutBoundary(const RenderElement* object)
     if (!object->hasOverflowClip())
         return false;
 
-    if (object->style().width().isIntrinsicOrAuto() || object->style().height().isIntrinsicOrAuto() || object->style().height().isPercent())
+    if (object->style().width().isIntrinsicOrAuto() || object->style().height().isIntrinsicOrAuto() || object->style().height().isPercentOrCalculated())
         return false;
 
     // Table parts can't be relayout roots since the table is responsible for layouting all the parts.

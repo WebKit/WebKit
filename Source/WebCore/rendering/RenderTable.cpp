@@ -368,7 +368,7 @@ LayoutUnit RenderTable::convertStyleLogicalHeightToComputedHeight(const Length& 
             borders = borderAndPaddingBefore + borderAndPaddingAfter;
         }
         computedLogicalHeight = styleLogicalHeight.value() - borders;
-    } else if (styleLogicalHeight.isPercent())
+    } else if (styleLogicalHeight.isPercentOrCalculated())
         computedLogicalHeight = computePercentageLogicalHeight(styleLogicalHeight);
     else
         ASSERT_NOT_REACHED();

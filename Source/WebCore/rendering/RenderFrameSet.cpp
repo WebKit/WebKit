@@ -206,7 +206,7 @@ void RenderFrameSet::layOutAxis(GridAxis& axis, const Length* grid, int availabl
         
         // Count the total percentage of all of the percentage columns/rows -> totalPercent
         // Count the number of columns/rows which are percentages -> countPercent
-        if (grid[i].isPercent()) {
+        if (grid[i].isPercentOrCalculated()) {
             gridLayout[i] = std::max(intValueForLength(grid[i], availableLen), 0);
             totalPercent += gridLayout[i];
             countPercent++;
@@ -244,7 +244,7 @@ void RenderFrameSet::layOutAxis(GridAxis& axis, const Length* grid, int availabl
         int remainingPercent = remainingLen;
 
         for (int i = 0; i < gridLen; ++i) {
-            if (grid[i].isPercent()) {
+            if (grid[i].isPercentOrCalculated()) {
                 gridLayout[i] = (gridLayout[i] * remainingPercent) / totalPercent;
                 remainingLen -= gridLayout[i];
             }
@@ -288,7 +288,7 @@ void RenderFrameSet::layOutAxis(GridAxis& axis, const Length* grid, int availabl
             int changePercent = 0;
 
             for (int i = 0; i < gridLen; ++i) {
-                if (grid[i].isPercent()) {
+                if (grid[i].isPercentOrCalculated()) {
                     changePercent = (remainingPercent * gridLayout[i]) / totalPercent;
                     gridLayout[i] += changePercent;
                     remainingLen -= changePercent;
@@ -320,7 +320,7 @@ void RenderFrameSet::layOutAxis(GridAxis& axis, const Length* grid, int availabl
         int changePercent = 0;
 
         for (int i = 0; i < gridLen; ++i) {
-            if (grid[i].isPercent()) {
+            if (grid[i].isPercentOrCalculated()) {
                 changePercent = remainingPercent / countPercent;
                 gridLayout[i] += changePercent;
                 remainingLen -= changePercent;

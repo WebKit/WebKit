@@ -483,7 +483,7 @@ static Ref<CSSPrimitiveValue> valueForImageSliceSide(const Length& length)
 {
     // These values can be percentages, numbers, or while an animation of mixed types is in progress,
     // a calculation that combines a percentage and a number.
-    if (length.isPercentNotCalculated())
+    if (length.isPercent())
         return cssValuePool().createValue(length.percent(), CSSPrimitiveValue::CSS_PERCENTAGE);
     if (length.isFixed())
         return cssValuePool().createValue(length.value(), CSSPrimitiveValue::CSS_NUMBER);
@@ -646,7 +646,7 @@ static Ref<CSSValue> valueForReflection(const StyleReflection* reflection, const
         return cssValuePool().createIdentifierValue(CSSValueNone);
 
     RefPtr<CSSPrimitiveValue> offset;
-    if (reflection->offset().isPercent())
+    if (reflection->offset().isPercentOrCalculated())
         offset = cssValuePool().createValue(reflection->offset().percent(), CSSPrimitiveValue::CSS_PERCENTAGE);
     else
         offset = zoomAdjustedPixelValue(reflection->offset().value(), style);
@@ -736,7 +736,7 @@ PassRefPtr<CSSPrimitiveValue> ComputedStyleExtractor::currentColorOrValidColor(R
 
 static Ref<CSSPrimitiveValue> percentageOrZoomAdjustedValue(Length length, const RenderStyle* style)
 {
-    if (length.isPercentNotCalculated())
+    if (length.isPercent())
         return cssValuePool().createValue(length.percent(), CSSPrimitiveValue::CSS_PERCENTAGE);
     
     return zoomAdjustedPixelValue(valueForLength(length, 0), style);
@@ -1559,7 +1559,7 @@ static Ref<CSSPrimitiveValue> lineHeightFromStyle(RenderStyle* style)
     Length length = style->lineHeight();
     if (length.isNegative()) // If true, line-height not set; use the font's line spacing.
         return zoomAdjustedPixelValue(style->fontMetrics().floatLineSpacing(), style);
-    if (length.isPercentNotCalculated()) {
+    if (length.isPercent()) {
         // This is imperfect, because it doesn't include the zoom factor and the real computation
         // for how high to be in pixels does include things like minimum font size and the zoom factor.
         // On the other hand, since font-size doesn't include the zoom factor, we really can't do
@@ -2429,7 +2429,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             if (marginRight.isFixed() || !is<RenderBox>(renderer))
                 return zoomAdjustedPixelValueForLength(marginRight, style.get());
             float value;
-            if (marginRight.isPercent()) {
+            if (marginRight.isPercentOrCalculated()) {
                 // RenderBox gives a marginRight() that is the distance between the right-edge of the child box
                 // and the right-edge of the containing box, when display == BLOCK. Let's calculate the absolute
                 // value of the specified margin-right % instead of relying on RenderBox's marginRight() value.

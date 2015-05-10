@@ -571,7 +571,7 @@ void HTMLPlugInImageElement::checkSizeChangeForSnapshotting()
 
 static inline bool is100Percent(Length length)
 {
-    return length.isPercentNotCalculated() && length.percent() == 100;
+    return length.isPercent() && length.percent() == 100;
 }
     
 static inline bool isSmallerThanTinySizingThreshold(const RenderEmbeddedObject& renderer)

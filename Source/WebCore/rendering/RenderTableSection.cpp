@@ -67,7 +67,7 @@ static inline void updateLogicalHeightForCell(RenderTableSection::RowStruct& row
         Length cRowLogicalHeight = row.logicalHeight;
         switch (logicalHeight.type()) {
         case Percent:
-            if (!cRowLogicalHeight.isPercentNotCalculated() || cRowLogicalHeight.percent() < logicalHeight.percent())
+            if (!cRowLogicalHeight.isPercent() || cRowLogicalHeight.percent() < logicalHeight.percent())
                 row.logicalHeight = logicalHeight;
             break;
         case Fixed:
@@ -425,7 +425,7 @@ void RenderTableSection::distributeExtraLogicalHeightToPercentRows(int& extraLog
     totalPercent = std::min(totalPercent, 100);
     int rowHeight = m_rowPos[1] - m_rowPos[0];
     for (unsigned r = 0; r < totalRows; ++r) {
-        if (totalPercent > 0 && m_grid[r].logicalHeight.isPercentNotCalculated()) {
+        if (totalPercent > 0 && m_grid[r].logicalHeight.isPercent()) {
             int toAdd = std::min<int>(extraLogicalHeight, (totalHeight * m_grid[r].logicalHeight.percent() / 100) - rowHeight);
             // If toAdd is negative, then we don't want to shrink the row (this bug
             // affected Outlook Web Access).
@@ -497,7 +497,7 @@ int RenderTableSection::distributeExtraLogicalHeightToRows(int extraLogicalHeigh
     for (unsigned r = 0; r < totalRows; r++) {
         if (m_grid[r].logicalHeight.isAuto())
             ++autoRowsCount;
-        else if (m_grid[r].logicalHeight.isPercentNotCalculated())
+        else if (m_grid[r].logicalHeight.isPercent())
             totalPercent += m_grid[r].logicalHeight.percent();
     }
 
@@ -568,7 +568,7 @@ void RenderTableSection::layoutRows()
                 || (!table()->style().logicalHeight().isAuto() && rHeight != cell->logicalHeight());
 
             for (RenderObject* renderer = cell->firstChild(); renderer; renderer = renderer->nextSibling()) {
-                if (!is<RenderText>(*renderer) && renderer->style().logicalHeight().isPercent() && (flexAllChildren || ((renderer->isReplaced() || (is<RenderBox>(*renderer) && downcast<RenderBox>(*renderer).scrollsOverflow())) && !is<RenderTextControl>(*renderer)))) {
+                if (!is<RenderText>(*renderer) && renderer->style().logicalHeight().isPercentOrCalculated() && (flexAllChildren || ((renderer->isReplaced() || (is<RenderBox>(*renderer) && downcast<RenderBox>(*renderer).scrollsOverflow())) && !is<RenderTextControl>(*renderer)))) {
                     // Tables with no sections do not flex.
                     if (!is<RenderTable>(*renderer) || downcast<RenderTable>(*renderer).hasSections()) {
                         renderer->setNeedsLayout(MarkOnlyThis);

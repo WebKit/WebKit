@@ -84,7 +84,7 @@ public:
     bool isFixed() const;
     bool isMaxContent() const;
     bool isMinContent() const;
-    bool isPercentNotCalculated() const; // FIXME: Rename to isPercent.
+    bool isPercent() const;
     bool isRelative() const;
     bool isUndefined() const;
 
@@ -98,7 +98,7 @@ public:
     bool isPositive() const;
     bool isNegative() const;
 
-    bool isPercent() const; // Returns true for both Percent and Calculated. FIXME: Find a better name for this.
+    bool isPercentOrCalculated() const; // Returns true for both Percent and Calculated.
 
     bool isIntrinsic() const;
     bool isIntrinsicOrAuto() const;
@@ -260,7 +260,7 @@ inline int Length::intValue() const
 
 inline float Length::percent() const
 {
-    ASSERT(isPercentNotCalculated());
+    ASSERT(isPercent());
     return value();
 }
 
@@ -333,7 +333,7 @@ inline bool Length::isNegative() const
     return m_isFloat ? (m_floatValue < 0) : (m_intValue < 0);
 }
 
-inline bool Length::isPercentNotCalculated() const
+inline bool Length::isPercent() const
 {
     return type() == Percent;
 }
@@ -348,9 +348,9 @@ inline bool Length::isUndefined() const
     return type() == Undefined;
 }
 
-inline bool Length::isPercent() const
+inline bool Length::isPercentOrCalculated() const
 {
-    return isPercentNotCalculated() || isCalculated();
+    return isPercent() || isCalculated();
 }
 
 inline bool Length::isPositive() const
@@ -392,7 +392,7 @@ inline bool Length::isIntrinsicOrAuto() const
 
 inline bool Length::isSpecified() const
 {
-    return isFixed() || isPercent();
+    return isFixed() || isPercentOrCalculated();
 }
 
 inline bool Length::isSpecifiedOrIntrinsic() const

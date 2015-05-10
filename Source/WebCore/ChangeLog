@@ -1,5 +1,120 @@
 2015-05-10  Sungmann Cho  <sungmann.cho@navercorp.com>
 
+        Rename Length::isPercent() and Length::isPercentNotCalculated().
+        https://bugs.webkit.org/show_bug.cgi?id=144791
+
+        Reviewed by Darin Adler.
+
+        1. Rename these methods as below for consistency and clarity.
+
+        Length::isPercentNotCalculated() => Length::isPercent()
+        Length::isPercent() => Length::isPercentOrCalculated()
+
+        2. Simplify the condition check of length type in SVGLengthContext::valueForLength().
+
+        "length.isPercent() && !length.isCalculated()" => "length.isPercent()"
+
+        No new tests, no behavior change.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForImageSliceSide):
+        (WebCore::valueForReflection):
+        (WebCore::percentageOrZoomAdjustedValue):
+        (WebCore::lineHeightFromStyle):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::is100Percent):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::computeTransformedExtentViaTransformList):
+        * platform/Length.h:
+        (WebCore::Length::percent):
+        (WebCore::Length::isPercent):
+        (WebCore::Length::isPercentOrCalculated):
+        (WebCore::Length::isSpecified):
+        (WebCore::Length::isPercentNotCalculated): Deleted.
+        * platform/graphics/transforms/TranslateTransformOperation.h:
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        (WebCore::AutoTableLayout::fullRecalc):
+        (WebCore::shouldScaleColumns):
+        (WebCore::AutoTableLayout::computeIntrinsicLogicalWidths):
+        (WebCore::AutoTableLayout::calcEffectiveLogicalWidth):
+        (WebCore::AutoTableLayout::layout):
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::calcWidthArray):
+        (WebCore::FixedTableLayout::applyPreferredLogicalWidthQuirks):
+        (WebCore::FixedTableLayout::layout):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::isSelfCollapsingBlock):
+        (WebCore::RenderBlock::textIndentOffset):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::needsPreferredWidthsRecalculation):
+        (WebCore::RenderBox::computeLogicalHeight):
+        (WebCore::RenderBox::computeContentAndScrollbarLogicalHeightUsing):
+        (WebCore::RenderBox::computePercentageLogicalHeight):
+        (WebCore::RenderBox::computeReplacedLogicalWidthRespectingMinMaxWidth):
+        (WebCore::RenderBox::computeReplacedLogicalWidthUsing):
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing):
+        (WebCore::RenderBox::availableLogicalHeightUsing):
+        (WebCore::logicalWidthIsResolvable):
+        (WebCore::RenderBox::percentageLogicalHeightIsResolvableFromBlock):
+        (WebCore::RenderBox::hasUnsplittableScrollingOverflow):
+        (WebCore::RenderBox::layoutOverflowRectForPropagation):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::hasAutoHeightOrContainingBlockWithAutoHeight):
+        (WebCore::RenderBoxModelObject::relativePositionOffset):
+        (WebCore::RenderBoxModelObject::computedCSSPadding):
+        (WebCore::RenderBoxModelObject::calculateImageIntrinsicDimensions):
+        (WebCore::RenderBoxModelObject::calculateFillTileSize):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+        (WebCore::RenderDeprecatedFlexibleBox::clearLineClamp):
+        * rendering/RenderElement.cpp:
+        (WebCore::mustRepaintFillLayers):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::computeIntrinsicLogicalWidths):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::layOutAxis):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::repaintOrMarkForLayout):
+        * rendering/RenderInline.cpp:
+        (WebCore::computeMargin):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::computeIntrinsicLogicalWidths):
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::computeIntrinsicLogicalWidths):
+        * rendering/RenderObject.cpp:
+        (WebCore::objectIsRelayoutBoundary):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computePreferredLogicalWidths):
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::computeIntrinsicLogicalWidths):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::convertStyleLogicalHeightToComputedHeight):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::computeIntrinsicLogicalWidths):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::layout):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::verticalPositionForBox):
+        * rendering/style/GridLength.h:
+        (WebCore::GridLength::isPercentage):
+        * rendering/style/GridTrackSize.h:
+        (WebCore::GridTrackSize::isPercentage):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::computedLineHeight):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::hasRelativeDimensions):
+        * svg/SVGLengthContext.cpp:
+        (WebCore::SVGLengthContext::valueForLength):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::hasRelativeWidth):
+        (WebCore::SVGImage::hasRelativeHeight):
+
+2015-05-10  Sungmann Cho  <sungmann.cho@navercorp.com>
+
         Remove unnecessary semicolons.
         https://bugs.webkit.org/show_bug.cgi?id=144844
 

@@ -315,9 +315,9 @@ void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, co
     // if the containing block's size depends on the image's size (i.e., the container uses shrink-to-fit sizing).
     // There's no easy way to detect that shrink-to-fit is needed, always force a layout.
     bool containingBlockNeedsToRecomputePreferredSize =
-        style().logicalWidth().isPercent()
-        || style().logicalMaxWidth().isPercent()
-        || style().logicalMinWidth().isPercent();
+        style().logicalWidth().isPercentOrCalculated()
+        || style().logicalMaxWidth().isPercentOrCalculated()
+        || style().logicalMinWidth().isPercentOrCalculated();
 
     bool layoutSizeDependsOnIntrinsicSize = style().aspectRatioType() == AspectRatioFromIntrinsic;
 

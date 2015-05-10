@@ -67,7 +67,7 @@ private:
     virtual bool apply(TransformationMatrix& transform, const FloatSize& borderBoxSize) const override
     {
         transform.translate3d(x(borderBoxSize), y(borderBoxSize), z(borderBoxSize));
-        return m_x.isPercentNotCalculated() || m_y.isPercentNotCalculated();
+        return m_x.isPercent() || m_y.isPercent();
     }
 
     virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
