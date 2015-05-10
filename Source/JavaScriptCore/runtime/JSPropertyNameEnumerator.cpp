@@ -47,14 +47,13 @@ JSPropertyNameEnumerator* JSPropertyNameEnumerator::create(VM& vm, Structure* st
     StructureID structureID = structure ? structure->id() : 0;
     uint32_t inlineCapacity = structure ? structure->inlineCapacity() : 0;
     JSPropertyNameEnumerator* enumerator = new (NotNull, 
-        allocateCell<JSPropertyNameEnumerator>(vm.heap)) JSPropertyNameEnumerator(vm, structureID, inlineCapacity, propertyNames.identifierSet());
+        allocateCell<JSPropertyNameEnumerator>(vm.heap)) JSPropertyNameEnumerator(vm, structureID, inlineCapacity);
     enumerator->finishCreation(vm, indexedLength, numberStructureProperties, propertyNames.data());
     return enumerator;
 }
 
-JSPropertyNameEnumerator::JSPropertyNameEnumerator(VM& vm, StructureID structureID, uint32_t inlineCapacity, RefCountedIdentifierSet* set)
+JSPropertyNameEnumerator::JSPropertyNameEnumerator(VM& vm, StructureID structureID, uint32_t inlineCapacity)
     : JSCell(vm, vm.propertyNameEnumeratorStructure.get())
-    , m_identifierSet(set)
     , m_cachedStructureID(structureID)
     , m_cachedInlineCapacity(inlineCapacity)
 {

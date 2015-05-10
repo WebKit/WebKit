@@ -1,3 +1,42 @@
+2015-05-10  Andreas Kling  <akling@apple.com>
+
+        Remove unused things from PropertyNameArray.
+        <https://webkit.org/b/144834>
+
+        Reviewed by Filip Pizlo.
+
+        PropertyNameArray had a bunch of bells and whistles added to it when for-in iteration
+        was refactored and optimized last year. Then more refactoring happened and this class
+        doesn't need to ring and toot anymore.
+
+        The RefCountedIdentifierSet class disappears since the JSPropertyNameEnumerator wasn't
+        actually using it for anything and we were just wasting time creating these.
+
+        Also made the member functions take AtomicStringImpl* instead of plain StringImpl*.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getPropertyNames):
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::JSPropertyNameEnumerator::create):
+        (JSC::JSPropertyNameEnumerator::JSPropertyNameEnumerator):
+        * runtime/JSPropertyNameEnumerator.h:
+        * runtime/PropertyNameArray.cpp:
+        (JSC::PropertyNameArray::add):
+        (JSC::PropertyNameArray::setPreviouslyEnumeratedProperties): Deleted.
+        * runtime/PropertyNameArray.h:
+        (JSC::PropertyNameArray::PropertyNameArray):
+        (JSC::PropertyNameArray::add):
+        (JSC::PropertyNameArray::addKnownUnique):
+        (JSC::PropertyNameArray::canAddKnownUniqueForStructure):
+        (JSC::RefCountedIdentifierSet::contains): Deleted.
+        (JSC::RefCountedIdentifierSet::size): Deleted.
+        (JSC::RefCountedIdentifierSet::add): Deleted.
+        (JSC::PropertyNameArray::identifierSet): Deleted.
+        (JSC::PropertyNameArray::numCacheableSlots): Deleted.
+        (JSC::PropertyNameArray::setNumCacheableSlotsForObject): Deleted.
+        (JSC::PropertyNameArray::setBaseObject): Deleted.
+        (JSC::PropertyNameArray::setPreviouslyEnumeratedLength): Deleted.
+
 2015-05-09  Yoav Weiss  <yoav@yoav.ws>
 
         Remove the PICTURE_SIZES build flag

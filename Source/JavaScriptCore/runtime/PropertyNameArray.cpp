@@ -29,26 +29,14 @@
 
 namespace JSC {
 
-void PropertyNameArray::add(StringImpl* identifier)
+void PropertyNameArray::add(AtomicStringImpl* identifier)
 {
-    ASSERT(!identifier || (identifier == StringImpl::empty() || identifier->isAtomic() || identifier->isSymbol()));
-    if (!ASSERT_DISABLED) {
-        Optional<uint32_t> index = parseIndex(Identifier::fromUid(m_vm, identifier));
-        ASSERT_UNUSED(index, !index || index.value() >= m_previouslyEnumeratedLength);
-    }
+    ASSERT(identifier);
 
-    if (m_alternateSet && m_alternateSet->contains(identifier))
-        return;
-
-    if (!m_set->add(identifier).isNewEntry)
+    if (!m_set.add(identifier).isNewEntry)
         return;
 
     addKnownUnique(identifier);
-}
-
-void PropertyNameArray::setPreviouslyEnumeratedProperties(const JSPropertyNameEnumerator* enumerator)
-{
-    m_alternateSet = enumerator->identifierSet();
 }
 
 } // namespace JSC

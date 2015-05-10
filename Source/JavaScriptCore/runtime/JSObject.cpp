@@ -1456,7 +1456,6 @@ bool JSObject::defaultHasInstance(ExecState* exec, JSValue value, JSValue proto)
 
 void JSObject::getPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    propertyNames.setBaseObject(object);
     object->methodTable(exec->vm())->getOwnPropertyNames(object, exec, propertyNames, mode);
 
     if (object->prototype().isNull())
