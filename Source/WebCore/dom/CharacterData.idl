@@ -37,12 +37,7 @@ interface CharacterData : Node {
     [ObjCLegacyUnnamedParameters, RaisesException] void replaceData([IsIndex, Default=Undefined] optional unsigned long offset, 
                                     [IsIndex, Default=Undefined] optional unsigned long length,
                                     [Default=Undefined] optional DOMString data);
-
-    // From the NonDocumentTypeChildNode interface - https://dom.spec.whatwg.org/#nondocumenttypechildnode
-    // FIXME: Move this to a seperate NonDocumentTypeChildNode IDL file when one exists.
-    readonly attribute Element previousElementSibling;
-    readonly attribute Element nextElementSibling;
 };
 
 CharacterData implements ChildNode;
-
+CharacterData implements NonDocumentTypeChildNode;

@@ -21,14 +21,6 @@
     Constructor,
     ConstructorCallWith=Document
  ] interface DocumentFragment : Node {
-    // NodeSelector - Selector API
-    [RaisesException] Element querySelector(DOMString selectors);
-    [RaisesException] NodeList querySelectorAll(DOMString selectors);
-    
-    // From the ParentNode interface - https://dom.spec.whatwg.org/#interface-parentnode
-    // FIXME: Move this to a seperate ParentNode IDL file when one exists.
-    readonly attribute Element firstElementChild;
-    readonly attribute Element lastElementChild;
-    readonly attribute unsigned long childElementCount;
 };
 
+DocumentFragment implements ParentNode;

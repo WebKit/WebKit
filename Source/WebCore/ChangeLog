@@ -1,5 +1,29 @@
 2015-05-09  Chris Dumez  <cdumez@apple.com>
 
+        Introduce ParentNode.idl / NonDocumentTypeChildNode.idl
+        https://bugs.webkit.org/show_bug.cgi?id=144825
+
+        Reviewed by Sam Weinig.
+
+        Introduce ParentNode.idl / NonDocumentTypeChildNode.idl as per DOM
+        specification and to avoid IDL code duplication:
+        - https://dom.spec.whatwg.org/#interface-parentnode
+        - https://dom.spec.whatwg.org/#interface-nondocumenttypechildnode
+
+        No Web-Exposed behavior change.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/CharacterData.idl:
+        * dom/Document.idl:
+        * dom/DocumentFragment.idl:
+        * dom/Element.idl:
+        * dom/NonDocumentTypeChildNode.idl: Copied from Source/WebCore/dom/DocumentFragment.idl.
+        * dom/ParentNode.idl: Copied from Source/WebCore/dom/DocumentFragment.idl.
+
+2015-05-09  Chris Dumez  <cdumez@apple.com>
+
         Invalidate the FontCache on WebProcess suspension / critical memory pressure
         https://bugs.webkit.org/show_bug.cgi?id=144821
 

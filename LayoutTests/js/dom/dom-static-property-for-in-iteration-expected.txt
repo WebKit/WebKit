@@ -65,13 +65,13 @@ PASS a["outerHTML"] is <a id="foo" href="bar">nerget</a>
 PASS a["className"] is 
 PASS a["classList"] is 
 PASS a["dataset"] is [object DOMStringMap]
+PASS a["uiactions"] is 
+PASS a["webkitRegionOverset"] is undefined
+PASS a["previousElementSibling"] is [object HTMLDivElement]
+PASS a["nextElementSibling"] is [object HTMLScriptElement]
 PASS a["firstElementChild"] is null
 PASS a["lastElementChild"] is null
 PASS a["childElementCount"] is 0
-PASS a["previousElementSibling"] is [object HTMLDivElement]
-PASS a["nextElementSibling"] is [object HTMLScriptElement]
-PASS a["uiactions"] is 
-PASS a["webkitRegionOverset"] is undefined
 PASS a["ALLOW_KEYBOARD_INPUT"] is 1
 PASS a["nodeName"] is A
 PASS a["nodeValue"] is null
