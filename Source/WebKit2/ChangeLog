@@ -1,3 +1,13 @@
+2015-05-10  Darin Adler  <darin@apple.com>
+
+        Fix internal Apple builds on Mavericks.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _dismissContentRelativeChildWindows]): Added missing conditionals around
+        some code that is for OS X 10.10 or newer only. There were similar conditionals around
+        other nearby code in this file, and around other uses of the same method in other files,
+        so matched the style.
+
 2015-05-10  Dan Bernstein  <mitz@apple.com>
 
         iOS internal build fix.
