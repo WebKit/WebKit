@@ -36,9 +36,7 @@
 
 namespace WebCore {
 
-class CSSRule;
 class CSSStyleDeclaration;
-class ComputedStyleExtractor;
 class ImmutableStyleProperties;
 class URL;
 class MutableStyleProperties;
