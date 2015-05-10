@@ -1,5 +1,13 @@
 2015-05-10  Andreas Kling  <akling@apple.com>
 
+        Remove unnecessary AtomicStringImpl* hash specification in PropertyNameArray.
+
+        Follow up to r184050 suggested by Darin.
+
+        * runtime/PropertyNameArray.h:
+
+2015-05-10  Andreas Kling  <akling@apple.com>
+
         Remove unused things from PropertyNameArray.
         <https://webkit.org/b/144834>
 

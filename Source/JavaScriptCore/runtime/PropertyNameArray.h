@@ -94,7 +94,7 @@ public:
 
 private:
     RefPtr<PropertyNameArrayData> m_data;
-    HashSet<AtomicStringImpl*, PtrHash<AtomicStringImpl*>> m_set;
+    HashSet<AtomicStringImpl*> m_set;
     VM* m_vm;
 };
 
