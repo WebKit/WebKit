@@ -287,13 +287,26 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
             return;
 
         var firstNonNativeCallFrame = this._firstNonNativeCallFrame();
+
+        var callFrame;
         if (firstNonNativeCallFrame) {
-            var urlElement = this._linkifyCallFrame(firstNonNativeCallFrame);
-            this._element.appendChild(urlElement);
+            // JavaScript errors and console.* methods.
+            callFrame = WebInspector.CallFrame.fromPayload(firstNonNativeCallFrame);
         } else if (this._message.url && !this._shouldHideURL(this._message.url)) {
-            var urlElement = this._linkifyLocation(this._message.url, this._message.line, this._message.column);
-            this._element.appendChild(urlElement);
+            // CSS warnings have no stack traces.
+            callFrame = WebInspector.CallFrame.fromPayload({
+                url: this._message.url,
+                lineNumber: this._message.line,
+                columnNumber: this._message.column
+            });
         }
+
+        if (!callFrame)
+            return;
+
+        var locationElement = new WebInspector.CallFrameView(callFrame);
+        locationElement.classList.add("console-message-location");
+        this._element.appendChild(locationElement);
     }
 
     _appendExtraParameters()

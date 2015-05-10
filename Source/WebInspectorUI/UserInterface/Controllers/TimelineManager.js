@@ -451,30 +451,7 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         if (!payload)
             return null;
 
-        function createCallFrame(payload)
-        {
-            var url = payload.url;
-            var nativeCode = false;
-
-            if (url === "[native code]") {
-                nativeCode = true;
-                url = null;
-            }
-
-            var sourceCode = WebInspector.frameResourceManager.resourceForURL(url);
-            if (!sourceCode)
-                sourceCode = WebInspector.debuggerManager.scriptsForURL(url)[0];
-
-            // The lineNumber is 1-based, but we expect 0-based.
-            var lineNumber = payload.lineNumber - 1;
-
-            var sourceCodeLocation = sourceCode ? sourceCode.createLazySourceCodeLocation(lineNumber, payload.columnNumber) : null;
-            var functionName = payload.functionName !== "global code" ? payload.functionName : null;
-
-            return new WebInspector.CallFrame(null, sourceCodeLocation, functionName, null, null, nativeCode);
-        }
-
-        return payload.map(createCallFrame);
+        return payload.map(WebInspector.CallFrame.fromPayload);
     }
 
     _addRecord(record)

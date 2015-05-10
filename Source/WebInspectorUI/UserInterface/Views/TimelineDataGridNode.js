@@ -150,7 +150,7 @@ WebInspector.TimelineDataGridNode.prototype = {
                 isAnonymousFunction = true;
             }
 
-            cell.classList.add(WebInspector.CallFrameTreeElement.FunctionIconStyleClassName);
+            cell.classList.add(WebInspector.CallFrameView.FunctionIconStyleClassName);
 
             var fragment = document.createDocumentFragment();
 
@@ -185,7 +185,7 @@ WebInspector.TimelineDataGridNode.prototype = {
                     fragment.appendChild(titleElement);
                 } else {
                     // Show the function name and icon.
-                    cell.classList.add(WebInspector.CallFrameTreeElement.FunctionIconStyleClassName);
+                    cell.classList.add(WebInspector.CallFrameView.FunctionIconStyleClassName);
 
                     fragment.appendChild(document.createTextNode(functionName));
 

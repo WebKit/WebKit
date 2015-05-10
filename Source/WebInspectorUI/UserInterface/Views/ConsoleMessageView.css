@@ -201,12 +201,6 @@
     color: rgb(0, 128, 255);
 }
 
-.console-message-url {
-    float: right;
-    margin-left: 4px;
-    font-weight: normal;
-}
-
 .console-saved-variable {
     font-style: normal;
     color: rgba(0, 0, 0, 0.33);
@@ -221,4 +215,28 @@
 .console-user-command-result.console-log-level::before {
     content: url(../Images/UserInputResult.svg);
     margin-left: 1px;
+}
+
+.console-message .console-message-location {
+    float: right;
+    font-weight: normal;
+}
+
+.console-message .call-frame {
+    -webkit-user-select: text;
+    height: 1.2em;
+}
+
+.console-message .go-to-link {
+    color: hsla(0, 0%, 0%, 0.6);
+    text-decoration: none;
+}
+
+.console-message .go-to-link:hover,
+.console-message .go-to-link:focus {
+    color: hsl(210, 100%, 40%);
+}
+
+.console-message .console-message-url::before {
+    content: ' ';
 }

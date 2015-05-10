@@ -56,9 +56,9 @@ WebInspector.ProfileNodeTreeElement = class ProfileNodeTreeElement extends WebIn
 
         switch (profileNode.type) {
         case WebInspector.ProfileNode.Type.Function:
-            className = WebInspector.CallFrameTreeElement.FunctionIconStyleClassName;
+            className = WebInspector.CallFrameView.FunctionIconStyleClassName;
             if (!sourceCodeLocation)
-                className = WebInspector.CallFrameTreeElement.NativeIconStyleClassName;
+                className = WebInspector.CallFrameView.NativeIconStyleClassName;
             break;
         case WebInspector.ProfileNode.Type.Program:
             className = WebInspector.TimelineRecordTreeElement.EvaluatedRecordIconStyleClass;
@@ -70,7 +70,7 @@ WebInspector.ProfileNodeTreeElement = class ProfileNodeTreeElement extends WebIn
         // This is more than likely an event listener function with an "on" prefix and it is
         // as long or longer than the shortest event listener name -- "oncut".
         if (profileNode.functionName && profileNode.functionName.startsWith("on") && profileNode.functionName.length >= 5)
-            className = WebInspector.CallFrameTreeElement.EventListenerIconStyleClassName;
+            className = WebInspector.CallFrameView.EventListenerIconStyleClassName;
 
         var hasChildren = !!profileNode.childNodes.length;
 

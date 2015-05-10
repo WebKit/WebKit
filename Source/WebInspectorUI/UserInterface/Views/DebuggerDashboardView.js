@@ -100,8 +100,8 @@ WebInspector.DebuggerDashboardView = class DebuggerDashboardView extends WebInsp
     }
 };
 
-WebInspector.DebuggerDashboardView.FunctionIconStyleClassName = WebInspector.CallFrameTreeElement.FunctionIconStyleClassName;
-WebInspector.DebuggerDashboardView.EventListenerIconStyleClassName = WebInspector.CallFrameTreeElement.EventListenerIconStyleClassName;
+WebInspector.DebuggerDashboardView.FunctionIconStyleClassName = WebInspector.CallFrameView.FunctionIconStyleClassName;
+WebInspector.DebuggerDashboardView.EventListenerIconStyleClassName = WebInspector.CallFrameView.EventListenerIconStyleClassName;
 
 WebInspector.DebuggerDashboardView.IconStyleClassName = "icon";
 WebInspector.DebuggerDashboardView.MessageStyleClassName = "message";

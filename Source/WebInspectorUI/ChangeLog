@@ -1,3 +1,73 @@
+2015-05-10  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: In the console, show function name next to the source link
+        https://bugs.webkit.org/show_bug.cgi?id=144372
+
+        Introduce CallFrameView to display counsole message source links. It looks like this:
+
+            [f] functionName - filename.js:42
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.createSourceCodeLocationLink):
+        (WebInspector.linkifyLocation):
+        (.showSourceCodeLocation):
+        (WebInspector.linkifyElement):
+        Abstract this out as it's used in WebInspector.CallFrameView and WebInspector.createSourceCodeLocationLink.
+
+        (WebInspector.sourceCodeForURL):
+        Move this code from Timeline to Main.js as it's used by Console too.
+
+        (WebInspector.linkifyURLAsNode):
+        Remove tooltipText argument as it is never used.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype._callFramesFromPayload):
+        * UserInterface/Main.html:
+        * UserInterface/Models/CallFrame.js:
+        (WebInspector.CallFrame.fromPayload):
+        Abstract this out as it's used in WebInspector.TimelineManager.prototype._callFramesFromPayload and
+        WebInspector.ConsoleMessageView._appendLocationLink.
+
+        (WebInspector.CallFrame):
+        * UserInterface/Views/CallFrameTreeElement.js:
+        (WebInspector.CallFrameTreeElement):
+        Move it to WebInspector.CallFrameView.iconForCallFrame.
+
+        * UserInterface/Views/CallFrameView.css: Added.
+        (.call-frame):
+        (.call-frame .icon):
+        (.call-frame .titles):
+        (.call-frame .title):
+        (.call-frame .source-link):
+        (.call-frame .title + .subtitle > .source-link):
+        (.call-frame .subtitle .source-link):
+        (.call-frame:focus .subtitle .source-link):
+        (.call-frame .subtitle:empty):
+        (.call-frame .subtitle):
+        (.call-frame .colon):
+        (.call-frame .title + .subtitle::before):
+        * UserInterface/Views/CallFrameView.js: Added.
+        (WebInspector.CallFrameView):
+        (WebInspector.CallFrameView.iconClassNameForCallFrame):
+        * UserInterface/Views/ConsoleMessageView.css:
+        (.console-message .console-message-location):
+        (.console-message .call-frame):
+        (.console-message .go-to-link):
+        (.console-message .go-to-link:focus):
+        (.console-message .console-message-url::before):
+        (.console-saved-variable): Deleted.
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._appendLocationLink):
+        * UserInterface/Views/DebuggerDashboardView.js:
+        * UserInterface/Views/Main.css:
+        (.hidden): Deleted.
+        * UserInterface/Views/ProfileNodeTreeElement.js:
+        (WebInspector.ProfileNodeTreeElement):
+        * UserInterface/Views/TimelineDataGridNode.js:
+        (WebInspector.TimelineDataGridNode.prototype.createCellContent):
+
 2015-05-08  Tobias Reiss  <tobi+webkit@basecode.de>
 
         Web Inspector: Styles sidebar editing with incomplete property looks poor in UI

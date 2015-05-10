@@ -29,15 +29,7 @@ WebInspector.CallFrameTreeElement = class CallFrameTreeElement extends WebInspec
     {
         console.assert(callFrame instanceof WebInspector.CallFrame);
 
-        var className = WebInspector.CallFrameTreeElement.FunctionIconStyleClassName;
-        if (callFrame.nativeCode)
-            className = WebInspector.CallFrameTreeElement.NativeIconStyleClassName;
-
-        // This is more than likely an event listener function with an "on" prefix and it is
-        // as long or longer than the shortest event listener name -- "oncut".
-        if (callFrame.functionName && callFrame.functionName.startsWith("on") && callFrame.functionName.length >= 5)
-            className = WebInspector.CallFrameTreeElement.EventListenerIconStyleClassName;
-
+        var className = WebInspector.CallFrameView.iconClassNameForCallFrame(callFrame);
         var title = callFrame.functionName || WebInspector.UIString("(anonymous function)");
 
         super(className, title, null, callFrame, false);
@@ -78,7 +70,3 @@ WebInspector.CallFrameTreeElement = class CallFrameTreeElement extends WebInspec
         }
     }
 };
-
-WebInspector.CallFrameTreeElement.FunctionIconStyleClassName = "function-icon";
-WebInspector.CallFrameTreeElement.EventListenerIconStyleClassName = "event-listener-icon";
-WebInspector.CallFrameTreeElement.NativeIconStyleClassName = "native-icon";
