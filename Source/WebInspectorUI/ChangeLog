@@ -1,5 +1,61 @@
 2015-05-11  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: REGRESSION (Tabs): Issues reloading a resource with breakpoints
+        https://bugs.webkit.org/show_bug.cgi?id=144650
+
+        Fix a number of issues with Debugger tab and navigation/reloading:
+        - Close old content views in the Debugger tab when main frame navigates.
+        - Prune old resource tree elements before attempting to restore a cookie that might match an old resource.
+        - Allow breakpoint selections to be restored from a saved cookie.
+        - Fix an assert when closing a content view that isn't the current index, but is the current view.
+        - Avoid calling closed() multiple times when a ContentView is in the back/forward list more than once.
+        - Make restoreStateFromCookie properly set and use the causedByNavigation argument for a longer restore delay.
+        - Create a new cookie object per tab instead of it being cumulative from the previous cookie.
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector._mainResourceDidChange): Delay calling _restoreCookieForOpenTabs to give time for sidebars
+        and tabs to respond to the main resource change.
+        (WebInspector._restoreCookieForOpenTabs): Rename causedByReload to causedByNavigation. Nothing special about
+        reload since we restore on all navigation.
+
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView): Support Breakpoint as a represented object, which happens during a cookie restore.
+        (WebInspector.ContentView.isViewable): Ditto.
+
+        * UserInterface/Views/ContentViewContainer.js:
+        (WebInspector.ContentViewContainer.prototype.closeAllContentViews): Disassociate if the view is current and not just
+        the current entry index. This matches other close functions. This fixes an assert in _disassociateFromContentView.
+        (WebInspector.ContentViewContainer.prototype._disassociateFromContentView): Don't disassociate multiple times. This
+        avoids calling the closed() function on a view more than once.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype.saveStateToCookie):
+        (WebInspector.DebuggerSidebarPanel.prototype._mainResourceDidChange): Renamed from _mainResourceChanged.
+        Close all content views if this is the main frame. Also prune all old resources. Doing this now avoids a flash
+        of having old and new resources in the tree caused by the default delay in NavigationSidebarPanel's _checkForOldResources.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel): Set _autoPruneOldTopLevelResourceTreeElements for later.
+        (WebInspector.NavigationSidebarPanel.prototype.get contentTreeOutlineToAutoPrune): Deleted.
+        (WebInspector.NavigationSidebarPanel.prototype.showDefaultContentView): Fix typo.
+        (WebInspector.NavigationSidebarPanel.prototype.showDefaultContentViewForTreeElement): Fix whitespace.
+        (WebInspector.NavigationSidebarPanel.prototype.pruneOldResourceTreeElements): Added. Broken out from
+        _checkForOldResources.delayedWork so it can be called manually. Also check all visible tree outlines.
+        (WebInspector.NavigationSidebarPanel.prototype._treeElementAddedOrChanged): Pass treeElement in an array.
+        (WebInspector.NavigationSidebarPanel.prototype._checkForOldResourcesIfNeeded): Added.
+        (WebInspector.NavigationSidebarPanel.prototype._checkForOldResources): Call pruneOldResourceTreeElements on a delay.
+        (WebInspector.NavigationSidebarPanel.prototype._checkForOldResources.delayedWork): Deleted.
+        (WebInspector.NavigationSidebarPanel.prototype._checkOutlinesForPendingViewStateCookie): Call _checkForOldResourcesIfNeeded.
+        (WebInspector.NavigationSidebarPanel.prototype._checkElementsForPendingViewStateCookie): Remove array folding code.
+
+        * UserInterface/Views/TabContentView.js:
+        (WebInspector.TabContentView.prototype.restoreStateFromCookie): Rename causedByReload to causedByNavigation.
+        (WebInspector.TabContentView.prototype.saveStateToCookie): Don't allow the cookie to build on the old cookie.
+
+2015-05-11  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: NavigationSidebarPanel leaks some event listeners
         https://bugs.webkit.org/show_bug.cgi?id=144523
 

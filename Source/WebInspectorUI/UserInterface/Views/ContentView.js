@@ -57,6 +57,11 @@ WebInspector.ContentView = function(representedObject, extraArguments)
                 return new WebInspector.RenderingFrameTimelineView(representedObject, extraArguments);
         }
 
+        if (representedObject instanceof WebInspector.Breakpoint) {
+            if (representedObject.sourceCodeLocation)
+                return new WebInspector.ContentView(representedObject.sourceCodeLocation.displaySourceCode, extraArguments);
+        }
+
         if (representedObject instanceof WebInspector.DOMStorageObject)
             return new WebInspector.DOMStorageContentView(representedObject, extraArguments);
 
@@ -147,6 +152,8 @@ WebInspector.ContentView.isViewable = function(representedObject)
         return true;
     if (representedObject instanceof WebInspector.Timeline)
         return true;
+    if (representedObject instanceof WebInspector.Breakpoint)
+        return representedObject.sourceCodeLocation;
     if (representedObject instanceof WebInspector.DOMStorageObject)
         return true;
     if (representedObject instanceof WebInspector.CookieStorageObject)

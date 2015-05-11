@@ -1125,7 +1125,9 @@ WebInspector._mainResourceDidChange = function(event)
 
     this._inProvisionalLoad = false;
 
-    this._restoreCookieForOpenTabs();
+    // Run cookie restoration after we are sure all of the Tabs and NavigationSidebarPanels
+    // have updated with respect to the main resource change.
+    setTimeout(this._restoreCookieForOpenTabs.bind(this, true));
 
     this._updateDownloadToolbarButton();
 
@@ -1142,13 +1144,13 @@ WebInspector._provisionalLoadStarted = function(event)
     this._inProvisionalLoad = true;
 };
 
-WebInspector._restoreCookieForOpenTabs = function(causedByReload)
+WebInspector._restoreCookieForOpenTabs = function(causedByNavigation)
 {
     for (var tabBarItem of this.tabBar.tabBarItems) {
         var tabContentView = tabBarItem.representedObject;
         if (!(tabContentView instanceof WebInspector.TabContentView))
             continue;
-        tabContentView.restoreStateFromCookie(causedByReload);
+        tabContentView.restoreStateFromCookie(causedByNavigation);
     }
 };
 

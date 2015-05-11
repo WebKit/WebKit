@@ -31,7 +31,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
         this.contentBrowser = contentBrowser;
 
-        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceChanged, this);
+        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceAdded, this);
 
         WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.BreakpointsEnabledDidChange, this._breakpointsEnabledDidChange, this);
@@ -227,11 +227,15 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
         var representedObject = selectedTreeElement.representedObject;
 
-        if (representedObject === WebInspector.debuggerManager.allExceptionsBreakpoint)
+        if (representedObject === WebInspector.debuggerManager.allExceptionsBreakpoint) {
             cookie[WebInspector.DebuggerSidebarPanel.SelectedAllExceptionsCookieKey] = true;
+            return;
+        }
 
-        if (representedObject === WebInspector.debuggerManager.allUncaughtExceptionsBreakpoint)
+        if (representedObject === WebInspector.debuggerManager.allUncaughtExceptionsBreakpoint) {
             cookie[WebInspector.DebuggerSidebarPanel.SelectedAllUncaughtExceptionsCookieKey] = true;
+            return;
+        }
 
         super.saveStateToCookie(cookie);
     }
@@ -378,8 +382,16 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         this._addIssuesForSourceCode(resource);
     }
 
-    _mainResourceChanged(event)
+    _mainResourceDidChange(event)
     {
+        if (event.target.isMainFrame()) {
+            // Aggressively prune resources now so the old resources are removed before
+            // the new main resource is added below. This avoids a visual flash when the
+            // prune normally happens on a later event loop cycle.
+            this.pruneStaleResourceTreeElements();
+            this.contentBrowser.contentViewContainer.closeAllContentViews();
+        }
+
         var resource = event.target.mainResource;
         this._addTreeElementForSourceCodeToContentTreeOutline(resource);
         this._addBreakpointsForSourceCode(resource);

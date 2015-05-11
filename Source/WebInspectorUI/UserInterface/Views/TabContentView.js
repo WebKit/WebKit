@@ -107,15 +107,15 @@ WebInspector.TabContentView.prototype = {
         return false;
     },
 
-    restoreStateFromCookie: function(causedByReload)
+    restoreStateFromCookie: function(causedByNavigation)
     {
         if (!this.navigationSidebarPanel)
             return;
 
-        var matchTypeOnlyDelayForReload = 2000;
+        var matchTypeOnlyDelayForNavigation = 2000;
         var matchTypeOnlyDelayForReopen = 1000;
 
-        var relaxMatchDelay = causedByReload ? matchTypeOnlyDelayForReload : matchTypeOnlyDelayForReopen;
+        var relaxMatchDelay = causedByNavigation ? matchTypeOnlyDelayForNavigation : matchTypeOnlyDelayForReopen;
         this.navigationSidebarPanel.restoreStateFromCookie(this._cookieSetting.value || {}, relaxMatchDelay);
     },
 
@@ -124,7 +124,7 @@ WebInspector.TabContentView.prototype = {
         if (!this.navigationSidebarPanel)
             return;
 
-        var cookie = this._cookieSetting.value || {};
+        var cookie = {};
         this.navigationSidebarPanel.saveStateToCookie(cookie);
         this._cookieSetting.value = cookie;
     },
