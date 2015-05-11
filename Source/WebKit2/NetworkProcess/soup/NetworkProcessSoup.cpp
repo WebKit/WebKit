@@ -38,6 +38,7 @@
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/SoupNetworkSession.h>
 #include <libsoup/soup.h>
+#include <wtf/RAMSize.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/gobject/GUniquePtr.h>
 
@@ -58,20 +59,6 @@ static uint64_t getCacheDiskFreeSize(SoupCache* cache)
     return WebCore::getVolumeFreeSizeForPath(cacheDir.get());
 }
 #endif
-
-static uint64_t getMemorySize()
-{
-    static uint64_t kDefaultMemorySize = 512;
-    long pageSize = sysconf(_SC_PAGESIZE);
-    if (pageSize == -1)
-        return kDefaultMemorySize;
-
-    long physPages = sysconf(_SC_PHYS_PAGES);
-    if (physPages == -1)
-        return kDefaultMemorySize;
-
-    return ((pageSize / 1024) * physPages) / 1024;
-}
 
 void NetworkProcess::userPreferredLanguagesChanged(const Vector<String>& languages)
 {
@@ -128,13 +115,13 @@ void NetworkProcess::platformSetCacheModel(CacheModel cacheModel)
     unsigned long urlCacheDiskCapacity = 0;
 
 #if ENABLE(NETWORK_CACHE)
-    uint64_t diskFreeSize = WebCore::getVolumeFreeSizeForPath(m_diskCacheDirectory.utf8().data()) / 1024 / 1024;
+    uint64_t diskFreeSize = WebCore::getVolumeFreeSizeForPath(m_diskCacheDirectory.utf8().data()) / WTF::MB;
 #else
     SoupCache* cache = SoupNetworkSession::defaultSession().cache();
-    uint64_t diskFreeSize = getCacheDiskFreeSize(cache) / 1024 / 1024;
+    uint64_t diskFreeSize = getCacheDiskFreeSize(cache) / WTF::MB;
 #endif
 
-    uint64_t memSize = getMemorySize();
+    uint64_t memSize = WTF::ramSize() / WTF::MB;
     calculateCacheSizes(cacheModel, memSize, diskFreeSize,
         cacheTotalCapacity, cacheMinDeadCapacity, cacheMaxDeadCapacity, deadDecodedDataDeletionInterval,
         pageCacheCapacity, urlCacheMemoryCapacity, urlCacheDiskCapacity);

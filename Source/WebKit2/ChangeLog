@@ -1,3 +1,19 @@
+2015-05-10  Philip Chimento  <philip.chimento@gmail.com>
+
+        [GTK][SOUP] Web and Network processes don't know how to get memory size on OSX
+        https://bugs.webkit.org/show_bug.cgi?id=144554
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformSetCacheModel): Use WTF::ramSize()
+        instead of local function. Also use WTF::MB instead of dividing by
+        1024 * 1024.
+        (WebKit::getMemorySize): Deleted.
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformSetCacheModel): Ditto.
+        (WebKit::getMemorySize): Deleted.
+
 2015-05-10  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Use preview view controller from WebKitSystemInterface.
