@@ -1,3 +1,21 @@
+2015-05-11  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: REGRESSION (r175203): No profile information is shown in Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=144808
+
+        Reviewed by Darin Adler.
+
+        Since a profile can be started after a timeline recording has already begun, we can't assume a zero start time.
+        The start time for the root node's call entry should be based on the stopwatch used by the ProfileGenerator.
+
+        * profiler/Profile.cpp:
+        (JSC::Profile::create):
+        (JSC::Profile::Profile):
+        * profiler/Profile.h:
+        * profiler/ProfileGenerator.cpp:
+        (JSC::ProfileGenerator::ProfileGenerator):
+        (JSC::AddParentForConsoleStartFunctor::operator()):
+
 2015-05-11  Basile Clement  <basile_clement@apple.com>
 
         Unreviewed, remove unintended change.

@@ -27,24 +27,23 @@
 #include "Profile.h"
 
 #include "ProfileNode.h"
-#include <wtf/CurrentTime.h>
 #include <wtf/DataLog.h>
 
 namespace JSC {
 
-PassRefPtr<Profile> Profile::create(const String& title, unsigned uid)
+PassRefPtr<Profile> Profile::create(const String& title, unsigned uid, double startTime)
 {
-    return adoptRef(new Profile(title, uid));
+    return adoptRef(new Profile(title, uid, startTime));
 }
 
-Profile::Profile(const String& title, unsigned uid)
+Profile::Profile(const String& title, unsigned uid, double startTime)
     : m_title(title)
     , m_uid(uid)
 {
     // FIXME: When multi-threading is supported this will be a vector and calls
     // into the profiler will need to know which thread it is executing on.
     m_rootNode = ProfileNode::create(nullptr, CallIdentifier(ASCIILiteral("Thread_1"), String(), 0, 0), nullptr);
-    m_rootNode->appendCall(ProfileNode::Call(0.0));
+    m_rootNode->appendCall(ProfileNode::Call(startTime));
 }
 
 Profile::~Profile()

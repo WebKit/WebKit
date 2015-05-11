@@ -61,7 +61,7 @@ namespace JSC {
 
     private:
         ProfileGenerator(ExecState*, const WTF::String& title, unsigned uid, PassRefPtr<Stopwatch>);
-        void addParentForConsoleStart(ExecState*);
+        void addParentForConsoleStart(ExecState*, double);
 
         void removeProfileStart();
         void removeProfileEnd();

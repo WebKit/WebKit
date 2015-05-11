@@ -1,3 +1,15 @@
+2015-05-11  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: REGRESSION (r175203): No profile information is shown in Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=144808
+
+        Reviewed by Darin Adler.
+
+        Profiles started from the console should always use the Inspector environment's shared stopwatch.
+
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::startFromConsole):
+
 2015-05-11  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Support domain-specific rules and exceptions.

@@ -51,20 +51,22 @@ ProfileGenerator::ProfileGenerator(ExecState* exec, const String& title, unsigne
     , m_foundConsoleStartParent(false)
     , m_suspended(false)
 {
-    m_profile = Profile::create(title, uid);
+    double startTime = m_stopwatch->elapsedTime();
+    m_profile = Profile::create(title, uid, startTime);
     m_currentNode = m_rootNode = m_profile->rootNode();
     if (exec)
-        addParentForConsoleStart(exec);
+        addParentForConsoleStart(exec, startTime);
 }
 
 class AddParentForConsoleStartFunctor {
 public:
-    AddParentForConsoleStartFunctor(ExecState* exec, RefPtr<ProfileNode>& rootNode, RefPtr<ProfileNode>& currentNode)
+    AddParentForConsoleStartFunctor(ExecState* exec, RefPtr<ProfileNode>& rootNode, RefPtr<ProfileNode>& currentNode, double startTime)
         : m_exec(exec)
         , m_hasSkippedFirstFrame(false)
         , m_foundParent(false)
         , m_rootNode(rootNode)
         , m_currentNode(currentNode)
+        , m_startTime(startTime)
     {
     }
 
@@ -81,9 +83,7 @@ public:
         unsigned column = 0;
         visitor->computeLineAndColumn(line, column);
         m_currentNode = ProfileNode::create(m_exec, LegacyProfiler::createCallIdentifier(m_exec, visitor->callee(), visitor->sourceURL(), line, column), m_rootNode.get());
-        // Assume that profile times are relative to when the |console.profile| command is evaluated.
-        // This matches the logic in JSStartProfiling() and InspectorTimelineAgent::startFromConsole().
-        m_currentNode->appendCall(ProfileNode::Call(0.0));
+        m_currentNode->appendCall(ProfileNode::Call(m_startTime));
         m_rootNode->spliceNode(m_currentNode.get());
 
         m_foundParent = true;
@@ -96,11 +96,12 @@ private:
     bool m_foundParent;
     RefPtr<ProfileNode>& m_rootNode;
     RefPtr<ProfileNode>& m_currentNode;
+    double m_startTime;
 };
 
-void ProfileGenerator::addParentForConsoleStart(ExecState* exec)
+void ProfileGenerator::addParentForConsoleStart(ExecState* exec, double startTime)
 {
-    AddParentForConsoleStartFunctor functor(exec, m_rootNode, m_currentNode);
+    AddParentForConsoleStartFunctor functor(exec, m_rootNode, m_currentNode, startTime);
     exec->iterate(functor);
 
     m_foundConsoleStartParent = functor.foundParent();
