@@ -28,7 +28,6 @@
 
 #include "HTTPHeaderNames.h"
 #include "ResourceRequest.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -49,9 +48,9 @@ inline const ResourceRequest& ResourceRequestBase::asResourceRequest() const
     return *static_cast<const ResourceRequest*>(this);
 }
 
-PassOwnPtr<ResourceRequest> ResourceRequestBase::adopt(PassOwnPtr<CrossThreadResourceRequestData> data)
+std::unique_ptr<ResourceRequest> ResourceRequestBase::adopt(std::unique_ptr<CrossThreadResourceRequestData> data)
 {
-    OwnPtr<ResourceRequest> request = adoptPtr(new ResourceRequest());
+    auto request = std::make_unique<ResourceRequest>();
     request->setURL(data->m_url);
     request->setCachePolicy(data->m_cachePolicy);
     request->setTimeoutInterval(data->m_timeoutInterval);
@@ -77,13 +76,13 @@ PassOwnPtr<ResourceRequest> ResourceRequestBase::adopt(PassOwnPtr<CrossThreadRes
     }
     request->setHTTPBody(data->m_httpBody);
     request->setAllowCookies(data->m_allowCookies);
-    request->doPlatformAdopt(data);
-    return request.release();
+    request->doPlatformAdopt(WTF::move(data));
+    return request;
 }
 
-PassOwnPtr<CrossThreadResourceRequestData> ResourceRequestBase::copyData() const
+std::unique_ptr<CrossThreadResourceRequestData> ResourceRequestBase::copyData() const
 {
-    OwnPtr<CrossThreadResourceRequestData> data = adoptPtr(new CrossThreadResourceRequestData());
+    auto data = std::make_unique<CrossThreadResourceRequestData>();
     data->m_url = url().copy();
     data->m_cachePolicy = cachePolicy();
     data->m_timeoutInterval = timeoutInterval();
@@ -100,7 +99,7 @@ PassOwnPtr<CrossThreadResourceRequestData> ResourceRequestBase::copyData() const
     if (m_httpBody)
         data->m_httpBody = m_httpBody->deepCopy();
     data->m_allowCookies = m_allowCookies;
-    return asResourceRequest().doPlatformCopyData(data.release());
+    return asResourceRequest().doPlatformCopyData(WTF::move(data));
 }
 
 bool ResourceRequestBase::isEmpty() const

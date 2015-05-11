@@ -28,7 +28,6 @@
 
 #include "HTTPHeaderNames.h"
 #include "ResourceRequest.h"
-#include <wtf/PassOwnPtr.h>
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)
 #include "PublicSuffix.h"
@@ -366,7 +365,7 @@ String ResourceRequest::partitionName(const String& domain)
 }
 #endif
 
-PassOwnPtr<CrossThreadResourceRequestData> ResourceRequest::doPlatformCopyData(PassOwnPtr<CrossThreadResourceRequestData> data) const
+std::unique_ptr<CrossThreadResourceRequestData> ResourceRequest::doPlatformCopyData(std::unique_ptr<CrossThreadResourceRequestData> data) const
 {
 #if ENABLE(CACHE_PARTITIONING)
     data->m_cachePartition = m_cachePartition;
@@ -374,7 +373,7 @@ PassOwnPtr<CrossThreadResourceRequestData> ResourceRequest::doPlatformCopyData(P
     return data;
 }
 
-void ResourceRequest::doPlatformAdopt(PassOwnPtr<CrossThreadResourceRequestData> data)
+void ResourceRequest::doPlatformAdopt(std::unique_ptr<CrossThreadResourceRequestData> data)
 {
 #if ENABLE(CACHE_PARTITIONING)
     m_cachePartition = data->m_cachePartition;

@@ -141,8 +141,8 @@ namespace WebCore {
         NSMutableURLRequest *ensureMutableNSURLRequest();
 #endif
 
-        PassOwnPtr<CrossThreadResourceRequestData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceRequestData>) const;
-        void doPlatformAdopt(PassOwnPtr<CrossThreadResourceRequestData>);
+        std::unique_ptr<CrossThreadResourceRequestData> doPlatformCopyData(std::unique_ptr<CrossThreadResourceRequestData>) const;
+        void doPlatformAdopt(std::unique_ptr<CrossThreadResourceRequestData>);
 
 #if USE(CFNETWORK)
         RetainPtr<CFURLRequestRef> m_cfRequest;

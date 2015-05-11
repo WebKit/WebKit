@@ -137,7 +137,7 @@ namespace WebCore {
     };
 
     template<> struct CrossThreadCopierBase<false, false, ResourceRequest> {
-        typedef PassOwnPtr<CrossThreadResourceRequestData> Type;
+        typedef std::unique_ptr<CrossThreadResourceRequestData> Type;
         static Type copy(const ResourceRequest&);
     };
 
