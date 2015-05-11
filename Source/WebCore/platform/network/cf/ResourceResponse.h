@@ -101,8 +101,8 @@ private:
     String platformSuggestedFilename() const;
     CertificateInfo platformCertificateInfo() const;
 
-    PassOwnPtr<CrossThreadResourceResponseData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceResponseData> data) const { return data; }
-    void doPlatformAdopt(PassOwnPtr<CrossThreadResourceResponseData>) { }
+    std::unique_ptr<CrossThreadResourceResponseData> doPlatformCopyData(std::unique_ptr<CrossThreadResourceResponseData> data) const { return data; }
+    void doPlatformAdopt(std::unique_ptr<CrossThreadResourceResponseData>) { }
 #if PLATFORM(COCOA)
     void initNSURLResponse() const;
 #endif
