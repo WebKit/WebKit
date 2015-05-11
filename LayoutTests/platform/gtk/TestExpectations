@@ -2270,12 +2270,6 @@ webkit.org/b/144765 fast/events/touch/touch-inside-iframe-scrolled.html [ Failur
 webkit.org/b/144765 fast/events/touch/touch-slider-no-js-touch-listener.html [ Failure ]
 webkit.org/b/144765 fast/events/touch/touch-inside-iframe.html [ Timeout ]
 
-# Need support for adjusting page visibility in the test harness.
-webkit.org/b/114789 fast/events/page-visibility-iframe-delete-test.html [ Timeout ]
-webkit.org/b/114789 fast/events/page-visibility-iframe-move-test.html [ Timeout ]
-webkit.org/b/114789 fast/events/page-visibility-iframe-propagation-test.html [ Timeout ]
-webkit.org/b/114789 fast/events/page-visibility-transition-test.html [ Timeout ]
-
 webkit.org/b/144763 fast/events/scroll-in-scaled-page-with-overflow-hidden.html
 
 #////////////////////////////////////////////////////////////////////////////////////////

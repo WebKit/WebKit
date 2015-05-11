@@ -1,3 +1,14 @@
+2015-05-10  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] fast/events/page-visibility-transition-test.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=114789
+
+        Reviewed by Darin Adler.
+
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        (WTR::TestController::setHidden): Map and unmap the WebView when the harness
+        requests visibility changes.
+
 2015-05-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Fix install-dependencies on Ubuntu 14.10/15.04

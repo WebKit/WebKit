@@ -95,9 +95,14 @@ void TestController::platformInitializeContext()
 {
 }
 
-void TestController::setHidden(bool)
+void TestController::setHidden(bool hidden)
 {
-    // FIXME: Need to implement this to test visibilityState.
+    if (!m_mainWebView)
+        return;
+    if (hidden)
+        gtk_widget_unmap(GTK_WIDGET(m_mainWebView->platformView()));
+    else
+        gtk_widget_map(GTK_WIDGET(m_mainWebView->platformView()));
 }
 
 void TestController::runModal(PlatformWebView*)
