@@ -1,3 +1,11 @@
+2015-05-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed build fix. Add "Duration" as a time metric.
+
+        * public/js/helper-classes.js:
+        * public/v2/data.js:
+        (RunsData.unitFromMetricName):
+
 2015-05-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf dashboard treats Speedometer and JetStream as smaller is better

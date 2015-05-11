@@ -406,6 +406,7 @@ RunsData.unitFromMetricName = function (metricName)
         'FrameRate': 'fps',
         'Runs': '/s',
         'Time': 'ms',
+        'Duration': 'ms',
         'Malloc': 'bytes',
         'Heap': 'bytes',
         'Allocations': 'bytes',
