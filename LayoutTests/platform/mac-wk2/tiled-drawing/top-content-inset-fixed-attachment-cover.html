@@ -1,0 +1,26 @@
+<html>
+<head>
+<style>
+body {
+    margin: 0;
+    height: 2000px;
+    overflow: hidden;
+    background-image: url('resources/bordered-image.png');
+    background-attachment: fixed;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+</style>
+
+<script>
+function runTest() {
+    if (window.internals)
+        window.internals.setTopContentInset(100);
+}
+window.addEventListener('load', runTest, false);
+</script>
+</head>
+<body>
+</body>
+</html>

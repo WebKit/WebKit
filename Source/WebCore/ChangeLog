@@ -1,3 +1,26 @@
+2015-05-10  Simon Fraser  <simon.fraser@apple.com>
+
+        background-position sometimes doesn't work properly with background-attachment: fixed
+        https://bugs.webkit.org/show_bug.cgi?id=103757
+        rdar://problem/18749925
+
+        Reviewed by Darin Adler.
+        
+        Fix sizing issues with fixed backgrounds when top content inset (blurred toolbar) is in
+        effect.
+        
+        The primary issue was that positioningAreaSize was including the top content inset
+        height, and should not have been, but there were also issues with the "fixedBackgroundPaintsInLocalCoordinates"
+        code path, which kicks in when the root background is fixed.
+
+        Tests: platform/mac-wk2/tiled-drawing/top-content-inset-fixed-attachment-cover-local.html
+               platform/mac-wk2/tiled-drawing/top-content-inset-fixed-attachment-cover.html
+               platform/mac-wk2/tiled-drawing/top-content-inset-fixed-attachment-local.html
+               platform/mac-wk2/tiled-drawing/top-content-inset-fixed-attachment-positioned.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+
 2015-05-10  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         Get rid of the public item accessors in BackForwardClient

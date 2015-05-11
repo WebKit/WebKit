@@ -1,3 +1,28 @@
+2015-05-10  Simon Fraser  <simon.fraser@apple.com>
+
+        background-position sometimes doesn't work properly with background-attachment: fixed
+        https://bugs.webkit.org/show_bug.cgi?id=103757
+        rdar://problem/18749925
+
+        Reviewed by Darin Adler.
+        
+        Tests various configurations for painting the fixed backgrounds. The existing test was
+        actually wrong, so fixed to use a gradient (so you can see where the edges of the image are),
+        and be valid. Testing is complicated by the fact that setting top content inset actually
+        causes the snapshot to be inset at the top.
+
+        * platform/mac-wk2/tiled-drawing/resources/bordered-image.png: Added.
+        * platform/mac-wk2/tiled-drawing/top-content-inset-fixed-attachment-cover-expected.html: Added.
+        * platform/mac-wk2/tiled-drawing/top-content-inset-fixed-attachment-cover-local-expected.html: Added.
+        * platform/mac-wk2/tiled-drawing/top-content-inset-fixed-attachment-cover-local.html: Copied from LayoutTests/platform/mac-wk2/tiled-drawing/top-content-inset-fixed-attachment.html.
+        * platform/mac-wk2/tiled-drawing/top-content-inset-fixed-attachment-cover.html: Added.
+        * platform/mac-wk2/tiled-drawing/top-content-inset-fixed-attachment-expected.html:
+        * platform/mac-wk2/tiled-drawing/top-content-inset-fixed-attachment-local-expected.html: Added.
+        * platform/mac-wk2/tiled-drawing/top-content-inset-fixed-attachment-local.html: Added.
+        * platform/mac-wk2/tiled-drawing/top-content-inset-fixed-attachment-positioned-expected.html: Added.
+        * platform/mac-wk2/tiled-drawing/top-content-inset-fixed-attachment-positioned.html: Added.
+        * platform/mac-wk2/tiled-drawing/top-content-inset-fixed-attachment.html:
+
 2015-05-10  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] fast/events/page-visibility-transition-test.html is timing out

@@ -1111,16 +1111,20 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
             positioningAreaSize = paintRect.size() - LayoutSize(left + right, top + bottom);
     } else {
         LayoutRect viewportRect;
+        float topContentInset = 0;
         if (frame().settings().fixedBackgroundsPaintRelativeToDocument())
             viewportRect = view().unscaledDocumentRect();
         else {
-            viewportRect.setSize(view().frameView().unscaledVisibleContentSizeIncludingObscuredArea());
+            FrameView& frameView = view().frameView();
+            viewportRect.setSize(frameView.unscaledVisibleContentSizeIncludingObscuredArea());
+            topContentInset = frameView.topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset);
+
             if (fixedBackgroundPaintsInLocalCoordinates())
-                viewportRect.setLocation(LayoutPoint());
-            else {
-                viewportRect.setLocation(toLayoutPoint(view().frameView().documentScrollOffsetRelativeToViewOrigin()));
-                top += view().frameView().topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset);
-            }
+                viewportRect.setLocation(LayoutPoint(0, -topContentInset));
+            else
+                viewportRect.setLocation(toLayoutPoint(frameView.documentScrollOffsetRelativeToViewOrigin()));
+
+            top += topContentInset;
         }
         
         if (paintContainer)
@@ -1128,6 +1132,7 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
 
         destinationRect = viewportRect;
         positioningAreaSize = destinationRect.size();
+        positioningAreaSize.setHeight(positioningAreaSize.height() - topContentInset);
     }
 
     auto clientForBackgroundImage = backgroundObject ? backgroundObject : this;
