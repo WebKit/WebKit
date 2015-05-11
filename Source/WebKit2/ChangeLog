@@ -1,3 +1,29 @@
+2015-05-10  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Use preview view controller from WebKitSystemInterface.
+        https://bugs.webkit.org/show_bug.cgi?id=144836
+
+        Add a property _allowsLinkPreview to WKWebView so that we can turn on/off preview at runtime. Also,
+        for client that doesn't provide preview view controller, use the default view controller prepared
+        by WebKitSystemInterface.
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        (-[WKWebView _allowsLinkPreview]):
+        (-[WKWebView _setAllowsLinkPreview:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: Add _allowsLinkPreview property
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView willMoveToWindow:]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _registerPreviewInWindow:]):
+        (-[WKContentView _unregisterPreviewInWindow:]):
+        (-[WKContentView previewViewControllerForPosition:inSourceView:]): : For client that doesn't provide
+            preview delegate, use preview view controller in WebKitSystemInterface.
+        (-[WKContentView commitPreviewViewController:]):
+
 2015-05-10  Darin Adler  <darin@apple.com>
 
         Fix internal Apple builds on Mavericks.
