@@ -73,7 +73,7 @@ void NumberConstructor::finishCreation(VM& vm, NumberPrototype* numberPrototype)
     putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier(&vm, "isNaN"), 1, numberConstructorFuncIsNaN, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier(&vm, "isSafeInteger"), 1, numberConstructorFuncIsSafeInteger, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier(&vm, "parseFloat"), 1, globalFuncParseFloat, NoIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier(&vm, "parseInt"), 1, globalFuncParseInt, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, numberPrototype->globalObject(), Identifier(&vm, "parseInt"), 2, globalFuncParseInt, NoIntrinsic, DontEnum | Function);
 }
 
 // ECMA 15.7.1

@@ -130,6 +130,7 @@ shouldBe('Number.parseFloat("200000000000000000000000000000000000000000000000000
 shouldThrow('Number.parseFloat(foo)');
 
 // parseInt
+shouldBe('Number.parseInt.length', '2');
 shouldBe('Number.parseInt("0")', '0');
 shouldBe('Number.parseInt("-0")', '-0');
 shouldBe('Number.parseInt("1")', '1');
