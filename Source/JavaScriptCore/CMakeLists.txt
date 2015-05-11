@@ -539,7 +539,6 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/Operations.cpp
     runtime/Options.cpp
     runtime/PropertyDescriptor.cpp
-    runtime/PropertyNameArray.cpp
     runtime/PropertySlot.cpp
     runtime/PropertyTable.cpp
     runtime/PrototypeMap.cpp

@@ -1,3 +1,25 @@
+2015-05-11  Andreas Kling  <akling@apple.com>
+
+        PropertyNameArray should use a Vector when there are few entries.
+        <https://webkit.org/b/144874>
+
+        Reviewed by Geoffrey Garen.
+
+        Bring back an optimization that was lost in the for-in refactoring.
+        PropertyNameArray now holds a Vector<AtomicStringImpl*> until there are
+        enough (20) entries to justify converting to a HashSet for contains().
+
+        Also inlined the code while we're here, since it has so few clients and
+        the call overhead adds up.
+
+        ~5% progression on Kraken/json-stringify-tinderbox.
+
+        * runtime/PropertyNameArray.cpp: Removed.
+        * runtime/PropertyNameArray.h:
+        (JSC::PropertyNameArray::canAddKnownUniqueForStructure):
+        (JSC::PropertyNameArray::add):
+        (JSC::PropertyNameArray::addKnownUnique):
+
 2015-05-11  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: REGRESSION (r175203): No profile information is shown in Inspector

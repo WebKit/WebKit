@@ -819,7 +819,6 @@
 		14469DE4107EC7E700650446 /* NumberPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2680C40E16D4E900A06E92 /* NumberPrototype.cpp */; };
 		14469DE5107EC7E700650446 /* ObjectConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2680C60E16D4E900A06E92 /* ObjectConstructor.cpp */; };
 		14469DE6107EC7E700650446 /* ObjectPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2680C80E16D4E900A06E92 /* ObjectPrototype.cpp */; };
-		14469DE7107EC7E700650446 /* PropertyNameArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65400C0F0A69BAF200509887 /* PropertyNameArray.cpp */; };
 		14469DE8107EC7E700650446 /* PropertySlot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65621E6B089E859700760F35 /* PropertySlot.cpp */; };
 		14469DEB107EC7E700650446 /* StringConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC18C3C00E16EE3300B34460 /* StringConstructor.cpp */; };
 		14469DEC107EC7E700650446 /* StringObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC18C3C20E16EE3300B34460 /* StringObject.cpp */; };
@@ -2678,7 +2677,6 @@
 		652A3A221651C69700A80AFE /* A64DOpcode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = A64DOpcode.cpp; path = disassembler/ARM64/A64DOpcode.cpp; sourceTree = "<group>"; };
 		652A3A231651C69700A80AFE /* A64DOpcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = A64DOpcode.h; path = disassembler/ARM64/A64DOpcode.h; sourceTree = "<group>"; };
 		65303D631447B9E100D3F904 /* ParserTokens.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParserTokens.h; sourceTree = "<group>"; };
-		65400C0F0A69BAF200509887 /* PropertyNameArray.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyNameArray.cpp; sourceTree = "<group>"; };
 		65400C100A69BAF200509887 /* PropertyNameArray.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PropertyNameArray.h; sourceTree = "<group>"; };
 		6546F51F1A32A59C006F07D5 /* NullGetterFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = NullGetterFunction.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		6546F5201A32A59C006F07D5 /* NullGetterFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NullGetterFunction.h; sourceTree = "<group>"; };
@@ -4637,7 +4635,6 @@
 				A7FB604B103F5EAB0017A286 /* PropertyDescriptor.h */,
 				BC95437C0EBA70FD0072B6D3 /* PropertyMapHashTable.h */,
 				86158AB2155C8B3F00B45C9C /* PropertyName.h */,
-				65400C0F0A69BAF200509887 /* PropertyNameArray.cpp */,
 				65400C100A69BAF200509887 /* PropertyNameArray.h */,
 				0FF7168A15A3B231008F5DAA /* PropertyOffset.h */,
 				65621E6B089E859700760F35 /* PropertySlot.cpp */,
@@ -7486,7 +7483,6 @@
 				0FB1058D1675483700F8AB6E /* ProfilerOSRExitSite.cpp in Sources */,
 				0F13912B16771C3A009CCB07 /* ProfilerProfiledBytecodes.cpp in Sources */,
 				A7FB60A4103F7DC20017A286 /* PropertyDescriptor.cpp in Sources */,
-				14469DE7107EC7E700650446 /* PropertyNameArray.cpp in Sources */,
 				14469DE8107EC7E700650446 /* PropertySlot.cpp in Sources */,
 				ADE39FFF16DD144B0003CD4A /* PropertyTable.cpp in Sources */,
 				65FB5117184EEE7000C12B70 /* ProtoCallFrame.cpp in Sources */,

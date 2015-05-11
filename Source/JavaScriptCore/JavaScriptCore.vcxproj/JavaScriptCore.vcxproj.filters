@@ -780,9 +780,6 @@
     <ClCompile Include="..\runtime\PropertyDescriptor.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
-    <ClCompile Include="..\runtime\PropertyNameArray.cpp">
-      <Filter>runtime</Filter>
-    </ClCompile>
     <ClCompile Include="..\runtime\PropertySlot.cpp">
       <Filter>runtime</Filter>
     </ClCompile>

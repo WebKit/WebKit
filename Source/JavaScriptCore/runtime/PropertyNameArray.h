@@ -70,13 +70,9 @@ public:
         add(Identifier::from(m_vm, index));
     }
 
-    void add(const Identifier& identifier) { add(identifier.impl()); }
-    JS_EXPORT_PRIVATE void add(AtomicStringImpl*);
-    void addKnownUnique(AtomicStringImpl* identifier)
-    {
-        m_set.add(identifier);
-        m_data->propertyNameVector().append(Identifier::fromUid(m_vm, identifier));
-    }
+    void add(const Identifier&);
+    void add(AtomicStringImpl*);
+    void addKnownUnique(AtomicStringImpl*);
 
     Identifier& operator[](unsigned i) { return m_data->propertyNameVector()[i]; }
     const Identifier& operator[](unsigned i) const { return m_data->propertyNameVector()[i]; }
@@ -86,7 +82,7 @@ public:
     PassRefPtr<PropertyNameArrayData> releaseData() { return m_data.release(); }
 
     // FIXME: Remove these functions.
-    bool canAddKnownUniqueForStructure() const { return m_set.isEmpty(); }
+    bool canAddKnownUniqueForStructure() const { return m_data->propertyNameVector().isEmpty(); }
     typedef PropertyNameArrayData::PropertyNameVector::const_iterator const_iterator;
     size_t size() const { return m_data->propertyNameVector().size(); }
     const_iterator begin() const { return m_data->propertyNameVector().begin(); }
@@ -97,6 +93,37 @@ private:
     HashSet<AtomicStringImpl*> m_set;
     VM* m_vm;
 };
+
+ALWAYS_INLINE void PropertyNameArray::add(const Identifier& identifier)
+{
+    add(identifier.impl());
+}
+
+ALWAYS_INLINE void PropertyNameArray::addKnownUnique(AtomicStringImpl* identifier)
+{
+    m_data->propertyNameVector().append(Identifier::fromUid(m_vm, identifier));
+}
+
+ALWAYS_INLINE void PropertyNameArray::add(AtomicStringImpl* identifier)
+{
+    static const unsigned setThreshold = 20;
+
+    ASSERT(identifier);
+
+    if (size() < setThreshold) {
+        if (m_data->propertyNameVector().contains(identifier))
+            return;
+    } else {
+        if (m_set.isEmpty()) {
+            for (Identifier& name : m_data->propertyNameVector())
+                m_set.add(name.impl());
+        }
+        if (!m_set.add(identifier).isNewEntry)
+            return;
+    }
+
+    addKnownUnique(identifier);
+}
 
 } // namespace JSC
 
