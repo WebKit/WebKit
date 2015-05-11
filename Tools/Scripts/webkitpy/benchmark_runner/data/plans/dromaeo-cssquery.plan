@@ -1,0 +1,11 @@
+{
+    "http_server_driver": "SimpleHTTPServerDriver",
+    "timeout": 1200,
+    "count": 1,
+    "benchmark_builder": "GenericBenchmarkBuilder",
+    "remote_archive": "https://github.com/jeresig/dromaeo/archive/ed7e6a8f25ea72f45c191f34a68722f80dc3c513.zip",
+    "benchmark_patch": "data/patches/Dromaeo.patch",
+    "create_script": ["make", "web"],
+    "entry_point": "web/index.html?cssquery",
+    "output_file": "dromaeo.result"
+}

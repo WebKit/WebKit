@@ -1,0 +1,92 @@
+diff --git a/web/webrunner.js b/web/webrunner.js
+index 63d777b..953c026 100755
+--- a/web/webrunner.js
++++ b/web/webrunner.js
+@@ -156,6 +156,7 @@
+ 
+ 			// Make Sum
+ 			results.sum = 0;
++			results.times = times;
+ 
+ 			for ( var i = 0; i < num; i++ )
+ 				results.sum += times[i];
+@@ -271,6 +272,7 @@
+ 			numTests = Number(m[1]);
+ 	}
+ 
++	var currentSuiteName = null;
+ 	jQuery(function(){
+ 		var id = search.match(/id=([\d,]+)/);
+ 
+@@ -282,6 +284,7 @@
+ 		var cat = filter.toString().slice(1,-2);
+ 
+ 		if ( catnames[cat] ) {
++			currentSuiteName = catnames[cat];
+ 			$("#overview span:first").html( catnames[cat] );
+ 
+ 			if ( catnames[cat].length > 22 ) {
+@@ -359,6 +362,25 @@
+ 			$("#overview input").remove();
+ 			updateTimebar();
+ 
++			var mean = (runStyle === "runs/s" ? Math.pow(Math.E, maxTotal / maxTotalNum) : maxTotal);
++			var resultsDict = {"Dromaeo": {"tests": {}}};
++			resultsDict["Dromaeo"]["tests"][currentSuiteName] = {"metrics": {"Runs": {"current": [mean]}}, "tests": subTests};
++			var results = JSON.stringify(resultsDict);
++			var xhr = new XMLHttpRequest();
++			xhr.open("POST", "/report");
++			xhr.setRequestHeader("Content-Type", "application/json");
++			xhr.setRequestHeader("Content-Length", results.length);
++			xhr.setRequestHeader("Connection", "close");
++			xhr.onreadystatechange = function() {
++			if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
++					closeRequest = new XMLHttpRequest();
++					closeRequest.open("GET", "/shutdown");
++					closeRequest.send();
++				}
++			}
++			xhr.send(results);
++			return;
++
+ 			if ( window.limitSearch ) {
+ 				var summary = (runStyle === "runs/s" ? Math.pow(Math.E, maxTotal / maxTotalNum) : maxTotal).toFixed(2);
+ 
+@@ -421,7 +443,5 @@
+ 				}
+ 			});
+ 
+-		if ( window.limitSearch ) {
+-			$("#pause").click();
+-		}
++		$("#pause").click();
+ 	}
+@@ -673,8 +695,18 @@
+ 
+ 		$("#timebar").width((w < 1 ? 1 : w) + "%");
+ 	}
+-	
++
++	var subTests = {};
+ 	function logTest(data){
++		var subTestName = tests[data.curID].name; // e.g. DOM Attributes
++		if (!subTests[subTestName]) {
++			subTests[subTestName] = {
++				"metrics": {"Runs": {}},
++				"tests": {}
++			}
++		}
++		subTests[subTestName]["tests"][data.name] = {"metrics": {"Runs": {"current": [data.times]}}};
++
+ 		// Keep a running summary going
+ 		data.mean = parseFloat(data.mean);
+ 		var mean = (runStyle === "runs/s" ? Math.log(data.mean) : data.mean);
+@@ -711,6 +743,8 @@
+ 			per + "%;'>" + (per >= 100 ? "<span>" + mean.toFixed(2) + runStyle + "</span>" : "") + "</div></div>");
+ 
+ 		if ( per >= 100 && testSummary[data.curID] > 0 ) {
++			var subTestName = tests[data.curID].name; // e.g. DOM Attributes
++			subTests[subTestName]["metrics"]["Runs"]["current"] = [mean];
+ 			testElems[data.curID].parent().addClass("done");
+ 		}
+ 	}
