@@ -1,3 +1,17 @@
+2015-05-11  Chris Dumez  <cdumez@apple.com>
+
+        Fix checkingLogicalHeight initialization in Document::updateLayoutIfDimensionsOutOfDate()
+        https://bugs.webkit.org/show_bug.cgi?id=144873
+
+        Reviewed by Simon Fraser.
+
+        Fix checkingLogicalHeight initialization in Document::updateLayoutIfDimensionsOutOfDate().
+        checkingLogicalHeight should only be initialized to true when
+        "dimensionsCheck & WidthDimensionsCheck" if isVertical is true.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateLayoutIfDimensionsOutOfDate):
+
 2015-05-11  Daniel Bates  <dabates@apple.com>
 
         [iOS] Close all open databases in expiration handler of process assertion
