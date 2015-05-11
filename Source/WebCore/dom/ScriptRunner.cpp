@@ -113,6 +113,10 @@ void ScriptRunner::timerFired()
     for (size_t i = 0; i < size; ++i) {
         CachedScript* cachedScript = scripts[i].cachedScript();
         RefPtr<Element> element = scripts[i].releaseElementAndClear();
+        ASSERT(element);
+        // Paper over https://bugs.webkit.org/show_bug.cgi?id=144050
+        if (!element)
+            continue;
         toScriptElementIfPossible(element.get())->execute(cachedScript);
         m_document.decrementLoadEventDelayCount();
     }
