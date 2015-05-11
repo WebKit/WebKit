@@ -1,7 +1,7 @@
-diff --git a/Speedometer/Full.html b/Speedometer/Full.html
+diff --git a/Full.html b/Full.html
 index 419b9f2..0b04c69 100644
---- a/Speedometer/Full.html
-+++ b/Speedometer/Full.html
+--- a/Full.html
++++ b/Full.html
 @@ -7,7 +7,6 @@
      <script src="resources/main.js" defer></script>
      <script src="resources/benchmark-runner.js" defer></script>
@@ -10,10 +10,10 @@ index 419b9f2..0b04c69 100644
      <script src="resources/tests.js" defer></script>
  </head>
  <body>
-diff --git a/Speedometer/resources/benchmark-report.js b/Speedometer/resources/benchmark-report.js
+diff --git a/resources/benchmark-report.js b/resources/benchmark-report.js
 index c4b4c64..874f597 100644
---- a/Speedometer/resources/benchmark-report.js
-+++ b/Speedometer/resources/benchmark-report.js
+--- a/resources/benchmark-report.js
++++ b/resources/benchmark-report.js
 @@ -1,30 +1,26 @@
  // This file can be customized to report results as needed.
  

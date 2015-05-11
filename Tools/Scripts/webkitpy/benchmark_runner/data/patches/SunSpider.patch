@@ -1,0 +1,47 @@
+diff --git a/hosted/sunspider-1.0.1/driver.html b/hosted/sunspider-1.0.1/driver.html
+index 0700bb2..2dde01a 100644
+--- a/hosted/sunspider-1.0.1/driver.html
++++ b/hosted/sunspider-1.0.1/driver.html
+@@ -103,23 +103,28 @@ function recordResult(time)
+ 
+ function finish()
+ {
+-    var outputString = "{";
+-    outputString += '"v": "sunspider-1.0.1", ';
++    var tests = {};
+     for (var test in output[0]) {
+-        outputString += '"' + test + '":[';
+-        for (var i = 0; i < output.length; i++) {
+-            var time = output[i][test];
+-            if (time != time)
+-                time = "\"NaN\"";
+-            outputString += time + ",";
+-        }
+-        outputString = outputString.substring(0, outputString.length - 1);
+-        outputString += "],";
++        var values = new Array(output.length);
++        for (var i = 0; i < output.length; i++)
++            values[i] = output[i][test];
++        tests[test] = {"metrics": {"Time": {"current": [values]}}}
+     }
+-    outputString = outputString.substring(0, outputString.length - 1);
+-    outputString += "}";
+ 
+-    location = "results.html?" + encodeURI(outputString);
++    var results = JSON.stringify({"SunSpider": {"metrics": {"Time": ["Total"]}, "tests": tests}});
++    var xhr = new XMLHttpRequest();
++    xhr.open("POST", "/report");
++    xhr.setRequestHeader("Content-Type", "application/json");
++    xhr.setRequestHeader("Content-Length", results.length);
++    xhr.setRequestHeader("Connection", "close");
++    xhr.onreadystatechange = function() {
++    if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
++            closeRequest = new XMLHttpRequest();
++            closeRequest.open("GET", "/shutdown");
++            closeRequest.send();
++        }
++    }
++    xhr.send(results);
+ }
+ 
+ </script>

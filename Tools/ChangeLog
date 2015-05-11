@@ -1,3 +1,69 @@
+2015-05-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-benchmark should support SunSpider, Kraken and Octane
+        https://bugs.webkit.org/show_bug.cgi?id=144840
+
+        Reviewed by Darin Adler.
+
+        Added the support for SunSpider, Kraken, and Octane. Because of the licensing issues, we can't commit the
+        Kraken source code into the WebKit repository as done for other benchmarks. Instead, we'll dynamically
+        download it from the remote server using newly added RemoteZipBenchmarkBuilder. We do the same for Octane
+        for simplicity. Use newly added --local-copy option to specify the location of a local copy if there is any.
+
+        Renamed "original_benchmark in the plan file to "local_copy" and added a new optional "remote_archive" to
+        specify the URL to a remote ZIP file. This optional field is used by Kraken and Octane benchmark plans.
+
+        In addition, generalized the ability to run a "create script" in JetStreamBenchmarkBuilder since it's also
+        needed for SunSpider and Kraken. This feature has now been folded into GenericBenchmarkBuilder.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder/benchmark_builders.json: Added
+        RemoteZipBenchmarkBuilder for Kraken and removed JetStreamBenchmarkBuilder since GenericBenchmarkBuilder
+        now has the ability to run an arbitrary "create script".
+
+        * Scripts/run-benchmark:
+        (main): Added an optional argument, --local-copy, to override the location of the benchmark's local copy.
+        This also overrides the remote archive URL specified in the plan.
+
+        * Scripts/webkitpy/benchmark_runner/README.md: Updated the description.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder/benchmark_builders.json: Deleted the entry for
+        JetStreamBenchmarkBuilder.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder/generic_benchmark_builder.py: 
+        (GenericBenchmarkBuilder.prepare): Call _fetchRemoteArchive if local_copy is not specified in the plan or
+        by --local-copy option but remote_archive is specified. Also call self.clean() here instead of relying on
+        _runCreateScript and _applyPatch to clean after themselves.
+        (GenericBenchmarkBuilder._runCreateScript): Moved from JetStreamBenchmarkBuilder._runCreateScript since
+        JetStream, SunSpider, Kraken all use this feature.
+        (GenericBenchmarkBuilder._copyBenchmarkToTempDir): Use self.name as the destination location instead of
+        the leaf directory name since the latter is not available when a remote ZIP file is used.
+        (GenericBenchmarkBuilder._fetchRemoteArchive): Added.
+        (GenericBenchmarkBuilder._applyPatch): Apply the patch inside destination directory to avoid hard coding
+        the benchmark name in the patches.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder/jetstream_benchmark_builder.py: Removed.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (BenchmarkRunner.__init__): Set self.planName. Also override 'local_copy' when --local-copy option is used.
+        (BenchmarkRunner.execute): Exit early if neither local_copy nor remote_archive is specified. Prefix the URL
+        the browser opens by planName as the plan file no longer contains that.
+
+        * Scripts/webkitpy/benchmark_runner/data/patches/JetStream.patch: Changed the path to be relative against
+        the top directory of JetStream instead of its parent.
+        * Scripts/webkitpy/benchmark_runner/data/patches/Kraken.patch: Added.
+        * Scripts/webkitpy/benchmark_runner/data/patches/Octane.patch: Added.
+        * Scripts/webkitpy/benchmark_runner/data/patches/Speedometer.patch: Changed the path to be relative against
+        the top directory of JetStream instead of its parent.
+        * Scripts/webkitpy/benchmark_runner/data/patches/SunSpider.patch: Added.
+        * Scripts/webkitpy/benchmark_runner/data/plans/jetstream.plan: Uses GenericBenchmarkBuilder and specifies
+        the script to run. The entry point was changed to the relative path from the top directory of JetStream as
+        done in JetStream.patch.
+        * Scripts/webkitpy/benchmark_runner/data/plans/kraken.plan: Added.
+        * Scripts/webkitpy/benchmark_runner/data/plans/octane.plan: Added.
+        * Scripts/webkitpy/benchmark_runner/data/plans/speedometer.plan: The entry point was changed to the relative
+        path from the top directory of JetStream as done in JetStream.patch.
+        * Scripts/webkitpy/benchmark_runner/data/plans/sunspider.plan: Added.
+
 2015-05-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix run-javascriptcore-tests step on the WinCairo bot

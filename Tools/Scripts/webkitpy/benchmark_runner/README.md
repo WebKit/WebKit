@@ -58,7 +58,7 @@ To create a plan, you may refer to Plans/jetstream.plan.
     "timeout" : 600,
     "count": 5,
     "benchmark_builder": "JetStreamBenchmarkBuilder",
-    "original_benchmark": "../../../../PerformanceTests/JetStream",
+    "local_copy": "../../../../PerformanceTests/JetStream",
     "benchmark_patch": "data/patches/JetStream.patch",
     "entry_point": "JetStream/JetStream-1.0.1/index.html",
     "output_file": "jetstream.result"
@@ -69,9 +69,10 @@ Plan is a json-formatted dictionary which contains following keys
 * **timeout**: time limit for **EACH RUN** of the benchmark. This can avoid program getting stuck in the extreme circumstances. The time limit is suggested to be 1.5-2x the time spent in a normal run.
 * **count**: the number of times you want to run benchmark
 * **benchmark_builder**:  builder of the benchmark which is responsible for arranging benchmark before the web server serving the directory. In most case, 'GenericBenchmarkHandler' is sufficient. It copies the benchmark to a temporary directory and applies patch to benchmark. If you have special requirement, you could design your own benchmark handle, just like the 'JetStreamBenchmarkHandle' in this example.
-* **original_benchmark**: path of benchmark, a relative path to the root of this project ('benchmark_runner' directory)
+* **local_copy**: path of benchmark, a relative path to the root of this project ('benchmark_runner' directory)
+* **remote_archive**: (**OPTIONAL**) URL of the remote (http/https) ZIP file that contains the benchmark.
 * **benchmark_path**: (**OPTIONAL**) path of patch, a relative path to the root of this project ('benchmark_runner' directory)
-* **entry_point**: the relative url you want browser to launch (a relative path to the webRoot)
+* **entry_point**: the relative url you want browser to launch (a relative path to the benchmark directory)
 * **output_file**: specify the output file, this can be overwritten by specifying '--output-file' while invoking run-benchmark script
 
 ### How to import a benchmark
