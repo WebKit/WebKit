@@ -68,7 +68,7 @@ private:
     void notifyClientsDataWasReceived(const char* data, unsigned length);
 
 #if USE(SOUP)
-    virtual char* getOrCreateReadBuffer(size_t requestedSize, size_t& actualSize);
+    virtual char* getOrCreateReadBuffer(size_t requestedSize, size_t& actualSize) override;
 #endif
 
     unsigned long m_identifier;

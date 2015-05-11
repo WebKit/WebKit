@@ -88,7 +88,7 @@ class Text;
         static bool parseDocumentFragment(const String&, DocumentFragment&, Element* parent = 0, ParserContentPolicy = AllowScriptingContent);
 
         // Used by the XMLHttpRequest to check if the responseXML was well formed.
-        virtual bool wellFormed() const { return !m_sawError; }
+        virtual bool wellFormed() const override { return !m_sawError; }
 
         static bool supportsXMLVersion(const String&);
 

@@ -56,15 +56,15 @@ namespace WebCore {
         static PassRefPtr<DocumentThreadableLoader> create(Document&, ThreadableLoaderClient&, const ResourceRequest&, const ThreadableLoaderOptions&);
         virtual ~DocumentThreadableLoader();
 
-        virtual void cancel();
+        virtual void cancel() override;
         virtual void setDefersLoading(bool);
 
         using RefCounted<DocumentThreadableLoader>::ref;
         using RefCounted<DocumentThreadableLoader>::deref;
 
     protected:
-        virtual void refThreadableLoader() { ref(); }
-        virtual void derefThreadableLoader() { deref(); }
+        virtual void refThreadableLoader() override { ref(); }
+        virtual void derefThreadableLoader() override { deref(); }
 
     private:
         enum BlockingBehavior {
