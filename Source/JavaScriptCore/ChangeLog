@@ -1,3 +1,18 @@
+2015-05-11  Andreas Kling  <akling@apple.com>
+
+        JSON.stringify shouldn't use generic get() to access Array.length
+        <https://webkit.org/b/144847>
+
+        Reviewed by Geoffrey Garen.
+
+        If the value being serialized is a JSArray object, we can downcast and call its
+        length() directly instead of doing a generic property lookup.
+
+        0.5% progression on Kraken/json-stringify-tinderbox.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Holder::appendNextProperty):
+
 2015-05-10  Andreas Kling  <akling@apple.com>
 
         Remove unnecessary AtomicStringImpl* hash specification in PropertyNameArray.

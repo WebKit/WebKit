@@ -418,7 +418,10 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
     if (!m_index) {
         if (m_isArray) {
             m_isJSArray = isJSArray(m_object.get());
-            m_size = m_object->get(exec, exec->vm().propertyNames->length).toUInt32(exec);
+            if (m_isJSArray)
+                m_size = asArray(m_object.get())->length();
+            else
+                m_size = m_object->get(exec, exec->vm().propertyNames->length).toUInt32(exec);
             builder.append('[');
         } else {
             if (stringifier.m_usingArrayReplacer)
