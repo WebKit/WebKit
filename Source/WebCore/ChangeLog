@@ -1,3 +1,32 @@
+2015-05-01  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] New CORS tests from r183280 fail on WebKitGTK+
+        https://bugs.webkit.org/show_bug.cgi?id=144469
+
+        Reviewed by Sergio Villar Senin.
+
+        No new tests. This causes failing tests to pass.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::doRedirect): Clear the origin header on cross-origin redirects.
+
+2015-04-24  Brady Eidson  <beidson@apple.com>
+
+        Origin header is preserved on cross-origin redirects.
+        https://bugs.webkit.org/show_bug.cgi?id=144157.
+
+        Reviewed by Sam Weinig.
+
+        Tests: http/tests/security/cors-post-redirect-301.html
+               http/tests/security/cors-post-redirect-302.html
+               http/tests/security/cors-post-redirect-307.html
+               http/tests/security/cors-post-redirect-308.html
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::willSendRequest): Always clear any origin header for cross-origin redirects.
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::willSendRequest): Ditto.
+
 2015-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Use a webkit subdirectory for the disk cache
