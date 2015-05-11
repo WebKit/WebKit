@@ -145,6 +145,8 @@ shouldThrow("Math.hypot({valueOf:function(){throw \"error1\"}}, {valueOf:functio
 shouldBe('sideEffect', '0');
 shouldBe("Math.hypot(3, 4, 'foo')", "NaN");
 
+shouldBe("Math.imul.length", "2");
+
 shouldBe("Math.log(NaN)", "NaN");
 shouldBe("Math.log(0)", "-Infinity");
 shouldBe("Math.log(-0)", "-Infinity");
