@@ -1,3 +1,30 @@
+2015-05-11  Antti Koivisto  <antti@apple.com>
+
+        WebContent crash under com.apple.WebCore: WebCore::WebKitCSSResourceValue::isCSSValueNone const + 6
+        https://bugs.webkit.org/show_bug.cgi?id=144870
+        rdar://problem/20727702
+
+        Reviewed by Simon Fraser.
+
+        No repro but we are seeing null pointer crashes like this:
+
+        Thread 0 Crashed:: Dispatch queue: com.apple.main-thread
+        0   com.apple.WebCore   0x00007fff92da5706 WebCore::WebKitCSSResourceValue::isCSSValueNone() const + 6
+        1   com.apple.WebCore   0x00007fff93382b48 WebCore::MaskImageOperation::isCSSValueNone() const + 24
+        2   com.apple.WebCore   0x00007fff92e0475e WebCore::FillLayer::hasNonEmptyMaskImage() const + 30
+
+        * platform/graphics/MaskImageOperation.cpp:
+        (WebCore::MaskImageOperation::MaskImageOperation):
+        (WebCore::MaskImageOperation::isCSSValueNone):
+
+            This would crash like this if both m_styleImage and m_cssMaskImageValue are null.
+            There are no obvious guarantees that this doesn't happen. Two of the constructor variants allow it
+            and there is setImage which may turn m_styleImage null later too.
+
+            Fix by making null m_cssMaskImageValue always signify CSSValueNone.
+
+        (WebCore::MaskImageOperation::cssValue):
+
 2015-05-11  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Crash at WebCore::AccessibilityMenuList::addChildren()
