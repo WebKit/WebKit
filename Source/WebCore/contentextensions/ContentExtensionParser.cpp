@@ -46,6 +46,41 @@ using namespace JSC;
 namespace WebCore {
 
 namespace ContentExtensions {
+    
+static bool containsOnlyASCIIWithNoUppercase(const String& domain)
+{
+    for (unsigned i = 0; i < domain.length(); ++i) {
+        UChar c = domain.at(i);
+        if (!isASCII(c) || isASCIIUpper(c))
+            return false;
+    }
+    return true;
+}
+    
+static std::error_code getDomainList(ExecState& exec, JSObject* arrayObject, Vector<String>& vector)
+{
+    ASSERT(vector.isEmpty());
+    if (!arrayObject || !isJSArray(arrayObject))
+        return ContentExtensionError::JSONInvalidDomainList;
+    JSArray* array = jsCast<JSArray*>(arrayObject);
+    
+    unsigned length = array->length();
+    for (unsigned i = 0; i < length; ++i) {
+        // FIXME: JSObject::getIndex should be marked as const.
+        JSValue value = array->getIndex(&exec, i);
+        if (exec.hadException() || !value.isString())
+            return ContentExtensionError::JSONInvalidDomainList;
+        
+        // Domains should be punycode encoded lower case.
+        const String& domain = jsCast<JSString*>(value)->value(&exec);
+        if (domain.isEmpty())
+            return ContentExtensionError::JSONInvalidDomainList;
+        if (!containsOnlyASCIIWithNoUppercase(domain))
+            return ContentExtensionError::JSONDomainNotLowerCaseASCII;
+        vector.append(domain);
+    }
+    return { };
+}
 
 static std::error_code getTypeFlags(ExecState& exec, const JSValue& typeValue, ResourceFlags& flags, uint16_t (*stringToType)(const String&))
 {
@@ -109,6 +144,29 @@ static std::error_code loadTrigger(ExecState& exec, JSObject& ruleObject, Trigge
             return typeFlagsError;
     }
 
+    JSValue ifDomain = triggerObject.get(&exec, Identifier::fromString(&exec, "if-domain"));
+    if (!exec.hadException() && ifDomain.isObject()) {
+        auto ifDomainError = getDomainList(exec, asObject(ifDomain), trigger.domains);
+        if (ifDomainError)
+            return ifDomainError;
+        if (trigger.domains.isEmpty())
+            return ContentExtensionError::JSONInvalidDomainList;
+        ASSERT(trigger.domainCondition == Trigger::DomainCondition::None);
+        trigger.domainCondition = Trigger::DomainCondition::IfDomain;
+    }
+    
+    JSValue unlessDomain = triggerObject.get(&exec, Identifier::fromString(&exec, "unless-domain"));
+    if (!exec.hadException() && unlessDomain.isObject()) {
+        if (trigger.domainCondition != Trigger::DomainCondition::None)
+            return ContentExtensionError::JSONUnlessAndIfDomain;
+        auto unlessDomainError = getDomainList(exec, asObject(unlessDomain), trigger.domains);
+        if (unlessDomainError)
+            return unlessDomainError;
+        if (trigger.domains.isEmpty())
+            return ContentExtensionError::JSONInvalidDomainList;
+        trigger.domainCondition = Trigger::DomainCondition::UnlessDomain;
+    }
+
     return { };
 }
 
@@ -160,6 +218,7 @@ static std::error_code loadRule(ExecState& exec, JSObject& ruleObject, Vector<Co
 
 static std::error_code loadEncodedRules(ExecState& exec, const String& rules, Vector<ContentExtensionRule>& ruleList)
 {
+    // FIXME: JSONParse should require callbacks instead of an ExecState.
     JSValue decodedRules = JSONParse(&exec, rules);
 
     if (exec.hadException() || !decodedRules)

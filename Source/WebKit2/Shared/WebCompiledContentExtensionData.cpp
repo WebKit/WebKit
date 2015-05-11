@@ -40,8 +40,12 @@ void WebCompiledContentExtensionData::encode(IPC::ArgumentEncoder& encoder) cons
 
     encoder << actionsOffset;
     encoder << actionsSize;
-    encoder << bytecodeOffset;
-    encoder << bytecodeSize;
+    encoder << filtersWithoutDomainsBytecodeOffset;
+    encoder << filtersWithoutDomainsBytecodeSize;
+    encoder << filtersWithDomainsBytecodeOffset;
+    encoder << filtersWithDomainsBytecodeSize;
+    encoder << domainFiltersBytecodeOffset;
+    encoder << domainFiltersBytecodeSize;
 }
 
 bool WebCompiledContentExtensionData::decode(IPC::ArgumentDecoder& decoder, WebCompiledContentExtensionData& compiledContentExtensionData)
@@ -55,9 +59,17 @@ bool WebCompiledContentExtensionData::decode(IPC::ArgumentDecoder& decoder, WebC
         return false;
     if (!decoder.decode(compiledContentExtensionData.actionsSize))
         return false;
-    if (!decoder.decode(compiledContentExtensionData.bytecodeOffset))
+    if (!decoder.decode(compiledContentExtensionData.filtersWithoutDomainsBytecodeOffset))
         return false;
-    if (!decoder.decode(compiledContentExtensionData.bytecodeSize))
+    if (!decoder.decode(compiledContentExtensionData.filtersWithoutDomainsBytecodeSize))
+        return false;
+    if (!decoder.decode(compiledContentExtensionData.filtersWithDomainsBytecodeOffset))
+        return false;
+    if (!decoder.decode(compiledContentExtensionData.filtersWithDomainsBytecodeSize))
+        return false;
+    if (!decoder.decode(compiledContentExtensionData.domainFiltersBytecodeOffset))
+        return false;
+    if (!decoder.decode(compiledContentExtensionData.domainFiltersBytecodeSize))
         return false;
 
     return true;

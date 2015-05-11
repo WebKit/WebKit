@@ -1,3 +1,21 @@
+2015-05-11  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Support domain-specific rules and exceptions.
+        https://bugs.webkit.org/show_bug.cgi?id=144833
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::InMemoryCompiledContentExtension::createFromFilter):
+        (TestWebKitAPI::InMemoryCompiledContentExtension::create):
+        (TestWebKitAPI::InMemoryCompiledContentExtension::InMemoryCompiledContentExtension):
+        Moved CompiledContentExtensionData from ContentExtensionCompiler.h because it is only used for testing.
+        (TestWebKitAPI::mainDocumentRequest):
+        (TestWebKitAPI::subResourceRequest):
+        (TestWebKitAPI::TEST_F):
+        (TestWebKitAPI::checkCompilerError):
+        Added tests for parsing and functionality of if-domain and unless-domain.
+
 2015-05-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-benchmark should support Chrome Canary and Firefox Nightly

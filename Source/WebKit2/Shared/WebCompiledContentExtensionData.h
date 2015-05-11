@@ -45,13 +45,17 @@ public:
     {
     }
     
-    WebCompiledContentExtensionData(RefPtr<SharedMemory>&& data, NetworkCache::Data fileData, unsigned actionsOffset, unsigned actionsSize, unsigned bytecodeOffset, unsigned bytecodeSize)
+    WebCompiledContentExtensionData(RefPtr<SharedMemory>&& data, NetworkCache::Data fileData, unsigned actionsOffset, unsigned actionsSize, unsigned filtersWithoutDomainsBytecodeOffset, unsigned filtersWithoutDomainsBytecodeSize, unsigned filtersWithDomainsBytecodeOffset, unsigned filtersWithDomainsBytecodeSize, unsigned domainFiltersBytecodeOffset, unsigned domainFiltersBytecodeSize)
         : data(WTF::move(data))
         , fileData(fileData)
         , actionsOffset(actionsOffset)
         , actionsSize(actionsSize)
-        , bytecodeOffset(bytecodeOffset)
-        , bytecodeSize(bytecodeSize)
+        , filtersWithoutDomainsBytecodeOffset(filtersWithoutDomainsBytecodeOffset)
+        , filtersWithoutDomainsBytecodeSize(filtersWithoutDomainsBytecodeSize)
+        , filtersWithDomainsBytecodeOffset(filtersWithDomainsBytecodeOffset)
+        , filtersWithDomainsBytecodeSize(filtersWithDomainsBytecodeSize)
+        , domainFiltersBytecodeOffset(domainFiltersBytecodeOffset)
+        , domainFiltersBytecodeSize(domainFiltersBytecodeSize)
     {
     }
 
@@ -62,8 +66,12 @@ public:
     NetworkCache::Data fileData;
     unsigned actionsOffset { 0 };
     unsigned actionsSize { 0 };
-    unsigned bytecodeOffset { 0 };
-    unsigned bytecodeSize { 0 };
+    unsigned filtersWithoutDomainsBytecodeOffset { 0 };
+    unsigned filtersWithoutDomainsBytecodeSize { 0 };
+    unsigned filtersWithDomainsBytecodeOffset { 0 };
+    unsigned filtersWithDomainsBytecodeSize { 0 };
+    unsigned domainFiltersBytecodeOffset { 0 };
+    unsigned domainFiltersBytecodeSize { 0 };
 };
 
 }

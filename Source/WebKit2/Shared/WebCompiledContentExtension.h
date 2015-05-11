@@ -44,8 +44,13 @@ public:
 private:
     WebCompiledContentExtension(WebCompiledContentExtensionData&&);
 
-    virtual const WebCore::ContentExtensions::DFABytecode* bytecode() const override;
-    virtual unsigned bytecodeLength() const override;
+    virtual const WebCore::ContentExtensions::DFABytecode* filtersWithoutDomainsBytecode() const override;
+    virtual unsigned filtersWithoutDomainsBytecodeLength() const override;
+    virtual const WebCore::ContentExtensions::DFABytecode* filtersWithDomainsBytecode() const override;
+    virtual unsigned filtersWithDomainsBytecodeLength() const override;
+    virtual const WebCore::ContentExtensions::DFABytecode* domainFiltersBytecode() const override;
+    virtual unsigned domainFiltersBytecodeLength() const override;
+    
     virtual const WebCore::ContentExtensions::SerializedActionByte* actions() const override;
     virtual unsigned actionsLength() const override;
     

@@ -1,3 +1,73 @@
+2015-05-11  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Support domain-specific rules and exceptions.
+        https://bugs.webkit.org/show_bug.cgi?id=144833
+
+        Reviewed by Darin Adler.
+
+        Test: http/tests/contentextensions/domain-rules.html
+        (And lots of API tests)
+
+        This patch adds if-domain and unless-domain to the trigger in the JSON format.
+        if-domain makes the rule apply only to domains in the list.
+        unless-domain makes the rule apply to domains that are not in the list.
+        
+        All rules without if-domain or unless-domain are compiled into a set of DFAs.  This behavior is unchanged.
+        All rules with if-domain or unless-domain are compiled into a separate set of DFAs.
+        The domains are also compiled into another set of DFAs.  This makes 3 arrays of DFA bytecode instead of 1.
+        
+        If there are no domain specific rules, there is no change in behavior.
+        If there are domain specific rules, the URL will be checked for matches in both
+        filtersWithoutDomainsBytecode and filtersWithDomainsBytecode.  If there are matches from 
+        filtersWithDomainsBytecode then the domain of the main document will be checked with 
+        domainFiltersBytecode to see which of the matches applies to this domain.
+
+        * contentextensions/CombinedURLFilters.cpp:
+        (WebCore::ContentExtensions::CombinedURLFilters::isEmpty):
+        (WebCore::ContentExtensions::CombinedURLFilters::addDomain):
+        * contentextensions/CombinedURLFilters.h:
+        Added addDomain, which adds characters from a domain to the prefix tree directly without using YARR.
+        * contentextensions/CompiledContentExtension.cpp:
+        (WebCore::ContentExtensions::CompiledContentExtension::globalDisplayNoneSelectors):
+        * contentextensions/CompiledContentExtension.h:
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::serializeActions):
+        (WebCore::ContentExtensions::compileRuleList):
+        Separate the rules into rules with domains and rules without domains and compile to bytecode.
+        * contentextensions/ContentExtensionCompiler.h:
+        Updated compiler interface to reflect the slightly more complicated structure.
+        * contentextensions/ContentExtensionError.cpp:
+        (WebCore::ContentExtensions::contentExtensionErrorCategory):
+        * contentextensions/ContentExtensionError.h:
+        Added new parsing errors.
+        * contentextensions/ContentExtensionParser.cpp:
+        (WebCore::ContentExtensions::getDomainList):
+        (WebCore::ContentExtensions::loadTrigger):
+        (WebCore::ContentExtensions::loadEncodedRules):
+        * contentextensions/ContentExtensionRule.h:
+        (WebCore::ContentExtensions::Trigger::operator==):
+        Parse the new domain structures from JSON into the Trigger structure.
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::actionsForResourceLoad):
+        Interpret as much bytecode as necessary to determine which rules apply to this URL and domain.
+        * contentextensions/DFABytecode.h:
+        (WebCore::ContentExtensions::instructionSizeWithArguments):
+        * contentextensions/DFABytecodeCompiler.cpp:
+        (WebCore::ContentExtensions::DFABytecodeCompiler::emitAppendAction):
+        (WebCore::ContentExtensions::DFABytecodeCompiler::emitTestFlagsAndAppendAction):
+        (WebCore::ContentExtensions::DFABytecodeCompiler::compileNode):
+        * contentextensions/DFABytecodeCompiler.h:
+        * contentextensions/DFABytecodeInterpreter.cpp:
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::interpretAppendAction):
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::interpretTestFlagsAndAppendAction):
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::actionsFromDFARoot):
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::interpret):
+        * contentextensions/DFABytecodeInterpreter.h:
+        * loader/ResourceLoadInfo.h:
+        Keep track of which actions have an if-domain trigger.  If an action is in the 
+        filtersWithDomainsBytecode, then it either has an if-domain or an unless-domain in its trigger.
+        This requires additional information in the bytecode, so there are two new bytecode types.
+
 2015-05-11  Yoav Weiss  <yoav@yoav.ws>
 
         Add srcset, sizes and picture to the features json

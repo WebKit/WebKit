@@ -88,8 +88,40 @@ Vector<Action> ContentExtensionsBackend::actionsForResourceLoad(const ResourceLo
     for (auto& contentExtension : m_contentExtensions.values()) {
         RELEASE_ASSERT(contentExtension);
         const CompiledContentExtension& compiledExtension = contentExtension->compiledExtension();
-        DFABytecodeInterpreter interpreter(compiledExtension.bytecode(), compiledExtension.bytecodeLength(), contentExtension->m_pagesUsed);
-        DFABytecodeInterpreter::Actions triggeredActions = interpreter.interpret(urlCString, flags);
+        
+        // FIXME: These should use a different Vector<bool> to keep track of which memory pages are used when doing memory reporting. Or just remove the memory reporting completely.
+        DFABytecodeInterpreter withoutDomainsInterpreter(compiledExtension.filtersWithoutDomainsBytecode(), compiledExtension.filtersWithoutDomainsBytecodeLength(), contentExtension->m_pagesUsed);
+        DFABytecodeInterpreter::Actions triggeredActions = withoutDomainsInterpreter.interpret(urlCString, flags);
+        
+        // Check to see if there are any actions triggered with if- or unless-domain and check the domain if there are.
+        DFABytecodeInterpreter withDomainsInterpreter(compiledExtension.filtersWithDomainsBytecode(), compiledExtension.filtersWithDomainsBytecodeLength(), contentExtension->m_pagesUsed);
+        
+        DFABytecodeInterpreter::Actions withDomainsPossibleActions = withDomainsInterpreter.interpret(urlCString, flags);
+        if (!withDomainsPossibleActions.isEmpty()) {
+            DFABytecodeInterpreter domainsInterpreter(compiledExtension.domainFiltersBytecode(), compiledExtension.domainFiltersBytecodeLength(), contentExtension->m_pagesUsed);
+            DFABytecodeInterpreter::Actions domainsActions = domainsInterpreter.interpret(resourceLoadInfo.mainDocumentURL.host().utf8(), flags);
+            
+            DFABytecodeInterpreter::Actions ifDomainActions;
+            DFABytecodeInterpreter::Actions unlessDomainActions;
+            for (uint64_t action : domainsActions) {
+                if (action & IfDomainFlag)
+                    ifDomainActions.add(action);
+                else
+                    unlessDomainActions.add(action);
+            }
+            
+            for (uint64_t action : withDomainsPossibleActions) {
+                if (ifDomainActions.contains(action)) {
+                    // If an if-domain trigger matches, add the action.
+                    ASSERT(action & IfDomainFlag);
+                    triggeredActions.add(action & ~IfDomainFlag);
+                } else if (!(action & IfDomainFlag) && !unlessDomainActions.contains(action)) {
+                    // If this action did not need an if-domain, it must have been an unless-domain rule.
+                    // Add the action unless it matched an unless-domain trigger.
+                    triggeredActions.add(action);
+                }
+            }
+        }
         
         const SerializedActionByte* actions = compiledExtension.actions();
         const unsigned actionsLength = compiledExtension.actionsLength();
@@ -114,8 +146,9 @@ Vector<Action> ContentExtensionsBackend::actionsForResourceLoad(const ResourceLo
             }
         }
         if (!sawIgnorePreviousRules) {
-            DFABytecodeInterpreter::Actions universalActions = interpreter.actionsFromDFARoot();
-            for (auto actionLocation : universalActions) {
+            DFABytecodeInterpreter::Actions universalActions = withoutDomainsInterpreter.actionsFromDFARoot();
+            for (uint64_t actionLocation : universalActions) {
+                // FIXME: We shouldn't deserialize an action all the way if it is a css-display-none selector.
                 Action action = Action::deserialize(actions, actionsLength, static_cast<unsigned>(actionLocation));
                 action.setExtensionIdentifier(contentExtension->identifier());
 

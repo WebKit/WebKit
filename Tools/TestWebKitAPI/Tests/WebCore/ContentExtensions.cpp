@@ -80,25 +80,53 @@ public:
     }
 };
 
-class InMemoryContentExtensionCompilationClient final : public WebCore::ContentExtensions::ContentExtensionCompilationClient {
+struct CompiledContentExtensionData {
+    Vector<ContentExtensions::SerializedActionByte> actions;
+    Vector<ContentExtensions::DFABytecode> filtersWithoutDomains;
+    Vector<ContentExtensions::DFABytecode> filtersWithDomains;
+    Vector<ContentExtensions::DFABytecode> domainFilters;
+};
+
+class InMemoryContentExtensionCompilationClient final : public ContentExtensions::ContentExtensionCompilationClient {
 public:
-    InMemoryContentExtensionCompilationClient(WebCore::ContentExtensions::CompiledContentExtensionData& data)
+    InMemoryContentExtensionCompilationClient(CompiledContentExtensionData& data)
         : m_data(data)
     {
-        EXPECT_EQ(data.bytecode.size(), 0ull);
         EXPECT_EQ(data.actions.size(), 0ull);
+        EXPECT_EQ(data.filtersWithoutDomains.size(), 0ull);
+        EXPECT_EQ(data.filtersWithDomains.size(), 0ull);
+        EXPECT_EQ(data.domainFilters.size(), 0ull);
     }
 
-    virtual void writeBytecode(Vector<WebCore::ContentExtensions::DFABytecode>&& bytecode) override
+    virtual void writeActions(Vector<ContentExtensions::SerializedActionByte>&& actions) override
     {
         EXPECT_FALSE(finalized);
-        m_data.bytecode.appendVector(bytecode);
+        EXPECT_EQ(m_data.actions.size(), 0ull);
+        EXPECT_EQ(m_data.filtersWithoutDomains.size(), 0ull);
+        EXPECT_EQ(m_data.filtersWithDomains.size(), 0ull);
+        EXPECT_EQ(m_data.domainFilters.size(), 0ull);
+        m_data.actions.appendVector(actions);
     }
     
-    virtual void writeActions(Vector<WebCore::ContentExtensions::SerializedActionByte>&& actions) override
+    virtual void writeFiltersWithoutDomainsBytecode(Vector<ContentExtensions::DFABytecode>&& bytecode) override
     {
         EXPECT_FALSE(finalized);
-        m_data.actions.appendVector(actions);
+        EXPECT_EQ(m_data.filtersWithDomains.size(), 0ull);
+        EXPECT_EQ(m_data.domainFilters.size(), 0ull);
+        m_data.filtersWithoutDomains.appendVector(bytecode);
+    }
+    
+    virtual void writeFiltersWithDomainsBytecode(Vector<ContentExtensions::DFABytecode>&& bytecode) override
+    {
+        EXPECT_FALSE(finalized);
+        EXPECT_EQ(m_data.domainFilters.size(), 0ull);
+        m_data.filtersWithDomains.appendVector(bytecode);
+    }
+    
+    virtual void writeDomainFiltersBytecode(Vector<ContentExtensions::DFABytecode>&& bytecode) override
+    {
+        EXPECT_FALSE(finalized);
+        m_data.domainFilters.appendVector(bytecode);
     }
     
     virtual void finalize() override
@@ -107,7 +135,7 @@ public:
     }
 
 private:
-    WebCore::ContentExtensions::CompiledContentExtensionData& m_data;
+    CompiledContentExtensionData& m_data;
     bool finalized { false };
 };
 
@@ -115,16 +143,19 @@ class InMemoryCompiledContentExtension : public ContentExtensions::CompiledConte
 public:
     static RefPtr<InMemoryCompiledContentExtension> createFromFilter(String&& filter)
     {
-        WebCore::ContentExtensions::CompiledContentExtensionData extensionData;
+        CompiledContentExtensionData extensionData;
         InMemoryContentExtensionCompilationClient client(extensionData);
         auto compilerError = ContentExtensions::compileRuleList(client, WTF::move(filter));
-        if (compilerError)
+        if (compilerError) {
+            // Compiling should always succeed here. We have other tests for compile failures.
+            EXPECT_TRUE(false);
             return nullptr;
+        }
 
         return InMemoryCompiledContentExtension::create(WTF::move(extensionData));
     }
 
-    static RefPtr<InMemoryCompiledContentExtension> create(ContentExtensions::CompiledContentExtensionData&& data)
+    static RefPtr<InMemoryCompiledContentExtension> create(CompiledContentExtensionData&& data)
     {
         return adoptRef(new InMemoryCompiledContentExtension(WTF::move(data)));
     }
@@ -133,18 +164,22 @@ public:
     {
     }
 
-    virtual const ContentExtensions::DFABytecode* bytecode() const override { return m_data.bytecode.data(); }
-    virtual unsigned bytecodeLength() const override { return m_data.bytecode.size(); }
     virtual const ContentExtensions::SerializedActionByte* actions() const override { return m_data.actions.data(); }
     virtual unsigned actionsLength() const override { return m_data.actions.size(); }
+    virtual const ContentExtensions::DFABytecode* filtersWithoutDomainsBytecode() const override { return m_data.filtersWithoutDomains.data(); }
+    virtual unsigned filtersWithoutDomainsBytecodeLength() const override { return m_data.filtersWithoutDomains.size(); }
+    virtual const ContentExtensions::DFABytecode* filtersWithDomainsBytecode() const override { return m_data.filtersWithDomains.data(); }
+    virtual unsigned filtersWithDomainsBytecodeLength() const override { return m_data.filtersWithDomains.size(); }
+    virtual const ContentExtensions::DFABytecode* domainFiltersBytecode() const override { return m_data.domainFilters.data(); }
+    virtual unsigned domainFiltersBytecodeLength() const override { return m_data.domainFilters.size(); }
 
 private:
-    InMemoryCompiledContentExtension(ContentExtensions::CompiledContentExtensionData&& data)
+    InMemoryCompiledContentExtension(CompiledContentExtensionData&& data)
         : m_data(WTF::move(data))
     {
     }
 
-    ContentExtensions::CompiledContentExtensionData m_data;
+    CompiledContentExtensionData m_data;
 };
 
 void static testRequest(ContentExtensions::ContentExtensionsBackend contentExtensionsBackend, const ResourceLoadInfo& resourceLoadInfo, Vector<ContentExtensions::ActionType> expectedActions, bool ignorePreviousRules = false)
@@ -164,9 +199,14 @@ void static testRequest(ContentExtensions::ContentExtensionsBackend contentExten
         EXPECT_EQ(actions[actions.size() - 1].type(), ContentExtensions::ActionType::CSSDisplayNoneStyleSheet);
 }
 
-ResourceLoadInfo mainDocumentRequest(const char* url, ResourceType resourceType = ResourceType::Document)
+static ResourceLoadInfo mainDocumentRequest(const char* url, ResourceType resourceType = ResourceType::Document)
 {
     return { URL(URL(), url), URL(URL(), url), resourceType };
+}
+
+static ResourceLoadInfo subResourceRequest(const char* url, const char* mainDocumentURL, ResourceType resourceType = ResourceType::Document)
+{
+    return { URL(URL(), url), URL(URL(), mainDocumentURL), resourceType };
 }
 
 ContentExtensions::ContentExtensionsBackend makeBackend(const char* json)
@@ -362,6 +402,79 @@ TEST_F(ContentExtensionTest, DuplicatedMatchAllTermsInVariousFormat)
     testRequest(backend, mainDocumentRequest("https://post.org/post"), { });
 }
 
+TEST_F(ContentExtensionTest, DomainTriggers)
+{
+    auto ifDomainBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-domain\":[\"webkit.org\"]}}]");
+    testRequest(ifDomainBackend, mainDocumentRequest("http://webkit.org/test.htm"), { });
+    testRequest(ifDomainBackend, mainDocumentRequest("http://bugs.webkit.org/test.htm"), { });
+    testRequest(ifDomainBackend, mainDocumentRequest("http://webkit.org/test.html"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(ifDomainBackend, mainDocumentRequest("http://bugs.webkit.org/test.html"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(ifDomainBackend, mainDocumentRequest("http://not_webkit.org/test.htm"), { });
+    testRequest(ifDomainBackend, mainDocumentRequest("http://webkit.organization/test.htm"), { });
+    testRequest(ifDomainBackend, mainDocumentRequest("http://not_webkit.org/test.html"), { });
+    testRequest(ifDomainBackend, mainDocumentRequest("http://webkit.organization/test.html"), { });
+    
+    auto unlessDomainBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-domain\":[\"webkit.org\"]}}]");
+    testRequest(unlessDomainBackend, mainDocumentRequest("http://webkit.org/test.htm"), { });
+    testRequest(unlessDomainBackend, mainDocumentRequest("http://bugs.webkit.org/test.htm"), { });
+    testRequest(unlessDomainBackend, mainDocumentRequest("http://webkit.org/test.html"), { });
+    testRequest(unlessDomainBackend, mainDocumentRequest("http://bugs.webkit.org/test.html"), { });
+    testRequest(unlessDomainBackend, mainDocumentRequest("http://not_webkit.org/test.htm"), { });
+    testRequest(unlessDomainBackend, mainDocumentRequest("http://webkit.organization/test.htm"), { });
+    testRequest(unlessDomainBackend, mainDocumentRequest("http://not_webkit.org/test.html"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(unlessDomainBackend, mainDocumentRequest("http://webkit.organization/test.html"), { ContentExtensions::ActionType::BlockLoad });
+
+    auto combinedBackend1 = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test_block_load\", \"if-domain\":[\"webkit.org\"]}},"
+        "{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"test_block_cookies\", \"unless-domain\":[\"webkit.org\"]}}]");
+    testRequest(combinedBackend1, mainDocumentRequest("http://webkit.org"), { });
+    testRequest(combinedBackend1, mainDocumentRequest("http://not_webkit.org"), { });
+    testRequest(combinedBackend1, mainDocumentRequest("http://webkit.org/test_block_load.html"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(combinedBackend1, subResourceRequest("http://whatwg.org/test_block_load.html", "http://webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(combinedBackend1, subResourceRequest("http://whatwg.org/shouldnt_match.html", "http://webkit.org/"), { });
+    testRequest(combinedBackend1, subResourceRequest("http://whatwg.org/test_block_load.html", "http://not_webkit.org/"), { });
+    testRequest(combinedBackend1, subResourceRequest("http://whatwg.org/shouldnt_match.html", "http://not_webkit.org/"), { });
+    testRequest(combinedBackend1, mainDocumentRequest("http://webkit.org/test_block_cookies.html"), { });
+    testRequest(combinedBackend1, subResourceRequest("http://whatwg.org/test_block_cookies.html", "http://webkit.org/"), { });
+    testRequest(combinedBackend1, subResourceRequest("http://whatwg.org/shouldnt_match.html", "http://webkit.org/"), { });
+    testRequest(combinedBackend1, subResourceRequest("http://whatwg.org/test_block_cookies.html", "http://not_webkit.org/path/to/main/document.html"), { ContentExtensions::ActionType::BlockCookies });
+    testRequest(combinedBackend1, subResourceRequest("http://whatwg.org/shouldnt_match.html", "http://not_webkit.org/"), { });
+    
+    auto combinedBackend2 = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test_block_load\\\\.html\", \"if-domain\":[\"webkit.org\"]}},"
+        "{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"test_block_cookies\\\\.html\", \"unless-domain\":[\"w3c.org\"]}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"test_css\\\\.html\"}}]");
+    testRequest(combinedBackend2, mainDocumentRequest("http://webkit.org/test_css.html"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(combinedBackend2, mainDocumentRequest("http://webkit.org/test_css.htm"), { });
+    testRequest(combinedBackend2, mainDocumentRequest("http://webkit.org/test_block_load.html"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(combinedBackend2, mainDocumentRequest("http://not_webkit.org/test_block_load.html"), { });
+    testRequest(combinedBackend2, mainDocumentRequest("http://not_webkit.org/test_css.html"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(combinedBackend2, mainDocumentRequest("http://webkit.org/TEST_CSS.hTmL/test_block_load.html"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad});
+    testRequest(combinedBackend2, mainDocumentRequest("http://w3c.org/test_css.html"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(combinedBackend2, mainDocumentRequest("http://w3c.org/test_block_load.html"), { });
+    testRequest(combinedBackend2, mainDocumentRequest("http://w3c.org/test_block_cookies.html"), { });
+    testRequest(combinedBackend2, mainDocumentRequest("http://w3c.org/test_css.html/test_block_cookies.html"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(combinedBackend2, mainDocumentRequest("http://not_w3c.org/test_block_cookies.html"), { ContentExtensions::ActionType::BlockCookies });
+    testRequest(combinedBackend2, mainDocumentRequest("http://not_w3c.org/test_css.html/test_block_cookies.html"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockCookies });
+
+    auto ifDomainWithFlagsBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\", \"if-domain\":[\"webkit.org\"],\"resource-type\":[\"image\"]}}]");
+    testRequest(ifDomainWithFlagsBackend, mainDocumentRequest("http://webkit.org/test.html"), { });
+    testRequest(ifDomainWithFlagsBackend, mainDocumentRequest("http://webkit.org/test.png", ResourceType::Image), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(ifDomainWithFlagsBackend, mainDocumentRequest("http://not_webkit.org/test.html"), { });
+    testRequest(ifDomainWithFlagsBackend, mainDocumentRequest("http://not_webkit.org/test.png", ResourceType::Image), { });
+
+    auto unlessDomainWithFlagsBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\", \"unless-domain\":[\"webkit.org\"],\"resource-type\":[\"image\"]}}]");
+    testRequest(unlessDomainWithFlagsBackend, mainDocumentRequest("http://webkit.org/test.html"), { });
+    testRequest(unlessDomainWithFlagsBackend, mainDocumentRequest("http://webkit.org/test.png", ResourceType::Image), { });
+    testRequest(unlessDomainWithFlagsBackend, mainDocumentRequest("http://not_webkit.org/test.html"), { });
+    testRequest(unlessDomainWithFlagsBackend, mainDocumentRequest("http://not_webkit.org/test.png", ResourceType::Image), { ContentExtensions::ActionType::BlockLoad });
+
+    // Domains should not be interepted as regular expressions.
+    auto domainRegexBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-domain\":[\"we?bkit.org\"]}}]");
+    testRequest(domainRegexBackend, mainDocumentRequest("http://webkit.org/test.html"), { });
+    testRequest(domainRegexBackend, mainDocumentRequest("http://wbkit.org/test.html"), { });
+    
+    // FIXME: Add and test domain-specific popup-only blocking (with layout tests).
+}
+    
 TEST_F(ContentExtensionTest, TermsKnownToMatchAnything)
 {
     auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^pre1.*post1$\"}},"
@@ -577,12 +690,14 @@ TEST_F(ContentExtensionTest, DeepNFA)
     EXPECT_EQ(1ul, createNFAs(combinedURLFilters).size());
 }
 
-void checkCompilerError(const char* json, ContentExtensions::ContentExtensionError expectedError)
+void checkCompilerError(const char* json, std::error_code expectedError)
 {
-    WebCore::ContentExtensions::CompiledContentExtensionData extensionData;
+    CompiledContentExtensionData extensionData;
     InMemoryContentExtensionCompilationClient client(extensionData);
     std::error_code compilerError = ContentExtensions::compileRuleList(client, json);
-    EXPECT_EQ(compilerError.value(), static_cast<int>(expectedError));
+    EXPECT_EQ(compilerError.value(), expectedError.value());
+    if (compilerError.value())
+        EXPECT_STREQ(compilerError.category().name(), expectedError.category().name());
 }
 
 TEST_F(ContentExtensionTest, InvalidJSON)
@@ -605,10 +720,37 @@ TEST_F(ContentExtensionTest, InvalidJSON)
         ContentExtensions::ContentExtensionError::JSONInvalidTriggerFlagsArray);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"load-type\":[\"invalid\"]}}]",
         ContentExtensions::ContentExtensionError::JSONInvalidStringInTriggerFlagsArray);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"load-type\":[5]}}]",
+        ContentExtensions::ContentExtensionError::JSONInvalidStringInTriggerFlagsArray);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":{}}}]",
         ContentExtensions::ContentExtensionError::JSONInvalidTriggerFlagsArray);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":[\"invalid\"]}}]",
         ContentExtensions::ContentExtensionError::JSONInvalidStringInTriggerFlagsArray);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":[5]}}]",
+        ContentExtensions::ContentExtensionError::JSONInvalidStringInTriggerFlagsArray);
+    
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":{}}}]", ContentExtensions::ContentExtensionError::JSONInvalidDomainList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[5]}}]", ContentExtensions::ContentExtensionError::JSONInvalidDomainList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"]}}]", { });
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":{}}}]", ContentExtensions::ContentExtensionError::JSONInvalidDomainList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[5]}}]", ContentExtensions::ContentExtensionError::JSONInvalidDomainList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"\"]}}]", ContentExtensions::ContentExtensionError::JSONInvalidDomainList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"A\"]}}]", ContentExtensions::ContentExtensionError::JSONDomainNotLowerCaseASCII);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"\\u00DC\"]}}]", ContentExtensions::ContentExtensionError::JSONDomainNotLowerCaseASCII);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"0\"]}}]", { });
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[\"a\"]}}]", { });
+
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[],\"unless-domain\":[\"a\"]}}]", ContentExtensions::ContentExtensionError::JSONInvalidDomainList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":[]}}]", ContentExtensions::ContentExtensionError::JSONInvalidDomainList);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":5}}]", { });
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"unless-domain\":5}}]", { });
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":5,\"unless-domain\":5}}]", { });
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[]}}]", ContentExtensions::ContentExtensionError::JSONInvalidDomainList);
+    
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"],\"unless-domain\":[]}}]", ContentExtensions::ContentExtensionError::JSONUnlessAndIfDomain);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"if-domain\":[\"a\"],\"unless-domain\":[\"a\"]}}]", ContentExtensions::ContentExtensionError::JSONUnlessAndIfDomain);
+
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\", \"unexpected-identifier-should-be-ignored\":5}}]", { });
 
     checkCompilerError("[{\"action\":5,\"trigger\":{\"url-filter\":\"webkit.org\"}}]",
         ContentExtensions::ContentExtensionError::JSONInvalidAction);
@@ -620,6 +762,8 @@ TEST_F(ContentExtensionTest, InvalidJSON)
     checkCompilerError("[{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"webkit.org\"}},"
         "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\"}}]",
         ContentExtensions::ContentExtensionError::RegexMatchesEverythingAfterIgnorePreviousRules);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"if-domain\":[\"a\"]}}]", ContentExtensions::ContentExtensionError::RegexMatchesEverythingWithDomains);
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"unless-domain\":[\"a\"]}}]", ContentExtensions::ContentExtensionError::RegexMatchesEverythingWithDomains);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"[\"}}]",
         ContentExtensions::ContentExtensionError::JSONInvalidRegex);
 }

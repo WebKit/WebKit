@@ -30,6 +30,7 @@
 
 #include "ContentExtensionsDebugging.h"
 #include "NFA.h"
+#include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -44,10 +45,11 @@ public:
     CombinedURLFilters();
     ~CombinedURLFilters();
 
-    void addPattern(uint64_t patternId, const Vector<Term>& pattern);
+    void addPattern(uint64_t actionId, const Vector<Term>& pattern);
+    void addDomain(uint64_t actionId, const String& domain);
 
     void processNFAs(size_t maxNFASize, std::function<void(NFA&&)> handler);
-    bool isEmpty();
+    bool isEmpty() const;
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     size_t memoryUsed() const;

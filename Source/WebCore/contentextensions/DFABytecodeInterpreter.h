@@ -63,8 +63,8 @@ public:
     Actions actionsFromDFARoot();
 
 private:
-    void interpretAppendAction(unsigned& programCounter, Actions&);
-    void interpretTestFlagsAndAppendAction(unsigned& programCounter, uint16_t flags, Actions&);
+    void interpretAppendAction(unsigned& programCounter, Actions&, bool ifDomain);
+    void interpretTestFlagsAndAppendAction(unsigned& programCounter, uint16_t flags, Actions&, bool ifDomain);
     const DFABytecode* m_bytecode;
     const unsigned m_bytecodeLength;
     Vector<bool>& m_pagesUsed;

@@ -66,8 +66,8 @@ private:
     void compileNodeTransitions(const DFANode&);
     void compileCheckForRange(const Range&);
 
-    void emitAppendAction(unsigned);
-    void emitTestFlagsAndAppendAction(uint16_t flags, unsigned);
+    void emitAppendAction(unsigned, bool ifDomain);
+    void emitTestFlagsAndAppendAction(uint16_t flags, unsigned, bool ifDomain);
     void emitJump(unsigned destinationNodeIndex);
     void emitCheckValue(uint8_t value, unsigned destinationNodeIndex, bool caseSensitive);
     void emitCheckValueRange(uint8_t lowValue, uint8_t highValue, unsigned destinationNodeIndex, bool caseSensitive);

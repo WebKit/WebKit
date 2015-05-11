@@ -115,9 +115,38 @@ CombinedURLFilters::~CombinedURLFilters()
 {
 }
 
-bool CombinedURLFilters::isEmpty()
+bool CombinedURLFilters::isEmpty() const
 {
     return m_prefixTreeRoot->edges.isEmpty();
+}
+
+void CombinedURLFilters::addDomain(uint64_t actionId, const String& domain)
+{
+    // This is like adding (.|^)domain$ by adding two Vector<Term>'s,
+    // but interpreting domain as a series of characters, not a regular expression.
+    // This way a domain of "webkit.org" will match "bugs.webkit.org" and "webkit.org".
+    // FIXME: Add support for matching only subdomains or no subdomains.
+    Vector<Term> prependDot;
+    Vector<Term> prependBeginningOfLine;
+    prependDot.reserveInitialCapacity(domain.length() + 3);
+    prependBeginningOfLine.reserveInitialCapacity(domain.length() + 1); // This is just no .* at the beginning.
+    
+    Term canonicalDotStar(Term::UniversalTransition);
+    canonicalDotStar.quantify(AtomQuantifier::ZeroOrMore);
+    prependDot.uncheckedAppend(canonicalDotStar);
+    prependDot.uncheckedAppend(Term('.', true));
+    
+    for (unsigned i = 0; i < domain.length(); i++) {
+        ASSERT(isASCII(domain[i]));
+        ASSERT(!isASCIIUpper(domain[i]));
+        prependDot.uncheckedAppend(Term(domain[i], true));
+        prependBeginningOfLine.uncheckedAppend(Term(domain[i], true));
+    }
+    prependDot.uncheckedAppend(Term::EndOfLineAssertionTerm);
+    prependBeginningOfLine.uncheckedAppend(Term::EndOfLineAssertionTerm);
+    
+    addPattern(actionId, prependDot);
+    addPattern(actionId, prependBeginningOfLine);
 }
 
 void CombinedURLFilters::addPattern(uint64_t actionId, const Vector<Term>& pattern)

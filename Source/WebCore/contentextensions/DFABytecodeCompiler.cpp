@@ -48,16 +48,22 @@ inline void set32Bits(Vector<DFABytecode>& bytecode, unsigned index, unsigned va
     *reinterpret_cast<unsigned*>(&bytecode[index]) = value;
 }
 
-void DFABytecodeCompiler::emitAppendAction(unsigned action)
+void DFABytecodeCompiler::emitAppendAction(unsigned action, bool ifDomain)
 {
-    append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::AppendAction);
+    if (ifDomain)
+        append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::AppendActionWithIfDomain);
+    else
+        append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::AppendAction);
     append<unsigned>(m_bytecode, action);
 }
 
-void DFABytecodeCompiler::emitTestFlagsAndAppendAction(uint16_t flags, unsigned action)
+void DFABytecodeCompiler::emitTestFlagsAndAppendAction(uint16_t flags, unsigned action, bool ifDomain)
 {
     ASSERT(flags);
-    append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::TestFlagsAndAppendAction);
+    if (ifDomain)
+        append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::TestFlagsAndAppendActionWithIfDomain);
+    else
+        append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::TestFlagsAndAppendAction);
     append<uint16_t>(m_bytecode, flags);
     append<unsigned>(m_bytecode, action);
 }
@@ -106,11 +112,11 @@ void DFABytecodeCompiler::compileNode(unsigned index, bool root)
         m_nodeStartOffsets[index] = m_bytecode.size();
 
     for (uint64_t action : node.actions(m_dfa)) {
-        // High bits are used to store flags. See compileRuleList.
+        // High bits are used to store flags. A boolean is stored in the 48th bit. See compileRuleList.
         if (action & 0xFFFF00000000)
-            emitTestFlagsAndAppendAction(static_cast<uint16_t>(action >> 32), static_cast<unsigned>(action));
+            emitTestFlagsAndAppendAction(static_cast<uint16_t>(action >> 32), static_cast<unsigned>(action), action & IfDomainFlag);
         else
-            emitAppendAction(static_cast<unsigned>(action));
+            emitAppendAction(static_cast<unsigned>(action), action & IfDomainFlag);
     }
     
     // If we jump to the root, we don't want to re-add its actions to a HashSet.
