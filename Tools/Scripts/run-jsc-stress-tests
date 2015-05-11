@@ -336,6 +336,11 @@ if !$testRunnerType
     end
 end
 
+# Force copying VM, because creating symlinks with symlink() isn't supported on Windows
+if $hostOS == "windows"
+    $copyVM = true
+end
+
 $numFailures = 0
 
 BASE_OPTIONS = ["--useFTLJIT=false", "--enableFunctionDotArguments=true"]
