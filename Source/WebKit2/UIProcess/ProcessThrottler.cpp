@@ -88,6 +88,7 @@ void ProcessThrottler::didConnectToProcess(pid_t pid)
 {
     m_suspendTimer.stop();
     m_assertion = std::make_unique<ProcessAndUIAssertion>(pid, assertionState());
+    m_assertion->setClient(*this);
 }
     
 void ProcessThrottler::suspendTimerFired()
@@ -107,6 +108,11 @@ void ProcessThrottler::didCancelProcessSuspension()
     if (!--m_suspendMessageCount)
         updateAssertionNow();
     ASSERT(m_suspendMessageCount >= 0);
+}
+
+void ProcessThrottler::assertionWillExpireImminently()
+{
+    m_process->sendProcessWillSuspendImminently();
 }
 
 }

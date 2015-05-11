@@ -1,3 +1,27 @@
+2015-05-11  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Close all open databases in expiration handler of process assertion
+        https://bugs.webkit.org/show_bug.cgi?id=144661
+        <rdar://problem/20845052>
+
+        Reviewed by Darin Adler.
+
+        Expose functionality in WebCore to close all open databases. Closing a SQLite database
+        will interrupt any in-progress database transactions.
+
+        * Modules/webdatabase/AbstractDatabaseServer.h:
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::closeAllDatabases): Added; turns around and calls DatabaseServer::closeAllDatabases().
+        * Modules/webdatabase/DatabaseManager.h: Export DatabaseManager::closeAllDatabases() so that
+        we can call in from WebKit2.
+        * Modules/webdatabase/DatabaseServer.cpp:
+        (WebCore::DatabaseServer::closeAllDatabases): Added; turns around and calls DatabaseTracker::closeAllDatabases().
+        * Modules/webdatabase/DatabaseServer.h:
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::closeAllDatabases): Added; closes all open databases.
+        * Modules/webdatabase/DatabaseTracker.h: Export DatabaseTracker::closeAllDatabases() so that
+        we can call in from Legacy WebKit.
+
 2015-05-11  Antti Koivisto  <antti@apple.com>
 
         WebContent crash under com.apple.WebCore: WebCore::WebKitCSSResourceValue::isCSSValueNone const + 6

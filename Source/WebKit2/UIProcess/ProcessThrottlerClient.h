@@ -32,6 +32,7 @@ class ProcessThrottlerClient {
 public:
     virtual ~ProcessThrottlerClient() { }
 
+    virtual void sendProcessWillSuspendImminently() = 0;
     virtual void sendProcessWillSuspend() = 0;
     virtual void sendCancelProcessWillSuspend() = 0;
     virtual void sendProcessDidResume() = 0;

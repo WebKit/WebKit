@@ -267,7 +267,10 @@ static WebBackgroundTaskIdentifier getTransactionBackgroundTaskIdentifier()
     if (getTransactionBackgroundTaskIdentifier() != invalidWebBackgroundTaskIdentifier())
         return;
     
-    setTransactionBackgroundTaskIdentifier(startBackgroundTask(^ { [WebDatabaseManager endBackgroundTask]; }));
+    setTransactionBackgroundTaskIdentifier(startBackgroundTask(^ {
+        DatabaseTracker::tracker().closeAllDatabases();
+        [WebDatabaseManager endBackgroundTask];
+    }));
 }
 
 + (void)endBackgroundTask

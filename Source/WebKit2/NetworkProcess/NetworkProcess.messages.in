@@ -58,6 +58,7 @@ messages -> NetworkProcess LegacyReceiver {
     ClearCacheForAllOrigins(uint32_t cachesToClear)
     SetCacheModel(uint32_t cacheModel);
 
+    ProcessWillSuspendImminently() -> (bool handled)
     ProcessWillSuspend()
     CancelProcessWillSuspend()
     ProcessDidResume()

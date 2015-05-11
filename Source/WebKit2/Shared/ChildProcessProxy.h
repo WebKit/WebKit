@@ -48,7 +48,7 @@ public:
     void terminate();
 
     template<typename T> bool send(T&& message, uint64_t destinationID, unsigned messageSendFlags = 0);
-    template<typename T> bool sendSync(T&& message, typename T::Reply&&, uint64_t destinationID, std::chrono::milliseconds timeout = std::chrono::seconds(1));
+    template<typename T> bool sendSync(T&& message, typename T::Reply&&, uint64_t destinationID, std::chrono::milliseconds timeout = std::chrono::seconds(1), unsigned sendSyncFlags = 0);
     
     IPC::Connection* connection() const
     {
@@ -105,14 +105,14 @@ bool ChildProcessProxy::send(T&& message, uint64_t destinationID, unsigned messa
 }
 
 template<typename U> 
-bool ChildProcessProxy::sendSync(U&& message, typename U::Reply&& reply, uint64_t destinationID, std::chrono::milliseconds timeout)
+bool ChildProcessProxy::sendSync(U&& message, typename U::Reply&& reply, uint64_t destinationID, std::chrono::milliseconds timeout, unsigned sendSyncFlags)
 {
     COMPILE_ASSERT(U::isSync, SyncMessageExpected);
 
     if (!m_connection)
         return false;
 
-    return connection()->sendSync(std::forward<U>(message), WTF::move(reply), destinationID, timeout);
+    return connection()->sendSync(std::forward<U>(message), WTF::move(reply), destinationID, timeout, sendSyncFlags);
 }
 
 } // namespace WebKit

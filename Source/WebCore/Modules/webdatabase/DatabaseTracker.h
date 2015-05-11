@@ -74,6 +74,8 @@ public:
 
     unsigned long long getMaxSizeForDatabase(const Database*);
 
+    WEBCORE_EXPORT void closeAllDatabases();
+
     void interruptAllDatabasesForContext(const DatabaseContext*);
 
 private:

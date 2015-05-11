@@ -306,6 +306,24 @@ unsigned long long DatabaseTracker::getMaxSizeForDatabase(const Database* databa
     return maxSize;
 }
 
+void DatabaseTracker::closeAllDatabases()
+{
+    Vector<Ref<Database>> openDatabases;
+    {
+        MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
+        if (!m_openDatabaseMap)
+            return;
+        for (auto& nameMap : m_openDatabaseMap->values()) {
+            for (auto& set : nameMap->values()) {
+                for (auto& database : *set)
+                    openDatabases.append(*database);
+            }
+        }
+    }
+    for (auto& database : openDatabases)
+        database->close();
+}
+
 void DatabaseTracker::interruptAllDatabasesForContext(const DatabaseContext* context)
 {
     Vector<RefPtr<DatabaseBackendBase>> openDatabases;

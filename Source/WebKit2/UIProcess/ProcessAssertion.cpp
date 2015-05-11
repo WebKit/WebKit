@@ -46,7 +46,7 @@ void ProcessAssertion::setState(AssertionState assertionState)
 
     m_assertionState = assertionState;
 }
-    
+
 ProcessAndUIAssertion::ProcessAndUIAssertion(pid_t pid, AssertionState assertionState)
     : ProcessAssertion(pid, assertionState)
 {
@@ -60,7 +60,12 @@ void ProcessAndUIAssertion::setState(AssertionState assertionState)
 {
     ProcessAssertion::setState(assertionState);
 }
-    
+
+void ProcessAndUIAssertion::setClient(ProcessAssertionClient& client)
+{
+    ProcessAssertion::setClient(client);
+}
+
 }
 
 #endif // !PLATFORM(IOS)

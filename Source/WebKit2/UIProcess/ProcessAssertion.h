@@ -39,27 +39,38 @@ enum class AssertionState {
     Foreground
 };
 
+class ProcessAssertionClient {
+public:
+    virtual ~ProcessAssertionClient() { };
+    virtual void assertionWillExpireImminently() = 0;
+};
+
 class ProcessAssertion {
 public:
     ProcessAssertion(pid_t, AssertionState);
     ~ProcessAssertion();
 
+    void setClient(ProcessAssertionClient& client) { m_client = &client; }
+    ProcessAssertionClient* client() { return m_client; }
+
     AssertionState state() const { return m_assertionState; }
-    
     void setState(AssertionState);
-    
+
 private:
 #if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
     RetainPtr<BKSProcessAssertion> m_assertion;
 #endif
     AssertionState m_assertionState;
+    ProcessAssertionClient* m_client { nullptr };
 };
     
 class ProcessAndUIAssertion : public ProcessAssertion {
 public:
     ProcessAndUIAssertion(pid_t, AssertionState);
     ~ProcessAndUIAssertion();
-    
+
+    void setClient(ProcessAssertionClient&);
+
     void setState(AssertionState);
 };
     

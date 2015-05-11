@@ -78,6 +78,7 @@ public:
     DownloadManager& downloadManager();
     bool canHandleHTTPSServerTrustEvaluation() const { return m_canHandleHTTPSServerTrustEvaluation; }
 
+    void processWillSuspendImminently(bool& handled);
     void processWillSuspend();
     void cancelProcessWillSuspend();
     void processDidResume();
@@ -122,6 +123,7 @@ private:
 
     // Message Handlers
     void didReceiveNetworkProcessMessage(IPC::Connection&, IPC::MessageDecoder&);
+    void didReceiveSyncNetworkProcessMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
     void initializeNetworkProcess(const NetworkProcessCreationParameters&);
     void createNetworkConnectionToWebProcess();
     void ensurePrivateBrowsingSession(WebCore::SessionID);

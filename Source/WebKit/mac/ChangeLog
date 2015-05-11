@@ -1,3 +1,19 @@
+2015-05-11  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Close all open databases in expiration handler of process assertion
+        https://bugs.webkit.org/show_bug.cgi?id=144661
+        <rdar://problem/20845052>
+
+        Reviewed by Darin Adler.
+
+        For Legacy WebKit, close all open databases when the process assertion expiration
+        handler is called.
+
+        * Storage/WebDatabaseManager.mm:
+        (+[WebDatabaseManager startBackgroundTask]): Call DatabaseTracker::tracker().closeAllDatabases()
+        in the expiration handler to close all open databases. As a side effect of closing
+        a database all in-progress database transactions are interrupted.
+
 2015-05-10  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         Get rid of the public item accessors in BackForwardClient

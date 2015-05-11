@@ -30,8 +30,12 @@
 
 #import "BKSProcessAssertionSPI.h"
 #import <UIKit/UIApplication.h>
+#import <wtf/HashSet.h>
+#import <wtf/Vector.h>
 
 #if !PLATFORM(IOS_SIMULATOR)
+
+using WebKit::ProcessAssertionClient;
 
 @interface WKProcessAssertionBackgroundTaskManager : NSObject
 
@@ -40,6 +44,9 @@
 - (void)incrementNeedsToRunInBackgroundCount;
 - (void)decrementNeedsToRunInBackgroundCount;
 
+- (void)addClient:(ProcessAssertionClient&)client;
+- (void)removeClient:(ProcessAssertionClient&)client;
+
 @end
 
 @implementation WKProcessAssertionBackgroundTaskManager
@@ -47,6 +54,7 @@
     unsigned _needsToRunInBackgroundCount;
     BOOL _appIsBackground;
     UIBackgroundTaskIdentifier _backgroundTask;
+    HashSet<ProcessAssertionClient*> _clients;
 }
 
 + (WKProcessAssertionBackgroundTaskManager *)shared
@@ -83,6 +91,16 @@
     [super dealloc];
 }
 
+- (void)addClient:(ProcessAssertionClient&)client
+{
+    _clients.add(&client);
+}
+
+- (void)removeClient:(ProcessAssertionClient&)client
+{
+    _clients.remove(&client);
+}
+
 - (void)_updateBackgroundTask
 {
     bool shouldHoldTask = _needsToRunInBackgroundCount && _appIsBackground;
@@ -90,6 +108,10 @@
     if (shouldHoldTask && _backgroundTask == UIBackgroundTaskInvalid) {
         _backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithName:@"com.apple.WebKit.ProcessAssertion" expirationHandler:^{
             NSLog(@"Background task expired while holding WebKit ProcessAssertion.");
+            Vector<ProcessAssertionClient*> clientsToNotify;
+            copyToVector(_clients, clientsToNotify);
+            for (auto* client : clientsToNotify)
+                client->assertionWillExpireImminently();
             [[UIApplication sharedApplication] endBackgroundTask:_backgroundTask];
             _backgroundTask = UIBackgroundTaskInvalid;
         }];
@@ -160,6 +182,8 @@ ProcessAssertion::ProcessAssertion(pid_t pid, AssertionState assertionState)
 
 ProcessAssertion::~ProcessAssertion()
 {
+    if (ProcessAssertionClient* client = this->client())
+        [[WKProcessAssertionBackgroundTaskManager shared] removeClient:*client];
     [m_assertion invalidate];
 }
 
@@ -195,6 +219,14 @@ void ProcessAndUIAssertion::setState(AssertionState assertionState)
     ProcessAssertion::setState(assertionState);
 }
 
+void ProcessAndUIAssertion::setClient(ProcessAssertionClient& newClient)
+{
+    [[WKProcessAssertionBackgroundTaskManager shared] addClient:newClient];
+    if (ProcessAssertionClient* oldClient = this->client())
+        [[WKProcessAssertionBackgroundTaskManager shared] removeClient:*oldClient];
+    ProcessAssertion::setClient(newClient);
+}
+
 } // namespace WebKit
 
 #else // PLATFORM(IOS_SIMULATOR)
@@ -227,6 +259,11 @@ ProcessAndUIAssertion::~ProcessAndUIAssertion()
 void ProcessAndUIAssertion::setState(AssertionState assertionState)
 {
     ProcessAssertion::setState(assertionState);
+}
+
+void ProcessAndUIAssertion::setClient(ProcessAssertionClient& newClient)
+{
+    ProcessAssertion::setClient(newClient);
 }
 
 } // namespace WebKit

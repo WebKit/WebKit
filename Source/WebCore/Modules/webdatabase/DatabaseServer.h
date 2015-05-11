@@ -46,6 +46,8 @@ public:
 
     virtual PassRefPtr<DatabaseBackendBase> openDatabase(RefPtr<DatabaseContext>&, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError&, String& errorMessage, OpenAttempt);
 
+    void closeAllDatabases() override;
+
     virtual bool hasEntryForOrigin(SecurityOrigin*);
     virtual void origins(Vector<RefPtr<SecurityOrigin>>& result);
     virtual bool databaseNamesForOrigin(SecurityOrigin*, Vector<String>& result);

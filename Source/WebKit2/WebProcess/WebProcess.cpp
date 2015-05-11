@@ -608,7 +608,7 @@ void WebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Message
     if (messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder))
         return;
 
-    LOG_ERROR("Unhandled synchronous web process message '%s:%s'", decoder.messageReceiverName().toString().data(), decoder.messageName().toString().data());
+    didReceiveSyncWebProcessMessage(connection, decoder, replyEncoder);
 }
 
 void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)
@@ -1217,16 +1217,31 @@ void WebProcess::resetAllGeolocationPermissions()
     }
 }
 #endif
-    
-void WebProcess::processWillSuspend()
+
+void WebProcess::prepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shouldAcknowledgeWhenReadyToSuspend)
 {
     MemoryPressureHandler::singleton().releaseMemory(true);
     setAllLayerTreeStatesFrozen(true);
 
-    if (!markAllLayersVolatileIfPossible())
-        m_processSuspensionCleanupTimer.startRepeating(std::chrono::milliseconds(20));
-    else
-        parentProcessConnection()->send(Messages::WebProcessProxy::ProcessReadyToSuspend(), 0);
+    if (markAllLayersVolatileIfPossible()) {
+        if (shouldAcknowledgeWhenReadyToSuspend == ShouldAcknowledgeWhenReadyToSuspend::Yes)
+            parentProcessConnection()->send(Messages::WebProcessProxy::ProcessReadyToSuspend(), 0);
+        return;
+    }
+    m_shouldAcknowledgeWhenReadyToSuspend = shouldAcknowledgeWhenReadyToSuspend;
+    m_processSuspensionCleanupTimer.startRepeating(std::chrono::milliseconds(20));
+}
+
+void WebProcess::processWillSuspendImminently(bool& handled)
+{
+    supplement<WebDatabaseManager>()->closeAllDatabases();
+    prepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend::No);
+    handled = true;
+}
+
+void WebProcess::processWillSuspend()
+{
+    prepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend::Yes);
 }
 
 void WebProcess::cancelProcessWillSuspend()
@@ -1263,14 +1278,16 @@ void WebProcess::setAllLayerTreeStatesFrozen(bool frozen)
 
 void WebProcess::processSuspensionCleanupTimerFired()
 {
-    if (markAllLayersVolatileIfPossible()) {
-        m_processSuspensionCleanupTimer.stop();
+    if (!markAllLayersVolatileIfPossible())
+        return;
+    m_processSuspensionCleanupTimer.stop();
+    if (m_shouldAcknowledgeWhenReadyToSuspend == ShouldAcknowledgeWhenReadyToSuspend::Yes)
         parentProcessConnection()->send(Messages::WebProcessProxy::ProcessReadyToSuspend(), 0);
-    }
 }
     
 void WebProcess::processDidResume()
 {
+    m_processSuspensionCleanupTimer.stop();
     setAllLayerTreeStatesFrozen(false);
 }
 

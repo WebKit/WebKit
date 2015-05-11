@@ -1,3 +1,80 @@
+2015-05-11  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Close all open databases in expiration handler of process assertion
+        https://bugs.webkit.org/show_bug.cgi?id=144661
+        <rdar://problem/20845052>
+
+        Reviewed by Darin Adler.
+
+        For WebKit2, close all open databases when the process assertion expiration
+        handler is called.
+
+        When the process assertion expiration handler is called we dispatch a synchronous
+        message called ProcessWillSuspendImminently to the {Web, Network} processes to inform
+        them that they will be suspended imminently. The {Web, Network} process will always
+        service this message regardless if they were waiting for another message. In the
+        WebProcess, we will close all open databases among other tasks upon receiving this
+        message. In the NetworkProcess, we will purge some data from memory.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didReceiveSyncMessage): Modified to call NetworkProcess::didReceiveSyncNetworkProcessMessage()
+        to process the synchronous ProcessWillSuspendImminently message.
+        (WebKit::NetworkProcess::processWillSuspendImminently): Added; free some memory.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in: Added synchronous message ProcessWillSuspendImminently.
+        * Shared/ChildProcessProxy.h:
+        (WebKit::ChildProcessProxy::sendSync): Added parameter sendSyncFlags so that we can send
+        a sync message with flag IPC::InterruptWaitingIfSyncMessageArrives to cause the {Web, Network}Process
+        to process the message regardless of whether it is waiting for another message.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::sendProcessWillSuspendImminently): Added. Sends the message
+        ProcessWillSuspendImminently to the NetworkProcess.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/ProcessAssertion.cpp:
+        (WebKit::ProcessAndUIAssertion::setClient): Added.
+        * UIProcess/ProcessAssertion.h: Added abstract class ProcessAssertionClient.
+        (WebKit::ProcessAssertionClient::~ProcessAssertionClient): Added.
+        (WebKit::ProcessAssertion::setClient): Added.
+        (WebKit::ProcessAssertion::client): Added.
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::didConnectToProcess):
+        (WebKit::ProcessThrottler::assertionWillExpireImminently): Added; implements the ProcessAssertionClient
+        interface. Notify the process throttler clients that the assertion is near expiration.
+        * UIProcess/ProcessThrottler.h:
+        * UIProcess/ProcessThrottlerClient.h: Added 
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::sendProcessWillSuspendImminently): Added. Sends the message
+        ProcessWillSuspendImminently to the WebProcess.
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKProcessAssertionBackgroundTaskManager addClient:]): Added.
+        (-[WKProcessAssertionBackgroundTaskManager removeClient:]): Added.
+        (-[WKProcessAssertionBackgroundTaskManager _updateBackgroundTask]): Modified expiration handler
+        to notify ProcessAssertionClient clients that the assertion is near expiration.
+        (WebKit::ProcessAssertion::~ProcessAssertion): Remove the client on destruction.
+        (WebKit::ProcessAndUIAssertion::setClient): Added.
+        * WebProcess/WebCoreSupport/WebDatabaseManager.cpp:
+        (WebKit::WebDatabaseManager::closeAllDatabases): Added; turns around and calls DatabaseManager::closeAllDatabases().
+        * WebProcess/WebCoreSupport/WebDatabaseManager.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveSyncMessage): Call WebProcess::didReceiveSyncWebProcessMessage() to process
+        the synchronous ProcessWillSuspendImminently message. Removed logging for an unhandled synchronous message
+        since WebProcess::didReceiveSyncWebProcessMessage() will ASSERT_NOT_REACHED() for such a message.
+        (WebKit::WebProcess::prepareToSuspend): Extracted code from WebProcess::processWillSuspend() so that it can
+        be used from both WebProcess::processWillSuspend() and WebProcess::processWillSuspendImminently(). And modified
+        it to conditionally dispatch a ProcessReadyToSuspend message to the WebProcessProxy. We only want to dispatch
+        such a message as part of a coordinated suspension by the ProcessThrottler. That is, we do not want to dispatch
+        the ProcessReadyToSuspend message when the background assertion is near expiration (i.e. WebProcess::processWillSuspendImminently()
+        is called).
+        (WebKit::WebProcess::processWillSuspendImminently): Added. Suspend all open databases among other tasks.
+        (WebKit::WebProcess::processWillSuspend): Implemented in terms of WebProcess::prepareToSuspend().
+        (WebKit::WebProcess::processSuspensionCleanupTimerFired): Modified to conditionally dispatch a ProcessReadyToSuspend
+        message to the WebProcessProxy.
+        (WebKit::WebProcess::processDidResume): Stop the suspension cleanup timer, which may be active if the WebProcess
+        did not mark all its graphics layers as volatile before process suspension.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in: Added synchronous message ProcessWillSuspendImminently.
+
 2015-05-10  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Use Ref instead of PassRefPtr in WebCore/page

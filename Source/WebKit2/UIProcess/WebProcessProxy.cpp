@@ -889,6 +889,16 @@ RefPtr<API::Object> WebProcessProxy::transformObjectsToHandles(API::Object* obje
     return UserData::transform(object, Transformer());
 }
 
+void WebProcessProxy::sendProcessWillSuspendImminently()
+{
+    if (!canSendMessage())
+        return;
+
+    bool handled = false;
+    sendSync(Messages::WebProcess::ProcessWillSuspendImminently(), Messages::WebProcess::ProcessWillSuspendImminently::Reply(handled),
+        0, std::chrono::seconds(1), IPC::InterruptWaitingIfSyncMessageArrives);
+}
+
 void WebProcessProxy::sendProcessWillSuspend()
 {
     if (canSendMessage())

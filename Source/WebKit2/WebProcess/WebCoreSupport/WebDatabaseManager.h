@@ -48,6 +48,8 @@ public:
 
     void setPauseAllDatabases(bool);
 
+    void closeAllDatabases() const;
+
 private:
     // WebProcessSupplement
     virtual void initialize(const WebProcessCreationParameters&) override;

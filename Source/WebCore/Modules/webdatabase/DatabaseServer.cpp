@@ -117,6 +117,11 @@ void DatabaseServer::setPauseAllDatabases(bool pauseAllDatabases)
 #endif
 }
 
+void DatabaseServer::closeAllDatabases()
+{
+    DatabaseTracker::tracker().closeAllDatabases();
+}
+
 void DatabaseServer::interruptAllDatabasesForContext(const DatabaseContext* context)
 {
     DatabaseTracker::tracker().interruptAllDatabasesForContext(context);

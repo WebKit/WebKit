@@ -313,6 +313,16 @@ void NetworkProcessProxy::logDiagnosticMessageWithValue(uint64_t pageID, const S
     page->logDiagnosticMessageWithValue(message, description, value, shouldSample);
 }
 
+void NetworkProcessProxy::sendProcessWillSuspendImminently()
+{
+    if (!canSendMessage())
+        return;
+
+    bool handled = false;
+    sendSync(Messages::NetworkProcess::ProcessWillSuspendImminently(), Messages::NetworkProcess::ProcessWillSuspendImminently::Reply(handled),
+        0, std::chrono::seconds(1), IPC::InterruptWaitingIfSyncMessageArrives);
+}
+    
 void NetworkProcessProxy::sendProcessWillSuspend()
 {
     if (canSendMessage())

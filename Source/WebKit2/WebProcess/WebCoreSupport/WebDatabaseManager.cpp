@@ -142,6 +142,11 @@ void WebDatabaseManager::setPauseAllDatabases(bool pauseAllDatabases)
     DatabaseManager::singleton().setPauseAllDatabases(pauseAllDatabases);
 }
 
+void WebDatabaseManager::closeAllDatabases() const
+{
+    DatabaseManager::singleton().closeAllDatabases();
+}
+
 void WebDatabaseManager::setQuotaForOrigin(const String& originIdentifier, unsigned long long quota) const
 {
     // If the quota is set to a value lower than the current usage, that quota will

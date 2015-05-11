@@ -143,6 +143,7 @@ public:
 
     void windowServerConnectionStateChanged();
 
+    void sendProcessWillSuspendImminently() override;
     void sendProcessWillSuspend() override;
     void processReadyToSuspend();
     void sendCancelProcessWillSuspend() override;

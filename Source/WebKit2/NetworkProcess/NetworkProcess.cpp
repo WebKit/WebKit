@@ -132,7 +132,10 @@ void NetworkProcess::didReceiveMessage(IPC::Connection& connection, IPC::Message
 
 void NetworkProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
 {
-    messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder);
+    if (messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder))
+        return;
+
+    didReceiveSyncNetworkProcessMessage(connection, decoder, replyEncoder);
 }
 
 void NetworkProcess::didClose(IPC::Connection&)
@@ -503,6 +506,12 @@ void NetworkProcess::terminate()
 {
     platformTerminate();
     ChildProcess::terminate();
+}
+
+void NetworkProcess::processWillSuspendImminently(bool& handled)
+{
+    lowMemoryHandler(true);
+    handled = true;
 }
 
 void NetworkProcess::processWillSuspend()

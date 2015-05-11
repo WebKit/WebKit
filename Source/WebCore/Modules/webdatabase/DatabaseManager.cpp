@@ -402,6 +402,11 @@ void DatabaseManager::setPauseAllDatabases(bool pauseAllDatabases)
     m_server->setPauseAllDatabases(pauseAllDatabases);
 }
 
+void DatabaseManager::closeAllDatabases()
+{
+    m_server->closeAllDatabases();
+}
+
 void DatabaseManager::interruptAllDatabasesForContext(ScriptExecutionContext* context)
 {
     RefPtr<DatabaseContext> databaseContext = existingDatabaseContextFor(context);

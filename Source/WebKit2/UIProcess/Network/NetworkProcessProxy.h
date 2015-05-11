@@ -69,6 +69,7 @@ public:
     void setProcessSuppressionEnabled(bool);
 #endif
 
+    void sendProcessWillSuspendImminently() override;
     void sendProcessWillSuspend() override;
     void sendCancelProcessWillSuspend() override;
     void didCancelProcessSuspension();

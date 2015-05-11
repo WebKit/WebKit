@@ -184,6 +184,7 @@ public:
     void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String& host);
 #endif
 
+    void processWillSuspendImminently(bool& handled);
     void processWillSuspend();
     void cancelProcessWillSuspend();
     bool markAllLayersVolatileIfPossible();
@@ -282,6 +283,9 @@ private:
     void handleInjectedBundleMessage(const String& messageName, const UserData& messageBody);
     void setInjectedBundleParameter(const String& key, const IPC::DataReference&);
 
+    enum class ShouldAcknowledgeWhenReadyToSuspend { No, Yes };
+    void prepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend);
+
     // ChildProcess
     virtual void initializeProcess(const ChildProcessInitializationParameters&) override;
     virtual void initializeProcessName(const ChildProcessInitializationParameters&) override;
@@ -307,6 +311,7 @@ private:
 
     // Implemented in generated WebProcessMessageReceiver.cpp
     void didReceiveWebProcessMessage(IPC::Connection&, IPC::MessageDecoder&);
+    void didReceiveSyncWebProcessMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
 
     // WebOriginDataManagerSupplement
     virtual void getOrigins(WKOriginDataTypes, std::function<void (const Vector<SecurityOriginData>&)> completion) override;
@@ -381,6 +386,8 @@ private:
 #if PLATFORM(IOS)
     WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
 #endif
+
+    ShouldAcknowledgeWhenReadyToSuspend m_shouldAcknowledgeWhenReadyToSuspend;
 };
 
 } // namespace WebKit
