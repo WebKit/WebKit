@@ -5,16 +5,14 @@ import os
 import subprocess
 import time
 
-# We assume that this handle can only be used when the platform is OSX.
-from AppKit import NSRunningApplication
-from browser_driver import BrowserDriver
+from osx_browser_driver import OSXBrowserDriver
 from webkitpy.benchmark_runner.utils import forceRemove
 
 
 _log = logging.getLogger(__name__)
 
 
-class OSXSafariDriver(BrowserDriver):
+class OSXSafariDriver(OSXBrowserDriver):
 
     def prepareEnv(self):
         self.safariProcess = None
@@ -43,10 +41,7 @@ class OSXSafariDriver(BrowserDriver):
         subprocess.Popen(['open', url])
 
     def closeBrowsers(self):
-        _log.info('Closing all existing safari processes')
-        safariInstances = NSRunningApplication.runningApplicationsWithBundleIdentifier_('com.apple.Safari')
-        for safariInstance in safariInstances:
-            safariInstance.terminate()
+        self.terminateProcesses('com.apple.Safari')
         if self.safariProcess:
             _log.info('Safari process console output:\nstdout: %s\nstderr: %s' % self.safariProcess.communicate())
             if self.safariProcess.returncode:

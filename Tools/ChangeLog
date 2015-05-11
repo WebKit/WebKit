@@ -1,3 +1,37 @@
+2015-05-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-benchmark should support Chrome Canary and Firefox Nightly
+        https://bugs.webkit.org/show_bug.cgi?id=144850
+
+        Reviewed by Darin Adler.
+
+        Added the support for Chrome Canary, Firefox (release), and Firefox Nightly.
+
+        This patch also extracts OSXBrowserDriver to launch and terminate processes on OS X.
+
+        * Scripts/webkitpy/benchmark_runner/browser_driver/browser_drivers.json:
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_browser_driver.py: Added.
+        (OSXBrowserDriver):
+        (OSXBrowserDriver.prepareEnv): Extracted from ChromeBrowserDriver.prepareEnv.
+        (OSXBrowserDriver.closeBrowsers): Ditto.
+        (OSXBrowserDriver.launchProcess): Ditto.
+        (OSXBrowserDriver.terminateProcesses): Ditto.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_chrome_driver.py:
+        (OSXChromeDriver): Removed the unused self.chromePreferences.
+        (OSXChromeDriver.prepareEnv): Moved to OSXBrowserDriver.
+        (OSXChromeDriver.closeBrowsers): Ditto.
+        (OSXChromeDriver.launchUrl):
+        (OSXChromeCanaryDriver): Added.
+        (OSXChromeCanaryDriver.launchUrl):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_firefox_driver.py: Added.
+        (OSXFirefoxDriver): Added.
+        (OSXFirefoxDriver.launchUrl):
+        (OSXFirefoxNightlyDriver): Added.
+        (OSXFirefoxNightlyDriver.launchUrl):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        (OSXSafariDriver):
+        (OSXSafariDriver.closeBrowsers):
+
 2015-05-11  Tim Horton  <timothy_horton@apple.com>
 
         Page overlay action context override should indicate the source of the request
