@@ -93,6 +93,38 @@ static const char* copyASanDynamicLibraryPath()
 }
 #endif
 
+#if PLATFORM(MAC)
+static RetainPtr<NSString> computeProcessShimPath(const ProcessLauncher::LaunchOptions& launchOptions, NSBundle *webKitBundle)
+{
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    if (launchOptions.processType == ProcessLauncher::PluginProcess) {
+        NSString *processPath = [webKitBundle pathForAuxiliaryExecutable:@"PluginProcess.app"];
+        NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
+
+        return [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"PluginProcessShim.dylib"];
+    }
+#endif
+
+#if ENABLE(NETWORK_PROCESS)
+    if (launchOptions.processType == ProcessLauncher::NetworkProcess) {
+        NSString *processPath = [webKitBundle pathForAuxiliaryExecutable:@"NetworkProcess.app"];
+        NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
+
+        return [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"SecItemShim.dylib"];
+    }
+#endif
+
+    if (launchOptions.processType == ProcessLauncher::WebProcess) {
+        NSString *processPath = [webKitBundle pathForAuxiliaryExecutable:@"WebProcess.app"];
+        NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
+
+        return [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"WebProcessShim.dylib"];
+    }
+
+    return nil;
+}
+#endif
+
 static void addDYLDEnvironmentAdditions(const ProcessLauncher::LaunchOptions& launchOptions, bool isWebKitDevelopmentBuild, EnvironmentVariables& environmentVariables)
 {
     DynamicLinkerEnvironmentExtractor environmentExtractor([[NSBundle mainBundle] executablePath], _NSGetMachExecuteHeader()->cputype);
@@ -107,30 +139,6 @@ static void addDYLDEnvironmentAdditions(const ProcessLauncher::LaunchOptions& la
     if (isWebKitDevelopmentBuild)
         environmentVariables.appendValue("DYLD_FRAMEWORK_PATH", [frameworksPath fileSystemRepresentation], ':');
 
-    NSString *processShimPathNSString = nil;
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    if (launchOptions.processType == ProcessLauncher::PluginProcess) {
-        NSString *processPath = [webKitBundle pathForAuxiliaryExecutable:@"PluginProcess.app"];
-        NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
-
-        processShimPathNSString = [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"PluginProcessShim.dylib"];
-    } else
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
-#if ENABLE(NETWORK_PROCESS)
-    if (launchOptions.processType == ProcessLauncher::NetworkProcess) {
-        NSString *processPath = [webKitBundle pathForAuxiliaryExecutable:@"NetworkProcess.app"];
-        NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
-
-        processShimPathNSString = [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"SecItemShim.dylib"];
-    } else
-#endif // ENABLE(NETWORK_PROCESS)
-    if (launchOptions.processType == ProcessLauncher::WebProcess) {
-        NSString *processPath = [webKitBundle pathForAuxiliaryExecutable:@"WebProcess.app"];
-        NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
-
-        processShimPathNSString = [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"WebProcessShim.dylib"];
-    }
-
 #if ASAN_ENABLED
     static const char* asanLibraryPath = copyASanDynamicLibraryPath();
     ASSERT(asanLibraryPath); // ASan runtime library was not found in the current process. This code may need to be updated if the library name has changed.
@@ -139,14 +147,15 @@ static void addDYLDEnvironmentAdditions(const ProcessLauncher::LaunchOptions& la
         environmentVariables.appendValue("DYLD_INSERT_LIBRARIES", asanLibraryPath, ':');
 #endif
 
-    // Make sure that the shim library file exists and insert it.
-    if (processShimPathNSString) {
-        const char* processShimPath = [processShimPathNSString fileSystemRepresentation];
+#if PLATFORM(MAC)
+    if (auto shimPath = computeProcessShimPath(launchOptions, webKitBundle)) {
+        // Make sure that the shim library file exists and insert it.
+        const char* processShimPath = [shimPath fileSystemRepresentation];
         struct stat statBuf;
         if (stat(processShimPath, &statBuf) == 0 && (statBuf.st_mode & S_IFMT) == S_IFREG)
             environmentVariables.appendValue("DYLD_INSERT_LIBRARIES", processShimPath, ':');
     }
-
+#endif
 }
 
 typedef void (ProcessLauncher::*DidFinishLaunchingProcessFunction)(PlatformProcessIdentifier, IPC::Connection::Identifier);
