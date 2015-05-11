@@ -290,6 +290,18 @@ static void recomputeDependentOptions()
 
     if (Option(Options::jitPolicyScaleID).isOverridden())
         scaleJITPolicy();
+    
+    if (Options::forceEagerCompilation()) {
+        Options::thresholdForJITAfterWarmUp() = 10;
+        Options::thresholdForJITSoon() = 10;
+        Options::thresholdForOptimizeAfterWarmUp() = 20;
+        Options::thresholdForOptimizeAfterLongWarmUp() = 20;
+        Options::thresholdForOptimizeSoon() = 20;
+        Options::thresholdForFTLOptimizeAfterWarmUp() = 20;
+        Options::thresholdForFTLOptimizeSoon() = 20;
+        Options::maximumEvalCacheableSourceLength() = 150000;
+        Options::enableConcurrentJIT() = false;
+    }
 
     // Compute the maximum value of the reoptimization retry counter. This is simply
     // the largest value at which we don't overflow the execute counter, when using it
