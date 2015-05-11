@@ -31,9 +31,11 @@
 
 #include "AuthenticationChallenge.h"
 #include "CookieJarSoup.h"
+#include "FileSystem.h"
 #include "GUniquePtrSoup.h"
 #include "Logging.h"
 #include "ResourceHandle.h"
+#include <glib/gstdio.h>
 #include <libsoup/soup.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -163,6 +165,37 @@ SoupCache* SoupNetworkSession::cache() const
 {
     SoupSessionFeature* soupCache = soup_session_get_feature(m_soupSession.get(), SOUP_TYPE_CACHE);
     return soupCache ? SOUP_CACHE(soupCache) : nullptr;
+}
+
+static inline bool stringIsNumeric(const char* str)
+{
+    while (*str) {
+        if (!g_ascii_isdigit(*str))
+            return false;
+        str++;
+    }
+    return true;
+}
+
+void SoupNetworkSession::clearCache(const String& cacheDirectory)
+{
+    CString cachePath = fileSystemRepresentation(cacheDirectory);
+    GUniquePtr<char> cacheFile(g_build_filename(cachePath.data(), "soup.cache2", nullptr));
+    if (!g_file_test(cacheFile.get(), G_FILE_TEST_IS_REGULAR))
+        return;
+
+    GUniquePtr<GDir> dir(g_dir_open(cachePath.data(), 0, nullptr));
+    if (!dir)
+        return;
+
+    while (const char* name = g_dir_read_name(dir.get())) {
+        if (!g_str_has_prefix(name, "soup.cache") && !stringIsNumeric(name))
+            continue;
+
+        GUniquePtr<gchar> filename(g_build_filename(cachePath.data(), name, nullptr));
+        if (g_file_test(filename.get(), G_FILE_TEST_IS_REGULAR))
+            g_unlink(filename.get());
+    }
 }
 
 void SoupNetworkSession::setSSLPolicy(SSLPolicy flags)

@@ -60,6 +60,7 @@ public:
 
     void setCache(SoupCache*);
     SoupCache* cache() const;
+    static void clearCache(const String& cacheDirectory);
 
     void setSSLPolicy(SSLPolicy);
     SSLPolicy sslPolicy() const;
