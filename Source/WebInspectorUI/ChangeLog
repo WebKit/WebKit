@@ -1,3 +1,22 @@
+2015-05-11  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: NavigationSidebarPanel leaks some event listeners
+        https://bugs.webkit.org/show_bug.cgi?id=144523
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel):
+        (WebInspector.NavigationSidebarPanel.prototype.closed):
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype.closed):
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WebInspector.SearchSidebarPanel.prototype.closed):
+        * UserInterface/Views/StorageSidebarPanel.js:
+        (WebInspector.StorageSidebarPanel.prototype.closed):
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.prototype.closed):
+
 2015-05-10  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: In the console, show function name next to the source link
