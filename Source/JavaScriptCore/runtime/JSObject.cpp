@@ -968,7 +968,7 @@ void JSObject::convertInt32ForValue(VM& vm, JSValue value)
 {
     ASSERT(!value.isInt32());
     
-    if (value.isDouble()) {
+    if (value.isDouble() && !std::isnan(value.asDouble())) {
         convertInt32ToDouble(vm);
         return;
     }
