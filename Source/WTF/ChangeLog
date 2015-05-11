@@ -1,3 +1,27 @@
+2015-05-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WorkQueue objects are not released
+        https://bugs.webkit.org/show_bug.cgi?id=144824
+
+        Reviewed by Žan Doberšek.
+
+        Do not keep a reference of the WorkQueue for the entire life of
+        its worker thread, since every task scheduled on the WorkQueue
+        already takes a reference. Instead, take a reference of the main
+        loop to make sure that when the worker thread starts, the main
+        loop hasn't been released to avoid runtime warnings (see
+        webkit.org/b/140998). Also removed the g_main_context_pop_thread_default()
+        from the thread body, since the thread-specific context queue will
+        be freed anyway when the thread exits.
+        If the WorkQueue is released early, before the thread has started,
+        schedule a main loop quit in the context, to make sure it will
+        be the first thing run by the main loop and the thread will exit.
+
+        * wtf/WorkQueue.h: Remove unused event loop mutex.
+        * wtf/gtk/WorkQueueGtk.cpp:
+        (WTF::WorkQueue::platformInitialize):
+        (WTF::WorkQueue::platformInvalidate):
+
 2015-05-09  Yoav Weiss  <yoav@yoav.ws>
 
         Remove the PICTURE_SIZES build flag

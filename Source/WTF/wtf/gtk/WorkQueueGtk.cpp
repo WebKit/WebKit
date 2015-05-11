@@ -55,11 +55,10 @@ void WorkQueue::platformInitialize(const char* name, Type, QOS)
     if (strlen(threadName) > kVisualStudioThreadNameLimit)
         threadName += strlen(threadName) - kVisualStudioThreadNameLimit;
 
-    RefPtr<WorkQueue> protector(this);
-    m_workQueueThread = createThread(threadName, [protector] {
-        g_main_context_push_thread_default(protector->m_eventContext.get());
-        g_main_loop_run(protector->m_eventLoop.get());
-        g_main_context_pop_thread_default(protector->m_eventContext.get());
+    GRefPtr<GMainLoop> eventLoop(m_eventLoop.get());
+    m_workQueueThread = createThread(threadName, [eventLoop] {
+        g_main_context_push_thread_default(g_main_loop_get_context(eventLoop.get()));
+        g_main_loop_run(eventLoop.get());
     });
 }
 
@@ -70,14 +69,19 @@ void WorkQueue::platformInvalidate()
         m_workQueueThread = 0;
     }
 
-    MutexLocker locker(m_eventLoopLock);
     if (m_eventLoop) {
         if (g_main_loop_is_running(m_eventLoop.get()))
             g_main_loop_quit(m_eventLoop.get());
-        m_eventLoop.clear();
+        else {
+            // The thread hasn't started yet, so schedule a main loop quit to ensure the thread finishes.
+            GMainLoop* eventLoop = m_eventLoop.get();
+            GMainLoopSource::scheduleAndDeleteOnDestroy("[WebKit] WorkQueue quit main loop", [eventLoop] { g_main_loop_quit(eventLoop); },
+                G_PRIORITY_HIGH, nullptr, m_eventContext.get());
+        }
+        m_eventLoop = nullptr;
     }
 
-    m_eventContext.clear();
+    m_eventContext = nullptr;
 }
 
 void WorkQueue::registerSocketEventHandler(int fileDescriptor, std::function<void ()> function, std::function<void ()> closeFunction)
