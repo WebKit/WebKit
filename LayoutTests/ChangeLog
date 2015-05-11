@@ -1,3 +1,19 @@
+2015-05-10  Filip Pizlo  <fpizlo@apple.com>
+
+        We shouldn't promote LoadVarargs to a sequence of GetStacks and PutStacks if doing so would exceed the LoadVarargs' limit
+        https://bugs.webkit.org/show_bug.cgi?id=144851
+
+        Reviewed by Michael Saboff.
+
+        * js/regress/load-varargs-elimination-expected.txt: Added.
+        * js/regress/load-varargs-elimination.html: Added.
+        * js/regress/script-tests/load-varargs-elimination.js: Added.
+        (foo):
+        (bar):
+        (baz):
+        * js/regress/sink-huge-activation-expected.txt: Added.
+        * js/regress/sink-huge-activation.html: Added.
+
 2015-05-11  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
 
         [GTK] Gardening 11th May.

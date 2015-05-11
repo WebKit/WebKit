@@ -450,7 +450,9 @@ private:
                     
                     LoadVarargsData* varargsData = node->loadVarargsData();
                     InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame;
-                    if (inlineCallFrame && !inlineCallFrame->isVarargs()) {
+                    if (inlineCallFrame
+                        && !inlineCallFrame->isVarargs()
+                        && inlineCallFrame->arguments.size() - varargsData->offset <= varargsData->limit) {
                         Node* argumentCount = insertionSet.insertConstant(
                             nodeIndex, node->origin,
                             jsNumber(inlineCallFrame->arguments.size() - varargsData->offset));

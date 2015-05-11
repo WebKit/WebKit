@@ -1,3 +1,40 @@
+2015-05-10  Filip Pizlo  <fpizlo@apple.com>
+
+        We shouldn't promote LoadVarargs to a sequence of GetStacks and PutStacks if doing so would exceed the LoadVarargs' limit
+        https://bugs.webkit.org/show_bug.cgi?id=144851
+
+        Reviewed by Michael Saboff.
+        
+        LoadVarargs loads arguments from some object and puts them on the stack. The region of
+        stack is controlled by a bunch of meta-data, including InlineCallFrame. InlineCallFrame
+        shouldn't really be edited after ByteCodeParser, so we cannot convert LoadVarargs to
+        something that uses more stack than the LoadVarargs wanted to.
+        
+        This check was missing in the ArgumentsEliminationPhase's LoadVarargs->GetStack+PutStack
+        promoter. This is an important promotion rule for performance, and in cases where we are
+        compiling truly hot code, the LoadVarargs limit will be at least as big as the length of
+        the phantom arguments array that this phase sees. The LoadVarargs limit is based on
+        profiling and the phantom arguments array is a proof; in most cases the profiling is more
+        conservative.
+        
+        But, you could write some crazy code where the statically obvious arguments array value is
+        bigger than what the profiling would have told you. When this happens, this promotion
+        effectively removes a bounds check. This either results in us clobbering a bunch of stack,
+        or it means that we never initialize a region of the stack that a later operation will read
+        (the uninitialization happens because PutStackSinkingPhase removes PutStacks that appear
+        unnecessary, and a GetMyArgumentByVal will claim not to use the region of the stack outside
+        the original LoadVarargs limit).
+        
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * tests/stress/load-varargs-elimination-bounds-check-barely.js: Added.
+        (foo):
+        (bar):
+        (baz):
+        * tests/stress/load-varargs-elimination-bounds-check.js: Added.
+        (foo):
+        (bar):
+        (baz):
+
 2015-05-11  Andreas Kling  <akling@apple.com>
 
         JSON.stringify shouldn't use generic get() to access Array.length
