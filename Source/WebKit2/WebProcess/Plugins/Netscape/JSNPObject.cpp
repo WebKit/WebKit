@@ -132,7 +132,7 @@ JSValue JSNPObject::callMethod(ExecState* exec, NPIdentifier methodName)
         NPRuntimeObjectMap::moveGlobalExceptionToExecState(exec);
     }
 
-    // Release all arguments;
+    // Release all arguments.
     for (size_t i = 0; i < argumentCount; ++i)
         releaseNPVariantValue(&arguments[i]);
 
