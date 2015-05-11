@@ -1,5 +1,27 @@
 2015-05-11  Zan Dobersek  <zdobersek@igalia.com>
 
+        Reduce TransformationMatrix copies in WebKitCSSMatrix operations
+        https://bugs.webkit.org/show_bug.cgi?id=144795
+
+        Reviewed by Darin Adler.
+
+        Instead of copying the TransformationMatrix member, performing
+        the operation on it and then copying it again when creating
+        the new WebKitCSSMatrix object, copy it just once by first
+        creating the new WebKitCSSMatrix object and then performing
+        the operation on that object's TransformationMatrix directly.
+
+        * css/WebKitCSSMatrix.cpp:
+        (WebCore::WebKitCSSMatrix::multiply):
+        (WebCore::WebKitCSSMatrix::translate):
+        (WebCore::WebKitCSSMatrix::scale):
+        (WebCore::WebKitCSSMatrix::rotate):
+        (WebCore::WebKitCSSMatrix::rotateAxisAngle):
+        (WebCore::WebKitCSSMatrix::skewX):
+        (WebCore::WebKitCSSMatrix::skewY):
+
+2015-05-11  Zan Dobersek  <zdobersek@igalia.com>
+
         Add missing vtable override specifiers under Source/WebCore/loader, Source/WebCore/xml
         https://bugs.webkit.org/show_bug.cgi?id=144793
 
