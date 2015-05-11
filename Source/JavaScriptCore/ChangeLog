@@ -1,3 +1,20 @@
+2015-05-08  Filip Pizlo  <fpizlo@apple.com>
+
+        CPS rethreading phase's flush detector flushes way too many SetLocals
+        https://bugs.webkit.org/show_bug.cgi?id=144819
+
+        Reviewed by Geoffrey Garen.
+        
+        After probably unrelated changes, this eventually caused some arguments elimination to stop
+        working because it would cause more SetLocals to turn into PutStacks. But it was a bug for
+        a long time. Basically, we don't want the children of a SetLocal to be flushed. Flushing is
+        meant to only affect the SetLocal itself.
+        
+        This is a speed-up on Octane/earley.
+
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        (JSC::DFG::CPSRethreadingPhase::computeIsFlushed):
+
 2015-05-11  Filip Pizlo  <fpizlo@apple.com>
 
         gmail and google maps fail to load with eager compilation: Failed to insert inline cache for varargs call (specifically, CallForwardVarargs) because we thought the size would be 250 but it ended up being 262 prior to compaction.
