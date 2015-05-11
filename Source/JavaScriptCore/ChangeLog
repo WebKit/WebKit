@@ -1,3 +1,18 @@
+2015-05-11  Filip Pizlo  <fpizlo@apple.com>
+
+        gmail and google maps fail to load with eager compilation: Failed to insert inline cache for varargs call (specifically, CallForwardVarargs) because we thought the size would be 250 but it ended up being 262 prior to compaction.
+        https://bugs.webkit.org/show_bug.cgi?id=144854
+
+        Reviewed by Oliver Hunt.
+        
+        This is easy: just lift the threshold. Also remove the need for some duplicate thresholds.
+        It used to be that Construct required less code, but that's not the case for now.
+
+        * ftl/FTLInlineCacheSize.cpp:
+        (JSC::FTL::sizeOfCallForwardVarargs):
+        (JSC::FTL::sizeOfConstructVarargs):
+        (JSC::FTL::sizeOfConstructForwardVarargs):
+
 2015-05-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r180595): same-callee profiling no longer works

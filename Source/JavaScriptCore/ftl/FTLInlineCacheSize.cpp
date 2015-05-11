@@ -87,26 +87,18 @@ size_t sizeOfCallForwardVarargs()
 #if CPU(ARM64)
     return 312;
 #else
-    return 250;
+    return 262;
 #endif
 }
 
 size_t sizeOfConstructVarargs()
 {
-#if CPU(ARM64)
-    return 332;
-#else
-    return 275;
-#endif
+    return sizeOfCallVarargs(); // Should be the same size.
 }
 
 size_t sizeOfConstructForwardVarargs()
 {
-#if CPU(ARM64)
-    return 312;
-#else
-    return 250;
-#endif
+    return sizeOfCallForwardVarargs(); // Should be the same size.
 }
 
 size_t sizeOfIn()
