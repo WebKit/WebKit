@@ -1,3 +1,19 @@
+2015-05-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        Add missing vtable override specifiers under Source/WebCore/accessibility, Source/WebCore/dom
+        https://bugs.webkit.org/show_bug.cgi?id=144792
+
+        Reviewed by Darin Adler.
+
+        Update virtual method overrides under Source/WebCore/accessibility
+        and Source/WebCore/dom which are missing the override specifier.
+
+        * accessibility/AccessibilityMockObject.h:
+        (WebCore::AccessibilityMockObject::isDetachedFromParent): Deleted.
+        * accessibility/AccessibilityRenderObject.h:
+        * dom/DecodedDataDocumentParser.h:
+        * dom/TouchEvent.h:
+
 2015-05-10  Zan Dobersek  <zdobersek@igalia.com>
 
         Have MediaStream::getAudioTracks(), MediaStream::getVideoTracks() return const references

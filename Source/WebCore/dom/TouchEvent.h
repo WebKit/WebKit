@@ -71,7 +71,7 @@ public:
 
     virtual bool isTouchEvent() const override;
 
-    virtual EventInterface eventInterface() const;
+    virtual EventInterface eventInterface() const override;
 
 private:
     TouchEvent();

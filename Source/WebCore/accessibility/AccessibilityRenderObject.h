@@ -265,8 +265,8 @@ private:
 #if PLATFORM(COCOA)
     void updateAttachmentViewParents();
 #endif
-    virtual String expandedTextValue() const;
-    virtual bool supportsExpandedTextValue() const;
+    virtual String expandedTextValue() const override;
+    virtual bool supportsExpandedTextValue() const override;
     void updateRoleAfterChildrenCreation();
     
     void ariaSelectedRows(AccessibilityChildrenVector&);

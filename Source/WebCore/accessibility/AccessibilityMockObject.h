@@ -49,7 +49,7 @@ protected:
 
 private:
     virtual bool isMockObject() const override final { return true; }
-    virtual bool isDetachedFromParent() { return !m_parent; }
+    virtual bool isDetachedFromParent() override { return !m_parent; }
 
     virtual bool computeAccessibilityIsIgnored() const override;
 };
