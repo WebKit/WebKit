@@ -102,12 +102,12 @@ if (OPENGL_FOUND)
     CMAKE_POP_CHECK_STATE()
 
     if (GLX_FOUND)
-        list(APPEND CAIRO_GL_COMPONENTS cairo-glx)
+        list(APPEND CAIROGL_COMPONENTS cairo-glx)
     endif ()
     if (EGL_FOUND)
-        list(APPEND CAIRO_GL_COMPONENTS cairo-egl)
+        list(APPEND CAIROGL_COMPONENTS cairo-egl)
     endif ()
-    find_package(CairoGL 1.10.2 COMPONENTS ${CAIRO_GL_COMPONENTS})
+    find_package(CairoGL 1.10.2 COMPONENTS ${CAIROGL_COMPONENTS})
 endif ()
 
 # Normally we do not set the value of options automatically. However, CairoGL is special. Currently
@@ -119,7 +119,7 @@ endif ()
 # EGL is not, and ENABLE_X11_TARGET is OFF, this guess is wrong and the user must override it. We
 # can't check ENABLE_X11_TARGET at this point because we don't know whether it's enabled until
 # WEBKIT_OPTION_END has been called, and at that point it's too late to change default values.
-WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ACCELERATED_2D_CANVAS PUBLIC ${CAIRO_GL_FOUND})
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ACCELERATED_2D_CANVAS PUBLIC ${CAIROGL_FOUND})
 
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_CREDENTIAL_STORAGE PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_DRAG_SUPPORT PUBLIC ON)

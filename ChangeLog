@@ -1,5 +1,17 @@
 2015-05-10  Philip Chimento  <philip.chimento@gmail.com>
 
+        CMake defines CAIROGL_FOUND, not CAIRO_GL_FOUND
+        https://bugs.webkit.org/show_bug.cgi?id=144846
+
+        Reviewed by Martin Robinson.
+
+        * Source/cmake/FindCairoGL.cmake: Use CAIROGL_* instead of
+        CAIRO_GL_* throughout, because find_package will define
+        CAIROGL_FOUND.
+        * Source/cmake/OptionsGTK.cmake: Ditto.
+
+2015-05-10  Philip Chimento  <philip.chimento@gmail.com>
+
         [CMake] Some macros need to be defined/undefined, rather than ON/OFF
         https://bugs.webkit.org/show_bug.cgi?id=144845
 

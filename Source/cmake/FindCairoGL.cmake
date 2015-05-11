@@ -1,9 +1,9 @@
 # - Try to find CairoGL
 # Once done, this will define
 #
-#  CAIRO_GL_FOUND - system has CairoGL
-#  CAIRO_GL_INCLUDE_DIRS - the CairoGL include directories
-#  CAIRO_GL_LIBRARIES - link these to use CairoGL
+#  CAIROGL_FOUND - system has CairoGL
+#  CAIROGL_INCLUDE_DIRS - the CairoGL include directories
+#  CAIROGL_LIBRARIES - link these to use CairoGL
 #
 # Copyright (C) 2014 Igalia S.L.
 #
@@ -29,18 +29,18 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 find_package(PkgConfig)
-pkg_check_modules(CAIRO_GL cairo-gl)
+pkg_check_modules(CAIROGL cairo-gl)
 
 # At the moment CairoGL does not add any extra cflags and libraries, so we can
-# safely ignore CAIRO_GL_LIBRARIES and CAIRO_GL_INCLUDE_DIRS for the moment.
+# safely ignore CAIROGL_LIBRARIES and CAIROGL_INCLUDE_DIRS for the moment.
 foreach (_component ${CairoGL_FIND_COMPONENTS})
     string(TOUPPER ${_component} _UPPER_NAME)
     string(REGEX REPLACE "-" "_" _UPPER_NAME ${_UPPER_NAME})
     pkg_check_modules(${_UPPER_NAME} ${_component})
-    set(CAIRO_GL_INCLUDE_DIRS ${CAIRO_GL_INCLUDE_DIRS} ${_UPPER_NAME}_INCLUDE_DIRS)
-    set(CAIRO_GL_LIBRARIES ${CAIRO_GL_LIBRARIES} ${_UPPER_NAME}_LIBRARIES)
+    set(CAIROGL_INCLUDE_DIRS ${CAIROGL_INCLUDE_DIRS} ${_UPPER_NAME}_INCLUDE_DIRS)
+    set(CAIROGL_LIBRARIES ${CAIROGL_LIBRARIES} ${_UPPER_NAME}_LIBRARIES)
 endforeach ()
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(CairoGL DEFAULT_MSG CAIRO_GL_INCLUDE_DIRS CAIRO_GL_LIBRARIES)
+find_package_handle_standard_args(CairoGL DEFAULT_MSG CAIROGL_INCLUDE_DIRS CAIROGL_LIBRARIES)
 
