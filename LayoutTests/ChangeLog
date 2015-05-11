@@ -1,3 +1,15 @@
+2015-04-17  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Large values for line-height cause integer overflow in RenderStyle::computedLineHeight
+        https://bugs.webkit.org/show_bug.cgi?id=143863
+
+        Reviewed by Rob Buis.
+
+        Simplified test from a fuzzer.
+
+        * fast/shapes/shape-outside-floats/shape-outside-negative-line-height-crash-expected.txt: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-negative-line-height-crash.html: Added.
+
 2015-04-15  Jordan Harband  <ljharb@gmail.com>
 
         String.prototype.startsWith/endsWith/includes have wrong length in r182673
