@@ -1,3 +1,17 @@
+2015-05-11  Yoav Weiss  <yoav@yoav.ws>
+
+        Add srcset, sizes and picture to the features json
+        https://bugs.webkit.org/show_bug.cgi?id=144862
+
+        Reviewed by Benjamin Poulain.
+
+        Add the srcset w descriptor and sizes attribute as a new feature in the JSON file,
+        as well as adding the picture element and srcset's x descriptor as seperate features.
+
+        No new tests, since no new functionality added.
+
+        * features.json:
+
 2015-05-11  Chris Dumez  <cdumez@apple.com>
 
         Fix checkingLogicalHeight initialization in Document::updateLayoutIfDimensionsOutOfDate()
