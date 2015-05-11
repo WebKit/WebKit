@@ -1,3 +1,13 @@
+2015-05-11  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Crash at WebCore::AccessibilityMenuList::addChildren()
+        https://bugs.webkit.org/show_bug.cgi?id=144860
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/menu-list-crash2-expected.txt: Added.
+        * accessibility/menu-list-crash2.html: Added.
+
 2015-05-11  Marcos Chavarría Teijeiro  <chavarria1991@gmail.com>
 
         [GTK] Gardening 7th May.

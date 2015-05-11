@@ -1,3 +1,17 @@
+2015-05-11  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Crash at WebCore::AccessibilityMenuList::addChildren()
+        https://bugs.webkit.org/show_bug.cgi?id=144860
+
+        Reviewed by Mario Sanchez Prada.
+
+        There were some unsafe pointer accesses in AccessibilityMenuList code that needed to be cleaned up.
+
+        Test: accessibility/menu-list-crash2.html
+
+        * accessibility/AccessibilityMenuList.cpp:
+        (WebCore::AccessibilityMenuList::addChildren):
+
 2015-05-11  Przemyslaw Szymanski  <p.szymanski3@samsung.com>
 
         [WebGL] Unnecessary condition check in the while loop
