@@ -41,7 +41,7 @@ class Frame;
 
 class Screen final : public ScriptWrappable, public RefCounted<Screen>, public DOMWindowProperty {
 public:
-    static PassRefPtr<Screen> create(Frame* frame) { return adoptRef(new Screen(frame)); }
+    static Ref<Screen> create(Frame* frame) { return adoptRef(*new Screen(frame)); }
 
     unsigned height() const;
     unsigned width() const;

@@ -43,7 +43,7 @@ class Frame;
 
 class PerformanceNavigation : public RefCounted<PerformanceNavigation>, public DOMWindowProperty {
 public:
-    static PassRefPtr<PerformanceNavigation> create(Frame* frame) { return adoptRef(new PerformanceNavigation(frame)); }
+    static Ref<PerformanceNavigation> create(Frame* frame) { return adoptRef(*new PerformanceNavigation(frame)); }
 
     enum PerformanceNavigationType {
         TYPE_NAVIGATE,

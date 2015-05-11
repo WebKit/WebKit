@@ -45,7 +45,7 @@ class PerformanceEntry;
 
 class PerformanceEntryList : public RefCounted<PerformanceEntryList> {
 public:
-    static PassRefPtr<PerformanceEntryList> create() { return adoptRef(new PerformanceEntryList); }
+    static Ref<PerformanceEntryList> create() { return adoptRef(*new PerformanceEntryList); }
     ~PerformanceEntryList();
 
     unsigned length() const;

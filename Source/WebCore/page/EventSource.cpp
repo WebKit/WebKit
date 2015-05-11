@@ -72,7 +72,7 @@ inline EventSource::EventSource(ScriptExecutionContext& context, const URL& url,
     eventSourceInit.get("withCredentials", m_withCredentials);
 }
 
-PassRefPtr<EventSource> EventSource::create(ScriptExecutionContext& context, const String& url, const Dictionary& eventSourceInit, ExceptionCode& ec)
+RefPtr<EventSource> EventSource::create(ScriptExecutionContext& context, const String& url, const Dictionary& eventSourceInit, ExceptionCode& ec)
 {
     if (url.isEmpty()) {
         ec = SYNTAX_ERR;

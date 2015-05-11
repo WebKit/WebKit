@@ -66,7 +66,7 @@ WebViewGroup* WebViewGroup::get(const String& name)
 WebViewGroup::WebViewGroup(const String& name, const String& localStorageDatabasePath)
     : m_name(name)
     , m_localStorageDatabasePath(localStorageDatabasePath)
-    , m_userContentController(*UserContentController::create())
+    , m_userContentController(UserContentController::create())
     , m_visitedLinkStore(WebVisitedLinkStore::create())
 {
 }

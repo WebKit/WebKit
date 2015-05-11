@@ -213,9 +213,9 @@ Settings::~Settings()
 {
 }
 
-PassRefPtr<Settings> Settings::create(Page* page)
+Ref<Settings> Settings::create(Page* page)
 {
-    return adoptRef(new Settings(page));
+    return adoptRef(*new Settings(page));
 }
 
 SETTINGS_SETTER_BODIES

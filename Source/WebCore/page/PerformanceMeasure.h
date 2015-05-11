@@ -36,7 +36,7 @@ namespace WebCore {
 
 class PerformanceMeasure : public PerformanceEntry {
 public:
-    static PassRefPtr<PerformanceMeasure> create(const String& name, double startTime, double duration) { return adoptRef(new PerformanceMeasure(name, startTime, duration)); }
+    static Ref<PerformanceMeasure> create(const String& name, double startTime, double duration) { return adoptRef(*new PerformanceMeasure(name, startTime, duration)); }
 
     virtual bool isMeasure() { return true; }
 

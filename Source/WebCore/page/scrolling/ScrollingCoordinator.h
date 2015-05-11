@@ -106,7 +106,7 @@ struct ScrollableAreaParameters {
 
 class ScrollingCoordinator : public ThreadSafeRefCounted<ScrollingCoordinator> {
 public:
-    static PassRefPtr<ScrollingCoordinator> create(Page*);
+    static Ref<ScrollingCoordinator> create(Page*);
     virtual ~ScrollingCoordinator();
 
     WEBCORE_EXPORT virtual void pageDestroyed();

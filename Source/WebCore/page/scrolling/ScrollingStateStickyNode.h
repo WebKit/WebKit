@@ -39,9 +39,9 @@ class StickyPositionViewportConstraints;
 
 class ScrollingStateStickyNode final : public ScrollingStateNode {
 public:
-    static PassRefPtr<ScrollingStateStickyNode> create(ScrollingStateTree&, ScrollingNodeID);
+    static Ref<ScrollingStateStickyNode> create(ScrollingStateTree&, ScrollingNodeID);
 
-    virtual PassRefPtr<ScrollingStateNode> clone(ScrollingStateTree&) override;
+    virtual Ref<ScrollingStateNode> clone(ScrollingStateTree&) override;
 
     virtual ~ScrollingStateStickyNode();
 

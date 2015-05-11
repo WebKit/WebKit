@@ -37,7 +37,7 @@ namespace WebCore {
 
 class ScrollingTreeFrameScrollingNodeIOS : public ScrollingTreeFrameScrollingNode {
 public:
-    WEBCORE_EXPORT static PassRefPtr<ScrollingTreeFrameScrollingNodeIOS> create(ScrollingTree&, ScrollingNodeID);
+    WEBCORE_EXPORT static Ref<ScrollingTreeFrameScrollingNodeIOS> create(ScrollingTree&, ScrollingNodeID);
     virtual ~ScrollingTreeFrameScrollingNodeIOS();
 
 protected:

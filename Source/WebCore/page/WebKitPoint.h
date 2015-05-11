@@ -34,13 +34,13 @@ namespace WebCore {
     class WebKitPoint : public RefCounted<WebKitPoint> {
     public:
 
-        static PassRefPtr<WebKitPoint> create()
+        static Ref<WebKitPoint> create()
         {
-            return adoptRef(new WebKitPoint());
+            return adoptRef(*new WebKitPoint);
         }
-        static PassRefPtr<WebKitPoint> create(float x, float y)
+        static Ref<WebKitPoint> create(float x, float y)
         {
-            return adoptRef(new WebKitPoint(x, y));
+            return adoptRef(*new WebKitPoint(x, y));
         }
 
         float x() const { return m_x; }

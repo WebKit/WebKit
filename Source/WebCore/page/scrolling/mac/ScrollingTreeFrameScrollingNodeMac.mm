@@ -49,9 +49,9 @@ namespace WebCore {
 
 static void logThreadedScrollingMode(unsigned synchronousScrollingReasons);
 
-PassRefPtr<ScrollingTreeFrameScrollingNode> ScrollingTreeFrameScrollingNodeMac::create(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
+Ref<ScrollingTreeFrameScrollingNode> ScrollingTreeFrameScrollingNodeMac::create(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
 {
-    return adoptRef(new ScrollingTreeFrameScrollingNodeMac(scrollingTree, nodeID));
+    return adoptRef(*new ScrollingTreeFrameScrollingNodeMac(scrollingTree, nodeID));
 }
 
 ScrollingTreeFrameScrollingNodeMac::ScrollingTreeFrameScrollingNodeMac(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)

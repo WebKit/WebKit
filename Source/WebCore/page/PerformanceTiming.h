@@ -47,7 +47,7 @@ class ResourceLoadTiming;
 
 class PerformanceTiming : public RefCounted<PerformanceTiming>, public DOMWindowProperty {
 public:
-    static PassRefPtr<PerformanceTiming> create(Frame* frame) { return adoptRef(new PerformanceTiming(frame)); }
+    static Ref<PerformanceTiming> create(Frame* frame) { return adoptRef(*new PerformanceTiming(frame)); }
 
     unsigned long long navigationStart() const;
     unsigned long long unloadEventStart() const;

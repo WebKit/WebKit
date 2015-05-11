@@ -39,7 +39,7 @@ class AsyncScrollingCoordinator;
 
 class ScrollingTreeIOS : public ScrollingTree {
 public:
-    static RefPtr<ScrollingTreeIOS> create(AsyncScrollingCoordinator*);
+    static Ref<ScrollingTreeIOS> create(AsyncScrollingCoordinator*);
     virtual ~ScrollingTreeIOS();
 
     virtual void commitNewTreeState(std::unique_ptr<ScrollingStateTree>) override;

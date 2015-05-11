@@ -40,9 +40,9 @@ class Scrollbar;
 
 class ScrollingStateFrameScrollingNode final : public ScrollingStateScrollingNode {
 public:
-    static PassRefPtr<ScrollingStateFrameScrollingNode> create(ScrollingStateTree&, ScrollingNodeID);
+    static Ref<ScrollingStateFrameScrollingNode> create(ScrollingStateTree&, ScrollingNodeID);
 
-    virtual PassRefPtr<ScrollingStateNode> clone(ScrollingStateTree&) override;
+    virtual Ref<ScrollingStateNode> clone(ScrollingStateTree&) override;
 
     virtual ~ScrollingStateFrameScrollingNode();
 

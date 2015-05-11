@@ -34,7 +34,7 @@ namespace WebCore {
 
 class ScrollingTreeMac : public ThreadedScrollingTree {
 public:
-    static RefPtr<ScrollingTreeMac> create(AsyncScrollingCoordinator*);
+    static Ref<ScrollingTreeMac> create(AsyncScrollingCoordinator*);
 
     virtual PassRefPtr<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) override;
 

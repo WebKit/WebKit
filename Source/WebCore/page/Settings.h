@@ -71,7 +71,7 @@ typedef unsigned DebugOverlayRegions;
 class Settings : public RefCounted<Settings> {
     WTF_MAKE_NONCOPYABLE(Settings); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<Settings> create(Page*);
+    static Ref<Settings> create(Page*);
     ~Settings();
 
     void pageDestroyed() { m_page = nullptr; }

@@ -40,7 +40,7 @@ class WheelEventDeltaTracker;
 
 class MainFrame final : public Frame {
 public:
-    static RefPtr<MainFrame> create(Page&, PageConfiguration&);
+    static Ref<MainFrame> create(Page&, PageConfiguration&);
 
     virtual ~MainFrame();
 

@@ -81,9 +81,9 @@ struct TextIndicatorData {
 
 class TextIndicator : public RefCounted<TextIndicator> {
 public:
-    WEBCORE_EXPORT static PassRefPtr<TextIndicator> create(const TextIndicatorData&);
-    WEBCORE_EXPORT static PassRefPtr<TextIndicator> createWithSelectionInFrame(Frame&, TextIndicatorPresentationTransition);
-    WEBCORE_EXPORT static PassRefPtr<TextIndicator> createWithRange(const Range&, TextIndicatorPresentationTransition);
+    WEBCORE_EXPORT static Ref<TextIndicator> create(const TextIndicatorData&);
+    WEBCORE_EXPORT static RefPtr<TextIndicator> createWithSelectionInFrame(Frame&, TextIndicatorPresentationTransition);
+    WEBCORE_EXPORT static RefPtr<TextIndicator> createWithRange(const Range&, TextIndicatorPresentationTransition);
 
     WEBCORE_EXPORT ~TextIndicator();
 

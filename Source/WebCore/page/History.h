@@ -42,7 +42,7 @@ typedef int ExceptionCode;
 
 class History : public ScriptWrappable, public RefCounted<History>, public DOMWindowProperty {
 public:
-    static PassRefPtr<History> create(Frame* frame) { return adoptRef(new History(frame)); }
+    static Ref<History> create(Frame* frame) { return adoptRef(*new History(frame)); }
 
     unsigned length() const;
     PassRefPtr<SerializedScriptValue> state();

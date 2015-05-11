@@ -34,9 +34,9 @@
 
 namespace WebCore {
 
-PassRefPtr<ScrollingStateFixedNode> ScrollingStateFixedNode::create(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
+Ref<ScrollingStateFixedNode> ScrollingStateFixedNode::create(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
 {
-    return adoptRef(new ScrollingStateFixedNode(stateTree, nodeID));
+    return adoptRef(*new ScrollingStateFixedNode(stateTree, nodeID));
 }
 
 ScrollingStateFixedNode::ScrollingStateFixedNode(ScrollingStateTree& tree, ScrollingNodeID nodeID)
@@ -54,9 +54,9 @@ ScrollingStateFixedNode::~ScrollingStateFixedNode()
 {
 }
 
-PassRefPtr<ScrollingStateNode> ScrollingStateFixedNode::clone(ScrollingStateTree& adoptiveTree)
+Ref<ScrollingStateNode> ScrollingStateFixedNode::clone(ScrollingStateTree& adoptiveTree)
 {
-    return adoptRef(new ScrollingStateFixedNode(*this, adoptiveTree));
+    return adoptRef(*new ScrollingStateFixedNode(*this, adoptiveTree));
 }
 
 void ScrollingStateFixedNode::updateConstraints(const FixedPositionViewportConstraints& constraints)

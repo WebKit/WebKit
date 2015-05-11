@@ -74,9 +74,9 @@ protected:
 
 class MouseWheelRegionOverlay final : public RegionOverlay {
 public:
-    static PassRefPtr<MouseWheelRegionOverlay> create(MainFrame& frame)
+    static Ref<MouseWheelRegionOverlay> create(MainFrame& frame)
     {
-        return adoptRef(new MouseWheelRegionOverlay(frame));
+        return adoptRef(*new MouseWheelRegionOverlay(frame));
     }
 
 private:
@@ -113,9 +113,9 @@ bool MouseWheelRegionOverlay::updateRegion()
 
 class NonFastScrollableRegionOverlay final : public RegionOverlay {
 public:
-    static PassRefPtr<NonFastScrollableRegionOverlay> create(MainFrame& frame)
+    static Ref<NonFastScrollableRegionOverlay> create(MainFrame& frame)
     {
-        return adoptRef(new NonFastScrollableRegionOverlay(frame));
+        return adoptRef(*new NonFastScrollableRegionOverlay(frame));
     }
 
 private:

@@ -55,13 +55,13 @@
 namespace WebCore {
 
 #if !PLATFORM(COCOA)
-PassRefPtr<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
+Ref<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
 {
 #if USE(COORDINATED_GRAPHICS)
-    return adoptRef(new ScrollingCoordinatorCoordinatedGraphics(page));
+    return adoptRef(*new ScrollingCoordinatorCoordinatedGraphics(page));
 #endif
 
-    return adoptRef(new ScrollingCoordinator(page));
+    return adoptRef(*new ScrollingCoordinator(page));
 }
 #endif
 

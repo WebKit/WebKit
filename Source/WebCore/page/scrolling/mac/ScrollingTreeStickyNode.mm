@@ -36,9 +36,9 @@
 
 namespace WebCore {
 
-PassRefPtr<ScrollingTreeStickyNode> ScrollingTreeStickyNode::create(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
+Ref<ScrollingTreeStickyNode> ScrollingTreeStickyNode::create(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
 {
-    return adoptRef(new ScrollingTreeStickyNode(scrollingTree, nodeID));
+    return adoptRef(*new ScrollingTreeStickyNode(scrollingTree, nodeID));
 }
 
 ScrollingTreeStickyNode::ScrollingTreeStickyNode(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)

@@ -46,9 +46,9 @@
 
 namespace WebCore {
 
-PassRefPtr<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
+Ref<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
 {
-    return adoptRef(new ScrollingCoordinatorMac(page));
+    return adoptRef(*new ScrollingCoordinatorMac(page));
 }
 
 ScrollingCoordinatorMac::ScrollingCoordinatorMac(Page* page)

@@ -48,7 +48,7 @@ typedef HashMap<String, Vector<RefPtr<PerformanceEntry> > > PerformanceEntryMap;
 
 class UserTiming : public RefCounted<UserTiming> {
 public:
-    static PassRefPtr<UserTiming> create(Performance* performance) { return adoptRef(new UserTiming(performance)); }
+    static Ref<UserTiming> create(Performance* performance) { return adoptRef(*new UserTiming(performance)); }
 
     void mark(const String& markName, ExceptionCode&);
     void clearMarks(const String& markName);

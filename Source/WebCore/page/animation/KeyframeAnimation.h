@@ -40,9 +40,9 @@ class RenderStyle;
 // A KeyframeAnimation tracks the state of an explicit animation for a single RenderElement.
 class KeyframeAnimation final : public AnimationBase {
 public:
-    static RefPtr<KeyframeAnimation> create(Animation& animation, RenderElement* renderer, int index, CompositeAnimation* compositeAnimation, RenderStyle* unanimatedStyle)
+    static Ref<KeyframeAnimation> create(Animation& animation, RenderElement* renderer, int index, CompositeAnimation* compositeAnimation, RenderStyle* unanimatedStyle)
     {
-        return adoptRef(new KeyframeAnimation(animation, renderer, index, compositeAnimation, unanimatedStyle));
+        return adoptRef(*new KeyframeAnimation(animation, renderer, index, compositeAnimation, unanimatedStyle));
     }
 
     virtual bool animate(CompositeAnimation*, RenderElement*, const RenderStyle* currentStyle, RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle) override;

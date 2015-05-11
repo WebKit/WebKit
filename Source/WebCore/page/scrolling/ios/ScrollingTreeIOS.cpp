@@ -41,9 +41,9 @@
 
 namespace WebCore {
 
-RefPtr<ScrollingTreeIOS> ScrollingTreeIOS::create(AsyncScrollingCoordinator* scrollingCoordinator)
+Ref<ScrollingTreeIOS> ScrollingTreeIOS::create(AsyncScrollingCoordinator* scrollingCoordinator)
 {
-    return adoptRef(new ScrollingTreeIOS(scrollingCoordinator));
+    return adoptRef(*new ScrollingTreeIOS(scrollingCoordinator));
 }
 
 ScrollingTreeIOS::ScrollingTreeIOS(AsyncScrollingCoordinator* scrollingCoordinator)

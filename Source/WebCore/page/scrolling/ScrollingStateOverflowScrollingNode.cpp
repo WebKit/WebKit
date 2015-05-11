@@ -33,9 +33,9 @@
 
 namespace WebCore {
 
-PassRefPtr<ScrollingStateOverflowScrollingNode> ScrollingStateOverflowScrollingNode::create(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
+Ref<ScrollingStateOverflowScrollingNode> ScrollingStateOverflowScrollingNode::create(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
 {
-    return adoptRef(new ScrollingStateOverflowScrollingNode(stateTree, nodeID));
+    return adoptRef(*new ScrollingStateOverflowScrollingNode(stateTree, nodeID));
 }
 
 ScrollingStateOverflowScrollingNode::ScrollingStateOverflowScrollingNode(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
@@ -54,9 +54,9 @@ ScrollingStateOverflowScrollingNode::~ScrollingStateOverflowScrollingNode()
 {
 }
 
-PassRefPtr<ScrollingStateNode> ScrollingStateOverflowScrollingNode::clone(ScrollingStateTree& adoptiveTree)
+Ref<ScrollingStateNode> ScrollingStateOverflowScrollingNode::clone(ScrollingStateTree& adoptiveTree)
 {
-    return adoptRef(new ScrollingStateOverflowScrollingNode(*this, adoptiveTree));
+    return adoptRef(*new ScrollingStateOverflowScrollingNode(*this, adoptiveTree));
 }
     
 void ScrollingStateOverflowScrollingNode::setScrolledContentsLayer(const LayerRepresentation& layerRepresentation)

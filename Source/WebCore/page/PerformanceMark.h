@@ -36,7 +36,7 @@ namespace WebCore {
 
 class PerformanceMark : public PerformanceEntry {
 public:
-    static PassRefPtr<PerformanceMark> create(const String& name, double startTime) { return adoptRef(new PerformanceMark(name, startTime)); }
+    static Ref<PerformanceMark> create(const String& name, double startTime) { return adoptRef(*new PerformanceMark(name, startTime)); }
 
     virtual bool isMark() { return true; }
     

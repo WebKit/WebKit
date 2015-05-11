@@ -3924,7 +3924,7 @@ void WebPageProxy::didGetImageForFindMatch(const ShareableBitmap::Handle& conten
 
 void WebPageProxy::setTextIndicator(const TextIndicatorData& indicatorData, uint64_t lifetime)
 {
-    m_pageClient.setTextIndicator(*TextIndicator::create(indicatorData), static_cast<TextIndicatorLifetime>(lifetime));
+    m_pageClient.setTextIndicator(TextIndicator::create(indicatorData), static_cast<TextIndicatorLifetime>(lifetime));
 }
 
 void WebPageProxy::clearTextIndicator()

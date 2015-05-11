@@ -30,7 +30,6 @@
 
 #include "FrameDestructionObserver.h"
 #include "UserMessageHandler.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>

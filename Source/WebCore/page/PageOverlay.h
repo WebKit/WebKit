@@ -69,7 +69,7 @@ public:
         Document, // Scales and scrolls with the document.
     };
 
-    WEBCORE_EXPORT static PassRefPtr<PageOverlay> create(Client&, OverlayType = OverlayType::View);
+    WEBCORE_EXPORT static Ref<PageOverlay> create(Client&, OverlayType = OverlayType::View);
     WEBCORE_EXPORT virtual ~PageOverlay();
 
     WEBCORE_EXPORT PageOverlayController* controller() const;

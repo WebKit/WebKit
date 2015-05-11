@@ -34,9 +34,9 @@
 
 namespace WebCore {
 
-PassRefPtr<ScrollingStateStickyNode> ScrollingStateStickyNode::create(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
+Ref<ScrollingStateStickyNode> ScrollingStateStickyNode::create(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
 {
-    return adoptRef(new ScrollingStateStickyNode(stateTree, nodeID));
+    return adoptRef(*new ScrollingStateStickyNode(stateTree, nodeID));
 }
 
 ScrollingStateStickyNode::ScrollingStateStickyNode(ScrollingStateTree& tree, ScrollingNodeID nodeID)
@@ -54,9 +54,9 @@ ScrollingStateStickyNode::~ScrollingStateStickyNode()
 {
 }
 
-PassRefPtr<ScrollingStateNode> ScrollingStateStickyNode::clone(ScrollingStateTree& adoptiveTree)
+Ref<ScrollingStateNode> ScrollingStateStickyNode::clone(ScrollingStateTree& adoptiveTree)
 {
-    return adoptRef(new ScrollingStateStickyNode(*this, adoptiveTree));
+    return adoptRef(*new ScrollingStateStickyNode(*this, adoptiveTree));
 }
 
 void ScrollingStateStickyNode::updateConstraints(const StickyPositionViewportConstraints& constraints)

@@ -46,9 +46,9 @@ static PageOverlay::PageOverlayID generatePageOverlayID()
     return ++pageOverlayID;
 }
 
-PassRefPtr<PageOverlay> PageOverlay::create(Client& client, OverlayType overlayType)
+Ref<PageOverlay> PageOverlay::create(Client& client, OverlayType overlayType)
 {
-    return adoptRef(new PageOverlay(client, overlayType));
+    return adoptRef(*new PageOverlay(client, overlayType));
 }
 
 PageOverlay::PageOverlay(Client& client, OverlayType overlayType)

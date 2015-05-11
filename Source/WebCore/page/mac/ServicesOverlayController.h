@@ -57,8 +57,8 @@ private:
     class Highlight : public RefCounted<Highlight>, private GraphicsLayerClient {
         WTF_MAKE_NONCOPYABLE(Highlight);
     public:
-        static PassRefPtr<Highlight> createForSelection(ServicesOverlayController&, RetainPtr<DDHighlightRef>, PassRefPtr<Range>);
-        static PassRefPtr<Highlight> createForTelephoneNumber(ServicesOverlayController&, RetainPtr<DDHighlightRef>, PassRefPtr<Range>);
+        static Ref<Highlight> createForSelection(ServicesOverlayController&, RetainPtr<DDHighlightRef>, PassRefPtr<Range>);
+        static Ref<Highlight> createForTelephoneNumber(ServicesOverlayController&, RetainPtr<DDHighlightRef>, PassRefPtr<Range>);
         ~Highlight();
 
         void invalidate();

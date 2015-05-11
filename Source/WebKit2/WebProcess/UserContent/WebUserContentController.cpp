@@ -69,7 +69,7 @@ PassRefPtr<WebUserContentController> WebUserContentController::getOrCreate(uint6
 
 WebUserContentController::WebUserContentController(uint64_t identifier)
     : m_identifier(identifier)
-    , m_userContentController(*UserContentController::create())
+    , m_userContentController(UserContentController::create())
 {
     WebProcess::singleton().addMessageReceiver(Messages::WebUserContentController::messageReceiverName(), m_identifier, *this);
 }

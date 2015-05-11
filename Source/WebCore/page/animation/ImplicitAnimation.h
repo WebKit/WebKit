@@ -41,9 +41,9 @@ class RenderElement;
 // for a single RenderElement.
 class ImplicitAnimation : public AnimationBase {
 public:
-    static PassRefPtr<ImplicitAnimation> create(Animation& animation, CSSPropertyID animatingProperty, RenderElement* renderer, CompositeAnimation* compositeAnimation, RenderStyle* fromStyle)
+    static Ref<ImplicitAnimation> create(Animation& animation, CSSPropertyID animatingProperty, RenderElement* renderer, CompositeAnimation* compositeAnimation, RenderStyle* fromStyle)
     {
-        return adoptRef(new ImplicitAnimation(animation, animatingProperty, renderer, compositeAnimation, fromStyle));
+        return adoptRef(*new ImplicitAnimation(animation, animatingProperty, renderer, compositeAnimation, fromStyle));
     };
     
     CSSPropertyID transitionProperty() const { return m_transitionProperty; }

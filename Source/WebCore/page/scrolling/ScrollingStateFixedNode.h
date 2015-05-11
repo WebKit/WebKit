@@ -39,9 +39,9 @@ class FixedPositionViewportConstraints;
 
 class ScrollingStateFixedNode final : public ScrollingStateNode {
 public:
-    static PassRefPtr<ScrollingStateFixedNode> create(ScrollingStateTree&, ScrollingNodeID);
+    static Ref<ScrollingStateFixedNode> create(ScrollingStateTree&, ScrollingNodeID);
 
-    virtual PassRefPtr<ScrollingStateNode> clone(ScrollingStateTree&) override;
+    virtual Ref<ScrollingStateNode> clone(ScrollingStateTree&) override;
 
     virtual ~ScrollingStateFixedNode();
 

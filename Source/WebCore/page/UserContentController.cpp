@@ -45,9 +45,9 @@
 
 namespace WebCore {
 
-RefPtr<UserContentController> UserContentController::create()
+Ref<UserContentController> UserContentController::create()
 {
-    return adoptRef(new UserContentController);
+    return adoptRef(*new UserContentController);
 }
 
 UserContentController::UserContentController()

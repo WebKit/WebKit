@@ -29,7 +29,6 @@
 #if ENABLE(USER_MESSAGE_HANDLERS)
 
 #include "DOMWindowProperty.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -40,9 +39,9 @@ class UserMessageHandlersNamespace;
 
 class WebKitNamespace : public DOMWindowProperty, public RefCounted<WebKitNamespace> {
 public:
-    static PassRefPtr<WebKitNamespace> create(Frame& frame)
+    static Ref<WebKitNamespace> create(Frame& frame)
     {
-        return adoptRef(new WebKitNamespace(frame));
+        return adoptRef(*new WebKitNamespace(frame));
     }
 
     virtual ~WebKitNamespace();

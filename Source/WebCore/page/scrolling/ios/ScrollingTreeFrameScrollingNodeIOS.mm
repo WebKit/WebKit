@@ -40,9 +40,9 @@
 
 namespace WebCore {
 
-PassRefPtr<ScrollingTreeFrameScrollingNodeIOS> ScrollingTreeFrameScrollingNodeIOS::create(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
+Ref<ScrollingTreeFrameScrollingNodeIOS> ScrollingTreeFrameScrollingNodeIOS::create(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
 {
-    return adoptRef(new ScrollingTreeFrameScrollingNodeIOS(scrollingTree, nodeID));
+    return adoptRef(*new ScrollingTreeFrameScrollingNodeIOS(scrollingTree, nodeID));
 }
 
 ScrollingTreeFrameScrollingNodeIOS::ScrollingTreeFrameScrollingNodeIOS(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)

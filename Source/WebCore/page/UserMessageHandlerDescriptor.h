@@ -48,9 +48,9 @@ public:
         virtual void didPostMessage(UserMessageHandler&, SerializedScriptValue*) = 0;
     };
 
-    static PassRefPtr<UserMessageHandlerDescriptor> create(const AtomicString& name, DOMWrapperWorld& world, Client& client)
+    static Ref<UserMessageHandlerDescriptor> create(const AtomicString& name, DOMWrapperWorld& world, Client& client)
     {
-        return adoptRef(new UserMessageHandlerDescriptor(name, world, client));
+        return adoptRef(*new UserMessageHandlerDescriptor(name, world, client));
     }
     WEBCORE_EXPORT ~UserMessageHandlerDescriptor();
 

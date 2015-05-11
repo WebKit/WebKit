@@ -60,7 +60,7 @@ struct Action;
 
 class UserContentController : public RefCounted<UserContentController> {
 public:
-    WEBCORE_EXPORT static RefPtr<UserContentController> create();
+    WEBCORE_EXPORT static Ref<UserContentController> create();
     WEBCORE_EXPORT ~UserContentController();
 
     void addPage(Page&);

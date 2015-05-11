@@ -1,3 +1,115 @@
+2015-05-10  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Use Ref instead of PassRefPtr in WebCore/page
+        https://bugs.webkit.org/show_bug.cgi?id=144841
+
+        Reviewed by Darin Adler.
+
+        To kill PassRefPtr, this patch replaces PassRefPtr with Ref or RefPtr
+        in WebCore/page.
+
+        No new tests, no behavior changes.
+
+        * page/DebugPageOverlays.cpp:
+        * page/EventSource.cpp:
+        (WebCore::EventSource::create):
+        * page/EventSource.h:
+        * page/History.h:
+        (WebCore::History::create):
+        * page/Location.h:
+        (WebCore::Location::create):
+        * page/MainFrame.cpp:
+        (WebCore::MainFrame::create):
+        * page/MainFrame.h:
+        * page/Navigator.h:
+        (WebCore::Navigator::create):
+        * page/PageOverlay.cpp:
+        (WebCore::PageOverlay::create):
+        * page/PageOverlay.h:
+        * page/Performance.h:
+        * page/PerformanceEntryList.h:
+        (WebCore::PerformanceEntryList::create):
+        * page/PerformanceMark.h:
+        (WebCore::PerformanceMark::create):
+        * page/PerformanceMeasure.h:
+        (WebCore::PerformanceMeasure::create):
+        * page/PerformanceNavigation.h:
+        (WebCore::PerformanceNavigation::create):
+        * page/PerformanceResourceTiming.h:
+        (WebCore::PerformanceResourceTiming::create):
+        * page/PerformanceTiming.h:
+        (WebCore::PerformanceTiming::create):
+        * page/PerformanceUserTiming.h:
+        (WebCore::UserTiming::create):
+        * page/Screen.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::create):
+        * page/Settings.h:
+        * page/TextIndicator.cpp:
+        (WebCore::TextIndicator::create):
+        * page/TextIndicator.h:
+        * page/UserContentController.cpp:
+        (WebCore::UserContentController::create):
+        * page/UserContentController.h:
+        * page/UserMessageHandlerDescriptor.h:
+        (WebCore::UserMessageHandlerDescriptor::create):
+        * page/UserMessageHandlersNamespace.h:
+        * page/VisitedLinkStore.h:
+        * page/WebKitNamespace.h:
+        (WebCore::WebKitNamespace::create):
+        * page/WebKitPoint.h:
+        (WebCore::WebKitPoint::create):
+        * page/WorkerNavigator.h:
+        (WebCore::WorkerNavigator::create):
+        * page/animation/ImplicitAnimation.h:
+        (WebCore::ImplicitAnimation::create):
+        * page/animation/KeyframeAnimation.h:
+        * page/mac/ServicesOverlayController.h:
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::Highlight::createForSelection):
+        (WebCore::ServicesOverlayController::Highlight::createForTelephoneNumber):
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::create):
+        * page/scrolling/ScrollingCoordinator.h:
+        * page/scrolling/ScrollingStateFixedNode.cpp:
+        (WebCore::ScrollingStateFixedNode::create):
+        (WebCore::ScrollingStateFixedNode::clone):
+        * page/scrolling/ScrollingStateFixedNode.h:
+        * page/scrolling/ScrollingStateFrameScrollingNode.cpp:
+        (WebCore::ScrollingStateFrameScrollingNode::create):
+        (WebCore::ScrollingStateFrameScrollingNode::clone):
+        * page/scrolling/ScrollingStateFrameScrollingNode.h:
+        * page/scrolling/ScrollingStateNode.h:
+        * page/scrolling/ScrollingStateOverflowScrollingNode.cpp:
+        (WebCore::ScrollingStateOverflowScrollingNode::create):
+        (WebCore::ScrollingStateOverflowScrollingNode::clone):
+        * page/scrolling/ScrollingStateOverflowScrollingNode.h:
+        * page/scrolling/ScrollingStateStickyNode.cpp:
+        (WebCore::ScrollingStateStickyNode::create):
+        (WebCore::ScrollingStateStickyNode::clone):
+        * page/scrolling/ScrollingStateStickyNode.h:
+        * page/scrolling/ios/ScrollingCoordinatorIOS.mm:
+        (WebCore::ScrollingCoordinator::create):
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.h:
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::create):
+        * page/scrolling/ios/ScrollingTreeIOS.cpp:
+        (WebCore::ScrollingTreeIOS::create):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinator::create):
+        * page/scrolling/mac/ScrollingTreeFixedNode.h:
+        * page/scrolling/mac/ScrollingTreeFixedNode.mm:
+        (WebCore::ScrollingTreeFixedNode::create):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::create):
+        * page/scrolling/mac/ScrollingTreeMac.cpp:
+        (ScrollingTreeMac::create):
+        * page/scrolling/mac/ScrollingTreeMac.h:
+        * page/scrolling/mac/ScrollingTreeStickyNode.h:
+        * page/scrolling/mac/ScrollingTreeStickyNode.mm:
+        (WebCore::ScrollingTreeStickyNode::create):
+
 2015-05-10  Simon Fraser  <simon.fraser@apple.com>
 
         background-position sometimes doesn't work properly with background-attachment: fixed

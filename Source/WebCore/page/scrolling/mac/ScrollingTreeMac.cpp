@@ -34,9 +34,9 @@
 
 using namespace WebCore;
 
-RefPtr<ScrollingTreeMac> ScrollingTreeMac::create(AsyncScrollingCoordinator* scrollingCoordinator)
+Ref<ScrollingTreeMac> ScrollingTreeMac::create(AsyncScrollingCoordinator* scrollingCoordinator)
 {
-    return adoptRef(new ScrollingTreeMac(scrollingCoordinator));
+    return adoptRef(*new ScrollingTreeMac(scrollingCoordinator));
 }
 
 ScrollingTreeMac::ScrollingTreeMac(AsyncScrollingCoordinator* scrollingCoordinator)

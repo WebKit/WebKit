@@ -50,9 +50,9 @@ class ResourceResponse;
 
 class PerformanceResourceTiming : public PerformanceEntry {
 public:
-    static PassRefPtr<PerformanceResourceTiming> create(const AtomicString& initiatorType, const ResourceRequest& request, const ResourceResponse& response, double initiationTime, double finishTime, Document* requestingDocument)
+    static Ref<PerformanceResourceTiming> create(const AtomicString& initiatorType, const ResourceRequest& request, const ResourceResponse& response, double initiationTime, double finishTime, Document* requestingDocument)
     {
-        return adoptRef(new PerformanceResourceTiming(initiatorType, request, response, initiationTime, finishTime, requestingDocument));
+        return adoptRef(*new PerformanceResourceTiming(initiatorType, request, response, initiationTime, finishTime, requestingDocument));
     }
 
     AtomicString initiatorType() const;

@@ -61,9 +61,9 @@ MainFrame::~MainFrame()
         m_diagnosticLoggingClient->mainFrameDestroyed();
 }
 
-RefPtr<MainFrame> MainFrame::create(Page& page, PageConfiguration& configuration)
+Ref<MainFrame> MainFrame::create(Page& page, PageConfiguration& configuration)
 {
-    return adoptRef(new MainFrame(page, configuration));
+    return adoptRef(*new MainFrame(page, configuration));
 }
 
 void MainFrame::selfOnlyRef()

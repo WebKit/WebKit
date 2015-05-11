@@ -197,7 +197,7 @@ public:
     bool isFrameScrollingNode() const { return m_nodeType == FrameScrollingNode; }
     bool isOverflowScrollingNode() const { return m_nodeType == OverflowScrollingNode; }
 
-    virtual PassRefPtr<ScrollingStateNode> clone(ScrollingStateTree& adoptiveTree) = 0;
+    virtual Ref<ScrollingStateNode> clone(ScrollingStateTree& adoptiveTree) = 0;
     PassRefPtr<ScrollingStateNode> cloneAndReset(ScrollingStateTree& adoptiveTree);
     void cloneAndResetChildren(ScrollingStateNode&, ScrollingStateTree& adoptiveTree);
 

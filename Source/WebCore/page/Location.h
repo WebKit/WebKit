@@ -46,7 +46,7 @@ typedef int ExceptionCode;
 
 class Location : public ScriptWrappable, public RefCounted<Location>, public DOMWindowProperty {
 public:
-    static PassRefPtr<Location> create(Frame* frame) { return adoptRef(new Location(frame)); }
+    static Ref<Location> create(Frame* frame) { return adoptRef(*new Location(frame)); }
 
     void setHref(const String&, DOMWindow& activeWindow, DOMWindow& firstWindow);
     String href() const;
