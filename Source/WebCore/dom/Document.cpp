@@ -3810,7 +3810,7 @@ EventListener* Document::getWindowAttributeEventListener(const AtomicString& eve
 
 void Document::dispatchWindowEvent(PassRefPtr<Event> event,  PassRefPtr<EventTarget> target)
 {
-    ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
+    ASSERT_WITH_SECURITY_IMPLICATION(!NoEventDispatchAssertion::isEventDispatchForbidden());
     if (!m_domWindow)
         return;
     m_domWindow->dispatchEvent(event, target);
@@ -3818,7 +3818,7 @@ void Document::dispatchWindowEvent(PassRefPtr<Event> event,  PassRefPtr<EventTar
 
 void Document::dispatchWindowLoadEvent()
 {
-    ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
+    ASSERT_WITH_SECURITY_IMPLICATION(!NoEventDispatchAssertion::isEventDispatchForbidden());
     if (!m_domWindow)
         return;
     m_domWindow->dispatchLoadEvent();

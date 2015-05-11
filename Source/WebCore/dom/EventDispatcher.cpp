@@ -319,7 +319,7 @@ static void dispatchEventInDOM(Event& event, const EventPath& path, WindowEventC
 
 bool EventDispatcher::dispatchEvent(Node* origin, PassRefPtr<Event> prpEvent)
 {
-    ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
+    ASSERT_WITH_SECURITY_IMPLICATION(!NoEventDispatchAssertion::isEventDispatchForbidden());
     if (!prpEvent)
         return true;
 
@@ -341,7 +341,7 @@ bool EventDispatcher::dispatchEvent(Node* origin, PassRefPtr<Event> prpEvent)
     ChildNodesLazySnapshot::takeChildNodesLazySnapshot();
 
     event->setTarget(&eventTargetRespectingTargetRules(*node));
-    ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
+    ASSERT_WITH_SECURITY_IMPLICATION(!NoEventDispatchAssertion::isEventDispatchForbidden());
     ASSERT(event->target());
     WindowEventContext windowEventContext(node.get(), eventPath.lastContextIfExists());
 

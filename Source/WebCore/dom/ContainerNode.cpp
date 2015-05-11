@@ -799,7 +799,7 @@ static void dispatchChildInsertionEvents(Node& child)
     if (child.isInShadowTree())
         return;
 
-    ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
+    ASSERT_WITH_SECURITY_IMPLICATION(!NoEventDispatchAssertion::isEventDispatchForbidden());
 
     RefPtr<Node> c = &child;
     Ref<Document> document(child.document());
@@ -821,7 +821,7 @@ static void dispatchChildRemovalEvents(Node& child)
         return;
     }
 
-    ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
+    ASSERT_WITH_SECURITY_IMPLICATION(!NoEventDispatchAssertion::isEventDispatchForbidden());
 
     willCreatePossiblyOrphanedTreeByRemoval(&child);
     InspectorInstrumentation::willRemoveDOMNode(child.document(), child);
