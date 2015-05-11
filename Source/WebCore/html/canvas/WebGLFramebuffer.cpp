@@ -369,7 +369,7 @@ void WebGLFramebuffer::removeAttachmentFromBoundFramebuffer(WebGLSharedObject* a
         return;
 
     bool checkMore = true;
-    while (checkMore) {
+    do {
         checkMore = false;
         for (AttachmentMap::iterator it = m_attachments.begin(); it != m_attachments.end(); ++it) {
             WebGLAttachment* attachmentObject = it->value.get();
@@ -381,7 +381,7 @@ void WebGLFramebuffer::removeAttachmentFromBoundFramebuffer(WebGLSharedObject* a
                 break;
             }
         }
-    }
+    } while (checkMore);
 }
 
 GC3Dsizei WebGLFramebuffer::getColorBufferWidth() const
