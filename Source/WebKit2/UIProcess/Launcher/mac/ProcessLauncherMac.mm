@@ -257,7 +257,10 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
     auto bootstrapMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_string(bootstrapMessage.get(), "message-name", "bootstrap");
     xpc_dictionary_set_string(bootstrapMessage.get(), "framework-executable-path", [[[NSBundle bundleWithIdentifier:@"com.apple.WebKit"] executablePath] fileSystemRepresentation]);
+
     xpc_dictionary_set_mach_send(bootstrapMessage.get(), "server-port", listeningPort);
+    mach_port_deallocate(mach_task_self(), listeningPort);
+
     xpc_dictionary_set_string(bootstrapMessage.get(), "client-identifier", clientIdentifier.data());
     xpc_dictionary_set_string(bootstrapMessage.get(), "ui-process-name", [[[NSProcessInfo processInfo] processName] UTF8String]);
 

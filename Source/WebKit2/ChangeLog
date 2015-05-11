@@ -1,3 +1,20 @@
+2015-05-11  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r184004.
+
+    2015-05-08  Anders Carlsson  <andersca@apple.com>
+
+            Fix ProcessLauncher port leak
+            https://bugs.webkit.org/show_bug.cgi?id=144807
+            rdar://problem/20593291
+
+            Reviewed by Sam Weinig.
+
+            * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+            (WebKit::connectToService):
+            xpc_dictionary_set_mach_send increments the send right count so make sure to
+            balance it with a call to mach_port_deallocate.
+
 2015-05-06  Joonghun Park  <jh718.park@samsung.com>
 
         [WK2] Simplify AsyncRequestImpl::ArgumentType parameters
