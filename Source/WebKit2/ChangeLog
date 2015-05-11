@@ -1,3 +1,25 @@
+2015-04-17  Tim Horton  <timothy_horton@apple.com>
+
+        Clients sometimes block for 500ms in waitForPossibleGeometryUpdates
+        https://bugs.webkit.org/show_bug.cgi?id=143901
+        <rdar://problem/20488655>
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::waitForMessage):
+        InterruptWaitingIfSyncMessageArrives already cancels waitForMessage if
+        a sync message arrives while waiting, but it should also avoid waiting
+        if there's a sync message already in the queue when the waiting starts,
+        as that will have the same nasty effect.
+
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::waitForPossibleGeometryUpdate):
+        If a synchronous message comes in from the Web process while we're waiting,
+        cancel our synchronous wait for DidUpdateGeometry. This will cause the size
+        change to not synchronize with the Web process' painting, but that is better
+        than pointlessly blocking for 500ms.
+
 2015-04-17  Chris Dumez  <cdumez@apple.com>
 
         Possible null pointer dereference in WebDiagnosticLoggingClient::logDiagnosticMessageWithValue()
