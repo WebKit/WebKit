@@ -361,9 +361,6 @@ webkit.org/b/99060 proximity/event-after-navigation.html [ Timeout ]
 webkit.org/b/99060 proximity/no-page-cache.html [ Timeout ]
 webkit.org/b/99060 fast/events/constructors/device-proximity-event-constructor.html [ Failure ]
 
-# HIDDEN_PAGE_DOM_TIMER_THROTTLING is not enabled
-webkit.org/b/99059 fast/dom/timer-throttling-hidden-page.html [ Failure ]
-
 # Requires Resolution Media Query support
 webkit.org/b/100137 fast/media/mq-resolution.html [ Failure ]
 webkit.org/b/100137 fast/media/mq-resolution-dpi-dpcm-warning.html [ Failure ]
@@ -573,7 +570,6 @@ webkit.org/b/141074 accessibility/auto-filled-value.html [ Missing ]
 
 webkit.org/b/142819 fast/text/baseline-inline-block.html [ ImageOnlyFailure ]
 
-webkit.org/b/142670 media/video-background-tab-playback.html [ Failure ]
 webkit.org/b/143233 media/media-source/media-source-append-buffer-with-append-window.html [ Pass Failure ]
 
 # This feature is only enabled on Mac and iOS right now
@@ -1128,6 +1124,9 @@ webkit.org/b/144730 fast/css/text-overflow-input-focus-value.html [ ImageOnlyFai
 webkit.org/b/144733 fast/forms/number/number-change-type-on-focus.html [ Failure Pass ]
 webkit.org/b/144734 fast/regions/hover-on-child-in-region.html [ Failure Pass ]
 
+webkit.org/b/144864 fast/events/clear-edit-drag-state.html [ Failure Pass ]
+webkit.org/b/144864 fast/events/clear-drag-state.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1287,8 +1286,6 @@ webkit.org/b/135094 fast/workers/worker-exception-during-navigation.html [ Timeo
 
 webkit.org/b/135095 fast/loader/child-frame-add-after-back-forward.html [ Timeout Pass ]
 
-webkit.org/b/135531 fast/dom/Geolocation/requestQueuingForHiddenPage.html [ Timeout Crash ]
-
 webkit.org/b/136069 fast/forms/mailto/formenctype-attribute-input-2.html [ Timeout Pass ]
 
 webkit.org/b/136674 media/track/track-cue-rendering-with-padding.html [ Timeout Pass ]
@@ -1335,6 +1332,9 @@ webkit.org/b/130971 media/track/track-remove-track.html [ Timeout ]
 webkit.org/b/123097 media/video-controls-toggling.html [ Timeout ]
 
 webkit.org/b/109469 fast/events/mouse-cursor-image-set.html [ Crash Timeout ]
+
+webkit.org/b/144865 fast/animation/request-animation-frame-throttle-subframe.html [ Timeout ]
+webkit.org/b/144865 fast/animation/request-animation-frame-throttle-subframe-display-none.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -2264,8 +2264,6 @@ webkit.org/b/144690 editing/spelling/context-menu-suggestions-multiword-selectio
 webkit.org/b/144690 editing/spelling/context-menu-suggestions-subword-selection.html [ Timeout ]
 webkit.org/b/144690 editing/spelling/spelling-exactly-selected-word.html [ Timeout ]
 webkit.org/b/144690 editing/spelling/spelling-with-punctuation-selection.html [ Timeout ]
-webkit.org/b/144690 editing/spelling/context-menu-suggestions.html [ Failure ]
-webkit.org/b/144690 editing/spelling/spelling-double-clicked-word.html [ Failure ]
 webkit.org/b/144690 editing/spelling/delete-into-misspelled-word.html [ Timeout Pass ]
 
 # Touch events not working
