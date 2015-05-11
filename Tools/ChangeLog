@@ -1,3 +1,17 @@
+2015-04-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Redirect to non HTTP destination is broken
+        https://bugs.webkit.org/show_bug.cgi?id=143866
+
+        Reviewed by Sergio Villar Senin.
+
+        Add a unit test to check that redirect to a data URI works.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestLoaderClient.cpp:
+        (testRedirectToDataURI):
+        (serverCallback):
+        (beforeAll):
+
 2015-04-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Crash in DOMObjectCache when a wrapped object owned by the cache is unreffed by the user
