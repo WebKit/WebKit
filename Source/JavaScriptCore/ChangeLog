@@ -1,3 +1,10 @@
+2015-05-11  Basile Clement  <basile_clement@apple.com>
+
+        Unreviewed, remove unintended change.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2015-05-11  Filip Pizlo  <fpizlo@apple.com>
 
         Make it easy to enable eager/non-concurrent JIT compilation
