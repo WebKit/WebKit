@@ -91,18 +91,21 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(PassRefPtr<Threadable
     ASSERT(m_workerClientWrapper.get());
 
     auto* requestData = request.copyData().release();
+    auto* optionsCopy = options.isolatedCopy().release();
     StringCapture capturedOutgoingReferrer(outgoingReferrer);
-    m_loaderProxy.postTaskToLoader([this, requestData, options, capturedOutgoingReferrer](ScriptExecutionContext& context) {
+    m_loaderProxy.postTaskToLoader([this, requestData, optionsCopy, capturedOutgoingReferrer](ScriptExecutionContext& context) {
         ASSERT(isMainThread());
         Document& document = downcast<Document>(context);
 
         auto request = ResourceRequest::adopt(std::unique_ptr<CrossThreadResourceRequestData>(requestData));
         request->setHTTPReferrer(capturedOutgoingReferrer.string());
 
+        auto options = std::unique_ptr<ThreadableLoaderOptions>(optionsCopy);
+
         // FIXME: If the a site requests a local resource, then this will return a non-zero value but the sync path
         // will return a 0 value. Either this should return 0 or the other code path should do a callback with
         // a failure.
-        m_mainThreadLoader = DocumentThreadableLoader::create(document, *this, *request, options);
+        m_mainThreadLoader = DocumentThreadableLoader::create(document, *this, *request, *options);
         ASSERT(m_mainThreadLoader);
     });
 }
