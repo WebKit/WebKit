@@ -1,3 +1,15 @@
+2015-05-11  Joonghun Park  <jh718.park@samsung.com>
+
+        [GTK] Reorder Performance class's member initialization sequence
+        https://bugs.webkit.org/show_bug.cgi?id=144858
+
+        Reviewed by Csaba Osztrogonác.
+
+        No new tests, no new behaviors.
+
+        * page/Performance.cpp:
+        (WebCore::Performance::Performance):
+
 2015-05-11  Zan Dobersek  <zdobersek@igalia.com>
 
         Reduce TransformationMatrix copies in WebKitCSSMatrix operations
