@@ -1,3 +1,25 @@
+2015-04-23  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] WebDiagnosticLoggingClient is leaking
+        https://bugs.webkit.org/show_bug.cgi?id=144089
+        <rdar://problem/19706214>
+
+        Reviewed by Darin Adler.
+
+        WebDiagnosticLoggingClient is leaking. It is constructed inside WebPage
+        constructor but there is no code destroying it.
+
+        This patch adds a new xxxDestroyed() virtual function to
+        DiagnosticLoggingClient and that is overriden in
+        WebDiagnosticLoggingClient to call "delete this". This is the same
+        pattern as for other WK2 clients (e.g. WebFrameLoaderClient,
+        WebProgressTrackerClient).
+
+        * loader/EmptyClients.h:
+        * page/DiagnosticLoggingClient.h:
+        * page/MainFrame.cpp:
+        (WebCore::MainFrame::~MainFrame):
+
 2015-04-22  Antti Koivisto  <antti@apple.com>
 
         CrashTracer: WebProcess at com.apple.WebCore: WebCore::toScriptElementIfPossible + 4

@@ -37,6 +37,8 @@ public:
     virtual void logDiagnosticMessageWithResult(const String& message, const String& description, DiagnosticLoggingResultType) = 0;
     virtual void logDiagnosticMessageWithValue(const String& message, const String& description, const String& value) = 0;
 
+    virtual void mainFrameDestroyed() = 0;
+
 protected:
     virtual ~DiagnosticLoggingClient() { }
 };

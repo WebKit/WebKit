@@ -57,6 +57,8 @@ inline MainFrame::MainFrame(Page& page, PageConfiguration& configuration)
 
 MainFrame::~MainFrame()
 {
+    if (m_diagnosticLoggingClient)
+        m_diagnosticLoggingClient->mainFrameDestroyed();
 }
 
 RefPtr<MainFrame> MainFrame::create(Page& page, PageConfiguration& configuration)
