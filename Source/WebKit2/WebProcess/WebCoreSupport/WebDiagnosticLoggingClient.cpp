@@ -43,7 +43,7 @@ WebDiagnosticLoggingClient::~WebDiagnosticLoggingClient()
 
 void WebDiagnosticLoggingClient::logDiagnosticMessage(const String& message, const String& description)
 {
-    if (!m_page.corePage()->settings().diagnosticLoggingEnabled())
+    if (!m_page.corePage() || !m_page.corePage()->settings().diagnosticLoggingEnabled())
         return;
 
     // FIXME: Remove this injected bundle API.
@@ -53,7 +53,7 @@ void WebDiagnosticLoggingClient::logDiagnosticMessage(const String& message, con
 
 void WebDiagnosticLoggingClient::logDiagnosticMessageWithResult(const String& message, const String& description, WebCore::DiagnosticLoggingResultType result)
 {
-    if (!m_page.corePage()->settings().diagnosticLoggingEnabled())
+    if (!m_page.corePage() || !m_page.corePage()->settings().diagnosticLoggingEnabled())
         return;
 
     // FIXME: Remove this injected bundle API.
@@ -63,7 +63,7 @@ void WebDiagnosticLoggingClient::logDiagnosticMessageWithResult(const String& me
 
 void WebDiagnosticLoggingClient::logDiagnosticMessageWithValue(const String& message, const String& description, const String& value)
 {
-    if (!m_page.corePage()->settings().diagnosticLoggingEnabled())
+    if (!m_page.corePage() || !m_page.corePage()->settings().diagnosticLoggingEnabled())
         return;
 
     // FIXME: Remove this injected bundle API.
