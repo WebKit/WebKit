@@ -63,8 +63,8 @@ public:
     void removeTrack(PassRefPtr<MediaStreamTrack>, ExceptionCode&);
     MediaStreamTrack* getTrackById(String);
 
-    Vector<RefPtr<MediaStreamTrack>> getAudioTracks() const { return m_audioTracks; }
-    Vector<RefPtr<MediaStreamTrack>> getVideoTracks() const { return m_videoTracks; }
+    const Vector<RefPtr<MediaStreamTrack>>& getAudioTracks() const { return m_audioTracks; }
+    const Vector<RefPtr<MediaStreamTrack>>& getVideoTracks() const { return m_videoTracks; }
     Vector<RefPtr<MediaStreamTrack>> getTracks();
 
     PassRefPtr<MediaStream> clone();

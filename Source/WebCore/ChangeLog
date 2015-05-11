@@ -1,3 +1,14 @@
+2015-05-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        Have MediaStream::getAudioTracks(), MediaStream::getVideoTracks() return const references
+        https://bugs.webkit.org/show_bug.cgi?id=144794
+
+        Reviewed by Philippe Normand.
+
+        * Modules/mediastream/MediaStream.h: getAudioTracks() and getVideoTracks()
+        should return a const reference to the member variables, instead of
+        copying the objects on every call.
+
 2015-05-10  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Use Ref instead of PassRefPtr in WebCore/page
