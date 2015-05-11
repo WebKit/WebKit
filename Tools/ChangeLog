@@ -1,5 +1,11 @@
 2015-05-11  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Build fix. jetstream has a local copy, not remote archive.
+
+        * Scripts/webkitpy/benchmark_runner/data/plans/jetstream.plan:
+
+2015-05-11  Ryosuke Niwa  <rniwa@webkit.org>
+
         run-benchmark should support SunSpider, Kraken and Octane
         https://bugs.webkit.org/show_bug.cgi?id=144840
 
