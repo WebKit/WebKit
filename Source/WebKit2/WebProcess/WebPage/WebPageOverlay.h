@@ -55,7 +55,7 @@ public:
         virtual void didScrollFrame(WebPageOverlay&, WebFrame*) { }
 
 #if PLATFORM(MAC)
-        virtual DDActionContext *actionContextForResultAtPoint(WebPageOverlay&, WebCore::FloatPoint location, RefPtr<WebCore::Range>& rangeHandle) { return nullptr; }
+        virtual DDActionContext *actionContextForResultAtPoint(WebPageOverlay&, WebCore::FloatPoint location, RefPtr<WebCore::Range>& rangeHandle, bool forImmediateAction) { return nullptr; }
         virtual void dataDetectorsDidPresentUI(WebPageOverlay&) { }
         virtual void dataDetectorsDidChangeUI(WebPageOverlay&) { }
         virtual void dataDetectorsDidHideUI(WebPageOverlay&) { }
@@ -79,7 +79,7 @@ public:
     Client& client() const { return *m_client; }
 
 #if PLATFORM(MAC)
-    DDActionContext *actionContextForResultAtPoint(WebCore::FloatPoint, RefPtr<WebCore::Range>&);
+    DDActionContext *actionContextForResultAtPoint(WebCore::FloatPoint, RefPtr<WebCore::Range>&, bool forImmediateAction);
     void dataDetectorsDidPresentUI();
     void dataDetectorsDidChangeUI();
     void dataDetectorsDidHideUI();

@@ -1,3 +1,23 @@
+2015-05-11  Tim Horton  <timothy_horton@apple.com>
+
+        Page overlay action context override should indicate the source of the request
+        https://bugs.webkit.org/show_bug.cgi?id=144832
+        <rdar://problem/20562594>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.h:
+        * WebProcess/WebPage/WebPageOverlay.cpp:
+        (WebKit::WebPageOverlay::actionContextForResultAtPoint):
+        * WebProcess/WebPage/WebPageOverlay.h:
+        (WebKit::WebPageOverlay::Client::actionContextForResultAtPoint):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performActionMenuHitTestAtLocation):
+        Add a parameter to WKBundlePageOverlayActionContextForResultAtPoint so that
+        clients can tell whether the requested action context should be targetted
+        at an action menu or immediate action.
+
 2015-05-11  Daniel Bates  <dabates@apple.com>
 
         [iOS] Close all open databases in expiration handler of process assertion

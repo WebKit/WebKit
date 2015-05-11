@@ -92,7 +92,7 @@ public:
         *userData = WKDictionaryCreate(keys, values, 1);
     }
 
-    static void* actionContextForResultAtPoint(WKBundlePageOverlayRef pageOverlay, WKPoint position, WKBundleRangeHandleRef* rangeHandle, const void* clientInfo)
+    static void* actionContextForResultAtPoint(WKBundlePageOverlayRef pageOverlay, WKPoint position, WKBundleRangeHandleRef* rangeHandle, _WKBundlePageOverlayActionContextRequestType requestType, const void* clientInfo)
     {
         if (position.x > 700) {
             RetainPtr<DDActionContext> actionContext = createActionContextForPhoneNumber();

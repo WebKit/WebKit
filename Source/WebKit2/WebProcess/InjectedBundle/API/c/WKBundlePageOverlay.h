@@ -40,6 +40,12 @@
 extern "C" {
 #endif
 
+enum {
+    kWKBundlePageOverlayActionContextForActionMenuRequestType = 0,
+    kWKBundlePageOverlayActionContextForImmediateActionRequestType,
+};
+typedef uint32_t _WKBundlePageOverlayActionContextRequestType;
+
 // Page overlay client.
 typedef void (*WKBundlePageOverlayWillMoveToPageCallback)(WKBundlePageOverlayRef pageOverlay, WKBundlePageRef page, const void* clientInfo);
 typedef void (*WKBundlePageOverlayDidMoveToPageCallback)(WKBundlePageOverlayRef pageOverlay, WKBundlePageRef page, const void* clientInfo);
@@ -49,10 +55,11 @@ typedef bool (*WKBundlePageOverlayMouseUpCallback)(WKBundlePageOverlayRef pageOv
 typedef bool (*WKBundlePageOverlayMouseMovedCallback)(WKBundlePageOverlayRef pageOverlay, WKPoint position, const void* clientInfo);
 typedef bool (*WKBundlePageOverlayMouseDraggedCallback)(WKBundlePageOverlayRef pageOverlay, WKPoint position, WKEventMouseButton mouseButton, const void* clientInfo);
 
-typedef void* (*WKBundlePageOverlayActionContextForResultAtPointCallback)(WKBundlePageOverlayRef pageOverlay, WKPoint position, WKBundleRangeHandleRef* rangeHandle, const void* clientInfo);
-typedef void (*WKBundlePageOverlayDatadetectorsDidPresentUI)(WKBundlePageOverlayRef pageOverlay, const void* clientInfo);
-typedef void (*WKBundlePageOverlayDatadetectorsDidChangeUI)(WKBundlePageOverlayRef pageOverlay, const void* clientInfo);
-typedef void (*WKBundlePageOverlayDatadetectorsDidHideUI)(WKBundlePageOverlayRef pageOverlay, const void* clientInfo);
+typedef void* (*WKBundlePageOverlayActionContextForResultAtPointCallback_deprecatedForUseWithV1)(WKBundlePageOverlayRef pageOverlay, WKPoint position, WKBundleRangeHandleRef* rangeHandle, const void* clientInfo);
+typedef void* (*WKBundlePageOverlayActionContextForResultAtPointCallback)(WKBundlePageOverlayRef pageOverlay, WKPoint position, WKBundleRangeHandleRef* rangeHandle, _WKBundlePageOverlayActionContextRequestType requestType, const void* clientInfo);
+typedef void (*WKBundlePageOverlayDataDetectorsDidPresentUI)(WKBundlePageOverlayRef pageOverlay, const void* clientInfo);
+typedef void (*WKBundlePageOverlayDataDetectorsDidChangeUI)(WKBundlePageOverlayRef pageOverlay, const void* clientInfo);
+typedef void (*WKBundlePageOverlayDataDetectorsDidHideUI)(WKBundlePageOverlayRef pageOverlay, const void* clientInfo);
 
 typedef struct WKBundlePageOverlayClientBase {
     int                                                                 version;
@@ -83,10 +90,29 @@ typedef struct WKBundlePageOverlayClientV1 {
     WKBundlePageOverlayMouseDraggedCallback                             mouseDragged;
 
     WKBundlePageOverlayActionContextForResultAtPointCallback            actionContextForResultAtPoint;
-    WKBundlePageOverlayDatadetectorsDidPresentUI                         dataDetectorsDidPresentUI;
-    WKBundlePageOverlayDatadetectorsDidChangeUI                           dataDetectorsDidChangeUI;
-    WKBundlePageOverlayDatadetectorsDidHideUI                               dataDetectorsDidHideUI;
+    WKBundlePageOverlayDataDetectorsDidPresentUI                        dataDetectorsDidPresentUI;
+    WKBundlePageOverlayDataDetectorsDidChangeUI                         dataDetectorsDidChangeUI;
+    WKBundlePageOverlayDataDetectorsDidHideUI                           dataDetectorsDidHideUI;
 } WKBundlePageOverlayClientV1;
+
+typedef struct WKBundlePageOverlayClientV2 {
+    WKBundlePageOverlayClientBase                                       base;
+
+    WKBundlePageOverlayWillMoveToPageCallback                           willMoveToPage;
+    WKBundlePageOverlayDidMoveToPageCallback                            didMoveToPage;
+    WKBundlePageOverlayDrawRectCallback                                 drawRect;
+    WKBundlePageOverlayMouseDownCallback                                mouseDown;
+    WKBundlePageOverlayMouseUpCallback                                  mouseUp;
+    WKBundlePageOverlayMouseMovedCallback                               mouseMoved;
+    WKBundlePageOverlayMouseDraggedCallback                             mouseDragged;
+
+    WKBundlePageOverlayActionContextForResultAtPointCallback_deprecatedForUseWithV1 actionContextForResultAtPoint_deprecatedForUseWithV1;
+    WKBundlePageOverlayDataDetectorsDidPresentUI                        dataDetectorsDidPresentUI;
+    WKBundlePageOverlayDataDetectorsDidChangeUI                         dataDetectorsDidChangeUI;
+    WKBundlePageOverlayDataDetectorsDidHideUI                           dataDetectorsDidHideUI;
+
+    WKBundlePageOverlayActionContextForResultAtPointCallback            actionContextForResultAtPoint;
+} WKBundlePageOverlayClientV2;
 
 enum { kWKBundlePageOverlayClientCurrentVersion WK_ENUM_DEPRECATED("Use an explicit version number instead") = 0 };
 typedef struct WKBundlePageOverlayClient {

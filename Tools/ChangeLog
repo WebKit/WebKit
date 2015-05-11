@@ -1,3 +1,14 @@
+2015-05-11  Tim Horton  <timothy_horton@apple.com>
+
+        Page overlay action context override should indicate the source of the request
+        https://bugs.webkit.org/show_bug.cgi?id=144832
+        <rdar://problem/20562594>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKit2ObjC/ActionMenusBundle.mm:
+        (TestWebKitAPI::ActionMenuTest::actionContextForResultAtPoint):
+
 2015-05-10  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] fast/events/page-visibility-transition-test.html is timing out
