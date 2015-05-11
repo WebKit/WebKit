@@ -1653,9 +1653,11 @@ RegisterID* BytecodeGenerator::emitCreateThis(RegisterID* dst)
     size_t begin = instructions().size();
     m_staticPropertyAnalyzer.createThis(m_thisRegister.index(), begin + 3);
 
+    m_codeBlock->addPropertyAccessInstruction(instructions().size());
     emitOpcode(op_create_this); 
     instructions().append(m_thisRegister.index()); 
     instructions().append(m_thisRegister.index()); 
+    instructions().append(0);
     instructions().append(0);
     return dst;
 }
