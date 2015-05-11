@@ -947,7 +947,7 @@ webkit.org/b/132248 media/media-fragments/TC0055.html [ Failure Pass Timeout ]
 webkit.org/b/132248 media/media-fragments/TC0058.html [ Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0059.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0061.html [ Timeout Pass ]
-webkit.org/b/132248 media/media-fragments/TC0063.html [ Failure Pass ]
+webkit.org/b/132248 media/media-fragments/TC0063.html [ Failure Pass Timeout ]
 webkit.org/b/143709 media/media-fragments/TC0064.html [ Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0067.html [ Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0072.html [ Failure Pass ]
@@ -992,7 +992,7 @@ webkit.org/b/132271 media/controls-strict.html [ ImageOnlyFailure Timeout Pass ]
 webkit.org/b/132271 media/media-controller-playbackrate.html [ Timeout Pass Crash ]
 webkit.org/b/132271 media/media-controller-time-clamp.html [ Timeout Pass ]
 webkit.org/b/132271 media/track/add-and-remove-track.html [ Timeout Pass ]
-webkit.org/b/132271 media/controls-without-preload.html [ ImageOnlyFailure Timeout Pass ]
+webkit.org/b/132271 media/controls-without-preload.html [ Failure Timeout Pass ]
 webkit.org/b/132271 media/controls-right-click-on-timebar.html [ Timeout Pass ]
 
 #JS slow stress
@@ -1123,6 +1123,10 @@ Bug(GTK) http/tests/xmlhttprequest/logout.html [ Failure Pass ]
 
 webkit.org/b/144579 transforms/2d/preserve3d-not-fixed-container.html [ ImageOnlyFailure Pass ]
 webkit.org/b/144582 fast/inline/layout-after-inserting-nested-br.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/144730 fast/css/text-overflow-input-focus-value.html [ ImageOnlyFailure Pass ]
+webkit.org/b/144733 fast/forms/number/number-change-type-on-focus.html [ Failure Pass ]
+webkit.org/b/144734 fast/regions/hover-on-child-in-region.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -2271,6 +2275,8 @@ webkit.org/b/144765 fast/events/touch/touch-slider-no-js-touch-listener.html [ F
 webkit.org/b/144765 fast/events/touch/touch-inside-iframe.html [ Timeout ]
 
 webkit.org/b/144763 fast/events/scroll-in-scaled-page-with-overflow-hidden.html
+
+webkit.org/b/144682 http/tests/xmlhttprequest/range-test.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
