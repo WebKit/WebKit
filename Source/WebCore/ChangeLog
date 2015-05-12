@@ -1,3 +1,14 @@
+2015-05-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Addressing post-review comments after r184037.
+
+        Unreviewed.
+
+        No new tests because there is no behavior change.
+
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::runWidth):
+
 2015-05-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Move Windows build target to Windows 7 (or newer)
