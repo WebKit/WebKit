@@ -38,6 +38,7 @@
 #include "RenderSVGInlineText.h"
 #include "TrailingObjects.h"
 #include "break_lines.h"
+#include <wtf/Optional.h>
 #include <wtf/text/StringView.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -60,6 +61,34 @@ struct WordMeasurement {
     int startOffset;
     int endOffset;
     HashSet<const Font*> fallbackFonts;
+};
+
+struct WordTrailingSpace {
+    WordTrailingSpace(RenderText& renderer, const RenderStyle& style, TextLayout* textLayout = nullptr)
+        : m_renderer(renderer)
+        , m_style(style)
+        , m_textLayout(textLayout)
+    {
+    }
+
+    WTF::Optional<float> width(HashSet<const Font*>& fallbackFonts)
+    {
+        if (m_state == WordTrailingSpaceState::Computed)
+            return m_width;
+
+        const FontCascade& font = m_style.fontCascade();
+        if ((font.typesettingFeatures() & Kerning) && !m_textLayout)
+            m_width = font.width(RenderBlock::constructTextRun(&m_renderer, font, &space, 1, m_style), &fallbackFonts) + font.wordSpacing();
+        m_state = WordTrailingSpaceState::Computed;
+        return m_width;
+    }
+private:
+    enum class WordTrailingSpaceState { Uninitialized, Computed };
+    WordTrailingSpaceState m_state { WordTrailingSpaceState::Uninitialized };
+    WTF::Optional<float> m_width;
+    RenderText& m_renderer;
+    const RenderStyle& m_style;
+    TextLayout* m_textLayout { nullptr };
 };
 
 class BreakingContext {
@@ -740,10 +769,9 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     // Non-zero only when kerning is enabled and TextLayout isn't used, in which case we measure
     // words with their trailing space, then subtract its width.
     HashSet<const Font*> fallbackFonts;
-    float wordTrailingSpaceWidth = (font.typesettingFeatures() & Kerning) && !textLayout ? font.width(RenderBlock::constructTextRun(&renderText, font, &space, 1, style), &fallbackFonts) + wordSpacing : 0;
-
     UChar lastCharacter = m_renderTextInfo.lineBreakIterator.lastCharacter();
     UChar secondToLastCharacter = m_renderTextInfo.lineBreakIterator.secondToLastCharacter();
+    WordTrailingSpace wordTrailingSpace(renderText, style, textLayout);
     for (; m_current.offset() < renderText.textLength(); m_current.fastIncrementInTextNode()) {
         bool previousCharacterIsSpace = m_currentCharacterIsSpace;
         bool previousCharacterIsWS = m_currentCharacterIsWS;
@@ -801,8 +829,13 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
             wordMeasurement.startOffset = lastSpace;
 
             float additionalTempWidth;
-            if (wordTrailingSpaceWidth && c == ' ')
-                additionalTempWidth = textWidth(renderText, lastSpace, m_current.offset() + 1 - lastSpace, font, m_width.currentWidth(), isFixedPitch, m_collapseWhiteSpace, wordMeasurement.fallbackFonts, textLayout) - wordTrailingSpaceWidth;
+            WTF::Optional<float> wordTrailingSpaceWidth;
+            if (c == ' ')
+                wordTrailingSpaceWidth = wordTrailingSpace.width(fallbackFonts);
+            if (wordTrailingSpaceWidth) {
+                additionalTempWidth = textWidth(renderText, lastSpace, m_current.offset() + 1 - lastSpace, font, m_width.currentWidth(), isFixedPitch, m_collapseWhiteSpace,
+                    wordMeasurement.fallbackFonts, textLayout) - wordTrailingSpaceWidth.value();
+            }
             else
                 additionalTempWidth = textWidth(renderText, lastSpace, m_current.offset() - lastSpace, font, m_width.currentWidth(), isFixedPitch, m_collapseWhiteSpace, wordMeasurement.fallbackFonts, textLayout);
 

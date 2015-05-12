@@ -26,6 +26,7 @@
 #include "RenderText.h"
 
 #include "AXObjectCache.h"
+#include "BreakingContext.h"
 #include "CharacterProperties.h"
 #include "EllipsisBox.h"
 #include "FloatQuad.h"
@@ -714,8 +715,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
 
     // Non-zero only when kerning is enabled, in which case we measure words with their trailing
     // space, then subtract its width.
-    float wordTrailingSpaceWidth = font.typesettingFeatures() & Kerning ? font.width(RenderBlock::constructTextRun(this, font, &space, 1, style), &fallbackFonts) + wordSpacing : 0;
-
+    WordTrailingSpace wordTrailingSpace(*this, style);
     // If automatic hyphenation is allowed, we keep track of the width of the widest word (or word
     // fragment) encountered so far, and only try hyphenating words that are wider.
     float maxWordWidth = std::numeric_limits<float>::max();
@@ -804,8 +804,11 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
             float currMinWidth = 0;
             bool isSpace = (j < len) && isSpaceAccordingToStyle(c, style);
             float w;
-            if (wordTrailingSpaceWidth && isSpace)
-                w = widthFromCache(font, i, wordLen + 1, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow, style) - wordTrailingSpaceWidth;
+            Optional<float> wordTrailingSpaceWidth;
+            if (isSpace)
+                wordTrailingSpaceWidth = wordTrailingSpace.width(fallbackFonts);
+            if (wordTrailingSpaceWidth)
+                w = widthFromCache(font, i, wordLen + 1, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow, style) - wordTrailingSpaceWidth.value();
             else {
                 w = widthFromCache(font, i, wordLen, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow, style);
                 if (c == softHyphen && style.hyphens() != HyphensNone)
@@ -818,8 +821,11 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
 
                 if (suffixStart) {
                     float suffixWidth;
-                    if (wordTrailingSpaceWidth && isSpace)
-                        suffixWidth = widthFromCache(font, i + suffixStart, wordLen - suffixStart + 1, leadWidth + currMaxWidth, 0, 0, style) - wordTrailingSpaceWidth;
+                    Optional<float> wordTrailingSpaceWidth;
+                    if (isSpace)
+                        wordTrailingSpaceWidth = wordTrailingSpace.width(fallbackFonts);
+                    if (wordTrailingSpaceWidth)
+                        suffixWidth = widthFromCache(font, i + suffixStart, wordLen - suffixStart + 1, leadWidth + currMaxWidth, 0, 0, style) - wordTrailingSpaceWidth.value();
                     else
                         suffixWidth = widthFromCache(font, i + suffixStart, wordLen - suffixStart, leadWidth + currMaxWidth, 0, 0, style);
 

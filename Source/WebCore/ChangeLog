@@ -1,3 +1,26 @@
+2015-05-11  Zalan Bujtas  <zalan@apple.com>
+
+        Text is misplaced when custom font does not have space glyph.
+        https://bugs.webkit.org/show_bug.cgi?id=144879
+
+        Reviewed by Myles C. Maxfield
+
+        This patch ensures that we use fallback font for the missing space glyph only when the rendered text has space in it.
+
+        If a font does not provide all the glyphs required to render the associated text, we initiate fallback fonts. It is done while
+        measuring the text at layout time. However due to the fact that we always pre-measure space, a font with no space glyph in it is never sufficient.
+        (even when the text does not require space at all)
+        Fallback fonts impact line positions through ascent/descent calculation.
+
+        Test: fast/text/font-with-no-space-glyph.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::computePreferredLogicalWidths):
+        * rendering/line/BreakingContext.h:
+        (WebCore::WordTrailingSpace::WordTrailingSpace):
+        (WebCore::WordTrailingSpace::width):
+        (WebCore::BreakingContext::handleText):
+
 2015-05-11  Simon Fraser  <simon.fraser@apple.com>
 
         Small tidyup in animations code

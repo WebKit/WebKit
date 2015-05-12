@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that when a font has no space glyph, we only use fallback fonts when space glyph is needed.</title>
+<script>
+	if (window.internals)
+    	internals.settings.setSimpleLineLayoutEnabled(false);
+</script>
+</head>
+<body><svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <defs>
+        	<font id="ValidTestFont" horiz-adv-x="450" >
+				<font-face font-family="SVGFreeSansASCIISubset" units-per-em="1000" panose-1="2 11 5 4 2 2 2 2 2 4" ascent="35" descent="10" alphabetic="0"/>
+				<glyph unicode="a" glyph-name="a" horiz-adv-x="556" d="M535 49V-14Q500 -23 478 -23Q407 -23 394 40Q393 47 392 54Q309 -22 218 -23H214Q104 -23 61 52Q42 86 42 131V132Q42 234 134 272Q170 287 264 299L302 304Q375 313 386 342V343V344L389 362V384Q389 448 308 460Q291 462 272 462Q169 462 152 387Q150 378 149 369H65Q68 441 101 478Q156 539 275 539Q451 539 470 423Q472 411 472 397V396V88Q472 47 517 47L535 49ZM389 165V259Q357 244 275 233Q266 232 255 230Q149 215 133 161L129 135V134Q129 69 196 54Q212 50 232 50Q304 50 356 97Q388 126 389 161Q389 162 389 162V162V163V163V165Z"/>
+				<glyph unicode="b" glyph-name="b" horiz-adv-x="556" d="M54 729H137V453Q194 539 299 539Q427 539 486 431Q523 363 523 265V264Q523 103 432 26Q375 -23 295 -23Q188 -23 129 67V0H54V729ZM283 461Q200 461 161 377Q137 328 137 259V258Q137 133 206 81Q239 55 283 55Q367 55 409 134Q436 185 436 254V255Q436 382 364 435Q331 460 288 461Q285 461 283 461Z"/>
+				<glyph unicode="f" glyph-name="f" horiz-adv-x="278" d="M258 524V456H171V0H88V456H18V524H88V613Q88 701 162 725Q184 732 211 732Q234 732 258 727V658L229 659Q172 659 171 608V606V524H258Z"/>
+				<glyph unicode="o" glyph-name="o" horiz-adv-x="556" d="M272 539Q424 539 481 410Q510 345 510 255V254Q510 87 408 16Q352 -23 273 -23Q129 -23 69 96Q36 162 36 257V258Q36 432 141 502Q196 539 272 539ZM273 462Q180 462 142 370Q123 323 123 259V258Q123 121 201 73Q232 54 273 54Q363 54 402 142Q423 189 423 254V255Q423 400 341 446Q311 462 273 462Z"/>
+				<glyph unicode="r" glyph-name="r" horiz-adv-x="333" d="M69 524H146V429Q204 522 262 536Q275 539 289 539L321 536V451Q249 450 218 429Q215 427 212 425Q153 382 153 273V272V0H69V524Z"/>
+                <glyph unicode=" " glyph-name="space" horiz-adv-x="224" 
+    	    </font>
+        </defs>
+    </svg><div style="font-family: SVGFreeSansASCIISubset">foobar</div></body>
+</html>
