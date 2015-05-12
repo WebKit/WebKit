@@ -94,7 +94,6 @@ private:
 #elif PLATFORM(GTK)
     ThreadIdentifier m_workQueueThread;
     GRefPtr<GMainContext> m_eventContext;
-    Mutex m_eventLoopLock;
     GRefPtr<GMainLoop> m_eventLoop;
     GMainLoopSource m_socketEventSource;
 #elif PLATFORM(EFL)
