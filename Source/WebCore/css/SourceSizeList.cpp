@@ -56,16 +56,25 @@ static bool match(std::unique_ptr<MediaQueryExp>&& expression, RenderStyle& styl
     return mediaQueryEvaluator.eval(mediaQuerySet.get());
 }
 
+static unsigned defaultLength(RenderStyle& style, RenderView* view)
+{
+    return CSSPrimitiveValue::create(100, CSSPrimitiveValue::CSS_VW)->computeLength<unsigned>(CSSToLengthConversionData(&style, &style, view));
+}
+
 static unsigned computeLength(CSSValue* value, RenderStyle& style, RenderView* view)
 {
     CSSToLengthConversionData conversionData(&style, &style, view);
-    if (is<CSSPrimitiveValue>(value))
-        return downcast<CSSPrimitiveValue>(*value).computeLength<unsigned>(conversionData);
+    if (is<CSSPrimitiveValue>(value)) {
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+        if (!primitiveValue.isLength())
+            return defaultLength(style, view);
+        return primitiveValue.computeLength<unsigned>(conversionData);
+    }
     if (is<CSSCalcValue>(value)) {
         Length length(downcast<CSSCalcValue>(*value).createCalculationValue(conversionData));
         return CSSPrimitiveValue::create(length, &style)->computeLength<unsigned>(conversionData);
     }
-    return 0;
+    return defaultLength(style, view);
 }
 
 unsigned parseSizesAttribute(StringView sizesAttribute, RenderView* view, Frame* frame)
@@ -77,7 +86,7 @@ unsigned parseSizesAttribute(StringView sizesAttribute, RenderView* view, Frame*
         if (match(WTF::move(sourceSize.expression), style, frame))
             return computeLength(sourceSize.length.get(), style, view);
     }
-    return computeLength(CSSPrimitiveValue::create(100, CSSPrimitiveValue::CSS_VW).ptr(), style, view);
+    return defaultLength(style, view);
 }
 
 #endif
