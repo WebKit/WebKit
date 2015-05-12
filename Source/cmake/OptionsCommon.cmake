@@ -56,12 +56,14 @@ if (WTF_CPU_ARM64_CORTEXA53)
     if (CXX_ACCEPTS_MFIX_CORTEX_A53_835769)
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfix-cortex-a53-835769")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfix-cortex-a53-835769")
-        message(STATUS "Enabling Cortex-A53 workaround for compiler")
+        message(STATUS "Enabling Cortex-A53 workaround for compiler and disabling GNU gold linker, because it doesn't support this workaround.")
     endif ()
 endif ()
 
 # Use ld.gold if it is available and isn't disabled explicitly
-option(USE_LD_GOLD "Use GNU gold linker" ON)
+include(CMakeDependentOption)
+CMAKE_DEPENDENT_OPTION(USE_LD_GOLD "Use GNU gold linker" ON
+                       "NOT CXX_ACCEPTS_MFIX_CORTEX_A53_835769" OFF)
 if (USE_LD_GOLD)
     execute_process(COMMAND ${CMAKE_C_COMPILER} -fuse-ld=gold -Wl,--version ERROR_QUIET OUTPUT_VARIABLE LD_VERSION)
     if ("${LD_VERSION}" MATCHES "GNU gold")
