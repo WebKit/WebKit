@@ -125,15 +125,20 @@ EXTERN_C CFDataRef CFHTTPCookieStorageCreateIdentifyingData(CFAllocatorRef inAll
 EXTERN_C CFHTTPCookieStorageRef CFHTTPCookieStorageCreateFromIdentifyingData(CFAllocatorRef inAllocator, CFDataRef inData);
 #endif
 
-#if defined(__OBJC__) && !USE(APPLE_INTERNAL_SDK)
+#if defined(__OBJC__)
+#if !USE(APPLE_INTERNAL_SDK) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1090)
 @interface NSHTTPCookieStorage (Details)
-#if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
-+ (void)_setSharedHTTPCookieStorage:(NSHTTPCookieStorage *)storage;
-#endif
 - (void)removeCookiesSinceDate:(NSDate *)date;
 - (id)_initWithCFHTTPCookieStorage:(CFHTTPCookieStorageRef)cfStorage;
 - (CFHTTPCookieStorageRef)_cookieStorage;
 @end
+#endif
+// FIXME: Move +_setSharedHTTPCookieStorage: into the above section under !USE(APPLE_INTERNAL_SDK) when possible (soon).
+#if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
+@interface NSHTTPCookieStorage (Details)
++ (void)_setSharedHTTPCookieStorage:(NSHTTPCookieStorage *)storage;
+@end
+#endif
 #endif
 
 #endif // CFNetworkSPI_h
