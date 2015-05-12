@@ -1,3 +1,51 @@
+2015-05-12  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Refine media playback target client configuration
+        https://bugs.webkit.org/show_bug.cgi?id=144892
+
+        Reviewed by Brent Fulgham.
+
+        Client and target picker state changes fequently happen several times in quick succession, so
+        don't react to immediately so we can batch callbacks to the web process. 
+        * Modules/mediasession/WebMediaSessionManager.cpp:
+        (WebCore::ClientState::ClientState): Store the client as a reference rather than a pointer
+        because it can never be NULL.
+        (WebCore::ClientState::operator == ): New.
+        (WebCore::WebMediaSessionManager::addPlaybackTargetPickerClient): Schedule the initial client 
+        configuration and a target configuration check.
+        (WebCore::WebMediaSessionManager::removePlaybackTargetPickerClient): Schedule a target monitoring
+        update, and a target configuration check.
+        (WebCore::WebMediaSessionManager::removeAllPlaybackTargetPickerClients): Ditto.
+        (WebCore::WebMediaSessionManager::showPlaybackTargetPicker): Schedule a target monitoring update.
+        (WebCore::WebMediaSessionManager::clientStateDidChange): If the client whose state has changed
+        can play to a target, tell it to start using the target even if it isn't playing as long as
+        no other client is actively using a target.
+        (WebCore::WebMediaSessionManager::setPlaybackTarget): Configure clients after a pause.
+        (WebCore::WebMediaSessionManager::configureNewClients): New, do new client configuration.
+        (WebCore::WebMediaSessionManager::configurePlaybackTargetClients): New, configure target clients.
+        (WebCore::WebMediaSessionManager::scheduleDelayedTask): Schedule the timer.
+        (WebCore::WebMediaSessionManager::taskTimerFired): Execute delayed tasks.
+        (WebCore::WebMediaSessionManager::find): 
+        * Modules/mediasession/WebMediaSessionManager.h:
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setMuted): Call updateMediaState.
+        (WebCore::HTMLMediaElement::setPlaying): Ditto.
+        (WebCore::HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged): Ditto.
+        (WebCore::HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent): Expand logging.
+        (WebCore::HTMLMediaElement::updateMediaState): New, don't broadcast a media state change
+        unless something actually changed.
+        * html/HTMLMediaElement.h:
+
+        * html/HTMLMediaSession.cpp:
+        (WebCore::HTMLMediaSession::externalOutputDeviceAvailableDidChange): Update logging.
+        (WebCore::HTMLMediaSession::setShouldPlayToPlaybackTarget): Ditto.
+        (WebCore::HTMLMediaSession::mediaEngineUpdated): Cleanup.
+
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm:
+        (WebCore::MediaPlaybackTargetPickerMac::showPlaybackTargetPicker): Remove the call to
+        deprecated API and the "-Wdeprecated-declarations".
+
 2015-05-12  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [GTK] Defer to WebCore Accessibility for table exposure
