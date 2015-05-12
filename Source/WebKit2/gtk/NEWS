@@ -1,4 +1,17 @@
 =================
+WebKitGTK+  2.8.2
+=================
+
+What's new in WebKitGTK+ 2.8.2?
+
+  - Fix network redirection to a non HTTP destination.
+  - Use a webkit subdirectory for the disk cache to avoid conflicts with other
+    files in the cache directory when the disk cache is cleaned up.
+  - Do not preserve the Origin header on on cross-origin redirects.
+  - Prevent WorkQueue objects from being leaked and ensure its worker thread
+    always exits.
+
+=================
 WebKitGTK+  2.8.1
 =================
 
