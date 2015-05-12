@@ -1,3 +1,12 @@
+2015-05-11  Andreas Kling  <akling@apple.com>
+
+        Rebaseline fast/workers/storage/test-authorizer.html for this branch.
+
+        This test (and the entire shared workers feature) has been removed from trunk,
+        which is why this test wasn't rebaselined in the merge of r183646.
+
+        * fast/workers/storage/test-authorizer-expected.txt:
+
 2015-05-08  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r183646.
