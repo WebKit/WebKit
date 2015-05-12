@@ -1,3 +1,20 @@
+2015-05-11  Jake Nielsen  <jacob_nielsen@apple.com>
+
+        Fix internal build configuration issues
+        https://bugs.webkit.org/show_bug.cgi?id=144762
+
+        Reviewed by Darin Adler.
+
+        Modifies TestWebKitAPI and WebKitTestRunner's xcconfig files to use SDK selectors.
+
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * TestWebKitAPI/Configurations/DebugRelease.xcconfig:
+        * TestWebKitAPI/Configurations/InjectedBundle.xcconfig:
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+        * WebKitTestRunner/Configurations/DebugRelease.xcconfig:
+        * WebKitTestRunner/Configurations/InjectedBundle.xcconfig:
+        * WebKitTestRunner/Configurations/WebKitTestRunner.xcconfig:
+
 2015-05-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Move Windows build target to Windows 7 (or newer)

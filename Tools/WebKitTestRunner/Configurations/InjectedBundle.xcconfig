@@ -30,12 +30,9 @@ INSTALL_PATH = $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Reso
 SKIP_INSTALL = NO;
 
 OTHER_LDFLAGS_BASE = -l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY) -framework CoreText -framework QuartzCore;
-OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_BASE) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
-OTHER_LDFLAGS_iphoneos = -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework Foundation -framework UIKit;
-OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_iphoneos);
-OTHER_LDFLAGS_macosx = -framework Carbon -framework Cocoa;
+OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_BASE) $(OTHER_LDFLAGS_PLATFORM);
+OTHER_LDFLAGS_PLATFORM[sdk=iphone*] = -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework Foundation -framework UIKit;
+OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = -framework Carbon -framework Cocoa;
 
-EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(PLATFORM_NAME));
-EXCLUDED_SOURCE_FILE_NAMES_iphoneos = AccessibilityControllerMac.mm AccessibilityTextMarkerMac.mm AccessibilityUIElementMac.mm ActivateFonts.mm InjectedBundleMac.mm InjectedBundlePageMac.mm WebArchiveDumpSupportMac.mm;
-EXCLUDED_SOURCE_FILE_NAMES_iphonesimulator = $(EXCLUDED_SOURCE_FILE_NAMES_iphoneos);
-EXCLUDED_SOURCE_FILE_NAMES_macosx = *IOS.*;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = AccessibilityControllerMac.mm AccessibilityTextMarkerMac.mm AccessibilityUIElementMac.mm ActivateFonts.mm InjectedBundleMac.mm InjectedBundlePageMac.mm WebArchiveDumpSupportMac.mm;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = *IOS.*;

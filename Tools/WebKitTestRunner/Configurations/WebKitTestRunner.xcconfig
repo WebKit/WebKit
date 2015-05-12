@@ -27,15 +27,12 @@ PRODUCT_NAME = WebKitTestRunner
 GCC_ENABLE_OBJC_EXCEPTIONS = YES
 
 OTHER_LDFLAGS_BASE = -l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY);
-OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_BASE) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
-OTHER_LDFLAGS_iphoneos = -framework JavaScriptCore -framework CoreGraphics -framework ImageIO -framework UIKit;
-OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_iphoneos);
-OTHER_LDFLAGS_macosx = -framework Carbon -framework Cocoa;
+OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_BASE) $(OTHER_LDFLAGS_PLATFORM);
+OTHER_LDFLAGS_PLATFORM[sdk=iphone*] = -framework JavaScriptCore -framework CoreGraphics -framework ImageIO -framework UIKit;
+OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = -framework Carbon -framework Cocoa;
 
 INSTALL_PATH = $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Resources;
 SKIP_INSTALL = NO;
 
-EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(PLATFORM_NAME));
-EXCLUDED_SOURCE_FILE_NAMES_iphoneos = EventSenderProxy.mm main.mm PlatformWebViewMac.mm TestControllerMac.mm mac/*;
-EXCLUDED_SOURCE_FILE_NAMES_iphonesimulator = $(EXCLUDED_SOURCE_FILE_NAMES_iphoneos);
-EXCLUDED_SOURCE_FILE_NAMES_macosx = AccessibilityUIElementIPhone.mm;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = EventSenderProxy.mm main.mm PlatformWebViewMac.mm TestControllerMac.mm mac/*;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = AccessibilityUIElementIPhone.mm;
