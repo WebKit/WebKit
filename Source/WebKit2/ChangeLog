@@ -1,3 +1,24 @@
+2015-05-11  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/19773721> [iOS] Find on page feels like it zooms in too much
+        https://bugs.webkit.org/show_bug.cgi?id=144891
+
+        Reviewed by Darin Adler.
+
+        Sometimes, Find on Page’s constant 1.6 scale factor is too much. Smart magnification is
+        designed to choose a scale factor that is just right.
+
+        * UIProcess/ios/SmartMagnificationController.h:
+        * UIProcess/ios/SmartMagnificationController.messages.in: Added Magnify message.
+        * UIProcess/ios/SmartMagnificationController.mm:
+        (WebKit::SmartMagnificationController::magnify): Added. Handle the new message using
+        -[WKContentView _soomToRect:withOrigin:fitEntireRect:minimumScale:maximumScale:minimumScrollDistance:].
+        * WebProcess/WebPage/ios/FindControllerIOS.mm:
+        (WebKit::FindController::updateFindIndicator): Instead of zooming to the selection rect,
+        get the surrounding render rect (the area we would target for a double-tap at the beginning
+        of the selection), and tell the magnification controller to target it. Use the center of the
+        start of the selection as the origin.
+
 2015-05-11  Brent Fulgham  <bfulgham@apple.com>
 
         Scroll snap logic should be triggered when resizing the WebView

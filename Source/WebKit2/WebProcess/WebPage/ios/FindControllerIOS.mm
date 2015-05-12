@@ -29,6 +29,7 @@
 
 #import "FindController.h"
 #import "FindIndicatorOverlayClientIOS.h"
+#import "SmartMagnificationControllerMessages.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
@@ -43,8 +44,6 @@ using namespace WebCore;
 const int cornerRadius = 3;
 const int totalHorizontalMargin = 2;
 const int totalVerticalMargin = 1;
-
-const double maximumFindIndicatorZoom = 1.6;
 
 static Color highlightColor()
 {
@@ -95,8 +94,17 @@ bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOve
     m_findIndicatorOverlay->setFrame(matchRect);
     m_findIndicatorOverlay->setNeedsDisplay();
 
-    if (isShowingOverlay || shouldAnimate)
-        m_webPage->zoomToRect(matchRect, m_webPage->minimumPageScaleFactor(), std::min(m_webPage->maximumPageScaleFactor(), maximumFindIndicatorZoom));
+    if (isShowingOverlay || shouldAnimate) {
+        FloatRect visibleContentRect = m_webPage->mainFrameView()->unobscuredContentRectIncludingScrollbars();
+
+        bool isReplaced;
+        const VisibleSelection& visibleSelection = selectedFrame.selection().selection();
+        FloatRect renderRect = visibleSelection.start().containerNode()->renderRect(&isReplaced);
+
+        IntRect startRect = visibleSelection.visibleStart().absoluteCaretBounds();
+
+        m_webPage->send(Messages::SmartMagnificationController::Magnify(startRect.center(), renderRect, visibleContentRect, m_webPage->minimumPageScaleFactor(), m_webPage->maximumPageScaleFactor()));
+    }
 
     m_findIndicatorRect = matchRect;
     m_isShowingFindIndicator = true;

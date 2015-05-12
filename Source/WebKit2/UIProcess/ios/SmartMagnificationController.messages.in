@@ -24,6 +24,7 @@
 
 messages -> SmartMagnificationController {
     DidCollectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin, WebCore::FloatRect renderRect, WebCore::FloatRect visibleContentBounds, bool isReplacedElement, double viewportMinimumScale, double viewportMaximumScale)
+    Magnify(WebCore::FloatPoint origin, WebCore::FloatRect targetRect, WebCore::FloatRect visibleContentRect, double viewportMinimumScale, double viewportMaximumScale)
 }
 
 #endif

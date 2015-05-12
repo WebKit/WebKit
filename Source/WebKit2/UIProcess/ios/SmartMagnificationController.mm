@@ -115,7 +115,18 @@ void SmartMagnificationController::didCollectGeometryForSmartMagnificationGestur
     // FIXME: If we still don't zoom, send the tap along to text selection (see <rdar://problem/6810344>).
     [m_contentView _zoomOutWithOrigin:origin];
 }
-    
+
+void SmartMagnificationController::magnify(FloatPoint origin, FloatRect targetRect, FloatRect visibleContentRect, double viewportMinimumScale, double viewportMaximumScale)
+{
+    targetRect.inflateX(smartMagnificationElementPadding * targetRect.width());
+    targetRect.inflateY(smartMagnificationElementPadding * targetRect.height());
+
+    double maximumScale = std::min(viewportMaximumScale, smartMagnificationMaximumScale);
+    double minimumScale = std::max(viewportMinimumScale, smartMagnificationMinimumScale);
+
+    [m_contentView _zoomToRect:targetRect withOrigin:origin fitEntireRect:NO minimumScale:minimumScale maximumScale:maximumScale minimumScrollDistance:0];
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)

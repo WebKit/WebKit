@@ -54,6 +54,7 @@ private:
     virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
     void didCollectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin, WebCore::FloatRect renderRect, WebCore::FloatRect visibleContentBounds, bool isReplacedElement, double viewportMinimumScale, double viewportMaximumScale);
+    void magnify(WebCore::FloatPoint origin, WebCore::FloatRect targetRect, WebCore::FloatRect visibleContentRect, double viewportMinimumScale, double viewportMaximumScale);
 
     WebPageProxy& m_webPageProxy;
     WKContentView *m_contentView;
