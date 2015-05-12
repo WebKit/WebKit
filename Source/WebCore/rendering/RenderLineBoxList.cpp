@@ -154,7 +154,7 @@ bool RenderLineBoxList::rangeIntersectsRect(RenderBoxModelObject* renderer, Layo
 {
     LayoutUnit physicalStart = logicalTop;
     LayoutUnit physicalEnd = logicalBottom;
-    if (renderer->view().hasFlippedBlockDescendants()) {
+    if (renderer->view().frameView().hasFlippedBlockRenderers()) {
         RenderBox* block;
         if (is<RenderBox>(*renderer))
             block = downcast<RenderBox>(renderer);

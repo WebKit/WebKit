@@ -500,6 +500,9 @@ public:
 
     ScrollBehaviorForFixedElements scrollBehaviorForFixedElements() const;
 
+    bool hasFlippedBlockRenderers() const { return m_hasFlippedBlockRenderers; }
+    void setHasFlippedBlockRenderers(bool b) { m_hasFlippedBlockRenderers = b; }
+
     void updateWidgetPositions();
     void didAddWidgetToRenderTree(Widget&);
     void willRemoveWidgetFromRenderTree(Widget&);
@@ -780,7 +783,8 @@ private:
 #endif
 
     bool m_visualUpdatesAllowedByClient;
-    
+    bool m_hasFlippedBlockRenderers;
+
     ScrollPinningBehavior m_scrollPinningBehavior;
 
     IntRect* m_cachedWindowClipRect { nullptr };

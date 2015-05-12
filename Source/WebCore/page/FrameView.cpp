@@ -202,6 +202,7 @@ FrameView::FrameView(Frame& frame)
     , m_footerHeight(0)
     , m_milestonesPendingPaint(0)
     , m_visualUpdatesAllowedByClient(true)
+    , m_hasFlippedBlockRenderers(false)
     , m_scrollPinningBehavior(DoNotPin)
 {
     init();

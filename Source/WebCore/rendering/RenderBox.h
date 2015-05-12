@@ -23,6 +23,7 @@
 #ifndef RenderBox_h
 #define RenderBox_h
 
+#include "FrameView.h"
 #include "RenderBoxModelObject.h"
 #include "RenderOverflow.h"
 #include "ScrollTypes.h"
@@ -551,6 +552,14 @@ public:
     // In layout related methods you almost always want the logical location (e.g. x() and y()).
     LayoutPoint topLeftLocation() const;
     LayoutSize topLeftLocationOffset() const;
+    void applyTopLeftLocationOffset(LayoutPoint& point) const
+    {
+        // This is inlined for speed, since it is used by updateLayerPosition() during scrolling.
+        if (!document().view()->hasFlippedBlockRenderers())
+            point.move(m_frameRect.x(), m_frameRect.y());
+        else
+            applyTopLeftLocationOffsetWithFlipping(point);
+    }
 
     LayoutRect logicalVisualOverflowRectForPropagation(RenderStyle*) const;
     LayoutRect visualOverflowRectForPropagation(RenderStyle*) const;
@@ -706,6 +715,8 @@ private:
     virtual void computePreferredLogicalWidths() { setPreferredLogicalWidthsDirty(false); }
 
     virtual LayoutRect frameRectForStickyPositioning() const override final { return frameRect(); }
+    
+    void applyTopLeftLocationOffsetWithFlipping(LayoutPoint&) const;
 
 private:
     // The width/height of the contents + borders + padding.  The x/y location is relative to our container (which is not always our parent).
