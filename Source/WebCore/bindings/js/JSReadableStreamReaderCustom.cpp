@@ -71,11 +71,13 @@ JSValue JSReadableStreamReader::closed(ExecState* exec) const
 {
     JSPromiseDeferred* promiseDeferred = getOrCreatePromiseDeferredFromObject(exec, this, globalObject(), closedPromiseSlotName());
     DeferredWrapper wrapper(exec, globalObject(), promiseDeferred);
+
+    RefPtr<ReadableStreamReader> reader = &impl();
     auto successCallback = [wrapper]() mutable {
         wrapper.resolve(jsUndefined());
     };
-    auto failureCallback = [this, wrapper]() mutable {
-        wrapper.reject(impl().error());
+    auto failureCallback = [wrapper, reader]() mutable {
+        wrapper.reject(reader->error());
     };
 
     impl().closed(WTF::move(successCallback), WTF::move(failureCallback));

@@ -1,3 +1,13 @@
+2015-05-12  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet <youenn.fablet@crf.canon.fr>
+
+        [Streams API] ReadableStream reader should not be disposable when having pending promises
+        https://bugs.webkit.org/show_bug.cgi?id=144869
+
+        Reviewed by Darin Adler.
+
+        * streams/readable-stream-gc.html:
+        * streams/readable-stream-gc-expected.txt:
+
 2015-05-11  Zalan Bujtas  <zalan@apple.com>
 
         Text is misplaced when custom font does not have space glyph.

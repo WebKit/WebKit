@@ -179,7 +179,9 @@ void ReadableJSStream::storeError(JSC::ExecState& exec)
 
 Ref<ReadableJSStream::Reader> ReadableJSStream::Reader::create(ReadableJSStream& stream)
 {
-    return adoptRef(*new Reader(stream));
+    Ref<Reader> reader = adoptRef(*new Reader(stream));
+    reader->initialize();
+    return reader;
 }
 
 ReadableJSStream::Reader::Reader(ReadableJSStream& readableStream)

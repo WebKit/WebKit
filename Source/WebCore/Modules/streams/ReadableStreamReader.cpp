@@ -47,7 +47,6 @@ ReadableStreamReader::ReadableStreamReader(ReadableStream& stream)
     readableStreamReaderCounter.increment();
 #endif
     suspendIfNeeded();
-    initialize();
 }
 
 ReadableStreamReader::~ReadableStreamReader()
@@ -77,6 +76,9 @@ void ReadableStreamReader::initialize()
 
 void ReadableStreamReader::releaseStreamAndClean()
 {
+    // Releasing callbacks may trigger unrefing of the reader.
+    Ref<ReadableStreamReader> protect(*this);
+
     ASSERT(m_stream);
     m_stream->release();
     m_stream = nullptr;

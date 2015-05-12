@@ -33,4 +33,36 @@ t1.step(function() {
     }));
 });
 
+t2 = async_test('Readable stream closed promise should resolve even if stream and reader JS references are lost');
+t2.step(function() {
+    var controller;
+    new ReadableStream({
+        start: function(c) {
+            controller = c;
+        }
+    }).getReader().closed.then(t2.step_func(function() {
+        t2.done();
+    }));
+
+    garbageCollectAndDo(t2.step_func(function() {
+        controller.close();
+    }));
+});
+
+t3 = async_test('Readable stream closed promise should reject even if stream and reader JS references are lost');
+t3.step(function() {
+    var controller;
+    new ReadableStream({
+        start: function(c) {
+            controller = c;
+        }
+    }).getReader().closed.catch(t3.step_func(function() {
+        t3.done();
+    }));
+
+    garbageCollectAndDo(t3.step_func(function() {
+        controller.error();
+    }));
+});
+
 </script>

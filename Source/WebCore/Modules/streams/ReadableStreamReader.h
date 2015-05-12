@@ -53,6 +53,7 @@ public:
         Errored
     };
 
+    void initialize();
     virtual ~ReadableStreamReader();
 
     ReadableStream* stream() { return m_stream.get(); }
@@ -74,7 +75,6 @@ private:
     const char* activeDOMObjectName() const override;
     bool canSuspendForPageCache() const override;
 
-    void initialize();
     void releaseStreamAndClean();
 
     RefPtr<ReadableStream> m_stream;

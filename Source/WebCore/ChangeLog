@@ -1,3 +1,23 @@
+2015-05-12  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet <youenn.fablet@crf.canon.fr>
+
+        [Streams API] ReadableStream reader should not be disposable when having pending promises
+        https://bugs.webkit.org/show_bug.cgi?id=144869
+
+        Reviewed by Darin Adler.
+
+        Made error promise callback to take a ref to the reader so that the reader is not disposed as long as the promise callback is not resolved.
+
+        Covered by tests added to streams/readable-stream-gc.html.
+
+        * Modules/streams/ReadableStreamReader.cpp:
+        (WebCore::ReadableStreamReader::ReadableStreamReader): Moved initialize() call outside constructor as it can ref/unref.
+        (WebCore::ReadableStreamReader::releaseStreamAndClean): Added protector.
+        * Modules/streams/ReadableStreamReader.h:
+        * bindings/js/JSReadableStreamReaderCustom.cpp:
+        (WebCore::JSReadableStreamReader::closed): Lambda for error now takes a ref to the reader.
+        * bindings/js/ReadableJSStream.cpp:
+        (WebCore::ReadableJSStream::Reader::create): Calling initialize() after adoptRef().
+
 2015-05-11  Zan Dobersek  <zdobersek@igalia.com>
 
         Clean up redundant resources in case of failure in GLContextEGL context creation methods
