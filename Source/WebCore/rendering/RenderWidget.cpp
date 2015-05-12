@@ -106,6 +106,7 @@ void RenderWidget::willBeDestroyed()
 
 RenderWidget::~RenderWidget()
 {
+    ASSERT(!m_refCount);
 }
 
 // Widgets are always placed on integer boundaries, so rounding the size is actually

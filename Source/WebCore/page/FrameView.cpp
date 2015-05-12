@@ -1356,6 +1356,8 @@ void FrameView::layout(bool allowSubtree)
     if (m_needsFullRepaint)
         root->view().repaintRootContents();
 
+    root->view().releaseProtectedRenderWidgets();
+
     ASSERT(!root->needsLayout());
 
     layer->updateLayerPositionsAfterLayout(renderView()->layer(), updateLayerPositionFlags(layer, subtree, m_needsFullRepaint));
