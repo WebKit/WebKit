@@ -235,12 +235,6 @@ SLOW_PATH_DECL(slow_path_create_this)
     ASSERT(constructor->methodTable()->getConstructData(constructor, constructData) == ConstructTypeJS);
 #endif
 
-    auto& cacheWriteBarrier = pc[4].u.jsCell;
-    if (!cacheWriteBarrier)
-        cacheWriteBarrier.set(exec->vm(), exec->codeBlock()->ownerExecutable(), constructor);
-    else if (cacheWriteBarrier.unvalidatedGet() != JSCell::seenMultipleCalleeObjects() && cacheWriteBarrier.get() != constructor)
-        cacheWriteBarrier.setWithoutWriteBarrier(JSCell::seenMultipleCalleeObjects());
-
     size_t inlineCapacity = pc[3].u.operand;
     Structure* structure = constructor->rareData(exec, inlineCapacity)->allocationProfile()->structure();
     RETURN(constructEmptyObject(exec, structure));

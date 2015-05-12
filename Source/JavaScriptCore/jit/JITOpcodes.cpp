@@ -705,13 +705,11 @@ void JIT::emit_op_to_this(Instruction* currentInstruction)
 void JIT::emit_op_create_this(Instruction* currentInstruction)
 {
     int callee = currentInstruction[2].u.operand;
-    WriteBarrierBase<JSCell>* cachedFunction = &currentInstruction[4].u.jsCell;
     RegisterID calleeReg = regT0;
-    RegisterID rareDataReg = regT4;
+    RegisterID rareDataReg = regT0;
     RegisterID resultReg = regT0;
     RegisterID allocatorReg = regT1;
     RegisterID structureReg = regT2;
-    RegisterID cachedFunctionReg = regT4;
     RegisterID scratchReg = regT3;
 
     emitGetVirtualRegister(callee, calleeReg);
@@ -720,11 +718,6 @@ void JIT::emit_op_create_this(Instruction* currentInstruction)
     loadPtr(Address(rareDataReg, FunctionRareData::offsetOfAllocationProfile() + ObjectAllocationProfile::offsetOfAllocator()), allocatorReg);
     loadPtr(Address(rareDataReg, FunctionRareData::offsetOfAllocationProfile() + ObjectAllocationProfile::offsetOfStructure()), structureReg);
     addSlowCase(branchTestPtr(Zero, allocatorReg));
-
-    loadPtr(cachedFunction, cachedFunctionReg);
-    Jump hasSeenMultipleCallees = branchPtr(Equal, cachedFunctionReg, TrustedImmPtr(JSCell::seenMultipleCalleeObjects()));
-    addSlowCase(branchPtr(NotEqual, calleeReg, cachedFunctionReg));
-    hasSeenMultipleCallees.link(this);
 
     emitAllocateJSObject(allocatorReg, structureReg, resultReg, scratchReg);
     emitPutVirtualRegister(currentInstruction[1].u.operand);
@@ -735,7 +728,6 @@ void JIT::emitSlow_op_create_this(Instruction* currentInstruction, Vector<SlowCa
     linkSlowCase(iter); // doesn't have rare data
     linkSlowCase(iter); // doesn't have an allocation profile
     linkSlowCase(iter); // allocation failed
-    linkSlowCase(iter); // cached function didn't match
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_create_this);
     slowPathCall.call();

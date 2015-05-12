@@ -74,8 +74,6 @@ public:
 
     static const bool needsDestruction = false;
 
-    static JSCell* seenMultipleCalleeObjects() { return bitwise_cast<JSCell*>(static_cast<uintptr_t>(1)); }
-
     enum CreatingEarlyCellTag { CreatingEarlyCell };
     JSCell(CreatingEarlyCellTag);
 

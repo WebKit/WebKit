@@ -142,6 +142,7 @@ void computeUsesForBytecodeOffset(
     case op_not:
     case op_mov:
     case op_new_array_with_size:
+    case op_create_this:
     case op_del_by_id:
     case op_unsigned:
     case op_new_func:
@@ -180,11 +181,6 @@ void computeUsesForBytecodeOffset(
     case op_del_by_val: {
         functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
         functor(codeBlock, instruction, opcodeID, instruction[3].u.operand);
-        return;
-    }
-    case op_create_this: {
-        functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);
-        functor(codeBlock, instruction, opcodeID, instruction[4].u.operand);
         return;
     }
     case op_has_structure_property:

@@ -631,18 +631,14 @@ _llint_op_create_this:
     loadp FunctionRareData::m_allocationProfile + ObjectAllocationProfile::m_allocator[t4], t1
     loadp FunctionRareData::m_allocationProfile + ObjectAllocationProfile::m_structure[t4], t2
     btpz t1, .opCreateThisSlow
-    loadpFromInstruction(4, t4)
-    bpeq t4, 1, .hasSeenMultipleCallee
-    bpneq t4, t0, .opCreateThisSlow
-.hasSeenMultipleCallee:
     allocateJSObject(t1, t2, t0, t3, .opCreateThisSlow)
     loadisFromInstruction(1, t1)
     storeq t0, [cfr, t1, 8]
-    dispatch(5)
+    dispatch(4)
 
 .opCreateThisSlow:
     callSlowPath(_slow_path_create_this)
-    dispatch(5)
+    dispatch(4)
 
 
 _llint_op_to_this:

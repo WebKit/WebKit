@@ -2669,24 +2669,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_create_this: {
             int calleeOperand = currentInstruction[2].u.operand;
             Node* callee = get(VirtualRegister(calleeOperand));
-
-            JSFunction* function = callee->dynamicCastConstant<JSFunction*>();
-            if (!function) {
-                JSCell* cachedFunction = currentInstruction[4].u.jsCell.unvalidatedGet();
-                RELEASE_ASSERT(cachedFunction); // LLint and BaselineJIT always set it to a JSFunction* or seenMultipleCalleeObjects().
-                if (cachedFunction != JSCell::seenMultipleCalleeObjects()) {
-                    ASSERT(cachedFunction->inherits(JSFunction::info()));
-
-                    FrozenValue* frozen = m_graph.freeze(cachedFunction);
-                    addToGraph(CheckCell, OpInfo(frozen), callee);
-                    set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(JSConstant, OpInfo(frozen)));
-
-                    function = static_cast<JSFunction*>(cachedFunction);
-                }
-            }
-
             bool alreadyEmitted = false;
-            if (function) {
+            if (JSFunction* function = callee->dynamicCastConstant<JSFunction*>()) {
                 if (FunctionRareData* rareData = function->rareData()) {
                     if (Structure* structure = rareData->allocationStructure()) {
                         m_graph.freeze(rareData);
