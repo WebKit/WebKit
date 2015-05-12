@@ -2071,12 +2071,14 @@ bool DOMWindow::isInsecureScriptAccess(DOMWindow& activeWindow, const String& ur
 PassRefPtr<Frame> DOMWindow::createWindow(const String& urlString, const AtomicString& frameName, const WindowFeatures& windowFeatures, DOMWindow& activeWindow, Frame* firstFrame, Frame* openerFrame, std::function<void (DOMWindow&)> prepareDialogFunction)
 {
     Frame* activeFrame = activeWindow.frame();
+    if (!activeFrame)
+        return nullptr;
 
     URL completedURL = urlString.isEmpty() ? URL(ParsedURLString, emptyString()) : firstFrame->document()->completeURL(urlString);
     if (!completedURL.isEmpty() && !completedURL.isValid()) {
         // Don't expose client code to invalid URLs.
         activeWindow.printErrorMessage("Unable to open a window with invalid URL '" + completedURL.string() + "'.\n");
-        return 0;
+        return nullptr;
     }
 
     // For whatever reason, Firefox uses the first frame to determine the outgoingReferrer. We replicate that behavior here.
@@ -2089,9 +2091,9 @@ PassRefPtr<Frame> DOMWindow::createWindow(const String& urlString, const AtomicS
     // We pass the opener frame for the lookupFrame in case the active frame is different from
     // the opener frame, and the name references a frame relative to the opener frame.
     bool created;
-    RefPtr<Frame> newFrame = WebCore::createWindow(activeFrame, openerFrame, frameRequest, windowFeatures, created);
+    RefPtr<Frame> newFrame = WebCore::createWindow(*activeFrame, openerFrame, frameRequest, windowFeatures, created);
     if (!newFrame)
-        return 0;
+        return nullptr;
 
     newFrame->loader().setOpener(openerFrame);
     newFrame->page()->setOpenedByDOM();
@@ -2111,7 +2113,7 @@ PassRefPtr<Frame> DOMWindow::createWindow(const String& urlString, const AtomicS
 
     // Navigating the new frame could result in it being detached from its page by a navigation policy delegate.
     if (!newFrame->page())
-        return 0;
+        return nullptr;
 
     return newFrame.release();
 }
