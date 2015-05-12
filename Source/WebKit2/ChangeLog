@@ -1,3 +1,9 @@
+2015-05-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ debug build after r184197.
+
+        * UIProcess/gtk/RedirectedXCompositeWindow.cpp: Add missing include.
+
 2015-05-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [X11] Add XUniquePtr and XUniqueResource to automatically free X resources

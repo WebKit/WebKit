@@ -29,6 +29,7 @@
 
 #if USE(REDIRECTED_XCOMPOSITE_WINDOW)
 
+#include <WebCore/PlatformDisplayX11.h>
 #include <X11/Xlib.h>
 #include <X11/extensions/Xcomposite.h>
 #include <X11/extensions/Xdamage.h>
