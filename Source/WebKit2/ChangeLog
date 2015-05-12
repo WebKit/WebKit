@@ -1,3 +1,18 @@
+2015-05-12  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Log using diagnostic logging how far back in history we navigate
+        https://bugs.webkit.org/show_bug.cgi?id=144919
+        <rdar://problem/20920043>
+
+        Reviewed by Gavin Barraclough.
+
+        Log using diagnostic logging how far back in history we navigate.
+        When a back navigation or a backward indexed navigation occurs, we
+        log the delta: (HistoryListSize - 1) - NewHistoryItemIndex.
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::goToItem):
+
 2015-05-11  Sam Weinig  <sam@webkit.org>
 
         ChildProcess should take an os_activity

@@ -34,9 +34,11 @@ class DiagnosticLoggingKeys {
 public:
     static String applicationCacheKey();
     static String audioKey();
+    WEBCORE_EXPORT static String backNavigationKey();
     WEBCORE_EXPORT static String cacheControlNoStoreKey();
     static String cachedResourceRevalidationKey();
     static String cannotSuspendActiveDOMObjectsKey();
+    WEBCORE_EXPORT static String deltaKey();
     static String deniedByClientKey();
     static String deviceMotionKey();
     static String deviceOrientationKey();

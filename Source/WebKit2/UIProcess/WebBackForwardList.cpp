@@ -29,6 +29,7 @@
 #include "APIArray.h"
 #include "SessionState.h"
 #include "WebPageProxy.h"
+#include <WebCore/DiagnosticLoggingKeys.h>
 
 namespace WebKit {
 
@@ -174,6 +175,12 @@ void WebBackForwardList::goToItem(WebBackForwardListItem* item)
     // If the target item wasn't even in the list, there's nothing else to do.
     if (targetIndex == notFound)
         return;
+
+    if (targetIndex < m_currentIndex) {
+        unsigned delta = m_entries.size() - targetIndex - 1;
+        String deltaValue = delta > 10 ? ASCIILiteral("over10") : String::number(delta);
+        m_page->logDiagnosticMessageWithValue(WebCore::DiagnosticLoggingKeys::backNavigationKey(), WebCore::DiagnosticLoggingKeys::deltaKey(), deltaValue, false /* shouldSample */);
+    }
 
     // If we're going to an item different from the current item, ask the client if the current
     // item should remain in the list.
