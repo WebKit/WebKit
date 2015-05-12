@@ -274,21 +274,22 @@ bool RenderBoxModelObject::hasAutoHeightOrContainingBlockWithAutoHeight() const
 
 LayoutSize RenderBoxModelObject::relativePositionOffset() const
 {
-    LayoutSize offset = accumulateInFlowPositionOffsets(this);
+    // This function has been optimized to avoid calls to containingBlock() in the common case
+    // where all values are either auto or fixed.
 
-    RenderBlock* containingBlock = this->containingBlock();
+    LayoutSize offset = accumulateInFlowPositionOffsets(this);
 
     // Objects that shrink to avoid floats normally use available line width when computing containing block width.  However
     // in the case of relative positioning using percentages, we can't do this.  The offset should always be resolved using the
     // available width of the containing block.  Therefore we don't use containingBlockLogicalWidthForContent() here, but instead explicitly
     // call availableWidth on our containing block.
     if (!style().left().isAuto()) {
-        if (!style().right().isAuto() && !containingBlock->style().isLeftToRightDirection())
-            offset.setWidth(-valueForLength(style().right(), containingBlock->availableWidth()));
+        if (!style().right().isAuto() && !containingBlock()->style().isLeftToRightDirection())
+            offset.setWidth(-valueForLength(style().right(), !style().right().isFixed() ? containingBlock()->availableWidth() : LayoutUnit()));
         else
-            offset.expand(valueForLength(style().left(), containingBlock->availableWidth()), 0);
+            offset.expand(valueForLength(style().left(), !style().left().isFixed() ? containingBlock()->availableWidth() : LayoutUnit()), 0);
     } else if (!style().right().isAuto()) {
-        offset.expand(-valueForLength(style().right(), containingBlock->availableWidth()), 0);
+        offset.expand(-valueForLength(style().right(), !style().right().isFixed() ? containingBlock()->availableWidth() : LayoutUnit()), 0);
     }
 
     // If the containing block of a relatively positioned element does not
@@ -298,16 +299,16 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
     // calculate the percent offset based on this height.
     // See <https://bugs.webkit.org/show_bug.cgi?id=26396>.
     if (!style().top().isAuto()
-        && (!containingBlock->hasAutoHeightOrContainingBlockWithAutoHeight()
-            || !style().top().isPercent()
-            || containingBlock->stretchesToViewport()))
-        offset.expand(0, valueForLength(style().top(), containingBlock->availableHeight()));
+        && (!style().top().isPercent()
+            || !containingBlock()->hasAutoHeightOrContainingBlockWithAutoHeight()
+            || containingBlock()->stretchesToViewport()))
+        offset.expand(0, valueForLength(style().top(), !style().top().isFixed() ? containingBlock()->availableHeight() : LayoutUnit()));
 
     else if (!style().bottom().isAuto()
-        && (!containingBlock->hasAutoHeightOrContainingBlockWithAutoHeight()
-            || !style().bottom().isPercent()
-            || containingBlock->stretchesToViewport()))
-        offset.expand(0, -valueForLength(style().bottom(), containingBlock->availableHeight()));
+        && (!style().bottom().isPercent()
+            || !containingBlock()->hasAutoHeightOrContainingBlockWithAutoHeight()
+            || containingBlock()->stretchesToViewport()))
+        offset.expand(0, -valueForLength(style().bottom(), !style().bottom().isFixed() ? containingBlock()->availableHeight() : LayoutUnit()));
 
     return offset;
 }
