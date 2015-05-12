@@ -1,3 +1,10 @@
+2015-05-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix the build with RESOURCE_TIMING disabled.
+
+        * loader/ThreadableLoader.cpp:
+        (WebCore::ThreadableLoaderOptions::isolatedCopy):
+
 2015-05-11  Zan Dobersek  <zdobersek@igalia.com>
 
         Clean up redundant resources in case of failure in GLContextEGL context creation methods
