@@ -1,3 +1,17 @@
+2015-05-12  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: REGRESSION (r181625): Timeline recording started from console.profile is always empty
+        https://bugs.webkit.org/show_bug.cgi?id=144882
+
+        Reviewed by Brian Burg.
+
+        A timeline recording will always be stopped before the end of the current run loop is observed. Before
+        dispatching the recording stopped event, the last run loop record must be completed and sent to the frontend
+        to prevent it from being discarded.
+
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::internalStop):
+
 2015-05-12  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION(r175617): Some text doesn't render on internationalculinarycenter.com
