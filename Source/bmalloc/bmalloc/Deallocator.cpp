@@ -99,6 +99,7 @@ void Deallocator::deallocateSlowCase(void* object)
         return;
     }
 
+    BASSERT(objectType(nullptr) == XLarge);
     if (!object)
         return;
 
