@@ -92,9 +92,11 @@ void WebKitCSSMatrix::setMatrixValue(const String& string, ExceptionCode& ec)
 PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::multiply(WebKitCSSMatrix* secondMatrix) const
 {
     if (!secondMatrix)
-        return 0;
+        return nullptr;
 
-    return WebKitCSSMatrix::create(TransformationMatrix(m_matrix).multiply(secondMatrix->m_matrix));
+    RefPtr<WebKitCSSMatrix> matrix = WebKitCSSMatrix::create(m_matrix);
+    matrix->m_matrix.multiply(secondMatrix->m_matrix);
+    return matrix.release();
 }
 
 PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::inverse(ExceptionCode& ec) const
@@ -115,7 +117,10 @@ PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::translate(double x, double y, doubl
         y = 0;
     if (std::isnan(z))
         z = 0;
-    return WebKitCSSMatrix::create(TransformationMatrix(m_matrix).translate3d(x, y, z));
+
+    RefPtr<WebKitCSSMatrix> matrix = WebKitCSSMatrix::create(m_matrix);
+    matrix->m_matrix.translate3d(x, y, z);
+    return matrix.release();
 }
 
 PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::scale(double scaleX, double scaleY, double scaleZ) const
@@ -126,7 +131,10 @@ PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::scale(double scaleX, double scaleY,
         scaleY = scaleX;
     if (std::isnan(scaleZ))
         scaleZ = 1;
-    return WebKitCSSMatrix::create(TransformationMatrix(m_matrix).scale3d(scaleX, scaleY, scaleZ));
+
+    RefPtr<WebKitCSSMatrix> matrix = WebKitCSSMatrix::create(m_matrix);
+    matrix->m_matrix.scale3d(scaleX, scaleY, scaleZ);
+    return matrix.release();
 }
 
 PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::rotate(double rotX, double rotY, double rotZ) const
@@ -144,7 +152,10 @@ PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::rotate(double rotX, double rotY, do
         rotY = 0;
     if (std::isnan(rotZ))
         rotZ = 0;
-    return WebKitCSSMatrix::create(TransformationMatrix(m_matrix).rotate3d(rotX, rotY, rotZ));
+
+    RefPtr<WebKitCSSMatrix> matrix = WebKitCSSMatrix::create(m_matrix);
+    matrix->m_matrix.rotate3d(rotX, rotY, rotZ);
+    return matrix.release();
 }
 
 PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::rotateAxisAngle(double x, double y, double z, double angle) const
@@ -159,21 +170,30 @@ PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::rotateAxisAngle(double x, double y,
         angle = 0;
     if (x == 0 && y == 0 && z == 0)
         z = 1;
-    return WebKitCSSMatrix::create(TransformationMatrix(m_matrix).rotate3d(x, y, z, angle));
+
+    RefPtr<WebKitCSSMatrix> matrix = WebKitCSSMatrix::create(m_matrix);
+    matrix->m_matrix.rotate3d(x, y, z, angle);
+    return matrix.release();
 }
 
 PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::skewX(double angle) const
 {
     if (std::isnan(angle))
         angle = 0;
-    return WebKitCSSMatrix::create(TransformationMatrix(m_matrix).skewX(angle));
+
+    RefPtr<WebKitCSSMatrix> matrix = WebKitCSSMatrix::create(m_matrix);
+    matrix->m_matrix.skewX(angle);
+    return matrix.release();
 }
 
 PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::skewY(double angle) const
 {
     if (std::isnan(angle))
         angle = 0;
-    return WebKitCSSMatrix::create(TransformationMatrix(m_matrix).skewY(angle));
+
+    RefPtr<WebKitCSSMatrix> matrix = WebKitCSSMatrix::create(m_matrix);
+    matrix->m_matrix.skewY(angle);
+    return matrix.release();
 }
 
 String WebKitCSSMatrix::toString() const
