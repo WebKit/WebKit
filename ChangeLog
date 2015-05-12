@@ -1,3 +1,14 @@
+2015-05-12  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        Linker fails without -DDEVELOPER_MODE=ON
+        https://bugs.webkit.org/show_bug.cgi?id=144117
+
+        Reviewed by Gyuyoung Kim.
+
+        * Source/cmake/OptionsEfl.cmake:
+        Remove fvisibility flags. linker script will cover the functionality for ewebkit2.so in release mode,
+        * Source/cmake/eflsymbols.filter: Updated symbol patterns which should be exposed for ewebkit2.
+
 2015-05-10  Philip Chimento  <philip.chimento@gmail.com>
 
         CMake defines CAIROGL_FOUND, not CAIRO_GL_FOUND
