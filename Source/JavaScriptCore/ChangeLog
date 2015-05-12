@@ -1,3 +1,19 @@
+2015-05-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Array.slice should have a fast path like Array.splice
+        https://bugs.webkit.org/show_bug.cgi?id=144901
+
+        Reviewed by Geoffrey Garen.
+
+        Add a fast memcpy path to Array.prototype.slice as done for Array.prototype.splice.
+        In Kraken, this appears to be 30% win on stanford-crypto-ccm and 10% win on stanford-crypto-pbkdf2.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncSlice):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::fastSlice): Added.
+        * runtime/JSArray.h:
+
 2015-05-11  Filip Pizlo  <fpizlo@apple.com>
 
         OSR availability analysis would be more scalable (and correct) if it did more liveness pruning

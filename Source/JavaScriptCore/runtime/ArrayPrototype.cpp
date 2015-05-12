@@ -601,6 +601,12 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
     unsigned begin = argumentClampedIndexFromStartOrEnd(exec, 0, length);
     unsigned end = argumentClampedIndexFromStartOrEnd(exec, 1, length, length);
 
+    if (isJSArray(thisObj)) {
+        EncodedJSValue result;
+        if (asArray(thisObj)->fastSlice(*exec, begin, end - begin, result))
+            return result;
+    }
+
     JSArray* result = constructEmptyArray(exec, nullptr, end - begin);
 
     unsigned n = 0;
