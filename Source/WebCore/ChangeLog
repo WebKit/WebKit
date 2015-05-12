@@ -1,3 +1,18 @@
+2015-05-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        Clean up redundant resources in case of failure in GLContextEGL context creation methods
+        https://bugs.webkit.org/show_bug.cgi?id=144878
+
+        Reviewed by Martin Robinson.
+
+        GLContextEGL::createWindowContext() and GLContextEGL::createPixmapContext() methods
+        should clean up the freshly-created resources when prematurely returning due to a
+        failure.
+
+        * platform/graphics/egl/GLContextEGL.cpp:
+        (WebCore::GLContextEGL::createWindowContext):
+        (WebCore::GLContextEGL::createPixmapContext):
+
 2015-05-11  Dan Bernstein  <mitz@apple.com>
 
         WebCore part of <rdar://problem/20878075> Trying to navigate to an invalid URL loads about:blank, but -[WKWebView URL] returns the invalid URL
