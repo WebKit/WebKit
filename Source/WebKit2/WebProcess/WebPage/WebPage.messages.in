@@ -126,7 +126,7 @@ messages -> WebPage LegacyReceiver {
     LoadRequest(uint64_t navigationID, WebCore::ResourceRequest request, WebKit::SandboxExtension::Handle sandboxExtensionHandle, WebKit::UserData userData)
     LoadData(IPC::DataReference data, String MIMEType, String encoding, String baseURL, WebKit::UserData userData)
     LoadHTMLString(uint64_t navigationID, String htmlString, String baseURL, WebKit::UserData userData)
-    LoadAlternateHTMLString(String htmlString, String baseURL, String unreachableURL, WebKit::UserData userData)
+    LoadAlternateHTMLString(String htmlString, String baseURL, String unreachableURL, String provisionalLoadErrorURL, WebKit::UserData userData)
     LoadPlainTextString(String string, WebKit::UserData userData)
     LoadWebArchiveData(IPC::DataReference webArchiveData, WebKit::UserData userData)
     NavigateToURLWithSimulatedClick(String url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint)
