@@ -116,7 +116,8 @@ void AuthenticationManager::useCredentialForChallenge(uint64_t challengeID, cons
     
     AuthenticationClient* coreClient = challenge.authenticationClient();
     if (!coreClient) {
-        // This authentication challenge comes from a download.
+        // FIXME: The authentication client is null for downloads, but it can also be null for canceled loads.
+        // We should not call Download::receivedCredential in the latter case.
         Download::receivedCredential(challenge, credential);
         return;
     }
@@ -132,7 +133,8 @@ void AuthenticationManager::continueWithoutCredentialForChallenge(uint64_t chall
     ASSERT(!challenge.isNull());
     AuthenticationClient* coreClient = challenge.authenticationClient();
     if (!coreClient) {
-        // This authentication challenge comes from a download.
+        // FIXME: The authentication client is null for downloads, but it can also be null for canceled loads.
+        // We should not call Download::receivedCredential in the latter case.
         Download::receivedRequestToContinueWithoutCredential(challenge);
         return;
     }
@@ -148,7 +150,8 @@ void AuthenticationManager::cancelChallenge(uint64_t challengeID)
     ASSERT(!challenge.isNull());
     AuthenticationClient* coreClient = challenge.authenticationClient();
     if (!coreClient) {
-        // This authentication challenge comes from a download.
+        // FIXME: The authentication client is null for downloads, but it can also be null for canceled loads.
+        // We should not call Download::receivedCredential in the latter case.
         Download::receivedCancellation(challenge);
         return;
     }
@@ -164,7 +167,8 @@ void AuthenticationManager::performDefaultHandling(uint64_t challengeID)
     ASSERT(!challenge.isNull());
     AuthenticationClient* coreClient = challenge.authenticationClient();
     if (!coreClient) {
-        // This authentication challenge comes from a download.
+        // FIXME: The authentication client is null for downloads, but it can also be null for canceled loads.
+        // We should not call Download::receivedCredential in the latter case.
         Download::receivedRequestToPerformDefaultHandling(challenge);
         return;
     }
@@ -180,7 +184,8 @@ void AuthenticationManager::rejectProtectionSpaceAndContinue(uint64_t challengeI
     ASSERT(!challenge.isNull());
     AuthenticationClient* coreClient = challenge.authenticationClient();
     if (!coreClient) {
-        // This authentication challenge comes from a download.
+        // FIXME: The authentication client is null for downloads, but it can also be null for canceled loads.
+        // We should not call Download::receivedCredential in the latter case.
         Download::receivedChallengeRejection(challenge);
         return;
     }
