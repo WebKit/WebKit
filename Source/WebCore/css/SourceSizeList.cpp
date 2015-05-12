@@ -49,7 +49,7 @@ static bool match(std::unique_ptr<MediaQueryExp>&& expression, RenderStyle& styl
 
 static float defaultLength(RenderStyle& style, RenderView* view)
 {
-    return CSSPrimitiveValue::create(100, CSSPrimitiveValue::CSS_VW)->computeLength<float>(CSSToLengthConversionData(&style, &style, view));
+    return clampTo<float>(CSSPrimitiveValue::computeNonCalcLengthDouble(CSSToLengthConversionData(&style, &style, view), CSSPrimitiveValue::CSS_VW, 100.0));
 }
 
 static float computeLength(CSSValue* value, RenderStyle& style, RenderView* view)
@@ -61,10 +61,8 @@ static float computeLength(CSSValue* value, RenderStyle& style, RenderView* view
             return defaultLength(style, view);
         return primitiveValue.computeLength<float>(conversionData);
     }
-    if (is<CSSCalcValue>(value)) {
-        Length length(downcast<CSSCalcValue>(*value).createCalculationValue(conversionData));
-        return CSSPrimitiveValue::create(length, &style)->computeLength<float>(conversionData);
-    }
+    if (is<CSSCalcValue>(value))
+        return downcast<CSSCalcValue>(*value).computeLengthPx(conversionData);
     return defaultLength(style, view);
 }
 

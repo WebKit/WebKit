@@ -1,3 +1,25 @@
+2015-05-12  Yoav Weiss  <yoav@yoav.ws>
+
+        Avoid CSSPrimitiveValue allocation when parsing sizes
+        https://bugs.webkit.org/show_bug.cgi?id=144910
+
+        Reviewed by Darin Adler.
+
+        Turn non-calc length calculation logic into a static method,
+        so that it can be called without a CSSPrimitiveValue object.
+        Then, call that method to calculate the default source-size length.
+
+        No new tests, since no functionality change.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::computeLengthDouble): Split out the logic for everything that's not calc into a static method.
+        (WebCore::CSSPrimitiveValue::computeNonCalcLengthDouble): Static length computation logic for everything that is not calc.
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::isFontRelativeLength): Turn into static.
+        * css/SourceSizeList.cpp:
+        (WebCore::defaultLength): Use the new static method to compute the length.
+        (WebCore::computeLength): Use the calc length computation methods directly.
+
 2015-05-12  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix for older DirectX build environments.

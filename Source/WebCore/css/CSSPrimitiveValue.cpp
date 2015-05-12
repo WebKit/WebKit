@@ -599,9 +599,14 @@ double CSSPrimitiveValue::computeLengthDouble(const CSSToLengthConversionData& c
         // The multiplier and factor is applied to each value in the calc expression individually
         return m_value.calc->computeLengthPx(conversionData);
 
+    return computeNonCalcLengthDouble(conversionData, primitiveType(), m_value.num);
+}
+
+double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversionData& conversionData, unsigned short primitiveType, double value)
+{
     double factor;
 
-    switch (primitiveType()) {
+    switch (primitiveType) {
     case CSS_EMS:
         ASSERT(conversionData.style());
         factor = conversionData.computingFontSize() ? conversionData.style()->fontDescription().specifiedSize() : conversionData.style()->fontDescription().computedSize();
@@ -669,8 +674,8 @@ double CSSPrimitiveValue::computeLengthDouble(const CSSToLengthConversionData& c
     // We do not apply the zoom factor when we are computing the value of the font-size property. The zooming
     // for font sizes is much more complicated, since we have to worry about enforcing the minimum font size preference
     // as well as enforcing the implicit "smart minimum."
-    double result = getDoubleValue() * factor;
-    if (conversionData.computingFontSize() || isFontRelativeLength())
+    double result = value * factor;
+    if (conversionData.computingFontSize() || isFontRelativeLength(primitiveType))
         return result;
 
     return result * conversionData.zoom();
@@ -760,6 +765,7 @@ double CSSPrimitiveValue::getDoubleValue() const
 {
     return m_primitiveUnitType != CSS_CALC ? m_value.num : m_value.calc->doubleValue();
 }
+
 
 CSSPrimitiveValue::UnitTypes CSSPrimitiveValue::canonicalUnitTypeForCategory(UnitCategory category)
 {

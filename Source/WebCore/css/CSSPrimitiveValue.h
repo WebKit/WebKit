@@ -181,13 +181,14 @@ public:
     bool isAttr() const { return m_primitiveUnitType == CSS_ATTR; }
     bool isCounter() const { return m_primitiveUnitType == CSS_COUNTER; }
     bool isFontIndependentLength() const { return m_primitiveUnitType >= CSS_PX && m_primitiveUnitType <= CSS_PC; }
-    bool isFontRelativeLength() const
+    static bool isFontRelativeLength(unsigned primitiveUnitType)
     {
-        return m_primitiveUnitType == CSS_EMS
-            || m_primitiveUnitType == CSS_EXS
-            || m_primitiveUnitType == CSS_REMS
-            || m_primitiveUnitType == CSS_CHS;
+        return primitiveUnitType == CSS_EMS
+            || primitiveUnitType == CSS_EXS
+            || primitiveUnitType == CSS_REMS
+            || primitiveUnitType == CSS_CHS;
     }
+    bool isFontRelativeLength() const { return isFontRelativeLength(m_primitiveUnitType); }
 
     static bool isViewportPercentageLength(unsigned short type) { return type >= CSS_VW && type <= CSS_VMAX; }
     bool isViewportPercentageLength() const { return isViewportPercentageLength(m_primitiveUnitType); }
@@ -370,6 +371,7 @@ public:
     static UnitTypes canonicalUnitTypeForCategory(UnitCategory);
     static double conversionToCanonicalUnitsScaleFactor(unsigned short unitType);
 
+    static double computeNonCalcLengthDouble(const CSSToLengthConversionData&, unsigned short primitiveType, double value);
 private:
     CSSPrimitiveValue(CSSValueID);
     CSSPrimitiveValue(CSSPropertyID);
