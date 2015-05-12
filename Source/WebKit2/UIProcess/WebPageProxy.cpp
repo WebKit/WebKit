@@ -2838,6 +2838,23 @@ void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t f
         m_loaderClient->didReceiveServerRedirectForProvisionalLoadForFrame(*this, *frame, navigation.get(), m_process->transformHandlesToObjects(userData.object()).get());
 }
 
+void WebPageProxy::didChangeProvisionalURLForFrame(uint64_t frameID, uint64_t, const String& url)
+{
+    WebFrameProxy* frame = m_process->webFrame(frameID);
+    MESSAGE_CHECK(frame);
+    MESSAGE_CHECK(frame->frameLoadState().state() == FrameLoadState::State::Provisional);
+    MESSAGE_CHECK_URL(url);
+
+    auto transaction = m_pageLoadState.transaction();
+
+    // Internally, we handle this the same way we handle a server redirect. There are no client callbacks
+    // for this, but if this is the main frame, clients may observe a change to the page's URL.
+    if (frame->isMainFrame())
+        m_pageLoadState.didReceiveServerRedirectForProvisionalLoad(transaction, url);
+
+    frame->didReceiveServerRedirectForProvisionalLoad(url);
+}
+
 void WebPageProxy::didFailProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, const String& provisionalURL, const ResourceError& error, const UserData& userData)
 {
     WebFrameProxy* frame = m_process->webFrame(frameID);

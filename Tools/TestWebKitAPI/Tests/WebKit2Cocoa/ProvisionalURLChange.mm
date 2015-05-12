@@ -30,20 +30,14 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
-#import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 static bool isDone;
 
-@interface LoadAlternateHTMLStringFromProvisionalLoadErrorController : NSObject <WKNavigationDelegate>
+@interface ProvisionalURLChangeController : NSObject <WKNavigationDelegate>
 @end
 
-@implementation LoadAlternateHTMLStringFromProvisionalLoadErrorController
-
-- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
-{
-    [webView _loadAlternateHTMLString:@"error page" baseURL:nil forUnreachableURL:[NSURL URLWithString:@"data:"]];
-}
+@implementation ProvisionalURLChangeController
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
@@ -52,45 +46,21 @@ static bool isDone;
 
 @end
 
-static NSString *unloadableURL = @"data:";
-static NSString *loadableURL = @"data:text/html,no%20error";
-
-TEST(WKWebView, LoadAlternateHTMLStringFromProvisionalLoadError)
+TEST(WKWebView, ProvisionalURLChange)
 {
     auto webView = adoptNS([[WKWebView alloc] init]);
-    auto controller = adoptNS([[LoadAlternateHTMLStringFromProvisionalLoadErrorController alloc] init]);
+    auto controller = adoptNS([[ProvisionalURLChangeController alloc] init]);
     [webView setNavigationDelegate:controller.get()];
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:unloadableURL]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,start"]]];
     TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.webkit.org!"]]];
     TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
-    [webView goBack];
-    TestWebKitAPI::Util::run(&isDone);
-    isDone = false;
-
-    WKBackForwardList *list = [webView backForwardList];
-    EXPECT_EQ((NSUInteger)0, list.backList.count);
-    EXPECT_EQ((NSUInteger)1, list.forwardList.count);
-    EXPECT_STREQ([[list.forwardList.firstObject URL] absoluteString].UTF8String, loadableURL.UTF8String);
-    EXPECT_STREQ([[list.currentItem URL] absoluteString].UTF8String, unloadableURL.UTF8String);
-
-    EXPECT_TRUE([webView canGoForward]);
-    if (![webView canGoForward])
-        return;
-
-    [webView goForward];
-    TestWebKitAPI::Util::run(&isDone);
-    isDone = false;
-
-    EXPECT_EQ((NSUInteger)1, list.backList.count);
-    EXPECT_EQ((NSUInteger)0, list.forwardList.count);
-    EXPECT_STREQ([[list.backList.firstObject URL] absoluteString].UTF8String, unloadableURL.UTF8String);
-    EXPECT_STREQ([[list.currentItem URL] absoluteString].UTF8String, loadableURL.UTF8String);
+    EXPECT_STREQ([webView URL].absoluteString.UTF8String, "about:blank");
 }
 
 #endif

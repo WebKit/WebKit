@@ -1,3 +1,14 @@
+2015-05-11  Dan Bernstein  <mitz@apple.com>
+
+        Test for <rdar://problem/20878075> Trying to navigate to an invalid URL loads about:blank, but -[WKWebView URL] returns the invalid URL
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/LoadAlternateHTMLString.mm: Fixed copyright header.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/ProvisionalURLChange.mm: Added.
+        (-[ProvisionalURLChangeController webView:didFinishNavigation:]):
+
 2015-05-11  Jake Nielsen  <jacob_nielsen@apple.com>
 
         Fix internal build configuration issues
@@ -811,6 +822,18 @@
         Reviewed by Csaba Osztrogonác.
 
         * gtk/install-dependencies:
+
+2015-05-01  Dan Bernstein  <mitz@apple.com>
+
+        Test for <rdar://problem/8636045> Back/forward navigation to an error page in Safari breaks the back-forward list
+        https://bugs.webkit.org/show_bug.cgi?id=144501
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/LoadAlternateHTMLString.mm: Added.
+        (-[LoadAlternateHTMLStringFromProvisionalLoadErrorController webView:didFailProvisionalNavigation:withError:]):
+        (-[LoadAlternateHTMLStringFromProvisionalLoadErrorController webView:didFinishNavigation:]):
 
 2015-05-01  Mario Sanchez Prada  <mario@endlessm.com>
 

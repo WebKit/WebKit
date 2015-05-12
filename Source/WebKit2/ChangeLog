@@ -1,5 +1,25 @@
 2015-05-11  Dan Bernstein  <mitz@apple.com>
 
+        WebKit2 part of <rdar://problem/20878075> Trying to navigate to an invalid URL loads about:blank, but -[WKWebView URL] returns the invalid URL
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChangeProvisionalURLForFrame): Added. Update internal state the
+        same way we update it for server redirects, but don’t make client callbacks. Clients
+        observing the URL property will see it change.
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/WebPageProxy.messages.in: Added DidChangeProvisionalURLForFrame.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidChangeProvisionalURL): Override this new
+        FrameLoaderClient function to send a DidChangeProvisionalURLForFrame message to the UI
+        process.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
+2015-05-11  Dan Bernstein  <mitz@apple.com>
+
         <rdar://problem/19773721> [iOS] Find on page feels like it zooms in too much
         https://bugs.webkit.org/show_bug.cgi?id=144891
 

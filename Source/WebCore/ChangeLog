@@ -1,3 +1,27 @@
+2015-05-11  Dan Bernstein  <mitz@apple.com>
+
+        WebCore part of <rdar://problem/20878075> Trying to navigate to an invalid URL loads about:blank, but -[WKWebView URL] returns the invalid URL
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test: TestWebKitAPI/Tests/WebKit2Cocoa/ProvisionalURLChange.mm
+
+        In some cases, trying to navigate to an invalid URL results in navigation to about:blank.
+        When the about:blank load is committed, the UI process still thinks that the provisional
+        URL is the original, invalid URL, and updates its state to reflect that that’s the URL that
+        has been committed.
+
+        The provisional URL changes (1) when a provisional load begins, (2) when a server redirect
+        happens, (3) when the client changes the request in willSendRequest, and (4) in this
+        about:blank case. For (1) and (2), there are frame loader client callbacks. (3) is client-
+        initiated. So this patch addresses (4).
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::maybeLoadEmpty): If our request URL is changing to about:blank and
+        while loading the main resource, call FrameLoaderClient::dispatchDidChangeProvisionalURL.
+        * loader/FrameLoaderClient.h: Added dispatchDidChangeProvisionalURL with an empty
+        implementation.
+
 2015-05-11  Zalan Bujtas  <zalan@apple.com>
 
         Text is misplaced when custom font does not have space glyph.
