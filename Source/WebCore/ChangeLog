@@ -1,3 +1,27 @@
+2015-05-12  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK][WK2] rowAtIndex is not implemented in DRT/WKTR
+        https://bugs.webkit.org/show_bug.cgi?id=116971
+
+        Reviewed by Chris Fleizach.
+
+        Because ATK lacks API to directly get an accessible row via its index,
+        the implementation of rowAtIndex gets a cell in the indexed row and
+        returns the parent row. The failing test continued to fail because
+        AccessibilityARIAGridCell::parentTable called parentObjectUnignored at
+        most twice, the second call in place to handle rows which are included
+        in the tree. However, given a well-formed ARIA grid with a rowgroup that
+        is interactive, that rowgroup also needs to be in the tree necessitating
+        parentObjectUnignored be called a third time to get to the grid. Given a
+        poorly-formed ARIA grid, there may additional objects which pass the test
+        for inclusion standing in between the cell and grid necessitating more
+        calls still. Therefore, ascend the hierarchy to find the parent grid.
+
+        No new tests. The failing test now passes.
+
+        * accessibility/AccessibilityARIAGridCell.cpp:
+        (WebCore::AccessibilityARIAGridCell::parentTable):
+
 2015-05-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [X11] Add XUniquePtr and XUniqueResource to automatically free X resources

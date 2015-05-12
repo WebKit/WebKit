@@ -800,7 +800,18 @@ PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::disclosedRowAtIndex(u
 
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::rowAtIndex(unsigned index)
 {
-    // FIXME: implement
+    // ATK doesn't have API to get an accessible row by index directly. It does, however, have
+    // API to get cells in the row specified by index. The parent of a cell should be the row.
+    AtkTable* axTable = ATK_TABLE(m_element.get());
+    unsigned nColumns = columnCount();
+    for (unsigned col = 0; col < nColumns; col++) {
+        // Find the first cell in this row that only spans one row.
+        if (atk_table_get_row_extent_at(axTable, index, col) == 1) {
+            AtkObject* cell = atk_table_ref_at(axTable, index, col);
+            return cell ? AccessibilityUIElement::create(atk_object_get_parent(cell)) : nullptr;
+        }
+    }
+
     return nullptr;
 }
 

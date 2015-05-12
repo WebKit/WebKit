@@ -1,3 +1,15 @@
+2015-05-12  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK][WK2] rowAtIndex is not implemented in DRT/WKTR
+        https://bugs.webkit.org/show_bug.cgi?id=116971
+
+        Reviewed by Chris Fleizach.
+
+        Implement rowAtIndex for ATK.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::rowAtIndex):
+
 2015-05-11  Dan Bernstein  <mitz@apple.com>
 
         Test for <rdar://problem/20878075> Trying to navigate to an invalid URL loads about:blank, but -[WKWebView URL] returns the invalid URL

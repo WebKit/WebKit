@@ -51,21 +51,15 @@ Ref<AccessibilityARIAGridCell> AccessibilityARIAGridCell::create(RenderObject* r
 
 AccessibilityTable* AccessibilityARIAGridCell::parentTable() const
 {
-    AccessibilityObject* parent = parentObjectUnignored();
-    if (!parent)
-        return nullptr;
-    
-    if (is<AccessibilityTable>(*parent) && downcast<AccessibilityTable>(*parent).isExposableThroughAccessibility())
-        return downcast<AccessibilityTable>(parent);
+    // ARIA gridcells may have multiple levels of unignored ancestors that are not the parent table,
+    // including rows and interactive rowgroups. In addition, poorly-formed grids may contain elements
+    // which pass the tests for inclusion.
+    for (AccessibilityObject* parent = parentObjectUnignored(); parent; parent = parent->parentObjectUnignored()) {
+        if (is<AccessibilityTable>(*parent) && downcast<AccessibilityTable>(*parent).isExposableThroughAccessibility())
+            return downcast<AccessibilityTable>(parent);
+    }
 
-    // It could happen that we hadn't reached the parent table yet (in
-    // case objects for rows were not ignoring accessibility) so for
-    // that reason we need to run parentObjectUnignored once again.
-    parent = parent->parentObjectUnignored();
-    if (!(is<AccessibilityTable>(parent) && downcast<AccessibilityTable>(*parent).isExposableThroughAccessibility()))
-        return nullptr;
-    
-    return downcast<AccessibilityTable>(parent);
+    return nullptr;
 }
     
 void AccessibilityARIAGridCell::rowIndexRange(std::pair<unsigned, unsigned>& rowRange) const

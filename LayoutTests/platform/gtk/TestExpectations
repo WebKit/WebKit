@@ -1586,8 +1586,6 @@ webkit.org/b/98382 accessibility/visible-elements.html [ Failure ]
 
 webkit.org/b/125506 accessibility/alt-tag-on-image-with-nonimage-role.html [ Failure ]
 
-webkit.org/b/116971 accessibility/poorly-formed-aria-table.html [ Failure ]
-
 # Blur and focus events are not received for the following tests.
 Bug(GTK) fast/events/frame-tab-focus.html [ Failure ]
 
