@@ -1,5 +1,26 @@
 2015-05-12  Joanmarie Diggs  <jdiggs@igalia.com>
 
+        AX: [GTK] Defer to WebCore Accessibility for table exposure
+        https://bugs.webkit.org/show_bug.cgi?id=144896
+
+        Reviewed by Chris Fleizach.
+
+        Several platform tests are testing accessibility of tables. In order to ensure
+        that those tables continue to be exposed as tables, a border was added so that
+        they are not judged to be layout tables. For the remainder of the tests, the
+        expectations were updated to reflect the fact that layout tables are no longer
+        exposed as AccessibilityTables in WebKitGtk.
+
+        * platform/gtk/accessibility/caret-offsets.html: Added border to table.
+        * platform/gtk/accessibility/table-detection-expected.txt: Updated to reflect new behavior.
+        * platform/gtk/accessibility/table-hierarchy-expected.txt: Updated to reflect new behavior.
+        * platform/gtk/accessibility/table-one-cell-expected.txt: Updated to reflect new behavior.
+        * platform/gtk/accessibility/table-with-rules-expected.txt: Updated to reflect new behavior.
+        * platform/gtk/accessibility/text-for-range-table-cells.html: Added border to table.
+        * platform/gtk/accessibility/text-for-table.html: Added border to table.
+
+2015-05-12  Joanmarie Diggs  <jdiggs@igalia.com>
+
         [GTK][WK2] rowAtIndex is not implemented in DRT/WKTR
         https://bugs.webkit.org/show_bug.cgi?id=116971
 

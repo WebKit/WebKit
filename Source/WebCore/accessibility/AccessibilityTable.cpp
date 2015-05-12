@@ -331,12 +331,12 @@ bool AccessibilityTable::computeIsTableExposableThroughAccessibility() const
     if (isDataTable())
         return true;
 
-    // Gtk+ ATs expect all tables to be exposed as tables.
-    // N.B. This will be changing for at least GTK in the near future. In the meantime, the following
+    // Gtk+ ATs used to expect all tables to be exposed as tables.
+    // N.B. Efl may wish to follow suit and also defer to WebCore. In the meantime, the following
     // check fails for data tables with display:table-row-group. By checking for data tables first,
     // we can handle that edge case without introducing regressions prior to switching to WebCore's
     // default behavior for table exposure.
-#if PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(EFL)
     Element* tableNode = downcast<RenderTable>(*m_renderer).element();
     return is<HTMLTableElement>(tableNode);
 #endif

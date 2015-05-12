@@ -1,5 +1,21 @@
 2015-05-12  Joanmarie Diggs  <jdiggs@igalia.com>
 
+        AX: [GTK] Defer to WebCore Accessibility for table exposure
+        https://bugs.webkit.org/show_bug.cgi?id=144896
+
+        Reviewed by Chris Fleizach.
+
+        Stop unconditionally exposing all HTMLTableElement nodes as AccessibilityTables
+        for WebKitGtk.
+
+        No new tests. Several existing tests already cover table exposure. They have
+        been updated accordingly.
+
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::computeIsTableExposableThroughAccessibility):
+
+2015-05-12  Joanmarie Diggs  <jdiggs@igalia.com>
+
         [GTK][WK2] rowAtIndex is not implemented in DRT/WKTR
         https://bugs.webkit.org/show_bug.cgi?id=116971
 

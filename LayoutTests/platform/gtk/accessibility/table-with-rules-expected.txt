@@ -59,13 +59,14 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: html-id:testTable4, toolkit:WebKitGtk
 
-AXRole: AXTable
+AXRole: AXSection
 AXParent: AXWebArea
-AXChildren: 1
-AXPosition: { 8.000000, 88.000000 }
-AXSize: { 62.000000, 23.000000 }
+AXChildren: 0
+AXPosition: { 10.000000, 90.000000 }
+AXSize: { 28.000000, 19.000000 }
 AXTitle: 
 AXDescription: 
+AXValue: asdf
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -75,16 +76,16 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: layout-guess:true, html-id:testTable5, toolkit:WebKitGtk
+AXPlatformAttributes: toolkit:WebKitGtk
 
-AXRole: AXGroup
+AXRole: AXSection
 AXParent: AXWebArea
 AXChildren: 0
-AXPosition: { 8.000000, 111.000000 }
-AXSize: { 769.000000, 34.000000 }
+AXPosition: { 40.000000, 90.000000 }
+AXSize: { 28.000000, 19.000000 }
 AXTitle: 
 AXDescription: 
-AXValue: <\n>------------------------------------<\n>
+AXValue: asdf
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
