@@ -82,7 +82,26 @@
 namespace WebCore {
 
 static const char versionKey[] = "WebKitDatabaseVersionKey";
-static const char infoTableName[] = "__WebKitDatabaseInfoTable__";
+static const char unqualifiedInfoTableName[] = "__WebKitDatabaseInfoTable__";
+
+const char* DatabaseBackendBase::databaseInfoTableName()
+{
+    return unqualifiedInfoTableName;
+}
+
+static const char* fullyQualifiedInfoTableName()
+{
+    static const char qualifier[] = "main.";
+    static char qualifiedName[sizeof(qualifier) + sizeof(unqualifiedInfoTableName) - 1];
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, []{
+        strcpy(qualifiedName, qualifier);
+        strcpy(qualifiedName + strlen(qualifier), unqualifiedInfoTableName);
+    });
+
+    return qualifiedName;
+}
 
 static String formatErrorMessage(const char* message, int sqliteErrorCode, const char* sqliteErrorMessage)
 {
@@ -190,12 +209,6 @@ static DatabaseGuid guidForOriginAndName(const String& origin, const String& nam
     return guid;
 }
 
-// static
-const char* DatabaseBackendBase::databaseInfoTableName()
-{
-    return infoTableName;
-}
-
 #if !LOG_DISABLED || !ERROR_DISABLED
 String DatabaseBackendBase::databaseDebugName() const
 {
@@ -214,7 +227,7 @@ DatabaseBackendBase::DatabaseBackendBase(PassRefPtr<DatabaseContext> databaseCon
 {
     m_contextThreadSecurityOrigin = m_databaseContext->securityOrigin()->isolatedCopy();
 
-    m_databaseAuthorizer = DatabaseAuthorizer::create(infoTableName);
+    m_databaseAuthorizer = DatabaseAuthorizer::create(unqualifiedInfoTableName);
 
     if (m_name.isNull())
         m_name = emptyString();
@@ -344,7 +357,7 @@ bool DatabaseBackendBase::performOpenAndVerify(bool shouldSetVersionInNewDatabas
                 return false;
             }
 
-            String tableName(infoTableName);
+            String tableName(unqualifiedInfoTableName);
             if (!m_sqliteDatabase.tableExists(tableName)) {
                 m_new = true;
 
@@ -443,7 +456,7 @@ DatabaseDetails DatabaseBackendBase::details() const
 
 bool DatabaseBackendBase::getVersionFromDatabase(String& version, bool shouldCacheVersion)
 {
-    String query(String("SELECT value FROM ") + infoTableName +  " WHERE key = '" + versionKey + "';");
+    String query(String("SELECT value FROM ") + fullyQualifiedInfoTableName() +  " WHERE key = '" + versionKey + "';");
 
     m_databaseAuthorizer->disable();
 
@@ -463,7 +476,7 @@ bool DatabaseBackendBase::setVersionInDatabase(const String& version, bool shoul
 {
     // The INSERT will replace an existing entry for the database with the new version number, due to the UNIQUE ON CONFLICT REPLACE
     // clause in the CREATE statement (see Database::performOpenAndVerify()).
-    String query(String("INSERT INTO ") + infoTableName +  " (key, value) VALUES ('" + versionKey + "', ?);");
+    String query(String("INSERT INTO ") + fullyQualifiedInfoTableName() +  " (key, value) VALUES ('" + versionKey + "', ?);");
 
     m_databaseAuthorizer->disable();
 
