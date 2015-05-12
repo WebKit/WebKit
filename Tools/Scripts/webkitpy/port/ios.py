@@ -197,8 +197,9 @@ class IOSSimulatorPort(Port):
 
     def setup_test_run(self):
         device_udid = self.testing_device.udid
+        # FIXME: <rdar://problem/20916140> Switch to using CoreSimulator.framework for launching and quitting iOS Simulator
         self._executive.run_command([
-            'open', '-a', os.path.join(self.developer_dir, 'Applications', 'iOS Simulator.app'),
+            'open', '-b', 'com.apple.iphonesimulator',
             '--args', '-CurrentDeviceUDID', device_udid])
         Simulator.wait_until_device_is_in_state(device_udid, Simulator.DeviceState.BOOTED)
 
@@ -241,6 +242,7 @@ class IOSSimulatorPort(Port):
         # testing_device will fail to boot if it is already booted. We assume that if testing_device
         # is booted that it was booted by the iOS Simulator app (as opposed to simctl). So, quit the
         # iOS Simulator app to shutdown testing_device.
+        # FIXME: <rdar://problem/20916140> Switch to using CoreSimulator.framework for launching and quitting iOS Simulator
         self._executive.run_command(['osascript', '-e', 'tell application id "com.apple.iphonesimulator" to quit'])
         Simulator.wait_until_device_is_in_state(testing_device.udid, Simulator.DeviceState.SHUTDOWN)
 

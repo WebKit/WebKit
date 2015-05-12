@@ -1,3 +1,19 @@
+2015-05-12  David Kilzer  <ddkilzer@apple.com>
+
+        Switch to launching iOS Simulator using bundle ID
+        <rdar://problem/20916096>
+
+        This is required to fix the layout tests on internal bots.
+
+        * Scripts/webkitdirs.pm:
+        (relaunchIOSSimulator): Switch to use bundle ID to launch iOS
+        Simulator.  Add FIXME.
+        (quitIOSSimulator): Add FIXME.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.setup_test_run): Switch to use bundle ID to
+        launch iOS Simulator.  Add FIXME.
+        (IOSSimulatorPort.check_sys_deps): Add FIXME.
+
 2015-05-12  Per Arne Vollan  <peavo@outlook.com>
 
         Fix run-javascriptcore-tests step on the WinCairo bot
