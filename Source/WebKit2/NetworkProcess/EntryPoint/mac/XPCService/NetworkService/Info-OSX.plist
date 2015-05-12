@@ -40,11 +40,6 @@
 		<string>NSRunLoop</string>
 		<key>_MultipleInstances</key>
 		<true/>
-		<key>EnvironmentVariables</key>
-		<dict>
-			<key>DYLD_INSERT_LIBRARIES</key>
-			<string>$(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/NetworkProcess.app/Contents/MacOS/SecItemShim.dylib</string>
-		</dict>
 	</dict>
 </dict>
 </plist>

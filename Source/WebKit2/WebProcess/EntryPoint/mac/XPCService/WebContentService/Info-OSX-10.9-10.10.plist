@@ -46,6 +46,11 @@
 		<string>_NSApplicationMain</string>
 		<key>_MultipleInstances</key>
 		<true/>
+		<key>EnvironmentVariables</key>
+		<dict>
+			<key>DYLD_INSERT_LIBRARIES</key>
+			<string>$(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/WebProcess.app/Contents/MacOS/WebProcessShim.dylib</string>
+		</dict>
 	</dict>
 </dict>
 </plist>

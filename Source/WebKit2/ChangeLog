@@ -1,3 +1,51 @@
+2015-05-12  Anders Carlsson  <andersca@apple.com>
+
+        Production builds should link against the shims directly
+        https://bugs.webkit.org/show_bug.cgi?id=144922
+        rdar://problem/19708579
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/NetworkService.xcconfig:
+        Point to an Info.plist that has DYLD_INSERT_LIBRARIES set on 10.10 and earlier.
+        Link directly against SecItemShim.dylib where possible.
+
+        * Configurations/PluginProcessShim.xcconfig:
+        Set the install name and install path.
+
+        * Configurations/PluginService.32.xcconfig:
+        Point to an Info.plist that has DYLD_INSERT_LIBRARIES set on 10.10 and earlier.
+        Link directly against PluginProcessShim.dylib where possible.
+
+        * Configurations/PluginService.64.xcconfig:
+        Point to an Info.plist that has DYLD_INSERT_LIBRARIES set on 10.10 and earlier.
+        Link directly against PluginProcessShim.dylib where possible.
+
+        * Configurations/SecItemShim.xcconfig:
+        Set the install name and install path.
+
+        * Configurations/WebContentService.xcconfig:
+        Point to an Info.plist that has DYLD_INSERT_LIBRARIES set on 10.10 and earlier.
+        Link directly against WebProcessShim.dylib where possible.
+
+        * Configurations/WebProcessShim.xcconfig:
+        Set the install name and install path.
+
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info-OSX-10.9-10.10.plist: Copied from Source/WebKit2/NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info-OSX.plist.
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info-OSX.plist:
+        Add an Info.plist for 10.9 and 10.10 and remove DYLD_INSERT_LIBRARIES from the non-legacy plist.
+
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64-10.9-10.10.Info.plist: Copied from Source/WebKit2/PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64.Info.plist.
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64.Info.plist:
+        Add an Info.plist for 10.9 and 10.10 and remove DYLD_INSERT_LIBRARIES from the non-legacy plist.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-OSX-10.9-10.10.plist: Copied from Source/WebKit2/WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-OSX.plist.
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-OSX.plist:
+        Add an Info.plist for 10.9 and 10.10 and remove DYLD_INSERT_LIBRARIES from the non-legacy plist.
+
 2015-05-12  Alexey Proskuryakov  <ap@apple.com>
 
         Undo a mistaken part of r184211.
