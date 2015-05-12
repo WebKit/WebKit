@@ -1,3 +1,10 @@
+2015-05-12  Alexey Proskuryakov  <ap@apple.com>
+
+        fast/frames/flattening/iframe-flattening-resize-event-count.html times out on Yosemite WK2
+        https://bugs.webkit.org/show_bug.cgi?id=144155
+
+        * platform/mac-wk2/TestExpectations: Marking as flaky for now.
+
 2015-05-12  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [GTK] Defer to WebCore Accessibility for table exposure
