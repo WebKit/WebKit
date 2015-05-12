@@ -27,19 +27,20 @@
 #define Matrix3DTransformOperation_h
 
 #include "TransformOperation.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
 class Matrix3DTransformOperation final : public TransformOperation {
 public:
-    static PassRefPtr<Matrix3DTransformOperation> create(const TransformationMatrix& matrix)
+    static Ref<Matrix3DTransformOperation> create(const TransformationMatrix& matrix)
     {
-        return adoptRef(new Matrix3DTransformOperation(matrix));
+        return adoptRef(*new Matrix3DTransformOperation(matrix));
     }
 
-    virtual PassRefPtr<TransformOperation> clone() const override
+    virtual Ref<TransformOperation> clone() const override
     {
-        return adoptRef(new Matrix3DTransformOperation(m_matrix));
+        return adoptRef(*new Matrix3DTransformOperation(m_matrix));
     }
 
     TransformationMatrix matrix() const {return m_matrix; }
@@ -59,7 +60,7 @@ private:
         return false;
     }
 
-    virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
+    virtual Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
     
     Matrix3DTransformOperation(const TransformationMatrix& mat)
     {

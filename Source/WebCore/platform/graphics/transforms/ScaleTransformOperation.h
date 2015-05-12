@@ -26,24 +26,25 @@
 #define ScaleTransformOperation_h
 
 #include "TransformOperation.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
 class ScaleTransformOperation final : public TransformOperation {
 public:
-    static PassRefPtr<ScaleTransformOperation> create(double sx, double sy, OperationType type)
+    static Ref<ScaleTransformOperation> create(double sx, double sy, OperationType type)
     {
-        return adoptRef(new ScaleTransformOperation(sx, sy, 1, type));
+        return adoptRef(*new ScaleTransformOperation(sx, sy, 1, type));
     }
 
-    static PassRefPtr<ScaleTransformOperation> create(double sx, double sy, double sz, OperationType type)
+    static Ref<ScaleTransformOperation> create(double sx, double sy, double sz, OperationType type)
     {
-        return adoptRef(new ScaleTransformOperation(sx, sy, sz, type));
+        return adoptRef(*new ScaleTransformOperation(sx, sy, sz, type));
     }
 
-    virtual PassRefPtr<TransformOperation> clone() const override
+    virtual Ref<TransformOperation> clone() const override
     {
-        return adoptRef(new ScaleTransformOperation(m_x, m_y, m_z, m_type));
+        return adoptRef(*new ScaleTransformOperation(m_x, m_y, m_z, m_type));
     }
 
     double x() const { return m_x; }
@@ -65,7 +66,7 @@ private:
         return false;
     }
 
-    virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
+    virtual Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
 
     ScaleTransformOperation(double sx, double sy, double sz, OperationType type)
         : m_x(sx)

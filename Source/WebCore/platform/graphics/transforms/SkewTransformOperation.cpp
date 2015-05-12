@@ -34,10 +34,10 @@ bool SkewTransformOperation::operator==(const TransformOperation& other) const
     return m_angleX == s.m_angleX && m_angleY == s.m_angleY;
 }
 
-PassRefPtr<TransformOperation> SkewTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
+Ref<TransformOperation> SkewTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
 {
     if (from && !from->isSameType(*this))
-        return this;
+        return *this;
     
     if (blendToIdentity)
         return SkewTransformOperation::create(WebCore::blend(m_angleX, 0.0, progress), WebCore::blend(m_angleY, 0.0, progress), m_type);

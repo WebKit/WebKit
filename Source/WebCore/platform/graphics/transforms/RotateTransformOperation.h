@@ -26,24 +26,25 @@
 #define RotateTransformOperation_h
 
 #include "TransformOperation.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
 class RotateTransformOperation final : public TransformOperation {
 public:
-    static PassRefPtr<RotateTransformOperation> create(double angle, OperationType type)
+    static Ref<RotateTransformOperation> create(double angle, OperationType type)
     {
-        return adoptRef(new RotateTransformOperation(0, 0, 1, angle, type));
+        return adoptRef(*new RotateTransformOperation(0, 0, 1, angle, type));
     }
 
-    static PassRefPtr<RotateTransformOperation> create(double x, double y, double z, double angle, OperationType type)
+    static Ref<RotateTransformOperation> create(double x, double y, double z, double angle, OperationType type)
     {
-        return adoptRef(new RotateTransformOperation(x, y, z, angle, type));
+        return adoptRef(*new RotateTransformOperation(x, y, z, angle, type));
     }
 
-    virtual PassRefPtr<TransformOperation> clone() const override
+    virtual Ref<TransformOperation> clone() const override
     {
-        return adoptRef(new RotateTransformOperation(m_x, m_y, m_z, m_angle, m_type));
+        return adoptRef(*new RotateTransformOperation(m_x, m_y, m_z, m_angle, m_type));
     }
 
     double x() const { return m_x; }
@@ -66,7 +67,7 @@ private:
         return false;
     }
 
-    virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
+    virtual Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
 
     RotateTransformOperation(double x, double y, double z, double angle, OperationType type)
         : m_x(x)

@@ -82,7 +82,7 @@ TransformOperations TransformOperations::blendByMatchingOperations(const Transfo
     for (unsigned i = 0; i < size; i++) {
         RefPtr<TransformOperation> fromOperation = (i < fromSize) ? from.operations()[i].get() : nullptr;
         RefPtr<TransformOperation> toOperation = (i < toSize) ? operations()[i].get() : nullptr;
-        RefPtr<TransformOperation> blendedOperation = toOperation ? toOperation->blend(fromOperation.get(), progress) : (fromOperation ? fromOperation->blend(nullptr, progress, true) : nullptr);
+        RefPtr<TransformOperation> blendedOperation = toOperation ? toOperation->blend(fromOperation.get(), progress) : (fromOperation ? RefPtr<TransformOperation>(fromOperation->blend(nullptr, progress, true)) : nullptr);
         if (blendedOperation)
             result.operations().append(blendedOperation);
         else {

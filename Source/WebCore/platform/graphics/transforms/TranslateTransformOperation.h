@@ -28,24 +28,25 @@
 #include "Length.h"
 #include "LengthFunctions.h"
 #include "TransformOperation.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
 class TranslateTransformOperation final : public TransformOperation {
 public:
-    static PassRefPtr<TranslateTransformOperation> create(const Length& tx, const Length& ty, OperationType type)
+    static Ref<TranslateTransformOperation> create(const Length& tx, const Length& ty, OperationType type)
     {
-        return adoptRef(new TranslateTransformOperation(tx, ty, Length(0, Fixed), type));
+        return adoptRef(*new TranslateTransformOperation(tx, ty, Length(0, Fixed), type));
     }
 
-    static PassRefPtr<TranslateTransformOperation> create(const Length& tx, const Length& ty, const Length& tz, OperationType type)
+    static Ref<TranslateTransformOperation> create(const Length& tx, const Length& ty, const Length& tz, OperationType type)
     {
-        return adoptRef(new TranslateTransformOperation(tx, ty, tz, type));
+        return adoptRef(*new TranslateTransformOperation(tx, ty, tz, type));
     }
 
-    virtual PassRefPtr<TransformOperation> clone() const override
+    virtual Ref<TransformOperation> clone() const override
     {
-        return adoptRef(new TranslateTransformOperation(m_x, m_y, m_z, m_type));
+        return adoptRef(*new TranslateTransformOperation(m_x, m_y, m_z, m_type));
     }
 
     double x(const FloatSize& borderBoxSize) const { return floatValueForLength(m_x, borderBoxSize.width()); }
@@ -70,7 +71,7 @@ private:
         return m_x.isPercent() || m_y.isPercent();
     }
 
-    virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
+    virtual Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
 
     TranslateTransformOperation(const Length& tx, const Length& ty, const Length& tz, OperationType type)
         : m_x(tx)

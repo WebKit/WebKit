@@ -34,10 +34,10 @@ bool ScaleTransformOperation::operator==(const TransformOperation& other) const
     return m_x == s.m_x && m_y == s.m_y && m_z == s.m_z;
 }
 
-PassRefPtr<TransformOperation> ScaleTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
+Ref<TransformOperation> ScaleTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
 {
     if (from && !from->isSameType(*this))
-        return this;
+        return *this;
     
     if (blendToIdentity)
         return ScaleTransformOperation::create(WebCore::blend(m_x, 1.0, progress),

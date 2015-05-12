@@ -26,17 +26,18 @@
 #define IdentityTransformOperation_h
 
 #include "TransformOperation.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
 class IdentityTransformOperation final : public TransformOperation {
 public:
-    static PassRefPtr<IdentityTransformOperation> create()
+    static Ref<IdentityTransformOperation> create()
     {
-        return adoptRef(new IdentityTransformOperation());
+        return adoptRef(*new IdentityTransformOperation());
     }
 
-    virtual PassRefPtr<TransformOperation> clone() const override
+    virtual Ref<TransformOperation> clone() const override
     {
         return create();
     }
@@ -56,9 +57,9 @@ private:
         return false;
     }
 
-    virtual PassRefPtr<TransformOperation> blend(const TransformOperation*, double, bool = false) override
+    virtual Ref<TransformOperation> blend(const TransformOperation*, double, bool = false) override
     {
-        return this;
+        return *this;
     }
 
     IdentityTransformOperation()

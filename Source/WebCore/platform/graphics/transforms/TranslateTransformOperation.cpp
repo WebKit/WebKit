@@ -33,10 +33,10 @@ bool TranslateTransformOperation::operator==(const TransformOperation& other) co
     return m_x == t.m_x && m_y == t.m_y && m_z == t.m_z;
 }
 
-PassRefPtr<TransformOperation> TranslateTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
+Ref<TransformOperation> TranslateTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
 {
     if (from && !from->isSameType(*this))
-        return this;
+        return *this;
 
     Length zeroLength(0, Fixed);
     if (blendToIdentity)

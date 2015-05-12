@@ -26,19 +26,20 @@
 #define SkewTransformOperation_h
 
 #include "TransformOperation.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
 class SkewTransformOperation final : public TransformOperation {
 public:
-    static PassRefPtr<SkewTransformOperation> create(double angleX, double angleY, OperationType type)
+    static Ref<SkewTransformOperation> create(double angleX, double angleY, OperationType type)
     {
-        return adoptRef(new SkewTransformOperation(angleX, angleY, type));
+        return adoptRef(*new SkewTransformOperation(angleX, angleY, type));
     }
 
-    virtual PassRefPtr<TransformOperation> clone() const override
+    virtual Ref<TransformOperation> clone() const override
     {
-        return adoptRef(new SkewTransformOperation(m_angleX, m_angleY, m_type));
+        return adoptRef(*new SkewTransformOperation(m_angleX, m_angleY, m_type));
     }
 
     double angleX() const { return m_angleX; }
@@ -59,7 +60,7 @@ private:
         return false;
     }
 
-    virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
+    virtual Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
     
     SkewTransformOperation(double angleX, double angleY, OperationType type)
         : m_angleX(angleX)

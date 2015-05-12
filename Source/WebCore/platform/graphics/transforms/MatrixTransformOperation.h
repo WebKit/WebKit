@@ -27,24 +27,25 @@
 
 #include "TransformOperation.h"
 #include "TransformationMatrix.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
 class MatrixTransformOperation final : public TransformOperation {
 public:
-    static PassRefPtr<MatrixTransformOperation> create(double a, double b, double c, double d, double e, double f)
+    static Ref<MatrixTransformOperation> create(double a, double b, double c, double d, double e, double f)
     {
-        return adoptRef(new MatrixTransformOperation(a, b, c, d, e, f));
+        return adoptRef(*new MatrixTransformOperation(a, b, c, d, e, f));
     }
 
-    static PassRefPtr<MatrixTransformOperation> create(const TransformationMatrix& t)
+    static Ref<MatrixTransformOperation> create(const TransformationMatrix& t)
     {
-        return adoptRef(new MatrixTransformOperation(t));
+        return adoptRef(*new MatrixTransformOperation(t));
     }
 
-    virtual PassRefPtr<TransformOperation> clone() const override
+    virtual Ref<TransformOperation> clone() const override
     {
-        return adoptRef(new MatrixTransformOperation(matrix()));
+        return adoptRef(*new MatrixTransformOperation(matrix()));
     }
 
     TransformationMatrix matrix() const { return TransformationMatrix(m_a, m_b, m_c, m_d, m_e, m_f); }
@@ -65,7 +66,7 @@ private:
         return false;
     }
 
-    virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
+    virtual Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
     
     MatrixTransformOperation(double a, double b, double c, double d, double e, double f)
         : m_a(a)

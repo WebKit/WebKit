@@ -38,10 +38,10 @@ bool PerspectiveTransformOperation::operator==(const TransformOperation& other) 
     return m_p == downcast<PerspectiveTransformOperation>(other).m_p;
 }
 
-PassRefPtr<TransformOperation> PerspectiveTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
+Ref<TransformOperation> PerspectiveTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
 {
     if (from && !from->isSameType(*this))
-        return this;
+        return *this;
     
     if (blendToIdentity) {
         double p = floatValueForLength(m_p, 1);
