@@ -1177,7 +1177,8 @@ def prepareBundle
             else
                 begin 
                     FileUtils.ln_s source, destination
-                rescue
+                rescue Exception
+                    $stderr.puts "Warning: unable to create soft link, trying to copy."
                     FileUtils.cp_r source, destination
                 end
             end

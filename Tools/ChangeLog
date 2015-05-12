@@ -1,3 +1,14 @@
+2015-05-12  Per Arne Vollan  <peavo@outlook.com>
+
+        Fix run-javascriptcore-tests step on the WinCairo bot
+        https://bugs.webkit.org/show_bug.cgi?id=144866
+
+        Reviewed by Csaba Osztrogonác.
+
+        Catch exception when failing to create soft link, so we can fall back to copy.
+
+        * Scripts/run-jsc-stress-tests:
+
 2015-05-12  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK][WK2] rowAtIndex is not implemented in DRT/WKTR
