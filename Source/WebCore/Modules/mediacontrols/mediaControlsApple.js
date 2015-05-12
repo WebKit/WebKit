@@ -1756,6 +1756,9 @@ Controller.prototype = {
             this.controls.panel.classList.remove(this.ClassNames.noVideo);
         else
             this.controls.panel.classList.add(this.ClassNames.noVideo);
+
+        // The wireless target picker is only visible for files with video, force an update.
+        this.updateWirelessTargetAvailable();
     },
 
     updateVolume: function()

@@ -1,3 +1,14 @@
+2015-05-11  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] Update device picker icon when video tracks change
+        https://bugs.webkit.org/show_bug.cgi?id=144889
+        <rdar://problem/20907253>
+
+        Reviewed by Brent Fulgham.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.updateHasVideo):
+
 2015-05-11  Brent Fulgham  <bfulgham@apple.com>
 
         Scroll snap logic should be triggered when resizing the WebView
