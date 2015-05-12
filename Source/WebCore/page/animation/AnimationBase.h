@@ -133,7 +133,7 @@ public:
 
     virtual double timeToNextService();
 
-    double progress(double scale, double offset, const TimingFunction*) const;
+    double progress(double scale = 1, double offset = 0, const TimingFunction* = nullptr) const;
 
     // Returns true if the animation state changed.
     virtual bool animate(CompositeAnimation*, RenderElement*, const RenderStyle* /*currentStyle*/, RenderStyle* /*targetStyle*/, RefPtr<RenderStyle>& /*animatedStyle*/) = 0;

@@ -613,21 +613,21 @@ double AnimationBase::fractionalTime(double scale, double elapsedTime, double of
     return fractionalTime;
 }
 
-double AnimationBase::progress(double scale, double offset, const TimingFunction* tf) const
+double AnimationBase::progress(double scale, double offset, const TimingFunction* timingFunction) const
 {
     if (preActive())
         return 0;
 
     double elapsedTime = getElapsedTime();
 
-    double dur = m_animation->duration();
+    double duration = m_animation->duration();
     if (m_animation->iterationCount() > 0)
-        dur *= m_animation->iterationCount();
+        duration *= m_animation->iterationCount();
 
     if (postActive() || !m_animation->duration())
         return 1.0;
 
-    if (m_animation->iterationCount() > 0 && elapsedTime >= dur) {
+    if (m_animation->iterationCount() > 0 && elapsedTime >= duration) {
         const int integralIterationCount = static_cast<int>(m_animation->iterationCount());
         const bool iterationCountHasFractional = m_animation->iterationCount() - integralIterationCount;
         return (integralIterationCount % 2 || iterationCountHasFractional) ? 1.0 : 0.0;
@@ -635,16 +635,16 @@ double AnimationBase::progress(double scale, double offset, const TimingFunction
 
     const double fractionalTime = this->fractionalTime(scale, elapsedTime, offset);
 
-    if (!tf)
-        tf = m_animation->timingFunction().get();
+    if (!timingFunction)
+        timingFunction = m_animation->timingFunction().get();
 
-    switch (tf->type()) {
+    switch (timingFunction->type()) {
     case TimingFunction::CubicBezierFunction: {
-        const CubicBezierTimingFunction* function = static_cast<const CubicBezierTimingFunction*>(tf);
+        const CubicBezierTimingFunction* function = static_cast<const CubicBezierTimingFunction*>(timingFunction);
         return solveCubicBezierFunction(function->x1(), function->y1(), function->x2(), function->y2(), fractionalTime, m_animation->duration());
     }
     case TimingFunction::StepsFunction: {
-        const StepsTimingFunction* stepsTimingFunction = static_cast<const StepsTimingFunction*>(tf);
+        const StepsTimingFunction* stepsTimingFunction = static_cast<const StepsTimingFunction*>(timingFunction);
         return solveStepsFunction(stepsTimingFunction->numberOfSteps(), stepsTimingFunction->stepAtStart(), fractionalTime);
     }
     case TimingFunction::LinearFunction:

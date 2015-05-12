@@ -1,3 +1,23 @@
+2015-05-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Small tidyup in animations code
+        https://bugs.webkit.org/show_bug.cgi?id=144893
+
+        Reviewed by Eric Carlson.
+
+        Reading progress(1, 0, 0) in callers of AnimationBase::progress() was confusing,
+        particularly as the last parameter is a TimingFunction*. Put default values 
+        in the header (with nullptr) and fix the callers. Also fix variable names in
+        the implementation.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::progress):
+        * page/animation/AnimationBase.h:
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::animate):
+        (WebCore::ImplicitAnimation::getAnimatedStyle):
+        (WebCore::ImplicitAnimation::blendPropertyValueInStyle):
+
 2015-05-11  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Purge PassRefPtr in WebCore/rendering
