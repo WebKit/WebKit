@@ -683,16 +683,6 @@ void RenderLayerBacking::updateGeometry()
     bool preserves3D = style.transformStyle3D() == TransformStyle3DPreserve3D && !renderer().hasReflection();
     m_graphicsLayer->setPreserves3D(preserves3D);
     m_graphicsLayer->setBackfaceVisibility(style.backfaceVisibility() == BackfaceVisibilityVisible);
-
-    RenderLayer* compAncestor = m_owningLayer.ancestorCompositingLayer();
-    
-    // We compute everything relative to the enclosing compositing layer.
-    LayoutRect ancestorCompositingBounds;
-    if (compAncestor) {
-        ASSERT(compAncestor->backing());
-        ancestorCompositingBounds = compAncestor->backing()->compositedBounds();
-    }
-
     /*
     * GraphicsLayer: device pixel positioned, enclosing rect.
     * RenderLayer: subpixel positioned.
@@ -718,6 +708,13 @@ void RenderLayerBacking::updateGeometry()
     * devicePixelFractionFromRenderer: rendererOffsetFromGraphicsLayer's fractional part (6.9px -> 0.4px in case of 2x display)
     */
     float deviceScaleFactor = this->deviceScaleFactor();
+    RenderLayer* compAncestor = m_owningLayer.ancestorCompositingLayer();
+    // We compute everything relative to the enclosing compositing layer.
+    LayoutRect ancestorCompositingBounds;
+    if (compAncestor) {
+        ASSERT(compAncestor->backing());
+        ancestorCompositingBounds = compAncestor->backing()->compositedBounds();
+    }
     LayoutRect localCompositingBounds = compositedBounds();
     LayoutRect relativeCompositingBounds(localCompositingBounds);
 
@@ -788,16 +785,17 @@ void RenderLayerBacking::updateGeometry()
     }
 
     LayoutSize contentsSize = enclosingRelativeCompositingBounds.size();
-    
     if (m_contentsContainmentLayer) {
         m_contentsContainmentLayer->setPreserves3D(preserves3D);
-        m_contentsContainmentLayer->setPosition(FloatPoint(enclosingRelativeCompositingBounds.location() - graphicsLayerParentLocation));
+        FloatPoint enclosingGraphicsParentLocation = floorPointToDevicePixels(graphicsLayerParentLocation, deviceScaleFactor);
+        m_contentsContainmentLayer->setPosition(FloatPoint(enclosingRelativeCompositingBounds.location() - enclosingGraphicsParentLocation));
         // Use the same size as m_graphicsLayer so transforms behave correctly.
         m_contentsContainmentLayer->setSize(contentsSize);
         graphicsLayerParentLocation = enclosingRelativeCompositingBounds.location();
     }
 
-    m_graphicsLayer->setPosition(FloatPoint(enclosingRelativeCompositingBounds.location() - graphicsLayerParentLocation));
+    FloatPoint enclosingGraphicsParentLocation = floorPointToDevicePixels(graphicsLayerParentLocation, deviceScaleFactor);
+    m_graphicsLayer->setPosition(FloatPoint(enclosingRelativeCompositingBounds.location() - enclosingGraphicsParentLocation));
     m_graphicsLayer->setSize(contentsSize);
     if (devicePixelOffsetFromRenderer != m_graphicsLayer->offsetFromRenderer()) {
         m_graphicsLayer->setOffsetFromRenderer(devicePixelOffsetFromRenderer);
