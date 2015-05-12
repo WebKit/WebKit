@@ -43,25 +43,19 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createWindowContext(XID window, GLCo
     visualInfo.visualid = XVisualIDFromVisual(attributes.visual);
 
     int numReturned = 0;
-    XVisualInfo* visualInfoList = XGetVisualInfo(display, VisualIDMask, &visualInfo, &numReturned);
+    XUniquePtr<XVisualInfo> visualInfoList(XGetVisualInfo(display, VisualIDMask, &visualInfo, &numReturned));
 
-    GLXContext glxSharingContext = sharingContext ? static_cast<GLContextGLX*>(sharingContext)->m_context : 0;
-    GLXContext context = glXCreateContext(display, visualInfoList, glxSharingContext, True);
-    XFree(visualInfoList);
-
+    GLXContext glxSharingContext = sharingContext ? static_cast<GLContextGLX*>(sharingContext)->m_context.get() : nullptr;
+    XUniqueGLXContext context(glXCreateContext(display, visualInfoList.get(), glxSharingContext, True));
     if (!context)
         return nullptr;
 
-    // GLXPbuffer and XID are both the same types underneath, so we have to share
-    // a constructor here with the window path.
-    auto contextWrapper = std::make_unique<GLContextGLX>(context);
-    contextWrapper->m_window = window;
-    return WTF::move(contextWrapper);
+    return std::make_unique<GLContextGLX>(WTF::move(context), window);
 }
 
 std::unique_ptr<GLContextGLX> GLContextGLX::createPbufferContext(GLXContext sharingContext)
 {
-    int fbConfigAttributes[] = {
+    static const int fbConfigAttributes[] = {
         GLX_DRAWABLE_TYPE, GLX_PBUFFER_BIT,
         GLX_RENDER_TYPE, GLX_RGBA_BIT,
         GLX_RED_SIZE, 1,
@@ -74,32 +68,21 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createPbufferContext(GLXContext shar
 
     int returnedElements;
     Display* display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
-    GLXFBConfig* configs = glXChooseFBConfig(display, 0, fbConfigAttributes, &returnedElements);
-    if (!returnedElements) {
-        XFree(configs);
+    XUniquePtr<GLXFBConfig> configs(glXChooseFBConfig(display, 0, fbConfigAttributes, &returnedElements));
+    if (!returnedElements)
         return nullptr;
-    }
 
     // We will be rendering to a texture, so our pbuffer does not need to be large.
     static const int pbufferAttributes[] = { GLX_PBUFFER_WIDTH, 1, GLX_PBUFFER_HEIGHT, 1, 0 };
-    GLXPbuffer pbuffer = glXCreatePbuffer(display, configs[0], pbufferAttributes);
-    if (!pbuffer) {
-        XFree(configs);
+    XUniqueGLXPbuffer pbuffer(glXCreatePbuffer(display, configs.get()[0], pbufferAttributes));
+    if (!pbuffer)
         return nullptr;
-    }
 
-    GLXContext context = glXCreateNewContext(display, configs[0], GLX_RGBA_TYPE, sharingContext, GL_TRUE);
-    XFree(configs);
-    if (!context) {
-        glXDestroyPbuffer(display, pbuffer);
+    XUniqueGLXContext context(glXCreateNewContext(display, configs.get()[0], GLX_RGBA_TYPE, sharingContext, GL_TRUE));
+    if (!context)
         return nullptr;
-    }
 
-    // GLXPbuffer and XID are both the same types underneath, so we have to share
-    // a constructor here with the window path.
-    auto contextWrapper = std::make_unique<GLContextGLX>(context);
-    contextWrapper->m_pbuffer = pbuffer;
-    return WTF::move(contextWrapper);
+    return std::make_unique<GLContextGLX>(WTF::move(context), WTF::move(pbuffer));
 }
 
 std::unique_ptr<GLContextGLX> GLContextGLX::createPixmapContext(GLXContext sharingContext)
@@ -114,31 +97,23 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createPixmapContext(GLXContext shari
     };
 
     Display* display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
-    XVisualInfo* visualInfo = glXChooseVisual(display, DefaultScreen(display), visualAttributes);
+    XUniquePtr<XVisualInfo> visualInfo(glXChooseVisual(display, DefaultScreen(display), visualAttributes));
     if (!visualInfo)
         return nullptr;
 
-    GLXContext context = glXCreateContext(display, visualInfo, sharingContext, GL_TRUE);
-    if (!context) {
-        XFree(visualInfo);
+    XUniqueGLXContext context(glXCreateContext(display, visualInfo.get(), sharingContext, GL_TRUE));
+    if (!context)
         return nullptr;
-    }
 
-    Pixmap pixmap = XCreatePixmap(display, DefaultRootWindow(display), 1, 1, visualInfo->depth);
-    if (!pixmap) {
-        XFree(visualInfo);
+    XUniquePixmap pixmap(XCreatePixmap(display, DefaultRootWindow(display), 1, 1, visualInfo->depth));
+    if (!pixmap)
         return nullptr;
-    }
 
-    GLXPixmap glxPixmap = glXCreateGLXPixmap(display, visualInfo, pixmap);
-    if (!glxPixmap) {
-        XFreePixmap(display, pixmap);
-        XFree(visualInfo);
+    XUniqueGLXPixmap glxPixmap(glXCreateGLXPixmap(display, visualInfo.get(), pixmap.get()));
+    if (!glxPixmap)
         return nullptr;
-    }
 
-    XFree(visualInfo);
-    return std::make_unique<GLContextGLX>(context, pixmap, glxPixmap);
+    return std::make_unique<GLContextGLX>(WTF::move(context), WTF::move(pixmap), WTF::move(glxPixmap));
 }
 
 std::unique_ptr<GLContextGLX> GLContextGLX::createContext(XID window, GLContext* sharingContext)
@@ -152,7 +127,7 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createContext(XID window, GLContext*
     if (!success)
         return nullptr;
 
-    GLXContext glxSharingContext = sharingContext ? static_cast<GLContextGLX*>(sharingContext)->m_context : 0;
+    GLXContext glxSharingContext = sharingContext ? static_cast<GLContextGLX*>(sharingContext)->m_context.get() : nullptr;
     auto context = window ? createWindowContext(window, sharingContext) : nullptr;
     if (!context)
         context = createPbufferContext(glxSharingContext);
@@ -164,23 +139,22 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createContext(XID window, GLContext*
     return WTF::move(context);
 }
 
-GLContextGLX::GLContextGLX(GLXContext context)
-    : m_context(context)
-    , m_window(0)
-    , m_pbuffer(0)
-    , m_pixmap(0)
-    , m_glxPixmap(0)
-    , m_cairoDevice(0)
+GLContextGLX::GLContextGLX(XUniqueGLXContext&& context, XID window)
+    : m_context(WTF::move(context))
+    , m_window(window)
 {
 }
 
-GLContextGLX::GLContextGLX(GLXContext context, Pixmap pixmap, GLXPixmap glxPixmap)
-    : m_context(context)
-    , m_window(0)
-    , m_pbuffer(0)
-    , m_pixmap(pixmap)
-    , m_glxPixmap(glxPixmap)
-    , m_cairoDevice(0)
+GLContextGLX::GLContextGLX(XUniqueGLXContext&& context, XUniqueGLXPbuffer&& pbuffer)
+    : m_context(WTF::move(context))
+    , m_pbuffer(WTF::move(pbuffer))
+{
+}
+
+GLContextGLX::GLContextGLX(XUniqueGLXContext&& context, XUniquePixmap&& pixmap, XUniqueGLXPixmap&& glxPixmap)
+    : m_context(WTF::move(context))
+    , m_pixmap(WTF::move(pixmap))
+    , m_glxPixmap(WTF::move(glxPixmap))
 {
 }
 
@@ -189,26 +163,12 @@ GLContextGLX::~GLContextGLX()
     if (m_cairoDevice)
         cairo_device_destroy(m_cairoDevice);
 
-    Display* display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
     if (m_context) {
         // This may be necessary to prevent crashes with NVidia's closed source drivers. Originally
         // from Mozilla's 3D canvas implementation at: http://bitbucket.org/ilmari/canvas3d/
+        Display* display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
         glXMakeCurrent(display, None, None);
-        glXDestroyContext(display, m_context);
-    }
-
-    if (m_pbuffer) {
-        glXDestroyPbuffer(display, m_pbuffer);
-        m_pbuffer = 0;
-    }
-    if (m_glxPixmap) {
-        glXDestroyGLXPixmap(display, m_glxPixmap);
-        m_glxPixmap = 0;
-    }
-    if (m_pixmap) {
-        XFreePixmap(display, m_pixmap);
-        m_pixmap = 0;
     }
 }
 
@@ -237,17 +197,17 @@ bool GLContextGLX::makeContextCurrent()
     ASSERT(m_context && (m_window || m_pbuffer || m_glxPixmap));
 
     GLContext::makeContextCurrent();
-    if (glXGetCurrentContext() == m_context)
+    if (glXGetCurrentContext() == m_context.get())
         return true;
 
     Display* display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
     if (m_window)
-        return glXMakeCurrent(display, m_window, m_context);
+        return glXMakeCurrent(display, m_window, m_context.get());
 
     if (m_pbuffer)
-        return glXMakeCurrent(display, m_pbuffer, m_context);
+        return glXMakeCurrent(display, m_pbuffer.get(), m_context.get());
 
-    return ::glXMakeCurrent(display, m_glxPixmap, m_context);
+    return ::glXMakeCurrent(display, m_glxPixmap.get(), m_context.get());
 }
 
 void GLContextGLX::swapBuffers()
@@ -267,7 +227,7 @@ cairo_device_t* GLContextGLX::cairoDevice()
         return m_cairoDevice;
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
-    m_cairoDevice = cairo_glx_device_create(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native(), m_context);
+    m_cairoDevice = cairo_glx_device_create(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native(), m_context.get());
 #endif
 
     return m_cairoDevice;
@@ -276,7 +236,7 @@ cairo_device_t* GLContextGLX::cairoDevice()
 #if ENABLE(GRAPHICS_CONTEXT_3D)
 PlatformGraphicsContext3D GLContextGLX::platformContext()
 {
-    return m_context;
+    return m_context.get();
 }
 #endif
 

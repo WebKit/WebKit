@@ -29,6 +29,7 @@
 
 #if USE(REDIRECTED_XCOMPOSITE_WINDOW)
 
+#include <X11/Xlib.h>
 #include <X11/extensions/Xcomposite.h>
 #include <X11/extensions/Xdamage.h>
 #include <cairo-xlib.h>
@@ -135,21 +136,18 @@ std::unique_ptr<RedirectedXCompositeWindow> RedirectedXCompositeWindow::create(G
 
 RedirectedXCompositeWindow::RedirectedXCompositeWindow(GdkWindow* parentWindow, std::function<void()> damageNotify)
     : m_display(GDK_DISPLAY_XDISPLAY(gdk_window_get_display(parentWindow)))
-    , m_window(0)
-    , m_parentWindow(0)
-    , m_pixmap(0)
-    , m_damage(0)
     , m_needsNewPixmapAfterResize(false)
 {
+    ASSERT(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native() == m_display);
     Screen* screen = DefaultScreenOfDisplay(m_display);
 
     GdkVisual* visual = gdk_window_get_visual(parentWindow);
-    Colormap colormap = XCreateColormap(m_display, RootWindowOfScreen(screen), GDK_VISUAL_XVISUAL(visual), AllocNone);
+    XUniqueColormap colormap(XCreateColormap(m_display, RootWindowOfScreen(screen), GDK_VISUAL_XVISUAL(visual), AllocNone));
 
     // This is based on code from Chromium: src/content/common/gpu/image_transport_surface_linux.cc
     XSetWindowAttributes windowAttributes;
     windowAttributes.override_redirect = True;
-    windowAttributes.colormap = colormap;
+    windowAttributes.colormap = colormap.get();
 
     // CWBorderPixel must be present when the depth doesn't match the parent's one.
     // See http://cgit.freedesktop.org/xorg/xserver/tree/dix/window.c?id=xorg-server-1.16.0#n703.
@@ -164,13 +162,13 @@ RedirectedXCompositeWindow::RedirectedXCompositeWindow(GdkWindow* parentWindow, 
         GDK_VISUAL_XVISUAL(visual),
         CWOverrideRedirect | CWColormap | CWBorderPixel,
         &windowAttributes);
-    XMapWindow(m_display, m_parentWindow);
+    XMapWindow(m_display, m_parentWindow.get());
 
     windowAttributes.event_mask = StructureNotifyMask;
     windowAttributes.override_redirect = False;
     // Create the window of at last 1x1 since X doesn't allow to create empty windows.
     m_window = XCreateWindow(m_display,
-        m_parentWindow,
+        m_parentWindow.get(),
         0, 0,
         std::max(1, m_size.width()),
         std::max(1, m_size.height()),
@@ -180,21 +178,19 @@ RedirectedXCompositeWindow::RedirectedXCompositeWindow(GdkWindow* parentWindow, 
         CopyFromParent,
         CWEventMask,
         &windowAttributes);
-    XMapWindow(m_display, m_window);
+    XMapWindow(m_display, m_window.get());
 
-    XFreeColormap(m_display, colormap);
-
-    xDamageNotifier().add(m_window, WTF::move(damageNotify));
+    xDamageNotifier().add(m_window.get(), WTF::move(damageNotify));
 
     while (1) {
         XEvent event;
-        XWindowEvent(m_display, m_window, StructureNotifyMask, &event);
-        if (event.type == MapNotify && event.xmap.window == m_window)
+        XWindowEvent(m_display, m_window.get(), StructureNotifyMask, &event);
+        if (event.type == MapNotify && event.xmap.window == m_window.get())
             break;
     }
-    XSelectInput(m_display, m_window, NoEventMask);
-    XCompositeRedirectWindow(m_display, m_window, CompositeRedirectManual);
-    m_damage = XDamageCreate(m_display, m_window, XDamageReportNonEmpty);
+    XSelectInput(m_display, m_window.get(), NoEventMask);
+    XCompositeRedirectWindow(m_display, m_window.get(), CompositeRedirectManual);
+    m_damage = XDamageCreate(m_display, m_window.get(), XDamageReportNonEmpty);
 }
 
 RedirectedXCompositeWindow::~RedirectedXCompositeWindow()
@@ -204,12 +200,12 @@ RedirectedXCompositeWindow::~RedirectedXCompositeWindow()
     ASSERT(m_window);
     ASSERT(m_parentWindow);
 
-    xDamageNotifier().remove(m_window);
+    xDamageNotifier().remove(m_window.get());
 
-    XDamageDestroy(m_display, m_damage);
-    XDestroyWindow(m_display, m_window);
-    XDestroyWindow(m_display, m_parentWindow);
-    cleanupPixmapAndPixmapSurface();
+    // Explicitly reset these because we need to ensure it happens in this order.
+    m_damage.reset();
+    m_window.reset();
+    m_parentWindow.reset();
 }
 
 void RedirectedXCompositeWindow::resize(const IntSize& size)
@@ -218,7 +214,7 @@ void RedirectedXCompositeWindow::resize(const IntSize& size)
         return;
 
     // Resize the window to at last 1x1 since X doesn't allow to create empty windows.
-    XResizeWindow(m_display, m_window, std::max(1, size.width()), std::max(1, size.height()));
+    XResizeWindow(m_display, m_window.get(), std::max(1, size.width()), std::max(1, size.height()));
     XFlush(m_display);
 
     m_size = size;
@@ -232,9 +228,8 @@ void RedirectedXCompositeWindow::cleanupPixmapAndPixmapSurface()
     if (!m_pixmap)
         return;
 
-    XFreePixmap(m_display, m_pixmap);
-    m_pixmap = 0;
     m_surface = nullptr;
+    m_pixmap.reset();
 }
 
 cairo_surface_t* RedirectedXCompositeWindow::surface()
@@ -247,20 +242,19 @@ cairo_surface_t* RedirectedXCompositeWindow::surface()
 
     m_needsNewPixmapAfterResize = false;
 
-    Pixmap newPixmap = XCompositeNameWindowPixmap(m_display, m_window);
+    XUniquePixmap newPixmap(XCompositeNameWindowPixmap(m_display, m_window.get()));
     if (!newPixmap) {
         cleanupPixmapAndPixmapSurface();
         return nullptr;
     }
 
     XWindowAttributes windowAttributes;
-    if (!XGetWindowAttributes(m_display, m_window, &windowAttributes)) {
+    if (!XGetWindowAttributes(m_display, m_window.get(), &windowAttributes)) {
         cleanupPixmapAndPixmapSurface();
-        XFreePixmap(m_display, newPixmap);
         return nullptr;
     }
 
-    RefPtr<cairo_surface_t> newSurface = adoptRef(cairo_xlib_surface_create(m_display, newPixmap, windowAttributes.visual, m_size.width(), m_size.height()));
+    RefPtr<cairo_surface_t> newSurface = adoptRef(cairo_xlib_surface_create(m_display, newPixmap.get(), windowAttributes.visual, m_size.width(), m_size.height()));
 
     // Nvidia drivers seem to prepare their redirected window pixmap asynchronously, so for a few fractions
     // of a second after each resize, while doing continuous resizing (which constantly destroys and creates
@@ -275,7 +269,7 @@ cairo_surface_t* RedirectedXCompositeWindow::surface()
     }
 
     cleanupPixmapAndPixmapSurface();
-    m_pixmap = newPixmap;
+    m_pixmap = WTF::move(newPixmap);
     m_surface = newSurface;
     return m_surface.get();
 }

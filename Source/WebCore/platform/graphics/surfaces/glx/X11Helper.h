@@ -42,15 +42,6 @@
 
 namespace WebCore {
 
-class X11Deleter {
-public:
-    template<typename T> void operator()(T* resource)
-    {
-        if (resource)
-            XFree(resource);
-    }
-};
-
 class X11Helper {
 public:
     static void createPixmap(Pixmap*, const XVisualInfo&, const IntSize& = IntSize(1, 1));

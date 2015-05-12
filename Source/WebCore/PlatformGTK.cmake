@@ -126,6 +126,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/opentype/OpenTypeVerticalData.cpp
 
     platform/graphics/x11/PlatformDisplayX11.cpp
+    platform/graphics/x11/XUniqueResource.cpp
 
     platform/gtk/ErrorsGtk.cpp
     platform/gtk/EventLoopGtk.cpp

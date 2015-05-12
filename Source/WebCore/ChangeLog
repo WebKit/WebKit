@@ -1,3 +1,74 @@
+2015-05-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [X11] Add XUniquePtr and XUniqueResource to automatically free X resources
+        https://bugs.webkit.org/show_bug.cgi?id=144521
+
+        Reviewed by Darin Adler.
+
+        Add XUniquePtr as a template alias of std:unique_ptr to handle X
+        resources using pointers and XUniqueResource as a new class to
+        handle X resources using a long unsigned identifier. This
+        simplifies the code and makes it more difficult to leak X resources.
+
+        * PlatformEfl.cmake: Add new files to compilation.
+        * PlatformGTK.cmake: Ditto.
+        * platform/graphics/cairo/BackingStoreBackendCairoX11.cpp:
+        (WebCore::BackingStoreBackendCairoX11::BackingStoreBackendCairoX11):
+        Remove the display member, and use XUnique for Pixmap and GC.
+        (WebCore::BackingStoreBackendCairoX11::~BackingStoreBackendCairoX11):
+        Remove code to explicitly free Pixmap and GC.
+        (WebCore::BackingStoreBackendCairoX11::scroll):
+        * platform/graphics/cairo/BackingStoreBackendCairoX11.h:
+        * platform/graphics/glx/GLContextGLX.cpp:
+        (WebCore::GLContextGLX::createWindowContext): Use XUnique and the
+        new constructor that receives a XID, since there's no longer
+        conflict with the one receiving a Pbuffer.
+        (WebCore::GLContextGLX::createPbufferContext): Use XUnique and the
+        new constructor that receives a XUniqueGLXPbuffer&&.
+        (WebCore::GLContextGLX::createPixmapContext):
+        (WebCore::GLContextGLX::createContext):
+        (WebCore::GLContextGLX::GLContextGLX):
+        (WebCore::GLContextGLX::~GLContextGLX): Remove code to explicitly
+        free X resources.
+        (WebCore::GLContextGLX::makeContextCurrent):
+        (WebCore::GLContextGLX::cairoDevice):
+        (WebCore::GLContextGLX::platformContext):
+        * platform/graphics/glx/GLContextGLX.h:
+        * platform/graphics/surfaces/egl/EGLXSurface.cpp:
+        (WebCore::EGLXTransportSurfaceClient::EGLXTransportSurfaceClient):
+        (WebCore::EGLXTransportSurfaceClient::destroy):
+        (WebCore::EGLXTransportSurfaceClient::prepareTexture):
+        * platform/graphics/surfaces/egl/EGLXSurface.h:
+        * platform/graphics/surfaces/glx/GLXConfigSelector.h:
+        (WebCore::GLXConfigSelector::findMatchingConfig): Use XUnique
+        instead of the custom std::unique X11Deleter.
+        (WebCore::GLXConfigSelector::findMatchingConfigWithVisualId): Ditto.
+        * platform/graphics/surfaces/glx/GLXSurface.cpp:
+        (WebCore::GLXTransportSurface::GLXTransportSurface): Ditto.
+        (WebCore::GLXOffScreenSurface::initialize):
+        * platform/graphics/surfaces/glx/X11Helper.cpp:
+        (WebCore::X11Helper::createOffScreenWindow): Ditto.
+        (WebCore::X11Helper::createPixmap): Ditto.
+        * platform/graphics/surfaces/glx/X11Helper.h:
+        * platform/graphics/x11/XUniquePtr.h: Remove X11Deleter.
+        (WebCore::XPtrDeleter::operator()):
+        * platform/graphics/x11/XUniqueResource.cpp: Added.
+        (WebCore::XUniqueResource<XResource::Colormap>::deleteXResource):
+        (WebCore::XUniqueResource<XResource::Damage>::deleteXResource):
+        (WebCore::XUniqueResource<XResource::Pixmap>::deleteXResource):
+        (WebCore::XUniqueResource<XResource::Window>::deleteXResource):
+        (WebCore::XUniqueResource<XResource::GLXPbuffer>::deleteXResource):
+        (WebCore::XUniqueResource<XResource::GLXPixmap>::deleteXResource):
+        * platform/graphics/x11/XUniqueResource.h: Added.
+        (WebCore::XUniqueResource::XUniqueResource):
+        (WebCore::XUniqueResource::operator=):
+        (WebCore::XUniqueResource::~XUniqueResource):
+        (WebCore::XUniqueResource::get):
+        (WebCore::XUniqueResource::release):
+        (WebCore::XUniqueResource::reset):
+        (WebCore::XUniqueResource::operator!):
+        (WebCore::XUniqueResource::operator UnspecifiedBoolType*):
+
 2015-05-12  Zan Dobersek  <zdobersek@igalia.com>
 
         Move TransformOperation-based classes off of PassRefPtr

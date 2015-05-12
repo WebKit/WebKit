@@ -28,6 +28,8 @@
 
 #if USE(GLX)
 
+#include "XUniquePtr.h"
+
 namespace WebCore {
 
 static PFNGLXBINDTEXIMAGEEXTPROC pGlXBindTexImageEXT = 0;
@@ -66,7 +68,7 @@ GLXTransportSurface::GLXTransportSurface(const IntSize& size, SurfaceAttributes 
 {
     attributes |= GLPlatformSurface::DoubleBuffered;
     m_configSelector = std::make_unique<GLXConfigSelector>(attributes);
-    std::unique_ptr<XVisualInfo, X11Deleter> visInfo(m_configSelector->visualInfo(m_configSelector->surfaceContextConfig()));
+    XUniquePtr<XVisualInfo> visInfo(m_configSelector->visualInfo(m_configSelector->surfaceContextConfig()));
 
     if (!visInfo.get()) {
         destroy();
@@ -142,7 +144,7 @@ void GLXOffScreenSurface::initialize(SurfaceAttributes attributes)
 {
     m_configSelector = std::make_unique<GLXConfigSelector>(attributes);
 
-    std::unique_ptr<XVisualInfo, X11Deleter> visualInfo(m_configSelector->visualInfo(m_configSelector->pixmapContextConfig()));
+    XUniquePtr<XVisualInfo> visualInfo(m_configSelector->visualInfo(m_configSelector->pixmapContextConfig()));
     X11Helper::createPixmap(&m_pixmap, *visualInfo.get());
 
     if (!m_pixmap) {

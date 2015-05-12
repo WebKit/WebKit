@@ -29,6 +29,7 @@
 #if USE(GLX)
 
 #include "X11Helper.h"
+#include "XUniquePtr.h"
 #include <opengl/GLDefs.h>
 #include <opengl/GLPlatformSurface.h>
 
@@ -140,13 +141,13 @@ private:
     GLXFBConfig findMatchingConfig(const int attributes[], int depth = 32)
     {
         int numAvailableConfigs;
-        std::unique_ptr<GLXFBConfig[], X11Deleter> temp(glXChooseFBConfig(X11Helper::nativeDisplay(), DefaultScreen(X11Helper::nativeDisplay()), attributes, &numAvailableConfigs));
+        XUniquePtr<GLXFBConfig> temp(glXChooseFBConfig(X11Helper::nativeDisplay(), DefaultScreen(X11Helper::nativeDisplay()), attributes, &numAvailableConfigs));
 
         if (!numAvailableConfigs || !temp.get())
             return 0;
 
         for (int i = 0; i < numAvailableConfigs; ++i) {
-            std::unique_ptr<XVisualInfo, X11Deleter> scopedVisualInfo { glXGetVisualFromFBConfig(X11Helper::nativeDisplay(), temp[i]) };
+            XUniquePtr<XVisualInfo> scopedVisualInfo { glXGetVisualFromFBConfig(X11Helper::nativeDisplay(), temp.get()[i]) };
             if (!scopedVisualInfo.get())
                 continue;
 
@@ -157,40 +158,40 @@ private:
                 if (format) {
                     if (m_attributes & GLPlatformSurface::SupportAlpha) {
                         if (scopedVisualInfo->depth == depth && format->direct.alphaMask > 0)
-                            return temp[i];
+                            return temp.get()[i];
                     } else if (!format->direct.alphaMask)
-                        return temp[i];
+                        return temp.get()[i];
                 }
             }
 #endif
             if (scopedVisualInfo->depth == depth)
-                return temp[i];
+                return temp.get()[i];
         }
 
         // Did not find any visual supporting alpha, select the first available config.
-        std::unique_ptr<XVisualInfo, X11Deleter> scopedVisualInfo { glXGetVisualFromFBConfig(X11Helper::nativeDisplay(), temp[0]) };
+        XUniquePtr<XVisualInfo> scopedVisualInfo { glXGetVisualFromFBConfig(X11Helper::nativeDisplay(), temp.get()[0]) };
 
         if ((m_attributes & GLPlatformSurface::SupportAlpha) && (scopedVisualInfo->depth != 32))
             m_attributes &= ~GLPlatformSurface::SupportAlpha;
 
-        return temp[0];
+        return temp.get()[0];
     }
 
     GLXFBConfig findMatchingConfigWithVisualId(const int attributes[], int depth, VisualID id)
     {
         int numAvailableConfigs;
-        std::unique_ptr<GLXFBConfig[], X11Deleter> temp(glXChooseFBConfig(X11Helper::nativeDisplay(), DefaultScreen(X11Helper::nativeDisplay()), attributes, &numAvailableConfigs));
+        XUniquePtr<GLXFBConfig> temp(glXChooseFBConfig(X11Helper::nativeDisplay(), DefaultScreen(X11Helper::nativeDisplay()), attributes, &numAvailableConfigs));
 
         if (!numAvailableConfigs || !temp.get())
             return 0;
 
         for (int i = 0; i < numAvailableConfigs; ++i) {
-            std::unique_ptr<XVisualInfo, X11Deleter> scopedVisualInfo { glXGetVisualFromFBConfig(X11Helper::nativeDisplay(), temp[i]) };
+            XUniquePtr<XVisualInfo> scopedVisualInfo { glXGetVisualFromFBConfig(X11Helper::nativeDisplay(), temp.get()[i]) };
             if (!scopedVisualInfo.get())
                 continue;
 
             if (id && scopedVisualInfo->depth == depth && scopedVisualInfo->visualid == id)
-                return temp[i];
+                return temp.get()[i];
         }
 
         return 0;

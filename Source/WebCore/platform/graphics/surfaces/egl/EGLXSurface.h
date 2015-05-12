@@ -29,11 +29,11 @@
 #if PLATFORM(X11) && USE(EGL) && USE(GRAPHICS_SURFACE)
 
 #include "EGLSurface.h"
+#include "XUniquePtr.h"
 #include <glx/X11Helper.h>
 
 namespace WebCore {
 
-typedef X11Helper NativeWrapper;
 typedef Pixmap NativePixmap;
 
 // Contents of the surface are backed by native window.
@@ -74,7 +74,7 @@ public:
     virtual void destroy() override;
 
 private:
-    XImage* m_image;
+    XUniquePtr<XImage> m_image;
     IntSize m_size;
     PlatformBufferHandle m_handle;
     GLuint m_format;

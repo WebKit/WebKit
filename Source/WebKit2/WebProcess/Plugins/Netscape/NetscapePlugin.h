@@ -42,6 +42,10 @@
 #include "WebHitTestResult.h"
 #endif
 
+#if PLUGIN_ARCHITECTURE(X11)
+#include <WebCore/XUniqueResource.h>
+#endif
+
 namespace WebCore {
 class MachSendRight;
 class HTTPHeaderMap;
@@ -388,7 +392,7 @@ private:
     NP_CGContext m_npCGContext;
 #endif
 #elif PLUGIN_ARCHITECTURE(X11)
-    Pixmap m_drawable;
+    WebCore::XUniquePixmap m_drawable;
     Display* m_pluginDisplay;
 #if PLATFORM(GTK)
     GtkWidget* m_platformPluginWidget;

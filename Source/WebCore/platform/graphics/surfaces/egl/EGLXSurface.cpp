@@ -141,7 +141,6 @@ void EGLPixmapSurface::destroy()
 
 EGLXTransportSurfaceClient::EGLXTransportSurfaceClient(const PlatformBufferHandle handle, const IntSize& size, bool hasAlpha)
     : GLTransportSurfaceClient()
-    , m_image(0)
     , m_size(size)
     , m_totalBytes(0)
 {
@@ -197,11 +196,7 @@ void EGLXTransportSurfaceClient::destroy()
     }
 
     eglWaitGL();
-
-    if (m_image) {
-        XDestroyImage(m_image);
-        m_image = 0;
-    }
+    m_image = nullptr;
 }
 
 void EGLXTransportSurfaceClient::prepareTexture()
@@ -214,7 +209,7 @@ void EGLXTransportSurfaceClient::prepareTexture()
     }
 
     // Fallback to use XImage in case EGLImage and TextureToPixmap are not supported.
-    m_image = XGetImage(NativeWrapper::nativeDisplay(), m_handle, 0, 0, m_size.width(), m_size.height(), AllPlanes, ZPixmap);
+    m_image.reset(XGetImage(NativeWrapper::nativeDisplay(), m_handle, 0, 0, m_size.width(), m_size.height(), AllPlanes, ZPixmap));
 
 #if USE(OPENGL_ES_2)
     if (m_format != GraphicsContext3D::BGRA) {
@@ -225,10 +220,7 @@ void EGLXTransportSurfaceClient::prepareTexture()
 
     glTexImage2D(GL_TEXTURE_2D, 0, m_format, m_size.width(), m_size.height(), 0, m_format, GL_UNSIGNED_BYTE, m_image->data);
 
-    if (m_image) {
-        XDestroyImage(m_image);
-        m_image = 0;
-    }
+    m_image = nullptr;
 }
 
 EGLTextureFromPixmap::EGLTextureFromPixmap(const NativePixmap handle, bool hasAlpha, EGLConfig config)

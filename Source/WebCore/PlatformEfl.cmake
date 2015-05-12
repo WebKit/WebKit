@@ -197,6 +197,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/texmap/coordinated/UpdateAtlas.cpp
 
     platform/graphics/x11/PlatformDisplayX11.cpp
+    platform/graphics/x11/XUniqueResource.cpp
 
     platform/image-decoders/ImageDecoder.cpp
 

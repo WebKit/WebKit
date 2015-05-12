@@ -22,21 +22,21 @@
 #include "BackingStoreBackendCairo.h"
 
 #if USE(CAIRO) && PLATFORM(X11)
-#include <X11/Xlib.h>
+#include "XUniquePtr.h"
+#include "XUniqueResource.h"
 
 namespace WebCore {
 
 class BackingStoreBackendCairoX11 final : public BackingStoreBackendCairo {
 public:
-    BackingStoreBackendCairoX11(Display*, unsigned long rootWindowID, Visual*, int depth, const IntSize&, float deviceScaleFactor);
+    BackingStoreBackendCairoX11(unsigned long rootWindowID, Visual*, int depth, const IntSize&, float deviceScaleFactor);
     virtual ~BackingStoreBackendCairoX11();
 
     void scroll(const IntRect& scrollRect, const IntSize& scrollOffset) override;
 
 private:
-    Display* m_display;
-    Pixmap m_pixmap;
-    GC m_gc;
+    XUniquePixmap m_pixmap;
+    XUniqueGC m_gc;
 };
 
 } // namespace WebCore

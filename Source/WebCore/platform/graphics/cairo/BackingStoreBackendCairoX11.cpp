@@ -26,17 +26,17 @@
 
 namespace WebCore {
 
-BackingStoreBackendCairoX11::BackingStoreBackendCairoX11(Display* display, unsigned long rootWindowID, Visual* visual, int depth, const IntSize& size, float deviceScaleFactor)
+BackingStoreBackendCairoX11::BackingStoreBackendCairoX11(unsigned long rootWindowID, Visual* visual, int depth, const IntSize& size, float deviceScaleFactor)
     : BackingStoreBackendCairo(size)
-    , m_display(display)
 {
     IntSize scaledSize = size;
     scaledSize.scale(deviceScaleFactor);
 
-    m_pixmap = XCreatePixmap(m_display, rootWindowID, scaledSize.width(), scaledSize.height(), depth);
-    m_gc = XCreateGC(m_display, m_pixmap, 0, nullptr);
+    auto* display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
+    m_pixmap = XCreatePixmap(display, rootWindowID, scaledSize.width(), scaledSize.height(), depth);
+    m_gc.reset(XCreateGC(display, m_pixmap.get(), 0, nullptr));
 
-    m_surface = adoptRef(cairo_xlib_surface_create(m_display, m_pixmap, visual, scaledSize.width(), scaledSize.height()));
+    m_surface = adoptRef(cairo_xlib_surface_create(display, m_pixmap.get(), visual, scaledSize.width(), scaledSize.height()));
     cairoSurfaceSetDeviceScale(m_surface.get(), deviceScaleFactor, deviceScaleFactor);
 }
 
@@ -44,8 +44,6 @@ BackingStoreBackendCairoX11::~BackingStoreBackendCairoX11()
 {
     // The pixmap needs to exist when the surface is destroyed, so begin by clearing it.
     m_surface.clear();
-    XFreePixmap(m_display, m_pixmap);
-    XFreeGC(m_display, m_gc);
 }
 
 void BackingStoreBackendCairoX11::scroll(const IntRect& scrollRect, const IntSize& scrollOffset)
@@ -65,7 +63,7 @@ void BackingStoreBackendCairoX11::scroll(const IntRect& scrollRect, const IntSiz
     scaledScrollOffset.scale(xScale, yScale);
 
     cairo_surface_flush(m_surface.get());
-    XCopyArea(m_display, m_pixmap, m_pixmap, m_gc,
+    XCopyArea(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native(), m_pixmap.get(), m_pixmap.get(), m_gc.get(),
         targetRect.x() - scaledScrollOffset.width(), targetRect.y() - scaledScrollOffset.height(),
         targetRect.width(), targetRect.height(), targetRect.x(), targetRect.y());
     cairo_surface_mark_dirty_rectangle(m_surface.get(), targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height());
