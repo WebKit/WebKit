@@ -51,7 +51,7 @@
 }
 
 .status-line.good .bubble {
-    background-color: rgb(134, 189, 141);
+    background-color: rgb(50, 219, 72);
 }
 
 .status-line.unauthorized .bubble {
@@ -81,7 +81,7 @@
 }
 
 .status-line.bad .bubble {
-    background-color: rgb(134, 189, 141);
+    background-color: rgb(196, 49, 49);
 }
 
 .status-line.bad .bubble.pictogram {
@@ -131,7 +131,7 @@
 
 .status-line.good .label,
 .status-line.good .message {
-    color: rgb(76, 151, 61);
+    color: rgb(40, 177, 58);
 }
 
 .status-line.danger .label,
