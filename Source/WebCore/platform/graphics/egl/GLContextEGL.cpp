@@ -138,8 +138,10 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createWindowContext(EGLNativeWindowT
         return nullptr;
 
     EGLSurface surface = eglCreateWindowSurface(display, config, window, 0);
-    if (surface == EGL_NO_SURFACE)
+    if (surface == EGL_NO_SURFACE) {
+        eglDestroyContext(display, context);
         return nullptr;
+    }
 
     return std::make_unique<GLContextEGL>(context, surface, WindowSurface);
 }
@@ -184,17 +186,24 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createPixmapContext(EGLContext shari
         return nullptr;
 
     EGLint depth;
-    if (!eglGetConfigAttrib(display, config, EGL_DEPTH_SIZE, &depth))
+    if (!eglGetConfigAttrib(display, config, EGL_DEPTH_SIZE, &depth)) {
+        eglDestroyContext(display, context);
         return nullptr;
+    }
 
     Pixmap pixmap = XCreatePixmap(sharedX11Display(), DefaultRootWindow(sharedX11Display()), 1, 1, depth);
-    if (!pixmap)
+    if (!pixmap) {
+        eglDestroyContext(display, context);
         return nullptr;
+    }
 
     EGLSurface surface = eglCreatePixmapSurface(display, config, pixmap, 0);
 
-    if (surface == EGL_NO_SURFACE)
+    if (surface == EGL_NO_SURFACE) {
+        XFreePixmap(sharedX11Display(), pixmap);
+        eglDestroyContext(display, context);
         return nullptr;
+    }
 
     return std::make_unique<GLContextEGL>(context, surface, PixmapSurface);
 #else
