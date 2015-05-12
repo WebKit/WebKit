@@ -1,3 +1,16 @@
+2015-05-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        People with Deuteranopia can't tell red and green apart on bot watcher's dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=144929
+
+        Reviewed by Eric Carlson.
+
+        Tweaked colors as I see fit.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/StatusLineView.css:
+        (.status-line.good .bubble):
+        (.status-line.bad .bubble):
+
 2015-05-11  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Share cookie storage between UI process and secondary processes
