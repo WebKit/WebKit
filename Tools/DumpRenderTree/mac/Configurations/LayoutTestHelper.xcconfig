@@ -25,5 +25,4 @@
 
 #include "BaseTarget.xcconfig"
 
-OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
-OTHER_LDFLAGS_macosx = -framework Carbon -framework Cocoa -framework OpenGL -framework IOKit;
+OTHER_LDFLAGS[sdk=macosx*] = $(inherited) -framework Carbon -framework Cocoa -framework OpenGL -framework IOKit;

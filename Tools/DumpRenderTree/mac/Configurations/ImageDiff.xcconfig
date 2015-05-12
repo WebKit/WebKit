@@ -24,7 +24,5 @@
 #include "BaseTarget.xcconfig"
 
 PRODUCT_NAME = ImageDiff;
-OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
-OTHER_LDFLAGS_macosx = -framework Carbon -framework Cocoa -framework QuartzCore;
-OTHER_LDFLAGS_iphoneos = -framework CoreFoundation -framework CoreGraphics -framework MobileCoreServices -framework ImageIO;
-OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_iphoneos);
+OTHER_LDFLAGS[sdk=macosx*] = $(inherited) -framework Carbon -framework Cocoa -framework QuartzCore;
+OTHER_LDFLAGS[sdk=iphone*] = $(inherited) -framework CoreFoundation -framework CoreGraphics -framework MobileCoreServices -framework ImageIO;

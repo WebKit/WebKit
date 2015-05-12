@@ -26,14 +26,10 @@
 CLANG_CXX_LANGUAGE_STANDARD = gnu++0x;
 CLANG_CXX_LIBRARY = libc++;
 CLANG_WARN_CXX0X_EXTENSIONS = NO;
-HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include $(BUILT_PRODUCTS_DIR)/WebCoreTestSupport ForwardingHeaders $(HEADER_SEARCH_PATHS_$(PLATFORM_NAME)) $(SRCROOT)/../../Source/JavaScriptCore/icu;
-HEADER_SEARCH_PATHS_iphoneos = $(SDKROOT)/usr/local/include $(SDKROOT)/usr/local/include/WebCoreTestSupport $(SRCROOT)/../../Source/WebKit2/Platform/spi/ios;
-HEADER_SEARCH_PATHS_iphonesimulator = $(HEADER_SEARCH_PATHS_iphoneos);
-HEADER_SEARCH_PATHS_macosx = mac/InternalHeaders $(NEXT_ROOT)/usr/local/include/WebCoreTestSupport;
-FRAMEWORK_SEARCH_PATHS = $(FRAMEWORK_SEARCH_PATHS_$(PLATFORM_NAME));
-FRAMEWORK_SEARCH_PATHS_macosx = $(interited);
-FRAMEWORK_SEARCH_PATHS_iphoneos = $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
-FRAMEWORK_SEARCH_PATHS_iphonesimulator = $(FRAMEWORK_SEARCH_PATHS_iphoneos);
+HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include $(BUILT_PRODUCTS_DIR)/WebCoreTestSupport ForwardingHeaders $(PLATFORM_HEADER_SEARCH_PATHS) $(SRCROOT)/../../Source/JavaScriptCore/icu;
+PLATFORM_HEADER_SEARCH_PATHS[sdk=iphone*] = $(SDKROOT)/usr/local/include $(SDKROOT)/usr/local/include/WebCoreTestSupport $(SRCROOT)/../../Source/WebKit2/Platform/spi/ios;
+PLATFORM_HEADER_SEARCH_PATHS[sdk=macosx*] = mac/InternalHeaders $(NEXT_ROOT)/usr/local/include/WebCoreTestSupport;
+FRAMEWORK_SEARCH_PATHS[sdk=iphone*] = $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
 GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) $(GCC_PREPROCESSOR_DEFINITIONS_$(PLATFORM_NAME)) WEBKIT_VERSION_MIN_REQUIRED=WEBKIT_VERSION_LATEST;
 GCC_PREPROCESSOR_DEFINITIONS_macosx = ENABLE_DASHBOARD_SUPPORT;
 DEBUG_INFORMATION_FORMAT = dwarf-with-dsym;
