@@ -1,3 +1,10 @@
+2015-05-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix for older DirectX build environments.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp: Switch back to our
+        d3d stub header to avoid build failures on July 2004 DXSDK build environments.
+
 2015-05-12  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Refine media playback target client configuration
