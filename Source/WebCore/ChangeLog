@@ -1,3 +1,21 @@
+2015-05-12  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION(r175617): Some text doesn't render on internationalculinarycenter.com
+        https://bugs.webkit.org/show_bug.cgi?id=144917
+        rdar://problem/20545878
+
+        Reviewed by Andreas Kling.
+
+        This patch ensures that text stroke width value is taken into account while
+        calculating visual overflow for simple line layout.
+        Ceiling the text stroke width value matches the normal text layout behaviour.
+
+        Test: fast/text/simple-line-layout-text-stroke-width.html
+
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintFlow):
+        (WebCore::SimpleLineLayout::collectFlowOverflow):
+
 2015-05-12  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix.
