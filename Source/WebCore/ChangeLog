@@ -1,3 +1,21 @@
+2015-05-11  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Always include rows in the tree of accessible tables
+        https://bugs.webkit.org/show_bug.cgi?id=144885
+
+        Reviewed by Chris Fleizach.
+
+        Remove the code that excluded rows from the tree of accessible tables for
+        Gtk and Efl, the latter of which inherited the exclusion from the former.
+
+        No new tests. We already have several tests which cover table hierarchy.
+        The associated expectations have been updated as part of this fix.
+
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::addChildrenFromSection):
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetParent):
+
 2015-05-11  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: REGRESSION (r175203): No profile information is shown in Inspector

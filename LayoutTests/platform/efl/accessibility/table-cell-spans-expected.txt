@@ -9,7 +9,7 @@ ROWSPAN="2"	3,2	3,3	3,4
 ----------------------
 { 0, 0 }
 AXRole: AXCell
-AXParent: AXTable
+AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 246.000000, 78.000000 }
@@ -31,7 +31,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 ----------------------
 { 1, 1 }
 AXRole: AXCell
-AXParent: AXTable
+AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 246.000000, 78.000000 }
@@ -53,7 +53,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 ----------------------
 { 3, 0 }
 AXRole: AXCell
-AXParent: AXTable
+AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 124.000000, 60.000000 }
@@ -75,7 +75,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 ----------------------
 { 2, 0 }
 AXRole: AXCell
-AXParent: AXTable
+AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 124.000000, 60.000000 }
@@ -97,7 +97,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 ----------------------
 { 2, 3 }
 AXRole: AXCell
-AXParent: AXTable
+AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 124.000000, 30.000000 }

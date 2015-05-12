@@ -440,10 +440,6 @@ void AccessibilityTable::addChildrenFromSection(RenderTableSection* tableSection
         m_rows.append(&row);
         if (!row.accessibilityIsIgnored())
             m_children.append(&row);
-#if PLATFORM(GTK) || PLATFORM(EFL)
-        else
-            m_children.appendVector(row.children());
-#endif
         appendedRows.add(&row);
     }
     

@@ -11,7 +11,7 @@ South	3333	1111	2222
 ------------------------
 [0,0]
 AXRole: AXColumnHeader
-AXParent: AXTable: Example #1: Nested Stubs
+AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 144.000000, 66.000000 }
@@ -31,7 +31,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 ------------------------
 [3,1]
 AXRole: AXCell
-AXParent: AXTable: Example #1: Nested Stubs
+AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 53.000000, 36.000000 }
@@ -51,7 +51,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 ------------------------
 [1,1]
 AXRole: AXColumnHeader
-AXParent: AXTable: Example #1: Nested Stubs
+AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 143.000000, 66.000000 }
@@ -71,7 +71,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 ------------------------
 [2,2]
 AXRole: AXCell
-AXParent: AXTable: Example #1: Nested Stubs
+AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 69.000000, 30.000000 }
@@ -91,7 +91,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 ------------------------
 [3,5]
 AXRole: AXCell
-AXParent: AXTable: Example #1: Nested Stubs
+AXParent: AXRow
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
 AXSize: { 52.000000, 30.000000 }

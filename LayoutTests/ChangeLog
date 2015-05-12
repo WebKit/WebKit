@@ -1,5 +1,23 @@
 2015-05-11  Joanmarie Diggs  <jdiggs@igalia.com>
 
+        AX: [ATK] Always include rows in the tree of accessible tables
+        https://bugs.webkit.org/show_bug.cgi?id=144885
+
+        Reviewed by Chris Fleizach.
+
+        Update the expectations to reflect the rows which are now included in the tree.
+
+        * platform/efl/accessibility/table-attributes-expected.txt: Updated.
+        * platform/efl/accessibility/table-cell-spans-expected.txt: Updated.
+        * platform/efl/accessibility/table-cells-expected.txt: Updated.
+        * platform/efl/accessibility/table-sections-expected.txt: Updated.
+        * platform/gtk/accessibility/table-attributes-expected.txt: Updated.
+        * platform/gtk/accessibility/table-cell-spans-expected.txt: Updated.
+        * platform/gtk/accessibility/table-cells-expected.txt: Updated.
+        * platform/gtk/accessibility/table-sections-expected.txt: Updated.
+
+2015-05-11  Joanmarie Diggs  <jdiggs@igalia.com>
+
         AX: [ATK] Need expectation files for menu-list-crash2.html for Gtk and Efl
         https://bugs.webkit.org/show_bug.cgi?id=144881
 

@@ -318,12 +318,6 @@ static AtkObject* webkitAccessibleGetParent(AtkObject* object)
     if (!coreParent)
         return 0;
 
-    // We don't expose table rows to Assistive technologies, but we
-    // need to have them anyway in the hierarchy from WebCore to
-    // properly perform coordinates calculations when requested.
-    if (coreParent->isTableRow() && coreObject->isTableCell())
-        coreParent = coreParent->parentObjectUnignored();
-
     return coreParent->wrapper();
 }
 
