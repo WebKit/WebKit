@@ -30,11 +30,23 @@
 #import "WKBase.h"
 #import "XPCServiceEntryPoint.h"
 
+#if HAVE(OS_ACTIVITY)
+#include <os/activity.h>
+#endif
+
 using namespace WebKit;
 
 extern "C" WK_EXPORT void DatabaseServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage);
 
 void DatabaseServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage)
 {
+#if HAVE(OS_ACTIVITY)
+    os_activity_t activity = os_activity_start("com.apple.WebKit.Databases", OS_ACTIVITY_FLAG_DEFAULT);
+#endif
+
     XPCServiceInitializer<DatabaseProcess, XPCServiceInitializerDelegate>(adoptOSObject(connection), initializerMessage);
+
+#if HAVE(OS_ACTIVITY)
+    os_activity_end(activity);
+#endif
 }

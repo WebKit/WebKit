@@ -36,6 +36,10 @@
 #import <WebCore/WebCoreThreadSystemInterface.h>
 #endif
 
+#if HAVE(OS_ACTIVITY)
+#include <os/activity.h>
+#endif
+
 using namespace WebCore;
 using namespace WebKit;
 
@@ -47,10 +51,18 @@ void WebContentServiceInitializer(xpc_connection_t connection, xpc_object_t init
     // the this process don't try to insert the shim and crash.
     EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/WebProcessShim.dylib");
 
+#if HAVE(OS_ACTIVITY)
+    os_activity_t activity = os_activity_start("com.apple.WebKit.WebContent", OS_ACTIVITY_FLAG_DEFAULT);
+#endif
+
 #if PLATFORM(IOS)
     GSInitialize();
     InitWebCoreThreadSystemInterface();
 #endif // PLATFORM(IOS)
 
     XPCServiceInitializer<WebProcess, XPCServiceInitializerDelegate>(adoptOSObject(connection), initializerMessage);
+
+#if HAVE(OS_ACTIVITY)
+    os_activity_end(activity);
+#endif
 }
