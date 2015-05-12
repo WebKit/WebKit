@@ -35,64 +35,47 @@ namespace WTF {
 RunLoop::RunLoop()
 {
     // g_main_context_default() doesn't add an extra reference.
-    m_runLoopContext = isMainThread() ? g_main_context_default() : adoptGRef(g_main_context_new());
-    ASSERT(m_runLoopContext);
-    GRefPtr<GMainLoop> innermostLoop = adoptGRef(g_main_loop_new(m_runLoopContext.get(), FALSE));
+    m_mainContext = isMainThread() ? g_main_context_default() : adoptGRef(g_main_context_new());
+    ASSERT(m_mainContext);
+    GRefPtr<GMainLoop> innermostLoop = adoptGRef(g_main_loop_new(m_mainContext.get(), FALSE));
     ASSERT(innermostLoop);
-    m_runLoopMainLoops.append(innermostLoop);
+    m_mainLoops.append(innermostLoop);
 }
 
 RunLoop::~RunLoop()
 {
-    for (int i = m_runLoopMainLoops.size() - 1; i >= 0; --i) {
-        if (!g_main_loop_is_running(m_runLoopMainLoops[i].get()))
+    for (int i = m_mainLoops.size() - 1; i >= 0; --i) {
+        if (!g_main_loop_is_running(m_mainLoops[i].get()))
             continue;
-        g_main_loop_quit(m_runLoopMainLoops[i].get());
+        g_main_loop_quit(m_mainLoops[i].get());
     }
 }
 
 void RunLoop::run()
 {
-    RunLoop& mainRunLoop = RunLoop::current();
-    GMainLoop* innermostLoop = mainRunLoop.innermostLoop();
+    RunLoop& runLoop = RunLoop::current();
+
+    // The innermost main loop should always be there.
+    ASSERT(!runLoop.m_mainLoops.isEmpty());
+
+    GMainLoop* innermostLoop = runLoop.m_mainLoops[0].get();
     if (!g_main_loop_is_running(innermostLoop)) {
         g_main_loop_run(innermostLoop);
         return;
     }
 
     // Create and run a nested loop if the innermost one was already running.
-    GMainLoop* nestedMainLoop = g_main_loop_new(0, FALSE);
-    mainRunLoop.pushNestedMainLoop(nestedMainLoop);
+    GMainLoop* nestedMainLoop = g_main_loop_new(runLoop.m_mainContext.get(), FALSE);
+    runLoop.m_mainLoops.append(adoptGRef(nestedMainLoop));
     g_main_loop_run(nestedMainLoop);
-    mainRunLoop.popNestedMainLoop();
-}
-
-GMainLoop* RunLoop::innermostLoop()
-{
-    // The innermost main loop should always be there.
-    ASSERT(!m_runLoopMainLoops.isEmpty());
-    return m_runLoopMainLoops[0].get();
-}
-
-void RunLoop::pushNestedMainLoop(GMainLoop* nestedLoop)
-{
-    // The innermost main loop should always be there.
-    ASSERT(!m_runLoopMainLoops.isEmpty());
-    m_runLoopMainLoops.append(adoptGRef(nestedLoop));
-}
-
-void RunLoop::popNestedMainLoop()
-{
-    // The innermost main loop should always be there.
-    ASSERT(!m_runLoopMainLoops.isEmpty());
-    m_runLoopMainLoops.removeLast();
+    runLoop.m_mainLoops.removeLast();
 }
 
 void RunLoop::stop()
 {
     // The innermost main loop should always be there.
-    ASSERT(!m_runLoopMainLoops.isEmpty());
-    GRefPtr<GMainLoop> lastMainLoop = m_runLoopMainLoops.last();
+    ASSERT(!m_mainLoops.isEmpty());
+    GRefPtr<GMainLoop> lastMainLoop = m_mainLoops.last();
     if (g_main_loop_is_running(lastMainLoop.get()))
         g_main_loop_quit(lastMainLoop.get());
 }
@@ -102,8 +85,8 @@ void RunLoop::wakeUp()
     RefPtr<RunLoop> runLoop(this);
     GMainLoopSource::scheduleAndDeleteOnDestroy("[WebKit] RunLoop work", std::function<void()>([runLoop] {
         runLoop->performWork();
-    }), G_PRIORITY_DEFAULT, nullptr, m_runLoopContext.get());
-    g_main_context_wakeup(m_runLoopContext.get());
+    }), G_PRIORITY_DEFAULT, nullptr, m_mainContext.get());
+    g_main_context_wakeup(m_mainContext.get());
 }
 
 RunLoop::TimerBase::TimerBase(RunLoop& runLoop)
@@ -119,7 +102,7 @@ RunLoop::TimerBase::~TimerBase()
 void RunLoop::TimerBase::start(double fireInterval, bool repeat)
 {
     m_timerSource.scheduleAfterDelay("[WebKit] RunLoop::Timer", std::function<bool ()>([this, repeat] { fired(); return repeat; }),
-        std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::duration<double>(fireInterval)), G_PRIORITY_DEFAULT, nullptr, m_runLoop.m_runLoopContext.get());
+        std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::duration<double>(fireInterval)), G_PRIORITY_DEFAULT, nullptr, m_runLoop.m_mainContext.get());
 }
 
 void RunLoop::TimerBase::stop()

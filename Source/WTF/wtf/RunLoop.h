@@ -158,12 +158,9 @@ private:
 #elif USE(GLIB)
 public:
     static gboolean queueWork(RunLoop*);
-    GMainLoop* innermostLoop();
-    void pushNestedMainLoop(GMainLoop*);
-    void popNestedMainLoop();
 private:
-    GRefPtr<GMainContext> m_runLoopContext;
-    Vector<GRefPtr<GMainLoop>> m_runLoopMainLoops;
+    GRefPtr<GMainContext> m_mainContext;
+    Vector<GRefPtr<GMainLoop>> m_mainLoops;
 #endif
 };
 
