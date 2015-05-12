@@ -947,6 +947,7 @@ public:
     {
         ASSERT(!(offset & 0xfff));
         insn(pcRelative(true, offset >> 12, rd));
+        nopCortexA53Fix843419();
     }
 
     template<int datasize, SetFlags setFlags = DontSetFlags>
@@ -3652,6 +3653,17 @@ private:
                     nop();
             }
         }
+#endif
+    }
+
+    // Workaround for Cortex-A53 erratum (843419). Emit extra nops to avoid
+    // wrong address access after ADRP instruction.
+    ALWAYS_INLINE void nopCortexA53Fix843419()
+    {
+#if CPU(ARM64_CORTEXA53)
+        nop();
+        nop();
+        nop();
 #endif
     }
 
