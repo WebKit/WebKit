@@ -1,3 +1,28 @@
+2015-05-12  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] ARIA menu items should not have anonymous block children
+        https://bugs.webkit.org/show_bug.cgi?id=144653
+
+        Reviewed by Chris Fleizach.
+
+        The existing test was not cross-platform friendly and was rewritten as
+        part of the fix for this bug. New expectations were generated for Mac,
+        Efl, and Gtk. The shared expectations and the Windows expectations were
+        removed so as not to break the Win port. The search-predicate test also
+        was updated because it included an ARIA treeitem which had a listmarker
+        child it should not have, and no longer has as a result of the bug fix.
+
+        * accessibility/aria-menubar-menuitems-expected.txt: Removed. Platform hierarchies vary vastly.
+        * accessibility/aria-menubar-menuitems.html: Rewritten to work better as a shared test.
+        * platform/efl/accessibility/aria-menubar-menuitems-expected.txt: Added.
+        * platform/gtk/accessibility/aria-menubar-menuitems-expected.txt: Added.
+        * platform/mac/accessibility/aria-menubar-menuitems-expected.txt: Modified as result of rewrite.
+        * platform/mac/accessibility/search-predicate.html: Modified to reflect correct treeitem children.
+        * platform/mac/accessibility/search-predicate-expected.txt: Modified to reflect correct treeitem children.
+        * platform/win/accessibility/aria-menubar-menuitems-expected.txt: Removed. New file should be generated.
+        * resources/accessibility-helper.js: Added an argument so dumpAccessibilityTree can print title rather than value.
+        (dumpAccessibilityTree):
+
 2015-05-12  Alexey Proskuryakov  <ap@apple.com>
 
         fast/frames/flattening/iframe-flattening-resize-event-count.html times out on Yosemite WK2

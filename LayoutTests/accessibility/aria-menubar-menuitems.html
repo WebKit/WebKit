@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 
@@ -26,7 +27,7 @@
     </ul>
   </li>
 </ul>
-
+<pre id="tree"></pre>
 <p id="description"></p>
 <div id="console"></div>
 <script>
@@ -37,30 +38,9 @@ if (window.layoutController) {
 }
 
 if (window.accessibilityController) {
-    document.getElementById("body").focus();
-    var webArea = accessibilityController.focusedElement;
-
-    var menuBar = webArea.childAtIndex(0);
-    debug(menuBar.role);
-    shouldBe("menuBar.childrenCount", "2");
-
-    var menuItem = menuBar.childAtIndex(0);
-    debug(menuItem.role);
-    shouldBe("menuItem.childrenCount", "2");
-
-    var menuSubItem1 = menuItem.childAtIndex(0);
-    debug(menuSubItem1.role);
-    shouldBe("menuSubItem1.childrenCount", "0");
-
-    var menuSubItem2 = menuItem.childAtIndex(1);
-    debug(menuSubItem2.role);
-    shouldBe("menuSubItem2.childrenCount", "1");
-
-    var subMenuSubItem = menuSubItem2.childAtIndex(0);
-    debug(subMenuSubItem.role);
-    shouldBe("subMenuSubItem.childrenCount", "0");
+    window.menuBar = accessibilityController.accessibleElementById("menubar");
+    dumpAccessibilityTree(menuBar, null, 0, false, true);
 }
-
 </script>
 <script src="../resources/js-test-post.js"></script>
 </body>

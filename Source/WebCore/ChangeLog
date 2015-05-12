@@ -1,3 +1,22 @@
+2015-05-12  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] ARIA menu items should not have anonymous block children
+        https://bugs.webkit.org/show_bug.cgi?id=144653
+
+        Reviewed by Chris Fleizach.
+
+        Exclude anonymous block children of menu items from the accessible tree
+        for ATK. Exclude list markers from the accessibility tree if the parent
+        is not being exposed as an accessible list item.
+
+        No new tests. Instead, modified the existing tests to reflect the correct
+        behavior.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored):
+        * accessibility/atk/AccessibilityObjectAtk.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+
 2015-05-08  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Share cookie storage between UI process and secondary processes
