@@ -52,7 +52,12 @@ void NetworkProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) con
     encoder << shouldEnableNetworkCache;
     encoder << shouldEnableNetworkCacheEfficacyLogging;
 #endif
+#if ENABLE(SECCOMP_FILTERS)
     encoder << cookieStorageDirectory;
+#endif
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    encoder << uiProcessCookieStorageIdentifier;
+#endif
 #if PLATFORM(IOS)
     encoder << cookieStorageDirectoryExtensionHandle;
     encoder << containerCachesDirectoryExtensionHandle;
@@ -100,8 +105,14 @@ bool NetworkProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, Net
     if (!decoder.decode(result.shouldEnableNetworkCacheEfficacyLogging))
         return false;
 #endif
+#if ENABLE(SECCOMP_FILTERS)
     if (!decoder.decode(result.cookieStorageDirectory))
         return false;
+#endif
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    if (!decoder.decode(result.uiProcessCookieStorageIdentifier))
+        return false;
+#endif
 #if PLATFORM(IOS)
     if (!decoder.decode(result.cookieStorageDirectoryExtensionHandle))
         return false;

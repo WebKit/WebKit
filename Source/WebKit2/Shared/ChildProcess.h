@@ -84,6 +84,10 @@ protected:
     virtual void initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&);
     virtual void initializeConnection(IPC::Connection*);
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    static void setSharedHTTPCookieStorage(const Vector<uint8_t>& identifier);
+#endif
+
     virtual bool shouldTerminate() = 0;
     virtual void terminate();
 

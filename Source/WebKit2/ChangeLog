@@ -1,3 +1,44 @@
+2015-05-08  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Share cookie storage between UI process and secondary processes
+        https://bugs.webkit.org/show_bug.cgi?id=144820
+        rdar://problem/20572830
+
+        Reviewed by Darin Adler.
+
+        Pass a cookie storage descriptor that includes file path as well as other data that
+        CFNetwork needs to use the same cookies storage as in another process (session cookies
+        are still separate).
+
+        While at it, started to clean up code that passes cookie storage path. It was mostly
+        dead and unimplemented, only used in child processes when USE(SECCOMP_FILTERS) was enabled.
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * Shared/Network/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * Shared/Network/NetworkProcessCreationParameters.h:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        (WebKit::WebProcessPool::platformDefaultCookieStorageDirectory): Deleted.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::createNewWebProcess):
+        (WebKit::WebProcessPool::cookieStorageDirectory):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/efl/WebProcessPoolEfl.cpp:
+        (WebKit::WebProcessPool::platformDefaultCookieStorageDirectory): Deleted.
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        (WebKit::WebProcessPool::platformDefaultCookieStorageDirectory): Deleted.
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2015-05-12  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Log using diagnostic logging how far back in history we navigate

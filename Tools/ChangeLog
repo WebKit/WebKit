@@ -1,3 +1,15 @@
+2015-05-11  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Share cookie storage between UI process and secondary processes
+        https://bugs.webkit.org/show_bug.cgi?id=144820
+        rdar://problem/20572830
+
+        Reviewed by Darin Adler.
+
+        * WebKitTestRunner/TestController.cpp: (WTR::TestController::initialize):
+        Don't set cookie storage directory, as it's a no-op, we use an ephemeral session
+        for testing.
+
 2015-05-12  Jake Nielsen  <jacob_nielsen@apple.com>
 
         Fix internal build configuration issues

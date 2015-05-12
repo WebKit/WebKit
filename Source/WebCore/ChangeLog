@@ -1,3 +1,15 @@
+2015-05-08  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Share cookie storage between UI process and secondary processes
+        https://bugs.webkit.org/show_bug.cgi?id=144820
+        rdar://problem/20572830
+
+        Reviewed by Darin Adler.
+
+        * platform/network/mac/CookieJarMac.mm:
+        * platform/spi/cf/CFNetworkSPI.h:
+        Moved SPIs into an SPI header, so that WebKit2 could use them too without duplication.
+
 2015-05-12  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Log using diagnostic logging how far back in history we navigate

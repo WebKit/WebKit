@@ -73,7 +73,12 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << webSQLDatabaseDirectoryExtensionHandle;
     encoder << diskCacheDirectory;
     encoder << diskCacheDirectoryExtensionHandle;
+#if ENABLE(SECCOMP_FILTERS)
     encoder << cookieStorageDirectory;
+#endif
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    encoder << uiProcessCookieStorageIdentifier;
+#endif
 #if PLATFORM(IOS)
     encoder << cookieStorageDirectoryExtensionHandle;
     encoder << containerCachesDirectoryExtensionHandle;
@@ -177,8 +182,14 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
         return false;
     if (!decoder.decode(parameters.diskCacheDirectoryExtensionHandle))
         return false;
+#if ENABLE(SECCOMP_FILTERS)
     if (!decoder.decode(parameters.cookieStorageDirectory))
         return false;
+#endif
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    if (!decoder.decode(parameters.uiProcessCookieStorageIdentifier))
+        return false;
+#endif
 #if PLATFORM(IOS)
     if (!decoder.decode(parameters.cookieStorageDirectoryExtensionHandle))
         return false;

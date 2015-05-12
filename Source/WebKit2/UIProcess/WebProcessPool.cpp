@@ -411,11 +411,14 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess()
     if (!parameters.diskCacheDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.diskCacheDirectory, parameters.diskCacheDirectoryExtensionHandle);
 
-    parameters.cookieStorageDirectory = cookieStorageDirectory();
+#if ENABLE(SECCOMP_FILTERS)
+    parameters.cookieStorageDirectory = this->cookieStorageDirectory();
+#endif
 
 #if PLATFORM(IOS)
-    if (!parameters.cookieStorageDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(parameters.cookieStorageDirectory, parameters.cookieStorageDirectoryExtensionHandle);
+    String cookieStorageDirectory = this->cookieStorageDirectory();
+    if (!cookieStorageDirectory.isEmpty())
+        SandboxExtension::createHandleForReadWriteDirectory(cookieStorageDirectory, parameters.cookieStorageDirectoryExtensionHandle);
 
     String containerCachesDirectory = this->networkingCachesDirectory();
     if (!containerCachesDirectory.isEmpty())
@@ -610,11 +613,14 @@ WebProcessProxy& WebProcessPool::createNewWebProcess()
     if (!parameters.diskCacheDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.diskCacheDirectory, parameters.diskCacheDirectoryExtensionHandle);
 
-    parameters.cookieStorageDirectory = cookieStorageDirectory();
+#if ENABLE(SECCOMP_FILTERS)
+    parameters.cookieStorageDirectory = this->cookieStorageDirectory();
+#endif
 
 #if PLATFORM(IOS)
-    if (!parameters.cookieStorageDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(parameters.cookieStorageDirectory, parameters.cookieStorageDirectoryExtensionHandle);
+    String cookieStorageDirectory = this->cookieStorageDirectory();
+    if (!cookieStorageDirectory.isEmpty())
+        SandboxExtension::createHandleForReadWriteDirectory(cookieStorageDirectory, parameters.cookieStorageDirectoryExtensionHandle);
 
     String containerCachesDirectory = this->webContentCachesDirectory();
     if (!containerCachesDirectory.isEmpty())
@@ -1187,13 +1193,16 @@ String WebProcessPool::diskCacheDirectory() const
     return platformDefaultDiskCacheDirectory();
 }
 
+#if ENABLE(SECCOMP_FILTERS)
 String WebProcessPool::cookieStorageDirectory() const
 {
     if (!m_overrideCookieStorageDirectory.isEmpty())
         return m_overrideCookieStorageDirectory;
 
-    return platformDefaultCookieStorageDirectory();
+    // FIXME: This doesn't make much sense. Is this function used at all? We used to call platform code, but no existing platforms implemented that function.
+    return emptyString();
 }
+#endif
 
 void WebProcessPool::useTestingNetworkSession()
 {

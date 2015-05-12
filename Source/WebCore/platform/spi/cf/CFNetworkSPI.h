@@ -120,4 +120,20 @@ EXTERN_C Boolean _CFNetworkSetATSContext(CFDataRef);
 EXTERN_C void _CFNetworkResetHSTSHostsSinceDate(CFURLStorageSessionRef, CFDateRef);
 #endif
 
+#if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
+EXTERN_C CFDataRef CFHTTPCookieStorageCreateIdentifyingData(CFAllocatorRef inAllocator, CFHTTPCookieStorageRef inStorage);
+EXTERN_C CFHTTPCookieStorageRef CFHTTPCookieStorageCreateFromIdentifyingData(CFAllocatorRef inAllocator, CFDataRef inData);
+#endif
+
+#if defined(__OBJC__) && !USE(APPLE_INTERNAL_SDK)
+@interface NSHTTPCookieStorage (Details)
+#if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
++ (void)_setSharedHTTPCookieStorage:(NSHTTPCookieStorage *)storage;
+#endif
+- (void)removeCookiesSinceDate:(NSDate *)date;
+- (id)_initWithCFHTTPCookieStorage:(CFHTTPCookieStorageRef)cfStorage;
+- (CFHTTPCookieStorageRef)_cookieStorage;
+@end
+#endif
+
 #endif // CFNetworkSPI_h

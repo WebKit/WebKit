@@ -74,7 +74,12 @@ struct WebProcessCreationParameters {
     SandboxExtension::Handle webSQLDatabaseDirectoryExtensionHandle;
     String diskCacheDirectory;
     SandboxExtension::Handle diskCacheDirectoryExtensionHandle;
+#if ENABLE(SECCOMP_FILTERS)
     String cookieStorageDirectory;
+#endif
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    Vector<uint8_t> uiProcessCookieStorageIdentifier;
+#endif
 #if PLATFORM(IOS)
     SandboxExtension::Handle cookieStorageDirectoryExtensionHandle;
     SandboxExtension::Handle containerCachesDirectoryExtensionHandle;

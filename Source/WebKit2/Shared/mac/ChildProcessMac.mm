@@ -30,6 +30,7 @@
 
 #import "SandboxInitializationParameters.h"
 #import "WebKitSystemInterface.h"
+#import <WebCore/CFNetworkSPI.h>
 #import <WebCore/FileSystem.h>
 #import <WebCore/SystemVersion.h>
 #import <mach/mach.h>
@@ -174,6 +175,20 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
         exit(EX_NOPERM);
     }
 }
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+void ChildProcess::setSharedHTTPCookieStorage(const Vector<uint8_t>& identifier)
+{
+    // FIXME: Remove the runtime check when it's not needed (soon).
+    if (![NSHTTPCookieStorage respondsToSelector:@selector(_setSharedHTTPCookieStorage:)])
+        return;
+
+    RetainPtr<CFDataRef> cookieStorageData = adoptCF(CFDataCreate(kCFAllocatorDefault, identifier.data(), identifier.size()));
+    RetainPtr<CFHTTPCookieStorageRef> uiProcessCookieStorage = adoptCF(CFHTTPCookieStorageCreateFromIdentifyingData(kCFAllocatorDefault, cookieStorageData.get()));
+    [NSHTTPCookieStorage _setSharedHTTPCookieStorage:adoptNS([[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:uiProcessCookieStorage.get()]).get()];
+}
+#endif
+
 
 #if USE(APPKIT)
 void ChildProcess::stopNSAppRunLoop()

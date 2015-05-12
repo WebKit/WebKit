@@ -148,12 +148,6 @@ String WebProcessPool::platformDefaultDiskCacheDirectory() const
     return WebCore::filenameToString(diskCacheDirectory.get());
 }
 
-String WebProcessPool::platformDefaultCookieStorageDirectory() const
-{
-    notImplemented();
-    return String();
-}
-
 void WebProcessPool::setIgnoreTLSErrors(bool ignoreTLSErrors)
 {
     m_ignoreTLSErrors = ignoreTLSErrors;

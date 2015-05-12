@@ -240,6 +240,12 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
 #if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
     parameters.networkATSContext = adoptCF(_CFNetworkCopyATSContext());
 #endif
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    RetainPtr<CFDataRef> cookieStorageData = adoptCF(CFHTTPCookieStorageCreateIdentifyingData(kCFAllocatorDefault, [[NSHTTPCookieStorage sharedHTTPCookieStorage] _cookieStorage]));
+    ASSERT(parameters.uiProcessCookieStorageIdentifier.isEmpty());
+    parameters.uiProcessCookieStorageIdentifier.append(CFDataGetBytePtr(cookieStorageData.get()), CFDataGetLength(cookieStorageData.get()));
+#endif
 }
 
 #if ENABLE(NETWORK_PROCESS)
@@ -267,6 +273,12 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     parameters.shouldEnableNetworkCache = [defaults boolForKey:WebKitNetworkCacheEnabledDefaultsKey] && ![defaults boolForKey:WebKitNetworkCacheTemporarilyDisabledForTestingKey];
     parameters.shouldEnableNetworkCacheEfficacyLogging = [defaults boolForKey:WebKitNetworkCacheEfficacyLoggingEnabledDefaultsKey];
 #endif
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    RetainPtr<CFDataRef> cookieStorageData = adoptCF(CFHTTPCookieStorageCreateIdentifyingData(kCFAllocatorDefault, [[NSHTTPCookieStorage sharedHTTPCookieStorage] _cookieStorage]));
+    ASSERT(parameters.uiProcessCookieStorageIdentifier.isEmpty());
+    parameters.uiProcessCookieStorageIdentifier.append(CFDataGetBytePtr(cookieStorageData.get()), CFDataGetLength(cookieStorageData.get()));
+#endif
 }
 #endif
 
@@ -281,22 +293,6 @@ String WebProcessPool::platformDefaultDiskCacheDirectory() const
     if (!cachePath)
         cachePath = @"~/Library/Caches/com.apple.WebKit.WebProcess";
     return stringByResolvingSymlinksInPath([cachePath stringByStandardizingPath]);
-}
-
-String WebProcessPool::platformDefaultCookieStorageDirectory() const
-{
-#if PLATFORM(IOS)
-    String path = pathForProcessContainer();
-    if (path.isEmpty())
-        path = NSHomeDirectory();
-
-    path = path + "/Library/Cookies";
-    path = stringByResolvingSymlinksInPath(path);
-    return path;
-#else
-    notImplemented();
-    return [@"" stringByStandardizingPath];
-#endif
 }
 
 #if PLATFORM(IOS)

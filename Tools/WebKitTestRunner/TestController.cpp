@@ -380,7 +380,6 @@ void TestController::initialize(int argc, const char* argv[])
         // FIXME: These should be migrated to WKContextConfigurationRef.
         WKContextSetApplicationCacheDirectory(m_context.get(), toWK(temporaryFolder + separator + "ApplicationCache").get());
         WKContextSetDiskCacheDirectory(m_context.get(), toWK(temporaryFolder + separator + "Cache").get());
-        WKContextSetCookieStorageDirectory(m_context.get(), toWK(temporaryFolder + separator + "Cookies").get());
         // Disable icon database to avoid fetching <http://127.0.0.1:8000/favicon.ico> and making tests flaky.
         // Invividual tests can enable it using testRunner.setIconDatabaseEnabled, although it's not currently supported in WebKitTestRunner.
         WKContextSetIconDatabasePath(m_context.get(), toWK(emptyString()).get());
