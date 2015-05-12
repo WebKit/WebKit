@@ -291,8 +291,9 @@ private:
     // A transform that can be used to convert from root view coordinates to plug-in coordinates.
     WebCore::AffineTransform m_pluginToRootViewTransform;
 
-    // FIXME: Get rid of these.
+#if PLUGIN_ARCHITECTURE(X11)
     WebCore::IntRect m_frameRectInWindowCoordinates;
+#endif
 
     CString m_userAgent;
 
