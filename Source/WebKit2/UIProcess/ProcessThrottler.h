@@ -48,7 +48,7 @@ public:
     enum BackgroundActivityTokenType { };
     typedef RefCounter::Token<BackgroundActivityTokenType> BackgroundActivityToken;
 
-    ProcessThrottler(ProcessThrottlerClient*);
+    ProcessThrottler(ProcessThrottlerClient&);
 
     inline ForegroundActivityToken foregroundActivityToken() const;
     inline BackgroundActivityToken backgroundActivityToken() const;
@@ -66,7 +66,7 @@ private:
     // ProcessAssertionClient
     void assertionWillExpireImminently() override;
 
-    ProcessThrottlerClient* m_process;
+    ProcessThrottlerClient& m_process;
     std::unique_ptr<ProcessAndUIAssertion> m_assertion;
     RunLoop::Timer<ProcessThrottler> m_suspendTimer;
     RefCounter m_foregroundCounter;

@@ -1,3 +1,49 @@
+2015-05-12  Daniel Bates  <dabates@apple.com>
+
+        Make {Network, Web}ProcessProxy inherit from ProcessThrottleClient privately
+        https://bugs.webkit.org/show_bug.cgi?id=144886
+
+        Reviewed by Darin Adler.
+
+        {Network, Web}ProcessProxy are implemented in terms of ProcessThrottleClient, an
+        interface that defines the callbacks that ProcessThrottler makes to a client. We
+        do not want to allow arbitrary callers to make use of the interface ProcessThrottleClient.
+        So, we should use private inheritance to represent the relationship between
+        {Network, Web}ProcessProxy and ProcessThrottleClient instead of public inheritance.
+
+        Additionally make ProcessThrottler a instance variable of {Network, Web}ProcessProxy instead
+        of holding a smart pointer to a ProcessThrottler instance because we always want to
+        have a ProcessThrottler for each instance of {Network, Web}ProcessProxy.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::NetworkProcessProxy): Update code to work now that m_throttler
+        is an instance of ProcessThrottler instead of a smart pointer to a ProcessThrottler instance.
+        (WebKit::NetworkProcessProxy::didFinishLaunching): Update code to access functions of
+        m_throttler by reference instead of by pointer.
+        (WebKit::NetworkProcessProxy::didCancelProcessSuspension): Ditto.
+        (WebKit::NetworkProcessProxy::processReadyToSuspend): Ditto.
+        (WebKit::NetworkProcessProxy::setIsHoldingLockedFiles): Ditto.
+        * UIProcess/Network/NetworkProcessProxy.h: Inherit from ProcessThrottleClient privately.
+        (WebKit::NetworkProcessProxy::throttler): Update code to work now that m_throttler is an
+        instance of ProcessThrottler instead of a smart pointer to a ProcessThrottler instance.
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::ProcessThrottler): Update code to work now that m_process is
+        a lvalue reference instead of a pointer.
+        (WebKit::ProcessThrottler::updateAssertion): Ditto.
+        (WebKit::ProcessThrottler::assertionWillExpireImminently): Ditto.
+        * UIProcess/ProcessThrottler.h: Ditto.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy): Update code to work now that m_throttler is an
+        instance of ProcessThrottler instead of a smart pointer to a ProcessThrottler instance. 
+        (WebKit::WebProcessProxy::didFinishLaunching): Update code to access functions of
+        m_throttler by reference instead of by pointer.
+        (WebKit::WebProcessProxy::processReadyToSuspend): Ditto.
+        (WebKit::WebProcessProxy::didCancelProcessSuspension): Ditto.
+        (WebKit::WebProcessProxy::setIsHoldingLockedFiles): Ditto.
+        * UIProcess/WebProcessProxy.h: Inherit from ProcessThrottleClient privately.
+        (WebKit::WebProcessProxy::throttler): Update code to work now that m_throttler is an
+        instance of ProcessThrottler instead of a smart pointer to a ProcessThrottler instance.
+
 2015-05-12  Anders Carlsson  <andersca@apple.com>
 
         Production builds should link against the shims directly

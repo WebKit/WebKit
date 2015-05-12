@@ -64,7 +64,7 @@ class WebPageGroup;
 class WebProcessPool;
 struct WebNavigationDataStore;
     
-class WebProcessProxy : public ChildProcessProxy, ResponsivenessTimer::Client, public ProcessThrottlerClient {
+class WebProcessProxy : public ChildProcessProxy, ResponsivenessTimer::Client, private ProcessThrottlerClient {
 public:
     typedef HashMap<uint64_t, RefPtr<WebBackForwardListItem>> WebBackForwardListItemMap;
     typedef HashMap<uint64_t, RefPtr<WebFrameProxy>> WebFrameProxyMap;
@@ -143,16 +143,12 @@ public:
 
     void windowServerConnectionStateChanged();
 
-    void sendProcessWillSuspendImminently() override;
-    void sendProcessWillSuspend() override;
     void processReadyToSuspend();
-    void sendCancelProcessWillSuspend() override;
     void didCancelProcessSuspension();
-    void sendProcessDidResume() override;
 
     void setIsHoldingLockedFiles(bool);
 
-    ProcessThrottler& throttler() { return *m_throttler; }
+    ProcessThrottler& throttler() { return m_throttler; }
 
 private:
     explicit WebProcessProxy(WebProcessPool&);
@@ -209,6 +205,12 @@ private:
     void interactionOccurredWhileUnresponsive(ResponsivenessTimer*) override;
     void didBecomeResponsive(ResponsivenessTimer*) override;
 
+    // ProcessThrottlerClient
+    void sendProcessWillSuspendImminently() override;
+    void sendProcessWillSuspend() override;
+    void sendCancelProcessWillSuspend() override;
+    void sendProcessDidResume() override;
+
     // ProcessLauncher::Client
     virtual void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
 
@@ -243,7 +245,7 @@ private:
     HashMap<uint64_t, std::function<void ()>> m_pendingDeleteWebsiteDataForOriginsCallbacks;
 
     int m_numberOfTimesSuddenTerminationWasDisabled;
-    std::unique_ptr<ProcessThrottler> m_throttler;
+    ProcessThrottler m_throttler;
     ProcessThrottler::BackgroundActivityToken m_tokenForHoldingLockedFiles;
 #if PLATFORM(IOS) && ENABLE(NETWORK_PROCESS)
     ProcessThrottler::ForegroundActivityToken m_tokenForNetworkProcess;

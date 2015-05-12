@@ -52,7 +52,7 @@ class DownloadProxyMap;
 class WebProcessPool;
 struct NetworkProcessCreationParameters;
 
-class NetworkProcessProxy : public ChildProcessProxy, public ProcessThrottlerClient {
+class NetworkProcessProxy : public ChildProcessProxy, private ProcessThrottlerClient {
 public:
     static PassRefPtr<NetworkProcessProxy> create(WebProcessPool&);
     ~NetworkProcessProxy();
@@ -69,15 +69,12 @@ public:
     void setProcessSuppressionEnabled(bool);
 #endif
 
-    void sendProcessWillSuspendImminently() override;
-    void sendProcessWillSuspend() override;
-    void sendCancelProcessWillSuspend() override;
     void didCancelProcessSuspension();
     void processReadyToSuspend();
-    void sendProcessDidResume() override;
+
     void setIsHoldingLockedFiles(bool);
 
-    ProcessThrottler& throttler() { return *m_throttler; }
+    ProcessThrottler& throttler() { return m_throttler; }
 
 private:
     NetworkProcessProxy(WebProcessPool&);
@@ -88,6 +85,12 @@ private:
 
     void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&);
     void networkProcessCrashedOrFailedToLaunch();
+
+    // ProcessThrottlerClient
+    void sendProcessWillSuspendImminently() override;
+    void sendProcessWillSuspend() override;
+    void sendCancelProcessWillSuspend() override;
+    void sendProcessDidResume() override;
 
     // IPC::Connection::Client
     virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
@@ -122,7 +125,7 @@ private:
 
     std::unique_ptr<DownloadProxyMap> m_downloadProxyMap;
     CustomProtocolManagerProxy m_customProtocolManagerProxy;
-    std::unique_ptr<ProcessThrottler> m_throttler;
+    ProcessThrottler m_throttler;
     ProcessThrottler::BackgroundActivityToken m_tokenForHoldingLockedFiles;
 };
 
