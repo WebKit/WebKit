@@ -4749,6 +4749,9 @@ void RenderBox::flipForWritingMode(FloatRect& rect) const
 
 LayoutPoint RenderBox::topLeftLocation() const
 {
+    if (!view().hasFlippedBlockDescendants())
+        return location();
+    
     RenderBlock* containerBlock = containingBlock();
     if (!containerBlock || containerBlock == this)
         return location();
@@ -4757,6 +4760,9 @@ LayoutPoint RenderBox::topLeftLocation() const
 
 LayoutSize RenderBox::topLeftLocationOffset() const
 {
+    if (!view().hasFlippedBlockDescendants())
+        return LayoutSize(m_frameRect.x(), m_frameRect.y());
+
     RenderBlock* containerBlock = containingBlock();
     if (!containerBlock || containerBlock == this)
         return locationOffset();

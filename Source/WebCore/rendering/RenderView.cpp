@@ -111,6 +111,7 @@ RenderView::RenderView(Document& document, Ref<RenderStyle>&& style)
     , m_renderCounterCount(0)
     , m_selectionWasCaret(false)
     , m_hasSoftwareFilters(false)
+    , m_hasFlippedBlockDescendants(false)
 #if ENABLE(SERVICE_CONTROLS)
     , m_selectionRectGatherer(*this)
 #endif
