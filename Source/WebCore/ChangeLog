@@ -1,3 +1,21 @@
+2015-05-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Move Windows build target to Windows 7 (or newer)
+        https://bugs.webkit.org/show_bug.cgi?id=144890
+        <rdar://problem/20707307>
+
+        Reviewed by Anders Carlsson.
+
+        Update linked SDK and minimal Windows level to be compatible with
+        Windows 7 or newer.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCoreGenerated.vcxproj:
+        * WebCore.vcxproj/WebCoreTestSupport.vcxproj:
+        * WebCorePrefix.h:
+        * config.h:
+        * testing/js/WebCoreTestSupportPrefix.h:
+
 2015-05-11  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Always include rows in the tree of accessible tables

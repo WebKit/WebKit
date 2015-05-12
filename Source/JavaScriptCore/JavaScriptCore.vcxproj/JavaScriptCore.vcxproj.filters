@@ -516,9 +516,6 @@
     <ClCompile Include="..\runtime\ArgList.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
-    <ClCompile Include="..\runtime\Arguments.cpp">
-      <Filter>runtime</Filter>
-    </ClCompile>
     <ClCompile Include="..\runtime\ArrayConstructor.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -1068,9 +1065,6 @@
     <ClCompile Include="..\dfg\DFGAbstractValue.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
-    <ClCompile Include="..\dfg\DFGArgumentsSimplificationPhase.cpp">
-      <Filter>dfg</Filter>
-    </ClCompile>
     <ClCompile Include="..\dfg\DFGArrayMode.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
@@ -1251,9 +1245,6 @@
     <ClCompile Include="..\dfg\DFGOSRExitPreparation.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
-    <ClCompile Include="..\dfg\DFGPhantomCanonicalizationPhase.cpp">
-      <Filter>dfg</Filter>
-    </ClCompile>
     <ClCompile Include="..\dfg\DFGPhase.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
@@ -1393,9 +1384,6 @@
       <Filter>jit</Filter>
     </ClCompile>
     <ClCompile Include="..\dfg\DFGAvailability.cpp">
-      <Filter>dfg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\dfg\DFGResurrectionForValidationPhase.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
     <ClCompile Include="..\bytecode\CodeBlockJettisoningWatchpoint.cpp">
@@ -1686,9 +1674,6 @@
     <ClCompile Include="..\dfg\DFGMayExit.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
-    <ClCompile Include="..\dfg\DFGPhantomRemovalPhase.cpp">
-      <Filter>dfg</Filter>
-    </ClCompile>
     <ClCompile Include="..\dfg\DFGPureValue.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
@@ -1711,9 +1696,6 @@
       <Filter>bytecode</Filter>
     </ClCompile>
     <ClCompile Include="..\bytecode\ToThisStatus.cpp">
-      <Filter>bytecode</Filter>
-    </ClCompile>
-    <ClCompile Include="..\bytecode\VariableWatchpointSet.cpp">
       <Filter>bytecode</Filter>
     </ClCompile>
     <ClCompile Include="..\bytecode\CallEdge.cpp">
@@ -1785,6 +1767,25 @@
     <ClCompile Include="..\jit\ExecutableAllocatorFixedVMPool.cpp">
       <Filter>jit</Filter>
     </ClCompile>
+    <ClCompile Include="..\bytecode\VariableWriteFireDetail.cpp" />
+    <ClCompile Include="..\dfg\DFGArgumentsEliminationPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGArgumentsUtilities.cpp" />
+    <ClCompile Include="..\dfg\DFGCleanUpPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGEpoch.cpp" />
+    <ClCompile Include="..\dfg\DFGMovHintRemovalPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGPhantomInsertionPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGVarargsForwardingPhase.cpp" />
+    <ClCompile Include="..\jit\ExecutableAllocationFuzz.cpp" />
+    <ClCompile Include="..\runtime\ClonedArguments.cpp" />
+    <ClCompile Include="..\runtime\ConstantMode.cpp" />
+    <ClCompile Include="..\runtime\DirectArguments.cpp" />
+    <ClCompile Include="..\runtime\DirectArgumentsOffset.cpp" />
+    <ClCompile Include="..\runtime\InferredValue.cpp" />
+    <ClCompile Include="..\runtime\ScopeOffset.cpp" />
+    <ClCompile Include="..\runtime\ScopedArguments.cpp" />
+    <ClCompile Include="..\runtime\ScopedArgumentsTable.cpp" />
+    <ClCompile Include="..\runtime\TypeofType.cpp" />
+    <ClCompile Include="..\runtime\VarOffset.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\API\APICallbackFunction.h">
@@ -2523,9 +2524,6 @@
       <Filter>profiler</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\ArgList.h">
-      <Filter>runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="..\runtime\Arguments.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\ArrayConstructor.h">
@@ -3390,9 +3388,6 @@
     <ClInclude Include="..\dfg\DFGArgumentPosition.h">
       <Filter>dfg</Filter>
     </ClInclude>
-    <ClInclude Include="..\dfg\DFGArgumentsSimplificationPhase.h">
-      <Filter>dfg</Filter>
-    </ClInclude>
     <ClInclude Include="..\dfg\DFGArrayifySlowPathGenerator.h">
       <Filter>dfg</Filter>
     </ClInclude>
@@ -3621,9 +3616,6 @@
     <ClInclude Include="..\dfg\DFGOSRExitPreparation.h">
       <Filter>dfg</Filter>
     </ClInclude>
-    <ClInclude Include="..\dfg\DFGPhantomCanonicalizationPhase.h">
-      <Filter>dfg</Filter>
-    </ClInclude>
     <ClInclude Include="..\dfg\DFGPhase.h">
       <Filter>dfg</Filter>
     </ClInclude>
@@ -3697,9 +3689,6 @@
       <Filter>dfg</Filter>
     </ClInclude>
     <ClInclude Include="..\dfg\DFGValidate.h">
-      <Filter>dfg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\dfg\DFGValueRecoveryOverride.h">
       <Filter>dfg</Filter>
     </ClInclude>
     <ClInclude Include="..\dfg\DFGValueSource.h">
@@ -3822,9 +3811,6 @@
     <ClInclude Include="..\jit\JITInlineCacheGenerator.h">
       <Filter>jit</Filter>
     </ClInclude>
-    <ClInclude Include="..\dfg\DFGResurrectionForValidationPhase.h">
-      <Filter>dfg</Filter>
-    </ClInclude>
     <ClInclude Include="..\dfg\DFGAvailability.h">
       <Filter>dfg</Filter>
     </ClInclude>
@@ -3836,9 +3822,6 @@
     </ClInclude>
     <ClInclude Include="..\runtime\StackAlignment.h">
       <Filter>runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bytecode\VariableWatchpointSet.h">
-      <Filter>bytecode</Filter>
     </ClInclude>
     <ClInclude Include="..\bindings\ScriptFunctionCall.h">
       <Filter>bindings</Filter>
@@ -4171,9 +4154,6 @@
     <ClInclude Include="..\dfg\DFGMayExit.h">
       <Filter>dfg</Filter>
     </ClInclude>
-    <ClInclude Include="..\dfg\DFGPhantomRemovalPhase.h">
-      <Filter>dfg</Filter>
-    </ClInclude>
     <ClInclude Include="..\dfg\DFGPureValue.h">
       <Filter>dfg</Filter>
     </ClInclude>
@@ -4271,6 +4251,31 @@
     <ClInclude Include="..\runtime\JSCatchScope.h" />
     <ClInclude Include="..\runtime\JSFunctionNameScope.h" />
     <ClInclude Include="..\runtime\MathCommon.h" />
+    <ClInclude Include="..\bytecode\BytecodeKills.h" />
+    <ClInclude Include="..\bytecode\VariableWriteFireDetail.h" />
+    <ClInclude Include="..\dfg\DFGArgumentsEliminationPhase.h" />
+    <ClInclude Include="..\dfg\DFGArgumentsUtilities.h" />
+    <ClInclude Include="..\dfg\DFGCallCreateDirectArgumentsSlowPathGenerator.h" />
+    <ClInclude Include="..\dfg\DFGCleanUpPhase.h" />
+    <ClInclude Include="..\dfg\DFGEpoch.h" />
+    <ClInclude Include="..\dfg\DFGForAllKills.h" />
+    <ClInclude Include="..\dfg\DFGMovHintRemovalPhase.h" />
+    <ClInclude Include="..\dfg\DFGPhantomInsertionPhase.h" />
+    <ClInclude Include="..\dfg\DFGVarargsForwardingPhase.h" />
+    <ClInclude Include="..\jit\ExecutableAllocationFuzz.h" />
+    <ClInclude Include="..\runtime\ArgumentsMode.h" />
+    <ClInclude Include="..\runtime\ClonedArguments.h" />
+    <ClInclude Include="..\runtime\DirectArguments.h" />
+    <ClInclude Include="..\runtime\DirectArgumentsOffset.h" />
+    <ClInclude Include="..\runtime\GenericArguments.h" />
+    <ClInclude Include="..\runtime\GenericArgumentsInlines.h" />
+    <ClInclude Include="..\runtime\GenericOffset.h" />
+    <ClInclude Include="..\runtime\InferredValue.h" />
+    <ClInclude Include="..\runtime\ScopeOffset.h" />
+    <ClInclude Include="..\runtime\ScopedArguments.h" />
+    <ClInclude Include="..\runtime\ScopedArgumentsTable.h" />
+    <ClInclude Include="..\runtime\TypeofType.h" />
+    <ClInclude Include="..\runtime\VarOffset.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="JavaScriptCorePreLink.cmd" />

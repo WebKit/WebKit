@@ -1,3 +1,16 @@
+2015-05-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Move Windows build target to Windows 7 (or newer)
+        https://bugs.webkit.org/show_bug.cgi?id=144890
+        <rdar://problem/20707307>
+
+        Reviewed by Anders Carlsson.
+
+        Update linked SDK and minimal Windows level to be compatible with
+        Windows 7 or newer.
+
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj:
+
 2015-05-11  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: REGRESSION (Tabs): Issues reloading a resource with breakpoints

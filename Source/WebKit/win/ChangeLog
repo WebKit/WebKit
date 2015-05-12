@@ -1,3 +1,16 @@
+2015-05-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Move Windows build target to Windows 7 (or newer)
+        https://bugs.webkit.org/show_bug.cgi?id=144890
+        <rdar://problem/20707307>
+
+        Reviewed by Anders Carlsson.
+
+        Update linked SDK and minimal Windows level to be compatible with
+        Windows 7 or newer.
+
+        * WebKitPrefix.h:
+
 2015-05-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed WinCairo buildfix after r183807.
