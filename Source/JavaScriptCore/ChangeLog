@@ -1,3 +1,47 @@
+2015-05-12  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Make the NegZero backward propagated flags of ArithMod stricter
+        https://bugs.webkit.org/show_bug.cgi?id=144897
+
+        Reviewed by Geoffrey Garen.
+
+        The NegZero flags of ArithMod were the same as ArithDiv: both children were
+        marked as needing to handle NegativeZero.
+
+        Lucky for us, ArithMod is quite a bit different than ArithDiv.
+
+        First, the sign of the result is completely independent from
+        the sign of the divisor. A zero on the divisor always produces a NaN.
+        That's great, we can remove the NodeBytecodeNeedsNegZero
+        from the flags propagated to child2.
+
+        Second, the sign of the result is always the same as the sign of
+        the dividend. A dividend of zero produces a zero of same sign
+        unless the divisor is zero (in which case the result is NaN).
+        This is great too: we can just pass the flags we got into
+        ArithMod.
+
+        With those two out of the way, we can make a faster version of ArithRound
+        for Kraken's oscillator. Since we no longer care about negative zero,
+        rounding becomes cast<int32>(value + 0.5). This gives ~3% faster runtime
+        on the benchmark.
+
+        Unfortunatelly, most of the time is spent in FTL and the same optimization
+        does not apply well just yet: rdar://problem/20904149.
+
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        Never add NodeBytecodeNeedsNegZero unless needed by the users of this node.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithRound):
+        Faster Math.round() when negative zero is not important.
+
+        * tests/stress/arith-modulo-node-behaviors.js: Added.
+        (moduloWithNegativeZeroDividend):
+        (moduloWithUnusedNegativeZeroDividend):
+        (moduloWithNegativeZeroDivisor):
+
 2015-05-12  Mark Lam  <mark.lam@apple.com>
 
         Refactor MachineStackMarker.cpp so that it's easier to reason about MachineThreads::Thread.

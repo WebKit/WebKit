@@ -3550,18 +3550,34 @@ void SpeculativeJIT::compileArithRound(Node* node)
 
     SpeculateDoubleOperand value(this, node->child1());
     FPRReg valueFPR = value.fpr();
+
+    if (producesInteger(node->arithRoundingMode()) && !shouldCheckNegativeZero(node->arithRoundingMode())) {
+        FPRTemporary oneHalf(this);
+        GPRTemporary roundedResultAsInt32(this);
+        FPRReg oneHalfFPR = oneHalf.fpr();
+        GPRReg resultGPR = roundedResultAsInt32.gpr();
+
+        static const double halfConstant = 0.5;
+        m_jit.loadDouble(MacroAssembler::TrustedImmPtr(&halfConstant), oneHalfFPR);
+        m_jit.addDouble(valueFPR, oneHalfFPR);
+
+        JITCompiler::Jump truncationFailed = m_jit.branchTruncateDoubleToInt32(oneHalfFPR, resultGPR);
+        speculationCheck(Overflow, JSValueRegs(), node, truncationFailed);
+        int32Result(resultGPR, node);
+        return;
+    }
+
     flushRegisters();
     FPRResult roundedResultAsDouble(this);
     FPRReg resultFPR = roundedResultAsDouble.fpr();
     callOperation(jsRound, resultFPR, valueFPR);
-
     if (producesInteger(node->arithRoundingMode())) {
         GPRTemporary roundedResultAsInt32(this);
         FPRTemporary scratch(this);
         FPRReg scratchFPR = scratch.fpr();
         GPRReg resultGPR = roundedResultAsInt32.gpr();
         JITCompiler::JumpList failureCases;
-        m_jit.branchConvertDoubleToInt32(resultFPR, resultGPR, failureCases, scratchFPR, shouldCheckNegativeZero(node->arithRoundingMode()));
+        m_jit.branchConvertDoubleToInt32(resultFPR, resultGPR, failureCases, scratchFPR);
         speculationCheck(Overflow, JSValueRegs(), node, failureCases);
 
         int32Result(resultGPR, node);

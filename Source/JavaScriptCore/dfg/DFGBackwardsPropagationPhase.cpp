@@ -319,11 +319,11 @@ private:
         }
             
         case ArithMod: {
-            flags |= NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero;
+            flags |= NodeBytecodeUsesAsNumber;
             flags &= ~NodeBytecodeUsesAsOther;
 
             node->child1()->mergeFlags(flags);
-            node->child2()->mergeFlags(flags);
+            node->child2()->mergeFlags(flags & ~NodeBytecodeNeedsNegZero);
             break;
         }
             
