@@ -43,9 +43,9 @@ class CSSImageSetValue;
 class StyleCachedImageSet final : public StyleImage, private CachedImageClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<StyleCachedImageSet> create(CachedImage* image, float imageScaleFactor, CSSImageSetValue* value)
+    static Ref<StyleCachedImageSet> create(CachedImage* image, float imageScaleFactor, CSSImageSetValue* value)
     {
-        return adoptRef(new StyleCachedImageSet(image, imageScaleFactor, value));
+        return adoptRef(*new StyleCachedImageSet(image, imageScaleFactor, value));
     }
     virtual ~StyleCachedImageSet();
 

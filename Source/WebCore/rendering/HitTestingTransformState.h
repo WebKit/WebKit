@@ -31,7 +31,7 @@
 #include "FloatQuad.h"
 #include "IntSize.h"
 #include "TransformationMatrix.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -42,14 +42,14 @@ namespace WebCore {
 // differently than move()) so care has to be taken when this is done.
 class HitTestingTransformState : public RefCounted<HitTestingTransformState> {
 public:
-    static PassRefPtr<HitTestingTransformState> create(const FloatPoint& p, const FloatQuad& quad, const FloatQuad& area)
+    static Ref<HitTestingTransformState> create(const FloatPoint& p, const FloatQuad& quad, const FloatQuad& area)
     {
-        return adoptRef(new HitTestingTransformState(p, quad, area));
+        return adoptRef(*new HitTestingTransformState(p, quad, area));
     }
 
-    static PassRefPtr<HitTestingTransformState> create(const HitTestingTransformState& other)
+    static Ref<HitTestingTransformState> create(const HitTestingTransformState& other)
     {
-        return adoptRef(new HitTestingTransformState(other));
+        return adoptRef(*new HitTestingTransformState(other));
     }
 
     enum TransformAccumulation { FlattenTransform, AccumulateTransform };

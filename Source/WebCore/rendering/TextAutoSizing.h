@@ -73,9 +73,9 @@ struct TextAutoSizingHash {
 
 class TextAutoSizingValue : public RefCounted<TextAutoSizingValue> {
 public:
-    static PassRefPtr<TextAutoSizingValue> create()
+    static Ref<TextAutoSizingValue> create()
     {
-        return adoptRef(new TextAutoSizingValue);
+        return adoptRef(*new TextAutoSizingValue);
     }
 
     void addNode(Node*, float size);

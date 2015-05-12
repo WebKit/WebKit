@@ -37,7 +37,7 @@ class GraphicsContext;
     
 class RenderThemeIOS final : public RenderTheme {
 public:
-    static PassRefPtr<RenderTheme> create();
+    static Ref<RenderTheme> create();
 
     virtual int popupInternalPaddingRight(RenderStyle&) const override;
 

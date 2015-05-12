@@ -33,9 +33,9 @@ class CSSImageGeneratorValue;
 
 class StyleGeneratedImage final : public StyleImage {
 public:
-    static PassRefPtr<StyleGeneratedImage> create(Ref<CSSImageGeneratorValue>&& value)
+    static Ref<StyleGeneratedImage> create(Ref<CSSImageGeneratorValue>&& value)
     {
-        return adoptRef(new StyleGeneratedImage(WTF::move(value)));
+        return adoptRef(*new StyleGeneratedImage(WTF::move(value)));
     }
 
     CSSImageGeneratorValue& imageValue() { return m_imageGeneratorValue; }

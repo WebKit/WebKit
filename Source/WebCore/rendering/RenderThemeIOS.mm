@@ -291,13 +291,13 @@ RenderThemeIOS::RenderThemeIOS()
 
 PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page*)
 {
-    static RenderTheme* renderTheme = RenderThemeIOS::create().leakRef();
-    return renderTheme;
+    static RenderTheme& renderTheme = RenderThemeIOS::create().leakRef();
+    return &renderTheme;
 }
 
-PassRefPtr<RenderTheme> RenderThemeIOS::create()
+Ref<RenderTheme> RenderThemeIOS::create()
 {
-    return adoptRef(new RenderThemeIOS);
+    return adoptRef(*new RenderThemeIOS);
 }
 
 static String& _contentSizeCategory()

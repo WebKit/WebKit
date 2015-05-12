@@ -60,15 +60,15 @@
 
 namespace WebCore {
 
-PassRefPtr<RenderTheme> RenderThemeGtk::create()
+Ref<RenderTheme> RenderThemeGtk::create()
 {
-    return adoptRef(new RenderThemeGtk());
+    return adoptRef(*new RenderThemeGtk());
 }
 
 PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page*)
 {
-    static RenderTheme* rt = RenderThemeGtk::create().leakRef();
-    return rt;
+    static RenderTheme& rt = RenderThemeGtk::create().leakRef();
+    return &rt;
 }
 
 static double getScreenDPI()

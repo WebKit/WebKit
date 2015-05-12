@@ -137,14 +137,14 @@ using namespace HTMLNames;
 class ClipRects {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<ClipRects> create()
+    static Ref<ClipRects> create()
     {
-        return adoptRef(new ClipRects);
+        return adoptRef(*new ClipRects);
     }
 
-    static PassRefPtr<ClipRects> create(const ClipRects& other)
+    static Ref<ClipRects> create(const ClipRects& other)
     {
-        return adoptRef(new ClipRects(other));
+        return adoptRef(*new ClipRects(other));
     }
 
     ClipRects() = default;

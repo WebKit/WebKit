@@ -49,7 +49,7 @@ struct ThemeData {
 
 class RenderThemeWin final: public RenderTheme {
 public:
-    static PassRefPtr<RenderTheme> create();
+    static Ref<RenderTheme> create();
 
     virtual String extraDefaultStyleSheet() override;
     virtual String extraQuirksStyleSheet() override;

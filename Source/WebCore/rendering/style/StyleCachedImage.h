@@ -35,7 +35,7 @@ class CachedImage;
 class StyleCachedImage final : public StyleImage, private CachedImageClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<StyleCachedImage> create(CachedImage* image) { return adoptRef(new StyleCachedImage(image)); }
+    static Ref<StyleCachedImage> create(CachedImage* image) { return adoptRef(*new StyleCachedImage(image)); }
     virtual ~StyleCachedImage();
 
     virtual CachedImage* cachedImage() const override { return m_image.get(); }

@@ -46,19 +46,19 @@ public:
         Image
     };
 
-    static PassRefPtr<ShapeValue> createShapeValue(PassRefPtr<BasicShape> shape, CSSBoxType cssBox)
+    static Ref<ShapeValue> createShapeValue(PassRefPtr<BasicShape> shape, CSSBoxType cssBox)
     {
-        return adoptRef(new ShapeValue(shape, cssBox));
+        return adoptRef(*new ShapeValue(shape, cssBox));
     }
 
-    static PassRefPtr<ShapeValue> createBoxShapeValue(CSSBoxType boxShape)
+    static Ref<ShapeValue> createBoxShapeValue(CSSBoxType boxShape)
     {
-        return adoptRef(new ShapeValue(boxShape));
+        return adoptRef(*new ShapeValue(boxShape));
     }
 
-    static PassRefPtr<ShapeValue> createImageValue(PassRefPtr<StyleImage> image)
+    static Ref<ShapeValue> createImageValue(PassRefPtr<StyleImage> image)
     {
-        return adoptRef(new ShapeValue(image));
+        return adoptRef(*new ShapeValue(image));
     }
 
     Type type() const { return m_type; }

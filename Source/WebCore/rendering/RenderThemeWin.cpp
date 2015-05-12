@@ -182,15 +182,15 @@ void RenderThemeWin::setWebKitIsBeingUnloaded()
     gWebKitIsBeingUnloaded = true;
 }
 
-PassRefPtr<RenderTheme> RenderThemeWin::create()
+Ref<RenderTheme> RenderThemeWin::create()
 {
-    return adoptRef(new RenderThemeWin);
+    return adoptRef(*new RenderThemeWin);
 }
 
 PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
 {
-    static RenderTheme* winTheme = RenderThemeWin::create().leakRef();
-    return winTheme;
+    static RenderTheme& winTheme = RenderThemeWin::create().leakRef();
+    return &winTheme;
 }
 
 RenderThemeWin::RenderThemeWin()

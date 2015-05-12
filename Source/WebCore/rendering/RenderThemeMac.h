@@ -42,7 +42,7 @@ struct AttachmentLayout;
 
 class RenderThemeMac final : public RenderTheme {
 public:
-    static PassRefPtr<RenderTheme> create();
+    static Ref<RenderTheme> create();
 
     // A method asking if the control changes its tint when the window has focus or not.
     virtual bool controlSupportsTints(const RenderObject&) const override;

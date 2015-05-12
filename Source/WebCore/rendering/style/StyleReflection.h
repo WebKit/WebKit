@@ -34,9 +34,9 @@ namespace WebCore {
 
 class StyleReflection : public RefCounted<StyleReflection> {
 public:
-    static PassRefPtr<StyleReflection> create()
+    static Ref<StyleReflection> create()
     {
-        return adoptRef(new StyleReflection);
+        return adoptRef(*new StyleReflection);
     }
 
     bool operator==(const StyleReflection& o) const

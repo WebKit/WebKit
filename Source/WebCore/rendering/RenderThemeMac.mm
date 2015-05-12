@@ -201,13 +201,13 @@ enum {
 
 PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page*)
 {
-    static RenderTheme* rt = RenderThemeMac::create().leakRef();
-    return rt;
+    static RenderTheme& rt = RenderThemeMac::create().leakRef();
+    return &rt;
 }
 
-PassRefPtr<RenderTheme> RenderThemeMac::create()
+Ref<RenderTheme> RenderThemeMac::create()
 {
-    return adoptRef(new RenderThemeMac);
+    return adoptRef(*new RenderThemeMac);
 }
 
 RenderThemeMac::RenderThemeMac()

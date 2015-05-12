@@ -1,3 +1,51 @@
+2015-05-11  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Purge PassRefPtr in WebCore/rendering
+        https://bugs.webkit.org/show_bug.cgi?id=144872
+
+        Reviewed by Darin Adler.
+
+        As a step to remove PassRefPtr, this patch replaces PassRefPtr with Ref in WebCore/rendering.
+
+        No new tests, no behavior changes.
+
+        * rendering/HitTestingTransformState.h:
+        (WebCore::HitTestingTransformState::create):
+        * rendering/RenderLayer.cpp:
+        (WebCore::ClipRects::create):
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::create):
+        (WebCore::RenderTheme::themeForPage):
+        * rendering/RenderThemeGtk.h:
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderTheme::themeForPage):
+        (WebCore::RenderThemeIOS::create):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderTheme::themeForPage):
+        (WebCore::RenderThemeMac::create):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::create):
+        (WebCore::RenderTheme::themeForPage):
+        * rendering/RenderThemeSafari.h:
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::create):
+        (WebCore::RenderTheme::themeForPage):
+        * rendering/RenderThemeWin.h:
+        * rendering/TextAutoSizing.h:
+        (WebCore::TextAutoSizingValue::create):
+        * rendering/style/ShapeValue.h:
+        (WebCore::ShapeValue::createShapeValue):
+        (WebCore::ShapeValue::createBoxShapeValue):
+        (WebCore::ShapeValue::createImageValue):
+        * rendering/style/StyleCachedImage.h:
+        * rendering/style/StyleCachedImageSet.h:
+        * rendering/style/StyleGeneratedImage.h:
+        * rendering/style/StylePendingImage.h:
+        * rendering/style/StyleReflection.h:
+        (WebCore::StyleReflection::create):
+
 2015-05-11  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Update device picker icon when video tracks change
