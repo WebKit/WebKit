@@ -8006,16 +8006,7 @@ private:
             arguments.append(lowValue.value());
         
         AvailabilityMap availabilityMap = this->availabilityMap();
-        availabilityMap.m_locals.fill(Availability());
-        
-        m_graph.forAllLiveInBytecode(
-            codeOrigin,
-            [&] (VirtualRegister reg) {
-                availabilityMap.m_locals.operand(reg) =
-                    this->availabilityMap().m_locals.operand(reg);
-            });
-        
-        availabilityMap.prune();
+        availabilityMap.pruneByLiveness(m_graph, codeOrigin);
         
         HashMap<Node*, ExitTimeObjectMaterialization*> map;
         availabilityMap.forEachAvailability(

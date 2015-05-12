@@ -1,3 +1,35 @@
+2015-05-11  Filip Pizlo  <fpizlo@apple.com>
+
+        OSR availability analysis would be more scalable (and correct) if it did more liveness pruning
+        https://bugs.webkit.org/show_bug.cgi?id=143078
+
+        Reviewed by Andreas Kling.
+        
+        In https://bugs.webkit.org/show_bug.cgi?id=144883, we found an example of where liveness
+        pruning is actually necessary. Well, not quite: we just need to prune out keys from the
+        heap availability map where the base node doesn't dominate the point where we are asking
+        for availability. If we don't do this, then eventually the IR gets corrupt because we'll
+        insert PutHints that reference the base node in places where the base node doesn't
+        dominate. But if we're going to do any pruning, then it makes sense to prune by bytecode
+        liveness. This is the strongest possible pruning we can do, and it should be sound. We
+        shouldn't have a node available for a virtual register if that register is live and the
+        node doesn't dominate.
+        
+        Making this work meant reusing the prune-to-liveness algorithm from the FTL backend. So, I
+        abstracted this a bit better. You can now availabilityMap.pruneByLiveness(graph, origin).
+
+        * dfg/DFGAvailabilityMap.cpp:
+        (JSC::DFG::AvailabilityMap::pruneHeap):
+        (JSC::DFG::AvailabilityMap::pruneByLiveness):
+        (JSC::DFG::AvailabilityMap::prune): Deleted.
+        * dfg/DFGAvailabilityMap.h:
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::OSRAvailabilityAnalysisPhase::run):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::buildExitArguments):
+        * tests/stress/liveness-pruning-needed-for-osr-availability.js: Added. This is a proper regression test.
+        * tests/stress/liveness-pruning-needed-for-osr-availability-eager.js: Added. This is the original reduced test case, requires eager-no-cjit to fail prior to this changeset.
+
 2015-05-12  Gabor Loki  <loki@webkit.org>
 
         Workaround for Cortex-A53 erratum 843419
