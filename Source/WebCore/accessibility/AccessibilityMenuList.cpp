@@ -58,10 +58,13 @@ bool AccessibilityMenuList::press()
 
 void AccessibilityMenuList::addChildren()
 {
-    m_haveChildren = true;
-
-    AXObjectCache* cache = m_renderer->document().axObjectCache();
-
+    if (!m_renderer)
+        return;
+    
+    AXObjectCache* cache = axObjectCache();
+    if (!cache)
+        return;
+    
     AccessibilityObject* list = cache->getOrCreate(MenuListPopupRole);
     if (!list)
         return;
@@ -72,6 +75,7 @@ void AccessibilityMenuList::addChildren()
         return;
     }
 
+    m_haveChildren = true;
     m_children.append(list);
 
     list->addChildren();
