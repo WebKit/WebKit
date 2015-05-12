@@ -401,7 +401,7 @@ private:
     String diskCacheDirectory() const;
     String platformDefaultDiskCacheDirectory() const;
 
-#if ENABLE(SECCOMP_FILTERS)
+#if PLATFORM(IOS) || ENABLE(SECCOMP_FILTERS)
     String cookieStorageDirectory() const;
 #endif
 

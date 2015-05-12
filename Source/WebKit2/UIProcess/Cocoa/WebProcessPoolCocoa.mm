@@ -175,6 +175,19 @@ String WebProcessPool::platformDefaultApplicationCacheDirectory() const
     return stringByResolvingSymlinksInPath([cachePath stringByStandardizingPath]);
 }
 
+#if PLATFORM(IOS)
+String WebProcessPool::cookieStorageDirectory() const
+{
+    String path = pathForProcessContainer();
+    if (path.isEmpty())
+        path = NSHomeDirectory();
+
+    path = path + "/Library/Cookies";
+    path = stringByResolvingSymlinksInPath(path);
+    return path;
+}
+#endif
+
 void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
     parameters.presenterApplicationPid = getpid();
