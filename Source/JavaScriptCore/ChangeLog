@@ -1,3 +1,41 @@
+2015-05-12  Mark Lam  <mark.lam@apple.com>
+
+        Refactor MachineStackMarker.cpp so that it's easier to reason about MachineThreads::Thread.
+        https://bugs.webkit.org/show_bug.cgi?id=144925
+
+        Reviewed by Michael Saboff.
+
+        Currently, the code in MachineStackMarker.cpp is written as a bunch of functions that
+        operate on the platformThread value in the MachineThreads::Thread struct.  Instead, we
+        can apply better OO encapsulation and convert all these functions into methods of the
+        MachineThreads::Thread struct.
+
+        This will also make it easier to reason about the fix for
+        https://bugs.webkit.org/show_bug.cgi?id=144924 later.
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::getCurrentPlatformThread):
+        (JSC::MachineThreads::Thread::createForCurrentThread):
+        (JSC::MachineThreads::Thread::operator!=):
+        (JSC::MachineThreads::Thread::operator==):
+        (JSC::MachineThreads::addCurrentThread):
+        (JSC::MachineThreads::removeThreadIfFound):
+        (JSC::MachineThreads::Thread::suspend):
+        (JSC::MachineThreads::Thread::resume):
+        (JSC::MachineThreads::Thread::getRegisters):
+        (JSC::MachineThreads::Thread::Registers::stackPointer):
+        (JSC::MachineThreads::Thread::freeRegisters):
+        (JSC::MachineThreads::Thread::captureStack):
+        (JSC::MachineThreads::tryCopyOtherThreadStack):
+        (JSC::MachineThreads::tryCopyOtherThreadStacks):
+        (JSC::equalThread): Deleted.
+        (JSC::suspendThread): Deleted.
+        (JSC::resumeThread): Deleted.
+        (JSC::getPlatformThreadRegisters): Deleted.
+        (JSC::otherThreadStackPointer): Deleted.
+        (JSC::freePlatformThreadRegisters): Deleted.
+        (JSC::otherThreadStack): Deleted.
+
 2015-05-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Array.slice should have a fast path like Array.splice
