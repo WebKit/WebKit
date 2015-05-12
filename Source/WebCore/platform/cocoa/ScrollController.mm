@@ -685,6 +685,26 @@ void ScrollController::initializeGlideParameters(ScrollEventAxis axis, bool shou
     snapState.m_glidePhaseShift = acos((snapState.m_glideInitialWheelDelta - targetFinalWheelDelta) / (snapState.m_glideInitialWheelDelta + targetFinalWheelDelta));
 }
 
+unsigned ScrollController::activeScrollSnapIndexForAxis(ScrollEventAxis axis) const
+{
+    if ((axis == ScrollEventAxis::Horizontal) && !m_horizontalScrollSnapState)
+        return 0;
+    if ((axis == ScrollEventAxis::Vertical) && !m_verticalScrollSnapState)
+        return 0;
+    
+    const ScrollSnapAnimatorState& snapState = scrollSnapPointState(axis);
+    return snapState.m_activeSnapIndex;
+}
+
+void ScrollController::setActiveScrollSnapIndexForAxis(ScrollEventAxis axis, unsigned index)
+{
+    auto* snapState = (axis == ScrollEventAxis::Horizontal) ? m_horizontalScrollSnapState.get() : m_verticalScrollSnapState.get();
+    if (!snapState)
+        return;
+
+    snapState->m_activeSnapIndex = index;
+}
+
 void ScrollController::beginScrollSnapAnimation(ScrollEventAxis axis, ScrollSnapState newState)
 {
     ASSERT(newState == ScrollSnapState::Gliding || newState == ScrollSnapState::Snapping);
@@ -701,10 +721,12 @@ void ScrollController::beginScrollSnapAnimation(ScrollEventAxis axis, ScrollSnap
     
     projectedScrollDestination = std::min(std::max(LayoutUnit(projectedScrollDestination / scaleFactor), snapState.m_snapOffsets.first()), snapState.m_snapOffsets.last());
     snapState.m_initialOffset = offset;
-    snapState.m_targetOffset = scaleFactor * closestSnapOffset<LayoutUnit, float>(snapState.m_snapOffsets, projectedScrollDestination, initialWheelDelta);
+    m_activeScrollSnapIndexDidChange = false;
+    snapState.m_targetOffset = scaleFactor * closestSnapOffset<LayoutUnit, float>(snapState.m_snapOffsets, projectedScrollDestination, initialWheelDelta, snapState.m_activeSnapIndex);
     if (snapState.m_initialOffset == snapState.m_targetOffset)
         return;
     
+    m_activeScrollSnapIndexDidChange = true;
     snapState.m_currentState = newState;
     if (newState == ScrollSnapState::Gliding) {
         snapState.m_shouldOverrideWheelEvent = true;

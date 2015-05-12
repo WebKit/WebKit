@@ -562,8 +562,33 @@ String AsyncScrollingCoordinator::scrollingStateTreeAsText() const
 }
 
 #if PLATFORM(COCOA)
+void AsyncScrollingCoordinator::setActiveScrollSnapIndices(ScrollingNodeID scrollingNodeID, unsigned horizontalIndex, unsigned verticalIndex)
+{
+    ASSERT(isMainThread());
+    
+    if (!m_page)
+        return;
+    
+    FrameView* frameView = frameViewForScrollingNode(scrollingNodeID);
+    if (!frameView)
+        return;
+    
+    if (scrollingNodeID == frameView->scrollLayerID()) {
+        frameView->setCurrentHorizontalSnapPointIndex(horizontalIndex);
+        frameView->setCurrentVerticalSnapPointIndex(verticalIndex);
+        return;
+    }
+    
+    // Overflow-scroll area.
+    if (ScrollableArea* scrollableArea = frameView->scrollableAreaForScrollLayerID(scrollingNodeID)) {
+        scrollableArea->setCurrentHorizontalSnapPointIndex(horizontalIndex);
+        scrollableArea->setCurrentVerticalSnapPointIndex(verticalIndex);
+    }
+}
+
 void AsyncScrollingCoordinator::deferTestsForReason(WheelEventTestTrigger::ScrollableAreaIdentifier identifier, WheelEventTestTrigger::DeferTestTriggerReason reason) const
 {
+    ASSERT(isMainThread());
     if (!m_page || !m_page->expectsWheelEventTriggers())
         return;
 
@@ -575,6 +600,7 @@ void AsyncScrollingCoordinator::deferTestsForReason(WheelEventTestTrigger::Scrol
 
 void AsyncScrollingCoordinator::removeTestDeferralForReason(WheelEventTestTrigger::ScrollableAreaIdentifier identifier, WheelEventTestTrigger::DeferTestTriggerReason reason) const
 {
+    ASSERT(isMainThread());
     if (!m_page || !m_page->expectsWheelEventTriggers())
         return;
 

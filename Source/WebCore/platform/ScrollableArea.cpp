@@ -46,6 +46,7 @@ struct SameSizeAsScrollableArea {
     virtual ~SameSizeAsScrollableArea();
 #if ENABLE(CSS_SCROLL_SNAP)
     void* pointers[3];
+    unsigned currentIndices[2];
 #else
     void* pointer;
 #endif
@@ -188,7 +189,14 @@ bool ScrollableArea::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
     if (!isScrollableOrRubberbandable())
         return false;
 
-    return scrollAnimator().handleWheelEvent(wheelEvent);
+    bool handledEvent = scrollAnimator().handleWheelEvent(wheelEvent);
+#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
+    if (scrollAnimator().activeScrollSnapIndexDidChange()) {
+        setCurrentHorizontalSnapPointIndex(scrollAnimator().activeScrollSnapIndexForAxis(ScrollEventAxis::Horizontal));
+        setCurrentVerticalSnapPointIndex(scrollAnimator().activeScrollSnapIndexForAxis(ScrollEventAxis::Vertical));
+    }
+#endif
+    return handledEvent;
 }
 
 #if ENABLE(TOUCH_EVENTS)
@@ -409,13 +417,63 @@ void ScrollableArea::setVerticalSnapOffsets(std::unique_ptr<Vector<LayoutUnit>> 
 void ScrollableArea::clearHorizontalSnapOffsets()
 {
     m_horizontalSnapOffsets = nullptr;
+    m_currentHorizontalSnapPointIndex = 0;
 }
 
 void ScrollableArea::clearVerticalSnapOffsets()
 {
     m_verticalSnapOffsets = nullptr;
+    m_currentVerticalSnapPointIndex = 0;
+}
+
+IntPoint ScrollableArea::nearestActiveSnapPoint(const IntPoint& currentPosition)
+{
+    if (!horizontalSnapOffsets() && !verticalSnapOffsets())
+        return currentPosition;
+    
+    if (!existingScrollAnimator())
+        return currentPosition;
+    
+    IntPoint correctedPosition = currentPosition;
+    
+    if (horizontalSnapOffsets()) {
+        const auto& horizontal = *horizontalSnapOffsets();
+        
+        size_t activeIndex = currentHorizontalSnapPointIndex();
+        if (activeIndex < horizontal.size())
+            correctedPosition.setX(horizontal[activeIndex].toInt());
+    }
+    
+    if (verticalSnapOffsets()) {
+        const auto& vertical = *verticalSnapOffsets();
+        
+        size_t activeIndex = currentVerticalSnapPointIndex();
+        if (activeIndex < vertical.size())
+            correctedPosition.setY(vertical[activeIndex].toInt());
+    }
+
+    return correctedPosition;
+}
+
+void ScrollableArea::updateScrollSnapState()
+{
+#if PLATFORM(MAC)
+    if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
+        scrollAnimator->updateScrollAnimatorsAndTimers();
+#endif
+
+    IntPoint currentPosition = scrollPosition();
+    IntPoint correctedPosition = nearestActiveSnapPoint(currentPosition);
+    
+    if (correctedPosition != currentPosition)
+        scrollToOffsetWithoutAnimation(correctedPosition);
+}
+#else
+void ScrollableArea::updateScrollSnapState()
+{
 }
 #endif
+
 
 void ScrollableArea::serviceScrollAnimations()
 {

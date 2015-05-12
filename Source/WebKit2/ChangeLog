@@ -1,3 +1,16 @@
+2015-05-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Scroll snap logic should be triggered when resizing the WebView
+        https://bugs.webkit.org/show_bug.cgi?id=142590
+        <rdar://problem/20125088>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (RemoteScrollingCoordinatorProxy::closestSnapOffsetForMainFrameScrolling): Modify use of 'closestSnapOffset' to satisfy the additional
+        argument I added. This is currently not used for anything on iOS.
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm: Ditto.
+
 2015-05-11  Andreas Kling  <akling@apple.com>
 
         Force a rebuild of JSNPObject.cpp on bots.

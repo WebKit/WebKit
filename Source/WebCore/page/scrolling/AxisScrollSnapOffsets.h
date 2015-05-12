@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,12 +44,14 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea&, HTMLElement& scrollingE
 // as well as a VelocityType indicating the velocity (e.g. float, CGFloat, etc.) This function is templated because the UI process will now
 // use pixel snapped floats to represent snap offsets rather than LayoutUnits.
 template <typename LayoutType, typename VelocityType>
-LayoutType closestSnapOffset(const Vector<LayoutType>& snapOffsets, LayoutType scrollDestination, VelocityType velocity)
+LayoutType closestSnapOffset(const Vector<LayoutType>& snapOffsets, LayoutType scrollDestination, VelocityType velocity, unsigned& activeSnapIndex)
 {
     ASSERT(snapOffsets.size());
+    activeSnapIndex = 0;
     if (scrollDestination <= snapOffsets.first())
         return snapOffsets.first();
 
+    activeSnapIndex = snapOffsets.size() - 1;
     if (scrollDestination >= snapOffsets.last())
         return snapOffsets.last();
 
@@ -70,10 +72,13 @@ LayoutType closestSnapOffset(const Vector<LayoutType>& snapOffsets, LayoutType s
     LayoutType lowerSnapPosition = snapOffsets[lowerIndex];
     LayoutType upperSnapPosition = snapOffsets[upperIndex];
     // Nonzero velocity indicates a flick gesture. Even if another snap point is closer, snap to the one in the direction of the flick gesture.
-    if (velocity)
+    if (velocity) {
+        activeSnapIndex = (velocity < 0) ? lowerIndex : upperIndex;
         return velocity < 0 ? lowerSnapPosition : upperSnapPosition;
+    }
 
     bool isCloserToLowerSnapPosition = scrollDestination - lowerSnapPosition <= upperSnapPosition - scrollDestination;
+    activeSnapIndex = isCloserToLowerSnapPosition ? lowerIndex : upperIndex;
     return isCloserToLowerSnapPosition ? lowerSnapPosition : upperSnapPosition;
 }
 

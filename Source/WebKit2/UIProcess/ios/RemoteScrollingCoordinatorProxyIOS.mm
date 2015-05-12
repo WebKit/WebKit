@@ -150,8 +150,9 @@ float RemoteScrollingCoordinatorProxy::closestSnapOffsetForMainFrameScrolling(Sc
     ScrollingTreeFrameScrollingNode* rootFrame = static_cast<ScrollingTreeFrameScrollingNode*>(root);
     const Vector<float>& snapOffsets = axis == ScrollEventAxis::Horizontal ? rootFrame->horizontalSnapOffsets() : rootFrame->verticalSnapOffsets();
 
+    unsigned ignore = 0;
     float scaledScrollDestination = scrollDestination / m_webPageProxy.displayedContentScale();
-    float rawClosestSnapOffset = closestSnapOffset<float, float>(snapOffsets, scaledScrollDestination, velocity);
+    float rawClosestSnapOffset = closestSnapOffset<float, float>(snapOffsets, scaledScrollDestination, velocity, ignore);
     return rawClosestSnapOffset * m_webPageProxy.displayedContentScale();
 }
 #endif

@@ -3461,6 +3461,12 @@ void RenderLayer::updateScrollInfoAfterLayout()
 
     computeScrollDimensions();
 
+#if ENABLE(CSS_SCROLL_SNAP)
+    // FIXME: Ensure that offsets are also updated in case of programmatic style changes.
+    // https://bugs.webkit.org/show_bug.cgi?id=135964
+    updateSnapOffsets();
+#endif
+
     if (box->style().overflowX() != OMARQUEE && !isRubberBandInProgress()) {
         // Layout may cause us to be at an invalid scroll position. In this case we need
         // to pull our scroll offsets back to the max (or push them up to the min).
@@ -3488,15 +3494,7 @@ void RenderLayer::updateScrollInfoAfterLayout()
     if (compositor().updateLayerCompositingState(*this))
         compositor().setCompositingLayersNeedRebuild();
 
-#if ENABLE(CSS_SCROLL_SNAP)
-    // FIXME: Ensure that offsets are also updated in case of programmatic style changes.
-    // https://bugs.webkit.org/show_bug.cgi?id=135964
-    updateSnapOffsets();
-#if PLATFORM(MAC)
-    if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
-        return scrollAnimator->updateScrollAnimatorsAndTimers();
-#endif
-#endif
+    updateScrollSnapState();
 }
 
 bool RenderLayer::overflowControlsIntersectRect(const IntRect& localRect) const

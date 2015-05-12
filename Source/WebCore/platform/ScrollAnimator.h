@@ -130,6 +130,8 @@ public:
     void updateScrollAnimatorsAndTimers();
     LayoutUnit scrollOffsetOnAxis(ScrollEventAxis) const override;
     void immediateScrollOnAxis(ScrollEventAxis, float delta) override;
+    bool activeScrollSnapIndexDidChange() const;
+    unsigned activeScrollSnapIndexForAxis(ScrollEventAxis) const;
 #endif
 
 protected:

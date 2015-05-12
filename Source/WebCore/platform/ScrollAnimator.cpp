@@ -87,6 +87,16 @@ bool ScrollAnimator::processWheelEventForScrollSnap(const PlatformWheelEvent& wh
 {
     return m_scrollController.processWheelEventForScrollSnap(wheelEvent);
 }
+
+bool ScrollAnimator::activeScrollSnapIndexDidChange() const
+{
+    return m_scrollController.activeScrollSnapIndexDidChange();
+}
+
+unsigned ScrollAnimator::activeScrollSnapIndexForAxis(ScrollEventAxis axis) const
+{
+    return m_scrollController.activeScrollSnapIndexForAxis(axis);
+}
 #endif
 
 bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
