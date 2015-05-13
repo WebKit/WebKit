@@ -64,6 +64,13 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
 @interface WebImmediateActionController () <QLPreviewMenuItemDelegate>
 @end
 
+@interface WebAnimationController : NSObject <NSImmediateActionAnimationController> {
+}
+@end
+
+@implementation WebAnimationController
+@end
+
 using namespace WebCore;
 
 @implementation WebImmediateActionController
@@ -92,12 +99,6 @@ using namespace WebCore;
 
     _immediateActionRecognizer = nil;
     _currentActionContext = nil;
-}
-
-- (void)webView:(WebView *)webView willHandleMouseDown:(NSEvent *)event
-{
-    [self _clearImmediateActionState];
-    [_webView _clearTextIndicatorWithAnimation:TextIndicatorDismissalAnimation::FadeOut];
 }
 
 - (void)webView:(WebView *)webView didHandleScrollWheel:(NSEvent *)event
@@ -136,6 +137,7 @@ using namespace WebCore;
     _type = WebImmediateActionNone;
     _currentActionContext = nil;
     _currentQLPreviewMenuItem = nil;
+    _contentPreventsDefault = NO;
 }
 
 - (void)performHitTestAtPoint:(NSPoint)viewPoint
@@ -144,6 +146,10 @@ using namespace WebCore;
     if (!coreFrame)
         return;
     _hitTestResult = coreFrame->eventHandler().hitTestResultAtPoint(IntPoint(viewPoint));
+    coreFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::PerformedHitTest);
+
+    if (Element* element = _hitTestResult.innerElement())
+        _contentPreventsDefault = element->dispatchMouseForceWillBegin();
 }
 
 #pragma mark NSImmediateActionGestureRecognizerDelegate
@@ -188,6 +194,13 @@ using namespace WebCore;
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
+    Frame* coreFrame = core([[[[_webView _selectedOrMainFrame] frameView] documentView] _frame]);
+    if (!coreFrame)
+        return;
+    coreFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionUpdated);
+    if (_contentPreventsDefault)
+        return;
+
     [_webView _setTextIndicatorAnimationProgress:[immediateActionRecognizer animationProgress]];
 }
 
@@ -195,6 +208,10 @@ using namespace WebCore;
 {
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
+
+    Frame* coreFrame = core([[[[_webView _selectedOrMainFrame] frameView] documentView] _frame]);
+    if (coreFrame)
+        coreFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCancelled);
 
     [_webView _setTextIndicatorAnimationProgress:0];
     [self _clearImmediateActionState];
@@ -207,6 +224,11 @@ using namespace WebCore;
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
+    Frame* coreFrame = core([[[[_webView _selectedOrMainFrame] frameView] documentView] _frame]);
+    if (!coreFrame)
+        return;
+    coreFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCompleted);
+
     [_webView _setTextIndicatorAnimationProgress:1];
     [_webView _setMaintainsInactiveSelection:NO];
 }
@@ -215,6 +237,11 @@ using namespace WebCore;
 
 - (id <NSImmediateActionAnimationController>)_defaultAnimationController
 {
+    if (_contentPreventsDefault) {
+        RetainPtr<WebAnimationController> dummyController = [[WebAnimationController alloc] init];
+        return dummyController.get();
+    }
+
     NSURL *url = _hitTestResult.absoluteLinkURL();
     NSString *absoluteURLString = [url absoluteString];
     if (url && _hitTestResult.URLElement()) {
@@ -264,6 +291,11 @@ using namespace WebCore;
     _type = WebImmediateActionNone;
 
     id <NSImmediateActionAnimationController> defaultAnimationController = [self _defaultAnimationController];
+
+    if (_contentPreventsDefault) {
+        [_immediateActionRecognizer setAnimationController:defaultAnimationController];
+        return;
+    }
 
     // Allow clients the opportunity to override the default immediate action.
     id customClientAnimationController = nil;

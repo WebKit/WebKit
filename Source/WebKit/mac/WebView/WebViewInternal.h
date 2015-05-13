@@ -269,6 +269,8 @@ OBJC_CLASS NSTextAlternatives;
 - (WebActionMenuController *)_actionMenuController;
 - (WebImmediateActionController *)_immediateActionController;
 #endif
+- (NSEvent *)_pressureEvent;
+- (void)_setPressureEvent:(NSEvent *)event;
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS) && defined(__cplusplus)

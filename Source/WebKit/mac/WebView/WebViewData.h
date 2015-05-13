@@ -175,6 +175,7 @@ private:
     std::unique_ptr<WebCore::TextIndicatorWindow> textIndicatorWindow;
     BOOL hasInitializedLookupObserver;
     RetainPtr<WebWindowVisibilityObserver> windowVisibilityObserver;
+    RetainPtr<NSEvent> pressureEvent;
 #endif // PLATFORM(MAC)
 
     BOOL shouldMaintainInactiveSelection;
