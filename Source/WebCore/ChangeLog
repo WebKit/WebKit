@@ -1,3 +1,19 @@
+2015-05-12  David Hyatt  <hyatt@apple.com>
+
+        Don't compute selection painting info when we don't have selection.
+        https://bugs.webkit.org/show_bug.cgi?id=144920
+        <rdar://problem/20919920>
+
+        Reviewed by Simon Fraser.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+
+        Just set the selection paint style to the text paint style when we don't have a selection
+        at all. Computing the selection style takes time in the case where a ::selection pseudo is
+        used on the page, so we don't want to waste time computing that info unless it's actually
+        needed.
+
 2015-05-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Pass String as reference in more places
