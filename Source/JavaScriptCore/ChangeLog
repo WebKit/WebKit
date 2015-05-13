@@ -1,3 +1,18 @@
+2015-05-13  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r184313.
+        https://bugs.webkit.org/show_bug.cgi?id=144974
+
+        Introduced an assertion failure in class-syntax-
+        declaration.js, class-syntax-expression.js, and object-
+        literal-syntax.js (Requested by rniwa on #webkit).
+
+        Reverted changeset:
+
+        "Small refactoring before ES6 Arrow function implementation."
+        https://bugs.webkit.org/show_bug.cgi?id=144954
+        http://trac.webkit.org/changeset/184313
+
 2015-05-13  Oliver Hunt  <oliver@apple.com>
         Ensure that all the smart pointer types in WTF clear their pointer before deref
         https://bugs.webkit.org/show_bug.cgi?id=143789
