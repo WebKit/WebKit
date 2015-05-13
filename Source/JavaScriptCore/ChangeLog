@@ -1,3 +1,16 @@
+2015-05-13  Michael Saboff  <msaboff@apple.com>
+
+        com.apple.WebKit.WebContent crashed at JavaScriptCore: JSC::CodeBlock::finalizeUnconditionally
+        https://bugs.webkit.org/show_bug.cgi?id=144933
+
+        Changed the RELEASE_ASSERT_NOT_REACHED into an ASSERT.  Added some diagnostic messages to
+        help determine the cause for any crash.
+
+        Reviewed by Geoffrey Garen.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finalizeUnconditionally):
+
 2015-05-13  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(r184260): arguments elimination has stopped working because of Check(UntypedUse:) from SSAConversionPhase
