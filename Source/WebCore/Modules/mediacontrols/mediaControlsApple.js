@@ -762,9 +762,6 @@ Controller.prototype = {
         if (this.controlsAreHidden())
             this.showControls();
         this.resetHideControlsTimer();
-        
-        if (this.scrubbing)
-            this.updateTime();
 
         if (!this.isDragging)
             return;
@@ -855,6 +852,7 @@ Controller.prototype = {
     handleTimelineInput: function(event)
     {
         this.video.fastSeek(this.controls.timeline.value);
+        this.updateControlsWhileScrubbing();
     },
 
     handleTimelineChange: function(event)
@@ -1157,8 +1155,8 @@ Controller.prototype = {
         
         if (!width || !height)
             return;
-        
-        var played = this.video.currentTime / this.video.duration;
+
+        var played = this.controls.timeline.value / this.controls.timeline.max;
         var buffered = 0;
         for (var i = 0, end = this.video.buffered.length; i < end; ++i)
             buffered = Math.max(this.video.buffered.end(i), buffered);
@@ -1407,6 +1405,18 @@ Controller.prototype = {
         this.controls.currentTime.innerText = this.formatTime(currentTime);
         this.controls.timeline.value = this.video.currentTime;
         this.controls.remainingTime.innerText = this.formatTime(timeRemaining);
+    },
+    
+    updateControlsWhileScrubbing: function()
+    {
+        if (!this.scrubbing)
+            return;
+
+        var currentTime = (this.controls.timeline.value / this.controls.timeline.max) * this.video.duration;
+        var timeRemaining = currentTime - this.video.duration;
+        this.controls.currentTime.innerText = this.formatTime(currentTime);
+        this.controls.remainingTime.innerText = this.formatTime(timeRemaining);
+        this.drawTimelineBackground();
     },
 
     updateReadyState: function()

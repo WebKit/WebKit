@@ -2,155 +2,149 @@
 Dana Burkart  <dburkart@apple.com
 dburkart@apple.com>
 
-        Merge r183943. rdar://problem/19913748
+        Merge r183953. rdar://problem/19997548
 
-    2015-05-07  Simon Fraser  <simon.fraser@apple.com>
+    2015-05-06  Roger Fong  <roger_fong@apple.com>
 
-            Remove the WK1-only code path for independently composited iframes
-            https://bugs.webkit.org/show_bug.cgi?id=144722
+            Media Controls: Scrubber should be independent of actual video time, causes scrubber to be jumpy.
+            https://bugs.webkit.org/show_bug.cgi?id=144700.
+            <rdar://problem/19997548>
 
-            Reviewed by Dean Jackson.
+            Reviewed by Jer Noble.
 
-            In WebKit1 on Mac, we allowed iframes to be composited independently of their
-            parent document, relying on the fact that the frame's platform view can host
-            a layer-backed view. However, this ran into bugs (rdar://problem/18862298),
-            and triggers the assertion at the end of FrameView::updateLayoutAndStyleIfNeededRecursive(),
-            because the compositing update after a layout can dirty style in notifyIFramesOfCompositingChange().
+            Update time and timeline during the timeline input event instead of the wrapper's mousemove.
+            (Controller.prototype.handleWrapperMouseMove):
+            (Controller.prototype.handleTimelineMouseMove):
+            (Controller.prototype.drawTimelineBackground):
 
-            Removing the WK1-only code path solves these problems. It also eliminates the need
-            to do compositing-specific frame overlap testing.
-
-            * page/FrameView.cpp:
-            (WebCore::FrameView::setIsOverlapped): No need to do compositing-related things here.
-            Any iframe that gets composited will participate in the normal compositing overlap
-            testing in its parent frame.
-            (WebCore::FrameView::hasCompositedContentIncludingDescendants): Deleted.
-            (WebCore::FrameView::hasCompositingAncestor): Deleted.
-            * page/FrameView.h:
-            * rendering/RenderLayerCompositor.cpp: Replace ownerElement() checks in this file
-            with an isMainFrameCompositor() for readability. Some 0->nullptr.
-            (WebCore::RenderLayerCompositor::cacheAcceleratedCompositingFlags):
-            (WebCore::RenderLayerCompositor::chromeClient):
-            (WebCore::RenderLayerCompositor::enclosingCompositorFlushingLayers):
-            (WebCore::RenderLayerCompositor::updateCompositingLayers):
-            (WebCore::RenderLayerCompositor::appendDocumentOverlayLayers):
-            (WebCore::RenderLayerCompositor::updateBacking):
-            (WebCore::RenderLayerCompositor::layerTreeAsText):
-            (WebCore::RenderLayerCompositor::frameContentsCompositor):
-            (WebCore::RenderLayerCompositor::setIsInWindow):
-            (WebCore::RenderLayerCompositor::requiresCompositingForScrollableFrame):
-            (WebCore::RenderLayerCompositor::requiresCompositingForFrame): frameRenderer.requiresAcceleratedCompositing()
-            already bails on no content RenderView, so the shouldPropagateCompositingToEnclosingFrame() check does
-            nothing and is removed.
-            (WebCore::RenderLayerCompositor::isAsyncScrollableStickyLayer):
-            (WebCore::RenderLayerCompositor::requiresScrollLayer):
-            (WebCore::RenderLayerCompositor::documentUsesTiledBacking):
-            (WebCore::RenderLayerCompositor::isMainFrameCompositor):
-            (WebCore::RenderLayerCompositor::shouldCompositeOverflowControls):
-            (WebCore::RenderLayerCompositor::requiresOverhangAreasLayer):
-            (WebCore::RenderLayerCompositor::requiresContentShadowLayer):
-            (WebCore::RenderLayerCompositor::updateLayerForTopOverhangArea):
-            (WebCore::RenderLayerCompositor::updateLayerForBottomOverhangArea):
-            (WebCore::RenderLayerCompositor::updateLayerForHeader):
-            (WebCore::RenderLayerCompositor::updateLayerForFooter):
-            (WebCore::RenderLayerCompositor::ensureRootLayer): Main frame attaches via ChromeClient,
-            all other frames attach via parent frame.
-            (WebCore::RenderLayerCompositor::notifyIFramesOfCompositingChange): This call to
-            scheduleSetNeedsStyleRecalc(SyntheticStyleChange) was the source of dirtying style after
-            layout, but is no longer needed so remove it.
-            (WebCore::RenderLayerCompositor::registerAllViewportConstrainedLayers):
-            (WebCore::RenderLayerCompositor::unregisterAllViewportConstrainedLayers):
-            (WebCore::RenderLayerCompositor::scrollingCoordinator):
-            (WebCore::RenderLayerCompositor::graphicsLayerFactory):
-            (WebCore::RenderLayerCompositor::allowsIndependentlyCompositedFrames): Deleted.
-            (WebCore::RenderLayerCompositor::shouldPropagateCompositingToEnclosingFrame): Deleted.
-            (WebCore::RenderLayerCompositor::mainFrameBackingIsTiled): Deleted. This was mis-named;
-            it really asks whether the document uses tiled backing, but does not check for main frame.
-            * rendering/RenderLayerCompositor.h:
-            * rendering/RenderWidget.cpp:
-            (WebCore::RenderWidget::paintContents): No need to do frame overlap testing for
-            compositing now.
+            (Controller.prototype.updateControlsWhileScrubbing):
+            Updates time and scrubber to reflect timeline user input.
 
     2015-05-12  Dana Burkart
     Dana Burkart  <dburkart@apple.com
     dburkart@apple.com>
 
-            Merge r183927. rdar://problem/20854785
+            Merge r183943. rdar://problem/19913748
 
-        2015-05-07  Eric Carlson  <eric.carlson@apple.com>
+        2015-05-07  Simon Fraser  <simon.fraser@apple.com>
 
-                [Mac] Playback target isn't set on new element
-                https://bugs.webkit.org/show_bug.cgi?id=144724
+                Remove the WK1-only code path for independently composited iframes
+                https://bugs.webkit.org/show_bug.cgi?id=144722
 
-                Reviewed by Jer Noble.
+                Reviewed by Dean Jackson.
 
-                * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
-                * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
-                (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer): Call setShouldPlayToPlaybackTarget
-                if necessary.
-                (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget): Remember
-                the setting in case we don't have an AVPlayer yet.
+                In WebKit1 on Mac, we allowed iframes to be composited independently of their
+                parent document, relying on the fact that the frame's platform view can host
+                a layer-backed view. However, this ran into bugs (rdar://problem/18862298),
+                and triggers the assertion at the end of FrameView::updateLayoutAndStyleIfNeededRecursive(),
+                because the compositing update after a layout can dirty style in notifyIFramesOfCompositingChange().
+
+                Removing the WK1-only code path solves these problems. It also eliminates the need
+                to do compositing-specific frame overlap testing.
+
+                * page/FrameView.cpp:
+                (WebCore::FrameView::setIsOverlapped): No need to do compositing-related things here.
+                Any iframe that gets composited will participate in the normal compositing overlap
+                testing in its parent frame.
+                (WebCore::FrameView::hasCompositedContentIncludingDescendants): Deleted.
+                (WebCore::FrameView::hasCompositingAncestor): Deleted.
+                * page/FrameView.h:
+                * rendering/RenderLayerCompositor.cpp: Replace ownerElement() checks in this file
+                with an isMainFrameCompositor() for readability. Some 0->nullptr.
+                (WebCore::RenderLayerCompositor::cacheAcceleratedCompositingFlags):
+                (WebCore::RenderLayerCompositor::chromeClient):
+                (WebCore::RenderLayerCompositor::enclosingCompositorFlushingLayers):
+                (WebCore::RenderLayerCompositor::updateCompositingLayers):
+                (WebCore::RenderLayerCompositor::appendDocumentOverlayLayers):
+                (WebCore::RenderLayerCompositor::updateBacking):
+                (WebCore::RenderLayerCompositor::layerTreeAsText):
+                (WebCore::RenderLayerCompositor::frameContentsCompositor):
+                (WebCore::RenderLayerCompositor::setIsInWindow):
+                (WebCore::RenderLayerCompositor::requiresCompositingForScrollableFrame):
+                (WebCore::RenderLayerCompositor::requiresCompositingForFrame): frameRenderer.requiresAcceleratedCompositing()
+                already bails on no content RenderView, so the shouldPropagateCompositingToEnclosingFrame() check does
+                nothing and is removed.
+                (WebCore::RenderLayerCompositor::isAsyncScrollableStickyLayer):
+                (WebCore::RenderLayerCompositor::requiresScrollLayer):
+                (WebCore::RenderLayerCompositor::documentUsesTiledBacking):
+                (WebCore::RenderLayerCompositor::isMainFrameCompositor):
+                (WebCore::RenderLayerCompositor::shouldCompositeOverflowControls):
+                (WebCore::RenderLayerCompositor::requiresOverhangAreasLayer):
+                (WebCore::RenderLayerCompositor::requiresContentShadowLayer):
+                (WebCore::RenderLayerCompositor::updateLayerForTopOverhangArea):
+                (WebCore::RenderLayerCompositor::updateLayerForBottomOverhangArea):
+                (WebCore::RenderLayerCompositor::updateLayerForHeader):
+                (WebCore::RenderLayerCompositor::updateLayerForFooter):
+                (WebCore::RenderLayerCompositor::ensureRootLayer): Main frame attaches via ChromeClient,
+                all other frames attach via parent frame.
+                (WebCore::RenderLayerCompositor::notifyIFramesOfCompositingChange): This call to
+                scheduleSetNeedsStyleRecalc(SyntheticStyleChange) was the source of dirtying style after
+                layout, but is no longer needed so remove it.
+                (WebCore::RenderLayerCompositor::registerAllViewportConstrainedLayers):
+                (WebCore::RenderLayerCompositor::unregisterAllViewportConstrainedLayers):
+                (WebCore::RenderLayerCompositor::scrollingCoordinator):
+                (WebCore::RenderLayerCompositor::graphicsLayerFactory):
+                (WebCore::RenderLayerCompositor::allowsIndependentlyCompositedFrames): Deleted.
+                (WebCore::RenderLayerCompositor::shouldPropagateCompositingToEnclosingFrame): Deleted.
+                (WebCore::RenderLayerCompositor::mainFrameBackingIsTiled): Deleted. This was mis-named;
+                it really asks whether the document uses tiled backing, but does not check for main frame.
+                * rendering/RenderLayerCompositor.h:
+                * rendering/RenderWidget.cpp:
+                (WebCore::RenderWidget::paintContents): No need to do frame overlap testing for
+                compositing now.
 
         2015-05-12  Dana Burkart
         Dana Burkart  <dburkart@apple.com
         dburkart@apple.com>
 
-                Merge r183909. rdar://problem/18894598
+                Merge r183927. rdar://problem/20854785
 
-            2015-05-06  Daniel Bates  <dabates@apple.com>
+            2015-05-07  Eric Carlson  <eric.carlson@apple.com>
 
-                    [iOS][WK2] Pause/resume database thread when UIProcess enters/leaves the background
-                    https://bugs.webkit.org/show_bug.cgi?id=144657
-                    <rdar://problem/18894598>
+                    [Mac] Playback target isn't set on new element
+                    https://bugs.webkit.org/show_bug.cgi?id=144724
 
-                    Reviewed by Andy Estes.
+                    Reviewed by Jer Noble.
 
-                    Export WebCore functionality to pause and resume the database thread so that we can
-                    make use of this functionality from WebKit2.
-
-                    * Modules/webdatabase/AbstractDatabaseServer.h:
-                    * Modules/webdatabase/DatabaseManager.cpp:
-                    (WebCore::DatabaseManager::setPauseAllDatabases): Added; turns around and calls DatabaseServer::setPauseAllDatabases().
-                    * Modules/webdatabase/DatabaseManager.h:
-                    * Modules/webdatabase/DatabaseServer.cpp:
-                    (WebCore::DatabaseServer::setPauseAllDatabases): Added; turns around and calls
-                    DatabaseTracker::tracker().setDatabasesPaused() to pause or resume the database thread.
-                    For now, we guard this call with PLATFORM(IOS). We'll look to remove this guard once
-                    we fix <https://bugs.webkit.org/show_bug.cgi?id=144660>.
-                    * Modules/webdatabase/DatabaseServer.h:
+                    * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+                    * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+                    (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer): Call setShouldPlayToPlaybackTarget
+                    if necessary.
+                    (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget): Remember
+                    the setting in case we don't have an AVPlayer yet.
 
             2015-05-12  Dana Burkart
-            Dana Burkart  <dburkart@apple.com>
+            Dana Burkart  <dburkart@apple.com
+            dburkart@apple.com>
 
-                    Merge r183942. rdar://problem/20049088
+                    Merge r183909. rdar://problem/18894598
 
-                2015-05-06  Dean Jackson  <dino@apple.com>
+                2015-05-06  Daniel Bates  <dabates@apple.com>
 
-                        Handle backdrop views that have to tile
-                        https://bugs.webkit.org/show_bug.cgi?id=142317
-                        <rdar://problem/20049088>
+                        [iOS][WK2] Pause/resume database thread when UIProcess enters/leaves the background
+                        https://bugs.webkit.org/show_bug.cgi?id=144657
+                        <rdar://problem/18894598>
 
-                        Reviewed by Simon Fraser.
+                        Reviewed by Andy Estes.
 
-                        Take 2 - this was rolled out because Mavericks was crashing.
+                        Export WebCore functionality to pause and resume the database thread so that we can
+                        make use of this functionality from WebKit2.
 
-                        Make sure backdrop layers don't tile. If they are big
-                        enough, we'll leave it to the platform compositor to handle.
-
-                        This also fixes a bug where if a layer changed from a backdrop
-                        type to a tiled type, it would still retain its custom appearance
-                        and we'd try to add children to the wrong layer.
-
-                        Test: compositing/media-controls-bar-appearance-big.html
-
-                        * platform/graphics/ca/GraphicsLayerCA.cpp:
-                        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers): Check if
-                        a layer needs a backdrop before checking if it needs to tile.
+                        * Modules/webdatabase/AbstractDatabaseServer.h:
+                        * Modules/webdatabase/DatabaseManager.cpp:
+                        (WebCore::DatabaseManager::setPauseAllDatabases): Added; turns around and calls DatabaseServer::setPauseAllDatabases().
+                        * Modules/webdatabase/DatabaseManager.h:
+                        * Modules/webdatabase/DatabaseServer.cpp:
+                        (WebCore::DatabaseServer::setPauseAllDatabases): Added; turns around and calls
+                        DatabaseTracker::tracker().setDatabasesPaused() to pause or resume the database thread.
+                        For now, we guard this call with PLATFORM(IOS). We'll look to remove this guard once
+                        we fix <https://bugs.webkit.org/show_bug.cgi?id=144660>.
+                        * Modules/webdatabase/DatabaseServer.h:
 
                 2015-05-12  Dana Burkart
                 Dana Burkart  <dburkart@apple.com>
 
-                        Merge r183894. rdar://problem/20049088
+                        Merge r183942. rdar://problem/20049088
 
                     2015-05-06  Dean Jackson  <dino@apple.com>
 
@@ -159,6 +153,8 @@ dburkart@apple.com>
                             <rdar://problem/20049088>
 
                             Reviewed by Simon Fraser.
+
+                            Take 2 - this was rolled out because Mavericks was crashing.
 
                             Make sure backdrop layers don't tile. If they are big
                             enough, we'll leave it to the platform compositor to handle.
@@ -172,6 +168,32 @@ dburkart@apple.com>
                             * platform/graphics/ca/GraphicsLayerCA.cpp:
                             (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers): Check if
                             a layer needs a backdrop before checking if it needs to tile.
+
+                    2015-05-12  Dana Burkart
+                    Dana Burkart  <dburkart@apple.com>
+
+                            Merge r183894. rdar://problem/20049088
+
+                        2015-05-06  Dean Jackson  <dino@apple.com>
+
+                                Handle backdrop views that have to tile
+                                https://bugs.webkit.org/show_bug.cgi?id=142317
+                                <rdar://problem/20049088>
+
+                                Reviewed by Simon Fraser.
+
+                                Make sure backdrop layers don't tile. If they are big
+                                enough, we'll leave it to the platform compositor to handle.
+
+                                This also fixes a bug where if a layer changed from a backdrop
+                                type to a tiled type, it would still retain its custom appearance
+                                and we'd try to add children to the wrong layer.
+
+                                Test: compositing/media-controls-bar-appearance-big.html
+
+                                * platform/graphics/ca/GraphicsLayerCA.cpp:
+                                (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers): Check if
+                                a layer needs a backdrop before checking if it needs to tile.
 
 2015-05-06  Brent Fulgham  <bfulgham@apple.com>
 
