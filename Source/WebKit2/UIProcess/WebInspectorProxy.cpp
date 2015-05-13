@@ -574,7 +574,7 @@ void WebInspectorProxy::attachAvailabilityChanged(bool available)
     if (previousCanAttach == m_canAttach)
         return;
 
-    if (!m_underTest)
+    if (m_inspectorPage && !m_underTest)
         m_inspectorPage->process().send(Messages::WebInspectorUI::SetDockingUnavailable(!m_canAttach), m_inspectorPage->pageID());
 
     platformAttachAvailabilityChanged(m_canAttach);
