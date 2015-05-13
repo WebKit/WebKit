@@ -104,6 +104,7 @@ public:
     virtual bool avoidScrollbarCreation() const override;
 
     virtual void setContentsSize(const IntSize&) override;
+    virtual void updateContentsSize() override;
 
     void layout(bool allowSubtree = true);
     WEBCORE_EXPORT bool didFirstLayout() const;
@@ -606,7 +607,6 @@ private:
     WEBCORE_EXPORT void adjustTiledBackingCoverage();
 
     virtual void repaintContentRectangle(const IntRect&) override;
-    virtual void updateContentsSize() override;
     virtual void addedOrRemovedScrollbar() override;
 
     virtual void delegatesScrollingDidChange() override;

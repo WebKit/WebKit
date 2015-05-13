@@ -399,6 +399,15 @@ void PageCache::markPagesForDeviceOrPageScaleChanged(Page& page)
     }
 }
 
+void PageCache::markPagesForContentsSizeChanged(Page& page)
+{
+    for (auto& item : m_items) {
+        CachedPage& cachedPage = *item->m_cachedPage;
+        if (&page.mainFrame() == &cachedPage.cachedMainFrame()->view()->frame())
+            cachedPage.markForContentsSizeChanged();
+    }
+}
+
 #if ENABLE(VIDEO_TRACK)
 void PageCache::markPagesForCaptionPreferencesChanged()
 {

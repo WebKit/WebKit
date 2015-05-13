@@ -1,3 +1,29 @@
+2015-05-13  Timothy Horton  <timothy_horton@apple.com>
+
+        Going back after resizing causes scroll knob to appear in the middle of the page
+        https://bugs.webkit.org/show_bug.cgi?id=144968
+        <rdar://problem/18299827>
+
+        Reviewed by Beth Dakin.
+
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::restore):
+        (WebCore::CachedPage::clear):
+        * history/CachedPage.h:
+        (WebCore::CachedPage::markForContentsSizeChanged):
+        * history/PageCache.cpp:
+        (WebCore::PageCache::markPagesForContentsSizeChanged):
+        * history/PageCache.h:
+        Add a flag that will cause us to call updateContentsSize() after a page
+        comes out of the page cache, if necessary.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setContentsSize):
+        * page/FrameView.h:
+        Mark all cached pages for this frame as needing updateContentsSize()
+        when setContentsSize happens. This will ensure that scrollbar layers
+        are repositioned when coming out of the page cache.
+
 2015-05-13  Beth Dakin  <bdakin@apple.com>
 
         Need SPI to set the overlay scroll bar style

@@ -61,6 +61,7 @@
 #include "MemoryCache.h"
 #include "MemoryPressureHandler.h"
 #include "OverflowEvent.h"
+#include "PageCache.h"
 #include "PageOverlayController.h"
 #include "ProgressTracker.h"
 #include "RenderEmbeddedObject.h"
@@ -583,8 +584,10 @@ void FrameView::setContentsSize(const IntSize& size)
 
     page->chrome().contentsSizeChanged(&frame(), size); // Notify only.
 
-    if (frame().isMainFrame())
+    if (frame().isMainFrame()) {
         frame().mainFrame().pageOverlayController().didChangeDocumentSize();
+        PageCache::singleton().markPagesForContentsSizeChanged(*page);
+    }
 
     ASSERT(m_deferSetNeedsLayoutCount);
     m_deferSetNeedsLayoutCount--;

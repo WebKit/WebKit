@@ -57,6 +57,8 @@ public:
 
     void markForDeviceOrPageScaleChanged() { m_needsDeviceOrPageScaleChanged = true; }
 
+    void markForContentsSizeChanged() { m_needsUpdateContentsSize = true; }
+
 private:
     double m_expirationTime;
     std::unique_ptr<CachedFrame> m_cachedMainFrame;
@@ -66,6 +68,7 @@ private:
     bool m_needsCaptionPreferencesChanged { false };
 #endif
     bool m_needsDeviceOrPageScaleChanged { false };
+    bool m_needsUpdateContentsSize { false };
 };
 
 } // namespace WebCore
