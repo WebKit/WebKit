@@ -1,3 +1,16 @@
+2015-05-12  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [Win] REGRESSION(r184213) breaks aria-menubar-menuitems.html
+        https://bugs.webkit.org/show_bug.cgi?id=144936
+
+        Reviewed by Chris Fleizach.
+
+        Use focusedElement + childAtIndex rather than accessibleElementById
+        as the latter seems to be failing, and the former worked on Windows
+        to get the menubar in the original version of this test.
+
+        * accessibility/aria-menubar-menuitems.html: Modified.
+
 2015-05-12  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION(r175617): Some text doesn't render on internationalculinarycenter.com

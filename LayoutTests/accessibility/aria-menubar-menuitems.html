@@ -38,7 +38,9 @@ if (window.layoutController) {
 }
 
 if (window.accessibilityController) {
-    window.menuBar = accessibilityController.accessibleElementById("menubar");
+    document.getElementById("body").focus();
+    var webArea = accessibilityController.focusedElement;
+    var menuBar = webArea.childAtIndex(0);
     dumpAccessibilityTree(menuBar, null, 0, false, true);
 }
 </script>
