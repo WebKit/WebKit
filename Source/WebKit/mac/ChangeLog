@@ -1,3 +1,17 @@
+2015-05-12  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r183968.
+
+    2015-05-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            Fix iPhone 6 iOS simulator Build.
+            following http://trac.webkit.org/changeset/183954.
+
+            Reviewed by Daniel Bates.
+
+            * WebView/WebHTMLView.mm:
+            (-[WebHTMLView pressureChangeWithEvent:]):
+
 2015-05-12  Dana Burkart <dburkart@apple.com>
 
         Merge r183957. rdar://problem/20811128
