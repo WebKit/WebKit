@@ -40,8 +40,12 @@ class WEBCORE_EXPORT CompiledContentExtension : public ThreadSafeRefCounted<Comp
 public:
     virtual ~CompiledContentExtension();
 
-    virtual const DFABytecode* bytecode() const = 0;
-    virtual unsigned bytecodeLength() const = 0;
+    virtual const DFABytecode* filtersWithoutDomainsBytecode() const = 0;
+    virtual unsigned filtersWithoutDomainsBytecodeLength() const = 0;
+    virtual const DFABytecode* filtersWithDomainsBytecode() const = 0;
+    virtual unsigned filtersWithDomainsBytecodeLength() const = 0;
+    virtual const DFABytecode* domainFiltersBytecode() const = 0;
+    virtual unsigned domainFiltersBytecodeLength() const = 0;
     virtual const SerializedActionByte* actions() const = 0;
     virtual unsigned actionsLength() const = 0;
     Vector<String> globalDisplayNoneSelectors(Vector<bool>& pagesUsed);

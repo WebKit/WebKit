@@ -52,11 +52,13 @@ enum class DFABytecodeInstruction : uint8_t {
     // AppendAction has one argument:
     // The action to append (4 bytes).
     AppendAction,
+    AppendActionWithIfDomain,
     
     // TestFlagsAndAppendAction has two arguments:
-    // The flags to check before appending (2 bytes),
-    // The action to append (4bytes).
+    // The flags to check before appending (2 bytes).
+    // The action to append (4 bytes).
     TestFlagsAndAppendAction,
+    TestFlagsAndAppendActionWithIfDomain,
 
     // Terminate has no arguments.
     Terminate,
@@ -76,8 +78,10 @@ static inline size_t instructionSizeWithArguments(DFABytecodeInstruction instruc
     case DFABytecodeInstruction::CheckValueRangeCaseInsensitive:
         return sizeof(DFABytecodeInstruction) + sizeof(uint8_t) + sizeof(uint8_t) + sizeof(unsigned);
     case DFABytecodeInstruction::AppendAction:
+    case DFABytecodeInstruction::AppendActionWithIfDomain:
         return sizeof(DFABytecodeInstruction) + sizeof(unsigned);
     case DFABytecodeInstruction::TestFlagsAndAppendAction:
+    case DFABytecodeInstruction::TestFlagsAndAppendActionWithIfDomain:
         return sizeof(DFABytecodeInstruction) + sizeof(uint16_t) + sizeof(unsigned);
     case DFABytecodeInstruction::Terminate:
         return sizeof(DFABytecodeInstruction);

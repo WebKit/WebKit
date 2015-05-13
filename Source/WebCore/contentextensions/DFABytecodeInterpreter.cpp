@@ -50,18 +50,20 @@ static inline IntType getBits(const DFABytecode* bytecode, unsigned bytecodeLeng
     return *reinterpret_cast<const IntType*>(&bytecode[index]);
 }
     
-void DFABytecodeInterpreter::interpretAppendAction(unsigned& programCounter, Actions& actions)
+void DFABytecodeInterpreter::interpretAppendAction(unsigned& programCounter, Actions& actions, bool ifDomain)
 {
-    ASSERT(getBits<DFABytecodeInstruction>(m_bytecode, m_bytecodeLength, programCounter, m_pagesUsed) == DFABytecodeInstruction::AppendAction);
-    actions.add(static_cast<uint64_t>(getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode), m_pagesUsed)));
+    ASSERT(getBits<DFABytecodeInstruction>(m_bytecode, m_bytecodeLength, programCounter, m_pagesUsed) == DFABytecodeInstruction::AppendAction
+        || getBits<DFABytecodeInstruction>(m_bytecode, m_bytecodeLength, programCounter, m_pagesUsed) == DFABytecodeInstruction::AppendActionWithIfDomain);
+    actions.add((ifDomain ? IfDomainFlag : 0) | static_cast<uint64_t>(getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode), m_pagesUsed)));
     programCounter += instructionSizeWithArguments(DFABytecodeInstruction::AppendAction);
 }
 
-void DFABytecodeInterpreter::interpretTestFlagsAndAppendAction(unsigned& programCounter, uint16_t flags, Actions& actions)
+void DFABytecodeInterpreter::interpretTestFlagsAndAppendAction(unsigned& programCounter, uint16_t flags, Actions& actions, bool ifDomain)
 {
-    ASSERT(getBits<DFABytecodeInstruction>(m_bytecode, m_bytecodeLength, programCounter, m_pagesUsed) == DFABytecodeInstruction::TestFlagsAndAppendAction);
+    ASSERT(getBits<DFABytecodeInstruction>(m_bytecode, m_bytecodeLength, programCounter, m_pagesUsed) == DFABytecodeInstruction::TestFlagsAndAppendAction
+        || getBits<DFABytecodeInstruction>(m_bytecode, m_bytecodeLength, programCounter, m_pagesUsed) == DFABytecodeInstruction::TestFlagsAndAppendActionWithIfDomain);
     if (flags & getBits<uint16_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode), m_pagesUsed))
-        actions.add(static_cast<uint64_t>(getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint16_t), m_pagesUsed)));
+        actions.add((ifDomain ? IfDomainFlag : 0) | static_cast<uint64_t>(getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint16_t), m_pagesUsed)));
     programCounter += instructionSizeWithArguments(DFABytecodeInstruction::TestFlagsAndAppendAction);
 }
 
@@ -76,7 +78,7 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::actionsFromDFARoot()
     while (programCounter < dfaBytecodeLength) {
         DFABytecodeInstruction instruction = static_cast<DFABytecodeInstruction>(m_bytecode[programCounter]);
         if (instruction == DFABytecodeInstruction::AppendAction)
-            interpretAppendAction(programCounter, actions);
+            interpretAppendAction(programCounter, actions, false);
         else if (instruction == DFABytecodeInstruction::TestFlagsAndAppendAction)
             programCounter += instructionSizeWithArguments(DFABytecodeInstruction::TestFlagsAndAppendAction);
         else
@@ -107,7 +109,7 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
                 if (instruction == DFABytecodeInstruction::AppendAction)
                     programCounter += instructionSizeWithArguments(DFABytecodeInstruction::AppendAction);
                 else if (instruction == DFABytecodeInstruction::TestFlagsAndAppendAction)
-                    interpretTestFlagsAndAppendAction(programCounter, flags, actions);
+                    interpretTestFlagsAndAppendAction(programCounter, flags, actions, false);
                 else
                     break;
             }
@@ -203,11 +205,19 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
                 break;
                     
             case DFABytecodeInstruction::AppendAction:
-                interpretAppendAction(programCounter, actions);
+                interpretAppendAction(programCounter, actions, false);
+                break;
+                    
+            case DFABytecodeInstruction::AppendActionWithIfDomain:
+                interpretAppendAction(programCounter, actions, true);
                 break;
                     
             case DFABytecodeInstruction::TestFlagsAndAppendAction:
-                interpretTestFlagsAndAppendAction(programCounter, flags, actions);
+                interpretTestFlagsAndAppendAction(programCounter, flags, actions, false);
+                break;
+            
+            case DFABytecodeInstruction::TestFlagsAndAppendActionWithIfDomain:
+                interpretTestFlagsAndAppendAction(programCounter, flags, actions, true);
                 break;
                     
             default:

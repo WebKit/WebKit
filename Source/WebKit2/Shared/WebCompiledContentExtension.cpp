@@ -44,14 +44,34 @@ WebCompiledContentExtension::~WebCompiledContentExtension()
 {
 }
 
-const WebCore::ContentExtensions::DFABytecode* WebCompiledContentExtension::bytecode() const
+const WebCore::ContentExtensions::DFABytecode* WebCompiledContentExtension::filtersWithoutDomainsBytecode() const
 {
-    return static_cast<const WebCore::ContentExtensions::DFABytecode*>(m_data.data->data()) + m_data.bytecodeOffset;
+    return static_cast<const WebCore::ContentExtensions::DFABytecode*>(m_data.data->data()) + m_data.filtersWithoutDomainsBytecodeOffset;
 }
 
-unsigned WebCompiledContentExtension::bytecodeLength() const
+unsigned WebCompiledContentExtension::filtersWithoutDomainsBytecodeLength() const
 {
-    return m_data.bytecodeSize;
+    return m_data.filtersWithoutDomainsBytecodeSize;
+}
+
+const WebCore::ContentExtensions::DFABytecode* WebCompiledContentExtension::filtersWithDomainsBytecode() const
+{
+    return static_cast<const WebCore::ContentExtensions::DFABytecode*>(m_data.data->data()) + m_data.filtersWithDomainsBytecodeOffset;
+}
+
+unsigned WebCompiledContentExtension::filtersWithDomainsBytecodeLength() const
+{
+    return m_data.filtersWithDomainsBytecodeSize;
+}
+
+const WebCore::ContentExtensions::DFABytecode* WebCompiledContentExtension::domainFiltersBytecode() const
+{
+    return static_cast<const WebCore::ContentExtensions::DFABytecode*>(m_data.data->data()) + m_data.domainFiltersBytecodeOffset;
+}
+
+unsigned WebCompiledContentExtension::domainFiltersBytecodeLength() const
+{
+    return m_data.domainFiltersBytecodeSize;
 }
 
 const WebCore::ContentExtensions::SerializedActionByte* WebCompiledContentExtension::actions() const

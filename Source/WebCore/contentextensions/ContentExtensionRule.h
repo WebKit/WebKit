@@ -45,11 +45,25 @@ struct Trigger {
     String urlFilter;
     bool urlFilterIsCaseSensitive { false };
     ResourceFlags flags { 0 };
+    Vector<String> domains;
+    enum class DomainCondition {
+        None,
+        IfDomain,
+        UnlessDomain,
+    } domainCondition { DomainCondition::None };
+    
+    ~Trigger()
+    {
+        ASSERT(domains.isEmpty() == (domainCondition == DomainCondition::None));
+    }
+    
     bool operator==(const Trigger& other) const
     {
         return urlFilter == other.urlFilter
             && urlFilterIsCaseSensitive == other.urlFilterIsCaseSensitive
-            && flags == other.flags;
+            && flags == other.flags
+            && domains == other.domains
+            && domainCondition == other.domainCondition;
     }
 };
     

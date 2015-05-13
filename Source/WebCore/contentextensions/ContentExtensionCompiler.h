@@ -36,17 +36,15 @@
 namespace WebCore {
 namespace ContentExtensions {
 
-struct CompiledContentExtensionData {
-    Vector<DFABytecode> bytecode;
-    Vector<SerializedActionByte> actions;
-};
-
 class ContentExtensionCompilationClient {
 public:
     virtual ~ContentExtensionCompilationClient() { }
     
-    virtual void writeBytecode(Vector<DFABytecode>&&) = 0;
+    // Functions should be called in this order. All except writeActions and finalize can be called multiple times, though.
     virtual void writeActions(Vector<SerializedActionByte>&&) = 0;
+    virtual void writeFiltersWithoutDomainsBytecode(Vector<DFABytecode>&&) = 0;
+    virtual void writeFiltersWithDomainsBytecode(Vector<DFABytecode>&&) = 0;
+    virtual void writeDomainFiltersBytecode(Vector<DFABytecode>&&) = 0;
     virtual void finalize() = 0;
 };
 

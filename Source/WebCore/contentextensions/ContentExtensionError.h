@@ -49,6 +49,9 @@ enum class ContentExtensionError {
     JSONInvalidTriggerFlagsArray,
     JSONInvalidObjectInTriggerFlagsArray,
     JSONInvalidStringInTriggerFlagsArray,
+    JSONInvalidDomainList,
+    JSONDomainNotLowerCaseASCII,
+    JSONUnlessAndIfDomain,
     
     JSONInvalidAction,
     JSONInvalidActionType,
@@ -56,9 +59,10 @@ enum class ContentExtensionError {
     JSONInvalidRegex,
     
     RegexMatchesEverythingAfterIgnorePreviousRules,
+    RegexMatchesEverythingWithDomains,
 };
 
-const std::error_category& contentExtensionErrorCategory();
+WEBCORE_EXPORT const std::error_category& contentExtensionErrorCategory();
 
 inline std::error_code make_error_code(ContentExtensionError error)
 {
