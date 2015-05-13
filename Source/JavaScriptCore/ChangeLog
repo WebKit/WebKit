@@ -1,3 +1,35 @@
+2015-05-12  Dana Burkart
+Dana Burkart  <dburkart@apple.com
+dburkart@apple.com>
+
+        Merge r184137. rdar://problem/20707307
+
+    2015-05-11  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Move Windows build target to Windows 7 (or newer)
+            https://bugs.webkit.org/show_bug.cgi?id=144890
+            <rdar://problem/20707307>
+
+            Reviewed by Anders Carlsson.
+
+            Update linked SDK and minimal Windows level to be compatible with
+            Windows 7 or newer.
+
+            * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+            * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+            * JavaScriptCore.vcxproj/JavaScriptCoreGenerated.vcxproj:
+            * JavaScriptCore.vcxproj/LLInt/LLIntAssembly/LLIntAssembly.vcxproj:
+            * JavaScriptCore.vcxproj/LLInt/LLIntDesiredOffsets/LLIntDesiredOffsets.vcxproj:
+            * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractor.vcxproj:
+            * JavaScriptCore.vcxproj/jsc/jsc.vcxproj:
+            * JavaScriptCore.vcxproj/jsc/jscLauncher.vcxproj:
+            * JavaScriptCore.vcxproj/libllvmForJSC/libllvmForJSC.vcxproj:
+            * JavaScriptCore.vcxproj/testRegExp/testRegExp.vcxproj:
+            * JavaScriptCore.vcxproj/testRegExp/testRegExpLauncher.vcxproj:
+            * JavaScriptCore.vcxproj/testapi/testapi.vcxproj:
+            * JavaScriptCore.vcxproj/testapi/testapiLauncher.vcxproj:
+            * config.h:
+
 2015-05-05  Filip Pizlo  <fpizlo@apple.com>
 
         Sane chain and string watchpoints should be set in FixupPhase or the backend rather than WatchpointCollectionPhase
