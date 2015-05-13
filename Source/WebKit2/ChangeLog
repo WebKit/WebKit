@@ -1,27 +1,46 @@
 2015-05-12  Dana Burkart
-Dana Burkart  <dburkart@apple.com>
+Dana Burkart  <dburkart@apple.com
+dburkart@apple.com>
 
-        Merge r183942. rdar://problem/20049088
+        Merge r183909. rdar://problem/18894598
 
-    2015-05-06  Dean Jackson  <dino@apple.com>
+    2015-05-06  Daniel Bates  <dabates@apple.com>
 
-            Handle backdrop views that have to tile
-            https://bugs.webkit.org/show_bug.cgi?id=142317
-            <rdar://problem/20049088>
+            [iOS][WK2] Pause/resume database thread when UIProcess enters/leaves the background
+            https://bugs.webkit.org/show_bug.cgi?id=144657
+            <rdar://problem/18894598>
 
-            Reviewed by Simon Fraser.
+            Reviewed by Andy Estes.
 
-            Take 2 - this was rolled out because Mavericks was crashing.
+            Pause and resume the database thread when the UIProcess enters and leaves the background,
+            respectively, so that we avoid WebProcess termination due to holding a locked SQLite
+            database file when the WebProcess is suspended. This behavior matches the analagous
+            behavior in Legacy WebKit.
 
-            Add some better logging for custom appearance.
-
-            * Shared/mac/RemoteLayerTreeTransaction.mm:
-            (WebKit::RemoteLayerTreeTextStream::operator<<):
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/ios/WKContentView.mm:
+            (-[WKContentView _applicationDidEnterBackground:]): Call WebPageProxy::applicationDidEnterBackground()
+            when the UIProcess enters the background.
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (WebKit::WebPageProxy::applicationDidEnterBackground): Added; notify the WebProcess to pause the database thread.
+            We temporarily take out background assertion on the WebProcess before sending this notification to ensure that the
+            WebProcess is running to receive it. We'll release this assertion when the WebProcess replies that it received the
+            notification.
+            * WebProcess/WebCoreSupport/WebDatabaseManager.cpp:
+            (WebKit::WebDatabaseManager::setPauseAllDatabases): Added; turns around and calls DatabaseManager::setPauseAllDatabases().
+            * WebProcess/WebCoreSupport/WebDatabaseManager.h:
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/WebPage.messages.in: Add message ApplicationDidEnterBackground(). Also,
+            add empty lines to help demarcate this message and the other UIKit application lifecycle-related
+            messages from the rest of the list of messages.
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::applicationWillEnterForeground): Resume the database thread.
+            (WebKit::WebPage::applicationDidEnterBackground): Pause the database thread.
 
     2015-05-12  Dana Burkart
     Dana Burkart  <dburkart@apple.com>
 
-            Merge r183894. rdar://problem/20049088
+            Merge r183942. rdar://problem/20049088
 
         2015-05-06  Dean Jackson  <dino@apple.com>
 
@@ -31,10 +50,30 @@ Dana Burkart  <dburkart@apple.com>
 
                 Reviewed by Simon Fraser.
 
+                Take 2 - this was rolled out because Mavericks was crashing.
+
                 Add some better logging for custom appearance.
 
                 * Shared/mac/RemoteLayerTreeTransaction.mm:
                 (WebKit::RemoteLayerTreeTextStream::operator<<):
+
+        2015-05-12  Dana Burkart
+        Dana Burkart  <dburkart@apple.com>
+
+                Merge r183894. rdar://problem/20049088
+
+            2015-05-06  Dean Jackson  <dino@apple.com>
+
+                    Handle backdrop views that have to tile
+                    https://bugs.webkit.org/show_bug.cgi?id=142317
+                    <rdar://problem/20049088>
+
+                    Reviewed by Simon Fraser.
+
+                    Add some better logging for custom appearance.
+
+                    * Shared/mac/RemoteLayerTreeTransaction.mm:
+                    (WebKit::RemoteLayerTreeTextStream::operator<<):
 
 2015-05-11  Babak Shafiei  <bshafiei@apple.com>
 

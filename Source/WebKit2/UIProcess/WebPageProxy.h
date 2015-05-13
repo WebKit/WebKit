@@ -493,9 +493,12 @@ public:
     void setAssistedNodeValue(const String&);
     void setAssistedNodeValueAsNumber(double);
     void setAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSelection = false);
+
     void applicationWillEnterForeground();
+    void applicationDidEnterBackground();
     void applicationWillResignActive();
     void applicationDidBecomeActive();
+
     void zoomToRect(WebCore::FloatRect, double minimumScale, double maximumScale);
     void commitPotentialTapFailed();
     void didNotHandleTapAsClick(const WebCore::IntPoint&);
