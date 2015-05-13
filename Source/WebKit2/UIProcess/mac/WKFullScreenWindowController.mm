@@ -102,12 +102,6 @@ static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSRe
     _clipView = adoptNS([[NSView alloc] initWithFrame:contentView.bounds]);
     [_clipView setWantsLayer:YES];
     [_clipView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
-    CALayer *maskLayer = [CALayer layer];
-    maskLayer.anchorPoint = CGPointZero;
-    maskLayer.frame = NSRectToCGRect(contentView.bounds);
-    maskLayer.backgroundColor = CGColorGetConstantColor(kCGColorBlack);
-    maskLayer.autoresizingMask = (NSViewWidthSizable | NSViewHeightSizable);
-    [_clipView layer].mask = maskLayer;
     [contentView addSubview:_clipView.get()];
 
     [self windowDidLoad];
@@ -300,7 +294,7 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
         NSView *contentView = [[self window] contentView];
         [contentView.layer removeAllAnimations];
         [[_clipView layer] removeAllAnimations];
-        [[_clipView layer].mask removeAllAnimations];
+        [[_clipView layer] setMask:nil];
 
         [_webViewPlaceholder setExitWarningVisible:YES];
         [_webViewPlaceholder setTarget:self];
@@ -584,10 +578,17 @@ static CAAnimation *fadeAnimation(CFTimeInterval duration, AnimationDirection di
 
 - (void)_startEnterFullScreenAnimationWithDuration:(NSTimeInterval)duration
 {
-    [[_clipView layer] addAnimation:zoomAnimation(_initialFrame, _finalFrame, self.window.screen.frame, duration, AnimateIn) forKey:@"fullscreen"];
-    [[_clipView layer].mask addAnimation:maskAnimation(_initialFrame, _finalFrame, self.window.screen.frame, duration, AnimateIn) forKey:@"fullscreen"];
-
     NSView* contentView = [[self window] contentView];
+
+    [[_clipView layer] addAnimation:zoomAnimation(_initialFrame, _finalFrame, self.window.screen.frame, duration, AnimateIn) forKey:@"fullscreen"];
+    CALayer *maskLayer = [CALayer layer];
+    maskLayer.anchorPoint = CGPointZero;
+    maskLayer.frame = NSRectToCGRect(contentView.bounds);
+    maskLayer.backgroundColor = CGColorGetConstantColor(kCGColorBlack);
+    maskLayer.autoresizingMask = (NSViewWidthSizable | NSViewHeightSizable);
+    [maskLayer addAnimation:maskAnimation(_initialFrame, _finalFrame, self.window.screen.frame, duration, AnimateIn) forKey:@"fullscreen"];
+    [_clipView layer].mask = maskLayer;
+
     contentView.layer.hidden = NO;
     [contentView.layer addAnimation:fadeAnimation(duration, AnimateIn) forKey:@"fullscreen"];
 
