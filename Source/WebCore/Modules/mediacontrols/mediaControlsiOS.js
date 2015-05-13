@@ -145,6 +145,7 @@ ControllerIOS.prototype = {
         this.listenFor(this.controls.optimizedFullscreenButton, 'touchstart', this.handleOptimizedFullscreenTouchStart);
         this.listenFor(this.controls.optimizedFullscreenButton, 'touchend', this.handleOptimizedFullscreenTouchEnd);
         this.listenFor(this.controls.optimizedFullscreenButton, 'touchcancel', this.handleOptimizedFullscreenTouchCancel);
+        this.listenFor(this.controls.timeline, 'touchstart', this.handleTimelineTouchStart);
         this.stopListeningFor(this.controls.playButton, 'click', this.handlePlayButtonClicked);
 
         this.controls.timeline.style.backgroundImage = '-webkit-canvas(' + this.timelineContextName + ')';
@@ -301,11 +302,6 @@ ControllerIOS.prototype = {
             return sign + intHours + ':' + String('0' + intMinutes).slice(-2) + ":" + String('0' + intSeconds).slice(-2);
 
         return sign + String('0' + intMinutes).slice(intMinutes >= 10 ? -2 : -1) + ":" + String('0' + intSeconds).slice(-2);
-    },
-
-    handleTimelineChange: function(event) {
-        Controller.prototype.handleTimelineChange.call(this);
-        this.updateProgress();
     },
 
     handlePlayButtonTouchStart: function() {
@@ -494,6 +490,32 @@ ControllerIOS.prototype = {
     handleStartPlaybackButtonTouchCancel: function(event) {
         this.controls.startPlaybackButton.classList.remove('active');
         return true;
+    },
+
+    handleTimelineInput: function(event) {
+        if (this.potentiallyScrubbing)
+            this.video.pause();
+        Controller.prototype.handleTimelineInput.call(this, event);
+    },
+
+    handleTimelineChange: function(event) {
+        Controller.prototype.handleTimelineChange.call(this, event);
+        this.updateProgress();
+    },
+
+    handleTimelineTouchStart: function(event) {
+        this.potentiallyScrubbing = true;
+        this.wasPlayingWhenScrubbingStarted = !this.video.paused;
+        this.listenFor(this.controls.timeline, 'touchend', this.handleTimelineTouchEnd);
+        this.listenFor(this.controls.timeline, 'touchcancel', this.handleTimelineTouchEnd);
+    },
+
+    handleTimelineTouchEnd: function(event) {
+        this.stopListeningFor(this.controls.timeline, 'touchend', this.handleTimelineTouchEnd);
+        this.stopListeningFor(this.controls.timeline, 'touchcancel', this.handleTimelineTouchEnd);
+        this.potentiallyScrubbing = false;
+        if (this.wasPlayingWhenScrubbingStarted && this.video.paused)
+            this.video.play();
     },
 
     handleReadyStateChange: function(event) {
