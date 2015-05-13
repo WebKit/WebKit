@@ -1,3 +1,13 @@
+2015-05-13  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Sandbox violation reading SubmitDiagInfo.domains
+        https://bugs.webkit.org/show_bug.cgi?id=144962
+        rdar://problem/20719330
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2015-05-13  Beth Dakin  <bdakin@apple.com>
 
         Speculative build fix.
