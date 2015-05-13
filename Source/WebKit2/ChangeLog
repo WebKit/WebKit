@@ -1,3 +1,15 @@
+2015-05-12  Dan Bernstein  <mitz@apple.com>
+
+        In Safari, Debug > Get Bytecode Profile crashes the Web Content process
+        https://bugs.webkit.org/show_bug.cgi?id=144944
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getBytecodeProfile): Don’t assert that m_perBytecodeProfiler isn’t null,
+        because it is when the profiler is disabled, which is the default. In that case, return
+        after sending back the empty string, rather than continuing to dereference a null pointer.
+
 2015-05-12  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Crash when using <input type=file>
