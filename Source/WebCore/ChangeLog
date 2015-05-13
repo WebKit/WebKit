@@ -1,3 +1,20 @@
+2015-05-12  Sungmann Cho  <sungmann.cho@navercorp.com>
+
+        Reindent DIBPixelData.h for consistency.
+        https://bugs.webkit.org/show_bug.cgi?id=144942
+
+        Reviewed by Darin Adler.
+
+        No new tests, no behavior change.
+
+        * platform/graphics/win/DIBPixelData.h:
+        (WebCore::DIBPixelData::DIBPixelData):
+        (WebCore::DIBPixelData::buffer):
+        (WebCore::DIBPixelData::bufferLength):
+        (WebCore::DIBPixelData::size):
+        (WebCore::DIBPixelData::bytesPerRow):
+        (WebCore::DIBPixelData::bitsPerPixel):
+
 2015-05-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r184224.
