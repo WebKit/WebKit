@@ -1,3 +1,28 @@
+2015-05-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        Reduce TransformationMatrix copies in MatrixTransformOperation, Matrix3DTransformOperation
+        https://bugs.webkit.org/show_bug.cgi?id=144797
+
+        Reviewed by Darin Adler.
+
+        Using std::swap() on TransformationMatrix objects which don't
+        provide move constructors will result in copies.
+
+        Instead, use a helper function in both MatrixTransformOperation
+        and Matrix3DTransformOperation that calls TransformationMatrix::blend()
+        and returns the new Matrix(3D)TransformOperation object, and call it
+        with fromT and toT arguments switched when blending to identity.
+
+        * platform/graphics/transforms/Matrix3DTransformOperation.cpp:
+        (WebCore::createOperation):
+        (WebCore::Matrix3DTransformOperation::blend):
+        * platform/graphics/transforms/Matrix3DTransformOperation.h: No need
+        to copy the m_matrix member, it won't change when passed to
+        TransformationMatrix::multiply().
+        * platform/graphics/transforms/MatrixTransformOperation.cpp:
+        (WebCore::createOperation):
+        (WebCore::MatrixTransformOperation::blend):
+
 2015-05-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [EGL][X11] XPixmap created in GLContextEGL::createPixmapContext() is leaked

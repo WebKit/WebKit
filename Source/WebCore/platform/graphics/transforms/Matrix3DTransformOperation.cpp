@@ -35,6 +35,12 @@ bool Matrix3DTransformOperation::operator==(const TransformOperation& other) con
     return isSameType(other) && m_matrix == downcast<Matrix3DTransformOperation>(other).m_matrix;
 }
 
+static Ref<TransformOperation> createOperation(TransformationMatrix& to, TransformationMatrix& from, double progress)
+{
+    to.blend(from, progress);
+    return Matrix3DTransformOperation::create(to);
+}
+
 Ref<TransformOperation> Matrix3DTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
 {
     if (from && !from->isSameType(*this))
@@ -50,10 +56,8 @@ Ref<TransformOperation> Matrix3DTransformOperation::blend(const TransformOperati
     apply(toT, size);
 
     if (blendToIdentity)
-        std::swap(fromT, toT);
-
-    toT.blend(fromT, progress);
-    return Matrix3DTransformOperation::create(toT);
+        return createOperation(fromT, toT, progress);
+    return createOperation(toT, fromT, progress);
 }
 
 } // namespace WebCore

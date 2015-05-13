@@ -56,7 +56,7 @@ private:
 
     virtual bool apply(TransformationMatrix& transform, const FloatSize&) const override
     {
-        transform.multiply(TransformationMatrix(m_matrix));
+        transform.multiply(m_matrix);
         return false;
     }
 
