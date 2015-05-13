@@ -52,6 +52,7 @@
 #include "SVGNames.h"
 #include "SelectorQuery.h"
 #include "TemplateContentDocumentFragment.h"
+#include <algorithm>
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {
@@ -929,13 +930,8 @@ unsigned ContainerNode::childElementCount() const
 {
     ASSERT(is<Document>(*this) || is<DocumentFragment>(*this) || is<Element>(*this));
 
-    unsigned count = 0;
-    Node* n = firstChild();
-    while (n) {
-        count += n->isElementNode();
-        n = n->nextSibling();
-    }
-    return count;
+    auto children = childrenOfType<Element>(*this);
+    return std::distance(children.begin(), children.end());
 }
 
 } // namespace WebCore
