@@ -19,7 +19,7 @@ index bfb2c94..5ad1704 100644
 +        var values = new Array(output.length);
 +        for (var i = 0; i < output.length; i++)
 +            values[i] = output[i][test];
-+        tests[test] = {"metrics": {"current": values}}
++        tests[test] = {"metrics": {"Time": {"current": [values]}}}
      }
 -    outputString = outputString.substring(0, outputString.length - 1);
 -    outputString += "}";

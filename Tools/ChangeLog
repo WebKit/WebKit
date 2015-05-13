@@ -1,5 +1,13 @@
 2015-05-12  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed build fix.
+
+        Added the missing metric name and wrapped values in an array as done in SunSpider.patch.
+
+        * Scripts/webkitpy/benchmark_runner/data/patches/Kraken.patch:
+
+2015-05-12  Ryosuke Niwa  <rniwa@webkit.org>
+
         Fix the previous commit, which made both bubbles green.
 
         * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/StatusLineView.css:
