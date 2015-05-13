@@ -1,3 +1,10 @@
+2015-05-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Added prefixes in the test added in r182985 (merged in r183180) since we don't support unprefixed versions in this branch.
+
+        * compositing/animation/animation-backing.html:
+        * platform/mac-wk2/TestExpectations: Removed merge conflict lines.
+
 2015-05-11  Andreas Kling  <akling@apple.com>
 
         Rebaseline fast/workers/storage/test-authorizer.html for this branch.

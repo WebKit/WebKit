@@ -11,12 +11,12 @@
         }
         
         .mover.animating {
-            animation: move 0.25s forwards linear;
+            -webkit-animation: move 0.25s forwards linear;
         }
         
-        @keyframes move {
-            from { transform: translateX(1000px); }
-            to { transform: translateX(-2000px); }
+        @-webkit-keyframes move {
+            from { -webkit-transform: translateX(1000px); }
+            to { -webkit-transform: translateX(-2000px); }
         }
     </style>
     <script>
@@ -28,12 +28,12 @@
         {
             window.setTimeout(function() {
                 var mover = document.getElementById('mover');
-                mover.addEventListener('animationstart', function() {
+                document.addEventListener('webkitAnimationStart', function() {
                     if (window.internals)
                         internals.startTrackingLayerFlushes();
                 });
 
-                mover.addEventListener('animationend', function() {
+                mover.addEventListener('webkitAnimationEnd', function() {
                     if (window.internals) {
                         var flushCount = internals.layerFlushCount();
                         document.getElementById('result').textContent = flushCount ? "Saw layer flushes during animation: PASS" : "No layer flushes during animation: FAIL";
