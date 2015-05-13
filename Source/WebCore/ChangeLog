@@ -1,5 +1,17 @@
 2015-05-13  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r183980.
+
+    2015-05-07  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed, fix build after r183970.
+
+            WEBCORE_EXPORT should not be used on inlined functions.
+
+            * platform/graphics/ca/GraphicsLayerCA.h:
+
+2015-05-13  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r184231.
 
     2015-05-12  Simon Fraser  <simon.fraser@apple.com>

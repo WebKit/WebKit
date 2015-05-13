@@ -195,7 +195,7 @@ private:
     virtual bool isCommittingChanges() const override { return m_isCommittingChanges; }
 
     WEBCORE_EXPORT virtual void setAllowsBackingStoreDetachment(bool) override;
-    WEBCORE_EXPORT virtual bool allowsBackingStoreDetachment() const override { return m_allowsBackingStoreDetachment; }
+    virtual bool allowsBackingStoreDetachment() const override { return m_allowsBackingStoreDetachment; }
 
     WEBCORE_EXPORT virtual double backingStoreMemoryEstimate() const override;
 
