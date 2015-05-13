@@ -3100,3 +3100,6 @@ webkit.org/b/143354 fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
 webkit.org/b/143354 fast/ruby/ruby-expansion-cjk-5.html [ ImageOnlyFailure ]
 
 webkit.org/b/143420 fast/fixed-layout/fixed-layout.html [ Skip ]
+
+# Seems to be font metrics dependent.
+fast/text/simple-line-layout-text-stroke-width.html [ Failure ]
