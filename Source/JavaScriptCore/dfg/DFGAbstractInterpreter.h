@@ -168,7 +168,7 @@ private:
     {
         AbstractValue& abstractValue = forNode(node);
         abstractValue.set(m_graph, value, m_state.structureClobberState());
-        abstractValue.fixTypeForRepresentation(node);
+        abstractValue.fixTypeForRepresentation(m_graph, node);
     }
     
     void setConstant(Node* node, FrozenValue value)

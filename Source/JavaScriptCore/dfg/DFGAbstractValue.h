@@ -213,8 +213,8 @@ struct AbstractValue {
         checkConsistency();
     }
     
-    void fixTypeForRepresentation(NodeFlags representation);
-    void fixTypeForRepresentation(Node*);
+    void fixTypeForRepresentation(Graph&, NodeFlags representation, Node* = nullptr);
+    void fixTypeForRepresentation(Graph&, Node*);
     
     bool operator==(const AbstractValue& other) const
     {

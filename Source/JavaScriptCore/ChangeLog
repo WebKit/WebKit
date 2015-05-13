@@ -1,3 +1,31 @@
+2015-05-13  Filip Pizlo  <fpizlo@apple.com>
+
+        Creating a new blank document in icloud pages causes an AI error: Abstract value (CellBytecodedoubleBoolOther, TOP, TOP) for double node has type outside SpecFullDouble.
+        https://bugs.webkit.org/show_bug.cgi?id=144856
+
+        Reviewed by Benjamin Poulain.
+        
+        First I made fixTypeForRepresentation() print out better diagnostics when it dies.
+        
+        Then I fixed the bug: Node::convertToIdentityOn(Node*) needs to make sure that when it
+        converts to a representation-changing node, it needs to use one of the UseKinds that such
+        a node expects. For example, DoubleRep(UntypedUse:) doesn't make sense; it needs to be
+        something like DoubleRep(NumberUse:) since it will speculate that the input is a number.
+
+        * dfg/DFGAbstractInterpreter.h:
+        (JSC::DFG::AbstractInterpreter::setBuiltInConstant):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::fixTypeForRepresentation):
+        * dfg/DFGAbstractValue.h:
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::initialize):
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::Node::convertToIdentityOn):
+        * tests/stress/cloned-arguments-get-by-val-double-array.js: Added.
+        (foo):
+
 2015-05-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r184313.

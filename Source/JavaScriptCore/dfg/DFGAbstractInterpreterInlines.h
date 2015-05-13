@@ -348,7 +348,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
         forNode(node).setType(m_graph, forNode(node->child1()).m_type);
-        forNode(node).fixTypeForRepresentation(node);
+        forNode(node).fixTypeForRepresentation(m_graph, node);
         break;
     }
         
@@ -371,7 +371,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         }
         
         forNode(node).setType(m_graph, forNode(node->child1()).m_type & ~SpecDoubleImpureNaN);
-        forNode(node).fixTypeForRepresentation(node);
+        forNode(node).fixTypeForRepresentation(m_graph, node);
         break;
     }
         

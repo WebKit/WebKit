@@ -167,7 +167,7 @@ void InPlaceAbstractState::initialize()
             VariableAccessData* variable = node->variableAccessData();
             FlushFormat format = variable->flushFormat();
             target.merge(source);
-            target.fixTypeForRepresentation(resultFor(format));
+            target.fixTypeForRepresentation(m_graph, resultFor(format));
         }
         block->cfaShouldRevisit = true;
     }

@@ -136,7 +136,7 @@ void AbstractValue::setType(Graph& graph, SpeculatedType type)
     checkConsistency();
 }
 
-void AbstractValue::fixTypeForRepresentation(NodeFlags representation)
+void AbstractValue::fixTypeForRepresentation(Graph& graph, NodeFlags representation, Node* node)
 {
     if (representation == NodeResultDouble) {
         if (m_value) {
@@ -148,39 +148,30 @@ void AbstractValue::fixTypeForRepresentation(NodeFlags representation)
             m_type &= ~SpecMachineInt;
             m_type |= SpecInt52AsDouble;
         }
-        if (m_type & ~SpecFullDouble) {
-            startCrashing();
-            dataLog("Abstract value ", *this, " for double node has type outside SpecFullDouble.\n");
-            CRASH();
-        }
+        if (m_type & ~SpecFullDouble)
+            DFG_CRASH(graph, node, toCString("Abstract value ", *this, " for double node has type outside SpecFullDouble.\n").data());
     } else if (representation == NodeResultInt52) {
         if (m_type & SpecInt52AsDouble) {
             m_type &= ~SpecInt52AsDouble;
             m_type |= SpecInt52;
         }
-        if (m_type & ~SpecMachineInt) {
-            startCrashing();
-            dataLog("Abstract value ", *this, " for int52 node has type outside SpecMachineInt.\n");
-            CRASH();
-        }
+        if (m_type & ~SpecMachineInt)
+            DFG_CRASH(graph, node, toCString("Abstract value ", *this, " for int52 node has type outside SpecMachineInt.\n").data());
     } else {
         if (m_type & SpecInt52) {
             m_type &= ~SpecInt52;
             m_type |= SpecInt52AsDouble;
         }
-        if (m_type & ~SpecBytecodeTop) {
-            startCrashing();
-            dataLog("Abstract value ", *this, " for value node has type outside SpecBytecodeTop.\n");
-            CRASH();
-        }
+        if (m_type & ~SpecBytecodeTop)
+            DFG_CRASH(graph, node, toCString("Abstract value ", *this, " for value node has type outside SpecBytecodeTop.\n").data());
     }
     
     checkConsistency();
 }
 
-void AbstractValue::fixTypeForRepresentation(Node* node)
+void AbstractValue::fixTypeForRepresentation(Graph& graph, Node* node)
 {
-    fixTypeForRepresentation(node->result());
+    fixTypeForRepresentation(graph, node->result(), node);
 }
 
 FiltrationResult AbstractValue::filter(Graph& graph, const StructureSet& other)
