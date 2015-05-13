@@ -507,6 +507,9 @@ void SocketStreamHandle::readStreamCallback(CFStreamEventType type)
             ptr = localBuffer;
         }
 
+        if (!length)
+            return;
+
         m_client->didReceiveSocketStreamData(this, reinterpret_cast<const char*>(ptr), length);
 
         return;

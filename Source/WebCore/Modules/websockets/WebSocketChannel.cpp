@@ -649,7 +649,8 @@ bool WebSocketChannel::processFrame()
         m_receivedClosingHandshake = true;
         startClosingHandshake(m_closeEventCode, m_closeEventReason);
         if (m_closing) {
-            m_outgoingFrameQueueStatus = OutgoingFrameQueueClosing;
+            if (m_outgoingFrameQueueStatus == OutgoingFrameQueueOpen)
+                m_outgoingFrameQueueStatus = OutgoingFrameQueueClosing;
             processOutgoingFrameQueue();
         }
         break;
