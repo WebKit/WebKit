@@ -1,3 +1,15 @@
+2015-05-13  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK][CMake] Extra include directory when libnotify is present but disabled
+        https://bugs.webkit.org/show_bug.cgi?id=144941
+
+        Reviewed by Martin Robinson.
+
+        Add LIBNOTIFY_INCLUDE_DIRS to WebKit2_INCLUDE_DIRECTORIES only if USE_LIBNOTIFY is true,
+        rather than checking LIBNOTIFY_FOUND.
+
+        * PlatformGTK.cmake:
+
 2015-05-13  Beth Dakin  <bdakin@apple.com>
 
         Need SPI to set the overlay scroll bar style
