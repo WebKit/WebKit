@@ -1,3 +1,23 @@
+2015-05-12  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Hang in MediaPlayerPrivateAVFoundationObjC::audioSourceProvider() - 'tracks' property not yet loaded
+        https://bugs.webkit.org/show_bug.cgi?id=144937
+
+        Reviewed by Eric Carlson.
+
+        Querying for the -[AVAsset tracks] property blocks for network loading; and could
+        block forever if the asset in question is not reachable. Add a "safe" mechanism for
+        querying the list of audible tracks, and use that when providing the audioSourceProvider()
+        with an audible track.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksChanged):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::audioSourceProvider):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::processLegacyClosedCaptionsTracks):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::safeAVAssetTracksForAudibleMedia):
+
 2015-05-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac build fix after r184228.

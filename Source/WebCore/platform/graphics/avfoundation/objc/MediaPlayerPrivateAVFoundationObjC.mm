@@ -999,7 +999,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
 #if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
     if (m_provider) {
         m_provider->setPlayerItem(m_avPlayerItem.get());
-        m_provider->setAudioTrack(firstEnabledTrack([m_avAsset tracksWithMediaCharacteristic:AVMediaCharacteristicAudible]));
+        m_provider->setAudioTrack(firstEnabledTrack(safeAVAssetTracksForAudibleMedia()));
     }
 #endif
 
@@ -1920,7 +1920,7 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
 
 #if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
     if (m_provider)
-        m_provider->setAudioTrack(firstEnabledTrack([m_avAsset tracksWithMediaCharacteristic:AVMediaCharacteristicAudible]));
+        m_provider->setAudioTrack(firstEnabledTrack(safeAVAssetTracksForAudibleMedia()));
 #endif
 
     setDelayCharacteristicsChangedNotification(false);
@@ -2135,7 +2135,7 @@ AudioSourceProvider* MediaPlayerPrivateAVFoundationObjC::audioSourceProvider()
 {
     if (!m_provider) {
         m_provider = AudioSourceProviderAVFObjC::create(m_avPlayerItem.get());
-        m_provider->setAudioTrack(firstEnabledTrack([m_avAsset tracksWithMediaCharacteristic:AVMediaCharacteristicAudible]));
+        m_provider->setAudioTrack(firstEnabledTrack(safeAVAssetTracksForAudibleMedia()));
     }
 
     return m_provider.get();
@@ -2504,6 +2504,17 @@ void MediaPlayerPrivateAVFoundationObjC::processLegacyClosedCaptionsTracks()
     processNewAndRemovedTextTracks(removedTextTracks);
 }
 #endif
+
+NSArray* MediaPlayerPrivateAVFoundationObjC::safeAVAssetTracksForAudibleMedia()
+{
+    if (!m_avAsset)
+        return nil;
+
+    if ([m_avAsset.get() statusOfValueForKey:@"tracks" error:NULL] != AVKeyValueStatusLoaded)
+        return nil;
+
+    return [m_avAsset tracksWithMediaCharacteristic:AVMediaCharacteristicAudible];
+}
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
 bool MediaPlayerPrivateAVFoundationObjC::hasLoadedMediaSelectionGroups()

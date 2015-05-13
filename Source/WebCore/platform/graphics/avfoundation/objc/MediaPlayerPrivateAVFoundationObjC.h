@@ -255,6 +255,8 @@ private:
     AVMediaSelectionGroup* safeMediaSelectionGroupForVisualMedia();
 #endif
 
+    NSArray* safeAVAssetTracksForAudibleMedia();
+
 #if ENABLE(DATACUE_VALUE)
     void processMetadataTrack();
 #endif
