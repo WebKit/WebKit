@@ -582,7 +582,7 @@ bool FontCascade::shouldUseSmoothing()
     return shouldUseFontSmoothing;
 }
 
-static bool antialiasedFontDilationIsEnabled = true;
+static bool antialiasedFontDilationIsEnabled = false;
 
 void FontCascade::setAntialiasedFontDilationEnabled(bool enabled)
 {
