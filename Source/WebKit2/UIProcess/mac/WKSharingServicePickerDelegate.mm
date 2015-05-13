@@ -107,7 +107,7 @@
     id item = [items objectAtIndex:0];
 
     if ([item isKindOfClass:[NSAttributedString class]]) {
-        NSData *data = [item RTFDFromRange:NSMakeRange(0, [item length]) documentAttributes:nil];
+        NSData *data = [item RTFDFromRange:NSMakeRange(0, [item length]) documentAttributes:@{ }];
         dataReference = IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length]);
 
         types.append(NSPasteboardTypeRTFD);

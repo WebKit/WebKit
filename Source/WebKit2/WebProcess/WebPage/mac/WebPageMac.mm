@@ -1050,7 +1050,7 @@ void WebPage::handleSelectionServiceClick(FrameSelection& selection, const Vecto
     if (!attributedSelection)
         return;
 
-    NSData *selectionData = [attributedSelection RTFDFromRange:NSMakeRange(0, [attributedSelection length]) documentAttributes:nil];
+    NSData *selectionData = [attributedSelection RTFDFromRange:NSMakeRange(0, [attributedSelection length]) documentAttributes:@{ }];
     IPC::DataReference data = IPC::DataReference(reinterpret_cast<const uint8_t*>([selectionData bytes]), [selectionData length]);
     bool isEditable = selection.selection().isContentEditable();
 

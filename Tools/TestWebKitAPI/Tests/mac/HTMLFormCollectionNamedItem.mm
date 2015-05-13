@@ -65,11 +65,11 @@ TEST(WebKit1, HTMLFormCollectionNamedItemTest)
     RetainPtr<DOMHTMLCollection> collection = [form elements];
 
     EXPECT_EQ([collection.get() length], (unsigned)2);
-    EXPECT_WK_STREQ([[collection.get() item:0] value], @"firstItem");
-    EXPECT_WK_STREQ([[collection.get() item:1] value], @"secondItem");
-    EXPECT_WK_STREQ([[collection.get() namedItem:@"nameForTwoTextFields"] value], @"firstItem");
-    EXPECT_WK_STREQ([[collection.get() item:1] value], @"secondItem");
-    EXPECT_WK_STREQ([[collection.get() item:0] value], @"firstItem");
+    EXPECT_WK_STREQ([(DOMHTMLInputElement *)[collection item:0] value], @"firstItem");
+    EXPECT_WK_STREQ([(DOMHTMLInputElement *)[collection item:1] value], @"secondItem");
+    EXPECT_WK_STREQ([(DOMHTMLInputElement *)[collection namedItem:@"nameForTwoTextFields"] value], @"firstItem");
+    EXPECT_WK_STREQ([(DOMHTMLInputElement *)[collection item:1] value], @"secondItem");
+    EXPECT_WK_STREQ([(DOMHTMLInputElement *)[collection item:0] value], @"firstItem");
 }
 
 } // namespace TestWebKitAPI

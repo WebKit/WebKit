@@ -1,5 +1,27 @@
 2015-05-13  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r183976.
+
+    2015-05-07  Anders Carlsson  <andersca@apple.com>
+
+            Build fixes.
+
+            * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+            (-[WebAccessibilityObjectWrapper doAXRTFForRange:]):
+            * editing/cocoa/HTMLConverter.mm:
+            (HTMLConverter::_addMarkersToList):
+            * platform/mac/PasteboardMac.mm:
+            (WebCore::writeFileWrapperAsRTFDAttachment):
+            * platform/mac/PlatformPasteboardMac.mm:
+            (WebCore::PlatformPasteboard::setTypes):
+            Pass empty arrays and dictionaries instead of nil.
+
+            * rendering/RenderThemeMac.mm:
+            (WebCore::RenderThemeMac::paintSliderThumb):
+            Pass the document view to the AppKit paint method.
+
+2015-05-13  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r183958.
 
     2015-05-07  Anders Carlsson  <andersca@apple.com>
