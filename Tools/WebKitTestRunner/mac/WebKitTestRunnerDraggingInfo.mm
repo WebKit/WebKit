@@ -146,4 +146,15 @@ using namespace WTR;
     // Ignored.
 }
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+-(NSInteger)springLoadingHighlight
+{
+    return 0;
+}
+
+- (void)resetSpringLoading
+{
+}
+#endif
+
 @end
