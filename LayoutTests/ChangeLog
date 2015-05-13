@@ -3,6 +3,18 @@
         AX: [Win] REGRESSION(r184213) breaks aria-menubar-menuitems.html
         https://bugs.webkit.org/show_bug.cgi?id=144936
 
+        Unreviewed gardening.
+
+        Adding the platform-specific expectations for Windows now that the
+        accessibility tree is being correctly generated for this test.
+
+        * platform/win/accessibility/aria-menubar-menuitems-expected.txt: Added.
+
+2015-05-12  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [Win] REGRESSION(r184213) breaks aria-menubar-menuitems.html
+        https://bugs.webkit.org/show_bug.cgi?id=144936
+
         Reviewed by Chris Fleizach.
 
         Use focusedElement + childAtIndex rather than accessibleElementById
