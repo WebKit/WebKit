@@ -341,7 +341,7 @@ static PassRefPtr<SharedBuffer> dataInRTFDFormat(NSAttributedString *string)
         return nullptr;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return SharedBuffer::wrapNSData([string RTFDFromRange:NSMakeRange(0, length) documentAttributes:nil]);
+    return SharedBuffer::wrapNSData([string RTFDFromRange:NSMakeRange(0, length) documentAttributes:@{ }]);
     END_BLOCK_OBJC_EXCEPTIONS;
 
     return nullptr;
@@ -354,7 +354,7 @@ static PassRefPtr<SharedBuffer> dataInRTFFormat(NSAttributedString *string)
         return nullptr;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return SharedBuffer::wrapNSData([string RTFFromRange:NSMakeRange(0, length) documentAttributes:nil]);
+    return SharedBuffer::wrapNSData([string RTFFromRange:NSMakeRange(0, length) documentAttributes:@{ }]);
     END_BLOCK_OBJC_EXCEPTIONS;
 
     return nullptr;

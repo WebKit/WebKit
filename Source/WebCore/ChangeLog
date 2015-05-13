@@ -1,5 +1,17 @@
 2015-05-13  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r183958.
+
+    2015-05-07  Anders Carlsson  <andersca@apple.com>
+
+            Build fix.
+
+            * editing/mac/EditorMac.mm:
+            (WebCore::dataInRTFDFormat):
+            (WebCore::dataInRTFFormat):
+
+2015-05-13  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r183980.
 
     2015-05-07  Chris Dumez  <cdumez@apple.com>
