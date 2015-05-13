@@ -1310,15 +1310,8 @@ static const char* stringForFunctionMode(FunctionParseMode mode)
     return nullptr;
 }
 
-template <typename LexerType>
-template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuilder& context, FunctionRequirements requirements, FunctionParseMode mode,
-    bool nameIsInContainingScope, ConstructorKind constructorKind, SuperBinding expectedSuperBinding, int functionKeywordStart, ParserFunctionInfo<TreeBuilder>& info)
+template <typename LexerType> template <class TreeBuilder> int Parser<LexerType>::parseFunctionParamters(TreeBuilder& context, FunctionRequirements requirements, FunctionParseMode mode, bool nameIsInContainingScope, AutoPopScopeRef& functionScope, ParserFunctionInfo<TreeBuilder>& info)
 {
-    AutoPopScopeRef functionScope(this, pushScope());
-    functionScope->setIsFunction();
-    int functionNameStart = m_token.m_location.startOffset;
-    const Identifier* lastFunctionName = m_lastFunctionName;
-    m_lastFunctionName = nullptr;
     if (match(IDENT)) {
         info.name = m_token.m_data.ident;
         m_lastFunctionName = info.name;
@@ -1354,6 +1347,20 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
         }
         consumeOrFail(CLOSEPAREN, "Expected a ')' or a ',' after a parameter declaration");
     }
+    
+    return parametersStart;
+}
+    
+template <typename LexerType>
+template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuilder& context, FunctionRequirements requirements, FunctionParseMode mode, bool nameIsInContainingScope, ConstructorKind constructorKind, SuperBinding expectedSuperBinding, int functionKeywordStart, ParserFunctionInfo<TreeBuilder>& info)
+{
+    AutoPopScopeRef functionScope(this, pushScope());
+    functionScope->setIsFunction();
+    int functionNameStart = m_token.m_location.startOffset;
+    const Identifier* lastFunctionName = m_lastFunctionName;
+    m_lastFunctionName = nullptr;
+    
+    int parametersStart = parseFunctionParamters(context, requirements, mode, nameIsInContainingScope, functionScope, info);
 
     matchOrFail(OPENBRACE, "Expected an opening '{' at the start of a ", stringForFunctionMode(mode), " body");
 
