@@ -45,10 +45,10 @@ namespace WebCore {
 
 static unsigned s_observerPriority = 0;
 
-PassRefPtr<MutationObserver> MutationObserver::create(PassRefPtr<MutationCallback> callback)
+Ref<MutationObserver> MutationObserver::create(PassRefPtr<MutationCallback> callback)
 {
     ASSERT(isMainThread());
-    return adoptRef(new MutationObserver(callback));
+    return adoptRef(*new MutationObserver(callback));
 }
 
 MutationObserver::MutationObserver(PassRefPtr<MutationCallback> callback)

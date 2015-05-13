@@ -35,9 +35,9 @@ namespace WebCore {
 
 class TemplateContentDocumentFragment final : public DocumentFragment {
 public:
-    static RefPtr<TemplateContentDocumentFragment> create(Document& document, const Element* host)
+    static Ref<TemplateContentDocumentFragment> create(Document& document, const Element* host)
     {
-        return adoptRef(new TemplateContentDocumentFragment(document, host));
+        return adoptRef(*new TemplateContentDocumentFragment(document, host));
     }
 
     const Element* host() const { return m_host; }

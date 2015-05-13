@@ -65,14 +65,14 @@ namespace WebCore {
             SHOW_NOTATION                  = 0x00000800
         };
 
-        static PassRefPtr<NodeFilter> create(PassRefPtr<NodeFilterCondition> condition)
+        static Ref<NodeFilter> create(PassRefPtr<NodeFilterCondition> condition)
         {
-            return adoptRef(new NodeFilter(condition));
+            return adoptRef(*new NodeFilter(condition));
         }
 
-        static PassRefPtr<NodeFilter> create()
+        static Ref<NodeFilter> create()
         {
-            return adoptRef(new NodeFilter());
+            return adoptRef(*new NodeFilter());
         }
 
         short acceptNode(JSC::ExecState*, Node*) const;

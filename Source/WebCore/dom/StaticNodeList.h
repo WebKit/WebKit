@@ -46,9 +46,9 @@ public:
         return nodeList.release();
     }
 
-    static PassRefPtr<StaticNodeList> createEmpty()
+    static Ref<StaticNodeList> createEmpty()
     {
-        return adoptRef(new StaticNodeList);
+        return adoptRef(*new StaticNodeList);
     }
 
     virtual unsigned length() const override;
@@ -70,9 +70,9 @@ public:
         return nodeList.release();
     }
 
-    static PassRefPtr<StaticElementList> createEmpty()
+    static Ref<StaticElementList> createEmpty()
     {
-        return adoptRef(new StaticElementList);
+        return adoptRef(*new StaticElementList);
     }
 
     virtual unsigned length() const override;

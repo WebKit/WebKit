@@ -42,11 +42,11 @@ class Frame;
 
 class Touch : public RefCounted<Touch> {
 public:
-    static PassRefPtr<Touch> create(Frame* frame, EventTarget* target,
+    static Ref<Touch> create(Frame* frame, EventTarget* target,
             unsigned identifier, int screenX, int screenY, int pageX, int pageY,
             int radiusX, int radiusY, float rotationAngle, float force)
     {
-        return adoptRef(new Touch(frame, target, identifier, screenX, 
+        return adoptRef(*new Touch(frame, target, identifier, screenX, 
                 screenY, pageX, pageY, radiusX, radiusY, rotationAngle, force));
     }
 
@@ -63,7 +63,7 @@ public:
     float webkitRotationAngle() const { return m_rotationAngle; }
     float webkitForce() const { return m_force; }
     const LayoutPoint& absoluteLocation() const { return m_absoluteLocation; }
-    PassRefPtr<Touch> cloneWithNewTarget(EventTarget*) const;
+    Ref<Touch> cloneWithNewTarget(EventTarget*) const;
 
 private:
     Touch(Frame* frame, EventTarget* target, unsigned identifier,

@@ -52,9 +52,9 @@ WebKitNamedFlow::~WebKitNamedFlow()
     m_flowManager->discardNamedFlow(this);
 }
 
-PassRefPtr<WebKitNamedFlow> WebKitNamedFlow::create(PassRefPtr<NamedFlowCollection> manager, const AtomicString& flowThreadName)
+Ref<WebKitNamedFlow> WebKitNamedFlow::create(PassRefPtr<NamedFlowCollection> manager, const AtomicString& flowThreadName)
 {
-    return adoptRef(new WebKitNamedFlow(manager, flowThreadName));
+    return adoptRef(*new WebKitNamedFlow(manager, flowThreadName));
 }
 
 const AtomicString& WebKitNamedFlow::name() const

@@ -42,9 +42,9 @@ class WebKitNamedFlow;
 
 class DOMNamedFlowCollection : public RefCounted<DOMNamedFlowCollection> {
 public:
-    static PassRefPtr<DOMNamedFlowCollection> create(const Vector<WebKitNamedFlow*>& namedFlows)
+    static Ref<DOMNamedFlowCollection> create(const Vector<WebKitNamedFlow*>& namedFlows)
     {
-        return adoptRef(new DOMNamedFlowCollection(namedFlows));
+        return adoptRef(*new DOMNamedFlowCollection(namedFlows));
     }
 
     unsigned long length() const;

@@ -34,7 +34,7 @@ class CSSStyleSheet;
 
 class ProcessingInstruction final : public CharacterData, private CachedStyleSheetClient {
 public:
-    static RefPtr<ProcessingInstruction> create(Document&, const String& target, const String& data);
+    static Ref<ProcessingInstruction> create(Document&, const String& target, const String& data);
     virtual ~ProcessingInstruction();
 
     const String& target() const { return m_target; }

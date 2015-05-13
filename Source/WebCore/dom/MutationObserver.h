@@ -72,7 +72,7 @@ public:
         CharacterDataOldValue = 1 << 6,
     };
 
-    static PassRefPtr<MutationObserver> create(PassRefPtr<MutationCallback>);
+    static Ref<MutationObserver> create(PassRefPtr<MutationCallback>);
     static void deliverAllMutations();
 
     ~MutationObserver();

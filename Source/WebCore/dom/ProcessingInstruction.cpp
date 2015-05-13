@@ -52,9 +52,9 @@ inline ProcessingInstruction::ProcessingInstruction(Document& document, const St
 {
 }
 
-RefPtr<ProcessingInstruction> ProcessingInstruction::create(Document& document, const String& target, const String& data)
+Ref<ProcessingInstruction> ProcessingInstruction::create(Document& document, const String& target, const String& data)
 {
-    return adoptRef(new ProcessingInstruction(document, target, data));
+    return adoptRef(*new ProcessingInstruction(document, target, data));
 }
 
 ProcessingInstruction::~ProcessingInstruction()

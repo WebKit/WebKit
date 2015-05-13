@@ -146,9 +146,9 @@ MessagePort* MessagePortChannel::locallyEntangledPort(const ScriptExecutionConte
     return 0;
 }
 
-PassRefPtr<PlatformMessagePortChannel> PlatformMessagePortChannel::create(PassRefPtr<MessagePortQueue> incoming, PassRefPtr<MessagePortQueue> outgoing)
+Ref<PlatformMessagePortChannel> PlatformMessagePortChannel::create(PassRefPtr<MessagePortQueue> incoming, PassRefPtr<MessagePortQueue> outgoing)
 {
-    return adoptRef(new PlatformMessagePortChannel(incoming, outgoing));
+    return adoptRef(*new PlatformMessagePortChannel(incoming, outgoing));
 }
 
 PlatformMessagePortChannel::PlatformMessagePortChannel(PassRefPtr<MessagePortQueue> incoming, PassRefPtr<MessagePortQueue> outgoing)

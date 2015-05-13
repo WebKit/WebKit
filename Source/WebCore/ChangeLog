@@ -1,3 +1,53 @@
+2015-05-12  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Return Ref instead of PassRefPtr in create() factory functions of WebCore/dom
+        https://bugs.webkit.org/show_bug.cgi?id=144904
+
+        Reviewed by Andreas Kling.
+
+        We return Ref when we're sure if pointer can't be null. If not, we use RefPtr instead PassRefPtr.
+
+        No new tests, no behavior changes.
+
+        * dom/AutocompleteErrorEvent.h:
+        * dom/DOMNamedFlowCollection.h:
+        (WebCore::DOMNamedFlowCollection::create):
+        * dom/MessageChannel.h:
+        (WebCore::MessageChannel::create):
+        * dom/MessagePort.h:
+        * dom/MutationObserver.cpp:
+        (WebCore::MutationObserver::create):
+        * dom/MutationObserver.h:
+        * dom/NamedFlowCollection.h:
+        * dom/NodeFilter.h:
+        (WebCore::NodeFilter::create):
+        * dom/NodeIterator.h:
+        (WebCore::NodeIterator::create):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::create):
+        * dom/ProcessingInstruction.h:
+        * dom/ScriptedAnimationController.h:
+        (WebCore::ScriptedAnimationController::create):
+        * dom/SecurityPolicyViolationEvent.h:
+        * dom/StaticNodeList.h:
+        * dom/TemplateContentDocumentFragment.h:
+        * dom/Touch.cpp:
+        (WebCore::Touch::cloneWithNewTarget):
+        * dom/Touch.h:
+        (WebCore::Touch::create):
+        * dom/TouchEvent.h:
+        * dom/TouchList.h:
+        (WebCore::TouchList::create):
+        * dom/TreeWalker.h:
+        (WebCore::TreeWalker::create):
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::create):
+        * dom/WebKitNamedFlow.h:
+        * dom/default/PlatformMessagePortChannel.cpp:
+        (WebCore::PlatformMessagePortChannel::create):
+        * dom/default/PlatformMessagePortChannel.h:
+        (WebCore::PlatformMessagePortChannel::MessagePortQueue::create):
+
 2015-05-12  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: REGRESSION (r181625): Timeline recording started from console.profile is always empty

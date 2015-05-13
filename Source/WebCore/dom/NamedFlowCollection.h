@@ -45,7 +45,7 @@ class DOMNamedFlowCollection;
 
 class NamedFlowCollection final : public RefCounted<NamedFlowCollection>, public ContextDestructionObserver {
 public:
-    static PassRefPtr<NamedFlowCollection> create(Document* doc) { return adoptRef(new NamedFlowCollection(doc)); }
+    static Ref<NamedFlowCollection> create(Document* doc) { return adoptRef(*new NamedFlowCollection(doc)); }
 
     Vector<RefPtr<WebKitNamedFlow>> namedFlows();
     WebKitNamedFlow* flowByName(const String&);

@@ -62,7 +62,7 @@ namespace WebCore {
         // Wrapper for MessageQueue that allows us to do thread safe sharing by two proxies.
         class MessagePortQueue : public ThreadSafeRefCounted<MessagePortQueue> {
         public:
-            static PassRefPtr<MessagePortQueue> create() { return adoptRef(new MessagePortQueue()); }
+            static Ref<MessagePortQueue> create() { return adoptRef(*new MessagePortQueue()); }
 
             std::unique_ptr<PlatformMessagePortChannel::EventData> tryGetMessage()
             {
@@ -87,7 +87,7 @@ namespace WebCore {
 
         ~PlatformMessagePortChannel();
 
-        static PassRefPtr<PlatformMessagePortChannel> create(PassRefPtr<MessagePortQueue> incoming, PassRefPtr<MessagePortQueue> outgoing);
+        static Ref<PlatformMessagePortChannel> create(PassRefPtr<MessagePortQueue> incoming, PassRefPtr<MessagePortQueue> outgoing);
         PlatformMessagePortChannel(PassRefPtr<MessagePortQueue> incoming, PassRefPtr<MessagePortQueue> outgoing);
 
         PassRefPtr<PlatformMessagePortChannel> entangledChannel();

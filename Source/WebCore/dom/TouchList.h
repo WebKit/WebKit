@@ -38,9 +38,9 @@ namespace WebCore {
 
 class TouchList : public RefCounted<TouchList> {
 public:
-    static PassRefPtr<TouchList> create()
+    static Ref<TouchList> create()
     {
-        return adoptRef(new TouchList);
+        return adoptRef(*new TouchList);
     }
 
     unsigned length() const { return m_values.size(); }

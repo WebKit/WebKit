@@ -48,7 +48,7 @@ class ScriptExecutionContext;
 
 class WebKitNamedFlow final : public RefCounted<WebKitNamedFlow>, public EventTargetWithInlineData {
 public:
-    static PassRefPtr<WebKitNamedFlow> create(PassRefPtr<NamedFlowCollection> manager, const AtomicString& flowThreadName);
+    static Ref<WebKitNamedFlow> create(PassRefPtr<NamedFlowCollection> manager, const AtomicString& flowThreadName);
 
     ~WebKitNamedFlow();
 

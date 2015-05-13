@@ -37,9 +37,9 @@ namespace WebCore {
 
     class NodeIterator : public ScriptWrappable, public RefCounted<NodeIterator>, public NodeIteratorBase {
     public:
-        static PassRefPtr<NodeIterator> create(PassRefPtr<Node> rootNode, unsigned whatToShow, PassRefPtr<NodeFilter> filter, bool expandEntityReferences)
+        static Ref<NodeIterator> create(PassRefPtr<Node> rootNode, unsigned whatToShow, PassRefPtr<NodeFilter> filter, bool expandEntityReferences)
         {
-            return adoptRef(new NodeIterator(rootNode, whatToShow, filter, expandEntityReferences));
+            return adoptRef(*new NodeIterator(rootNode, whatToShow, filter, expandEntityReferences));
         }
         ~NodeIterator();
 

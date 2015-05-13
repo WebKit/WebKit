@@ -52,9 +52,9 @@ class ScriptedAnimationController : public RefCounted<ScriptedAnimationControlle
 #endif
 {
 public:
-    static PassRefPtr<ScriptedAnimationController> create(Document* document, PlatformDisplayID displayID)
+    static Ref<ScriptedAnimationController> create(Document* document, PlatformDisplayID displayID)
     {
-        return adoptRef(new ScriptedAnimationController(document, displayID));
+        return adoptRef(*new ScriptedAnimationController(document, displayID));
     }
     ~ScriptedAnimationController();
     void clearDocumentPointer() { m_document = 0; }

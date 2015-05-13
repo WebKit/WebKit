@@ -37,9 +37,9 @@ namespace WebCore {
 
     class TreeWalker : public ScriptWrappable, public RefCounted<TreeWalker>, public NodeIteratorBase {
     public:
-        static PassRefPtr<TreeWalker> create(PassRefPtr<Node> rootNode, unsigned whatToShow, PassRefPtr<NodeFilter> filter, bool expandEntityReferences)
+        static Ref<TreeWalker> create(PassRefPtr<Node> rootNode, unsigned whatToShow, PassRefPtr<NodeFilter> filter, bool expandEntityReferences)
         {
-            return adoptRef(new TreeWalker(rootNode, whatToShow, filter, expandEntityReferences));
+            return adoptRef(*new TreeWalker(rootNode, whatToShow, filter, expandEntityReferences));
         }                            
 
         Node* currentNode() const { return m_current.get(); }

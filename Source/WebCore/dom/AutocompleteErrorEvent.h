@@ -40,7 +40,7 @@ class AutocompleteErrorEvent final : public Event {
 public:
     static Ref<AutocompleteErrorEvent> create()
     {
-        return adoptRef(new AutocompleteErrorEvent);
+        return adoptRef(*new AutocompleteErrorEvent);
     }
 
     static Ref<AutocompleteErrorEvent> create(const String& reason)

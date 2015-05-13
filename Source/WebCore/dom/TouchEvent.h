@@ -44,13 +44,13 @@ public:
     {
         return adoptRef(*new TouchEvent);
     }
-    static PassRefPtr<TouchEvent> create(TouchList* touches, 
+    static Ref<TouchEvent> create(TouchList* touches, 
             TouchList* targetTouches, TouchList* changedTouches, 
             const AtomicString& type, PassRefPtr<AbstractView> view,
             int screenX, int screenY, int pageX, int pageY,
             bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
     {
-        return adoptRef(new TouchEvent(touches, targetTouches, changedTouches,
+        return adoptRef(*new TouchEvent(touches, targetTouches, changedTouches,
                 type, view, screenX, screenY, pageX, pageY,
                 ctrlKey, altKey, shiftKey, metaKey));
     }
