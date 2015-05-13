@@ -42,7 +42,7 @@ class Node;
 
 class InspectorNodeFinder {
 public:
-    InspectorNodeFinder(String whitespaceTrimmedQuery);
+    InspectorNodeFinder(const String& whitespaceTrimmedQuery);
     void performSearch(Node*);
     const ListHashSet<Node*>& results() const { return m_results; }
 

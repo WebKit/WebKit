@@ -1,3 +1,47 @@
+2015-05-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Pass String as reference in more places
+        https://bugs.webkit.org/show_bug.cgi?id=144769
+
+        Reviewed by Daniel Bates.
+
+        * debugger/Breakpoint.h:
+        (JSC::Breakpoint::Breakpoint):
+        * parser/Parser.h:
+        (JSC::Parser::setErrorMessage):
+        (JSC::Parser::updateErrorWithNameAndMessage):
+        * parser/ParserError.h:
+        (JSC::ParserError::ParserError):
+        * runtime/RegExp.cpp:
+        (JSC::RegExpFunctionalTestCollector::outputOneTest):
+        * runtime/RegExpObject.cpp:
+        (JSC::regExpObjectSourceInternal):
+        * runtime/TypeProfiler.cpp:
+        (JSC::TypeProfiler::typeInformationForExpressionAtOffset):
+        * runtime/TypeProfilerLog.cpp:
+        (JSC::TypeProfilerLog::processLogEntries):
+        * runtime/TypeProfilerLog.h:
+        * tools/FunctionOverrides.cpp:
+        (JSC::initializeOverrideInfo):
+        * inspector/scripts/codegen/generate_objc_conversion_helpers.py:
+        (ObjCConversionHelpersGenerator._generate_enum_from_protocol_string):
+
+        * inspector/scripts/codegen/objc_generator_templates.py:
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/expected/enum-values.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+        Rebaseline tests after updating the generator.
+
 2015-05-13  Michael Saboff  <msaboff@apple.com>
 
         com.apple.WebKit.WebContent crashed at JavaScriptCore: JSC::CodeBlock::finalizeUnconditionally

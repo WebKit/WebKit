@@ -104,7 +104,7 @@ FunctionOverrides::FunctionOverrides(const char* overridesFileName)
     parseOverridesInFile(overridesFileName);
 }
 
-static void initializeOverrideInfo(const SourceCode& origCode, String newBody, FunctionOverrides::OverrideInfo& info)
+static void initializeOverrideInfo(const SourceCode& origCode, const String& newBody, FunctionOverrides::OverrideInfo& info)
 {
     String origProviderStr = origCode.provider()->source();
     unsigned origBraceStart = origCode.startOffset();

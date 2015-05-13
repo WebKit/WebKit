@@ -57,7 +57,7 @@ public:
     void showConsole();
     void showResources();
 
-    void showMainResourceForFrame(String frameIdentifier);
+    void showMainResourceForFrame(const String& frameIdentifier);
 
     void startPageProfiling();
     void stopPageProfiling();

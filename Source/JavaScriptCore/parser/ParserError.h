@@ -70,7 +70,7 @@ public:
     {
     }
 
-    ParserError(ErrorType type, SyntaxErrorType syntaxError, JSToken token, String msg, int line)
+    ParserError(ErrorType type, SyntaxErrorType syntaxError, JSToken token, const String& msg, int line)
         : m_token(token)
         , m_message(msg)
         , m_line(line)

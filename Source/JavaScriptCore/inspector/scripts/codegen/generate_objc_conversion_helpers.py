@@ -144,7 +144,7 @@ class ObjCConversionHelpersGenerator(Generator):
     def _generate_enum_from_protocol_string(self, objc_enum_name, enum_values):
         lines = []
         lines.append('template<>')
-        lines.append('inline %s fromProtocolString(String value)' % objc_enum_name)
+        lines.append('inline %s fromProtocolString(const String& value)' % objc_enum_name)
         lines.append('{')
         for enum_value in enum_values:
             lines.append('    if (value == "%s")' % enum_value)

@@ -681,23 +681,23 @@ private:
         }
     }
 
-    void dumpString(String str)
+    void dumpString(const String& string)
     {
-        if (str.isEmpty())
+        if (string.isEmpty())
             write(EmptyStringTag);
         else {
             write(StringTag);
-            write(str);
+            write(string);
         }
     }
 
-    void dumpStringObject(String str)
+    void dumpStringObject(const String& string)
     {
-        if (str.isEmpty())
+        if (string.isEmpty())
             write(EmptyStringObjectTag);
         else {
             write(StringObjectTag);
-            write(str);
+            write(string);
         }
     }
 

@@ -669,7 +669,7 @@ namespace Inspector {
 namespace Inspector {
 
 template<typename ObjCEnumType>
-ObjCEnumType fromProtocolString(String value);
+ObjCEnumType fromProtocolString(const String& value);
 
 
 inline String toProtocolString(RWIProtocolDebuggerReason value)
@@ -685,7 +685,7 @@ inline String toProtocolString(RWIProtocolDebuggerReason value)
 }
 
 template<>
-inline RWIProtocolDebuggerReason fromProtocolString(String value)
+inline RWIProtocolDebuggerReason fromProtocolString(const String& value)
 {
     if (value == "Died")
         return RWIProtocolDebuggerReasonDied;

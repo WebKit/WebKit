@@ -108,7 +108,7 @@ void DocumentMarkerController::addTextMatchMarker(const Range* range, bool activ
 }
 
 #if PLATFORM(IOS)
-void DocumentMarkerController::addMarker(Range* range, DocumentMarker::MarkerType type, String description, const Vector<String>& interpretations, const RetainPtr<id>& metadata)
+void DocumentMarkerController::addMarker(Range* range, DocumentMarker::MarkerType type, const String& description, const Vector<String>& interpretations, const RetainPtr<id>& metadata)
 {
     // Use a TextIterator to visit the potentially multiple nodes the range covers.
     for (TextIterator markedText(range); !markedText.atEnd(); markedText.advance()) {

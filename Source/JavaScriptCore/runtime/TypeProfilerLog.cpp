@@ -52,7 +52,7 @@ TypeProfilerLog::~TypeProfilerLog()
     delete[] m_logStartPtr;
 }
 
-void TypeProfilerLog::processLogEntries(String reason)
+void TypeProfilerLog::processLogEntries(const String& reason)
 {
     if (verbose)
         dataLog("Process caller:'", reason, "'");

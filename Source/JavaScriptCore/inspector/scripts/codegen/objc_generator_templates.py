@@ -55,7 +55,7 @@ namespace Inspector {""")
 
     ConversionHelpersStandard = (
     """template<typename ObjCEnumType>
-ObjCEnumType fromProtocolString(String value);""")
+ObjCEnumType fromProtocolString(const String& value);""")
 
     BackendDispatcherHeaderPrelude = (
     """${includes}

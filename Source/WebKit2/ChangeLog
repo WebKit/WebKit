@@ -1,3 +1,14 @@
+2015-05-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Pass String as reference in more places
+        https://bugs.webkit.org/show_bug.cgi?id=144769
+
+        Reviewed by Daniel Bates.
+
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::showMainResourceForFrame):
+        * WebProcess/WebPage/WebInspectorUI.h:
+
 2015-05-13  Timothy Horton  <timothy_horton@apple.com>
 
         View scale changes are temporarily lost after restoring a page from the page cache

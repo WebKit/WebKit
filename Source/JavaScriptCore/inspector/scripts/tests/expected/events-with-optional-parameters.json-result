@@ -784,7 +784,7 @@ namespace Inspector {
 namespace Inspector {
 
 template<typename ObjCEnumType>
-ObjCEnumType fromProtocolString(String value);
+ObjCEnumType fromProtocolString(const String& value);
 
 
 

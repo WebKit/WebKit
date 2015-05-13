@@ -113,7 +113,7 @@ RegExpFunctionalTestCollector* RegExpFunctionalTestCollector::get()
     return s_instance;
 }
 
-void RegExpFunctionalTestCollector::outputOneTest(RegExp* regExp, String s, int startOffset, int* ovector, int result)
+void RegExpFunctionalTestCollector::outputOneTest(RegExp* regExp, const String& s, int startOffset, int* ovector, int result)
 {
     if ((!m_lastRegExp) || (m_lastRegExp != regExp)) {
         m_lastRegExp = regExp;

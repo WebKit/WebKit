@@ -69,7 +69,7 @@ private:
     Ref<Inspector::Protocol::Array<Inspector::Protocol::ApplicationCache::ApplicationCacheResource>> buildArrayForApplicationCacheResources(const ApplicationCacheHost::ResourceInfoList&);
     Ref<Inspector::Protocol::ApplicationCache::ApplicationCacheResource> buildObjectForApplicationCacheResource(const ApplicationCacheHost::ResourceInfo&);
 
-    DocumentLoader* assertFrameWithDocumentLoader(ErrorString&, String frameId);
+    DocumentLoader* assertFrameWithDocumentLoader(ErrorString&, const String& frameId);
 
     InspectorPageAgent* m_pageAgent;
     std::unique_ptr<Inspector::ApplicationCacheFrontendDispatcher> m_frontendDispatcher;

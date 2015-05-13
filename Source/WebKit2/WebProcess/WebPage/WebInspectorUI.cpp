@@ -215,7 +215,7 @@ void WebInspectorUI::showResources()
     evaluateCommandOnLoad(ASCIILiteral("showResources"));
 }
 
-void WebInspectorUI::showMainResourceForFrame(String frameIdentifier)
+void WebInspectorUI::showMainResourceForFrame(const String& frameIdentifier)
 {
     evaluateCommandOnLoad(ASCIILiteral("showMainResourceForFrame"), frameIdentifier);
 }

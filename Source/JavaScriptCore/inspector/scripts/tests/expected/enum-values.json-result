@@ -835,7 +835,7 @@ void ObjCInspectorCommandDomainBackendDispatcher::commandWithEnumReturnValue(lon
 namespace Inspector {
 
 template<typename ObjCEnumType>
-ObjCEnumType fromProtocolString(String value);
+ObjCEnumType fromProtocolString(const String& value);
 
 
 inline String toProtocolString(RWIProtocolTypeDomainEnum value)
@@ -853,7 +853,7 @@ inline String toProtocolString(RWIProtocolTypeDomainEnum value)
 }
 
 template<>
-inline RWIProtocolTypeDomainEnum fromProtocolString(String value)
+inline RWIProtocolTypeDomainEnum fromProtocolString(const String& value)
 {
     if (value == "shared")
         return RWIProtocolTypeDomainEnumShared;
@@ -883,7 +883,7 @@ inline String toProtocolString(RWIProtocolCommandDomainCommandWithEnumReturnValu
 }
 
 template<>
-inline RWIProtocolCommandDomainCommandWithEnumReturnValueReturnValue fromProtocolString(String value)
+inline RWIProtocolCommandDomainCommandWithEnumReturnValueReturnValue fromProtocolString(const String& value)
 {
     if (value == "shared")
         return RWIProtocolCommandDomainCommandWithEnumReturnValueReturnValueShared;
@@ -911,7 +911,7 @@ inline String toProtocolString(RWIProtocolEventDomainEventWithEnumParameterParam
 }
 
 template<>
-inline RWIProtocolEventDomainEventWithEnumParameterParameter fromProtocolString(String value)
+inline RWIProtocolEventDomainEventWithEnumParameterParameter fromProtocolString(const String& value)
 {
     if (value == "shared")
         return RWIProtocolEventDomainEventWithEnumParameterParameterShared;

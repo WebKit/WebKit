@@ -55,7 +55,7 @@ public:
     void addMarkerToNode(Node*, unsigned startOffset, unsigned length, DocumentMarker::MarkerType, PassRefPtr<DocumentMarkerDetails>);
     WEBCORE_EXPORT void addTextMatchMarker(const Range*, bool activeMatch);
 #if PLATFORM(IOS)
-    void addMarker(Range*, DocumentMarker::MarkerType, String description, const Vector<String>& interpretations, const RetainPtr<id>& metadata);
+    void addMarker(Range*, DocumentMarker::MarkerType, const String& description, const Vector<String>& interpretations, const RetainPtr<id>& metadata);
     void addDictationPhraseWithAlternativesMarker(Range*, const Vector<String>& interpretations);
     void addDictationResultMarker(Range*, const RetainPtr<id>& metadata);
 #endif

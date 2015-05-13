@@ -114,7 +114,7 @@ void InspectorApplicationCacheAgent::getFramesWithManifests(ErrorString&, RefPtr
     }
 }
 
-DocumentLoader* InspectorApplicationCacheAgent::assertFrameWithDocumentLoader(ErrorString& errorString, String frameId)
+DocumentLoader* InspectorApplicationCacheAgent::assertFrameWithDocumentLoader(ErrorString& errorString, const String& frameId)
 {
     Frame* frame = m_pageAgent->assertFrame(errorString, frameId);
     if (!frame)

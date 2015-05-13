@@ -1077,7 +1077,7 @@ void ObjCInspectorDatabaseBackendDispatcher::executeNoOptionalParameters(long ca
 namespace Inspector {
 
 template<typename ObjCEnumType>
-ObjCEnumType fromProtocolString(String value);
+ObjCEnumType fromProtocolString(const String& value);
 
 
 inline String toProtocolString(RWIProtocolDatabasePrimaryColors value)
@@ -1093,7 +1093,7 @@ inline String toProtocolString(RWIProtocolDatabasePrimaryColors value)
 }
 
 template<>
-inline RWIProtocolDatabasePrimaryColors fromProtocolString(String value)
+inline RWIProtocolDatabasePrimaryColors fromProtocolString(const String& value)
 {
     if (value == "red")
         return RWIProtocolDatabasePrimaryColorsRed;
@@ -1120,7 +1120,7 @@ inline String toProtocolString(RWIProtocolDatabaseExecuteAllOptionalParametersPr
 }
 
 template<>
-inline RWIProtocolDatabaseExecuteAllOptionalParametersPrintColor fromProtocolString(String value)
+inline RWIProtocolDatabaseExecuteAllOptionalParametersPrintColor fromProtocolString(const String& value)
 {
     if (value == "cyan")
         return RWIProtocolDatabaseExecuteAllOptionalParametersPrintColorCyan;
@@ -1149,7 +1149,7 @@ inline String toProtocolString(RWIProtocolDatabaseExecuteAllOptionalParametersPr
 }
 
 template<>
-inline RWIProtocolDatabaseExecuteAllOptionalParametersPrintColor fromProtocolString(String value)
+inline RWIProtocolDatabaseExecuteAllOptionalParametersPrintColor fromProtocolString(const String& value)
 {
     if (value == "cyan")
         return RWIProtocolDatabaseExecuteAllOptionalParametersPrintColorCyan;
@@ -1178,7 +1178,7 @@ inline String toProtocolString(RWIProtocolDatabaseExecuteNoOptionalParametersPri
 }
 
 template<>
-inline RWIProtocolDatabaseExecuteNoOptionalParametersPrintColor fromProtocolString(String value)
+inline RWIProtocolDatabaseExecuteNoOptionalParametersPrintColor fromProtocolString(const String& value)
 {
     if (value == "cyan")
         return RWIProtocolDatabaseExecuteNoOptionalParametersPrintColorCyan;
@@ -1207,7 +1207,7 @@ inline String toProtocolString(RWIProtocolDatabaseExecuteNoOptionalParametersPri
 }
 
 template<>
-inline RWIProtocolDatabaseExecuteNoOptionalParametersPrintColor fromProtocolString(String value)
+inline RWIProtocolDatabaseExecuteNoOptionalParametersPrintColor fromProtocolString(const String& value)
 {
     if (value == "cyan")
         return RWIProtocolDatabaseExecuteNoOptionalParametersPrintColorCyan;

@@ -199,7 +199,7 @@ inline void appendLineTerminatorEscape<UChar>(StringBuilder& builder, UChar line
 }
 
 template <typename CharacterType>
-static inline JSValue regExpObjectSourceInternal(ExecState* exec, String pattern, const CharacterType* characters, unsigned length)
+static inline JSValue regExpObjectSourceInternal(ExecState* exec, const String& pattern, const CharacterType* characters, unsigned length)
 {
     bool previousCharacterWasBackslash = false;
     bool inBrackets = false;

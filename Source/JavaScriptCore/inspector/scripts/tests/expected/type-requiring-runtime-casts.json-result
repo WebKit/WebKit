@@ -993,7 +993,7 @@ namespace Inspector {
 namespace Inspector {
 
 template<typename ObjCEnumType>
-ObjCEnumType fromProtocolString(String value);
+ObjCEnumType fromProtocolString(const String& value);
 
 
 inline String toProtocolString(RWIProtocolTestUncastedAnimals value)
@@ -1011,7 +1011,7 @@ inline String toProtocolString(RWIProtocolTestUncastedAnimals value)
 }
 
 template<>
-inline RWIProtocolTestUncastedAnimals fromProtocolString(String value)
+inline RWIProtocolTestUncastedAnimals fromProtocolString(const String& value)
 {
     if (value == "Pigs")
         return RWIProtocolTestUncastedAnimalsPigs;
@@ -1040,7 +1040,7 @@ inline String toProtocolString(RWIProtocolTestCastedAnimals value)
 }
 
 template<>
-inline RWIProtocolTestCastedAnimals fromProtocolString(String value)
+inline RWIProtocolTestCastedAnimals fromProtocolString(const String& value)
 {
     if (value == "Ducks")
         return RWIProtocolTestCastedAnimalsDucks;

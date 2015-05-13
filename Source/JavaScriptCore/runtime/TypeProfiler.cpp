@@ -101,7 +101,6 @@ String TypeProfiler::typeInformationForExpressionAtOffset(TypeProfilerSearchDesc
     else
         json.appendLiteral("false");
 
-
     json.append('}');
     
     return json.toString();

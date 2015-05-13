@@ -1,3 +1,24 @@
+2015-05-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Pass String as reference in more places
+        https://bugs.webkit.org/show_bug.cgi?id=144769
+
+        Reviewed by Daniel Bates.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::dumpString):
+        (WebCore::CloneSerializer::dumpStringObject):
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::addMarker):
+        * dom/DocumentMarkerController.h:
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::assertFrameWithDocumentLoader):
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorNodeFinder.cpp:
+        (WebCore::stripCharacters):
+        (WebCore::InspectorNodeFinder::InspectorNodeFinder):
+        * inspector/InspectorNodeFinder.h:
+
 2015-05-13  Timothy Horton  <timothy_horton@apple.com>
 
         View scale changes are temporarily lost after restoring a page from the page cache

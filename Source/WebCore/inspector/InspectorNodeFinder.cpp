@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-static String stripCharacters(String string, const char startCharacter, const char endCharacter, bool& startCharFound, bool& endCharFound)
+static String stripCharacters(const String& string, const char startCharacter, const char endCharacter, bool& startCharFound, bool& endCharFound)
 {
     startCharFound = string.startsWith(startCharacter);
     endCharFound = string.endsWith(endCharacter);
@@ -52,7 +52,7 @@ static String stripCharacters(String string, const char startCharacter, const ch
     return string.substring(start, end - start);
 }
 
-InspectorNodeFinder::InspectorNodeFinder(String whitespaceTrimmedQuery)
+InspectorNodeFinder::InspectorNodeFinder(const String& whitespaceTrimmedQuery)
     : m_whitespaceTrimmedQuery(whitespaceTrimmedQuery)
 {
     m_tagNameQuery = stripCharacters(whitespaceTrimmedQuery, '<', '>', m_startTagFound, m_endTagFound);

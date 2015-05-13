@@ -1226,7 +1226,7 @@ void ObjCInspectorDatabaseBackendDispatcher::executeSQLAsync(long callId, int in
 namespace Inspector {
 
 template<typename ObjCEnumType>
-ObjCEnumType fromProtocolString(String value);
+ObjCEnumType fromProtocolString(const String& value);
 
 
 inline String toProtocolString(RWIProtocolDatabasePrimaryColors value)
@@ -1242,7 +1242,7 @@ inline String toProtocolString(RWIProtocolDatabasePrimaryColors value)
 }
 
 template<>
-inline RWIProtocolDatabasePrimaryColors fromProtocolString(String value)
+inline RWIProtocolDatabasePrimaryColors fromProtocolString(const String& value)
 {
     if (value == "red")
         return RWIProtocolDatabasePrimaryColorsRed;
@@ -1269,7 +1269,7 @@ inline String toProtocolString(RWIProtocolDatabaseExecuteSQLSyncOptionalReturnVa
 }
 
 template<>
-inline RWIProtocolDatabaseExecuteSQLSyncOptionalReturnValuesPrintColor fromProtocolString(String value)
+inline RWIProtocolDatabaseExecuteSQLSyncOptionalReturnValuesPrintColor fromProtocolString(const String& value)
 {
     if (value == "cyan")
         return RWIProtocolDatabaseExecuteSQLSyncOptionalReturnValuesPrintColorCyan;
@@ -1298,7 +1298,7 @@ inline String toProtocolString(RWIProtocolDatabaseExecuteSQLAsyncOptionalReturnV
 }
 
 template<>
-inline RWIProtocolDatabaseExecuteSQLAsyncOptionalReturnValuesPrintColor fromProtocolString(String value)
+inline RWIProtocolDatabaseExecuteSQLAsyncOptionalReturnValuesPrintColor fromProtocolString(const String& value)
 {
     if (value == "cyan")
         return RWIProtocolDatabaseExecuteSQLAsyncOptionalReturnValuesPrintColorCyan;
@@ -1327,7 +1327,7 @@ inline String toProtocolString(RWIProtocolDatabaseExecuteSQLSyncPrintColor value
 }
 
 template<>
-inline RWIProtocolDatabaseExecuteSQLSyncPrintColor fromProtocolString(String value)
+inline RWIProtocolDatabaseExecuteSQLSyncPrintColor fromProtocolString(const String& value)
 {
     if (value == "cyan")
         return RWIProtocolDatabaseExecuteSQLSyncPrintColorCyan;
@@ -1356,7 +1356,7 @@ inline String toProtocolString(RWIProtocolDatabaseExecuteSQLAsyncPrintColor valu
 }
 
 template<>
-inline RWIProtocolDatabaseExecuteSQLAsyncPrintColor fromProtocolString(String value)
+inline RWIProtocolDatabaseExecuteSQLAsyncPrintColor fromProtocolString(const String& value)
 {
     if (value == "cyan")
         return RWIProtocolDatabaseExecuteSQLAsyncPrintColorCyan;

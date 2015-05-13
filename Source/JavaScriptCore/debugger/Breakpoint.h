@@ -43,7 +43,7 @@ struct Breakpoint : public DoublyLinkedListNode<Breakpoint> {
     {
     }
 
-    Breakpoint(SourceID sourceID, unsigned line, unsigned column, String condition, bool autoContinue)
+    Breakpoint(SourceID sourceID, unsigned line, unsigned column, const String& condition, bool autoContinue)
         : id(noBreakpointID)
         , sourceID(sourceID)
         , line(line)
