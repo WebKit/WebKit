@@ -472,9 +472,52 @@ TEST_F(ContentExtensionTest, DomainTriggers)
     testRequest(domainRegexBackend, mainDocumentRequest("http://webkit.org/test.html"), { });
     testRequest(domainRegexBackend, mainDocumentRequest("http://wbkit.org/test.html"), { });
     
+    auto multipleIfDomainsBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-domain\":[\"webkit.org\", \"w3c.org\"]}}]");
+    testRequest(multipleIfDomainsBackend, mainDocumentRequest("http://webkit.org/test.htm"), { });
+    testRequest(multipleIfDomainsBackend, mainDocumentRequest("http://webkit.org/test.html"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(multipleIfDomainsBackend, mainDocumentRequest("http://w3c.org/test.html"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(multipleIfDomainsBackend, mainDocumentRequest("http://whatwg.org/test.html"), { });
+
+    auto multipleUnlessDomainsBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-domain\":[\"webkit.org\", \"w3c.org\"]}}]");
+    testRequest(multipleUnlessDomainsBackend, mainDocumentRequest("http://webkit.org/test.htm"), { });
+    testRequest(multipleUnlessDomainsBackend, mainDocumentRequest("http://webkit.org/test.html"), { });
+    testRequest(multipleUnlessDomainsBackend, mainDocumentRequest("http://w3c.org/test.html"), { });
+    testRequest(multipleUnlessDomainsBackend, mainDocumentRequest("http://whatwg.org/test.html"), { ContentExtensions::ActionType::BlockLoad });
+
     // FIXME: Add and test domain-specific popup-only blocking (with layout tests).
 }
     
+TEST_F(ContentExtensionTest, MultipleExtensions)
+{
+    auto extension1 = InMemoryCompiledContentExtension::createFromFilter("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"block_load\"}}]");
+    auto extension2 = InMemoryCompiledContentExtension::createFromFilter("[{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"block_cookies\"}}]");
+    ContentExtensions::ContentExtensionsBackend backend;
+    backend.addContentExtension("testFilter1", extension1);
+    backend.addContentExtension("testFilter2", extension2);
+    
+    // These each have two display:none stylesheets. The second one is implied by using the default parameter ignorePreviousRules = false.
+    testRequest(backend, mainDocumentRequest("http://webkit.org"), { ContentExtensions::ActionType::CSSDisplayNoneStyleSheet });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/block_load.html"), { ContentExtensions::ActionType::CSSDisplayNoneStyleSheet, ContentExtensions::ActionType::BlockLoad});
+    testRequest(backend, mainDocumentRequest("http://webkit.org/block_cookies.html"), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::CSSDisplayNoneStyleSheet});
+    testRequest(backend, mainDocumentRequest("http://webkit.org/block_load/block_cookies.html"), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::CSSDisplayNoneStyleSheet, ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/block_cookies/block_load.html"), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::CSSDisplayNoneStyleSheet, ContentExtensions::ActionType::BlockLoad });
+    
+    auto ignoreExtension1 = InMemoryCompiledContentExtension::createFromFilter("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"block_load\"}},"
+        "{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"ignore1\"}}]");
+    auto ignoreExtension2 = InMemoryCompiledContentExtension::createFromFilter("[{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"block_cookies\"}},"
+        "{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"ignore2\"}}]");
+    ContentExtensions::ContentExtensionsBackend backendWithIgnore;
+    backendWithIgnore.addContentExtension("testFilter1", ignoreExtension1);
+    backendWithIgnore.addContentExtension("testFilter2", ignoreExtension2);
+    
+    testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org"), { ContentExtensions::ActionType::CSSDisplayNoneStyleSheet, ContentExtensions::ActionType::CSSDisplayNoneStyleSheet }, true);
+    testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org/block_load/ignore1.html"), { ContentExtensions::ActionType::CSSDisplayNoneStyleSheet }, true);
+    testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org/block_cookies/ignore1.html"), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::CSSDisplayNoneStyleSheet}, true);
+    testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org/block_load/ignore2.html"), { ContentExtensions::ActionType::BlockLoad, ContentExtensions::ActionType::CSSDisplayNoneStyleSheet }, true);
+    testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org/block_cookies/ignore2.html"), { ContentExtensions::ActionType::CSSDisplayNoneStyleSheet}, true);
+    testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org/block_load/block_cookies/ignore1/ignore2.html"), { }, true);
+}
+
 TEST_F(ContentExtensionTest, TermsKnownToMatchAnything)
 {
     auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^pre1.*post1$\"}},"

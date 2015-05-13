@@ -1,3 +1,16 @@
+2015-05-13  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Test interactions between multiple extensions and multiple domains.
+        https://bugs.webkit.org/show_bug.cgi?id=144967
+
+        Reviewed by Benjamin Poulain.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        Xcode wanted to fix an alphabetization issue.
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::TEST_F):
+        Test interactions that worked but were not explicitly tested before.
+
 2015-05-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed build fix.

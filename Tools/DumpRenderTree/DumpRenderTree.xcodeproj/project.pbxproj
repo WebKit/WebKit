@@ -1219,12 +1219,12 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = All;
 				SECTORDER_FLAGS = "";
+				USE_EXPORT_MACROS = 0;
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
 					"-Wno-unknown-pragmas",
 				);
-				USE_EXPORT_MACROS = 0;
 			};
 			name = Debug;
 		};
@@ -1237,12 +1237,12 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = All;
 				SECTORDER_FLAGS = "";
+				USE_EXPORT_MACROS = 0;
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
 					"-Wno-unknown-pragmas",
 				);
-				USE_EXPORT_MACROS = 0;
 			};
 			name = Release;
 		};
