@@ -283,7 +283,7 @@ static UIImage* iconForFile(NSURL *file)
 
 @implementation WKFileUploadPanel {
     WKContentView *_view;
-    WebKit::WebOpenPanelResultListenerProxy* _listener;
+    RefPtr<WebKit::WebOpenPanelResultListenerProxy> _listener;
     RetainPtr<NSArray> _mimeTypes;
     CGPoint _interactionPoint;
     BOOL _allowMultipleFiles;

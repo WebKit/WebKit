@@ -1,3 +1,16 @@
+2015-05-12  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Crash when using <input type=file>
+
+        <https://bugs.webkit.org/show_bug.cgi?id=144939>
+        <rdar://problem/20172315>
+
+        Reviewed by Andy Estes.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        Use a RefPtr to hold the WebOpenPanelResultListenerProxy, because the
+        WKFileUploadPanel can outlive it.
+
 2015-05-12  Simon Fraser  <simon.fraser@apple.com>
 
         Turn antialiased font dilation off by default
