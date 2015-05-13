@@ -33,7 +33,13 @@ using namespace WebKit;
 
 WKContextConfigurationRef WKContextConfigurationCreate()
 {
-    return toAPI(&API::ProcessPoolConfiguration::create().leakRef());
+    auto configuration = API::ProcessPoolConfiguration::create();
+    
+    // FIXME: A context created like this shouldn't have a data store,
+    // instead there should be a WKPageConfigurationRef object that specifies the data store.
+    configuration->setShouldHaveLegacyDataStore(true);
+    
+    return toAPI(&configuration.leakRef());
 }
 
 WKStringRef WKContextConfigurationCopyIndexedDBDatabaseDirectory(WKContextConfigurationRef configuration)

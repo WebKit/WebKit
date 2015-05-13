@@ -45,6 +45,9 @@ public:
     
     Ref<ProcessPoolConfiguration> copy();
 
+    bool shouldHaveLegacyDataStore() const { return m_shouldHaveLegacyDataStore; }
+    void setShouldHaveLegacyDataStore(bool shouldHaveLegacyDataStore) { m_shouldHaveLegacyDataStore = shouldHaveLegacyDataStore; }
+
     WebKit::ProcessModel processModel() const { return m_processModel; }
     void setProcessModel(WebKit::ProcessModel processModel) { m_processModel = processModel; } 
 
@@ -79,6 +82,8 @@ public:
     void setCachePartitionedURLSchemes(Vector<WTF::String>&& cachePartitionedURLSchemes) { m_cachePartitionedURLSchemes = WTF::move(cachePartitionedURLSchemes); }
 
 private:
+    bool m_shouldHaveLegacyDataStore { false };
+
     WebKit::ProcessModel m_processModel { WebKit::ProcessModelMultipleSecondaryProcesses };
     bool m_useNetworkProcess { true };
     unsigned m_maximumProcessCount { 0 };

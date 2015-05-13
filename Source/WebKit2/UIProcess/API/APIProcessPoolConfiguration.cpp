@@ -40,6 +40,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithLegacyOptions(
 {
     auto configuration = ProcessPoolConfiguration::create();
 
+    configuration->m_shouldHaveLegacyDataStore = true;
     configuration->m_processModel = WebKit::ProcessModelSharedSecondaryProcess;
     configuration->m_useNetworkProcess = false;
     configuration->m_cacheModel = WebKit::CacheModelDocumentViewer;
@@ -67,6 +68,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
 {
     auto copy = this->create();
 
+    copy->m_shouldHaveLegacyDataStore = this->m_shouldHaveLegacyDataStore;
     copy->m_processModel = this->m_processModel;
     copy->m_useNetworkProcess = this->m_useNetworkProcess;
     copy->m_maximumProcessCount = this->m_maximumProcessCount;

@@ -158,7 +158,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_diskCacheSizeOverride(m_configuration->diskCacheSizeOverride())
     , m_memorySamplerEnabled(false)
     , m_memorySamplerInterval(1400.0)
-    , m_websiteDataStore(API::WebsiteDataStore::create(websiteDataStoreConfiguration(m_configuration.get())))
+    , m_websiteDataStore(m_configuration->shouldHaveLegacyDataStore() ? API::WebsiteDataStore::create(websiteDataStoreConfiguration(m_configuration)) : nullptr)
 #if USE(SOUP)
     , m_initialHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain)
 #endif

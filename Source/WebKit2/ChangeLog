@@ -1,3 +1,33 @@
+2015-05-13  Anders Carlsson  <andersca@apple.com>
+
+        Don't create a per-pool data store when using the modern API
+        https://bugs.webkit.org/show_bug.cgi?id=144963
+        rdar://problem/20331756
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::createWithLegacyOptions):
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        Keep track of whether the process pool should have a data store.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetWebsiteDataStore):
+        * UIProcess/WebKeyValueStorageManager.cpp:
+        (WebKit::WebKeyValueStorageManager::getKeyValueStorageOrigins):
+        (WebKit::WebKeyValueStorageManager::getStorageDetailsByOrigin):
+        (WebKit::WebKeyValueStorageManager::deleteEntriesForOrigin):
+        (WebKit::WebKeyValueStorageManager::deleteAllEntries):
+        Update now that WebProcessPool::dataStore() no longer returns a reference.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::WebProcessPool):
+        Only create a data store if the configuration states that we should.
+
+        * UIProcess/WebProcessPool.h:
+        Change dataStore() to return a pointer instead of a reference.
+
 2015-05-13  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Sandbox violation reading SubmitDiagInfo.domains
