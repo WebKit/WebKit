@@ -1,3 +1,17 @@
+2015-05-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r183770): Crash inside WebEditorClient::shouldApplyStyle when applying underline
+        https://bugs.webkit.org/show_bug.cgi?id=144949
+
+        Reviewed by Darin Adler.
+
+        Added a test that emulates underlining of text by the user. Unlike document.execCommand,
+        testRunner.execCommand simulates a user initiated editing command and therefore invokes
+        shouldApplyStyle.
+
+        * editing/style/underline-by-user-expected.txt: Added.
+        * editing/style/underline-by-user.html: Added.
+
 2015-05-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement String.raw

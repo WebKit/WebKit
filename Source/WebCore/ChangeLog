@@ -1,3 +1,30 @@
+2015-05-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r183770): Crash inside WebEditorClient::shouldApplyStyle when applying underline
+        https://bugs.webkit.org/show_bug.cgi?id=144949
+        <rdar://problem/20895753>
+
+        Reviewed by Darin Adler.
+
+        The crash was caused by the variant of applyStyleToSelection that takes EditingStyle passing
+        a null pointer to shouldApplyStyle when we're only applying text decoration changes so that
+        m_mutableStyle in the editing style is null. This didn't reproduce in execCommand since we
+        wouldn't call shouldApplyStyle in that case. It didn't reproduce in my manual testing because
+        font panel also sets text shadow, which ends up filling up m_mutableStyle.
+
+        Fixed the bug by creating a mutable style properties when one is not provided by EditingStyle.
+        Also fixed the "FIXME" in the function by converting text decoration changes to a corresponding
+        text decoration value. The values passed to shouldApplyStyle now matches the old behavior prior
+        to r183770.
+
+        Test: editing/style/underline-by-user.html
+
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::styleWithResolvedTextDecorations): Added.
+        * editing/EditingStyle.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::applyStyleToSelection): Use styleWithResolvedTextDecorations to avoid the crash.
+
 2015-05-13  Eric Carlson  <eric.carlson@apple.com>
 
         Work around HTMLMediaElement::documentDidResumeFromPageCache being called twice
