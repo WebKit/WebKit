@@ -127,6 +127,9 @@ typedef NS_ENUM(NSInteger, _WKPaginationMode) {
 
 @property (nonatomic, readonly) _WKWebViewPrintFormatter *_webViewPrintFormatter;
 
+// Indicating whether link preview is allowed. The default value is YES.
+@property (nonatomic, getter=_allowsLinkPreview, setter=_setAllowsLinkPreview:) BOOL _allowsLinkPreview WK_AVAILABLE(NA, WK_IOS_TBA);
+
 - (void)_beginInteractiveObscuredInsetsChange;
 - (void)_endInteractiveObscuredInsetsChange;
 

@@ -169,6 +169,7 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     CGSize _maximumUnobscuredSizeOverride;
     CGRect _inputViewBounds;
     CGFloat _viewportMetaTagWidth;
+    BOOL _allowsLinkPreview;
 
     UIEdgeInsets _obscuredInsets;
     BOOL _haveSetObscuredInsets;
@@ -331,6 +332,7 @@ static int32_t deviceOrientation()
     [self _updateScrollViewBackground];
 
     _viewportMetaTagWidth = -1;
+    _allowsLinkPreview = YES;
 
     [self _frameOrBoundsChanged];
 
@@ -2794,6 +2796,25 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     UIViewPrintFormatter *viewPrintFormatter = self.viewPrintFormatter;
     ASSERT([viewPrintFormatter isKindOfClass:[_WKWebViewPrintFormatter class]]);
     return (_WKWebViewPrintFormatter *)viewPrintFormatter;
+}
+
+- (BOOL)_allowsLinkPreview
+{
+    return _allowsLinkPreview;
+}
+
+- (void)_setAllowsLinkPreview:(BOOL)allowsLinkPreview
+{
+    if (_allowsLinkPreview == allowsLinkPreview)
+        return;
+
+    _allowsLinkPreview = allowsLinkPreview;
+#if HAVE(LINK_PREVIEW)
+    if (_allowsLinkPreview)
+        [_contentView _registerPreviewInWindow:[_contentView window]];
+    else
+        [_contentView _unregisterPreviewInWindow:[_contentView window]];
+#endif
 }
 
 #else

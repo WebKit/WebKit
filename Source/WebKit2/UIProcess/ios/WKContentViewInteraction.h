@@ -44,6 +44,10 @@
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/LinkPreviewDefines.h>
+#endif
+
 namespace WebCore {
 class Color;
 class FloatQuad;
@@ -200,8 +204,11 @@ struct WKAutoCorrectionData {
 - (void)_becomeFirstResponderWithSelectionMovingForward:(BOOL)selectingForward completionHandler:(void (^)(BOOL didBecomeFirstResponder))completionHandler;
 @end
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
+#if HAVE(LINK_PREVIEW)
 @interface WKContentView (WKInteractionPreview) <UIViewControllerPreviewingDelegate>
+
+- (void)_registerPreviewInWindow:(UIWindow *)window;
+- (void)_unregisterPreviewInWindow:(UIWindow *)window;
 @end
 #endif
 
