@@ -59,12 +59,13 @@ struct ScrollSnapAnimatorState {
     LayoutUnit m_targetOffset;
     // Used to track gliding behavior.
     LayoutUnit m_beginTrackingWheelDeltaOffset;
-    int m_numWheelDeltasTracked;
+    int m_numWheelDeltasTracked { 0 };
+    unsigned m_activeSnapIndex { 0 };
     float m_wheelDeltaWindow[wheelDeltaWindowSize];
-    float m_glideMagnitude;
-    float m_glidePhaseShift;
-    float m_glideInitialWheelDelta;
-    bool m_shouldOverrideWheelEvent;
+    float m_glideMagnitude { 0 };
+    float m_glidePhaseShift { 0 };
+    float m_glideInitialWheelDelta { 0 };
+    bool m_shouldOverrideWheelEvent { false };
 };
 
 } // namespace WebCore

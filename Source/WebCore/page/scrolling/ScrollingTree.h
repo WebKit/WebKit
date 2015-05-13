@@ -100,6 +100,7 @@ public:
     
 #if PLATFORM(MAC)
     virtual void handleWheelEventPhase(PlatformWheelEventPhase) = 0;
+    virtual void setActiveScrollSnapIndices(ScrollingNodeID, unsigned /*horizontalIndex*/, unsigned /*verticalIndex*/) { }
     virtual void deferTestsForReason(WheelEventTestTrigger::ScrollableAreaIdentifier, WheelEventTestTrigger::DeferTestTriggerReason) { }
     virtual void removeTestDeferralForReason(WheelEventTestTrigger::ScrollableAreaIdentifier, WheelEventTestTrigger::DeferTestTriggerReason) { }
 #endif

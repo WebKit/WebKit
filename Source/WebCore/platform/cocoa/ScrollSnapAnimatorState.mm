@@ -37,11 +37,6 @@ ScrollSnapAnimatorState::ScrollSnapAnimatorState(ScrollEventAxis axis, const Vec
     , m_initialOffset(0)
     , m_targetOffset(0)
     , m_beginTrackingWheelDeltaOffset(0)
-    , m_numWheelDeltasTracked(0)
-    , m_glideMagnitude(0)
-    , m_glidePhaseShift(0)
-    , m_glideInitialWheelDelta(0)
-    , m_shouldOverrideWheelEvent(false)
 {
 }
 

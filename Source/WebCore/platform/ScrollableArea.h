@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2011, 2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2011, 2014-2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,7 +66,14 @@ public:
     void setVerticalSnapOffsets(std::unique_ptr<Vector<LayoutUnit>>);
     void clearHorizontalSnapOffsets();
     void clearVerticalSnapOffsets();
+    unsigned currentHorizontalSnapPointIndex() const { return m_currentHorizontalSnapPointIndex; }
+    void setCurrentHorizontalSnapPointIndex(unsigned index) { m_currentHorizontalSnapPointIndex = index; }
+    unsigned currentVerticalSnapPointIndex() const { return m_currentVerticalSnapPointIndex; }
+    void setCurrentVerticalSnapPointIndex(unsigned index) { m_currentVerticalSnapPointIndex = index; }
+    IntPoint nearestActiveSnapPoint(const IntPoint&);
 #endif
+
+    void updateScrollSnapState();
 
 #if ENABLE(TOUCH_EVENTS)
     virtual bool isTouchScrollable() const { return false; }
@@ -305,6 +312,8 @@ private:
 #if ENABLE(CSS_SCROLL_SNAP)
     std::unique_ptr<Vector<LayoutUnit>> m_horizontalSnapOffsets;
     std::unique_ptr<Vector<LayoutUnit>> m_verticalSnapOffsets;
+    unsigned m_currentHorizontalSnapPointIndex { 0 };
+    unsigned m_currentVerticalSnapPointIndex { 0 };
 #endif
 
     // There are 8 possible combinations of writing mode and direction. Scroll origin will be non-zero in the x or y axis

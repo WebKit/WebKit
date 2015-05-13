@@ -2933,7 +2933,11 @@ void FrameView::performPostLayoutTasks()
     frame().loader().client().dispatchDidLayout();
 
     updateWidgetPositions();
-    
+
+#if ENABLE(CSS_SCROLL_SNAP)
+    updateSnapOffsets();
+#endif
+
     // layout() protects FrameView, but it still can get destroyed when updateEmbeddedObjects()
     // is called through the post layout timer.
     Ref<FrameView> protect(*this);
@@ -2955,15 +2959,7 @@ void FrameView::performPostLayoutTasks()
     sendResizeEventIfNeeded();
     viewportContentsChanged();
 
-#if ENABLE(CSS_SCROLL_SNAP)
-    if (!frame().isMainFrame()) {
-        updateSnapOffsets();
-#if PLATFORM(MAC)
-        if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
-            return scrollAnimator->updateScrollAnimatorsAndTimers();
-#endif
-    }
-#endif
+    updateScrollSnapState();
 }
 
 IntSize FrameView::sizeForResizeEvent() const

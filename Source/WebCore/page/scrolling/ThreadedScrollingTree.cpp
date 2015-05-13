@@ -123,6 +123,17 @@ void ThreadedScrollingTree::handleWheelEventPhase(PlatformWheelEventPhase phase)
     });
 }
 
+void ThreadedScrollingTree::setActiveScrollSnapIndices(ScrollingNodeID nodeID, unsigned horizontalIndex, unsigned verticalIndex)
+{
+    if (!m_scrollingCoordinator)
+        return;
+    
+    RefPtr<AsyncScrollingCoordinator> scrollingCoordinator = m_scrollingCoordinator;
+    RunLoop::main().dispatch([scrollingCoordinator, nodeID, horizontalIndex, verticalIndex] {
+        scrollingCoordinator->setActiveScrollSnapIndices(nodeID, horizontalIndex, verticalIndex);
+    });
+}
+
 void ThreadedScrollingTree::deferTestsForReason(WheelEventTestTrigger::ScrollableAreaIdentifier identifier, WheelEventTestTrigger::DeferTestTriggerReason reason)
 {
     if (!m_scrollingCoordinator)

@@ -97,6 +97,11 @@ public:
     {
         return 1.0f;
     }
+
+    virtual unsigned activeScrollOffsetIndex(ScrollEventAxis) const
+    {
+        return 0;
+    }
 #endif
 };
 
@@ -114,6 +119,10 @@ public:
     bool processWheelEventForScrollSnap(const PlatformWheelEvent&);
     void updateScrollAnimatorsAndTimers(const ScrollableArea&);
     void updateScrollSnapPoints(ScrollEventAxis, const Vector<LayoutUnit>&);
+    unsigned activeScrollSnapIndexForAxis(ScrollEventAxis) const;
+    void setActiveScrollSnapIndexForAxis(ScrollEventAxis, unsigned);
+    bool activeScrollSnapIndexDidChange() const { return m_activeScrollSnapIndexDidChange; }
+    void setScrollSnapIndexDidChange(bool state) { m_activeScrollSnapIndexDidChange = state; }
 #endif
 
 private:
@@ -172,6 +181,7 @@ private:
     bool m_momentumScrollInProgress { false };
     bool m_ignoreMomentumScrolls { false };
     bool m_snapRubberbandTimerIsActive { false };
+    bool m_activeScrollSnapIndexDidChange { false };
 };
     
 } // namespace WebCore
