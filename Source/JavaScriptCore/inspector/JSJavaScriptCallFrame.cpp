@@ -64,10 +64,8 @@ void JSJavaScriptCallFrame::destroy(JSC::JSCell* cell)
 
 void JSJavaScriptCallFrame::releaseImpl()
 {
-    if (m_impl) {
-        m_impl->deref();
-        m_impl = nullptr;
-    }
+    if (auto impl = std::exchange(m_impl, nullptr))
+        impl->deref();
 }
 
 JSJavaScriptCallFrame::~JSJavaScriptCallFrame()

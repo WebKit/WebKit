@@ -56,7 +56,7 @@ public:
     RefPtr(HashTableDeletedValueType) : m_ptr(hashTableDeletedValue()) { }
     bool isHashTableDeletedValue() const { return m_ptr == hashTableDeletedValue(); }
 
-    ALWAYS_INLINE ~RefPtr() { derefIfNotNull(m_ptr); }
+    ALWAYS_INLINE ~RefPtr() { derefIfNotNull(std::exchange(m_ptr, nullptr)); }
 
     T* get() const { return m_ptr; }
     

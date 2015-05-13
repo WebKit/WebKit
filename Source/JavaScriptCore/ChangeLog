@@ -1,3 +1,18 @@
+2015-05-13  Oliver Hunt  <oliver@apple.com>
+        Ensure that all the smart pointer types in WTF clear their pointer before deref
+        https://bugs.webkit.org/show_bug.cgi?id=143789
+
+        Reviewed by Ryosuke Niwa.
+
+        One of the simpler cases of this in JavaScriptCore. There
+        are other cases where we need to guard the derefs but they
+        are more complex cases.
+
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::releaseImpl):
+        * inspector/JSJavaScriptCallFrame.cpp:
+        (Inspector::JSJavaScriptCallFrame::releaseImpl):
+
 2015-05-13  Alexandr Skachkov  <gskachkov@gmail.com>
 
         Small refactoring before ES6 Arrow function implementation.

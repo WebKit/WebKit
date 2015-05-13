@@ -55,7 +55,7 @@ namespace WTF {
         PassRefPtr(const PassRefPtr& o) : m_ptr(o.leakRef()) { }
         template<typename U> PassRefPtr(const PassRefPtr<U>& o) : m_ptr(o.leakRef()) { }
 
-        ALWAYS_INLINE ~PassRefPtr() { derefIfNotNull(m_ptr); }
+        ALWAYS_INLINE ~PassRefPtr() { derefIfNotNull(std::exchange(m_ptr, nullptr)); }
 
         template<typename U> PassRefPtr(const RefPtr<U>&);
         template<typename U> PassRefPtr(Ref<U>&& reference) : m_ptr(&reference.leakRef()) { }

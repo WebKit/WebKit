@@ -85,10 +85,8 @@ void JSInjectedScriptHost::destroy(JSC::JSCell* cell)
 
 void JSInjectedScriptHost::releaseImpl()
 {
-    if (m_impl) {
-        m_impl->deref();
-        m_impl = nullptr;
-    }
+    if (auto impl = std::exchange(m_impl, nullptr))
+        impl->deref();
 }
 
 JSInjectedScriptHost::~JSInjectedScriptHost()

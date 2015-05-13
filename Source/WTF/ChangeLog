@@ -1,3 +1,56 @@
+2015-05-13  Oliver Hunt  <oliver@apple.com>
+       Ensure that all the smart pointer types in WTF clear their pointer before deref
+       https://bugs.webkit.org/show_bug.cgi?id=143789
+
+       Reviewed by Ryosuke Niwa.
+
+       In order to prevent use after free bugs caused by destructors
+       that end up trying to access the smart pointer itself, we should
+       make sure we always clear the m_ptr field before calling deref.
+
+       Essentially the UaF path is:
+       struct Foo : RefCounted<Foo> {
+         Wibble* m_wibble;
+         void doSomething();
+         ~Foo() { m_wibble->doSomethingLikeCleanup(); }
+       };
+
+       struct Wibble {
+         void doSomethingLikeCleanup()
+         {
+           if (m_foo) {
+               /* if this branch is not here we get a null deref */
+               m_foo->doSomething();
+           }
+         }
+         void replaceFoo(Foo* foo) { m_foo = foo; }
+         RefPtr<Foo> m_foo;
+       };
+
+       Wibble* someWibble = /* a Wibble with m_foo->m_refCount == 1 */;
+                            /* and m_foo points to someWibble       */;
+
+       someWibble->replaceFoo(someOtherFoo);
+       + someWibble->m_foo->m_ptr->deref();
+         + someWibble->m_foo->m_ptr->~Foo()
+           + someWibble->m_foo->m_ptr->m_wibble->doSomethingLikeCleanup()
+             + someWibble->m_foo->m_ptr->m_wibble /* someWibble */ ->m_foo->m_ptr /*logically dead*/ ->doSomething()
+
+       By clearing m_ptr first we either force a null pointer deref or
+       we force our code down a path that does not use the dead smart
+       pointer.
+
+       * wtf/PassRefPtr.h:
+       (WTF::PassRefPtr::~PassRefPtr):
+       * wtf/Ref.h:
+       (WTF::Ref::~Ref):
+       (WTF::Ref::operator=):
+       * wtf/RefPtr.h:
+       (WTF::RefPtr::~RefPtr):
+       * wtf/RetainPtr.h:
+       (WTF::RetainPtr::~RetainPtr):
+       (WTF::RetainPtr<T>::clear):
+
 2015-05-12  Michael Saboff  <msaboff@apple.com>
 
         If JSC cannot get executable memory, it shouldn't call madvise
