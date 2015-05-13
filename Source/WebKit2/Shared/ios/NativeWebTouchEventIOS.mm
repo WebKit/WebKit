@@ -75,7 +75,10 @@ static inline WebCore::IntPoint positionForCGPoint(CGPoint position)
     return WebCore::IntPoint(position);
 }
 
-static inline Vector<WebPlatformTouchPoint> extractWebTouchPoint(const _UIWebTouchEvent* event)
+#if ENABLE(IOS_TOUCH_EVENTS)
+#import <WebKitAdditions/NativeWebTouchEventIOS.mm>
+#else
+Vector<WebPlatformTouchPoint> NativeWebTouchEvent::extractWebTouchPoint(const _UIWebTouchEvent* event)
 {
     unsigned touchCount = event->touchPointCount;
 
@@ -90,6 +93,7 @@ static inline Vector<WebPlatformTouchPoint> extractWebTouchPoint(const _UIWebTou
     }
     return touchPointList;
 }
+#endif
 
 NativeWebTouchEvent::NativeWebTouchEvent(const _UIWebTouchEvent* event)
     : WebTouchEvent(webEventTypeForUIWebTouchEventType(event->type), static_cast<Modifiers>(0), event->timestamp, extractWebTouchPoint(event), positionForCGPoint(event->locationInDocumentCoordinates), event->inJavaScriptGesture, event->scale, event->rotation)

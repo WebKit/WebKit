@@ -1,5 +1,24 @@
 2015-05-13  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r184028.
+
+    2015-05-08  Beth Dakin  <bdakin@apple.com>
+
+            Shuffle touch-related code to keep the internal builds working
+            https://bugs.webkit.org/show_bug.cgi?id=144812
+
+            Reviewed by Benjamin Poulain.
+
+            * Shared/NativeWebTouchEvent.h:
+            * Shared/WebEvent.h:
+            * Shared/WebEventConversion.cpp:
+            * Shared/ios/NativeWebTouchEventIOS.mm:
+            (WebKit::NativeWebTouchEvent::extractWebTouchPoint):
+            (WebKit::extractWebTouchPoint): Deleted.
+            * Shared/ios/WebPlatformTouchPointIOS.cpp:
+
+2015-05-13  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r184241.
 
     2015-05-12  Jon Honeycutt  <jhoneycutt@apple.com>

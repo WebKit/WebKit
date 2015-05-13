@@ -238,6 +238,9 @@ static WebCore::PlatformTouchPoint::TouchPhaseType touchEventType(const WebPlatf
     }
 }
 
+#if ENABLE(IOS_TOUCH_EVENTS)
+#include <WebKitAdditions/WebEventConversionIOS.cpp>
+#else
 class WebKit2PlatformTouchPoint : public WebCore::PlatformTouchPoint {
 public:
 WebKit2PlatformTouchPoint(const WebPlatformTouchPoint& webTouchPoint)
@@ -245,6 +248,8 @@ WebKit2PlatformTouchPoint(const WebPlatformTouchPoint& webTouchPoint)
 {
 }
 };
+#endif // ENABLE(IOS_TOUCH_EVENTS)
+
 #else
 
 class WebKit2PlatformTouchPoint : public WebCore::PlatformTouchPoint {

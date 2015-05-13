@@ -35,6 +35,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
+#if ENABLE(IOS_TOUCH_EVENTS)
+#import <WebKitAdditions/WebPlatformTouchPointIOS.cpp>
+#else
 void WebPlatformTouchPoint::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << m_identifier;
@@ -52,6 +55,7 @@ bool WebPlatformTouchPoint::decode(IPC::ArgumentDecoder& decoder, WebPlatformTou
         return false;
     return true;
 }
+#endif // ENABLE(IOS_TOUCH_EVENTS)
 
 } // namespace WebKit
 
