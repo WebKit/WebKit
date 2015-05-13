@@ -1,3 +1,15 @@
+2015-05-12  Michael Saboff  <msaboff@apple.com>
+
+        If JSC cannot get executable memory, it shouldn't call madvise
+        https://bugs.webkit.org/show_bug.cgi?id=144931
+
+        Reviewed by Mark Lam.
+
+        Made calling madvise conditional on really getting mmapped memory.
+
+        * wtf/OSAllocatorPosix.cpp:
+        (WTF::OSAllocator::reserveUncommitted):
+
 2015-05-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Move Windows build target to Windows 7 (or newer)
