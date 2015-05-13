@@ -1,3 +1,16 @@
+2015-05-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Turn antialiased font dilation off by default
+        https://bugs.webkit.org/show_bug.cgi?id=144940
+        rdar://problem/20923031
+
+        Reviewed by Sam Weinig.
+        
+        Turn antialised font dilation off by default.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+
 2015-05-11  Daniel Bates  <dabates@apple.com>
 
         [iOS] Close all open databases in expiration handler of process assertion

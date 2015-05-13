@@ -1,3 +1,17 @@
+2015-05-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Turn antialiased font dilation off by default
+        https://bugs.webkit.org/show_bug.cgi?id=144940
+        rdar://problem/20923031
+
+        Reviewed by Sam Weinig.
+
+        Turn antialised font dilation off by default.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * platform/graphics/FontCascade.cpp:
+
 2015-05-12  Alex Christensen  <achristensen@webkit.org>
 
         Don't export all JS bindings classes.

@@ -195,7 +195,7 @@
     macro(GamepadsEnabled, gamepadsEnabled, Bool, bool, false) \
     macro(LongMousePressEnabled, longMousePressEnabled, Bool, bool, false) \
     macro(NewBlockInsideInlineModelEnabled, newBlockInsideInlineModelEnabled, Bool, bool, false) \
-    macro(AntialiasedFontDilationEnabled, antialiasedFontDilationEnabled, Bool, bool, true) \
+    macro(AntialiasedFontDilationEnabled, antialiasedFontDilationEnabled, Bool, bool, false) \
     macro(MetaRefreshEnabled, metaRefreshEnabled, Bool, bool, true) \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \
