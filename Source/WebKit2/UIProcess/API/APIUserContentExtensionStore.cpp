@@ -186,7 +186,7 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
             ASSERT(!metaData.domainFiltersBytecodeSize);
         }
         
-        virtual void writeFiltersWithoutDomainsBytecode(Vector<DFABytecode>&& bytecode)
+        virtual void writeFiltersWithoutDomainsBytecode(Vector<DFABytecode>&& bytecode) override
         {
             ASSERT(!m_filtersWithDomainBytecodeWritten);
             ASSERT(!m_domainFiltersBytecodeWritten);
@@ -194,14 +194,14 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
             writeToFile(Data(bytecode.data(), bytecode.size()));
         }
         
-        virtual void writeFiltersWithDomainsBytecode(Vector<DFABytecode>&& bytecode)
+        virtual void writeFiltersWithDomainsBytecode(Vector<DFABytecode>&& bytecode) override
         {
             ASSERT(!m_domainFiltersBytecodeWritten);
             m_filtersWithDomainBytecodeWritten += bytecode.size();
             writeToFile(Data(bytecode.data(), bytecode.size()));
         }
         
-        virtual void writeDomainFiltersBytecode(Vector<DFABytecode>&& bytecode)
+        virtual void writeDomainFiltersBytecode(Vector<DFABytecode>&& bytecode) override
         {
             m_domainFiltersBytecodeWritten += bytecode.size();
             writeToFile(Data(bytecode.data(), bytecode.size()));
