@@ -72,7 +72,7 @@ namespace JSC {
 #if OS(DARWIN)
 typedef mach_port_t PlatformThread;
 #elif OS(WINDOWS)
-typedef HANDLE PlatformThread;
+typedef DWORD PlatformThread;
 #elif USE(PTHREADS)
 typedef pthread_t PlatformThread;
 static const int SigThreadSuspendResume = SIGUSR2;
@@ -151,7 +151,7 @@ static inline PlatformThread getCurrentPlatformThread()
 #if OS(DARWIN)
     return pthread_mach_thread_np(pthread_self());
 #elif OS(WINDOWS)
-    return GetCurrentThread();
+    return GetCurrentThreadId();
 #elif USE(PTHREADS)
     return pthread_self();
 #endif
@@ -176,10 +176,23 @@ class MachineThreads::Thread {
         sigemptyset(&mask);
         sigaddset(&mask, SigThreadSuspendResume);
         pthread_sigmask(SIG_UNBLOCK, &mask, 0);
+#elif OS(WINDOWS)
+        ASSERT(platformThread == GetCurrentThreadId());
+        bool isSuccessful =
+            DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(),
+                &platformThreadHandle, 0, FALSE, DUPLICATE_SAME_ACCESS);
+        RELEASE_ASSERT(isSuccessful);
 #endif
     }
 
 public:
+    ~Thread()
+    {
+#if OS(WINDOWS)
+        CloseHandle(platformThreadHandle);
+#endif
+    }
+
     static Thread* createForCurrentThread()
     {
         return new Thread(getCurrentPlatformThread(), wtfThreadData().stack().origin());
@@ -228,6 +241,9 @@ public:
     Thread* next;
     PlatformThread platformThread;
     void* stackBase;
+#if OS(WINDOWS)
+    HANDLE platformThreadHandle;
+#endif
 };
 
 MachineThreads::MachineThreads(Heap* heap)
@@ -335,7 +351,7 @@ inline bool MachineThreads::Thread::suspend()
     kern_return_t result = thread_suspend(platformThread);
     return result == KERN_SUCCESS;
 #elif OS(WINDOWS)
-    bool threadIsSuspended = (SuspendThread(platformThread) != (DWORD)-1);
+    bool threadIsSuspended = (SuspendThread(platformThreadHandle) != (DWORD)-1);
     ASSERT(threadIsSuspended);
     return threadIsSuspended;
 #elif USE(PTHREADS)
@@ -351,7 +367,7 @@ inline void MachineThreads::Thread::resume()
 #if OS(DARWIN)
     thread_resume(platformThread);
 #elif OS(WINDOWS)
-    ResumeThread(platformThread);
+    ResumeThread(platformThreadHandle);
 #elif USE(PTHREADS)
     pthread_kill(platformThread, SigThreadSuspendResume);
 #else
@@ -396,7 +412,7 @@ size_t MachineThreads::Thread::getRegisters(MachineThreads::Thread::Registers& r
 
 #elif OS(WINDOWS)
     regs.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
-    GetThreadContext(platformThread, &regs);
+    GetThreadContext(platformThreadHandle, &regs);
     return sizeof(CONTEXT);
 #elif USE(PTHREADS)
     pthread_attr_init(&regs);

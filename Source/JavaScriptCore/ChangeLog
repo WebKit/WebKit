@@ -1,3 +1,42 @@
+2015-05-12  Mark Lam  <mark.lam@apple.com>
+
+        Windows: Cannot use HANDLE from GetCurrentThread() to get the CONTEXT of another thread.
+        https://bugs.webkit.org/show_bug.cgi?id=144924
+
+        Reviewed by Alex Christensen.
+
+        The present stack scanning code in the Windows port is expecting that the
+        GetCurrentThread() API will provide a unique HANDLE for each thread.  The code
+        then saves and later uses that HANDLE with GetThreadContext() to get the
+        runtime state of the target thread from the GC thread.  According to
+        https://msdn.microsoft.com/en-us/library/windows/desktop/ms683182(v=vs.85).aspx,
+        GetCurrentThread() does not provide this unique HANDLE that we expect:
+
+            "The function cannot be used by one thread to create a handle that can
+            be used by other threads to refer to the first thread. The handle is
+            always interpreted as referring to the thread that is using it. A
+            thread can create a "real" handle to itself that can be used by other
+            threads, or inherited by other processes, by specifying the pseudo
+            handle as the source handle in a call to the DuplicateHandle function."
+
+        As a result of this, GetCurrentThread() always returns the same HANDLE value, and
+        we end up never scanning the stacks of other threads because we wrongly think that
+        they are all equal (in identity) to the scanning thread.  This, in turn, results
+        in crashes due to objects that are incorrectly collected.
+
+        The fix is to call DuplicateHandle() to create a HANDLE that we can use.  The
+        MachineThreads::Thread class already accurately tracks the period of time when
+        we need that HANDLE for the VM.  Hence, the life-cycle of the HANDLE can be tied
+        to the life-cycle of the MachineThreads::Thread object for the corresponding thread.
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::getCurrentPlatformThread):
+        (JSC::MachineThreads::Thread::Thread):
+        (JSC::MachineThreads::Thread::~Thread):
+        (JSC::MachineThreads::Thread::suspend):
+        (JSC::MachineThreads::Thread::resume):
+        (JSC::MachineThreads::Thread::getRegisters):
+
 2015-05-12  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Make the NegZero backward propagated flags of ArithMod stricter
