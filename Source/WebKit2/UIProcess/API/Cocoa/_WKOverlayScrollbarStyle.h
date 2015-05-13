@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 typedef NS_ENUM(NSUInteger, _WKOverlayScrollbarStyle) {
     _WKOverlayScrollbarStyleDefault,
     _WKOverlayScrollbarStyleDark,
@@ -37,5 +35,3 @@ typedef NS_ENUM(NSUInteger, _WKOverlayScrollbarStyle) {
     _WKOverlayScrollbarStyleAutomatic
 
 } WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
-
-#endif

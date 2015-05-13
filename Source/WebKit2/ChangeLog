@@ -1,3 +1,9 @@
+2015-05-13  Beth Dakin  <bdakin@apple.com>
+
+        Speculative build fix.
+
+        * UIProcess/API/Cocoa/_WKOverlayScrollbarStyle.h:
+
 2015-05-13  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK][CMake] Extra include directory when libnotify is present but disabled
