@@ -514,7 +514,7 @@ void StorageManager::processDidCloseConnection(WebProcessProxy&, IPC::Connection
     });
 }
 
-void StorageManager::getOrigins(std::function<void (Vector<RefPtr<WebCore::SecurityOrigin>>)> completionHandler)
+void StorageManager::getLocalStorageOrigins(std::function<void (Vector<RefPtr<WebCore::SecurityOrigin>>)> completionHandler)
 {
     RefPtr<StorageManager> storageManager(this);
 
@@ -527,7 +527,7 @@ void StorageManager::getOrigins(std::function<void (Vector<RefPtr<WebCore::Secur
     });
 }
 
-void StorageManager::getStorageDetailsByOrigin(std::function<void (Vector<LocalStorageDetails>)> completionHandler)
+void StorageManager::getLocalStorageDetailsByOrigin(std::function<void (Vector<LocalStorageDetails>)> completionHandler)
 {
     RefPtr<StorageManager> storageManager(this);
 
@@ -540,7 +540,7 @@ void StorageManager::getStorageDetailsByOrigin(std::function<void (Vector<LocalS
     });
 }
 
-void StorageManager::deleteEntriesForOrigin(const SecurityOrigin& securityOrigin)
+void StorageManager::deleteLocalStorageEntriesForOrigin(const SecurityOrigin& securityOrigin)
 {
     RefPtr<StorageManager> storageManager(this);
 
@@ -556,7 +556,7 @@ void StorageManager::deleteEntriesForOrigin(const SecurityOrigin& securityOrigin
     });
 }
 
-void StorageManager::deleteAllEntries()
+void StorageManager::deleteAllLocalStorageEntries()
 {
     RefPtr<StorageManager> storageManager(this);
 
@@ -590,7 +590,7 @@ void StorageManager::deleteLocalStorageOriginsModifiedSince(std::chrono::system_
     });
 }
 
-void StorageManager::deleteEntriesForOrigins(const Vector<RefPtr<WebCore::SecurityOrigin>>& origins, std::function<void ()> completionHandler)
+void StorageManager::deleteLocalStorageEntriesForOrigins(const Vector<RefPtr<WebCore::SecurityOrigin>>& origins, std::function<void ()> completionHandler)
 {
     Vector<RefPtr<WebCore::SecurityOrigin>> copiedOrigins;
     copiedOrigins.reserveInitialCapacity(origins.size());

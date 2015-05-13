@@ -1,3 +1,32 @@
+2015-05-13  Anders Carlsson  <andersca@apple.com>
+
+        Rename some StorageManager functions to indicate that they work on local storage entries
+        https://bugs.webkit.org/show_bug.cgi?id=144958
+        First part of rdar://problem/10690447.
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::getLocalStorageOrigins):
+        (WebKit::StorageManager::getLocalStorageDetailsByOrigin):
+        (WebKit::StorageManager::deleteLocalStorageEntriesForOrigin):
+        (WebKit::StorageManager::deleteAllLocalStorageEntries):
+        (WebKit::StorageManager::deleteLocalStorageEntriesForOrigins):
+        (WebKit::StorageManager::getOrigins): Deleted.
+        (WebKit::StorageManager::getStorageDetailsByOrigin): Deleted.
+        (WebKit::StorageManager::deleteEntriesForOrigin): Deleted.
+        (WebKit::StorageManager::deleteAllEntries): Deleted.
+        (WebKit::StorageManager::deleteEntriesForOrigins): Deleted.
+        * UIProcess/Storage/StorageManager.h:
+        * UIProcess/WebKeyValueStorageManager.cpp:
+        (WebKit::WebKeyValueStorageManager::getKeyValueStorageOrigins):
+        (WebKit::WebKeyValueStorageManager::getStorageDetailsByOrigin):
+        (WebKit::WebKeyValueStorageManager::deleteEntriesForOrigin):
+        (WebKit::WebKeyValueStorageManager::deleteAllEntries):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchData):
+        (WebKit::WebsiteDataStore::removeData):
+
 2015-05-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Crash under WebKit::WebInspectorProxy::attachAvailabilityChanged sometimes opening new page

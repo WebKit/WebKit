@@ -269,7 +269,7 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
     if (dataTypes & WebsiteDataTypeLocalStorage && m_storageManager) {
         callbackAggregator->addPendingCallback();
 
-        m_storageManager->getOrigins([callbackAggregator](Vector<RefPtr<WebCore::SecurityOrigin>> origins) {
+        m_storageManager->getLocalStorageOrigins([callbackAggregator](Vector<RefPtr<WebCore::SecurityOrigin>> origins) {
             WebsiteData websiteData;
             for (auto& origin : origins)
                 websiteData.entries.append(WebsiteData::Entry { WTF::move(origin), WebsiteDataTypeLocalStorage });
@@ -616,7 +616,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<Websi
     if (dataTypes & WebsiteDataTypeLocalStorage && m_storageManager) {
         callbackAggregator->addPendingCallback();
 
-        m_storageManager->deleteEntriesForOrigins(origins, [callbackAggregator] {
+        m_storageManager->deleteLocalStorageEntriesForOrigins(origins, [callbackAggregator] {
             callbackAggregator->removePendingCallback();
         });
     }

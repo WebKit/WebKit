@@ -98,7 +98,7 @@ void WebKeyValueStorageManager::getKeyValueStorageOrigins(std::function<void (AP
         return;
     }
 
-    storageManager->getOrigins([callbackFunction](Vector<RefPtr<SecurityOrigin>> securityOrigins) {
+    storageManager->getLocalStorageOrigins([callbackFunction](Vector<RefPtr<SecurityOrigin>> securityOrigins) {
         Vector<RefPtr<API::Object>> webSecurityOrigins;
         webSecurityOrigins.reserveInitialCapacity(securityOrigins.size());
         for (auto& origin : securityOrigins)
@@ -118,7 +118,7 @@ void WebKeyValueStorageManager::getStorageDetailsByOrigin(std::function<void (AP
         return;
     }
 
-    storageManager->getStorageDetailsByOrigin([callbackFunction](Vector<LocalStorageDetails> storageDetails) {
+    storageManager->getLocalStorageDetailsByOrigin([callbackFunction](Vector<LocalStorageDetails> storageDetails) {
         HashMap<String, RefPtr<API::Object>> detailsMap;
         Vector<RefPtr<API::Object>> result;
         result.reserveInitialCapacity(storageDetails.size());
@@ -147,7 +147,7 @@ void WebKeyValueStorageManager::deleteEntriesForOrigin(API::SecurityOrigin* orig
     if (!storageManager)
         return;
 
-    storageManager->deleteEntriesForOrigin(origin->securityOrigin());
+    storageManager->deleteLocalStorageEntriesForOrigin(origin->securityOrigin());
 }
 
 void WebKeyValueStorageManager::deleteAllEntries()
@@ -156,7 +156,7 @@ void WebKeyValueStorageManager::deleteAllEntries()
     if (!storageManager)
         return;
 
-    storageManager->deleteAllEntries();
+    storageManager->deleteAllLocalStorageEntries();
 }
 
 } // namespace WebKit

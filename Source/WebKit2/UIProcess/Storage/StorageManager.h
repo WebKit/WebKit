@@ -57,13 +57,13 @@ public:
     void processDidCloseConnection(WebProcessProxy&, IPC::Connection&);
     void applicationWillTerminate();
 
-    void getOrigins(std::function<void (Vector<RefPtr<WebCore::SecurityOrigin>>)> completionHandler);
-    void getStorageDetailsByOrigin(std::function<void (Vector<LocalStorageDetails>)> completionHandler);
-    void deleteEntriesForOrigin(const WebCore::SecurityOrigin&);
-    void deleteAllEntries();
+    void getLocalStorageOrigins(std::function<void (Vector<RefPtr<WebCore::SecurityOrigin>>)> completionHandler);
+    void getLocalStorageDetailsByOrigin(std::function<void (Vector<LocalStorageDetails>)> completionHandler);
+    void deleteLocalStorageEntriesForOrigin(const WebCore::SecurityOrigin&);
+    void deleteAllLocalStorageEntries();
 
     void deleteLocalStorageOriginsModifiedSince(std::chrono::system_clock::time_point, std::function<void ()> completionHandler);
-    void deleteEntriesForOrigins(const Vector<RefPtr<WebCore::SecurityOrigin>>&, std::function<void ()> completionHandler);
+    void deleteLocalStorageEntriesForOrigins(const Vector<RefPtr<WebCore::SecurityOrigin>>&, std::function<void ()> completionHandler);
 
 private:
     explicit StorageManager(const String& localStorageDirectory);
