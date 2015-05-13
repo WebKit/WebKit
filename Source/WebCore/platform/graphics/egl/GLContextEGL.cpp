@@ -143,9 +143,9 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createPbufferContext(EGLContext shar
     return std::make_unique<GLContextEGL>(context, surface, PbufferSurface);
 }
 
+#if PLATFORM(X11)
 std::unique_ptr<GLContextEGL> GLContextEGL::createPixmapContext(EGLContext sharingContext)
 {
-#if PLATFORM(X11)
     EGLDisplay display = sharedEGLDisplay();
     if (display == EGL_NO_DISPLAY)
         return nullptr;
@@ -165,25 +165,21 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createPixmapContext(EGLContext shari
     }
 
     Display* x11Display = downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native();
-    Pixmap pixmap = XCreatePixmap(x11Display, DefaultRootWindow(x11Display), 1, 1, depth);
+    XUniquePixmap pixmap = XCreatePixmap(x11Display, DefaultRootWindow(x11Display), 1, 1, depth);
     if (!pixmap) {
         eglDestroyContext(display, context);
         return nullptr;
     }
 
-    EGLSurface surface = eglCreatePixmapSurface(display, config, pixmap, 0);
-
+    EGLSurface surface = eglCreatePixmapSurface(display, config, pixmap.get(), 0);
     if (surface == EGL_NO_SURFACE) {
-        XFreePixmap(x11Display, pixmap);
         eglDestroyContext(display, context);
         return nullptr;
     }
 
-    return std::make_unique<GLContextEGL>(context, surface, PixmapSurface);
-#else
-    return nullptr;
-#endif
+    return std::make_unique<GLContextEGL>(context, surface, WTF::move(pixmap));
 }
+#endif // PLATFORM(X11)
 
 std::unique_ptr<GLContextEGL> GLContextEGL::createContext(EGLNativeWindowType window, GLContext* sharingContext)
 {
@@ -203,12 +199,13 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createContext(EGLNativeWindowType wi
 
     EGLContext eglSharingContext = sharingContext ? static_cast<GLContextEGL*>(sharingContext)->m_context : 0;
     auto context = window ? createWindowContext(window, sharingContext) : nullptr;
+#if PLATFORM(X11)
     if (!context)
         context = createPixmapContext(eglSharingContext);
-
+#endif
     if (!context)
         context = createPbufferContext(eglSharingContext);
-    
+
     return WTF::move(context);
 }
 
@@ -216,11 +213,19 @@ GLContextEGL::GLContextEGL(EGLContext context, EGLSurface surface, EGLSurfaceTyp
     : m_context(context)
     , m_surface(surface)
     , m_type(type)
-#if USE(CAIRO)
-    , m_cairoDevice(0)
-#endif
+{
+    ASSERT(type != PixmapSurface);
+}
+
+#if PLATFORM(X11)
+GLContextEGL::GLContextEGL(EGLContext context, EGLSurface surface, XUniquePixmap&& pixmap)
+    : m_context(context)
+    , m_surface(surface)
+    , m_type(PixmapSurface)
+    , m_pixmap(WTF::move(pixmap))
 {
 }
+#endif
 
 GLContextEGL::~GLContextEGL()
 {

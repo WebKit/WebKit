@@ -1,3 +1,26 @@
+2015-05-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [EGL][X11] XPixmap created in GLContextEGL::createPixmapContext() is leaked
+        https://bugs.webkit.org/show_bug.cgi?id=144909
+
+        Reviewed by Sergio Villar Senin and Žan Doberšek.
+
+        The pixmap is created and passed to eglCreatePixmapSurface(), but
+        never released. eglCreatePixmapSurface() doesn't take the
+        ownership of the pixmap, so we should explicitly free it when the
+        GLContextEGL is destroyed.
+
+        * platform/graphics/egl/GLContextEGL.cpp:
+        (WebCore::GLContextEGL::createPixmapContext): Use XUniquePixmap
+        and transfer the ownership to the context by using the new
+        constructor that receives a XUniquePixmap&&.
+        (WebCore::GLContextEGL::createContext): createPixmapContext() is
+        now only defined for X11.
+        (WebCore::GLContextEGL::GLContextEGL): New constructor that
+        receives a XUniquePixmap&&.
+        * platform/graphics/egl/GLContextEGL.h: Add new constructor and
+        initialize the cairo device when defined to simplify constructors.
+
 2015-05-12  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         Reindent DIBPixelData.h for consistency.
