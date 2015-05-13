@@ -106,6 +106,10 @@ struct WebPageCreationParameters {
     
     WebCore::ScrollPinningBehavior scrollPinningBehavior;
 
+    // FIXME: This should be WTF::Optional<WebCore::ScrollbarOverlayStyle>, but we would need to
+    // correctly handle enums inside Optionals when encoding and decoding. 
+    WTF::Optional<uint32_t> scrollbarOverlayStyle;
+
     bool backgroundExtendsBeyondPage;
 
     LayerHostingMode layerHostingMode;

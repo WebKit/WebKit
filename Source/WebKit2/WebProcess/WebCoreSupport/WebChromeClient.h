@@ -276,6 +276,8 @@ private:
     virtual void notifyScrollerThumbIsVisibleInRect(const WebCore::IntRect&) override;
     virtual void recommendedScrollbarStyleDidChange(WebCore::ScrollbarStyle newStyle) override;
 
+    virtual WTF::Optional<WebCore::ScrollbarOverlayStyle> preferredScrollbarOverlayStyle() override;
+
     virtual WebCore::Color underlayColor() const override;
 
     virtual void pageExtendedBackgroundColorDidChange(WebCore::Color) const override;

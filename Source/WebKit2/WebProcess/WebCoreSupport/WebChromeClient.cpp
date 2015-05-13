@@ -980,6 +980,11 @@ void WebChromeClient::recommendedScrollbarStyleDidChange(ScrollbarStyle newStyle
     m_page->send(Messages::WebPageProxy::RecommendedScrollbarStyleDidChange(static_cast<int32_t>(newStyle)));
 }
 
+WTF::Optional<ScrollbarOverlayStyle> WebChromeClient::preferredScrollbarOverlayStyle()
+{
+    return m_page->scrollbarOverlayStyle(); 
+}
+
 Color WebChromeClient::underlayColor() const
 {
     return m_page->underlayColor();

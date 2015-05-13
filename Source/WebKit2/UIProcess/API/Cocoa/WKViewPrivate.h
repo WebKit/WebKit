@@ -28,6 +28,7 @@
 #import <WebKit/WKImmediateActionTypes.h>
 #import <WebKit/WKLayoutMode.h>
 #import <WebKit/WKView.h>
+#import <WebKit/_WKOverlayScrollbarStyle.h>
 
 @interface WKView (Private)
 
@@ -88,6 +89,8 @@
 @property (readwrite) BOOL allowsBackForwardNavigationGestures;
 @property (nonatomic, setter=_setTopContentInset:) CGFloat _topContentInset;
 @property (nonatomic, setter=_setTotalHeightOfBanners:) CGFloat _totalHeightOfBanners;
+
+@property (nonatomic, setter=_setOverlayScrollbarStyle:) _WKOverlayScrollbarStyle _overlayScrollbarStyle;
 
 @property (nonatomic, setter=_setLayoutMode:) WKLayoutMode _layoutMode;
 // For use with _layoutMode = kWKLayoutModeFixedSize:

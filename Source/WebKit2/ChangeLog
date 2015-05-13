@@ -1,3 +1,47 @@
+2015-05-13  Beth Dakin  <bdakin@apple.com>
+
+        Need SPI to set the overlay scroll bar style
+        https://bugs.webkit.org/show_bug.cgi?id=144928
+        -and corresponding-
+        rdar://problem/20143614
+
+        Reviewed by Anders Carlsson.
+
+        Make scrollbarOverlayStyle a part of the creation parameters. 
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+
+        New SPI.
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKOverlayScrollbarStyle.h: Added.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setOverlayScrollbarStyle:]):
+        (-[WKView _overlayScrollbarStyle]):
+
+        Store m_scrollbarOverlayStyle on WebPageProxy, and set it to the WebProcess.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::setOverlayScrollbarStyle):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::overlayScrollbarStyle):
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        Return WebPage’s scrollbarOverlayStyle().
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::preferredScrollbarOverlayStyle):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
+        Cache the scrollbarOverlayStyle() here for the WebProcess. 
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::setScrollbarOverlayStyle):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::scrollbarOverlayStyle):
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2015-05-13  Anders Carlsson  <andersca@apple.com>
 
         Rename some StorageManager functions to indicate that they work on local storage entries

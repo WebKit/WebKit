@@ -66,6 +66,7 @@ void WebPageCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << minimumLayoutSize;
     encoder << autoSizingShouldExpandToViewHeight;
     encoder.encodeEnum(scrollPinningBehavior);
+    encoder << scrollbarOverlayStyle;
     encoder << backgroundExtendsBeyondPage;
     encoder.encodeEnum(layerHostingMode);
     encoder << mimeTypesWithCustomContentProviders;
@@ -151,6 +152,8 @@ bool WebPageCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebPageCre
     if (!decoder.decode(parameters.autoSizingShouldExpandToViewHeight))
         return false;
     if (!decoder.decodeEnum(parameters.scrollPinningBehavior))
+        return false;
+    if (!decoder.decode(parameters.scrollbarOverlayStyle))
         return false;
     if (!decoder.decode(parameters.backgroundExtendsBeyondPage))
         return false;

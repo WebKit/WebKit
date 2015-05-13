@@ -5000,6 +5000,10 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.minimumLayoutSize = m_minimumLayoutSize;
     parameters.autoSizingShouldExpandToViewHeight = m_autoSizingShouldExpandToViewHeight;
     parameters.scrollPinningBehavior = m_scrollPinningBehavior;
+    if (m_scrollbarOverlayStyle)
+        parameters.scrollbarOverlayStyle = m_scrollbarOverlayStyle.value();
+    else
+        parameters.scrollbarOverlayStyle = Nullopt;
     parameters.backgroundExtendsBeyondPage = m_backgroundExtendsBeyondPage;
     parameters.layerHostingMode = m_layerHostingMode;
 #if ENABLE(REMOTE_INSPECTOR)
@@ -5548,6 +5552,24 @@ void WebPageProxy::setScrollPinningBehavior(ScrollPinningBehavior pinning)
 
     if (isValid())
         m_process->send(Messages::WebPage::SetScrollPinningBehavior(pinning), m_pageID);
+}
+
+void WebPageProxy::setOverlayScrollbarStyle(WTF::Optional<WebCore::ScrollbarOverlayStyle> scrollbarStyle)
+{
+    if (!m_scrollbarOverlayStyle && !scrollbarStyle)
+        return;
+
+    if ((m_scrollbarOverlayStyle && scrollbarStyle) && m_scrollbarOverlayStyle.value() == scrollbarStyle.value())
+        return;
+
+    m_scrollbarOverlayStyle = scrollbarStyle;
+
+    WTF::Optional<uint32_t> scrollbarStyleForMessage;
+    if (scrollbarStyle)
+        scrollbarStyleForMessage = static_cast<ScrollbarOverlayStyle>(scrollbarStyle.value());
+
+    if (isValid())
+        m_process->send(Messages::WebPage::SetScrollbarOverlayStyle(scrollbarStyleForMessage), m_pageID);
 }
 
 #if ENABLE(SUBTLE_CRYPTO)
