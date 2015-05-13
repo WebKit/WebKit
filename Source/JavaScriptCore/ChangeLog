@@ -1,3 +1,10 @@
+2015-05-12  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix the iteration count of arith-modulo-node-behaviors.js
+
+        * tests/stress/arith-modulo-node-behaviors.js:
+        No need for big numbers for the real testing.
+
 2015-05-12  Mark Lam  <mark.lam@apple.com>
 
         Windows: Cannot use HANDLE from GetCurrentThread() to get the CONTEXT of another thread.
