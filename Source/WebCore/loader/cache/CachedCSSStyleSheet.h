@@ -43,7 +43,7 @@ namespace WebCore {
 
         const String sheetText(bool* hasValidMIMEType = nullptr) const;
 
-        PassRefPtr<StyleSheetContents> restoreParsedStyleSheet(const CSSParserContext&);
+        PassRefPtr<StyleSheetContents> restoreParsedStyleSheet(const CSSParserContext&, CachePolicy);
         void saveParsedStyleSheet(Ref<StyleSheetContents>&&);
 
     private:

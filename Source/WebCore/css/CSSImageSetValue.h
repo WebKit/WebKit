@@ -62,7 +62,7 @@ public:
         float scaleFactor;
     };
 
-    bool hasFailedOrCanceledSubresources() const;
+    bool traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const;
 
     PassRefPtr<CSSImageSetValue> cloneForCSSOM() const;
 

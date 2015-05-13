@@ -646,6 +646,34 @@ void CachedResourceLoader::storeResourceTimingInitiatorInformation(const CachedR
 }
 #endif // ENABLE(RESOURCE_TIMING)
 
+static void logRevalidation(const String& reason, DiagnosticLoggingClient& logClient)
+{
+    logClient.logDiagnosticMessageWithValue(DiagnosticLoggingKeys::cachedResourceRevalidationKey(), DiagnosticLoggingKeys::reasonKey(), reason, ShouldSample::Yes);
+}
+
+static void logResourceRevalidationDecision(CachedResource::RevalidationDecision reason, const Frame* frame)
+{
+    if (!frame)
+        return;
+    auto& logClient = frame->mainFrame().diagnosticLoggingClient();
+    switch (reason) {
+    case CachedResource::RevalidationDecision::No:
+        break;
+    case CachedResource::RevalidationDecision::YesDueToExpired:
+        logRevalidation(DiagnosticLoggingKeys::isExpiredKey(), logClient);
+        break;
+    case CachedResource::RevalidationDecision::YesDueToNoStore:
+        logRevalidation(DiagnosticLoggingKeys::noStoreKey(), logClient);
+        break;
+    case CachedResource::RevalidationDecision::YesDueToNoCache:
+        logRevalidation(DiagnosticLoggingKeys::noCacheKey(), logClient);
+        break;
+    case CachedResource::RevalidationDecision::YesDueToCachePolicy:
+        logRevalidation(DiagnosticLoggingKeys::reloadKey(), logClient);
+        break;
+    }
+}
+
 CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalidationPolicy(CachedResource::Type type, ResourceRequest& request, bool forPreload, CachedResource* existingResource, CachedResourceRequest::DeferOption defer) const
 {
     if (!existingResource)
@@ -738,8 +766,11 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     if (existingResource->isLoading())
         return Use;
 
+    auto revalidationDecision = existingResource->makeRevalidationDecision(cachePolicy(type));
+    logResourceRevalidationDecision(revalidationDecision, frame());
+
     // Check if the cache headers requires us to revalidate (cache expiration for example).
-    if (existingResource->mustRevalidateDueToCacheHeaders(*this, cachePolicy(type))) {
+    if (revalidationDecision != CachedResource::RevalidationDecision::No) {
         // See if the resource has usable ETag or Last-modified headers.
         if (existingResource->canUseCacheValidator())
             return Revalidate;

@@ -680,39 +680,30 @@ bool CachedResource::canUseCacheValidator() const
     return m_response.hasCacheValidatorFields();
 }
 
-static inline void logResourceRevalidationReason(Frame* frame, const String& reason)
-{
-    if (frame)
-        frame->mainFrame().diagnosticLoggingClient().logDiagnosticMessageWithValue(DiagnosticLoggingKeys::cachedResourceRevalidationKey(), DiagnosticLoggingKeys::reasonKey(), reason, ShouldSample::Yes);
-}
-
-bool CachedResource::mustRevalidateDueToCacheHeaders(const CachedResourceLoader& cachedResourceLoader, CachePolicy cachePolicy) const
+CachedResource::RevalidationDecision CachedResource::makeRevalidationDecision(CachePolicy cachePolicy) const
 {    
-    ASSERT(cachePolicy == CachePolicyRevalidate || cachePolicy == CachePolicyVerify);
+    switch (cachePolicy) {
+    case CachePolicyHistoryBuffer:
+        return RevalidationDecision::No;
 
-    if (cachePolicy == CachePolicyRevalidate) {
-        logResourceRevalidationReason(cachedResourceLoader.frame(), DiagnosticLoggingKeys::reloadKey());
-        return true;
-    }
+    case CachePolicyReload:
+    case CachePolicyRevalidate:
+        return RevalidationDecision::YesDueToCachePolicy;
 
-    if (m_response.cacheControlContainsNoCache() || m_response.cacheControlContainsNoStore()) {
-        LOG(ResourceLoading, "CachedResource %p mustRevalidate because of m_response.cacheControlContainsNoCache() || m_response.cacheControlContainsNoStore()\n", this);
+    case CachePolicyVerify:
+        if (m_response.cacheControlContainsNoCache())
+            return RevalidationDecision::YesDueToNoCache;
+        // FIXME: Cache-Control:no-store should prevent storing, not reuse.
         if (m_response.cacheControlContainsNoStore())
-            logResourceRevalidationReason(cachedResourceLoader.frame(), DiagnosticLoggingKeys::noStoreKey());
-        else
-            logResourceRevalidationReason(cachedResourceLoader.frame(), DiagnosticLoggingKeys::noCacheKey());
+            return RevalidationDecision::YesDueToNoStore;
 
-        return true;
-    }
+        if (isExpired())
+            return RevalidationDecision::YesDueToExpired;
 
-    // CachePolicyVerify
-    if (isExpired()) {
-        LOG(ResourceLoading, "CachedResource %p mustRevalidate because of isExpired()\n", this);
-        logResourceRevalidationReason(cachedResourceLoader.frame(), DiagnosticLoggingKeys::isExpiredKey());
-        return true;
-    }
-
-    return false;
+        return RevalidationDecision::No;
+    };
+    ASSERT_NOT_REACHED();
+    return RevalidationDecision::No;
 }
 
 bool CachedResource::redirectChainAllowsReuse(ReuseExpiredRedirectionOrNot reuseExpiredRedirection) const

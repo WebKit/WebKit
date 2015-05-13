@@ -1,3 +1,100 @@
+2015-05-13  Antti Koivisto  <antti@apple.com>
+
+        Cached CSS image resources don't show up after reloading <http://nightly.webkit.org/start/>
+        https://bugs.webkit.org/show_bug.cgi?id=144952
+        rdar://problem/13387307
+
+        Reviewed by Oliver Hunt.
+
+        This is a symptom of a general problem that we don't revalidate subresources of cached parsed stylesheets.
+
+        Fix by tightening the check we perform when choosing to used the cached sheet. If there are expired subresources
+        we reparse the sheet.
+
+        Test: http/tests/cache/stylesheet-sharing.html
+
+        * css/CSSCrossfadeValue.cpp:
+        (WebCore::CSSCrossfadeValue::traverseSubresources):
+        (WebCore::CSSCrossfadeValue::hasFailedOrCanceledSubresources): Deleted.
+
+            Replace hasFailedOrCanceledSubresources with general purpose subresource traversal functions.
+
+        * css/CSSCrossfadeValue.h:
+        * css/CSSFilterImageValue.cpp:
+        (WebCore::CSSFilterImageValue::traverseSubresources):
+        (WebCore::CSSFilterImageValue::hasFailedOrCanceledSubresources): Deleted.
+        * css/CSSFilterImageValue.h:
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::traverseSubresources):
+        (WebCore::CSSFontFaceSrcValue::hasFailedOrCanceledSubresources): Deleted.
+        * css/CSSFontFaceSrcValue.h:
+        * css/CSSImageSetValue.cpp:
+        (WebCore::CSSImageSetValue::traverseSubresources):
+        (WebCore::CSSImageSetValue::hasFailedOrCanceledSubresources): Deleted.
+        * css/CSSImageSetValue.h:
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::traverseSubresources):
+        (WebCore::CSSImageValue::hasFailedOrCanceledSubresources): Deleted.
+        * css/CSSImageValue.h:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::traverseSubresources):
+        (WebCore::CSSValue::hasFailedOrCanceledSubresources): Deleted.
+        * css/CSSValue.h:
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::traverseSubresources):
+        (WebCore::CSSValueList::hasFailedOrCanceledSubresources): Deleted.
+        * css/CSSValueList.h:
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::traverseSubresources):
+        (WebCore::StyleProperties::hasFailedOrCanceledSubresources): Deleted.
+        * css/StyleProperties.h:
+        * css/StyleSheetContents.cpp:
+        (WebCore::traverseSubresourcesInRules):
+        (WebCore::StyleSheetContents::traverseSubresources):
+        (WebCore::StyleSheetContents::subresourcesAllowReuse):
+
+            Disallow reuse if there are expired subresources.
+
+        (WebCore::StyleSheetContents::isLoadingSubresources):
+
+            Testing support.
+
+        (WebCore::childRulesHaveFailedOrCanceledSubresources): Deleted.
+        (WebCore::StyleSheetContents::hasFailedOrCanceledSubresources): Deleted.
+        * css/StyleSheetContents.h:
+        (WebCore::StyleSheetContents::loadCompleted):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::setCSSStyleSheet):
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::restoreParsedStyleSheet):
+        * loader/cache/CachedCSSStyleSheet.h:
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::makeRevalidationDecision):
+        (WebCore::CachedImage::mustRevalidateDueToCacheHeaders): Deleted.
+
+            Move the logging code out from this function (it requires frame access this function doesn't otherwise need)
+            and refactor to return a decision enum.
+
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::makeRevalidationDecision):
+        (WebCore::logResourceRevalidationReason): Deleted.
+        (WebCore::CachedResource::mustRevalidateDueToCacheHeaders): Deleted.
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::loadFailedOrCanceled):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::logRevalidation):
+        (WebCore::logResourceRevalidationDecision):
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy):
+
+            Move logging here.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::isSharingStyleSheetContents):
+        (WebCore::Internals::isStyleSheetLoadingSubresources):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2015-05-13  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [CoordinatedGraphics] Remove scaleFactor from SurfaceUpdateInfo

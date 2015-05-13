@@ -423,24 +423,24 @@ void StyleSheetContents::addSubresourceStyleURLs(ListHashSet<URL>& urls)
     }
 }
 
-static bool childRulesHaveFailedOrCanceledSubresources(const Vector<RefPtr<StyleRuleBase>>& rules)
+static bool traverseSubresourcesInRules(const Vector<RefPtr<StyleRuleBase>>& rules, const std::function<bool (const CachedResource&)>& handler)
 {
     for (auto& rule : rules) {
         switch (rule->type()) {
         case StyleRuleBase::Style:
-            if (downcast<StyleRule>(*rule).properties().hasFailedOrCanceledSubresources())
+            if (downcast<StyleRule>(*rule).properties().traverseSubresources(handler))
                 return true;
             break;
         case StyleRuleBase::FontFace:
-            if (downcast<StyleRuleFontFace>(*rule).properties().hasFailedOrCanceledSubresources())
+            if (downcast<StyleRuleFontFace>(*rule).properties().traverseSubresources(handler))
                 return true;
             break;
         case StyleRuleBase::Media:
-            if (childRulesHaveFailedOrCanceledSubresources(downcast<StyleRuleMedia>(*rule).childRules()))
+            if (traverseSubresourcesInRules(downcast<StyleRuleMedia>(*rule).childRules(), handler))
                 return true;
             break;
         case StyleRuleBase::Region:
-            if (childRulesHaveFailedOrCanceledSubresources(downcast<StyleRuleRegion>(*rule).childRules()))
+            if (traverseSubresourcesInRules(downcast<StyleRuleRegion>(*rule).childRules(), handler))
                 return true;
             break;
         case StyleRuleBase::Import:
@@ -463,10 +463,35 @@ static bool childRulesHaveFailedOrCanceledSubresources(const Vector<RefPtr<Style
     return false;
 }
 
-bool StyleSheetContents::hasFailedOrCanceledSubresources() const
+bool StyleSheetContents::traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const
 {
-    ASSERT(isCacheable());
-    return childRulesHaveFailedOrCanceledSubresources(m_childRules);
+    for (auto& importRule : m_importRules) {
+        if (!importRule->styleSheet())
+            continue;
+        if (traverseSubresourcesInRules(importRule->styleSheet()->m_childRules, handler))
+            return true;
+    }
+    return traverseSubresourcesInRules(m_childRules, handler);
+}
+
+bool StyleSheetContents::subresourcesAllowReuse(CachePolicy cachePolicy) const
+{
+    bool hasFailedOrExpiredResources = traverseSubresources([cachePolicy](const CachedResource& resource) {
+        if (resource.loadFailedOrCanceled())
+            return true;
+        // We can't revalidate subresources individually so don't use reuse the parsed sheet if they need revalidation.
+        if (resource.makeRevalidationDecision(cachePolicy) != CachedResource::RevalidationDecision::No)
+            return true;
+        return false;
+    });
+    return !hasFailedOrExpiredResources;
+}
+
+bool StyleSheetContents::isLoadingSubresources() const
+{
+    return traverseSubresources([](const CachedResource& resource) {
+        return resource.isLoading();
+    });
 }
 
 StyleSheetContents* StyleSheetContents::parentStyleSheet() const

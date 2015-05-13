@@ -184,14 +184,13 @@ String CSSImageSetValue::customCSSText() const
     return result.toString();
 }
 
-bool CSSImageSetValue::hasFailedOrCanceledSubresources() const
+bool CSSImageSetValue::traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const
 {
     if (!is<StyleCachedImageSet>(m_imageSet.get()))
         return false;
     CachedImage* cachedResource = downcast<StyleCachedImageSet>(*m_imageSet).cachedImage();
-    if (!cachedResource)
-        return true;
-    return cachedResource->loadFailedOrCanceled();
+    ASSERT(cachedResource);
+    return handler(*cachedResource);
 }
 
 CSSImageSetValue::CSSImageSetValue(const CSSImageSetValue& cloneFrom)

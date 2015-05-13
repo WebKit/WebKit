@@ -149,11 +149,11 @@ void CSSFilterImageValue::FilterSubimageObserverProxy::imageChanged(CachedImage*
         m_ownerValue->filterImageChanged(*rect);
 }
 
-bool CSSFilterImageValue::hasFailedOrCanceledSubresources() const
+bool CSSFilterImageValue::traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const
 {
-    if (m_cachedImage && m_cachedImage->loadFailedOrCanceled())
-        return true;
-    return false;
+    if (!m_cachedImage)
+        return false;
+    return handler(*m_cachedImage);
 }
 
 bool CSSFilterImageValue::equals(const CSSFilterImageValue& other) const

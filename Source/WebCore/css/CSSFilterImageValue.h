@@ -64,7 +64,7 @@ public:
 
     void loadSubimages(CachedResourceLoader&);
 
-    bool hasFailedOrCanceledSubresources() const;
+    bool traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const;
 
     bool equals(const CSSFilterImageValue&) const;
 

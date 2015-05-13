@@ -143,11 +143,11 @@ void CachedCSSStyleSheet::destroyDecodedData()
     setDecodedSize(0);
 }
 
-PassRefPtr<StyleSheetContents> CachedCSSStyleSheet::restoreParsedStyleSheet(const CSSParserContext& context)
+PassRefPtr<StyleSheetContents> CachedCSSStyleSheet::restoreParsedStyleSheet(const CSSParserContext& context, CachePolicy cachePolicy)
 {
     if (!m_parsedStyleSheetCache)
         return 0;
-    if (m_parsedStyleSheetCache->hasFailedOrCanceledSubresources()) {
+    if (!m_parsedStyleSheetCache->subresourcesAllowReuse(cachePolicy)) {
         m_parsedStyleSheetCache->removedFromMemoryCache();
         m_parsedStyleSheetCache.clear();
         return 0;

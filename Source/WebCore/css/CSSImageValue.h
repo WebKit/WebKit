@@ -50,7 +50,7 @@ public:
 
     PassRefPtr<CSSValue> cloneForCSSOM() const;
 
-    bool hasFailedOrCanceledSubresources() const;
+    bool traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const;
 
     bool equals(const CSSImageValue&) const;
 

@@ -63,7 +63,7 @@ public:
 
     void setPercentage(PassRefPtr<CSSPrimitiveValue> percentageValue) { m_percentageValue = percentageValue; }
 
-    bool hasFailedOrCanceledSubresources() const;
+    bool traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const;
 
     PassRefPtr<CSSCrossfadeValue> blend(const CSSCrossfadeValue&, double) const;
 

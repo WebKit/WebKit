@@ -56,6 +56,7 @@
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
+#include "HTMLLinkElement.h"
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
 #include "HTMLPreloadScanner.h"
@@ -439,6 +440,25 @@ String Internals::xhrResponseSource(XMLHttpRequest* xhr)
     }
     ASSERT_NOT_REACHED();
     return "Error";
+}
+
+bool Internals::isSharingStyleSheetContents(Element* a, Element* b)
+{
+    if (!is<HTMLLinkElement>(a) || !is<HTMLLinkElement>(b))
+        return false;
+    auto& aLink = downcast<HTMLLinkElement>(*a);
+    auto& bLink = downcast<HTMLLinkElement>(*b);
+    if (!aLink.sheet() || !bLink.sheet())
+        return false;
+    return &aLink.sheet()->contents() == &bLink.sheet()->contents();
+}
+
+bool Internals::isStyleSheetLoadingSubresources(Element* link)
+{
+    if (!is<HTMLLinkElement>(link))
+        return false;
+    auto& linkElement = downcast<HTMLLinkElement>(*link);
+    return linkElement.sheet() && linkElement.sheet()->contents().isLoadingSubresources();
 }
 
 static ResourceRequestCachePolicy stringToResourceRequestCachePolicy(const String& policy)

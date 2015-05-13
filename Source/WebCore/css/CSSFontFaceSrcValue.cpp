@@ -91,11 +91,11 @@ void CSSFontFaceSrcValue::addSubresourceStyleURLs(ListHashSet<URL>& urls, const 
         addSubresourceURL(urls, styleSheet->completeURL(m_resource));
 }
 
-bool CSSFontFaceSrcValue::hasFailedOrCanceledSubresources() const
+bool CSSFontFaceSrcValue::traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const
 {
     if (!m_cachedFont)
         return false;
-    return m_cachedFont->loadFailedOrCanceled();
+    return handler(*m_cachedFont);
 }
 
 CachedFont* CSSFontFaceSrcValue::cachedFont(Document* document, bool isSVG)

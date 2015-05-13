@@ -174,11 +174,11 @@ void CSSCrossfadeValue::CrossfadeSubimageObserverProxy::imageChanged(CachedImage
         m_ownerValue->crossfadeChanged(*rect);
 }
 
-bool CSSCrossfadeValue::hasFailedOrCanceledSubresources() const
+bool CSSCrossfadeValue::traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const
 {
-    if (m_cachedFromImage && m_cachedFromImage->loadFailedOrCanceled())
+    if (m_cachedFromImage && handler(*m_cachedFromImage))
         return true;
-    if (m_cachedToImage && m_cachedToImage->loadFailedOrCanceled())
+    if (m_cachedToImage && handler(*m_cachedToImage))
         return true;
     return false;
 }

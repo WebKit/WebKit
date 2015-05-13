@@ -22,6 +22,7 @@
 #define StyleSheetContents_h
 
 #include "CSSParserMode.h"
+#include "CachePolicy.h"
 #include "URL.h"
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
@@ -34,6 +35,7 @@ namespace WebCore {
 
 class CSSStyleSheet;
 class CachedCSSStyleSheet;
+class CachedResource;
 class Document;
 class Node;
 class StyleRuleBase;
@@ -67,6 +69,8 @@ public:
     bool isCacheable() const;
 
     bool isLoading() const;
+    bool subresourcesAllowReuse(CachePolicy) const;
+    WEBCORE_EXPORT bool isLoadingSubresources() const;
 
     void checkLoaded();
     void startLoadingDynamicSheet();
@@ -78,10 +82,10 @@ public:
     const String& charset() const { return m_parserContext.charset; }
 
     bool loadCompleted() const { return m_loadCompleted; }
-    bool hasFailedOrCanceledSubresources() const;
 
     URL completeURL(const String& url) const;
     void addSubresourceStyleURLs(ListHashSet<URL>&);
+    bool traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const;
 
     void setIsUserStyleSheet(bool b) { m_isUserStyleSheet = b; }
     bool isUserStyleSheet() const { return m_isUserStyleSheet; }
