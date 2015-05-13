@@ -477,6 +477,19 @@ extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
     JITCode* jitCode = codeBlock->jitCode()->ftl();
     OSRExit& exit = jitCode->osrExit[exitID];
     
+    if (shouldShowDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit()) {
+        dataLog("    Owning block: ", pointerDump(codeBlock), "\n");
+        dataLog("    Origin: ", exit.m_codeOrigin, "\n");
+        if (exit.m_codeOriginForExitProfile != exit.m_codeOrigin)
+            dataLog("    Origin for exit profile: ", exit.m_codeOriginForExitProfile, "\n");
+        dataLog("    Exit values: ", exit.m_values, "\n");
+        if (!exit.m_materializations.isEmpty()) {
+            dataLog("    Materializations:\n");
+            for (ExitTimeObjectMaterialization* materialization : exit.m_materializations)
+                dataLog("        ", pointerDump(materialization), "\n");
+        }
+    }
+
     prepareCodeOriginForOSRExit(exec, exit.m_codeOrigin);
     
     compileStub(exitID, jitCode, exit, vm, codeBlock);

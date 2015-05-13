@@ -828,25 +828,45 @@ private:
         case NewFunction:
             if (!node->castOperand<FunctionExecutable*>()->singletonFunction()->isStillValid())
                 sinkCandidate();
-            m_graph.doToChildren(
-                node,
-                [&] (Edge edge) {
-                    escape(edge.node());
-                });
+            escape(node->child1().node());
             break;
 
         case CreateActivation:
             if (!m_graph.symbolTableFor(node->origin.semantic)->singletonScope()->isStillValid())
                 sinkCandidate();
+            escape(node->child1().node());
+            break;
+
+        case Check:
             m_graph.doToChildren(
                 node,
                 [&] (Edge edge) {
-                    escape(edge.node());
+                    bool ok = true;
+
+                    switch (edge.useKind()) {
+                    case KnownCellUse:
+                    case CellUse:
+                    case ObjectUse:
+                        // All of our allocations will pass this.
+                        break;
+                        
+                    case FunctionUse:
+                        // Function allocations will pass this.
+                        if (edge->op() != NewFunction)
+                            ok = false;
+                        break;
+                        
+                    default:
+                        ok = false;
+                        break;
+                    }
+                    
+                    if (!ok)
+                        escape(edge.node());
                 });
             break;
 
         case MovHint:
-        case Check:
         case PutHint:
         case StoreBarrier:
         case StoreBarrierWithNullCheck:

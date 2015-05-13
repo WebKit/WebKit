@@ -60,6 +60,7 @@ enum Intrinsic {
     OSRExitIntrinsic,
     IsFinalTierIntrinsic,
     SetInt32HeapPredictionIntrinsic,
+    CheckInt32Intrinsic,
     FiatInt52Intrinsic,
 };
 

@@ -42,10 +42,13 @@
 #include "JSCInlines.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/ListDump.h>
 
 namespace JSC { namespace DFG {
 
 namespace {
+
+bool verbose = false;
 
 class ArgumentsEliminationPhase : public Phase {
 public:
@@ -101,6 +104,9 @@ private:
                 }
             }
         }
+        
+        if (verbose)
+            dataLog("Candidates: ", listDump(m_candidates), "\n");
     }
     
     // Look for escaping sites, and remove from the candidates set if we see an escape.
@@ -160,6 +166,21 @@ private:
                     break;
 
                 case Check:
+                    m_graph.doToChildren(
+                        node,
+                        [&] (Edge edge) {
+                            switch (edge.useKind()) {
+                            case CellUse:
+                            case ObjectUse:
+                                break;
+                                
+                            default:
+                                escape(edge);
+                                break;
+                            }
+                        });
+                    break;
+                    
                 case MovHint:
                 case PutHint:
                     break;
@@ -189,6 +210,9 @@ private:
                 }
             }
         }
+
+        if (verbose)
+            dataLog("After escape analysis: ", listDump(m_candidates), "\n");
     }
 
     // Anywhere that a candidate is live (in bytecode or in DFG), check if there is a chance of
@@ -331,6 +355,9 @@ private:
         // availabilities may become whatever. OSR exit should be able to handle this quite naturally,
         // since those availabilities speak of the stack before the optimizing compiler stack frame is
         // torn down.
+
+        if (verbose)
+            dataLog("After interference analysis: ", listDump(m_candidates), "\n");
     }
     
     void transform()

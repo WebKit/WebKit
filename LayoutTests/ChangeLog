@@ -1,3 +1,19 @@
+2015-05-12  Filip Pizlo  <fpizlo@apple.com>
+
+        js/dom/stack-trace.html fails with eager compilation
+        https://bugs.webkit.org/show_bug.cgi?id=144853
+
+        Reviewed by Benjamin Poulain.
+        
+        Make a copy of the stack-trace test that only runs in run-jsc-stress-tests. Sadly, we don't
+        have a good way of having different expectation files for when a test runs in RJST versus
+        RWT. So, the approach I take is that I make a copy of the test just for RJST and I exclude
+        the .html file, which makes RWT overlook it. The test has different expectations in the
+        two harnesses because it does some small DOM things.
+
+        * js/script-tests/stack-trace.js: Added.
+        * js/stack-trace-expected.txt: Added.
+
 2015-05-12  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [Win] REGRESSION(r184213) breaks aria-menubar-menuitems.html

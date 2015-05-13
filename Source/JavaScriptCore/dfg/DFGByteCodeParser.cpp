@@ -2111,6 +2111,16 @@ bool ByteCodeParser::handleIntrinsic(int resultOperand, Intrinsic intrinsic, int
         return true;
     }
         
+    case CheckInt32Intrinsic: {
+        insertChecks();
+        for (int i = 1; i < argumentCountIncludingThis; ++i) {
+            Node* node = get(virtualRegisterForArgument(i, registerOffset));
+            addToGraph(Phantom, Edge(node, Int32Use));
+        }
+        set(VirtualRegister(resultOperand), jsConstant(jsBoolean(true)));
+        return true;
+    }
+        
     case FiatInt52Intrinsic: {
         if (argumentCountIncludingThis != 2)
             return false;

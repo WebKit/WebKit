@@ -114,7 +114,7 @@ void ExitValue::dumpInContext(PrintStream& out, DumpContext* context) const
         out.print("Recovery(", recoveryOpcode(), ", arg", leftRecoveryArgument(), ", arg", rightRecoveryArgument(), ", ", recoveryFormat(), ")");
         return;
     case ExitValueMaterializeNewObject:
-        out.print("Materialize(", WTF::RawPointer(objectMaterialization()), ":..)");
+        out.print("Materialize(", WTF::RawPointer(objectMaterialization()), ")");
         return;
     }
     

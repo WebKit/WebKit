@@ -8052,7 +8052,7 @@ private:
             if (!exit.m_materializations.isEmpty()) {
                 dataLog("        Materializations: \n");
                 for (ExitTimeObjectMaterialization* materialization : exit.m_materializations)
-                    dataLog("            Materialize(", pointerDump(materialization), ")\n");
+                    dataLog("            ", pointerDump(materialization), "\n");
             }
         }
     }

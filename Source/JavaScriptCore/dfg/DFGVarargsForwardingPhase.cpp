@@ -104,7 +104,30 @@ private:
                     relevantLocals.append(node->unlinkedLocal());
                 break;
                 
-            case Check:
+            case Check: {
+                bool sawEscape = false;
+                m_graph.doToChildren(
+                    node,
+                    [&] (Edge edge) {
+                        switch (edge.useKind()) {
+                        case CellUse:
+                        case ObjectUse:
+                            if (edge == candidate)
+                                lastUserIndex = nodeIndex;
+                            break;
+                        default:
+                            sawEscape = true;
+                            break;
+                        }  
+                    });
+                if (sawEscape) {
+                    if (verbose)
+                        dataLog("    Escape at ", node, "\n");
+                    return;
+                }
+                break;
+            }
+                
             case LoadVarargs:
                 if (m_graph.uses(node, candidate))
                     lastUserIndex = nodeIndex;

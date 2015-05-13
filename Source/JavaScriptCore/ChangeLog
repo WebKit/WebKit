@@ -1,3 +1,72 @@
+2015-05-12  Filip Pizlo  <fpizlo@apple.com>
+
+        js/dom/stack-trace.html fails with eager compilation
+        https://bugs.webkit.org/show_bug.cgi?id=144853
+
+        Reviewed by Benjamin Poulain.
+        
+        All of our escape analyses were mishandling Check(). They were assuming that this is a
+        non-escaping operation. But, if we do for example a Check(Int32:@x) and @x is an escape
+        candidate, then we need to do something: if we eliminate or sink @x, then the check no
+        longer makes any sense since a phantom allocation has no type. This will make us forget
+        that this operation would have exited. This was causing us to not call a valueOf method in
+        js/dom/stack-trace.html with eager compilation enabled, because it was doing something like
+        +o where o had a valueOf method, and o was otherwise sinkable.
+        
+        This changes our escape analyses to basically pretend that any Check() that isn't obviously
+        unnecessary is an escape. We don't have to be super careful here. Most checks will be
+        completely eliminated by constant-folding. If that doesn't run in time, then the most
+        common check we will see is CellUse. So, we just recognize some very obvious check kinds
+        that we know would have passed, and for all of the rest we just assume that it's an escape.
+        
+        This was super tricky to test. The obvious way to test it is to use +o like
+        stack-trace.html, except that doing so relies on the fact that we still haven't implemented
+        the optimal behavior for op_to_number. So, I take four approaches in testing this patch:
+        
+        1) Use +o. These will test what we want it to test for now, but at some point in the future
+           these tests will just be a good sanity-check that our op_to_number implementation is
+           right.
+        
+        2) Do fancy control flow tricks to fool the profiling into thinking that some arithmetic
+           operation always sees integers even though we eventually feed it an object and that
+           object is a sink candidate.
+        
+        3) Introduce a new jsc.cpp intrinsic called isInt32() which returns true if the incoming
+           value is an int32. This intrinsic is required to be implemented by DFG by
+           unconditionally speculating that the input is int32. This allows us to write much more
+           targetted tests of the underlying issue.
+        
+        4) I made a version of stack-trace.html that runs in run-jsc-stress-tests, so that we can
+           get regression test coverage of this test in eager mode.
+
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        (JSC::DFG::ObjectAllocationSinkingPhase::handleNode):
+        * dfg/DFGVarargsForwardingPhase.cpp:
+        * ftl/FTLExitValue.cpp:
+        (JSC::FTL::ExitValue::dumpInContext):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::buildExitArguments):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileFTLOSRExit):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionIsInt32):
+        * runtime/Intrinsic.h:
+        * tests/stress/sink-arguments-past-invalid-check-dfg.js: Added.
+        * tests/stress/sink-arguments-past-invalid-check-int32-dfg.js: Added.
+        * tests/stress/sink-arguments-past-invalid-check-int32.js: Added.
+        * tests/stress/sink-arguments-past-invalid-check-sneakier.js: Added.
+        * tests/stress/sink-arguments-past-invalid-check.js: Added.
+        * tests/stress/sink-function-past-invalid-check-sneakier.js: Added.
+        * tests/stress/sink-function-past-invalid-check-sneaky.js: Added.
+        * tests/stress/sink-object-past-invalid-check-int32.js: Added.
+        * tests/stress/sink-object-past-invalid-check-sneakier.js: Added.
+        * tests/stress/sink-object-past-invalid-check-sneaky.js: Added.
+        * tests/stress/sink-object-past-invalid-check.js: Added.
+
 2015-05-12  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix the iteration count of arith-modulo-node-behaviors.js
