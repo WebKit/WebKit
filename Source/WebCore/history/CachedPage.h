@@ -55,17 +55,17 @@ public:
     void markForCaptionPreferencesChanged() { m_needsCaptionPreferencesChanged = true; }
 #endif
 
-    void markForDeviceScaleChanged() { m_needsDeviceScaleChanged = true; }
+    void markForDeviceOrPageScaleChanged() { m_needsDeviceOrPageScaleChanged = true; }
 
 private:
     double m_expirationTime;
     std::unique_ptr<CachedFrame> m_cachedMainFrame;
-    bool m_needStyleRecalcForVisitedLinks;
-    bool m_needsFullStyleRecalc;
+    bool m_needStyleRecalcForVisitedLinks { false };
+    bool m_needsFullStyleRecalc { false };
 #if ENABLE(VIDEO_TRACK)
-    bool m_needsCaptionPreferencesChanged;
+    bool m_needsCaptionPreferencesChanged { false };
 #endif
-    bool m_needsDeviceScaleChanged;
+    bool m_needsDeviceOrPageScaleChanged { false };
 };
 
 } // namespace WebCore

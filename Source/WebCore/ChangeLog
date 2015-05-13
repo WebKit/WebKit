@@ -1,3 +1,45 @@
+2015-05-13  Timothy Horton  <timothy_horton@apple.com>
+
+        View scale changes are temporarily lost after restoring a page from the page cache
+        https://bugs.webkit.org/show_bug.cgi?id=144934
+
+        Reviewed by Brady Eidson.
+
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::CachedPage):
+        (WebCore::CachedPage::restore):
+        (WebCore::CachedPage::clear):
+        * history/CachedPage.h:
+        (WebCore::CachedPage::markForDeviceOrPageScaleChanged): Renamed.
+        * history/PageCache.cpp:
+        (WebCore::PageCache::markPagesForDeviceOrPageScaleChanged): Renamed.
+        * history/PageCache.h:
+        Rename PageCache/CachedPage methods to make it more clear that they
+        will eventually result in calling deviceOrPageScaleFactorChanged().
+        Also, use modern initialization for CachedPage members.
+
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::saveScrollPositionAndViewStateToItem):
+        (WebCore::HistoryController::restoreScrollPositionAndViewState):
+        Store the pageScaleFactor on HistoryItem with the view scale factored out,
+        because the view scale can change while the page is in the page cache, and
+        WebCore needs a way - without consulting with WebKit2 - to apply the changed
+        view scale to the cached page scale.
+
+        * page/Page.cpp:
+        (WebCore::Page::setViewScaleFactor):
+        (WebCore::Page::setDeviceScaleFactor):
+        * page/Page.h:
+        (WebCore::Page::viewScaleFactor):
+        Keep track of the viewScaleFactor, and mark all pages in the page cache
+        as needing to call deviceOrPageScaleFactorChanged and do a full style recalc
+        when they come back from the page cache.
+
+        For now, we expect all callers of setPageScaleFactor (including WebKit2 and
+        HistoryController) to multiply the viewScale in manually, to avoid the
+        significant amount of change in WebCore that would be required to keep them
+        totally separately.
+
 2015-05-12  Zan Dobersek  <zdobersek@igalia.com>
 
         Reduce TransformationMatrix copies in MatrixTransformOperation, Matrix3DTransformOperation

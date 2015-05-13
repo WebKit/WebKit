@@ -86,7 +86,7 @@ void HistoryController::saveScrollPositionAndViewStateToItem(HistoryItem* item)
 
     Page* page = m_frame.page();
     if (page && m_frame.isMainFrame())
-        item->setPageScaleFactor(page->pageScaleFactor());
+        item->setPageScaleFactor(page->pageScaleFactor() / page->viewScaleFactor());
 
     // FIXME: It would be great to work out a way to put this code in WebCore instead of calling through to the client.
     m_frame.loader().client().saveViewStateToItem(item);
@@ -151,7 +151,7 @@ void HistoryController::restoreScrollPositionAndViewState()
     if (view && !view->wasScrolledByUser()) {
         Page* page = m_frame.page();
         if (page && m_frame.isMainFrame() && m_currentItem->pageScaleFactor())
-            page->setPageScaleFactor(m_currentItem->pageScaleFactor(), m_currentItem->scrollPoint());
+            page->setPageScaleFactor(m_currentItem->pageScaleFactor() * page->viewScaleFactor(), m_currentItem->scrollPoint());
         else
             view->setScrollPosition(m_currentItem->scrollPoint());
     }
