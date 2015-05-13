@@ -276,17 +276,18 @@ public:
                     
                 case SetLocal: {
                     VariableAccessData* variable = node->variableAccessData();
+                    Node* child = node->child1().node();
                     
                     if (!!(node->flags() & NodeIsFlushed)) {
                         node->convertToPutStack(
                             m_graph.m_stackAccessData.add(
                                 variable->local(), variable->flushFormat()));
                     } else
-                        node->setOpAndDefaultFlags(Check);
+                        node->remove();
                     
                     if (verbose)
-                        dataLog("Mapping: ", variable->local(), " -> ", node->child1().node(), "\n");
-                    valueForOperand.operand(variable->local()) = node->child1().node();
+                        dataLog("Mapping: ", variable->local(), " -> ", child, "\n");
+                    valueForOperand.operand(variable->local()) = child;
                     break;
                 }
                     

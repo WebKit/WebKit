@@ -51,12 +51,21 @@ public:
         }
 
         switch (edge.useKind()) {
+        // These are shady because nodes that have these use kinds will typically exit for
+        // unrelated reasons. For example CompareEq doesn't usually exit, but if it uses ObjectUse
+        // then it will.
         case ObjectUse:
         case ObjectOrOtherUse:
+            m_result = true;
+            break;
+            
+        // These are shady because they check the structure even if the type of the child node
+        // passes the StringObject type filter.
         case StringObjectUse:
         case StringOrStringObjectUse:
             m_result = true;
             break;
+            
         default:
             break;
         }

@@ -841,28 +841,13 @@ private:
             m_graph.doToChildren(
                 node,
                 [&] (Edge edge) {
-                    bool ok = true;
-
-                    switch (edge.useKind()) {
-                    case KnownCellUse:
-                    case CellUse:
-                    case ObjectUse:
-                        // All of our allocations will pass this.
-                        break;
-                        
-                    case FunctionUse:
-                        // Function allocations will pass this.
-                        if (edge->op() != NewFunction)
-                            ok = false;
-                        break;
-                        
-                    default:
-                        ok = false;
-                        break;
-                    }
+                    if (edge.willNotHaveCheck())
+                        return;
                     
-                    if (!ok)
-                        escape(edge.node());
+                    if (alreadyChecked(edge.useKind(), SpecObject))
+                        return;
+                    
+                    escape(edge.node());
                 });
             break;
 

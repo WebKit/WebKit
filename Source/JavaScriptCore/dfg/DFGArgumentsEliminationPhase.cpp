@@ -63,6 +63,11 @@ public:
         // version over LoadStore.
         DFG_ASSERT(m_graph, nullptr, m_graph.m_form == SSA);
         
+        if (verbose) {
+            dataLog("Graph before arguments elimination:\n");
+            m_graph.dump();
+        }
+        
         identifyCandidates();
         if (m_candidates.isEmpty())
             return false;
@@ -169,15 +174,13 @@ private:
                     m_graph.doToChildren(
                         node,
                         [&] (Edge edge) {
-                            switch (edge.useKind()) {
-                            case CellUse:
-                            case ObjectUse:
-                                break;
-                                
-                            default:
-                                escape(edge);
-                                break;
-                            }
+                            if (edge.willNotHaveCheck())
+                                return;
+                            
+                            if (alreadyChecked(edge.useKind(), SpecObject))
+                                return;
+                            
+                            escape(edge);
                         });
                     break;
                     

@@ -213,6 +213,17 @@ inline bool usesStructure(UseKind kind)
     }
 }
 
+// Returns true if we've already guaranteed the type 
+inline bool alreadyChecked(UseKind kind, SpeculatedType type)
+{
+    // If the check involves the structure then we need to know more than just the type to be sure
+    // that the check is done.
+    if (usesStructure(kind))
+        return false;
+    
+    return !(type & ~typeFilterFor(kind));
+}
+
 inline UseKind useKindForResult(NodeFlags result)
 {
     ASSERT(!(result & ~NodeResultMask));

@@ -109,16 +109,16 @@ private:
                 m_graph.doToChildren(
                     node,
                     [&] (Edge edge) {
-                        switch (edge.useKind()) {
-                        case CellUse:
-                        case ObjectUse:
-                            if (edge == candidate)
-                                lastUserIndex = nodeIndex;
-                            break;
-                        default:
-                            sawEscape = true;
-                            break;
-                        }  
+                        if (edge == candidate)
+                            lastUserIndex = nodeIndex;
+                        
+                        if (edge.willNotHaveCheck())
+                            return;
+                        
+                        if (alreadyChecked(edge.useKind(), SpecObject))
+                            return;
+                        
+                        sawEscape = true;
                     });
                 if (sawEscape) {
                     if (verbose)
