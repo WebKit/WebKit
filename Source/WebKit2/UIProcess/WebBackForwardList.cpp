@@ -397,14 +397,18 @@ BackForwardListState WebBackForwardList::backForwardListState(const std::functio
         auto& entry = *m_entries[i];
 
         if (filter && !filter(entry)) {
-            if (backForwardListState.currentIndex && i <= backForwardListState.currentIndex.value())
-                --backForwardListState.currentIndex.value();
+            auto& currentIndex = backForwardListState.currentIndex;
+            if (currentIndex && i <= currentIndex.value() && currentIndex.value())
+                --currentIndex.value();
 
             continue;
         }
 
         backForwardListState.items.append(entry.itemState());
     }
+
+    if (backForwardListState.items.isEmpty())
+        backForwardListState.currentIndex = Nullopt;
 
     return backForwardListState;
 }
