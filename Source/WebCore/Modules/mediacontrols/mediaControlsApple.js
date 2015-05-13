@@ -1362,7 +1362,7 @@ Controller.prototype = {
 
     hideControls: function()
     {
-        if (this.controlsAlwaysVisible())
+        if (this.controlsAlwaysVisible() || this._potentiallyScrubbing)
             return;
 
         this.updateShouldListenForPlaybackTargetAvailabilityEvent();

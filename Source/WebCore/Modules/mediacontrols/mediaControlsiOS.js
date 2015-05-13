@@ -16,6 +16,7 @@ function ControllerIOS(root, video, host)
 
     this._timelineIsHidden = false;
     this._currentDisplayWidth = 0;
+    this._potentiallyScrubbing = false;
     this.scheduleUpdateLayoutForDisplayedWidth();
 
     host.controlsDependOnPageScaleFactor = true;
@@ -493,7 +494,7 @@ ControllerIOS.prototype = {
     },
 
     handleTimelineInput: function(event) {
-        if (this.potentiallyScrubbing)
+        if (this._potentiallyScrubbing)
             this.video.pause();
         Controller.prototype.handleTimelineInput.call(this, event);
     },
@@ -504,7 +505,7 @@ ControllerIOS.prototype = {
     },
 
     handleTimelineTouchStart: function(event) {
-        this.potentiallyScrubbing = true;
+        this._potentiallyScrubbing = true;
         this.wasPlayingWhenScrubbingStarted = !this.video.paused;
         this.listenFor(this.controls.timeline, 'touchend', this.handleTimelineTouchEnd);
         this.listenFor(this.controls.timeline, 'touchcancel', this.handleTimelineTouchEnd);
@@ -513,9 +514,11 @@ ControllerIOS.prototype = {
     handleTimelineTouchEnd: function(event) {
         this.stopListeningFor(this.controls.timeline, 'touchend', this.handleTimelineTouchEnd);
         this.stopListeningFor(this.controls.timeline, 'touchcancel', this.handleTimelineTouchEnd);
-        this.potentiallyScrubbing = false;
-        if (this.wasPlayingWhenScrubbingStarted && this.video.paused)
+        this._potentiallyScrubbing = false;
+        if (this.wasPlayingWhenScrubbingStarted && this.video.paused) {
             this.video.play();
+            this.resetHideControlsTimer();
+        }
     },
 
     handleReadyStateChange: function(event) {
