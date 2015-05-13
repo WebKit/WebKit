@@ -2,637 +2,623 @@
 Dana Burkart  <dburkart@apple.com
 dburkart@apple.com>
 
-        Merge r184207. rdar://problem/20707307
+        Merge r184226. rdar://problem/20707307
 
     2015-05-12  Brent Fulgham  <bfulgham@apple.com>
 
-            [Win] Unreviewed build fix for older DirectX build environments.
+            [Win] Update DXSDK_DIR settings for build system.
 
-            * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp: Switch back to our
-            d3d stub header to avoid build failures on July 2004 DXSDK build environments.
+            Unreviewed build fix.
+
+            * WebCore.vcxproj/WebCore.proj: Add DXSDK_DIR definition for builder.
 
     2015-05-12  Dana Burkart
     Dana Burkart  <dburkart@apple.com
     dburkart@apple.com>
 
-            Merge r184140. rdar://problem/20907253
+            Merge r184207. rdar://problem/20707307
 
-        2015-05-11  Eric Carlson  <eric.carlson@apple.com>
+        2015-05-12  Brent Fulgham  <bfulgham@apple.com>
 
-                [Mac] Update device picker icon when video tracks change
-                https://bugs.webkit.org/show_bug.cgi?id=144889
-                <rdar://problem/20907253>
+                [Win] Unreviewed build fix for older DirectX build environments.
 
-                Reviewed by Brent Fulgham.
-
-                * Modules/mediacontrols/mediaControlsApple.js:
-                (Controller.prototype.updateHasVideo):
+                * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp: Switch back to our
+                d3d stub header to avoid build failures on July 2004 DXSDK build environments.
 
         2015-05-12  Dana Burkart
         Dana Burkart  <dburkart@apple.com
         dburkart@apple.com>
 
-                Merge r184139. rdar://problem/20125088
+                Merge r184140. rdar://problem/20907253
 
-            2015-05-11  Brent Fulgham  <bfulgham@apple.com>
+            2015-05-11  Eric Carlson  <eric.carlson@apple.com>
 
-                    Scroll snap logic should be triggered when resizing the WebView
-                    https://bugs.webkit.org/show_bug.cgi?id=142590
-                    <rdar://problem/20125088>
+                    [Mac] Update device picker icon when video tracks change
+                    https://bugs.webkit.org/show_bug.cgi?id=144889
+                    <rdar://problem/20907253>
 
-                    Reviewed by Simon Fraser.
+                    Reviewed by Brent Fulgham.
 
-                    Tests coming in a second patch.
-
-                    Resizing of the main frame or overflow regions was properly recalculating the scroll snap points,
-                    but there was no code to honor these values when window resizing was occurring. The correction was
-                    handled in two ways:
-                    1. Scrolling thread operations that moved to new snap points needed to notify the main thread that
-                       it had shifted to a new snap point, so that the resize code (which happens on the main thread)
-                       could ensure that we stayed clamped to the correct 'tile' in the snap region.
-                    2. Main thread (overflow) resizes were likewise missing code to honor the current snap position
-                       after resizing calculations were complete.
-
-                    This change also required the addition of two indices to the scrollable area to track which scroll
-                    snap point was currently being used. We don't bother with a 'none' case because you cannot have a
-                    'none' state when you have an active set of scroll snap points, and we do not execute this code
-                    if the scroll snap points are null.
-
-                    The FrameView code was computing updated snap offsets after it had dispatched frame view layout
-                    information to the scrolling thread, which was wrong. This was also corrected.
-
-                    I think it might be possible to track all of this state inside the ScrollController, but the current
-                    scroll snap architecture destroys and recreates the state each time a new set of interactions starts.
-                    This should be fixed in the future, which would allow us to remove some of this local state.
-
-                    * page/FrameView.cpp:
-                    (WebCore::FrameView::performPostLayoutTasks): Make sure 'updateSnapOffsets' is called prior to
-                    calling 'frameViewLayoutUpdated' so the scrolling thread gets correct updated points. Add a new
-                    call to 'scrollToNearestActiveSnapPoint', which will keep us on our current snap point during
-                    resize (if appropriate).
-                    * page/scrolling/AsyncScrollingCoordinator.cpp:
-                    (WebCore::AsyncScrollingCoordinator::updateScrollSnapOffsetIndices): Added. This finds and notifies
-                    the correct scroll region when a new snap position (index) has been selected by user interaction on
-                    the scrolling thread.
-                    (WebCore::AsyncScrollingCoordinator::deferTestsForReason): Added an assertion for 'isMainThread'.
-                    (WebCore::AsyncScrollingCoordinator::removeTestDeferralForReason): Ditto.
-                    * page/scrolling/AsyncScrollingCoordinator.h:
-                    * page/scrolling/AxisScrollSnapOffsets.h:
-                    (WebCore::closestSnapOffset): Modified to also return the selected snap point index so we can track
-                    it to handle resize operations.
-                    * page/scrolling/ScrollingTree.h:
-                    (WebCore::ScrollingTree::updateScrollSnapOffsetIndices):
-                    * page/scrolling/ThreadedScrollingTree.cpp:
-                    (WebCore::ThreadedScrollingTree::updateScrollSnapOffsetIndices): Added method to dispatch the active
-                    horizontal and vertical scroll snap indices back to the main thread.
-                    * page/scrolling/ThreadedScrollingTree.h:
-                    * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
-                    (WebCore::ScrollingTreeFrameScrollingNodeMac::handleWheelEvent): After the scroll controller processes
-                    the current event, notify the main thread of any change in the active scroll snap index.
-                    * platform/ScrollAnimator.cpp:
-                    (WebCore::ScrollAnimator::activeScrollSnapOffsetIndexDidChange): Added method to allow ScrollAnimator
-                    clients to find out about the current scroll snap state, which is only known by the ScrollController.
-                    (WebCore::ScrollAnimator::activeScrollSnapOffsetIndexForAxis): Ditto.
-                    * platform/ScrollAnimator.h:
-                    * platform/ScrollView.cpp:
-                    (WebCore::ScrollView::scrollToNearestActiveSnapPoint): Added method that allows us to set scroll position
-                    to one of our active scroll snap offsets.
-                    * platform/ScrollView.h:
-                    * platform/ScrollableArea.cpp:
-                    (WebCore::ScrollableArea::handleWheelEvent): If the active scroll snap offset has changed, make sure we
-                    keep track of the new values for potential resize operations.
-                    (WebCore::ScrollableArea::clearHorizontalSnapOffsets): Make sure to also clear out the current snap index.
-                    (WebCore::ScrollableArea::clearVerticalSnapOffsets): Ditto.
-                    (WebCore::ScrollableArea::nearestActiveSnapPoint): New method that returns an updated IntPoint reflecting
-                    the proper scroll position based on the active scroll snap offset.
-                    * platform/ScrollableArea.h:
-                    (WebCore::ScrollableArea::currentHorizontalSnapPointIndex): Added.
-                    (WebCore::ScrollableArea::setCurrentHorizontalSnapPointIndex): Added.
-                    (WebCore::ScrollableArea::currentVerticalSnapPointIndex): Added.
-                    (WebCore::ScrollableArea::setCurrentVerticalSnapPointIndex): Added.
-                    (WebCore::ScrollableArea::scrollToNearestActiveSnapPoint): Added.
-                    * platform/cocoa/ScrollController.h:
-                    (WebCore::ScrollControllerClient::activeScrollOffsetIndex): Added new method for clients to implement.
-                    (WebCore::ScrollController::activeScrollSnapOffsetIndexDidChange): Added.
-                    (WebCore::ScrollController::setScrollSnapOffsetIndexDidChange): Added.
-                    * platform/cocoa/ScrollController.mm:
-                    (WebCore::ScrollController::activeScrollSnapOffsetIndexForAxis): Helper method to return current active
-                    index (if applicable).
-                    (WebCore::ScrollController::setActiveScrollSnapOffsetIndexForAxis): Helper function to safely set
-                    the current active index.
-                    (WebCore::ScrollController::beginScrollSnapAnimation): Updated to keep track of the new active scroll snap
-                    index, as well as whether the current animation actually changed the active snap point offset.
-                    * platform/cocoa/ScrollSnapAnimatorState.h: Revise to use modern C++ initializers, and to track a new index
-                    that represents the current scroll snap offset.
-                    * platform/cocoa/ScrollSnapAnimatorState.mm:
-                    (WebCore::ScrollSnapAnimatorState::ScrollSnapAnimatorState): Update for modern C++ syntax.
-                    * rendering/RenderLayer.cpp:
-                    (WebCore::RenderLayer::scrollToNearestActiveSnapPoint): New method to set scroll position to be one of our
-                    active scroll snap points.
-                    (WebCore::RenderLayer::updateScrollInfoAfterLayout): Add a new call to 'scrollToNearestActiveSnapPoint' so that
-                    we stay on the current scroll snap offset during resizing.
-                    * rendering/RenderLayer.h:
+                    * Modules/mediacontrols/mediaControlsApple.js:
+                    (Controller.prototype.updateHasVideo):
 
             2015-05-12  Dana Burkart
             Dana Burkart  <dburkart@apple.com
             dburkart@apple.com>
 
-                    Merge r184137. rdar://problem/20707307
+                    Merge r184139. rdar://problem/20125088
 
                 2015-05-11  Brent Fulgham  <bfulgham@apple.com>
 
-                        [Win] Move Windows build target to Windows 7 (or newer)
-                        https://bugs.webkit.org/show_bug.cgi?id=144890
-                        <rdar://problem/20707307>
+                        Scroll snap logic should be triggered when resizing the WebView
+                        https://bugs.webkit.org/show_bug.cgi?id=142590
+                        <rdar://problem/20125088>
 
-                        Reviewed by Anders Carlsson.
+                        Reviewed by Simon Fraser.
 
-                        Update linked SDK and minimal Windows level to be compatible with
-                        Windows 7 or newer.
+                        Tests coming in a second patch.
 
-                        * WebCore.vcxproj/WebCore.vcxproj:
-                        * WebCore.vcxproj/WebCoreGenerated.vcxproj:
-                        * WebCore.vcxproj/WebCoreTestSupport.vcxproj:
-                        * WebCorePrefix.h:
-                        * config.h:
-                        * testing/js/WebCoreTestSupportPrefix.h:
+                        Resizing of the main frame or overflow regions was properly recalculating the scroll snap points,
+                        but there was no code to honor these values when window resizing was occurring. The correction was
+                        handled in two ways:
+                        1. Scrolling thread operations that moved to new snap points needed to notify the main thread that
+                           it had shifted to a new snap point, so that the resize code (which happens on the main thread)
+                           could ensure that we stayed clamped to the correct 'tile' in the snap region.
+                        2. Main thread (overflow) resizes were likewise missing code to honor the current snap position
+                           after resizing calculations were complete.
+
+                        This change also required the addition of two indices to the scrollable area to track which scroll
+                        snap point was currently being used. We don't bother with a 'none' case because you cannot have a
+                        'none' state when you have an active set of scroll snap points, and we do not execute this code
+                        if the scroll snap points are null.
+
+                        The FrameView code was computing updated snap offsets after it had dispatched frame view layout
+                        information to the scrolling thread, which was wrong. This was also corrected.
+
+                        I think it might be possible to track all of this state inside the ScrollController, but the current
+                        scroll snap architecture destroys and recreates the state each time a new set of interactions starts.
+                        This should be fixed in the future, which would allow us to remove some of this local state.
+
+                        * page/FrameView.cpp:
+                        (WebCore::FrameView::performPostLayoutTasks): Make sure 'updateSnapOffsets' is called prior to
+                        calling 'frameViewLayoutUpdated' so the scrolling thread gets correct updated points. Add a new
+                        call to 'scrollToNearestActiveSnapPoint', which will keep us on our current snap point during
+                        resize (if appropriate).
+                        * page/scrolling/AsyncScrollingCoordinator.cpp:
+                        (WebCore::AsyncScrollingCoordinator::updateScrollSnapOffsetIndices): Added. This finds and notifies
+                        the correct scroll region when a new snap position (index) has been selected by user interaction on
+                        the scrolling thread.
+                        (WebCore::AsyncScrollingCoordinator::deferTestsForReason): Added an assertion for 'isMainThread'.
+                        (WebCore::AsyncScrollingCoordinator::removeTestDeferralForReason): Ditto.
+                        * page/scrolling/AsyncScrollingCoordinator.h:
+                        * page/scrolling/AxisScrollSnapOffsets.h:
+                        (WebCore::closestSnapOffset): Modified to also return the selected snap point index so we can track
+                        it to handle resize operations.
+                        * page/scrolling/ScrollingTree.h:
+                        (WebCore::ScrollingTree::updateScrollSnapOffsetIndices):
+                        * page/scrolling/ThreadedScrollingTree.cpp:
+                        (WebCore::ThreadedScrollingTree::updateScrollSnapOffsetIndices): Added method to dispatch the active
+                        horizontal and vertical scroll snap indices back to the main thread.
+                        * page/scrolling/ThreadedScrollingTree.h:
+                        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+                        (WebCore::ScrollingTreeFrameScrollingNodeMac::handleWheelEvent): After the scroll controller processes
+                        the current event, notify the main thread of any change in the active scroll snap index.
+                        * platform/ScrollAnimator.cpp:
+                        (WebCore::ScrollAnimator::activeScrollSnapOffsetIndexDidChange): Added method to allow ScrollAnimator
+                        clients to find out about the current scroll snap state, which is only known by the ScrollController.
+                        (WebCore::ScrollAnimator::activeScrollSnapOffsetIndexForAxis): Ditto.
+                        * platform/ScrollAnimator.h:
+                        * platform/ScrollView.cpp:
+                        (WebCore::ScrollView::scrollToNearestActiveSnapPoint): Added method that allows us to set scroll position
+                        to one of our active scroll snap offsets.
+                        * platform/ScrollView.h:
+                        * platform/ScrollableArea.cpp:
+                        (WebCore::ScrollableArea::handleWheelEvent): If the active scroll snap offset has changed, make sure we
+                        keep track of the new values for potential resize operations.
+                        (WebCore::ScrollableArea::clearHorizontalSnapOffsets): Make sure to also clear out the current snap index.
+                        (WebCore::ScrollableArea::clearVerticalSnapOffsets): Ditto.
+                        (WebCore::ScrollableArea::nearestActiveSnapPoint): New method that returns an updated IntPoint reflecting
+                        the proper scroll position based on the active scroll snap offset.
+                        * platform/ScrollableArea.h:
+                        (WebCore::ScrollableArea::currentHorizontalSnapPointIndex): Added.
+                        (WebCore::ScrollableArea::setCurrentHorizontalSnapPointIndex): Added.
+                        (WebCore::ScrollableArea::currentVerticalSnapPointIndex): Added.
+                        (WebCore::ScrollableArea::setCurrentVerticalSnapPointIndex): Added.
+                        (WebCore::ScrollableArea::scrollToNearestActiveSnapPoint): Added.
+                        * platform/cocoa/ScrollController.h:
+                        (WebCore::ScrollControllerClient::activeScrollOffsetIndex): Added new method for clients to implement.
+                        (WebCore::ScrollController::activeScrollSnapOffsetIndexDidChange): Added.
+                        (WebCore::ScrollController::setScrollSnapOffsetIndexDidChange): Added.
+                        * platform/cocoa/ScrollController.mm:
+                        (WebCore::ScrollController::activeScrollSnapOffsetIndexForAxis): Helper method to return current active
+                        index (if applicable).
+                        (WebCore::ScrollController::setActiveScrollSnapOffsetIndexForAxis): Helper function to safely set
+                        the current active index.
+                        (WebCore::ScrollController::beginScrollSnapAnimation): Updated to keep track of the new active scroll snap
+                        index, as well as whether the current animation actually changed the active snap point offset.
+                        * platform/cocoa/ScrollSnapAnimatorState.h: Revise to use modern C++ initializers, and to track a new index
+                        that represents the current scroll snap offset.
+                        * platform/cocoa/ScrollSnapAnimatorState.mm:
+                        (WebCore::ScrollSnapAnimatorState::ScrollSnapAnimatorState): Update for modern C++ syntax.
+                        * rendering/RenderLayer.cpp:
+                        (WebCore::RenderLayer::scrollToNearestActiveSnapPoint): New method to set scroll position to be one of our
+                        active scroll snap points.
+                        (WebCore::RenderLayer::updateScrollInfoAfterLayout): Add a new call to 'scrollToNearestActiveSnapPoint' so that
+                        we stay on the current scroll snap offset during resizing.
+                        * rendering/RenderLayer.h:
 
                 2015-05-12  Dana Burkart
                 Dana Burkart  <dburkart@apple.com
                 dburkart@apple.com>
 
-                        Merge r184116. rdar://problem/20774613
+                        Merge r184137. rdar://problem/20707307
 
-                    2015-05-11  Alex Christensen  <achristensen@webkit.org>
+                    2015-05-11  Brent Fulgham  <bfulgham@apple.com>
 
-                            [Content Extensions] Support domain-specific rules and exceptions.
-                            https://bugs.webkit.org/show_bug.cgi?id=144833
+                            [Win] Move Windows build target to Windows 7 (or newer)
+                            https://bugs.webkit.org/show_bug.cgi?id=144890
+                            <rdar://problem/20707307>
 
-                            Reviewed by Darin Adler.
+                            Reviewed by Anders Carlsson.
 
-                            Test: http/tests/contentextensions/domain-rules.html
-                            (And lots of API tests)
+                            Update linked SDK and minimal Windows level to be compatible with
+                            Windows 7 or newer.
 
-                            This patch adds if-domain and unless-domain to the trigger in the JSON format.
-                            if-domain makes the rule apply only to domains in the list.
-                            unless-domain makes the rule apply to domains that are not in the list.
-
-                            All rules without if-domain or unless-domain are compiled into a set of DFAs.  This behavior is unchanged.
-                            All rules with if-domain or unless-domain are compiled into a separate set of DFAs.
-                            The domains are also compiled into another set of DFAs.  This makes 3 arrays of DFA bytecode instead of 1.
-
-                            If there are no domain specific rules, there is no change in behavior.
-                            If there are domain specific rules, the URL will be checked for matches in both
-                            filtersWithoutDomainsBytecode and filtersWithDomainsBytecode.  If there are matches from
-                            filtersWithDomainsBytecode then the domain of the main document will be checked with
-                            domainFiltersBytecode to see which of the matches applies to this domain.
-
-                            * contentextensions/CombinedURLFilters.cpp:
-                            (WebCore::ContentExtensions::CombinedURLFilters::isEmpty):
-                            (WebCore::ContentExtensions::CombinedURLFilters::addDomain):
-                            * contentextensions/CombinedURLFilters.h:
-                            Added addDomain, which adds characters from a domain to the prefix tree directly without using YARR.
-                            * contentextensions/CompiledContentExtension.cpp:
-                            (WebCore::ContentExtensions::CompiledContentExtension::globalDisplayNoneSelectors):
-                            * contentextensions/CompiledContentExtension.h:
-                            * contentextensions/ContentExtensionCompiler.cpp:
-                            (WebCore::ContentExtensions::serializeActions):
-                            (WebCore::ContentExtensions::compileRuleList):
-                            Separate the rules into rules with domains and rules without domains and compile to bytecode.
-                            * contentextensions/ContentExtensionCompiler.h:
-                            Updated compiler interface to reflect the slightly more complicated structure.
-                            * contentextensions/ContentExtensionError.cpp:
-                            (WebCore::ContentExtensions::contentExtensionErrorCategory):
-                            * contentextensions/ContentExtensionError.h:
-                            Added new parsing errors.
-                            * contentextensions/ContentExtensionParser.cpp:
-                            (WebCore::ContentExtensions::getDomainList):
-                            (WebCore::ContentExtensions::loadTrigger):
-                            (WebCore::ContentExtensions::loadEncodedRules):
-                            * contentextensions/ContentExtensionRule.h:
-                            (WebCore::ContentExtensions::Trigger::operator==):
-                            Parse the new domain structures from JSON into the Trigger structure.
-                            * contentextensions/ContentExtensionsBackend.cpp:
-                            (WebCore::ContentExtensions::ContentExtensionsBackend::actionsForResourceLoad):
-                            Interpret as much bytecode as necessary to determine which rules apply to this URL and domain.
-                            * contentextensions/DFABytecode.h:
-                            (WebCore::ContentExtensions::instructionSizeWithArguments):
-                            * contentextensions/DFABytecodeCompiler.cpp:
-                            (WebCore::ContentExtensions::DFABytecodeCompiler::emitAppendAction):
-                            (WebCore::ContentExtensions::DFABytecodeCompiler::emitTestFlagsAndAppendAction):
-                            (WebCore::ContentExtensions::DFABytecodeCompiler::compileNode):
-                            * contentextensions/DFABytecodeCompiler.h:
-                            * contentextensions/DFABytecodeInterpreter.cpp:
-                            (WebCore::ContentExtensions::DFABytecodeInterpreter::interpretAppendAction):
-                            (WebCore::ContentExtensions::DFABytecodeInterpreter::interpretTestFlagsAndAppendAction):
-                            (WebCore::ContentExtensions::DFABytecodeInterpreter::actionsFromDFARoot):
-                            (WebCore::ContentExtensions::DFABytecodeInterpreter::interpret):
-                            * contentextensions/DFABytecodeInterpreter.h:
-                            * loader/ResourceLoadInfo.h:
-                            Keep track of which actions have an if-domain trigger.  If an action is in the
-                            filtersWithDomainsBytecode, then it either has an if-domain or an unless-domain in its trigger.
-                            This requires additional information in the bytecode, so there are two new bytecode types.
+                            * WebCore.vcxproj/WebCore.vcxproj:
+                            * WebCore.vcxproj/WebCoreGenerated.vcxproj:
+                            * WebCore.vcxproj/WebCoreTestSupport.vcxproj:
+                            * WebCorePrefix.h:
+                            * config.h:
+                            * testing/js/WebCoreTestSupportPrefix.h:
 
                     2015-05-12  Dana Burkart
                     Dana Burkart  <dburkart@apple.com
                     dburkart@apple.com>
 
-                            Merge r184104. rdar://problem/20727702
+                            Merge r184116. rdar://problem/20774613
 
-                        2015-05-11  Antti Koivisto  <antti@apple.com>
+                        2015-05-11  Alex Christensen  <achristensen@webkit.org>
 
-                                WebContent crash under com.apple.WebCore: WebCore::WebKitCSSResourceValue::isCSSValueNone const + 6
-                                https://bugs.webkit.org/show_bug.cgi?id=144870
-                                rdar://problem/20727702
+                                [Content Extensions] Support domain-specific rules and exceptions.
+                                https://bugs.webkit.org/show_bug.cgi?id=144833
 
-                                Reviewed by Simon Fraser.
+                                Reviewed by Darin Adler.
 
-                                No repro but we are seeing null pointer crashes like this:
+                                Test: http/tests/contentextensions/domain-rules.html
+                                (And lots of API tests)
 
-                                Thread 0 Crashed:: Dispatch queue: com.apple.main-thread
-                                0   com.apple.WebCore   0x00007fff92da5706 WebCore::WebKitCSSResourceValue::isCSSValueNone() const + 6
-                                1   com.apple.WebCore   0x00007fff93382b48 WebCore::MaskImageOperation::isCSSValueNone() const + 24
-                                2   com.apple.WebCore   0x00007fff92e0475e WebCore::FillLayer::hasNonEmptyMaskImage() const + 30
+                                This patch adds if-domain and unless-domain to the trigger in the JSON format.
+                                if-domain makes the rule apply only to domains in the list.
+                                unless-domain makes the rule apply to domains that are not in the list.
 
-                                * platform/graphics/MaskImageOperation.cpp:
-                                (WebCore::MaskImageOperation::MaskImageOperation):
-                                (WebCore::MaskImageOperation::isCSSValueNone):
+                                All rules without if-domain or unless-domain are compiled into a set of DFAs.  This behavior is unchanged.
+                                All rules with if-domain or unless-domain are compiled into a separate set of DFAs.
+                                The domains are also compiled into another set of DFAs.  This makes 3 arrays of DFA bytecode instead of 1.
 
-                                    This would crash like this if both m_styleImage and m_cssMaskImageValue are null.
-                                    There are no obvious guarantees that this doesn't happen. Two of the constructor variants allow it
-                                    and there is setImage which may turn m_styleImage null later too.
+                                If there are no domain specific rules, there is no change in behavior.
+                                If there are domain specific rules, the URL will be checked for matches in both
+                                filtersWithoutDomainsBytecode and filtersWithDomainsBytecode.  If there are matches from
+                                filtersWithDomainsBytecode then the domain of the main document will be checked with
+                                domainFiltersBytecode to see which of the matches applies to this domain.
 
-                                    Fix by making null m_cssMaskImageValue always signify CSSValueNone.
-
-                                (WebCore::MaskImageOperation::cssValue):
+                                * contentextensions/CombinedURLFilters.cpp:
+                                (WebCore::ContentExtensions::CombinedURLFilters::isEmpty):
+                                (WebCore::ContentExtensions::CombinedURLFilters::addDomain):
+                                * contentextensions/CombinedURLFilters.h:
+                                Added addDomain, which adds characters from a domain to the prefix tree directly without using YARR.
+                                * contentextensions/CompiledContentExtension.cpp:
+                                (WebCore::ContentExtensions::CompiledContentExtension::globalDisplayNoneSelectors):
+                                * contentextensions/CompiledContentExtension.h:
+                                * contentextensions/ContentExtensionCompiler.cpp:
+                                (WebCore::ContentExtensions::serializeActions):
+                                (WebCore::ContentExtensions::compileRuleList):
+                                Separate the rules into rules with domains and rules without domains and compile to bytecode.
+                                * contentextensions/ContentExtensionCompiler.h:
+                                Updated compiler interface to reflect the slightly more complicated structure.
+                                * contentextensions/ContentExtensionError.cpp:
+                                (WebCore::ContentExtensions::contentExtensionErrorCategory):
+                                * contentextensions/ContentExtensionError.h:
+                                Added new parsing errors.
+                                * contentextensions/ContentExtensionParser.cpp:
+                                (WebCore::ContentExtensions::getDomainList):
+                                (WebCore::ContentExtensions::loadTrigger):
+                                (WebCore::ContentExtensions::loadEncodedRules):
+                                * contentextensions/ContentExtensionRule.h:
+                                (WebCore::ContentExtensions::Trigger::operator==):
+                                Parse the new domain structures from JSON into the Trigger structure.
+                                * contentextensions/ContentExtensionsBackend.cpp:
+                                (WebCore::ContentExtensions::ContentExtensionsBackend::actionsForResourceLoad):
+                                Interpret as much bytecode as necessary to determine which rules apply to this URL and domain.
+                                * contentextensions/DFABytecode.h:
+                                (WebCore::ContentExtensions::instructionSizeWithArguments):
+                                * contentextensions/DFABytecodeCompiler.cpp:
+                                (WebCore::ContentExtensions::DFABytecodeCompiler::emitAppendAction):
+                                (WebCore::ContentExtensions::DFABytecodeCompiler::emitTestFlagsAndAppendAction):
+                                (WebCore::ContentExtensions::DFABytecodeCompiler::compileNode):
+                                * contentextensions/DFABytecodeCompiler.h:
+                                * contentextensions/DFABytecodeInterpreter.cpp:
+                                (WebCore::ContentExtensions::DFABytecodeInterpreter::interpretAppendAction):
+                                (WebCore::ContentExtensions::DFABytecodeInterpreter::interpretTestFlagsAndAppendAction):
+                                (WebCore::ContentExtensions::DFABytecodeInterpreter::actionsFromDFARoot):
+                                (WebCore::ContentExtensions::DFABytecodeInterpreter::interpret):
+                                * contentextensions/DFABytecodeInterpreter.h:
+                                * loader/ResourceLoadInfo.h:
+                                Keep track of which actions have an if-domain trigger.  If an action is in the
+                                filtersWithDomainsBytecode, then it either has an if-domain or an unless-domain in its trigger.
+                                This requires additional information in the bytecode, so there are two new bytecode types.
 
                         2015-05-12  Dana Burkart
                         Dana Burkart  <dburkart@apple.com
                         dburkart@apple.com>
 
-                                Merge r184005. rdar://problem/20486538
+                                Merge r184104. rdar://problem/20727702
 
-                            2015-05-08  Alexey Proskuryakov  <ap@apple.com>
+                            2015-05-11  Antti Koivisto  <antti@apple.com>
 
-                                    Crashes in SocketStreamHandleBase::close
-                                    https://bugs.webkit.org/show_bug.cgi?id=144767
-                                    rdar://problem/20486538
+                                    WebContent crash under com.apple.WebCore: WebCore::WebKitCSSResourceValue::isCSSValueNone const + 6
+                                    https://bugs.webkit.org/show_bug.cgi?id=144870
+                                    rdar://problem/20727702
 
-                                    Reviewed by Brady Eidson.
+                                    Reviewed by Simon Fraser.
 
-                                    This is a speculative fix, I could not reproduce the crash.
+                                    No repro but we are seeing null pointer crashes like this:
 
-                                    * Modules/websockets/WebSocketChannel.cpp: (WebCore::WebSocketChannel::processFrame):
-                                    Normally, processOutgoingFrameQueue() closes the handle in the end when called in
-                                    OutgoingFrameQueueClosing state. But there is no definitive protection against
-                                    processing two CLOSE frames, in which case we'd try to close the handle twice.
+                                    Thread 0 Crashed:: Dispatch queue: com.apple.main-thread
+                                    0   com.apple.WebCore   0x00007fff92da5706 WebCore::WebKitCSSResourceValue::isCSSValueNone() const + 6
+                                    1   com.apple.WebCore   0x00007fff93382b48 WebCore::MaskImageOperation::isCSSValueNone() const + 24
+                                    2   com.apple.WebCore   0x00007fff92e0475e WebCore::FillLayer::hasNonEmptyMaskImage() const + 30
 
-                                    * platform/network/cf/SocketStreamHandleCFNet.cpp:
-                                    (WebCore::SocketStreamHandle::readStreamCallback): Passing empty data to the client
-                                    results in the socket being closed, which makes no sense here.
+                                    * platform/graphics/MaskImageOperation.cpp:
+                                    (WebCore::MaskImageOperation::MaskImageOperation):
+                                    (WebCore::MaskImageOperation::isCSSValueNone):
+
+                                        This would crash like this if both m_styleImage and m_cssMaskImageValue are null.
+                                        There are no obvious guarantees that this doesn't happen. Two of the constructor variants allow it
+                                        and there is setImage which may turn m_styleImage null later too.
+
+                                        Fix by making null m_cssMaskImageValue always signify CSSValueNone.
+
+                                    (WebCore::MaskImageOperation::cssValue):
 
                             2015-05-12  Dana Burkart
                             Dana Burkart  <dburkart@apple.com
                             dburkart@apple.com>
 
-                                    Merge r184001. rdar://problem/20862460
+                                    Merge r184005. rdar://problem/20486538
 
-                                2015-05-08  Eric Carlson  <eric.carlson@apple.com>
+                                2015-05-08  Alexey Proskuryakov  <ap@apple.com>
 
-                                        [Mac] Playback target clients do not unregister on page reload
-                                        https://bugs.webkit.org/show_bug.cgi?id=144761
+                                        Crashes in SocketStreamHandleBase::close
+                                        https://bugs.webkit.org/show_bug.cgi?id=144767
+                                        rdar://problem/20486538
 
                                         Reviewed by Brady Eidson.
 
-                                        * dom/Document.cpp:
-                                        (WebCore::Document::prepareForDestruction): Unregister all target picker clients.
+                                        This is a speculative fix, I could not reproduce the crash.
 
-                                        * html/HTMLMediaElement.cpp:
-                                        (WebCore::HTMLMediaElement::registerWithDocument): Register for page cache callback.
-                                        (WebCore::HTMLMediaElement::unregisterWithDocument): Unregister for page cache callback.
-                                        (WebCore::HTMLMediaElement::documentWillSuspendForPageCache): New.
-                                        (WebCore::HTMLMediaElement::documentDidResumeFromPageCache): New.
+                                        * Modules/websockets/WebSocketChannel.cpp: (WebCore::WebSocketChannel::processFrame):
+                                        Normally, processOutgoingFrameQueue() closes the handle in the end when called in
+                                        OutgoingFrameQueueClosing state. But there is no definitive protection against
+                                        processing two CLOSE frames, in which case we'd try to close the handle twice.
+
+                                        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+                                        (WebCore::SocketStreamHandle::readStreamCallback): Passing empty data to the client
+                                        results in the socket being closed, which makes no sense here.
 
                                 2015-05-12  Dana Burkart
                                 Dana Burkart  <dburkart@apple.com
                                 dburkart@apple.com>
 
-                                        Merge r183971. rdar://problem/20065572
+                                        Merge r184001. rdar://problem/20862460
 
-                                    2015-05-07  Dean Jackson  <dino@apple.com>
+                                    2015-05-08  Eric Carlson  <eric.carlson@apple.com>
 
-                                            [iOS] MediaControls: disappear while scrubbing
-                                            https://bugs.webkit.org/show_bug.cgi?id=144777
-                                            <rdar://problem/20065572>
+                                            [Mac] Playback target clients do not unregister on page reload
+                                            https://bugs.webkit.org/show_bug.cgi?id=144761
 
-                                            Reviewed by Eric Carlson.
+                                            Reviewed by Brady Eidson.
 
-                                            If we are scrubbing we shouldn't hide the controls.
+                                            * dom/Document.cpp:
+                                            (WebCore::Document::prepareForDestruction): Unregister all target picker clients.
 
-                                            * Modules/mediacontrols/mediaControlsApple.js:
-                                            (Controller.prototype.hideControls): Return early if we are scrubbing.
-                                            * Modules/mediacontrols/mediaControlsiOS.js:
-                                            (ControllerIOS.prototype): Add initial value for _potentiallyScrubbing and
-                                            rename from non-underscored value throughout the file.
-                                            (ControllerIOS.prototype.handleTimelineTouchEnd): When we finish scrubbing, reset
-                                            the timer to hide the controls.
+                                            * html/HTMLMediaElement.cpp:
+                                            (WebCore::HTMLMediaElement::registerWithDocument): Register for page cache callback.
+                                            (WebCore::HTMLMediaElement::unregisterWithDocument): Unregister for page cache callback.
+                                            (WebCore::HTMLMediaElement::documentWillSuspendForPageCache): New.
+                                            (WebCore::HTMLMediaElement::documentDidResumeFromPageCache): New.
 
                                     2015-05-12  Dana Burkart
                                     Dana Burkart  <dburkart@apple.com
                                     dburkart@apple.com>
 
-                                            Merge r183970. rdar://problem/20769741
+                                            Merge r183971. rdar://problem/20065572
 
-                                        2015-05-07  Simon Fraser  <simon.fraser@apple.com>
+                                        2015-05-07  Dean Jackson  <dino@apple.com>
 
-                                                REGRESSION (r183300): Fixed elements flash when scrolling
-                                                https://bugs.webkit.org/show_bug.cgi?id=144778
-                                                rdar://problem/20769741
+                                                [iOS] MediaControls: disappear while scrubbing
+                                                https://bugs.webkit.org/show_bug.cgi?id=144777
+                                                <rdar://problem/20065572>
 
-                                                Reviewed by Dean Jackson.
+                                                Reviewed by Eric Carlson.
 
-                                                After r183300 we can detached layer backing store when outside the coverage region.
-                                                However, position:fixed layers are moved around by the ScrollingCoordinator behind
-                                                GraphicsLayer's back, so we can do layer flushes with stale information about layer
-                                                geometry.
+                                                If we are scrubbing we shouldn't hide the controls.
 
-                                                To avoid dropping backing store for layers in this situation, prevent backing
-                                                store detachment on layers registered with the ScrollingCoordinator as viewport-constrained
-                                                layers. Preventing detachment on a layer also prevents detachment on all descendant
-                                                layers.
-
-                                                * platform/graphics/GraphicsLayer.h:
-                                                (WebCore::GraphicsLayer::setAllowsBackingStoreDetachment):
-                                                (WebCore::GraphicsLayer::allowsBackingStoreDetachment):
-                                                * platform/graphics/ca/GraphicsLayerCA.cpp:
-                                                (WebCore::GraphicsLayerCA::GraphicsLayerCA):
-                                                (WebCore::GraphicsLayerCA::setVisibleAndCoverageRects): Set m_intersectsCoverageRect to true
-                                                if backing store detachment is prevented.
-                                                (WebCore::GraphicsLayerCA::recursiveCommitChanges): Set a bit in the CommitState to
-                                                communicate to descendants that detachment is prevented.
-                                                * platform/graphics/ca/GraphicsLayerCA.h:
-                                                (WebCore::GraphicsLayerCA::CommitState::CommitState): Deleted.
-                                                * rendering/RenderLayerBacking.cpp:
-                                                (WebCore::RenderLayerBacking::setIsScrollCoordinatedWithViewportConstrainedRole):
-                                                * rendering/RenderLayerBacking.h:
-                                                (WebCore::RenderLayerBacking::setScrollingNodeIDForRole): If registering with a non-zero
-                                                nodeID for the ViewportConstrained role, turn off backing store detachment.
+                                                * Modules/mediacontrols/mediaControlsApple.js:
+                                                (Controller.prototype.hideControls): Return early if we are scrubbing.
+                                                * Modules/mediacontrols/mediaControlsiOS.js:
+                                                (ControllerIOS.prototype): Add initial value for _potentiallyScrubbing and
+                                                rename from non-underscored value throughout the file.
+                                                (ControllerIOS.prototype.handleTimelineTouchEnd): When we finish scrubbing, reset
+                                                the timer to hide the controls.
 
                                         2015-05-12  Dana Burkart
                                         Dana Burkart  <dburkart@apple.com
                                         dburkart@apple.com>
 
-                                                Merge r183965. rdar://problem/20866590
+                                                Merge r183970. rdar://problem/20769741
 
-                                            2015-05-07  Dean Jackson  <dino@apple.com>
+                                            2015-05-07  Simon Fraser  <simon.fraser@apple.com>
 
-                                                    [iOS] While scrubbing and holding down, video continues to play
-                                                    https://bugs.webkit.org/show_bug.cgi?id=144776
-                                                    <rdar://problem/20863757>
+                                                    REGRESSION (r183300): Fixed elements flash when scrolling
+                                                    https://bugs.webkit.org/show_bug.cgi?id=144778
+                                                    rdar://problem/20769741
 
-                                                    Reviewed by Simon Fraser.
+                                                    Reviewed by Dean Jackson.
 
-                                                    When we are scrubbing a video, we should pause playback. As we
-                                                    let go of the scrubber playback can resume (but only if it was
-                                                    playing originally).
+                                                    After r183300 we can detached layer backing store when outside the coverage region.
+                                                    However, position:fixed layers are moved around by the ScrollingCoordinator behind
+                                                    GraphicsLayer's back, so we can do layer flushes with stale information about layer
+                                                    geometry.
 
-                                                    * Modules/mediacontrols/mediaControlsiOS.js:
-                                                    (ControllerIOS.prototype.createControls): Listen for touchstart on the scrubber.
-                                                    (ControllerIOS.prototype.handleTimelineInput): Call the prototype, but pause if necessary.
-                                                    (ControllerIOS.prototype.handleTimelineChange): Just moved this to be with the other timeline functions.
-                                                    (ControllerIOS.prototype.handleTimelineTouchStart): Add the listeners for end and cancel. Remember that we are
-                                                    potentially about to scrub.
-                                                    (ControllerIOS.prototype.handleTimelineTouchEnd): Remove the listeners.
+                                                    To avoid dropping backing store for layers in this situation, prevent backing
+                                                    store detachment on layers registered with the ScrollingCoordinator as viewport-constrained
+                                                    layers. Preventing detachment on a layer also prevents detachment on all descendant
+                                                    layers.
+
+                                                    * platform/graphics/GraphicsLayer.h:
+                                                    (WebCore::GraphicsLayer::setAllowsBackingStoreDetachment):
+                                                    (WebCore::GraphicsLayer::allowsBackingStoreDetachment):
+                                                    * platform/graphics/ca/GraphicsLayerCA.cpp:
+                                                    (WebCore::GraphicsLayerCA::GraphicsLayerCA):
+                                                    (WebCore::GraphicsLayerCA::setVisibleAndCoverageRects): Set m_intersectsCoverageRect to true
+                                                    if backing store detachment is prevented.
+                                                    (WebCore::GraphicsLayerCA::recursiveCommitChanges): Set a bit in the CommitState to
+                                                    communicate to descendants that detachment is prevented.
+                                                    * platform/graphics/ca/GraphicsLayerCA.h:
+                                                    (WebCore::GraphicsLayerCA::CommitState::CommitState): Deleted.
+                                                    * rendering/RenderLayerBacking.cpp:
+                                                    (WebCore::RenderLayerBacking::setIsScrollCoordinatedWithViewportConstrainedRole):
+                                                    * rendering/RenderLayerBacking.h:
+                                                    (WebCore::RenderLayerBacking::setScrollingNodeIDForRole): If registering with a non-zero
+                                                    nodeID for the ViewportConstrained role, turn off backing store detachment.
 
                                             2015-05-12  Dana Burkart
                                             Dana Burkart  <dburkart@apple.com
                                             dburkart@apple.com>
 
-                                                    Merge r183954. rdar://problem/20281886
+                                                    Merge r183965. rdar://problem/20866590
 
-                                                2015-05-07  Beth Dakin  <bdakin@apple.com>
+                                                2015-05-07  Dean Jackson  <dino@apple.com>
 
-                                                        New force-related DOM events should fire in WK1 views
-                                                        https://bugs.webkit.org/show_bug.cgi?id=144663
-                                                        -and corresponding-
-                                                        rdar://problem/20281886
+                                                        [iOS] While scrubbing and holding down, video continues to play
+                                                        https://bugs.webkit.org/show_bug.cgi?id=144776
+                                                        <rdar://problem/20863757>
 
-                                                        Reviewed by Sam Weinig.
+                                                        Reviewed by Simon Fraser.
 
-                                                        All of the WK1 mouse events need to take the correspondingPressureEvent.
-                                                        * page/EventHandler.h:
+                                                        When we are scrubbing a video, we should pause playback. As we
+                                                        let go of the scrubber playback can resume (but only if it was
+                                                        playing originally).
 
-                                                        Make correspondingPressureEvent a part of CurrentEventScope. This is needed to
-                                                        have accurate pressure information for all of the mouse events in subframes.
-                                                        * page/mac/EventHandlerMac.mm:
-                                                        (WebCore::correspondingPressureEventSlot):
-                                                        (WebCore::EventHandler::correspondingPressureEvent):
-                                                        (WebCore::CurrentEventScope::CurrentEventScope):
-                                                        (WebCore::CurrentEventScope::~CurrentEventScope):
-
-                                                        These events don’t have an associated pressure, so send nil for the
-                                                        correspondingPressureEvent.
-                                                        (WebCore::EventHandler::wheelEvent):
-                                                        (WebCore::EventHandler::keyEvent):
-
-                                                        Pipe through correspondingPressureEvent.
-                                                        (WebCore::EventHandler::mouseDown):
-                                                        (WebCore::EventHandler::mouseDragged):
-                                                        (WebCore::EventHandler::mouseUp):
-                                                        (WebCore::EventHandler::mouseMoved):
-
-                                                        New function to handle pressure change events.
-                                                        (WebCore::EventHandler::pressureChange):
-
-                                                        Pipe through correspondingPressureEvent.
-                                                        (WebCore::EventHandler::passMouseMovedEventToScrollbars):
-                                                        (WebCore::EventHandler::currentPlatformMouseEvent):
-
-                                                        Take the correspondingPressureEvent in order to build a PlatformMouseEvent with
-                                                        the correct pressure information.
-                                                        * platform/mac/PlatformEventFactoryMac.h:
-                                                        * platform/mac/PlatformEventFactoryMac.mm:
-                                                        (WebCore::globalPointForEvent):
-                                                        (WebCore::pointForEvent):
-                                                        (WebCore::mouseButtonForEvent):
-                                                        (WebCore::PlatformMouseEventBuilder::PlatformMouseEventBuilder):
-                                                        (WebCore::PlatformEventFactory::createPlatformMouseEvent):
+                                                        * Modules/mediacontrols/mediaControlsiOS.js:
+                                                        (ControllerIOS.prototype.createControls): Listen for touchstart on the scrubber.
+                                                        (ControllerIOS.prototype.handleTimelineInput): Call the prototype, but pause if necessary.
+                                                        (ControllerIOS.prototype.handleTimelineChange): Just moved this to be with the other timeline functions.
+                                                        (ControllerIOS.prototype.handleTimelineTouchStart): Add the listeners for end and cancel. Remember that we are
+                                                        potentially about to scrub.
+                                                        (ControllerIOS.prototype.handleTimelineTouchEnd): Remove the listeners.
 
                                                 2015-05-12  Dana Burkart
                                                 Dana Burkart  <dburkart@apple.com
                                                 dburkart@apple.com>
 
-                                                        Merge r183953. rdar://problem/19997548
+                                                        Merge r183954. rdar://problem/20281886
 
-                                                    2015-05-06  Roger Fong  <roger_fong@apple.com>
+                                                    2015-05-07  Beth Dakin  <bdakin@apple.com>
 
-                                                            Media Controls: Scrubber should be independent of actual video time, causes scrubber to be jumpy.
-                                                            https://bugs.webkit.org/show_bug.cgi?id=144700.
-                                                            <rdar://problem/19997548>
+                                                            New force-related DOM events should fire in WK1 views
+                                                            https://bugs.webkit.org/show_bug.cgi?id=144663
+                                                            -and corresponding-
+                                                            rdar://problem/20281886
 
-                                                            Reviewed by Jer Noble.
+                                                            Reviewed by Sam Weinig.
 
-                                                            Update time and timeline during the timeline input event instead of the wrapper's mousemove.
-                                                            (Controller.prototype.handleWrapperMouseMove):
-                                                            (Controller.prototype.handleTimelineMouseMove):
-                                                            (Controller.prototype.drawTimelineBackground):
+                                                            All of the WK1 mouse events need to take the correspondingPressureEvent.
+                                                            * page/EventHandler.h:
 
-                                                            (Controller.prototype.updateControlsWhileScrubbing):
-                                                            Updates time and scrubber to reflect timeline user input.
+                                                            Make correspondingPressureEvent a part of CurrentEventScope. This is needed to
+                                                            have accurate pressure information for all of the mouse events in subframes.
+                                                            * page/mac/EventHandlerMac.mm:
+                                                            (WebCore::correspondingPressureEventSlot):
+                                                            (WebCore::EventHandler::correspondingPressureEvent):
+                                                            (WebCore::CurrentEventScope::CurrentEventScope):
+                                                            (WebCore::CurrentEventScope::~CurrentEventScope):
+
+                                                            These events don’t have an associated pressure, so send nil for the
+                                                            correspondingPressureEvent.
+                                                            (WebCore::EventHandler::wheelEvent):
+                                                            (WebCore::EventHandler::keyEvent):
+
+                                                            Pipe through correspondingPressureEvent.
+                                                            (WebCore::EventHandler::mouseDown):
+                                                            (WebCore::EventHandler::mouseDragged):
+                                                            (WebCore::EventHandler::mouseUp):
+                                                            (WebCore::EventHandler::mouseMoved):
+
+                                                            New function to handle pressure change events.
+                                                            (WebCore::EventHandler::pressureChange):
+
+                                                            Pipe through correspondingPressureEvent.
+                                                            (WebCore::EventHandler::passMouseMovedEventToScrollbars):
+                                                            (WebCore::EventHandler::currentPlatformMouseEvent):
+
+                                                            Take the correspondingPressureEvent in order to build a PlatformMouseEvent with
+                                                            the correct pressure information.
+                                                            * platform/mac/PlatformEventFactoryMac.h:
+                                                            * platform/mac/PlatformEventFactoryMac.mm:
+                                                            (WebCore::globalPointForEvent):
+                                                            (WebCore::pointForEvent):
+                                                            (WebCore::mouseButtonForEvent):
+                                                            (WebCore::PlatformMouseEventBuilder::PlatformMouseEventBuilder):
+                                                            (WebCore::PlatformEventFactory::createPlatformMouseEvent):
 
                                                     2015-05-12  Dana Burkart
                                                     Dana Burkart  <dburkart@apple.com
                                                     dburkart@apple.com>
 
-                                                            Merge r183943. rdar://problem/19913748
+                                                            Merge r183953. rdar://problem/19997548
 
-                                                        2015-05-07  Simon Fraser  <simon.fraser@apple.com>
+                                                        2015-05-06  Roger Fong  <roger_fong@apple.com>
 
-                                                                Remove the WK1-only code path for independently composited iframes
-                                                                https://bugs.webkit.org/show_bug.cgi?id=144722
+                                                                Media Controls: Scrubber should be independent of actual video time, causes scrubber to be jumpy.
+                                                                https://bugs.webkit.org/show_bug.cgi?id=144700.
+                                                                <rdar://problem/19997548>
 
-                                                                Reviewed by Dean Jackson.
+                                                                Reviewed by Jer Noble.
 
-                                                                In WebKit1 on Mac, we allowed iframes to be composited independently of their
-                                                                parent document, relying on the fact that the frame's platform view can host
-                                                                a layer-backed view. However, this ran into bugs (rdar://problem/18862298),
-                                                                and triggers the assertion at the end of FrameView::updateLayoutAndStyleIfNeededRecursive(),
-                                                                because the compositing update after a layout can dirty style in notifyIFramesOfCompositingChange().
+                                                                Update time and timeline during the timeline input event instead of the wrapper's mousemove.
+                                                                (Controller.prototype.handleWrapperMouseMove):
+                                                                (Controller.prototype.handleTimelineMouseMove):
+                                                                (Controller.prototype.drawTimelineBackground):
 
-                                                                Removing the WK1-only code path solves these problems. It also eliminates the need
-                                                                to do compositing-specific frame overlap testing.
-
-                                                                * page/FrameView.cpp:
-                                                                (WebCore::FrameView::setIsOverlapped): No need to do compositing-related things here.
-                                                                Any iframe that gets composited will participate in the normal compositing overlap
-                                                                testing in its parent frame.
-                                                                (WebCore::FrameView::hasCompositedContentIncludingDescendants): Deleted.
-                                                                (WebCore::FrameView::hasCompositingAncestor): Deleted.
-                                                                * page/FrameView.h:
-                                                                * rendering/RenderLayerCompositor.cpp: Replace ownerElement() checks in this file
-                                                                with an isMainFrameCompositor() for readability. Some 0->nullptr.
-                                                                (WebCore::RenderLayerCompositor::cacheAcceleratedCompositingFlags):
-                                                                (WebCore::RenderLayerCompositor::chromeClient):
-                                                                (WebCore::RenderLayerCompositor::enclosingCompositorFlushingLayers):
-                                                                (WebCore::RenderLayerCompositor::updateCompositingLayers):
-                                                                (WebCore::RenderLayerCompositor::appendDocumentOverlayLayers):
-                                                                (WebCore::RenderLayerCompositor::updateBacking):
-                                                                (WebCore::RenderLayerCompositor::layerTreeAsText):
-                                                                (WebCore::RenderLayerCompositor::frameContentsCompositor):
-                                                                (WebCore::RenderLayerCompositor::setIsInWindow):
-                                                                (WebCore::RenderLayerCompositor::requiresCompositingForScrollableFrame):
-                                                                (WebCore::RenderLayerCompositor::requiresCompositingForFrame): frameRenderer.requiresAcceleratedCompositing()
-                                                                already bails on no content RenderView, so the shouldPropagateCompositingToEnclosingFrame() check does
-                                                                nothing and is removed.
-                                                                (WebCore::RenderLayerCompositor::isAsyncScrollableStickyLayer):
-                                                                (WebCore::RenderLayerCompositor::requiresScrollLayer):
-                                                                (WebCore::RenderLayerCompositor::documentUsesTiledBacking):
-                                                                (WebCore::RenderLayerCompositor::isMainFrameCompositor):
-                                                                (WebCore::RenderLayerCompositor::shouldCompositeOverflowControls):
-                                                                (WebCore::RenderLayerCompositor::requiresOverhangAreasLayer):
-                                                                (WebCore::RenderLayerCompositor::requiresContentShadowLayer):
-                                                                (WebCore::RenderLayerCompositor::updateLayerForTopOverhangArea):
-                                                                (WebCore::RenderLayerCompositor::updateLayerForBottomOverhangArea):
-                                                                (WebCore::RenderLayerCompositor::updateLayerForHeader):
-                                                                (WebCore::RenderLayerCompositor::updateLayerForFooter):
-                                                                (WebCore::RenderLayerCompositor::ensureRootLayer): Main frame attaches via ChromeClient,
-                                                                all other frames attach via parent frame.
-                                                                (WebCore::RenderLayerCompositor::notifyIFramesOfCompositingChange): This call to
-                                                                scheduleSetNeedsStyleRecalc(SyntheticStyleChange) was the source of dirtying style after
-                                                                layout, but is no longer needed so remove it.
-                                                                (WebCore::RenderLayerCompositor::registerAllViewportConstrainedLayers):
-                                                                (WebCore::RenderLayerCompositor::unregisterAllViewportConstrainedLayers):
-                                                                (WebCore::RenderLayerCompositor::scrollingCoordinator):
-                                                                (WebCore::RenderLayerCompositor::graphicsLayerFactory):
-                                                                (WebCore::RenderLayerCompositor::allowsIndependentlyCompositedFrames): Deleted.
-                                                                (WebCore::RenderLayerCompositor::shouldPropagateCompositingToEnclosingFrame): Deleted.
-                                                                (WebCore::RenderLayerCompositor::mainFrameBackingIsTiled): Deleted. This was mis-named;
-                                                                it really asks whether the document uses tiled backing, but does not check for main frame.
-                                                                * rendering/RenderLayerCompositor.h:
-                                                                * rendering/RenderWidget.cpp:
-                                                                (WebCore::RenderWidget::paintContents): No need to do frame overlap testing for
-                                                                compositing now.
+                                                                (Controller.prototype.updateControlsWhileScrubbing):
+                                                                Updates time and scrubber to reflect timeline user input.
 
                                                         2015-05-12  Dana Burkart
                                                         Dana Burkart  <dburkart@apple.com
                                                         dburkart@apple.com>
 
-                                                                Merge r183927. rdar://problem/20854785
+                                                                Merge r183943. rdar://problem/19913748
 
-                                                            2015-05-07  Eric Carlson  <eric.carlson@apple.com>
+                                                            2015-05-07  Simon Fraser  <simon.fraser@apple.com>
 
-                                                                    [Mac] Playback target isn't set on new element
-                                                                    https://bugs.webkit.org/show_bug.cgi?id=144724
+                                                                    Remove the WK1-only code path for independently composited iframes
+                                                                    https://bugs.webkit.org/show_bug.cgi?id=144722
 
-                                                                    Reviewed by Jer Noble.
+                                                                    Reviewed by Dean Jackson.
 
-                                                                    * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
-                                                                    * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
-                                                                    (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer): Call setShouldPlayToPlaybackTarget
-                                                                    if necessary.
-                                                                    (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget): Remember
-                                                                    the setting in case we don't have an AVPlayer yet.
+                                                                    In WebKit1 on Mac, we allowed iframes to be composited independently of their
+                                                                    parent document, relying on the fact that the frame's platform view can host
+                                                                    a layer-backed view. However, this ran into bugs (rdar://problem/18862298),
+                                                                    and triggers the assertion at the end of FrameView::updateLayoutAndStyleIfNeededRecursive(),
+                                                                    because the compositing update after a layout can dirty style in notifyIFramesOfCompositingChange().
+
+                                                                    Removing the WK1-only code path solves these problems. It also eliminates the need
+                                                                    to do compositing-specific frame overlap testing.
+
+                                                                    * page/FrameView.cpp:
+                                                                    (WebCore::FrameView::setIsOverlapped): No need to do compositing-related things here.
+                                                                    Any iframe that gets composited will participate in the normal compositing overlap
+                                                                    testing in its parent frame.
+                                                                    (WebCore::FrameView::hasCompositedContentIncludingDescendants): Deleted.
+                                                                    (WebCore::FrameView::hasCompositingAncestor): Deleted.
+                                                                    * page/FrameView.h:
+                                                                    * rendering/RenderLayerCompositor.cpp: Replace ownerElement() checks in this file
+                                                                    with an isMainFrameCompositor() for readability. Some 0->nullptr.
+                                                                    (WebCore::RenderLayerCompositor::cacheAcceleratedCompositingFlags):
+                                                                    (WebCore::RenderLayerCompositor::chromeClient):
+                                                                    (WebCore::RenderLayerCompositor::enclosingCompositorFlushingLayers):
+                                                                    (WebCore::RenderLayerCompositor::updateCompositingLayers):
+                                                                    (WebCore::RenderLayerCompositor::appendDocumentOverlayLayers):
+                                                                    (WebCore::RenderLayerCompositor::updateBacking):
+                                                                    (WebCore::RenderLayerCompositor::layerTreeAsText):
+                                                                    (WebCore::RenderLayerCompositor::frameContentsCompositor):
+                                                                    (WebCore::RenderLayerCompositor::setIsInWindow):
+                                                                    (WebCore::RenderLayerCompositor::requiresCompositingForScrollableFrame):
+                                                                    (WebCore::RenderLayerCompositor::requiresCompositingForFrame): frameRenderer.requiresAcceleratedCompositing()
+                                                                    already bails on no content RenderView, so the shouldPropagateCompositingToEnclosingFrame() check does
+                                                                    nothing and is removed.
+                                                                    (WebCore::RenderLayerCompositor::isAsyncScrollableStickyLayer):
+                                                                    (WebCore::RenderLayerCompositor::requiresScrollLayer):
+                                                                    (WebCore::RenderLayerCompositor::documentUsesTiledBacking):
+                                                                    (WebCore::RenderLayerCompositor::isMainFrameCompositor):
+                                                                    (WebCore::RenderLayerCompositor::shouldCompositeOverflowControls):
+                                                                    (WebCore::RenderLayerCompositor::requiresOverhangAreasLayer):
+                                                                    (WebCore::RenderLayerCompositor::requiresContentShadowLayer):
+                                                                    (WebCore::RenderLayerCompositor::updateLayerForTopOverhangArea):
+                                                                    (WebCore::RenderLayerCompositor::updateLayerForBottomOverhangArea):
+                                                                    (WebCore::RenderLayerCompositor::updateLayerForHeader):
+                                                                    (WebCore::RenderLayerCompositor::updateLayerForFooter):
+                                                                    (WebCore::RenderLayerCompositor::ensureRootLayer): Main frame attaches via ChromeClient,
+                                                                    all other frames attach via parent frame.
+                                                                    (WebCore::RenderLayerCompositor::notifyIFramesOfCompositingChange): This call to
+                                                                    scheduleSetNeedsStyleRecalc(SyntheticStyleChange) was the source of dirtying style after
+                                                                    layout, but is no longer needed so remove it.
+                                                                    (WebCore::RenderLayerCompositor::registerAllViewportConstrainedLayers):
+                                                                    (WebCore::RenderLayerCompositor::unregisterAllViewportConstrainedLayers):
+                                                                    (WebCore::RenderLayerCompositor::scrollingCoordinator):
+                                                                    (WebCore::RenderLayerCompositor::graphicsLayerFactory):
+                                                                    (WebCore::RenderLayerCompositor::allowsIndependentlyCompositedFrames): Deleted.
+                                                                    (WebCore::RenderLayerCompositor::shouldPropagateCompositingToEnclosingFrame): Deleted.
+                                                                    (WebCore::RenderLayerCompositor::mainFrameBackingIsTiled): Deleted. This was mis-named;
+                                                                    it really asks whether the document uses tiled backing, but does not check for main frame.
+                                                                    * rendering/RenderLayerCompositor.h:
+                                                                    * rendering/RenderWidget.cpp:
+                                                                    (WebCore::RenderWidget::paintContents): No need to do frame overlap testing for
+                                                                    compositing now.
 
                                                             2015-05-12  Dana Burkart
                                                             Dana Burkart  <dburkart@apple.com
                                                             dburkart@apple.com>
 
-                                                                    Merge r183909. rdar://problem/18894598
+                                                                    Merge r183927. rdar://problem/20854785
 
-                                                                2015-05-06  Daniel Bates  <dabates@apple.com>
+                                                                2015-05-07  Eric Carlson  <eric.carlson@apple.com>
 
-                                                                        [iOS][WK2] Pause/resume database thread when UIProcess enters/leaves the background
-                                                                        https://bugs.webkit.org/show_bug.cgi?id=144657
-                                                                        <rdar://problem/18894598>
+                                                                        [Mac] Playback target isn't set on new element
+                                                                        https://bugs.webkit.org/show_bug.cgi?id=144724
 
-                                                                        Reviewed by Andy Estes.
+                                                                        Reviewed by Jer Noble.
 
-                                                                        Export WebCore functionality to pause and resume the database thread so that we can
-                                                                        make use of this functionality from WebKit2.
-
-                                                                        * Modules/webdatabase/AbstractDatabaseServer.h:
-                                                                        * Modules/webdatabase/DatabaseManager.cpp:
-                                                                        (WebCore::DatabaseManager::setPauseAllDatabases): Added; turns around and calls DatabaseServer::setPauseAllDatabases().
-                                                                        * Modules/webdatabase/DatabaseManager.h:
-                                                                        * Modules/webdatabase/DatabaseServer.cpp:
-                                                                        (WebCore::DatabaseServer::setPauseAllDatabases): Added; turns around and calls
-                                                                        DatabaseTracker::tracker().setDatabasesPaused() to pause or resume the database thread.
-                                                                        For now, we guard this call with PLATFORM(IOS). We'll look to remove this guard once
-                                                                        we fix <https://bugs.webkit.org/show_bug.cgi?id=144660>.
-                                                                        * Modules/webdatabase/DatabaseServer.h:
+                                                                        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+                                                                        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+                                                                        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer): Call setShouldPlayToPlaybackTarget
+                                                                        if necessary.
+                                                                        (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget): Remember
+                                                                        the setting in case we don't have an AVPlayer yet.
 
                                                                 2015-05-12  Dana Burkart
-                                                                Dana Burkart  <dburkart@apple.com>
+                                                                Dana Burkart  <dburkart@apple.com
+                                                                dburkart@apple.com>
 
-                                                                        Merge r183942. rdar://problem/20049088
+                                                                        Merge r183909. rdar://problem/18894598
 
-                                                                    2015-05-06  Dean Jackson  <dino@apple.com>
+                                                                    2015-05-06  Daniel Bates  <dabates@apple.com>
 
-                                                                            Handle backdrop views that have to tile
-                                                                            https://bugs.webkit.org/show_bug.cgi?id=142317
-                                                                            <rdar://problem/20049088>
+                                                                            [iOS][WK2] Pause/resume database thread when UIProcess enters/leaves the background
+                                                                            https://bugs.webkit.org/show_bug.cgi?id=144657
+                                                                            <rdar://problem/18894598>
 
-                                                                            Reviewed by Simon Fraser.
+                                                                            Reviewed by Andy Estes.
 
-                                                                            Take 2 - this was rolled out because Mavericks was crashing.
+                                                                            Export WebCore functionality to pause and resume the database thread so that we can
+                                                                            make use of this functionality from WebKit2.
 
-                                                                            Make sure backdrop layers don't tile. If they are big
-                                                                            enough, we'll leave it to the platform compositor to handle.
-
-                                                                            This also fixes a bug where if a layer changed from a backdrop
-                                                                            type to a tiled type, it would still retain its custom appearance
-                                                                            and we'd try to add children to the wrong layer.
-
-                                                                            Test: compositing/media-controls-bar-appearance-big.html
-
-                                                                            * platform/graphics/ca/GraphicsLayerCA.cpp:
-                                                                            (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers): Check if
-                                                                            a layer needs a backdrop before checking if it needs to tile.
+                                                                            * Modules/webdatabase/AbstractDatabaseServer.h:
+                                                                            * Modules/webdatabase/DatabaseManager.cpp:
+                                                                            (WebCore::DatabaseManager::setPauseAllDatabases): Added; turns around and calls DatabaseServer::setPauseAllDatabases().
+                                                                            * Modules/webdatabase/DatabaseManager.h:
+                                                                            * Modules/webdatabase/DatabaseServer.cpp:
+                                                                            (WebCore::DatabaseServer::setPauseAllDatabases): Added; turns around and calls
+                                                                            DatabaseTracker::tracker().setDatabasesPaused() to pause or resume the database thread.
+                                                                            For now, we guard this call with PLATFORM(IOS). We'll look to remove this guard once
+                                                                            we fix <https://bugs.webkit.org/show_bug.cgi?id=144660>.
+                                                                            * Modules/webdatabase/DatabaseServer.h:
 
                                                                     2015-05-12  Dana Burkart
                                                                     Dana Burkart  <dburkart@apple.com>
 
-                                                                            Merge r183894. rdar://problem/20049088
+                                                                            Merge r183942. rdar://problem/20049088
 
                                                                         2015-05-06  Dean Jackson  <dino@apple.com>
 
@@ -641,6 +627,8 @@ dburkart@apple.com>
                                                                                 <rdar://problem/20049088>
 
                                                                                 Reviewed by Simon Fraser.
+
+                                                                                Take 2 - this was rolled out because Mavericks was crashing.
 
                                                                                 Make sure backdrop layers don't tile. If they are big
                                                                                 enough, we'll leave it to the platform compositor to handle.
@@ -654,6 +642,32 @@ dburkart@apple.com>
                                                                                 * platform/graphics/ca/GraphicsLayerCA.cpp:
                                                                                 (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers): Check if
                                                                                 a layer needs a backdrop before checking if it needs to tile.
+
+                                                                        2015-05-12  Dana Burkart
+                                                                        Dana Burkart  <dburkart@apple.com>
+
+                                                                                Merge r183894. rdar://problem/20049088
+
+                                                                            2015-05-06  Dean Jackson  <dino@apple.com>
+
+                                                                                    Handle backdrop views that have to tile
+                                                                                    https://bugs.webkit.org/show_bug.cgi?id=142317
+                                                                                    <rdar://problem/20049088>
+
+                                                                                    Reviewed by Simon Fraser.
+
+                                                                                    Make sure backdrop layers don't tile. If they are big
+                                                                                    enough, we'll leave it to the platform compositor to handle.
+
+                                                                                    This also fixes a bug where if a layer changed from a backdrop
+                                                                                    type to a tiled type, it would still retain its custom appearance
+                                                                                    and we'd try to add children to the wrong layer.
+
+                                                                                    Test: compositing/media-controls-bar-appearance-big.html
+
+                                                                                    * platform/graphics/ca/GraphicsLayerCA.cpp:
+                                                                                    (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers): Check if
+                                                                                    a layer needs a backdrop before checking if it needs to tile.
 
 2015-05-06  Brent Fulgham  <bfulgham@apple.com>
 
