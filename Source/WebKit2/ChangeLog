@@ -1,3 +1,14 @@
+2015-05-13  Daegyu Lee  <daegyu.lee@navercorp.com>
+
+        REGRESSION(r176631): [EFL] Fullscreen feature doesn't work correctly on MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=144906
+
+        Reviewed by Gyuyoung Kim.
+
+        * UIProcess/CoordinatedGraphics/PageViewportController.cpp:
+        (WebKit::PageViewportController::updateMinimumScaleToFit): Recover the r176631 condition to
+        call applyScaleAfterRenderingContents function to apply correct scale.
+
 2015-05-12  Dan Bernstein  <mitz@apple.com>
 
         In Safari, Debug > Get Bytecode Profile crashes the Web Content process

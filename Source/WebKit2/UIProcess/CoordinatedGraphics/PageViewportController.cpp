@@ -347,7 +347,7 @@ bool PageViewportController::updateMinimumScaleToFit(bool userInitiatedUpdate)
         m_minimumScaleToFit = minimumScale;
 
         if (!m_webPageProxy->areActiveDOMObjectsAndAnimationsSuspended()) {
-            if (userInitiatedUpdate && currentlyScaledToFit)
+            if (!m_hadUserInteraction || (userInitiatedUpdate && currentlyScaledToFit))
                 applyScaleAfterRenderingContents(m_minimumScaleToFit);
             else {
                 // Ensure the effective scale stays within bounds.
