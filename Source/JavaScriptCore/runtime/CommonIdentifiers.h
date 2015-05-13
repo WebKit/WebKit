@@ -242,7 +242,8 @@
     macro(unscopables)
 
 #define JSC_COMMON_BYTECODE_INTRINSICS_EACH_NAME(macro) \
-    macro(putByValDirect)
+    macro(putByValDirect) \
+    macro(toString)
 
 #define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
     JSC_COMMON_BYTECODE_INTRINSICS_EACH_NAME(macro) \

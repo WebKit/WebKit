@@ -1,3 +1,26 @@
+2015-05-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement String.raw
+        https://bugs.webkit.org/show_bug.cgi?id=144330
+
+        Reviewed by Filip Pizlo.
+
+        Implement String.raw. It is intended to be used with tagged-templates syntax.
+        To implement ToString abstract operation efficiently,
+        we introduce @toString bytecode intrinsic. It emits op_to_string directly.
+
+        * CMakeLists.txt:
+        * builtins/StringConstructor.js: Added.
+        (raw):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_toString):
+        * runtime/CommonIdentifiers.h:
+        * runtime/StringConstructor.cpp:
+        * tests/stress/string-raw.js: Added.
+        (shouldBe):
+        (.get shouldBe):
+        (Counter):
+
 2015-05-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Temporarily disable the test on Windows. The failure is tracked in webkit.org/b/144897.

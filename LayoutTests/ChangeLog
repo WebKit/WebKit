@@ -1,3 +1,15 @@
+2015-05-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement String.raw
+        https://bugs.webkit.org/show_bug.cgi?id=144330
+
+        Reviewed by Filip Pizlo.
+
+        Add String.raw.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+
 2015-05-12  Alexey Proskuryakov  <ap@apple.com>
 
         fast/text/simple-line-layout-text-stroke-width.html fails on Windows
