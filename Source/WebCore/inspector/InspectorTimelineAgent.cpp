@@ -198,10 +198,6 @@ void InspectorTimelineAgent::internalStop()
 #if PLATFORM(COCOA)
     m_frameStartObserver = nullptr;
     m_frameStopObserver = nullptr;
-    if (m_didStartRecordingRunLoop) {
-        m_didStartRecordingRunLoop = false;
-        didCompleteCurrentRecord(TimelineRecordType::RenderingFrame);
-    }
 #endif
 
     clearRecordStack();

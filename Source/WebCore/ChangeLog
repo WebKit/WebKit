@@ -1,3 +1,18 @@
+2015-05-12  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r184224.
+        https://bugs.webkit.org/show_bug.cgi?id=144946
+
+        Made inspector/page/main-frame-resource.html assert every time
+        (Requested by ap on #webkit).
+
+        Reverted changeset:
+
+        "Web Inspector: REGRESSION (r181625): Timeline recording
+        started from console.profile is always empty"
+        https://bugs.webkit.org/show_bug.cgi?id=144882
+        http://trac.webkit.org/changeset/184224
+
 2015-05-12  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Hang in MediaPlayerPrivateAVFoundationObjC::audioSourceProvider() - 'tracks' property not yet loaded
