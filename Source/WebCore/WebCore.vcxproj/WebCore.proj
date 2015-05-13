@@ -12,6 +12,7 @@
   <!-- Wrapper to build WebCore for both win32 and x64. -->
   <PropertyGroup>
     <OFFICIAL_BUILD>1</OFFICIAL_BUILD>
+    <DXSDK_DIR>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\</DXSDK_DIR>
     <WebKit_Libraries>$(SRCROOT)\AppleInternal</WebKit_Libraries>
     <WebKit_OutputDir>$(OBJROOT)</WebKit_OutputDir>
     <AppleInternal>$(DSTROOT)\AppleInternal</AppleInternal>
@@ -29,10 +30,10 @@
 
   <ItemGroup>
     <WebCore Include="WebCore.submit.sln">
-      <AdditionalProperties>Platform=Win32;WEBKIT_OUTPUTDIR=$(WebKit_OutputDir);WEBKIT_LIBRARIES=$(WebKit_Libraries);OFFICIAL_BUILD=$(OFFICIAL_BUILD)</AdditionalProperties>
+      <AdditionalProperties>Platform=Win32;WEBKIT_OUTPUTDIR=$(WebKit_OutputDir);WEBKIT_LIBRARIES=$(WebKit_Libraries);OFFICIAL_BUILD=$(OFFICIAL_BUILD);DXSDK_DIR=$(DXSDK_DIR)</AdditionalProperties>
     </WebCore>
     <WebCore Include="WebCore.submit.sln">
-      <AdditionalProperties>Platform=x64;WEBKIT_OUTPUTDIR=$(WebKit_OutputDir);WEBKIT_LIBRARIES=$(WebKit_Libraries);OFFICIAL_BUILD=$(OFFICIAL_BUILD)</AdditionalProperties>
+      <AdditionalProperties>Platform=x64;WEBKIT_OUTPUTDIR=$(WebKit_OutputDir);WEBKIT_LIBRARIES=$(WebKit_Libraries);OFFICIAL_BUILD=$(OFFICIAL_BUILD);DXSDK_DIR=$(DXSDK_DIR)</AdditionalProperties>
     </WebCore>
   </ItemGroup>
  

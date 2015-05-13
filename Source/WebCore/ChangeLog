@@ -1,3 +1,11 @@
+2015-05-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Update DXSDK_DIR settings for build system.
+
+        Unreviewed build fix.
+
+        * WebCore.vcxproj/WebCore.proj: Add DXSDK_DIR definition for builder.
+
 2015-05-12  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Return Ref instead of PassRefPtr in create() factory functions of WebCore/dom
