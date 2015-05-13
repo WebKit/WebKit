@@ -47,6 +47,7 @@
 #include "PlatformCALayerWin.h"
 #include "TimeRanges.h"
 #include "WebCoreAVCFResourceLoader.h"
+#include "WebKitQuartzCoreAdditions/WKCACFTypes.h"
 
 #include <AVFoundationCF/AVCFPlayerItem.h>
 #if HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
@@ -57,7 +58,6 @@
 #include <AVFoundationCF/AVCFAssetResourceLoader.h>
 #endif
 #include <AVFoundationCF/AVFoundationCF.h>
-#include <d3d9.h>
 #include <delayimp.h>
 #include <dispatch/dispatch.h>
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE) && ENABLE(ENCRYPTED_MEDIA_V2)
