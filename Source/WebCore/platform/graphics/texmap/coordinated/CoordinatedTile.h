@@ -73,7 +73,7 @@ private:
 class CoordinatedTileClient {
 public:
     virtual ~CoordinatedTileClient() { }
-    virtual void createTile(uint32_t tileID, const SurfaceUpdateInfo&, const IntRect&) = 0;
+    virtual void createTile(uint32_t tileID, float) = 0;
     virtual void updateTile(uint32_t tileID, const SurfaceUpdateInfo&, const IntRect&) = 0;
     virtual void removeTile(uint32_t tileID) = 0;
     virtual bool paintToSurface(const IntSize&, uint32_t& atlasID, IntPoint&, CoordinatedSurface::Client*) = 0;

@@ -34,9 +34,6 @@ public:
     // The rect to be updated.
     IntRect updateRect;
 
-    // The page scale factor used to render this update.
-    float scaleFactor;
-
     // The id of the update atlas including the shareable bitmap containing the updates.
     uint32_t atlasID;
 

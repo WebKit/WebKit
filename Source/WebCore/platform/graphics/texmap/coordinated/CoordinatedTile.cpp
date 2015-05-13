@@ -79,7 +79,6 @@ Vector<IntRect> CoordinatedTile::updateBackBuffer()
 
     updateInfo.updateRect = m_dirtyRect;
     updateInfo.updateRect.move(-m_rect.x(), -m_rect.y());
-    updateInfo.scaleFactor = m_tiledBackingStore->contentsScale();
 
     static uint32_t id = 1;
     if (m_ID == InvalidCoordinatedTileID) {
@@ -87,9 +86,9 @@ Vector<IntRect> CoordinatedTile::updateBackBuffer()
         // We may get an invalid ID due to wrap-around on overflow.
         if (m_ID == InvalidCoordinatedTileID)
             m_ID = id++;
-        m_client->createTile(m_ID, updateInfo, m_rect);
-    } else
-        m_client->updateTile(m_ID, updateInfo, m_rect);
+        m_client->createTile(m_ID, m_tiledBackingStore->contentsScale());
+    }
+    m_client->updateTile(m_ID, updateInfo, m_rect);
 
     Vector<IntRect> updatedRects;
     updatedRects.append(m_dirtyRect);

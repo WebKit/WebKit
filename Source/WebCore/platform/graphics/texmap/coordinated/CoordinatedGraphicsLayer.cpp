@@ -954,17 +954,15 @@ bool CoordinatedGraphicsLayer::paintToSurface(const IntSize& size, uint32_t& atl
     return m_coordinator->paintToSurface(size, contentsOpaque() ? CoordinatedSurface::NoFlags : CoordinatedSurface::SupportsAlpha, atlas, offset, client);
 }
 
-void CoordinatedGraphicsLayer::createTile(uint32_t tileID, const SurfaceUpdateInfo& updateInfo, const IntRect& tileRect)
+void CoordinatedGraphicsLayer::createTile(uint32_t tileID, float scaleFactor)
 {
     ASSERT(m_coordinator);
     ASSERT(m_coordinator->isFlushingLayerChanges());
 
     TileCreationInfo creationInfo;
     creationInfo.tileID = tileID;
-    creationInfo.scale = updateInfo.scaleFactor;
-
+    creationInfo.scale = scaleFactor;
     m_layerState.tilesToCreate.append(creationInfo);
-    updateTile(tileID, updateInfo, tileRect);
 }
 
 void CoordinatedGraphicsLayer::updateTile(uint32_t tileID, const SurfaceUpdateInfo& updateInfo, const IntRect& tileRect)

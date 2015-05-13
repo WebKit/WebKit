@@ -1,3 +1,24 @@
+2015-05-13  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [CoordinatedGraphics] Remove scaleFactor from SurfaceUpdateInfo
+        https://bugs.webkit.org/show_bug.cgi?id=144935
+
+        Reviewed by Darin Adler.
+
+        The members of SurfaceUpdateInfo are only used to update tile except scaleFactor.
+        So, this patch removes scaleFactor from SurfaceUpdateInfo.
+        In addition, removes unnecessary parameters in createTile() 
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::createTile):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+        * platform/graphics/texmap/coordinated/CoordinatedTile.cpp:
+        (WebCore::CoordinatedTile::updateBackBuffer):
+        * platform/graphics/texmap/coordinated/CoordinatedTile.h:
+        * platform/graphics/texmap/coordinated/SurfaceUpdateInfo.h:
+
 2015-05-13  Sam Weinig  <sam@webkit.org>
 
         Modernize ContainerNode::childElementCount

@@ -137,7 +137,7 @@ public:
     virtual Color tiledBackingStoreBackgroundColor() const override;
 
     // CoordinatedTileClient
-    virtual void createTile(uint32_t tileID, const SurfaceUpdateInfo&, const IntRect&) override;
+    virtual void createTile(uint32_t tileID, float) override;
     virtual void updateTile(uint32_t tileID, const SurfaceUpdateInfo&, const IntRect&) override;
     virtual void removeTile(uint32_t tileID) override;
     virtual bool paintToSurface(const IntSize&, uint32_t& /* atlasID */, IntPoint&, CoordinatedSurface::Client*) override;
