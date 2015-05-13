@@ -172,6 +172,8 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
     closed()
     {
+        super.closed();
+
         WebInspector.showReplayInterfaceSetting.removeEventListener(null, null, this);
         WebInspector.replayManager.removeEventListener(null, null, this);
         WebInspector.timelineManager.removeEventListener(null, null, this);

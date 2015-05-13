@@ -56,6 +56,8 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
 
     closed()
     {
+        super.closed();
+
         WebInspector.Frame.removeEventListener(null, null, this);
         WebInspector.frameResourceManager.removeEventListener(null, null, this);
         WebInspector.debuggerManager.removeEventListener(null, null, this);

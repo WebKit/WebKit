@@ -85,6 +85,8 @@ WebInspector.StorageSidebarPanel = class StorageSidebarPanel extends WebInspecto
 
     closed()
     {
+        super.closed();
+
         WebInspector.storageManager.removeEventListener(null, null, this);
         WebInspector.applicationCacheManager.removeEventListener(null, null, this);
     }

@@ -64,6 +64,8 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
 
     closed()
     {
+        super.closed();
+
         WebInspector.Frame.removeEventListener(null, null, this);
     }
 

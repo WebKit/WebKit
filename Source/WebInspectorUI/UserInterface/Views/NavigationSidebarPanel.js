@@ -52,7 +52,8 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
             this.element.appendChild(this._topOverflowShadowElement);
         }
 
-        window.addEventListener("resize", this._updateContentOverflowShadowVisibility.bind(this));
+        this._boundUpdateContentOverflowShadowVisibility = this._updateContentOverflowShadowVisibility.bind(this);
+        window.addEventListener("resize", this._boundUpdateContentOverflowShadowVisibility);
 
         this._filtersSetting = new WebInspector.Setting(identifier + "-navigation-sidebar-filters", {});
         this._filterBar.filters = this._filtersSetting.value;
@@ -75,6 +76,12 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
     }
 
     // Public
+
+    closed()
+    {
+        window.removeEventListener("resize", this._boundUpdateContentOverflowShadowVisibility);
+        WebInspector.Frame.removeEventListener(null, null, this);
+    }
 
     get contentBrowser()
     {
