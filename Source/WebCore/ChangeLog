@@ -1,3 +1,24 @@
+2015-05-13  Brent Fulgham  <bfulgham@apple.com>
+
+        Scrollbars in overflow regions are not vanishing after scrolling with scroll snap points
+        https://bugs.webkit.org/show_bug.cgi?id=142521
+        <rdar://problem/20100706>
+
+        Reviewed by Darin Adler.
+
+        The scrollbars were not being dismissed because they were not being notified that the wheel
+        gesture was finished. This was happening because the wheel event 'ended' state has zero
+        deltaX and deltaY. If the region did not allow stretching, it would exit early, never passing
+        through the 'handleWheelEventPhase' code that would notify the scrollbar controller that
+        the gesture had ended.
+
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::mouseExitedContentArea): The wrong ScrollAnimator method was being
+        called when the mouse exited the content area.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::handleWheelEvent): Do not early return when the wheel event has
+        no change in X or Y coordinate.
+
 2015-05-12  David Hyatt  <hyatt@apple.com>
 
         Don't compute selection painting info when we don't have selection.
