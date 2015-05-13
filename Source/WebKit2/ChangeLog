@@ -1,3 +1,18 @@
+2015-05-13  Sungmann Cho  <sungmann.cho@navercorp.com>
+
+        Minor cleanups to PluginProxy.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=144948
+
+        Reviewed by Gyuyoung Kim.
+
+        1. Remove unnecessary #include.
+        2. Remove unnecessary return statement from PluginProxy::paint().
+
+        No new tests, no behavior change.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::paint):
+
 2015-05-13  Daegyu Lee  <daegyu.lee@navercorp.com>
 
         REGRESSION(r176631): [EFL] Fullscreen feature doesn't work correctly on MiniBrowser
