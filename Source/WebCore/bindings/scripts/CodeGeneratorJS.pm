@@ -250,6 +250,7 @@ my %classesNeedingWebCoreExport = (
     "JSRange" => 1,
     "JSScriptProfile" => 1,
     "JSScriptProfileNode" => 1,
+    "JSSourceBuffer" => 1,
     "JSTimeRanges" => 1,
     "JSXMLHttpRequest" => 1,
 

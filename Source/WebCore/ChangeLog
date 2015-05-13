@@ -1,3 +1,9 @@
+2015-05-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac build fix after r184228.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2015-05-12  Simon Fraser  <simon.fraser@apple.com>
 
         Turn antialiased font dilation off by default
