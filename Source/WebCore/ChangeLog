@@ -1,3 +1,14 @@
+2015-05-13  Eric Carlson  <eric.carlson@apple.com>
+
+        Work around HTMLMediaElement::documentDidResumeFromPageCache being called twice
+        https://bugs.webkit.org/show_bug.cgi?id=144969
+
+        Reviewed by Alexey Proskuryakov.
+
+        * dom/Document.cpp:
+        (WebCore::Document::addPlaybackTargetPickerClient): Replace ASSERT with early 
+        return to work around https://webkit.org/b/144970.
+
 2015-05-13  Timothy Horton  <timothy_horton@apple.com>
 
         Going back after resizing causes scroll knob to appear in the middle of the page

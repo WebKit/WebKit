@@ -6552,7 +6552,9 @@ void Document::addPlaybackTargetPickerClient(MediaPlaybackTargetClient& client)
     if (!page)
         return;
 
-    ASSERT(!m_clientToIDMap.contains(&client));
+    // FIXME: change this back to an ASSERT once https://webkit.org/b/144970 is fixed.
+    if (m_clientToIDMap.contains(&client))
+        return;
 
     uint64_t contextId = nextPlaybackTargetClientContextId();
     m_clientToIDMap.add(&client, contextId);
