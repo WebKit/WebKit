@@ -145,6 +145,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGCleanUpPhase.cpp
     dfg/DFGClobberSet.cpp
     dfg/DFGClobberize.cpp
+    dfg/DFGCombinedLiveness.cpp
     dfg/DFGCommon.cpp
     dfg/DFGCommonData.cpp
     dfg/DFGCompilationKey.cpp

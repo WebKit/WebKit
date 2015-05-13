@@ -82,6 +82,8 @@
 		0F0332C418B01763005F979A /* GetByIdVariant.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0332C218B01763005F979A /* GetByIdVariant.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0332C618B53FA9005F979A /* FTLWeight.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0332C518B53FA9005F979A /* FTLWeight.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0332C818B546EC005F979A /* FTLWeightedTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0332C718B546EC005F979A /* FTLWeightedTarget.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F04396D1B03DC0B009598B7 /* DFGCombinedLiveness.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F04396B1B03DC0B009598B7 /* DFGCombinedLiveness.cpp */; };
+		0F04396E1B03DC0B009598B7 /* DFGCombinedLiveness.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F04396C1B03DC0B009598B7 /* DFGCombinedLiveness.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F05C3B41683CF9200BAF45B /* DFGArrayifySlowPathGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F05C3B21683CF8F00BAF45B /* DFGArrayifySlowPathGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0776BF14FF002B00102332 /* JITCompilationEffort.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0776BD14FF002800102332 /* JITCompilationEffort.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0B839C14BCF46300885B4F /* LLIntThunks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0B839714BCF45A00885B4F /* LLIntThunks.cpp */; };
@@ -1816,6 +1818,8 @@
 		0F0332C218B01763005F979A /* GetByIdVariant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetByIdVariant.h; sourceTree = "<group>"; };
 		0F0332C518B53FA9005F979A /* FTLWeight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLWeight.h; path = ftl/FTLWeight.h; sourceTree = "<group>"; };
 		0F0332C718B546EC005F979A /* FTLWeightedTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLWeightedTarget.h; path = ftl/FTLWeightedTarget.h; sourceTree = "<group>"; };
+		0F04396B1B03DC0B009598B7 /* DFGCombinedLiveness.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGCombinedLiveness.cpp; path = dfg/DFGCombinedLiveness.cpp; sourceTree = "<group>"; };
+		0F04396C1B03DC0B009598B7 /* DFGCombinedLiveness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCombinedLiveness.h; path = dfg/DFGCombinedLiveness.h; sourceTree = "<group>"; };
 		0F05C3B21683CF8F00BAF45B /* DFGArrayifySlowPathGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGArrayifySlowPathGenerator.h; path = dfg/DFGArrayifySlowPathGenerator.h; sourceTree = "<group>"; };
 		0F0776BD14FF002800102332 /* JITCompilationEffort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITCompilationEffort.h; sourceTree = "<group>"; };
 		0F0B839714BCF45A00885B4F /* LLIntThunks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LLIntThunks.cpp; path = llint/LLIntThunks.cpp; sourceTree = "<group>"; };
@@ -4881,6 +4885,8 @@
 				A77A423917A0BBFD00A8DB81 /* DFGClobberize.h */,
 				A77A423A17A0BBFD00A8DB81 /* DFGClobberSet.cpp */,
 				A77A423B17A0BBFD00A8DB81 /* DFGClobberSet.h */,
+				0F04396B1B03DC0B009598B7 /* DFGCombinedLiveness.cpp */,
+				0F04396C1B03DC0B009598B7 /* DFGCombinedLiveness.h */,
 				0FB4B51A16B62772003F696B /* DFGCommon.cpp */,
 				0FC0977E1469EBC400CF2442 /* DFGCommon.h */,
 				0FEA0A2D170D40BF00BB722C /* DFGCommonData.cpp */,
@@ -6230,6 +6236,7 @@
 				0FC3CD0019ADA410006AC72A /* DFGBlockWorklist.h in Headers */,
 				0FE050181AA9091100D33B33 /* DirectArguments.h in Headers */,
 				FE20CE9E15F04A9500DF3430 /* LLIntCLoop.h in Headers */,
+				0F04396E1B03DC0B009598B7 /* DFGCombinedLiveness.h in Headers */,
 				0F4680CA14BBB16C00BFE272 /* LLIntCommon.h in Headers */,
 				0FBDB9AD1AB0FBC6000B57E5 /* DFGCallCreateDirectArgumentsSlowPathGenerator.h in Headers */,
 				0F4680D314BBD16700BFE272 /* LLIntData.h in Headers */,
@@ -7514,6 +7521,7 @@
 				70EC0EC61AA0D7DA00B6AAFA /* StringIteratorPrototype.cpp in Sources */,
 				A5FD0067189AFE9C00633231 /* ScriptArguments.cpp in Sources */,
 				A5FD006D189B00AA00633231 /* ScriptCallFrame.cpp in Sources */,
+				0F04396D1B03DC0B009598B7 /* DFGCombinedLiveness.cpp in Sources */,
 				A5FD006F189B00AA00633231 /* ScriptCallStack.cpp in Sources */,
 				A5FD007D189B0B4C00633231 /* ScriptCallStackFactory.cpp in Sources */,
 				A503FA25188EFFFD00110F14 /* ScriptDebugServer.cpp in Sources */,

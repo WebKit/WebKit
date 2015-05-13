@@ -33,6 +33,7 @@
 #include "DFGBasicBlockInlines.h"
 #include "DFGBlockMapInlines.h"
 #include "DFGClobberize.h"
+#include "DFGCombinedLiveness.h"
 #include "DFGForAllKills.h"
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"
@@ -226,6 +227,7 @@ private:
         performLivenessAnalysis(m_graph);
         performOSRAvailabilityAnalysis(m_graph);
         m_graph.initializeNodeOwners();
+        CombinedLiveness combinedLiveness(m_graph);
         
         BlockMap<Operands<bool>> clobberedByBlock(m_graph);
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
@@ -264,7 +266,7 @@ private:
                 continue;
             
             forAllKillsInBlock(
-                m_graph, block,
+                m_graph, combinedLiveness, block,
                 [&] (unsigned nodeIndex, Node* candidate) {
                     if (!m_candidates.contains(candidate))
                         return;

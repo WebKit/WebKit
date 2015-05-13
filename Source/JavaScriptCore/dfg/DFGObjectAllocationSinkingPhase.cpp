@@ -31,6 +31,7 @@
 #include "DFGAbstractHeap.h"
 #include "DFGBlockMapInlines.h"
 #include "DFGClobberize.h"
+#include "DFGCombinedLiveness.h"
 #include "DFGGraph.h"
 #include "DFGInsertOSRHintsForUpdate.h"
 #include "DFGInsertionSet.h"
@@ -107,6 +108,7 @@ private:
         m_graph.computeRefCounts();
         performLivenessAnalysis(m_graph);
         performOSRAvailabilityAnalysis(m_graph);
+        m_combinedLiveness = CombinedLiveness(m_graph);
         
         CString graphBeforeSinking;
         if (Options::verboseValidationFailure() && Options::validateGraphAtEachPhase()) {
@@ -189,7 +191,7 @@ private:
                 // So, we prune materialized-at-tail to only include things that are live.
                 Vector<Node*> toRemove;
                 for (auto pair : materialized) {
-                    if (!block->ssa->liveAtTail.contains(pair.key))
+                    if (!m_combinedLiveness.liveAtTail[block].contains(pair.key))
                         toRemove.append(pair.key);
                 }
                 for (Node* key : toRemove)
@@ -227,7 +229,7 @@ private:
                 if (pair.value)
                     continue; // It was materialized.
                 
-                if (block->ssa->liveAtTail.contains(pair.key))
+                if (m_combinedLiveness.liveAtTail[block].contains(pair.key))
                     continue; // It might still get materialized in all of the successors.
                 
                 // We know that it died in this block and it wasn't materialized. That means that
@@ -391,7 +393,7 @@ private:
         m_ssaCalculator.computePhis(
             [&] (SSACalculator::Variable* variable, BasicBlock* block) -> Node* {
                 Node* allocation = indexToNode[variable->index()];
-                if (!block->ssa->liveAtHead.contains(allocation))
+                if (!m_combinedLiveness.liveAtHead[block].contains(allocation))
                     return nullptr;
                 
                 Node* phiNode = m_graph.addNode(allocation->prediction(), Phi, NodeOrigin());
@@ -405,7 +407,7 @@ private:
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             HashMap<Node*, Node*> mapping;
             
-            for (Node* candidate : block->ssa->liveAtHead) {
+            for (Node* candidate : m_combinedLiveness.liveAtHead[block]) {
                 SSACalculator::Variable* variable = nodeToVariable.get(candidate);
                 if (!variable)
                     continue;
@@ -714,7 +716,7 @@ private:
         m_ssaCalculator.computePhis(
             [&] (SSACalculator::Variable* variable, BasicBlock* block) -> Node* {
                 PromotedHeapLocation location = m_indexToLocation[variable->index()];
-                if (!block->ssa->liveAtHead.contains(location.base()))
+                if (!m_combinedLiveness.liveAtHead[block].contains(location.base()))
                     return nullptr;
                 
                 Node* phiNode = m_graph.addNode(SpecHeapTop, Phi, NodeOrigin());
@@ -1085,6 +1087,7 @@ private:
         }
     }
     
+    CombinedLiveness m_combinedLiveness;
     SSACalculator m_ssaCalculator;
     HashSet<Node*> m_sinkCandidates;
     HashMap<Node*, Node*> m_materializationToEscapee;

@@ -1,3 +1,45 @@
+2015-05-13  Filip Pizlo  <fpizlo@apple.com>
+
+        The liveness pruning done by ObjectAllocationSinkingPhase ignores the possibility of an object's bytecode liveness being longer than its DFG liveness
+        https://bugs.webkit.org/show_bug.cgi?id=144945
+
+        Reviewed by Michael Saboff.
+        
+        We were making the mistake of using DFG liveness for object allocation sinking decisions.
+        This is wrong. In fact we almost never want to use DFG liveness directly. The only place
+        where that makes sense is pruning in DFG AI.
+        
+        So, I created a CombinedLiveness class that combines the DFG liveness with bytecode
+        liveness.
+        
+        In the process of doing this, I realized that the DFGForAllKills definition of combined
+        liveness at block tail was not strictly right; it was using the bytecode liveness at the
+        block terminal instead of the union of the bytecode live-at-heads of successor blocks. So,
+        I changed DFGForAllKills to work in terms of CombinedLiveness.
+        
+        This allows me to unskip the test I added in r184260. I also added a new test that tries to
+        trigger this bug more directly.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGCombinedLiveness.cpp: Added.
+        (JSC::DFG::liveNodesAtHead):
+        (JSC::DFG::CombinedLiveness::CombinedLiveness):
+        * dfg/DFGCombinedLiveness.h: Added.
+        (JSC::DFG::CombinedLiveness::CombinedLiveness):
+        * dfg/DFGForAllKills.h:
+        (JSC::DFG::forAllKillsInBlock):
+        (JSC::DFG::forAllLiveNodesAtTail): Deleted.
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        (JSC::DFG::ObjectAllocationSinkingPhase::performSinking):
+        (JSC::DFG::ObjectAllocationSinkingPhase::determineMaterializationPoints):
+        (JSC::DFG::ObjectAllocationSinkingPhase::placeMaterializationPoints):
+        (JSC::DFG::ObjectAllocationSinkingPhase::promoteSunkenFields):
+        * tests/stress/escape-object-in-diamond-then-exit.js: Added.
+        * tests/stress/sink-object-past-invalid-check-sneaky.js:
+
 2015-05-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         I skipped a wrong test in r184270. Fix that.
