@@ -9,7 +9,7 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.apple.WebKit.WebContent</string>
+	<string>com.apple.WebKit.Networking</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -27,25 +27,24 @@
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>WebKitEntryPoint</key>
-	<string>WebContentServiceInitializer</string>
+	<string>NetworkServiceInitializer</string>
 	<key>LSUIElement</key>
 	<true/>
-	<key>NSSupportsAutomaticGraphicsSwitching</key>
-	<true/>
-	<key>NSSupportsAppNap</key>
-	<true/>
-	<key>NSMainNibFile</key>
-	<string>WebContentProcess</string>
 	<key>XPCService</key>
 	<dict>
-		<key>JoinExistingSession</key>
-		<true/>
 		<key>ServiceType</key>
 		<string>Application</string>
+		<key>JoinExistingSession</key>
+		<true/>
 		<key>RunLoopType</key>
-		<string>_NSApplicationMain</string>
+		<string>NSRunLoop</string>
 		<key>_MultipleInstances</key>
 		<true/>
+		<key>EnvironmentVariables</key>
+		<dict>
+			<key>DYLD_INSERT_LIBRARIES</key>
+			<string>$(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/NetworkProcess.app/Contents/MacOS/SecItemShim.dylib</string>
+		</dict>
 	</dict>
 </dict>
 </plist>
