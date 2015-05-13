@@ -1,5 +1,3 @@
-//@ skip if $hostOS == "windows"
-
 // Test value * 1.
 function arithMulIdentityWrittenAsInteger(x) {
     var a = x * 1;

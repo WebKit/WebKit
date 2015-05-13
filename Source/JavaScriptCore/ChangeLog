@@ -1,3 +1,11 @@
+2015-05-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        I skipped a wrong test in r184270. Fix that.
+        The failure is tracked by webkit.org/b/144947.
+
+        * tests/stress/arith-modulo-node-behaviors.js:
+        * tests/stress/arith-mul-with-constants.js:
+
 2015-05-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Avoid always running some debug code in type profiling

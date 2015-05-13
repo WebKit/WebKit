@@ -1,3 +1,5 @@
+//@ skip if $hostOS == "windows"
+
 // Verify that the dividend propagate the NeedsNegZero if the dividend requires it.
 function moduloWithNegativeZeroDividend(a, b, c)
 {
