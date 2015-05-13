@@ -1,3 +1,9 @@
+2015-05-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Temporarily disable the test on Windows. The failure is tracked in webkit.org/b/144897.
+
+        * tests/stress/arith-mul-with-constants.js:
+
 2015-05-12  Filip Pizlo  <fpizlo@apple.com>
 
         js/dom/stack-trace.html fails with eager compilation
