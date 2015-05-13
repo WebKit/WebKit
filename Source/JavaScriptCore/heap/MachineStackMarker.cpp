@@ -84,7 +84,7 @@ UNUSED_PARAM(end);
 #if OS(DARWIN)
 typedef mach_port_t PlatformThread;
 #elif OS(WINDOWS)
-typedef HANDLE PlatformThread;
+typedef DWORD PlatformThread;
 #elif USE(PTHREADS)
 typedef pthread_t PlatformThread;
 static const int SigThreadSuspendResume = SIGUSR2;
@@ -119,12 +119,26 @@ public:
         sigemptyset(&mask);
         sigaddset(&mask, SigThreadSuspendResume);
         pthread_sigmask(SIG_UNBLOCK, &mask, 0);
+#elif OS(WINDOWS)
+        ASSERT(platformThread == GetCurrentThreadId());
+        bool isSuccessful = DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &platformThreadHandle, 0, FALSE, DUPLICATE_SAME_ACCESS);
+        RELEASE_ASSERT(isSuccessful);
+#endif
+    }
+
+    ~Thread()
+    {
+#if OS(WINDOWS)
+        CloseHandle(platformThreadHandle);
 #endif
     }
 
     Thread* next;
     PlatformThread platformThread;
     void* stackBase;
+#if OS(WINDOWS)
+    HANDLE platformThreadHandle;
+#endif
 };
 
 MachineThreads::MachineThreads(Heap* heap)
@@ -155,7 +169,7 @@ static inline PlatformThread getCurrentPlatformThread()
 #if OS(DARWIN)
     return pthread_mach_thread_np(pthread_self());
 #elif OS(WINDOWS)
-    return GetCurrentThread();
+    return GetCurrentThreadId();
 #elif USE(PTHREADS)
     return pthread_self();
 #endif
@@ -240,31 +254,31 @@ void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoot
     conservativeRoots.add(stackBegin, stackEnd, jitStubRoutines, codeBlocks);
 }
 
-static inline bool suspendThread(const PlatformThread& platformThread)
+static inline bool suspendThread(MachineThreads::Thread* thread)
 {
 #if OS(DARWIN)
-    kern_return_t result = thread_suspend(platformThread);
+    kern_return_t result = thread_suspend(thread->platformThread);
     return result == KERN_SUCCESS;
 #elif OS(WINDOWS)
-    bool threadIsSuspended = (SuspendThread(platformThread) != (DWORD)-1);
+    bool threadIsSuspended = (SuspendThread(thread->platformThreadHandle) != (DWORD)-1);
     ASSERT(threadIsSuspended);
     return threadIsSuspended;
 #elif USE(PTHREADS)
-    pthread_kill(platformThread, SigThreadSuspendResume);
+    pthread_kill(thread->platformThread, SigThreadSuspendResume);
     return true;
 #else
 #error Need a way to suspend threads on this platform
 #endif
 }
 
-static inline void resumeThread(const PlatformThread& platformThread)
+static inline void resumeThread(MachineThreads::Thread* thread)
 {
 #if OS(DARWIN)
-    thread_resume(platformThread);
+    thread_resume(thread->platformThread);
 #elif OS(WINDOWS)
-    ResumeThread(platformThread);
+    ResumeThread(thread->platformThreadHandle);
 #elif USE(PTHREADS)
-    pthread_kill(platformThread, SigThreadSuspendResume);
+    pthread_kill(thread->platformThread, SigThreadSuspendResume);
 #else
 #error Need a way to resume threads on this platform
 #endif
@@ -298,7 +312,7 @@ typedef pthread_attr_t PlatformThreadRegisters;
 #error Need a thread register struct for this platform
 #endif
 
-static size_t getPlatformThreadRegisters(const PlatformThread& platformThread, PlatformThreadRegisters& regs)
+static size_t getPlatformThreadRegisters(MachineThreads::Thread* thread, PlatformThreadRegisters& regs)
 {
 #if OS(DARWIN)
 
@@ -324,7 +338,7 @@ static size_t getPlatformThreadRegisters(const PlatformThread& platformThread, P
 #error Unknown Architecture
 #endif
 
-    kern_return_t result = thread_get_state(platformThread, flavor, (thread_state_t)&regs, &user_count);
+    kern_return_t result = thread_get_state(thread->platformThread, flavor, (thread_state_t)&regs, &user_count);
     if (result != KERN_SUCCESS) {
         WTFReportFatalError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, 
                             "JavaScript garbage collection failed because thread_get_state returned an error (%d). This is probably the result of running inside Rosetta, which is not supported.", result);
@@ -335,18 +349,18 @@ static size_t getPlatformThreadRegisters(const PlatformThread& platformThread, P
 
 #elif OS(WINDOWS)
     regs.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
-    GetThreadContext(platformThread, &regs);
+    GetThreadContext(thread->platformThreadHandle, &regs);
     return sizeof(CONTEXT);
 #elif USE(PTHREADS)
     pthread_attr_init(&regs);
 #if HAVE(PTHREAD_NP_H) || OS(NETBSD)
 #if !OS(OPENBSD)
     // e.g. on FreeBSD 5.4, neundorf@kde.org
-    pthread_attr_get_np(platformThread, &regs);
+    pthread_attr_get_np(thread->platformThread, &regs);
 #endif
 #else
     // FIXME: this function is non-portable; other POSIX systems may have different np alternatives
-    pthread_getattr_np(platformThread, &regs);
+    pthread_getattr_np(thread->platformThread, &regs);
 #endif
     return 0;
 #else
@@ -434,7 +448,7 @@ static void freePlatformThreadRegisters(PlatformThreadRegisters& regs)
 void MachineThreads::gatherFromOtherThread(ConservativeRoots& conservativeRoots, Thread* thread, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks)
 {
     PlatformThreadRegisters regs;
-    size_t regSize = getPlatformThreadRegisters(thread->platformThread, regs);
+    size_t regSize = getPlatformThreadRegisters(thread, regs);
 
     conservativeRoots.add(static_cast<void*>(&regs), static_cast<void*>(reinterpret_cast<char*>(&regs) + regSize), jitStubRoutines, codeBlocks);
 
@@ -469,7 +483,7 @@ void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoot
         Thread* previousThread = nullptr;
         for (Thread* thread = m_registeredThreads; thread; index++) {
             if (!equalThread(thread->platformThread, currentPlatformThread)) {
-                bool success = suspendThread(thread->platformThread);
+                bool success = suspendThread(thread);
 #if OS(DARWIN)
                 if (!success) {
                     if (!numberOfThreads) {
@@ -519,7 +533,7 @@ void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoot
 
         for (Thread* thread = m_registeredThreads; thread; thread = thread->next) {
             if (!equalThread(thread->platformThread, currentPlatformThread))
-                resumeThread(thread->platformThread);
+                resumeThread(thread);
         }
 
 #ifndef NDEBUG

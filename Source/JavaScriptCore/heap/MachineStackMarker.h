@@ -47,10 +47,10 @@ namespace JSC {
         JS_EXPORT_PRIVATE void makeUsableFromMultipleThreads();
         JS_EXPORT_PRIVATE void addCurrentThread(); // Only needs to be called by clients that can use the same heap from multiple threads.
 
+        class Thread;
+
     private:
         void gatherFromCurrentThread(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, void* stackCurrent, RegisterState& registers);
-
-        class Thread;
 
         static void removeThread(void*);
         void removeCurrentThread();
