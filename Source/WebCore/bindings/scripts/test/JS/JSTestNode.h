@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class WEBCORE_EXPORT JSTestNode : public JSNode {
+class WEBCORE_TESTSUPPORT_EXPORT JSTestNode : public JSNode {
 public:
     typedef JSNode Base;
     static JSTestNode* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNode>&& impl)

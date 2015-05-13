@@ -229,14 +229,41 @@ my %testSupportClasses = (
     "JSMallocStatistics" => 1,
     "JSMemoryInfo" => 1,
     "JSTypeConversions" => 1,
+
+    # This is for the bindings tests.
+    "JSTestNode" => 1,
+);
+
+my %classesNeedingWebCoreExport = (
+    "JSAudioContext" => 1,
+    "JSClientRect" => 1,
+    "JSClientRectList" => 1,
+    "JSCSSStyleDeclaration" => 1,
+    "JSDocument" => 1,
+    "JSDOMWindow" => 1,
+    "JSElement" => 1,
+    "JSFile" => 1,
+    "JSHTMLElement" => 1,
+    "JSHTMLMediaElement" => 1,
+    "JSNode" => 1,
+    "JSNotification" => 1,
+    "JSRange" => 1,
+    "JSScriptProfile" => 1,
+    "JSScriptProfileNode" => 1,
+    "JSTimeRanges" => 1,
+    "JSXMLHttpRequest" => 1,
+
+    # This is for the bindings tests.
+    "JSTestInterface" => 1,
 );
 
 sub ExportLabelForClass
 {
     my $class = shift;
 
-    return "WEBCORE_TESTSUPPORT_EXPORT" if $testSupportClasses{$class};
-    return "WEBCORE_EXPORT"
+    return "WEBCORE_TESTSUPPORT_EXPORT " if $testSupportClasses{$class};
+    return "WEBCORE_EXPORT " if $classesNeedingWebCoreExport{$class};
+    return "";
 }
 
 sub AddIncludesForType
@@ -817,7 +844,7 @@ sub GenerateHeader
     my $exportLabel = ExportLabelForClass($className);
 
     # Class declaration
-    push(@headerContent, "class $exportLabel $className : public $parentClassName {\n");
+    push(@headerContent, "class $exportLabel$className : public $parentClassName {\n");
 
     # Static create methods
     push(@headerContent, "public:\n");
@@ -1168,7 +1195,7 @@ sub GenerateHeader
         if ($implType eq "Node" or $implType eq "NodeList") {
             push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
         } else {
-            push(@headerContent, "$exportLabel JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
+            push(@headerContent, $exportLabel."JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
         }
         push(@headerContent, "inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, $implType& impl) { return toJS(exec, globalObject, &impl); }\n");
     }

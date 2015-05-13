@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-class WEBCORE_EXPORT JSattribute : public JSDOMWrapper {
+class JSattribute : public JSDOMWrapper {
 public:
     typedef JSDOMWrapper Base;
     static JSattribute* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<attribute>&& impl)
@@ -80,7 +80,7 @@ inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, attribute*)
     return &owner.get();
 }
 
-WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, attribute*);
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, attribute*);
 inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, attribute& impl) { return toJS(exec, globalObject, &impl); }
 
 

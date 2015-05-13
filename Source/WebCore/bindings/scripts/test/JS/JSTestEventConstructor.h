@@ -29,7 +29,7 @@ namespace WebCore {
 
 class JSDictionary;
 
-class WEBCORE_EXPORT JSTestEventConstructor : public JSDOMWrapper {
+class JSTestEventConstructor : public JSDOMWrapper {
 public:
     typedef JSDOMWrapper Base;
     static JSTestEventConstructor* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestEventConstructor>&& impl)
@@ -81,7 +81,7 @@ inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestEventConstructor
     return &owner.get();
 }
 
-WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestEventConstructor*);
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestEventConstructor*);
 inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestEventConstructor& impl) { return toJS(exec, globalObject, &impl); }
 
 bool fillTestEventConstructorInit(TestEventConstructorInit&, JSDictionary&);

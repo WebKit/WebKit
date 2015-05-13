@@ -1,3 +1,34 @@
+2015-05-12  Alex Christensen  <achristensen@webkit.org>
+
+        Don't export all JS bindings classes.
+        https://bugs.webkit.org/show_bug.cgi?id=144932
+
+        Reviewed by Dan Bernstein.
+
+        This change is good if it compiles and links successfully.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (ExportLabelForClass):
+        Add a list of the JS bindings classes that need WEBCORE_EXPORT to prevent exporting too many symbols from WebCore.
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h:
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        * bindings/scripts/test/JS/JSTestException.h:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.h:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        * bindings/scripts/test/JS/JSTestNode.h:
+        * bindings/scripts/test/JS/JSTestNondeterministic.h:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.h:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+        * bindings/scripts/test/JS/JSattribute.h:
+        * bindings/scripts/test/JS/JSreadonly.h:
+        Update bindings tests to remove WEBCORE_EXPORT from most of the tests,
+        but keep one test with WEBCORE_EXPORT and one test with WEBCORE_TESTSUPPORT_EXPORT.
+
 2015-05-12  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Update DXSDK_DIR settings for build system.
