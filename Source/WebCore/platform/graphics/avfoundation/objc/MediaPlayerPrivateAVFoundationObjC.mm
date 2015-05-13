@@ -946,6 +946,11 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
     [m_avPlayer.get() setAllowsExternalPlayback:m_allowsWirelessVideoPlayback];
 #endif
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+    if (m_shouldPlayToPlaybackTarget)
+        setShouldPlayToPlaybackTarget(true);
+#endif
+
     if (player()->client().mediaPlayerIsVideo())
         createAVPlayerLayer();
 
@@ -2781,6 +2786,8 @@ void MediaPlayerPrivateAVFoundationObjC::setWirelessPlaybackTarget(Ref<MediaPlay
 
 void MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget(bool shouldPlay)
 {
+    m_shouldPlayToPlaybackTarget = shouldPlay;
+
     if (!m_avPlayer)
         return;
 
