@@ -351,6 +351,7 @@ public:
     JS_EXPORT_PRIVATE static bool setOption(const char* arg);
     JS_EXPORT_PRIVATE static void dumpAllOptions(DumpLevel, const char* title = nullptr, FILE* stream = stdout);
     static void dumpOption(DumpLevel, OptionID, FILE* stream = stdout, const char* header = "", const char* footer = "");
+    JS_EXPORT_PRIVATE static void ensureOptionsAreCoherent();
 
     // Declare accessors for each option:
 #define FOR_EACH_OPTION(type_, name_, defaultValue_, description_) \

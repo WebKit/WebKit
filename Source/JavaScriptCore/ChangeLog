@@ -1,3 +1,30 @@
+2015-05-12  Basile Clement  <basile_clement@apple.com>
+
+        Enforce options coherency
+        https://bugs.webkit.org/show_bug.cgi?id=144921
+
+        Reviewed by Mark Lam.
+
+        JavaScriptCore should be failing early when the options are set in such
+        a way that we don't have a meaningful way to execute JavaScript, rather
+        than failing for obscure reasons at some point during execution.
+
+        This patch adds a new function that checks whether the options are set
+        in a coherent way, and makes JSC::Options::initialize() crash when the
+        environment enforces incoherent options.
+        Client applications able to add or change additional options are
+        responsible to check for coherency again before starting to actually
+        execute JavaScript, if any additional options have been set. This is
+        implemented for the jsc executable in this patch.
+
+        * jsc.cpp:
+        (CommandLine::parseArguments):
+        * runtime/Options.cpp:
+        (JSC::Options::initialize):
+        (JSC::Options::ensureOptionsAreCoherent): Added.
+        * runtime/Options.h:
+        (JSC::Options::ensureOptionsAreCoherent): Added.
+
 2015-05-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         REGRESSION (r184337): [EFL] unresolved reference errors in ARM builds
