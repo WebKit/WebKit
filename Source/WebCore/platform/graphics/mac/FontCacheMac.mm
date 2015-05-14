@@ -43,6 +43,7 @@
 #import <AppKit/AppKit.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/Optional.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/Threading.h>
 #import <wtf/text/AtomicStringHash.h>
@@ -203,17 +204,38 @@ static int toAppKitFontWeight(FontWeight fontWeight)
     return appKitFontWeights[fontWeight];
 }
 
-// Family name is somewhat of a misnomer here. We first attempt to find an exact match
-// comparing the desiredFamily to the PostScript name of the installed fonts. If that fails
-// we then do a search based on the family names of the installed fonts.
-static NSFont *fontWithFamily(const AtomicString& family, NSFontTraitMask desiredTraits, FontWeight weight, float size)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+static CGFloat toNSFontWeight(FontWeight fontWeight)
 {
-    if (equalIgnoringASCIICase(family.string(), String(@"-webkit-system-font")) || equalIgnoringASCIICase(family.string(), String(@"-apple-system")) || equalIgnoringASCIICase(family.string(), String(@"-apple-system-font"))) {
-        // We ignore italic for system font.
+    static CGFloat nsFontWeights[] = {
+        NSFontWeightUltraLight,
+        NSFontWeightThin,
+        NSFontWeightLight,
+        NSFontWeightRegular,
+        NSFontWeightMedium,
+        NSFontWeightSemibold,
+        NSFontWeightBold,
+        NSFontWeightHeavy,
+        NSFontWeightBlack
+    };
+    ASSERT(fontWeight >= 0 && fontWeight <= 8);
+    return nsFontWeights[fontWeight];
+}
+#endif
+
+static Optional<NSFont*> fontWithFamilySpecialCase(const AtomicString& family, FontWeight weight, float size)
+{
+    if (equalIgnoringASCIICase(family.string(), "-webkit-system-font")
+        || equalIgnoringASCIICase(family.string(), "-apple-system")
+        || equalIgnoringASCIICase(family.string(), "-apple-system-font")) {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+        return [NSFont systemFontOfSize:size weight:toNSFontWeight(weight)];
+#else
         return (weight >= FontWeight600) ? [NSFont boldSystemFontOfSize:size] : [NSFont systemFontOfSize:size];
+#endif
     }
 
-    if (equalIgnoringASCIICase(family.string(), String(@"-apple-system-monospaced-numbers"))) {
+    if (equalIgnoringASCIICase(family.string(), "-apple-system-monospaced-numbers")) {
         NSArray *featureArray = @[ @{ NSFontFeatureTypeIdentifierKey : @(kNumberSpacingType),
             NSFontFeatureSelectorIdentifierKey : @(kMonospacedNumbersSelector) } ];
 
@@ -221,6 +243,23 @@ static NSFont *fontWithFamily(const AtomicString& family, NSFontTraitMask desire
         NSFontDescriptor* desc = [systemFont.fontDescriptor fontDescriptorByAddingAttributes:@{ NSFontFeatureSettingsAttribute : featureArray }];
         return [NSFont fontWithDescriptor:desc size:size];
     }
+
+    if (equalIgnoringASCIICase(family.string(), "-apple-menu"))
+        return [NSFont menuFontOfSize:size];
+
+    if (equalIgnoringASCIICase(family.string(), "-apple-status-bar"))
+        return [NSFont labelFontOfSize:size];
+
+    return Optional<NSFont*>(Nullopt);
+}
+
+// Family name is somewhat of a misnomer here. We first attempt to find an exact match
+// comparing the desiredFamily to the PostScript name of the installed fonts. If that fails
+// we then do a search based on the family names of the installed fonts.
+static NSFont *fontWithFamily(const AtomicString& family, NSFontTraitMask desiredTraits, FontWeight weight, float size)
+{
+    if (const auto& specialCase = fontWithFamilySpecialCase(family, weight, size))
+        return specialCase.value();
 
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
     NSString *desiredFamily = family;
@@ -230,8 +269,6 @@ static NSFont *fontWithFamily(const AtomicString& family, NSFontTraitMask desire
 
 #if ENABLE(PLATFORM_FONT_LOOKUP)
 
-    if (family.length() > 0 && family.string().at(0) == '.')
-        return [NSFont fontWithName:desiredFamily size:size];
     const auto& whitelist = fontWhitelist();
     if (whitelist.size() && !whitelist.contains(family.lower()))
         return nil;

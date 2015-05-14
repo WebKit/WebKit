@@ -6613,6 +6613,7 @@ void CSSParser::parseSystemFont(bool important)
     if (!fontDescription.isAbsoluteSize())
         return;
 
+    // We must set font's constituent properties, even for system fonts, so the cascade functions correctly.
     ShorthandScope scope(this, CSSPropertyFont);
     addProperty(CSSPropertyFontStyle, cssValuePool().createIdentifierValue(fontDescription.italic() == FontItalicOn ? CSSValueItalic : CSSValueNormal), important);
     addProperty(CSSPropertyFontWeight, cssValuePool().createValue(fontDescription.weight()), important);

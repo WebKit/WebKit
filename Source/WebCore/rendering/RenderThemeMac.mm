@@ -347,15 +347,21 @@ static FontWeight toFontWeight(NSInteger appKitFontWeight)
 void RenderThemeMac::updateCachedSystemFontDescription(CSSValueID cssValueId, FontDescription& fontDescription) const
 {
     NSFont* font;
+    // System-font-ness can't be encapsulated by simply a font name. Instead, we must use a token
+    // which FontCache will look for.
+    // Make sure we keep this list of possible tokens in sync with FontCascade::primaryFontIsSystemFont()
+    String fontName(ASCIILiteral("-apple-system"));
     switch (cssValueId) {
         case CSSValueSmallCaption:
             font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize]];
             break;
         case CSSValueMenu:
             font = [NSFont menuFontOfSize:[NSFont systemFontSize]];
+            fontName = String(ASCIILiteral("-apple-menu"));
             break;
         case CSSValueStatusBar:
             font = [NSFont labelFontOfSize:[NSFont labelFontSize]];
+            fontName = String(ASCIILiteral("-apple-status-bar"));
             break;
         case CSSValueWebkitMiniControl:
             font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSMiniControlSize]];
@@ -375,7 +381,7 @@ void RenderThemeMac::updateCachedSystemFontDescription(CSSValueID cssValueId, Fo
 
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
     fontDescription.setIsAbsoluteSize(true);
-    fontDescription.setOneFamily([font webCoreFamilyName]);
+    fontDescription.setOneFamily(fontName);
     fontDescription.setSpecifiedSize([font pointSize]);
     fontDescription.setWeight(toFontWeight([fontManager weightOfFont:font]));
     fontDescription.setIsItalic([fontManager traitsOfFont:font] & NSItalicFontMask);
@@ -821,7 +827,7 @@ void RenderThemeMac::setFontFromControlSize(StyleResolver&, RenderStyle& style, 
     fontDescription.setIsAbsoluteSize(true);
 
     NSFont* font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:controlSize]];
-    fontDescription.setOneFamily([font webCoreFamilyName]);
+    fontDescription.setOneFamily(AtomicString("-apple-system", AtomicString::ConstructFromLiteral));
     fontDescription.setComputedSize([font pointSize] * style.effectiveZoom());
     fontDescription.setSpecifiedSize([font pointSize] * style.effectiveZoom());
 

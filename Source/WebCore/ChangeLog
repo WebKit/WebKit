@@ -1,3 +1,57 @@
+2015-05-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Mac] Expose more font weights for -apple-system
+        https://bugs.webkit.org/show_bug.cgi?id=144707
+
+        Reviewed by Simon Fraser.
+
+        Previously, when we parsed a CSS declaration of the form font: keyword; where keyword
+        is one of caption, icon, menu, message-box, small-caption, -webkit-mini-control, -webkit-small-control,
+        or -webkit-control (which html.css does for form controls), we would ask the system what the appropriate
+        system font is, get that font's family name, and synthesize a font-family CSS property for the element.
+        Then, later when we actually go to look up the font, we would look up the font by family name using this
+        information. However, this round-tripping of a font through a family name is actually lossy, and is not
+        guaranteed to preserve system-font-ness (which we use for various things including metrics calculations).
+
+        This patch modifies this logic to specify a token family name instead, which the font lookup code special
+        cases (and reacts by making the appropriate system-font lookup call). This approach is currently how iOS
+        handles these system fonts; this patch simply brings this approach to OS X.
+
+        There is also an added progression here. We used to simply call [NSFont fontWithName:size:] on the system
+        font family name (which the parser found for us) which entirely disregards weight. This means that we
+        used to be getting synthesized bold in form controls which ask for a heavy weight. Migrating to this
+        system-font aware call means that we get the real bold font instead of synthesized bold.
+
+        Once this system-font-ness is guaranteed to be preserved between parsing time and font lookup time, we
+        can safely migrate to using [NSFont systemFontOfSize:weight] instead of [NSFont systemFontOfSize:] on
+        platforms which support it.
+
+        Tests: fast/text/systemFont.html
+               fast/css/css2-system-fonts.html
+               fast/forms/select/optgroup-rendering.html
+               fast/forms/validation-message-appearance.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseSystemFont): Add a comment regarding why we are bothering with expanding out
+        the font property in the first place.
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::FontCascade::primaryFontIsSystemFont): Update to use new system font tokens.
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::toNSFontWeight): New static method to map font weights to NSFontWeight constants available on
+        Yosemite and later.
+        (WebCore::fontWithFamilySpecialCase): Pull all these special-case font token name handling into a
+        separate function, which returns an Optional.
+        (WebCore::fontWithFamily):
+        * platform/mac/ThemeMac.mm:
+        (WebCore::ThemeMac::controlFont): Use the font token name instead of the generated system font family
+        name.
+        * platform/spi/mac/NSFontSPI.h: Add [NSFont systemFontWithSize:weight:] and the proper NSFontWeight
+        constants.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::updateCachedSystemFontDescription): Use the font token names instead of the
+        generated system font family name.
+        (WebCore::RenderThemeMac::setFontFromControlSize): Ditto.
+
 2015-05-14  Roger Fong  <roger_fong@apple.com>
 
         Add internals setting to disable wireless playback availability for layout tests
