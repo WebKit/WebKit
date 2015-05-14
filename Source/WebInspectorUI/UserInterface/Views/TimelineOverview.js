@@ -66,6 +66,7 @@ WebInspector.TimelineOverview = function(identifier, timelineRecording, minimumD
 
     this._startTime = 0;
     this._currentTime = 0;
+    this._revealCurrentTime = false;
     this._endTime = 0;
     this._minimumDurationPerPixel = minimumDurationPerPixel;
     this._maximumDurationPerPixel = maximumDurationPerPixel;
@@ -280,7 +281,7 @@ WebInspector.TimelineOverview.prototype = {
 
         if (this._revealCurrentTime) {
             this.revealMarker(this._currentTimeMarker);
-            delete this._revealCurrentTime;
+            this._revealCurrentTime = false;
         }
 
         const visibleDuration = this.visibleDuration;

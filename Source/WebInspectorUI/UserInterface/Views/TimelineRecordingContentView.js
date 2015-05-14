@@ -428,9 +428,12 @@ WebInspector.TimelineRecordingContentView.prototype = {
         if (this.currentTimelineView)
             this.currentTimelineView.currentTime = currentTime;
 
-        if (this._renderingFrameTimeline && this.currentTimelineView.representedObject.type === WebInspector.TimelineRecord.Type.RenderingFrame) {
-            var oldEndTime = this._renderingFrameTimelineOverview.endTime;
-            this._renderingFrameTimelineOverview.endTime = this._renderingFrameTimeline.records.length;
+        if (this._renderingFrameTimeline) {
+            var currentFrameNumber = 0;
+            if (this._renderingFrameTimeline.records.length)
+                currentFrameNumber = this._renderingFrameTimeline.records.lastValue.frameNumber;
+
+            this._renderingFrameTimelineOverview.currentTime = this._renderingFrameTimelineOverview.endTime = currentFrameNumber;
         }
 
         this._timelineSidebarPanel.updateFilter();
@@ -513,6 +516,10 @@ WebInspector.TimelineRecordingContentView.prototype = {
         // We might want to have the backend send a "start" record to get current time moving.
 
         for (var timeline of this._recording.timelines.values()) {
+            // The rendering frame timeline doesn't use a time axis.
+            if (timeline.type === WebInspector.TimelineRecord.Type.RenderingFrame)
+                continue;
+
             var lastRecord = timeline.records.lastValue;
             if (!lastRecord)
                 continue;
