@@ -1,3 +1,9 @@
+2015-05-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, skip js/regress-141098.html. The fix will be tracked in https://bugs.webkit.org/show_bug.cgi?id=145007
+
+        * TestExpectations:
+
 2015-05-14  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Unskip passing AX tests since r184198
