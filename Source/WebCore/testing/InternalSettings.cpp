@@ -210,6 +210,9 @@ void InternalSettings::resetToConsistentState()
 {
     page()->setPageScaleFactor(1, IntPoint(0, 0));
     page()->setCanStartMedia(true);
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    m_page->settings().setMediaPlaybackAllowsAirPlay(false);
+#endif
 
     m_backup.restoreTo(*settings());
     m_backup = Backup(*settings());
@@ -355,6 +358,15 @@ void InternalSettings::setCanStartMedia(bool enabled, ExceptionCode& ec)
 {
     InternalSettingsGuardForSettings();
     m_page->setCanStartMedia(enabled);
+}
+
+void InternalSettings::setWirelessPlaybackDisabled(bool available)
+{
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    m_page->settings().setMediaPlaybackAllowsAirPlay(available);
+#else
+    UNUSED_PARAM(available);
+#endif
 }
 
 void InternalSettings::setEditingBehavior(const String& editingBehavior, ExceptionCode& ec)
