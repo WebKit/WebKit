@@ -123,7 +123,7 @@
     {
         "name": "Tagged templates",
         "status": {
-            "status": "In Development",
+            "status": "Done",
             "enabled-by-default": true
         },
         "url": "http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tagged-templates",
