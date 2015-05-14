@@ -28,6 +28,7 @@
 
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
+#include "StructureInlines.h"
 #include "VM.h"
 
 namespace JSC {

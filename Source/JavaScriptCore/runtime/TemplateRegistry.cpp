@@ -29,6 +29,7 @@
 #include "JSCJSValueInlines.h"
 #include "JSGlobalObject.h"
 #include "ObjectConstructor.h"
+#include "StructureInlines.h"
 #include "WeakGCMapInlines.h"
 
 namespace JSC {

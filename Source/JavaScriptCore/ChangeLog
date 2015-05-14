@@ -1,3 +1,17 @@
+2015-05-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        REGRESSION (r184337): [EFL] unresolved reference errors in ARM builds
+        https://bugs.webkit.org/show_bug.cgi?id=145019
+
+        Reviewed by Ryosuke Niwa.
+
+        Attempt to fix compile errors in EFL ARM buildbots.
+        By executing `nm`, found JSTemplateRegistryKey.cpp.o and TemplateRegistry.cpp.o have
+        unresolved reference to Structure::get. That is inlined function in StructureInlines.h.
+
+        * runtime/JSTemplateRegistryKey.cpp:
+        * runtime/TemplateRegistry.cpp:
+
 2015-05-14  Alexandr Skachkov  <gskachkov@gmail.com>
 
         Small refactoring before implementation of the ES6 arrow function.
