@@ -773,6 +773,9 @@ private:
     template <class TreeBuilder> NEVER_INLINE TreeDeconstructionPattern tryParseDeconstructionPatternExpression(TreeBuilder&);
 
     template <class TreeBuilder> NEVER_INLINE bool parseFunctionInfo(TreeBuilder&, FunctionRequirements, FunctionParseMode, bool nameIsInContainingScope, ConstructorKind, SuperBinding, int functionKeywordStart, ParserFunctionInfo<TreeBuilder>&);
+    
+    template <class TreeBuilder> NEVER_INLINE int parseFunctionParamters(TreeBuilder&, FunctionRequirements, FunctionParseMode, bool, AutoPopScopeRef&, ParserFunctionInfo<TreeBuilder>&);
+
 #if ENABLE(ES6_CLASS_SYNTAX)
     template <class TreeBuilder> NEVER_INLINE TreeClassExpression parseClass(TreeBuilder&, FunctionRequirements, ParserClassInfo<TreeBuilder>&);
 #endif

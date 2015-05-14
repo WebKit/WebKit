@@ -1,3 +1,13 @@
+2015-05-14  Alexandr Skachkov  <gskachkov@gmail.com>
+
+        Small refactoring before implementation of the ES6 arrow function.
+        https://bugs.webkit.org/show_bug.cgi?id=144954
+
+        Reviewed by Ryosuke Niwa.
+
+        * parser/Parser.h:
+        * parser/Parser.cpp:
+
 2015-05-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         REGRESSION (r184337): ASSERT failed in debug builds for tagged templates
