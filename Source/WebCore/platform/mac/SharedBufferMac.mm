@@ -122,7 +122,7 @@ RetainPtr<CFDataRef> SharedBuffer::createCFData()
     return adoptCF((CFDataRef)adoptNS([[WebCoreSharedBufferData alloc] initWithSharedBufferDataBuffer:m_buffer.get()]).leakRef());
 }
 
-PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& filePath)
+RefPtr<SharedBuffer> SharedBuffer::createFromReadingFile(const String& filePath)
 {
     NSData *resourceData = [NSData dataWithContentsOfFile:filePath];
     if (resourceData) 

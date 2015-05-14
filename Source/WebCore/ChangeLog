@@ -1,3 +1,48 @@
+2015-05-14  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        SharedBuffer::createWithContentsOfFile should use map file routines
+        https://bugs.webkit.org/show_bug.cgi?id=144192
+
+        Reviewed by Darin Adler.
+
+        Made use of mmap routines within SharedBuffer::createWithContentsOfFile for EFL, GTK and Mac ports.
+        If mapping is failing, it falls back to the previous version of SharedBuffer::createWithContentsOfFile renamed as
+        SharedBuffer::createFromReadingFile (using open/read method).
+        File content is mapped until SharedBuffer is cleared, destroyed or additional content is appended to the SharedBuffer.
+
+        A helper class, MappedFileData, is introduced to handle mapped files through calls to open/mmap/munmap/close.
+
+        Patch covered by existing layout tests and added unit tests.
+
+        * platform/FileSystem.cpp:
+        (WebCore::MappedFileData::MappedFileData):
+        (WebCore::MappedFileData::operator=):
+        (WebCore::MappedFileData::~MappedFileData):
+        * platform/FileSystem.h:
+        (WebCore::MappedFileData::MappedFileData):
+        (WebCore::MappedFileData::operator bool):
+        (WebCore::MappedFileData::data):
+        (WebCore::MappedFileData::size):
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::SharedBuffer):
+        (WebCore::SharedBuffer::createWithContentsOfFile): Making use of MappedFileData before using createFromReadingFile.
+        (WebCore::SharedBuffer::size): Checking whether data is coming from a MappedFileData.
+        (WebCore::SharedBuffer::data): Ditto.
+        (WebCore::SharedBuffer::append): Ditto.
+        (WebCore::SharedBuffer::clear): Clearing MappedFileData if needed.
+        (WebCore::SharedBuffer::copy): Transferring mapped data to buffer if needed.
+        (WebCore::SharedBuffer::getSomeData):
+        (WebCore::SharedBuffer::maybeTransferMappedFileData):
+        * platform/SharedBuffer.h:
+        * platform/gtk/SharedBufferGtk.cpp:
+        (WebCore::SharedBuffer::createFromReadingFile): renamed from createWithContentsOfFile.
+        * platform/mac/SharedBufferMac.mm:
+        (WebCore::SharedBuffer::createFromReadingFile): Dito.
+        * platform/posix/SharedBufferPOSIX.cpp:
+        (WebCore::SharedBuffer::createFromReadingFile): Ditto.
+        * platform/win/SharedBufferWin.cpp:
+        (WebCore::SharedBuffer::createFromReadingFile): Ditto.
+
 2015-05-13  Simon Fraser  <simon.fraser@apple.com>
 
         Get the ScriptController from the correct frame for media elements and plug-ins

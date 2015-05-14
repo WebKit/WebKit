@@ -27,6 +27,7 @@
 #ifndef SharedBuffer_h
 #define SharedBuffer_h
 
+#include "FileSystem.h"
 #include <runtime/ArrayBuffer.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -55,7 +56,7 @@ public:
     static PassRefPtr<SharedBuffer> create(const char* c, unsigned i) { return adoptRef(new SharedBuffer(c, i)); }
     static PassRefPtr<SharedBuffer> create(const unsigned char* c, unsigned i) { return adoptRef(new SharedBuffer(c, i)); }
 
-    WEBCORE_EXPORT static PassRefPtr<SharedBuffer> createWithContentsOfFile(const String& filePath);
+    WEBCORE_EXPORT static RefPtr<SharedBuffer> createWithContentsOfFile(const String& filePath);
 
     WEBCORE_EXPORT static PassRefPtr<SharedBuffer> adoptVector(Vector<char>& vector);
     
@@ -92,7 +93,7 @@ public:
     WEBCORE_EXPORT void append(const char*, unsigned);
     void append(const Vector<char>&);
 
-    void clear();
+    WEBCORE_EXPORT void clear();
     const char* platformData() const;
     unsigned platformDataSize() const;
 
@@ -101,7 +102,7 @@ public:
     void append(CFDataRef);
 #endif
 
-    PassRefPtr<SharedBuffer> copy() const;
+    WEBCORE_EXPORT PassRefPtr<SharedBuffer> copy() const;
     
     // Return the number of consecutive bytes after "position". "data"
     // points to the first byte.
@@ -129,7 +130,10 @@ private:
     explicit SharedBuffer(unsigned);
     WEBCORE_EXPORT SharedBuffer(const char*, unsigned);
     WEBCORE_EXPORT SharedBuffer(const unsigned char*, unsigned);
-    
+    explicit SharedBuffer(MappedFileData&&);
+
+    static RefPtr<SharedBuffer> createFromReadingFile(const String& filePath);
+
     // Calling this function will force internal segmented buffers
     // to be merged into a flat buffer. Use getSomeData() whenever possible
     // for better performance.
@@ -138,6 +142,8 @@ private:
     void clearPlatformData();
     void maybeTransferPlatformData();
     bool maybeAppendPlatformData(SharedBuffer*);
+
+    void maybeTransferMappedFileData();
 
     void copyBufferAndClear(char* destination, unsigned bytesToCopy) const;
 
@@ -167,6 +173,8 @@ private:
     explicit SharedBuffer(SoupBuffer*);
     GUniquePtr<SoupBuffer> m_soupBuffer;
 #endif
+
+    MappedFileData m_fileData;
 };
 
 PassRefPtr<SharedBuffer> utf8Buffer(const String&);

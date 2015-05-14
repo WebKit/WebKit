@@ -45,6 +45,8 @@
 		37D36F321B004DD400BAF5D9 /* ProvisionalURLChange.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37D36F311B004DD400BAF5D9 /* ProvisionalURLChange.mm */; };
 		37DC6791140D7D7600ABCCDB /* DOMRangeOfString.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 37DC678F140D7D3A00ABCCDB /* DOMRangeOfString.html */; };
 		37E1064C1697681800B78BD0 /* DOMHTMLTableCellElementCellAbove.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 37E1064B169767F700B78BD0 /* DOMHTMLTableCellElementCellAbove.html */; };
+		41973B5B1AF2286A006C7B36 /* FileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41973B5A1AF2286A006C7B36 /* FileSystem.cpp */; };
+		41973B5D1AF22875006C7B36 /* SharedBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41973B5C1AF22875006C7B36 /* SharedBuffer.cpp */; };
 		4BFDFFA71314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BFDFFA61314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp */; };
 		51393E221523952D005F39C5 /* DOMWindowExtensionBasic_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51393E1D1523944A005F39C5 /* DOMWindowExtensionBasic_Bundle.cpp */; };
 		5142B2731517C8C800C32B19 /* ContextMenuCanCopyURL.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5142B2721517C89100C32B19 /* ContextMenuCanCopyURL.html */; };
@@ -497,6 +499,8 @@
 		37E1064A1697676400B78BD0 /* DOMHTMLTableCellCellAbove.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMHTMLTableCellCellAbove.mm; sourceTree = "<group>"; };
 		37E1064B169767F700B78BD0 /* DOMHTMLTableCellElementCellAbove.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DOMHTMLTableCellElementCellAbove.html; sourceTree = "<group>"; };
 		37E38C33169B7D010084C28C /* WebViewDidRemoveFrameFromHierarchy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewDidRemoveFrameFromHierarchy.mm; sourceTree = "<group>"; };
+		41973B5A1AF2286A006C7B36 /* FileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystem.cpp; sourceTree = "<group>"; };
+		41973B5C1AF22875006C7B36 /* SharedBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedBuffer.cpp; sourceTree = "<group>"; };
 		440A1D3814A0103A008A66F2 /* URL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URL.cpp; sourceTree = "<group>"; };
 		44A622C114A0E2B60048515B /* WTFStringUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WTFStringUtilities.h; sourceTree = "<group>"; };
 		4A410F4B19AF7BD6002EBAB5 /* UserMedia.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserMedia.cpp; sourceTree = "<group>"; };
@@ -767,6 +771,7 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				44A82E7B19251B3500C1C8C4 /* Cocoa */,
 				0F139E711A423A1D00F590F5 /* cocoa */,
 				BC575944126E733C006F0F12 /* InjectedBundle */,
 				2E9660DC16C07D7B00371B42 /* ios */,
@@ -858,7 +863,9 @@
 				7CB184C41AA3F2100066EDFD /* ContentExtensions.cpp */,
 				CD5451E919E41F9D0016936F /* CSSParser.cpp */,
 				26F6E1EF1ADC749B00DE696B /* DFAMinimizer.cpp */,
+				41973B5A1AF2286A006C7B36 /* FileSystem.cpp */,
 				14464012167A8305000BD218 /* LayoutUnit.cpp */,
+				41973B5C1AF22875006C7B36 /* SharedBuffer.cpp */,
 				CDC2C7141797089D00E627FB /* TimeRanges.cpp */,
 				440A1D3814A0103A008A66F2 /* URL.cpp */,
 			);
@@ -870,7 +877,8 @@
 			children = (
 				93A7EB3C18FA63A4009E7670 /* URLExtras.mm */,
 			);
-			path = Cocoa;
+			name = Cocoa;
+			path = Tests/Cocoa;
 			sourceTree = "<group>";
 		};
 		7560917619259C59009EF06E /* ios */ = {
@@ -1160,7 +1168,6 @@
 		BCB9EB66112366D800A137E0 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				44A82E7B19251B3500C1C8C4 /* Cocoa */,
 				7560917619259C59009EF06E /* ios */,
 				FE217ECB1640A54A0052988B /* JavaScriptCore */,
 				C07E6CAD13FD67650038B22B /* mac */,
@@ -1595,8 +1602,10 @@
 				2D1FE0B01AD465C1006CD9E6 /* FixedLayoutSize.mm in Sources */,
 				1CB9BC381A67482300FE5678 /* WeakPtr.cpp in Sources */,
 				2E7765CD16C4D80A00BA2BB1 /* mainIOS.mm in Sources */,
+				41973B5D1AF22875006C7B36 /* SharedBuffer.cpp in Sources */,
 				7AA6A1521AAC0B31002B2ED3 /* WorkQueue.cpp in Sources */,
 				2E7765CF16C4D81100BA2BB1 /* mainMac.mm in Sources */,
+				41973B5B1AF2286A006C7B36 /* FileSystem.cpp in Sources */,
 				7A5623111AD5AF3E0096B920 /* MenuTypesForMouseEvents.cpp in Sources */,
 				26F6E1F01ADC749B00DE696B /* DFAMinimizer.cpp in Sources */,
 				7A99D9941AD4A29D00373141 /* MenuTypesForMouseEvents.mm in Sources */,

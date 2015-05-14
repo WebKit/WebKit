@@ -1,3 +1,23 @@
+2015-05-14  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        SharedBuffer::createWithContentsOfFile should use map file routines
+        https://bugs.webkit.org/show_bug.cgi?id=144192
+
+        Reviewed by Darin Adler.
+
+        Adding SharedBuffer and FileSystem Unit tests to Mac and GTK, not yet for EFL.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/FileSystem.cpp: Added.
+        (TestWebKitAPI::FileSystemTest::tempFilePath):
+        (TestWebKitAPI::FileSystemTest::tempEmptyFilePath):
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebCore/SharedBuffer.cpp: Added.
+        (TestWebKitAPI::SharedBufferTest::tempFilePath):
+        (TestWebKitAPI::SharedBufferTest::tempEmptyFilePath):
+        (TestWebKitAPI::TEST_F):
+
 2015-05-13  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Test interactions between multiple extensions and multiple domains.

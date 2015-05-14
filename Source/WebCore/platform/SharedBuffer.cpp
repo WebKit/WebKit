@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
+ * Copyright (C) 2015 Canon Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,10 +83,27 @@ SharedBuffer::SharedBuffer(const unsigned char* data, unsigned size)
 {
     append(reinterpret_cast<const char*>(data), size);
 }
-    
+
+SharedBuffer::SharedBuffer(MappedFileData&& fileData)
+    : m_buffer(adoptRef(new DataBuffer))
+    , m_fileData(WTF::move(fileData))
+{
+}
+
 SharedBuffer::~SharedBuffer()
 {
     clear();
+}
+
+RefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& filePath)
+{
+    bool mappingSuccess;
+    MappedFileData mappedFileData(filePath, mappingSuccess);
+
+    if (!mappingSuccess)
+        return SharedBuffer::createFromReadingFile(filePath);
+
+    return adoptRef(new SharedBuffer(WTF::move(mappedFileData)));
 }
 
 PassRefPtr<SharedBuffer> SharedBuffer::adoptVector(Vector<char>& vector)
@@ -101,14 +119,19 @@ unsigned SharedBuffer::size() const
     if (hasPlatformData())
         return platformDataSize();
     
+    if (m_fileData)
+        return m_fileData.size();
+
     return m_size;
 }
 
 const char* SharedBuffer::data() const
 {
-
     if (hasPlatformData())
         return platformData();
+
+    if (m_fileData)
+        return static_cast<const char*>(m_fileData.data());
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
     if (const char* buffer = singleDataArrayBuffer())
@@ -160,6 +183,7 @@ void SharedBuffer::append(const char* data, unsigned length)
     if (!length)
         return;
 
+    maybeTransferMappedFileData();
     maybeTransferPlatformData();
 
 #if !USE(NETWORK_CFDATA_ARRAY_CALLBACK)
@@ -210,6 +234,8 @@ void SharedBuffer::append(const Vector<char>& data)
 
 void SharedBuffer::clear()
 {
+    m_fileData = { };
+
     clearPlatformData();
     
 #if !USE(NETWORK_CFDATA_ARRAY_CALLBACK)
@@ -227,7 +253,8 @@ void SharedBuffer::clear()
 PassRefPtr<SharedBuffer> SharedBuffer::copy() const
 {
     RefPtr<SharedBuffer> clone { adoptRef(*new SharedBuffer) };
-    if (hasPlatformData()) {
+
+    if (hasPlatformData() || m_fileData) {
         clone->append(data(), size());
         return clone.release();
     }
@@ -310,7 +337,7 @@ unsigned SharedBuffer::getSomeData(const char*& someData, unsigned position) con
         return 0;
     }
 
-    if (hasPlatformData()) {
+    if (hasPlatformData() || m_fileData) {
         ASSERT_WITH_SECURITY_IMPLICATION(position < size());
         someData = data() + position;
         return totalSize - position;
@@ -341,6 +368,14 @@ unsigned SharedBuffer::getSomeData(const char*& someData, unsigned position) con
 #else
     return copySomeDataFromDataArray(someData, position);
 #endif
+}
+
+void SharedBuffer::maybeTransferMappedFileData()
+{
+    if (m_fileData) {
+        auto fileData = WTF::move(m_fileData);
+        append(static_cast<const char*>(fileData.data()), fileData.size());
+    }
 }
 
 #if !USE(CF) && !USE(SOUP)

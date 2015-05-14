@@ -11,6 +11,7 @@ set(ForwardingHeadersForTestWebKitAPI_NAME TestWebKitAPI-forwarding-headers)
 
 include_directories(
     ${FORWARDING_HEADERS_DIR}
+    ${FORWARDING_HEADERS_DIR}/JavaScriptCore
     ${WEBKIT2_DIR}/UIProcess/API/C/soup
     ${WEBKIT2_DIR}/UIProcess/API/C/gtk
     ${WEBKIT2_DIR}/UIProcess/API/gtk
@@ -122,6 +123,8 @@ add_executable(TestWebCore
     ${TESTWEBKITAPI_DIR}/TestsController.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/LayoutUnit.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/URL.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/SharedBuffer.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/FileSystem.cpp
 )
 
 target_link_libraries(TestWebCore ${test_webcore_LIBRARIES})
