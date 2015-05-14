@@ -1,3 +1,29 @@
+2015-05-14  Roger Fong  <roger_fong@apple.com>
+
+        Adjust button CSS and positioning in preparation.
+        https://bugs.webkit.org/show_bug.cgi?id=144973.
+        <rdar://problem/20306227>
+
+        Reviewed by Dean Jackson.
+
+        The only visual change here is the swapping of the rewind and play button positions.
+        Also, position buttons based off of both left and right margins instead of just one of the two.
+        This allows the controls drop off to work without having to use a spacer element to take the place
+        of the timeline if the controls are too small.
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (audio::-webkit-media-controls-rewind-button):
+        (audio::-webkit-media-controls-play-button):
+        (audio::-webkit-media-controls-panel .mute-box):
+        (audio::-webkit-media-controls-wireless-playback-picker-button):
+        (audio::-webkit-media-controls-toggle-closed-captions-button):
+        (audio::-webkit-media-controls-fullscreen-button):
+        (audio::-webkit-media-controls-fullscreen-button.exit):
+        (audio::-webkit-media-controls-time-remaining-display):
+        (audio:-webkit-full-screen::-webkit-media-controls-toggle-closed-captions-button):
+        (audio:-webkit-full-screen::-webkit-media-controls-wireless-playback-picker-button):
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.configureInlineControls):
+
 2015-05-14  Dean Jackson  <dino@apple.com>
 
         MediaControls: controls are live even when invisible
