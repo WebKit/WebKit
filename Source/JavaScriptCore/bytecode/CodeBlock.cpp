@@ -795,8 +795,9 @@ void CodeBlock::dumpBytecode(
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             unsigned inferredInlineCapacity = (++it)->u.operand;
+            unsigned cachedFunction = (++it)->u.operand;
             printLocationAndOp(out, exec, location, it, "create_this");
-            out.printf("%s, %s, %u", registerName(r0).data(), registerName(r1).data(), inferredInlineCapacity);
+            out.printf("%s, %s, %u, %u", registerName(r0).data(), registerName(r1).data(), inferredInlineCapacity, cachedFunction);
             break;
         }
         case op_to_this: {
@@ -2569,6 +2570,18 @@ void CodeBlock::finalizeUnconditionally()
                 curInstruction[3].u.toThisStatus = merge(
                     curInstruction[3].u.toThisStatus, ToThisClearedByGC);
                 break;
+            case op_create_this: {
+                auto& cacheWriteBarrier = curInstruction[4].u.jsCell;
+                if (!cacheWriteBarrier || cacheWriteBarrier.unvalidatedGet() == JSCell::seenMultipleCalleeObjects())
+                    break;
+                JSCell* cachedFunction = cacheWriteBarrier.get();
+                if (Heap::isMarked(cachedFunction))
+                    break;
+                if (Options::verboseOSR())
+                    dataLogF("Clearing LLInt create_this with cached callee %p.\n", cachedFunction);
+                cacheWriteBarrier.clear();
+                break;
+            }
             case op_resolve_scope: {
                 // Right now this isn't strictly necessary. Any symbol tables that this will refer to
                 // are for outer functions, and we refer to those functions strongly, and they refer

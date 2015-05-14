@@ -1,3 +1,53 @@
+2015-05-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r180595): same-callee profiling no longer works
+        https://bugs.webkit.org/show_bug.cgi?id=144787
+
+        Reviewed by Filip Pizlo.
+
+        This patch introduces a DFG optimization to use NewObject node when the callee of op_create_this is
+        always the same JSFunction. This condition doesn't hold when the byte code creates multiple
+        JSFunction objects at runtime as in: function y() { return function () {} }; new y(); new y();
+
+        To enable this optimization, LLint and baseline JIT now store the last callee we saw in the newly
+        added fourth operand of op_create_this. We use this JSFunction's structure in DFG after verifying
+        our speculation that the callee is the same. To avoid recompiling the same code for different callee
+        objects in the polymorphic case, the special value of seenMultipleCalleeObjects() is set in
+        LLint and baseline JIT when multiple callees are observed.
+
+        Tests: stress/create-this-with-callee-variants.js
+
+        * bytecode/BytecodeList.json: Increased the number of operands to 5.
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode): Dump the newly added callee cache.
+        (JSC::CodeBlock::finalizeUnconditionally): Clear the callee cache if the callee is no longer alive.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCreateThis): Add the instruction to propertyAccessInstructions so that
+        we can clear the callee cache in CodeBlock::finalizeUnconditionally. Also initialize the newly added
+        operand.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock): Implement the optimization. Speculate the actual callee to
+        match the cache. Use the cached callee's structure if the speculation succeeds. Otherwise, OSR exit.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_create_this): Go to the slow path to update the cache unless it's already marked
+        as seenMultipleCalleeObjects() to indicate the polymorphic behavior and/or we've OSR exited here.
+        (JSC::JIT::emitSlow_op_create_this):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_create_this): Ditto.
+        (JSC::JIT::emitSlow_op_create_this):
+        * llint/LowLevelInterpreter32_64.asm:
+        (_llint_op_create_this): Ditto.
+        * llint/LowLevelInterpreter64.asm:
+        (_llint_op_create_this): Ditto.
+        * runtime/CommonSlowPaths.cpp:
+        (slow_path_create_this): Set the callee cache to the actual callee if it's not set. If the cache has
+        been set to a JSFunction* different from the actual callee, set it to seenMultipleCalleeObjects().
+        * runtime/JSCell.h:
+        (JSC::JSCell::seenMultipleCalleeObjects): Added.
+        * runtime/WriteBarrier.h:
+        (JSC::WriteBarrierBase::unvalidatedGet): Removed the compile guard around it.
+        * tests/stress/create-this-with-callee-variants.js: Added.
+
 2015-05-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Clean up some possible RefPtr to PassRefPtr churn

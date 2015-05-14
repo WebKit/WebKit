@@ -126,9 +126,7 @@ public:
         this->m_cell = reinterpret_cast<JSCell*>(value);
     }
 
-#if ENABLE(GC_VALIDATION)
     T* unvalidatedGet() const { return reinterpret_cast<T*>(static_cast<void*>(m_cell)); }
-#endif
 
 private:
     JSCell* m_cell;

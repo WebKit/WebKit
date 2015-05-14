@@ -745,15 +745,19 @@ _llint_op_create_this:
     loadp FunctionRareData::m_allocationProfile + ObjectAllocationProfile::m_allocator[t4], t1
     loadp FunctionRareData::m_allocationProfile + ObjectAllocationProfile::m_structure[t4], t2
     btpz t1, .opCreateThisSlow
+    loadpFromInstruction(4, t4)
+    bpeq t4, 1, .hasSeenMultipleCallee
+    bpneq t4, t0, .opCreateThisSlow
+.hasSeenMultipleCallee:
     allocateJSObject(t1, t2, t0, t3, .opCreateThisSlow)
     loadi 4[PC], t1
     storei CellTag, TagOffset[cfr, t1, 8]
     storei t0, PayloadOffset[cfr, t1, 8]
-    dispatch(4)
+    dispatch(5)
 
 .opCreateThisSlow:
     callSlowPath(_slow_path_create_this)
-    dispatch(4)
+    dispatch(5)
 
 
 _llint_op_to_this:
