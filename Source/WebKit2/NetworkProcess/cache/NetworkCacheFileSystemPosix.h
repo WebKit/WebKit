@@ -90,6 +90,8 @@ inline FileTimes fileTimes(const String& path)
     if (!fileInfo)
         return { };
     const char* birthtimeString = g_file_info_get_attribute_string(fileInfo.get(), "xattr::birthtime");
+    if (!birthtimeString)
+        return { };
     return { std::chrono::system_clock::from_time_t(g_ascii_strtoull(birthtimeString, nullptr, 10)),
         std::chrono::system_clock::from_time_t(g_file_info_get_attribute_uint64(fileInfo.get(), "time::modified")) };
 #endif

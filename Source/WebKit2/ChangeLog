@@ -1,3 +1,15 @@
+2015-05-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Network Cache: NetworkProcess segfault when file system doesn't support xattrs
+        https://bugs.webkit.org/show_bug.cgi?id=144953
+
+        Reviewed by Martin Robinson.
+
+        Return early if we fail to get the birthtime xattr.
+
+        * NetworkProcess/cache/NetworkCacheFileSystemPosix.h:
+        (WebKit::NetworkCache::fileTimes):
+
 2015-05-13  Daniel Bates  <dabates@apple.com>
 
         Rename ProcessThrottlerClient::{send, cancel}ProcessWillSuspend() to {send, cancel}PrepareToSuspend()
