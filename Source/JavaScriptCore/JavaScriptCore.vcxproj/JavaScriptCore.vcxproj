@@ -771,6 +771,7 @@
     <ClCompile Include="..\runtime\JSStringIterator.cpp" />
     <ClCompile Include="..\runtime\JSStringJoiner.cpp" />
     <ClCompile Include="..\runtime\JSSymbolTableObject.cpp" />
+    <ClCompile Include="..\runtime\JSTemplateRegistryKey.cpp" />
     <ClCompile Include="..\runtime\JSTypedArrayConstructors.cpp" />
     <ClCompile Include="..\runtime\JSTypedArrayPrototypes.cpp" />
     <ClCompile Include="..\runtime\JSTypedArrays.cpp" />
@@ -838,6 +839,7 @@
     <ClCompile Include="..\runtime\SymbolObject.cpp" />
     <ClCompile Include="..\runtime\SymbolPrototype.cpp" />
     <ClCompile Include="..\runtime\SymbolTable.cpp" />
+    <ClCompile Include="..\runtime\TemplateRegistry.cpp" />
     <ClCompile Include="..\runtime\TestRunnerUtils.cpp" />
     <ClCompile Include="..\runtime\TypedArrayController.cpp" />
     <ClCompile Include="..\runtime\TypedArrayType.cpp" />
@@ -1590,6 +1592,7 @@
     <ClInclude Include="..\runtime\JSStringIterator.h" />
     <ClInclude Include="..\runtime\JSStringJoiner.h" />
     <ClInclude Include="..\runtime\JSSymbolTableObject.h" />
+    <ClInclude Include="..\runtime\JSTemplateRegistryKey.h" />
     <ClInclude Include="..\runtime\JSType.h" />
     <ClInclude Include="..\runtime\JSTypeInfo.h" />
     <ClInclude Include="..\runtime\JSTypedArrayConstructors.h" />
@@ -1683,6 +1686,8 @@
     <ClInclude Include="..\runtime\SymbolObject.h" />
     <ClInclude Include="..\runtime\SymbolPrototype.h" />
     <ClInclude Include="..\runtime\SymbolTable.h" />
+    <ClInclude Include="..\runtime\TemplateRegistry.h" />
+    <ClInclude Include="..\runtime\TemplateRegistryKey.h" />
     <ClInclude Include="..\runtime\TestRunnerUtils.h" />
     <ClInclude Include="..\runtime\Tracing.h" />
     <ClInclude Include="..\runtime\ToNativeFromValue.h" />

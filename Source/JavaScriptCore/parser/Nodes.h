@@ -473,11 +473,27 @@ namespace JSC {
         TemplateLiteralNode(const JSTokenLocation&, TemplateStringListNode*);
         TemplateLiteralNode(const JSTokenLocation&, TemplateStringListNode*, TemplateExpressionListNode*);
 
+        TemplateStringListNode* templateStrings() const { return m_templateStrings; }
+        TemplateExpressionListNode* templateExpressions() const { return m_templateExpressions; }
+
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
 
         TemplateStringListNode* m_templateStrings;
         TemplateExpressionListNode* m_templateExpressions;
+    };
+
+    class TaggedTemplateNode : public ExpressionNode, public ThrowableExpressionData {
+    public:
+        TaggedTemplateNode(const JSTokenLocation&, ExpressionNode*, TemplateLiteralNode*);
+
+        TemplateLiteralNode* templateLiteral() const { return m_templateLiteral; }
+
+    private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+
+        ExpressionNode* m_tag;
+        TemplateLiteralNode* m_templateLiteral;
     };
 #endif
 

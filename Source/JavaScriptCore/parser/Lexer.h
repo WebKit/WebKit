@@ -102,7 +102,8 @@ public:
     bool prevTerminator() const { return m_terminator; }
     bool scanRegExp(const Identifier*& pattern, const Identifier*& flags, UChar patternPrefix = 0);
 #if ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX)
-    JSTokenType scanTrailingTemplateString(JSToken*);
+    enum class RawStringsBuildMode { BuildRawStrings, DontBuildRawStrings };
+    JSTokenType scanTrailingTemplateString(JSToken*, RawStringsBuildMode);
 #endif
     bool skipRegExp();
 
@@ -166,6 +167,7 @@ private:
     ALWAYS_INLINE const Identifier* makeLCharIdentifier(const UChar* characters, size_t length);
     ALWAYS_INLINE const Identifier* makeRightSizedIdentifier(const UChar* characters, size_t length, UChar orAllChars);
     ALWAYS_INLINE const Identifier* makeIdentifierLCharFromUChar(const UChar* characters, size_t length);
+    ALWAYS_INLINE const Identifier* makeEmptyIdentifier();
 
     ALWAYS_INLINE bool lastTokenWasRestrKeyword() const;
 
@@ -184,7 +186,7 @@ private:
     enum class EscapeParseMode { Template, String };
     template <bool shouldBuildStrings> ALWAYS_INLINE StringParseResult parseComplexEscape(EscapeParseMode, bool strictMode, T stringQuoteCharacter);
 #if ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX)
-    template <bool shouldBuildStrings> ALWAYS_INLINE StringParseResult parseTemplateLiteral(JSTokenData*);
+    template <bool shouldBuildStrings> ALWAYS_INLINE StringParseResult parseTemplateLiteral(JSTokenData*, RawStringsBuildMode);
 #endif
     ALWAYS_INLINE void parseHex(double& returnValue);
     ALWAYS_INLINE bool parseBinary(double& returnValue);
@@ -201,6 +203,7 @@ private:
 
     Vector<LChar> m_buffer8;
     Vector<UChar> m_buffer16;
+    Vector<UChar> m_bufferForRawTemplateString16;
     bool m_terminator;
     int m_lastToken;
 
@@ -287,6 +290,12 @@ ALWAYS_INLINE const Identifier* Lexer<UChar>::makeRightSizedIdentifier(const UCh
         return &m_arena->makeIdentifierLCharFromUChar(m_vm, characters, length);
 
     return &m_arena->makeIdentifier(m_vm, characters, length);
+}
+
+template <typename T>
+ALWAYS_INLINE const Identifier* Lexer<T>::makeEmptyIdentifier()
+{
+    return &m_arena->makeEmptyIdentifier(m_vm);
 }
 
 template <>

@@ -65,6 +65,7 @@
 #include "JSPromiseDeferred.h"
 #include "JSPromiseReaction.h"
 #include "JSPropertyNameEnumerator.h"
+#include "JSTemplateRegistryKey.h"
 #include "JSWithScope.h"
 #include "Lexer.h"
 #include "Lookup.h"
@@ -224,6 +225,7 @@ VM::VM(VMType vmType, HeapType heapType)
     symbolTableStructure.set(*this, SymbolTable::createStructure(*this, 0, jsNull()));
     structureChainStructure.set(*this, StructureChain::createStructure(*this, 0, jsNull()));
     sparseArrayValueMapStructure.set(*this, SparseArrayValueMap::createStructure(*this, 0, jsNull()));
+    templateRegistryKeyStructure.set(*this, JSTemplateRegistryKey::createStructure(*this, 0, jsNull()));
     arrayBufferNeuteringWatchpointStructure.set(*this, ArrayBufferNeuteringWatchpoint::createStructure(*this));
     unlinkedFunctionExecutableStructure.set(*this, UnlinkedFunctionExecutable::createStructure(*this, 0, jsNull()));
     unlinkedProgramCodeBlockStructure.set(*this, UnlinkedProgramCodeBlock::createStructure(*this, 0, jsNull()));

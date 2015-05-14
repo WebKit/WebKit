@@ -569,6 +569,7 @@ void Lexer<T>::setCode(const SourceCode& source, ParserArena* arena)
     
     m_buffer8.reserveInitialCapacity(initialReadBufferCapacity);
     m_buffer16.reserveInitialCapacity((m_codeEnd - m_code) / 2);
+    m_bufferForRawTemplateString16.reserveInitialCapacity(initialReadBufferCapacity);
     
     if (LIKELY(m_code < m_codeEnd))
         m_current = *m_code;
@@ -1374,7 +1375,7 @@ private:
 };
 
 template <typename T>
-template <bool shouldBuildStrings> typename Lexer<T>::StringParseResult Lexer<T>::parseTemplateLiteral(JSTokenData* tokenData)
+template <bool shouldBuildStrings> typename Lexer<T>::StringParseResult Lexer<T>::parseTemplateLiteral(JSTokenData* tokenData, RawStringsBuildMode rawStringsBuildMode)
 {
     const T* stringStart = currentSourcePtr();
     const T* rawStringStart = currentSourcePtr();
@@ -1435,10 +1436,16 @@ template <bool shouldBuildStrings> typename Lexer<T>::StringParseResult Lexer<T>
             if (isLineTerminator(m_current)) {
                 if (m_current == '\r') {
                     // Normalize <CR>, <CR><LF> to <LF>.
-                    if (stringStart != currentSourcePtr() && shouldBuildStrings)
-                        append16(stringStart, currentSourcePtr() - stringStart);
-                    if (shouldBuildStrings)
+                    if (shouldBuildStrings) {
+                        if (stringStart != currentSourcePtr())
+                            append16(stringStart, currentSourcePtr() - stringStart);
+                        if (rawStringStart != currentSourcePtr() && rawStringsBuildMode == RawStringsBuildMode::BuildRawStrings)
+                            m_bufferForRawTemplateString16.append(rawStringStart, currentSourcePtr() - rawStringStart);
+
                         record16('\n');
+                        if (rawStringsBuildMode == RawStringsBuildMode::BuildRawStrings)
+                            m_bufferForRawTemplateString16.append('\n');
+                    }
                     lineNumberAdder.add(m_current);
                     shift();
                     if (m_current == '\n') {
@@ -1446,6 +1453,7 @@ template <bool shouldBuildStrings> typename Lexer<T>::StringParseResult Lexer<T>
                         shift();
                     }
                     stringStart = currentSourcePtr();
+                    rawStringStart = currentSourcePtr();
                 } else {
                     lineNumberAdder.add(m_current);
                     shift();
@@ -1461,24 +1469,28 @@ template <bool shouldBuildStrings> typename Lexer<T>::StringParseResult Lexer<T>
 
     bool isTail = m_current == '`';
 
-    if (currentSourcePtr() != stringStart && shouldBuildStrings)
-        append16(stringStart, currentSourcePtr() - stringStart);
+    if (shouldBuildStrings) {
+        if (currentSourcePtr() != stringStart)
+            append16(stringStart, currentSourcePtr() - stringStart);
+        if (rawStringStart != currentSourcePtr() && rawStringsBuildMode == RawStringsBuildMode::BuildRawStrings)
+            m_bufferForRawTemplateString16.append(rawStringStart, currentSourcePtr() - rawStringStart);
+    }
 
     if (shouldBuildStrings) {
         tokenData->cooked = makeIdentifier(m_buffer16.data(), m_buffer16.size());
-        // TODO: While line terminator normalization (e.g. <CR> => <LF>) should be applied to both the raw and cooked representations,
-        // this raw implementation just slices the source string. As a result, line terminators appear in the raw representation without normalization.
-        // For example, when parsing `<CR>`, <CR> appears in the raw representation.
-        // While non-tagged template literals don't use the raw representation, tagged templates use the raw representation.
-        // So line terminator normalization should be applied to the raw representation when implementing tagged templates.
-        tokenData->raw = makeIdentifier(rawStringStart, currentSourcePtr() - rawStringStart);
+        // Line terminator normalization (e.g. <CR> => <LF>) should be applied to both the raw and cooked representations.
+        if (rawStringsBuildMode == RawStringsBuildMode::BuildRawStrings)
+            tokenData->raw = makeIdentifier(m_bufferForRawTemplateString16.data(), m_bufferForRawTemplateString16.size());
+        else
+            tokenData->raw = makeEmptyIdentifier();
     } else {
-        tokenData->cooked = nullptr;
-        tokenData->raw = nullptr;
+        tokenData->cooked = makeEmptyIdentifier();
+        tokenData->raw = makeEmptyIdentifier();
     }
     tokenData->isTail = isTail;
 
     m_buffer16.shrink(0);
+    m_bufferForRawTemplateString16.shrink(0);
 
     if (isTail) {
         // Skip `
@@ -2125,9 +2137,9 @@ inNumberAfterDecimalPoint:
         shift();
         StringParseResult result = StringCannotBeParsed;
         if (lexerFlags & LexerFlagsDontBuildStrings)
-            result = parseTemplateLiteral<false>(tokenData);
+            result = parseTemplateLiteral<false>(tokenData, RawStringsBuildMode::BuildRawStrings);
         else
-            result = parseTemplateLiteral<true>(tokenData);
+            result = parseTemplateLiteral<true>(tokenData, RawStringsBuildMode::BuildRawStrings);
 
         if (UNLIKELY(result != StringParsedSuccessfully)) {
             token = result == StringUnterminated ? UNTERMINATED_TEMPLATE_LITERAL_ERRORTOK : INVALID_TEMPLATE_LITERAL_ERRORTOK;
@@ -2331,7 +2343,7 @@ bool Lexer<T>::skipRegExp()
 
 #if ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX)
 template <typename T>
-JSTokenType Lexer<T>::scanTrailingTemplateString(JSToken* tokenRecord)
+JSTokenType Lexer<T>::scanTrailingTemplateString(JSToken* tokenRecord, RawStringsBuildMode rawStringsBuildMode)
 {
     JSTokenData* tokenData = &tokenRecord->m_data;
     JSTokenLocation* tokenLocation = &tokenRecord->m_location;
@@ -2340,7 +2352,7 @@ JSTokenType Lexer<T>::scanTrailingTemplateString(JSToken* tokenRecord)
 
     // Leading closing brace } is already shifted in the previous token scan.
     // So in this re-scan phase, shift() is not needed here.
-    StringParseResult result = parseTemplateLiteral<true>(tokenData);
+    StringParseResult result = parseTemplateLiteral<true>(tokenData, rawStringsBuildMode);
     JSTokenType token = ERRORTOK;
     if (UNLIKELY(result != StringParsedSuccessfully)) {
         token = result == StringUnterminated ? UNTERMINATED_TEMPLATE_LITERAL_ERRORTOK : INVALID_TEMPLATE_LITERAL_ERRORTOK;
@@ -2373,6 +2385,9 @@ void Lexer<T>::clear()
 
     Vector<UChar> newBuffer16;
     m_buffer16.swap(newBuffer16);
+
+    Vector<UChar> newBufferForRawTemplateString16;
+    m_bufferForRawTemplateString16.swap(newBufferForRawTemplateString16);
 
     m_isReparsing = false;
 }

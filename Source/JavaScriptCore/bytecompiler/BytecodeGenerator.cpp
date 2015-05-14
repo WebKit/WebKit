@@ -36,6 +36,7 @@
 #include "JSFunction.h"
 #include "JSLexicalEnvironment.h"
 #include "JSNameScope.h"
+#include "JSTemplateRegistryKey.h"
 #include "LowLevelInterpreter.h"
 #include "JSCInlines.h"
 #include "Options.h"
@@ -1717,6 +1718,16 @@ JSString* BytecodeGenerator::addStringConstant(const Identifier& identifier)
     return stringInMap;
 }
 
+JSTemplateRegistryKey* BytecodeGenerator::addTemplateRegistryKeyConstant(const TemplateRegistryKey& templateRegistryKey)
+{
+    JSTemplateRegistryKey*& templateRegistryKeyInMap = m_templateRegistryKeyMap.add(templateRegistryKey, nullptr).iterator->value;
+    if (!templateRegistryKeyInMap) {
+        templateRegistryKeyInMap = JSTemplateRegistryKey::create(*vm(), templateRegistryKey);
+        addConstantValue(templateRegistryKeyInMap);
+    }
+    return templateRegistryKeyInMap;
+}
+
 RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elements, unsigned length)
 {
 #if !ASSERT_DISABLED
@@ -2795,6 +2806,33 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
     popIteratorCloseContext();
     emitIteratorClose(iterator.get(), node);
     emitLabel(loopDone.get());
+}
+
+RegisterID* BytecodeGenerator::emitGetTemplateObject(RegisterID* dst, TaggedTemplateNode* taggedTemplate)
+{
+    TemplateRegistryKey::StringVector rawStrings;
+    TemplateRegistryKey::StringVector cookedStrings;
+
+    TemplateStringListNode* templateString = taggedTemplate->templateLiteral()->templateStrings();
+    for (; templateString; templateString = templateString->next()) {
+        rawStrings.append(templateString->value()->raw().impl());
+        cookedStrings.append(templateString->value()->cooked().impl());
+    }
+
+    RefPtr<RegisterID> getTemplateObject = nullptr;
+    Variable var = variable(propertyNames().getTemplateObjectPrivateName);
+    if (RegisterID* local = var.local())
+        getTemplateObject = emitMove(newTemporary(), local);
+    else {
+        getTemplateObject = newTemporary();
+        RefPtr<RegisterID> scope = newTemporary();
+        moveToDestinationIfNeeded(scope.get(), emitResolveScope(scope.get(), var));
+        emitGetFromScope(getTemplateObject.get(), scope.get(), var, ThrowIfNotFound);
+    }
+
+    CallArguments arguments(*this, nullptr);
+    emitLoad(arguments.thisRegister(), JSValue(addTemplateRegistryKeyConstant(TemplateRegistryKey(rawStrings, cookedStrings))));
+    return emitCall(dst, getTemplateObject.get(), NoExpectedFunction, arguments, taggedTemplate->divot(), taggedTemplate->divotStart(), taggedTemplate->divotEnd());
 }
 
 RegisterID* BytecodeGenerator::emitGetEnumerableLength(RegisterID* dst, RegisterID* base)

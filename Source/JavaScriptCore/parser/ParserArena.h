@@ -45,6 +45,7 @@ namespace JSC {
 
         template <typename T>
         ALWAYS_INLINE const Identifier& makeIdentifier(VM*, const T* characters, size_t length);
+        ALWAYS_INLINE const Identifier& makeEmptyIdentifier(VM*);
         ALWAYS_INLINE const Identifier& makeIdentifierLCharFromUChar(VM*, const UChar* characters, size_t length);
 
         const Identifier& makeNumericIdentifier(VM*, double number);
@@ -89,6 +90,11 @@ namespace JSC {
         m_identifiers.append(Identifier::fromString(vm, characters, length));
         m_recentIdentifiers[characters[0]] = &m_identifiers.last();
         return m_identifiers.last();
+    }
+
+    ALWAYS_INLINE const Identifier& IdentifierArena::makeEmptyIdentifier(VM* vm)
+    {
+        return vm->propertyNames->emptyIdentifier;
     }
 
     ALWAYS_INLINE const Identifier& IdentifierArena::makeIdentifierLCharFromUChar(VM* vm, const UChar* characters, size_t length)

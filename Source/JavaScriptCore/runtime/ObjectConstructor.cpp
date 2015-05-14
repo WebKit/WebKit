@@ -462,17 +462,11 @@ EncodedJSValue JSC_HOST_CALL objectConstructorSeal(ExecState* exec)
     return JSValue::encode(obj);
 }
 
-EncodedJSValue JSC_HOST_CALL objectConstructorFreeze(ExecState* exec)
+JSObject* objectConstructorFreeze(ExecState* exec, JSObject* object)
 {
-    // 1. If Type(O) is not Object, return O.
-    JSValue obj = exec->argument(0);
-    if (!obj.isObject())
-        return JSValue::encode(obj);
-    JSObject* object = asObject(obj);
-
     if (isJSFinalObject(object) && !hasIndexedProperties(object->indexingType())) {
         object->freeze(exec->vm());
-        return JSValue::encode(obj);
+        return object;
     }
 
     // 2. For each named own property name P of O,
@@ -496,14 +490,23 @@ EncodedJSValue JSC_HOST_CALL objectConstructorFreeze(ExecState* exec)
         // d. Call the [[DefineOwnProperty]] internal method of O with P, desc, and true as arguments.
         object->methodTable(exec->vm())->defineOwnProperty(object, exec, propertyName, desc, true);
         if (exec->hadException())
-            return JSValue::encode(obj);
+            return object;
     }
 
     // 3. Set the [[Extensible]] internal property of O to false.
     object->preventExtensions(exec->vm());
 
     // 4. Return O.
-    return JSValue::encode(obj);
+    return object;
+}
+
+EncodedJSValue JSC_HOST_CALL objectConstructorFreeze(ExecState* exec)
+{
+    // 1. If Type(O) is not Object, return O.
+    JSValue obj = exec->argument(0);
+    if (!obj.isObject())
+        return JSValue::encode(obj);
+    return JSValue::encode(objectConstructorFreeze(exec, asObject(obj)));
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorPreventExtensions(ExecState* exec)

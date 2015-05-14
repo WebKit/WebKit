@@ -82,7 +82,9 @@ public:
         PropertyListResult, ArgumentsListResult, ElementsListResult,
         StatementResult, FormalParameterListResult, ClauseResult,
         ClauseListResult, CommaExpr, DeconstructingAssignment,
-        TemplateStringResult, TemplateStringListResult, TemplateExpressionListResult, TemplateExpr
+        TemplateStringResult, TemplateStringListResult,
+        TemplateExpressionListResult, TemplateExpr,
+        TaggedTemplateExpr
     };
     typedef int ExpressionType;
 
@@ -188,6 +190,7 @@ public:
     TemplateExpressionList createTemplateExpressionList(TemplateExpressionList, Expression) { return TemplateExpressionListResult; }
     TemplateLiteral createTemplateLiteral(const JSTokenLocation&, TemplateStringList) { return TemplateExpr; }
     TemplateLiteral createTemplateLiteral(const JSTokenLocation&, TemplateStringList, TemplateExpressionList) { return TemplateExpr; }
+    ExpressionType createTaggedTemplate(const JSTokenLocation&, ExpressionType, TemplateLiteral, int, int, int) { return TaggedTemplateExpr; }
 #endif
 
     int createArgumentsList(const JSTokenLocation&, int) { return ArgumentsListResult; }

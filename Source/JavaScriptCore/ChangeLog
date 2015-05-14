@@ -1,3 +1,147 @@
+2015-05-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement tagged templates
+        https://bugs.webkit.org/show_bug.cgi?id=143183
+
+        Reviewed by Oliver Hunt.
+
+        This patch implements ES6 tagged templates.
+        In tagged templates, the function takes the template object.
+
+        The template object contains the raw and cooked template strings,
+        so when parsing the tagged templates, we need to tokenize the raw and cooked strings.
+        While tagged templates require the both strings, the template literal only requires
+        the cooked strings. So when tokenizing under the template literal context,
+        we only builds the cooked strings.
+
+        As per ES6 spec, the template objects for the same raw strings are shared in the same realm.
+        The template objects is cached. And every time we evaluate the same tagged templates,
+        the same (cached) template objects are used.
+        Since the spec freezes this template objects completely,
+        we cannot attach some properties to it.
+        So we can say that it behaves as if the template objects are the primitive values (like JSString).
+        Since we cannot attach properties, the only way to test the identity of the template object is comparing. (===)
+        As the result, when there is no reference to the template object, we can garbage collect it
+        because the user has no way to test that the newly created template object does not equal
+        to the already collected template object.
+
+        So, to implement tagged templates, we implement the following components.
+
+        1. JSTemplateRegistryKey
+        It holds the template registry key and it does not exposed to users.
+        TemplateRegistryKey holds the vector of raw and cooked strings with the pre-computed hash value.
+        When obtaining the template object for the (statically, a.k.a. at the parsing time) given raw string vectors,
+        we use this JSTemplateRegistryKey as a key to the map and look up the template object from
+        TemplateRegistry.
+        JSTemplateRegistryKey is created at the bytecode compiling time and
+        stored in the CodeBlock as like as JSString content values.
+
+        2. TemplateRegistry
+        This manages the cached template objects.
+        It holds the weak map (JSTemplateRegistryKey -> the template object).
+        The template object is weakly referenced.
+        So if there is no reference to the template object,
+        the template object is automatically GC-ed.
+        When looking up the template object, it searches the cached template object.
+        If it is found, it is returned to the users.
+        If there is no cached template objects, it creates the new template object and
+        stores it with the given template registry key.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addTemplateRegistryKeyConstant):
+        (JSC::BytecodeGenerator::emitGetTemplateObject):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::TaggedTemplateNode::emitBytecode):
+        (JSC::TemplateLiteralNode::emitBytecode): Deleted.
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createTaggedTemplate):
+        (JSC::ASTBuilder::createTemplateLiteral): Deleted.
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::setCode):
+        (JSC::Lexer<T>::parseTemplateLiteral):
+        (JSC::Lexer<T>::lex):
+        (JSC::Lexer<T>::scanTrailingTemplateString):
+        (JSC::Lexer<T>::clear):
+        * parser/Lexer.h:
+        (JSC::Lexer<T>::makeEmptyIdentifier):
+        * parser/NodeConstructors.h:
+        (JSC::TaggedTemplateNode::TaggedTemplateNode):
+        (JSC::TemplateLiteralNode::TemplateLiteralNode): Deleted.
+        * parser/Nodes.h:
+        (JSC::TemplateLiteralNode::templateStrings):
+        (JSC::TemplateLiteralNode::templateExpressions):
+        (JSC::TaggedTemplateNode::templateLiteral):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseTemplateString):
+        (JSC::Parser<LexerType>::parseTemplateLiteral):
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * parser/Parser.h:
+        * parser/ParserArena.h:
+        (JSC::IdentifierArena::makeEmptyIdentifier):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createTaggedTemplate):
+        (JSC::SyntaxChecker::createTemplateLiteral): Deleted.
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::getTemplateObject):
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::templateRegistry):
+        * runtime/JSTemplateRegistryKey.cpp: Added.
+        (JSC::JSTemplateRegistryKey::JSTemplateRegistryKey):
+        (JSC::JSTemplateRegistryKey::create):
+        (JSC::JSTemplateRegistryKey::destroy):
+        * runtime/JSTemplateRegistryKey.h: Added.
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorFreeze):
+        * runtime/ObjectConstructor.h:
+        * runtime/TemplateRegistry.cpp: Added.
+        (JSC::TemplateRegistry::TemplateRegistry):
+        (JSC::TemplateRegistry::getTemplateObject):
+        * runtime/TemplateRegistry.h: Added.
+        * runtime/TemplateRegistryKey.h: Added.
+        (JSC::TemplateRegistryKey::isDeletedValue):
+        (JSC::TemplateRegistryKey::isEmptyValue):
+        (JSC::TemplateRegistryKey::hash):
+        (JSC::TemplateRegistryKey::rawStrings):
+        (JSC::TemplateRegistryKey::cookedStrings):
+        (JSC::TemplateRegistryKey::operator==):
+        (JSC::TemplateRegistryKey::operator!=):
+        (JSC::TemplateRegistryKey::Hasher::hash):
+        (JSC::TemplateRegistryKey::Hasher::equal):
+        (JSC::TemplateRegistryKey::TemplateRegistryKey):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * tests/stress/tagged-templates-identity.js: Added.
+        (shouldBe):
+        * tests/stress/tagged-templates-raw-strings.js: Added.
+        (shouldBe):
+        (tag):
+        (testEval):
+        * tests/stress/tagged-templates-syntax.js: Added.
+        (tag):
+        (testSyntax):
+        (testSyntaxError):
+        * tests/stress/tagged-templates-template-object.js: Added.
+        (shouldBe):
+        (tag):
+        * tests/stress/tagged-templates-this.js: Added.
+        (shouldBe):
+        (tag):
+        * tests/stress/tagged-templates.js: Added.
+        (shouldBe):
+        (raw):
+        (cooked):
+        (Counter):
+
 2015-05-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r180595): same-callee profiling no longer works

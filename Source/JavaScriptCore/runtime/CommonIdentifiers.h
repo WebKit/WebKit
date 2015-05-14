@@ -150,6 +150,7 @@
     macro(profiledBytecodes) \
     macro(propertyIsEnumerable) \
     macro(prototype) \
+    macro(raw) \
     macro(reload) \
     macro(replace) \
     macro(resolve) \
@@ -281,7 +282,8 @@
     macro(TypeError) \
     macro(undefined) \
     macro(BuiltinLog) \
-    macro(homeObject)
+    macro(homeObject) \
+    macro(getTemplateObject)
 
 namespace JSC {
     

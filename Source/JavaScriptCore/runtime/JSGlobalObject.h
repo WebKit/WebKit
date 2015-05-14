@@ -37,6 +37,7 @@
 #include "StructureChain.h"
 #include "StructureRareDataInlines.h"
 #include "SymbolPrototype.h"
+#include "TemplateRegistry.h"
 #include "VM.h"
 #include "Watchpoint.h"
 #include <JavaScriptCore/JSBase.h>
@@ -283,6 +284,8 @@ protected:
     std::unique_ptr<JSGlobalObjectRareData> m_rareData;
 
     WeakRandom m_weakRandom;
+
+    TemplateRegistry m_templateRegistry;
 
     bool m_evalEnabled;
     String m_evalDisabledErrorMessage;
@@ -607,6 +610,8 @@ public:
         createRareDataIfNeeded();
         return m_rareData->opaqueJSClassData;
     }
+
+    TemplateRegistry& templateRegistry() { return m_templateRegistry; }
 
     double weakRandomNumber() { return m_weakRandom.get(); }
     unsigned weakRandomInteger() { return m_weakRandom.getUint32(); }

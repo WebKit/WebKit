@@ -288,6 +288,13 @@ public:
     {
         return new (m_parserArena) TemplateLiteralNode(location, templateStringList, templateExpressionList);
     }
+
+    ExpressionNode* createTaggedTemplate(const JSTokenLocation& location, ExpressionNode* base, TemplateLiteralNode* templateLiteral, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end)
+    {
+        auto node = new (m_parserArena) TaggedTemplateNode(location, base, templateLiteral);
+        setExceptionLocation(node, start, divot, end);
+        return node;
+    }
 #endif
 
     ExpressionNode* createRegExp(const JSTokenLocation& location, const Identifier& pattern, const Identifier& flags, const JSTextPosition& start)

@@ -89,6 +89,8 @@ inline JSObject* constructEmptyObject(ExecState* exec)
     return constructEmptyObject(exec, exec->lexicalGlobalObject()->objectPrototype());
 }
 
+JSObject* objectConstructorFreeze(ExecState*, JSObject*);
+
 } // namespace JSC
 
 #endif // ObjectConstructor_h

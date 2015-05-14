@@ -512,6 +512,7 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/JSStringIterator.cpp
     runtime/JSStringJoiner.cpp
     runtime/JSSymbolTableObject.cpp
+    runtime/JSTemplateRegistryKey.cpp
     runtime/JSTypedArrayConstructors.cpp
     runtime/JSTypedArrayPrototypes.cpp
     runtime/JSTypedArrays.cpp
@@ -578,6 +579,7 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/SymbolObject.cpp
     runtime/SymbolPrototype.cpp
     runtime/SymbolTable.cpp
+    runtime/TemplateRegistry.cpp
     runtime/TestRunnerUtils.cpp
     runtime/TypeLocationCache.cpp
     runtime/TypeProfiler.cpp

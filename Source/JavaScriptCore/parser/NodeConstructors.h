@@ -143,6 +143,13 @@ namespace JSC {
         , m_templateExpressions(templateExpressions)
     {
     }
+
+    inline TaggedTemplateNode::TaggedTemplateNode(const JSTokenLocation& location, ExpressionNode* tag, TemplateLiteralNode* templateLiteral)
+        : ExpressionNode(location)
+        , m_tag(tag)
+        , m_templateLiteral(templateLiteral)
+    {
+    }
 #endif
 
     inline RegExpNode::RegExpNode(const JSTokenLocation& location, const Identifier& pattern, const Identifier& flags)

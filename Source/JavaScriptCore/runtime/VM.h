@@ -264,6 +264,7 @@ public:
     Strong<Structure> symbolTableStructure;
     Strong<Structure> structureChainStructure;
     Strong<Structure> sparseArrayValueMapStructure;
+    Strong<Structure> templateRegistryKeyStructure;
     Strong<Structure> arrayBufferNeuteringWatchpointStructure;
     Strong<Structure> unlinkedFunctionExecutableStructure;
     Strong<Structure> unlinkedProgramCodeBlockStructure;

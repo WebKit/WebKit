@@ -40,12 +40,14 @@
 #include "LabelScope.h"
 #include "Lexer.h"
 #include "JSCInlines.h"
+#include "JSTemplateRegistryKey.h"
 #include "Parser.h"
 #include "PropertyNameArray.h"
 #include "RegExpCache.h"
 #include "RegExpObject.h"
 #include "SamplingTool.h"
 #include "StackAlignment.h"
+#include "TemplateRegistryKey.h"
 #include <wtf/Assertions.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/Threading.h>
@@ -259,6 +261,64 @@ RegisterID* TemplateLiteralNode::emitBytecode(BytecodeGenerator& generator, Regi
     }
 
     return generator.emitStrcat(generator.finalDestination(dst, temporaryRegisters[0].get()), temporaryRegisters[0].get(), temporaryRegisters.size());
+}
+
+// ------------------------------ TaggedTemplateNode -----------------------------------
+
+RegisterID* TaggedTemplateNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ExpectedFunction expectedFunction = NoExpectedFunction;
+    RefPtr<RegisterID> tag = nullptr;
+    RefPtr<RegisterID> base = nullptr;
+    if (!m_tag->isLocation()) {
+        tag = generator.emitNode(generator.newTemporary(), m_tag);
+    } else if (m_tag->isResolveNode()) {
+        ResolveNode* resolve = static_cast<ResolveNode*>(m_tag);
+        const Identifier& identifier = resolve->identifier();
+        expectedFunction = generator.expectedFunctionForIdentifier(identifier);
+
+        Variable var = generator.variable(identifier);
+        if (RegisterID* local = var.local())
+            tag = generator.emitMove(generator.newTemporary(), local);
+        else {
+            tag = generator.newTemporary();
+            base = generator.newTemporary();
+
+            JSTextPosition newDivot = divotStart() + identifier.length();
+            generator.emitExpressionInfo(newDivot, divotStart(), newDivot);
+            generator.moveToDestinationIfNeeded(base.get(), generator.emitResolveScope(base.get(), var));
+            generator.emitGetFromScope(tag.get(), base.get(), var, ThrowIfNotFound);
+        }
+    } else if (m_tag->isBracketAccessorNode()) {
+        BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(m_tag);
+        base = generator.emitNode(generator.newTemporary(), bracket->base());
+        RefPtr<RegisterID> property = generator.emitNode(bracket->subscript());
+        tag = generator.emitGetByVal(generator.newTemporary(), base.get(), property.get());
+    } else {
+        ASSERT(m_tag->isDotAccessorNode());
+        DotAccessorNode* dot = static_cast<DotAccessorNode*>(m_tag);
+        base = generator.emitNode(generator.newTemporary(), dot->base());
+        tag = generator.emitGetById(generator.newTemporary(), base.get(), dot->identifier());
+    }
+
+    RefPtr<RegisterID> templateObject = generator.emitGetTemplateObject(generator.newTemporary(), this);
+
+    unsigned expressionsCount = 0;
+    for (TemplateExpressionListNode* templateExpression = m_templateLiteral->templateExpressions(); templateExpression; templateExpression = templateExpression->next())
+        ++expressionsCount;
+
+    CallArguments callArguments(generator, nullptr, 1 + expressionsCount);
+    if (base)
+        generator.emitMove(callArguments.thisRegister(), base.get());
+    else
+        generator.emitLoad(callArguments.thisRegister(), jsUndefined());
+
+    unsigned argumentIndex = 0;
+    generator.emitMove(callArguments.argumentRegister(argumentIndex++), templateObject.get());
+    for (TemplateExpressionListNode* templateExpression = m_templateLiteral->templateExpressions(); templateExpression; templateExpression = templateExpression->next())
+        generator.emitNode(callArguments.argumentRegister(argumentIndex++), templateExpression->value());
+
+    return generator.emitCall(generator.finalDestination(dst, tag.get()), tag.get(), expectedFunction, callArguments, divot(), divotStart(), divotEnd());
 }
 #endif
 

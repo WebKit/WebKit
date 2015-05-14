@@ -708,6 +708,9 @@
     <ClCompile Include="..\runtime\JSSymbolTableObject.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\JSTemplateRegistryKey.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\runtime\JSEnvironmentRecord.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -871,6 +874,9 @@
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\SymbolTable.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\TemplateRegistry.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\TypeLocationCache.cpp">
@@ -2763,6 +2769,9 @@
     <ClInclude Include="..\runtime\JSSymbolTableObject.h">
       <Filter>runtime</Filter>
     </ClInclude>
+    <ClInclude Include="..\runtime\JSTemplateRegistryKey.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
     <ClInclude Include="..\runtime\JSType.h">
       <Filter>runtime</Filter>
     </ClInclude>
@@ -2950,6 +2959,12 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\SymbolTable.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\TemplateRegistry.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\TemplateRegistryKey.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\Tracing.h">
