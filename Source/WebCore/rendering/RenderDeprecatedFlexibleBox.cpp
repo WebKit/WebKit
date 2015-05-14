@@ -199,7 +199,7 @@ void RenderDeprecatedFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minL
 
     maxLogicalWidth = std::max(minLogicalWidth, maxLogicalWidth);
 
-    LayoutUnit scrollbarWidth = instrinsicScrollbarLogicalWidth();
+    LayoutUnit scrollbarWidth = intrinsicScrollbarLogicalWidth();
     maxLogicalWidth += scrollbarWidth;
     minLogicalWidth += scrollbarWidth;
 }

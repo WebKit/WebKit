@@ -459,7 +459,7 @@ public:
 
     virtual int verticalScrollbarWidth() const;
     int horizontalScrollbarHeight() const;
-    int instrinsicScrollbarLogicalWidth() const;
+    int intrinsicScrollbarLogicalWidth() const;
     int scrollbarLogicalHeight() const { return style().isHorizontalWritingMode() ? horizontalScrollbarHeight() : verticalScrollbarWidth(); }
     virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = nullptr, RenderBox* startBox = nullptr, const IntPoint& wheelEventAbsolutePoint = IntPoint());
     virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = nullptr);

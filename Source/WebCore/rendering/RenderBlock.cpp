@@ -2647,7 +2647,7 @@ void RenderBlock::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Lay
 
     maxLogicalWidth = std::max(minLogicalWidth, maxLogicalWidth);
 
-    int scrollbarWidth = instrinsicScrollbarLogicalWidth();
+    int scrollbarWidth = intrinsicScrollbarLogicalWidth();
     maxLogicalWidth += scrollbarWidth;
     minLogicalWidth += scrollbarWidth;
 }

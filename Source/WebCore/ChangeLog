@@ -1,3 +1,28 @@
+2015-05-14  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Fix typo in RenderBox::instrinsicScrollbarLogicalWidth()
+        https://bugs.webkit.org/show_bug.cgi?id=144999
+
+        Reviewed by Sergio Villar Senin.
+
+        Rename RenderBox::instrinsicScrollbarLogicalWidth() to
+        RenderBox::intrinsicScrollbarLogicalWidth().
+
+        No new tests, no behavior changes.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeIntrinsicLogicalWidths):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::computeIntrinsicLogicalWidths):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::intrinsicScrollbarLogicalWidth):
+        (WebCore::RenderBox::instrinsicScrollbarLogicalWidth): Deleted.
+        * rendering/RenderBox.h:
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::computeIntrinsicLogicalWidths):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computeIntrinsicLogicalWidths):
+
 2015-05-14  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         SharedBuffer::createWithContentsOfFile should use map file routines
