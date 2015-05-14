@@ -1,3 +1,15 @@
+2015-05-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline
+        https://bugs.webkit.org/show_bug.cgi?id=119068
+
+        Reviewed by Enrica Casucci.
+
+        Added a test based on https://chromium.googlesource.com/chromium/blink/+/3500267482e60550ce84fadd6c0db883937ce744
+
+        * editing/inserting/insert-table-in-paragraph-crash-expected.txt: Added.
+        * editing/inserting/insert-table-in-paragraph-crash.html: Added.
+
 2015-05-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Mac] Expose more font weights for -apple-system

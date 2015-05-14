@@ -96,7 +96,7 @@ private:
     
     void removeRedundantStylesAndKeepStyleSpanInline(InsertedNodes&);
     void makeInsertedContentRoundTrippableWithHTMLTreeBuilder(InsertedNodes&);
-    void moveNodeOutOfAncestor(PassRefPtr<Node>, PassRefPtr<Node> ancestor);
+    void moveNodeOutOfAncestor(PassRefPtr<Node>, PassRefPtr<Node> ancestor, InsertedNodes&);
     void handleStyleSpans(InsertedNodes&);
     void handlePasteAsQuotationNode();
     
