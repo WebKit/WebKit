@@ -1,3 +1,20 @@
+2015-05-14  Dean Jackson  <dino@apple.com>
+
+        MediaControls: controls are live even when invisible
+        https://bugs.webkit.org/show_bug.cgi?id=145029
+        <rdar://problem/20865442>
+
+        Reviewed by Jer Noble.
+
+        When the controls are invisible they should ignore touch/mouse
+        events.
+
+        * Modules/mediacontrols/mediaControlsiOS.css: Add pointer-events: none where appropriate.
+        (video::-webkit-media-controls-panel-container):
+        (video::-webkit-media-controls-panel-background):
+        (video::-webkit-media-controls-panel):
+        (video::-webkit-media-controls-panel.paused):
+
 2015-05-14  Jer Noble  <jer.noble@apple.com>
 
         [MediaControls] Refactor media controls & bring improvements made to iOS controls to Mac.

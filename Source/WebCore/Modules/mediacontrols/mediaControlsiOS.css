@@ -100,6 +100,7 @@ video::-webkit-media-controls-panel-container {
     height: 50px;
     position: absolute;
     bottom: 0;
+    pointer-events: none;
 }
 
 audio::-webkit-media-controls-panel-container {
@@ -118,6 +119,7 @@ video::-webkit-media-controls-panel-background {
     -webkit-appearance: media-controls-light-bar-background;
     transition: opacity 0.25s linear;
     opacity: 0;
+    pointer-events: none;
 }
 
 audio::-webkit-media-controls-panel-background {
@@ -157,6 +159,7 @@ audio::-webkit-media-controls-panel .hidden {
 video::-webkit-media-controls-panel {
     height: 50px;
     opacity: 0;
+    pointer-events: none;
     -webkit-transform: translate3d(0, 0, 0);
 }
 
@@ -167,6 +170,7 @@ audio::-webkit-media-controls-panel {
 
 video::-webkit-media-controls-panel.show,
 video::-webkit-media-controls-panel.paused {
+    pointer-events: auto;
     opacity: 1;
 }
 
