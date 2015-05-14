@@ -1,3 +1,13 @@
+2015-05-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a Pass/Failure test expectation on
+        fast/canvas/webgl/tex-image-and-sub-image-2d-with-potentially-subsampled-image.html.
+
+        I don't know why this test expectation was not in the branch given it was added back in r174585.
+        Perhaps it got lost during some merges.
+
+        * platform/mac/TestExpectations:
+
 2015-05-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Added prefixes in the test added in r182985 (merged in r183180) since we don't support unprefixed versions in this branch.
