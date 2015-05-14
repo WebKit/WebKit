@@ -1,3 +1,19 @@
+2015-05-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Add missing ENABLE(NETSCAPE_PLUGIN_API) build guards
+        https://bugs.webkit.org/show_bug.cgi?id=144994
+
+        Reviewed by Carlos Garcia Campos.
+
+        This fixes the build when configured with Netscape plugin API
+        support disabled.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_set_additional_plugins_directory):
+        (webkitWebContextGetPluginThread):
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+
 2015-05-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Network Cache: NetworkProcess segfault when file system doesn't support xattrs
