@@ -3786,7 +3786,7 @@ void HTMLMediaElement::layoutSizeChanged()
         if (ShadowRoot* root = strongThis->userAgentShadowRoot())
             root->dispatchEvent(Event::create("resize", false, false));
     };
-    resizeTaskQueue.enqueueTask(task);
+    m_resizeTaskQueue.enqueueTask(task);
 #endif
 }
     

@@ -1,3 +1,10 @@
+2015-05-14  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix after r184359; typo.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::layoutSizeChanged):
+
 2015-05-14  Roger Fong  <roger_fong@apple.com>
 
         Adjust button CSS and positioning in preparation.
