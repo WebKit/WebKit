@@ -156,6 +156,12 @@ bool equal(StringView, StringView);
 bool equal(StringView, const LChar*);
 bool equal(StringView, const char*);
 bool equalIgnoringASCIICase(StringView, StringView);
+WTF_EXPORT_STRING_API bool equalIgnoringASCIICase(StringView a, const char* b, unsigned bLength);
+template<unsigned charactersCount>
+bool equalIgnoringASCIICase(StringView a, const char (&b)[charactersCount])
+{
+    return equalIgnoringASCIICase(a, b, charactersCount - 1);
+}
 
 inline bool operator==(StringView a, StringView b) { return equal(a, b); }
 inline bool operator==(StringView a, const LChar* b) { return equal(a, b); }
