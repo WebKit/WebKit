@@ -467,6 +467,9 @@ public:
     void putDirectAccessor(ExecState*, PropertyName, JSValue, unsigned attributes);
     JS_EXPORT_PRIVATE void putDirectCustomAccessor(VM&, PropertyName, JSValue, unsigned attributes);
 
+    void putGetter(ExecState*, PropertyName, JSValue);
+    void putSetter(ExecState*, PropertyName, JSValue);
+
     JS_EXPORT_PRIVATE bool hasProperty(ExecState*, PropertyName) const;
     JS_EXPORT_PRIVATE bool hasProperty(ExecState*, unsigned propertyName) const;
     bool hasOwnProperty(ExecState*, PropertyName) const;
@@ -1318,8 +1321,12 @@ inline bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSVal
 
             putDirect(vm, offset, value);
             structure->didReplaceProperty(offset);
-            
             slot.setExistingProperty(this, offset);
+
+            if ((attributes & Accessor) != (currentAttributes & Accessor)) {
+                ASSERT(!(attributes & ReadOnly));
+                setStructure(vm, Structure::attributeChangeTransition(vm, structure, propertyName, attributes));
+            }
             return true;
         }
 
@@ -1369,6 +1376,11 @@ inline bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSVal
         structure->didReplaceProperty(offset);
         slot.setExistingProperty(this, offset);
         putDirect(vm, offset, value);
+
+        if ((attributes & Accessor) != (currentAttributes & Accessor)) {
+            ASSERT(!(attributes & ReadOnly));
+            setStructure(vm, Structure::attributeChangeTransition(vm, structure, propertyName, attributes));
+        }
         return true;
     }
 

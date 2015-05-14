@@ -1548,6 +1548,28 @@ RegisterID* BytecodeGenerator::emitDirectPutById(RegisterID* base, const Identif
     return value;
 }
 
+void BytecodeGenerator::emitPutGetterById(RegisterID* base, const Identifier& property, RegisterID* getter)
+{
+    unsigned propertyIndex = addConstant(property);
+    m_staticPropertyAnalyzer.putById(base->index(), propertyIndex);
+
+    emitOpcode(op_put_getter_by_id);
+    instructions().append(base->index());
+    instructions().append(propertyIndex);
+    instructions().append(getter->index());
+}
+
+void BytecodeGenerator::emitPutSetterById(RegisterID* base, const Identifier& property, RegisterID* setter)
+{
+    unsigned propertyIndex = addConstant(property);
+    m_staticPropertyAnalyzer.putById(base->index(), propertyIndex);
+
+    emitOpcode(op_put_setter_by_id);
+    instructions().append(base->index());
+    instructions().append(propertyIndex);
+    instructions().append(setter->index());
+}
+
 void BytecodeGenerator::emitPutGetterSetter(RegisterID* base, const Identifier& property, RegisterID* getter, RegisterID* setter)
 {
     unsigned propertyIndex = addConstant(property);

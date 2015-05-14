@@ -1,3 +1,95 @@
+2015-05-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ES6: Allow duplicate property names
+        https://bugs.webkit.org/show_bug.cgi?id=142895
+
+        Reviewed by Geoffrey Garen.
+
+        Introduce new `op_put_getter_by_id` and `op_put_setter_by_id` opcodes
+        that will define a single getter or setter property on an object.
+
+        The existing `op_put_getter_setter` opcode is still preferred for
+        putting both a getter and setter at the same time but cannot be used
+        for putting an individual getter or setter which is needed in
+        some cases.
+
+        Add a new slow path when generating bytecodes for a property list
+        with computed properties, as computed properties are the only time
+        the list of properties cannot be determined statically.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitBytecode):
+        - fast path for all constant properties
+        - slow but paired getter/setter path if there are no computed properties
+        - slow path, individual put operation for every property, if there are computed properties
+
+        * parser/Nodes.h:
+        Distinguish a Computed property from a Constant property.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::parsePropertyMethod):
+        Distingish Computed and Constant properties.
+
+        (JSC::Parser<LexerType>::parseObjectLiteral):
+        When we drop into strict mode it is because we saw a getter
+        or setter, so be more explicit.
+
+        (JSC::Parser<LexerType>::parseStrictObjectLiteral):
+        Eliminate duplicate property syntax error exception.
+
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::getName):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::getName): Deleted.
+        No longer used.
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::putDirectInternal):
+        When updating a property. If the Accessor attribute changed
+        update the Structure.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putGetter):
+        (JSC::JSObject::putSetter):
+        Called by the opcodes, just perform the same operation that
+        __defineGetter__ or __defineSetter__ would do.
+
+        (JSC::JSObject::putDirectNonIndexAccessor):
+        This transition is now handled in putDirectInternal.
+
+        * runtime/Structure.h:
+        Add needed export.
+
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitPutGetterById):
+        (JSC::BytecodeGenerator::emitPutSetterById):
+        * bytecompiler/BytecodeGenerator.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_getter_by_id):
+        (JSC::JIT::emit_op_put_setter_by_id):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_getter_by_id):
+        (JSC::JIT::emit_op_put_setter_by_id):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        New bytecodes. Modelled after existing op_put_getter_setter.
+
 2015-05-13  Filip Pizlo  <fpizlo@apple.com>
 
         Creating a new blank document in icloud pages causes an AI error: Abstract value (CellBytecodedoubleBoolOther, TOP, TOP) for double node has type outside SpecFullDouble.

@@ -1110,6 +1110,22 @@ void CodeBlock::dumpBytecode(
             printPutByIdCacheStatus(out, exec, location, stubInfos);
             break;
         }
+        case op_put_getter_by_id: {
+            int r0 = (++it)->u.operand;
+            int id0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            printLocationAndOp(out, exec, location, it, "put_getter_by_id");
+            out.printf("%s, %s, %s", registerName(r0).data(), idName(id0, identifier(id0)).data(), registerName(r1).data());
+            break;
+        }
+        case op_put_setter_by_id: {
+            int r0 = (++it)->u.operand;
+            int id0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            printLocationAndOp(out, exec, location, it, "put_setter_by_id");
+            out.printf("%s, %s, %s", registerName(r0).data(), idName(id0, identifier(id0)).data(), registerName(r1).data());
+            break;
+        }
         case op_put_getter_setter: {
             int r0 = (++it)->u.operand;
             int id0 = (++it)->u.operand;

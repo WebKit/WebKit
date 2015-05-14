@@ -1057,6 +1057,18 @@ _llint_op_put_by_index:
     dispatch(4)
 
 
+_llint_op_put_getter_by_id:
+    traceExecution()
+    callSlowPath(_llint_slow_path_put_getter_by_id)
+    dispatch(4)
+
+
+_llint_op_put_setter_by_id:
+    traceExecution()
+    callSlowPath(_llint_slow_path_put_setter_by_id)
+    dispatch(4)
+
+
 _llint_op_put_getter_setter:
     traceExecution()
     callSlowPath(_llint_slow_path_put_getter_setter)

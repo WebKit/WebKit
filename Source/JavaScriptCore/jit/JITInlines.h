@@ -478,6 +478,12 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EJ operatio
     return appendCallWithExceptionCheck(operation);
 }
 
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EJIdJ operation, RegisterID regOp1, const Identifier* identOp2, RegisterID regOp3)
+{
+    setupArgumentsWithExecState(regOp1, TrustedImmPtr(identOp2), regOp3);
+    return appendCallWithExceptionCheck(operation);
+}
+
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EJIdJJ operation, RegisterID regOp1, const Identifier* identOp2, RegisterID regOp3, RegisterID regOp4)
 {
     setupArgumentsWithExecState(regOp1, TrustedImmPtr(identOp2), regOp3, regOp4);
@@ -585,6 +591,12 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(S_JITOperation_EJ operatio
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(S_JITOperation_EJJ operation, RegisterID arg1Tag, RegisterID arg1Payload, RegisterID arg2Tag, RegisterID arg2Payload)
 {
     setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag, SH4_32BIT_DUMMY_ARG arg2Payload, arg2Tag);
+    return appendCallWithExceptionCheck(operation);
+}
+
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_ECIC operation, RegisterID regOp1, const Identifier* identOp2, RegisterID regOp3)
+{
+    setupArgumentsWithExecState(regOp1, TrustedImmPtr(identOp2), regOp3);
     return appendCallWithExceptionCheck(operation);
 }
 

@@ -1,19 +1,20 @@
 description("Make sure that we correctly identify parse errors in object literals");
 
-shouldThrow("({a:1, get a(){}})");
-shouldThrow("({a:1, set a(x){}})");
-shouldThrow("({get a(){}, a:1})");
-shouldThrow("({set a(x){}, a:1})");
-shouldThrow("({get a(){}, get a(){}})");
-shouldThrow("({set a(x){}, set a(x){}})");
-shouldThrow("({set a(x){}, get a(){}, set a(x){}})");
-shouldThrow("(function(){({a:1, get a(){}})})");
-shouldThrow("(function(){({a:1, set a(x){}})})");
-shouldThrow("(function(){({get a(){}, a:1})})");
-shouldThrow("(function(){({set a(x){}, a:1})})");
-shouldThrow("(function(){({get a(){}, get a(){}})})");
-shouldThrow("(function(){({set a(x){}, set a(x){}})})");
-shouldThrow("(function(){({set a(x){}, get a(){}, set a(x){}})})");
+shouldNotThrow("({a:1, get a(){}})");
+shouldNotThrow("({a:1, set a(x){}})");
+shouldNotThrow("({get a(){}, a:1})");
+shouldNotThrow("({set a(x){}, a:1})");
+shouldNotThrow("({get a(){}, get a(){}})");
+shouldNotThrow("({set a(x){}, set a(x){}})");
+shouldNotThrow("({set a(x){}, get a(){}, set a(x){}})");
+shouldNotThrow("(function(){({a:1, get a(){}})})");
+shouldNotThrow("(function(){({a:1, set a(x){}})})");
+shouldNotThrow("(function(){({get a(){}, a:1})})");
+shouldNotThrow("(function(){({set a(x){}, a:1})})");
+shouldNotThrow("(function(){({get a(){}, get a(){}})})");
+shouldNotThrow("(function(){({set a(x){}, set a(x){}})})");
+shouldNotThrow("(function(){({set a(x){}, get a(){}, set a(x){}})})");
+
 shouldBeTrue("({a:1, a:1, a:1}), true");
 shouldBeTrue("({get a(){}, set a(x){}}), true");
 shouldBeTrue("({set a(x){}, get a(){}}), true");
@@ -25,6 +26,7 @@ shouldNotThrow("({get a(){}})");
 shouldNotThrow("({set a(x){}})");
 shouldNotThrow("({set a([x, y]){}})");
 shouldNotThrow("({set a({x, y}){}})");
+
 shouldThrow("({get a(x){}})");
 shouldThrow("({b:1, get a(x){}})");
 shouldThrow("({get a([x]){}})");

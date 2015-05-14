@@ -444,6 +444,20 @@ void JIT::emit_op_put_by_index(Instruction* currentInstruction)
     callOperation(operationPutByIndex, regT0, currentInstruction[2].u.operand, regT1);
 }
 
+void JIT::emit_op_put_getter_by_id(Instruction* currentInstruction)
+{
+    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
+    emitGetVirtualRegister(currentInstruction[3].u.operand, regT1);
+    callOperation(operationPutGetterById, regT0, &m_codeBlock->identifier(currentInstruction[2].u.operand), regT1);
+}
+
+void JIT::emit_op_put_setter_by_id(Instruction* currentInstruction)
+{
+    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
+    emitGetVirtualRegister(currentInstruction[3].u.operand, regT1);
+    callOperation(operationPutSetterById, regT0, &m_codeBlock->identifier(currentInstruction[2].u.operand), regT1);
+}
+
 void JIT::emit_op_put_getter_setter(Instruction* currentInstruction)
 {
     emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);

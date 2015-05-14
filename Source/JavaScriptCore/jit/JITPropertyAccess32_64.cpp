@@ -57,6 +57,28 @@ void JIT::emit_op_put_by_index(Instruction* currentInstruction)
     callOperation(operationPutByIndex, regT1, regT0, property, regT3, regT2);
 }
 
+void JIT::emit_op_put_getter_by_id(Instruction* currentInstruction)
+{
+    int base = currentInstruction[1].u.operand;
+    int property = currentInstruction[2].u.operand;
+    int getter = currentInstruction[3].u.operand;
+
+    emitLoadPayload(base, regT1);
+    emitLoadPayload(getter, regT3);
+    callOperation(operationPutGetterById, regT1, &m_codeBlock->identifier(property), regT3);
+}
+
+void JIT::emit_op_put_setter_by_id(Instruction* currentInstruction)
+{
+    int base = currentInstruction[1].u.operand;
+    int property = currentInstruction[2].u.operand;
+    int setter = currentInstruction[3].u.operand;
+
+    emitLoadPayload(base, regT1);
+    emitLoadPayload(setter, regT3);
+    callOperation(operationPutSetterById, regT1, &m_codeBlock->identifier(property), regT3);
+}
+
 void JIT::emit_op_put_getter_setter(Instruction* currentInstruction)
 {
     int base = currentInstruction[1].u.operand;

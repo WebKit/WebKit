@@ -862,6 +862,32 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_index)
     LLINT_END();
 }
 
+LLINT_SLOW_PATH_DECL(slow_path_put_getter_by_id)
+{
+    LLINT_BEGIN();
+    ASSERT(LLINT_OP(1).jsValue().isObject());
+    JSObject* baseObj = asObject(LLINT_OP(1).jsValue());
+    
+    JSValue getter = LLINT_OP(3).jsValue();
+    ASSERT(getter.isObject());
+    
+    baseObj->putGetter(exec, exec->codeBlock()->identifier(pc[2].u.operand), asObject(getter));
+    LLINT_END();
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_put_setter_by_id)
+{
+    LLINT_BEGIN();
+    ASSERT(LLINT_OP(1).jsValue().isObject());
+    JSObject* baseObj = asObject(LLINT_OP(1).jsValue());
+    
+    JSValue setter = LLINT_OP(3).jsValue();
+    ASSERT(setter.isObject());
+    
+    baseObj->putSetter(exec, exec->codeBlock()->identifier(pc[2].u.operand), asObject(setter));
+    LLINT_END();
+}
+
 LLINT_SLOW_PATH_DECL(slow_path_put_getter_setter)
 {
     LLINT_BEGIN();

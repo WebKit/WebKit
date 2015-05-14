@@ -282,6 +282,8 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_put_by_index)
         case op_put_by_val_direct:
         DEFINE_OP(op_put_by_val)
+        DEFINE_OP(op_put_getter_by_id)
+        DEFINE_OP(op_put_setter_by_id)
         DEFINE_OP(op_put_getter_setter)
         case op_init_global_const_nop:
             NEXT_OPCODE(op_init_global_const_nop);

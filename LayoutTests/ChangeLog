@@ -1,3 +1,32 @@
+2015-05-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ES6: Allow duplicate property names
+        https://bugs.webkit.org/show_bug.cgi?id=142895
+
+        Reviewed by Geoffrey Garen.
+
+        * js/object-literal-duplicate-properties-expected.txt: Added.
+        * js/object-literal-duplicate-properties.html: Added.
+        * js/script-tests/object-literal-duplicate-properties.js: Added.
+        Include a new test all about testing duplicate property names
+        and their expected cascading results.
+
+        * ietestcenter/Javascript/11.1.5_4-4-b-1-expected.txt:
+        * ietestcenter/Javascript/11.1.5_4-4-b-2-expected.txt:
+        * ietestcenter/Javascript/11.1.5_4-4-c-1-expected.txt:
+        * ietestcenter/Javascript/11.1.5_4-4-c-2-expected.txt:
+        * ietestcenter/Javascript/11.1.5_4-4-d-1-expected.txt:
+        * ietestcenter/Javascript/11.1.5_4-4-d-2-expected.txt:
+        * ietestcenter/Javascript/11.1.5_4-4-d-3-expected.txt:
+        * ietestcenter/Javascript/11.1.5_4-4-d-4-expected.txt:
+        ES5 behavior for duplciate properties has changed.
+
+        * js/mozilla/strict/11.1.5-expected.txt:
+        * js/object-literal-syntax-expected.txt:
+        * js/script-tests/object-literal-syntax.js:
+        Update other tests and values now that duplicate properties
+        are allowed, and their cascade order behaves correctly.
+
 2015-05-13  Antti Koivisto  <antti@apple.com>
 
         Cached CSS image resources don't show up after reloading <http://nightly.webkit.org/start/>
