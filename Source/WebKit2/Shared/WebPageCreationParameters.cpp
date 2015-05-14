@@ -83,6 +83,7 @@ void WebPageCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << textAutosizingWidth;
 #endif
     encoder << appleMailPaginationQuirkEnabled;
+    encoder << shouldScaleViewToFitDocument;
 }
 
 bool WebPageCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebPageCreationParameters& parameters)
@@ -182,6 +183,9 @@ bool WebPageCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebPageCre
 #endif
 
     if (!decoder.decode(parameters.appleMailPaginationQuirkEnabled))
+        return false;
+
+    if (!decoder.decode(parameters.shouldScaleViewToFitDocument))
         return false;
 
     return true;

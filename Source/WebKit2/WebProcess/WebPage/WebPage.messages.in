@@ -433,4 +433,5 @@ messages -> WebPage LegacyReceiver {
 #endif
 
     ClearWheelEventTestTrigger()
+    SetShouldScaleViewToFitDocument(bool shouldScaleViewToFitDocument)
 }

@@ -655,6 +655,7 @@ public:
 #if PLATFORM(COCOA)
     void scaleViewAndUpdateGeometryFenced(double scale, WebCore::IntSize viewSize, std::function<void (const WebCore::MachSendRight&, CallbackBase::Error)>);
 #endif
+    void setShouldScaleViewToFitDocument(bool);
 
     float deviceScaleFactor() const;
     void setIntrinsicDeviceScaleFactor(float);
@@ -1710,7 +1711,9 @@ private:
     bool m_mayStartMediaWhenInWindow;
 
     bool m_waitingForDidUpdateViewState;
-        
+
+    bool m_shouldScaleViewToFitDocument { false };
+
 #if PLATFORM(COCOA)
     HashMap<String, String> m_temporaryPDFFiles;
     std::unique_ptr<WebCore::RunLoopObserver> m_viewStateChangeDispatcher;

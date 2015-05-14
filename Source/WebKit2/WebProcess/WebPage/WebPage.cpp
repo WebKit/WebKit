@@ -381,6 +381,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
     m_drawingArea = DrawingArea::create(*this, parameters);
     m_drawingArea->setPaintingEnabled(false);
+    m_drawingArea->setShouldScaleViewToFitDocument(parameters.shouldScaleViewToFitDocument);
 
 #if ENABLE(ASYNC_SCROLLING)
     m_useAsyncScrolling = parameters.store.getBoolValueForKey(WebPreferencesKey::threadedScrollingEnabledKey());
@@ -4952,6 +4953,14 @@ void WebPage::clearWheelEventTestTrigger()
         return;
 
     m_page->clearTrigger();
+}
+
+void WebPage::setShouldScaleViewToFitDocument(bool shouldScaleViewToFitDocument)
+{
+    if (!m_drawingArea)
+        return;
+
+    m_drawingArea->setShouldScaleViewToFitDocument(shouldScaleViewToFitDocument);
 }
 
 } // namespace WebKit

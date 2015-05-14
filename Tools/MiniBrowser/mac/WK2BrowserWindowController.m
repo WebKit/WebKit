@@ -48,7 +48,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     BOOL _zoomTextOnly;
     BOOL _isPrivateBrowsingWindow;
 
-    BOOL _useMinimumViewSize;
+    BOOL _useShrinkToFit;
 }
 
 - (void)awakeFromNib
@@ -237,12 +237,11 @@ static CGFloat viewScaleForMenuItemTag(NSInteger tag)
     return _zoomTextOnly ? (_webView._textZoomFactor != 1) : (_webView._pageZoomFactor != 1);
 }
 
-- (IBAction)toggleUseMinimumViewSize:(id)sender
+- (IBAction)toggleShrinkToFit:(id)sender
 {
-    _useMinimumViewSize = !_useMinimumViewSize;
-    toggleUseMinimumViewSizeButton.image = _useMinimumViewSize ? [NSImage imageNamed:@"NSExitFullScreenTemplate"] : [NSImage imageNamed:@"NSEnterFullScreenTemplate"];
-    [_webView _setMinimumViewSize:CGSizeMake(1024, 0)];
-    [_webView _setLayoutMode:_useMinimumViewSize ? _WKLayoutModeDynamicSizeWithMinimumViewSize : _WKLayoutModeViewSize];
+    _useShrinkToFit = !_useShrinkToFit;
+    toggleUseShrinkToFitButton.image = _useShrinkToFit ? [NSImage imageNamed:@"NSExitFullScreenTemplate"] : [NSImage imageNamed:@"NSEnterFullScreenTemplate"];
+    [_webView _setLayoutMode:_useShrinkToFit ? _WKLayoutModeDynamicSizeComputedFromMinimumDocumentSize : _WKLayoutModeViewSize];
 }
 
 - (IBAction)dumpSourceToConsole:(id)sender

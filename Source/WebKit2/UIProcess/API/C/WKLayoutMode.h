@@ -36,7 +36,8 @@ enum {
     kWKLayoutModeViewSize,
     kWKLayoutModeFixedSize,
     kWKLayoutModeDynamicSizeComputedFromViewScale,
-    kWKLayoutModeDynamicSizeWithMinimumViewSize
+    kWKLayoutModeDynamicSizeWithMinimumViewSize,
+    kWKLayoutModeDynamicSizeComputedFromMinimumDocumentSize
 };
 typedef uint32_t WKLayoutMode;
 

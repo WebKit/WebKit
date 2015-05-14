@@ -1129,6 +1129,8 @@ private:
 
     void clearWheelEventTestTrigger();
 
+    void setShouldScaleViewToFitDocument(bool);
+
     uint64_t m_pageID;
 
     std::unique_ptr<WebCore::Page> m_page;

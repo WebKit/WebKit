@@ -2301,6 +2301,8 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         return _WKLayoutModeDynamicSizeComputedFromViewScale;
     case kWKLayoutModeDynamicSizeWithMinimumViewSize:
         return _WKLayoutModeDynamicSizeWithMinimumViewSize;
+    case kWKLayoutModeDynamicSizeComputedFromMinimumDocumentSize:
+        return _WKLayoutModeDynamicSizeComputedFromMinimumDocumentSize;
     case kWKLayoutModeViewSize:
     default:
         return _WKLayoutModeViewSize;
@@ -2323,6 +2325,9 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         break;
     case _WKLayoutModeDynamicSizeWithMinimumViewSize:
         wkViewLayoutMode = kWKLayoutModeDynamicSizeWithMinimumViewSize;
+        break;
+    case _WKLayoutModeDynamicSizeComputedFromMinimumDocumentSize:
+        wkViewLayoutMode = kWKLayoutModeDynamicSizeComputedFromMinimumDocumentSize;
         break;
     case _WKLayoutModeViewSize:
     default:

@@ -1,3 +1,49 @@
+2015-05-14  Timothy Horton  <timothy_horton@apple.com>
+
+        Add a layout mode that scales down the view to try to fit the document
+        https://bugs.webkit.org/show_bug.cgi?id=145022
+        <rdar://problem/19790341>
+
+        Reviewed by Dean Jackson.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::setShouldScaleViewToFitDocument):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::setShouldScaleViewToFitDocument):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::setShouldScaleViewToFitDocument):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Plumb shouldScaleViewToFitDocument through to the DrawingArea.
+
+        * UIProcess/mac/WKViewLayoutStrategy.mm:
+        (+[WKViewLayoutStrategy layoutStrategyWithPage:view:mode:]):
+        (-[WKViewDynamicSizeComputedFromMinimumDocumentSizeLayoutStrategy initWithPage:view:mode:]):
+        (-[WKViewDynamicSizeComputedFromMinimumDocumentSizeLayoutStrategy updateLayout]):
+        (-[WKViewDynamicSizeComputedFromMinimumDocumentSizeLayoutStrategy willChangeLayoutStrategy]):
+        * UIProcess/API/C/WKLayoutMode.h:
+        * UIProcess/API/Cocoa/_WKLayoutMode.h:
+        Add a new layout mode, which just turns on shouldScaleViewToFitDocument,
+        and otherwise behaves as normal.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::setShouldScaleViewToFitDocument):
+        (WebKit::TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded):
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        On every flush where either the document size or view size has changed,
+        or layout is outstanding, do a layout with fixed layout off to determine
+        whether the document fits inside the view. If it doesn't, scale it down
+        to fit. This will require an extra layout for every resize while in the
+        scaled-down state, but there is potential for future optimization.
+
 2015-05-14  Anders Carlsson  <andersca@apple.com>
 
         Local storage origins should include origins with transient local storage

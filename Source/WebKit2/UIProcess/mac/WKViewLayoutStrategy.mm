@@ -52,6 +52,9 @@ using namespace WebKit;
 }
 @end
 
+@interface WKViewDynamicSizeComputedFromMinimumDocumentSizeLayoutStrategy : WKViewLayoutStrategy
+@end
+
 @implementation WKViewLayoutStrategy
 
 + (instancetype)layoutStrategyWithPage:(WebPageProxy&)page view:(WKView *)wkView mode:(WKLayoutMode)mode
@@ -67,6 +70,9 @@ using namespace WebKit;
         break;
     case kWKLayoutModeDynamicSizeWithMinimumViewSize:
         strategy = [[WKViewDynamicSizeWithMinimumViewSizeLayoutStrategy alloc] initWithPage:page view:wkView mode:mode];
+        break;
+    case kWKLayoutModeDynamicSizeComputedFromMinimumDocumentSize:
+        strategy = [[WKViewDynamicSizeComputedFromMinimumDocumentSizeLayoutStrategy alloc] initWithPage:page view:wkView mode:mode];
         break;
     case kWKLayoutModeViewSize:
     default:
@@ -370,6 +376,31 @@ using namespace WebKit;
 {
     _wkView._rootLayer.transform = CATransform3DIdentity;
     _page->scaleView(1);
+}
+
+@end
+
+@implementation WKViewDynamicSizeComputedFromMinimumDocumentSizeLayoutStrategy
+
+- (instancetype)initWithPage:(WebPageProxy&)page view:(WKView *)wkView mode:(WKLayoutMode)mode
+{
+    self = [super initWithPage:page view:wkView mode:mode];
+
+    if (!self)
+        return nil;
+
+    _page->setShouldScaleViewToFitDocument(true);
+
+    return self;
+}
+
+- (void)updateLayout
+{
+}
+
+- (void)willChangeLayoutStrategy
+{
+    _page->setShouldScaleViewToFitDocument(false);
 }
 
 @end
