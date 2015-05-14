@@ -43,8 +43,8 @@ typedef struct _Evas_Event_Mouse_Move Evas_Event_Mouse_Move;
 
 namespace WebCore {
 
-const double ForceAtClick = 0;
-const double ForceAtForceClick = 1;
+const double ForceAtClick = 1;
+const double ForceAtForceClick = 2;
 
     // These button numbers match the ones used in the DOM API, 0 through 2, except for NoButton which isn't specified.
     enum MouseButton : int8_t { NoButton = -1, LeftButton, MiddleButton, RightButton };

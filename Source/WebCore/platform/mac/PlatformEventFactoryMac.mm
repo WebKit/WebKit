@@ -454,7 +454,7 @@ public:
 #if defined(__LP64__) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
         int stage = eventIsPressureEvent ? event.stage : correspondingPressureEvent.stage;
         double pressure = eventIsPressureEvent ? event.pressure : correspondingPressureEvent.pressure;
-        m_force = stage < 1 ? pressure : pressure + stage - 1;
+        m_force = pressure + stage;
 #endif
 
         // Mac specific

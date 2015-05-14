@@ -1,3 +1,16 @@
+2015-05-14  Beth Dakin  <bdakin@apple.com>
+
+        Change range of possible forces for mouseforcechanged DOM event
+        https://bugs.webkit.org/show_bug.cgi?id=144987
+        -and corresponding-
+        rdar://problem/20472802
+
+        Reviewed by Tim Horton.
+
+        Change to a 0-3 range.
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::WebEventFactory::createWebMouseEvent):
+
 2015-05-14  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Add missing ENABLE(NETSCAPE_PLUGIN_API) build guards

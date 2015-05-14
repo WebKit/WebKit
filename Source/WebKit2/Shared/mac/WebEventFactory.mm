@@ -400,7 +400,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSEvent *last
 #if defined(__LP64__) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
     int stage = [event type] == NSEventTypePressure ? event.stage : lastPressureEvent.stage;
     double pressure = [event type] == NSEventTypePressure ? event.pressure : lastPressureEvent.pressure;
-    force = stage < 1 ? pressure : pressure + stage - 1;
+    force = pressure + stage;
 #endif
 
     return WebMouseEvent(type, button, IntPoint(position), IntPoint(globalPosition), deltaX, deltaY, deltaZ, clickCount, modifiers, timestamp, force, eventNumber, menuTypeForEvent);
