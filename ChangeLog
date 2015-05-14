@@ -1,3 +1,17 @@
+2015-05-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Enable plugin-related CMake options and variables for the X11 target only
+        https://bugs.webkit.org/show_bug.cgi?id=144995
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/OptionsGTK.cmake: Plugins are only supported for
+        the X11 windowing target at the moment, so the following options
+        and variables should be enabled or disabled accordingly:
+        - ENABLE_PLUGIN_PROCESS_GTK2
+        - ENABLE_NETSCAPE_PLUGIN_API
+        - ENABLE_PLUGIN_PROCESS
+
 2015-05-12  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         Linker fails without -DDEVELOPER_MODE=ON
