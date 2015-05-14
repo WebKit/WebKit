@@ -94,7 +94,7 @@ protected:
         RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(length, sizeof(T));
         if (!buffer.get())
             return 0;
-        return create<Subclass>(buffer, 0, length);
+        return create<Subclass>(buffer.release(), 0, length);
     }
 
     template <class Subclass>
@@ -104,7 +104,7 @@ protected:
         if (a)
             for (unsigned i = 0; i < length; ++i)
                 a->set(i, array[i]);
-        return a;
+        return a.release();
     }
 
     template <class Subclass>
@@ -114,7 +114,7 @@ protected:
         if (!verifySubRange<T>(buf, byteOffset, length))
             return 0;
 
-        return adoptRef(new Subclass(buf, byteOffset, length));
+        return adoptRef(new Subclass(buf.release(), byteOffset, length));
     }
 
     template <class Subclass>
@@ -123,7 +123,7 @@ protected:
         RefPtr<ArrayBuffer> buffer = ArrayBuffer::createUninitialized(length, sizeof(T));
         if (!buffer.get())
             return 0;
-        return create<Subclass>(buffer, 0, length);
+        return create<Subclass>(buffer.release(), 0, length);
     }
 
     template <class Subclass>

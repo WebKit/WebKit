@@ -45,7 +45,7 @@ PassRefPtr<GenericTypedArrayView<Adaptor>> GenericTypedArrayView<Adaptor>::creat
     RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(length, sizeof(typename Adaptor::Type));
     if (!buffer)
         return 0;
-    return create(buffer, 0, length);
+    return create(buffer.release(), 0, length);
 }
 
 template<typename Adaptor>
@@ -54,7 +54,7 @@ PassRefPtr<GenericTypedArrayView<Adaptor>> GenericTypedArrayView<Adaptor>::creat
 {
     RefPtr<GenericTypedArrayView> result = create(length);
     memcpy(result->data(), array, length * sizeof(typename Adaptor::Type));
-    return result;
+    return result.release();
 }
 
 template<typename Adaptor>
@@ -67,7 +67,7 @@ PassRefPtr<GenericTypedArrayView<Adaptor>> GenericTypedArrayView<Adaptor>::creat
         return nullptr;
     }
     
-    return adoptRef(new GenericTypedArrayView(buffer, byteOffset, length));
+    return adoptRef(new GenericTypedArrayView(buffer.release(), byteOffset, length));
 }
 
 template<typename Adaptor>
@@ -78,7 +78,7 @@ GenericTypedArrayView<Adaptor>::createUninitialized(unsigned length)
         ArrayBuffer::createUninitialized(length, sizeof(typename Adaptor::Type));
     if (!buffer)
         return 0;
-    return create(buffer, 0, length);
+    return create(buffer.release(), 0, length);
 }
 
 template<typename Adaptor>

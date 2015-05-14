@@ -1052,7 +1052,6 @@ PassRefPtr<StructureShape> Structure::toStructureShape(JSValue value)
                 curShape->addProperty(structure->m_nameInPrevious.get());
         }
 
-        
         if (JSObject* curObject = curValue.getObject())
             curShape->setConstructorName(JSObject::calculatedClassName(curObject));
         else
@@ -1066,7 +1065,7 @@ PassRefPtr<StructureShape> Structure::toStructureShape(JSValue value)
         if (curStructure->storedPrototypeStructure()) {
             RefPtr<StructureShape> newShape = StructureShape::create();
             curShape->setProto(newShape);
-            curShape = newShape;
+            curShape = newShape.release();
             curValue = curStructure->storedPrototype();
         }
 

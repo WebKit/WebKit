@@ -1,5 +1,26 @@
 2015-05-13  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Clean up some possible RefPtr to PassRefPtr churn
+        https://bugs.webkit.org/show_bug.cgi?id=144779
+
+        Reviewed by Darin Adler.
+
+        * runtime/GenericTypedArrayViewInlines.h:
+        (JSC::GenericTypedArrayView<Adaptor>::create):
+        (JSC::GenericTypedArrayView<Adaptor>::createUninitialized):
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::constructArrayBuffer):
+        * runtime/Structure.cpp:
+        (JSC::Structure::toStructureShape):
+        * runtime/TypedArrayBase.h:
+        (JSC::TypedArrayBase::create):
+        (JSC::TypedArrayBase::createUninitialized):
+        * tools/FunctionOverrides.cpp:
+        (JSC::initializeOverrideInfo):
+        Release the last use of a RefPtr as it is passed on.
+
+2015-05-13  Joseph Pecoraro  <pecoraro@apple.com>
+
         ES6: Allow duplicate property names
         https://bugs.webkit.org/show_bug.cgi?id=142895
 

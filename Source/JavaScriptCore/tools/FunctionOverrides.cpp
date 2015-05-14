@@ -127,7 +127,7 @@ static void initializeOverrideInfo(const SourceCode& origCode, const String& new
     info.typeProfilingEndOffset = newProviderStr.length() - 1;
 
     info.sourceCode =
-        SourceCode(newProvider, info.typeProfilingStartOffset, info.typeProfilingEndOffset + 1, 1, 1);
+        SourceCode(newProvider.release(), info.typeProfilingStartOffset, info.typeProfilingEndOffset + 1, 1, 1);
 }
     
 bool FunctionOverrides::initializeOverrideFor(const SourceCode& origCode, FunctionOverrides::OverrideInfo& result)
