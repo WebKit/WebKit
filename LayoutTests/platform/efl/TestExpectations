@@ -1578,15 +1578,11 @@ webkit.org/b/111996 accessibility/canvas-fallback-content-2.html [ Failure ]
 webkit.org/b/111999 accessibility/disabled-controls-not-focusable.html [ Failure ]
 webkit.org/b/112002 accessibility/inline-continuations.html [ Failure ]
 webkit.org/b/112005 accessibility/onclick-handlers.html [ Failure ]
-webkit.org/b/112006 accessibility/secure-textfield-title-ui.html [ Failure ]
 webkit.org/b/112008 accessibility/spinbutton-value.html [ Failure ]
 webkit.org/b/112012 accessibility/svg-bounds.html [ Failure ]
 webkit.org/b/112014 accessibility/textarea-insertion-point-line-number.html [ Failure ]
 webkit.org/b/112018 accessibility/th-as-title-ui.html [ Failure ]
 webkit.org/b/112021 accessibility/visible-elements.html [ Failure Crash ]
-
-# New accessibility test added in r149858 that is failing for EFL.
-webkit.org/b/115901 accessibility/poorly-formed-aria-table.html [ Failure ]
 
 # New accessibility test added in r151079 that is failing for EFL.
 webkit.org/b/117182 accessibility/text-role-with-aria-hidden-inside.html [ Failure ]

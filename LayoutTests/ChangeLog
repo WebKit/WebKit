@@ -1,3 +1,11 @@
+2015-05-14  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Unskip passing AX tests since r184198
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/TestExpectations: Two AX tests have been passed since r184198.
+
 2015-05-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         ES6: Allow duplicate property names
