@@ -1,3 +1,23 @@
+2015-05-14  Žan Doberšek  <zdobersek@igalia.com>
+
+        [GTK] RunLoop constructor should properly retrieve or establish the thread-default GMainContext
+        https://bugs.webkit.org/show_bug.cgi?id=144732
+
+        Reviewed by Carlos Garcia Campos.
+
+        RunLoop constructor in the GTK implementation should use the
+        existing thread-default context, create a new one if not on
+        the main thread, or use the global-default one if on the main
+        thread.
+
+        In RunLoop::run(), the GMainContext should then be pushed as
+        the thread-default before calling g_main_loop_run(), and popped
+        off when the main loop stops.
+
+        * wtf/gtk/RunLoopGtk.cpp:
+        (WTF::RunLoop::RunLoop):
+        (WTF::RunLoop::run):
+
 2015-05-13  Oliver Hunt  <oliver@apple.com>
        Ensure that all the smart pointer types in WTF clear their pointer before deref
        https://bugs.webkit.org/show_bug.cgi?id=143789
