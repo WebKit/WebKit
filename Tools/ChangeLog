@@ -1,3 +1,16 @@
+2015-05-14  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] Don't read the LOCATION property of targets
+        https://bugs.webkit.org/show_bug.cgi?id=145018
+
+        Reviewed by Martin Robinson.
+
+        Use the TARGET_FILE_DIR generator expression to determine the location of the test injected
+        bundle, rather than assuming that the LOCATION property of TestWebKitAPIInjectedBundle will
+        be the same at configure-time as it is at generate-time.
+
+        * TestWebKitAPI/CMakeLists.txt:
+
 2015-05-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Add String literal overloads to equalIgnoringASCIICase()
