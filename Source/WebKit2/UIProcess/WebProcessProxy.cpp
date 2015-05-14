@@ -899,16 +899,16 @@ void WebProcessProxy::sendProcessWillSuspendImminently()
         0, std::chrono::seconds(1), IPC::InterruptWaitingIfSyncMessageArrives);
 }
 
-void WebProcessProxy::sendProcessWillSuspend()
+void WebProcessProxy::sendPrepareToSuspend()
 {
     if (canSendMessage())
-        send(Messages::WebProcess::ProcessWillSuspend(), 0);
+        send(Messages::WebProcess::PrepareToSuspend(), 0);
 }
 
-void WebProcessProxy::sendCancelProcessWillSuspend()
+void WebProcessProxy::sendCancelPrepareToSuspend()
 {
     if (canSendMessage())
-        send(Messages::WebProcess::CancelProcessWillSuspend(), 0);
+        send(Messages::WebProcess::CancelPrepareToSuspend(), 0);
 }
 
 void WebProcessProxy::initializeNetworkProcessActivityToken()

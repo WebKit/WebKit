@@ -79,8 +79,8 @@ public:
     bool canHandleHTTPSServerTrustEvaluation() const { return m_canHandleHTTPSServerTrustEvaluation; }
 
     void processWillSuspendImminently(bool& handled);
-    void processWillSuspend();
-    void cancelProcessWillSuspend();
+    void prepareToSuspend();
+    void cancelPrepareToSuspend();
     void processDidResume();
 
     // Diagnostic messages logging.

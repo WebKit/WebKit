@@ -88,8 +88,8 @@ private:
 
     // ProcessThrottlerClient
     void sendProcessWillSuspendImminently() override;
-    void sendProcessWillSuspend() override;
-    void sendCancelProcessWillSuspend() override;
+    void sendPrepareToSuspend() override;
+    void sendCancelPrepareToSuspend() override;
     void sendProcessDidResume() override;
 
     // IPC::Connection::Client

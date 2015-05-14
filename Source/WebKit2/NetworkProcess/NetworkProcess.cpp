@@ -514,13 +514,13 @@ void NetworkProcess::processWillSuspendImminently(bool& handled)
     handled = true;
 }
 
-void NetworkProcess::processWillSuspend()
+void NetworkProcess::prepareToSuspend()
 {
     lowMemoryHandler(true);
     parentProcessConnection()->send(Messages::NetworkProcessProxy::ProcessReadyToSuspend(), 0);
 }
 
-void NetworkProcess::cancelProcessWillSuspend()
+void NetworkProcess::cancelPrepareToSuspend()
 {
     parentProcessConnection()->send(Messages::NetworkProcessProxy::DidCancelProcessSuspension(), 0);
 }

@@ -101,7 +101,7 @@ messages -> WebProcess LegacyReceiver {
 #endif
 
     ProcessWillSuspendImminently() -> (bool handled)
-    ProcessWillSuspend()
-    CancelProcessWillSuspend()
+    PrepareToSuspend()
+    CancelPrepareToSuspend()
     ProcessDidResume()
 }

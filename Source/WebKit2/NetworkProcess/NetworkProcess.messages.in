@@ -59,8 +59,8 @@ messages -> NetworkProcess LegacyReceiver {
     SetCacheModel(uint32_t cacheModel);
 
     ProcessWillSuspendImminently() -> (bool handled)
-    ProcessWillSuspend()
-    CancelProcessWillSuspend()
+    PrepareToSuspend()
+    CancelPrepareToSuspend()
     ProcessDidResume()
 }
 

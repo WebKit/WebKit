@@ -323,16 +323,16 @@ void NetworkProcessProxy::sendProcessWillSuspendImminently()
         0, std::chrono::seconds(1), IPC::InterruptWaitingIfSyncMessageArrives);
 }
     
-void NetworkProcessProxy::sendProcessWillSuspend()
+void NetworkProcessProxy::sendPrepareToSuspend()
 {
     if (canSendMessage())
-        send(Messages::NetworkProcess::ProcessWillSuspend(), 0);
+        send(Messages::NetworkProcess::PrepareToSuspend(), 0);
 }
 
-void NetworkProcessProxy::sendCancelProcessWillSuspend()
+void NetworkProcessProxy::sendCancelPrepareToSuspend()
 {
     if (canSendMessage())
-        send(Messages::NetworkProcess::CancelProcessWillSuspend(), 0);
+        send(Messages::NetworkProcess::CancelPrepareToSuspend(), 0);
 }
 
 void NetworkProcessProxy::didCancelProcessSuspension()

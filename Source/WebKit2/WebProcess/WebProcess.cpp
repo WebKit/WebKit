@@ -1218,7 +1218,7 @@ void WebProcess::resetAllGeolocationPermissions()
 }
 #endif
 
-void WebProcess::prepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shouldAcknowledgeWhenReadyToSuspend)
+void WebProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shouldAcknowledgeWhenReadyToSuspend)
 {
     MemoryPressureHandler::singleton().releaseMemory(true);
     setAllLayerTreeStatesFrozen(true);
@@ -1235,16 +1235,16 @@ void WebProcess::prepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shouldAckn
 void WebProcess::processWillSuspendImminently(bool& handled)
 {
     supplement<WebDatabaseManager>()->closeAllDatabases();
-    prepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend::No);
+    actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend::No);
     handled = true;
 }
 
-void WebProcess::processWillSuspend()
+void WebProcess::prepareToSuspend()
 {
-    prepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend::Yes);
+    actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend::Yes);
 }
 
-void WebProcess::cancelProcessWillSuspend()
+void WebProcess::cancelPrepareToSuspend()
 {
     setAllLayerTreeStatesFrozen(false);
 

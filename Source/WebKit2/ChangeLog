@@ -1,3 +1,48 @@
+2015-05-13  Daniel Bates  <dabates@apple.com>
+
+        Rename ProcessThrottlerClient::{send, cancel}ProcessWillSuspend() to {send, cancel}PrepareToSuspend()
+        https://bugs.webkit.org/show_bug.cgi?id=144619
+        <rdar://problem/20812779>
+
+        Reviewed by Andy Estes.
+
+        The names of the functions ProcessThrottlerClient::{send, cancel}ProcessWillSuspend() are misnomers. These
+        functions are called when the ProcessThrottler wants to prepare the process that it manages for suspension
+        and changes its mind, respectively. That is, these functions do not actually correspond to the OS decision
+        to suspend a process or cancel the suspension of a process, respectively. So, rename these functions and
+        associated {Network, Web}ProcessProxy message names to better describe their purpose.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::prepareToSuspend):
+        (WebKit::NetworkProcess::cancelPrepareToSuspend):
+        (WebKit::NetworkProcess::processWillSuspend): Deleted.
+        (WebKit::NetworkProcess::cancelProcessWillSuspend): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::sendPrepareToSuspend):
+        (WebKit::NetworkProcessProxy::sendCancelPrepareToSuspend):
+        (WebKit::NetworkProcessProxy::sendProcessWillSuspend): Deleted.
+        (WebKit::NetworkProcessProxy::sendCancelProcessWillSuspend): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::updateAssertion):
+        * UIProcess/ProcessThrottlerClient.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcess::actualPrepareToSuspend): Formerly named prepareToSuspend.
+        (WebKit::WebProcessProxy::sendPrepareToSuspend):
+        (WebKit::WebProcessProxy::sendCancelPrepareToSuspend):
+        (WebKit::WebProcessProxy::sendProcessWillSuspend): Deleted.
+        (WebKit::WebProcessProxy::sendCancelProcessWillSuspend): Deleted.
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::prepareToSuspend):
+        (WebKit::WebProcess::cancelPrepareToSuspend):
+        (WebKit::WebProcess::processWillSuspend): Deleted.
+        (WebKit::WebProcess::cancelProcessWillSuspend): Deleted.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2015-05-13  Anders Carlsson  <andersca@apple.com>
 
         Don't create a per-pool data store when using the modern API

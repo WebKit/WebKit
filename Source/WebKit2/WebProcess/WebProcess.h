@@ -185,8 +185,8 @@ public:
 #endif
 
     void processWillSuspendImminently(bool& handled);
-    void processWillSuspend();
-    void cancelProcessWillSuspend();
+    void prepareToSuspend();
+    void cancelPrepareToSuspend();
     bool markAllLayersVolatileIfPossible();
     void setAllLayerTreeStatesFrozen(bool);
     void processSuspensionCleanupTimerFired();
@@ -284,7 +284,7 @@ private:
     void setInjectedBundleParameter(const String& key, const IPC::DataReference&);
 
     enum class ShouldAcknowledgeWhenReadyToSuspend { No, Yes };
-    void prepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend);
+    void actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend);
 
     // ChildProcess
     virtual void initializeProcess(const ChildProcessInitializationParameters&) override;

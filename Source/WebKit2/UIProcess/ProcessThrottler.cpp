@@ -66,7 +66,7 @@ void ProcessThrottler::updateAssertion()
     // in the background for too long.
     if (m_assertion && m_assertion->state() != AssertionState::Suspended && !m_foregroundCounter.value() && !m_backgroundCounter.value()) {
         ++m_suspendMessageCount;
-        m_process.sendProcessWillSuspend();
+        m_process.sendPrepareToSuspend();
         m_suspendTimer.startOneShot(processSuspensionTimeout);
         m_assertion->setState(AssertionState::Background);
         return;
@@ -76,7 +76,7 @@ void ProcessThrottler::updateAssertion()
 
     // If we're currently waiting for the Web process to do suspension cleanup, but no longer need to be suspended, tell the Web process to cancel the cleanup.
     if (m_suspendTimer.isActive() && shouldBeRunnable)
-        m_process.sendCancelProcessWillSuspend();
+        m_process.sendCancelPrepareToSuspend();
     
     if (m_assertion && m_assertion->state() == AssertionState::Suspended && shouldBeRunnable)
         m_process.sendProcessDidResume();
