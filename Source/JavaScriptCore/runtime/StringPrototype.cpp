@@ -175,6 +175,16 @@ static inline JSString* jsStringWithReuse(ExecState* exec, JSValue originalValue
     return jsString(exec, string);
 }
 
+// Helper that tries to use the JSString substring sharing mechanism if 'originalValue' is a JSString.
+static inline JSString* jsSubstring(ExecState* exec, JSValue originalValue, const String& string, unsigned offset, unsigned length)
+{
+    if (originalValue.isString()) {
+        ASSERT(asString(originalValue)->value(exec) == string);
+        return jsSubstring(exec, asString(originalValue), offset, length);
+    }
+    return jsSubstring(exec, string, offset, length);
+}
+
 static NEVER_INLINE String substituteBackreferencesSlow(StringView replacement, StringView source, const int* ovector, RegExp* reg, size_t i)
 {
     StringBuilder substitutedReplacement;
@@ -1053,7 +1063,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSlice(ExecState* exec)
 
 // Return true in case of early return (resultLength got to limitLength).
 template<typename CharacterType>
-static ALWAYS_INLINE bool splitStringByOneCharacterImpl(ExecState* exec, JSArray* result, const String& input, StringImpl* string, UChar separatorCharacter, size_t& position, unsigned& resultLength, unsigned limitLength)
+static ALWAYS_INLINE bool splitStringByOneCharacterImpl(ExecState* exec, JSArray* result, JSValue originalValue, const String& input, StringImpl* string, UChar separatorCharacter, size_t& position, unsigned& resultLength, unsigned limitLength)
 {
     // 12. Let q = p.
     size_t matchPosition;
@@ -1067,7 +1077,7 @@ static ALWAYS_INLINE bool splitStringByOneCharacterImpl(ExecState* exec, JSArray
         //    through q (exclusive).
         // 2. Call the [[DefineOwnProperty]] internal method of A with arguments ToString(lengthA),
         //    Property Descriptor {[[Value]]: T, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
-        result->putDirectIndex(exec, resultLength, jsSubstring(exec, input, position, matchPosition - position));
+        result->putDirectIndex(exec, resultLength, jsSubstring(exec, originalValue, input, position, matchPosition - position));
         // 3. Increment lengthA by 1.
         // 4. If lengthA == lim, return A.
         if (++resultLength == limitLength)
@@ -1173,7 +1183,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
             //    through q (exclusive).
             // 2. Call the [[DefineOwnProperty]] internal method of A with arguments ToString(lengthA),
             //    Property Descriptor {[[Value]]: T, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
-            result->putDirectIndex(exec, resultLength, jsSubstring(exec, input, position, matchPosition - position));
+            result->putDirectIndex(exec, resultLength, jsSubstring(exec, thisValue, input, position, matchPosition - position));
 
             // 3. Increment lengthA by 1.
             // 4. If lengthA == lim, return A.
@@ -1193,7 +1203,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
                 //   ToString(lengthA), Property Descriptor {[[Value]]: cap[i], [[Writable]]:
                 //   true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
                 int sub = ovector[i * 2];
-                result->putDirectIndex(exec, resultLength, sub < 0 ? jsUndefined() : jsSubstring(exec, input, sub, ovector[i * 2 + 1] - sub));
+                result->putDirectIndex(exec, resultLength, sub < 0 ? jsUndefined() : jsSubstring(exec, thisValue, input, sub, ovector[i * 2 + 1] - sub));
                 // c Increment lengthA by 1.
                 // d If lengthA == lim, return A.
                 if (++resultLength == limit)
@@ -1258,10 +1268,10 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
                 separatorCharacter = separatorImpl->characters16()[0];
 
             if (stringImpl->is8Bit()) {
-                if (splitStringByOneCharacterImpl<LChar>(exec, result, input, stringImpl, separatorCharacter, position, resultLength, limit))
+                if (splitStringByOneCharacterImpl<LChar>(exec, result, thisValue, input, stringImpl, separatorCharacter, position, resultLength, limit))
                     return JSValue::encode(result);
             } else {
-                if (splitStringByOneCharacterImpl<UChar>(exec, result, input, stringImpl, separatorCharacter, position, resultLength, limit))
+                if (splitStringByOneCharacterImpl<UChar>(exec, result, thisValue, input, stringImpl, separatorCharacter, position, resultLength, limit))
                     return JSValue::encode(result);
             }
         } else {
@@ -1276,7 +1286,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
                 //    through q (exclusive).
                 // 2. Call the [[DefineOwnProperty]] internal method of A with arguments ToString(lengthA),
                 //    Property Descriptor {[[Value]]: T, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
-                result->putDirectIndex(exec, resultLength, jsSubstring(exec, input, position, matchPosition - position));
+                result->putDirectIndex(exec, resultLength, jsSubstring(exec, thisValue, input, position, matchPosition - position));
                 // 3. Increment lengthA by 1.
                 // 4. If lengthA == lim, return A.
                 if (++resultLength == limit)
@@ -1293,7 +1303,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
     //     through s (exclusive).
     // 15. Call the [[DefineOwnProperty]] internal method of A with arguments ToString(lengthA), Property Descriptor
     //     {[[Value]]: T, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
-    result->putDirectIndex(exec, resultLength++, jsSubstring(exec, input, position, input.length() - position));
+    result->putDirectIndex(exec, resultLength++, jsSubstring(exec, thisValue, input, position, input.length() - position));
 
     // 16. Return A.
     return JSValue::encode(result);

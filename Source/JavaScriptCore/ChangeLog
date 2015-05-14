@@ -1,3 +1,23 @@
+2015-05-14  Andreas Kling  <akling@apple.com>
+
+        String.prototype.split() should create efficient substrings.
+        <https://webkit.org/b/144985>
+        <rdar://problem/20949344>
+
+        Reviewed by Geoffrey Garen.
+
+        Teach split() how to make substring JSStrings instead of relying on StringImpl's
+        substring sharing mechanism. The optimization works by deferring the construction
+        of a StringImpl until the substring's value is actually needed.
+
+        This knocks ~2MB off of theverge.com by avoiding the extra StringImpl allocations.
+        Out of ~70000 substrings created by split(), only ~2000 of them get reified.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::jsSubstring):
+        (JSC::splitStringByOneCharacterImpl):
+        (JSC::stringProtoFuncSplit):
+
 2015-05-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Change the status of ES6 tagged templates to Done in features.json
