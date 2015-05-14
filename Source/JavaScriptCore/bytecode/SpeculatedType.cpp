@@ -156,6 +156,11 @@ void dumpSpeculation(PrintStream& out, SpeculatedType value)
             else
                 isTop = false;
         }
+
+        if (value & SpecSymbol)
+            myOut.print("Symbol");
+        else
+            isTop = false;
     }
     
     if (value & SpecInt32)
@@ -337,6 +342,8 @@ SpeculatedType speculationFromStructure(Structure* structure)
 {
     if (structure->typeInfo().type() == StringType)
         return SpecString;
+    if (structure->typeInfo().type() == SymbolType)
+        return SpecSymbol;
     return speculationFromClassInfo(structure->classInfo());
 }
 

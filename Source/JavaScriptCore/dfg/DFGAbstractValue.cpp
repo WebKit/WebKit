@@ -124,6 +124,8 @@ void AbstractValue::setType(Graph& graph, SpeculatedType type)
     if (cellType) {
         if (!(cellType & ~SpecString))
             m_structure = graph.m_vm.stringStructure.get();
+        else if (isSymbolSpeculation(cellType))
+            m_structure = graph.m_vm.symbolStructure.get();
         else
             m_structure.makeTop();
         m_arrayModes = ALL_ARRAY_MODES;

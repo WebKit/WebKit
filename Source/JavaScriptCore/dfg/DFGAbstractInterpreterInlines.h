@@ -1070,6 +1070,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
 
+        if (isSymbolSpeculation(abstractChild.m_type)) {
+            setConstant(node, *m_graph.freeze(vm->smallStrings.symbolString()));
+            break;
+        }
+
         forNode(node).setType(m_graph, SpecStringIdent);
         break;
     }
@@ -1420,7 +1425,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
         
-        if (!(forNode(node->child1()).m_type & ~(SpecFullNumber | SpecBoolean | SpecString | SpecCellOther))) {
+        if (!(forNode(node->child1()).m_type & ~(SpecFullNumber | SpecBoolean | SpecString | SpecSymbol))) {
             m_state.setFoundConstants(true);
             forNode(node) = forNode(node->child1());
             break;
@@ -1428,7 +1433,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
         clobberWorld(node->origin.semantic, clobberLimit);
         
-        forNode(node).setType(m_graph, (SpecHeapTop & ~SpecCell) | SpecString | SpecCellOther);
+        forNode(node).setType(m_graph, (SpecHeapTop & ~SpecCell) | SpecString | SpecSymbol);
         break;
     }
         

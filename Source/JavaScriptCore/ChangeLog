@@ -1,5 +1,36 @@
 2015-05-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Introduce SymbolType into SpeculativeTypes
+        https://bugs.webkit.org/show_bug.cgi?id=142651
+
+        Reviewed by Filip Pizlo.
+
+        Introduce SpecSymbol type into speculative types.
+        Previously symbol type is categorized into SpecCellOther.
+        But SpecCellOther is not intended to be used for such cells.
+
+        This patch just introduces SpecSymbol.
+        It represents the type of target value is definitely the symbol type.
+        It is the part of SpecCell.
+
+        In this patch, we do not introduce SymbolUse tracking.
+        It will be added in the separate patch.
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::dumpSpeculation):
+        (JSC::speculationFromStructure):
+        * bytecode/SpeculatedType.h:
+        (JSC::isSymbolSpeculation):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::setType):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * tests/stress/typeof-symbol.js: Added.
+
+2015-05-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [ES6] Implement tagged templates
         https://bugs.webkit.org/show_bug.cgi?id=143183
 

@@ -451,7 +451,7 @@ private:
             }
 
             case ToPrimitive: {
-                if (m_state.forNode(node->child1()).m_type & ~(SpecFullNumber | SpecBoolean | SpecString | SpecCellOther))
+                if (m_state.forNode(node->child1()).m_type & ~(SpecFullNumber | SpecBoolean | SpecString | SpecSymbol))
                     break;
                 
                 node->convertToIdentity();
