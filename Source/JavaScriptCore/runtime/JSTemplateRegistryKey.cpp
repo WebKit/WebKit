@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-const ClassInfo JSTemplateRegistryKey::s_info = { "TemplateRegistryKey", nullptr, nullptr, CREATE_METHOD_TABLE(JSTemplateRegistryKey) };
+const ClassInfo JSTemplateRegistryKey::s_info = { "TemplateRegistryKey", &Base::s_info, nullptr, CREATE_METHOD_TABLE(JSTemplateRegistryKey) };
 
 
 JSTemplateRegistryKey::JSTemplateRegistryKey(VM& vm, const TemplateRegistryKey& templateRegistryKey)

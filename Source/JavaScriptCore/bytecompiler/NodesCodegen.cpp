@@ -271,7 +271,8 @@ RegisterID* TaggedTemplateNode::emitBytecode(BytecodeGenerator& generator, Regis
     RefPtr<RegisterID> tag = nullptr;
     RefPtr<RegisterID> base = nullptr;
     if (!m_tag->isLocation()) {
-        tag = generator.emitNode(generator.newTemporary(), m_tag);
+        tag = generator.newTemporary();
+        tag = generator.emitNode(tag.get(), m_tag);
     } else if (m_tag->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(m_tag);
         const Identifier& identifier = resolve->identifier();
@@ -291,13 +292,15 @@ RegisterID* TaggedTemplateNode::emitBytecode(BytecodeGenerator& generator, Regis
         }
     } else if (m_tag->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(m_tag);
-        base = generator.emitNode(generator.newTemporary(), bracket->base());
+        base = generator.newTemporary();
+        base = generator.emitNode(base.get(), bracket->base());
         RefPtr<RegisterID> property = generator.emitNode(bracket->subscript());
         tag = generator.emitGetByVal(generator.newTemporary(), base.get(), property.get());
     } else {
         ASSERT(m_tag->isDotAccessorNode());
         DotAccessorNode* dot = static_cast<DotAccessorNode*>(m_tag);
-        base = generator.emitNode(generator.newTemporary(), dot->base());
+        base = generator.newTemporary();
+        base = generator.emitNode(base.get(), dot->base());
         tag = generator.emitGetById(generator.newTemporary(), base.get(), dot->identifier());
     }
 
