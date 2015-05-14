@@ -1,3 +1,18 @@
+2015-05-13  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESION (r179958): Crash in WebCore::DocumentLoader::detachFromFrame when -[id<WebPolicyDelegate> decidePolicyForMIMEType:request:frame:decisionListener:] fails to call -[id<WebPolicyDecisionListener> download|ignore|use]
+        <http://webkit.org/b/144975>
+
+        Reviewed by Andy Estes.
+
+        This change reverts r179958.  It changes RELEASE_ASSERT*()
+        statements back to Debug-only ASSERT*() statements.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::~DocumentLoader):
+        (WebCore::DocumentLoader::continueAfterContentPolicy):
+        (WebCore::DocumentLoader::detachFromFrame):
+
 2015-05-13  Antti Koivisto  <antti@apple.com>
 
         Cached CSS image resources don't show up after reloading <http://nightly.webkit.org/start/>
