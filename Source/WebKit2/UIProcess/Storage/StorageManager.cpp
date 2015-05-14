@@ -129,6 +129,18 @@ public:
         return storageArea;
     }
 
+    Vector<RefPtr<SecurityOrigin>> origins() const
+    {
+        Vector<RefPtr<SecurityOrigin>> origins;
+
+        for (const auto& storageArea : m_storageAreaMap.values()) {
+            if (!storageArea->items().isEmpty())
+                origins.append(storageArea->securityOrigin());
+        }
+
+        return origins;
+    }
+
     void clearStorageAreasMatchingOrigin(const SecurityOrigin& securityOrigin)
     {
         for (auto& storageArea : m_storageAreaMap.values()) {
@@ -514,12 +526,20 @@ void StorageManager::processDidCloseConnection(WebProcessProxy&, IPC::Connection
     });
 }
 
-void StorageManager::getLocalStorageOrigins(std::function<void (Vector<RefPtr<WebCore::SecurityOrigin>>)> completionHandler)
+void StorageManager::getLocalStorageOrigins(std::function<void (HashSet<RefPtr<WebCore::SecurityOrigin>>&&)> completionHandler)
 {
     RefPtr<StorageManager> storageManager(this);
 
     m_queue->dispatch([storageManager, completionHandler] {
-        auto origins = storageManager->m_localStorageDatabaseTracker->origins();
+        HashSet<RefPtr<SecurityOrigin>> origins;
+
+        for (auto& origin : storageManager->m_localStorageDatabaseTracker->origins())
+            origins.add(WTF::move(origin));
+
+        for (auto& transientLocalStorageNamespace : storageManager->m_transientLocalStorageNamespaces.values()) {
+            for (auto& origin : transientLocalStorageNamespace->origins())
+                origins.add(WTF::move(origin));
+        }
 
         RunLoop::main().dispatch([origins, completionHandler]() mutable {
             completionHandler(WTF::move(origins));

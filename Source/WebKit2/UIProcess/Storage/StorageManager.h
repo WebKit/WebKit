@@ -27,8 +27,10 @@
 #define StorageManager_h
 
 #include "Connection.h"
+#include <WebCore/SecurityOriginHash.h>
 #include <chrono>
 #include <wtf/Forward.h>
+#include <wtf/HashSet.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/StringHash.h>
 
@@ -57,7 +59,7 @@ public:
     void processDidCloseConnection(WebProcessProxy&, IPC::Connection&);
     void applicationWillTerminate();
 
-    void getLocalStorageOrigins(std::function<void (Vector<RefPtr<WebCore::SecurityOrigin>>)> completionHandler);
+    void getLocalStorageOrigins(std::function<void (HashSet<RefPtr<WebCore::SecurityOrigin>>&&)> completionHandler);
     void getLocalStorageDetailsByOrigin(std::function<void (Vector<LocalStorageDetails>)> completionHandler);
     void deleteLocalStorageEntriesForOrigin(const WebCore::SecurityOrigin&);
     void deleteAllLocalStorageEntries();

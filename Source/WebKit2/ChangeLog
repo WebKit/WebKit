@@ -1,3 +1,24 @@
+2015-05-14  Anders Carlsson  <andersca@apple.com>
+
+        Local storage origins should include origins with transient local storage
+        https://bugs.webkit.org/show_bug.cgi?id=145017
+        rdar://problem/10690447
+
+        Reviewed by Sam Weinig.
+
+        The transient local storage namespaces are used for third party data blocking and will stay
+        around until the UI process exits so we need to be able to include website data from transient storage
+        in the website data store APIs.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::TransientLocalStorageNamespace::origins):
+        (WebKit::StorageManager::getLocalStorageOrigins):
+        * UIProcess/Storage/StorageManager.h:
+        * UIProcess/WebKeyValueStorageManager.cpp:
+        (WebKit::WebKeyValueStorageManager::getKeyValueStorageOrigins):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchData):
+
 2015-05-14  Beth Dakin  <bdakin@apple.com>
 
         Change range of possible forces for mouseforcechanged DOM event

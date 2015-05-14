@@ -98,11 +98,11 @@ void WebKeyValueStorageManager::getKeyValueStorageOrigins(std::function<void (AP
         return;
     }
 
-    storageManager->getLocalStorageOrigins([callbackFunction](Vector<RefPtr<SecurityOrigin>> securityOrigins) {
+    storageManager->getLocalStorageOrigins([callbackFunction](HashSet<RefPtr<SecurityOrigin>>&& securityOrigins) {
         Vector<RefPtr<API::Object>> webSecurityOrigins;
         webSecurityOrigins.reserveInitialCapacity(securityOrigins.size());
         for (auto& origin : securityOrigins)
-            webSecurityOrigins.uncheckedAppend(API::SecurityOrigin::create(WTF::move(origin)));
+            webSecurityOrigins.uncheckedAppend(API::SecurityOrigin::create(origin));
 
         callbackFunction(API::Array::create(WTF::move(webSecurityOrigins)).ptr(), CallbackBase::Error::None);
     });
