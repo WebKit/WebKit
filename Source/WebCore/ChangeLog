@@ -1,3 +1,18 @@
+2015-05-13  Sungmann Cho  <sungmann.cho@navercorp.com>
+
+        Fix trivial typos in ApplyBlockElementCommand
+        https://bugs.webkit.org/show_bug.cgi?id=144984
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests, no behavior change.
+
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::ApplyBlockElementCommand::formatSelection):
+        (WebCore::ApplyBlockElementCommand::endOfNextParagraphSplittingTextNodesIfNeeded):
+        (WebCore::ApplyBlockElementCommand::endOfNextParagrahSplittingTextNodesIfNeeded): Deleted.
+        * editing/ApplyBlockElementCommand.h:
+
 2015-05-13  David Kilzer  <ddkilzer@apple.com>
 
         REGRESION (r179958): Crash in WebCore::DocumentLoader::detachFromFrame when -[id<WebPolicyDelegate> decidePolicyForMIMEType:request:frame:decisionListener:] fails to call -[id<WebPolicyDecisionListener> download|ignore|use]

@@ -136,7 +136,7 @@ void ApplyBlockElementCommand::formatSelection(const VisiblePosition& startOfSel
 
         Position afterEnd = end.next();
         Node* enclosingCell = enclosingNodeOfType(start, &isTableCell);
-        VisiblePosition endOfNextParagraph = endOfNextParagrahSplittingTextNodesIfNeeded(endOfCurrentParagraph, start, end);
+        VisiblePosition endOfNextParagraph = endOfNextParagraphSplittingTextNodesIfNeeded(endOfCurrentParagraph, start, end);
 
         formatRange(start, end, m_endOfLastParagraph, blockquoteForNextIndent);
 
@@ -250,7 +250,7 @@ void ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded(const
     }
 }
 
-VisiblePosition ApplyBlockElementCommand::endOfNextParagrahSplittingTextNodesIfNeeded(VisiblePosition& endOfCurrentParagraph, Position& start, Position& end)
+VisiblePosition ApplyBlockElementCommand::endOfNextParagraphSplittingTextNodesIfNeeded(VisiblePosition& endOfCurrentParagraph, Position& start, Position& end)
 {
     VisiblePosition endOfNextParagraph = endOfParagraph(endOfCurrentParagraph.next());
     Position position = endOfNextParagraph.deepEquivalent();
