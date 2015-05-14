@@ -1,3 +1,33 @@
+2015-05-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Get the ScriptController from the correct frame for media elements and plug-ins
+        https://bugs.webkit.org/show_bug.cgi?id=144983
+        rdar://problem/20692642&19943135
+
+        Reviewed by Sam Weinig.
+
+        HTMLMediaElement, QuickTimePluginReplacement and HTMLPlugInImageElement were
+        getting the main frame's ScriptController instead of the one for their frame.
+        This caused media controls JS to be running in the context of the main frame,
+        which broke media controls which use getCSSCanvasContext() and -webkit-canvas.
+        
+        Fix by getting the frame via the element's document.
+        
+        Also undo r180584 which was working around this bug.
+
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.drawTimelineBackground):
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::QuickTimePluginReplacement::ensureReplacementScriptInjected):
+        (WebCore::QuickTimePluginReplacement::installReplacement):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updateCaptionContainer):
+        (WebCore::HTMLMediaElement::ensureMediaControlsInjectedScript):
+        (WebCore::HTMLMediaElement::didAddUserAgentShadowRoot):
+        (WebCore::HTMLMediaElement::pageScaleFactorChanged):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::didAddUserAgentShadowRoot):
+
 2015-05-13  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         Fix trivial typos in ApplyBlockElementCommand
