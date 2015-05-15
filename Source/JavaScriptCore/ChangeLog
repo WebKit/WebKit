@@ -1,3 +1,9 @@
+2015-05-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, remove an unused declaration.
+
+        * dfg/DFGSpeculativeJIT.h:
+
 2015-05-14  Filip Pizlo  <fpizlo@apple.com>
 
         Remove unused constant-base and constant-value store barrier code in the DFG

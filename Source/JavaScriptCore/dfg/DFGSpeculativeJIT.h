@@ -291,7 +291,6 @@ public:
 
 #if ENABLE(GGC)
     void storeToWriteBarrierBuffer(GPRReg cell, GPRReg scratch1, GPRReg scratch2);
-    void storeToWriteBarrierBuffer(JSCell*, GPRReg scratch1, GPRReg scratch2);
 
     void writeBarrier(GPRReg owner, GPRReg scratch1, GPRReg scratch2);
 
