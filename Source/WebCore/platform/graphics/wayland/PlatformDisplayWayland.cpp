@@ -61,11 +61,11 @@ std::unique_ptr<PlatformDisplayWayland> PlatformDisplayWayland::create()
     if (!wlDisplay)
         return nullptr;
 
-    auto display = std::make_unique<PlatformDisplayWayland>(wlDisplay);
+    auto display = std::unique_ptr<PlatformDisplayWayland>(new PlatformDisplayWayland(wlDisplay));
     if (!display->isInitialized())
         return nullptr;
 
-    return WTF::move(display);
+    return display;
 }
 
 PlatformDisplayWayland::PlatformDisplayWayland(struct wl_display* wlDisplay)
@@ -98,6 +98,18 @@ PlatformDisplayWayland::PlatformDisplayWayland(struct wl_display* wlDisplay)
     }
 
     m_eglConfigChosen = true;
+}
+
+PlatformDisplayWayland::~PlatformDisplayWayland()
+{
+    if (m_webkitgtk)
+        wl_webkitgtk_destroy(m_webkitgtk);
+    if (m_compositor)
+        wl_compositor_destroy(m_compositor);
+    if (m_registry)
+        wl_registry_destroy(m_registry);
+    if (m_display)
+        wl_display_disconnect(m_display);
 }
 
 std::unique_ptr<WaylandSurface> PlatformDisplayWayland::createSurface(const IntSize& size, int widgetId)

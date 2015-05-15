@@ -1,3 +1,21 @@
+2015-05-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Fix PlatformDisplayWayland construction error, implement the destructor
+        https://bugs.webkit.org/show_bug.cgi?id=144997
+
+        Reviewed by Carlos Garcia Campos.
+
+        The PlatformDisplayWayland constructor is private, so we can't use
+        std::make_unique<>() to construct an object of this class.
+
+        Implement the PlatformDisplayWayland destructor, cleaning out all
+        the Wayland resources, if present.
+
+        * platform/graphics/wayland/PlatformDisplayWayland.cpp:
+        (WebCore::PlatformDisplayWayland::create):
+        (WebCore::PlatformDisplayWayland::PlatformDisplayWayland):
+        (WebCore::PlatformDisplayWayland::~PlatformDisplayWayland):
+
 2015-05-14  Zalan Bujtas  <zalan@apple.com>
 
         Images on www.fitstylelife.com jiggle on hover.
