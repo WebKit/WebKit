@@ -1,3 +1,73 @@
+2015-05-15  Jer Noble  <jer.noble@apple.com>
+
+        [MediaControls] Refactor media controls & bring improvements made to iOS controls to Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=144973
+
+        Reviewed by Dean Jackson.
+
+        Pull improvements made to the iOS media controls back into the Mac controls by moving
+        code from mediaControlsiOS.js into MediaControlsApple.js.
+
+        The largest refactored feature is the ability to drop individual controls from the media
+        controls when the video is too small to contain them. To allow these controls to resize
+        dynamically, a new "resize" event is fired inside the media element's shadow DOM.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (audio::-webkit-media-controls-panel .dropped): Added; sets "display: none".
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller): Set defaults for new variables.
+        (Controller.prototype.updateControls): Update the controls width; moved from iOS.js.
+        (Controller.prototype.handleReadyStateChange): Update the controls; moved from iOS.js.
+        (Controller.prototype.handleTimeUpdate): Update the progress; moved from iOS.js.
+        (Controller.prototype.handleTimelineInput): Pause if scrubbing; moved from iOS.js.
+        (Controller.prototype.handleTimelineChange): Update the progress; moved from iOS.js.
+        (Controller.prototype.showControls): Update the controls width; moved from iOS.js.
+        (Controller.prototype.hideControls): Removed _potentiallyScrubbing check; not needed due to changes
+            to controlsAlwaysVisible().
+        (Controller.prototype.scheduleUpdateLayoutForDisplayedWidth): Moved from iOS.js.
+        (Controller.prototype.isControlVisible): Added; checks whether control is parented & not hidden.
+        (Controller.prototype.updateLayoutForDisplayedWidth): Moved from iOS.js and refactored.
+        (Controller.prototype.controlsAlwaysVisible): Return true if scrubbing.
+        (Controller.prototype.updateHasAudio): Check currentPlaybackTargetIsWireless(); moved from iOS.js.
+        (Controller.prototype.get scrubbing): Simple getter for _scrubbing.
+        (Controller.prototype.set scrubbing): Check play state if scrubbing; start playback (if necessary)
+            if not scrubbing.
+        (Controller.prototype.get pageScaleFactor): Moved from iOS.js.
+        (Controller.prototype.set pageScaleFactor): Ditto.
+        (Controller.prototype.handleRootResize): Schedule an update of the contrtols width.
+
+        Remove a bunch of newly unnecessary code from the iOS media controls:
+
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS):
+        (ControllerIOS.prototype.createControls): Remove ivars moved into Apple.js.
+        (ControllerIOS.prototype.configureInlineControls): Remove spacer; made unnecessary.
+        (ControllerIOS.prototype.showControls): Deleted.
+        (ControllerIOS.prototype.updateTime): Deleted.
+        (ControllerIOS.prototype.handleTimelineTouchStart): Just call "scrubbing = true", handled in Apple.js.
+        (ControllerIOS.prototype.handleTimelineTouchEnd): Just call "scrubbing = false", handled in Apple.js.
+        (ControllerIOS.prototype.handleReadyStateChange): Deleted.
+        (ControllerIOS.prototype.setPlaying): Don't check _timelineIsHidden; not needed.
+        (ControllerIOS.prototype.get pageScaleFactor): Deleted.
+        (ControllerIOS.prototype.set pageScaleFactor): Deleted.
+        (ControllerIOS.prototype.scheduleUpdateLayoutForDisplayedWidth): Deleted.
+        (ControllerIOS.prototypeupdateLayoutForDisplayedWidth): Deleted.
+
+        Fire a "resize" event at the shadow DOM root when layout results in a size change.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::layoutSizeChanged): Fire the "resize" event at the shadow DOM.
+        * html/HTMLMediaElement.h:
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::layout): Trigger layoutSizeChanged()
+        * rendering/RenderMedia.h:
+
+        Drive-by fixes:
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.createControls): aria-label text is totally wrong; removed.
+        (Controller.prototype.updateWirelessPlaybackStatus): Use class-names to hide controls, not inline styles.
+
 2015-05-15  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Fail to load old content extension files
