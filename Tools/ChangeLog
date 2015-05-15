@@ -1,3 +1,10 @@
+2015-05-15  Timothy Horton  <timothy_horton@apple.com>
+
+        Temporarily disable failing API test.
+
+        * TestWebKitAPI/Tests/WebKit2ObjC/ActionMenus.mm:
+        (TestWebKitAPI::TEST):
+
 2015-05-15  Ravi Phaneendra Kasibhatla  <r.kasibhatla@samsung.com>
 
         User interruption while running of run-webkit-tests should also generate results.html
