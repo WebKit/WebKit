@@ -39,7 +39,7 @@
 
 inline bool signedAddOverflows(int32_t a, int32_t b, int32_t& result)
 {
-#if COMPILER_HAS_CLANG_BUILTIN(__builtin_sadd_overflow)
+#if COMPILER_HAS_CLANG_BUILTIN(__builtin_sadd_overflow) && !(defined __clang_major__ && __clang_major__ < 7)
     return __builtin_sadd_overflow(a, b, &result);
 #else
     uint32_t ua = a;
@@ -71,7 +71,7 @@ inline int32_t saturatedAddition(int32_t a, int32_t b)
 
 inline bool signedSubtractOverflows(int32_t a, int32_t b, int32_t& result)
 {
-#if COMPILER_HAS_CLANG_BUILTIN(__builtin_ssub_overflow)
+#if COMPILER_HAS_CLANG_BUILTIN(__builtin_ssub_overflow) && !(defined __clang_major__ && __clang_major__ < 7)
     return __builtin_ssub_overflow(a, b, &result);
 #else
     uint32_t ua = a;

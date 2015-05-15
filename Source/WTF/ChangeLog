@@ -1,3 +1,11 @@
+2015-05-15  Dan Bernstein  <mitz@apple.com>
+
+        Build fix for some versions of clang.
+
+        * wtf/SaturatedArithmetic.h:
+        (signedAddOverflows):
+        (signedSubtractOverflows):
+
 2015-05-14  Dan Bernstein  <mitz@apple.com>
 
         Reverted r177753, now that <rdar://problem/19347133> is fixed.
