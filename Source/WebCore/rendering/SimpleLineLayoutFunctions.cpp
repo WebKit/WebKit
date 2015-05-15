@@ -79,8 +79,11 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
     paintRect.moveBy(-paintOffset);
 
     auto resolver = runResolver(flow, layout);
+    float strokeOverflow = ceilf(flow.style().textStrokeWidth());
     for (const auto& run : resolver.rangeForRect(paintRect)) {
-        if (!run.rect().intersects(paintRect))
+        FloatRect rect = run.rect();
+        rect.inflate(strokeOverflow);
+        if (!rect.intersects(paintRect))
             continue;
         TextRun textRun(run.text());
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
@@ -127,8 +130,10 @@ bool hitTestFlow(const RenderBlockFlow& flow, const Layout& layout, const HitTes
 void collectFlowOverflow(RenderBlockFlow& flow, const Layout& layout)
 {
     auto resolver = lineResolver(flow, layout);
+    float strokeOverflow = ceilf(flow.style().textStrokeWidth());
     for (auto it = resolver.begin(), end = resolver.end(); it != end; ++it) {
         auto rect = *it;
+        rect.inflate(strokeOverflow);
         flow.addLayoutOverflow(rect);
         flow.addVisualOverflow(rect);
     }
