@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .box {
+            margin: 20px;
+            width: 100px;
+            height: 0px;
+            overflow: hidden;
+            background-color: blue;
+            -webkit-transform: translateZ(0);
+        }
+        
+        .box.changed {
+            height: 100px;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function doTest()
+        {
+            window.setTimeout(function() {
+                document.body.offsetWidth;
+
+                document.getElementById('box').classList.add('changed');
+
+                if (window.internals)
+                    document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS)
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+
+            }, 0);
+
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+
+</head>
+<body>
+    <div id="box" class="box">Content</div>
+<pre id="layers">Layer tree goes here when testing</pre>
+</body>
+</html>

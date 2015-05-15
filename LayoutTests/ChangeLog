@@ -1,3 +1,16 @@
+2015-05-15  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r183300): Background missing on top links on apple.com
+        https://bugs.webkit.org/show_bug.cgi?id=145079
+        rdar://problem/20914252
+
+        Reviewed by Tim Horton.
+
+        Composited box that toggles to a non-zero height and dumps layers.
+
+        * compositing/visible-rect/backing-change-height-from-zero-expected.txt: Added.
+        * compositing/visible-rect/backing-change-height-from-zero.html: Added.
+
 2015-05-15  Sam Weinig  <sam@webkit.org>
 
         Move HTMLElement's children property to ParentNode
