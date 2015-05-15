@@ -1,3 +1,15 @@
+2015-05-14  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] Error out when ruby is too old
+        https://bugs.webkit.org/show_bug.cgi?id=145014
+
+        Reviewed by Martin Robinson.
+
+        Error out immediately after checking for Ruby if the ruby executable is not found, or if it
+        is too old.
+
+        * CMakeLists.txt:
+
 2015-05-14  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Enable plugin-related CMake options and variables for the X11 target only

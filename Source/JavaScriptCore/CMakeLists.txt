@@ -664,13 +664,6 @@ if (USE_UDIS86)
     )
 endif ()
 
-# We cannot check for RUBY_FOUND because it is set only when the full package is installed and
-# the only thing we need is the interpreter. Unlike Python, cmake does not provide a macro
-# for finding the only Ruby interpreter.
-if (NOT RUBY_EXECUTABLE)
-    message(FATAL_ERROR "The Ruby interpreter is needed to generate LLInt files.")
-endif ()
-
 set(LLINT_ASM
     llint/LowLevelInterpreter.asm
     llint/LowLevelInterpreter32_64.asm

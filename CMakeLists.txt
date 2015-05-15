@@ -65,7 +65,14 @@ find_package(Gperf 3.0.1 REQUIRED)
 find_package(Perl 5.10.0 REQUIRED)
 
 find_package(PythonInterp 2.7.0 REQUIRED)
+
+# We cannot check for RUBY_FOUND because it is set only when the full package is installed and
+# the only thing we need is the interpreter. Unlike Python, cmake does not provide a macro
+# for finding only the Ruby interpreter.
 find_package(Ruby 1.8.7)
+if (NOT RUBY_EXECUTABLE OR RUBY_VERSION VERSION_LESS 1.8.7)
+    message(FATAL_ERROR "Ruby 1.8.7 or higher is required.")
+endif ()
 
 # -----------------------------------------------------------------------------
 # Determine the target processor
