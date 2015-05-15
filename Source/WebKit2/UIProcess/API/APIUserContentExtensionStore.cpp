@@ -76,7 +76,7 @@ static String constructedPath(const String& base, const String& identifier)
 
 const size_t ContentExtensionFileHeaderSize = sizeof(uint32_t) + 4 * sizeof(uint64_t);
 struct ContentExtensionMetaData {
-    uint32_t version { 2 };
+    uint32_t version { UserContentExtensionStore::CurrentContentExtensionFileVersion };
     uint64_t actionsSize { 0 };
     uint64_t filtersWithoutDomainsBytecodeSize { 0 };
     uint64_t filtersWithDomainBytecodeSize { 0 };
@@ -325,6 +325,13 @@ void UserContentExtensionStore::lookupContentExtension(const WTF::String& identi
             return;
         }
         
+        if (metaData.version != UserContentExtensionStore::CurrentContentExtensionFileVersion) {
+            RunLoop::main().dispatch([self, completionHandler] {
+                completionHandler(nullptr, Error::VersionMismatch);
+            });
+            return;
+        }
+        
         RunLoop::main().dispatch([self, identifierCapture, fileData, metaData, completionHandler] {
             RefPtr<API::UserContentExtension> userContentExtension = createExtension(identifierCapture.string(), metaData, fileData);
             completionHandler(userContentExtension, { });
@@ -400,6 +407,8 @@ const std::error_category& userContentExtensionStoreErrorCategory()
             switch (static_cast<UserContentExtensionStore::Error>(errorCode)) {
             case UserContentExtensionStore::Error::LookupFailed:
                 return "Unspecified error during lookup.";
+            case UserContentExtensionStore::Error::VersionMismatch:
+                return "Version of file does not match version of interpreter.";
             case UserContentExtensionStore::Error::CompileFailed:
                 return "Unspecified error during compile.";
             case UserContentExtensionStore::Error::RemoveFailed:
