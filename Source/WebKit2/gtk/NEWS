@@ -1,4 +1,15 @@
 =================
+WebKitGTK+  2.8.3
+=================
+
+What's new in WebKitGTK+ 2.8.3?
+
+  - Fixed a regression introduced in 2.8.2 that broke downloads when using the network
+    process.
+  - Fix the build with Netscape plugins disabled.
+  - Fix XPixamps leaked by GLContext when using EGL on X11.
+
+=================
 WebKitGTK+  2.8.2
 =================
 

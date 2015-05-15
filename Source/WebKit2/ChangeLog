@@ -1,3 +1,9 @@
+2015-05-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.8.3 release.
+
+        * gtk/NEWS: Add release notes for 2.8.3.
+
 2015-05-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r183861): [SOUP] Downloads are broken when using the Network Process
