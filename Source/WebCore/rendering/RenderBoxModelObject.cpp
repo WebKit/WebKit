@@ -688,7 +688,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         if (!colorVisible)
             return;
 
-        bool boxShadowShouldBeAppliedToBackground = this->boxShadowShouldBeAppliedToBackground(bleedAvoidance, box);
+        bool boxShadowShouldBeAppliedToBackground = this->boxShadowShouldBeAppliedToBackground(rect.location(), bleedAvoidance, box);
         GraphicsContextStateSaver shadowStateSaver(*context, boxShadowShouldBeAppliedToBackground);
         if (boxShadowShouldBeAppliedToBackground)
             applyBoxShadowForBackground(context, &style());
@@ -811,7 +811,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     // by verifying whether the background image covers the entire layout rect.
     if (!bgLayer->next()) {
         LayoutRect backgroundRect(scrolledPaintRect);
-        bool boxShadowShouldBeAppliedToBackground = this->boxShadowShouldBeAppliedToBackground(bleedAvoidance, box);
+        bool boxShadowShouldBeAppliedToBackground = this->boxShadowShouldBeAppliedToBackground(rect.location(), bleedAvoidance, box);
         if (boxShadowShouldBeAppliedToBackground || !shouldPaintBackgroundImage || !bgLayer->hasOpaqueImage(*this) || !bgLayer->hasRepeatXY()) {
             if (!boxShadowShouldBeAppliedToBackground)
                 backgroundRect.intersect(paintInfo.rect);
@@ -845,7 +845,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
 
     // no progressive loading of the background image
     if (!baseBgColorOnly && (shouldPaintBackgroundImage || bgLayer->hasMaskImage())) {
-        BackgroundImageGeometry geometry = calculateBackgroundImageGeometry(paintInfo.paintContainer, *bgLayer, scrolledPaintRect, backgroundObject);
+        BackgroundImageGeometry geometry = calculateBackgroundImageGeometry(paintInfo.paintContainer, *bgLayer, rect.location(), scrolledPaintRect, backgroundObject);
         geometry.clip(LayoutRect(pixelSnappedRect));
 
         if (!geometry.destRect().isEmpty()) {
@@ -1069,8 +1069,8 @@ static inline LayoutUnit getSpace(LayoutUnit areaSize, LayoutUnit tileSize)
     return space;
 }
 
-BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerModelObject* paintContainer, const FillLayer& fillLayer, const LayoutRect& paintRect,
-    RenderElement* backgroundObject) const
+BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerModelObject* paintContainer, const FillLayer& fillLayer, const LayoutPoint& paintOffset,
+    const LayoutRect& borderBoxRect, RenderElement* backgroundObject) const
 {
     LayoutUnit left = 0;
     LayoutUnit top = 0;
@@ -1078,8 +1078,9 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
     // Determine the background positioning area and set destination rect to the background painting area.
     // Destination rect will be adjusted later if the background is non-repeating.
     // FIXME: transforms spec says that fixed backgrounds behave like scroll inside transforms. https://bugs.webkit.org/show_bug.cgi?id=15679
-    LayoutRect destinationRect(paintRect);
+    LayoutRect destinationRect(borderBoxRect);
     bool fixedAttachment = fillLayer.attachment() == FixedBackgroundAttachment;
+    float deviceScaleFactor = document().deviceScaleFactor();
     if (!fixedAttachment) {
         LayoutUnit right = 0;
         LayoutUnit bottom = 0;
@@ -1102,13 +1103,16 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
         // the background positioning area.
         if (isRoot()) {
             positioningAreaSize = downcast<RenderBox>(*this).size() - LayoutSize(left + right, top + bottom);
+            positioningAreaSize = LayoutSize(snapSizeToDevicePixel(positioningAreaSize, LayoutPoint(), deviceScaleFactor));
             if (view().frameView().hasExtendedBackgroundRectForPainting()) {
                 LayoutRect extendedBackgroundRect = view().frameView().extendedBackgroundRectForPainting();
                 left += (marginLeft() - extendedBackgroundRect.x());
                 top += (marginTop() - extendedBackgroundRect.y());
             }
-        } else
-            positioningAreaSize = paintRect.size() - LayoutSize(left + right, top + bottom);
+        } else {
+            positioningAreaSize = borderBoxRect.size() - LayoutSize(left + right, top + bottom);
+            positioningAreaSize = LayoutSize(snapRectToDevicePixels(LayoutRect(paintOffset, positioningAreaSize), deviceScaleFactor).size());
+        }
     } else {
         LayoutRect viewportRect;
         float topContentInset = 0;
@@ -1133,6 +1137,7 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
         destinationRect = viewportRect;
         positioningAreaSize = destinationRect.size();
         positioningAreaSize.setHeight(positioningAreaSize.height() - topContentInset);
+        positioningAreaSize = LayoutSize(snapRectToDevicePixels(LayoutRect(destinationRect.location(), positioningAreaSize), deviceScaleFactor).size());
     }
 
     auto clientForBackgroundImage = backgroundObject ? backgroundObject : this;
@@ -1216,18 +1221,18 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
         spaceSize.setHeight(0);
     }
     if (fixedAttachment) {
-        LayoutPoint attachmentPoint = paintRect.location();
+        LayoutPoint attachmentPoint = borderBoxRect.location();
         phase.expand(std::max<LayoutUnit>(attachmentPoint.x() - destinationRect.x(), 0), std::max<LayoutUnit>(attachmentPoint.y() - destinationRect.y(), 0));
     }
-    destinationRect.intersect(paintRect);
-    pixelSnapBackgroundImageGeometryForPainting(destinationRect, tileSize, phase, spaceSize, document().deviceScaleFactor());
+    destinationRect.intersect(borderBoxRect);
+    pixelSnapBackgroundImageGeometryForPainting(destinationRect, tileSize, phase, spaceSize, deviceScaleFactor);
     return BackgroundImageGeometry(destinationRect, tileSize, phase, spaceSize, fixedAttachment);
 }
 
-void RenderBoxModelObject::getGeometryForBackgroundImage(const RenderLayerModelObject* paintContainer, FloatRect& destRect, FloatSize& phase, FloatSize& tileSize) const
+void RenderBoxModelObject::getGeometryForBackgroundImage(const RenderLayerModelObject* paintContainer, const LayoutPoint& paintOffset, FloatRect& destRect, FloatSize& phase, FloatSize& tileSize) const
 {
     LayoutRect paintRect(destRect);
-    BackgroundImageGeometry geometry = calculateBackgroundImageGeometry(paintContainer, *style().backgroundLayers(), paintRect);
+    BackgroundImageGeometry geometry = calculateBackgroundImageGeometry(paintContainer, *style().backgroundLayers(), paintOffset, paintRect);
     phase = geometry.phase();
     tileSize = geometry.tileSize();
     destRect = geometry.destRect();
@@ -2301,7 +2306,7 @@ bool RenderBoxModelObject::borderObscuresBackground() const
     return true;
 }
 
-bool RenderBoxModelObject::boxShadowShouldBeAppliedToBackground(BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox* inlineFlowBox) const
+bool RenderBoxModelObject::boxShadowShouldBeAppliedToBackground(const LayoutPoint&, BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox* inlineFlowBox) const
 {
     if (bleedAvoidance != BackgroundBleedNone)
         return false;

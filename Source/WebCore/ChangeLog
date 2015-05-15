@@ -1,3 +1,53 @@
+2015-05-15  Zalan Bujtas  <zalan@apple.com>
+
+        White edge on animating panel on http://rokkosunnyvale.com
+        https://bugs.webkit.org/show_bug.cgi?id=144986
+        rdar://problem/20907683
+
+        Reviewed by Simon Fraser.
+
+        Background image geometry calculation needs to be based on the final painting size of the container
+        in order to accurately compute tile sizes, repeating positions etc.
+        The container's size is pixelsnapped at painting using absolute coordinates. This patch
+        ensures that we snap to the same size while computing background geometry.
+
+        Test: fast/images/background-image-size-changes-fractional-position.html
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBoxDecorations):
+        (WebCore::RenderBox::paintBackground):
+        (WebCore::RenderBox::getBackgroundPaintedExtent):
+        (WebCore::RenderBox::computeBackgroundIsKnownToBeObscured):
+        (WebCore::RenderBox::maskClipRect):
+        (WebCore::RenderBox::repaintLayerRectsForImage): unable to get absolute coords.
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+        (WebCore::RenderBoxModelObject::getGeometryForBackgroundImage):
+        (WebCore::RenderBoxModelObject::boxShadowShouldBeAppliedToBackground):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBoxDecorations):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::boxShadowShouldBeAppliedToBackground):
+        (WebCore::RenderImage::computeBackgroundIsKnownToBeObscured):
+        * rendering/RenderImage.h:
+        * rendering/RenderLayer.cpp: unable to get absolute coords.
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateDirectlyCompositedBackgroundImage): currently not used.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::computeBackgroundIsKnownToBeObscured):
+        (WebCore::RenderObject::backgroundIsKnownToBeObscured):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintBoxDecorations):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::boxShadowShouldBeAppliedToBackground):
+        * rendering/RenderTableCell.h:
+
 2015-05-15  Jer Noble  <jer.noble@apple.com>
 
         Crash in RenderFlowThread::popFlowThreadLayoutState() due to mismatched push/pop count

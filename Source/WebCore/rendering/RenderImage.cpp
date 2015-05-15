@@ -555,12 +555,12 @@ void RenderImage::paintIntoRect(GraphicsContext* context, const FloatRect& rect)
         ImagePaintingOptions(compositeOperator, BlendModeNormal, orientationDescription, useLowQualityScaling));
 }
 
-bool RenderImage::boxShadowShouldBeAppliedToBackground(BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox*) const
+bool RenderImage::boxShadowShouldBeAppliedToBackground(const LayoutPoint& paintOffset, BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox*) const
 {
-    if (!RenderBoxModelObject::boxShadowShouldBeAppliedToBackground(bleedAvoidance))
+    if (!RenderBoxModelObject::boxShadowShouldBeAppliedToBackground(paintOffset, bleedAvoidance))
         return false;
 
-    return !const_cast<RenderImage*>(this)->backgroundIsKnownToBeObscured();
+    return !const_cast<RenderImage*>(this)->backgroundIsKnownToBeObscured(paintOffset);
 }
 
 bool RenderImage::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const
@@ -587,13 +587,13 @@ bool RenderImage::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect,
     return imageResource().cachedImage() && imageResource().cachedImage()->currentFrameKnownToBeOpaque(this);
 }
 
-bool RenderImage::computeBackgroundIsKnownToBeObscured()
+bool RenderImage::computeBackgroundIsKnownToBeObscured(const LayoutPoint& paintOffset)
 {
     if (!hasBackground())
         return false;
     
     LayoutRect paintedExtent;
-    if (!getBackgroundPaintedExtent(paintedExtent))
+    if (!getBackgroundPaintedExtent(paintOffset, paintedExtent))
         return false;
     return foregroundIsKnownToBeOpaqueInRect(paintedExtent, 0);
 }

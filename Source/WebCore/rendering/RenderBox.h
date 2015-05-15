@@ -514,7 +514,7 @@ public:
         return true;
     }
 
-    LayoutRect maskClipRect();
+    LayoutRect maskClipRect(const LayoutPoint& paintOffset);
 
     virtual VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override;
 
@@ -638,9 +638,9 @@ protected:
     bool createsNewFormattingContext() const;
 
     // Returns false if it could not cheaply compute the extent (e.g. fixed background), in which case the returned rect may be incorrect.
-    bool getBackgroundPaintedExtent(LayoutRect&) const;
+    bool getBackgroundPaintedExtent(const LayoutPoint& paintOffset, LayoutRect&) const;
     virtual bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const;
-    virtual bool computeBackgroundIsKnownToBeObscured() override;
+    virtual bool computeBackgroundIsKnownToBeObscured(const LayoutPoint& paintOffset) override;
 
     void paintBackground(const PaintInfo&, const LayoutRect&, BackgroundBleedAvoidance = BackgroundBleedNone);
     

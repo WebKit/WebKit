@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that background image geometry is computed properly when size changes due to subpixel positioning.</title>
+<style>
+	body {
+		background-color: green;
+	}
+
+	div {
+		position: absolute;
+		top: 0px;
+		left: 0.4px;
+		width: 666.2px;
+		height: 100px;
+		background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAApoAAAAGCAYAAABjNz7uAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAI1JREFUeNrs1kEKwjAQBdDEbS7n/U8hYigiEgdX4i5towbfg0+7SMNPFmVyrbWlTjnntIc1+3zim9HrR/iFDjN2m7mrs/JtrTXn1XXafr0dRq/fci973WfvPqWUYzxOkXPkEqmRJXKN3CL3g18lAAAr5Jekt/cngyYAAEMYNAEAMGgCAGDQBADgzz0EGADSDSoT1JeLJQAAAABJRU5ErkJggg==);
+		background-position: 100% 0%;
+	}
+</style>
+</head>
+<body>
+	<div></div>
+</body>
+</html>

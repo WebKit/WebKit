@@ -530,7 +530,7 @@ public:
         HasBoxDecorationsAndBackgroundMayBeVisible,
     };
     bool hasBoxDecorations() const { return m_bitfields.boxDecorationState() != NoBoxDecorations; }
-    bool backgroundIsKnownToBeObscured();
+    bool backgroundIsKnownToBeObscured(const LayoutPoint& paintOffset);
     bool hasEntirelyFixedBackground() const;
 
     bool needsLayout() const
@@ -614,7 +614,7 @@ public:
 
     void setHasBoxDecorations(bool = true);
     void invalidateBackgroundObscurationStatus();
-    virtual bool computeBackgroundIsKnownToBeObscured() { return false; }
+    virtual bool computeBackgroundIsKnownToBeObscured(const LayoutPoint&) { return false; }
 
     void setIsText() { ASSERT(!isBox()); m_bitfields.setIsTextOrRenderView(true); }
     void setIsLineBreak() { m_bitfields.setIsLineBreak(true); }
@@ -1123,10 +1123,10 @@ inline void RenderObject::invalidateBackgroundObscurationStatus()
     m_bitfields.setBoxDecorationState(HasBoxDecorationsAndBackgroundObscurationStatusInvalid);
 }
 
-inline bool RenderObject::backgroundIsKnownToBeObscured()
+inline bool RenderObject::backgroundIsKnownToBeObscured(const LayoutPoint& paintOffset)
 {
     if (m_bitfields.boxDecorationState() == HasBoxDecorationsAndBackgroundObscurationStatusInvalid) {
-        BoxDecorationState boxDecorationState = computeBackgroundIsKnownToBeObscured() ? HasBoxDecorationsAndBackgroundIsKnownToBeObscured : HasBoxDecorationsAndBackgroundMayBeVisible;
+        BoxDecorationState boxDecorationState = computeBackgroundIsKnownToBeObscured(paintOffset) ? HasBoxDecorationsAndBackgroundIsKnownToBeObscured : HasBoxDecorationsAndBackgroundMayBeVisible;
         m_bitfields.setBoxDecorationState(boxDecorationState);
     }
     return m_bitfields.boxDecorationState() == HasBoxDecorationsAndBackgroundIsKnownToBeObscured;

@@ -100,14 +100,14 @@ private:
 
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&) override;
 
-    virtual bool computeBackgroundIsKnownToBeObscured() override final;
+    virtual bool computeBackgroundIsKnownToBeObscured(const LayoutPoint& paintOffset) override final;
 
     virtual LayoutUnit minimumReplacedHeight() const override;
 
     virtual void notifyFinished(CachedResource*) override final;
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override final;
 
-    virtual bool boxShadowShouldBeAppliedToBackground(BackgroundBleedAvoidance, InlineFlowBox*) const override final;
+    virtual bool boxShadowShouldBeAppliedToBackground(const LayoutPoint& paintOffset, BackgroundBleedAvoidance, InlineFlowBox*) const override final;
 
     virtual bool shadowControlsNeedCustomLayoutMetrics() const { return false; }
 
