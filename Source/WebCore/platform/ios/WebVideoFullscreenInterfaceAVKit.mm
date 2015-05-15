@@ -1129,6 +1129,8 @@ void WebVideoFullscreenInterfaceAVKit::cleanupFullscreen()
     });
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 void WebVideoFullscreenInterfaceAVKit::cleanupFullscreenInternal()
 {
     LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::cleanupFullscreenInternal(%p)", this);
@@ -1178,6 +1180,7 @@ void WebVideoFullscreenInterfaceAVKit::cleanupFullscreenInternal()
         strongThis->m_enterRequested = false;
     });
 }
+#pragma clang diagnostic pop
 
 void WebVideoFullscreenInterfaceAVKit::invalidate()
 {
