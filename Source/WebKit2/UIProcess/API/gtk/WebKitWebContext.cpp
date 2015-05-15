@@ -671,7 +671,9 @@ void webkit_web_context_set_additional_plugins_directory(WebKitWebContext* conte
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
     g_return_if_fail(directory);
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
     context->priv->context->setAdditionalPluginsDirectory(WebCore::filenameToString(directory));
+#endif
 }
 
 static void destroyPluginList(GList* plugins)
@@ -681,10 +683,12 @@ static void destroyPluginList(GList* plugins)
 
 static void webkitWebContextGetPluginThread(GTask* task, gpointer object, gpointer /* taskData */, GCancellable*)
 {
-    Vector<PluginModuleInfo> plugins = WEBKIT_WEB_CONTEXT(object)->priv->context->pluginInfoStore().plugins();
     GList* returnValue = 0;
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    Vector<PluginModuleInfo> plugins = WEBKIT_WEB_CONTEXT(object)->priv->context->pluginInfoStore().plugins();
     for (size_t i = 0; i < plugins.size(); ++i)
         returnValue = g_list_prepend(returnValue, webkitPluginCreate(plugins[i]));
+#endif
     g_task_return_pointer(task, returnValue, reinterpret_cast<GDestroyNotify>(destroyPluginList));
 }
 

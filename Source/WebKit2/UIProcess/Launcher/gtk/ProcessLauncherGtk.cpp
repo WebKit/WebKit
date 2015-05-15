@@ -65,6 +65,7 @@ void ProcessLauncher::launchProcess()
     case WebProcess:
         executablePath = executablePathOfWebProcess();
         break;
+#if ENABLE(NETSCAPE_PLUGIN_API)
     case PluginProcess:
         executablePath = executablePathOfPluginProcess();
 #if ENABLE(PLUGIN_PROCESS_GTK2)
@@ -74,6 +75,7 @@ void ProcessLauncher::launchProcess()
         pluginPath = m_launchOptions.extraInitializationData.get("plugin-path");
         realPluginPath = fileSystemRepresentation(pluginPath);
         break;
+#endif
 #if ENABLE(NETWORK_PROCESS)
     case NetworkProcess:
         executablePath = executablePathOfNetworkProcess();
