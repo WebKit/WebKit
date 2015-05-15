@@ -634,7 +634,7 @@ void ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuild
             if (auto* paragraphElement = enclosingElementWithTag(positionInParentBeforeNode(node.get()), pTag)) {
                 auto* parent = paragraphElement->parentNode();
                 if (parent && parent->hasEditableStyle())
-                    moveNodeOutOfAncestor(node, paragraphElement);
+                    moveNodeOutOfAncestor(node, paragraphElement, insertedNodes);
             }
         }
 
@@ -642,7 +642,7 @@ void ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuild
             auto* headerElement = highestEnclosingNodeOfType(positionInParentBeforeNode(node.get()), isHeaderElement);
             if (headerElement) {
                 if (headerElement->parentNode() && headerElement->parentNode()->isContentRichlyEditable())
-                    moveNodeOutOfAncestor(node, headerElement);
+                    moveNodeOutOfAncestor(node, headerElement, insertedNodes);
                 else {
                     HTMLElement* newSpanElement = replaceElementWithSpanPreservingChildrenAndAttributes(downcast<HTMLElement>(node.get()));
                     insertedNodes.didReplaceNode(node.get(), newSpanElement);
@@ -652,7 +652,7 @@ void ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuild
     }
 }
 
-void ReplaceSelectionCommand::moveNodeOutOfAncestor(PassRefPtr<Node> prpNode, PassRefPtr<Node> prpAncestor)
+void ReplaceSelectionCommand::moveNodeOutOfAncestor(PassRefPtr<Node> prpNode, PassRefPtr<Node> prpAncestor, InsertedNodes& insertedNodes)
 {
     RefPtr<Node> node = prpNode;
     RefPtr<Node> ancestor = prpAncestor;
@@ -670,8 +670,10 @@ void ReplaceSelectionCommand::moveNodeOutOfAncestor(PassRefPtr<Node> prpNode, Pa
         removeNode(node);
         insertNodeBefore(node, nodeToSplitTo);
     }
-    if (!ancestor->firstChild())
+    if (!ancestor->firstChild()) {
+        insertedNodes.willRemoveNode(ancestor.get());
         removeNode(ancestor.release());
+    }
 }
 
 static inline bool hasRenderedText(const Text& text)
