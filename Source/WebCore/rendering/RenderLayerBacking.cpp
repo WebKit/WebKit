@@ -774,7 +774,8 @@ void RenderLayerBacking::updateGeometry()
         RenderLayer::ClipRectsContext clipRectsContext(compAncestor, TemporaryClipRects, IgnoreOverlayScrollbarSize, shouldRespectOverflowClip);
         LayoutRect parentClipRect = m_owningLayer.backgroundClipRect(clipRectsContext).rect(); // FIXME: Incorrect for CSS regions.
         ASSERT(!parentClipRect.isInfinite());
-        m_ancestorClippingLayer->setPosition(FloatPoint(parentClipRect.location() - graphicsLayerParentLocation));
+        FloatPoint enclosingClippingLayerPosition = floorPointToDevicePixels(LayoutPoint(parentClipRect.location() - graphicsLayerParentLocation), deviceScaleFactor);
+        m_ancestorClippingLayer->setPosition(enclosingClippingLayerPosition);
         m_ancestorClippingLayer->setSize(parentClipRect.size());
 
         // backgroundRect is relative to compAncestor, so subtract deltaX/deltaY to get back to local coords.
