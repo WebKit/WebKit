@@ -1,3 +1,13 @@
+2015-05-14  Dan Bernstein  <mitz@apple.com>
+
+        Reverted r177753, now that <rdar://problem/19347133> is fixed.
+
+        Rubber-stamped by Benjamin Poulain.
+
+        * wtf/SaturatedArithmetic.h:
+        (signedAddOverflows):
+        (signedSubtractOverflows):
+
 2015-05-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Add String literal overloads to equalIgnoringASCIICase()
