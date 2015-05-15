@@ -1,3 +1,26 @@
+2015-05-15  Jer Noble  <jer.noble@apple.com>
+
+        Crash in RenderFlowThread::popFlowThreadLayoutState() due to mismatched push/pop count
+        https://bugs.webkit.org/show_bug.cgi?id=145042
+
+        Reviewed by David Hyatt.
+
+        RenderFlowThread previously used a ListHashSet to store its stack of active objects. This
+        is problematic because, if the same object is pushed twice, only a single entry of that
+        object is added to the stack. After this occurs, a matching number of pushes will pop too
+        many items off the stack, causing a crash when popping a stack with zero items. This
+        specifically happens in FrameView::layout(), which will push its root renderer on the stack
+        of active items, and then ask the root to layout(), which will attempt to push itself on the
+        stack of active items.
+
+        Instead of a ListHashSet, use a Vector, which has similar memory characteristics and no 
+        uniqueness requirements.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::pushFlowThreadLayoutState):
+        (WebCore::RenderFlowThread::popFlowThreadLayoutState):
+        * rendering/RenderFlowThread.h:
+
 2015-05-15  Per Arne Vollan  <peavo@outlook.com>
 
         [Curl] WebSocket platform part is not implemented.
