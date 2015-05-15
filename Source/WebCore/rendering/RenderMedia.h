@@ -41,9 +41,6 @@ public:
 
     HTMLMediaElement& mediaElement() const { return downcast<HTMLMediaElement>(nodeForNonAnonymous()); }
 
-protected:
-    virtual void layout() override;
-
 private:
     void element() const = delete;
 

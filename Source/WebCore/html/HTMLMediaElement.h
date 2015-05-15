@@ -459,8 +459,6 @@ public:
 
     virtual MediaProducer::MediaStateFlags mediaState() const override;
 
-    void layoutSizeChanged();
-
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool);
     virtual ~HTMLMediaElement();
@@ -750,7 +748,6 @@ private:
     Timer m_playbackProgressTimer;
     Timer m_scanTimer;
     GenericTaskQueue<ScriptExecutionContext> m_seekTaskQueue;
-    GenericTaskQueue<ScriptExecutionContext> m_resizeTaskQueue;
     RefPtr<TimeRanges> m_playedTimeRanges;
     GenericEventQueue m_asyncEventQueue;
 

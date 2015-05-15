@@ -261,7 +261,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_playbackProgressTimer(*this, &HTMLMediaElement::playbackProgressTimerFired)
     , m_scanTimer(*this, &HTMLMediaElement::scanTimerFired)
     , m_seekTaskQueue(document)
-    , m_resizeTaskQueue(document)
     , m_playedTimeRanges()
     , m_asyncEventQueue(*this)
     , m_requestedPlaybackRate(1)
@@ -3777,18 +3776,6 @@ void HTMLMediaElement::updateCaptionContainer()
     exec->clearException();
 #endif
 }
-
-void HTMLMediaElement::layoutSizeChanged()
-{
-#if ENABLE(MEDIA_CONTROLS_SCRIPT)
-    RefPtr<HTMLMediaElement> strongThis = this;
-    std::function<void()> task = [strongThis] {
-        if (ShadowRoot* root = strongThis->userAgentShadowRoot())
-            root->dispatchEvent(Event::create("resize", false, false));
-    };
-    m_resizeTaskQueue.enqueueTask(task);
-#endif
-}
     
 void HTMLMediaElement::setSelectedTextTrack(TextTrack* trackToSelect)
 {
@@ -5720,6 +5707,7 @@ String HTMLMediaElement::mediaPlayerUserAgent() const
         return String();
 
     return frame->loader().userAgent(m_currentSrc);
+
 }
 
 #if ENABLE(AVF_CAPTIONS)

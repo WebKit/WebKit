@@ -1,3 +1,21 @@
+2015-05-14  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r184359 and r184362.
+        https://bugs.webkit.org/show_bug.cgi?id=145035
+
+        Introduced a crash in six media element tests (Requested by
+        rniwa on #webkit).
+
+        Reverted changesets:
+
+        "[MediaControls] Refactor media controls & bring improvements
+        made to iOS controls to Mac."
+        https://bugs.webkit.org/show_bug.cgi?id=144973
+        http://trac.webkit.org/changeset/184359
+
+        "Unreviewed build fix after r184359; typo."
+        http://trac.webkit.org/changeset/184362
+
 2015-05-14  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix after r184359; typo.

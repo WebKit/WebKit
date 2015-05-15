@@ -16,21 +16,22 @@ function ControllerIOS(root, video, host)
 
     this._timelineIsHidden = false;
     this._currentDisplayWidth = 0;
+    this._potentiallyScrubbing = false;
     this.scheduleUpdateLayoutForDisplayedWidth();
 
     host.controlsDependOnPageScaleFactor = true;
     this.doingSetup = false;
 };
 
+/* Constants */
+ControllerIOS.MinimumTimelineWidth = 200;
+ControllerIOS.ButtonWidth = 42;
+
 /* Enums */
 ControllerIOS.StartPlaybackControls = 2;
 
 
 ControllerIOS.prototype = {
-    /* Constants */
-    MinimumTimelineWidth: 200,
-    ButtonWidth: 42,
-
     addVideoListeners: function() {
         Controller.prototype.addVideoListeners.call(this);
 
@@ -111,6 +112,10 @@ ControllerIOS.prototype = {
         var panelBackground = this.controls.panelBackground = document.createElement('div');
         panelBackground.setAttribute('pseudo', '-webkit-media-controls-panel-background');
 
+        var spacer = this.controls.spacer = document.createElement('div');
+        spacer.setAttribute('pseudo', '-webkit-media-controls-spacer');
+        spacer.classList.add(this.ClassNames.hidden);
+
         var inlinePlaybackPlaceholderText = this.controls.inlinePlaybackPlaceholderText = document.createElement('div');
         inlinePlaybackPlaceholderText.setAttribute('pseudo', '-webkit-media-controls-wireless-playback-text');
 
@@ -181,6 +186,7 @@ ControllerIOS.prototype = {
         this.controls.inlinePlaybackPlaceholderText.appendChild(this.controls.inlinePlaybackPlaceholderTextBottom);
         this.controls.panel.appendChild(this.controls.playButton);
         this.controls.panel.appendChild(this.controls.statusDisplay);
+        this.controls.panel.appendChild(this.controls.spacer);
         this.controls.panel.appendChild(this.controls.timelineBox);
         this.controls.panel.appendChild(this.controls.wirelessTargetPicker);
         if (!this.isLive) {
@@ -202,6 +208,13 @@ ControllerIOS.prototype = {
         // Explicitly do nothing to override base-class behavior.
     },
 
+    showControls: function() {
+        this.updateLayoutForDisplayedWidth();
+        this.updateTime(true);
+        this.updateProgress(true);
+        Controller.prototype.showControls.call(this);
+    },
+
     addControls: function() {
         this.base.appendChild(this.controls.inlinePlaybackPlaceholder);
         this.base.appendChild(this.controls.panelContainer);
@@ -220,6 +233,11 @@ ControllerIOS.prototype = {
 
         this.updateLayoutForDisplayedWidth();
         this.setNeedsTimelineMetricsUpdate();
+    },
+
+    updateTime: function(forceUpdate) {
+        Controller.prototype.updateTime.call(this, forceUpdate);
+        this.updateProgress();
     },
 
     drawTimelineBackground: function() {
@@ -475,8 +493,20 @@ ControllerIOS.prototype = {
         return true;
     },
 
+    handleTimelineInput: function(event) {
+        if (this._potentiallyScrubbing)
+            this.video.pause();
+        Controller.prototype.handleTimelineInput.call(this, event);
+    },
+
+    handleTimelineChange: function(event) {
+        Controller.prototype.handleTimelineChange.call(this, event);
+        this.updateProgress();
+    },
+
     handleTimelineTouchStart: function(event) {
-        this.scrubbing = true;
+        this._potentiallyScrubbing = true;
+        this.wasPlayingWhenScrubbingStarted = !this.video.paused;
         this.listenFor(this.controls.timeline, 'touchend', this.handleTimelineTouchEnd);
         this.listenFor(this.controls.timeline, 'touchcancel', this.handleTimelineTouchEnd);
     },
@@ -484,7 +514,16 @@ ControllerIOS.prototype = {
     handleTimelineTouchEnd: function(event) {
         this.stopListeningFor(this.controls.timeline, 'touchend', this.handleTimelineTouchEnd);
         this.stopListeningFor(this.controls.timeline, 'touchcancel', this.handleTimelineTouchEnd);
-        this.scrubbing = false;
+        this._potentiallyScrubbing = false;
+        if (this.wasPlayingWhenScrubbingStarted && this.video.paused) {
+            this.video.play();
+            this.resetHideControlsTimer();
+        }
+    },
+
+    handleReadyStateChange: function(event) {
+        Controller.prototype.handleReadyStateChange.call(this, event);
+        this.updateControls();
     },
 
     handleWirelessPickerButtonTouchStart: function() {
@@ -523,8 +562,10 @@ ControllerIOS.prototype = {
 
         this.updateControls();
 
-        if (isPlaying && this.isAudio())
+        if (isPlaying && this.isAudio() && !this._timelineIsHidden) {
             this.controls.timelineBox.classList.remove(this.ClassNames.hidden);
+            this.controls.spacer.classList.add(this.ClassNames.hidden);
+        }
 
         if (isPlaying)
             this.hasPlayed = true;
@@ -538,6 +579,25 @@ ControllerIOS.prototype = {
             return;
 
         Controller.prototype.setShouldListenForPlaybackTargetAvailabilityEvent.call(this, shouldListen);
+    },
+
+    get pageScaleFactor()
+    {
+        return this._pageScaleFactor;
+    },
+
+    set pageScaleFactor(newScaleFactor)
+    {
+        if (this._pageScaleFactor === newScaleFactor)
+            return;
+
+        this._pageScaleFactor = newScaleFactor;
+
+        // FIXME: this should react to the scale change by
+        // unscaling the controls panel. However, this
+        // hits a bug with the backdrop blur layer getting
+        // too big and moving to a tiled layer.
+        // https://bugs.webkit.org/show_bug.cgi?id=142317
     },
 
     handlePresentationModeChange: function(event)
@@ -566,6 +626,69 @@ ControllerIOS.prototype = {
     {
         Controller.prototype.handleFullscreenChange.call(this, event);
         this.handlePresentationModeChange(event);
+    },
+
+    scheduleUpdateLayoutForDisplayedWidth: function ()
+    {
+        setTimeout(function () {
+            this.updateLayoutForDisplayedWidth();
+        }.bind(this), 0);
+    },
+
+    updateLayoutForDisplayedWidth: function()
+    {
+        if (!this.controls || !this.controls.panel)
+            return;
+
+        var visibleWidth = this.controls.panel.getBoundingClientRect().width * this._pageScaleFactor;
+        if (visibleWidth <= 0 || visibleWidth == this._currentDisplayWidth)
+            return;
+
+        this._currentDisplayWidth = visibleWidth;
+
+        // We need to work out how many right-hand side buttons are available.
+        this.updateWirelessTargetAvailable();
+        this.updateFullscreenButtons();
+
+        var visibleButtonWidth = ControllerIOS.ButtonWidth; // We always try to show the fullscreen button.
+
+        if (!this.controls.wirelessTargetPicker.classList.contains(this.ClassNames.hidden))
+            visibleButtonWidth += ControllerIOS.ButtonWidth;
+        if (!this.controls.optimizedFullscreenButton.classList.contains(this.ClassNames.hidden))
+            visibleButtonWidth += ControllerIOS.ButtonWidth;
+
+        // Check if there is enough room for the scrubber.
+        if ((visibleWidth - visibleButtonWidth) < ControllerIOS.MinimumTimelineWidth) {
+            this.controls.timelineBox.classList.add(this.ClassNames.hidden);
+            this.controls.spacer.classList.remove(this.ClassNames.hidden);
+            this._timelineIsHidden = true;
+        } else {
+            if (!this.isAudio() || this.hasPlayed) {
+                this.controls.timelineBox.classList.remove(this.ClassNames.hidden);
+                this.controls.spacer.classList.add(this.ClassNames.hidden);
+                this._timelineIsHidden = false;
+            } else
+                this.controls.spacer.classList.remove(this.ClassNames.hidden);
+        }
+
+        // Drop the airplay button if there isn't enough space.
+        if (visibleWidth < visibleButtonWidth) {
+            this.controls.wirelessTargetPicker.classList.add(this.ClassNames.hidden);
+            visibleButtonWidth -= ControllerIOS.ButtonWidth;
+        }
+
+        // Drop the optimized fullscreen button if there still isn't enough space.
+        if (visibleWidth < visibleButtonWidth) {
+            this.controls.optimizedFullscreenButton.classList.add(this.ClassNames.hidden);
+            visibleButtonWidth -= ControllerIOS.ButtonWidth;
+        }
+
+        // And finally, drop the fullscreen button as a last resort.
+        if (visibleWidth < visibleButtonWidth) {
+            this.controls.fullscreenButton.classList.add(this.ClassNames.hidden);
+            visibleButtonWidth -= ControllerIOS.ButtonWidth;
+        } else
+            this.controls.fullscreenButton.classList.remove(this.ClassNames.hidden);
     },
 
     controlsAlwaysVisible: function()

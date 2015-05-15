@@ -17,9 +17,6 @@ function Controller(root, video, host)
     this.currentTargetIsWireless = false;
     this.wirelessPlaybackDisabled = false;
     this.isVolumeSliderActive = false;
-    this.currentDisplayWidth = 0;
-    this._scrubbing = false;
-    this._pageScaleFactor = 1;
 
     this.addVideoListeners();
     this.createBase();
@@ -40,9 +37,6 @@ function Controller(root, video, host)
     this.updateHasVideo();
     this.updateWirelessTargetAvailable();
     this.updateWirelessPlaybackStatus();
-    this.scheduleUpdateLayoutForDisplayedWidth();
-
-    this.listenFor(this.root, 'resize', this.handleRootResize);
 };
 
 /* Enums */
@@ -87,7 +81,6 @@ Controller.prototype = {
     SeekDelay: 1500,
     ClassNames: {
         active: 'active',
-        dropped: 'dropped',
         exit: 'exit',
         failed: 'failed',
         hidden: 'hidden',
@@ -125,8 +118,6 @@ Controller.prototype = {
         right: 39,
         down: 40
     },
-    MinimumTimelineWidth: 150,
-    ButtonWidth: 32,
 
     extend: function(child)
     {
@@ -466,7 +457,8 @@ Controller.prototype = {
         inlinePlaybackPlaceholder.setAttribute('pseudo', '-webkit-media-controls-wireless-playback-status');
         if (!Controller.gSimulateOptimizedFullscreenAvailable)
             inlinePlaybackPlaceholder.classList.add(this.ClassNames.hidden);
-
+        inlinePlaybackPlaceholder.setAttribute('aria-label', this.UIString('Display Optimized Full Screen'));
+        
         var inlinePlaybackPlaceholderText = this.controls.inlinePlaybackPlaceholderText = document.createElement('div');
         inlinePlaybackPlaceholderText.setAttribute('pseudo', '-webkit-media-controls-wireless-playback-text');
         
@@ -601,7 +593,6 @@ Controller.prototype = {
         else
             this.setControlsType(Controller.InlineControls);
 
-        this.updateLayoutForDisplayedWidth();
         this.setNeedsTimelineMetricsUpdate();
     },
 
@@ -666,15 +657,12 @@ Controller.prototype = {
         this.updateFullscreenButtons();
         this.updateWirelessTargetPickerButton();
         this.updateProgress();
-        this.updateControls();
     },
 
     handleTimeUpdate: function(event)
     {
-        if (!this.scrubbing) {
+        if (!this.scrubbing)
             this.updateTime();
-            this.updateProgress();
-        }
         this.drawTimelineBackground();
     },
 
@@ -863,9 +851,6 @@ Controller.prototype = {
 
     handleTimelineInput: function(event)
     {
-        if (this.scrubbing)
-            this.video.pause();
-
         this.video.fastSeek(this.controls.timeline.value);
         this.updateControlsWhileScrubbing();
     },
@@ -873,7 +858,6 @@ Controller.prototype = {
     handleTimelineChange: function(event)
     {
         this.video.currentTime = this.controls.timeline.value;
-        this.updateProgress();
     },
 
     handleTimelineDown: function(event)
@@ -1011,7 +995,6 @@ Controller.prototype = {
         var shouldBeHidden = !this.video.webkitSupportsFullscreen || !this.hasVideo();
         this.controls.fullscreenButton.classList.toggle(this.ClassNames.hidden, shouldBeHidden);
         this.controls.optimizedFullscreenButton.classList.toggle(this.ClassNames.hidden, shouldBeHidden);
-        this.updateLayoutForDisplayedWidth();
     },
 
     handleFullscreenButtonClicked: function(event)
@@ -1363,7 +1346,6 @@ Controller.prototype = {
         if (this.showInlinePlaybackPlaceholderOnly())
             return;
 
-        this.updateLayoutForDisplayedWidth();
         this.setNeedsTimelineMetricsUpdate();
         this.updateTime(true);
         this.updateProgress(true);
@@ -1380,7 +1362,7 @@ Controller.prototype = {
 
     hideControls: function()
     {
-        if (this.controlsAlwaysVisible())
+        if (this.controlsAlwaysVisible() || this._potentiallyScrubbing)
             return;
 
         this.updateShouldListenForPlaybackTargetAvailabilityEvent();
@@ -1389,65 +1371,9 @@ Controller.prototype = {
             this.controls.panelBackground.classList.remove(this.ClassNames.show);
     },
 
-    scheduleUpdateLayoutForDisplayedWidth: function()
-    {
-        setTimeout(this.updateLayoutForDisplayedWidth.bind(this), 0);
-    },
-
-    isControlVisible: function(control)
-    {
-        if (!control)
-            return false;
-        if (!this.root.contains(control))
-            return false;
-        return !control.classList.contains(this.ClassNames.hidden)
-    },
-
-    updateLayoutForDisplayedWidth: function()
-    {
-        if (!this.controls || !this.controls.panel)
-            return;
-
-        var visibleWidth = this.controls.panel.getBoundingClientRect().width * this._pageScaleFactor;
-        if (visibleWidth <= 0 || visibleWidth == this.currentDisplayWidth)
-            return;
-
-        this.currentDisplayWidth = visibleWidth;
-
-        // We need to work out how many buttons are available.
-        this.updateWirelessTargetAvailable();
-        this.updateFullscreenButtons();
-
-        // Filter all the buttons which are not explicitly hidden.
-        var buttons = [this.controls.playButton, this.controls.rewindButton, this.controls.captionButton,
-                       this.controls.fullscreenButton, this.controls.optimizedFullscreenButton,
-                       this.controls.wirelessTargetPicker, this.controls.muteBox];
-        var visibleButtons = buttons.filter(this.isControlVisible, this);
-
-        // This tells us how much room we need in order to display every visible button.
-        var visibleButtonWidth = this.ButtonWidth * visibleButtons.length;
-
-        // Check if there is enough room for the scrubber.
-        var shouldDropTimeline = (visibleWidth - visibleButtonWidth) < this.MinimumTimelineWidth;
-        this.controls.currentTime.classList.toggle(this.ClassNames.dropped, shouldDropTimeline);
-        this.controls.thumbnailTrack.classList.toggle(this.ClassNames.dropped, shouldDropTimeline);
-        this.controls.remainingTime.classList.toggle(this.ClassNames.dropped, shouldDropTimeline);
-
-        // Then controls in the following order:
-        var removeOrder = [this.controls.wirelessTargetPicker, this.controls.optimizedFullscreenButton,
-                           this.controls.captionButton, this.controls.muteBox, this.controls.rewindButton,
-                           this.controls.fullscreenButton];
-        removeOrder.forEach(function(control) {
-            var shouldDropControl = visibleWidth < visibleButtonWidth && this.isControlVisible(control);
-            control.classList.toggle(this.ClassNames.dropped, shouldDropControl);
-            if (shouldDropControl)
-                visibleButtonWidth -= this.ButtonWidth;
-        }, this);
-    },
-
     controlsAlwaysVisible: function()
     {
-        return this.isAudio() || this.currentPlaybackTargetIsWireless() || this.scrubbing;
+        return this.isAudio() || this.currentPlaybackTargetIsWireless();
     },
 
     controlsAreHidden: function()
@@ -1546,7 +1472,6 @@ Controller.prototype = {
             this.controls.captionButton.classList.remove(this.ClassNames.hidden);
         else
             this.controls.captionButton.classList.add(this.ClassNames.hidden);
-        this.updateLayoutForDisplayedWidth();
     },
 
     updateCaptionContainer: function()
@@ -1819,11 +1744,10 @@ Controller.prototype = {
 
     updateHasAudio: function()
     {
-        if (this.video.audioTracks.length && !this.currentPlaybackTargetIsWireless())
+        if (this.video.audioTracks.length)
             this.controls.muteBox.classList.remove(this.ClassNames.hidden);
         else
             this.controls.muteBox.classList.add(this.ClassNames.hidden);
-        this.updateLayoutForDisplayedWidth();
     },
 
     updateHasVideo: function()
@@ -1920,15 +1844,19 @@ Controller.prototype = {
                 this.controls.inlinePlaybackPlaceholderTextTop.classList.remove(this.ClassNames.small);
                 this.controls.inlinePlaybackPlaceholderTextBottom.classList.remove(this.ClassNames.small);
             }
-            this.controls.volumeBox.classList.add(this.ClassNames.hidden);
-            this.controls.muteBox.classList.add(this.ClassNames.hidden);
+            if (this.isFullScreen())
+                this.controls.volumeBox.style.display = "none";
+            else
+                this.controls.muteBox.style.display = "none";
             this.updateBase();
             this.showControls();
         } else {
             this.controls.inlinePlaybackPlaceholder.classList.add(this.ClassNames.hidden);
             this.controls.wirelessTargetPicker.classList.remove(this.ClassNames.playing);
-            this.controls.volumeBox.classList.remove(this.ClassNames.hidden);
-            this.controls.muteBox.classList.remove(this.ClassNames.hidden);
+            if (this.isFullScreen())
+                this.controls.volumeBox.style.display = "-webkit-flex";
+            else
+                this.controls.muteBox.style.display = "-webkit-flex";
         }
         this.updateWirelessTargetPickerButton();
     },
@@ -1945,7 +1873,6 @@ Controller.prototype = {
             this.controls.wirelessTargetPicker.classList.remove(this.ClassNames.hidden);
         else
             this.controls.wirelessTargetPicker.classList.add(this.ClassNames.hidden);
-        this.updateLayoutForDisplayedWidth();
     },
 
     handleWirelessPickerButtonClicked: function(event)
@@ -1990,51 +1917,5 @@ Controller.prototype = {
     {
         return this.currentPlaybackTargetIsWireless() && !this.video.controls;
     },
-
-    get scrubbing()
-    {
-        return this._scrubbing;
-    },
-
-    set scrubbing(flag)
-    {
-        if (this._scrubbing == flag)
-            return;
-        this._scrubbing = flag;
-
-        if (this._scrubbing)
-            this.wasPlayingWhenScrubbingStarted = !this.video.paused;
-        else if (this.wasPlayingWhenScrubbingStarted && this.video.paused) {
-            this.video.play();
-            this.resetHideControlsTimer();
-        }
-    },
-
-    get pageScaleFactor()
-    {
-        return this._pageScaleFactor;
-    },
-
-    set pageScaleFactor(newScaleFactor)
-    {
-        if (this._pageScaleFactor === newScaleFactor)
-            return;
-
-        this._pageScaleFactor = newScaleFactor;
-
-        // FIXME: this should react to the scale change by
-        // unscaling the controls panel. However, this
-        // hits a bug with the backdrop blur layer getting
-        // too big and moving to a tiled layer.
-        // https://bugs.webkit.org/show_bug.cgi?id=142317
-    },
-
-    handleRootResize: function(event)
-    {
-        this.updateLayoutForDisplayedWidth();
-        this.setNeedsTimelineMetricsUpdate();
-        this.updateTimelineMetricsIfNeeded();
-        this.drawTimelineBackground();
-    }
 
 };

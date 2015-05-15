@@ -55,15 +55,6 @@ void RenderMedia::paintReplaced(PaintInfo&, const LayoutPoint&)
 {
 }
 
-void RenderMedia::layout()
-{
-    LayoutSize oldSize = size();
-    RenderImage::layout();
-    if (oldSize != size())
-        mediaElement().layoutSizeChanged();
-}
-
-
 } // namespace WebCore
 
 #endif
