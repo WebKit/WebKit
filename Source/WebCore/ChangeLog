@@ -1,3 +1,15 @@
+2015-05-15  Beth Dakin  <bdakin@apple.com>
+
+        Prefix force on MouseEvent and add constants for click and force click values
+        https://bugs.webkit.org/show_bug.cgi?id=145065
+        -and corresponding-
+        rdar://problem/20770052
+
+        Reviewed by Tim Horton.
+
+        (WebCore::MouseEvent::webkitForce):
+        * dom/MouseEvent.idl:
+
 2015-05-15  Jer Noble  <jer.noble@apple.com>
 
         [MediaControls] Refactor media controls & bring improvements made to iOS controls to Mac.
