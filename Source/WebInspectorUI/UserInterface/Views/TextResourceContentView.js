@@ -116,6 +116,8 @@ WebInspector.TextResourceContentView.prototype = {
         WebInspector.ResourceContentView.prototype.closed.call(this);
 
         this.resource.removeEventListener(null, null, this);
+        WebInspector.probeManager.removeEventListener(null, null, this);
+        WebInspector.showJavaScriptTypeInformationSetting.removeEventListener(null, null, this);
 
         this._textEditor.close();
     },

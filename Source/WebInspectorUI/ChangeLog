@@ -1,5 +1,37 @@
 2015-05-15  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Fix some possible event listener leakers in content views
+        https://bugs.webkit.org/show_bug.cgi?id=145068
+
+        Reviewed by Timothy Hatcher.
+
+        Now that some content views can be closed that weren't closable before, ensure
+        we clean up after global event listeners that may strongly reference "this".
+
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WebInspector.DOMTreeContentView.prototype.closed):
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WebInspector.DOMTreeOutline.prototype.close):
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WebInspector.LayoutTimelineView.prototype.closed):
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WebInspector.NetworkTimelineView.prototype.closed):
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WebInspector.RenderingFrameTimelineView.prototype.closed):
+        * UserInterface/Views/ScriptContentView.js:
+        (WebInspector.ScriptContentView.prototype.closed):
+        * UserInterface/Views/ScriptTimelineView.js:
+        (WebInspector.ScriptTimelineView.prototype.closed):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype.close):
+        * UserInterface/Views/TextResourceContentView.js:
+        (WebInspector.TextResourceContentView.prototype.closed):
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid.prototype.closed):
+        (WebInspector.TimelineDataGrid.prototype.handleEvent):
+
+2015-05-15  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Initiator Popovers no longer work in Layout Timeline
         https://bugs.webkit.org/show_bug.cgi?id=145067
 

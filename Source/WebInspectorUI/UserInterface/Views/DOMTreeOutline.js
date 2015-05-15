@@ -74,6 +74,8 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
 
     close()
     {
+        WebInspector.showShadowDOMSetting.removeEventListener(null, null, this);
+
         if (this._elementsTreeUpdater) {
             this._elementsTreeUpdater.close();
             this._elementsTreeUpdater = null;

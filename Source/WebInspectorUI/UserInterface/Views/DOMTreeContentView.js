@@ -105,6 +105,8 @@ WebInspector.DOMTreeContentView.prototype = {
 
     closed: function()
     {
+        WebInspector.showPaintRectsSetting.removeEventListener(null, null, this);
+        WebInspector.showShadowDOMSetting.removeEventListener(null, null, this);
         WebInspector.domTreeManager.removeEventListener(null, null, this);
 
         this._domTreeOutline.close();

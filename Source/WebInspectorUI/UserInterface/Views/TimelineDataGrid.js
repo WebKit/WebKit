@@ -61,7 +61,7 @@ WebInspector.TimelineDataGrid = function(treeOutline, columns, delegate, editCal
     this.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridSelectedNodeChanged, this);
     this.addEventListener(WebInspector.DataGrid.Event.SortChanged, this._sort, this);
 
-    window.addEventListener("resize", this._windowResized.bind(this));
+    window.addEventListener("resize", this);
 };
 
 WebInspector.TimelineDataGrid.StyleClassName = "timeline";
@@ -115,6 +115,11 @@ WebInspector.TimelineDataGrid.prototype = {
         // May be overridden by subclasses. If so, they should call the superclass.
 
         this._hidePopover();
+    },
+
+    closed: function()
+    {
+        window.removeEventListener("resize", this);
     },
 
     treeElementForDataGridNode: function(dataGridNode)
@@ -189,6 +194,13 @@ WebInspector.TimelineDataGrid.prototype = {
     },
 
     // Protected
+
+    handleEvent: function(event)
+    {
+        console.assert(event.type === "resize");
+
+        this._windowResized(event);
+    },
 
     dataGridNodeNeedsRefresh: function(dataGridNode)
     {

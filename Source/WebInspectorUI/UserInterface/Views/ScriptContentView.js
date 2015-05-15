@@ -112,6 +112,8 @@ WebInspector.ScriptContentView.prototype = {
 
     closed: function()
     {
+        WebInspector.showJavaScriptTypeInformationSetting.removeEventListener(null, null, this);
+
         this._textEditor.close();
     },
 

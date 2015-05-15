@@ -100,6 +100,8 @@ WebInspector.RenderingFrameTimelineView.prototype = {
     {
         console.assert(this.representedObject instanceof WebInspector.Timeline);
         this.representedObject.removeEventListener(null, null, this);
+
+        this._dataGrid.closed();
     },
 
     updateLayout: function()
