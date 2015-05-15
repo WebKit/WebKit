@@ -404,7 +404,7 @@ bool JSArray::setLength(ExecState* exec, unsigned newLength, bool throwException
     case ArrayWithUndecided:
     case ArrayWithInt32:
     case ArrayWithDouble:
-    case ArrayWithContiguous:
+    case ArrayWithContiguous: {
         if (newLength == m_butterfly->publicLength())
             return true;
         if (newLength >= MAX_ARRAY_INDEX // This case ensures that we can do fast push.
@@ -418,6 +418,14 @@ bool JSArray::setLength(ExecState* exec, unsigned newLength, bool throwException
             ensureLength(exec->vm(), newLength);
             return true;
         }
+
+        unsigned lengthToClear = m_butterfly->publicLength() - newLength;
+        unsigned costToAllocateNewButterfly = 64; // a heuristic.
+        if (lengthToClear > newLength && lengthToClear > costToAllocateNewButterfly) {
+            reallocateAndShrinkButterfly(exec->vm(), newLength);
+            return true;
+        }
+
         if (indexingType() == ArrayWithDouble) {
             for (unsigned i = m_butterfly->publicLength(); i-- > newLength;)
                 m_butterfly->contiguousDouble()[i] = PNaN;
@@ -427,6 +435,7 @@ bool JSArray::setLength(ExecState* exec, unsigned newLength, bool throwException
         }
         m_butterfly->setPublicLength(newLength);
         return true;
+    }
         
     case ArrayWithArrayStorage:
     case ArrayWithSlowPutArrayStorage:

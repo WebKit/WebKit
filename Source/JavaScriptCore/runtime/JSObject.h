@@ -827,6 +827,10 @@ protected:
             m_butterfly->setPublicLength(length);
     }
         
+    // Call this if you want to shrink the butterfly backing store, and you're
+    // sure that the array is contiguous.
+    void reallocateAndShrinkButterfly(VM&, unsigned length);
+    
     template<IndexingType indexingShape>
     unsigned countElements(Butterfly*);
         

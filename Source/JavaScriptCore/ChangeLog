@@ -1,3 +1,29 @@
+2015-05-15  Mark Lam  <mark.lam@apple.com>
+
+        JSArray::setLength() should reallocate instead of zero-filling if the reallocation would be small enough.
+        https://bugs.webkit.org/show_bug.cgi?id=144622
+
+        Reviewed by Geoffrey Garen.
+
+        When setting the array to a new length that is shorter, we now check if it is worth
+        just making a new butterfly instead of clearing out the slots in the old butterfly
+        that resides beyond the new length.  If so, we will make a new butterfly instead.
+
+        There is no perf differences in the benchmark results.  However, this does benefit
+        the perf of pathological cases where we need to shorten the length of a very large
+        array, as is the case in tests/mozilla/js1_5/Array/regress-101964.js.  With this
+        patch, we can expect that test to complete in a short time again.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::setLength):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::reallocateAndShrinkButterfly):
+        - makes a new butterfly with a new shorter length.
+        * runtime/JSObject.h:
+        * tests/mozilla/js1_5/Array/regress-101964.js:
+        - Undo this test change since this patch will prevent us from spending a lot of time
+          clearing a large butterfly.
+
 2015-05-15  Basile Clement  <basile_clement@apple.com>
 
         DFGLICMPhase shouldn't create NodeOrigins with forExit but without semantic

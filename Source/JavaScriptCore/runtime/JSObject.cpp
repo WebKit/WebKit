@@ -2457,6 +2457,21 @@ void JSObject::ensureLengthSlow(VM& vm, unsigned length)
     }
 }
 
+void JSObject::reallocateAndShrinkButterfly(VM& vm, unsigned length)
+{
+    ASSERT(length < MAX_ARRAY_INDEX);
+    ASSERT(length < MAX_STORAGE_VECTOR_LENGTH);
+    ASSERT(hasContiguous(indexingType()) || hasInt32(indexingType()) || hasDouble(indexingType()) || hasUndecided(indexingType()));
+    ASSERT(m_butterfly->vectorLength() > length);
+    ASSERT(!m_butterfly->indexingHeader()->preCapacity(structure()));
+
+    DeferGC deferGC(vm.heap);
+    Butterfly* newButterfly = m_butterfly->resizeArray(vm, this, structure(), 0, ArrayStorage::sizeFor(length));
+    m_butterfly.set(vm, this, newButterfly);
+    m_butterfly->setVectorLength(length);
+    m_butterfly->setPublicLength(length);
+}
+
 Butterfly* JSObject::growOutOfLineStorage(VM& vm, size_t oldSize, size_t newSize)
 {
     ASSERT(newSize > oldSize);
