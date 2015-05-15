@@ -1,3 +1,13 @@
+2015-05-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Update the New Tab button disabled state after extra domains are activated
+        https://bugs.webkit.org/show_bug.cgi?id=145028
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.activateExtraDomains):
+
 2015-05-14  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Current time marker is always at zero in Rendering Frames ruler

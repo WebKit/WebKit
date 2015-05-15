@@ -512,6 +512,8 @@ WebInspector.activateExtraDomains = function(domains)
     }
 
     this._pendingOpenTabTypes = stillPendingOpenTabTypes;
+
+    this._updateNewTabButtonState();
 };
 
 WebInspector.contentBrowserTreeElementForRepresentedObject = function(contentBrowser, representedObject)
