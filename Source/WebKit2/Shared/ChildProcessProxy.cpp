@@ -159,23 +159,18 @@ void ChildProcessProxy::abortProcessLaunchIfNeeded()
     m_processLauncher = nullptr;
 }
 
-void ChildProcessProxy::clearConnection()
+void ChildProcessProxy::shutDownProcess()
 {
     if (!m_connection)
         return;
 
-    // FIXME: Call this after the connection has been invalidated.
-    connectionDidClose(*m_connection);
+    processWillShutDown(*m_connection);
 
     m_connection->invalidate();
     m_connection = nullptr;
 }
 
 void ChildProcessProxy::connectionWillOpen(IPC::Connection&)
-{
-}
-
-void ChildProcessProxy::connectionDidClose(IPC::Connection&)
 {
 }
 

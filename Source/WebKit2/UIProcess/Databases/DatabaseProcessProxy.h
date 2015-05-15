@@ -59,6 +59,7 @@ private:
 
     // ChildProcessProxy
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
+    virtual void processWillShutDown(IPC::Connection&) override;
 
     // IPC::Connection::Client
     virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;

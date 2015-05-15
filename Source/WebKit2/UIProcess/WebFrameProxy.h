@@ -73,7 +73,7 @@ public:
     uint64_t frameID() const { return m_frameID; }
     WebPageProxy* page() const { return m_page; }
 
-    void disconnect();
+    void webProcessWillShutDown();
 
     bool isMainFrame() const;
 

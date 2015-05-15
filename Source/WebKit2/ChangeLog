@@ -1,3 +1,60 @@
+2015-05-14  Brady Eidson  <beidson@apple.com>
+
+        Rename connectionDidClose and related methods to be more clear.
+        https://bugs.webkit.org/show_bug.cgi?id=145030
+
+        Reviewed by Darin Adler.
+
+        These methods were easy to confuse with "Connection::Client::didClose()", yet they
+        were about something much more explicit: A child process being shut down by the UI Process.
+
+        Let's call them as such.
+
+        * Shared/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::shutDownProcess):
+        (WebKit::ChildProcessProxy::clearConnection): Deleted.
+        (WebKit::ChildProcessProxy::connectionDidClose): Deleted.
+        * Shared/ChildProcessProxy.h:
+
+        * UIProcess/Databases/DatabaseProcessProxy.cpp:
+        (WebKit::DatabaseProcessProxy::processWillShutDown):
+        * UIProcess/Databases/DatabaseProcessProxy.h:
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::processWillShutDown):
+        * UIProcess/Network/NetworkProcessProxy.h:
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::processWillShutDown):
+        * UIProcess/Plugins/PluginProcessProxy.h:
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::webProcessWillShutDown):
+        (WebKit::WebFrameProxy::disconnect): Deleted.
+        * UIProcess/WebFrameProxy.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::webProcessWillShutDown):
+        (WebKit::WebPageProxy::connectionDidClose): Deleted.
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/WebProcessLifetimeTracker.cpp:
+        (WebKit::WebProcessLifetimeTracker::webProcessWillShutDown):
+        (WebKit::WebProcessLifetimeTracker::connectionDidClose): Deleted.
+        * UIProcess/WebProcessLifetimeTracker.h:
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::processWillShutDown):
+        (WebKit::WebProcessProxy::shutDown):
+        (WebKit::WebProcessProxy::removeWebPage):
+        (WebKit::WebProcessProxy::didClose):
+        (WebKit::WebProcessProxy::disconnectFramesFromPage):
+        (WebKit::WebProcessProxy::shouldTerminate):
+        (WebKit::WebProcessProxy::requestTermination):
+        (WebKit::WebProcessProxy::connectionDidClose): Deleted.
+        (WebKit::WebProcessProxy::disconnect): Deleted.
+        * UIProcess/WebProcessProxy.h:
+
 2015-05-14  Zhuo Li  <zachli@apple.com>
 
         Some CFNetwork SPI to reset HSTS hosts added since a date should not be used on Yosemite.

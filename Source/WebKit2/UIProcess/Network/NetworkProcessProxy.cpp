@@ -95,6 +95,11 @@ void NetworkProcessProxy::connectionWillOpen(IPC::Connection& connection)
 #endif
 }
 
+void NetworkProcessProxy::processWillShutDown(IPC::Connection& connection)
+{
+    ASSERT_UNUSED(connection, this->connection() == &connection);
+}
+
 void NetworkProcessProxy::getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> reply)
 {
     m_pendingConnectionReplies.append(reply);

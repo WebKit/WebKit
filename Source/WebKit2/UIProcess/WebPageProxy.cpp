@@ -3516,11 +3516,9 @@ void WebPageProxy::connectionWillOpen(IPC::Connection& connection)
     m_webProcessLifetimeTracker.connectionWillOpen(connection);
 }
 
-void WebPageProxy::connectionDidClose(IPC::Connection& connection)
+void WebPageProxy::webProcessWillShutDown()
 {
-    ASSERT_UNUSED(connection, &connection == m_process->connection());
-
-    m_webProcessLifetimeTracker.connectionDidClose(connection);
+    m_webProcessLifetimeTracker.webProcessWillShutDown();
 }
 
 void WebPageProxy::processDidFinishLaunching()

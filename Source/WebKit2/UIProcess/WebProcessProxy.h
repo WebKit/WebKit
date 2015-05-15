@@ -157,11 +157,11 @@ private:
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
     void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&);
     virtual void connectionWillOpen(IPC::Connection&) override;
-    virtual void connectionDidClose(IPC::Connection&) override;
+    virtual void processWillShutDown(IPC::Connection&) override;
 
     // Called when the web process has crashed or we know that it will terminate soon.
     // Will potentially cause the WebProcessProxy object to be freed.
-    void disconnect();
+    void shutDown();
 
     // IPC message handlers.
     void addBackForwardItem(uint64_t itemID, uint64_t pageID, const PageState&);
