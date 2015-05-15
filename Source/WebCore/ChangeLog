@@ -1,3 +1,14 @@
+2015-05-15  Zalan Bujtas  <zalan@apple.com>
+
+        WebCore ASan debug build fails. ERROR: WebCore has a weak external symbol in it.
+        https://bugs.webkit.org/show_bug.cgi?id=145070
+
+        Reviewed by David Kilzer.
+
+        Build fix.
+
+        * Configurations/WebCore.unexp:
+
 2015-05-15  Beth Dakin  <bdakin@apple.com>
 
         Prefix force on MouseEvent and add constants for click and force click values
