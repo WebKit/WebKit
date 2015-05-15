@@ -1,3 +1,11 @@
+2015-05-15  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Revert part of r184361.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.configureInlineControls):
+        HI wants the buttons flipped.
+
 2015-05-15  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         Fix trivial typo in TextEncodingDetectorICU.cpp.

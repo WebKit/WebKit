@@ -527,9 +527,9 @@ Controller.prototype = {
         this.controls.panel.appendChild(this.controls.panelBackgroundContainer);
         this.controls.panelBackgroundContainer.appendChild(this.controls.panelBackground);
         this.controls.panelBackgroundContainer.appendChild(this.controls.panelTint);
+        this.controls.panel.appendChild(this.controls.playButton);
         if (!this.isLive)
             this.controls.panel.appendChild(this.controls.rewindButton);
-        this.controls.panel.appendChild(this.controls.playButton);
         this.controls.panel.appendChild(this.controls.statusDisplay);
         if (!this.isLive) {
             this.controls.panel.appendChild(this.controls.timelineBox);
