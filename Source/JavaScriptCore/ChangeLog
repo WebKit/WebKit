@@ -1,3 +1,19 @@
+2015-05-15  Benjamin Poulain  <bpoulain@apple.com>
+
+        [ARM64] Do not fail branchConvertDoubleToInt32 when the result is zero and not negative zero
+        https://bugs.webkit.org/show_bug.cgi?id=144976
+
+        Reviewed by Michael Saboff.
+
+        Failing the conversion on zero is pretty dangerous as we discovered on x86.
+
+        This patch does not really impact performance significantly because
+        r184220 removed the zero checks from Kraken. This patch is just to be
+        on the safe side for cases not covered by existing benchmarks.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::branchConvertDoubleToInt32):
+
 2015-05-15  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         Remove unnecessary forward declarations in PropertyNameArray.h.
