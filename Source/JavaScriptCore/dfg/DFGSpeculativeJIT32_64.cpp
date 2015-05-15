@@ -4657,20 +4657,6 @@ void SpeculativeJIT::writeBarrier(GPRReg ownerGPR, GPRReg valueTagGPR, Edge valu
     if (!isKnownCell(valueUse.node()))
         isNotCell.link(&m_jit);
 }
-
-void SpeculativeJIT::writeBarrier(JSCell* owner, GPRReg valueTagGPR, Edge valueUse, GPRReg scratch1, GPRReg scratch2)
-{
-    JITCompiler::Jump isNotCell;
-    if (!isKnownCell(valueUse.node()))
-        isNotCell = m_jit.branch32(JITCompiler::NotEqual, valueTagGPR, JITCompiler::TrustedImm32(JSValue::CellTag));
-
-    JITCompiler::Jump ownerIsRememberedOrInEden = m_jit.jumpIfIsRememberedOrInEden(owner);
-    storeToWriteBarrierBuffer(owner, scratch1, scratch2);
-    ownerIsRememberedOrInEden.link(&m_jit);
-
-    if (!isKnownCell(valueUse.node()))
-        isNotCell.link(&m_jit);
-}
 #endif // ENABLE(GGC)
 
 void SpeculativeJIT::moveTrueTo(GPRReg gpr)

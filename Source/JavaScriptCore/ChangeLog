@@ -1,3 +1,21 @@
+2015-05-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove unused constant-base and constant-value store barrier code in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=145039
+
+        Reviewed by Andreas Kling.
+        
+        Just killing dead code.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::storeToWriteBarrierBuffer): Deleted.
+        (JSC::DFG::SpeculativeJIT::writeBarrier): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::writeBarrier):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::writeBarrier):
+
 2015-05-15  Alexandr Skachkov  <gskachkov@gmail.com>
 
         Fix typo in function name parseFunctionParamters -> parseFunctionParameters

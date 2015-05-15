@@ -6145,42 +6145,6 @@ void SpeculativeJIT::storeToWriteBarrierBuffer(GPRReg cell, GPRReg scratch1, GPR
     done.link(&m_jit);
 }
 
-void SpeculativeJIT::storeToWriteBarrierBuffer(JSCell* cell, GPRReg scratch1, GPRReg scratch2)
-{
-    ASSERT(scratch1 != scratch2);
-    WriteBarrierBuffer* writeBarrierBuffer = &m_jit.vm()->heap.m_writeBarrierBuffer;
-    m_jit.move(TrustedImmPtr(writeBarrierBuffer), scratch1);
-    m_jit.load32(MacroAssembler::Address(scratch1, WriteBarrierBuffer::currentIndexOffset()), scratch2);
-    JITCompiler::Jump needToFlush = m_jit.branch32(MacroAssembler::AboveOrEqual, scratch2, MacroAssembler::Address(scratch1, WriteBarrierBuffer::capacityOffset()));
-
-    m_jit.add32(TrustedImm32(1), scratch2);
-    m_jit.store32(scratch2, MacroAssembler::Address(scratch1, WriteBarrierBuffer::currentIndexOffset()));
-
-    m_jit.loadPtr(MacroAssembler::Address(scratch1, WriteBarrierBuffer::bufferOffset()), scratch1);
-    // We use an offset of -sizeof(void*) because we already added 1 to scratch2.
-    m_jit.storePtr(TrustedImmPtr(cell), MacroAssembler::BaseIndex(scratch1, scratch2, MacroAssembler::ScalePtr, static_cast<int32_t>(-sizeof(void*))));
-
-    JITCompiler::Jump done = m_jit.jump();
-    needToFlush.link(&m_jit);
-
-    // Call C slow path
-    silentSpillAllRegisters(InvalidGPRReg);
-    callOperation(operationFlushWriteBarrierBuffer, cell);
-    silentFillAllRegisters(InvalidGPRReg);
-
-    done.link(&m_jit);
-}
-
-void SpeculativeJIT::writeBarrier(GPRReg ownerGPR, JSCell* value, GPRReg scratch1, GPRReg scratch2)
-{
-    if (Heap::isMarked(value))
-        return;
-
-    JITCompiler::Jump ownerIsRememberedOrInEden = m_jit.jumpIfIsRememberedOrInEden(ownerGPR);
-    storeToWriteBarrierBuffer(ownerGPR, scratch1, scratch2);
-    ownerIsRememberedOrInEden.link(&m_jit);
-}
-
 void SpeculativeJIT::writeBarrier(GPRReg ownerGPR, GPRReg scratch1, GPRReg scratch2)
 {
     JITCompiler::Jump ownerIsRememberedOrInEden = m_jit.jumpIfIsRememberedOrInEden(ownerGPR);
