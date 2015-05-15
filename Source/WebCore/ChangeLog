@@ -1,5 +1,20 @@
 2015-05-15  Roger Fong  <roger_fong@apple.com>
 
+        Cursor is displayed after full screen video controls fade away.
+        https://bugs.webkit.org/show_bug.cgi?id=145034.
+        <rdar://problem/20458604>
+
+        Reviewed by Jer Noble.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (video::-webkit-media-controls-panel):
+        Unnecessary cursor style is on the control panel while hidden but
+        the cursor will already be hidden anyways from being auto-hidden.
+        Causes style to change when controls are hidden,
+        which causes the cursor to reappear.
+
+2015-05-15  Roger Fong  <roger_fong@apple.com>
+
         Checkmark on OFF option of captions sometimes does not appear.
         https://bugs.webkit.org/show_bug.cgi?id=145060.
         <rdar://problem/19388333>
