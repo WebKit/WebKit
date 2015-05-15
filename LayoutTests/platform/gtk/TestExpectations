@@ -946,6 +946,7 @@ webkit.org/b/132248 media/media-fragments/TC0061.html [ Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0063.html [ Failure Pass Timeout ]
 webkit.org/b/143709 media/media-fragments/TC0064.html [ Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0067.html [ Timeout Pass ]
+webkit.org/b/132248 media/media-fragments/TC0070.html [ Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0072.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0078.html [ Failure Crash Pass ]
 webkit.org/b/132248 media/media-fragments/TC0079.html [ Failure Pass ]
@@ -1126,6 +1127,10 @@ webkit.org/b/144734 fast/regions/hover-on-child-in-region.html [ Failure Pass ]
 
 webkit.org/b/144864 fast/events/clear-edit-drag-state.html [ Failure Pass ]
 webkit.org/b/144864 fast/events/clear-drag-state.html [ Failure Pass ]
+
+webkit.org/b/145050 fast/events/touch/touch-coords-in-zoom-and-scroll.html [ Failure Pass ]
+webkit.org/b/145051 media/video-rtl.html [ ImageOnlyFailure Pass ]
+webkit.org/b/145052 fast/history/page-cache-webdatabase-pending-transaction.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -1335,6 +1340,7 @@ webkit.org/b/109469 fast/events/mouse-cursor-image-set.html [ Crash Timeout ]
 
 webkit.org/b/144865 fast/animation/request-animation-frame-throttle-subframe.html [ Timeout ]
 webkit.org/b/144865 fast/animation/request-animation-frame-throttle-subframe-display-none.html [ Timeout ]
+webkit.org/b/145053 http/tests/xmlhttprequest/origin-exact-matching.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -2273,6 +2279,10 @@ webkit.org/b/144765 fast/events/touch/touch-inside-iframe.html [ Timeout ]
 webkit.org/b/144763 fast/events/scroll-in-scaled-page-with-overflow-hidden.html
 
 webkit.org/b/144682 http/tests/xmlhttprequest/range-test.html [ Failure ]
+
+webkit.org/b/141835 media/video-controls-no-scripting.html [ Failure ]
+webkit.org/b/145048 http/tests/misc/bad-charset-alias.html [ Failure ]
+webkit.org/b/145049 fast/text/simple-line-layout-text-stroke-width.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
