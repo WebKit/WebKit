@@ -35,7 +35,7 @@ WebInspector.LayoutTimelineDataGrid.prototype = {
 
     callFramePopoverAnchorElement: function()
     {
-        return this.selectedNode.elementWithColumnIdentifier("initiatorCallFrame");
+        return this.selectedNode.elementWithColumnIdentifier("location");
     }
 };
 

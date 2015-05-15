@@ -1,3 +1,14 @@
+2015-05-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Initiator Popovers no longer work in Layout Timeline
+        https://bugs.webkit.org/show_bug.cgi?id=145067
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/LayoutTimelineDataGrid.js:
+        (WebInspector.LayoutTimelineDataGrid.prototype.callFramePopoverAnchorElement):
+        Update the column name, which changed in r183134.
+
 2015-05-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Update the New Tab button disabled state after extra domains are activated
