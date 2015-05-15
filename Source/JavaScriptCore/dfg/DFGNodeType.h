@@ -323,7 +323,6 @@ namespace JSC { namespace DFG {
     macro(CheckWatchdogTimer, NodeMustGenerate) \
     /* Write barriers ! */\
     macro(StoreBarrier, NodeMustGenerate) \
-    macro(StoreBarrierWithNullCheck, NodeMustGenerate) \
     \
     /* For-in enumeration opcodes */\
     macro(GetEnumerableLength, NodeMustGenerate | NodeResultJS) \

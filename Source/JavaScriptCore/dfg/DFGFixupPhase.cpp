@@ -1299,7 +1299,6 @@ private:
         case ExtractOSREntryLocal:
         case LoopHint:
         case StoreBarrier:
-        case StoreBarrierWithNullCheck:
         case MovHint:
         case ZombieHint:
         case BottomValue:

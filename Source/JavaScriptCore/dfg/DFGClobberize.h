@@ -293,7 +293,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ProfileType:
     case ProfileControlFlow:
     case StoreBarrier:
-    case StoreBarrierWithNullCheck:
     case PutHint:
         write(SideState);
         return;

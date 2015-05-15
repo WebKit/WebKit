@@ -618,7 +618,6 @@ private:
 #ifndef NDEBUG
         // These get ignored because they don't return anything.
         case StoreBarrier:
-        case StoreBarrierWithNullCheck:
         case PutByValDirect:
         case PutByVal:
         case PutClosureVar:

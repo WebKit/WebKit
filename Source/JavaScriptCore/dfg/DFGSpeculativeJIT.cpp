@@ -6109,36 +6109,13 @@ void SpeculativeJIT::linkBranches()
 #if ENABLE(GGC)
 void SpeculativeJIT::compileStoreBarrier(Node* node)
 {
-    switch (node->op()) {
-    case StoreBarrier: {
-        SpeculateCellOperand base(this, node->child1());
-        GPRTemporary scratch1(this);
-        GPRTemporary scratch2(this);
+    ASSERT(node->op() == StoreBarrier);
     
-        writeBarrier(base.gpr(), scratch1.gpr(), scratch2.gpr());
-        break;
-    }
-
-    case StoreBarrierWithNullCheck: {
-        JSValueOperand base(this, node->child1());
-        GPRTemporary scratch1(this);
-        GPRTemporary scratch2(this);
+    SpeculateCellOperand base(this, node->child1());
+    GPRTemporary scratch1(this);
+    GPRTemporary scratch2(this);
     
-#if USE(JSVALUE64)
-        JITCompiler::Jump isNull = m_jit.branchTest64(JITCompiler::Zero, base.gpr());
-        writeBarrier(base.gpr(), scratch1.gpr(), scratch2.gpr());
-#else
-        JITCompiler::Jump isNull = m_jit.branch32(JITCompiler::Equal, base.tagGPR(), TrustedImm32(JSValue::EmptyValueTag));
-        writeBarrier(base.payloadGPR(), scratch1.gpr(), scratch2.gpr());
-#endif
-        isNull.link(&m_jit);
-        break;
-    }
-
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        break;
-    }
+    writeBarrier(base.gpr(), scratch1.gpr(), scratch2.gpr());
 
     noResult(node);
 }

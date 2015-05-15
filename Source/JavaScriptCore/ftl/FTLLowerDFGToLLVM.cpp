@@ -818,9 +818,6 @@ private:
         case StoreBarrier:
             compileStoreBarrier();
             break;
-        case StoreBarrierWithNullCheck:
-            compileStoreBarrierWithNullCheck();
-            break;
         case HasIndexedProperty:
             compileHasIndexedProperty();
             break;
@@ -4901,22 +4898,6 @@ private:
         emitStoreBarrier(lowCell(m_node->child1()));
     }
 
-    void compileStoreBarrierWithNullCheck()
-    {
-#if ENABLE(GGC)
-        LBasicBlock isNotNull = FTL_NEW_BLOCK(m_out, ("Store barrier with null check value not null"));
-        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Store barrier continuation"));
-
-        LValue base = lowJSValue(m_node->child1());
-        m_out.branch(m_out.isZero64(base), unsure(continuation), unsure(isNotNull));
-        LBasicBlock lastNext = m_out.appendTo(isNotNull, continuation);
-        emitStoreBarrier(base);
-        m_out.appendTo(continuation, lastNext);
-#else
-        speculate(m_node->child1());
-#endif
-    }
-    
     void compileHasIndexedProperty()
     {
         switch (m_node->arrayMode().type()) {

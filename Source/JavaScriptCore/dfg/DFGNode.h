@@ -830,13 +830,7 @@ struct Node {
 
     bool isStoreBarrier()
     {
-        switch (op()) {
-        case StoreBarrier:
-        case StoreBarrierWithNullCheck:
-            return true;
-        default:
-            return false;
-        }
+        return op() == StoreBarrier;
     }
 
     bool hasIdentifier()
