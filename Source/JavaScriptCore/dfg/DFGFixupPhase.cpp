@@ -722,7 +722,7 @@ private:
             case Array::SlowPutArrayStorage:
                 fixEdge<KnownCellUse>(child1);
                 fixEdge<Int32Use>(child2);
-                insertStoreBarrier(m_indexInBlock, child1, child3);
+                speculateForBarrier(child3);
                 break;
             default:
                 fixEdge<KnownCellUse>(child1);
@@ -760,7 +760,7 @@ private:
                 break;
             case Array::Contiguous:
             case Array::ArrayStorage:
-                insertStoreBarrier(m_indexInBlock, node->child1(), node->child2());
+                speculateForBarrier(node->child2());
                 break;
             default:
                 break;
@@ -922,7 +922,6 @@ private:
             
         case PutStructure: {
             fixEdge<KnownCellUse>(node->child1());
-            insertStoreBarrier(m_indexInBlock, node->child1());
             break;
         }
             
@@ -935,7 +934,7 @@ private:
         case PutClosureVar:
         case PutToArguments: {
             fixEdge<KnownCellUse>(node->child1());
-            insertStoreBarrier(m_indexInBlock, node->child1(), node->child2());
+            speculateForBarrier(node->child2());
             break;
         }
             
@@ -950,7 +949,6 @@ private:
         case AllocatePropertyStorage:
         case ReallocatePropertyStorage: {
             fixEdge<KnownCellUse>(node->child1());
-            insertStoreBarrier(m_indexInBlock + 1, node->child1());
             break;
         }
 
@@ -986,7 +984,7 @@ private:
         case PutByIdFlush:
         case PutByIdDirect: {
             fixEdge<CellUse>(node->child1());
-            insertStoreBarrier(m_indexInBlock, node->child1(), node->child2());
+            speculateForBarrier(node->child2());
             break;
         }
 
@@ -1029,13 +1027,13 @@ private:
             if (!node->child1()->hasStorageResult())
                 fixEdge<KnownCellUse>(node->child1());
             fixEdge<KnownCellUse>(node->child2());
-            insertStoreBarrier(m_indexInBlock, node->child2(), node->child3());
+            speculateForBarrier(node->child3());
             break;
         }
             
         case MultiPutByOffset: {
             fixEdge<CellUse>(node->child1());
-            insertStoreBarrier(m_indexInBlock, node->child1(), node->child2());
+            speculateForBarrier(node->child2());
             break;
         }
             
@@ -1115,16 +1113,16 @@ private:
         case PutStack:
         case KillStack:
         case GetStack:
+        case StoreBarrier:
             // These are just nodes that we don't currently expect to see during fixup.
             // If we ever wanted to insert them prior to fixup, then we just have to create
             // fixup rules for them.
-            RELEASE_ASSERT_NOT_REACHED();
+            DFG_CRASH(m_graph, node, "Unexpected node during fixup");
             break;
         
         case PutGlobalVar: {
             fixEdge<CellUse>(node->child1());
-            insertStoreBarrier(
-                m_indexInBlock, node->child1(), node->child2());
+            speculateForBarrier(node->child2());
             break;
         }
 
@@ -1298,7 +1296,6 @@ private:
         case Unreachable:
         case ExtractOSREntryLocal:
         case LoopHint:
-        case StoreBarrier:
         case MovHint:
         case ZombieHint:
         case BottomValue:
@@ -1762,37 +1759,35 @@ private:
         edge.setUseKind(useKind);
     }
     
-    void insertStoreBarrier(unsigned indexInBlock, Edge base, Edge value = Edge())
+    void speculateForBarrier(Edge value)
     {
-        if (!!value) {
-            if (value->shouldSpeculateInt32()) {
-                insertCheck<Int32Use>(indexInBlock, value.node());
-                return;
-            }
-            
-            if (value->shouldSpeculateBoolean()) {
-                insertCheck<BooleanUse>(indexInBlock, value.node());
-                return;
-            }
-            
-            if (value->shouldSpeculateOther()) {
-                insertCheck<OtherUse>(indexInBlock, value.node());
-                return;
-            }
-            
-            if (value->shouldSpeculateNumber()) {
-                insertCheck<NumberUse>(indexInBlock, value.node());
-                return;
-            }
-            
-            if (value->shouldSpeculateNotCell()) {
-                insertCheck<NotCellUse>(indexInBlock, value.node());
-                return;
-            }
+        if (!isFTL(m_graph.m_plan.mode))
+            return;
+        
+        if (value->shouldSpeculateInt32()) {
+            insertCheck<Int32Use>(m_indexInBlock, value.node());
+            return;
         }
-
-        m_insertionSet.insertNode(
-            indexInBlock, SpecNone, StoreBarrier, m_currentNode->origin, base);
+            
+        if (value->shouldSpeculateBoolean()) {
+            insertCheck<BooleanUse>(m_indexInBlock, value.node());
+            return;
+        }
+            
+        if (value->shouldSpeculateOther()) {
+            insertCheck<OtherUse>(m_indexInBlock, value.node());
+            return;
+        }
+            
+        if (value->shouldSpeculateNumber()) {
+            insertCheck<NumberUse>(m_indexInBlock, value.node());
+            return;
+        }
+            
+        if (value->shouldSpeculateNotCell()) {
+            insertCheck<NotCellUse>(m_indexInBlock, value.node());
+            return;
+        }
     }
     
     template<UseKind useKind>
