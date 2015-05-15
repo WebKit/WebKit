@@ -230,8 +230,7 @@ void Download::startWithHandle(ResourceHandle* resourceHandle, const ResourceRes
     ASSERT(!m_downloadClient);
     ASSERT(!m_resourceHandle);
     m_downloadClient = std::make_unique<DownloadClient>(this);
-    resourceHandle->setClient(m_downloadClient.get());
-    m_resourceHandle = resourceHandle;
+    m_resourceHandle = resourceHandle->releaseForDownload(m_downloadClient.get());
     didStart();
     static_cast<DownloadClient*>(m_downloadClient.get())->handleResponseLater(response);
 }

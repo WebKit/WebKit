@@ -1,3 +1,19 @@
+2015-05-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r183861): [SOUP] Downloads are broken when using the Network Process
+        https://bugs.webkit.org/show_bug.cgi?id=144738
+
+        Reviewed by Alexey Proskuryakov.
+
+        When converting the main resource handle to a download, the
+        NetworkResourceLoader is aborted, and the ResourceHandle is
+        cleaned up aborting the download operation. We need to use a
+        different ResourceHandle for the download operation.
+
+        * Shared/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::Download::startWithHandle): Use ResourceHandle::releaseForDownload()
+        instead of reusing the given handle.
+
 2015-05-14  Brady Eidson  <beidson@apple.com>
 
         Rename connectionDidClose and related methods to be more clear.

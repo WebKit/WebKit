@@ -1,3 +1,17 @@
+2015-05-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r183861): [SOUP] Downloads are broken when using the Network Process
+        https://bugs.webkit.org/show_bug.cgi?id=144738
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add ResourceHandle::releaseForDownload() that releases the current
+        handle to be used as a download.
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::releaseForDownload):
+
 2015-05-15  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Fix PlatformDisplayWayland construction error, implement the destructor

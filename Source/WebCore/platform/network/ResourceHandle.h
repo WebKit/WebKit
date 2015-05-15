@@ -177,6 +177,7 @@ public:
 #endif
 
 #if USE(SOUP)
+    RefPtr<ResourceHandle> releaseForDownload(ResourceHandleClient*);
     void continueDidReceiveAuthenticationChallenge(const Credential& credentialFromPersistentStorage);
     void sendPendingRequest();
     bool cancelledOrClientless();
