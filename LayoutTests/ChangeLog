@@ -1,3 +1,18 @@
+2015-05-14  Zalan Bujtas  <zalan@apple.com>
+
+        Images on www.fitstylelife.com jiggle on hover.
+        https://bugs.webkit.org/show_bug.cgi?id=145020
+        rdar://problem/20885337
+
+        Reviewed by Simon Fraser.
+
+        This patch ensures that the clipping layer of a composited content is pixel snapped properly.
+
+        * compositing/composited-parent-clipping-layer-on-subpixel-position-expected.html: Added.
+        * compositing/composited-parent-clipping-layer-on-subpixel-position.html: Added.
+        * compositing/parent-clipping-layer-on-subpixel-position-expected.html: Added.
+        * compositing/parent-clipping-layer-on-subpixel-position.html: Added.
+
 2015-05-14  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r183794): Garbage tiles when body background switches to fixed

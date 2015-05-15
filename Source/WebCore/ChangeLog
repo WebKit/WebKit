@@ -1,3 +1,19 @@
+2015-05-14  Zalan Bujtas  <zalan@apple.com>
+
+        Images on www.fitstylelife.com jiggle on hover.
+        https://bugs.webkit.org/show_bug.cgi?id=145020
+        rdar://problem/20885337
+
+        Reviewed by Simon Fraser.
+
+        This patch ensures that the clipping layer of a composited content is pixel snapped properly.
+
+        Tests: compositing/composited-parent-clipping-layer-on-subpixel-position.html
+               compositing/parent-clipping-layer-on-subpixel-position.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry):
+
 2015-05-14  Chris Dumez  <cdumez@apple.com>
 
         Have DOMWindow::createWindow() take references to frames
