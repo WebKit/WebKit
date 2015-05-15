@@ -79,14 +79,14 @@ bool detectTextEncoding(const char* data, size_t len,
         // the chunk is consistent with a set of encodings. So, instead of
         // setting an arbitrary threshold, we have to scan all the encodings
         // consistent with the data.  
-        const int32_t kThresold = 10;
+        const int32_t kThreshold = 10;
         for (int i = 0; i < matchesCount; ++i) {
             int32_t confidence = ucsdet_getConfidence(matches[i], &status);
             if (U_FAILURE(status)) {
                 status = U_ZERO_ERROR;
                 continue;
             }
-            if (confidence < kThresold)
+            if (confidence < kThreshold)
                 break;
             const char* matchEncoding = ucsdet_getName(matches[i], &status);
             if (U_FAILURE(status)) {
