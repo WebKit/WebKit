@@ -861,11 +861,6 @@ void HTMLElement::setTranslate(bool enable)
     setAttribute(translateAttr, enable ? "yes" : "no");
 }
 
-Ref<HTMLCollection> HTMLElement::children()
-{
-    return ensureCachedHTMLCollection(NodeChildren);
-}
-
 bool HTMLElement::rendererIsNeeded(const RenderStyle& style)
 {
     if (hasTagName(noscriptTag)) {

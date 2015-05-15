@@ -42,8 +42,6 @@ class HTMLElement : public StyledElement {
 public:
     static Ref<HTMLElement> create(const QualifiedName& tagName, Document&);
 
-    Ref<HTMLCollection> children();
-
     WEBCORE_EXPORT virtual String title() const override final;
 
     virtual short tabIndex() const override;

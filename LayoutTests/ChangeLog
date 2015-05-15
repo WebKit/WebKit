@@ -1,3 +1,20 @@
+2015-05-15  Sam Weinig  <sam@webkit.org>
+
+        Move HTMLElement's children property to ParentNode
+        https://bugs.webkit.org/show_bug.cgi?id=145072
+
+        Reviewed by Chris Dumez.
+
+        * fast/dom/ParentNode-children-expected.txt: Added.
+        * fast/dom/ParentNode-children.html: Added.
+        Test children on Element, Document and DocumentFragment.
+
+        * fast/dom/xmlserializer-serialize-to-string-exception-expected.txt:
+        Update results since document.children is no longer undefined.
+
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+        Update results.
+
 2015-05-15  Zalan Bujtas  <zalan@apple.com>
 
         White edge on animating panel on http://rokkosunnyvale.com

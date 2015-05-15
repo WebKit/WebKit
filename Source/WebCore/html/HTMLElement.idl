@@ -48,7 +48,9 @@
     [RaisesException] void insertAdjacentText([Default=Undefined] optional DOMString where,
                             [Default=Undefined] optional DOMString text);
 
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     readonly attribute HTMLCollection children;
+#endif
 
              [TreatNullAs=NullString, SetterRaisesException] attribute DOMString contentEditable;
     readonly attribute boolean isContentEditable;

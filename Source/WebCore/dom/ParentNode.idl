@@ -28,6 +28,7 @@
 [
     NoInterfaceObject,
 ] interface ParentNode {
+    readonly attribute HTMLCollection children;
     readonly attribute Element firstElementChild;
     readonly attribute Element lastElementChild;
     readonly attribute unsigned long childElementCount;

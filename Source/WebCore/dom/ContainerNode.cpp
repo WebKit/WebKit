@@ -32,6 +32,9 @@
 #include "Editor.h"
 #include "FloatRect.h"
 #include "FrameView.h"
+#include "HTMLFormControlsCollection.h"
+#include "HTMLOptionsCollection.h"
+#include "HTMLTableRowsCollection.h"
 #include "InlineTextBox.h"
 #include "InsertionPoint.h"
 #include "JSLazyEventListener.h"
@@ -912,26 +915,46 @@ RefPtr<RadioNodeList> ContainerNode::radioNodeList(const AtomicString& name)
     return ensureRareData().ensureNodeLists().addCacheWithAtomicName<RadioNodeList>(*this, name);
 }
 
+Ref<HTMLCollection> ContainerNode::children()
+{
+    return ensureCachedHTMLCollection(NodeChildren);
+}
+
 Element* ContainerNode::firstElementChild() const
 {
-    ASSERT(is<Document>(*this) || is<DocumentFragment>(*this) || is<Element>(*this));
-
     return ElementTraversal::firstChild(*this);
 }
 
 Element* ContainerNode::lastElementChild() const
 {
-    ASSERT(is<Document>(*this) || is<DocumentFragment>(*this) || is<Element>(*this));
-
     return ElementTraversal::lastChild(*this);
 }
 
 unsigned ContainerNode::childElementCount() const
 {
-    ASSERT(is<Document>(*this) || is<DocumentFragment>(*this) || is<Element>(*this));
-
     auto children = childrenOfType<Element>(*this);
     return std::distance(children.begin(), children.end());
+}
+
+Ref<HTMLCollection> ContainerNode::ensureCachedHTMLCollection(CollectionType type)
+{
+    if (HTMLCollection* collection = cachedHTMLCollection(type))
+        return *collection;
+
+    if (type == TableRows)
+        return ensureRareData().ensureNodeLists().addCachedCollection<HTMLTableRowsCollection>(downcast<HTMLTableElement>(*this), type);
+    else if (type == SelectOptions)
+        return ensureRareData().ensureNodeLists().addCachedCollection<HTMLOptionsCollection>(downcast<HTMLSelectElement>(*this), type);
+    else if (type == FormControls) {
+        ASSERT(hasTagName(HTMLNames::formTag) || hasTagName(HTMLNames::fieldsetTag));
+        return ensureRareData().ensureNodeLists().addCachedCollection<HTMLFormControlsCollection>(*this, type);
+    }
+    return ensureRareData().ensureNodeLists().addCachedCollection<HTMLCollection>(*this, type);
+}
+
+HTMLCollection* ContainerNode::cachedHTMLCollection(CollectionType type)
+{
+    return hasRareData() && rareData()->nodeLists() ? rareData()->nodeLists()->cachedCollection<HTMLCollection>(type) : nullptr;
 }
 
 } // namespace WebCore

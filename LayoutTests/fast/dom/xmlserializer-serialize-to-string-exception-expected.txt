@@ -12,7 +12,7 @@ PASS
 Exception thrown = [TypeError: Type error]
 PASS
 
-4. Verifying XMLSerializer.serializeToString() should THROW exception with node value = undefined
+4. Verifying XMLSerializer.serializeToString() should THROW exception with node value = [object HTMLCollection]
 Exception thrown = [TypeError: Type error]
 PASS
 

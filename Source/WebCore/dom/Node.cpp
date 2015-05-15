@@ -432,15 +432,11 @@ Node* Node::firstDescendant() const
 
 Element* Node::previousElementSibling() const
 {
-    ASSERT(is<CharacterData>(*this) || is<Element>(*this));
-
     return ElementTraversal::previousSibling(*this);
 }
 
 Element* Node::nextElementSibling() const
 {
-    ASSERT(is<CharacterData>(*this) || is<Element>(*this));
-
     return ElementTraversal::nextSibling(*this);
 }
 

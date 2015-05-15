@@ -25,7 +25,6 @@
 #ifndef Element_h
 #define Element_h
 
-#include "CollectionType.h"
 #include "Document.h"
 #include "ElementData.h"
 #include "HTMLNames.h"
@@ -497,9 +496,6 @@ protected:
 
     void clearTabIndexExplicitlyIfNeeded();
     void setTabIndexExplicitly(short);
-
-    Ref<HTMLCollection> ensureCachedHTMLCollection(CollectionType);
-    HTMLCollection* cachedHTMLCollection(CollectionType);
 
     // classAttributeChanged() exists to share code between
     // parseAttribute (called via setAttribute()) and
