@@ -51,6 +51,7 @@ from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models import test_run_results
 from webkitpy.layout_tests.models.test_input import TestInput
+from webkitpy.layout_tests.models.test_run_results import INTERRUPTED_EXIT_STATUS
 from webkitpy.tool.grammar import pluralize
 
 _log = logging.getLogger(__name__)
@@ -194,7 +195,9 @@ class Manager(object):
                 int(self._options.child_processes), retrying=False)
 
             tests_to_retry = self._tests_to_retry(initial_results, include_crashes=self._port.should_retry_crashes())
-            if self._options.retry_failures and tests_to_retry and not initial_results.interrupted:
+            # Don't retry failures when interrupted by user or failures limit exception.
+            retry_failures = self._options.retry_failures and not (initial_results.interrupted or initial_results.keyboard_interrupted)
+            if retry_failures and tests_to_retry:
                 enabled_pixel_tests_in_retry = self._force_pixel_tests_if_needed()
 
                 _log.info('')
@@ -226,18 +229,21 @@ class Manager(object):
             results_including_passes = test_run_results.summarize_results(self._port, self._expectations, initial_results, retry_results, enabled_pixel_tests_in_retry, include_passes=True, include_time_and_modifiers=True)
         self._printer.print_results(end_time - start_time, initial_results, summarized_results)
 
+        exit_code = -1
         if not self._options.dry_run:
             self._port.print_leaks_summary()
             self._upload_json_files(summarized_results, initial_results, results_including_passes, start_time, end_time)
 
             results_path = self._filesystem.join(self._results_directory, "results.html")
             self._copy_results_html_file(results_path)
-            if self._options.show_results and (initial_results.unexpected_results_by_name or
-                                               (self._options.full_results_html and initial_results.total_failures)):
-                self._port.show_results_html_file(results_path)
-
-        return test_run_results.RunDetails(self._port.exit_code_from_summarized_results(summarized_results),
-                                           summarized_results, initial_results, retry_results, enabled_pixel_tests_in_retry)
+            if initial_results.keyboard_interrupted:
+                exit_code = INTERRUPTED_EXIT_STATUS
+            else:
+                if self._options.show_results and (initial_results.unexpected_results_by_name or
+                    (self._options.full_results_html and initial_results.total_failures)):
+                    self._port.show_results_html_file(results_path)
+                exit_code = self._port.exit_code_from_summarized_results(summarized_results)
+        return test_run_results.RunDetails(exit_code, summarized_results, initial_results, retry_results, enabled_pixel_tests_in_retry)
 
     def _run_tests(self, tests_to_run, tests_to_skip, repeat_each, iterations, num_workers, retrying):
         needs_http = any((self._is_http_test(test) and not self._is_web_platform_test(test)) for test in tests_to_run)

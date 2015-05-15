@@ -31,12 +31,12 @@
 import logging
 import optparse
 import os
-import signal
 import sys
 import traceback
 
 from webkitpy.common.host import Host
 from webkitpy.layout_tests.controllers.manager import Manager
+from webkitpy.layout_tests.models.test_run_results import INTERRUPTED_EXIT_STATUS
 from webkitpy.port import configuration_options, platform_options
 from webkitpy.layout_tests.views import buildbot_results
 from webkitpy.layout_tests.views import printing
@@ -44,9 +44,6 @@ from webkitpy.layout_tests.views import printing
 
 _log = logging.getLogger(__name__)
 
-
-# This mirrors what the shell normally does.
-INTERRUPTED_EXIT_STATUS = signal.SIGINT + 128
 
 # This is a randomly chosen exit code that can be tested against to
 # indicate that an unexpected exception occurred.
@@ -78,11 +75,12 @@ def main(argv, stdout, stderr):
 
     try:
         run_details = run(port, options, args, stderr)
-        if run_details.exit_code != -1:
+        if run_details.exit_code != -1 and not run_details.initial_results.keyboard_interrupted:
             bot_printer = buildbot_results.BuildBotPrinter(stdout, options.debug_rwt_logging)
             bot_printer.print_results(run_details)
 
         return run_details.exit_code
+    # We still need to handle KeyboardInterrupt, at least for webkitpy unittest cases.
     except KeyboardInterrupt:
         return INTERRUPTED_EXIT_STATUS
     except BaseException as e:

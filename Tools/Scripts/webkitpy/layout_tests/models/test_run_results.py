@@ -28,6 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
+import signal
 
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
@@ -35,6 +36,7 @@ from webkitpy.layout_tests.models import test_failures
 
 _log = logging.getLogger(__name__)
 
+INTERRUPTED_EXIT_STATUS = signal.SIGINT + 128
 
 class TestRunResults(object):
     def __init__(self, expectations, num_tests):
@@ -60,6 +62,7 @@ class TestRunResults(object):
             self.tests_by_timeline[timeline] = expectations.model().get_tests_with_timeline(timeline)
         self.slow_tests = set()
         self.interrupted = False
+        self.keyboard_interrupted = False
 
     def add(self, test_result, expected, test_is_slow):
         self.tests_by_expectation[test_result.type].add(test_result.test_name)

@@ -1,3 +1,27 @@
+2015-05-15  Ravi Phaneendra Kasibhatla  <r.kasibhatla@samsung.com>
+
+        User interruption while running of run-webkit-tests should also generate results.html
+        https://bugs.webkit.org/show_bug.cgi?id=122154
+
+        Reviewed by Csaba Osztrogonác.
+
+        Generation of results.html on execution of run-webkit-tests happens only
+        on completion of entire layout tests run. It should be created even when
+        the execution has been interrupted - either by user (by pressing Ctrl+C)
+        or because of other interruptions (like exit-after-n-failures option).
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner.run_tests):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.run):
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (TestRunResults.__init__):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (main):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.test_keyboard_interrupt):
+        (MainTest.test_exception_handling):
+
 2015-05-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         [buildbot] Fix the URL of the performance bots

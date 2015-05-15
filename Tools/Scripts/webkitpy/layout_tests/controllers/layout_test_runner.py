@@ -123,7 +123,7 @@ class LayoutTestRunner(object):
         except KeyboardInterrupt:
             self._printer.flush()
             self._printer.writeln('Interrupted, exiting ...')
-            raise
+            run_results.keyboard_interrupted = True
         except Exception, e:
             _log.debug('%s("%s") raised, exiting' % (e.__class__.__name__, str(e)))
             raise

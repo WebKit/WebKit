@@ -50,6 +50,7 @@ from webkitpy.common.host_mock import MockHost
 
 from webkitpy import port
 from webkitpy.layout_tests import run_webkit_tests
+from webkitpy.layout_tests.models.test_run_results import INTERRUPTED_EXIT_STATUS
 from webkitpy.port import Port
 from webkitpy.port import test
 from webkitpy.test.skip import skip_if
@@ -276,11 +277,12 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
     def test_keyboard_interrupt(self):
         # Note that this also tests running a test marked as SKIP if
         # you specify it explicitly.
-        self.assertRaises(KeyboardInterrupt, logging_run, ['failures/expected/keyboard.html', '--child-processes', '1'], tests_included=True)
+        details, _, _ = logging_run(['failures/expected/keyboard.html', '--child-processes', '1'], tests_included=True)
+        self.assertEqual(details.exit_code, INTERRUPTED_EXIT_STATUS)
 
         if self.should_test_processes:
-            self.assertRaises(KeyboardInterrupt, logging_run,
-                ['failures/expected/keyboard.html', 'passes/text.html', '--child-processes', '2', '--force'], tests_included=True, shared_port=False)
+            _, regular_output, _ = logging_run(['failures/expected/keyboard.html', 'passes/text.html', '--child-processes', '2', '--force'], tests_included=True, shared_port=False)
+            self.assertTrue(any(['Interrupted, exiting' in line for line in regular_output.buflist]))
 
     def test_no_tests_found(self):
         details, err, _ = logging_run(['resources'], tests_included=True)
@@ -940,7 +942,7 @@ class MainTest(unittest.TestCase):
         try:
             run_webkit_tests.run = interrupting_run
             res = run_webkit_tests.main([], stdout, stderr)
-            self.assertEqual(res, run_webkit_tests.INTERRUPTED_EXIT_STATUS)
+            self.assertEqual(res, INTERRUPTED_EXIT_STATUS)
 
             run_webkit_tests.run = successful_run
             res = run_webkit_tests.main(['--platform', 'test'], stdout, stderr)
