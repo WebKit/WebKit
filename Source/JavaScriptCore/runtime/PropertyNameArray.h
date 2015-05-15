@@ -28,9 +28,6 @@
 
 namespace JSC {
 
-class JSPropertyNameEnumerator;
-class Structure;
-
 // FIXME: Rename to PropertyNameArray.
 class PropertyNameArrayData : public RefCounted<PropertyNameArrayData> {
 public:
