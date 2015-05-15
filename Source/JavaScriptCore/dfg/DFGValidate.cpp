@@ -186,6 +186,7 @@ public:
             for (size_t i = 0; i < block->size(); ++i) {
                 Node* node = block->at(i);
                 
+                VALIDATE((node), node->origin.semantic.isSet() == node->origin.forExit.isSet());
                 VALIDATE((node), !mayExit(m_graph, node) || node->origin.forExit.isSet());
                 VALIDATE((node), !node->hasStructure() || !!node->structure());
                 VALIDATE((node), !node->hasCellOperand() || node->cellOperand()->value().isCell());
@@ -402,6 +403,7 @@ private:
                 Node* node = block->at(i);
                 ASSERT(nodesInThisBlock.contains(node));
                 VALIDATE((node), node->op() != Phi);
+                VALIDATE((node), node->origin.forExit.isSet());
                 for (unsigned j = 0; j < m_graph.numChildren(node); ++j) {
                     Edge edge = m_graph.child(node, j);
                     if (!edge)
