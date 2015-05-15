@@ -206,10 +206,9 @@ void NetworkResourceLoader::cleanup()
 
     NetworkProcess::singleton().networkResourceLoadScheduler().removeLoader(this);
 
-    if (m_handle) {
+    if (m_handle && !m_didConvertHandleToDownload)
         m_handle->setClient(nullptr);
-        m_handle = nullptr;
-    }
+    m_handle = nullptr;
 
     // This will cause NetworkResourceLoader to be destroyed and therefore we do it last.
     m_connection->didCleanupResourceLoader(*this);
