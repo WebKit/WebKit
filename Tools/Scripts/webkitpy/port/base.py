@@ -132,6 +132,7 @@ class Port(object):
         self._reftest_list = {}
         self._results_directory = None
         self._root_was_set = hasattr(options, 'root') and options.root
+        self._layout_tests_dir = hasattr(options, 'layout_tests_dir') and options.layout_tests_dir and self._filesystem.abspath(options.layout_tests_dir)
 
     def additional_drt_flag(self):
         return []
@@ -667,6 +668,8 @@ class Port(object):
         return self._webkit_finder.path_to_script(script_name)
 
     def layout_tests_dir(self):
+        if self._layout_tests_dir:
+            return self._layout_tests_dir
         return self._webkit_finder.layout_tests_dir()
 
     def perf_tests_dir(self):
@@ -1038,6 +1041,8 @@ class Port(object):
             repository_paths += [(self._options.additional_repository_name, self._options.additional_repository_path)]
         return repository_paths
 
+    def allowed_hosts(self):
+        return self.get_option("allowed_host", [])
 
     def default_configuration(self):
         return self._config.default_configuration()
