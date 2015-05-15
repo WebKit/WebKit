@@ -31,6 +31,7 @@
 #import "WebCoreNSStringExtras.h"
 #import "WebCoreNSURLExtras.h"
 #import "WebCoreSystemInterface.h"
+#import <functional>
 #import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
@@ -262,33 +263,189 @@ static BOOL allCharactersInIDNScriptWhiteList(const UChar *buffer, int32_t lengt
     return YES;
 }
 
+static bool isSecondLevelDomainNameAllowedByTLDRules(const UChar* buffer, int32_t length, const std::function<bool(UChar)>& characterIsAllowed)
+{
+    ASSERT(length > 0);
+
+    for (int32_t i = length - 1; i >= 0; --i) {
+        UChar ch = buffer[i];
+        
+        if (characterIsAllowed(ch))
+            continue;
+        
+        // Only check the second level domain. Lower level registrars may have different rules.
+        if (ch == '.')
+            break;
+        
+        return false;
+    }
+    return true;
+}
+
+#define CHECK_RULES_IF_SUFFIX_MATCHES(suffix, function) \
+    { \
+        static const int32_t suffixLength = sizeof(suffix) / sizeof(suffix[0]); \
+        if (length > suffixLength && 0 == memcmp(buffer + length - suffixLength, suffix, sizeof(suffix))) \
+            return isSecondLevelDomainNameAllowedByTLDRules(buffer, length - suffixLength, function); \
+    }
+
+static bool isRussianDomainNameCharacter(UChar ch)
+{
+    // Only modern Russian letters, digits and dashes are allowed.
+    return (ch >= 0x0430 && ch <= 0x044f) || ch == 0x0451 || (ch >= '0' && ch <= '9') || ch == '-';
+}
+
 static BOOL allCharactersAllowedByTLDRules(const UChar* buffer, int32_t length)
 {
     // Skip trailing dot for root domain.
     if (buffer[length - 1] == '.')
         length--;
-    
-    if (length > 3 && buffer[length - 3] == '.'
-        && buffer[length - 2] == 0x0440 // CYRILLIC SMALL LETTER ER
-        && buffer[length - 1] == 0x0444) // CYRILLIC SMALL LETTER EF
-    {
-        // Rules defined by <http://www.cctld.ru/ru/docs/rulesrf.php>. This code only checks requirements that matter for presentation purposes.
-        for (int32_t i = length - 4; i; --i) {
-            UChar ch = buffer[i];
-            
-            // Only modern Russian letters, digits and dashes are allowed.
-            if ((ch >= 0x0430 && ch <= 0x044f) || ch == 0x0451|| (ch >= '0' && ch <= '9') || ch == '-')
-                continue;
-            
-            // Only check top level domain. Lower level registrars may have different rules.
-            if (ch == '.')
-                break;
-            
-            return NO;
-        }
-        return YES;
-    }
-    
+
+    // http://cctld.ru/files/pdf/docs/rules_ru-rf.pdf
+    static const UChar cyrillicRF[] = {
+        '.',
+        0x0440, // CYRILLIC SMALL LETTER ER
+        0x0444  // CYRILLIC SMALL LETTER EF
+    };
+    CHECK_RULES_IF_SUFFIX_MATCHES(cyrillicRF, isRussianDomainNameCharacter);
+
+    // http://rusnames.ru/rules.pl
+    static const UChar cyrillicRUS[] = {
+        '.',
+        0x0440, // CYRILLIC SMALL LETTER ER
+        0x0443, // CYRILLIC SMALL LETTER U
+        0x0441  // CYRILLIC SMALL LETTER ES
+    };
+    CHECK_RULES_IF_SUFFIX_MATCHES(cyrillicRUS, isRussianDomainNameCharacter);
+
+    // http://ru.faitid.org/projects/moscow/documents/moskva/idn
+    static const UChar cyrillicMOSKVA[] = {
+        '.',
+        0x043C, // CYRILLIC SMALL LETTER EM
+        0x043E, // CYRILLIC SMALL LETTER O
+        0x0441, // CYRILLIC SMALL LETTER ES
+        0x043A, // CYRILLIC SMALL LETTER KA
+        0x0432, // CYRILLIC SMALL LETTER VE
+        0x0430  // CYRILLIC SMALL LETTER A
+    };
+    CHECK_RULES_IF_SUFFIX_MATCHES(cyrillicMOSKVA, isRussianDomainNameCharacter);
+
+    // http://www.dotdeti.ru/foruser/docs/regrules.php
+    static const UChar cyrillicDETI[] = {
+        '.',
+        0x0434, // CYRILLIC SMALL LETTER DE
+        0x0435, // CYRILLIC SMALL LETTER IE
+        0x0442, // CYRILLIC SMALL LETTER TE
+        0x0438  // CYRILLIC SMALL LETTER I
+    };
+    CHECK_RULES_IF_SUFFIX_MATCHES(cyrillicDETI, isRussianDomainNameCharacter);
+
+    // http://corenic.org - rules not published. The word is Russian, so only allowing Russian at this time,
+    // although we may need to revise the checks if this ends up being used with other languages spoken in Russia.
+    static const UChar cyrillicONLAYN[] = {
+        '.',
+        0x043E, // CYRILLIC SMALL LETTER O
+        0x043D, // CYRILLIC SMALL LETTER EN
+        0x043B, // CYRILLIC SMALL LETTER EL
+        0x0430, // CYRILLIC SMALL LETTER A
+        0x0439, // CYRILLIC SMALL LETTER SHORT I
+        0x043D  // CYRILLIC SMALL LETTER EN
+    };
+    CHECK_RULES_IF_SUFFIX_MATCHES(cyrillicONLAYN, isRussianDomainNameCharacter);
+
+    // http://corenic.org - same as above.
+    static const UChar cyrillicSAYT[] = {
+        '.',
+        0x0441, // CYRILLIC SMALL LETTER ES
+        0x0430, // CYRILLIC SMALL LETTER A
+        0x0439, // CYRILLIC SMALL LETTER SHORT I
+        0x0442  // CYRILLIC SMALL LETTER TE
+    };
+    CHECK_RULES_IF_SUFFIX_MATCHES(cyrillicSAYT, isRussianDomainNameCharacter);
+
+    // http://pir.org/products/opr-domain/ - rules not published. According to the registry site,
+    // the intended audience is "Russian and other Slavic-speaking markets".
+    // Chrome appears to only allow Russian, so sticking with that for now.
+    static const UChar cyrillicORG[] = {
+        '.',
+        0x043E, // CYRILLIC SMALL LETTER O
+        0x0440, // CYRILLIC SMALL LETTER ER
+        0x0433  // CYRILLIC SMALL LETTER GHE
+    };
+    CHECK_RULES_IF_SUFFIX_MATCHES(cyrillicORG, isRussianDomainNameCharacter);
+
+    // http://cctld.by/rules.html
+    static const UChar cyrillicBEL[] = {
+        '.',
+        0x0431, // CYRILLIC SMALL LETTER BE
+        0x0435, // CYRILLIC SMALL LETTER IE
+        0x043B  // CYRILLIC SMALL LETTER EL
+    };
+    CHECK_RULES_IF_SUFFIX_MATCHES(cyrillicBEL, [](UChar ch) {
+        // Russian and Byelorussian letters, digits and dashes are allowed.
+        return (ch >= 0x0430 && ch <= 0x044f) || ch == 0x0451 || ch == 0x0456 || ch == 0x045E || ch == 0x2019 || (ch >= '0' && ch <= '9') || ch == '-';
+    });
+
+    // http://www.nic.kz/docs/poryadok_vnedreniya_kaz_ru.pdf
+    static const UChar cyrillicKAZ[] = {
+        '.',
+        0x049B, // CYRILLIC SMALL LETTER KA WITH DESCENDER
+        0x0430, // CYRILLIC SMALL LETTER A
+        0x0437  // CYRILLIC SMALL LETTER ZE
+    };
+    CHECK_RULES_IF_SUFFIX_MATCHES(cyrillicKAZ, [](UChar ch) {
+        // Kazakh letters, digits and dashes are allowed.
+        return (ch >= 0x0430 && ch <= 0x044f) || ch == 0x0451 || ch == 0x04D9 || ch == 0x0493 || ch == 0x049B || ch == 0x04A3 || ch == 0x04E9 || ch == 0x04B1 || ch == 0x04AF || ch == 0x04BB || ch == 0x0456 || (ch >= '0' && ch <= '9') || ch == '-';
+    });
+
+    // http://uanic.net/docs/documents-ukr/Rules%20of%20UKR_v4.0.pdf
+    static const UChar cyrillicUKR[] = {
+        '.',
+        0x0443, // CYRILLIC SMALL LETTER U
+        0x043A, // CYRILLIC SMALL LETTER KA
+        0x0440  // CYRILLIC SMALL LETTER ER
+    };
+    CHECK_RULES_IF_SUFFIX_MATCHES(cyrillicUKR, [](UChar ch) {
+        // Russian and Ukrainian letters, digits and dashes are allowed.
+        return (ch >= 0x0430 && ch <= 0x044f) || ch == 0x0451 || ch == 0x0491 || ch == 0x0404 || ch == 0x0456 || ch == 0x0457 || (ch >= '0' && ch <= '9') || ch == '-';
+    });
+
+    // http://www.rnids.rs/data/DOKUMENTI/idn-srb-policy-termsofuse-v1.4-eng.pdf
+    static const UChar cyrillicSRB[] = {
+        '.',
+        0x0441, // CYRILLIC SMALL LETTER ES
+        0x0440, // CYRILLIC SMALL LETTER ER
+        0x0431  // CYRILLIC SMALL LETTER BE
+    };
+    CHECK_RULES_IF_SUFFIX_MATCHES(cyrillicSRB, [](UChar ch) {
+        // Serbian letters, digits and dashes are allowed.
+        return (ch >= 0x0430 && ch <= 0x0438) || (ch >= 0x043A && ch <= 0x0448) || ch == 0x0452 || ch == 0x0458 || ch == 0x0459 || ch == 0x045A || ch == 0x045B || ch == 0x045F || (ch >= '0' && ch <= '9') || ch == '-';
+    });
+
+    // http://marnet.mk/doc/pravilnik-mk-mkd.pdf
+    static const UChar cyrillicMKD[] = {
+        '.',
+        0x043C, // CYRILLIC SMALL LETTER EM
+        0x043A, // CYRILLIC SMALL LETTER KA
+        0x0434  // CYRILLIC SMALL LETTER DE
+    };
+    CHECK_RULES_IF_SUFFIX_MATCHES(cyrillicMKD, [](UChar ch) {
+        // Macedonian letters, digits and dashes are allowed.
+        return (ch >= 0x0430 && ch <= 0x0438) || (ch >= 0x043A && ch <= 0x0448) || ch == 0x0453 || ch == 0x0455 || ch == 0x0458 || ch == 0x0459 || ch == 0x045A || ch == 0x045C || ch == 0x045F || (ch >= '0' && ch <= '9') || ch == '-';
+    });
+
+    // https://www.mon.mn/cs/
+    static const UChar cyrillicMON[] = {
+        '.',
+        0x043C, // CYRILLIC SMALL LETTER EM
+        0x043E, // CYRILLIC SMALL LETTER O
+        0x043D  // CYRILLIC SMALL LETTER EN
+    };
+    CHECK_RULES_IF_SUFFIX_MATCHES(cyrillicMON, [](UChar ch) {
+        // Mongolian letters, digits and dashes are allowed.
+        return (ch >= 0x0430 && ch <= 0x044f) || ch == 0x0451 || ch == 0x04E9 || ch == 0x04AF || (ch >= '0' && ch <= '9') || ch == '-';
+    });
+
     // Not a known top level domain with special rules.
     return NO;
 }
