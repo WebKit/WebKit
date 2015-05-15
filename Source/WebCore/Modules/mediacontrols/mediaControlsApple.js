@@ -1537,17 +1537,10 @@ Controller.prototype = {
                 menuItem.track = track;
 
                 if (track.enabled) {
-                    var trackMenuItemSelected = true;
                     menuItem.classList.add(this.ClassNames.selected);
                     menuItem.setAttribute('tabindex', '0');
                     menuItem.setAttribute('aria-checked', 'true');
                 }
-            }
-
-            if (offMenu && displayMode === 'forced-only' && !trackMenuItemSelected) {
-                offMenu.classList.add(this.ClassNames.selected);
-                menuItem.setAttribute('tabindex', '0');
-                menuItem.setAttribute('aria-checked', 'true');
             }
         }
 

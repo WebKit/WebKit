@@ -1,3 +1,16 @@
+2015-05-15  Roger Fong  <roger_fong@apple.com>
+
+        Checkmark on OFF option of captions sometimes does not appear.
+        https://bugs.webkit.org/show_bug.cgi?id=145060.
+        <rdar://problem/19388333>
+
+        Reviewed by Eric Carlson.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.buildCaptionMenu):
+        Audio tracks don’t have an OFF option.
+        Remove related code to allow OFF option for subtitles to work properly.
+
 2015-05-15  Zalan Bujtas  <zalan@apple.com>
 
         White edge on animating panel on http://rokkosunnyvale.com
