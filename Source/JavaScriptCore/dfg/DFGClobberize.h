@@ -834,7 +834,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         
     case PutGlobalVar:
         write(AbstractHeap(Absolute, node->variablePointer()));
-        def(HeapLocation(GlobalVariableLoc, AbstractHeap(Absolute, node->variablePointer())), node->child1().node());
+        def(HeapLocation(GlobalVariableLoc, AbstractHeap(Absolute, node->variablePointer())), node->child2().node());
         return;
 
     case NewArray:

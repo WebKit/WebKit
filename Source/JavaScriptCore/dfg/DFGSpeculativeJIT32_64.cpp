@@ -3995,7 +3995,7 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case PutGlobalVar: {
-        JSValueOperand value(this, node->child1());
+        JSValueOperand value(this, node->child2());
 
         // FIXME: if we happen to have a spare register - and _ONLY_ if we happen to have
         // a spare register - a good optimization would be to put the register pointer into

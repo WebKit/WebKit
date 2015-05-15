@@ -4019,7 +4019,7 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case PutGlobalVar: {
-        JSValueOperand value(this, node->child1());
+        JSValueOperand value(this, node->child2());
 
         m_jit.store64(value.gpr(), node->variablePointer());
 

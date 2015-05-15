@@ -1122,11 +1122,9 @@ private:
             break;
         
         case PutGlobalVar: {
-            Node* globalObjectNode = m_insertionSet.insertNode(
-                m_indexInBlock, SpecNone, JSConstant, node->origin, 
-                OpInfo(m_graph.freeze(m_graph.globalObjectFor(node->origin.semantic))));
+            fixEdge<CellUse>(node->child1());
             insertStoreBarrier(
-                m_indexInBlock, Edge(globalObjectNode, KnownCellUse), node->child1());
+                m_indexInBlock, node->child1(), node->child2());
             break;
         }
 
