@@ -1,3 +1,29 @@
+2015-05-15  Per Arne Vollan  <peavo@outlook.com>
+
+        [Curl] WebSocket platform part is not implemented.
+        https://bugs.webkit.org/show_bug.cgi?id=144628
+
+        Reviewed by Darin Adler.
+
+        Add Curl platform code implementation for WebSockets.
+
+        * platform/network/curl/SocketStreamHandle.h:
+        (WebCore::SocketStreamHandle::create):
+        (WebCore::SocketStreamHandle::SocketData::SocketData):
+        * platform/network/curl/SocketStreamHandleCurl.cpp:
+        (WebCore::SocketStreamHandle::SocketStreamHandle):
+        (WebCore::SocketStreamHandle::~SocketStreamHandle):
+        (WebCore::SocketStreamHandle::platformSend):
+        (WebCore::SocketStreamHandle::platformClose):
+        (WebCore::SocketStreamHandle::readData):
+        (WebCore::SocketStreamHandle::sendData):
+        (WebCore::SocketStreamHandle::waitForAvailableData):
+        (WebCore::SocketStreamHandle::startThread):
+        (WebCore::SocketStreamHandle::stopThread):
+        (WebCore::SocketStreamHandle::didReceiveData):
+        (WebCore::SocketStreamHandle::didOpenSocket):
+        (WebCore::SocketStreamHandle::createCopy):
+
 2015-05-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r183861): [SOUP] Downloads are broken when using the Network Process

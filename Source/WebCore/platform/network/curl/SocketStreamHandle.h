@@ -34,37 +34,82 @@
 
 #include "SocketStreamHandleBase.h"
 
-#include <wtf/PassRefPtr.h>
+#if PLATFORM(WIN)
+#include <winsock2.h>
+#endif
+
+#include <curl/curl.h>
+
+#include <mutex>
+
+#include <wtf/Deque.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Threading.h>
 
 namespace WebCore {
 
-    class AuthenticationChallenge;
-    class Credential;
-    class SocketStreamHandleClient;
+class AuthenticationChallenge;
+class Credential;
+class SocketStreamHandleClient;
 
-    class SocketStreamHandle : public RefCounted<SocketStreamHandle>, public SocketStreamHandleBase {
-    public:
-        static PassRefPtr<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient* client) { return adoptRef(new SocketStreamHandle(url, client)); }
+class SocketStreamHandle : public ThreadSafeRefCounted<SocketStreamHandle>, public SocketStreamHandleBase {
+public:
+    static Ref<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient* client) { return adoptRef(*new SocketStreamHandle(url, client)); }
 
-        virtual ~SocketStreamHandle();
+    virtual ~SocketStreamHandle();
 
-    protected:
-        virtual int platformSend(const char* data, int length);
-        virtual void platformClose();
+private:
+    SocketStreamHandle(const URL&, SocketStreamHandleClient*);
 
-    private:
-        SocketStreamHandle(const URL&, SocketStreamHandleClient*);
+    int platformSend(const char* data, int length) override;
+    void platformClose() override;
 
-        // No authentication for streams per se, but proxy may ask for credentials.
-        void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
-        void receivedCredential(const AuthenticationChallenge&, const Credential&);
-        void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&);
-        void receivedCancellation(const AuthenticationChallenge&);
-        void receivedRequestToPerformDefaultHandling(const AuthenticationChallenge&);
-        void receivedChallengeRejection(const AuthenticationChallenge&);
+    bool readData(CURL*);
+    bool sendData(CURL*);
+    bool waitForAvailableData(CURL*, std::chrono::milliseconds selectTimeout);
+
+    void startThread();
+    void stopThread();
+
+    void didReceiveData();
+    void didOpenSocket();
+
+    static std::unique_ptr<char[]> createCopy(const char* data, int length);
+
+    // No authentication for streams per se, but proxy may ask for credentials.
+    void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
+    void receivedCredential(const AuthenticationChallenge&, const Credential&);
+    void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&);
+    void receivedCancellation(const AuthenticationChallenge&);
+    void receivedRequestToPerformDefaultHandling(const AuthenticationChallenge&);
+    void receivedChallengeRejection(const AuthenticationChallenge&);
+
+    struct SocketData {
+        SocketData(std::unique_ptr<char[]>&& source, int length)
+        {
+            data = WTF::move(source);
+            size = length;
+        }
+
+        SocketData(SocketData&& other)
+        {
+            data = WTF::move(other.data);
+            size = other.size;
+            other.size = 0;
+        }
+
+        std::unique_ptr<char[]> data;
+        int size { 0 };
     };
 
-}  // namespace WebCore
+    ThreadIdentifier m_workerThread { 0 };
+    std::atomic<bool> m_stopThread { false };
+    std::mutex m_mutexSend;
+    std::mutex m_mutexReceive;
+    Deque<SocketData> m_sendData;
+    Deque<SocketData> m_receiveData;
+};
 
-#endif  // SocketStreamHandle_h
+} // namespace WebCore
+
+#endif // SocketStreamHandle_h
