@@ -1,3 +1,37 @@
+2015-05-15  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][Cocoa] Back swipe tab snapshot takes a long time to be removed on bing.com
+        https://bugs.webkit.org/show_bug.cgi?id=145061
+        <rdar://problem/20939743>
+
+        Reviewed by Tim Horton.
+
+        When swiping back from a video search result to the list of video
+        search results on bing.com, the back swipe gesture tab snapshot takes
+        ~3 seconds to be removed, even though the page gets loaded almost
+        instantly from PageCache. The tab snapshot should be removed as soon as
+        the load is done.
+
+        The issue is that we only cleared the back swipe gesture tab snapshot
+        after PageClient::didFinishLoadForMainFrame() has been called. However,
+        PageClient::didFinishLoadForMainFrame() was only being called by
+        WebPageProxy if the main frame loaded *without* error. In case the main
+        frame loaded with an error, only WebPageProxy::didFailLoadForFrame() is
+        called, not WebPageProxy::didFinishLoadForFrame() and we would fail to
+        remove the gesture snapshot until the 3 seconds timeout.
+
+        This patch calls PageClient::didFinishLoadForMainFrame() from
+        WebPageProxy::didFailLoadForFrame() so we remove the snapshot in the
+        error case as well.
+
+        The reason didFailLoadForFrame() is being called on bing.com video
+        search results is because a "ping" load is aborted when the page is
+        entering PageCache. Aborting any kind of resource load sets a
+        "cancellation" error on the main document.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFailLoadForFrame):
+
 2015-05-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r183861): [SOUP] Downloads are broken when using the Network Process
