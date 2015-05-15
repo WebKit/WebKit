@@ -3415,19 +3415,19 @@ bool FrameLoaderClient::hasHTMLView() const
     return true;
 }
 
-PassRefPtr<Frame> createWindow(Frame& openerFrame, Frame* lookupFrame, const FrameLoadRequest& request, const WindowFeatures& features, bool& created)
+RefPtr<Frame> createWindow(Frame& openerFrame, Frame& lookupFrame, const FrameLoadRequest& request, const WindowFeatures& features, bool& created)
 {
     ASSERT(!features.dialog || request.frameName().isEmpty());
 
     created = false;
 
     if (!request.frameName().isEmpty() && request.frameName() != "_blank") {
-        if (RefPtr<Frame> frame = lookupFrame->loader().findFrameForNavigation(request.frameName(), openerFrame.document())) {
+        if (RefPtr<Frame> frame = lookupFrame.loader().findFrameForNavigation(request.frameName(), openerFrame.document())) {
             if (request.frameName() != "_self") {
                 if (Page* page = frame->page())
                     page->chrome().focus();
             }
-            return frame.release();
+            return WTF::move(frame);
         }
     }
 
@@ -3518,7 +3518,7 @@ PassRefPtr<Frame> createWindow(Frame& openerFrame, Frame* lookupFrame, const Fra
     page->chrome().show();
 
     created = true;
-    return frame.release();
+    return WTF::move(frame);
 }
 
 } // namespace WebCore

@@ -1,3 +1,25 @@
+2015-05-14  Chris Dumez  <cdumez@apple.com>
+
+        Have DOMWindow::createWindow() take references to frames
+        https://bugs.webkit.org/show_bug.cgi?id=145037
+
+        Reviewed by Gyuyoung Kim.
+
+        Have DOMWindow::createWindow() take references to frames instead of
+        pointers as they are expected to be non-null. Also return a RefPtr
+        instead of a PassRefPtr.
+
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::openInNewTab):
+        * loader/FrameLoader.cpp:
+        (WebCore::createWindow):
+        * loader/FrameLoader.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::createWindow):
+        (WebCore::DOMWindow::open):
+        (WebCore::DOMWindow::showModalDialog):
+        * page/DOMWindow.h:
+
 2015-05-14  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r183794): Garbage tiles when body background switches to fixed
