@@ -164,7 +164,9 @@ public:
     bool supportsFixedRootBackgroundCompositing() const;
     bool needsFixedRootBackgroundLayer(const RenderLayer&) const;
     GraphicsLayer* fixedRootBackgroundLayer() const;
-    
+
+    void rootOrBodyStyleChanged(RenderElement&, const RenderStyle* oldStyle);
+
     // Called after the view transparency, or the document or base background color change.
     void rootBackgroundTransparencyChanged();
     

@@ -3166,16 +3166,37 @@ bool RenderLayerCompositor::viewHasTransparentBackground(Color* backgroundColor)
     return documentBackgroundColor.hasAlpha();
 }
 
+// We can't rely on getting layerStyleChanged() for a style change that affects the root background, because the style change may
+// be on the body which has no RenderLayer.
+void RenderLayerCompositor::rootOrBodyStyleChanged(RenderElement& renderer, const RenderStyle* oldStyle)
+{
+    if (!inCompositingMode())
+        return;
+
+    Color oldBackgroundColor;
+    if (oldStyle)
+        oldBackgroundColor = oldStyle->visitedDependentColor(CSSPropertyBackgroundColor);
+
+    if (oldBackgroundColor != renderer.style().visitedDependentColor(CSSPropertyBackgroundColor))
+        rootBackgroundTransparencyChanged();
+
+    bool hadFixedBackground = oldStyle && oldStyle->hasEntirelyFixedBackground();
+    if (hadFixedBackground != renderer.hasEntirelyFixedBackground()) {
+        setCompositingLayersNeedRebuild();
+        scheduleCompositingLayerUpdate();
+    }
+}
+
 void RenderLayerCompositor::rootBackgroundTransparencyChanged()
 {
     if (!inCompositingMode())
         return;
 
     Color documentBackgroundColor = m_renderView.frameView().documentBackgroundColor();
-    if (m_lastDocumentBackgroundColor.isValid() && documentBackgroundColor.hasAlpha() == m_lastDocumentBackgroundColor.hasAlpha())
-        return;
-
+    Color lastDocumentBackgroundColor = m_lastDocumentBackgroundColor;
     m_lastDocumentBackgroundColor = documentBackgroundColor;
+    if (lastDocumentBackgroundColor.isValid() && lastDocumentBackgroundColor.hasAlpha() == documentBackgroundColor.hasAlpha())
+        return;
 
     // FIXME: We should do something less expensive than a full layer rebuild.
     setCompositingLayersNeedRebuild();
