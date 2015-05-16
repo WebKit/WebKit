@@ -1,0 +1,341 @@
+layer at (0,0) size 785x2139
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x2139
+  RenderBlock {HTML} at (0,0) size 785x2139
+    RenderBody {BODY} at (8,8) size 769x2123
+      RenderBlock (anonymous) at (0,0) size 769x144
+        RenderText {#text} at (0,0) size 769x72
+          text run at (0,0) width 746: "This test is designed to test the interaction between font-family and font-weight. In particular, our implementation of"
+          text run at (0,18) width 759: "font-family accepts PostScript names, which may name a font with a particular weight. However, there is another CSS"
+          text run at (0,36) width 769: "property, font-weight, in which the author may also name a particular weight. Our font selection algorithm takes both of"
+          text run at (0,54) width 305: "these signals into account when choosing fonts."
+        RenderBR {BR} at (304,54) size 1x18
+        RenderBR {BR} at (0,72) size 0x18
+        RenderText {#text} at (0,90) size 767x54
+          text run at (0,90) width 767: "There is currently no good way in JavaScript to find the actual font chosen for some text. Therefore, the best way to test"
+          text run at (0,108) width 732: "this aspect of the font selection algorithm is to dump the render tree, therefore testing glyph advances (which are a"
+          text run at (0,126) width 159: "property of font weight)."
+      RenderBlock {DIV} at (0,144) size 769x18
+        RenderText {#text} at (0,0) size 217x18
+          text run at (0,0) width 217: "Font: Helvetica Neue Weight: 100"
+      RenderBlock {DIV} at (0,162) size 769x18
+        RenderText {#text} at (0,0) size 231x18
+          text run at (0,0) width 231: "Font: Helvetica Neue Weight: 200"
+      RenderBlock {DIV} at (0,180) size 769x18
+        RenderText {#text} at (0,0) size 231x18
+          text run at (0,0) width 231: "Font: Helvetica Neue Weight: 300"
+      RenderBlock {DIV} at (0,198) size 769x18
+        RenderText {#text} at (0,0) size 239x18
+          text run at (0,0) width 239: "Font: Helvetica Neue Weight: 400"
+      RenderBlock {DIV} at (0,216) size 769x19
+        RenderText {#text} at (0,0) size 246x19
+          text run at (0,0) width 246: "Font: Helvetica Neue Weight: 500"
+      RenderBlock {DIV} at (0,235) size 769x19
+        RenderText {#text} at (0,0) size 251x19
+          text run at (0,0) width 251: "Font: Helvetica Neue Weight: 600"
+      RenderBlock {DIV} at (0,254) size 769x19
+        RenderText {#text} at (0,0) size 251x19
+          text run at (0,0) width 251: "Font: Helvetica Neue Weight: 700"
+      RenderBlock {DIV} at (0,273) size 769x19
+        RenderText {#text} at (0,0) size 251x19
+          text run at (0,0) width 251: "Font: Helvetica Neue Weight: 800"
+      RenderBlock {DIV} at (0,292) size 769x19
+        RenderText {#text} at (0,0) size 251x19
+          text run at (0,0) width 251: "Font: Helvetica Neue Weight: 900"
+      RenderBlock {DIV} at (0,311) size 769x18
+        RenderText {#text} at (0,0) size 275x18
+          text run at (0,0) width 275: "Font: HelveticaNeue-UltraLight Weight: 100"
+      RenderBlock {DIV} at (0,329) size 769x18
+        RenderText {#text} at (0,0) size 275x18
+          text run at (0,0) width 275: "Font: HelveticaNeue-UltraLight Weight: 200"
+      RenderBlock {DIV} at (0,347) size 769x18
+        RenderText {#text} at (0,0) size 275x18
+          text run at (0,0) width 275: "Font: HelveticaNeue-UltraLight Weight: 300"
+      RenderBlock {DIV} at (0,365) size 769x18
+        RenderText {#text} at (0,0) size 275x18
+          text run at (0,0) width 275: "Font: HelveticaNeue-UltraLight Weight: 400"
+      RenderBlock {DIV} at (0,383) size 769x18
+        RenderText {#text} at (0,0) size 275x18
+          text run at (0,0) width 275: "Font: HelveticaNeue-UltraLight Weight: 500"
+      RenderBlock {DIV} at (0,401) size 769x19
+        RenderText {#text} at (0,0) size 329x19
+          text run at (0,0) width 329: "Font: HelveticaNeue-UltraLight Weight: 600"
+      RenderBlock {DIV} at (0,420) size 769x19
+        RenderText {#text} at (0,0) size 329x19
+          text run at (0,0) width 329: "Font: HelveticaNeue-UltraLight Weight: 700"
+      RenderBlock {DIV} at (0,439) size 769x19
+        RenderText {#text} at (0,0) size 329x19
+          text run at (0,0) width 329: "Font: HelveticaNeue-UltraLight Weight: 800"
+      RenderBlock {DIV} at (0,458) size 769x19
+        RenderText {#text} at (0,0) size 329x19
+          text run at (0,0) width 329: "Font: HelveticaNeue-UltraLight Weight: 900"
+      RenderBlock {DIV} at (0,477) size 769x18
+        RenderText {#text} at (0,0) size 267x18
+          text run at (0,0) width 267: "Font: HelveticaNeue-Light Weight: 100"
+      RenderBlock {DIV} at (0,495) size 769x18
+        RenderText {#text} at (0,0) size 267x18
+          text run at (0,0) width 267: "Font: HelveticaNeue-Light Weight: 200"
+      RenderBlock {DIV} at (0,513) size 769x18
+        RenderText {#text} at (0,0) size 267x18
+          text run at (0,0) width 267: "Font: HelveticaNeue-Light Weight: 300"
+      RenderBlock {DIV} at (0,531) size 769x18
+        RenderText {#text} at (0,0) size 267x18
+          text run at (0,0) width 267: "Font: HelveticaNeue-Light Weight: 400"
+      RenderBlock {DIV} at (0,549) size 769x18
+        RenderText {#text} at (0,0) size 267x18
+          text run at (0,0) width 267: "Font: HelveticaNeue-Light Weight: 500"
+      RenderBlock {DIV} at (0,567) size 769x19
+        RenderText {#text} at (0,0) size 292x19
+          text run at (0,0) width 292: "Font: HelveticaNeue-Light Weight: 600"
+      RenderBlock {DIV} at (0,586) size 769x19
+        RenderText {#text} at (0,0) size 292x19
+          text run at (0,0) width 292: "Font: HelveticaNeue-Light Weight: 700"
+      RenderBlock {DIV} at (0,605) size 769x19
+        RenderText {#text} at (0,0) size 292x19
+          text run at (0,0) width 292: "Font: HelveticaNeue-Light Weight: 800"
+      RenderBlock {DIV} at (0,624) size 769x19
+        RenderText {#text} at (0,0) size 292x19
+          text run at (0,0) width 292: "Font: HelveticaNeue-Light Weight: 900"
+      RenderBlock {DIV} at (0,643) size 769x18
+        RenderText {#text} at (0,0) size 235x18
+          text run at (0,0) width 235: "Font: HelveticaNeue Weight: 100"
+      RenderBlock {DIV} at (0,661) size 769x18
+        RenderText {#text} at (0,0) size 235x18
+          text run at (0,0) width 235: "Font: HelveticaNeue Weight: 200"
+      RenderBlock {DIV} at (0,679) size 769x18
+        RenderText {#text} at (0,0) size 235x18
+          text run at (0,0) width 235: "Font: HelveticaNeue Weight: 300"
+      RenderBlock {DIV} at (0,697) size 769x18
+        RenderText {#text} at (0,0) size 235x18
+          text run at (0,0) width 235: "Font: HelveticaNeue Weight: 400"
+      RenderBlock {DIV} at (0,715) size 769x18
+        RenderText {#text} at (0,0) size 235x18
+          text run at (0,0) width 235: "Font: HelveticaNeue Weight: 500"
+      RenderBlock {DIV} at (0,733) size 769x19
+        RenderText {#text} at (0,0) size 247x19
+          text run at (0,0) width 247: "Font: HelveticaNeue Weight: 600"
+      RenderBlock {DIV} at (0,752) size 769x19
+        RenderText {#text} at (0,0) size 247x19
+          text run at (0,0) width 247: "Font: HelveticaNeue Weight: 700"
+      RenderBlock {DIV} at (0,771) size 769x19
+        RenderText {#text} at (0,0) size 247x19
+          text run at (0,0) width 247: "Font: HelveticaNeue Weight: 800"
+      RenderBlock {DIV} at (0,790) size 769x19
+        RenderText {#text} at (0,0) size 247x19
+          text run at (0,0) width 247: "Font: HelveticaNeue Weight: 900"
+      RenderBlock {DIV} at (0,809) size 769x19
+        RenderText {#text} at (0,0) size 308x19
+          text run at (0,0) width 308: "Font: HelveticaNeue-Medium Weight: 100"
+      RenderBlock {DIV} at (0,828) size 769x19
+        RenderText {#text} at (0,0) size 308x19
+          text run at (0,0) width 308: "Font: HelveticaNeue-Medium Weight: 200"
+      RenderBlock {DIV} at (0,847) size 769x19
+        RenderText {#text} at (0,0) size 308x19
+          text run at (0,0) width 308: "Font: HelveticaNeue-Medium Weight: 300"
+      RenderBlock {DIV} at (0,866) size 769x19
+        RenderText {#text} at (0,0) size 308x19
+          text run at (0,0) width 308: "Font: HelveticaNeue-Medium Weight: 400"
+      RenderBlock {DIV} at (0,885) size 769x19
+        RenderText {#text} at (0,0) size 308x19
+          text run at (0,0) width 308: "Font: HelveticaNeue-Medium Weight: 500"
+      RenderBlock {DIV} at (0,904) size 769x19
+        RenderText {#text} at (0,0) size 315x19
+          text run at (0,0) width 315: "Font: HelveticaNeue-Medium Weight: 600"
+      RenderBlock {DIV} at (0,923) size 769x19
+        RenderText {#text} at (0,0) size 315x19
+          text run at (0,0) width 315: "Font: HelveticaNeue-Medium Weight: 700"
+      RenderBlock {DIV} at (0,942) size 769x19
+        RenderText {#text} at (0,0) size 315x19
+          text run at (0,0) width 315: "Font: HelveticaNeue-Medium Weight: 800"
+      RenderBlock {DIV} at (0,961) size 769x19
+        RenderText {#text} at (0,0) size 315x19
+          text run at (0,0) width 315: "Font: HelveticaNeue-Medium Weight: 900"
+      RenderBlock {DIV} at (0,980) size 769x19
+        RenderText {#text} at (0,0) size 288x19
+          text run at (0,0) width 288: "Font: HelveticaNeue-Bold Weight: 100"
+      RenderBlock {DIV} at (0,999) size 769x19
+        RenderText {#text} at (0,0) size 288x19
+          text run at (0,0) width 288: "Font: HelveticaNeue-Bold Weight: 200"
+      RenderBlock {DIV} at (0,1018) size 769x19
+        RenderText {#text} at (0,0) size 288x19
+          text run at (0,0) width 288: "Font: HelveticaNeue-Bold Weight: 300"
+      RenderBlock {DIV} at (0,1037) size 769x19
+        RenderText {#text} at (0,0) size 288x19
+          text run at (0,0) width 288: "Font: HelveticaNeue-Bold Weight: 400"
+      RenderBlock {DIV} at (0,1056) size 769x19
+        RenderText {#text} at (0,0) size 288x19
+          text run at (0,0) width 288: "Font: HelveticaNeue-Bold Weight: 500"
+      RenderBlock {DIV} at (0,1075) size 769x19
+        RenderText {#text} at (0,0) size 288x19
+          text run at (0,0) width 288: "Font: HelveticaNeue-Bold Weight: 600"
+      RenderBlock {DIV} at (0,1094) size 769x19
+        RenderText {#text} at (0,0) size 288x19
+          text run at (0,0) width 288: "Font: HelveticaNeue-Bold Weight: 700"
+      RenderBlock {DIV} at (0,1113) size 769x19
+        RenderText {#text} at (0,0) size 288x19
+          text run at (0,0) width 288: "Font: HelveticaNeue-Bold Weight: 800"
+      RenderBlock {DIV} at (0,1132) size 769x19
+        RenderText {#text} at (0,0) size 288x19
+          text run at (0,0) width 288: "Font: HelveticaNeue-Bold Weight: 900"
+      RenderBlock {DIV} at (0,1151) size 769x18
+        RenderText {#text} at (0,0) size 164x18
+          text run at (0,0) width 164: "Font: Avenir Weight: 100"
+      RenderBlock {DIV} at (0,1169) size 769x18
+        RenderText {#text} at (0,0) size 164x18
+          text run at (0,0) width 164: "Font: Avenir Weight: 200"
+      RenderBlock {DIV} at (0,1187) size 769x18
+        RenderText {#text} at (0,0) size 164x18
+          text run at (0,0) width 164: "Font: Avenir Weight: 300"
+      RenderBlock {DIV} at (0,1205) size 769x18
+        RenderText {#text} at (0,0) size 164x18
+          text run at (0,0) width 164: "Font: Avenir Weight: 400"
+      RenderBlock {DIV} at (0,1223) size 769x18
+        RenderText {#text} at (0,0) size 164x18
+          text run at (0,0) width 164: "Font: Avenir Weight: 500"
+      RenderBlock {DIV} at (0,1241) size 769x18
+        RenderText {#text} at (0,0) size 174x18
+          text run at (0,0) width 174: "Font: Avenir Weight: 600"
+      RenderBlock {DIV} at (0,1259) size 769x18
+        RenderText {#text} at (0,0) size 174x18
+          text run at (0,0) width 174: "Font: Avenir Weight: 700"
+      RenderBlock {DIV} at (0,1277) size 769x18
+        RenderText {#text} at (0,0) size 174x18
+          text run at (0,0) width 174: "Font: Avenir Weight: 800"
+      RenderBlock {DIV} at (0,1295) size 769x18
+        RenderText {#text} at (0,0) size 174x18
+          text run at (0,0) width 174: "Font: Avenir Weight: 900"
+      RenderBlock {DIV} at (0,1313) size 769x18
+        RenderText {#text} at (0,0) size 203x18
+          text run at (0,0) width 203: "Font: Avenir-Light Weight: 100"
+      RenderBlock {DIV} at (0,1331) size 769x18
+        RenderText {#text} at (0,0) size 203x18
+          text run at (0,0) width 203: "Font: Avenir-Light Weight: 200"
+      RenderBlock {DIV} at (0,1349) size 769x18
+        RenderText {#text} at (0,0) size 203x18
+          text run at (0,0) width 203: "Font: Avenir-Light Weight: 300"
+      RenderBlock {DIV} at (0,1367) size 769x18
+        RenderText {#text} at (0,0) size 203x18
+          text run at (0,0) width 203: "Font: Avenir-Light Weight: 400"
+      RenderBlock {DIV} at (0,1385) size 769x18
+        RenderText {#text} at (0,0) size 203x18
+          text run at (0,0) width 203: "Font: Avenir-Light Weight: 500"
+      RenderBlock {DIV} at (0,1403) size 769x18
+        RenderText {#text} at (0,0) size 216x18
+          text run at (0,0) width 216: "Font: Avenir-Light Weight: 600"
+      RenderBlock {DIV} at (0,1421) size 769x18
+        RenderText {#text} at (0,0) size 216x18
+          text run at (0,0) width 216: "Font: Avenir-Light Weight: 700"
+      RenderBlock {DIV} at (0,1439) size 769x18
+        RenderText {#text} at (0,0) size 216x18
+          text run at (0,0) width 216: "Font: Avenir-Light Weight: 800"
+      RenderBlock {DIV} at (0,1457) size 769x18
+        RenderText {#text} at (0,0) size 216x18
+          text run at (0,0) width 216: "Font: Avenir-Light Weight: 900"
+      RenderBlock {DIV} at (0,1475) size 769x18
+        RenderText {#text} at (0,0) size 203x18
+          text run at (0,0) width 203: "Font: Avenir-Book Weight: 100"
+      RenderBlock {DIV} at (0,1493) size 769x18
+        RenderText {#text} at (0,0) size 203x18
+          text run at (0,0) width 203: "Font: Avenir-Book Weight: 200"
+      RenderBlock {DIV} at (0,1511) size 769x18
+        RenderText {#text} at (0,0) size 203x18
+          text run at (0,0) width 203: "Font: Avenir-Book Weight: 300"
+      RenderBlock {DIV} at (0,1529) size 769x18
+        RenderText {#text} at (0,0) size 203x18
+          text run at (0,0) width 203: "Font: Avenir-Book Weight: 400"
+      RenderBlock {DIV} at (0,1547) size 769x18
+        RenderText {#text} at (0,0) size 203x18
+          text run at (0,0) width 203: "Font: Avenir-Book Weight: 500"
+      RenderBlock {DIV} at (0,1565) size 769x18
+        RenderText {#text} at (0,0) size 214x18
+          text run at (0,0) width 214: "Font: Avenir-Book Weight: 600"
+      RenderBlock {DIV} at (0,1583) size 769x18
+        RenderText {#text} at (0,0) size 214x18
+          text run at (0,0) width 214: "Font: Avenir-Book Weight: 700"
+      RenderBlock {DIV} at (0,1601) size 769x18
+        RenderText {#text} at (0,0) size 214x18
+          text run at (0,0) width 214: "Font: Avenir-Book Weight: 800"
+      RenderBlock {DIV} at (0,1619) size 769x18
+        RenderText {#text} at (0,0) size 214x18
+          text run at (0,0) width 214: "Font: Avenir-Book Weight: 900"
+      RenderBlock {DIV} at (0,1637) size 769x18
+        RenderText {#text} at (0,0) size 223x18
+          text run at (0,0) width 223: "Font: Avenir-Medium Weight: 100"
+      RenderBlock {DIV} at (0,1655) size 769x18
+        RenderText {#text} at (0,0) size 223x18
+          text run at (0,0) width 223: "Font: Avenir-Medium Weight: 200"
+      RenderBlock {DIV} at (0,1673) size 769x18
+        RenderText {#text} at (0,0) size 223x18
+          text run at (0,0) width 223: "Font: Avenir-Medium Weight: 300"
+      RenderBlock {DIV} at (0,1691) size 769x18
+        RenderText {#text} at (0,0) size 223x18
+          text run at (0,0) width 223: "Font: Avenir-Medium Weight: 400"
+      RenderBlock {DIV} at (0,1709) size 769x18
+        RenderText {#text} at (0,0) size 223x18
+          text run at (0,0) width 223: "Font: Avenir-Medium Weight: 500"
+      RenderBlock {DIV} at (0,1727) size 769x18
+        RenderText {#text} at (0,0) size 236x18
+          text run at (0,0) width 236: "Font: Avenir-Medium Weight: 600"
+      RenderBlock {DIV} at (0,1745) size 769x18
+        RenderText {#text} at (0,0) size 236x18
+          text run at (0,0) width 236: "Font: Avenir-Medium Weight: 700"
+      RenderBlock {DIV} at (0,1763) size 769x18
+        RenderText {#text} at (0,0) size 236x18
+          text run at (0,0) width 236: "Font: Avenir-Medium Weight: 800"
+      RenderBlock {DIV} at (0,1781) size 769x18
+        RenderText {#text} at (0,0) size 236x18
+          text run at (0,0) width 236: "Font: Avenir-Medium Weight: 900"
+      RenderBlock {DIV} at (0,1799) size 769x18
+        RenderText {#text} at (0,0) size 206x18
+          text run at (0,0) width 206: "Font: Avenir-Black Weight: 100"
+      RenderBlock {DIV} at (0,1817) size 769x18
+        RenderText {#text} at (0,0) size 206x18
+          text run at (0,0) width 206: "Font: Avenir-Black Weight: 200"
+      RenderBlock {DIV} at (0,1835) size 769x18
+        RenderText {#text} at (0,0) size 206x18
+          text run at (0,0) width 206: "Font: Avenir-Black Weight: 300"
+      RenderBlock {DIV} at (0,1853) size 769x18
+        RenderText {#text} at (0,0) size 206x18
+          text run at (0,0) width 206: "Font: Avenir-Black Weight: 400"
+      RenderBlock {DIV} at (0,1871) size 769x18
+        RenderText {#text} at (0,0) size 206x18
+          text run at (0,0) width 206: "Font: Avenir-Black Weight: 500"
+      RenderBlock {DIV} at (0,1889) size 769x18
+        RenderText {#text} at (0,0) size 218x18
+          text run at (0,0) width 218: "Font: Avenir-Black Weight: 600"
+      RenderBlock {DIV} at (0,1907) size 769x18
+        RenderText {#text} at (0,0) size 218x18
+          text run at (0,0) width 218: "Font: Avenir-Black Weight: 700"
+      RenderBlock {DIV} at (0,1925) size 769x18
+        RenderText {#text} at (0,0) size 218x18
+          text run at (0,0) width 218: "Font: Avenir-Black Weight: 800"
+      RenderBlock {DIV} at (0,1943) size 769x18
+        RenderText {#text} at (0,0) size 218x18
+          text run at (0,0) width 218: "Font: Avenir-Black Weight: 900"
+      RenderBlock {DIV} at (0,1961) size 769x18
+        RenderText {#text} at (0,0) size 211x18
+          text run at (0,0) width 211: "Font: Avenir-Heavy Weight: 100"
+      RenderBlock {DIV} at (0,1979) size 769x18
+        RenderText {#text} at (0,0) size 211x18
+          text run at (0,0) width 211: "Font: Avenir-Heavy Weight: 200"
+      RenderBlock {DIV} at (0,1997) size 769x18
+        RenderText {#text} at (0,0) size 211x18
+          text run at (0,0) width 211: "Font: Avenir-Heavy Weight: 300"
+      RenderBlock {DIV} at (0,2015) size 769x18
+        RenderText {#text} at (0,0) size 211x18
+          text run at (0,0) width 211: "Font: Avenir-Heavy Weight: 400"
+      RenderBlock {DIV} at (0,2033) size 769x18
+        RenderText {#text} at (0,0) size 211x18
+          text run at (0,0) width 211: "Font: Avenir-Heavy Weight: 500"
+      RenderBlock {DIV} at (0,2051) size 769x18
+        RenderText {#text} at (0,0) size 222x18
+          text run at (0,0) width 222: "Font: Avenir-Heavy Weight: 600"
+      RenderBlock {DIV} at (0,2069) size 769x18
+        RenderText {#text} at (0,0) size 222x18
+          text run at (0,0) width 222: "Font: Avenir-Heavy Weight: 700"
+      RenderBlock {DIV} at (0,2087) size 769x18
+        RenderText {#text} at (0,0) size 222x18
+          text run at (0,0) width 222: "Font: Avenir-Heavy Weight: 800"
+      RenderBlock {DIV} at (0,2105) size 769x18
+        RenderText {#text} at (0,0) size 222x18
+          text run at (0,0) width 222: "Font: Avenir-Heavy Weight: 900"
