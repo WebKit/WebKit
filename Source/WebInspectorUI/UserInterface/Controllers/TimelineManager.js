@@ -34,6 +34,8 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
 
         this._isCapturing = false;
+        this._isCapturingPageReload = false;
+        this._autoCapturingMainResource = null;
         this._boundStopCapturing = this.stopCapturing.bind(this);
 
         this.reset();
@@ -68,6 +70,11 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
     isCapturing()
     {
         return this._isCapturing;
+    }
+
+    isCapturingPageReload()
+    {
+        return this._isCapturingPageReload;
     }
 
     startCapturing(shouldCreateRecording)
@@ -146,6 +153,7 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         }
 
         this._isCapturing = false;
+        this._isCapturingPageReload = false;
         this._autoCapturingMainResource = null;
 
         this.dispatchEventToListeners(WebInspector.TimelineManager.Event.CapturingStopped);
@@ -164,8 +172,12 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         }.bind(this));
     }
 
+    // Protected
+
     pageDidLoad(timestamp)
     {
+        // Called from WebInspector.PageObserver.
+
         if (isNaN(WebInspector.frameResourceManager.mainFrame.loadEventTimestamp))
             WebInspector.frameResourceManager.mainFrame.markLoadEvent(this.activeRecording.computeElapsedTime(timestamp));
     }
@@ -471,6 +483,9 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         var mainResource = event.target.provisionalMainResource || event.target.mainResource;
         if (mainResource === this._autoCapturingMainResource)
             return false;
+
+        var oldMainResource = event.target.mainResource || null;
+        this._isCapturingPageReload = oldMainResource !== null && oldMainResource.url === mainResource.url;
 
         if (this._isCapturing)
             this.stopCapturing();

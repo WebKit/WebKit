@@ -60,9 +60,10 @@ WebInspector.TimelineOverview = function(identifier, timelineRecording, minimumD
     this._scrollWidthSizer.className = WebInspector.TimelineOverview.ScrollWidthSizerStyleClassName;
     this._scrollContainerElement.appendChild(this._scrollWidthSizer);
 
-    this._durationPerPixelSetting = new WebInspector.Setting(identifier + "-timeline-overview-duration-per-pixel", defaultSettingsValues.durationPerPixel);
-    this._selectionStartValueSetting = new WebInspector.Setting(identifier + "-timeline-overview-selection-start-value", defaultSettingsValues.selectionStartValue);
-    this._selectionDurationSetting = new WebInspector.Setting(identifier + "-timeline-overview-selection-duration", defaultSettingsValues.selectionDuration);
+    this._defaultSettingsValues = defaultSettingsValues;
+    this._durationPerPixelSetting = new WebInspector.Setting(identifier + "-timeline-overview-duration-per-pixel", this._defaultSettingsValues.durationPerPixel);
+    this._selectionStartValueSetting = new WebInspector.Setting(identifier + "-timeline-overview-selection-start-value", this._defaultSettingsValues.selectionStartValue);
+    this._selectionDurationSetting = new WebInspector.Setting(identifier + "-timeline-overview-selection-duration", this._defaultSettingsValues.selectionDuration);
 
     this._startTime = 0;
     this._currentTime = 0;
@@ -79,6 +80,9 @@ WebInspector.TimelineOverview = function(identifier, timelineRecording, minimumD
 
     for (var timeline of this._recording.timelines.values())
         this._timelineAdded(timeline);
+
+    if (!WebInspector.timelineManager.isCapturingPageReload())
+        this._resetSelection();
 };
 
 WebInspector.TimelineOverview.StyleClassName = "timeline-overview";
@@ -245,6 +249,8 @@ WebInspector.TimelineOverview.prototype = {
     {
         for (var timelineOverviewGraph of this._timelineOverviewGraphsMap.values())
             timelineOverviewGraph.reset();
+
+        this._resetSelection();
     },
 
     addMarker: function(marker)
@@ -442,5 +448,12 @@ WebInspector.TimelineOverview.prototype = {
         this._selectionDurationSetting.value = this.selectionDuration;
 
         this.dispatchEventToListeners(WebInspector.TimelineOverview.Event.TimeRangeSelectionChanged);
-    }
+    },
+
+    _resetSelection: function()
+    {
+        this.secondsPerPixel = this._defaultSettingsValues.durationPerPixel;
+        this.selectionStartTime = this._defaultSettingsValues.selectionStartValue;
+        this.selectionDuration = this._defaultSettingsValues.selectionDuration;
+    },
 };

@@ -30,7 +30,7 @@ WebInspector.LinearTimelineOverview = function(timelineRecording)
     var defaultSettingsValues = {
         durationPerPixel: 0.01,
         selectionStartValue: 0,
-        selectionDuration: 5
+        selectionDuration: 15
     };
 
     WebInspector.TimelineOverview.call(this, "linear", timelineRecording, 0.0001, 60, defaultSettingsValues);
