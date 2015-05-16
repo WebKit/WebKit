@@ -2725,16 +2725,10 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 #if USE(IOSURFACE)
     // If we are parented and thus won't incur a significant penalty from paging in tiles, snapshot the view hierarchy directly.
     if (self.window) {
-        float deviceScaleFactor = _page->deviceScaleFactor();
-
-        CGRect imageRectInPoints;
-        imageRectInPoints.size.width = imageWidth / deviceScaleFactor;
-        imageRectInPoints.size.height = imageRectInPoints.size.width / rectInViewCoordinates.size.width * rectInViewCoordinates.size.height;
-        imageRectInPoints.origin.x = rectInViewCoordinates.origin.x / deviceScaleFactor;
-        imageRectInPoints.origin.y = rectInViewCoordinates.origin.y / deviceScaleFactor;
-
         auto surface = WebCore::IOSurface::create(WebCore::expandedIntSize(WebCore::FloatSize(imageSize)), WebCore::ColorSpaceDeviceRGB);
-        CATransform3D transform = CATransform3DMakeScale(deviceScaleFactor, deviceScaleFactor, 1);
+        CGFloat imageScaleInViewCoordinates = imageWidth / rectInViewCoordinates.size.width;
+        CATransform3D transform = CATransform3DMakeScale(imageScaleInViewCoordinates, imageScaleInViewCoordinates, 1);
+        transform = CATransform3DTranslate(transform, -rectInViewCoordinates.origin.x, -rectInViewCoordinates.origin.y, 0);
         CARenderServerRenderLayerWithTransform(MACH_PORT_NULL, self.layer.context.contextId, reinterpret_cast<uint64_t>(self.layer), surface->surface(), 0, 0, &transform);
         completionHandler(surface->createImage().get());
 
