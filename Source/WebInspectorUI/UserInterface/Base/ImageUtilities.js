@@ -28,7 +28,7 @@ const _imageStorageFormatVersion = 1;
 
 // Use as a default where an image version is not otherwise specified.
 // Bump the base version when making changes that affect the result image.
-const baseDefaultImageVersion = 6;
+const baseDefaultImageVersion = 7;
 const defaultImageVersion = baseDefaultImageVersion + 0.01 * WebInspector.Platform.version.base + 0.0001 * WebInspector.Platform.version.release;
 
 try {
