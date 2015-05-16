@@ -1,3 +1,43 @@
+2015-05-15  Antti Koivisto  <antti@apple.com>
+
+        When redirecting to data URL use HTTP response for same origin policy checks
+        https://bugs.webkit.org/show_bug.cgi?id=145054
+        rdar://problem/20299050
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test: http/tests/security/canvas-remote-read-data-url-image-redirect.html
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::notifyFinished):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::sanitizeScriptError):
+        * html/canvas/CanvasRenderingContext.cpp:
+        (WebCore::CanvasRenderingContext::wouldTaintOrigin):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::notifyFinished):
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResourceLoader::responseReceived):
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::notifyFinished):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::isOriginClean):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::passesAccessControlCheck):
+        (WebCore::CachedResource::passesSameOriginPolicyCheck):
+
+            Factor repeatedly used same origin policy test into a function.
+
+        (WebCore::CachedResource::redirectReceived):
+
+            When redirecting to a data URL save the redirect response.
+
+        (WebCore::CachedResource::responseForSameOriginPolicyChecks):
+
+            In case we got redirected to data use that response instead of the final data response for policy checks.
+
+        * loader/cache/CachedResource.h:
+
 2015-05-16  Jon Lee  <jonlee@apple.com>
 
         [iOS] wireless playback picker button is drawn incorrectly

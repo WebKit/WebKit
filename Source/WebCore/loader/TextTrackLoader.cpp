@@ -125,12 +125,8 @@ void TextTrackLoader::notifyFinished(CachedResource* resource)
     ASSERT(m_resource == resource);
 
     Document* document = downcast<Document>(m_scriptExecutionContext);
-    if (!m_crossOriginMode.isNull()
-        && !document->securityOrigin()->canRequest(resource->response().url())
-        && !resource->passesAccessControlCheck(document->securityOrigin())) {
-
+    if (!m_crossOriginMode.isNull() && !resource->passesSameOriginPolicyCheck(*document->securityOrigin()))
         corsPolicyPreventedLoad();
-    }
 
     if (m_state != Failed) {
         processNewCueData(resource);
