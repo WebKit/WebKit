@@ -23,7 +23,7 @@ _log = logging.getLogger(__name__)
 
 class BenchmarkRunner(object):
 
-    def __init__(self, planFile, localCopy, buildDir, outputFile, platform, browser):
+    def __init__(self, planFile, localCopy, countOverride, buildDir, outputFile, platform, browser):
         _log.info('Initializing benchmark running')
         try:
             planFile = self._findPlanFile(planFile)
@@ -32,6 +32,8 @@ class BenchmarkRunner(object):
                 self.plan = json.load(fp)
                 if localCopy:
                     self.plan['local_copy'] = localCopy
+                if countOverride:
+                    self.plan['count'] = countOverride
                 self.browserDriver = BrowserDriverFactory.create([platform, browser])
                 self.httpServerDriver = HTTPServerDriverFactory.create([self.plan['http_server_driver']])
                 self.buildDir = os.path.abspath(buildDir) if buildDir else None

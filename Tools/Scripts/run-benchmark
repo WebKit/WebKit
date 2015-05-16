@@ -27,6 +27,7 @@ def main():
     parser.add_argument('--browser', dest='browser', required=True, choices=BrowserDriverFactory.available_browsers())
     parser.add_argument('--debug', action='store_true')
     parser.add_argument('--local-copy', dest='localCopy', help='Path to a local copy of the benchmark. e.g. PerformanceTests/SunSpider/')
+    parser.add_argument('--count', dest='countOverride', type=int, help='Number of times to run the benchmark. e.g. 5')
     args = parser.parse_args()
 
     if args.debug:
@@ -35,7 +36,7 @@ def main():
     _log.debug('\toutput file name\t: %s' % args.output)
     _log.debug('\tbuild directory\t: %s' % args.buildDir)
     _log.debug('\tplan name\t: %s', args.plan)
-    runner = BenchmarkRunner(args.plan, args.localCopy, args.buildDir, args.output, args.platform, args.browser)
+    runner = BenchmarkRunner(args.plan, args.localCopy, args.countOverride, args.buildDir, args.output, args.platform, args.browser)
     return runner.execute()
 
 

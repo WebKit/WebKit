@@ -1,3 +1,17 @@
+2015-05-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run_benchmark should have an option to specify the number of runs
+        https://bugs.webkit.org/show_bug.cgi?id=145091
+
+        Reviewed by Stephanie Lewis.
+
+        Added --count option.
+
+        * Scripts/run-benchmark:
+        (main):
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (BenchmarkRunner.__init__):
+
 2015-05-15  Timothy Horton  <timothy_horton@apple.com>
 
         Temporarily disable failing API test.
