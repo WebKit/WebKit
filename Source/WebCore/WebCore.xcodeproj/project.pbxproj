@@ -9818,6 +9818,7 @@
 		7C6136F71710C35200FF4A57 /* InFilesCompiler.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; name = InFilesCompiler.pm; path = scripts/InFilesCompiler.pm; sourceTree = "<group>"; };
 		7C6136F81710C35200FF4A57 /* InFilesParser.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; name = InFilesParser.pm; path = scripts/InFilesParser.pm; sourceTree = "<group>"; };
 		7C6136F91710C35200FF4A57 /* StaticString.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; name = StaticString.pm; path = scripts/StaticString.pm; sourceTree = "<group>"; };
+		7C6752BA1B06E82000C279CB /* NonElementParentNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NonElementParentNode.idl; sourceTree = "<group>"; };
 		7C73FB05191EF416007DE061 /* UserMessageHandlersNamespace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserMessageHandlersNamespace.cpp; sourceTree = "<group>"; };
 		7C73FB06191EF417007DE061 /* UserMessageHandlersNamespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserMessageHandlersNamespace.h; sourceTree = "<group>"; };
 		7C73FB09191EF49F007DE061 /* UserMessageHandlersNamespace.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = UserMessageHandlersNamespace.idl; sourceTree = "<group>"; };
@@ -23171,6 +23172,7 @@
 				E43105BA16750F1600DB2FB8 /* NodeTraversal.h */,
 				9382AAB10D8C386100F357A6 /* NodeWithIndex.h */,
 				8369E58F1AFDD0300087DF68 /* NonDocumentTypeChildNode.idl */,
+				7C6752BA1B06E82000C279CB /* NonElementParentNode.idl */,
 				1A0D57340A5C77FE007EDD4C /* OverflowEvent.cpp */,
 				1A0D57350A5C77FE007EDD4C /* OverflowEvent.h */,
 				1A0D57380A5C7812007EDD4C /* OverflowEvent.idl */,

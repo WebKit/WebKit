@@ -24,6 +24,7 @@
 #include "DocumentFragment.h"
 
 #include "Document.h"
+#include "ElementDescendantIterator.h"
 #include "HTMLDocumentParser.h"
 #include "Page.h"
 #include "Settings.h"
@@ -89,6 +90,21 @@ void DocumentFragment::parseHTML(const String& source, Element* contextElement, 
 bool DocumentFragment::parseXML(const String& source, Element* contextElement, ParserContentPolicy parserContentPolicy)
 {
     return XMLDocumentParser::parseDocumentFragment(source, *this, contextElement, parserContentPolicy);
+}
+
+Element* DocumentFragment::getElementById(const AtomicString& id) const
+{
+    // Fast path for ShadowRoot, where we are both a DocumentFragment and a TreeScope.
+    if (isTreeScope())
+        return treeScope().getElementById(id);
+
+    // Otherwise, fall back to iterating all of the element descendants.
+    for (auto& element : elementDescendants(*this)) {
+        if (element.getIdAttribute() == id)
+            return const_cast<Element*>(&element);
+    }
+
+    return nullptr;
 }
 
 }

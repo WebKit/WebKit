@@ -411,6 +411,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/NodeFilter.idl
     dom/NodeIterator.idl
     dom/NodeList.idl
+    dom/NonElementParentNode.idl
     dom/NonDocumentTypeChildNode.idl
     dom/OverflowEvent.idl
     dom/PageTransitionEvent.idl

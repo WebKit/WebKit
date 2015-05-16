@@ -1,3 +1,13 @@
+2015-05-15  Sam Weinig  <sam@webkit.org>
+
+        Add getElementById to DocumentFragment
+        https://bugs.webkit.org/show_bug.cgi?id=145094
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/dom/DocumentFragment/getElementById-expected.txt: Added.
+        * fast/dom/DocumentFragment/getElementById.html: Added.
+
 2015-05-15  Antti Koivisto  <antti@apple.com>
 
         When redirecting to data URL use HTTP response for same origin policy checks

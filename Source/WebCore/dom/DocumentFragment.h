@@ -39,6 +39,9 @@ public:
     virtual bool canContainRangeEndPoint() const override final { return true; }
     virtual bool isTemplateContent() const { return false; }
 
+    // From the NonElementParentNode interface - https://dom.spec.whatwg.org/#interface-nonelementparentnode
+    Element* getElementById(const AtomicString&) const;
+
 protected:
     DocumentFragment(Document&, ConstructionType = CreateContainer);
     virtual String nodeName() const override final;

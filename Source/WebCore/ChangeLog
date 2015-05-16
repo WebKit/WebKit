@@ -1,3 +1,43 @@
+2015-05-15  Sam Weinig  <sam@webkit.org>
+
+        Add getElementById to DocumentFragment
+        https://bugs.webkit.org/show_bug.cgi?id=145094
+
+        Reviewed by Alexey Proskuryakov.
+
+        Match the latest DOM standard and other browsers by adding getElementById
+        to DocumentFragment in addition to Document and SVGSVGElement. Add NonElementParentNode
+        interface that the DOM standard defines.
+
+        Test: fast/dom/DocumentFragment/getElementById.html
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add NonElementParentNode.idl
+
+        * dom/Document.idl:
+        Mark Document as implementing NonElementParentNode and remove now redundant getElementById
+        declaration.
+
+        * dom/DocumentFragment.cpp:
+        (WebCore::DocumentFragment::getElementById):
+        * dom/DocumentFragment.h:
+        Add implementation of getElementById for DocumentFragments. Add a fast path for ShadowRoots
+        which can take advantage of the fact that they are TreeScopes to use the elements by id cache
+        in TreeScrope.
+
+        * dom/DocumentFragment.idl:
+        Mark DocumentFragment as implementing NonElementParentNode.
+
+        * dom/NonElementParentNode.idl: Copied from Source/WebCore/dom/NonDocumentTypeChildNode.idl.
+        Added.
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::getElementById):
+        * svg/SVGSVGElement.h:
+        * svg/SVGSVGElement.idl:
+        Convert to taking an AtomicString to match other getElementByIds.
+
 2015-05-15  Antti Koivisto  <antti@apple.com>
 
         When redirecting to data URL use HTTP response for same origin policy checks

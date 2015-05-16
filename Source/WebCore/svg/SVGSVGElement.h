@@ -97,7 +97,7 @@ public: // DOM
     static SVGTransform createSVGTransform();
     static SVGTransform createSVGTransformFromMatrix(const SVGMatrix&);
 
-    Element* getElementById(const String&);
+    Element* getElementById(const AtomicString&);
 
     SVGZoomAndPanType zoomAndPan() const;
     void setZoomAndPan(unsigned short);

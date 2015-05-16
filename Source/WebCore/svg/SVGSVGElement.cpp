@@ -670,7 +670,7 @@ void SVGSVGElement::documentDidResumeFromPageCache()
 
 // getElementById on SVGSVGElement is restricted to only the child subtree defined by the <svg> element.
 // See http://www.w3.org/TR/SVG11/struct.html#InterfaceSVGSVGElement
-Element* SVGSVGElement::getElementById(const String& id)
+Element* SVGSVGElement::getElementById(const AtomicString& id)
 {
     Element* element = treeScope().getElementById(id);
     if (element && element->isDescendantOf(this))

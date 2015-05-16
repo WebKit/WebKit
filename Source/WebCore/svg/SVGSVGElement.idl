@@ -67,7 +67,8 @@ interface SVGSVGElement : SVGGraphicsElement {
     SVGRect createSVGRect();
     SVGTransform createSVGTransform();
     SVGTransform createSVGTransformFromMatrix([Default=Undefined] optional SVGMatrix matrix);
-    Element getElementById([Default=Undefined] optional DOMString elementId);
+
+    Element getElementById([Default=Undefined, RequiresExistingAtomicString] optional DOMString elementId);
 };
 
 SVGSVGElement implements SVGExternalResourcesRequired;
