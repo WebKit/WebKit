@@ -740,20 +740,21 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             this._frameSelectionChartSection.collapsed = false;
         }
 
-        if (!selectedByUser)
-            return;
+        if (selectedByUser) {
+            if (this._viewMode === WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames) {
+                if (this._timelinesTreeOutline.selectedTreeElement)
+                    this._previousTimelineSelection = this._timelinesTreeOutline.selectedTreeElement.representedObject;
 
-        if (this._viewMode === WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames) {
-            if (this._timelinesTreeOutline.selectedTreeElement)
-                this._previousTimelineSelection = this._timelinesTreeOutline.selectedTreeElement.representedObject;
+                console.assert(this._displayedRecording);
+                this.showTimelineViewForTimeline(this._displayedRecording.timelines.get(WebInspector.TimelineRecord.Type.RenderingFrame));
+            } else if (this._previousTimelineSelection) {
+                this.showTimelineViewForTimeline(this._previousTimelineSelection);
+                this._previousTimelineSelection = null;
+            } else
+                this.showTimelineOverview();
+        }
 
-            console.assert(this._displayedRecording);
-            this.showTimelineViewForTimeline(this._displayedRecording.timelines.get(WebInspector.TimelineRecord.Type.RenderingFrame));
-        } else if (this._previousTimelineSelection) {
-            this.showTimelineViewForTimeline(this._previousTimelineSelection);
-            this._previousTimelineSelection = null;
-        } else
-            this.showTimelineOverview();
+        this.updateFilter();
     }
 
     _refreshFrameSelectionChart()
