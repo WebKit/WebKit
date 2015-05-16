@@ -1,3 +1,19 @@
+2015-05-16  Sungmann Cho  <sungmann.cho@navercorp.com>
+
+        Remove MessageType variant of addMessageToConsole() from ChromeClient.
+        https://bugs.webkit.org/show_bug.cgi?id=145095
+
+        Reviewed by Darin Adler.
+
+        All addMessageToConsole() in ChromeClient are exactly the same thing.
+        So there is no reason to keep all this methods.
+
+        No new tests, no behavior change.
+
+        * page/ChromeClient.h:
+        * page/PageConsoleClient.cpp:
+        (WebCore::PageConsoleClient::messageWithTypeAndLevel):
+
 2015-05-15  Sam Weinig  <sam@webkit.org>
 
         Add getElementById to DocumentFragment

@@ -169,7 +169,7 @@ void PageConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel l
         return;
 
     if (gotMessage)
-        m_page.chrome().client().addMessageToConsole(MessageSource::ConsoleAPI, type, level, messageText, lineNumber, columnNumber, url);
+        m_page.chrome().client().addMessageToConsole(MessageSource::ConsoleAPI, level, messageText, lineNumber, columnNumber, url);
 
     if (m_page.settings().logsPageMessagesToSystemConsoleEnabled() || PageConsoleClient::shouldPrintExceptions())
         ConsoleClient::printConsoleMessageWithArguments(MessageSource::ConsoleAPI, type, level, exec, WTF::move(arguments));
