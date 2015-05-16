@@ -1,3 +1,16 @@
+2015-05-16  Jon Lee  <jonlee@apple.com>
+
+        [iOS] wireless playback picker button is drawn incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=145057
+        rdar://problem/20877518
+
+        Reviewed by Jer Noble.
+
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.updateWirelessTargetPickerButton): This method is
+        defined in Controller, but is only meant to run on Macs. Override it with
+        an empty function for iOS.
+
 2015-05-15  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r183300): Background missing on top links on apple.com

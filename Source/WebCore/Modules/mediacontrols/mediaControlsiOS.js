@@ -511,6 +511,9 @@ ControllerIOS.prototype = {
         Controller.prototype.updateShouldListenForPlaybackTargetAvailabilityEvent.call(this);
     },
 
+    updateWirelessTargetPickerButton: function() {
+    },
+
     updateStatusDisplay: function(event)
     {
         this.controls.startPlaybackButton.classList.toggle(this.ClassNames.failed, this.video.error !== null);
