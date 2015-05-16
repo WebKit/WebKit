@@ -407,10 +407,23 @@ static void window_close(Browser_Window *window)
 }
 
 static void
+search_icon_show(Browser_Window *window)
+{
+    Evas_Object *icon = elm_icon_add(window->elm_window);
+    elm_icon_standard_set(icon, "edit-find");
+    elm_object_part_content_set(window->search.search_field, "icon", icon);
+    evas_object_size_hint_min_set(icon, 20, 20);
+    evas_object_size_hint_max_set(icon, 20, 20);
+    elm_entry_icon_visible_set(window->search.search_field, EINA_TRUE);
+    evas_object_show(icon);
+}
+
+static void
 search_box_show(Browser_Window *window)
 {
     evas_object_size_hint_min_set(window->search.search_bar, SEARCH_FIELD_SIZE + 2 * SEARCH_BUTTON_SIZE, SEARCH_BUTTON_SIZE);
 
+    search_icon_show(window);
     evas_object_show(window->search.search_bar);
     evas_object_show(window->search.search_field);
     evas_object_show(window->search.search_field_count);
