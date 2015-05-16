@@ -1,3 +1,31 @@
+2015-05-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Remote scrolling tree needs to coordinate scroll snap state during resize/rotations
+        https://bugs.webkit.org/show_bug.cgi?id=145059
+        <rdar://problem/20975978>
+
+        Reviewed by Simon Fraser.
+
+        The web view needs to update its scroll snap point offsets to take into account any
+        adjustments to the view size caused by content insets. We also need to update the
+        offstes after device rotation.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView scrollViewWillEndDragging:withVelocity:targetContentOffset:]): Retrieve the proper
+        computed content inset for the view and incorporate into any scroll snap point adjustments.
+        (-[WKWebView _updateVisibleContentRects]): If we have active scroll snap points, 
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::adjustTargetContentOffsetForSnapping): Update to account
+        for content inset.
+        (WebKit::RemoteScrollingCoordinatorProxy::shouldSnapForMainFrameScrolling): Also validate that the
+        active index is valid.
+        (WebKit::RemoteScrollingCoordinatorProxy::closestSnapOffsetForMainFrameScrolling): Update to track
+        current active snap offset index.
+        (WebKit::RemoteScrollingCoordinatorProxy::hasActiveSnapPoint): Added.
+        (WebKit::RemoteScrollingCoordinatorProxy::nearestActiveSnapPoint): Added. It calculates the proper
+        scroll position incorporating any snap point and content insets.
+
 2015-05-15  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Don't reset the preview recognizer in [WKContentViewInteraction cleanupInteraction]

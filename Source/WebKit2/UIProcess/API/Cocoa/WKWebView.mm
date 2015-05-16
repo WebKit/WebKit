@@ -1413,7 +1413,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (WebKit::RemoteScrollingCoordinatorProxy* coordinator = _page->scrollingCoordinatorProxy()) {
         // FIXME: Here, I'm finding the maximum horizontal/vertical scroll offsets. There's probably a better way to do this.
         CGSize maxScrollOffsets = CGSizeMake(scrollView.contentSize.width - scrollView.bounds.size.width, scrollView.contentSize.height - scrollView.bounds.size.height);
-        coordinator->adjustTargetContentOffsetForSnapping(maxScrollOffsets, velocity, targetContentOffset);
+        
+        CGRect fullViewRect = self.bounds;
+        CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, [self _computedContentInset]);
+        
+        coordinator->adjustTargetContentOffsetForSnapping(maxScrollOffsets, velocity, unobscuredRect.origin.y, targetContentOffset);
     }
 #endif
 }
@@ -1533,6 +1537,26 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (isStableState && [_scrollView respondsToSelector:@selector(_isInterruptingDeceleration)])
         isStableState = ![_scrollView performSelector:@selector(_isInterruptingDeceleration)];
 
+#if ENABLE(CSS_SCROLL_SNAP) && ENABLE(ASYNC_SCROLLING)
+    if (isStableState) {
+        WebKit::RemoteScrollingCoordinatorProxy* coordinator = _page->scrollingCoordinatorProxy();
+        if (coordinator && coordinator->hasActiveSnapPoint()) {
+            CGRect fullViewRect = self.bounds;
+            CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, [self _computedContentInset]);
+            
+            CGPoint currentPoint = [_scrollView contentOffset];
+            CGPoint activePoint = coordinator->nearestActiveContentInsetAdjustedSnapPoint(unobscuredRect.origin.y, currentPoint);
+
+            if (!CGPointEqualToPoint(activePoint, currentPoint)) {
+                RetainPtr<WKScrollView> strongScrollView = _scrollView;
+                dispatch_async(dispatch_get_main_queue(), [strongScrollView, activePoint] {
+                    [strongScrollView setContentOffset:activePoint animated:NO];
+                });
+            }
+        }
+    }
+#endif
+    
     [_contentView didUpdateVisibleRect:visibleRectInContentCoordinates
         unobscuredRect:unobscuredRectInContentCoordinates
         unobscuredRectInScrollViewCoordinates:unobscuredRect
