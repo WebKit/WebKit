@@ -1,5 +1,23 @@
 2015-05-16  Sungmann Cho  <sungmann.cho@navercorp.com>
 
+        Remove styleText() and applyStyleText() from InspectorStyle.
+        https://bugs.webkit.org/show_bug.cgi?id=145093
+
+        Reviewed by Darin Adler.
+
+        styleText() and applyStyleText() in InspectorStyle are private aliases for the public
+        accessors in the same class but are rarely used. I think it would be better off removing
+        these aliases and updating all the current call sites to use the public accessors directly
+        as noted in InspectorStyleSheet.h.
+
+        No new tests, no behavior change.
+
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::populateAllProperties):
+        * inspector/InspectorStyleSheet.h:
+
+2015-05-16  Sungmann Cho  <sungmann.cho@navercorp.com>
+
         Remove MessageType variant of addMessageToConsole() from ChromeClient.
         https://bugs.webkit.org/show_bug.cgi?id=145095
 

@@ -140,10 +140,6 @@ public:
 private:
     InspectorStyle(const InspectorCSSId& styleId, RefPtr<CSSStyleDeclaration>&&, InspectorStyleSheet* parentStyleSheet);
 
-    // FIXME: Remove these aliases and update all the current call sites to use the new public methods.
-    bool styleText(String* result) const { return getText(result); }
-    bool applyStyleText(const String& text) { ExceptionCode ec = 0; return setText(text, ec); }
-
     bool populateAllProperties(Vector<InspectorStyleProperty>* result) const;
     Ref<Inspector::Protocol::CSS::CSSStyle> styleWithProperties() const;
     RefPtr<CSSRuleSourceData> extractSourceData() const;
