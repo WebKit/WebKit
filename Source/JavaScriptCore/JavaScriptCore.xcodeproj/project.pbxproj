@@ -462,8 +462,6 @@
 		0F9D339B1803ADB70073C2BC /* FTLStackMaps.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9D33991803ADB70073C2BC /* FTLStackMaps.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F9D36941AE9CC33000D4DFB /* DFGCleanUpPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9D36921AE9CC33000D4DFB /* DFGCleanUpPhase.cpp */; };
 		0F9D36951AE9CC33000D4DFB /* DFGCleanUpPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9D36931AE9CC33000D4DFB /* DFGCleanUpPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F9E32631B05AB0400801ED5 /* DFGStoreBarrierInsertionPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9E32611B05AB0400801ED5 /* DFGStoreBarrierInsertionPhase.cpp */; };
-		0F9E32641B05AB0400801ED5 /* DFGStoreBarrierInsertionPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9E32621B05AB0400801ED5 /* DFGStoreBarrierInsertionPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F9FB4F417FCB91700CB67F8 /* DFGStackLayoutPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9FB4F217FCB91700CB67F8 /* DFGStackLayoutPhase.cpp */; };
 		0F9FB4F517FCB91700CB67F8 /* DFGStackLayoutPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9FB4F317FCB91700CB67F8 /* DFGStackLayoutPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F9FC8C314E1B5FE00D52AE0 /* PolymorphicPutByIdList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9FC8BF14E1B5FB00D52AE0 /* PolymorphicPutByIdList.cpp */; };
@@ -930,6 +928,8 @@
 		2AAD964A18569417001F93BE /* RecursiveAllocationScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AAD964918569417001F93BE /* RecursiveAllocationScope.h */; };
 		2AC922BB18A16182003CE0FB /* FTLDWARFDebugLineInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2AC922B918A16182003CE0FB /* FTLDWARFDebugLineInfo.cpp */; };
 		2AC922BC18A16182003CE0FB /* FTLDWARFDebugLineInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AC922BA18A16182003CE0FB /* FTLDWARFDebugLineInfo.h */; };
+		2ACCF3DE185FE26B0083E2AD /* DFGStoreBarrierElisionPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2ACCF3DC185FE26B0083E2AD /* DFGStoreBarrierElisionPhase.cpp */; };
+		2ACCF3DF185FE26B0083E2AD /* DFGStoreBarrierElisionPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 2ACCF3DD185FE26B0083E2AD /* DFGStoreBarrierElisionPhase.h */; };
 		2AD2EDFB19799E38004D6478 /* EnumerationMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AD2EDFA19799E38004D6478 /* EnumerationMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AD8932B17E3868F00668276 /* HeapIterationScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AD8932917E3868F00668276 /* HeapIterationScope.h */; };
 		2ADFA26318EF3540004F9FCC /* GCLogging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2ADFA26218EF3540004F9FCC /* GCLogging.cpp */; };
@@ -2201,8 +2201,6 @@
 		0F9D33991803ADB70073C2BC /* FTLStackMaps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLStackMaps.h; path = ftl/FTLStackMaps.h; sourceTree = "<group>"; };
 		0F9D36921AE9CC33000D4DFB /* DFGCleanUpPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGCleanUpPhase.cpp; path = dfg/DFGCleanUpPhase.cpp; sourceTree = "<group>"; };
 		0F9D36931AE9CC33000D4DFB /* DFGCleanUpPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCleanUpPhase.h; path = dfg/DFGCleanUpPhase.h; sourceTree = "<group>"; };
-		0F9E32611B05AB0400801ED5 /* DFGStoreBarrierInsertionPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGStoreBarrierInsertionPhase.cpp; path = dfg/DFGStoreBarrierInsertionPhase.cpp; sourceTree = "<group>"; };
-		0F9E32621B05AB0400801ED5 /* DFGStoreBarrierInsertionPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGStoreBarrierInsertionPhase.h; path = dfg/DFGStoreBarrierInsertionPhase.h; sourceTree = "<group>"; };
 		0F9FB4F217FCB91700CB67F8 /* DFGStackLayoutPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGStackLayoutPhase.cpp; path = dfg/DFGStackLayoutPhase.cpp; sourceTree = "<group>"; };
 		0F9FB4F317FCB91700CB67F8 /* DFGStackLayoutPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGStackLayoutPhase.h; path = dfg/DFGStackLayoutPhase.h; sourceTree = "<group>"; };
 		0F9FC8BF14E1B5FB00D52AE0 /* PolymorphicPutByIdList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PolymorphicPutByIdList.cpp; sourceTree = "<group>"; };
@@ -2639,6 +2637,8 @@
 		2AAD964918569417001F93BE /* RecursiveAllocationScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecursiveAllocationScope.h; sourceTree = "<group>"; };
 		2AC922B918A16182003CE0FB /* FTLDWARFDebugLineInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLDWARFDebugLineInfo.cpp; path = ftl/FTLDWARFDebugLineInfo.cpp; sourceTree = "<group>"; };
 		2AC922BA18A16182003CE0FB /* FTLDWARFDebugLineInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLDWARFDebugLineInfo.h; path = ftl/FTLDWARFDebugLineInfo.h; sourceTree = "<group>"; };
+		2ACCF3DC185FE26B0083E2AD /* DFGStoreBarrierElisionPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGStoreBarrierElisionPhase.cpp; path = dfg/DFGStoreBarrierElisionPhase.cpp; sourceTree = "<group>"; };
+		2ACCF3DD185FE26B0083E2AD /* DFGStoreBarrierElisionPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGStoreBarrierElisionPhase.h; path = dfg/DFGStoreBarrierElisionPhase.h; sourceTree = "<group>"; };
 		2AD2EDFA19799E38004D6478 /* EnumerationMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnumerationMode.h; sourceTree = "<group>"; };
 		2AD8932917E3868F00668276 /* HeapIterationScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapIterationScope.h; sourceTree = "<group>"; };
 		2ADFA26218EF3540004F9FCC /* GCLogging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCLogging.cpp; sourceTree = "<group>"; };
@@ -5089,8 +5089,8 @@
 				0F9FB4F317FCB91700CB67F8 /* DFGStackLayoutPhase.h */,
 				0F4F29DD18B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.cpp */,
 				0F4F29DE18B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.h */,
-				0F9E32611B05AB0400801ED5 /* DFGStoreBarrierInsertionPhase.cpp */,
-				0F9E32621B05AB0400801ED5 /* DFGStoreBarrierInsertionPhase.h */,
+				2ACCF3DC185FE26B0083E2AD /* DFGStoreBarrierElisionPhase.cpp */,
+				2ACCF3DD185FE26B0083E2AD /* DFGStoreBarrierElisionPhase.h */,
 				0FC20CB31852E2C600C9E954 /* DFGStrengthReductionPhase.cpp */,
 				0FC20CB41852E2C600C9E954 /* DFGStrengthReductionPhase.h */,
 				0F893BDA1936E23C001211F4 /* DFGStructureAbstractValue.cpp */,
@@ -5894,8 +5894,8 @@
 				A7D89D0017A0B8CC00773AD8 /* DFGSSAConversionPhase.h in Headers */,
 				0FC20CBA18556A3500C9E954 /* DFGSSALoweringPhase.h in Headers */,
 				0F9FB4F517FCB91700CB67F8 /* DFGStackLayoutPhase.h in Headers */,
-				0F9E32641B05AB0400801ED5 /* DFGStoreBarrierInsertionPhase.h in Headers */,
 				0F4F29E018B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.h in Headers */,
+				2ACCF3DF185FE26B0083E2AD /* DFGStoreBarrierElisionPhase.h in Headers */,
 				0FC20CB61852E2C600C9E954 /* DFGStrengthReductionPhase.h in Headers */,
 				0F63947815DCE34B006A597C /* DFGStructureAbstractValue.h in Headers */,
 				0F2FCCFF18A60070001A27F8 /* DFGThreadData.h in Headers */,
@@ -7181,6 +7181,7 @@
 				0F9FB4F417FCB91700CB67F8 /* DFGStackLayoutPhase.cpp in Sources */,
 				0F4F29DF18B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.cpp in Sources */,
 				0FE7211D193B9C590031F6ED /* DFGTransition.cpp in Sources */,
+				2ACCF3DE185FE26B0083E2AD /* DFGStoreBarrierElisionPhase.cpp in Sources */,
 				0FC20CB51852E2C600C9E954 /* DFGStrengthReductionPhase.cpp in Sources */,
 				0F2FCCFE18A60070001A27F8 /* DFGThreadData.cpp in Sources */,
 				0FC097A1146B28CA00CF2442 /* DFGThunks.cpp in Sources */,
@@ -7201,7 +7202,6 @@
 				0F2BDC5115228FFD00CD8910 /* DFGVariableEvent.cpp in Sources */,
 				0F2BDC4A1522809A00CD8910 /* DFGVariableEventStream.cpp in Sources */,
 				0FFFC95F14EF90BB00C72532 /* DFGVirtualRegisterAllocationPhase.cpp in Sources */,
-				0F9E32631B05AB0400801ED5 /* DFGStoreBarrierInsertionPhase.cpp in Sources */,
 				0FC97F4118202119002C9B26 /* DFGWatchpointCollectionPhase.cpp in Sources */,
 				0FDB2CE7174830A2007B3C1B /* DFGWorklist.cpp in Sources */,
 				0F9D3370165DBB90005AD387 /* Disassembler.cpp in Sources */,

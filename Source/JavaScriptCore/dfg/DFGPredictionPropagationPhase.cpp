@@ -562,11 +562,10 @@ private:
         case MaterializeCreateActivation:
         case PutStack:
         case KillStack:
-        case StoreBarrier:
         case GetStack: {
             // This node should never be visible at this stage of compilation. It is
             // inserted by fixup(), which follows this phase.
-            DFG_CRASH(m_graph, node, "Unexpected node during prediction propagation");
+            RELEASE_ASSERT_NOT_REACHED();
             break;
         }
         
@@ -618,6 +617,7 @@ private:
 
 #ifndef NDEBUG
         // These get ignored because they don't return anything.
+        case StoreBarrier:
         case PutByValDirect:
         case PutByVal:
         case PutClosureVar:

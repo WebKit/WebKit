@@ -60,7 +60,7 @@
 #include "DFGSSALoweringPhase.h"
 #include "DFGStackLayoutPhase.h"
 #include "DFGStaticExecutionCountEstimationPhase.h"
-#include "DFGStoreBarrierInsertionPhase.h"
+#include "DFGStoreBarrierElisionPhase.h"
 #include "DFGStrengthReductionPhase.h"
 #include "DFGStructureRegistrationPhase.h"
 #include "DFGTierUpCheckInjectionPhase.h"
@@ -315,7 +315,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
     
         performTierUpCheckInjection(dfg);
 
-        performFastStoreBarrierInsertion(dfg);
+        performStoreBarrierElision(dfg);
         performCleanUp(dfg);
         performCPSRethreading(dfg);
         performDCE(dfg);
@@ -387,9 +387,9 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         // about code motion assumes that it's OK to insert GC points in random places.
         dfg.m_fixpointState = FixpointConverged;
         
+        performStoreBarrierElision(dfg);
         performLivenessAnalysis(dfg);
         performCFA(dfg);
-        performGlobalStoreBarrierInsertion(dfg);
         if (Options::enableMovHintRemoval())
             performMovHintRemoval(dfg);
         performCleanUp(dfg);

@@ -613,7 +613,11 @@ private:
                 }
 
                 case StoreBarrier: {
-                    DFG_CRASH(m_graph, node, "Unexpected store barrier during sinking.");
+                    Node* target = node->child1().node();
+                    if (m_sinkCandidates.contains(target)) {
+                        ASSERT(target->isPhantomAllocation());
+                        node->remove();
+                    }
                     break;
                 }
                     
@@ -850,6 +854,7 @@ private:
 
         case MovHint:
         case PutHint:
+        case StoreBarrier:
             break;
 
         case PutStructure:

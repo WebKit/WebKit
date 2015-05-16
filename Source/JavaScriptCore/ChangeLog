@@ -1,3 +1,17 @@
+2015-05-16  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r184415.
+        https://bugs.webkit.org/show_bug.cgi?id=145096
+
+        Broke several tests (Requested by msaboff on #webkit).
+
+        Reverted changeset:
+
+        "Insert store barriers late so that IR transformations don't
+        have to worry about them"
+        https://bugs.webkit.org/show_bug.cgi?id=145015
+        http://trac.webkit.org/changeset/184415
+
 2015-05-14  Filip Pizlo  <fpizlo@apple.com>
 
         Insert store barriers late so that IR transformations don't have to worry about them

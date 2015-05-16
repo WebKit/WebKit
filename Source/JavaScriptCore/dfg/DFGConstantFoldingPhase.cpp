@@ -597,6 +597,7 @@ private:
             Node* allocatePropertyStorage = m_insertionSet.insertNode(
                 indexInBlock, SpecNone, AllocatePropertyStorage,
                 origin, OpInfo(transition), childEdge);
+            m_insertionSet.insertNode(indexInBlock, SpecNone, StoreBarrier, origin, Edge(node->child1().node(), KnownCellUse));
             propertyStorage = Edge(allocatePropertyStorage);
         } else {
             ASSERT(variant.oldStructureForTransition()->outOfLineCapacity());
@@ -608,6 +609,7 @@ private:
                 OpInfo(transition), childEdge,
                 Edge(m_insertionSet.insertNode(
                     indexInBlock, SpecNone, GetButterfly, origin, childEdge)));
+            m_insertionSet.insertNode(indexInBlock, SpecNone, StoreBarrier, origin, Edge(node->child1().node(), KnownCellUse));
             propertyStorage = Edge(reallocatePropertyStorage);
         }
 
