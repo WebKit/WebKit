@@ -1,3 +1,17 @@
+2015-05-15  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Don't reset the preview recognizer in [WKContentViewInteraction cleanupInteraction]
+        https://bugs.webkit.org/show_bug.cgi?id=145081
+
+        We shouldn't reset the recognizer in [WKContentViewInteraction cleanupInteraction] since we don't re-add it
+        back to WKContentView when the process relaunched. Since we already add/remove it when the view is move into/
+        removed from the window, we don't need reset it in cleanupInteraction.
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]):
+
 2015-05-15  James Savage  <james.savage@apple.com>
 
         REGRESSION (r181910): WKWebView incorrectly scales snapshot
