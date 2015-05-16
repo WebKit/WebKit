@@ -1,3 +1,19 @@
+2015-05-16  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (Subpixel): Dashed underline is missing when box is positioned at subpixels.
+        https://bugs.webkit.org/show_bug.cgi?id=145097
+        rdar://problem/18588415
+
+        Reviewed by Simon Fraser.
+
+        Dashed and dotted border painting needs clipping in order to properly display corners.
+        Similarly to solid border's quad calculation, we pixelsnap the border positions before computing the clipping quad values.
+
+        * fast/borders/dashed-border-on-subpixel-position-expected.html: Added.
+        * fast/borders/dashed-border-on-subpixel-position.html: Added.
+        * fast/borders/dotted-border-on-subpixel-position-expected.html: Added.
+        * fast/borders/dotted-border-on-subpixel-position.html: Added.
+
 2015-05-15  Sam Weinig  <sam@webkit.org>
 
         Add getElementById to DocumentFragment
