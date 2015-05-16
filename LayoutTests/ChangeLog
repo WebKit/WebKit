@@ -1,3 +1,18 @@
+2015-05-15  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r184421.
+        https://bugs.webkit.org/show_bug.cgi?id=145087
+
+        Introduced 42 layout test failures (Requested by rniwa on
+        #webkit).
+
+        Reverted changeset:
+
+        "REGRESSION (r183300): Background missing on top links on
+        apple.com"
+        https://bugs.webkit.org/show_bug.cgi?id=145079
+        http://trac.webkit.org/changeset/184421
+
 2015-05-15  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r183300): Background missing on top links on apple.com

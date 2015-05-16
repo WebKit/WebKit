@@ -1260,17 +1260,10 @@ void GraphicsLayerCA::setVisibleAndCoverageRects(const VisibleAndCoverageRects& 
     if (!visibleRectChanged && !coverageRectChanged)
         return;
 
-    // FIXME: we need to take reflections into account when determining whether this layer intersects the coverage rect.
-    bool intersectsCoverageRect = !allowBackingStoreDetachment || m_coverageRect.intersects(FloatRect(m_boundsOrigin, size()));
-    if (intersectsCoverageRect != m_intersectsCoverageRect) {
-        m_uncommittedChanges |= CoverageRectChanged;
-        m_intersectsCoverageRect = intersectsCoverageRect;
-    }
-
     if (visibleRectChanged) {
         m_uncommittedChanges |= CoverageRectChanged;
         m_visibleRect = rects.visibleRect;
-
+        
         if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer)) {
             // FIXME: this assumes that the mask layer has the same geometry as this layer (which is currently always true).
             maskLayer->m_uncommittedChanges |= CoverageRectChanged;
@@ -1281,6 +1274,9 @@ void GraphicsLayerCA::setVisibleAndCoverageRects(const VisibleAndCoverageRects& 
     if (coverageRectChanged) {
         m_uncommittedChanges |= CoverageRectChanged;
         m_coverageRect = rects.coverageRect;
+
+        // FIXME: we need to take reflections into account when determining whether this layer intersects the coverage rect.
+        m_intersectsCoverageRect = !allowBackingStoreDetachment || m_coverageRect.intersects(FloatRect(m_boundsOrigin, size()));
 
         if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer)) {
             maskLayer->m_uncommittedChanges |= CoverageRectChanged;
