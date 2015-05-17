@@ -1,3 +1,25 @@
+2015-05-17  Alexey Proskuryakov  <ap@apple.com>
+
+        Crash when uploading huge files to YouTube or Google Drive
+        https://bugs.webkit.org/show_bug.cgi?id=145083
+        rdar://problem/15468529
+
+        Reviewed by Darin Adler.
+
+        This fixes the crash, but uploading will fail.
+
+        * fileapi/FileReaderLoader.cpp:
+        (WebCore::FileReaderLoader::start): Tell SubresourceLoader to not store a copy of
+        all received data, FileReaderLoader has its own buffer.
+        (WebCore::FileReaderLoader::didReceiveResponse): Fixed a bounds check - not every
+        64-bit value that doesn't fit into 32 bits is negative. With this, FileReader fails
+        on huge files right away, as intended.
+        (WebCore::FileReaderLoader::didReceiveData): Fixed multiple bugs in code that's
+        executed when size is not available upfront. This is the code that used to crash,
+        but with the above fix, it's not executed by YouTube.
+        Not only overflow was handled incorrectly, but even simply growing a buffer for
+        append was buggy.
+
 2015-05-16  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (Subpixel): Dashed underline is missing when box is positioned at subpixels.

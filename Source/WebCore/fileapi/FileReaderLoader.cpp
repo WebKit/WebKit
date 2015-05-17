@@ -94,6 +94,7 @@ void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, Blo
     ThreadableLoaderOptions options;
     options.setSendLoadCallbacks(SendCallbacks);
     options.setSniffContent(DoNotSniffContent);
+    options.setDataBufferingPolicy(DoNotBufferData);
     options.preflightPolicy = ConsiderPreflight;
     options.setAllowCredentials(AllowStoredCredentials);
     options.crossOriginRequestPolicy = DenyCrossOriginRequests;
@@ -136,11 +137,10 @@ void FileReaderLoader::didReceiveResponse(unsigned long, const ResourceResponse&
         return;
     }
 
-    unsigned long long length = response.expectedContentLength();
+    long long length = response.expectedContentLength();
 
-    // A value larger than INT_MAX means that the content length wasn't
-    // specified, so the buffer will need to be dynamically grown.
-    if (length > INT_MAX) {
+    // A negative value means that the content length wasn't specified, so the buffer will need to be dynamically grown.
+    if (length < 0) {
         m_variableLength = true;
         if (m_hasRange)
             length = 1 + m_rangeEnd - m_rangeStart;
@@ -188,17 +188,26 @@ void FileReaderLoader::didReceiveData(const char* data, int dataLength)
             return;
         }
         if (m_variableLength) {
-            unsigned long long newLength = m_totalBytes * 2;
-            if (newLength > std::numeric_limits<unsigned>::max())
-                newLength = std::numeric_limits<unsigned>::max();
-            RefPtr<ArrayBuffer> newData =
-                ArrayBuffer::create(static_cast<unsigned>(newLength), 1);
+            unsigned newLength = m_totalBytes + static_cast<unsigned>(dataLength);
+            if (newLength < m_totalBytes) {
+                failed(FileError::NOT_READABLE_ERR);
+                return;
+            }
+            newLength = std::max(newLength, m_totalBytes + m_totalBytes / 4 + 1);
+            RefPtr<ArrayBuffer> newData = ArrayBuffer::create(newLength, 1);
+            if (!newData) {
+                // Not enough memory.
+                failed(FileError::NOT_READABLE_ERR);
+                return;
+            }
             memcpy(static_cast<char*>(newData->data()), static_cast<char*>(m_rawData->data()), m_bytesLoaded);
 
             m_rawData = newData;
             m_totalBytes = static_cast<unsigned>(newLength);
-        } else
+        } else {
+            // This can only happen if we get more data than indicated in expected content length (i.e. never, unless the networking layer is buggy).
             length = remainingBufferSpace;
+        }
     }
 
     if (length <= 0)
