@@ -110,6 +110,7 @@
 #include <WebCore/SerializedCryptoKeyWrap.h>
 #include <WebCore/TextCheckerClient.h>
 #include <WebCore/TextIndicator.h>
+#include <WebCore/URL.h>
 #include <WebCore/WindowFeatures.h>
 #include <stdio.h>
 #include <wtf/NeverDestroyed.h>
@@ -987,15 +988,18 @@ void WebPageProxy::loadWebArchiveData(API::Data* webArchiveData, API::Object* us
     m_process->responsivenessTimer()->start();
 }
 
-void WebPageProxy::navigateToURLWithSimulatedClick(const String& url, IntPoint documentPoint, IntPoint screenPoint)
+void WebPageProxy::navigateToPDFLinkWithSimulatedClick(const String& url, IntPoint documentPoint, IntPoint screenPoint)
 {
     if (m_isClosed)
+        return;
+
+    if (WebCore::protocolIsJavaScript(url))
         return;
 
     if (!isValid())
         reattachToWebProcess();
 
-    m_process->send(Messages::WebPage::NavigateToURLWithSimulatedClick(url, documentPoint, screenPoint), m_pageID);
+    m_process->send(Messages::WebPage::NavigateToPDFLinkWithSimulatedClick(url, documentPoint, screenPoint), m_pageID);
     m_process->responsivenessTimer()->start();
 }
 

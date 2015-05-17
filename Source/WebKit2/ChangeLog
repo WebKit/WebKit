@@ -1,3 +1,24 @@
+2015-05-16  Andy Estes  <aestes@apple.com>
+
+        [iOS] WKPDFView should not follow javascript: links
+        https://bugs.webkit.org/show_bug.cgi?id=145101
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::navigateToPDFLinkWithSimulatedClick): Returned early if url's protocol is javascript:.
+        (WebKit::WebPageProxy::navigateToURLWithSimulatedClick): Renamed to navigateToPDFLinkWithSimulatedClick to
+        reflect that this function is exclusively for following PDF links.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView annotation:wasTouchedAtPoint:controller:]):
+        (-[WKPDFView actionSheetAssistant:openElementAtLocation:]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::navigateToPDFLinkWithSimulatedClick): Renamed from navigateToURLWithSimulatedClick.
+        (WebKit::WebPage::navigateToURLWithSimulatedClick): Renamed to navigateToPDFLinkWithSimulatedClick.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2015-05-16  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Remote scrolling tree needs to coordinate scroll snap state during resize/rotations

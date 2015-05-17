@@ -1094,7 +1094,7 @@ void WebPage::loadWebArchiveData(const IPC::DataReference& webArchiveData, const
     loadDataImpl(0, sharedBuffer, ASCIILiteral("application/x-webarchive"), ASCIILiteral("utf-16"), blankURL(), URL(), userData);
 }
 
-void WebPage::navigateToURLWithSimulatedClick(const String& url, IntPoint documentPoint, IntPoint screenPoint)
+void WebPage::navigateToPDFLinkWithSimulatedClick(const String& url, IntPoint documentPoint, IntPoint screenPoint)
 {
     Frame* mainFrame = m_mainFrame->coreFrame();
     Document* mainFrameDocument = mainFrame->document();

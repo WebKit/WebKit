@@ -669,7 +669,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
     RetainPtr<WKWebView> retainedWebView = _webView;
 
     [self _highlightLinkAnnotation:linkAnnotation forDuration:.2 completionHandler:^{
-        retainedWebView->_page->navigateToURLWithSimulatedClick([url absoluteString], roundedIntPoint(documentPoint), roundedIntPoint(screenPoint));
+        retainedWebView->_page->navigateToPDFLinkWithSimulatedClick([url absoluteString], roundedIntPoint(documentPoint), roundedIntPoint(screenPoint));
     }];
 }
 
@@ -715,7 +715,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant openElementAtLocation:(CGPoint)location
 {
     CGPoint screenPoint = [self.window convertPoint:[self convertPoint:location toView:nil] toWindow:nil];
-    _webView->_page->navigateToURLWithSimulatedClick(_positionInformation.url, roundedIntPoint(location), roundedIntPoint(screenPoint));
+    _webView->_page->navigateToPDFLinkWithSimulatedClick(_positionInformation.url, roundedIntPoint(location), roundedIntPoint(screenPoint));
 }
 
 - (RetainPtr<NSArray>)actionSheetAssistant:(WKActionSheetAssistant *)assistant decideActionsForElement:(_WKActivatedElementInfo *)element defaultActions:(RetainPtr<NSArray>)defaultActions
