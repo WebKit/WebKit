@@ -42,7 +42,6 @@ DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, readableStreamCounter, ("Re
 
 ReadableStream::ReadableStream(ScriptExecutionContext& scriptExecutionContext, Ref<ReadableStreamSource>&& source)
     : ActiveDOMObject(&scriptExecutionContext)
-    , m_state(State::Readable)
     , m_source(WTF::move(source))
 {
 #ifndef NDEBUG
@@ -63,9 +62,10 @@ void ReadableStream::changeStateToClosed()
     if (m_state != State::Readable)
         return;
     m_state = State::Closed;
-    if (m_reader)
-        m_reader->changeStateToClosed();
-    ASSERT(!m_reader);
+    if (!m_reader)
+        return;
+    m_reader->changeStateToClosed();
+    m_releasedReaders.append(WTF::move(m_reader));
 }
 
 void ReadableStream::changeStateToErrored()
@@ -73,9 +73,31 @@ void ReadableStream::changeStateToErrored()
     if (m_state != State::Readable)
         return;
     m_state = State::Errored;
-    if (m_reader)
-        m_reader->changeStateToErrored();
+    if (!m_reader)
+        return;
+    m_reader->changeStateToErrored();
+    m_releasedReaders.append(WTF::move(m_reader));
+}
+
+ReadableStreamReader& ReadableStream::getReader()
+{
     ASSERT(!m_reader);
+
+    std::unique_ptr<ReadableStreamReader> newReader = std::make_unique<ReadableStreamReader>(*this);
+    ReadableStreamReader& reader = *newReader.get();
+
+    if (m_state == State::Readable) {
+        m_reader = WTF::move(newReader);
+        return reader;
+    }
+
+    if (m_state == State::Closed)
+        reader.changeStateToClosed();
+    else if (m_state == State::Errored)
+        reader.changeStateToErrored();
+    m_releasedReaders.append(WTF::move(newReader));
+
+    return reader;
 }
 
 void ReadableStream::start()

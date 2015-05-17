@@ -28,7 +28,6 @@
  */
 
 [
-    ActiveDOMObject,
     CustomConstructor(any properties),
     Conditional=STREAMS_API,
     SkipVTableValidation

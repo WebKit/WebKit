@@ -48,18 +48,6 @@ class ReadableStreamController;
 
 class ReadableJSStream: public ReadableStream {
 private:
-    class Reader: public ReadableStreamReader {
-    public:
-        static Ref<Reader> create(ReadableJSStream&);
-        void storeError(JSC::ExecState&, JSC::JSValue);
-        JSC::JSValue error() { return m_error.get(); }
-
-    private:
-        explicit Reader(ReadableJSStream&);
-
-        JSC::Strong<JSC::Unknown> m_error;
-    };
-
     class Source: public ReadableStreamSource {
     public:
         static Ref<Source> create(JSC::ExecState&);
@@ -75,7 +63,6 @@ private:
 
 public:
     static Ref<ReadableJSStream> create(JSC::ExecState&, ScriptExecutionContext&);
-    virtual Ref<ReadableStreamReader> createReader() override;
 
     ReadableJSStream::Source& jsSource();
     JSC::JSValue jsController(JSC::ExecState&, JSDOMGlobalObject*);

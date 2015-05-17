@@ -72,12 +72,11 @@ JSValue JSReadableStreamReader::closed(ExecState* exec) const
     JSPromiseDeferred* promiseDeferred = getOrCreatePromiseDeferredFromObject(exec, this, globalObject(), closedPromiseSlotName());
     DeferredWrapper wrapper(exec, globalObject(), promiseDeferred);
 
-    RefPtr<ReadableStreamReader> reader = &impl();
     auto successCallback = [wrapper]() mutable {
         wrapper.resolve(jsUndefined());
     };
-    auto failureCallback = [wrapper, reader]() mutable {
-        wrapper.reject(reader->error());
+    auto failureCallback = [wrapper](ReadableStream& stream) mutable {
+        wrapper.reject(stream.error());
     };
 
     impl().closed(WTF::move(successCallback), WTF::move(failureCallback));
@@ -109,7 +108,7 @@ EncodedJSValue JSC_HOST_CALL constructJSReadableStreamReader(ExecState* exec)
     if (stream->impl().isLocked())
         return throwVMError(exec, createTypeError(exec, ASCIILiteral("ReadableStreamReader constructor parameter is a locked ReadableStream")));
 
-    return JSValue::encode(toJS(exec, stream->globalObject(), stream->impl().createReader()));
+    return JSValue::encode(toJS(exec, stream->globalObject(), stream->impl().getReader()));
 }
 
 } // namespace WebCore

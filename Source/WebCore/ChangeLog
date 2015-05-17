@@ -1,3 +1,53 @@
+2015-05-17  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet <youenn.fablet@crf.canon.fr>
+
+        [Streams API] Delegate ReadableStreamReader reference counting to ReadableStream
+        https://bugs.webkit.org/show_bug.cgi?id=144907
+
+        Reviewed by Darin Adler.
+
+        Changed the link between readadable stream and reader.
+        Controller ref()/deref() now increments/decrements its stream ref counter, similarly to ReadableStreamController.
+        This ensures that even if JS scripts do not keep track of the readable stream,
+        the readable stream will not be disposed as long as the JS script has access to its reader.
+
+        All readers of a given stream are kept by the stream, either in an array (for released readers) 
+        or and in ReadableStream::m_reader for the active reader.
+        This removes the need for the code synchronizing stream and reader.
+
+        As a reader can now already count on its stream, the reader no longer needs to store the error in errored state.
+        Removal of ReadableJSStream::Reader as closed promise rejection error is directly retrieved from the ReadableStream.
+        Moved the creation of reader directly in ReadableStream.
+
+        Next step should be to remove ReadableStreamReader::m_state and to delegate the handling of ReadableStreamReader closed promise callbacks to ReadableStream.
+
+        No change in behavior.
+
+        * Modules/streams/ReadableStream.cpp:
+        (WebCore::ReadableStream::changeStateToClosed):
+        (WebCore::ReadableStream::changeStateToErrored):
+        (WebCore::ReadableStream::getReader):
+        * Modules/streams/ReadableStream.h:
+        (WebCore::ReadableStream::reader):
+        * Modules/streams/ReadableStreamReader.cpp:
+        (WebCore::ReadableStreamReader::clean):
+        (WebCore::ReadableStreamReader::ref):
+        (WebCore::ReadableStreamReader::deref):
+        (WebCore::ReadableStreamReader::closed):
+        (WebCore::ReadableStreamReader::changeStateToClosed):
+        (WebCore::ReadableStreamReader::changeStateToErrored):
+        * Modules/streams/ReadableStreamReader.h:
+        (WebCore::ReadableStreamReader::ReadableStreamReader):
+        * Modules/streams/ReadableStreamReader.idl:
+        * bindings/js/JSReadableStreamCustom.cpp:
+        (WebCore::JSReadableStream::getReader):
+        * bindings/js/JSReadableStreamReaderCustom.cpp:
+        (WebCore::JSReadableStreamReader::closed):
+        (WebCore::constructJSReadableStreamReader):
+        * bindings/js/ReadableJSStream.cpp:
+        (WebCore::ReadableJSStream::storeError):
+        (WebCore::ReadableJSStream::ReadableJSStream): Deleted.
+        * bindings/js/ReadableJSStream.h:
+
 2015-05-17  Alexey Proskuryakov  <ap@apple.com>
 
         Crash when uploading huge files to YouTube or Google Drive

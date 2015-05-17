@@ -38,6 +38,10 @@
 #include <functional>
 #include <wtf/Ref.h>
 
+namespace JSC {
+class JSValue;
+}
+
 namespace WebCore {
 
 class ReadableStreamReader;
@@ -57,13 +61,10 @@ public:
 
     virtual ~ReadableStream();
 
-    ReadableStreamReader* reader() { return m_reader; }
-    virtual Ref<ReadableStreamReader> createReader() = 0;
+    ReadableStreamReader& getReader();
+    bool isLocked() const { return !!m_reader; }
 
-    bool isLocked() const { return m_isLocked; }
-    void lock(ReadableStreamReader&);
-    void release();
-    void releaseButKeepLocked();
+    virtual JSC::JSValue error() = 0;
 
     State internalState() { return m_state; }
 
@@ -81,31 +82,12 @@ private:
     const char* activeDOMObjectName() const override;
     bool canSuspendForPageCache() const override;
 
-    State m_state;
+    std::unique_ptr<ReadableStreamReader> m_reader;
+    Vector<std::unique_ptr<ReadableStreamReader>> m_releasedReaders;
+
+    State m_state { State::Readable };
     Ref<ReadableStreamSource> m_source;
-    ReadableStreamReader* m_reader { nullptr };
-    bool m_isLocked { false };
 };
-
-inline void ReadableStream::lock(ReadableStreamReader& reader)
-{
-    m_reader = &reader;
-    m_isLocked = true;
-}
-
-inline void ReadableStream::release()
-{
-    m_reader = nullptr;
-    m_isLocked = false;
-}
-
-inline void ReadableStream::releaseButKeepLocked()
-{
-    m_reader = nullptr;
-    m_isLocked = true;
-}
-
-
 
 }
 

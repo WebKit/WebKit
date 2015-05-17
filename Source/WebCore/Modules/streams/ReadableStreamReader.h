@@ -36,16 +36,17 @@
 #include "ReadableStream.h"
 #include "ScriptWrappable.h"
 #include <functional>
-#include <runtime/JSCJSValue.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-// ReadableStreamReader implements the core of the streams API ReadableStreamReader functionality.
-// It handles in particular access to the chunks and state of a ReadableStream.
+// ReadableStreamReader implements access to ReadableStream from JavaScript.
+// It basically allows access to the ReadableStream iff the ReadableStreamReader instance is the active reader
+// of the ReadableStream.
+// Most of this handling is happening in the custom JS binding of ReadableStreamReader.
 // See https://streams.spec.whatwg.org/#reader-class for more information.
-class ReadableStreamReader : public ActiveDOMObject, public ScriptWrappable, public RefCounted<ReadableStreamReader> {
+class ReadableStreamReader {
 public:
     enum class State {
         Readable,
@@ -53,31 +54,23 @@ public:
         Errored
     };
 
-    void initialize();
-    virtual ~ReadableStreamReader();
-
-    ReadableStream* stream() { return m_stream.get(); }
+    ReadableStreamReader(ReadableStream& stream)
+        : m_stream(stream) { };
 
     typedef std::function<void()> ClosedSuccessCallback;
-    typedef std::function<void()> ClosedErrorCallback;
+    typedef std::function<void(ReadableStream&)> ClosedErrorCallback;
     void closed(ClosedSuccessCallback, ClosedErrorCallback);
 
     void changeStateToClosed();
     void changeStateToErrored();
 
-    virtual JSC::JSValue error() = 0;
-
-protected:
-    ReadableStreamReader(ReadableStream&);
+    void ref() { m_stream.ref(); }
+    void deref() { m_stream.deref(); }
 
 private:
-    // ActiveDOMObject API.
-    const char* activeDOMObjectName() const override;
-    bool canSuspendForPageCache() const override;
+    void clean();
 
-    void releaseStreamAndClean();
-
-    RefPtr<ReadableStream> m_stream;
+    ReadableStream& m_stream;
     State m_state { State::Readable };
 
     ClosedSuccessCallback m_closedSuccessCallback;
