@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2007-2009, 2011-2014 Apple Inc.  All rights reserved.
+# Copyright (C) 2007-2009, 2011-2015 Apple Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -11,9 +11,6 @@
 # 2.  Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in the
 #     documentation and/or other materials provided with the distribution. 
-# 3.  Neither the name of Apple Inc. ("Apple") nor the names of
-#     its contributors may be used to endorse or promote products derived
-#     from this software without specific prior written permission. 
 #
 # THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 # EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -49,6 +46,13 @@ use Time::HiRes qw(usleep);
 
 use lib $FindBin::Bin;
 use webkitdirs qw(safariPathFromSafariBundle);
+
+use constant {
+    PROMPT_RESPONSE_BROKEN => -1,
+    PROMPT_RESPONSE_NO => 0,
+    PROMPT_RESPONSE_RETRY => 2,
+    PROMPT_RESPONSE_YES => 1,
+};
 
 sub createTempFile($);
 sub downloadNightly($$$);
@@ -152,27 +156,31 @@ if ($sanityCheck) {
         printf "\nChecking starting revision r%s...\n",
             $nightlies[$startIndex]->{rev};
         downloadNightly($nightlies[$startIndex]->{file}, $nightlyFilesURLBase, $nightlyDownloadDirectory);
-        mountAndRunNightly($nightlies[$startIndex]->{file}, $nightlyDownloadDirectory, $safariPath, $tempFile);
-        $didReproduceBug = promptForTest($nightlies[$startIndex]->{rev});
-        $startIndex-- if $didReproduceBug < 0;
-    } while ($didReproduceBug < 0);
+        do {
+            mountAndRunNightly($nightlies[$startIndex]->{file}, $nightlyDownloadDirectory, $safariPath, $tempFile);
+            $didReproduceBug = promptForTest($nightlies[$startIndex]->{rev});
+        } while ($didReproduceBug == PROMPT_RESPONSE_RETRY);
+        $startIndex-- if $didReproduceBug == PROMPT_RESPONSE_BROKEN;
+    } while ($didReproduceBug == PROMPT_RESPONSE_BROKEN);
     die "ERROR: Bug reproduced in starting revision!  Do you need to test an earlier revision or for a progression?"
-        if $didReproduceBug && !$isProgression;
+        if $didReproduceBug == PROMPT_RESPONSE_YES && !$isProgression;
     die "ERROR: Bug not reproduced in starting revision!  Do you need to test an earlier revision or for a regression?"
-        if !$didReproduceBug && $isProgression;
+        if $didReproduceBug == PROMPT_RESPONSE_NO && $isProgression;
 
     do {
         printf "\nChecking ending revision r%s...\n",
             $nightlies[$endIndex]->{rev};
         downloadNightly($nightlies[$endIndex]->{file}, $nightlyFilesURLBase, $nightlyDownloadDirectory);
-        mountAndRunNightly($nightlies[$endIndex]->{file}, $nightlyDownloadDirectory, $safariPath, $tempFile);
-        $didReproduceBug = promptForTest($nightlies[$endIndex]->{rev});
-        $endIndex++ if $didReproduceBug < 0;
-    } while ($didReproduceBug < 0);
+        do {
+            mountAndRunNightly($nightlies[$endIndex]->{file}, $nightlyDownloadDirectory, $safariPath, $tempFile);
+            $didReproduceBug = promptForTest($nightlies[$endIndex]->{rev});
+        } while ($didReproduceBug == PROMPT_RESPONSE_RETRY);
+        $endIndex++ if $didReproduceBug == PROMPT_RESPONSE_BROKEN;
+    } while ($didReproduceBug == PROMPT_RESPONSE_BROKEN);
     die "ERROR: Bug NOT reproduced in ending revision!  Do you need to test a later revision or for a progression?"
-        if !$didReproduceBug && !$isProgression;
+        if $didReproduceBug == PROMPT_RESPONSE_NO && !$isProgression;
     die "ERROR: Bug reproduced in ending revision!  Do you need to test a later revision or for a regression?"
-        if $didReproduceBug && $isProgression;
+        if $didReproduceBug == PROMPT_RESPONSE_YES && $isProgression;
 }
 
 printStatus($nightlies[$startIndex]->{rev}, $nightlies[$endIndex]->{rev}, $isProgression);
@@ -188,10 +196,12 @@ while (abs($endIndex - $startIndex) > 1) {
             my $plural = $buildsLeft == 1 ? "" : "s";
             printf "\nChecking revision r%s (%d build%s left to test after this)...\n", $nightlies[$index]->{rev}, $buildsLeft, $plural;
             downloadNightly($nightlies[$index]->{file}, $nightlyFilesURLBase, $nightlyDownloadDirectory);
-            mountAndRunNightly($nightlies[$index]->{file}, $nightlyDownloadDirectory, $safariPath, $tempFile);
-            $didReproduceBug = promptForTest($nightlies[$index]->{rev});
+            do {
+                mountAndRunNightly($nightlies[$index]->{file}, $nightlyDownloadDirectory, $safariPath, $tempFile);
+                $didReproduceBug = promptForTest($nightlies[$index]->{rev});
+            } while ($didReproduceBug == PROMPT_RESPONSE_RETRY);
         }
-        if ($didReproduceBug < 0) {
+        if ($didReproduceBug == PROMPT_RESPONSE_BROKEN) {
             $brokenRevisions{$nightlies[$index]->{rev}} = $nightlies[$index]->{file};
             delete $nightlies[$index];
             $endIndex--;
@@ -203,9 +213,9 @@ while (abs($endIndex - $startIndex) > 1) {
                 $index = int(($index + $endIndex) / 2);
             }
         }
-    } while ($didReproduceBug < 0);
+    } while ($didReproduceBug == PROMPT_RESPONSE_BROKEN);
 
-    if ($didReproduceBug && !$isProgression || !$didReproduceBug && $isProgression) {
+    if ($didReproduceBug == PROMPT_RESPONSE_YES && !$isProgression || $didReproduceBug == PROMPT_RESPONSE_NO && $isProgression) {
         $endIndex = $index;
     } else {
         $startIndex = $index;
@@ -482,10 +492,11 @@ sub printTracLink($$)
 sub promptForTest($)
 {
     my ($revision) = @_;
-    print "Did the bug reproduce in r$revision (yes/no/broken)? ";
+    print "Did the bug reproduce in r$revision (yes/no/retry/broken)? ";
     my $answer = <STDIN>;
-    return 1 if $answer =~ /^(1|y.*)$/i;
-    return -1 if $answer =~ /^(-1|b.*)$/i; # Broken
-    return 0;
+    return PROMPT_RESPONSE_YES if $answer =~ /^(1|y.*)$/i;
+    return PROMPT_RESPONSE_RETRY if $answer =~ /^r.*/i;
+    return PROMPT_RESPONSE_BROKEN if $answer =~ /^(-1|b.*)$/i;
+    return PROMPT_RESPONSE_NO;
 }
 

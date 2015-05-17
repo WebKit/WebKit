@@ -1,3 +1,19 @@
+2015-05-17  David Kilzer  <ddkilzer@apple.com>
+
+        bisect-builds: Add 'retry' option when prompting whether the bug reproduced
+        <http://webkit.org/b/145100>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/bisect-builds:
+        - Add PROMPT_ANSWER_* constants for yes/no/retry/broken prompt.
+        - Switch to using PROMPT_RESPONSE_* constants when testing the
+          value of $didReproduceBug.
+        - Add do { } while loops to implement 'retry' mode.
+        (promptForTest):
+        - Switch to returning PROMPT_RESPONSE_* constants.
+        - Add support for 'retry' response.
+
 2015-05-16  Tanay C  <tanay.c@samsung.com>
 
         [EFL][WK2] Minibrowser : Add search icon to search bar
