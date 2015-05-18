@@ -281,13 +281,13 @@ sub generateFunctionLists($$$$$)
             $file = makeFilePathRelative($1) if $_ =~ diffHeaderFormat();
             if (defined $file) {
                 my ($before_start, $before_end) = extractLineRangeBeforeChange($_);
-                if ($before_start >= 0 && $before_end >= $before_start) {
+                if ($before_start >= 1 && $before_end >= 1) {
                     push @{$line_ranges_before_changed{$file}}, [ $before_start, $before_end ];
                 } elsif (/DO_NOT_COMMIT/) {
                     print STDERR "WARNING: file $file contains the string DO_NOT_COMMIT, line $.\n";
                 }
                 my ($after_start, $after_end) = extractLineRangeAfterChange($_);
-                if ($after_start >= 0 && $after_end >= 0 && $after_end >= $after_start) {
+                if ($after_start >= 1 && $after_end >= 1) {
                     push @{$line_ranges_after_changed{$file}}, [ $after_start, $after_end ];
                 } elsif (/DO_NOT_COMMIT/) {
                     print STDERR "WARNING: file $file contains the string DO_NOT_COMMIT, line $.\n";
@@ -299,7 +299,8 @@ sub generateFunctionLists($$$$$)
 
     # For each source file, convert line range to function list.
     print STDERR "  Extracting affected function names from source files.\n";
-    foreach my $file (keys %line_ranges_after_changed) {
+    my %filesToExamine = map { $_ => 1 } (keys(%line_ranges_before_changed), keys(%line_ranges_after_changed));
+    foreach my $file (keys %filesToExamine) {
         my %saw_function;
         # Find all the functions in the file.
         if ($line_ranges_after_changed{$file}) {
@@ -1772,7 +1773,7 @@ sub diffCommand($$$$)
     if (isSVN()) {
         my @escapedPaths = map(escapeSubversionPath($_), @$paths);
         my $escapedPathsString = "'" . join("' '", @escapedPaths) . "'";
-        $command = SVN . " diff --diff-cmd diff -x -N $escapedPathsString";
+        $command = SVN . " diff --diff-cmd diff -x -u $escapedPathsString";
     } elsif (isGit()) {
         my $pathsString = "'" . join("' '", @$paths) . "'"; 
         $command = GIT . " diff --no-ext-diff -U0 " . diffFromToString($gitCommit, $gitIndex, $mergeBase);
@@ -2100,35 +2101,23 @@ sub propertyChangeDescription($)
 sub extractLineRangeAfterChange($)
 {
     my ($string) = @_;
-
-    my ($start, $end) = (-1, -1);
-
-    if (isSVN() && $string =~ /^\d+(,\d+)?[acd](\d+)(,(\d+))?/) {
-        $start = $2;
-        $end = $4 || $2;
-    } elsif (isGit() && $string =~ /^@@ -\d+(,\d+)? \+(\d+)(,(\d+))? @@/) {
-        $start = $2;
-        $end = defined($4) ? max($start + $4 - 1, $start) : $start;
+    my $chunkRange = parseChunkRange($string);
+    if (!$chunkRange || !$chunkRange->{newStartingLine} || !$chunkRange->{newLineCount}) {
+         # Deletion; no lines exist after change.
+        return (-1, -1);
     }
-
-    return ($start, $end);
+    return ($chunkRange->{newStartingLine}, $chunkRange->{newStartingLine} + $chunkRange->{newLineCount} - 1);
 }
 
 sub extractLineRangeBeforeChange($)
 {
     my ($string) = @_;
-
-    my ($start, $end) = (-1, -1);
-
-    if (isSVN() && $string =~ /^(\d+)(,(\d+))?([acd])\d+(,\d+)?/) {
-        $start = $1;
-        $end = $3 || $1 if $4 ne "a";
-    } elsif (isGit() && $string =~ /^@@ -(\d+)(,(\d+))? \+\d+(,\d+)? @@/) {
-        $start = $1;
-        $end = defined($3) ? max($start + $3 - 1, $start) : $start;
+    my $chunkRange = parseChunkRange($string);
+    if (!$chunkRange || !$chunkRange->{startingLine} || !$chunkRange->{lineCount}) {
+        # Addition; no lines existed before change.
+        return (-1, -1);
     }
-
-    return ($start, $end);
+    return ($chunkRange->{startingLine}, $chunkRange->{startingLine} + $chunkRange->{lineCount} - 1);
 }
 
 sub testListForChangeLog(@)
