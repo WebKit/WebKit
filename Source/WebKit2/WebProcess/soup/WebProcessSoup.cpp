@@ -110,7 +110,7 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
     WebCore::memoryCache()->setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
     WebCore::pageCache()->setCapacity(pageCacheCapacity);
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && USE(ACCELERATED_COMPOSITING)
     WebCore::pageCache()->setShouldClearBackingStores(true);
 #endif
 
