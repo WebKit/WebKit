@@ -34,7 +34,7 @@
 #include "Timer.h"
 #include <wtf/RefCounted.h>
 
-typedef struct __DDHighlight DDHighlight, *DDHighlightRef;
+typedef struct __DDHighlight *DDHighlightRef;
 
 namespace WebCore {
 class LayoutRect;

@@ -43,7 +43,7 @@ namespace WebCore {
 
 RetainPtr<DDActionContext> DataDetection::detectItemAroundHitTestResult(const HitTestResult& hitTestResult, FloatRect& detectedDataBoundingBox, RefPtr<Range>& detectedDataRange)
 {
-    if (!DataDetectorsLibrary() || !DataDetectorsCoreLibrary())
+    if (!DataDetectorsLibrary())
         return nullptr;
 
     Node* node = hitTestResult.innerNonSharedNode();
