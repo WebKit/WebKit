@@ -225,9 +225,9 @@ static CGFloat toNSFontWeight(FontWeight fontWeight)
 
 static Optional<NSFont*> fontWithFamilySpecialCase(const AtomicString& family, FontWeight weight, float size)
 {
-    if (equalIgnoringASCIICase(family.string(), "-webkit-system-font")
-        || equalIgnoringASCIICase(family.string(), "-apple-system")
-        || equalIgnoringASCIICase(family.string(), "-apple-system-font")) {
+    if (equalIgnoringASCIICase(family, "-webkit-system-font")
+        || equalIgnoringASCIICase(family, "-apple-system")
+        || equalIgnoringASCIICase(family, "-apple-system-font")) {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
         return [NSFont systemFontOfSize:size weight:toNSFontWeight(weight)];
 #else
@@ -235,7 +235,7 @@ static Optional<NSFont*> fontWithFamilySpecialCase(const AtomicString& family, F
 #endif
     }
 
-    if (equalIgnoringASCIICase(family.string(), "-apple-system-monospaced-numbers")) {
+    if (equalIgnoringASCIICase(family, "-apple-system-monospaced-numbers")) {
         NSArray *featureArray = @[ @{ NSFontFeatureTypeIdentifierKey : @(kNumberSpacingType),
             NSFontFeatureSelectorIdentifierKey : @(kMonospacedNumbersSelector) } ];
 
@@ -244,10 +244,10 @@ static Optional<NSFont*> fontWithFamilySpecialCase(const AtomicString& family, F
         return [NSFont fontWithDescriptor:desc size:size];
     }
 
-    if (equalIgnoringASCIICase(family.string(), "-apple-menu"))
+    if (equalIgnoringASCIICase(family, "-apple-menu"))
         return [NSFont menuFontOfSize:size];
 
-    if (equalIgnoringASCIICase(family.string(), "-apple-status-bar"))
+    if (equalIgnoringASCIICase(family, "-apple-status-bar"))
         return [NSFont labelFontOfSize:size];
 
     return Optional<NSFont*>(Nullopt);

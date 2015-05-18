@@ -1,3 +1,15 @@
+2015-05-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Addressing post-review comments on r184353
+        https://bugs.webkit.org/show_bug.cgi?id=145146
+
+        Reviewed by Benjamin Poulain.
+
+        Create an overload for equalIgnoringASCIICase() for AtomicString and string literals.
+
+        * wtf/text/AtomicString.h:
+        (WTF::equalIgnoringASCIICase):
+
 2015-05-18  Skachkov Alexandr  <gskachkov@gmail.com>
 
         [ES6] Arrow function syntax. Feature flag for arrow function

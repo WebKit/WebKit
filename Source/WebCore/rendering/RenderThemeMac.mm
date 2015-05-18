@@ -350,18 +350,18 @@ void RenderThemeMac::updateCachedSystemFontDescription(CSSValueID cssValueId, Fo
     // System-font-ness can't be encapsulated by simply a font name. Instead, we must use a token
     // which FontCache will look for.
     // Make sure we keep this list of possible tokens in sync with FontCascade::primaryFontIsSystemFont()
-    String fontName(ASCIILiteral("-apple-system"));
+    AtomicString fontName;
     switch (cssValueId) {
         case CSSValueSmallCaption:
             font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize]];
             break;
         case CSSValueMenu:
             font = [NSFont menuFontOfSize:[NSFont systemFontSize]];
-            fontName = String(ASCIILiteral("-apple-menu"));
+            fontName = AtomicString("-apple-menu", AtomicString::ConstructFromLiteral);
             break;
         case CSSValueStatusBar:
             font = [NSFont labelFontOfSize:[NSFont labelFontSize]];
-            fontName = String(ASCIILiteral("-apple-status-bar"));
+            fontName = AtomicString("-apple-status-bar", AtomicString::ConstructFromLiteral);
             break;
         case CSSValueWebkitMiniControl:
             font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSMiniControlSize]];
@@ -378,6 +378,9 @@ void RenderThemeMac::updateCachedSystemFontDescription(CSSValueID cssValueId, Fo
 
     if (!font)
         return;
+
+    if (fontName.isNull())
+        fontName = AtomicString("-apple-system", AtomicString::ConstructFromLiteral);
 
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
     fontDescription.setIsAbsoluteSize(true);

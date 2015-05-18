@@ -290,6 +290,9 @@ inline bool equalIgnoringASCIICase(const AtomicString& a, const AtomicString& b)
 inline bool equalIgnoringASCIICase(const AtomicString& a, const String& b) { return equalIgnoringASCIICase(a.impl(), b.impl()); }
 inline bool equalIgnoringASCIICase(const String& a, const AtomicString& b) { return equalIgnoringASCIICase(a.impl(), b.impl()); }
 
+template <unsigned charactersCount>
+inline bool equalIgnoringASCIICase(const AtomicString& a, const char (&b)[charactersCount]) { return equalIgnoringASCIICase<charactersCount>(a.impl(), b); }
+
 // Define external global variables for the commonly used atomic strings.
 // These are only usable from the main thread.
 #ifndef ATOMICSTRING_HIDE_GLOBALS
