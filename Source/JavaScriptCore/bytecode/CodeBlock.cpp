@@ -2580,7 +2580,8 @@ void CodeBlock::finalizeUnconditionally()
                 break;
             }
             default:
-                RELEASE_ASSERT_NOT_REACHED();
+                OpcodeID opcodeID = interpreter->getOpcodeID(curInstruction[0].u.opcode);
+                ASSERT_WITH_MESSAGE_UNUSED(opcodeID, false, "Unhandled opcode in CodeBlock::finalizeUnconditionally, %s(%d) at bc %u", opcodeNames[opcodeID], opcodeID, propertyAccessInstructions[i]);
             }
         }
 
