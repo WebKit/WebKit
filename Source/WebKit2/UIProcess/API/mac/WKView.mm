@@ -280,6 +280,8 @@ struct WKViewInterpretKeyEventsParameters {
 
     CGFloat _overrideDeviceScaleFactor;
 
+    BOOL _didRegisterForLookupPopoverCloseNotifications;
+
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     BOOL _automaticallyAdjustsContentInsets;
     RetainPtr<WKActionMenuController> _actionMenuController;
@@ -2888,6 +2890,17 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     _data->_page->viewStateDidChange(ViewState::IsVisible);
 }
 
+- (void)_prepareForDictionaryLookup
+{
+    if (_data->_didRegisterForLookupPopoverCloseNotifications)
+        return;
+
+    _data->_didRegisterForLookupPopoverCloseNotifications = YES;
+
+    if (canLoadLUNotificationPopoverWillClose())
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_dictionaryLookupPopoverWillClose:) name:getLUNotificationPopoverWillClose() object:nil];
+}
+
 - (void)_dictionaryLookupPopoverWillClose:(NSNotification *)notification
 {
     [self _clearTextIndicatorWithAnimation:TextIndicatorDismissalAnimation::None];
@@ -3831,9 +3844,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
     NSNotificationCenter* workspaceNotificationCenter = [[NSWorkspace sharedWorkspace] notificationCenter];
     [workspaceNotificationCenter addObserver:self selector:@selector(_activeSpaceDidChange:) name:NSWorkspaceActiveSpaceDidChangeNotification object:nil];
-
-    if (canLoadLUNotificationPopoverWillClose())
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_dictionaryLookupPopoverWillClose:) name:getLUNotificationPopoverWillClose() object:nil];
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if ([self respondsToSelector:@selector(_setActionMenu:)]) {

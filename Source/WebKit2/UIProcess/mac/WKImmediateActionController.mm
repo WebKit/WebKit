@@ -467,6 +467,8 @@ using namespace WebKit;
     if (!dictionaryPopupInfo.attributedString.string)
         return nil;
 
+    [_wkView _prepareForDictionaryLookup];
+
     // Convert baseline to screen coordinates.
     NSPoint textBaselineOrigin = dictionaryPopupInfo.origin;
     textBaselineOrigin = [_wkView convertPoint:textBaselineOrigin toView:nil];
