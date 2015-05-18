@@ -40,6 +40,8 @@ PASS X = class { static set 6(x) { } static get 6() { return 26 } }; X[6] is 26
 PASS (new X)[6] is undefined
 PASS setterValue = 0; X = class { static set 7(x) { setterValue = x } static get 7() { } }; X[7] = 27; setterValue is 27
 PASS (new X)[7] = 28; setterValue is 27
+PASS function x() { return class { 'foo bar'() { return 29; } } }; (new (x()))['foo bar']() is 29
+PASS function x() { return class { 30() { return 30; } } }; (new (x()))[30]() is 30
 PASS successfullyParsed is true
 
 TEST COMPLETE
