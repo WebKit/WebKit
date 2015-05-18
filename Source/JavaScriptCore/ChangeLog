@@ -1,3 +1,67 @@
+2015-05-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Insert store barriers late so that IR transformations don't have to worry about them
+        https://bugs.webkit.org/show_bug.cgi?id=145015
+
+        Reviewed by Geoffrey Garen.
+        
+        We have had three kinds of bugs with store barriers. For the sake of discussion we say
+        that a store barrier is needed when we have something like:
+        
+            base.field = value
+        
+        - We sometimes fail to realize that we could remove a barrier when value is a non-cell.
+          This might happen if we prove value to be a non-cell even though in the FixupPhase it
+          wasn't predicted non-cell.
+        
+        - We sometimes have a barrier in the wrong place after object allocation sinking. We
+          might sink an allocation to just above the store, but that puts it just after the
+          StoreBarrier that FixupPhase inserted.
+        
+        - We don't remove redundant barriers across basic blocks.
+        
+        This comprehensively fixes these issues by doing store barrier insertion late, and
+        removing the store barrier elision phase. Store barrier insertion uses an epoch-based
+        algorithm to determine when stores need barriers. Briefly, a barrier is not needed if
+        base is in the current GC epoch (i.e. was the last object that we allocated or had a
+        barrier since last GC) or if base has a newer GC epoch than value (i.e. value would have
+        always been allocated before base). We do conservative things when merging epoch state
+        between basic blocks, and we only do such inter-block removal in the FTL. FTL also
+        queries AI to determine what type we've proved about value, and avoids barriers when
+        value is not a cell. FixupPhase still inserts type checks on some stores, to maximize
+        the likelihood that this AI-based removal is effective.
+        
+        Rolling back in after fixing some debug build test failures.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGBlockMap.h:
+        (JSC::DFG::BlockMap::at):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::emitPutByOffset):
+        * dfg/DFGEpoch.h:
+        (JSC::DFG::Epoch::operator<):
+        (JSC::DFG::Epoch::operator>):
+        (JSC::DFG::Epoch::operator<=):
+        (JSC::DFG::Epoch::operator>=):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::speculateForBarrier):
+        (JSC::DFG::FixupPhase::insertStoreBarrier): Deleted.
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGStoreBarrierElisionPhase.cpp: Removed.
+        * dfg/DFGStoreBarrierElisionPhase.h: Removed.
+        * dfg/DFGStoreBarrierInsertionPhase.cpp: Added.
+        (JSC::DFG::performFastStoreBarrierInsertion):
+        (JSC::DFG::performGlobalStoreBarrierInsertion):
+        * dfg/DFGStoreBarrierInsertionPhase.h: Added.
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationMaterializeObjectInOSR): Fix an unrelated debug-only bug.
+        * tests/stress/load-varargs-then-inlined-call-and-exit.js: Test for that debug-only bug.
+        * tests/stress/load-varargs-then-inlined-call-and-exit-strict.js: Strict version of that test.
+
 2015-05-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r184415.

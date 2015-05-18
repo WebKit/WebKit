@@ -205,7 +205,18 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
                 unsigned index = property.location().info();
                 if (index >= capacity)
                     continue;
-                result->setIndexQuickly(vm, index, JSValue::decode(values[i]));
+                
+                // We don't want to use setIndexQuickly(), since that's only for the passed-in
+                // arguments but sometimes the number of named arguments is greater. For
+                // example:
+                //
+                // function foo(a, b, c) { ... }
+                // foo();
+                //
+                // setIndexQuickly() would fail for indices 0, 1, 2 - but we need to recover
+                // those here.
+                result->argument(DirectArgumentsOffset(index)).set(
+                    vm, result, JSValue::decode(values[i]));
             }
             return result;
         }
