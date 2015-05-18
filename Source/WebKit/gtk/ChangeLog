@@ -1,3 +1,19 @@
+2015-04-15  Руслан Ижбулатов  <lrn1986@gmail.com>
+
+        [W32][GTK] GI fails due to W32-incompatible arguments to the scanner
+        https://bugs.webkit.org/show_bug.cgi?id=143764
+
+        Reviewed by Carlos Garcia Campos.
+
+        Use correct .la files as --library arguments for GI scanner
+
+        This way it plays well with W32 gobject-introspection library resolution
+        code.
+        Without that one would get things like:
+        ERROR: can't resolve libraries to shared libraries: webkitgtk-3.0, javascriptcoregtk-3.0
+
+        * GNUmakefile.am:
+
 2015-02-16  Milan Crha  <mcrha@redhat.com>
 
         [GTK] Memory leak from webkit_web_policy_decision_new()
