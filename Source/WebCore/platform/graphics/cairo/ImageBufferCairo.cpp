@@ -97,6 +97,8 @@ ImageBuffer::ImageBuffer(const IntSize& size, float /* resolutionScale */, Color
     , m_logicalSize(size)
 {
     success = false;  // Make early return mean error.
+    if (m_size.isEmpty())
+        return;
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
     if (renderingMode == Accelerated)
