@@ -64,15 +64,25 @@ private:
     virtual void externalOutputDeviceAvailableDidChange(bool) override;
 
     size_t find(WebMediaSessionManagerClient*, uint64_t);
+    void configurePlaybackTargetClients();
+    void configureNewClients();
     void configurePlaybackTargetMonitoring();
-    void taskTimerFired();
 
-    typedef std::tuple<WebMediaSessionManagerClient*, uint64_t, std::function<void(ClientState&)>> TaskCallback;
-    Vector<TaskCallback> m_taskQueue;
+    enum ConfigurationTaskFlags {
+        NoTask = 0,
+        InitialConfigurationTask = 1 << 0,
+        TargetClientsConfigurationTask = 1 << 1,
+        TargetMonitoringConfigurationTask = 1 << 2,
+    };
+    typedef unsigned ConfigurationTasks;
+
+    void scheduleDelayedTask(ConfigurationTasks);
+    void taskTimerFired();
     RunLoop::Timer<WebMediaSessionManager> m_taskTimer;
 
     Vector<std::unique_ptr<ClientState>> m_clientState;
     RefPtr<MediaPlaybackTarget> m_playbackTarget;
+    ConfigurationTasks m_taskFlags { NoTask };
     bool m_externalOutputDeviceAvailable { false };
 };
 

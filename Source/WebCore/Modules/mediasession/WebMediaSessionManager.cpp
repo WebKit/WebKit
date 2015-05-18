@@ -34,17 +34,25 @@
 
 namespace WebCore {
 
+static double taskDelayInterval = 1.0 / 10.0;
+
 struct ClientState {
     explicit ClientState(WebMediaSessionManagerClient& client, uint64_t contextId)
-        : client(&client)
+        : client(client)
         , contextId(contextId)
     {
     }
 
-    WebMediaSessionManagerClient* client { nullptr };
+    bool operator == (ClientState const& other) const
+    {
+        return contextId == other.contextId && &client == &other.client;
+    }
+
+    WebMediaSessionManagerClient& client;
     uint64_t contextId { 0 };
     WebCore::MediaProducer::MediaStateFlags flags { WebCore::MediaProducer::IsNotPlaying };
     bool requestedPicker { false };
+    bool configurationRequired { true };
 };
 
 static bool flagsAreSet(MediaProducer::MediaStateFlags value, unsigned flags)
@@ -70,24 +78,8 @@ uint64_t WebMediaSessionManager::addPlaybackTargetPickerClient(WebMediaSessionMa
 
     m_clientState.append(std::make_unique<ClientState>(client, contextId));
 
-    if (m_externalOutputDeviceAvailable || m_playbackTarget) {
-
-        TaskCallback callback = std::make_tuple(&client, contextId, [this](ClientState& state) {
-
-            if (m_externalOutputDeviceAvailable)
-                state.client->externalOutputDeviceAvailableDidChange(state.contextId, true);
-
-            if (m_playbackTarget) {
-                state.client->setPlaybackTarget(state.contextId, *m_playbackTarget.copyRef());
-
-                if (m_clientState.size() == 1 && m_playbackTarget->hasActiveRoute())
-                    state.client->setShouldPlayToPlaybackTarget(state.contextId, true);
-            }
-        });
-
-        m_taskQueue.append(callback);
-        m_taskTimer.startOneShot(0);
-    }
+    if (m_externalOutputDeviceAvailable || m_playbackTarget)
+        scheduleDelayedTask(InitialConfigurationTask | TargetClientsConfigurationTask);
 
     return contextId;
 }
@@ -100,18 +92,16 @@ void WebMediaSessionManager::removePlaybackTargetPickerClient(WebMediaSessionMan
         return;
 
     m_clientState.remove(index);
-    configurePlaybackTargetMonitoring();
-
-    if (m_playbackTarget && m_clientState.size() == 1 && m_playbackTarget->hasActiveRoute())
-        m_clientState[0]->client->setShouldPlayToPlaybackTarget(m_clientState[0]->contextId, true);
+    scheduleDelayedTask(TargetMonitoringConfigurationTask | TargetClientsConfigurationTask);
 }
 
 void WebMediaSessionManager::removeAllPlaybackTargetPickerClients(WebMediaSessionManagerClient& client)
 {
     for (size_t i = m_clientState.size(); i > 0; --i) {
-        if (m_clientState[i - 1]->client == &client)
+        if (&m_clientState[i - 1]->client == &client)
             m_clientState.remove(i - 1);
     }
+    scheduleDelayedTask(TargetMonitoringConfigurationTask | TargetClientsConfigurationTask);
 }
 
 void WebMediaSessionManager::showPlaybackTargetPicker(WebMediaSessionManagerClient& client, uint64_t contextId, const IntRect& rect, bool)
@@ -121,8 +111,9 @@ void WebMediaSessionManager::showPlaybackTargetPicker(WebMediaSessionManagerClie
     if (index == notFound)
         return;
 
+    auto& clientRequestingPicker = m_clientState[index];
     for (auto& state : m_clientState)
-        state->requestedPicker = (state->contextId == contextId && state->client == &client);
+        state->requestedPicker = state == clientRequestingPicker;
 
     bool hasActiveRoute = flagsAreSet(m_clientState[index]->flags, MediaProducer::IsPlayingToExternalDevice);
     targetPicker().showPlaybackTargetPicker(FloatRect(rect), hasActiveRoute);
@@ -142,30 +133,35 @@ void WebMediaSessionManager::clientStateDidChange(WebMediaSessionManagerClient& 
 
     changedClientState->flags = newFlags;
     if (!flagsAreSet(oldFlags, MediaProducer::RequiresPlaybackTargetMonitoring) && flagsAreSet(newFlags, MediaProducer::RequiresPlaybackTargetMonitoring))
-        configurePlaybackTargetMonitoring();
+        scheduleDelayedTask(TargetMonitoringConfigurationTask);
 
-    if (!flagsAreSet(newFlags, MediaProducer::IsPlayingVideo) || !flagsAreSet(newFlags, MediaProducer::ExternalDeviceAutoPlayCandidate))
+    if (!flagsAreSet(newFlags, MediaProducer::ExternalDeviceAutoPlayCandidate))
         return;
 
     if (!m_playbackTarget || !m_playbackTarget->hasActiveRoute())
         return;
 
     // Do not interrupt another element already playing to a device.
+    bool anotherClientHasActiveTarget = false;
     for (auto& state : m_clientState) {
-        if (state->contextId == contextId && state->client == &client)
-            continue;
-
-        if (flagsAreSet(state->flags, MediaProducer::IsPlayingVideo) && flagsAreSet(state->flags, MediaProducer::IsPlayingToExternalDevice))
-            return;
+        if (flagsAreSet(state->flags, MediaProducer::IsPlayingToExternalDevice)) {
+            if (flagsAreSet(state->flags, MediaProducer::IsPlayingVideo))
+                return;
+            anotherClientHasActiveTarget = true;
+        }
     }
 
+    // Do not take the target if another client has it and the client reporting a state change is not playing.
+    if (anotherClientHasActiveTarget && !flagsAreSet(newFlags, MediaProducer::IsPlayingVideo))
+        return;
+
     for (auto& state : m_clientState) {
-        if (state->contextId == contextId && state->client == &client)
+        if (state == changedClientState)
             continue;
-        state->client->setShouldPlayToPlaybackTarget(state->contextId, false);
+        state->client.setShouldPlayToPlaybackTarget(state->contextId, false);
     }
 
-    changedClientState->client->setShouldPlayToPlaybackTarget(changedClientState->contextId, true);
+    changedClientState->client.setShouldPlayToPlaybackTarget(changedClientState->contextId, true);
 
     if (index && m_clientState.size() > 1)
         std::swap(m_clientState.at(index), m_clientState.at(0));
@@ -174,32 +170,70 @@ void WebMediaSessionManager::clientStateDidChange(WebMediaSessionManagerClient& 
 void WebMediaSessionManager::setPlaybackTarget(Ref<MediaPlaybackTarget>&& target)
 {
     m_playbackTarget = WTF::move(target);
-
-    size_t indexThatRequestedPicker = notFound;
-    for (size_t i = 0; i < m_clientState.size(); ++i) {
-        auto& state = m_clientState[i];
-        state->client->setPlaybackTarget(state->contextId, *m_playbackTarget.copyRef());
-        if (state->requestedPicker) {
-            indexThatRequestedPicker = i;
-            continue;
-        }
-        state->client->setShouldPlayToPlaybackTarget(state->contextId, false);
-        state->requestedPicker = false;
-    }
-
-    if (indexThatRequestedPicker == notFound)
-        return;
-
-    auto& state = m_clientState[indexThatRequestedPicker];
-    state->client->setShouldPlayToPlaybackTarget(state->contextId, m_playbackTarget && m_playbackTarget->hasActiveRoute());
-    state->requestedPicker = false;
+    scheduleDelayedTask(TargetClientsConfigurationTask);
 }
 
 void WebMediaSessionManager::externalOutputDeviceAvailableDidChange(bool available)
 {
     m_externalOutputDeviceAvailable = available;
     for (auto& state : m_clientState)
-        state->client->externalOutputDeviceAvailableDidChange(state->contextId, available);
+        state->client.externalOutputDeviceAvailableDidChange(state->contextId, available);
+}
+
+void WebMediaSessionManager::configureNewClients()
+{
+    for (auto& state : m_clientState) {
+        if (!state->configurationRequired)
+            continue;
+
+        state->configurationRequired = false;
+        if (m_externalOutputDeviceAvailable)
+            state->client.externalOutputDeviceAvailableDidChange(state->contextId, true);
+
+        if (m_playbackTarget)
+            state->client.setPlaybackTarget(state->contextId, *m_playbackTarget.copyRef());
+    }
+}
+
+void WebMediaSessionManager::configurePlaybackTargetClients()
+{
+    size_t indexOfClientThatRequestedPicker = notFound;
+    size_t indexOfAutoPlayCandidate = notFound;
+    size_t indexOfClientWillPlayToTarget = notFound;
+    bool haveActiveRoute = m_playbackTarget && m_playbackTarget->hasActiveRoute();
+
+    for (size_t i = 0; i < m_clientState.size(); ++i) {
+        auto& state = m_clientState[i];
+
+        if (indexOfClientThatRequestedPicker == notFound && state->requestedPicker)
+            indexOfClientThatRequestedPicker = i;
+
+        if (indexOfClientWillPlayToTarget == notFound && flagsAreSet(state->flags, MediaProducer::IsPlayingToExternalDevice))
+            indexOfClientWillPlayToTarget = i;
+
+        if (indexOfAutoPlayCandidate == notFound && flagsAreSet(state->flags, MediaProducer::ExternalDeviceAutoPlayCandidate) && !flagsAreSet(state->flags, MediaProducer::IsPlayingVideo))
+            indexOfAutoPlayCandidate = i;
+    }
+
+    if (indexOfClientThatRequestedPicker != notFound)
+        indexOfClientWillPlayToTarget = indexOfClientThatRequestedPicker;
+    if (indexOfClientWillPlayToTarget == notFound && haveActiveRoute && indexOfAutoPlayCandidate != notFound)
+        indexOfClientWillPlayToTarget = indexOfAutoPlayCandidate;
+
+    for (size_t i = 0; i < m_clientState.size(); ++i) {
+        auto& state = m_clientState[i];
+
+        if (m_playbackTarget)
+            state->client.setPlaybackTarget(state->contextId, *m_playbackTarget.copyRef());
+
+        if (i != indexOfClientWillPlayToTarget)
+            state->client.setShouldPlayToPlaybackTarget(state->contextId, false);
+        else if (!flagsAreSet(state->flags, MediaProducer::IsPlayingToExternalDevice))
+            state->client.setShouldPlayToPlaybackTarget(state->contextId, haveActiveRoute);
+
+        state->configurationRequired = false;
+        state->requestedPicker = false;
+    }
 }
 
 void WebMediaSessionManager::configurePlaybackTargetMonitoring()
@@ -218,26 +252,28 @@ void WebMediaSessionManager::configurePlaybackTargetMonitoring()
         targetPicker().stopMonitoringPlaybackTargets();
 }
 
+void WebMediaSessionManager::scheduleDelayedTask(ConfigurationTasks tasks)
+{
+    m_taskFlags |= tasks;
+    m_taskTimer.startOneShot(taskDelayInterval);
+}
+
 void WebMediaSessionManager::taskTimerFired()
 {
-    auto taskQueue = WTF::move(m_taskQueue);
-    if (taskQueue.isEmpty())
-        return;
+    if (m_taskFlags & InitialConfigurationTask)
+        configureNewClients();
+    if (m_taskFlags & TargetClientsConfigurationTask)
+        configurePlaybackTargetClients();
+    if (m_taskFlags & TargetMonitoringConfigurationTask)
+        configurePlaybackTargetMonitoring();
 
-    for (auto& task : taskQueue) {
-        size_t index = find(std::get<0>(task), std::get<1>(task));
-
-        if (index == notFound)
-            continue;
-
-        std::get<2>(task)(*m_clientState[index]);
-    }
+    m_taskFlags = NoTask;
 }
 
 size_t WebMediaSessionManager::find(WebMediaSessionManagerClient* client, uint64_t contextId)
 {
     for (size_t i = 0; i < m_clientState.size(); ++i) {
-        if (m_clientState[i]->contextId == contextId && m_clientState[i]->client == client)
+        if (m_clientState[i]->contextId == contextId && &m_clientState[i]->client == client)
             return i;
     }
 

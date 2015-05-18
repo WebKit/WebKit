@@ -305,11 +305,10 @@ void HTMLMediaSession::externalOutputDeviceAvailableDidChange(bool hasTargets)
     if (m_hasPlaybackTargets == hasTargets)
         return;
 
-    LOG(Media, "HTMLMediaSession::externalOutputDeviceAvailableDidChange - hasTargets %s", hasTargets ? "TRUE" : "FALSE");
+    LOG(Media, "HTMLMediaSession::externalOutputDeviceAvailableDidChange(%p) - hasTargets %s", this, hasTargets ? "TRUE" : "FALSE");
 
     m_hasPlaybackTargets = hasTargets;
-    if (!m_targetAvailabilityChangedTimer.isActive())
-        m_targetAvailabilityChangedTimer.startOneShot(0);
+    m_targetAvailabilityChangedTimer.startOneShot(0);
 }
 
 bool HTMLMediaSession::canPlayToWirelessPlaybackTarget() const
@@ -330,6 +329,7 @@ bool HTMLMediaSession::isPlayingToWirelessPlaybackTarget() const
 
 void HTMLMediaSession::setShouldPlayToPlaybackTarget(bool shouldPlay)
 {
+    LOG(Media, "HTMLMediaSession::setShouldPlayToPlaybackTarget - shouldPlay %s", shouldPlay ? "TRUE" : "FALSE");
     m_shouldPlayToPlaybackTarget = shouldPlay;
     client().setShouldPlayToPlaybackTarget(shouldPlay);
 }
@@ -386,7 +386,7 @@ void HTMLMediaSession::mediaEngineUpdated(const HTMLMediaElement& element)
     if (m_playbackTarget)
         client().setWirelessPlaybackTarget(*m_playbackTarget.copyRef());
     if (m_shouldPlayToPlaybackTarget)
-        client().setShouldPlayToPlaybackTarget(m_shouldPlayToPlaybackTarget);
+        client().setShouldPlayToPlaybackTarget(true);
 #else
     UNUSED_PARAM(element);
 #endif

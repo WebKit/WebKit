@@ -3034,7 +3034,7 @@ void HTMLMediaElement::setMuted(bool muted)
         document().updateIsPlayingMedia();
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-        m_mediaSession->mediaStateDidChange(*this, mediaState());
+        updateMediaState();
 #endif
     }
 #endif
@@ -4632,7 +4632,7 @@ void HTMLMediaElement::setPlaying(bool playing)
     document().updateIsPlayingMedia();
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    m_mediaSession->mediaStateDidChange(*this, mediaState());
+    updateMediaState();
 #endif
 }
 
@@ -4895,7 +4895,7 @@ void HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged(MediaPl
 
     configureMediaControls();
     scheduleEvent(eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent);
-    m_mediaSession->mediaStateDidChange(*this, mediaState());
+    updateMediaState();
 }
 
 bool HTMLMediaElement::dispatchEvent(PassRefPtr<Event> prpEvent)
@@ -4946,8 +4946,9 @@ bool HTMLMediaElement::removeEventListener(const AtomicString& eventType, EventL
 
 void HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent()
 {
-    LOG(Media, "HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent(%p)", this);
-    RefPtr<Event> event = WebKitPlaybackTargetAvailabilityEvent::create(eventNames().webkitplaybacktargetavailabilitychangedEvent, m_mediaSession->hasWirelessPlaybackTargets(*this));
+    bool hasTargets = m_mediaSession->hasWirelessPlaybackTargets(*this);
+    LOG(Media, "HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent(%p) - hasTargets = %s", this, boolString(hasTargets));
+    RefPtr<Event> event = WebKitPlaybackTargetAvailabilityEvent::create(eventNames().webkitplaybacktargetavailabilitychangedEvent, hasTargets);
     event->setTarget(this);
     m_asyncEventQueue.enqueueEvent(event.release());
 }
@@ -6217,6 +6218,18 @@ bool HTMLMediaElement::overrideBackgroundPlaybackRestriction() const
 #endif
     return false;
 }
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+void HTMLMediaElement::updateMediaState()
+{
+    MediaProducer::MediaStateFlags state = mediaState();
+    if (m_mediaState == state)
+        return;
+
+    m_mediaState = state;
+    m_mediaSession->mediaStateDidChange(*this, m_mediaState);
+}
+#endif
 
 MediaProducer::MediaStateFlags HTMLMediaElement::mediaState() const
 {
