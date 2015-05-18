@@ -28,5 +28,10 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>CFAppTransportSecurity</key>
+	<dict>
+		<key>AllowArbitraryInsecureHTTPLoads</key>
+		<true/>
+	</dict>
 </dict>
 </plist>
