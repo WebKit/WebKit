@@ -150,6 +150,13 @@ public:
             m_floats = adoptPtr(new Vector<RenderBox*>(1, &floatingBox));
     }
 
+    void removeFloat(RenderBox& floatingBox)
+    {
+        ASSERT(m_floats);
+        ASSERT(m_floats->contains(&floatingBox));
+        m_floats->remove(m_floats->find(&floatingBox));
+    }
+
     Vector<RenderBox*>* floatsPtr() { ASSERT(!isDirty()); return m_floats.get(); }
 
     virtual void extractLineBoxFromRenderObject() override final;
