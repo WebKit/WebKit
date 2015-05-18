@@ -121,6 +121,7 @@ NO_RETURN_DUE_TO_ASSERT void LayerHostingContext::setFencePort(mach_port_t fence
 NO_RETURN_DUE_TO_ASSERT MachSendRight LayerHostingContext::createFencePort()
 {
     ASSERT_NOT_REACHED();
+    return MachSendRight();
 }
 #endif
 
