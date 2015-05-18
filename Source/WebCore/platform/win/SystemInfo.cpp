@@ -29,6 +29,10 @@
 #include <windows.h>
 #include <wtf/text/WTFString.h>
 
+#ifndef SM_SERVERR2
+#define SM_SERVERR2 89
+#endif
+
 namespace WebCore {
 
 WindowsVersion windowsVersion(int* major, int* minor)
@@ -65,15 +69,75 @@ WindowsVersion windowsVersion(int* major, int* minor)
                 version = (minorVersion == 10) ? Windows98 : WindowsME;
         } else {
             if (majorVersion == 5) {
-                if (!minorVersion)
+                switch (minorVersion) {
+                default:
+                case 0:
                     version = Windows2000;
-                else
-                    version = (minorVersion == 1) ? WindowsXP : WindowsServer2003;
-            } else if (majorVersion >= 6) {
-                if (versionInfo.wProductType == VER_NT_WORKSTATION)
-                    version = (majorVersion == 6 && !minorVersion) ? WindowsVista : Windows7;
-                else
-                    version = WindowsServer2008;
+                    break;
+                case 1:
+                    version = WindowsXP;
+                    break;
+                case 2:
+                    if (versionInfo.wProductType == VER_NT_WORKSTATION)
+                        version = WindowsXP64;
+                    else {
+                        if (!GetSystemMetrics(SM_SERVERR2))
+                            version = WindowsServer2003;
+                        else
+                            version = WindowsServer2003R2;
+                    }
+                    break;
+                }
+            } else if (majorVersion == 6) {
+                if (versionInfo.wProductType == VER_NT_WORKSTATION) {
+                    switch (minorVersion) {
+                    default:
+                    case 0:
+                        version = WindowsVista;
+                        break;
+                    case 1:
+                        version = Windows7;
+                        break;
+                    case 2:
+                        version = Windows8;
+                        break;
+                    case 3:
+                        version = Windows81;
+                        break;
+                    }
+                } else {
+                    switch (minorVersion) {
+                    default:
+                    case 0:
+                        version = WindowsServer2008;
+                        break;
+                    case 1:
+                        version = WindowsServer2008R2;
+                        break;
+                    case 2:
+                        version = WindowsServer2012;
+                        break;
+                    case 3:
+                        version = WindowsServer2012R2;
+                        break;
+                    }
+                }
+            } else if (majorVersion == 10) {
+                if (versionInfo.wProductType == VER_NT_WORKSTATION) {
+                    switch (minorVersion) {
+                    default:
+                    case 0:
+                        version = Windows10;
+                        break;
+                    }
+                } else {
+                    switch (minorVersion) {
+                    default:
+                    case 0:
+                        version = WindowsServer2016;
+                        break;
+                    }
+                }
             } else
                 version = (majorVersion == 4) ? WindowsNT4 : WindowsNT3;
         }
@@ -97,6 +161,9 @@ static String osVersionForUAString()
     case WindowsCE3:
         return "Windows CE";
     case WindowsCE4:
+    case WindowsCE5:
+    case WindowsCE6:
+    case WindowsCE7:
         return "Windows CE .NET";
     case Windows3_1:
         return "Windows 3.1";
@@ -106,8 +173,40 @@ static String osVersionForUAString()
         return "Windows 98";
     case WindowsME:
         return "Windows 98; Win 9x 4.90";
+    case WindowsNT3:
+        return "WinNT3.0";
     case WindowsNT4:
         return "WinNT4.0";
+    case Windows2000:
+        return "Windows 2000";
+    case WindowsXP:
+        return "Windows XP";
+    case WindowsServer2003:
+        return "Windows Server 2003";
+    case WindowsXP64:
+        return "Windows XP Professional x64 Edition";
+    case WindowsServer2003R2:
+        return "Windows Server 2003 R2";
+    case WindowsVista:
+        return "Windows Vista";
+    case WindowsServer2008:
+        return "Windows Server 2008";
+    case Windows7:
+        return "Windows 7";
+    case WindowsServer2008R2:
+        return "Windows Server 2008 R2";
+    case Windows8:
+        return "Windows 8";
+    case WindowsServer2012:
+        return "Windows Server 2012";
+    case Windows81:
+        return "Windows 8.1";
+    case WindowsServer2012R2:
+        return "Windows Server 2012 R2";
+    case Windows10:
+        return "Windows 10";
+    case WindowsServer2016:
+        return "Windows Server 2016";
     }
 
     const char* familyName = (version >= WindowsNT3) ? "Windows NT " : "Windows CE ";

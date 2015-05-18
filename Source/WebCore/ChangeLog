@@ -1,3 +1,23 @@
+2015-04-15  Руслан Ижбулатов  <lrn1986@gmail.com>
+
+        [W32] windowsVersion() and osVersionForUAString() are outdated
+        https://bugs.webkit.org/show_bug.cgi?id=143771
+
+        Reviewed by Darin Adler
+
+        Update windowsVersion() and osVersionForUAString()
+
+        Add support for newer Windows versions to windowsVersion(), handle
+        all defined cases in osVersionForUAString(), avoiding warnings like
+        ../webkitgtk-2.4.8/Source/WebCore/platform/win/SystemInfo.cpp: In function 'WTF::String WebCore::osVersionForUAString()':
+        ../webkitgtk-2.4.8/Source/WebCore/platform/win/SystemInfo.cpp:94:12: warning: enumeration value 'WindowsCE5' not handled in switch [-Wswitch]
+        repeated for each unhandled value
+
+        * platform/win/SystemInfo.cpp:
+        (WebCore::windowsVersion):
+        (WebCore::osVersionForUAString):
+        * platform/win/SystemInfo.h:
+
 2015-04-17  Milan Crha  <mcrha@redhat.com>
 
         [GTK] Replace M_SQRT2 with sqrtOfTwoDouble

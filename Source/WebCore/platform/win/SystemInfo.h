@@ -54,9 +54,18 @@ enum WindowsVersion {
     Windows2000,
     WindowsXP,
     WindowsServer2003,
+    WindowsXP64,
+    WindowsServer2003R2,
     WindowsVista,
     WindowsServer2008,
     Windows7,
+    WindowsServer2008R2,
+    Windows8,
+    WindowsServer2012,
+    Windows81,
+    WindowsServer2012R2,
+    Windows10,
+    WindowsServer2016,
 };
 
 // If supplied, |major| and |minor| are set to the OSVERSIONINFO::dwMajorVersion
