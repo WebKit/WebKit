@@ -33,9 +33,10 @@ enum WebsiteDataTypes {
     WebsiteDataTypeDiskCache = 1 << 1,
     WebsiteDataTypeMemoryCache = 1 << 2,
     WebsiteDataTypeOfflineWebApplicationCache = 1 << 3,
-    WebsiteDataTypeLocalStorage = 1 << 4,
-    WebsiteDataTypeWebSQLDatabases = 1 << 5,
-    WebsiteDataTypeIndexedDBDatabases = 1 << 6,
+    WebsiteDataTypeSessionStorage = 1 << 4,
+    WebsiteDataTypeLocalStorage = 1 << 5,
+    WebsiteDataTypeWebSQLDatabases = 1 << 6,
+    WebsiteDataTypeIndexedDBDatabases = 1 << 7,
 };
 
 };

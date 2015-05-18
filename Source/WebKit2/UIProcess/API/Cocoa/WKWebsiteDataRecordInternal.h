@@ -52,6 +52,8 @@ static inline WebKit::WebsiteDataTypes toWebsiteDataTypes(NSSet *wkWebsiteDataTy
         websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeMemoryCache;
     if ([wkWebsiteDataTypes containsObject:WKWebsiteDataTypeOfflineWebApplicationCache])
         websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeOfflineWebApplicationCache;
+    if ([wkWebsiteDataTypes containsObject:WKWebsiteDataTypeSessionStorage])
+        websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeSessionStorage;
     if ([wkWebsiteDataTypes containsObject:WKWebsiteDataTypeLocalStorage])
         websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeLocalStorage;
     if ([wkWebsiteDataTypes containsObject:WKWebsiteDataTypeWebSQLDatabases])
@@ -76,6 +78,8 @@ static inline RetainPtr<NSSet> toWKWebsiteDataTypes(int websiteDataTypes)
         [wkWebsiteDataTypes addObject:WKWebsiteDataTypeMemoryCache];
     if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeOfflineWebApplicationCache)
         [wkWebsiteDataTypes addObject:WKWebsiteDataTypeOfflineWebApplicationCache];
+    if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeSessionStorage)
+        [wkWebsiteDataTypes addObject:WKWebsiteDataTypeSessionStorage];
     if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeLocalStorage)
         [wkWebsiteDataTypes addObject:WKWebsiteDataTypeLocalStorage];
     if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeWebSQLDatabases)

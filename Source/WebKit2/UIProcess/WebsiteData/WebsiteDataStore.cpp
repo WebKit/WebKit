@@ -266,6 +266,19 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
         }
     }
 
+    if (dataTypes & WebsiteDataTypeSessionStorage && m_storageManager) {
+        callbackAggregator->addPendingCallback();
+
+        m_storageManager->getSessionStorageOrigins([callbackAggregator](HashSet<RefPtr<WebCore::SecurityOrigin>>&& origins) {
+            WebsiteData websiteData;
+
+            while (!origins.isEmpty())
+                websiteData.entries.append(WebsiteData::Entry { origins.takeAny(), WebsiteDataTypeSessionStorage });
+
+            callbackAggregator->removePendingCallback(WTF::move(websiteData));
+        });
+    }
+
     if (dataTypes & WebsiteDataTypeLocalStorage && m_storageManager) {
         callbackAggregator->addPendingCallback();
 
@@ -455,6 +468,14 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
         }
     }
 
+    if (dataTypes & WebsiteDataTypeSessionStorage && m_storageManager) {
+        callbackAggregator->addPendingCallback();
+
+        m_storageManager->deleteSessionStorageOrigins([callbackAggregator] {
+            callbackAggregator->removePendingCallback();
+        });
+    }
+
     if (dataTypes & WebsiteDataTypeLocalStorage && m_storageManager) {
         callbackAggregator->addPendingCallback();
 
@@ -612,6 +633,14 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<Websi
                 callbackAggregator->removePendingCallback();
             });
         }
+    }
+
+    if (dataTypes & WebsiteDataTypeSessionStorage && m_storageManager) {
+        callbackAggregator->addPendingCallback();
+
+        m_storageManager->deleteSessionStorageEntriesForOrigins(origins, [callbackAggregator] {
+            callbackAggregator->removePendingCallback();
+        });
     }
 
     if (dataTypes & WebsiteDataTypeLocalStorage && m_storageManager) {

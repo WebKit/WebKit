@@ -33,6 +33,8 @@ NSString * const WKWebsiteDataTypeMemoryCache = @"WKWebsiteDataTypeMemoryCache";
 NSString * const WKWebsiteDataTypeOfflineWebApplicationCache = @"WKWebsiteDataTypeOfflineWebApplicationCache";
 
 NSString * const WKWebsiteDataTypeCookies = @"WKWebsiteDataTypeCookies";
+NSString * const WKWebsiteDataTypeSessionStorage = @"WKWebsiteDataTypeSessionStorage";
+
 NSString * const WKWebsiteDataTypeLocalStorage = @"WKWebsiteDataTypeLocalStorage";
 NSString * const WKWebsiteDataTypeWebSQLDatabases = @"WKWebsiteDataTypeWebSQLDatabases";
 NSString * const WKWebsiteDataTypeIndexedDBDatabases = @"WKWebsiteDataTypeIndexedDBDatabases";
@@ -58,6 +60,8 @@ static NSString *dataTypesToString(NSSet *dataTypes)
         [array addObject:@"Offline Web Application Cache"];
     if ([dataTypes containsObject:WKWebsiteDataTypeCookies])
         [array addObject:@"Cookies"];
+    if ([dataTypes containsObject:WKWebsiteDataTypeSessionStorage])
+        [array addObject:@"Session Storage"];
     if ([dataTypes containsObject:WKWebsiteDataTypeLocalStorage])
         [array addObject:@"Local Storage"];
     if ([dataTypes containsObject:WKWebsiteDataTypeWebSQLDatabases])

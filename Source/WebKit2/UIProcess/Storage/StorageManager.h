@@ -59,6 +59,10 @@ public:
     void processDidCloseConnection(WebProcessProxy&, IPC::Connection&);
     void applicationWillTerminate();
 
+    void getSessionStorageOrigins(std::function<void (HashSet<RefPtr<WebCore::SecurityOrigin>>&&)> completionHandler);
+    void deleteSessionStorageOrigins(std::function<void ()> completionHandler);
+    void deleteSessionStorageEntriesForOrigins(const Vector<RefPtr<WebCore::SecurityOrigin>>&, std::function<void ()> completionHandler);
+
     void getLocalStorageOrigins(std::function<void (HashSet<RefPtr<WebCore::SecurityOrigin>>&&)> completionHandler);
     void getLocalStorageDetailsByOrigin(std::function<void (Vector<LocalStorageDetails>)> completionHandler);
     void deleteLocalStorageEntriesForOrigin(const WebCore::SecurityOrigin&);

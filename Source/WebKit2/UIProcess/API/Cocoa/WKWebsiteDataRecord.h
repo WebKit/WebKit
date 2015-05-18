@@ -43,6 +43,9 @@ WK_EXTERN NSString * const WKWebsiteDataTypeOfflineWebApplicationCache WK_AVAILA
 /*! @constant WKWebsiteDataTypeCookies Cookies. */
 WK_EXTERN NSString * const WKWebsiteDataTypeCookies WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
+/*! @constant WKWebsiteDataTypeSessionStorage HTML session storage. */
+WK_EXTERN NSString * const WKWebsiteDataTypeSessionStorage WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
 /*! @constant WKWebsiteDataTypeLocalStorage HTML local storage. */
 WK_EXTERN NSString * const WKWebsiteDataTypeLocalStorage WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
