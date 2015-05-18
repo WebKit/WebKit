@@ -73,6 +73,17 @@ bool StringView::endsWithIgnoringASCIICase(const StringView& suffix) const
     return ::WTF::endsWithIgnoringASCIICase(*this, suffix);
 }
 
+bool equalIgnoringASCIICase(StringView a, const char* b, unsigned bLength)
+{
+    if (bLength != a.length())
+        return false;
+
+    if (a.is8Bit())
+        return equalIgnoringASCIICase(a.characters8(), b, bLength);
+
+    return equalIgnoringASCIICase(a.characters16(), b, bLength);
+}
+
 #if CHECK_STRINGVIEW_LIFETIME
 
 // Manage reference count manually so UnderlyingString does not need to be defined in the header.
