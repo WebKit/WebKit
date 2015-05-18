@@ -1,5 +1,16 @@
 2015-05-18  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r184024. rdar://problem/19790341
+
+    2015-05-08  Timothy Horton  <timothy_horton@apple.com>
+
+            Fix the build.
+
+            * Platform/mac/LayerHostingContext.mm:
+            (WebKit::LayerHostingContext::createFencePort):
+
+2015-05-18  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r184022. rdar://problem/19790341
 
     2015-05-08  Timothy Horton  <timothy_horton@apple.com>
