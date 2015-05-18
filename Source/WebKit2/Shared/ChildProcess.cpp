@@ -160,6 +160,11 @@ void ChildProcess::terminate()
     stopRunLoop();
 }
 
+void ChildProcess::shutDown()
+{
+    terminate();
+}
+
 #if !PLATFORM(COCOA)
 void ChildProcess::platformInitialize()
 {

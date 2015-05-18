@@ -69,6 +69,7 @@ VPATH = \
 
 MESSAGE_RECEIVERS = \
     AuthenticationManager \
+    ChildProcess \
     CustomProtocolManager \
     CustomProtocolManagerProxy \
     DatabaseProcess \

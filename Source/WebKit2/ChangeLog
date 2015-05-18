@@ -1,3 +1,52 @@
+2015-05-18  Brady Eidson  <beidson@apple.com>
+
+        Networking process on iOS can be suspended and never exit.
+        <rdar://problem/20368630> and https://bugs.webkit.org/show_bug.cgi?id=144971
+
+        Reviewed by Darin Adler.
+
+        There's a few issues here.
+        
+        1 - When the NetworkProcessProxy goes away, it takes its process assertion with it. This causes
+            the Network process to suspend indefinitely, unable to ever respond to IPC::Connection callbacks.
+            We already solved this with WebProcess with a watchdog timer keeping both the process assertion
+            and xpc_connection alive while the process shuts down. This patch expands that to the network
+            process, and it will be easy to expand that to database and plugin processes doing forward.
+        
+        2 - All of our child processes either decide to self-terminate or listen for their connection to
+            close at which point they terminate. This leads to various races. We should
+            move to a model where the UI process explicitly tells them to shutdown, and this patch starts us 
+            down that path.
+        
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebKit2.xcodeproj/project.pbxproj:
+        
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didReceiveMessage): Send ChildProcess messages to ChildProcess.
+        
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::shutDown): For now, just terminate the process. In the future have the
+          process do cleanup work before it is terminated.
+        * Shared/ChildProcess.h:
+        * Shared/ChildProcess.messages.in: Added.
+        
+        * Shared/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::shutDownProcess): Set a watchdog and - if possible - explicitly message 
+          the process to ShutDown.
+        (WebKit::ChildProcessProxy::abortProcessLaunchIfNeeded): Deleted.
+        * Shared/ChildProcessProxy.h:
+        
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::~WebProcessPool): Explicitly tell the network process to shut down.
+        
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::removeWebPage): Move abortProcessLaunchIfNeeded() and the watchdog timer
+          code to ChildProcessProxy::shutDownProcess.
+        
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessage): Send ChildProcess messages to ChildProcess::didReceiveMessage.
+
 2015-05-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Network Cache: Make Data::adoptMap take the ownership of the file descriptor

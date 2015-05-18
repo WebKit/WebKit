@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ChildProcessProxy.h"
 
+#include "ChildProcessMessages.h"
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
@@ -150,21 +151,29 @@ void ChildProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection::Id
     m_pendingMessages.clear();
 }
 
-void ChildProcessProxy::abortProcessLaunchIfNeeded()
-{
-    if (state() != State::Launching)
-        return;
-
-    m_processLauncher->invalidate();
-    m_processLauncher = nullptr;
-}
-
 void ChildProcessProxy::shutDownProcess()
 {
-    if (!m_connection)
+    switch (state()) {
+    case State::Launching:
+        m_processLauncher->invalidate();
+        m_processLauncher = nullptr;
+        break;
+    case State::Running:
+#if PLATFORM(IOS)
+        // On iOS deploy a watchdog in the UI process, since the child process may be suspended.
+        // If 30s is insufficient for any outstanding activity to complete cleanly, then it will be killed.
+        ASSERT(m_connection);
+        m_connection->terminateSoon(30);
+#endif
+        break;
+    case State::Terminated:
         return;
+    }
 
     processWillShutDown(*m_connection);
+
+    if (canSendMessage())
+        send(Messages::ChildProcess::ShutDown(), 0);
 
     m_connection->invalidate();
     m_connection = nullptr;
