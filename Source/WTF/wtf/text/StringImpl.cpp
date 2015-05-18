@@ -2075,6 +2075,17 @@ bool equalIgnoringASCIICase(const StringImpl* a, const StringImpl*b)
     return equalIgnoringASCIICaseCommon(*a, *b);
 }
 
+bool equalIgnoringASCIICase(const StringImpl& a, const char* b, unsigned bLength)
+{
+    if (bLength != a.length())
+        return false;
+
+    if (a.is8Bit())
+        return equalIgnoringASCIICase(a.characters8(), b, bLength);
+
+    return equalIgnoringASCIICase(a.characters16(), b, bLength);
+}
+
 bool equalIgnoringASCIICaseNonNull(const StringImpl* a, const StringImpl* b)
 {
     ASSERT(a);

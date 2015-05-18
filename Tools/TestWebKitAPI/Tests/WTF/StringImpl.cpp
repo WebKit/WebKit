@@ -104,13 +104,18 @@ TEST(WTF, StringImplEqualIgnoringASCIICaseBasic)
     RefPtr<StringImpl> a = StringImpl::createFromLiteral("aBcDeFG");
     RefPtr<StringImpl> b = StringImpl::createFromLiteral("ABCDEFG");
     RefPtr<StringImpl> c = StringImpl::createFromLiteral("abcdefg");
+    const char d[] = "aBcDeFG";
     RefPtr<StringImpl> empty = StringImpl::create(reinterpret_cast<const LChar*>(""));
     RefPtr<StringImpl> shorter = StringImpl::createFromLiteral("abcdef");
+    RefPtr<StringImpl> different = StringImpl::createFromLiteral("abcrefg");
 
     // Identity.
     ASSERT_TRUE(equalIgnoringASCIICase(a.get(), a.get()));
     ASSERT_TRUE(equalIgnoringASCIICase(b.get(), b.get()));
     ASSERT_TRUE(equalIgnoringASCIICase(c.get(), c.get()));
+    ASSERT_TRUE(equalIgnoringASCIICase(a.get(), d));
+    ASSERT_TRUE(equalIgnoringASCIICase(b.get(), d));
+    ASSERT_TRUE(equalIgnoringASCIICase(c.get(), d));
 
     // Transitivity.
     ASSERT_TRUE(equalIgnoringASCIICase(a.get(), b.get()));
@@ -124,6 +129,12 @@ TEST(WTF, StringImplEqualIgnoringASCIICaseBasic)
     ASSERT_FALSE(equalIgnoringASCIICase(a.get(), shorter.get()));
     ASSERT_FALSE(equalIgnoringASCIICase(b.get(), shorter.get()));
     ASSERT_FALSE(equalIgnoringASCIICase(c.get(), shorter.get()));
+    ASSERT_FALSE(equalIgnoringASCIICase(a.get(), different.get()));
+    ASSERT_FALSE(equalIgnoringASCIICase(b.get(), different.get()));
+    ASSERT_FALSE(equalIgnoringASCIICase(c.get(), different.get()));
+    ASSERT_FALSE(equalIgnoringASCIICase(empty.get(), d));
+    ASSERT_FALSE(equalIgnoringASCIICase(shorter.get(), d));
+    ASSERT_FALSE(equalIgnoringASCIICase(different.get(), d));
 }
 
 TEST(WTF, StringImplEqualIgnoringASCIICaseWithNull)
@@ -153,6 +164,7 @@ TEST(WTF, StringImplEqualIgnoringASCIICaseWithLatin1Characters)
     RefPtr<StringImpl> b = stringFromUTF8("ABCÉEFG");
     RefPtr<StringImpl> c = stringFromUTF8("ABCéEFG");
     RefPtr<StringImpl> d = stringFromUTF8("abcéefg");
+    const char e[] = "aBcéeFG";
 
     // Identity.
     ASSERT_TRUE(equalIgnoringASCIICase(a.get(), a.get()));
@@ -167,6 +179,10 @@ TEST(WTF, StringImplEqualIgnoringASCIICaseWithLatin1Characters)
     ASSERT_FALSE(equalIgnoringASCIICase(b.get(), c.get()));
     ASSERT_FALSE(equalIgnoringASCIICase(b.get(), d.get()));
     ASSERT_TRUE(equalIgnoringASCIICase(c.get(), d.get()));
+    ASSERT_FALSE(equalIgnoringASCIICase(a.get(), e));
+    ASSERT_FALSE(equalIgnoringASCIICase(b.get(), e));
+    ASSERT_FALSE(equalIgnoringASCIICase(c.get(), e));
+    ASSERT_FALSE(equalIgnoringASCIICase(d.get(), e));
 }
 
 TEST(WTF, StringImplFindIgnoringASCIICaseBasic)

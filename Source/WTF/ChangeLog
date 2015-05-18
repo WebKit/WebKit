@@ -1,3 +1,27 @@
+2015-05-18  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r184341. rdar://problem/20809399
+
+    2015-05-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Add String literal overloads to equalIgnoringASCIICase()
+            https://bugs.webkit.org/show_bug.cgi?id=145008
+
+            Reviewed by Benjamin Poulain.
+
+            Create an overload for equalIgnoringASCIICase for string literals.
+
+            * wtf/text/StringImpl.h:
+            (WTF::equalIgnoringASCIICase): Use a non-templated helper function.
+            * wtf/text/StringImpl.cpp:
+            (WTF::equalIgnoringASCIICase): Implement it.
+            * wtf/text/StringView.h:
+            (WTF::equalIgnoringASCIICase): Use a non-templated helper function.
+            * wtf/text/StringView.cpp:
+            (WTF::equalIgnoringASCIICase): Implement it.
+            * wtf/text/WTFString.h:
+            (WTF::equalIgnoringASCIICase): Delegate to StringImpl's implementation.
+
 2015-05-12  Dana Burkart <dburkart@apple.com>
 
         Merge r184137. rdar://problem/20707307

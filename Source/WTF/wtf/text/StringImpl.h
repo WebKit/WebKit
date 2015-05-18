@@ -972,7 +972,14 @@ WTF_EXPORT_STRING_API bool equalIgnoringNullity(const UChar*, size_t length, Str
 
 WTF_EXPORT_STRING_API bool equalIgnoringASCIICase(const StringImpl&, const StringImpl&);
 WTF_EXPORT_STRING_API bool equalIgnoringASCIICase(const StringImpl*, const StringImpl*);
+WTF_EXPORT_STRING_API bool equalIgnoringASCIICase(const StringImpl& a, const char* b, unsigned bLength);
 WTF_EXPORT_STRING_API bool equalIgnoringASCIICaseNonNull(const StringImpl*, const StringImpl*);
+
+template<unsigned charactersCount>
+bool equalIgnoringASCIICase(const StringImpl* a, const char (&b)[charactersCount])
+{
+    return a ? equalIgnoringASCIICase(*a, b, charactersCount - 1) : false;
+}
 
 template<typename CharacterType>
 inline size_t find(const CharacterType* characters, unsigned length, CharacterType matchCharacter, unsigned index = 0)
