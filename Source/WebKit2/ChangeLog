@@ -1,3 +1,14 @@
+2015-05-18  Brady Eidson  <beidson@apple.com>
+
+        Followup to: Networking process on iOS can be suspended and never exit
+        https://bugs.webkit.org/show_bug.cgi?id=144971.
+
+        Unreviewed. Fixing API tests that revealed the unintentional change in behavior.
+
+        * Shared/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::shutDownProcess): The on WebProcessProxy code path that this
+          was adopted from had an m_connection null check, and that null check needs to remain.
+
 2015-05-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         [GTK] URTBF after r184503.

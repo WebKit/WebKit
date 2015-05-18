@@ -170,6 +170,9 @@ void ChildProcessProxy::shutDownProcess()
         return;
     }
 
+    if (!m_connection)
+        return;
+
     processWillShutDown(*m_connection);
 
     if (canSendMessage())
