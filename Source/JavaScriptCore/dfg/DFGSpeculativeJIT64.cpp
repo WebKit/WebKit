@@ -4635,7 +4635,7 @@ void SpeculativeJIT::compile(Node* node)
         
         silentSpillAllRegisters(InvalidGPRReg);
         m_jit.setupArgumentsExecState();
-        appendCall(triggerTierUpNow);
+        appendCall(triggerTierUpNowInLoop);
         silentFillAllRegisters(InvalidGPRReg);
         
         done.link(&m_jit);
@@ -4657,17 +4657,24 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
-    case CheckTierUpAndOSREnter: {
+    case CheckTierUpAndOSREnter:
+    case CheckTierUpWithNestedTriggerAndOSREnter: {
         ASSERT(!node->origin.semantic.inlineCallFrame);
         
         GPRTemporary temp(this);
         GPRReg tempGPR = temp.gpr();
+
+        MacroAssembler::Jump forceOSREntry;
+        if (op == CheckTierUpWithNestedTriggerAndOSREnter)
+            forceOSREntry = m_jit.branchTest8(MacroAssembler::NonZero, MacroAssembler::AbsoluteAddress(&m_jit.jitCode()->nestedTriggerIsSet));
         
         MacroAssembler::Jump done = m_jit.branchAdd32(
             MacroAssembler::Signed,
             TrustedImm32(Options::ftlTierUpCounterIncrementForLoop()),
             MacroAssembler::AbsoluteAddress(&m_jit.jitCode()->tierUpCounter.m_counter));
-        
+
+        if (forceOSREntry.isSet())
+            forceOSREntry.link(&m_jit);
         silentSpillAllRegisters(tempGPR);
         m_jit.setupArgumentsWithExecState(
             TrustedImm32(node->origin.semantic.bytecodeIndex),
@@ -4685,6 +4692,7 @@ void SpeculativeJIT::compile(Node* node)
     case CheckTierUpInLoop:
     case CheckTierUpAtReturn:
     case CheckTierUpAndOSREnter:
+    case CheckTierUpWithNestedTriggerAndOSREnter:
         DFG_CRASH(m_jit.graph(), node, "Unexpected tier-up node");
         break;
 #endif // ENABLE(FTL_JIT)

@@ -148,6 +148,7 @@ void JIT_OPERATION triggerReoptimizationNow(CodeBlock*, OSRExitBase*) WTF_INTERN
 
 #if ENABLE(FTL_JIT)
 void JIT_OPERATION triggerTierUpNow(ExecState*) WTF_INTERNAL;
+void JIT_OPERATION triggerTierUpNowInLoop(ExecState*) WTF_INTERNAL;
 char* JIT_OPERATION triggerOSREntryNow(ExecState*, int32_t bytecodeIndex, int32_t streamIndex) WTF_INTERNAL;
 #endif // ENABLE(FTL_JIT)
 

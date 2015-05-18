@@ -1351,7 +1351,7 @@ static void triggerFTLReplacementCompile(VM* vm, CodeBlock* codeBlock, JITCode* 
         Operands<JSValue>(), ToFTLDeferredCompilationCallback::create(codeBlock));
 }
 
-void JIT_OPERATION triggerTierUpNow(ExecState* exec)
+static void triggerTierUpNowCommon(ExecState* exec, bool inLoop)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
@@ -1370,8 +1370,20 @@ void JIT_OPERATION triggerTierUpNow(ExecState* exec)
             *codeBlock, ": Entered triggerTierUpNow with executeCounter = ",
             jitCode->tierUpCounter, "\n");
     }
-    
+    if (inLoop)
+        jitCode->nestedTriggerIsSet = 1;
+
     triggerFTLReplacementCompile(vm, codeBlock, jitCode);
+}
+
+void JIT_OPERATION triggerTierUpNow(ExecState* exec)
+{
+    triggerTierUpNowCommon(exec, false);
+}
+
+void JIT_OPERATION triggerTierUpNowInLoop(ExecState* exec)
+{
+    triggerTierUpNowCommon(exec, true);
 }
 
 char* JIT_OPERATION triggerOSREntryNow(
@@ -1388,6 +1400,7 @@ char* JIT_OPERATION triggerOSREntryNow(
     }
     
     JITCode* jitCode = codeBlock->jitCode()->dfg();
+    jitCode->nestedTriggerIsSet = 0;
     
     if (Options::verboseOSR()) {
         dataLog(

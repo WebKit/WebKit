@@ -1,3 +1,74 @@
+2015-05-18  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] When entering a CheckTierUp without OSREntry, force the CheckTierUp for the outer loops with OSR Entry
+        https://bugs.webkit.org/show_bug.cgi?id=145092
+
+        Reviewed by Filip Pizlo.
+
+        When we have a hot loop without OSR Entry inside a slower loop that support OSR Entry,
+        we get the inside loop driving the tierUpCounter and we have very little chance of
+        doing a CheckTierUp on the outer loop. In turn, this give almost no opportunity to tier
+        up in the outer loop and OSR Enter there.
+
+        This patches changes CheckTierUp to force its outer loops to do a CheckTierUp themselves.
+
+        To do that, CheckTierUp sets a flag "nestedTriggerIsSet" to force the outer loop to
+        enter their CheckTierUp regardless of the tier-up counter.
+
+        * bytecode/ExecutionCounter.cpp:
+        (JSC::ExecutionCounter<countingVariant>::setThreshold):
+        This is somewhat unrelated. This assertion is incorrect because it relies on
+        m_counter, which changes on an other thread.
+
+        I have hit it a couple of times with this patch because we are a bit more aggressive
+        on CheckTierUp. What happens is:
+        1) ExecutionCounter<countingVariant>::checkIfThresholdCrossedAndSet() first checks
+           hasCrossedThreshold(), and it is false.
+        2) On the main thread, the hot loops keeps running and the counter becomes large
+           enough to cross the threshold.
+        3) ExecutionCounter<countingVariant>::checkIfThresholdCrossedAndSet() runs the next
+           test, setThreshold(), where the assertion is. Since the counter is now large enough,
+           the assertion fails.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
+        * dfg/DFGJITCode.h:
+        I used a uint8_t instead of a boolean to make the code generation clearer
+        in DFGSpeculativeJIT64.
+
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        This is a bit annoying: we have the NaturalLoops analysis that provides us
+        everything we need to know about loops, but the TierUpCheck are conservative
+        and set on LoopHint.
+
+        To make the two work together, we first find all the CheckTierUp that cannot
+        OSR enter and we keep a list of all the natural loops containing them.
+
+        Then we do a second pass over the LoopHints, get their NaturalLoop, and check
+        if it contains a loop that cannot OSR enter.
+
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+        (JSC::DFG::TierUpCheckInjectionPhase::canOSREnterAtLoopHint):
+
 2015-05-18  Filip Pizlo  <fpizlo@apple.com>
 
         Add a Int-or-Boolean speculation to Branch

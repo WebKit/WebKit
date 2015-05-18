@@ -120,6 +120,7 @@ public:
     DFG::VariableEventStream variableEventStream;
     DFG::MinifiedGraph minifiedDFG;
 #if ENABLE(FTL_JIT)
+    uint8_t nestedTriggerIsSet { 0 };
     UpperTierExecutionCounter tierUpCounter;
     RefPtr<CodeBlock> osrEntryBlock;
     unsigned osrEntryRetry;

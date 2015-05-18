@@ -136,8 +136,6 @@ bool ExecutionCounter<countingVariant>::setThreshold(CodeBlock* codeBlock)
         return false;
     }
         
-    ASSERT(!m_activeThreshold || !hasCrossedThreshold(codeBlock));
-        
     // Compute the true total count.
     double trueTotalCount = count();
     
