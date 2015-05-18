@@ -1,5 +1,27 @@
 2015-05-18  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r184422. rdar://problem/20410944
+
+    2015-05-15  James Savage  <james.savage@apple.com>
+
+            REGRESSION (r181910): WKWebView incorrectly scales snapshot
+            https://bugs.webkit.org/show_bug.cgi?id=145076
+
+            Reviewed by Tim Horton.
+
+            We added a fast path to snapshotting using IOSurfaces with
+            http://trac.webkit.org/changeset/181910 which incorrectly determined
+            scale and transform and resulted in bad snapshots in some situations.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]):
+            When snapshotting an IOSurface we need to compute our scale based off of
+            the rect in the WKWebView coordinates, we also failed to account for
+            non-zero origins in the snapshot rect. Remove an unused varible while
+            we're here.
+
+2015-05-18  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r184399. rdar://problem/20939743
 
     2015-05-15  Chris Dumez  <cdumez@apple.com>
