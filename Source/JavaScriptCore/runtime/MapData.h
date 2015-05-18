@@ -42,8 +42,8 @@ public:
         const_iterator(const MapData*);
         ~const_iterator();
         const WTF::KeyValuePair<JSValue, JSValue> operator*() const;
-        JSValue key() const { ASSERT(!atEnd()); return m_mapData->m_entries[m_index].key.get(); }
-        JSValue value() const { ASSERT(!atEnd()); return m_mapData->m_entries[m_index].value.get(); }
+        JSValue key() const { RELEASE_ASSERT(!atEnd()); return m_mapData->m_entries[m_index].key.get(); }
+        JSValue value() const { RELEASE_ASSERT(!atEnd()); return m_mapData->m_entries[m_index].value.get(); }
         void operator++() { ASSERT(!atEnd()); internalIncrement(); }
         static const_iterator end(const MapData*);
         bool operator!=(const const_iterator& other);
