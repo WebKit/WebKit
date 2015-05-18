@@ -65,6 +65,7 @@ public:
     // Will mark all cached pages associated with the given page as needing style recalc.
     void markPagesForFullStyleRecalc(Page&);
     void markPagesForDeviceOrPageScaleChanged(Page&);
+    void markPagesForContentsSizeChanged(Page&);
 #if ENABLE(VIDEO_TRACK)
     void markPagesForCaptionPreferencesChanged();
 #endif

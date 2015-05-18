@@ -116,6 +116,11 @@ void CachedPage::restore(Page& page)
         page.captionPreferencesChanged();
 #endif
 
+    if (m_needsUpdateContentsSize) {
+        if (FrameView* frameView = page.mainFrame().view())
+            frameView->updateContentsSize();
+    }
+
     clear();
 }
 
@@ -130,6 +135,7 @@ void CachedPage::clear()
     m_needsCaptionPreferencesChanged = false;
 #endif
     m_needsDeviceOrPageScaleChanged = false;
+    m_needsUpdateContentsSize = false;
 }
 
 bool CachedPage::hasExpired() const
