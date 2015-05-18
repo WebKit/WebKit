@@ -1,3 +1,25 @@
+2015-05-18  Andreas Kling  <akling@apple.com>
+
+        [JSC] Speed up URL encode/decode by using bitmaps instead of strchr().
+        <https://webkit.org/b/145115>
+
+        Reviewed by Anders Carlsson.
+
+        We were calling strchr() for every character when doing URL encoding/decoding and it stood out
+        like a sore O(n) thumb in Instruments. Optimize this by using a Bitmap<256> instead.
+
+        5.5% progression on Kraken/stanford-crypto-sha256-iterative.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::makeCharacterBitmap):
+        (JSC::encode):
+        (JSC::decode):
+        (JSC::globalFuncDecodeURI):
+        (JSC::globalFuncDecodeURIComponent):
+        (JSC::globalFuncEncodeURI):
+        (JSC::globalFuncEncodeURIComponent):
+        (JSC::globalFuncEscape):
+
 2015-05-17  Benjamin Poulain  <benjamin@webkit.org>
 
         Do not use fastMallocGoodSize anywhere
