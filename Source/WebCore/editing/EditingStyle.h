@@ -112,6 +112,7 @@ public:
     WEBCORE_EXPORT ~EditingStyle();
 
     MutableStyleProperties* style() { return m_mutableStyle.get(); }
+    Ref<MutableStyleProperties> styleWithResolvedTextDecorations() const;
     bool textDirection(WritingDirection&) const;
     bool isEmpty() const;
     void setStyle(PassRefPtr<MutableStyleProperties>);

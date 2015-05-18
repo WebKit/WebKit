@@ -525,6 +525,28 @@ bool EditingStyle::isEmpty() const
         && underlineChange() == TextDecorationChange::None && strikeThroughChange() == TextDecorationChange::None;
 }
 
+Ref<MutableStyleProperties> EditingStyle::styleWithResolvedTextDecorations() const
+{
+    bool hasTextDecorationChanges = underlineChange() != TextDecorationChange::None || strikeThroughChange() != TextDecorationChange::None;
+    if (m_mutableStyle && !hasTextDecorationChanges)
+        return *m_mutableStyle;
+
+    Ref<MutableStyleProperties> style = m_mutableStyle ? m_mutableStyle->mutableCopy() : MutableStyleProperties::create();
+
+    Ref<CSSValueList> valueList = CSSValueList::createSpaceSeparated();
+    if (underlineChange() == TextDecorationChange::Add)
+        valueList->append(cssValuePool().createIdentifierValue(CSSValueUnderline));
+    if (strikeThroughChange() == TextDecorationChange::Add)
+        valueList->append(cssValuePool().createIdentifierValue(CSSValueLineThrough));
+
+    if (valueList->length())
+        style->setProperty(CSSPropertyTextDecoration, valueList.ptr());
+    else
+        style->setProperty(CSSPropertyTextDecoration, cssValuePool().createIdentifierValue(CSSValueNone));
+
+    return style;
+}
+
 bool EditingStyle::textDirection(WritingDirection& writingDirection) const
 {
     if (!m_mutableStyle)
