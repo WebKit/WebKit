@@ -69,6 +69,8 @@ if ($ENV{CC}) {
     $gccLocation = "/usr/sfw/bin/gcc";
 } elsif ($Config::Config{"osname"} eq "darwin" && $ENV{SDKROOT}) {
     chomp($gccLocation = `xcrun -find cc -sdk '$ENV{SDKROOT}'`);
+} elsif ($Config::Config{"osname"} eq "msys") {
+    $gccLocation = "gcc";
 } else {
     $gccLocation = "/usr/bin/cc";
 }

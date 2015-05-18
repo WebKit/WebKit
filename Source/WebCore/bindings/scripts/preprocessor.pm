@@ -51,6 +51,8 @@ sub applyPreprocessor
             $preprocessor = "/usr/sfw/bin/gcc";
         } elsif (-x "/usr/bin/clang") {
             $preprocessor = "/usr/bin/clang";
+        } elsif ($Config{osname} eq 'msys') {
+            $preprocessor = "gcc";
         } else {
             $preprocessor = "/usr/bin/gcc";
         }
@@ -71,7 +73,7 @@ sub applyPreprocessor
     @macros = map { "-D$_" } @macros;
 
     my $pid = 0;
-    if ($Config{osname} eq "cygwin" || $Config{osname} eq 'MSWin32') {
+    if ($Config{osname} eq "cygwin" || $Config{osname} eq 'MSWin32' || $Config{osname} eq 'msys') {
         # This call can fail if Windows rebases cygwin, so retry a few times until it succeeds.
         for (my $tries = 0; !$pid && ($tries < 20); $tries++) {
             eval {
