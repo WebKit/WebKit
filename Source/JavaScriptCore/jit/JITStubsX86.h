@@ -32,6 +32,7 @@
 #define JITStubsX86_h
 
 #include "JITStubsX86Common.h"
+#include <wtf/InlineASM.h>
 
 #if !CPU(X86)
 #error "JITStubsX86.h should only be #included if CPU(X86)"
@@ -197,6 +198,225 @@ SYMBOL_STRING(ctiMasmProbeTrampolineEnd) ":" "\n"
     "ret" "\n"
 );
 #endif // USE(MASM_PROBE)
+
+#if OS(WINDOWS)
+extern "C" {
+
+    // FIXME: Since Windows doesn't use the LLInt, we have inline stubs here.
+    // Until the LLInt is changed to support Windows, these stub needs to be updated.
+    asm (
+        ".globl " SYMBOL_STRING(callToJavaScript) "\n"
+        HIDE_SYMBOL(callToJavaScript) "\n"
+        SYMBOL_STRING(callToJavaScript) ":" "\n"
+            "mov    (%esp),%edx" "\n"
+            "push   %ebp" "\n"
+            "mov    %ebp,%eax" "\n"
+            "mov    %esp,%ebp" "\n"
+            "push   %esi" "\n"
+            "push   %edi" "\n"
+            "push   %ebx" "\n"
+            "sub    $0x1c,%esp" "\n"
+            "mov    0x34(%esp),%ecx" "\n"
+            "mov    0x38(%esp),%esi" "\n"
+            "mov    0x3c(%esp),%ebp" "\n"
+            "sub    $0x20,%ebp" "\n"
+            "movl   $0x0,0x24(%ebp)" "\n"
+            "movl   $0x0,0x20(%ebp)" "\n"
+            "movl   $0x0,0x1c(%ebp)" "\n"
+            "mov    %ecx,0x18(%ebp)" "\n"
+            "mov    (%ecx),%ebx" "\n"
+            "movl   $0x0,0x14(%ebp)" "\n"
+            "mov    %ebx,0x10(%ebp)" "\n"
+            "movl   $0x0,0xc(%ebp)" "\n"
+            "movl   $0x1,0x8(%ebp)" "\n"
+            "mov    %edx,0x4(%ebp)" "\n"
+            "mov    %eax,0x0(%ebp)" "\n"
+            "mov    %ebp,%eax" "\n"
+
+            "mov    0x28(%esi),%edx" "\n"
+            "add    $0x5,%edx" "\n"
+            "shl    $0x3,%edx" "\n"
+            "sub    %edx,%ebp" "\n"
+            "mov    %eax,0x0(%ebp)" "\n"
+
+            "mov    $0x5,%eax" "\n"
+
+        ".copyHeaderLoop:" "\n"
+            "sub    $0x1,%eax" "\n"
+            "mov    (%esi,%eax,8),%ecx" "\n"
+            "mov    %ecx,0x8(%ebp,%eax,8)" "\n"
+            "mov    0x4(%esi,%eax,8),%ecx" "\n"
+            "mov    %ecx,0xc(%ebp,%eax,8)" "\n"
+            "test   %eax,%eax" "\n"
+            "jne .copyHeaderLoop" "\n"
+
+            "mov    0x18(%esi),%edx" "\n"
+            "sub    $0x1,%edx" "\n"
+            "mov    0x28(%esi),%ecx" "\n"
+            "sub    $0x1,%ecx" "\n"
+
+            "cmp    %ecx,%edx" "\n"
+            "je .copyArgs" "\n"
+
+            "xor    %eax,%eax" "\n"
+            "mov    $0xfffffffc,%ebx" "\n"
+
+        ".fillExtraArgsLoop:" "\n"
+            "sub    $0x1,%ecx" "\n"
+            "mov    %eax,0x30(%ebp,%ecx,8)" "\n"
+            "mov    %ebx,0x34(%ebp,%ecx,8)" "\n"
+            "cmp    %ecx,%edx" "\n"
+            "jne .fillExtraArgsLoop" "\n"
+
+        ".copyArgs:" "\n"
+            "mov    0x2c(%esi),%eax" "\n"
+
+        ".copyArgsLoop:" "\n"
+            "test   %edx,%edx" "\n"
+            "je .copyArgsDone" "\n"
+            "sub    $0x1,%edx" "\n"
+            "mov    (%eax,%edx,8),%ecx" "\n"
+            "mov    0x4(%eax,%edx,8),%ebx" "\n"
+            "mov    %ecx,0x30(%ebp,%edx,8)" "\n"
+            "mov    %ebx,0x34(%ebp,%edx,8)" "\n"
+            "jmp .copyArgsLoop" "\n"
+
+        ".copyArgsDone:" "\n"
+            "mov    0x34(%esp),%ecx" "\n"
+            "mov    %ebp,(%ecx)" "\n"
+
+            "call   *0x30(%esp)" "\n"
+
+            "cmpl   $0x1,0x8(%ebp)" "\n"
+            "je .calleeFramePopped" "\n"
+            "mov    0x0(%ebp),%ebp" "\n"
+
+        ".calleeFramePopped:" "\n"
+            "mov    0x18(%ebp),%ecx" "\n"
+            "mov    0x10(%ebp),%ebx" "\n"
+            "mov    %ebx,(%ecx)" "\n"
+
+            "add    $0x1c,%esp" "\n"
+            "pop    %ebx" "\n"
+            "pop    %edi" "\n"
+            "pop    %esi" "\n"
+            "pop    %ebp" "\n"
+            "ret" "\n"
+
+        ".globl " SYMBOL_STRING(returnFromJavaScript) "\n"
+        HIDE_SYMBOL(returnFromJavaScript) "\n"
+        SYMBOL_STRING(returnFromJavaScript) ":" "\n"
+            "add    $0x1c,%esp" "\n"
+            "pop    %ebx" "\n"
+            "pop    %edi" "\n"
+            "pop    %esi" "\n"
+            "pop    %ebp" "\n"
+            "ret" "\n"
+
+        ".globl " SYMBOL_STRING(callToNativeFunction) "\n"
+        HIDE_SYMBOL(callToNativeFunction) "\n"
+        SYMBOL_STRING(callToNativeFunction) ":" "\n"
+            "mov    (%esp),%edx" "\n"
+            "push   %ebp" "\n"
+            "mov    %ebp,%eax" "\n"
+            "mov    %esp,%ebp" "\n"
+            "push   %esi" "\n"
+            "push   %edi" "\n"
+            "push   %ebx" "\n"
+            "sub    $0x1c,%esp" "\n"
+            "mov    0x34(%esp),%ecx" "\n"
+            "mov    0x38(%esp),%esi" "\n"
+            "mov    0x3c(%esp),%ebp" "\n"
+            "sub    $0x20,%ebp" "\n"
+            "movl   $0x0,0x24(%ebp)" "\n"
+            "movl   $0x0,0x20(%ebp)" "\n"
+            "movl   $0x0,0x1c(%ebp)" "\n"
+            "mov    %ecx,0x18(%ebp)" "\n"
+            "mov    (%ecx),%ebx" "\n"
+            "movl   $0x0,0x14(%ebp)" "\n"
+            "mov    %ebx,0x10(%ebp)" "\n"
+            "movl   $0x0,0xc(%ebp)" "\n"
+            "movl   $0x1,0x8(%ebp)" "\n"
+            "mov    %edx,0x4(%ebp)" "\n"
+            "mov    %eax,0x0(%ebp)" "\n"
+            "mov    %ebp,%eax" "\n"
+
+            "mov    0x28(%esi),%edx" "\n"
+            "add    $0x5,%edx" "\n"
+            "shl    $0x3,%edx" "\n"
+            "sub    %edx,%ebp" "\n"
+            "mov    %eax,0x0(%ebp)" "\n"
+
+            "mov    $0x5,%eax" "\n"
+
+        "copyHeaderLoop:" "\n"
+            "sub    $0x1,%eax" "\n"
+            "mov    (%esi,%eax,8),%ecx" "\n"
+            "mov    %ecx,0x8(%ebp,%eax,8)" "\n"
+            "mov    0x4(%esi,%eax,8),%ecx" "\n"
+            "mov    %ecx,0xc(%ebp,%eax,8)" "\n"
+            "test   %eax,%eax" "\n"
+            "jne copyHeaderLoop" "\n"
+
+            "mov    0x18(%esi),%edx" "\n"
+            "sub    $0x1,%edx" "\n"
+            "mov    0x28(%esi),%ecx" "\n"
+            "sub    $0x1,%ecx" "\n"
+
+            "cmp    %ecx,%edx" "\n"
+            "je copyArgs" "\n"
+
+            "xor    %eax,%eax" "\n"
+            "mov    $0xfffffffc,%ebx" "\n"
+
+        "fillExtraArgsLoop:" "\n"
+            "sub    $0x1,%ecx" "\n"
+            "mov    %eax,0x30(%ebp,%ecx,8)" "\n"
+            "mov    %ebx,0x34(%ebp,%ecx,8)" "\n"
+            "cmp    %ecx,%edx" "\n"
+            "jne fillExtraArgsLoop" "\n"
+
+        "copyArgs:" "\n"
+            "mov    0x2c(%esi),%eax" "\n"
+
+        "copyArgsLoop:" "\n"
+            "test   %edx,%edx" "\n"
+            "je copyArgsDone" "\n"
+            "sub    $0x1,%edx" "\n"
+            "mov    (%eax,%edx,8),%ecx" "\n"
+            "mov    0x4(%eax,%edx,8),%ebx" "\n"
+            "mov    %ecx,0x30(%ebp,%edx,8)" "\n"
+            "mov    %ebx,0x34(%ebp,%edx,8)" "\n"
+            "jmp copyArgsLoop" "\n"
+
+        "copyArgsDone:" "\n"
+            "mov    0x34(%esp),%ecx" "\n"
+            "mov    %ebp,(%ecx)" "\n"
+
+            "mov    0x30(%esp),%edi" "\n"
+            "mov    %ebp,0x30(%esp)" "\n"
+            "mov    %ebp,%ecx" "\n"
+            "call   *%edi" "\n"
+
+            "cmpl   $0x1,0x8(%ebp)" "\n"
+            "je calleeFramePopped" "\n"
+            "mov    0x0(%ebp),%ebp" "\n"
+
+        "calleeFramePopped:" "\n"
+            "mov    0x18(%ebp),%ecx" "\n"
+            "mov    0x10(%ebp),%ebx" "\n"
+            "mov    %ebx,(%ecx)" "\n"
+
+            "add    $0x1c,%esp" "\n"
+            "pop    %ebx" "\n"
+            "pop    %edi" "\n"
+            "pop    %esi" "\n"
+            "pop    %ebp" "\n"
+            "ret" "\n"
+        );
+}
+
+#endif // OS(WINDOWS)
 
 #endif // COMPILER(GCC)
 

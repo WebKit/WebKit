@@ -1,3 +1,10 @@
+2015-04-17  Milan Crha  <mcrha@redhat.com>
+
+        [GTK][Stable] Missing implementation of callToJavaScript/callToNativeFunction with msys/mingw32
+        https://bugs.webkit.org/show_bug.cgi?id=132856
+
+        * jit/JITStubsX86.h:
+
 2015-01-06  Philip Chimento  <philip.chimento@gmail.com>
 
         webkit-gtk 2.3.3 fails to build on OS X - Conflicting type "Fixed"
