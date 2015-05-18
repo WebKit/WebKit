@@ -1,5 +1,16 @@
 2015-05-18  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r184052. rdar://problem/20890647
+
+    2015-05-10  Darin Adler  <darin@apple.com>
+
+            Fix build.
+
+            * Platform/mac/MenuUtilities.mm: Added includes that were somehow omitted in what
+            I committed before.
+
+2015-05-18  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r184047. rdar://problem/20890647
 
     2015-05-10  Darin Adler  <darin@apple.com>
