@@ -731,8 +731,8 @@ if (ENABLE_PLUGIN_PROCESS_GTK2)
         ${DERIVED_SOURCES_WEBKIT2_DIR}/PluginControllerProxyMessageReceiver.cpp
         ${DERIVED_SOURCES_WEBKIT2_DIR}/PluginProcessMessageReceiver.cpp
         ${DERIVED_SOURCES_WEBKIT2_DIR}/WebProcessConnectionMessageReceiver.cpp
-
         ${DERIVED_SOURCES_WEBKIT2_DIR}/NPObjectMessageReceiverMessageReceiver.cpp
+        ${DERIVED_SOURCES_WEBKIT2_DIR}/ChildProcessMessageReceiver.cpp
     )
 
     add_executable(WebKitPluginProcess2 ${PluginProcessGTK2_SOURCES})

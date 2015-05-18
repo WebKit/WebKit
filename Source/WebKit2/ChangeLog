@@ -1,3 +1,9 @@
+2015-05-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [GTK] URTBF after r184503.
+
+        * PlatformGTK.cmake:
+
 2015-05-18  Brady Eidson  <beidson@apple.com>
 
         Networking process on iOS can be suspended and never exit.
