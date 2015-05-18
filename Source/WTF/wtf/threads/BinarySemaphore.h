@@ -41,12 +41,12 @@ public:
     WTF_EXPORT_PRIVATE void signal();
     WTF_EXPORT_PRIVATE bool wait(double absoluteTime);
 
-#if OS(WINDOWS)
+#if PLATFORM(WIN)
     HANDLE event() const { return m_event; }
 #endif
 
 private:
-#if OS(WINDOWS)
+#if PLATFORM(WIN)
     HANDLE m_event;
 #else
     bool m_isSet;
