@@ -1475,6 +1475,9 @@ void RenderStyle::setWordSpacing(Length v)
     case Fixed:
         fontWordSpacing = v.getFloatValue();
         break;
+    case Calculated:
+        fontWordSpacing = v.nonNanCalculatedValue(maxValueForCssLength);
+        break;
     default:
         ASSERT_NOT_REACHED();
         fontWordSpacing = 0;
