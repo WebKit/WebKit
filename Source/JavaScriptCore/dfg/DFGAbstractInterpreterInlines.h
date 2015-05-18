@@ -2235,10 +2235,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case StoreBarrierWithNullCheck: {
-        break;
-    }
-
     case CheckTierUpAndOSREnter:
     case LoopHint:
     case ZombieHint:
