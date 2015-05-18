@@ -44,6 +44,7 @@ BEGIN {
 my (
     $threeDTransformsSupport,
     $accelerated2DCanvasSupport,
+    $arrowfunctionSyntax,
     $attachmentElementSupport,
     $batteryStatusSupport,
     $canvasPathSupport,
@@ -154,6 +155,9 @@ my @features = (
 
     { option => "accelerated-2d-canvas", desc => "Toggle Accelerated 2D Canvas support",
       define => "ENABLE_ACCELERATED_2D_CANVAS", default => isGtk(), value => \$accelerated2DCanvasSupport },
+
+    { option => "arrowfunction-syntax", desc => "Toggle ES6 arrow function syntax support",
+      define => "ENABLE_ES6_ARROWFUNCTION_SYNTAX", default => 1, value => \$arrowfunctionSyntax },
 
     { option => "attachment-element", desc => "Toggle Attachment Element support",
       define => "ENABLE_ATTACHMENT_ELEMENT", default => 0, value => \$attachmentElementSupport },

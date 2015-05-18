@@ -1,3 +1,14 @@
+2015-05-18  Skachkov Alexandr  <gskachkov@gmail.com>
+
+        [ES6] Arrow function syntax. Feature flag for arrow function
+        https://bugs.webkit.org/show_bug.cgi?id=145108
+
+        Reviewed by Ryosuke Niwa.
+
+        Added feature flag ENABLE_ES6_ARROWFUNCTION_SYNTAX for arrow function
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2015-05-15  Jeremy Jones  <jeremyj@apple.com>
 
         Limit alternate fullscreen with linked on or after.
