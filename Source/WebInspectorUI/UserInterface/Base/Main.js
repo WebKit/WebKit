@@ -41,6 +41,12 @@ WebInspector.DebuggableType = {
 WebInspector.SelectedSidebarPanelCookieKey = "selected-sidebar-panel";
 WebInspector.TypeIdentifierCookieKey = "represented-object-type";
 
+WebInspector.StateRestorationType = {
+    Load: "state-restoration-load",
+    Navigation: "state-restoration-navigation",
+    Delayed: "state-restoration-delayed",
+};
+
 WebInspector.loaded = function()
 {
     // Initialize WebSocket to communication.
@@ -343,7 +349,7 @@ WebInspector.contentLoaded = function()
         this.tabBrowser.addTabForContentView(tabContentView, true);
     }
 
-    this._restoreCookieForOpenTabs();
+    this._restoreCookieForOpenTabs(WebInspector.StateRestorationType.Load);
 
     this.tabBar.selectedTabBarItem = this._selectedTabIndexSetting.value;
 
@@ -508,7 +514,7 @@ WebInspector.activateExtraDomains = function(domains)
 
         this.tabBrowser.addTabForContentView(tabContentView, true);
 
-        tabContentView.restoreStateFromCookie();
+        tabContentView.restoreStateFromCookie(WebInspector.StateRestorationType.Load);
     }
 
     this._pendingOpenTabTypes = stillPendingOpenTabTypes;
@@ -1129,7 +1135,7 @@ WebInspector._mainResourceDidChange = function(event)
 
     // Run cookie restoration after we are sure all of the Tabs and NavigationSidebarPanels
     // have updated with respect to the main resource change.
-    setTimeout(this._restoreCookieForOpenTabs.bind(this, true));
+    setTimeout(this._restoreCookieForOpenTabs.bind(this, WebInspector.StateRestorationType.Navigation));
 
     this._updateDownloadToolbarButton();
 
@@ -1146,13 +1152,13 @@ WebInspector._provisionalLoadStarted = function(event)
     this._inProvisionalLoad = true;
 };
 
-WebInspector._restoreCookieForOpenTabs = function(causedByNavigation)
+WebInspector._restoreCookieForOpenTabs = function(restorationType)
 {
     for (var tabBarItem of this.tabBar.tabBarItems) {
         var tabContentView = tabBarItem.representedObject;
         if (!(tabContentView instanceof WebInspector.TabContentView))
             continue;
-        tabContentView.restoreStateFromCookie(causedByNavigation);
+        tabContentView.restoreStateFromCookie(restorationType);
     }
 };
 

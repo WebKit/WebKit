@@ -1,3 +1,50 @@
+2015-05-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Tab Restoration incorrectly makes ContentViews "shown" in background tabs
+        https://bugs.webkit.org/show_bug.cgi?id=145080
+
+        Reviewed by Timothy Hatcher.
+
+        Many tabs have their own content browser / navigation sidebar. During
+        state restoration, each tab would immediately try to restore an
+        appropriate ContentView after the load / navigation. However, in doing
+        so, we weren't respecting whether or not the Tab the ContentBrowser
+        was in was hidden or not, so ContentViews in background tags were
+        still being treated as shown/visible.
+
+        This patch changes state restoration to only affect the foreground
+        tab, and be delayed on all background tabs until that tab is shown.
+        This reduces the amount of work on load and navigation to just a
+        single tab instead of all tabs. Most importantly, it avoids having
+        performing work on ContentBrowsers that are non-visible, so state
+        restoration only happens for visible ContentBrowsers.
+
+        For simplicity, in the case of a delayed tab restoration triggered
+        by the user switching tabs, we don't try twice (like we occasionally
+        do on load/reload). We could add back some hueristic here if needed.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        (WebInspector.activateExtraDomains):
+        (WebInspector._mainResourceDidChange):
+        (WebInspector._restoreCookieForOpenTabs):
+        * UserInterface/Views/NavigationSidebarPanel.js:
+
+        * UserInterface/Views/TabContentView.js:
+        (WebInspector.TabContentView.prototype.shown):
+        (WebInspector.TabContentView.prototype.restoreStateFromCookie):
+        (WebInspector.TabContentView.prototype.saveStateToCookie):
+        When asked to restore state, save that logic until the next time the tab is shown.
+
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.prototype.get visible):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype.editingControllerDidStartEditing):
+        (WebInspector.SourceCodeTextEditor.prototype._setTypeTokenAnnotatorEnabledState): Deleted.
+        Although this didn't actually catch the issue, it could potentially
+        catch other issues in the future. We don't want to enable the annotators
+        in a non-visible text editor, as it could be a performance issue.
+
 2015-05-15  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: empty timeline should not use previous timeline's zoom interval

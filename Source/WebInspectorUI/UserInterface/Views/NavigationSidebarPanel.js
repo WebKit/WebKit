@@ -235,6 +235,9 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         if (this._finalAttemptToRestoreViewStateTimeout)
             clearTimeout(this._finalAttemptToRestoreViewStateTimeout);
 
+        if (relaxedMatchDelay === 0)
+            return;
+
         function finalAttemptToRestoreViewStateFromCookie()
         {
             delete this._finalAttemptToRestoreViewStateTimeout;

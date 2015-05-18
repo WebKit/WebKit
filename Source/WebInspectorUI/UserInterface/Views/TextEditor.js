@@ -76,6 +76,11 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.Object
         return this._element;
     }
 
+    get visible()
+    {
+        return this._visible;
+    }
+
     get string()
     {
         return this._codeMirror.getValue();
