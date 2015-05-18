@@ -229,7 +229,7 @@
     _zoomTextOnly = !_zoomTextOnly;
 }
 
-- (IBAction)toggleUseMinimumViewSize:(id)sender
+- (IBAction)toggleShrinkToFit:(id)sender
 {
 
 }

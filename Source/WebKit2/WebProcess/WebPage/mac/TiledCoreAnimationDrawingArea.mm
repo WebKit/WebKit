@@ -261,6 +261,54 @@ void TiledCoreAnimationDrawingArea::updateIntrinsicContentSizeIfNeeded()
     m_webPage.send(Messages::DrawingAreaProxy::IntrinsicContentSizeDidChange(contentSize));
 }
 
+void TiledCoreAnimationDrawingArea::setShouldScaleViewToFitDocument(bool shouldScaleView)
+{
+    if (m_shouldScaleViewToFitDocument == shouldScaleView)
+        return;
+
+    m_shouldScaleViewToFitDocument = shouldScaleView;
+    scheduleCompositingLayerFlush();
+}
+
+void TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded()
+{
+    // FIXME: Defer scrollbar flashing until after the second layout.
+
+    const int maximumDocumentWidthForScaling = 1440;
+    const float minimumViewScale = 0.1;
+
+    if (!m_shouldScaleViewToFitDocument)
+        return;
+
+    if (!m_webPage.mainFrame()->view()->needsLayout() && m_lastDocumentSizeForScaleToFit == m_webPage.mainFrameView()->renderView()->unscaledDocumentRect().size() && m_lastViewSizeForScaleToFit == m_webPage.size())
+        return;
+
+    // Lay out at the view size.
+    m_webPage.setUseFixedLayout(false);
+    m_webPage.layoutIfNeeded();
+
+    IntSize documentSize = m_webPage.mainFrameView()->renderView()->unscaledDocumentRect().size();
+    m_lastViewSizeForScaleToFit = m_webPage.size();
+    m_lastDocumentSizeForScaleToFit = documentSize;
+
+    int documentWidth = documentSize.width();
+    int viewWidth = m_webPage.size().width();
+
+    float viewScale = 1;
+
+    // Avoid scaling down documents that don't fit in a certain width, to allow
+    // sites that want horizontal scrollbars to continue to have them.
+    if (documentWidth && documentWidth < maximumDocumentWidthForScaling && viewWidth < documentWidth) {
+        // If the document doesn't fit in the view, scale it down but lay out at the view size.
+        m_webPage.setUseFixedLayout(true);
+        viewScale = (float)viewWidth / (float)documentWidth;
+        viewScale = std::max(viewScale, minimumViewScale);
+        m_webPage.setFixedLayoutSize(IntSize(ceilf(m_webPage.size().width() / viewScale), m_webPage.size().height()));
+    }
+
+    m_webPage.scaleView(viewScale);
+}
+
 void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(std::function<void ()> function)
 {
 #if ENABLE(ASYNC_SCROLLING)
@@ -302,6 +350,8 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
     ASSERT(!m_layerTreeStateIsFrozen);
 
     @autoreleasepool {
+        scaleViewToFitDocumentIfNeeded();
+
         m_webPage.layoutIfNeeded();
 
         updateIntrinsicContentSizeIfNeeded();

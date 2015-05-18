@@ -125,6 +125,7 @@ struct WebPageCreationParameters {
     float textAutosizingWidth;
 #endif
     bool appleMailPaginationQuirkEnabled;
+    bool shouldScaleViewToFitDocument;
 };
 
 } // namespace WebKit

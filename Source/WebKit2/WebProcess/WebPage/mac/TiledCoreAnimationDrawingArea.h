@@ -100,6 +100,8 @@ private:
     virtual void setColorSpace(const ColorSpaceData&) override;
     virtual void addFence(const WebCore::MachSendRight&) override;
 
+    virtual void setShouldScaleViewToFitDocument(bool) override;
+
     virtual void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
     virtual void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
     void applyTransientZoomToPage(double scale, WebCore::FloatPoint origin);
@@ -118,6 +120,7 @@ private:
 
     void updateIntrinsicContentSizeIfNeeded();
     void updateScrolledExposedRect();
+    void scaleViewToFitDocumentIfNeeded();
 
     bool m_layerTreeStateIsFrozen;
     WebCore::LayerFlushScheduler m_layerFlushScheduler;
@@ -150,6 +153,10 @@ private:
     WebCore::GraphicsLayer* m_viewOverlayRootLayer;
 
     Vector<uint64_t> m_fenceCallbacksForAfterNextFlush;
+    bool m_shouldScaleViewToFitDocument { false };
+
+    WebCore::IntSize m_lastViewSizeForScaleToFit;
+    WebCore::IntSize m_lastDocumentSizeForScaleToFit;
 };
 
 } // namespace WebKit

@@ -12,7 +12,7 @@
                 <outlet property="forwardButton" destination="42" id="47"/>
                 <outlet property="progressIndicator" destination="21" id="33"/>
                 <outlet property="reloadButton" destination="23" id="34"/>
-                <outlet property="toggleUseMinimumViewSizeButton" destination="82" id="FTZ-YK-Ae5"/>
+                <outlet property="toggleUseShrinkToFitButton" destination="82" id="9w7-AB-Ye3"/>
                 <outlet property="toolbar" destination="48" id="67"/>
                 <outlet property="urlText" destination="10" id="32"/>
                 <outlet property="window" destination="1" id="3"/>
@@ -85,7 +85,7 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="76DCF2B0-1DDE-47D2-9212-705E6E310CCE" label="Use Minimum View Size" paletteLabel="Use Minimum View Size" image="NSEnterFullScreenTemplate" id="81" customClass="MBToolbarItem">
+                    <toolbarItem implicitItemIdentifier="76DCF2B0-1DDE-47D2-9212-705E6E310CCE" label="Use Shrink To Fit" paletteLabel="Use Shrink To Fit" image="NSEnterFullScreenTemplate" id="81" customClass="MBToolbarItem">
                         <nil key="toolTip"/>
                         <size key="minSize" width="29" height="25"/>
                         <size key="maxSize" width="29" height="25"/>
@@ -96,6 +96,9 @@
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
+                            <connections>
+                                <action selector="toggleShrinkToFit:" target="-2" id="gp7-Vk-KTI"/>
+                            </connections>
                         </button>
                         <connections>
                             <action selector="toggleUseMinimumViewSize:" target="-2" id="gZA-yS-7L4"/>

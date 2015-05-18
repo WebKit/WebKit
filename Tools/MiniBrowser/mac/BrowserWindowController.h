@@ -47,7 +47,7 @@
 
 - (IBAction)setScale:(id)sender;
 
-- (IBAction)toggleUseMinimumViewSize:(id)sender;
+- (IBAction)toggleShrinkToFit:(id)sender;
 
 - (IBAction)dumpSourceToConsole:(id)sender;
 - (IBAction)find:(id)sender;
@@ -64,7 +64,7 @@
     IBOutlet NSToolbar *toolbar;
     IBOutlet NSTextField *urlText;
     IBOutlet NSView *containerView;
-    IBOutlet NSButton *toggleUseMinimumViewSizeButton;
+    IBOutlet NSButton *toggleUseShrinkToFitButton;
     
     IBOutlet NSWindow *findPanelWindow;
 
