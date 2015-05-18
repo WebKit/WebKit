@@ -1549,7 +1549,7 @@ public:
                 multiplier *= frame->textZoomFactor();
             wordSpacing = primitiveValue->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), multiplier);
         } else if (primitiveValue->isPercentage())
-            wordSpacing = Length(primitiveValue->getDoubleValue(), Percent);
+            wordSpacing = Length(clampTo<float>(primitiveValue->getDoubleValue(), minValueForCssLength, maxValueForCssLength), Percent);
         else if (primitiveValue->isNumber())
             wordSpacing = Length(primitiveValue->getDoubleValue(), Fixed);
         else if (primitiveValue->isViewportPercentageLength())
