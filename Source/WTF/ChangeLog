@@ -1,3 +1,12 @@
+2015-04-17  Milan Crha  <mcrha@redhat.com>
+
+        [GTK] Replace M_SQRT2 with sqrtOfTwoDouble
+        https://bugs.webkit.org/show_bug.cgi?id=143906
+
+        Reviewed by Carlos Garcia Campos.
+
+        * wtf/MathExtras.h:
+
 2015-04-15  Руслан Ижбулатов  <lrn1986@gmail.com>
 
         Harmonize binary semaphore ifdefs

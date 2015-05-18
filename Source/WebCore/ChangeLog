@@ -1,5 +1,16 @@
 2015-04-17  Milan Crha  <mcrha@redhat.com>
 
+        [GTK] Replace M_SQRT2 with sqrtOfTwoDouble
+        https://bugs.webkit.org/show_bug.cgi?id=143906
+
+        Reviewed by Carlos Garcia Campos.
+
+        * rendering/mathml/RenderMathMLMenclose.cpp:
+        (WebCore::RenderMathMLMenclose::computePreferredLogicalWidths):
+        (WebCore::RenderMathMLMenclose::updateLogicalHeight):
+
+2015-04-17  Milan Crha  <mcrha@redhat.com>
+
         [GTK] Make preprocessor.pm / make_names.pl work under msys/mingw
         https://bugs.webkit.org/show_bug.cgi?id=143908
 

@@ -71,8 +71,8 @@ void RenderMathMLMenclose::computePreferredLogicalWidths()
     size_t notationalValueSize = notationValues.size();
     for (size_t i = 0; i < notationalValueSize; i++) {
         if (notationValues[i] == "circle") {
-            m_minPreferredLogicalWidth = minPreferredLogicalWidth() * float(M_SQRT2);
-            m_maxPreferredLogicalWidth = maxPreferredLogicalWidth() * float(M_SQRT2);
+            m_minPreferredLogicalWidth = minPreferredLogicalWidth() * float(sqrtOfTwoDouble);
+            m_maxPreferredLogicalWidth = maxPreferredLogicalWidth() * float(sqrtOfTwoDouble);
         }
     }
 
@@ -86,7 +86,7 @@ void RenderMathMLMenclose::updateLogicalHeight()
     size_t notationalValueSize = notationValues.size();
     for (size_t i = 0; i < notationalValueSize; i++)
         if (notationValues[i] == "circle")
-            setLogicalHeight(logicalHeight() * float(M_SQRT2));
+            setLogicalHeight(logicalHeight() * float(sqrtOfTwoDouble));
 }
 
 void RenderMathMLMenclose::paint(PaintInfo& info, const LayoutPoint& paintOffset)
