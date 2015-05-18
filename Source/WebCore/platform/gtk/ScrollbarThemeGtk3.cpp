@@ -72,6 +72,14 @@ static void applyScrollbarStyleContextClasses(GtkStyleContext* context, Scrollba
     gtk_style_context_add_class(context, orientation == VerticalScrollbar ?  GTK_STYLE_CLASS_VERTICAL : GTK_STYLE_CLASS_HORIZONTAL);
 }
 
+static void adjustRectAccordingToMargin(GtkStyleContext* context, GtkStateFlags state, IntRect& rect)
+{
+    GtkBorder margin;
+    gtk_style_context_get_margin(context, state, &margin);
+    rect.move(margin.left, margin.right);
+    rect.contract(margin.left + margin.right, margin.top + margin.bottom);
+}
+
 void ScrollbarThemeGtk::paintTrackBackground(GraphicsContext* context, ScrollbarThemeClient* scrollbar, const IntRect& rect)
 {
     // Paint the track background. If the trough-under-steppers property is true, this
@@ -86,6 +94,7 @@ void ScrollbarThemeGtk::paintTrackBackground(GraphicsContext* context, Scrollbar
     applyScrollbarStyleContextClasses(m_context, scrollbar->orientation());
     gtk_style_context_add_class(m_context, GTK_STYLE_CLASS_TROUGH);
 
+    adjustRectAccordingToMargin(m_context, static_cast<GtkStateFlags>(0), fullScrollbarRect);
     gtk_render_background(m_context, context->platformContext()->cr(),
                           fullScrollbarRect.x(), fullScrollbarRect.y(), fullScrollbarRect.width(), fullScrollbarRect.height());
     gtk_render_frame(m_context, context->platformContext()->cr(),
@@ -120,8 +129,10 @@ void ScrollbarThemeGtk::paintThumb(GraphicsContext* context, ScrollbarThemeClien
         flags |= GTK_STATE_FLAG_PRELIGHT;
     gtk_style_context_set_state(m_context, static_cast<GtkStateFlags>(flags));
 
-    gtk_render_slider(m_context, context->platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height(),
-                      orientation == VerticalScrollbar ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL);
+    IntRect thumbRect(rect);
+    adjustRectAccordingToMargin(m_context, static_cast<GtkStateFlags>(flags), thumbRect);
+    gtk_render_slider(m_context, context->platformContext()->cr(), thumbRect.x(), thumbRect.y(), thumbRect.width(), thumbRect.height(),
+        orientation == VerticalScrollbar ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL);
 
     gtk_style_context_restore(m_context);
 }
