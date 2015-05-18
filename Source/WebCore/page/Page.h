@@ -260,6 +260,11 @@ public:
     WEBCORE_EXPORT void setPageScaleFactor(float scale, const IntPoint& origin, bool inStableState = true);
     float pageScaleFactor() const { return m_pageScaleFactor; }
 
+    // The view scale factor is multiplied into the page scale factor by all
+    // callers of setPageScaleFactor.
+    WEBCORE_EXPORT void setViewScaleFactor(float);
+    float viewScaleFactor() const { return m_viewScaleFactor; }
+
     WEBCORE_EXPORT void setZoomedOutPageScaleFactor(float);
     float zoomedOutPageScaleFactor() const { return m_zoomedOutPageScaleFactor; }
 
@@ -520,6 +525,7 @@ private:
     float m_pageScaleFactor;
     float m_zoomedOutPageScaleFactor;
     float m_deviceScaleFactor;
+    float m_viewScaleFactor { 1 };
 
     float m_topContentInset;
     

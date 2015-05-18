@@ -359,7 +359,7 @@ public:
     void scalePageInViewCoordinates(double scale, WebCore::IntPoint centerInViewCoordinates);
     double pageScaleFactor() const;
     double totalScaleFactor() const;
-    double viewScaleFactor() const { return m_viewScaleFactor; }
+    double viewScaleFactor() const;
     void scaleView(double scale);
 #if PLATFORM(COCOA)
     void scaleViewAndUpdateGeometryFenced(double scale, WebCore::IntSize viewSize, uint64_t callbackID);
@@ -1358,8 +1358,6 @@ private:
     UserActivity m_userActivity;
 
     uint64_t m_pendingNavigationID;
-
-    double m_viewScaleFactor { 1 };
 
 #if ENABLE(WEBGL)
     WebCore::WebGLLoadPolicy m_systemWebGLPolicy;

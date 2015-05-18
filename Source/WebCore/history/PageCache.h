@@ -64,7 +64,7 @@ public:
     WEBCORE_EXPORT void markPagesForVisitedLinkStyleRecalc();
     // Will mark all cached pages associated with the given page as needing style recalc.
     void markPagesForFullStyleRecalc(Page&);
-    void markPagesForDeviceScaleChanged(Page&);
+    void markPagesForDeviceOrPageScaleChanged(Page&);
 #if ENABLE(VIDEO_TRACK)
     void markPagesForCaptionPreferencesChanged();
 #endif

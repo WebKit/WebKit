@@ -832,6 +832,16 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStable
 #endif
 }
 
+void Page::setViewScaleFactor(float scale)
+{
+    if (m_viewScaleFactor == scale)
+        return;
+
+    m_viewScaleFactor = scale;
+    PageCache::singleton().markPagesForDeviceOrPageScaleChanged(*this);
+    PageCache::singleton().markPagesForFullStyleRecalc(*this);
+}
+
 void Page::setDeviceScaleFactor(float scaleFactor)
 {
     ASSERT(scaleFactor > 0);
@@ -845,7 +855,7 @@ void Page::setDeviceScaleFactor(float scaleFactor)
     setNeedsRecalcStyleInAllFrames();
 
     mainFrame().deviceOrPageScaleFactorChanged();
-    PageCache::singleton().markPagesForDeviceScaleChanged(*this);
+    PageCache::singleton().markPagesForDeviceOrPageScaleChanged(*this);
 
     PageCache::singleton().markPagesForFullStyleRecalc(*this);
     GraphicsContext::updateDocumentMarkerResources();
