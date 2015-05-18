@@ -50,8 +50,8 @@ namespace JSC {
 
 class VM;
 
-void msToGregorianDateTime(VM&, double, bool outputIsUTC, GregorianDateTime&);
-double gregorianDateTimeToMS(VM&, const GregorianDateTime&, double, bool inputIsUTC);
+void msToGregorianDateTime(VM&, double, WTF::TimeType outputTimeType, GregorianDateTime&);
+double gregorianDateTimeToMS(VM&, const GregorianDateTime&, double, WTF::TimeType inputTimeType);
 double getUTCOffset(VM&);
 double parseDateFromNullTerminatedCharacters(VM&, const char* dateString);
 double parseDate(VM&, const WTF::String&);

@@ -120,6 +120,7 @@ namespace JSC {
             : start(0.0)
             , end(-1.0)
             , increment(0.0)
+            , timeType(WTF::UTCTime)
         {
         }
         
@@ -129,12 +130,14 @@ namespace JSC {
             start = 0.0;
             end = -1.0;
             increment = 0.0;
+            timeType = WTF::UTCTime;
         }
 
         LocalTimeOffset offset;
         double start;
         double end;
         double increment;
+        WTF::TimeType timeType;
     };
 
     class ConservativeRoots;
