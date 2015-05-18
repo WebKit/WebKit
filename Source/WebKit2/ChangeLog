@@ -1,5 +1,15 @@
 2015-05-18  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r184016. rdar://problem/19790341
+
+    2015-05-08  Timothy Horton  <timothy_horton@apple.com>
+
+            Fix the build.
+
+            * UIProcess/WebPageProxy.cpp:
+
+2015-05-18  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r184014. rdar://problem/19790341
 
     2015-05-08  Timothy Horton  <timothy_horton@apple.com>
