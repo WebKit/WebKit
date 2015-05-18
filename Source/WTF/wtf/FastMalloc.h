@@ -56,6 +56,8 @@ WTF_EXPORT_PRIVATE void* fastAlignedMalloc(size_t alignment, size_t);
 WTF_EXPORT_PRIVATE void fastAlignedFree(void*);
 
 WTF_EXPORT_PRIVATE size_t fastMallocSize(const void*);
+
+// FIXME: This is non-helpful; fastMallocGoodSize will be removed soon.
 WTF_EXPORT_PRIVATE size_t fastMallocGoodSize(size_t);
 
 WTF_EXPORT_PRIVATE void releaseFastMallocFreeMemory();

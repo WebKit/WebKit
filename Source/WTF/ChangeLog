@@ -1,3 +1,23 @@
+2015-05-17  Benjamin Poulain  <benjamin@webkit.org>
+
+        Do not use fastMallocGoodSize anywhere
+        https://bugs.webkit.org/show_bug.cgi?id=145103
+
+        Reviewed by Michael Saboff.
+
+        It is silly we see fastMallocGoodSize in profiles, it does absolutely nothing.
+
+        This patch keeps fastMallocGoodSize() around for older code linking
+        with newer WebKit, but remove any use of it inside WebKit.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMallocGoodSize):
+        * wtf/FastMalloc.h:
+        * wtf/Vector.h:
+        (WTF::VectorBufferBase::allocateBuffer):
+        (WTF::VectorBufferBase::tryAllocateBuffer):
+        (WTF::VectorBufferBase::reallocateBuffer):
+
 2015-05-15  Dan Bernstein  <mitz@apple.com>
 
         Build fix for some versions of clang.

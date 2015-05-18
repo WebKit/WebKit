@@ -69,7 +69,7 @@ namespace JSC {
 
         AssemblerData(unsigned initialCapacity)
         {
-            m_capacity = fastMallocGoodSize(initialCapacity);
+            m_capacity = initialCapacity;
             m_buffer = static_cast<char*>(fastMalloc(m_capacity));
         }
 
@@ -101,7 +101,7 @@ namespace JSC {
 
         void grow(unsigned extraCapacity = 0)
         {
-            m_capacity = fastMallocGoodSize(m_capacity + m_capacity / 2 + extraCapacity);
+            m_capacity = m_capacity + m_capacity / 2 + extraCapacity;
             m_buffer = static_cast<char*>(fastRealloc(m_buffer, m_capacity));
         }
 

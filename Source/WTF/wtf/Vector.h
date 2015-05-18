@@ -264,7 +264,7 @@ public:
         ASSERT(newCapacity);
         if (newCapacity > std::numeric_limits<unsigned>::max() / sizeof(T))
             CRASH();
-        size_t sizeToAllocate = fastMallocGoodSize(newCapacity * sizeof(T));
+        size_t sizeToAllocate = newCapacity * sizeof(T);
         m_capacity = sizeToAllocate / sizeof(T);
         m_buffer = static_cast<T*>(fastMalloc(sizeToAllocate));
     }
@@ -275,7 +275,7 @@ public:
         if (newCapacity > std::numeric_limits<unsigned>::max() / sizeof(T))
             return false;
 
-        size_t sizeToAllocate = fastMallocGoodSize(newCapacity * sizeof(T));
+        size_t sizeToAllocate = newCapacity * sizeof(T);
         T* newBuffer;
         if (tryFastMalloc(sizeToAllocate).getValue(newBuffer)) {
             m_capacity = sizeToAllocate / sizeof(T);
@@ -295,7 +295,7 @@ public:
         ASSERT(shouldReallocateBuffer(newCapacity));
         if (newCapacity > std::numeric_limits<size_t>::max() / sizeof(T))
             CRASH();
-        size_t sizeToAllocate = fastMallocGoodSize(newCapacity * sizeof(T));
+        size_t sizeToAllocate = newCapacity * sizeof(T);
         m_capacity = sizeToAllocate / sizeof(T);
         m_buffer = static_cast<T*>(fastRealloc(m_buffer, sizeToAllocate));
     }
