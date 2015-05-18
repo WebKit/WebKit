@@ -1,3 +1,42 @@
+2015-05-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Network Cache: Make Data::adoptMap take the ownership of the file descriptor
+        https://bugs.webkit.org/show_bug.cgi?id=144950
+
+        Reviewed by Antti Koivisto.
+
+        It will be required to implement ShareableResource for soup
+        network backend. Also move the common code of Data to a common
+        file and add mapToFile(). The mapFile version that receives a file
+        descriptor has been renamed to adoptAndMapFile().
+
+        * CMakeLists.txt: Add new file to compilation.
+        * NetworkProcess/cache/NetworkCacheBlobStorage.cpp:
+        (WebKit::NetworkCache::BlobStorage::add): Use mapToFile().
+        * NetworkProcess/cache/NetworkCacheData.cpp: Added.
+        (WebKit::NetworkCache::Data::mapToFile): Write the data to the
+        given file and map it.
+        (WebKit::NetworkCache::mapFile):
+        (WebKit::NetworkCache::adoptAndMapFile):
+        (WebKit::NetworkCache::computeSHA1):
+        (WebKit::NetworkCache::bytesEqual):
+        * NetworkProcess/cache/NetworkCacheData.h:
+        * NetworkProcess/cache/NetworkCacheDataCocoa.mm:
+        (WebKit::NetworkCache::Data::adoptMap): Close the file descriptor.
+        * NetworkProcess/cache/NetworkCacheDataSoup.cpp:
+        (WebKit::NetworkCache::Data::Data): Use a constructor that
+        receives a file descriptor instead of the one receiving
+        Backing. If the file descriptor is not -1 then the Data is a map.
+        (WebKit::NetworkCache::MapWrapper::~MapWrapper): Also close the
+        file descriptor.
+        (WebKit::NetworkCache::Data::adoptMap): Pass the file descriptor
+        to the MapWrapper and create the Data passing the file descriptor.
+        * UIProcess/API/APIUserContentExtensionStore.cpp:
+        (API::openAndMapContentExtension): Use mapFile that receives a
+        file path.
+        (API::compiledToFile): Use adoptAndMapFile() and don't close the
+        descriptor.
+
 2015-05-16  Andy Estes  <aestes@apple.com>
 
         [iOS] WKPDFView should not follow javascript: links

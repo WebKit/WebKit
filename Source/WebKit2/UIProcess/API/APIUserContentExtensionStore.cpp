@@ -134,19 +134,7 @@ static bool decodeContentExtensionMetaData(ContentExtensionMetaData& metaData, c
 
 static bool openAndMapContentExtension(const String& path, ContentExtensionMetaData& metaData, Data& fileData)
 {
-    auto fd = WebCore::openFile(path, WebCore::OpenForRead);
-    if (fd == WebCore::invalidPlatformFileHandle)
-        return false;
-
-    long long fileSize = 0;
-    if (!WebCore::getFileSize(fd, fileSize)) {
-        WebCore::closeFile(fd);
-        return false;
-    }
-
-    fileData = mapFile(fd, 0, static_cast<size_t>(fileSize));
-    WebCore::closeFile(fd);
-
+    fileData = mapFile(WebCore::fileSystemRepresentation(path).data());
     if (fileData.isNull())
         return false;
 
@@ -270,9 +258,7 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
     if (compilationClient.hadErrorWhileWritingToFile())
         return UserContentExtensionStore::Error::CompileFailed;
     
-    mappedData = mapFile(temporaryFileHandle, 0, metaData.fileSize());
-    WebCore::closeFile(temporaryFileHandle);
-
+    mappedData = adoptAndMapFile(temporaryFileHandle, 0, metaData.fileSize());
     if (mappedData.isNull())
         return UserContentExtensionStore::Error::CompileFailed;
 

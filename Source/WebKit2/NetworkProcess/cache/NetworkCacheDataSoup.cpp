@@ -45,10 +45,11 @@ Data::Data(const uint8_t* data, size_t size)
     m_buffer = adoptGRef(soup_buffer_new_with_owner(copiedData, size, copiedData, fastFree));
 }
 
-Data::Data(GRefPtr<SoupBuffer>&& buffer, Backing backing)
+Data::Data(GRefPtr<SoupBuffer>&& buffer, int fd)
     : m_buffer(buffer)
+    , m_fileDescriptor(fd)
     , m_size(buffer ? buffer->length : 0)
-    , m_isMap(m_size && backing == Backing::Map)
+    , m_isMap(m_size && fd != -1)
 {
 }
 
@@ -104,10 +105,12 @@ struct MapWrapper {
     ~MapWrapper()
     {
         munmap(map, size);
+        close(fileDescriptor);
     }
 
     void* map;
     size_t size;
+    int fileDescriptor;
 };
 
 static void deleteMapWrapper(MapWrapper* wrapper)
@@ -115,63 +118,16 @@ static void deleteMapWrapper(MapWrapper* wrapper)
     delete wrapper;
 }
 
-Data mapFile(int fd, size_t offset, size_t size)
-{
-    if (!size)
-        return Data::empty();
-
-    void* map = mmap(nullptr, size, PROT_READ, MAP_PRIVATE, fd, offset);
-    if (map == MAP_FAILED)
-        return { };
-    return Data::adoptMap(map, size);
-}
-
-Data Data::adoptMap(void* map, size_t size)
+Data Data::adoptMap(void* map, size_t size, int fd)
 {
     ASSERT(map);
     ASSERT(map != MAP_FAILED);
-    MapWrapper* wrapper = new MapWrapper { map, size };
+    MapWrapper* wrapper = new MapWrapper { map, size, fd };
     GRefPtr<SoupBuffer> buffer = adoptGRef(soup_buffer_new_with_owner(map, size, wrapper, reinterpret_cast<GDestroyNotify>(deleteMapWrapper)));
-    return { WTF::move(buffer), Data::Backing::Map };
+    return { WTF::move(buffer), fd };
 }
 
-Data mapFile(const char* path)
-{
-    int fd = open(path, O_RDONLY, 0);
-    if (fd < 0)
-        return { };
-    struct stat stat;
-    if (fstat(fd, &stat) < 0) {
-        close(fd);
-        return { };
-    }
-    size_t size = stat.st_size;
-    auto data = mapFile(fd, 0, size);
-    close(fd);
 
-    return data;
-}
-
-SHA1::Digest computeSHA1(const Data& data)
-{
-    SHA1 sha1;
-    data.apply([&sha1](const uint8_t* data, size_t size) {
-        sha1.addBytes(data, size);
-        return true;
-    });
-    SHA1::Digest digest;
-    sha1.computeHash(digest);
-    return digest;
-}
-
-bool bytesEqual(const Data& a, const Data& b)
-{
-    if (a.isNull() || b.isNull())
-        return false;
-    if (a.size() != b.size())
-        return false;
-    return !memcmp(a.data(), b.data(), a.size());
-}
 
 } // namespace NetworkCache
 } // namespace WebKit

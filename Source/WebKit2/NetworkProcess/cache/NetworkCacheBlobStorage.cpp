@@ -101,37 +101,13 @@ BlobStorage::Blob BlobStorage::add(const String& path, const Data& data)
         unlink(blobPath.data());
     }
 
-    int fd = open(blobPath.data(), O_CREAT | O_EXCL | O_RDWR , S_IRUSR | S_IWUSR);
-    if (fd < 0)
+    auto mappedData = data.mapToFile(blobPath.data());
+    if (mappedData.isNull())
         return { };
-
-    size_t size = data.size();
-    if (ftruncate(fd, size) < 0) {
-        close(fd);
-        return { };
-    }
-
-    void* map = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-    close(fd);
-
-    if (map == MAP_FAILED)
-        return { };
-
-    uint8_t* mapData = static_cast<uint8_t*>(map);
-    data.apply([&mapData](const uint8_t* bytes, size_t bytesSize) {
-        memcpy(mapData, bytes, bytesSize);
-        mapData += bytesSize;
-        return true;
-    });
-
-    // Drop the write permission.
-    mprotect(map, size, PROT_READ);
-
-    auto mappedData = Data::adoptMap(map, size);
 
     link(blobPath.data(), linkPath.data());
 
-    m_approximateSize += size;
+    m_approximateSize += mappedData.size();
 
     return { mappedData, hash };
 }

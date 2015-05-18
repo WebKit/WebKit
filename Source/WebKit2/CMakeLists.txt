@@ -165,6 +165,7 @@ set(NetworkProcess_COMMON_SOURCES
     NetworkProcess/cache/NetworkCache.cpp
     NetworkProcess/cache/NetworkCacheBlobStorage.cpp
     NetworkProcess/cache/NetworkCacheCoders.cpp
+    NetworkProcess/cache/NetworkCacheData.cpp
     NetworkProcess/cache/NetworkCacheDecoder.cpp
     NetworkProcess/cache/NetworkCacheEncoder.cpp
     NetworkProcess/cache/NetworkCacheEntry.cpp

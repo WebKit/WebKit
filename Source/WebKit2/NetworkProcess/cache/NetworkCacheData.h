@@ -104,14 +104,14 @@ public:
     Data(const uint8_t*, size_t);
 
     static Data empty();
-    static Data adoptMap(void* map, size_t);
+    static Data adoptMap(void* map, size_t, int fd);
 
-    enum class Backing { Buffer, Map };
 #if PLATFORM(COCOA)
+    enum class Backing { Buffer, Map };
     Data(DispatchPtr<dispatch_data_t>, Backing = Backing::Buffer);
 #endif
 #if USE(SOUP)
-    Data(GRefPtr<SoupBuffer>&&, Backing = Backing::Buffer);
+    Data(GRefPtr<SoupBuffer>&&, int fd = -1);
 #endif
     bool isNull() const;
     bool isEmpty() const { return !m_size; }
@@ -123,6 +123,8 @@ public:
     Data subrange(size_t offset, size_t) const;
 
     bool apply(const std::function<bool (const uint8_t*, size_t)>&&) const;
+
+    Data mapToFile(const char* path) const;
 
 #if PLATFORM(COCOA)
     dispatch_data_t dispatchData() const { return m_dispatchData.get(); }
@@ -137,6 +139,7 @@ private:
 #endif
 #if USE(SOUP)
     mutable GRefPtr<SoupBuffer> m_buffer;
+    int m_fileDescriptor { -1 };
 #endif
     mutable const uint8_t* m_data { nullptr };
     size_t m_size { 0 };
@@ -145,7 +148,7 @@ private:
 
 Data concatenate(const Data&, const Data&);
 bool bytesEqual(const Data&, const Data&);
-Data mapFile(int fd, size_t offset, size_t);
+Data adoptAndMapFile(int fd, size_t offset, size_t);
 Data mapFile(const char* path);
 SHA1::Digest computeSHA1(const Data&);
 
