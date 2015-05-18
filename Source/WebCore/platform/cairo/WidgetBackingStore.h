@@ -49,11 +49,18 @@ public:
     virtual cairo_surface_t* cairoSurface() = 0;
     virtual void scroll(const IntRect& scrollRect, const IntSize& scrollOffset) = 0;
     const IntSize& size() { return m_size; }
-    WidgetBackingStore(const IntSize& size) : m_size(size) { }
+    float deviceScaleFactor() { return m_deviceScaleFactor; }
+
+    WidgetBackingStore(const IntSize& size, float deviceScaleFactor)
+        : m_size(size)
+        , m_deviceScaleFactor(deviceScaleFactor)
+    { }
+
     virtual ~WidgetBackingStore() { }
 
-private:
+protected:
     IntSize m_size;
+    float m_deviceScaleFactor;
 };
 
 } // namespace WebCore

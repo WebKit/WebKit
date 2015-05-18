@@ -130,6 +130,8 @@
 #include <gdk/gdkwayland.h>
 #endif
 
+#define HAVE_GTK_SCALE_FACTOR HAVE_CAIRO_SURFACE_SET_DEVICE_SCALE && GTK_CHECK_VERSION(3, 10, 0)
+
 /**
  * SECTION:webkitwebview
  * @short_description: The central class of the WebKitGTK+ API
@@ -281,6 +283,9 @@ G_DEFINE_TYPE_WITH_CODE(WebKitWebView, webkit_web_view, GTK_TYPE_CONTAINER,
 static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GParamSpec* pspec, WebKitWebView* webView);
 static void webkit_web_view_set_window_features(WebKitWebView* webView, WebKitWebWindowFeatures* webWindowFeatures);
 static void webkitWebViewDirectionChanged(WebKitWebView*, GtkTextDirection previousDirection, gpointer);
+#if HAVE(GTK_SCALE_FACTOR)
+static void webkitWebViewNotifyScaleFactor(WebKitWebView* webView, GParamSpec *pspec, gpointer);
+#endif
 
 #if ENABLE(CONTEXT_MENUS)
 static void PopupMenuPositionFunc(GtkMenu* menu, gint *x, gint *y, gboolean *pushIn, gpointer userData)
@@ -3851,6 +3856,10 @@ static void webkit_web_view_init(WebKitWebView* webView)
     // time of writing this comment), we simply set all the pages to the same group.
     priv->corePage->setGroupName(webkitPageGroupName());
 
+#if HAVE(GTK_SCALE_FACTOR)
+    priv->corePage->setDeviceScaleFactor(gtk_widget_get_scale_factor(GTK_WIDGET(webView)));
+#endif
+
     // We also add a simple wrapper class to provide the public
     // interface for the Web Inspector.
     priv->webInspector = adoptGRef(WEBKIT_WEB_INSPECTOR(g_object_new(WEBKIT_TYPE_WEB_INSPECTOR, NULL)));
@@ -3890,6 +3899,10 @@ static void webkit_web_view_init(WebKitWebView* webView)
 #endif
 
     g_signal_connect(webView, "direction-changed", G_CALLBACK(webkitWebViewDirectionChanged), 0);
+
+#if HAVE(GTK_SCALE_FACTOR)
+    g_signal_connect(webView, "notify::scale-factor", G_CALLBACK(webkitWebViewNotifyScaleFactor), 0);
+#endif
 }
 
 GtkWidget* webkit_web_view_new(void)
@@ -5554,6 +5567,18 @@ void webkitWebViewDirectionChanged(WebKitWebView* webView, GtkTextDirection prev
         return;
     }
 }
+
+#if HAVE(GTK_SCALE_FACTOR)
+void webkitWebViewNotifyScaleFactor(WebKitWebView* webView, GParamSpec* pspec, gpointer)
+{
+    Page* page = core(webView);
+
+    page->setDeviceScaleFactor(gtk_widget_get_scale_factor(GTK_WIDGET(webView)));
+
+    WebKit::ChromeClient& chromeClient = static_cast<WebKit::ChromeClient&>(page->chrome().client());
+    chromeClient.deviceScaleFactorChanged();
+}
+#endif
 
 namespace WebKit {
 

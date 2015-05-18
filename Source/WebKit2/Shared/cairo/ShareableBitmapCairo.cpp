@@ -60,19 +60,16 @@ std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 
 void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& dstPoint, const IntRect& srcRect)
 {
-    RefPtr<cairo_surface_t> surface = createSurfaceFromData(data(), m_size);
-    FloatRect destRect(dstPoint, srcRect.size());
-    context.platformContext()->drawSurfaceToContext(surface.get(), destRect, srcRect, &context);
+    paint(context, 1, dstPoint, srcRect);
 }
 
 void ShareableBitmap::paint(GraphicsContext& context, float scaleFactor, const IntPoint& dstPoint, const IntRect& srcRect)
 {
-    if (scaleFactor != 1) {
-        // See <https://bugs.webkit.org/show_bug.cgi?id=64665>.
-        notImplemented();
-        return;
-    }
-    paint(context, dstPoint, srcRect);
+    RefPtr<cairo_surface_t> surface = createSurfaceFromData(data(), m_size);
+    FloatRect destRect(dstPoint, srcRect.size());
+    FloatRect srcRectScaled(srcRect);
+    srcRectScaled.scale(scaleFactor);
+    context.platformContext()->drawSurfaceToContext(surface.get(), destRect, srcRectScaled, &context);
 }
 
 PassRefPtr<cairo_surface_t> ShareableBitmap::createCairoSurface()

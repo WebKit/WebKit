@@ -156,6 +156,7 @@ namespace WebKit {
         void paint(Timer<ChromeClient>*);
         void forcePaint();
         void widgetSizeChanged(const IntSize& oldWidgetSize, IntSize newSize);
+        void deviceScaleFactorChanged();
 
         WebKitWebView* webView() { return m_webView; }
 

@@ -25,6 +25,7 @@
 #include "config.h"
 #include "ChromeClientGtk.h"
 
+#include "CairoUtilities.h"
 #include "Chrome.h"
 #include "Console.h"
 #include "DumpRenderTreeSupportGtk.h"
@@ -97,18 +98,27 @@
 #endif
 #include "WidgetBackingStoreCairo.h"
 
+#define HAVE_GTK_SCALE_FACTOR HAVE_CAIRO_SURFACE_SET_DEVICE_SCALE && GTK_CHECK_VERSION(3, 10, 0)
+
 using namespace WebCore;
 
 namespace WebKit {
 
-static PassOwnPtr<WidgetBackingStore> createBackingStore(GtkWidget* widget, const IntSize& size)
+static PassOwnPtr<WidgetBackingStore> createBackingStore(GtkWidget* widget, const IntSize& size, bool scale)
 {
+    float deviceScaleFactor = 1.0;
+
+#if HAVE(GTK_SCALE_FACTOR)
+    if (scale)
+        deviceScaleFactor = gtk_widget_get_scale_factor(widget);
+#endif
+
 #if PLATFORM(X11) && defined(GDK_WINDOWING_X11)
     GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
     if (GDK_IS_X11_DISPLAY(display))
-        return WebCore::WidgetBackingStoreGtkX11::create(widget, size);
+        return WebCore::WidgetBackingStoreGtkX11::create(widget, size, deviceScaleFactor);
 #endif
-    return WebCore::WidgetBackingStoreCairo::create(widget, size);
+    return WebCore::WidgetBackingStoreCairo::create(widget, size, deviceScaleFactor);
 }
 
 ChromeClient::ChromeClient(WebKitWebView* webView)
@@ -483,7 +493,7 @@ void ChromeClient::widgetSizeChanged(const IntSize& oldWidgetSize, IntSize newSi
         || newSize.width() > backingStore->size().width()
         || newSize.height() > backingStore->size().height()) {
 
-        OwnPtr<WidgetBackingStore> newBackingStore = createBackingStore(GTK_WIDGET(m_webView), newSize);
+        OwnPtr<WidgetBackingStore> newBackingStore = createBackingStore(GTK_WIDGET(m_webView), newSize, true);
         RefPtr<cairo_t> cr = adoptRef(cairo_create(newBackingStore->cairoSurface()));
 
         clearEverywhereInBackingStore(m_webView, cr.get());
@@ -516,6 +526,21 @@ void ChromeClient::widgetSizeChanged(const IntSize& oldWidgetSize, IntSize newSi
     // resize is on, thus we use g_timeout_add here to force a higher timeout priority.
     if (!m_repaintSoonSourceId)
         m_repaintSoonSourceId = g_idle_add_full(G_PRIORITY_DEFAULT, reinterpret_cast<GSourceFunc>(repaintEverythingSoonTimeout), this, 0);
+}
+
+void ChromeClient::deviceScaleFactorChanged()
+{
+#if HAVE(GTK_SCALE_FACTOR)
+    if (m_webView->priv->backingStore) {
+        int scaleFactor = gtk_widget_get_scale_factor(GTK_WIDGET(m_webView));
+        float oldScaleFactor = m_webView->priv->backingStore->deviceScaleFactor();
+
+        if (scaleFactor != oldScaleFactor) {
+            m_webView->priv->backingStore = 0;
+            widgetSizeChanged(IntSize(0, 0), getWebViewRect(m_webView).size());
+        }
+    }
+#endif
 }
 
 static void coalesceRectsIfPossible(const IntRect& clipRect, Vector<IntRect>& rects)
@@ -553,7 +578,6 @@ static void paintWebView(WebKitWebView* webView, Frame* frame, const Region& dir
 
     RefPtr<cairo_t> backingStoreContext = adoptRef(cairo_create(webView->priv->backingStore->cairoSurface()));
     GraphicsContext gc(backingStoreContext.get());
-    gc.applyDeviceScaleFactor(frame->page()->deviceScaleFactor());
     for (size_t i = 0; i < rects.size(); i++) {
         const IntRect& rect = rects[i];
 
@@ -1011,11 +1035,11 @@ void ChromeClient::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* rootLaye
 
     if (turningOnCompositing) {
         m_displayTimer.stop();
-        m_webView->priv->backingStore = createBackingStore(GTK_WIDGET(m_webView), IntSize(1, 1));
+        m_webView->priv->backingStore = createBackingStore(GTK_WIDGET(m_webView), IntSize(1, 1), false);
     }
 
     if (turningOffCompositing) {
-        m_webView->priv->backingStore = createBackingStore(GTK_WIDGET(m_webView), getWebViewRect(m_webView).size());
+        m_webView->priv->backingStore = createBackingStore(GTK_WIDGET(m_webView), getWebViewRect(m_webView).size(), true);
         RefPtr<cairo_t> cr = adoptRef(cairo_create(m_webView->priv->backingStore->cairoSurface()));
         clearEverywhereInBackingStore(m_webView, cr.get());
     }
