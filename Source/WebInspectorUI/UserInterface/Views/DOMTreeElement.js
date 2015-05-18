@@ -52,7 +52,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
     {
         if (this._searchQuery !== searchQuery) {
             this._updateSearchHighlight(false);
-            delete this._highlightResult; // A new search query.
+            this._highlightResult = undefined; // A new search query.
         }
 
         this._searchQuery = searchQuery;
@@ -62,7 +62,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
     hideSearchHighlights()
     {
-        delete this._searchHighlightsVisible;
+        this._searchHighlightsVisible = false;
         this._updateSearchHighlight(false);
     }
 
@@ -93,7 +93,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
                 return;
 
             this._bouncyHighlightElement.remove();
-            delete this._bouncyHighlightElement;
+            this._bouncyHighlightElement = null;
         }
 
         this._bouncyHighlightElement.addEventListener("webkitAnimationEnd", animationEnded.bind(this));
@@ -407,7 +407,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
                 treeOutlineContainerElement.scrollTop = originalScrollTop;
         }
 
-        delete this._updateChildrenInProgress;
+        this._updateChildrenInProgress = false;
     }
 
     adjustCollapsedRange()
@@ -447,7 +447,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
             this.expandAllButtonElement.textContent = WebInspector.UIString("Show All Nodes (%d More)").format(childNodeCount - expandedChildCount);
         } else if (this.expandAllButtonElement)
-            delete this.expandAllButtonElement;
+            this.expandAllButtonElement = null;
     }
 
     handleLoadAllChildren()
@@ -839,7 +839,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
             // Remove editor.
             this.listItemElement.removeChild(this._htmlEditElement);
-            delete this._htmlEditElement;
+            this._htmlEditElement = null;
             // Unhide children item.
             if (this._childrenListNode)
                 this._childrenListNode.style.removeProperty("display");
@@ -1030,10 +1030,10 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         } else {
             this.title = document.createElement("span");
             this.title.appendChild(this._nodeTitleInfo().titleDOM);
-            delete this._highlightResult;
+            this._highlightResult = undefined;
         }
 
-        delete this.selectionElement;
+        this.selectionElement = null;
         this.updateSelection();
         this._highlightSearchResults();
     }

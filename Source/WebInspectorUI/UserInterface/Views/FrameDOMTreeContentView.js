@@ -72,7 +72,7 @@ WebInspector.FrameDOMTreeContentView.prototype = {
             return;
         }
 
-        this._restoreSelectedNodeAfterUpdate(this._domTree.frame.url, rootDOMNode.body || rootDOMNode.documentElement);
+        this._restoreSelectedNodeAfterUpdate(this._domTree.frame.url, rootDOMNode.body || rootDOMNode.documentElement || rootDOMNode.firstChild);
     },
 
     _rootDOMNodeInvalidated: function(event)

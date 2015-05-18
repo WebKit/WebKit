@@ -89,8 +89,11 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
             return;
 
         this._updateModifiedNodes();
+
         if (this._selectedDOMNode)
             this._revealAndSelectNode(this._selectedDOMNode, omitFocus);
+
+        this.update();
     }
 
     get rootDOMNode()
@@ -176,7 +179,7 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
                 treeElement.selectable = this._selectEnabled;
                 this.appendChild(treeElement);
                 node = node.nextSibling;
-                
+
                 if (treeElement.hasChildren && !treeElement.expanded)
                     treeElement.expand();
             }

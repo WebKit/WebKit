@@ -1,5 +1,33 @@
 2015-05-18  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Improve Reliability of Closing and Reopening Elements Tab
+        https://bugs.webkit.org/show_bug.cgi?id=145139
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype.highlightSearchResults):
+        (WebInspector.DOMTreeElement.prototype.hideSearchHighlights):
+        (WebInspector.DOMTreeElement.prototype.emphasizeSearchHighlight.animationEnded):
+        (WebInspector.DOMTreeElement.prototype.emphasizeSearchHighlight):
+        (WebInspector.DOMTreeElement.prototype._updateChildren):
+        (WebInspector.DOMTreeElement.prototype.adjustCollapsedRange):
+        (WebInspector.DOMTreeElement.prototype._startEditingAsHTML.dispose):
+        (WebInspector.DOMTreeElement.prototype._startEditingAsHTML):
+        (WebInspector.DOMTreeElement.prototype.updateTitle):
+        Stop using the `delete` operator.
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WebInspector.DOMTreeOutline.prototype.setVisible):
+        Trigger an update when the outline is made visible.
+
+        * UserInterface/Views/FrameDOMTreeContentView.js:
+        (WebInspector.FrameDOMTreeContentView.prototype._rootDOMNodeAvailable):
+        Provide a reasonable default selection if there is no body or document element.
+        For example in an augmented DOM tree.
+
+2015-05-18  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Tab Restoration incorrectly makes ContentViews "shown" in background tabs
         https://bugs.webkit.org/show_bug.cgi?id=145080
 
