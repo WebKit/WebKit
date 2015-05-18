@@ -1,5 +1,26 @@
 2015-04-15  Руслан Ижбулатов  <lrn1986@gmail.com>
 
+        [W32] Wrong configure tests for OpenGL on Windows, wrong ifdefs
+        https://bugs.webkit.org/show_bug.cgi?id=143763
+
+        Reviewed by Carlos Garcia Campos.
+
+        Change OpenGL checks to work on W32, add libopengl32
+
+        AGain, use OS(WINDOWS) for things that are W32 but not necessarily MSVC.
+        Don't try to check for dlopen() on W32 (it might be available, but
+        native code is already here, so use it).
+
+        Correctly cast the result of GetProcAddress(), because C++.
+
+        Link W32 version to -lOpenGL32 instead of -lGL, otherwise libtool complains:
+        *** Warning: linker path does not have real file for library -lGL.
+
+        * platform/graphics/OpenGLShims.cpp:
+        (WebCore::getProcAddress):
+
+2015-04-15  Руслан Ижбулатов  <lrn1986@gmail.com>
+
         [W32] windowsVersion() and osVersionForUAString() are outdated
         https://bugs.webkit.org/show_bug.cgi?id=143771
 

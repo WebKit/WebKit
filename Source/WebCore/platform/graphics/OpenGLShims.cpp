@@ -22,7 +22,7 @@
 #define DISABLE_SHIMS
 #include "OpenGLShims.h"
 
-#if !PLATFORM(WIN)
+#if !OS(WINDOWS)
 #include <dlfcn.h>
 #endif
 
@@ -37,10 +37,10 @@ OpenGLFunctionTable* openGLFunctionTable()
     return &table;
 }
 
-#if PLATFORM(WIN)
+#if OS(WINDOWS)
 static void* getProcAddress(const char* procName)
 {
-    return GetProcAddress(GetModuleHandleA("libGLESv2"), procName);
+    return reinterpret_cast<void*>(GetProcAddress(GetModuleHandleA("libGLESv2"), procName));
 }
 #else
 typedef void* (*glGetProcAddressType) (const char* procName);
