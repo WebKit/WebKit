@@ -2248,15 +2248,18 @@ void WebPageProxy::scaleView(double scale)
 }
 
 #if PLATFORM(COCOA)
-void WebPageProxy::scaleViewAndUpdateGeometryFenced(double scale, IntSize viewSize, const MachSendRight& fencePort)
+void WebPageProxy::scaleViewAndUpdateGeometryFenced(double scale, IntSize viewSize, std::function<void (const MachSendRight&, CallbackBase::Error)> callback)
 {
-    if (!isValid())
+    if (!isValid()) {
+        callback(MachSendRight(), CallbackBase::Error::OwnerWasInvalidated);
         return;
+    }
 
     m_viewScaleFactor = scale;
     if (m_drawingArea)
         m_drawingArea->willSendUpdateGeometry();
-    m_process->send(Messages::WebPage::ScaleViewAndUpdateGeometryFenced(scale, viewSize, fencePort), m_pageID);
+    uint64_t callbackID = m_callbacks.put(WTF::move(callback), m_process->throttler().backgroundActivityToken());
+    m_process->send(Messages::WebPage::ScaleViewAndUpdateGeometryFenced(scale, viewSize, callbackID), m_pageID);
 }
 #endif
 
@@ -4655,6 +4658,17 @@ void WebPageProxy::editingRangeCallback(const EditingRange& range, uint64_t call
 
     callback->performCallbackWithReturnValue(range);
 }
+
+#if PLATFORM(COCOA)
+void WebPageProxy::machSendRightCallback(const MachSendRight& sendRight, uint64_t callbackID)
+{
+    auto callback = m_callbacks.take<MachSendRightCallback>(callbackID);
+    if (!callback)
+        return;
+
+    callback->performCallbackWithReturnValue(sendRight);
+}
+#endif
 
 static bool shouldLogDiagnosticMessage(bool shouldSample)
 {

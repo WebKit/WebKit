@@ -129,6 +129,8 @@ public:
 #if PLATFORM(COCOA)
     // Used by TiledCoreAnimationDrawingArea.
     virtual void updateGeometry(const WebCore::IntSize& viewSize, const WebCore::IntSize& layerPosition, bool flushSynchronously) { }
+
+    virtual void replyWithFenceAfterNextFlush(uint64_t callbackID) { ASSERT_NOT_REACHED(); }
 #endif
 
 protected:

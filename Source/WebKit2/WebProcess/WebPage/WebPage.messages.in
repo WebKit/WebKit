@@ -203,7 +203,7 @@ messages -> WebPage LegacyReceiver {
     ScalePageInViewCoordinates(double scale, WebCore::IntPoint centerInViewCoordinates)
     ScaleView(double scale)
 #if PLATFORM(COCOA)
-    ScaleViewAndUpdateGeometryFenced(double scale, WebCore::IntSize viewSize, WebCore::MachSendRight fencePort)
+    ScaleViewAndUpdateGeometryFenced(double scale, WebCore::IntSize viewSize, uint64_t callbackID)
 #endif
 
     SetUseFixedLayout(bool fixed)
