@@ -687,9 +687,12 @@ bool FontCascade::primaryFontIsSystemFont() const
     const auto& fontData = primaryFont();
     return !fontData.isSVGFont() && CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(fontData.platformData().ctFont())).get());
 #else
-    // System fonts are hidden by having a name that begins with a period, so simply search
-    // for that here rather than try to keep the list up to date.
-    return firstFamily().startsWith('.');
+    const String& firstFamily = this->firstFamily();
+    return equalIgnoringASCIICase(firstFamily, "-webkit-system-font")
+        || equalIgnoringASCIICase(firstFamily, "-apple-system-font")
+        || equalIgnoringASCIICase(firstFamily, "-apple-system")
+        || equalIgnoringASCIICase(firstFamily, "-apple-menu")
+        || equalIgnoringASCIICase(firstFamily, "-apple-status-bar");
 #endif
 }
 
