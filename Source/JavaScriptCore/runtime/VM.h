@@ -453,6 +453,7 @@ public:
 
     VMEntryScope* entryScope;
 
+    JSObject* stringRecursionCheckFirstObject { nullptr };
     HashSet<JSObject*> stringRecursionCheckVisitedObjects;
 
     LocalTimeOffsetCache localTimeOffsetCache;

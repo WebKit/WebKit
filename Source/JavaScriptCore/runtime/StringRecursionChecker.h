@@ -52,7 +52,15 @@ inline JSValue StringRecursionChecker::performCheck()
     VM& vm = m_exec->vm();
     if (!vm.isSafeToRecurse())
         return throwStackOverflowError();
-    bool alreadyVisited = !vm.stringRecursionCheckVisitedObjects.add(m_thisObject).isNewEntry;
+
+    bool alreadyVisited = false;
+    if (!vm.stringRecursionCheckFirstObject)
+        vm.stringRecursionCheckFirstObject = m_thisObject;
+    else if (vm.stringRecursionCheckFirstObject == m_thisObject)
+        alreadyVisited = true;
+    else
+        alreadyVisited = !vm.stringRecursionCheckVisitedObjects.add(m_thisObject).isNewEntry;
+
     if (alreadyVisited)
         return emptyString(); // Return empty string to avoid infinite recursion.
     return JSValue(); // Indicate success.
@@ -74,8 +82,14 @@ inline StringRecursionChecker::~StringRecursionChecker()
 {
     if (m_earlyReturnValue)
         return;
-    ASSERT(m_exec->vm().stringRecursionCheckVisitedObjects.contains(m_thisObject));
-    m_exec->vm().stringRecursionCheckVisitedObjects.remove(m_thisObject);
+
+    VM& vm = m_exec->vm();
+    if (vm.stringRecursionCheckFirstObject == m_thisObject)
+        vm.stringRecursionCheckFirstObject = nullptr;
+    else {
+        ASSERT(vm.stringRecursionCheckVisitedObjects.contains(m_thisObject));
+        vm.stringRecursionCheckVisitedObjects.remove(m_thisObject);
+    }
 }
 
 }

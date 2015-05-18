@@ -1,3 +1,16 @@
+2015-05-17  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] Make StringRecursionChecker faster in the simple cases without any recursion
+        https://bugs.webkit.org/show_bug.cgi?id=145102
+
+        Reviewed by Darin Adler.
+
+        Improve the coverage a tiny bit.
+
+        * js/array-string-recursion-expected.txt: Added.
+        * js/array-string-recursion.html: Added.
+        * js/script-tests/array-string-recursion.js: Added.
+
 2015-05-17  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Add scrollbar width in intrinsic logical widths computation
