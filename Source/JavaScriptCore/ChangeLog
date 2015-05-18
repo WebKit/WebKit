@@ -1,3 +1,16 @@
+2015-05-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Add a Int-or-Boolean speculation to Branch
+        https://bugs.webkit.org/show_bug.cgi?id=145134
+
+        Reviewed by Benjamin Poulain.
+        
+        After https://bugs.webkit.org/show_bug.cgi?id=126778 we no longer have a reason not to do the
+        int-or-boolean optimization that we already do everywhere else.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
 2015-05-18  Andreas Kling  <akling@apple.com>
 
         [JSC] Speed up URL encode/decode by using bitmaps instead of strchr().

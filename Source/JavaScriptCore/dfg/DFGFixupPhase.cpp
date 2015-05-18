@@ -786,11 +786,8 @@ private:
                 fixEdge<BooleanUse>(node->child1());
             else if (node->child1()->shouldSpeculateObjectOrOther())
                 fixEdge<ObjectOrOtherUse>(node->child1());
-            // FIXME: We should just be able to do shouldSpeculateInt32OrBoolean() and
-            // shouldSpeculateNumberOrBoolean() here now that
-            // https://bugs.webkit.org/show_bug.cgi?id=126778 is fixed.
-            else if (node->child1()->shouldSpeculateInt32())
-                fixEdge<Int32Use>(node->child1());
+            else if (node->child1()->shouldSpeculateInt32OrBoolean())
+                fixIntOrBooleanEdge(node->child1());
             else if (node->child1()->shouldSpeculateNumber())
                 fixEdge<DoubleRepUse>(node->child1());
             else if (node->child1()->shouldSpeculateString())
