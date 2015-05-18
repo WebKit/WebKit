@@ -109,8 +109,14 @@ case "$host" in
         UNICODE_LIBS="-licucore"
         ;;
     *-*-mingw*)
-        UNICODE_CFLAGS=""
-        UNICODE_LIBS="-licui18n -licuuc"
+	PKG_CHECK_MODULES(ICU, icu-i18n, ,)
+	if test "x$ICU_LIBS" = "x" ; then
+           UNICODE_CFLAGS=""
+           UNICODE_LIBS="-licui18n -licuuc"
+	else
+           UNICODE_CFLAGS="$ICU_CFLAGS"
+           UNICODE_LIBS="$ICU_LIBS"
+	fi
         AC_CHECK_HEADERS([unicode/uchar.h], [], [AC_MSG_ERROR([Could not find ICU headers.])])
         ;;
     *)
