@@ -1,3 +1,13 @@
+2015-05-17  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Add scrollbar width in intrinsic logical widths computation
+        https://bugs.webkit.org/show_bug.cgi?id=145021
+
+        Reviewed by Sergio Villar Senin.
+
+        * fast/css-grid-layout/compute-intrinsic-widths-scrollbar-expected.txt: Added.
+        * fast/css-grid-layout/compute-intrinsic-widths-scrollbar.html: Added.
+
 2015-05-16  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (Subpixel): Dashed underline is missing when box is positioned at subpixels.
