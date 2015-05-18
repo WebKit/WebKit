@@ -1,3 +1,27 @@
+2015-05-18  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(142590): Scroll-snap points are improperly snapping to earlier index values
+        https://bugs.webkit.org/show_bug.cgi?id=145140
+        <rdar://problem/21006738>
+
+        Reviewed by Beth Dakin.
+
+        The new "nearestActiveSnapPoint" logic is firing while scroll snap animations are running. We need
+        to add an "isScrollSnapInProgress" predicate, much like the existing "isRubberBandInProgress" to avoid
+        certain "fix-up" logic that we don't want running while we are in the process of moving to a new position.
+
+        * platform/ScrollAnimator.h:
+        (WebCore::ScrollAnimator::ScrollAnimator::isScrollSnapInProgress): Added.
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::updateScrollSnapState): If we are in the midst of a scroll snap operation,
+        do not attempt to reset position to the current active snap point.
+        * platform/cocoa/ScrollController.h:
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::ScrollController::isScrollSnapInProgress): Added.
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::isScrollSnapInProgress): Added.
+
 2015-05-17  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Add scrollbar width in intrinsic logical widths computation

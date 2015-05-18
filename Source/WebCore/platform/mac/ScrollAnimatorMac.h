@@ -132,7 +132,8 @@ private:
 
     void immediateScrollTo(const FloatPoint&);
 
-    virtual bool isRubberBandInProgress() const override;
+    bool isRubberBandInProgress() const override;
+    bool isScrollSnapInProgress() const override;
 
 #if ENABLE(RUBBER_BANDING)
     /// ScrollControllerClient member functions.

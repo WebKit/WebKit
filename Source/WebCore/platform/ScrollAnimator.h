@@ -118,6 +118,7 @@ public:
     virtual void notifyContentAreaScrolled(const FloatSize& delta) { UNUSED_PARAM(delta); }
 
     virtual bool isRubberBandInProgress() const { return false; }
+    virtual bool isScrollSnapInProgress() const { return false; }
 
     void setWheelEventTestTrigger(RefPtr<WheelEventTestTrigger>&& testTrigger) { m_wheelEventTestTrigger = testTrigger; }
 #if (ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)) && PLATFORM(MAC)
