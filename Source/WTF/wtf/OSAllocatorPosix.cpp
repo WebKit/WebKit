@@ -50,8 +50,10 @@ void* OSAllocator::reserveUncommitted(size_t bytes, Usage usage, bool writable, 
 #else
     void* result = reserveAndCommit(bytes, usage, writable, executable, includesGuardPages);
 #if HAVE(MADV_FREE_REUSE)
-    // To support the "reserve then commit" model, we have to initially decommit.
-    while (madvise(result, bytes, MADV_FREE_REUSABLE) == -1 && errno == EAGAIN) { }
+    if (result) {
+        // To support the "reserve then commit" model, we have to initially decommit.
+        while (madvise(result, bytes, MADV_FREE_REUSABLE) == -1 && errno == EAGAIN) { }
+    }
 #endif
 
 #endif
