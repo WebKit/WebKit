@@ -83,7 +83,7 @@ void ResourceResponse::updateFromSoupMessageHeaders(const SoupMessageHeaders* me
 
     soup_message_headers_iter_init(&headersIter, headers);
     while (soup_message_headers_iter_next(&headersIter, &headerName, &headerValue))
-        addHTTPHeaderField(String::fromUTF8WithLatin1Fallback(headerName, strlen(headerName)), String::fromUTF8WithLatin1Fallback(headerValue, strlen(headerValue)));
+        addHTTPHeaderField(String(headerName), String(headerValue));
 
     String contentType;
     const char* officialType = soup_message_headers_get_one(headers, "Content-Type");
