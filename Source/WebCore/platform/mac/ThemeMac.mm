@@ -675,7 +675,7 @@ Optional<FontDescription> ThemeMac::controlFont(ControlPart part, const FontCasc
             fontDescription.setIsAbsoluteSize(true);
 
             NSFont* nsFont = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:controlSizeForFont(font)]];
-            fontDescription.setOneFamily([nsFont webCoreFamilyName]);
+            fontDescription.setOneFamily(AtomicString("-apple-system", AtomicString::ConstructFromLiteral));
             fontDescription.setComputedSize([nsFont pointSize] * zoomFactor);
             fontDescription.setSpecifiedSize([nsFont pointSize] * zoomFactor);
             return fontDescription;
