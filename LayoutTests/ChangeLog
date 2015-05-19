@@ -1,3 +1,77 @@
+2015-05-19  Eric Carlson  <eric.carlson@apple.com>
+
+        iOS gardening. Update "fast" image and text results, delete wk2-only results.
+
+        Rubber-stamped by Brent Fulgham.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator-wk2/fast/events/touch/gesture/long-press-on-draggable-element-triggers-drag-expected.txt: Removed.
+        * platform/ios-simulator-wk2/fast/forms/search-vertical-alignment-expected.txt: Removed.
+        * platform/ios-simulator-wk2/fast/forms/searchfield-heights-expected.txt: Removed.
+        * platform/ios-simulator-wk2/fast/gradients/list-item-gradient-expected.txt: Removed.
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/fast/attachment/attachment-select-on-click-expected.txt: Added.
+        * platform/ios-simulator/fast/attachment/attachment-select-on-click-inside-user-select-all-expected.txt: Added.
+        * platform/ios-simulator/fast/backgrounds/selection-background-color-of-image-list-style-expected.txt: Added.
+        * platform/ios-simulator/fast/backgrounds/selection-background-color-of-list-style-expected.txt: Added.
+        * platform/ios-simulator/fast/block/basic/001-expected.png: Added.
+        * platform/ios-simulator/fast/block/margin-collapse/001-expected.png: Added.
+        * platform/ios-simulator/fast/block/positioning/001-expected.png: Added.
+        * platform/ios-simulator/fast/block/positioning/002-expected.png: Added.
+        * platform/ios-simulator/fast/block/positioning/003-expected.png: Added.
+        * platform/ios-simulator/fast/block/positioning/004-expected.png: Added.
+        * platform/ios-simulator/fast/block/positioning/005-expected.png: Added.
+        * platform/ios-simulator/fast/block/positioning/006-expected.png: Added.
+        * platform/ios-simulator/fast/block/positioning/007-expected.png: Added.
+        * platform/ios-simulator/fast/block/positioning/008-expected.png: Added.
+        * platform/ios-simulator/fast/block/positioning/009-expected.png: Added.
+        * platform/ios-simulator/fast/block/positioning/010-expected.png: Added.
+        * platform/ios-simulator/fast/block/positioning/011-expected.png: Added.
+        * platform/ios-simulator/fast/block/positioning/012-expected.png: Added.
+        * platform/ios-simulator/fast/block/positioning/013-expected.png: Added.
+        * platform/ios-simulator/fast/block/positioning/014-expected.png: Added.
+        * platform/ios-simulator/fast/block/positioning/015-expected.png: Added.
+        * platform/ios-simulator/fast/block/positioning/016-expected.png: Added.
+        * platform/ios-simulator/fast/block/positioning/017-expected.png: Added.
+        * platform/ios-simulator/fast/block/positioning/018-expected.png: Added.
+        * platform/ios-simulator/fast/block/positioning/019-expected.png: Added.
+        * platform/ios-simulator/fast/block/positioning/020-expected.png: Added.
+        * platform/ios-simulator/fast/block/positioning/021-expected.png: Added.
+        * platform/ios-simulator/fast/css/font-weight-1-expected.png: Added.
+        * platform/ios-simulator/fast/css/font-weight-1-expected.txt:
+        * platform/ios-simulator/fast/css/text-overflow-ellipsis-bidi-expected.png: Added.
+        * platform/ios-simulator/fast/css/text-overflow-ellipsis-bidi-expected.txt:
+        * platform/ios-simulator/fast/events/touch/gesture/long-press-on-draggable-element-triggers-drag-expected.txt:
+        * platform/ios-simulator/fast/forms/box-shadow-override-expected.png: Added.
+        * platform/ios-simulator/fast/forms/button-align-expected.png: Added.
+        * platform/ios-simulator/fast/forms/input-auto-fill-button-expected.png: Added.
+        * platform/ios-simulator/fast/forms/input-auto-fill-button-expected.txt: Added.
+        * platform/ios-simulator/fast/forms/input-spaces-expected.png: Added.
+        * platform/ios-simulator/fast/forms/input-table-expected.png: Added.
+        * platform/ios-simulator/fast/forms/input-text-click-inside-expected.png: Added.
+        * platform/ios-simulator/fast/forms/input-text-click-outside-expected.png: Added.
+        * platform/ios-simulator/fast/forms/input-text-double-click-expected.png: Added.
+        * platform/ios-simulator/fast/forms/input-text-drag-down-expected.png: Added.
+        * platform/ios-simulator/fast/forms/listbox-hit-test-zoomed-expected.png: Added.
+        * platform/ios-simulator/fast/forms/listbox-hit-test-zoomed-expected.txt:
+        * platform/ios-simulator/fast/forms/option-index-expected.png: Added.
+        * platform/ios-simulator/fast/forms/search-vertical-alignment-expected.png: Added.
+        * platform/ios-simulator/fast/forms/search-vertical-alignment-expected.txt:
+        * platform/ios-simulator/fast/forms/searchfield-heights-expected.png: Added.
+        * platform/ios-simulator/fast/forms/searchfield-heights-expected.txt:
+        * platform/ios-simulator/fast/forms/textarea-placeholder-pseudo-style-expected.png: Added.
+        * platform/ios-simulator/fast/frames/calculate-fixed-expected.png: Added.
+        * platform/ios-simulator/fast/frames/calculate-order-expected.png: Added.
+        * platform/ios-simulator/fast/frames/calculate-percentage-expected.png: Added.
+        * platform/ios-simulator/fast/frames/calculate-relative-expected.png: Added.
+        * platform/ios-simulator/fast/frames/calculate-round-expected.png: Added.
+        * platform/ios-simulator/fast/frames/content-opacity-1-expected.png: Added.
+        * platform/ios-simulator/fast/frames/content-opacity-2-expected.png: Added.
+        * platform/ios-simulator/fast/gradients/list-item-gradient-expected.png: Added.
+        * platform/ios-simulator/fast/gradients/list-item-gradient-expected.txt:
+        * platform/ios-simulator/fast/hidpi/broken-image-icon-very-hidpi-expected.txt: Added.
+        * platform/ios-simulator/fast/images/animated-gif-with-offsets-expected.png: Added.
+
 2015-05-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Array.prototype methods must use ToLength
