@@ -1,3 +1,30 @@
+2015-05-19  Chris Dumez  <cdumez@apple.com>
+
+        [Mac] Font lookups are flakey due to caching
+        https://bugs.webkit.org/show_bug.cgi?id=145180
+        <rdar://problem/21012406>
+
+        Reviewed by Darin Adler.
+
+        Font lookups were flakey on Mac due to the cache in fontWithFamily().
+        The reason is that the "desired family" to "available family" mapping
+        is sometimes dependent on the desired traits. However, our cache was
+        only using the "desired family" as key.
+
+        This patch now uses a std::pair as key containing both the "desired
+        family" and the "desired traits" for correctness. I also updated the
+        cache to use WTF types instead of NS types.
+
+        Test: platform/mac/fast/text/font-weights.html
+
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::desiredFamilyToAvailableFamilyMap):
+        (WebCore::hasDesiredFamilyToAvailableFamilyMapping):
+        (WebCore::rememberDesiredFamilyToAvailableFamilyMapping):
+        (WebCore::fontWithFamily):
+        (WebCore::invalidateFontCache):
+        (WebCore::desiredFamilyToAvailableFamilyDictionary): Deleted.
+
 2015-05-19  Brady Eidson  <beidson@apple.com>
 
         X-Frame-Options headers not respected when loading from application cache.

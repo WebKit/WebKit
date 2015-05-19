@@ -129,29 +129,34 @@ static inline FontTraitsMask toTraitsMask(NSFontTraitMask appKitTraits, NSIntege
                 FontWeight900Mask));
 }
 
-// Keep a cache for mapping desired font families to font families actually
-// available on the system for performance.
-static NSMutableDictionary* desiredFamilyToAvailableFamilyDictionary()
+#if !ENABLE(PLATFORM_FONT_LOOKUP)
+// Keep a cache for mapping desired font families to font families actually available on the system for performance.
+using AvailableFamilyMap = HashMap<std::pair<AtomicString, NSFontTraitMask>, AtomicString>;
+static AvailableFamilyMap& desiredFamilyToAvailableFamilyMap()
 {
     ASSERT(isMainThread());
-    static NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
-    return dictionary;
+    static NeverDestroyed<AvailableFamilyMap> map;
+    return map;
 }
 
-#if !ENABLE(PLATFORM_FONT_LOOKUP)
-static inline void rememberDesiredFamilyToAvailableFamilyMapping(NSString* desiredFamily, NSString* availableFamily)
+static bool hasDesiredFamilyToAvailableFamilyMapping(const AtomicString& desiredFamily, NSFontTraitMask desiredTraits, NSString*& availableFamily)
 {
-    static const NSUInteger maxCacheSize = 128;
-    NSMutableDictionary *familyMapping = desiredFamilyToAvailableFamilyDictionary();
-    ASSERT([familyMapping count] <= maxCacheSize);
-    if ([familyMapping count] == maxCacheSize) {
-        for (NSString *key in familyMapping) {
-            [familyMapping removeObjectForKey:key];
-            break;
-        }
-    }
-    id value = availableFamily ? availableFamily : [NSNull null];
-    [familyMapping setObject:value forKey:desiredFamily];
+    AtomicString value = desiredFamilyToAvailableFamilyMap().get(std::make_pair(desiredFamily, desiredTraits));
+    availableFamily = value.isEmpty() ? nil : static_cast<NSString*>(value);
+    return !value.isNull();
+}
+
+static inline void rememberDesiredFamilyToAvailableFamilyMapping(const AtomicString& desiredFamily, NSFontTraitMask desiredTraits, NSString* availableFamily)
+{
+    static const unsigned maxCacheSize = 128;
+    auto& familyMapping = desiredFamilyToAvailableFamilyMap();
+    ASSERT(familyMapping.size() <= maxCacheSize);
+    if (familyMapping.size() >= maxCacheSize)
+        familyMapping.remove(familyMapping.begin());
+
+    // Store nil as an emptyAtom to distinguish from missing values (nullAtom).
+    AtomicString value = availableFamily ? AtomicString(availableFamily) : emptyAtom;
+    familyMapping.add(std::make_pair(desiredFamily, desiredTraits), value);
 }
 
 #else
@@ -262,7 +267,6 @@ static NSFont *fontWithFamily(const AtomicString& family, NSFontTraitMask desire
         return specialCase.value();
 
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
-    NSString *desiredFamily = family;
     NSString *availableFamily;
     int chosenWeight;
     NSFont *font;
@@ -277,20 +281,25 @@ static NSFont *fontWithFamily(const AtomicString& family, NSFontTraitMask desire
         requestedTraits |= kCTFontItalicTrait;
     if (weight >= FontWeight600)
         requestedTraits |= kCTFontBoldTrait;
+
+    NSString *desiredFamily = family;
     font = CFBridgingRelease(CTFontCreateForCSS((CFStringRef)desiredFamily, toCoreTextFontWeight(weight), requestedTraits, size));
     availableFamily = [font familyName];
     chosenWeight = [fontManager weightOfFont:font];
 
 #else
 
-    id cachedAvailableFamily = [desiredFamilyToAvailableFamilyDictionary() objectForKey:desiredFamily];
-    if (cachedAvailableFamily == [NSNull null]) {
-        // We already know this font is not available.
-        return nil;
+    NSFontTraitMask desiredTraitsForNameMatch = desiredTraits | (weight >= FontWeight600 ? NSBoldFontMask : 0);
+    if (hasDesiredFamilyToAvailableFamilyMapping(family, desiredTraitsForNameMatch, availableFamily)) {
+        if (!availableFamily) {
+            // We already know the desired font family does not map to any available font family.
+            return nil;
+        }
     }
 
-    availableFamily = cachedAvailableFamily;
     if (!availableFamily) {
+        NSString *desiredFamily = family;
+
         // Do a simple case insensitive search for a matching font family.
         // NSFontManager requires exact name matches.
         // This addresses the problem of matching arial to Arial, etc., but perhaps not all the issues.
@@ -302,7 +311,6 @@ static NSFont *fontWithFamily(const AtomicString& family, NSFontTraitMask desire
         if (!availableFamily) {
             // Match by PostScript name.
             NSFont *nameMatchedFont = nil;
-            NSFontTraitMask desiredTraitsForNameMatch = desiredTraits | (weight >= FontWeight600 ? NSBoldFontMask : 0);
             for (NSString *availableFont in [fontManager availableFonts]) {
                 if ([desiredFamily caseInsensitiveCompare:availableFont] == NSOrderedSame) {
                     nameMatchedFont = [NSFont fontWithName:availableFont size:size];
@@ -322,7 +330,7 @@ static NSFont *fontWithFamily(const AtomicString& family, NSFontTraitMask desire
             }
         }
 
-        rememberDesiredFamilyToAvailableFamilyMapping(desiredFamily, availableFamily);
+        rememberDesiredFamilyToAvailableFamilyMapping(family, desiredTraitsForNameMatch, availableFamily);
         if (!availableFamily)
             return nil;
     }
@@ -406,7 +414,10 @@ static void invalidateFontCache(void*)
         return;
     }
     FontCache::singleton().invalidate();
-    [desiredFamilyToAvailableFamilyDictionary() removeAllObjects];
+
+#if !ENABLE(PLATFORM_FONT_LOOKUP)
+    desiredFamilyToAvailableFamilyMap().clear();
+#endif
 }
 
 static void fontCacheRegisteredFontsChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void *, CFDictionaryRef)
