@@ -134,7 +134,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ArithPow:
     case ArithSqrt:
     case ArithFRound:
-    case ArithRound:
     case ArithSin:
     case ArithCos:
     case ArithLog:
@@ -255,7 +254,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case UInt32ToNumber:
         def(PureValue(node, node->arithMode()));
         return;
-        
+
+    case ArithRound:
+        def(PureValue(node, static_cast<uintptr_t>(node->arithRoundingMode())));
+        return;
+
     case CheckCell:
         def(PureValue(CheckCell, AdjacencyList(AdjacencyList::Fixed, node->child1()), node->cellOperand()));
         return;

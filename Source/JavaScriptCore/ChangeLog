@@ -1,3 +1,24 @@
+2015-05-18  Benjamin Poulain  <bpoulain@apple.com>
+
+        <rdar://problem/21003555> cloberrize() is wrong for ArithRound because it doesn't account for the arith mode
+        https://bugs.webkit.org/show_bug.cgi?id=145147
+
+        Reviewed by Filip Pizlo.
+
+        Really stupid bug: ArithRound nodes with different rounding modes
+        were not distinguished and CSE would happily unify with a node of
+        a different rounding mode.
+
+        DFG::clobberize() already support additional data but I was not using it.
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * tests/stress/math-round-arith-rounding-mode.js: Added.
+        (firstCareAboutZeroSecondDoesNot):
+        (firstDoNotCareAboutZeroSecondDoes):
+        (warmup):
+        (verifyNegativeZeroIsPreserved):
+
 2015-05-18  Filip Pizlo  <fpizlo@apple.com>
 
         Add SpecBoolInt32 type that means "I'm an int and I'm either 0 or 1"
