@@ -1,3 +1,27 @@
+2015-05-19  Beth Dakin  <bdakin@apple.com>
+
+        Crash in WebCore::RenderLayer::updateScrollbarsAfterLayout
+        https://bugs.webkit.org/show_bug.cgi?id=145142
+
+        Reviewed by Simon Fraser.
+
+        I have not been able to reproduce this crash, but according to symbolication 
+        m_vBar is null. It seems like this crash was probably caused by 
+        http://trac.webkit.org/changeset/173668 which made it so that overflow:scroll 
+        behaves like overflow:auto when the scrollbars are overlay. I can see how you 
+        could encounter this crash with that change if the layout caused 
+        styleRequiresScrollbar() to return true when it used to return false. Then this 
+        code, by failing to null-check the scrollbars, assumes that 
+        styleRequiresScrollbar() could not have changed based on a layout. But it could 
+        change if the css changed the scrollbars to be custom or if the user managed 
+        switch to legacy style scrollbars at just the wrong time. Or I suppose it could 
+        also happen if the user has legacy scrollbars and the style switched from auto to 
+        scroll during the layout.
+
+        Anyway, we should null-check  the scrollbars. This is a speculative fix.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateScrollbarsAfterLayout):
+
 2015-05-19  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         Use modern for-loops in WebCore/xml.
