@@ -1,3 +1,13 @@
+2015-05-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] Fix unsequenced warning in MiniBrowser's main.c
+        https://bugs.webkit.org/show_bug.cgi?id=145123
+
+        Reviewed by Gyuyoung Kim.
+
+        * MiniBrowser/efl/main.c:
+        (on_key_down):
+
 2015-05-18  Daniel Bates  <dabates@apple.com>
 
         prepare-ChangeLog reports function above deleted function as deleted; uninitialized value warning

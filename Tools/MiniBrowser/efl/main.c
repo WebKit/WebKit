@@ -569,7 +569,7 @@ on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
         ewk_view_stop(ewk_view);
     } else if (!strcmp(ev->key, "F7")) {
         Ewk_Pagination_Mode mode =  ewk_view_pagination_mode_get(ewk_view);
-        mode = (++mode) % (EWK_PAGINATION_MODE_BOTTOM_TO_TOP + 1);
+        mode = (mode + 1) % (EWK_PAGINATION_MODE_BOTTOM_TO_TOP + 1);
         if (ewk_view_pagination_mode_set(ewk_view, mode))
             INFO("Change Pagination Mode (F7) was pressed, changed to: %d", mode);
         else
