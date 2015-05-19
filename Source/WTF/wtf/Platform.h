@@ -605,6 +605,10 @@
 #endif
 #endif
 
+#if OS(DARWIN) || OS(FREEBSD) || OS(NETBSD)
+#define HAVE_STAT_BIRTHTIME 1
+#endif
+
 #if !OS(WINDOWS) && !OS(SOLARIS)
 #define HAVE_TM_GMTOFF 1
 #define HAVE_TM_ZONE 1

@@ -77,13 +77,12 @@ struct FileTimes {
 
 inline FileTimes fileTimes(const String& path)
 {
-#if PLATFORM(COCOA)
+#if HAVE(STAT_BIRTHTIME)
     struct stat fileInfo;
     if (stat(WebCore::fileSystemRepresentation(path).data(), &fileInfo))
         return { };
     return { std::chrono::system_clock::from_time_t(fileInfo.st_birthtime), std::chrono::system_clock::from_time_t(fileInfo.st_mtime) };
-#endif
-#if USE(SOUP)
+#elif USE(SOUP)
     // There's no st_birthtime in some operating systems like Linux, so we use xattrs to set/get the creation time.
     GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(WebCore::fileSystemRepresentation(path).data()));
     GRefPtr<GFileInfo> fileInfo = adoptGRef(g_file_query_info(file.get(), "xattr::birthtime,time::modified", G_FILE_QUERY_INFO_NONE, nullptr, nullptr));
