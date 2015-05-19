@@ -188,19 +188,6 @@ td, th {
     left: 5px;
 }
 
-#dashboard .unit {
-    display: none;
-}
-
-#charts .unit {
-    font-size: small;
-    width: 50px;
-    text-align: center;
-    position: absolute;
-    bottom: 10px;
-    left: 245px;
-}
-
 #charts .arrow {
     width: 20px;
     height: 40px;
@@ -530,7 +517,6 @@ td, th {
             section.addClass(status.class);
             section.find('.status tbody').html(buildLabelWithLinks(results.lastResult().build()));
             section.find('.summaryTable tbody').html(summaryRows);
-            section.find('.unit').html(results.unit());
             if (results.smallerIsBetter()) {
                 section.find('.arrow .downwardArrowHead').show();
                 section.find('.arrow .upwardArrowHead').hide();

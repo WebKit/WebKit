@@ -407,9 +407,9 @@ RunsData.unitFromMetricName = function (metricName)
         'Runs': '/s',
         'Time': 'ms',
         'Duration': 'ms',
-        'Malloc': 'bytes',
-        'Heap': 'bytes',
-        'Allocations': 'bytes',
+        'Malloc': 'B',
+        'Heap': 'B',
+        'Allocations': 'B',
         'Score': 'pt',
     }[suffix];
     return unit;

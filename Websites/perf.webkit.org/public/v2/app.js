@@ -1228,7 +1228,7 @@ App.AnalysisTaskController = Ember.Controller.extend({
                 id: point.measurement.id(),
                 measurement: point.measurement,
                 label: 'Point ' + (index + 1),
-                value: chartData.formatWithUnit(point.value),
+                value: chartData.formatter(point.value),
             };
         });
 
@@ -1529,7 +1529,7 @@ App.TestGroupPane = Ember.ObjectProxy.extend({
                 }),
                 value: point ? point.value : null,
                 valueRange: range,
-                formattedValue: point ? testResults.formatWithUnit(point.value) : null,
+                formattedValue: point ? testResults.formatter(point.value) : null,
                 buildLabel: point ? 'Build ' + point.measurement.buildNumber() : null,
             });
         });

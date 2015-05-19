@@ -113,8 +113,6 @@ App.InteractiveChartComponent = Ember.Component.extend({
         this._targetTimeSeries = chartData.target;
         this._movingAverageTimeSeries = chartData.movingAverage;
 
-        this._yAxisUnit = chartData.unit;
-
         if (this._baselineTimeSeries) {
             this._paths.push(this._clippedContainer
                 .append("path")
@@ -312,14 +310,8 @@ App.InteractiveChartComponent = Ember.Component.extend({
             return;
 
         this._yAxisLabels.call(this._yAxis);
-        if (this._yAxisUnitContainer)
-            this._yAxisUnitContainer.remove();
         var x = - 3.2 * this._rem;
         var y = this._contentHeight / 2;
-        this._yAxisUnitContainer = this._yAxisLabels.append("text")
-            .attr("transform", "rotate(90 0 0) translate(" + y + ", " + (-x) + ")")
-            .style("text-anchor", "middle")
-            .text(this._yAxisUnit);
     },
     _updateHighlightPositions: function () {
         if (!this._highlights)

@@ -1,3 +1,30 @@
+2015-05-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Don't show unit (bytes) separaetly from SI suffixes (K, M, etc...)
+        https://bugs.webkit.org/show_bug.cgi?id=145181
+
+        Rubber-stamped by Chris Dumez.
+
+        Show 'MB' in each y-axis label instead of showing 'bytes' separately and suffixing each label with just 'M'
+        for clarity. This change also reduces the code complexity.
+
+        * public/index.html:
+        * public/v2/app.js:
+        (App.AnalysisTaskController._chartDataChanged):
+        (App.TestGroupPane._createConfigurationSummary):
+        * public/v2/data.js:
+        (RunsData.unitFromMetricName): Use 'B' instead of 'bytes' as the unit.
+
+        * public/v2/interactive-chart.js: Removed the support for showing units separately.
+        (App.InteractiveChartComponent._constructGraphIfPossible):
+        (App.InteractiveChartComponent._relayoutDataAndAxes)
+
+        * public/v2/manifest.js:
+        (App.Manifest._makeFormatter): Renamed from _formatBytes. Support more SI suffixes such as micro and mili.
+        Now takes the unit as the first argument. Adjust the base unit if it's 'ms'.
+        (App.Manifest._formatFetchedData): Removed unit and formatWithUnit now that all all formatters would
+        automatically include unit.
+
 2015-05-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION: v2 UI reports a higher memory usage

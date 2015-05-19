@@ -315,28 +315,33 @@ App.Manifest = Ember.Controller.extend({
             };
         });
     },
-    _formatBytes: function (sigFig, alwaysShowSign)
+    _makeFormatter: function (unit, sigFig, alwaysShowSign)
     {
-        var units = ['', 'K', 'M', 'G', 'T', 'P', 'E'];
-        var threshold = sigFig >= 3 ? 1024 : 102.4;
+        var isMiliseconds = false;
+        if (unit == 'ms') {
+            isMiliseconds = true;
+            unit = 's';
+        }
+        var divisor = unit == 'bytes' ? 1024 : 1000;
+
+        var suffix = ['\u03BC', 'm', '', 'K', 'M', 'G', 'T', 'P', 'E'];
+        var threshold = sigFig >= 3 ? divisor : (divisor / 10);
         return function (bytes) {
             var i;
             var sign = bytes >= 0 ? (alwaysShowSign ? '+' : '') : '-';
             bytes = Math.abs(bytes);
-
-            for (i = 0; bytes >= threshold; i++)
-                bytes /= 1024;
-            return sign + bytes.toPrecision(Math.max(2, sigFig)) + units[i];
+            for (i = isMiliseconds ? 1 : 2; bytes < 1; i--)
+                bytes *= divisor;
+            for (; bytes >= threshold; i++)
+                bytes /= divisor;
+            return sign + bytes.toPrecision(Math.max(2, sigFig)) + ' ' + suffix[i] + (unit || '');
         }
     },
     _formatFetchedData: function (metricName, configurations)
     {
         var unit = RunsData.unitFromMetricName(metricName);
         var smallerIsBetter = RunsData.isSmallerBetter(unit);
-
-        var isBytes = unit == 'bytes';
-        var unitSuffix = unit ? ' ' + unit : '';
-        var deltaFormatterWithoutSign = isBytes ? this._formatBytes(2, false) : d3.format('.2g');
+        var deltaFormatterWithoutSign = this._makeFormatter(unit, 2, false);
 
         var currentTimeSeries = configurations.current.timeSeriesByCommitTime(false);
         var baselineTimeSeries = configurations.baseline ? configurations.baseline.timeSeriesByCommitTime(false) : null;
@@ -347,14 +352,12 @@ App.Manifest = Ember.Controller.extend({
             current: currentTimeSeries,
             baseline: baselineTimeSeries,
             target: targetTimeSeries,
-            unit: unit,
-            formatWithUnit: function (value) { return this.formatter(value) + unitSuffix; },
             formatWithDeltaAndUnit: function (value, delta)
             {
-                return this.formatter(value) + (delta && !isNaN(delta) ? ' \u00b1 ' + deltaFormatterWithoutSign(delta) : '') + unitSuffix;
+                return this.formatter(value) + (delta && !isNaN(delta) ? ' \u00b1 ' + deltaFormatterWithoutSign(delta) : '');
             },
-            formatter: isBytes ? this._formatBytes(4, false) : d3.format('.4g'),
-            deltaFormatter: isBytes ? this._formatBytes(2, true) : d3.format('+.2g'),
+            formatter: this._makeFormatter(unit, 4, false),
+            deltaFormatter: this._makeFormatter(unit, 2, true),
             smallerIsBetter: smallerIsBetter,
             showOutlier: function (show)
             {
