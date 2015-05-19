@@ -1,5 +1,17 @@
 2015-05-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Improve coverage of platform/mac/fast/text/font-weights.html
+        https://bugs.webkit.org/show_bug.cgi?id=145152
+
+        Reviewed by Anders Carlsson.
+
+        Add coverage of italics.
+
+        * platform/mac/fast/text/font-weights-expected.txt:
+        * platform/mac/fast/text/font-weights.html:
+
+2015-05-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
         platform/mac/fast/text/font-weights.html is flakey
         https://bugs.webkit.org/show_bug.cgi?id=145149
 
