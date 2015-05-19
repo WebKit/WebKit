@@ -1,3 +1,17 @@
+2015-05-19  Brent Fulgham  <bfulgham@apple.com>
+
+        Scroll-snap animations should not start on axes with zero-delta
+        https://bugs.webkit.org/show_bug.cgi?id=145148
+
+        Reviewed by Dean Jackson.
+
+        Don't begin a scroll snap animation on an axis that had no change in position (on that axis)
+        during the gesture.
+
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::ScrollController::processWheelEventForScrollSnapOnAxis): Don't begin a scroll snap
+        animation if no movement on this axis was ever made.
+
 2015-05-19  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         AudioContext should resolve promises with jsUndefined() and not jsNull()
