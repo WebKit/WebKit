@@ -1,5 +1,8 @@
 description("Tests for Array.prototype.find");
 
+shouldBe("Array.prototype.find.length", "1");
+shouldBe("Array.prototype.find.name", "'find'");
+
 function passUndefined(element, index, array) {
     return typeof element === "undefined";
 }
@@ -66,14 +69,14 @@ shouldBe("[undefined, 0, null, false].find(passEmptyString)", "undefined");
 shouldBe("[undefined, null, false, ''].find(passZero)", "undefined");
 shouldBe("(new Array(20)).find(passUndefined)", "undefined");
 
-// Array with holes.
+debug("Array with holes")
 shouldBe("arrayWithHoles.find(passUndefined)", "undefined");
 shouldBe("arrayWithHoles.find(passZero)", "0");
 shouldBe("arrayWithHoles.find(passNull)", "null");
 shouldBe("arrayWithHoles.find(passFalse)", "false");
 shouldBe("arrayWithHoles.find(passEmptyString)", "''");
 
-// Generic Object
+debug("Generic Object");
 shouldBe("toObject([undefined, 0, null, false, '']).find(passUndefined)", "undefined");
 shouldBe("toObject([undefined, 0, null, false, '']).find(passZero)", "0");
 shouldBe("toObject([undefined, 0, null, false, '']).find(passNull)", "null");
@@ -86,11 +89,19 @@ shouldBe("toObject([undefined, 0, null, false]).find(passEmptyString)", "undefin
 shouldBe("toObject([undefined, null, false, '']).find(passZero)", "undefined");
 shouldBe("toObject(new Array(20)).find(passUndefined)", "undefined");
 
-// Modification during search
+debug("Array-like object with invalid lengths");
+var throwError = function throwError() {
+    throw new Error("should not reach here");
+};
+shouldBeUndefined("var obj = { 0: 1, 1: 2, 2: 3, length: 0 }; Array.prototype.find.call(obj, throwError)");
+shouldBeUndefined("var obj = { 0: 1, 1: 2, 2: 3, length: -0 }; Array.prototype.find.call(obj, throwError)");
+shouldBeUndefined("var obj = { 0: 1, 1: 2, 2: 3, length: -3 }; Array.prototype.find.call(obj, throwError)");
+
+debug("Modification during search");
 shouldBe("[0,1,2,3,4,5,6,7,8,9].find(findItemAddedDuringSearch)", "undefined");
 shouldBe("[0,1,2,3,4,5,6,7,8,9].find(findItemRemovedDuringSearch)", "undefined");
 
-// Exeptions
+debug("Exceptions");
 shouldThrow("Array.prototype.find.call(undefined, function() {})", "'TypeError: Array.prototype.find requires that |this| not be undefined'");
 shouldThrow("Array.prototype.find.call(null, function() {})", "'TypeError: Array.prototype.find requires that |this| not be null'");
 shouldThrow("[].find(1)", "'TypeError: Array.prototype.find callback must be a function'");
@@ -100,5 +111,5 @@ shouldThrow("[].find({})", "'TypeError: Array.prototype.find callback must be a 
 shouldThrow("[].find(null)", "'TypeError: Array.prototype.find callback must be a function'");
 shouldThrow("[].find(undefined)", "'TypeError: Array.prototype.find callback must be a function'");
 
-// Callbacks in the expected order and skipping holes.
+debug("Callbacks in the expected order and skipping holes");
 shouldBe("numberOfCallbacksInFindInArrayWithHoles()", "5");

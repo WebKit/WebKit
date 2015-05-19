@@ -32,8 +32,8 @@ function every(callback /*, thisArg */) {
         throw new @TypeError("Array.prototype.every requires that |this| not be undefined");
     
     var array = @Object(this);
-    var length = array.length >>> 0;
-    
+    var length = @ToLength(array.length);
+
     if (typeof callback !== "function")
         throw new @TypeError("Array.prototype.every callback must be a function");
     
@@ -58,8 +58,8 @@ function forEach(callback /*, thisArg */) {
         throw new @TypeError("Array.prototype.forEach requires that |this| not be undefined");
     
     var array = @Object(this);
-    var length = array.length >>> 0;
-    
+    var length = @ToLength(array.length);
+
     if (typeof callback !== "function")
         throw new @TypeError("Array.prototype.forEach callback must be a function");
     
@@ -80,8 +80,8 @@ function filter(callback /*, thisArg */) {
         throw new @TypeError("Array.prototype.filter requires that |this| not be undefined");
     
     var array = @Object(this);
-    var length = array.length >>> 0;
-    
+    var length = @ToLength(array.length);
+
     if (typeof callback !== "function")
         throw new @TypeError("Array.prototype.filter callback must be a function");
     
@@ -109,8 +109,8 @@ function map(callback /*, thisArg */) {
         throw new @TypeError("Array.prototype.map requires that |this| not be undefined");
     
     var array = @Object(this);
-    var length = array.length >>> 0;
-    
+    var length = @ToLength(array.length);
+
     if (typeof callback !== "function")
         throw new @TypeError("Array.prototype.map callback must be a function");
     
@@ -136,8 +136,8 @@ function some(callback /*, thisArg */) {
         throw new @TypeError("Array.prototype.some requires that |this| not be undefined");
     
     var array = @Object(this);
-    var length = array.length >>> 0;
-    
+    var length = @ToLength(array.length);
+
     if (typeof callback !== "function")
         throw new @TypeError("Array.prototype.some callback must be a function");
     
@@ -160,7 +160,7 @@ function fill(value /* [, start [, end]] */)
     if (this === undefined)
         throw new @TypeError("Array.prototype.fill requires that |this| not be undefined");
     var O = @Object(this);
-    var len = O.length >>> 0;
+    var len = @ToLength(O.length);
     var relativeStart = 0;
     if (arguments.length > 1 && arguments[1] !== undefined)
         relativeStart = arguments[1] | 0;
@@ -201,8 +201,8 @@ function find(callback /*, thisArg */) {
         throw new @TypeError("Array.prototype.find requires that |this| not be undefined");
     
     var array = @Object(this);
-    var length = array.length >>> 0;
-    
+    var length = @ToLength(array.length);
+
     if (typeof callback !== "function")
         throw new @TypeError("Array.prototype.find callback must be a function");
     
@@ -226,8 +226,8 @@ function findIndex(callback /*, thisArg */) {
         throw new @TypeError("Array.prototype.findIndex requires that |this| not be undefined");
     
     var array = @Object(this);
-    var length = array.length >>> 0;
-    
+    var length = @ToLength(array.length);
+
     if (typeof callback !== "function")
         throw new @TypeError("Array.prototype.findIndex callback must be a function");
     
@@ -250,7 +250,7 @@ function includes(searchElement /*, fromIndex*/) {
         throw new @TypeError("Array.prototype.includes requires that |this| not be undefined");
 
     var array = @Object(this);
-    var length = array.length >>> 0;
+    var length = @ToLength(array.length);
 
     if (length === 0)
         return false;

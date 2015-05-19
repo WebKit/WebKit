@@ -1,6 +1,7 @@
 description("Tests for Array.prototype.includes");
 
-shouldBe("[].includes.length", "1");
+shouldBe("Array.prototype.includes.length", "1");
+shouldBe("Array.prototype.includes.name", "'includes'");
 
 shouldBeTrue("[1, 2, 3].includes(2)");
 shouldBeFalse("[1, 2, 3].includes(4)");
@@ -25,7 +26,7 @@ shouldBeTrue("[1, 2, NaN, 4].includes(NaN)");
 shouldBeTrue("['egg', 'bacon', 'sausage'].includes('egg')");
 shouldBeFalse("['egg', 'bacon', 'sausage'].includes('spinach')");
 
-debug("Array with holes");
+debug("Array with holes (sparse array)");
 
 var a = [];
 a[0] = 'egg';
@@ -42,4 +43,7 @@ shouldBeFalse("a.includes('toast')");
 shouldThrow("Array.prototype.includes.call(undefined, 1)");
 shouldThrow("Array.prototype.includes.call(null, 1)");
 
-
+debug("Array-like object with invalid lengths");
+shouldBeFalse("var obj = { 0: 1, 1: 1, 2: 1, length: 0 }; Array.prototype.includes.call(obj, 1)");
+shouldBeFalse("var obj = { 0: 1, 1: 1, 2: 1, length: -0 }; Array.prototype.includes.call(obj, 1)");
+shouldBeFalse("var obj = { 0: 1, 1: 1, 2: 1, length: -3 }; Array.prototype.includes.call(obj, 1)");

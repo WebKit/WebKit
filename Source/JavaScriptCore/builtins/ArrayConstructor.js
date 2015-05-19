@@ -76,19 +76,7 @@ function from(items /*, mapFn, thisArg */) {
     }
 
     var arrayLike = @Object(items);
-
-    var maxSafeInteger = 9007199254740991;
-    var numberValue = @Number(arrayLike.length);
-    var lengthValue;
-    if (numberValue != numberValue) {  // isNaN(numberValue)
-        lengthValue = 0;
-    } else if (numberValue === 0 || !@isFinite(numberValue)) {
-        lengthValue = numberValue;
-    } else {
-        lengthValue = (numberValue > 0 ? 1 : -1) * @floor(@abs(numberValue));
-    }
-    // originally Math.min(Math.max(length, 0), maxSafeInteger));
-    var arrayLikeLength = lengthValue > 0 ? (lengthValue < maxSafeInteger ? lengthValue : maxSafeInteger) : 0;
+    var arrayLikeLength = @ToLength(arrayLike.length);
 
     // TODO: Need isConstructor(thisObj) instead of typeof "function" check.
     var result = (typeof thisObj === "function") ? @Object(new thisObj(arrayLikeLength)) : new @Array(arrayLikeLength);

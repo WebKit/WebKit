@@ -3,21 +3,30 @@ Tests for Array.prototype.filter
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS Array.prototype.filter.length is 1
+PASS Array.prototype.filter.name is 'filter'
 PASS [undefined].filter(passUndefined) is [undefined]
 PASS (new Array(20)).filter(passUndefined) is []
 PASS [0,1,2,3,4,5,6,7,8,9].filter(passEven) is [0,2,4,6,8]
 PASS [0,1,2,3,4,5,6,7,8,9].filter(passAfter5) is [5,6,7,8,9]
 PASS mixPartialAndFast.filter(passAfter5) is [5,6,7,8,9,sparseArrayLength-1]
+Generic Object
 PASS toObject([undefined]).filter(passUndefined) is [undefined]
 PASS toObject(new Array(20)).filter(passUndefined) is []
 PASS toObject([0,1,2,3,4,5,6,7,8,9]).filter(passEven) is [0,2,4,6,8]
 PASS toObject([0,1,2,3,4,5,6,7,8,9]).filter(passAfter5) is [5,6,7,8,9]
 PASS toObject(mixPartialAndFast).filter(passAfter5) is [5,6,7,8,9,sparseArrayLength-1]
+Array-like object with invalid lengths
+PASS var obj = { 0: 1, 1: 2, 2: 3, length: 0 }; Array.prototype.filter.call(obj, throwError) is []
+PASS var obj = { 0: 1, 1: 2, 2: 3, length: -0 }; Array.prototype.filter.call(obj, throwError) is []
+PASS var obj = { 0: 1, 1: 2, 2: 3, length: -3 }; Array.prototype.filter.call(obj, throwError) is []
+Reversed generic Object
 PASS reverseInsertionOrder([undefined]).filter(passUndefined) is [undefined]
 PASS reverseInsertionOrder(new Array(20)).filter(passUndefined) is []
 PASS reverseInsertionOrder([0,1,2,3,4,5,6,7,8,9]).filter(passEven) is [0,2,4,6,8]
 PASS reverseInsertionOrder([0,1,2,3,4,5,6,7,8,9]).filter(passAfter5) is [5,6,7,8,9]
 PASS reverseInsertionOrder(mixPartialAndFast).filter(passAfter5) is [5,6,7,8,9,sparseArrayLength-1]
+Log evaluation order
 ,0,[object Object]
 PASS reverseInsertionOrder([undefined]).filter(filterLog(passUndefined)) is [undefined]
 PASS reverseInsertionOrder(new Array(20)).filter(filterLog(passUndefined)) is []

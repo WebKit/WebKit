@@ -1,3 +1,36 @@
+2015-05-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Array.prototype methods must use ToLength
+        https://bugs.webkit.org/show_bug.cgi?id=144128
+
+        Reviewed by Oliver Hunt.
+
+        Patch by Jordan Harband  <ljharb@gmail.com> and Yusuke Suzuki <utatane.tea@gmail.com>
+
+        * fast/profiler/built-in-function-calls-anonymous-expected.txt:
+        * fast/profiler/built-in-function-calls-user-defined-function-expected.txt:
+        * js/array-every-expected.txt:
+        * js/array-fill-expected.txt:
+        * js/array-filter-expected.txt:
+        * js/array-find-expected.txt:
+        * js/array-findIndex-expected.txt:
+        * js/array-functions-non-arrays-expected.txt:
+        * js/array-includes-expected.txt:
+        * js/script-tests/array-every.js:
+        (throwError):
+        * js/script-tests/array-fill.js:
+        (throwError):
+        * js/script-tests/array-filter.js:
+        (throwError):
+        * js/script-tests/array-find.js:
+        (throwError):
+        * js/script-tests/array-findIndex.js:
+        (toObject):
+        (throwError):
+        * js/script-tests/array-functions-non-arrays.js:
+        (throwError):
+        * js/script-tests/array-includes.js:
+
 2015-05-19  Zalan Bujtas  <zalan@apple.com>
 
         Merged anonymous blocks should invalidate simple line layout path.

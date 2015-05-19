@@ -23,37 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function raw(template) {
+function ToInteger(target) {
     "use strict";
 
-    if (template === null || template === undefined)
-        throw new @TypeError("String.raw requires template not be null or undefined");
-    var cookedSegments = @Object(template);
+    var numberValue = @Number(target);
 
-    var rawValue = cookedSegments.raw;
-    if (rawValue === null || rawValue === undefined)
-        throw new @TypeError("String.raw requires template.raw not be null or undefined");
-    var rawSegments = @Object(rawValue);
+    // isNaN(numberValue)
+    if (numberValue !== numberValue)
+        return 0;
 
-    var numberOfSubstitutions = arguments.length - 1;
+    if (numberValue === 0 || !@isFinite(numberValue))
+        return numberValue;
 
-    var segmentCount = @ToLength(rawSegments.length);
+    return (numberValue > 0 ? 1 : -1) * @floor(@abs(numberValue));
+}
 
-    if (segmentCount <= 0)
-        return '';
+function ToLength(target) {
+    "use strict";
 
-    var stringElements = '';
-    for (var i = 0; ; ++i) {
-        var segment = @toString(rawSegments[i]);
-        stringElements += segment;
-
-        if ((i + 1) === segmentCount)
-            return stringElements;
-
-        if (i < numberOfSubstitutions) {
-            var substitutionIndexInArguments = i + 1;
-            var next = @toString(arguments[substitutionIndexInArguments]);
-            stringElements += next;
-        }
-    }
+    var maxSafeInteger = 0x1FFFFFFFFFFFFF;
+    var length = @ToInteger(target);
+    // originally Math.min(Math.max(length, 0), maxSafeInteger));
+    return length > 0 ? (length < maxSafeInteger ? length : maxSafeInteger) : 0;
 }

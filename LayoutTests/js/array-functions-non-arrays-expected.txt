@@ -93,6 +93,16 @@ PASS Array.prototype.unshift.call(x = {}, 'c'); properties(x) is '0:c, length:1'
 PASS Array.prototype.unshift.call(x = ['b', 'a'], 'c'); properties(x) is '0:c, 1:b, 2:a, length:3(DontDelete, DontEnum)'
 PASS Array.prototype.unshift.call(x = { length:2, 0:'b', 1:'a' }, 'c'); properties(x) is '0:c, 1:b, 2:a, length:3'
 PASS Array.prototype.unshift.call(x = new TwoItemConstructor, 'c'); properties(x) is '0:c, 1:b, 2:a, length:3'
+Array-like object with invalid lengths
+PASS var obj = { 0: 1, 1: 2, 2: 3, length: 0 }; Array.prototype.forEach.call(obj, throwError) is undefined.
+PASS var obj = { 0: 1, 1: 2, 2: 3, length: -0 }; Array.prototype.forEach.call(obj, throwError) is undefined.
+PASS var obj = { 0: 1, 1: 2, 2: 3, length: -3 }; Array.prototype.forEach.call(obj, throwError) is undefined.
+PASS var obj = { 0: 1, 1: 2, 2: 3, length: 0 }; Array.prototype.map.call(obj, throwError) is []
+PASS var obj = { 0: 1, 1: 2, 2: 3, length: -0 }; Array.prototype.map.call(obj, throwError) is []
+PASS var obj = { 0: 1, 1: 2, 2: 3, length: -3 }; Array.prototype.map.call(obj, throwError) is []
+PASS var obj = { 0: 1, 1: 2, 2: 3, length: 0 }; Array.prototype.some.call(obj, throwError) is false
+PASS var obj = { 0: 1, 1: 2, 2: 3, length: -0 }; Array.prototype.some.call(obj, throwError) is false
+PASS var obj = { 0: 1, 1: 2, 2: 3, length: -3 }; Array.prototype.some.call(obj, throwError) is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,5 +1,8 @@
 description("Tests for Array.prototype.filter");
 
+shouldBe("Array.prototype.filter.length", "1");
+shouldBe("Array.prototype.filter.name", "'filter'");
+
 function passUndefined(element, index, array) {
     return typeof element === "undefined";
 }
@@ -50,21 +53,29 @@ shouldBe("[0,1,2,3,4,5,6,7,8,9].filter(passEven)", "[0,2,4,6,8]");
 shouldBe("[0,1,2,3,4,5,6,7,8,9].filter(passAfter5)", "[5,6,7,8,9]");
 shouldBe("mixPartialAndFast.filter(passAfter5)", "[5,6,7,8,9,sparseArrayLength-1]");
 
-// Generic Object
+debug("Generic Object");
 shouldBe("toObject([undefined]).filter(passUndefined)", "[undefined]");
 shouldBe("toObject(new Array(20)).filter(passUndefined)", "[]");
 shouldBe("toObject([0,1,2,3,4,5,6,7,8,9]).filter(passEven)", "[0,2,4,6,8]");
 shouldBe("toObject([0,1,2,3,4,5,6,7,8,9]).filter(passAfter5)", "[5,6,7,8,9]");
 shouldBe("toObject(mixPartialAndFast).filter(passAfter5)", "[5,6,7,8,9,sparseArrayLength-1]");
 
-// Reversed generic Object
+debug("Array-like object with invalid lengths");
+var throwError = function throwError() {
+    throw new Error("should not reach here");
+};
+shouldBe("var obj = { 0: 1, 1: 2, 2: 3, length: 0 }; Array.prototype.filter.call(obj, throwError)", "[]");
+shouldBe("var obj = { 0: 1, 1: 2, 2: 3, length: -0 }; Array.prototype.filter.call(obj, throwError)", "[]");
+shouldBe("var obj = { 0: 1, 1: 2, 2: 3, length: -3 }; Array.prototype.filter.call(obj, throwError)", "[]");
+
+debug("Reversed generic Object");
 shouldBe("reverseInsertionOrder([undefined]).filter(passUndefined)", "[undefined]");
 shouldBe("reverseInsertionOrder(new Array(20)).filter(passUndefined)", "[]");
 shouldBe("reverseInsertionOrder([0,1,2,3,4,5,6,7,8,9]).filter(passEven)", "[0,2,4,6,8]");
 shouldBe("reverseInsertionOrder([0,1,2,3,4,5,6,7,8,9]).filter(passAfter5)", "[5,6,7,8,9]");
 shouldBe("reverseInsertionOrder(mixPartialAndFast).filter(passAfter5)", "[5,6,7,8,9,sparseArrayLength-1]");
 
-// Log evaluation order
+debug("Log evaluation order");
 shouldBe("reverseInsertionOrder([undefined]).filter(filterLog(passUndefined))", "[undefined]");
 shouldBe("reverseInsertionOrder(new Array(20)).filter(filterLog(passUndefined))", "[]");
 shouldBe("reverseInsertionOrder([0,1,2,3,4]).filter(filterLog(passEven))", "[0,2,4]");

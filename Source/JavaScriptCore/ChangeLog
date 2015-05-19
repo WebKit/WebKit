@@ -1,3 +1,39 @@
+2015-05-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Array.prototype methods must use ToLength
+        https://bugs.webkit.org/show_bug.cgi?id=144128
+
+        Reviewed by Oliver Hunt.
+
+        Patch by Jordan Harband  <ljharb@gmail.com> and Yusuke Suzuki <utatane.tea@gmail.com>
+
+        Per https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength
+
+        This patch introduces ToLength and ToInteger JS implementation to encourage the DFG/FTL's inlining.
+        These implementations are located in GlobalObject.js.
+        And set to the JSGlobalObject with the private symbols @ToLength and @ToInteger manually.
+
+        * builtins/Array.prototype.js:
+        (every):
+        (forEach):
+        (filter):
+        (map):
+        (some):
+        (fill):
+        (find):
+        (findIndex):
+        (includes):
+        * builtins/ArrayConstructor.js:
+        (from):
+        * builtins/GlobalObject.js: Copied from Source/JavaScriptCore/builtins/StringConstructor.js.
+        (ToInteger):
+        (ToLength):
+        * builtins/StringConstructor.js:
+        (raw):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObjectFunctions.h:
+
 2015-05-19  Mark Lam  <mark.lam@apple.com>
 
         Fix the build of a universal binary with ARMv7k of JavaScriptCore.

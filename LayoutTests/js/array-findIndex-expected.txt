@@ -3,6 +3,8 @@ Tests for Array.prototype.findIndex
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS Array.prototype.findIndex.length is 1
+PASS Array.prototype.findIndex.name is 'findIndex'
 PASS [undefined, 0, null, false, ''].findIndex(passUndefined) is 0
 PASS [undefined, 0, null, false, ''].findIndex(passZero) is 1
 PASS [undefined, 0, null, false, ''].findIndex(passNull) is 2
@@ -14,12 +16,14 @@ PASS [undefined, 0, null, ''].findIndex(passFalse) is -1
 PASS [undefined, 0, null, false].findIndex(passEmptyString) is -1
 PASS [undefined, null, false, ''].findIndex(passZero) is -1
 PASS (new Array(20)).findIndex(passUndefined) is -1
+Array with holes
 PASS arrayWithHoles.findIndex(passUndefined) is -1
 PASS arrayWithHoles.findIndex(passZero) is 10
 PASS arrayWithHoles.findIndex(passNull) is 20
 PASS arrayWithHoles.findIndex(passFalse) is 30
 PASS arrayWithHoles.findIndex(passEmptyString) is 40
 PASS arrayWithHoles.findIndex(passUndefined) is 50
+Generic Object
 PASS toObject([undefined, 0, null, false, '']).findIndex(passUndefined) is 0
 PASS toObject([undefined, 0, null, false, '']).findIndex(passZero) is 1
 PASS toObject([undefined, 0, null, false, '']).findIndex(passNull) is 2
@@ -31,8 +35,14 @@ PASS toObject([undefined, 0, null, '']).findIndex(passFalse) is -1
 PASS toObject([undefined, 0, null, false]).findIndex(passEmptyString) is -1
 PASS toObject([undefined, null, false, '']).findIndex(passZero) is -1
 PASS toObject(new Array(20)).findIndex(passUndefined) is -1
+Array-like object with invalid lengths
+PASS var obj = { 0: 1, 1: 2, 2: 3, length: 0 }; Array.prototype.findIndex.call(obj, throwError) is -1
+PASS var obj = { 0: 1, 1: 2, 2: 3, length: -0 }; Array.prototype.findIndex.call(obj, throwError) is -1
+PASS var obj = { 0: 1, 1: 2, 2: 3, length: -3 }; Array.prototype.findIndex.call(obj, throwError) is -1
+Modification during search
 PASS [0,1,2,3,4,5,6,7,8,9].findIndex(findItemAddedDuringSearch) is -1
 PASS [0,1,2,3,4,5,6,7,8,9].findIndex(findItemRemovedDuringSearch) is -1
+Exceptions
 PASS Array.prototype.findIndex.call(undefined, function() {}) threw exception TypeError: Array.prototype.findIndex requires that |this| not be undefined.
 PASS Array.prototype.findIndex.call(null, function() {}) threw exception TypeError: Array.prototype.findIndex requires that |this| not be null.
 PASS [].findIndex(1) threw exception TypeError: Array.prototype.findIndex callback must be a function.
@@ -41,6 +51,7 @@ PASS [].findIndex([]) threw exception TypeError: Array.prototype.findIndex callb
 PASS [].findIndex({}) threw exception TypeError: Array.prototype.findIndex callback must be a function.
 PASS [].findIndex(null) threw exception TypeError: Array.prototype.findIndex callback must be a function.
 PASS [].findIndex(undefined) threw exception TypeError: Array.prototype.findIndex callback must be a function.
+Callbacks in the expected order and skipping holes
 find callback called with index 10
 find callback called with index 20
 find callback called with index 30

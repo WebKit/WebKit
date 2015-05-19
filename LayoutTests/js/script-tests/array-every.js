@@ -2,6 +2,10 @@ description(
 "This test checks the behavior of the every() method on Array objects."
 );
 
+shouldBe("Array.prototype.every.length", "1");
+shouldBe("Array.prototype.every.name", "'every'");
+debug("");
+
 debug("1.0 Single Argument Testing");
 function isBigEnough(element, index, array) {
     return (element >= 10);
@@ -91,3 +95,13 @@ function isNotUndefined(element, index, array) {
 shouldBeTrue("arr.every(isNotUndefined)");
 arr = new Array(20);
 shouldBeTrue("arr.every(isNotUndefined)");
+debug("");
+
+debug("8.0 Array-like object with invalid lengths");
+var throwError = function throwError() {
+    throw new Error("should not reach here");
+};
+shouldBeTrue("var obj = { 0: 1, 1: 2, 2: 3, length: 0 }; Array.prototype.every.call(obj, throwError)");
+shouldBeTrue("var obj = { 0: 1, 1: 2, 2: 3, length: -0 }; Array.prototype.every.call(obj, throwError)");
+shouldBeTrue("var obj = { 0: 1, 1: 2, 2: 3, length: -3 }; Array.prototype.every.call(obj, throwError)");
+debug("");

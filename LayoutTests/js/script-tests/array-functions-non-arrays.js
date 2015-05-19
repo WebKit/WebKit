@@ -179,3 +179,16 @@ shouldBe("Array.prototype.unshift.call(x = { length:2, 0:'b', 1:'a' }, 'c'); pro
 shouldBe("Array.prototype.unshift.call(x = new TwoItemConstructor, 'c'); properties(x)", "'0:c, 1:b, 2:a, length:3'");
 
 // FIXME: Add tests for every, forEach, some, indexOf, lastIndexOf, filter, and map
+debug("Array-like object with invalid lengths");
+var throwError = function throwError() {
+    throw new Error("should not reach here");
+};
+shouldBeUndefined("var obj = { 0: 1, 1: 2, 2: 3, length: 0 }; Array.prototype.forEach.call(obj, throwError)");
+shouldBeUndefined("var obj = { 0: 1, 1: 2, 2: 3, length: -0 }; Array.prototype.forEach.call(obj, throwError)");
+shouldBeUndefined("var obj = { 0: 1, 1: 2, 2: 3, length: -3 }; Array.prototype.forEach.call(obj, throwError)");
+shouldBe("var obj = { 0: 1, 1: 2, 2: 3, length: 0 }; Array.prototype.map.call(obj, throwError)", "[]");
+shouldBe("var obj = { 0: 1, 1: 2, 2: 3, length: -0 }; Array.prototype.map.call(obj, throwError)", "[]");
+shouldBe("var obj = { 0: 1, 1: 2, 2: 3, length: -3 }; Array.prototype.map.call(obj, throwError)", "[]");
+shouldBeFalse("var obj = { 0: 1, 1: 2, 2: 3, length: 0 }; Array.prototype.some.call(obj, throwError)");
+shouldBeFalse("var obj = { 0: 1, 1: 2, 2: 3, length: -0 }; Array.prototype.some.call(obj, throwError)");
+shouldBeFalse("var obj = { 0: 1, 1: 2, 2: 3, length: -3 }; Array.prototype.some.call(obj, throwError)");
