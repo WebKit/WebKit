@@ -85,6 +85,14 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
+#if PLATFORM(WIN) || (PLATFORM(GTK) && OS(WINDOWS))
+#undef NO_ERROR
+#endif
+
+#if PLATFORM(GTK)
+#undef VERSION
+#endif
+
 namespace WebCore {
 
 const double secondsBetweenRestoreAttempts = 1.0;

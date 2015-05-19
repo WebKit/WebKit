@@ -1,5 +1,27 @@
 2015-04-15  Руслан Ижбулатов  <lrn1986@gmail.com>
 
+        [W32][GTK] Conflict between NO_ERROR from W32API and GraphicsContext3D
+        https://bugs.webkit.org/show_bug.cgi?id=143768
+
+        Reviewed by Carlos Garcia Campos.
+
+        Work around name conflicts (NO_ERROR)
+
+        In file included from /mingw/include/_mingw.h:12:0,
+                         from ../webkitgtk-2.4.8/Source/WTF/wtf/Compiler.h:93,
+                         from ../webkitgtk-2.4.8/Source/WTF/wtf/Platform.h:32,
+                         from ../webkitgtk-2.4.8/Source/JavaScriptCore/config.h:30,
+                         from ../webkitgtk-2.4.8/Source/WebCore/platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:27:
+        ../webkitgtk-2.4.8/Source/WebCore/platform/graphics/opengl/Extensions3DOpenGLCommon.cpp: In member function 'virtual int WebCore::Extensions3DOpenGLCommon::getGraphicsResetStatusARB()':
+        ../webkitgtk-2.4.8/Source/WebCore/platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:144:31: error: expected unqualified-id before numeric constant
+             return GraphicsContext3D::NO_ERROR;
+
+        because NO_ERROR is also a macro defined in Windows headers. Ouch.
+        Also expand this to the (PLATFORM(GTK) && OS(WINDOWS)) combination,
+        in addition to the workaround for VERSION already present there.
+
+2015-04-15  Руслан Ижбулатов  <lrn1986@gmail.com>
+
         [W32] Fails to build - missing references to OpenGL context functions
         https://bugs.webkit.org/show_bug.cgi?id=143769
 

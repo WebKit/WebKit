@@ -29,6 +29,10 @@
 
 #include <wtf/text/StringBuilder.h>
 
+#if PLATFORM(WIN) || (PLATFORM(GTK) && OS(WINDOWS))
+#undef NO_ERROR
+#endif
+
 #define STRINGIFY(...) #__VA_ARGS__
 
 namespace WebCore {

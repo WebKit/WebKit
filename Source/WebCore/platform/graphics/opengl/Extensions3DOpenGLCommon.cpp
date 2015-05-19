@@ -49,6 +49,10 @@
 #include <wtf/MainThread.h>
 #include <wtf/Vector.h>
 
+#if PLATFORM(WIN) || (PLATFORM(GTK) && OS(WINDOWS))
+#undef NO_ERROR
+#endif
+
 namespace WebCore {
 
 Extensions3DOpenGLCommon::Extensions3DOpenGLCommon(GraphicsContext3D* context)
