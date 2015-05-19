@@ -1,3 +1,14 @@
+2015-04-17  Milan Crha  <mcrha@redhat.com>
+
+        [GTK] Expand wildcards inside generate-inspector-gresource-manifest.py
+        https://bugs.webkit.org/show_bug.cgi?id=138134
+
+        Reviewed by Carlos Garcia Campos.
+
+        * GNUmakefile.am: Command line with expanded resources exceeds 32KB, which
+        is a limit on Windows. It's better to expand wildcards inside the
+        python script.
+
 2015-04-15  Руслан Ижбулатов  <lrn1986@gmail.com>
 
         [W32] Wrong configure tests for OpenGL on Windows, wrong ifdefs
