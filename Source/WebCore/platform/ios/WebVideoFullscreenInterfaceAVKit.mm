@@ -1129,8 +1129,6 @@ void WebVideoFullscreenInterfaceAVKit::cleanupFullscreen()
     });
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 void WebVideoFullscreenInterfaceAVKit::cleanupFullscreenInternal()
 {
     LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::cleanupFullscreenInternal(%p)", this);
@@ -1148,7 +1146,7 @@ void WebVideoFullscreenInterfaceAVKit::cleanupFullscreenInternal()
     [m_playerViewController setPlayerController:nil];
     
     if (hasMode(HTMLMediaElement::VideoFullscreenModeOptimized))
-        [m_playerViewController cancelOptimizedFullscreen];
+        [m_playerViewController stopOptimizedFullscreen];
     if (hasMode(HTMLMediaElement::VideoFullscreenModeStandard))
         [m_playerViewController exitFullScreenAnimated:NO completionHandler:[] (BOOL, NSError *) { }];
     
@@ -1180,7 +1178,6 @@ void WebVideoFullscreenInterfaceAVKit::cleanupFullscreenInternal()
         strongThis->m_enterRequested = false;
     });
 }
-#pragma clang diagnostic pop
 
 void WebVideoFullscreenInterfaceAVKit::invalidate()
 {
