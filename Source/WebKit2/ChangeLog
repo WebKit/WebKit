@@ -1,3 +1,13 @@
+2015-05-19  Jeremy Jones  <jeremyj@apple.com>
+
+        WebVideoFullscreenManagerProxy has incorrect OS_VERSION_MIN_REQUIRED conditionals.
+        https://bugs.webkit.org/show_bug.cgi?id=145158
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::setVideoLayerFrame):
+
 2015-05-19  Ting-Wei Lan  <lantw44@gmail.com>
 
         [SOUP] Use st_birthtime to get creation time of files on systems support it
