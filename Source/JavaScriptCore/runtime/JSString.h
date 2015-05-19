@@ -30,6 +30,7 @@
 #include "PropertySlot.h"
 #include "Structure.h"
 #include <array>
+#include <wtf/text/StringView.h>
 
 namespace JSC {
 
@@ -143,6 +144,7 @@ public:
     Identifier toIdentifier(ExecState*) const;
     AtomicString toAtomicString(ExecState*) const;
     AtomicStringImpl* toExistingAtomicString(ExecState*) const;
+    StringView view(ExecState*) const;
     const String& value(ExecState*) const;
     const String& tryGetValue() const;
     const StringImpl* tryGetValueImpl() const;
@@ -369,6 +371,7 @@ private:
     void resolveRopeInternal16(UChar*) const;
     void resolveRopeInternal16NoSubstring(UChar*) const;
     void clearFibers() const;
+    StringView view(ExecState*) const;
 
     JS_EXPORT_PRIVATE JSString* getIndexSlowCase(ExecState*, unsigned);
 
@@ -696,6 +699,24 @@ ALWAYS_INLINE String JSValue::toWTFStringInline(ExecState* exec) const
         return static_cast<JSString*>(asCell())->value(exec);
 
     return inlineJSValueNotStringtoString(*this, exec);
+}
+
+ALWAYS_INLINE StringView JSRopeString::view(ExecState* exec) const
+{
+    if (isSubstring()) {
+        if (is8Bit())
+            return StringView(substringBase()->m_value.characters8() + substringOffset(), m_length);
+        return StringView(substringBase()->m_value.characters16() + substringOffset(), m_length);
+    }
+    resolveRope(exec);
+    return StringView(m_value);
+}
+
+ALWAYS_INLINE StringView JSString::view(ExecState* exec) const
+{
+    if (isRope())
+        return static_cast<const JSRopeString*>(this)->view(exec);
+    return StringView(m_value);
 }
 
 } // namespace JSC

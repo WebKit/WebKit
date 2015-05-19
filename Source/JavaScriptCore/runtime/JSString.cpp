@@ -385,7 +385,7 @@ JSValue JSString::toPrimitive(ExecState*, PreferredPrimitiveType) const
 bool JSString::getPrimitiveNumber(ExecState* exec, double& number, JSValue& result) const
 {
     result = this;
-    number = jsToNumber(value(exec));
+    number = jsToNumber(view(exec));
     return false;
 }
 
@@ -396,7 +396,7 @@ bool JSString::toBoolean() const
 
 double JSString::toNumber(ExecState* exec) const
 {
-    return jsToNumber(value(exec));
+    return jsToNumber(view(exec));
 }
 
 inline StringObject* StringObject::create(VM& vm, JSGlobalObject* globalObject, JSString* string)

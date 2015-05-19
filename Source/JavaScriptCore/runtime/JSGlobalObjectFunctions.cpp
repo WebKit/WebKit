@@ -150,7 +150,7 @@ static JSValue decode(ExecState* exec, const CharType* characters, int length, c
 
 static JSValue decode(ExecState* exec, const Bitmap<256>& doNotUnescape, bool strict)
 {
-    String str = exec->argument(0).toString(exec)->value(exec);
+    StringView str = exec->argument(0).toString(exec)->view(exec);
     
     if (str.is8Bit())
         return decode(exec, str.characters8(), str.length(), doNotUnescape, strict);
@@ -248,7 +248,7 @@ static double parseIntOverflow(StringView string, int radix)
 // ES5.1 15.1.2.2
 template <typename CharType>
 ALWAYS_INLINE
-static double parseInt(const String& s, const CharType* data, int radix)
+static double parseInt(StringView s, const CharType* data, int radix)
 {
     // 1. Let inputString be ToString(string).
     // 2. Let S be a newly created substring of inputString consisting of the first character that is not a
@@ -320,16 +320,16 @@ static double parseInt(const String& s, const CharType* data, int radix)
     if (number >= mantissaOverflowLowerBound) {
         if (radix == 10) {
             size_t parsedLength;
-            number = parseDouble(StringView(s).substring(firstDigitPosition, p - firstDigitPosition), parsedLength);
+            number = parseDouble(s.substring(firstDigitPosition, p - firstDigitPosition), parsedLength);
         } else if (radix == 2 || radix == 4 || radix == 8 || radix == 16 || radix == 32)
-            number = parseIntOverflow(StringView(s).substring(firstDigitPosition, p - firstDigitPosition), radix);
+            number = parseIntOverflow(s.substring(firstDigitPosition, p - firstDigitPosition), radix);
     }
 
     // 15. Return sign x number.
     return sign * number;
 }
 
-static double parseInt(const String& s, int radix)
+static double parseInt(StringView s, int radix)
 {
     if (s.is8Bit())
         return parseInt(s, s.characters8(), radix);
@@ -499,7 +499,7 @@ static double toDouble(const CharType* characters, unsigned size)
 }
 
 // See ecma-262 6th 11.8.3
-double jsToNumber(const String& s)
+double jsToNumber(StringView s)
 {
     unsigned size = s.length();
 
@@ -517,7 +517,7 @@ double jsToNumber(const String& s)
     return toDouble(s.characters16(), size);
 }
 
-static double parseFloat(const String& s)
+static double parseFloat(StringView s)
 {
     unsigned size = s.length();
 
@@ -610,7 +610,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncParseInt(ExecState* exec)
     }
 
     // If ToString throws, we shouldn't call ToInt32.
-    String s = value.toString(exec)->value(exec);
+    StringView s = value.toString(exec)->view(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -619,7 +619,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncParseInt(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL globalFuncParseFloat(ExecState* exec)
 {
-    return JSValue::encode(jsNumber(parseFloat(exec->argument(0).toString(exec)->value(exec))));
+    return JSValue::encode(jsNumber(parseFloat(exec->argument(0).toString(exec)->view(exec))));
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncIsNaN(ExecState* exec)
@@ -682,7 +682,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
     );
 
     JSStringBuilder builder;
-    String str = exec->argument(0).toString(exec)->value(exec);
+    StringView str = exec->argument(0).toString(exec)->view(exec);
     if (str.is8Bit()) {
         const LChar* c = str.characters8();
         for (unsigned k = 0; k < str.length(); k++, c++) {
@@ -720,7 +720,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL globalFuncUnescape(ExecState* exec)
 {
     StringBuilder builder;
-    String str = exec->argument(0).toString(exec)->value(exec);
+    StringView str = exec->argument(0).toString(exec)->view(exec);
     int k = 0;
     int len = str.length();
     

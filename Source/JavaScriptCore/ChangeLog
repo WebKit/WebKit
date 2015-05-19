@@ -1,3 +1,42 @@
+2015-05-19  Andreas Kling  <akling@apple.com>
+
+        Give JSString a StringView getter and start using it.
+        <https://webkit.org/b/145131>
+
+        Reviewed by Anders Carlsson.
+
+        When JSString is a substring internally, calling value(ExecState*) on it
+        will reify the baseString/start/length tuple into a new StringImpl.
+
+        For clients that only want to look at the characters of a JSString, but
+        don't actually need a reffable StringImpl, adding a light-weight StringView
+        getter lets them avoid constructing anything.
+
+        This patch adds JSString::view(ExecState*) and uses it in a few places.
+        There are many more opportunities to use this API, but let's do a few things
+        at a time.
+
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::decode):
+        (JSC::parseInt):
+        (JSC::jsToNumber):
+        (JSC::parseFloat):
+        (JSC::globalFuncParseInt):
+        (JSC::globalFuncParseFloat):
+        (JSC::globalFuncEscape):
+        (JSC::globalFuncUnescape):
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/JSONObject.cpp:
+        (JSC::JSONProtoFuncParse):
+        * runtime/JSString.cpp:
+        (JSC::JSString::getPrimitiveNumber):
+        (JSC::JSString::toNumber):
+        * runtime/JSString.h:
+        (JSC::JSRopeString::view):
+        (JSC::JSString::view):
+
 2015-05-18  Filip Pizlo  <fpizlo@apple.com>
 
         Better optimize 'if' with ternaries conditional tests.
