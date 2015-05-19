@@ -1,3 +1,15 @@
+2015-05-19  Sungmann Cho  <sungmann.cho@navercorp.com>
+
+        Add PLUGIN_ARCHITECTURE(MAC) around WKNVCALayerRenderServerPort in NetscapeBrowserFunc.h.
+        https://bugs.webkit.org/show_bug.cgi?id=145173
+
+        Reviewed by Anders Carlsson.
+
+        WKNVCALayerRenderServerPort in NetscapeBrowserFunc.h is meaningful only for Mac.
+        So we need to add PLUGIN_ARCHITECTURE(MAC) around it.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.h:
+
 2015-05-19  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(142590): Part 2: Scroll-snap points are improperly snapping to earlier index values (Scrolling Thread) 

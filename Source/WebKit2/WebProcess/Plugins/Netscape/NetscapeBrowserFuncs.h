@@ -32,8 +32,10 @@
 
 namespace WebKit {
 
+#if PLUGIN_ARCHITECTURE(MAC)
 // The Core Animation render server port.
 static const unsigned WKNVCALayerRenderServerPort = 71879;
+#endif
 
 NPNetscapeFuncs* netscapeBrowserFuncs();
 
