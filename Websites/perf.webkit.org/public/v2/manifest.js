@@ -315,14 +315,28 @@ App.Manifest = Ember.Controller.extend({
             };
         });
     },
+    _formatBytes: function (sigFig, alwaysShowSign)
+    {
+        var units = ['', 'K', 'M', 'G', 'T', 'P', 'E'];
+        var threshold = sigFig >= 3 ? 1024 : 102.4;
+        return function (bytes) {
+            var i;
+            var sign = bytes >= 0 ? (alwaysShowSign ? '+' : '') : '-';
+            bytes = Math.abs(bytes);
+
+            for (i = 0; bytes >= threshold; i++)
+                bytes /= 1024;
+            return sign + bytes.toPrecision(Math.max(2, sigFig)) + units[i];
+        }
+    },
     _formatFetchedData: function (metricName, configurations)
     {
         var unit = RunsData.unitFromMetricName(metricName);
         var smallerIsBetter = RunsData.isSmallerBetter(unit);
 
-        var useSI = unit == 'bytes';
+        var isBytes = unit == 'bytes';
         var unitSuffix = unit ? ' ' + unit : '';
-        var deltaFormatterWithoutSign = useSI ? d3.format('.2s') : d3.format('.2g');
+        var deltaFormatterWithoutSign = isBytes ? this._formatBytes(2, false) : d3.format('.2g');
 
         var currentTimeSeries = configurations.current.timeSeriesByCommitTime(false);
         var baselineTimeSeries = configurations.baseline ? configurations.baseline.timeSeriesByCommitTime(false) : null;
@@ -339,8 +353,8 @@ App.Manifest = Ember.Controller.extend({
             {
                 return this.formatter(value) + (delta && !isNaN(delta) ? ' \u00b1 ' + deltaFormatterWithoutSign(delta) : '') + unitSuffix;
             },
-            formatter: useSI ? d3.format('.4s') : d3.format('.4g'),
-            deltaFormatter: useSI ? d3.format('+.2s') : d3.format('+.2g'),
+            formatter: isBytes ? this._formatBytes(4, false) : d3.format('.4g'),
+            deltaFormatter: isBytes ? this._formatBytes(2, true) : d3.format('+.2g'),
             smallerIsBetter: smallerIsBetter,
             showOutlier: function (show)
             {

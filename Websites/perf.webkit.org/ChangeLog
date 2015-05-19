@@ -1,3 +1,17 @@
+2015-05-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION: v2 UI reports a higher memory usage
+        https://bugs.webkit.org/show_bug.cgi?id=145151
+
+        Reviewed by Chris Dumez.
+
+        The bug was caused by v2 UI using 1000 to divide the number of bytes instead of by 1024 as done in v1.
+        Fixed the bug by manually implementing the formatter as done in v1.
+
+        * public/v2/manifest.js:
+        (App.Manfiest._formatBytes): Added.
+        (App.Manifest._formatFetchedData): Use _formatByte instead of format('s').
+
 2015-05-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed build fix. Add "Duration" as a time metric.
