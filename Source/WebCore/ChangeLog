@@ -1,3 +1,14 @@
+2015-05-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix uninitialized warnings in RealtimeMediaSourceCenterOwr.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=145119
+
+        Reviewed by Gyuyoung Kim.
+
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceCenterOwr.cpp:
+        (WebCore::RealtimeMediaSourceCenterOwr::validateRequestConstraints):
+        (WebCore::RealtimeMediaSourceCenterOwr::mediaSourcesAvailable):
+
 2015-05-18  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] Ignore warnings in system headers
