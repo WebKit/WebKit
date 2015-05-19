@@ -34,9 +34,9 @@ namespace WebCore {
 
     class JSNodeFilterCondition : public NodeFilterCondition {
     public:
-        static PassRefPtr<JSNodeFilterCondition> create(JSC::VM& vm, NodeFilter* owner, JSC::JSValue filter)
+        static Ref<JSNodeFilterCondition> create(JSC::VM& vm, NodeFilter* owner, JSC::JSValue filter)
         {
-            return adoptRef(new JSNodeFilterCondition(vm, owner, filter));
+            return adoptRef(*new JSNodeFilterCondition(vm, owner, filter));
         }
 
     private:

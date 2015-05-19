@@ -32,8 +32,8 @@ namespace WebCore {
 
     class JSLazyEventListener final : public JSEventListener {
     public:
-        static PassRefPtr<JSLazyEventListener> createForNode(ContainerNode&, const QualifiedName& attributeName, const AtomicString& attributeValue);
-        static PassRefPtr<JSLazyEventListener> createForDOMWindow(Frame&, const QualifiedName& attributeName, const AtomicString& attributeValue);
+        static RefPtr<JSLazyEventListener> createForNode(ContainerNode&, const QualifiedName& attributeName, const AtomicString& attributeValue);
+        static RefPtr<JSLazyEventListener> createForDOMWindow(Frame&, const QualifiedName& attributeName, const AtomicString& attributeValue);
 
         virtual ~JSLazyEventListener();
 

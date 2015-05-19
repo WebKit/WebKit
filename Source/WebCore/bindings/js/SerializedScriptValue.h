@@ -67,15 +67,15 @@ class SerializedScriptValue :
     public RefCounted<SerializedScriptValue> {
 #endif
 public:
-    WEBCORE_EXPORT static PassRefPtr<SerializedScriptValue> create(JSC::ExecState*, JSC::JSValue, MessagePortArray*, ArrayBufferArray*, SerializationErrorMode = Throwing);
+    WEBCORE_EXPORT static RefPtr<SerializedScriptValue> create(JSC::ExecState*, JSC::JSValue, MessagePortArray*, ArrayBufferArray*, SerializationErrorMode = Throwing);
 
-    WEBCORE_EXPORT static PassRefPtr<SerializedScriptValue> create(const String&);
-    static PassRefPtr<SerializedScriptValue> adopt(Vector<uint8_t>& buffer)
+    WEBCORE_EXPORT static RefPtr<SerializedScriptValue> create(const String&);
+    static Ref<SerializedScriptValue> adopt(Vector<uint8_t>& buffer)
     {
-        return adoptRef(new SerializedScriptValue(buffer));
+        return adoptRef(*new SerializedScriptValue(buffer));
     }
 
-    static PassRefPtr<SerializedScriptValue> nullValue();
+    static Ref<SerializedScriptValue> nullValue();
 
     WEBCORE_EXPORT JSC::JSValue deserialize(JSC::ExecState*, JSC::JSGlobalObject*, MessagePortArray*, SerializationErrorMode = Throwing);
 
@@ -93,13 +93,13 @@ public:
 
 #if ENABLE(INDEXED_DATABASE)
     // FIXME: Get rid of these. The only caller immediately deserializes the result, so it's a very roundabout way to create a JSValue.
-    static PassRefPtr<SerializedScriptValue> numberValue(double value);
-    static PassRefPtr<SerializedScriptValue> undefinedValue();
+    static Ref<SerializedScriptValue> numberValue(double value);
+    static Ref<SerializedScriptValue> undefinedValue();
 #endif
 
-    static PassRefPtr<SerializedScriptValue> createFromWireBytes(const Vector<uint8_t>& data)
+    static Ref<SerializedScriptValue> createFromWireBytes(const Vector<uint8_t>& data)
     {
-        return adoptRef(new SerializedScriptValue(data));
+        return adoptRef(*new SerializedScriptValue(data));
     }
     const Vector<uint8_t>& toWireBytes() const { return m_data; }
 

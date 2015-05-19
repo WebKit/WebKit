@@ -46,7 +46,7 @@ namespace WebCore {
 
     class JSCustomXPathNSResolver : public XPathNSResolver {
     public:
-        static PassRefPtr<JSCustomXPathNSResolver> create(JSC::ExecState*, JSC::JSValue);
+        static RefPtr<JSCustomXPathNSResolver> create(JSC::ExecState*, JSC::JSValue);
         
         virtual ~JSCustomXPathNSResolver();
 

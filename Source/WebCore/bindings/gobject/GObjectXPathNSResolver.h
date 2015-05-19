@@ -29,9 +29,9 @@ namespace WebCore {
 class GObjectXPathNSResolver : public XPathNSResolver {
 public:
 
-    static PassRefPtr<GObjectXPathNSResolver> create(WebKitDOMXPathNSResolver* resolver)
+    static Ref<GObjectXPathNSResolver> create(WebKitDOMXPathNSResolver* resolver)
     {
-        return adoptRef(new GObjectXPathNSResolver(resolver));
+        return adoptRef(*new GObjectXPathNSResolver(resolver));
     }
 
     virtual ~GObjectXPathNSResolver();

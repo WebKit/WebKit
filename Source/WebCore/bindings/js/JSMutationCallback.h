@@ -39,9 +39,9 @@ class JSDOMGlobalObject;
 
 class JSMutationCallback : public MutationCallback, public ActiveDOMCallback {
 public:
-    static PassRefPtr<JSMutationCallback> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
+    static Ref<JSMutationCallback> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
     {
-        return adoptRef(new JSMutationCallback(callback, globalObject));
+        return adoptRef(*new JSMutationCallback(callback, globalObject));
     }
 
     virtual ~JSMutationCallback();

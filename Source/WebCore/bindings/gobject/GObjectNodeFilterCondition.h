@@ -32,9 +32,9 @@ class Node;
 class GObjectNodeFilterCondition : public NodeFilterCondition {
 public:
 
-    static PassRefPtr<GObjectNodeFilterCondition> create(WebKitDOMNodeFilter* filter)
+    static Ref<GObjectNodeFilterCondition> create(WebKitDOMNodeFilter* filter)
     {
-        return adoptRef(new GObjectNodeFilterCondition(filter));
+        return adoptRef(*new GObjectNodeFilterCondition(filter));
     }
 
     virtual short acceptNode(JSC::ExecState*, Node*) const;

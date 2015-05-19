@@ -39,9 +39,9 @@ namespace WebCore {
 
     class ObjCNodeFilterCondition : public NodeFilterCondition {
     public:
-        static PassRefPtr<ObjCNodeFilterCondition> create(id <DOMNodeFilter> filter)
+        static Ref<ObjCNodeFilterCondition> create(id <DOMNodeFilter> filter)
         {
-            return adoptRef(new ObjCNodeFilterCondition(filter));
+            return adoptRef(*new ObjCNodeFilterCondition(filter));
         }
 
         virtual short acceptNode(JSC::ExecState*, Node*) const;

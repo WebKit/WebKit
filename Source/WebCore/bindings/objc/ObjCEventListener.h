@@ -38,7 +38,7 @@ namespace WebCore {
     class ObjCEventListener : public EventListener {
     public:
         typedef id<DOMEventListener> ObjCListener;
-        static PassRefPtr<ObjCEventListener> wrap(ObjCListener);
+        static Ref<ObjCEventListener> wrap(ObjCListener);
 
         static const ObjCEventListener* cast(const EventListener* listener)
         {

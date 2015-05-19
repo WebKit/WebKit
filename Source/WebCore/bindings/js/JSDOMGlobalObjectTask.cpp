@@ -38,9 +38,9 @@ namespace WebCore {
 
 class JSGlobalObjectCallback final : public RefCounted<JSGlobalObjectCallback>, private ActiveDOMCallback {
 public:
-    static PassRefPtr<JSGlobalObjectCallback> create(JSDOMGlobalObject* globalObject, PassRefPtr<Microtask> task)
+    static Ref<JSGlobalObjectCallback> create(JSDOMGlobalObject* globalObject, PassRefPtr<Microtask> task)
     {
-        return adoptRef(new JSGlobalObjectCallback(globalObject, task));
+        return adoptRef(*new JSGlobalObjectCallback(globalObject, task));
     }
 
     void call()

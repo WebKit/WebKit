@@ -37,9 +37,9 @@ namespace WebCore {
 
 class JSErrorHandler : public JSEventListener {
 public:
-    static PassRefPtr<JSErrorHandler> create(JSC::JSObject* listener, JSC::JSObject* wrapper, bool isAttribute, DOMWrapperWorld& world)
+    static Ref<JSErrorHandler> create(JSC::JSObject* listener, JSC::JSObject* wrapper, bool isAttribute, DOMWrapperWorld& world)
     {
-        return adoptRef(new JSErrorHandler(listener, wrapper, isAttribute, world));
+        return adoptRef(*new JSErrorHandler(listener, wrapper, isAttribute, world));
     }
 
     virtual ~JSErrorHandler();

@@ -142,7 +142,7 @@ static const String& eventParameterName(bool isSVGEvent)
     return isSVGEvent ? evtString : eventString;
 }
 
-PassRefPtr<JSLazyEventListener> JSLazyEventListener::createForNode(ContainerNode& node, const QualifiedName& attributeName, const AtomicString& attributeValue)
+RefPtr<JSLazyEventListener> JSLazyEventListener::createForNode(ContainerNode& node, const QualifiedName& attributeName, const AtomicString& attributeValue)
 {
     if (attributeValue.isNull())
         return nullptr;
@@ -159,12 +159,12 @@ PassRefPtr<JSLazyEventListener> JSLazyEventListener::createForNode(ContainerNode
         sourceURL = node.document().url().string();
     }
 
-    return adoptRef(new JSLazyEventListener(attributeName.localName().string(),
+    return adoptRef(*new JSLazyEventListener(attributeName.localName().string(),
         eventParameterName(node.isSVGElement()), attributeValue,
         &node, sourceURL, position, nullptr, mainThreadNormalWorld()));
 }
 
-PassRefPtr<JSLazyEventListener> JSLazyEventListener::createForDOMWindow(Frame& frame, const QualifiedName& attributeName, const AtomicString& attributeValue)
+RefPtr<JSLazyEventListener> JSLazyEventListener::createForDOMWindow(Frame& frame, const QualifiedName& attributeName, const AtomicString& attributeValue)
 {
     if (attributeValue.isNull())
         return nullptr;
@@ -172,7 +172,7 @@ PassRefPtr<JSLazyEventListener> JSLazyEventListener::createForDOMWindow(Frame& f
     if (!frame.script().canExecuteScripts(AboutToExecuteScript))
         return nullptr;
 
-    return adoptRef(new JSLazyEventListener(attributeName.localName().string(),
+    return adoptRef(*new JSLazyEventListener(attributeName.localName().string(),
         eventParameterName(frame.document()->isSVGDocument()), attributeValue,
         nullptr, frame.document()->url().string(), frame.script().eventHandlerPosition(),
         toJSDOMWindow(&frame, mainThreadNormalWorld()), mainThreadNormalWorld()));
