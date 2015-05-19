@@ -1,5 +1,23 @@
 2015-04-15  Руслан Ижбулатов  <lrn1986@gmail.com>
 
+        WebCore uses M_PI_2 instead of piOverTwoDouble
+        https://bugs.webkit.org/show_bug.cgi?id=143758
+
+        Reviewed by Darin Adler.
+
+        Because M_PI_2 is not defined everywhere.
+        Fixes errors like:
+          CXX Source/WebCore/platform/graphics/freetype/libPlatformGtk_la-FontPlatformDataFreeType.lo
+        ../webkitgtk-2.4.8/Source/WebCore/platform/graphics/freetype/FontPlatformDataFreeType.cpp: In function 'void WebCore::rotateCairoMatrixForVerticalOrientation(cairo_matrix_t*)':
+        ../webkitgtk-2.4.8/Source/WebCore/platform/graphics/freetype/FontPlatformDataFreeType.cpp:123:34: error: 'M_PI_2' was not declared in this scope
+             cairo_matrix_rotate(matrix, -M_PI_2);
+                                          ^
+        GNUmakefile:51663: recipe for target 'Source/WebCore/platform/graphics/freetype/libPlatformGtk_la-FontPlatformDataFreeType.lo' failed
+
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::rotateCairoMatrixForVerticalOrientation):
+2015-04-15  Руслан Ижбулатов  <lrn1986@gmail.com>
+
         [GTK][W32] FileSystemGtk calls GetModuleHandleExA(), but does not include appropriate header
         https://bugs.webkit.org/show_bug.cgi?id=143759
 

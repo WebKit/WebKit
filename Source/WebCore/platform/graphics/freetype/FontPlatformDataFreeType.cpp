@@ -120,7 +120,7 @@ static void rotateCairoMatrixForVerticalOrientation(cairo_matrix_t* matrix)
     // combination of rotation (R) and translation (T) applied on the
     // horizontal matrix (H). V = H . R . T, where R rotates by -90 degrees
     // and T translates by font size towards y axis.
-    cairo_matrix_rotate(matrix, -M_PI_2);
+    cairo_matrix_rotate(matrix, -piOverTwoDouble);
     cairo_matrix_translate(matrix, 0.0, 1.0);
 }
 
