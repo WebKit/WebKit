@@ -1,3 +1,38 @@
+2015-05-19  Roger Fong  <roger_fong@apple.com>
+
+        Media Controls stop updating after hovering for a few seconds.
+        https://bugs.webkit.org/show_bug.cgi?id=144770.
+        <rdar://problem/19823121>
+
+        Reviewed by Jer Noble.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.createBase):
+        We should never hide controls immediately as a result of mousing out of the controls.
+        It should only happen when the mouse leaves the video entirely.
+        (Controller.prototype.updateTimelineMetricsIfNeeded):
+        Don’t update if controls are hidden, timeline dimensions will be 0.
+        (Controller.prototype.handlePanelTransitionEnd): 
+        Instead of adjusting visibility via adding and removing classes,
+        remove controls entirely from the tree.
+        (Controller.prototype.showControls):
+        Add controls back into the tree when showing controls.
+        (Controller.prototype.updateForShowingControls):
+        Helper method for showControls.
+        (Controller.prototype.controlsAreHidden):
+        Controls also hidden if removed from tree.
+
+        Remove forceUpdate logic, no longer necessary.
+        (Controller.prototype.handleDurationChange): 
+        (Controller.prototype.updateProgress):
+        (Controller.prototype.updateTime):
+
+        Override methods to use add and remove panelContainer for iOS.
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.handlePanelTransitionEnd):
+        (ControllerIOS.prototype.showControls):
+        (ControllerIOS.prototype.controlsAreHidden):
+
 2015-05-19  Brent Fulgham  <bfulgham@apple.com>
 
         Scroll-snap animations should not start on axes with zero-delta
