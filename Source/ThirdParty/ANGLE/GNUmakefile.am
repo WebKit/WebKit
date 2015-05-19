@@ -80,7 +80,6 @@ libANGLE_la_SOURCES = \
 	Source/ThirdParty/ANGLE/src/compiler/MMap.h \
 	Source/ThirdParty/ANGLE/src/compiler/NodeSearch.h \
 	Source/ThirdParty/ANGLE/src/compiler/osinclude.h \
-	Source/ThirdParty/ANGLE/src/compiler/ossource_posix.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/OutputESSL.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/OutputESSL.h \
 	Source/ThirdParty/ANGLE/src/compiler/OutputGLSLBase.cpp \
@@ -161,3 +160,9 @@ libANGLE_la_SOURCES = \
 	Source/ThirdParty/ANGLE/src/compiler/VersionGLSL.h \
 	Source/ThirdParty/ANGLE/src/third_party/compiler/ArrayBoundsClamper.cpp \
 	Source/ThirdParty/ANGLE/src/third_party/compiler/ArrayBoundsClamper.h
+
+if TARGET_WIN32
+libANGLE_la_SOURCES += Source/ThirdParty/ANGLE/src/compiler/ossource_win.cpp
+else
+libANGLE_la_SOURCES += Source/ThirdParty/ANGLE/src/compiler/ossource_posix.cpp
+endif

@@ -1,3 +1,19 @@
+2015-04-15  Руслан Ижбулатов  <lrn1986@gmail.com>
+
+        [ANGLE][W32] Buildsystem is hardcoded for UNIX
+        https://bugs.webkit.org/show_bug.cgi?id=143762
+
+        Reviewed by Carlos Garcia Campos.
+
+        Don't hardcode ossource_posix.cpp in the makefile
+
+        Compile ossource_posix.cpp or ossource_win.cpp depending on the target.
+
+        Otherwise you get an error:
+        ../webkitgtk-2.4.8/Source/ThirdParty/ANGLE/src/compiler/ossource_posix.cpp:13:2: error: #error Trying to build a posix specific file in a non-posix build.
+
+        * GNUmakefile.am:
+
 2014-07-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] [Stable] Crash in TSymbolTableLevel::~TSymbolTableLevel with GCC 4.9
