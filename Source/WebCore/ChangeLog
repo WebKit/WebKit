@@ -1,3 +1,54 @@
+2015-05-19  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(142590): Part 2: Scroll-snap points are improperly snapping to earlier index values (Scrolling Thread) 
+        https://bugs.webkit.org/show_bug.cgi?id=145175
+        <rdar://problem/21023785>
+
+        Reviewed by Beth Dakin.
+
+        Extend the main-thread scrolling changes done in Bug 145140 to also handle Scrolling Thread snapping.
+        The post-layout fixup (needed to handle window resize and device orientation changes) should not fire
+        while Scrolling Thread scroll-snap animations are running, since these animations will most likely
+        move the scroll view into the proper position. If we attempt to 'fix up' the scroll position before
+        these animations finish, we get an ugly 'jump' in the display.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::isScrollSnapInProgress): New method based on isRubberBandInProgress, which considers
+        both the ScrollAnimator (main thread) scrolling, as well as the ScrollingCoordinator (Scrolling Thread)
+        scrolling operations. Returns true if a scroll-snap animation is still active.
+        * page/FrameView.h:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::isScrollSnapInProgress): Added. Returns scrolling tree's
+        'isScrollSnapInProgress' state.
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::isScrollSnapInProgress): Added default 'false' stub.
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::ScrollingTree): Use modern C++11 initializers.
+        (WebCore::ScrollingTree::isScrollSnapInProgress): Added.
+        (WebCore::ScrollingTree::setMainFrameIsScrollSnapping): Added.
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::handleWheelEvent): Update scrolling tree state to match the
+        ScrollController's scroll-snap state.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::startScrollSnapTimer): Added. When starting a scroll snap timer,
+        always set the scrolling tree scroll-snapping state to true.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::stopScrollSnapTimer): Added. When ending a scroll snap timer,
+        only set the scrolling tree scroll-snapping state to false if the other axis animator is inactive.
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::updateScrollSnapState): Revise implementation to use its 'isScrollSnapInProgress'
+        method, rather than only looking at the ScrollAnimator (main thread) state.
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::isScrollSnapInProgress): Added.
+        * platform/cocoa/ScrollController.h:
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::ScrollController::hasActiveScrollSnapTimerForAxis): Added. Reports if the scroll snap animation
+        timer on the requested axis is running or not.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::isScrollSnapInProgress): Added.
+        * rendering/RenderLayer.h:
+
 2015-05-19  Roger Fong  <roger_fong@apple.com>
 
         Media Controls stop updating after hovering for a few seconds.

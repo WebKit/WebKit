@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,20 +39,6 @@
 namespace WebCore {
 
 ScrollingTree::ScrollingTree()
-    : m_rubberBandsAtLeft(true)
-    , m_rubberBandsAtRight(true)
-    , m_rubberBandsAtTop(true)
-    , m_rubberBandsAtBottom(true)
-    , m_mainFramePinnedToTheLeft(true)
-    , m_mainFramePinnedToTheRight(true)
-    , m_mainFramePinnedToTheTop(true)
-    , m_mainFramePinnedToTheBottom(true)
-    , m_mainFrameIsRubberBanding(false)
-    , m_scrollPinningBehavior(DoNotPin)
-    , m_latchedNode(0)
-    , m_scrollingPerformanceLoggingEnabled(false)
-    , m_isHandlingProgrammaticScroll(false)
-    , m_fixedOrStickyNodeCount(0)
 {
 }
 
@@ -261,6 +247,20 @@ void ScrollingTree::setMainFrameIsRubberBanding(bool isRubberBanding)
     MutexLocker locker(m_mutex);
 
     m_mainFrameIsRubberBanding = isRubberBanding;
+}
+
+bool ScrollingTree::isScrollSnapInProgress()
+{
+    MutexLocker lock(m_mutex);
+    
+    return m_mainFrameIsScrollSnapping;
+}
+    
+void ScrollingTree::setMainFrameIsScrollSnapping(bool isScrollSnapping)
+{
+    MutexLocker locker(m_mutex);
+    
+    m_mainFrameIsScrollSnapping = isScrollSnapping;
 }
 
 void ScrollingTree::setCanRubberBandState(bool canRubberBandAtLeft, bool canRubberBandAtRight, bool canRubberBandAtTop, bool canRubberBandAtBottom)

@@ -905,6 +905,28 @@ void FrameView::updateSnapOffsets()
     
     updateSnapOffsetsForScrollableArea(*this, *body, *renderView(), body->renderer()->style());
 }
+
+bool FrameView::isScrollSnapInProgress() const
+{
+    if (scrollbarsSuppressed())
+        return false;
+    
+    // If the scrolling thread updates the scroll position for this FrameView, then we should return
+    // ScrollingCoordinator::isScrollSnapInProgress().
+    if (Page* page = frame().page()) {
+        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator()) {
+            if (!scrollingCoordinator->shouldUpdateScrollLayerPositionSynchronously())
+                return scrollingCoordinator->isScrollSnapInProgress();
+        }
+    }
+    
+    // If the main thread updates the scroll position for this FrameView, we should return
+    // ScrollAnimator::isScrollSnapInProgress().
+    if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
+        return scrollAnimator->isScrollSnapInProgress();
+    
+    return false;
+}
 #endif
 
 bool FrameView::flushCompositingStateForThisFrame(Frame* rootFrameForFlush)

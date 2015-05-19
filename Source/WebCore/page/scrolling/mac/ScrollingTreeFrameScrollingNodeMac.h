@@ -86,6 +86,8 @@ private:
     LayoutUnit scrollOffsetOnAxis(ScrollEventAxis) const override;
     void immediateScrollOnAxis(ScrollEventAxis, float delta) override;
     float pageScaleFactor() const override;
+    void startScrollSnapTimer(ScrollEventAxis) override;
+    void stopScrollSnapTimer(ScrollEventAxis) override;
 #endif
 
     void logExposedUnfilledArea();

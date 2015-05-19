@@ -1,3 +1,17 @@
+2015-05-19  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(142590): Part 2: Scroll-snap points are improperly snapping to earlier index values (Scrolling Thread) 
+        https://bugs.webkit.org/show_bug.cgi?id=145175
+        <rdar://problem/21023785>
+
+        Reviewed by Beth Dakin.
+
+        Add a stub implementation of isScrollSnapInProgress to match ScrollingCoordinator signature.
+
+        * WebProcess/Scrolling/RemoteScrollingCoordinator.h:
+        * WebProcess/Scrolling/RemoteScrollingCoordinator.mm:
+        (WebKit::RemoteScrollingCoordinator::isScrollSnapInProgress): Added stub.
+
 2015-05-19  Jeremy Jones  <jeremyj@apple.com>
 
         WebVideoFullscreenManagerProxy has incorrect OS_VERSION_MIN_REQUIRED conditionals.
