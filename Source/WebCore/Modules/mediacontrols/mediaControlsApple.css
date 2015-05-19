@@ -966,10 +966,11 @@ audio::-webkit-media-controls-wireless-playback-text-top {
     top: 15pt;
     width: 100%;
     line-height: 12pt;
-    height: 12pt;
+    height: 13pt;
     font-size: 12pt;
     text-align: center;
     margin: 0px;
+    background-color: black;
 }
 
 video::-webkit-media-controls-wireless-playback-text-bottom,
@@ -979,13 +980,14 @@ audio::-webkit-media-controls-wireless-playback-text-bottom {
     left: 5%;
     width: 90%;
     line-height: 10pt;
-    height: 10pt;
+    height: 11pt;
     font-size: 10pt;
     text-align: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin: 0px;
+    background-color: black;
 }
 
 video::-webkit-media-controls-wireless-playback-status.small,

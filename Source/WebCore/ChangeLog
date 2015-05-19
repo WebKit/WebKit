@@ -1,5 +1,21 @@
 2015-05-19  Jon Lee  <jonlee@apple.com>
 
+        Improve text rendering of placeholder
+        https://bugs.webkit.org/show_bug.cgi?id=145135
+
+        Reviewed by Eric Carlson.
+
+        * Modules/mediacontrols/mediaControlsApple.css: The <p> elements of the wireless playback
+        text are being popped out into separate layers, causing the text to render antialiased, which
+        looks bad on non-retina machines. Explicitly set the background color (which is ok since the
+        container element for the placeholder is also black). Also extend the height out 1pt to prevent
+        clipping of descenders.
+        (audio::-webkit-media-controls-wireless-playback-text-top): Set background color to black and add
+        1 to the height.
+        (audio::-webkit-media-controls-wireless-playback-text-bottom): Ditto.
+
+2015-05-19  Jon Lee  <jonlee@apple.com>
+
         [iOS] Current time display should be right-aligned
         https://bugs.webkit.org/show_bug.cgi?id=145163
         rdar://problem/21014339
