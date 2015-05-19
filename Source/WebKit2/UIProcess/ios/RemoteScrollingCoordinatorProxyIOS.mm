@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -113,16 +113,17 @@ void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidEndScroll()
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)
-void RemoteScrollingCoordinatorProxy::adjustTargetContentOffsetForSnapping(CGSize maxScrollOffsets, CGPoint velocity, CGPoint* targetContentOffset) const
+void RemoteScrollingCoordinatorProxy::adjustTargetContentOffsetForSnapping(CGSize maxScrollOffsets, CGPoint velocity, CGFloat topInset, CGPoint* targetContentOffset)
 {
     // The bounds checking with maxScrollOffsets is to ensure that we won't interfere with rubber-banding when scrolling to the edge of the page.
     if (shouldSnapForMainFrameScrolling(WebCore::ScrollEventAxis::Horizontal) && targetContentOffset->x > 0 && targetContentOffset->x < maxScrollOffsets.width) {
-        float potentialSnapPosition = closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis::Horizontal, targetContentOffset->x, velocity.x);
+        float potentialSnapPosition = closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis::Horizontal, targetContentOffset->x, velocity.x, m_currentHorizontalSnapPointIndex);
         targetContentOffset->x = std::min<float>(maxScrollOffsets.width, potentialSnapPosition);
     }
-    // FIXME: We need to account for how the top navigation bar changes in size.
+
     if (shouldSnapForMainFrameScrolling(WebCore::ScrollEventAxis::Vertical) && targetContentOffset->y > 0 && targetContentOffset->y < maxScrollOffsets.height) {
-        float potentialSnapPosition = closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis::Vertical, targetContentOffset->y, velocity.y);
+        float potentialSnapPosition = closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis::Vertical, targetContentOffset->y, velocity.y, m_currentVerticalSnapPointIndex);
+        potentialSnapPosition -= topInset;
         targetContentOffset->y = std::min<float>(maxScrollOffsets.height, potentialSnapPosition);
     }
 }
@@ -138,23 +139,71 @@ bool RemoteScrollingCoordinatorProxy::shouldSnapForMainFrameScrolling(ScrollEven
     if (root && root->isFrameScrollingNode()) {
         ScrollingTreeFrameScrollingNode* rootFrame = static_cast<ScrollingTreeFrameScrollingNode*>(root);
         const Vector<float>& snapOffsets = axis == ScrollEventAxis::Horizontal ? rootFrame->horizontalSnapOffsets() : rootFrame->verticalSnapOffsets();
-        return snapOffsets.size() > 0;
+        unsigned currentIndex = axis == ScrollEventAxis::Horizontal ? m_currentHorizontalSnapPointIndex : m_currentVerticalSnapPointIndex;
+        return (snapOffsets.size() > 0) && (currentIndex < snapOffsets.size());
     }
     return false;
 }
 
-float RemoteScrollingCoordinatorProxy::closestSnapOffsetForMainFrameScrolling(ScrollEventAxis axis, float scrollDestination, float velocity) const
+float RemoteScrollingCoordinatorProxy::closestSnapOffsetForMainFrameScrolling(ScrollEventAxis axis, float scrollDestination, float velocity, unsigned& currentIndex) const
 {
     ScrollingTreeNode* root = m_scrollingTree->rootNode();
     ASSERT(root && root->isFrameScrollingNode());
     ScrollingTreeFrameScrollingNode* rootFrame = static_cast<ScrollingTreeFrameScrollingNode*>(root);
     const Vector<float>& snapOffsets = axis == ScrollEventAxis::Horizontal ? rootFrame->horizontalSnapOffsets() : rootFrame->verticalSnapOffsets();
 
-    unsigned ignore = 0;
     float scaledScrollDestination = scrollDestination / m_webPageProxy.displayedContentScale();
-    float rawClosestSnapOffset = closestSnapOffset<float, float>(snapOffsets, scaledScrollDestination, velocity, ignore);
+    float rawClosestSnapOffset = closestSnapOffset<float, float>(snapOffsets, scaledScrollDestination, velocity, currentIndex);
     return rawClosestSnapOffset * m_webPageProxy.displayedContentScale();
 }
+
+bool RemoteScrollingCoordinatorProxy::hasActiveSnapPoint() const
+{
+    ScrollingTreeNode* root = m_scrollingTree->rootNode();
+    if (!root)
+        return false;
+
+    if (!is<ScrollingTreeFrameScrollingNode>(root))
+        return false;
+
+    ScrollingTreeFrameScrollingNode& rootFrame = downcast<ScrollingTreeFrameScrollingNode>(*root);
+    const Vector<float>& horizontal = rootFrame.horizontalSnapOffsets();
+    const Vector<float>& vertical = rootFrame.verticalSnapOffsets();
+
+    if (horizontal.isEmpty() && vertical.isEmpty())
+        return false;
+
+    if ((!horizontal.isEmpty() && m_currentHorizontalSnapPointIndex >= horizontal.size())
+        || (!vertical.isEmpty() && m_currentVerticalSnapPointIndex >= vertical.size())) {
+        return false;
+    }
+    
+    return true;
+}
+    
+CGPoint RemoteScrollingCoordinatorProxy::nearestActiveContentInsetAdjustedSnapPoint(CGFloat topInset, const CGPoint& currentPoint) const
+{
+    CGPoint activePoint = currentPoint;
+
+    ScrollingTreeNode* root = m_scrollingTree->rootNode();
+    ASSERT(root && is<ScrollingTreeFrameScrollingNode>(root));
+    ScrollingTreeFrameScrollingNode& rootFrame = downcast<ScrollingTreeFrameScrollingNode>(*root);
+    const Vector<float>& horizontal = rootFrame.horizontalSnapOffsets();
+    const Vector<float>& vertical = rootFrame.verticalSnapOffsets();
+
+    // The bounds checking with maxScrollOffsets is to ensure that we won't interfere with rubber-banding when scrolling to the edge of the page.
+    if (!horizontal.isEmpty() && m_currentHorizontalSnapPointIndex < horizontal.size())
+        activePoint.x = horizontal[m_currentHorizontalSnapPointIndex] * m_webPageProxy.displayedContentScale();
+
+    if (!vertical.isEmpty() && m_currentVerticalSnapPointIndex < vertical.size()) {
+        float potentialSnapPosition = vertical[m_currentVerticalSnapPointIndex] * m_webPageProxy.displayedContentScale();
+        potentialSnapPosition -= topInset;
+        activePoint.y = potentialSnapPosition;
+    }
+
+    return activePoint;
+}
+
 #endif
 
 } // namespace WebKit
