@@ -1,3 +1,14 @@
+2015-05-19  Roger Fong  <roger_fong@apple.com>
+
+        Upper half of volume control should be filled, not hollow.
+        https://bugs.webkit.org/show_bug.cgi?id=145187.
+        <rdar://problem/21021970>
+
+        Reviewed by Dean Jackson.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.drawVolumeBackground):
+
 2015-05-19  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(183787): JIT is enabled for all builds

@@ -1268,13 +1268,12 @@ Controller.prototype = {
         ctx.fillRect(0, 0, width, height);
         ctx.restore();
         
-        // Draw volume track border.
+        // Draw portion of volume above slider thumb.
         ctx.save();
         ctx.beginPath();
         this.addRoundedRect(ctx, scrubberPosition, 3, width - scrubberPosition, timelineHeight, timelineHeight / 2.0);
-        this.addRoundedRect(ctx, scrubberPosition + 1, 4, width - borderSize - scrubberPosition - 1, trackHeight, trackHeight / 2.0);
         ctx.closePath();
-        ctx.clip("evenodd");
+        ctx.clip();
         ctx.fillStyle = "rgb(30, 30, 30)";
         ctx.fillRect(0, 0, width, height);
         ctx.restore();
