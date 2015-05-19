@@ -413,14 +413,14 @@ audio::-webkit-media-controls-time-remaining-display {
 audio::-webkit-media-controls-current-time-display,
 video::-webkit-media-controls-current-time-display {
     min-width: 32px;
-    -webkit-justify-content: right;
+    -webkit-justify-content: flex-end;
     padding-right: 6px;
 }
 
 audio::-webkit-media-controls-time-remaining-display,
 video::-webkit-media-controls-time-remaining-display {
     min-width: 38px;
-    -webkit-justify-content: left;
+    -webkit-justify-content: flex-start;
     padding-left: 6px;
     margin-right: 6px;
 }
