@@ -228,6 +228,32 @@ static WKWebViewConfiguration *defaultConfiguration()
 {
     return defaultConfiguration().userContentController;
 }
+
+- (IBAction)fetchDefaultStoreWebsiteData:(id)sender
+{
+    [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray *websiteDataRecords) {
+        NSLog(@"did fetch default store website data %@.", websiteDataRecords);
+    }];
+}
+
+- (IBAction)fetchAndClearDefaultStoreWebsiteData:(id)sender
+{
+    [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray *websiteDataRecords) {
+        [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] forDataRecords:websiteDataRecords completionHandler:^{
+            [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray *websiteDataRecords) {
+                NSLog(@"did clear default store website data, after clearing data is %@.", websiteDataRecords);
+            }];
+        }];
+    }];
+}
+
+- (IBAction)clearDefaultStoreWebsiteData:(id)sender
+{
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^{
+        NSLog(@"Did clear default store website data.");
+    }];
+}
+
 #endif
 
 @end

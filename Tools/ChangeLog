@@ -1,3 +1,19 @@
+2015-05-19  Anders Carlsson  <andersca@apple.com>
+
+        Add alternate menu items for performing operations on the default data store
+        https://bugs.webkit.org/show_bug.cgi?id=145184
+
+        Reviewed by Sam Weinig.
+
+        This makes it possible to test WKWebsiteDataStore code paths when there are no live web views
+        associated with a data store.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate fetchDefaultStoreWebsiteData:]):
+        (-[BrowserAppDelegate fetchAndClearDefaultStoreWebsiteData:]):
+        (-[BrowserAppDelegate clearDefaultStoreWebsiteData:]):
+        * MiniBrowser/mac/MainMenu.xib:
+
 2015-05-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix tautological-compare warning in AtomicString.cpp
