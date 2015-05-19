@@ -1,3 +1,14 @@
+2015-05-19  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r184406.
+
+    2015-05-15  Eric Carlson  <eric.carlson@apple.com>
+
+            Unreviewed build fix.
+
+            * platform/ios/WebVideoFullscreenInterfaceAVKit.mm: Add clang pragmas to ignore
+            deprecation warnings.
+
 2015-05-18  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r184513. rdar://problem/21006738
