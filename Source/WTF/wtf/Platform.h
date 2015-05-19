@@ -611,8 +611,6 @@
 #define HAVE_ALIGNED_MALLOC 1
 #define HAVE_ISDEBUGGERPRESENT 1
 
-#include <WTF/WTFHeaderDetection.h>
-
 #endif
 
 #if OS(WINDOWS)
