@@ -1,3 +1,13 @@
+2015-05-19  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Remove unnecessary PLATFORM(EFL) macro in EFL specific files
+        https://bugs.webkit.org/show_bug.cgi?id=145160
+
+        Reviewed by Csaba Osztrogonác.
+
+        * wtf/efl/EflTypedefs.h: Remove PLATFORM(EFL).
+        * wtf/efl/UniquePtrEfl.h: ditto.
+
 2015-05-18  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] Ignore warnings in system headers

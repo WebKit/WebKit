@@ -30,7 +30,6 @@
 
 #ifdef __cplusplus
 
-#if PLATFORM(EFL)
 typedef unsigned Ecore_X_ID;
 typedef Ecore_X_ID Ecore_X_Window;
 
@@ -47,7 +46,6 @@ typedef struct _Eina_Rectangle Eina_Rectangle;
 typedef struct _Eo_Opaque Evas;
 typedef struct _Eo_Opaque Evas_Object;
 typedef struct _Eo_Opaque Ecore_Timer;
-#endif
 
 #endif
 

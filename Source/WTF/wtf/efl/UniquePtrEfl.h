@@ -26,8 +26,6 @@
 #ifndef UniquePtrEfl_h
 #define UniquePtrEfl_h
 
-#if PLATFORM(EFL)
-
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Ecore_IMF.h>
@@ -67,7 +65,5 @@ FOR_EACH_EFL_DELETER(WTF_DEFINE_EFLPTR_DELETER)
 } // namespace WTF
 
 using WTF::EflUniquePtr;
-
-#endif // PLATFORM(EFL)
 
 #endif // UniquePtrEfl_h
