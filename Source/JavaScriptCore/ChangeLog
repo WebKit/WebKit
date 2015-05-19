@@ -1,3 +1,66 @@
+2015-05-19  Mark Lam  <mark.lam@apple.com>
+
+        Fix the build of a universal binary with ARMv7k of JavaScriptCore.
+        https://bugs.webkit.org/show_bug.cgi?id=145143
+
+        Reviewed by Geoffrey Garen.
+
+        The offlineasm works in 3 phases:
+
+        Phase 1:
+           Parse the llint asm files for config options and desired offsets.
+           Let's say the offlineasm discovers C unique options and O unique offsets.
+           The offlineasm will then generate a LLIntDesiredOffsets.h file with
+           C x C build configurations, each with a set of O offsets.
+
+           Each of these build configurations is given a unique configuration index number.
+
+        Phase 2: 
+           Compile the LLIntDesiredOffsets.h file into a JSCLLIntOffsetsExtractor binary.
+
+           If we're building a fat binary with 2 configurations: armv7, and armv7k,
+           then the fat binary will contain 2 blobs of offsets, one for each of these
+           build configurations.
+
+        Phase 3:
+           Parse the llint asm files and emit asm code using the offsets that are
+           extracted from the JSCLLIntOffsetsExtractor binary for the corresponding
+           configuration index number.
+
+        In the pre-existing code, there are no "if ARMv7k" statements in the llint asm
+        source.  As a result, OFFLINE_ASM_ARMv7k is not one of the config options in
+        the set of C unique options.
+
+        For armv7k builds, OFFLINE_ASM_ARMv7 is also true.  As a result, for an armv7k
+        target, we will end up building armv7 source.  In general, this is fine except:
+
+        1. armv7k has different alignment requirements from armv7.  Hence, their offset
+           values (in JSCLLIntOffsetsExtractor) will be different.
+
+        2. The offlineasm was never told that it needed to make a different configuration
+           for armv7k builds.  Hence, the armv7k build of LLIntDesiredOffsets.h will
+           build the armv7 configuration, and consequently, the armv7k blob of offsets in
+           JSCLLIntOffsetsExtractor will have the same configuration index number as
+           the armv7 blob of offsets.
+
+        In phase 3, when the offlineasm parses the JSCLLIntOffsetsExtractor fat binary
+        looking for the armv7 build's configuration index number, it discovers the
+        armv7k blob which has the same configuration number.  As a result, it
+        erroneously thinks the armv7k offsets are appropriate for emitting armv7 code.
+        Needless to say, armv7 code using armv7k offsets will lead to incorrect behavior
+        and all round badness.
+
+        The fix is to add a simple "if ARMv7k" statement to the llint asm files.  While
+        the if statement has no body, it does make the offlineasm aware of the need for
+        ARMv7k as a configuration option.  As a result, it will generate an armv7k
+        variant configuration in the LLIntDesiredOffsets.h file with its own unique
+        configuration index number.  With that, the JSCLLIntOffsetsExtractor fat binary
+        will no longer have duplicate configuration index numbers for the armv7 and
+        armv7k blobs of offsets, and the issue is resolved.
+
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LowLevelInterpreter.asm:
+
 2015-05-19  Andreas Kling  <akling@apple.com>
 
         Give JSString a StringView getter and start using it.
