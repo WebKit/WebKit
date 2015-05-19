@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-static struct CoreException {
+static const struct CoreException {
     const char* const name;
     const char* const description;
 } coreExceptions[] = {

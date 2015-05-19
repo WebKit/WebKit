@@ -207,7 +207,7 @@ bool HRTFElevation::calculateKernelsForAzimuthElevation(int azimuth, int elevati
 // The range of elevations for the IRCAM impulse responses varies depending on azimuth, but the minimum elevation appears to always be -45.
 //
 // Here's how it goes:
-static int maxElevations[] = {
+static const int maxElevations[] = {
         //  Azimuth
         //
     90, // 0  

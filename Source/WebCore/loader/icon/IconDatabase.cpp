@@ -79,7 +79,7 @@ static const int notUsedIconExpirationTime = 60*60*24*30;
 #if !LOG_DISABLED || !ERROR_DISABLED
 static String urlForLogging(const String& url)
 {
-    static unsigned urlTruncationLength = 120;
+    static const unsigned urlTruncationLength = 120;
 
     if (url.length() < urlTruncationLength)
         return url;

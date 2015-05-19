@@ -325,7 +325,7 @@ static FontWeight toFontWeight(NSInteger appKitFontWeight)
     else if (appKitFontWeight < 1)
         appKitFontWeight = 1;
 
-    static FontWeight fontWeights[] = {
+    static const FontWeight fontWeights[] = {
         FontWeight100,
         FontWeight100,
         FontWeight200,
@@ -1174,8 +1174,8 @@ const int styledPopupPaddingBottom = 2;
 
 static void TopGradientInterpolate(void*, const CGFloat* inData, CGFloat* outData)
 {
-    static float dark[4] = { 1.0f, 1.0f, 1.0f, 0.4f };
-    static float light[4] = { 1.0f, 1.0f, 1.0f, 0.15f };
+    static const float dark[4] = { 1.0f, 1.0f, 1.0f, 0.4f };
+    static const float light[4] = { 1.0f, 1.0f, 1.0f, 0.15f };
     float a = inData[0];
     int i = 0;
     for (i = 0; i < 4; i++)
@@ -1184,8 +1184,8 @@ static void TopGradientInterpolate(void*, const CGFloat* inData, CGFloat* outDat
 
 static void BottomGradientInterpolate(void*, const CGFloat* inData, CGFloat* outData)
 {
-    static float dark[4] = { 1.0f, 1.0f, 1.0f, 0.0f };
-    static float light[4] = { 1.0f, 1.0f, 1.0f, 0.3f };
+    static const float dark[4] = { 1.0f, 1.0f, 1.0f, 0.0f };
+    static const float light[4] = { 1.0f, 1.0f, 1.0f, 0.3f };
     float a = inData[0];
     int i = 0;
     for (i = 0; i < 4; i++)
@@ -1194,8 +1194,8 @@ static void BottomGradientInterpolate(void*, const CGFloat* inData, CGFloat* out
 
 static void MainGradientInterpolate(void*, const CGFloat* inData, CGFloat* outData)
 {
-    static float dark[4] = { 0.0f, 0.0f, 0.0f, 0.15f };
-    static float light[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+    static const float dark[4] = { 0.0f, 0.0f, 0.0f, 0.15f };
+    static const float light[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
     float a = inData[0];
     int i = 0;
     for (i = 0; i < 4; i++)
@@ -1204,8 +1204,8 @@ static void MainGradientInterpolate(void*, const CGFloat* inData, CGFloat* outDa
 
 static void TrackGradientInterpolate(void*, const CGFloat* inData, CGFloat* outData)
 {
-    static float dark[4] = { 0.0f, 0.0f, 0.0f, 0.678f };
-    static float light[4] = { 0.0f, 0.0f, 0.0f, 0.13f };
+    static const float dark[4] = { 0.0f, 0.0f, 0.0f, 0.678f };
+    static const float light[4] = { 0.0f, 0.0f, 0.0f, 0.13f };
     float a = inData[0];
     int i = 0;
     for (i = 0; i < 4; i++)

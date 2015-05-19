@@ -2032,13 +2032,13 @@ static void setLayerDebugBorder(PlatformCALayer& layer, Color borderColor, float
     layer.setBorderWidth(borderColor.isValid() ? borderWidth : 0);
 }
 
-static float contentsLayerBorderWidth = 4;
+static const float contentsLayerBorderWidth = 4;
 static Color contentsLayerDebugBorderColor(bool showingBorders)
 {
     return showingBorders ? Color(0, 0, 128, 180) : Color();
 }
 
-static float cloneLayerBorderWidth = 2;
+static const float cloneLayerBorderWidth = 2;
 static Color cloneLayerDebugBorderColor(bool showingBorders)
 {
     return showingBorders ? Color(255, 122, 251) : Color();

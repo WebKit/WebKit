@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-static double taskDelayInterval = 1.0 / 10.0;
+static const double taskDelayInterval = 1.0 / 10.0;
 
 struct ClientState {
     explicit ClientState(WebMediaSessionManagerClient& client, uint64_t contextId)

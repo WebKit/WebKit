@@ -377,9 +377,9 @@ bool RenderThemeIOS::paintCheckboxDecorations(const RenderObject& box, const Pai
     if (isChecked(box)) {
         drawAxialGradient(cgContext, gradientWithName(ConcaveGradient), clip.location(), FloatPoint(clip.x(), clip.maxY()), LinearInterpolation);
 
-        static float thicknessRatio = 2 / 14.0;
-        static CGSize size = { 14.0f, 14.0f };
-        static CGPoint pathRatios[3] = {
+        static const float thicknessRatio = 2 / 14.0;
+        static const CGSize size = { 14.0f, 14.0f };
+        static const CGPoint pathRatios[3] = {
             { 2.5f / size.width, 7.5f / size.height },
             { 5.5f / size.width, 10.5f / size.height },
             { 11.5f / size.width, 2.5f / size.height }
@@ -465,7 +465,7 @@ bool RenderThemeIOS::paintRadioDecorations(const RenderObject& box, const PaintI
         // The inner circle is 6 / 14 the size of the surrounding circle, 
         // leaving 8 / 14 around it. (8 / 14) / 2 = 2 / 7.
 
-        static float InnerInverseRatio = 2 / 7.0;
+        static const float InnerInverseRatio = 2 / 7.0;
 
         clip.inflateX(-clip.width() * InnerInverseRatio);
         clip.inflateY(-clip.height() * InnerInverseRatio);

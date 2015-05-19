@@ -493,25 +493,25 @@ void WebProcessPool::resetHSTSHostsAddedAfterDate(double startDateIntervalSince1
 
 int networkProcessLatencyQOS()
 {
-    static int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitNetworkProcessLatencyQOS"];
+    static const int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitNetworkProcessLatencyQOS"];
     return qos;
 }
 
 int networkProcessThroughputQOS()
 {
-    static int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitNetworkProcessThroughputQOS"];
+    static const int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitNetworkProcessThroughputQOS"];
     return qos;
 }
 
 int webProcessLatencyQOS()
 {
-    static int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitWebProcessLatencyQOS"];
+    static const int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitWebProcessLatencyQOS"];
     return qos;
 }
 
 int webProcessThroughputQOS()
 {
-    static int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitWebProcessThroughputQOS"];
+    static const int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitWebProcessThroughputQOS"];
     return qos;
 }
 

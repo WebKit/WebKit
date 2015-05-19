@@ -158,7 +158,7 @@ static inline void rememberDesiredFamilyToAvailableFamilyMapping(NSString* desir
 
 static uint16_t toCoreTextFontWeight(FontWeight fontWeight)
 {
-    static int coreTextFontWeights[] = {
+    static const int coreTextFontWeights[] = {
         100, // FontWeight100
         200, // FontWeight200
         300, // FontWeight300
@@ -190,7 +190,7 @@ void FontCache::setFontWhitelist(const Vector<String>& inputWhitelist)
 
 static int toAppKitFontWeight(FontWeight fontWeight)
 {
-    static int appKitFontWeights[] = {
+    static const int appKitFontWeights[] = {
         2, // FontWeight100
         3, // FontWeight200
         4, // FontWeight300
@@ -207,7 +207,7 @@ static int toAppKitFontWeight(FontWeight fontWeight)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 static CGFloat toNSFontWeight(FontWeight fontWeight)
 {
-    static CGFloat nsFontWeights[] = {
+    static const CGFloat nsFontWeights[] = {
         NSFontWeightUltraLight,
         NSFontWeightThin,
         NSFontWeightLight,

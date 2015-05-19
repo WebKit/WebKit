@@ -167,7 +167,7 @@ float LocalizedDateCache::calculateMaximumWidth(DateComponents::Type type, const
     [components.get() setHour:22];
     [components.get() setMinute:45];
 
-    static NSUInteger numberOfGregorianMonths = [[dateFormatter monthSymbols] count];
+    static const NSUInteger numberOfGregorianMonths = [[dateFormatter monthSymbols] count];
     ASSERT(numberOfGregorianMonths == 12);
 
     // For each month (in the Gregorian Calendar), format a date and measure its length.

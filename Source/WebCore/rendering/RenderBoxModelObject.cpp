@@ -1682,7 +1682,7 @@ void RenderBoxModelObject::paintTranslucentBorderSides(GraphicsContext* graphics
 {
     // willBeOverdrawn assumes that we draw in order: top, bottom, left, right.
     // This is different from BoxSide enum order.
-    static BoxSide paintOrder[] = { BSTop, BSBottom, BSLeft, BSRight };
+    static const BoxSide paintOrder[] = { BSTop, BSBottom, BSLeft, BSRight };
 
     while (edgesToDraw) {
         // Find undrawn edges sharing a color.

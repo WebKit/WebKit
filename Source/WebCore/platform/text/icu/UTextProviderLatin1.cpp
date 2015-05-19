@@ -41,7 +41,7 @@ static int64_t uTextLatin1MapOffsetToNative(const UText*);
 static int32_t uTextLatin1MapNativeIndexToUTF16(const UText*, int64_t);
 static void uTextLatin1Close(UText*);
 
-static struct UTextFuncs uTextLatin1Funcs = {
+static const struct UTextFuncs uTextLatin1Funcs = {
     sizeof(UTextFuncs),
     0,
     0,

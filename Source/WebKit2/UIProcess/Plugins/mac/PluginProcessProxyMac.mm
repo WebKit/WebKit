@@ -63,7 +63,7 @@ namespace WebKit {
     
 bool PluginProcessProxy::pluginNeedsExecutableHeap(const PluginModuleInfo& pluginInfo)
 {
-    static bool forceNonexecutableHeapForPlugins = [[NSUserDefaults standardUserDefaults] boolForKey:@"ForceNonexecutableHeapForPlugins"];
+    static const bool forceNonexecutableHeapForPlugins = [[NSUserDefaults standardUserDefaults] boolForKey:@"ForceNonexecutableHeapForPlugins"];
     if (forceNonexecutableHeapForPlugins)
         return false;
     
@@ -473,13 +473,13 @@ void PluginProcessProxy::openFile(const String& fullPath, bool& result)
 
 int pluginProcessLatencyQOS()
 {
-    static int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitPluginProcessLatencyQOS"];
+    static const int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitPluginProcessLatencyQOS"];
     return qos;
 }
 
 int pluginProcessThroughputQOS()
 {
-    static int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitPluginProcessThroughputQOS"];
+    static const int qos = [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitPluginProcessThroughputQOS"];
     return qos;
 }
 

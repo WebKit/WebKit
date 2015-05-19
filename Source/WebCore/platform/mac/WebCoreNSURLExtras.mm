@@ -840,7 +840,7 @@ static BOOL hasQuestionMarkOnlyQueryString(NSURL *URL)
 
 NSData *dataForURLComponentType(NSURL *URL, CFURLComponentType componentType)
 {
-    static int URLComponentTypeBufferLength = 2048;
+    static const int URLComponentTypeBufferLength = 2048;
     
     UInt8 staticAllBytesBuffer[URLComponentTypeBufferLength];
     UInt8 *allBytesBuffer = staticAllBytesBuffer;

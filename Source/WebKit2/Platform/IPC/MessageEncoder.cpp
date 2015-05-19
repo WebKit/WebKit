@@ -33,7 +33,7 @@
 
 namespace IPC {
 
-static uint8_t defaultMessageFlags = 0;
+static const uint8_t defaultMessageFlags = 0;
 
 #if HAVE(DTRACE)
 MessageEncoder::MessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, const uuid_t& UUID)

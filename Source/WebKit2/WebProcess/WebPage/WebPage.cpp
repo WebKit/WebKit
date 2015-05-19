@@ -4633,14 +4633,14 @@ void WebPage::didFinishLoad(WebFrame* frame)
 }
 
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
-static int primarySnapshottedPlugInSearchLimit = 3000;
-static float primarySnapshottedPlugInSearchBucketSize = 1.1;
-static int primarySnapshottedPlugInMinimumWidth = 400;
-static int primarySnapshottedPlugInMinimumHeight = 300;
-static unsigned maxPrimarySnapshottedPlugInDetectionAttempts = 2;
-static int deferredPrimarySnapshottedPlugInDetectionDelay = 3;
-static float overlappingImageBoundsScale = 1.1;
-static float minimumOverlappingImageToPluginDimensionScale = .9;
+static const int primarySnapshottedPlugInSearchLimit = 3000;
+static const float primarySnapshottedPlugInSearchBucketSize = 1.1;
+static const int primarySnapshottedPlugInMinimumWidth = 400;
+static const int primarySnapshottedPlugInMinimumHeight = 300;
+static const unsigned maxPrimarySnapshottedPlugInDetectionAttempts = 2;
+static const int deferredPrimarySnapshottedPlugInDetectionDelay = 3;
+static const float overlappingImageBoundsScale = 1.1;
+static const float minimumOverlappingImageToPluginDimensionScale = .9;
 
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
 void WebPage::determinePrimarySnapshottedPlugInTimerFired()
