@@ -35,7 +35,7 @@ docs_build_dependencies += \
 	gtkdoc-webkitdom.cfg
 
 docs-build.stamp: $(docs_build_dependencies)
-	CC=$(CC) $(srcdir)/Tools/gtk/generate-gtkdoc
+	CC=$(CC) $(PYTHON) $(srcdir)/Tools/gtk/generate-gtkdoc
 	@touch docs-build.stamp
 
 clean-local: doc-clean-local
