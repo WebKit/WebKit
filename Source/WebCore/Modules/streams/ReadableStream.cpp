@@ -34,6 +34,7 @@
 
 #include "NotImplemented.h"
 #include "ReadableStreamReader.h"
+#include <runtime/JSCJSValue.h>
 #include <wtf/RefCountedLeakCounter.h>
 
 namespace WebCore {
@@ -57,15 +58,25 @@ ReadableStream::~ReadableStream()
 #endif
 }
 
+void ReadableStream::clearCallbacks()
+{
+    m_closedSuccessCallback = nullptr;
+    m_closedFailureCallback = nullptr;
+}
+
 void ReadableStream::changeStateToClosed()
 {
     if (m_state != State::Readable)
         return;
     m_state = State::Closed;
-    if (!m_reader)
-        return;
-    m_reader->changeStateToClosed();
-    m_releasedReaders.append(WTF::move(m_reader));
+
+    if (m_reader)
+        m_releasedReaders.append(WTF::move(m_reader));
+
+    if (m_closedSuccessCallback)
+        m_closedSuccessCallback();
+
+    clearCallbacks();
 }
 
 void ReadableStream::changeStateToErrored()
@@ -73,10 +84,14 @@ void ReadableStream::changeStateToErrored()
     if (m_state != State::Readable)
         return;
     m_state = State::Errored;
-    if (!m_reader)
-        return;
-    m_reader->changeStateToErrored();
-    m_releasedReaders.append(WTF::move(m_reader));
+
+    if (m_reader)
+        m_releasedReaders.append(WTF::move(m_reader));
+
+    if (m_closedFailureCallback)
+        m_closedFailureCallback(error());
+
+    clearCallbacks();
 }
 
 ReadableStreamReader& ReadableStream::getReader()
@@ -91,13 +106,22 @@ ReadableStreamReader& ReadableStream::getReader()
         return reader;
     }
 
-    if (m_state == State::Closed)
-        reader.changeStateToClosed();
-    else if (m_state == State::Errored)
-        reader.changeStateToErrored();
     m_releasedReaders.append(WTF::move(newReader));
-
     return reader;
+}
+
+void ReadableStream::closed(ClosedSuccessCallback successCallback, ClosedFailureCallback failureCallback)
+{
+    if (m_state == State::Closed) {
+        successCallback();
+        return;
+    }
+    if (m_state == State::Errored) {
+        failureCallback(error());
+        return;
+    }
+    m_closedSuccessCallback = WTF::move(successCallback);
+    m_closedFailureCallback = WTF::move(failureCallback);
 }
 
 void ReadableStream::start()

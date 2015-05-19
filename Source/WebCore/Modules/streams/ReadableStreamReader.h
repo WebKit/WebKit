@@ -48,33 +48,16 @@ namespace WebCore {
 // See https://streams.spec.whatwg.org/#reader-class for more information.
 class ReadableStreamReader {
 public:
-    enum class State {
-        Readable,
-        Closed,
-        Errored
-    };
-
     ReadableStreamReader(ReadableStream& stream)
-        : m_stream(stream) { };
+        : m_stream(stream) { }
 
-    typedef std::function<void()> ClosedSuccessCallback;
-    typedef std::function<void(ReadableStream&)> ClosedErrorCallback;
-    void closed(ClosedSuccessCallback, ClosedErrorCallback);
-
-    void changeStateToClosed();
-    void changeStateToErrored();
+    void closed(ReadableStream::ClosedSuccessCallback, ReadableStream::ClosedFailureCallback);
 
     void ref() { m_stream.ref(); }
     void deref() { m_stream.deref(); }
 
 private:
-    void clean();
-
     ReadableStream& m_stream;
-    State m_state { State::Readable };
-
-    ClosedSuccessCallback m_closedSuccessCallback;
-    ClosedErrorCallback m_closedErrorCallback;
 };
 
 }

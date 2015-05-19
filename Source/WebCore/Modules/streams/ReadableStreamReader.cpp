@@ -32,54 +32,15 @@
 
 #if ENABLE(STREAMS_API)
 
-#include "NotImplemented.h"
-
 namespace WebCore {
 
-void ReadableStreamReader::clean()
+void ReadableStreamReader::closed(ReadableStream::ClosedSuccessCallback successCallback, ReadableStream::ClosedFailureCallback failureCallback)
 {
-    m_closedSuccessCallback = nullptr;
-    m_closedErrorCallback = nullptr;
-}
-
-void ReadableStreamReader::closed(ClosedSuccessCallback successCallback, ClosedErrorCallback errorCallback)
-{
-    if (m_state == State::Closed) {
+    if (m_stream.isReadable() && m_stream.reader() != this) {
         successCallback();
         return;
     }
-    if (m_state == State::Errored) {
-        errorCallback(m_stream);
-        return;
-    }
-    m_closedSuccessCallback = WTF::move(successCallback);
-    m_closedErrorCallback = WTF::move(errorCallback);
-}
-
-void ReadableStreamReader::changeStateToClosed()
-{
-    ASSERT(m_state == State::Readable);
-    m_state = State::Closed;
-
-    if (m_closedSuccessCallback)
-        m_closedSuccessCallback();
-
-    // FIXME: Implement read promise fulfilling.
-
-    clean();
-}
-
-void ReadableStreamReader::changeStateToErrored()
-{
-    ASSERT(m_state == State::Readable);
-    m_state = State::Errored;
-
-    if (m_closedErrorCallback)
-        m_closedErrorCallback(m_stream);
-
-    // FIXME: Implement read promise rejection.
-
-    clean();
+    m_stream.closed(WTF::move(successCallback), WTF::move(failureCallback));
 }
 
 }

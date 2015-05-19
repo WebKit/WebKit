@@ -75,8 +75,8 @@ JSValue JSReadableStreamReader::closed(ExecState* exec) const
     auto successCallback = [wrapper]() mutable {
         wrapper.resolve(jsUndefined());
     };
-    auto failureCallback = [wrapper](ReadableStream& stream) mutable {
-        wrapper.reject(stream.error());
+    auto failureCallback = [wrapper](const JSValue& value) mutable {
+        wrapper.reject(value);
     };
 
     impl().closed(WTF::move(successCallback), WTF::move(failureCallback));

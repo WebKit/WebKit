@@ -1,3 +1,35 @@
+2015-05-19  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet <youenn.fablet@crf.canon.fr>
+
+        [Streams API] Migrate closed promise handling from ReadableStreamReader to ReadableStream
+        https://bugs.webkit.org/show_bug.cgi?id=145110
+
+        Reviewed by Darin Adler.
+
+        Reader is now just checking whether it is the reader locking the stream or not.
+        If not and stream is readable, it resolves the closed promise.
+        Otherwise, it delegates the promise handling to its stream.
+
+        No change in behavior.
+
+        * Modules/streams/ReadableStream.cpp:
+        (WebCore::ReadableStream::cleanCallbacks): Cleaning of closed callbacks.
+        (WebCore::ReadableStream::changeStateToClosed): Resolving closed promise if set.
+        (WebCore::ReadableStream::changeStateToErrored): Rejecting closed promise if set.
+        (WebCore::ReadableStream::getReader): Removed reader state notification.
+        (WebCore::ReadableStream::closed): Moved from reader to stream.
+        * Modules/streams/ReadableStream.h:
+        (WebCore::ReadableStream::reader): Added to allow reader to check whether it is locking its stream or not.
+        (WebCore::ReadableStream::isReadable): Added as an improvement over internalState which is removed.
+        (WebCore::ReadableStream::internalState): Deleted.
+        * Modules/streams/ReadableStreamReader.cpp:
+        (WebCore::ReadableStreamReader::closed):
+        * Modules/streams/ReadableStreamReader.h: Removed state and closed promise callbacks.
+        * bindings/js/JSReadableStreamControllerCustom.cpp:
+        (WebCore::JSReadableStreamController::close): Refactoring of internalState to isReadable.
+        (WebCore::JSReadableStreamController::error): Ditto.
+        * bindings/js/JSReadableStreamReaderCustom.cpp:
+        (WebCore::JSReadableStreamReader::closed): Refactoring to have the promise value as callback parameter.
+
 2015-05-19  Jeremy Jones  <jeremyj@apple.com>
 
         Remove use of deprecated AVKit SPI cancelOptimizedFullscreen.

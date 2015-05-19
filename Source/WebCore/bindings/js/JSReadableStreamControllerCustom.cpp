@@ -45,7 +45,7 @@ JSValue JSReadableStreamController::close(ExecState* exec)
 {
     ReadableJSStream& stream = impl().stream();
     // FIXME: Handle the case of draining.
-    if (stream.internalState() != ReadableStream::State::Readable)
+    if (!stream.isReadable())
         return exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Calling close on a stream which is not readable")));
     stream.changeStateToClosed();
     return jsUndefined();
@@ -60,7 +60,7 @@ JSValue JSReadableStreamController::enqueue(ExecState*)
 JSValue JSReadableStreamController::error(ExecState* exec)
 {
     ReadableJSStream& stream = impl().stream();
-    if (stream.internalState() != ReadableStream::State::Readable)
+    if (!stream.isReadable())
         return exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Calling error on a stream which is not readable")));
     stream.storeError(*exec);
     return jsUndefined();

@@ -62,17 +62,22 @@ public:
     virtual ~ReadableStream();
 
     ReadableStreamReader& getReader();
+    const ReadableStreamReader* reader() const { return m_reader.get(); }
     bool isLocked() const { return !!m_reader; }
 
-    virtual JSC::JSValue error() = 0;
+    bool isReadable() const { return m_state == State::Readable; }
 
-    State internalState() { return m_state; }
+    virtual JSC::JSValue error() = 0;
 
     void start();
     void changeStateToClosed();
     void changeStateToErrored();
 
     ReadableStreamSource& source() { return m_source.get(); }
+
+    typedef std::function<void()> ClosedSuccessCallback;
+    typedef std::function<void(JSC::JSValue)> ClosedFailureCallback;
+    void closed(ClosedSuccessCallback, ClosedFailureCallback);
 
 protected:
     ReadableStream(ScriptExecutionContext&, Ref<ReadableStreamSource>&&);
@@ -82,8 +87,13 @@ private:
     const char* activeDOMObjectName() const override;
     bool canSuspendForPageCache() const override;
 
+    void clearCallbacks();
+
     std::unique_ptr<ReadableStreamReader> m_reader;
     Vector<std::unique_ptr<ReadableStreamReader>> m_releasedReaders;
+
+    ClosedSuccessCallback m_closedSuccessCallback;
+    ClosedFailureCallback m_closedFailureCallback;
 
     State m_state { State::Readable };
     Ref<ReadableStreamSource> m_source;
