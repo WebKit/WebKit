@@ -1,3 +1,34 @@
+2015-05-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Add SpecBoolInt32 type that means "I'm an int and I'm either 0 or 1"
+        https://bugs.webkit.org/show_bug.cgi?id=145137
+
+        Reviewed by Benjamin Poulain.
+        
+        It's super useful to know if an integer value could be either zero or one. We have an
+        immediate need for this because of Int32|Boolean uses, where knowing that the Int32 is
+        either 0 or 1 means that there is no actual polymorphism if you just look at the low bit
+        (1 behaves like true, 0 behaves like false, and the low bit of 1|true is 1, and the low
+        bit of 0|false is 0).
+        
+        We do this by splitting the SpecInt32 type into SpecBoolInt32 and SpecNonBoolInt32. This
+        change doesn't have any effect on behavior, yet. But it does give us the ability to
+        predict and prove when values are SpecBoolInt32; it's just we don't leverage this yet.
+        
+        This is perf-neutral.
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::dumpSpeculation):
+        (JSC::speculationToAbbreviatedString):
+        (JSC::speculationFromValue):
+        * bytecode/SpeculatedType.h:
+        (JSC::isStringOrStringObjectSpeculation):
+        (JSC::isBoolInt32Speculation):
+        (JSC::isInt32Speculation):
+        (JSC::isInt32OrBooleanSpeculation):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2015-05-18  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] Ignore warnings in system headers

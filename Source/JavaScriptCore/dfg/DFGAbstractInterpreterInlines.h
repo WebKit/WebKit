@@ -257,6 +257,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             }
             break;
         }
+        
+        if (node->op() == BitAnd
+            && (isBoolInt32Speculation(forNode(node->child1()).m_type) ||
+                isBoolInt32Speculation(forNode(node->child2()).m_type))) {
+            forNode(node).setType(SpecBoolInt32);
+            break;
+        }
+        
         forNode(node).setType(SpecInt32);
         break;
     }
@@ -297,7 +305,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (node->child1().useKind() == UntypedUse && !(value.m_type & ~SpecBoolean))
             m_state.setFoundConstants(true);
         if (value.m_type & SpecBoolean) {
-            value.merge(SpecInt32);
+            value.merge(SpecBoolInt32);
             value.filter(~SpecBoolean);
         }
         break;
@@ -335,6 +343,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 setConstant(node, jsNumber(0));
                 break;
             }
+        }
+        
+        if (isBooleanSpeculation(forNode(node->child1()).m_type)) {
+            forNode(node).setType(SpecBoolInt32);
+            break;
         }
         
         forNode(node).setType(SpecInt32);

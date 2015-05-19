@@ -163,10 +163,19 @@ void dumpSpeculation(PrintStream& out, SpeculatedType value)
             isTop = false;
     }
     
-    if (value & SpecInt32)
+    if (value == SpecInt32)
         myOut.print("Int32");
-    else
-        isTop = false;
+    else {
+        if (value & SpecBoolInt32)
+            myOut.print("Boolint32");
+        else
+            isTop = false;
+        
+        if (value & SpecNonBoolInt32)
+            myOut.print("Nonboolint32");
+        else
+            isTop = false;
+    }
     
     if (value & SpecInt52)
         myOut.print("Int52");
@@ -254,6 +263,8 @@ static const char* speculationToAbbreviatedString(SpeculatedType prediction)
         return "<Object>";
     if (isCellSpeculation(prediction))
         return "<Cell>";
+    if (isBoolInt32Speculation(prediction))
+        return "<BoolInt32>";
     if (isInt32Speculation(prediction))
         return "<Int32>";
     if (isInt52AsDoubleSpeculation(prediction))
@@ -363,8 +374,11 @@ SpeculatedType speculationFromValue(JSValue value)
 {
     if (value.isEmpty())
         return SpecEmpty;
-    if (value.isInt32())
-        return SpecInt32;
+    if (value.isInt32()) {
+        if (value.asInt32() & ~1)
+            return SpecNonBoolInt32;
+        return SpecBoolInt32;
+    }
     if (value.isDouble()) {
         double number = value.asNumber();
         if (number != number)
