@@ -1,3 +1,15 @@
+2015-05-19  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(183787): JIT is enabled for all builds
+        https://bugs.webkit.org/show_bug.cgi?id=145179
+
+        Reviewed by Geoffrey Garen.
+
+        Eliminated the setting of ENABLE_JIT, as wtf/Platform.h has appropriate logic to
+        set it depending on OS and CPU type.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2015-05-19  Brady Eidson  <beidson@apple.com>
 
         X-Frame-Options headers not respected when loading from application cache.
