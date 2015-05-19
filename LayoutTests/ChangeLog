@@ -1,3 +1,12 @@
+2015-05-19  Marcos Chavarría Teijeiro  <mchavarria@igalia.com>
+
+        [GTK] Gardening 19th May
+        https://bugs.webkit.org/show_bug.cgi?id=145166
+
+        Unreviewed.
+
+        * platform/gtk/TestExpectations:
+
 2015-05-18  Eric Carlson  <eric.carlson@apple.com>
 
         iOS gardening. Update "editing" image and text results, delete wk2-only results.

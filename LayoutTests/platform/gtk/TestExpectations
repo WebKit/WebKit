@@ -945,11 +945,15 @@ webkit.org/b/132248 media/media-fragments/TC0059.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0061.html [ Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0063.html [ Failure Pass Timeout ]
 webkit.org/b/143709 media/media-fragments/TC0064.html [ Timeout Pass ]
+webkit.org/b/132248 media/media-fragments/TC0065.html [ Timeout Pass ]
+webkit.org/b/132248 media/media-fragments/TC0066.html [ Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0067.html [ Timeout Pass ]
+webkit.org/b/132248 media/media-fragments/TC0068.html [ Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0070.html [ Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0072.html [ Failure Pass ]
 webkit.org/b/132248 media/media-fragments/TC0078.html [ Failure Crash Pass ]
 webkit.org/b/132248 media/media-fragments/TC0079.html [ Failure Pass ]
+webkit.org/b/132248 media/media-fragments/TC0081.html [ Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0080.html [ Timeout Pass ]
 webkit.org/b/132248 media/media-fragments/TC0082.html [ Timeout Crash Pass ]
 webkit.org/b/132248 media/media-fragments/TC0085.html [ Failure Crash Pass ]
@@ -1112,6 +1116,7 @@ webkit.org/b/143876 css3/viewport-percentage-lengths/vh-resize.html [ ImageOnlyF
 webkit.org/b/143983 fast/hidpi/image-srcset-svg-canvas.html [ ImageOnlyFailure Pass ]
 webkit.org/b/143985 editing/pasteboard/drop-text-events.html [ Failure Timeout Crash ]
 
+webkit.org/b/143988 css3/masking/mask-svg-invalid-fragmentId.html [ ImageOnlyFailure Pass ]
 webkit.org/b/143988 css3/masking/mask-svg-no-fragmentId.html [ ImageOnlyFailure Pass ]
 webkit.org/b/143991 fast/table/multiple-captions-crash3.html [ ImageOnlyFailure Pass ]
 webkit.org/b/143995 fast/canvas/canvas-composite-text-alpha.html [ Failure Pass ]
@@ -1131,6 +1136,11 @@ webkit.org/b/144864 fast/events/clear-drag-state.html [ Failure Pass ]
 webkit.org/b/145050 fast/events/touch/touch-coords-in-zoom-and-scroll.html [ Failure Pass ]
 webkit.org/b/145051 media/video-rtl.html [ ImageOnlyFailure Pass ]
 webkit.org/b/145052 fast/history/page-cache-webdatabase-pending-transaction.html [ Failure Pass ]
+
+webkit.org/b/145167 transforms/2d/perspective-not-fixed-container.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/145170 fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Failure Pass ]
+webkit.org/b/145170 fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -1341,6 +1351,10 @@ webkit.org/b/109469 fast/events/mouse-cursor-image-set.html [ Crash Timeout ]
 webkit.org/b/144865 fast/animation/request-animation-frame-throttle-subframe.html [ Timeout ]
 webkit.org/b/144865 fast/animation/request-animation-frame-throttle-subframe-display-none.html [ Timeout ]
 webkit.org/b/145053 http/tests/xmlhttprequest/origin-exact-matching.html [ Timeout Pass ]
+
+webkit.org/b/145168 media/track/track-cue-inline-assertion-crash.html [ Timeout Pass ]
+webkit.org/b/145169 media/track/track-css-user-override.html [ Timeout Pass ]
+webkit.org/b/145171 fast/events/tabindex-focus-blur-all.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
