@@ -42,7 +42,12 @@ function suspendFailed() {
     finishJSTest();
 }
 
-function suspendSucceeded() {
+function suspendSucceeded(value) {
+    if (typeof value != 'undefined') {
+        testFailed('context.suspend() promise should not resolve with a value.');
+        finishJSTest();
+        return;
+    }
     testPassed('context.suspend() promise resolved');
     shouldBe('context.state', '"suspended"');
 
@@ -55,7 +60,12 @@ function resumeFailed() {
     finishJSTest();
 }
 
-function resumeSucceeded() {
+function resumeSucceeded(value) {
+    if (typeof value != 'undefined') {
+        testFailed('context.resume() promise should not resolve with a value.');
+        finishJSTest();
+        return;
+    }
     testPassed('context.resume() promise resolved');
     shouldBe('context.state', '"running"');
 
@@ -68,7 +78,12 @@ function closeFailed() {
     finishJSTest();
 }
 
-function closeSucceeded() {
+function closeSucceeded(value) {
+    if (typeof value != 'undefined') {
+        testFailed('context.closed() promise should not resolve with a value.');
+        finishJSTest();
+        return;
+    }
     testPassed('context.close() promise resolved');
     shouldBe('context.state', '"closed"');
 

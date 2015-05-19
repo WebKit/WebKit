@@ -126,7 +126,7 @@ inline void DeferredWrapper::resolve(const std::nullptr_t&)
 {
     JSC::ExecState* exec = m_globalObject->globalExec();
     JSC::JSLockHolder locker(exec);
-    resolve(exec, JSC::jsNull());
+    resolve(exec, JSC::jsUndefined());
 }
 
 template<>
