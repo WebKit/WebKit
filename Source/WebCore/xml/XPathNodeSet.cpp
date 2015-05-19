@@ -197,9 +197,8 @@ void NodeSet::traversalSort() const
 
     unsigned nodeCount = m_nodes.size();
     ASSERT(nodeCount > 1);
-    for (unsigned i = 0; i < nodeCount; ++i) {
-        Node* node = m_nodes[i].get();
-        nodes.add(node);
+    for (auto& node : m_nodes) {
+        nodes.add(node.get());
         if (node->isAttributeNode())
             containsAttributeNodes = true;
     }

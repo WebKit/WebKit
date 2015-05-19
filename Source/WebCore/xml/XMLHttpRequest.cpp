@@ -405,12 +405,12 @@ bool XMLHttpRequest::isAllowedHTTPMethod(const String& method)
 String XMLHttpRequest::uppercaseKnownHTTPMethod(const String& method)
 {
     const char* const methods[] = { "DELETE", "GET", "HEAD", "OPTIONS", "POST", "PUT" };
-    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(methods); ++i) {
-        if (equalIgnoringCase(method, methods[i])) {
+    for (auto* value : methods) {
+        if (equalIgnoringCase(method, value)) {
             // Don't bother allocating a new string if it's already all uppercase.
-            if (method == methods[i])
+            if (method == value)
                 break;
-            return ASCIILiteral(methods[i]);
+            return ASCIILiteral(value);
         }
     }
     return method;

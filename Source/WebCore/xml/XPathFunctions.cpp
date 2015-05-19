@@ -634,8 +634,8 @@ Value FunSum::evaluate() const
     // To be really compliant, we should sort the node-set, as floating point addition is not associative.
     // However, this is unlikely to ever become a practical issue, and sorting is slow.
 
-    for (unsigned i = 0; i < nodes.size(); i++)
-        sum += Value(stringValue(nodes[i])).toNumber();
+    for (auto& node : nodes)
+        sum += Value(stringValue(node.get())).toNumber();
     
     return sum;
 }
@@ -708,8 +708,8 @@ static void populateFunctionMap(HashMap<String, FunctionMapValue>& functionMap)
         { "true", { createFunctionTrue, 0 } },
     };
 
-    for (size_t i = 0; i < WTF_ARRAY_LENGTH(functions); ++i)
-        functionMap.add(functions[i].name, functions[i].function);
+    for (auto& function : functions)
+        functionMap.add(function.name, function.function);
 }
 
 std::unique_ptr<Function> Function::create(const String& name, unsigned numArguments)

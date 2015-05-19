@@ -1,3 +1,42 @@
+2015-05-19  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        Use modern for-loops in WebCore/xml.
+        https://bugs.webkit.org/show_bug.cgi?id=145046
+
+        Reviewed by Chris Dumez.
+
+        No new tests, no new tests.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::uppercaseKnownHTTPMethod):
+        * xml/XPathExpressionNode.cpp:
+        (WebCore::XPath::Expression::setSubexpressions):
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunSum::evaluate):
+        (WebCore::XPath::populateFunctionMap):
+        * xml/XPathNodeSet.cpp:
+        (WebCore::XPath::NodeSet::traversalSort):
+        * xml/XPathParser.cpp:
+        (WebCore::XPath::populateAxisNamesMap):
+        * xml/XPathPath.cpp:
+        (WebCore::XPath::Filter::evaluate):
+        (WebCore::XPath::LocationPath::evaluate):
+        * xml/XPathPredicate.cpp:
+        (WebCore::XPath::EqTestOp::compare):
+        (WebCore::XPath::Union::evaluate):
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::Step::optimize):
+        (WebCore::XPath::Step::predicatesAreContextListInsensitive):
+        (WebCore::XPath::Step::evaluate):
+        (WebCore::XPath::nodeMatches):
+        * xml/XSLStyleSheetLibxslt.cpp:
+        (WebCore::XSLStyleSheet::~XSLStyleSheet):
+        (WebCore::XSLStyleSheet::isLoading):
+        (WebCore::XSLStyleSheet::clearDocuments):
+        (WebCore::XSLStyleSheet::locateStylesheetSubResource):
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::xsltParamArrayFromParameterMap):
+
 2015-05-19  Jon Lee  <jonlee@apple.com>
 
         Improve text rendering of placeholder

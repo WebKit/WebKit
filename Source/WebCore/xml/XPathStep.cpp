@@ -63,8 +63,7 @@ void Step::optimize()
     // E.g., there is no need to build a set of all "foo" nodes to evaluate "foo[@bar]", we can check the predicate while enumerating.
     // This optimization can be applied to predicates that are not context node list sensitive, or to first predicate that is only context position sensitive, e.g. foo[position() mod 2 = 0].
     Vector<std::unique_ptr<Expression>> remainingPredicates;
-    for (size_t i = 0; i < m_predicates.size(); ++i) {
-        auto& predicate = m_predicates[i];
+    for (auto& predicate : m_predicates) {
         if ((!predicateIsContextPositionSensitive(*predicate) || m_nodeTest.m_mergedPredicates.isEmpty()) && !predicate->isContextSizeSensitive() && remainingPredicates.isEmpty())
             m_nodeTest.m_mergedPredicates.append(WTF::move(predicate));
         else
@@ -108,15 +107,13 @@ void optimizeStepPair(Step& first, Step& second, bool& dropSecondStep)
 
 bool Step::predicatesAreContextListInsensitive() const
 {
-    for (size_t i = 0; i < m_predicates.size(); ++i) {
-        auto& predicate = *m_predicates[i];
-        if (predicateIsContextPositionSensitive(predicate) || predicate.isContextSizeSensitive())
+    for (auto& predicate : m_predicates) {
+        if (predicateIsContextPositionSensitive(*predicate) || predicate->isContextSizeSensitive())
             return false;
     }
 
-    for (size_t i = 0; i < m_nodeTest.m_mergedPredicates.size(); ++i) {
-        auto& predicate = *m_nodeTest.m_mergedPredicates[i];
-        if (predicateIsContextPositionSensitive(predicate) || predicate.isContextSizeSensitive())
+    for (auto& predicate : m_nodeTest.m_mergedPredicates) {
+        if (predicateIsContextPositionSensitive(*predicate) || predicate->isContextSizeSensitive())
             return false;
     }
 
@@ -131,9 +128,7 @@ void Step::evaluate(Node& context, NodeSet& nodes) const
     nodesInAxis(context, nodes);
 
     // Check predicates that couldn't be merged into node test.
-    for (unsigned i = 0; i < m_predicates.size(); i++) {
-        auto& predicate = *m_predicates[i];
-
+    for (auto& predicate : m_predicates) {
         NodeSet newNodes;
         if (!nodes.isSorted())
             newNodes.markSorted(false);
@@ -144,7 +139,7 @@ void Step::evaluate(Node& context, NodeSet& nodes) const
             evaluationContext.node = node;
             evaluationContext.size = nodes.size();
             evaluationContext.position = j + 1;
-            if (evaluatePredicate(predicate))
+            if (evaluatePredicate(*predicate))
                 newNodes.append(node);
         }
 
@@ -233,11 +228,10 @@ inline bool nodeMatches(Node& node, Step::Axis axis, const Step::NodeTest& nodeT
     // Only the first merged predicate may depend on position.
     ++evaluationContext.position;
 
-    auto& mergedPredicates = nodeTest.m_mergedPredicates;
-    for (unsigned i = 0; i < mergedPredicates.size(); i++) {
+    for (auto& predicate : nodeTest.m_mergedPredicates) {
         // No need to set context size - we only get here when evaluating predicates that do not depend on it.
         evaluationContext.node = &node;
-        if (!evaluatePredicate(*mergedPredicates[i]))
+        if (!evaluatePredicate(*predicate))
             return false;
     }
 

@@ -82,16 +82,16 @@ XSLStyleSheet::~XSLStyleSheet()
     if (!m_stylesheetDocTaken)
         xmlFreeDoc(m_stylesheetDoc);
 
-    for (unsigned i = 0; i < m_children.size(); ++i) {
-        ASSERT(m_children.at(i)->parentStyleSheet() == this);
-        m_children.at(i)->setParentStyleSheet(0);
+    for (auto& child : m_children) {
+        ASSERT(child->parentStyleSheet() == this);
+        child->setParentStyleSheet(0);
     }
 }
 
 bool XSLStyleSheet::isLoading() const
 {
-    for (unsigned i = 0; i < m_children.size(); ++i) {
-        if (m_children.at(i)->isLoading())
+    for (auto& child : m_children) {
+        if (child->isLoading())
             return true;
     }
     return false;
@@ -117,8 +117,7 @@ xmlDocPtr XSLStyleSheet::document()
 void XSLStyleSheet::clearDocuments()
 {
     m_stylesheetDoc = 0;
-    for (unsigned i = 0; i < m_children.size(); ++i) {
-        XSLImportRule* import = m_children.at(i).get();
+    for (auto& import : m_children) {
         if (import->styleSheet())
             import->styleSheet()->clearDocuments();
     }
@@ -273,8 +272,7 @@ Document* XSLStyleSheet::ownerDocument()
 xmlDocPtr XSLStyleSheet::locateStylesheetSubResource(xmlDocPtr parentDoc, const xmlChar* uri)
 {
     bool matchedParent = (parentDoc == document());
-    for (unsigned i = 0; i < m_children.size(); ++i) {
-        XSLImportRule* import = m_children.at(i).get();
+    for (auto& import : m_children) {
         XSLStyleSheet* child = import->styleSheet();
         if (!child)
             continue;

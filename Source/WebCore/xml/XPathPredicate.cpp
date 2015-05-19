@@ -111,28 +111,32 @@ bool EqTestOp::compare(const Value& lhs, const Value& rhs) const
             // there is a node in the first node-set and a node in the second node-set such that the result of
             // performing the comparison on the string-values of the two nodes is true.
             const NodeSet& rhsSet = rhs.toNodeSet();
-            for (unsigned lindex = 0; lindex < lhsSet.size(); ++lindex)
-                for (unsigned rindex = 0; rindex < rhsSet.size(); ++rindex)
-                    if (compare(stringValue(lhsSet[lindex]), stringValue(rhsSet[rindex])))
+            for (auto& lhs : lhsSet) {
+                for (auto& rhs : rhsSet) {
+                    if (compare(stringValue(lhs.get()), stringValue(rhs.get())))
                         return true;
+                }
+            }
             return false;
         }
         if (rhs.isNumber()) {
             // If one object to be compared is a node-set and the other is a number, then the comparison will be true
             // if and only if there is a node in the node-set such that the result of performing the comparison on the number
             // to be compared and on the result of converting the string-value of that node to a number using the number function is true.
-            for (unsigned lindex = 0; lindex < lhsSet.size(); ++lindex)
-                if (compare(Value(stringValue(lhsSet[lindex])).toNumber(), rhs))
+            for (auto& lhs : lhsSet) {
+                if (compare(Value(stringValue(lhs.get())).toNumber(), rhs))
                     return true;
+            }
             return false;
         }
         if (rhs.isString()) {
             // If one object to be compared is a node-set and the other is a string, then the comparison will be true
             // if and only if there is a node in the node-set such that the result of performing the comparison on
             // the string-value of the node and the other string is true.
-            for (unsigned lindex = 0; lindex < lhsSet.size(); ++lindex)
-                if (compare(stringValue(lhsSet[lindex]), rhs))
+            for (auto& lhs : lhsSet) {
+                if (compare(stringValue(lhs.get()), rhs))
                     return true;
+            }
             return false;
         }
         if (rhs.isBoolean()) {
@@ -146,15 +150,17 @@ bool EqTestOp::compare(const Value& lhs, const Value& rhs) const
     if (rhs.isNodeSet()) {
         const NodeSet& rhsSet = rhs.toNodeSet();
         if (lhs.isNumber()) {
-            for (unsigned rindex = 0; rindex < rhsSet.size(); ++rindex)
-                if (compare(lhs, Value(stringValue(rhsSet[rindex])).toNumber()))
+            for (auto& rhs : rhsSet) {
+                if (compare(lhs, Value(stringValue(rhs.get())).toNumber()))
                     return true;
+            }
             return false;
         }
         if (lhs.isString()) {
-            for (unsigned rindex = 0; rindex < rhsSet.size(); ++rindex)
-                if (compare(lhs, stringValue(rhsSet[rindex])))
+            for (auto& rhs : rhsSet) {
+                if (compare(lhs, stringValue(rhs.get())))
                     return true;
+            }
             return false;
         }
         if (lhs.isBoolean())
@@ -236,13 +242,12 @@ Value Union::evaluate() const
     const NodeSet& rhsNodes = rhs.toNodeSet();
 
     HashSet<Node*> nodes;
-    for (size_t i = 0; i < resultSet.size(); ++i)
-        nodes.add(resultSet[i]);
+    for (auto& result : resultSet)
+        nodes.add(result.get());
 
-    for (size_t i = 0; i < rhsNodes.size(); ++i) {
-        Node* node = rhsNodes[i];
-        if (nodes.add(node).isNewEntry)
-            resultSet.append(node);
+    for (auto& node : rhsNodes) {
+        if (nodes.add(node.get()).isNewEntry)
+            resultSet.append(node.get());
     }
 
     // It would also be possible to perform a merge sort here to avoid making an unsorted result,

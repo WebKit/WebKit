@@ -50,10 +50,10 @@ void Expression::setSubexpressions(Vector<std::unique_ptr<Expression>> subexpres
 {
     ASSERT(m_subexpressions.isEmpty());
     m_subexpressions = WTF::move(subexpressions);
-    for (unsigned i = 0; i < m_subexpressions.size(); ++i) {
-        m_isContextNodeSensitive |= m_subexpressions[i]->m_isContextNodeSensitive;
-        m_isContextPositionSensitive |= m_subexpressions[i]->m_isContextPositionSensitive;
-        m_isContextSizeSensitive |= m_subexpressions[i]->m_isContextSizeSensitive;
+    for (auto& subexpression : m_subexpressions) {
+        m_isContextNodeSensitive |= subexpression->m_isContextNodeSensitive;
+        m_isContextPositionSensitive |= subexpression->m_isContextPositionSensitive;
+        m_isContextSizeSensitive |= subexpression->m_isContextSizeSensitive;
     }
 }
 
