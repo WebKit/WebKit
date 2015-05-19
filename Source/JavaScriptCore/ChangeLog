@@ -1,5 +1,33 @@
 2015-05-18  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r184367. rdar://problem/20979071
+
+    2015-05-14  Filip Pizlo  <fpizlo@apple.com>
+
+            PutGlobalVar should reference the global object it's storing into
+            https://bugs.webkit.org/show_bug.cgi?id=145036
+
+            Reviewed by Michael Saboff.
+
+            This makes it easier to reason about store barrier insertion and elimination. This changes
+            the format of PutGlobalVar so that child1 is the global object and child2 is the value.
+            Previously it just had child1, and that was the value.
+
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::parseBlock):
+            * dfg/DFGClobberize.h:
+            (JSC::DFG::clobberize):
+            * dfg/DFGFixupPhase.cpp:
+            (JSC::DFG::FixupPhase::fixupNode):
+            * dfg/DFGSpeculativeJIT32_64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * dfg/DFGSpeculativeJIT64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * ftl/FTLLowerDFGToLLVM.cpp:
+            (JSC::FTL::LowerDFGToLLVM::compilePutGlobalVar):
+
+2015-05-18  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge custom patch. rdar://problem/20950052
 
     2015-05-15  Dean Jackson  <dino@apple.com>

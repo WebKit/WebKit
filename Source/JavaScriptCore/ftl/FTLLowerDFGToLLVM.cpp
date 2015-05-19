@@ -3852,7 +3852,7 @@ private:
     void compilePutGlobalVar()
     {
         m_out.store64(
-            lowJSValue(m_node->child1()), m_out.absolute(m_node->variablePointer()));
+            lowJSValue(m_node->child2()), m_out.absolute(m_node->variablePointer()));
     }
     
     void compileNotifyWrite()

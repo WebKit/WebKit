@@ -1055,9 +1055,7 @@ private:
             break;
         
         case PutGlobalVar: {
-            Node* globalObjectNode = m_insertionSet.insertNode(
-                m_indexInBlock, SpecNone, JSConstant, node->origin, 
-                OpInfo(m_graph.freeze(m_graph.globalObjectFor(node->origin.semantic))));
+            fixEdge<CellUse>(node->child1());
             speculateForBarrier(node->child2());
             break;
         }
