@@ -108,20 +108,23 @@ WebInspector.CallFrame = class CallFrame extends WebInspector.Object
 
         var url = payload.url;
         var nativeCode = false;
+        var sourceCodeLocation = null;
 
-        if (url === "[native code]") {
+        if (!url || url === "[native code]") {
             nativeCode = true;
             url = null;
+        } else {
+            var sourceCode = WebInspector.frameResourceManager.resourceForURL(url);
+            if (!sourceCode)
+                sourceCode = WebInspector.debuggerManager.scriptsForURL(url)[0];
+
+            if (sourceCode) {
+                // The lineNumber is 1-based, but we expect 0-based.
+                var lineNumber = payload.lineNumber - 1;
+                sourceCodeLocation = sourceCode.createLazySourceCodeLocation(lineNumber, payload.columnNumber);
+            }
         }
 
-        var sourceCode = WebInspector.frameResourceManager.resourceForURL(url);
-        if (!sourceCode)
-            sourceCode = WebInspector.debuggerManager.scriptsForURL(url)[0];
-
-        // The lineNumber is 1-based, but we expect 0-based.
-        var lineNumber = payload.lineNumber - 1;
-
-        var sourceCodeLocation = sourceCode ? sourceCode.createLazySourceCodeLocation(lineNumber, payload.columnNumber) : null;
         var functionName = payload.functionName !== "global code" ? payload.functionName : null;
 
         return new WebInspector.CallFrame(null, sourceCodeLocation, functionName, null, null, nativeCode);

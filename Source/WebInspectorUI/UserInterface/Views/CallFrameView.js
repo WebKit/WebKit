@@ -27,23 +27,26 @@ WebInspector.CallFrameView = class CallFrameView extends WebInspector.Object
 {
     constructor(callFrame)
     {
-        console.assert(callFrame.sourceCodeLocation && callFrame.sourceCodeLocation.sourceCode);
+        console.assert(callFrame instanceof WebInspector.CallFrame);
 
         var callFrameElement = document.createElement("div");
         callFrameElement.classList.add("call-frame", WebInspector.CallFrameView.iconClassNameForCallFrame(callFrame));
 
-        var sourceCodeLocation = callFrame.sourceCodeLocation;
-        WebInspector.linkifyElement(callFrameElement, sourceCodeLocation);
-
-        var linkElement = document.createElement("a");
-        linkElement.className = "source-link";
-        linkElement.href = sourceCodeLocation.sourceCode.url;
-        sourceCodeLocation.populateLiveDisplayLocationTooltip(linkElement);
-        sourceCodeLocation.populateLiveDisplayLocationString(linkElement, "textContent");
-
         var subtitleElement = document.createElement("span");
         subtitleElement.classList.add("subtitle");
-        subtitleElement.appendChild(linkElement);
+
+        var sourceCodeLocation = callFrame.sourceCodeLocation;
+        if (sourceCodeLocation) {
+            WebInspector.linkifyElement(callFrameElement, sourceCodeLocation);
+
+            var linkElement = document.createElement("a");
+            linkElement.className = "source-link";
+            linkElement.href = sourceCodeLocation.sourceCode.url;
+            subtitleElement.appendChild(linkElement);
+
+            sourceCodeLocation.populateLiveDisplayLocationTooltip(linkElement);
+            sourceCodeLocation.populateLiveDisplayLocationString(linkElement, "textContent");
+        }
 
         if (callFrame.functionName) {
             var imgElement = document.createElement("img");

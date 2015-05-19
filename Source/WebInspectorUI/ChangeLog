@@ -1,3 +1,40 @@
+2015-05-19  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Convert stackTrace from raw payload data to an array of CallFrames
+        https://bugs.webkit.org/show_bug.cgi?id=144982
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/LogManager.js:
+        * UserInterface/Main.html:
+        * UserInterface/Models/CallFrame.js:
+        (WebInspector.CallFrame.fromPayload):
+        Consider an empty string url as a native code as it was in 
+        WebInspector.ConsoleMessageView.prototype._firstNonNativeCallFrame
+
+        * UserInterface/Models/ConsoleMessage.js:
+        (WebInspector.ConsoleMessage):
+        Convert _stackTrace from an array of payload objects to WebInspector.StackTrace model.
+
+        * UserInterface/Models/StackTrace.js: Added.
+        (WebInspector.StackTrace):
+        (WebInspector.StackTrace.prototype.get callFrames):
+        (WebInspector.StackTrace.prototype.get firstNonNativeCallFrame): Added.
+        (WebInspector.StackTrace.fromPayload):
+        * UserInterface/Test.html:
+        * UserInterface/Views/CallFrameView.js:
+        (WebInspector.CallFrameView):
+        Don't show a URL when sourceCodeLocation is missing, fix webkit.org/b/145071.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView):
+        (WebInspector.ConsoleMessageView.prototype.toClipboardString):
+        (WebInspector.ConsoleMessageView.prototype._appendLocationLink):
+        (WebInspector.ConsoleMessageView.prototype._appendStackTrace):
+        (WebInspector.ConsoleMessageView.prototype._shouldShowStackTrace):
+        (WebInspector.ConsoleMessageView.prototype._linkifyCallFrame):
+        (WebInspector.ConsoleMessageView.prototype._firstNonNativeCallFrame): Deleted.
+
 2015-05-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve Reliability of Closing and Reopening Elements Tab

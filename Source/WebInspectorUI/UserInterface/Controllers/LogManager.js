@@ -38,7 +38,6 @@ WebInspector.LogManager = class LogManager extends WebInspector.Object
     {
         // Called from WebInspector.ConsoleObserver.
 
-        // FIXME: stackTrace should be converted to a model object.
         // FIXME: Get a request from request ID.
 
         if (parameters)
