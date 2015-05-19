@@ -1,3 +1,12 @@
+2015-05-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        platform/mac/fast/text/font-weights.html is flakey
+        https://bugs.webkit.org/show_bug.cgi?id=145149
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/mac/TestExpectations:
+
 2015-05-18  Filip Pizlo  <fpizlo@apple.com>
 
         Add a Int-or-Boolean speculation to Branch
