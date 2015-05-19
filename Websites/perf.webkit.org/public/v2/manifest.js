@@ -326,15 +326,15 @@ App.Manifest = Ember.Controller.extend({
 
         var suffix = ['\u03BC', 'm', '', 'K', 'M', 'G', 'T', 'P', 'E'];
         var threshold = sigFig >= 3 ? divisor : (divisor / 10);
-        return function (bytes) {
+        return function (value) {
             var i;
-            var sign = bytes >= 0 ? (alwaysShowSign ? '+' : '') : '-';
-            bytes = Math.abs(bytes);
-            for (i = isMiliseconds ? 1 : 2; bytes < 1; i--)
-                bytes *= divisor;
-            for (; bytes >= threshold; i++)
-                bytes /= divisor;
-            return sign + bytes.toPrecision(Math.max(2, sigFig)) + ' ' + suffix[i] + (unit || '');
+            var sign = value >= 0 ? (alwaysShowSign ? '+' : '') : '-';
+            value = Math.abs(value);
+            for (i = isMiliseconds ? 1 : 2; value < 1 && i > 0; i--)
+                value *= divisor;
+            for (; value >= threshold; i++)
+                value /= divisor;
+            return sign + value.toPrecision(Math.max(2, sigFig)) + ' ' + suffix[i] + (unit || '');
         }
     },
     _formatFetchedData: function (metricName, configurations)

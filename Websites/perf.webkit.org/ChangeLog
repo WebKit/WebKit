@@ -1,5 +1,13 @@
 2015-05-19  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Build fix. Don't fall into an infinite loop when value (renamed from bytes) is zero.
+
+        * public/v2/manifest.js:
+        (App.Manifest.Ember.Controller.extend.):
+        (App.Manifest.Ember.Controller.extend):
+
+2015-05-19  Ryosuke Niwa  <rniwa@webkit.org>
+
         Don't show unit (bytes) separaetly from SI suffixes (K, M, etc...)
         https://bugs.webkit.org/show_bug.cgi?id=145181
 
