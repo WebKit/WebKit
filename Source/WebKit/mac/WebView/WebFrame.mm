@@ -2525,7 +2525,8 @@ static NSURL *createUniqueWebDataURL()
     [NSURLProtocol setProperty:@"" forKey:@"WebDataRequest" inRequest:(NSMutableURLRequest *)request.nsURLRequest(UpdateHTTPBody)];
 #endif
 
-    SubstituteData substituteData(WebCore::SharedBuffer::wrapNSData(data), MIMEType, encodingName, [unreachableURL absoluteURL], responseURL);
+    ResourceResponse response(responseURL, MIMEType, [data length], encodingName);
+    SubstituteData substituteData(WebCore::SharedBuffer::wrapNSData(data), [unreachableURL absoluteURL], response, SubstituteData::SessionHistoryVisibility::Hidden);
 
     _private->coreFrame->loader().load(FrameLoadRequest(_private->coreFrame, request, substituteData));
 }
