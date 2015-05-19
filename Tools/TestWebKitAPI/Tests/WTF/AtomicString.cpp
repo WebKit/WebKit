@@ -39,7 +39,6 @@ TEST(WTF, AtomicStringCreationFromLiteral)
     const char* programmaticStringData = "Explicit Size Literal";
     AtomicString programmaticString(programmaticStringData, strlen(programmaticStringData), AtomicString::ConstructFromLiteral);
     ASSERT_EQ(strlen(programmaticStringData), programmaticString.length());
-    ASSERT_TRUE(programmaticStringData == programmaticStringData);
     ASSERT_TRUE(programmaticString.string().is8Bit());
     ASSERT_EQ(programmaticStringData, reinterpret_cast<const char*>(programmaticString.string().characters8()));
 }
