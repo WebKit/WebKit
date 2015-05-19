@@ -32,7 +32,7 @@
 
 #include <cairo-win32.h>
 #include "GraphicsContextPlatformPrivateCairo.h"
-#include <wtf/win/GdiObject.h>
+#include <wtf/win/GDIObject.h>
 
 using namespace std;
 

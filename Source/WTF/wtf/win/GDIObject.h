@@ -111,7 +111,7 @@ template<typename T> inline void swap(GDIObject<T>& a, GDIObject<T>& b)
 }
 
 // Nearly all GDI types use the same DeleteObject call.
-template<typename T> inline void deleteObject<T>(T object)
+template<typename T> inline void deleteObject(T object)
 {
     if (object)
         ::DeleteObject(object);

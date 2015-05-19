@@ -1,3 +1,24 @@
+2015-04-15  Руслан Ижбулатов  <lrn1986@gmail.com>
+
+        [W32] GraphicsContextCairoWin.cpp fails to compile: unallowed function template partial specialization
+        https://bugs.webkit.org/show_bug.cgi?id=143761
+
+        Reviewed by Darin Adler.
+
+        Fix deleteObject prototypte, fix header case
+
+        Apparently, <T> is unneeded here:
+
+        In file included from ../webkitgtk-2.4.8/Source/WebCore/platform/graphics/win/GraphicsContextCairoWin.cpp:35:0:
+        ../webkitgtk-2.4.8/Source/WTF/wtf/win/GdiObject.h:114:58: error: function template partial specialization 'deleteObject<T>' is not allowed
+         template<typename T> inline void deleteObject<T>(T object)
+                                                                  ^
+        As a bonus, change GdiObject.h -> GDIObject.h (this matters when
+        cross-compiling or when using case-sensitive filesystems on W32).
+
+        * wtf/win/GDIObject.h:
+        (WTF::deleteObject):
+
 2015-04-17  Milan Crha  <mcrha@redhat.com>
 
         [GTK] Replace M_SQRT2 with sqrtOfTwoDouble
