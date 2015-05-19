@@ -131,7 +131,7 @@ void iteratorClose(ExecState* exec, JSValue iterator)
     }
 }
 
-JSObject* createIterResultObject(ExecState* exec, JSValue value, bool done)
+JSObject* createIteratorResultObject(ExecState* exec, JSValue value, bool done)
 {
     JSObject* resultObject = constructEmptyObject(exec);
     resultObject->putDirect(exec->vm(), exec->propertyNames().done, jsBoolean(done));

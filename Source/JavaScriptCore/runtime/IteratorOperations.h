@@ -33,11 +33,11 @@ namespace JSC {
 
 JSValue iteratorNext(ExecState*, JSValue iterator, JSValue);
 JSValue iteratorNext(ExecState*, JSValue iterator);
-JSValue iteratorValue(ExecState*, JSValue iterResult);
-bool iteratorComplete(ExecState*, JSValue iterResult);
+JSValue iteratorValue(ExecState*, JSValue iterator);
+bool iteratorComplete(ExecState*, JSValue iterator);
 JSValue iteratorStep(ExecState*, JSValue iterator);
 void iteratorClose(ExecState*, JSValue iterator);
-JSObject* createIterResultObject(ExecState*, JSValue, bool done);
+JS_EXPORT_PRIVATE JSObject* createIteratorResultObject(ExecState*, JSValue, bool done);
 
 }
 

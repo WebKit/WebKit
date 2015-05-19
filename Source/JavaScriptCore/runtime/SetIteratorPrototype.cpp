@@ -63,9 +63,9 @@ EncodedJSValue JSC_HOST_CALL SetIteratorPrototypeFuncNext(CallFrame* callFrame)
         return JSValue::encode(throwTypeError(callFrame, ASCIILiteral("Cannot call SetIterator.next() on a non-SetIterator object")));
 
     if (iterator->next(callFrame, result))
-        return JSValue::encode(createIterResultObject(callFrame, result, false));
+        return JSValue::encode(createIteratorResultObject(callFrame, result, false));
     iterator->finish();
-    return JSValue::encode(createIterResultObject(callFrame, jsUndefined(), true));
+    return JSValue::encode(createIteratorResultObject(callFrame, jsUndefined(), true));
 }
 
 }
