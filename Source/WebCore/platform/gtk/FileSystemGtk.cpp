@@ -23,6 +23,10 @@
 #include "config.h"
 #include "FileSystem.h"
 
+#if OS(WINDOWS)
+#include <windows.h>
+#endif
+
 #include "FileMetadata.h"
 #include "UUID.h"
 #include <gio/gio.h>
