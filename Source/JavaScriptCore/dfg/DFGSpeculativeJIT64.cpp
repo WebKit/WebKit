@@ -3150,6 +3150,13 @@ void SpeculativeJIT::compile(Node* node)
             JSValueOperand value(this, node->child1());
             GPRTemporary result(this);
             
+            if (!m_interpreter.needsTypeCheck(node->child1(), SpecBoolInt32 | SpecBoolean)) {
+                m_jit.move(value.gpr(), result.gpr());
+                m_jit.and32(TrustedImm32(1), result.gpr());
+                int32Result(result.gpr(), node);
+                break;
+            }
+            
             m_jit.move(value.gpr(), result.gpr());
             m_jit.xor64(TrustedImm32(static_cast<int32_t>(ValueFalse)), result.gpr());
             JITCompiler::Jump isBoolean = m_jit.branchTest64(

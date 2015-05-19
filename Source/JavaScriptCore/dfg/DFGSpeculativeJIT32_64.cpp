@@ -3058,6 +3058,18 @@ void SpeculativeJIT::compile(Node* node)
             
         case UntypedUse: {
             JSValueOperand value(this, node->child1());
+            
+            if (!m_interpreter.needsTypeCheck(node->child1(), SpecBoolInt32 | SpecBoolean)) {
+                GPRTemporary result(this);
+                
+                GPRReg valueGPR = value.payloadGPR();
+                GPRReg resultGPR = result.gpr();
+                
+                m_jit.move(valueGPR, resultGPR);
+                int32Result(result.gpr(), node);
+                break;
+            }
+            
             GPRTemporary resultTag(this);
             GPRTemporary resultPayload(this);
             

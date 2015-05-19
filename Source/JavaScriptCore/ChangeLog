@@ -1,3 +1,23 @@
+2015-05-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Better optimize 'if' with ternaries conditional tests.
+        https://bugs.webkit.org/show_bug.cgi?id=144136
+
+        Reviewed by Benjamin Poulain.
+        
+        This is the last fix I'll do for this for now. BooleanToNumber(Untyped:) where the input
+        is proved to be either BoolInt32 or Boolean should be optimized to just masking the
+        lowest bit.
+        
+        This is another 37% speed-up on JSRegress/slow-ternaries.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileBooleanToNumber):
+
 2015-05-18  Benjamin Poulain  <bpoulain@apple.com>
 
         <rdar://problem/21003555> cloberrize() is wrong for ArithRound because it doesn't account for the arith mode

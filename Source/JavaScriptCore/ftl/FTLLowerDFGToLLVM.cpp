@@ -1080,6 +1080,11 @@ private:
         case UntypedUse: {
             LValue value = lowJSValue(m_node->child1());
             
+            if (!m_interpreter.needsTypeCheck(m_node->child1(), SpecBoolInt32 | SpecBoolean)) {
+                setInt32(m_out.bitAnd(m_out.castToInt32(value), m_out.int32One));
+                return;
+            }
+            
             LBasicBlock booleanCase = FTL_NEW_BLOCK(m_out, ("BooleanToNumber boolean case"));
             LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("BooleanToNumber continuation"));
             
