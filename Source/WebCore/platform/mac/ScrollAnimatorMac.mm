@@ -769,6 +769,15 @@ bool ScrollAnimatorMac::isRubberBandInProgress() const
 #endif
 }
 
+bool ScrollAnimatorMac::isScrollSnapInProgress() const
+{
+#if ENABLE(CSS_SCROLL_SNAP)
+    return m_scrollController.isScrollSnapInProgress();
+#else
+    return false;
+#endif
+}
+
 void ScrollAnimatorMac::immediateScrollToPointForScrollAnimation(const FloatPoint& newPosition)
 {
     ASSERT(m_scrollAnimationHelper);

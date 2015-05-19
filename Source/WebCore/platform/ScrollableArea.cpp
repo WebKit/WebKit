@@ -458,8 +458,11 @@ IntPoint ScrollableArea::nearestActiveSnapPoint(const IntPoint& currentPosition)
 void ScrollableArea::updateScrollSnapState()
 {
 #if PLATFORM(MAC)
-    if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
+    if (ScrollAnimator* scrollAnimator = existingScrollAnimator()) {
         scrollAnimator->updateScrollAnimatorsAndTimers();
+        if (scrollAnimator->isScrollSnapInProgress())
+            return;
+    }
 #endif
 
     IntPoint currentPosition = scrollPosition();

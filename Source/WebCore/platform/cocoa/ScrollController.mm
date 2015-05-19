@@ -404,6 +404,15 @@ bool ScrollController::isRubberBandInProgress() const
     return !m_client.stretchAmount().isZero();
 }
 
+bool ScrollController::isScrollSnapInProgress() const
+{
+#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
+    if (m_inScrollGesture || m_momentumScrollInProgress || m_horizontalScrollSnapTimer.isActive() || m_verticalScrollSnapTimer.isActive())
+        return true;
+#endif
+    return false;
+}
+
 void ScrollController::startSnapRubberbandTimer()
 {
     m_client.startSnapRubberbandTimer();
