@@ -610,8 +610,7 @@ private:
                     break;
                 }
 
-                case StoreBarrier:
-                case StoreBarrierWithNullCheck: {
+                case StoreBarrier: {
                     Node* target = node->child1().node();
                     if (m_sinkCandidates.contains(target)) {
                         ASSERT(target->isPhantomAllocation());
@@ -849,7 +848,6 @@ private:
         case Check:
         case PutHint:
         case StoreBarrier:
-        case StoreBarrierWithNullCheck:
             break;
 
         case PutStructure:
