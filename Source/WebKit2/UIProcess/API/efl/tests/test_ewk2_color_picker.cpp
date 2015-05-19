@@ -98,6 +98,7 @@ public:
         // 5. Test color picker is shown.
         EXPECT_TRUE(s_isColorPickerShown);
         s_isColorPickerShown = false;
+        return true;
     }
 
     static Eina_Bool hideColorPickerByRemovingElement(Ewk_View_Smart_Data* smartData)
@@ -106,6 +107,7 @@ public:
         EXPECT_TRUE(s_isColorPickerShown);
         s_isColorPickerShown = false;
         evas_object_smart_callback_call(smartData->self, "input,type,color,request", 0);
+        return true;
     }
 
 protected:

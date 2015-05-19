@@ -1,3 +1,14 @@
+2015-05-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix return-type warnings in test_ewk2_color_picker.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=145122
+
+        Reviewed by Gyuyoung Kim.
+
+        * UIProcess/API/efl/tests/test_ewk2_color_picker.cpp:
+        (EWK2ColorPickerTest::hideColorPicker):
+        (EWK2ColorPickerTest::hideColorPickerByRemovingElement):
+
 2015-05-18  Skachkov Alexandr  <gskachkov@gmail.com>
 
         [ES6] Arrow function syntax. Feature flag for arrow function
