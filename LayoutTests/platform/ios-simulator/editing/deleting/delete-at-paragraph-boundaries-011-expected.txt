@@ -1,0 +1,44 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of P > DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of P > DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document toDOMRange:range from 0 of P > DIV > BODY > HTML > #document to 0 of P > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x254 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x90
+          RenderText {#text} at (0,1) size 66x28
+            text run at (0,1) width 66: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,31) size 622x28
+            text run at (0,31) width 622: "Delete at the end of document when there is a BR following a P. "
+          RenderBR {BR} at (621,53) size 1x0
+          RenderText {#text} at (0,61) size 437x28
+            text run at (0,61) width 437: "This is a test case for rdar://problem/4110366"
+        RenderBlock {DIV} at (14,120) size 756x120
+          RenderText {#text} at (0,1) size 190x28
+            text run at (0,1) width 190: "Expected Results: "
+          RenderBR {BR} at (189,23) size 1x0
+          RenderText {#text} at (0,31) size 715x58
+            text run at (0,31) width 239: "Red box with four lines. "
+            text run at (238,31) width 477: "The second line is a nested red box with the word"
+            text run at (0,61) width 80: "\"hello\". "
+            text run at (79,61) width 311: "The other three lines are empty. "
+          RenderBR {BR} at (389,83) size 1x0
+          RenderText {#text} at (0,91) size 461x28
+            text run at (0,91) width 461: "Selection is a caret at the start of the fourth line."
+      RenderBlock {DIV} at (0,278) size 784x144 [border: (2px solid #FF0000)]
+        RenderBlock {P} at (2,26) size 780x34 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,3) size 48x28
+            text run at (2,3) width 48: "hello"
+        RenderBlock {P} at (2,84) size 780x34 [border: (2px solid #FF0000)]
+          RenderBR {BR} at (2,3) size 0x28
+        RenderBlock (anonymous) at (2,142) size 780x0
+caret: position 0 of child 0 {BR} of child 1 {P} of child 3 {DIV} of body

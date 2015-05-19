@@ -1,0 +1,19 @@
+CONSOLE MESSAGE: line 41: TypeError: textInputController.selectedRange is not a function. (In 'textInputController.selectedRange()', 'textInputController.selectedRange' is undefined)
+#1 DIV element with a non-editable element only align center:
+
+Hello
+#2 DIV element with a non-editable element only align left:
+
+Hello
+#3 DIV element with a non-editable element only align right:
+
+Hello
+#4 DIV element with two non-editable elementwith padding:
+
+Hello World
+#5 DIV element empty
+
+#6 non editable DIV element with an editable empty span element
+
+Hello: 
+
