@@ -610,7 +610,15 @@ void AccessibilityObject::findMatchingObjects(AccessibilitySearchCriteria* crite
 static PassRefPtr<Range> rangeClosestToRange(Range* referenceRange, PassRefPtr<Range> afterRange, PassRefPtr<Range> beforeRange)
 {
     ASSERT(referenceRange);
+    
+    // The treeScope for shadow nodes may not be the same scope as another element in a document.
+    // Comparisons may fail in that case, which are expected behavior and should not assert.
+    if (afterRange && ((afterRange->startPosition().anchorNode()->compareDocumentPosition(referenceRange->endPosition().anchorNode()) & Node::DOCUMENT_POSITION_DISCONNECTED) == Node::DOCUMENT_POSITION_DISCONNECTED))
+        return nullptr;
     ASSERT(!afterRange || afterRange->startPosition() >= referenceRange->endPosition());
+    
+    if (beforeRange && ((beforeRange->endPosition().anchorNode()->compareDocumentPosition(referenceRange->startPosition().anchorNode()) & Node::DOCUMENT_POSITION_DISCONNECTED) == Node::DOCUMENT_POSITION_DISCONNECTED))
+        return nullptr;
     ASSERT(!beforeRange || beforeRange->endPosition() <= referenceRange->startPosition());
     
     if (!referenceRange || (!afterRange && !beforeRange))
@@ -710,6 +718,12 @@ String AccessibilityObject::selectText(AccessibilitySelectTextCriteria* criteria
     
     // Determine which candidate is closest to the selection and perform the activity.
     if (RefPtr<Range> closestStringRange = rangeClosestToRange(selectedStringRange.get(), closestAfterStringRange, closestBeforeStringRange)) {
+        // If the search started within a text control, ensure that the result is inside that element.
+        if (element() && element()->isTextFormControl()) {
+            if (!closestStringRange->startContainer()->isDescendantOrShadowDescendantOf(element()) || !closestStringRange->endContainer()->isDescendantOrShadowDescendantOf(element()))
+                return String();
+        }
+        
         String closestString = closestStringRange->text();
         bool replaceSelection = false;
         if (frame->selection().setSelectedRange(closestStringRange.get(), DOWNSTREAM, true)) {
