@@ -6246,6 +6246,11 @@ webcoregtk_sources += \
 platformgtk_sources += \
 	Source/WebCore/platform/gtk/WidgetBackingStoreGtkX11.h \
 	Source/WebCore/platform/gtk/WidgetBackingStoreGtkX11.cpp
+if USE_OPENGL
+platformgtk_sources += \
+	Source/WebCore/platform/gtk/RedirectedXCompositeWindow.cpp \
+	Source/WebCore/platform/gtk/RedirectedXCompositeWindow.h
+endif # END USE_OPENGL
 if USE_GLX
 webcoregtk_sources += \
 	Source/WebCore/platform/graphics/glx/GLContextGLX.cpp \
@@ -6267,19 +6272,19 @@ if TARGET_X11_OR_WAYLAND
 platformgtk_sources += \
 	Source/WebCore/platform/cairo/WidgetBackingStoreCairo.h \
 	Source/WebCore/platform/cairo/WidgetBackingStoreCairo.cpp
+endif # END TARGET_X11_OR_WAYLAND
+
 if USE_OPENGL
 platformgtk_sources += \
 	Source/WebCore/platform/graphics/GLContext.cpp \
-	Source/WebCore/platform/graphics/GLContext.h \
-	Source/WebCore/platform/gtk/RedirectedXCompositeWindow.cpp \
-	Source/WebCore/platform/gtk/RedirectedXCompositeWindow.h
+	Source/WebCore/platform/graphics/GLContext.h
 endif # END USE_OPENGL
+
 if USE_EGL
 webcoregtk_sources += \
 	Source/WebCore/platform/graphics/egl/GLContextEGL.cpp \
 	Source/WebCore/platform/graphics/egl/GLContextEGL.h
 endif # END USE_EGL
-endif # END TARGET_X11_OR_WAYLAND
 
 if TARGET_WIN32
 webcore_sources += \

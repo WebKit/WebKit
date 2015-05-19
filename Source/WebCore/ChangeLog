@@ -1,5 +1,27 @@
 2015-04-15  Руслан Ижбулатов  <lrn1986@gmail.com>
 
+        [W32] Fails to build - missing references to OpenGL context functions
+        https://bugs.webkit.org/show_bug.cgi?id=143769
+
+        Reviewed by Carlos Garcia Campos.
+
+        Also use GL-related files when compiling with MinGW
+        CXXLD    libwebkitgtk-3.0.la
+        ./.libs/../source/webcore/platform/graphics/.libs/libplatform_la-graphicscontext3dprivate.o: In function `GraphicsContext3DPrivate':
+        /src/mingw/webkitgtk-2.4.8-1\bld/../webkitgtk-2.4.8/Source/WebCore/platform/graphics/GraphicsContext3DPrivate.cpp:59: undefined reference to `__ZN7WebCore9GLContext14sharingContextEv'
+        /src/mingw/webkitgtk-2.4.8-1\bld/../webkitgtk-2.4.8/Source/WebCore/platform/graphics/GraphicsContext3DPrivate.cpp:59: undefined reference to `__ZN7WebCore9GLContext22createOffscreenContextEPS0_'
+        ./.libs/../source/webcore/platform/graphics/.libs/libplatform_la-graphicscontext3dprivate.o: In function `platformContext':
+        /src/mingw/webkitgtk-2.4.8-1\bld/../webkitgtk-2.4.8/Source/WebCore/platform/graphics/GraphicsContext3DPrivate.cpp:84: undefined reference to `__ZN7WebCore9GLContext10getCurrentEv'
+
+        Becuase GLContext.cpp is not used, which happens because it's
+        under TARGET_X11_OR_WAYLAND condition in the GNUmakefile.list.am.
+        Move TARGET_X11_OR_WAYLAND up a bit to free up GLContext.cpp (now
+        only protected by USE_OPENGL).
+
+        * GNUmakefile.list.am:
+
+2015-04-15  Руслан Ижбулатов  <lrn1986@gmail.com>
+
         [W32] Wrong configure tests for OpenGL on Windows, wrong ifdefs
         https://bugs.webkit.org/show_bug.cgi?id=143763
 
