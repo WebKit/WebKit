@@ -51,7 +51,6 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${DERIVED_SOURCES_WEBCORE_DIR}"
     "${DERIVED_SOURCES_WEBKITLEGACY_DIR}"
     "${JAVASCRIPTCORE_DIR}/dfg"
-    "${PDFKIT_INCLUDE_DIRECTORY}"
     "${WEBCORE_DIR}/accessibility/mac"
     "${WEBCORE_DIR}/bindings/objc"
     "${WEBCORE_DIR}/bridge"
@@ -81,7 +80,11 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/text/cf"
     "${WEBCORE_DIR}/platform/text/mac"
     "${WEBCORE_DIR}/plugins/mac"
+    ../../WebKitLibraries
+)
 
+list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
+    "${PDFKIT_INCLUDE_DIRECTORY}"
     mac
     mac/Carbon
     mac/DefaultDelegates
@@ -97,7 +100,6 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     mac/WebInspector
     mac/WebView
     Storage
-    ../../WebKitLibraries
 )
 
 list(APPEND WebKit_SOURCES

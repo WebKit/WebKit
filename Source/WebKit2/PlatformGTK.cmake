@@ -486,7 +486,10 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/WebPage/gtk"
     "${WTF_DIR}/wtf/gtk/"
     "${WTF_DIR}/wtf/gobject"
-    ${WTF_DIR}
+    "${WTF_DIR}"
+)
+
+list(APPEND WebKit2_SYSTEM_INCLUDE_DIRECTORIES
     ${CAIRO_INCLUDE_DIRS}
     ${ENCHANT_INCLUDE_DIRS}
     ${GEOCLUE_INCLUDE_DIRS}
@@ -495,14 +498,15 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
 )
 
 if (USE_LIBNOTIFY)
-list(APPEND WebKit2_INCLUDE_DIRECTORIES
+list(APPEND WebKit2_SYSTEM_INCLUDE_DIRECTORIES
     ${LIBNOTIFY_INCLUDE_DIRS}
 )
 endif ()
 
 set(WebKit2CommonIncludeDirectories ${WebKit2_INCLUDE_DIRECTORIES})
+set(WebKit2CommonSystemIncludeDirectories ${WebKit2_SYSTEM_INCLUDE_DIRECTORIES})
 
-list(APPEND WebKit2_INCLUDE_DIRECTORIES
+list(APPEND WebKit2_SYSTEM_INCLUDE_DIRECTORIES
     ${GLIB_INCLUDE_DIRS}
     ${GTK_INCLUDE_DIRS}
     ${GTK_UNIX_PRINT_INCLUDE_DIRS}
@@ -745,13 +749,13 @@ if (ENABLE_PLUGIN_PROCESS_GTK2)
         APPEND
         PROPERTY COMPILE_DEFINITIONS GTK_API_VERSION_2=1
     )
-    set_property(
-        TARGET WebKitPluginProcess2
-        APPEND
-        PROPERTY INCLUDE_DIRECTORIES
-            ${WebKit2CommonIncludeDirectories}
-            ${GTK2_INCLUDE_DIRS}
-            ${GDK2_INCLUDE_DIRS}
+    target_include_directories(WebKitPluginProcess2 PRIVATE
+        ${WebKit2CommonIncludeDirectories}
+    )
+    target_include_directories(WebKitPluginProcess2 SYSTEM PRIVATE
+         ${WebKit2CommonSystemIncludeDirectories}
+         ${GTK2_INCLUDE_DIRS}
+         ${GDK2_INCLUDE_DIRS}
     )
 
     set(WebKitPluginProcess2_LIBRARIES

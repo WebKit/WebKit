@@ -129,6 +129,9 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${DERIVED_SOURCES_WEBCORE_DIR}"
     "${CMAKE_SOURCE_DIR}/Source"
     "${CMAKE_BINARY_DIR}"
+)
+
+set(WebCore_SYSTEM_INCLUDE_DIRECTORIES
     ${ICU_INCLUDE_DIRS}
 )
 
@@ -3000,14 +3003,14 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
     # For platforms that want to use system-provided OpenGL (ES) headers,
     # these include directories need to be added before the ANGLE directories.
     if (OPENGL_FOUND)
-        list(APPEND WebCore_INCLUDE_DIRECTORIES
+        list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
             ${OPENGL_INCLUDE_DIR}
         )
         list(APPEND WebCore_LIBRARIES
             ${OPENGL_gl_LIBRARY}
         )
     elseif (OPENGLES2_FOUND)
-        list(APPEND WebCore_INCLUDE_DIRECTORIES
+        list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
             ${OPENGLES2_INCLUDE_DIR}
         )
         list(APPEND WebCore_LIBRARIES
@@ -3521,6 +3524,7 @@ WEBKIT_WRAP_SOURCELIST(${WebCore_IDL_FILES} ${WebCore_SOURCES})
 WEBKIT_WRAP_SOURCELIST(${WebCoreTestSupport_IDL_FILES} ${WebCoreTestSupport_SOURCES})
 
 include_directories(${WebCore_INCLUDE_DIRECTORIES} ${WebCoreTestSupport_INCLUDE_DIRECTORIES})
+include_directories(SYSTEM ${WebCore_SYSTEM_INCLUDE_DIRECTORIES})
 
 if (MSVC)
     ADD_PRECOMPILED_HEADER("WebCorePrefix.h" "WebCorePrefix.cpp" WebCore_SOURCES)
@@ -3549,12 +3553,9 @@ endif ()
 if (ENABLE_GRAPHICS_CONTEXT_3D)
     add_library(ANGLESupport STATIC ${ANGLESupport_SOURCES})
     set_target_properties(ANGLESupport PROPERTIES FOLDER "WebCore")
-    set_property(
-        TARGET ANGLESupport
-        APPEND
-        PROPERTY INCLUDE_DIRECTORIES
-            "${THIRDPARTY_DIR}/ANGLE/include"
-            "${THIRDPARTY_DIR}/ANGLE/src"
+    target_include_directories(ANGLESupport PRIVATE
+        "${THIRDPARTY_DIR}/ANGLE/include"
+        "${THIRDPARTY_DIR}/ANGLE/src"
     )
     list(APPEND WebCore_LIBRARIES ANGLESupport)
     WEBKIT_SET_EXTRA_COMPILER_FLAGS(ANGLESupport IGNORECXX_WARNINGS)

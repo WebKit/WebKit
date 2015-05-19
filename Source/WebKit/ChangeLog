@@ -1,3 +1,17 @@
+2015-05-18  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] Ignore warnings in system headers
+        https://bugs.webkit.org/show_bug.cgi?id=144747
+
+        Reviewed by Darin Adler.
+
+        Separate include directories into WebKit project includes and system includes. Suppress all
+        warnings from headers in system include directories using the SYSTEM argument to
+        the include_directories command.
+
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+
 2015-05-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Move Windows build target to Windows 7 (or newer)

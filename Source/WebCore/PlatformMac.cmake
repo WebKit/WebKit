@@ -34,7 +34,9 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/spi/cocoa"
     "${WEBCORE_DIR}/platform/spi/mac"
     "${WEBCORE_DIR}/plugins/mac"
+)
 
+list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
     "/usr/include/libxslt"
     "/usr/include/libxml2"
 )

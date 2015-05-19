@@ -33,7 +33,10 @@ set(JavaScriptCore_INCLUDE_DIRECTORIES
     "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}"
     "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector"
     "${CMAKE_SOURCE_DIR}/Source"
-    ${ICU_INCLUDE_DIRS}
+)
+
+set(JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES
+    "${ICU_INCLUDE_DIRS}"
 )
 
 set(JavaScriptCore_SOURCES
@@ -836,7 +839,7 @@ if (ENABLE_FTL_JIT)
     target_link_libraries(llvmForJSC ${LLVM_STATIC_LIBRARIES} "pthread" "dl" -Wl,--version-script=${JAVASCRIPTCORE_DIR}/llvm/library/libllvmForJSC.version)
 
     # Added extra items for JavaScriptCore
-    list(APPEND JavaScriptCore_INCLUDE_DIRECTORIES
+    list(APPEND JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES
         ${LLVM_INCLUDE_DIRS}
     )
 
@@ -1186,6 +1189,7 @@ add_subdirectory(shell)
 
 WEBKIT_WRAP_SOURCELIST(${JavaScriptCore_SOURCES})
 include_directories(${JavaScriptCore_INCLUDE_DIRECTORIES})
+include_directories(SYSTEM ${JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES})
 add_library(JavaScriptCore ${JavaScriptCore_LIBRARY_TYPE} ${JavaScriptCore_HEADERS} ${JavaScriptCore_SOURCES})
 target_link_libraries(JavaScriptCore ${JavaScriptCore_LIBRARIES})
 set_target_properties(JavaScriptCore PROPERTIES COMPILE_DEFINITIONS "BUILDING_JavaScriptCore")

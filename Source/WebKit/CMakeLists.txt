@@ -14,6 +14,8 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${WTF_DIR}"
 )
 
+set(WebKit_SYSTEM_INCLUDE_DIRECTORIES "")
+
 set(WebKit_LIBRARIES
     JavaScriptCore
     WTF
@@ -23,6 +25,7 @@ set(WebKit_LIBRARIES
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 include_directories(${WebKit_INCLUDE_DIRECTORIES})
+include_directories(SYSTEM ${WebKit_SYSTEM_INCLUDE_DIRECTORIES})
 
 if (MSVC)
     ADD_PRECOMPILED_HEADER("WebKitPrefix.h" "win/WebKitPrefix.cpp" WebKit_SOURCES)
