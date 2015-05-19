@@ -235,11 +235,11 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #endif
 
 #if !defined(ENABLE_INPUT_TYPE_COLOR)
-#define ENABLE_INPUT_TYPE_COLOR 1
+#define ENABLE_INPUT_TYPE_COLOR 0
 #endif
 
 #if !defined(ENABLE_INPUT_TYPE_COLOR_POPOVER)
-#define ENABLE_INPUT_TYPE_COLOR_POPOVER 1
+#define ENABLE_INPUT_TYPE_COLOR_POPOVER 0
 #endif
 
 #if !defined(ENABLE_FILE_REPLACEMENT)
@@ -600,7 +600,7 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #endif
 
 #if !defined(ENABLE_NAVIGATOR_HWCONCURRENCY)
-#define ENABLE_NAVIGATOR_HWCONCURRENCY 1
+#define ENABLE_NAVIGATOR_HWCONCURRENCY 0
 #endif
 
 #if !defined(ENABLE_NETSCAPE_PLUGIN_API)
@@ -682,7 +682,7 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #endif
 
 #if !defined(ENABLE_STREAMS_API)
-#define ENABLE_STREAMS_API 1
+#define ENABLE_STREAMS_API 0
 #endif
 
 #if !defined(ENABLE_SVG_FONTS)
@@ -774,7 +774,7 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #endif
 
 #if !defined(ENABLE_WILL_REVEAL_EDGE_EVENTS)
-#define ENABLE_WILL_REVEAL_EDGE_EVENTS 1
+#define ENABLE_WILL_REVEAL_EDGE_EVENTS 0
 #endif
 
 #if !defined(ENABLE_XHR_TIMEOUT)
