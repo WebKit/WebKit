@@ -1,3 +1,18 @@
+2015-05-19  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r184595.
+        https://bugs.webkit.org/show_bug.cgi?id=145197
+
+        Introduced a crash in 15 layout tests on Mavericks on #webkit
+        (Requested by rniwa on #webkit).
+
+        Reverted changeset:
+
+        "Media Controls stop updating after hovering for a few
+        seconds."
+        https://bugs.webkit.org/show_bug.cgi?id=144770
+        http://trac.webkit.org/changeset/184595
+
 2015-05-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         REGRESSION(r181571): Build broken when USE(OPENGL_ES_2) is defined.

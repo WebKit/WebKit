@@ -202,12 +202,6 @@ ControllerIOS.prototype = {
         // Explicitly do nothing to override base-class behavior.
     },
 
-    controlsAreHidden: function()
-    {
-        // Controls are only ever actually hidden when they are removed from the tree
-        return !this.controls.panelContainer.parentElement;
-    },
-
     addControls: function() {
         this.base.appendChild(this.controls.inlinePlaybackPlaceholder);
         this.base.appendChild(this.controls.panelContainer);
@@ -386,15 +380,6 @@ ControllerIOS.prototype = {
         this.updateShouldListenForPlaybackTargetAvailabilityEvent();
     },
 
-    handlePanelTransitionEnd: function(event)
-    {
-        var opacity = window.getComputedStyle(this.controls.panel).opacity;
-        if (!parseInt(opacity) && !this.controlsAlwaysVisible()) {
-            this.base.removeChild(this.controls.inlinePlaybackPlaceholder);
-            this.base.removeChild(this.controls.panelContainer);
-        }
-    },
-
     presentationMode: function() {
         if ('webkitPresentationMode' in this.video)
             return this.video.webkitPresentationMode;
@@ -548,19 +533,6 @@ ControllerIOS.prototype = {
             this.hasPlayed = true;
         else
             this.showControls();
-    },
-
-    showControls: function()
-    {
-        this.updateShouldListenForPlaybackTargetAvailabilityEvent();
-        if (this.showInlinePlaybackPlaceholderOnly())
-            return;
-        
-        this.updateForShowingControls();
-        if (this.shouldHaveControls()) {
-            this.base.appendChild(this.controls.inlinePlaybackPlaceholder);
-            this.base.appendChild(this.controls.panelContainer);
-        }
     },
 
     setShouldListenForPlaybackTargetAvailabilityEvent: function(shouldListen)
