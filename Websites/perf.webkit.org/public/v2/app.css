@@ -587,6 +587,12 @@ form .analysis-group > * {
     font-size: 0.9rem;
 }
 
+.analysis-bugs .icon-button {
+    margin-left: 0.2rem;
+    width: 0.8rem;
+    height: 0.8rem;
+}
+
 .analysis-bugs .hidden {
     display: none;
 }

@@ -86,7 +86,7 @@
                                 {{#if chartData}}
                                     <div class="dashboard-status">
                                         {{#if latestStatus}}
-                                            {{latestStatus.currentValue}} {{chartData.unit}}
+                                            {{latestStatus.currentValue}}{{chartData.unit}}
                                             {{#if latestStatus.label}}
                                                 <span {{bind-attr class=":status-label latestStatus.className"}}>{{latestStatus.label}}</span>
                                             {{/if}}
@@ -264,9 +264,8 @@
                     <tr>
                         <th>{{label}}</th>
                         <td>
-                            {{#each bugs}}
-                                <a {{bind-attr href=bugUrl}} target="_blank">{{bugNumber}}</a>
-                            {{/each}}
+                        [{{bugUrl}}]
+                        <a {{bind-attr href=bugUrl}} target="_blank">{{bugNumber}}</a>
                         </td>
                     </tr>
                 {{/if}}
@@ -736,16 +735,26 @@
     <script type="text/x-handlebars" data-template-name="analysisStatusForm">
         <table class="analysis-bugs">
             <tbody>
-                {{#each bugTrackers}}
+                {{#each model.bugs}}
                     <tr>
-                        <th><label {{bind-attr for=elementId}}>{{label}}</label></th>
+                        <th>{{bugTracker.name}}</th>
                         <td>
-                            <form {{action "associateBug" this editedBugNumber on="submit"}}>
-                                {{input id=elementId type=text value=editedBugNumber}}
-                            </form>
+                            <a {{bind-attr href=url}} target="_blank">{{number}}</a>
+                            <a href="javascript:false" {{action "deleteBug" this}}>{{partial "close-button"}}</a>
                         </td>
                     </tr>
                 {{/each}}
+                {{#if bugTrackers}}
+                    <tr>
+                        <td>
+                            {{view Ember.Select content=bugTrackers optionValuePath="content" optionLabelPath="content.name" value=chosenBugTracker}}
+                        </td>
+                        <td>
+                            {{input id=elementId type=text value=editedBugNumber}}
+                            <button {{action "addBug" chosenBugTracker editedBugNumber}}>Add</button>
+                        </td>
+                    </tr>
+                {{/if}}
             </tbody>
             <tbody>
                 <tr>

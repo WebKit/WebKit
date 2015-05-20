@@ -61,6 +61,9 @@ App.Bug = App.Model.extend({
     bugTracker: DS.belongsTo('BugTracker'),
     createdAt: DS.attr('date'),
     number: DS.attr('number'),
+    url: function () {
+        return this.get('bugTracker').urlFromBugNumber(this.get('number'));
+    }.property('bugTracker.bugUrl', 'number'),
     label: function () {
         return this.get('bugTracker').get('label') + ': ' + this.get('number');
     }.property('name', 'bugTracker'),
@@ -94,6 +97,12 @@ App.BugAdapter = DS.RESTAdapter.extend({
         return PrivilegedAPI.sendRequest('associate-bug', param).then(function (data) {
             param['id'] = data['bugId'];
             return {'bug': param};
+        });
+    },
+    deleteRecord: function (store, type, record)
+    {
+        return PrivilegedAPI.sendRequest('associate-bug', {bugToDelete: record.get('id')}).then(function () {
+            return {};
         });
     }
 });

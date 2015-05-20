@@ -1,5 +1,40 @@
 2015-05-20  Ryosuke Niwa  <rniwa@webkit.org>
 
+        UI to associate bugs with an analysis task is crappy
+        https://bugs.webkit.org/show_bug.cgi?id=145198
+
+        Reviewed by Andreas Kling.
+
+        Make the UI less crappy by linkifying bug numbers and adding an explicit button to disassociate
+        a bug and a separate select view with a text field to associate a new bug instead of implicitly
+        updating or deleting the existing record based on what the user had typed.
+
+        * init-database.sql: Removed the constraint that each bug tracker should appear exactly once for
+        a given analysis task since it's perfectly reasonable for a given task to be associated with
+        multiple WebKit bugs.
+
+        * public/privileged-api/associate-bug.php:
+        (main): Only remove the bug specified by newly added bugToDelete instead of implicitly deleting
+        one that matches the analysis task and the bug tracker when the bug number is falsey.
+
+        * public/v2/analysis.js:
+        (App.Bug.url): Added.
+        (App.BugAdapter.deleteRecord): Added. Uses the privileged API to delete the record.
+
+        * public/v2/app.css:
+
+        * public/v2/app.js:
+        (App.AnalysisTaskController.actions.addBug): Added.
+        (App.AnalysisTaskController.actions.deleteBug): Added.
+        (App.AnalysisTaskController.associateBug): Deleted.
+
+        * public/v2/index.html: Updated the templates.
+
+        * public/v2/manifest.js:
+        (App.BugTracker.urlFromBugNumber): Added.
+
+2015-05-20  Ryosuke Niwa  <rniwa@webkit.org>
+
         A/B testing rootSets should provide commit times as well as revisions
         https://bugs.webkit.org/show_bug.cgi?id=145207
 

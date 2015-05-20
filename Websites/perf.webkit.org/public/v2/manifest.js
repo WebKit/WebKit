@@ -52,6 +52,10 @@ App.BugTracker = App.NameLabelModel.extend({
     bugUrl: DS.attr('string'),
     newBugUrl: DS.attr('string'),
     repositories: DS.hasMany('repository'),
+    urlFromBugNumber: function (bugNumber) {
+        var template = this.get('bugUrl');
+        return template && bugNumber ? template.replace(/\$number/g, bugNumber) : null;
+    }
 });
 
 App.DateArrayTransform = DS.Transform.extend({

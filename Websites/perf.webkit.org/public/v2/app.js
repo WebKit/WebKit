@@ -1196,6 +1196,7 @@ App.AnalysisTaskController = Ember.Controller.extend({
                 elementId: 'bug-' + bugTracker.get('id'),
                 content: bugTracker,
                 bugNumber: bugNumber,
+                bugUrl: bugTracker.urlFromBugNumber(bugNumber),
                 editedBugNumber: bugNumber,
             });
         }));
@@ -1295,15 +1296,25 @@ App.AnalysisTaskController = Ember.Controller.extend({
         });
     }.observes('analysisPoints'),
     actions: {
-        associateBug: function (bugTracker, bugNumber)
+        addBug: function (bugTracker, bugNumber)
         {
             var model = this.get('model');
-            this.store.createRecord('bug',
-                {task: this.get('model'), bugTracker: bugTracker.get('content'), number: bugNumber}).save().then(function () {
-                    // FIXME: Should we notify the user?
-                }, function (error) {
-                    alert('Failed to associate the bug: ' + error);
-                });
+            if (!bugTracker)
+                bugTracker = this.get('bugTrackers').objectAt(0);
+            var bug = {task: this.get('model'), bugTracker: bugTracker.get('content'), number: bugNumber};
+            this.store.createRecord('bug', bug).save().then(function () {
+                alert('Associated the ' + bugTracker.get('name') + ' ' + bugNumber + ' with this analysis.');
+            }, function (error) {
+                alert('Failed to associate the bug: ' + error);
+            });
+        },
+        deleteBug: function (bug)
+        {
+            bug.destroyRecord().then(function () {
+                alert('Successfully deassociated the bug.');
+            }, function (error) {
+                alert('Failed to disassociate the bug: ' + error);
+            });
         },
         saveStatus: function ()
         {
