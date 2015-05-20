@@ -39,10 +39,6 @@
 #include <WebCore/NotImplemented.h>
 #include <wtf/RunLoop.h>
 
-#if OS(DARWIN)
-#include "MachPort.h"
-#endif
-
 using namespace WebCore;
 
 namespace WebKit {

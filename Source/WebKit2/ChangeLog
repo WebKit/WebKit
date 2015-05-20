@@ -1,3 +1,16 @@
+2015-05-20  Sungmann Cho  <sungmann.cho@navercorp.com>
+
+        Minor cleanups to PluginProcessProxy.
+        https://bugs.webkit.org/show_bug.cgi?id=145199
+
+        Reviewed by Anders Carlsson.
+
+        1. Remove unnecessary forward declaration.
+        2. Remove unnecessary #include.
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        * UIProcess/Plugins/PluginProcessProxy.h:
+
 2015-05-20  Marcos Chavarría Teijeiro  <mchavarria@igalia.com>
 
         [GTK] Add some documentation to WebKitWebExtension
