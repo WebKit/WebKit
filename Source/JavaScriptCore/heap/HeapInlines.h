@@ -75,7 +75,6 @@ inline bool Heap::isRemembered(const void* ptr)
     const JSCell* cell = static_cast<const JSCell*>(ptr);
     ASSERT(cell);
     ASSERT(!Options::enableConcurrentJIT() || !isCompilationThread());
-    ASSERT(MarkedBlock::blockFor(cell)->isRemembered(cell) == cell->isRemembered());
     return cell->isRemembered();
 }
 

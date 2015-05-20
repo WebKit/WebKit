@@ -147,7 +147,6 @@ namespace JSC {
         // and was successfully cleared and false otherwise.
         bool clearNewlyAllocated();
         void clearMarks();
-        void clearRememberedSet();
         template <HeapOperation collectionType>
         void clearMarksWithCollectionType();
 
@@ -209,10 +208,8 @@ namespace JSC {
         size_t m_endAtom; // This is a fuzzy end. Always test for < m_endAtom.
 #if ENABLE(PARALLEL_GC)
         WTF::Bitmap<atomsPerBlock, WTF::BitmapAtomic, uint8_t> m_marks;
-        WTF::Bitmap<atomsPerBlock, WTF::BitmapAtomic, uint8_t> m_rememberedSet;
 #else
         WTF::Bitmap<atomsPerBlock, WTF::BitmapNotAtomic, uint8_t> m_marks;
-        WTF::Bitmap<atomsPerBlock, WTF::BitmapNotAtomic, uint8_t> m_rememberedSet;
 #endif
         std::unique_ptr<WTF::Bitmap<atomsPerBlock>> m_newlyAllocated;
 
@@ -345,26 +342,6 @@ namespace JSC {
     inline size_t MarkedBlock::atomNumber(const void* p)
     {
         return (reinterpret_cast<Bits>(p) - reinterpret_cast<Bits>(this)) / atomSize;
-    }
-
-    inline void MarkedBlock::setRemembered(const void* p)
-    {
-        m_rememberedSet.set(atomNumber(p));
-    }
-
-    inline void MarkedBlock::clearRemembered(const void* p)
-    {
-        m_rememberedSet.clear(atomNumber(p));
-    }
-
-    inline void MarkedBlock::atomicClearRemembered(const void* p)
-    {
-        m_rememberedSet.concurrentTestAndClear(atomNumber(p));
-    }
-
-    inline bool MarkedBlock::isRemembered(const void* p)
-    {
-        return m_rememberedSet.get(atomNumber(p));
     }
 
     inline bool MarkedBlock::isMarked(const void* p)

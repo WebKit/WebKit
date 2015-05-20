@@ -51,13 +51,6 @@ struct ClearMarks : MarkedBlock::VoidFunctor {
     }
 };
 
-struct ClearRememberedSet : MarkedBlock::VoidFunctor {
-    void operator()(MarkedBlock* block)
-    {
-        block->clearRememberedSet();
-    }
-};
-
 struct Sweep : MarkedBlock::VoidFunctor {
     void operator()(MarkedBlock* block) { block->sweep(); }
 };
@@ -142,7 +135,6 @@ public:
     void didAllocateInBlock(MarkedBlock*);
 
     void clearMarks();
-    void clearRememberedSet();
     void clearNewlyAllocated();
     void sweep();
     void zombifySweep();
@@ -275,11 +267,6 @@ inline void MarkedSpace::didAllocateInBlock(MarkedBlock* block)
 #else
     UNUSED_PARAM(block);
 #endif
-}
-
-inline void MarkedSpace::clearRememberedSet()
-{
-    forEachBlock<ClearRememberedSet>();
 }
 
 inline size_t MarkedSpace::objectCount()

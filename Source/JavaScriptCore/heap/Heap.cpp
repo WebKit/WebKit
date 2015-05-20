@@ -798,10 +798,8 @@ void Heap::clearRememberedSet(Vector<const JSCell*>& rememberedSet)
 {
 #if ENABLE(GGC)
     GCPHASE(ClearRememberedSet);
-    for (auto* cell : rememberedSet) {
-        MarkedBlock::blockFor(cell)->clearRemembered(cell);
+    for (auto* cell : rememberedSet)
         const_cast<JSCell*>(cell)->setRemembered(false);
-    }
 #else
     UNUSED_PARAM(rememberedSet);
 #endif
@@ -975,7 +973,6 @@ void Heap::addToRememberedSet(const JSCell* cell)
     ASSERT(!Options::enableConcurrentJIT() || !isCompilationThread());
     if (isRemembered(cell))
         return;
-    MarkedBlock::blockFor(cell)->setRemembered(cell);
     const_cast<JSCell*>(cell)->setRemembered(true);
     m_slotVisitor.unconditionallyAppend(const_cast<JSCell*>(cell));
 }

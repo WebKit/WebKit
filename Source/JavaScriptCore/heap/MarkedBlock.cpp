@@ -218,11 +218,6 @@ void MarkedBlock::clearMarks()
 #endif
 }
 
-void MarkedBlock::clearRememberedSet()
-{
-    m_rememberedSet.clearAll();
-}
-
 template <HeapOperation collectionType>
 void MarkedBlock::clearMarksWithCollectionType()
 {
@@ -232,9 +227,6 @@ void MarkedBlock::clearMarksWithCollectionType()
     ASSERT(m_state != New && m_state != FreeListed);
     if (collectionType == FullCollection) {
         m_marks.clearAll();
-#if ENABLE(GGC)
-        m_rememberedSet.clearAll();
-#endif
         // This will become true at the end of the mark phase. We set it now to
         // avoid an extra pass to do so later.
         m_state = Marked;

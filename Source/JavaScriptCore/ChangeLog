@@ -1,5 +1,35 @@
 2015-05-20  Andreas Kling  <akling@apple.com>
 
+        Remove unused MarkedBlock::m_rememberedSet.
+        <https://webkit.org/b/145224>
+
+        Reviewed by Mark Hahnenberg.
+
+        The MarkedBlock had a copy of the remembered bit for each of its cells,
+        and we were maintaining that bitmap despite no one actually ever consulting it.
+
+        This patch removes MarkedBlock::m_rememberedSet, freeing up 128 bytes in each
+        block and making write barriers a little faster.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::clearRememberedSet):
+        (JSC::Heap::addToRememberedSet):
+        * heap/HeapInlines.h:
+        (JSC::Heap::isRemembered):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::clearRememberedSet): Deleted.
+        (JSC::MarkedBlock::clearMarksWithCollectionType):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::setRemembered): Deleted.
+        (JSC::MarkedBlock::clearRemembered): Deleted.
+        (JSC::MarkedBlock::atomicClearRemembered): Deleted.
+        (JSC::MarkedBlock::isRemembered): Deleted.
+        * heap/MarkedSpace.h:
+        (JSC::ClearRememberedSet::operator()): Deleted.
+        (JSC::MarkedSpace::clearRememberedSet): Deleted.
+
+2015-05-20  Andreas Kling  <akling@apple.com>
+
         Eden collections should extend the IncrementalSweeper work list, not replace it.
         <https://webkit.org/b/145213>
         <rdar://problem/21002666>
