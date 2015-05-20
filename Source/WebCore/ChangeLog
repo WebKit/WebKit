@@ -1,3 +1,17 @@
+2015-05-20  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] inform media session of all state changes
+        https://bugs.webkit.org/show_bug.cgi?id=145222
+
+        Reviewed by Dean Jackson.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::~HTMLMediaElement): Call updateMediaState.
+        (WebCore::HTMLMediaElement::mediaPlayerEngineUpdated): Ditto.
+        (WebCore::HTMLMediaElement::mediaPlayerFirstVideoFrameAvailable): Ditto.
+        (WebCore::HTMLMediaElement::removeEventListener): Ditto.
+        (WebCore::HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent): Ditto.
+
 2015-05-20  Daniel Bates  <dabates@apple.com>
 
         AX: AutoFill button is not accessible with VoiceOver

@@ -412,6 +412,7 @@ HTMLMediaElement::~HTMLMediaElement()
     if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent)) {
         m_hasPlaybackTargetAvailabilityListeners = false;
         m_mediaSession->setHasPlaybackTargetAvailabilityListeners(*this, false);
+        updateMediaState();
     }
 #endif
 
@@ -4350,6 +4351,9 @@ void HTMLMediaElement::mediaPlayerEngineUpdated(MediaPlayer*)
     m_player->setVideoFullscreenGravity(m_videoFullscreenGravity);
     m_player->setVideoFullscreenLayer(m_videoFullscreenLayer.get());
 #endif
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    updateMediaState();
+#endif
 }
 
 void HTMLMediaElement::mediaPlayerFirstVideoFrameAvailable(MediaPlayer*)
@@ -4953,6 +4957,7 @@ bool HTMLMediaElement::removeEventListener(const AtomicString& eventType, EventL
     if (didRemoveLastAvailabilityChangedListener) {
         m_hasPlaybackTargetAvailabilityListeners = false;
         m_mediaSession->setHasPlaybackTargetAvailabilityListeners(*this, false);
+        updateMediaState();
     }
 
     return true;
@@ -4965,6 +4970,7 @@ void HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent()
     RefPtr<Event> event = WebKitPlaybackTargetAvailabilityEvent::create(eventNames().webkitplaybacktargetavailabilitychangedEvent, hasTargets);
     event->setTarget(this);
     m_asyncEventQueue.enqueueEvent(event.release());
+    updateMediaState();
 }
 
 void HTMLMediaElement::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&& device)
