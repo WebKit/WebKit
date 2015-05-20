@@ -79,6 +79,7 @@
 #import <JavaScriptCore/JSContext.h>
 #import <JavaScriptCore/JSValue.h>
 #import <WebCore/IOSurface.h>
+#import <WebCore/WebCoreSystemInterface.h>
 #import <wtf/HashMap.h>
 #import <wtf/MathExtras.h>
 #import <wtf/NeverDestroyed.h>
@@ -259,6 +260,16 @@ static int32_t deviceOrientation()
 #endif
 }
 
+static bool shouldAllowAlternateFullscreen()
+{
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
+    static bool shouldAllowAlternateFullscreen = iosExecutableWasLinkedOnOrAfterVersion(wkIOSSystemVersion_9_0);
+    return shouldAllowAlternateFullscreen;
+#else
+    return false;
+#endif
+}
+
 #endif
 
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
@@ -308,7 +319,7 @@ static int32_t deviceOrientation()
 
 #if PLATFORM(IOS)
     webPageConfiguration.preferenceValues.set(WebKit::WebPreferencesKey::mediaPlaybackAllowsInlineKey(), WebKit::WebPreferencesStore::Value(!![_configuration allowsInlineMediaPlayback]));
-    webPageConfiguration.preferenceValues.set(WebKit::WebPreferencesKey::allowsAlternateFullscreenKey(), WebKit::WebPreferencesStore::Value(!![_configuration _allowsAlternateFullscreen]));
+    webPageConfiguration.preferenceValues.set(WebKit::WebPreferencesKey::allowsAlternateFullscreenKey(), WebKit::WebPreferencesStore::Value(!![_configuration _allowsAlternateFullscreen] && shouldAllowAlternateFullscreen()));
     webPageConfiguration.preferenceValues.set(WebKit::WebPreferencesKey::mediaPlaybackRequiresUserGestureKey(), WebKit::WebPreferencesStore::Value(!![_configuration mediaPlaybackRequiresUserAction]));
     webPageConfiguration.preferenceValues.set(WebKit::WebPreferencesKey::mediaPlaybackAllowsAirPlayKey(), WebKit::WebPreferencesStore::Value(!![_configuration mediaPlaybackAllowsAirPlay]));
 #endif
