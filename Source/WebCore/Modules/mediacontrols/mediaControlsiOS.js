@@ -108,19 +108,7 @@ ControllerIOS.prototype = {
         var panelContainer = this.controls.panelContainer = document.createElement('div');
         panelContainer.setAttribute('pseudo', '-webkit-media-controls-panel-container');
 
-        var panelBackground = this.controls.panelBackground = document.createElement('div');
-        panelBackground.setAttribute('pseudo', '-webkit-media-controls-panel-background');
-
-        var inlinePlaybackPlaceholderText = this.controls.inlinePlaybackPlaceholderText = document.createElement('div');
-        inlinePlaybackPlaceholderText.setAttribute('pseudo', '-webkit-media-controls-wireless-playback-text');
-
-        var inlinePlaybackPlaceholderTextTop = this.controls.inlinePlaybackPlaceholderTextTop = document.createElement('p');
-        inlinePlaybackPlaceholderTextTop.setAttribute('pseudo', '-webkit-media-controls-wireless-playback-text-top');
-
-        var inlinePlaybackPlaceholderTextBottom = this.controls.inlinePlaybackPlaceholderTextBottom = document.createElement('p');
-        inlinePlaybackPlaceholderTextBottom.setAttribute('pseudo', '-webkit-media-controls-wireless-playback-text-bottom');
-
-        var wirelessTargetPicker = this.controls.wirelessTargetPicker
+        var wirelessTargetPicker = this.controls.wirelessTargetPicker;
         this.listenFor(wirelessTargetPicker, 'touchstart', this.handleWirelessPickerButtonTouchStart);
         this.listenFor(wirelessTargetPicker, 'touchend', this.handleWirelessPickerButtonTouchEnd);
         this.listenFor(wirelessTargetPicker, 'touchcancel', this.handleWirelessPickerButtonTouchCancel);
@@ -549,13 +537,29 @@ ControllerIOS.prototype = {
 
         switch (presentationMode) {
             case 'inline':
+                this.controls.inlinePlaybackPlaceholder.style.backgroundImage = "";
                 this.controls.inlinePlaybackPlaceholder.classList.add(this.ClassNames.hidden);
+                this.controls.inlinePlaybackPlaceholder.classList.remove(this.ClassNames.optimized);
+                this.controls.inlinePlaybackPlaceholderTextTop.classList.remove(this.ClassNames.optimized);
+                this.controls.inlinePlaybackPlaceholderTextBottom.classList.remove(this.ClassNames.optimized);
                 break;
             case 'optimized':
                 var backgroundImage = "url('" + this.host.mediaUIImageData("optimized-fullscreen-placeholder") + "')";
                 this.controls.inlinePlaybackPlaceholder.style.backgroundImage = backgroundImage;
                 this.controls.inlinePlaybackPlaceholder.setAttribute('aria-label', "video playback placeholder");
+                this.controls.inlinePlaybackPlaceholder.classList.add(this.ClassNames.optimized);
                 this.controls.inlinePlaybackPlaceholder.classList.remove(this.ClassNames.hidden);
+
+                this.controls.inlinePlaybackPlaceholderTextTop.innerText = this.host.mediaUIImageData("optimized-fullscreen-placeholder-text");
+                this.controls.inlinePlaybackPlaceholderTextTop.classList.add(this.ClassNames.optimized);
+                this.controls.inlinePlaybackPlaceholderTextBottom.innerText = "";
+                this.controls.inlinePlaybackPlaceholderTextBottom.classList.add(this.ClassNames.optimized);
+                break;
+            default:
+                this.controls.inlinePlaybackPlaceholder.style.backgroundImage = "";
+                this.controls.inlinePlaybackPlaceholder.classList.remove(this.ClassNames.optimized);
+                this.controls.inlinePlaybackPlaceholderTextTop.classList.remove(this.ClassNames.optimized);
+                this.controls.inlinePlaybackPlaceholderTextBottom.classList.remove(this.ClassNames.optimized);
                 break;
         }
 

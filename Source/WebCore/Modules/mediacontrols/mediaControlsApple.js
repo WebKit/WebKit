@@ -99,6 +99,7 @@ Controller.prototype = {
         list: 'list',
         muteBox: 'mute-box',
         muted: 'muted',
+        optimized: 'optimized',
         paused: 'paused',
         playing: 'playing',
         selected: 'selected',

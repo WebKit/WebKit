@@ -1,3 +1,52 @@
+2015-05-19  Jon Lee  <jonlee@apple.com>
+
+        [iOS] Optimized fullscreen placeholder is incorrectly sized
+        https://bugs.webkit.org/show_bug.cgi?id=145196
+        rdar://problem/21031188
+
+        Reviewed by Dean Jackson.
+
+        Add a new media part UI for the placeholder text when entering optimized fullscreen,
+        and use it as part of the title text in the placeholder. Now the wireless playback status
+        div serves as a multi-purpose placeholder.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::mediaUIImageData): Return the placeholder text.
+        * Modules/mediacontrols/MediaControlsHost.idl: Add a new UI part for placeholder text.
+        * Modules/mediacontrols/mediaControlsApple.js: Add a new "optimized" ClassName when
+        the presentation mode is set to optimized.
+
+        * Modules/mediacontrols/mediaControlsiOS.css:
+        (audio::-webkit-media-controls-wireless-playback-status): The text should be at
+        medium weight, not light weight.
+        (audio::-webkit-media-controls-wireless-playback-text-top): The title text should be
+        white for both wireless playback and optimized fullscreen. It matches the style
+        when taking a video fullscreen.
+
+        Add new CSS rules when the placard is used for optimized fullscreen.
+        (audio::-webkit-media-controls-wireless-playback-status.optimized): Accommodate the
+        size of the graphic, and position appropriately.
+        (audio::-webkit-media-controls-wireless-playback-text-top.optimized): One line is
+        needed, so use this one, and place it where the bottom one is since more room is
+        needed to accommodate the graphic.
+        (audio::-webkit-media-controls-wireless-playback-text-bottom.optimized): One line is
+        needed, so hide this one.
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.createControls): Several of the container divs are already
+        created in Controller.prototype.createControls(). Fly-by fix to avoid creation of
+        those divs. Only the panelContainer is new for the iOS controls. Fly-by fix of a
+        missing semicolon.
+        (ControllerIOS.prototype.handlePresentationModeChange): When the presentation mode
+        changes do several things:
+            1- Update the background image. Clear the inline background image when going back
+               to inline or in wireless playback.
+            2- Add the "optimized" ClassName to the placeholder container, and the two text
+               divs when entering optimized fullscreen. Remove them in other cases.
+            3- Set -webkit-media-controls-wireless-playback-text-top to the placeholder text.
+               This is better than embedding it inside the graphic. Clear the -bottom text.
+        * platform/ios/WebCoreSystemInterfaceIOS.h: Add a new enum to obtain the placeholder
+        text.
+
 2015-05-19  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [EFL] Use GSimpleProxyResolver instead of custom SoupProxyResolver
