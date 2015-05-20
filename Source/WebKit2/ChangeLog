@@ -1,3 +1,21 @@
+2015-05-20  Sungmann Cho  <sungmann.cho@navercorp.com>
+
+        Rename WebsiteDataStore::isNonPersistent() to WebsiteDataStore::isPersistent().
+        https://bugs.webkit.org/show_bug.cgi?id=145111
+
+        Reviewed by Darin Adler.
+
+        This is a follow up to https://bugs.webkit.org/show_bug.cgi?id=144158.
+
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        (API::WebsiteDataStore::isPersistent):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchData):
+        (WebKit::WebsiteDataStore::removeData):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::isPersistent):
+        (WebKit::WebsiteDataStore::isNonPersistent): Deleted.
+
 2015-05-20  Hyungwook Lee  <hyungwook.lee@navercorp.com>
 
         [EFL] Fix build failure, linker does not find libXext.
