@@ -7,19 +7,23 @@
  */
 
 /** Load WordPress Bootstrap */
-require_once ('admin.php');
+require_once( dirname( __FILE__ ) . '/admin.php' );
 
 if ( !current_user_can('export') )
 	wp_die(__('You do not have sufficient permissions to export the content of this site.'));
 
 /** Load WordPress export API */
-require_once('./includes/export.php');
+require_once( ABSPATH . 'wp-admin/includes/export.php' );
 $title = __('Export');
 
-function add_js() {
+/**
+ * Display JavaScript on the page.
+ *
+ * @since 3.5.0
+ */
+function export_add_js() {
 ?>
 <script type="text/javascript">
-//<![CDATA[
 	jQuery(document).ready(function($){
  		var form = $('#export-filters'),
  			filters = form.find('.export-filters');
@@ -32,26 +36,31 @@ function add_js() {
 			}
  		});
 	});
-//]]>
 </script>
 <?php
 }
-add_action( 'admin_head', 'add_js' );
+add_action( 'admin_head', 'export_add_js' );
 
-add_contextual_help( $current_screen,
-	'<p>' . __('You can export a file of your site&#8217;s content in order to import it into another installation or platform. The export file will be an XML file format called WXR. Posts, pages, comments, custom fields, categories, and tags can be included. You can choose for the WXR file to include only certain posts or pages by setting the dropdown filters to  limit the export by category, author, date range by month, or publishing status.') . '</p>' .
-	'<p>' . __('Once generated, your WXR file can be imported by another WordPress site or by another blogging platform able to access this format.') . '</p>' .
+get_current_screen()->add_help_tab( array(
+	'id'      => 'overview',
+	'title'   => __('Overview'),
+	'content' => '<p>' . __('You can export a file of your site&#8217;s content in order to import it into another installation or platform. The export file will be an XML file format called WXR. Posts, pages, comments, custom fields, categories, and tags can be included. You can choose for the WXR file to include only certain posts or pages by setting the dropdown filters to limit the export by category, author, date range by month, or publishing status.') . '</p>' .
+		'<p>' . __('Once generated, your WXR file can be imported by another WordPress site or by another blogging platform able to access this format.') . '</p>',
+) );
+
+get_current_screen()->set_help_sidebar(
 	'<p><strong>' . __('For more information:') . '</strong></p>' .
-	'<p>' . __('<a href="http://codex.wordpress.org/Tools_Export_Screen" target="_blank">Documentation on Export</a>') . '</p>' .
-	'<p>' . __('<a href="http://wordpress.org/support/" target="_blank">Support Forums</a>') . '</p>'
+	'<p>' . __('<a href="https://codex.wordpress.org/Tools_Export_Screen" target="_blank">Documentation on Export</a>') . '</p>' .
+	'<p>' . __('<a href="https://wordpress.org/support/" target="_blank">Support Forums</a>') . '</p>'
 );
 
+// If the 'download' URL parameter is set, a WXR export file is baked and returned.
 if ( isset( $_GET['download'] ) ) {
 	$args = array();
 
 	if ( ! isset( $_GET['content'] ) || 'all' == $_GET['content'] ) {
 		$args['content'] = 'all';
-	} else if ( 'posts' == $_GET['content'] ) {
+	} elseif ( 'posts' == $_GET['content'] ) {
 		$args['content'] = 'post';
 
 		if ( $_GET['cat'] )
@@ -67,7 +76,7 @@ if ( isset( $_GET['download'] ) ) {
 
 		if ( $_GET['post_status'] )
 			$args['status'] = $_GET['post_status'];
-	} else if ( 'pages' == $_GET['content'] ) {
+	} elseif ( 'pages' == $_GET['content'] ) {
 		$args['content'] = 'page';
 
 		if ( $_GET['page_author'] )
@@ -84,21 +93,40 @@ if ( isset( $_GET['download'] ) ) {
 		$args['content'] = $_GET['content'];
 	}
 
+	/**
+	 * Filter the export args.
+	 *
+	 * @since 3.5.0
+	 *
+	 * @param array $args The arguments to send to the exporter.
+	 */
+	$args = apply_filters( 'export_args', $args );
+
 	export_wp( $args );
 	die();
 }
 
-require_once ('admin-header.php');
+require_once( ABSPATH . 'wp-admin/admin-header.php' );
 
-function export_date_options() {
+/**
+ * Create the date options fields for exporting a given post type.
+ *
+ * @global wpdb      $wpdb      WordPress database abstraction object.
+ * @global WP_Locale $wp_locale Date and Time Locale object.
+ *
+ * @since 3.1.0
+ *
+ * @param string $post_type The post type. Default 'post'.
+ */
+function export_date_options( $post_type = 'post' ) {
 	global $wpdb, $wp_locale;
 
-	$months = $wpdb->get_results( "
+	$months = $wpdb->get_results( $wpdb->prepare( "
 		SELECT DISTINCT YEAR( post_date ) AS year, MONTH( post_date ) AS month
 		FROM $wpdb->posts
-		WHERE post_type = 'post' AND post_status != 'auto-draft'
+		WHERE post_type = %s AND post_status != 'auto-draft'
 		ORDER BY post_date DESC
-	" );
+	", $post_type ) );
 
 	$month_count = count( $months );
 	if ( !$month_count || ( 1 == $month_count && 0 == $months[0]->month ) )
@@ -115,18 +143,17 @@ function export_date_options() {
 ?>
 
 <div class="wrap">
-<?php screen_icon(); ?>
 <h2><?php echo esc_html( $title ); ?></h2>
 
 <p><?php _e('When you click the button below WordPress will create an XML file for you to save to your computer.'); ?></p>
 <p><?php _e('This format, which we call WordPress eXtended RSS or WXR, will contain your posts, pages, comments, custom fields, categories, and tags.'); ?></p>
-<p><?php _e('Once you&#8217;ve saved the download file, you can use the Import function in another WordPress installation to import this site.'); ?></p>
+<p><?php _e('Once you&#8217;ve saved the download file, you can use the Import function in another WordPress installation to import the content from this site.'); ?></p>
 
 <h3><?php _e( 'Choose what to export' ); ?></h3>
-<form action="" method="get" id="export-filters">
+<form method="get" id="export-filters">
 <input type="hidden" name="download" value="true" />
-<p><label><input type="radio" name="content" value="all" checked="checked" /> <?php _e( 'All content' ); ?></label>
-<span class="description"><?php _e( 'This will contain all of your posts, pages, comments, custom fields, terms, navigation menus and custom posts.' ); ?></span></p>
+<p><label><input type="radio" name="content" value="all" checked="checked" /> <?php _e( 'All content' ); ?></label></p>
+<p class="description"><?php _e( 'This will contain all of your posts, pages, comments, custom fields, terms, navigation menus and custom posts.' ); ?></p>
 
 <p><label><input type="radio" name="content" value="posts" /> <?php _e( 'Posts' ); ?></label></p>
 <ul id="post-filters" class="export-filters">
@@ -177,11 +204,11 @@ function export_date_options() {
 		<label><?php _e( 'Date range:' ); ?></label>
 		<select name="page_start_date">
 			<option value="0"><?php _e( 'Start Date' ); ?></option>
-			<?php export_date_options(); ?>
+			<?php export_date_options( 'page' ); ?>
 		</select>
 		<select name="page_end_date">
 			<option value="0"><?php _e( 'End Date' ); ?></option>
-			<?php export_date_options(); ?>
+			<?php export_date_options( 'page' ); ?>
 		</select>
 	</li>
 	<li>
@@ -199,8 +226,17 @@ function export_date_options() {
 <p><label><input type="radio" name="content" value="<?php echo esc_attr( $post_type->name ); ?>" /> <?php echo esc_html( $post_type->label ); ?></label></p>
 <?php endforeach; ?>
 
-<?php submit_button( __('Download Export File'), 'secondary' ); ?>
+<?php
+/**
+ * Fires after the export filters form.
+ *
+ * @since 3.5.0
+ */
+do_action( 'export_filters' );
+?>
+
+<?php submit_button( __('Download Export File') ); ?>
 </form>
 </div>
 
-<?php include('admin-footer.php'); ?>
+<?php include( ABSPATH . 'wp-admin/admin-footer.php' ); ?>

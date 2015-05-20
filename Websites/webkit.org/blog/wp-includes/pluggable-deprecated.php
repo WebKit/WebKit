@@ -28,7 +28,7 @@ if ( !function_exists('set_current_user') ) :
  *
  * @param int|null $id User ID.
  * @param string $name Optional. The user's username
- * @return object returns wp_set_current_user()
+ * @return WP_User returns wp_set_current_user()
  */
 function set_current_user($id, $name = '') {
 	_deprecated_function( __FUNCTION__, '3.0', 'wp_set_current_user()' );
@@ -36,12 +36,46 @@ function set_current_user($id, $name = '') {
 }
 endif;
 
+if ( !function_exists('get_userdatabylogin') ) :
+/**
+ * Retrieve user info by login name.
+ *
+ * @since 0.71
+ * @deprecated 3.3.0
+ * @deprecated Use get_user_by('login')
+ *
+ * @param string $user_login User's username
+ * @return bool|object False on failure, User DB row object
+ */
+function get_userdatabylogin($user_login) {
+	_deprecated_function( __FUNCTION__, '3.3', "get_user_by('login')" );
+	return get_user_by('login', $user_login);
+}
+endif;
+
+if ( !function_exists('get_user_by_email') ) :
+/**
+ * Retrieve user info by email.
+ *
+ * @since 2.5.0
+ * @deprecated 3.3.0
+ * @deprecated Use get_user_by('email')
+ *
+ * @param string $email User's email address
+ * @return bool|object False on failure, User DB row object
+ */
+function get_user_by_email($email) {
+	_deprecated_function( __FUNCTION__, '3.3', "get_user_by('email')" );
+	return get_user_by('email', $email);
+}
+endif;
+
 if ( !function_exists('wp_setcookie') ) :
 /**
  * Sets a cookie for a user who just logged in. This function is deprecated.
  *
- * @since 1.5
- * @deprecated 2.5
+ * @since 1.5.0
+ * @deprecated 2.5.0
  * @deprecated Use wp_set_auth_cookie()
  * @see wp_set_auth_cookie()
  *
@@ -54,7 +88,7 @@ if ( !function_exists('wp_setcookie') ) :
  */
 function wp_setcookie($username, $password = '', $already_md5 = false, $home = '', $siteurl = '', $remember = false) {
 	_deprecated_function( __FUNCTION__, '2.5', 'wp_set_auth_cookie()' );
-	$user = get_userdatabylogin($username);
+	$user = get_user_by('login', $username);
 	wp_set_auth_cookie($user->ID, $remember);
 }
 else :
@@ -65,8 +99,8 @@ if ( !function_exists('wp_clearcookie') ) :
 /**
  * Clears the authentication cookie, logging the user out. This function is deprecated.
  *
- * @since 1.5
- * @deprecated 2.5
+ * @since 1.5.0
+ * @deprecated 2.5.0
  * @deprecated Use wp_clear_auth_cookie()
  * @see wp_clear_auth_cookie()
  */
@@ -86,7 +120,7 @@ if ( !function_exists('wp_get_cookie_login') ):
  * used anywhere in WordPress. Also, plugins shouldn't use it either.
  *
  * @since 2.0.3
- * @deprecated 2.5
+ * @deprecated 2.5.0
  * @deprecated No alternative
  *
  * @return bool Always returns false
@@ -114,9 +148,9 @@ if ( !function_exists('wp_login') ) :
  * @deprecated Use wp_signon()
  * @global string $error Error when false is returned
  *
- * @param string $username User's username
- * @param string $password User's password
- * @param bool $deprecated Not used
+ * @param string $username   User's username
+ * @param string $password   User's password
+ * @param string $deprecated Not used
  * @return bool False on login failure, true on successful check
  */
 function wp_login($username, $password, $deprecated = '') {
@@ -134,3 +168,25 @@ function wp_login($username, $password, $deprecated = '') {
 else :
 	_deprecated_function( 'wp_login', '2.5', 'wp_signon()' );
 endif;
+
+/**
+ * WordPress AtomPub API implementation.
+ *
+ * Originally stored in wp-app.php, and later wp-includes/class-wp-atom-server.php.
+ * It is kept here in case a plugin directly referred to the class.
+ *
+ * @since 2.2.0
+ * @deprecated 3.5.0
+ * @link https://wordpress.org/plugins/atom-publishing-protocol/
+ */
+if ( ! class_exists( 'wp_atom_server' ) ) {
+	class wp_atom_server {
+		public function __call( $name, $arguments ) {
+			_deprecated_function( __CLASS__ . '::' . $name, '3.5', 'the Atom Publishing Protocol plugin' );
+		}
+
+		public static function __callStatic( $name, $arguments ) {
+			_deprecated_function( __CLASS__ . '::' . $name, '3.5', 'the Atom Publishing Protocol plugin' );
+		}
+	}
+}

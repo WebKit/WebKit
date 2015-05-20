@@ -1,11 +1,11 @@
 /**
  * editable_selects.js
  *
- * Copyright 2009, Moxiecode Systems AB
+ * Copyright, Moxiecode Systems AB
  * Released under LGPL License.
  *
- * License: http://tinymce.moxiecode.com/license
- * Contributing: http://tinymce.moxiecode.com/contributing
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
  */
 
 var TinyMCE_EditableSelects = {
@@ -16,7 +16,7 @@ var TinyMCE_EditableSelects = {
 
 		for (i=0; i<nl.length; i++) {
 			if (nl[i].className.indexOf('mceEditableSelect') != -1) {
-				o = new Option('(value)', '__mce_add_custom__');
+				o = new Option(tinyMCEPopup.editor.translate('value'), '__mce_add_custom__');
 
 				o.className = 'mceAddSelectValue';
 

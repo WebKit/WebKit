@@ -1,1 +1,704 @@
-var PubSub,fullscreen,wptitlehint;PubSub=function(){this.topics={}};PubSub.prototype.subscribe=function(a,b){if(!this.topics[a]){this.topics[a]=[]}this.topics[a].push(b);return b};PubSub.prototype.unsubscribe=function(b,e){var c,a,d=this.topics[b];if(!d){return e||[]}if(e){for(c=0,a=d.length;c<a;c++){if(e==d[c]){d.splice(c,1)}}return e}else{this.topics[b]=[];return d}};PubSub.prototype.publish=function(c,b){var d,a,e,f=this.topics[c];if(!f){return}b=b||[];for(d=0,a=f.length;d<a;d++){e=(f[d].apply(null,b)===false||e)}return !e};(function(c){var b,e,d,a;fullscreen=b={};e=b.pubsub=new PubSub();timer=0;block=false;a=b.settings={visible:false,mode:"tinymce",editor_id:"content",title_id:"title",timer:0,toolbar_shown:false};d=b.bounder=function(l,h,g,j){var k,i;g=g||1250;if(j){k=j.pageY||j.clientY||j.offsetY;i=c(document).scrollTop();if(!j.isDefaultPrevented){k=135+k}if(k-i>120){return}}if(block){return}block=true;setTimeout(function(){block=false},400);if(a.timer){clearTimeout(a.timer)}else{e.publish(l)}function f(){e.publish(h);a.timer=0}a.timer=setTimeout(f,g)};b.on=function(){if(a.visible){return}a.mode=c("#"+a.editor_id).is(":hidden")?"tinymce":"html";if(!a.element){b.ui.init()}a.is_mce_on=a.has_tinymce&&typeof(tinyMCE.get(a.editor_id))!="undefined";b.ui.fade("show","showing","shown")};b.off=function(){if(!a.visible){return}b.ui.fade("hide","hiding","hidden")};b.switchmode=function(g){var f=a.mode;if(!g||!a.visible||!a.has_tinymce){return f}if(f==g){return f}e.publish("switchMode",[f,g]);a.mode=g;e.publish("switchedMode",[f,g]);return g};b.save=function(){var h=c("#hiddenaction"),f=h.val(),i=c("#wp-fullscreen-save img"),g=c("#wp-fullscreen-save span");i.show();b.savecontent();h.val("wp-fullscreen-save-post");c.post(ajaxurl,c("form#post").serialize(),function(j){i.hide();g.show();setTimeout(function(){g.fadeOut(1000)},3000);if(j.last_edited){c("#wp-fullscreen-save input").attr("title",j.last_edited)}},"json");h.val(f)};b.savecontent=function(){var f,g;c("#"+a.title_id).val(c("#wp-fullscreen-title").val());if(a.mode==="tinymce"&&(f=tinyMCE.get("wp_mce_fullscreen"))){g=f.save()}else{g=c("#wp_mce_fullscreen").val()}c("#"+a.editor_id).val(g);c(document).triggerHandler("wpcountwords",[g])};set_title_hint=function(f){if(!f.val().length){f.siblings("label").css("visibility","")}else{f.siblings("label").css("visibility","hidden")}};b.dfw_width=function(h){var g=c("#wp-fullscreen-wrap"),f=g.width();if(!h){g.width(c("#wp-fullscreen-central-toolbar").width());deleteUserSetting("dfw_width");return}f=h+f;if(f<200||f>1200){return}g.width(f);setUserSetting("dfw_width",f)};e.subscribe("showToolbar",function(){a.toolbars.removeClass("fade-1000").addClass("fade-300");b.fade.In(a.toolbars,300,function(){e.publish("toolbarShown")},true);c("#wp-fullscreen-body").addClass("wp-fullscreen-focus");a.toolbar_shown=true});e.subscribe("hideToolbar",function(){a.toolbars.removeClass("fade-300").addClass("fade-1000");b.fade.Out(a.toolbars,1000,function(){e.publish("toolbarHidden")},true);c("#wp-fullscreen-body").removeClass("wp-fullscreen-focus")});e.subscribe("toolbarShown",function(){a.toolbars.removeClass("fade-300")});e.subscribe("toolbarHidden",function(){a.toolbars.removeClass("fade-1000");a.toolbar_shown=false});e.subscribe("show",function(){var f=c("#wp-fullscreen-title").val(c("#"+a.title_id).val());set_title_hint(f);c("#wp-fullscreen-save input").attr("title",c("#last-edit").text());a.textarea_obj.value=edCanvas.value;if(a.has_tinymce&&a.mode==="tinymce"){tinyMCE.execCommand("wpFullScreenInit")}a._edCanvas=edCanvas;edCanvas=a.textarea_obj;a.orig_y=c(window).scrollTop()});e.subscribe("showing",function(){c(document.body).addClass("fullscreen-active");b.refresh_buttons();c(document).bind("mousemove.fullscreen",function(f){d("showToolbar","hideToolbar",2000,f)});d("showToolbar","hideToolbar",2000);b.bind_resize();setTimeout(b.resize_textarea,200);scrollTo(0,0);c("#wpadminbar").hide()});e.subscribe("shown",function(){a.visible=true;if(a.has_tinymce&&!a.is_mce_on){htmled=document.getElementById(a.editor_id),old_val=htmled.value;htmled.value=switchEditors.wpautop(old_val);tinyMCE.settings.setup=function(f){f.onInit.add(function(g){g.hide();delete tinyMCE.settings.setup;g.getElement().value=old_val})};tinyMCE.execCommand("mceAddControl",false,a.editor_id);a.is_mce_on=true}});e.subscribe("hide",function(){if(a.has_tinymce&&a.mode==="tinymce"&&c("#"+a.editor_id).is(":visible")){switchEditors.go(a.editor_id,"tinymce")}else{if(a.mode==="html"&&c("#"+a.editor_id).is(":hidden")){switchEditors.go(a.editor_id,"html")}}b.savecontent();c(document).unbind(".fullscreen");c(a.textarea_obj).unbind(".grow");if(a.has_tinymce&&a.mode==="tinymce"){tinyMCE.execCommand("wpFullScreenSave")}set_title_hint(c("#"+a.title_id));edCanvas=a._edCanvas;edCanvas.value=a.textarea_obj.value});e.subscribe("hiding",function(){c(document.body).removeClass("fullscreen-active");scrollTo(0,a.orig_y);c("#wpadminbar").show()});e.subscribe("hidden",function(){a.visible=false;c("#wp_mce_fullscreen").removeAttr("style");if(a.has_tinymce&&a.is_mce_on){tinyMCE.execCommand("wpFullScreenClose")}a.textarea_obj.value="";b.oldheight=0});e.subscribe("switchMode",function(h,g){var f;if(!a.has_tinymce||!a.is_mce_on){return}f=tinyMCE.get("wp_mce_fullscreen");if(h==="html"&&g==="tinymce"){a.textarea_obj.value=switchEditors.wpautop(a.textarea_obj.value);if("undefined"==typeof(f)){tinyMCE.execCommand("wpFullScreenInit")}else{f.show()}}else{if(h==="tinymce"&&g==="html"){if(f){f.hide()}}}});e.subscribe("switchedMode",function(g,f){b.refresh_buttons(true);if(f==="html"){setTimeout(b.resize_textarea,200)}});b.b=function(){if(a.has_tinymce&&"tinymce"===a.mode){tinyMCE.execCommand("Bold")}};b.i=function(){if(a.has_tinymce&&"tinymce"===a.mode){tinyMCE.execCommand("Italic")}};b.ul=function(){if(a.has_tinymce&&"tinymce"===a.mode){tinyMCE.execCommand("InsertUnorderedList")}};b.ol=function(){if(a.has_tinymce&&"tinymce"===a.mode){tinyMCE.execCommand("InsertOrderedList")}};b.link=function(){if(a.has_tinymce&&"tinymce"===a.mode){tinyMCE.execCommand("WP_Link")}else{wpLink.open()}};b.unlink=function(){if(a.has_tinymce&&"tinymce"===a.mode){tinyMCE.execCommand("unlink")}};b.atd=function(){if(a.has_tinymce&&"tinymce"===a.mode){tinyMCE.execCommand("mceWritingImprovementTool")}};b.help=function(){if(a.has_tinymce&&"tinymce"===a.mode){tinyMCE.execCommand("WP_Help")}};b.blockquote=function(){if(a.has_tinymce&&"tinymce"===a.mode){tinyMCE.execCommand("mceBlockQuote")}};b.refresh_buttons=function(f){f=f||false;if(a.mode==="html"){c("#wp-fullscreen-mode-bar").removeClass("wp-tmce-mode").addClass("wp-html-mode");if(f){c("#wp-fullscreen-button-bar").fadeOut(150,function(){c(this).addClass("wp-html-mode").fadeIn(150)})}else{c("#wp-fullscreen-button-bar").addClass("wp-html-mode")}}else{if(a.mode==="tinymce"){c("#wp-fullscreen-mode-bar").removeClass("wp-html-mode").addClass("wp-tmce-mode");if(f){c("#wp-fullscreen-button-bar").fadeOut(150,function(){c(this).removeClass("wp-html-mode").fadeIn(150)})}else{c("#wp-fullscreen-button-bar").removeClass("wp-html-mode")}}}};b.ui={init:function(){var f=c("#fullscreen-topbar"),h=c("#wp_mce_fullscreen"),g=0;a.toolbars=f.add(c("#wp-fullscreen-status"));a.element=c("#fullscreen-fader");a.textarea_obj=h[0];a.has_tinymce=typeof(tinyMCE)!="undefined";if(!a.has_tinymce){c("#wp-fullscreen-mode-bar").hide()}if(wptitlehint){wptitlehint("wp-fullscreen-title")}c(document).keyup(function(k){var l=k.keyCode||k.charCode,i,j;if(!fullscreen.settings.visible){return true}if(navigator.platform&&navigator.platform.indexOf("Mac")!=-1){i=k.ctrlKey}else{i=k.altKey}if(27==l){j={event:k,what:"dfw",cb:fullscreen.off,condition:function(){if(c("#TB_window").is(":visible")||c(".wp-dialog").is(":visible")){return false}return true}};if(!jQuery(document).triggerHandler("wp_CloseOnEscape",[j])){fullscreen.off()}}if(i&&(61==l||107==l||187==l)){b.dfw_width(25)}if(i&&(45==l||109==l||189==l)){b.dfw_width(-25)}if(i&&48==l){b.dfw_width(0)}return false});if(typeof(wpWordCount)!="undefined"){h.keyup(function(j){var i=j.keyCode||j.charCode;if(i==g){return true}if(13==i||8==g||46==g){c(document).triggerHandler("wpcountwords",[h.val()])}g=i;return true})}f.mouseenter(function(i){a.toolbars.addClass("fullscreen-make-sticky");c(document).unbind(".fullscreen");clearTimeout(a.timer);a.timer=0}).mouseleave(function(i){a.toolbars.removeClass("fullscreen-make-sticky");if(a.visible){c(document).bind("mousemove.fullscreen",function(j){d("showToolbar","hideToolbar",2000,j)})}})},fade:function(g,f,h){if(!a.element){b.ui.init()}if(g&&!e.publish(g)){return}b.fade.In(a.element,600,function(){if(f){e.publish(f)}b.fade.Out(a.element,600,function(){if(h){e.publish(h)}})})}};b.fade={transitionend:"transitionend webkitTransitionEnd oTransitionEnd",sensitivity:100,In:function(g,h,i,f){i=i||c.noop;h=h||400;f=f||false;if(b.fade.transitions){if(g.is(":visible")){g.addClass("fade-trigger");return g}g.show();g.first().one(this.transitionend,function(){i()});setTimeout(function(){g.addClass("fade-trigger")},this.sensitivity)}else{if(f){g.stop()}g.css("opacity",1);g.first().fadeIn(h,i);if(g.length>1){g.not(":first").fadeIn(h)}}return g},Out:function(g,h,i,f){i=i||c.noop;h=h||400;f=f||false;if(!g.is(":visible")){return g}if(b.fade.transitions){g.first().one(b.fade.transitionend,function(){if(g.hasClass("fade-trigger")){return}g.hide();i()});setTimeout(function(){g.removeClass("fade-trigger")},this.sensitivity)}else{if(f){g.stop()}g.first().fadeOut(h,i);if(g.length>1){g.not(":first").fadeOut(h)}}return g},transitions:(function(){var f=document.documentElement.style;return(typeof(f.WebkitTransition)=="string"||typeof(f.MozTransition)=="string"||typeof(f.OTransition)=="string"||typeof(f.transition)=="string")})()};b.bind_resize=function(){c(a.textarea_obj).bind("keypress.grow click.grow paste.grow",function(){setTimeout(b.resize_textarea,200)})};b.oldheight=0;b.resize_textarea=function(){var f=a.textarea_obj,g;g=f.scrollHeight>300?f.scrollHeight:300;if(g!=b.oldheight){f.style.height=g+"px";b.oldheight=g}}})(jQuery);
+/* global deleteUserSetting, setUserSetting, switchEditors, tinymce, tinyMCEPreInit */
+/**
+ * Distraction-Free Writing
+ * (wp-fullscreen)
+ *
+ * Access the API globally using the window.wp.editor.fullscreen variable.
+ */
+( function( $, window ) {
+	var api, ps, s, toggleUI, uiTimer, PubSub,
+		uiScrollTop = 0,
+		transitionend = 'transitionend webkitTransitionEnd',
+		$body = $( document.body ),
+		$document = $( document );
+
+	/**
+	 * PubSub
+	 *
+	 * A lightweight publish/subscribe implementation.
+	 *
+	 * @access private
+	 */
+	PubSub = function() {
+		this.topics = {};
+
+		this.subscribe = function( topic, callback ) {
+			if ( ! this.topics[ topic ] )
+				this.topics[ topic ] = [];
+
+			this.topics[ topic ].push( callback );
+			return callback;
+		};
+
+		this.unsubscribe = function( topic, callback ) {
+			var i, l,
+				topics = this.topics[ topic ];
+
+			if ( ! topics )
+				return callback || [];
+
+			// Clear matching callbacks
+			if ( callback ) {
+				for ( i = 0, l = topics.length; i < l; i++ ) {
+					if ( callback == topics[i] )
+						topics.splice( i, 1 );
+				}
+				return callback;
+
+			// Clear all callbacks
+			} else {
+				this.topics[ topic ] = [];
+				return topics;
+			}
+		};
+
+		this.publish = function( topic, args ) {
+			var i, l, broken,
+				topics = this.topics[ topic ];
+
+			if ( ! topics )
+				return;
+
+			args = args || [];
+
+			for ( i = 0, l = topics.length; i < l; i++ ) {
+				broken = ( topics[i].apply( null, args ) === false || broken );
+			}
+			return ! broken;
+		};
+	};
+
+	// Initialize the fullscreen/api object
+	api = {};
+
+	// Create the PubSub (publish/subscribe) interface.
+	ps = api.pubsub = new PubSub();
+
+	s = api.settings = { // Settings
+		visible: false,
+		mode: 'tinymce',
+		id: '',
+		title_id: '',
+		timer: 0,
+		toolbar_shown: false
+	};
+
+	function _hideUI() {
+		$body.removeClass('wp-dfw-show-ui');
+	}
+
+	/**
+	 * toggleUI
+	 *
+	 * Toggle the CSS class to show/hide the toolbar, borders and statusbar.
+	 */
+	toggleUI = api.toggleUI = function( show ) {
+		clearTimeout( uiTimer );
+
+		if ( ! $body.hasClass('wp-dfw-show-ui') || show === 'show' ) {
+			$body.addClass('wp-dfw-show-ui');
+		} else if ( show !== 'autohide' ) {
+			$body.removeClass('wp-dfw-show-ui');
+		}
+
+		if ( show === 'autohide' ) {
+			uiTimer = setTimeout( _hideUI, 2000 );
+		}
+	};
+
+	function resetCssPosition( add ) {
+		s.$dfwWrap.parents().each( function( i, parent ) {
+			var cssPosition, $parent = $(parent);
+
+			if ( add ) {
+				if ( parent.style.position ) {
+					$parent.data( 'wp-dfw-css-position', parent.style.position );
+				}
+
+				$parent.css( 'position', 'static' );
+			} else {
+				cssPosition = $parent.data( 'wp-dfw-css-position' );
+				cssPosition = cssPosition || '';
+				$parent.css( 'position', cssPosition );
+			}
+
+			if ( parent.nodeName === 'BODY' ) {
+				return false;
+			}
+		});
+	}
+
+	/**
+	 * on()
+	 *
+	 * Turns fullscreen on.
+	 *
+	 * @param string mode Optional. Switch to the given mode before opening.
+	 */
+	api.on = function() {
+		var id, $dfwWrap, titleId;
+
+		if ( s.visible ) {
+			return;
+		}
+
+		if ( ! s.$fullscreenFader ) {
+			api.ui.init();
+		}
+
+		// Settings can be added or changed by defining "wp_fullscreen_settings" JS object.
+		if ( typeof window.wp_fullscreen_settings === 'object' )
+			$.extend( s, window.wp_fullscreen_settings );
+
+		id = s.id || window.wpActiveEditor;
+
+		if ( ! id ) {
+			if ( s.hasTinymce ) {
+				id = tinymce.activeEditor.id;
+			} else {
+				return;
+			}
+		}
+
+		s.id = id;
+		$dfwWrap = s.$dfwWrap = $( '#wp-' + id + '-wrap' );
+
+		if ( ! $dfwWrap.length ) {
+			return;
+		}
+
+		s.$dfwTextarea = $( '#' + id );
+		s.$editorContainer = $dfwWrap.find( '.wp-editor-container' );
+		uiScrollTop = $document.scrollTop();
+
+		if ( s.hasTinymce ) {
+			s.editor = tinymce.get( id );
+		}
+
+		if ( s.editor && ! s.editor.isHidden() ) {
+			s.origHeight = $( '#' + id + '_ifr' ).height();
+			s.mode = 'tinymce';
+		} else {
+			s.origHeight = s.$dfwTextarea.height();
+			s.mode = 'html';
+		}
+
+		// Try to find title field
+		if ( typeof window.adminpage !== 'undefined' &&
+			( window.adminpage === 'post-php' || window.adminpage === 'post-new-php' ) ) {
+
+			titleId = 'title';
+		} else {
+			titleId = id + '-title';
+		}
+
+		s.$dfwTitle = $( '#' + titleId );
+
+		if ( ! s.$dfwTitle.length ) {
+			s.$dfwTitle = null;
+		}
+
+		api.ui.fade( 'show', 'showing', 'shown' );
+	};
+
+	/**
+	 * off()
+	 *
+	 * Turns fullscreen off.
+	 */
+	api.off = function() {
+		if ( ! s.visible )
+			return;
+
+		api.ui.fade( 'hide', 'hiding', 'hidden' );
+	};
+
+	/**
+	 * switchmode()
+	 *
+	 * @return string - The current mode.
+	 *
+	 * @param string to - The fullscreen mode to switch to.
+	 * @event switchMode
+	 * @eventparam string to   - The new mode.
+	 * @eventparam string from - The old mode.
+	 */
+	api.switchmode = function( to ) {
+		var from = s.mode;
+
+		if ( ! to || ! s.visible || ! s.hasTinymce || typeof switchEditors === 'undefined' ) {
+			return from;
+		}
+
+		// Don't switch if the mode is the same.
+		if ( from == to )
+			return from;
+
+		if ( to === 'tinymce' && ! s.editor ) {
+			s.editor = tinymce.get( s.id );
+
+			if ( ! s.editor &&  typeof tinyMCEPreInit !== 'undefined' &&
+				tinyMCEPreInit.mceInit && tinyMCEPreInit.mceInit[ s.id ] ) {
+
+				// If the TinyMCE instance hasn't been created, set the "wp_fulscreen" flag on creating it
+				tinyMCEPreInit.mceInit[ s.id ].wp_fullscreen = true;
+			}
+		}
+
+		s.mode = to;
+		switchEditors.go( s.id, to );
+		api.refreshButtons( true );
+
+		if ( to === 'html' ) {
+			setTimeout( api.resizeTextarea, 200 );
+		}
+
+		return to;
+	};
+
+	/**
+	 * General
+	 */
+
+	api.save = function() {
+		var $hidden = $('#hiddenaction'),
+			oldVal = $hidden.val(),
+			$spinner = $('#wp-fullscreen-save .spinner'),
+			$saveMessage = $('#wp-fullscreen-save .wp-fullscreen-saved-message'),
+			$errorMessage = $('#wp-fullscreen-save .wp-fullscreen-error-message');
+
+		$spinner.addClass( 'is-active' );
+		$errorMessage.hide();
+		$saveMessage.hide();
+		$hidden.val('wp-fullscreen-save-post');
+
+		if ( s.editor && ! s.editor.isHidden() ) {
+			s.editor.save();
+		}
+
+		$.ajax({
+			url: window.ajaxurl,
+			type: 'post',
+			data: $('form#post').serialize(),
+			dataType: 'json'
+		}).done( function( response ) {
+			$spinner.removeClass( 'is-active' );
+
+			if ( response && response.success ) {
+				$saveMessage.show();
+
+				setTimeout( function() {
+					$saveMessage.fadeOut(300);
+				}, 3000 );
+
+				if ( response.data && response.data.last_edited ) {
+					$('#wp-fullscreen-save input').attr( 'title',  response.data.last_edited );
+				}
+			} else {
+				$errorMessage.show();
+			}
+		}).fail( function() {
+			$spinner.removeClass( 'is-active' );
+			$errorMessage.show();
+		});
+
+		$hidden.val( oldVal );
+	};
+
+	api.dfwWidth = function( pixels, total ) {
+		var width;
+
+		if ( pixels && pixels.toString().indexOf('%') !== -1 ) {
+			s.$editorContainer.css( 'width', pixels );
+			s.$statusbar.css( 'width', pixels );
+
+			if ( s.$dfwTitle ) {
+				s.$dfwTitle.css( 'width', pixels );
+			}
+			return;
+		}
+
+		if ( ! pixels ) {
+			// Reset to theme width
+			width = $('#wp-fullscreen-body').data('theme-width') || 800;
+			s.$editorContainer.width( width );
+			s.$statusbar.width( width );
+
+			if ( s.$dfwTitle ) {
+				s.$dfwTitle.width( width - 16 );
+			}
+
+			deleteUserSetting('dfw_width');
+			return;
+		}
+
+		if ( total ) {
+			width = pixels;
+		} else {
+			width = s.$editorContainer.width();
+			width += pixels;
+		}
+
+		if ( width < 200 || width > 1200 ) {
+			// sanity check
+			return;
+		}
+
+		s.$editorContainer.width( width );
+		s.$statusbar.width( width );
+
+		if ( s.$dfwTitle ) {
+			s.$dfwTitle.width( width - 16 );
+		}
+
+		setUserSetting( 'dfw_width', width );
+	};
+
+	// This event occurs before the overlay blocks the UI.
+	ps.subscribe( 'show', function() {
+		var title = $('#last-edit').text();
+
+		if ( title ) {
+			$('#wp-fullscreen-save input').attr( 'title', title );
+		}
+	});
+
+	// This event occurs while the overlay blocks the UI.
+	ps.subscribe( 'showing', function() {
+		$body.addClass( 'wp-fullscreen-active' );
+		s.$dfwWrap.addClass( 'wp-fullscreen-wrap' );
+
+		if ( s.$dfwTitle ) {
+			s.$dfwTitle.after( '<span id="wp-fullscreen-title-placeholder">' );
+			s.$dfwWrap.prepend( s.$dfwTitle.addClass('wp-fullscreen-title') );
+		}
+
+		api.refreshButtons();
+		resetCssPosition( true );
+		$('#wpadminbar').hide();
+
+		// Show the UI for 2 sec. when opening
+		toggleUI('autohide');
+
+		api.bind_resize();
+
+		if ( s.editor ) {
+			s.editor.execCommand( 'wpFullScreenOn' );
+		}
+
+		if ( 'ontouchstart' in window ) {
+			api.dfwWidth( '90%' );
+		} else {
+			api.dfwWidth( $( '#wp-fullscreen-body' ).data('dfw-width') || 800, true );
+		}
+
+		// scroll to top so the user is not disoriented
+		scrollTo(0, 0);
+	});
+
+	// This event occurs after the overlay unblocks the UI
+	ps.subscribe( 'shown', function() {
+		s.visible = true;
+
+		if ( s.editor && ! s.editor.isHidden() ) {
+			s.editor.execCommand( 'wpAutoResize' );
+		} else {
+			api.resizeTextarea( 'force' );
+		}
+	});
+
+	ps.subscribe( 'hide', function() { // This event occurs before the overlay blocks DFW.
+		$document.unbind( '.fullscreen' );
+		s.$dfwTextarea.unbind('.wp-dfw-resize');
+	});
+
+	ps.subscribe( 'hiding', function() { // This event occurs while the overlay blocks the DFW UI.
+		$body.removeClass( 'wp-fullscreen-active' );
+
+		if ( s.$dfwTitle ) {
+			$( '#wp-fullscreen-title-placeholder' ).before( s.$dfwTitle.removeClass('wp-fullscreen-title').css( 'width', '' ) ).remove();
+		}
+
+		s.$dfwWrap.removeClass( 'wp-fullscreen-wrap' );
+		s.$editorContainer.css( 'width', '' );
+		s.$dfwTextarea.add( '#' + s.id + '_ifr' ).height( s.origHeight );
+
+		if ( s.editor ) {
+			s.editor.execCommand( 'wpFullScreenOff' );
+		}
+
+		resetCssPosition( false );
+
+		window.scrollTo( 0, uiScrollTop );
+		$('#wpadminbar').show();
+	});
+
+	// This event occurs after DFW is removed.
+	ps.subscribe( 'hidden', function() {
+		s.visible = false;
+	});
+
+	api.refreshButtons = function( fade ) {
+		if ( s.mode === 'html' ) {
+			$('#wp-fullscreen-mode-bar').removeClass('wp-tmce-mode').addClass('wp-html-mode')
+				.find('a').removeClass( 'active' ).filter('.wp-fullscreen-mode-html').addClass( 'active' );
+
+			if ( fade ) {
+				$('#wp-fullscreen-button-bar').fadeOut( 150, function(){
+					$(this).addClass('wp-html-mode').fadeIn( 150 );
+				});
+			} else {
+				$('#wp-fullscreen-button-bar').addClass('wp-html-mode');
+			}
+		} else if ( s.mode === 'tinymce' ) {
+			$('#wp-fullscreen-mode-bar').removeClass('wp-html-mode').addClass('wp-tmce-mode')
+				.find('a').removeClass( 'active' ).filter('.wp-fullscreen-mode-tinymce').addClass( 'active' );
+
+			if ( fade ) {
+				$('#wp-fullscreen-button-bar').fadeOut( 150, function(){
+					$(this).removeClass('wp-html-mode').fadeIn( 150 );
+				});
+			} else {
+				$('#wp-fullscreen-button-bar').removeClass('wp-html-mode');
+			}
+		}
+	};
+
+	/**
+	 * UI Elements
+	 *
+	 * Used for transitioning between states.
+	 */
+	api.ui = {
+		init: function() {
+			var toolbar;
+
+			s.toolbar = toolbar = $('#fullscreen-topbar');
+			s.$fullscreenFader = $('#fullscreen-fader');
+			s.$statusbar = $('#wp-fullscreen-status');
+			s.hasTinymce = typeof tinymce !== 'undefined';
+
+			if ( ! s.hasTinymce )
+				$('#wp-fullscreen-mode-bar').hide();
+
+			$document.keyup( function(e) {
+				var c = e.keyCode || e.charCode, modKey;
+
+				if ( ! s.visible ) {
+					return;
+				}
+
+				if ( navigator.platform && navigator.platform.indexOf('Mac') !== -1 ) {
+					modKey = e.ctrlKey; // Ctrl key for Mac
+				} else {
+					modKey = e.altKey; // Alt key for Win & Linux
+				}
+
+				if ( modKey && ( 61 === c || 107 === c || 187 === c ) ) { // +
+					api.dfwWidth( 25 );
+					e.preventDefault();
+				}
+
+				if ( modKey && ( 45 === c || 109 === c || 189 === c ) ) { // -
+					api.dfwWidth( -25 );
+					e.preventDefault();
+				}
+
+				if ( modKey && 48 === c ) { // 0
+					api.dfwWidth( 0 );
+					e.preventDefault();
+				}
+			});
+
+			$( window ).on( 'keydown.wp-fullscreen', function( event ) {
+				// Turn fullscreen off when Esc is pressed.
+				if ( 27 === event.keyCode && s.visible ) {
+					api.off();
+					event.stopImmediatePropagation();
+				}
+			});
+
+			if ( 'ontouchstart' in window ) {
+				$body.addClass('wp-dfw-touch');
+			}
+
+			toolbar.on( 'mouseenter', function() {
+				toggleUI('show');
+			}).on( 'mouseleave', function() {
+				toggleUI('autohide');
+			});
+
+			// Bind buttons
+			$('#wp-fullscreen-buttons').on( 'click.wp-fullscreen', 'button', function( event ) {
+				var command = event.currentTarget.id ? event.currentTarget.id.substr(6) : null;
+
+				if ( s.editor && 'tinymce' === s.mode ) {
+					switch( command ) {
+						case 'bold':
+							s.editor.execCommand('Bold');
+							break;
+						case 'italic':
+							s.editor.execCommand('Italic');
+							break;
+						case 'bullist':
+							s.editor.execCommand('InsertUnorderedList');
+							break;
+						case 'numlist':
+							s.editor.execCommand('InsertOrderedList');
+							break;
+						case 'link':
+							s.editor.execCommand('WP_Link');
+							break;
+						case 'unlink':
+							s.editor.execCommand('unlink');
+							break;
+						case 'help':
+							s.editor.execCommand('WP_Help');
+							break;
+						case 'blockquote':
+							s.editor.execCommand('mceBlockQuote');
+							break;
+					}
+				} else if ( command === 'link' && window.wpLink ) {
+					window.wpLink.open();
+				}
+
+				if ( command === 'wp-media-library' && typeof wp !== 'undefined' && wp.media && wp.media.editor ) {
+					wp.media.editor.open( s.id );
+				}
+			});
+		},
+
+		fade: function( before, during, after ) {
+			if ( ! s.$fullscreenFader ) {
+				api.ui.init();
+			}
+
+			// If any callback bound to before returns false, bail.
+			if ( before && ! ps.publish( before ) ) {
+				return;
+			}
+
+			api.fade.In( s.$fullscreenFader, 200, function() {
+				if ( during ) {
+					ps.publish( during );
+				}
+
+				api.fade.Out( s.$fullscreenFader, 200, function() {
+					if ( after ) {
+						ps.publish( after );
+					}
+				});
+			});
+		}
+	};
+
+	api.fade = {
+		// Sensitivity to allow browsers to render the blank element before animating.
+		sensitivity: 100,
+
+		In: function( element, speed, callback, stop ) {
+
+			callback = callback || $.noop;
+			speed = speed || 400;
+			stop = stop || false;
+
+			if ( api.fade.transitions ) {
+				if ( element.is(':visible') ) {
+					element.addClass( 'fade-trigger' );
+					return element;
+				}
+
+				element.show();
+				element.first().one( transitionend, function() {
+					callback();
+				});
+
+				setTimeout( function() { element.addClass( 'fade-trigger' ); }, this.sensitivity );
+			} else {
+				if ( stop ) {
+					element.stop();
+				}
+
+				element.css( 'opacity', 1 );
+				element.first().fadeIn( speed, callback );
+
+				if ( element.length > 1 ) {
+					element.not(':first').fadeIn( speed );
+				}
+			}
+
+			return element;
+		},
+
+		Out: function( element, speed, callback, stop ) {
+
+			callback = callback || $.noop;
+			speed = speed || 400;
+			stop = stop || false;
+
+			if ( ! element.is(':visible') ) {
+				return element;
+			}
+
+			if ( api.fade.transitions ) {
+				element.first().one( transitionend, function() {
+					if ( element.hasClass('fade-trigger') ) {
+						return;
+					}
+
+					element.hide();
+					callback();
+				});
+				setTimeout( function() { element.removeClass( 'fade-trigger' ); }, this.sensitivity );
+			} else {
+				if ( stop ) {
+					element.stop();
+				}
+
+				element.first().fadeOut( speed, callback );
+
+				if ( element.length > 1 ) {
+					element.not(':first').fadeOut( speed );
+				}
+			}
+
+			return element;
+		},
+
+		// Check if the browser supports CSS 3.0 transitions
+		transitions: ( function() {
+			var style = document.documentElement.style;
+
+			return ( typeof style.WebkitTransition === 'string' ||
+				typeof style.MozTransition === 'string' ||
+				typeof style.OTransition === 'string' ||
+				typeof style.transition === 'string' );
+		})()
+	};
+
+	/**
+	 * Resize API
+	 *
+	 * Automatically updates textarea height.
+	 */
+	api.bind_resize = function() {
+		s.$dfwTextarea.on( 'keydown.wp-dfw-resize click.wp-dfw-resize paste.wp-dfw-resize', function() {
+			api.resizeTextarea();
+		});
+	};
+
+	api.resizeTextarea = function() {
+		var node = s.$dfwTextarea[0];
+
+		if ( node.scrollHeight > node.clientHeight ) {
+			node.style.height = node.scrollHeight + 50 + 'px';
+		}
+	};
+
+	// Export
+	window.wp = window.wp || {};
+	window.wp.editor = window.wp.editor || {};
+	window.wp.editor.fullscreen = api;
+
+})( jQuery, window );

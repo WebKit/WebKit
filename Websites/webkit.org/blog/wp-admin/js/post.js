@@ -1,1 +1,926 @@
-var tagBox,commentsBox,editPermalink,makeSlugeditClickable,WPSetThumbnailHTML,WPSetThumbnailID,WPRemoveThumbnail,wptitlehint;function array_unique_noempty(b){var c=[];jQuery.each(b,function(a,d){d=jQuery.trim(d);if(d&&jQuery.inArray(d,c)==-1){c.push(d)}});return c}(function(a){tagBox={clean:function(b){return b.replace(/\s*,\s*/g,",").replace(/,+/g,",").replace(/[,\s]+$/,"").replace(/^[,\s]+/,"")},parseTags:function(e){var h=e.id,b=h.split("-check-num-")[1],d=a(e).closest(".tagsdiv"),g=d.find(".the-tags"),c=g.val().split(","),f=[];delete c[b];a.each(c,function(i,j){j=a.trim(j);if(j){f.push(j)}});g.val(this.clean(f.join(",")));this.quickClicks(d);return false},quickClicks:function(d){var g=a(".the-tags",d),e=a(".tagchecklist",d),f=a(d).attr("id"),b,c;if(!g.length){return}c=g.prop("disabled");b=g.val().split(",");e.empty();a.each(b,function(i,k){var j,h;k=a.trim(k);if(!k){return}j=a("<span />").text(k);if(!c){h=a('<a id="'+f+"-check-num-"+i+'" class="ntdelbutton">X</a>');h.click(function(){tagBox.parseTags(this)});j.prepend("&nbsp;").prepend(h)}e.append(j)})},flushTags:function(e,b,g){b=b||false;var i,c=a(".the-tags",e),h=a("input.newtag",e),d;i=b?a(b).text():h.val();tagsval=c.val();d=tagsval?tagsval+","+i:i;d=this.clean(d);d=array_unique_noempty(d.split(",")).join(",");c.val(d);this.quickClicks(e);if(!b){h.val("")}if("undefined"==typeof(g)){h.focus()}return false},get:function(c){var b=c.substr(c.indexOf("-")+1);a.post(ajaxurl,{action:"get-tagcloud",tax:b},function(e,d){if(0==e||"success"!=d){e=wpAjax.broken}e=a('<p id="tagcloud-'+b+'" class="the-tagcloud">'+e+"</p>");a("a",e).click(function(){tagBox.flushTags(a(this).closest(".inside").children(".tagsdiv"),this);return false});a("#"+c).after(e)})},init:function(){var b=this,c=a("div.ajaxtag");a(".tagsdiv").each(function(){tagBox.quickClicks(this)});a("input.tagadd",c).click(function(){b.flushTags(a(this).closest(".tagsdiv"))});a("div.taghint",c).click(function(){a(this).css("visibility","hidden").parent().siblings(".newtag").focus()});a("input.newtag",c).blur(function(){if(this.value==""){a(this).parent().siblings(".taghint").css("visibility","")}}).focus(function(){a(this).parent().siblings(".taghint").css("visibility","hidden")}).keyup(function(d){if(13==d.which){tagBox.flushTags(a(this).closest(".tagsdiv"));return false}}).keypress(function(d){if(13==d.which){d.preventDefault();return false}}).each(function(){var d=a(this).closest("div.tagsdiv").attr("id");a(this).suggest(ajaxurl+"?action=ajax-tag-search&tax="+d,{delay:500,minchars:2,multiple:true,multipleSep:","})});a("#post").submit(function(){a("div.tagsdiv").each(function(){tagBox.flushTags(this,false,1)})});a("a.tagcloud-link").click(function(){tagBox.get(a(this).attr("id"));a(this).unbind().click(function(){a(this).siblings(".the-tagcloud").toggle();return false});return false})}};commentsBox={st:0,get:function(d,c){var b=this.st,e;if(!c){c=20}this.st+=c;this.total=d;a("#commentsdiv img.waiting").show();e={action:"get-comments",mode:"single",_ajax_nonce:a("#add_comment_nonce").val(),p:a("#post_ID").val(),start:b,number:c};a.post(ajaxurl,e,function(f){f=wpAjax.parseAjaxResponse(f);a("#commentsdiv .widefat").show();a("#commentsdiv img.waiting").hide();if("object"==typeof f&&f.responses[0]){a("#the-comment-list").append(f.responses[0].data);theList=theExtraList=null;a("a[className*=':']").unbind();if(commentsBox.st>commentsBox.total){a("#show-comments").hide()}else{a("#show-comments").html(postL10n.showcomm)}return}else{if(1==f){a("#show-comments").parent().html(postL10n.endcomm);return}}a("#the-comment-list").append('<tr><td colspan="2">'+wpAjax.broken+"</td></tr>")});return false}};WPSetThumbnailHTML=function(b){a(".inside","#postimagediv").html(b)};WPSetThumbnailID=function(c){var b=a('input[value="_thumbnail_id"]',"#list-table");if(b.size()>0){a("#meta\\["+b.attr("id").match(/[0-9]+/)+"\\]\\[value\\]").text(c)}};WPRemoveThumbnail=function(b){a.post(ajaxurl,{action:"set-post-thumbnail",post_id:a("#post_ID").val(),thumbnail_id:-1,_ajax_nonce:b,cookie:encodeURIComponent(document.cookie)},function(c){if(c=="0"){alert(setPostThumbnailL10n.error)}else{WPSetThumbnailHTML(c)}})}})(jQuery);jQuery(document).ready(function(f){var b,a,g="",e=0,h=f("#content");postboxes.add_postbox_toggles(pagenow);if(f("#tagsdiv-post_tag").length){tagBox.init()}else{f("#side-sortables, #normal-sortables, #advanced-sortables").children("div.postbox").each(function(){if(this.id.indexOf("tagsdiv-")===0){tagBox.init();return false}})}f(".categorydiv").each(function(){var n=f(this).attr("id"),j=false,m,o,l,i,k;l=n.split("-");l.shift();i=l.join("-");k=i+"_tab";if(i=="category"){k="cats"}f("a","#"+i+"-tabs").click(function(){var p=f(this).attr("href");f(this).parent().addClass("tabs").siblings("li").removeClass("tabs");f("#"+i+"-tabs").siblings(".tabs-panel").hide();f(p).show();if("#"+i+"-all"==p){deleteUserSetting(k)}else{setUserSetting(k,"pop")}return false});if(getUserSetting(k)){f('a[href="#'+i+'-pop"]',"#"+i+"-tabs").click()}f("#new"+i).one("focus",function(){f(this).val("").removeClass("form-input-tip")});f("#"+i+"-add-submit").click(function(){f("#new"+i).focus()});m=function(){if(j){return}j=true;var p=jQuery(this),r=p.is(":checked"),q=p.val().toString();f("#in-"+i+"-"+q+", #in-"+i+"-category-"+q).prop("checked",r);j=false};catAddBefore=function(p){if(!f("#new"+i).val()){return false}p.data+="&"+f(":checked","#"+i+"checklist").serialize();return p};o=function(u,t){var q,p=f("#new"+i+"_parent");if("undefined"!=t.parsed.responses[0]&&(q=t.parsed.responses[0].supplemental.newcat_parent)){p.before(q);p.remove()}};f("#"+i+"checklist").wpList({alt:"",response:i+"-ajax-response",addBefore:catAddBefore,addAfter:o});f("#"+i+"-add-toggle").click(function(){f("#"+i+"-adder").toggleClass("wp-hidden-children");f('a[href="#'+i+'-all"]',"#"+i+"-tabs").click();f("#new"+i).focus();return false});f("#"+i+"checklist li.popular-category :checkbox, #"+i+"checklist-pop :checkbox").live("click",function(){var p=f(this),r=p.is(":checked"),q=p.val();if(q&&p.parents("#taxonomy-"+i).length){f("#in-"+i+"-"+q+", #in-popular-"+i+"-"+q).prop("checked",r)}})});if(f("#postcustom").length){f("#the-list").wpList({addAfter:function(i,j){f("table#list-table").show()},addBefore:function(i){i.data+="&post_id="+f("#post_ID").val();return i}})}if(f("#submitdiv").length){b=f("#timestamp").html();a=f("#post-visibility-display").html();function d(){var i=f("#post-visibility-select");if(f("input:radio:checked",i).val()!="public"){f("#sticky").prop("checked",false);f("#sticky-span").hide()}else{f("#sticky-span").show()}if(f("input:radio:checked",i).val()!="password"){f("#password-span").hide()}else{f("#password-span").show()}}function c(){var p,q,j,s,r=f("#post_status"),k=f('option[value="publish"]',r),i=f("#aa").val(),n=f("#mm").val(),o=f("#jj").val(),m=f("#hh").val(),l=f("#mn").val();p=new Date(i,n-1,o,m,l);q=new Date(f("#hidden_aa").val(),f("#hidden_mm").val()-1,f("#hidden_jj").val(),f("#hidden_hh").val(),f("#hidden_mn").val());j=new Date(f("#cur_aa").val(),f("#cur_mm").val()-1,f("#cur_jj").val(),f("#cur_hh").val(),f("#cur_mn").val());if(p.getFullYear()!=i||(1+p.getMonth())!=n||p.getDate()!=o||p.getMinutes()!=l){f(".timestamp-wrap","#timestampdiv").addClass("form-invalid");return false}else{f(".timestamp-wrap","#timestampdiv").removeClass("form-invalid")}if(p>j&&f("#original_post_status").val()!="future"){s=postL10n.publishOnFuture;f("#publish").val(postL10n.schedule)}else{if(p<=j&&f("#original_post_status").val()!="publish"){s=postL10n.publishOn;f("#publish").val(postL10n.publish)}else{s=postL10n.publishOnPast;f("#publish").val(postL10n.update)}}if(q.toUTCString()==p.toUTCString()){f("#timestamp").html(b)}else{f("#timestamp").html(s+" <b>"+f('option[value="'+f("#mm").val()+'"]',"#mm").text()+" "+o+", "+i+" @ "+m+":"+l+"</b> ")}if(f("input:radio:checked","#post-visibility-select").val()=="private"){f("#publish").val(postL10n.update);if(k.length==0){r.append('<option value="publish">'+postL10n.privatelyPublished+"</option>")}else{k.html(postL10n.privatelyPublished)}f('option[value="publish"]',r).prop("selected",true);f(".edit-post-status","#misc-publishing-actions").hide()}else{if(f("#original_post_status").val()=="future"||f("#original_post_status").val()=="draft"){if(k.length){k.remove();r.val(f("#hidden_post_status").val())}}else{k.html(postL10n.published)}if(r.is(":hidden")){f(".edit-post-status","#misc-publishing-actions").show()}}f("#post-status-display").html(f("option:selected",r).text());if(f("option:selected",r).val()=="private"||f("option:selected",r).val()=="publish"){f("#save-post").hide()}else{f("#save-post").show();if(f("option:selected",r).val()=="pending"){f("#save-post").show().val(postL10n.savePending)}else{f("#save-post").show().val(postL10n.saveDraft)}}return true}f(".edit-visibility","#visibility").click(function(){if(f("#post-visibility-select").is(":hidden")){d();f("#post-visibility-select").slideDown("fast");f(this).hide()}return false});f(".cancel-post-visibility","#post-visibility-select").click(function(){f("#post-visibility-select").slideUp("fast");f("#visibility-radio-"+f("#hidden-post-visibility").val()).prop("checked",true);f("#post_password").val(f("#hidden_post_password").val());f("#sticky").prop("checked",f("#hidden-post-sticky").prop("checked"));f("#post-visibility-display").html(a);f(".edit-visibility","#visibility").show();c();return false});f(".save-post-visibility","#post-visibility-select").click(function(){var i=f("#post-visibility-select");i.slideUp("fast");f(".edit-visibility","#visibility").show();c();if(f("input:radio:checked",i).val()!="public"){f("#sticky").prop("checked",false)}if(true==f("#sticky").prop("checked")){g="Sticky"}else{g=""}f("#post-visibility-display").html(postL10n[f("input:radio:checked",i).val()+g]);return false});f("input:radio","#post-visibility-select").change(function(){d()});f("#timestampdiv").siblings("a.edit-timestamp").click(function(){if(f("#timestampdiv").is(":hidden")){f("#timestampdiv").slideDown("fast");f(this).hide()}return false});f(".cancel-timestamp","#timestampdiv").click(function(){f("#timestampdiv").slideUp("fast");f("#mm").val(f("#hidden_mm").val());f("#jj").val(f("#hidden_jj").val());f("#aa").val(f("#hidden_aa").val());f("#hh").val(f("#hidden_hh").val());f("#mn").val(f("#hidden_mn").val());f("#timestampdiv").siblings("a.edit-timestamp").show();c();return false});f(".save-timestamp","#timestampdiv").click(function(){if(c()){f("#timestampdiv").slideUp("fast");f("#timestampdiv").siblings("a.edit-timestamp").show()}return false});f("#post-status-select").siblings("a.edit-post-status").click(function(){if(f("#post-status-select").is(":hidden")){f("#post-status-select").slideDown("fast");f(this).hide()}return false});f(".save-post-status","#post-status-select").click(function(){f("#post-status-select").slideUp("fast");f("#post-status-select").siblings("a.edit-post-status").show();c();return false});f(".cancel-post-status","#post-status-select").click(function(){f("#post-status-select").slideUp("fast");f("#post_status").val(f("#hidden_post_status").val());f("#post-status-select").siblings("a.edit-post-status").show();c();return false})}if(f("#edit-slug-box").length){editPermalink=function(j){var k,n=0,m=f("#editable-post-name"),o=m.html(),r=f("#post_name"),s=r.val(),p=f("#edit-slug-buttons"),q=p.html(),l=f("#editable-post-name-full").html();f("#view-post-btn").hide();p.html('<a href="#" class="save button">'+postL10n.ok+'</a> <a class="cancel" href="#">'+postL10n.cancel+"</a>");p.children(".save").click(function(){var i=m.children("input").val();f.post(ajaxurl,{action:"sample-permalink",post_id:j,new_slug:i,new_title:f("#title").val(),samplepermalinknonce:f("#samplepermalinknonce").val()},function(t){f("#edit-slug-box").html(t);p.html(q);r.val(i);makeSlugeditClickable();f("#view-post-btn").show()});return false});f(".cancel","#edit-slug-buttons").click(function(){f("#view-post-btn").show();m.html(o);p.html(q);r.val(s);return false});for(k=0;k<l.length;++k){if("%"==l.charAt(k)){n++}}slug_value=(n>l.length/4)?"":l;m.html('<input type="text" id="new-post-slug" value="'+slug_value+'" />').children("input").keypress(function(t){var i=t.keyCode||0;if(13==i){p.children(".save").click();return false}if(27==i){p.children(".cancel").click();return false}r.val(this.value)}).focus()};makeSlugeditClickable=function(){f("#editable-post-name").click(function(){f("#edit-slug-buttons").children(".edit-slug").click()})};makeSlugeditClickable()}if(typeof(wpWordCount)!="undefined"){f(document).triggerHandler("wpcountwords",[h.val()]);h.keyup(function(j){var i=j.keyCode||j.charCode;if(i==e){return true}if(13==i||8==e||46==e){f(document).triggerHandler("wpcountwords",[h.val()])}e=i;return true})}wptitlehint=function(k){k=k||"title";var i=f("#"+k),j=f("#"+k+"-prompt-text");if(i.val()==""){j.css("visibility","")}j.click(function(){f(this).css("visibility","hidden");i.focus()});i.blur(function(){if(this.value==""){j.css("visibility","")}}).focus(function(){j.css("visibility","hidden")}).keydown(function(l){j.css("visibility","hidden");f(this).unbind(l)})};wptitlehint()});
+/* global postL10n, ajaxurl, wpAjax, setPostThumbnailL10n, postboxes, pagenow, tinymce, alert, deleteUserSetting */
+/* global theList:true, theExtraList:true, getUserSetting, setUserSetting */
+
+var commentsBox, WPSetThumbnailHTML, WPSetThumbnailID, WPRemoveThumbnail, wptitlehint, makeSlugeditClickable, editPermalink;
+// Back-compat: prevent fatal errors
+makeSlugeditClickable = editPermalink = function(){};
+
+window.wp = window.wp || {};
+
+( function( $ ) {
+	var titleHasFocus = false;
+
+commentsBox = {
+	st : 0,
+
+	get : function(total, num) {
+		var st = this.st, data;
+		if ( ! num )
+			num = 20;
+
+		this.st += num;
+		this.total = total;
+		$( '#commentsdiv .spinner' ).addClass( 'is-active' );
+
+		data = {
+			'action' : 'get-comments',
+			'mode' : 'single',
+			'_ajax_nonce' : $('#add_comment_nonce').val(),
+			'p' : $('#post_ID').val(),
+			'start' : st,
+			'number' : num
+		};
+
+		$.post(ajaxurl, data,
+			function(r) {
+				r = wpAjax.parseAjaxResponse(r);
+				$('#commentsdiv .widefat').show();
+				$( '#commentsdiv .spinner' ).removeClass( 'is-active' );
+
+				if ( 'object' == typeof r && r.responses[0] ) {
+					$('#the-comment-list').append( r.responses[0].data );
+
+					theList = theExtraList = null;
+					$( 'a[className*=\':\']' ).unbind();
+
+					if ( commentsBox.st > commentsBox.total )
+						$('#show-comments').hide();
+					else
+						$('#show-comments').show().children('a').html(postL10n.showcomm);
+
+					return;
+				} else if ( 1 == r ) {
+					$('#show-comments').html(postL10n.endcomm);
+					return;
+				}
+
+				$('#the-comment-list').append('<tr><td colspan="2">'+wpAjax.broken+'</td></tr>');
+			}
+		);
+
+		return false;
+	}
+};
+
+WPSetThumbnailHTML = function(html){
+	$('.inside', '#postimagediv').html(html);
+};
+
+WPSetThumbnailID = function(id){
+	var field = $('input[value="_thumbnail_id"]', '#list-table');
+	if ( field.size() > 0 ) {
+		$('#meta\\[' + field.attr('id').match(/[0-9]+/) + '\\]\\[value\\]').text(id);
+	}
+};
+
+WPRemoveThumbnail = function(nonce){
+	$.post(ajaxurl, {
+		action: 'set-post-thumbnail', post_id: $( '#post_ID' ).val(), thumbnail_id: -1, _ajax_nonce: nonce, cookie: encodeURIComponent( document.cookie )
+	}, function(str){
+		if ( str == '0' ) {
+			alert( setPostThumbnailL10n.error );
+		} else {
+			WPSetThumbnailHTML(str);
+		}
+	}
+	);
+};
+
+$(document).on( 'heartbeat-send.refresh-lock', function( e, data ) {
+	var lock = $('#active_post_lock').val(),
+		post_id = $('#post_ID').val(),
+		send = {};
+
+	if ( ! post_id || ! $('#post-lock-dialog').length )
+		return;
+
+	send.post_id = post_id;
+
+	if ( lock )
+		send.lock = lock;
+
+	data['wp-refresh-post-lock'] = send;
+
+}).on( 'heartbeat-tick.refresh-lock', function( e, data ) {
+	// Post locks: update the lock string or show the dialog if somebody has taken over editing
+	var received, wrap, avatar;
+
+	if ( data['wp-refresh-post-lock'] ) {
+		received = data['wp-refresh-post-lock'];
+
+		if ( received.lock_error ) {
+			// show "editing taken over" message
+			wrap = $('#post-lock-dialog');
+
+			if ( wrap.length && ! wrap.is(':visible') ) {
+				if ( wp.autosave ) {
+					// Save the latest changes and disable
+					$(document).one( 'heartbeat-tick', function() {
+						wp.autosave.server.suspend();
+						wrap.removeClass('saving').addClass('saved');
+						$(window).off( 'beforeunload.edit-post' );
+					});
+
+					wrap.addClass('saving');
+					wp.autosave.server.triggerSave();
+				}
+
+				if ( received.lock_error.avatar_src ) {
+					avatar = $('<img class="avatar avatar-64 photo" width="64" height="64" />').attr( 'src', received.lock_error.avatar_src.replace(/&amp;/g, '&') );
+					wrap.find('div.post-locked-avatar').empty().append( avatar );
+				}
+
+				wrap.show().find('.currently-editing').text( received.lock_error.text );
+				wrap.find('.wp-tab-first').focus();
+			}
+		} else if ( received.new_lock ) {
+			$('#active_post_lock').val( received.new_lock );
+		}
+	}
+}).on( 'before-autosave.update-post-slug', function() {
+	titleHasFocus = document.activeElement && document.activeElement.id === 'title';
+}).on( 'after-autosave.update-post-slug', function() {
+	// Create slug area only if not already there
+	// and the title field was not focused (user was not typing a title) when autosave ran
+	if ( ! $('#edit-slug-box > *').length && ! titleHasFocus ) {
+		$.post( ajaxurl, {
+				action: 'sample-permalink',
+				post_id: $('#post_ID').val(),
+				new_title: $('#title').val(),
+				samplepermalinknonce: $('#samplepermalinknonce').val()
+			},
+			function( data ) {
+				if ( data != '-1' ) {
+					$('#edit-slug-box').html(data);
+				}
+			}
+		);
+	}
+});
+
+}(jQuery));
+
+(function($) {
+	var check, timeout;
+
+	function schedule() {
+		check = false;
+		window.clearTimeout( timeout );
+		timeout = window.setTimeout( function(){ check = true; }, 300000 );
+	}
+
+	$(document).on( 'heartbeat-send.wp-refresh-nonces', function( e, data ) {
+		var nonce, post_id;
+
+		if ( check ) {
+			if ( ( post_id = $('#post_ID').val() ) && ( nonce = $('#_wpnonce').val() ) ) {
+				data['wp-refresh-post-nonces'] = {
+					post_id: post_id,
+					post_nonce: nonce
+				};
+			}
+		}
+	}).on( 'heartbeat-tick.wp-refresh-nonces', function( e, data ) {
+		var nonces = data['wp-refresh-post-nonces'];
+
+		if ( nonces ) {
+			schedule();
+
+			if ( nonces.replace ) {
+				$.each( nonces.replace, function( selector, value ) {
+					$( '#' + selector ).val( value );
+				});
+			}
+
+			if ( nonces.heartbeatNonce )
+				window.heartbeatSettings.nonce = nonces.heartbeatNonce;
+		}
+	}).ready( function() {
+		schedule();
+	});
+}(jQuery));
+
+jQuery(document).ready( function($) {
+	var stamp, visibility, $submitButtons, updateVisibility, updateText,
+		sticky = '',
+		last = 0,
+		co = $('#content'),
+		$document = $(document),
+		$editSlugWrap = $('#edit-slug-box'),
+		postId = $('#post_ID').val() || 0,
+		$submitpost = $('#submitpost'),
+		releaseLock = true,
+		$postVisibilitySelect = $('#post-visibility-select'),
+		$timestampdiv = $('#timestampdiv'),
+		$postStatusSelect = $('#post-status-select');
+
+	postboxes.add_postbox_toggles(pagenow);
+
+	// Clear the window name. Otherwise if this is a former preview window where the user navigated to edit another post,
+	// and the first post is still being edited, clicking Preview there will use this window to show the preview.
+	window.name = '';
+
+	// Post locks: contain focus inside the dialog. If the dialog is shown, focus the first item.
+	$('#post-lock-dialog .notification-dialog').on( 'keydown', function(e) {
+		if ( e.which != 9 )
+			return;
+
+		var target = $(e.target);
+
+		if ( target.hasClass('wp-tab-first') && e.shiftKey ) {
+			$(this).find('.wp-tab-last').focus();
+			e.preventDefault();
+		} else if ( target.hasClass('wp-tab-last') && ! e.shiftKey ) {
+			$(this).find('.wp-tab-first').focus();
+			e.preventDefault();
+		}
+	}).filter(':visible').find('.wp-tab-first').focus();
+
+	// Set the heartbeat interval to 15 sec. if post lock dialogs are enabled
+	if ( wp.heartbeat && $('#post-lock-dialog').length ) {
+		wp.heartbeat.interval( 15 );
+	}
+
+	// The form is being submitted by the user
+	$submitButtons = $submitpost.find( ':submit, a.submitdelete, #post-preview' ).on( 'click.edit-post', function( event ) {
+		var $button = $(this);
+
+		if ( $button.hasClass('disabled') ) {
+			event.preventDefault();
+			return;
+		}
+
+		if ( $button.hasClass('submitdelete') || $button.is( '#post-preview' ) ) {
+			return;
+		}
+
+		// The form submission can be blocked from JS or by using HTML 5.0 validation on some fields.
+		// Run this only on an actual 'submit'.
+		$('form#post').off( 'submit.edit-post' ).on( 'submit.edit-post', function( event ) {
+			if ( event.isDefaultPrevented() ) {
+				return;
+			}
+
+			// Stop autosave
+			if ( wp.autosave ) {
+				wp.autosave.server.suspend();
+			}
+
+			releaseLock = false;
+			$(window).off( 'beforeunload.edit-post' );
+
+			$submitButtons.addClass( 'disabled' );
+
+			if ( $button.attr('id') === 'publish' ) {
+				$submitpost.find( '#major-publishing-actions .spinner' ).addClass( 'is-active' );
+			} else {
+				$submitpost.find( '#minor-publishing .spinner' ).addClass( 'is-active' );
+			}
+		});
+	});
+
+	// Submit the form saving a draft or an autosave, and show a preview in a new tab
+	$('#post-preview').on( 'click.post-preview', function( event ) {
+		var $this = $(this),
+			$form = $('form#post'),
+			$previewField = $('input#wp-preview'),
+			target = $this.attr('target') || 'wp-preview',
+			ua = navigator.userAgent.toLowerCase();
+
+		event.preventDefault();
+
+		if ( $this.hasClass('disabled') ) {
+			return;
+		}
+
+		if ( wp.autosave ) {
+			wp.autosave.server.tempBlockSave();
+		}
+
+		$previewField.val('dopreview');
+		$form.attr( 'target', target ).submit().attr( 'target', '' );
+
+		// Workaround for WebKit bug preventing a form submitting twice to the same action.
+		// https://bugs.webkit.org/show_bug.cgi?id=28633
+		if ( ua.indexOf('safari') !== -1 && ua.indexOf('chrome') === -1 ) {
+			$form.attr( 'action', function( index, value ) {
+				return value + '?t=' + ( new Date() ).getTime();
+			});
+		}
+
+		$previewField.val('');
+	});
+
+	// This code is meant to allow tabbing from Title to Post content.
+	$('#title').on( 'keydown.editor-focus', function( event ) {
+		var editor, $textarea;
+
+		if ( event.keyCode === 9 && ! event.ctrlKey && ! event.altKey && ! event.shiftKey ) {
+			editor = typeof tinymce != 'undefined' && tinymce.get('content');
+			$textarea = $('#content');
+
+			if ( editor && ! editor.isHidden() ) {
+				editor.focus();
+			} else if ( $textarea.length ) {
+				$textarea.focus();
+			} else {
+				return;
+			}
+
+			event.preventDefault();
+		}
+	});
+
+	// Autosave new posts after a title is typed
+	if ( $( '#auto_draft' ).val() ) {
+		$( '#title' ).blur( function() {
+			var cancel;
+
+			if ( ! this.value || $('#edit-slug-box > *').length ) {
+				return;
+			}
+
+			// Cancel the autosave when the blur was triggered by the user submitting the form
+			$('form#post').one( 'submit', function() {
+				cancel = true;
+			});
+
+			window.setTimeout( function() {
+				if ( ! cancel && wp.autosave ) {
+					wp.autosave.server.triggerSave();
+				}
+			}, 200 );
+		});
+	}
+
+	$document.on( 'autosave-disable-buttons.edit-post', function() {
+		$submitButtons.addClass( 'disabled' );
+	}).on( 'autosave-enable-buttons.edit-post', function() {
+		if ( ! wp.heartbeat || ! wp.heartbeat.hasConnectionError() ) {
+			$submitButtons.removeClass( 'disabled' );
+		}
+	}).on( 'before-autosave.edit-post', function() {
+		$( '.autosave-message' ).text( postL10n.savingText );
+	}).on( 'after-autosave.edit-post', function( event, data ) {
+		$( '.autosave-message' ).text( data.message );
+	});
+
+	$(window).on( 'beforeunload.edit-post', function() {
+		var editor = typeof tinymce !== 'undefined' && tinymce.get('content');
+
+		if ( ( editor && ! editor.isHidden() && editor.isDirty() ) ||
+			( wp.autosave && wp.autosave.server.postChanged() ) ) {
+
+			return postL10n.saveAlert;
+		}
+	}).on( 'unload.edit-post', function( event ) {
+		if ( ! releaseLock ) {
+			return;
+		}
+
+		// Unload is triggered (by hand) on removing the Thickbox iframe.
+		// Make sure we process only the main document unload.
+		if ( event.target && event.target.nodeName != '#document' ) {
+			return;
+		}
+
+		$.ajax({
+			type: 'POST',
+			url: ajaxurl,
+			async: false,
+			data: {
+				action: 'wp-remove-post-lock',
+				_wpnonce: $('#_wpnonce').val(),
+				post_ID: $('#post_ID').val(),
+				active_post_lock: $('#active_post_lock').val()
+			}
+		});
+	});
+
+	// multi-taxonomies
+	if ( $('#tagsdiv-post_tag').length ) {
+		window.tagBox && window.tagBox.init();
+	} else {
+		$('#side-sortables, #normal-sortables, #advanced-sortables').children('div.postbox').each(function(){
+			if ( this.id.indexOf('tagsdiv-') === 0 ) {
+				window.tagBox && window.tagBox.init();
+				return false;
+			}
+		});
+	}
+
+	// categories
+	$('.categorydiv').each( function(){
+		var this_id = $(this).attr('id'), catAddBefore, catAddAfter, taxonomyParts, taxonomy, settingName;
+
+		taxonomyParts = this_id.split('-');
+		taxonomyParts.shift();
+		taxonomy = taxonomyParts.join('-');
+		settingName = taxonomy + '_tab';
+		if ( taxonomy == 'category' )
+			settingName = 'cats';
+
+		// TODO: move to jQuery 1.3+, support for multiple hierarchical taxonomies, see wp-lists.js
+		$('a', '#' + taxonomy + '-tabs').click( function(){
+			var t = $(this).attr('href');
+			$(this).parent().addClass('tabs').siblings('li').removeClass('tabs');
+			$('#' + taxonomy + '-tabs').siblings('.tabs-panel').hide();
+			$(t).show();
+			if ( '#' + taxonomy + '-all' == t )
+				deleteUserSetting( settingName );
+			else
+				setUserSetting( settingName, 'pop' );
+			return false;
+		});
+
+		if ( getUserSetting( settingName ) )
+			$('a[href="#' + taxonomy + '-pop"]', '#' + taxonomy + '-tabs').click();
+
+		// Ajax Cat
+		$( '#new' + taxonomy ).one( 'focus', function() { $( this ).val( '' ).removeClass( 'form-input-tip' ); } );
+
+		$('#new' + taxonomy).keypress( function(event){
+			if( 13 === event.keyCode ) {
+				event.preventDefault();
+				$('#' + taxonomy + '-add-submit').click();
+			}
+		});
+		$('#' + taxonomy + '-add-submit').click( function(){ $('#new' + taxonomy).focus(); });
+
+		catAddBefore = function( s ) {
+			if ( !$('#new'+taxonomy).val() )
+				return false;
+			s.data += '&' + $( ':checked', '#'+taxonomy+'checklist' ).serialize();
+			$( '#' + taxonomy + '-add-submit' ).prop( 'disabled', true );
+			return s;
+		};
+
+		catAddAfter = function( r, s ) {
+			var sup, drop = $('#new'+taxonomy+'_parent');
+
+			$( '#' + taxonomy + '-add-submit' ).prop( 'disabled', false );
+			if ( 'undefined' != s.parsed.responses[0] && (sup = s.parsed.responses[0].supplemental.newcat_parent) ) {
+				drop.before(sup);
+				drop.remove();
+			}
+		};
+
+		$('#' + taxonomy + 'checklist').wpList({
+			alt: '',
+			response: taxonomy + '-ajax-response',
+			addBefore: catAddBefore,
+			addAfter: catAddAfter
+		});
+
+		$('#' + taxonomy + '-add-toggle').click( function() {
+			$('#' + taxonomy + '-adder').toggleClass( 'wp-hidden-children' );
+			$('a[href="#' + taxonomy + '-all"]', '#' + taxonomy + '-tabs').click();
+			$('#new'+taxonomy).focus();
+			return false;
+		});
+
+		$('#' + taxonomy + 'checklist, #' + taxonomy + 'checklist-pop').on( 'click', 'li.popular-category > label input[type="checkbox"]', function() {
+			var t = $(this), c = t.is(':checked'), id = t.val();
+			if ( id && t.parents('#taxonomy-'+taxonomy).length )
+				$('#in-' + taxonomy + '-' + id + ', #in-popular-' + taxonomy + '-' + id).prop( 'checked', c );
+		});
+
+	}); // end cats
+
+	// Custom Fields
+	if ( $('#postcustom').length ) {
+		$( '#the-list' ).wpList( { addAfter: function() {
+			$('table#list-table').show();
+		}, addBefore: function( s ) {
+			s.data += '&post_id=' + $('#post_ID').val();
+			return s;
+		}
+		});
+	}
+
+	// submitdiv
+	if ( $('#submitdiv').length ) {
+		stamp = $('#timestamp').html();
+		visibility = $('#post-visibility-display').html();
+
+		updateVisibility = function() {
+			if ( $postVisibilitySelect.find('input:radio:checked').val() != 'public' ) {
+				$('#sticky').prop('checked', false);
+				$('#sticky-span').hide();
+			} else {
+				$('#sticky-span').show();
+			}
+			if ( $postVisibilitySelect.find('input:radio:checked').val() != 'password' ) {
+				$('#password-span').hide();
+			} else {
+				$('#password-span').show();
+			}
+		};
+
+		updateText = function() {
+
+			if ( ! $timestampdiv.length )
+				return true;
+
+			var attemptedDate, originalDate, currentDate, publishOn, postStatus = $('#post_status'),
+				optPublish = $('option[value="publish"]', postStatus), aa = $('#aa').val(),
+				mm = $('#mm').val(), jj = $('#jj').val(), hh = $('#hh').val(), mn = $('#mn').val();
+
+			attemptedDate = new Date( aa, mm - 1, jj, hh, mn );
+			originalDate = new Date( $('#hidden_aa').val(), $('#hidden_mm').val() -1, $('#hidden_jj').val(), $('#hidden_hh').val(), $('#hidden_mn').val() );
+			currentDate = new Date( $('#cur_aa').val(), $('#cur_mm').val() -1, $('#cur_jj').val(), $('#cur_hh').val(), $('#cur_mn').val() );
+
+			if ( attemptedDate.getFullYear() != aa || (1 + attemptedDate.getMonth()) != mm || attemptedDate.getDate() != jj || attemptedDate.getMinutes() != mn ) {
+				$timestampdiv.find('.timestamp-wrap').addClass('form-invalid');
+				return false;
+			} else {
+				$timestampdiv.find('.timestamp-wrap').removeClass('form-invalid');
+			}
+
+			if ( attemptedDate > currentDate && $('#original_post_status').val() != 'future' ) {
+				publishOn = postL10n.publishOnFuture;
+				$('#publish').val( postL10n.schedule );
+			} else if ( attemptedDate <= currentDate && $('#original_post_status').val() != 'publish' ) {
+				publishOn = postL10n.publishOn;
+				$('#publish').val( postL10n.publish );
+			} else {
+				publishOn = postL10n.publishOnPast;
+				$('#publish').val( postL10n.update );
+			}
+			if ( originalDate.toUTCString() == attemptedDate.toUTCString() ) { //hack
+				$('#timestamp').html(stamp);
+			} else {
+				$('#timestamp').html(
+					publishOn + ' <b>' +
+					postL10n.dateFormat.replace( '%1$s', $('option[value="' + $('#mm').val() + '"]', '#mm').text() )
+						.replace( '%2$s', jj )
+						.replace( '%3$s', aa )
+						.replace( '%4$s', hh )
+						.replace( '%5$s', mn ) +
+						'</b> '
+				);
+			}
+
+			if ( $postVisibilitySelect.find('input:radio:checked').val() == 'private' ) {
+				$('#publish').val( postL10n.update );
+				if ( 0 === optPublish.length ) {
+					postStatus.append('<option value="publish">' + postL10n.privatelyPublished + '</option>');
+				} else {
+					optPublish.html( postL10n.privatelyPublished );
+				}
+				$('option[value="publish"]', postStatus).prop('selected', true);
+				$('#misc-publishing-actions .edit-post-status').hide();
+			} else {
+				if ( $('#original_post_status').val() == 'future' || $('#original_post_status').val() == 'draft' ) {
+					if ( optPublish.length ) {
+						optPublish.remove();
+						postStatus.val($('#hidden_post_status').val());
+					}
+				} else {
+					optPublish.html( postL10n.published );
+				}
+				if ( postStatus.is(':hidden') )
+					$('#misc-publishing-actions .edit-post-status').show();
+			}
+			$('#post-status-display').html($('option:selected', postStatus).text());
+			if ( $('option:selected', postStatus).val() == 'private' || $('option:selected', postStatus).val() == 'publish' ) {
+				$('#save-post').hide();
+			} else {
+				$('#save-post').show();
+				if ( $('option:selected', postStatus).val() == 'pending' ) {
+					$('#save-post').show().val( postL10n.savePending );
+				} else {
+					$('#save-post').show().val( postL10n.saveDraft );
+				}
+			}
+			return true;
+		};
+
+		$( '#visibility .edit-visibility').click( function () {
+			if ( $postVisibilitySelect.is(':hidden') ) {
+				updateVisibility();
+				$postVisibilitySelect.slideDown('fast').find('input[type="radio"]').first().focus();
+				$(this).hide();
+			}
+			return false;
+		});
+
+		$postVisibilitySelect.find('.cancel-post-visibility').click( function( event ) {
+			$postVisibilitySelect.slideUp('fast');
+			$('#visibility-radio-' + $('#hidden-post-visibility').val()).prop('checked', true);
+			$('#post_password').val($('#hidden-post-password').val());
+			$('#sticky').prop('checked', $('#hidden-post-sticky').prop('checked'));
+			$('#post-visibility-display').html(visibility);
+			$('#visibility .edit-visibility').show().focus();
+			updateText();
+			event.preventDefault();
+		});
+
+		$postVisibilitySelect.find('.save-post-visibility').click( function( event ) { // crazyhorse - multiple ok cancels
+			$postVisibilitySelect.slideUp('fast');
+			$('#visibility .edit-visibility').show();
+			updateText();
+
+			if ( $postVisibilitySelect.find('input:radio:checked').val() != 'public' ) {
+				$('#sticky').prop('checked', false);
+			} // WEAPON LOCKED
+
+			if ( $('#sticky').prop('checked') ) {
+				sticky = 'Sticky';
+			} else {
+				sticky = '';
+			}
+
+			$('#post-visibility-display').html(	postL10n[ $postVisibilitySelect.find('input:radio:checked').val() + sticky ]	);
+			event.preventDefault();
+		});
+
+		$postVisibilitySelect.find('input:radio').change( function() {
+			updateVisibility();
+		});
+
+		$timestampdiv.siblings('a.edit-timestamp').click( function( event ) {
+			if ( $timestampdiv.is( ':hidden' ) ) {
+				$timestampdiv.slideDown('fast');
+				$('#mm').focus();
+				$(this).hide();
+			}
+			event.preventDefault();
+		});
+
+		$timestampdiv.find('.cancel-timestamp').click( function( event ) {
+			$timestampdiv.slideUp('fast').siblings('a.edit-timestamp').show().focus();
+			$('#mm').val($('#hidden_mm').val());
+			$('#jj').val($('#hidden_jj').val());
+			$('#aa').val($('#hidden_aa').val());
+			$('#hh').val($('#hidden_hh').val());
+			$('#mn').val($('#hidden_mn').val());
+			updateText();
+			event.preventDefault();
+		});
+
+		$timestampdiv.find('.save-timestamp').click( function( event ) { // crazyhorse - multiple ok cancels
+			if ( updateText() ) {
+				$timestampdiv.slideUp('fast');
+				$timestampdiv.siblings('a.edit-timestamp').show();
+			}
+			event.preventDefault();
+		});
+
+		$('#post').on( 'submit', function( event ) {
+			if ( ! updateText() ) {
+				event.preventDefault();
+				$timestampdiv.show();
+
+				if ( wp.autosave ) {
+					wp.autosave.enableButtons();
+				}
+
+				$( '#publishing-action .spinner' ).removeClass( 'is-active' );
+			}
+		});
+
+		$postStatusSelect.siblings('a.edit-post-status').click( function( event ) {
+			if ( $postStatusSelect.is( ':hidden' ) ) {
+				$postStatusSelect.slideDown('fast').find('select').focus();
+				$(this).hide();
+			}
+			event.preventDefault();
+		});
+
+		$postStatusSelect.find('.save-post-status').click( function( event ) {
+			$postStatusSelect.slideUp('fast').siblings('a.edit-post-status').show();
+			updateText();
+			event.preventDefault();
+		});
+
+		$postStatusSelect.find('.cancel-post-status').click( function( event ) {
+			$('#post-status-select').slideUp('fast').siblings( 'a.edit-post-status' ).show().focus();
+			$('#post_status').val( $('#hidden_post_status').val() );
+			updateText();
+			event.preventDefault();
+		});
+	} // end submitdiv
+
+	// permalink
+	function editPermalink() {
+		var i, slug_value,
+			c = 0,
+			e = $('#editable-post-name'),
+			revert_e = e.html(),
+			real_slug = $('#post_name'),
+			revert_slug = real_slug.val(),
+			b = $('#edit-slug-buttons'),
+			revert_b = b.html(),
+			full = $('#editable-post-name-full');
+
+		// Deal with Twemoji in the post-name
+		full.find( 'img' ).replaceWith( function() { return this.alt; } );
+		full = full.html();
+
+		$('#view-post-btn').hide();
+		b.html('<a href="#" class="save button button-small">'+postL10n.ok+'</a> <a class="cancel" href="#">'+postL10n.cancel+'</a>');
+		b.children('.save').click(function() {
+			var new_slug = e.children('input').val();
+			if ( new_slug == $('#editable-post-name-full').text() ) {
+				b.children('.cancel').click();
+				return false;
+			}
+			$.post(ajaxurl, {
+				action: 'sample-permalink',
+				post_id: postId,
+				new_slug: new_slug,
+				new_title: $('#title').val(),
+				samplepermalinknonce: $('#samplepermalinknonce').val()
+			}, function(data) {
+				var box = $('#edit-slug-box');
+				box.html(data);
+				if (box.hasClass('hidden')) {
+					box.fadeIn('fast', function () {
+						box.removeClass('hidden');
+					});
+				}
+
+				b.html(revert_b);
+				real_slug.val(new_slug);
+				$('#view-post-btn').show();
+			});
+			return false;
+		});
+
+		b.children('.cancel').click(function() {
+			$('#view-post-btn').show();
+			e.html(revert_e);
+			b.html(revert_b);
+			real_slug.val(revert_slug);
+			return false;
+		});
+
+		for ( i = 0; i < full.length; ++i ) {
+			if ( '%' == full.charAt(i) )
+				c++;
+		}
+
+		slug_value = ( c > full.length / 4 ) ? '' : full;
+		e.html('<input type="text" id="new-post-slug" value="'+slug_value+'" />').children('input').keypress(function(e) {
+			var key = e.keyCode || 0;
+			// on enter, just save the new slug, don't save the post
+			if ( 13 == key ) {
+				b.children('.save').click();
+				return false;
+			}
+			if ( 27 == key ) {
+				b.children('.cancel').click();
+				return false;
+			}
+		} ).keyup( function() {
+			real_slug.val(this.value);
+		}).focus();
+	}
+
+	if ( $editSlugWrap.length ) {
+		$editSlugWrap.on( 'click', function( event ) {
+			var $target = $( event.target );
+
+			if ( $target.is('#editable-post-name') || $target.hasClass('edit-slug') ) {
+				editPermalink();
+			}
+		});
+	}
+
+	// word count
+	if ( typeof(wpWordCount) != 'undefined' ) {
+		$document.triggerHandler('wpcountwords', [ co.val() ]);
+
+		co.keyup( function(e) {
+			var k = e.keyCode || e.charCode;
+
+			if ( k == last )
+				return true;
+
+			if ( 13 == k || 8 == last || 46 == last )
+				$document.triggerHandler('wpcountwords', [ co.val() ]);
+
+			last = k;
+			return true;
+		});
+	}
+
+	wptitlehint = function(id) {
+		id = id || 'title';
+
+		var title = $('#' + id), titleprompt = $('#' + id + '-prompt-text');
+
+		if ( '' === title.val() )
+			titleprompt.removeClass('screen-reader-text');
+
+		titleprompt.click(function(){
+			$(this).addClass('screen-reader-text');
+			title.focus();
+		});
+
+		title.blur(function(){
+			if ( '' === this.value )
+				titleprompt.removeClass('screen-reader-text');
+		}).focus(function(){
+			titleprompt.addClass('screen-reader-text');
+		}).keydown(function(e){
+			titleprompt.addClass('screen-reader-text');
+			$(this).unbind(e);
+		});
+	};
+
+	wptitlehint();
+
+	// Resize the visual and text editors
+	( function() {
+		var editor, offset, mce,
+			$textarea = $('textarea#content'),
+			$handle = $('#post-status-info'),
+			$postdivrich = $('#postdivrich');
+
+		// No point for touch devices
+		if ( ! $textarea.length || 'ontouchstart' in window ) {
+			// Hide the resize handle
+			$('#content-resize-handle').hide();
+			return;
+		}
+
+		function dragging( event ) {
+			if ( $postdivrich.hasClass( 'wp-editor-expand' ) ) {
+				return;
+			}
+
+			if ( mce ) {
+				editor.theme.resizeTo( null, offset + event.pageY );
+			} else {
+				$textarea.height( Math.max( 50, offset + event.pageY ) );
+			}
+
+			event.preventDefault();
+		}
+
+		function endDrag() {
+			var height, toolbarHeight;
+
+			if ( $postdivrich.hasClass( 'wp-editor-expand' ) ) {
+				return;
+			}
+
+			if ( mce ) {
+				editor.focus();
+				toolbarHeight = parseInt( $( '#wp-content-editor-container .mce-toolbar-grp' ).height(), 10 );
+
+				if ( toolbarHeight < 10 || toolbarHeight > 200 ) {
+					toolbarHeight = 30;
+				}
+
+				height = parseInt( $('#content_ifr').css('height'), 10 ) + toolbarHeight - 28;
+			} else {
+				$textarea.focus();
+				height = parseInt( $textarea.css('height'), 10 );
+			}
+
+			$document.off( '.wp-editor-resize' );
+
+			// sanity check
+			if ( height && height > 50 && height < 5000 ) {
+				setUserSetting( 'ed_size', height );
+			}
+		}
+
+		$handle.on( 'mousedown.wp-editor-resize', function( event ) {
+			if ( typeof tinymce !== 'undefined' ) {
+				editor = tinymce.get('content');
+			}
+
+			if ( editor && ! editor.isHidden() ) {
+				mce = true;
+				offset = $('#content_ifr').height() - event.pageY;
+			} else {
+				mce = false;
+				offset = $textarea.height() - event.pageY;
+				$textarea.blur();
+			}
+
+			$document.on( 'mousemove.wp-editor-resize', dragging )
+				.on( 'mouseup.wp-editor-resize mouseleave.wp-editor-resize', endDrag );
+
+			event.preventDefault();
+		}).on( 'mouseup.wp-editor-resize', endDrag );
+	})();
+
+	if ( typeof tinymce !== 'undefined' ) {
+		// When changing post formats, change the editor body class
+		$( '#post-formats-select input.post-format' ).on( 'change.set-editor-class', function() {
+			var editor, body, format = this.id;
+
+			if ( format && $( this ).prop( 'checked' ) && ( editor = tinymce.get( 'content' ) ) ) {
+				body = editor.getBody();
+				body.className = body.className.replace( /\bpost-format-[^ ]+/, '' );
+				editor.dom.addClass( body, format == 'post-format-0' ? 'post-format-standard' : format );
+				$( document ).trigger( 'editor-classchange' );
+			}
+		});
+	}
+});

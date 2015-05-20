@@ -1,1 +1,69 @@
-function send_to_editor(b){var a;if(typeof tinyMCE!="undefined"&&(a=tinyMCE.activeEditor)&&!a.isHidden()){if(tinymce.isIE&&a.windowManager.insertimagebookmark){a.selection.moveToBookmark(a.windowManager.insertimagebookmark)}if(b.indexOf("[caption")===0){if(a.plugins.wpeditimage){b=a.plugins.wpeditimage._do_shcode(b)}}else{if(b.indexOf("[gallery")===0){if(a.plugins.wpgallery){b=a.plugins.wpgallery._do_gallery(b)}}else{if(b.indexOf("[embed")===0){if(a.plugins.wordpress){b=a.plugins.wordpress._setEmbed(b)}}}}a.execCommand("mceInsertContent",false,b)}else{if(typeof edInsertContent=="function"){edInsertContent(edCanvas,b)}else{jQuery(edCanvas).val(jQuery(edCanvas).val()+b)}}tb_remove()}var tb_position;(function(a){tb_position=function(){var f=a("#TB_window"),e=a(window).width(),d=a(window).height(),c=(720<e)?720:e,b=0;if(a("body.admin-bar").length){b=28}if(f.size()){f.width(c-50).height(d-45-b);a("#TB_iframeContent").width(c-50).height(d-75-b);f.css({"margin-left":"-"+parseInt(((c-50)/2),10)+"px"});if(typeof document.body.style.maxWidth!="undefined"){f.css({top:20+b+"px","margin-top":"0"})}}return a("a.thickbox").each(function(){var g=a(this).attr("href");if(!g){return}g=g.replace(/&width=[0-9]+/g,"");g=g.replace(/&height=[0-9]+/g,"");a(this).attr("href",g+"&width="+(c-80)+"&height="+(d-85-b))})};a(window).resize(function(){tb_position()});a(document).ready(function(b){b("a.thickbox").click(function(){var c;if(typeof tinyMCE!="undefined"&&tinymce.isIE&&(c=tinyMCE.activeEditor)&&!c.isHidden()){c.focus();c.windowManager.insertimagebookmark=c.selection.getBookmark()}})})})(jQuery);
+/* global tinymce, QTags */
+// send html to the post editor
+
+var wpActiveEditor, send_to_editor;
+
+send_to_editor = function( html ) {
+	var editor,
+		hasTinymce = typeof tinymce !== 'undefined',
+		hasQuicktags = typeof QTags !== 'undefined';
+
+	if ( ! wpActiveEditor ) {
+		if ( hasTinymce && tinymce.activeEditor ) {
+			editor = tinymce.activeEditor;
+			wpActiveEditor = editor.id;
+		} else if ( ! hasQuicktags ) {
+			return false;
+		}
+	} else if ( hasTinymce ) {
+		editor = tinymce.get( wpActiveEditor );
+	}
+
+	if ( editor && ! editor.isHidden() ) {
+		editor.execCommand( 'mceInsertContent', false, html );
+	} else if ( hasQuicktags ) {
+		QTags.insertContent( html );
+	} else {
+		document.getElementById( wpActiveEditor ).value += html;
+	}
+
+	// If the old thickbox remove function exists, call it
+	if ( window.tb_remove ) {
+		try { window.tb_remove(); } catch( e ) {}
+	}
+};
+
+// thickbox settings
+var tb_position;
+(function($) {
+	tb_position = function() {
+		var tbWindow = $('#TB_window'),
+			width = $(window).width(),
+			H = $(window).height(),
+			W = ( 833 < width ) ? 833 : width,
+			adminbar_height = 0;
+
+		if ( $('#wpadminbar').length ) {
+			adminbar_height = parseInt( $('#wpadminbar').css('height'), 10 );
+		}
+
+		if ( tbWindow.size() ) {
+			tbWindow.width( W - 50 ).height( H - 45 - adminbar_height );
+			$('#TB_iframeContent').width( W - 50 ).height( H - 75 - adminbar_height );
+			tbWindow.css({'margin-left': '-' + parseInt( ( ( W - 50 ) / 2 ), 10 ) + 'px'});
+			if ( typeof document.body.style.maxWidth !== 'undefined' )
+				tbWindow.css({'top': 20 + adminbar_height + 'px', 'margin-top': '0'});
+		}
+
+		return $('a.thickbox').each( function() {
+			var href = $(this).attr('href');
+			if ( ! href ) return;
+			href = href.replace(/&width=[0-9]+/g, '');
+			href = href.replace(/&height=[0-9]+/g, '');
+			$(this).attr( 'href', href + '&width=' + ( W - 80 ) + '&height=' + ( H - 85 - adminbar_height ) );
+		});
+	};
+
+	$(window).resize(function(){ tb_position(); });
+
+})(jQuery);

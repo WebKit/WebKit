@@ -2,7 +2,7 @@
 /**
  * Contains Translation_Entry class
  *
- * @version $Id: entry.php 406 2010-02-07 11:10:24Z nbachiyski $
+ * @version $Id: entry.php 718 2012-10-31 00:32:02Z nbachiyski $
  * @package pomo
  * @subpackage entry
  */
@@ -64,6 +64,15 @@ class Translation_Entry {
 		if (is_null($this->singular)) return false;
 		// prepend context and EOT, like in MO files
 		return is_null($this->context)? $this->singular : $this->context.chr(4).$this->singular;
+	}
+
+	function merge_with(&$other) {
+		$this->flags = array_unique( array_merge( $this->flags, $other->flags ) );
+		$this->references = array_unique( array_merge( $this->references, $other->references ) );
+		if ( $this->extracted_comments != $other->extracted_comments ) {
+			$this->extracted_comments .= $other->extracted_comments;
+		}
+
 	}
 }
 endif;

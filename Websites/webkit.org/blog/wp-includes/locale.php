@@ -17,61 +17,55 @@ class WP_Locale {
 	 *
 	 * @since 2.1.0
 	 * @var array
-	 * @access private
 	 */
-	var $weekday;
+	public $weekday;
 
 	/**
 	 * Stores the translated strings for the one character weekday names.
 	 *
 	 * There is a hack to make sure that Tuesday and Thursday, as well
-	 * as Sunday and Saturday don't conflict. See init() method for more.
+	 * as Sunday and Saturday, don't conflict. See init() method for more.
 	 *
 	 * @see WP_Locale::init() for how to handle the hack.
 	 *
 	 * @since 2.1.0
 	 * @var array
-	 * @access private
 	 */
-	var $weekday_initial;
+	public $weekday_initial;
 
 	/**
 	 * Stores the translated strings for the abbreviated weekday names.
 	 *
 	 * @since 2.1.0
 	 * @var array
-	 * @access private
 	 */
-	var $weekday_abbrev;
+	public $weekday_abbrev;
 
 	/**
 	 * Stores the translated strings for the full month names.
 	 *
 	 * @since 2.1.0
 	 * @var array
-	 * @access private
 	 */
-	var $month;
+	public $month;
 
 	/**
 	 * Stores the translated strings for the abbreviated month names.
 	 *
 	 * @since 2.1.0
 	 * @var array
-	 * @access private
 	 */
-	var $month_abbrev;
+	public $month_abbrev;
 
 	/**
 	 * Stores the translated strings for 'am' and 'pm'.
 	 *
-	 * Also the capalized versions.
+	 * Also the capitalized versions.
 	 *
 	 * @since 2.1.0
 	 * @var array
-	 * @access private
 	 */
-	var $meridiem;
+	public $meridiem;
 
 	/**
 	 * The text direction of the locale language.
@@ -80,18 +74,13 @@ class WP_Locale {
 	 *
 	 * @since 2.1.0
 	 * @var string
-	 * @access private
 	 */
-	var $text_direction = 'ltr';
+	public $text_direction = 'ltr';
 
 	/**
-	 * Imports the global version to the class property.
-	 *
-	 * @since 2.1.0
 	 * @var array
-	 * @access private
 	 */
-	var $locale_vars = array('text_direction');
+	public $number_format;
 
 	/**
 	 * Sets up the translated strings and object properties.
@@ -113,7 +102,7 @@ class WP_Locale {
 		$this->weekday[5] = /* translators: weekday */ __('Friday');
 		$this->weekday[6] = /* translators: weekday */ __('Saturday');
 
-		// The first letter of each day.  The _%day%_initial suffix is a hack to make
+		// The first letter of each day. The _%day%_initial suffix is a hack to make
 		// sure the day initials are unique.
 		$this->weekday_initial[__('Sunday')]    = /* translators: one-letter abbreviation of the weekday */ __('S_Sunday_initial');
 		$this->weekday_initial[__('Monday')]    = /* translators: one-letter abbreviation of the weekday */ __('M_Monday_initial');
@@ -186,12 +175,21 @@ class WP_Locale {
 		$trans = __('number_format_decimal_point');
 		$this->number_format['decimal_point'] = ('number_format_decimal_point' == $trans) ? '.' : $trans;
 
-		// Import global locale vars set during inclusion of $locale.php.
-		foreach ( (array) $this->locale_vars as $var ) {
-			if ( isset($GLOBALS[$var]) )
-				$this->$var = $GLOBALS[$var];
-		}
+		// Set text direction.
+		if ( isset( $GLOBALS['text_direction'] ) )
+			$this->text_direction = $GLOBALS['text_direction'];
+		/* translators: 'rtl' or 'ltr'. This sets the text direction for WordPress. */
+		elseif ( 'rtl' == _x( 'ltr', 'text direction' ) )
+			$this->text_direction = 'rtl';
 
+		if ( 'rtl' === $this->text_direction && strpos( $GLOBALS['wp_version'], '-src' ) ) {
+			$this->text_direction = 'ltr';
+			add_action( 'all_admin_notices', array( $this, 'rtl_src_admin_notice' ) );
+		}
+	}
+
+	function rtl_src_admin_notice() {
+		echo '<div class="error"><p>' . 'The <code>build</code> directory of the develop repository must be used for RTL.' . '</p></div>';
 	}
 
 	/**
@@ -320,21 +318,39 @@ class WP_Locale {
 	 * @uses WP_Locale::register_globals()
 	 * @since 2.1.0
 	 *
-	 * @return WP_Locale
 	 */
 	function __construct() {
 		$this->init();
 		$this->register_globals();
 	}
+
 	/**
 	 * Checks if current locale is RTL.
 	 *
 	 * @since 3.0.0
 	 * @return bool Whether locale is RTL.
 	 */
-	 function is_rtl() {
-	 	return 'rtl' == $this->text_direction;
-	 }
+	function is_rtl() {
+		return 'rtl' == $this->text_direction;
+	}
+
+	/**
+	 * Register date/time format strings for general POT.
+	 *
+	 * Private, unused method to add some date/time formats translated
+	 * on wp-admin/options-general.php to the general POT that would
+	 * otherwise be added to the admin POT.
+	 *
+	 * @since 3.6.0
+	 */
+	function _strings_for_pot() {
+		/* translators: localized date format, see http://php.net/date */
+		__( 'F j, Y' );
+		/* translators: localized time format, see http://php.net/date */
+		__( 'g:i a' );
+		/* translators: localized date and time format, see http://php.net/date */
+		__( 'F j, Y g:i a' );
+	}
 }
 
 /**
@@ -347,5 +363,3 @@ function is_rtl() {
 	global $wp_locale;
 	return $wp_locale->is_rtl();
 }
-
-?>

@@ -24,22 +24,24 @@ $theme_field_defaults = array( 'description' => true, 'sections' => false, 'test
  *
  * @since 2.8.0
  *
- * @deprecated since 3.1.0  Use get_theme_feature_list() instead.
+ * @deprecated since 3.1.0 Use get_theme_feature_list() instead.
  *
  * @return array
  */
-function install_themes_feature_list( ) {
-	if ( !$cache = get_transient( 'wporg_theme_feature_list' ) )
-		set_transient( 'wporg_theme_feature_list', array( ),  10800);
+function install_themes_feature_list() {
+	_deprecated_function( __FUNCTION__, '3.1', 'get_theme_feature_list()' );
 
-	if ( $cache  )
+	if ( !$cache = get_transient( 'wporg_theme_feature_list' ) )
+		set_transient( 'wporg_theme_feature_list', array(), 3 * HOUR_IN_SECONDS );
+
+	if ( $cache )
 		return $cache;
 
-	$feature_list = themes_api( 'feature_list', array( ) );
+	$feature_list = themes_api( 'feature_list', array() );
 	if ( is_wp_error( $feature_list ) )
-		return $features;
+		return array();
 
-	set_transient( 'wporg_theme_feature_list', $feature_list, 10800 );
+	set_transient( 'wporg_theme_feature_list', $feature_list, 3 * HOUR_IN_SECONDS );
 
 	return $feature_list;
 }
@@ -49,20 +51,38 @@ function install_themes_feature_list( ) {
  *
  * @since 2.8.0
  */
-function install_theme_search_form() {
-	$type = isset( $_REQUEST['type'] ) ? stripslashes( $_REQUEST['type'] ) : '';
-	$term = isset( $_REQUEST['s'] ) ? stripslashes( $_REQUEST['s'] ) : '';
+function install_theme_search_form( $type_selector = true ) {
+	$type = isset( $_REQUEST['type'] ) ? wp_unslash( $_REQUEST['type'] ) : 'term';
+	$term = isset( $_REQUEST['s'] ) ? wp_unslash( $_REQUEST['s'] ) : '';
+	if ( ! $type_selector )
+		echo '<p class="install-help">' . __( 'Search for themes by keyword.' ) . '</p>';
 	?>
-<p class="install-help"><?php _e('Search for themes by keyword, author, or tag.') ?></p>
-
-<form id="search-themes" method="get" action="">
+<form id="search-themes" method="get">
 	<input type="hidden" name="tab" value="search" />
+	<?php if ( $type_selector ) : ?>
+	<label class="screen-reader-text" for="typeselector"><?php _e('Type of search'); ?></label>
 	<select	name="type" id="typeselector">
-	<option value="term" <?php selected('term', $type) ?>><?php _e('Term'); ?></option>
+	<option value="term" <?php selected('term', $type) ?>><?php _e('Keyword'); ?></option>
 	<option value="author" <?php selected('author', $type) ?>><?php _e('Author'); ?></option>
 	<option value="tag" <?php selected('tag', $type) ?>><?php _ex('Tag', 'Theme Installer'); ?></option>
 	</select>
-	<input type="text" name="s" size="30" value="<?php echo esc_attr($term) ?>" />
+	<label class="screen-reader-text" for="s"><?php
+	switch ( $type ) {
+		case 'term':
+			_e( 'Search by keyword' );
+			break;
+		case 'author':
+			_e( 'Search by author' );
+			break;
+		case 'tag':
+			_e( 'Search by tag' );
+			break;
+	}
+	?></label>
+	<?php else : ?>
+	<label class="screen-reader-text" for="s"><?php _e('Search by keyword'); ?></label>
+	<?php endif; ?>
+	<input type="search" name="s" id="s" size="30" value="<?php echo esc_attr($term) ?>" autofocus="autofocus" />
 	<?php submit_button( __( 'Search' ), 'button', 'search', false ); ?>
 </form>
 <?php
@@ -74,13 +94,15 @@ function install_theme_search_form() {
  * @since 2.8.0
  */
 function install_themes_dashboard() {
-	install_theme_search_form();
+	install_theme_search_form( false );
 ?>
 <h4><?php _e('Feature Filter') ?></h4>
-<form method="post" action="<?php echo self_admin_url( 'theme-install.php?tab=search' ); ?>">
-<p class="install-help"><?php _e('Find a theme based on specific features') ?></p>
+<p class="install-help"><?php _e( 'Find a theme based on specific features.' ); ?></p>
+
+<form method="get">
+	<input type="hidden" name="tab" value="search" />
 	<?php
-	$feature_list = get_theme_feature_list( );
+	$feature_list = get_theme_feature_list();
 	echo '<div class="feature-filter">';
 
 	foreach ( (array) $feature_list as $feature_name => $features ) {
@@ -94,7 +116,7 @@ function install_themes_dashboard() {
 ?>
 
 <li>
-	<input type="checkbox" name="features[<?php echo $feature; ?>]" id="feature-id-<?php echo $feature; ?>" value="<?php echo $feature; ?>" />
+	<input type="checkbox" name="features[]" id="feature-id-<?php echo $feature; ?>" value="<?php echo $feature; ?>" />
 	<label for="feature-id-<?php echo $feature; ?>"><?php echo $feature_name; ?></label>
 </li>
 
@@ -110,90 +132,33 @@ function install_themes_dashboard() {
 </form>
 <?php
 }
-add_action('install_themes_dashboard', 'install_themes_dashboard');
+// add_action('install_themes_dashboard', 'install_themes_dashboard');
 
-function install_themes_upload($page = 1) {
+function install_themes_upload() {
 ?>
-<h4><?php _e('Install a theme in .zip format') ?></h4>
-<p class="install-help"><?php _e('If you have a theme in a .zip format, you may install it by uploading it here.') ?></p>
-<form method="post" enctype="multipart/form-data" action="<?php echo self_admin_url('update.php?action=upload-theme') ?>">
-	<?php wp_nonce_field( 'theme-upload') ?>
+<p class="install-help"><?php _e('If you have a theme in a .zip format, you may install it by uploading it here.'); ?></p>
+<form method="post" enctype="multipart/form-data" class="wp-upload-form" action="<?php echo self_admin_url('update.php?action=upload-theme'); ?>">
+	<?php wp_nonce_field( 'theme-upload'); ?>
 	<input type="file" name="themezip" />
 	<?php submit_button( __( 'Install Now' ), 'button', 'install-theme-submit', false ); ?>
 </form>
 	<?php
 }
-add_action('install_themes_upload', 'install_themes_upload', 10, 1);
+// add_action('install_themes_upload', 'install_themes_upload', 10, 0);
 
-function display_theme($theme, $actions = null, $show_details = true) {
-	global $themes_allowedtags;
-
-	if ( empty($theme) )
-		return;
-
-	$name = wp_kses($theme->name, $themes_allowedtags);
-	$desc = wp_kses($theme->description, $themes_allowedtags);
-	//if ( strlen($desc) > 30 )
-	//	$desc =  substr($desc, 0, 15) . '<span class="dots">...</span><span>' . substr($desc, -15) . '</span>';
-
-	$preview_link = $theme->preview_url . '?TB_iframe=true&amp;width=600&amp;height=400';
-	if ( !is_array($actions) ) {
-		$actions = array();
-		$actions[] = '<a href="' . self_admin_url('theme-install.php?tab=theme-information&amp;theme=' . $theme->slug .
-										'&amp;TB_iframe=true&amp;tbWidth=500&amp;tbHeight=385') . '" class="thickbox thickbox-preview onclick" title="' . esc_attr(sprintf(__('Install &#8220;%s&#8221;'), $name)) . '">' . __('Install') . '</a>';
-		if ( !is_network_admin() )
-			$actions[] = '<a href="' . $preview_link . '" class="thickbox thickbox-preview onclick previewlink" title="' . esc_attr(sprintf(__('Preview &#8220;%s&#8221;'), $name)) . '">' . __('Preview') . '</a>';
-		$actions = apply_filters('theme_install_action_links', $actions, $theme);
+/**
+ * Prints a theme on the Install Themes pages.
+ *
+ * @deprecated 3.4.0
+ */
+function display_theme( $theme ) {
+	_deprecated_function( __FUNCTION__, '3.4' );
+	global $wp_list_table;
+	if ( ! isset( $wp_list_table ) ) {
+		$wp_list_table = _get_list_table('WP_Theme_Install_List_Table');
 	}
-
-	$actions = implode ( ' | ', $actions );
-	?>
-<a class='thickbox thickbox-preview screenshot'
-	href='<?php echo esc_url($preview_link); ?>'
-	title='<?php echo esc_attr(sprintf(__('Preview &#8220;%s&#8221;'), $name)); ?>'>
-<img src='<?php echo esc_url($theme->screenshot_url); ?>' width='150' />
-</a>
-<h3><?php echo $name ?></h3>
-<span class='action-links'><?php echo $actions ?></span>
-<p><?php echo $desc ?></p>
-<?php if ( $show_details ) { ?>
-<a href="#theme_detail" class="theme-detail hide-if-no-js" tabindex='4'><?php _e('Details') ?></a>
-<div class="themedetaildiv hide-if-js">
-<p><strong><?php _e('Version:') ?></strong> <?php echo wp_kses($theme->version, $themes_allowedtags) ?></p>
-<p><strong><?php _e('Author:') ?></strong> <?php echo wp_kses($theme->author, $themes_allowedtags) ?></p>
-<?php if ( ! empty($theme->last_updated) ) : ?>
-<p><strong><?php _e('Last Updated:') ?></strong> <span title="<?php echo $theme->last_updated ?>"><?php printf( __('%s ago'), human_time_diff(strtotime($theme->last_updated)) ) ?></span></p>
-<?php endif; if ( ! empty($theme->requires) ) : ?>
-<p><strong><?php _e('Requires WordPress Version:') ?></strong> <?php printf(__('%s or higher'), $theme->requires) ?></p>
-<?php endif; if ( ! empty($theme->tested) ) : ?>
-<p><strong><?php _e('Compatible up to:') ?></strong> <?php echo $theme->tested ?></p>
-<?php endif; if ( !empty($theme->downloaded) ) : ?>
-<p><strong><?php _e('Downloaded:') ?></strong> <?php printf(_n('%s time', '%s times', $theme->downloaded), number_format_i18n($theme->downloaded)) ?></p>
-<?php endif; ?>
-<div class="star-holder" title="<?php printf(_n('(based on %s rating)', '(based on %s ratings)', $theme->num_ratings), number_format_i18n($theme->num_ratings)) ?>">
-	<div class="star star-rating" style="width: <?php echo esc_attr($theme->rating) ?>px"></div>
-	<div class="star star5"><img src="<?php echo admin_url('images/star.png?v=20110615'); ?>" alt="<?php _e('5 stars') ?>" /></div>
-	<div class="star star4"><img src="<?php echo admin_url('images/star.png?v=20110615'); ?>" alt="<?php _e('4 stars') ?>" /></div>
-	<div class="star star3"><img src="<?php echo admin_url('images/star.png?v=20110615'); ?>" alt="<?php _e('3 stars') ?>" /></div>
-	<div class="star star2"><img src="<?php echo admin_url('images/star.png?v=20110615'); ?>" alt="<?php _e('2 stars') ?>" /></div>
-	<div class="star star1"><img src="<?php echo admin_url('images/star.png?v=20110615'); ?>" alt="<?php _e('1 star') ?>" /></div>
-</div>
-</div>
-<?php }
-	/*
-	 object(stdClass)[59]
-	 public 'name' => string 'Magazine Basic' (length=14)
-	 public 'slug' => string 'magazine-basic' (length=14)
-	 public 'version' => string '1.1' (length=3)
-	 public 'author' => string 'tinkerpriest' (length=12)
-	 public 'preview_url' => string 'http://wp-themes.com/?magazine-basic' (length=36)
-	 public 'screenshot_url' => string 'http://wp-themes.com/wp-content/themes/magazine-basic/screenshot.png' (length=68)
-	 public 'rating' => float 80
-	 public 'num_ratings' => int 1
-	 public 'homepage' => string 'http://wordpress.org/extend/themes/magazine-basic' (length=49)
-	 public 'description' => string 'A basic magazine style layout with a fully customizable layout through a backend interface. Designed by <a href="http://bavotasan.com">c.bavota</a> of <a href="http://tinkerpriestmedia.com">Tinker Priest Media</a>.' (length=214)
-	 public 'download_link' => string 'http://wordpress.org/extend/themes/download/magazine-basic.1.1.zip' (length=66)
-	 */
+	$wp_list_table->prepare_items();
+	$wp_list_table->single_row( $theme );
 }
 
 /**
@@ -204,12 +169,17 @@ function display_theme($theme, $actions = null, $show_details = true) {
 function display_themes() {
 	global $wp_list_table;
 
+	if ( ! isset( $wp_list_table ) ) {
+		$wp_list_table = _get_list_table('WP_Theme_Install_List_Table');
+	}
+	$wp_list_table->prepare_items();
 	$wp_list_table->display();
+
 }
-add_action('install_themes_search', 'display_themes');
-add_action('install_themes_featured', 'display_themes');
-add_action('install_themes_new', 'display_themes');
-add_action('install_themes_updated', 'display_themes');
+// add_action('install_themes_search', 'display_themes');
+// add_action('install_themes_featured', 'display_themes');
+// add_action('install_themes_new', 'display_themes');
+// add_action('install_themes_updated', 'display_themes');
 
 /**
  * Display theme information in dialog box form.
@@ -217,107 +187,19 @@ add_action('install_themes_updated', 'display_themes');
  * @since 2.8.0
  */
 function install_theme_information() {
-	//TODO: This function needs a LOT of UI work :)
-	global $tab, $themes_allowedtags;
+	global $wp_list_table;
 
-	$api = themes_api('theme_information', array('slug' => stripslashes( $_REQUEST['theme'] ) ));
+	$theme = themes_api( 'theme_information', array( 'slug' => wp_unslash( $_REQUEST['theme'] ) ) );
 
-	if ( is_wp_error($api) )
-		wp_die($api);
-
-	// Sanitize HTML
-	foreach ( (array)$api->sections as $section_name => $content )
-		$api->sections[$section_name] = wp_kses($content, $themes_allowedtags);
-
-	foreach ( array('version', 'author', 'requires', 'tested', 'homepage', 'downloaded', 'slug') as $key ) {
-		if ( isset($api->$key) )
-			$api->$key = wp_kses($api->$key, $themes_allowedtags);
-	}
+	if ( is_wp_error( $theme ) )
+		wp_die( $theme );
 
 	iframe_header( __('Theme Install') );
-
-	if ( empty($api->download_link) ) {
-		echo '<div id="message" class="error"><p>' . __('<strong>Error:</strong> This theme is currently not available. Please try again later.') . '</p></div>';
-		iframe_footer();
-		exit;
+	if ( ! isset( $wp_list_table ) ) {
+		$wp_list_table = _get_list_table('WP_Theme_Install_List_Table');
 	}
-
-	if ( !empty($api->tested) && version_compare($GLOBALS['wp_version'], $api->tested, '>') )
-		echo '<div class="updated"><p>' . __('<strong>Warning:</strong> This theme has <strong>not been tested</strong> with your current version of WordPress.') . '</p></div>';
-	else if ( !empty($api->requires) && version_compare($GLOBALS['wp_version'], $api->requires, '<') )
-		echo '<div class="updated"><p>' . __('<strong>Warning:</strong> This theme has not been marked as <strong>compatible</strong> with your version of WordPress.') . '</p></div>';
-
-	// Default to a "new" theme
-	$type = 'install';
-	// Check to see if this theme is known to be installed, and has an update awaiting it.
-	$update_themes = get_site_transient('update_themes');
-	if ( is_object($update_themes) && isset($update_themes->response) ) {
-		foreach ( (array)$update_themes->response as $theme_slug => $theme_info ) {
-			if ( $theme_slug === $api->slug ) {
-				$type = 'update_available';
-				$update_file = $theme_slug;
-				break;
-			}
-		}
-	}
-
-	$themes = get_themes();
-	foreach ( $themes as $this_theme ) {
-		if ( is_array($this_theme) && $this_theme['Stylesheet'] == $api->slug ) {
-			if ( $this_theme['Version'] == $api->version ) {
-				$type = 'latest_installed';
-			} elseif ( $this_theme['Version'] > $api->version ) {
-				$type = 'newer_installed';
-				$newer_version = $this_theme['Version'];
-			}
-			break;
-		}
-	}
-?>
-
-<div class='available-theme'>
-<img src='<?php echo esc_url($api->screenshot_url) ?>' width='300' class="theme-preview-img" />
-<h3><?php echo $api->name; ?></h3>
-<p><?php printf(__('by %s'), $api->author); ?></p>
-<p><?php printf(__('Version: %s'), $api->version); ?></p>
-
-<?php
-$buttons = '<a class="button" id="cancel" href="#" onclick="tb_close();return false;">' . __('Cancel') . '</a> ';
-
-switch ( $type ) {
-default:
-case 'install':
-	if ( current_user_can('install_themes') ) :
-	$buttons .= '<a class="button-primary" id="install" href="' . wp_nonce_url(self_admin_url('update.php?action=install-theme&theme=' . $api->slug), 'install-theme_' . $api->slug) . '" target="_parent">' . __('Install Now') . '</a>';
-	endif;
-	break;
-case 'update_available':
-	if ( current_user_can('update_themes') ) :
-	$buttons .= '<a class="button-primary" id="install"	href="' . wp_nonce_url(self_admin_url('update.php?action=upgrade-theme&theme=' . $update_file), 'upgrade-theme_' . $update_file) . '" target="_parent">' . __('Install Update Now') . '</a>';
-	endif;
-	break;
-case 'newer_installed':
-	if ( current_user_can('install_themes') || current_user_can('update_themes') ) :
-	?><p><?php printf(__('Newer version (%s) is installed.'), $newer_version); ?></p><?php
-	endif;
-	break;
-case 'latest_installed':
-	if ( current_user_can('install_themes') || current_user_can('update_themes') ) :
-	?><p><?php _e('This version is already installed.'); ?></p><?php
-	endif;
-	break;
-} ?>
-<br class="clear" />
-</div>
-
-<p class="action-button">
-<?php echo $buttons; ?>
-<br class="clear" />
-</p>
-
-<?php
+	$wp_list_table->theme_installer_single( $theme );
 	iframe_footer();
 	exit;
 }
 add_action('install_themes_pre_theme-information', 'install_theme_information');
-

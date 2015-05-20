@@ -9,7 +9,7 @@
  * @copyright Alexey Dotsenko
  * @author Alexey Dotsenko
  * @link http://www.phpclasses.org/browse/package/1743.html Site
- * @license LGPL License http://www.opensource.org/licenses/lgpl-license.html
+ * @license LGPL http://www.opensource.org/licenses/lgpl-license.html
  */
 
 /**
@@ -504,7 +504,7 @@ class ftp_base {
 		return $this->_list(($arg?" ".$arg:"").($pathname?" ".$pathname:""), "LIST", "rawlist");
 	}
 
-	function nlist($pathname="") {
+	function nlist($pathname="", $arg="") {
 		return $this->_list(($arg?" ".$arg:"").($pathname?" ".$pathname:""), "NLST", "nlist");
 	}
 
@@ -896,11 +896,11 @@ class ftp_base {
 	}
 }
 
-$mod_sockets=TRUE;
-if (!extension_loaded('sockets')) {
-	$prefix = (PHP_SHLIB_SUFFIX == 'dll') ? 'php_' : '';
-	if(!@dl($prefix . 'sockets.' . PHP_SHLIB_SUFFIX)) $mod_sockets=FALSE;
+$mod_sockets = extension_loaded( 'sockets' );
+if ( ! $mod_sockets && function_exists( 'dl' ) && is_callable( 'dl' ) ) {
+	$prefix = ( PHP_SHLIB_SUFFIX == 'dll' ) ? 'php_' : '';
+	@dl( $prefix . 'sockets.' . PHP_SHLIB_SUFFIX );
+	$mod_sockets = extension_loaded( 'sockets' );
 }
 
-require_once "class-ftp-".($mod_sockets?"sockets":"pure").".php";
-?>
+require_once dirname( __FILE__ ) . "/class-ftp-" . ( $mod_sockets ? "sockets" : "pure" ) . ".php";

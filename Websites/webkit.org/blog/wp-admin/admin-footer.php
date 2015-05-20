@@ -15,27 +15,75 @@ if ( !defined('ABSPATH') )
 <div class="clear"></div></div><!-- wpbody -->
 <div class="clear"></div></div><!-- wpcontent -->
 
-<div id="footer">
-<?php do_action( 'in_admin_footer' ); ?>
-<p id="footer-left" class="alignleft"><?php
-$upgrade = apply_filters( 'update_footer', '' );
-$footer_text = array(
-	'<span id="footer-thankyou">' . __( 'Thank you for creating with <a href="http://wordpress.org/">WordPress</a>.' ) . '</span>',
-	__( '<a href="http://codex.wordpress.org/">Documentation</a>' ),
-	sprintf( __( '<a href="%s">Freedoms</a>' ), admin_url( 'freedoms.php' ) ),
-	__('<a href="http://wordpress.org/support/forum/4">Feedback</a>'),
-	sprintf(__('<a href="%s">Credits</a>'), admin_url('credits.php') ),
-);
-echo apply_filters( 'admin_footer_text', implode( ' &bull; ', $footer_text ) );
-unset( $footer_text );
-?></p>
-<p id="footer-upgrade" class="alignright"><?php echo $upgrade; ?></p>
-<div class="clear"></div>
+<div id="wpfooter" role="contentinfo">
+	<?php
+	/**
+	 * Fires after the opening tag for the admin footer.
+	 *
+	 * @since 2.5.0
+	 */
+	do_action( 'in_admin_footer' );
+	?>
+	<p id="footer-left" class="alignleft">
+		<?php
+		$text = sprintf( __( 'Thank you for creating with <a href="%s">WordPress</a>.' ), __( 'https://wordpress.org/' ) );
+		/**
+		 * Filter the "Thank you" text displayed in the admin footer.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param string $text The content that will be printed.
+		 */
+		echo apply_filters( 'admin_footer_text', '<span id="footer-thankyou">' . $text . '</span>' );
+		?>
+	</p>
+	<p id="footer-upgrade" class="alignright">
+		<?php
+		/**
+		 * Filter the version/update text displayed in the admin footer.
+		 *
+		 * WordPress prints the current version and update information,
+		 * using core_update_footer() at priority 10.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @see core_update_footer()
+		 *
+		 * @param string $content The content that will be printed.
+		 */
+		echo apply_filters( 'update_footer', '' );
+		?>
+	</p>
+	<div class="clear"></div>
 </div>
 <?php
-do_action('admin_footer', '');
-do_action('admin_print_footer_scripts');
-do_action("admin_footer-" . $GLOBALS['hook_suffix']);
+/**
+ * Print scripts or data before the default footer scripts.
+ *
+ * @since 1.2.0
+ *
+ * @param string $data The data to print.
+ */
+do_action( 'admin_footer', '' );
+
+/**
+ * Prints any scripts and data queued for the footer.
+ *
+ * @since 2.8.0
+ */
+do_action( 'admin_print_footer_scripts' );
+
+/**
+ * Print scripts or data after the default footer scripts.
+ *
+ * The dynamic portion of the hook name, `$GLOBALS['hook_suffix']`,
+ * refers to the global hook suffix of the current page.
+ *
+ * @since 2.8.0
+ *
+ * @param string $hook_suffix The current admin page.
+ */
+do_action( "admin_footer-" . $GLOBALS['hook_suffix'] );
 
 // get_site_option() won't exist when auto upgrading from <= 2.7
 if ( function_exists('get_site_option') ) {

@@ -9,10 +9,10 @@
  */
 _deprecated_file( sprintf( __( 'Theme without %1$s' ), basename(__FILE__) ), '3.0', null, sprintf( __('Please include a %1$s template in your theme.'), basename(__FILE__) ) );
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" <?php language_attributes(); ?>>
-
-<head profile="http://gmpg.org/xfn/11">
+<head>
+<link rel="profile" href="http://gmpg.org/xfn/11" />
 <meta http-equiv="Content-Type" content="<?php bloginfo('html_type'); ?>; charset=<?php bloginfo('charset'); ?>" />
 
 <title><?php wp_title('&laquo;', true, 'right'); ?> <?php bloginfo('name'); ?></title>
@@ -39,7 +39,6 @@ if ( empty($withcomments) && !is_single() ) {
 </head>
 <body <?php body_class(); ?>>
 <div id="page">
-
 
 <div id="header" role="banner">
 	<div id="headerimg">

@@ -28,27 +28,27 @@ class WP_Text_Diff_Renderer_Table extends Text_Diff_Renderer {
 	/**
 	 * @see Text_Diff_Renderer::_leading_context_lines
 	 * @var int
-	 * @access protected
+	 * @access public
 	 * @since 2.6.0
 	 */
-	var $_leading_context_lines  = 10000;
+	public $_leading_context_lines  = 10000;
 
 	/**
 	 * @see Text_Diff_Renderer::_trailing_context_lines
 	 * @var int
-	 * @access protected
+	 * @access public
 	 * @since 2.6.0
 	 */
-	var $_trailing_context_lines = 10000;
+	public $_trailing_context_lines = 10000;
 
 	/**
-	 * {@internal Missing Description}}
+	 * Threshold for when a diff should be saved or omitted.
 	 *
 	 * @var float
 	 * @access protected
 	 * @since 2.6.0
 	 */
-	var $_diff_threshold = 0.6;
+	protected $_diff_threshold = 0.6;
 
 	/**
 	 * Inline display helper object name.
@@ -57,7 +57,18 @@ class WP_Text_Diff_Renderer_Table extends Text_Diff_Renderer {
 	 * @access protected
 	 * @since 2.6.0
 	 */
-	var $inline_diff_renderer = 'WP_Text_Diff_Renderer_inline';
+	protected $inline_diff_renderer = 'WP_Text_Diff_Renderer_inline';
+
+	/**
+	 * Should we show the split view or not
+	 *
+	 * @var string
+	 * @access protected
+	 * @since 3.6.0
+	 */
+	protected $_show_split_view = true;
+
+	protected $compat_fields = array( '_show_split_view', 'inline_diff_renderer', '_diff_threshold' );
 
 	/**
 	 * Constructor - Call parent constructor with params array.
@@ -68,8 +79,10 @@ class WP_Text_Diff_Renderer_Table extends Text_Diff_Renderer {
 	 *
 	 * @param array $params
 	 */
-	function __construct( $params = array() ) {
+	public function __construct( $params = array() ) {
 		parent::__construct( $params );
+		if ( isset( $params[ 'show_split_view' ] ) )
+			$this->_show_split_view = $params[ 'show_split_view' ];
 	}
 
 	/**
@@ -78,7 +91,7 @@ class WP_Text_Diff_Renderer_Table extends Text_Diff_Renderer {
 	 * @param string $header
 	 * @return string
 	 */
-	function _startBlock( $header ) {
+	public function _startBlock( $header ) {
 		return '';
 	}
 
@@ -88,7 +101,7 @@ class WP_Text_Diff_Renderer_Table extends Text_Diff_Renderer {
 	 * @param array $lines
 	 * @param string $prefix
 	 */
-	function _lines( $lines, $prefix=' ' ) {
+	public function _lines( $lines, $prefix=' ' ) {
 	}
 
 	/**
@@ -97,8 +110,9 @@ class WP_Text_Diff_Renderer_Table extends Text_Diff_Renderer {
 	 * @param string $line HTML-escape the value.
 	 * @return string
 	 */
-	function addedLine( $line ) {
-		return "<td>+</td><td class='diff-addedline'>{$line}</td>";
+	public function addedLine( $line ) {
+		return "<td class='diff-addedline'>{$line}</td>";
+
 	}
 
 	/**
@@ -107,8 +121,8 @@ class WP_Text_Diff_Renderer_Table extends Text_Diff_Renderer {
 	 * @param string $line HTML-escape the value.
 	 * @return string
 	 */
-	function deletedLine( $line ) {
-		return "<td>-</td><td class='diff-deletedline'>{$line}</td>";
+	public function deletedLine( $line ) {
+		return "<td class='diff-deletedline'>{$line}</td>";
 	}
 
 	/**
@@ -117,8 +131,8 @@ class WP_Text_Diff_Renderer_Table extends Text_Diff_Renderer {
 	 * @param string $line HTML-escape the value.
 	 * @return string
 	 */
-	function contextLine( $line ) {
-		return "<td> </td><td class='diff-context'>{$line}</td>";
+	public function contextLine( $line ) {
+		return "<td class='diff-context'>{$line}</td>";
 	}
 
 	/**
@@ -126,61 +140,98 @@ class WP_Text_Diff_Renderer_Table extends Text_Diff_Renderer {
 	 *
 	 * @return string
 	 */
-	function emptyLine() {
-		return '<td colspan="2">&nbsp;</td>';
+	public function emptyLine() {
+		return '<td>&nbsp;</td>';
 	}
 
 	/**
 	 * @ignore
-	 * @access private
+	 * @access public
 	 *
 	 * @param array $lines
 	 * @param bool $encode
 	 * @return string
 	 */
-	function _added( $lines, $encode = true ) {
+	public function _added( $lines, $encode = true ) {
 		$r = '';
 		foreach ($lines as $line) {
-			if ( $encode )
-				$line = htmlspecialchars( $line );
-			$r .= '<tr>' . $this->emptyLine() . $this->addedLine( $line ) . "</tr>\n";
+			if ( $encode ) {
+				$processed_line = htmlspecialchars( $line );
+
+				/**
+				 * Contextually filter a diffed line.
+				 *
+				 * Filters TextDiff processing of diffed line. By default, diffs are processed with
+				 * htmlspecialchars. Use this filter to remove or change the processing. Passes a context
+				 * indicating if the line is added, deleted or unchanged.
+				 *
+				 * @since 4.1.0
+				 *
+				 * @param String $processed_line The processed diffed line.
+				 * @param String $line           The unprocessed diffed line.
+		 		 * @param string null            The line context. Values are 'added', 'deleted' or 'unchanged'.
+				 */
+				$line = apply_filters( 'process_text_diff_html', $processed_line, $line, 'added' );
+			}
+
+			if ( $this->_show_split_view ) {
+				$r .= '<tr>' . $this->emptyLine() . $this->emptyLine() . $this->addedLine( $line ) . "</tr>\n";
+			} else {
+				$r .= '<tr>' . $this->addedLine( $line ) . "</tr>\n";
+			}
 		}
 		return $r;
 	}
 
 	/**
 	 * @ignore
-	 * @access private
+	 * @access public
 	 *
 	 * @param array $lines
 	 * @param bool $encode
 	 * @return string
 	 */
-	function _deleted( $lines, $encode = true ) {
+	public function _deleted( $lines, $encode = true ) {
 		$r = '';
 		foreach ($lines as $line) {
-			if ( $encode )
-				$line = htmlspecialchars( $line );
-			$r .= '<tr>' . $this->deletedLine( $line ) . $this->emptyLine() . "</tr>\n";
+			if ( $encode ) {
+				$processed_line = htmlspecialchars( $line );
+
+				/** This filter is documented in wp-includes/wp-diff.php */
+				$line = apply_filters( 'process_text_diff_html', $processed_line, $line, 'deleted' );
+			}
+			if ( $this->_show_split_view ) {
+				$r .= '<tr>' . $this->deletedLine( $line ) . $this->emptyLine() . $this->emptyLine() . "</tr>\n";
+			} else {
+				$r .= '<tr>' . $this->deletedLine( $line ) . "</tr>\n";
+			}
+
 		}
 		return $r;
 	}
 
 	/**
 	 * @ignore
-	 * @access private
+	 * @access public
 	 *
 	 * @param array $lines
 	 * @param bool $encode
 	 * @return string
 	 */
-	function _context( $lines, $encode = true ) {
+	public function _context( $lines, $encode = true ) {
 		$r = '';
 		foreach ($lines as $line) {
-			if ( $encode )
-				$line = htmlspecialchars( $line );
-			$r .= '<tr>' .
-				$this->contextLine( $line ) . $this->contextLine( $line ) . "</tr>\n";
+			if ( $encode ) {
+				$processed_line = htmlspecialchars( $line );
+
+				/** This filter is documented in wp-includes/wp-diff.php */
+				$line = apply_filters( 'process_text_diff_html', $processed_line, $line, 'unchanged' );
+			}
+			if (  $this->_show_split_view ) {
+				$r .= '<tr>' . $this->contextLine( $line ) . $this->emptyLine() . $this->contextLine( $line )  . "</tr>\n";
+			} else {
+				$r .= '<tr>' . $this->contextLine( $line ) . "</tr>\n";
+			}
 		}
 		return $r;
 	}
@@ -191,25 +242,24 @@ class WP_Text_Diff_Renderer_Table extends Text_Diff_Renderer {
 	 * (TRAC style) sometimes these lines can actually be deleted or added rows.
 	 * We do additional processing to figure that out
 	 *
-	 * @access private
+	 * @access public
 	 * @since 2.6.0
 	 *
 	 * @param array $orig
 	 * @param array $final
 	 * @return string
 	 */
-	function _changed( $orig, $final ) {
+	public function _changed( $orig, $final ) {
 		$r = '';
 
 		// Does the aforementioned additional processing
-		// *_matches tell what rows are "the same" in orig and final.  Those pairs will be diffed to get word changes
+		// *_matches tell what rows are "the same" in orig and final. Those pairs will be diffed to get word changes
 		//	match is numeric: an index in other column
-		//	match is 'X': no match.  It is a new row
+		//	match is 'X': no match. It is a new row
 		// *_rows are column vectors for the orig column and the final column.
 		//	row >= 0: an indix of the $orig or $final array
 		//	row  < 0: a blank row for that column
 		list($orig_matches, $final_matches, $orig_rows, $final_rows) = $this->interleave_changed_lines( $orig, $final );
-
 
 		// These will hold the word changes as determined by an inline diff
 		$orig_diffs  = array();
@@ -223,7 +273,7 @@ class WP_Text_Diff_Renderer_Table extends Text_Diff_Renderer {
 				$diff = $renderer->render( $text_diff );
 
 				// If they're too different, don't include any <ins> or <dels>
-				if ( $diff_count = preg_match_all( '!(<ins>.*?</ins>|<del>.*?</del>)!', $diff, $diff_matches ) ) {
+				if ( preg_match_all( '!(<ins>.*?</ins>|<del>.*?</del>)!', $diff, $diff_matches ) ) {
 					// length of all text between <ins> or <del>
 					$stripped_matches = strlen(strip_tags( join(' ', $diff_matches[0]) ));
 					// since we count lengith of text between <ins> or <del> (instead of picking just one),
@@ -231,7 +281,7 @@ class WP_Text_Diff_Renderer_Table extends Text_Diff_Renderer {
 					$stripped_diff = strlen(strip_tags( $diff )) * 2 - $stripped_matches;
 					$diff_ratio = $stripped_matches / $stripped_diff;
 					if ( $diff_ratio > $this->_diff_threshold )
-						continue; // Too different.  Don't save diffs.
+						continue; // Too different. Don't save diffs.
 				}
 
 				// Un-inline the diffs by removing del or ins
@@ -241,11 +291,11 @@ class WP_Text_Diff_Renderer_Table extends Text_Diff_Renderer {
 		}
 
 		foreach ( array_keys($orig_rows) as $row ) {
-			// Both columns have blanks.  Ignore them.
+			// Both columns have blanks. Ignore them.
 			if ( $orig_rows[$row] < 0 && $final_rows[$row] < 0 )
 				continue;
 
-			// If we have a word based diff, use it.  Otherwise, use the normal line.
+			// If we have a word based diff, use it. Otherwise, use the normal line.
 			if ( isset( $orig_diffs[$orig_rows[$row]] ) )
 				$orig_line = $orig_diffs[$orig_rows[$row]];
 			elseif ( isset( $orig[$orig_rows[$row]] ) )
@@ -260,12 +310,16 @@ class WP_Text_Diff_Renderer_Table extends Text_Diff_Renderer {
 			else
 				$final_line = '';
 
-			if ( $orig_rows[$row] < 0 ) { // Orig is blank.  This is really an added row.
+			if ( $orig_rows[$row] < 0 ) { // Orig is blank. This is really an added row.
 				$r .= $this->_added( array($final_line), false );
-			} elseif ( $final_rows[$row] < 0 ) { // Final is blank.  This is really a deleted row.
+			} elseif ( $final_rows[$row] < 0 ) { // Final is blank. This is really a deleted row.
 				$r .= $this->_deleted( array($orig_line), false );
 			} else { // A true changed row.
-				$r .= '<tr>' . $this->deletedLine( $orig_line ) . $this->addedLine( $final_line ) . "</tr>\n";
+				if ( $this->_show_split_view ) {
+					$r .= '<tr>' . $this->deletedLine( $orig_line ) . $this->emptyLine() . $this->addedLine( $final_line ) . "</tr>\n";
+				} else {
+					$r .= '<tr>' . $this->deletedLine( $orig_line ) . "</tr><tr>" . $this->addedLine( $final_line ) . "</tr>\n";
+				}
 			}
 		}
 
@@ -282,13 +336,13 @@ class WP_Text_Diff_Renderer_Table extends Text_Diff_Renderer {
 	 *
 	 * @since 2.6.0
 	 *
-	 * @param unknown_type $orig
-	 * @param unknown_type $final
-	 * @return unknown
+	 * @param array $orig
+	 * @param array $final
+	 * @return array
 	 */
-	function interleave_changed_lines( $orig, $final ) {
+	public function interleave_changed_lines( $orig, $final ) {
 
-		// Contains all pairwise string comparisons.  Keys are such that this need only be a one dimensional array.
+		// Contains all pairwise string comparisons. Keys are such that this need only be a one dimensional array.
 		$matches = array();
 		foreach ( array_keys($orig) as $o ) {
 			foreach ( array_keys($final) as $f ) {
@@ -309,7 +363,7 @@ class WP_Text_Diff_Renderer_Table extends Text_Diff_Renderer {
 			if ( isset($orig_matches[$o]) && isset($final_matches[$f]) )
 				continue;
 
-			// First match for these guys.  Must be best match
+			// First match for these guys. Must be best match
 			if ( !isset($orig_matches[$o]) && !isset($final_matches[$f]) ) {
 				$orig_matches[$o] = $f;
 				$final_matches[$f] = $o;
@@ -329,7 +383,6 @@ class WP_Text_Diff_Renderer_Table extends Text_Diff_Renderer {
 		ksort($orig_matches);
 		ksort($final_matches);
 
-
 		// Stores rows and blanks for each column.
 		$orig_rows = $orig_rows_copy = array_keys($orig_matches);
 		$final_rows = array_keys($final_matches);
@@ -342,17 +395,16 @@ class WP_Text_Diff_Renderer_Table extends Text_Diff_Renderer {
 
 			if ( false === $final_pos ) { // This orig is paired with a blank final.
 				array_splice( $final_rows, $orig_pos, 0, -1 );
-			} elseif ( $final_pos < $orig_pos ) { // This orig's match is up a ways.  Pad final with blank rows.
+			} elseif ( $final_pos < $orig_pos ) { // This orig's match is up a ways. Pad final with blank rows.
 				$diff_pos = $final_pos - $orig_pos;
 				while ( $diff_pos < 0 )
 					array_splice( $final_rows, $orig_pos, 0, $diff_pos++ );
-			} elseif ( $final_pos > $orig_pos ) { // This orig's match is down a ways.  Pad orig with blank rows.
+			} elseif ( $final_pos > $orig_pos ) { // This orig's match is down a ways. Pad orig with blank rows.
 				$diff_pos = $orig_pos - $final_pos;
 				while ( $diff_pos < 0 )
 					array_splice( $orig_rows, $orig_pos, 0, $diff_pos++ );
 			}
 		}
-
 
 		// Pad the ends with blank rows if the columns aren't the same length
 		$diff_count = count($orig_rows) - count($final_rows);
@@ -366,48 +418,6 @@ class WP_Text_Diff_Renderer_Table extends Text_Diff_Renderer {
 		}
 
 		return array($orig_matches, $final_matches, $orig_rows, $final_rows);
-
-/*
-		// Debug
-		echo "\n\n\n\n\n";
-
-		echo "-- DEBUG Matches: Orig -> Final --";
-
-		foreach ( $orig_matches as $o => $f ) {
-			echo "\n\n\n\n\n";
-			echo "ORIG: $o, FINAL: $f\n";
-			var_dump($orig[$o],$final[$f]);
-		}
-		echo "\n\n\n\n\n";
-
-		echo "-- DEBUG Matches: Final -> Orig --";
-
-		foreach ( $final_matches as $f => $o ) {
-			echo "\n\n\n\n\n";
-			echo "FINAL: $f, ORIG: $o\n";
-			var_dump($final[$f],$orig[$o]);
-		}
-		echo "\n\n\n\n\n";
-
-		echo "-- DEBUG Rows: Orig -- Final --";
-
-		echo "\n\n\n\n\n";
-		foreach ( $orig_rows as $row => $o ) {
-			if ( $o < 0 )
-				$o = 'X';
-			$f = $final_rows[$row];
-			if ( $f < 0 )
-				$f = 'X';
-			echo "$o -- $f\n";
-		}
-		echo "\n\n\n\n\n";
-
-		echo "-- END DEBUG --";
-
-		echo "\n\n\n\n\n";
-
-		return array($orig_matches, $final_matches, $orig_rows, $final_rows);
-*/
 	}
 
 	/**
@@ -419,19 +429,19 @@ class WP_Text_Diff_Renderer_Table extends Text_Diff_Renderer {
 	 * @param string $string2
 	 * @return int
 	 */
-	function compute_string_distance( $string1, $string2 ) {
+	public function compute_string_distance( $string1, $string2 ) {
 		// Vectors containing character frequency for all chars in each string
 		$chars1 = count_chars($string1);
 		$chars2 = count_chars($string2);
 
 		// L1-norm of difference vector.
-		$difference = array_sum( array_map( array(&$this, 'difference'), $chars1, $chars2 ) );
+		$difference = array_sum( array_map( array($this, 'difference'), $chars1, $chars2 ) );
 
-		// $string1 has zero length? Odd.  Give huge penalty by not dividing.
+		// $string1 has zero length? Odd. Give huge penalty by not dividing.
 		if ( !$string1 )
 			return $difference;
 
-		// Return distance per charcter (of string1)
+		// Return distance per character (of string1).
 		return $difference / strlen($string1);
 	}
 
@@ -443,10 +453,69 @@ class WP_Text_Diff_Renderer_Table extends Text_Diff_Renderer {
 	 * @param int $b
 	 * @return int
 	 */
-	function difference( $a, $b ) {
+	public function difference( $a, $b ) {
 		return abs( $a - $b );
 	}
 
+	/**
+	 * Make private properties readable for backwards compatibility.
+	 *
+	 * @since 4.0.0
+	 * @access public
+	 *
+	 * @param string $name Property to get.
+	 * @return mixed Property.
+	 */
+	public function __get( $name ) {
+		if ( in_array( $name, $this->compat_fields ) ) {
+			return $this->$name;
+		}
+	}
+
+	/**
+	 * Make private properties settable for backwards compatibility.
+	 *
+	 * @since 4.0.0
+	 * @access public
+	 *
+	 * @param string $name  Property to check if set.
+	 * @param mixed  $value Property value.
+	 * @return mixed Newly-set property.
+	 */
+	public function __set( $name, $value ) {
+		if ( in_array( $name, $this->compat_fields ) ) {
+			return $this->$name = $value;
+		}
+	}
+
+	/**
+	 * Make private properties checkable for backwards compatibility.
+	 *
+	 * @since 4.0.0
+	 * @access public
+	 *
+	 * @param string $name Property to check if set.
+	 * @return bool Whether the property is set.
+	 */
+	public function __isset( $name ) {
+		if ( in_array( $name, $this->compat_fields ) ) {
+			return isset( $this->$name );
+		}
+	}
+
+	/**
+	 * Make private properties un-settable for backwards compatibility.
+	 *
+	 * @since 4.0.0
+	 * @access public
+	 *
+	 * @param string $name Property to unset.
+	 */
+	public function __unset( $name ) {
+		if ( in_array( $name, $this->compat_fields ) ) {
+			unset( $this->$name );
+		}
+	}
 }
 
 /**
@@ -465,7 +534,7 @@ class WP_Text_Diff_Renderer_inline extends Text_Diff_Renderer_inline {
 	 * @param string $newlineEscape
 	 * @return string
 	 */
-	function _splitOnWords($string, $newlineEscape = "\n") {
+	public function _splitOnWords($string, $newlineEscape = "\n") {
 		$string = str_replace("\0", '', $string);
 		$words  = preg_split( '/([^\w])/u', $string, -1, PREG_SPLIT_DELIM_CAPTURE );
 		$words  = str_replace( "\n", $newlineEscape, $words );
@@ -473,5 +542,3 @@ class WP_Text_Diff_Renderer_inline extends Text_Diff_Renderer_inline {
 	}
 
 }
-
-?>

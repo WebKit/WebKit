@@ -1,1 +1,683 @@
-var edButtons=new Array(),edLinks=new Array(),edOpenTags=new Array(),now=new Date(),datetime;function edButton(f,e,c,b,a,d){this.id=f;this.display=e;this.tagStart=c;this.tagEnd=b;this.access=a;this.open=d}function zeroise(b,a){var c=b.toString();if(b<0){c=c.substr(1,c.length)}while(c.length<a){c="0"+c}if(b<0){c="-"+c}return c}datetime=now.getUTCFullYear()+"-"+zeroise(now.getUTCMonth()+1,2)+"-"+zeroise(now.getUTCDate(),2)+"T"+zeroise(now.getUTCHours(),2)+":"+zeroise(now.getUTCMinutes(),2)+":"+zeroise(now.getUTCSeconds(),2)+"+00:00";edButtons[edButtons.length]=new edButton("ed_strong","b","<strong>","</strong>","b");edButtons[edButtons.length]=new edButton("ed_em","i","<em>","</em>","i");edButtons[edButtons.length]=new edButton("ed_link","link","","</a>","a");edButtons[edButtons.length]=new edButton("ed_block","b-quote","\n\n<blockquote>","</blockquote>\n\n","q");edButtons[edButtons.length]=new edButton("ed_del","del",'<del datetime="'+datetime+'">',"</del>","d");edButtons[edButtons.length]=new edButton("ed_ins","ins",'<ins datetime="'+datetime+'">',"</ins>","s");edButtons[edButtons.length]=new edButton("ed_img","img","","","m",-1);edButtons[edButtons.length]=new edButton("ed_ul","ul","<ul>\n","</ul>\n\n","u");edButtons[edButtons.length]=new edButton("ed_ol","ol","<ol>\n","</ol>\n\n","o");edButtons[edButtons.length]=new edButton("ed_li","li","\t<li>","</li>\n","l");edButtons[edButtons.length]=new edButton("ed_code","code","<code>","</code>","c");edButtons[edButtons.length]=new edButton("ed_more","more","<!--more-->","","t",-1);function edLink(){this.display="";this.URL="";this.newWin=0}edLinks[edLinks.length]=new edLink("WordPress","http://wordpress.org/");edLinks[edLinks.length]=new edLink("alexking.org","http://www.alexking.org/");function edShowButton(b,a){if(b.id=="ed_img"){document.write('<input type="button" id="'+b.id+'" accesskey="'+b.access+'" class="ed_button" onclick="edInsertImage(edCanvas);" value="'+b.display+'" />')}else{if(b.id=="ed_link"){document.write('<input type="button" id="'+b.id+'" accesskey="'+b.access+'" class="ed_button" onclick="edInsertLink(edCanvas, '+a+');" value="'+b.display+'" />')}else{document.write('<input type="button" id="'+b.id+'" accesskey="'+b.access+'" class="ed_button" onclick="edInsertTag(edCanvas, '+a+');" value="'+b.display+'"  />')}}}function edShowLinks(){var a='<select onchange="edQuickLink(this.options[this.selectedIndex].value, this);"><option value="-1" selected>'+quicktagsL10n.quickLinks+"</option>",b;for(b=0;b<edLinks.length;b++){a+='<option value="'+b+'">'+edLinks[b].display+"</option>"}a+="</select>";document.write(a)}function edAddTag(a){if(edButtons[a].tagEnd!=""){edOpenTags[edOpenTags.length]=a;document.getElementById(edButtons[a].id).value="/"+document.getElementById(edButtons[a].id).value}}function edRemoveTag(b){for(var a=0;a<edOpenTags.length;a++){if(edOpenTags[a]==b){edOpenTags.splice(a,1);document.getElementById(edButtons[b].id).value=document.getElementById(edButtons[b].id).value.replace("/","")}}}function edCheckOpenTags(c){var a=0,b;for(b=0;b<edOpenTags.length;b++){if(edOpenTags[b]==c){a++}}if(a>0){return true}else{return false}}function edCloseAllTags(){var a=edOpenTags.length,b;for(b=0;b<a;b++){edInsertTag(edCanvas,edOpenTags[edOpenTags.length-1])}}function edQuickLink(c,d){if(c>-1){var b="",a;if(edLinks[c].newWin==1){b=' target="_blank"'}a='<a href="'+edLinks[c].URL+'"'+b+">"+edLinks[c].display+"</a>";d.selectedIndex=0;edInsertContent(edCanvas,a)}else{d.selectedIndex=0}}function edSpell(c){var e="",d,b,a;if(document.selection){c.focus();d=document.selection.createRange();if(d.text.length>0){e=d.text}}else{if(c.selectionStart||c.selectionStart=="0"){b=c.selectionStart;a=c.selectionEnd;if(b!=a){e=c.value.substring(b,a)}}}if(e==""){e=prompt(quicktagsL10n.wordLookup,"")}if(e!==null&&/^\w[\w ]*$/.test(e)){window.open("http://www.answers.com/"+escape(e))}}function edToolbar(){document.write('<div id="ed_toolbar">');for(var a=0;a<edButtons.length;a++){edShowButton(edButtons[a],a)}document.write('<input type="button" id="ed_spell" class="ed_button" onclick="edSpell(edCanvas);" title="'+quicktagsL10n.dictionaryLookup+'" value="'+quicktagsL10n.lookup+'" />');document.write('<input type="button" id="ed_close" class="ed_button" onclick="edCloseAllTags();" title="'+quicktagsL10n.closeAllOpenTags+'" value="'+quicktagsL10n.closeTags+'" />');document.write('<input type="button" id="ed_fullscreen" class="ed_button" onclick="fullscreen.on();" title="'+quicktagsL10n.toggleFullscreen+'" value="'+quicktagsL10n.fullscreen+'" />');document.write("</div>")}function edInsertTag(d,c){if(document.selection){d.focus();var e=document.selection.createRange();if(e.text.length>0){e.text=edButtons[c].tagStart+e.text+edButtons[c].tagEnd}else{if(!edCheckOpenTags(c)||edButtons[c].tagEnd==""){e.text=edButtons[c].tagStart;edAddTag(c)}else{e.text=edButtons[c].tagEnd;edRemoveTag(c)}}d.focus()}else{if(d.selectionStart||d.selectionStart=="0"){var b=d.selectionStart,a=d.selectionEnd,g=a,f=d.scrollTop;if(b!=a){d.value=d.value.substring(0,b)+edButtons[c].tagStart+d.value.substring(b,a)+edButtons[c].tagEnd+d.value.substring(a,d.value.length);g+=edButtons[c].tagStart.length+edButtons[c].tagEnd.length}else{if(!edCheckOpenTags(c)||edButtons[c].tagEnd==""){d.value=d.value.substring(0,b)+edButtons[c].tagStart+d.value.substring(a,d.value.length);edAddTag(c);g=b+edButtons[c].tagStart.length}else{d.value=d.value.substring(0,b)+edButtons[c].tagEnd+d.value.substring(a,d.value.length);edRemoveTag(c);g=b+edButtons[c].tagEnd.length}}d.focus();d.selectionStart=g;d.selectionEnd=g;d.scrollTop=f}else{if(!edCheckOpenTags(c)||edButtons[c].tagEnd==""){d.value+=edButtons[c].tagStart;edAddTag(c)}else{d.value+=edButtons[c].tagEnd;edRemoveTag(c)}d.focus()}}}function edInsertContent(d,c){var e,b,a,f;if(document.selection){d.focus();e=document.selection.createRange();e.text=c;d.focus()}else{if(d.selectionStart||d.selectionStart=="0"){b=d.selectionStart;a=d.selectionEnd;f=d.scrollTop;d.value=d.value.substring(0,b)+c+d.value.substring(a,d.value.length);d.focus();d.selectionStart=b+c.length;d.selectionEnd=b+c.length;d.scrollTop=f}else{d.value+=c;d.focus()}}}function edInsertLink(d,c,b){if("object"==typeof(wpLink)){wpLink.open()}else{if(!b){b="http://"}if(!edCheckOpenTags(c)){var a=prompt(quicktagsL10n.enterURL,b);if(a){edButtons[c].tagStart='<a href="'+a+'">';edInsertTag(d,c)}}else{edInsertTag(d,c)}}}function edInsertImage(b){var a=prompt(quicktagsL10n.enterImageURL,"http://");if(a){a='<img src="'+a+'" alt="'+prompt(quicktagsL10n.enterImageDescription,"")+'" />';edInsertContent(b,a)}}var QTags=function(a,c,b,f){var j=this,k=document.getElementById(b),g,l,e,h,d;j.Buttons=[];j.Links=[];j.OpenTags=[];j.Canvas=document.getElementById(c);if(!j.Canvas||!k){return}f=(typeof f!="undefined")?","+f+",":"";j.edShowButton=function(n,m){if(f&&(f.indexOf(","+n.display+",")!=-1)){return""}else{if(n.id==a+"_img"){return'<input type="button" id="'+n.id+'" accesskey="'+n.access+'" class="ed_button" onclick="edInsertImage('+a+'.Canvas);" value="'+n.display+'" />'}else{if(n.id==a+"_link"){return'<input type="button" id="'+n.id+'" accesskey="'+n.access+'" class="ed_button" onclick="'+a+".edInsertLink("+m+');" value="'+n.display+'" />'}else{return'<input type="button" id="'+n.id+'" accesskey="'+n.access+'" class="ed_button" onclick="'+a+".edInsertTag("+m+');" value="'+n.display+'" />'}}}};j.edAddTag=function(i){if(j.Buttons[i].tagEnd!=""){j.OpenTags[j.OpenTags.length]=i;document.getElementById(j.Buttons[i].id).value="/"+document.getElementById(j.Buttons[i].id).value}};j.edRemoveTag=function(i){for(g=0;g<j.OpenTags.length;g++){if(j.OpenTags[g]==i){j.OpenTags.splice(g,1);document.getElementById(j.Buttons[i].id).value=document.getElementById(j.Buttons[i].id).value.replace("/","")}}};j.edCheckOpenTags=function(n){l=0;for(var m=0;m<j.OpenTags.length;m++){if(j.OpenTags[m]==n){l++}}if(l>0){return true}else{return false}};this.edCloseAllTags=function(){var i=j.OpenTags.length;for(var m=0;m<i;m++){j.edInsertTag(j.OpenTags[j.OpenTags.length-1])}};this.edQuickLink=function(o,p){if(o>-1){var n="",m;if(Links[o].newWin==1){n=' target="_blank"'}m='<a href="'+Links[o].URL+'"'+n+">"+Links[o].display+"</a>";p.selectedIndex=0;edInsertContent(j.Canvas,m)}else{p.selectedIndex=0}};j.edInsertTag=function(o){if(document.selection){j.Canvas.focus();d=document.selection.createRange();if(d.text.length>0){d.text=j.Buttons[o].tagStart+d.text+j.Buttons[o].tagEnd}else{if(!j.edCheckOpenTags(o)||j.Buttons[o].tagEnd==""){d.text=j.Buttons[o].tagStart;j.edAddTag(o)}else{d.text=j.Buttons[o].tagEnd;j.edRemoveTag(o)}}j.Canvas.focus()}else{if(j.Canvas.selectionStart||j.Canvas.selectionStart=="0"){var n=j.Canvas.selectionStart,m=j.Canvas.selectionEnd,q=m,p=j.Canvas.scrollTop;if(n!=m){j.Canvas.value=j.Canvas.value.substring(0,n)+j.Buttons[o].tagStart+j.Canvas.value.substring(n,m)+j.Buttons[o].tagEnd+j.Canvas.value.substring(m,j.Canvas.value.length);q+=j.Buttons[o].tagStart.length+j.Buttons[o].tagEnd.length}else{if(!j.edCheckOpenTags(o)||j.Buttons[o].tagEnd==""){j.Canvas.value=j.Canvas.value.substring(0,n)+j.Buttons[o].tagStart+j.Canvas.value.substring(m,j.Canvas.value.length);j.edAddTag(o);q=n+j.Buttons[o].tagStart.length}else{j.Canvas.value=j.Canvas.value.substring(0,n)+j.Buttons[o].tagEnd+j.Canvas.value.substring(m,j.Canvas.value.length);j.edRemoveTag(o);q=n+j.Buttons[o].tagEnd.length}}j.Canvas.focus();j.Canvas.selectionStart=q;j.Canvas.selectionEnd=q;j.Canvas.scrollTop=p}else{if(!j.edCheckOpenTags(o)||j.Buttons[o].tagEnd==""){j.Canvas.value+=Buttons[o].tagStart;j.edAddTag(o)}else{j.Canvas.value+=Buttons[o].tagEnd;j.edRemoveTag(o)}j.Canvas.focus()}}};this.edInsertLink=function(o,n){if(!n){n="http://"}if(!j.edCheckOpenTags(o)){var m=prompt(quicktagsL10n.enterURL,n);if(m){j.Buttons[o].tagStart='<a href="'+m+'">';j.edInsertTag(o)}}else{j.edInsertTag(o)}};this.edInsertImage=function(){var i=prompt(quicktagsL10n.enterImageURL,"http://");if(i){i='<img src="'+i+'" alt="'+prompt(quicktagsL10n.enterImageDescription,"")+'" />';edInsertContent(j.Canvas,i)}};j.Buttons[j.Buttons.length]=new edButton(a+"_strong","b","<strong>","</strong>","b");j.Buttons[j.Buttons.length]=new edButton(a+"_em","i","<em>","</em>","i");j.Buttons[j.Buttons.length]=new edButton(a+"_link","link","","</a>","a");j.Buttons[j.Buttons.length]=new edButton(a+"_block","b-quote","\n\n<blockquote>","</blockquote>\n\n","q");j.Buttons[j.Buttons.length]=new edButton(a+"_del","del",'<del datetime="'+datetime+'">',"</del>","d");j.Buttons[j.Buttons.length]=new edButton(a+"_ins","ins",'<ins datetime="'+datetime+'">',"</ins>","s");j.Buttons[j.Buttons.length]=new edButton(a+"_img","img","","","m",-1);j.Buttons[j.Buttons.length]=new edButton(a+"_ul","ul","<ul>\n","</ul>\n\n","u");j.Buttons[j.Buttons.length]=new edButton(a+"_ol","ol","<ol>\n","</ol>\n\n","o");j.Buttons[j.Buttons.length]=new edButton(a+"_li","li","\t<li>","</li>\n","l");j.Buttons[j.Buttons.length]=new edButton(a+"_code","code","<code>","</code>","c");j.Buttons[j.Buttons.length]=new edButton(a+"_more","more","<!--more-->","","t",-1);e=document.createElement("div");e.id=a+"_qtags";h='<div id="'+a+'_toolbar">';for(g=0;g<j.Buttons.length;g++){h+=j.edShowButton(j.Buttons[g],g)}h+='<input type="button" id="'+a+'_ed_spell" class="ed_button" onclick="edSpell('+a+'.Canvas);" title="'+quicktagsL10n.dictionaryLookup+'" value="'+quicktagsL10n.lookup+'" />';h+='<input type="button" id="'+a+'_ed_close" class="ed_button" onclick="'+a+'.edCloseAllTags();" title="'+quicktagsL10n.closeAllOpenTags+'" value="'+quicktagsL10n.closeTags+'" /></div>';e.innerHTML=h;k.parentNode.insertBefore(e,k)};
+/* global adminpage, wpActiveEditor, quicktagsL10n, wpLink, prompt */
+/*
+ * Quicktags
+ *
+ * This is the HTML editor in WordPress. It can be attached to any textarea and will
+ * append a toolbar above it. This script is self-contained (does not require external libraries).
+ *
+ * Run quicktags(settings) to initialize it, where settings is an object containing up to 3 properties:
+ * settings = {
+ *   id : 'my_id',          the HTML ID of the textarea, required
+ *   buttons: ''            Comma separated list of the names of the default buttons to show. Optional.
+ *                          Current list of default button names: 'strong,em,link,block,del,ins,img,ul,ol,li,code,more,close';
+ * }
+ *
+ * The settings can also be a string quicktags_id.
+ *
+ * quicktags_id string The ID of the textarea that will be the editor canvas
+ * buttons string Comma separated list of the default buttons names that will be shown in that instance.
+ */
+
+// new edit toolbar used with permission
+// by Alex King
+// http://www.alexking.org/
+
+var QTags, edCanvas,
+	edButtons = [];
+
+/* jshint ignore:start */
+
+/**
+ * Back-compat
+ *
+ * Define all former global functions so plugins that hack quicktags.js directly don't cause fatal errors.
+ */
+var edAddTag = function(){},
+edCheckOpenTags = function(){},
+edCloseAllTags = function(){},
+edInsertImage = function(){},
+edInsertLink = function(){},
+edInsertTag = function(){},
+edLink = function(){},
+edQuickLink = function(){},
+edRemoveTag = function(){},
+edShowButton = function(){},
+edShowLinks = function(){},
+edSpell = function(){},
+edToolbar = function(){};
+
+/**
+ * Initialize new instance of the Quicktags editor
+ */
+function quicktags(settings) {
+	return new QTags(settings);
+}
+
+/**
+ * Inserts content at the caret in the active editor (textarea)
+ *
+ * Added for back compatibility
+ * @see QTags.insertContent()
+ */
+function edInsertContent(bah, txt) {
+	return QTags.insertContent(txt);
+}
+
+/**
+ * Adds a button to all instances of the editor
+ *
+ * Added for back compatibility, use QTags.addButton() as it gives more flexibility like type of button, button placement, etc.
+ * @see QTags.addButton()
+ */
+function edButton(id, display, tagStart, tagEnd, access) {
+	return QTags.addButton( id, display, tagStart, tagEnd, access, '', -1 );
+}
+
+/* jshint ignore:end */
+
+(function(){
+	// private stuff is prefixed with an underscore
+	var _domReady = function(func) {
+		var t, i, DOMContentLoaded, _tryReady;
+
+		if ( typeof jQuery !== 'undefined' ) {
+			jQuery(document).ready(func);
+		} else {
+			t = _domReady;
+			t.funcs = [];
+
+			t.ready = function() {
+				if ( ! t.isReady ) {
+					t.isReady = true;
+					for ( i = 0; i < t.funcs.length; i++ ) {
+						t.funcs[i]();
+					}
+				}
+			};
+
+			if ( t.isReady ) {
+				func();
+			} else {
+				t.funcs.push(func);
+			}
+
+			if ( ! t.eventAttached ) {
+				if ( document.addEventListener ) {
+					DOMContentLoaded = function(){document.removeEventListener('DOMContentLoaded', DOMContentLoaded, false);t.ready();};
+					document.addEventListener('DOMContentLoaded', DOMContentLoaded, false);
+					window.addEventListener('load', t.ready, false);
+				} else if ( document.attachEvent ) {
+					DOMContentLoaded = function(){if (document.readyState === 'complete'){ document.detachEvent('onreadystatechange', DOMContentLoaded);t.ready();}};
+					document.attachEvent('onreadystatechange', DOMContentLoaded);
+					window.attachEvent('onload', t.ready);
+
+					_tryReady = function() {
+						try {
+							document.documentElement.doScroll('left');
+						} catch(e) {
+							setTimeout(_tryReady, 50);
+							return;
+						}
+
+						t.ready();
+					};
+					_tryReady();
+				}
+
+				t.eventAttached = true;
+			}
+		}
+	},
+
+	_datetime = (function() {
+		var now = new Date(), zeroise;
+
+		zeroise = function(number) {
+			var str = number.toString();
+
+			if ( str.length < 2 ) {
+				str = '0' + str;
+			}
+
+			return str;
+		};
+
+		return now.getUTCFullYear() + '-' +
+			zeroise( now.getUTCMonth() + 1 ) + '-' +
+			zeroise( now.getUTCDate() ) + 'T' +
+			zeroise( now.getUTCHours() ) + ':' +
+			zeroise( now.getUTCMinutes() ) + ':' +
+			zeroise( now.getUTCSeconds() ) +
+			'+00:00';
+	})(),
+	qt;
+
+	qt = QTags = function(settings) {
+		if ( typeof(settings) === 'string' ) {
+			settings = {id: settings};
+		} else if ( typeof(settings) !== 'object' ) {
+			return false;
+		}
+
+		var t = this,
+			id = settings.id,
+			canvas = document.getElementById(id),
+			name = 'qt_' + id,
+			tb, onclick, toolbar_id;
+
+		if ( !id || !canvas ) {
+			return false;
+		}
+
+		t.name = name;
+		t.id = id;
+		t.canvas = canvas;
+		t.settings = settings;
+
+		if ( id === 'content' && typeof(adminpage) === 'string' && ( adminpage === 'post-new-php' || adminpage === 'post-php' ) ) {
+			// back compat hack :-(
+			edCanvas = canvas;
+			toolbar_id = 'ed_toolbar';
+		} else {
+			toolbar_id = name + '_toolbar';
+		}
+
+		tb = document.createElement('div');
+		tb.id = toolbar_id;
+		tb.className = 'quicktags-toolbar';
+		tb.onclick = function() {
+			window.wpActiveEditor = id;
+		};
+
+		canvas.parentNode.insertBefore(tb, canvas);
+		t.toolbar = tb;
+
+		// listen for click events
+		onclick = function(e) {
+			e = e || window.event;
+			var target = e.target || e.srcElement, visible = target.clientWidth || target.offsetWidth, i;
+
+			// don't call the callback on pressing the accesskey when the button is not visible
+			if ( !visible ) {
+				return;
+			}
+
+			// as long as it has the class ed_button, execute the callback
+			if ( / ed_button /.test(' ' + target.className + ' ') ) {
+				// we have to reassign canvas here
+				t.canvas = canvas = document.getElementById(id);
+				i = target.id.replace(name + '_', '');
+
+				if ( t.theButtons[i] ) {
+					t.theButtons[i].callback.call(t.theButtons[i], target, canvas, t);
+				}
+			}
+		};
+
+		if ( tb.addEventListener ) {
+			tb.addEventListener('click', onclick, false);
+		} else if ( tb.attachEvent ) {
+			tb.attachEvent('onclick', onclick);
+		}
+
+		t.getButton = function(id) {
+			return t.theButtons[id];
+		};
+
+		t.getButtonElement = function(id) {
+			return document.getElementById(name + '_' + id);
+		};
+
+		qt.instances[id] = t;
+
+		if ( ! qt.instances['0'] ) {
+			qt.instances['0'] = qt.instances[id];
+			_domReady( function(){ qt._buttonsInit(); } );
+		}
+	};
+
+	qt.instances = {};
+
+	qt.getInstance = function(id) {
+		return qt.instances[id];
+	};
+
+	qt._buttonsInit = function() {
+		var t = this, canvas, name, settings, theButtons, html, inst, ed, id, i, use,
+			defaults = ',strong,em,link,block,del,ins,img,ul,ol,li,code,more,close,';
+
+		for ( inst in t.instances ) {
+			if ( '0' === inst ) {
+				continue;
+			}
+
+			ed = t.instances[inst];
+			canvas = ed.canvas;
+			name = ed.name;
+			settings = ed.settings;
+			html = '';
+			theButtons = {};
+			use = '';
+
+			// set buttons
+			if ( settings.buttons ) {
+				use = ','+settings.buttons+',';
+			}
+
+			for ( i in edButtons ) {
+				if ( !edButtons[i] ) {
+					continue;
+				}
+
+				id = edButtons[i].id;
+				if ( use && defaults.indexOf( ',' + id + ',' ) !== -1 && use.indexOf( ',' + id + ',' ) === -1 ) {
+					continue;
+				}
+
+				if ( !edButtons[i].instance || edButtons[i].instance === inst ) {
+					theButtons[id] = edButtons[i];
+
+					if ( edButtons[i].html ) {
+						html += edButtons[i].html(name + '_');
+					}
+				}
+			}
+
+			if ( use && use.indexOf(',fullscreen,') !== -1 ) {
+				theButtons.fullscreen = new qt.FullscreenButton();
+				html += theButtons.fullscreen.html(name + '_');
+			}
+
+			if ( use && use.indexOf(',dfw,') !== -1 ) {
+				theButtons.dfw = new qt.DFWButton();
+				html += theButtons.dfw.html( name + '_' );
+			}
+
+			if ( 'rtl' === document.getElementsByTagName('html')[0].dir ) {
+				theButtons.textdirection = new qt.TextDirectionButton();
+				html += theButtons.textdirection.html(name + '_');
+			}
+
+			ed.toolbar.innerHTML = html;
+			ed.theButtons = theButtons;
+
+			if ( typeof jQuery !== 'undefined' ) {
+				jQuery( document ).triggerHandler( 'quicktags-init', [ ed ] );
+			}
+		}
+		t.buttonsInitDone = true;
+	};
+
+	/**
+	 * Main API function for adding a button to Quicktags
+	 *
+	 * Adds qt.Button or qt.TagButton depending on the args. The first three args are always required.
+	 * To be able to add button(s) to Quicktags, your script should be enqueued as dependent
+	 * on "quicktags" and outputted in the footer. If you are echoing JS directly from PHP,
+	 * use add_action( 'admin_print_footer_scripts', 'output_my_js', 100 ) or add_action( 'wp_footer', 'output_my_js', 100 )
+	 *
+	 * Minimum required to add a button that calls an external function:
+	 *     QTags.addButton( 'my_id', 'my button', my_callback );
+	 *     function my_callback() { alert('yeah!'); }
+	 *
+	 * Minimum required to add a button that inserts a tag:
+	 *     QTags.addButton( 'my_id', 'my button', '<span>', '</span>' );
+	 *     QTags.addButton( 'my_id2', 'my button', '<br />' );
+	 *
+	 * @param string id Required. Button HTML ID
+	 * @param string display Required. Button's value="..."
+	 * @param string|function arg1 Required. Either a starting tag to be inserted like "<span>" or a callback that is executed when the button is clicked.
+	 * @param string arg2 Optional. Ending tag like "</span>"
+	 * @param string access_key Deprecated Not used
+	 * @param string title Optional. Button's title="..."
+	 * @param int priority Optional. Number representing the desired position of the button in the toolbar. 1 - 9 = first, 11 - 19 = second, 21 - 29 = third, etc.
+	 * @param string instance Optional. Limit the button to a specific instance of Quicktags, add to all instances if not present.
+	 * @return mixed null or the button object that is needed for back-compat.
+	 */
+	qt.addButton = function( id, display, arg1, arg2, access_key, title, priority, instance ) {
+		var btn;
+
+		if ( !id || !display ) {
+			return;
+		}
+
+		priority = priority || 0;
+		arg2 = arg2 || '';
+
+		if ( typeof(arg1) === 'function' ) {
+			btn = new qt.Button(id, display, access_key, title, instance);
+			btn.callback = arg1;
+		} else if ( typeof(arg1) === 'string' ) {
+			btn = new qt.TagButton(id, display, arg1, arg2, access_key, title, instance);
+		} else {
+			return;
+		}
+
+		if ( priority === -1 ) { // back-compat
+			return btn;
+		}
+
+		if ( priority > 0 ) {
+			while ( typeof(edButtons[priority]) !== 'undefined' ) {
+				priority++;
+			}
+
+			edButtons[priority] = btn;
+		} else {
+			edButtons[edButtons.length] = btn;
+		}
+
+		if ( this.buttonsInitDone ) {
+			this._buttonsInit(); // add the button HTML to all instances toolbars if addButton() was called too late
+		}
+	};
+
+	qt.insertContent = function(content) {
+		var sel, startPos, endPos, scrollTop, text, canvas = document.getElementById(wpActiveEditor);
+
+		if ( !canvas ) {
+			return false;
+		}
+
+		if ( document.selection ) { //IE
+			canvas.focus();
+			sel = document.selection.createRange();
+			sel.text = content;
+			canvas.focus();
+		} else if ( canvas.selectionStart || canvas.selectionStart === 0 ) { // FF, WebKit, Opera
+			text = canvas.value;
+			startPos = canvas.selectionStart;
+			endPos = canvas.selectionEnd;
+			scrollTop = canvas.scrollTop;
+
+			canvas.value = text.substring(0, startPos) + content + text.substring(endPos, text.length);
+
+			canvas.selectionStart = startPos + content.length;
+			canvas.selectionEnd = startPos + content.length;
+			canvas.scrollTop = scrollTop;
+			canvas.focus();
+		} else {
+			canvas.value += content;
+			canvas.focus();
+		}
+		return true;
+	};
+
+	// a plain, dumb button
+	qt.Button = function(id, display, access, title, instance) {
+		var t = this;
+		t.id = id;
+		t.display = display;
+		t.access = '';
+		t.title = title || '';
+		t.instance = instance || '';
+	};
+	qt.Button.prototype.html = function(idPrefix) {
+		var title = this.title ? ' title="' + this.title + '"' : '',
+			active, on, wp,
+			dfw = ( wp = window.wp ) && wp.editor && wp.editor.dfw;
+
+		if ( this.id === 'fullscreen' ) {
+			return '<button type="button" id="' + idPrefix + this.id + '" class="ed_button qt-dfw qt-fullscreen"' + title + '></button>';
+		} else if ( this.id === 'dfw' ) {
+			active = dfw && dfw.isActive() ? '' : ' disabled="disabled"';
+			on = dfw && dfw.isOn() ? ' active' : '';
+
+			return '<button type="button" id="' + idPrefix + this.id + '" class="ed_button qt-dfw' + on + '"' + title + active + '></button>';
+		}
+
+		return '<input type="button" id="' + idPrefix + this.id + '" class="ed_button button button-small"' + title + ' value="' + this.display + '" />';
+	};
+	qt.Button.prototype.callback = function(){};
+
+	// a button that inserts HTML tag
+	qt.TagButton = function(id, display, tagStart, tagEnd, access, title, instance) {
+		var t = this;
+		qt.Button.call(t, id, display, access, title, instance);
+		t.tagStart = tagStart;
+		t.tagEnd = tagEnd;
+	};
+	qt.TagButton.prototype = new qt.Button();
+	qt.TagButton.prototype.openTag = function(e, ed) {
+		var t = this;
+
+		if ( ! ed.openTags ) {
+			ed.openTags = [];
+		}
+		if ( t.tagEnd ) {
+			ed.openTags.push(t.id);
+			e.value = '/' + e.value;
+		}
+	};
+	qt.TagButton.prototype.closeTag = function(e, ed) {
+		var t = this, i = t.isOpen(ed);
+
+		if ( i !== false ) {
+			ed.openTags.splice(i, 1);
+		}
+
+		e.value = t.display;
+	};
+	// whether a tag is open or not. Returns false if not open, or current open depth of the tag
+	qt.TagButton.prototype.isOpen = function (ed) {
+		var t = this, i = 0, ret = false;
+		if ( ed.openTags ) {
+			while ( ret === false && i < ed.openTags.length ) {
+				ret = ed.openTags[i] === t.id ? i : false;
+				i ++;
+			}
+		} else {
+			ret = false;
+		}
+		return ret;
+	};
+	qt.TagButton.prototype.callback = function(element, canvas, ed) {
+		var t = this, startPos, endPos, cursorPos, scrollTop, v = canvas.value, l, r, i, sel, endTag = v ? t.tagEnd : '';
+
+		if ( document.selection ) { // IE
+			canvas.focus();
+			sel = document.selection.createRange();
+			if ( sel.text.length > 0 ) {
+				if ( !t.tagEnd ) {
+					sel.text = sel.text + t.tagStart;
+				} else {
+					sel.text = t.tagStart + sel.text + endTag;
+				}
+			} else {
+				if ( !t.tagEnd ) {
+					sel.text = t.tagStart;
+				} else if ( t.isOpen(ed) === false ) {
+					sel.text = t.tagStart;
+					t.openTag(element, ed);
+				} else {
+					sel.text = endTag;
+					t.closeTag(element, ed);
+				}
+			}
+			canvas.focus();
+		} else if ( canvas.selectionStart || canvas.selectionStart === 0 ) { // FF, WebKit, Opera
+			startPos = canvas.selectionStart;
+			endPos = canvas.selectionEnd;
+			cursorPos = endPos;
+			scrollTop = canvas.scrollTop;
+			l = v.substring(0, startPos); // left of the selection
+			r = v.substring(endPos, v.length); // right of the selection
+			i = v.substring(startPos, endPos); // inside the selection
+			if ( startPos !== endPos ) {
+				if ( !t.tagEnd ) {
+					canvas.value = l + i + t.tagStart + r; // insert self closing tags after the selection
+					cursorPos += t.tagStart.length;
+				} else {
+					canvas.value = l + t.tagStart + i + endTag + r;
+					cursorPos += t.tagStart.length + endTag.length;
+				}
+			} else {
+				if ( !t.tagEnd ) {
+					canvas.value = l + t.tagStart + r;
+					cursorPos = startPos + t.tagStart.length;
+				} else if ( t.isOpen(ed) === false ) {
+					canvas.value = l + t.tagStart + r;
+					t.openTag(element, ed);
+					cursorPos = startPos + t.tagStart.length;
+				} else {
+					canvas.value = l + endTag + r;
+					cursorPos = startPos + endTag.length;
+					t.closeTag(element, ed);
+				}
+			}
+
+			canvas.selectionStart = cursorPos;
+			canvas.selectionEnd = cursorPos;
+			canvas.scrollTop = scrollTop;
+			canvas.focus();
+		} else { // other browsers?
+			if ( !endTag ) {
+				canvas.value += t.tagStart;
+			} else if ( t.isOpen(ed) !== false ) {
+				canvas.value += t.tagStart;
+				t.openTag(element, ed);
+			} else {
+				canvas.value += endTag;
+				t.closeTag(element, ed);
+			}
+			canvas.focus();
+		}
+	};
+
+	// removed
+	qt.SpellButton = function() {};
+
+	// the close tags button
+	qt.CloseButton = function() {
+		qt.Button.call(this, 'close', quicktagsL10n.closeTags, '', quicktagsL10n.closeAllOpenTags);
+	};
+
+	qt.CloseButton.prototype = new qt.Button();
+
+	qt._close = function(e, c, ed) {
+		var button, element, tbo = ed.openTags;
+
+		if ( tbo ) {
+			while ( tbo.length > 0 ) {
+				button = ed.getButton(tbo[tbo.length - 1]);
+				element = document.getElementById(ed.name + '_' + button.id);
+
+				if ( e ) {
+					button.callback.call(button, element, c, ed);
+				} else {
+					button.closeTag(element, ed);
+				}
+			}
+		}
+	};
+
+	qt.CloseButton.prototype.callback = qt._close;
+
+	qt.closeAllTags = function(editor_id) {
+		var ed = this.getInstance(editor_id);
+		qt._close('', ed.canvas, ed);
+	};
+
+	// the link button
+	qt.LinkButton = function() {
+		qt.TagButton.call(this, 'link', 'link', '', '</a>');
+	};
+	qt.LinkButton.prototype = new qt.TagButton();
+	qt.LinkButton.prototype.callback = function(e, c, ed, defaultValue) {
+		var URL, t = this;
+
+		if ( typeof wpLink !== 'undefined' ) {
+			wpLink.open( ed.id );
+			return;
+		}
+
+		if ( ! defaultValue ) {
+			defaultValue = 'http://';
+		}
+
+		if ( t.isOpen(ed) === false ) {
+			URL = prompt(quicktagsL10n.enterURL, defaultValue);
+			if ( URL ) {
+				t.tagStart = '<a href="' + URL + '">';
+				qt.TagButton.prototype.callback.call(t, e, c, ed);
+			}
+		} else {
+			qt.TagButton.prototype.callback.call(t, e, c, ed);
+		}
+	};
+
+	// the img button
+	qt.ImgButton = function() {
+		qt.TagButton.call(this, 'img', 'img', '', '');
+	};
+	qt.ImgButton.prototype = new qt.TagButton();
+	qt.ImgButton.prototype.callback = function(e, c, ed, defaultValue) {
+		if ( ! defaultValue ) {
+			defaultValue = 'http://';
+		}
+		var src = prompt(quicktagsL10n.enterImageURL, defaultValue), alt;
+		if ( src ) {
+			alt = prompt(quicktagsL10n.enterImageDescription, '');
+			this.tagStart = '<img src="' + src + '" alt="' + alt + '" />';
+			qt.TagButton.prototype.callback.call(this, e, c, ed);
+		}
+	};
+
+	qt.FullscreenButton = function() {
+		qt.Button.call(this, 'fullscreen', quicktagsL10n.fullscreen, 'f', quicktagsL10n.toggleFullscreen);
+	};
+	qt.FullscreenButton.prototype = new qt.Button();
+	qt.FullscreenButton.prototype.callback = function(e, c) {
+		if ( ! c.id || typeof wp === 'undefined' || ! wp.editor || ! wp.editor.fullscreen ) {
+			return;
+		}
+
+		wp.editor.fullscreen.on();
+	};
+
+	qt.DFWButton = function() {
+		qt.Button.call( this, 'dfw', '', 'f', quicktagsL10n.dfw );
+	};
+	qt.DFWButton.prototype = new qt.Button();
+	qt.DFWButton.prototype.callback = function() {
+		var wp;
+
+		if ( ! ( wp = window.wp ) || ! wp.editor || ! wp.editor.dfw ) {
+			return;
+		}
+
+		window.wp.editor.dfw.toggle();
+	};
+
+	qt.TextDirectionButton = function() {
+		qt.Button.call(this, 'textdirection', quicktagsL10n.textdirection, '', quicktagsL10n.toggleTextdirection);
+	};
+	qt.TextDirectionButton.prototype = new qt.Button();
+	qt.TextDirectionButton.prototype.callback = function(e, c) {
+		var isRTL = ( 'rtl' === document.getElementsByTagName('html')[0].dir ),
+			currentDirection = c.style.direction;
+
+		if ( ! currentDirection ) {
+			currentDirection = ( isRTL ) ? 'rtl' : 'ltr';
+		}
+
+		c.style.direction = ( 'rtl' === currentDirection ) ? 'ltr' : 'rtl';
+		c.focus();
+	};
+
+	// ensure backward compatibility
+	edButtons[10] = new qt.TagButton('strong','b','<strong>','</strong>');
+	edButtons[20] = new qt.TagButton('em','i','<em>','</em>'),
+	edButtons[30] = new qt.LinkButton(), // special case
+	edButtons[40] = new qt.TagButton('block','b-quote','\n\n<blockquote>','</blockquote>\n\n'),
+	edButtons[50] = new qt.TagButton('del','del','<del datetime="' + _datetime + '">','</del>'),
+	edButtons[60] = new qt.TagButton('ins','ins','<ins datetime="' + _datetime + '">','</ins>'),
+	edButtons[70] = new qt.ImgButton(), // special case
+	edButtons[80] = new qt.TagButton('ul','ul','<ul>\n','</ul>\n\n'),
+	edButtons[90] = new qt.TagButton('ol','ol','<ol>\n','</ol>\n\n'),
+	edButtons[100] = new qt.TagButton('li','li','\t<li>','</li>\n'),
+	edButtons[110] = new qt.TagButton('code','code','<code>','</code>'),
+	edButtons[120] = new qt.TagButton('more','more','<!--more-->\n\n',''),
+	edButtons[140] = new qt.CloseButton();
+
+})();

@@ -1,3 +1,31 @@
+2015-05-20  Jon Davis  <jond@apple.com>
+
+        Upgrading WordPress to 4.2.2 release.
+
+        Rubber-stamped by Timothy Hatcher.
+
+        * Websites/webkit.org/blog/:
+        * Websites/webkit.org/blcd Tog/wp-admin/:
+        * Websites/webkit.org/blog/wp-admin/css/:
+        * Websites/webkit.org/blog/wp-admin/css/colors/:
+        * Websites/webkit.org/blog/wp-admin/images/:
+        * Websites/webkit.org/blog/wp-admin/includes/:
+        * Websites/webkit.org/blog/wp-admin/js/:
+        * Websites/webkit.org/blog/wp-admin/maint/:
+        * Websites/webkit.org/blog/wp-admin/network/:
+        * Websites/webkit.org/blog/wp-admin/user/:
+        * Websites/webkit.org/blog/wp-includes/:
+        * Websites/webkit.org/blog/wp-includes/ID3/:
+        * Websites/webkit.org/blog/wp-includes/SimplePie/:
+        * Websites/webkit.org/blog/wp-includes/Text/:
+        * Websites/webkit.org/blog/wp-includes/certificates/:
+        * Websites/webkit.org/blog/wp-includes/css/:
+        * Websites/webkit.org/blog/wp-includes/fonts/:
+        * Websites/webkit.org/blog/wp-includes/images/:
+        * Websites/webkit.org/blog/wp-includes/js/:
+        * Websites/webkit.org/blog/wp-includes/pomo/:
+        * Websites/webkit.org/blog/wp-includes/theme-compat/:
+
 2015-04-28  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Fix the link noted 'contribute to features' in status.html

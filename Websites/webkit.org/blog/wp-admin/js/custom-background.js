@@ -1,1 +1,75 @@
-var farbtastic;function pickColor(a){farbtastic.setColor(a);jQuery("#background-color").val(a);jQuery("#custom-background-image").css("background-color",a);if(a&&a!=="#"){jQuery("#clearcolor").show()}else{jQuery("#clearcolor").hide()}}jQuery(document).ready(function(){jQuery("#pickcolor").click(function(){jQuery("#colorPickerDiv").show();return false});jQuery("#clearcolor a").click(function(a){pickColor("");a.preventDefault()});jQuery("#background-color").keyup(function(){var b=jQuery("#background-color").val(),a=b;if(a.charAt(0)!="#"){a="#"+a}a=a.replace(/[^#a-fA-F0-9]+/,"");if(a!=b){jQuery("#background-color").val(a)}if(a.length==4||a.length==7){pickColor(a)}});jQuery('input[name="background-position-x"]').change(function(){jQuery("#custom-background-image").css("background-position",jQuery(this).val()+" top")});jQuery('input[name="background-repeat"]').change(function(){jQuery("#custom-background-image").css("background-repeat",jQuery(this).val())});farbtastic=jQuery.farbtastic("#colorPickerDiv",function(a){pickColor(a)});pickColor(jQuery("#background-color").val());jQuery(document).mousedown(function(){jQuery("#colorPickerDiv").each(function(){var a=jQuery(this).css("display");if(a=="block"){jQuery(this).fadeOut(2)}})})});
+/* global ajaxurl */
+(function($) {
+	$(document).ready(function() {
+		var frame,
+			bgImage = $( '#custom-background-image' );
+
+		$('#background-color').wpColorPicker({
+			change: function( event, ui ) {
+				bgImage.css('background-color', ui.color.toString());
+			},
+			clear: function() {
+				bgImage.css('background-color', '');
+			}
+		});
+
+		$('input[name="background-position-x"]').change(function() {
+			bgImage.css('background-position', $(this).val() + ' top');
+		});
+
+		$('input[name="background-repeat"]').change(function() {
+			bgImage.css('background-repeat', $(this).val());
+		});
+
+		$('#choose-from-library-link').click( function( event ) {
+			var $el = $(this);
+
+			event.preventDefault();
+
+			// If the media frame already exists, reopen it.
+			if ( frame ) {
+				frame.open();
+				return;
+			}
+
+			// Create the media frame.
+			frame = wp.media.frames.customBackground = wp.media({
+				// Set the title of the modal.
+				title: $el.data('choose'),
+
+				// Tell the modal to show only images.
+				library: {
+					type: 'image'
+				},
+
+				// Customize the submit button.
+				button: {
+					// Set the text of the button.
+					text: $el.data('update'),
+					// Tell the button not to close the modal, since we're
+					// going to refresh the page when the image is selected.
+					close: false
+				}
+			});
+
+			// When an image is selected, run a callback.
+			frame.on( 'select', function() {
+				// Grab the selected attachment.
+				var attachment = frame.state().get('selection').first();
+
+				// Run an AJAX request to set the background image.
+				$.post( ajaxurl, {
+					action: 'set-background-image',
+					attachment_id: attachment.id,
+					size: 'full'
+				}).done( function() {
+					// When the request completes, reload the window.
+					window.location.reload();
+				});
+			});
+
+			// Finally, open the modal.
+			frame.open();
+		});
+	});
+})(jQuery);

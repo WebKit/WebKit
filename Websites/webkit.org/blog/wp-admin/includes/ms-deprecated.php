@@ -14,7 +14,7 @@
  */
 function wpmu_menu() {
 	_deprecated_function(__FUNCTION__, '3.0' );
-	// deprecated. See #11763
+	// Deprecated. See #11763.
 }
 
 /**
@@ -53,7 +53,6 @@ function activate_sitewide_plugin() {
  */
 function deactivate_sitewide_plugin( $plugin = false ) {
 	_deprecated_function(__FUNCTION__, '3.0', 'deactivate_plugin()' );
-	return;
 }
 
 /**
@@ -65,4 +64,14 @@ function is_wpmu_sitewide_plugin( $file ) {
 	return is_network_only_plugin( $file );
 }
 
-?>
+function get_site_allowed_themes() {
+	_deprecated_function( __FUNCTION__, '3.4', 'WP_Theme::get_allowed_on_network()' );
+	return array_map( 'intval', WP_Theme::get_allowed_on_network() );
+}
+
+function wpmu_get_blog_allowedthemes( $blog_id = 0 ) {
+	_deprecated_function( __FUNCTION__, '3.4', 'WP_Theme::get_allowed_on_site()' );
+	return array_map( 'intval', WP_Theme::get_allowed_on_site( $blog_id ) );
+}
+
+function ms_deprecated_blogs_file() {}

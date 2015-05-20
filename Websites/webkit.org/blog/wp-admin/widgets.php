@@ -7,15 +7,13 @@
  */
 
 /** WordPress Administration Bootstrap */
-require_once( './admin.php' );
+require_once( dirname( __FILE__ ) . '/admin.php' );
 
 /** WordPress Administration Widgets API */
 require_once(ABSPATH . 'wp-admin/includes/widgets.php');
 
 if ( ! current_user_can('edit_theme_options') )
-	wp_die( __( 'Cheatin&#8217; uh?' ));
-
-wp_admin_css( 'widgets' );
+	wp_die( __( 'Cheatin&#8217; uh?' ), 403 );
 
 $widgets_access = get_user_setting( 'widgets_access' );
 if ( isset($_GET['widgets-access']) ) {
@@ -23,132 +21,104 @@ if ( isset($_GET['widgets-access']) ) {
 	set_user_setting( 'widgets_access', $widgets_access );
 }
 
-if ( 'on' == $widgets_access )
-	add_filter( 'admin_body_class', create_function('', '{return " widgets_access ";}') );
-else
+function wp_widgets_access_body_class($classes) {
+	return "$classes widgets_access ";
+}
+
+if ( 'on' == $widgets_access ) {
+	add_filter( 'admin_body_class', 'wp_widgets_access_body_class' );
+} else {
 	wp_enqueue_script('admin-widgets');
 
+	if ( wp_is_mobile() )
+		wp_enqueue_script( 'jquery-touch-punch' );
+}
+
+/**
+ * Fires early before the Widgets administration screen loads,
+ * after scripts are enqueued.
+ *
+ * @since 2.2.0
+ */
 do_action( 'sidebar_admin_setup' );
 
 $title = __( 'Widgets' );
 $parent_file = 'themes.php';
 
-$help = '
-	<p>' . __('Widgets are independent sections of content that can be placed into any widgetized area provided by your theme (commonly called sidebars). To populate your sidebars/widget areas with individual widgets, drag and drop the title bars into the desired area. By default, only the first widget area is expanded. To populate additional widget areas, click on their title bars to expand them.') . '</p>
-	<p>' . __('The Available Widgets section contains all the widgets you can choose from. Once you drag a widget into a sidebar, it will open to allow you to configure its settings. When you are happy with the widget settings, click the Save button and the widget will go live on your site. If you click Delete, it will remove the widget.') . '</p>
-	<p>' . __('If you want to remove the widget but save its setting for possible future use, just drag it into the Inactive Widgets area. You can add them back anytime from there. This is especially helpful when you switch to a theme with fewer or different widget areas.') . '</p>
+get_current_screen()->add_help_tab( array(
+'id'		=> 'overview',
+'title'		=> __('Overview'),
+'content'	=>
+	'<p>' . __('Widgets are independent sections of content that can be placed into any widgetized area provided by your theme (commonly called sidebars). To populate your sidebars/widget areas with individual widgets, drag and drop the title bars into the desired area. By default, only the first widget area is expanded. To populate additional widget areas, click on their title bars to expand them.') . '</p>
+	<p>' . __('The Available Widgets section contains all the widgets you can choose from. Once you drag a widget into a sidebar, it will open to allow you to configure its settings. When you are happy with the widget settings, click the Save button and the widget will go live on your site. If you click Delete, it will remove the widget.') . '</p>'
+) );
+get_current_screen()->add_help_tab( array(
+'id'		=> 'removing-reusing',
+'title'		=> __('Removing and Reusing'),
+'content'	=>
+	'<p>' . __('If you want to remove the widget but save its setting for possible future use, just drag it into the Inactive Widgets area. You can add them back anytime from there. This is especially helpful when you switch to a theme with fewer or different widget areas.') . '</p>
 	<p>' . __('Widgets may be used multiple times. You can give each widget a title, to display on your site, but it&#8217;s not required.') . '</p>
-	<p>' . __('Enabling Accessibility Mode, via Screen Options, allows you to use Add and Edit buttons instead of using drag and drop.') . '</p>
-	<p>' . __('Many themes show some sidebar widgets by default until you edit your sidebars, but they are not automatically displayed in your sidebar management tool. After you make your first widget change, you can re-add the default widgets by adding them from the Available Widgets area.') . '</p>
-';
-$help .= '<p><strong>' . __('For more information:') . '</strong></p>';
-$help .= '<p>' . __('<a href="http://codex.wordpress.org/Appearance_Widgets_Screen" target="_blank">Documentation on Widgets</a>') . '</p>';
-$help .= '<p>' . __('<a href="http://wordpress.org/support/" target="_blank">Support Forums</a>') . '</p>';
-add_contextual_help($current_screen, $help);
+	<p>' . __('Enabling Accessibility Mode, via Screen Options, allows you to use Add and Edit buttons instead of using drag and drop.') . '</p>'
+) );
+get_current_screen()->add_help_tab( array(
+'id'		=> 'missing-widgets',
+'title'		=> __('Missing Widgets'),
+'content'	=>
+	'<p>' . __('Many themes show some sidebar widgets by default until you edit your sidebars, but they are not automatically displayed in your sidebar management tool. After you make your first widget change, you can re-add the default widgets by adding them from the Available Widgets area.') . '</p>' .
+		'<p>' . __('When changing themes, there is often some variation in the number and setup of widget areas/sidebars and sometimes these conflicts make the transition a bit less smooth. If you changed themes and seem to be missing widgets, scroll down on this screen to the Inactive Widgets area, where all of your widgets and their settings will have been saved.') . '</p>'
+) );
+
+get_current_screen()->set_help_sidebar(
+	'<p><strong>' . __('For more information:') . '</strong></p>' .
+	'<p>' . __('<a href="https://codex.wordpress.org/Appearance_Widgets_Screen" target="_blank">Documentation on Widgets</a>') . '</p>' .
+	'<p>' . __('<a href="https://wordpress.org/support/" target="_blank">Support Forums</a>') . '</p>'
+);
+
+if ( ! current_theme_supports( 'widgets' ) ) {
+	wp_die( __( 'The theme you are currently using isn&#8217;t widget-aware, meaning that it has no sidebars that you are able to change. For information on making your theme widget-aware, please <a href="https://codex.wordpress.org/Widgetizing_Themes">follow these instructions</a>.' ) );
+}
+
+// These are the widgets grouped by sidebar
+$sidebars_widgets = wp_get_sidebars_widgets();
+
+if ( empty( $sidebars_widgets ) )
+	$sidebars_widgets = wp_get_widget_defaults();
+
+foreach ( $sidebars_widgets as $sidebar_id => $widgets ) {
+	if ( 'wp_inactive_widgets' == $sidebar_id )
+		continue;
+
+	if ( !isset( $wp_registered_sidebars[ $sidebar_id ] ) ) {
+		if ( ! empty( $widgets ) ) { // register the inactive_widgets area as sidebar
+			register_sidebar(array(
+				'name' => __( 'Inactive Sidebar (not used)' ),
+				'id' => $sidebar_id,
+				'class' => 'inactive-sidebar orphan-sidebar',
+				'description' => __( 'This sidebar is no longer available and does not show anywhere on your site. Remove each of the widgets below to fully remove this inactive sidebar.' ),
+				'before_widget' => '',
+				'after_widget' => '',
+				'before_title' => '',
+				'after_title' => '',
+			));
+		} else {
+			unset( $sidebars_widgets[ $sidebar_id ] );
+		}
+	}
+}
 
 // register the inactive_widgets area as sidebar
 register_sidebar(array(
 	'name' => __('Inactive Widgets'),
 	'id' => 'wp_inactive_widgets',
-	'description' => '',
+	'class' => 'inactive-sidebar',
+	'description' => __( 'Drag widgets here to remove them from the sidebar but keep their settings.' ),
 	'before_widget' => '',
 	'after_widget' => '',
 	'before_title' => '',
 	'after_title' => '',
 ));
 
-// These are the widgets grouped by sidebar
-$sidebars_widgets = wp_get_sidebars_widgets();
-if ( empty( $sidebars_widgets ) )
-	$sidebars_widgets = wp_get_widget_defaults();
-
-// look for "lost" widgets, this has to run at least on each theme change
-function retrieve_widgets() {
-	global $wp_registered_widget_updates, $wp_registered_sidebars, $sidebars_widgets, $wp_registered_widgets;
-
-	$_sidebars_widgets = array();
-	$sidebars = array_keys($wp_registered_sidebars);
-
-	unset( $sidebars_widgets['array_version'] );
-
-	$old = array_keys($sidebars_widgets);
-	sort($old);
-	sort($sidebars);
-
-	if ( $old == $sidebars )
-		return;
-
-	// Move the known-good ones first
-	foreach ( $sidebars as $id ) {
-		if ( array_key_exists( $id, $sidebars_widgets ) ) {
-			$_sidebars_widgets[$id] = $sidebars_widgets[$id];
-			unset($sidebars_widgets[$id], $sidebars[$id]);
-		}
-	}
-
-	// if new theme has less sidebars than the old theme
-	if ( !empty($sidebars_widgets) ) {
-		foreach ( $sidebars_widgets as $lost => $val ) {
-			if ( is_array($val) )
-				$_sidebars_widgets['wp_inactive_widgets'] = array_merge( (array) $_sidebars_widgets['wp_inactive_widgets'], $val );
-		}
-	}
-
-	// discard invalid, theme-specific widgets from sidebars
-	$shown_widgets = array();
-	foreach ( $_sidebars_widgets as $sidebar => $widgets ) {
-		if ( !is_array($widgets) )
-			continue;
-
-		$_widgets = array();
-		foreach ( $widgets as $widget ) {
-			if ( isset($wp_registered_widgets[$widget]) )
-				$_widgets[] = $widget;
-		}
-		$_sidebars_widgets[$sidebar] = $_widgets;
-		$shown_widgets = array_merge($shown_widgets, $_widgets);
-	}
-
-	$sidebars_widgets = $_sidebars_widgets;
-	unset($_sidebars_widgets, $_widgets);
-
-	// find hidden/lost multi-widget instances
-	$lost_widgets = array();
-	foreach ( $wp_registered_widgets as $key => $val ) {
-		if ( in_array($key, $shown_widgets, true) )
-			continue;
-
-		$number = preg_replace('/.+?-([0-9]+)$/', '$1', $key);
-
-		if ( 2 > (int) $number )
-			continue;
-
-		$lost_widgets[] = $key;
-	}
-
-	$sidebars_widgets['wp_inactive_widgets'] = array_merge($lost_widgets, (array) $sidebars_widgets['wp_inactive_widgets']);
-	wp_set_sidebars_widgets($sidebars_widgets);
-}
 retrieve_widgets();
-
-if ( count($wp_registered_sidebars) == 1 ) {
-	// If only "wp_inactive_widgets" is defined the theme has no sidebars, die.
-	require_once( './admin-header.php' );
-?>
-
-	<div class="wrap">
-	<?php screen_icon(); ?>
-	<h2><?php echo esc_html( $title ); ?></h2>
-		<div class="error">
-			<p><?php _e( 'No Sidebars Defined' ); ?></p>
-		</div>
-		<p><?php _e( 'The theme you are currently using isn&#8217;t widget-aware, meaning that it has no sidebars that you are able to change. For information on making your theme widget-aware, please <a href="http://codex.wordpress.org/Widgetizing_Themes">follow these instructions</a>.' ); ?></p>
-	</div>
-
-<?php
-	require_once( './admin-footer.php' );
-	exit;
-}
 
 // We're saving a widget without js
 if ( isset($_POST['savewidget']) || isset($_POST['removewidget']) ) {
@@ -171,7 +141,7 @@ if ( isset($_POST['savewidget']) || isset($_POST['removewidget']) ) {
 	$id_base = $_POST['id_base'];
 	$sidebar = isset($sidebars_widgets[$sidebar_id]) ? $sidebars_widgets[$sidebar_id] : array();
 
-	// delete
+	// Delete.
 	if ( isset($_POST['removewidget']) && $_POST['removewidget'] ) {
 
 		if ( !in_array($widget_id, $sidebar, true) ) {
@@ -198,7 +168,7 @@ if ( isset($_POST['savewidget']) || isset($_POST['removewidget']) ) {
 
 	$sidebars_widgets[$sidebar_id] = $sidebar;
 
-	// remove old position
+	// Remove old position.
 	if ( !isset($_POST['delete_widget']) ) {
 		foreach ( $sidebars_widgets as $key => $sb ) {
 			if ( is_array($sb) )
@@ -218,7 +188,8 @@ if ( isset($_GET['editwidget']) && $_GET['editwidget'] ) {
 
 	if ( isset($_GET['addnew']) ) {
 		// Default to the first sidebar
-		$sidebar = array_shift( $keys = array_keys($wp_registered_sidebars) );
+		$keys = array_keys( $wp_registered_sidebars );
+		$sidebar = reset( $keys );
 
 		if ( isset($_GET['base']) && isset($_GET['num']) ) { // multi-widget
 			// Copy minimal info from an existing instance of this widget to a new instance
@@ -253,13 +224,12 @@ if ( isset($_GET['editwidget']) && $_GET['editwidget'] ) {
 
 	$id_base = isset($control['id_base']) ? $control['id_base'] : $control['id'];
 
-	// show the widget form
+	// Show the widget form.
 	$width = ' style="width:' . max($control['width'], 350) . 'px"';
 	$key = isset($_GET['key']) ? (int) $_GET['key'] : 0;
 
-	require_once( './admin-header.php' ); ?>
+	require_once( ABSPATH . 'wp-admin/admin-header.php' ); ?>
 	<div class="wrap">
-	<?php screen_icon(); ?>
 	<h2><?php echo esc_html( $title ); ?></h2>
 	<div class="editwidget"<?php echo $width; ?>>
 	<h3><?php printf( __( 'Widget %s' ), $name ); ?></h3>
@@ -279,7 +249,7 @@ if ( isset($_GET['editwidget']) && $_GET['editwidget'] ) {
 <?php
 	foreach ( $wp_registered_sidebars as $sbname => $sbvalue ) {
 		echo "\t\t<tr><td><label><input type='radio' name='sidebar' value='" . esc_attr($sbname) . "'" . checked( $sbname, $sidebar, false ) . " /> $sbvalue[name]</label></td><td>";
-		if ( 'wp_inactive_widgets' == $sbname ) {
+		if ( 'wp_inactive_widgets' == $sbname || 'orphaned_widgets' == substr( $sbname, 0, 16 ) ) {
 			echo '&nbsp;';
 		} else {
 			if ( !isset($sidebars_widgets[$sbname]) || !is_array($sidebars_widgets[$sbname]) ) {
@@ -324,7 +294,7 @@ if ( isset($_GET['editwidget']) && $_GET['editwidget'] ) {
 	</div>
 	</div>
 <?php
-	require_once( './admin-footer.php' );
+	require_once( ABSPATH . 'wp-admin/admin-footer.php' );
 	exit;
 }
 
@@ -337,77 +307,153 @@ $errors = array(
 	__('Error in displaying the widget settings form.')
 );
 
-require_once( './admin-header.php' ); ?>
+require_once( ABSPATH . 'wp-admin/admin-header.php' ); ?>
 
 <div class="wrap">
-<?php screen_icon(); ?>
-<h2><?php echo esc_html( $title ); ?></h2>
+<h2>
+<?php
+	echo esc_html( $title );
+	if ( current_user_can( 'customize' ) ) {
+		printf(
+			' <a class="add-new-h2 hide-if-no-customize" href="%1$s">%2$s</a>',
+			esc_url( add_query_arg(
+				array(
+					array( 'autofocus' => array( 'panel' => 'widgets' ) ),
+					'return' => urlencode( wp_unslash( $_SERVER['REQUEST_URI'] ) )
+				),
+				admin_url( 'customize.php' )
+			) ),
+			__( 'Manage in Customizer' )
+		);
+	}
+?>
+</h2>
 
 <?php if ( isset($_GET['message']) && isset($messages[$_GET['message']]) ) { ?>
-<div id="message" class="updated"><p><?php echo $messages[$_GET['message']]; ?></p></div>
+<div id="message" class="updated notice is-dismissible"><p><?php echo $messages[$_GET['message']]; ?></p></div>
 <?php } ?>
 <?php if ( isset($_GET['error']) && isset($errors[$_GET['error']]) ) { ?>
 <div id="message" class="error"><p><?php echo $errors[$_GET['error']]; ?></p></div>
 <?php } ?>
 
-<?php do_action( 'widgets_admin_page' ); ?>
+<?php
+/**
+ * Fires before the Widgets administration page content loads.
+ *
+ * @since 3.0.0
+ */
+do_action( 'widgets_admin_page' ); ?>
 
 <div class="widget-liquid-left">
 <div id="widgets-left">
 	<div id="available-widgets" class="widgets-holder-wrap">
 		<div class="sidebar-name">
-		<div class="sidebar-name-arrow"><br /></div>
-		<h3><?php _e('Available Widgets'); ?> <span id="removing-widget"><?php _ex('Deactivate', 'removing-widget'); ?> <span></span></span></h3></div>
+			<div class="sidebar-name-arrow"><br /></div>
+			<h3><?php _e('Available Widgets'); ?> <span id="removing-widget"><?php _ex('Deactivate', 'removing-widget'); ?> <span></span></span></h3>
+		</div>
 		<div class="widget-holder">
-		<p class="description"><?php _e('Drag widgets from here to a sidebar on the right to activate them. Drag widgets back here to deactivate them and delete their settings.'); ?></p>
-		<div id="widget-list">
-		<?php wp_list_widgets(); ?>
-		</div>
-		<br class='clear' />
+			<div class="sidebar-description">
+				<p class="description"><?php _e('To activate a widget drag it to a sidebar or click on it. To deactivate a widget and delete its settings, drag it back.'); ?></p>
+			</div>
+			<div id="widget-list">
+				<?php wp_list_widgets(); ?>
+			</div>
+			<br class='clear' />
 		</div>
 		<br class="clear" />
 	</div>
 
-	<div class="widgets-holder-wrap">
-		<div class="sidebar-name">
-		<div class="sidebar-name-arrow"><br /></div>
-		<h3><?php _e('Inactive Widgets'); ?>
-		<span><img src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" class="ajax-feedback" title="" alt="" /></span></h3></div>
-		<div class="widget-holder inactive">
-		<p class="description"><?php _e('Drag widgets here to remove them from the sidebar but keep their settings.'); ?></p>
-		<?php wp_list_widget_controls('wp_inactive_widgets'); ?>
-		<br class="clear" />
-		</div>
-	</div>
-</div>
-</div>
-
-<div class="widget-liquid-right">
-<div id="widgets-right">
 <?php
-$i = 0;
+
+$theme_sidebars = array();
 foreach ( $wp_registered_sidebars as $sidebar => $registered_sidebar ) {
-	if ( 'wp_inactive_widgets' == $sidebar )
-		continue;
-	$closed = $i ? ' closed' : ''; ?>
-	<div class="widgets-holder-wrap<?php echo $closed; ?>">
-	<div class="sidebar-name">
-	<div class="sidebar-name-arrow"><br /></div>
-	<h3><?php echo esc_html( $registered_sidebar['name'] ); ?>
-	<span><img src="<?php echo esc_url( admin_url( 'images/wpspin_dark.gif' ) ); ?>" class="ajax-feedback" title="" alt="" /></span></h3></div>
-	<?php wp_list_widget_controls( $sidebar ); // Show the control forms for each of the widgets in this sidebar ?>
-	</div>
+	if ( false !== strpos( $registered_sidebar['class'], 'inactive-sidebar' ) || 'orphaned_widgets' == substr( $sidebar, 0, 16 ) ) {
+		$wrap_class = 'widgets-holder-wrap';
+		if ( !empty( $registered_sidebar['class'] ) )
+			$wrap_class .= ' ' . $registered_sidebar['class'];
+
+		?>
+		<div class="<?php echo esc_attr( $wrap_class ); ?>">
+			<div class="widget-holder inactive">
+				<?php wp_list_widget_controls( $registered_sidebar['id'], $registered_sidebar['name'] ); ?>
+				<div class="clear"></div>
+			</div>
+		</div>
+		<?php
+
+	} else {
+		$theme_sidebars[$sidebar] = $registered_sidebar;
+	}
+}
+
+?>
+</div>
+</div>
 <?php
+
+$i = $split = 0;
+$single_sidebar_class = '';
+$sidebars_count = count( $theme_sidebars );
+
+if ( $sidebars_count > 1 ) {
+	$split = ceil( $sidebars_count / 2 );
+} else {
+	$single_sidebar_class = ' class="single-sidebar"';
+}
+
+?>
+<div class="widget-liquid-right">
+<div id="widgets-right"<?php echo $single_sidebar_class; ?>>
+<div class="sidebars-column-1">
+<?php
+
+foreach ( $theme_sidebars as $sidebar => $registered_sidebar ) {
+	$wrap_class = 'widgets-holder-wrap';
+	if ( !empty( $registered_sidebar['class'] ) )
+		$wrap_class .= ' sidebar-' . $registered_sidebar['class'];
+
+	if ( $i > 0 )
+		$wrap_class .= ' closed';
+
+	if ( $split && $i == $split ) {
+		?>
+		</div><div class="sidebars-column-2">
+		<?php
+	}
+
+	?>
+	<div class="<?php echo esc_attr( $wrap_class ); ?>">
+		<?php wp_list_widget_controls( $sidebar, $registered_sidebar['name'] ); // Show the control forms for each of the widgets in this sidebar ?>
+	</div>
+	<?php
+
 	$i++;
-} ?>
+}
+
+?>
 </div>
 </div>
-<form action="" method="post">
+</div>
+<form method="post">
 <?php wp_nonce_field( 'save-sidebar-widgets', '_wpnonce_widgets', false ); ?>
 </form>
 <br class="clear" />
 </div>
 
+<div class="widgets-chooser">
+	<ul class="widgets-chooser-sidebars"></ul>
+	<div class="widgets-chooser-actions">
+		<button class="button-secondary"><?php _e( 'Cancel' ); ?></button>
+		<button class="button-primary"><?php _e( 'Add Widget' ); ?></button>
+	</div>
+</div>
+
 <?php
+
+/**
+ * Fires after the available widgets and sidebars have loaded, before the admin footer.
+ *
+ * @since 2.2.0
+ */
 do_action( 'sidebar_admin_page' );
-require_once( './admin-footer.php' );
+require_once( ABSPATH . 'wp-admin/admin-footer.php' );

@@ -11,9 +11,8 @@ class WP_Ajax_Response {
 	 *
 	 * @since 2.1.0
 	 * @var array
-	 * @access private
 	 */
-	var $responses = array();
+	public $responses = array();
 
 	/**
 	 * Constructor - Passes args to {@link WP_Ajax_Response::add()}.
@@ -22,9 +21,8 @@ class WP_Ajax_Response {
 	 * @see WP_Ajax_Response::add()
 	 *
 	 * @param string|array $args Optional. Will be passed to add() method.
-	 * @return WP_Ajax_Response
 	 */
-	function __construct( $args = '' ) {
+	public function __construct( $args = '' ) {
 		if ( !empty($args) )
 			$this->add($args);
 	}
@@ -52,7 +50,7 @@ class WP_Ajax_Response {
 	 * @param string|array $args Override defaults.
 	 * @return string XML response.
 	 */
-	function add( $args = '' ) {
+	public function add( $args = '' ) {
 		$defaults = array(
 			'what' => 'object', 'action' => false,
 			'id' => '0', 'old_id' => false,
@@ -61,33 +59,40 @@ class WP_Ajax_Response {
 		);
 
 		$r = wp_parse_args( $args, $defaults );
-		extract( $r, EXTR_SKIP );
-		$position = preg_replace( '/[^a-z0-9:_-]/i', '', $position );
 
-		if ( is_wp_error($id) ) {
+		$position = preg_replace( '/[^a-z0-9:_-]/i', '', $r['position'] );
+		$id = $r['id'];
+		$what = $r['what'];
+		$action = $r['action'];
+		$old_id = $r['old_id'];
+		$data = $r['data'];
+
+		if ( is_wp_error( $id ) ) {
 			$data = $id;
 			$id = 0;
 		}
 
 		$response = '';
-		if ( is_wp_error($data) ) {
+		if ( is_wp_error( $data ) ) {
 			foreach ( (array) $data->get_error_codes() as $code ) {
-				$response .= "<wp_error code='$code'><![CDATA[" . $data->get_error_message($code) . "]]></wp_error>";
-				if ( !$error_data = $data->get_error_data($code) )
+				$response .= "<wp_error code='$code'><![CDATA[" . $data->get_error_message( $code ) . "]]></wp_error>";
+				if ( ! $error_data = $data->get_error_data( $code ) ) {
 					continue;
+				}
 				$class = '';
-				if ( is_object($error_data) ) {
-					$class = ' class="' . get_class($error_data) . '"';
-					$error_data = get_object_vars($error_data);
+				if ( is_object( $error_data ) ) {
+					$class = ' class="' . get_class( $error_data ) . '"';
+					$error_data = get_object_vars( $error_data );
 				}
 
 				$response .= "<wp_error_data code='$code'$class>";
 
-				if ( is_scalar($error_data) ) {
+				if ( is_scalar( $error_data ) ) {
 					$response .= "<![CDATA[$error_data]]>";
-				} elseif ( is_array($error_data) ) {
-					foreach ( $error_data as $k => $v )
+				} elseif ( is_array( $error_data ) ) {
+					foreach ( $error_data as $k => $v ) {
 						$response .= "<$k><![CDATA[$v]]></$k>";
+					}
 				}
 
 				$response .= "</wp_error_data>";
@@ -97,15 +102,16 @@ class WP_Ajax_Response {
 		}
 
 		$s = '';
-		if ( is_array($supplemental) ) {
-			foreach ( $supplemental as $k => $v )
+		if ( is_array( $r['supplemental'] ) ) {
+			foreach ( $r['supplemental'] as $k => $v ) {
 				$s .= "<$k><![CDATA[$v]]></$k>";
+			}
 			$s = "<supplemental>$s</supplemental>";
 		}
 
-		if ( false === $action )
+		if ( false === $action ) {
 			$action = $_POST['action'];
-
+		}
 		$x = '';
 		$x .= "<response action='{$action}_$id'>"; // The action attribute in the xml output is formatted like a nonce action
 		$x .=	"<$what id='$id' " . ( false === $old_id ? '' : "old_id='$old_id' " ) . "position='$position'>";
@@ -125,14 +131,15 @@ class WP_Ajax_Response {
 	 *
 	 * @since 2.1.0
 	 */
-	function send() {
-		header('Content-Type: text/xml');
-		echo "<?xml version='1.0' standalone='yes'?><wp_ajax>";
+	public function send() {
+		header( 'Content-Type: text/xml; charset=' . get_option( 'blog_charset' ) );
+		echo "<?xml version='1.0' encoding='" . get_option( 'blog_charset' ) . "' standalone='yes'?><wp_ajax>";
 		foreach ( (array) $this->responses as $response )
 			echo $response;
 		echo '</wp_ajax>';
-		die();
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX )
+			wp_die();
+		else
+			die();
 	}
 }
-
-?>
