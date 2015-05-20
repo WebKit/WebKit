@@ -6889,9 +6889,6 @@
     <ClCompile Include="..\platform\network\soup\NetworkStorageSessionSoup.cpp">
       <Filter>platform\network\soup</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\network\soup\ProxyResolverSoup.cpp">
-      <Filter>platform\network\soup</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\network\soup\ProxyServerSoup.cpp">
       <Filter>platform\network\soup</Filter>
     </ClCompile>

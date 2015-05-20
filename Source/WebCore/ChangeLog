@@ -1,3 +1,26 @@
+2015-05-19  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Use GSimpleProxyResolver instead of custom SoupProxyResolver
+        https://bugs.webkit.org/show_bug.cgi?id=145154
+
+        Reviewed by Gyuyoung Kim.
+
+        SoupProxyResolver was deprecated since libsoup 2.42.
+        So, this patch refactors the custom SoupProxyResolver to GSimpleProxyResolver
+        which provides same functionality in gio.
+
+        No new tests, because there is not behavior change.
+
+        * PlatformEfl.cmake:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * platform/network/soup/ProxyResolverSoup.cpp: Removed.
+        * platform/network/soup/ProxyResolverSoup.h: Removed.
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::SoupNetworkSession::setHTTPProxy): Moved to private member.
+        (WebCore::SoupNetworkSession::httpProxy): Deleted because nobody calls it.
+        * platform/network/soup/SoupNetworkSession.h:
+
 2015-05-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r184595.

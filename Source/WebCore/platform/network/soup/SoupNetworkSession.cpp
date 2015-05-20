@@ -40,10 +40,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
-#if PLATFORM(EFL)
-#include "ProxyResolverSoup.h"
-#endif
-
 namespace WebCore {
 
 #if !LOG_DISABLED
@@ -226,32 +222,21 @@ void SoupNetworkSession::setHTTPProxy(const char* httpProxy, const char* httpPro
 {
 #if PLATFORM(EFL)
     // Only for EFL because GTK port uses the default resolver, which uses GIO's proxy resolver.
-    if (!httpProxy) {
-        soup_session_remove_feature_by_type(m_soupSession.get(), SOUP_TYPE_PROXY_URI_RESOLVER);
-        return;
+    GProxyResolver* resolver = nullptr;
+    if (httpProxy) {
+        gchar** ignoreLists = nullptr;
+        if (httpProxyExceptions)
+            ignoreLists =  g_strsplit(httpProxyExceptions, ",", -1);
+
+        resolver = g_simple_proxy_resolver_new(httpProxy, ignoreLists);
+
+        g_strfreev(ignoreLists);
     }
 
-    GRefPtr<SoupProxyURIResolver> resolver = adoptGRef(soupProxyResolverWkNew(httpProxy, httpProxyExceptions));
-    soup_session_add_feature(m_soupSession.get(), SOUP_SESSION_FEATURE(resolver.get()));
+    g_object_set(m_soupSession.get(), SOUP_SESSION_PROXY_RESOLVER, resolver, nullptr);
 #else
     UNUSED_PARAM(httpProxy);
     UNUSED_PARAM(httpProxyExceptions);
-#endif
-}
-
-char* SoupNetworkSession::httpProxy() const
-{
-#if PLATFORM(EFL)
-    SoupSessionFeature* soupResolver = soup_session_get_feature(m_soupSession.get(), SOUP_TYPE_PROXY_URI_RESOLVER);
-    if (!soupResolver)
-        return nullptr;
-
-    GUniqueOutPtr<SoupURI> uri;
-    g_object_get(soupResolver, SOUP_PROXY_RESOLVER_WK_PROXY_URI, &uri.outPtr(), nullptr);
-
-    return uri ? soup_uri_to_string(uri.get(), FALSE) : nullptr;
-#else
-    return nullptr;
 #endif
 }
 

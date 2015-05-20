@@ -65,8 +65,6 @@ public:
     void setSSLPolicy(SSLPolicy);
     SSLPolicy sslPolicy() const;
 
-    void setHTTPProxy(const char* httpProxy, const char* httpProxyExceptions);
-    char* httpProxy() const;
     void setupHTTPProxyFromEnvironment();
 
     void setAcceptLanguages(const Vector<String>&);
@@ -74,6 +72,8 @@ public:
 private:
     SoupNetworkSession(SoupCookieJar*);
     SoupNetworkSession(SoupSession*);
+
+    void setHTTPProxy(const char* httpProxy, const char* httpProxyExceptions);
 
     void setupLogger();
 
