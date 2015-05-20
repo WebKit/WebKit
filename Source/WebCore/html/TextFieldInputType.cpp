@@ -42,7 +42,6 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
-#include "LocalizedStrings.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
@@ -603,8 +602,6 @@ void TextFieldInputType::createAutoFillButton()
 
     m_autoFillButton = AutoFillButtonElement::create(element().document(), *this);
     m_autoFillButton->setPseudo(AtomicString("-webkit-auto-fill-button", AtomicString::ConstructFromLiteral));
-    m_autoFillButton->setAttribute(aria_labelAttr, AtomicString(AXAutoFillButtonText()));
-    m_autoFillButton->setAttribute(roleAttr, AtomicString("button", AtomicString::ConstructFromLiteral));
     m_container->appendChild(m_autoFillButton, IGNORE_EXCEPTION);
 }
 
