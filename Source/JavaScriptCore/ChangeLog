@@ -1,3 +1,22 @@
+2015-05-19  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r184613 and r184614.
+        https://bugs.webkit.org/show_bug.cgi?id=145206
+
+        Broke 10 tests :| (Requested by kling on #webkit).
+
+        Reverted changesets:
+
+        "[JSC] Speed up URL encode/decode by using bitmaps instead of
+        strchr()."
+        https://bugs.webkit.org/show_bug.cgi?id=145115
+        http://trac.webkit.org/changeset/184613
+
+        "[JSC] Speed up URL encode/decode by using bitmaps instead of
+        strchr()."
+        https://bugs.webkit.org/show_bug.cgi?id=145115
+        http://trac.webkit.org/changeset/184614
+
 2015-05-19  Andreas Kling  <akling@apple.com>
 
         Give StringView a utf8() API.

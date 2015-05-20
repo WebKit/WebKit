@@ -72,7 +72,7 @@ static JSValue encode(ExecState* exec, const Bitmap<256>& doNotEscape)
     const char* p = cstr.data();
     for (size_t k = 0; k < cstr.length(); k++, p++) {
         char c = *p;
-        if (doNotEscape.get(static_cast<LChar>(c)))
+        if (c && doNotEscape.get(static_cast<LChar>(c)))
             builder.append(static_cast<LChar>(c));
         else {
             builder.append(static_cast<LChar>('%'));
@@ -136,7 +136,7 @@ static JSValue decode(ExecState* exec, const CharType* characters, int length, c
                     u = Lexer<UChar>::convertUnicode(p[2], p[3], p[4], p[5]);
                 }
             }
-            if (charLen && (u >= 128 || !doNotUnescape.get(static_cast<LChar>(u)))) {
+            if (charLen && (u == 0 || u >= 128 || !doNotUnescape.get(static_cast<LChar>(u)))) {
                 builder.append(u);
                 k += charLen;
                 continue;
@@ -687,7 +687,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
         const LChar* c = str.characters8();
         for (unsigned k = 0; k < str.length(); k++, c++) {
             int u = c[0];
-            if (doNotEscape.get(static_cast<LChar>(u)))
+            if (u && doNotEscape.get(static_cast<LChar>(u)))
                 builder.append(*c);
             else {
                 builder.append(static_cast<LChar>('%'));
@@ -706,7 +706,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
             builder.append(static_cast<LChar>('u'));
             appendByteAsHex(u >> 8, builder);
             appendByteAsHex(u & 0xFF, builder);
-        } else if (doNotEscape.get(static_cast<LChar>(u)))
+        } else if (u != 0 && doNotEscape.get(static_cast<LChar>(u)))
             builder.append(*c);
         else {
             builder.append(static_cast<LChar>('%'));
