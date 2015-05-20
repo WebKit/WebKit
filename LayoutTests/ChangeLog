@@ -1,3 +1,15 @@
+2015-05-20  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r172591): Can no longer style <optgroup> with colors (LayoutTests/fast/forms/select/optgroup-rendering.html)
+        https://bugs.webkit.org/show_bug.cgi?id=145227
+
+        Reviewed by Darin Adler.
+
+        Add ref test for select painting.
+
+        * fast/forms/select/select-painting-expected.html: Added.
+        * fast/forms/select/select-painting.html: Added.
+
 2015-05-20  Daniel Bates  <dabates@apple.com>
 
         AX: AutoFill button is not accessible with VoiceOver

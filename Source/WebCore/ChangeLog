@@ -1,3 +1,25 @@
+2015-05-20  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r172591): Can no longer style <optgroup> with colors (LayoutTests/fast/forms/select/optgroup-rendering.html)
+        https://bugs.webkit.org/show_bug.cgi?id=145227
+        rdar://problem/20967472
+
+        Reviewed by Darin Adler.
+
+        Test: fast/forms/select/select-painting.html
+
+        Use computedStyle() consistently for option and optgroup items.
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItemForeground):
+        (WebCore::RenderListBox::paintItemBackground):
+
+            We can always use computedStyle() and it can't be null. If there was renderer style it would return that.
+
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::itemStyle):
+        (RenderMenuList::getItemBackgroundColor):
+
 2015-05-19  Jer Noble  <jer.noble@apple.com>
 
         Touching HTMLMediaElement.h or MediaPlayer.h causes a world rebuild.
