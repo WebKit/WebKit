@@ -1322,6 +1322,8 @@ webkit.org/b/140798 [ Release ] accessibility/html-html-element-is-ignored.html 
 webkit.org/b/140798 [ Debug ] accessibility/html-html-element-is-ignored.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/inline-block-assertion.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/inline-block-assertion.html [ Skip ] # Debug assertion
+webkit.org/b/140798 [ Release ] accessibility/input-auto-fill-button.html [ Failure ]
+webkit.org/b/140798 [ Debug ] accessibility/input-auto-fill-button.html [ Failure ]
 webkit.org/b/140798 [ Release ] accessibility/input-type-hidden-in-aria-hidden-false.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/input-type-hidden-in-aria-hidden-false.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/legend-children-are-visible.html [ Failure ]

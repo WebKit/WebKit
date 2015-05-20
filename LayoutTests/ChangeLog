@@ -1,3 +1,18 @@
+2015-05-20  Daniel Bates  <dabates@apple.com>
+
+        AX: AutoFill button is not accessible with VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=145200
+        <rdar://problem/20507480>
+
+        Reviewed by Chris Fleizach.
+
+        Test that there is an accessibility element for the AutoFill button.
+
+        * accessibility/input-auto-fill-button-expected.txt: Added.
+        * accessibility/input-auto-fill-button.html: Added.
+        * platform/win/TestExpectations: For now, mark tests as failing. I suspect the cause
+        is <https://bugs.webkit.org/show_bug.cgi?id=140798>.
+
 2015-05-20  Antti Koivisto  <antti@apple.com>
 
         Assertion failure in WebCore::BidiRun::BidiRun()

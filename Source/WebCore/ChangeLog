@@ -1,3 +1,27 @@
+2015-05-20  Daniel Bates  <dabates@apple.com>
+
+        AX: AutoFill button is not accessible with VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=145200
+        <rdar://problem/20507480>
+
+        Reviewed by Chris Fleizach.
+
+        Add ARIA label and role attributes to the AutoFill button markup so that VoiceOver
+        can identify and interact with it.
+
+        Test: accessibility/input-auto-fill-button.html
+
+        * English.lproj/Localizable.strings: Add placeholder localized string for AutoFill button.
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::createAutoFillButton): Add ARIA label and role attributes.
+        * platform/LocalizedStrings.cpp:
+        (WebCore::AXAutoFillButtonText): Added; returns the localized string for the AutoFill button.
+        * platform/LocalizedStrings.h:
+        * platform/efl/LocalizedStringsEfl.cpp:
+        (WebCore::AXAutoFillButtonText): Ditto.
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::AXAutoFillButtonText): Ditto.
+
 2015-05-20  Dean Jackson  <dino@apple.com>
 
         Label text for default buttons don’t have the correct white color
