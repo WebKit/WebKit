@@ -43,47 +43,50 @@ inline void append(Vector<DFABytecode>& bytecode, IntType value)
     *reinterpret_cast<IntType*>(&bytecode[bytecode.size() - sizeof(IntType)]) = value;
 }
 
-inline void set32Bits(Vector<DFABytecode>& bytecode, unsigned index, unsigned value)
+inline void set32Bits(Vector<DFABytecode>& bytecode, uint32_t index, uint32_t value)
 {
-    *reinterpret_cast<unsigned*>(&bytecode[index]) = value;
+    *reinterpret_cast<uint32_t*>(&bytecode[index]) = value;
 }
 
-void DFABytecodeCompiler::emitAppendAction(unsigned action, bool ifDomain)
+void DFABytecodeCompiler::emitAppendAction(uint64_t action)
 {
-    if (ifDomain)
-        append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::AppendActionWithIfDomain);
-    else
-        append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::AppendAction);
-    append<unsigned>(m_bytecode, action);
+    // High bits are used to store flags. See compileRuleList.
+    if (action & 0xFFFF00000000) {
+        ASSERT(!(action & DisplayNoneStyleSheetFlag));
+        if (action & IfDomainFlag)
+            append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::TestFlagsAndAppendActionWithIfDomain);
+        else
+            append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::TestFlagsAndAppendAction);
+        append<uint16_t>(m_bytecode, static_cast<uint16_t>(action >> 32));
+        append<uint32_t>(m_bytecode, static_cast<uint32_t>(action));
+    } else {
+        if (action & DisplayNoneStyleSheetFlag) {
+            RELEASE_ASSERT(!(action & IfDomainFlag));
+            append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::AppendActionDefaultStylesheet);
+        } else if (action & IfDomainFlag)
+            append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::AppendActionWithIfDomain);
+        else
+            append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::AppendAction);
+        append<uint32_t>(m_bytecode, static_cast<uint32_t>(action));
+    }
 }
 
-void DFABytecodeCompiler::emitTestFlagsAndAppendAction(uint16_t flags, unsigned action, bool ifDomain)
-{
-    ASSERT(flags);
-    if (ifDomain)
-        append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::TestFlagsAndAppendActionWithIfDomain);
-    else
-        append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::TestFlagsAndAppendAction);
-    append<uint16_t>(m_bytecode, flags);
-    append<unsigned>(m_bytecode, action);
-}
-
-void DFABytecodeCompiler::emitJump(unsigned destinationNodeIndex)
+void DFABytecodeCompiler::emitJump(uint32_t destinationNodeIndex)
 {
     append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::Jump);
     m_linkRecords.append(std::make_pair(m_bytecode.size(), destinationNodeIndex));
-    append<unsigned>(m_bytecode, 0); // This value will be set when linking.
+    append<uint32_t>(m_bytecode, 0); // This value will be set when linking.
 }
 
-void DFABytecodeCompiler::emitCheckValue(uint8_t value, unsigned destinationNodeIndex, bool caseSensitive)
+void DFABytecodeCompiler::emitCheckValue(uint8_t value, uint32_t destinationNodeIndex, bool caseSensitive)
 {
     append<DFABytecodeInstruction>(m_bytecode, caseSensitive ? DFABytecodeInstruction::CheckValueCaseSensitive : DFABytecodeInstruction::CheckValueCaseInsensitive);
     append<uint8_t>(m_bytecode, value);
     m_linkRecords.append(std::make_pair(m_bytecode.size(), destinationNodeIndex));
-    append<unsigned>(m_bytecode, 0); // This value will be set when linking.
+    append<uint32_t>(m_bytecode, 0); // This value will be set when linking.
 }
 
-void DFABytecodeCompiler::emitCheckValueRange(uint8_t lowValue, uint8_t highValue, unsigned destinationNodeIndex, bool caseSensitive)
+void DFABytecodeCompiler::emitCheckValueRange(uint8_t lowValue, uint8_t highValue, uint32_t destinationNodeIndex, bool caseSensitive)
 {
     ASSERT_WITH_MESSAGE(lowValue < highValue, "The instruction semantic impose lowValue is strictly less than highValue.");
 
@@ -91,7 +94,7 @@ void DFABytecodeCompiler::emitCheckValueRange(uint8_t lowValue, uint8_t highValu
     append<uint8_t>(m_bytecode, lowValue);
     append<uint8_t>(m_bytecode, highValue);
     m_linkRecords.append(std::make_pair(m_bytecode.size(), destinationNodeIndex));
-    append<unsigned>(m_bytecode, 0); // This value will be set when linking.
+    append<uint32_t>(m_bytecode, 0); // This value will be set when linking.
 }
 
 void DFABytecodeCompiler::emitTerminate()
@@ -99,11 +102,11 @@ void DFABytecodeCompiler::emitTerminate()
     append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::Terminate);
 }
 
-void DFABytecodeCompiler::compileNode(unsigned index, bool root)
+void DFABytecodeCompiler::compileNode(uint32_t index, bool root)
 {
     const DFANode& node = m_dfa.nodes[index];
     if (node.isKilled()) {
-        m_nodeStartOffsets[index] = std::numeric_limits<unsigned>::max();
+        m_nodeStartOffsets[index] = std::numeric_limits<uint32_t>::max();
         return;
     }
 
@@ -111,13 +114,8 @@ void DFABytecodeCompiler::compileNode(unsigned index, bool root)
     if (!root)
         m_nodeStartOffsets[index] = m_bytecode.size();
 
-    for (uint64_t action : node.actions(m_dfa)) {
-        // High bits are used to store flags. A boolean is stored in the 48th bit. See compileRuleList.
-        if (action & 0xFFFF00000000)
-            emitTestFlagsAndAppendAction(static_cast<uint16_t>(action >> 32), static_cast<unsigned>(action), action & IfDomainFlag);
-        else
-            emitAppendAction(static_cast<unsigned>(action), action & IfDomainFlag);
-    }
+    for (uint64_t action : node.actions(m_dfa))
+        emitAppendAction(action);
     
     // If we jump to the root, we don't want to re-add its actions to a HashSet.
     // We know we have already added them because the root is always compiled first and we always start interpreting at the beginning.
@@ -212,24 +210,24 @@ void DFABytecodeCompiler::compileCheckForRange(const Range& range)
 void DFABytecodeCompiler::compile()
 {
     // DFA header.
-    unsigned startLocation = m_bytecode.size();
-    append<unsigned>(m_bytecode, 0);
+    uint32_t startLocation = m_bytecode.size();
+    append<uint32_t>(m_bytecode, 0);
     m_nodeStartOffsets.resize(m_dfa.nodes.size());
     
     // Make sure the root is always at the beginning of the bytecode.
     compileNode(m_dfa.root, true);
-    for (unsigned i = 0; i < m_dfa.nodes.size(); i++) {
+    for (uint32_t i = 0; i < m_dfa.nodes.size(); i++) {
         if (i != m_dfa.root)
             compileNode(i, false);
     }
 
     // Link.
     for (const auto& linkRecord : m_linkRecords) {
-        unsigned offset = linkRecord.first;
-        ASSERT(!(*reinterpret_cast<unsigned*>(&m_bytecode[offset])));
+        uint32_t offset = linkRecord.first;
+        ASSERT(!(*reinterpret_cast<uint32_t*>(&m_bytecode[offset])));
 
-        unsigned target = m_nodeStartOffsets[linkRecord.second];
-        RELEASE_ASSERT(target != std::numeric_limits<unsigned>::max());
+        uint32_t target = m_nodeStartOffsets[linkRecord.second];
+        RELEASE_ASSERT(target != std::numeric_limits<uint32_t>::max());
         set32Bits(m_bytecode, offset, m_nodeStartOffsets[linkRecord.second]);
     }
     

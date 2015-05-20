@@ -1,3 +1,53 @@
+2015-05-20  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Relax restrictions on triggers that match everything.
+        https://bugs.webkit.org/show_bug.cgi?id=145069
+
+        Reviewed by Benjamin Poulain.
+
+        Added API tests that cover the new functionality and test for correctness in behavior.
+
+        * contentextensions/CompiledContentExtension.cpp:
+        (WebCore::ContentExtensions::CompiledContentExtension::globalDisplayNoneSelectors):
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::addUniversalActionsToDFA):
+        (WebCore::ContentExtensions::compileRuleList):
+        Put universalActionsWithoutDomains into the DFA from filtersWithoutDomains and
+        put universalActionsWithDomains into the DFA from filtersWithDomains.        
+        * contentextensions/ContentExtensionError.cpp:
+        (WebCore::ContentExtensions::contentExtensionErrorCategory):
+        * contentextensions/ContentExtensionError.h:
+        Remove error codes for errors that are not errors any more.
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::actionsForResourceLoad):
+        * contentextensions/ContentExtensionsBackend.h:
+        * contentextensions/DFABytecode.h:
+        (WebCore::ContentExtensions::instructionSizeWithArguments):
+        * contentextensions/DFABytecodeCompiler.cpp:
+        (WebCore::ContentExtensions::set32Bits):
+        (WebCore::ContentExtensions::DFABytecodeCompiler::emitAppendAction):
+        (WebCore::ContentExtensions::DFABytecodeCompiler::emitJump):
+        (WebCore::ContentExtensions::DFABytecodeCompiler::emitCheckValue):
+        (WebCore::ContentExtensions::DFABytecodeCompiler::emitCheckValueRange):
+        (WebCore::ContentExtensions::DFABytecodeCompiler::compileNode):
+        (WebCore::ContentExtensions::DFABytecodeCompiler::compile):
+        (WebCore::ContentExtensions::DFABytecodeCompiler::emitTestFlagsAndAppendAction): Deleted.
+        * contentextensions/DFABytecodeCompiler.h:
+        * contentextensions/DFABytecodeInterpreter.cpp:
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::interpretAppendAction):
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::interpretTestFlagsAndAppendAction):
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::actionsForDefaultStylesheetFromDFARoot):
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::interpret):
+        (WebCore::ContentExtensions::DFABytecodeInterpreter::actionsFromDFARoot): Deleted.
+        * contentextensions/DFABytecodeInterpreter.h:
+        Add a new bytecode AppendActionDefaultStylesheet to mark actions that are css-display-none
+        that need to be put in the default stylesheet to be ignored or not as a whole.
+        css-display-none actions with flags or domain rules and css-display-none actions 
+        after ignore-previous-rules actions are not to be in this precompiled stylesheet, but
+        they will be applied as needed per page.  The precompiled stylesheet is already applied
+        if no ignore-previous-rules action is triggered.
+        * loader/ResourceLoadInfo.h:
+
 2015-05-20  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         JS binding generator should create a member variable for each Promise attribute of an interface

@@ -63,7 +63,7 @@ public:
 
     // - Internal WebCore Interface.
     WEBCORE_EXPORT Vector<Action> actionsForResourceLoad(const ResourceLoadInfo&) const;
-    StyleSheetContents* globalDisplayNoneStyleSheet(const String& identifier) const;
+    WEBCORE_EXPORT StyleSheetContents* globalDisplayNoneStyleSheet(const String& identifier) const;
 
     void processContentExtensionRulesForLoad(ResourceRequest&, ResourceType, DocumentLoader& initiatingDocumentLoader);
 

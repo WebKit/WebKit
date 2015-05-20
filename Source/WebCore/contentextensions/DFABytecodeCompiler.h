@@ -50,7 +50,7 @@ public:
 
 private:
     struct Range {
-        Range(uint8_t min, uint8_t max, unsigned destination, bool caseSensitive)
+        Range(uint8_t min, uint8_t max, uint32_t destination, bool caseSensitive)
             : min(min)
             , max(max)
             , destination(destination)
@@ -59,28 +59,27 @@ private:
         }
         uint8_t min;
         uint8_t max;
-        unsigned destination;
+        uint32_t destination;
         bool caseSensitive;
     };
-    void compileNode(unsigned, bool root);
+    void compileNode(uint32_t, bool root);
     void compileNodeTransitions(const DFANode&);
     void compileCheckForRange(const Range&);
 
-    void emitAppendAction(unsigned, bool ifDomain);
-    void emitTestFlagsAndAppendAction(uint16_t flags, unsigned, bool ifDomain);
-    void emitJump(unsigned destinationNodeIndex);
-    void emitCheckValue(uint8_t value, unsigned destinationNodeIndex, bool caseSensitive);
-    void emitCheckValueRange(uint8_t lowValue, uint8_t highValue, unsigned destinationNodeIndex, bool caseSensitive);
+    void emitAppendAction(uint64_t);
+    void emitJump(uint32_t destinationNodeIndex);
+    void emitCheckValue(uint8_t value, uint32_t destinationNodeIndex, bool caseSensitive);
+    void emitCheckValueRange(uint8_t lowValue, uint8_t highValue, uint32_t destinationNodeIndex, bool caseSensitive);
     void emitTerminate();
 
     Vector<DFABytecode>& m_bytecode;
     const DFA& m_dfa;
     
-    Vector<unsigned> m_nodeStartOffsets;
+    Vector<uint32_t> m_nodeStartOffsets;
     
     // The first value is the index in the bytecode buffer where the jump is to be written.
     // The second value is the index of the node to jump to.
-    Vector<std::pair<unsigned, unsigned>> m_linkRecords;
+    Vector<std::pair<uint32_t, uint32_t>> m_linkRecords;
 };
 
 } // namespace ContentExtensions

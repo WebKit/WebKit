@@ -146,16 +146,6 @@ Vector<Action> ContentExtensionsBackend::actionsForResourceLoad(const ResourceLo
             }
         }
         if (!sawIgnorePreviousRules) {
-            DFABytecodeInterpreter::Actions universalActions = withoutDomainsInterpreter.actionsFromDFARoot();
-            for (uint64_t actionLocation : universalActions) {
-                // FIXME: We shouldn't deserialize an action all the way if it is a css-display-none selector.
-                Action action = Action::deserialize(actions, actionsLength, static_cast<unsigned>(actionLocation));
-                action.setExtensionIdentifier(contentExtension->identifier());
-
-                // CSS selectors were already compiled into a stylesheet using globalDisplayNoneSelectors.
-                if (action.type() != ActionType::CSSDisplayNoneSelector)
-                    finalActions.append(action);
-            }
             finalActions.append(Action(ActionType::CSSDisplayNoneStyleSheet, contentExtension->identifier()));
             finalActions.last().setExtensionIdentifier(contentExtension->identifier());
         }

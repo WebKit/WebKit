@@ -57,9 +57,6 @@ enum class ContentExtensionError {
     JSONInvalidActionType,
     JSONInvalidCSSDisplayNoneActionType,
     JSONInvalidRegex,
-    
-    RegexMatchesEverythingAfterIgnorePreviousRules,
-    RegexMatchesEverythingWithDomains,
 };
 
 WEBCORE_EXPORT const std::error_category& contentExtensionErrorCategory();

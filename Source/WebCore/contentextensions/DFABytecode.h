@@ -55,6 +55,7 @@ enum class DFABytecodeInstruction : uint8_t {
     // AppendAction has one argument:
     // The action to append (4 bytes).
     AppendAction,
+    AppendActionDefaultStylesheet,
     AppendActionWithIfDomain,
     
     // TestFlagsAndAppendAction has two arguments:
@@ -76,20 +77,21 @@ static inline size_t instructionSizeWithArguments(DFABytecodeInstruction instruc
     switch (instruction) {
     case DFABytecodeInstruction::CheckValueCaseSensitive:
     case DFABytecodeInstruction::CheckValueCaseInsensitive:
-        return sizeof(DFABytecodeInstruction) + sizeof(uint8_t) + sizeof(unsigned);
+        return sizeof(DFABytecodeInstruction) + sizeof(uint8_t) + sizeof(uint32_t);
     case DFABytecodeInstruction::CheckValueRangeCaseSensitive:
     case DFABytecodeInstruction::CheckValueRangeCaseInsensitive:
-        return sizeof(DFABytecodeInstruction) + sizeof(uint8_t) + sizeof(uint8_t) + sizeof(unsigned);
+        return sizeof(DFABytecodeInstruction) + sizeof(uint8_t) + sizeof(uint8_t) + sizeof(uint32_t);
     case DFABytecodeInstruction::AppendAction:
+    case DFABytecodeInstruction::AppendActionDefaultStylesheet:
     case DFABytecodeInstruction::AppendActionWithIfDomain:
-        return sizeof(DFABytecodeInstruction) + sizeof(unsigned);
+        return sizeof(DFABytecodeInstruction) + sizeof(uint32_t);
     case DFABytecodeInstruction::TestFlagsAndAppendAction:
     case DFABytecodeInstruction::TestFlagsAndAppendActionWithIfDomain:
-        return sizeof(DFABytecodeInstruction) + sizeof(uint16_t) + sizeof(unsigned);
+        return sizeof(DFABytecodeInstruction) + sizeof(uint16_t) + sizeof(uint32_t);
     case DFABytecodeInstruction::Terminate:
         return sizeof(DFABytecodeInstruction);
     case DFABytecodeInstruction::Jump:
-        return sizeof(DFABytecodeInstruction) + sizeof(unsigned);
+        return sizeof(DFABytecodeInstruction) + sizeof(uint32_t);
     }
 }
     

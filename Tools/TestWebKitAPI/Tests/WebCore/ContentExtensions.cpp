@@ -743,6 +743,37 @@ void checkCompilerError(const char* json, std::error_code expectedError)
         EXPECT_STREQ(compilerError.category().name(), expectedError.category().name());
 }
 
+TEST_F(ContentExtensionTest, MatchesEverything)
+{
+    // Only css-display-none rules with triggers that match everything, no domain rules, and no flags
+    // should go in the global display:none stylesheet. css-display-none rules with domain rules or flags
+    // are applied separately on pages where they apply.
+    auto backend1 = makeBackend("[{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\"}}]");
+    EXPECT_TRUE(nullptr != backend1.globalDisplayNoneStyleSheet(ASCIILiteral("testFilter")));
+    testRequest(backend1, mainDocumentRequest("http://webkit.org"), { }); // Selector is in global stylesheet.
+    
+    auto backend2 = makeBackend("[{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\",\"if-domain\":[\"webkit.org\"]}}]");
+    EXPECT_EQ(nullptr, backend2.globalDisplayNoneStyleSheet(ASCIILiteral("testFilter")));
+    testRequest(backend2, mainDocumentRequest("http://webkit.org"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(backend2, mainDocumentRequest("http://w3c.org"), { });
+    
+    auto backend3 = makeBackend("[{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\",\"unless-domain\":[\"webkit.org\"]}}]");
+    EXPECT_EQ(nullptr, backend3.globalDisplayNoneStyleSheet(ASCIILiteral("testFilter")));
+    testRequest(backend3, mainDocumentRequest("http://webkit.org"), { });
+    testRequest(backend3, mainDocumentRequest("http://w3c.org"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    
+    auto backend4 = makeBackend("[{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\",\"load-type\":[\"third-party\"]}}]");
+    EXPECT_EQ(nullptr, backend4.globalDisplayNoneStyleSheet(ASCIILiteral("testFilter")));
+    testRequest(backend4, mainDocumentRequest("http://webkit.org"), { });
+    testRequest(backend4, subResourceRequest("http://not_webkit.org", "http://webkit.org"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+
+    // css-display-none rules after ignore-previous-rules should not be put in the default stylesheet.
+    auto backend5 = makeBackend("[{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\".*\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\"}}]");
+    EXPECT_EQ(nullptr, backend5.globalDisplayNoneStyleSheet(ASCIILiteral("testFilter")));
+    testRequest(backend5, mainDocumentRequest("http://webkit.org"), { ContentExtensions::ActionType::CSSDisplayNoneSelector }, true);
+}
+    
 TEST_F(ContentExtensionTest, InvalidJSON)
 {
     checkCompilerError("[", ContentExtensions::ContentExtensionError::JSONInvalid);
@@ -803,10 +834,9 @@ TEST_F(ContentExtensionTest, InvalidJSON)
         ContentExtensions::ContentExtensionError::JSONInvalidCSSDisplayNoneActionType);
 
     checkCompilerError("[{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"webkit.org\"}},"
-        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\"}}]",
-        ContentExtensions::ContentExtensionError::RegexMatchesEverythingAfterIgnorePreviousRules);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"if-domain\":[\"a\"]}}]", ContentExtensions::ContentExtensionError::RegexMatchesEverythingWithDomains);
-    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"unless-domain\":[\"a\"]}}]", ContentExtensions::ContentExtensionError::RegexMatchesEverythingWithDomains);
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\"}}]", { });
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"if-domain\":[\"a\"]}}]", { });
+    checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"unless-domain\":[\"a\"]}}]", { });
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"[\"}}]",
         ContentExtensions::ContentExtensionError::JSONInvalidRegex);
 }
