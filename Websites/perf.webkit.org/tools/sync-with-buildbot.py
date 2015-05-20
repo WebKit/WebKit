@@ -134,14 +134,13 @@ def find_stale_request_updates(configurations, open_requests, requests_on_buildb
 
 def schedule_request(config, request, root_sets):
     roots = root_sets.get(request['rootSet'], {})
-    replacements = roots.copy()
 
     payload = {}
     for property_name, property_value in config['arguments'].iteritems():
         if not isinstance(property_value, dict):
             payload[property_name] = property_value
         elif 'root' in property_value:
-            payload[property_name] = replacements[property_value['root']]
+            payload[property_name] = roots[property_value['root']]['revision']
         elif 'rootsExcluding' in property_value:
             excluded_roots = property_value['rootsExcluding']
             filtered_roots = {}

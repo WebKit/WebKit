@@ -1,3 +1,21 @@
+2015-05-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        A/B testing rootSets should provide commit times as well as revisions
+        https://bugs.webkit.org/show_bug.cgi?id=145207
+
+        Reviewed by Andreas Kling.
+
+        Some continuous build systems need the commit time as well as the revision number / hash so provide one
+        in the root sets but maintain the backwards compatibility with buildbots that use revision number directly.
+
+        * public/include/build-requests-fetcher.php:
+        (BuildRequestsFetcher::fetch_roots_for_set): Made the revision info an associative array that contains
+        the revision number as well as the commit time.
+        * tools/sync-with-buildbot.py:
+        (schedule_request): Removed "replacement" which was a superfluous copy of "roots". Use "revision" values
+        when the JSON configuration refers to "root". This is necessary in buildbot instances that require WebKit
+        revision to be specified on its own field instead of it being a JSON that contains "revision" and "time".
+
 2015-05-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix. Don't fall into an infinite loop when value (renamed from bytes) is zero.

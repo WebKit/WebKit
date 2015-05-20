@@ -93,10 +93,11 @@ class BuildRequestsFetcher {
         foreach ($root_rows as $row) {
             $repository = $row['repository_id'];
             $revision = $row['commit_revision'];
+            $commit_time = $row['commit_time'];
             $root_id = $root_set_id . '-' . $repository;
             array_push($root_ids, $root_id);
             array_push($this->roots, array('id' => $root_id, 'repository' => $repository, 'revision' => $revision));
-            $roots[$resolve_ids ? $row['repository_name'] : $row['repository_id']] = $revision;
+            $roots[$resolve_ids ? $row['repository_name'] : $row['repository_id']] = array('revision' => $revision, 'time' => $commit_time);
         }
         array_push($this->root_sets, array('id' => $root_set_id, 'roots' => $root_ids));
 
