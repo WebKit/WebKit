@@ -1,5 +1,60 @@
 2015-05-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [SOUP] Network Cache: Implement ShareableResource for Soup and enable it for GTK platform
+        https://bugs.webkit.org/show_bug.cgi?id=144380
+
+        Reviewed by Antti Koivisto.
+
+        It improves the network cache performance, by mmaping big
+        resources and sending only the file descriptor to the web process
+        instead of the actual file data. It needs some changes in
+        cross-platform code, because we can't use the same approach as
+        mac (it uses a platform specific implementation not available in
+        other platforms).
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::store): Use
+        Data::tryCreateSharedMemory() to create the shared memory used by
+        the ShareableResource. Also add an ASSERT instead of checking the
+        shareable resource created is not nullptr, because the
+        ShareableResource::create() that receives a shared memory should
+        never return nullptr.
+        * NetworkProcess/cache/NetworkCacheData.h:
+        * NetworkProcess/cache/NetworkCacheDataCocoa.mm:
+        (WebKit::NetworkCache::Data::tryCreateSharedMemory):
+        * NetworkProcess/cache/NetworkCacheDataSoup.cpp:
+        (WebKit::NetworkCache::Data::tryCreateSharedMemory): Create a
+        SharedMemory object to wrap the mapped file, but keeping the ownership.
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::initializeShareableResourceHandleFromStorageRecord):
+        Use Data::tryCreateSharedMemory() to create the shared memory used
+        bythe ShareableResource. Also add an ASSERT instead of checking
+        the shareable resource created is not nullptr, because the
+        ShareableResource::create() that receives a shared memory should
+        never return nullptr.
+        * Platform/SharedMemory.h:
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::SharedMemory::map): Use wrapMap() and initialize
+        m_isWrappingMap to false.
+        (WebKit::SharedMemory::wrapMap): Create a SharedMemory object for
+        the given map, without taking its ownership.
+        (WebKit::SharedMemory::~SharedMemory): Do not unmap and close the
+        file descriptor if m_isWrappingMap is true.
+        * Shared/ShareableResource.cpp:
+        (WebKit::createShareableResourceDeallocator):
+        (WebKit::ShareableResource::wrapInSharedBuffer): Create a SharedBuffer
+        wrapping the ShareableResource data.
+        (WebKit::ShareableResource::Handle::tryWrapInSharedBuffer): Create
+        a ShareableResource for the handle and create a SharedBuffer
+        wrapping it.
+        * Shared/ShareableResource.h:
+        * WebKit2Prefix.h: Enable ENABLE_SHAREABLE_RESOURCE for GTK.
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveResource): Get the CFData
+        from the SharedBuffer for QuickLook instead of wrapping the handle again.
+
+2015-05-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [SOUP] Network Cache: Disable network cache efficacy logging
         https://bugs.webkit.org/show_bug.cgi?id=145172
 

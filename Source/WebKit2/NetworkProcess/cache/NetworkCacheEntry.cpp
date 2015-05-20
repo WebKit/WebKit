@@ -104,12 +104,13 @@ std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storage
 #if ENABLE(SHAREABLE_RESOURCE)
 void Entry::initializeShareableResourceHandleFromStorageRecord() const
 {
-    auto* data = m_sourceStorageRecord.body.data();
-    size_t size = m_sourceStorageRecord.body.size();
-    RefPtr<SharedMemory> sharedMemory = m_sourceStorageRecord.body.isMap() ? SharedMemory::create(const_cast<uint8_t*>(data), size, SharedMemory::Protection::ReadOnly) : nullptr;
-    RefPtr<ShareableResource> shareableResource = sharedMemory ? ShareableResource::create(sharedMemory.release(), 0, size) : nullptr;
-    if (shareableResource)
-        shareableResource->createHandle(m_shareableResourceHandle);
+    RefPtr<SharedMemory> sharedMemory = m_sourceStorageRecord.body.tryCreateSharedMemory();
+    if (!sharedMemory)
+        return;
+
+    RefPtr<ShareableResource> shareableResource = ShareableResource::create(sharedMemory.release(), 0, m_sourceStorageRecord.body.size());
+    ASSERT(shareableResource);
+    shareableResource->createHandle(m_shareableResourceHandle);
 }
 #endif
 

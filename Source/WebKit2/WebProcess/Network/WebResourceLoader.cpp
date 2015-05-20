@@ -180,11 +180,12 @@ void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& hand
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveResource for '%s'", m_coreLoader->url().string().utf8().data());
 
+    RefPtr<SharedBuffer> buffer = handle.tryWrapInSharedBuffer();
+
 #if USE(QUICK_LOOK)
     if (QuickLookHandle* quickLookHandle = m_coreLoader->documentLoader()->quickLookHandle()) {
-        RetainPtr<CFDataRef> cfBuffer = handle.tryWrapInCFData();
-        if (cfBuffer) {
-            if (quickLookHandle->didReceiveData(cfBuffer.get())) {
+        if (buffer) {
+            if (quickLookHandle->didReceiveData(buffer->existingCFData())) {
                 quickLookHandle->didFinishLoading();
                 return;
             }
@@ -193,7 +194,6 @@ void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& hand
     }
 #endif
 
-    RefPtr<SharedBuffer> buffer = handle.tryWrapInSharedBuffer();
     if (!buffer) {
         LOG_ERROR("Unable to create buffer from ShareableResource sent from the network process.");
         m_coreLoader->didFail(internalError(m_coreLoader->request().url()));

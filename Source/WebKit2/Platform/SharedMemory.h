@@ -85,6 +85,9 @@ public:
     static RefPtr<SharedMemory> allocate(size_t);
     static RefPtr<SharedMemory> create(void*, size_t, Protection);
     static RefPtr<SharedMemory> map(const Handle&, Protection);
+#if USE(UNIX_DOMAIN_SOCKETS)
+    static RefPtr<SharedMemory> wrapMap(void*, size_t, int fileDescriptor);
+#endif
 
     ~SharedMemory();
 
@@ -113,6 +116,7 @@ private:
     mach_port_t m_port;
 #elif USE(UNIX_DOMAIN_SOCKETS)
     int m_fileDescriptor;
+    bool m_isWrappingMap { false };
 #endif
 };
 

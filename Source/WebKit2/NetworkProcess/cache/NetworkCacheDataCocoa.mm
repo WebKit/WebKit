@@ -28,6 +28,7 @@
 
 #if ENABLE(NETWORK_CACHE)
 
+#include "SharedMemory.h"
 #include <dispatch/dispatch.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
@@ -103,7 +104,13 @@ Data Data::adoptMap(void* map, size_t size, int fd)
     return { bodyMap, Data::Backing::Map };
 }
 
+RefPtr<SharedMemory> Data::tryCreateSharedMemory() const
+{
+    if (isNull() || !isMap())
+        return nullptr;
 
+    return SharedMemory::create(const_cast<uint8_t*>(data()), m_size, SharedMemory::Protection::ReadOnly);
+}
 
 }
 }

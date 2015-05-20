@@ -28,6 +28,7 @@
 
 #if ENABLE(NETWORK_CACHE)
 
+#include "SharedMemory.h"
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
@@ -127,7 +128,13 @@ Data Data::adoptMap(void* map, size_t size, int fd)
     return { WTF::move(buffer), fd };
 }
 
+RefPtr<SharedMemory> Data::tryCreateSharedMemory() const
+{
+    if (isNull() || !isMap())
+        return nullptr;
 
+    return SharedMemory::wrapMap(const_cast<char*>(m_buffer->data), m_buffer->length, m_fileDescriptor);
+}
 
 } // namespace NetworkCache
 } // namespace WebKit

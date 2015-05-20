@@ -252,7 +252,7 @@ public:
 
     virtual bool canReuse(const ResourceRequest&) const { return true; }
 
-#if USE(FOUNDATION)
+#if USE(FOUNDATION) || USE(SOUP)
     WEBCORE_EXPORT void tryReplaceEncodedData(SharedBuffer&);
 #endif
 

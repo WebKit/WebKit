@@ -56,9 +56,6 @@ public:
         void encode(IPC::ArgumentEncoder&) const;
         static bool decode(IPC::ArgumentDecoder&, Handle&);
 
-#if USE(CF)
-        RetainPtr<CFDataRef> tryWrapInCFData() const;
-#endif
         PassRefPtr<WebCore::SharedBuffer> tryWrapInSharedBuffer() const;
 
     private:
@@ -86,6 +83,7 @@ public:
     
 private:
     ShareableResource(PassRefPtr<SharedMemory>, unsigned offset, unsigned size);
+    PassRefPtr<WebCore::SharedBuffer> wrapInSharedBuffer();
 
     RefPtr<SharedMemory> m_sharedMemory;
 

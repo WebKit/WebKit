@@ -58,6 +58,7 @@
 
 #if PLATFORM(GTK)
 #define ENABLE_NETWORK_PROCESS 1
+#define ENABLE_SHAREABLE_RESOURCE 1
 #endif
 
 /* When C++ exceptions are disabled, the C++ library defines |try| and |catch|

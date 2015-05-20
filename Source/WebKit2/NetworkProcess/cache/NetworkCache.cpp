@@ -414,11 +414,10 @@ void Cache::store(const WebCore::ResourceRequest& originalRequest, const WebCore
     m_storage->store(record, [completionHandler](const Data& bodyData) {
         MappedBody mappedBody;
 #if ENABLE(SHAREABLE_RESOURCE)
-        if (bodyData.isMap()) {
-            RefPtr<SharedMemory> sharedMemory = SharedMemory::create(const_cast<uint8_t*>(bodyData.data()), bodyData.size(), SharedMemory::Protection::ReadOnly);
-            mappedBody.shareableResource = sharedMemory ? ShareableResource::create(WTF::move(sharedMemory), 0, bodyData.size()) : nullptr;
-            if (mappedBody.shareableResource)
-                mappedBody.shareableResource->createHandle(mappedBody.shareableResourceHandle);
+        if (RefPtr<SharedMemory> sharedMemory = bodyData.tryCreateSharedMemory()) {
+            mappedBody.shareableResource = ShareableResource::create(WTF::move(sharedMemory), 0, bodyData.size());
+            ASSERT(mappedBody.shareableResource);
+            mappedBody.shareableResource->createHandle(mappedBody.shareableResourceHandle);
         }
 #endif
         completionHandler(mappedBody);

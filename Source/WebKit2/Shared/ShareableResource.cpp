@@ -57,6 +57,7 @@ bool ShareableResource::Handle::decode(IPC::ArgumentDecoder& decoder, Handle& ha
     return true;
 }
 
+#if USE(CF)
 static void shareableResourceDeallocate(void *ptr, void *info)
 {
     (static_cast<ShareableResource*>(info))->deref(); // Balanced by ref() in createShareableResourceDeallocator()
@@ -64,8 +65,6 @@ static void shareableResourceDeallocate(void *ptr, void *info)
     
 static CFAllocatorRef createShareableResourceDeallocator(ShareableResource* resource)
 {
-    resource->ref(); // Balanced by deref in shareableResourceDeallocate()
-
     CFAllocatorContext context = { 0,
         resource,
         NULL, // retain
@@ -79,24 +78,35 @@ static CFAllocatorRef createShareableResourceDeallocator(ShareableResource* reso
 
     return CFAllocatorCreate(kCFAllocatorDefault, &context);
 }
+#endif
 
-RetainPtr<CFDataRef> ShareableResource::Handle::tryWrapInCFData() const
+PassRefPtr<SharedBuffer> ShareableResource::wrapInSharedBuffer()
 {
-    RefPtr<ShareableResource> resource = ShareableResource::create(*this);
-    if (!resource) {
-        LOG_ERROR("Failed to recreate ShareableResource from handle.");
-        return 0;
-    }
+    ref(); // Balanced by deref when SharedBuffer is deallocated.
 
-    RetainPtr<CFAllocatorRef> deallocator = adoptCF(createShareableResourceDeallocator(resource.get()));
-    return adoptCF(CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(resource->data()), static_cast<CFIndex>(resource->size()), deallocator.get()));
+#if USE(CF)
+    RetainPtr<CFAllocatorRef> deallocator = adoptCF(createShareableResourceDeallocator(this));
+    RetainPtr<CFDataRef> cfData = adoptCF(CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(data()), static_cast<CFIndex>(size()), deallocator.get()));
+    return SharedBuffer::wrapCFData(cfData.get());
+#elif USE(SOUP)
+    return SharedBuffer::wrapSoupBuffer(soup_buffer_new_with_owner(data(), size(), this, [](void* data) { static_cast<ShareableResource*>(data)->deref(); }));
+#else
+    ASSERT_NOT_REACHED();
+    return nullptr;
+#endif
 }
 
 PassRefPtr<SharedBuffer> ShareableResource::Handle::tryWrapInSharedBuffer() const
 {
-    return SharedBuffer::wrapCFData(tryWrapInCFData().get());
+    RefPtr<ShareableResource> resource = ShareableResource::create(*this);
+    if (!resource) {
+        LOG_ERROR("Failed to recreate ShareableResource from handle.");
+        return nullptr;
+    }
+
+    return resource->wrapInSharedBuffer();
 }
-    
+
 PassRefPtr<ShareableResource> ShareableResource::create(PassRefPtr<SharedMemory> sharedMemory, unsigned offset, unsigned size)
 {
     return adoptRef(new ShareableResource(sharedMemory, offset, size));

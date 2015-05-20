@@ -39,6 +39,9 @@
 #endif
 
 namespace WebKit {
+
+class SharedMemory;
+
 namespace NetworkCache {
 
 #if PLATFORM(COCOA)
@@ -119,6 +122,7 @@ public:
     const uint8_t* data() const;
     size_t size() const { return m_size; }
     bool isMap() const { return m_isMap; }
+    RefPtr<SharedMemory> tryCreateSharedMemory() const;
 
     Data subrange(size_t offset, size_t) const;
 

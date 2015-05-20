@@ -1,3 +1,20 @@
+2015-05-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Network Cache: Implement ShareableResource for Soup and enable it for GTK platform
+        https://bugs.webkit.org/show_bug.cgi?id=144380
+
+        Reviewed by Antti Koivisto.
+
+        Add a soup implementation of SharedBuffer::tryReplaceContentsWithPlatformBuffer().
+
+        Covered by http/tests/cache/disk-cache/ tests.
+
+        * loader/cache/CachedResource.cpp: Define
+        CachedResource::tryReplaceEncodedData() also for Soup.
+        * loader/cache/CachedResource.h: Ditto.
+        * platform/soup/SharedBufferSoup.cpp:
+        (WebCore::SharedBuffer::tryReplaceContentsWithPlatformBuffer):
+
 2015-05-17  Sam Weinig  <sam@webkit.org>
 
         Organize event handlers a bit

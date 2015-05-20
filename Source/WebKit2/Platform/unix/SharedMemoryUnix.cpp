@@ -156,17 +156,27 @@ RefPtr<SharedMemory> SharedMemory::map(const Handle& handle, Protection protecti
     if (data == MAP_FAILED)
         return nullptr;
 
+    RefPtr<SharedMemory> instance = wrapMap(data, handle.m_attachment.size(), handle.m_attachment.releaseFileDescriptor());
+    instance->m_isWrappingMap = false;
+    return instance;
+}
+
+RefPtr<SharedMemory> SharedMemory::wrapMap(void* data, size_t size, int fileDescriptor)
+{
     RefPtr<SharedMemory> instance = adoptRef(new SharedMemory());
     instance->m_data = data;
-    instance->m_fileDescriptor = handle.m_attachment.releaseFileDescriptor();
-    instance->m_size = handle.m_attachment.size();
+    instance->m_size = size;
+    instance->m_fileDescriptor = fileDescriptor;
+    instance->m_isWrappingMap = true;
     return instance;
 }
 
 SharedMemory::~SharedMemory()
 {
-    munmap(m_data, m_size);
-    closeWithRetry(m_fileDescriptor);
+    if (!m_isWrappingMap) {
+        munmap(m_data, m_size);
+        closeWithRetry(m_fileDescriptor);
+    }
 }
 
 bool SharedMemory::createHandle(Handle& handle, Protection)

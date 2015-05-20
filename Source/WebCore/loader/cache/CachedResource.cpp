@@ -773,7 +773,7 @@ void CachedResource::Callback::timerFired()
     m_resource.didAddClient(&m_client);
 }
 
-#if USE(FOUNDATION)
+#if USE(FOUNDATION) || USE(SOUP)
 
 void CachedResource::tryReplaceEncodedData(SharedBuffer& newBuffer)
 {
