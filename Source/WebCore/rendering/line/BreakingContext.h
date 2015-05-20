@@ -715,7 +715,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     if (m_autoWrap && !RenderStyle::autoWrap(m_lastWS) && m_ignoringSpaces)
         commitLineBreakAtCurrentWidth(renderText);
 
-    if (renderText.style().hasTextCombine() && is<RenderCombineText>(*m_current.renderer()) && !downcast<RenderCombineText>(*m_current.renderer()).isCombined()) {
+    if (renderText.style().hasTextCombine() && is<RenderCombineText>(*m_current.renderer())) {
         auto& combineRenderer = downcast<RenderCombineText>(*m_current.renderer());
         combineRenderer.combineText();
         // The length of the renderer's text may have changed. Increment stale iterator positions

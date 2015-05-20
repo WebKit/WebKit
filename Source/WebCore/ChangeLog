@@ -1,3 +1,24 @@
+2015-05-20  Antti Koivisto  <antti@apple.com>
+
+        Assertion failure in WebCore::BidiRun::BidiRun()
+        https://bugs.webkit.org/show_bug.cgi?id=145203
+        rdar://problem/20958973
+
+        Reviewed by Andreas Kling.
+
+        Test: fast/text/text-combine-crash.html
+
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::handleText):
+
+            Renove !isCombined() check. RenderCombineText::combineText() doesn't
+            do any work unless needed and text may become uncombined too.
+
+        * rendering/line/LineBreaker.cpp:
+        (WebCore::LineBreaker::skipLeadingWhitespace):
+
+            Same here.
+
 2015-05-20  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         AudioContext resume/close/suspend should reject promises with a DOM exception in lieu of throwing exceptions
