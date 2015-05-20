@@ -1,3 +1,33 @@
+2015-05-19  Jer Noble  <jer.noble@apple.com>
+
+        Touching HTMLMediaElement.h or MediaPlayer.h causes a world rebuild.
+        https://bugs.webkit.org/show_bug.cgi?id=145193
+
+        Reviewed by Eric Carlson.
+
+        Use HTMLMediaElementEnums instead of HTMLMediaElement.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _isShowingVideoOptimized]): HTMLMediaElement -> HTMLMediaElementEnums.
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.h:
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.messages.in:
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::hasMode): Ditto.
+        (WebKit::WebVideoFullscreenModelContext::fullscreenModeChanged): Ditto.
+        (WebKit::WebVideoFullscreenManagerProxy::setupFullscreenWithID): Ditto.
+        (WebKit::WebVideoFullscreenManagerProxy::fullscreenModeChanged): Ditto.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::enterVideoFullscreenForVideoElement): Ditto.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/ios/WebVideoFullscreenManager.h:
+        (WebKit::WebVideoFullscreenInterfaceContext::fullscreenMode): Ditto.
+        (WebKit::WebVideoFullscreenInterfaceContext::setFullscreenMode): Ditto.
+        * WebProcess/ios/WebVideoFullscreenManager.messages.in:
+        * WebProcess/ios/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::enterVideoFullscreenForVideoElement): Ditto.
+        (WebKit::WebVideoFullscreenManager::fullscreenModeChanged): Ditto.
+        (WebKit::WebVideoFullscreenManager::didCleanupFullscreen): Ditto.
+
 2015-05-20  Anders Carlsson  <andersca@apple.com>
 
         Refactor process pool enumeration code in WebsiteDataStore

@@ -33,6 +33,7 @@
 #import "WebVideoFullscreenInterfaceAVKit.h"
 #import "WebVideoFullscreenModelVideoElement.h"
 #import <QuartzCore/CoreAnimation.h>
+#import <WebCore/HTMLVideoElement.h>
 #import <WebCore/WebCoreThreadRun.h>
 
 using namespace WebCore;
@@ -121,7 +122,7 @@ public:
     return _videoElement.get();
 }
 
-- (void)enterFullscreen:(UIView *)view mode:(HTMLMediaElement::VideoFullscreenMode)mode
+- (void)enterFullscreen:(UIView *)view mode:(HTMLMediaElementEnums::VideoFullscreenMode)mode
 {
     [self retain]; // Balanced by -release in didExitFullscreen:
     

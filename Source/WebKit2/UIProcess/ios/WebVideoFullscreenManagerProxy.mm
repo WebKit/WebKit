@@ -57,7 +57,7 @@ void WebVideoFullscreenManagerProxy::invalidate()
 {
 }
 
-bool WebVideoFullscreenManagerProxy::hasMode(HTMLMediaElement::VideoFullscreenMode) const
+bool WebVideoFullscreenManagerProxy::hasMode(HTMLMediaElementEnums::VideoFullscreenMode) const
 {
     return false;
 }
@@ -177,7 +177,7 @@ void WebVideoFullscreenModelContext::selectLegibleMediaOption(uint64_t optionId)
         m_manager->selectLegibleMediaOption(m_contextId, optionId);
 }
 
-void WebVideoFullscreenModelContext::fullscreenModeChanged(WebCore::HTMLMediaElement::VideoFullscreenMode mode)
+void WebVideoFullscreenModelContext::fullscreenModeChanged(WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     if (m_manager)
         m_manager->fullscreenModeChanged(m_contextId, mode);
@@ -257,7 +257,7 @@ void WebVideoFullscreenManagerProxy::requestHideAndExitFullscreen()
         std::get<1>(tuple)->requestHideAndExitFullscreen();
 }
 
-bool WebVideoFullscreenManagerProxy::hasMode(HTMLMediaElement::VideoFullscreenMode mode) const
+bool WebVideoFullscreenManagerProxy::hasMode(HTMLMediaElementEnums::VideoFullscreenMode mode) const
 {
     for (auto& tuple : m_contextMap.values()) {
         if (std::get<1>(tuple)->hasMode(mode))
@@ -306,7 +306,7 @@ WebCore::WebVideoFullscreenInterfaceAVKit& WebVideoFullscreenManagerProxy::ensur
 
 #pragma mark Messages from WebVideoFullscreenManager
 
-void WebVideoFullscreenManagerProxy::setupFullscreenWithID(uint64_t contextId, uint32_t videoLayerID, const WebCore::IntRect& initialRect, float hostingDeviceScaleFactor, HTMLMediaElement::VideoFullscreenMode videoFullscreenMode, bool allowOptimizedFullscreen)
+void WebVideoFullscreenManagerProxy::setupFullscreenWithID(uint64_t contextId, uint32_t videoLayerID, const WebCore::IntRect& initialRect, float hostingDeviceScaleFactor, HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowOptimizedFullscreen)
 {
     ASSERT(videoLayerID);
     RefPtr<WebVideoFullscreenModelContext> model;
@@ -542,7 +542,7 @@ void WebVideoFullscreenManagerProxy::selectLegibleMediaOption(uint64_t contextId
     m_page->send(Messages::WebVideoFullscreenManager::SelectLegibleMediaOption(contextId, index), m_page->pageID());
 }
 
-void WebVideoFullscreenManagerProxy::fullscreenModeChanged(uint64_t contextId, WebCore::HTMLMediaElement::VideoFullscreenMode mode)
+void WebVideoFullscreenManagerProxy::fullscreenModeChanged(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     m_page->send(Messages::WebVideoFullscreenManager::FullscreenModeChanged(contextId, mode), m_page->pageID());
 }

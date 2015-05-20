@@ -1,3 +1,19 @@
+2015-05-19  Jer Noble  <jer.noble@apple.com>
+
+        Touching HTMLMediaElement.h or MediaPlayer.h causes a world rebuild.
+        https://bugs.webkit.org/show_bug.cgi?id=145193
+
+        Reviewed by Eric Carlson.
+
+        Use HTMLMediaElementEnums instead of HTMLMediaElement.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::enterVideoFullscreenForVideoElement): HTMLMediaElement -> HTMLMediaElementEnums.
+        * WebView/WebView.mm:
+        (-[WebView _enterVideoFullscreenForVideoElement:mode:]): Ditto.
+        * WebView/WebViewInternal.h:
+
 2015-05-19  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(183787): JIT is enabled for all builds

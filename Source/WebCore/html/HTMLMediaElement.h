@@ -31,10 +31,10 @@
 #include "ActiveDOMObject.h"
 #include "GenericEventQueue.h"
 #include "GenericTaskQueue.h"
+#include "HTMLMediaElementEnums.h"
 #include "HTMLMediaSession.h"
 #include "MediaCanStartListener.h"
 #include "MediaControllerInterface.h"
-#include "MediaPlayer.h"
 #include "MediaProducer.h"
 #include "PageThrottler.h"
 
@@ -67,6 +67,7 @@ class MediaController;
 class MediaControls;
 class MediaControlsHost;
 class MediaError;
+class MediaPlayer;
 class TimeRanges;
 #if ENABLE(ENCRYPTED_MEDIA_V2)
 class MediaKeys;
@@ -131,22 +132,14 @@ public:
     void setVideoFullscreenLayer(PlatformLayer*);
     PlatformLayer* videoFullscreenLayer() const { return m_videoFullscreenLayer.get(); }
     void setVideoFullscreenFrame(FloatRect);
-    void setVideoFullscreenGravity(MediaPlayer::VideoGravity);
-    MediaPlayer::VideoGravity videoFullscreenGravity() const { return m_videoFullscreenGravity; }
+    void setVideoFullscreenGravity(MediaPlayerEnums::VideoGravity);
+    MediaPlayerEnums::VideoGravity videoFullscreenGravity() const { return m_videoFullscreenGravity; }
 #endif
 
-    enum DelayedActionType {
-        LoadMediaResource = 1 << 0,
-        ConfigureTextTracks = 1 << 1,
-        TextTrackChangesNotification = 1 << 2,
-        ConfigureTextTrackDisplay = 1 << 3,
-        CheckPlaybackTargetCompatablity = 1 << 4,
-
-        EveryDelayedAction = LoadMediaResource | ConfigureTextTracks | TextTrackChangesNotification | ConfigureTextTrackDisplay | CheckPlaybackTargetCompatablity,
-    };
+    using HTMLMediaElementEnums::DelayedActionType;
     void scheduleDelayedAction(DelayedActionType);
     
-    MediaPlayer::MovieLoadType movieLoadType() const;
+    MediaPlayerEnums::MovieLoadType movieLoadType() const;
     
     bool inActiveDocument() const { return m_inActiveDocument; }
     
@@ -163,7 +156,7 @@ public:
 #endif
 
 // network state
-    enum NetworkState { NETWORK_EMPTY, NETWORK_IDLE, NETWORK_LOADING, NETWORK_NO_SOURCE };
+    using HTMLMediaElementEnums::NetworkState;
     NetworkState networkState() const;
 
     String preload() const;    
@@ -174,6 +167,7 @@ public:
     String canPlayType(const String& mimeType, const String& keySystem = String(), const URL& = URL()) const;
 
 // ready state
+    using HTMLMediaElementEnums::ReadyState;
     virtual ReadyState readyState() const override;
     bool seeking() const;
 
@@ -306,24 +300,7 @@ public:
     PlatformTextTrackMenuInterface* platformTextTrackMenu();
 #endif
 
-    struct TrackGroup {
-        enum GroupKind { CaptionsAndSubtitles, Description, Chapter, Metadata, Other };
-
-        TrackGroup(GroupKind kind)
-            : visibleTrack(0)
-            , defaultTrack(0)
-            , kind(kind)
-            , hasSrcLang(false)
-        {
-        }
-
-        Vector<RefPtr<TextTrack>> tracks;
-        RefPtr<TextTrack> visibleTrack;
-        RefPtr<TextTrack> defaultTrack;
-        GroupKind kind;
-        bool hasSrcLang;
-    };
-
+    struct TrackGroup;
     void configureTextTrackGroupForLanguage(const TrackGroup&) const;
     void configureTextTracks();
     void configureTextTrackGroup(const TrackGroup&);
@@ -331,7 +308,7 @@ public:
     void setSelectedTextTrack(TextTrack*);
 
     bool textTracksAreReady() const;
-    enum TextTrackVisibilityCheckType { CheckTextTrackVisibility, AssumeTextTrackVisibilityChanged };
+    using HTMLMediaElementEnums::TextTrackVisibilityCheckType;
     void configureTextTrackDisplay(TextTrackVisibilityCheckType checkType = CheckTextTrackVisibility);
     void updateTextTrackDisplay();
 
@@ -381,13 +358,7 @@ public:
     WEBCORE_EXPORT virtual bool isFullscreen() const override;
     void toggleFullscreenState();
 
-    enum {
-        VideoFullscreenModeNone = 0,
-        VideoFullscreenModeStandard = 1 << 0,
-        VideoFullscreenModeOptimized = 1 << 1,
-    };
-    typedef uint32_t VideoFullscreenMode;
-
+    using MediaPlayerEnums::VideoFullscreenMode;
     VideoFullscreenMode fullscreenMode() const { return m_videoFullscreenMode; }
     virtual void fullscreenModeChanged(VideoFullscreenMode mode) { m_videoFullscreenMode = mode; }
 
@@ -424,7 +395,7 @@ public:
     AudioSourceProvider* audioSourceProvider();
 #endif
 
-    enum InvalidURLAction { DoNothing, Complain };
+    using HTMLMediaElementEnums::InvalidURLAction;
     bool isSafeToLoadURL(const URL&, InvalidURLAction);
 
     const String& mediaGroup() const;
@@ -437,14 +408,14 @@ public:
 
     unsigned long long fileSize() const;
 
-    void mediaLoadingFailed(MediaPlayer::NetworkState);
-    void mediaLoadingFailedFatally(MediaPlayer::NetworkState);
+    void mediaLoadingFailed(MediaPlayerEnums::NetworkState);
+    void mediaLoadingFailedFatally(MediaPlayerEnums::NetworkState);
 
 #if ENABLE(MEDIA_SOURCE)
     RefPtr<VideoPlaybackQuality> getVideoPlaybackQuality();
 #endif
 
-    MediaPlayer::Preload preloadValue() const { return m_preload; }
+    MediaPlayerEnums::Preload preloadValue() const { return m_preload; }
     HTMLMediaSession& mediaSession() const { return *m_mediaSession; }
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
@@ -524,8 +495,8 @@ private:
 
     virtual void updateDisplayState() { }
     
-    void setReadyState(MediaPlayer::ReadyState);
-    void setNetworkState(MediaPlayer::NetworkState);
+    void setReadyState(MediaPlayerEnums::ReadyState);
+    void setNetworkState(MediaPlayerEnums::NetworkState);
 
     double effectivePlaybackRate() const;
     double requestedPlaybackRate() const;
@@ -705,7 +676,7 @@ private:
     bool isBlocked() const;
     bool isBlockedOnMediaController() const;
     virtual bool hasCurrentSrc() const override { return !m_currentSrc.isEmpty(); }
-    virtual bool isLiveStream() const override { return movieLoadType() == MediaPlayer::LiveStream; }
+    virtual bool isLiveStream() const override { return movieLoadType() == MediaPlayerEnums::LiveStream; }
     bool isAutoplaying() const { return m_autoplaying; }
 
     void updateSleepDisabling();
@@ -803,12 +774,12 @@ private:
 #if PLATFORM(IOS)
     RetainPtr<PlatformLayer> m_videoFullscreenLayer;
     FloatRect m_videoFullscreenFrame;
-    MediaPlayer::VideoGravity m_videoFullscreenGravity;
+    MediaPlayerEnums::VideoGravity m_videoFullscreenGravity;
 #endif
 
     std::unique_ptr<MediaPlayer> m_player;
 
-    MediaPlayer::Preload m_preload;
+    MediaPlayerEnums::Preload m_preload;
 
     DisplayMode m_displayMode;
 

@@ -28,6 +28,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "HTMLMediaElementEnums.h"
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -36,7 +37,7 @@ class TimeRanges;
 
 typedef int ExceptionCode;
 
-class MediaControllerInterface {
+class MediaControllerInterface : public HTMLMediaElementEnums {
 public:
     virtual ~MediaControllerInterface() { };
     
@@ -64,8 +65,8 @@ public:
     
     virtual bool muted() const = 0;
     virtual void setMuted(bool) = 0;
-    
-    enum ReadyState { HAVE_NOTHING, HAVE_METADATA, HAVE_CURRENT_DATA, HAVE_FUTURE_DATA, HAVE_ENOUGH_DATA };
+
+    using HTMLMediaElementEnums::ReadyState;
     virtual ReadyState readyState() const = 0;
 
     // MediaControlElements:

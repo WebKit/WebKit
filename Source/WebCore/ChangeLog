@@ -1,3 +1,53 @@
+2015-05-19  Jer Noble  <jer.noble@apple.com>
+
+        Touching HTMLMediaElement.h or MediaPlayer.h causes a world rebuild.
+        https://bugs.webkit.org/show_bug.cgi?id=145193
+
+        Reviewed by Eric Carlson.
+
+        HTMLMediaElement.h and MediaPlayer.h are included in a number of headers solely for access to the enums
+        defined within the classes contained within. Move these enums into their own--otherwise empty--classes.
+        Then add `using` declarations to pull those inherited enums back into the namespace of HTMLMediaElement
+        and MediaPlayer.
+
+        Classes and headers which do not need to directly include HTMLMediaElement.h can now include HTMLMediaElementEnums.h
+        instead; the same goes for MediaPlayer.h and MediaPlayerEnums.h.
+
+        * WebCore.xcodeproj/project.pbxproj: Add new files to project.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::TrackGroup::TrackGroup): Move definition here from the header.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::videoFullscreenGravity): MediaPlayer -> MediaPlayerEnums.
+        (WebCore::HTMLMediaElement::preloadValue): Ditto.
+        (WebCore::HTMLMediaElement::TrackGroup::TrackGroup): Deleted; moved to implementation file.
+        * html/HTMLMediaElementEnums.h: Added.
+        * html/MediaControllerInterface.h: Inherit from HTMLMediaElementEnums.
+        * page/ChromeClient.h: HTMLMediaElement -> HTMLMediaElementEnums.
+        * platform/graphics/MediaPlayer.h: MediaPlayer -> MediaPlayerEnums.
+        * platform/graphics/MediaPlayerEnums.h: Added.
+        * platform/ios/WebVideoFullscreenControllerAVKit.h:
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (-[WebVideoFullscreenController enterFullscreen:mode:]): HTMLMediaElement -> HTMLMediaElementEnums.
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::setupFullscreen): Ditto.
+        (WebVideoFullscreenInterfaceAVKit::setupFullscreenInternal): Ditto.
+        (WebVideoFullscreenInterfaceAVKit::enterFullscreen): Ditto.
+        (WebVideoFullscreenInterfaceAVKit::exitFullscreenInternal): Ditto.
+        (WebVideoFullscreenInterfaceAVKit::cleanupFullscreenInternal): Ditto.
+        (WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen): Ditto.
+        (WebVideoFullscreenInterfaceAVKit::mayAutomaticallyShowVideoOptimized): Ditto.
+        (WebVideoFullscreenInterfaceAVKit::willStartOptimizedFullscreen): Ditto.
+        (WebVideoFullscreenInterfaceAVKit::didStopOptimizedFullscreen): Ditto.
+        (WebVideoFullscreenInterfaceAVKit::didCancelOptimizedFullscreen): Ditto.
+        (WebVideoFullscreenInterfaceAVKit::setMode): Ditto.
+        (WebVideoFullscreenInterfaceAVKit::clearMode): Ditto.
+        * platform/ios/WebVideoFullscreenModel.h:
+        * platform/ios/WebVideoFullscreenModelVideoElement.h:
+        * platform/ios/WebVideoFullscreenModelVideoElement.mm:
+        (WebVideoFullscreenModelVideoElement::setVideoElement): Ditto.
+        (WebVideoFullscreenModelVideoElement::fullscreenModeChanged): Ditto.
+
 2015-05-20  Roger Fong  <roger_fong@apple.com>
 
         Media Controls stop updating after hovering for a few seconds.
