@@ -1,3 +1,9 @@
+2015-05-20  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix; WebActionMenuController.mm should directly include LocalizedStrings.h
+
+        * WebView/WebActionMenuController.mm:
+
 2015-05-19  Jer Noble  <jer.noble@apple.com>
 
         Touching HTMLMediaElement.h or MediaPlayer.h causes a world rebuild.
