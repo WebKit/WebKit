@@ -2191,7 +2191,51 @@ EXPRESSION: span = document.createElement('span'); span.id = 'foo'; span
 }
 
 -----------------------------------------------------
-EXPRESSION: document.createTextNode('text')
+EXPRESSION: input = document.createElement('input'); input.type = 'password'; input
+{
+  "_type": "object",
+  "_subtype": "node",
+  "_objectId": "<filtered>",
+  "_description": "input",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "node",
+    "_description": "input",
+    "_lossless": false,
+    "_overflow": true,
+    "_properties": [
+      {
+        "_name": "selectionStart",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "selectionEnd",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "selectionDirection",
+        "_type": "string",
+        "_value": "none"
+      },
+      {
+        "_name": "accept",
+        "_type": "string",
+        "_value": ""
+      },
+      {
+        "_name": "alt",
+        "_type": "string",
+        "_value": ""
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: text = document.createTextNode('text content'); text
 {
   "_type": "object",
   "_subtype": "node",
@@ -2207,7 +2251,7 @@ EXPRESSION: document.createTextNode('text')
       {
         "_name": "wholeText",
         "_type": "string",
-        "_value": "text"
+        "_value": "text content"
       },
       {
         "_name": "splitText",
@@ -2222,12 +2266,115 @@ EXPRESSION: document.createTextNode('text')
       {
         "_name": "data",
         "_type": "string",
-        "_value": "text"
+        "_value": "text content"
       },
       {
         "_name": "length",
         "_type": "number",
-        "_value": "4"
+        "_value": "12"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: comment = document.createComment('comment content'); comment
+{
+  "_type": "object",
+  "_subtype": "node",
+  "_objectId": "<filtered>",
+  "_description": "#comment",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "node",
+    "_description": "#comment",
+    "_lossless": false,
+    "_overflow": true,
+    "_properties": [
+      {
+        "_name": "data",
+        "_type": "string",
+        "_value": "comment content"
+      },
+      {
+        "_name": "length",
+        "_type": "number",
+        "_value": "15"
+      },
+      {
+        "_name": "previousElementSibling",
+        "_type": "object",
+        "_subtype": "null",
+        "_value": "null"
+      },
+      {
+        "_name": "nextElementSibling",
+        "_type": "object",
+        "_subtype": "null",
+        "_value": "null"
+      },
+      {
+        "_name": "substringData",
+        "_type": "function",
+        "_value": ""
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [document.body, div, span, input, text, comment]
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 6,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": false,
+    "_overflow": false,
+    "_size": 6,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "object",
+        "_subtype": "node",
+        "_value": "<body>"
+      },
+      {
+        "_name": "1",
+        "_type": "object",
+        "_subtype": "node",
+        "_value": "<div class=\"foo bar\">"
+      },
+      {
+        "_name": "2",
+        "_type": "object",
+        "_subtype": "node",
+        "_value": "<span id=\"foo\">"
+      },
+      {
+        "_name": "3",
+        "_type": "object",
+        "_subtype": "node",
+        "_value": "<input type=\"password\">"
+      },
+      {
+        "_name": "4",
+        "_type": "object",
+        "_subtype": "node",
+        "_value": "#text \"text content\""
+      },
+      {
+        "_name": "5",
+        "_type": "object",
+        "_subtype": "node",
+        "_value": "<!--comment content-->"
       }
     ],
     "_entries": null
@@ -2254,19 +2401,19 @@ EXPRESSION: document.head.children
         "_name": "0",
         "_type": "object",
         "_subtype": "node",
-        "_value": "meta"
+        "_value": "<meta>"
       },
       {
         "_name": "1",
         "_type": "object",
         "_subtype": "node",
-        "_value": "script"
+        "_value": "<script>"
       },
       {
         "_name": "2",
         "_type": "object",
         "_subtype": "node",
-        "_value": "script"
+        "_value": "<script>"
       }
     ],
     "_entries": null
@@ -2293,19 +2440,19 @@ EXPRESSION: document.getElementsByClassName('my-test')
         "_name": "0",
         "_type": "object",
         "_subtype": "node",
-        "_value": "p.my-test"
+        "_value": "<p class=\"my-test\">"
       },
       {
         "_name": "1",
         "_type": "object",
         "_subtype": "node",
-        "_value": "p.my-test"
+        "_value": "<p class=\"my-test\">"
       },
       {
         "_name": "2",
         "_type": "object",
         "_subtype": "node",
-        "_value": "p.my-test"
+        "_value": "<p class=\"my-test\">"
       }
     ],
     "_entries": null
@@ -2332,19 +2479,19 @@ EXPRESSION: document.querySelectorAll('.my-test')
         "_name": "0",
         "_type": "object",
         "_subtype": "node",
-        "_value": "p.my-test"
+        "_value": "<p class=\"my-test\">"
       },
       {
         "_name": "1",
         "_type": "object",
         "_subtype": "node",
-        "_value": "p.my-test"
+        "_value": "<p class=\"my-test\">"
       },
       {
         "_name": "2",
         "_type": "object",
         "_subtype": "node",
-        "_value": "p.my-test"
+        "_value": "<p class=\"my-test\">"
       }
     ],
     "_entries": null

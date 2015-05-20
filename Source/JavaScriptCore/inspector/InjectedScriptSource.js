@@ -755,6 +755,53 @@ InjectedScript.prototype = {
         return null;
     },
 
+    _nodeDescription: function(node)
+    {
+        var isXMLDocument = node.ownerDocument && !!node.ownerDocument.xmlVersion;
+        var description = isXMLDocument ? node.nodeName : node.nodeName.toLowerCase();
+
+        switch (node.nodeType) {
+        case 1: // Node.ELEMENT_NODE
+            if (node.id)
+                description += "#" + node.id;
+            if (node.className)
+                description += "." + node.className.trim().replace(/\s+/g, ".");
+            return description;
+
+        default:
+            return description;
+        }
+    },
+
+    _nodePreview: function(node)
+    {
+        var isXMLDocument = node.ownerDocument && !!node.ownerDocument.xmlVersion;
+        var nodeName = isXMLDocument ? node.nodeName : node.nodeName.toLowerCase();
+
+        switch (node.nodeType) {
+        case 1: // Node.ELEMENT_NODE
+            if (node.id)
+                return "<" + nodeName + " id=\"" + node.id + "\">";
+            if (node.className)
+                return "<" + nodeName + " class=\"" + node.className + "\">";
+            if (nodeName === "input" && node.type)
+                return "<" + nodeName + " type=\"" + node.type + "\">";
+            return "<" + nodeName + ">";
+
+        case 3: // Node.TEXT_NODE
+            return nodeName + " \"" + node.nodeValue + "\"";
+
+        case 8: // Node.COMMENT_NODE
+            return "<!--" + node.nodeValue + "-->";
+
+        case 10: // Node.DOCUMENT_TYPE_NODE
+            return "<!DOCTYPE " + nodeName + ">";
+
+        default:
+            return nodeName;
+        }
+    },
+
     _describe: function(obj)
     {
         if (this.isPrimitiveValue(obj))
@@ -774,20 +821,8 @@ InjectedScript.prototype = {
         if (subtype === "error")
             return toString(obj);
 
-        if (subtype === "node") {
-            var description = obj.nodeName.toLowerCase();
-            switch (obj.nodeType) {
-            case 1 /* Node.ELEMENT_NODE */:
-                description += obj.id ? "#" + obj.id : "";
-                var className = obj.className;
-                description += (className && typeof className === "string") ? "." + className.trim().replace(/\s+/g, ".") : "";
-                break;
-            case 10 /*Node.DOCUMENT_TYPE_NODE */:
-                description = "<!DOCTYPE " + description + ">";
-                break;
-            }
-            return description;
-        }
+        if (subtype === "node")
+            return this._nodeDescription(obj);
 
         var className = InjectedScriptHost.internalConstructorName(obj);
         if (subtype === "array")
@@ -1133,8 +1168,10 @@ InjectedScript.RemoteObject.prototype = {
                     preview.overflow = true;
             } else {
                 var description = "";
-                if (type !== "function" || subtype === "class")
-                    description = this._abbreviateString(injectedScript._describe(value), maxLength, subtype === "regexp");
+                if (type !== "function" || subtype === "class") {
+                    var fullDescription = subtype === "node" ? injectedScript._nodePreview(value) : injectedScript._describe(value);
+                    description = this._abbreviateString(fullDescription, maxLength, subtype === "regexp");
+                }
                 property.value = description;
                 preview.lossless = false;
             }

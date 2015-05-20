@@ -109,7 +109,10 @@ function test()
         {expression: "document.body"},
         {expression: "div = document.createElement('div'); div.className = 'foo bar'; div"},
         {expression: "span = document.createElement('span'); span.id = 'foo'; span"},
-        {expression: "document.createTextNode('text')"},
+        {expression: "input = document.createElement('input'); input.type = 'password'; input"},
+        {expression: "text = document.createTextNode('text content'); text"},
+        {expression: "comment = document.createComment('comment content'); comment"},
+        {expression: "[document.body, div, span, input, text, comment]"},
 
         // Node Collections (NodeLists / Collections)
         {expression: "document.all", browserOnly: true}, // HTMLAllCollection
