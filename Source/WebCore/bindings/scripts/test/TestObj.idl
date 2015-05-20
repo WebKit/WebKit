@@ -270,6 +270,10 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     readonly attribute DOMString       _attribute;
     attribute _optional                attributeWithReservedEnumType;
     void _any(unrestricted float a, long b);
+
+    // Promise attributes
+    [CustomGetter] readonly attribute Promise testPromiseAttr;
+
 };
 
 // The following comment should not generate any code.

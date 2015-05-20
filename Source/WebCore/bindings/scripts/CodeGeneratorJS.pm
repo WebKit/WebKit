@@ -1047,7 +1047,14 @@ sub GenerateHeader
                 $needsVisitChildren = 1;
                 push(@headerContent, "#endif\n") if $conditionalString;
             }
+            elsif ($attribute->signature->type eq "Promise") {
+                $headerIncludes{"JSDOMPromise.h"} = 1;
 
+                my $conditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
+                push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
+                push(@headerContent, "    JSC::Strong<JSC::JSPromiseDeferred> m_" . $attribute->signature->name . "PromiseDeferred;\n");
+                push(@headerContent, "#endif\n") if $conditionalString;
+            }
             if ($attribute->signature->extendedAttributes->{"ForwardDeclareInHeader"}) {
                 $hasForwardDeclaringAttributes = 1;
             }
