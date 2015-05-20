@@ -345,10 +345,10 @@ endif ()
 if (ENABLE_ECORE_X)
     list(APPEND WebProcess_LIBRARIES
         ${ECORE_X_LIBRARIES}
-        ${X11_Xext_LIB}
     )
     list(APPEND WebKit2_LIBRARIES
         ${ECORE_X_LIBRARIES}
+        ${X11_Xext_LIB}
     )
 endif ()
 

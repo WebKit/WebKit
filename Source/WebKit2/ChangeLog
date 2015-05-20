@@ -1,3 +1,14 @@
+2015-05-20  Hyungwook Lee  <hyungwook.lee@navercorp.com>
+
+        [EFL] Fix build failure, linker does not find libXext.
+        https://bugs.webkit.org/show_bug.cgi?id=144100
+
+        Reviewed by Gyuyoung Kim.
+
+        Move Xext library from WebProcess_LIBRARIES to WebKit2_LIBRARIES.
+
+        * PlatformEfl.cmake:
+
 2015-05-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Network Cache: Implement ShareableResource for Soup and enable it for GTK platform
