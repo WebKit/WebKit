@@ -41,6 +41,9 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     parameters.ignoreTLSErrors = m_ignoreTLSErrors;
     parameters.languages = WebCore::userPreferredLanguages();
     parameters.urlSchemesRegisteredForCustomProtocols = supplement<WebSoupCustomProtocolRequestManager>()->registeredSchemesForCustomProtocols();
+#if ENABLE(NETWORK_CACHE)
+    parameters.shouldEnableNetworkCacheEfficacyLogging = false;
+#endif
 }
 
 }
