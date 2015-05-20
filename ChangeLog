@@ -1,3 +1,9 @@
+2015-05-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and Versions.m4 for 2.4.9 release.
+
+        * Source/autotools/Versions.m4: Bump version numbers.
+
 2015-04-17  Milan Crha  <mcrha@redhat.com>
 
         [GTK] Expand wildcards inside generate-inspector-gresource-manifest.py

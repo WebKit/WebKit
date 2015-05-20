@@ -1,3 +1,9 @@
+2015-05-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and Versions.m4 for 2.4.9 release.
+
+        * NEWS: Added release notes for 2.4.9.
+
 2015-04-15  Руслан Ижбулатов  <lrn1986@gmail.com>
 
         [W32][GTK] GI fails due to W32-incompatible arguments to the scanner
