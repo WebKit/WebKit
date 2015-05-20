@@ -94,7 +94,7 @@ public:
     virtual String href() const override { return m_originalURL; }
     virtual String title() const override { return emptyString(); }
 
-    virtual void clearOwnerNode() override { m_ownerNode = 0; }
+    virtual void clearOwnerNode() override { m_ownerNode = nullptr; }
     virtual URL baseURL() const override { return m_finalURL; }
     virtual bool isLoading() const override;
 

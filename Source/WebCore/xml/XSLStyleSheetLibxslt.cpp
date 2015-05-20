@@ -52,15 +52,15 @@ SOFT_LINK(libxslt, xsltLoadStylesheetPI, xsltStylesheetPtr, (xmlDocPtr doc), (do
 namespace WebCore {
 
 XSLStyleSheet::XSLStyleSheet(XSLImportRule* parentRule, const String& originalURL, const URL& finalURL)
-    : m_ownerNode(0)
+    : m_ownerNode(nullptr)
     , m_originalURL(originalURL)
     , m_finalURL(finalURL)
     , m_isDisabled(false)
     , m_embedded(false)
     , m_processed(false) // Child sheets get marked as processed when the libxslt engine has finally seen them.
-    , m_stylesheetDoc(0)
+    , m_stylesheetDoc(nullptr)
     , m_stylesheetDocTaken(false)
-    , m_parentStyleSheet(parentRule ? parentRule->parentStyleSheet() : 0)
+    , m_parentStyleSheet(parentRule ? parentRule->parentStyleSheet() : nullptr)
 {
 }
 
@@ -71,9 +71,9 @@ XSLStyleSheet::XSLStyleSheet(Node* parentNode, const String& originalURL, const 
     , m_isDisabled(false)
     , m_embedded(embedded)
     , m_processed(true) // The root sheet starts off processed.
-    , m_stylesheetDoc(0)
+    , m_stylesheetDoc(nullptr)
     , m_stylesheetDocTaken(false)
-    , m_parentStyleSheet(0)
+    , m_parentStyleSheet(nullptr)
 {
 }
 
@@ -84,7 +84,7 @@ XSLStyleSheet::~XSLStyleSheet()
 
     for (auto& child : m_children) {
         ASSERT(child->parentStyleSheet() == this);
-        child->setParentStyleSheet(0);
+        child->setParentStyleSheet(nullptr);
     }
 }
 
@@ -116,7 +116,7 @@ xmlDocPtr XSLStyleSheet::document()
 
 void XSLStyleSheet::clearDocuments()
 {
-    m_stylesheetDoc = 0;
+    m_stylesheetDoc = nullptr;
     for (auto& import : m_children) {
         if (import->styleSheet())
             import->styleSheet()->clearDocuments();

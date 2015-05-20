@@ -459,7 +459,7 @@ static void* openFunc(const char* uri)
 
     {
         CachedResourceLoader* cachedResourceLoader = XMLDocumentParserScope::currentCachedResourceLoader;
-        XMLDocumentParserScope scope(0);
+        XMLDocumentParserScope scope(nullptr);
         // FIXME: We should restore the original global error handler as well.
 
         if (cachedResourceLoader->frame())
@@ -577,7 +577,7 @@ bool XMLDocumentParser::supportsXMLVersion(const String& version)
 XMLDocumentParser::XMLDocumentParser(Document& document, FrameView* frameView)
     : ScriptableDocumentParser(document)
     , m_view(frameView)
-    , m_context(0)
+    , m_context(nullptr)
     , m_pendingCallbacks(std::make_unique<PendingCallbacks>())
     , m_depthTriggeringEntityExpansion(-1)
     , m_isParsingEntityDeclaration(false)
@@ -590,7 +590,7 @@ XMLDocumentParser::XMLDocumentParser(Document& document, FrameView* frameView)
     , m_parserPaused(false)
     , m_requestingScript(false)
     , m_finishCalled(false)
-    , m_pendingScript(0)
+    , m_pendingScript(nullptr)
     , m_scriptStartPosition(TextPosition::belowRangePosition())
     , m_parsingFragment(false)
 {
@@ -598,8 +598,8 @@ XMLDocumentParser::XMLDocumentParser(Document& document, FrameView* frameView)
 
 XMLDocumentParser::XMLDocumentParser(DocumentFragment& fragment, Element* parentElement, ParserContentPolicy parserContentPolicy)
     : ScriptableDocumentParser(fragment.document(), parserContentPolicy)
-    , m_view(0)
-    , m_context(0)
+    , m_view(nullptr)
+    , m_context(nullptr)
     , m_pendingCallbacks(std::make_unique<PendingCallbacks>())
     , m_depthTriggeringEntityExpansion(-1)
     , m_isParsingEntityDeclaration(false)

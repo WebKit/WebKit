@@ -213,7 +213,7 @@ Document* XMLHttpRequest::responseXML(ExceptionCode& ec)
         if ((m_response.isHTTP() && !responseIsXML() && !isHTML)
             || (isHTML && m_responseTypeCode == ResponseTypeDefault)
             || scriptExecutionContext()->isWorkerGlobalScope()) {
-            m_responseDocument = 0;
+            m_responseDocument = nullptr;
         } else {
             if (isHTML)
                 m_responseDocument = HTMLDocument::create(0, m_url);
@@ -225,7 +225,7 @@ Document* XMLHttpRequest::responseXML(ExceptionCode& ec)
             m_responseDocument->overrideMIMEType(mimeType);
 
             if (!m_responseDocument->wellFormed())
-                m_responseDocument = 0;
+                m_responseDocument = nullptr;
         }
         m_createdDocument = true;
     }
@@ -833,7 +833,7 @@ bool XMLHttpRequest::internalAbort()
     // FIXME: when we add the support for multi-part XHR, we will have to think be careful with this initialization.
     m_receivedLength = 0;
 
-    m_decoder = 0;
+    m_decoder = nullptr;
 
     if (!m_loader)
         return true;
@@ -866,8 +866,8 @@ void XMLHttpRequest::clearResponseBuffers()
     m_responseBuilder.clear();
     m_responseEncoding = String();
     m_createdDocument = false;
-    m_responseDocument = 0;
-    m_responseBlob = 0;
+    m_responseDocument = nullptr;
+    m_responseBlob = nullptr;
     m_binaryResponseBuilder.clear();
     m_responseArrayBuffer.clear();
     m_responseCacheIsValid = false;
@@ -876,7 +876,7 @@ void XMLHttpRequest::clearResponseBuffers()
 void XMLHttpRequest::clearRequest()
 {
     m_requestHeaders.clear();
-    m_requestEntityBody = 0;
+    m_requestEntityBody = nullptr;
 }
 
 void XMLHttpRequest::genericError()
@@ -1112,11 +1112,11 @@ void XMLHttpRequest::didFinishLoading(unsigned long identifier, double)
     InspectorInstrumentation::didFinishXHRLoading(scriptExecutionContext(), this, identifier, m_responseBuilder.toStringPreserveCapacity(), m_url, m_lastSendURL, m_lastSendLineNumber, m_lastSendColumnNumber);
 
     bool hadLoader = m_loader;
-    m_loader = 0;
+    m_loader = nullptr;
 
     changeState(DONE);
     m_responseEncoding = String();
-    m_decoder = 0;
+    m_decoder = nullptr;
 
     if (hadLoader)
         dropProtection();

@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-CachedResourceLoader* XMLDocumentParserScope::currentCachedResourceLoader = 0;
+CachedResourceLoader* XMLDocumentParserScope::currentCachedResourceLoader = nullptr;
 
 XMLDocumentParserScope::XMLDocumentParserScope(CachedResourceLoader* cachedResourceLoader)
     : m_oldCachedResourceLoader(currentCachedResourceLoader)

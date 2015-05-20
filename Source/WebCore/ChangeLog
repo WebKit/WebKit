@@ -1,3 +1,46 @@
+2015-05-20  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        nullptr cleanup in WebCore/xml.
+        https://bugs.webkit.org/show_bug.cgi?id=145165
+
+        Reviewed by Csaba Osztrogonác.
+
+        No new tests, no behavior changes
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::responseXML):
+        (WebCore::XMLHttpRequest::internalAbort):
+        (WebCore::XMLHttpRequest::clearResponseBuffers):
+        (WebCore::XMLHttpRequest::clearRequest):
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        * xml/XMLHttpRequestProgressEventThrottle.cpp:
+        (WebCore::XMLHttpRequestProgressEventThrottle::flushProgressEvent):
+        * xml/XSLImportRule.cpp:
+        (WebCore::XSLImportRule::XSLImportRule):
+        (WebCore::XSLImportRule::~XSLImportRule):
+        (WebCore::XSLImportRule::setXSLStyleSheet):
+        (WebCore::XSLImportRule::loadSheet):
+        * xml/XSLStyleSheet.h:
+        * xml/XSLStyleSheetLibxslt.cpp:
+        (WebCore::XSLStyleSheet::XSLStyleSheet):
+        (WebCore::XSLStyleSheet::~XSLStyleSheet):
+        (WebCore::XSLStyleSheet::clearDocuments):
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::saveResultToString):
+        (WebCore::xsltParamArrayFromParameterMap):
+        (WebCore::xmlDocPtrFromNode):
+        (WebCore::XSLTProcessor::transformToString):
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::clearCurrentNodeStack):
+        (WebCore::XMLDocumentParser::exitText):
+        (WebCore::XMLDocumentParser::notifyFinished):
+        * xml/parser/XMLDocumentParser.h:
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::openFunc):
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+        * xml/parser/XMLDocumentParserScope.cpp:
+        * xml/parser/XMLDocumentParserScope.h:
+
 2015-05-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Network Cache: Implement ShareableResource for Soup and enable it for GTK platform

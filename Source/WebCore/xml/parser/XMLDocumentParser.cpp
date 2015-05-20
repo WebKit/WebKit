@@ -88,8 +88,8 @@ void XMLDocumentParser::clearCurrentNodeStack()
 {
     if (m_currentNode && m_currentNode != document())
         m_currentNode->deref();
-    m_currentNode = 0;
-    m_leafTextNode = 0;
+    m_currentNode = nullptr;
+    m_leafTextNode = nullptr;
 
     if (m_currentNodeStack.size()) { // Aborted parsing.
         for (size_t i = m_currentNodeStack.size() - 1; i != 0; --i)
@@ -162,7 +162,7 @@ void XMLDocumentParser::exitText()
     Vector<xmlChar> empty;
     m_bufferedText.swap(empty);
 
-    m_leafTextNode = 0;
+    m_leafTextNode = nullptr;
 }
 
 void XMLDocumentParser::detach()
@@ -230,10 +230,10 @@ void XMLDocumentParser::notifyFinished(CachedResource* unusedResource)
     bool wasCanceled = m_pendingScript->wasCanceled();
 
     m_pendingScript->removeClient(this);
-    m_pendingScript = 0;
+    m_pendingScript = nullptr;
 
     RefPtr<Element> e = m_scriptElement;
-    m_scriptElement = 0;
+    m_scriptElement = nullptr;
 
     ScriptElement* scriptElement = toScriptElementIfPossible(e.get());
     ASSERT(scriptElement);
@@ -248,7 +248,7 @@ void XMLDocumentParser::notifyFinished(CachedResource* unusedResource)
         scriptElement->dispatchLoadEvent();
     }
 
-    m_scriptElement = 0;
+    m_scriptElement = nullptr;
 
     if (!isDetached() && !m_requestingScript)
         resumeParsing();

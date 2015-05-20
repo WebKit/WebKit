@@ -121,7 +121,7 @@ void XMLHttpRequestProgressEventThrottle::flushProgressEvent()
     if (m_deferEvents && m_deferredProgressEvent) {
         // Move the progress event to the queue, to get it in the right order on resume.
         m_deferredEvents.append(m_deferredProgressEvent);
-        m_deferredProgressEvent = 0;
+        m_deferredProgressEvent = nullptr;
         return;
     }
 

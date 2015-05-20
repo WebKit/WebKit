@@ -34,7 +34,7 @@ namespace WebCore {
 XSLImportRule::XSLImportRule(XSLStyleSheet* parent, const String& href)
     : m_parentStyleSheet(parent)
     , m_strHref(href)
-    , m_cachedSheet(0)
+    , m_cachedSheet(nullptr)
     , m_loading(false)
 {
 }
@@ -42,7 +42,7 @@ XSLImportRule::XSLImportRule(XSLStyleSheet* parent, const String& href)
 XSLImportRule::~XSLImportRule()
 {
     if (m_styleSheet)
-        m_styleSheet->setParentStyleSheet(0);
+        m_styleSheet->setParentStyleSheet(nullptr);
     
     if (m_cachedSheet)
         m_cachedSheet->removeClient(this);
@@ -51,7 +51,7 @@ XSLImportRule::~XSLImportRule()
 void XSLImportRule::setXSLStyleSheet(const String& href, const URL& baseURL, const String& sheet)
 {
     if (m_styleSheet)
-        m_styleSheet->setParentStyleSheet(0);
+        m_styleSheet->setParentStyleSheet(nullptr);
 
     m_styleSheet = XSLStyleSheet::create(this, href, baseURL);
 
@@ -73,7 +73,7 @@ bool XSLImportRule::isLoading()
 
 void XSLImportRule::loadSheet()
 {
-    CachedResourceLoader* cachedResourceLoader = 0;
+    CachedResourceLoader* cachedResourceLoader = nullptr;
 
     XSLStyleSheet* rootSheet = parentStyleSheet();
 
