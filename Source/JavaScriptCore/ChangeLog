@@ -1,4 +1,4 @@
-2015-05-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+2015-05-19  Andreas Kling  <akling@apple.com>
 
         [JSC] Speed up URL encode/decode by using bitmaps instead of strchr().
         <https://webkit.org/b/145115>
@@ -10,7 +10,7 @@
         (JSC::decode):
         (JSC::globalFuncEscape):
 
-2015-05-19  Andreas Kling  <akling@apple.com>
+2015-05-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Move AtomicStringImpl table related operations from AtomicString to AtomicStringImpl
         https://bugs.webkit.org/show_bug.cgi?id=145109
