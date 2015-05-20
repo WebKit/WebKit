@@ -117,17 +117,11 @@ JSValue JSAudioContext::suspend(ExecState* exec)
     auto successCallback = [wrapper]() mutable {
         wrapper.resolve(nullptr);
     };
-    auto failureCallback = [wrapper]() mutable {
-        wrapper.reject(nullptr);
+    auto failureCallback = [wrapper](ExceptionCode value) mutable {
+        wrapper.reject(value);
     };
 
-    ExceptionCode ec = 0;
-    impl().suspendContext(WTF::move(successCallback), WTF::move(failureCallback), ec);
-
-    if (ec) {
-        setDOMException(exec, ec);
-        return jsUndefined();
-    }
+    impl().suspendContext(WTF::move(successCallback), WTF::move(failureCallback));
 
     return wrapper.promise();
 }
@@ -138,17 +132,11 @@ JSValue JSAudioContext::resume(ExecState* exec)
     auto successCallback = [wrapper]() mutable {
         wrapper.resolve(nullptr);
     };
-    auto failureCallback = [wrapper]() mutable {
-        wrapper.reject(nullptr);
+    auto failureCallback = [wrapper](ExceptionCode value) mutable {
+        wrapper.reject(value);
     };
 
-    ExceptionCode ec = 0;
-    impl().resumeContext(WTF::move(successCallback), WTF::move(failureCallback), ec);
-
-    if (ec) {
-        setDOMException(exec, ec);
-        return jsUndefined();
-    }
+    impl().resumeContext(WTF::move(successCallback), WTF::move(failureCallback));
 
     return wrapper.promise();
 }
@@ -159,17 +147,11 @@ JSValue JSAudioContext::close(ExecState* exec)
     auto successCallback = [wrapper]() mutable {
         wrapper.resolve(nullptr);
     };
-    auto failureCallback = [wrapper]() mutable {
-        wrapper.reject(nullptr);
+    auto failureCallback = [wrapper](ExceptionCode value) mutable {
+        wrapper.reject(value);
     };
 
-    ExceptionCode ec = 0;
-    impl().closeContext(WTF::move(successCallback), WTF::move(failureCallback), ec);
-
-    if (ec) {
-        setDOMException(exec, ec);
-        return jsUndefined();
-    }
+    impl().closeContext(WTF::move(successCallback), WTF::move(failureCallback));
 
     return wrapper.promise();
 }

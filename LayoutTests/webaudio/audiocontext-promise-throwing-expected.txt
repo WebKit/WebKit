@@ -1,0 +1,11 @@
+Tests that AudioContext resume/suspend/close methods reject promises when called on an OfflineAudioContext.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS context.resume() promise rejected with InvalidStateError value
+PASS context.suspend() promise rejected with InvalidStateError value
+PASS context.close() promise rejected with InvalidStateError value
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

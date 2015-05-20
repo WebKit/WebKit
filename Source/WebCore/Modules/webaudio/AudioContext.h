@@ -106,9 +106,11 @@ public:
 
     AudioListener* listener() { return m_listener.get(); }
 
-    void suspendContext(std::function<void()>, std::function<void()>, ExceptionCode&);
-    void resumeContext(std::function<void()>, std::function<void()>, ExceptionCode&);
-    void closeContext(std::function<void()>, std::function<void()>, ExceptionCode&);
+    typedef std::function<void(ExceptionCode)> FailureCallback;
+
+    void suspendContext(std::function<void()>, FailureCallback);
+    void resumeContext(std::function<void()>, FailureCallback);
+    void closeContext(std::function<void()>, FailureCallback);
     const AtomicString& state() const;
 
     // The AudioNode create methods are called on the main thread (from JavaScript).

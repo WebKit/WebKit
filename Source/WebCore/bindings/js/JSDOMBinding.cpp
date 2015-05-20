@@ -192,16 +192,14 @@ void reportCurrentException(ExecState* exec)
         errorObject = toJS(exec, globalObject, interfaceName::create(description)); \
         break;
 
-void setDOMException(ExecState* exec, ExceptionCode ec)
+JSValue createDOMException(ExecState* exec, ExceptionCode ec)
 {
-    if (!ec || exec->hadException())
-        return;
+    if (!ec)
+        return jsUndefined();
 
     // FIXME: Handle other WebIDL exception types.
-    if (ec == TypeError) {
-        throwTypeError(exec);
-        return;
-    }
+    if (ec == TypeError)
+        return createTypeError(exec);
 
     // FIXME: All callers to setDOMException need to pass in the right global object
     // for now, we're going to assume the lexicalGlobalObject.  Which is wrong in cases like this:
@@ -217,7 +215,15 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
     
     ASSERT(errorObject);
     addErrorInfo(exec, asObject(errorObject), true);
-    exec->vm().throwException(exec, errorObject);
+    return errorObject;
+}
+
+void setDOMException(ExecState* exec, ExceptionCode ec)
+{
+    if (!ec || exec->hadException())
+        return;
+
+    exec->vm().throwException(exec, createDOMException(exec, ec));
 }
 
 #undef TRY_TO_CREATE_EXCEPTION

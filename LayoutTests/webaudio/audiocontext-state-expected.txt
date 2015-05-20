@@ -18,7 +18,7 @@ Calling context.resume() (should fail)
 PASS context.resume() promise rejected (correctly)
 PASS context.state is "closed"
 Calling context.suspend() (should fail)
-PASS context.resume() promise rejected (correctly)
+PASS context.suspend() promise rejected (correctly)
 PASS context.state is "closed"
 PASS successfullyParsed is true
 

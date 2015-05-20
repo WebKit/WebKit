@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="resources/audio-testing.js"></script>
+<script src="resources/delay-testing.js"></script>
+</head>
+
+<body>
+
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Tests that AudioContext resume/suspend/close methods reject promises when called on an OfflineAudioContext.");
+
+function runTest() {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    
+    window.jsTestIsAsync = true;
+        
+    var context = new webkitOfflineAudioContext(1, sampleRate * renderLengthSeconds, sampleRate);
+
+    context.resume().then(function() {
+        testFailed('context.resume() promise resolved (should have rejected)');
+        finishJSTest();
+    }, function(e) {
+       if (e.name == 'InvalidStateError') 
+           testPassed('context.resume() promise rejected with InvalidStateError value');
+       else
+           testFailed('context.resume() promise rejected, but without InvalidStateError value');
+    });
+
+    context.suspend().then(function() {
+        testFailed('context.suspend() promise resolved (should have rejected)');
+        finishJSTest();
+    }, function(e) {
+       if (e.name == 'InvalidStateError') 
+           testPassed('context.suspend() promise rejected with InvalidStateError value');
+       else
+           testFailed('context.suspend() promise rejected, but without InvalidStateError value');
+    });
+
+    context.close().then(function() {
+        testFailed('context.close() promise resolved (should have rejected)');
+        finishJSTest();
+    }, function(e) {
+       if (e.name == 'InvalidStateError')
+           testPassed('context.close() promise rejected with InvalidStateError value');
+       else
+           testFailed('context.close() promise rejected, but without InvalidStateError value');
+       finishJSTest();
+    });
+}
+
+runTest();
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html> 

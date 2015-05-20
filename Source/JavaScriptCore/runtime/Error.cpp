@@ -211,7 +211,7 @@ bool hasErrorInfo(ExecState* exec, JSObject* error)
 
 JSObject* throwTypeError(ExecState* exec)
 {
-    return exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Type error")));
+    return exec->vm().throwException(exec, createTypeError(exec));
 }
 
 JSObject* throwSyntaxError(ExecState* exec)
@@ -243,6 +243,11 @@ JSObject* createReferenceError(ExecState* exec, const String& message)
 JSObject* createSyntaxError(ExecState* exec, const String& message)
 {
     return createSyntaxError(exec, message, nullptr);
+}
+
+JSObject* createTypeError(ExecState* exec)
+{
+    return createTypeError(exec, ASCIILiteral("Type error"));
 }
 
 JSObject* createTypeError(ExecState* exec, const String& message)

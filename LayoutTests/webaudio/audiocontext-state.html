@@ -96,8 +96,10 @@ function resumeSucceededIncorrectly() {
     finishJSTest();
 }
 
-function resumeFailedCorrectly() {
+function resumeFailedCorrectly(value) {
     testPassed('context.resume() promise rejected (correctly)');
+    if (typeof value != 'undefined')
+        testFailed('No value should be passed to the context.resume() promise rejected callback');
     shouldBe('context.state', '"closed"');
 
     debug('Calling context.suspend() (should fail)');
@@ -110,7 +112,9 @@ function suspendSucceededIncorrectly() {
 }
 
 function suspendFailedCorrectly() {
-    testPassed('context.resume() promise rejected (correctly)');
+    testPassed('context.suspend() promise rejected (correctly)');
+    if (typeof value != 'undefined')
+        testFailed('No value should be passed to the context.suspend() promise rejected callback');
     shouldBe('context.state', '"closed"');
     finishJSTest();
 }

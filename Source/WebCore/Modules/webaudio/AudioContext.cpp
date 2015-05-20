@@ -1101,13 +1101,13 @@ void AudioContext::decrementActiveSourceCount()
     --m_activeSourceCount;
 }
 
-void AudioContext::suspendContext(std::function<void()> successCallback, std::function<void()> failureCallback, ExceptionCode& ec)
+void AudioContext::suspendContext(std::function<void()> successCallback, FailureCallback failureCallback)
 {
     ASSERT(successCallback);
     ASSERT(failureCallback);
 
     if (isOfflineContext()) {
-        ec = INVALID_STATE_ERR;
+        failureCallback(INVALID_STATE_ERR);
         return;
     }
 
@@ -1117,7 +1117,7 @@ void AudioContext::suspendContext(std::function<void()> successCallback, std::fu
     }
 
     if (m_state == State::Closed || m_state == State::Interrupted || !m_destinationNode) {
-        failureCallback();
+        failureCallback(0);
         return;
     }
 
@@ -1134,13 +1134,13 @@ void AudioContext::suspendContext(std::function<void()> successCallback, std::fu
     });
 }
 
-void AudioContext::resumeContext(std::function<void()> successCallback, std::function<void()> failureCallback, ExceptionCode& ec)
+void AudioContext::resumeContext(std::function<void()> successCallback, FailureCallback failureCallback)
 {
     ASSERT(successCallback);
     ASSERT(failureCallback);
 
     if (isOfflineContext()) {
-        ec = INVALID_STATE_ERR;
+        failureCallback(INVALID_STATE_ERR);
         return;
     }
 
@@ -1150,7 +1150,7 @@ void AudioContext::resumeContext(std::function<void()> successCallback, std::fun
     }
 
     if (m_state == State::Closed || !m_destinationNode) {
-        failureCallback();
+        failureCallback(0);
         return;
     }
 
@@ -1167,12 +1167,13 @@ void AudioContext::resumeContext(std::function<void()> successCallback, std::fun
     });
 }
 
-void AudioContext::closeContext(std::function<void()> successCallback, std::function<void()>, ExceptionCode& ec)
+void AudioContext::closeContext(std::function<void()> successCallback, FailureCallback failureCallback)
 {
     ASSERT(successCallback);
+    ASSERT(failureCallback);
 
     if (isOfflineContext()) {
-        ec = INVALID_STATE_ERR;
+        failureCallback(INVALID_STATE_ERR);
         return;
     }
 

@@ -1,3 +1,16 @@
+2015-05-20  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        AudioContext resume/close/suspend should reject promises with a DOM exception in lieu of throwing exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=145064
+
+        Reviewed by Darin Adler.
+
+        Added default message for TypeError.
+
+        * runtime/Error.cpp:
+        (JSC::throwTypeError):
+        * runtime/Error.h:
+
 2015-05-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         No LLInt Test Failure: jsc-layout-tests.yaml/js/script-tests/object-literal-duplicate-properties.js.layout-no-llint

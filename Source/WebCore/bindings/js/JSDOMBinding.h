@@ -250,6 +250,7 @@ const JSC::HashTable& getHashTableForGlobalData(JSC::VM&, const JSC::HashTable& 
 WEBCORE_EXPORT void reportException(JSC::ExecState*, JSC::JSValue exception, CachedScript* = nullptr);
 void reportCurrentException(JSC::ExecState*);
 
+JSC::JSValue createDOMException(JSC::ExecState*, ExceptionCode);
 // Convert a DOM implementation exception code into a JavaScript exception in the execution state.
 WEBCORE_EXPORT void setDOMException(JSC::ExecState*, ExceptionCode);
 

@@ -1,3 +1,32 @@
+2015-05-20  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        AudioContext resume/close/suspend should reject promises with a DOM exception in lieu of throwing exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=145064
+
+        Reviewed by Darin Adler.
+
+        Rejecting resume/suspend/close promises with InvalidStateError values in case context is offline.
+        Removed unneeded calls to postTask for resolving/rejecting promises.
+        Adding promise rejection of DOM Exception values, 0 being equivalent of no error passed to reject callback.
+
+        Test: webaudio/audiocontext-promise-throwing.html
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::suspendContext): Rejecting promise in lieu of throwing exception.
+        (WebCore::AudioContext::resumeContext): Ditto.
+        (WebCore::AudioContext::closeContext): Ditto.
+        * Modules/webaudio/AudioContext.h:
+        * bindings/js/JSAudioContextCustom.cpp:
+        (WebCore::JSAudioContext::suspend): Removing ExceptionCode handling.
+        (WebCore::JSAudioContext::resume): Ditto.
+        (WebCore::JSAudioContext::close): Ditto.
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::createDOMException): Splitting DOM exception creation from throwing.
+        (WebCore::setDOMException): Ditto.
+        * bindings/js/JSDOMBinding.h: Adding createDOMException prototype.
+        * bindings/js/JSDOMPromise.h:
+        (WebCore::DeferredWrapper::reject<ExceptionCode>):
+
 2015-05-20  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r184645.
