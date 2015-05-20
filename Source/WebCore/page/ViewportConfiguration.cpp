@@ -103,6 +103,9 @@ bool ViewportConfiguration::shouldIgnoreHorizontalScalingConstraints() const
     if (!m_canIgnoreScalingConstraints)
         return false;
 
+    if (!m_configuration.allowsShrinkToFit)
+        return false;
+
     bool laidOutWiderThanViewport = m_contentSize.width() > layoutWidth();
     if (m_viewportArguments.width == ViewportArguments::ValueDeviceWidth)
         return laidOutWiderThanViewport;
@@ -116,6 +119,9 @@ bool ViewportConfiguration::shouldIgnoreHorizontalScalingConstraints() const
 bool ViewportConfiguration::shouldIgnoreVerticalScalingConstraints() const
 {
     if (!m_canIgnoreScalingConstraints)
+        return false;
+
+    if (!m_configuration.allowsShrinkToFit)
         return false;
 
     bool laidOutTallerThanViewport = m_contentSize.height() > layoutHeight();
@@ -188,6 +194,7 @@ ViewportConfiguration::Parameters ViewportConfiguration::webpageParameters()
     parameters.width = 980;
     parameters.widthIsSet = true;
     parameters.allowsUserScaling = true;
+    parameters.allowsShrinkToFit = true;
     parameters.minimumScale = 0.25;
     parameters.maximumScale = 5;
     return parameters;
@@ -206,6 +213,7 @@ ViewportConfiguration::Parameters ViewportConfiguration::textDocumentParameters(
 
     parameters.widthIsSet = true;
     parameters.allowsUserScaling = true;
+    parameters.allowsShrinkToFit = false;
     parameters.minimumScale = 0.25;
     parameters.maximumScale = 5;
     return parameters;
@@ -217,6 +225,7 @@ ViewportConfiguration::Parameters ViewportConfiguration::imageDocumentParameters
     parameters.width = 980;
     parameters.widthIsSet = true;
     parameters.allowsUserScaling = true;
+    parameters.allowsShrinkToFit = false;
     parameters.minimumScale = 0.01;
     parameters.maximumScale = 5;
     return parameters;
@@ -234,6 +243,7 @@ ViewportConfiguration::Parameters ViewportConfiguration::testingParameters()
     Parameters parameters;
     parameters.initialScale = 1;
     parameters.initialScaleIsSet = true;
+    parameters.allowsShrinkToFit = true;
     parameters.minimumScale = 1;
     parameters.maximumScale = 5;
     return parameters;
@@ -261,7 +271,7 @@ static inline void applyViewportArgument(ValueType& value, bool& valueIsSet, Vie
         valueIsSet = false;
 }
 
-static inline bool viewportArgumentUserZoomIsSet(float value)
+static inline bool booleanViewportArgumentIsSet(float value)
 {
     return !value || value == 1;
 }
@@ -292,8 +302,11 @@ void ViewportConfiguration::updateConfiguration()
         m_configuration.heightIsSet = viewportArgumentsOverridesHeight;
     }
 
-    if (viewportArgumentUserZoomIsSet(m_viewportArguments.userZoom))
+    if (booleanViewportArgumentIsSet(m_viewportArguments.userZoom))
         m_configuration.allowsUserScaling = m_viewportArguments.userZoom != 0.;
+
+    if (booleanViewportArgumentIsSet(m_viewportArguments.shrinkToFit))
+        m_configuration.allowsShrinkToFit = m_viewportArguments.shrinkToFit != 0.;
 }
 
 double ViewportConfiguration::viewportArgumentsLength(double length) const
@@ -437,6 +450,7 @@ ViewportConfigurationTextStream& ViewportConfigurationTextStream::operator<<(con
     dumpProperty(ts, "minimumScale", parameters.minimumScale);
     dumpProperty(ts, "maximumScale", parameters.maximumScale);
     dumpProperty(ts, "allowsUserScaling", parameters.allowsUserScaling);
+    dumpProperty(ts, "allowsShrinkToFit", parameters.allowsShrinkToFit);
 
     return ts;
 }

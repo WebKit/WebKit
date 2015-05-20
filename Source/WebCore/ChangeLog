@@ -1,3 +1,40 @@
+2015-05-20  Tim Horton  <timothy_horton@apple.com>
+
+        Add a mechanism to opt-out of the automatic scaling applied to not-really-responsive sites
+        https://bugs.webkit.org/show_bug.cgi?id=144760
+
+        Reviewed by Darin Adler.
+
+        Add a new viewport property, shrink-to-fit, which can be used to disable
+        the automatic scaling introduced in r181400. This provides sites with a
+        way to tell WebKit that they're really sure they want to be laid out at
+        window-width/height, even if they fail to fit within that size.
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::ViewportArguments::resolve):
+        (WebCore::findBooleanValue):
+        (WebCore::setViewportFeature):
+        * dom/ViewportArguments.h:
+        (WebCore::ViewportArguments::ViewportArguments):
+        (WebCore::ViewportArguments::operator==):
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::shouldIgnoreHorizontalScalingConstraints):
+        (WebCore::ViewportConfiguration::shouldIgnoreVerticalScalingConstraints):
+        (WebCore::ViewportConfiguration::webpageParameters):
+        (WebCore::ViewportConfiguration::textDocumentParameters):
+        (WebCore::ViewportConfiguration::imageDocumentParameters):
+        (WebCore::ViewportConfiguration::testingParameters):
+        (WebCore::booleanViewportArgumentIsSet):
+        (WebCore::ViewportConfiguration::updateConfiguration):
+        (WebCore::ViewportConfigurationTextStream::operator<<):
+        (WebCore::viewportArgumentUserZoomIsSet): Deleted.
+        * page/ViewportConfiguration.h:
+        (WebCore::ViewportConfiguration::Parameters::Parameters):
+        Plumb the shrink-to-fit viewport property through.
+        If shrink-to-fit is set to yes, or not set, we behave as usual; if it is
+        set to no, we will bail from shouldIgnore[Horizontal|Vertical]ScalingConstraints,
+        effectively disabling the automatic scaling introduced in r181400.
+
 2015-05-20  Antti Koivisto  <antti@apple.com>
 
         Assertion failure in WebCore::BidiRun::BidiRun()
