@@ -1,3 +1,21 @@
+2015-05-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r184420): [GTK] webkit_dom_html_element_get_children has been removed
+        https://bugs.webkit.org/show_bug.cgi?id=145174
+
+        Reviewed by Philippe Normand.
+
+        children property has been moved to Element, Document and
+        DocumentFragment to match the spec, so we need to expose the new
+        get_children and bring back webkit_dom_html_element_get_children()
+        as deprecated.
+
+        * bindings/gobject/WebKitDOMDeprecated.cpp:
+        (webkit_dom_html_element_get_children):
+        * bindings/gobject/WebKitDOMDeprecated.h:
+        * bindings/gobject/WebKitDOMDeprecated.symbols:
+        * bindings/gobject/webkitdom.symbols:
+
 2015-05-20  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         nullptr cleanup in WebCore/xml.

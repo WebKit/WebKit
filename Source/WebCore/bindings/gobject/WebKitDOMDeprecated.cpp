@@ -44,3 +44,9 @@ void webkit_dom_html_element_set_outer_html(WebKitDOMHTMLElement* self, const gc
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ELEMENT(self));
     webkit_dom_element_set_outer_html(WEBKIT_DOM_ELEMENT(self), contents, error);
 }
+
+WebKitDOMHTMLCollection* webkit_dom_html_element_get_children(WebKitDOMHTMLElement* self)
+{
+    g_return_val_if_fail(WEBKIT_DOM_IS_HTML_ELEMENT(self), nullptr);
+    return webkit_dom_element_get_children(WEBKIT_DOM_ELEMENT(self));
+}

@@ -132,6 +132,7 @@ gdouble webkit_dom_element_get_client_top(WebKitDOMElement*)
 gdouble webkit_dom_element_get_client_left(WebKitDOMElement*)
 gdouble webkit_dom_element_get_client_height(WebKitDOMElement*)
 gdouble webkit_dom_element_get_client_width(WebKitDOMElement*)
+WebKitDOMHTMLCollection* webkit_dom_element_get_children(WebKitDOMElement*)@2.10
 gboolean webkit_dom_element_has_attributes(WebKitDOMElement*)
 gboolean webkit_dom_element_has_attribute(WebKitDOMElement*, const gchar*)
 gboolean webkit_dom_element_has_attribute_ns(WebKitDOMElement*, const gchar*, const gchar*)

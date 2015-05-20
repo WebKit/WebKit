@@ -70,6 +70,17 @@ webkit_dom_html_element_get_outer_html(WebKitDOMHTMLElement* self);
 WEBKIT_DEPRECATED_FOR(webkit_dom_element_set_outer_html) void
 webkit_dom_html_element_set_outer_html(WebKitDOMHTMLElement* self, const gchar* contents, GError** error);
 
+/**
+ * webkit_dom_html_element_get_children:
+ * @self: A #WebKitDOMHTMLElement
+ *
+ * Returns: (transfer full): A #WebKitDOMHTMLCollection
+ *
+ * Deprecated: 2.10: Use webkit_dom_element_get_children() instead.
+ */
+WEBKIT_DEPRECATED_FOR(webkit_dom_element_get_children) WebKitDOMHTMLCollection*
+webkit_dom_html_element_get_children(WebKitDOMHTMLElement* self);
+
 G_END_DECLS
 
 #endif /* WEBKIT_DISABLE_DEPRECATED */
