@@ -1,5 +1,17 @@
 2015-05-20  Alex Christensen  <achristensen@webkit.org>
 
+        Use correct String for StringView in WTF API tests
+        https://bugs.webkit.org/show_bug.cgi?id=145226
+        rdar://problem/20361786
+
+        Reviewed by Benjamin Poulain.
+
+        * TestWebKitAPI/Tests/WTF/StringView.cpp:
+        (TestWebKitAPI::TEST):
+        Use patternHolder for pattern.
+
+2015-05-20  Alex Christensen  <achristensen@webkit.org>
+
         [Content Extensions] Relax restrictions on triggers that match everything.
         https://bugs.webkit.org/show_bug.cgi?id=145069
 

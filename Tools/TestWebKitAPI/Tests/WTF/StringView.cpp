@@ -402,7 +402,7 @@ TEST(WTF, StringViewFindIgnoringASCIICaseWithPatternLongerThanReference)
     String referenceHolder;
     StringView reference = stringViewFromUTF8(referenceHolder, "ABCÉEFG");
     String patternHolder;
-    StringView pattern = stringViewFromUTF8(referenceHolder, "ABCÉEFGA");
+    StringView pattern = stringViewFromUTF8(patternHolder, "ABCÉEFGA");
 
     EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference.findIgnoringASCIICase(pattern));
     EXPECT_EQ(static_cast<size_t>(0), pattern.findIgnoringASCIICase(reference));
