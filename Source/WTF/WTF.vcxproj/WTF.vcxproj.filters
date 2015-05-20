@@ -66,6 +66,9 @@
     <ClCompile Include="..\wtf\text\AtomicString.cpp">
       <Filter>text</Filter>
     </ClCompile>
+    <ClCompile Include="..\wtf\text\AtomicStringImpl.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
     <ClCompile Include="..\wtf\text\Base64.cpp">
       <Filter>text</Filter>
     </ClCompile>
@@ -84,7 +87,7 @@
     <ClCompile Include="..\wtf\text\WTFString.cpp">
       <Filter>text</Filter>
     </ClCompile>
-    <ClCompile Include="..\wtf\text\cf\AtomicStringCF.cpp">
+    <ClCompile Include="..\wtf\text\cf\AtomicStringImplCF.cpp">
       <Filter>text</Filter>
     </ClCompile>
     <ClCompile Include="..\wtf\text\cf\StringCF.cpp">

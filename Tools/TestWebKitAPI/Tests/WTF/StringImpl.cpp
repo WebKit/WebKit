@@ -525,7 +525,7 @@ TEST(WTF, StringImplSymbolToAtomicString)
     ASSERT_TRUE(reference->isSymbol());
     ASSERT_FALSE(reference->isAtomic());
 
-    RefPtr<StringImpl> atomic = AtomicString::add(reference.get());
+    RefPtr<StringImpl> atomic = AtomicStringImpl::add(reference.get());
     ASSERT_TRUE(atomic->isAtomic());
     ASSERT_FALSE(atomic->isSymbol());
     ASSERT_TRUE(reference->isSymbol());
@@ -538,7 +538,7 @@ TEST(WTF, StringImplSymbolEmptyToAtomicString)
     ASSERT_TRUE(reference->isSymbol());
     ASSERT_FALSE(reference->isAtomic());
 
-    RefPtr<StringImpl> atomic = AtomicString::add(reference.get());
+    RefPtr<StringImpl> atomic = AtomicStringImpl::add(reference.get());
     ASSERT_TRUE(atomic->isAtomic());
     ASSERT_FALSE(atomic->isSymbol());
     ASSERT_TRUE(reference->isSymbol());

@@ -3839,7 +3839,7 @@ String CodeBlock::nameForRegister(VirtualRegister virtualRegister)
         if (ptr->value.varOffset() == VarOffset(virtualRegister)) {
             // FIXME: This won't work from the compilation thread.
             // https://bugs.webkit.org/show_bug.cgi?id=115300
-            return String(ptr->key);
+            return ptr->key.get();
         }
     }
     if (virtualRegister == thisRegister())

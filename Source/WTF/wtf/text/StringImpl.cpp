@@ -111,7 +111,7 @@ StringImpl::~StringImpl()
     STRING_STATS_REMOVE_STRING(*this);
 
     if (isAtomic() && length() && !isSymbol())
-        AtomicString::remove(this);
+        AtomicStringImpl::remove(static_cast<AtomicStringImpl*>(this));
 
     if (isSymbol() && symbolRegistry())
         symbolRegistry()->remove(this);

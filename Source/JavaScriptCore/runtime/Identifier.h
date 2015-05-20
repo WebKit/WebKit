@@ -221,7 +221,7 @@ Ref<StringImpl> Identifier::add(VM* vm, const T* s, int length)
     if (!length)
         return *StringImpl::empty();
 
-    return *AtomicString::add(s, length);
+    return *AtomicStringImpl::add(s, length);
 }
 
 inline bool operator==(const Identifier& a, const Identifier& b)

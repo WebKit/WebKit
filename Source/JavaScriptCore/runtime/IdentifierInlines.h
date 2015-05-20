@@ -37,7 +37,7 @@ inline Identifier::Identifier(ExecState* exec, AtomicStringImpl* string)
 #ifndef NDEBUG
     checkCurrentAtomicStringTable(exec);
     if (string)
-        ASSERT_WITH_MESSAGE(!string->length() || string->isSymbol() || AtomicString::isInAtomicStringTable(string), "The atomic string comes from an other thread!");
+        ASSERT_WITH_MESSAGE(!string->length() || string->isSymbol() || AtomicStringImpl::isInAtomicStringTable(string), "The atomic string comes from an other thread!");
 #else
     UNUSED_PARAM(exec);
 #endif
@@ -49,7 +49,7 @@ inline Identifier::Identifier(ExecState* exec, const AtomicString& string)
 #ifndef NDEBUG
     checkCurrentAtomicStringTable(exec);
     if (!string.isNull())
-        ASSERT_WITH_MESSAGE(!string.length() || string.impl()->isSymbol() || AtomicString::isInAtomicStringTable(string.impl()), "The atomic string comes from an other thread!");
+        ASSERT_WITH_MESSAGE(!string.length() || string.impl()->isSymbol() || AtomicStringImpl::isInAtomicStringTable(string.impl()), "The atomic string comes from an other thread!");
 #else
     UNUSED_PARAM(exec);
 #endif
@@ -60,14 +60,14 @@ inline Ref<StringImpl> Identifier::add(ExecState* exec, StringImpl* r)
 #ifndef NDEBUG
     checkCurrentAtomicStringTable(exec);
 #endif
-    return *AtomicString::addWithStringTableProvider(*exec, r);
+    return *AtomicStringImpl::addWithStringTableProvider(*exec, r);
 }
 inline Ref<StringImpl> Identifier::add(VM* vm, StringImpl* r)
 {
 #ifndef NDEBUG
     checkCurrentAtomicStringTable(vm);
 #endif
-    return *AtomicString::addWithStringTableProvider(*vm, r);
+    return *AtomicStringImpl::addWithStringTableProvider(*vm, r);
 }
 
 inline Identifier Identifier::fromUid(VM* vm, StringImpl* uid)

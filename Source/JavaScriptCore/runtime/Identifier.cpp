@@ -45,7 +45,7 @@ Ref<StringImpl> Identifier::add(VM* vm, const char* c)
     if (!c[1])
         return *vm->smallStrings.singleCharacterStringRep(c[0]);
 
-    return *AtomicString::add(c);
+    return *AtomicStringImpl::add(c);
 }
 
 Ref<StringImpl> Identifier::add(ExecState* exec, const char* c)
@@ -64,7 +64,7 @@ Ref<StringImpl> Identifier::add8(VM* vm, const UChar* s, int length)
     if (!length)
         return *StringImpl::empty();
 
-    return *AtomicString::add(s, length);
+    return *AtomicStringImpl::add(s, length);
 }
 
 Identifier Identifier::from(ExecState* exec, unsigned value)

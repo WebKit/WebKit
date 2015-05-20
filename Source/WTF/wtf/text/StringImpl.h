@@ -131,7 +131,6 @@ class StringImpl {
     friend struct WTF::LCharBufferTranslator;
     friend struct WTF::SubstringTranslator;
     friend struct WTF::UCharBufferTranslator;
-    friend class AtomicStringImpl;
     friend class JSC::LLInt::Data;
     friend class JSC::LLIntOffsetsExtractor;
     
@@ -329,8 +328,6 @@ private:
 
         STRING_STATS_ADD_16BIT_STRING2(m_length, true);
     }
-
-    ~StringImpl();
 
 public:
     WTF_EXPORT_STRING_API static void destroy(StringImpl*);
@@ -806,6 +803,9 @@ public:
         ASSERT(isSymbol());
         return *reinterpret_cast<unsigned*>((tailPointer<SymbolRegistry*>() + 2));
     }
+
+protected:
+    ~StringImpl();
 
 private:
     bool requiresCopy() const

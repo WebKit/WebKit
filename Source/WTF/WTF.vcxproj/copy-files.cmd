@@ -28,6 +28,7 @@ echo Copying other files...
 for %%f in (
     ..\JavaScriptCore\create_hash_table
     wtf\text\AtomicString.cpp
+    wtf\text\AtomicStringImpl.cpp
     wtf\text\StringBuilder.cpp
     wtf\text\StringImpl.cpp
     wtf\text\WTFString.cpp

@@ -484,7 +484,7 @@ ALWAYS_INLINE AtomicStringImpl* JSString::toExistingAtomicString(ExecState* exec
         return static_cast<const JSRopeString*>(this)->resolveRopeToExistingAtomicString(exec);
     if (m_value.impl()->isAtomic())
         return static_cast<AtomicStringImpl*>(m_value.impl());
-    return AtomicString::find(m_value.impl());
+    return AtomicStringImpl::lookUp(m_value.impl());
 }
 
 inline const String& JSString::value(ExecState* exec) const

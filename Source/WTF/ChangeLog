@@ -1,3 +1,117 @@
+2015-05-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Move AtomicStringImpl table related operations from AtomicString to AtomicStringImpl
+        https://bugs.webkit.org/show_bug.cgi?id=145109
+
+        Reviewed by Darin Adler.
+
+        Now AtomicStringImpl table operations are located in AtomicString.
+        But they should be under AtomicStringImpl.
+        This patch simply moves these operations to AtomicStringImpl.
+
+        And this patch renames static AtomicString::find to static AtomicStringImpl::lookUp
+        because it conflicts with AtomicStringImpl's member function name.
+
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.vcxproj/copy-files.cmd:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/PlatformMac.cmake:
+        * wtf/PlatformWin.cmake:
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicString::lower):
+        (WTF::AtomicString::convertToASCIILowercase):
+        (WTF::AtomicString::fromUTF8Internal):
+        (WTF::AtomicStringTableLocker::AtomicStringTableLocker): Deleted.
+        (WTF::stringTable): Deleted.
+        (WTF::addToStringTable): Deleted.
+        (WTF::CStringTranslator::hash): Deleted.
+        (WTF::CStringTranslator::equal): Deleted.
+        (WTF::CStringTranslator::translate): Deleted.
+        (WTF::AtomicString::add): Deleted.
+        (WTF::UCharBufferTranslator::hash): Deleted.
+        (WTF::UCharBufferTranslator::equal): Deleted.
+        (WTF::UCharBufferTranslator::translate): Deleted.
+        (WTF::HashAndCharactersTranslator::hash): Deleted.
+        (WTF::HashAndCharactersTranslator::equal): Deleted.
+        (WTF::HashAndCharactersTranslator::translate): Deleted.
+        (WTF::HashAndUTF8CharactersTranslator::hash): Deleted.
+        (WTF::HashAndUTF8CharactersTranslator::equal): Deleted.
+        (WTF::HashAndUTF8CharactersTranslator::translate): Deleted.
+        (WTF::SubstringTranslator::translate): Deleted.
+        (WTF::SubstringTranslator8::hash): Deleted.
+        (WTF::SubstringTranslator8::equal): Deleted.
+        (WTF::SubstringTranslator16::hash): Deleted.
+        (WTF::SubstringTranslator16::equal): Deleted.
+        (WTF::LCharBufferTranslator::hash): Deleted.
+        (WTF::LCharBufferTranslator::equal): Deleted.
+        (WTF::LCharBufferTranslator::translate): Deleted.
+        (WTF::CharBufferFromLiteralDataTranslator::hash): Deleted.
+        (WTF::CharBufferFromLiteralDataTranslator::equal): Deleted.
+        (WTF::CharBufferFromLiteralDataTranslator::translate): Deleted.
+        (WTF::AtomicString::addFromLiteralData): Deleted.
+        (WTF::AtomicString::addSlowCase): Deleted.
+        (WTF::AtomicString::remove): Deleted.
+        (WTF::AtomicString::findSlowCase): Deleted.
+        (WTF::AtomicString::findInternal): Deleted.
+        (WTF::AtomicString::isInAtomicStringTable): Deleted.
+        * wtf/text/AtomicString.h:
+        (WTF::AtomicString::AtomicString):
+        (WTF::AtomicString::fromUTF8):
+        (WTF::AtomicString::find): Deleted.
+        (WTF::AtomicString::add): Deleted.
+        (WTF::AtomicString::addWithStringTableProvider): Deleted.
+        * wtf/text/AtomicStringImpl.cpp: Copied from Source/WTF/wtf/text/AtomicString.cpp.
+        (WTF::AtomicStringTableLocker::AtomicStringTableLocker):
+        (WTF::stringTable):
+        (WTF::addToStringTable):
+        (WTF::CStringTranslator::hash):
+        (WTF::CStringTranslator::equal):
+        (WTF::CStringTranslator::translate):
+        (WTF::AtomicStringImpl::add):
+        (WTF::UCharBufferTranslator::hash):
+        (WTF::UCharBufferTranslator::equal):
+        (WTF::UCharBufferTranslator::translate):
+        (WTF::HashAndCharactersTranslator::hash):
+        (WTF::HashAndCharactersTranslator::equal):
+        (WTF::HashAndCharactersTranslator::translate):
+        (WTF::HashAndUTF8CharactersTranslator::hash):
+        (WTF::HashAndUTF8CharactersTranslator::equal):
+        (WTF::HashAndUTF8CharactersTranslator::translate):
+        (WTF::SubstringTranslator::translate):
+        (WTF::SubstringTranslator8::hash):
+        (WTF::SubstringTranslator8::equal):
+        (WTF::SubstringTranslator16::hash):
+        (WTF::SubstringTranslator16::equal):
+        (WTF::LCharBufferTranslator::hash):
+        (WTF::LCharBufferTranslator::equal):
+        (WTF::LCharBufferTranslator::translate):
+        (WTF::CharBufferFromLiteralDataTranslator::hash):
+        (WTF::CharBufferFromLiteralDataTranslator::equal):
+        (WTF::CharBufferFromLiteralDataTranslator::translate):
+        (WTF::AtomicStringImpl::addLiteral):
+        (WTF::AtomicStringImpl::addSlowCase):
+        (WTF::AtomicStringImpl::remove):
+        (WTF::AtomicStringImpl::lookUpSlowCase):
+        (WTF::AtomicStringImpl::addUTF8):
+        (WTF::AtomicStringImpl::lookUpInternal):
+        (WTF::AtomicStringImpl::isInAtomicStringTable):
+        * wtf/text/AtomicStringImpl.h:
+        (WTF::AtomicStringImpl::lookUp):
+        (WTF::AtomicStringImpl::add):
+        (WTF::AtomicStringImpl::addWithStringTableProvider):
+        (WTF::AtomicStringImpl::AtomicStringImpl): Deleted.
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::~StringImpl):
+        * wtf/text/StringImpl.h:
+        * wtf/text/WTFString.h:
+        (WTF::String::String):
+        * wtf/text/cf/AtomicStringCF.cpp:
+        (WTF::AtomicString::add): Deleted.
+        * wtf/text/cf/AtomicStringImplCF.cpp: Renamed from Source/WTF/wtf/text/cf/AtomicStringCF.cpp.
+        (WTF::AtomicStringImpl::add):
+
 2015-05-19  Ting-Wei Lan  <lantw44@gmail.com>
 
         [SOUP] Use st_birthtime to get creation time of files on systems support it

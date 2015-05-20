@@ -35,41 +35,40 @@
 
 namespace WTF {
 
-class AtomicStringTable;
 struct AtomicStringHash;
 
 class AtomicString {
 public:
     WTF_EXPORT_PRIVATE static void init();
 
-    AtomicString() { }
-    AtomicString(const LChar* s) : m_string(add(s)) { }
-    AtomicString(const char* s) : m_string(add(s)) { }
-    AtomicString(const LChar* s, unsigned length) : m_string(add(s, length)) { }
-    AtomicString(const UChar* s, unsigned length) : m_string(add(s, length)) { }
-    AtomicString(const UChar* s, unsigned length, unsigned existingHash) : m_string(add(s, length, existingHash)) { }
-    AtomicString(const UChar* s) : m_string(add(s)) { }
+    AtomicString();
+    AtomicString(const LChar*);
+    AtomicString(const char*);
+    AtomicString(const LChar*, unsigned length);
+    AtomicString(const UChar*, unsigned length);
+    AtomicString(const UChar*, unsigned length, unsigned existingHash);
+    AtomicString(const UChar*);
 
     template<size_t inlineCapacity>
     explicit AtomicString(const Vector<UChar, inlineCapacity>& characters)
-        : m_string(add(characters.data(), characters.size()))
+        : m_string(AtomicStringImpl::add(characters.data(), characters.size()))
     {
     }
 
-    ATOMICSTRING_CONVERSION AtomicString(StringImpl* imp) : m_string(add(imp)) { }
-    AtomicString(AtomicStringImpl* imp) : m_string(imp) { }
-    ATOMICSTRING_CONVERSION AtomicString(const String& s) : m_string(add(s.impl())) { }
-    AtomicString(StringImpl* baseString, unsigned start, unsigned length) : m_string(add(baseString, start, length)) { }
+    AtomicString(AtomicStringImpl*);
+    ATOMICSTRING_CONVERSION AtomicString(StringImpl*);
+    ATOMICSTRING_CONVERSION AtomicString(const String&);
+    AtomicString(StringImpl* baseString, unsigned start, unsigned length);
 
     enum ConstructFromLiteralTag { ConstructFromLiteral };
     AtomicString(const char* characters, unsigned length, ConstructFromLiteralTag)
-        : m_string(addFromLiteralData(characters, length))
+        : m_string(AtomicStringImpl::addLiteral(characters, length))
     {
     }
 
     template<unsigned charactersCount>
     ALWAYS_INLINE AtomicString(const char (&characters)[charactersCount], ConstructFromLiteralTag)
-        : m_string(addFromLiteralData(characters, charactersCount - 1))
+        : m_string(AtomicStringImpl::addLiteral(characters, charactersCount - 1))
     {
         COMPILE_ASSERT(charactersCount > 1, AtomicStringFromLiteralNotEmpty);
         COMPILE_ASSERT((charactersCount - 1 <= ((unsigned(~0) - sizeof(StringImpl)) / sizeof(LChar))), AtomicStringFromLiteralCannotOverflow);
@@ -86,21 +85,6 @@ public:
     AtomicString(WTF::HashTableDeletedValueType) : m_string(WTF::HashTableDeletedValue) { }
     bool isHashTableDeletedValue() const { return m_string.isHashTableDeletedValue(); }
 
-    static AtomicStringImpl* find(LChar* characters, unsigned length)
-    {
-        return findInternal(characters, length);
-    }
-    static AtomicStringImpl* find(UChar* characters, unsigned length)
-    {
-        return findInternal(characters, length);
-    }
-    static AtomicStringImpl* find(StringImpl* string)
-    {
-        if (!string || string->isAtomic())
-            return static_cast<AtomicStringImpl*>(string);
-        return findSlowCase(*string);
-    }
-
     operator const String&() const { return m_string; }
     const String& string() const { return m_string; };
 
@@ -110,7 +94,7 @@ public:
     const LChar* characters8() const { return m_string.characters8(); }
     const UChar* characters16() const { return m_string.characters16(); }
     unsigned length() const { return m_string.length(); }
-    
+
     UChar operator[](unsigned int i) const { return m_string[i]; }
 
     WTF_EXPORT_STRING_API static AtomicString number(int);
@@ -163,7 +147,7 @@ public:
     template<unsigned matchLength>
     bool endsWith(const char (&prefix)[matchLength], bool caseSensitive = true) const
         { return m_string.endsWith<matchLength>(prefix, caseSensitive); }
-    
+
     WTF_EXPORT_STRING_API AtomicString convertToASCIILowercase() const;
     WTF_EXPORT_STRING_API AtomicString lower() const;
     AtomicString upper() const { return AtomicString(impl()->upper()); }
@@ -176,13 +160,11 @@ public:
     bool isNull() const { return m_string.isNull(); }
     bool isEmpty() const { return m_string.isEmpty(); }
 
-    static void remove(StringImpl*);
-    
 #if USE(CF)
-    AtomicString(CFStringRef s) :  m_string(add(s)) { }
-#endif    
+    AtomicString(CFStringRef);
+#endif
 #ifdef __OBJC__
-    AtomicString(NSString* s) : m_string(add((CFStringRef)s)) { }
+    AtomicString(NSString*);
     operator NSString*() const { return m_string; }
 #endif
 
@@ -195,70 +177,16 @@ public:
     void show() const;
 #endif
 
-    WTF_EXPORT_STRING_API static RefPtr<StringImpl> add(const LChar*);
-    ALWAYS_INLINE static RefPtr<StringImpl> add(const char* s) { return add(reinterpret_cast<const LChar*>(s)); };
-    WTF_EXPORT_STRING_API static RefPtr<StringImpl> add(const LChar*, unsigned length);
-    WTF_EXPORT_STRING_API static RefPtr<StringImpl> add(const UChar*, unsigned length);
-    ALWAYS_INLINE static RefPtr<StringImpl> add(const char* s, unsigned length) { return add(reinterpret_cast<const LChar*>(s), length); };
-    WTF_EXPORT_STRING_API static Ref<StringImpl> add(const UChar*, unsigned length, unsigned existingHash);
-    WTF_EXPORT_STRING_API static RefPtr<StringImpl> add(const UChar*);
-    WTF_EXPORT_STRING_API static RefPtr<StringImpl> add(StringImpl*, unsigned offset, unsigned length);
-    ALWAYS_INLINE static RefPtr<StringImpl> add(StringImpl* string)
-    {
-        if (!string)
-            return string;
-        return add(*string);
-    }
-    WTF_EXPORT_STRING_API static Ref<StringImpl> addFromLiteralData(const char* characters, unsigned length);
-#if USE(CF)
-    WTF_EXPORT_STRING_API static RefPtr<StringImpl> add(CFStringRef);
-#endif
-
-    template<typename StringTableProvider>
-    ALWAYS_INLINE static RefPtr<StringImpl> addWithStringTableProvider(StringTableProvider& stringTableProvider, StringImpl* string)
-    {
-        if (!string)
-            return string;
-        return add(*stringTableProvider.atomicStringTable(), *string);
-    }
-
-#if !ASSERT_DISABLED
-    WTF_EXPORT_STRING_API static bool isInAtomicStringTable(StringImpl*);
-#endif
-
 private:
     // The explicit constructors with AtomicString::ConstructFromLiteral must be used for literals.
     AtomicString(ASCIILiteral);
 
-    String m_string;
-
-    ALWAYS_INLINE static Ref<StringImpl> add(StringImpl& string)
-    {
-        if (string.isAtomic()) {
-            ASSERT_WITH_MESSAGE(!string.length() || isInAtomicStringTable(&string), "The atomic string comes from an other thread!");
-            return string;
-        }
-        return addSlowCase(string);
-    }
-
-    ALWAYS_INLINE static Ref<StringImpl> add(AtomicStringTable& stringTable, StringImpl& string)
-    {
-        if (string.isAtomic()) {
-            ASSERT_WITH_MESSAGE(!string.length() || isInAtomicStringTable(&string), "The atomic string comes from an other thread!");
-            return string;
-        }
-        return addSlowCase(stringTable, string);
-    }
-
-    WTF_EXPORT_STRING_API static Ref<StringImpl> addSlowCase(StringImpl&);
-    WTF_EXPORT_STRING_API static Ref<StringImpl> addSlowCase(AtomicStringTable&, StringImpl&);
-
-    WTF_EXPORT_STRING_API static AtomicStringImpl* findSlowCase(StringImpl&);
     WTF_EXPORT_STRING_API static AtomicString fromUTF8Internal(const char*, const char*);
 
-    WTF_EXPORT_STRING_API static AtomicStringImpl* findInternal(const LChar*, unsigned length);
-    WTF_EXPORT_STRING_API static AtomicStringImpl* findInternal(const UChar*, unsigned length);
+    String m_string;
 };
+
+static_assert(sizeof(AtomicString) == sizeof(String), "AtomicString and String must be same size!");
 
 inline bool operator==(const AtomicString& a, const AtomicString& b) { return a.impl() == b.impl(); }
 bool operator==(const AtomicString&, const LChar*);
@@ -293,6 +221,74 @@ inline bool equalIgnoringASCIICase(const String& a, const AtomicString& b) { ret
 template <unsigned charactersCount>
 inline bool equalIgnoringASCIICase(const AtomicString& a, const char (&b)[charactersCount]) { return equalIgnoringASCIICase<charactersCount>(a.impl(), b); }
 
+inline AtomicString::AtomicString()
+{
+}
+
+inline AtomicString::AtomicString(const LChar* s)
+    : m_string(AtomicStringImpl::add(s))
+{
+}
+
+inline AtomicString::AtomicString(const char* s)
+    : m_string(AtomicStringImpl::add(s))
+{
+}
+
+inline AtomicString::AtomicString(const LChar* s, unsigned length)
+    : m_string(AtomicStringImpl::add(s, length))
+{
+}
+
+inline AtomicString::AtomicString(const UChar* s, unsigned length)
+    : m_string(AtomicStringImpl::add(s, length))
+{
+}
+
+inline AtomicString::AtomicString(const UChar* s, unsigned length, unsigned existingHash)
+    : m_string(AtomicStringImpl::add(s, length, existingHash))
+{
+}
+
+inline AtomicString::AtomicString(const UChar* s)
+    : m_string(AtomicStringImpl::add(s))
+{
+}
+
+inline AtomicString::AtomicString(AtomicStringImpl* imp)
+    : m_string(imp)
+{
+}
+
+inline AtomicString::AtomicString(StringImpl* imp)
+    : m_string(AtomicStringImpl::add(imp))
+{
+}
+
+inline AtomicString::AtomicString(const String& s)
+    : m_string(AtomicStringImpl::add(s.impl()))
+{
+}
+
+inline AtomicString::AtomicString(StringImpl* baseString, unsigned start, unsigned length)
+    : m_string(AtomicStringImpl::add(baseString, start, length))
+{
+}
+
+#if USE(CF)
+inline AtomicString::AtomicString(CFStringRef s)
+    :  m_string(AtomicStringImpl::add(s))
+{
+}
+#endif
+
+#ifdef __OBJC__
+inline AtomicString::AtomicString(NSString* s)
+    : m_string(AtomicStringImpl::add((CFStringRef)s))
+{
+}
+#endif
+
 // Define external global variables for the commonly used atomic strings.
 // These are only usable from the main thread.
 #ifndef ATOMICSTRING_HIDE_GLOBALS
@@ -320,7 +316,7 @@ inline AtomicString AtomicString::fromUTF8(const char* characters)
         return nullAtom;
     if (!*characters)
         return emptyAtom;
-    return fromUTF8Internal(characters, 0);
+    return fromUTF8Internal(characters, nullptr);
 }
 #endif
 
