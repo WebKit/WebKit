@@ -1,3 +1,14 @@
+2015-05-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [JSC] Add missing copyrights and licenses for some scripts
+        https://bugs.webkit.org/show_bug.cgi?id=145044
+
+        Reviewed by Darin Adler.
+
+        * build-symbol-table-index.py:
+        * create-llvm-ir-from-source-file.py:
+        * create-symbol-table-index.py:
+
 2015-05-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Slightly better node previews in arrays
