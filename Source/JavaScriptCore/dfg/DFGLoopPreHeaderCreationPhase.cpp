@@ -88,11 +88,23 @@ public:
                     existingPreHeader = predecessor;
                     continue;
                 }
-                if (existingPreHeader == predecessor)
-                    continue;
+                // We won't have duplicate entries in the predecessors list.
+                DFG_ASSERT(m_graph, nullptr, existingPreHeader != predecessor);
                 needsNewPreHeader = true;
                 break;
             }
+            
+            // This phase should only be run on a DFG where unreachable blocks have been pruned.
+            // We also don't allow loops back to root. This means that every loop header has got
+            // to have a pre-header.
+            DFG_ASSERT(m_graph, nullptr, existingPreHeader);
+            
+            // We are looking at the predecessors of a loop header. A loop header has to have
+            // some predecessor other than the pre-header. We must have broken critical edges
+            // because that is the DFG SSA convention. Therefore, each predecessor of the loop
+            // header must have only one successor.
+            DFG_ASSERT(m_graph, nullptr, existingPreHeader->terminal()->op() == Jump);
+            
             if (!needsNewPreHeader)
                 continue;
             

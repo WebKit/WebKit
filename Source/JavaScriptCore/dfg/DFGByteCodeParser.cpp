@@ -607,6 +607,8 @@ private:
 
     NodeOrigin currentNodeOrigin()
     {
+        // FIXME: We should set the forExit origin only on those nodes that can exit.
+        // https://bugs.webkit.org/show_bug.cgi?id=145204
         if (m_currentSemanticOrigin.isSet())
             return NodeOrigin(m_currentSemanticOrigin, currentCodeOrigin());
         return NodeOrigin(currentCodeOrigin());
