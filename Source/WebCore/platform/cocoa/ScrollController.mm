@@ -477,6 +477,11 @@ const ScrollSnapAnimatorState& ScrollController::scrollSnapPointState(ScrollEven
     return (axis == ScrollEventAxis::Horizontal) ? *m_horizontalScrollSnapState : *m_verticalScrollSnapState;
 }
 
+bool ScrollController::hasActiveScrollSnapTimerForAxis(ScrollEventAxis axis) const
+{
+    return (axis == ScrollEventAxis::Horizontal) ? m_horizontalScrollSnapTimer.isActive() : m_verticalScrollSnapTimer.isActive();
+}
+
 static inline WheelEventStatus toWheelEventStatus(PlatformWheelEventPhase phase, PlatformWheelEventPhase momentumPhase)
 {
     if (phase == PlatformWheelEventPhaseNone) {

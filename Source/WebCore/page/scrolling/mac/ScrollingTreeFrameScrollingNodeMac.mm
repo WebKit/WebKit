@@ -185,6 +185,7 @@ void ScrollingTreeFrameScrollingNodeMac::handleWheelEvent(const PlatformWheelEve
 
     m_scrollController.handleWheelEvent(wheelEvent);
 #if ENABLE(CSS_SCROLL_SNAP)
+    scrollingTree().setMainFrameIsScrollSnapping(m_scrollController.isScrollSnapInProgress());
     if (m_scrollController.activeScrollSnapIndexDidChange())
         scrollingTree().setActiveScrollSnapIndices(scrollingNodeID(), m_scrollController.activeScrollSnapIndexForAxis(ScrollEventAxis::Horizontal), m_scrollController.activeScrollSnapIndexForAxis(ScrollEventAxis::Vertical));
 #endif
@@ -573,6 +574,18 @@ void ScrollingTreeFrameScrollingNodeMac::immediateScrollOnAxis(ScrollEventAxis a
 float ScrollingTreeFrameScrollingNodeMac::pageScaleFactor() const
 {
     return frameScaleFactor();
+}
+
+void ScrollingTreeFrameScrollingNodeMac::startScrollSnapTimer(ScrollEventAxis)
+{
+    scrollingTree().setMainFrameIsScrollSnapping(true);
+}
+
+void ScrollingTreeFrameScrollingNodeMac::stopScrollSnapTimer(ScrollEventAxis axis)
+{
+    ScrollEventAxis otherAxis = (axis == ScrollEventAxis::Horizontal) ? ScrollEventAxis::Vertical : ScrollEventAxis::Horizontal;
+    if (!m_scrollController.hasActiveScrollSnapTimerForAxis(otherAxis))
+        scrollingTree().setMainFrameIsScrollSnapping(false);
 }
 #endif
 

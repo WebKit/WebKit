@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2009, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2009, 2012, 2015 Apple Inc. All rights reserved.
  *
  * Portions are Copyright (C) 1998 Netscape Communications Corporation.
  *
@@ -877,6 +877,9 @@ private:
     virtual bool isRubberBandInProgress() const override;
     virtual bool updatesScrollLayerPositionOnMainThread() const override { return true; }
     virtual bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const override;
+#if ENABLE(CSS_SCROLL_SNAP)
+    bool isScrollSnapInProgress() const override;
+#endif
 
 #if PLATFORM(IOS)
     void registerAsTouchEventListenerForScrolling();

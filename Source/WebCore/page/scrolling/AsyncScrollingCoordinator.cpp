@@ -611,6 +611,13 @@ void AsyncScrollingCoordinator::removeTestDeferralForReason(WheelEventTestTrigge
 }
 #endif
 
+#if ENABLE(CSS_SCROLL_SNAP)
+bool AsyncScrollingCoordinator::isScrollSnapInProgress() const
+{
+    return scrollingTree()->isScrollSnapInProgress();
+}
+#endif
+    
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)

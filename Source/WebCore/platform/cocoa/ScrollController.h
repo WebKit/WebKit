@@ -124,6 +124,7 @@ public:
     void setActiveScrollSnapIndexForAxis(ScrollEventAxis, unsigned);
     bool activeScrollSnapIndexDidChange() const { return m_activeScrollSnapIndexDidChange; }
     void setScrollSnapIndexDidChange(bool state) { m_activeScrollSnapIndexDidChange = state; }
+    bool hasActiveScrollSnapTimerForAxis(ScrollEventAxis) const;
 #endif
 
 private:
