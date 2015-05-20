@@ -12,12 +12,8 @@ const unusualEventNames = {
     "webkittransitionend": "webkitTransitionEnd",
 };
 
-const windowEvents = [
+const eventsInGlobalEventHandlers = [
     "abort",
-    "animationend",
-    "animationiteration",
-    "animationstart",
-    "beforeunload",
     "blur",
     "canplay",
     "canplaythrough",
@@ -37,7 +33,6 @@ const windowEvents = [
     "ended",
     "error",
     "focus",
-    "hashchange",
     "input",
     "invalid",
     "keydown",
@@ -47,7 +42,6 @@ const windowEvents = [
     "loadeddata",
     "loadedmetadata",
     "loadstart",
-    "message",
     "mousedown",
     "mouseenter",
     "mouseleave",
@@ -56,160 +50,76 @@ const windowEvents = [
     "mouseover",
     "mouseup",
     "mousewheel",
+    "pause",
+    "play",
+    "playing",
+    "progress",
+    "ratechange",
+    "reset",
+    "scroll",
+    "seeked",
+    "seeking",
+    "select",
+    "stalled",
+    "submit",
+    "suspend",
+    "timeupdate",
+    "volumechange",
+    "waiting",
+    "search",
+    "wheel"
+];
+
+const eventsInWindowEventHandlers = [
+    "beforeunload",
+    "hashchange",
+    "message",
     "offline",
     "online",
     "pagehide",
     "pageshow",
-    "pause",
-    "play",
-    "playing",
     "popstate",
-    "progress",
-    "ratechange",
-    "reset",
-    "resize",
-    "scroll",
-    "search",
-    "seeked",
-    "seeking",
-    "select",
-    "stalled",
     "storage",
-    "submit",
-    "suspend",
-    "timeupdate",
-    "transitionend",
     "unload",
-    "volumechange",
-    "waiting",
-    "webkitanimationend",
-    "webkitanimationiteration",
-    "webkitanimationstart",
-    "webkittransitionend",
-    "wheel",
 ];
 
-const documentEvents = [
-    "abort",
+const elementAndDocumentEvents = [
     "beforecopy",
     "beforecut",
     "beforepaste",
-    "blur",
-    "change",
-    "click",
-    "contextmenu",
     "copy",
     "cut",
-    "dblclick",
-    "drag",
-    "dragend",
-    "dragenter",
-    "dragleave",
-    "dragover",
-    "dragstart",
-    "drop",
-    "error",
-    "focus",
-    "input",
-    "invalid",
-    "keydown",
-    "keypress",
-    "keyup",
-    "load",
-    "mousedown",
-    "mouseenter",
-    "mouseleave",
-    "mousemove",
-    "mouseout",
-    "mouseover",
-    "mouseup",
-    "mousewheel",
     "paste",
-    "readystatechange",
-    "reset",
-    "scroll",
-    "search",
-    "select",
-    "selectionchange",
     "selectstart",
-    "submit",
-    "wheel",
 ];
 
-const elementEvents = [
-    "abort",
+const elementAndWindowEvents = [
     "animationend",
     "animationiteration",
     "animationstart",
-    "beforecopy",
-    "beforecut",
-    "beforeload",
-    "beforepaste",
-    "blur",
-    "canplay",
-    "canplaythrough",
-    "change",
-    "click",
-    "contextmenu",
-    "copy",
-    "cut",
-    "dblclick",
-    "drag",
-    "dragend",
-    "dragenter",
-    "dragleave",
-    "dragover",
-    "dragstart",
-    "drop",
-    "durationchange",
-    "emptied",
-    "ended",
-    "error",
-    "focus",
-    "focusin",
-    "focusout",
-    "input",
-    "invalid",
-    "keydown",
-    "keypress",
-    "keyup",
-    "load",
-    "loadeddata",
-    "loadedmetadata",
-    "loadstart",
-    "mousedown",
-    "mouseenter",
-    "mouseleave",
-    "mousemove",
-    "mouseout",
-    "mouseover",
-    "mouseup",
-    "mousewheel",
-    "paste",
-    "pause",
-    "play",
-    "playing",
-    "progress",
-    "ratechange",
-    "reset",
-    "scroll",
-    "search",
-    "seeked",
-    "seeking",
-    "select",
-    "selectstart",
-    "stalled",
-    "submit",
-    "suspend",
-    "timeupdate",
     "transitionend",
-    "volumechange",
-    "waiting",
     "webkitanimationend",
     "webkitanimationiteration",
     "webkitanimationstart",
-    "webkittransitionend",
-    "wheel",
+    "webkittransitionend"
+];
+
+const uniqueWindowEvents = [
+    "resize"
+];
+
+const uniqueDocumentEvents = [
+    "selectionchange",
+    "readystatechange"
+];
+
+const uniqueElementEvents = [
+    "beforeload"
+];
+
+const elementBodyAndFrameSetEvents = [
+    "focusin",
+    "focusout"
 ];
 
 const bodyElementWindowForwardedEvents = [
@@ -335,6 +245,10 @@ function arrayDifference(a, b)
         return b.indexOf(item) < 0;
     });
 }
+
+const windowEvents = arrayUnion(eventsInGlobalEventHandlers, eventsInWindowEventHandlers, elementAndWindowEvents, uniqueWindowEvents);
+const documentEvents = arrayUnion(eventsInGlobalEventHandlers, elementAndDocumentEvents, uniqueDocumentEvents);
+const elementEvents = arrayUnion(eventsInGlobalEventHandlers, elementAndDocumentEvents, elementAndWindowEvents, elementBodyAndFrameSetEvents, uniqueElementEvents);
 
 const allEventNames = arrayUnion(windowEvents, documentEvents, elementEvents, bodyElementWindowForwardedEvents, bodyElementDocumentForwardedEvents, nonEventNames);
 

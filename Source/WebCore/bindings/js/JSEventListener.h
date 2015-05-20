@@ -29,6 +29,7 @@
 
 namespace WebCore {
 
+class DOMWindow;
 class EventTarget;
 class HTMLElement;
 class JSDOMGlobalObject;
@@ -84,10 +85,14 @@ void setEventHandlerAttribute(JSC::ExecState&, JSC::JSObject&, EventTarget&, con
 // Like the functions above, but for attributes that forward event handlers to the window object rather than setting them on the target.
 JSC::JSValue windowEventHandlerAttribute(HTMLElement&, const AtomicString& eventType);
 void setWindowEventHandlerAttribute(JSC::ExecState&, JSC::JSObject&, HTMLElement&, const AtomicString& eventType, JSC::JSValue);
+JSC::JSValue windowEventHandlerAttribute(DOMWindow&, const AtomicString& eventType);
+void setWindowEventHandlerAttribute(JSC::ExecState&, JSC::JSObject&, DOMWindow&, const AtomicString& eventType, JSC::JSValue);
 
 // Like the functions above, but for attributes that forward event handlers to the document rather than setting them on the target.
 JSC::JSValue documentEventHandlerAttribute(HTMLElement&, const AtomicString& eventType);
 void setDocumentEventHandlerAttribute(JSC::ExecState&, JSC::JSObject&, HTMLElement&, const AtomicString& eventType, JSC::JSValue);
+JSC::JSValue documentEventHandlerAttribute(Document&, const AtomicString& eventType);
+void setDocumentEventHandlerAttribute(JSC::ExecState&, JSC::JSObject&, Document&, const AtomicString& eventType, JSC::JSValue);
 
 Ref<JSEventListener> createJSEventListenerForAdd(JSC::ExecState&, JSC::JSObject& listener, JSC::JSObject& wrapper);
 Ref<JSEventListener> createJSEventListenerForRemove(JSC::ExecState&, JSC::JSObject& listener, JSC::JSObject& wrapper);

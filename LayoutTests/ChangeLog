@@ -1,3 +1,15 @@
+2015-05-17  Sam Weinig  <sam@webkit.org>
+
+        Organize event handlers a bit
+        https://bugs.webkit.org/show_bug.cgi?id=145106
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/event-handler-attributes-expected.txt:
+        * fast/dom/event-handler-attributes.html:
+        Update for putting media related event handlers on Document in addition to
+        Element and DOMWindow.
+
 2015-05-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve Preview for NodeList / array like collections

@@ -9798,6 +9798,8 @@
 		7C3B79701908757B00B47A2D /* UserMessageHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserMessageHandler.h; sourceTree = "<group>"; };
 		7C3E510818DF8F3500C112F7 /* HTMLConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLConverter.h; sourceTree = "<group>"; };
 		7C3E510918DF8F3500C112F7 /* HTMLConverter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HTMLConverter.mm; sourceTree = "<group>"; };
+		7C4189AB1B07C170000FA757 /* GlobalEventHandlers.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GlobalEventHandlers.idl; sourceTree = "<group>"; };
+		7C4189AC1B07CBF2000FA757 /* WindowEventHandlers.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WindowEventHandlers.idl; sourceTree = "<group>"; };
 		7C48A6CE191C9D6500026674 /* WebKitNamespace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitNamespace.cpp; sourceTree = "<group>"; };
 		7C48A6CF191C9D6500026674 /* WebKitNamespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitNamespace.h; sourceTree = "<group>"; };
 		7C48A6D2191C9D8E00026674 /* WebKitNamespace.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebKitNamespace.idl; sourceTree = "<group>"; };
@@ -16918,6 +16920,7 @@
 				1403B99609EB13AF00797C7F /* DOMWindow.cpp */,
 				1403B99509EB13AF00797C7F /* DOMWindow.h */,
 				1403B90C09EB124500797C7F /* DOMWindow.idl */,
+				7C4189AC1B07CBF2000FA757 /* WindowEventHandlers.idl */,
 				517FBA17151AA71B00B57959 /* DOMWindowExtension.cpp */,
 				517FBA18151AA71B00B57959 /* DOMWindowExtension.h */,
 				97D2AD0114B823A60093DF32 /* DOMWindowProperty.cpp */,
@@ -23094,6 +23097,7 @@
 				A853123C11D0471B00D4D077 /* FragmentScriptingPermission.h */,
 				0720B09E14D3323500642955 /* GenericEventQueue.cpp */,
 				0720B09F14D3323500642955 /* GenericEventQueue.h */,
+				7C4189AB1B07C170000FA757 /* GlobalEventHandlers.idl */,
 				2442BBF81194C9D300D49469 /* HashChangeEvent.h */,
 				8482B7441198C32E00BFB005 /* HashChangeEvent.idl */,
 				45BAC2AF1360BBAB005DA258 /* IconURL.h */,

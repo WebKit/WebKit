@@ -1,3 +1,60 @@
+2015-05-17  Sam Weinig  <sam@webkit.org>
+
+        Organize event handlers a bit
+        https://bugs.webkit.org/show_bug.cgi?id=145106
+
+        Reviewed by Darin Adler.
+
+        - Add GlobalEventHandlers.idl (from https://html.spec.whatwg.org/multipage/webappapis.html#globaleventhandlers)
+          and move all event handlers shared by Element, Document and DOMWindow there. Put all the standard defined
+          event handlers at the top (commenting out the ones that aren't implemented yet) and the non-standard ones
+          at the bottom.
+
+          There is one change in behavior here. Previously, the media related event handlers where only exposed on
+          Element and DOMWindow. The spec says they should also be on Document, so this adds support for that (this
+          is tested in fast/dom/event-handler-attributes.html).
+
+        - Add WindowEventHandlers.idl (from https://html.spec.whatwg.org/multipage/webappapis.html#windoweventhandlers)
+          and move all event handlers shared by DOMWindow, HTMLBodyElement and HTMLFrameSetElement there. Put all the 
+          standard defined event handlers at the top (commenting out the ones that aren't implemented yet) and the 
+          non-standard ones at the bottom.
+
+        - Group remaining event handlers in Element, Document, DOMWindow, HTMLBodyElement and HTMLFrameSetElement by
+          their grouping, and add some FIXMEs for future cleaning.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        - Add GlobalEventHandlers.idl and WindowEventHandlers.idl.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        Add special cases for WindowEventHandler when used on DOMWindow and DocumentEventHandler when used on Document
+        so that event handlers using those extended attributes can be set on shared interfaces. This is used to allow
+        DOMWindow to implement WindowEventHandlers.
+
+        * dom/Document.idl:
+        Move event handlers to GlobalEventHandlers and have Document implement it. Group remaining event handlers.
+
+        * dom/Element.idl:
+        Move event handlers to GlobalEventHandlers and have Element implement it. Group remaining event handlers.
+
+        * dom/GlobalEventHandlers.idl:
+        Added.
+
+        * html/HTMLBodyElement.idl:
+        Move event handlers to WindowEventHandlers and have HTMLBodyElement implement it. Group remaining event handlers.
+        
+        * html/HTMLFrameSetElement.idl:
+        Move event handlers to WindowEventHandlers and have HTMLFrameSetElement implement it. Group remaining event handlers.
+
+        * page/DOMWindow.idl:
+        Move event handlers to GlobalEventHandlers and WindowEventHandlers and have DOMWindow implement both of them. Group 
+        remaining event handlers.
+
+        * page/WindowEventHandlers.idl:
+        Added.
+
 2015-05-19  Antti Koivisto  <antti@apple.com>
 
         Crash under WebCore::invalidateStyleRecursively

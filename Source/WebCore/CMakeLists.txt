@@ -400,6 +400,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/EventException.idl
     dom/EventTarget.idl
     dom/FocusEvent.idl
+    dom/GlobalEventHandlers.idl
     dom/HashChangeEvent.idl
     dom/KeyboardEvent.idl
     dom/MessageChannel.idl
@@ -630,6 +631,7 @@ set(WebCore_NON_SVG_IDL_FILES
     page/UserMessageHandlersNamespace.idl
     page/UserMessageHandler.idl
     page/WindowBase64.idl
+    page/WindowEventHandlers.idl
     page/WindowTimers.idl
     page/WorkerNavigator.idl
 
