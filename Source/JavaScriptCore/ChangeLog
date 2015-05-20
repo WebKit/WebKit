@@ -1,3 +1,38 @@
+2015-05-20  Andreas Kling  <akling@apple.com>
+
+        Eden collections should extend the IncrementalSweeper work list, not replace it.
+        <https://webkit.org/b/145213>
+        <rdar://problem/21002666>
+
+        Reviewed by Geoffrey Garen.
+
+        After an eden collection, the garbage collector was adding all MarkedBlocks containing
+        new objects to the IncrementalSweeper's work list, to make sure they didn't have to
+        wait until the next full collection before getting swept.
+
+        Or at least, that's what it thought it was doing. It turns out that IncrementalSweeper's
+        internal work list is really just a reference to Heap::m_blockSnapshot. I didn't realize
+        this when writing the post-eden sweep code, and instead made eden collections cancel
+        all pending sweeps and *replace* them with the list of blocks with new objects.
+
+        This made it so that rapidly occurring eden collections could prevent large numbers of
+        heap blocks from ever getting swept. This would manifest as accumulation of MarkedBlocks
+        when a system under heavy load was also allocating short lived objects at a high rate.
+        Things would eventually get cleaned up when there was a lull and a full collection was
+        allowed to run its heap sweep to completion.
+
+        Fix this by moving all management of the block snapshot to Heap. snapshotMarkedSpace()
+        now handles eden collections by merging the list of blocks with new objects into the
+        existing block snapshot.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::snapshotMarkedSpace):
+        (JSC::Heap::notifyIncrementalSweeper):
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::startSweeping):
+        (JSC::IncrementalSweeper::addBlocksAndContinueSweeping): Deleted.
+        * heap/IncrementalSweeper.h:
+
 2015-05-20  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         AudioContext resume/close/suspend should reject promises with a DOM exception in lieu of throwing exceptions

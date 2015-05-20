@@ -44,8 +44,7 @@ public:
     explicit IncrementalSweeper(VM*);
 #endif
 
-    void startSweeping(Vector<MarkedBlock*>&&);
-    void addBlocksAndContinueSweeping(Vector<MarkedBlock*>&&);
+    void startSweeping();
 
     JS_EXPORT_PRIVATE virtual void doWork() override;
     bool sweepNextBlock();
