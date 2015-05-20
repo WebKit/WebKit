@@ -1,3 +1,21 @@
+2015-05-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION(r181571): Build broken when USE(OPENGL_ES_2) is defined.
+        https://bugs.webkit.org/show_bug.cgi?id=145156
+
+        Reviewed by Alex Christensen.
+
+        No new tests, no behavior changes.
+
+        Vertex Array Objects are not available in OpenGLESv2.
+        Add guards to avoid using this when building with GLESv2.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::createVertexArray):
+        (WebCore::GraphicsContext3D::deleteVertexArray):
+        (WebCore::GraphicsContext3D::isVertexArray):
+        (WebCore::GraphicsContext3D::bindVertexArray):
+
 2015-05-19  Roger Fong  <roger_fong@apple.com>
 
         Upper half of volume control should be filled, not hollow.
