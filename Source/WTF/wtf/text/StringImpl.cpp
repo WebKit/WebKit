@@ -2198,6 +2198,20 @@ bool StringImpl::utf8Impl(const UChar* characters, unsigned length, char*& buffe
     return true;
 }
 
+CString StringImpl::utf8ForCharacters(const LChar* characters, unsigned length)
+{
+    if (!length)
+        return CString("", 0);
+    if (length > std::numeric_limits<unsigned>::max() / 3)
+        return CString();
+    Vector<char, 1024> bufferVector(length * 3);
+    char* buffer = bufferVector.data();
+    const LChar* source = characters;
+    ConversionResult result = convertLatin1ToUTF8(&source, source + length, &buffer, buffer + bufferVector.size());
+    ASSERT_UNUSED(result, result != targetExhausted); // (length * 3) should be sufficient for any conversion
+    return CString(bufferVector.data(), buffer - bufferVector.data());
+}
+
 CString StringImpl::utf8ForCharacters(const UChar* characters, unsigned length, ConversionMode mode)
 {
     if (!length)

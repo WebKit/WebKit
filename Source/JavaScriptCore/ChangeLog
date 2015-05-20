@@ -1,5 +1,22 @@
 2015-05-19  Andreas Kling  <akling@apple.com>
 
+        Give StringView a utf8() API.
+        <https://webkit.org/b/145201>
+
+        Reviewed by Anders Carlsson.
+
+        Use JSString::view() in a few places where we couldn't before due to StringView
+        lacking a utf8() API. This is a minor speed-up on Kraken's crypto subtests,
+        which like to call encode() with substring JSStrings.
+
+        * jsc.cpp:
+        (functionPrint):
+        (functionDebug):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::encode):
+
+2015-05-19  Andreas Kling  <akling@apple.com>
+
         [JSC] Speed up URL encode/decode by using bitmaps instead of strchr().
         <https://webkit.org/b/145115>
 

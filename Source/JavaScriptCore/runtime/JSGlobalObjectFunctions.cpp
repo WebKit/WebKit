@@ -64,7 +64,7 @@ static Bitmap<256> makeCharacterBitmap(const char (&characters)[charactersCount]
 
 static JSValue encode(ExecState* exec, const Bitmap<256>& doNotEscape)
 {
-    CString cstr = exec->argument(0).toString(exec)->value(exec).utf8(StrictConversion);
+    CString cstr = exec->argument(0).toString(exec)->view(exec).utf8(StrictConversion);
     if (!cstr.data())
         return exec->vm().throwException(exec, createURIError(exec, ASCIILiteral("String contained an illegal UTF-16 sequence.")));
 

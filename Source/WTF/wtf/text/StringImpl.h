@@ -512,6 +512,7 @@ public:
     bool isSubString() const { return bufferOwnership() == BufferSubstring; }
 #endif
 
+    static WTF_EXPORT_STRING_API CString utf8ForCharacters(const LChar* characters, unsigned length);
     static WTF_EXPORT_STRING_API CString utf8ForCharacters(const UChar* characters, unsigned length, ConversionMode = LenientConversion);
     WTF_EXPORT_STRING_API CString utf8ForRange(unsigned offset, unsigned length, ConversionMode = LenientConversion) const;
     WTF_EXPORT_STRING_API CString utf8(ConversionMode = LenientConversion) const;

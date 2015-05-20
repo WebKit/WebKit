@@ -30,8 +30,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <mutex>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/unicode/UTF8.h>
 
 namespace WTF {
+
+using namespace Unicode;
 
 bool StringView::containsIgnoringASCIICase(const StringView& matchString) const
 {
@@ -82,6 +85,15 @@ bool equalIgnoringASCIICase(StringView a, const char* b, unsigned bLength)
         return equalIgnoringASCIICase(a.characters8(), b, bLength);
 
     return equalIgnoringASCIICase(a.characters16(), b, bLength);
+}
+
+CString StringView::utf8(ConversionMode mode) const
+{
+    if (isNull())
+        return CString("", 0);
+    if (is8Bit())
+        return StringImpl::utf8ForCharacters(characters8(), length());
+    return StringImpl::utf8ForCharacters(characters16(), length(), mode);
 }
 
 #if CHECK_STRINGVIEW_LIFETIME

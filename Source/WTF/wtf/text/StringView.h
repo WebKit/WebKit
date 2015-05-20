@@ -30,6 +30,8 @@
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/ConversionMode.h>
 #include <wtf/text/LChar.h>
 #include <wtf/text/StringCommon.h>
 
@@ -95,6 +97,8 @@ public:
     WTF_EXPORT_STRING_API RetainPtr<NSString> createNSString() const;
     WTF_EXPORT_STRING_API RetainPtr<NSString> createNSStringWithoutCopying() const;
 #endif
+
+    WTF_EXPORT_STRING_API CString utf8(ConversionMode = LenientConversion) const;
 
     class UpconvertedCharacters;
     UpconvertedCharacters upconvertedCharacters() const;

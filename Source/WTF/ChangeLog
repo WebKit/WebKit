@@ -1,3 +1,20 @@
+2015-05-19  Andreas Kling  <akling@apple.com>
+
+        Give StringView a utf8() API.
+        <https://webkit.org/b/145201>
+
+        Reviewed by Anders Carlsson
+
+        Added an LChar version of StringImpl::utf8ForCharacters() and use that to give
+        StringView a utf8() API just like String has.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::utf8ForCharacters):
+        * wtf/text/StringImpl.h:
+        * wtf/text/StringView.cpp:
+        (WTF::StringView::utf8):
+        * wtf/text/StringView.h:
+
 2015-05-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Move AtomicStringImpl table related operations from AtomicString to AtomicStringImpl
