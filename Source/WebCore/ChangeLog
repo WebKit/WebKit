@@ -1,3 +1,20 @@
+2015-05-20  Dean Jackson  <dino@apple.com>
+
+        Label text for default buttons don’t have the correct white color
+        https://bugs.webkit.org/show_bug.cgi?id=145221
+        <rdar://problem/20985817>
+
+        Reviewed by Tim Horton.
+
+        Use a 85% solid white for the active text color on buttons.
+
+        As has been disappointingly pointed out in other patches, we don't
+        have a good way to test ActiveButtonText since it only applies at
+        paint time.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::systemColor): Move to an 85% solid white.
+
 2015-05-20  Alexey Proskuryakov  <ap@apple.com>
 
         ThreadableLoaderOptions::isolatedCopy() doesn't produce a copy that is safe for sending to another thread
