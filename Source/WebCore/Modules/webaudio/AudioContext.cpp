@@ -1112,12 +1112,12 @@ void AudioContext::suspendContext(std::function<void()> successCallback, std::fu
     }
 
     if (m_state == State::Suspended) {
-        scriptExecutionContext()->postTask(successCallback);
+        successCallback();
         return;
     }
 
     if (m_state == State::Closed || m_state == State::Interrupted || !m_destinationNode) {
-        scriptExecutionContext()->postTask(failureCallback);
+        failureCallback();
         return;
     }
 
@@ -1145,12 +1145,12 @@ void AudioContext::resumeContext(std::function<void()> successCallback, std::fun
     }
 
     if (m_state == State::Running) {
-        scriptExecutionContext()->postTask(successCallback);
+        successCallback();
         return;
     }
 
     if (m_state == State::Closed || !m_destinationNode) {
-        scriptExecutionContext()->postTask(failureCallback);
+        failureCallback();
         return;
     }
 
@@ -1177,7 +1177,7 @@ void AudioContext::closeContext(std::function<void()> successCallback, std::func
     }
 
     if (m_state == State::Closed || !m_destinationNode) {
-        scriptExecutionContext()->postTask(successCallback);
+        successCallback();
         return;
     }
 

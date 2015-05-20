@@ -1,3 +1,17 @@
+2015-05-20  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        AudioContext suspend/resume/close should resolve promises immediately when state is already suspended/active/closed
+        https://bugs.webkit.org/show_bug.cgi?id=145164
+
+        Reviewed by Jer Noble.
+
+        Test: webaudio/audiocontext-promise.html
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::suspendContext): Immediatly call callbacks whenever possible to resolve/reject promises.
+        (WebCore::AudioContext::resumeContext): Ditto.
+        (WebCore::AudioContext::closeContext): Ditto
+
 2015-05-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r184420): [GTK] webkit_dom_html_element_get_children has been removed

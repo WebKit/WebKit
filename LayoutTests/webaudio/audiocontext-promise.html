@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+
+<body>
+
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Tests that AudioContext suspend method resolve promises immediately when already suspended.");
+
+function runTest() {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    
+    window.jsTestIsAsync = true;
+
+    context = new webkitAudioContext();
+
+    var isSuspended = false;
+    context.suspend().then(function() {
+        testPassed('context resolve callback called');
+        isSuspended = true;
+    }, function() {
+        testFailed('context reject callback called');
+    });
+
+    if (isSuspended)
+        testFailed('context resolve callback called synchronously');
+ 
+    var resolvePromise;
+    var promise = new Promise(function(resolve, reject) {
+        resolvePromise = resolve;
+    });
+    promise.then(function() {
+        if (isSuspended)
+            testPassed('JS promise callback called after context callback');
+        else
+            testFailed('JS promise callback called before context callback');
+        finishJSTest();
+    });
+    resolvePromise();
+}
+
+runTest();
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
