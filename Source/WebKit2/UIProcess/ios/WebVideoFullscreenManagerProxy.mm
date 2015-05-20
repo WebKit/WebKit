@@ -38,7 +38,7 @@
 #import <WebCore/TimeRanges.h>
 #import <WebKitSystemInterface.h>
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED > 90000
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
 #import "BackBoardServicesSPI.h"
 #endif
 
@@ -46,7 +46,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED <= 80200 || !HAVE(AVKIT)
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 90000 || !HAVE(AVKIT)
 
 PassRefPtr<WebVideoFullscreenManagerProxy> WebVideoFullscreenManagerProxy::create(WebPageProxy&)
 {
@@ -516,7 +516,7 @@ void WebVideoFullscreenManagerProxy::didCleanupFullscreen(uint64_t contextId)
 void WebVideoFullscreenManagerProxy::setVideoLayerFrame(uint64_t contextId, WebCore::FloatRect frame)
 {
     @autoreleasepool {
-#if __IPHONE_OS_VERSION_MIN_REQUIRED > 90000
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
         BKSAnimationFenceHandle* synchronizationFence = [UIWindow _synchronizedDrawingFence];
         mach_port_name_t fencePort = [synchronizationFence CAPort];
 #else
