@@ -59,6 +59,7 @@
 #include "RenderScrollbarPart.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "RenderWidget.h"
 #include "SVGRenderSupport.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
@@ -2031,6 +2032,10 @@ void RenderObject::destroy()
 #endif
 
     willBeDestroyed();
+    if (isWidget()) {
+        toRenderWidget(this)->deref();
+        return;
+    }
     delete this;
 }
 
