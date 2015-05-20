@@ -1,5 +1,22 @@
 2015-05-20  Joseph Pecoraro  <pecoraro@apple.com>
 
+        ES6: Implement Object.setPrototypeOf
+        https://bugs.webkit.org/show_bug.cgi?id=145202
+
+        Reviewed by Darin Adler.
+
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncProtoSetter):
+        (JSC::checkProtoSetterAccessAllowed):
+        Extract a helper to share this code between __proto__ setter and setPrototypeOf.
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorSetPrototypeOf):
+        Implementation is very similiar to __proto__ setter.
+
+2015-05-20  Joseph Pecoraro  <pecoraro@apple.com>
+
         ES6: Should not allow duplicate basic __proto__ properties in Object Literals
         https://bugs.webkit.org/show_bug.cgi?id=145138
 

@@ -4,9 +4,12 @@ description(
 
 shouldBe("('').__proto__", "String.prototype");
 shouldBe("(0).__proto__", "Number.prototype");
+shouldBe("(true).__proto__", "Boolean.prototype");
+shouldBe("(Symbol()).__proto__", "Symbol.prototype");
 shouldBe("([]).__proto__", "Array.prototype");
 shouldBe("({}).__proto__", "Object.prototype");
 shouldBe("(new Date).__proto__", "Date.prototype");
+shouldBe("(new Error).__proto__", "Error.prototype");
 shouldBe("(new Number).__proto__", "Number.prototype");
 shouldBe("(new Object).__proto__", "Object.prototype");
 shouldBe("(new String).__proto__", "String.prototype");
@@ -22,9 +25,12 @@ shouldBe("String.__proto__", "Object.__proto__");
 
 shouldBe("Object.getPrototypeOf('')", "String.prototype");
 shouldBe("Object.getPrototypeOf(0)", "Number.prototype");
+shouldBe("Object.getPrototypeOf(true)", "Boolean.prototype");
+shouldBe("Object.getPrototypeOf(Symbol())", "Symbol.prototype");
 shouldBe("Object.getPrototypeOf([])", "Array.prototype");
 shouldBe("Object.getPrototypeOf({})", "Object.prototype");
 shouldBe("Object.getPrototypeOf(new Date)", "Date.prototype");
+shouldBe("Object.getPrototypeOf(new Error)", "Error.prototype");
 shouldBe("Object.getPrototypeOf(new Number)", "Number.prototype");
 shouldBe("Object.getPrototypeOf(new Object)", "Object.prototype");
 shouldBe("Object.getPrototypeOf(new String)", "String.prototype");
@@ -40,9 +46,12 @@ shouldBe("Object.getPrototypeOf(String)", "Object.__proto__");
 
 shouldBeFalse("String.prototype.isPrototypeOf('')");
 shouldBeFalse("Number.prototype.isPrototypeOf(0)");
+shouldBeFalse("Boolean.prototype.isPrototypeOf(true)");
+shouldBeFalse("Symbol.prototype.isPrototypeOf(Symbol())");
 shouldBeTrue("Array.prototype.isPrototypeOf([])");
 shouldBeTrue("Object.prototype.isPrototypeOf({})");
 shouldBeTrue("Date.prototype.isPrototypeOf(new Date)");
+shouldBeTrue("Error.prototype.isPrototypeOf(new Error)");
 shouldBeTrue("Number.prototype.isPrototypeOf(new Number)");
 shouldBeTrue("Object.prototype.isPrototypeOf(new Object)");
 shouldBeTrue("String.prototype.isPrototypeOf(new String)");

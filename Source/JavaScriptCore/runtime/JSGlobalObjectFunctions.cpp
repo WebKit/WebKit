@@ -846,6 +846,13 @@ private:
     JSObject* m_thisObject;
 };
 
+bool checkProtoSetterAccessAllowed(ExecState* exec, JSObject* object)
+{
+    GlobalFuncProtoSetterFunctor functor(object);
+    exec->iterate(functor);
+    return functor.allowsAccess();
+}
+
 EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
 {
     if (exec->thisValue().isUndefinedOrNull()) 
@@ -859,9 +866,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
     if (!thisObject)
         return JSValue::encode(jsUndefined());
 
-    GlobalFuncProtoSetterFunctor functor(thisObject);
-    exec->iterate(functor);
-    if (!functor.allowsAccess())
+    if (!checkProtoSetterAccessAllowed(exec, thisObject))
         return JSValue::encode(jsUndefined());
 
     // Setting __proto__ to a non-object, non-null value is silently ignored to match Mozilla.

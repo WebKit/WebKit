@@ -8,11 +8,14 @@ o3.__proto__ = o2;
 
 // Try to create a cyclical prototype chain.
 shouldThrow("o1.__proto__ = o3;");
+shouldThrow("Object.setPrototypeOf(o1, o3)");
 
-// This changes behaviour, since __proto__ is an accessor on Object.prototype.
+// This changes __proto__ setter behaviour, since __proto__ is an accessor on Object.prototype.
 o1.__proto__ = null;
-
 shouldBeFalse("({}).hasOwnProperty.call(o1, '__proto__')");
 o1.__proto__ = o3;
 shouldBeTrue("({}).hasOwnProperty.call(o1, '__proto__')");
 shouldBe("Object.getPrototypeOf(o1)", "null");
+
+// But setPrototypeOf will still work, and will still detect the cycle.
+shouldThrow("Object.setPrototypeOf(o1, o3)");
