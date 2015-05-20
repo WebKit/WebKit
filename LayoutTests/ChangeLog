@@ -1,3 +1,12 @@
+2015-05-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Improve Preview for NodeList / array like collections
+        https://bugs.webkit.org/show_bug.cgi?id=145177
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/model/remote-object-expected.txt:
+
 2015-05-19  Chris Dumez  <cdumez@apple.com>
 
         [Mac] Font lookups are flakey due to caching

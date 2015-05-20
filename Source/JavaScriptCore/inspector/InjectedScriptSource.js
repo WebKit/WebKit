@@ -1053,12 +1053,12 @@ InjectedScript.RemoteObject.prototype = {
             if (name === "__proto__")
                 continue;
 
-            // Do not show "length" on array like objects in preview.
-            if (this.subtype === "array" && name === "length")
+            // For arrays, only allow indexes.
+            if (this.subtype === "array" && !isUInt32(name))
                 continue;
 
             // Do not show non-enumerable non-own properties. Special case to allow array indexes that may be on the prototype.
-            if (!descriptor.enumerable && !descriptor.isOwn && !(this.subtype === "array" && isUInt32(name)))
+            if (!descriptor.enumerable && !descriptor.isOwn && this.subtype !== "array")
                 continue;
 
             // If we have a filter, only show properties in the filter.

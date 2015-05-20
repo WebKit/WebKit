@@ -1,3 +1,16 @@
+2015-05-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Improve Preview for NodeList / array like collections
+        https://bugs.webkit.org/show_bug.cgi?id=145177
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.RemoteObject.prototype._appendPropertyPreviews):
+        For "array" like object previews skip over non-index properties.
+        We are not marking the object as lossless by choice, but we
+        may return to this decision later.
+
 2015-05-19  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(183787): JIT is enabled for all builds

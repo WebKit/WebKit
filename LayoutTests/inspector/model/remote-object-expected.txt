@@ -1578,7 +1578,7 @@ EXPRESSION: new Int32Array(new ArrayBuffer(16))
     "_type": "object",
     "_subtype": "array",
     "_description": "Int32Array",
-    "_lossless": false,
+    "_lossless": true,
     "_overflow": false,
     "_size": 4,
     "_properties": [
@@ -1601,21 +1601,6 @@ EXPRESSION: new Int32Array(new ArrayBuffer(16))
         "_name": "3",
         "_type": "number",
         "_value": "0"
-      },
-      {
-        "_name": "byteOffset",
-        "_type": "number",
-        "_value": "0"
-      },
-      {
-        "_name": "byteLength",
-        "_type": "number",
-        "_value": "16"
-      },
-      {
-        "_name": "buffer",
-        "_type": "object",
-        "_value": "ArrayBuffer"
       }
     ],
     "_entries": null
@@ -1634,7 +1619,7 @@ EXPRESSION: var intArray = new Int32Array(new ArrayBuffer(16)); for (var i = 0; 
     "_type": "object",
     "_subtype": "array",
     "_description": "Int32Array",
-    "_lossless": false,
+    "_lossless": true,
     "_overflow": false,
     "_size": 4,
     "_properties": [
@@ -1657,21 +1642,6 @@ EXPRESSION: var intArray = new Int32Array(new ArrayBuffer(16)); for (var i = 0; 
         "_name": "3",
         "_type": "number",
         "_value": "3"
-      },
-      {
-        "_name": "byteOffset",
-        "_type": "number",
-        "_value": "0"
-      },
-      {
-        "_name": "byteLength",
-        "_type": "number",
-        "_value": "16"
-      },
-      {
-        "_name": "buffer",
-        "_type": "object",
-        "_value": "ArrayBuffer"
       }
     ],
     "_entries": null
@@ -2297,16 +2267,6 @@ EXPRESSION: document.head.children
         "_type": "object",
         "_subtype": "node",
         "_value": "script"
-      },
-      {
-        "_name": "item",
-        "_type": "function",
-        "_value": ""
-      },
-      {
-        "_name": "namedItem",
-        "_type": "function",
-        "_value": ""
       }
     ],
     "_entries": null
@@ -2346,16 +2306,6 @@ EXPRESSION: document.getElementsByClassName('my-test')
         "_type": "object",
         "_subtype": "node",
         "_value": "p.my-test"
-      },
-      {
-        "_name": "constructor",
-        "_type": "object",
-        "_value": "NodeListConstructor"
-      },
-      {
-        "_name": "item",
-        "_type": "function",
-        "_value": ""
       }
     ],
     "_entries": null
@@ -2395,16 +2345,6 @@ EXPRESSION: document.querySelectorAll('.my-test')
         "_type": "object",
         "_subtype": "node",
         "_value": "p.my-test"
-      },
-      {
-        "_name": "constructor",
-        "_type": "object",
-        "_value": "NodeListConstructor"
-      },
-      {
-        "_name": "item",
-        "_type": "function",
-        "_value": ""
       }
     ],
     "_entries": null

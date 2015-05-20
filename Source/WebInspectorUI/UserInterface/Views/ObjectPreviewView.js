@@ -125,8 +125,8 @@ WebInspector.ObjectPreviewView = class ObjectPreviewView extends WebInspector.Ob
             if (preview.subtype === "regexp" || preview.subtype === "null") {
                 // Display null / regexps as simple formatted values.
                 displayObjectAsValue = true;
-            }  else if (preview.subtype !== "array" && preview.description !== "Object") {
-                // Class names for other non-array / non-basic-Object types.
+            } else if ((preview.subtype === "array" && preview.description !== "Array") || (preview.subtype !== "array" && preview.description !== "Object")) {
+                // Class names for other non-basic-Array / non-basic-Object types.
                 var nameElement = element.appendChild(document.createElement("span"));
                 nameElement.className = "object-preview-name";
                 nameElement.textContent = preview.description + " ";
