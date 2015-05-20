@@ -1,3 +1,20 @@
+2015-05-20  Anders Carlsson  <andersca@apple.com>
+
+        Refactor process pool enumeration code in WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=145218
+
+        Reviewed by Tim Horton.
+
+        Also make sure to keep the WebProcessPool objects alive for the duration of the various data store
+        operations. This is the first step towards having the data store create a single process pool lazily if
+        there are no web views associated with the data store.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchData):
+        (WebKit::WebsiteDataStore::removeData):
+        (WebKit::WebsiteDataStore::processPools):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2015-05-20  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Relax restrictions on triggers that match everything.

@@ -215,11 +215,7 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
 
     auto networkProcessAccessType = computeNetworkProcessAccessTypeForDataFetch(dataTypes, !isPersistent());
     if (networkProcessAccessType != ProcessAccessType::None) {
-        HashSet<WebProcessPool*> processPools;
-        for (auto& process : processes())
-            processPools.add(&process->processPool());
-
-        for (auto& processPool : processPools) {
+        for (auto processPool : processPools()) {
             switch (networkProcessAccessType) {
             case ProcessAccessType::OnlyIfLaunched:
                 if (!processPool->networkProcess())
@@ -235,7 +231,7 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
             }
 
             callbackAggregator->addPendingCallback();
-            processPool->networkProcess()->fetchWebsiteData(m_sessionID, dataTypes, [callbackAggregator](WebsiteData websiteData) {
+            processPool->networkProcess()->fetchWebsiteData(m_sessionID, dataTypes, [callbackAggregator, processPool](WebsiteData websiteData) {
                 callbackAggregator->removePendingCallback(WTF::move(websiteData));
             });
         }
@@ -335,15 +331,11 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
 
 #if ENABLE(DATABASE_PROCESS)
     if (dataTypes & WebsiteDataTypeIndexedDBDatabases && isPersistent()) {
-        HashSet<WebProcessPool*> processPools;
-        for (auto& process : processes())
-            processPools.add(&process->processPool());
-
-        for (auto& processPool : processPools) {
+        for (auto processPool : processPools()) {
             processPool->ensureDatabaseProcess();
 
             callbackAggregator->addPendingCallback();
-            processPool->databaseProcess()->fetchWebsiteData(m_sessionID, dataTypes, [callbackAggregator](WebsiteData websiteData) {
+            processPool->databaseProcess()->fetchWebsiteData(m_sessionID, dataTypes, [callbackAggregator, processPool](WebsiteData websiteData) {
                 callbackAggregator->removePendingCallback(WTF::move(websiteData));
             });
         }
@@ -417,11 +409,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
 
     auto networkProcessAccessType = computeNetworkProcessAccessTypeForDataRemoval(dataTypes, !isPersistent());
     if (networkProcessAccessType != ProcessAccessType::None) {
-        HashSet<WebProcessPool*> processPools;
-        for (auto& process : processes())
-            processPools.add(&process->processPool());
-
-        for (auto& processPool : processPools) {
+        for (auto processPool : processPools()) {
             switch (networkProcessAccessType) {
             case ProcessAccessType::OnlyIfLaunched:
                 if (!processPool->networkProcess())
@@ -437,7 +425,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
             }
 
             callbackAggregator->addPendingCallback();
-            processPool->networkProcess()->deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator] {
+            processPool->networkProcess()->deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator, processPool] {
                 callbackAggregator->removePendingCallback();
             });
         }
@@ -516,15 +504,11 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
 
 #if ENABLE(DATABASE_PROCESS)
     if (dataTypes & WebsiteDataTypeIndexedDBDatabases && isPersistent()) {
-        HashSet<WebProcessPool*> processPools;
-        for (auto& process : processes())
-            processPools.add(&process->processPool());
-
-        for (auto& processPool : processPools) {
+        for (auto processPool : processPools()) {
             processPool->ensureDatabaseProcess();
 
             callbackAggregator->addPendingCallback();
-            processPool->databaseProcess()->deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator]() {
+            processPool->databaseProcess()->deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator, processPool] {
                 callbackAggregator->removePendingCallback();
             });
         }
@@ -577,11 +561,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<Websi
 
     auto networkProcessAccessType = computeNetworkProcessAccessTypeForDataRemoval(dataTypes, !isPersistent());
     if (networkProcessAccessType != ProcessAccessType::None) {
-        HashSet<WebProcessPool*> processPools;
-        for (auto& process : processes())
-            processPools.add(&process->processPool());
-
-        for (auto& processPool : processPools) {
+        for (auto processPool : processPools()) {
             switch (networkProcessAccessType) {
             case ProcessAccessType::OnlyIfLaunched:
                 if (!processPool->networkProcess())
@@ -603,7 +583,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<Websi
             }
 
             callbackAggregator->addPendingCallback();
-            processPool->networkProcess()->deleteWebsiteDataForOrigins(m_sessionID, dataTypes, origins, cookieHostNames, [callbackAggregator] {
+            processPool->networkProcess()->deleteWebsiteDataForOrigins(m_sessionID, dataTypes, origins, cookieHostNames, [callbackAggregator, processPool] {
                 callbackAggregator->removePendingCallback();
             });
         }
@@ -697,15 +677,11 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<Websi
 
 #if ENABLE(DATABASE_PROCESS)
     if (dataTypes & WebsiteDataTypeIndexedDBDatabases && isPersistent()) {
-        HashSet<WebProcessPool*> processPools;
-        for (auto& process : processes())
-            processPools.add(&process->processPool());
-
-        for (auto& processPool : processPools) {
+        for (auto processPool : processPools()) {
             processPool->ensureDatabaseProcess();
 
             callbackAggregator->addPendingCallback();
-            processPool->databaseProcess()->deleteWebsiteDataForOrigins(m_sessionID, dataTypes, origins, [callbackAggregator]() {
+            processPool->databaseProcess()->deleteWebsiteDataForOrigins(m_sessionID, dataTypes, origins, [callbackAggregator, processPool] {
                 callbackAggregator->removePendingCallback();
             });
         }
@@ -750,6 +726,15 @@ void WebsiteDataStore::webProcessDidCloseConnection(WebProcessProxy& webProcessP
 {
     if (m_storageManager)
         m_storageManager->processDidCloseConnection(webProcessProxy, connection);
+}
+
+HashSet<RefPtr<WebProcessPool>> WebsiteDataStore::processPools() const
+{
+    HashSet<RefPtr<WebProcessPool>> processPools;
+    for (auto& process : processes())
+        processPools.add(&process->processPool());
+
+    return processPools;
 }
 
 }

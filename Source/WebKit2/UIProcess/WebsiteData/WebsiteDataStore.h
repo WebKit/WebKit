@@ -40,6 +40,7 @@ namespace WebKit {
 
 class StorageManager;
 class WebPageProxy;
+class WebProcessPool;
 struct WebsiteDataRecord;
 
 class WebsiteDataStore : public RefCounted<WebsiteDataStore>, public WebProcessLifetimeObserver {
@@ -82,6 +83,8 @@ private:
 
     void platformInitialize();
     void platformDestroy();
+
+    HashSet<RefPtr<WebProcessPool>> processPools() const;
 
     const uint64_t m_identifier;
     const WebCore::SessionID m_sessionID;
