@@ -64,6 +64,8 @@ public:
     
     void setMainFrameIsRubberBanding(bool);
     bool isRubberBandInProgress();
+    void setMainFrameIsScrollSnapping(bool);
+    bool isScrollSnapInProgress();
 
     virtual void invalidate() { }
     WEBCORE_EXPORT virtual void commitNewTreeState(std::unique_ptr<ScrollingStateTree>);
@@ -161,24 +163,25 @@ private:
     FloatPoint m_mainFrameScrollPosition;
 
     Mutex m_swipeStateMutex;
-    bool m_rubberBandsAtLeft;
-    bool m_rubberBandsAtRight;
-    bool m_rubberBandsAtTop;
-    bool m_rubberBandsAtBottom;
-    bool m_mainFramePinnedToTheLeft;
-    bool m_mainFramePinnedToTheRight;
-    bool m_mainFramePinnedToTheTop;
-    bool m_mainFramePinnedToTheBottom;
-    bool m_mainFrameIsRubberBanding;
-    ScrollPinningBehavior m_scrollPinningBehavior;
-    ScrollingNodeID m_latchedNode;
+    ScrollPinningBehavior m_scrollPinningBehavior { DoNotPin };
+    ScrollingNodeID m_latchedNode { 0 };
 
-    bool m_scrollingPerformanceLoggingEnabled;
-    
-    bool m_isHandlingProgrammaticScroll;
-    unsigned m_fixedOrStickyNodeCount;
+    unsigned m_fixedOrStickyNodeCount { 0 };
+
+    bool m_rubberBandsAtLeft { true };
+    bool m_rubberBandsAtRight { true };
+    bool m_rubberBandsAtTop { true };
+    bool m_rubberBandsAtBottom { true };
+    bool m_mainFramePinnedToTheLeft { true };
+    bool m_mainFramePinnedToTheRight { true };
+    bool m_mainFramePinnedToTheTop { true };
+    bool m_mainFramePinnedToTheBottom { true };
+    bool m_mainFrameIsRubberBanding { false };
+    bool m_mainFrameIsScrollSnapping { false };
+    bool m_scrollingPerformanceLoggingEnabled { false };
+    bool m_isHandlingProgrammaticScroll { false };
 };
-
+    
 } // namespace WebCore
 
 #define SPECIALIZE_TYPE_TRAITS_SCROLLING_TREE(ToValueTypeName, predicate) \

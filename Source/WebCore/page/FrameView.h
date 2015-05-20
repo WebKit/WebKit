@@ -4,7 +4,7 @@
              (C) 1998, 1999 Torben Weis (weis@kde.org)
              (C) 1999 Lars Knoll (knoll@kde.org)
              (C) 1999 Antti Koivisto (koivisto@kde.org)
-   Copyright (C) 2004-2009, 2014 Apple Inc. All rights reserved.
+   Copyright (C) 2004-2009, 2014-2015 Apple Inc. All rights reserved.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -538,7 +538,8 @@ public:
     FloatRect exposedRect() const { return m_exposedRect; }
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    virtual void updateSnapOffsets() override;
+    void updateSnapOffsets() override;
+    bool isScrollSnapInProgress() const override;
 #endif
 
     virtual float adjustScrollStepForFixedContent(float step, ScrollbarOrientation, ScrollGranularity) override;

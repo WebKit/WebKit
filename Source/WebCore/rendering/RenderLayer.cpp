@@ -3204,6 +3204,17 @@ void RenderLayer::updateSnapOffsets()
     RenderBox* box = enclosingElement()->renderBox();
     updateSnapOffsetsForScrollableArea(*this, *downcast<HTMLElement>(enclosingElement()), *box, box->style());
 }
+
+bool RenderLayer::isScrollSnapInProgress() const
+{
+    if (!scrollsOverflow())
+        return false;
+    
+    if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
+        return scrollAnimator->isScrollSnapInProgress();
+    
+    return false;
+}
 #endif
 
 int RenderLayer::verticalScrollbarWidth(OverlayScrollbarSizeRelevancy relevancy) const

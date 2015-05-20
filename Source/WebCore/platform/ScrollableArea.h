@@ -230,6 +230,7 @@ public:
     virtual IntRect scrollableAreaBoundingBox() const = 0;
 
     virtual bool isRubberBandInProgress() const { return false; }
+    virtual bool isScrollSnapInProgress() const { return false; }
 
     virtual bool scrollAnimatorEnabled() const { return false; }
 

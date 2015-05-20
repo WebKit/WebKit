@@ -102,6 +102,10 @@ private:
     virtual bool isRubberBandInProgress() const override;
     virtual void setScrollPinningBehavior(ScrollPinningBehavior) override;
 
+#if ENABLE(CSS_SCROLL_SNAP)
+    bool isScrollSnapInProgress() const override;
+#endif
+
     WEBCORE_EXPORT virtual void syncChildPositions(const LayoutRect& viewportRect) override;
     WEBCORE_EXPORT virtual void scrollableAreaScrollbarLayerDidChange(ScrollableArea&, ScrollbarOrientation) override;
 
