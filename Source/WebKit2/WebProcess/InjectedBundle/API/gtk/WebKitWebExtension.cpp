@@ -33,6 +33,82 @@
 
 using namespace WebKit;
 
+/**
+ * SECTION: WebKitWebExtension
+ * @Short_description: Represents a WebExtension of the WebProcess
+ * @Title: WebKitWebExtension
+ *
+ * WebKitWebExtension is a loadable module for the WebProcess. It allows you to execute code in the
+ * WebProcess and being able to use the DOM API, to change any request or to inject custom
+ * JavaScript code, for example.
+ *
+ * To create a WebKitWebExtension you should write a module with an initialization function that could
+ * be either webkit_web_extension_initialize() with prototype #WebKitWebExtensionInitializeFunction or
+ * webkit_web_extension_initialize_with_user_data() with prototype #WebKitWebExtensionInitializeWithUserDataFunction.
+ * This function has to be public and it has to use the #G_MODULE_EXPORT macro. It is called when the
+ * web process is initialized.
+ *
+ * <informalexample><programlisting>
+ * static void
+ * web_page_created_callback (WebKitWebExtension *extension,
+ *                            WebKitWebPage      *web_page,
+ *                            gpointer            user_data)
+ * {
+ *     g_print ("Page %d created for %s\n",
+ *              webkit_web_page_get_id (web_page),
+ *              webkit_web_page_get_uri (web_page));
+ * }
+ *
+ * G_MODULE_EXPORT void
+ * webkit_web_extension_initialize (WebKitWebExtension *extension)
+ * {
+ *     g_signal_connect (extension, "page-created",
+ *                       G_CALLBACK (web_page_created_callback),
+ *                       NULL);
+ * }
+ * </programlisting></informalexample>
+ *
+ * The previous piece of code shows a trivial example of an extension that notifies when
+ * a #WebKitWebPage is created.
+ *
+ * WebKit has to know where it can find the created WebKitWebExtension. To do so you
+ * should use the webkit_web_context_set_web_extensions_directory() function. The signal
+ * #WebKitWebContext::initialize-web-extensions is the recommended place to call it.
+ *
+ * To provide the initialization data used by the webkit_web_extension_initialize_with_user_data()
+ * function, you have to call webkit_web_context_set_web_extensions_initialization_user_data() with
+ * the desired data as parameter. You can see an example of this in the following piece of code:
+ *
+ * <informalexample><programlisting>
+ * #define WEB_EXTENSIONS_DIRECTORY /<!-- -->* ... *<!-- -->/
+ *
+ * static void
+ * initialize_web_extensions (WebKitWebContext *context,
+ *                            gpointer          user_data)
+ * {
+ *   /<!-- -->* Web Extensions get a different ID for each Web Process *<!-- -->/
+ *   static guint32 unique_id = 0;
+ *
+ *   webkit_web_context_set_web_extensions_directory (
+ *      context, WEB_EXTENSIONS_DIRECTORY);
+ *   webkit_web_context_set_web_extensions_initialization_user_data (
+ *      context, g_variant_new_uint32 (unique_id++));
+ * }
+ *
+ * int main (int argc, char **argv)
+ * {
+ *   g_signal_connect (webkit_web_context_get_default (),
+ *                    "initialize-web-extensions",
+ *                     G_CALLBACK (initialize_web_extensions),
+ *                     NULL);
+ *
+ *   GtkWidget *view = webkit_web_view_new ();
+ *
+ *   /<!-- -->* ... *<!-- -->/
+ * }
+ * </programlisting></informalexample>
+ */
+
 enum {
     PAGE_CREATED,
 

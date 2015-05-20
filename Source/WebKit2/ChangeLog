@@ -1,3 +1,19 @@
+2015-05-20  Marcos Chavarría Teijeiro  <mchavarria@igalia.com>
+
+        [GTK] Add some documentation to WebKitWebExtension
+        https://bugs.webkit.org/show_bug.cgi?id=142786
+
+        Reviewed by Carlos Garcia Campos.
+
+        WebKitWebExtension API documentation lacks of some details and the information
+        available is in some contributors blog posts. I add the section
+        documentation with a small guide about how to use WebExtensions.
+
+        The code examples were taken from Carlos García and Adrián Pérez blog
+        posts.
+
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.cpp:
+
 2015-05-20  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         Rename WebsiteDataStore::isNonPersistent() to WebsiteDataStore::isPersistent().
