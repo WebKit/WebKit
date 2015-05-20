@@ -604,6 +604,11 @@ String AXSearchFieldCancelButtonText()
     return WEB_UI_STRING("cancel", "accessibility description for a search field cancel button");
 }
 
+String AXAutoFillButtonText()
+{
+    return WEB_UI_STRING("autofill", "accessibility description for a password field AutoFill button");
+}
+
 String AXButtonActionVerb()
 {
     return WEB_UI_STRING("press", "Verb stating the action that will occur when a button is pressed, as used by accessibility");

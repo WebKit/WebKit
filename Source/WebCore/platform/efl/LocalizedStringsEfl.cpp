@@ -408,6 +408,11 @@ String AXSearchFieldCancelButtonText()
     return String::fromUTF8("cancel");
 }
 
+String AXAutoFillButtonText()
+{
+    return String::fromUTF8("autofill");
+}
+
 String AXButtonActionVerb()
 {
     return String::fromUTF8("press");
