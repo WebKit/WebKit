@@ -68,7 +68,7 @@ namespace WebCore {
         PreflightPolicy preflightPolicy; // If AccessControl is used, how to determine if a preflight is needed.
         CrossOriginRequestPolicy crossOriginRequestPolicy;
         RefPtr<SecurityOrigin> securityOrigin;
-        AtomicString initiator;
+        String initiator; // This cannot be an AtomicString, as isolatedCopy() wouldn't create an object that's safe for passing to another thread.
     };
 
     // Useful for doing loader operations from any thread (not threadsafe, 

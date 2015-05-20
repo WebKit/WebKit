@@ -58,7 +58,7 @@ std::unique_ptr<ThreadableLoaderOptions> ThreadableLoaderOptions::isolatedCopy()
     copy->crossOriginRequestPolicy = crossOriginRequestPolicy;
     if (securityOrigin)
         copy->securityOrigin = securityOrigin->isolatedCopy();
-    copy->initiator = initiator.string().isolatedCopy();
+    copy->initiator = initiator.isolatedCopy();
     return copy;
 }
 

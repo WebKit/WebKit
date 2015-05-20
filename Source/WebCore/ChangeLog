@@ -1,3 +1,15 @@
+2015-05-20  Alexey Proskuryakov  <ap@apple.com>
+
+        ThreadableLoaderOptions::isolatedCopy() doesn't produce a copy that is safe for sending to another thread
+        https://bugs.webkit.org/show_bug.cgi?id=145217
+
+        Reviewed by Anders Carlsson.
+
+        Caught by existing tests, rarely. I don't know how to catch such bugs more reliably.
+
+        * loader/ThreadableLoader.cpp: (WebCore::ThreadableLoaderOptions::isolatedCopy):
+        * loader/ThreadableLoader.h:
+
 2015-05-20  Tim Horton  <timothy_horton@apple.com>
 
         Add a mechanism to opt-out of the automatic scaling applied to not-really-responsive sites
