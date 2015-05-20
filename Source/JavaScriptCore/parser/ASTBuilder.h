@@ -719,8 +719,9 @@ public:
         assignmentStackDepth--;
         return result;
     }
-    
-    PropertyNode::Type getType(Property property) const { return property->type(); }
+
+    const Identifier* getName(const Property& property) const { return property->name(); }
+    PropertyNode::Type getType(const Property& property) const { return property->type(); }
 
     bool isResolve(ExpressionNode* expr) const { return expr->isResolveNode(); }
 

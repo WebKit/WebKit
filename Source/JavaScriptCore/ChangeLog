@@ -1,3 +1,49 @@
+2015-05-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ES6: Should not allow duplicate basic __proto__ properties in Object Literals
+        https://bugs.webkit.org/show_bug.cgi?id=145138
+
+        Reviewed by Darin Adler.
+
+        Implement ES6 Annex B.3.1, which disallows duplicate basic __proto__
+        properties in object literals. This doesn't affect computed properties,
+        shorthand properties, or getters/setters all of which avoid setting
+        the actual prototype of the object anyway.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        Remove out of date comment. Duplicate property names are allowed
+        now in ES6, they were not in ES5 strict mode.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::getName):
+        (JSC::ASTBuilder::getType):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::getName):
+        Add back getName to get the property name depending on the tree builder.
+        Also tighten up the parameter types.
+
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser<CharType>::parse):
+        In quick JSON literal parsing for eval, we actually need to evaluate
+        the __proto__ property assignment, instead of just building up a list
+        of direct properties. Only do this when not doing a strict JSON parse.
+
+        * parser/Nodes.h:
+        Add "Shorthand" to the list of PropertyNode types to allow it to
+        be distinguished without relying on other information.
+
+        * parser/Parser.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseProperty):
+        Add the Shorthand type when parsing a shorthand property.
+
+        (JSC::Parser<LexerType>::shouldCheckPropertyForUnderscoreProtoDuplicate):
+        (JSC::Parser<LexerType>::parseObjectLiteral):
+        (JSC::Parser<LexerType>::parseStrictObjectLiteral):
+        Check for duplicate __proto__ properties, and throw a SyntaxError
+        if that was the case.
+
 2015-05-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         [JSC] Add missing copyrights and licenses for some scripts

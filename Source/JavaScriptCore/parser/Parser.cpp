@@ -2035,7 +2035,7 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseProperty(TreeB
             JSTokenLocation location(tokenLocation());
             currentScope()->useVariable(ident, m_vm->propertyNames->eval == *ident);
             TreeExpression node = context.createResolve(location, ident, start);
-            return context.createProperty(ident, node, PropertyNode::Constant, PropertyNode::KnownDirect, complete);
+            return context.createProperty(ident, node, static_cast<PropertyNode::Type>(PropertyNode::Constant | PropertyNode::Shorthand), PropertyNode::KnownDirect, complete);
         }
 
         PropertyNode::Type type;
@@ -2135,14 +2135,27 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseGetterSetter(T
 }
 
 template <typename LexerType>
+template <class TreeBuilder> bool Parser<LexerType>::shouldCheckPropertyForUnderscoreProtoDuplicate(TreeBuilder& context, const TreeProperty& property)
+{
+    if (m_syntaxAlreadyValidated)
+        return false;
+
+    if (!context.getName(property))
+        return false;
+
+    // A Constant property that is not a Computed or Shorthand Constant property.
+    return context.getType(property) == PropertyNode::Constant;
+}
+
+template <typename LexerType>
 template <class TreeBuilder> TreeExpression Parser<LexerType>::parseObjectLiteral(TreeBuilder& context)
 {
     auto savePoint = createSavePoint();
     consumeOrFailWithFlags(OPENBRACE, TreeBuilder::DontBuildStrings, "Expected opening '{' at the start of an object literal");
-    JSTokenLocation location(tokenLocation());
 
     int oldNonLHSCount = m_nonLHSCount;
-    
+
+    JSTokenLocation location(tokenLocation());    
     if (match(CLOSEBRACE)) {
         next();
         return context.createObjectLiteral(location);
@@ -2150,10 +2163,16 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseObjectLitera
     
     TreeProperty property = parseProperty(context, false);
     failIfFalse(property, "Cannot parse object literal property");
+
     if (!m_syntaxAlreadyValidated && context.getType(property) & (PropertyNode::Getter | PropertyNode::Setter)) {
         restoreSavePoint(savePoint);
         return parseStrictObjectLiteral(context);
     }
+
+    bool seenUnderscoreProto = false;
+    if (shouldCheckPropertyForUnderscoreProtoDuplicate(context, property))
+        seenUnderscoreProto = *context.getName(property) == m_vm->propertyNames->underscoreProto;
+
     TreePropertyList propertyList = context.createPropertyList(location, property);
     TreePropertyList tail = propertyList;
     while (match(COMMA)) {
@@ -2166,6 +2185,12 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseObjectLitera
         if (!m_syntaxAlreadyValidated && context.getType(property) & (PropertyNode::Getter | PropertyNode::Setter)) {
             restoreSavePoint(savePoint);
             return parseStrictObjectLiteral(context);
+        }
+        if (shouldCheckPropertyForUnderscoreProtoDuplicate(context, property)) {
+            if (*context.getName(property) == m_vm->propertyNames->underscoreProto) {
+                semanticFailIfTrue(seenUnderscoreProto, "Attempted to redefine __proto__ property");
+                seenUnderscoreProto = true;
+            }
         }
         tail = context.createPropertyList(propertyLocation, property, tail);
     }
@@ -2193,7 +2218,11 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseStrictObject
     
     TreeProperty property = parseProperty(context, true);
     failIfFalse(property, "Cannot parse object literal property");
-    
+
+    bool seenUnderscoreProto = false;
+    if (shouldCheckPropertyForUnderscoreProtoDuplicate(context, property))
+        seenUnderscoreProto = *context.getName(property) == m_vm->propertyNames->underscoreProto;
+
     TreePropertyList propertyList = context.createPropertyList(location, property);
     TreePropertyList tail = propertyList;
     while (match(COMMA)) {
@@ -2203,6 +2232,12 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseStrictObject
         JSTokenLocation propertyLocation(tokenLocation());
         property = parseProperty(context, true);
         failIfFalse(property, "Cannot parse object literal property");
+        if (shouldCheckPropertyForUnderscoreProtoDuplicate(context, property)) {
+            if (*context.getName(property) == m_vm->propertyNames->underscoreProto) {
+                semanticFailIfTrue(seenUnderscoreProto, "Attempted to redefine __proto__ property");
+                seenUnderscoreProto = true;
+            }
+        }
         tail = context.createPropertyList(propertyLocation, property, tail);
     }
 

@@ -151,8 +151,6 @@ JSValue eval(CallFrame* callFrame)
 
     if (!eval) {
         if (!callerCodeBlock->isStrictMode()) {
-            // FIXME: We can use the preparser in strict mode, we just need additional logic
-            // to prevent duplicates.
             if (programSource.is8Bit()) {
                 LiteralParser<LChar> preparser(callFrame, programSource.characters8(), programSource.length(), NonStrictJSON);
                 if (JSValue parsedObject = preparser.tryLiteralParse())

@@ -548,6 +548,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
     JSValue lastValue;
     Vector<ParserState, 16, UnsafeVectorOverflow> stateStack;
     Vector<Identifier, 16, UnsafeVectorOverflow> identifierStack;
+    HashSet<JSObject*> visitedUnderscoreProto;
     while (1) {
         switch(state) {
             startParseArray:
@@ -649,10 +650,20 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
             {
                 JSObject* object = asObject(objectStack.last());
                 PropertyName ident = identifierStack.last();
-                if (Optional<uint32_t> index = parseIndex(ident))
-                    object->putDirectIndex(m_exec, index.value(), lastValue);
-                else
-                    object->putDirect(m_exec->vm(), ident, lastValue);
+                if (m_mode != StrictJSON && ident == m_exec->vm().propertyNames->underscoreProto) {
+                    if (!visitedUnderscoreProto.add(object).isNewEntry) {
+                        m_parseErrorMessage = ASCIILiteral("Attempted to redefine __proto__ property");
+                        return JSValue();
+                    }
+                    CodeBlock* codeBlock = m_exec->codeBlock();
+                    PutPropertySlot slot(object, codeBlock ? codeBlock->isStrictMode() : false);
+                    objectStack.last().put(m_exec, ident, lastValue, slot);
+                } else {
+                    if (Optional<uint32_t> index = parseIndex(ident))
+                        object->putDirectIndex(m_exec, index.value(), lastValue);
+                    else
+                        object->putDirect(m_exec->vm(), ident, lastValue);                    
+                }
                 identifierStack.removeLast();
                 if (m_lexer.currentToken().type == TokComma)
                     goto doParseObjectStartExpression;

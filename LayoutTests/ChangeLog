@@ -1,5 +1,31 @@
 2015-05-20  Joseph Pecoraro  <pecoraro@apple.com>
 
+        ES6: Should not allow duplicate basic __proto__ properties in Object Literals
+        https://bugs.webkit.org/show_bug.cgi?id=145138
+
+        Reviewed by Darin Adler.
+
+        * js/dom/JSON-parse-expected.txt:
+        * js/resources/JSON-parse.js:
+        Update expected results for JSON parsing using eval() versus JSON.parse.
+        In eval, an object literal with a "__proto__" property modifies the prototype.
+        In JSON.parse, all properties are direct/own properties, no matter their name,
+        so "__proto__" does not get special treatment.
+
+        * js/eval-json-proto-expected.txt: Added.
+        * js/eval-json-proto.html: Added.
+        * js/script-tests/eval-json-proto.js: Added.
+        Direct test for LiteralParser behavior, in both eval and JSON.parse.
+
+        * js/object-literal-duplicate-properties-expected.txt:
+        * js/script-tests/object-literal-duplicate-properties.js:
+        (runProtoTestShouldThrow):
+        (runProtoTestShouldNotThrow):
+        Test for all cases of acceptable and unacceptable __proto__ duplicate
+        properties in literals.
+
+2015-05-20  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Slightly better node previews in arrays
         https://bugs.webkit.org/show_bug.cgi?id=145188
 

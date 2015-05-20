@@ -67,6 +67,8 @@ function createTests() {
     result.push(function(jsonObject){
         return jsonObject.parse('{"__proto__":5}');
     });
+    result[result.length - 1].jsonParseExpected = '{"__proto__":5}';
+    result[result.length - 1].evalExpected = '{}';
     result.push(function(jsonObject){
         return jsonObject.parse('{"a":5,}');
     });
@@ -403,6 +405,8 @@ function createTests() {
     result.push(function(jsonObject){
         return jsonObject.parse('{"__proto__":{"a":5}}', log);
     });
+    result[result.length - 1].jsonParseExpected = '{"":{"__proto__":{"keyType":"string"}},"keyType":"string"}';
+    result[result.length - 1].evalExpected = '{"":{},"keyType":"string"}';
     var logOrderString;
     function logOrder(key, value) {
         logOrderString += key +":"+JSON.stringify(value);
@@ -567,7 +571,12 @@ for (var i = 0; i < tests.length; i++) {
             try { shouldBe('JSON.stringify(tests[i](nativeJSON))',  "tests[i].expected") } catch(e) { debug("threw - " + e)}
         else if (tests[i].unstringifiedExpected)
             try { shouldBe('tests[i](nativeJSON)',  "tests[i].unstringifiedExpected") } catch(e) { debug("threw - " + e)}
-        else
+        else if (tests[i].evalExpected) {
+            debug("json2.js uses eval and will differ when parsing JSON with __proto__.");
+            try { shouldNotBe('JSON.stringify(tests[i](nativeJSON))',  'JSON.stringify(tests[i](JSON))') } catch(e) { debug("threw - " + e) };
+            try { shouldBe('JSON.stringify(tests[i](nativeJSON))',  'tests[i].jsonParseExpected') } catch(e) { debug("threw - " + e) };
+            try { shouldBe('JSON.stringify(tests[i](JSON))',  'tests[i].evalExpected') } catch(e) { debug("threw - " + e) };
+        } else
             try { shouldBe('JSON.stringify(tests[i](nativeJSON))',  'JSON.stringify(tests[i](JSON))') } catch(e) { debug("threw - " + e) };
     }catch(e){
         debug(e);

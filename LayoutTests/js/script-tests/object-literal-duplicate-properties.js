@@ -182,3 +182,27 @@ runTest("o = {get foo(){return 2}, ['foo']:3, get foo(){return 2}, foo:1}", "'va
 runTest("o = {set foo(x){}, ['foo']:3, set foo(x){}, foo:1}", "'value:1 keys:1 [ECW][Extensible]'");
 runTest("o = {set foo(x){}, foo:1, get foo(){return 2}, ['foo']:3}", "'value:3 keys:1 [ECW][Extensible]'");
 runTest("o = {get foo(){return 2}, get foo(){return 2}, ['foo']:3, foo:1}", "'value:1 keys:1 [ECW][Extensible]'");
+
+// __proto__ duplicates are not allowed.
+function runProtoTestShouldThrow(test) {
+    shouldThrow(test);
+    shouldThrow("'use strict';" + test);
+    shouldThrow("(function(){" + test + "})()");
+}
+function runProtoTestShouldNotThrow(test) {
+    shouldNotThrow(test);
+    shouldNotThrow("'use strict';" + test);
+    shouldNotThrow("(function(){" + test + "})()");
+}
+
+debug(""); debug("Duplicate simple __proto__ attributes are not allowed");
+runProtoTestShouldNotThrow("o = {__proto__:null}");
+runProtoTestShouldNotThrow("({__proto__:null, ['__proto__']:{}})");
+runProtoTestShouldNotThrow("o = {__proto__:null, ['__proto__']:{}}");
+runProtoTestShouldNotThrow("o = {__proto__:null, get __proto__(){}}");
+runProtoTestShouldNotThrow("var __proto__ = null; o = {__proto__:null, __proto__}");
+runProtoTestShouldThrow("({__proto__:[], __proto__:{}})");
+runProtoTestShouldThrow("o = {__proto__:null, '__proto__':{}}");
+runProtoTestShouldThrow("o = {__proto__:[], __proto__:{}}");
+runProtoTestShouldThrow("o = {'__proto__':{}, '__proto__':{}}");
+runProtoTestShouldThrow("o = {a:1, __proto__:{}, b:2, ['c']:3, __proto__:{}, d:3}");

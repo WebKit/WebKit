@@ -69,7 +69,10 @@ PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject){
         return jsonObject.parse('{"__proto__":5}');
     }
-PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
+json2.js uses eval and will differ when parsing JSON with __proto__.
+PASS JSON.stringify(tests[i](nativeJSON)) is not JSON.stringify(tests[i](JSON))
+PASS JSON.stringify(tests[i](nativeJSON)) is tests[i].jsonParseExpected
+PASS JSON.stringify(tests[i](JSON)) is tests[i].evalExpected
 function (jsonObject){
         return jsonObject.parse('{"a":5,}');
     }
@@ -443,7 +446,10 @@ PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject){
         return jsonObject.parse('{"__proto__":{"a":5}}', log);
     }
-PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
+json2.js uses eval and will differ when parsing JSON with __proto__.
+PASS JSON.stringify(tests[i](nativeJSON)) is not JSON.stringify(tests[i](JSON))
+PASS JSON.stringify(tests[i](nativeJSON)) is tests[i].jsonParseExpected
+PASS JSON.stringify(tests[i](JSON)) is tests[i].evalExpected
 function (jsonObject){
         logOrderString = "";
         return jsonObject.parse("true", logOrder);

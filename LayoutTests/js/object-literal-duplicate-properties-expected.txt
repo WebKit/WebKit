@@ -205,6 +205,38 @@ PASS (function(){o = {set foo(x){}, foo:1, get foo(){return 2}, ['foo']:3}; desc
 PASS o = {get foo(){return 2}, get foo(){return 2}, ['foo']:3, foo:1}; descriptionString(o, 'foo'); is 'value:1 keys:1 [ECW][Extensible]'
 PASS 'use strict';o = {get foo(){return 2}, get foo(){return 2}, ['foo']:3, foo:1}; descriptionString(o, 'foo'); is 'value:1 keys:1 [ECW][Extensible]'
 PASS (function(){o = {get foo(){return 2}, get foo(){return 2}, ['foo']:3, foo:1}; descriptionString(o, 'foo');})() did not throw exception.
+
+Duplicate simple __proto__ attributes are not allowed
+PASS o = {__proto__:null} did not throw exception.
+PASS 'use strict';o = {__proto__:null} did not throw exception.
+PASS (function(){o = {__proto__:null}})() did not throw exception.
+PASS ({__proto__:null, ['__proto__']:{}}) did not throw exception.
+PASS 'use strict';({__proto__:null, ['__proto__']:{}}) did not throw exception.
+PASS (function(){({__proto__:null, ['__proto__']:{}})})() did not throw exception.
+PASS o = {__proto__:null, ['__proto__']:{}} did not throw exception.
+PASS 'use strict';o = {__proto__:null, ['__proto__']:{}} did not throw exception.
+PASS (function(){o = {__proto__:null, ['__proto__']:{}}})() did not throw exception.
+PASS o = {__proto__:null, get __proto__(){}} did not throw exception.
+PASS 'use strict';o = {__proto__:null, get __proto__(){}} did not throw exception.
+PASS (function(){o = {__proto__:null, get __proto__(){}}})() did not throw exception.
+PASS var __proto__ = null; o = {__proto__:null, __proto__} did not throw exception.
+PASS 'use strict';var __proto__ = null; o = {__proto__:null, __proto__} did not throw exception.
+PASS (function(){var __proto__ = null; o = {__proto__:null, __proto__}})() did not throw exception.
+PASS ({__proto__:[], __proto__:{}}) threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS 'use strict';({__proto__:[], __proto__:{}}) threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS (function(){({__proto__:[], __proto__:{}})})() threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS o = {__proto__:null, '__proto__':{}} threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS 'use strict';o = {__proto__:null, '__proto__':{}} threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS (function(){o = {__proto__:null, '__proto__':{}}})() threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS o = {__proto__:[], __proto__:{}} threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS 'use strict';o = {__proto__:[], __proto__:{}} threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS (function(){o = {__proto__:[], __proto__:{}}})() threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS o = {'__proto__':{}, '__proto__':{}} threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS 'use strict';o = {'__proto__':{}, '__proto__':{}} threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS (function(){o = {'__proto__':{}, '__proto__':{}}})() threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS o = {a:1, __proto__:{}, b:2, ['c']:3, __proto__:{}, d:3} threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS 'use strict';o = {a:1, __proto__:{}, b:2, ['c']:3, __proto__:{}, d:3} threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS (function(){o = {a:1, __proto__:{}, b:2, ['c']:3, __proto__:{}, d:3}})() threw exception SyntaxError: Attempted to redefine __proto__ property..
 PASS successfullyParsed is true
 
 TEST COMPLETE
