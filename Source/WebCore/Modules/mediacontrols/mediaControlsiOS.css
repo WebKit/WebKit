@@ -575,6 +575,7 @@ audio::-webkit-media-controls-wireless-playback-status {
     background-size: 131px auto;
     color: rgb(145,145,145);
     font: -apple-system;
+    font-weight: 400;
     vertical-align: text-bottom;
 }
 
@@ -599,6 +600,7 @@ audio::-webkit-media-controls-wireless-playback-text-top {
     font-size: 12pt;
     text-align: center;
     margin: 0px;
+    color: rgb(255,255,255);
 }
 
 video::-webkit-media-controls-wireless-playback-text-bottom,
@@ -634,7 +636,26 @@ audio::-webkit-media-controls-wireless-playback-text-bottom.small {
     display: none;
 }
 
+video::-webkit-media-controls-wireless-playback-status.optimized,
+audio::-webkit-media-controls-wireless-playback-status.optimized
+{
+    background-size: 304px auto;
+    background-position: 50% calc(.5 * (100% - 25px));
+}
+
+video::-webkit-media-controls-wireless-playback-text-top.optimized,
+audio::-webkit-media-controls-wireless-playback-text-top.optimized {
+    top: initial;
+    bottom: 0;
+}
+
+video::-webkit-media-controls-wireless-playback-text-bottom.optimized,
+audio::-webkit-media-controls-wireless-playback-text-bottom.optimized {
+    display: none;
+}
+
 video::-webkit-media-controls-wireless-playback-status.hidden,
 audio::-webkit-media-controls-wireless-playback-status.hidden {
     display: none;
 }
+
