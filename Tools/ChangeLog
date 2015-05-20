@@ -1,3 +1,17 @@
+2015-05-20  Rohit Kumar  <kumar.rohit@samsung.com>
+
+        [EFL][Minibrowser] Hide URL bar on fullscreen mode for HTML elements and browser window in WebKit EFL Minibrowser
+        https://bugs.webkit.org/show_bug.cgi?id=144992
+
+        Reviewed by Gyuyoung Kim.
+
+        * MiniBrowser/efl/main.c:
+        (toggle_window_fullscreen): Method to toggle between fullscreen and normal mode.
+        (on_key_down):
+        (on_fullscreen_enter):
+        (on_fullscreen_exit):
+        (window_create):
+
 2015-05-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Move AtomicStringImpl table related operations from AtomicString to AtomicStringImpl

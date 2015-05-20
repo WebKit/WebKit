@@ -99,6 +99,8 @@ typedef struct _Color_Selector {
 typedef struct _Browser_Window {
     Evas_Object *elm_window;
     Evas_Object *ewk_view;
+    Evas_Object *horizontal_layout;
+    Evas_Object *vertical_layout;
     Evas_Object *url_bar;
     Evas_Object *back_button;
     Evas_Object *forward_button;
@@ -527,6 +529,20 @@ script_execute_callback(Evas_Object *ewk_view, const char *return_value, void *u
 }
 
 static void
+toggle_window_fullscreen(Browser_Window *window, Eina_Bool isFullScreen)
+{
+    if (isFullScreen) {
+        evas_object_hide(window->horizontal_layout);
+        elm_box_unpack(window->vertical_layout, window->horizontal_layout);
+        elm_win_fullscreen_set(window->elm_window, EINA_TRUE);
+    } else {
+        elm_win_fullscreen_set(window->elm_window, EINA_FALSE);
+        elm_box_pack_start(window->vertical_layout, window->horizontal_layout);
+        evas_object_show(window->horizontal_layout);
+    }
+}
+
+static void
 on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
 {
     Browser_Window *window = (Browser_Window *)user_data;
@@ -576,7 +592,7 @@ on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
             INFO("Change Pagination Mode (F7) was pressed, but NOT changed!");
     } else if (!strcmp(ev->key, "F11")) {
         INFO("Fullscreen (F11) was pressed, toggling window/fullscreen.");
-        elm_win_fullscreen_set(window->elm_window, !elm_win_fullscreen_get(window->elm_window));
+        toggle_window_fullscreen(window, !elm_win_fullscreen_get(window->elm_window));
     } else if (!strcmp(ev->key, "n") && ctrlPressed) {
         INFO("Create new window (Ctrl+n) was pressed.");
         Browser_Window *window = window_create(NULL, 0, 0);
@@ -1630,7 +1646,7 @@ static Eina_Bool on_fullscreen_enter(Ewk_View_Smart_Data *sd, Ewk_Security_Origi
     Browser_Window *window = window_find_with_ewk_view(sd->self);
 
     /* Go fullscreen */
-    elm_win_fullscreen_set(window->elm_window, EINA_TRUE);
+    toggle_window_fullscreen(window, EINA_TRUE);
 
     /* Show user popup */
     Evas_Object *permission_popup = elm_popup_add(window->elm_window);
@@ -1665,7 +1681,7 @@ static Eina_Bool on_fullscreen_exit(Ewk_View_Smart_Data *sd)
 {
     Browser_Window *window = window_find_with_ewk_view(sd->self);
 
-    elm_win_fullscreen_set(window->elm_window, EINA_FALSE);
+    toggle_window_fullscreen(window, EINA_FALSE);
 
     return EINA_TRUE;
 }
@@ -2043,19 +2059,19 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     evas_object_show(bg);
 
     /* Create vertical layout */
-    Evas_Object *vertical_layout = elm_box_add(window->elm_window);
-    elm_box_padding_set(vertical_layout, 0, 2);
-    evas_object_size_hint_weight_set(vertical_layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    elm_win_resize_object_add(window->elm_window, vertical_layout);
-    evas_object_show(vertical_layout);
+    window->vertical_layout = elm_box_add(window->elm_window);
+    elm_box_padding_set(window->vertical_layout, 0, 2);
+    evas_object_size_hint_weight_set(window->vertical_layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    elm_win_resize_object_add(window->elm_window, window->vertical_layout);
+    evas_object_show(window->vertical_layout);
 
     /* Create horizontal layout for top bar */
-    Evas_Object *horizontal_layout = elm_box_add(window->elm_window);
-    elm_box_horizontal_set(horizontal_layout, EINA_TRUE);
-    evas_object_size_hint_weight_set(horizontal_layout, EVAS_HINT_EXPAND, 0.0);
-    evas_object_size_hint_align_set(horizontal_layout, EVAS_HINT_FILL, 0.0);
-    elm_box_pack_end(vertical_layout, horizontal_layout);
-    evas_object_show(horizontal_layout);
+    window->horizontal_layout = elm_box_add(window->elm_window);
+    elm_box_horizontal_set(window->horizontal_layout, EINA_TRUE);
+    evas_object_size_hint_weight_set(window->horizontal_layout, EVAS_HINT_EXPAND, 0.0);
+    evas_object_size_hint_align_set(window->horizontal_layout, EVAS_HINT_FILL, 0.0);
+    elm_box_pack_end(window->vertical_layout, window->horizontal_layout);
+    evas_object_show(window->horizontal_layout);
 
     /* Create Back button */
     window->back_button = create_toolbar_button(window->elm_window, "arrow_left");
@@ -2066,7 +2082,7 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     elm_object_disabled_set(window->back_button, EINA_TRUE);
     evas_object_size_hint_weight_set(window->back_button, 0.0, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(window->back_button, 0.0, 0.5);
-    elm_box_pack_end(horizontal_layout, window->back_button);
+    elm_box_pack_end(window->horizontal_layout, window->back_button);
     evas_object_show(window->back_button);
 
     /* Create Forward button */
@@ -2078,7 +2094,7 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     elm_object_disabled_set(window->forward_button, EINA_TRUE);
     evas_object_size_hint_weight_set(window->forward_button, 0.0, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(window->forward_button, 0.0, 0.5);
-    elm_box_pack_end(horizontal_layout, window->forward_button);
+    elm_box_pack_end(window->horizontal_layout, window->forward_button);
     evas_object_show(window->forward_button);
 
     /* Create URL bar */
@@ -2092,7 +2108,7 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     evas_object_smart_callback_add(window->url_bar, "clicked", on_url_bar_clicked, window);
     evas_object_size_hint_weight_set(window->url_bar, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(window->url_bar, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    elm_box_pack_end(horizontal_layout, window->url_bar);
+    elm_box_pack_end(window->horizontal_layout, window->url_bar);
     evas_object_show(window->url_bar);
 
     /* Create Refresh button */
@@ -2102,7 +2118,7 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     elm_object_tooltip_window_mode_set(refresh_button, EINA_TRUE);
     evas_object_size_hint_weight_set(refresh_button, 0.0, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(refresh_button, 1.0, 0.5);
-    elm_box_pack_end(horizontal_layout, refresh_button);
+    elm_box_pack_end(window->horizontal_layout, refresh_button);
     evas_object_show(refresh_button);
 
     /* Create Stop button */
@@ -2112,7 +2128,7 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     elm_object_tooltip_window_mode_set(stop_button, EINA_TRUE);
     evas_object_size_hint_weight_set(stop_button, 0.0, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(stop_button, 1.0, 0.5);
-    elm_box_pack_end(horizontal_layout, stop_button);
+    elm_box_pack_end(window->horizontal_layout, stop_button);
     evas_object_show(stop_button);
 
     /* Create Home button */
@@ -2122,7 +2138,7 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     elm_object_tooltip_window_mode_set(home_button, EINA_TRUE);
     evas_object_size_hint_weight_set(home_button, 0.0, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(home_button, 1.0, 0.5);
-    elm_box_pack_end(horizontal_layout, home_button);
+    elm_box_pack_end(window->horizontal_layout, home_button);
     evas_object_show(home_button);
 
     /* Create Search bar */
@@ -2130,7 +2146,7 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
     elm_box_horizontal_set(window->search.search_bar, EINA_TRUE);
     evas_object_size_hint_min_set(window->search.search_bar, SEARCH_FIELD_SIZE + 2 * SEARCH_BUTTON_SIZE, 0);
     evas_object_size_hint_align_set(window->search.search_bar, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    elm_box_pack_end(vertical_layout, window->search.search_bar);
+    elm_box_pack_end(window->vertical_layout, window->search.search_bar);
 
     /* Create Search field */
     window->search.search_field = elm_entry_add(window->elm_window);
@@ -2288,7 +2304,7 @@ static Browser_Window *window_create(Evas_Object *opener, int width, int height)
 
     evas_object_size_hint_weight_set(window->ewk_view, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     evas_object_size_hint_align_set(window->ewk_view, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    elm_box_pack_before(vertical_layout, window->ewk_view, window->search.search_bar);
+    elm_box_pack_before(window->vertical_layout, window->ewk_view, window->search.search_bar);
     evas_object_show(window->ewk_view);
 
     evas_object_resize(window->elm_window, width ? width : window_width, height ? height : window_height);
