@@ -547,7 +547,7 @@ void ScrollController::processWheelEventForScrollSnapOnAxis(ScrollEventAxis axis
             if (snapState.m_numWheelDeltasTracked < snapState.wheelDeltaWindowSize)
                 snapState.pushInitialWheelDelta(wheelDelta);
             
-            if (snapState.m_numWheelDeltasTracked == snapState.wheelDeltaWindowSize)
+            if ((snapState.m_numWheelDeltasTracked == snapState.wheelDeltaWindowSize) && snapState.averageInitialWheelDelta())
                 beginScrollSnapAnimation(axis, ScrollSnapState::Gliding);
         }
         break;
