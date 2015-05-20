@@ -1,3 +1,14 @@
+2015-05-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        No LLInt Test Failure: jsc-layout-tests.yaml/js/script-tests/object-literal-duplicate-properties.js.layout-no-llint
+        https://bugs.webkit.org/show_bug.cgi?id=145219
+
+        Reviewed by Mark Lam.
+
+        * jit/JITOperations.cpp:
+        Throw the error we just got, instead of a stack overflow exception.
+        This matches other error handling for callers of prepareForExecution.
+
 2015-05-19  Filip Pizlo  <fpizlo@apple.com>
 
         Add some assertions about the CFG in the loop pre-header creation phase
