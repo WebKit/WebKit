@@ -50,13 +50,15 @@ std::unique_ptr<SVGAnimatedType> SVGAnimatedPathAnimator::startAnimValAnimation(
 
     Vector<RefPtr<SVGAnimatedPathSegListPropertyTearOff>> result;
 
-    for (auto& type : animatedTypes)
-        result.append(castAnimatedPropertyToActualType<SVGAnimatedPathSegListPropertyTearOff>(type.properties[0].get()));
+    SVGElementAnimatedPropertyList::const_iterator end = animatedTypes.end();
+    for (SVGElementAnimatedPropertyList::const_iterator it = animatedTypes.begin(); it != end; ++it)
+        result.append(castAnimatedPropertyToActualType<SVGAnimatedPathSegListPropertyTearOff>(it->properties[0].get()));
 
     SVGElement::InstanceUpdateBlocker blocker(*property->contextElement());
 
-    for (auto& segment : result)
-        segment->animationStarted(byteStream.get(), &baseValue);
+    size_t resultSize = result.size();
+    for (size_t i = 0; i < resultSize; ++i)
+        result[i]->animationStarted(byteStream.get(), &baseValue);
 
     return SVGAnimatedType::createPath(WTF::move(byteStream));
 }

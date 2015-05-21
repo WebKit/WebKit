@@ -30,7 +30,9 @@ namespace WebCore {
 void SVGPathSegListPropertyTearOff::clearContextAndRoles()
 {
     ASSERT(m_values);
-    for (auto& item : *m_values) {
+    unsigned size = m_values->size();
+    for (unsigned i = 0; i < size; ++i) {
+        ListItemType item = m_values->at(i);
         static_cast<SVGPathSegWithContext*>(item.get())->setContextAndRole(0, PathSegUndefinedRole);
     }
 }

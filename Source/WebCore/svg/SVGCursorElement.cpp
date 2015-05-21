@@ -58,8 +58,9 @@ Ref<SVGCursorElement> SVGCursorElement::create(const QualifiedName& tagName, Doc
 
 SVGCursorElement::~SVGCursorElement()
 {
-    for (auto& client : m_clients)
-        client->cursorElementRemoved();
+    HashSet<SVGElement*>::iterator end = m_clients.end();
+    for (HashSet<SVGElement*>::iterator it = m_clients.begin(); it != end; ++it)
+        (*it)->cursorElementRemoved();
 }
 
 bool SVGCursorElement::isSupportedAttribute(const QualifiedName& attrName)

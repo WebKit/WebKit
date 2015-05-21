@@ -187,9 +187,11 @@ void SMILTimeContainer::setElapsed(SMILTime time)
 #ifndef NDEBUG
     m_preventScheduledAnimationsChanges = true;
 #endif
-    for (auto& animation : m_scheduledAnimations.values()) {
-        for (auto& element : *animation)
-            element->reset();
+    for (auto& it : m_scheduledAnimations) {
+        AnimationsVector* scheduled = it.value.get();
+        unsigned size = scheduled->size();
+        for (unsigned n = 0; n < size; n++)
+            scheduled->at(n)->reset();
     }
 #ifndef NDEBUG
     m_preventScheduledAnimationsChanges = false;
@@ -272,7 +274,9 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
         sortByPriority(*scheduled, elapsed);
 
         SVGSMILElement* resultElement = 0;
-        for (auto& animation : *scheduled) {
+        unsigned size = scheduled->size();
+        for (unsigned n = 0; n < size; n++) {
+            SVGSMILElement* animation = scheduled->at(n);
             ASSERT(animation->timeContainer() == this);
             ASSERT(animation->targetElement());
             ASSERT(animation->hasValidAttributeName());
@@ -297,7 +301,8 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
             animationsToApply.append(resultElement);
     }
 
-    if (animationsToApply.isEmpty()) {
+    unsigned animationsToApplySize = animationsToApply.size();
+    if (!animationsToApplySize) {
 #ifndef NDEBUG
         m_preventScheduledAnimationsChanges = false;
 #endif
@@ -306,8 +311,8 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
     }
 
     // Apply results to target elements.
-    for (auto& animation : animationsToApply)
-        animation->applyResultsToTarget();
+    for (unsigned i = 0; i < animationsToApplySize; ++i)
+        animationsToApply[i]->applyResultsToTarget();
 
 #ifndef NDEBUG
     m_preventScheduledAnimationsChanges = false;

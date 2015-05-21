@@ -191,9 +191,10 @@ private:
         // FIXME: Can't use SVGElement::InstanceUpdateBlocker because of circular header dependency. Would be nice to untangle this.
         setInstanceUpdatesBlocked(*animatedTypes[0].element, true);
 
-        for (auto& animatedType : animatedTypes) {
-            ASSERT_WITH_SECURITY_IMPLICATION(whichProperty < animatedType.properties.size());
-            AnimValType* property = castAnimatedPropertyToActualType<AnimValType>(animatedType.properties[whichProperty].get());
+        SVGElementAnimatedPropertyList::const_iterator end = animatedTypes.end();
+        for (SVGElementAnimatedPropertyList::const_iterator it = animatedTypes.begin(); it != end; ++it) {
+            ASSERT_WITH_SECURITY_IMPLICATION(whichProperty < it->properties.size());
+            AnimValType* property = castAnimatedPropertyToActualType<AnimValType>(it->properties[whichProperty].get());
 
             switch (action) {
             case StartAnimationAction:

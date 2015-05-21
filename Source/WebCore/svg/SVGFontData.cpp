@@ -161,17 +161,19 @@ bool SVGFontData::applySVGGlyphSelection(WidthIterator& iterator, GlyphData& gly
     }
 
     Vector<SVGGlyph> glyphs;
-    if (!altGlyphNames.isEmpty()) {
-        for (auto& name : altGlyphNames)
-            associatedFontElement->collectGlyphsForGlyphName(name, glyphs);
+    size_t altGlyphNamesSize = altGlyphNames.size();
+    if (altGlyphNamesSize) {
+        for (size_t index = 0; index < altGlyphNamesSize; ++index)
+            associatedFontElement->collectGlyphsForGlyphName(altGlyphNames[index], glyphs);
 
         // Assign the unicodeStringLength now that its known.
-        for (auto& glyph : glyphs)
-            glyph.unicodeStringLength = run.length();
+        size_t glyphsSize = glyphs.size();
+        for (size_t i = 0; i < glyphsSize; ++i)
+            glyphs[i].unicodeStringLength = run.length();
 
         // Do not check alt glyphs for compatibility. Just return the first one.
         // Later code will fail if we do not do this and the glyph is incompatible.
-        if (!glyphs.isEmpty()) {
+        if (glyphsSize) {
             SVGGlyph& svgGlyph = glyphs[0];
             iterator.setLastGlyphName(svgGlyph.glyphName);
             glyphData.glyph = svgGlyph.tableEntry;
@@ -189,14 +191,16 @@ bool SVGFontData::applySVGGlyphSelection(WidthIterator& iterator, GlyphData& gly
         associatedFontElement->collectGlyphsForString(remainingTextInRun, glyphs);
     }
 
-    for (auto& glyph : glyphs) {
-        if (glyph.isPartOfLigature)
+    size_t glyphsSize = glyphs.size();
+    for (size_t i = 0; i < glyphsSize; ++i) {
+        SVGGlyph& svgGlyph = glyphs[i];
+        if (svgGlyph.isPartOfLigature)
             continue;
-        if (!isCompatibleGlyph(glyph, isVerticalText, language, arabicForms, currentCharacter, currentCharacter + glyph.unicodeStringLength))
+        if (!isCompatibleGlyph(svgGlyph, isVerticalText, language, arabicForms, currentCharacter, currentCharacter + svgGlyph.unicodeStringLength))
             continue;
-        iterator.setLastGlyphName(glyph.glyphName);
-        glyphData.glyph = glyph.tableEntry;
-        advanceLength = glyph.unicodeStringLength;
+        iterator.setLastGlyphName(svgGlyph.glyphName);
+        glyphData.glyph = svgGlyph.tableEntry;
+        advanceLength = svgGlyph.unicodeStringLength;
         return true;
     }
 

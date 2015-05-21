@@ -150,8 +150,8 @@ static NEVER_INLINE void populateAttributeNameToCSSPropertyIDMap(HashMap<AtomicS
         &yAttr,
     };
 
-    for (auto& name : attributeNames) {
-        const AtomicString& localName = name->localName();
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(attributeNames); ++i) {
+        const AtomicString& localName = attributeNames[i]->localName();
         map.add(localName.impl(), cssPropertyID(localName));
     }
 
@@ -229,8 +229,8 @@ static NEVER_INLINE void populateAttributeNameToAnimatedPropertyTypeMap(HashMap<
         { word_spacingAttr, AnimatedLength },
     };
 
-    for (auto& entry : table)
-        map.add(entry.attributeName.impl(), entry.type);
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(table); ++i)
+        map.add(table[i].attributeName.impl(), table[i].type);
 }
 
 static inline HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyType>& attributeNameToAnimatedPropertyTypeMap()
@@ -263,8 +263,8 @@ static NEVER_INLINE void populateCSSPropertyWithSVGDOMNameToAnimatedPropertyType
         { yAttr, AnimatedLength },
     };
 
-    for (auto& entry : table)
-        map.add(entry.attributeName.impl(), entry.type);
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(table); ++i)
+        map.add(table[i].attributeName.impl(), table[i].type);
 }
 
 static inline HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyType>& cssPropertyWithSVGDOMNameToAnimatedPropertyTypeMap()
@@ -639,8 +639,8 @@ static bool hasLoadListener(Element* element)
 
     for (element = element->parentOrShadowHostElement(); element; element = element->parentOrShadowHostElement()) {
         const EventListenerVector& entry = element->getEventListeners(eventNames().loadEvent);
-        for (auto& listener : entry) {
-            if (listener.useCapture)
+        for (size_t i = 0; i < entry.size(); ++i) {
+            if (entry[i].useCapture)
                 return true;
         }
     }

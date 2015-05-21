@@ -101,14 +101,16 @@ void SVGDocumentExtensions::startAnimations()
 
 void SVGDocumentExtensions::pauseAnimations()
 {
-    for (auto& container : m_timeContainers)
-        container->pauseAnimations();
+    auto end = m_timeContainers.end();
+    for (auto it = m_timeContainers.begin(); it != end; ++it)
+        (*it)->pauseAnimations();
 }
 
 void SVGDocumentExtensions::unpauseAnimations()
 {
-    for (auto& container : m_timeContainers)
-        container->unpauseAnimations();
+    auto end = m_timeContainers.end();
+    for (auto it = m_timeContainers.begin(); it != end; ++it)
+        (*it)->unpauseAnimations();
 }
 
 void SVGDocumentExtensions::dispatchSVGLoadEventToOutermostSVGElements()
@@ -116,10 +118,12 @@ void SVGDocumentExtensions::dispatchSVGLoadEventToOutermostSVGElements()
     Vector<RefPtr<SVGSVGElement>> timeContainers;
     timeContainers.appendRange(m_timeContainers.begin(), m_timeContainers.end());
 
-    for (auto& container : m_timeContainers) {
-        if (!container->isOutermostSVGSVGElement())
+    auto end = timeContainers.end();
+    for (auto it = timeContainers.begin(); it != end; ++it) {
+        SVGSVGElement* outerSVG = (*it).get();
+        if (!outerSVG->isOutermostSVGSVGElement())
             continue;
-        container->sendSVGLoadEventIfPossible();
+        outerSVG->sendSVGLoadEventIfPossible();
     }
 }
 
@@ -167,7 +171,9 @@ bool SVGDocumentExtensions::isElementWithPendingResources(Element* element) cons
     // This algorithm takes time proportional to the number of pending resources and need not.
     // If performance becomes an issue we can keep a counted set of elements and answer the question efficiently.
     ASSERT(element);
-    for (auto& elements : m_pendingResources.values()) {
+    auto end = m_pendingResources.end();
+    for (auto it = m_pendingResources.begin(); it != end; ++it) {
+        PendingElements* elements = it->value.get();
         ASSERT(elements);
 
         if (elements->contains(element))
@@ -199,39 +205,43 @@ void SVGDocumentExtensions::removeElementFromPendingResources(Element* element)
     // Remove the element from pending resources.
     if (!m_pendingResources.isEmpty() && element->hasPendingResources()) {
         Vector<AtomicString> toBeRemoved;
-        for (auto& resource : m_pendingResources) {
-            PendingElements* elements = resource.value.get();
+        auto end = m_pendingResources.end();
+        for (auto it = m_pendingResources.begin(); it != end; ++it) {
+            PendingElements* elements = it->value.get();
             ASSERT(elements);
             ASSERT(!elements->isEmpty());
 
             elements->remove(element);
             if (elements->isEmpty())
-                toBeRemoved.append(resource.key);
+                toBeRemoved.append(it->key);
         }
 
         clearHasPendingResourcesIfPossible(element);
 
         // We use the removePendingResource function here because it deals with set lifetime correctly.
-        for (auto& resource : toBeRemoved)
-            removePendingResource(resource);
+        auto vectorEnd = toBeRemoved.end();
+        for (auto it = toBeRemoved.begin(); it != vectorEnd; ++it)
+            removePendingResource(*it);
     }
 
     // Remove the element from pending resources that were scheduled for removal.
     if (!m_pendingResourcesForRemoval.isEmpty()) {
         Vector<AtomicString> toBeRemoved;
-        for (auto& resource : m_pendingResourcesForRemoval) {
-            PendingElements* elements = resource.value.get();
+        auto end = m_pendingResourcesForRemoval.end();
+        for (auto it = m_pendingResourcesForRemoval.begin(); it != end; ++it) {
+            PendingElements* elements = it->value.get();
             ASSERT(elements);
             ASSERT(!elements->isEmpty());
 
             elements->remove(element);
             if (elements->isEmpty())
-                toBeRemoved.append(resource.key);
+                toBeRemoved.append(it->key);
         }
 
         // We use the removePendingResourceForRemoval function here because it deals with set lifetime correctly.
-        for (auto& resource : toBeRemoved)
-            removePendingResourceForRemoval(resource);
+        auto vectorEnd = toBeRemoved.end();
+        for (auto it = toBeRemoved.begin(); it != vectorEnd; ++it)
+            removePendingResourceForRemoval(*it);
     }
 }
 
@@ -307,16 +317,18 @@ void SVGDocumentExtensions::removeAllTargetReferencesForElement(SVGElement* refe
 {
     Vector<SVGElement*> toBeRemoved;
 
-    for (auto& dependency : m_elementDependencies) {
-        SVGElement* referencedElement = dependency.key;
-        HashSet<SVGElement*>& referencingElements = *dependency.value;
+    auto end = m_elementDependencies.end();
+    for (auto it = m_elementDependencies.begin(); it != end; ++it) {
+        SVGElement* referencedElement = it->key;
+        HashSet<SVGElement*>& referencingElements = *it->value;
         referencingElements.remove(referencingElement);
         if (referencingElements.isEmpty())
             toBeRemoved.append(referencedElement);
     }
 
-    for (auto& element : toBeRemoved)
-        m_elementDependencies.remove(element);
+    auto vectorEnd = toBeRemoved.end();
+    for (auto it = toBeRemoved.begin(); it != vectorEnd; ++it)
+        m_elementDependencies.remove(*it);
 }
 
 void SVGDocumentExtensions::rebuildElements()

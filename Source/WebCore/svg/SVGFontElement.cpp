@@ -86,7 +86,10 @@ void SVGFontElement::registerLigaturesInGlyphCache(Vector<String>& ligatures)
     // will not be able to find a glyph for "f", but handles the fallback
     // character substitution properly through glyphDataForCharacter().
     Vector<SVGGlyph> glyphs;
-    for (auto& unicode : ligatures) {
+    size_t ligaturesSize = ligatures.size();
+    for (size_t i = 0; i < ligaturesSize; ++i) {
+        const String& unicode = ligatures[i];
+
         unsigned unicodeLength = unicode.length();
         ASSERT(unicodeLength > 1);
 
@@ -171,23 +174,27 @@ void SVGKerningMap::insert(const SVGKerningPair& kerningPair)
     svgKerning.unicodeName2 = kerningPair.unicodeName2;
     svgKerning.glyphName2 = kerningPair.glyphName2;
 
-    for (auto& name : kerningPair.unicodeName1) {
-        if (unicodeMap.contains(name))
-            unicodeMap.get(name)->append(svgKerning);
+    HashSet<String>::const_iterator uIt = kerningPair.unicodeName1.begin();
+    const HashSet<String>::const_iterator uEnd = kerningPair.unicodeName1.end();
+    for (; uIt != uEnd; ++uIt) {
+        if (unicodeMap.contains(*uIt))
+            unicodeMap.get(*uIt)->append(svgKerning);
         else {
             auto newVector = std::make_unique<SVGKerningVector>();
             newVector->append(svgKerning);
-            unicodeMap.add(name, WTF::move(newVector));
+            unicodeMap.add(*uIt, WTF::move(newVector));
         }
     }
 
-    for (auto& name : kerningPair.glyphName1) {
-        if (glyphMap.contains(name))
-            glyphMap.get(name)->append(svgKerning);
+    HashSet<String>::const_iterator gIt = kerningPair.glyphName1.begin();
+    const HashSet<String>::const_iterator gEnd = kerningPair.glyphName1.end();
+    for (; gIt != gEnd; ++gIt) {
+        if (glyphMap.contains(*gIt))
+            glyphMap.get(*gIt)->append(svgKerning);
         else {
             auto newVector = std::make_unique<SVGKerningVector>();
             newVector->append(svgKerning);
-            glyphMap.add(name, WTF::move(newVector));
+            glyphMap.add(*gIt, WTF::move(newVector));
         }
     }
 
@@ -202,8 +209,9 @@ static inline bool stringMatchesUnicodeRange(const String& unicodeString, const 
 
     if (!ranges.isEmpty()) {
         UChar firstChar = unicodeString[0];
-        for (auto& range : ranges) {
-            if (firstChar >= range.first && firstChar <= range.second)
+        const UnicodeRanges::const_iterator end = ranges.end();
+        for (UnicodeRanges::const_iterator it = ranges.begin(); it != end; ++it) {
+            if (firstChar >= it->first && firstChar <= it->second)
                 return true;
         }
     }
