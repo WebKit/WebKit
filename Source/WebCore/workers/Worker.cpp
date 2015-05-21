@@ -72,28 +72,28 @@ inline Worker::Worker(ScriptExecutionContext& context)
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
-PassRefPtr<Worker> Worker::create(ScriptExecutionContext& context, const String& url, ExceptionCode& ec)
+RefPtr<Worker> Worker::create(ScriptExecutionContext& context, const String& url, ExceptionCode& ec)
 {
     ASSERT(isMainThread());
 
     // We don't currently support nested workers, so workers can only be created from documents.
     ASSERT_WITH_SECURITY_IMPLICATION(context.isDocument());
 
-    RefPtr<Worker> worker = adoptRef(new Worker(context));
+    Ref<Worker> worker = adoptRef(*new Worker(context));
 
     worker->suspendIfNeeded();
 
     URL scriptURL = worker->resolveURL(url, ec);
     if (scriptURL.isEmpty())
-        return 0;
+        return nullptr;
 
     // The worker context does not exist while loading, so we must ensure that the worker object is not collected, nor are its event listeners.
-    worker->setPendingActivity(worker.get());
+    worker->setPendingActivity(worker.ptr());
 
     worker->m_scriptLoader = WorkerScriptLoader::create();
-    worker->m_scriptLoader->loadAsynchronously(&context, scriptURL, DenyCrossOriginRequests, worker.get());
+    worker->m_scriptLoader->loadAsynchronously(&context, scriptURL, DenyCrossOriginRequests, worker.ptr());
 
-    return worker.release();
+    return WTF::move(worker);
 }
 
 Worker::~Worker()

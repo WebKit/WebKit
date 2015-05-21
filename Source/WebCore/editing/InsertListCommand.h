@@ -37,9 +37,9 @@ class InsertListCommand : public CompositeEditCommand {
 public:
     enum Type { OrderedList, UnorderedList };
 
-    static RefPtr<InsertListCommand> create(Document& document, Type listType)
+    static Ref<InsertListCommand> create(Document& document, Type listType)
     {
-        return adoptRef(new InsertListCommand(document, listType));
+        return adoptRef(*new InsertListCommand(document, listType));
     }
 
     static RefPtr<HTMLElement> insertList(Document&, Type);

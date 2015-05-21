@@ -55,9 +55,9 @@ class WorkerRunLoop;
 class WorkerThreadableWebSocketChannel : public RefCounted<WorkerThreadableWebSocketChannel>, public ThreadableWebSocketChannel {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<ThreadableWebSocketChannel> create(WorkerGlobalScope* workerGlobalScope, WebSocketChannelClient* client, const String& taskMode)
+    static Ref<ThreadableWebSocketChannel> create(WorkerGlobalScope* workerGlobalScope, WebSocketChannelClient* client, const String& taskMode)
     {
-        return adoptRef(new WorkerThreadableWebSocketChannel(workerGlobalScope, client, taskMode));
+        return adoptRef(*new WorkerThreadableWebSocketChannel(workerGlobalScope, client, taskMode));
     }
     virtual ~WorkerThreadableWebSocketChannel();
 
@@ -126,9 +126,9 @@ private:
     // Bridge for Peer.  Running on the worker thread.
     class Bridge : public RefCounted<Bridge> {
     public:
-        static PassRefPtr<Bridge> create(PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper, PassRefPtr<WorkerGlobalScope> workerGlobalScope, const String& taskMode)
+        static Ref<Bridge> create(PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper, PassRefPtr<WorkerGlobalScope> workerGlobalScope, const String& taskMode)
         {
-            return adoptRef(new Bridge(workerClientWrapper, workerGlobalScope, taskMode));
+            return adoptRef(*new Bridge(workerClientWrapper, workerGlobalScope, taskMode));
         }
         ~Bridge();
         void initialize();

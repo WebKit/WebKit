@@ -35,9 +35,9 @@ namespace WebCore {
 
 class Geoposition : public RefCounted<Geoposition> {
 public:
-    static PassRefPtr<Geoposition> create(PassRefPtr<Coordinates> coordinates, DOMTimeStamp timestamp)
+    static Ref<Geoposition> create(PassRefPtr<Coordinates> coordinates, DOMTimeStamp timestamp)
     {
-        return adoptRef(new Geoposition(coordinates, timestamp));
+        return adoptRef(*new Geoposition(coordinates, timestamp));
     }
 
     PassRefPtr<Geoposition> isolatedCopy() const

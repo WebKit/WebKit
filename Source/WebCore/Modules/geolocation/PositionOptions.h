@@ -33,7 +33,7 @@ namespace WebCore {
     
 class PositionOptions : public RefCounted<PositionOptions> {
 public:
-    static PassRefPtr<PositionOptions> create() { return adoptRef(new PositionOptions()); }
+    static Ref<PositionOptions> create() { return adoptRef(*new PositionOptions()); }
 
     bool enableHighAccuracy() const { return m_highAccuracy; }
     void setEnableHighAccuracy(bool enable) { m_highAccuracy = enable; }

@@ -46,7 +46,7 @@ class TextTrackList;
 
 class MediaControlsHost : public RefCounted<MediaControlsHost> {
 public:
-    static PassRefPtr<MediaControlsHost> create(HTMLMediaElement*);
+    static Ref<MediaControlsHost> create(HTMLMediaElement*);
     ~MediaControlsHost();
 
     static const AtomicString& automaticKeyword();

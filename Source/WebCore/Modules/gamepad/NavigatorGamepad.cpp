@@ -76,7 +76,7 @@ Ref<Gamepad> NavigatorGamepad::gamepadFromPlatformGamepad(PlatformGamepad& platf
 {
     unsigned index = platformGamepad.index();
     if (index >= m_gamepads.size() || !m_gamepads[index])
-        return adoptRef(*Gamepad::create(platformGamepad).leakRef());
+        return Gamepad::create(platformGamepad);
 
     return *m_gamepads[index];
 }

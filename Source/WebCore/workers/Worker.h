@@ -48,7 +48,7 @@ namespace WebCore {
 
     class Worker final : public AbstractWorker, public ActiveDOMObject, private WorkerScriptLoaderClient {
     public:
-        static PassRefPtr<Worker> create(ScriptExecutionContext&, const String& url, ExceptionCode&);
+        static RefPtr<Worker> create(ScriptExecutionContext&, const String& url, ExceptionCode&);
         virtual ~Worker();
 
         virtual EventTargetInterface eventTargetInterface() const override { return WorkerEventTargetInterfaceType; }

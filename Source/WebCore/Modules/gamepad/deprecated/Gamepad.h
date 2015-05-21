@@ -36,9 +36,9 @@ namespace WebCore {
 
 class Gamepad: public RefCounted<Gamepad> {
 public:
-    static PassRefPtr<Gamepad> create()
+    static Ref<Gamepad> create()
     {
-        return adoptRef(new Gamepad);
+        return adoptRef(*new Gamepad);
     }
     ~Gamepad();
 

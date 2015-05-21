@@ -40,7 +40,7 @@ public:
         TIMEOUT = 3
     };
     
-    static PassRefPtr<PositionError> create(ErrorCode code, const String& message) { return adoptRef(new PositionError(code, message)); }
+    static Ref<PositionError> create(ErrorCode code, const String& message) { return adoptRef(*new PositionError(code, message)); }
 
     ErrorCode code() const { return m_code; }
     const String& message() const { return m_message; }

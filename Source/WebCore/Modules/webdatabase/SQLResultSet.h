@@ -37,7 +37,7 @@ namespace WebCore {
 
 class SQLResultSet : public ThreadSafeRefCounted<SQLResultSet> {
 public:
-    static PassRefPtr<SQLResultSet> create() { return adoptRef(new SQLResultSet); }
+    static Ref<SQLResultSet> create() { return adoptRef(*new SQLResultSet); }
 
     SQLResultSetRowList* rows() const;
 

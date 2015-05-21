@@ -40,7 +40,7 @@ public:
         PositionUnavailable
     };
 
-    static PassRefPtr<GeolocationError> create(ErrorCode code, const String& message) { return adoptRef(new GeolocationError(code, message)); }
+    static Ref<GeolocationError> create(ErrorCode code, const String& message) { return adoptRef(*new GeolocationError(code, message)); }
 
     ErrorCode code() const { return m_code; }
     const String& message() const { return m_message; }

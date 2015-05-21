@@ -44,10 +44,10 @@ namespace WebCore {
 
     class XPathExpression : public RefCounted<XPathExpression> {
     public:
-        static PassRefPtr<XPathExpression> createExpression(const String& expression, XPathNSResolver*, ExceptionCode&);
+        static RefPtr<XPathExpression> createExpression(const String& expression, XPathNSResolver*, ExceptionCode&);
         ~XPathExpression();
         
-        PassRefPtr<XPathResult> evaluate(Node* contextNode, unsigned short type, XPathResult*, ExceptionCode&);
+        RefPtr<XPathResult> evaluate(Node* contextNode, unsigned short type, XPathResult*, ExceptionCode&);
             
     private:
         explicit XPathExpression(std::unique_ptr<XPath::Expression>);

@@ -58,7 +58,7 @@ public:
     static const AtomicString& closedKeyword();
     static const AtomicString& endedKeyword();
 
-    static PassRefPtr<MediaSource> create(ScriptExecutionContext&);
+    static Ref<MediaSource> create(ScriptExecutionContext&);
     virtual ~MediaSource();
 
     void addedToRegistry();

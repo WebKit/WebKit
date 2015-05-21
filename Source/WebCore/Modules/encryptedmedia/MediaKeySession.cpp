@@ -40,9 +40,9 @@
 
 namespace WebCore {
 
-PassRefPtr<MediaKeySession> MediaKeySession::create(ScriptExecutionContext* context, MediaKeys* keys, const String& keySystem)
+Ref<MediaKeySession> MediaKeySession::create(ScriptExecutionContext* context, MediaKeys* keys, const String& keySystem)
 {
-    auto session = adoptRef(new MediaKeySession(context, keys, keySystem));
+    auto session = adoptRef(*new MediaKeySession(context, keys, keySystem));
     session->suspendIfNeeded();
     return session;
 }

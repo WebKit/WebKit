@@ -51,7 +51,7 @@ public:
         CUSTOM = 4
     };
 
-    static PassRefPtr<OscillatorNode> create(AudioContext*, float sampleRate);
+    static Ref<OscillatorNode> create(AudioContext*, float sampleRate);
 
     virtual ~OscillatorNode();
     

@@ -46,9 +46,9 @@ PeriodicWave* OscillatorNode::s_periodicWaveSquare = 0;
 PeriodicWave* OscillatorNode::s_periodicWaveSawtooth = 0;
 PeriodicWave* OscillatorNode::s_periodicWaveTriangle = 0;
 
-PassRefPtr<OscillatorNode> OscillatorNode::create(AudioContext* context, float sampleRate)
+Ref<OscillatorNode> OscillatorNode::create(AudioContext* context, float sampleRate)
 {
-    return adoptRef(new OscillatorNode(context, sampleRate));
+    return adoptRef(*new OscillatorNode(context, sampleRate));
 }
 
 OscillatorNode::OscillatorNode(AudioContext* context, float sampleRate)

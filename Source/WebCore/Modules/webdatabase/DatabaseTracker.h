@@ -95,7 +95,7 @@ public:
     unsigned long long usageForOrigin(SecurityOrigin*);
     unsigned long long quotaForOrigin(SecurityOrigin*);
     void setQuota(SecurityOrigin*, unsigned long long);
-    PassRefPtr<OriginLock> originLockFor(SecurityOrigin*);
+    RefPtr<OriginLock> originLockFor(SecurityOrigin*);
 
     void deleteAllDatabases();
     WEBCORE_EXPORT void deleteDatabasesModifiedSince(std::chrono::system_clock::time_point);

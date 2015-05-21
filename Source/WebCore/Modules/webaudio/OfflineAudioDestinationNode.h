@@ -38,9 +38,9 @@ class AudioContext;
     
 class OfflineAudioDestinationNode : public AudioDestinationNode {
 public:
-    static PassRefPtr<OfflineAudioDestinationNode> create(AudioContext* context, AudioBuffer* renderTarget)
+    static Ref<OfflineAudioDestinationNode> create(AudioContext* context, AudioBuffer* renderTarget)
     {
-        return adoptRef(new OfflineAudioDestinationNode(context, renderTarget));     
+        return adoptRef(*new OfflineAudioDestinationNode(context, renderTarget));     
     }
 
     virtual ~OfflineAudioDestinationNode();

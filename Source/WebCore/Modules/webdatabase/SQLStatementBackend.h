@@ -43,7 +43,7 @@ class SQLTransactionBackend;
 
 class SQLStatementBackend : public ThreadSafeRefCounted<SQLStatementBackend> {
 public:
-    static PassRefPtr<SQLStatementBackend> create(std::unique_ptr<SQLStatement>,
+    static Ref<SQLStatementBackend> create(std::unique_ptr<SQLStatement>,
         const String& sqlStatement, const Vector<SQLValue>& arguments, int permissions);
     virtual ~SQLStatementBackend();
 

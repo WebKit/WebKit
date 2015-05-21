@@ -39,9 +39,9 @@ class PlatformGamepad;
 
 class Gamepad: public RefCounted<Gamepad> {
 public:
-    static PassRefPtr<Gamepad> create(const PlatformGamepad& platformGamepad)
+    static Ref<Gamepad> create(const PlatformGamepad& platformGamepad)
     {
-        return adoptRef(new Gamepad(platformGamepad));
+        return adoptRef(*new Gamepad(platformGamepad));
     }
     ~Gamepad();
 

@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-PassRefPtr<MediaKeys> MediaKeys::create(const String& keySystem, ExceptionCode& ec)
+RefPtr<MediaKeys> MediaKeys::create(const String& keySystem, ExceptionCode& ec)
 {
     // From <http://dvcs.w3.org/hg/html-media/raw-file/tip/encrypted-media/encrypted-media.html#dom-media-keys-constructor>:
     // The MediaKeys(keySystem) constructor must run the following steps:
@@ -46,13 +46,13 @@ PassRefPtr<MediaKeys> MediaKeys::create(const String& keySystem, ExceptionCode& 
     // 1. If keySystem is null or an empty string, throw an INVALID_ACCESS_ERR exception and abort these steps.
     if (keySystem.isNull() || keySystem.isEmpty()) {
         ec = INVALID_ACCESS_ERR;
-        return 0;
+        return nullptr;
     }
 
     // 2. If keySystem is not one of the user agent's supported Key Systems, throw a NOT_SUPPORTED_ERR and abort these steps.
     if (!CDM::supportsKeySystem(keySystem)) {
         ec = NOT_SUPPORTED_ERR;
-        return 0;
+        return nullptr;
     }
 
     // 3. Let cdm be the content decryption module corresponding to keySystem.
@@ -62,7 +62,7 @@ PassRefPtr<MediaKeys> MediaKeys::create(const String& keySystem, ExceptionCode& 
     // 5. Create a new MediaKeys object.
     // 5.1 Let the keySystem attribute be keySystem.
     // 6. Return the new object to the caller.
-    return adoptRef(new MediaKeys(keySystem, WTF::move(cdm)));
+    return adoptRef(*new MediaKeys(keySystem, WTF::move(cdm)));
 }
 
 MediaKeys::MediaKeys(const String& keySystem, std::unique_ptr<CDM> cdm)
@@ -83,7 +83,7 @@ MediaKeys::~MediaKeys()
     }
 }
 
-PassRefPtr<MediaKeySession> MediaKeys::createSession(ScriptExecutionContext* context, const String& type, Uint8Array* initData, ExceptionCode& ec)
+RefPtr<MediaKeySession> MediaKeys::createSession(ScriptExecutionContext* context, const String& type, Uint8Array* initData, ExceptionCode& ec)
 {
     // From <http://www.w3.org/TR/2014/WD-encrypted-media-20140218/#dom-createsession>:
     // The createSession(type, initData) method must run the following steps:
@@ -92,20 +92,20 @@ PassRefPtr<MediaKeySession> MediaKeys::createSession(ScriptExecutionContext* con
     // 1. If contentType is null or an empty string, throw an INVALID_ACCESS_ERR exception and abort these steps.
     if (type.isEmpty()) {
         ec = INVALID_ACCESS_ERR;
-        return 0;
+        return nullptr;
     }
 
     // 2. If initData is null or an empty array, throw an INVALID_ACCESS_ERR exception and abort these steps.
     if (!initData || !initData->length()) {
         ec = INVALID_ACCESS_ERR;
-        return 0;
+        return nullptr;
     }
 
     // 3. If type contains a MIME type that is not supported or is not supported by the keySystem, throw
     // a NOT_SUPPORTED_ERR exception and abort these steps.
     if (!type.isNull() && !type.isEmpty() && !m_cdm->supportsMIMEType(type)) {
         ec = NOT_SUPPORTED_ERR;
-        return 0;
+        return nullptr;
     }
 
     // 4. Create a new MediaKeySession object.
@@ -119,7 +119,7 @@ PassRefPtr<MediaKeySession> MediaKeys::createSession(ScriptExecutionContext* con
     session->generateKeyRequest(type, initData);
 
     // 6. Return the new object to the caller.
-    return session;
+    return WTF::move(session);
 }
 
 bool MediaKeys::isTypeSupported(const String& keySystem, const String& mimeType)

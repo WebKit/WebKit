@@ -44,10 +44,10 @@ class HTMLMediaElement;
 
 class MediaKeys : public RefCounted<MediaKeys>, public CDMClient {
 public:
-    static PassRefPtr<MediaKeys> create(const String& keySystem, ExceptionCode&);
+    static RefPtr<MediaKeys> create(const String& keySystem, ExceptionCode&);
     virtual ~MediaKeys();
 
-    PassRefPtr<MediaKeySession> createSession(ScriptExecutionContext*, const String& mimeType, Uint8Array* initData, ExceptionCode&);
+    RefPtr<MediaKeySession> createSession(ScriptExecutionContext*, const String& mimeType, Uint8Array* initData, ExceptionCode&);
 
     static bool isTypeSupported(const String& keySystem, const String& mimeType);
 

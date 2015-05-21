@@ -67,11 +67,11 @@ void MediaSource::setRegistry(URLRegistry* registry)
     s_registry = registry;
 }
 
-PassRefPtr<MediaSource> MediaSource::create(ScriptExecutionContext& context)
+Ref<MediaSource> MediaSource::create(ScriptExecutionContext& context)
 {
-    RefPtr<MediaSource> mediaSource(adoptRef(new MediaSource(context)));
+    Ref<MediaSource> mediaSource(adoptRef(*new MediaSource(context)));
     mediaSource->suspendIfNeeded();
-    return mediaSource.release();
+    return mediaSource;
 }
 
 MediaSource::MediaSource(ScriptExecutionContext& context)

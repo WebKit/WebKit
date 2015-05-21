@@ -45,24 +45,24 @@ inline XPathExpression::XPathExpression(std::unique_ptr<XPath::Expression> expre
 {
 }
 
-PassRefPtr<XPathExpression> XPathExpression::createExpression(const String& expression, XPathNSResolver* resolver, ExceptionCode& ec)
+RefPtr<XPathExpression> XPathExpression::createExpression(const String& expression, XPathNSResolver* resolver, ExceptionCode& ec)
 {
     auto parsedExpression = Parser::parseStatement(expression, resolver, ec);
     if (!parsedExpression)
         return nullptr;
 
-    return adoptRef(new XPathExpression(WTF::move(parsedExpression)));
+    return adoptRef(*new XPathExpression(WTF::move(parsedExpression)));
 }
 
 XPathExpression::~XPathExpression()
 {
 }
 
-PassRefPtr<XPathResult> XPathExpression::evaluate(Node* contextNode, unsigned short type, XPathResult*, ExceptionCode& ec)
+RefPtr<XPathResult> XPathExpression::evaluate(Node* contextNode, unsigned short type, XPathResult*, ExceptionCode& ec)
 {
     if (!isValidContextNode(contextNode)) {
         ec = NOT_SUPPORTED_ERR;
-        return 0;
+        return nullptr;
     }
 
     EvaluationContext& evaluationContext = Expression::evaluationContext();
@@ -87,7 +87,7 @@ PassRefPtr<XPathResult> XPathExpression::evaluate(Node* contextNode, unsigned sh
             return nullptr;
     }
 
-    return result;
+    return WTF::move(result);
 }
 
 }
