@@ -142,11 +142,9 @@
       <dep package="glib-networking"/>
       <dep package="libxml2"/>
     </dependencies>
-    <branch module="/pub/gnome/sources/libsoup/2.42/libsoup-2.42.0.tar.xz" version="2.42.0"
+    <branch module="/pub/gnome/sources/libsoup/2.50/libsoup-2.50.0.tar.xz" version="2.50.0"
             repo="ftp.gnome.org"
-            hash="sha256:9e0e7eb5d3f7401ccf521fbc289fc1fa0923b7c7833729e2ed7696f7b848893e">
-      <patch file="soup-clang-warning-fix1.patch" strip="1"/>
-      <patch file="soup-clang-warning-fix2.patch" strip="1"/>
+            hash="sha256:1e01365ac4af3817187ea847f9d3588c27eee01fc519a5a7cb212bb78b0f667b">
     </branch>
   </autotools>
 

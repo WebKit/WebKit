@@ -1,3 +1,14 @@
+2015-05-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] Bump libsoup version to 2.50.0
+        https://bugs.webkit.org/show_bug.cgi?id=145127
+
+        Reviewed by Gyuyoung Kim.
+
+        * efl/jhbuild.modules:
+        * efl/patches/soup-clang-warning-fix1.patch: Removed.
+        * efl/patches/soup-clang-warning-fix2.patch: Removed.
+
 2015-05-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Move MainThreadGtk, RunLoopGtk, WorkQueueGtk under Source/WTF/wtf/glib/
