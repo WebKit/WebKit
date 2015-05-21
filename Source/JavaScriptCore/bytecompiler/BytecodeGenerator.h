@@ -503,8 +503,11 @@ namespace JSC {
             RegisterID* valueRegister, RegisterID* getterRegister, RegisterID* setterRegister, unsigned options, const JSTextPosition&);
 
         void emitEnumeration(ThrowableExpressionData* enumerationNode, ExpressionNode* subjectNode, const std::function<void(BytecodeGenerator&, RegisterID*)>& callBack);
+
+#if ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX)
         RegisterID* emitGetTemplateObject(RegisterID* dst, TaggedTemplateNode*);
-        
+#endif
+
         RegisterID* emitReturn(RegisterID* src);
         RegisterID* emitEnd(RegisterID* src) { return emitUnaryNoDstOp(op_end, src); }
 

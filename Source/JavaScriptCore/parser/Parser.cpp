@@ -2611,6 +2611,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
             next();
             break;
         }
+#if ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX)
         case TEMPLATE: {
             semanticFailIfTrue(baseIsSuper, "Cannot use super as tag for tagged templates");
             JSTextPosition expressionEnd = lastTokenEndPosition();
@@ -2621,6 +2622,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
             m_nonLHSCount = nonLHSCount;
             break;
         }
+#endif
         default:
             goto endMemberExpression;
         }
