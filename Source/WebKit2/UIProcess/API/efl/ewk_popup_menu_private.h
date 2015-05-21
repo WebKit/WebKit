@@ -45,7 +45,6 @@ public:
     unsigned selectedIndex() const;
 
 private:
-    EwkView* m_view;
     WKRetainPtr<WKPopupMenuListenerRef> m_popupMenuListener;
     Eina_List* m_popupMenuItems;
     unsigned m_selectedIndex;

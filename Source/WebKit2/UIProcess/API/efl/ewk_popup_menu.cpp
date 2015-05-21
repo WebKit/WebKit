@@ -34,9 +34,8 @@
 #include "ewk_popup_menu_item_private.h"
 #include "ewk_popup_menu_private.h"
 
-EwkPopupMenu::EwkPopupMenu(EwkView* view, WKPopupMenuListenerRef popupMenuListener, WKArrayRef items, unsigned selectedIndex)
-    : m_view(view)
-    , m_popupMenuListener(popupMenuListener)
+EwkPopupMenu::EwkPopupMenu(EwkView*, WKPopupMenuListenerRef popupMenuListener, WKArrayRef items, unsigned selectedIndex)
+    : m_popupMenuListener(popupMenuListener)
     , m_popupMenuItems(0)
     , m_selectedIndex(selectedIndex)
 {
