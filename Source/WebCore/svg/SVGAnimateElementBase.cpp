@@ -172,7 +172,7 @@ bool SVGAnimateElementBase::calculateFromAndByValues(const String& fromString, c
 static inline bool propertyTypesAreConsistent(AnimatedPropertyType expectedPropertyType, const SVGElementAnimatedPropertyList& animatedTypes)
 {
     for (auto& type : animatedTypes) {
-        for (auto& property : type.properties()) {
+        for (auto& property : type.properties) {
             if (expectedPropertyType != property->animatedPropertyType()) {
                 // This is the only allowed inconsistency. SVGAnimatedAngleAnimator handles both SVGAnimatedAngle & SVGAnimatedEnumeration for markers orient attribute.
                 if (expectedPropertyType == AnimatedAngle && property->animatedPropertyType() == AnimatedEnumeration)
