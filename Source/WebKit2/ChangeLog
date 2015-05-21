@@ -1,3 +1,17 @@
+2015-05-20  Anders Carlsson  <andersca@apple.com>
+
+        Make sure we always have a process pool to perform data store operations with
+        https://bugs.webkit.org/show_bug.cgi?id=145231
+        rdar://problem/20618248
+
+        Reviewed by Tim Horton.
+
+        Make sure that we always return a process pool. If we're a legacy C SPI per-context data store,
+        find the process pool we're a part of and use that. Otherwise, create a new one.
+    
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::processPools):
+
 2015-05-19  Jer Noble  <jer.noble@apple.com>
 
         Touching HTMLMediaElement.h or MediaPlayer.h causes a world rebuild.

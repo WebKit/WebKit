@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebsiteDataStore.h"
 
+#include "APIProcessPoolConfiguration.h"
 #include "APIWebsiteDataRecord.h"
 #include "StorageManager.h"
 #include "WebProcessPool.h"
@@ -733,6 +734,24 @@ HashSet<RefPtr<WebProcessPool>> WebsiteDataStore::processPools() const
     HashSet<RefPtr<WebProcessPool>> processPools;
     for (auto& process : processes())
         processPools.add(&process->processPool());
+
+    if (processPools.isEmpty()) {
+        // Check if we're one of the legacy data stores.
+        for (auto& processPool : WebProcessPool::allProcessPools()) {
+            if (auto dataStore = processPool->websiteDataStore()) {
+                if (&dataStore->websiteDataStore() == this) {
+                    processPools.add(processPool);
+                    break;
+                }
+            }
+        }
+    }
+
+    if (processPools.isEmpty()) {
+        auto processPool = WebProcessPool::create(API::ProcessPoolConfiguration::create());
+
+        processPools.add(processPool.ptr());
+    }
 
     return processPools;
 }
