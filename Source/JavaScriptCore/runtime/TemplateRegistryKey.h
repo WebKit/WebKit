@@ -62,8 +62,8 @@ public:
     };
 
 private:
-    StringVector m_rawStrings { };
-    StringVector m_cookedStrings { };
+    StringVector m_rawStrings;
+    StringVector m_cookedStrings;
     unsigned m_hash { 0 };
 };
 
