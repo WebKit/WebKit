@@ -46,6 +46,12 @@
     return WebKit::wrapper(API::UserContentExtensionStore::defaultStore());
 }
 
++ (instancetype)storeWithURL:(NSURL *)url
+{
+    Ref<API::UserContentExtensionStore> store = API::UserContentExtensionStore::storeWithPath(url.absoluteURL.fileSystemRepresentation);
+    return WebKit::wrapper(store.leakRef());
+}
+
 - (void)compileContentExtensionForIdentifier:(NSString *)identifier encodedContentExtension:(NSString *)encodedContentExtension completionHandler:(void (^)(_WKUserContentFilter *, NSError *))completionHandler
 {
     auto handler = adoptNS([completionHandler copy]);

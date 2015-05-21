@@ -33,6 +33,7 @@ WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
 @interface _WKUserContentExtensionStore : NSObject
 
 + (instancetype)defaultStore;
++ (instancetype)storeWithURL:(NSURL *)url;
 
 - (void)compileContentExtensionForIdentifier:(NSString *)identifier encodedContentExtension:(NSString *) NS_RELEASES_ARGUMENT encodedContentExtension completionHandler:(void (^)(_WKUserContentFilter *, NSError *))completionHandler;
 - (void)lookupContentExtensionForIdentifier:(NSString *)identifier completionHandler:(void (^)(_WKUserContentFilter *, NSError *))completionHandler;
