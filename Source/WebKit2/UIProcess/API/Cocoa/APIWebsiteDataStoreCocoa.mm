@@ -26,7 +26,12 @@
 #include "config.h"
 #include "APIWebsiteDataStore.h"
 
+#include "SandboxExtension.h"
 #include "SandboxUtilities.h"
+
+#if PLATFORM(IOS)
+#import <WebCore/RuntimeApplicationChecksIOS.h>
+#endif
 
 namespace API {
 
@@ -86,12 +91,29 @@ String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const Stri
     return url.absoluteURL.path.fileSystemRepresentation;
 }
 
+static String applicationCacheDirectory()
+{
+#if PLATFORM(IOS)
+    // This quirk used to make these apps share application cache storage, but doesn't accomplish that any more.
+    // Preserving it avoids the need to migrate data when upgrading.
+    // FIXME: Ideally we should just have Safari and WebApp create a data store with
+    // this application cache path, but that's not supported as of right now.
+    if (WebCore::applicationIsMobileSafari() || WebCore::applicationIsWebApp()) {
+        NSString *cachePath = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches/com.apple.WebAppCache"];
+
+        return WebKit::stringByResolvingSymlinksInPath(cachePath.stringByStandardizingPath);
+    }
+#endif
+
+    return WebsiteDataStore::cacheDirectoryFileSystemRepresentation("OfflineWebApplicationCache");
+}
+
 WebKit::WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfiguration()
 {
     WebKit::WebsiteDataStore::Configuration configuration;
 
     configuration.networkCacheDirectory = cacheDirectoryFileSystemRepresentation("NetworkCache");
-    configuration.applicationCacheDirectory = cacheDirectoryFileSystemRepresentation("OfflineWebApplicationCache");
+    configuration.applicationCacheDirectory = applicationCacheDirectory();
 
     configuration.webSQLDatabaseDirectory = websiteDataDirectoryFileSystemRepresentation("WebSQL");
     configuration.localStorageDirectory = websiteDataDirectoryFileSystemRepresentation("LocalStorage");
