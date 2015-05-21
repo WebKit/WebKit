@@ -208,6 +208,19 @@
         https://bugs.webkit.org/show_bug.cgi?id=145221
         <rdar://problem/20985817>
 
+        Follow-up commit. After discussion with the AppKit team, we've
+        concluded that a solid white is the color that best matches
+        the system.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::systemColor): Use Color::white.
+
+2015-05-20  Dean Jackson  <dino@apple.com>
+
+        Label text for default buttons don’t have the correct white color
+        https://bugs.webkit.org/show_bug.cgi?id=145221
+        <rdar://problem/20985817>
+
         Reviewed by Tim Horton.
 
         Use a 85% solid white for the active text color on buttons.

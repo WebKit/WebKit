@@ -478,7 +478,7 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID) const
     case CSSValueActivebuttontext:
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
         // There is no corresponding NSColor for this so we use a hard coded value.
-        color = 0xDAFFFFFF;
+        color = Color::white;
 #else
         color = convertNSColorToColor([NSColor controlTextColor]);
 #endif
