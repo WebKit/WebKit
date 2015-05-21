@@ -86,7 +86,6 @@ ViewportAttributes ViewportArguments::resolve(const FloatSize& initialViewportSi
     float resultZoom = zoom;
     float resultMinZoom = minZoom;
     float resultMaxZoom = maxZoom;
-    float resultUserZoom = userZoom;
 
     switch (int(resultWidth)) {
     case ViewportArguments::ValueDeviceWidth:
@@ -244,8 +243,9 @@ ViewportAttributes ViewportArguments::resolve(const FloatSize& initialViewportSi
     // if (resultZoom == ViewportArguments::ValueAuto)
     //    result.initialScale = ViewportArguments::ValueAuto;
 
-    result.userScalable = resultUserZoom;
+    result.userScalable = userZoom;
     result.orientation = orientation;
+    result.shrinkToFit = shrinkToFit;
 
     return result;
 }
@@ -354,7 +354,7 @@ static float findScaleValue(const String& keyString, const String& valueString, 
     return value;
 }
 
-static float findUserScalableValue(const String& keyString, const String& valueString, Document* document)
+static float findBooleanValue(const String& keyString, const String& valueString, Document* document)
 {
     // yes and no are used as keywords.
     // Numbers >= 1, numbers <= -1, device-width and device-height are mapped to yes.
@@ -392,12 +392,14 @@ void setViewportFeature(const String& keyString, const String& valueString, Docu
     else if (keyString == "maximum-scale")
         arguments->maxZoom = findScaleValue(keyString, valueString, document);
     else if (keyString == "user-scalable")
-        arguments->userZoom = findUserScalableValue(keyString, valueString, document);
+        arguments->userZoom = findBooleanValue(keyString, valueString, document);
 #if PLATFORM(IOS)
     else if (keyString == "minimal-ui")
-        // FIXME: Ignore silently for now. This should eventually fallback to the warning.
+        // FIXME: Ignore silently for now. This should eventually fall back to the warning.
         { }
 #endif
+    else if (keyString == "shrink-to-fit")
+        arguments->shrinkToFit = findBooleanValue(keyString, valueString, document);
     else
         reportViewportWarning(document, UnrecognizedViewportArgumentKeyError, keyString, String());
 }

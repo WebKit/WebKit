@@ -51,6 +51,7 @@ struct ViewportAttributes {
 
     float userScalable;
     float orientation;
+    float shrinkToFit;
 };
 
 struct ViewportArguments {
@@ -76,34 +77,24 @@ struct ViewportArguments {
 
     explicit ViewportArguments(Type type = Implicit)
         : type(type)
-        , width(ValueAuto)
-        , minWidth(ValueAuto)
-        , maxWidth(ValueAuto)
-        , height(ValueAuto)
-        , minHeight(ValueAuto)
-        , maxHeight(ValueAuto)
-        , zoom(ValueAuto)
-        , minZoom(ValueAuto)
-        , maxZoom(ValueAuto)
-        , userZoom(ValueAuto)
-        , orientation(ValueAuto)
     {
     }
 
     // All arguments are in CSS units.
     ViewportAttributes resolve(const FloatSize& initialViewportSize, const FloatSize& deviceSize, int defaultWidth) const;
 
-    float width;
-    float minWidth;
-    float maxWidth;
-    float height;
-    float minHeight;
-    float maxHeight;
-    float zoom;
-    float minZoom;
-    float maxZoom;
-    float userZoom;
-    float orientation;
+    float width { ValueAuto };
+    float minWidth { ValueAuto };
+    float maxWidth { ValueAuto };
+    float height { ValueAuto };
+    float minHeight { ValueAuto };
+    float maxHeight { ValueAuto };
+    float zoom { ValueAuto };
+    float minZoom { ValueAuto };
+    float maxZoom { ValueAuto };
+    float userZoom { ValueAuto };
+    float orientation { ValueAuto };
+    float shrinkToFit { ValueAuto };
 
     bool operator==(const ViewportArguments& other) const
     {
@@ -119,7 +110,8 @@ struct ViewportArguments {
             && minZoom == other.minZoom
             && maxZoom == other.maxZoom
             && userZoom == other.userZoom
-            && orientation == other.orientation;
+            && orientation == other.orientation
+            && shrinkToFit == other.shrinkToFit;
     }
 
     bool operator!=(const ViewportArguments& other) const
