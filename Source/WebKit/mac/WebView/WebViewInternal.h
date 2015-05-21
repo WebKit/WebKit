@@ -63,6 +63,11 @@ struct DictationAlternative;
 struct DictionaryPopupInfo;
 class WebMediaPlaybackTargetPicker;
 class WebSelectionServiceController;
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+#import <WebCore/MediaProducer.h>
+#endif
+
 #endif
 
 @class WebActionMenuController;

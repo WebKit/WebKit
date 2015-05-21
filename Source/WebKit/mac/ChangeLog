@@ -1,3 +1,9 @@
+2015-05-20  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * WebView/WebViewInternal.h:
+
 2015-05-20  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed build fix; LocalizedStrings.h is in WebCore.
