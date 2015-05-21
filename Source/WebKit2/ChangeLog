@@ -1,3 +1,11 @@
+2015-05-20  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Unreviewed EFL build fix since r184686.
+
+        * UIProcess/efl/WebProcessPoolEfl.cpp:
+        (WebKit::WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory): Add *legacy* prefix.
+        (WebKit::WebProcessPool::platformDefaultApplicationCacheDirectory): Deleted.
+
 2015-05-20  Chris Dumez  <cdumez@apple.com>
 
         [WK2][iOS] Update WebContent process sandbox profile for AWD logging

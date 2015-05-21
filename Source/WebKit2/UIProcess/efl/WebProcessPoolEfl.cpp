@@ -80,7 +80,7 @@ static void initializeInspectorServer()
 #endif
 }
 
-String WebProcessPool::platformDefaultApplicationCacheDirectory() const
+String WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory()
 {
     return String::fromUTF8(efreet_cache_home_get()) + "/WebKitEfl/Applications";
 }
