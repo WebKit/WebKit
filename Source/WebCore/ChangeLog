@@ -1,3 +1,19 @@
+2015-05-20  Enrica Casucci  <enrica@apple.com>
+
+        [iOS] Using CSS viewport units causes incorrect layout.
+        https://bugs.webkit.org/show_bug.cgi?id=145225
+        rdar://problem/20924495
+
+        Reviewed by Benjamin Poulain.
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::initialScaleFromSize):
+        (WebCore::ViewportConfiguration::initialScale):
+        (WebCore::ViewportConfiguration::initialScaleIgnoringContentSize):
+        * page/ViewportConfiguration.h:
+        (WebCore::ViewportConfiguration::initialScaleFromSize):
+        (WebCore::ViewportConfiguration::initialScaleIgnoringContentSize):
+
 2015-05-20  Chris Fleizach  <cfleizach@apple.com>
 
         AX: improve list heuristics (presentational use versus actual lists)

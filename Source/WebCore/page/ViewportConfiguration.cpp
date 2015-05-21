@@ -136,28 +136,36 @@ bool ViewportConfiguration::shouldIgnoreScalingConstraints() const
     return shouldIgnoreHorizontalScalingConstraints() || shouldIgnoreVerticalScalingConstraints();
 }
 
-double ViewportConfiguration::initialScale() const
+double ViewportConfiguration::initialScaleFromSize(double width, double height, bool shouldIgnoreScalingConstraints) const
 {
     ASSERT(!constraintsAreAllRelative(m_configuration));
 
     // If the document has specified its own initial scale, use it regardless.
     // This is guaranteed to be sanity checked already, so no need for MIN/MAX.
-    if (m_configuration.initialScaleIsSet && !shouldIgnoreScalingConstraints())
+    if (m_configuration.initialScaleIsSet && !shouldIgnoreScalingConstraints)
         return m_configuration.initialScale;
 
     // If not, it is up to us to determine the initial scale.
     // We want a scale small enough to fit the document width-wise.
     const FloatSize& minimumLayoutSize = m_minimumLayoutSize;
-    double width = m_contentSize.width() > 0 ? m_contentSize.width() : layoutWidth();
     double initialScale = 0;
     if (width > 0 && !shouldIgnoreVerticalScalingConstraints())
         initialScale = minimumLayoutSize.width() / width;
 
     // Prevent the initial scale from shrinking to a height smaller than our view's minimum height.
-    double height = m_contentSize.height() > 0 ? m_contentSize.height() : layoutHeight();
     if (height > 0 && height * initialScale < minimumLayoutSize.height() && !shouldIgnoreHorizontalScalingConstraints())
         initialScale = minimumLayoutSize.height() / height;
-    return std::min(std::max(initialScale, shouldIgnoreScalingConstraints() ? m_defaultConfiguration.minimumScale : m_configuration.minimumScale), m_configuration.maximumScale);
+    return std::min(std::max(initialScale, shouldIgnoreScalingConstraints ? m_defaultConfiguration.minimumScale : m_configuration.minimumScale), m_configuration.maximumScale);
+}
+
+double ViewportConfiguration::initialScale() const
+{
+    return initialScaleFromSize(m_contentSize.width() > 0 ? m_contentSize.width() : layoutWidth(), m_contentSize.height() > 0 ? m_contentSize.height() : layoutHeight(), shouldIgnoreScalingConstraints());
+}
+
+double ViewportConfiguration::initialScaleIgnoringContentSize() const
+{
+    return initialScaleFromSize(layoutWidth(), layoutHeight(), false);
 }
 
 double ViewportConfiguration::minimumScale() const

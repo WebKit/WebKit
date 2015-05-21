@@ -84,6 +84,7 @@ public:
 
     WEBCORE_EXPORT IntSize layoutSize() const;
     WEBCORE_EXPORT double initialScale() const;
+    WEBCORE_EXPORT double initialScaleIgnoringContentSize() const;
     WEBCORE_EXPORT double minimumScale() const;
     double maximumScale() const { return m_configuration.maximumScale; }
     WEBCORE_EXPORT bool allowsUserScaling() const;
@@ -103,6 +104,7 @@ public:
 private:
     void updateConfiguration();
     double viewportArgumentsLength(double length) const;
+    double initialScaleFromSize(double width, double height, bool shouldIgnoreScalingConstraints) const;
     int layoutWidth() const;
     int layoutHeight() const;
 
