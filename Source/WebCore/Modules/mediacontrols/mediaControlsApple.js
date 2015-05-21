@@ -102,6 +102,7 @@ Controller.prototype = {
         optimized: 'optimized',
         paused: 'paused',
         playing: 'playing',
+        returnFromOptimized: 'return-from-optimized',
         selected: 'selected',
         show: 'show',
         small: 'small',

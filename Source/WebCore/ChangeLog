@@ -1,3 +1,27 @@
+2015-05-20  Jon Lee  <jonlee@apple.com>
+
+        [iOS] Update optimized fullscreen controls artwork
+        https://bugs.webkit.org/show_bug.cgi?id=145208
+        rdar://problem/21034032
+
+        Reviewed by Jer Noble.
+
+        Update the artwork when media goes into optimized fullscreen. Add a new UI part
+        representing return-from-optimized.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::mediaUIImageData): Return data for the return button.
+        * Modules/mediacontrols/MediaControlsHost.idl: Add a new part ID.
+        * Modules/mediacontrols/mediaControlsApple.js: Add a new ClassName to apply to the
+        button when in the proper state.
+        * Modules/mediacontrols/mediaControlsiOS.js:
+        (ControllerIOS.prototype.handlePresentationModeChange): Add the ClassName when the
+        video goes into optimized fullscreen mode. Remove it otherwise.
+        * platform/ios/WebCoreSystemInterfaceIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::mediaControlsStyleSheet): Add the return button data to the
+        stylesheet.
+
 2015-05-20  Alex Christensen  <achristensen@webkit.org>
 
         [ContentExtensions] Properly initialize ActionKey.state

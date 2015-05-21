@@ -80,6 +80,7 @@ extern bool (*wkIsOptimizedFullscreenSupported)(void);
 
 typedef enum {
     wkMediaUIPartOptimizedFullscreenButton = 0,
+    wkMediaUIPartOptimizedFullscreenReturnButton,
     wkMediaUIPartOptimizedFullscreenPlaceholder,
     wkMediaUIPartOptimizedFullscreenPlaceholderText
 } wkMediaUIPart;

@@ -31,6 +31,7 @@ enum DeviceType {
 
 enum MediaUIPartID {
     "optimized-fullscreen-button",
+    "optimized-fullscreen-return-button",
     "optimized-fullscreen-placeholder",
     "optimized-fullscreen-placeholder-text"
 };

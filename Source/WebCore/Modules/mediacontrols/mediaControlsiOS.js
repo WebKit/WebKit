@@ -570,6 +570,8 @@ ControllerIOS.prototype = {
                 this.controls.inlinePlaybackPlaceholder.classList.remove(this.ClassNames.optimized);
                 this.controls.inlinePlaybackPlaceholderTextTop.classList.remove(this.ClassNames.optimized);
                 this.controls.inlinePlaybackPlaceholderTextBottom.classList.remove(this.ClassNames.optimized);
+
+                this.controls.optimizedFullscreenButton.classList.remove(this.ClassNames.returnFromOptimized);
                 break;
             case 'optimized':
                 var backgroundImage = "url('" + this.host.mediaUIImageData("optimized-fullscreen-placeholder") + "')";
@@ -582,12 +584,16 @@ ControllerIOS.prototype = {
                 this.controls.inlinePlaybackPlaceholderTextTop.classList.add(this.ClassNames.optimized);
                 this.controls.inlinePlaybackPlaceholderTextBottom.innerText = "";
                 this.controls.inlinePlaybackPlaceholderTextBottom.classList.add(this.ClassNames.optimized);
+
+                this.controls.optimizedFullscreenButton.classList.add(this.ClassNames.returnFromOptimized);
                 break;
             default:
                 this.controls.inlinePlaybackPlaceholder.style.backgroundImage = "";
                 this.controls.inlinePlaybackPlaceholder.classList.remove(this.ClassNames.optimized);
                 this.controls.inlinePlaybackPlaceholderTextTop.classList.remove(this.ClassNames.optimized);
                 this.controls.inlinePlaybackPlaceholderTextBottom.classList.remove(this.ClassNames.optimized);
+
+                this.controls.optimizedFullscreenButton.classList.remove(this.ClassNames.returnFromOptimized);
                 break;
         }
 

@@ -1286,6 +1286,7 @@ String RenderThemeIOS::mediaControlsStyleSheet()
         StringBuilder builder;
         builder.append([NSString stringWithContentsOfFile:[[NSBundle bundleForClass:[WebCoreRenderThemeBundle class]] pathForResource:@"mediaControlsiOS" ofType:@"css"] encoding:NSUTF8StringEncoding error:nil]);
         builder.append(wkGetMediaUIImageData(wkMediaUIPartOptimizedFullscreenButton));
+        builder.append(wkGetMediaUIImageData(wkMediaUIPartOptimizedFullscreenReturnButton));
         m_mediaControlsStyleSheet = builder.toString();
     }
     return m_mediaControlsStyleSheet;
