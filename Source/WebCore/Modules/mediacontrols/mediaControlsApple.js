@@ -268,7 +268,7 @@ Controller.prototype = {
         var base = this.base = document.createElement('div');
         base.setAttribute('pseudo', '-webkit-media-controls');
         this.listenFor(base, 'mousemove', this.handleWrapperMouseMove);
-        this.listenFor(this.video, 'mouseout', this.handleWrapperMouseOut);
+        this.listenFor(base, 'mouseout', this.handleWrapperMouseOut);
         if (this.host.textTrackContainer)
             base.appendChild(this.host.textTrackContainer);
     },
@@ -291,14 +291,9 @@ Controller.prototype = {
         this.timelineMetricsNeedsUpdate = true;
     },
 
-    scheduleUpdateLayoutForDisplayedWidth: function()
-    {
-        setTimeout(this.updateLayoutForDisplayedWidth.bind(this), 0);
-    },
-
     updateTimelineMetricsIfNeeded: function()
     {
-        if (this.timelineMetricsNeedsUpdate && !this.controlsAreHidden()) {
+        if (this.timelineMetricsNeedsUpdate) {
             this.timelineLeft = this.controls.timeline.offsetLeft;
             this.timelineWidth = this.controls.timeline.offsetWidth;
             this.timelineHeight = this.controls.timeline.offsetHeight;
@@ -689,8 +684,8 @@ Controller.prototype = {
     handleDurationChange: function(event)
     {
         this.updateDuration();
-        this.updateTime();
-        this.updateProgress();
+        this.updateTime(true);
+        this.updateProgress(true);
     },
 
     handlePlay: function(event)
@@ -823,9 +818,14 @@ Controller.prototype = {
     handlePanelTransitionEnd: function(event)
     {
         var opacity = window.getComputedStyle(this.controls.panel).opacity;
-        if (!parseInt(opacity) && !this.controlsAlwaysVisible()) {
-            this.base.removeChild(this.controls.inlinePlaybackPlaceholder);
-            this.base.removeChild(this.controls.panel);
+        if (parseInt(opacity) > 0) {
+            this.controls.panel.classList.remove(this.ClassNames.hidden);
+            if (this.controls.panelBackground)
+                this.controls.panelBackground.classList.remove(this.ClassNames.hidden);
+        } else if (!this.controlsAlwaysVisible()) {
+            this.controls.panel.classList.add(this.ClassNames.hidden);
+            if (this.controls.panelBackground)
+                this.controls.panelBackground.classList.add(this.ClassNames.hidden);
         }
     },
 
@@ -1149,8 +1149,11 @@ Controller.prototype = {
         return gradient;
     },
 
-    updateProgress: function()
+    updateProgress: function(forceUpdate)
     {
+        if (!forceUpdate && this.controlsAreHidden())
+            return;
+
         this.updateTimelineMetricsIfNeeded();
         this.drawTimelineBackground();
     },
@@ -1357,32 +1360,24 @@ Controller.prototype = {
         }
     },
 
-    updateForShowingControls: function()
-    {
-        this.updateLayoutForDisplayedWidth();
-        this.setNeedsTimelineMetricsUpdate();
-        this.updateTime();
-        this.updateProgress();
-        this.drawVolumeBackground();
-        this.drawTimelineBackground();
-        this.controls.panel.classList.add(this.ClassNames.show);
-        this.controls.panel.classList.remove(this.ClassNames.hidden);
-        if (this.controls.panelBackground) {
-            this.controls.panelBackground.classList.add(this.ClassNames.show);
-            this.controls.panelBackground.classList.remove(this.ClassNames.hidden);
-        }
-    },
-
     showControls: function()
     {
         this.updateShouldListenForPlaybackTargetAvailabilityEvent();
         if (this.showInlinePlaybackPlaceholderOnly())
             return;
 
-        this.updateForShowingControls();
-        if (this.shouldHaveControls() && this.controlsAreHidden()) {
-            this.base.appendChild(this.controls.inlinePlaybackPlaceholder);
-            this.base.appendChild(this.controls.panel);
+        this.updateLayoutForDisplayedWidth();
+        this.setNeedsTimelineMetricsUpdate();
+        this.updateTime(true);
+        this.updateProgress(true);
+        this.drawVolumeBackground();
+        this.drawTimelineBackground();
+        this.controls.panel.classList.add(this.ClassNames.show);
+        this.controls.panel.classList.remove(this.ClassNames.hidden);
+
+        if (this.controls.panelBackground) {
+            this.controls.panelBackground.classList.add(this.ClassNames.show);
+            this.controls.panelBackground.classList.remove(this.ClassNames.hidden);
         }
     },
 
@@ -1461,7 +1456,7 @@ Controller.prototype = {
 
     controlsAreHidden: function()
     {
-        return !this.controlsAlwaysVisible() && !this.controls.panel.classList.contains(this.ClassNames.show) && !this.controls.panel.parentElement;
+        return !this.controlsAlwaysVisible() && !this.controls.panel.classList.contains(this.ClassNames.show);
     },
 
     removeControls: function()
@@ -1478,8 +1473,11 @@ Controller.prototype = {
         this.setNeedsTimelineMetricsUpdate();
     },
 
-    updateTime: function()
+    updateTime: function(forceUpdate)
     {
+        if (!forceUpdate && this.controlsAreHidden())
+            return;
+
         var currentTime = this.video.currentTime;
         var timeRemaining = currentTime - this.video.duration;
         this.controls.currentTime.innerText = this.formatTime(currentTime);

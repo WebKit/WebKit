@@ -1,3 +1,23 @@
+2015-05-20  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r184667 and r184682.
+        https://bugs.webkit.org/show_bug.cgi?id=145245
+
+        Broke media/media-controls-timeline-updates.html on WebKit2
+        (Requested by ap on #webkit).
+
+        Reverted changesets:
+
+        "Media Controls stop updating after hovering for a few
+        seconds."
+        https://bugs.webkit.org/show_bug.cgi?id=144770
+        http://trac.webkit.org/changeset/184667
+
+        "Unreviewed. Media Controls stop updating after hovering for a
+        few seconds."
+        https://bugs.webkit.org/show_bug.cgi?id=144770
+        http://trac.webkit.org/changeset/184682
+
 2015-05-20  Jon Lee  <jonlee@apple.com>
 
         [iOS] Update optimized fullscreen controls artwork
