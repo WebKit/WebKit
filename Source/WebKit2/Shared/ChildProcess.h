@@ -93,10 +93,14 @@ protected:
     static void stopNSAppRunLoop();
 #endif
 
+    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+
 private:
     // IPC::MessageSender
     virtual IPC::Connection* messageSenderConnection() override;
     virtual uint64_t messageSenderDestinationID() override;
+
+    void shutDown();
 
     void terminationTimerFired();
 

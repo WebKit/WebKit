@@ -272,6 +272,11 @@ WebProcessPool::~WebProcessPool()
 #ifndef NDEBUG
     processPoolCounter.decrement();
 #endif
+
+#if ENABLE(NETWORK_PROCESS)
+    if (m_networkProcess)
+        m_networkProcess->shutDownProcess();
+#endif
 }
 
 void WebProcessPool::initializeClient(const WKContextClientBase* client)

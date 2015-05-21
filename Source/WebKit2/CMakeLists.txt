@@ -641,6 +641,7 @@ set(WebKit2_MESSAGES_IN_FILES
     PluginProcess/PluginProcess.messages.in
     PluginProcess/WebProcessConnection.messages.in
 
+    Shared/ChildProcess.messages.in
     Shared/WebConnection.messages.in
 
     Shared/Authentication/AuthenticationManager.messages.in

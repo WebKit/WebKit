@@ -30,6 +30,7 @@
 #include "APIPageGroupHandle.h"
 #include "APIPageHandle.h"
 #include "AuthenticationManager.h"
+#include "ChildProcessMessages.h"
 #include "CustomProtocolManager.h"
 #include "DrawingArea.h"
 #include "EventDispatcher.h"
@@ -631,6 +632,11 @@ void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::MessageDeco
             return;
         
         pageGroupProxy->didReceiveMessage(connection, decoder);
+        return;
+    }
+
+    if (decoder.messageReceiverName() == Messages::ChildProcess::messageReceiverName()) {
+        ChildProcess::didReceiveMessage(connection, decoder);
         return;
     }
 

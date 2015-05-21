@@ -72,10 +72,9 @@ public:
     bool canSendMessage() const { return state() != State::Terminated;}
     bool sendMessage(std::unique_ptr<IPC::MessageEncoder>, unsigned messageSendFlags);
 
-protected:
     void shutDownProcess();
-    void abortProcessLaunchIfNeeded();
 
+protected:
     // ProcessLauncher::Client
     virtual void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
 

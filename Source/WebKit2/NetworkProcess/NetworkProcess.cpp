@@ -31,6 +31,7 @@
 #include "ArgumentCoders.h"
 #include "Attachment.h"
 #include "AuthenticationManager.h"
+#include "ChildProcessMessages.h"
 #include "CustomProtocolManager.h"
 #include "Logging.h"
 #include "NetworkConnectionToWebProcess.h"
@@ -126,6 +127,11 @@ void NetworkProcess::didReceiveMessage(IPC::Connection& connection, IPC::Message
 {
     if (messageReceiverMap().dispatchMessage(connection, decoder))
         return;
+
+    if (decoder.messageReceiverName() == Messages::ChildProcess::messageReceiverName()) {
+        ChildProcess::didReceiveMessage(connection, decoder);
+        return;
+    }
 
     didReceiveNetworkProcessMessage(connection, decoder);
 }

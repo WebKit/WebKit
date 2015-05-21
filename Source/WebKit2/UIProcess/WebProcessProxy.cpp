@@ -245,16 +245,6 @@ void WebProcessProxy::removeWebPage(uint64_t pageID)
     if (!m_processPool->usesNetworkProcess() || state() == State::Terminated || !canTerminateChildProcess())
         return;
 
-    abortProcessLaunchIfNeeded();
-
-#if PLATFORM(IOS)
-    if (state() == State::Running) {
-        // On iOS deploy a watchdog in the UI process, since the child process may be suspended.
-        // If 30s is insufficient for any outstanding activity to complete cleanly, then it will be killed.
-        connection()->terminateSoon(30);
-    }
-#endif
-
     shutDown();
 }
 
