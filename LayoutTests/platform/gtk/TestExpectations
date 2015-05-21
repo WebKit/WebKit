@@ -491,6 +491,7 @@ webkit.org/b/133806 svg/masking/mask-transformed-text-missing.svg [ ImageOnlyFai
 Bug(GTK) css3/filters/backdrop [ Skip ]
 
 webkit.org/b/141072 accessibility/frame-disconnect-textmarker-cache-crash.html [ Failure ]
+webkit.org/b/145273 accessibility/list-detection2.html [ Failure ]
 
 webkit.org/b/141423 css3/calc/line-height.html [ Failure ]
 webkit.org/b/141423 editing/pasteboard/simplfiying-markup-should-not-strip-content.html [ Failure ]

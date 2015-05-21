@@ -1,3 +1,20 @@
+2015-05-21  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: improve list heuristics (presentational use versus actual lists)
+        https://bugs.webkit.org/show_bug.cgi?id=134187
+
+        Unreviewed layout test fixage.
+
+        Skip the list-detection2.html test on GTK until it can be investigated.
+            https://bugs.webkit.org/show_bug.cgi?id=145273
+        Fix a failing test on GTK that needed an update after the last set of changes.
+        Skip the test on windows until a time someone can decide if we even expose or need lists in Windows AX API.
+            https://bugs.webkit.org/show_bug.cgi?id=145271
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/accessibility/list-detection-expected.txt:
+        * platform/win/TestExpectations:
+
 2015-05-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         SVG as image uses very tiny default font-size
