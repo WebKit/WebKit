@@ -38,7 +38,11 @@ extern "C" {
 #endif
 
 /** Creates a type name for Ewk_Cookie_Manager */
+#ifdef __cplusplus
+typedef class EwkCookieManager Ewk_Cookie_Manager;
+#else
 typedef struct EwkCookieManager Ewk_Cookie_Manager;
+#endif
 
 /**
  * \enum    Ewk_Cookie_Accept_Policy

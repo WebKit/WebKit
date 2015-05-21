@@ -43,7 +43,11 @@ extern "C" {
  *
  * @see Ewk_Object
  */
+#ifdef __cplusplus
+typedef class EwkObject Ewk_Navigation_Data;
+#else
 typedef struct EwkObject Ewk_Navigation_Data;
+#endif
 
 /**
  * Returns title for this navigation data.

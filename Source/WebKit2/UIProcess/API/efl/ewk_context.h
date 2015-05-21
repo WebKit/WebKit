@@ -68,7 +68,11 @@ struct Ewk_Download_Job_Error {
  *
  * @see Ewk_Object
  */
+#ifdef __cplusplus
+typedef class EwkObject Ewk_Context;
+#else
 typedef struct EwkObject Ewk_Context;
+#endif
 
 /**
  * \enum    Ewk_Cache_Model

@@ -43,7 +43,11 @@ extern "C" {
  *
  * @see Ewk_Object
  */
+#ifdef __cplusplus
+typedef class EwkObject Ewk_Page_Group;
+#else
 typedef struct EwkObject Ewk_Page_Group;
+#endif
 
 /**
  * Creates a new Ewk_Page_Group.

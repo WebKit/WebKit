@@ -42,7 +42,11 @@ extern "C" {
  *
  * @see Ewk_Object
  */
+#ifdef __cplusplus
+typedef class EwkObject Ewk_Back_Forward_List_Item;
+#else
 typedef struct EwkObject Ewk_Back_Forward_List_Item;
+#endif
 
 /**
  * Returns URL of the item.

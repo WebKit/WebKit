@@ -34,7 +34,11 @@
 #include <Eina.h>
 #include <JavaScriptCore/JSBase.h>
 
+#ifdef __cplusplus
+typedef class EwkPage Ewk_Page;
+#else
 typedef struct EwkPage Ewk_Page;
+#endif
 
 #ifdef __cplusplus
 extern "C" {

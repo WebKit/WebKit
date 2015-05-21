@@ -40,12 +40,20 @@ extern "C" {
 /**
  * Declare Ewk_Page.
  */
+#ifdef __cplusplus
+typedef class EwkPage Ewk_Page;
+#else
 typedef struct EwkPage Ewk_Page;
+#endif
 
 /**
  * Declare Ewk_Extension.
  */
+#ifdef __cplusplus
+typedef class EwkExtension Ewk_Extension;
+#else
 typedef struct EwkExtension Ewk_Extension;
+#endif
 
 /**
  * Declare Ewk_Extension_Initialize_Function.

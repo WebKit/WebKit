@@ -39,7 +39,11 @@ extern "C" {
 #endif
 
 /** Creates a type name for @a Ewk_Favicon_Database. */
+#ifdef __cplusplus
+typedef class EwkFaviconDatabase Ewk_Favicon_Database;
+#else
 typedef struct EwkFaviconDatabase Ewk_Favicon_Database;
+#endif
 
 /**
  * @typedef Ewk_Favicon_Database_Icon_Change_Cb Ewk_Favicon_Database_Icon_Change_Cb

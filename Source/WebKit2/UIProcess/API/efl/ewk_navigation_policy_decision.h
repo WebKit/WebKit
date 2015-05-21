@@ -43,7 +43,11 @@ extern "C" {
  *
  * @see Ewk_Object
  */
+#ifdef __cplusplus
+typedef class EwkObject Ewk_Navigation_Policy_Decision;
+#else
 typedef struct EwkObject Ewk_Navigation_Policy_Decision;
+#endif
 
 /// Enum containing navigation types
 typedef enum  {

@@ -41,7 +41,11 @@ extern "C" {
 #endif
 
 /** Creates a type name for Ewk_Storage_Manager. */
+#ifdef __cplusplus
+typedef class EwkStorageManager Ewk_Storage_Manager;
+#else
 typedef struct EwkStorageManager Ewk_Storage_Manager;
+#endif
 
 /**
  * @typedef Ewk_Storage_Origins_Async_Get_Cb Ewk_Storage_Origins_Async_Get_Cb

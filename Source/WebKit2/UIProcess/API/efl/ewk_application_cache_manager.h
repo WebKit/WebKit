@@ -39,7 +39,11 @@ extern "C" {
 #endif
 
 /** Creates a type name for Ewk_Application_Cache_Manager */
+#ifdef __cplusplus
+typedef class EwkApplicationCacheManager Ewk_Application_Cache_Manager;
+#else
 typedef struct EwkApplicationCacheManager Ewk_Application_Cache_Manager;
+#endif
 
 /**
  * @typedef Ewk_Application_Cache_Origins_Async_Get_Cb Ewk_Application_Cache_Origins_Async_Get_Cb

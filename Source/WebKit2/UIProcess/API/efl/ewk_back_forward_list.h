@@ -38,7 +38,11 @@ extern "C" {
 #endif
 
 /** Creates a type name for Ewk_Back_Forward_List */
+#ifdef __cplusplus
+typedef class EwkBackForwardList Ewk_Back_Forward_List;
+#else
 typedef struct EwkBackForwardList Ewk_Back_Forward_List;
+#endif
 
 /**
  * Returns the current item in the @a list.

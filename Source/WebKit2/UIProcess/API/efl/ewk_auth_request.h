@@ -42,7 +42,11 @@ extern "C" {
  *
  * @see Ewk_Object
  */
+#ifdef __cplusplus
+typedef class EwkObject Ewk_Auth_Request;
+#else
 typedef struct EwkObject Ewk_Auth_Request;
+#endif
 
 /**
  * Queries the suggested username to be used for authenticating.

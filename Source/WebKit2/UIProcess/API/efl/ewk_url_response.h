@@ -42,7 +42,11 @@ extern "C" {
  *
  * @see Ewk_Object
  */
+#ifdef __cplusplus
+typedef class EwkObject Ewk_Url_Response;
+#else
 typedef struct EwkObject Ewk_Url_Response;
+#endif
 
 /**
  * Query URL for this response.

@@ -34,12 +34,21 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
+#ifdef __cplusplus
+typedef class EwkObject Ewk_Auth_Request;
+typedef class EwkObject Ewk_Download_Job;
+typedef class EwkObject Ewk_File_Chooser_Request;
+typedef class EwkObject Ewk_Form_Submission_Request;
+typedef class EwkObject Ewk_Navigation_Policy_Decision;
+typedef class EwkError Ewk_Error;
+#else
 typedef struct EwkObject Ewk_Auth_Request;
 typedef struct EwkObject Ewk_Download_Job;
 typedef struct EwkObject Ewk_File_Chooser_Request;
 typedef struct EwkObject Ewk_Form_Submission_Request;
 typedef struct EwkObject Ewk_Navigation_Policy_Decision;
 typedef struct EwkError Ewk_Error;
+#endif
 
 namespace EwkViewCallbacks {
 

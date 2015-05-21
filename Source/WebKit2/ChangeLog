@@ -1,5 +1,44 @@
 2015-05-21  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [EFL] Fix mismatched-tags warnings in UIProcess/API/efl
+        https://bugs.webkit.org/show_bug.cgi?id=145129
+
+        Reviewed by Gyuyoung Kim.
+
+        * UIProcess/API/efl/EwkViewCallbacks.h:
+        * UIProcess/API/efl/ewk_application_cache_manager.h:
+        * UIProcess/API/efl/ewk_auth_request.h:
+        * UIProcess/API/efl/ewk_back_forward_list.h:
+        * UIProcess/API/efl/ewk_back_forward_list_item.h:
+        * UIProcess/API/efl/ewk_color_picker.h:
+        * UIProcess/API/efl/ewk_context.h:
+        * UIProcess/API/efl/ewk_context_menu_item.h:
+        * UIProcess/API/efl/ewk_cookie_manager.h:
+        * UIProcess/API/efl/ewk_database_manager.h:
+        * UIProcess/API/efl/ewk_download_job.h:
+        * UIProcess/API/efl/ewk_error.h:
+        * UIProcess/API/efl/ewk_favicon_database.h:
+        * UIProcess/API/efl/ewk_file_chooser_request.h:
+        * UIProcess/API/efl/ewk_form_submission_request.h:
+        * UIProcess/API/efl/ewk_navigation_data.h:
+        * UIProcess/API/efl/ewk_navigation_policy_decision.h:
+        * UIProcess/API/efl/ewk_object.h:
+        * UIProcess/API/efl/ewk_page_group.h:
+        * UIProcess/API/efl/ewk_popup_menu.h:
+        * UIProcess/API/efl/ewk_popup_menu_item.h:
+        * UIProcess/API/efl/ewk_security_origin.h:
+        * UIProcess/API/efl/ewk_settings.h:
+        * UIProcess/API/efl/ewk_storage_manager.h:
+        * UIProcess/API/efl/ewk_url_request.h:
+        * UIProcess/API/efl/ewk_url_response.h:
+        * UIProcess/API/efl/ewk_url_scheme_request.h:
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_window_features.h:
+        * WebProcess/InjectedBundle/API/efl/ewk_extension.h:
+        * WebProcess/InjectedBundle/API/efl/ewk_page.h:
+
+2015-05-21  Csaba Osztrogonác  <ossy@webkit.org>
+
         Fix mismatched-tags warnings related to CoordinatedGraphics
         https://bugs.webkit.org/show_bug.cgi?id=145130
 

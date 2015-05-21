@@ -41,7 +41,11 @@ extern "C" {
 #endif
 
 /** Creates a type name for Ewk_Settings */
+#ifdef __cplusplus
+typedef class EwkSettings Ewk_Settings;
+#else
 typedef struct EwkSettings Ewk_Settings;
+#endif
 
 
 /**

@@ -43,7 +43,11 @@ extern "C" {
  *
  * @see Ewk_Object
  */
+#ifdef __cplusplus
+typedef class EwkObject Ewk_Window_Features;
+#else
 typedef struct EwkObject Ewk_Window_Features;
+#endif
 
 /**
  * Queries the toolbar visibility of the window feature.

@@ -214,7 +214,12 @@ struct Ewk_View_Smart_Class {
  */
 #define EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION(name) EWK_VIEW_SMART_CLASS_INIT(EVAS_SMART_CLASS_INIT_NAME_VERSION(name))
 
+#ifdef __cplusplus
+typedef class EwkView EwkView;
+#else
 typedef struct EwkView EwkView;
+#endif
+
 /**
  * @brief Contains an internal View data.
  *

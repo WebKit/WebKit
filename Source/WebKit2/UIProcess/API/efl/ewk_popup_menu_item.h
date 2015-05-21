@@ -46,7 +46,11 @@ typedef enum {
 } Ewk_Popup_Menu_Item_Type;
 
 /** Creates a type name for Ewk_Popup_Menu_Item */
+#ifdef __cplusplus
+typedef class EwkPopupMenuItem Ewk_Popup_Menu_Item;
+#else
 typedef struct EwkPopupMenuItem Ewk_Popup_Menu_Item;
+#endif
 
 /**
  * Returns type of the popup menu item.
