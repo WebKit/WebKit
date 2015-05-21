@@ -83,7 +83,7 @@ static void initInspectorServer()
 #endif
 }
 
-WTF::String WebProcessPool::platformDefaultApplicationCacheDirectory() const
+WTF::String WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory()
 {
     GUniquePtr<gchar> cacheDirectory(g_build_filename(g_get_user_cache_dir(), "webkitgtk", "applications", nullptr));
     return WebCore::filenameToString(cacheDirectory.get());
