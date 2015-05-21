@@ -1,3 +1,16 @@
+2015-05-20  Tim Horton  <timothy_horton@apple.com>
+
+        Allow overriding the waitForDidUpdateViewState timeout
+        https://bugs.webkit.org/show_bug.cgi?id=145230
+        <rdar://problem/20990162>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateViewState):
+        Use the value from NSUserDefaults, if it exists.
+        We'll only check once, so changing the default requires a restart of the UI process.
+
 2015-05-20  Anders Carlsson  <andersca@apple.com>
 
         Make sure we always have a process pool to perform data store operations with
