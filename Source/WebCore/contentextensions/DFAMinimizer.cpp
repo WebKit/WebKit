@@ -437,6 +437,7 @@ struct ActionKey {
         : dfa(dfa)
         , actionsStart(actionsStart)
         , actionsLength(actionsLength)
+        , state(Valid)
     {
         StringHasher hasher;
         hasher.addCharactersAssumingAligned(reinterpret_cast<const UChar*>(&dfa->actions[actionsStart]), actionsLength * sizeof(uint64_t) / sizeof(UChar));
@@ -465,8 +466,7 @@ struct ActionKeyHash {
         return actionKey.hash;
     }
 
-    // FIXME: Release builds on Mavericks fail with this inlined.
-    __attribute__((noinline)) static bool equal(const ActionKey& a, const ActionKey& b)
+    static bool equal(const ActionKey& a, const ActionKey& b)
     {
         if (a.state != b.state
             || a.dfa != b.dfa
