@@ -73,7 +73,7 @@ public:
     bool sendMessage(std::unique_ptr<IPC::MessageEncoder>, unsigned messageSendFlags);
 
 protected:
-    void clearConnection();
+    void shutDownProcess();
     void abortProcessLaunchIfNeeded();
 
     // ProcessLauncher::Client
@@ -85,7 +85,7 @@ protected:
 private:
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) = 0;
     virtual void connectionWillOpen(IPC::Connection&);
-    virtual void connectionDidClose(IPC::Connection&);
+    virtual void processWillShutDown(IPC::Connection&) = 0;
 
     Vector<std::pair<std::unique_ptr<IPC::MessageEncoder>, unsigned>> m_pendingMessages;
     RefPtr<ProcessLauncher> m_processLauncher;

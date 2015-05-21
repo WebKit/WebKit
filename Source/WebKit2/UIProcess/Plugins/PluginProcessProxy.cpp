@@ -82,6 +82,11 @@ void PluginProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launch
     platformGetLaunchOptions(launchOptions, m_pluginProcessAttributes);
 }
 
+void PluginProcessProxy::processWillShutDown(IPC::Connection& connection)
+{
+    ASSERT_UNUSED(connection, this->connection() == &connection);
+}
+
 // Asks the plug-in process to create a new connection to a web process. The connection identifier will be 
 // encoded in the given argument encoder and sent back to the connection of the given web process.
 void PluginProcessProxy::getPluginProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply)

@@ -55,7 +55,7 @@ WebFrameProxy::~WebFrameProxy()
     WebProcessPool::statistics().wkFrameCount--;
 }
 
-void WebFrameProxy::disconnect()
+void WebFrameProxy::webProcessWillShutDown()
 {
     m_page = 0;
 

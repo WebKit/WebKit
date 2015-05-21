@@ -959,7 +959,7 @@ public:
     void didCancelCheckingText(uint64_t requestID);
 
     void connectionWillOpen(IPC::Connection&);
-    void connectionDidClose(IPC::Connection&);
+    void webProcessWillShutDown();
 
     void processDidFinishLaunching();
 
