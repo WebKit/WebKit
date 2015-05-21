@@ -1,3 +1,15 @@
+2015-05-20  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Media Controls stop updating after hovering for a few seconds.
+        https://bugs.webkit.org/show_bug.cgi?id=144770.
+        <rdar://problem/19823121>
+
+        Followup to r184667.
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.showControls):
+        Only put controls back into the tree if they don’t yet exist in the tree.
+        Otherwise we interrupt operations like scrubbing.
+
 2015-05-20  Enrica Casucci  <enrica@apple.com>
 
         [iOS] Using CSS viewport units causes incorrect layout.

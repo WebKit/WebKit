@@ -1379,7 +1379,7 @@ Controller.prototype = {
             return;
 
         this.updateForShowingControls();
-        if (this.shouldHaveControls()) {
+        if (this.shouldHaveControls() && this.controlsAreHidden()) {
             this.base.appendChild(this.controls.inlinePlaybackPlaceholder);
             this.base.appendChild(this.controls.panel);
         }
