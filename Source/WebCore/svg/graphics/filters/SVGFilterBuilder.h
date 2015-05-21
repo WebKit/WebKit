@@ -62,9 +62,8 @@ public:
 private:
     inline void addBuiltinEffects()
     {
-        HashMap<AtomicString, RefPtr<FilterEffect>>::iterator end = m_builtinEffects.end();
-        for (HashMap<AtomicString, RefPtr<FilterEffect>>::iterator iterator = m_builtinEffects.begin(); iterator != end; ++iterator)
-             m_effectReferences.add(iterator->value, FilterEffectSet());
+        for (auto& effect : m_builtinEffects.values())
+            m_effectReferences.add(effect, FilterEffectSet());
     }
 
     HashMap<AtomicString, RefPtr<FilterEffect>> m_builtinEffects;

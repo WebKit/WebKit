@@ -167,8 +167,8 @@ void SVGAnimationElement::parseAttribute(const QualifiedName& name, const Atomic
         // and white space before and after semicolon separators, is allowed and will be ignored.
         // http://www.w3.org/TR/SVG11/animate.html#ValuesAttribute
         value.string().split(';', m_values);
-        for (unsigned i = 0; i < m_values.size(); ++i)
-            m_values[i] = m_values[i].stripWhiteSpace();
+        for (auto& value : m_values)
+            value = value.stripWhiteSpace();
 
         updateAnimationMode();
         return;

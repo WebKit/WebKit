@@ -95,10 +95,8 @@ void SVGFilterBuilder::clearResultsRecursive(FilterEffect* effect)
 
     effect->clearResult();
 
-    HashSet<FilterEffect*>& effectReferences = this->effectReferences(effect);
-    HashSet<FilterEffect*>::iterator end = effectReferences.end();
-    for (HashSet<FilterEffect*>::iterator it = effectReferences.begin(); it != end; ++it)
-         clearResultsRecursive(*it);
+    for (auto& reference : effectReferences(effect))
+        clearResultsRecursive(reference);
 }
 
 } // namespace WebCore

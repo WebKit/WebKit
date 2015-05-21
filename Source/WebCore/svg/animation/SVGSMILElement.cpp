@@ -421,14 +421,14 @@ void SVGSMILElement::parseBeginOrEnd(const String& parseString, BeginOrEnd begin
     if (beginOrEnd == End)
         m_hasEndEventConditions = false;
     HashSet<double> existing;
-    for (unsigned n = 0; n < timeList.size(); ++n)
-        existing.add(timeList[n].time().value());
+    for (auto& time : timeList)
+        existing.add(time.time().value());
     Vector<String> splitString;
     parseString.split(';', splitString);
-    for (unsigned n = 0; n < splitString.size(); ++n) {
-        SMILTime value = parseClockValue(splitString[n]);
+    for (auto& string : splitString) {
+        SMILTime value = parseClockValue(string);
         if (value.isUnresolved())
-            parseCondition(splitString[n], beginOrEnd);
+            parseCondition(string, beginOrEnd);
         else if (!existing.contains(value.value()))
             timeList.append(SMILTimeWithOrigin(value, SMILTimeWithOrigin::ParserOrigin));
     }
@@ -518,8 +518,7 @@ void SVGSMILElement::connectConditions()
     if (m_conditionsConnected)
         disconnectConditions();
     m_conditionsConnected = true;
-    for (unsigned n = 0; n < m_conditions.size(); ++n) {
-        Condition& condition = m_conditions[n];
+    for (auto& condition : m_conditions) {
         if (condition.m_type == Condition::EventBase) {
             ASSERT(!condition.m_syncbase);
             Element* eventBase = eventBaseFor(condition);
@@ -547,8 +546,7 @@ void SVGSMILElement::disconnectConditions()
     if (!m_conditionsConnected)
         return;
     m_conditionsConnected = false;
-    for (unsigned n = 0; n < m_conditions.size(); ++n) {
-        Condition& condition = m_conditions[n];
+    for (auto& condition : m_conditions) {
         if (condition.m_type == Condition::EventBase) {
             ASSERT(!condition.m_syncbase);
             if (!condition.m_eventListener)
@@ -1126,9 +1124,7 @@ void SVGSMILElement::notifyDependentsIntervalChanged(NewOrExistingInterval newOr
         return;
     loopBreaker.add(this);
     
-    TimeDependentSet::iterator end = m_timeDependents.end();
-    for (TimeDependentSet::iterator it = m_timeDependents.begin(); it != end; ++it) {
-        SVGSMILElement* dependent = *it;
+    for (auto& dependent : m_timeDependents) {
         dependent->createInstanceTimesFromSyncbase(this, newOrExisting);
     }
 
@@ -1139,8 +1135,7 @@ void SVGSMILElement::createInstanceTimesFromSyncbase(SVGSMILElement* syncbase, N
 {
     // FIXME: To be really correct, this should handle updating exising interval by changing 
     // the associated times instead of creating new ones.
-    for (unsigned n = 0; n < m_conditions.size(); ++n) {
-        Condition& condition = m_conditions[n];
+    for (auto& condition : m_conditions) {
         if (condition.m_type == Condition::Syncbase && condition.m_syncbase == syncbase) {
             ASSERT(condition.m_name == "begin" || condition.m_name == "end");
             // No nested time containers in SVG, no need for crazy time space conversions. Phew!
