@@ -109,7 +109,11 @@ static Key makeCacheKey(const WebCore::ResourceRequest& request)
 #endif
     if (partition.isEmpty())
         partition = ASCIILiteral("No partition");
-    return { request.httpMethod(), partition, request.url().string()  };
+
+    // FIXME: This implements minimal Range header disk cache support. We don't parse
+    // ranges so only the same exact range request will be served from the cache.
+    String range = request.httpHeaderField(WebCore::HTTPHeaderName::Range);
+    return { request.httpMethod(), partition, range, request.url().string()  };
 }
 
 static String headerValueForVary(const WebCore::ResourceRequest& request, const String& headerName)
@@ -237,6 +241,7 @@ static bool isStatusCodeCacheableByDefault(int statusCode)
     case 200: // OK
     case 203: // Non-Authoritative Information
     case 204: // No Content
+    case 206: // Partial Content
     case 300: // Multiple Choices
     case 301: // Moved Permanently
     case 404: // Not Found

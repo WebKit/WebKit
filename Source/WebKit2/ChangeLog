@@ -1,3 +1,26 @@
+2015-05-20  Marcos Chavarría Teijeiro  <mchavarria@igalia.com>
+
+        Enable disk cache for range requests
+        https://bugs.webkit.org/show_bug.cgi?id=144682
+
+        Reviewed by Antti Koivisto.
+
+        Add Range header value to the network cache key constructor so we take
+        into account this value. The 206 response code is also marked to be cached.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::makeCacheKey):
+        (WebKit::NetworkCache::isStatusCodeCacheableByDefault):
+        * NetworkProcess/cache/NetworkCacheKey.cpp:
+        (WebKit::NetworkCache::Key::Key):
+        (WebKit::NetworkCache::Key::operator=):
+        (WebKit::NetworkCache::Key::computeHash):
+        (WebKit::NetworkCache::Key::operator==):
+        (WebKit::NetworkCache::Key::encode):
+        (WebKit::NetworkCache::Key::decode):
+        (WebKit::NetworkCache::Key::stringToHash): Deleted.
+        * NetworkProcess/cache/NetworkCacheKey.h:
+
 2015-05-20  Anders Carlsson  <andersca@apple.com>
 
         WKWebsiteDataStore API doesn't report webkit.org as using Databases or App Cache after visiting http://www.webkit.org/demos/sticky-notes/

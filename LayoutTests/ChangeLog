@@ -1,3 +1,15 @@
+2015-05-20  Marcos Chavarría Teijeiro  <mchavarria@igalia.com>
+
+        Enable disk cache for range requests
+        https://bugs.webkit.org/show_bug.cgi?id=144682
+
+        Reviewed by Antti Koivisto.
+
+        * http/tests/cache/disk-cache/disk-cache-range-expected.txt: Added. Add Test.
+        * http/tests/cache/disk-cache/disk-cache-range.html: Added.
+        * http/tests/cache/disk-cache/resources/generate-response.cgi: Modify script to return 206 and 416 response codes if Range header is present.
+        * platform/gtk/TestExpectations: Remove failing test.
+
 2015-05-20  Chris Fleizach  <cfleizach@apple.com>
 
         AX: improve list heuristics (presentational use versus actual lists)

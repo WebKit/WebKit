@@ -40,14 +40,16 @@ Key::Key(const Key& o)
     : m_method(o.m_method.isolatedCopy())
     , m_partition(o.m_partition.isolatedCopy())
     , m_identifier(o.m_identifier.isolatedCopy())
+    , m_range(o.m_range.isolatedCopy())
     , m_hash(o.m_hash)
 {
 }
 
-Key::Key(const String& method, const String& partition, const String& identifier)
+Key::Key(const String& method, const String& partition, const String& range, const String& identifier)
     : m_method(method.isolatedCopy())
     , m_partition(partition.isolatedCopy())
     , m_identifier(identifier.isolatedCopy())
+    , m_range(range.isolatedCopy())
     , m_hash(computeHash())
 {
 }
@@ -57,6 +59,7 @@ Key& Key::operator=(const Key& other)
     m_method = other.m_method.isolatedCopy();
     m_partition = other.m_partition.isolatedCopy();
     m_identifier = other.m_identifier.isolatedCopy();
+    m_range = other.m_range.isolatedCopy();
     m_hash = other.m_hash;
     return *this;
 }
@@ -64,6 +67,10 @@ Key& Key::operator=(const Key& other)
 static void hashString(MD5& md5, const String& string)
 {
     const uint8_t zero = 0;
+
+    if (string.isNull())
+        return;
+
     if (string.is8Bit() && string.containsOnlyASCII()) {
         md5.addBytes(string.characters8(), string.length());
         md5.addBytes(&zero, 1);
@@ -82,6 +89,7 @@ Key::HashType Key::computeHash() const
     hashString(md5, m_method);
     hashString(md5, m_partition);
     hashString(md5, m_identifier);
+    hashString(md5, m_range);
     MD5::Digest hash;
     md5.checksum(hash);
     return hash;
@@ -121,7 +129,7 @@ bool Key::stringToHash(const String& string, HashType& hash)
 
 bool Key::operator==(const Key& other) const
 {
-    return m_hash == other.m_hash && m_method == other.m_method && m_partition == other.m_partition && m_identifier == other.m_identifier;
+    return m_hash == other.m_hash && m_method == other.m_method && m_partition == other.m_partition && m_identifier == other.m_identifier && m_range == other.m_range;
 }
 
 void Key::encode(Encoder& encoder) const
@@ -129,12 +137,13 @@ void Key::encode(Encoder& encoder) const
     encoder << m_method;
     encoder << m_partition;
     encoder << m_identifier;
+    encoder << m_range;
     encoder << m_hash;
 }
 
 bool Key::decode(Decoder& decoder, Key& key)
 {
-    return decoder.decode(key.m_method) && decoder.decode(key.m_partition) && decoder.decode(key.m_identifier) && decoder.decode(key.m_hash);
+    return decoder.decode(key.m_method) && decoder.decode(key.m_partition) && decoder.decode(key.m_identifier) && decoder.decode(key.m_range) && decoder.decode(key.m_hash);
 }
 
 }

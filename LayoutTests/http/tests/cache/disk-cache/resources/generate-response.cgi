@@ -19,6 +19,17 @@ if ($query->http && $query->http("If-None-Match") eq "match") {
     }
 }
 
+if ($query->http && $query->param("Range") =~ /bytes=(\d+)-(\d+)/) {
+
+    if ($1 < 6 && $2 < 6) {
+        print "Status: 206\n";
+    } else {
+	print "Status: 416\n";
+    }
+
+    $hasStatusCode = 1;
+}
+
 foreach (@names) {
     next if ($_ eq "uniqueId");
     next if ($_ eq "include-body");
