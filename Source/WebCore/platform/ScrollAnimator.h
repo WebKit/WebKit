@@ -137,6 +137,7 @@ public:
 
 protected:
     virtual void notifyPositionChanged(const FloatSize& delta);
+    void updateActiveScrollSnapIndexForOffset();
 
     ScrollableArea& m_scrollableArea;
     RefPtr<WheelEventTestTrigger> m_wheelEventTestTrigger;

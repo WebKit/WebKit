@@ -80,6 +80,7 @@ void ScrollAnimator::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
     m_currentPosX = offset.x();
     m_currentPosY = offset.y();
     notifyPositionChanged(delta);
+    updateActiveScrollSnapIndexForOffset();
 }
 
 #if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
@@ -168,11 +169,23 @@ void ScrollAnimator::setCurrentPosition(const FloatPoint& position)
 {
     m_currentPosX = position.x();
     m_currentPosY = position.y();
+    updateActiveScrollSnapIndexForOffset();
 }
 
 FloatPoint ScrollAnimator::currentPosition() const
 {
     return FloatPoint(m_currentPosX, m_currentPosY);
+}
+
+void ScrollAnimator::updateActiveScrollSnapIndexForOffset()
+{
+#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
+    m_scrollController.setActiveScrollSnapIndicesForOffset(m_currentPosX, m_currentPosY);
+    if (m_scrollController.activeScrollSnapIndexDidChange()) {
+        m_scrollableArea.setCurrentHorizontalSnapPointIndex(m_scrollController.activeScrollSnapIndexForAxis(ScrollEventAxis::Horizontal));
+        m_scrollableArea.setCurrentVerticalSnapPointIndex(m_scrollController.activeScrollSnapIndexForAxis(ScrollEventAxis::Vertical));
+    }
+#endif
 }
 
 void ScrollAnimator::notifyPositionChanged(const FloatSize& delta)
