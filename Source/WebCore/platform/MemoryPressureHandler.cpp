@@ -95,7 +95,7 @@ void MemoryPressureHandler::releaseNoncriticalMemory()
     }
 
     {
-        ReliefLogger log("Evict MemoryCache dead resources");
+        ReliefLogger log("Prune MemoryCache dead resources");
         MemoryCache::singleton().pruneDeadResourcesToSize(0);
     }
 }
@@ -110,8 +110,8 @@ void MemoryPressureHandler::releaseCriticalMemory()
     }
 
     {
-        ReliefLogger log("Evict all MemoryCache resources");
-        MemoryCache::singleton().evictResources();
+        ReliefLogger log("Prune MemoryCache live resources");
+        MemoryCache::singleton().pruneLiveResourcesToSize(0);
     }
 
     {
