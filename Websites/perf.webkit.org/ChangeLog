@@ -1,5 +1,11 @@
 2015-05-20  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Build fix after r184591.
+
+        * public/v2/manifest.js:
+
+2015-05-20  Ryosuke Niwa  <rniwa@webkit.org>
+
         Build fix. Use POSIX timestamp instead of human readable string for the commit time.
 
         * public/include/build-requests-fetcher.php:

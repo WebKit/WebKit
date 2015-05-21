@@ -326,7 +326,7 @@ App.Manifest = Ember.Controller.extend({
             isMiliseconds = true;
             unit = 's';
         }
-        var divisor = unit == 'bytes' ? 1024 : 1000;
+        var divisor = unit == 'B' ? 1024 : 1000;
 
         var suffix = ['\u03BC', 'm', '', 'K', 'M', 'G', 'T', 'P', 'E'];
         var threshold = sigFig >= 3 ? divisor : (divisor / 10);
