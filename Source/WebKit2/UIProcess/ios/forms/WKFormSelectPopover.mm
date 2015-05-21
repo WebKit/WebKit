@@ -401,7 +401,11 @@ static NSString *stringWithWritingDirection(NSString *string, UITextWritingDirec
     else
         popoverViewController.preferredContentSize = popoverSize;
     
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     self.popoverController = [[[UIPopoverController alloc] initWithContentViewController:popoverViewController] autorelease];
+#pragma clang diagnostic pop
+
     [navController release];
     
     [[UIKeyboardImpl sharedInstance] setDelegate:_tableViewController.get()];

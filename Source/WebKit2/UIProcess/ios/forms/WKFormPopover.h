@@ -38,7 +38,10 @@
 - (UIPopoverArrowDirection)popoverArrowDirections;
 
 @property(nonatomic, assign) CGPoint presentationPoint;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 @property(nonatomic, retain) UIPopoverController *popoverController;
+#pragma clang diagnostic pop
 @property(nonatomic, assign) id <WKRotatingPopoverDelegate> dismissionDelegate;
 @end
 
