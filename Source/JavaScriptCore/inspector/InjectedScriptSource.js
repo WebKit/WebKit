@@ -1035,7 +1035,7 @@ InjectedScript.RemoteObject.prototype = {
 
         var propertiesThreshold = {
             properties: isTableRowsRequest ? 1000 : Math.max(5, firstLevelKeysCount),
-            indexes: isTableRowsRequest ? 1000 : Math.max(100, firstLevelKeysCount)
+            indexes: isTableRowsRequest ? 1000 : Math.max(10, firstLevelKeysCount)
         };
 
         try {

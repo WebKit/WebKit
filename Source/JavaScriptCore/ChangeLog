@@ -1,5 +1,16 @@
 2015-05-20  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: array previews should have a much smaller cap on values
+        https://bugs.webkit.org/show_bug.cgi?id=145195
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.RemoteObject.prototype._generatePreview):
+        Reduce the indexes threshold for previews.
+
+2015-05-20  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Use native Arguments detection instead of using toString
         https://bugs.webkit.org/show_bug.cgi?id=145235
 

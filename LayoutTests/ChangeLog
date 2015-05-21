@@ -1,3 +1,14 @@
+2015-05-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: array previews should have a much smaller cap on values
+        https://bugs.webkit.org/show_bug.cgi?id=145195
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/model/remote-object-expected.txt:
+        Update expected results now that array previews include
+        a smaller number of items.
+
 2015-05-20  Marcos Chavarría Teijeiro  <mchavarria@igalia.com>
 
         Enable disk cache for range requests
