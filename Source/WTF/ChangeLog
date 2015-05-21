@@ -1,3 +1,41 @@
+2015-05-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Move MainThreadGtk, RunLoopGtk, WorkQueueGtk under Source/WTF/wtf/glib/
+        https://bugs.webkit.org/show_bug.cgi?id=145117
+
+        Reviewed by Csaba Osztrogonác.
+
+        Move the MainThreadGtk, RunLoopGtk and WorkQueueGtk implementation files from
+        Source/WTF/wtf/gtk/ to Source/WTF/wtf/glib/. These implementations are not
+        GTK-specific and only depend on GLib, so they are renamed as well.
+
+        There are other such implementations under Source/WTF/wtf/gobject/ (GObject
+        is just a subset of GLib) that will be moved under the new directory in
+        future patches.
+
+        * wtf/PlatformGTK.cmake:
+        * wtf/glib/MainThreadGLib.cpp: Renamed from Source/WTF/wtf/gtk/MainThreadGtk.cpp.
+        (WTF::initializeMainThreadPlatform):
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+        * wtf/glib/RunLoopGLib.cpp: Renamed from Source/WTF/wtf/gtk/RunLoopGtk.cpp.
+        (WTF::RunLoop::RunLoop):
+        (WTF::RunLoop::~RunLoop):
+        (WTF::RunLoop::run):
+        (WTF::RunLoop::stop):
+        (WTF::RunLoop::wakeUp):
+        (WTF::RunLoop::TimerBase::TimerBase):
+        (WTF::RunLoop::TimerBase::~TimerBase):
+        (WTF::RunLoop::TimerBase::start):
+        (WTF::RunLoop::TimerBase::stop):
+        (WTF::RunLoop::TimerBase::isActive):
+        * wtf/glib/WorkQueueGLib.cpp: Renamed from Source/WTF/wtf/gtk/WorkQueueGtk.cpp.
+        (WTF::WorkQueue::platformInitialize):
+        (WTF::WorkQueue::platformInvalidate):
+        (WTF::WorkQueue::registerSocketEventHandler):
+        (WTF::WorkQueue::unregisterSocketEventHandler):
+        (WTF::WorkQueue::dispatch):
+        (WTF::WorkQueue::dispatchAfter):
+
 2015-05-19  Andreas Kling  <akling@apple.com>
 
         Give StringView a utf8() API.

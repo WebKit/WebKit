@@ -1,3 +1,17 @@
+2015-05-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Move MainThreadGtk, RunLoopGtk, WorkQueueGtk under Source/WTF/wtf/glib/
+        https://bugs.webkit.org/show_bug.cgi?id=145117
+
+        Reviewed by Csaba Osztrogonác.
+
+        Rename the WorkQueueGtk.cpp file to WorkQueueGLib.cpp, and move it under
+        Tools/TestWebKitAPI/Tests/WTF/glib/.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/Tests/WTF/glib/WorkQueueGLib.cpp: Renamed from Tools/TestWebKitAPI/Tests/WTF/gtk/WorkQueueGtk.cpp.
+        (TestWebKitAPI::TEST):
+
 2015-05-20  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] fix efreet error
