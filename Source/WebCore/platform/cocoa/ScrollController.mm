@@ -719,6 +719,31 @@ void ScrollController::setActiveScrollSnapIndexForAxis(ScrollEventAxis axis, uns
     snapState->m_activeSnapIndex = index;
 }
 
+void ScrollController::setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis axis, int offset)
+{
+    float scaleFactor = m_client.pageScaleFactor();
+    ScrollSnapAnimatorState& snapState = scrollSnapPointState(axis);
+    
+    LayoutUnit clampedOffset = std::min(std::max(LayoutUnit(offset / scaleFactor), snapState.m_snapOffsets.first()), snapState.m_snapOffsets.last());
+
+    unsigned activeIndex = 0;
+    (void)closestSnapOffset<LayoutUnit, float>(snapState.m_snapOffsets, clampedOffset, 0, activeIndex);
+
+    if (activeIndex == snapState.m_activeSnapIndex)
+        return;
+
+    m_activeScrollSnapIndexDidChange = true;
+    snapState.m_activeSnapIndex = activeIndex;
+}
+
+void ScrollController::setActiveScrollSnapIndicesForOffset(int x, int y)
+{
+    if (m_horizontalScrollSnapState)
+        setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Horizontal, x);
+    if (m_verticalScrollSnapState)
+        setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Vertical, y);
+}
+
 void ScrollController::beginScrollSnapAnimation(ScrollEventAxis axis, ScrollSnapState newState)
 {
     ASSERT(newState == ScrollSnapState::Gliding || newState == ScrollSnapState::Snapping);
