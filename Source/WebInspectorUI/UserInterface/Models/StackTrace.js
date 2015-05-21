@@ -34,6 +34,16 @@ WebInspector.StackTrace = class StackTrace extends WebInspector.Object
         this._callFrames = callFrames;
     }
 
+    // Static
+
+    static fromPayload(payload)
+    {
+        var callFrames = payload.map(WebInspector.CallFrame.fromPayload);
+        return new WebInspector.StackTrace(callFrames);
+    }
+
+    // Public
+
     get callFrames()
     {
         return this._callFrames;
@@ -47,13 +57,5 @@ WebInspector.StackTrace = class StackTrace extends WebInspector.Object
         }
 
         return null;
-    }
-
-    // Static
-
-    static fromPayload(payload)
-    {
-        var callFrames = payload.map(WebInspector.CallFrame.fromPayload);
-        return new WebInspector.StackTrace(callFrames);
     }
 };

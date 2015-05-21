@@ -1,3 +1,13 @@
+2015-05-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Fix WebInspector.StackTrace style
+        https://bugs.webkit.org/show_bug.cgi?id=145240
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/StackTrace.js:
+        Reorder and add our usual marker comments.
+
 2015-05-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve Preview for NodeList / array like collections
