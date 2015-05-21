@@ -75,10 +75,14 @@
 ;; Various services required by CFNetwork and other frameworks
 (allow mach-lookup
     (global-name "com.apple.PowerManagement.control")
-    (global-name "com.apple.accountsd.accountmanager")
-    (global-name "com.apple.awdd"))
+    (global-name "com.apple.accountsd.accountmanager"))
 
 (deny file-write-create (vnode-type SYMLINK))
 (deny file-read-xattr file-write-xattr (xattr-regex #"^com\.apple\.security\.private\."))
+
+;; AWD logging
+(allow mach-lookup (global-name "com.apple.awdd"))
+(allow file-read* file-write*
+    (literal "/private/var/mobile/Library/Logs/awd/awd-com.apple.WebKit.WebContent.log"))
 
 (network-client (remote tcp))
