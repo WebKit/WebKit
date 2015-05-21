@@ -21,6 +21,6 @@
 #if USE(COORDINATED_GRAPHICS)
 messages -> CoordinatedLayerTreeHostProxy {
 
-    CommitCoordinatedGraphicsState(WebCore::CoordinatedGraphicsState state)
+    CommitCoordinatedGraphicsState(struct WebCore::CoordinatedGraphicsState state)
 }
 #endif

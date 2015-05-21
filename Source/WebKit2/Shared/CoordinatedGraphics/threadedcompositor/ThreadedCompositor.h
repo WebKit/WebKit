@@ -39,7 +39,7 @@
 #include <wtf/Threading.h>
 
 namespace WebCore {
-class CoordinatedGraphicsState;
+struct CoordinatedGraphicsState;
 }
 
 namespace WebKit {

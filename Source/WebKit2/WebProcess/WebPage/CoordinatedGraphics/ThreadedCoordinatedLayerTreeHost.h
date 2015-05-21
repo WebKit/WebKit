@@ -46,7 +46,7 @@
 
 namespace WebCore {
 class CoordinatedGraphicsLayerState;
-class CoordinatedGraphicsState;
+struct CoordinatedGraphicsState;
 class CoordinatedSurface;
 class GraphicsContext;
 class GraphicsLayer;
