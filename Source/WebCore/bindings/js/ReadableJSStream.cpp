@@ -47,24 +47,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-void setInternalSlotToObject(ExecState* exec, JSValue objectValue, PrivateName& name, JSValue value)
-{
-    JSObject* object = objectValue.toObject(exec);
-    PutPropertySlot propertySlot(objectValue);
-    object->put(object, exec, Identifier::fromUid(name), value, propertySlot);
-}
-
-JSValue getInternalSlotFromObject(ExecState* exec, JSValue objectValue, PrivateName& name)
-{
-    JSObject* object = objectValue.toObject(exec);
-    PropertySlot propertySlot(objectValue);
-
-    Identifier propertyName = Identifier::fromUid(name);
-    if (!object->getOwnPropertySlot(object, exec, propertyName, propertySlot))
-        return JSValue();
-    return propertySlot.getValue(exec, propertyName);
-}
-
 static inline JSValue getPropertyFromObject(ExecState* exec, JSObject* object, const char* identifier)
 {
     return object->get(exec, Identifier::fromString(exec, identifier));

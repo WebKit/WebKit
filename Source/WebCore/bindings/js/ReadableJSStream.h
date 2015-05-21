@@ -77,9 +77,6 @@ private:
     JSC::Strong<JSC::Unknown> m_error;
 };
 
-void setInternalSlotToObject(JSC::ExecState*, JSC::JSValue, JSC::PrivateName&, JSC::JSValue);
-JSC::JSValue getInternalSlotFromObject(JSC::ExecState*, JSC::JSValue, JSC::PrivateName&);
-
 } // namespace WebCore
 
 #endif // ENABLE(STREAMS_API)
