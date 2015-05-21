@@ -1,3 +1,39 @@
+2015-05-21  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r184728.
+
+    2015-05-21  Brent Fulgham  <bfulgham@apple.com>
+
+            Scroll-snap points needs to be updated during programmatic scrolls
+            https://bugs.webkit.org/show_bug.cgi?id=145216
+            <rdar://problem/21051039>
+
+            Reviewed by Dean Jackson.
+
+            Whenever we adjust the current scroll position, make sure we also update the current
+            active scroll snap offset index (if applicable).
+
+            * platform/ScrollAnimator.cpp:
+            (WebCore::ScrollAnimator::scrollToOffsetWithoutAnimation): Call the new 'updateActiveScrollSnapIndexForOffset'
+            method after moving to a new position.
+            (WebCore::ScrollAnimator::setCurrentPosition): Ditto.
+            (WebCore::ScrollAnimator::updateActiveScrollSnapIndexForOffset): New method. Asks the scroll controller to
+            identify the closest scroll snap offset index. If it finds something relevant, update the ScrollableArea state
+            to track these new values.
+            * platform/ScrollAnimator.h:
+            * platform/cocoa/ScrollController.h:
+            (WebCore::ScrollController::activeScrollSnapIndexDidChange):
+            (WebCore::ScrollController::setScrollSnapIndexDidChange):
+            * platform/cocoa/ScrollController.mm:
+            (WebCore::ScrollController::setNearestScrollSnapIndexForAxisAndOffset): Added. Find the closest relevant scroll snap offset
+            index for the given scroll offset, and update the internal scroll snap state to reflect it.
+            (WebCore::ScrollController::setActiveScrollSnapIndicesForOffset): Given the x and y offset for a scroll,
+            set the relevant scroll snap offset indices.
+            * platform/mac/ScrollAnimatorMac.mm:
+            (WebCore::ScrollAnimatorMac::immediateScrollTo): Call the new 'updateActiveScrollSnapIndexForOffset' method
+            after moving to a new position.
+            (WebCore::ScrollAnimatorMac::immediateScrollBy): Ditto.
+
 2015-05-20  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r184308.
