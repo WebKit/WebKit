@@ -1,3 +1,18 @@
+2015-05-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Use native Arguments detection instead of using toString
+        https://bugs.webkit.org/show_bug.cgi?id=145235
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.prototype._subtype):
+        Deleted the old string code.
+
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::subtype):
+        Replaced with a stricter, more accurate check.
+
 2015-05-20  Andreas Kling  <akling@apple.com>
 
         Remove unused MarkedBlock::m_rememberedSet.
