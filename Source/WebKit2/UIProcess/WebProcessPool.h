@@ -364,6 +364,7 @@ public:
     static String legacyPlatformDefaultIndexedDBDatabaseDirectory();
     static String legacyPlatformDefaultWebSQLDatabaseDirectory();
     static String legacyPlatformDefaultMediaKeysStorageDirectory();
+    static String legacyPlatformDefaultApplicationCacheDirectory();
 
 private:
     void platformInitialize();
@@ -394,7 +395,6 @@ private:
     void languageChanged();
 
     String applicationCacheDirectory() const;
-    String platformDefaultApplicationCacheDirectory() const;
 
     String platformDefaultIconDatabasePath() const;
 

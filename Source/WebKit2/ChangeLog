@@ -1,3 +1,30 @@
+2015-05-20  Anders Carlsson  <andersca@apple.com>
+
+        WKWebsiteDataStore API doesn't report webkit.org as using Databases or App Cache after visiting http://www.webkit.org/demos/sticky-notes/
+        https://bugs.webkit.org/show_bug.cgi?id=145238
+        rdar://problem/20581175
+
+        Reviewed by Tim Horton.
+
+        Make sure to set the application cache and WebSQL directories when using the legacy data store.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory):
+        (WebKit::WebProcessPool::platformDefaultApplicationCacheDirectory):
+        Rename this and move it to the right place.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::legacyWebsiteDataStoreConfiguration):
+        Rename this and add the application cache and WebSQL directories.
+
+        (WebKit::WebProcessPool::WebProcessPool):
+        Call legacyWebsiteDataStoreConfiguration.
+
+        (WebKit::WebProcessPool::applicationCacheDirectory):
+        Call legacyPlatformDefaultApplicationCacheDirectory.
+
+        * UIProcess/WebProcessPool.h:
+
 2015-05-20  Enrica Casucci  <enrica@apple.com>
 
         [iOS] Using CSS viewport units causes incorrect layout.
