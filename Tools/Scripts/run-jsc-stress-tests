@@ -91,6 +91,7 @@ end
 $jscPath = nil
 $doNotMessWithVMPath = false
 $enableFTL = false
+$jitTests = true
 $memoryLimited = false
 $outputDir = Pathname.new("results")
 $verbosity = 0
@@ -117,6 +118,7 @@ def usage
     puts "--ftl-jit                   Indicate that we have the FTL JIT."
     puts "--memory-limited            Indicate that we are targeting the test for a memory limited device."
     puts "                            Skip tests tagged with //@large-heap"
+    puts "--no-jit                    Do not run JIT specific tests."
     puts "--output-dir         (-o)   Path where to put results. Default is #{$outputDir}."
     puts "--verbose            (-v)   Print more things while running."
     puts "--run-bundle                Runs a bundle previously created by run-jsc-stress-tests."
@@ -143,6 +145,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--no-copy', GetoptLong::NO_ARGUMENT],
                ['--ftl-jit', GetoptLong::NO_ARGUMENT],
                ['--memory-limited', GetoptLong::NO_ARGUMENT],
+               ['--no-jit', GetoptLong::NO_ARGUMENT],
                ['--output-dir', '-o', GetoptLong::REQUIRED_ARGUMENT],
                ['--run-bundle', GetoptLong::REQUIRED_ARGUMENT],
                ['--tarball', GetoptLong::OPTIONAL_ARGUMENT],
@@ -170,6 +173,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $enableFTL = true
     when '--memory-limited'
         $memoryLimited = true
+    when '--no-jit'
+        $jitTests = false
     when '--verbose'
         $verbosity += 1
     when '--run-bundle'
@@ -222,6 +227,11 @@ end
 
 unless jscArg
     $stderr.puts "Error: must specify -jsc <path>"
+    exit 1
+end
+
+if $enableFTL and !$jitTests
+    $stderr.puts "Error: can only specify one of --no-jit and --ftl-jit"
     exit 1
 end
 
@@ -658,7 +668,9 @@ def runWithRAMSize(size)
 end
 
 def runNoLLInt
-    run("no-llint", "--useLLInt=false")
+    if $jitTests
+        run("no-llint", "--useLLInt=false")
+    end
 end
 
 def runNoCJITValidate
@@ -731,16 +743,18 @@ end
 
 def defaultRun
     runDefault
-    runNoLLInt
     runAlwaysTriggerCopyPhase
-    runNoCJITValidatePhases
-    runDFGEager
-    runDFGEagerNoCJITValidate
-    runDefaultFTL
-    runFTLNoCJITValidate
-    runFTLNoCJITNoInlineValidate
-    runFTLEager
-    runFTLEagerNoCJITValidate
+    if $jitTests
+        runNoLLInt
+        runNoCJITValidatePhases
+        runDFGEager
+        runDFGEagerNoCJITValidate
+        runDefaultFTL
+        runFTLNoCJITValidate
+        runFTLNoCJITNoInlineValidate
+        runFTLEager
+        runFTLEagerNoCJITValidate
+    end
 end
 
 def defaultQuickRun
@@ -749,7 +763,9 @@ def defaultQuickRun
         runFTLNoCJITValidate
     else
         runDefault
-        runNoCJITValidate
+        if $jitTests
+            runNoCJITValidate
+        end
     end
 end
 
@@ -766,12 +782,14 @@ end
 # by counting recompilations.
 def defaultNoEagerRun
     runDefault
-    runNoLLInt
     runAlwaysTriggerCopyPhase
-    runNoCJITValidatePhases
-    runDefaultFTL
-    runFTLNoCJITValidate
-    runFTLNoCJITNoInlineValidate
+    if $jitTests
+        runNoLLInt
+        runNoCJITValidatePhases
+        runDefaultFTL
+        runFTLNoCJITValidate
+        runFTLNoCJITNoInlineValidate
+    end
 end
 
 def runProfiler
@@ -800,6 +818,10 @@ def runExecutableAllocationFuzz(name, *options)
 end
 
 def runTypeProfiler
+    if !$jitTests
+        return
+    end
+
     if $enableFTL
         run("ftl-no-cjit-type-profiler", "--enableTypeProfiler=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
     else
@@ -808,6 +830,10 @@ def runTypeProfiler
 end
 
 def runControlFlowProfiler
+    if !$jitTests
+        return
+    end
+
     if $enableFTL
         run("ftl-no-cjit-type-profiler", "--enableControlFlowProfiler=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
     else
@@ -863,17 +889,23 @@ def runLayoutTestFTLEagerNoCJIT
 end
 
 def noFTLRunLayoutTest
-    runLayoutTestDefault
+    if !$jitTests
+        return
+    end
+
     runLayoutTestNoLLInt
     runLayoutTestNoCJIT
     runLayoutTestDFGEagerNoCJIT
 end
 
 def defaultRunLayoutTest
-    noFTLRunLayoutTest
-    runLayoutTestDefaultFTL
-    runLayoutTestFTLNoCJIT
-    runLayoutTestFTLEagerNoCJIT
+    runLayoutTestDefault
+    if $jitTests
+        noFTLRunLayoutTest
+        runLayoutTestDefaultFTL
+        runLayoutTestFTLNoCJIT
+        runLayoutTestFTLEagerNoCJIT
+    end
 end
 
 def prepareExtraRelativeFiles(extraFiles, destination)
@@ -951,11 +983,13 @@ end
 
 def defaultRunMozillaTest(mode, *extraFiles)
     runMozillaTestDefault(mode, *extraFiles)
-    runMozillaTestLLInt(mode, *extraFiles)
-    runMozillaTestBaselineJIT(mode, *extraFiles)
-    runMozillaTestDFGEagerNoCJITValidatePhases(mode, *extraFiles)
-    runMozillaTestDefaultFTL(mode, *extraFiles)
-    runMozillaTestFTLEagerNoCJITValidatePhases(mode, *extraFiles)
+    if $jitTests
+        runMozillaTestLLInt(mode, *extraFiles)
+        runMozillaTestBaselineJIT(mode, *extraFiles)
+        runMozillaTestDFGEagerNoCJITValidatePhases(mode, *extraFiles)
+        runMozillaTestDefaultFTL(mode, *extraFiles)
+        runMozillaTestFTLEagerNoCJITValidatePhases(mode, *extraFiles)
+    end
 end
 
 def skip
