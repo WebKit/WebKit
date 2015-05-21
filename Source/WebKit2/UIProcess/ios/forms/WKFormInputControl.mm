@@ -341,7 +341,10 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 #pragma clang diagnostic pop
     [navigationItem setRightBarButtonItem:clearButton];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     RetainPtr<UIPopoverController> controller = adoptNS([[UIPopoverController alloc] initWithContentViewController:navigationController.get()]);
+#pragma clang diagnostic pop
     [self setPopoverController:controller.get()];
 
     return self;
