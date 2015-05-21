@@ -2710,7 +2710,7 @@ void WebPage::updateViewportSizeForCSSViewportUnits()
         largestUnobscuredRect = m_viewportConfiguration.minimumLayoutSize();
 
     FrameView& frameView = *mainFrameView();
-    largestUnobscuredRect.scale(1 / m_viewportConfiguration.initialScale());
+    largestUnobscuredRect.scale(1 / m_viewportConfiguration.initialScaleIgnoringContentSize());
     frameView.setViewportSizeForCSSViewportUnits(roundedIntSize(largestUnobscuredRect));
 }
 
