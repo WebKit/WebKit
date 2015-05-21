@@ -26,6 +26,8 @@
 #include <Elementary.h>
 #include <Evas.h>
 
+extern int efreet_cache_update;
+
 static const char DEFAULT_URL[] = "http://www.google.com/";
 static const char APP_NAME[] = "EFL MiniBrowser";
 static const int TOOL_BAR_ICON_SIZE = 24;
@@ -2398,6 +2400,8 @@ elm_main(int argc, char *argv[])
         ECORE_GETOPT_VALUE_BOOL(quitOption),
         ECORE_GETOPT_VALUE_NONE
     };
+
+    efreet_cache_update = 0;
 
     if (!ewk_init())
         return EXIT_FAILURE;

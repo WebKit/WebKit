@@ -1,3 +1,17 @@
+2015-05-20  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] fix efreet error
+        https://bugs.webkit.org/show_bug.cgi?id=143670
+
+        Reviewed by Gyuyoung Kim.
+
+        Fix efreet error by using external variable efreet_cache_update.
+        As 0 value of efreet_cache_update prevents monitoring of icon and desktop cache,
+        efreet error for efreet_cache does not occur.
+
+        * MiniBrowser/efl/main.c:
+        (elm_main):
+
 2015-05-20  Michael Saboff  <msaboff@apple.com>
 
         Add option to run_jsc_stress_tests to disable JIT testing
