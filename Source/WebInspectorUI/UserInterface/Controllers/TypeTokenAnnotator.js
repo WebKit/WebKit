@@ -87,7 +87,7 @@ WebInspector.TypeTokenAnnotator = class TypeTokenAnnotator extends WebInspector.
     _insertTypeToken(node)
     {
         if (node.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier) {
-            if (!node.attachments.__typeToken && node.attachments.types && node.attachments.types.isValid)
+            if (!node.attachments.__typeToken && node.attachments.types && node.attachments.types.valid)
                 this._insertToken(node.range[0], node, false, WebInspector.TypeTokenView.TitleType.Variable, node.name);
 
             if (node.attachments.__typeToken)
@@ -99,13 +99,13 @@ WebInspector.TypeTokenAnnotator = class TypeTokenAnnotator extends WebInspector.
         console.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration || node.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression);
 
         var functionReturnType = node.attachments.returnTypes;
-        if (!functionReturnType || !functionReturnType.isValid)
+        if (!functionReturnType || !functionReturnType.valid)
             return;
 
         // If a function does not have an explicit return statement with an argument (i.e, "return x;" instead of "return;") 
         // then don't show a return type unless we think it's a constructor.
         var scriptSyntaxTree = this._script._scriptSyntaxTree;
-        if (!node.attachments.__typeToken && (scriptSyntaxTree.containsNonEmptyReturnStatement(node.body) || !WebInspector.TypeSet.fromPayload(functionReturnType).isContainedIn(WebInspector.TypeSet.TypeBit.Undefined))) {
+        if (!node.attachments.__typeToken && (scriptSyntaxTree.containsNonEmptyReturnStatement(node.body) || !WebInspector.TypeSet.fromPayload(functionReturnType.typeSet).isContainedIn(WebInspector.TypeSet.TypeBit.Undefined))) {
             var functionName = node.id ? node.id.name : null;
             var offset = node.isGetterOrSetter ? node.getterOrSetterRange[0] : node.range[0];
             this._insertToken(offset, node, true, WebInspector.TypeTokenView.TitleType.ReturnStatement, functionName);

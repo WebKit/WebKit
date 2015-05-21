@@ -204,7 +204,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
 
             for (var i = 0; i < typeInformationArray.length; i++) {
                 var node = allRequestNodes[i];
-                var typeInformation = typeInformationArray[i];
+                var typeInformation = WebInspector.TypeDescription.fromPayload(typeInformationArray[i]);
                 if (allRequests[i].typeInformationDescriptor === WebInspector.ScriptSyntaxTree.TypeProfilerSearchDescriptor.FunctionReturn)
                     node.attachments.returnTypes = typeInformation;
                 else

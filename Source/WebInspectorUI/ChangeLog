@@ -1,3 +1,91 @@
+2015-05-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Improve the UI of the type profiler popover
+        https://bugs.webkit.org/show_bug.cgi?id=140737
+
+        Reviewed by Timothy Hatcher.
+
+        Display TypeDescriptions in a Tree similiar to ObjectTrees.
+        Currently the only information we have in a TypeDescription
+        is the property names, and not their types, so all we can
+        display in the tree are names.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Controllers/TypeTokenAnnotator.js:
+        (WebInspector.TypeTokenAnnotator.prototype._insertTypeToken):
+        * UserInterface/Main.html:
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        (WebInspector.ScriptSyntaxTree.prototype.updateTypes):
+        * UserInterface/Models/StructureDescription.js: Added.
+        (WebInspector.StructureDescription):
+        (WebInspector.StructureDescription.fromPayload):
+        (WebInspector.StructureDescription.prototype.get fields):
+        (WebInspector.StructureDescription.prototype.get optionalFields):
+        (WebInspector.StructureDescription.prototype.get constructorName):
+        (WebInspector.StructureDescription.prototype.get prototypeStructure):
+        (WebInspector.StructureDescription.prototype.get imprecise):
+        * UserInterface/Models/TypeDescription.js: Added.
+        (WebInspector.TypeDescription):
+        (WebInspector.TypeDescription.fromPayload):
+        (WebInspector.TypeDescription.prototype.get leastCommonAncestor):
+        (WebInspector.TypeDescription.prototype.get typeSet):
+        (WebInspector.TypeDescription.prototype.get structures):
+        (WebInspector.TypeDescription.prototype.get valid):
+        (WebInspector.TypeDescription.prototype.get truncated):
+        * UserInterface/Models/TypeSet.js:
+        (WebInspector.TypeSet):
+        (WebInspector.TypeSet.prototype.get primitiveTypeNames):
+        * UserInterface/Views/ObjectTreeView.js:
+        (WebInspector.ObjectTreeView.prototype._updateChildren):
+        * UserInterface/Views/Section.css: Removed.
+        * UserInterface/Views/Section.js: Removed.
+        * UserInterface/Views/SourceCodeTextEditor.css:
+        (.popover .expandable):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor):
+        (WebInspector.SourceCodeTextEditor.prototype.showPopoverForTypes):
+        (WebInspector.SourceCodeTextEditor.prototype._populateWithScriptContent):
+        (WebInspector.SourceCodeTextEditor.prototype._tokenTrackingControllerHighlightedJavaScriptTypeInformation.handler):
+        (WebInspector.SourceCodeTextEditor.prototype._tokenTrackingControllerHighlightedJavaScriptTypeInformation):
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForObject):
+        * UserInterface/Views/TypePropertiesSection.js: Removed.
+        * UserInterface/Views/TypeTokenView.js:
+        (WebInspector.TypeTokenView):
+        (WebInspector.TypeTokenView.titleForPopover):
+        (WebInspector.TypeTokenView.prototype.update):
+        (WebInspector.TypeTokenView.prototype._setUpMouseoverHandlers):
+        (WebInspector.TypeTokenView.prototype._shouldShowPopover):
+        (WebInspector.TypeTokenView.prototype._displayTypeName):
+        * UserInterface/Views/TypeTreeElement.css: Added.
+        (.type-tree-element):
+        (.type-tree-element > .titles):
+        (.type-tree-element > .disclosure-button):
+        (.type-tree-element.parent > .disclosure-button):
+        (.type-tree-element.parent.expanded > .disclosure-button):
+        (.type-tree-element > .icon):
+        (.type-tree-element.prototype):
+        (.type-tree-element.prototype:focus):
+        (.type-tree-element.prototype + ol):
+        * UserInterface/Views/TypeTreeElement.js: Added.
+        (WebInspector.TypeTreeElement):
+        (WebInspector.TypeTreeElement.prototype.get name):
+        (WebInspector.TypeTreeElement.prototype.get isPrototype):
+        (WebInspector.TypeTreeElement.prototype.onpopulate):
+        (WebInspector.TypeTreeElement.prototype.onexpand):
+        * UserInterface/Views/TypeTreeView.css: Renamed from Source/WebInspectorUI/UserInterface/Views/PropertiesSection.js.
+        (.type-tree):
+        (.type-tree-outline):
+        (.type-tree-outline li):
+        (.type-tree-outline ol):
+        (.type-tree-outline ol.expanded):
+        (.type-tree-outline li .empty-message):
+        * UserInterface/Views/TypeTreeView.js: Added.
+        (WebInspector.TypeTreeView):
+        (WebInspector.TypeTreeView.prototype.get typeDescription):
+        (WebInspector.TypeTreeView.prototype.get element):
+        (WebInspector.TypeTreeView.prototype.get treeOutline):
+        (WebInspector.TypeTreeView.prototype._populate):
+
 2015-05-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Fix WebInspector.StackTrace style

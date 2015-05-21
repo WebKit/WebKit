@@ -26,13 +26,12 @@
 
 WebInspector.TypeSet = class TypeSet extends WebInspector.Object
 {
-    constructor(runtimeTypeDescriptionPayload)
+    constructor(typeSet)
     {
         super();
 
-        this._types = runtimeTypeDescriptionPayload;
+        console.assert(typeSet);
 
-        var typeSet = this._types.typeSet;
         var bitString = 0x0;
         if (typeSet.isFunction)
             bitString |= WebInspector.TypeSet.TypeBit.Function;
@@ -52,10 +51,10 @@ WebInspector.TypeSet = class TypeSet extends WebInspector.Object
             bitString |= WebInspector.TypeSet.TypeBit.Object;
         if (typeSet.isSymbol)
             bitString |= WebInspector.TypeSet.TypeBit.Symbol;
-
         console.assert(bitString);
-        this._bitString = bitString;
 
+        this._typeSet = typeSet;
+        this._bitString = bitString;
         this._primitiveTypeNames = null;
     }
 
@@ -94,7 +93,7 @@ WebInspector.TypeSet = class TypeSet extends WebInspector.Object
             return this._primitiveTypeNames;
 
         this._primitiveTypeNames = [];
-        var typeSet = this._types.typeSet;
+        var typeSet = this._typeSet;
         if (typeSet.isUndefined)
             this._primitiveTypeNames.push("Undefined");
         if (typeSet.isNull)

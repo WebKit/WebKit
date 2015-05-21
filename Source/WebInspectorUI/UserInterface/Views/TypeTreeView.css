@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,17 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.PropertiesSection = function(title, subtitle)
-{
-    this.propertiesElement = document.createElement("ol");
-    this.propertiesElement.className = "properties properties-tree";
-    this.propertiesElement.tabIndex = 0;
-    this.propertiesTreeOutline = new WebInspector.TreeOutline(this.propertiesElement);
-    this.propertiesTreeOutline.section = this;
+.type-tree {
+    position: relative;
+    display: block;
 
-    WebInspector.Section.call(this, title, subtitle);
+    color: black;
+    font-family: -webkit-system-font, sans-serif;
+    font-size: 12px;
+}
 
-    this.element.appendChild(this.propertiesElement);
-};
+.type-tree-outline {
+    margin: 0;
+    padding: 0 6px 2px;
+    list-style: none;
+    min-height: 18px;
+    outline: none;
+}
 
-WebInspector.PropertiesSection.prototype.__proto__ = WebInspector.Section.prototype;
+.type-tree-outline li {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    -webkit-user-select: text;
+    cursor: default;
+}
+
+.type-tree-outline ol {
+    display: none;
+    margin: 0;
+    -webkit-padding-start: 16px;
+    list-style: none;
+}
+
+.type-tree-outline ol.expanded {
+    display: block;
+}
+
+.type-tree-outline li .empty-message {
+    color: rgb(60%, 60%, 60%);
+    margin-left: 13px;
+}

@@ -40,8 +40,9 @@ WebInspector.TypeTokenView = class TypeTokenView extends WebInspector.Object
 
         this.element = span;
         this._tokenAnnotator = tokenAnnotator;
-        this._types = null;
-        this._typeSet = null;
+
+        this._typeDescription = null;
+
         this._colorClass = null;
 
         this._popoverTitle = WebInspector.TypeTokenView.titleForPopover(titleType, functionOrVariableName);
@@ -53,25 +54,22 @@ WebInspector.TypeTokenView = class TypeTokenView extends WebInspector.Object
 
     static titleForPopover(titleType, functionOrVariableName)
     {
-        var titleString = null;
         if (titleType === WebInspector.TypeTokenView.TitleType.Variable)
-            titleString = WebInspector.UIString("Type information for variable: %s").format(functionOrVariableName);
-        else {
-            if (functionOrVariableName)
-                titleString = WebInspector.UIString("Return type for function: %s").format(functionOrVariableName);
-            else
-                titleString = WebInspector.UIString("Return type for anonymous function");
-        }
+            return WebInspector.UIString("Type information for variable: %s").format(functionOrVariableName);
 
-        return titleString;
+        if (functionOrVariableName)
+            return WebInspector.UIString("Return type for function: %s").format(functionOrVariableName);
+
+        return WebInspector.UIString("Return type for anonymous function");
     }
 
     // Public
 
-    update(types)
+    update(typeDescription)
     {
-        this._types = types;
-        this._typeSet = WebInspector.TypeSet.fromPayload(this._types);
+        console.assert(typeDescription instanceof WebInspector.TypeDescription);
+
+        this._typeDescription = typeDescription;
 
         var title = this._displayTypeName();
         if (title === this.element.textContent)
@@ -100,7 +98,7 @@ WebInspector.TypeTokenView = class TypeTokenView extends WebInspector.Object
 
                 var domRect = this.element.getBoundingClientRect();
                 var bounds = new WebInspector.Rect(domRect.left, domRect.top, domRect.width, domRect.height);
-                this._tokenAnnotator.sourceCodeTextEditor.showPopoverForTypes(this._types, bounds, this._popoverTitle);
+                this._tokenAnnotator.sourceCodeTextEditor.showPopoverForTypes(this._typeDescription, bounds, this._popoverTitle);
             }
 
             if (this._shouldShowPopover())
@@ -115,13 +113,13 @@ WebInspector.TypeTokenView = class TypeTokenView extends WebInspector.Object
 
     _shouldShowPopover()
     {
-        if (!this._types.isValid)
+        if (!this._typeDescription.valid)
             return false;
 
-        if (this._typeSet.primitiveTypeNames.length > 1)
+        if (this._typeDescription.typeSet.primitiveTypeNames.length > 1)
             return true;
 
-        if (this._types.structures && this._types.structures.length)
+        if (this._typeDescription.structures && this._typeDescription.structures.length)
             return true;
 
         return false;
@@ -129,16 +127,16 @@ WebInspector.TypeTokenView = class TypeTokenView extends WebInspector.Object
 
     _displayTypeName()
     {
-        if (!this._types.isValid)
+        if (!this._typeDescription.valid)
             return "";
 
-        var typeSet = this._typeSet;
+        var typeSet = this._typeDescription.typeSet;
 
-        if (this._types.leastCommonAncestor && !this._typeSet.primitiveTypeNames.length) {
+        if (this._typeDescription.leastCommonAncestor && !this._typeDescription.typeSet.primitiveTypeNames.length) {
             if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Object))
-                return this._types.leastCommonAncestor;
+                return this._typeDescription.leastCommonAncestor;
             if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Object | WebInspector.TypeSet.NullOrUndefinedTypeBits))
-                return this._types.leastCommonAncestor + "?";
+                return this._typeDescription.leastCommonAncestor + "?";
         }
 
         // The order of these checks are important.
