@@ -49,4 +49,19 @@
 
 #endif
 
+#endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
+
+#if PLATFORM(IOS)
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <AVKit/AVPlayerViewController_WebKitOnly.h>
 #endif
+
+#import <AVFoundation/AVPlayerLayer.h>
+
+@interface AVPlayerLayer (AVPlayerLayerOptimizedFullscreenModeSupportPrivate)
+- (void)setEnterOptimizedFullscreenModeEnabled:(BOOL)flag;
+@end
+
+#endif
+

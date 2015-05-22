@@ -580,6 +580,7 @@ private:
     virtual void mediaPlayerEngineFailedToLoad() const override final;
 
     virtual double mediaPlayerRequestedPlaybackRate() const override final;
+    virtual VideoFullscreenMode mediaPlayerFullscreenMode() const override final { return fullscreenMode(); }
 
     void pendingActionTimerFired();
     void progressEventTimerFired();

@@ -419,6 +419,9 @@ void HTMLVideoElement::fullscreenModeChanged(VideoFullscreenMode mode)
         scheduleEvent(eventNames().webkitpresentationmodechangedEvent);
     }
 
+    if (player())
+        player()->setVideoFullscreenMode(mode);
+
     HTMLMediaElement::fullscreenModeChanged(mode);
 }
 

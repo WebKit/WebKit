@@ -159,6 +159,7 @@ private:
     virtual void setVideoFullscreenLayer(PlatformLayer*);
     virtual void setVideoFullscreenFrame(FloatRect);
     virtual void setVideoFullscreenGravity(MediaPlayer::VideoGravity);
+    virtual void setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode) override;
 
     virtual NSArray *timedMetadata() const override;
     virtual String accessLog() const;

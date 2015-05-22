@@ -276,6 +276,7 @@ public:
     virtual void mediaPlayerEngineFailedToLoad() const { }
 
     virtual double mediaPlayerRequestedPlaybackRate() const { return 0; }
+    virtual MediaPlayerEnums::VideoFullscreenMode mediaPlayerFullscreenMode() const { return MediaPlayerEnums::VideoFullscreenModeNone; }
 };
 
 class MediaPlayerSupportsTypeClient {
@@ -314,6 +315,8 @@ public:
     void setVideoFullscreenFrame(FloatRect);
     using MediaPlayerEnums::VideoGravity;
     void setVideoFullscreenGravity(VideoGravity);
+    void setVideoFullscreenMode(VideoFullscreenMode);
+    VideoFullscreenMode fullscreenMode() const;
 
     NSArray *timedMetadata() const;
     String accessLog() const;
