@@ -1,3 +1,25 @@
+2015-05-22  Jon Lee  <jonlee@apple.com>
+
+        Rename MediaPlaybackRequiresUserGesture
+        https://bugs.webkit.org/show_bug.cgi?id=145314
+
+        Reviewed by Anders Carlsson.
+
+        In preparation for an API rename, update internal symbols from mediaPlaybackRequiresUserGesture
+        to requiresUserGestureForMediaPlayback.
+
+        No changes are being made to the API in this patch.
+
+        * WebView/WebPreferenceKeysPrivate.h: Update the name of the key, but not its value, for backwards
+        compatibility.
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Update the symbol.
+        (-[WebPreferences mediaPlaybackRequiresUserGesture]): Ditto. This setting will not be renamed
+        in a future patch.
+        (-[WebPreferences setMediaPlaybackRequiresUserGesture:]): Ditto.
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]): Update the call to settings.
+
 2015-05-22  Tim Horton  <timothy_horton@apple.com>
 
         Remove action menu support
