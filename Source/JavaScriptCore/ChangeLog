@@ -1,3 +1,62 @@
+2015-05-22  Basile Clement  <basile_clement@apple.com>
+
+        Allow DFGClobberize to return non-node constants that must be later created
+        https://bugs.webkit.org/show_bug.cgi?id=145272
+
+        Reviewed by Filip Pizlo.
+
+        This adds a new LazyNode class in DFG that represents either a Node*,
+        or a FrozenValue* with a way to convert it to a Node* provided a block
+        to insert it into. DFGClobberize is converted to use LazyNode instead
+        of Node* when def()'ing values, which allows to now define the array's
+        length as well as the value of its various fields in NewArray and
+        NewArrayBuffer nodes.
+
+        We also introduce a Vector<uint32_t> in DFG::Graph to collect all the
+        values that can be used as index, in order to avoid def()'ing too many
+        values at once for big NewArrayBuffers.
+
+        HeapLocation had to be updated to use a LazyNode as its index to be
+        able to define array values.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGCSEPhase.cpp:
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        (JSC::DFG::DefMethodClobberize::operator()):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::freezeFragile):
+        * dfg/DFGGraph.h:
+        * dfg/DFGHeapLocation.h:
+        (JSC::DFG::HeapLocation::HeapLocation):
+        (JSC::DFG::HeapLocation::index):
+        (JSC::DFG::HeapLocation::hash):
+        * dfg/DFGLazyNode.cpp: Added.
+        (JSC::DFG::LazyNode::dump):
+        * dfg/DFGLazyNode.h: Added.
+        (JSC::DFG::LazyNode::LazyNode):
+        (JSC::DFG::LazyNode::setNode):
+        (JSC::DFG::LazyNode::isHashTableDeletedValue):
+        (JSC::DFG::LazyNode::isNode):
+        (JSC::DFG::LazyNode::op):
+        (JSC::DFG::LazyNode::asNode):
+        (JSC::DFG::LazyNode::asValue):
+        (JSC::DFG::LazyNode::hash):
+        (JSC::DFG::LazyNode::operator==):
+        (JSC::DFG::LazyNode::operator!=):
+        (JSC::DFG::LazyNode::ensureIsNode):
+        (JSC::DFG::LazyNode::operator->):
+        (JSC::DFG::LazyNode::operator*):
+        (JSC::DFG::LazyNode::operator!):
+        (JSC::DFG::LazyNode::operator UnspecifiedBoolType*):
+        (JSC::DFG::LazyNode::setFrozenValue):
+        * dfg/DFGPreciseLocalClobberize.h:
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::def):
+        * dfg/DFGPutStackSinkingPhase.cpp:
+
 2015-05-22  Andreas Kling  <akling@apple.com>
 
         [JSC] Speed up new array construction in Array.prototype.splice().

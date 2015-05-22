@@ -1,3 +1,15 @@
+2015-05-22  Basile Clement  <basile_clement@apple.com>
+
+        Allow DFGClobberize to return non-node constants that must be later created
+        https://bugs.webkit.org/show_bug.cgi?id=145272
+
+        Reviewed by Filip Pizlo.
+
+        * js/regress/script-tests/cse-new-array-buffer.js: Added.
+        (foo):
+        * js/regress/script-tests/cse-new-array.js: Added.
+        (foo):
+
 2015-05-22  Marcos Chavarría Teijeiro  <mchavarria@igalia.com>
 
         [GTK] Gardening 21st May.

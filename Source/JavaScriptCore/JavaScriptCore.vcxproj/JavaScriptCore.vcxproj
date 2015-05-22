@@ -423,6 +423,7 @@
     <ClCompile Include="..\dfg\DFGJITFinalizer.cpp" />
     <ClCompile Include="..\dfg\DFGJumpReplacement.cpp" />
     <ClCompile Include="..\dfg\DFGLazyJSValue.cpp" />
+    <ClCompile Include="..\dfg\DFGLazyNode.cpp" />
     <ClCompile Include="..\dfg\DFGLICMPhase.cpp" />
     <ClCompile Include="..\dfg\DFGLivenessAnalysisPhase.cpp" />
     <ClCompile Include="..\dfg\DFGLongLivedState.cpp" />
@@ -1115,6 +1116,7 @@
     <ClInclude Include="..\dfg\DFGJITFinalizer.h" />
     <ClInclude Include="..\dfg\DFGJumpReplacement.h" />
     <ClInclude Include="..\dfg\DFGLazyJSValue.h" />
+    <ClInclude Include="..\dfg\DFGLazyNode.h" />
     <ClInclude Include="..\dfg\DFGLICMPhase.h" />
     <ClInclude Include="..\dfg\DFGLivenessAnalysisPhase.h" />
     <ClInclude Include="..\dfg\DFGLongLivedState.h" />

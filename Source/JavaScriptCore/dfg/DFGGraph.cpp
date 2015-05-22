@@ -1210,6 +1210,9 @@ FrozenValue* Graph::freezeFragile(JSValue value)
     auto result = m_frozenValueMap.add(JSValue::encode(value), nullptr);
     if (LIKELY(!result.isNewEntry))
         return result.iterator->value;
+
+    if (value.isUInt32())
+        m_uint32ValuesInUse.append(value.asUInt32());
     
     return result.iterator->value = m_frozenValues.add(FrozenValue::freeze(value));
 }

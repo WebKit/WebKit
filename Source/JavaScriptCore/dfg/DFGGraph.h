@@ -806,6 +806,8 @@ public:
 
     HashMap<EncodedJSValue, FrozenValue*, EncodedJSValueHash, EncodedJSValueHashTraits> m_frozenValueMap;
     Bag<FrozenValue> m_frozenValues;
+
+    Vector<uint32_t> m_uint32ValuesInUse;
     
     Bag<StorageAccessData> m_storageAccessData;
     

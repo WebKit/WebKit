@@ -82,7 +82,7 @@ public:
         // PureValue defs never have anything to do with locals, so ignore this.
     }
     
-    void def(HeapLocation location, Node* node)
+    void def(HeapLocation location, LazyNode node)
     {
         if (location.kind() != StackLoc)
             return;

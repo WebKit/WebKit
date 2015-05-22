@@ -1191,6 +1191,9 @@
     <ClCompile Include="..\dfg\DFGLazyJSValue.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
+    <ClCompile Include="..\dfg\DFGLazyNode.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
     <ClCompile Include="..\dfg\DFGLICMPhase.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
@@ -3560,6 +3563,9 @@
       <Filter>dfg</Filter>
     </ClInclude>
     <ClInclude Include="..\dfg\DFGLazyJSValue.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGLazyNode.h">
       <Filter>dfg</Filter>
     </ClInclude>
     <ClInclude Include="..\dfg\DFGLICMPhase.h">

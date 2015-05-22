@@ -109,8 +109,10 @@ public:
                     
                     preciseLocalClobberize(
                         m_graph, node, escapeHandler, escapeHandler,
-                        [&] (VirtualRegister operand, Node* source) {
-                            if (source == node) {
+                        [&] (VirtualRegister operand, LazyNode source) {
+                            RELEASE_ASSERT(source.isNode());
+
+                            if (source.asNode() == node) {
                                 // This is a load. Ignore it.
                                 return;
                             }
@@ -231,8 +233,10 @@ public:
                     
                     preciseLocalClobberize(
                         m_graph, node, escapeHandler, escapeHandler,
-                        [&] (VirtualRegister operand, Node* source) {
-                            if (source == node) {
+                        [&] (VirtualRegister operand, LazyNode source) {
+                            RELEASE_ASSERT(source.isNode());
+
+                            if (source.asNode() == node) {
                                 // This is a load. Ignore it.
                                 return;
                             }
@@ -436,7 +440,7 @@ public:
                 
                     preciseLocalClobberize(
                         m_graph, node, escapeHandler, escapeHandler,
-                        [&] (VirtualRegister, Node*) { });
+                        [&] (VirtualRegister, LazyNode) { });
                     break;
                 } }
             }

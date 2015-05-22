@@ -187,6 +187,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGJumpReplacement.cpp
     dfg/DFGLICMPhase.cpp
     dfg/DFGLazyJSValue.cpp
+    dfg/DFGLazyNode.cpp
     dfg/DFGLivenessAnalysisPhase.cpp
     dfg/DFGLongLivedState.cpp
     dfg/DFGLoopPreHeaderCreationPhase.cpp
