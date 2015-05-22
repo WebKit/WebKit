@@ -1,3 +1,17 @@
+2015-05-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Arguments elimination phase mishandles arity check failure in its reduction of LoadVarargs to GetStack/PutStacks
+        https://bugs.webkit.org/show_bug.cgi?id=145298
+
+        Reviewed by Geoffrey Garen.
+
+        * dfg/DFGArgumentsEliminationPhase.cpp: Fix the bug. I restructured the loop to make it more obvious that we're initializing everything that we're supposed to initialize.
+        * dfg/DFGNode.h: Add a comment to clarify something I was confused about while writing this code.
+        * dfg/DFGPutStackSinkingPhase.cpp: Hacking on PutStacks made me think deep thoughts, and I added some FIXMEs.
+        * tests/stress/fold-load-varargs-arity-check-fail-barely.js: Added. This test crashes or fails before this patch.
+        * tests/stress/fold-load-varargs-arity-check-fail.js: Added. This is even more sure to crash or fail.
+        * tests/stress/simplify-varargs-mandatory-minimum-smaller-than-limit.js: Added. Not sure if we had coverage for this case before.
+
 2015-05-22  Basile Clement  <basile_clement@apple.com>
 
         Allow DFGClobberize to return non-node constants that must be later created
