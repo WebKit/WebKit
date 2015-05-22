@@ -1241,6 +1241,11 @@ void MediaPlayer::syncTextTrackBounds()
     m_private->syncTextTrackBounds();
 }
 
+void MediaPlayer::tracksChanged()
+{
+    m_private->tracksChanged();
+}
+
 #if ENABLE(AVF_CAPTIONS)
 void MediaPlayer::notifyTrackModeChanged()
 {
@@ -1355,6 +1360,11 @@ void MediaPlayer::handlePlaybackCommand(MediaSession::RemoteControlCommandType c
 String MediaPlayer::sourceApplicationIdentifier() const
 {
     return m_client.mediaPlayerSourceApplicationIdentifier();
+}
+
+Vector<String> MediaPlayer::preferredAudioCharacteristics() const
+{
+    return m_client.mediaPlayerPreferredAudioCharacteristics();
 }
 
 void MediaPlayerFactorySupport::callRegisterMediaEngine(MediaEngineRegister registerMediaEngine)

@@ -35,6 +35,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/text/WTFString.h>
 
 OBJC_CLASS AVPlayerItem;
 OBJC_CLASS AVMediaSelectionGroup;
@@ -67,13 +68,13 @@ private:
 
 class MediaSelectionGroupAVFObjC : public RefCounted<MediaSelectionGroupAVFObjC> {
 public:
-    static PassRefPtr<MediaSelectionGroupAVFObjC> create(AVPlayerItem*, AVMediaSelectionGroup*);
+    static PassRefPtr<MediaSelectionGroupAVFObjC> create(AVPlayerItem*, AVMediaSelectionGroup*, const Vector<String>& characteristics);
     ~MediaSelectionGroupAVFObjC();
 
     void setSelectedOption(MediaSelectionOptionAVFObjC*);
     MediaSelectionOptionAVFObjC* selectedOption() const { return m_selectedOption; }
 
-    void updateOptions();
+    void updateOptions(const Vector<String>& characteristics);
 
     typedef HashMap<AVMediaSelectionOption*, RefPtr<MediaSelectionOptionAVFObjC>> OptionContainer;
     WTF::IteratorRange<OptionContainer::iterator::Values> options() { return m_options.values(); }
@@ -81,7 +82,7 @@ public:
     AVMediaSelectionGroup *avMediaSelectionGroup() const { return m_mediaSelectionGroup.get(); }
 
 private:
-    MediaSelectionGroupAVFObjC(AVPlayerItem*, AVMediaSelectionGroup*);
+    MediaSelectionGroupAVFObjC(AVPlayerItem*, AVMediaSelectionGroup*, const Vector<String>& characteristics);
 
     void selectionTimerFired();
 

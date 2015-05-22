@@ -158,6 +158,20 @@ void CaptionUserPreferences::setPreferredLanguage(const String& language)
     notify();
 }
 
+void CaptionUserPreferences::setPreferredAudioCharacteristic(const String& characteristic)
+{
+    m_userPreferredAudioCharacteristic = characteristic;
+    notify();
+}
+
+Vector<String> CaptionUserPreferences::preferredAudioCharacteristics() const
+{
+    Vector<String> characteristics;
+    if (!m_userPreferredAudioCharacteristic.isEmpty())
+        characteristics.append(m_userPreferredAudioCharacteristic);
+    return characteristics;
+}
+
 static String trackDisplayName(TextTrack* track)
 {
     if (track == TextTrack::captionMenuOffItem())

@@ -226,6 +226,38 @@
     } \
     }
 
+#define SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(functionNamespace, framework, variableName, variableType) \
+    namespace functionNamespace { \
+    bool canLoad_##framework##_##variableName(); \
+    bool init_##framework##_##variableName(); \
+    variableType get_##framework##_##variableName(); \
+    }
+
+#define SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(functionNamespace, framework, variableName, variableType) \
+    namespace functionNamespace { \
+    static variableType constant##framework##variableName; \
+    bool init_##framework##_##variableName(); \
+    bool init_##framework##_##variableName() \
+    { \
+        variableType* ptr = reinterpret_cast<variableType*>(SOFT_LINK_GETPROCADDRESS(framework##Library(), #variableName)); \
+        if (!ptr) \
+            return false; \
+        constant##framework##variableName = *ptr; \
+        return true; \
+    } \
+    bool canLoad_##framework##_##variableName(); \
+    bool canLoad_##framework##_##variableName() \
+    { \
+        static bool loaded = init_##framework##_##variableName(); \
+        return loaded; \
+    } \
+    variableType get_##framework##_##variableName(); \
+    variableType get_##framework##_##variableName() \
+    { \
+        return constant##framework##variableName; \
+    } \
+    }
+
 #define SOFT_LINK_FUNCTION_FOR_HEADER(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
     namespace functionNamespace { \
     extern resultType(__cdecl*softLink##framework##functionName) parameterDeclarations; \
@@ -243,6 +275,46 @@
     { \
         softLink##framework##functionName = reinterpret_cast<resultType (__cdecl*)parameterDeclarations>(SOFT_LINK_GETPROCADDRESS(framework##Library(), #functionName)); \
         RELEASE_ASSERT(softLink##framework##functionName); \
+        return softLink##framework##functionName parameterNames; \
+    } \
+    }
+
+#define SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
+    WTF_EXTERN_C_BEGIN \
+    resultType functionName parameterDeclarations; \
+    WTF_EXTERN_C_END \
+    namespace functionNamespace { \
+    extern resultType (*softLink##framework##functionName) parameterDeclarations; \
+    bool canLoad_##framework##_##functionName(); \
+    bool init_##framework##_##functionName(); \
+    resultType softLink_##framework##_##functionName parameterDeclarations; \
+    }
+
+#define SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
+    WTF_EXTERN_C_BEGIN \
+    resultType functionName parameterDeclarations; \
+    WTF_EXTERN_C_END \
+    namespace functionNamespace { \
+    resultType (*softLink##framework##functionName) parameterDeclarations = 0; \
+    bool init_##framework##_##functionName(); \
+    bool init_##framework##_##functionName() \
+    { \
+        ASSERT(!softLink##framework##functionName); \
+        softLink##framework##functionName = reinterpret_cast<resultType (__cdecl*)parameterDeclarations>(SOFT_LINK_GETPROCADDRESS(framework##Library(), #functionName)); \
+        return !!softLink##framework##functionName; \
+    } \
+    \
+    bool canLoad_##framework##_##functionName(); \
+    bool canLoad_##framework##_##functionName() \
+    { \
+        static bool loaded = init_##framework##_##functionName(); \
+        return loaded; \
+    } \
+    \
+    resultType softLink_##framework##_##functionName parameterDeclarations; \
+    resultType softLink_##framework##_##functionName parameterDeclarations \
+    { \
+        ASSERT(softLink##framework##functionName); \
         return softLink##framework##functionName parameterNames; \
     } \
     }

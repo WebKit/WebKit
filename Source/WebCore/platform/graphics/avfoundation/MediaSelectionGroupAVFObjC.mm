@@ -43,6 +43,11 @@ SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVMediaSelectionGroup)
 SOFT_LINK_CLASS(AVFoundation, AVMediaSelectionOption)
 
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+#include <MediaAccessibility/MediaAccessibility.h>
+#include "MediaAccessibilitySoftLink.h"
+#endif
+
 namespace WebCore {
 
 PassRefPtr<MediaSelectionOptionAVFObjC> MediaSelectionOptionAVFObjC::create(MediaSelectionGroupAVFObjC& group, AVMediaSelectionOption *option)
@@ -82,17 +87,17 @@ int MediaSelectionOptionAVFObjC::index() const
     return [[m_group->avMediaSelectionGroup() options] indexOfObject:m_mediaSelectionOption.get()];
 }
 
-PassRefPtr<MediaSelectionGroupAVFObjC> MediaSelectionGroupAVFObjC::create(AVPlayerItem *item, AVMediaSelectionGroup *group)
+PassRefPtr<MediaSelectionGroupAVFObjC> MediaSelectionGroupAVFObjC::create(AVPlayerItem *item, AVMediaSelectionGroup *group, const Vector<String>& characteristics)
 {
-    return adoptRef(new MediaSelectionGroupAVFObjC(item, group));
+    return adoptRef(new MediaSelectionGroupAVFObjC(item, group, characteristics));
 }
 
-MediaSelectionGroupAVFObjC::MediaSelectionGroupAVFObjC(AVPlayerItem *item, AVMediaSelectionGroup *group)
+MediaSelectionGroupAVFObjC::MediaSelectionGroupAVFObjC(AVPlayerItem *item, AVMediaSelectionGroup *group, const Vector<String>& characteristics)
     : m_playerItem(item)
     , m_mediaSelectionGroup(group)
     , m_selectionTimer(*this, &MediaSelectionGroupAVFObjC::selectionTimerFired)
 {
-    updateOptions();
+    updateOptions(characteristics);
 }
 
 MediaSelectionGroupAVFObjC::~MediaSelectionGroupAVFObjC()
@@ -101,7 +106,7 @@ MediaSelectionGroupAVFObjC::~MediaSelectionGroupAVFObjC()
         option->clearGroup();
 }
 
-void MediaSelectionGroupAVFObjC::updateOptions()
+void MediaSelectionGroupAVFObjC::updateOptions(const Vector<String>& characteristics)
 {
     RetainPtr<NSSet> newAVOptions = adoptNS([[NSSet alloc] initWithArray:[getAVMediaSelectionGroupClass() playableMediaSelectionOptionsFromArray:[m_mediaSelectionGroup options]]]);
     RetainPtr<NSMutableSet> oldAVOptions = adoptNS([[NSMutableSet alloc] initWithCapacity:m_options.size()]);
@@ -137,6 +142,21 @@ void MediaSelectionGroupAVFObjC::updateOptions()
     for (auto& language : userPreferredLanguages())
         [nsLanguages addObject:(NSString*)language];
     NSArray* filteredOptions = [getAVMediaSelectionGroupClass() mediaSelectionOptionsFromArray:[m_mediaSelectionGroup options] filteredAndSortedAccordingToPreferredLanguages:nsLanguages.get()];
+
+    if (![filteredOptions count] && characteristics.isEmpty())
+        return;
+
+    // If no options match our language selection, search for matching characteristics across all the group's options
+    if (![filteredOptions count])
+        filteredOptions = [m_mediaSelectionGroup options];
+
+    RetainPtr<NSMutableArray> nsCharacteristics = adoptNS([[NSMutableArray alloc] initWithCapacity:characteristics.size()]);
+    for (auto& characteristic : characteristics)
+        [nsCharacteristics addObject:(NSString *)characteristic];
+
+    NSArray* optionsWithCharacteristics = [getAVMediaSelectionGroupClass() mediaSelectionOptionsFromArray:filteredOptions withMediaCharacteristics:nsCharacteristics.get()];
+    if (optionsWithCharacteristics && [optionsWithCharacteristics count])
+        filteredOptions = optionsWithCharacteristics;
 
     if (![filteredOptions count])
         return;

@@ -79,6 +79,9 @@ public:
     virtual void setPreferredLanguage(const String&);
     virtual Vector<String> preferredLanguages() const;
 
+    virtual void setPreferredAudioCharacteristic(const String&);
+    virtual Vector<String> preferredAudioCharacteristics() const;
+
     virtual String displayNameForTrack(TextTrack*) const;
     virtual Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList*);
 
@@ -104,6 +107,7 @@ private:
     CaptionDisplayMode m_displayMode;
     Timer m_timer;
     String m_userPreferredLanguage;
+    String m_userPreferredAudioCharacteristic;
     String m_captionsStyleSheetOverride;
     String m_primaryAudioTrackLanguageOverride;
     bool m_testingMode;

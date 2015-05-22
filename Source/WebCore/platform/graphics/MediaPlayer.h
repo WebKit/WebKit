@@ -277,6 +277,7 @@ public:
 
     virtual double mediaPlayerRequestedPlaybackRate() const { return 0; }
     virtual MediaPlayerEnums::VideoFullscreenMode mediaPlayerFullscreenMode() const { return MediaPlayerEnums::VideoFullscreenModeNone; }
+    virtual Vector<String> mediaPlayerPreferredAudioCharacteristics() const { return Vector<String>(); }
 };
 
 class MediaPlayerSupportsTypeClient {
@@ -558,6 +559,7 @@ public:
     bool requiresTextTrackRepresentation() const;
     void setTextTrackRepresentation(TextTrackRepresentation*);
     void syncTextTrackBounds();
+    void tracksChanged();
 #if ENABLE(AVF_CAPTIONS)
     void notifyTrackModeChanged();
     Vector<RefPtr<PlatformTextTrack>> outOfBandTrackSources();
@@ -596,6 +598,7 @@ public:
     bool shouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge&);
     void handlePlaybackCommand(MediaSession::RemoteControlCommandType);
     String sourceApplicationIdentifier() const;
+    Vector<String> preferredAudioCharacteristics() const;
 
 private:
     const MediaPlayerFactory* nextBestMediaEngine(const MediaPlayerFactory*) const;

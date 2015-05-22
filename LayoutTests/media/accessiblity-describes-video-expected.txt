@@ -1,0 +1,7 @@
+
+EVENT(canplaythrough)
+EXPECTED (video.audioTracks.length == '2') OK
+EXPECTED (video.audioTracks[0].enabled == 'false') OK
+EXPECTED (video.audioTracks[1].enabled == 'true') OK
+END OF TEST
+

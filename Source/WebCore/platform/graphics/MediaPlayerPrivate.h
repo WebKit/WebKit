@@ -238,6 +238,7 @@ public:
     virtual bool requiresTextTrackRepresentation() const { return false; }
     virtual void setTextTrackRepresentation(TextTrackRepresentation*) { }
     virtual void syncTextTrackBounds() { };
+    virtual void tracksChanged() { };
 #endif
 
 #if USE(PLATFORM_TEXT_TRACK_MENU)

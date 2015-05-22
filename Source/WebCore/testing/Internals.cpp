@@ -1293,6 +1293,22 @@ void Internals::setUserPreferredLanguages(const Vector<String>& languages)
     WebCore::overrideUserPreferredLanguages(languages);
 }
 
+Vector<String> Internals::userPreferredAudioCharacteristics() const
+{
+    Document* document = contextDocument();
+    if (!document || !document->page())
+        return Vector<String>();
+    return document->page()->group().captionPreferences()->preferredAudioCharacteristics();
+}
+
+void Internals::setUserPreferredAudioCharacteristic(const String& characteristic)
+{
+    Document* document = contextDocument();
+    if (!document || !document->page())
+        return;
+    document->page()->group().captionPreferences()->setPreferredAudioCharacteristic(characteristic);
+}
+
 unsigned Internals::wheelEventHandlerCount(ExceptionCode& ec)
 {
     Document* document = contextDocument();

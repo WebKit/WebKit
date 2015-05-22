@@ -47,7 +47,9 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, MediaAccessibility, MACaptionAppearanceGe
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, MediaAccessibility, MACaptionAppearanceAddSelectedLanguage, bool, (MACaptionAppearanceDomain domain, CFStringRef language), (domain, language));
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, MediaAccessibility, MACaptionAppearanceCopySelectedLanguages, CFArrayRef, (MACaptionAppearanceDomain domain), (domain));
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, MediaAccessibility, MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics,  CFArrayRef, (MACaptionAppearanceDomain domain), (domain));
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebCore, MediaAccessibility, MAAudibleMediaCopyPreferredCharacteristics, CFArrayRef, (), ());
 
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, MediaAccessibility, kMAXCaptionAppearanceSettingsChangedNotification, CFStringRef)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, MediaAccessibility, kMAAudibleMediaSettingsChangedNotification, CFStringRef)
 
 #endif // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)

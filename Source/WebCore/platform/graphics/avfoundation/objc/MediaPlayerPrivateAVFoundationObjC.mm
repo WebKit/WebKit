@@ -1981,9 +1981,9 @@ void determineChangedTracksFromNewTracksAndOldItems(NSArray* tracks, NSString* t
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
 template <typename RefT, typename PassRefT>
-void determineChangedTracksFromNewTracksAndOldItems(MediaSelectionGroupAVFObjC* group, Vector<RefT>& oldItems, RefT (*itemFactory)(MediaSelectionOptionAVFObjC&), MediaPlayer* player, void (MediaPlayer::*removedFunction)(PassRefT), void (MediaPlayer::*addedFunction)(PassRefT))
+void determineChangedTracksFromNewTracksAndOldItems(MediaSelectionGroupAVFObjC* group, Vector<RefT>& oldItems, const Vector<String>& characteristics, RefT (*itemFactory)(MediaSelectionOptionAVFObjC&), MediaPlayer* player, void (MediaPlayer::*removedFunction)(PassRefT), void (MediaPlayer::*addedFunction)(PassRefT))
 {
-    group->updateOptions();
+    group->updateOptions(characteristics);
 
     // Only add selection options which do not have an associated persistant track.
     ListHashSet<RefPtr<MediaSelectionOptionAVFObjC>> newSelectionOptions;
@@ -2050,13 +2050,14 @@ void MediaPlayerPrivateAVFoundationObjC::updateAudioTracks()
     determineChangedTracksFromNewTracksAndOldItems(m_cachedTracks.get(), AVMediaTypeAudio, m_audioTracks, &AudioTrackPrivateAVFObjC::create, player(), &MediaPlayer::removeAudioTrack, &MediaPlayer::addAudioTrack);
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
+    Vector<String> characteristics = player()->preferredAudioCharacteristics();
     if (!m_audibleGroup) {
         if (AVMediaSelectionGroupType *group = safeMediaSelectionGroupForAudibleMedia())
-            m_audibleGroup = MediaSelectionGroupAVFObjC::create(m_avPlayerItem.get(), group);
+            m_audibleGroup = MediaSelectionGroupAVFObjC::create(m_avPlayerItem.get(), group, characteristics);
     }
 
     if (m_audibleGroup)
-        determineChangedTracksFromNewTracksAndOldItems(m_audibleGroup.get(), m_audioTracks, &AudioTrackPrivateAVFObjC::create, player(), &MediaPlayer::removeAudioTrack, &MediaPlayer::addAudioTrack);
+        determineChangedTracksFromNewTracksAndOldItems(m_audibleGroup.get(), m_audioTracks, characteristics, &AudioTrackPrivateAVFObjC::create, player(), &MediaPlayer::removeAudioTrack, &MediaPlayer::addAudioTrack);
 #endif
 
     for (auto& track : m_audioTracks)
@@ -2078,11 +2079,11 @@ void MediaPlayerPrivateAVFoundationObjC::updateVideoTracks()
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
     if (!m_visualGroup) {
         if (AVMediaSelectionGroupType *group = safeMediaSelectionGroupForVisualMedia())
-            m_visualGroup = MediaSelectionGroupAVFObjC::create(m_avPlayerItem.get(), group);
+            m_visualGroup = MediaSelectionGroupAVFObjC::create(m_avPlayerItem.get(), group, Vector<String>());
     }
 
     if (m_visualGroup)
-        determineChangedTracksFromNewTracksAndOldItems(m_visualGroup.get(), m_videoTracks, &VideoTrackPrivateAVFObjC::create, player(), &MediaPlayer::removeVideoTrack, &MediaPlayer::addVideoTrack);
+        determineChangedTracksFromNewTracksAndOldItems(m_visualGroup.get(), m_videoTracks, Vector<String>(), &VideoTrackPrivateAVFObjC::create, player(), &MediaPlayer::removeVideoTrack, &MediaPlayer::addVideoTrack);
 #endif
 
     for (auto& track : m_audioTracks)

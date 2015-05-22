@@ -5482,6 +5482,9 @@ void HTMLMediaElement::captionPreferencesChanged()
         m_mediaControlsHost->updateCaptionDisplaySizes();
 #endif
 
+    if (m_player)
+        m_player->tracksChanged();
+
     if (!document().page())
         return;
 
@@ -5912,6 +5915,14 @@ String HTMLMediaElement::mediaPlayerSourceApplicationIdentifier() const
             return networkingContext->sourceApplicationIdentifier();
     }
     return emptyString();
+}
+
+Vector<String> HTMLMediaElement::mediaPlayerPreferredAudioCharacteristics() const
+{
+    Page* page = document().page();
+    if (CaptionUserPreferences* captionPreferences = page ? page->group().captionPreferences() : nullptr)
+        return captionPreferences->preferredAudioCharacteristics();
+    return Vector<String>();
 }
 
 #if PLATFORM(IOS)

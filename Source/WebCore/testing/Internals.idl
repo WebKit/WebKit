@@ -160,6 +160,9 @@ enum ResourceLoadPriority {
     sequence<DOMString> userPreferredLanguages();
     void setUserPreferredLanguages(sequence<DOMString> languages);
 
+    sequence<DOMString> userPreferredAudioCharacteristics();
+    void setUserPreferredAudioCharacteristic(DOMString characteristic);
+
     [RaisesException] unsigned long wheelEventHandlerCount();
     [RaisesException] unsigned long touchEventHandlerCount();
 

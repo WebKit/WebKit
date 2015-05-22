@@ -55,6 +55,9 @@ public:
     virtual void setPreferredLanguage(const String&) override;
     virtual Vector<String> preferredLanguages() const override;
 
+    virtual void setPreferredAudioCharacteristic(const String&) override;
+    virtual Vector<String> preferredAudioCharacteristics() const override;
+
     virtual void captionPreferencesChanged() override;
 
     bool shouldFilterTrackMenu() const { return true; }

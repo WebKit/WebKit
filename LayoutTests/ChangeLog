@@ -1,3 +1,20 @@
+2015-05-22  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Audio tracks tagged as 'describes-video' are not automatically selected when that system accessibility option is set.
+        https://bugs.webkit.org/show_bug.cgi?id=145228
+
+        Reviewed by Eric Carlson.
+
+        * http/tests/media/hls/hls-accessiblity-describes-video-expected.txt: Added.
+        * http/tests/media/hls/hls-accessiblity-describes-video.html: Added.
+        * http/tests/media/resources/hls/audio-describes-video.m3u8: Added.
+        * http/tests/media/resources/hls/english/description.aac: Added.
+        * http/tests/media/resources/hls/english/description.m3u8: Added.
+        * media/accessiblity-describes-video-expected.txt: Added.
+        * media/accessiblity-describes-video.html: Added.
+        * media/content/audio-describes-video.mp4: Added.
+        * platform/mac-mavericks/TestExpectations:
+
 2015-05-22  Basile Clement  <basile_clement@apple.com>
 
         Allow DFGClobberize to return non-node constants that must be later created

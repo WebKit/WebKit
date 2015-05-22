@@ -377,6 +377,44 @@
     } \
     }
 
+#define SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(functionNamespace, framework, variableName, variableType) \
+    WTF_EXTERN_C_BEGIN \
+    extern const variableType variableName; \
+    WTF_EXTERN_C_END \
+    namespace functionNamespace { \
+    bool canLoad_##framework##_##variableName(); \
+    bool init_##framework##_##variableName(); \
+    variableType get_##framework##_##variableName(); \
+    }
+
+#define SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(functionNamespace, framework, variableName, variableType) \
+    WTF_EXTERN_C_BEGIN \
+    extern const variableType variableName; \
+    WTF_EXTERN_C_END \
+    namespace functionNamespace { \
+    static variableType constant##framework##variableName; \
+    bool init_##framework##_##variableName(); \
+    bool init_##framework##_##variableName() \
+    { \
+        void* constant = dlsym(framework##Library(), #variableName); \
+        if (!constant) \
+            return false; \
+        constant##framework##variableName = *static_cast<variableType*>(constant); \
+        return true; \
+    } \
+    bool canLoad_##framework##_##variableName(); \
+    bool canLoad_##framework##_##variableName() \
+    { \
+        static bool loaded = init_##framework##_##variableName(); \
+        return loaded; \
+    } \
+    variableType get_##framework##_##variableName(); \
+    variableType get_##framework##_##variableName() \
+    { \
+        return constant##framework##variableName; \
+    } \
+    }
+
 #define SOFT_LINK_FUNCTION_FOR_HEADER(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
     WTF_EXTERN_C_BEGIN \
     resultType functionName parameterDeclarations; \
@@ -403,6 +441,46 @@
             softLink##framework##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(), #functionName); \
             RELEASE_ASSERT_WITH_MESSAGE(softLink##framework##functionName, "%s", dlerror()); \
         }); \
+        return softLink##framework##functionName parameterNames; \
+    } \
+    }
+
+#define SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
+    WTF_EXTERN_C_BEGIN \
+    resultType functionName parameterDeclarations; \
+    WTF_EXTERN_C_END \
+    namespace functionNamespace { \
+    extern resultType (*softLink##framework##functionName) parameterDeclarations; \
+    bool canLoad_##framework##_##functionName(); \
+    bool init_##framework##_##functionName(); \
+    resultType softLink_##framework##_##functionName parameterDeclarations; \
+    }
+
+#define SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
+    WTF_EXTERN_C_BEGIN \
+    resultType functionName parameterDeclarations; \
+    WTF_EXTERN_C_END \
+    namespace functionNamespace { \
+    resultType (*softLink##framework##functionName) parameterDeclarations = 0; \
+    bool init_##framework##_##functionName(); \
+    bool init_##framework##_##functionName() \
+    { \
+        ASSERT(!softLink##framework##functionName); \
+        softLink##framework##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(), #functionName); \
+        return !!softLink##framework##functionName; \
+    } \
+    \
+    bool canLoad_##framework##_##functionName(); \
+    bool canLoad_##framework##_##functionName() \
+    { \
+        static bool loaded = init_##framework##_##functionName(); \
+        return loaded; \
+    } \
+    \
+    resultType softLink_##framework##_##functionName parameterDeclarations; \
+    resultType softLink_##framework##_##functionName parameterDeclarations \
+    { \
+        ASSERT(softLink##framework##functionName); \
         return softLink##framework##functionName parameterNames; \
     } \
     }

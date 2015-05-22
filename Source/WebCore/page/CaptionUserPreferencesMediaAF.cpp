@@ -106,6 +106,8 @@ CaptionUserPreferencesMediaAF::~CaptionUserPreferencesMediaAF()
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     if (kMAXCaptionAppearanceSettingsChangedNotification)
         CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenter(), this, kMAXCaptionAppearanceSettingsChangedNotification, 0);
+    if (kMAAudibleMediaSettingsChangedNotification)
+        CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenter(), this, kMAAudibleMediaSettingsChangedNotification, 0);
 #endif
 }
 
@@ -191,12 +193,16 @@ void CaptionUserPreferencesMediaAF::setInterestedInCaptionPreferenceChanges()
     if (!MediaAccessibilityLibrary())
         return;
 
-    if (!kMAXCaptionAppearanceSettingsChangedNotification)
+    if (!kMAXCaptionAppearanceSettingsChangedNotification && !canLoad_MediaAccessibility_kMAAudibleMediaSettingsChangedNotification())
         return;
 
     m_listeningForPreferenceChanges = true;
     m_registeringForNotification = true;
-    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, userCaptionPreferencesChangedNotificationCallback, kMAXCaptionAppearanceSettingsChangedNotification, 0, CFNotificationSuspensionBehaviorCoalesce);
+
+    if (kMAXCaptionAppearanceSettingsChangedNotification)
+        CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, userCaptionPreferencesChangedNotificationCallback, kMAXCaptionAppearanceSettingsChangedNotification, 0, CFNotificationSuspensionBehaviorCoalesce);
+    if (canLoad_MediaAccessibility_kMAAudibleMediaSettingsChangedNotification())
+        CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, userCaptionPreferencesChangedNotificationCallback, kMAAudibleMediaSettingsChangedNotification, 0, CFNotificationSuspensionBehaviorCoalesce);
     m_registeringForNotification = false;
 
     // Generating and registering the caption stylesheet can be expensive and this method is called indirectly when the parser creates an audio or
@@ -465,6 +471,33 @@ Vector<String> CaptionUserPreferencesMediaAF::preferredLanguages() const
     userPreferredLanguages.appendVector(platformLanguages);
 
     return userPreferredLanguages;
+}
+
+void CaptionUserPreferencesMediaAF::setPreferredAudioCharacteristic(const String& characteristic)
+{
+    if (testingMode() || !MediaAccessibilityLibrary())
+        CaptionUserPreferences::setPreferredAudioCharacteristic(characteristic);
+}
+
+Vector<String> CaptionUserPreferencesMediaAF::preferredAudioCharacteristics() const
+{
+    if (testingMode() || !MediaAccessibilityLibrary() || !canLoad_MediaAccessibility_MAAudibleMediaCopyPreferredCharacteristics())
+        return CaptionUserPreferences::preferredAudioCharacteristics();
+
+    CFIndex characteristicCount = 0;
+    RetainPtr<CFArrayRef> characteristics = adoptCF(MAAudibleMediaCopyPreferredCharacteristics());
+    if (characteristics)
+        characteristicCount = CFArrayGetCount(characteristics.get());
+
+    if (!characteristicCount)
+        return CaptionUserPreferences::preferredAudioCharacteristics();
+
+    Vector<String> userPreferredAudioCharacteristics;
+    userPreferredAudioCharacteristics.reserveCapacity(characteristicCount);
+    for (CFIndex i = 0; i < characteristicCount; i++)
+        userPreferredAudioCharacteristics.append(static_cast<CFStringRef>(CFArrayGetValueAtIndex(characteristics.get(), i)));
+
+    return userPreferredAudioCharacteristics;
 }
 #endif // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 

@@ -295,6 +295,8 @@ private:
 
     virtual URL resolvedURL() const override;
 
+    Vector<String> preferredAudioCharacteristics() const;
+
     WeakPtrFactory<MediaPlayerPrivateAVFoundationObjC> m_weakPtrFactory;
 
     RetainPtr<AVURLAsset> m_avAsset;
