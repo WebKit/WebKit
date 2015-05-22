@@ -346,6 +346,10 @@ void NetworkProcessProxy::processReadyToSuspend()
     m_throttler->processReadyToSuspend();
 }
 
+void NetworkProcessProxy::didSetAssertionState(AssertionState)
+{
+}
+    
 void NetworkProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
 {
     if (!isHoldingLockedFiles) {

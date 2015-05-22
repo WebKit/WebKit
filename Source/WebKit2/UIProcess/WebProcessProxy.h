@@ -208,6 +208,8 @@ private:
     void interactionOccurredWhileUnresponsive(ResponsivenessTimer*) override;
     void didBecomeResponsive(ResponsivenessTimer*) override;
 
+    void didSetAssertionState(AssertionState) override;
+
     // ProcessLauncher::Client
     virtual void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
 
@@ -216,8 +218,6 @@ private:
     void didReceiveSyncWebProcessProxyMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
 
     bool canTerminateChildProcess();
-
-    void initializeNetworkProcessActivityToken();
 
     ResponsivenessTimer m_responsivenessTimer;
     
@@ -245,7 +245,8 @@ private:
     std::unique_ptr<ProcessThrottler> m_throttler;
     ProcessThrottler::BackgroundActivityToken m_tokenForHoldingLockedFiles;
 #if PLATFORM(IOS) && ENABLE(NETWORK_PROCESS)
-    ProcessThrottler::ForegroundActivityToken m_tokenForNetworkProcess;
+    ProcessThrottler::ForegroundActivityToken m_foregroundTokenForNetworkProcess;
+    ProcessThrottler::BackgroundActivityToken m_backgroundTokenForNetworkProcess;
 #endif
 
     HashMap<String, uint64_t> m_pageURLRetainCountMap;

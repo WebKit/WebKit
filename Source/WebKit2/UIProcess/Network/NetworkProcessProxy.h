@@ -89,6 +89,8 @@ private:
     void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&);
     void networkProcessCrashedOrFailedToLaunch();
 
+    void didSetAssertionState(AssertionState) override;
+
     // IPC::Connection::Client
     virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
     virtual void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
