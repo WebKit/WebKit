@@ -35,7 +35,7 @@
                     </customView>
                 </subviews>
             </view>
-            <toolbar key="toolbar" implicitIdentifier="994A0CB1-7575-4F39-A65B-7165AB1E8015" autosavesConfiguration="NO" displayMode="iconOnly" sizeMode="regular" id="48">
+            <toolbar key="toolbar" implicitIdentifier="994A0CB1-7575-4F39-A65B-7165AB1E8015" displayMode="iconOnly" sizeMode="regular" id="48">
                 <allowedToolbarItems>
                     <toolbarItem implicitItemIdentifier="73DE9F4B-73E2-4036-A134-2D9E029DA980" label="Go Back" paletteLabel="Go Back" image="NSGoLeftTemplate" id="56" customClass="MBToolbarItem">
                         <nil key="toolTip"/>

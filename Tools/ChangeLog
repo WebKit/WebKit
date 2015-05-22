@@ -1,3 +1,11 @@
+2015-05-22  Tim Horton  <timothy_horton@apple.com>
+
+        Turn on autosaving of toolbar configuration in MiniBrowser
+
+        Rubber-stamped by Dan Bernstein.
+
+        * MiniBrowser/mac/BrowserWindow.xib:
+
 2015-05-22  Alexey Proskuryakov  <ap@apple.com>
 
         build.webkit.org/dashboard: Simplify BuildbotQueueView creation code
