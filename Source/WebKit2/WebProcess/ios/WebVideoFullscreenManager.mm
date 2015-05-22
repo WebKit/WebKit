@@ -217,9 +217,9 @@ bool WebVideoFullscreenManager::supportsVideoFullscreen() const
     return Settings::avKitEnabled();
 }
 
-void WebVideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElement& videoElement, HTMLMediaElement::VideoFullscreenMode mode)
+void WebVideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElement& videoElement, HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
-    ASSERT(mode != HTMLMediaElement::VideoFullscreenModeNone);
+    ASSERT(mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
 
     uint64_t contextId;
 
@@ -394,7 +394,7 @@ void WebVideoFullscreenManager::selectLegibleMediaOption(uint64_t contextId, uin
     ensureModel(contextId).selectLegibleMediaOption(index);
 }
 
-void WebVideoFullscreenManager::fullscreenModeChanged(uint64_t contextId, WebCore::HTMLMediaElement::VideoFullscreenMode videoFullscreenMode)
+void WebVideoFullscreenManager::fullscreenModeChanged(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode)
 {
     ensureModel(contextId).fullscreenModeChanged(videoFullscreenMode);
 }
@@ -481,7 +481,7 @@ void WebVideoFullscreenManager::didCleanupFullscreen(uint64_t contextId)
 
     interface->setIsAnimating(false);
     interface->setIsFullscreen(false);
-    HTMLMediaElement::VideoFullscreenMode mode = interface->fullscreenMode();
+    HTMLMediaElementEnums::VideoFullscreenMode mode = interface->fullscreenMode();
 
     model->setVideoFullscreenLayer(nil);
     RefPtr<HTMLVideoElement> videoElement = model->videoElement();

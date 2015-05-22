@@ -62,6 +62,7 @@
 #include "MediaFragmentURIParser.h"
 #include "MediaKeyEvent.h"
 #include "MediaList.h"
+#include "MediaPlayer.h"
 #include "MediaQueryEvaluator.h"
 #include "MediaResourceLoader.h"
 #include "MediaSessionManager.h"
@@ -252,6 +253,24 @@ private:
     HTMLMediaElement* m_mediaElement;
 };
 #endif
+
+struct HTMLMediaElement::TrackGroup {
+    enum GroupKind { CaptionsAndSubtitles, Description, Chapter, Metadata, Other };
+
+    TrackGroup(GroupKind kind)
+        : visibleTrack(0)
+        , defaultTrack(0)
+        , kind(kind)
+        , hasSrcLang(false)
+    {
+    }
+
+    Vector<RefPtr<TextTrack>> tracks;
+    RefPtr<TextTrack> visibleTrack;
+    RefPtr<TextTrack> defaultTrack;
+    GroupKind kind;
+    bool hasSrcLang;
+};
 
 HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& document, bool createdByParser)
     : HTMLElement(tagName, document)

@@ -35,6 +35,7 @@
 #include "IntRect.h"
 #include "URL.h"
 #include "LayoutRect.h"
+#include "MediaPlayerEnums.h"
 #include "MediaSession.h"
 #include "NativeImagePtr.h"
 #include "PlatformLayer.h"
@@ -285,7 +286,7 @@ public:
     virtual String mediaPlayerDocumentHost() const { return String(); }
 };
 
-class MediaPlayer {
+class MediaPlayer : public MediaPlayerEnums {
     WTF_MAKE_NONCOPYABLE(MediaPlayer); WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit MediaPlayer(MediaPlayerClient&);
@@ -311,7 +312,7 @@ public:
 #if PLATFORM(IOS)
     void setVideoFullscreenLayer(PlatformLayer*);
     void setVideoFullscreenFrame(FloatRect);
-    enum VideoGravity { VideoGravityResize, VideoGravityResizeAspect, VideoGravityResizeAspectFill };
+    using MediaPlayerEnums::VideoGravity;
     void setVideoFullscreenGravity(VideoGravity);
 
     NSArray *timedMetadata() const;
@@ -422,16 +423,16 @@ public:
 
     PassNativeImagePtr nativeImageForCurrentTime();
 
-    enum NetworkState { Empty, Idle, Loading, Loaded, FormatError, NetworkError, DecodeError };
+    using MediaPlayerEnums::NetworkState;
     NetworkState networkState();
 
-    enum ReadyState  { HaveNothing, HaveMetadata, HaveCurrentData, HaveFutureData, HaveEnoughData };
+    using MediaPlayerEnums::ReadyState;
     ReadyState readyState();
 
-    enum MovieLoadType { Unknown, Download, StoredStream, LiveStream };
+    using MediaPlayerEnums::MovieLoadType;
     MovieLoadType movieLoadType() const;
 
-    enum Preload { None, MetaData, Auto };
+    using MediaPlayerEnums::Preload;
     Preload preload() const;
     void setPreload(Preload);
 

@@ -29,7 +29,7 @@
 #include "FocusDirection.h"
 #include "FrameLoader.h"
 #include "GraphicsContext.h"
-#include "HTMLMediaElement.h"
+#include "HTMLMediaElementEnums.h"
 #include "HostWindow.h"
 #include "LayerFlushThrottleState.h"
 #include "MediaProducer.h"
@@ -332,7 +332,7 @@ public:
 
     virtual bool supportsVideoFullscreen() { return false; }
 #if ENABLE(VIDEO)
-    virtual void enterVideoFullscreenForVideoElement(HTMLVideoElement&, HTMLMediaElement::VideoFullscreenMode) { }
+    virtual void enterVideoFullscreenForVideoElement(HTMLVideoElement&, HTMLMediaElementEnums::VideoFullscreenMode) { }
 #endif
     virtual void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&) { }
     virtual bool requiresFullscreenForVideoPlayback() { return false; } 

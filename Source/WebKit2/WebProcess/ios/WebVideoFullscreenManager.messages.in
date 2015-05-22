@@ -41,7 +41,7 @@ messages -> WebVideoFullscreenManager {
     SetVideoLayerGravityEnum(uint64_t contextId, unsigned gravity)
     SelectAudioMediaOption(uint64_t contextId, uint64_t index)
     SelectLegibleMediaOption(uint64_t contextId, uint64_t index)
-    FullscreenModeChanged(uint64_t contextId, WebCore::HTMLMediaElement::VideoFullscreenMode videoFullscreenMode)
+    FullscreenModeChanged(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode)
     FullscreenMayReturnToInline(uint64_t contextId, bool isPageVisible)
 }
 #endif

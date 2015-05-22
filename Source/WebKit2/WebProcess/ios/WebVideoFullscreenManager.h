@@ -29,7 +29,7 @@
 
 #include "MessageReceiver.h"
 #include <WebCore/EventListener.h>
-#include <WebCore/HTMLMediaElement.h>
+#include <WebCore/HTMLMediaElementEnums.h>
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/WebVideoFullscreenInterface.h>
 #include <WebCore/WebVideoFullscreenModelVideoElement.h>
@@ -73,8 +73,8 @@ public:
     bool targetIsFullscreen() const { return m_targetIsFullscreen; }
     void setTargetIsFullscreen(bool flag) { m_targetIsFullscreen = flag; }
 
-    WebCore::HTMLMediaElement::VideoFullscreenMode fullscreenMode() const { return m_fullscreenMode; }
-    void setFullscreenMode(WebCore::HTMLMediaElement::VideoFullscreenMode mode) { m_fullscreenMode = mode; }
+    WebCore::HTMLMediaElementEnums::VideoFullscreenMode fullscreenMode() const { return m_fullscreenMode; }
+    void setFullscreenMode(WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode) { m_fullscreenMode = mode; }
 
     bool isFullscreen() const { return m_isFullscreen; }
     void setIsFullscreen(bool flag) { m_isFullscreen = flag; }
@@ -100,7 +100,7 @@ private:
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     bool m_isAnimating { false };
     bool m_targetIsFullscreen { false };
-    WebCore::HTMLMediaElement::VideoFullscreenMode m_fullscreenMode { WebCore::HTMLMediaElement::VideoFullscreenModeNone };
+    WebCore::HTMLMediaElementEnums::VideoFullscreenMode m_fullscreenMode { WebCore::HTMLMediaElementEnums::VideoFullscreenModeNone };
     bool m_isFullscreen { false };
 };
 
@@ -113,7 +113,7 @@ public:
 
     // Interface to ChromeClient
     bool supportsVideoFullscreen() const;
-    void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElement::VideoFullscreenMode);
+    void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
     void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&);
     
 protected:
@@ -160,7 +160,7 @@ protected:
     void setVideoLayerGravityEnum(uint64_t contextId, unsigned gravity);
     void selectAudioMediaOption(uint64_t contextId, uint64_t index);
     void selectLegibleMediaOption(uint64_t contextId, uint64_t index);
-    void fullscreenModeChanged(uint64_t contextId, WebCore::HTMLMediaElement::VideoFullscreenMode);
+    void fullscreenModeChanged(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
     void fullscreenMayReturnToInline(uint64_t contextId, bool isPageVisible);
     
     WebPage* m_page;

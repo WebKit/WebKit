@@ -31,7 +31,7 @@
 
 #include <WebCore/EventListener.h>
 #include <WebCore/FloatRect.h>
-#include <WebCore/HTMLMediaElement.h>
+#include <WebCore/HTMLMediaElementEnums.h>
 #include <WebCore/PlatformLayer.h>
 #include <WebCore/WebVideoFullscreenModel.h>
 #include <wtf/RefPtr.h>
@@ -39,6 +39,7 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
+class AudioTrack;
 class HTMLVideoElement;
 class TextTrack;
 class WebVideoFullscreenInterface;
@@ -76,7 +77,7 @@ public:
     WEBCORE_EXPORT virtual VideoGravity videoLayerGravity() const override;
     WEBCORE_EXPORT virtual void selectAudioMediaOption(uint64_t index) override;
     WEBCORE_EXPORT virtual void selectLegibleMediaOption(uint64_t index) override;
-    WEBCORE_EXPORT virtual void fullscreenModeChanged(HTMLMediaElement::VideoFullscreenMode) override;
+    WEBCORE_EXPORT virtual void fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode) override;
 
 protected:
     WEBCORE_EXPORT WebVideoFullscreenModelVideoElement();

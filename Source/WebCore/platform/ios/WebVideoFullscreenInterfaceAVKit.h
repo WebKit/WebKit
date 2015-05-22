@@ -30,9 +30,11 @@
 #if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 80000
 
 #include <WebCore/EventListener.h>
-#include <WebCore/HTMLMediaElement.h>
+#include <WebCore/HTMLMediaElementEnums.h>
 #include <WebCore/PlatformLayer.h>
 #include <WebCore/WebVideoFullscreenInterface.h>
+#include <functional>
+#include <objc/objc.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -89,7 +91,7 @@ public:
     WEBCORE_EXPORT virtual void setLegibleMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex) override;
     WEBCORE_EXPORT virtual void setExternalPlayback(bool enabled, ExternalPlaybackTargetType, WTF::String localizedDeviceName) override;
     
-    WEBCORE_EXPORT virtual void setupFullscreen(PlatformLayer&, const IntRect& initialRect, UIView *, HTMLMediaElement::VideoFullscreenMode, bool allowOptimizedFullscreen);
+    WEBCORE_EXPORT virtual void setupFullscreen(PlatformLayer&, const IntRect& initialRect, UIView *, HTMLMediaElementEnums::VideoFullscreenMode, bool allowOptimizedFullscreen);
     WEBCORE_EXPORT virtual void enterFullscreen();
     WEBCORE_EXPORT virtual void exitFullscreen(const IntRect& finalRect);
     WEBCORE_EXPORT virtual void cleanupFullscreen();
@@ -97,7 +99,7 @@ public:
     WEBCORE_EXPORT virtual void requestHideAndExitFullscreen();
     WEBCORE_EXPORT virtual void preparedToReturnToInline(bool visible, const IntRect& inlineRect);
 
-    HTMLMediaElement::VideoFullscreenMode mode() const { return m_mode; }
+    HTMLMediaElementEnums::VideoFullscreenMode mode() const { return m_mode; }
     bool allowOptimizedFullscreen() const { return m_allowOptimizedFullscreen; }
     void setIsOptimized(bool);
     WEBCORE_EXPORT bool mayAutomaticallyShowVideoOptimized() const;
@@ -111,15 +113,15 @@ public:
     void didCancelOptimizedFullscreen();
     void prepareForOptimizedFullscreenStopWithCompletionHandler(void (^)(BOOL));
 
-    void setMode(HTMLMediaElement::VideoFullscreenMode);
-    void clearMode(HTMLMediaElement::VideoFullscreenMode);
-    bool hasMode(HTMLMediaElement::VideoFullscreenMode mode) const { return m_mode & mode; }
-    bool isMode(HTMLMediaElement::VideoFullscreenMode mode) const { return m_mode == mode; }
+    void setMode(HTMLMediaElementEnums::VideoFullscreenMode);
+    void clearMode(HTMLMediaElementEnums::VideoFullscreenMode);
+    bool hasMode(HTMLMediaElementEnums::VideoFullscreenMode mode) const { return m_mode & mode; }
+    bool isMode(HTMLMediaElementEnums::VideoFullscreenMode mode) const { return m_mode == mode; }
 
 protected:
     WEBCORE_EXPORT WebVideoFullscreenInterfaceAVKit();
     void beginSession();
-    void setupFullscreenInternal(PlatformLayer&, const IntRect& initialRect, UIView *, HTMLMediaElement::VideoFullscreenMode, bool allowOptimizedFullscreen);
+    void setupFullscreenInternal(PlatformLayer&, const IntRect& initialRect, UIView *, HTMLMediaElementEnums::VideoFullscreenMode, bool allowOptimizedFullscreen);
     void enterFullscreenOptimized();
     void enterFullscreenStandard();
     void exitFullscreenInternal(const IntRect& finalRect);
@@ -138,7 +140,7 @@ protected:
     RetainPtr<UIViewController> m_viewController;
     RetainPtr<UIView> m_parentView;
     RetainPtr<UIWindow> m_parentWindow;
-    HTMLMediaElement::VideoFullscreenMode m_mode { HTMLMediaElement::VideoFullscreenModeNone };
+    HTMLMediaElementEnums::VideoFullscreenMode m_mode { HTMLMediaElementEnums::VideoFullscreenModeNone };
     std::function<void(bool)> m_prepareToInlineCallback;
     bool m_allowOptimizedFullscreen { false };
     bool m_exitRequested { false };
