@@ -190,12 +190,10 @@ static void showGlyphsWithAdvances(const FloatPoint& point, const Font* font, CG
 
     const FontPlatformData& platformData = font->platformData();
     Vector<CGPoint, 256> positions(count);
-    if (platformData.isColorBitmapFont())
-        fillVectorWithHorizontalGlyphPositions(positions, context, advances, count);
+    fillVectorWithHorizontalGlyphPositions(positions, context, advances, count);
     if (platformData.orientation() == Vertical) {
-        CGAffineTransform savedMatrix;
         CGAffineTransform rotateLeftTransform = CGAffineTransformMake(0, -1, 1, 0, 0, 0);
-        savedMatrix = CGContextGetTextMatrix(context);
+        CGAffineTransform savedMatrix = CGContextGetTextMatrix(context);
         CGAffineTransform runMatrix = CGAffineTransformConcat(savedMatrix, rotateLeftTransform);
         CGContextSetTextMatrix(context, runMatrix);
 
@@ -211,21 +209,10 @@ static void showGlyphsWithAdvances(const FloatPoint& point, const Font* font, CG
             position.x += advances[i].width;
             position.y += advances[i].height;
         }
-        if (!platformData.isColorBitmapFont()) {
-            RenderingStyleSaver saver(platformData.ctFont(), context);
-            CGContextShowGlyphsAtPositions(context, glyphs, positions.data(), count);
-        } else
-            CTFontDrawGlyphs(platformData.ctFont(), glyphs, positions.data(), count, context);
+        CTFontDrawGlyphs(platformData.ctFont(), glyphs, positions.data(), count, context);
         CGContextSetTextMatrix(context, savedMatrix);
     } else {
-        if (!platformData.isColorBitmapFont()) {
-            RenderingStyleSaver saver(platformData.ctFont(), context);
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-            CGContextShowGlyphsWithAdvances(context, glyphs, advances, count);
-#pragma clang diagnostic pop
-        } else
-            CTFontDrawGlyphs(platformData.ctFont(), glyphs, positions.data(), count, context);
+        CTFontDrawGlyphs(platformData.ctFont(), glyphs, positions.data(), count, context);
     }
 }
 
@@ -371,24 +358,13 @@ void FontCascade::drawGlyphs(GraphicsContext* context, const Font* font, const G
     }
 #endif
 #endif
-
-#if !PLATFORM(IOS)
-    NSFont* drawFont = [platformData.nsFont() printerFont];
-#endif
     
     CGContextSetFont(cgContext, platformData.cgFont());
 
     bool useLetterpressEffect = shouldUseLetterpressEffect(*context);
     FloatPoint point = pointAdjustedForEmoji(platformData, anchorPoint);
 
-#if PLATFORM(IOS)
-    float fontSize = platformData.size();
-    CGAffineTransform matrix = useLetterpressEffect || platformData.isColorBitmapFont() ? CGAffineTransformIdentity : CGAffineTransformMakeScale(fontSize, fontSize);
-#else
-    CGAffineTransform matrix = CGAffineTransformIdentity;
-    if (drawFont && !platformData.isColorBitmapFont())
-        memcpy(&matrix, [drawFont matrix], sizeof(matrix));
-#endif
+    CGAffineTransform matrix = CTFontGetMatrix(platformData.ctFont());
     matrix.b = -matrix.b;
     matrix.d = -matrix.d;
     if (platformData.m_syntheticOblique) {
@@ -401,16 +377,10 @@ void FontCascade::drawGlyphs(GraphicsContext* context, const Font* font, const G
     CGContextSetTextMatrix(cgContext, matrix);
 
 #if PLATFORM(IOS)
-    CGContextSetFontSize(cgContext, 1);
     CGContextSetShouldSubpixelQuantizeFonts(cgContext, context->shouldSubpixelQuantizeFonts());
 #else
-    setCGFontRenderingMode(cgContext, [drawFont renderingMode], context->shouldSubpixelQuantizeFonts());
-    if (drawFont)
-        CGContextSetFontSize(cgContext, 1);
-    else
-        CGContextSetFontSize(cgContext, platformData.m_size);
+    setCGFontRenderingMode(cgContext, [[platformData.nsFont() printerFont] renderingMode], context->shouldSubpixelQuantizeFonts());
 #endif
-
 
     FloatSize shadowOffset;
     float shadowBlur;
