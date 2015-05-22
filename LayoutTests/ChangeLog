@@ -1,3 +1,12 @@
+2015-05-22  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Figure out why list-detection2.html test fails on GTK
+        https://bugs.webkit.org/show_bug.cgi?id=145273
+
+        Reviewed by Chris Fleizach.
+
+        * platform/gtk/TestExpectations: Removed list-detection2.html from the list of expected failures.
+
 2015-05-21  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [GTK] Implement computedRoleString in AccessibilityUIElement
