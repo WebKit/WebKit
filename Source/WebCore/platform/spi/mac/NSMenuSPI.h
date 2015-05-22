@@ -28,7 +28,6 @@
 typedef NS_ENUM(NSInteger, NSMenuType) {
     NSMenuTypeNone = 0,
     NSMenuTypeContextMenu,
-    NSMenuTypeActionMenu,
 };
 
 @interface NSMenu (Private)

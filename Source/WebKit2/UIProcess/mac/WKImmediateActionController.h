@@ -69,7 +69,7 @@ enum class ImmediateActionState {
 
 - (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(WKView *)wkView recognizer:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer;
 - (void)willDestroyView:(WKView *)view;
-- (void)didPerformActionMenuHitTest:(const WebKit::WebHitTestResult::Data&)hitTestResult contentPreventsDefault:(BOOL)contentPreventsDefault userData:(API::Object*)userData;
+- (void)didPerformImmediateActionHitTest:(const WebKit::WebHitTestResult::Data&)hitTestResult contentPreventsDefault:(BOOL)contentPreventsDefault userData:(API::Object*)userData;
 - (void)dismissContentRelativeChildWindows;
 - (BOOL)hasActiveImmediateAction;
 

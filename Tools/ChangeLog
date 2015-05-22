@@ -1,3 +1,19 @@
+2015-05-22  Tim Horton  <timothy_horton@apple.com>
+
+        Remove action menu support
+        https://bugs.webkit.org/show_bug.cgi?id=145305
+        <rdar://problem/21070771>
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/action-menu-target.pdf: Removed.
+        * TestWebKitAPI/Tests/WebKit2/action-menu-targets.html: Removed.
+        * TestWebKitAPI/Tests/WebKit2ObjC/ActionMenus.mm: Removed.
+        * TestWebKitAPI/Tests/WebKit2ObjC/ActionMenusBundle.mm: Removed.
+        * TestWebKitAPI/Tests/WebKit2ObjC/ActionMenusBundleSPI.h: Removed.
+        Remove the tests.
+
 2015-05-22  Dan Bernstein  <mitz@apple.com>
 
         Removed the Use Shrink To Fit button from the toolbar’s default set.

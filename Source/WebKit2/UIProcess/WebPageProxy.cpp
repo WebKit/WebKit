@@ -5781,19 +5781,9 @@ void WebPageProxy::removeNavigationGestureSnapshot()
     m_pageClient.removeNavigationGestureSnapshot();
 }
 
-void WebPageProxy::performActionMenuHitTestAtLocation(FloatPoint point, bool forImmediateAction)
+void WebPageProxy::performImmediateActionHitTestAtLocation(FloatPoint point)
 {
-    m_process->send(Messages::WebPage::PerformActionMenuHitTestAtLocation(point, forImmediateAction), m_pageID);
-}
-
-void WebPageProxy::selectLastActionMenuRange()
-{
-    m_process->send(Messages::WebPage::SelectLastActionMenuRange(), m_pageID);
-}
-
-void WebPageProxy::focusAndSelectLastActionMenuHitTestResult()
-{
-    m_process->send(Messages::WebPage::FocusAndSelectLastActionMenuHitTestResult(), m_pageID);
+    m_process->send(Messages::WebPage::PerformImmediateActionHitTestAtLocation(point), m_pageID);
 }
 
 void WebPageProxy::immediateActionDidUpdate()
@@ -5811,9 +5801,9 @@ void WebPageProxy::immediateActionDidComplete()
     m_process->send(Messages::WebPage::ImmediateActionDidComplete(), m_pageID);
 }
 
-void WebPageProxy::didPerformActionMenuHitTest(const WebHitTestResult::Data& result, bool forImmediateAction, bool contentPreventsDefault, const UserData& userData)
+void WebPageProxy::didPerformImmediateActionHitTest(const WebHitTestResult::Data& result, bool contentPreventsDefault, const UserData& userData)
 {
-    m_pageClient.didPerformActionMenuHitTest(result, forImmediateAction, contentPreventsDefault, m_process->transformHandlesToObjects(userData.object()).get());
+    m_pageClient.didPerformImmediateActionHitTest(result, contentPreventsDefault, m_process->transformHandlesToObjects(userData.object()).get());
 }
 
 void WebPageProxy::installViewStateChangeCompletionHandler(void (^completionHandler)())

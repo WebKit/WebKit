@@ -83,7 +83,7 @@ bool InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems(WebPage&
     return true;
 }
 
-void InjectedBundlePageContextMenuClient::prepareForActionMenu(WebPage& page, const HitTestResult& hitTestResult, RefPtr<API::Object>& userData)
+void InjectedBundlePageContextMenuClient::prepareForImmediateAction(WebPage& page, const HitTestResult& hitTestResult, RefPtr<API::Object>& userData)
 {
     if (!m_client.prepareForActionMenu)
         return;

@@ -131,7 +131,7 @@ using namespace WebKit;
     _hasActiveImmediateAction = NO;
 }
 
-- (void)didPerformActionMenuHitTest:(const WebHitTestResult::Data&)hitTestResult contentPreventsDefault:(BOOL)contentPreventsDefault userData:(API::Object*)userData
+- (void)didPerformImmediateActionHitTest:(const WebHitTestResult::Data&)hitTestResult contentPreventsDefault:(BOOL)contentPreventsDefault userData:(API::Object*)userData
 {
     // If we've already given up on this gesture (either because it was canceled or the
     // willBeginAnimation timeout expired), we shouldn't build a new animationController for it.
@@ -172,7 +172,7 @@ using namespace WebKit;
 
     _page->setMaintainsInactiveSelection(true);
 
-    _page->performActionMenuHitTestAtLocation([immediateActionRecognizer locationInView:immediateActionRecognizer.view], true);
+    _page->performImmediateActionHitTestAtLocation([immediateActionRecognizer locationInView:immediateActionRecognizer.view]);
 
     _state = ImmediateActionState::Pending;
     immediateActionRecognizer.animationController = nil;
@@ -192,7 +192,7 @@ using namespace WebKit;
     // FIXME: Connection can be null if the process is closed; we should clean up better in that case.
     if (_state == ImmediateActionState::Pending) {
         if (auto* connection = _page->process().connection()) {
-            bool receivedReply = connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidPerformActionMenuHitTest>(_page->pageID(), std::chrono::milliseconds(500));
+            bool receivedReply = connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidPerformImmediateActionHitTest>(_page->pageID(), std::chrono::milliseconds(500));
             if (!receivedReply)
                 _state = ImmediateActionState::TimedOut;
         }

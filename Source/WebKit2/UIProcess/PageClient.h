@@ -319,7 +319,7 @@ public:
     virtual void didChangeBackgroundColor() = 0;
 
 #if PLATFORM(MAC)
-    virtual void didPerformActionMenuHitTest(const WebHitTestResult::Data&, bool forImmediateAction, bool contentPreventsDefault, API::Object*) = 0;
+    virtual void didPerformImmediateActionHitTest(const WebHitTestResult::Data&, bool contentPreventsDefault, API::Object*) = 0;
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)

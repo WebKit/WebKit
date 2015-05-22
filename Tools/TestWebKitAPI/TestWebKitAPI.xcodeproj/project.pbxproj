@@ -29,8 +29,6 @@
 		290F4275172A221C00939FF0 /* custom-protocol-sync-xhr.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 290F4274172A1FDE00939FF0 /* custom-protocol-sync-xhr.html */; };
 		297234B7173AFAC700983601 /* CustomProtocolsInvalidScheme_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 297234B5173AFAC700983601 /* CustomProtocolsInvalidScheme_Bundle.cpp */; };
 		2D1FE0B01AD465C1006CD9E6 /* FixedLayoutSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D1FE0AF1AD465C1006CD9E6 /* FixedLayoutSize.mm */; };
-		2D950FBE1A2217D300012434 /* ActionMenusBundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D950FBB1A2217D000012434 /* ActionMenusBundle.mm */; };
-		2D950FC01A230C3A00012434 /* action-menu-targets.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2D950FBF1A230C1E00012434 /* action-menu-targets.html */; };
 		2DD7D3AF178227B30026E1E3 /* lots-of-text-vertical-lr.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2DD7D3AE178227AC0026E1E3 /* lots-of-text-vertical-lr.html */; };
 		2E7765CD16C4D80A00BA2BB1 /* mainIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E7765CC16C4D80A00BA2BB1 /* mainIOS.mm */; };
 		2E7765CF16C4D81100BA2BB1 /* mainMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E7765CE16C4D81100BA2BB1 /* mainMac.mm */; };
@@ -69,7 +67,6 @@
 		7AA021BB1AB09EA70052953F /* DateMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AA021BA1AB09EA70052953F /* DateMath.cpp */; };
 		7AA6A1521AAC0B31002B2ED3 /* WorkQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AA6A1511AAC0B31002B2ED3 /* WorkQueue.cpp */; };
 		7AE9E5091AE5AE8B00CF874B /* test.pdf in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7AE9E5081AE5AE8B00CF874B /* test.pdf */; };
-		7AE9E50B1AE5F97000CF874B /* action-menu-target.pdf in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7AE9E50A1AE5F91300CF874B /* action-menu-target.pdf */; };
 		7C486BA11AA12567003F6F9B /* bundle-file.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7C486BA01AA1254B003F6F9B /* bundle-file.html */; };
 		7C54A4BE1AA11CCA00380F78 /* WKBundleFileHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C54A4BC1AA11CCA00380F78 /* WKBundleFileHandle.cpp */; };
 		7C54A4C11AA11CE400380F78 /* WKBundleFileHandle_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C54A4BF1AA11CE400380F78 /* WKBundleFileHandle_Bundle.cpp */; };
@@ -206,7 +203,6 @@
 		7CCE7F251A411AF600447C4C /* OpenAndCloseWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEA6CF2219CCF5BD0064F5A7 /* OpenAndCloseWindow.mm */; };
 		7CCE7F261A411AF600447C4C /* Preferences.mm in Sources */ = {isa = PBXBuildFile; fileRef = C95501BE19AD2FAF0049BE3E /* Preferences.mm */; };
 		7CCE7F271A411AF600447C4C /* UserContentController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7CC3E1FA197E234100BE6252 /* UserContentController.mm */; };
-		7CCE7F281A411B1000447C4C /* ActionMenus.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D950FBA1A2217D000012434 /* ActionMenus.mm */; };
 		7CCE7F291A411B1000447C4C /* CustomProtocolsInvalidScheme.mm in Sources */ = {isa = PBXBuildFile; fileRef = 297234B2173AD04800983601 /* CustomProtocolsInvalidScheme.mm */; };
 		7CCE7F2A1A411B1000447C4C /* CustomProtocolsSyncXHRTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 290F4276172A232C00939FF0 /* CustomProtocolsSyncXHRTest.mm */; };
 		7CCE7F2B1A411B1000447C4C /* CustomProtocolsTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29AB8A9F164C735800D49BEC /* CustomProtocolsTest.mm */; };
@@ -335,13 +331,11 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
-				7AE9E50B1AE5F97000CF874B /* action-menu-target.pdf in Copy Resources */,
 				7AE9E5091AE5AE8B00CF874B /* test.pdf in Copy Resources */,
 				7A1458FC1AD5C07000E06772 /* mouse-button-listener.html in Copy Resources */,
 				7C486BA11AA12567003F6F9B /* bundle-file.html in Copy Resources */,
 				1A9E52C913E65EF4006917F5 /* 18-characters.html in Copy Resources */,
 				379028B914FAC24C007E6B43 /* acceptsFirstMouse.html in Copy Resources */,
-				2D950FC01A230C3A00012434 /* action-menu-targets.html in Copy Resources */,
 				B55F11BE15191A0600915916 /* Ahem.ttf in Copy Resources */,
 				1A63479F183D72A4005B1707 /* all-content-in-one-iframe.html in Copy Resources */,
 				F6B7BE9717469B96008A3445 /* associate-form-controls.html in Copy Resources */,
@@ -466,12 +460,8 @@
 		29AB8AA3164C7A9300D49BEC /* TestBrowsingContextLoadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestBrowsingContextLoadDelegate.h; sourceTree = "<group>"; };
 		2D1FE0AF1AD465C1006CD9E6 /* FixedLayoutSize.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FixedLayoutSize.mm; sourceTree = "<group>"; };
 		2D640B5417875DFF00BFAF99 /* ScrollPinningBehaviors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollPinningBehaviors.cpp; sourceTree = "<group>"; };
-		2D950FBA1A2217D000012434 /* ActionMenus.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ActionMenus.mm; path = WebKit2ObjC/ActionMenus.mm; sourceTree = "<group>"; };
-		2D950FBB1A2217D000012434 /* ActionMenusBundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ActionMenusBundle.mm; path = WebKit2ObjC/ActionMenusBundle.mm; sourceTree = "<group>"; };
-		2D950FBF1A230C1E00012434 /* action-menu-targets.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "action-menu-targets.html"; sourceTree = "<group>"; };
 		2DD7D3A9178205D00026E1E3 /* ResizeReversePaginatedWebView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResizeReversePaginatedWebView.cpp; sourceTree = "<group>"; };
 		2DD7D3AE178227AC0026E1E3 /* lots-of-text-vertical-lr.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "lots-of-text-vertical-lr.html"; sourceTree = "<group>"; };
-		2DDE58961A36342B00AA80DE /* ActionMenusBundleSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ActionMenusBundleSPI.h; path = WebKit2ObjC/ActionMenusBundleSPI.h; sourceTree = "<group>"; };
 		2E7765CC16C4D80A00BA2BB1 /* mainIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = mainIOS.mm; sourceTree = "<group>"; };
 		2E7765CE16C4D81100BA2BB1 /* mainMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = mainMac.mm; sourceTree = "<group>"; };
 		333B9CE11277F23100FEFCE3 /* PreventEmptyUserAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PreventEmptyUserAgent.cpp; sourceTree = "<group>"; };
@@ -546,7 +536,6 @@
 		7AA021BA1AB09EA70052953F /* DateMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateMath.cpp; sourceTree = "<group>"; };
 		7AA6A1511AAC0B31002B2ED3 /* WorkQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueue.cpp; sourceTree = "<group>"; };
 		7AE9E5081AE5AE8B00CF874B /* test.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = test.pdf; sourceTree = "<group>"; };
-		7AE9E50A1AE5F91300CF874B /* action-menu-target.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "action-menu-target.pdf"; sourceTree = "<group>"; };
 		7C486BA01AA1254B003F6F9B /* bundle-file.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "bundle-file.html"; sourceTree = "<group>"; };
 		7C54A4BC1AA11CCA00380F78 /* WKBundleFileHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleFileHandle.cpp; sourceTree = "<group>"; };
 		7C54A4BF1AA11CE400380F78 /* WKBundleFileHandle_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleFileHandle_Bundle.cpp; sourceTree = "<group>"; };
@@ -908,9 +897,6 @@
 		BC3C4C6F14575B1D0025FB62 /* WebKit2 Objective-C */ = {
 			isa = PBXGroup;
 			children = (
-				2D950FBA1A2217D000012434 /* ActionMenus.mm */,
-				2D950FBB1A2217D000012434 /* ActionMenusBundle.mm */,
-				2DDE58961A36342B00AA80DE /* ActionMenusBundleSPI.h */,
 				297234B2173AD04800983601 /* CustomProtocolsInvalidScheme.mm */,
 				297234B5173AFAC700983601 /* CustomProtocolsInvalidScheme_Bundle.cpp */,
 				290F4276172A232C00939FF0 /* CustomProtocolsSyncXHRTest.mm */,
@@ -1098,11 +1084,9 @@
 		BC90977B125571AE00083756 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				7AE9E50A1AE5F91300CF874B /* action-menu-target.pdf */,
 				7AE9E5081AE5AE8B00CF874B /* test.pdf */,
 				7A1458FB1AD5C03500E06772 /* mouse-button-listener.html */,
 				C045F9461385C2F800C0F3CD /* 18-characters.html */,
-				2D950FBF1A230C1E00012434 /* action-menu-targets.html */,
 				93D3D19B17B1A7B000C7C415 /* all-content-in-one-iframe.html */,
 				F6B7BE9617469B7E008A3445 /* associate-form-controls.html */,
 				76E182DE15475A8300F1FADD /* auto-submitting-form.html */,
@@ -1411,7 +1395,6 @@
 			files = (
 				7CCE7EE41A411AE600447C4C /* AboutBlankLoad.cpp in Sources */,
 				7CCE7EB31A411A7E00447C4C /* AcceptsFirstMouse.mm in Sources */,
-				7CCE7F281A411B1000447C4C /* ActionMenus.mm in Sources */,
 				7CCE7F301A411B8E00447C4C /* AtomicString.cpp in Sources */,
 				7CCE7EB41A411A7E00447C4C /* AttributedString.mm in Sources */,
 				7CCE7EB51A411A7E00447C4C /* BackForwardList.mm in Sources */,
@@ -1616,7 +1599,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D950FBE1A2217D300012434 /* ActionMenusBundle.mm in Sources */,
 				BC246D9C132F1FF000B56D7C /* CanHandleRequest_Bundle.cpp in Sources */,
 				297234B7173AFAC700983601 /* CustomProtocolsInvalidScheme_Bundle.cpp in Sources */,
 				F6B7BE9517469212008A3445 /* DidAssociateFormControls_Bundle.cpp in Sources */,

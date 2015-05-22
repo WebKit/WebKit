@@ -55,7 +55,7 @@ public:
 
 private:
     bool getCustomMenuFromDefaultItems(WebPage&, const WebCore::HitTestResult&, const Vector<WebCore::ContextMenuItem>& defaultMenu, Vector<WebContextMenuItemData>& newMenu, RefPtr<API::Object>& userData) override;
-    void prepareForActionMenu(WebPage&, const WebCore::HitTestResult&, RefPtr<API::Object>& userData) override;
+    void prepareForImmediateAction(WebPage&, const WebCore::HitTestResult&, RefPtr<API::Object>& userData) override;
 };
 
 } // namespace WebKit

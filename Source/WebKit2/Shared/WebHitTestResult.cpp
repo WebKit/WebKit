@@ -84,11 +84,9 @@ WebHitTestResult::Data::Data(const WebCore::HitTestResult& hitTestResult, bool i
 
     if (Image* image = hitTestResult.image()) {
         RefPtr<SharedBuffer> buffer = image->data();
-        String filenameExtension = image->filenameExtension();
-        if (!filenameExtension.isEmpty() && buffer) {
+        if (buffer) {
             imageSharedMemory = SharedMemory::allocate(buffer->size());
             memcpy(imageSharedMemory->data(), buffer->data(), buffer->size());
-            imageExtension = filenameExtension;
             imageSize = buffer->size();
         }
     }
@@ -114,7 +112,6 @@ void WebHitTestResult::Data::encode(IPC::ArgumentEncoder& encoder) const
     encoder << isOverTextInsideFormControlElement;
     encoder << allowsCopy;
     encoder << isDownloadableMedia;
-    encoder << hitTestLocationInViewCoordinates;
     encoder << lookupText;
     encoder << dictionaryPopupInfo;
 
@@ -123,7 +120,6 @@ void WebHitTestResult::Data::encode(IPC::ArgumentEncoder& encoder) const
         imageSharedMemory->createHandle(imageHandle, SharedMemory::Protection::ReadOnly);
     encoder << imageHandle;
     encoder << imageSize;
-    encoder << imageExtension;
 
     bool hasLinkTextIndicator = linkTextIndicator;
     encoder << hasLinkTextIndicator;
@@ -149,7 +145,6 @@ bool WebHitTestResult::Data::decode(IPC::ArgumentDecoder& decoder, WebHitTestRes
         || !decoder.decode(hitTestResultData.isOverTextInsideFormControlElement)
         || !decoder.decode(hitTestResultData.allowsCopy)
         || !decoder.decode(hitTestResultData.isDownloadableMedia)
-        || !decoder.decode(hitTestResultData.hitTestLocationInViewCoordinates)
         || !decoder.decode(hitTestResultData.lookupText)
         || !decoder.decode(hitTestResultData.dictionaryPopupInfo))
         return false;
@@ -162,9 +157,6 @@ bool WebHitTestResult::Data::decode(IPC::ArgumentDecoder& decoder, WebHitTestRes
         hitTestResultData.imageSharedMemory = SharedMemory::map(imageHandle, SharedMemory::Protection::ReadOnly);
 
     if (!decoder.decode(hitTestResultData.imageSize))
-        return false;
-
-    if (!decoder.decode(hitTestResultData.imageExtension))
         return false;
 
     bool hasLinkTextIndicator;

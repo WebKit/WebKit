@@ -44,7 +44,7 @@
 namespace API {
 
 template<> struct ClientTraits<WKBundlePageOverlayClientBase> {
-    typedef std::tuple<WKBundlePageOverlayClientV0, WKBundlePageOverlayClientV1, WKBundlePageOverlayClientV2> Versions;
+    typedef std::tuple<WKBundlePageOverlayClientV0, WKBundlePageOverlayClientV1> Versions;
 };
 
 template<> struct ClientTraits<WKBundlePageOverlayAccessibilityClientBase> {
@@ -135,21 +135,11 @@ private:
     }
 
 #if PLATFORM(MAC)
-    virtual DDActionContext *actionContextForResultAtPoint(WebPageOverlay& pageOverlay, WebCore::FloatPoint location, RefPtr<WebCore::Range>& rangeHandle, bool forImmediateAction) override
+    virtual DDActionContext *actionContextForResultAtPoint(WebPageOverlay& pageOverlay, WebCore::FloatPoint location, RefPtr<WebCore::Range>& rangeHandle) override
     {
         if (m_client.actionContextForResultAtPoint) {
             WKBundleRangeHandleRef apiRange = nullptr;
-            DDActionContext *actionContext = (DDActionContext *)m_client.actionContextForResultAtPoint(toAPI(&pageOverlay), WKPointMake(location.x(), location.y()), &apiRange, forImmediateAction ? kWKBundlePageOverlayActionContextForImmediateActionRequestType : kWKBundlePageOverlayActionContextForActionMenuRequestType, m_client.base.clientInfo);
-
-            if (apiRange)
-                rangeHandle = toImpl(apiRange)->coreRange();
-
-            return actionContext;
-        }
-
-        if (m_client.actionContextForResultAtPoint_deprecatedForUseWithV1) {
-            WKBundleRangeHandleRef apiRange = nullptr;
-            DDActionContext *actionContext = (DDActionContext *)m_client.actionContextForResultAtPoint_deprecatedForUseWithV1(toAPI(&pageOverlay), WKPointMake(location.x(), location.y()), &apiRange, m_client.base.clientInfo);
+            DDActionContext *actionContext = (DDActionContext *)m_client.actionContextForResultAtPoint(toAPI(&pageOverlay), WKPointMake(location.x(), location.y()), &apiRange, m_client.base.clientInfo);
 
             if (apiRange)
                 rangeHandle = toImpl(apiRange)->coreRange();

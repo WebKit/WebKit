@@ -196,7 +196,7 @@ private:
     virtual void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) override;
     virtual void removeNavigationGestureSnapshot() override;
 
-    virtual void didPerformActionMenuHitTest(const WebHitTestResult::Data&, bool forImmediateAction, bool contentPreventsDefault, API::Object*) override;
+    virtual void didPerformImmediateActionHitTest(const WebHitTestResult::Data&, bool contentPreventsDefault, API::Object*) override;
     virtual void showPlatformContextMenu(NSMenu *, WebCore::IntPoint) override;
 
     virtual void didChangeBackgroundColor() override;

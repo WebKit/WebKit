@@ -1102,10 +1102,8 @@ private:
     void reportUsedFeatures();
 
 #if PLATFORM(MAC)
-    void performActionMenuHitTestAtLocation(WebCore::FloatPoint, bool forImmediateAction);
+    void performImmediateActionHitTestAtLocation(WebCore::FloatPoint);
     PassRefPtr<WebCore::Range> lookupTextAtLocation(WebCore::FloatPoint, NSDictionary **options);
-    void selectLastActionMenuRange();
-    void focusAndSelectLastActionMenuHitTestResult();
     void immediateActionDidUpdate();
     void immediateActionDidCancel();
     void immediateActionDidComplete();
@@ -1364,12 +1362,6 @@ private:
 
 #if ENABLE(WEBGL)
     WebCore::WebGLLoadPolicy m_systemWebGLPolicy;
-#endif
-
-#if PLATFORM(MAC)
-    RefPtr<WebCore::Range> m_lastActionMenuRangeForSelection;
-    WebCore::HitTestResult m_lastActionMenuHitTestResult;
-    RefPtr<WebPageOverlay> m_lastActionMenuHitPageOverlay;
 #endif
 
     bool m_mainFrameProgressCompleted;

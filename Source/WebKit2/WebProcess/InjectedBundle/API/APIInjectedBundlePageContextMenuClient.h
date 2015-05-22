@@ -52,7 +52,7 @@ public:
     virtual ~PageContextMenuClient() { }
 
     virtual bool getCustomMenuFromDefaultItems(WebKit::WebPage&, const WebCore::HitTestResult&, const Vector<WebCore::ContextMenuItem>& /* defaultMenu */, Vector<WebKit::WebContextMenuItemData>& /* newMenu */, RefPtr<API::Object>& /* userData */) { return false; }
-    virtual void prepareForActionMenu(WebKit::WebPage&, const WebCore::HitTestResult&, RefPtr<API::Object>& /* userData */) { }
+    virtual void prepareForImmediateAction(WebKit::WebPage&, const WebCore::HitTestResult&, RefPtr<API::Object>& /* userData */) { }
 };
 
 } // namespace InjectedBundle

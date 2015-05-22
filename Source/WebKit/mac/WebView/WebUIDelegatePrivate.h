@@ -112,25 +112,7 @@ enum {
     WebMenuItemTagBaseApplication = 10000
 };
 
-enum {
-    WebActionMenuItemTagNoAction = 0,
-    WebActionMenuItemTagOpenLinkInDefaultBrowser,
-    WebActionMenuItemTagPreviewLink,
-    WebActionMenuItemTagAddLinkToSafariReadingList,
-    WebActionMenuItemTagCopyText,
-    WebActionMenuItemTagLookupText,
-    WebActionMenuItemTagPaste,
-    WebActionMenuItemTagTextSuggestions,
-    WebActionMenuItemTagCopyImage,
-    WebActionMenuItemTagAddImageToPhotos,
-    WebActionMenuItemTagSaveImageToDownloads,
-    WebActionMenuItemTagShareImage,
-    WebActionMenuItemTagCopyVideoURL,
-    WebActionMenuItemTagSaveVideoToDownloads,
-    WebActionMenuItemTagShareVideo,
-    WebActionMenuItemTagShareLink
-};
-
+// Deprecated; remove when there are no more clients.
 typedef enum {
     WebActionMenuNone = 0,
     WebActionMenuLink,
@@ -238,7 +220,8 @@ extern NSString *WebConsoleMessageErrorMessageLevel;
 - (void)webView:(WebView *)sender willPopupMenu:(NSMenu *)menu;
 - (void)webView:(WebView *)sender contextMenuItemSelected:(NSMenuItem *)item forElement:(NSDictionary *)element;
 - (void)webView:(WebView *)sender saveFrameView:(WebFrameView *)frameView showingPanel:(BOOL)showingPanel;
-- (NSArray *)_webView:(WebView *)sender actionMenuItemsForHitTestResult:(NSDictionary *)hitTestResult withType:(WebActionMenuType)type defaultActionMenuItems:(NSArray *)defaultMenuItems;
+
+// FIXME: Rename this because it's only used by immediate action code.
 - (DDActionContext *)_webView:(WebView *)sender actionContextForHitTestResult:(NSDictionary *)hitTestResult range:(DOMRange **)range;
 
 // Clients that want to maintain default behavior can return nil. To disable the immediate action entirely, return NSNull. And to

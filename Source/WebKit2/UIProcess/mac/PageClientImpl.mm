@@ -807,10 +807,10 @@ CGRect PageClientImpl::boundsOfLayerInLayerBackedWindowCoordinates(CALayer *laye
     return [windowContentLayer convertRect:layer.bounds fromLayer:layer];
 }
 
-void PageClientImpl::didPerformActionMenuHitTest(const WebHitTestResult::Data& result, bool forImmediateAction, bool contentPreventsDefault, API::Object* userData)
+void PageClientImpl::didPerformImmediateActionHitTest(const WebHitTestResult::Data& result, bool contentPreventsDefault, API::Object* userData)
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    [m_wkView _didPerformActionMenuHitTest:result forImmediateAction:forImmediateAction contentPreventsDefault:contentPreventsDefault userData:userData];
+    [m_wkView _didPerformImmediateActionHitTest:result contentPreventsDefault:contentPreventsDefault userData:userData];
 #endif
 }
 

@@ -212,7 +212,6 @@
 #import <wtf/StdLibExtras.h>
 
 #if !PLATFORM(IOS)
-#import "WebActionMenuController.h"
 #import "WebContextMenuClient.h"
 #import "WebFullScreenController.h"
 #import "WebImmediateActionController.h"
@@ -223,7 +222,6 @@
 #import "WebPDFView.h"
 #import <WebCore/LookupSPI.h>
 #import <WebCore/NSImmediateActionGestureRecognizerSPI.h>
-#import <WebCore/NSViewSPI.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextIndicatorWindow.h>
@@ -909,13 +907,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     [frameView release];
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    if ([self respondsToSelector:@selector(_setActionMenu:)]) {
-        RetainPtr<NSMenu> actionMenu = adoptNS([[NSMenu alloc] init]);
-        self._actionMenu = actionMenu.get();
-        _private->actionMenuController = [[WebActionMenuController alloc] initWithWebView:self];
-        self._actionMenu.autoenablesItems = NO;
-    }
-
     if (Class gestureClass = NSClassFromString(@"NSImmediateActionGestureRecognizer")) {
         RetainPtr<NSImmediateActionGestureRecognizer> recognizer = adoptNS([(NSImmediateActionGestureRecognizer *)[gestureClass alloc] init]);
         _private->immediateActionController = [[WebImmediateActionController alloc] initWithWebView:self recognizer:recognizer.get()];
@@ -1762,7 +1753,6 @@ static bool fastDocumentTeardownEnabled()
     [_private->inspector webViewClosed];
 #endif
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    [_private->actionMenuController webViewClosed];
     [_private->immediateActionController webViewClosed];
 #endif
 
@@ -8550,35 +8540,6 @@ bool LayerFlushController::flushLayers()
 
 #if PLATFORM(MAC)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-- (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event
-{
-    if (menu != self._actionMenu)
-        return;
-
-    [_private->actionMenuController prepareForMenu:menu withEvent:event];
-}
-
-- (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event
-{
-    if (menu != self._actionMenu)
-        return;
-
-    [_private->actionMenuController willOpenMenu:menu withEvent:event];
-}
-
-- (void)didCloseMenu:(NSMenu *)menu withEvent:(NSEvent *)event
-{
-    if (menu != self._actionMenu)
-        return;
-
-    [_private->actionMenuController didCloseMenu:menu withEvent:event];
-}
-
-- (WebActionMenuController *)_actionMenuController
-{
-    return _private->actionMenuController;
-}
-
 - (WebImmediateActionController *)_immediateActionController
 {
     return _private->immediateActionController;

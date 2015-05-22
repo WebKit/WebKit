@@ -32,6 +32,7 @@
 extern "C" {
 #endif
 
+// Deprecated; remove when there are no more clients.
 enum {
     kWKActionMenuNone = 0,
     kWKActionMenuLink,

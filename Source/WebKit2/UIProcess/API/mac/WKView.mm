@@ -55,8 +55,6 @@
 #import "ViewGestureController.h"
 #import "ViewSnapshotStore.h"
 #import "WKAPICast.h"
-#import "WKActionMenuController.h"
-#import "WKActionMenuItemTypes.h"
 #import "WKFullScreenWindowController.h"
 #import "WKImmediateActionController.h"
 #import "WKLayoutMode.h"
@@ -96,7 +94,6 @@
 #import <WebCore/LookupSPI.h>
 #import <WebCore/NSImmediateActionGestureRecognizerSPI.h>
 #import <WebCore/NSMenuSPI.h>
-#import <WebCore/NSViewSPI.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/Region.h>
@@ -284,7 +281,6 @@ struct WKViewInterpretKeyEventsParameters {
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     BOOL _automaticallyAdjustsContentInsets;
-    RetainPtr<WKActionMenuController> _actionMenuController;
     RetainPtr<WKImmediateActionController> _immediateActionController;
     RetainPtr<NSImmediateActionGestureRecognizer> _immediateActionGestureRecognizer;
 #endif
@@ -387,7 +383,6 @@ struct WKViewInterpretKeyEventsParameters {
 - (void)dealloc
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    [_data->_actionMenuController willDestroyView:self];
     [_data->_immediateActionController willDestroyView:self];
 #endif
     [_data->_layoutStrategy willDestroyView:self];
@@ -1262,10 +1257,6 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
             }]; \
             return; \
         } \
-        if ([NSMenu respondsToSelector:@selector(menuTypeForEvent:)] && [NSMenu menuTypeForEvent:theEvent] == NSMenuTypeActionMenu) { \
-            [super Selector:theEvent]; \
-            return; \
-        } \
         NativeWebMouseEvent webEvent(theEvent, _data->_pressureEvent, self); \
         _data->_page->handleMouseEvent(webEvent); \
     }
@@ -1296,10 +1287,6 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
             return; \
         if ([[self inputContext] handleEvent:theEvent]) { \
             LOG(TextInput, "%s was handled by text input context", String(#Selector).substring(0, String(#Selector).find("Internal")).ascii().data()); \
-            return; \
-        } \
-        if ([NSMenu respondsToSelector:@selector(menuTypeForEvent:)] && [NSMenu menuTypeForEvent:theEvent] == NSMenuTypeActionMenu) { \
-            [super Selector:theEvent]; \
             return; \
         } \
         NativeWebMouseEvent webEvent(theEvent, _data->_pressureEvent, self); \
@@ -1396,9 +1383,6 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
     [self _setMouseDownEvent:event];
     _data->_ignoringMouseDraggedEvents = NO;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    [_data->_actionMenuController wkView:self willHandleMouseDown:event];
-#endif
     [self mouseDownInternal:event];
 }
 
@@ -3846,14 +3830,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [workspaceNotificationCenter addObserver:self selector:@selector(_activeSpaceDidChange:) name:NSWorkspaceActiveSpaceDidChangeNotification object:nil];
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    if ([self respondsToSelector:@selector(_setActionMenu:)]) {
-        RetainPtr<NSMenu> menu = adoptNS([[NSMenu alloc] init]);
-        self._actionMenu = menu.get();
-        _data->_actionMenuController = adoptNS([[WKActionMenuController alloc] initWithPage:*_data->_page view:self]);
-        self._actionMenu.delegate = _data->_actionMenuController.get();
-        self._actionMenu.autoenablesItems = NO;
-    }
-
     if (Class gestureClass = NSClassFromString(@"NSImmediateActionGestureRecognizer")) {
         _data->_immediateActionGestureRecognizer = adoptNS([(NSImmediateActionGestureRecognizer *)[gestureClass alloc] init]);
         _data->_immediateActionController = adoptNS([[WKImmediateActionController alloc] initWithPage:*_data->_page view:self recognizer:_data->_immediateActionGestureRecognizer.get()]);
@@ -3968,42 +3944,9 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
-- (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event
+- (void)_didPerformImmediateActionHitTest:(const WebHitTestResult::Data&)hitTestResult contentPreventsDefault:(BOOL)contentPreventsDefault userData:(API::Object*)userData
 {
-    if (_data->_ignoresNonWheelEvents) {
-        [menu cancelTracking];
-        return;
-    }
-
-    [_data->_actionMenuController prepareForMenu:menu withEvent:event];
-}
-
-- (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event
-{
-    if (_data->_ignoresNonWheelEvents) {
-        [menu cancelTracking];
-        return;
-    }
-
-    [_data->_actionMenuController willOpenMenu:menu withEvent:event];
-}
-
-- (void)didCloseMenu:(NSMenu *)menu withEvent:(NSEvent *)event
-{
-    if (_data->_ignoresNonWheelEvents) {
-        [menu cancelTracking];
-        return;
-    }
-
-    [_data->_actionMenuController didCloseMenu:menu withEvent:event];
-}
-
-- (void)_didPerformActionMenuHitTest:(const WebHitTestResult::Data&)hitTestResult forImmediateAction:(BOOL)forImmediateAction contentPreventsDefault:(BOOL)contentPreventsDefault userData:(API::Object*)userData
-{
-    if (forImmediateAction)
-        [_data->_immediateActionController didPerformActionMenuHitTest:hitTestResult contentPreventsDefault:contentPreventsDefault userData:userData];
-    else
-        [_data->_actionMenuController didPerformActionMenuHitTest:hitTestResult userData:userData];
+    [_data->_immediateActionController didPerformImmediateActionHitTest:hitTestResult contentPreventsDefault:contentPreventsDefault userData:userData];
 }
 
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
@@ -4642,16 +4585,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
     [self _ensureGestureController];
     _data->_gestureController->setDidMoveSwipeSnapshotCallback(callback);
-}
-
-- (NSArray *)_actionMenuItemsForHitTestResult:(WKHitTestResultRef)hitTestResult withType:(_WKActionMenuType)type defaultActionMenuItems:(NSArray *)defaultMenuItems
-{
-    return defaultMenuItems;
-}
-
-- (NSArray *)_actionMenuItemsForHitTestResult:(WKHitTestResultRef)hitTestResult withType:(_WKActionMenuType)type defaultActionMenuItems:(NSArray *)defaultMenuItems userData:(WKTypeRef)userData
-{
-    return [self _actionMenuItemsForHitTestResult:hitTestResult withType:type defaultActionMenuItems:defaultMenuItems];
 }
 
 - (id)_immediateActionAnimationControllerForHitTestResult:(WKHitTestResultRef)hitTestResult withType:(_WKImmediateActionType)type userData:(WKTypeRef)userData

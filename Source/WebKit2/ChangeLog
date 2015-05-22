@@ -1,3 +1,80 @@
+2015-05-22  Tim Horton  <timothy_horton@apple.com>
+
+        Remove action menu support
+        https://bugs.webkit.org/show_bug.cgi?id=145305
+        <rdar://problem/21070771>
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/WebKit.xcconfig:
+        * Shared/API/c/WKActionMenuItemTypes.h:
+        * Shared/API/c/WKActionMenuTypes.h:
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _didPerformImmediateActionHitTest:contentPreventsDefault:userData:]):
+        (-[WKView dealloc]): Deleted.
+        (-[WKView mouseDown:]): Deleted.
+        (-[WKView initWithFrame:processPool:configuration:webView:]): Deleted.
+        (-[WKView prepareForMenu:withEvent:]): Deleted.
+        (-[WKView willOpenMenu:withEvent:]): Deleted.
+        (-[WKView didCloseMenu:withEvent:]): Deleted.
+        (-[WKView _didPerformActionMenuHitTest:forImmediateAction:contentPreventsDefault:userData:]): Deleted.
+        (-[WKView _actionMenuItemsForHitTestResult:withType:defaultActionMenuItems:]): Deleted.
+        (-[WKView _actionMenuItemsForHitTestResult:withType:defaultActionMenuItems:userData:]): Deleted.
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::performImmediateActionHitTestAtLocation):
+        (WebKit::WebPageProxy::didPerformImmediateActionHitTest):
+        (WebKit::WebPageProxy::performActionMenuHitTestAtLocation): Deleted.
+        (WebKit::WebPageProxy::selectLastActionMenuRange): Deleted.
+        (WebKit::WebPageProxy::focusAndSelectLastActionMenuHitTestResult): Deleted.
+        (WebKit::WebPageProxy::didPerformActionMenuHitTest): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didPerformImmediateActionHitTest):
+        (WebKit::PageClientImpl::didPerformActionMenuHitTest): Deleted.
+        * UIProcess/mac/WKActionMenuController.h: Removed.
+        * UIProcess/mac/WKActionMenuController.mm: Removed.
+        * UIProcess/mac/WKImmediateActionController.h:
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController didPerformImmediateActionHitTest:contentPreventsDefault:userData:]):
+        (-[WKImmediateActionController immediateActionRecognizerWillPrepare:]):
+        (-[WKImmediateActionController immediateActionRecognizerWillBeginAnimation:]):
+        (-[WKImmediateActionController didPerformActionMenuHitTest:contentPreventsDefault:userData:]): Deleted.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageContextMenuClient.h:
+        (API::InjectedBundle::PageContextMenuClient::prepareForImmediateAction):
+        (API::InjectedBundle::PageContextMenuClient::prepareForActionMenu): Deleted.
+        * WebProcess/InjectedBundle/API/c/WKBundlePageContextMenuClient.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp:
+        (WebKit::InjectedBundlePageContextMenuClient::prepareForImmediateAction):
+        (WebKit::InjectedBundlePageContextMenuClient::prepareForActionMenu): Deleted.
+        * WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/WebPageOverlay.cpp:
+        (WebKit::WebPageOverlay::actionContextForResultAtPoint):
+        * WebProcess/WebPage/WebPageOverlay.h:
+        (WebKit::WebPageOverlay::Client::actionContextForResultAtPoint):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::textIndicatorTransitionForImmediateAction):
+        (WebKit::WebPage::performImmediateActionHitTestAtLocation):
+        (WebKit::textIndicatorTransitionForActionMenu): Deleted.
+        (WebKit::WebPage::performActionMenuHitTestAtLocation): Deleted.
+        (WebKit::WebPage::selectLastActionMenuRange): Deleted.
+        (WebKit::WebPage::focusAndSelectLastActionMenuHitTestResult): Deleted.
+        Remove everything, except some enums that clients still refer to.
+        Also, leave SPI that used to be shared between immediate actions and
+        action menus intact, even if it had "action menu" in the name. We can
+        deprecate and rename in another patch... except for the very recently-added
+        support from r184106, which we'll revert entirely, removing WKBundlePageOverlayV2, 
+        which was not adopted by any clients.
+
 2015-05-22  Brady Eidson  <beidson@apple.com>
 
         Rework how the ResourceRequest user initiated property key is used.

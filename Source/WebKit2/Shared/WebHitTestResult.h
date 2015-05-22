@@ -64,12 +64,9 @@ public:
         bool allowsCopy;
         bool isDownloadableMedia;
 
-        // FIXME: Added from ActionHitTestResult. All make sense?
-        WebCore::FloatPoint hitTestLocationInViewCoordinates;
         String lookupText;
         RefPtr<SharedMemory> imageSharedMemory;
         uint64_t imageSize;
-        String imageExtension;
 
 #if PLATFORM(MAC)
         RetainPtr<DDActionContext> detectedDataActionContext;

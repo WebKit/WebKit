@@ -1062,46 +1062,41 @@ String WebPage::platformUserAgent(const URL&) const
     return String();
 }
 
-static TextIndicatorPresentationTransition textIndicatorTransitionForActionMenu(Range* selectionRange, Range& indicatorRange, bool forImmediateAction, bool forDataDetectors)
+static TextIndicatorPresentationTransition textIndicatorTransitionForImmediateAction(Range* selectionRange, Range& indicatorRange, bool forDataDetectors)
 {
-    if (areRangesEqual(&indicatorRange, selectionRange) || (forDataDetectors && !forImmediateAction))
-        return forImmediateAction ? TextIndicatorPresentationTransition::Crossfade : TextIndicatorPresentationTransition::BounceAndCrossfade;
-    return forImmediateAction ? TextIndicatorPresentationTransition::FadeIn : TextIndicatorPresentationTransition::Bounce;
+    if (areRangesEqual(&indicatorRange, selectionRange))
+        return TextIndicatorPresentationTransition::Crossfade;
+    return TextIndicatorPresentationTransition::FadeIn;
 }
 
 #if ENABLE(PDFKIT_PLUGIN)
-static TextIndicatorPresentationTransition textIndicatorTransitionForActionMenu(bool forImmediateAction, bool forDataDetectors)
+static TextIndicatorPresentationTransition textIndicatorTransitionForImmediateAction()
 {
-    if (forDataDetectors && !forImmediateAction)
-        return forImmediateAction ? TextIndicatorPresentationTransition::Crossfade : TextIndicatorPresentationTransition::BounceAndCrossfade;
-    return forImmediateAction ? TextIndicatorPresentationTransition::FadeIn : TextIndicatorPresentationTransition::Bounce;
+    return TextIndicatorPresentationTransition::FadeIn;
 }
 #endif
 
-void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInViewCoordinates, bool forImmediateAction)
+void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locationInViewCoordinates)
 {
     layoutIfNeeded();
 
     MainFrame& mainFrame = corePage()->mainFrame();
     if (!mainFrame.view() || !mainFrame.view()->renderView()) {
-        send(Messages::WebPageProxy::DidPerformActionMenuHitTest(WebHitTestResult::Data(), forImmediateAction, false, UserData()));
+        send(Messages::WebPageProxy::DidPerformImmediateActionHitTest(WebHitTestResult::Data(), false, UserData()));
         return;
     }
 
     IntPoint locationInContentCoordinates = mainFrame.view()->rootViewToContents(roundedIntPoint(locationInViewCoordinates));
     HitTestResult hitTestResult = mainFrame.eventHandler().hitTestResultAtPoint(locationInContentCoordinates);
 
-    bool actionMenuHitTestPreventsDefault = false;
+    bool immediateActionHitTestPreventsDefault = false;
     Element* element = hitTestResult.innerElement();
 
-    if (forImmediateAction) {
-        mainFrame.eventHandler().setImmediateActionStage(ImmediateActionStage::PerformedHitTest);
-        if (element)
-            actionMenuHitTestPreventsDefault = element->dispatchMouseForceWillBegin();
-    }
+    mainFrame.eventHandler().setImmediateActionStage(ImmediateActionStage::PerformedHitTest);
+    if (element)
+        immediateActionHitTestPreventsDefault = element->dispatchMouseForceWillBegin();
 
-    WebHitTestResult::Data actionMenuResult(hitTestResult, !forImmediateAction);
-    actionMenuResult.hitTestLocationInViewCoordinates = locationInViewCoordinates;
+    WebHitTestResult::Data immediateActionResult(hitTestResult);
 
     RefPtr<Range> selectionRange = corePage()->focusController().focusedOrMainFrame().selection().selection().firstRange();
 
@@ -1109,22 +1104,19 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
     Element *URLElement = hitTestResult.URLElement();
     if (!absoluteLinkURL.isEmpty() && URLElement) {
         RefPtr<Range> linkRange = rangeOfContents(*URLElement);
-        actionMenuResult.linkTextIndicator = TextIndicator::createWithRange(*linkRange, textIndicatorTransitionForActionMenu(selectionRange.get(), *linkRange, forImmediateAction, false));
+        immediateActionResult.linkTextIndicator = TextIndicator::createWithRange(*linkRange, textIndicatorTransitionForImmediateAction(selectionRange.get(), *linkRange, false));
     }
 
     NSDictionary *options = nil;
     RefPtr<Range> lookupRange = lookupTextAtLocation(locationInViewCoordinates, &options);
-    actionMenuResult.lookupText = lookupRange ? lookupRange->text() : String();
+    immediateActionResult.lookupText = lookupRange ? lookupRange->text() : String();
 
     if (lookupRange) {
         if (Node* node = hitTestResult.innerNode()) {
             if (Frame* hitTestResultFrame = node->document().frame())
-                actionMenuResult.dictionaryPopupInfo = dictionaryPopupInfoForRange(hitTestResultFrame, *lookupRange.get(), &options, textIndicatorTransitionForActionMenu(selectionRange.get(), *lookupRange, forImmediateAction, false));
+                immediateActionResult.dictionaryPopupInfo = dictionaryPopupInfoForRange(hitTestResultFrame, *lookupRange.get(), &options, textIndicatorTransitionForImmediateAction(selectionRange.get(), *lookupRange, false));
         }
     }
-
-    m_lastActionMenuRangeForSelection = lookupRange;
-    m_lastActionMenuHitTestResult = hitTestResult;
 
     bool pageOverlayDidOverrideDataDetectors = false;
     for (const auto& overlay : mainFrame.pageOverlayController().pageOverlays()) {
@@ -1133,12 +1125,12 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
             continue;
 
         RefPtr<Range> mainResultRange;
-        DDActionContext *actionContext = webOverlay->actionContextForResultAtPoint(locationInContentCoordinates, mainResultRange, forImmediateAction);
+        DDActionContext *actionContext = webOverlay->actionContextForResultAtPoint(locationInContentCoordinates, mainResultRange);
         if (!actionContext || !mainResultRange)
             continue;
 
         pageOverlayDidOverrideDataDetectors = true;
-        actionMenuResult.detectedDataActionContext = actionContext;
+        immediateActionResult.detectedDataActionContext = actionContext;
 
         Vector<FloatQuad> quads;
         mainResultRange->textQuads(quads);
@@ -1147,10 +1139,9 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
         for (const auto& quad : quads)
             detectedDataBoundingBox.unite(frameView->contentsToWindow(quad.enclosingBoundingBox()));
 
-        actionMenuResult.detectedDataBoundingBox = detectedDataBoundingBox;
-        actionMenuResult.detectedDataTextIndicator = TextIndicator::createWithRange(*mainResultRange, textIndicatorTransitionForActionMenu(selectionRange.get(), *mainResultRange, forImmediateAction, true));
-        actionMenuResult.detectedDataOriginatingPageOverlay = overlay->pageOverlayID();
-        m_lastActionMenuRangeForSelection = mainResultRange;
+        immediateActionResult.detectedDataBoundingBox = detectedDataBoundingBox;
+        immediateActionResult.detectedDataTextIndicator = TextIndicator::createWithRange(*mainResultRange, textIndicatorTransitionForImmediateAction(selectionRange.get(), *mainResultRange, true));
+        immediateActionResult.detectedDataOriginatingPageOverlay = overlay->pageOverlayID();
 
         break;
     }
@@ -1159,11 +1150,10 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
     if (!pageOverlayDidOverrideDataDetectors && hitTestResult.innerNode() && hitTestResult.innerNode()->isTextNode()) {
         FloatRect detectedDataBoundingBox;
         RefPtr<Range> detectedDataRange;
-        actionMenuResult.detectedDataActionContext = DataDetection::detectItemAroundHitTestResult(hitTestResult, detectedDataBoundingBox, detectedDataRange);
-        if (actionMenuResult.detectedDataActionContext && detectedDataRange) {
-            actionMenuResult.detectedDataBoundingBox = detectedDataBoundingBox;
-            actionMenuResult.detectedDataTextIndicator = TextIndicator::createWithRange(*detectedDataRange, textIndicatorTransitionForActionMenu(selectionRange.get(), *detectedDataRange, forImmediateAction, true));
-            m_lastActionMenuRangeForSelection = detectedDataRange;
+        immediateActionResult.detectedDataActionContext = DataDetection::detectItemAroundHitTestResult(hitTestResult, detectedDataBoundingBox, detectedDataRange);
+        if (immediateActionResult.detectedDataActionContext && detectedDataRange) {
+            immediateActionResult.detectedDataBoundingBox = detectedDataBoundingBox;
+            immediateActionResult.detectedDataTextIndicator = TextIndicator::createWithRange(*detectedDataRange, textIndicatorTransitionForImmediateAction(selectionRange.get(), *detectedDataRange, true));
         }
     }
 
@@ -1178,7 +1168,7 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
             // FIXME: We don't have API to identify images inside PDFs based on position.
             NSDictionary *options = nil;
             PDFSelection *selection = nil;
-            String selectedText = pdfPugin->lookupTextAtLocation(locationInViewCoordinates, actionMenuResult, &selection, &options);
+            String selectedText = pdfPugin->lookupTextAtLocation(locationInViewCoordinates, immediateActionResult, &selection, &options);
             if (!selectedText.isEmpty()) {
                 if (element->document().isPluginDocument()) {
                     // FIXME(144030): Focus does not seem to get set to the PDF when invoking the menu.
@@ -1186,21 +1176,21 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
                     pluginDocument.setFocusedElement(element);
                 }
 
-                actionMenuResult.lookupText = selectedText;
-                actionMenuResult.isTextNode = true;
-                actionMenuResult.isSelected = true;
-                actionMenuResult.allowsCopy = true;
+                immediateActionResult.lookupText = selectedText;
+                immediateActionResult.isTextNode = true;
+                immediateActionResult.isSelected = true;
+                immediateActionResult.allowsCopy = true;
 
-                actionMenuResult.dictionaryPopupInfo = dictionaryPopupInfoForSelectionInPDFPlugin(selection, *pdfPugin, &options, textIndicatorTransitionForActionMenu(forImmediateAction, false));
+                immediateActionResult.dictionaryPopupInfo = dictionaryPopupInfoForSelectionInPDFPlugin(selection, *pdfPugin, &options, textIndicatorTransitionForImmediateAction());
             }
         }
     }
 #endif
 
     RefPtr<API::Object> userData;
-    injectedBundleContextMenuClient().prepareForActionMenu(*this, hitTestResult, userData);
+    injectedBundleContextMenuClient().prepareForImmediateAction(*this, hitTestResult, userData);
 
-    send(Messages::WebPageProxy::DidPerformActionMenuHitTest(actionMenuResult, forImmediateAction, actionMenuHitTestPreventsDefault, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+    send(Messages::WebPageProxy::DidPerformImmediateActionHitTest(immediateActionResult, immediateActionHitTestPreventsDefault, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
 PassRefPtr<WebCore::Range> WebPage::lookupTextAtLocation(FloatPoint locationInViewCoordinates, NSDictionary **options)
@@ -1212,30 +1202,6 @@ PassRefPtr<WebCore::Range> WebPage::lookupTextAtLocation(FloatPoint locationInVi
     IntPoint point = roundedIntPoint(locationInViewCoordinates);
     HitTestResult result = mainFrame.eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(point));
     return rangeForDictionaryLookupAtHitTestResult(result, options);
-}
-
-void WebPage::selectLastActionMenuRange()
-{
-    if (m_lastActionMenuRangeForSelection)
-        corePage()->mainFrame().selection().setSelectedRange(m_lastActionMenuRangeForSelection.get(), DOWNSTREAM, true);
-}
-
-void WebPage::focusAndSelectLastActionMenuHitTestResult()
-{
-    if (!m_lastActionMenuHitTestResult.isContentEditable())
-        return;
-
-    Element* element = m_lastActionMenuHitTestResult.innerElement();
-    if (!element)
-        return;
-
-    Frame* frame = element->document().frame();
-    if (!frame)
-        return;
-
-    m_page->focusController().setFocusedElement(element, frame);
-    VisiblePosition position = frame->visiblePositionForPoint(m_lastActionMenuHitTestResult.roundedPointInInnerNodeFrame());
-    frame->selection().setSelection(position);
 }
 
 void WebPage::immediateActionDidUpdate()

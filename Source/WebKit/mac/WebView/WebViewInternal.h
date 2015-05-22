@@ -70,7 +70,6 @@ class WebSelectionServiceController;
 
 #endif
 
-@class WebActionMenuController;
 @class WebBasePluginPackage;
 @class WebDownload;
 @class WebImmediateActionController;
@@ -271,7 +270,6 @@ OBJC_CLASS NSTextAlternatives;
 - (void)_showDictionaryLookupPopup:(const DictionaryPopupInfo&)dictionaryPopupInfo;
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 - (id)_animationControllerForDictionaryLookupPopupInfo:(const DictionaryPopupInfo&)dictionaryPopupInfo;
-- (WebActionMenuController *)_actionMenuController;
 - (WebImmediateActionController *)_immediateActionController;
 #endif
 - (NSEvent *)_pressureEvent;

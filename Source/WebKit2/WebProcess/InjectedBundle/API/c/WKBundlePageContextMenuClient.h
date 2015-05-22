@@ -46,6 +46,8 @@ typedef struct WKBundlePageContextMenuClientV1 {
     WKBundlePageContextMenuClientBase                                   base;
 
     WKBundlePageGetContextMenuFromDefaultContextMenuCallback            getContextMenuFromDefaultMenu;
+
+    // This is actually about immediate actions; we should consider deprecating and renaming.
     WKBundlePagePrepareForActionMenuCallback                            prepareForActionMenu;
 } WKBundlePageContextMenuClientV1;
 
