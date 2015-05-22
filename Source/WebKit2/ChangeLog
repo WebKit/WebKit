@@ -1,3 +1,20 @@
+2015-05-21  Enrica Casucci  <enrica@apple.com>
+
+        [iOS] Crash when taking a snapshot of a large PDF.
+        https://bugs.webkit.org/show_bug.cgi?id=145286
+        rdar://problem/20892362
+
+        Reviewed by Tim Horton.
+
+        The code for the PDF case was incorrectly computing the snapshot rect.
+        On top of that drawViewHierarchyInRect was ignoring the rect and
+        always creating an image using the view bounds causing the crash.
+        We are now always using the IOSurface if we are parented or
+        an image context when we are not.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]):
+
 2015-05-21  Anders Carlsson  <andersca@apple.com>
 
         Symlink the WebKit dylib instead of just the framework directory
