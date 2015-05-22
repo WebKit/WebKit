@@ -1077,7 +1077,8 @@ bool InspectorStyleSheet::styleSheetMutated() const
 
 bool InspectorStyleSheet::ensureParsedDataReady()
 {
-    return !styleSheetMutated() && ensureText() && ensureSourceData();
+    bool allowParsedData = m_origin == Inspector::Protocol::CSS::StyleSheetOrigin::Inspector || !styleSheetMutated();
+    return allowParsedData && ensureText() && ensureSourceData();
 }
 
 bool InspectorStyleSheet::ensureText() const
