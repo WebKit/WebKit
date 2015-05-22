@@ -26,13 +26,13 @@
 #import "config.h"
 #import "_WKNSURLRequestExtras.h"
 
-#import <WebCore/WebCoreSystemInterface.h>
+#import <WebCore/ResourceRequest.h>
 
 @implementation NSURLRequest (WKExtras)
 
 - (BOOL)_web_isUserInitiated
 {
-    NSNumber *userInitiated = [NSURLProtocol propertyForKey:(NSString *)wkResourceRequestIsUserInitiatedKey() inRequest:self];
+    NSNumber *userInitiated = [NSURLProtocol propertyForKey:(NSString *)WebCore::ResourceRequest::isUserInitiatedKey() inRequest:self];
     return userInitiated.boolValue;
 }
 
@@ -42,7 +42,7 @@
 
 - (void)_web_setIsUserInitiated:(BOOL)userInitiated
 {
-    [NSURLProtocol setProperty:userInitiated ? @YES : @NO forKey:(NSString *)wkResourceRequestIsUserInitiatedKey() inRequest:self];
+    [NSURLProtocol setProperty:userInitiated ? @YES : @NO forKey:(NSString *)WebCore::ResourceRequest::isUserInitiatedKey() inRequest:self];
 }
 
 @end

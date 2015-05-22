@@ -103,7 +103,7 @@ void ResourceRequest::doUpdateResourceRequest()
     }
 #endif
 
-    NSNumber *initiatedByUserGesture = [NSURLProtocol propertyForKey:(NSString *)wkResourceRequestIsUserInitiatedKey() inRequest:m_nsRequest.get()];
+    NSNumber *initiatedByUserGesture = [NSURLProtocol propertyForKey:(NSString *)ResourceRequest::isUserInitiatedKey() inRequest:m_nsRequest.get()];
     if (initiatedByUserGesture)
         setInitiatedByUserGesture(initiatedByUserGesture.boolValue);
 }
@@ -184,7 +184,7 @@ void ResourceRequest::doUpdatePlatformRequest()
 #endif
 
     if (initiatedByUserGesture())
-        [NSURLProtocol setProperty:@YES forKey:(NSString *)wkResourceRequestIsUserInitiatedKey() inRequest:nsRequest];
+        [NSURLProtocol setProperty:@YES forKey:(NSString *)ResourceRequest::isUserInitiatedKey() inRequest:nsRequest];
 }
 
 void ResourceRequest::doUpdatePlatformHTTPBody()

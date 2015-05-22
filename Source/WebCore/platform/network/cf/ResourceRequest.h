@@ -95,6 +95,8 @@ namespace WebCore {
         bool encodingRequiresPlatformData() const { return m_httpBody || m_nsRequest; }
 #endif
         WEBCORE_EXPORT NSURLRequest *nsURLRequest(HTTPBodyUpdatePolicy) const;
+
+        WEBCORE_EXPORT static CFStringRef isUserInitiatedKey();
 #endif
 
 #if ENABLE(CACHE_PARTITIONING)

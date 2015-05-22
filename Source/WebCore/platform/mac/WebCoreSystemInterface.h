@@ -318,8 +318,6 @@ extern bool (*wkIsPublicSuffix)(NSString *host);
 extern CFStringRef (*wkCachePartitionKey)(void);
 #endif
 
-extern CFStringRef (*wkResourceRequestIsUserInitiatedKey)(void);
-
 typedef enum {
     wkExternalPlaybackTypeNone,
     wkExternalPlaybackTypeAirPlay,

@@ -188,7 +188,7 @@ void ResourceRequest::doUpdatePlatformRequest()
 
 #if !PLATFORM(WIN)
     if (initiatedByUserGesture())
-        _CFURLRequestSetProtocolProperty(cfRequest, wkResourceRequestIsUserInitiatedKey(), kCFBooleanTrue);
+        _CFURLRequestSetProtocolProperty(cfRequest, ResourceRequest::isUserInitiatedKey(), kCFBooleanTrue);
 #endif
 
     m_cfRequest = adoptCF(cfRequest);
@@ -297,7 +297,7 @@ void ResourceRequest::doUpdateResourceRequest()
 #endif
 
 #if !PLATFORM(WIN)
-    RetainPtr<CFBooleanRef> initiatedByUserGesture = adoptCF(static_cast<CFBooleanRef>(_CFURLRequestCopyProtocolPropertyForKey(m_cfRequest.get(), wkResourceRequestIsUserInitiatedKey())));
+    RetainPtr<CFBooleanRef> initiatedByUserGesture = adoptCF(static_cast<CFBooleanRef>(_CFURLRequestCopyProtocolPropertyForKey(m_cfRequest.get(), ResourceRequest::isUserInitiatedKey())));
     if (initiatedByUserGesture)
         setInitiatedByUserGesture(CFBooleanGetValue(initiatedByUserGesture.get()));
 #endif
@@ -437,5 +437,11 @@ void initializeHTTPConnectionSettingsOnStartup()
     _CFNetworkHTTPConnectionCacheSetLimit(kHTTPNumFastLanes, fastLaneConnectionCount);
 }
 #endif
+
+CFStringRef ResourceRequest::isUserInitiatedKey()
+{
+    static CFStringRef key = CFSTR("ResourceRequestIsUserInitiatedKey");
+    return key;
+}
 
 } // namespace WebCore

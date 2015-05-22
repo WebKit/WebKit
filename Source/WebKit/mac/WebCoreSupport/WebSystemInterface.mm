@@ -36,12 +36,6 @@
 
 #define INIT(function) wk##function = WK##function
 
-static CFStringRef WKResourceRequestIsUserInitiatedKey()
-{
-    static CFStringRef key = CFSTR("WKResourceRequestIsUserInitiatedKey");
-    return key;
-}
-
 void InitWebCoreSystemInterface(void)
 {
     static bool didInit;
@@ -216,7 +210,6 @@ void InitWebCoreSystemInterface(void)
     INIT(CachePartitionKey);
 #endif
 
-    INIT(ResourceRequestIsUserInitiatedKey);
     INIT(ExernalDeviceTypeForPlayer);
     INIT(ExernalDeviceDisplayNameForPlayer);
 
