@@ -1,3 +1,12 @@
+2015-05-22  Marcos Chavarría Teijeiro  <mchavarria@igalia.com>
+
+        [GTK] Gardening 21st May.
+        https://bugs.webkit.org/show_bug.cgi?id=145250
+
+        Unreviewed.
+
+        * platform/gtk/TestExpectations:
+
 2015-05-22  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Figure out why list-detection2.html test fails on GTK
