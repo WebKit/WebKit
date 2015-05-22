@@ -1,3 +1,17 @@
+2015-05-22  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Image link doesn't create a preview view controller.
+        https://bugs.webkit.org/show_bug.cgi?id=145320
+
+        Also try to create the preview view controller if the hit-tested node
+        is a image link.
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+        (-[WKContentView previewViewControllerForPosition:inSourceView:]):
+
 2015-05-22  Tim Horton  <timothy_horton@apple.com>
 
         Avoid doing an extra layout in some cases while doing scale-to-fit

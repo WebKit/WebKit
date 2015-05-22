@@ -953,7 +953,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
     if (gestureRecognizer == _previewGestureRecognizer) {
         [self ensurePositionInformationIsUpToDate:point];
-        if (_positionInformation.clickableElementName != "A")
+        if (_positionInformation.clickableElementName != "A" && _positionInformation.clickableElementName != "IMG")
             return NO;
 
         String absoluteLinkURL = _positionInformation.url;
@@ -3117,7 +3117,7 @@ static bool isAssistableInputType(InputType type)
 {
     ASSERT(self == sourceView);
 
-    if (_positionInformation.clickableElementName != "A")
+    if (_positionInformation.clickableElementName != "A" && _positionInformation.clickableElementName != "IMG")
         return nil;
 
     String absoluteLinkURL = _positionInformation.url;
