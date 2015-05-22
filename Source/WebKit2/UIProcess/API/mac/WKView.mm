@@ -3995,20 +3995,12 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return YES;
 }
 
-- (CGColorRef)_viewBackgroundColor
-{
-    if (self.drawsBackground && !self.drawsTransparentBackground) {
-        if (NSColor *backgroundColor = self._pageExtendedBackgroundColor)
-            return backgroundColor.CGColor;
-        return CGColorGetConstantColor(kCGColorWhite);
-    }
-
-    return CGColorGetConstantColor(kCGColorClear);
-}
-
 - (void)updateLayer
 {
-    self.layer.backgroundColor = self._viewBackgroundColor;
+    if ([self drawsBackground] && ![self drawsTransparentBackground])
+        self.layer.backgroundColor = CGColorGetConstantColor(kCGColorWhite);
+    else
+        self.layer.backgroundColor = CGColorGetConstantColor(kCGColorClear);
 
     // If asynchronous geometry updates have been sent by forceAsyncDrawingAreaSizeUpdate,
     // then subsequent calls to setFrameSize should not result in us waiting for the did
