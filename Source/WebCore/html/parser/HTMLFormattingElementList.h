@@ -121,7 +121,7 @@ public:
     const Entry& at(size_t i) const { return m_entries[i]; }
     Entry& at(size_t i) { return m_entries[i]; }
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
     void show();
 #endif
 

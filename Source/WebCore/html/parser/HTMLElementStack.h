@@ -156,7 +156,7 @@ public:
 
     ContainerNode& rootNode() const;
 
-#ifndef NDEBUG
+#if ENABLE(TREE_DEBUGGING)
     void show();
 #endif
 
