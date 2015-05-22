@@ -1,3 +1,20 @@
+2015-05-22  Tim Horton  <timothy_horton@apple.com>
+
+        Avoid doing an extra layout in some cases while doing scale-to-fit
+        https://bugs.webkit.org/show_bug.cgi?id=145321
+        <rdar://problem/21051165>
+
+        Reviewed by Beth Dakin.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded):
+        If we make it to scaleViewToFitDocumentIfNeeded with valid layout,
+        the view width is still less than the last-known minimum document size,
+        and the document size hasn't changed, update the view scale without
+        doing an extra layout, keeping the fixed layout size at the previously
+        computed minimum document size.
+
 2015-05-22  Beth Dakin  <bdakin@apple.com>
 
         Yellow highlight and DD popover don't go away when scrolling an iframe

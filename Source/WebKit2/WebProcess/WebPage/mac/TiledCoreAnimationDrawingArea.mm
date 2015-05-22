@@ -272,16 +272,32 @@ void TiledCoreAnimationDrawingArea::setShouldScaleViewToFitDocument(bool shouldS
 
 void TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded()
 {
-    // FIXME: Defer scrollbar flashing until after the second layout.
-
     const int maximumDocumentWidthForScaling = 1440;
     const float minimumViewScale = 0.1;
 
     if (!m_shouldScaleViewToFitDocument)
         return;
 
-    if (!m_webPage.mainFrame()->view()->needsLayout() && m_lastDocumentSizeForScaleToFit == m_webPage.mainFrameView()->renderView()->unscaledDocumentRect().size() && m_lastViewSizeForScaleToFit == m_webPage.size())
+    int viewWidth = m_webPage.size().width();
+    bool documentWidthChangedOrInvalidated = m_webPage.mainFrame()->view()->needsLayout() || (m_lastDocumentSizeForScaleToFit.width() != m_webPage.mainFrameView()->renderView()->unscaledDocumentRect().width());
+    bool viewWidthChanged = m_lastViewSizeForScaleToFit.width() != viewWidth;
+
+    if (!documentWidthChangedOrInvalidated && !viewWidthChanged)
         return;
+
+    // The view is now bigger than the document, so we'll re-evaluate whether we have to scale.
+    if (m_isScalingViewToFitDocument && viewWidth >= m_lastDocumentSizeForScaleToFit.width())
+        m_isScalingViewToFitDocument = false;
+
+    // Our current understanding of the document width is still up to date, and we're in scaling mode.
+    // Update the viewScale without doing an extra layout to re-determine the document width.
+    if (m_isScalingViewToFitDocument && !documentWidthChangedOrInvalidated) {
+        float viewScale = (float)viewWidth / (float)m_lastDocumentSizeForScaleToFit.width();
+        m_lastViewSizeForScaleToFit = m_webPage.size();
+        viewScale = std::max(viewScale, minimumViewScale);
+        m_webPage.scaleView(viewScale);
+        return;
+    }
 
     // Lay out at the view size.
     m_webPage.setUseFixedLayout(false);
@@ -292,7 +308,6 @@ void TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded()
     m_lastDocumentSizeForScaleToFit = documentSize;
 
     int documentWidth = documentSize.width();
-    int viewWidth = m_webPage.size().width();
 
     float viewScale = 1;
 
@@ -300,6 +315,7 @@ void TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded()
     // sites that want horizontal scrollbars to continue to have them.
     if (documentWidth && documentWidth < maximumDocumentWidthForScaling && viewWidth < documentWidth) {
         // If the document doesn't fit in the view, scale it down but lay out at the view size.
+        m_isScalingViewToFitDocument = true;
         m_webPage.setUseFixedLayout(true);
         viewScale = (float)viewWidth / (float)documentWidth;
         viewScale = std::max(viewScale, minimumViewScale);

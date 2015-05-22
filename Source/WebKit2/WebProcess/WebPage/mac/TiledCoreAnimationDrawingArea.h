@@ -154,7 +154,7 @@ private:
 
     Vector<uint64_t> m_fenceCallbacksForAfterNextFlush;
     bool m_shouldScaleViewToFitDocument { false };
-
+    bool m_isScalingViewToFitDocument { false };
     WebCore::IntSize m_lastViewSizeForScaleToFit;
     WebCore::IntSize m_lastDocumentSizeForScaleToFit;
 };
