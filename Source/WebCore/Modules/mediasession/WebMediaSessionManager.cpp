@@ -29,6 +29,7 @@
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
 
 #include "FloatRect.h"
+#include "Logging.h"
 #include "MediaPlaybackTargetPickerMac.h"
 #include "WebMediaSessionManagerClient.h"
 
@@ -76,6 +77,8 @@ uint64_t WebMediaSessionManager::addPlaybackTargetPickerClient(WebMediaSessionMa
     if (index != notFound)
         return 0;
 
+    LOG(Media, "WebMediaSessionManager::addPlaybackTargetPickerClient(%p + %llu)", &client, contextId);
+
     m_clientState.append(std::make_unique<ClientState>(client, contextId));
 
     if (m_externalOutputDeviceAvailable || m_playbackTarget)
@@ -91,12 +94,16 @@ void WebMediaSessionManager::removePlaybackTargetPickerClient(WebMediaSessionMan
     if (index == notFound)
         return;
 
+    LOG(Media, "WebMediaSessionManager::removePlaybackTargetPickerClient(%p + %llu)", &client, contextId);
+
     m_clientState.remove(index);
     scheduleDelayedTask(TargetMonitoringConfigurationTask | TargetClientsConfigurationTask);
 }
 
 void WebMediaSessionManager::removeAllPlaybackTargetPickerClients(WebMediaSessionManagerClient& client)
 {
+    LOG(Media, "WebMediaSessionManager::removeAllPlaybackTargetPickerClients(%p)", &client);
+
     for (size_t i = m_clientState.size(); i > 0; --i) {
         if (&m_clientState[i - 1]->client == &client)
             m_clientState.remove(i - 1);
@@ -116,6 +123,7 @@ void WebMediaSessionManager::showPlaybackTargetPicker(WebMediaSessionManagerClie
         state->requestedPicker = state == clientRequestingPicker;
 
     bool hasActiveRoute = flagsAreSet(m_clientState[index]->flags, MediaProducer::IsPlayingToExternalDevice);
+    LOG(Media, "WebMediaSessionManager::showPlaybackTargetPicker(%p + %llu) - hasActiveRoute = %i", &client, contextId, (int)hasActiveRoute);
     targetPicker().showPlaybackTargetPicker(FloatRect(rect), hasActiveRoute);
 }
 
@@ -128,6 +136,7 @@ void WebMediaSessionManager::clientStateDidChange(WebMediaSessionManagerClient& 
 
     auto& changedClientState = m_clientState[index];
     MediaProducer::MediaStateFlags oldFlags = changedClientState->flags;
+    LOG(Media, "WebMediaSessionManager::clientStateDidChange(%p + %llu) - new flags = 0x%x, old flags = 0x%x", &client, contextId, newFlags, oldFlags);
     if (newFlags == oldFlags)
         return;
 
@@ -175,6 +184,8 @@ void WebMediaSessionManager::setPlaybackTarget(Ref<MediaPlaybackTarget>&& target
 
 void WebMediaSessionManager::externalOutputDeviceAvailableDidChange(bool available)
 {
+    LOG(Media, "WebMediaSessionManager::externalOutputDeviceAvailableDidChange - clients = %zu, available = %i", m_clientState.size(), (int)available);
+
     m_externalOutputDeviceAvailable = available;
     for (auto& state : m_clientState)
         state->client.externalOutputDeviceAvailableDidChange(state->contextId, available);
@@ -245,6 +256,8 @@ void WebMediaSessionManager::configurePlaybackTargetMonitoring()
             break;
         }
     }
+
+    LOG(Media, "WebMediaSessionManager::configurePlaybackTargetMonitoring - monitoringRequired = %i", (int)monitoringRequired);
 
     if (monitoringRequired)
         targetPicker().startingMonitoringPlaybackTargets();
