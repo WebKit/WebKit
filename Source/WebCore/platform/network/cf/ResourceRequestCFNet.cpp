@@ -438,10 +438,12 @@ void initializeHTTPConnectionSettingsOnStartup()
 }
 #endif
 
+#if PLATFORM(COCOA)
 CFStringRef ResourceRequest::isUserInitiatedKey()
 {
     static CFStringRef key = CFSTR("ResourceRequestIsUserInitiatedKey");
     return key;
 }
+#endif
 
 } // namespace WebCore
