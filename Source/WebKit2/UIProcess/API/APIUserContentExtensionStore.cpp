@@ -52,6 +52,11 @@ UserContentExtensionStore& UserContentExtensionStore::defaultStore()
     return *defaultStore;
 }
 
+Ref<UserContentExtensionStore> UserContentExtensionStore::storeWithPath(const WTF::String& storePath)
+{
+    return adoptRef(*new UserContentExtensionStore(storePath));
+}
+
 UserContentExtensionStore::UserContentExtensionStore()
     : UserContentExtensionStore(defaultStorePath())
 {

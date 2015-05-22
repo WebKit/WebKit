@@ -49,6 +49,7 @@ public:
     };
 
     static UserContentExtensionStore& defaultStore();
+    static Ref<UserContentExtensionStore> storeWithPath(const WTF::String& storePath);
 
     explicit UserContentExtensionStore();
     explicit UserContentExtensionStore(const WTF::String& storePath);
