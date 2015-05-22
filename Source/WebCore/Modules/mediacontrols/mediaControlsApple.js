@@ -823,7 +823,7 @@ Controller.prototype = {
     handlePanelTransitionEnd: function(event)
     {
         var opacity = window.getComputedStyle(this.controls.panel).opacity;
-        if (!parseInt(opacity) && !this.controlsAlwaysVisible()) {
+        if (!parseInt(opacity) && !this.controlsAlwaysVisible() && this.video.controls) {
             this.base.removeChild(this.controls.inlinePlaybackPlaceholder);
             this.base.removeChild(this.controls.panel);
         }
@@ -1333,7 +1333,7 @@ Controller.prototype = {
 
     setPlaying: function(isPlaying)
     {
-        if (this.showInlinePlaybackPlaceholderOnly())
+        if (!this.video.controls)
             return;
 
         if (this.isPlaying === isPlaying)
@@ -1376,7 +1376,7 @@ Controller.prototype = {
     showControls: function()
     {
         this.updateShouldListenForPlaybackTargetAvailabilityEvent();
-        if (this.showInlinePlaybackPlaceholderOnly())
+        if (!this.video.controls)
             return;
 
         this.updateForShowingControls();
@@ -1934,6 +1934,7 @@ Controller.prototype = {
         }
         this.setNeedsUpdateForDisplayedWidth();
         this.updateLayoutForDisplayedWidth();
+        this.reconnectControls();
         this.updateWirelessTargetPickerButton();
     },
 
@@ -1963,8 +1964,6 @@ Controller.prototype = {
         this.updateWirelessTargetAvailable();
         this.updateWirelessPlaybackStatus();
         this.setNeedsTimelineMetricsUpdate();
-        if (this.showInlinePlaybackPlaceholderOnly())
-            this.reconnectControls();
     },
 
     handleWirelessTargetAvailableChange: function(event) {
@@ -1989,11 +1988,6 @@ Controller.prototype = {
             this.listenFor(this.video, 'webkitplaybacktargetavailabilitychanged', this.handleWirelessTargetAvailableChange);
         else
             this.stopListeningFor(this.video, 'webkitplaybacktargetavailabilitychanged', this.handleWirelessTargetAvailableChange);
-    },
-
-    showInlinePlaybackPlaceholderOnly: function(event)
-    {
-        return this.currentPlaybackTargetIsWireless() && !this.video.controls;
     },
 
     get scrubbing()
