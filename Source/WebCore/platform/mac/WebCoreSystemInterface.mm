@@ -170,6 +170,8 @@ bool (*wkIsPublicSuffix)(NSString *host);
 CFStringRef (*wkCachePartitionKey)(void);
 #endif
 
+CFStringRef (*wkResourceRequestIsUserInitiatedKey)(void);
+
 int (*wkExernalDeviceTypeForPlayer)(AVPlayer *);
 NSString *(*wkExernalDeviceDisplayNameForPlayer)(AVPlayer *);
 

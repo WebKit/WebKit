@@ -124,3 +124,5 @@ WEBCORE_EXPORT NSString *(*wkExernalDeviceDisplayNameForPlayer)(AVPlayer *);
 
 WEBCORE_EXPORT bool (*wkQueryDecoderAvailability)(void);
 
+WEBCORE_EXPORT CFStringRef (*wkResourceRequestIsUserInitiatedKey)(void);
+

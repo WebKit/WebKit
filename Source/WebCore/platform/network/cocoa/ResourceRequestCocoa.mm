@@ -102,6 +102,10 @@ void ResourceRequest::doUpdateResourceRequest()
             m_cachePartition = cachePartition;
     }
 #endif
+
+    NSNumber *initiatedByUserGesture = [NSURLProtocol propertyForKey:(NSString *)wkResourceRequestIsUserInitiatedKey() inRequest:m_nsRequest.get()];
+    if (initiatedByUserGesture)
+        setInitiatedByUserGesture(initiatedByUserGesture.boolValue);
 }
 
 void ResourceRequest::doUpdateResourceHTTPBody()
@@ -178,6 +182,9 @@ void ResourceRequest::doUpdatePlatformRequest()
         [NSURLProtocol setProperty:partitionValue forKey:(NSString *)wkCachePartitionKey() inRequest:nsRequest];
     }
 #endif
+
+    if (initiatedByUserGesture())
+        [NSURLProtocol setProperty:@YES forKey:(NSString *)wkResourceRequestIsUserInitiatedKey() inRequest:nsRequest];
 }
 
 void ResourceRequest::doUpdatePlatformHTTPBody()

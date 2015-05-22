@@ -1,3 +1,14 @@
+2015-05-21  Brady Eidson  <beidson@apple.com>
+
+        Add an "initiated by user gesture" flag to ResourceRequest.
+        https://bugs.webkit.org/show_bug.cgi?id=145281
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (WKResourceRequestIsUserInitiatedKey):
+        (InitWebCoreSystemInterface):
+
 2015-05-20  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

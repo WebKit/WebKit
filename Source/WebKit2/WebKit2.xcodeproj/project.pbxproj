@@ -1014,6 +1014,8 @@
 		51AD35731AD2F3940057B38E /* WebHitTestResult.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51AD35721AD2F3750057B38E /* WebHitTestResult.mm */; };
 		51B15A8413843A3900321AD8 /* EnvironmentUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51B15A8213843A3900321AD8 /* EnvironmentUtilities.cpp */; };
 		51B15A8513843A3900321AD8 /* EnvironmentUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B15A8313843A3900321AD8 /* EnvironmentUtilities.h */; };
+		51B8F4831B0E539A008FC4BD /* _WKNSURLRequestExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B8F47F1B0E530C008FC4BD /* _WKNSURLRequestExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51B8F4841B0E53A1008FC4BD /* _WKNSURLRequestExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51B8F4801B0E530C008FC4BD /* _WKNSURLRequestExtras.mm */; };
 		51BA24441858EE3000EA2811 /* AsyncTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BA24431858EE3000EA2811 /* AsyncTask.h */; };
 		51BA24461858F55D00EA2811 /* WebCrossThreadCopier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51BA24451858F41500EA2811 /* WebCrossThreadCopier.cpp */; };
 		51C96118183D294700D2002E /* WebIDBServerConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51C96116183D294700D2002E /* WebIDBServerConnectionMessageReceiver.cpp */; };
@@ -3219,6 +3221,8 @@
 		51AD35721AD2F3750057B38E /* WebHitTestResult.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebHitTestResult.mm; sourceTree = "<group>"; };
 		51B15A8213843A3900321AD8 /* EnvironmentUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EnvironmentUtilities.cpp; path = unix/EnvironmentUtilities.cpp; sourceTree = "<group>"; };
 		51B15A8313843A3900321AD8 /* EnvironmentUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EnvironmentUtilities.h; path = unix/EnvironmentUtilities.h; sourceTree = "<group>"; };
+		51B8F47F1B0E530C008FC4BD /* _WKNSURLRequestExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKNSURLRequestExtras.h; sourceTree = "<group>"; };
+		51B8F4801B0E530C008FC4BD /* _WKNSURLRequestExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKNSURLRequestExtras.mm; sourceTree = "<group>"; };
 		51BA24431858EE3000EA2811 /* AsyncTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncTask.h; sourceTree = "<group>"; };
 		51BA24451858F41500EA2811 /* WebCrossThreadCopier.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCrossThreadCopier.cpp; sourceTree = "<group>"; };
 		51C96115183C95FF00D2002E /* WebIDBServerConnection.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebIDBServerConnection.messages.in; sourceTree = "<group>"; };
@@ -5504,6 +5508,8 @@
 				373D122618A473F60066D9CC /* _WKFrameHandleInternal.h */,
 				A118A9F11908B8EA00F7C92B /* _WKNSFileManagerExtras.h */,
 				A118A9F01908B8EA00F7C92B /* _WKNSFileManagerExtras.mm */,
+				51B8F47F1B0E530C008FC4BD /* _WKNSURLRequestExtras.h */,
+				51B8F4801B0E530C008FC4BD /* _WKNSURLRequestExtras.mm */,
 				1A9E328B182165A900F5D04C /* _WKRemoteObjectInterface.h */,
 				1A9E328C182165A900F5D04C /* _WKRemoteObjectInterface.mm */,
 				1AABFE391829C1ED005B070E /* _WKRemoteObjectInterfaceInternal.h */,
@@ -7829,6 +7835,7 @@
 				1A4A9C5612B816CF008FE984 /* NetscapePluginModule.h in Headers */,
 				1AA5889211EE70400061B882 /* NetscapePluginStream.h in Headers */,
 				E1798C7A16E6818800240139 /* NetworkBlobRegistry.h in Headers */,
+				51B8F4831B0E539A008FC4BD /* _WKNSURLRequestExtras.h in Headers */,
 				E4436ECC1A0D040B00EAD204 /* NetworkCache.h in Headers */,
 				E49D40D71AD3FB170066B7B9 /* NetworkCacheBlobStorage.h in Headers */,
 				E489D28A1A0A2DB80078C06A /* NetworkCacheCoder.h in Headers */,
@@ -9569,6 +9576,7 @@
 				1A1D8BA11731A36300141DA4 /* LocalStorageDatabase.cpp in Sources */,
 				1A8C728C1738477C000A6554 /* LocalStorageDatabaseTracker.cpp in Sources */,
 				51A7F2F5125BF8D4008AEB1D /* Logging.cpp in Sources */,
+				51B8F4841B0E53A1008FC4BD /* _WKNSURLRequestExtras.mm in Sources */,
 				5160BFE113381DF900918999 /* LoggingFoundation.mm in Sources */,
 				1A24B5F211F531E800C38269 /* MachUtilities.cpp in Sources */,
 				51933DF01965EB31008AC3EA /* MenuUtilities.mm in Sources */,

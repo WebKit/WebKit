@@ -1,3 +1,23 @@
+2015-05-21  Brady Eidson  <beidson@apple.com>
+
+        Add an "initiated by user gesture" flag to ResourceRequest.
+        https://bugs.webkit.org/show_bug.cgi?id=145281
+
+        Reviewed by Alex Christensen.
+
+        Expose a new category on NSURLRequest to allow SPI clients to easily set/get the flag:
+        * Shared/API/Cocoa/_WKNSURLRequestExtras.h: Added.
+        * Shared/API/Cocoa/_WKNSURLRequestExtras.mm: Added.
+        (-[NSURLRequest _web_isUserInitiated]):
+        (-[NSMutableURLRequest _web_setIsUserInitiated:]):
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        Expose the new property key to WebCore:
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (WKResourceRequestIsUserInitiatedKey):
+        (InitWebCoreSystemInterface):
+
 2015-05-21  Daniel Bates  <dabates@apple.com>
 
         Rollout <http://trac.webkit.org/changeset/183909>
