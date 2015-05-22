@@ -63,7 +63,7 @@ public:
     const String& fragment() const { return m_fragment; }
     bool isExternalDocument() const { return m_isExternalDocument; }
     StyleImage* image() const { return m_styleImage.get(); }
-    void setImage(PassRefPtr<StyleImage> image) { m_styleImage = image; }
+    void setImage(PassRefPtr<StyleImage>);
     void setRenderLayerImageClient(CachedImageClient*);
     void addRendererImageClient(RenderElement*);
     void removeRendererImageClient(RenderElement*);

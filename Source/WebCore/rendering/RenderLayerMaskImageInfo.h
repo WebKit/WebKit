@@ -44,7 +44,7 @@ public:
     ~MaskImageInfo();
 
     void updateMaskImageClients();
-    void removeMaskImageClients(const RenderStyle& oldStyle);
+    void removeMaskImageClients();
 
 private:
     static HashMap<const RenderLayer*, std::unique_ptr<MaskImageInfo>>& layerToMaskMap();
@@ -58,6 +58,7 @@ private:
     Vector<CachedResourceHandle<CachedSVGDocument>> m_externalSVGReferences;
     std::unique_ptr<SVGDocumentClient> m_svgDocumentClient;
     std::unique_ptr<ImageClient> m_imageClient;
+    Vector<RefPtr<MaskImageOperation>> m_maskImageOperations;
 };
 
 } // namespace WebCore

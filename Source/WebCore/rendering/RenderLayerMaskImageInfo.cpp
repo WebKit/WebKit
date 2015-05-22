@@ -106,16 +106,18 @@ RenderLayer::MaskImageInfo::MaskImageInfo(RenderLayer& layer)
 
 RenderLayer::MaskImageInfo::~MaskImageInfo()
 {
-    removeMaskImageClients(m_layer.renderer().style());
+    removeMaskImageClients();
 }
 
 void RenderLayer::MaskImageInfo::updateMaskImageClients()
 {
-    removeMaskImageClients(m_layer.renderer().style());
+    removeMaskImageClients();
     
     for (auto* maskLayer = m_layer.renderer().style().maskLayers(); maskLayer; maskLayer = maskLayer->next()) {
-        const RefPtr<MaskImageOperation> maskImage = maskLayer->maskImage();
+        RefPtr<MaskImageOperation> maskImage = maskLayer->maskImage();
         maskImage->setRenderLayerImageClient(m_imageClient.get());
+        m_maskImageOperations.append(maskImage);
+
         CachedSVGDocumentReference* documentReference = maskImage->cachedSVGDocumentReference();
         CachedSVGDocument* cachedSVGDocument = documentReference ? documentReference->document() : nullptr;
         
@@ -134,13 +136,11 @@ void RenderLayer::MaskImageInfo::updateMaskImageClients()
     }
 }
 
-void RenderLayer::MaskImageInfo::removeMaskImageClients(const RenderStyle& oldStyle)
+void RenderLayer::MaskImageInfo::removeMaskImageClients()
 {
-    for (auto* maskLayer = oldStyle.maskLayers(); maskLayer; maskLayer = maskLayer->next()) {
-        if (auto& image = maskLayer->maskImage())
-            image->setRenderLayerImageClient(nullptr);
-    }
-    
+    for (auto& maskImage : m_maskImageOperations)
+        maskImage->setRenderLayerImageClient(nullptr);
+
     for (auto& externalSVGReference : m_externalSVGReferences)
         externalSVGReference->removeClient(m_svgDocumentClient.get());
     m_externalSVGReferences.clear();
