@@ -137,11 +137,6 @@ void WebDatabaseManager::deleteAllDatabases() const
     DatabaseManager::singleton().deleteAllDatabases();
 }
 
-void WebDatabaseManager::setPauseAllDatabases(bool pauseAllDatabases)
-{
-    DatabaseManager::singleton().setPauseAllDatabases(pauseAllDatabases);
-}
-
 void WebDatabaseManager::closeAllDatabases() const
 {
     DatabaseManager::singleton().closeAllDatabases();

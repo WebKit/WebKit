@@ -397,11 +397,6 @@ bool DatabaseManager::deleteDatabase(SecurityOrigin* origin, const String& name)
     return m_server->deleteDatabase(origin, name);
 }
 
-void DatabaseManager::setPauseAllDatabases(bool pauseAllDatabases)
-{
-    m_server->setPauseAllDatabases(pauseAllDatabases);
-}
-
 void DatabaseManager::closeAllDatabases()
 {
     m_server->closeAllDatabases();

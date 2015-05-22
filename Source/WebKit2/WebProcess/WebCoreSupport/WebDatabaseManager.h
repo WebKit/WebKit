@@ -46,8 +46,6 @@ public:
     void setQuotaForOrigin(const String& originIdentifier, unsigned long long quota) const;
     void deleteAllDatabases() const;
 
-    void setPauseAllDatabases(bool);
-
     void closeAllDatabases() const;
 
 private:

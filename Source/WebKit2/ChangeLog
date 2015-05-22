@@ -1,3 +1,26 @@
+2015-05-21  Daniel Bates  <dabates@apple.com>
+
+        Rollout <http://trac.webkit.org/changeset/183909>
+        (https://bugs.webkit.org/show_bug.cgi?id=144657)
+
+        Revert <http://trac.webkit.org/changeset/183909> since pausing the database
+        thread prevents in-progress transactions from completing. We need to think
+        about this change some more.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _applicationDidEnterBackground:]): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::applicationDidEnterBackground): Deleted.
+        * WebProcess/WebCoreSupport/WebDatabaseManager.cpp:
+        (WebKit::WebDatabaseManager::setPauseAllDatabases): Deleted.
+        * WebProcess/WebCoreSupport/WebDatabaseManager.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::applicationWillEnterForeground): Deleted.
+        (WebKit::WebPage::applicationDidEnterBackground): Deleted.
+
 2015-05-21  Enrica Casucci  <enrica@apple.com>
 
         [iOS] Crash when taking a snapshot of a large PDF.

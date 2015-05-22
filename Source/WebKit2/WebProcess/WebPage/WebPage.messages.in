@@ -87,12 +87,9 @@ messages -> WebPage LegacyReceiver {
     SetAssistedNodeValue(String value)
     SetAssistedNodeValueAsNumber(double value)
     SetAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSelection)
-
     ApplicationWillResignActive()
     ApplicationWillEnterForeground()
-    ApplicationDidEnterBackground(uint64_t callbackID)
     ApplicationDidBecomeActive()
-
     ContentSizeCategoryDidChange(String contentSizeCategory)
     ExecuteEditCommandWithCallback(String name, uint64_t callbackID)
     GetLookupContextAtPoint(WebCore::IntPoint point, uint64_t callbackID)
