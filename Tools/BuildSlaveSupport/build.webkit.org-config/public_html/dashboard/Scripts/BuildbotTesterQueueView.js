@@ -23,9 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-BuildbotTesterQueueView = function(debugQueues, releaseQueues)
+BuildbotTesterQueueView = function(queues)
 {
-    BuildbotQueueView.call(this, debugQueues, releaseQueues);
+    BuildbotQueueView.call(this, queues);
+
+    this.releaseQueues = this.queues.filter(function(queue) { return queue.debug === false; });
+    this.debugQueues = this.queues.filter(function(queue) { return queue.debug === true; });
 
     this.update();
 };

@@ -36,7 +36,7 @@ for (var i = 0; i < buildbots.length; ++i) {
         if (!platform)
             platform = categorizedQueuesByPlatformAndBuildType[queue.platform] = {};
         if (!platform.builders)
-            platform.builders = {};
+            platform.builders = [];
 
         var categoryName;
         if (queue.builder)
@@ -54,15 +54,9 @@ for (var i = 0; i < buildbots.length; ++i) {
 
         category = platform[categoryName];
         if (!category)
-            category = platform[categoryName] = {};
+            category = platform[categoryName] = [];
 
-        var buildType = queue.debug ? "debug" : "release";
-
-        buildQueues = category[buildType];
-        if (!buildQueues)
-            buildQueues = category[buildType] = [];
-
-        buildQueues.push(queue);
+        category.push(queue);
     }
 }
 
@@ -73,7 +67,7 @@ if (hasBubbles) {
         if (!platform)
             platform = categorizedQueuesByPlatformAndBuildType[queue.platform] = {};
         if (!platform.builders)
-            platform.builders = {};
+            platform.builders = [];
 
         var categoryName = BubblesCategory;
 
@@ -199,7 +193,7 @@ function documentReady()
 
         cell = document.createElement("td");
 
-        var view = new BuildbotBuilderQueueView(platformQueues.builders.debug, platformQueues.builders.release);
+        var view = new BuildbotBuilderQueueView(platformQueues.builders);
         cell.appendChild(view.element);
         row.appendChild(cell);
 
@@ -208,7 +202,7 @@ function documentReady()
 
             var testerProperty = Buildbot.TestCategory[testerKey];
             if (platformQueues[testerProperty]) {
-                var view = new BuildbotTesterQueueView(platformQueues[testerProperty].debug, platformQueues[testerProperty].release);
+                var view = new BuildbotTesterQueueView(platformQueues[testerProperty]);
                 cell.appendChild(view.element);
             }
 
@@ -216,13 +210,13 @@ function documentReady()
         }
 
         var cell = document.createElement("td");
-        if (platformQueues.performance && platformQueues.performance.release) {
-            var view = new BuildbotPerformanceQueueView(platformQueues.performance.release);
+        if (platformQueues.performance) {
+            var view = new BuildbotPerformanceQueueView(platformQueues.performance);
             cell.appendChild(view.element);
         }
 
-        if (platformQueues.leaks && platformQueues.leaks.debug) {
-            var view = new BuildbotLeaksQueueView(platformQueues.leaks.debug);
+        if (platformQueues.leaks) {
+            var view = new BuildbotLeaksQueueView(platformQueues.leaks);
             cell.appendChild(view.element);
         }
 

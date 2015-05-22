@@ -23,23 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-BuildbotQueueView = function(debugQueues, releaseQueues)
+BuildbotQueueView = function(queues)
 {
     QueueView.call(this);
 
-    this.releaseQueues = releaseQueues || [];
-    this.debugQueues = debugQueues || [];
+    this.queues = queues || [];
 
-    this.releaseQueues.forEach(function(queue) {
-        if (this.platform && this.platform != queue.platform)
-            throw "A buildbot view may not contain queues for multiple platforms."
-        else
-            this.platform = queue.platform;
-        queue.addEventListener(BuildbotQueue.Event.IterationsAdded, this._queueIterationsAdded, this);
-        queue.addEventListener(BuildbotQueue.Event.UnauthorizedAccess, this._unauthorizedAccess, this);
-    }.bind(this));
-
-    this.debugQueues.forEach(function(queue) {
+    this.queues.forEach(function(queue) {
         if (this.platform && this.platform != queue.platform)
             throw "A buildbot view may not contain queues for multiple platforms."
         else
@@ -302,8 +292,7 @@ BuildbotQueueView.prototype = {
 
     _updateQueues: function()
     {
-        this.releaseQueues.forEach(function(queue) { queue.update(); });
-        this.debugQueues.forEach(function(queue) { queue.update(); });
+        this.queues.forEach(function(queue) { queue.update(); });
     },
 
     _queueIterationsAdded: function(event)

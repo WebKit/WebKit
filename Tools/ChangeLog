@@ -1,3 +1,32 @@
+2015-05-22  Alexey Proskuryakov  <ap@apple.com>
+
+        build.webkit.org/dashboard: Simplify BuildbotQueueView creation code
+        https://bugs.webkit.org/show_bug.cgi?id=145297
+
+        Reviewed by Tim Horton.
+
+        This is a refactoring to simplify code, and to make it more logical.
+
+        It is up to the view to decide how to present the queues, and whether to split
+        them into debug and release, or in some different way.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotBuilderQueueView.js:
+        (BuildbotBuilderQueueView.filterQueues):
+        (BuildbotBuilderQueueView):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotLeaksQueueView.js:
+        (BuildbotLeaksQueueView):
+        (BuildbotLeaksQueueView.prototype.update):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotPerformanceQueueView.js:
+        (BuildbotPerformanceQueueView):
+        (BuildbotPerformanceQueueView.prototype.update):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        (BuildbotQueueView):
+        (BuildbotQueueView.prototype._updateQueues):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        (BuildbotTesterQueueView):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Main.js:
+        (documentReady):
+
 2015-05-22  Tim Horton  <timothy_horton@apple.com>
 
         Remove action menu support

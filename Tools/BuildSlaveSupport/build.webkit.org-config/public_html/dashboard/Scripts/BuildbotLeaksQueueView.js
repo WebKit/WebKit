@@ -25,7 +25,7 @@
 
 BuildbotLeaksQueueView = function(queues)
 {
-    BuildbotQueueView.call(this, [], queues);
+    BuildbotQueueView.call(this, queues);
     this.update();
 };
 
@@ -84,7 +84,7 @@ BuildbotLeaksQueueView.prototype = {
             new PopoverTracker(status.statusBubbleElement, this._presentPopoverForLeaksQueue.bind(this), iteration);
         }
 
-        this.appendBuildStyle.call(this, this.releaseQueues, "Leaks", appendLeaksQueueStatus);
+        this.appendBuildStyle.call(this, this.queues, "Leaks", appendLeaksQueueStatus);
     },
 
     addLinkToRow: function(rowElement, className, text, url)

@@ -23,25 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-BuildbotBuilderQueueView = function(debugQueues, releaseQueues)
+BuildbotBuilderQueueView = function(queues)
 {
-    BuildbotQueueView.call(this, debugQueues, releaseQueues);
+    BuildbotQueueView.call(this, queues);
 
-    function filterQueuesByArchitecture(architecture, queue)
+    function filterQueues(architecture, debug, queue)
     {
-        return queue.architecture === architecture;
+        return queue.architecture === architecture && queue.debug === debug;
     }
 
-    this.universalReleaseQueues = this.releaseQueues.filter(filterQueuesByArchitecture.bind(this, Buildbot.BuildArchitecture.Universal));
-    this.sixtyFourBitReleaseQueues = this.releaseQueues.filter(filterQueuesByArchitecture.bind(this, Buildbot.BuildArchitecture.SixtyFourBit));
-    this.thirtyTwoBitReleaseQueues = this.releaseQueues.filter(filterQueuesByArchitecture.bind(this, Buildbot.BuildArchitecture.ThirtyTwoBit));
+    this.universalReleaseQueues = this.queues.filter(filterQueues.bind(this, Buildbot.BuildArchitecture.Universal, false));
+    this.sixtyFourBitReleaseQueues = this.queues.filter(filterQueues.bind(this, Buildbot.BuildArchitecture.SixtyFourBit, false));
+    this.thirtyTwoBitReleaseQueues = this.queues.filter(filterQueues.bind(this, Buildbot.BuildArchitecture.ThirtyTwoBit, false));
 
-    this.universalDebugQueues = this.debugQueues.filter(filterQueuesByArchitecture.bind(this, Buildbot.BuildArchitecture.Universal));
-    this.sixtyFourBitDebugQueues = this.debugQueues.filter(filterQueuesByArchitecture.bind(this, Buildbot.BuildArchitecture.SixtyFourBit));
-    this.thirtyTwoBitDebugQueues = this.debugQueues.filter(filterQueuesByArchitecture.bind(this, Buildbot.BuildArchitecture.ThirtyTwoBit));
+    this.universalDebugQueues = this.queues.filter(filterQueues.bind(this, Buildbot.BuildArchitecture.Universal, true));
+    this.sixtyFourBitDebugQueues = this.queues.filter(filterQueues.bind(this, Buildbot.BuildArchitecture.SixtyFourBit, true));
+    this.thirtyTwoBitDebugQueues = this.queues.filter(filterQueues.bind(this, Buildbot.BuildArchitecture.ThirtyTwoBit, true));
 
-    this.hasMultipleReleaseBuilds = this.releaseQueues.length > 1;
-    this.hasMultipleDebugBuilds = this.debugQueues.length > 1;
+    this.hasMultipleReleaseBuilds = this.universalReleaseQueues.length + this.sixtyFourBitReleaseQueues.length + this.thirtyTwoBitReleaseQueues.length > 1;
+    this.hasMultipleDebugBuilds = this.universalDebugQueues.length + this.sixtyFourBitDebugQueues.length + this.thirtyTwoBitDebugQueues.length > 1;
 
     this.update();
 };

@@ -25,7 +25,7 @@
 
 BuildbotPerformanceQueueView = function(queues)
 {
-    BuildbotQueueView.call(this, [], queues);
+    BuildbotQueueView.call(this, queues);
     this.update();
 };
 
@@ -82,7 +82,7 @@ BuildbotPerformanceQueueView.prototype = {
             new PopoverTracker(status.statusBubbleElement, this._presentPopoverForPerformanceQueue.bind(this), queue);
         }
 
-        this.appendBuildStyle.call(this, this.releaseQueues, 'Release', appendPerformanceQueueStatus);
+        this.appendBuildStyle.call(this, this.queues, 'Release', appendPerformanceQueueStatus);
     },
 
     addLinkToRow: function(rowElement, className, text, url)
