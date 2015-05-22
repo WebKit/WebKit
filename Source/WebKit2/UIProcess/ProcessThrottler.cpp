@@ -57,7 +57,7 @@ void ProcessThrottler::updateAssertionNow()
     m_suspendTimer.stop();
     if (m_assertion) {
         m_assertion->setState(assertionState());
-        m_process.didSetAssertionState(assertionState());
+        m_process->didSetAssertionState(assertionState());
     }
 }
     
@@ -71,7 +71,7 @@ void ProcessThrottler::updateAssertion()
         m_process->sendProcessWillSuspend();
         m_suspendTimer.startOneShot(processSuspensionTimeout);
         m_assertion->setState(AssertionState::Background);
-        m_process.didSetAssertionState(AssertionState::Background);
+        m_process->didSetAssertionState(AssertionState::Background);
         return;
     }
     
@@ -91,7 +91,7 @@ void ProcessThrottler::didConnectToProcess(pid_t pid)
 {
     m_suspendTimer.stop();
     m_assertion = std::make_unique<ProcessAndUIAssertion>(pid, assertionState());
-    m_process.didSetAssertionState(assertionState());
+    m_process->didSetAssertionState(assertionState());
 }
     
 void ProcessThrottler::suspendTimerFired()

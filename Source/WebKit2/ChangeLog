@@ -1,5 +1,9 @@
 2015-05-22  Babak Shafiei  <bshafiei@apple.com>
 
+        Build fix after r184774.
+
+2015-05-22  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r184774.
 
     2015-05-21  Gavin Barraclough  <barraclough@apple.com>
