@@ -452,8 +452,10 @@ private:
                     // doesn't yet know to be dead.
                     if (!m_myRefCounts.get(node))
                         break;
-                    if (m_graph.m_form == ThreadedCPS)
+                    if (m_graph.m_form == ThreadedCPS) {
                         VALIDATE((node, block), getLocalPositions.operand(node->local()) == notSet);
+                        VALIDATE((node, block), !!node->child1());
+                    }
                     getLocalPositions.operand(node->local()) = i;
                     break;
                 case SetLocal:

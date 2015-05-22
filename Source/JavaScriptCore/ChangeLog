@@ -1,3 +1,24 @@
+2015-05-21  Filip Pizlo  <fpizlo@apple.com>
+
+        CPS rethreading should really get rid of GetLocals
+        https://bugs.webkit.org/show_bug.cgi?id=145290
+
+        Reviewed by Benjamin Poulain.
+        
+        CPS rethreading is intended to get rid of redundant GetLocals. CSE can also do it, but
+        the idea is that you should be able to disable CSE and everything would still work. This
+        fixes a bug in CPS rethreading's GetLocal elimination: we should be calling replaceWith
+        rather than setReplacement, since setReplacement still leaves the original node.
+
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeGetLocalFor): Fix the bug.
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode): Eliminating GetLocals means that they turn into Check. We should handle Checks that have zero inputs.
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validateCPS): Add a validation for what a GetLocal should look like in ThreadedCPS.
+        * tests/stress/get-local-elimination.js: Added.
+        (foo):
+
 2015-05-21  Saam Barati  <saambarati1@gmail.com>
 
         Object allocation sinking phase should explicitly create bottom values for CreateActivation sink candidates and CreateActivation should have SymbolTable as a child node

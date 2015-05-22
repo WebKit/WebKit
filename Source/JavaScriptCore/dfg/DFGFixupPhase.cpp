@@ -1050,15 +1050,19 @@ private:
         }
 
         case Check: {
-            switch (node->child1().useKind()) {
-            case NumberUse:
-                if (node->child1()->shouldSpeculateInt32ForArithmetic())
-                    node->child1().setUseKind(Int32Use);
-                break;
-            default:
-                break;
-            }
-            observeUseKindOnEdge(node->child1());
+            m_graph.doToChildren(
+                node,
+                [&] (Edge& edge) {
+                    switch (edge.useKind()) {
+                    case NumberUse:
+                        if (edge->shouldSpeculateInt32ForArithmetic())
+                            edge.setUseKind(Int32Use);
+                        break;
+                    default:
+                        break;
+                    }
+                    observeUseKindOnEdge(edge);
+                });
             break;
         }
 
