@@ -30,6 +30,7 @@
 #import "DOMElementInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
+#import "LocalizedStrings.h"
 #import "WebDataSource.h"
 #import "WebDocumentInternal.h"
 #import "WebElementDictionary.h"
