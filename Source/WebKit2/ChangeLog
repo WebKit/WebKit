@@ -1,3 +1,52 @@
+2015-05-21  Gavin Barraclough  <barraclough@apple.com>
+
+        Networking process sometimes suspended while WebContent runnable
+        https://bugs.webkit.org/show_bug.cgi?id=145291
+        <rdar://problem/21033029>
+
+        Reviewed by Andreas Kling.
+
+        There is an asymmetry in how the Networking process suspension is managed.
+        We drop the assertion (& suspend the process) whenever the WebProcess says
+        it is ready to suspend, but we only take the assertion (& resume execution)
+        when the WebContent process is actually resumed. This leaves a race – where
+        the WebContent process was willing to be suspended, but the UI app changed
+        its mind suspending it. Since the WebContent process never actually suspended
+        (we only prepared it to), we never send a resume, and since we never resume,
+        we never wake the Networking process.
+
+        The fix is pretty clean. A web process should take a token on the networking
+        process precisely whenever it holds an assertion on the web content process.
+        This also enables a nice refinement, that when holding a BG assertion on the
+        WebContent process we only need to hold a BG assertion on the networking
+        process.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didSetAssertionState):
+            - no-op
+        * UIProcess/Network/NetworkProcessProxy.h:
+            - added didSetAssertionState.
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::updateAssertionNow):
+        (WebKit::ProcessThrottler::updateAssertion):
+        (WebKit::ProcessThrottler::didConnectToProcess):
+            - whenever taking/updating the assertion, inform the client via didSetAssertionState.
+        * UIProcess/ProcessThrottlerClient.h:
+            - added didSetAssertionState.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didFinishLaunching):
+            removed initializeNetworkProcessActivityToken - this is taken via ProcessThrottler::didConnectToProcess.
+        (WebKit::WebProcessProxy::sendProcessDidResume):
+            - removed call to initializeNetworkProcessActivityToken - updated via didSetAssertionState.
+        (WebKit::WebProcessProxy::processReadyToSuspend):
+            - removed update of m_tokenForNetworkProcess - updated via didSetAssertionState.
+        (WebKit::WebProcessProxy::didSetAssertionState):
+            - update m_backgroundTokenForNetworkProcess/m_foregroundTokenForNetworkProcess.
+        (WebKit::WebProcessProxy::initializeNetworkProcessActivityToken): Deleted.
+            - updated via didSetAssertionState.
+        * UIProcess/WebProcessProxy.h:
+            - added didSetAssertionState, added separate FG/BG activity tokens for Networking process.
+
 2015-05-22  Dan Bernstein  <mitz@apple.com>
 
         Fixed the fix for <rdar://problem/20830673> Symlink the WebKit dylib instead of just the framework directory

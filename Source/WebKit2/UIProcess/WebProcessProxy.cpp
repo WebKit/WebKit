@@ -580,8 +580,6 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     ASSERT(xpcConnection);
     m_throttler.didConnectToProcess(xpc_connection_get_pid(xpcConnection));
 #endif
-
-    initializeNetworkProcessActivityToken();
 }
 
 WebFrameProxy* WebProcessProxy::webFrame(uint64_t frameID) const
@@ -901,28 +899,15 @@ void WebProcessProxy::sendCancelPrepareToSuspend()
         send(Messages::WebProcess::CancelPrepareToSuspend(), 0);
 }
 
-void WebProcessProxy::initializeNetworkProcessActivityToken()
-{
-#if PLATFORM(IOS) && ENABLE(NETWORK_PROCESS)
-    if (processPool().usesNetworkProcess())
-        m_tokenForNetworkProcess = processPool().ensureNetworkProcess().throttler().foregroundActivityToken();
-#endif
-}
-
 void WebProcessProxy::sendProcessDidResume()
 {
-    initializeNetworkProcessActivityToken();
-
     if (canSendMessage())
         send(Messages::WebProcess::ProcessDidResume(), 0);
 }
-    
+
 void WebProcessProxy::processReadyToSuspend()
 {
     m_throttler.processReadyToSuspend();
-#if PLATFORM(IOS) && ENABLE(NETWORK_PROCESS)
-    m_tokenForNetworkProcess = nullptr;
-#endif
 }
 
 void WebProcessProxy::didCancelProcessSuspension()
@@ -930,6 +915,32 @@ void WebProcessProxy::didCancelProcessSuspension()
     m_throttler.didCancelProcessSuspension();
 }
 
+void WebProcessProxy::didSetAssertionState(AssertionState state)
+{
+#if PLATFORM(IOS) && ENABLE(NETWORK_PROCESS)
+    switch (state) {
+    case AssertionState::Suspended:
+        m_foregroundTokenForNetworkProcess = nullptr;
+        m_backgroundTokenForNetworkProcess = nullptr;
+        break;
+
+    case AssertionState::Background:
+        if (processPool().usesNetworkProcess())
+            m_backgroundTokenForNetworkProcess = processPool().ensureNetworkProcess().throttler().backgroundActivityToken();
+        m_foregroundTokenForNetworkProcess = nullptr;
+        break;
+    
+    case AssertionState::Foreground:
+        if (processPool().usesNetworkProcess())
+            m_foregroundTokenForNetworkProcess = processPool().ensureNetworkProcess().throttler().foregroundActivityToken();
+        m_backgroundTokenForNetworkProcess = nullptr;
+        break;
+    }
+#else
+    UNUSED_PARAM(state);
+#endif
+}
+    
 void WebProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
 {
     if (!isHoldingLockedFiles) {
