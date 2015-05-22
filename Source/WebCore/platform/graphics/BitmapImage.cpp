@@ -135,10 +135,8 @@ void BitmapImage::destroyDecodedData(bool destroyAll)
             frameBytesCleared += frameBytes;
     }
 
-    destroyMetadataAndNotify(frameBytesCleared);
-
     m_source.clear(destroyAll, clearBeforeFrame, data(), m_allDataReceived);
-    return;
+    destroyMetadataAndNotify(frameBytesCleared, ClearedSource::Yes);
 }
 
 void BitmapImage::destroyDecodedDataIfNecessary(bool destroyAll)
@@ -169,7 +167,7 @@ void BitmapImage::destroyDecodedDataIfNecessary(bool destroyAll)
         destroyDecodedData(destroyAll);
 }
 
-void BitmapImage::destroyMetadataAndNotify(unsigned frameBytesCleared)
+void BitmapImage::destroyMetadataAndNotify(unsigned frameBytesCleared, ClearedSource clearedSource)
 {
     m_isSolidColor = false;
     m_checkedForSolidColor = false;
@@ -177,10 +175,13 @@ void BitmapImage::destroyMetadataAndNotify(unsigned frameBytesCleared)
 
     ASSERT(m_decodedSize >= frameBytesCleared);
     m_decodedSize -= frameBytesCleared;
-    if (frameBytesCleared > 0) {
+
+    // Clearing the ImageSource destroys the extra decoded data used for determining image properties.
+    if (clearedSource == ClearedSource::Yes) {
         frameBytesCleared += m_decodedPropertiesSize;
         m_decodedPropertiesSize = 0;
     }
+
     if (frameBytesCleared && imageObserver())
         imageObserver()->decodedSizeChanged(this, -safeCast<int>(frameBytesCleared));
 }
@@ -313,7 +314,7 @@ bool BitmapImage::dataChanged(bool allDataReceived)
         if (m_frames[i].m_haveMetadata && !m_frames[i].m_isComplete)
             frameBytesCleared += (m_frames[i].clear(true) ? frameBytes : 0);
     }
-    destroyMetadataAndNotify(frameBytesCleared);
+    destroyMetadataAndNotify(frameBytesCleared, ClearedSource::No);
 #else
     // FIXME: why is this different for iOS?
     int deltaBytes = 0;
@@ -325,7 +326,7 @@ bool BitmapImage::dataChanged(bool allDataReceived)
             m_decodedPropertiesSize = 0;
         }
     }
-    destroyMetadataAndNotify(deltaBytes);
+    destroyMetadataAndNotify(deltaBytes, ClearedSource::No);
 #endif
     
     // Feed all the data we've seen so far to the image decoder.
