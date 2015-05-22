@@ -598,12 +598,6 @@ void WebPageProxy::applicationWillEnterForeground()
     m_process->send(Messages::WebPage::ApplicationWillEnterForeground(), m_pageID);
 }
 
-void WebPageProxy::applicationDidEnterBackground()
-{
-    uint64_t callbackID = m_callbacks.put(VoidCallback::create([](CallbackBase::Error) { }, m_process->throttler().backgroundActivityToken()));
-    m_process->send(Messages::WebPage::ApplicationDidEnterBackground(callbackID), m_pageID);
-}
-
 void WebPageProxy::applicationWillResignActive()
 {
     m_process->send(Messages::WebPage::ApplicationWillResignActive(), m_pageID);

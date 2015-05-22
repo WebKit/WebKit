@@ -549,7 +549,6 @@ private:
 - (void)_applicationDidEnterBackground:(NSNotification*)notification
 {
     _isBackground = YES;
-    _page->applicationDidEnterBackground();
     _page->viewStateDidChange(ViewState::AllFlags & ~ViewState::IsInWindow);
 }
 
