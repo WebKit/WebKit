@@ -1,5 +1,15 @@
 2015-05-22  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r184678.
+
+    2015-05-20  Alex Christensen  <achristensen@webkit.org>
+
+            Unreviewed build fix; LocalizedStrings.h is in WebCore.
+
+            * WebView/WebActionMenuController.mm:
+
+2015-05-22  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r184674.
 
     2015-05-20  Jer Noble  <jer.noble@apple.com>
