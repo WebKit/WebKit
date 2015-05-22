@@ -140,6 +140,7 @@ void RenderLayer::MaskImageInfo::removeMaskImageClients()
 {
     for (auto& maskImage : m_maskImageOperations)
         maskImage->setRenderLayerImageClient(nullptr);
+    m_maskImageOperations.clear();
 
     for (auto& externalSVGReference : m_externalSVGReferences)
         externalSVGReference->removeClient(m_svgDocumentClient.get());
