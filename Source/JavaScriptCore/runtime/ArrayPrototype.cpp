@@ -602,9 +602,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
     unsigned end = argumentClampedIndexFromStartOrEnd(exec, 1, length, length);
 
     if (isJSArray(thisObj)) {
-        EncodedJSValue result;
-        if (asArray(thisObj)->fastSlice(*exec, begin, end - begin, result))
-            return result;
+        if (JSArray* result = asArray(thisObj)->fastSlice(*exec, begin, end - begin))
+            return JSValue::encode(result);
     }
 
     JSArray* result = constructEmptyArray(exec, nullptr, end - begin);
@@ -634,6 +633,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
 {
     // 15.4.4.12
 
+    VM& vm = exec->vm();
+
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
     unsigned length = getLength(exec, thisObj);
     if (exec->hadException())
@@ -655,17 +656,22 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
             deleteCount = static_cast<unsigned>(deleteDouble);
     }
 
-    JSArray* resObj = JSArray::tryCreateUninitialized(exec->vm(), exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), deleteCount);
-    if (!resObj)
-        return JSValue::encode(throwOutOfMemoryError(exec));
+    JSArray* result = nullptr;
 
-    JSValue result = resObj;
-    VM& vm = exec->vm();
-    for (unsigned k = 0; k < deleteCount; k++) {
-        JSValue v = getProperty(exec, thisObj, k + begin);
-        if (exec->hadException())
-            return JSValue::encode(jsUndefined());
-        resObj->initializeIndex(vm, k, v);
+    if (isJSArray(thisObj))
+        result = asArray(thisObj)->fastSlice(*exec, begin, deleteCount);
+
+    if (!result) {
+        result = JSArray::tryCreateUninitialized(vm, exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), deleteCount);
+        if (!result)
+            return JSValue::encode(throwOutOfMemoryError(exec));
+
+        for (unsigned k = 0; k < deleteCount; ++k) {
+            JSValue v = getProperty(exec, thisObj, k + begin);
+            if (exec->hadException())
+                return JSValue::encode(jsUndefined());
+            result->initializeIndex(vm, k, v);
+        }
     }
 
     unsigned additionalArgs = std::max<int>(exec->argumentCount() - 2, 0);

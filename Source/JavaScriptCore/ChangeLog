@@ -1,3 +1,27 @@
+2015-05-22  Andreas Kling  <akling@apple.com>
+
+        [JSC] Speed up new array construction in Array.prototype.splice().
+        <https://webkit.org/b/145303>
+
+        Reviewed by Benjamin Poulain.
+
+        Give splice() a fast path just like slice(), for indexing types where the backing
+        store can be memcpy'd. I generalized JSArray::fastSlice() a little bit so it works
+        for this optimization as well.
+
+        7% progression on Kraken/stanford-crypto-pbkdf2.
+
+        * runtime/JSArray.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::fastSlice): Tweak this to return JSArray*, and don't bother throwing
+        out-of-memory exceptions. Let the caller worry about that.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncSlice): Update for fastSlice() changes.
+        (JSC::arrayProtoFuncSplice): If the object we're splicing out of is a bona fide
+        JSArray, use fastSlice() to create the returned array instead of doing a generic
+        get/put loop.
+
 2015-05-21  Filip Pizlo  <fpizlo@apple.com>
 
         CPS rethreading should really get rid of GetLocals

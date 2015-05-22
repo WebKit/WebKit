@@ -675,7 +675,7 @@ void JSArray::push(ExecState* exec, JSValue value)
     }
 }
 
-bool JSArray::fastSlice(ExecState& exec, unsigned startIndex, unsigned count, EncodedJSValue& result)
+JSArray* JSArray::fastSlice(ExecState& exec, unsigned startIndex, unsigned count)
 {
     auto arrayType = indexingType();
     switch (arrayType) {
@@ -684,14 +684,12 @@ bool JSArray::fastSlice(ExecState& exec, unsigned startIndex, unsigned count, En
     case ArrayWithContiguous: {
         VM& vm = exec.vm();
         if (count >= MIN_SPARSE_ARRAY_INDEX || structure(vm)->holesMustForwardToPrototype(vm))
-            return false;
+            return nullptr;
 
         Structure* resultStructure = exec.lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(arrayType);
         JSArray* resultArray = JSArray::tryCreateUninitialized(vm, resultStructure, count);
-        if (!resultArray) {
-            result = JSValue::encode(throwOutOfMemoryError(&exec));
-            return true;
-        }
+        if (!resultArray)
+            return nullptr;
 
         auto& resultButterfly = *resultArray->butterfly();
         if (arrayType == ArrayWithDouble)
@@ -700,13 +698,11 @@ bool JSArray::fastSlice(ExecState& exec, unsigned startIndex, unsigned count, En
             memcpy(resultButterfly.contiguous().data(), m_butterfly->contiguous().data() + startIndex, sizeof(JSValue) * count);
         resultButterfly.setPublicLength(count);
 
-        result = JSValue::encode(resultArray);
-        return true;
+        return resultArray;
     }
     default:
-        break;
+        return nullptr;
     }
-    return false;
 }
 
 bool JSArray::shiftCountWithArrayStorage(VM& vm, unsigned startIndex, unsigned count, ArrayStorage* storage)
