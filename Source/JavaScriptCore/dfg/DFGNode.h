@@ -190,7 +190,7 @@ struct CallVarargsData {
 };
 
 struct LoadVarargsData {
-    VirtualRegister start; // Local for the first element.
+    VirtualRegister start; // Local for the first element. This is the first actual argument, not this.
     VirtualRegister count; // Local for the count.
     VirtualRegister machineStart;
     VirtualRegister machineCount;
