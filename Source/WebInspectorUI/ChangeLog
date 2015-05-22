@@ -1,3 +1,18 @@
+2015-05-21  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Dashboard debugger information can be clipped
+        https://bugs.webkit.org/show_bug.cgi?id=144209
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DashboardContainerView.css:
+        (.toolbar .dashboard-container):
+        Make dashboard flexible by using vw (viewport width units).
+
+        * UserInterface/Views/DefaultDashboardView.css:
+        (.toolbar .dashboard.default):
+        Center default dashboard icons in the middle, don't spread them along the dashboard.
+
 2015-05-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve the UI of the type profiler popover

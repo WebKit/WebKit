@@ -34,7 +34,7 @@ body.javascript .toolbar .dashboard.default > .item.resourcesCount {
 .toolbar .dashboard.default {
     display: flex;
     flex-flow: row nowrap;
-    justify-content: space-between;
+    justify-content: center;
 }
 
 .toolbar .dashboard.default > .item {
