@@ -37,7 +37,7 @@ AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
 AXURL: http://www.apple.com/
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:link, toolkit:WebKitGtk
 ------------
 AXRole: AXLink
 AXParent: AXWebArea
@@ -57,7 +57,7 @@ AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
 AXURL: http://www.apple.com/
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:link, toolkit:WebKitGtk
 ------------
 
 

@@ -451,30 +451,18 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
     if (coreObject->supportsARIASetSize())
         attributeSet = addToAtkAttributeSet(attributeSet, "setsize", String::number(coreObject->ariaSetSize()).utf8().data());
 
-    // Landmarks will be exposed with xml-roles object attributes, with the exception
-    // of LandmarkApplicationRole, which will be exposed with ATK_ROLE_EMBEDDED.
-    AccessibilityRole role = coreObject->roleValue();
-    switch (role) {
-    case LandmarkBannerRole:
-        attributeSet = addToAtkAttributeSet(attributeSet, "xml-roles", "banner");
-        break;
-    case LandmarkComplementaryRole:
-        attributeSet = addToAtkAttributeSet(attributeSet, "xml-roles", "complementary");
-        break;
-    case LandmarkContentInfoRole:
-        attributeSet = addToAtkAttributeSet(attributeSet, "xml-roles", "contentinfo");
-        break;
-    case LandmarkMainRole:
-        attributeSet = addToAtkAttributeSet(attributeSet, "xml-roles", "main");
-        break;
-    case LandmarkNavigationRole:
-        attributeSet = addToAtkAttributeSet(attributeSet, "xml-roles", "navigation");
-        break;
-    case LandmarkSearchRole:
-        attributeSet = addToAtkAttributeSet(attributeSet, "xml-roles", "search");
-        break;
-    default:
-        break;
+    // According to the W3C Core Accessibility API Mappings 1.1, section 5.4.1 General Rules:
+    // "User agents must expose the WAI-ARIA role string if the API supports a mechanism to do so."
+    // In the case of ATK, the mechanism to do so is an object attribute pair (xml-roles:"string").
+    // The computedRoleString is primarily for testing, and not limited to elements with ARIA roles.
+    // Because the computedRoleString currently contains the ARIA role string, we'll use it for
+    // both purposes, as the "computed-role" object attribute for all elements which have a value
+    // and also via the "xml-roles" attribute for elements with ARIA, as well as for landmarks.
+    String roleString = coreObject->computedRoleString();
+    if (!roleString.isEmpty()) {
+        if (coreObject->ariaRoleAttribute() != UnknownRole || coreObject->isLandmark())
+            attributeSet = addToAtkAttributeSet(attributeSet, "xml-roles", roleString.utf8().data());
+        attributeSet = addToAtkAttributeSet(attributeSet, "computed-role", roleString.utf8().data());
     }
 
     return attributeSet;

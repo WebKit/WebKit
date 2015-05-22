@@ -1070,7 +1070,10 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::roleDescription()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::computedRoleString()
 {
-    // FIXME: implement http://webkit.org/b/128420
+    String role = getAttributeSetValueForId(ATK_OBJECT(m_element.get()), ObjectAttributeType, "computed-role");
+    if (!role.isEmpty())
+        return JSStringCreateWithUTF8CString(role.utf8().data());
+
     return JSStringCreateWithCharacters(0, 0);
 }
 

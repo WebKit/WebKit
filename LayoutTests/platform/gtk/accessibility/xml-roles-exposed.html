@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div id="test">
+ <div role="alert"></div>
+ <div role="alertdialog"></div>
+ <div role="application"></div>
+ <div role="article"></div>
+ <div role="banner"></div>
+ <div role="button"></div>
+ <div role="checkbox"></div>
+ <div role="combobox"></div>
+ <div role="complementary"></div>
+ <div role="contentinfo"></div>
+ <div role="definition"></div>
+ <div role="dialog"></div>
+ <div role="directory"></div>
+ <div role="document"></div>
+ <div role="form"></div>
+ <div role="group"></div>
+ <div role="heading"></div>
+ <div role="img"></div>
+ <div role="link"></div>
+ <div role="log"></div>
+ <div role="main"></div>
+ <div role="marquee"></div>
+ <div role="math"></div>
+ <div role="navigation"></div>
+ <div role="note"></div>
+ <div role="presentation"></div>
+ <div role="progressbar"></div>
+ <div role="radio"></div>
+ <div role="region"></div>
+ <div role="scrollbar"></div>
+ <div role="search"></div>
+ <div role="searchbox"></div>
+ <div role="separator"></div>
+ <div role="slider"></div>
+ <div role="spinbutton"></div>
+ <div role="status"></div>
+ <div role="switch"></div>
+ <div role="textbox"></div>
+ <div role="timer"></div>
+ <div role="toolbar"></div>
+ <div role="tooltip"></div>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Verify exposure of ARIA role values via the 'xml-roles' object attribute.");
+if (window.accessibilityController) {
+    document.getElementById("body").focus();
+    debug(accessibilityController.focusedElement.attributesOfChildren());
+}
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

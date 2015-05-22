@@ -1,3 +1,24 @@
+2015-05-21  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [GTK] Implement computedRoleString in AccessibilityUIElement
+        https://bugs.webkit.org/show_bug.cgi?id=128420
+
+        Reviewed by Chris Fleizach.
+
+        * platform/gtk/TestExpectations: Removed roles-computedRoleString from the failing test.
+        * platform/gtk/accessibility/image-link-expected.txt: Updated to reflect the new object attribute.
+        * platform/gtk/accessibility/image-map2-expected.txt: Updated to reflect the new object attribute.
+        * platform/gtk/accessibility/lists-expected.txt: Updated to reflect the new object attribute.
+        * platform/gtk/accessibility/roles-computedRoleString-expected.txt: Added.
+        * platform/gtk/accessibility/table-attributes-expected.txt: Updated to reflect the new object attribute.
+        * platform/gtk/accessibility/table-cell-spans-expected.txt: Updated to reflect the new object attribute.
+        * platform/gtk/accessibility/table-cells-expected.txt: Updated to reflect the new object attribute.
+        * platform/gtk/accessibility/table-detection-expected.txt: Updated to reflect the new object attribute.
+        * platform/gtk/accessibility/table-sections-expected.txt: Updated to reflect the new object attribute.
+        * platform/gtk/accessibility/table-with-rules-expected.txt: Updated to reflect the new object attribute.
+        * platform/gtk/accessibility/xml-roles-exposed-expected.txt: Added.
+        * platform/gtk/accessibility/xml-roles-exposed.html: Added.
+
 2015-05-21  Antti Koivisto  <antti@apple.com>
 
         MaskImageOperation code does not manage CachedImageClients correctly

@@ -25,7 +25,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:columnheader, toolkit:WebKitGtk
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
@@ -44,7 +44,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:columnheader, toolkit:WebKitGtk
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
@@ -63,7 +63,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:columnheader, toolkit:WebKitGtk
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
@@ -82,7 +82,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:columnheader, toolkit:WebKitGtk
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
@@ -101,7 +101,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:columnheader, toolkit:WebKitGtk
 ------------
 
 
@@ -124,7 +124,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:columnheader, toolkit:WebKitGtk
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
@@ -143,7 +143,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:columnheader, toolkit:WebKitGtk
 ------------
 AXRole: AXRowHeader
 AXParent: AXRow
@@ -162,7 +162,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:rowheader, toolkit:WebKitGtk
 ------------
 AXRole: AXRowHeader
 AXParent: AXRow
@@ -181,7 +181,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:rowheader, toolkit:WebKitGtk
 ------------
 
 
@@ -212,7 +212,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:columnheader, toolkit:WebKitGtk
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
@@ -231,7 +231,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:columnheader, toolkit:WebKitGtk
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
@@ -250,7 +250,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:columnheader, toolkit:WebKitGtk
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
@@ -269,7 +269,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:columnheader, toolkit:WebKitGtk
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
@@ -288,7 +288,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:columnheader, toolkit:WebKitGtk
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
@@ -307,7 +307,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:columnheader, toolkit:WebKitGtk
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
@@ -326,7 +326,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:columnheader, toolkit:WebKitGtk
 ------------
 AXRole: AXColumnHeader
 AXParent: AXRow
@@ -345,7 +345,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:columnheader, toolkit:WebKitGtk
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -364,7 +364,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:gridcell, toolkit:WebKitGtk
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -383,7 +383,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:gridcell, toolkit:WebKitGtk
 ------------
 AXRole: AXRowHeader
 AXParent: AXRow
@@ -402,7 +402,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:rowheader, toolkit:WebKitGtk
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -421,7 +421,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:gridcell, toolkit:WebKitGtk
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -440,7 +440,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:gridcell, toolkit:WebKitGtk
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -459,7 +459,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:gridcell, toolkit:WebKitGtk
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -478,7 +478,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:gridcell, toolkit:WebKitGtk
 ------------
 AXRole: AXRowHeader
 AXParent: AXRow
@@ -497,7 +497,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:rowheader, toolkit:WebKitGtk
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -516,7 +516,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:gridcell, toolkit:WebKitGtk
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -535,7 +535,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:gridcell, toolkit:WebKitGtk
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -554,7 +554,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:gridcell, toolkit:WebKitGtk
 ------------
 AXRole: AXCell
 AXParent: AXRow
@@ -573,7 +573,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:gridcell, toolkit:WebKitGtk
 ------------
 
 
