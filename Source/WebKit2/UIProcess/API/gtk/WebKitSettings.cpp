@@ -2573,7 +2573,7 @@ gboolean webkit_settings_get_media_playback_requires_user_gesture(WebKitSettings
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
-    return settings->priv->preferences->mediaPlaybackRequiresUserGesture();
+    return settings->priv->preferences->requiresUserGestureForMediaPlayback();
 }
 
 /**
@@ -2588,11 +2588,11 @@ void webkit_settings_set_media_playback_requires_user_gesture(WebKitSettings* se
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
     WebKitSettingsPrivate* priv = settings->priv;
-    bool currentValue = priv->preferences->mediaPlaybackRequiresUserGesture();
+    bool currentValue = priv->preferences->requiresUserGestureForMediaPlayback();
     if (currentValue == enabled)
         return;
 
-    priv->preferences->setMediaPlaybackRequiresUserGesture(enabled);
+    priv->preferences->setRequiresUserGestureForMediaPlayback(enabled);
     g_object_notify(G_OBJECT(settings), "media-playback-requires-user-gesture");
 }
 
