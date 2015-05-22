@@ -1,3 +1,11 @@
+2015-05-22  Dan Bernstein  <mitz@apple.com>
+
+        Removed the Use Shrink To Fit button from the toolbar’s default set.
+
+        Rubber-stamped by Tim Horton.
+
+        * MiniBrowser/mac/BrowserWindow.xib:
+
 2015-05-21  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [GTK] Implement computedRoleString in AccessibilityUIElement
