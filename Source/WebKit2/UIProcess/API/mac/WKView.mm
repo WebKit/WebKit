@@ -1335,6 +1335,9 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
     if (_data->_ignoresAllEvents)
         return;
 
+    if (event.phase == NSEventPhaseBegan)
+        [self _dismissContentRelativeChildWindowsWithAnimation:NO];
+
     if (_data->_allowsBackForwardNavigationGestures) {
         [self _ensureGestureController];
         if (_data->_gestureController->handleScrollWheelEvent(event))

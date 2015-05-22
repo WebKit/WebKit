@@ -3705,9 +3705,6 @@ void WebPageProxy::didChangeViewportProperties(const ViewportAttributes& attr)
 void WebPageProxy::pageDidScroll()
 {
     m_uiClient->pageDidScroll(this);
-#if PLATFORM(MAC)
-    m_pageClient.dismissContentRelativeChildWindows(false);
-#endif
 }
 
 void WebPageProxy::runOpenPanel(uint64_t frameID, const FileChooserSettings& settings)
