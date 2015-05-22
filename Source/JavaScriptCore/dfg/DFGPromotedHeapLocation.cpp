@@ -66,6 +66,10 @@ void printInternal(PrintStream& out, PromotedLocationKind kind)
     case StructurePLoc:
         out.print("StructurePLoc");
         return;
+
+    case ActivationSymbolTablePLoc:
+        out.print("ActivationSymbolTablePLoc");
+        return;
         
     case NamedPropertyPLoc:
         out.print("NamedPropertyPLoc");

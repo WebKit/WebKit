@@ -317,7 +317,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case CreateActivation: {
-        SymbolTable* table = graph.symbolTableFor(node->origin.semantic);
+        SymbolTable* table = node->castOperand<SymbolTable*>();
         if (table->singletonScope()->isStillValid())
             write(Watchpoint_fire);
         read(HeapObjectCount);

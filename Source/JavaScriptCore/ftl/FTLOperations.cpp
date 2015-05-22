@@ -115,21 +115,24 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
     case PhantomCreateActivation: {
         // Figure out where the scope is
         JSScope* scope = nullptr;
+        SymbolTable* table = nullptr;
         for (unsigned i = materialization->properties().size(); i--;) {
             const ExitPropertyValue& property = materialization->properties()[i];
-            if (property.location() != PromotedLocationDescriptor(ActivationScopePLoc))
-                continue;
-            scope = jsCast<JSScope*>(JSValue::decode(values[i]));
+            if (property.location() == PromotedLocationDescriptor(ActivationScopePLoc))
+                scope = jsCast<JSScope*>(JSValue::decode(values[i]));
+            else if (property.location() == PromotedLocationDescriptor(ActivationSymbolTablePLoc))
+                table = jsCast<SymbolTable*>(JSValue::decode(values[i]));
         }
         RELEASE_ASSERT(scope);
+        RELEASE_ASSERT(table);
 
         CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(
             materialization->origin(), exec->codeBlock());
-        SymbolTable* table = codeBlock->symbolTable();
         Structure* structure = codeBlock->globalObject()->activationStructure();
 
         JSLexicalEnvironment* result = JSLexicalEnvironment::create(vm, structure, scope, table);
 
+        RELEASE_ASSERT(materialization->properties().size() - 2 == table->scopeSize());
         // Figure out what to populate the activation with
         for (unsigned i = materialization->properties().size(); i--;) {
             const ExitPropertyValue& property = materialization->properties()[i];
@@ -137,6 +140,31 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
                 continue;
 
             result->variableAt(ScopeOffset(property.location().info())).set(exec->vm(), result, JSValue::decode(values[i]));
+        }
+
+        if (validationEnabled()) {
+            // Validate to make sure every slot in the scope has one value.
+            ConcurrentJITLocker locker(table->m_lock);
+            for (auto iter = table->begin(locker), end = table->end(locker); iter != end; ++iter) {
+                bool found = false;
+                for (unsigned i = materialization->properties().size(); i--;) {
+                    const ExitPropertyValue& property = materialization->properties()[i];
+                    if (property.location().kind() != ClosureVarPLoc)
+                        continue;
+                    if (ScopeOffset(property.location().info()) == iter->value.scopeOffset()) {
+                        found = true;
+                        break;
+                    }
+                }
+                ASSERT(found);
+            }
+            unsigned numberOfClosureVarPloc = 0;
+            for (unsigned i = materialization->properties().size(); i--;) {
+                const ExitPropertyValue& property = materialization->properties()[i];
+                if (property.location().kind() == ClosureVarPLoc)
+                    numberOfClosureVarPloc++;
+            }
+            ASSERT(numberOfClosureVarPloc == table->scopeSize());
         }
 
         return result;

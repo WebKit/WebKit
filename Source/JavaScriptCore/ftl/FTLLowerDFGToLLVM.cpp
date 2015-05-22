@@ -2947,7 +2947,7 @@ private:
     void compileCreateActivation()
     {
         LValue scope = lowCell(m_node->child1());
-        SymbolTable* table = m_graph.symbolTableFor(m_node->origin.semantic);
+        SymbolTable* table = m_node->castOperand<SymbolTable*>();
         Structure* structure = m_graph.globalObjectFor(m_node->origin.semantic)->activationStructure();
         
         if (table->singletonScope()->isStillValid()) {
@@ -5264,7 +5264,7 @@ private:
             values.append(lowJSValue(m_graph.varArgChild(m_node, 1 + i)));
 
         LValue scope = lowCell(m_graph.varArgChild(m_node, 0));
-        SymbolTable* table = m_graph.symbolTableFor(m_node->origin.semantic);
+        SymbolTable* table = m_node->castOperand<SymbolTable*>();
         Structure* structure = m_graph.globalObjectFor(m_node->origin.semantic)->activationStructure();
 
         LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("MaterializeCreateActivation slow path"));
@@ -5278,11 +5278,6 @@ private:
         m_out.storePtr(scope, fastObject, m_heaps.JSScope_next);
         m_out.storePtr(weakPointer(table), fastObject, m_heaps.JSSymbolTableObject_symbolTable);
 
-        for (unsigned i = 0; i < table->scopeSize(); ++i) {
-            m_out.store64(
-                m_out.constInt64(JSValue::encode(jsUndefined())),
-                fastObject, m_heaps.JSEnvironmentRecord_variables[i]);
-        }
 
         ValueFromBlock fastResult = m_out.anchor(fastObject);
         m_out.jump(continuation);
@@ -5296,11 +5291,28 @@ private:
 
         m_out.appendTo(continuation, lastNext);
         LValue activation = m_out.phi(m_out.intPtr, fastResult, slowResult);
+        RELEASE_ASSERT(data.m_properties.size() == table->scopeSize());
         for (unsigned i = 0; i < data.m_properties.size(); ++i) {
             m_out.store64(values[i],
                 activation,
                 m_heaps.JSEnvironmentRecord_variables[data.m_properties[i].m_identifierNumber]);
         }
+
+        if (validationEnabled()) {
+            // Validate to make sure every slot in the scope has one value.
+            ConcurrentJITLocker locker(table->m_lock);
+            for (auto iter = table->begin(locker), end = table->end(locker); iter != end; ++iter) {
+                bool found = false;
+                for (unsigned i = 0; i < data.m_properties.size(); ++i) {
+                    if (iter->value.scopeOffset().offset() == data.m_properties[i].m_identifierNumber) {
+                        found = true;
+                        break;
+                    }
+                }
+                ASSERT(found);
+            }
+        }
+
         setJSValue(activation);
     }
 

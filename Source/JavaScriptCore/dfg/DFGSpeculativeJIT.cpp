@@ -4521,7 +4521,7 @@ void SpeculativeJIT::compileForwardVarargs(Node* node)
 
 void SpeculativeJIT::compileCreateActivation(Node* node)
 {
-    SymbolTable* table = m_jit.graph().symbolTableFor(node->origin.semantic);
+    SymbolTable* table = node->castOperand<SymbolTable*>();
     Structure* structure = m_jit.graph().globalObjectFor(
         node->origin.semantic)->activationStructure();
         

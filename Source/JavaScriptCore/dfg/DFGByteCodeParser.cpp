@@ -3733,7 +3733,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
             
         case op_create_lexical_environment: {
-            Node* lexicalEnvironment = addToGraph(CreateActivation, get(VirtualRegister(currentInstruction[2].u.operand)));
+            FrozenValue* symbolTable = m_graph.freezeStrong(m_graph.symbolTableFor(currentNodeOrigin().semantic));
+            Node* lexicalEnvironment = addToGraph(CreateActivation, OpInfo(symbolTable), get(VirtualRegister(currentInstruction[2].u.operand)));
             set(VirtualRegister(currentInstruction[1].u.operand), lexicalEnvironment);
             set(VirtualRegister(currentInstruction[2].u.operand), lexicalEnvironment);
             NEXT_OPCODE(op_create_lexical_environment);

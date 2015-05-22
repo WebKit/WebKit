@@ -1,3 +1,47 @@
+2015-05-21  Saam Barati  <saambarati1@gmail.com>
+
+        Object allocation sinking phase should explicitly create bottom values for CreateActivation sink candidates and CreateActivation should have SymbolTable as a child node
+        https://bugs.webkit.org/show_bug.cgi?id=145192
+
+        Reviewed by Filip Pizlo.
+
+        When we sink CreateActivation and generate MaterializeCreateActivation
+        in the object allocation sinking phase, we now explictly add PutHints for 
+        all variables on the activation setting those variables to their default value 
+        (undefined for Function activations and soon to be JS Empty Value for block scope activations). 
+        This allows us to remove code that fills FTL fast activation allocations with Undefined.
+
+        This patch also adds the constant SymbolTable as an OpInfo of CreateActivation and MaterializeCreateActivation
+        nodes. This is in preparation for ES6 block scoping which will introduce a new 
+        op code that gets lowered to CreateActivation.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasCellOperand):
+        (JSC::DFG::Node::cellOperand):
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        (JSC::DFG::ObjectAllocationSinkingPhase::lowerNonReadingOperationsOnPhantomAllocations):
+        (JSC::DFG::ObjectAllocationSinkingPhase::handleNode):
+        (JSC::DFG::ObjectAllocationSinkingPhase::createMaterialize):
+        (JSC::DFG::ObjectAllocationSinkingPhase::populateMaterialize):
+        * dfg/DFGPromotedHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGPromotedHeapLocation.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCreateActivation):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileCreateActivation):
+        (JSC::FTL::LowerDFGToLLVM::compileMaterializeCreateActivation):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * tests/stress/activation-sink-default-value.js: Added.
+        (bar):
+        * tests/stress/activation-sink-osrexit-default-value.js: Added.
+        (foo.set result):
+
 2015-05-21  Per Arne Vollan  <peavo@outlook.com>
 
         MSVC internal compiler error when compiling TemplateRegistryKey class.
