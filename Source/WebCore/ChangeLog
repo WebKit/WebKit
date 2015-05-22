@@ -1,5 +1,39 @@
 2015-05-22  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r184760.
+
+    2015-05-21  Jer Noble  <jer.noble@apple.com>
+
+            [iOS] Tell AVPlayerLayer when we enter optimized fullscreen mode.
+            https://bugs.webkit.org/show_bug.cgi?id=145289
+
+            Reviewed by Eric Carlson.
+
+            AVFoundation would normally already know that its AVPlayerLayer is in optimized
+            fullscreen mode, but because of the WebProcess/UIProcess split, they need to be
+            told explicitly in the WebProcess when the UIProcess enters optimized fullscreen
+            mode.
+
+            * html/HTMLMediaElement.h:
+            * html/HTMLVideoElement.cpp:
+            (WebCore::HTMLVideoElement::fullscreenModeChanged): Pass to private().
+            * platform/graphics/MediaPlayer.cpp:
+            (WebCore::MediaPlayer::setVideoFullscreenMode): Pass to m_private.
+            (WebCore::MediaPlayer::fullscreenMode): Pass to m_client.
+            * platform/graphics/MediaPlayer.h:
+            (WebCore::MediaPlayerClient::mediaPlayerFullscreenMode): Default implementation returns None.
+            * platform/graphics/MediaPlayerPrivate.h:
+            (WebCore::MediaPlayerPrivateInterface::setVideoFullscreenMode): Default implementation is a no-op.
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer): Get the fullscreen
+                mode from MediaPlayer and tell the AVPlayerLayer if the mode is optimized.
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenMode):
+                Ditto.
+            * platform/spi/mac/AVFoundationSPI.h:
+
+2015-05-22  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r184670.
 
     2015-05-19  Jer Noble  <jer.noble@apple.com>

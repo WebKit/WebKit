@@ -620,6 +620,16 @@ void MediaPlayer::setVideoFullscreenGravity(MediaPlayer::VideoGravity gravity)
     m_private->setVideoFullscreenGravity(gravity);
 }
 
+void MediaPlayer::setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode mode)
+{
+    m_private->setVideoFullscreenMode(mode);
+}
+
+MediaPlayer::VideoFullscreenMode MediaPlayer::fullscreenMode() const
+{
+    return m_client.mediaPlayerFullscreenMode();
+}
+
 NSArray* MediaPlayer::timedMetadata() const
 {
     return m_private->timedMetadata();
