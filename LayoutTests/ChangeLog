@@ -1,5 +1,17 @@
 2015-05-23  Zalan Bujtas  <zalan@apple.com>
 
+        Rebaseline after r184825. Remove artificial extra space between 2 text renderers. 
+
+        Reviewed by Antti Koivisto.
+
+        * animations/lineheight-animation-expected.txt:
+        * animations/simultaneous-start-transform-expected.txt:
+        * animations/width-using-ems-expected.txt:
+        * fast/events/window-events-bubble-expected.txt:
+        * fast/events/window-events-bubble2-expected.txt:
+
+2015-05-23  Zalan Bujtas  <zalan@apple.com>
+
         Simple line layout: Ignore -webkit-flow-*content while collecting text content for innerText.
         https://bugs.webkit.org/show_bug.cgi?id=145344
         rdar://problem/20959522
