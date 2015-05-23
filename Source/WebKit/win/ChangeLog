@@ -1,3 +1,10 @@
+2015-05-22  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed build fix for Windows.
+
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2015-05-19  Brady Eidson  <beidson@apple.com>
 
         X-Frame-Options headers not respected when loading from application cache.

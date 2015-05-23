@@ -5125,7 +5125,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = prefsPrivate->mediaPlaybackRequiresUserGesture(&enabled);
     if (FAILED(hr))
         return hr;
-    settings.setMediaPlaybackRequiresUserGesture(enabled);
+    settings.setRequiresUserGestureForMediaPlayback(enabled);
 
     hr = prefsPrivate->mediaPlaybackAllowsInline(&enabled);
     if (FAILED(hr))
