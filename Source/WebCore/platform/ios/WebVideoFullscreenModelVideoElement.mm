@@ -151,7 +151,7 @@ void WebVideoFullscreenModelVideoElement::updateForEventName(const WTF::AtomicSt
 
     if (all
         || eventName == eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent) {
-        bool enabled = m_videoElement->mediaSession().currentPlaybackTargetIsWireless(*m_videoElement);
+        bool enabled = m_videoElement->webkitCurrentPlaybackTargetIsWireless();
         WebVideoFullscreenInterface::ExternalPlaybackTargetType targetType = WebVideoFullscreenInterface::TargetTypeNone;
         String localizedDeviceName;
 

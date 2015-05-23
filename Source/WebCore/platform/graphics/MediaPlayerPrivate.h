@@ -161,7 +161,6 @@ public:
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    virtual bool isCurrentPlaybackTargetWireless() const { return false; }
 
     virtual String wirelessPlaybackTargetName() const { return emptyString(); }
     virtual MediaPlayer::WirelessPlaybackTargetType wirelessPlaybackTargetType() const { return MediaPlayer::TargetTypeNone; }
@@ -170,7 +169,7 @@ public:
     virtual void setWirelessVideoPlaybackDisabled(bool) { }
 
     virtual bool canPlayToWirelessPlaybackTarget() const { return false; }
-    virtual bool isPlayingToWirelessPlaybackTarget() { return false; }
+    virtual bool isCurrentPlaybackTargetWireless() const { return false; }
     virtual void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) { }
 
     virtual void setShouldPlayToPlaybackTarget(bool) { }

@@ -2823,15 +2823,6 @@ void MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget(bool shou
     m_avPlayer.get().outputContext = newContext;
     setDelayCallbacks(false);
 }
-
-bool MediaPlayerPrivateAVFoundationObjC::isPlayingToWirelessPlaybackTarget()
-{
-    if (!m_avPlayer)
-        return false;
-
-    RetainPtr<AVOutputContext> currentContext = m_avPlayer.get().outputContext;
-    return currentContext && currentContext.get().deviceName;
-}
 #endif // !PLATFORM(IOS)
 
 void MediaPlayerPrivateAVFoundationObjC::updateDisableExternalPlayback()
