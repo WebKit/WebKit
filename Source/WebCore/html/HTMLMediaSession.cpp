@@ -228,7 +228,7 @@ bool HTMLMediaSession::hasWirelessPlaybackTargets(const HTMLMediaElement&) const
 bool HTMLMediaSession::wirelessVideoPlaybackDisabled(const HTMLMediaElement& element) const
 {
     Settings* settings = element.document().settings();
-    if (!settings || !settings->mediaPlaybackAllowsAirPlay()) {
+    if (!settings || !settings->allowsAirPlayForMediaPlayback()) {
         LOG(Media, "HTMLMediaSession::wirelessVideoPlaybackDisabled - returning TRUE because of settings");
         return true;
     }

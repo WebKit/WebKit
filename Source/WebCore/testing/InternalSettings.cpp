@@ -98,7 +98,7 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_touchEventEmulationEnabled(settings.isTouchEventEmulationEnabled())
 #endif
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    , m_mediaPlaybackAllowsAirPlay(settings.mediaPlaybackAllowsAirPlay())
+    , m_allowsAirPlayForMediaPlayback(settings.allowsAirPlayForMediaPlayback())
 #endif
 {
 }
@@ -202,7 +202,7 @@ InternalSettings::InternalSettings(Page* page)
     , m_backup(page->settings())
 {
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    page->settings().setMediaPlaybackAllowsAirPlay(false);
+    page->settings().setAllowsAirPlayForMediaPlayback(false);
 #endif
 }
 
@@ -211,7 +211,7 @@ void InternalSettings::resetToConsistentState()
     page()->setPageScaleFactor(1, IntPoint(0, 0));
     page()->setCanStartMedia(true);
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    m_page->settings().setMediaPlaybackAllowsAirPlay(false);
+    m_page->settings().setAllowsAirPlayForMediaPlayback(false);
 #endif
 
     m_backup.restoreTo(*settings());
@@ -363,7 +363,7 @@ void InternalSettings::setCanStartMedia(bool enabled, ExceptionCode& ec)
 void InternalSettings::setWirelessPlaybackDisabled(bool available)
 {
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    m_page->settings().setMediaPlaybackAllowsAirPlay(available);
+    m_page->settings().setAllowsAirPlayForMediaPlayback(available);
 #else
     UNUSED_PARAM(available);
 #endif

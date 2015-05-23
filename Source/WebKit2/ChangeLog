@@ -1,5 +1,21 @@
 2015-05-22  Jon Lee  <jonlee@apple.com>
 
+        Rename MediaPlaybackAllowsAirPlay
+        https://bugs.webkit.org/show_bug.cgi?id=145316
+
+        Reviewed by Eric Carlson.
+
+        In preparation for an API rename, update internal symbols from mediaPlaybackAllowsAirPlay
+        to allowsAirPlayForMediaPlayback.
+
+        * Shared/WebPreferencesDefinitions.h: Update the name.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]): Ditto.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Update the call to settings.
+
+2015-05-22  Jon Lee  <jonlee@apple.com>
+
         Unreviewed GTK fix after r184802.
 
         * UIProcess/API/gtk/WebKitSettings.cpp:

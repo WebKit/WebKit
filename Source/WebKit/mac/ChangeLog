@@ -1,5 +1,25 @@
 2015-05-22  Jon Lee  <jonlee@apple.com>
 
+        Rename MediaPlaybackAllowsAirPlay
+        https://bugs.webkit.org/show_bug.cgi?id=145316
+
+        Reviewed by Eric Carlson.
+
+        In preparation for an API rename, update internal symbols from mediaPlaybackAllowsAirPlay
+        to allowsAirPlayForMediaPlayback.
+
+        * WebView/WebPreferenceKeysPrivate.h: Update the name but keep its value, for backwards
+        compatibility.
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Update to reference the new key name.
+        (-[WebPreferences mediaPlaybackAllowsAirPlay]): Ditto. This API will not change in a future
+        patch.
+        (-[WebPreferences setMediaPlaybackAllowsAirPlay:]): Ditto.
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]): Update the call to settings.
+
+2015-05-22  Jon Lee  <jonlee@apple.com>
+
         Rename MediaPlaybackRequiresUserGesture
         https://bugs.webkit.org/show_bug.cgi?id=145314
 

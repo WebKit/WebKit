@@ -96,7 +96,7 @@ public:
         bool m_touchEventEmulationEnabled;
 #endif
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-        bool m_mediaPlaybackAllowsAirPlay;
+        bool m_allowsAirPlayForMediaPlayback;
 #endif
     };
 

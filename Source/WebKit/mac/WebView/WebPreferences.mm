@@ -529,7 +529,7 @@ public:
 #else
         [NSNumber numberWithBool:YES],  WebKitRequiresUserGestureForMediaPlaybackPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitMediaPlaybackAllowsInlinePreferenceKey,
-        [NSNumber numberWithBool:YES],  WebKitMediaPlaybackAllowsAirPlayPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitAllowsAirPlayForMediaPlaybackPreferenceKey,
         [NSNumber numberWithUnsignedInt:AudioSession::None],  WebKitAudioSessionCategoryOverride,
 #if HAVE(AVKIT)
         [NSNumber numberWithBool:YES],  WebKitAVKitEnabled,
@@ -2079,12 +2079,12 @@ static NSString *classIBCreatorID = nil;
 #if PLATFORM(IOS)
 - (BOOL)mediaPlaybackAllowsAirPlay
 {
-    return [self _boolValueForKey:WebKitMediaPlaybackAllowsAirPlayPreferenceKey];
+    return [self _boolValueForKey:WebKitAllowsAirPlayForMediaPlaybackPreferenceKey];
 }
 
 - (void)setMediaPlaybackAllowsAirPlay:(BOOL)flag
 {
-    [self _setBoolValue:flag forKey:WebKitMediaPlaybackAllowsAirPlayPreferenceKey];
+    [self _setBoolValue:flag forKey:WebKitAllowsAirPlayForMediaPlaybackPreferenceKey];
 }
 
 - (unsigned)audioSessionCategoryOverride
