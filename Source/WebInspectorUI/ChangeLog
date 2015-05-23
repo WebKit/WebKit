@@ -1,5 +1,17 @@
 2015-05-22  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Adopt Object.setPrototypeOf
+        https://bugs.webkit.org/show_bug.cgi?id=145335
+
+        Reviewed by Timothy Hatcher.
+
+        For a case that won't easily move to ES6 classes use Object.setPrototypeOf.
+
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackend.Command.create):
+
+2015-05-22  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Inline use once class names and remove some unused class names
         https://bugs.webkit.org/show_bug.cgi?id=145334
 

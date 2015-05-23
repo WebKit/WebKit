@@ -385,7 +385,7 @@ InspectorBackend.Command.create = function(backend, commandName, callSignature, 
     }
 
     callable._instance = instance;
-    callable.__proto__ = InspectorBackend.Command.prototype;
+    Object.setPrototypeOf(callable, InspectorBackend.Command.prototype);
 
     return callable;
 };
