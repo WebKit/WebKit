@@ -581,10 +581,7 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
                     toAppend = wrapper;
                 }
 
-                var span = document.createElement("span");
-                span.className = "type-string";
-                span.appendChild(toAppend);
-                a.appendChild(span);
+                a.appendChild(toAppend);
             }
             return a;
         }

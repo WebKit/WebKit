@@ -1,5 +1,20 @@
 2015-05-23  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Remove code related with unused style classes
+        https://bugs.webkit.org/show_bug.cgi?id=145332
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._formatWithSubstitutionString.append):
+        (WebInspector.ConsoleMessageView.prototype._formatWithSubstitutionString):
+        The "type-string" class has no styles associated with it. So the entire span can be removed.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        Both of these style classes have no styles associated with them. Remove the class names.
+
+2015-05-23  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Improve native parameter lists a bit
         https://bugs.webkit.org/show_bug.cgi?id=145338
 

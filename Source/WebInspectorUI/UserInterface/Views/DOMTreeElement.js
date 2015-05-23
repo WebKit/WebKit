@@ -810,7 +810,6 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
             return;
 
         this._htmlEditElement = document.createElement("div");
-        this._htmlEditElement.className = "source-code elements-tree-editor";
         this._htmlEditElement.textContent = initialValue;
 
         // Hide header items.
