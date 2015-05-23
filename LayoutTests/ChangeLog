@@ -1,5 +1,13 @@
 2015-05-22  Alexey Proskuryakov  <ap@apple.com>
 
+        Update tests broken by MediaPlaybackRequiresUserGesture renaming.
+
+        * media/no-autoplay-with-user-gesture-requirement.html:
+        * media/video-load-require-user-gesture.html:
+        * media/video-play-require-user-gesture.html:
+
+2015-05-22  Alexey Proskuryakov  <ap@apple.com>
+
         New test media/accessiblity-describes-video.html is flaky.
 
         * platform/mac/TestExpectations: Marking as such, as suggested by Jer.
