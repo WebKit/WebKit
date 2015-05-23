@@ -1262,3 +1262,4 @@ webkit.org/b/17022 [ MountainLion Mavericks ] fast/images/animated-png.html [ Sk
 webkit.org/b/142548 [ Yosemite+ ] editing/selection/extend-by-character-007.html [ Pass ]
 webkit.org/b/141661 [ Yosemite+ ] fast/text/emoji.html [ Pass ]
 
+media/accessiblity-describes-video.html [ Pass Failure ]

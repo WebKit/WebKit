@@ -1,3 +1,9 @@
+2015-05-22  Alexey Proskuryakov  <ap@apple.com>
+
+        New test media/accessiblity-describes-video.html is flaky.
+
+        * platform/mac/TestExpectations: Marking as such, as suggested by Jer.
+
 2015-05-22  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Audio tracks tagged as 'describes-video' are not automatically selected when that system accessibility option is set.
