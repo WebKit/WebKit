@@ -87,6 +87,6 @@ BuildbotStaticAnalyzerQueueView.prototype = {
             }
         }
 
-        this.appendBuildStyle.call(this, this.releaseQueues, 'Release', appendStaticAnalyzerQueueStatus);
+        this.appendBuildStyle.call(this, this.queues, 'Release', appendStaticAnalyzerQueueStatus);
     }
 };
