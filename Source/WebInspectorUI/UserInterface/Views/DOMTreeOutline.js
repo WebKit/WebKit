@@ -556,39 +556,30 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
         if (selectedNode.nodeType() !== Node.ELEMENT_NODE)
             return;
 
-        if (this._togglePending)
-            return;
-        this._togglePending = true;
-
-        function toggleProperties()
+        function resolvedNode(object)
         {
-            nodeStyles.removeEventListener(WebInspector.DOMNodeStyles.Event.Refreshed, toggleProperties, this);
+            if (!object)
+                return;
 
-            var opacityProperty = nodeStyles.inlineStyle.propertyForName("opacity");
-            opacityProperty.value = "0";
-            opacityProperty.important = true;
+            function injectStyleAndToggleClass()
+            {
+                var hideElementStyleSheetIdOrClassName = "__WebInspectorHideElement__";
+                var styleElement = document.getElementById(hideElementStyleSheetIdOrClassName);
+                if (!styleElement) {
+                    styleElement = document.createElement("style");
+                    styleElement.id = hideElementStyleSheetIdOrClassName;
+                    styleElement.textContent = "." + hideElementStyleSheetIdOrClassName + " { visibility: hidden !important; }";
+                    document.head.appendChild(styleElement);
+                }
 
-            var pointerEventsProperty = nodeStyles.inlineStyle.propertyForName("pointer-events");
-            pointerEventsProperty.value = "none";
-            pointerEventsProperty.important = true;
-
-            if (opacityProperty.enabled && pointerEventsProperty.enabled) {
-                opacityProperty.remove();
-                pointerEventsProperty.remove();
-            } else {
-                opacityProperty.add();
-                pointerEventsProperty.add();
+                this.classList.toggle(hideElementStyleSheetIdOrClassName);
             }
 
-            delete this._togglePending;
+            object.callFunction(injectStyleAndToggleClass, undefined, false, function(){});
+            object.release();
         }
 
-        var nodeStyles = WebInspector.cssStyleManager.stylesForNode(selectedNode);
-        if (nodeStyles.needsRefresh) {
-            nodeStyles.addEventListener(WebInspector.DOMNodeStyles.Event.Refreshed, toggleProperties, this);
-            nodeStyles.refresh();
-        } else
-            toggleProperties.call(this);
+        WebInspector.RemoteObject.resolveNode(selectedNode, "", resolvedNode);
     }
 };
 
