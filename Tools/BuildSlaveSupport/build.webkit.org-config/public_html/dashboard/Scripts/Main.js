@@ -47,6 +47,8 @@ for (var i = 0; i < buildbots.length; ++i) {
             categoryName = "performance";
         else if (queue.leaks)
             categoryName = "leaks";
+        else if (queue.staticAnalyzer)
+            categoryName = "staticAnalyzer";
         else {
             console.assert("Unknown queue type.");
             continue;
@@ -147,15 +149,8 @@ function documentReady()
     }
 
     var header = document.createElement("th");
-    header.textContent = "Performance";
+    header.textContent = "Other";
     row.appendChild(header);
-
-    if (hasBubbles) {
-        // Currently, EWS and commit queues are the only items in Other category.
-        var header = document.createElement("th");
-        header.textContent = "Other";
-        row.appendChild(header);
-    }
 
     table.appendChild(row);
 
@@ -215,6 +210,11 @@ function documentReady()
             cell.appendChild(view.element);
         }
 
+        if (platformQueues.staticAnalyzer) {
+            var view = new BuildbotStaticAnalyzerQueueView(platformQueues.staticAnalyzer.release);
+            cell.appendChild(view.element);
+        }
+
         if (platformQueues.leaks) {
             var view = new BuildbotLeaksQueueView(platformQueues.leaks);
             cell.appendChild(view.element);
@@ -223,8 +223,6 @@ function documentReady()
         row.appendChild(cell);
 
         if (hasBubbles) {
-            var cell = document.createElement("td");
-
             if (platformQueues[BubblesCategory]) {
                 var view = new BubbleQueueView(platformQueues[BubblesCategory]);
                 cell.appendChild(view.element);

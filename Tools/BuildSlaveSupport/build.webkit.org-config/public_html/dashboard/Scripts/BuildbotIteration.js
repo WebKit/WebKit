@@ -75,7 +75,8 @@ BuildbotIteration.ProductiveSteps = {
     "webkitpy-test": 1,
     "webkitperl-test": 1,
     "bindings-generation-tests": 1,
-    "perf-test": 1
+    "perf-test": 1,
+    "scan build": 1,
 };
 
 BuildbotIteration.TestSteps = {

@@ -93,6 +93,7 @@ BuildbotTestResults.prototype = {
         this.newPassesCount = testStep.results[1].reduce(resultSummarizer.bind(null, "new pass"), undefined);
         this.missingCount = testStep.results[1].reduce(resultSummarizer.bind(null, "missing"), undefined);
         this.crashCount = testStep.results[1].reduce(resultSummarizer.bind(null, "crash"), undefined);
+        this.issueCount = testStep.results[1].reduce(resultSummarizer.bind(null, "issue"), undefined);
 
         if (!this.failureCount && !this.flakyCount && !this.totalLeakCount && !this.uniqueLeakCount && !this.newPassesCount && !this.missingCount) {
             // This step exited with a non-zero exit status, but we didn't find any output about the number of failed tests.
@@ -146,7 +147,7 @@ BuildbotTestResults.prototype = {
 
                         // FIXME (bug 127186): It is particularly unfortunate for image diffs, because we currently only check image results
                         // on retry (except for reftests), so many times, you will see images on buildbot page, but not on the dashboard.
-                        // FIXME: Find a way to display expected mismatch reftest failures. 
+                        // FIXME: Find a way to display expected mismatch reftest failures.
                         if (value.actual.split(" ")[0].contains("IMAGE") && value.reftest_type != "!=")
                             item.has_image_diff = true;
 

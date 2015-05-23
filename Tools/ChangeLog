@@ -1,3 +1,29 @@
+2015-05-22  Dana Burkart  <dburkart@apple.com>
+
+        Add support to the botwatchers dashboard for a static analyzer bot.
+        https://bugs.webkit.org/show_bug.cgi?id=144814
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        scan-build should be considered a productive step.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueue.js:
+        (BuildbotQueue):
+        Adds support for the staticAnalyzer property
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTestResults.js:
+        (BuildbotTestResults.prototype._parseResults):
+        Get bug count from the scan-build step output
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Main.js:
+        (documentReady):
+        Rename the performance column 'Other', and merge the current 'Other' column with it.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot):
+        Now that performance bots are part of the 'Other' column, give them better headings.
+
 2015-05-22  Tim Horton  <timothy_horton@apple.com>
 
         Turn on autosaving of toolbar configuration in MiniBrowser
