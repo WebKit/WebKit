@@ -628,11 +628,11 @@
                     <thead>
                         <tr>
                             <td colspan="2">Configuration</td>
+                            <td>Results</td>
+                            <td>Status</td>
                             {{#each repositories}}
                                 <td>{{name}}</td>
                             {{/each}}
-                            <td>Results</td>
-                            <td>Status</td>
                         </tr>
                     </thead>
                     {{#each configurations}}
@@ -658,12 +658,13 @@
                         <tbody>
                             <tr>
                                 <td colspan="2">{{label}}</td>
+                                <td>{{difference}}</td>
+                                <td>{{result}}</td>
                                 {{#with ../this}}
                                     {{#each repositories}}
                                         <td></td>
                                     {{/each}}
                                 {{/with}}
-                                <td colspan="2">{{result}}</td>
                             </tr>
                         </tbody>
                     {{/each}}
@@ -684,18 +685,18 @@
     </script>
 
     <script type="text/x-handlebars" data-template-name="testGroupRow">
-        {{#each revisionList}}
-            <td>{{this}}</td>
-        {{/each}}
         <td>
             {{#if value}}
-                {{box-plot range=valueRange value=value delta=confidenceIntervalDelta}}
+                {{box-plot range=valueRange value=value delta=delta}}
             {{/if}}
             {{formattedValue}}
         </td>
         <td>
             <a {{bind-attr href=url title=buildLabel}}>{{statusLabel}}</a>
         </td>
+        {{#each revisionList}}
+            <td>{{this}}</td>
+        {{/each}}
     </script>
 
     <script type="text/x-handlebars" data-template-name="testGroupForm">

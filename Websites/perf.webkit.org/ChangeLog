@@ -1,3 +1,18 @@
+2015-05-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Show results and status before revisions for A/B testing results
+        https://bugs.webkit.org/show_bug.cgi?id=145327
+
+        Reviewed by Chris Dumez.
+
+        Place the results and the status columns before the columns for revisions.
+        Also show the absolute difference as well as the relative difference between the averages of A and B.
+
+        * public/v2/app.js:
+        (App.TestGroupPane._populate):
+        (App.TestGroupPane._computeStatisticalSignificance):
+        * public/v2/index.html:
+
 2015-05-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r184591.

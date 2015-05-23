@@ -1424,14 +1424,21 @@ App.TestGroupPane = Ember.ObjectProxy.extend({
 
         this.set('configurations', configurations);
 
+        var probabilityFormatter = d3.format('.2p');
         var comparisons = [];
         for (var i = 0; i < configurations.length - 1; i++) {
             var summary1 = configurations[i].summary;
             for (var j = i + 1; j < configurations.length; j++) {
                 var summary2 = configurations[j].summary;
+
+                var valueDelta = testResults.deltaFormatter(summary2.value - summary1.value);
+                var relativeDelta = d3.format('+.2p')((summary2.value - summary1.value) / summary1.value);
+
+                var stat = this._computeStatisticalSignificance(summary1.measuredValues, summary2.measuredValues);
                 comparisons.push({
                     label: summary1.configLetter + ' / ' + summary2.configLetter,
-                    result: this._computeStatisticalSignificance(summary1.measuredValues, summary2.measuredValues)
+                    difference: isNaN(summary1.value) || isNaN(summary2.value) ? 'N/A' : valueDelta + ' (' + relativeDelta + ') ',
+                    result: stat,
                 });
             }
         }
@@ -1448,13 +1455,13 @@ App.TestGroupPane = Ember.ObjectProxy.extend({
         var details = ' (t=' + tFormatter(statistics.t) + ' df=' + tFormatter(statistics.degreesOfFreedom) + ')';
 
         if (!statistics.range[0])
-            return 'Not statistically significant' + details;
+            return 'Not significant' + details;
 
         var lowerLimit = probabilityFormatter(statistics.range[0]);
         if (!statistics.range[1])
-            return 'Statistical significance > ' + lowerLimit + details;
+            return 'Significance > ' + lowerLimit + details;
 
-        return lowerLimit + ' < Statistical significance < ' + probabilityFormatter(statistics.range[1]) + details;
+        return lowerLimit + ' < Significance < ' + probabilityFormatter(statistics.range[1]) + details;
     },
     _updateReferenceChart: function ()
     {
