@@ -1,3 +1,12 @@
+2015-05-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Update CSS Autocompletion properties and values
+        https://bugs.webkit.org/show_bug.cgi?id=145341
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+
 2015-05-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Adopt Object.setPrototypeOf

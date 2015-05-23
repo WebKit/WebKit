@@ -116,6 +116,7 @@ WebInspector.CSSKeywordCompletions.InheritedProperties = [
     "-webkit-text-stroke", "-webkit-text-stroke-color", "-webkit-text-stroke-width", "-webkit-user-modify",
     "-webkit-user-select", "-webkit-writing-mode", "-webkit-cursor-visibility", "image-orientation", "image-resolution",
     "overflow-wrap", "-webkit-text-align-last", "-webkit-text-justify", "-webkit-ruby-position", "-webkit-text-decoration-line",
+    "font-synthesis",
 
     // iOS Properties
     "-webkit-overflow-scrolling", "-webkit-touch-callout", "-webkit-tap-highlight-color"
@@ -233,9 +234,10 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     ],
     "cursor": [
         "none", "copy", "auto", "crosshair", "default", "pointer", "move", "vertical-text", "cell", "context-menu",
-        "alias", "progress", "no-drop", "not-allowed", "-webkit-zoom-in", "-webkit-zoom-out", "e-resize", "ne-resize",
+        "alias", "progress", "no-drop", "not-allowed", "zoom-in", "zoom-out", "e-resize", "ne-resize",
         "nw-resize", "n-resize", "se-resize", "sw-resize", "s-resize", "w-resize", "ew-resize", "ns-resize",
         "nesw-resize", "nwse-resize", "col-resize", "row-resize", "text", "wait", "help", "all-scroll", "-webkit-grab",
+        "-webkit-zoom-in", "-webkit-zoom-out",
         "-webkit-grabbing", "url()", "-webkit-image-set()"
     ],
     "border-width": [
@@ -320,6 +322,9 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     ],
     "font-weight": [
         "normal", "bold", "bolder", "lighter", "100", "200", "300", "400", "500", "600", "700", "800", "900"
+    ],
+    "font-synthesis": [
+        "none", "weight", "style"
     ],
     "margin-before-collapse": [
         "collapse", "separate", "discard"
@@ -606,6 +611,12 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     "page": [
         "auto"
     ],
+    "perspective": [
+        "none"
+    ],
+    "perspective-origin": [
+        "none", "left", "right", "bottom", "top", "center"
+    ],
     "-webkit-marquee-increment": [
         "small", "large", "medium"
     ],
@@ -636,10 +647,13 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     "-webkit-text-emphasis-position": [
         "over", "under", "left", "right"
     ],
-    "-webkit-transform": [
+    "transform": [
         "none",
         "scale()", "scaleX()", "scaleY()", "scale3d()", "rotate()", "rotateX()", "rotateY()", "rotateZ()", "rotate3d()", "skew()", "skewX()", "skewY()",
         "translate()", "translateX()", "translateY()", "translateZ()", "translate3d()", "matrix()", "matrix3d()", "perspective()"
+    ],
+    "transform-style": [
+        "flat", "preserve-3d"
     ],
     "-webkit-cursor-visibility": [
         "auto", "auto-hide"
@@ -666,11 +680,14 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "from-image", "snap"
     ],
     "-webkit-blend-mode": [
-        "normal", "multiply", "screen", "overlay", "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion", "hue", "saturation", "color", "luminosity"
+        "normal", "multiply", "screen", "overlay", "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion", "plus-darker", "plus-lighter", "hue", "saturation", "color", "luminosity",
+    ],
+    "mix-blend-mode": [
+        "normal", "multiply", "screen", "overlay", "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion", "plus-darker", "plus-lighter", "hue", "saturation", "color", "luminosity",
     ],
     "mix": [
         "auto",
-        "normal", "multiply", "screen", "overlay", "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion", "hue", "saturation", "color", "luminosity",
+        "normal", "multiply", "screen", "overlay", "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion", "plus-darker", "plus-lighter", "hue", "saturation", "color", "luminosity",
         "clear", "copy", "destination", "source-over", "destination-over", "source-in", "destination-in", "source-out", "destination-out", "source-atop", "destination-atop", "xor"
     ],
     "geometry": [
@@ -695,16 +712,41 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "slice", "clone"
     ],
     "align-content": [
-        "flex-start", "flex-end", "center", "space-between", "space-around", "stretch"
-    ],
-    "align-items": [
-        "flex-start", "flex-end", "center", "baseline", "stretch"
-    ],
-    "align-self": [
-        "auto", "flex-start", "flex-end", "center", "baseline", "stretch"
+        "auto",
+        "baseline", "last-baseline",
+        "space-between", "space-around", "space-evenly", "stretch",
+        "center", "start", "end", "flex-start", "flex-end", "left", "right",
+        "true", "safe"
     ],
     "justify-content": [
-        "flex-start", "flex-end", "center", "space-between", "space-around"
+        "auto",
+        "baseline", "last-baseline", "space-between", "space-around", "space-evenly", "stretch",
+        "center", "start", "end", "flex-start", "flex-end", "left", "right",
+        "true", "safe"
+    ],
+    "align-items": [
+        "auto", "stretch",
+        "baseline", "last-baseline",
+        "center", "start", "end", "self-start", "self-end", "flex-start", "flex-end", "left", "right",
+        "true", "safe"
+    ],
+    "align-self": [
+        "auto", "stretch",
+        "baseline", "last-baseline",
+        "center", "start", "end", "self-start", "self-end", "flex-start", "flex-end", "left", "right",
+        "true", "safe"
+    ],
+    "justify-items": [
+        "auto", "stretch",
+        "baseline", "last-baseline",
+        "center", "start", "end", "self-start", "self-end", "flex-start", "flex-end", "left", "right",
+        "true", "safe"
+    ],
+    "justify-self": [
+        "auto", "stretch",
+        "baseline", "last-baseline",
+        "center", "start", "end", "self-start", "self-end", "flex-start", "flex-end", "left", "right",
+        "true", "safe"
     ],
     "flex-direction": [
         "row", "row-reverse", "column", "column-reverse"
@@ -735,7 +777,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "auto"
     ],
     "-webkit-grid-auto-flow": [
-        "none", "rows", "columns"
+        "row", "column", "dense"
     ],
     "-webkit-grid-column": [
         "auto"
@@ -750,7 +792,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "auto", "-webkit-max-content", "-webkit-min-content"
     ],
     "-webkit-ruby-position": [
-        "after", "before"
+        "after", "before", "inter-character"
     ],
     "-webkit-text-align-last": [
         "auto", "start", "end", "left", "right", "center", "justify"
@@ -848,9 +890,6 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     "-webkit-text-security": [
         "disc", "circle", "square", "none"
     ],
-    "-webkit-transform-style": [
-        "flat", "preserve-3d"
-    ],
     "-webkit-user-drag": [
         "auto", "none", "element"
     ],
@@ -878,11 +917,11 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     "-webkit-aspect-ratio": [
         "auto", "from-dimensions", "from-intrinsic", "/"
     ],
-    "-webkit-filter": [
+    "filter": [
         "none", "grayscale()", "sepia()", "saturate()", "hue-rotate()", "invert()", "opacity()", "brightness()", "contrast()", "blur()", "drop-shadow()", "custom()"
     ],
-    "-webkit-perspective": [
-        "none"
+    "-webkit-backdrop-filter": [
+        "none", "grayscale()", "sepia()", "saturate()", "hue-rotate()", "invert()", "opacity()", "brightness()", "contrast()", "blur()", "drop-shadow()", "custom()"
     ],
     "-webkit-column-count": [
         "auto", "calc()", "-webkit-calc()"
@@ -895,6 +934,9 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     ],
     "-webkit-column-width": [
         "auto", "calc()", "-webkit-calc()"
+    ],
+    "-webkit-column-fill": [
+        "auto", "balance"
     ],
     "-webkit-hyphenate-character": [
         "none"
@@ -928,20 +970,26 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     ],
     /*
     "-webkit-appearance": [
-        "none", "checkbox", "radio", "push-button", "square-button", "button", "button-bevel", "default-button", "inner-spin-button", "listbox", "listitem", "media-enter-fullscreen-button", "media-exit-fullscreen-button", "media-fullscreen-volume-slider", "media-fullscreen-volume-slider-thumb", "media-mute-button", "media-play-button", "media-overlay-play-button", "media-seek-back-button", "media-seek-forward-button", "media-rewind-button", "media-return-to-realtime-button", "media-toggle-closed-captions-button", "media-slider", "media-sliderthumb", "media-volume-slider-container", "media-volume-slider", "media-volume-sliderthumb", "media-volume-slider-mute-button", "media-controls-background", "media-controls-fullscreen-background", "media-current-time-display", "media-time-remaining-display", "menulist", "menulist-button", "menulist-text", "menulist-textfield", "meter", "progress-bar", "progress-bar-value", "slider-horizontal", "slider-vertical", "sliderthumb-horizontal", "sliderthumb-vertical", "caret", "searchfield", "searchfield-decoration", "searchfield-results-decoration", "searchfield-results-button", "searchfield-cancel-button", "snapshotted-plugin-overlay", "textfield", "relevancy-level-indicator", "continuous-capacity-level-indicator", "discrete-capacity-level-indicator", "rating-level-indicator", "textarea"
+        "none", "checkbox", "radio", "push-button", "square-button", "button", "button-bevel", "default-button", "inner-spin-button", "listbox", "listitem", "media-enter-fullscreen-button", "media-exit-fullscreen-button", "media-fullscreen-volume-slider", "media-fullscreen-volume-slider-thumb", "media-mute-button", "media-play-button", "media-overlay-play-button", "media-seek-back-button", "media-seek-forward-button", "media-rewind-button", "media-return-to-realtime-button", "media-toggle-closed-captions-button", "media-slider", "media-sliderthumb", "media-volume-slider-container", "media-volume-slider", "media-volume-sliderthumb", "media-volume-slider-mute-button", "media-controls-background", "media-controls-fullscreen-background", "media-current-time-display", "media-time-remaining-display", "menulist", "menulist-button", "menulist-text", "menulist-textfield", "meter", "progress-bar", "progress-bar-value", "slider-horizontal", "slider-vertical", "sliderthumb-horizontal", "sliderthumb-vertical", "caret", "searchfield", "searchfield-decoration", "searchfield-results-decoration", "searchfield-results-button", "searchfield-cancel-button", "snapshotted-plugin-overlay", "textfield", "relevancy-level-indicator", "continuous-capacity-level-indicator", "discrete-capacity-level-indicator", "rating-level-indicator", "textarea", "attachment", "caps-lock-indicator"
     ],
     */
+    "-webkit-animation-trigger": [
+        "auto", "container-scroll()"
+    ],
     "-webkit-scroll-snap-type": [
-        "mandatory", "proximity", "none"
+        "none", "mandatory", "proximity"
     ],
     "-webkit-scroll-snap-points-x": [
-        "elements", "repeat"
+        "elements", "repeat()"
     ],
     "-webkit-scroll-snap-points-y": [
-        "elements", "repeat"
+        "elements", "repeat()"
+    ],
+    "-webkit-scroll-snap-destination": [
+        "none", "left", "right", "bottom", "top", "center"
     ],
     "-webkit-scroll-snap-coordinate": [
-        "none"
+        "none", "left", "right", "bottom", "top", "center"
     ],
 
     // iOS Properties
