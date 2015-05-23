@@ -25,7 +25,7 @@
 
 BuildbotStaticAnalyzerQueueView = function(queues)
 {
-    BuildbotQueueView.call(this, [], queues);
+    BuildbotQueueView.call(this, queues);
     this.update();
 };
 
