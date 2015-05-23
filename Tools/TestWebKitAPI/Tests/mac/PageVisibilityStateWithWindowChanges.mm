@@ -31,10 +31,6 @@
 #import <WebKit/WKViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
-// https://bugs.webkit.org/show_bug.cgi?id=130463
-// rdar://problem/20461342
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 101000
-
 static bool isWaitingForPageSignalToContinue = false;
 static bool didGetPageSignalToContinue = false;
 
@@ -180,5 +176,3 @@ TEST_F(PageVisibilityStateWithWindowChanges, WebKit2)
 }
 
 } // namespace TestWebKitAPI
-
-#endif

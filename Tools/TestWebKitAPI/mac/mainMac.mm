@@ -26,12 +26,16 @@
 #import "config.h"
 #import "TestsController.h"
 
+extern "C" void _BeginEventReceiptOnThread(void);
+
 int main(int argc, char** argv)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:@"TestWebKitAPI"];
+
     [NSApplication sharedApplication];
+    _BeginEventReceiptOnThread(); // Makes window visibility notifications work (and possibly more).
 
     bool passed = TestWebKitAPI::TestsController::singleton().run(argc, argv);
 
