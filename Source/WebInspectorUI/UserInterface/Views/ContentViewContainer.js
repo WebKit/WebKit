@@ -29,13 +29,11 @@ WebInspector.ContentViewContainer = function(element)
     // WebInspector.Object.call(this);
 
     this._element = element || document.createElement("div");
-    this._element.classList.add(WebInspector.ContentViewContainer.StyleClassName);
+    this._element.classList.add("content-view-container");
 
     this._backForwardList = [];
     this._currentIndex = -1;
 };
-
-WebInspector.ContentViewContainer.StyleClassName = "content-view-container";
 
 WebInspector.ContentViewContainer.Event = {
     CurrentContentViewDidChange: "content-view-container-current-content-view-did-change"

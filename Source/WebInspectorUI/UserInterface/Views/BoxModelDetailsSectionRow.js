@@ -29,7 +29,7 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
     {
         super(WebInspector.UIString("No Box Model Information"));
 
-        this.element.classList.add(WebInspector.BoxModelDetailsSectionRow.StyleClassName);
+        this.element.classList.add("box-model");
 
         this._nodeStyles = null;
     }
@@ -424,6 +424,5 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
     }
 };
 
-WebInspector.BoxModelDetailsSectionRow.StyleClassName = "box-model";
 WebInspector.BoxModelDetailsSectionRow.StyleValueDelimiters = " \xA0\t\n\"':;,/()";
 WebInspector.BoxModelDetailsSectionRow.CSSNumberRegex = /^(-?(?:\d+(?:\.\d+)?|\.\d+))$/;

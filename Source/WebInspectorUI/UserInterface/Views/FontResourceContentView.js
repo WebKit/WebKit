@@ -25,7 +25,7 @@
 
 WebInspector.FontResourceContentView = function(resource)
 {
-    WebInspector.ResourceContentView.call(this, resource, WebInspector.FontResourceContentView.StyleClassName);
+    WebInspector.ResourceContentView.call(this, resource, "font");
 
     this._styleElement = null;
     this._previewElement = null;
@@ -33,16 +33,6 @@ WebInspector.FontResourceContentView = function(resource)
 
 WebInspector.FontResourceContentView._uniqueFontIdentifier = 0;
 
-WebInspector.FontResourceContentView.StyleClassName = "font";
-WebInspector.FontResourceContentView.PreviewElementStyleClassName = "preview";
-WebInspector.FontResourceContentView.LineElementStyleClassName = "line";
-WebInspector.FontResourceContentView.ContentElementStyleClassName = "content";
-WebInspector.FontResourceContentView.MetricElementStyleClassName = "metric";
-WebInspector.FontResourceContentView.TopMetricElementStyleClassName = "top";
-WebInspector.FontResourceContentView.XHeightMetricElementStyleClassName = "xheight";
-WebInspector.FontResourceContentView.MiddleMetricElementStyleClassName = "middle";
-WebInspector.FontResourceContentView.BaselineMetricElementStyleClassName = "baseline";
-WebInspector.FontResourceContentView.BottomMetricElementStyleClassName = "bottom";
 WebInspector.FontResourceContentView.PreviewLines = ["ABCDEFGHIJKLM", "NOPQRSTUVWXYZ", "abcdefghijklm", "nopqrstuvwxyz", "1234567890"];
 
 WebInspector.FontResourceContentView.MaximumFontSize = 72;
@@ -96,29 +86,29 @@ WebInspector.FontResourceContentView.prototype = {
             document.head.appendChild(this._styleElement);
 
         this._previewElement = document.createElement("div");
-        this._previewElement.className = WebInspector.FontResourceContentView.PreviewElementStyleClassName;
+        this._previewElement.className = "preview";
         this._previewElement.style.fontFamily = uniqueFontName;
 
         function createMetricElement(className)
         {
             var metricElement = document.createElement("div");
-            metricElement.className = WebInspector.FontResourceContentView.MetricElementStyleClassName + " " + className;
+            metricElement.className = "metric " + className;
             return metricElement;
         }
 
         var lines = WebInspector.FontResourceContentView.PreviewLines;
         for (var i = 0; i < lines.length; ++i) {
             var lineElement = document.createElement("div");
-            lineElement.className = WebInspector.FontResourceContentView.LineElementStyleClassName;
+            lineElement.className = "line";
 
-            lineElement.appendChild(createMetricElement(WebInspector.FontResourceContentView.TopMetricElementStyleClassName));
-            lineElement.appendChild(createMetricElement(WebInspector.FontResourceContentView.XHeightMetricElementStyleClassName));
-            lineElement.appendChild(createMetricElement(WebInspector.FontResourceContentView.MiddleMetricElementStyleClassName));
-            lineElement.appendChild(createMetricElement(WebInspector.FontResourceContentView.BaselineMetricElementStyleClassName));
-            lineElement.appendChild(createMetricElement(WebInspector.FontResourceContentView.BottomMetricElementStyleClassName));
+            lineElement.appendChild(createMetricElement("top"));
+            lineElement.appendChild(createMetricElement("xheight"));
+            lineElement.appendChild(createMetricElement("middle"));
+            lineElement.appendChild(createMetricElement("baseline"));
+            lineElement.appendChild(createMetricElement("bottom"));
 
             var contentElement = document.createElement("div");
-            contentElement.className = WebInspector.FontResourceContentView.ContentElementStyleClassName;
+            contentElement.className = "content";
             contentElement.textContent = lines[i];
             lineElement.appendChild(contentElement);
 

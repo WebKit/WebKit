@@ -31,7 +31,7 @@ WebInspector.ConsolePrompt = function(delegate, mimeType, element)
     mimeType = parseMIMEType(mimeType).type;
 
     this._element = element || document.createElement("div");
-    this._element.classList.add(WebInspector.ConsolePrompt.StyleClassName);
+    this._element.classList.add("console-prompt");
     this._element.classList.add(WebInspector.SyntaxHighlightedStyleClassName);
 
     this._delegate = delegate || null;
@@ -63,7 +63,6 @@ WebInspector.ConsolePrompt = function(delegate, mimeType, element)
     this._historyIndex = 0;
 };
 
-WebInspector.ConsolePrompt.StyleClassName = "console-prompt";
 WebInspector.ConsolePrompt.MaximumHistorySize = 30;
 
 WebInspector.ConsolePrompt.prototype = {

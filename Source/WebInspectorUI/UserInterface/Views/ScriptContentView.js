@@ -27,7 +27,7 @@ WebInspector.ScriptContentView = function(script)
 {
     WebInspector.ContentView.call(this, script);
 
-    this.element.classList.add(WebInspector.ScriptContentView.StyleClassName);
+    this.element.classList.add("script");
 
     // Append a spinner while waiting for _contentWillPopulate.
     var spinner = new WebInspector.IndeterminateProgressSpinner;
@@ -62,8 +62,6 @@ WebInspector.ScriptContentView = function(script)
 
     WebInspector.showJavaScriptTypeInformationSetting.addEventListener(WebInspector.Setting.Event.Changed, this._showJavaScriptTypeInformationSettingChanged, this);
 };
-
-WebInspector.ScriptContentView.StyleClassName = "script";
 
 WebInspector.ScriptContentView.prototype = {
     constructor: WebInspector.ScriptContentView,

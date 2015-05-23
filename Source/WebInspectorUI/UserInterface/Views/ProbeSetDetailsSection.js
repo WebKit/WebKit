@@ -149,4 +149,3 @@ WebInspector.ProbeSetDetailsSection.ProbePopoverElementStyleClassName = "probe-p
 WebInspector.ProbeSetDetailsSection.ProbeClearSamplesStyleClassName = "probe-clear-samples";
 WebInspector.ProbeSetDetailsSection.ProbeRemoveStyleClassName = "probe-remove";
 WebInspector.ProbeSetDetailsSection.SectionOptionsStyleClassName = "options";
-WebInspector.ProbeSetDetailsSection.StyleClassName = "probe-set";

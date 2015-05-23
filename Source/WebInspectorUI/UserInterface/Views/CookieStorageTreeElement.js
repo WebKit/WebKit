@@ -29,7 +29,7 @@ WebInspector.CookieStorageTreeElement = class CookieStorageTreeElement extends W
     {
         console.assert(representedObject instanceof WebInspector.CookieStorageObject);
 
-        super(WebInspector.CookieStorageTreeElement.CookieIconStyleClassName, WebInspector.displayNameForHost(representedObject.host), representedObject);
+        super("cookie-icon", WebInspector.displayNameForHost(representedObject.host), representedObject);
     }
 
     // Public
@@ -44,5 +44,3 @@ WebInspector.CookieStorageTreeElement = class CookieStorageTreeElement extends W
         return WebInspector.UIString("Cookies");
     }
 };
-
-WebInspector.CookieStorageTreeElement.CookieIconStyleClassName = "cookie-icon";

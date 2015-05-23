@@ -44,7 +44,7 @@ WebInspector.DOMTreeContentView = function(representedObject)
     this._showsShadowDOMButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._toggleShowsShadowDOMSetting, this);
     this._showShadowDOMSettingChanged();
 
-    this.element.classList.add(WebInspector.DOMTreeContentView.StyleClassName);
+    this.element.classList.add("dom-tree");
     this.element.addEventListener("click", this._mouseWasClicked.bind(this), false);
 
     this._domTreeOutline = new WebInspector.DOMTreeOutline(true, true, true);
@@ -62,8 +62,6 @@ WebInspector.DOMTreeContentView = function(representedObject)
     this._restoreSelectedNodeIsAllowed = true;
     this._numberOfSearchResults = null;
 };
-
-WebInspector.DOMTreeContentView.StyleClassName = "dom-tree";
 
 WebInspector.DOMTreeContentView.prototype = {
     constructor: WebInspector.DOMTreeContentView,

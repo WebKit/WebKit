@@ -114,7 +114,3 @@ WebInspector.ReplayDashboardView = class ReplayDashboardView extends WebInspecto
         this._replayButtonItem.toggled = false;
     }
 };
-
-WebInspector.ReplayDashboardView.RecordingContainerStyleClassName = "recording-container";
-WebInspector.ReplayDashboardView.RecordButtonStyleClassName = "record-button";
-WebInspector.ReplayDashboardView.ReplayButtonStyleClassName = "replay-button";

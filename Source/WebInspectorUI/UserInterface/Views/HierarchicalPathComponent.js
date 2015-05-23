@@ -48,21 +48,21 @@ WebInspector.HierarchicalPathComponent = class HierarchicalPathComponent extends
 
         if (!textOnly) {
             this._iconElement = document.createElement("img");
-            this._iconElement.className = WebInspector.HierarchicalPathComponent.IconElementStyleClassName;
+            this._iconElement.className = "icon";
             this._element.appendChild(this._iconElement);
         } else
             this._element.classList.add(WebInspector.HierarchicalPathComponent.TextOnlyStyleClassName);
 
         this._titleElement = document.createElement("div");
-        this._titleElement.className = WebInspector.HierarchicalPathComponent.TitleElementStyleClassName;
+        this._titleElement.className = "title";
         this._element.appendChild(this._titleElement);
 
         this._titleContentElement = document.createElement("div");
-        this._titleContentElement.className = WebInspector.HierarchicalPathComponent.TitleContentElementStyleClassName;
+        this._titleContentElement.className = "content";
         this._titleElement.appendChild(this._titleContentElement);
 
         this._separatorElement = document.createElement("div");
-        this._separatorElement.className = WebInspector.HierarchicalPathComponent.SeparatorElementStyleClassName;
+        this._separatorElement.className = "separator";
         this._element.appendChild(this._separatorElement);
 
         this._selectElement = document.createElement("select");
@@ -198,7 +198,7 @@ WebInspector.HierarchicalPathComponent = class HierarchicalPathComponent extends
     {
         if (flag) {
             this._selectorArrowsElement = document.createElement("img");
-            this._selectorArrowsElement.className = WebInspector.HierarchicalPathComponent.SelectorArrowsElementStyleClassName;
+            this._selectorArrowsElement.className = "selector-arrows";
             this._element.insertBefore(this._selectorArrowsElement, this._separatorElement);
 
             this._element.classList.add(WebInspector.HierarchicalPathComponent.ShowSelectorArrowsStyleClassName);
@@ -316,13 +316,8 @@ WebInspector.HierarchicalPathComponent = class HierarchicalPathComponent extends
 
 WebInspector.HierarchicalPathComponent.HiddenStyleClassName = "hidden";
 WebInspector.HierarchicalPathComponent.CollapsedStyleClassName = "collapsed";
-WebInspector.HierarchicalPathComponent.IconElementStyleClassName = "icon";
 WebInspector.HierarchicalPathComponent.TextOnlyStyleClassName = "text-only";
 WebInspector.HierarchicalPathComponent.ShowSelectorArrowsStyleClassName = "show-selector-arrows";
-WebInspector.HierarchicalPathComponent.TitleElementStyleClassName = "title";
-WebInspector.HierarchicalPathComponent.TitleContentElementStyleClassName = "content";
-WebInspector.HierarchicalPathComponent.SelectorArrowsElementStyleClassName = "selector-arrows";
-WebInspector.HierarchicalPathComponent.SeparatorElementStyleClassName = "separator";
 
 WebInspector.HierarchicalPathComponent.MinimumWidth = 32;
 WebInspector.HierarchicalPathComponent.MinimumWidthCollapsed = 24;

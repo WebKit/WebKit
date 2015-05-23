@@ -1,5 +1,88 @@
 2015-05-22  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Inline use once class names and remove some unused class names
+        https://bugs.webkit.org/show_bug.cgi?id=145334
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ApplicationCacheFrameContentView.js:
+        (WebInspector.ApplicationCacheFrameContentView):
+        * UserInterface/Views/BoxModelDetailsSectionRow.js:
+        (WebInspector.BoxModelDetailsSectionRow):
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection):
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.js:
+        (WebInspector.CSSStyleDetailsSidebarPanel):
+        * UserInterface/Views/ClusterContentView.js:
+        (WebInspector.ClusterContentView):
+        * UserInterface/Views/CompletionSuggestionsView.js:
+        (WebInspector.CompletionSuggestionsView):
+        * UserInterface/Views/ConsolePrompt.js:
+        (WebInspector.ConsolePrompt):
+        * UserInterface/Views/ContentBrowser.js:
+        (WebInspector.ContentBrowser):
+        * UserInterface/Views/ContentFlowTreeElement.js:
+        (WebInspector.ContentFlowTreeElement):
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView):
+        * UserInterface/Views/ContentViewContainer.js:
+        (WebInspector.ContentViewContainer):
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WebInspector.CookieStorageContentView):
+        * UserInterface/Views/CookieStorageTreeElement.js:
+        (WebInspector.CookieStorageTreeElement):
+        * UserInterface/Views/DOMStorageContentView.js:
+        (WebInspector.DOMStorageContentView):
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WebInspector.DOMTreeContentView):
+        * UserInterface/Views/DashboardView.js:
+        (WebInspector.DashboardView):
+        * UserInterface/Views/DatabaseTableContentView.js:
+        (WebInspector.DatabaseTableContentView):
+        * UserInterface/Views/DebuggerDashboardView.js:
+        (WebInspector.DebuggerDashboardView):
+        (WebInspector.DebuggerDashboardView.prototype._rebuildLocation):
+        * UserInterface/Views/DetailsSection.js:
+        (WebInspector.DetailsSection):
+        * UserInterface/Views/DetailsSectionSimpleRow.js:
+        * UserInterface/Views/FontResourceContentView.js:
+        (WebInspector.FontResourceContentView):
+        (WebInspector.FontResourceContentView.prototype.createMetricElement):
+        (WebInspector.FontResourceContentView.prototype.contentAvailable):
+        * UserInterface/Views/HierarchicalPathComponent.js:
+        (WebInspector.HierarchicalPathComponent):
+        (WebInspector.HierarchicalPathComponent.prototype.set selectorArrows):
+        * UserInterface/Views/IndexedDatabaseObjectStoreContentView.js:
+        * UserInterface/Views/LayoutTimelineOverviewGraph.js:
+        (WebInspector.LayoutTimelineOverviewGraph):
+        * UserInterface/Views/NetworkTimelineOverviewGraph.js:
+        (WebInspector.NetworkTimelineOverviewGraph):
+        * UserInterface/Views/OverviewTimelineView.js:
+        * UserInterface/Views/ProbeSetDetailsSection.js:
+        * UserInterface/Views/QuickConsole.js:
+        * UserInterface/Views/ReplayDashboardView.js:
+        * UserInterface/Views/ScriptContentView.js:
+        (WebInspector.ScriptContentView):
+        * UserInterface/Views/ScriptTimelineOverviewGraph.js:
+        (WebInspector.ScriptTimelineOverviewGraph):
+        * UserInterface/Views/TextContentView.js:
+        (WebInspector.TextContentView):
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview):
+        * UserInterface/Views/TimelineOverviewGraph.js:
+        (WebInspector.TimelineOverviewGraph):
+        * UserInterface/Views/TimelineRecordBar.js:
+        (WebInspector.TimelineRecordBar):
+        * UserInterface/Views/TimelineRecordFrame.js:
+        (WebInspector.TimelineRecordFrame):
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView):
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler):
+        (WebInspector.TimelineRuler.prototype.set allowsTimeRangeSelection):
+
+2015-05-22  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: DOMTree Keyboard Shortcut 'H' to toggle element visibility is not working
         https://bugs.webkit.org/show_bug.cgi?id=145331
 

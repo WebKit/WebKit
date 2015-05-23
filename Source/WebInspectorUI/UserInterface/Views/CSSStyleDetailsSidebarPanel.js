@@ -39,7 +39,7 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
 
         if (WebInspector.cssStyleManager.canForcePseudoClasses()) {
             this._forcedPseudoClassContainer = document.createElement("div");
-            this._forcedPseudoClassContainer.className = WebInspector.CSSStyleDetailsSidebarPanel.PseudoClassesElementStyleClassName;
+            this._forcedPseudoClassContainer.className = "pseudo-classes";
 
             var groupElement = null;
 
@@ -60,7 +60,7 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
 
                 if (!groupElement || groupElement.children.length === 2) {
                     groupElement = document.createElement("div");
-                    groupElement.className = WebInspector.CSSStyleDetailsSidebarPanel.PseudoClassesGroupElementStyleClassName;
+                    groupElement.className = "group";
                     this._forcedPseudoClassContainer.appendChild(groupElement);
                 }
 
@@ -226,6 +226,4 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
     }
 };
 
-WebInspector.CSSStyleDetailsSidebarPanel.PseudoClassesElementStyleClassName = "pseudo-classes";
-WebInspector.CSSStyleDetailsSidebarPanel.PseudoClassesGroupElementStyleClassName = "group";
 WebInspector.CSSStyleDetailsSidebarPanel.NoForcedPseudoClassesScrollOffset = 38; // Default height of the forced pseudo classes container. Updated in widthDidChange.

@@ -33,11 +33,11 @@ WebInspector.TimelineOverview = function(identifier, timelineRecording, minimumD
     this._recording.addEventListener(WebInspector.TimelineRecording.Event.TimelineRemoved, this._timelineRemoved, this);
 
     this._element = document.createElement("div");
-    this._element.className = WebInspector.TimelineOverview.StyleClassName;
+    this._element.className = "timeline-overview";
     this._element.addEventListener("wheel", this._handleWheelEvent.bind(this));
 
     this._graphsContainerElement = document.createElement("div");
-    this._graphsContainerElement.className = WebInspector.TimelineOverview.GraphsContainerStyleClassName;
+    this._graphsContainerElement.className = "graphs-container";
     this._element.appendChild(this._graphsContainerElement);
 
     this._timelineOverviewGraphsMap = new Map;
@@ -52,12 +52,12 @@ WebInspector.TimelineOverview = function(identifier, timelineRecording, minimumD
     this._timelineRuler.addMarker(this._currentTimeMarker);
 
     this._scrollContainerElement = document.createElement("div");
-    this._scrollContainerElement.className = WebInspector.TimelineOverview.ScrollContainerStyleClassName;
+    this._scrollContainerElement.className = "scroll-container";
     this._scrollContainerElement.addEventListener("scroll", this._handleScrollEvent.bind(this));
     this._element.appendChild(this._scrollContainerElement);
 
     this._scrollWidthSizer = document.createElement("div");
-    this._scrollWidthSizer.className = WebInspector.TimelineOverview.ScrollWidthSizerStyleClassName;
+    this._scrollWidthSizer.className = "scroll-width-sizer";
     this._scrollContainerElement.appendChild(this._scrollWidthSizer);
 
     this._defaultSettingsValues = defaultSettingsValues;
@@ -85,10 +85,6 @@ WebInspector.TimelineOverview = function(identifier, timelineRecording, minimumD
         this._resetSelection();
 };
 
-WebInspector.TimelineOverview.StyleClassName = "timeline-overview";
-WebInspector.TimelineOverview.GraphsContainerStyleClassName = "graphs-container";
-WebInspector.TimelineOverview.ScrollContainerStyleClassName = "scroll-container";
-WebInspector.TimelineOverview.ScrollWidthSizerStyleClassName = "scroll-width-sizer";
 WebInspector.TimelineOverview.ScrollDeltaDenominator = 500;
 
 WebInspector.TimelineOverview.Event = {

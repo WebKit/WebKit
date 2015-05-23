@@ -44,7 +44,7 @@ WebInspector.OverviewTimelineView = function(recording, extraArguments)
     this._currentTimeMarker = new WebInspector.TimelineMarker(0, WebInspector.TimelineMarker.Type.CurrentTime);
     this._timelineRuler.addMarker(this._currentTimeMarker);
 
-    this.element.classList.add(WebInspector.OverviewTimelineView.StyleClassName);
+    this.element.classList.add("overview");
     this.element.appendChild(this._dataGrid.element);
 
     this._networkTimeline = recording.timelines.get(WebInspector.TimelineRecord.Type.Network);
@@ -54,8 +54,6 @@ WebInspector.OverviewTimelineView = function(recording, extraArguments)
 
     this._pendingRepresentedObjects = [];
 };
-
-WebInspector.OverviewTimelineView.StyleClassName = "overview";
 
 WebInspector.OverviewTimelineView.prototype = {
     constructor: WebInspector.OverviewTimelineView,

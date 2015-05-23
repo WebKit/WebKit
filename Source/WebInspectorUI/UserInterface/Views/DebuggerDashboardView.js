@@ -41,16 +41,16 @@ WebInspector.DebuggerDashboardView = class DebuggerDashboardView extends WebInsp
         this._navigationBar.addNavigationItem(this._debuggerResumeButtonItem);
 
         var message = this._messageElement = document.createElement("div");
-        message.classList.add(WebInspector.DebuggerDashboardView.MessageStyleClassName);
+        message.classList.add("message");
         message.title = message.textContent = WebInspector.UIString("Debugger Paused");
         this.element.appendChild(message);
 
         var dividerElement = document.createElement("div");
-        dividerElement.classList.add(WebInspector.DebuggerDashboardView.DividerStyleClassName);
+        dividerElement.classList.add("divider");
         this.element.appendChild(dividerElement);
 
         var locationElement = this._locationElement = document.createElement("div");
-        locationElement.classList.add(WebInspector.DebuggerDashboardView.LocationStyleClassName);
+        locationElement.classList.add("location");
         this.element.appendChild(locationElement);
 
         this._rebuildLocation();
@@ -80,12 +80,12 @@ WebInspector.DebuggerDashboardView = class DebuggerDashboardView extends WebInsp
         this._locationElement.appendChild(iconElement);
 
         var iconImageElement = document.createElement("img");
-        iconImageElement.className = WebInspector.DebuggerDashboardView.IconStyleClassName;
+        iconImageElement.className = "icon";
         iconElement.appendChild(iconImageElement);
 
         var nameElement = document.createElement("div");
         nameElement.appendChild(document.createTextNode(functionName));
-        nameElement.classList.add(WebInspector.DebuggerDashboardView.FunctionNameStyleClassName);
+        nameElement.classList.add("function-name");
         this._locationElement.appendChild(nameElement);
 
         var sourceCodeLocation = WebInspector.debuggerManager.activeCallFrame.sourceCodeLocation;
@@ -102,9 +102,3 @@ WebInspector.DebuggerDashboardView = class DebuggerDashboardView extends WebInsp
 
 WebInspector.DebuggerDashboardView.FunctionIconStyleClassName = WebInspector.CallFrameView.FunctionIconStyleClassName;
 WebInspector.DebuggerDashboardView.EventListenerIconStyleClassName = WebInspector.CallFrameView.EventListenerIconStyleClassName;
-
-WebInspector.DebuggerDashboardView.IconStyleClassName = "icon";
-WebInspector.DebuggerDashboardView.MessageStyleClassName = "message";
-WebInspector.DebuggerDashboardView.DividerStyleClassName = "divider";
-WebInspector.DebuggerDashboardView.LocationStyleClassName = "location";
-WebInspector.DebuggerDashboardView.FunctionNameStyleClassName = "function-name";

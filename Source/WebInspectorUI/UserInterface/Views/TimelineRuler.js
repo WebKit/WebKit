@@ -29,14 +29,14 @@ WebInspector.TimelineRuler = function()
     // WebInspector.Object.call(this);
 
     this._element = document.createElement("div");
-    this._element.className = WebInspector.TimelineRuler.StyleClassName;
+    this._element.className = "timeline-ruler";
 
     this._headerElement = document.createElement("div");
-    this._headerElement.className = WebInspector.TimelineRuler.HeaderElementStyleClassName;
+    this._headerElement.className = "header";
     this._element.appendChild(this._headerElement);
 
     this._markersElement = document.createElement("div");
-    this._markersElement.className = WebInspector.TimelineRuler.MarkersElementStyleClassName;
+    this._markersElement.className = "markers";
     this._element.appendChild(this._markersElement);
 
     this._zeroTime = 0;
@@ -57,19 +57,10 @@ WebInspector.TimelineRuler = function()
 WebInspector.TimelineRuler.MinimumLeftDividerSpacing = 48;
 WebInspector.TimelineRuler.MinimumDividerSpacing = 64;
 
-WebInspector.TimelineRuler.StyleClassName = "timeline-ruler";
 WebInspector.TimelineRuler.AllowsTimeRangeSelectionStyleClassName = "allows-time-range-selection";
-WebInspector.TimelineRuler.HeaderElementStyleClassName = "header";
 WebInspector.TimelineRuler.DividerElementStyleClassName = "divider";
 WebInspector.TimelineRuler.DividerLabelElementStyleClassName = "label";
 
-WebInspector.TimelineRuler.MarkersElementStyleClassName = "markers";
-WebInspector.TimelineRuler.BaseMarkerElementStyleClassName = "marker";
-WebInspector.TimelineRuler.ShadedAreaElementStyleClassName = "shaded-area";
-WebInspector.TimelineRuler.SelectionDragElementStyleClassName = "selection-drag";
-WebInspector.TimelineRuler.SelectionHandleElementStyleClassName = "selection-handle";
-WebInspector.TimelineRuler.LeftSelectionElementStyleClassName = "left";
-WebInspector.TimelineRuler.RightSelectionElementStyleClassName = "right";
 WebInspector.TimelineRuler.MinimumSelectionTimeRange = 0.01;
 
 WebInspector.TimelineRuler.Event = {
@@ -130,25 +121,25 @@ WebInspector.TimelineRuler.prototype = {
             this._element.addEventListener("mousedown", this._mouseDownEventListener);
 
             this._leftShadedAreaElement = document.createElement("div");
-            this._leftShadedAreaElement.classList.add(WebInspector.TimelineRuler.ShadedAreaElementStyleClassName);
-            this._leftShadedAreaElement.classList.add(WebInspector.TimelineRuler.LeftSelectionElementStyleClassName);
+            this._leftShadedAreaElement.classList.add("shaded-area");
+            this._leftShadedAreaElement.classList.add("left");
 
             this._rightShadedAreaElement = document.createElement("div");
-            this._rightShadedAreaElement.classList.add(WebInspector.TimelineRuler.ShadedAreaElementStyleClassName);
-            this._rightShadedAreaElement.classList.add(WebInspector.TimelineRuler.RightSelectionElementStyleClassName);
+            this._rightShadedAreaElement.classList.add("shaded-area");
+            this._rightShadedAreaElement.classList.add("right");
 
             this._leftSelectionHandleElement = document.createElement("div");
-            this._leftSelectionHandleElement.classList.add(WebInspector.TimelineRuler.SelectionHandleElementStyleClassName);
-            this._leftSelectionHandleElement.classList.add(WebInspector.TimelineRuler.LeftSelectionElementStyleClassName);
+            this._leftSelectionHandleElement.classList.add("selection-handle");
+            this._leftSelectionHandleElement.classList.add("left");
             this._leftSelectionHandleElement.addEventListener("mousedown", this._handleSelectionHandleMouseDown.bind(this));
 
             this._rightSelectionHandleElement = document.createElement("div");
-            this._rightSelectionHandleElement.classList.add(WebInspector.TimelineRuler.SelectionHandleElementStyleClassName);
-            this._rightSelectionHandleElement.classList.add(WebInspector.TimelineRuler.RightSelectionElementStyleClassName);
+            this._rightSelectionHandleElement.classList.add("selection-handle");
+            this._rightSelectionHandleElement.classList.add("right");
             this._rightSelectionHandleElement.addEventListener("mousedown", this._handleSelectionHandleMouseDown.bind(this));
 
             this._selectionDragElement = document.createElement("div");
-            this._selectionDragElement.classList.add(WebInspector.TimelineRuler.SelectionDragElementStyleClassName);
+            this._selectionDragElement.classList.add("selection-drag");
 
             this._needsSelectionLayout();
         } else {
@@ -304,7 +295,7 @@ WebInspector.TimelineRuler.prototype = {
         marker.addEventListener(WebInspector.TimelineMarker.Event.TimeChanged, this._timelineMarkerTimeChanged, this);
 
         var markerElement = document.createElement("div");
-        markerElement.classList.add(marker.type, WebInspector.TimelineRuler.BaseMarkerElementStyleClassName);
+        markerElement.classList.add(marker.type, "marker");
 
         this._markerElementMap.set(marker, markerElement);
 

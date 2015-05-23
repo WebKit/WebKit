@@ -29,7 +29,7 @@ WebInspector.TimelineRecordFrame = function(graphDataSource, record)
     // WebInspector.Object.call(this);
 
     this._element = document.createElement("div");
-    this._element.classList.add(WebInspector.TimelineRecordFrame.StyleClassName);
+    this._element.classList.add("timeline-record-frame");
 
     this._graphDataSource = graphDataSource;
     this._record = record || null;
@@ -38,7 +38,6 @@ WebInspector.TimelineRecordFrame = function(graphDataSource, record)
 // FIXME: Move to a WebInspector.Object subclass and we can remove this.
 WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.TimelineRecordFrame);
 
-WebInspector.TimelineRecordFrame.StyleClassName = "timeline-record-frame";
 WebInspector.TimelineRecordFrame.MaximumWidthPixels = 16;
 WebInspector.TimelineRecordFrame.MinimumWidthPixels = 4;
 

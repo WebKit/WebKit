@@ -28,7 +28,7 @@ WebInspector.DOMStorageContentView = function(representedObject)
 {
     WebInspector.ContentView.call(this, representedObject);
 
-    this.element.classList.add(WebInspector.DOMStorageContentView.StyleClassName);
+    this.element.classList.add("dom-storage");
 
     representedObject.addEventListener(WebInspector.DOMStorageObject.Event.ItemsCleared, this.itemsCleared, this);
     representedObject.addEventListener(WebInspector.DOMStorageObject.Event.ItemAdded, this.itemAdded, this);
@@ -49,7 +49,6 @@ WebInspector.DOMStorageContentView = function(representedObject)
     this._populate();
 };
 
-WebInspector.DOMStorageContentView.StyleClassName = "dom-storage";
 WebInspector.DOMStorageContentView.DuplicateKeyStyleClassName = "duplicate-key";
 WebInspector.DOMStorageContentView.MissingKeyStyleClassName = "missing-key";
 WebInspector.DOMStorageContentView.MissingValueStyleClassName = "missing-value";

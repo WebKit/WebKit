@@ -34,7 +34,7 @@ WebInspector.DashboardView = class DashboardView extends WebInspector.Object
         this._representedObject = representedObject;
 
         this._element = document.createElement("div");
-        this._element.classList.add(WebInspector.DashboardView.StyleClassName);
+        this._element.classList.add("dashboard");
         this._element.classList.add(identifier);
     }
 
@@ -83,5 +83,3 @@ WebInspector.DashboardView = class DashboardView extends WebInspector.Object
         // Implemented by subclasses.
     }
 };
-
-WebInspector.DashboardView.StyleClassName = "dashboard";

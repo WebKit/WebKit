@@ -53,7 +53,7 @@ WebInspector.TimelineOverviewGraph = function(timeline)
     // WebInspector.Object.call(this);
 
     this.element = document.createElement("div");
-    this.element.classList.add(WebInspector.TimelineOverviewGraph.StyleClassName);
+    this.element.classList.add("timeline-overview-graph");
 
     this._zeroTime = 0;
     this._startTime = 0;
@@ -61,8 +61,6 @@ WebInspector.TimelineOverviewGraph = function(timeline)
     this._currentTime = 0;
     this._timelineOverview = null;
 };
-
-WebInspector.TimelineOverviewGraph.StyleClassName = "timeline-overview-graph";
 
 WebInspector.TimelineOverviewGraph.prototype = {
     constructor: WebInspector.TimelineOverviewGraph,

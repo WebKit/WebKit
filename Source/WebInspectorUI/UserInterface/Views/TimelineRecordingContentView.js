@@ -34,7 +34,7 @@ WebInspector.TimelineRecordingContentView = function(recording, extraArguments)
     this._recording = recording;
     this._timelineSidebarPanel = extraArguments.timelineSidebarPanel;
 
-    this.element.classList.add(WebInspector.TimelineRecordingContentView.StyleClassName);
+    this.element.classList.add("timeline-recording");
 
     this._linearTimelineOverview = new WebInspector.LinearTimelineOverview(this._recording);
     this._linearTimelineOverview.addEventListener(WebInspector.TimelineOverview.Event.TimeRangeSelectionChanged, this._timeRangeSelectionChanged, this);
@@ -83,8 +83,6 @@ WebInspector.TimelineRecordingContentView = function(recording, extraArguments)
 
     this.showOverviewTimelineView();
 };
-
-WebInspector.TimelineRecordingContentView.StyleClassName = "timeline-recording";
 
 WebInspector.TimelineRecordingContentView.SelectedTimelineTypeCookieKey = "timeline-recording-content-view-selected-timeline-type";
 WebInspector.TimelineRecordingContentView.OverviewTimelineViewCookieValue = "timeline-recording-content-view-overview-timeline-view";

@@ -27,15 +27,13 @@ WebInspector.DatabaseTableContentView = function(representedObject)
 {
     WebInspector.ContentView.call(this, representedObject);
 
-    this.element.classList.add(WebInspector.DatabaseTableContentView.StyleClassName);
+    this.element.classList.add("database-table");
 
     this._refreshButtonNavigationItem = new WebInspector.ButtonNavigationItem("database-table-refresh", WebInspector.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
     this._refreshButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._refreshButtonClicked, this);
 
     this.update();
 };
-
-WebInspector.DatabaseTableContentView.StyleClassName = "database-table";
 
 WebInspector.DatabaseTableContentView.prototype = {
     constructor: WebInspector.DatabaseTableContentView,

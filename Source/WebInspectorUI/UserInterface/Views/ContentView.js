@@ -132,7 +132,7 @@ WebInspector.ContentView = function(representedObject, extraArguments)
     this._representedObject = representedObject;
 
     this._element = document.createElement("div");
-    this._element.classList.add(WebInspector.ContentView.StyleClassName);
+    this._element.classList.add("content-view");
 
     this._parentContainer = null;
 };
@@ -182,8 +182,6 @@ WebInspector.ContentView.isViewable = function(representedObject)
         return true;
     return false;
 };
-
-WebInspector.ContentView.StyleClassName = "content-view";
 
 WebInspector.ContentView.Event = {
     SelectionPathComponentsDidChange: "content-view-selection-path-components-did-change",

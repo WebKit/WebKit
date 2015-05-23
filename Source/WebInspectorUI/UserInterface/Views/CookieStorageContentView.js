@@ -27,12 +27,10 @@ WebInspector.CookieStorageContentView = function(representedObject)
 {
     WebInspector.ContentView.call(this, representedObject);
 
-    this.element.classList.add(WebInspector.CookieStorageContentView.StyleClassName);
+    this.element.classList.add("cookie-storage");
 
     this.update();
 };
-
-WebInspector.CookieStorageContentView.StyleClassName = "cookie-storage";
 
 WebInspector.CookieStorageContentView.prototype = {
     constructor: WebInspector.CookieStorageContentView,

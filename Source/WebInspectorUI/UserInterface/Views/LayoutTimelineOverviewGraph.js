@@ -27,7 +27,7 @@ WebInspector.LayoutTimelineOverviewGraph = function(timeline)
 {
     WebInspector.TimelineOverviewGraph.call(this, timeline);
 
-    this.element.classList.add(WebInspector.LayoutTimelineOverviewGraph.StyleClassName);
+    this.element.classList.add("layout");
 
     this._layoutTimeline = timeline;
     this._layoutTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._layoutTimelineRecordAdded, this);
@@ -36,8 +36,6 @@ WebInspector.LayoutTimelineOverviewGraph = function(timeline)
 
     this.reset();
 };
-
-WebInspector.LayoutTimelineOverviewGraph.StyleClassName = "layout";
 
 WebInspector.LayoutTimelineOverviewGraph.prototype = {
     constructor: WebInspector.LayoutTimelineOverviewGraph,

@@ -36,7 +36,7 @@ WebInspector.DetailsSection = class DetailsSection extends WebInspector.Object
 
         this._headerElement = document.createElement("div");
         this._headerElement.addEventListener("click", this._headerElementClicked.bind(this));
-        this._headerElement.className = WebInspector.DetailsSection.HeaderElementStyleClassName;
+        this._headerElement.className = "header";
         this._element.appendChild(this._headerElement);
 
         if (optionsElement instanceof HTMLElement) {
@@ -50,7 +50,7 @@ WebInspector.DetailsSection = class DetailsSection extends WebInspector.Object
         this._headerElement.appendChild(this._titleElement);
 
         this._contentElement = document.createElement("div");
-        this._contentElement.className = WebInspector.DetailsSection.ContentElementStyleClassName;
+        this._contentElement.className = "content";
         this._element.appendChild(this._contentElement);
 
         this._generateDisclosureTrianglesIfNeeded();
@@ -160,9 +160,6 @@ WebInspector.DetailsSection = class DetailsSection extends WebInspector.Object
     }
 };
 
-WebInspector.DetailsSection.HeaderElementStyleClassName = "header";
-WebInspector.DetailsSection.TitleElementStyleClassName = "title";
-WebInspector.DetailsSection.ContentElementStyleClassName = "content";
 WebInspector.DetailsSection.CollapsedStyleClassName = "collapsed";
 WebInspector.DetailsSection.MouseOverOptionsElementStyleClassName = "mouse-over-options-element";
 WebInspector.DetailsSection.DisclosureTriangleOpenCanvasIdentifier = "details-section-disclosure-triangle-open";

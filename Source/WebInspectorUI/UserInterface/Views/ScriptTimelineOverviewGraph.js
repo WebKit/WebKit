@@ -27,7 +27,7 @@ WebInspector.ScriptTimelineOverviewGraph = function(timeline)
 {
     WebInspector.TimelineOverviewGraph.call(this, timeline);
 
-    this.element.classList.add(WebInspector.ScriptTimelineOverviewGraph.StyleClassName);
+    this.element.classList.add("script");
 
     this._scriptTimeline = timeline;
     this._scriptTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._scriptTimelineRecordAdded, this);
@@ -36,8 +36,6 @@ WebInspector.ScriptTimelineOverviewGraph = function(timeline)
 
     this.reset();
 };
-
-WebInspector.ScriptTimelineOverviewGraph.StyleClassName = "script";
 
 WebInspector.ScriptTimelineOverviewGraph.prototype = {
     constructor: WebInspector.ScriptTimelineOverviewGraph,

@@ -28,7 +28,7 @@ WebInspector.NetworkTimelineOverviewGraph = function(timeline)
 {
     WebInspector.TimelineOverviewGraph.call(this, timeline);
 
-    this.element.classList.add(WebInspector.NetworkTimelineOverviewGraph.StyleClassName);
+    this.element.classList.add("network");
 
     timeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
     timeline.addEventListener(WebInspector.Timeline.Event.TimesUpdated, this.needsLayout, this);
@@ -36,7 +36,6 @@ WebInspector.NetworkTimelineOverviewGraph = function(timeline)
     this.reset();
 };
 
-WebInspector.NetworkTimelineOverviewGraph.StyleClassName = "network";
 WebInspector.NetworkTimelineOverviewGraph.GraphRowStyleClassName = "graph-row";
 WebInspector.NetworkTimelineOverviewGraph.BarStyleClassName = "bar";
 WebInspector.NetworkTimelineOverviewGraph.InactiveBarStyleClassName = "inactive";

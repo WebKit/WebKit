@@ -29,7 +29,7 @@ WebInspector.ContentBrowser = function(element, delegate, disableBackForward)
     // WebInspector.Object.call(this);
 
     this._element = element || document.createElement("div");
-    this._element.classList.add(WebInspector.ContentBrowser.StyleClassName);
+    this._element.classList.add("content-browser");
 
     this._navigationBar = new WebInspector.NavigationBar;
     this._element.appendChild(this._navigationBar.element);
@@ -91,8 +91,6 @@ WebInspector.ContentBrowser = function(element, delegate, disableBackForward)
 
 // FIXME: Move to a WebInspector.Object subclass and we can remove this.
 WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.ContentBrowser);
-
-WebInspector.ContentBrowser.StyleClassName = "content-browser";
 
 WebInspector.ContentBrowser.Event = {
     CurrentRepresentedObjectsDidChange: "content-browser-current-represented-objects-did-change",

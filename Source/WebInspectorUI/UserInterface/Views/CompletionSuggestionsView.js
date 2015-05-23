@@ -34,10 +34,10 @@ WebInspector.CompletionSuggestionsView = class CompletionSuggestionsView extends
         this._selectedIndex = NaN;
 
         this._element = document.createElement("div");
-        this._element.className = WebInspector.CompletionSuggestionsView.StyleClassName;
+        this._element.className = "completion-suggestions";
 
         this._containerElement = document.createElement("div");
-        this._containerElement.className = WebInspector.CompletionSuggestionsView.ContainerElementStyleClassName;
+        this._containerElement.className = "completion-suggestions-container";
         this._containerElement.addEventListener("mousedown", this._mouseDown.bind(this));
         this._containerElement.addEventListener("mouseup", this._mouseUp.bind(this));
         this._containerElement.addEventListener("click", this._itemClicked.bind(this));
@@ -219,7 +219,5 @@ WebInspector.CompletionSuggestionsView = class CompletionSuggestionsView extends
     }
 };
 
-WebInspector.CompletionSuggestionsView.StyleClassName = "completion-suggestions";
-WebInspector.CompletionSuggestionsView.ContainerElementStyleClassName = "completion-suggestions-container";
 WebInspector.CompletionSuggestionsView.ItemElementStyleClassName = "item";
 WebInspector.CompletionSuggestionsView.SelectedItemStyleClassName = "selected";

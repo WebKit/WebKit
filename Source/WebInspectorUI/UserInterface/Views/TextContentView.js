@@ -27,7 +27,7 @@ WebInspector.TextContentView = function(string, mimeType)
 {
     WebInspector.ContentView.call(this, string);
 
-    this.element.classList.add(WebInspector.TextContentView.StyleClassName);
+    this.element.classList.add("text");
 
     this._textEditor = new WebInspector.TextEditor;
     this._textEditor.addEventListener(WebInspector.TextEditor.Event.NumberOfSearchResultsDidChange, this._numberOfSearchResultsDidChange, this);
@@ -50,8 +50,6 @@ WebInspector.TextContentView = function(string, mimeType)
     this._showTypesButtonNavigationItem = new WebInspector.ActivateButtonNavigationItem("show-types", toolTipTypes, activatedToolTipTypes, "Images/NavigationItemTypes.svg", 13, 14);
     this._showTypesButtonNavigationItem.enabled = false;
 };
-
-WebInspector.TextContentView.StyleClassName = "text";
 
 WebInspector.TextContentView.prototype = {
     constructor: WebInspector.TextContentView,

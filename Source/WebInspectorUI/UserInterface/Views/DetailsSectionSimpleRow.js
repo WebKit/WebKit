@@ -32,11 +32,11 @@ WebInspector.DetailsSectionSimpleRow = class DetailsSectionSimpleRow extends Web
         this.element.classList.add("simple");
 
         this._labelElement = document.createElement("div");
-        this._labelElement.className = WebInspector.DetailsSectionSimpleRow.LabelElementStyleClassName;
+        this._labelElement.className = "label";
         this.element.appendChild(this._labelElement);
 
         this._valueElement = document.createElement("div");
-        this._valueElement.className = WebInspector.DetailsSectionSimpleRow.ValueElementStyleClassName;
+        this._valueElement.className = "value";
         this.element.appendChild(this._valueElement);
 
         // Workaround for <rdar://problem/12668870> Triple-clicking text within a
@@ -113,5 +113,3 @@ WebInspector.DetailsSectionSimpleRow = class DetailsSectionSimpleRow extends Web
 
 WebInspector.DetailsSectionSimpleRow.DataStyleClassName = "data";
 WebInspector.DetailsSectionSimpleRow.EmptyStyleClassName = "empty";
-WebInspector.DetailsSectionSimpleRow.LabelElementStyleClassName = "label";
-WebInspector.DetailsSectionSimpleRow.ValueElementStyleClassName = "value";
