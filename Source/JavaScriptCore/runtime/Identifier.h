@@ -26,6 +26,7 @@
 #include <wtf/ThreadSpecific.h>
 #include <wtf/WTFThreadData.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/UniquedStringImpl.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -92,7 +93,7 @@ public:
     Identifier(EmptyIdentifierFlag) : m_string(StringImpl::empty()) { ASSERT(m_string.impl()->isAtomic()); }
 
     const String& string() const { return m_string; }
-    AtomicStringImpl* impl() const { return static_cast<AtomicStringImpl*>(m_string.impl()); }
+    UniquedStringImpl* impl() const { return static_cast<UniquedStringImpl*>(m_string.impl()); }
 
     int length() const { return m_string.length(); }
 
@@ -123,8 +124,8 @@ public:
     static Identifier fromString(ExecState*, const String&);
     static Identifier fromString(ExecState*, const char*);
 
-    static Identifier fromUid(VM*, StringImpl* uid);
-    static Identifier fromUid(ExecState*, StringImpl* uid);
+    static Identifier fromUid(VM*, UniquedStringImpl* uid);
+    static Identifier fromUid(ExecState*, UniquedStringImpl* uid);
     static Identifier fromUid(const PrivateName&);
 
     static Identifier createLCharFromUChar(VM* vm, const UChar* s, int length) { return Identifier(vm, add8(vm, s, length)); }
@@ -174,8 +175,10 @@ private:
     Identifier(VM* vm, const String& string) : m_string(add(vm, string.impl())) { ASSERT(m_string.impl()->isAtomic()); }
     Identifier(VM* vm, StringImpl* rep) : m_string(add(vm, rep)) { ASSERT(m_string.impl()->isAtomic()); }
 
-    enum UniqueIdentifierFlag { UniqueIdentifier };
-    Identifier(UniqueIdentifierFlag, StringImpl* uid) : m_string(uid) { ASSERT(m_string.impl()->isSymbol()); }
+    Identifier(SymbolImpl& uid)
+        : m_string(&uid)
+    {
+    }
 
     template <typename CharType>
     ALWAYS_INLINE static uint32_t toUInt32FromCharacters(const CharType* characters, unsigned length, bool& ok);
@@ -271,7 +274,7 @@ inline bool Identifier::equal(const StringImpl* r, const UChar* s, unsigned leng
 
 ALWAYS_INLINE Optional<uint32_t> parseIndex(const Identifier& identifier)
 {
-    AtomicStringImpl* uid = identifier.impl();
+    auto uid = identifier.impl();
     if (!uid)
         return Nullopt;
     if (uid->isSymbol())
@@ -279,9 +282,9 @@ ALWAYS_INLINE Optional<uint32_t> parseIndex(const Identifier& identifier)
     return parseIndex(*uid);
 }
 
-struct IdentifierRepHash : PtrHash<RefPtr<StringImpl>> {
-    static unsigned hash(const RefPtr<StringImpl>& key) { return key->existingSymbolAwareHash(); }
-    static unsigned hash(StringImpl* key) { return key->existingSymbolAwareHash(); }
+struct IdentifierRepHash : PtrHash<RefPtr<UniquedStringImpl>> {
+    static unsigned hash(const RefPtr<UniquedStringImpl>& key) { return key->existingSymbolAwareHash(); }
+    static unsigned hash(UniquedStringImpl* key) { return key->existingSymbolAwareHash(); }
 };
 
 struct IdentifierMapIndexHashTraits : HashTraits<int> {
@@ -289,8 +292,8 @@ struct IdentifierMapIndexHashTraits : HashTraits<int> {
     static const bool emptyValueIsZero = false;
 };
 
-typedef HashMap<RefPtr<StringImpl>, int, IdentifierRepHash, HashTraits<RefPtr<StringImpl>>, IdentifierMapIndexHashTraits> IdentifierMap;
-typedef HashMap<StringImpl*, int, IdentifierRepHash, HashTraits<StringImpl*>, IdentifierMapIndexHashTraits> BorrowedIdentifierMap;
+typedef HashMap<RefPtr<UniquedStringImpl>, int, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, IdentifierMapIndexHashTraits> IdentifierMap;
+typedef HashMap<UniquedStringImpl*, int, IdentifierRepHash, HashTraits<UniquedStringImpl*>, IdentifierMapIndexHashTraits> BorrowedIdentifierMap;
 
 } // namespace JSC
 

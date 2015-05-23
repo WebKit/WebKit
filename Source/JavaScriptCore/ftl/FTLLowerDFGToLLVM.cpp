@@ -2089,7 +2089,7 @@ private:
         
         LValue base = lowCell(m_node->child1());
         LValue value = lowJSValue(m_node->child2());
-        StringImpl* uid = m_graph.identifiers()[m_node->identifierNumber()];
+        auto uid = m_graph.identifiers()[m_node->identifierNumber()];
 
         // Arguments: id, bytes, target, numArgs, args...
         unsigned stackmapID = m_stackmapIDs++;
@@ -4813,7 +4813,7 @@ private:
         if (JSString* string = m_node->child1()->dynamicCastConstant<JSString*>()) {
             if (string->tryGetValueImpl() && string->tryGetValueImpl()->isAtomic()) {
 
-                const StringImpl* str = string->tryGetValueImpl();
+                const auto str = static_cast<const AtomicStringImpl*>(string->tryGetValueImpl());
                 unsigned stackmapID = m_stackmapIDs++;
             
                 LValue call = m_out.call(
@@ -5309,7 +5309,7 @@ private:
                         break;
                     }
                 }
-                ASSERT(found);
+                ASSERT_UNUSED(found, found);
             }
         }
 
@@ -5748,7 +5748,7 @@ private:
     
     LValue getById(LValue base)
     {
-        StringImpl* uid = m_graph.identifiers()[m_node->identifierNumber()];
+        auto uid = m_graph.identifiers()[m_node->identifierNumber()];
 
         // Arguments: id, bytes, target, numArgs, args...
         unsigned stackmapID = m_stackmapIDs++;

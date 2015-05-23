@@ -177,7 +177,7 @@ MacroAssembler::Call callOperation(
     State& state, const RegisterSet& usedRegisters, CCallHelpers& jit,
     CodeOrigin codeOrigin, MacroAssembler::JumpList* exceptionTarget,
     J_JITOperation_ESsiCI operation, GPRReg result, StructureStubInfo* stubInfo,
-    GPRReg object, const StringImpl* uid)
+    GPRReg object, const UniquedStringImpl* uid)
 {
     storeCodeOrigin(state, jit, codeOrigin);
     CallContext context(state, usedRegisters, jit, 4, result);
@@ -190,7 +190,7 @@ MacroAssembler::Call callOperation(
     State& state, const RegisterSet& usedRegisters, CCallHelpers& jit,
     CodeOrigin codeOrigin, MacroAssembler::JumpList* exceptionTarget,
     J_JITOperation_ESsiJI operation, GPRReg result, StructureStubInfo* stubInfo,
-    GPRReg object, StringImpl* uid)
+    GPRReg object, UniquedStringImpl* uid)
 {
     storeCodeOrigin(state, jit, codeOrigin);
     CallContext context(state, usedRegisters, jit, 4, result);
@@ -204,7 +204,7 @@ MacroAssembler::Call callOperation(
     State& state, const RegisterSet& usedRegisters, CCallHelpers& jit, 
     CodeOrigin codeOrigin, MacroAssembler::JumpList* exceptionTarget,
     V_JITOperation_ESsiJJI operation, StructureStubInfo* stubInfo, GPRReg value,
-    GPRReg object, StringImpl* uid)
+    GPRReg object, UniquedStringImpl* uid)
 {
     storeCodeOrigin(state, jit, codeOrigin);
     CallContext context(state, usedRegisters, jit, 5, InvalidGPRReg);

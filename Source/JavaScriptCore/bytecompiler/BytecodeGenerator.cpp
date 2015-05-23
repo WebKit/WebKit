@@ -211,7 +211,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     bool shouldCaptureAllOfTheThings = m_shouldEmitDebugHooks || codeBlock->usesEval();
     bool needsArguments = functionNode->usesArguments() || codeBlock->usesEval();
     
-    auto captures = [&] (StringImpl* uid) -> bool {
+    auto captures = [&] (UniquedStringImpl* uid) -> bool {
         if (shouldCaptureAllOfTheThings)
             return true;
         if (!shouldCaptureSomeOfTheThings)
@@ -225,7 +225,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         }
         return functionNode->captures(uid);
     };
-    auto varKind = [&] (StringImpl* uid) -> VarKind {
+    auto varKind = [&] (UniquedStringImpl* uid) -> VarKind {
         return captures(uid) ? VarKind::Scope : VarKind::Stack;
     };
 
@@ -315,7 +315,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             for (unsigned i = 0; i < parameters.size(); ++i) {
                 ScopeOffset offset = m_symbolTable->takeNextScopeOffset();
                 m_symbolTable->setArgumentOffset(vm, i, offset);
-                if (StringImpl* name = visibleNameForParameter(parameters.at(i))) {
+                if (UniquedStringImpl* name = visibleNameForParameter(parameters.at(i))) {
                     VarOffset varOffset(offset);
                     SymbolTableEntry entry(varOffset);
                     // Stores to these variables via the ScopedArguments object will not do
@@ -343,7 +343,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             // We're going to put all parameters into the DirectArguments object. First ensure
             // that the symbol table knows that this is happening.
             for (unsigned i = 0; i < parameters.size(); ++i) {
-                if (StringImpl* name = visibleNameForParameter(parameters.at(i)))
+                if (UniquedStringImpl* name = visibleNameForParameter(parameters.at(i)))
                     m_symbolTable->set(name, SymbolTableEntry(VarOffset(DirectArgumentsOffset(i))));
             }
             
@@ -354,7 +354,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         // Create the formal parameters the normal way. Any of them could be captured, or not. If
         // captured, lift them into the scope.
         for (unsigned i = 0; i < parameters.size(); ++i) {
-            StringImpl* name = visibleNameForParameter(parameters.at(i));
+            UniquedStringImpl* name = visibleNameForParameter(parameters.at(i));
             if (!name)
                 continue;
             
@@ -466,7 +466,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         
         bool haveParameterNamedArguments = false;
         for (unsigned i = 0; i < parameters.size(); ++i) {
-            StringImpl* name = visibleNameForParameter(parameters.at(i));
+            UniquedStringImpl* name = visibleNameForParameter(parameters.at(i));
             if (name == propertyNames().arguments.impl()) {
                 haveParameterNamedArguments = true;
                 break;
@@ -546,7 +546,7 @@ RegisterID* BytecodeGenerator::initializeNextParameter()
     return &parameter;
 }
 
-StringImpl* BytecodeGenerator::visibleNameForParameter(DeconstructionPatternNode* pattern)
+UniquedStringImpl* BytecodeGenerator::visibleNameForParameter(DeconstructionPatternNode* pattern)
 {
     if (pattern->isBindingNode()) {
         const Identifier& ident = static_cast<const BindingNode*>(pattern)->boundProperty();
@@ -955,13 +955,13 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfNotFunctionApply(RegisterID* cond
 
 bool BytecodeGenerator::hasConstant(const Identifier& ident) const
 {
-    StringImpl* rep = ident.impl();
+    UniquedStringImpl* rep = ident.impl();
     return m_identifierMap.contains(rep);
 }
 
 unsigned BytecodeGenerator::addConstant(const Identifier& ident)
 {
-    StringImpl* rep = ident.impl();
+    UniquedStringImpl* rep = ident.impl();
     IdentifierMap::AddResult result = m_identifierMap.add(rep, m_codeBlock->numberOfIdentifiers());
     if (result.isNewEntry)
         m_codeBlock->addIdentifier(ident);

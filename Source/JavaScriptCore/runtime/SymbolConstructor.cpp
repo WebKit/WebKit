@@ -62,7 +62,7 @@ SymbolConstructor::SymbolConstructor(VM& vm, Structure* structure)
 }
 
 #define INITIALIZE_WELL_KNOWN_SYMBOLS(name) \
-    putDirectWithoutTransition(vm, Identifier::fromString(&vm, #name), Symbol::create(vm, vm.propertyNames->name##Symbol.impl()), DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, Identifier::fromString(&vm, #name), Symbol::create(vm, static_cast<SymbolImpl&>(*vm.propertyNames->name##Symbol.impl())), DontEnum | DontDelete | ReadOnly);
 
 void SymbolConstructor::finishCreation(VM& vm, SymbolPrototype* prototype)
 {
@@ -108,8 +108,7 @@ EncodedJSValue JSC_HOST_CALL symbolConstructorFor(ExecState* exec)
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    Ref<StringImpl> uid = exec->vm().symbolRegistry().symbolForKey(string);
-    return JSValue::encode(Symbol::create(exec->vm(), static_cast<AtomicStringImpl*>(&uid.get())));
+    return JSValue::encode(Symbol::create(exec->vm(), exec->vm().symbolRegistry().symbolForKey(string)));
 }
 
 EncodedJSValue JSC_HOST_CALL symbolConstructorKeyFor(ExecState* exec)
@@ -118,13 +117,12 @@ EncodedJSValue JSC_HOST_CALL symbolConstructorKeyFor(ExecState* exec)
     if (!symbolValue.isSymbol())
         return JSValue::encode(throwTypeError(exec));
 
-    AtomicStringImpl* uid = asSymbol(symbolValue)->privateName().uid();
-    ASSERT(uid->isSymbol());
+    SymbolImpl* uid = asSymbol(symbolValue)->privateName().uid();
     if (!uid->symbolRegistry())
         return JSValue::encode(jsUndefined());
 
     ASSERT(uid->symbolRegistry() == &exec->vm().symbolRegistry());
-    return JSValue::encode(jsString(exec, exec->vm().symbolRegistry().keyForSymbol(uid)));
+    return JSValue::encode(jsString(exec, exec->vm().symbolRegistry().keyForSymbol(*uid)));
 }
 
 } // namespace JSC

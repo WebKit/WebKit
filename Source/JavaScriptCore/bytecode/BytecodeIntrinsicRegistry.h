@@ -48,7 +48,7 @@ public:
 
 private:
     const CommonIdentifiers& m_propertyNames;
-    HashMap<RefPtr<StringImpl>, EmitterType, IdentifierRepHash> m_bytecodeIntrinsicMap;
+    HashMap<RefPtr<UniquedStringImpl>, EmitterType, IdentifierRepHash> m_bytecodeIntrinsicMap;
 };
 
 } // namespace JSC

@@ -28,6 +28,7 @@
 
 #include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/SymbolImpl.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {
@@ -81,10 +82,10 @@ public:
     SymbolRegistry() = default;
     WTF_EXPORT_PRIVATE ~SymbolRegistry();
 
-    WTF_EXPORT_PRIVATE Ref<StringImpl> symbolForKey(const String&);
-    WTF_EXPORT_PRIVATE String keyForSymbol(StringImpl* uid);
+    WTF_EXPORT_PRIVATE Ref<SymbolImpl> symbolForKey(const String&);
+    WTF_EXPORT_PRIVATE String keyForSymbol(SymbolImpl&);
 
-    void remove(StringImpl* uid);
+    void remove(SymbolImpl&);
 
 private:
     HashSet<SymbolRegistryKey> m_table;

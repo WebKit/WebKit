@@ -70,21 +70,21 @@ inline Ref<StringImpl> Identifier::add(VM* vm, StringImpl* r)
     return *AtomicStringImpl::addWithStringTableProvider(*vm, r);
 }
 
-inline Identifier Identifier::fromUid(VM* vm, StringImpl* uid)
+inline Identifier Identifier::fromUid(VM* vm, UniquedStringImpl* uid)
 {
     if (!uid || !uid->isSymbol())
         return Identifier(vm, uid);
-    return Identifier(UniqueIdentifier, uid);
+    return static_cast<SymbolImpl&>(*uid);
 }
 
-inline Identifier Identifier::fromUid(ExecState* exec, StringImpl* uid)
+inline Identifier Identifier::fromUid(ExecState* exec, UniquedStringImpl* uid)
 {
     return fromUid(&exec->vm(), uid);
 }
 
 inline Identifier Identifier::fromUid(const PrivateName& name)
 {
-    return Identifier(UniqueIdentifier, name.uid());
+    return *name.uid();
 }
 
 template<unsigned charactersCount>

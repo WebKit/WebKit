@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PrivateName_h
-#define PrivateName_h
+#ifndef UniquedStringImpl_h
+#define UniquedStringImpl_h
 
-#include <wtf/text/SymbolImpl.h>
+#include <wtf/text/StringImpl.h>
 
-namespace JSC {
+namespace WTF {
 
-class PrivateName {
-public:
-    PrivateName()
-        : m_uid(StringImpl::createSymbolEmpty())
-    {
-    }
-
-    explicit PrivateName(SymbolImpl& uid)
-        : m_uid(&uid)
-    {
-    }
-
-    enum DescriptionTag { Description };
-    explicit PrivateName(DescriptionTag, const String& description)
-        : m_uid(StringImpl::createSymbol(description.impl()))
-    {
-    }
-
-    SymbolImpl* uid() const { return m_uid.get(); }
-
-    bool operator==(const PrivateName& other) const { return uid() == other.uid(); }
-    bool operator!=(const PrivateName& other) const { return uid() != other.uid(); }
-
+// It represents that the string impl is uniqued in some ways.
+// When the given 2 string impls are both uniqued string impls, we can compare it just using pointer comparison.
+class UniquedStringImpl : public StringImpl {
 private:
-    RefPtr<SymbolImpl> m_uid;
+    UniquedStringImpl() = delete;
 };
 
-}
+#if !ASSERT_DISABLED
+// UniquedStringImpls created from StaticASCIILiteral will ASSERT
+// in the generic ValueCheck<T>::checkConsistency
+// as they are not allocated by fastMalloc.
+// We don't currently have any way to detect that case
+// so we ignore the consistency check for all UniquedStringImpls*.
+template<> struct
+ValueCheck<UniquedStringImpl*> {
+    static void checkConsistency(const UniquedStringImpl*) { }
+};
 
+template<> struct
+ValueCheck<const UniquedStringImpl*> {
+    static void checkConsistency(const UniquedStringImpl*) { }
+};
 #endif
+
+} // namespace WTF
+
+using WTF::UniquedStringImpl;
+
+#endif // UniquedStringImpl_h

@@ -334,13 +334,13 @@ void StructureShape::markAsFinal()
     m_final = true;
 }
 
-void StructureShape::addProperty(RefPtr<StringImpl> impl)
+void StructureShape::addProperty(UniquedStringImpl& uid)
 {
     ASSERT(!m_final);
-    m_fields.add(impl);
+    m_fields.add(&uid);
 }
 
-String StructureShape::propertyHash() 
+String StructureShape::propertyHash()
 {
     ASSERT(m_final);
     if (m_propertyHash)
@@ -350,9 +350,8 @@ String StructureShape::propertyHash()
     builder.append(':');
     builder.append(m_constructorName);
     builder.append(':');
-    
-    for (auto iter = m_fields.begin(), end = m_fields.end(); iter != end; ++iter) {
-        String property = iter->get();
+    for (auto& key : m_fields) {
+        String property = key.get();
         property.replace(":", "\\:"); // Ensure that hash({"foo:", "bar"}) != hash({"foo", ":bar"}) because we're using colons as a separator and colons are legal characters in field names in JS.
         builder.append(property);
     }

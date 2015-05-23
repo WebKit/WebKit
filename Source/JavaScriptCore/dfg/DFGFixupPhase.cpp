@@ -959,16 +959,16 @@ private:
             if (!m_graph.hasExitSite(node->origin.semantic, BadCache)
                 && !m_graph.hasExitSite(node->origin.semantic, BadIndexingType)
                 && !m_graph.hasExitSite(node->origin.semantic, ExoticObjectMode)) {
-                StringImpl* impl = m_graph.identifiers()[node->identifierNumber()];
-                if (impl == vm().propertyNames->length.impl()) {
+                auto uid = m_graph.identifiers()[node->identifierNumber()];
+                if (uid == vm().propertyNames->length.impl()) {
                     attemptToMakeGetArrayLength(node);
                     break;
                 }
-                if (impl == vm().propertyNames->byteLength.impl()) {
+                if (uid == vm().propertyNames->byteLength.impl()) {
                     attemptToMakeGetTypedArrayByteLength(node);
                     break;
                 }
-                if (impl == vm().propertyNames->byteOffset.impl()) {
+                if (uid == vm().propertyNames->byteOffset.impl()) {
                     attemptToMakeGetTypedArrayByteOffset(node);
                     break;
                 }
@@ -1492,7 +1492,7 @@ private:
     }
     
     bool isStringPrototypeMethodSane(
-        JSObject* stringPrototype, Structure* stringPrototypeStructure, AtomicStringImpl* uid)
+        JSObject* stringPrototype, Structure* stringPrototypeStructure, UniquedStringImpl* uid)
     {
         unsigned attributesUnused;
         PropertyOffset offset =

@@ -156,7 +156,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
                         break;
                     }
                 }
-                ASSERT(found);
+                ASSERT_UNUSED(found, found);
             }
             unsigned numberOfClosureVarPloc = 0;
             for (unsigned i = materialization->properties().size(); i--;) {

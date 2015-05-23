@@ -1,3 +1,14 @@
+2015-05-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Introduce UniquedStringImpl and SymbolImpl to separate symbolic strings from AtomicStringImpl
+        https://bugs.webkit.org/show_bug.cgi?id=144848
+
+        Reviewed by Darin Adler.
+
+        Use UniquedStringImpl, SymbolImpl and AtomicStringImpl.
+
+        * TestWebKitAPI/Tests/WTF/StringImpl.cpp:
+
 2015-05-22  Alexey Proskuryakov  <ap@apple.com>
 
         Fix one more merge error in static analyzer support.

@@ -52,7 +52,12 @@ CommonIdentifiers::~CommonIdentifiers()
 {
 }
 
-bool CommonIdentifiers::isPrivateName(StringImpl* uid) const
+bool CommonIdentifiers::isPrivateName(SymbolImpl& uid) const
+{
+    return m_builtinNames->isPrivateName(uid);
+}
+
+bool CommonIdentifiers::isPrivateName(UniquedStringImpl& uid) const
 {
     return m_builtinNames->isPrivateName(uid);
 }

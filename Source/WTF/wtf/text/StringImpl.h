@@ -57,6 +57,7 @@ struct CharBufferFromLiteralDataTranslator;
 struct SubstringTranslator;
 struct UCharBufferTranslator;
 template<typename> class RetainPtr;
+class SymbolImpl;
 class SymbolRegistry;
 
 enum TextCaseSensitivity {
@@ -418,8 +419,8 @@ public:
         return constructInternal<T>(resultImpl, length);
     }
 
-    WTF_EXPORT_STRING_API static Ref<StringImpl> createSymbolEmpty();
-    WTF_EXPORT_STRING_API static Ref<StringImpl> createSymbol(PassRefPtr<StringImpl> rep);
+    WTF_EXPORT_STRING_API static Ref<SymbolImpl> createSymbolEmpty();
+    WTF_EXPORT_STRING_API static Ref<SymbolImpl> createSymbol(PassRefPtr<StringImpl> rep);
 
     // Reallocate the StringImpl. The originalString must be only owned by the PassRefPtr,
     // and the buffer ownership must be BufferInternal. Just like the input pointer of realloc(),

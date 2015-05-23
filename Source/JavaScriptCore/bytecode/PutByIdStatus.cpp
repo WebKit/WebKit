@@ -62,7 +62,7 @@ bool PutByIdStatus::hasExitSite(const ConcurrentJITLocker& locker, CodeBlock* pr
 }
 #endif
 
-PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned bytecodeIndex, AtomicStringImpl* uid)
+PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned bytecodeIndex, UniquedStringImpl* uid)
 {
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
@@ -105,7 +105,7 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     return PutByIdVariant::transition(structure, newStructure, intendedChain.get(), offset);
 }
 
-PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& map, unsigned bytecodeIndex, AtomicStringImpl* uid)
+PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& map, unsigned bytecodeIndex, UniquedStringImpl* uid)
 {
     ConcurrentJITLocker locker(profiledBlock->m_lock);
     
@@ -134,7 +134,7 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& m
 #if ENABLE(JIT)
 PutByIdStatus PutByIdStatus::computeForStubInfo(
     const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo,
-    AtomicStringImpl* uid, CallLinkStatus::ExitSiteData callExitSiteData)
+    UniquedStringImpl* uid, CallLinkStatus::ExitSiteData callExitSiteData)
 {
     if (!stubInfo || !stubInfo->seen)
         return PutByIdStatus();
@@ -274,7 +274,7 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
 }
 #endif
 
-PutByIdStatus PutByIdStatus::computeFor(CodeBlock* baselineBlock, CodeBlock* dfgBlock, StubInfoMap& baselineMap, StubInfoMap& dfgMap, CodeOrigin codeOrigin, AtomicStringImpl* uid)
+PutByIdStatus PutByIdStatus::computeFor(CodeBlock* baselineBlock, CodeBlock* dfgBlock, StubInfoMap& baselineMap, StubInfoMap& dfgMap, CodeOrigin codeOrigin, UniquedStringImpl* uid)
 {
 #if ENABLE(DFG_JIT)
     if (dfgBlock) {
@@ -308,7 +308,7 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* baselineBlock, CodeBlock* dfg
     return computeFor(baselineBlock, baselineMap, codeOrigin.bytecodeIndex, uid);
 }
 
-PutByIdStatus PutByIdStatus::computeFor(JSGlobalObject* globalObject, const StructureSet& set, AtomicStringImpl* uid, bool isDirect)
+PutByIdStatus PutByIdStatus::computeFor(JSGlobalObject* globalObject, const StructureSet& set, UniquedStringImpl* uid, bool isDirect)
 {
     if (parseIndex(*uid))
         return PutByIdStatus(TakesSlowPath);

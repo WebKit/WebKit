@@ -37,7 +37,7 @@ namespace JSC {
     const Identifier& name##PublicName() const { return m_##name; } \
     const Identifier& name##PrivateName() const { return m_##name##PrivateName; }
 
-#define INITIALISE_BUILTIN_SYMBOLS(name) INITIALISE_BUILTIN_NAMES(name), m_##name##Symbol(Identifier::fromUid(PrivateName(ASCIILiteral("Symbol." #name))))
+#define INITIALISE_BUILTIN_SYMBOLS(name) INITIALISE_BUILTIN_NAMES(name), m_##name##Symbol(Identifier::fromUid(PrivateName(PrivateName::Description, ASCIILiteral("Symbol." #name))))
 #define DECLARE_BUILTIN_SYMBOLS(name) DECLARE_BUILTIN_NAMES(name) const Identifier m_##name##Symbol;
 #define DECLARE_BUILTIN_SYMBOL_ACCESSOR(name) \
     DECLARE_BUILTIN_IDENTIFIER_ACCESSOR(name) \
@@ -64,7 +64,8 @@ public:
         JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(INITIALISE_PUBLIC_TO_PRIVATE_ENTRY)
     }
 
-    bool isPrivateName(StringImpl* uid) const;
+    bool isPrivateName(SymbolImpl& uid) const;
+    bool isPrivateName(UniquedStringImpl& uid) const;
     bool isPrivateName(const Identifier&) const;
     const Identifier* getPrivateName(const Identifier&) const;
     const Identifier& getPublicName(const Identifier&) const;
@@ -78,7 +79,7 @@ private:
     JSC_FOREACH_BUILTIN_FUNCTION_NAME(DECLARE_BUILTIN_NAMES)
     JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(DECLARE_BUILTIN_NAMES)
     JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(DECLARE_BUILTIN_SYMBOLS)
-    typedef HashMap<RefPtr<StringImpl>, const Identifier*, IdentifierRepHash> BuiltinNamesMap;
+    typedef HashMap<RefPtr<UniquedStringImpl>, const Identifier*, IdentifierRepHash> BuiltinNamesMap;
     BuiltinNamesMap m_publicToPrivateMap;
     BuiltinNamesMap m_privateToPublicMap;
 };
@@ -90,16 +91,23 @@ private:
 #undef INITIALISE_BUILTIN_SYMBOLS
 #undef DECLARE_BUILTIN_SYMBOL_ACCESSOR
 
-inline bool BuiltinNames::isPrivateName(StringImpl* uid) const
+inline bool BuiltinNames::isPrivateName(SymbolImpl& uid) const
 {
-    if (!uid->isSymbol())
+    return m_privateToPublicMap.contains(&uid);
+}
+
+inline bool BuiltinNames::isPrivateName(UniquedStringImpl& uid) const
+{
+    if (!uid.isSymbol())
         return false;
-    return m_privateToPublicMap.contains(uid);
+    return m_privateToPublicMap.contains(&uid);
 }
 
 inline bool BuiltinNames::isPrivateName(const Identifier& ident) const
 {
-    return isPrivateName(ident.impl());
+    if (ident.isNull())
+        return false;
+    return isPrivateName(*ident.impl());
 }
 
 inline const Identifier* BuiltinNames::getPrivateName(const Identifier& ident) const

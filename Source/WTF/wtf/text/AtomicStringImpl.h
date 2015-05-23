@@ -21,13 +21,13 @@
 #ifndef AtomicStringImpl_h
 #define AtomicStringImpl_h
 
-#include <wtf/text/StringImpl.h>
+#include <wtf/text/UniquedStringImpl.h>
 
 namespace WTF {
 
 class AtomicStringTable;
 
-class AtomicStringImpl : public StringImpl {
+class AtomicStringImpl : public UniquedStringImpl {
 public:
     static AtomicStringImpl* lookUp(LChar* characters, unsigned length)
     {

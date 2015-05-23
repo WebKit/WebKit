@@ -107,7 +107,7 @@ public:
         }
 
     private:
-        typedef HashMap<RefPtr<StringImpl>, WriteBarrier<Unknown>, IdentifierRepHash> PrivatePropertyMap;
+        typedef HashMap<RefPtr<UniquedStringImpl>, WriteBarrier<Unknown>, IdentifierRepHash> PrivatePropertyMap;
         PrivatePropertyMap m_propertyMap;
     };
     std::unique_ptr<JSPrivatePropertyMap> m_privateProperties;

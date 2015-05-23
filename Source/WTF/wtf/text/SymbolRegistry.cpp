@@ -34,30 +34,28 @@ SymbolRegistry::~SymbolRegistry()
         key.impl()->symbolRegistry() = nullptr;
 }
 
-Ref<StringImpl> SymbolRegistry::symbolForKey(const String& rep)
+Ref<SymbolImpl> SymbolRegistry::symbolForKey(const String& rep)
 {
     auto addResult = m_table.add(SymbolRegistryKey(rep.impl()));
     if (!addResult.isNewEntry)
-        return *addResult.iterator->impl();
+        return *static_cast<SymbolImpl*>(addResult.iterator->impl());
 
-    Ref<StringImpl> symbol = StringImpl::createSymbol(rep.impl());
+    Ref<SymbolImpl> symbol = StringImpl::createSymbol(rep.impl());
     symbol->symbolRegistry() = this;
     *addResult.iterator = SymbolRegistryKey(&symbol.get());
     return symbol;
 }
 
-String SymbolRegistry::keyForSymbol(StringImpl* uid)
+String SymbolRegistry::keyForSymbol(SymbolImpl& uid)
 {
-    ASSERT(uid->isSymbol());
-    ASSERT(uid->symbolRegistry() == this);
-    return uid->extractFoldedStringInSymbol();
+    ASSERT(uid.symbolRegistry() == this);
+    return uid.extractFoldedStringInSymbol();
 }
 
-void SymbolRegistry::remove(StringImpl* uid)
+void SymbolRegistry::remove(SymbolImpl& uid)
 {
-    ASSERT(uid->isSymbol());
-    ASSERT(uid->symbolRegistry() == this);
-    auto iterator = m_table.find(SymbolRegistryKey(uid));
+    ASSERT(uid.symbolRegistry() == this);
+    auto iterator = m_table.find(SymbolRegistryKey(&uid));
     ASSERT_WITH_MESSAGE(iterator != m_table.end(), "The string being removed is registered in the string table of an other thread!");
     m_table.remove(iterator);
 }

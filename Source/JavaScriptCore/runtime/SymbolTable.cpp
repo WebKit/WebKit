@@ -193,7 +193,7 @@ void SymbolTable::prepareForTypeProfiling(const ConcurrentJITLocker&)
     }
 }
 
-GlobalVariableID SymbolTable::uniqueIDForVariable(const ConcurrentJITLocker&, StringImpl* key, VM& vm)
+GlobalVariableID SymbolTable::uniqueIDForVariable(const ConcurrentJITLocker&, UniquedStringImpl* key, VM& vm)
 {
     RELEASE_ASSERT(m_typeProfilingRareData);
 
@@ -238,7 +238,7 @@ RefPtr<TypeSet> SymbolTable::globalTypeSetForOffset(const ConcurrentJITLocker& l
     return globalTypeSetForVariable(locker, iter->value.get(), vm);
 }
 
-RefPtr<TypeSet> SymbolTable::globalTypeSetForVariable(const ConcurrentJITLocker& locker, StringImpl* key, VM& vm)
+RefPtr<TypeSet> SymbolTable::globalTypeSetForVariable(const ConcurrentJITLocker& locker, UniquedStringImpl* key, VM& vm)
 {
     RELEASE_ASSERT(m_typeProfilingRareData);
 

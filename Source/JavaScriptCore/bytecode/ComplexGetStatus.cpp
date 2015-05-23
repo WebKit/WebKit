@@ -32,7 +32,7 @@ namespace JSC {
 
 ComplexGetStatus ComplexGetStatus::computeFor(
     CodeBlock* profiledBlock, Structure* headStructure, StructureChain* chain,
-    unsigned chainCount, AtomicStringImpl* uid)
+    unsigned chainCount, UniquedStringImpl* uid)
 {
     // FIXME: We should assert that we never see a structure that
     // hasImpureGetOwnPropertySlot() but for which we don't

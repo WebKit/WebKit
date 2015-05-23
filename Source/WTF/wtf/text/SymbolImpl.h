@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PrivateName_h
-#define PrivateName_h
+#ifndef SymbolImpl_h
+#define SymbolImpl_h
 
-#include <wtf/text/SymbolImpl.h>
+#include <wtf/text/UniquedStringImpl.h>
 
-namespace JSC {
+namespace WTF {
 
-class PrivateName {
-public:
-    PrivateName()
-        : m_uid(StringImpl::createSymbolEmpty())
-    {
-    }
-
-    explicit PrivateName(SymbolImpl& uid)
-        : m_uid(&uid)
-    {
-    }
-
-    enum DescriptionTag { Description };
-    explicit PrivateName(DescriptionTag, const String& description)
-        : m_uid(StringImpl::createSymbol(description.impl()))
-    {
-    }
-
-    SymbolImpl* uid() const { return m_uid.get(); }
-
-    bool operator==(const PrivateName& other) const { return uid() == other.uid(); }
-    bool operator!=(const PrivateName& other) const { return uid() != other.uid(); }
-
+// SymbolImpl is used to represent the symbol string impl.
+// It is uniqued string impl, but is not registered in Atomic String tables, so it's not atomic.
+class SymbolImpl : public UniquedStringImpl {
 private:
-    RefPtr<SymbolImpl> m_uid;
+    SymbolImpl() = delete;
 };
 
-}
+#if !ASSERT_DISABLED
+// SymbolImpls created from StaticASCIILiteral will ASSERT
+// in the generic ValueCheck<T>::checkConsistency
+// as they are not allocated by fastMalloc.
+// We don't currently have any way to detect that case
+// so we ignore the consistency check for all SymbolImpls*.
+template<> struct
+ValueCheck<SymbolImpl*> {
+    static void checkConsistency(const SymbolImpl*) { }
+};
 
+template<> struct
+ValueCheck<const SymbolImpl*> {
+    static void checkConsistency(const SymbolImpl*) { }
+};
 #endif
+
+} // namespace WTF
+
+using WTF::SymbolImpl;
+
+#endif // SymbolImpl_h

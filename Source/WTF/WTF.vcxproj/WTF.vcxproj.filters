@@ -348,7 +348,13 @@
     <ClInclude Include="..\wtf\text\StringView.h">
       <Filter>wtf</Filter>
     </ClInclude>
+    <ClInclude Include="..\wtf\text\SymbolImpl.h">
+      <Filter>text</Filter>
+    </ClInclude>
     <ClInclude Include="..\wtf\text\SymbolRegistry.h">
+      <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\text\UniquedStringImpl.h">
       <Filter>text</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\text\WTFString.h">

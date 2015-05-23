@@ -60,6 +60,9 @@ public:
     ATOMICSTRING_CONVERSION AtomicString(const String&);
     AtomicString(StringImpl* baseString, unsigned start, unsigned length);
 
+    // FIXME: AtomicString doesn’t always have AtomicStringImpl, so one of those two names needs to change..
+    AtomicString(UniquedStringImpl* uid);
+
     enum ConstructFromLiteralTag { ConstructFromLiteral };
     AtomicString(const char* characters, unsigned length, ConstructFromLiteralTag)
         : m_string(AtomicStringImpl::addLiteral(characters, length))
@@ -272,6 +275,11 @@ inline AtomicString::AtomicString(const String& s)
 
 inline AtomicString::AtomicString(StringImpl* baseString, unsigned start, unsigned length)
     : m_string(AtomicStringImpl::add(baseString, start, length))
+{
+}
+
+inline AtomicString::AtomicString(UniquedStringImpl* uid)
+    : m_string(uid)
 {
 }
 

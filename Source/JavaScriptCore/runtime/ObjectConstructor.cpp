@@ -273,9 +273,9 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertySymbols(ExecState* e
     JSArray* names = constructEmptyArray(exec, 0);
     size_t numProperties = properties.size();
     for (size_t i = 0; i < numProperties; i++) {
-        AtomicStringImpl* impl = properties[i].impl();
-        if (impl->isSymbol() && !exec->propertyNames().isPrivateName(impl))
-            names->push(exec, Symbol::create(exec->vm(), impl));
+        auto impl = properties[i].impl();
+        if (impl->isSymbol() && !exec->propertyNames().isPrivateName(*impl))
+            names->push(exec, Symbol::create(exec->vm(), static_cast<SymbolImpl&>(*impl)));
     }
     return JSValue::encode(names);
 }

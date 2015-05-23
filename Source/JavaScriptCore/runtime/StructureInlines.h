@@ -133,7 +133,7 @@ void Structure::forEachPropertyConcurrently(const Functor& functor)
     }
 }
 
-inline PropertyOffset Structure::getConcurrently(AtomicStringImpl* uid)
+inline PropertyOffset Structure::getConcurrently(UniquedStringImpl* uid)
 {
     unsigned attributesIgnored;
     return getConcurrently(uid, attributesIgnored);

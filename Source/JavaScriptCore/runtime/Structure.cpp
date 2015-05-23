@@ -60,7 +60,7 @@ namespace JSC {
 static HashSet<Structure*>& liveStructureSet = *(new HashSet<Structure*>);
 #endif
 
-bool StructureTransitionTable::contains(AtomicStringImpl* rep, unsigned attributes) const
+bool StructureTransitionTable::contains(UniquedStringImpl* rep, unsigned attributes) const
 {
     if (isUsingSingleSlot()) {
         Structure* transition = singleTransition();
@@ -69,7 +69,7 @@ bool StructureTransitionTable::contains(AtomicStringImpl* rep, unsigned attribut
     return map()->get(std::make_pair(rep, attributes));
 }
 
-inline Structure* StructureTransitionTable::get(AtomicStringImpl* rep, unsigned attributes) const
+Structure* StructureTransitionTable::get(UniquedStringImpl* rep, unsigned attributes) const
 {
     if (isUsingSingleSlot()) {
         Structure* transition = singleTransition();
@@ -78,7 +78,7 @@ inline Structure* StructureTransitionTable::get(AtomicStringImpl* rep, unsigned 
     return map()->get(std::make_pair(rep, attributes));
 }
 
-inline void StructureTransitionTable::add(VM& vm, Structure* structure)
+void StructureTransitionTable::add(VM& vm, Structure* structure)
 {
     if (isUsingSingleSlot()) {
         Structure* existingTransition = singleTransition();
@@ -316,7 +316,7 @@ void Structure::materializePropertyMap(VM& vm)
     checkOffsetConsistency();
 }
 
-Structure* Structure::addPropertyTransitionToExistingStructureImpl(Structure* structure, AtomicStringImpl* uid, unsigned attributes, PropertyOffset& offset)
+Structure* Structure::addPropertyTransitionToExistingStructureImpl(Structure* structure, UniquedStringImpl* uid, unsigned attributes, PropertyOffset& offset)
 {
     ASSERT(!structure->isDictionary());
     ASSERT(structure->isObject());
@@ -336,7 +336,7 @@ Structure* Structure::addPropertyTransitionToExistingStructure(Structure* struct
     return addPropertyTransitionToExistingStructureImpl(structure, propertyName.uid(), attributes, offset);
 }
 
-Structure* Structure::addPropertyTransitionToExistingStructureConcurrently(Structure* structure, AtomicStringImpl* uid, unsigned attributes, PropertyOffset& offset)
+Structure* Structure::addPropertyTransitionToExistingStructureConcurrently(Structure* structure, UniquedStringImpl* uid, unsigned attributes, PropertyOffset& offset)
 {
     ConcurrentJITLocker locker(structure->m_lock);
     return addPropertyTransitionToExistingStructureImpl(structure, uid, attributes, offset);
@@ -842,7 +842,7 @@ PropertyTable* Structure::copyPropertyTableForPinning(VM& vm)
     return PropertyTable::create(vm, numberOfSlotsForLastOffset(m_offset, m_inlineCapacity));
 }
 
-PropertyOffset Structure::getConcurrently(AtomicStringImpl* uid, unsigned& attributes)
+PropertyOffset Structure::getConcurrently(UniquedStringImpl* uid, unsigned& attributes)
 {
     PropertyOffset result = invalidOffset;
     
@@ -882,7 +882,7 @@ PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned attrib
     if (attributes & DontEnum)
         setHasNonEnumerableProperties(true);
 
-    AtomicStringImpl* rep = propertyName.uid();
+    auto rep = propertyName.uid();
 
     if (!propertyTable())
         createPropertyMap(locker, vm);
@@ -901,7 +901,7 @@ PropertyOffset Structure::remove(PropertyName propertyName)
     
     checkConsistency();
 
-    AtomicStringImpl* rep = propertyName.uid();
+    auto rep = propertyName.uid();
 
     if (!propertyTable())
         return invalidOffset;
@@ -1042,14 +1042,14 @@ PassRefPtr<StructureShape> Structure::toStructureShape(JSValue value)
             PropertyTable::iterator iter = table->begin();
             PropertyTable::iterator end = table->end();
             for (; iter != end; ++iter)
-                curShape->addProperty(iter->key);
+                curShape->addProperty(*iter->key);
             
             structure->m_lock.unlock();
         }
         for (unsigned i = structures.size(); i--;) {
             Structure* structure = structures[i];
             if (structure->m_nameInPrevious)
-                curShape->addProperty(structure->m_nameInPrevious.get());
+                curShape->addProperty(*structure->m_nameInPrevious);
         }
 
         if (JSObject* curObject = curValue.getObject())

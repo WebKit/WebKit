@@ -34,19 +34,18 @@ namespace JSC {
 
 class PropertyName {
 public:
-    PropertyName(AtomicStringImpl* propertyName)
+    PropertyName(UniquedStringImpl* propertyName)
         : m_impl(propertyName)
     {
-        ASSERT(!m_impl || m_impl->isAtomic() || m_impl->isSymbol());
     }
 
     PropertyName(const Identifier& propertyName)
-        : PropertyName(static_cast<AtomicStringImpl*>(propertyName.impl()))
+        : PropertyName(propertyName.impl())
     {
     }
 
     PropertyName(const PrivateName& propertyName)
-        : m_impl(static_cast<AtomicStringImpl*>(propertyName.uid()))
+        : m_impl(propertyName.uid())
     {
         ASSERT(m_impl);
         ASSERT(m_impl->isSymbol());
@@ -57,14 +56,14 @@ public:
         return m_impl && m_impl->isSymbol();
     }
 
-    AtomicStringImpl* uid() const
+    UniquedStringImpl* uid() const
     {
         return m_impl;
     }
 
     AtomicStringImpl* publicName() const
     {
-        return (!m_impl || m_impl->isSymbol()) ? nullptr : m_impl;
+        return (!m_impl || m_impl->isSymbol()) ? nullptr : static_cast<AtomicStringImpl*>(m_impl);
     }
 
     void dump(PrintStream& out) const
@@ -76,7 +75,7 @@ public:
     }
 
 private:
-    AtomicStringImpl* m_impl;
+    UniquedStringImpl* m_impl;
 };
 
 inline bool operator==(PropertyName a, const Identifier& b)
@@ -116,7 +115,7 @@ inline bool operator!=(PropertyName a, PropertyName b)
 
 ALWAYS_INLINE Optional<uint32_t> parseIndex(PropertyName propertyName)
 {
-    AtomicStringImpl* uid = propertyName.uid();
+    auto uid = propertyName.uid();
     if (!uid)
         return Nullopt;
     if (uid->isSymbol())

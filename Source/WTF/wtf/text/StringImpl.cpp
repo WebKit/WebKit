@@ -33,6 +33,7 @@
 #include <wtf/WTFThreadData.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringView.h>
+#include <wtf/text/SymbolImpl.h>
 #include <wtf/text/SymbolRegistry.h>
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/UTF8.h>
@@ -114,7 +115,7 @@ StringImpl::~StringImpl()
         AtomicStringImpl::remove(static_cast<AtomicStringImpl*>(this));
 
     if (isSymbol() && symbolRegistry())
-        symbolRegistry()->remove(this);
+        symbolRegistry()->remove(static_cast<SymbolImpl&>(*this));
 
     BufferOwnership ownership = bufferOwnership();
 
@@ -290,7 +291,7 @@ Ref<StringImpl> StringImpl::create(const LChar* string)
     return create(string, length);
 }
 
-Ref<StringImpl> StringImpl::createSymbol(PassRefPtr<StringImpl> rep)
+Ref<SymbolImpl> StringImpl::createSymbol(PassRefPtr<StringImpl> rep)
 {
     StringImpl* ownerRep = (rep->bufferOwnership() == BufferSubstring) ? rep->substringBuffer() : rep.get();
 
@@ -301,11 +302,11 @@ Ref<StringImpl> StringImpl::createSymbol(PassRefPtr<StringImpl> rep)
     // 4. the placeholder for symbol aware hash value (allocated size is pointer size, but only 4 bytes are used)
     StringImpl* stringImpl = static_cast<StringImpl*>(fastMalloc(allocationSize<StringImpl*>(3)));
     if (rep->is8Bit())
-        return adoptRef(*new (NotNull, stringImpl) StringImpl(CreateSymbol, rep->m_data8, rep->length(), ownerRep));
-    return adoptRef(*new (NotNull, stringImpl) StringImpl(CreateSymbol, rep->m_data16, rep->length(), ownerRep));
+        return adoptRef(static_cast<SymbolImpl&>(*new (NotNull, stringImpl) StringImpl(CreateSymbol, rep->m_data8, rep->length(), ownerRep)));
+    return adoptRef(static_cast<SymbolImpl&>(*new (NotNull, stringImpl) StringImpl(CreateSymbol, rep->m_data16, rep->length(), ownerRep)));
 }
 
-Ref<StringImpl> StringImpl::createSymbolEmpty()
+Ref<SymbolImpl> StringImpl::createSymbolEmpty()
 {
     return createSymbol(empty());
 }

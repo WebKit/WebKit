@@ -66,6 +66,7 @@
 #include <wtf/CommaPrinter.h>
 #include <wtf/StringExtras.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/text/UniquedStringImpl.h>
 
 #if ENABLE(DFG_JIT)
 #include "DFGOperations.h"
@@ -2022,9 +2023,8 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
                 if (static_cast<unsigned>(pc[2].u.operand) != UINT_MAX) {
                     RELEASE_ASSERT(didCloneSymbolTable);
                     const Identifier& ident = identifier(pc[2].u.operand);
-                    StringImpl* uid = ident.impl();
                     ConcurrentJITLocker locker(m_symbolTable->m_lock);
-                    SymbolTable::Map::iterator iter = m_symbolTable->find(locker, uid);
+                    SymbolTable::Map::iterator iter = m_symbolTable->find(locker, ident.impl());
                     ASSERT(iter != m_symbolTable->end(locker));
                     iter->value.prepareToWatch();
                     instructions[i + 5].u.watchpointSet = iter->value.watchpointSet();

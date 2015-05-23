@@ -56,7 +56,7 @@ public:
     static PassRefPtr<StructureShape> create() { return adoptRef(new StructureShape); }
     String propertyHash();
     void markAsFinal();
-    void addProperty(RefPtr<StringImpl>);
+    void addProperty(UniquedStringImpl&);
     String stringRepresentation();
     String toJSONString() const;
     Ref<Inspector::Protocol::Runtime::StructureDescription> inspectorRepresentation();
@@ -70,8 +70,8 @@ private:
     static PassRefPtr<StructureShape> merge(const PassRefPtr<StructureShape>, const PassRefPtr<StructureShape>);
     bool hasSamePrototypeChain(PassRefPtr<StructureShape>);
 
-    HashSet<RefPtr<StringImpl>> m_fields;
-    HashSet<RefPtr<StringImpl>> m_optionalFields;
+    HashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> m_fields;
+    HashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> m_optionalFields;
     RefPtr<StructureShape> m_proto;
     std::unique_ptr<String> m_propertyHash;
     String m_constructorName;

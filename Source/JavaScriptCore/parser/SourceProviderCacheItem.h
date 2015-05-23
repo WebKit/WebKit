@@ -28,6 +28,7 @@
 
 #include "ParserTokens.h"
 #include <wtf/Vector.h>
+#include <wtf/text/UniquedStringImpl.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -40,8 +41,8 @@ struct SourceProviderCacheItemCreationParameters {
     bool needsFullActivation;
     bool usesEval;
     bool strictMode;
-    Vector<RefPtr<StringImpl>> usedVariables;
-    Vector<RefPtr<StringImpl>> writtenVariables;
+    Vector<RefPtr<UniquedStringImpl>> usedVariables;
+    Vector<RefPtr<UniquedStringImpl>> writtenVariables;
 };
 
 #if COMPILER(MSVC)
@@ -82,13 +83,13 @@ public:
     unsigned usedVariablesCount;
     unsigned writtenVariablesCount;
 
-    StringImpl** usedVariables() const { return const_cast<StringImpl**>(m_variables); }
-    StringImpl** writtenVariables() const { return const_cast<StringImpl**>(&m_variables[usedVariablesCount]); }
+    UniquedStringImpl** usedVariables() const { return const_cast<UniquedStringImpl**>(m_variables); }
+    UniquedStringImpl** writtenVariables() const { return const_cast<UniquedStringImpl**>(&m_variables[usedVariablesCount]); }
 
 private:
     SourceProviderCacheItem(const SourceProviderCacheItemCreationParameters&);
 
-    StringImpl* m_variables[0];
+    UniquedStringImpl* m_variables[0];
 };
 
 inline SourceProviderCacheItem::~SourceProviderCacheItem()
@@ -100,7 +101,7 @@ inline SourceProviderCacheItem::~SourceProviderCacheItem()
 inline std::unique_ptr<SourceProviderCacheItem> SourceProviderCacheItem::create(const SourceProviderCacheItemCreationParameters& parameters)
 {
     size_t variableCount = parameters.writtenVariables.size() + parameters.usedVariables.size();
-    size_t objectSize = sizeof(SourceProviderCacheItem) + sizeof(StringImpl*) * variableCount;
+    size_t objectSize = sizeof(SourceProviderCacheItem) + sizeof(UniquedStringImpl*) * variableCount;
     void* slot = fastMalloc(objectSize);
     return std::unique_ptr<SourceProviderCacheItem>(new (slot) SourceProviderCacheItem(parameters));
 }

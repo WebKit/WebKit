@@ -98,7 +98,7 @@ public:
     
     static ComplexGetStatus computeFor(
         CodeBlock* profiledBlock, Structure* headStructure, StructureChain* chain,
-        unsigned chainCount, AtomicStringImpl* uid);
+        unsigned chainCount, UniquedStringImpl* uid);
     
     Kind kind() const { return m_kind; }
     unsigned attributes() const { return m_attributes; }

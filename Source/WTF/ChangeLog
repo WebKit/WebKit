@@ -1,3 +1,54 @@
+2015-05-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Introduce UniquedStringImpl and SymbolImpl to separate symbolic strings from AtomicStringImpl
+        https://bugs.webkit.org/show_bug.cgi?id=144848
+
+        Reviewed by Darin Adler.
+
+        he current AtomicStringImpl accidentally means the symbol OR atomic StringImpl.
+        t's not correct to its name and it's error prone.
+
+        In this patch, we'll introduce/changes classes into WTF.
+
+        1. UniquedStringImpl
+        It's derived class from StringImpl. And it represents symbol || atomic StringImpl.
+
+        2. SymbolImpl
+        It's derived class from UniquedStringImpl. Only symbol strings can become this.
+        It ensures the given StringImpl is symbol in compile time.
+
+        3. AtomicStringImpl
+        It's derived class from UniquedStringImpl. Only atomic (non-normal && non-symbol) strings can become this.
+        It ensures the given StringImpl is atomic in compile time.
+
+        And, in this time, I just accept UniqueStringImpl in AtomicString. As the result,
+        1. Now AtomicStringImpl issue is fixed. Its SymbolImpl is separated and UniquedStringImpl is introduced.
+        2. But AtomicString still have both symbol and atomic strings.
+        This should be solved in the separated patch.
+
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/PrintStream.cpp:
+        * wtf/PrintStream.h:
+        (WTF::printInternal):
+        * wtf/text/AtomicString.h:
+        (WTF::AtomicString::AtomicString):
+        * wtf/text/AtomicStringImpl.h:
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::~StringImpl):
+        (WTF::StringImpl::createSymbol):
+        (WTF::StringImpl::createSymbolEmpty):
+        * wtf/text/StringImpl.h:
+        * wtf/text/SymbolImpl.h: Copied from Source/JavaScriptCore/runtime/PrivateName.h.
+        * wtf/text/SymbolRegistry.cpp:
+        (WTF::SymbolRegistry::symbolForKey):
+        (WTF::SymbolRegistry::keyForSymbol):
+        (WTF::SymbolRegistry::remove):
+        * wtf/text/SymbolRegistry.h:
+        * wtf/text/UniquedStringImpl.h: Copied from Source/JavaScriptCore/runtime/PrivateName.h.
+
 2015-05-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Move MainThreadGtk, RunLoopGtk, WorkQueueGtk under Source/WTF/wtf/glib/

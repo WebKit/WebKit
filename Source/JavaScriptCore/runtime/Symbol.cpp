@@ -43,11 +43,11 @@ Symbol::Symbol(VM& vm)
 
 Symbol::Symbol(VM& vm, const String& string)
     : Base(vm, vm.symbolStructure.get())
-    , m_privateName(string)
+    , m_privateName(PrivateName::Description, string)
 {
 }
 
-Symbol::Symbol(VM& vm, AtomicStringImpl* uid)
+Symbol::Symbol(VM& vm, SymbolImpl& uid)
     : Base(vm, vm.symbolStructure.get())
     , m_privateName(uid)
 {

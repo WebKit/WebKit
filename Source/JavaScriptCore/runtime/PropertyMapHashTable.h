@@ -35,7 +35,7 @@
 #define DUMP_PROPERTYMAP_STATS 0
 #define DUMP_PROPERTYMAP_COLLISIONS 0
 
-#define PROPERTY_MAP_DELETED_ENTRY_KEY ((AtomicStringImpl*)1)
+#define PROPERTY_MAP_DELETED_ENTRY_KEY ((UniquedStringImpl*)1)
 
 namespace JSC {
 
@@ -133,7 +133,7 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
     }
 
-    typedef AtomicStringImpl* KeyType;
+    typedef UniquedStringImpl* KeyType;
     typedef PropertyMapEntry ValueType;
 
     // The in order iterator provides overloaded * and -> to access the Value at the current position.

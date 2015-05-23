@@ -97,14 +97,8 @@ template <typename T> inline bool isEvalNode() { return false; }
 template <> inline bool isEvalNode<EvalNode>() { return true; }
 
 struct ScopeLabelInfo {
-    ScopeLabelInfo(StringImpl* ident, bool isLoop)
-        : m_ident(ident)
-        , m_isLoop(isLoop)
-    {
-    }
-
-    StringImpl* m_ident;
-    bool m_isLoop;
+    UniquedStringImpl* uid;
+    bool isLoop;
 };
 
 struct Scope {
@@ -146,7 +140,7 @@ struct Scope {
             typedef LabelStack::const_iterator iterator;
             iterator end = rhs.m_labels->end();
             for (iterator it = rhs.m_labels->begin(); it != end; ++it)
-                m_labels->append(ScopeLabelInfo(it->m_ident, it->m_isLoop));
+                m_labels->append(ScopeLabelInfo { it->uid, it->isLoop });
         }
     }
 
@@ -162,7 +156,7 @@ struct Scope {
     {
         if (!m_labels)
             m_labels = std::make_unique<LabelStack>();
-        m_labels->append(ScopeLabelInfo(label->impl(), isLoop));
+        m_labels->append(ScopeLabelInfo { label->impl(), isLoop });
     }
 
     void popLabel()
@@ -177,7 +171,7 @@ struct Scope {
         if (!m_labels)
             return 0;
         for (int i = m_labels->size(); i > 0; i--) {
-            if (m_labels->at(i - 1).m_ident == label->impl())
+            if (m_labels->at(i - 1).uid == label->impl())
                 return &m_labels->at(i - 1);
         }
         return 0;
@@ -193,14 +187,14 @@ struct Scope {
 
     void declareCallee(const Identifier* ident)
     {
-        m_declaredVariables.add(ident->string().impl());
+        m_declaredVariables.add(ident->impl());
     }
 
     bool declareVariable(const Identifier* ident)
     {
         bool isValidStrictMode = m_vm->propertyNames->eval != *ident && m_vm->propertyNames->arguments != *ident;
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
-        m_declaredVariables.add(ident->string().impl());
+        m_declaredVariables.add(ident->impl());
         return isValidStrictMode;
     }
 
@@ -226,9 +220,9 @@ struct Scope {
     bool declareParameter(const Identifier* ident)
     {
         bool isArguments = m_vm->propertyNames->arguments == *ident;
-        bool isValidStrictMode = m_declaredVariables.add(ident->string().impl()).isNewEntry && m_vm->propertyNames->eval != *ident && !isArguments;
+        bool isValidStrictMode = m_declaredVariables.add(ident->impl()).isNewEntry && m_vm->propertyNames->eval != *ident && !isArguments;
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
-        m_declaredParameters.add(ident->string().impl());
+        m_declaredParameters.add(ident->impl());
 
         if (isArguments)
             m_shadowsArguments = true;
@@ -243,7 +237,7 @@ struct Scope {
     BindingResult declareBoundParameter(const Identifier* ident)
     {
         bool isArguments = m_vm->propertyNames->arguments == *ident;
-        bool newEntry = m_declaredVariables.add(ident->string().impl()).isNewEntry;
+        bool newEntry = m_declaredVariables.add(ident->impl()).isNewEntry;
         bool isValidStrictMode = newEntry && m_vm->propertyNames->eval != *ident && !isArguments;
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
     
@@ -262,7 +256,7 @@ struct Scope {
     void useVariable(const Identifier* ident, bool isEval)
     {
         m_usesEval |= isEval;
-        m_usedVariables.add(ident->string().impl());
+        m_usedVariables.add(ident->impl());
     }
 
     void setNeedsFullActivation() { m_needsFullActivation = true; }
@@ -337,7 +331,7 @@ struct Scope {
     bool isValidStrictMode() const { return m_isValidStrictMode; }
     bool shadowsArguments() const { return m_shadowsArguments; }
 
-    void copyCapturedVariablesToVector(const IdentifierSet& capturedVariables, Vector<RefPtr<StringImpl>>& vector)
+    void copyCapturedVariablesToVector(const IdentifierSet& capturedVariables, Vector<RefPtr<UniquedStringImpl>>& vector)
     {
         IdentifierSet::iterator end = capturedVariables.end();
         for (IdentifierSet::iterator it = capturedVariables.begin(); it != end; ++it) {
@@ -436,7 +430,7 @@ public:
     std::unique_ptr<ParsedNode> parse(ParserError&);
 
     JSTextPosition positionBeforeLastNewline() const { return m_lexer->positionBeforeLastNewline(); }
-    Vector<RefPtr<StringImpl>>&& closedVariables() { return WTF::move(m_closedVariables); }
+    Vector<RefPtr<UniquedStringImpl>>&& closedVariables() { return WTF::move(m_closedVariables); }
 
 private:
     struct AllowInOverride {
@@ -563,7 +557,7 @@ private:
     String parseInner();
 
     void didFinishParsing(SourceElements*, DeclarationStacks::VarStack&, 
-        DeclarationStacks::FunctionStack&, CodeFeatures, int, IdentifierSet&, const Vector<RefPtr<StringImpl>>&&);
+        DeclarationStacks::FunctionStack&, CodeFeatures, int, IdentifierSet&, const Vector<RefPtr<UniquedStringImpl>>&&);
 
     // Used to determine type of error to report.
     bool isFunctionBodyNode(ScopeNode*) { return false; }
@@ -889,7 +883,7 @@ private:
     DeclarationStacks::VarStack m_varDeclarations;
     DeclarationStacks::FunctionStack m_funcDeclarations;
     IdentifierSet m_capturedVariables;
-    Vector<RefPtr<StringImpl>> m_closedVariables;
+    Vector<RefPtr<UniquedStringImpl>> m_closedVariables;
     CodeFeatures m_features;
     int m_numConstants;
     

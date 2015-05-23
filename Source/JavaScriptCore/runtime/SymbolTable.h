@@ -39,7 +39,7 @@
 #include "Watchpoint.h"
 #include <memory>
 #include <wtf/HashTraits.h>
-#include <wtf/text/StringImpl.h>
+#include <wtf/text/UniquedStringImpl.h>
 
 namespace JSC {
 
@@ -424,10 +424,10 @@ public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    typedef HashMap<RefPtr<StringImpl>, SymbolTableEntry, IdentifierRepHash, HashTraits<RefPtr<StringImpl>>, SymbolTableIndexHashTraits> Map;
-    typedef HashMap<RefPtr<StringImpl>, GlobalVariableID, IdentifierRepHash> UniqueIDMap;
-    typedef HashMap<RefPtr<StringImpl>, RefPtr<TypeSet>, IdentifierRepHash> UniqueTypeSetMap;
-    typedef HashMap<VarOffset, RefPtr<StringImpl>> OffsetToVariableMap;
+    typedef HashMap<RefPtr<UniquedStringImpl>, SymbolTableEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, SymbolTableIndexHashTraits> Map;
+    typedef HashMap<RefPtr<UniquedStringImpl>, GlobalVariableID, IdentifierRepHash> UniqueIDMap;
+    typedef HashMap<RefPtr<UniquedStringImpl>, RefPtr<TypeSet>, IdentifierRepHash> UniqueTypeSetMap;
+    typedef HashMap<VarOffset, RefPtr<UniquedStringImpl>> OffsetToVariableMap;
     typedef Vector<SymbolTableEntry*> LocalToEntryVec;
 
     static SymbolTable* create(VM& vm)
@@ -453,33 +453,33 @@ public:
     }
 
     // You must hold the lock until after you're done with the iterator.
-    Map::iterator find(const ConcurrentJITLocker&, StringImpl* key)
+    Map::iterator find(const ConcurrentJITLocker&, UniquedStringImpl* key)
     {
         return m_map.find(key);
     }
     
-    Map::iterator find(const GCSafeConcurrentJITLocker&, StringImpl* key)
+    Map::iterator find(const GCSafeConcurrentJITLocker&, UniquedStringImpl* key)
     {
         return m_map.find(key);
     }
     
-    SymbolTableEntry get(const ConcurrentJITLocker&, StringImpl* key)
+    SymbolTableEntry get(const ConcurrentJITLocker&, UniquedStringImpl* key)
     {
         return m_map.get(key);
     }
     
-    SymbolTableEntry get(StringImpl* key)
+    SymbolTableEntry get(UniquedStringImpl* key)
     {
         ConcurrentJITLocker locker(m_lock);
         return get(locker, key);
     }
     
-    SymbolTableEntry inlineGet(const ConcurrentJITLocker&, StringImpl* key)
+    SymbolTableEntry inlineGet(const ConcurrentJITLocker&, UniquedStringImpl* key)
     {
         return m_map.inlineGet(key);
     }
     
-    SymbolTableEntry inlineGet(StringImpl* key)
+    SymbolTableEntry inlineGet(UniquedStringImpl* key)
     {
         ConcurrentJITLocker locker(m_lock);
         return inlineGet(locker, key);
@@ -559,7 +559,7 @@ public:
         return takeNextScopeOffset(locker);
     }
     
-    void add(const ConcurrentJITLocker&, StringImpl* key, const SymbolTableEntry& entry)
+    void add(const ConcurrentJITLocker&, UniquedStringImpl* key, const SymbolTableEntry& entry)
     {
         RELEASE_ASSERT(!m_localToEntry);
         didUseVarOffset(entry.varOffset());
@@ -567,31 +567,31 @@ public:
         ASSERT_UNUSED(result, result.isNewEntry);
     }
     
-    void add(StringImpl* key, const SymbolTableEntry& entry)
+    void add(UniquedStringImpl* key, const SymbolTableEntry& entry)
     {
         ConcurrentJITLocker locker(m_lock);
         add(locker, key, entry);
     }
     
-    void set(const ConcurrentJITLocker&, StringImpl* key, const SymbolTableEntry& entry)
+    void set(const ConcurrentJITLocker&, UniquedStringImpl* key, const SymbolTableEntry& entry)
     {
         RELEASE_ASSERT(!m_localToEntry);
         didUseVarOffset(entry.varOffset());
         m_map.set(key, entry);
     }
     
-    void set(StringImpl* key, const SymbolTableEntry& entry)
+    void set(UniquedStringImpl* key, const SymbolTableEntry& entry)
     {
         ConcurrentJITLocker locker(m_lock);
         set(locker, key, entry);
     }
     
-    bool contains(const ConcurrentJITLocker&, StringImpl* key)
+    bool contains(const ConcurrentJITLocker&, UniquedStringImpl* key)
     {
         return m_map.contains(key);
     }
     
-    bool contains(StringImpl* key)
+    bool contains(UniquedStringImpl* key)
     {
         ConcurrentJITLocker locker(m_lock);
         return contains(locker, key);
@@ -641,10 +641,10 @@ public:
     const LocalToEntryVec& localToEntry(const ConcurrentJITLocker&);
     SymbolTableEntry* entryFor(const ConcurrentJITLocker&, ScopeOffset);
     
-    GlobalVariableID uniqueIDForVariable(const ConcurrentJITLocker&, StringImpl* key, VM&);
+    GlobalVariableID uniqueIDForVariable(const ConcurrentJITLocker&, UniquedStringImpl* key, VM&);
     GlobalVariableID uniqueIDForOffset(const ConcurrentJITLocker&, VarOffset, VM&);
     RefPtr<TypeSet> globalTypeSetForOffset(const ConcurrentJITLocker&, VarOffset, VM&);
-    RefPtr<TypeSet> globalTypeSetForVariable(const ConcurrentJITLocker&, StringImpl* key, VM&);
+    RefPtr<TypeSet> globalTypeSetForVariable(const ConcurrentJITLocker&, UniquedStringImpl* key, VM&);
 
     bool usesNonStrictEval() { return m_usesNonStrictEval; }
     void setUsesNonStrictEval(bool usesNonStrictEval) { m_usesNonStrictEval = usesNonStrictEval; }

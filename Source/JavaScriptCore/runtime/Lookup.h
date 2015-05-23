@@ -100,7 +100,7 @@ struct HashTable {
         if (propertyName.isSymbol())
             return nullptr;
 
-        StringImpl* uid = propertyName.uid();
+        auto uid = propertyName.uid();
         if (!uid)
             return nullptr;
 

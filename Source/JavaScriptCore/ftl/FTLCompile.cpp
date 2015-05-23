@@ -515,7 +515,7 @@ static void fixFunctionBasedOnStackMaps(
 
                 MacroAssembler::Call slowCall = callOperation(
                     state, usedRegisters, slowPathJIT, checkIn.codeOrigin(), &exceptionTarget,
-                    operationInOptimize, result, stubInfo, obj, checkIn.m_id);
+                    operationInOptimize, result, stubInfo, obj, checkIn.m_uid);
 
                 checkIn.m_slowPathDone.append(slowPathJIT.jump());
                 

@@ -68,8 +68,8 @@ public:
     }
 
     void add(const Identifier&);
-    void add(AtomicStringImpl*);
-    void addKnownUnique(AtomicStringImpl*);
+    void add(UniquedStringImpl*);
+    void addKnownUnique(UniquedStringImpl*);
 
     Identifier& operator[](unsigned i) { return m_data->propertyNameVector()[i]; }
     const Identifier& operator[](unsigned i) const { return m_data->propertyNameVector()[i]; }
@@ -87,7 +87,7 @@ public:
 
 private:
     RefPtr<PropertyNameArrayData> m_data;
-    HashSet<AtomicStringImpl*> m_set;
+    HashSet<UniquedStringImpl*> m_set;
     VM* m_vm;
 };
 
@@ -96,12 +96,12 @@ ALWAYS_INLINE void PropertyNameArray::add(const Identifier& identifier)
     add(identifier.impl());
 }
 
-ALWAYS_INLINE void PropertyNameArray::addKnownUnique(AtomicStringImpl* identifier)
+ALWAYS_INLINE void PropertyNameArray::addKnownUnique(UniquedStringImpl* identifier)
 {
     m_data->propertyNameVector().append(Identifier::fromUid(m_vm, identifier));
 }
 
-ALWAYS_INLINE void PropertyNameArray::add(AtomicStringImpl* identifier)
+ALWAYS_INLINE void PropertyNameArray::add(UniquedStringImpl* identifier)
 {
     static const unsigned setThreshold = 20;
 

@@ -66,7 +66,7 @@ bool GetByIdStatus::hasExitSite(const ConcurrentJITLocker& locker, CodeBlock* pr
 }
 #endif
 
-GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned bytecodeIndex, AtomicStringImpl* uid)
+GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned bytecodeIndex, UniquedStringImpl* uid)
 {
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
@@ -91,7 +91,7 @@ GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     return GetByIdStatus(Simple, false, GetByIdVariant(StructureSet(structure), offset));
 }
 
-GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& map, unsigned bytecodeIndex, AtomicStringImpl* uid)
+GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& map, unsigned bytecodeIndex, UniquedStringImpl* uid)
 {
     ConcurrentJITLocker locker(profiledBlock->m_lock);
 
@@ -118,7 +118,7 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& m
 
 #if ENABLE(JIT)
 GetByIdStatus GetByIdStatus::computeForStubInfo(
-    const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, AtomicStringImpl* uid,
+    const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, UniquedStringImpl* uid,
     CallLinkStatus::ExitSiteData callExitSiteData)
 {
     if (!stubInfo || !stubInfo->seen)
@@ -224,7 +224,7 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
 
 GetByIdStatus GetByIdStatus::computeFor(
     CodeBlock* profiledBlock, CodeBlock* dfgBlock, StubInfoMap& baselineMap,
-    StubInfoMap& dfgMap, CodeOrigin codeOrigin, AtomicStringImpl* uid)
+    StubInfoMap& dfgMap, CodeOrigin codeOrigin, UniquedStringImpl* uid)
 {
 #if ENABLE(DFG_JIT)
     if (dfgBlock) {
@@ -262,7 +262,7 @@ GetByIdStatus GetByIdStatus::computeFor(
     return computeFor(profiledBlock, baselineMap, codeOrigin.bytecodeIndex, uid);
 }
 
-GetByIdStatus GetByIdStatus::computeFor(const StructureSet& set, AtomicStringImpl* uid)
+GetByIdStatus GetByIdStatus::computeFor(const StructureSet& set, UniquedStringImpl* uid)
 {
     // For now we only handle the super simple self access case. We could handle the
     // prototype case in the future.

@@ -103,7 +103,7 @@ bool IntendedStructureChain::matches(StructureChain* chain) const
     return true;
 }
 
-bool IntendedStructureChain::mayInterceptStoreTo(AtomicStringImpl* uid)
+bool IntendedStructureChain::mayInterceptStoreTo(UniquedStringImpl* uid)
 {
     for (unsigned i = 0; i < m_vector.size(); ++i) {
         unsigned attributes;

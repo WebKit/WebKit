@@ -64,7 +64,7 @@ public:
         return symbol;
     }
 
-    static Symbol* create(VM& vm, AtomicStringImpl* uid)
+    static Symbol* create(VM& vm, SymbolImpl& uid)
     {
         Symbol* symbol = new (NotNull, allocateCell<Symbol>(vm.heap)) Symbol(vm, uid);
         symbol->finishCreation(vm);
@@ -85,7 +85,7 @@ protected:
 
     Symbol(VM&);
     Symbol(VM&, const String&);
-    Symbol(VM&, AtomicStringImpl* uid);
+    Symbol(VM&, SymbolImpl& uid);
 
     void finishCreation(VM& vm)
     {

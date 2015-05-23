@@ -100,7 +100,7 @@ struct Instruction {
     Instruction(ObjectAllocationProfile* profile) { u.objectAllocationProfile = profile; }
     Instruction(WriteBarrier<Unknown>* variablePointer) { u.variablePointer = variablePointer; }
     Instruction(Special::Pointer pointer) { u.specialPointer = pointer; }
-    Instruction(StringImpl* uid) { u.uid = uid; }
+    Instruction(UniquedStringImpl* uid) { u.uid = uid; }
     Instruction(bool* predicatePointer) { u.predicatePointer = predicatePointer; }
 
     union {
@@ -114,7 +114,7 @@ struct Instruction {
         Special::Pointer specialPointer;
         PropertySlot::GetValueFunc getterFunc;
         LLIntCallLinkInfo* callLinkInfo;
-        StringImpl* uid;
+        UniquedStringImpl* uid;
         ValueProfile* profile;
         ArrayProfile* arrayProfile;
         ArrayAllocationProfile* arrayAllocationProfile;

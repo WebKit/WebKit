@@ -450,7 +450,7 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
         bool hasComputedProperty = false;
 
         typedef std::pair<PropertyNode*, PropertyNode*> GetterSetterPair;
-        typedef HashMap<StringImpl*, GetterSetterPair> GetterSetterMap;
+        typedef HashMap<UniquedStringImpl*, GetterSetterPair, IdentifierRepHash> GetterSetterMap;
         GetterSetterMap map;
 
         // Build a map, pairing get/set values together.

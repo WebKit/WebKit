@@ -31,7 +31,7 @@
 #include "CodeOrigin.h"
 #include "JITInlineCacheGenerator.h"
 #include "MacroAssembler.h"
-#include <wtf/text/StringImpl.h>
+#include <wtf/text/UniquedStringImpl.h>
 
 namespace JSC { namespace FTL {
 
@@ -39,7 +39,7 @@ class InlineCacheDescriptor {
 public:
     InlineCacheDescriptor() { }
     
-    InlineCacheDescriptor(unsigned stackmapID, CodeOrigin codeOrigin, StringImpl* uid)
+    InlineCacheDescriptor(unsigned stackmapID, CodeOrigin codeOrigin, UniquedStringImpl* uid)
         : m_stackmapID(stackmapID)
         , m_codeOrigin(codeOrigin)
         , m_uid(uid)
@@ -48,12 +48,12 @@ public:
     
     unsigned stackmapID() const { return m_stackmapID; }
     CodeOrigin codeOrigin() const { return m_codeOrigin; }
-    StringImpl* uid() const { return m_uid; }
+    UniquedStringImpl* uid() const { return m_uid; }
     
 private:
     unsigned m_stackmapID;
     CodeOrigin m_codeOrigin;
-    StringImpl* m_uid;
+    UniquedStringImpl* m_uid;
     
 public:
     Vector<MacroAssembler::Jump> m_slowPathDone;
@@ -63,7 +63,7 @@ class GetByIdDescriptor : public InlineCacheDescriptor {
 public:
     GetByIdDescriptor() { }
     
-    GetByIdDescriptor(unsigned stackmapID, CodeOrigin codeOrigin, StringImpl* uid)
+    GetByIdDescriptor(unsigned stackmapID, CodeOrigin codeOrigin, UniquedStringImpl* uid)
         : InlineCacheDescriptor(stackmapID, codeOrigin, uid)
     {
     }
@@ -76,7 +76,7 @@ public:
     PutByIdDescriptor() { }
     
     PutByIdDescriptor(
-        unsigned stackmapID, CodeOrigin codeOrigin, StringImpl* uid,
+        unsigned stackmapID, CodeOrigin codeOrigin, UniquedStringImpl* uid,
         ECMAMode ecmaMode, PutKind putKind)
         : InlineCacheDescriptor(stackmapID, codeOrigin, uid)
         , m_ecmaMode(ecmaMode)
@@ -111,14 +111,14 @@ class CheckInDescriptor : public InlineCacheDescriptor {
 public:
     CheckInDescriptor() { }
     
-    CheckInDescriptor(unsigned stackmapID, CodeOrigin codeOrigin, const StringImpl* id)
+    CheckInDescriptor(unsigned stackmapID, CodeOrigin codeOrigin, const UniquedStringImpl* uid)
         : InlineCacheDescriptor(stackmapID, codeOrigin, nullptr)
-        , m_id(id)
+        , m_uid(uid)
     {
     }
 
     
-    const StringImpl* m_id;
+    const UniquedStringImpl* m_uid;
     Vector<CheckInGenerator> m_generators;
 };
 

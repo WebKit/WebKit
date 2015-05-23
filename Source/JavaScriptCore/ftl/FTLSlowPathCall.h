@@ -60,15 +60,15 @@ void storeCodeOrigin(State&, CCallHelpers&, CodeOrigin);
 MacroAssembler::Call callOperation(
     State&, const RegisterSet&, CCallHelpers&, CodeOrigin, CCallHelpers::JumpList*,
     J_JITOperation_ESsiCI, GPRReg, StructureStubInfo*, GPRReg,
-    const StringImpl*);
+    const UniquedStringImpl* uid);
 MacroAssembler::Call callOperation(
     State&, const RegisterSet&, CCallHelpers&, CodeOrigin, CCallHelpers::JumpList*,
     J_JITOperation_ESsiJI, GPRReg result, StructureStubInfo*, GPRReg object,
-    StringImpl* uid);
+    UniquedStringImpl* uid);
 MacroAssembler::Call callOperation(
     State&, const RegisterSet&, CCallHelpers&, CodeOrigin, CCallHelpers::JumpList*,
     V_JITOperation_ESsiJJI, StructureStubInfo*, GPRReg value, GPRReg object,
-    StringImpl* uid);
+    UniquedStringImpl* uid);
 
 } } // namespace JSC::FTL
 

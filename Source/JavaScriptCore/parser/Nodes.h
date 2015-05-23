@@ -76,7 +76,7 @@ namespace JSC {
     };
     inline FallThroughMode invert(FallThroughMode fallThroughMode) { return static_cast<FallThroughMode>(!fallThroughMode); }
 
-    typedef HashSet<RefPtr<StringImpl>, IdentifierRepHash> IdentifierSet;
+    typedef HashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> IdentifierSet;
 
     namespace DeclarationStacks {
         enum VarAttrs { IsConstant = 1, HasInitializer = 2 };
@@ -1562,7 +1562,7 @@ namespace JSC {
         bool hasCapturedVariables() const { return !!m_capturedVariables.size(); }
         size_t capturedVariableCount() const { return m_capturedVariables.size(); }
         const IdentifierSet& capturedVariables() const { return m_capturedVariables; }
-        bool captures(StringImpl* uid) { return m_capturedVariables.contains(uid); }
+        bool captures(UniquedStringImpl* uid) { return m_capturedVariables.contains(uid); }
         bool captures(const Identifier& ident) { return captures(ident.impl()); }
 
         VarStack& varStack() { return m_varStack; }
@@ -1579,7 +1579,7 @@ namespace JSC {
 
         void emitStatementsBytecode(BytecodeGenerator&, RegisterID* destination);
         
-        void setClosedVariables(Vector<RefPtr<StringImpl>>&&) { }
+        void setClosedVariables(Vector<RefPtr<UniquedStringImpl>>&&) { }
 
     protected:
         int m_startLineNumber;
@@ -1605,12 +1605,12 @@ namespace JSC {
 
         static const bool scopeIsFunction = false;
 
-        void setClosedVariables(Vector<RefPtr<StringImpl>>&&);
-        const Vector<RefPtr<StringImpl>>& closedVariables() const { return m_closedVariables; }
+        void setClosedVariables(Vector<RefPtr<UniquedStringImpl>>&&);
+        const Vector<RefPtr<UniquedStringImpl>>& closedVariables() const { return m_closedVariables; }
 
     private:
         virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
-        Vector<RefPtr<StringImpl>> m_closedVariables;
+        Vector<RefPtr<UniquedStringImpl>> m_closedVariables;
         unsigned m_startColumn;
         unsigned m_endColumn;
     };

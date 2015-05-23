@@ -291,7 +291,9 @@
     <ClInclude Include="..\wtf\text\StringImpl.h" />
     <ClInclude Include="..\wtf\text\StringOperators.h" />
     <ClInclude Include="..\wtf\text\StringView.h" />
+    <ClInclude Include="..\wtf\text\SymbolImpl.h" />
     <ClInclude Include="..\wtf\text\SymbolRegistry.h" />
+    <ClInclude Include="..\wtf\text\UniquedStringImpl.h" />
     <ClInclude Include="..\wtf\text\WTFString.h" />
     <ClInclude Include="..\wtf\Threading.h" />
     <ClInclude Include="..\wtf\ThreadingPrimitives.h" />

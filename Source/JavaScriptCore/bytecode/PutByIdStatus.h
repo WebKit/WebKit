@@ -70,10 +70,10 @@ public:
         m_variants.append(variant);
     }
     
-    static PutByIdStatus computeFor(CodeBlock*, StubInfoMap&, unsigned bytecodeIndex, AtomicStringImpl* uid);
-    static PutByIdStatus computeFor(JSGlobalObject*, const StructureSet&, AtomicStringImpl* uid, bool isDirect);
+    static PutByIdStatus computeFor(CodeBlock*, StubInfoMap&, unsigned bytecodeIndex, UniquedStringImpl* uid);
+    static PutByIdStatus computeFor(JSGlobalObject*, const StructureSet&, UniquedStringImpl* uid, bool isDirect);
     
-    static PutByIdStatus computeFor(CodeBlock* baselineBlock, CodeBlock* dfgBlock, StubInfoMap& baselineMap, StubInfoMap& dfgMap, CodeOrigin, AtomicStringImpl* uid);
+    static PutByIdStatus computeFor(CodeBlock* baselineBlock, CodeBlock* dfgBlock, StubInfoMap& baselineMap, StubInfoMap& dfgMap, CodeOrigin, UniquedStringImpl* uid);
     
     State state() const { return m_state; }
     
@@ -96,10 +96,10 @@ private:
 #endif
 #if ENABLE(JIT)
     static PutByIdStatus computeForStubInfo(
-        const ConcurrentJITLocker&, CodeBlock*, StructureStubInfo*, AtomicStringImpl* uid,
+        const ConcurrentJITLocker&, CodeBlock*, StructureStubInfo*, UniquedStringImpl* uid,
         CallLinkStatus::ExitSiteData);
 #endif
-    static PutByIdStatus computeFromLLInt(CodeBlock*, unsigned bytecodeIndex, AtomicStringImpl* uid);
+    static PutByIdStatus computeFromLLInt(CodeBlock*, unsigned bytecodeIndex, UniquedStringImpl* uid);
     
     bool appendVariant(const PutByIdVariant&);
     
