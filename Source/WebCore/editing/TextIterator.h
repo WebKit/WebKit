@@ -168,7 +168,8 @@ private:
 
     // Used to do simple line layout run logic.
     bool m_nextRunNeedsWhitespace { false };
-    unsigned m_previousTextLengthInFlow { 0 };
+    unsigned m_accumulatedSimpleTextLengthInFlow { 0 };
+    Text* m_previousSimpleTextNodeInFlow { nullptr };
     std::unique_ptr<SimpleLineLayout::RunResolver> m_flowRunResolverCache;
 
     // Used when text boxes are out of order (Hebrew/Arabic with embedded LTR text)

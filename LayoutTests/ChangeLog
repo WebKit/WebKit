@@ -1,3 +1,19 @@
+2015-05-23  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Ignore -webkit-flow-*content while collecting text content for innerText.
+        https://bugs.webkit.org/show_bug.cgi?id=145344
+        rdar://problem/20959522
+
+        Reviewed by Antti Koivisto.
+
+        This patch ensures that when a -webkit-flow-into content is present in a simple line layout container,
+        we skip it while collecting the text content for innerText.
+        It's not always guaranteed that a simple line layout container only contains simple text nodes. In such cases,
+        we need to ensure that text offset computing only takes the simple text nodes into account.
+
+        * fast/text/simple-line-layout-inner-text-with-flow-content-expected.txt: Added.
+        * fast/text/simple-line-layout-inner-text-with-flow-content.html: Added.
+
 2015-05-22  Alexey Proskuryakov  <ap@apple.com>
 
         Update tests broken by MediaPlaybackRequiresUserGesture renaming.

@@ -528,7 +528,6 @@ bool TextIterator::handleTextNode()
         return false;
 
     auto& renderer = *textNode.renderer();
-    const auto* previousTextNode = m_lastTextNode;
     m_lastTextNode = &textNode;
     String rendererText = renderer.text();
 
@@ -565,23 +564,26 @@ bool TextIterator::handleTextNode()
     if (const auto* layout = renderer.simpleLineLayout()) {
         if (renderer.style().visibility() != VISIBLE && !(m_behavior & TextIteratorIgnoresStyleVisibility))
             return true;
-        // Use the simple layout runs to iterate over the text content.
-        ASSERT(renderer.parent() && is<RenderBlockFlow>(renderer.parent()));
-        unsigned endPosition = (m_node == m_endContainer) ? static_cast<unsigned>(m_endOffset) : rendererText.length();
+        ASSERT(renderer.parent());
+        ASSERT(is<RenderBlockFlow>(*renderer.parent()));
         const auto& blockFlow = downcast<RenderBlockFlow>(*renderer.parent());
+        // Use the simple layout runs to iterate over the text content.
+        bool isNewTextNode = m_previousSimpleTextNodeInFlow && m_previousSimpleTextNodeInFlow != &textNode;
+        // Simple line layout run positions are all absolute to the parent flow.
+        // Offsetting is required when multiple renderers are present.
+        m_accumulatedSimpleTextLengthInFlow += isNewTextNode ? m_previousSimpleTextNodeInFlow->renderer()->text()->length() : 0;
+        m_previousSimpleTextNodeInFlow = &textNode;
+
+        unsigned endPosition = (m_node == m_endContainer) ? static_cast<unsigned>(m_endOffset) : rendererText.length();
         if (!m_flowRunResolverCache || &m_flowRunResolverCache->flow() != &blockFlow) {
-            m_previousTextLengthInFlow = m_flowRunResolverCache ? 0 : textNodeOffsetInFlow(textNode);
+            m_accumulatedSimpleTextLengthInFlow = m_flowRunResolverCache ? 0 : textNodeOffsetInFlow(textNode);
             m_flowRunResolverCache = std::make_unique<SimpleLineLayout::RunResolver>(blockFlow, *layout);
-        } else if (previousTextNode && previousTextNode != &textNode) {
-            // Simple line layout run positions are all absolute to the parent flow.
-            // Offsetting is required when multiple renderers are present.
-            m_previousTextLengthInFlow += previousTextNode->renderer()->text()->length();
         }
         // Skip to m_offset position.
         auto range = m_flowRunResolverCache->rangeForRenderer(renderer);
         auto it = range.begin();
         auto end = range.end();
-        while (it != end && (*it).end() <= (static_cast<unsigned>(m_offset) + m_previousTextLengthInFlow))
+        while (it != end && (*it).end() <= (static_cast<unsigned>(m_offset) + m_accumulatedSimpleTextLengthInFlow))
             ++it;
         if (m_nextRunNeedsWhitespace && rendererText[m_offset - 1] == '\n') {
             emitCharacter(' ', textNode, nullptr, m_offset, m_offset + 1);
@@ -600,10 +602,11 @@ bool TextIterator::handleTextNode()
         const auto run = *it;
         ASSERT(run.end() - run.start() <= rendererText.length());
         // contentStart skips leading whitespace.
-        unsigned contentStart = std::max<unsigned>(m_offset, run.start() - m_previousTextLengthInFlow);
-        unsigned contentEnd = std::min(endPosition, run.end() - m_previousTextLengthInFlow);
+        unsigned contentStart = std::max<unsigned>(m_offset, run.start() - m_accumulatedSimpleTextLengthInFlow);
+        unsigned contentEnd = std::min(endPosition, run.end() - m_accumulatedSimpleTextLengthInFlow);
+        ASSERT_WITH_SECURITY_IMPLICATION(contentStart <= contentEnd);
         // Check if whitespace adjustment is needed when crossing renderer boundary.
-        if (previousTextNode && previousTextNode != &textNode) {
+        if (isNewTextNode) {
             bool lastCharacterIsNotWhitespace = m_lastCharacter && !renderer.style().isCollapsibleWhiteSpace(m_lastCharacter);
             bool addTrailingWhitespaceForPrevious = m_lastTextNodeEndedWithCollapsedSpace && lastCharacterIsNotWhitespace;
             bool leadingWhitespaceIsNeededForCurrent = contentStart > static_cast<unsigned>(m_offset) && lastCharacterIsNotWhitespace;
