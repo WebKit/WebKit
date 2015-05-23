@@ -63,7 +63,7 @@ public:
     void setSelectedTextTrack(TextTrack*);
     Element* textTrackContainer();
     void updateTextTrackContainer();
-    bool mediaPlaybackAllowsInline() const;
+    bool allowsInlineMediaPlayback() const;
     bool supportsFullscreen();
     bool userGestureRequired() const;
 

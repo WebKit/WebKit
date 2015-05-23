@@ -644,7 +644,7 @@ static inline bool isRunningOnIPhoneOrIPod()
 
 static bool video_playable_inlineMediaFeatureEval(CSSValue*, const CSSToLengthConversionData&, Frame* frame, MediaFeaturePrefix)
 {
-    return !isRunningOnIPhoneOrIPod() || frame->settings().mediaPlaybackAllowsInline();
+    return !isRunningOnIPhoneOrIPod() || frame->settings().allowsInlineMediaPlayback();
 }
 
 static bool hoverMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame*, MediaFeaturePrefix)

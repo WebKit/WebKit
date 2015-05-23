@@ -518,7 +518,7 @@ public:
         [NSNumber numberWithBool:NO],   WebKitSuppressesIncrementalRenderingKey,
 #if !PLATFORM(IOS)
         [NSNumber numberWithBool:NO],   WebKitRequiresUserGestureForMediaPlaybackPreferenceKey,
-        [NSNumber numberWithBool:YES],  WebKitMediaPlaybackAllowsInlinePreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitAllowsInlineMediaPlaybackPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWebAudioEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitBackspaceKeyNavigationEnabledKey,
         [NSNumber numberWithBool:NO],   WebKitShouldDisplaySubtitlesPreferenceKey,
@@ -528,7 +528,7 @@ public:
         [NSNumber numberWithBool:NO],   WebKitShouldRespectImageOrientationKey,
 #else
         [NSNumber numberWithBool:YES],  WebKitRequiresUserGestureForMediaPlaybackPreferenceKey,
-        [NSNumber numberWithBool:NO],   WebKitMediaPlaybackAllowsInlinePreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitAllowsInlineMediaPlaybackPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAllowsAirPlayForMediaPlaybackPreferenceKey,
         [NSNumber numberWithUnsignedInt:AudioSession::None],  WebKitAudioSessionCategoryOverride,
 #if HAVE(AVKIT)
@@ -2170,12 +2170,12 @@ static NSString *classIBCreatorID = nil;
 
 - (BOOL)mediaPlaybackAllowsInline
 {
-    return [self _boolValueForKey:WebKitMediaPlaybackAllowsInlinePreferenceKey];
+    return [self _boolValueForKey:WebKitAllowsInlineMediaPlaybackPreferenceKey];
 }
 
 - (void)setMediaPlaybackAllowsInline:(BOOL)flag
 {
-    [self _setBoolValue:flag forKey:WebKitMediaPlaybackAllowsInlinePreferenceKey];
+    [self _setBoolValue:flag forKey:WebKitAllowsInlineMediaPlaybackPreferenceKey];
 }
 
 - (BOOL)allowsAlternateFullscreen

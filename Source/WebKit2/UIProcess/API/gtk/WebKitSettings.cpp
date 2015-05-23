@@ -2609,7 +2609,7 @@ gboolean webkit_settings_get_media_playback_allows_inline(WebKitSettings* settin
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), TRUE);
 
-    return settings->priv->preferences->mediaPlaybackAllowsInline();
+    return settings->priv->preferences->allowsInlineMediaPlayback();
 }
 
 /**
@@ -2624,11 +2624,11 @@ void webkit_settings_set_media_playback_allows_inline(WebKitSettings* settings, 
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
     WebKitSettingsPrivate* priv = settings->priv;
-    bool currentValue = priv->preferences->mediaPlaybackAllowsInline();
+    bool currentValue = priv->preferences->allowsInlineMediaPlayback();
     if (currentValue == enabled)
         return;
 
-    priv->preferences->setMediaPlaybackAllowsInline(enabled);
+    priv->preferences->setAllowsInlineMediaPlayback(enabled);
     g_object_notify(G_OBJECT(settings), "media-playback-allows-inline");
 }
 

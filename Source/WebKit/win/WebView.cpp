@@ -5130,7 +5130,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = prefsPrivate->mediaPlaybackAllowsInline(&enabled);
     if (FAILED(hr))
         return hr;
-    settings.setMediaPlaybackAllowsInline(enabled);
+    settings.setAllowsInlineMediaPlayback(enabled);
 
     hr = prefsPrivate->shouldInvertColors(&enabled);
     if (FAILED(hr))

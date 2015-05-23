@@ -2297,7 +2297,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setValidationMessageTimerMagnification([self validationMessageTimerMagnification]);
 
     settings.setRequiresUserGestureForMediaPlayback([preferences mediaPlaybackRequiresUserGesture]);
-    settings.setMediaPlaybackAllowsInline([preferences mediaPlaybackAllowsInline]);
+    settings.setAllowsInlineMediaPlayback([preferences mediaPlaybackAllowsInline]);
     settings.setAllowsAlternateFullscreen([preferences allowsAlternateFullscreen] && shouldAllowAlternateFullscreen());
     settings.setSuppressesIncrementalRendering([preferences suppressesIncrementalRendering]);
     settings.setBackspaceKeyNavigationEnabled([preferences backspaceKeyNavigationEnabled]);

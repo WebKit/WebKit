@@ -318,7 +318,7 @@ static bool shouldAllowAlternateFullscreen()
     webPageConfiguration.preferenceValues.set(WebKit::WebPreferencesKey::suppressesIncrementalRenderingKey(), WebKit::WebPreferencesStore::Value(!![_configuration suppressesIncrementalRendering]));
 
 #if PLATFORM(IOS)
-    webPageConfiguration.preferenceValues.set(WebKit::WebPreferencesKey::mediaPlaybackAllowsInlineKey(), WebKit::WebPreferencesStore::Value(!![_configuration allowsInlineMediaPlayback]));
+    webPageConfiguration.preferenceValues.set(WebKit::WebPreferencesKey::allowsInlineMediaPlaybackKey(), WebKit::WebPreferencesStore::Value(!![_configuration allowsInlineMediaPlayback]));
     webPageConfiguration.preferenceValues.set(WebKit::WebPreferencesKey::allowsAlternateFullscreenKey(), WebKit::WebPreferencesStore::Value(!![_configuration _allowsAlternateFullscreen] && shouldAllowAlternateFullscreen()));
     webPageConfiguration.preferenceValues.set(WebKit::WebPreferencesKey::requiresUserGestureForMediaPlaybackKey(), WebKit::WebPreferencesStore::Value(!![_configuration mediaPlaybackRequiresUserAction]));
     webPageConfiguration.preferenceValues.set(WebKit::WebPreferencesKey::allowsAirPlayForMediaPlaybackKey(), WebKit::WebPreferencesStore::Value(!![_configuration mediaPlaybackAllowsAirPlay]));

@@ -65,7 +65,7 @@ ControllerIOS.prototype = {
     },
 
     shouldHaveStartPlaybackButton: function() {
-        var allowsInline = this.host.mediaPlaybackAllowsInline;
+        var allowsInline = this.host.allowsInlineMediaPlayback;
 
         if (this.isPlaying || (this.hasPlayed && allowsInline))
             return false;

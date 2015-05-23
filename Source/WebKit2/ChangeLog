@@ -1,5 +1,28 @@
 2015-05-22  Jon Lee  <jonlee@apple.com>
 
+        Rename MediaPlaybackAllowsInline
+        https://bugs.webkit.org/show_bug.cgi?id=145315
+
+        Reviewed by Eric Carlson.
+
+        Our API uses allowsInlineMediaPlayback. Our symbols should reflect the same.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetMediaPlaybackAllowsInline): Update the call to preferences.
+        The C API will not change in a future patch.
+        (WKPreferencesGetMediaPlaybackAllowsInline): Ditto.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]): Update the name of the key.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Ditto.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp: Update the call.
+        (webkit_settings_get_media_playback_allows_inline):
+        (webkit_settings_set_media_playback_allows_inline):
+
+2015-05-22  Jon Lee  <jonlee@apple.com>
+
         Rename MediaPlaybackAllowsAirPlay
         https://bugs.webkit.org/show_bug.cgi?id=145316
 

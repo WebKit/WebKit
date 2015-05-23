@@ -56,7 +56,7 @@
 #define DEFAULT_SHOULD_RESPECT_IMAGE_ORIENTATION true
 #define DEFAULT_MINIMUM_FONT_ZOOM_SIZE WKGetMinimumZoomFontSize()
 #define DEFAULT_PASSWORD_ECHO_ENABLED true
-#define DEFAULT_MEDIA_PLAYBACK_ALLOWS_INLINE false
+#define DEFAULT_ALLOWS_INLINE_MEDIA_PLAYBACK false
 #define DEFAULT_REQUIRES_USER_GESTURE_FOR_MEDIA_PLAYBACK true
 #define DEFAULT_TEMPORARY_TILE_COHORT_RETENTION_ENABLED false
 #else
@@ -67,7 +67,7 @@
 #define DEFAULT_SHOULD_RESPECT_IMAGE_ORIENTATION false
 #define DEFAULT_MINIMUM_FONT_ZOOM_SIZE 0
 #define DEFAULT_PASSWORD_ECHO_ENABLED false
-#define DEFAULT_MEDIA_PLAYBACK_ALLOWS_INLINE true
+#define DEFAULT_ALLOWS_INLINE_MEDIA_PLAYBACK true
 #define DEFAULT_REQUIRES_USER_GESTURE_FOR_MEDIA_PLAYBACK false
 #define DEFAULT_TEMPORARY_TILE_COHORT_RETENTION_ENABLED true
 #endif
@@ -129,7 +129,7 @@
     macro(AllowFileAccessFromFileURLs, allowFileAccessFromFileURLs, Bool, bool, false) \
     macro(AVFoundationEnabled, isAVFoundationEnabled, Bool, bool, true) \
     macro(RequiresUserGestureForMediaPlayback, requiresUserGestureForMediaPlayback, Bool, bool, DEFAULT_REQUIRES_USER_GESTURE_FOR_MEDIA_PLAYBACK) \
-    macro(MediaPlaybackAllowsInline, mediaPlaybackAllowsInline, Bool, bool, DEFAULT_MEDIA_PLAYBACK_ALLOWS_INLINE) \
+    macro(AllowsInlineMediaPlayback, allowsInlineMediaPlayback, Bool, bool, DEFAULT_ALLOWS_INLINE_MEDIA_PLAYBACK) \
     macro(AllowsAlternateFullscreen, allowsAlternateFullscreen, Bool, bool, true) \
     macro(AllowsAirPlayForMediaPlayback, allowsAirPlayForMediaPlayback, Bool, bool, true) \
     macro(InspectorStartsAttached, inspectorStartsAttached, Bool, bool, true) \

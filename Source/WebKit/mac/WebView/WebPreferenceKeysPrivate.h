@@ -120,7 +120,7 @@
 #define WebKitAVFoundationEnabledKey @"WebKitAVFoundationEnabled"
 #define WebKitHixie76WebSocketProtocolEnabledKey @"WebKitHixie76WebSocketProtocolEnabled"
 #define WebKitRequiresUserGestureForMediaPlaybackPreferenceKey @"WebKitMediaPlaybackRequiresUserGesture"
-#define WebKitMediaPlaybackAllowsInlinePreferenceKey @"WebKitMediaPlaybackAllowsInline"
+#define WebKitAllowsInlineMediaPlaybackPreferenceKey @"WebKitMediaPlaybackAllowsInline"
 #define WebKitAllowsAlternateFullscreenPreferenceKey @"WebKitAllowsAlternateFullscreen"
 #define WebKitMockScrollbarsEnabledPreferenceKey @"WebKitMockScrollbarsEnabled"
 #define WebKitShouldDisplaySubtitlesPreferenceKey @"WebKitShouldDisplaySubtitles"

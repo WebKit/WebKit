@@ -740,12 +740,12 @@ bool WKPreferencesGetMediaPlaybackRequiresUserGesture(WKPreferencesRef preferenc
 
 void WKPreferencesSetMediaPlaybackAllowsInline(WKPreferencesRef preferencesRef, bool flag)
 {
-    toImpl(preferencesRef)->setMediaPlaybackAllowsInline(flag);
+    toImpl(preferencesRef)->setAllowsInlineMediaPlayback(flag);
 }
 
 bool WKPreferencesGetMediaPlaybackAllowsInline(WKPreferencesRef preferencesRef)
 {
-    return toImpl(preferencesRef)->mediaPlaybackAllowsInline();
+    return toImpl(preferencesRef)->allowsInlineMediaPlayback();
 }
 
 void WKPreferencesSetAllowsAlternateFullscreen(WKPreferencesRef preferencesRef, bool flag)

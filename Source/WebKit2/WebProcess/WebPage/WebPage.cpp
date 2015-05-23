@@ -2770,7 +2770,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setForceSoftwareWebGLRendering(store.getBoolValueForKey(WebPreferencesKey::forceSoftwareWebGLRenderingKey()));
     settings.setAccelerated2dCanvasEnabled(store.getBoolValueForKey(WebPreferencesKey::accelerated2dCanvasEnabledKey()));
     settings.setRequiresUserGestureForMediaPlayback(store.getBoolValueForKey(WebPreferencesKey::requiresUserGestureForMediaPlaybackKey()));
-    settings.setMediaPlaybackAllowsInline(store.getBoolValueForKey(WebPreferencesKey::mediaPlaybackAllowsInlineKey()));
+    settings.setAllowsInlineMediaPlayback(store.getBoolValueForKey(WebPreferencesKey::allowsInlineMediaPlaybackKey()));
     settings.setAllowsAlternateFullscreen(store.getBoolValueForKey(WebPreferencesKey::allowsAlternateFullscreenKey()));
     settings.setMockScrollbarsEnabled(store.getBoolValueForKey(WebPreferencesKey::mockScrollbarsEnabledKey()));
     settings.setHyperlinkAuditingEnabled(store.getBoolValueForKey(WebPreferencesKey::hyperlinkAuditingEnabledKey()));

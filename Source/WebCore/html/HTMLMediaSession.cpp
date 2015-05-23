@@ -362,7 +362,7 @@ bool HTMLMediaSession::requiresFullscreenForVideoPlayback(const HTMLMediaElement
         return false;
 
     Settings* settings = element.document().settings();
-    if (!settings || !settings->mediaPlaybackAllowsInline())
+    if (!settings || !settings->allowsInlineMediaPlayback())
         return true;
 
     if (element.fastHasAttribute(HTMLNames::webkit_playsinlineAttr))

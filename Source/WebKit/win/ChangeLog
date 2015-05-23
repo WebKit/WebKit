@@ -1,5 +1,17 @@
 2015-05-22  Jon Lee  <jonlee@apple.com>
 
+        Rename MediaPlaybackAllowsInline
+        https://bugs.webkit.org/show_bug.cgi?id=145315
+
+        Reviewed by Eric Carlson.
+
+        Our API uses allowsInlineMediaPlayback. Our symbols should reflect the same.
+
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged): Use the new name.
+
+2015-05-22  Jon Lee  <jonlee@apple.com>
+
         Unreviewed build fix for Windows.
 
         * WebView.cpp:
