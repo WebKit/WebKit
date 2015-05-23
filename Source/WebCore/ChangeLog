@@ -1,3 +1,13 @@
+2015-05-23  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge patch for rdar://problem/21084541.
+
+    2015-05-22  Jer Noble  <jer.noble@apple.com>
+
+            Unreviewed build fix; Make sure to include the correct private header when building with internal SDKs.
+
+            * platform/spi/mac/AVFoundationSPI.h:
+
 2015-05-22  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r184760.

@@ -55,13 +55,16 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <AVKit/AVPlayerViewController_WebKitOnly.h>
-#endif
+#import <AVFoundation/AVPlayerLayer_Private.h>
+#else
 
 #import <AVFoundation/AVPlayerLayer.h>
 
 @interface AVPlayerLayer (AVPlayerLayerOptimizedFullscreenModeSupportPrivate)
 - (void)setEnterOptimizedFullscreenModeEnabled:(BOOL)flag;
 @end
+
+#endif
 
 #endif
 
