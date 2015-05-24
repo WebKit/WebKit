@@ -1,3 +1,13 @@
+2015-05-23  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/21090327> /S/L/PrivateFrameworks/WebKit.framework is missing Headers and PrivateHeaders symlinks
+        https://bugs.webkit.org/show_bug.cgi?id=145354
+
+        Reviewed by David Kilzer.
+
+        * WebKit2.xcodeproj/project.pbxproj: Create Headers and PrivateHeaders symlinks alongside
+        the dylib symlink.
+
 2015-05-23  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         Rename ShareableResource::create(Handle&) to map(Handle&) to match SharedMemory.
