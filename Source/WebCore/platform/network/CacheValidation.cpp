@@ -120,14 +120,20 @@ std::chrono::microseconds computeFreshnessLifetimeForHTTPFamily(const ResourceRe
     if (expires)
         return duration_cast<microseconds>(expires.value() - dateValue);
 
-    // Heuristic Freshness:
-    // http://tools.ietf.org/html/rfc7234#section-4.2.2
-    auto lastModified = response.lastModified();
-    if (lastModified)
-        return duration_cast<microseconds>((dateValue - lastModified.value()) * 0.1);
-
-    // If no cache headers are present, the specification leaves the decision to the UA. Other browsers seem to opt for 0.
-    return microseconds::zero();
+    // Implicit lifetime.
+    switch (response.httpStatusCode()) {
+    case 301: // Moved Permanently
+    case 410: // Gone
+        // These are semantically permanent and so get long implicit lifetime.
+        return hours(365 * 24);
+    default:
+        // Heuristic Freshness:
+        // http://tools.ietf.org/html/rfc7234#section-4.2.2
+        auto lastModified = response.lastModified();
+        if (lastModified)
+            return duration_cast<microseconds>((dateValue - lastModified.value()) * 0.1);
+        return microseconds::zero();
+    }
 }
 
 void updateRedirectChainStatus(RedirectChainCacheStatus& redirectChainCacheStatus, const ResourceResponse& response)

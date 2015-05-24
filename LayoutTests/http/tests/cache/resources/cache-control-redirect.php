@@ -16,9 +16,9 @@
     else
         header('Location: ' . $url);
 
-    $max_age = $_GET['max_age'];
-    if (!isset($max_age)) {
-        $expires = gmdate(DATE_RFC1123, time() + $max_age);
+    $expiration = $_GET['expiration'];
+    if (isset($expiration)) {
+        $expires = gmdate(DATE_RFC1123, time() + $expiration);
         header('Expires: ' . $expires);
     }
 

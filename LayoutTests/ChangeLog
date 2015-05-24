@@ -1,3 +1,15 @@
+2015-05-23  Antti Koivisto  <antti@apple.com>
+
+        Permanent redirects should have long implicit cache lifetime
+        https://bugs.webkit.org/show_bug.cgi?id=145348
+
+        Reviewed by Sam Weinig.
+
+        * http/tests/cache/cache-redirections.html:
+        * http/tests/cache/resources/cache-control-redirect.php:
+
+            Use less confusing name (max_age->expiration vs. max-age) and fix logic.
+
 2015-05-23  Zalan Bujtas  <zalan@apple.com>
 
         Rebaseline after r184825. Remove artificial extra space between 2 text renderers. 
