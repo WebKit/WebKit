@@ -98,7 +98,7 @@ PassRefPtr<SharedBuffer> ShareableResource::wrapInSharedBuffer()
 
 PassRefPtr<SharedBuffer> ShareableResource::Handle::tryWrapInSharedBuffer() const
 {
-    RefPtr<ShareableResource> resource = ShareableResource::create(*this);
+    RefPtr<ShareableResource> resource = ShareableResource::map(*this);
     if (!resource) {
         LOG_ERROR("Failed to recreate ShareableResource from handle.");
         return nullptr;
@@ -112,7 +112,7 @@ PassRefPtr<ShareableResource> ShareableResource::create(PassRefPtr<SharedMemory>
     return adoptRef(new ShareableResource(sharedMemory, offset, size));
 }
 
-PassRefPtr<ShareableResource> ShareableResource::create(const Handle& handle)
+PassRefPtr<ShareableResource> ShareableResource::map(const Handle& handle)
 {
     RefPtr<SharedMemory> sharedMemory = SharedMemory::map(handle.m_handle, SharedMemory::Protection::ReadOnly);
     if (!sharedMemory)
