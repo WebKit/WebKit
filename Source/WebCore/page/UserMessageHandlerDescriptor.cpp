@@ -35,7 +35,7 @@ namespace WebCore {
 UserMessageHandlerDescriptor::UserMessageHandlerDescriptor(const AtomicString& name, DOMWrapperWorld& world, Client& client)
     : m_name(name)
     , m_world(world)
-    , m_client(client)
+    , m_client(&client)
 {
 }
 

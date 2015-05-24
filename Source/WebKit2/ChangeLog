@@ -1,3 +1,17 @@
+2015-05-24  Sam Weinig  <sam@webkit.org>
+
+        Crash when using a removed ScriptMessageHandler
+        <rdar://problem/20888499>
+        https://bugs.webkit.org/show_bug.cgi?id=145359
+
+        Reviewed by Dan Bernstein.
+
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserMessageHandlerDescriptorProxy::~WebUserMessageHandlerDescriptorProxy):
+        Invalidate the descriptor when the message handler client (as implemented by WebUserMessageHandlerDescriptorProxy)
+        goes away. This will happen if a script message handler is removed at the API level or the WebUserContentController
+        is destroyed (which will happen if all the pages get destroyed).
+
 2015-05-23  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/21090327> /S/L/PrivateFrameworks/WebKit.framework is missing Headers and PrivateHeaders symlinks

@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+typedef int ExceptionCode;
+
 class UserMessageHandler : public RefCounted<UserMessageHandler>, public FrameDestructionObserver {
 public:
     static Ref<UserMessageHandler> create(Frame& frame, UserMessageHandlerDescriptor& descriptor)
@@ -42,7 +44,7 @@ public:
     }
     virtual ~UserMessageHandler();
 
-    void postMessage(PassRefPtr<SerializedScriptValue>);
+    void postMessage(PassRefPtr<SerializedScriptValue>, ExceptionCode&);
 
     const AtomicString& name();
     DOMWrapperWorld& world();
