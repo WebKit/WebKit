@@ -62,9 +62,8 @@ public:
     {
         // See SVGPropertyTearOff::detachWrapper() for an explanation about what's happening here.
         ASSERT(wrappers);
-        unsigned size = wrappers->size();
-        for (unsigned i = 0; i < size; ++i) {
-            if (ListItemTearOff* item = wrappers->at(i).get())
+        for (auto& item : *wrappers) {
+            if (item)
                 item->detachWrapper();
         }
 

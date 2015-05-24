@@ -155,7 +155,7 @@ bool appendSVGPathByteStreamFromSVGPathSeg(PassRefPtr<SVGPathSeg> pathSeg, SVGPa
     parser->cleanup();
 
     if (ok)
-        result->append(appendedByteStream.get());
+        result->append(*appendedByteStream);
 
     return ok;
 }
