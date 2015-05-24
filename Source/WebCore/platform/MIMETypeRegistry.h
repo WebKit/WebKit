@@ -90,7 +90,7 @@ public:
     static HashSet<String>& getSupportedImageResourceMIMETypes();
     static HashSet<String>& getSupportedImageMIMETypesForEncoding();
     WEBCORE_EXPORT static HashSet<String>& getSupportedNonImageMIMETypes();
-    static HashSet<String>& getSupportedMediaMIMETypes();
+    WEBCORE_EXPORT static HashSet<String>& getSupportedMediaMIMETypes();
     WEBCORE_EXPORT static HashSet<String>& getPDFMIMETypes();
     static HashSet<String>& getPDFAndPostScriptMIMETypes();
     WEBCORE_EXPORT static HashSet<String>& getUnsupportedTextMIMETypes();

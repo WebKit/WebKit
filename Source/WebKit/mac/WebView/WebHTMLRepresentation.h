@@ -49,6 +49,7 @@
 }
 
 + (NSArray *)supportedMIMETypes;
++ (NSArray *)supportedMediaMIMETypes;
 + (NSArray *)supportedNonImageMIMETypes;
 + (NSArray *)supportedImageMIMETypes;
 + (NSArray *)unsupportedTextMIMETypes;

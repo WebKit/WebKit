@@ -1262,6 +1262,11 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     return [WebHTMLRepresentation supportedMIMETypes];
 }
 
++ (NSArray *)supportedMediaMIMETypes
+{
+    return [WebHTMLRepresentation supportedMediaMIMETypes];
+}
+
 + (NSArray *)supportedImageMIMETypes
 {
     return [WebHTMLRepresentation supportedImageMIMETypes];

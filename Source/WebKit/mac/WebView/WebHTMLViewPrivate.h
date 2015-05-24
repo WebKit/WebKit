@@ -45,6 +45,7 @@ extern const float _WebHTMLViewPrintingMaximumShrinkFactor;
 @interface WebHTMLView (WebPrivate)
 
 + (NSArray *)supportedMIMETypes;
++ (NSArray *)supportedMediaMIMETypes;
 + (NSArray *)supportedImageMIMETypes;
 + (NSArray *)supportedNonImageMIMETypes;
 + (NSArray *)unsupportedTextMIMETypes;

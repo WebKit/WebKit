@@ -1,3 +1,26 @@
+2015-05-24  Jeremy Jones  <jeremyj@apple.com>
+
+        Register media MIME types as supported by HTML view in WebKit1.
+        https://bugs.webkit.org/show_bug.cgi?id=145356
+
+        Reviewed by Eric Carlson.
+
+        WebDataSource and WebFrame view knew about suppotedImageMIMETypes and supportedNonImageMIMETypes,
+        but not a third category supportedMediaMIMETypes. These are now included along-side 
+        supportedNonImageMIMETypes.
+
+        * WebView/WebDataSource.mm:
+        (+[WebDataSource _repTypesAllowImageTypeOmission:]): use supportedMediaMIMETypes.
+        * WebView/WebFrameView.mm:
+        (+[WebFrameView _viewTypesAllowImageTypeOmission:]): use supportedMediaMIMETypes.
+        * WebView/WebHTMLRepresentation.h: declare -supportedMediaMIMETypes
+        * WebView/WebHTMLRepresentation.mm:
+        (+[WebHTMLRepresentation supportedMIMETypes]): include supportedMediaMIMETypes
+        (+[WebHTMLRepresentation supportedMediaMIMETypes]): added
+        * WebView/WebHTMLView.mm:
+        (+[WebHTMLView supportedMediaMIMETypes]): added
+        * WebView/WebHTMLViewPrivate.h: declare -supportedMediaMIMETypes
+
 2015-05-22  Jon Lee  <jonlee@apple.com>
 
         Rename MediaPlaybackAllowsInline

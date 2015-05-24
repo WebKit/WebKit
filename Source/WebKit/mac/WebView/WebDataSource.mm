@@ -263,6 +263,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     if (!repTypes) {
         repTypes = [[NSMutableDictionary alloc] init];
         addTypesFromClass(repTypes, [WebHTMLRepresentation class], [WebHTMLRepresentation supportedNonImageMIMETypes]);
+        addTypesFromClass(repTypes, [WebHTMLRepresentation class], [WebHTMLRepresentation supportedMediaMIMETypes]);
         
         // Since this is a "secret default" we don't both registering it.
         BOOL omitPDFSupport = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitOmitPDFSupport"];

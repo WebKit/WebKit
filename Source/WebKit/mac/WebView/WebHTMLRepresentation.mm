@@ -106,8 +106,15 @@ static NSMutableArray *newArrayByConcatenatingArrays(NSArray *first, NSArray *se
 
 + (NSArray *)supportedMIMETypes
 {
-    static __unsafe_unretained NSArray *staticSupportedMIMETypes = newArrayByConcatenatingArrays([self supportedNonImageMIMETypes], [self supportedImageMIMETypes]);
+    static __unsafe_unretained NSArray *staticSupportedMIMETypes = newArrayByConcatenatingArrays([self supportedNonImageMIMETypes],
+        newArrayByConcatenatingArrays([self supportedImageMIMETypes], [self supportedMediaMIMETypes]));
     return staticSupportedMIMETypes;
+}
+
++ (NSArray *)supportedMediaMIMETypes
+{
+    static __unsafe_unretained NSArray *staticSupportedMediaMIMETypes = newArrayWithStrings(MIMETypeRegistry::getSupportedMediaMIMETypes());
+    return staticSupportedMediaMIMETypes;
 }
 
 + (NSArray *)supportedNonImageMIMETypes
