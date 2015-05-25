@@ -208,8 +208,6 @@ function find(callback /*, thisArg */) {
     
     var thisArg = arguments.length > 1 ? arguments[1] : undefined;
     for (var i = 0; i < length; i++) {
-        if (!(i in array))
-            continue;
         var kValue = array[i];
         if (callback.@call(thisArg, kValue, i, array))
             return kValue;
@@ -233,8 +231,6 @@ function findIndex(callback /*, thisArg */) {
     
     var thisArg = arguments.length > 1 ? arguments[1] : undefined;
     for (var i = 0; i < length; i++) {
-        if (!(i in array))
-            continue;
         if (callback.@call(thisArg, array[i], i, array))
             return i;
     }

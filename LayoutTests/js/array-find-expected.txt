@@ -15,8 +15,8 @@ PASS [undefined, 0, false, ''].find(passNull) is undefined
 PASS [undefined, 0, null, ''].find(passFalse) is undefined
 PASS [undefined, 0, null, false].find(passEmptyString) is undefined
 PASS [undefined, null, false, ''].find(passZero) is undefined
-PASS (new Array(20)).find(passUndefined) is undefined
 Array with holes
+PASS (new Array(20)).find(passUndefined) is undefined
 PASS arrayWithHoles.find(passUndefined) is undefined
 PASS arrayWithHoles.find(passZero) is 0
 PASS arrayWithHoles.find(passNull) is null
@@ -50,13 +50,16 @@ PASS [].find([]) threw exception TypeError: Array.prototype.find callback must b
 PASS [].find({}) threw exception TypeError: Array.prototype.find callback must be a function.
 PASS [].find(null) threw exception TypeError: Array.prototype.find callback must be a function.
 PASS [].find(undefined) threw exception TypeError: Array.prototype.find callback must be a function.
-Callbacks in the expected order and skipping holes
-find callback called with index 10
-find callback called with index 20
-find callback called with index 30
-find callback called with index 40
-find callback called with index 50
-PASS numberOfCallbacksInFindInArrayWithHoles() is 5
+Callbacks in the expected order and *not* skipping holes
+find callback called with index 0
+find callback called with index 1
+find callback called with index 2
+find callback called with index 3
+find callback called with index 4
+find callback called with index 5
+find callback called with index 6
+find callback called with index 7
+PASS numberOfCallbacksInFindInArrayWithHoles() is 8
 PASS successfullyParsed is true
 
 TEST COMPLETE

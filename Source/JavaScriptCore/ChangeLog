@@ -1,3 +1,16 @@
+2015-05-24  Jordan Harband  <ljharb@gmail.com>
+
+        Array#findIndex/find should not skip holes
+        https://bugs.webkit.org/show_bug.cgi?id=145361
+        per https://people.mozilla.org/~jorendorff/es6-draft.html#sec-array.prototype.findindex
+        and https://people.mozilla.org/~jorendorff/es6-draft.html#sec-array.prototype.find
+
+        Reviewed by Yusuke Suzuki.
+
+        * builtins/Array.prototype.js:
+        (find): Deleted.
+        (findIndex): Deleted.
+
 2015-05-24  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: Uncaught exception when using Inspect tool on SVG elements

@@ -42,11 +42,11 @@ function findItemRemovedDuringSearch(element, index, array) {
         array.shift();
     return (index === 0 && array[0] === element);
 }
-arrayWithHoles = [];
-arrayWithHoles[10] = 0;
-arrayWithHoles[20] = null;
-arrayWithHoles[30] = false;
-arrayWithHoles[40] = "";
+var arrayWithHoles = [];
+arrayWithHoles[1] = 0;
+arrayWithHoles[3] = null;
+arrayWithHoles[5] = false;
+arrayWithHoles[7] = "";
 function numberOfCallbacksInFindIndexInArrayWithHoles() {
     var count = 0;
     arrayWithHoles.find(function(element, index, array) {
@@ -66,16 +66,16 @@ shouldBe("[undefined, 0, false, ''].findIndex(passNull)", "-1");
 shouldBe("[undefined, 0, null, ''].findIndex(passFalse)", "-1");
 shouldBe("[undefined, 0, null, false].findIndex(passEmptyString)", "-1");
 shouldBe("[undefined, null, false, ''].findIndex(passZero)", "-1");
-shouldBe("(new Array(20)).findIndex(passUndefined)", "-1");
 
 debug("Array with holes");
-shouldBe("arrayWithHoles.findIndex(passUndefined)", "-1");
-shouldBe("arrayWithHoles.findIndex(passZero)", "10");
-shouldBe("arrayWithHoles.findIndex(passNull)", "20");
-shouldBe("arrayWithHoles.findIndex(passFalse)", "30");
-shouldBe("arrayWithHoles.findIndex(passEmptyString)", "40");
-arrayWithHoles[50] = undefined;
-shouldBe("arrayWithHoles.findIndex(passUndefined)", "50");
+shouldBe("(new Array(20)).findIndex(passUndefined)", "0");
+shouldBe("arrayWithHoles.findIndex(passUndefined)", "0");
+shouldBe("arrayWithHoles.findIndex(passZero)", "1");
+shouldBe("arrayWithHoles.findIndex(passNull)", "3");
+shouldBe("arrayWithHoles.findIndex(passFalse)", "5");
+shouldBe("arrayWithHoles.findIndex(passEmptyString)", "7");
+arrayWithHoles[0] = {};
+shouldBe("arrayWithHoles.findIndex(passUndefined)", "2");
 
 debug("Generic Object");
 shouldBe("toObject([undefined, 0, null, false, '']).findIndex(passUndefined)", "0");
@@ -88,7 +88,7 @@ shouldBe("toObject([undefined, 0, false, '']).findIndex(passNull)", "-1");
 shouldBe("toObject([undefined, 0, null, '']).findIndex(passFalse)", "-1");
 shouldBe("toObject([undefined, 0, null, false]).findIndex(passEmptyString)", "-1");
 shouldBe("toObject([undefined, null, false, '']).findIndex(passZero)", "-1");
-shouldBe("toObject(new Array(20)).findIndex(passUndefined)", "-1");
+shouldBe("toObject(new Array(20)).findIndex(passUndefined)", "0");
 
 debug("Array-like object with invalid lengths");
 var throwError = function throwError() {
@@ -112,5 +112,5 @@ shouldThrow("[].findIndex({})", "'TypeError: Array.prototype.findIndex callback 
 shouldThrow("[].findIndex(null)", "'TypeError: Array.prototype.findIndex callback must be a function'");
 shouldThrow("[].findIndex(undefined)", "'TypeError: Array.prototype.findIndex callback must be a function'");
 
-debug("Callbacks in the expected order and skipping holes");
-shouldBe("numberOfCallbacksInFindIndexInArrayWithHoles()", "5");
+debug("Callbacks in the expected order and *not* skipping holes");
+shouldBe("numberOfCallbacksInFindIndexInArrayWithHoles()", "8");

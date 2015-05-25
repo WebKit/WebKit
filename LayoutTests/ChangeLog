@@ -1,3 +1,15 @@
+2015-05-24  Jordan Harband  <ljharb@gmail.com>
+
+        Array#findIndex/find should not skip holes
+        https://bugs.webkit.org/show_bug.cgi?id=145361
+
+        Reviewed by Yusuke Suzuki.
+
+        * js/array-find-expected.txt:
+        * js/array-findIndex-expected.txt:
+        * js/script-tests/array-find.js:
+        * js/script-tests/array-findIndex.js:
+
 2015-05-23  Antti Koivisto  <antti@apple.com>
 
         Permanent redirects should have long implicit cache lifetime

@@ -43,11 +43,10 @@ function findItemRemovedDuringSearch(element, index, array) {
     return (index === 0 && array[0] === element);
 }
 arrayWithHoles = [];
-arrayWithHoles[10] = 0;
-arrayWithHoles[20] = null;
-arrayWithHoles[30] = false;
-arrayWithHoles[40] = "";
-arrayWithHoles[50] = undefined;
+arrayWithHoles[1] = 0;
+arrayWithHoles[3] = null;
+arrayWithHoles[5] = false;
+arrayWithHoles[7] = "";
 function numberOfCallbacksInFindInArrayWithHoles() {
     var count = 0;
     arrayWithHoles.find(function(element, index, array) {
@@ -67,9 +66,9 @@ shouldBe("[undefined, 0, false, ''].find(passNull)", "undefined");
 shouldBe("[undefined, 0, null, ''].find(passFalse)", "undefined");
 shouldBe("[undefined, 0, null, false].find(passEmptyString)", "undefined");
 shouldBe("[undefined, null, false, ''].find(passZero)", "undefined");
-shouldBe("(new Array(20)).find(passUndefined)", "undefined");
 
 debug("Array with holes")
+shouldBe("(new Array(20)).find(passUndefined)", "undefined");
 shouldBe("arrayWithHoles.find(passUndefined)", "undefined");
 shouldBe("arrayWithHoles.find(passZero)", "0");
 shouldBe("arrayWithHoles.find(passNull)", "null");
@@ -111,5 +110,5 @@ shouldThrow("[].find({})", "'TypeError: Array.prototype.find callback must be a 
 shouldThrow("[].find(null)", "'TypeError: Array.prototype.find callback must be a function'");
 shouldThrow("[].find(undefined)", "'TypeError: Array.prototype.find callback must be a function'");
 
-debug("Callbacks in the expected order and skipping holes");
-shouldBe("numberOfCallbacksInFindInArrayWithHoles()", "5");
+debug("Callbacks in the expected order and *not* skipping holes");
+shouldBe("numberOfCallbacksInFindInArrayWithHoles()", "8");
