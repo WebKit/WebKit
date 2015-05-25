@@ -41,6 +41,12 @@ static void testWebContextConfiguration(WebViewTest* test, gconstpointer)
 {
     GUniquePtr<char> localStorageDirectory(g_build_filename(Test::dataDirectory(), "local-storage", nullptr));
     g_assert(g_file_test(localStorageDirectory.get(), G_FILE_TEST_IS_DIR));
+
+    test->loadURI(kServer->getURIForPath("/empty").data());
+    test->waitUntilLoadFinished();
+    test->runJavaScriptAndWaitUntilFinished("window.indexedDB.open('TestDatabase');", nullptr);
+    GUniquePtr<char> indexedDBDirectory(g_build_filename(Test::dataDirectory(), "indexeddb", nullptr));
+    g_assert(g_file_test(indexedDBDirectory.get(), G_FILE_TEST_IS_DIR));
 }
 
 class PluginsTest: public Test {
@@ -330,6 +336,11 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         soup_message_set_status(message, SOUP_STATUS_OK);
         soup_message_body_append(message->response_body, SOUP_MEMORY_COPY, acceptLanguage, strlen(acceptLanguage));
         soup_message_body_complete(message->response_body);
+    } else if (g_str_equal(path, "/empty")) {
+        const char* emptyHTML = "<html><body></body></html>";
+        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, emptyHTML, strlen(emptyHTML));
+        soup_message_body_complete(message->response_body);
+        soup_message_set_status(message, SOUP_STATUS_OK);
     } else
         soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
 }

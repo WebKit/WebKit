@@ -1,3 +1,18 @@
+2015-05-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add construct property to WebKitWebContext to set the IndexedDB database directory
+        https://bugs.webkit.org/show_bug.cgi?id=140882
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add WebKitWebContext:indexed-db-database-directory construct only property.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextGetProperty):
+        (webkitWebContextSetProperty):
+        (webkitWebContextConstructed):
+        (webkit_web_context_class_init):
+
 2015-05-24  Sam Weinig  <sam@webkit.org>
 
         Crash when using a removed ScriptMessageHandler
