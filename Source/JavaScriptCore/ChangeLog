@@ -1,3 +1,17 @@
+2015-05-24  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: Uncaught exception when using Inspect tool on SVG elements
+        https://bugs.webkit.org/show_bug.cgi?id=145363
+
+        Reviewed by Joseph Pecoraro.
+
+        The injected script failed by chaining a call to String.prototype.trim to the result of
+        SVG*Element.className, which is an SVGAnimatedString and lacks useful methods. So, obtain
+        the class name using Node.getAttribute, which always returns a DOMString.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScriptSource.prototype._getDescription): use getAttribute instead of className.
+
 2015-05-23  Dan Bernstein  <mitz@apple.com>
 
         Remove unused definitions of WEBKIT_VERSION_MIN_REQUIRED

@@ -762,8 +762,11 @@ InjectedScript.prototype = {
         case 1: // Node.ELEMENT_NODE
             if (node.id)
                 description += "#" + node.id;
-            if (node.className)
-                description += "." + node.className.trim().replace(/\s+/g, ".");
+            if (node.hasAttribute("class")) {
+                // Using .getAttribute() is a workaround for SVG*Element.className returning SVGAnimatedString,
+                // which doesn't have any useful String methods. See <https://webkit.org/b/145363/>.
+                description += "." + node.getAttribute("class").trim().replace(/\s+/g, ".");
+            }
             return description;
 
         default:
