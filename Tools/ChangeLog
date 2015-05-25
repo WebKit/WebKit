@@ -1,3 +1,12 @@
+2015-05-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Enable IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=98932
+
+        Reviewed by Žan Doberšek.
+
+        * Scripts/webkitperl/FeatureList.pm: Enable IndexedDB for the GTK port.
+
 2015-05-24  Sam Weinig  <sam@webkit.org>
 
         Crash when using a removed ScriptMessageHandler
