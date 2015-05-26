@@ -24,6 +24,21 @@
         "comment": "There is no \"use asm\" mode in JavaScriptCore. Instead WebKit integrates ASM.js optimizations directly in the optimizer. As a result, it is possible to mix ASM-style typing with regular code and still get great performance and power efficiency."
     },
     {
+        "name": "Array.prototype.copyWithin",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "https://people.mozilla.org/~jorendorff/es6-draft.html#sec-array.prototype.copywithin",
+        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/copyWithin",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=145107",
+        "specification": "ES6",
+        "contact": {
+            "name": "Yusuke Suzuki",
+            "email": "utatane.tea@gmail.com"
+        }
+    },
+    {
         "name": "Array.prototype.includes",
         "status": {
             "status": "Done",
