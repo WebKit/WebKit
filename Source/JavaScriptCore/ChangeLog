@@ -1,3 +1,19 @@
+2015-05-26  Andreas Kling  <akling@apple.com>
+
+        Try to use StringView when comparing JSStrings for equality.
+        <https://webkit.org/b/145379>
+
+        Reviewed by Darin Adler.
+
+        Use JSString::view() when sending two JSStrings to WTF::equal()
+        for comparison. This avoids creating new objects in the case where
+        the strings are actually substrings.
+
+        * jit/JITOperations.cpp:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::equalSlowCaseInline):
+        (JSC::JSValue::strictEqualSlowCaseInline):
+
 2015-05-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Generate put_by_val_direct for indexed identifiers instead of put_by_id with direct postfix
