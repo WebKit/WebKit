@@ -1,3 +1,15 @@
+2015-05-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        SVG fragment identifier rendering issue
+        https://bugs.webkit.org/show_bug.cgi?id=137328
+
+        Reviewed by Darin Adler.
+
+        * svg/css/svg-resource-fragment-identifier-order-expected.html: Added.
+        * svg/css/svg-resource-fragment-identifier-order.html: Added.
+        Ensure the SVG fragment is drawn correctly when the same SVG image is
+        referenced multiple times.
+
 2015-05-26  Daniel Bates  <dabates@apple.com>
 
         Update Autofill button icon
