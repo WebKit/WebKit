@@ -225,7 +225,7 @@ function documentReady()
         }
 
         if (platformQueues.staticAnalyzer) {
-            var view = new BuildbotStaticAnalyzerQueueView(platformQueues.staticAnalyzer.release);
+            var view = new BuildbotStaticAnalyzerQueueView(platformQueues.staticAnalyzer);
             cell.appendChild(view.element);
         }
 
