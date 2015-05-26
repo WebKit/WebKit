@@ -188,7 +188,7 @@ void RenderVideo::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     if (displayingPoster)
         paintIntoRect(context, rect);
-    else if (!videoElement().isFullscreen()) {
+    else if (!videoElement().isFullscreen() || !mediaPlayer->supportsAcceleratedRendering()) {
         if (view().frameView().paintBehavior() & PaintBehaviorFlattenCompositingLayers)
             mediaPlayer->paintCurrentFrameInContext(context, rect);
         else
