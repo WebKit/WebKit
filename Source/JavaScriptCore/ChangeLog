@@ -1,3 +1,18 @@
+2015-05-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Inline @Array / @Object callsites
+        https://bugs.webkit.org/show_bug.cgi?id=145382
+
+        Reviewed by Geoffrey Garen.
+
+        As the same to Array/Object callsite inlining, @Array/@Object also
+        should be inlined in bytecode level.
+        While `new @Object` style is not encouraged in the builtins,
+        `@Array(len)` is already used at least in Array.from code.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::expectedFunctionForIdentifier):
+
 2015-05-26  Andreas Kling  <akling@apple.com>
 
         String.prototype.charCodeAt() should use StringView.
