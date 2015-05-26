@@ -1,3 +1,14 @@
+2015-05-26  Milan Crha  <mcrha@redhat.com>
+
+        [GTK] Expand wildcards inside generate-inspector-gresource-manifest.py
+        https://bugs.webkit.org/show_bug.cgi?id=138134
+
+        Reviewed by Žan Doberšek.
+
+        * gtk/generate-inspector-gresource-manifest.py:
+        (get_filenames): Command line with expanded resources exceeds 32KB, which
+        is a limit on Windows. It's better to expand wildcards inside the python script.
+
 2015-05-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add construct property to WebKitWebContext to set the IndexedDB database directory

@@ -16,6 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 import argparse
+import glob
 import os
 import sys
 
@@ -26,10 +27,17 @@ BASE_DIR = 'WebInspectorUI/'
 def get_filenames(args):
     filenames = []
 
-    for filename in args:
-        base_dir_index = filename.rfind(BASE_DIR)
-        if base_dir_index != -1:
-            filenames.append(filename[base_dir_index + len(BASE_DIR):])
+    for pattern in args:
+        paths = glob.glob(pattern)
+        for filename in paths:
+            base_dir_index = filename.rfind(BASE_DIR)
+            if base_dir_index != -1:
+                name = filename[base_dir_index + len(BASE_DIR):]
+                # The result should use forward slashes, thus make sure any os-specific
+                # separator, added by the glob.glob() call, is properly replaced
+                if os.sep != '/':
+                    name = name.replace(os.sep, '/')
+                filenames.append(name)
     return filenames
 
 
