@@ -455,3 +455,61 @@ function sort(comparator)
     comparatorSort(array, comparator);
     return array;
 }
+
+function copyWithin(target, start)
+{
+    "use strict";
+
+    function maxWithPositives(a, b)
+    {
+        return (a < b) ? b : a;
+    }
+
+    function minWithMaybeNegativeZeroAndPositive(maybeNegativeZero, positive)
+    {
+        return (maybeNegativeZero < positive) ? maybeNegativeZero : positive;
+    }
+
+    var thisValue = this;
+    if (thisValue === null || thisValue === undefined)
+        throw new @TypeError("Array.copyWithin requires that |this| be not null or undefined");
+    var thisObject = @Object(thisValue);
+
+    var length = @ToLength(thisObject.length);
+
+    var relativeTarget = @ToInteger(target);
+    var to = (relativeTarget < 0) ? maxWithPositives(length + relativeTarget, 0) : minWithMaybeNegativeZeroAndPositive(relativeTarget, length);
+
+    var relativeStart = @ToInteger(start);
+    var from = (relativeStart < 0) ? maxWithPositives(length + relativeStart, 0) : minWithMaybeNegativeZeroAndPositive(relativeStart, length);
+
+    var relativeEnd;
+    if (arguments.length >= 3) {
+        var end = arguments[2];
+        if (end === undefined)
+            relativeEnd = length;
+        else
+            relativeEnd = @ToInteger(end);
+    } else
+        relativeEnd = length;
+
+    var finalValue = (relativeEnd < 0) ? maxWithPositives(length + relativeEnd, 0) : minWithMaybeNegativeZeroAndPositive(relativeEnd, length);
+
+    var count = minWithMaybeNegativeZeroAndPositive(finalValue - from, length - to);
+
+    var direction = 1;
+    if (from < to && to < from + count) {
+        direction = -1;
+        from = from + count - 1;
+        to = to + count - 1;
+    }
+
+    for (var i = 0; i < count; ++i, from += direction, to += direction) {
+        if (from in thisObject)
+            thisObject[to] = thisObject[from];
+        else
+            delete thisObject[to];
+    }
+
+    return thisObject;
+}

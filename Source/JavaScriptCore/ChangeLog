@@ -1,3 +1,28 @@
+2015-05-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement Array.prototype.copyWithin
+        https://bugs.webkit.org/show_bug.cgi?id=145107
+
+        Reviewed by Darin Adler.
+
+        This patch implements ES6 Array.prototype.copyWithin.
+        It is intended to be used for copying the region to the other region
+        in the callee array itself safely (like memmove, not memcpy).
+        This function is proposed in the context of WebGL.
+
+        * builtins/Array.prototype.js:
+        (.maxWithPositives):
+        (.minWithMaybeNegativeZeroAndPositive):
+        (copyWithin):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+        * tests/stress/array-copywithin.js: Added.
+        (shouldBe):
+        (shouldBeArray):
+        (shouldThrow):
+        (arrayToObject):
+        (valueOf):
+
 2015-05-26  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/21104551> Update build settings

@@ -1,3 +1,13 @@
+2015-05-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement Array.prototype.copyWithin
+        https://bugs.webkit.org/show_bug.cgi?id=145107
+
+        Reviewed by Darin Adler.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+
 2015-05-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Enable IndexedDB
