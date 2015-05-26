@@ -1,3 +1,13 @@
+2015-05-26  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/21104551> Update build settings
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/FeatureDefines.xcconfig:
+        * Configurations/Version.xcconfig:
+
 2015-05-26  Andreas Kling  <akling@apple.com>
 
         Try to use StringView when comparing JSStrings for equality.

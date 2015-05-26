@@ -1,3 +1,12 @@
+2015-05-26  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/21104551> Update build settings
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+
 2015-05-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         REGRESSION(r181571): Build broken when USE(OPENGL_ES_2) is defined.

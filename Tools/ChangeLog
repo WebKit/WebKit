@@ -1,3 +1,17 @@
+2015-05-26  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/21104551> Update build settings
+
+        Reviewed by Anders Carlsson.
+
+        * ContentExtensionTester/Configurations/DebugRelease.xcconfig:
+        * DumpRenderTree/mac/Configurations/DebugRelease.xcconfig:
+        * MiniBrowser/Configurations/DebugRelease.xcconfig:
+        * TestWebKitAPI/Configurations/DebugRelease.xcconfig:
+        * WebEditingTester/Configurations/DebugRelease.xcconfig:
+        * WebKitTestRunner/Configurations/DebugRelease.xcconfig:
+        * asan/asan.xcconfig:
+
 2015-05-26  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
