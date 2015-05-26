@@ -1,3 +1,13 @@
+2015-05-26  Alexey Proskuryakov  <ap@apple.com>
+
+        build.webkit.org/dashboard: Don't list test steps in BuildbotIteration twice
+        https://bugs.webkit.org/show_bug.cgi?id=145342
+
+        Reviewed by Darin Adler.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (BuildbotIteration.prototype._parseData):
+
 2015-05-26  Milan Crha  <mcrha@redhat.com>
 
         [GTK] Expand wildcards inside generate-inspector-gresource-manifest.py

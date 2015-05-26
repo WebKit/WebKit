@@ -64,29 +64,26 @@ BuildbotIteration.EXCEPTION = 4;
 BuildbotIteration.RETRY = 5;
 
 // If none of these steps ran, then we didn't get any real results, and the iteration was not productive.
+// All test steps are considered productive too.
 BuildbotIteration.ProductiveSteps = {
-    "compile-webkit": 1,
-    "build ASan archive": 1,
     "Build" : 1,
-    "layout-test": 1,
-    "jscore-test": 1,
-    "run-api-tests": 1,
-    "API tests": 1,
-    "webkitpy-test": 1,
-    "webkitperl-test": 1,
-    "bindings-generation-tests": 1,
-    "perf-test": 1,
+    "build ASan archive": 1,
+    "compile-webkit": 1,
     "scan build": 1,
 };
 
+// These have a special meaning for test queue views.
 BuildbotIteration.TestSteps = {
-    "layout-test": "layout test",
-    "jscore-test": "javascript test",
-    "run-api-tests": "api test",
     "API tests": "platform api test",
-    "webkitpy-test": "webkitpy test",
-    "webkitperl-test": "webkitperl test",
     "bindings-generation-tests": "bindings tests",
+    "jscore-test": "javascript test",
+    "layout-test": "layout test",
+    "perf-test": "performance test",
+    "run-api-tests": "api test",
+    "webkit-32bit-jsc-test": "javascript test",
+    "webkit-jsc-cloop-test": "javascript cloop test",
+    "webkitperl-test": "webkitperl test",
+    "webkitpy-test": "webkitpy test",
 };
 
 BuildbotIteration.Event = {
@@ -274,7 +271,7 @@ BuildbotIteration.prototype = {
                 var step = data.steps[i];
                 if (!step.isFinished)
                     break;
-                if (step.name in BuildbotIteration.ProductiveSteps) {
+                if (step.name in BuildbotIteration.ProductiveSteps || step.name in BuildbotIteration.TestSteps) {
                     finishedAnyProductiveStep = true;
                     break;
                 }
