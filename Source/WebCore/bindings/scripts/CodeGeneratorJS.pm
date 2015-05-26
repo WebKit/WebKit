@@ -1301,7 +1301,7 @@ sub GenerateAttributesHashTable
 
     if (ConstructorShouldBeOnInstance($interface) == $isInstance) {
 
-        if (NeedsConstructorProperty($interface)) {
+        if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
             die if !$numAttributes;
             push(@$hashKeys, "constructor");
             my $getter = "js" . $interfaceName . "Constructor";
@@ -1749,7 +1749,7 @@ sub GenerateImplementation
         push(@implContent, "\n");
     }
 
-    if ($numAttributes > 0 || NeedsConstructorProperty($interface)) {
+    if ($numAttributes > 0 || !$interface->extendedAttributes->{"NoInterfaceObject"}) {
         push(@implContent, "// Attributes\n\n");
         foreach my $attribute (@{$interface->attributes}) {
             next if $attribute->signature->extendedAttributes->{"ForwardDeclareInHeader"};
@@ -1765,7 +1765,7 @@ sub GenerateImplementation
             push(@implContent, "#endif\n") if $conditionalString;
         }
         
-        if (NeedsConstructorProperty($interface)) {
+        if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
             my $getter = "js" . $interfaceName . "Constructor";
             push(@implContent, "JSC::EncodedJSValue ${getter}(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);\n");
         }
@@ -1784,7 +1784,7 @@ sub GenerateImplementation
     }
 
     # Add constructor declaration
-    if (NeedsConstructorProperty($interface)) {
+    if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
         $implIncludes{"JSDOMBinding.h"} = 1;
         if ($interface->extendedAttributes->{"NamedConstructor"}) {
             $implIncludes{"DOMConstructorWithDocument.h"} = 1;
@@ -1811,7 +1811,7 @@ sub GenerateImplementation
         \%conditionals, 0) if $numInstanceAttributes > 0;
 
     # - Add all constants
-    if (NeedsConstructorProperty($interface)) {
+    if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
         my $hashSize = 0;
         my $hashName = $className . "ConstructorTable";
 
@@ -2189,7 +2189,7 @@ sub GenerateImplementation
         }
 
     }
-    $numAttributes = $numAttributes + 1 if NeedsConstructorProperty($interface);
+    $numAttributes = $numAttributes + 1 if !$interface->extendedAttributes->{"NoInterfaceObject"};
     if ($numAttributes > 0) {
         foreach my $attribute (@{$interface->attributes}) {
             my $name = $attribute->signature->name;
@@ -2415,7 +2415,7 @@ sub GenerateImplementation
             push(@implContent, "\n");
         }
 
-        if (NeedsConstructorProperty($interface)) {
+        if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
             my $constructorFunctionName = "js" . $interfaceName . "Constructor";
 
             if ($interface->extendedAttributes->{"CustomProxyToJSObject"}) {
@@ -2440,14 +2440,7 @@ sub GenerateImplementation
                 push(@implContent, "        return JSValue::encode(jsUndefined());\n");
             }
 
-            if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
-                push(@implContent, "    return JSValue::encode(${className}::getConstructor(exec->vm(), domObject->globalObject()));\n");
-            } else {
-                push(@implContent, "    JSValue constructor = ${className}Constructor::create(exec->vm(), ${className}Constructor::createStructure(exec->vm(), domObject->globalObject(), domObject->globalObject()->objectPrototype()), jsCast<JSDOMGlobalObject*>(domObject->globalObject()));\n");
-                push(@implContent, "    // Shadowing constructor property to ensure reusing the same constructor object\n");
-                push(@implContent, "    domObject->putDirect(exec->vm(), exec->propertyNames().constructor, constructor, DontEnum | ReadOnly);\n");
-                push(@implContent, "    return JSValue::encode(constructor);\n");
-            }
+            push(@implContent, "    return JSValue::encode(${className}::getConstructor(exec->vm(), domObject->globalObject()));\n");
             push(@implContent, "}\n\n");
         }
 
@@ -4768,13 +4761,6 @@ sub HasCustomMethod
 {
     my $attrExt = shift;
     return $attrExt->{"Custom"};
-}
-
-sub NeedsConstructorProperty
-{
-    my $interface = shift;
-
-    return !$interface->extendedAttributes->{"NoInterfaceObject"} || $interface->extendedAttributes->{"CustomConstructor"};
 }
 
 sub IsConstructable
