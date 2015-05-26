@@ -1,3 +1,46 @@
+2015-05-26  Alexey Proskuryakov  <ap@apple.com>
+
+        Botwatcher's dashboard doesn't show JSC test regressions on Apple bots
+        https://bugs.webkit.org/show_bug.cgi?id=143091
+        rdar://problem/19330328
+
+        Reviewed by Darin Adler and Timothy Hatcher.
+
+        We have many of these, which are hard to fit on the dashboard. Added a view that
+        collapses to a single green bubble when everything is good, and expands when there
+        are failures (or manually).
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/index.html: Added BuildbotCombinedQueueView.js
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Buildbot.js:
+        (Buildbot.prototype.set isAuthenticated):
+        (Buildbot.prototype._normalizeQueueInfo):
+        (Buildbot.prototype._normalizeQueuesInfo):
+        (Buildbot.prototype.updateQueues):
+        Moved queue info normalization here from BuildbitQueue. The latter is a model class
+        that shouldn't have to know about presentation, and this lets us leep the knowledge
+        about combined queues out if it. Later, we can refactor existing code, and move out
+        all knowledge about headings and such.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotCombinedQueueView.js:
+        Added the new view. It's not quite universal, and doesn't have as helpful popovers
+        as other views, but we can extend it when/if we use it for more than JSC.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueue.js:
+        (BuildbotQueue): Now that info is normalized before creating a queue, don't do that here.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Main.js:
+        (documentReady): Added support for combined queues. These are currently always ending up
+        in Other column, but it's easy to customize in the future if we need to.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot): Added JSC queus.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/QueueView.css:
+        (.combined-queue-popover):
+        (.combined-queue-popover .revision):
+        Added styles for the combined view.
+
 2015-05-26  Dan Bernstein  <mitz@apple.com>
 
         Changed a file to use Unix line endings.

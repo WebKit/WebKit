@@ -33,6 +33,10 @@ WebKitBuildbot = function()
         "Apple Mavericks Release WK1 (Tests)": {platform: Dashboard.Platform.MacOSXMavericks, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
         "Apple Mavericks Release WK2 (Tests)": {platform: Dashboard.Platform.MacOSXMavericks, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
         "Apple Mavericks Release WK2 (Perf)": {platform: Dashboard.Platform.MacOSXMavericks, debug: false, performance: true, heading: "Performance"},
+        "Apple Mavericks JSC": {platform: Dashboard.Platform.MacOSXMavericks, heading: "JavaScript", combinedQueues: {
+            "Apple Mavericks 32-bit JSC (BuildAndTest)": {heading: "32-bit JSC (BuildAndTest)"},
+            "Apple Mavericks LLINT CLoop (BuildAndTest)": {heading: "LLINT CLoop (BuildAndTest)"},
+        }},
         "Apple Yosemite Debug (Build)": {platform: Dashboard.Platform.MacOSXYosemite, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple Yosemite Release (Build)": {platform: Dashboard.Platform.MacOSXYosemite, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple Yosemite Release (32-bit Build)": {platform: Dashboard.Platform.MacOSXYosemite, builder: true, architecture: Buildbot.BuildArchitecture.ThirtyTwoBit},
@@ -42,6 +46,12 @@ WebKitBuildbot = function()
         "Apple Yosemite Release WK2 (Tests)": {platform: Dashboard.Platform.MacOSXYosemite, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
         "Apple Yosemite Release WK2 (Perf)": {platform: Dashboard.Platform.MacOSXYosemite, debug: false, performance: true, heading: "Performance"},
         "Apple Yosemite (Leaks)": {platform: Dashboard.Platform.MacOSXYosemite, debug: true, leaks: true},
+        "Apple Yosemite JSC": {platform: Dashboard.Platform.MacOSXYosemite, heading: "JavaScript", combinedQueues: {
+            "Apple Yosemite 32-bit JSC (BuildAndTest)": {heading: "32-bit JSC (BuildAndTest)"},
+            "Apple Yosemite LLINT CLoop (BuildAndTest)": {heading: "LLINT CLoop (BuildAndTest)"},
+            "Apple Yosemite Debug JSC (Tests)": {heading: "Debug JSC (Tests)"},
+            "Apple Yosemite Release JSC (Tests)": {heading: "Release JSC (Tests)"},
+        }},
         "Apple Win Debug (Build)": {platform: Dashboard.Platform.Windows7, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.ThirtyTwoBit},
         "Apple Win Release (Build)": {platform: Dashboard.Platform.Windows7, builder: true, architecture: Buildbot.BuildArchitecture.ThirtyTwoBit},
         "Apple Win 7 Debug (Tests)": {platform: Dashboard.Platform.Windows7, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit1},

@@ -30,11 +30,23 @@ var categorizedQueuesByPlatformAndBuildType = {};
 
 for (var i = 0; i < buildbots.length; ++i) {
     var buildbot = buildbots[i];
-    for (var id in buildbot.queues) {
-        var queue = buildbot.queues[id];
-        var platform = categorizedQueuesByPlatformAndBuildType[queue.platform];
+    for (var id in buildbot.queuesInfo) {
+        if (buildbot.queuesInfo[id].combinedQueues) {
+            var info = buildbot.queuesInfo[id];
+            var queue = {
+                id: id,
+                branch: info.branch,
+                platform: info.platform.name,
+                heading: info.heading,
+                combinedQueues: Object.keys(info.combinedQueues).map(function(combinedQueueID) { return buildbot.queues[combinedQueueID]; }),
+            };
+        } else
+            var queue = buildbot.queues[id];
+
+        var platformName = queue.platform;
+        var platform = categorizedQueuesByPlatformAndBuildType[platformName];
         if (!platform)
-            platform = categorizedQueuesByPlatformAndBuildType[queue.platform] = {};
+            platform = categorizedQueuesByPlatformAndBuildType[platformName] = {};
         if (!platform.builders)
             platform.builders = [];
 
@@ -49,6 +61,8 @@ for (var i = 0; i < buildbots.length; ++i) {
             categoryName = "leaks";
         else if (queue.staticAnalyzer)
             categoryName = "staticAnalyzer";
+        else if ("combinedQueues" in queue)
+            categoryName = "combinedQueues";
         else {
             console.assert("Unknown queue type.");
             continue;
@@ -220,16 +234,20 @@ function documentReady()
             cell.appendChild(view.element);
         }
 
-        row.appendChild(cell);
+        if (platformQueues[BubblesCategory]) {
+            var view = new BubbleQueueView(platformQueues[BubblesCategory]);
+            cell.appendChild(view.element);
+        }
 
-        if (hasBubbles) {
-            if (platformQueues[BubblesCategory]) {
-                var view = new BubbleQueueView(platformQueues[BubblesCategory]);
+        // Currently, all combined queues are in Other column.
+        if (platformQueues.combinedQueues) {
+            for (var i = 0; i < platformQueues.combinedQueues.length; ++i) {
+                var view = new BuildbotCombinedQueueView(platformQueues.combinedQueues[i]);
                 cell.appendChild(view.element);
             }
-
-            row.appendChild(cell);
         }
+
+        row.appendChild(cell);
 
         table.appendChild(row);
     }

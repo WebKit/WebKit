@@ -33,18 +33,19 @@ BuildbotQueue = function(buildbot, id, info)
     this.buildbot = buildbot;
     this.id = id;
 
-    this.branch = info.branch || { openSource: "trunk", internal: "trunk" };
-    this.platform = info.platform.name || "unknown";
-    this.debug = info.debug || false;
-    this.builder = info.builder || false;
-    this.tester = info.tester || false;
-    this.performance = info.performance || false;
-    this.staticAnalyzer = info.staticAnalyzer || false;
-    this.leaks = info.leaks || false;
-    this.architecture = info.architecture || null;
-    this.testCategory = info.testCategory || null;
-    this.heading = info.heading || null;
-    this.crashesOnly = info.crashesOnly || false;
+    // FIXME: Some of these are presentation only, and should be handled above BuildbotQueue level.
+    this.branch = info.branch;
+    this.platform = info.platform.name;
+    this.debug = info.debug;
+    this.builder = info.builder;
+    this.tester = info.tester;
+    this.performance = info.performance;
+    this.staticAnalyzer = info.staticAnalyzer;
+    this.leaks = info.leaks;
+    this.architecture = info.architecture;
+    this.testCategory = info.testCategory;
+    this.heading = info.heading;
+    this.crashesOnly = info.crashesOnly;
 
     this.iterations = [];
     this._knownIterations = {};

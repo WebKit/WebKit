@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,10 @@ Buildbot = function(baseURL, queuesInfo, options)
     console.assert(queuesInfo);
 
     this.baseURL = baseURL;
+    this.queuesInfo = queuesInfo;
     this.queues = {};
+
+    this._normalizeQueuesInfo();
 
     // We regard _needsAuthentication as a hint whether this Buildbot requires authentication so that we can show
     // an appropriate initial status message (say, an "unauthorized" status if the Buildbot requires authentication)
@@ -39,8 +42,13 @@ Buildbot = function(baseURL, queuesInfo, options)
     this._needsAuthentication = typeof options === "object" && options.needsAuthentication === true;
     this._authenticationStatus = Buildbot.AuthenticationStatus.Unauthenticated;
 
-    for (var id in queuesInfo)
-        this.queues[id] = new BuildbotQueue(this, id, queuesInfo[id]);
+    for (var id in queuesInfo) {
+        if (queuesInfo[id].combinedQueues) {
+            for (var combinedQueueID in queuesInfo[id].combinedQueues)
+                this.queues[combinedQueueID] = new BuildbotQueue(this, combinedQueueID, queuesInfo[id].combinedQueues[combinedQueueID]);
+        } else
+            this.queues[id] = new BuildbotQueue(this, id, queuesInfo[id]);
+    }
 };
 
 BaseObject.addConstructorFunctions(Buildbot);
@@ -90,6 +98,35 @@ Buildbot.prototype = {
     set isAuthenticated(value)
     {
         this._authenticationStatus = value ? Buildbot.AuthenticationStatus.Authenticated : Buildbot.AuthenticationStatus.InvalidCredentials;
+    },
+
+    _normalizeQueueInfo: function(queueInfo)
+    {
+        queueInfo.branch = queueInfo.branch || { openSource: "trunk", internal: "trunk" };
+        queueInfo.debug = queueInfo.debug || false;
+        queueInfo.builder = queueInfo.builder || false;
+        queueInfo.tester = queueInfo.tester || false;
+        queueInfo.performance = queueInfo.performance || false;
+        queueInfo.staticAnalyzer = queueInfo.staticAnalyzer || false;
+        queueInfo.leaks = queueInfo.leaks || false;
+        queueInfo.architecture = queueInfo.architecture || null;
+        queueInfo.testCategory = queueInfo.testCategory || null;
+        queueInfo.heading = queueInfo.heading || null;
+        queueInfo.crashesOnly = queueInfo.crashesOnly || false;
+    },
+
+    _normalizeQueuesInfo: function()
+    {
+        for (queueName in this.queuesInfo) {
+            var queueInfo = this.queuesInfo[queueName];
+            this._normalizeQueueInfo(queueInfo);
+            if (queueInfo.combinedQueues) {
+                for (combinedQueueName in queueInfo.combinedQueues) {
+                    queueInfo.combinedQueues[combinedQueueName].platform = queueInfo.platform;
+                    this._normalizeQueueInfo(queueInfo.combinedQueues[combinedQueueName]);
+                }
+            }
+        }
     },
 
     updateQueues: function(updateReason)

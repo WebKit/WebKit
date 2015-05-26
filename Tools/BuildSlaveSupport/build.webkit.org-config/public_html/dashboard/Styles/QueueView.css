@@ -121,7 +121,8 @@
 
 .bubble-server-popover,
 .performance-popover,
-.leaks-popover {
+.leaks-popover,
+.combined-queue-popover {
     font-family: "HelveticaNeue-Light", "Helvetica Neue", sans-serif;
     color: rgb(145, 135, 95);
     font-size: 12px;
@@ -151,4 +152,8 @@
 /* Styling the performance dashboard link as visited doesn't make much sense in the context of bot watcher's dashboard. */
 .performance-popover .dashboard-link {
     color: blue;
+}
+
+.combined-queue-popover .revision {
+    padding-left: 7px;
 }
