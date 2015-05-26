@@ -26,7 +26,6 @@
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "Tile.h"
-#include "TiledBackingStoreBackend.h"
 #include "Timer.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
@@ -41,7 +40,7 @@ class TiledBackingStoreClient;
 class TiledBackingStore {
     WTF_MAKE_NONCOPYABLE(TiledBackingStore); WTF_MAKE_FAST_ALLOCATED;
 public:
-    TiledBackingStore(TiledBackingStoreClient*, std::unique_ptr<TiledBackingStoreBackend>);
+    TiledBackingStore(TiledBackingStoreClient*);
     ~TiledBackingStore();
 
     TiledBackingStoreClient* client() { return m_client; }
@@ -93,7 +92,6 @@ private:
 
 private:
     TiledBackingStoreClient* m_client;
-    std::unique_ptr<TiledBackingStoreBackend> m_backend;
 
     typedef HashMap<Tile::Coordinate, RefPtr<Tile> > TileMap;
     TileMap m_tiles;

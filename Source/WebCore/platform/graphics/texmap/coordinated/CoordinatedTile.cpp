@@ -37,9 +37,13 @@ namespace WebCore {
 
 static const uint32_t InvalidCoordinatedTileID = 0;
 
-CoordinatedTile::CoordinatedTile(CoordinatedTileClient* client, TiledBackingStore* tiledBackingStore, const Coordinate& tileCoordinate)
-    : m_client(client)
-    , m_tiledBackingStore(tiledBackingStore)
+PassRefPtr<Tile> CoordinatedTile::create(TiledBackingStore* tiledBackingStore, const Coordinate& tileCoordinate)
+{
+    return adoptRef(new CoordinatedTile(tiledBackingStore, tileCoordinate));
+}
+
+CoordinatedTile::CoordinatedTile(TiledBackingStore* tiledBackingStore, const Coordinate& tileCoordinate)
+    : m_tiledBackingStore(tiledBackingStore)
     , m_coordinate(tileCoordinate)
     , m_rect(tiledBackingStore->tileRectForCoordinate(tileCoordinate))
     , m_ID(InvalidCoordinatedTileID)
@@ -50,7 +54,7 @@ CoordinatedTile::CoordinatedTile(CoordinatedTileClient* client, TiledBackingStor
 CoordinatedTile::~CoordinatedTile()
 {
     if (m_ID != InvalidCoordinatedTileID)
-        m_client->removeTile(m_ID);
+        m_tiledBackingStore->client()->removeTile(m_ID);
 }
 
 bool CoordinatedTile::isDirty() const
@@ -74,7 +78,7 @@ Vector<IntRect> CoordinatedTile::updateBackBuffer()
 
     SurfaceUpdateInfo updateInfo;
 
-    if (!m_client->paintToSurface(m_dirtyRect.size(), updateInfo.atlasID, updateInfo.surfaceOffset, this))
+    if (!m_tiledBackingStore->client()->paintToSurface(m_dirtyRect.size(), updateInfo.atlasID, updateInfo.surfaceOffset, this))
         return Vector<IntRect>();
 
     updateInfo.updateRect = m_dirtyRect;
@@ -86,9 +90,9 @@ Vector<IntRect> CoordinatedTile::updateBackBuffer()
         // We may get an invalid ID due to wrap-around on overflow.
         if (m_ID == InvalidCoordinatedTileID)
             m_ID = id++;
-        m_client->createTile(m_ID, m_tiledBackingStore->contentsScale());
+        m_tiledBackingStore->client()->createTile(m_ID, m_tiledBackingStore->contentsScale());
     }
-    m_client->updateTile(m_ID, updateInfo, m_rect);
+    m_tiledBackingStore->client()->updateTile(m_ID, updateInfo, m_rect);
 
     Vector<IntRect> updatedRects;
     updatedRects.append(m_dirtyRect);
@@ -122,20 +126,6 @@ void CoordinatedTile::resize(const IntSize& newSize)
 {
     m_rect = IntRect(m_rect.location(), newSize);
     m_dirtyRect = m_rect;
-}
-
-CoordinatedTileBackend::CoordinatedTileBackend(CoordinatedTileClient* client)
-    : m_client(client)
-{
-}
-
-PassRefPtr<Tile> CoordinatedTileBackend::createTile(TiledBackingStore* tiledBackingStore, const Tile::Coordinate& tileCoordinate)
-{
-    return CoordinatedTile::create(m_client, tiledBackingStore, tileCoordinate);
-}
-
-void CoordinatedTileBackend::paintCheckerPattern(GraphicsContext*, const FloatRect&)
-{
 }
 
 } // namespace WebCore

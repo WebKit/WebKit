@@ -22,6 +22,7 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
+#include "CoordinatedTile.h"
 #include "GraphicsContext.h"
 #include "TiledBackingStoreClient.h"
 
@@ -35,9 +36,8 @@ static IntPoint innerBottomRight(const IntRect& rect)
     return IntPoint(rect.maxX() - 1, rect.maxY() - 1);
 }
 
-TiledBackingStore::TiledBackingStore(TiledBackingStoreClient* client, std::unique_ptr<TiledBackingStoreBackend> backend)
+TiledBackingStore::TiledBackingStore(TiledBackingStoreClient* client)
     : m_client(client)
-    , m_backend(WTF::move(backend))
     , m_tileSize(defaultTileDimension, defaultTileDimension)
     , m_coverAreaMultiplier(2.0f)
     , m_contentsScale(1.f)
@@ -263,7 +263,7 @@ void TiledBackingStore::createTiles()
     unsigned tilesToCreateCount = tilesToCreate.size();
     for (unsigned n = 0; n < tilesToCreateCount; ++n) {
         Tile::Coordinate coordinate = tilesToCreate[n];
-        setTile(coordinate, m_backend->createTile(this, coordinate));
+        setTile(coordinate, CoordinatedTile::create(this, coordinate));
     }
     requiredTileCount -= tilesToCreateCount;
 

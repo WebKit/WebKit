@@ -35,14 +35,13 @@
 
 namespace WebCore {
 
-class CoordinatedTileClient;
 class ImageBuffer;
-class SurfaceUpdateInfo;
 class TiledBackingStore;
 
 class CoordinatedTile : public Tile, public CoordinatedSurface::Client {
 public:
-    static PassRefPtr<Tile> create(CoordinatedTileClient* client, TiledBackingStore* tiledBackingStore, const Coordinate& tileCoordinate) { return adoptRef(new CoordinatedTile(client, tiledBackingStore, tileCoordinate)); }
+    static PassRefPtr<Tile> create(TiledBackingStore*, const Coordinate&);
+
     ~CoordinatedTile();
 
     bool isDirty() const;
@@ -59,34 +58,14 @@ public:
     virtual void paintToSurfaceContext(GraphicsContext*) override;
 
 private:
-    CoordinatedTile(CoordinatedTileClient*, TiledBackingStore*, const Coordinate&);
+    CoordinatedTile(TiledBackingStore*, const Coordinate&);
 
-    CoordinatedTileClient* m_client;
     TiledBackingStore* m_tiledBackingStore;
     Coordinate m_coordinate;
     IntRect m_rect;
 
     uint32_t m_ID;
     IntRect m_dirtyRect;
-};
-
-class CoordinatedTileClient {
-public:
-    virtual ~CoordinatedTileClient() { }
-    virtual void createTile(uint32_t tileID, float) = 0;
-    virtual void updateTile(uint32_t tileID, const SurfaceUpdateInfo&, const IntRect&) = 0;
-    virtual void removeTile(uint32_t tileID) = 0;
-    virtual bool paintToSurface(const IntSize&, uint32_t& atlasID, IntPoint&, CoordinatedSurface::Client*) = 0;
-};
-
-class CoordinatedTileBackend : public TiledBackingStoreBackend {
-public:
-    explicit CoordinatedTileBackend(CoordinatedTileClient*);
-    PassRefPtr<Tile> createTile(TiledBackingStore*, const Tile::Coordinate&);
-    void paintCheckerPattern(GraphicsContext*, const FloatRect&);
-
-private:
-    CoordinatedTileClient* m_client;
 };
 
 } // namespace WebCore
