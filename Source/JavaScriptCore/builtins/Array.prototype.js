@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -456,7 +457,7 @@ function sort(comparator)
     return array;
 }
 
-function copyWithin(target, start)
+function copyWithin(target, start /*, end */)
 {
     "use strict";
 
@@ -470,10 +471,9 @@ function copyWithin(target, start)
         return (maybeNegativeZero < positive) ? maybeNegativeZero : positive;
     }
 
-    var thisValue = this;
-    if (thisValue === null || thisValue === undefined)
-        throw new @TypeError("Array.copyWithin requires that |this| be not null or undefined");
-    var thisObject = @Object(thisValue);
+    if (this === null || this === undefined)
+        throw new @TypeError("Array.copyWithin requires that |this| not be null or undefined");
+    var thisObject = @Object(this);
 
     var length = @ToLength(thisObject.length);
 

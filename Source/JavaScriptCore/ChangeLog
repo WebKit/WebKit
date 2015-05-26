@@ -1,5 +1,26 @@
 2015-05-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Reflect nits for r184863
+        https://bugs.webkit.org/show_bug.cgi?id=145107
+
+        Reviewed by Darin Adler.
+
+        1. Added the copyright line.
+        2. Added an optional argument (/*, end */). To do so, fixed generate-js-builtins.
+        3. Dropped the unnecessary variable `thisValue`.
+        4. Fix the type error messages. This is also found in StringIterator.prototype.js.
+        5. Added tests for 0 arguments.
+
+        * builtins/Array.prototype.js:
+        (copyWithin):
+        * builtins/StringIterator.prototype.js:
+        (next):
+        * generate-js-builtins:
+        * tests/stress/array-copywithin.js:
+        * tests/stress/string-iterators.js:
+
+2015-05-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Inline @Array / @Object callsites
         https://bugs.webkit.org/show_bug.cgi?id=145382
 

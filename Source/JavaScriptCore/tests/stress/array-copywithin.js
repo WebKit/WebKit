@@ -35,6 +35,10 @@ shouldBe([].copyWithin.length, 2);
 shouldBe(Array.prototype.hasOwnProperty('copyWithin'), true);
 shouldBe(JSON.stringify(Object.getOwnPropertyDescriptor(Array.prototype, 'copyWithin')), '{"writable":true,"enumerable":false,"configurable":true}');
 
+// 0 arguments. (it is equivalent to copyWithin(0))
+shouldBeArray([1, 2, 3, 4, 5].copyWithin(), [1, 2, 3, 4, 5]);
+shouldBeArray([].copyWithin(), []);
+
 // 1 arguments.
 shouldBeArray([1, 2, 3, 4, 5].copyWithin(-5), [1, 2, 3, 4, 5]);
 shouldBeArray([1, 2, 3, 4, 5].copyWithin(-4), [1, 1, 2, 3, 4]);
@@ -234,11 +238,11 @@ shouldBe(JSON.stringify(result), '{"length":5}');
 
 shouldThrow(function () {
     Array.prototype.copyWithin.call(undefined);
-}, 'TypeError: Array.copyWithin requires that |this| be not null or undefined');
+}, 'TypeError: Array.copyWithin requires that |this| not be null or undefined');
 
 shouldThrow(function () {
     Array.prototype.copyWithin.call(null);
-}, 'TypeError: Array.copyWithin requires that |this| be not null or undefined');
+}, 'TypeError: Array.copyWithin requires that |this| not be null or undefined');
 
 
 function valueOf(code) {

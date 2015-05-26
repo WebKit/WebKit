@@ -27,7 +27,7 @@ function next() {
     "use strict";
 
     if (this == null)
-        throw new @TypeError("%StringIteratorPrototype%.next requires that |this| be not null or undefined");
+        throw new @TypeError("%StringIteratorPrototype%.next requires that |this| not be null or undefined");
 
     var position = this.@stringIteratorNextIndex;
     if (position === undefined)
