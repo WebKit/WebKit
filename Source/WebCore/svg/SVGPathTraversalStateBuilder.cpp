@@ -28,7 +28,7 @@
 namespace WebCore {
 
 SVGPathTraversalStateBuilder::SVGPathTraversalStateBuilder()
-    : m_traversalState(0)
+    : m_traversalState(nullptr)
     , m_segmentIndex(0)
 {
 }

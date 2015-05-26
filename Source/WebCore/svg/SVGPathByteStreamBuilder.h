@@ -36,7 +36,7 @@ public:
 private:
     virtual void incrementPathSegmentCount() override { }
     virtual bool continueConsuming() override { return true; }
-    virtual void cleanup() override { m_byteStream = 0; }
+    virtual void cleanup() override { m_byteStream = nullptr; }
 
     // Used in UnalteredParsing/NormalizedParsing modes.
     virtual void moveTo(const FloatPoint&, bool closed, PathCoordinateMode) override;

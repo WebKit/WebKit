@@ -28,9 +28,9 @@
 namespace WebCore {
 
 SVGPathBlender::SVGPathBlender()
-    : m_fromSource(0)
-    , m_toSource(0)
-    , m_consumer(0)
+    : m_fromSource(nullptr)
+    , m_toSource(nullptr)
+    , m_consumer(nullptr)
     , m_progress(0)
     , m_addTypesCount(0)
     , m_isInFirstHalfOfAnimation(false)
@@ -399,9 +399,9 @@ void SVGPathBlender::cleanup()
     ASSERT(m_consumer);
 
     m_consumer->cleanup();
-    m_toSource = 0;
-    m_fromSource = 0;
-    m_consumer = 0;
+    m_toSource = nullptr;
+    m_fromSource = nullptr;
+    m_consumer = nullptr;
     m_fromCurrentPoint = FloatPoint();
     m_toCurrentPoint = FloatPoint();
 }

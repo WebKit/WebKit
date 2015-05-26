@@ -276,7 +276,7 @@ private:
 
     union DataUnion {
         DataUnion()
-            : length(0)
+            : length(nullptr)
         {
         }
 

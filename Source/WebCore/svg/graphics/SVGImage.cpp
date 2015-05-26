@@ -146,7 +146,7 @@ void SVGImage::drawForContainer(GraphicsContext* context, const FloatSize contai
     ASSERT(observer);
 
     // Temporarily reset image observer, we don't want to receive any changeInRect() calls due to this relayout.
-    setImageObserver(0);
+    setImageObserver(nullptr);
 
     IntSize roundedContainerSize = roundedIntSize(containerSize);
     setContainerSize(roundedContainerSize);

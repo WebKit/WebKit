@@ -458,7 +458,7 @@ void SVGElement::setCursorElement(SVGCursorElement* cursorElement)
 void SVGElement::cursorElementRemoved() 
 {
     ASSERT(m_svgRareData);
-    m_svgRareData->setCursorElement(0);
+    m_svgRareData->setCursorElement(nullptr);
 }
 
 void SVGElement::setCursorImageValue(CSSCursorImageValue* cursorImageValue)
@@ -475,7 +475,7 @@ void SVGElement::setCursorImageValue(CSSCursorImageValue* cursorImageValue)
 void SVGElement::cursorImageValueRemoved()
 {
     ASSERT(m_svgRareData);
-    m_svgRareData->setCursorImageValue(0);
+    m_svgRareData->setCursorImageValue(nullptr);
 }
 
 SVGElement* SVGElement::correspondingElement() const
@@ -1100,7 +1100,7 @@ RefPtr<CSSValue> SVGElement::getPresentationAttribute(const String& name)
     CSSPropertyID propertyID = cssPropertyIdForSVGAttributeName(attribute->name());
     style->setProperty(propertyID, attribute->value());
     RefPtr<CSSValue> cssValue = style->getPropertyCSSValue(propertyID);
-    return cssValue ? cssValue->cloneForCSSOM() : 0;
+    return cssValue ? cssValue->cloneForCSSOM() : nullptr;
 }
 
 bool SVGElement::instanceUpdatesBlocked() const

@@ -105,7 +105,7 @@ public:
         // Whenever the XML DOM modifies the "x" attribute, all existing wrappers are detached, using this function.
         m_value = new PropertyType(*m_value);
         m_valueIsCopy = true;
-        m_animatedProperty = 0;
+        m_animatedProperty = nullptr;
     }
 
     virtual void commitChange() override
@@ -144,7 +144,7 @@ protected:
     }
 
     SVGPropertyTearOff(const PropertyType* initialValue)
-        : m_animatedProperty(0)
+        : m_animatedProperty(nullptr)
         , m_role(UndefinedRole)
         , m_value(initialValue ? new PropertyType(*initialValue) : nullptr)
         , m_valueIsCopy(true)

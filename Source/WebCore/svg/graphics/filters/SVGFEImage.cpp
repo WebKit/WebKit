@@ -39,7 +39,7 @@ namespace WebCore {
 FEImage::FEImage(Filter& filter, RefPtr<Image> image, const SVGPreserveAspectRatio& preserveAspectRatio)
     : FilterEffect(filter)
     , m_image(image)
-    , m_document(0)
+    , m_document(nullptr)
     , m_preserveAspectRatio(preserveAspectRatio)
 {
 }

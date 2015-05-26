@@ -81,7 +81,7 @@ void SVGFilterBuilder::appendEffectToEffectReferences(PassRefPtr<FilterEffect> p
 
 void SVGFilterBuilder::clearEffects()
 {
-    m_lastEffect = 0;
+    m_lastEffect = nullptr;
     m_namedEffects.clear();
     m_effectReferences.clear();
     m_effectRenderer.clear();

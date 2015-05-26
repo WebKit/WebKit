@@ -35,11 +35,11 @@ public:
     {
         if (m_baseVal) {
             ASSERT(m_baseVal->animatedProperty() == this);
-            m_baseVal->setAnimatedProperty(0);
+            m_baseVal->setAnimatedProperty(nullptr);
         }
         if (m_animVal) {
             ASSERT(m_animVal->animatedProperty() == this);
-            m_animVal->setAnimatedProperty(0);
+            m_animVal->setAnimatedProperty(nullptr);
         }
     }
 

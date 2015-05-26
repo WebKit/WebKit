@@ -54,8 +54,8 @@ bool SVGException::initializeDescription(ExceptionCode ec, ExceptionCodeDescript
     size_t tableSize = WTF_ARRAY_LENGTH(svgExceptions);
     size_t tableIndex = ec - SVG_WRONG_TYPE_ERR;
 
-    description->name = tableIndex < tableSize ? svgExceptions[tableIndex].name : 0;
-    description->description = tableIndex < tableSize ? svgExceptions[tableIndex].description : 0;
+    description->name = tableIndex < tableSize ? svgExceptions[tableIndex].name : nullptr;
+    description->description = tableIndex < tableSize ? svgExceptions[tableIndex].description : nullptr;
 
     return true;
 }

@@ -32,7 +32,7 @@ namespace WebCore {
 // Define custom animated property 'viewBox'.
 const SVGPropertyInfo* SVGViewSpec::viewBoxPropertyInfo()
 {
-    static const SVGPropertyInfo* s_propertyInfo = 0;
+    static const SVGPropertyInfo* s_propertyInfo = nullptr;
     if (!s_propertyInfo) {
         s_propertyInfo = new SVGPropertyInfo(AnimatedRect,
                                              PropertyIsReadOnly,
@@ -47,7 +47,7 @@ const SVGPropertyInfo* SVGViewSpec::viewBoxPropertyInfo()
 // Define custom animated property 'preserveAspectRatio'.
 const SVGPropertyInfo* SVGViewSpec::preserveAspectRatioPropertyInfo()
 {
-    static const SVGPropertyInfo* s_propertyInfo = 0;
+    static const SVGPropertyInfo* s_propertyInfo = nullptr;
     if (!s_propertyInfo) {
         s_propertyInfo = new SVGPropertyInfo(AnimatedPreserveAspectRatio,
                                              PropertyIsReadOnly,
@@ -63,7 +63,7 @@ const SVGPropertyInfo* SVGViewSpec::preserveAspectRatioPropertyInfo()
 // Define custom non-animated property 'transform'.
 const SVGPropertyInfo* SVGViewSpec::transformPropertyInfo()
 {
-    static const SVGPropertyInfo* s_propertyInfo = 0;
+    static const SVGPropertyInfo* s_propertyInfo = nullptr;
     if (!s_propertyInfo) {
         s_propertyInfo = new SVGPropertyInfo(AnimatedTransformList,
                                              PropertyIsReadOnly,

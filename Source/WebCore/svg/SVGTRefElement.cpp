@@ -62,8 +62,7 @@ public:
 
     static const SVGTRefTargetEventListener* cast(const EventListener* listener)
     {
-        return listener->type() == SVGTRefTargetEventListenerType
-                ? static_cast<const SVGTRefTargetEventListener*>(listener) : 0;
+        return listener->type() == SVGTRefTargetEventListenerType ? static_cast<const SVGTRefTargetEventListener*>(listener) : nullptr;
     }
 
     void attach(PassRefPtr<Element> target);
@@ -83,7 +82,7 @@ private:
 SVGTRefTargetEventListener::SVGTRefTargetEventListener(SVGTRefElement& trefElement)
     : EventListener(SVGTRefTargetEventListenerType)
     , m_trefElement(trefElement)
-    , m_target(0)
+    , m_target(nullptr)
 {
 }
 

@@ -29,7 +29,7 @@
 namespace WebCore {
 
 SVGPathBuilder::SVGPathBuilder()
-    : m_path(0)
+    : m_path(nullptr)
 {
 }
 

@@ -27,7 +27,7 @@
 namespace WebCore {
 
 SVGPathByteStreamBuilder::SVGPathByteStreamBuilder()
-    : m_byteStream(0)
+    : m_byteStream(nullptr)
 {
 }
 

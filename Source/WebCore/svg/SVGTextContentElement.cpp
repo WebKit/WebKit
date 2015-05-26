@@ -39,7 +39,7 @@ namespace WebCore {
 // Define custom animated property 'textLength'.
 const SVGPropertyInfo* SVGTextContentElement::textLengthPropertyInfo()
 {
-    static const SVGPropertyInfo* s_propertyInfo = 0;
+    static const SVGPropertyInfo* s_propertyInfo = nullptr;
     if (!s_propertyInfo) {
         s_propertyInfo = new SVGPropertyInfo(AnimatedLength,
                                              PropertyIsReadWrite,

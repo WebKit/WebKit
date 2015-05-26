@@ -141,7 +141,7 @@ public:
         ASSERT(!isRelative());
         ASSERT(!from.isRelative());
 
-        SVGLengthContext nonRelativeLengthContext(0);
+        SVGLengthContext nonRelativeLengthContext(nullptr);
         float fromValueInUserUnits = nonRelativeLengthContext.convertValueToUserUnits(from.valueInSpecifiedUnits(), from.unitMode(), fromType, ec);
         if (ec)
             return SVGLength();

@@ -109,7 +109,7 @@ void SVGFontFaceUriElement::loadFont()
             m_cachedFont->beginLoadIfNeeded(cachedResourceLoader);
         }
     } else
-        m_cachedFont = 0;
+        m_cachedFont = nullptr;
 }
 
 }

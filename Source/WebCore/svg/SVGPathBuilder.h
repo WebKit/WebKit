@@ -43,7 +43,7 @@ protected:
 private:
     virtual void incrementPathSegmentCount() override { }
     virtual bool continueConsuming() override { return true; }
-    virtual void cleanup() override { m_path = 0; }
+    virtual void cleanup() override { m_path = nullptr; }
 
     // Used in UnalteredParsing/NormalizedParsing modes.
     virtual void moveTo(const FloatPoint&, bool closed, PathCoordinateMode) override;

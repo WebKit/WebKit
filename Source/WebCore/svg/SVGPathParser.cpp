@@ -33,7 +33,7 @@ static const float gOneOverThree = 1 / 3.f;
 namespace WebCore {
 
 SVGPathParser::SVGPathParser()
-    : m_consumer(0)
+    : m_consumer(nullptr)
 {
 }
 
@@ -411,8 +411,8 @@ void SVGPathParser::cleanup()
     ASSERT(m_consumer);
 
     m_consumer->cleanup();
-    m_source = 0;
-    m_consumer = 0;
+    m_source = nullptr;
+    m_consumer = nullptr;
 }
 
 // This works by converting the SVG arc to "simple" beziers.

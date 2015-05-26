@@ -55,7 +55,7 @@ namespace WebCore {
 // Define custom animated property 'd'.
 const SVGPropertyInfo* SVGPathElement::dPropertyInfo()
 {
-    static const SVGPropertyInfo* s_propertyInfo = 0;
+    static const SVGPropertyInfo* s_propertyInfo = nullptr;
     if (!s_propertyInfo) {
         s_propertyInfo = new SVGPropertyInfo(AnimatedPath,
                                              PropertyIsReadWrite,

@@ -65,7 +65,7 @@ public:
     void setZoomAndPanBaseValue(unsigned short zoomAndPan) { m_zoomAndPan = SVGZoomAndPan::parseFromNumber(zoomAndPan); }
 
     SVGElement* contextElement() const { return m_contextElement; }
-    void resetContextElement() { m_contextElement = 0; }
+    void resetContextElement() { m_contextElement = nullptr; }
 
     // Custom non-animated 'transform' property.
     SVGTransformListPropertyTearOff* transform();

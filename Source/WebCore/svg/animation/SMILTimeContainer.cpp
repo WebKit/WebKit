@@ -271,7 +271,7 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
         // have higher priority.
         sortByPriority(*scheduled, elapsed);
 
-        SVGSMILElement* resultElement = 0;
+        SVGSMILElement* resultElement = nullptr;
         for (auto& animation : *scheduled) {
             ASSERT(animation->timeContainer() == this);
             ASSERT(animation->targetElement());
@@ -286,7 +286,7 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
 
             // This will calculate the contribution from the animation and add it to the resultsElement.
             if (!animation->progress(elapsed, resultElement, seekToTime) && resultElement == animation)
-                resultElement = 0;
+                resultElement = nullptr;
 
             SMILTime nextFireTime = animation->nextProgressTime();
             if (nextFireTime.isFinite())

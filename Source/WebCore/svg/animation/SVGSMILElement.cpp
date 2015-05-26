@@ -60,14 +60,14 @@ public:
     {
         return listener->type() == ConditionEventListenerType
             ? static_cast<const ConditionEventListener*>(listener)
-            : 0;
+            : nullptr;
     }
 
     virtual bool operator==(const EventListener& other) override;
     
     void disconnectAnimation()
     {
-        m_animation = 0;
+        m_animation = nullptr;
     }
 
 private:
@@ -111,7 +111,7 @@ SVGSMILElement::Condition::Condition(Type type, BeginOrEnd beginOrEnd, const Str
 SVGSMILElement::SVGSMILElement(const QualifiedName& tagName, Document& doc)
     : SVGElement(tagName, doc)
     , m_attributeName(anyQName())
-    , m_targetElement(0)
+    , m_targetElement(nullptr)
     , m_conditionsConnected(false)
     , m_hasEndEventConditions(false)
     , m_isWaitingForFirstInterval(true)
@@ -273,10 +273,10 @@ void SVGSMILElement::removedFrom(ContainerNode& rootParent)
     if (rootParent.inDocument()) {
         clearResourceReferences();
         disconnectConditions();
-        setTargetElement(0);
+        setTargetElement(nullptr);
         setAttributeName(anyQName());
         animationAttributeChanged();
-        m_timeContainer = 0;
+        m_timeContainer = nullptr;
     }
 
     SVGElement::removedFrom(rootParent);

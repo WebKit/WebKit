@@ -37,7 +37,7 @@ struct PatternAttributes {
         , m_preserveAspectRatio()
         , m_patternUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
         , m_patternContentUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
-        , m_patternContentElement(0)
+        , m_patternContentElement(nullptr)
         , m_xSet(false)
         , m_ySet(false)
         , m_widthSet(false)

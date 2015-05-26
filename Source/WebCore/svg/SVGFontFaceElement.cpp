@@ -50,7 +50,7 @@ using namespace SVGNames;
 inline SVGFontFaceElement::SVGFontFaceElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
     , m_fontFaceRule(StyleRuleFontFace::create(MutableStyleProperties::create(CSSStrictMode)))
-    , m_fontElement(0)
+    , m_fontElement(nullptr)
 {
     ASSERT(hasTagName(font_faceTag));
 }
@@ -287,7 +287,7 @@ void SVGFontFaceElement::removedFrom(ContainerNode& rootParent)
     SVGElement::removedFrom(rootParent);
 
     if (rootParent.inDocument()) {
-        m_fontElement = 0;
+        m_fontElement = nullptr;
         document().accessSVGExtensions().unregisterSVGFontFaceElement(this);
         m_fontFaceRule->mutableProperties().clear();
 

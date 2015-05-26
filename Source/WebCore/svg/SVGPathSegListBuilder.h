@@ -45,8 +45,8 @@ private:
     virtual bool continueConsuming() override { return true; }
     virtual void cleanup() override
     {
-        m_pathElement = 0;
-        m_pathSegList = 0;
+        m_pathElement = nullptr;
+        m_pathSegList = nullptr;
         m_pathSegRole = PathSegUndefinedRole;
     }
 

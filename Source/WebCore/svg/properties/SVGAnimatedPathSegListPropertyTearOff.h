@@ -81,7 +81,7 @@ public:
     void animationEnded()
     {
         ASSERT(m_animatedPathByteStream);
-        m_animatedPathByteStream = 0;
+        m_animatedPathByteStream = nullptr;
         SVGAnimatedListPropertyTearOff<SVGPathSegList>::animationEnded();
     }
 
@@ -106,7 +106,7 @@ public:
 private:
     SVGAnimatedPathSegListPropertyTearOff(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, SVGPathSegList& values)
         : SVGAnimatedListPropertyTearOff<SVGPathSegList>(contextElement, attributeName, animatedPropertyType, values)
-        , m_animatedPathByteStream(0)
+        , m_animatedPathByteStream(nullptr)
     {
     }
 

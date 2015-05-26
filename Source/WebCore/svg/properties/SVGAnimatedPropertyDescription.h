@@ -32,8 +32,8 @@ class SVGElement;
 struct SVGAnimatedPropertyDescription {            
     // Empty value
     SVGAnimatedPropertyDescription()
-        : m_element(0)
-        , m_attributeName(0)
+        : m_element(nullptr)
+        , m_attributeName(nullptr)
     {
     }
 

@@ -38,7 +38,7 @@ namespace WebCore {
 
 static SVGPathBuilder* globalSVGPathBuilder(Path& result)
 {
-    static SVGPathBuilder* s_builder = 0;
+    static SVGPathBuilder* s_builder = nullptr;
     if (!s_builder)
         s_builder = new SVGPathBuilder;
 
@@ -48,7 +48,7 @@ static SVGPathBuilder* globalSVGPathBuilder(Path& result)
 
 static SVGPathSegListBuilder* globalSVGPathSegListBuilder(SVGPathElement* element, SVGPathSegRole role, SVGPathSegList& result)
 {
-    static SVGPathSegListBuilder* s_builder = 0;
+    static SVGPathSegListBuilder* s_builder = nullptr;
     if (!s_builder)
         s_builder = new SVGPathSegListBuilder;
 
@@ -60,7 +60,7 @@ static SVGPathSegListBuilder* globalSVGPathSegListBuilder(SVGPathElement* elemen
 
 static SVGPathByteStreamBuilder* globalSVGPathByteStreamBuilder(SVGPathByteStream* result)
 {
-    static SVGPathByteStreamBuilder* s_builder = 0;
+    static SVGPathByteStreamBuilder* s_builder = nullptr;
     if (!s_builder)
         s_builder = new SVGPathByteStreamBuilder;
 
@@ -70,7 +70,7 @@ static SVGPathByteStreamBuilder* globalSVGPathByteStreamBuilder(SVGPathByteStrea
 
 static SVGPathStringBuilder* globalSVGPathStringBuilder()
 {
-    static SVGPathStringBuilder* s_builder = 0;
+    static SVGPathStringBuilder* s_builder = nullptr;
     if (!s_builder)
         s_builder = new SVGPathStringBuilder;
 
@@ -79,7 +79,7 @@ static SVGPathStringBuilder* globalSVGPathStringBuilder()
 
 static SVGPathTraversalStateBuilder* globalSVGPathTraversalStateBuilder(PathTraversalState& traversalState, float length)
 {
-    static SVGPathTraversalStateBuilder* s_builder = 0;
+    static SVGPathTraversalStateBuilder* s_builder = nullptr;
     if (!s_builder)
         s_builder = new SVGPathTraversalStateBuilder;
 
@@ -90,7 +90,7 @@ static SVGPathTraversalStateBuilder* globalSVGPathTraversalStateBuilder(PathTrav
 
 static SVGPathParser* globalSVGPathParser(SVGPathSource* source, SVGPathConsumer* consumer)
 {
-    static SVGPathParser* s_parser = 0;
+    static SVGPathParser* s_parser = nullptr;
     if (!s_parser)
         s_parser = new SVGPathParser;
 
@@ -101,7 +101,7 @@ static SVGPathParser* globalSVGPathParser(SVGPathSource* source, SVGPathConsumer
 
 static SVGPathBlender* globalSVGPathBlender()
 {
-    static SVGPathBlender* s_blender = 0;
+    static SVGPathBlender* s_blender = nullptr;
     if (!s_blender)
         s_blender = new SVGPathBlender;
 

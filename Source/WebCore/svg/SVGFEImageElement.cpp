@@ -69,7 +69,7 @@ void SVGFEImageElement::clearResourceReferences()
 {
     if (m_cachedImage) {
         m_cachedImage->removeClient(this);
-        m_cachedImage = 0;
+        m_cachedImage = nullptr;
     }
 
     document().accessSVGExtensions().removeAllTargetReferencesForElement(this);
