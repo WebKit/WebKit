@@ -1,3 +1,13 @@
+2015-05-26  Daniel Bates  <dabates@apple.com>
+
+        Update Autofill button icon
+        https://bugs.webkit.org/show_bug.cgi?id=145191
+        <rdar://problem/20178942>
+
+        Update expected results for Windows.
+
+        * platform/win/fast/forms/input-auto-fill-button-expected.txt:
+
 2015-05-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         CSS properties (font-synthesis, column-fill) are missing in getComputedStyles
