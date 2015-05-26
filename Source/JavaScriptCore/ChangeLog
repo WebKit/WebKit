@@ -1,3 +1,20 @@
+2015-05-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Generate put_by_val_direct for indexed identifiers instead of put_by_id with direct postfix
+        https://bugs.webkit.org/show_bug.cgi?id=145360
+
+        Reviewed by Darin Adler.
+
+        JSObject::putDirect only accepts non-indexed properties.
+        So when generating put_by_id (with direct postfix) for indexed property,
+        we should generate put_by_val_direct instead.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitDirectPutById):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitPutConstantProperty):
+        * tests/stress/put-by-id-direct-should-be-done-for-non-index-property.js: Added.
+
 2015-05-24  Jordan Harband  <ljharb@gmail.com>
 
         Array#findIndex/find should not skip holes

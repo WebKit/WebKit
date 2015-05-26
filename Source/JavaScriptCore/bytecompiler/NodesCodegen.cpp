@@ -569,8 +569,15 @@ void PropertyListNode::emitPutConstantProperty(BytecodeGenerator& generator, Reg
             value.get(), nullptr, nullptr, BytecodeGenerator::PropertyConfigurable | BytecodeGenerator::PropertyWritable, m_position);
         return;
     }
-    if (node.name()) {
-        generator.emitDirectPutById(newObj, *node.name(), value.get(), node.putType());
+    if (const auto* identifier = node.name()) {
+        Optional<uint32_t> optionalIndex = parseIndex(*identifier);
+        if (!optionalIndex) {
+            generator.emitDirectPutById(newObj, *identifier, value.get(), node.putType());
+            return;
+        }
+
+        RefPtr<RegisterID> index = generator.emitLoad(generator.newTemporary(), jsNumber(optionalIndex.value()));
+        generator.emitDirectPutByVal(newObj, index.get(), value.get());
         return;
     }
     RefPtr<RegisterID> propertyName = generator.emitNode(node.m_expression);
