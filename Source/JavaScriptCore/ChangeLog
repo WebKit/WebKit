@@ -1,3 +1,18 @@
+2015-05-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Photo Booth hangs under JSC::MachineThreads::tryCopyOtherThreadStacks
+        https://bugs.webkit.org/show_bug.cgi?id=145395
+
+        Reviewed by Mark Hahnenberg.
+
+        No test case because we already have --threaded mode, which runs lots of
+        parallel GC, but it (and the original in-app test case) can't reproduce
+        this bug.
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::tryCopyOtherThreadStacks): Use a lock to prevent
+        two threads from mutually suspending each other.
+
 2015-05-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Add Array.prototype.copyWithin to JSC features.json

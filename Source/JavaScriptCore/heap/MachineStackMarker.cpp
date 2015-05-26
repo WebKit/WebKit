@@ -563,6 +563,11 @@ void MachineThreads::tryCopyOtherThreadStack(Thread* thread, void* buffer, size_
 
 bool MachineThreads::tryCopyOtherThreadStacks(MutexLocker&, void* buffer, size_t capacity, size_t* size)
 {
+    // Prevent two VMs from suspending each other's threads at the same time,
+    // which can cause deadlock: <rdar://problem/20300842>.
+    static StaticSpinLock mutex;
+    std::lock_guard<StaticSpinLock> lock(mutex);
+
     *size = 0;
 
     PlatformThread currentPlatformThread = getCurrentPlatformThread();
