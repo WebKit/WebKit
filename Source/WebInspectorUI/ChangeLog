@@ -1,5 +1,21 @@
 2015-05-26  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: focus outline of a search field should have a radius
+        https://bugs.webkit.org/show_bug.cgi?id=145383
+
+        Add a focus outline animation to roughly mimic the default focus outline of OS X.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/Toolbar.css:
+        (.toolbar .search-bar > input[type="search"]):
+        -webkit-focus-ring-color doesn't follow element's curvature (e.g. border-radius)
+        and it cannot be animated. Replace it with box-shadow.
+
+        (.toolbar .search-bar > input[type="search"]:focus):
+
+2015-05-26  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: The bottom part "debugger" is clipped in the tab’s title
         https://bugs.webkit.org/show_bug.cgi?id=145381
 

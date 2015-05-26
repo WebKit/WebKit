@@ -114,16 +114,16 @@ body.mac-platform:not(.docked) .toolbar {
     border: 1px solid transparent;
     border-top-color: white;
 
-    box-shadow: rgba(0, 0, 0, 0.15) 0 1px 0;
-
     background-clip: initial;
 
     margin: 4px;
+
+    box-shadow: rgba(0, 0, 0, 0.15) 0 1px 0, 0 0 0 7px hsla(211, 96%, 48%, 0);
+    transition: box-shadow .25s cubic-bezier(0.165, 0.840, 0.440, 1) /* easeOutQuart */;
 }
 
 .toolbar .search-bar > input[type="search"]:focus {
-    outline: auto 5px -webkit-focus-ring-color;
-    outline-offset: -2px
+    box-shadow: rgba(0, 0, 0, 0.15) 0 1px 0, 0 0 0 3px hsla(211, 96%, 48%, 0.4);
 }
 
 .toolbar .search-bar > input[type="search"]::-webkit-textfield-decoration-container {
