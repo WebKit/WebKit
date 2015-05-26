@@ -804,21 +804,17 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncCharCodeAt(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec);
-    String s = thisValue.toString(exec)->value(exec);
-    unsigned len = s.length();
+    StringView string = thisValue.toString(exec)->view(exec);
     JSValue a0 = exec->argument(0);
     if (a0.isUInt32()) {
         uint32_t i = a0.asUInt32();
-        if (i < len) {
-            if (s.is8Bit())
-                return JSValue::encode(jsNumber(s.characters8()[i]));
-            return JSValue::encode(jsNumber(s.characters16()[i]));
-        }
+        if (i < string.length())
+            return JSValue::encode(jsNumber(string[i]));
         return JSValue::encode(jsNaN());
     }
     double dpos = a0.toInteger(exec);
-    if (dpos >= 0 && dpos < len)
-        return JSValue::encode(jsNumber(s[static_cast<int>(dpos)]));
+    if (dpos >= 0 && dpos < string.length())
+        return JSValue::encode(jsNumber(string[static_cast<int>(dpos)]));
     return JSValue::encode(jsNaN());
 }
 

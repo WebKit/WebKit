@@ -1,5 +1,19 @@
 2015-05-26  Andreas Kling  <akling@apple.com>
 
+        String.prototype.charCodeAt() should use StringView.
+        <https://webkit.org/b/145353>
+
+        Reviewed by Darin Adler.
+
+        Use JSString::view() in charCodeAt() to avoid reifying the JSString if it's
+        a substring. This avoids StringImpl allocation in some cases and ref churn
+        in all cases.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncCharCodeAt):
+
+2015-05-26  Andreas Kling  <akling@apple.com>
+
         String.prototype.charAt() should use StringView.
         <https://webkit.org/b/145352>
 
