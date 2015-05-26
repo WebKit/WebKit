@@ -1,3 +1,15 @@
+2015-05-26  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: The bottom part "debugger" is clipped in the tab’s title
+        https://bugs.webkit.org/show_bug.cgi?id=145381
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TabBar.css:
+        (.tab-bar > .item):
+        Set line-height to fit "debugger". Setting line-height to 16px, which is the
+        size of the tabs icons, moves the text one pixel up, so set it to 15px.
+
 2015-05-26  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/21104551> Update build settings

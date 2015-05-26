@@ -87,6 +87,7 @@ body.window-inactive .tab-bar > .top-border {
     border-top: 1px solid rgb(168, 168, 168);
 
     height: 100%;
+    line-height: 15px;
     outline: none;
 
     /* FIXME: These cause noticeable transitions when focusing the window. Fix that with JavaScript? */
