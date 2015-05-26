@@ -45,7 +45,6 @@ JSString* jsString(ExecState*, const String&); // returns empty string if passed
 
 JSString* jsSingleCharacterString(VM*, UChar);
 JSString* jsSingleCharacterString(ExecState*, UChar);
-JSString* jsSingleCharacterSubstring(ExecState*, const String&, unsigned offset);
 JSString* jsSubstring(VM*, const String&, unsigned offset, unsigned length);
 JSString* jsSubstring(ExecState*, const String&, unsigned offset, unsigned length);
 
@@ -444,16 +443,6 @@ ALWAYS_INLINE JSString* jsSingleCharacterString(VM* vm, UChar c)
     return JSString::create(*vm, String(&c, 1).impl());
 }
 
-ALWAYS_INLINE JSString* jsSingleCharacterSubstring(ExecState* exec, const String& s, unsigned offset)
-{
-    VM* vm = &exec->vm();
-    ASSERT(offset < static_cast<unsigned>(s.length()));
-    UChar c = s.characterAt(offset);
-    if (c <= maxSingleCharacterString)
-        return vm->smallStrings.singleCharacterString(c);
-    return JSString::create(*vm, StringImpl::createSubstringSharingImpl(s.impl(), offset, 1));
-}
-
 inline JSString* jsNontrivialString(VM* vm, const String& s)
 {
     ASSERT(s.length() > 1);
@@ -507,7 +496,7 @@ inline JSString* JSString::getIndex(ExecState* exec, unsigned i)
     if (isRope())
         return static_cast<JSRopeString*>(this)->getIndexSlowCase(exec, i);
     ASSERT(i < m_value.length());
-    return jsSingleCharacterSubstring(exec, m_value, i);
+    return jsSingleCharacterString(exec, m_value[i]);
 }
 
 inline JSString* jsString(VM* vm, const String& s)

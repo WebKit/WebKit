@@ -374,7 +374,7 @@ JSString* JSRopeString::getIndexSlowCase(ExecState* exec, unsigned i)
         return jsEmptyString(exec);
     ASSERT(!isRope());
     RELEASE_ASSERT(i < m_value.length());
-    return jsSingleCharacterSubstring(exec, m_value, i);
+    return jsSingleCharacterString(exec, m_value[i]);
 }
 
 JSValue JSString::toPrimitive(ExecState*, PreferredPrimitiveType) const

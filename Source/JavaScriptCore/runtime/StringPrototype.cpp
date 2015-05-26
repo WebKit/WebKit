@@ -785,18 +785,17 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncCharAt(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec);
-    String s = thisValue.toString(exec)->value(exec);
-    unsigned len = s.length();
+    StringView string = thisValue.toString(exec)->view(exec);
     JSValue a0 = exec->argument(0);
     if (a0.isUInt32()) {
         uint32_t i = a0.asUInt32();
-        if (i < len)
-            return JSValue::encode(jsSingleCharacterSubstring(exec, s, i));
+        if (i < string.length())
+            return JSValue::encode(jsSingleCharacterString(exec, string[i]));
         return JSValue::encode(jsEmptyString(exec));
     }
     double dpos = a0.toInteger(exec);
-    if (dpos >= 0 && dpos < len)
-        return JSValue::encode(jsSingleCharacterSubstring(exec, s, static_cast<unsigned>(dpos)));
+    if (dpos >= 0 && dpos < string.length())
+        return JSValue::encode(jsSingleCharacterString(exec, string[static_cast<unsigned>(dpos)]));
     return JSValue::encode(jsEmptyString(exec));
 }
 
@@ -1246,7 +1245,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
             ASSERT(limit);
 
             do {
-                result->putDirectIndex(exec, position, jsSingleCharacterSubstring(exec, input, position));
+                result->putDirectIndex(exec, position, jsSingleCharacterString(exec, input[position]));
             } while (++position < limit);
 
             return JSValue::encode(result);

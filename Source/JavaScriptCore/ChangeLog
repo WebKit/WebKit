@@ -1,3 +1,30 @@
+2015-05-26  Andreas Kling  <akling@apple.com>
+
+        String.prototype.charAt() should use StringView.
+        <https://webkit.org/b/145352>
+
+        Reviewed by Darin Adler.
+
+        Remove the jsSingleCharacterSubstring() function since it's actually completely
+        counter-productive: it could create a single-character string that would retain
+        a much larger string for the duration of its lifetime.
+
+        This made sense before StringImpl learned to put its characters at the tail end
+        of its own allocation. Now that it does, it's far better to just create a new
+        single-character StringImpl.
+
+        With that out of the way, we can make String.prototype.charAt() use StringView
+        to avoid reifying substring JSStrings (and avoid some ref churn too.)
+
+        * runtime/JSString.cpp:
+        (JSC::JSRopeString::getIndexSlowCase):
+        * runtime/JSString.h:
+        (JSC::JSString::getIndex):
+        (JSC::jsSingleCharacterSubstring): Deleted.
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncCharAt):
+        (JSC::stringProtoFuncSplit):
+
 2015-05-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement Array.prototype.copyWithin
