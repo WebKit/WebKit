@@ -1,3 +1,11 @@
+2015-05-26  Beth Dakin  <bdakin@apple.com>
+
+        storage/indexeddb/deleteIndex-bug110792.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=145390
+
+        Marking as flaky.
+        * TestExpectations:
+
 2015-05-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         SVG fragment identifier rendering issue

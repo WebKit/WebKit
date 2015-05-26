@@ -524,3 +524,5 @@ webkit.org/b/144258 [ Debug ] js/class-syntax-semicolon.html [ Skip ]
 webkit.org/b/144540 fast/frames/flattening/crash-remove-iframe-during-object-beforeload.html [ Skip ]
 
 webkit.org/b/145007 js/regress-141098.html [ Skip ]
+
+webkit.org/b/145390 storage/indexeddb/deleteIndex-bug110792.html [ Pass Failure ]
