@@ -1,5 +1,11 @@
 2015-05-26  Dan Bernstein  <mitz@apple.com>
 
+        Changed a file to use Unix line endings.
+
+        * LayoutTestRelay/Configurations/DebugRelease.xcconfig:
+
+2015-05-26  Dan Bernstein  <mitz@apple.com>
+
         <rdar://problem/21104551> Update build settings
 
         Reviewed by Anders Carlsson.
