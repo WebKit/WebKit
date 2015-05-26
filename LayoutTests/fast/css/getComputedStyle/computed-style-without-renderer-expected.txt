@@ -43,6 +43,7 @@ empty-cells: show
 float: none
 font-size: 16px
 font-style: normal
+font-synthesis: style weight
 font-variant: normal
 font-weight: normal
 height: 100px
@@ -139,6 +140,7 @@ zoom: 1
 -webkit-column-break-inside: auto
 -webkit-column-axis: auto
 column-count: auto
+column-fill: balance
 column-gap: normal
 column-rule-color: rgb(0, 0, 0)
 column-rule-style: none

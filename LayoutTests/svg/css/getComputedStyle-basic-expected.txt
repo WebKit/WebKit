@@ -86,6 +86,8 @@ rect: style.getPropertyValue(font-size) : 16px
 rect: style.getPropertyCSSValue(font-size) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(font-style) : normal
 rect: style.getPropertyCSSValue(font-style) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(font-synthesis) : style weight
+rect: style.getPropertyCSSValue(font-synthesis) : [object CSSValueList]
 rect: style.getPropertyValue(font-variant) : normal
 rect: style.getPropertyCSSValue(font-variant) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(font-weight) : normal
@@ -278,6 +280,8 @@ rect: style.getPropertyValue(-webkit-column-axis) : auto
 rect: style.getPropertyCSSValue(-webkit-column-axis) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(column-count) : auto
 rect: style.getPropertyCSSValue(column-count) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(column-fill) : balance
+rect: style.getPropertyCSSValue(column-fill) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(column-gap) : normal
 rect: style.getPropertyCSSValue(column-gap) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(column-rule-color) : rgb(0, 0, 0)
@@ -604,6 +608,8 @@ g: style.getPropertyValue(font-size) : 16px
 g: style.getPropertyCSSValue(font-size) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(font-style) : normal
 g: style.getPropertyCSSValue(font-style) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(font-synthesis) : style weight
+g: style.getPropertyCSSValue(font-synthesis) : [object CSSValueList]
 g: style.getPropertyValue(font-variant) : normal
 g: style.getPropertyCSSValue(font-variant) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(font-weight) : normal
@@ -796,6 +802,8 @@ g: style.getPropertyValue(-webkit-column-axis) : auto
 g: style.getPropertyCSSValue(-webkit-column-axis) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(column-count) : auto
 g: style.getPropertyCSSValue(column-count) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(column-fill) : balance
+g: style.getPropertyCSSValue(column-fill) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(column-gap) : normal
 g: style.getPropertyCSSValue(column-gap) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(column-rule-color) : rgb(0, 0, 0)

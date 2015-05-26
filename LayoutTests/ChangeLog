@@ -1,3 +1,15 @@
+2015-05-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        CSS properties (font-synthesis, column-fill) are missing in getComputedStyles
+        https://bugs.webkit.org/show_bug.cgi?id=145343
+
+        Reviewed by Timothy Hatcher.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-font-family-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle/resources/property-names.js:
+
 2015-05-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement Array.prototype.copyWithin
