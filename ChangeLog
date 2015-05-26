@@ -1,5 +1,14 @@
 2015-05-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Export DatabaseProcessMainUnix symbol.
+
+        Add DatabaseProcessMainUnix symbol to gtksymbols.filter so that it
+        is exported in production builds.
+
+        * Source/cmake/gtksymbols.filter:
+
+2015-05-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Enable IndexedDB
         https://bugs.webkit.org/show_bug.cgi?id=98932
 

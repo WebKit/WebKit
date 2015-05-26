@@ -4,6 +4,7 @@ global:
   WebProcessMainUnix;
   NetworkProcessMainUnix;
   PluginProcessMainUnix;
+  DatabaseProcessMainUnix;
   _ZN6WebKit22WebGtkExtensionManager10initializeEPK14OpaqueWKBundlePKv;
   _ZN6WebKit22WebGtkExtensionManager9singletonEv;
 local:
