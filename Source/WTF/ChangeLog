@@ -1,3 +1,29 @@
+2015-05-26  Andreas Kling  <akling@apple.com>
+
+        StringView should have find(StringView, start).
+        <https://webkit.org/b/145351>
+
+        Reviewed by Darin Adler.
+
+        Move the class agnostic guts of StringImpl's find() implementation from StringImpl
+        to StringCommon.h and templatize the code into a findCommon() helper.
+
+        StringImpl::find() and StringView::find() now both call findCommon().
+
+        * wtf/text/StringCommon.h:
+        (WTF::findInner):
+        (WTF::find):
+        (WTF::findCommon):
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::find):
+        (WTF::findInner): Deleted.
+        * wtf/text/StringImpl.h:
+        (WTF::find): Deleted.
+        * wtf/text/StringView.cpp:
+        (WTF::StringView::find):
+        * wtf/text/StringView.h:
+
+
 2015-05-26  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/21104551> Update build settings

@@ -96,6 +96,11 @@ CString StringView::utf8(ConversionMode mode) const
     return StringImpl::utf8ForCharacters(characters16(), length(), mode);
 }
 
+size_t StringView::find(StringView matchString, unsigned start) const
+{
+    return findCommon(*this, matchString, start);
+}
+
 #if CHECK_STRINGVIEW_LIFETIME
 
 // Manage reference count manually so UnderlyingString does not need to be defined in the header.

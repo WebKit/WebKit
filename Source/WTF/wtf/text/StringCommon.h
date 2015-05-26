@@ -461,6 +461,90 @@ size_t findIgnoringASCIICase(const StringClassA& source, const StringClassB& str
     return findIgnoringASCIICase(source.characters16(), stringToFind.characters16(), startOffset, searchLength, matchLength);
 }
 
+template <typename SearchCharacterType, typename MatchCharacterType>
+ALWAYS_INLINE static size_t findInner(const SearchCharacterType* searchCharacters, const MatchCharacterType* matchCharacters, unsigned index, unsigned searchLength, unsigned matchLength)
+{
+    // Optimization: keep a running hash of the strings,
+    // only call equal() if the hashes match.
+
+    // delta is the number of additional times to test; delta == 0 means test only once.
+    unsigned delta = searchLength - matchLength;
+
+    unsigned searchHash = 0;
+    unsigned matchHash = 0;
+
+    for (unsigned i = 0; i < matchLength; ++i) {
+        searchHash += searchCharacters[i];
+        matchHash += matchCharacters[i];
+    }
+
+    unsigned i = 0;
+    // keep looping until we match
+    while (searchHash != matchHash || !equal(searchCharacters + i, matchCharacters, matchLength)) {
+        if (i == delta)
+            return notFound;
+        searchHash += searchCharacters[i + matchLength];
+        searchHash -= searchCharacters[i];
+        ++i;
+    }
+    return index + i;
+}
+
+template<typename CharacterType>
+inline size_t find(const CharacterType* characters, unsigned length, CharacterType matchCharacter, unsigned index = 0)
+{
+    while (index < length) {
+        if (characters[index] == matchCharacter)
+            return index;
+        ++index;
+    }
+    return notFound;
+}
+
+ALWAYS_INLINE size_t find(const UChar* characters, unsigned length, LChar matchCharacter, unsigned index = 0)
+{
+    return find(characters, length, static_cast<UChar>(matchCharacter), index);
+}
+
+inline size_t find(const LChar* characters, unsigned length, UChar matchCharacter, unsigned index = 0)
+{
+    if (matchCharacter & ~0xFF)
+        return notFound;
+    return find(characters, length, static_cast<LChar>(matchCharacter), index);
+}
+
+template<typename StringClass>
+size_t findCommon(const StringClass& haystack, const StringClass& needle, unsigned start)
+{
+    unsigned needleLength = needle.length();
+
+    if (needleLength == 1) {
+        if (haystack.is8Bit())
+            return WTF::find(haystack.characters8(), haystack.length(), needle[0], start);
+        return WTF::find(haystack.characters16(), haystack.length(), needle[0], start);
+    }
+
+    if (!needleLength)
+        return std::min(start, haystack.length());
+
+    if (start > haystack.length())
+        return notFound;
+    unsigned searchLength = haystack.length() - start;
+    if (needleLength > searchLength)
+        return notFound;
+
+    if (haystack.is8Bit()) {
+        if (needle.is8Bit())
+            return findInner(haystack.characters8() + start, needle.characters8(), start, searchLength, needleLength);
+        return findInner(haystack.characters8() + start, needle.characters16(), start, searchLength, needleLength);
+    }
+
+    if (needle.is8Bit())
+        return findInner(haystack.characters16() + start, needle.characters8(), start, searchLength, needleLength);
+
+    return findInner(haystack.characters16() + start, needle.characters16(), start, searchLength, needleLength);
+}
+
 }
 
 #endif // StringCommon_h

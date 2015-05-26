@@ -1092,35 +1092,6 @@ size_t StringImpl::findIgnoringCase(const LChar* matchString, unsigned index)
     return index + i;
 }
 
-template <typename SearchCharacterType, typename MatchCharacterType>
-ALWAYS_INLINE static size_t findInner(const SearchCharacterType* searchCharacters, const MatchCharacterType* matchCharacters, unsigned index, unsigned searchLength, unsigned matchLength)
-{
-    // Optimization: keep a running hash of the strings,
-    // only call equal() if the hashes match.
-
-    // delta is the number of additional times to test; delta == 0 means test only once.
-    unsigned delta = searchLength - matchLength;
-
-    unsigned searchHash = 0;
-    unsigned matchHash = 0;
-
-    for (unsigned i = 0; i < matchLength; ++i) {
-        searchHash += searchCharacters[i];
-        matchHash += matchCharacters[i];
-    }
-
-    unsigned i = 0;
-    // keep looping until we match
-    while (searchHash != matchHash || !equal(searchCharacters + i, matchCharacters, matchLength)) {
-        if (i == delta)
-            return notFound;
-        searchHash += searchCharacters[i + matchLength];
-        searchHash -= searchCharacters[i];
-        ++i;
-    }
-    return index + i;        
-}
-
 size_t StringImpl::find(StringImpl* matchString)
 {
     // Check for null string to match against
@@ -1166,35 +1137,7 @@ size_t StringImpl::find(StringImpl* matchString, unsigned index)
     if (UNLIKELY(!matchString))
         return notFound;
 
-    unsigned matchLength = matchString->length();
-
-    // Optimization 1: fast case for strings of length 1.
-    if (matchLength == 1) {
-        if (is8Bit())
-            return WTF::find(characters8(), length(), (*matchString)[0], index);
-        return WTF::find(characters16(), length(), (*matchString)[0], index);
-    }
-
-    if (UNLIKELY(!matchLength))
-        return std::min(index, length());
-
-    // Check index & matchLength are in range.
-    if (index > length())
-        return notFound;
-    unsigned searchLength = length() - index;
-    if (matchLength > searchLength)
-        return notFound;
-
-    if (is8Bit()) {
-        if (matchString->is8Bit())
-            return findInner(characters8() + index, matchString->characters8(), index, searchLength, matchLength);
-        return findInner(characters8() + index, matchString->characters16(), index, searchLength, matchLength);
-    }
-
-    if (matchString->is8Bit())
-        return findInner(characters16() + index, matchString->characters8(), index, searchLength, matchLength);
-
-    return findInner(characters16() + index, matchString->characters16(), index, searchLength, matchLength);
+    return findCommon(*this, *matchString, index);
 }
 
 template <typename SearchCharacterType, typename MatchCharacterType>

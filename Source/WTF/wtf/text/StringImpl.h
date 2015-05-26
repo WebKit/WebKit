@@ -33,6 +33,7 @@
 #include <wtf/StringHasher.h>
 #include <wtf/Vector.h>
 #include <wtf/text/ConversionMode.h>
+#include <wtf/text/StringCommon.h>
 
 #if USE(CF)
 typedef const struct __CFString * CFStringRef;
@@ -981,29 +982,6 @@ template<unsigned charactersCount>
 bool equalIgnoringASCIICase(const StringImpl* a, const char (&b)[charactersCount])
 {
     return a ? equalIgnoringASCIICase(*a, b, charactersCount - 1) : false;
-}
-
-template<typename CharacterType>
-inline size_t find(const CharacterType* characters, unsigned length, CharacterType matchCharacter, unsigned index = 0)
-{
-    while (index < length) {
-        if (characters[index] == matchCharacter)
-            return index;
-        ++index;
-    }
-    return notFound;
-}
-
-ALWAYS_INLINE size_t find(const UChar* characters, unsigned length, LChar matchCharacter, unsigned index = 0)
-{
-    return find(characters, length, static_cast<UChar>(matchCharacter), index);
-}
-
-inline size_t find(const LChar* characters, unsigned length, UChar matchCharacter, unsigned index = 0)
-{
-    if (matchCharacter & ~0xFF)
-        return notFound;
-    return find(characters, length, static_cast<LChar>(matchCharacter), index);
 }
 
 inline size_t find(const LChar* characters, unsigned length, CharacterMatchFunctionPtr matchFunction, unsigned index = 0)
