@@ -264,14 +264,14 @@ LayoutRect RenderBox::borderBoxRectInRegion(RenderRegion* region, RenderBoxRegio
     return LayoutRect(0, logicalLeft, width(), logicalWidth);
 }
 
-RenderBlockFlow* RenderBox::outermostBlockContainingFloatingObject()
+static RenderBlockFlow* outermostBlockContainingFloatingObject(RenderBox& box)
 {
-    ASSERT(isFloating());
+    ASSERT(box.isFloating());
     RenderBlockFlow* parentBlock = nullptr;
-    for (auto& ancestor : ancestorsOfType<RenderBlockFlow>(*this)) {
+    for (auto& ancestor : ancestorsOfType<RenderBlockFlow>(box)) {
         if (ancestor.isRenderView())
             break;
-        if (!parentBlock || ancestor.containsFloat(*this))
+        if (!parentBlock || ancestor.containsFloat(box))
             parentBlock = &ancestor;
     }
     return parentBlock;
@@ -285,7 +285,7 @@ void RenderBox::removeFloatingOrPositionedChildFromBlockLists()
         return;
 
     if (isFloating()) {
-        if (RenderBlockFlow* parentBlock = outermostBlockContainingFloatingObject()) {
+        if (RenderBlockFlow* parentBlock = outermostBlockContainingFloatingObject(*this)) {
             parentBlock->markSiblingsWithFloatsForLayout(this);
             parentBlock->markAllDescendantsWithFloatsForLayout(this, false);
         }

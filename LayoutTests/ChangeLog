@@ -1,3 +1,27 @@
+2015-05-26  Zalan Bujtas  <zalan@apple.com>
+
+        Overhanging float sets are not cleaned up properly when floating renderer is destroyed.
+        https://bugs.webkit.org/show_bug.cgi?id=145323
+        rdar://problem/20980628
+
+        Reviewed by Dave Hyatt.
+
+        This patch ensures when an overhanging float renderer is destroyed,
+        all the sibling containers' floating object set(m_floatingObjects) gets properly cleaned up.
+
+        When an overhanging float is present, we cache the renderer on the parent and on the affected
+        sibling containers too. (RenderBlockFlow::m_floatingObjects) These caches(sets) get cleared and repopulated
+        during ::layout(). In order to have a float renderer removed from a set, a layout needs to be initiated on the container.
+        This is normally done through RenderBlockFlow::markSiblingsWithFloatsForLayout() and RenderBlockFlow::markAllDescendantsWithFloatsForLayout().
+        However, when the float container's parent's writing direction changes (and we promote the children containers to new formatting contexts),
+        the layout propagation through siblings does not work anymore.
+
+        The avoidsFloats() check in RenderBlockFlow::markSiblingsWithFloatsForLayout() has very little performance gain, but it prevents us
+        from propagating layout to siblings when certain properties of the parent container changes.
+
+        * fast/block/float/crash-when-floating-object-is-removed-expected.txt: Added.
+        * fast/block/float/crash-when-floating-object-is-removed.xhtml: Added.
+
 2015-05-26  Beth Dakin  <bdakin@apple.com>
 
         storage/indexeddb/deleteIndex-bug110792.html is flaky

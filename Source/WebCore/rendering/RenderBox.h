@@ -518,8 +518,6 @@ public:
 
     virtual VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override;
 
-    RenderBlockFlow* outermostBlockContainingFloatingObject();
-
     void removeFloatingOrPositionedChildFromBlockLists();
     
     RenderLayer* enclosingFloatPaintingLayer() const;
