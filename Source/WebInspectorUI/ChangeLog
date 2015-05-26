@@ -1,3 +1,12 @@
+2015-05-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add Array.prototype.copyWithin parameter list
+        https://bugs.webkit.org/show_bug.cgi?id=145388
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Models/NativeFunctionParameters.js:
+
 2015-05-26  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: focus outline of a search field should have a radius

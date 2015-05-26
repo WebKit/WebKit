@@ -197,6 +197,7 @@ WebInspector.NativePrototypeFunctionParameters = {
 
     Array: {
         concat: "value, ...",
+        copyWithin: "targetIndex, startIndex, [endIndex=length]",
         every: "callback, [thisArg]",
         fill: "value, [startIndex=0], [endIndex=length]",
         filter: "callback, [thisArg]",
