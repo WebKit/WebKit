@@ -128,7 +128,6 @@ static WebIconDatabaseClient* defaultClient()
 
 - (NSImage *)iconForURL:(NSString *)URL withSize:(NSSize)size cache:(BOOL)cache
 {
-    ASSERT_MAIN_THREAD();
     ASSERT(size.width);
     ASSERT(size.height);
 
@@ -154,14 +153,12 @@ static WebIconDatabaseClient* defaultClient()
 {
     if (![self isEnabled])
         return nil;
-    ASSERT_MAIN_THREAD();
 
     return iconDatabase().synchronousIconURLForPageURL(URL);
 }
 
 - (NSImage *)defaultIconWithSize:(NSSize)size
 {
-    ASSERT_MAIN_THREAD();
     ASSERT(size.width);
     ASSERT(size.height);
     
@@ -178,7 +175,6 @@ static WebIconDatabaseClient* defaultClient()
 
 - (void)retainIconForURL:(NSString *)URL
 {
-    ASSERT_MAIN_THREAD();
     ASSERT(URL);
     if (![self isEnabled])
         return;
@@ -188,7 +184,6 @@ static WebIconDatabaseClient* defaultClient()
 
 - (void)releaseIconForURL:(NSString *)pageURL
 {
-    ASSERT_MAIN_THREAD();
     ASSERT(pageURL);
     if (![self isEnabled])
         return;
@@ -198,15 +193,11 @@ static WebIconDatabaseClient* defaultClient()
 
 + (void)delayDatabaseCleanup
 {
-    ASSERT_MAIN_THREAD();
-
     IconDatabase::delayDatabaseCleanup();
 }
 
 + (void)allowDatabaseCleanup
 {
-    ASSERT_MAIN_THREAD();
-
     IconDatabase::allowDatabaseCleanup();
 }
 
@@ -245,7 +236,6 @@ static WebIconDatabaseClient* defaultClient()
 
 - (void)removeAllIcons
 {
-    ASSERT_MAIN_THREAD();
     if (![self isEnabled])
         return;
 
@@ -334,7 +324,6 @@ static WebIconDatabaseClient* defaultClient()
 
 - (NSImage *)_iconForFileURL:(NSString *)file withSize:(NSSize)size
 {
-    ASSERT_MAIN_THREAD();
     ASSERT(size.width);
     ASSERT(size.height);
 
@@ -473,7 +462,6 @@ static WebIconDatabaseClient* defaultClient()
 
 NSImage *webGetNSImage(Image* image, NSSize size)
 {
-    ASSERT_MAIN_THREAD();
     ASSERT(size.width);
     ASSERT(size.height);
 

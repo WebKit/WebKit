@@ -63,6 +63,6 @@ WebCore::Float64Array* core(DOMFloat64Array *wrapper)
 
 DOMFloat64Array *kit(WebCore::Float64Array* value)
 {
-    { DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheckRoundOne(); };
+    WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMFloat64Array*>(kit(static_cast<WebCore::Node*>(value)));
 }

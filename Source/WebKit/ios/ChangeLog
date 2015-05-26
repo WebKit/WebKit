@@ -1,3 +1,18 @@
+2015-05-25  Dan Bernstein  <mitz@apple.com>
+
+        ASSERT_MAIN_THREAD and DOM_ASSERT_MAIN_THREAD are unnecessary no-ops
+        https://bugs.webkit.org/show_bug.cgi?id=145372
+
+        Reviewed by Sam Weinig.
+
+        * Misc/WebGeolocationCoreLocationProvider.mm:
+        (-[WebGeolocationCoreLocationProvider initWithListener:]): Removed use of ASSERT_MAIN_THREAD.
+        (-[WebGeolocationCoreLocationProvider dealloc]): Ditto.
+        (-[WebGeolocationCoreLocationProvider requestGeolocationAuthorization]): Ditto.
+        (-[WebGeolocationCoreLocationProvider start]): Ditto.
+        (-[WebGeolocationCoreLocationProvider stop]): Ditto.
+        (-[WebGeolocationCoreLocationProvider setEnableHighAccuracy:]): Ditto.
+
 2015-04-28  Brady Eidson  <beidson@apple.com>
 
         Consolidate most "frame load" arguments into FrameLoadRequest.

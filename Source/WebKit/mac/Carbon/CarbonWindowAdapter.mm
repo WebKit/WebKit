@@ -297,7 +297,6 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 }
 
 - (void)finalize {
-    ASSERT_MAIN_THREAD();
     if (_eventHandler) RemoveEventHandler(_eventHandler);
     [super finalize];
 }

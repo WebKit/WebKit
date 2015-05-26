@@ -131,7 +131,7 @@ WebCore::TestCallback* core(DOMTestCallback *wrapper)
 
 DOMTestCallback *kit(WebCore::TestCallback* value)
 {
-    { DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheckRoundOne(); };
+    WebCoreThreadViolationCheckRoundOne();
     if (!value)
         return nil;
     if (DOMTestCallback *wrapper = getDOMWrapper(value))

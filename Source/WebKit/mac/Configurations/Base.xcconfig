@@ -80,7 +80,7 @@ TARGET_MAC_OS_X_VERSION_MAJOR = $(MAC_OS_X_VERSION_MAJOR);
 
 // DEBUG_DEFINES, GCC_OPTIMIZATION_LEVEL, STRIP_INSTALLED_PRODUCT and DEAD_CODE_STRIPPING vary between the debug and normal variants.
 // We set up the values for each variant here, and have the Debug configuration in the Xcode project use the _debug variant.
-DEBUG_DEFINES_debug = DISABLE_THREAD_CHECK;
+DEBUG_DEFINES_debug = ;
 DEBUG_DEFINES_normal = NDEBUG;
 DEBUG_DEFINES = $(DEBUG_DEFINES_$(CURRENT_VARIANT));
 

@@ -135,7 +135,7 @@ WebCore::TestNondeterministic* core(DOMTestNondeterministic *wrapper)
 
 DOMTestNondeterministic *kit(WebCore::TestNondeterministic* value)
 {
-    { DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheckRoundOne(); };
+    WebCoreThreadViolationCheckRoundOne();
     if (!value)
         return nil;
     if (DOMTestNondeterministic *wrapper = getDOMWrapper(value))

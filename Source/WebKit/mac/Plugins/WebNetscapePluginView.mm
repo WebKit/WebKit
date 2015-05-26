@@ -1381,7 +1381,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)finalize
 {
-    ASSERT_MAIN_THREAD();
     ASSERT(!_isStarted);
 
     [self fini];

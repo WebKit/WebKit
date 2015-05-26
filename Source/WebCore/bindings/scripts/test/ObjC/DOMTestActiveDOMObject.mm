@@ -89,7 +89,7 @@ WebCore::TestActiveDOMObject* core(DOMTestActiveDOMObject *wrapper)
 
 DOMTestActiveDOMObject *kit(WebCore::TestActiveDOMObject* value)
 {
-    { DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheckRoundOne(); };
+    WebCoreThreadViolationCheckRoundOne();
     if (!value)
         return nil;
     if (DOMTestActiveDOMObject *wrapper = getDOMWrapper(value))

@@ -77,7 +77,7 @@ WebCore::TestMediaQueryListListener* core(DOMTestMediaQueryListListener *wrapper
 
 DOMTestMediaQueryListListener *kit(WebCore::TestMediaQueryListListener* value)
 {
-    { DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheckRoundOne(); };
+    WebCoreThreadViolationCheckRoundOne();
     if (!value)
         return nil;
     if (DOMTestMediaQueryListListener *wrapper = getDOMWrapper(value))

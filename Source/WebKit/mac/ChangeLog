@@ -1,3 +1,65 @@
+2015-05-25  Dan Bernstein  <mitz@apple.com>
+
+        ASSERT_MAIN_THREAD and DOM_ASSERT_MAIN_THREAD are unnecessary no-ops
+        https://bugs.webkit.org/show_bug.cgi?id=145372
+
+        Reviewed by Sam Weinig.
+
+        * Carbon/CarbonWindowAdapter.mm:
+        (-[CarbonWindowAdapter finalize]): Removed use of ASSERT_MAIN_THREAD.
+
+        * Configurations/Base.xcconfig: Removed DISABLE_THREAD_CHECK from DEBUG_DEFINES.
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem URLString]): Removed use of ASSERT_MAIN_THREAD.
+        (-[WebHistoryItem originalURLString]): Ditto.
+        (-[WebHistoryItem title]): Ditto.
+        (-[WebHistoryItem lastVisitedTimeInterval]): Ditto.
+        (-[WebHistoryItem isEqual:]): Ditto.
+        (-[WebHistoryItem description]): Ditto.
+        (-[WebHistoryItem initFromDictionaryRepresentation:]): Ditto.
+        (-[WebHistoryItem scrollPoint]): Ditto.
+
+        * Misc/WebElementDictionary.mm:
+        (-[WebElementDictionary finalize]): Ditto.
+
+        * Misc/WebIconDatabase.mm:
+        (-[WebIconDatabase iconForURL:withSize:cache:]): Ditto.
+        (-[WebIconDatabase iconURLForURL:]): Ditto.
+        (-[WebIconDatabase defaultIconWithSize:]): Ditto.
+        (-[WebIconDatabase retainIconForURL:]): Ditto.
+        (-[WebIconDatabase releaseIconForURL:]): Ditto.
+        (+[WebIconDatabase delayDatabaseCleanup]): Ditto.
+        (+[WebIconDatabase allowDatabaseCleanup]): Ditto.
+        (-[WebIconDatabase removeAllIcons]): Ditto.
+        (-[WebIconDatabase _iconForFileURL:withSize:]): Ditto.
+        (webGetNSImage): Ditto.
+
+        * Misc/WebKitLogging.h: Removed definition of ASSERT_MAIN_THREAD.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView finalize]): Removed use of ASSERT_MAIN_THREAD.
+
+        * Plugins/WebBasePluginPackage.mm:
+        (-[WebBasePluginPackage finalize]): Ditto.
+
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView finalize]): Ditto.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (-[WebUndoStep finalize]): Ditto.
+
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource finalize]): Ditto.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLViewPrivate finalize]): Ditto.
+        (-[WebHTMLView finalize]): Ditto.
+        (-[WebHTMLView drawRect:]): Ditto.
+
+        * WebView/WebViewData.mm:
+        (-[WebViewPrivate finalize]): Ditto.
+
 2015-05-23  Dan Bernstein  <mitz@apple.com>
 
         Remove unused definitions of WEBKIT_VERSION_MIN_REQUIRED

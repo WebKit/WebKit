@@ -125,7 +125,6 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 
 - (void)finalize
 {
-    ASSERT_MAIN_THREAD();
     delete _result;
     [super finalize];
 }

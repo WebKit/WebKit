@@ -76,7 +76,7 @@ WebCore::TestException* core(DOMTestException *wrapper)
 
 DOMTestException *kit(WebCore::TestException* value)
 {
-    { DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheckRoundOne(); };
+    WebCoreThreadViolationCheckRoundOne();
     if (!value)
         return nil;
     if (DOMTestException *wrapper = getDOMWrapper(value))

@@ -69,7 +69,7 @@ WebCore::TestOverloadedConstructors* core(DOMTestOverloadedConstructors *wrapper
 
 DOMTestOverloadedConstructors *kit(WebCore::TestOverloadedConstructors* value)
 {
-    { DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheckRoundOne(); };
+    WebCoreThreadViolationCheckRoundOne();
     if (!value)
         return nil;
     if (DOMTestOverloadedConstructors *wrapper = getDOMWrapper(value))

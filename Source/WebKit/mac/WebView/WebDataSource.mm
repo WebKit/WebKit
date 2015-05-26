@@ -437,8 +437,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (void)finalize
 {
-    ASSERT_MAIN_THREAD();
-
     if (toPrivate(_private) && toPrivate(_private)->includedInWebKitStatistics)
         --WebDataSourceCount;
 

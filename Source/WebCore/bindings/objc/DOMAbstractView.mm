@@ -44,7 +44,7 @@
 
 - (void)dealloc
 {
-    { DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheckRoundOne(); }
+    WebCoreThreadViolationCheckRoundOne();
     [super dealloc];
 }
 
@@ -79,7 +79,7 @@ WebCore::DOMWindow* core(DOMAbstractView *wrapper)
 
 DOMAbstractView *kit(WebCore::DOMWindow* value)
 {
-    { DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheckRoundOne(); };
+    WebCoreThreadViolationCheckRoundOne();
 
     if (!value)
         return nil;

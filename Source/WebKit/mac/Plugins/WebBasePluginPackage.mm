@@ -276,7 +276,6 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
 
 - (void)finalize
 {
-    ASSERT_MAIN_THREAD();
     ASSERT(!pluginDatabases || [pluginDatabases count] == 0);
     [pluginDatabases release];
 

@@ -51,6 +51,6 @@ WebCore::TestNode* core(DOMTestNode *wrapper)
 
 DOMTestNode *kit(WebCore::TestNode* value)
 {
-    { DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheckRoundOne(); };
+    WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMTestNode*>(kit(static_cast<WebCore::Node*>(value)));
 }

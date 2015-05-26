@@ -130,7 +130,6 @@ using namespace WebCore;
 
 - (void)finalize
 {
-    ASSERT_MAIN_THREAD();
     ASSERT(!_isStarted);
 
     [super finalize];

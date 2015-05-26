@@ -215,7 +215,6 @@ WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flu
 
 - (void)finalize
 {
-    ASSERT_MAIN_THREAD();
 #if !PLATFORM(IOS)
     ASSERT(!insertionPasteboard);
 #endif

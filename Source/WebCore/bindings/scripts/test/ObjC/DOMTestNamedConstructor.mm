@@ -69,7 +69,7 @@ WebCore::TestNamedConstructor* core(DOMTestNamedConstructor *wrapper)
 
 DOMTestNamedConstructor *kit(WebCore::TestNamedConstructor* value)
 {
-    { DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheckRoundOne(); };
+    WebCoreThreadViolationCheckRoundOne();
     if (!value)
         return nil;
     if (DOMTestNamedConstructor *wrapper = getDOMWrapper(value))

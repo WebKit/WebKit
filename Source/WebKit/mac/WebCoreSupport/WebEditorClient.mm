@@ -142,8 +142,6 @@ static WebViewInsertAction kit(EditorInsertAction coreAction)
 
 - (void)finalize
 {
-    ASSERT_MAIN_THREAD();
-
     [super finalize];
 }
 

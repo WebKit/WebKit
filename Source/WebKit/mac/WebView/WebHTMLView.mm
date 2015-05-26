@@ -713,8 +713,6 @@ static NSCellStateValue kit(TriState state)
 
 - (void)finalize
 {
-    ASSERT_MAIN_THREAD();
-
 #if !PLATFORM(IOS)
     if (promisedDragTIFFDataSource)
         promisedDragTIFFDataSource->removeClient(promisedDataClient());
@@ -2529,7 +2527,6 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
 
 - (void)finalize
 {
-    ASSERT_MAIN_THREAD();
     // We can't assert that close has already been called because
     // this view can be removed from it's superview, even though
     // it could be needed later, so close if needed.
@@ -3538,7 +3535,6 @@ static void setMenuTargets(NSMenu* menu)
 
 - (void)drawRect:(NSRect)rect
 {
-    ASSERT_MAIN_THREAD();
     LOG(View, "%@ drawing", self);
 
 #if !PLATFORM(IOS)

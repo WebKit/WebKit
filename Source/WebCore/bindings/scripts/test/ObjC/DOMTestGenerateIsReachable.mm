@@ -69,7 +69,7 @@ WebCore::TestGenerateIsReachable* core(DOMTestGenerateIsReachable *wrapper)
 
 DOMTestGenerateIsReachable *kit(WebCore::TestGenerateIsReachable* value)
 {
-    { DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheckRoundOne(); };
+    WebCoreThreadViolationCheckRoundOne();
     if (!value)
         return nil;
     if (DOMTestGenerateIsReachable *wrapper = getDOMWrapper(value))

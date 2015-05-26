@@ -73,7 +73,6 @@ using namespace WebCore;
 
 - (id)initWithListener:(id<WebGeolocationCoreLocationUpdateListener>)listener
 {
-    ASSERT_MAIN_THREAD();
     self = [super init];
     if (self) {
         _positionListener = listener;
@@ -84,15 +83,12 @@ using namespace WebCore;
 
 - (void)dealloc
 {
-    ASSERT_MAIN_THREAD();
     [_locationManager setDelegate:nil];
     [super dealloc];
 }
 
 - (void)requestGeolocationAuthorization
 {
-    ASSERT_MAIN_THREAD();
-
     if (![getCLLocationManagerClass() locationServicesEnabled]) {
         [_positionListener geolocationAuthorizationDenied];
         return;
@@ -125,8 +121,6 @@ static bool isAuthorizationGranted(CLAuthorizationStatus authorizationStatus)
 
 - (void)start
 {
-    ASSERT_MAIN_THREAD();
-
     if (![getCLLocationManagerClass() locationServicesEnabled]
         || !isAuthorizationGranted([getCLLocationManagerClass() authorizationStatus])) {
         [_locationManager stopUpdatingLocation];
@@ -139,7 +133,6 @@ static bool isAuthorizationGranted(CLAuthorizationStatus authorizationStatus)
 
 - (void)stop
 {
-    ASSERT_MAIN_THREAD();
     [_locationManager stopUpdatingLocation];
 }
 
@@ -221,7 +214,6 @@ static bool isAuthorizationGranted(CLAuthorizationStatus authorizationStatus)
 
 - (void)setEnableHighAccuracy:(BOOL)flag
 {
-    ASSERT_MAIN_THREAD();
     [_locationManager setDesiredAccuracy:flag ? kCLLocationAccuracyBest : kCLLocationAccuracyHundredMeters];
 }
 

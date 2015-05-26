@@ -69,7 +69,7 @@ WebCore::readonly* core(DOMreadonly *wrapper)
 
 DOMreadonly *kit(WebCore::readonly* value)
 {
-    { DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheckRoundOne(); };
+    WebCoreThreadViolationCheckRoundOne();
     if (!value)
         return nil;
     if (DOMreadonly *wrapper = getDOMWrapper(value))
