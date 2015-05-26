@@ -1,3 +1,12 @@
+2015-05-26  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::mouseForceDown):
+        (WTR::EventSenderProxy::mouseForceUp):
+        (WTR::EventSenderProxy::mouseForceChanged):
+
 2015-05-26  Alexey Proskuryakov  <ap@apple.com>
 
         build.webkit.org/dashboard: Don't list test steps in BuildbotIteration twice

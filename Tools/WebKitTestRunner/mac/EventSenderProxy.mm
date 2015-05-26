@@ -309,8 +309,11 @@ void EventSenderProxy::mouseForceDown()
     [targetView pressureChangeWithEvent:secondEvent];
 
     [NSApp _setCurrentEvent:nil];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
     // WKView caches the most recent pressure event, so send it a nil event to clear the cache.
     [targetView pressureChangeWithEvent:nil];
+#pragma clang diagnostic pop
 
     [firstEvent release];
     [secondEvent release];
@@ -345,8 +348,12 @@ void EventSenderProxy::mouseForceUp()
     [targetView pressureChangeWithEvent:secondEvent];
 
     [NSApp _setCurrentEvent:nil];
-    // WKView caches the most recent pressure event, so send it a nil event to clear the cache.
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+// WKView caches the most recent pressure event, so send it a nil event to clear the cache.
     [targetView pressureChangeWithEvent:nil];
+#pragma clang diagnostic pop
 
     [firstEvent release];
     [secondEvent release];
@@ -369,8 +376,11 @@ void EventSenderProxy::mouseForceChanged(float force)
     [targetView pressureChangeWithEvent:event];
     [NSApp _setCurrentEvent:nil];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
     // WKView caches the most recent pressure event, so send it a nil event to clear the cache.
     [targetView pressureChangeWithEvent:nil];
+#pragma clang diagnostic pop
 
     [event release];
 }
