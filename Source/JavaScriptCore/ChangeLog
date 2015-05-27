@@ -1,3 +1,28 @@
+2015-05-26  Filip Pizlo  <fpizlo@apple.com>
+
+        JIT-generated store barrier code should assume the buffer pointer and capacity to be compile-time constants
+        https://bugs.webkit.org/show_bug.cgi?id=145404
+
+        Reviewed by Andreas Kling.
+        
+        We never change the capacity of a write barrier buffer. We never repoint the buffer
+        pointer. So, the JIT shouldn't load those from memory; it should take advantage of the
+        fact that these are compile-time constants.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::storeToWriteBarrierBuffer):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::emitStoreBarrier):
+        * heap/WriteBarrierBuffer.h:
+        (JSC::WriteBarrierBuffer::currentIndexAddress):
+        (JSC::WriteBarrierBuffer::capacity):
+        (JSC::WriteBarrierBuffer::buffer):
+        (JSC::WriteBarrierBuffer::currentIndexOffset): Deleted.
+        (JSC::WriteBarrierBuffer::capacityOffset): Deleted.
+        (JSC::WriteBarrierBuffer::bufferOffset): Deleted.
+        * jit/Repatch.cpp:
+        (JSC::emitPutTransitionStubAndGetOldStructure):
+
 2015-05-27  Geoffrey Garen  <ggaren@apple.com>
 
         REGRESSION: These sorting idioms used by Peacekeeper and Browsermark are ~20X slower

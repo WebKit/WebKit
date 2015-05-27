@@ -44,7 +44,6 @@ WriteBarrierBuffer::WriteBarrierBuffer(unsigned capacity)
 WriteBarrierBuffer::~WriteBarrierBuffer()
 {
     fastFree(m_buffer);
-    m_buffer = 0;
 }
 
 void WriteBarrierBuffer::flush(Heap& heap)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,10 +33,7 @@ namespace JSC {
 class Heap;
 class JSCell;
 
-namespace FTL { class LowerDFGToLLVM; }
-
 class WriteBarrierBuffer {
-    friend class FTL::LowerDFGToLLVM;
 public:
     WriteBarrierBuffer(unsigned capacity);
     ~WriteBarrierBuffer();
@@ -45,25 +42,25 @@ public:
     void flush(Heap&);
     void reset();
 
-    static ptrdiff_t currentIndexOffset()
+    unsigned* currentIndexAddress()
     {
-        return OBJECT_OFFSETOF(WriteBarrierBuffer, m_currentIndex);
+        return &m_currentIndex;
     }
 
-    static ptrdiff_t capacityOffset()
+    unsigned capacity() const
     {
-        return OBJECT_OFFSETOF(WriteBarrierBuffer, m_capacity);
+        return m_capacity;
     }
 
-    static ptrdiff_t bufferOffset()
+    JSCell** buffer()
     {
-        return OBJECT_OFFSETOF(WriteBarrierBuffer, m_buffer);
+        return m_buffer;
     }
 
 private:
     unsigned m_currentIndex;
-    unsigned m_capacity;
-    JSCell** m_buffer;
+    const unsigned m_capacity;
+    JSCell** const m_buffer;
 };
 
 } // namespace JSC

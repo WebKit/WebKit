@@ -7874,17 +7874,17 @@ private:
 
         // Append to the write barrier buffer.
         LBasicBlock lastNext = m_out.appendTo(isMarkedAndNotRemembered, bufferHasSpace);
-        LValue currentBufferIndex = m_out.load32(m_out.absolute(&vm().heap.writeBarrierBuffer().m_currentIndex));
-        LValue bufferCapacity = m_out.load32(m_out.absolute(&vm().heap.writeBarrierBuffer().m_capacity));
+        LValue currentBufferIndex = m_out.load32(m_out.absolute(vm().heap.writeBarrierBuffer().currentIndexAddress()));
+        LValue bufferCapacity = m_out.constInt32(vm().heap.writeBarrierBuffer().capacity());
         m_out.branch(
             m_out.lessThan(currentBufferIndex, bufferCapacity),
             usually(bufferHasSpace), rarely(bufferIsFull));
 
         // Buffer has space, store to it.
         m_out.appendTo(bufferHasSpace, bufferIsFull);
-        LValue writeBarrierBufferBase = m_out.loadPtr(m_out.absolute(&vm().heap.writeBarrierBuffer().m_buffer));
+        LValue writeBarrierBufferBase = m_out.constIntPtr(vm().heap.writeBarrierBuffer().buffer());
         m_out.storePtr(base, m_out.baseIndex(m_heaps.WriteBarrierBuffer_bufferContents, writeBarrierBufferBase, m_out.zeroExtPtr(currentBufferIndex)));
-        m_out.store32(m_out.add(currentBufferIndex, m_out.constInt32(1)), m_out.absolute(&vm().heap.writeBarrierBuffer().m_currentIndex));
+        m_out.store32(m_out.add(currentBufferIndex, m_out.constInt32(1)), m_out.absolute(vm().heap.writeBarrierBuffer().currentIndexAddress()));
         m_out.jump(continuation);
 
         // Buffer is out of space, flush it.
