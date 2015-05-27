@@ -192,6 +192,9 @@ public:
     // FIXME: rename this using the "lists match" terminology.
     bool isTransformFunctionListValid() const { return m_transformFunctionListValid; }
     bool filterFunctionListsMatch() const { return m_filterFunctionListsMatch; }
+#if ENABLE(FILTERS_LEVEL_2)
+    bool backdropFilterFunctionListsMatch() const { return m_backdropFilterFunctionListsMatch; }
+#endif
 
     // Freeze the animation; used by DumpRenderTree.
     void freezeAtTime(double t);
@@ -259,6 +262,9 @@ protected:
     bool m_isAccelerated { false };
     bool m_transformFunctionListValid { false };
     bool m_filterFunctionListsMatch { false };
+#if ENABLE(FILTERS_LEVEL_2)
+    bool m_backdropFilterFunctionListsMatch { false };
+#endif
 };
 
 } // namespace WebCore

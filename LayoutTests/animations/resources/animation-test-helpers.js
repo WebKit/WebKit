@@ -126,19 +126,19 @@ function parseFilterImage(s)
     // Separate image value from filter function list.
     var matches = s.match("([\\-\\w]+\\(.*\\))\\s*,\\s*(.*)\\s*");
     if (!matches) {
-        console.error("Parsing error on 'fitler()' ", s);
+        console.error("Parsing error on 'filter()' ", s);
         return false;
     }
 
     var image = parseCSSImage(matches[1]);
     if (!image) {
-        console.error("Parsing error on image passed to 'fitler()' ", s);
+        console.error("Parsing error on image passed to 'filter()' ", s);
         return false;
     }
 
     var filterFunctionList = parseFilterFunctionList(matches[2]);
     if (!filterFunctionList) {
-        console.error("Parsing error on filter function list passed to 'fitler()' ", s);
+        console.error("Parsing error on filter function list passed to 'filter()' ", s);
         return false;
     }
 
@@ -395,6 +395,7 @@ function getPropertyValue(property, elementId, iframeId)
                || property == "webkitMaskImage"
                || property == "webkitMaskBoxImage"
                || property == "webkitFilter"
+               || property == "webkitBackdropFilter"
                || property == "webkitClipPath"
                || property == "webkitShapeInside"
                || property == "webkitShapeOutside"
@@ -426,7 +427,7 @@ function comparePropertyValue(property, computedValue, expectedValue, tolerance)
                     break;
             }
         }
-    } else if (property == "webkitFilter") {
+    } else if (property == "webkitFilter" || property == "webkitBackdropFilter") {
         var filterParameters = parseFilterFunctionList(computedValue);
         var filter2Parameters = parseFilterFunctionList(expectedValue);
         result = compareFilterFunctions(filterParameters, filter2Parameters, tolerance);

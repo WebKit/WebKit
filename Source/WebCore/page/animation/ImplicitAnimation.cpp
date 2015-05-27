@@ -219,6 +219,9 @@ void ImplicitAnimation::reset(RenderStyle* to)
     // set the transform animation list
     validateTransformFunctionList();
     checkForMatchingFilterFunctionLists();
+#if ENABLE(FILTERS_LEVEL_2)
+    checkForMatchingBackdropFilterFunctionLists();
+#endif
 }
 
 void ImplicitAnimation::setOverridden(bool b)
@@ -271,7 +274,7 @@ void ImplicitAnimation::validateTransformFunctionList()
     if (val->operations().isEmpty())
         return;
         
-    // An emtpy transform list matches anything.
+    // An empty transform list matches anything.
     if (val != toVal && !toVal->operations().isEmpty() && !val->operationsMatch(*toVal))
         return;
 
@@ -279,29 +282,41 @@ void ImplicitAnimation::validateTransformFunctionList()
     m_transformFunctionListValid = true;
 }
 
+static bool filterOperationsMatch(const FilterOperations* fromOperations, const FilterOperations& toOperations)
+{
+    if (fromOperations->operations().isEmpty())
+        fromOperations = &toOperations;
+
+    if (fromOperations->operations().isEmpty())
+        return false;
+
+    if (fromOperations != &toOperations && !toOperations.operations().isEmpty() && !fromOperations->operationsMatch(toOperations))
+        return false;
+
+    return true;
+}
+
 void ImplicitAnimation::checkForMatchingFilterFunctionLists()
 {
     m_filterFunctionListsMatch = false;
-    
+
     if (!m_fromStyle || !m_toStyle)
         return;
-        
-    const FilterOperations* val = &m_fromStyle->filter();
-    const FilterOperations* toVal = &m_toStyle->filter();
 
-    if (val->operations().isEmpty())
-        val = toVal;
-
-    if (val->operations().isEmpty())
-        return;
-        
-    // An emtpy filter list matches anything.
-    if (val != toVal && !toVal->operations().isEmpty() && !val->operationsMatch(*toVal))
-        return;
-
-    // Filter lists match.
-    m_filterFunctionListsMatch = true;
+    m_filterFunctionListsMatch = filterOperationsMatch(&m_fromStyle->filter(), m_toStyle->filter());
 }
+
+#if ENABLE(FILTERS_LEVEL_2)
+void ImplicitAnimation::checkForMatchingBackdropFilterFunctionLists()
+{
+    m_backdropFilterFunctionListsMatch = false;
+
+    if (!m_fromStyle || !m_toStyle)
+        return;
+
+    m_backdropFilterFunctionListsMatch = filterOperationsMatch(&m_fromStyle->backdropFilter(), m_toStyle->backdropFilter());
+}
+#endif
 
 double ImplicitAnimation::timeToNextService()
 {

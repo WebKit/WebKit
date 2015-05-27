@@ -2574,6 +2574,9 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderLayerModelObje
     return (animController.isRunningAnimationOnRenderer(renderer, CSSPropertyOpacity, activeAnimationState)
             && (inCompositingMode() || (m_compositingTriggers & ChromeClient::AnimatedOpacityTrigger)))
             || animController.isRunningAnimationOnRenderer(renderer, CSSPropertyWebkitFilter, activeAnimationState)
+#if ENABLE(FILTERS_LEVEL_2)
+            || animController.isRunningAnimationOnRenderer(renderer, CSSPropertyWebkitBackdropFilter, activeAnimationState)
+#endif
             || animController.isRunningAnimationOnRenderer(renderer, CSSPropertyTransform, activeAnimationState);
 }
 

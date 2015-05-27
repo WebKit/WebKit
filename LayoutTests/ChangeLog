@@ -1,3 +1,21 @@
+2015-05-26  Dean Jackson  <dino@apple.com>
+
+        Backdrop filters don't animate
+        https://bugs.webkit.org/show_bug.cgi?id=145386
+        <rdar://problem/21110037>
+
+        Reviewed by Simon Fraser.
+
+        Add a test for animation of backdrop-filter, and do some
+        minor cleanups in related files.
+
+        * animations/resources/animation-test-helpers.js:
+        (parseFilterImage): Fix a typo.
+        (getPropertyValue): Support webkitBackdropFilter.
+        (comparePropertyValue): Ditto.
+        * css3/filters/backdrop/animation-expected.txt: Added.
+        * css3/filters/backdrop/animation.html: Added.
+
 2015-05-27  Matt Baker  <mattbaker@apple.com>
 
         [iOS] Rebaseline expected results for tests in LayoutTests/compositing

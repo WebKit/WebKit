@@ -56,6 +56,9 @@ enum AnimatedPropertyID {
     AnimatedPropertyOpacity,
     AnimatedPropertyBackgroundColor,
     AnimatedPropertyWebkitFilter
+#if ENABLE(FILTERS_LEVEL_2)
+    , AnimatedPropertyWebkitBackdropFilter
+#endif
 };
 
 enum LayerTreeAsTextBehaviorFlags {

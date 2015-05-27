@@ -229,22 +229,26 @@ static PlatformCAAnimation::ValueFunctionType getValueFunctionNameForTransformOp
     }
 }
 
-static String propertyIdToString(AnimatedPropertyID property)
+static ASCIILiteral propertyIdToString(AnimatedPropertyID property)
 {
     switch (property) {
     case AnimatedPropertyTransform:
-        return "transform";
+        return ASCIILiteral("transform");
     case AnimatedPropertyOpacity:
-        return "opacity";
+        return ASCIILiteral("opacity");
     case AnimatedPropertyBackgroundColor:
-        return "backgroundColor";
+        return ASCIILiteral("backgroundColor");
     case AnimatedPropertyWebkitFilter:
-        return "filters";
+        return ASCIILiteral("filters");
+#if ENABLE(FILTERS_LEVEL_2)
+    case AnimatedPropertyWebkitBackdropFilter:
+        return ASCIILiteral("backdropFilters");
+#endif
     case AnimatedPropertyInvalid:
         ASSERT_NOT_REACHED();
     }
     ASSERT_NOT_REACHED();
-    return "";
+    return ASCIILiteral("");
 }
 
 static String animationIdentifier(const String& animationName, AnimatedPropertyID property, int index, int subIndex)
@@ -885,6 +889,12 @@ bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const Flo
         if (supportsAcceleratedFilterAnimations())
             createdAnimations = createFilterAnimationsFromKeyframes(valueList, anim, animationName, timeOffset);
     }
+#if ENABLE(FILTERS_LEVEL_2)
+    else if (valueList.property() == AnimatedPropertyWebkitBackdropFilter) {
+        if (supportsAcceleratedFilterAnimations())
+            createdAnimations = createFilterAnimationsFromKeyframes(valueList, anim, animationName, timeOffset);
+    }
+#endif
     else
         createdAnimations = createAnimationFromKeyframes(valueList, anim, animationName, timeOffset);
 
@@ -2462,7 +2472,6 @@ void GraphicsLayerCA::updateAnimations()
                 Vector<LayerPropertyAnimation> animations;
                 animations.append(pendingAnimation);
                 m_runningAnimations.add(pendingAnimation.m_name, animations);
-
             } else {
                 Vector<LayerPropertyAnimation>& animations = it->value;
                 animations.append(pendingAnimation);
@@ -2738,7 +2747,11 @@ bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& val
 
 bool GraphicsLayerCA::createFilterAnimationsFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, double timeOffset)
 {
+#if ENABLE(FILTERS_LEVEL_2)
+    ASSERT(valueList.property() == AnimatedPropertyWebkitFilter || valueList.property() == AnimatedPropertyWebkitBackdropFilter);
+#else
     ASSERT(valueList.property() == AnimatedPropertyWebkitFilter);
+#endif
 
     int listIndex = validateFilterOperations(valueList);
     if (listIndex < 0)
@@ -3130,7 +3143,17 @@ PlatformCALayer* GraphicsLayerCA::layerForSuperlayer() const
 
 PlatformCALayer* GraphicsLayerCA::animatedLayer(AnimatedPropertyID property) const
 {
-    return (property == AnimatedPropertyBackgroundColor) ? m_contentsLayer.get() : primaryLayer();
+    switch (property) {
+    case AnimatedPropertyBackgroundColor:
+        return m_contentsLayer.get();
+#if ENABLE(FILTERS_LEVEL_2)
+    case AnimatedPropertyWebkitBackdropFilter:
+        // FIXME: Should be just m_backdropLayer.get(). Also, add an ASSERT(m_backdropLayer) here when https://bugs.webkit.org/show_bug.cgi?id=145322 is fixed.
+        return m_backdropLayer ? m_backdropLayer.get() : primaryLayer();
+#endif
+    default:
+        return primaryLayer();
+    }
 }
 
 GraphicsLayerCA::LayerMap* GraphicsLayerCA::animatedLayerClones(AnimatedPropertyID property) const

@@ -2455,12 +2455,20 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation* anim
     bool hasTransform = renderer().isBox() && keyframes.containsProperty(CSSPropertyTransform);
     bool hasFilter = keyframes.containsProperty(CSSPropertyWebkitFilter);
 
-    if (!hasOpacity && !hasTransform && !hasFilter)
+    bool hasBackdropFilter = false;
+#if ENABLE(FILTERS_LEVEL_2)
+    hasBackdropFilter = keyframes.containsProperty(CSSPropertyWebkitBackdropFilter);
+#endif
+
+    if (!hasOpacity && !hasTransform && !hasFilter && !hasBackdropFilter)
         return false;
-    
+
     KeyframeValueList transformVector(AnimatedPropertyTransform);
     KeyframeValueList opacityVector(AnimatedPropertyOpacity);
     KeyframeValueList filterVector(AnimatedPropertyWebkitFilter);
+#if ENABLE(FILTERS_LEVEL_2)
+    KeyframeValueList backdropFilterVector(AnimatedPropertyWebkitBackdropFilter);
+#endif
 
     size_t numKeyframes = keyframes.size();
     for (size_t i = 0; i < numKeyframes; ++i) {
@@ -2482,6 +2490,11 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation* anim
 
         if ((hasFilter && isFirstOrLastKeyframe) || currentKeyframe.containsProperty(CSSPropertyWebkitFilter))
             filterVector.insert(std::make_unique<FilterAnimationValue>(key, keyframeStyle->filter(), tf));
+
+#if ENABLE(FILTERS_LEVEL_2)
+        if ((hasBackdropFilter && isFirstOrLastKeyframe) || currentKeyframe.containsProperty(CSSPropertyWebkitBackdropFilter))
+            backdropFilterVector.insert(std::make_unique<FilterAnimationValue>(key, keyframeStyle->backdropFilter(), tf));
+#endif
     }
 
     if (renderer().frame().page() && !renderer().frame().page()->settings().acceleratedCompositedAnimationsEnabled())
@@ -2497,6 +2510,11 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation* anim
 
     if (hasFilter && m_graphicsLayer->addAnimation(filterVector, IntSize(), anim, keyframes.animationName(), timeOffset))
         didAnimate = true;
+
+#if ENABLE(FILTERS_LEVEL_2)
+    if (hasBackdropFilter && m_graphicsLayer->addAnimation(backdropFilterVector, IntSize(), anim, keyframes.animationName(), timeOffset))
+        didAnimate = true;
+#endif
 
     return didAnimate;
 }
@@ -2559,6 +2577,22 @@ bool RenderLayerBacking::startTransition(double timeOffset, CSSPropertyID proper
             }
         }
     }
+
+#if ENABLE(FILTERS_LEVEL_2)
+    if (property == CSSPropertyWebkitBackdropFilter && m_owningLayer.hasBackdropFilter()) {
+        const Animation* backdropFilterAnim = toStyle->transitionForProperty(CSSPropertyWebkitBackdropFilter);
+        if (backdropFilterAnim && !backdropFilterAnim->isEmptyOrZeroDuration()) {
+            KeyframeValueList backdropFilterVector(AnimatedPropertyWebkitBackdropFilter);
+            backdropFilterVector.insert(std::make_unique<FilterAnimationValue>(0, fromStyle->backdropFilter()));
+            backdropFilterVector.insert(std::make_unique<FilterAnimationValue>(1, toStyle->backdropFilter()));
+            if (m_graphicsLayer->addAnimation(backdropFilterVector, FloatSize(), backdropFilterAnim, GraphicsLayer::animationNameForTransition(AnimatedPropertyWebkitBackdropFilter), timeOffset)) {
+                // To ensure that the correct backdrop filter is visible when the animation ends, also set the final backdrop filter.
+                updateBackdropFilters(*toStyle);
+                didAnimate = true;
+            }
+        }
+    }
+#endif
 
     return didAnimate;
 }
@@ -2647,6 +2681,11 @@ CSSPropertyID RenderLayerBacking::graphicsLayerToCSSProperty(AnimatedPropertyID 
     case AnimatedPropertyWebkitFilter:
         cssProperty = CSSPropertyWebkitFilter;
         break;
+#if ENABLE(FILTERS_LEVEL_2)
+    case AnimatedPropertyWebkitBackdropFilter:
+        cssProperty = CSSPropertyWebkitBackdropFilter;
+        break;
+#endif
     case AnimatedPropertyInvalid:
         ASSERT_NOT_REACHED();
     }
@@ -2664,6 +2703,10 @@ AnimatedPropertyID RenderLayerBacking::cssToGraphicsLayerProperty(CSSPropertyID 
         return AnimatedPropertyBackgroundColor;
     case CSSPropertyWebkitFilter:
         return AnimatedPropertyWebkitFilter;
+#if ENABLE(FILTERS_LEVEL_2)
+    case CSSPropertyWebkitBackdropFilter:
+        return AnimatedPropertyWebkitBackdropFilter;
+#endif
     default:
         // It's fine if we see other css properties here; they are just not accelerated.
         break;
