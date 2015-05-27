@@ -1,3 +1,17 @@
+2015-05-26  Andreas Kling  <akling@apple.com>
+
+        <font face> doesn't support plus character in font family names.
+        <https://webkit.org/b/145400>
+        <rdar://problem/21097484>
+
+        Reviewed by Darin Adler.
+
+        Add a little test for <font face> attributes to cover this problem
+        and some other interesting cases with spaces and commas.
+
+        * fast/dom/HTMLFontElement/face-attribute-expected.txt: Added.
+        * fast/dom/HTMLFontElement/face-attribute.html: Added.
+
 2015-05-26  Chris Fleizach  <cfleizach@apple.com>
 
         AX: display:none content exposed to accessibility when aria-hidden is toggled on ancestor element
