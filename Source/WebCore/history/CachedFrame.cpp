@@ -207,6 +207,8 @@ CachedFrame::CachedFrame(Frame& frame)
         }
     }
 #endif
+
+    ASSERT_WITH_SECURITY_IMPLICATION(!m_documentLoader->isLoading());
 }
 
 void CachedFrame::open()

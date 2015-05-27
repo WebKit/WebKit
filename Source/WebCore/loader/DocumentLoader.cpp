@@ -1297,6 +1297,7 @@ void DocumentLoader::stopLoadingPlugIns()
 void DocumentLoader::stopLoadingSubresources()
 {
     cancelAll(m_subresourceLoaders);
+    ASSERT(m_subresourceLoaders.isEmpty());
 }
 
 void DocumentLoader::addSubresourceLoader(ResourceLoader* loader)
@@ -1311,6 +1312,9 @@ void DocumentLoader::addSubresourceLoader(ResourceLoader* loader)
     ASSERT(loader->identifier());
     ASSERT(!m_subresourceLoaders.contains(loader->identifier()));
     ASSERT(!mainResourceLoader() || mainResourceLoader() != loader);
+
+    // A page in the PageCache should not be able to start loads.
+    ASSERT_WITH_SECURITY_IMPLICATION(!document() || !document()->inPageCache());
 
     m_subresourceLoaders.add(loader->identifier(), loader);
 }
