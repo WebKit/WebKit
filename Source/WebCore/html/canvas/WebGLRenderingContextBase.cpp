@@ -1804,7 +1804,7 @@ bool WebGLRenderingContextBase::validateDrawElements(const char* functionName, G
     case GraphicsContext3D::UNSIGNED_SHORT:
         break;
     case GraphicsContext3D::UNSIGNED_INT:
-        if (m_oesElementIndexUint && !isWebGL2())
+        if (m_oesElementIndexUint || isWebGL2())
             break;
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid type");
         return false;
