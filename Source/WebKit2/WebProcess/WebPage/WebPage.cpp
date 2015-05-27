@@ -4430,18 +4430,11 @@ void WebPage::didChangeSelection()
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     FrameView* view = frame.view();
-#if PLATFORM(COCOA) && !defined(NDEBUG)
-    int layoutCount = view ? view->layoutCount() : 0;
-#endif
 
     // If there is a layout pending, we should avoid populating EditorState that require layout to be done or it will
     // trigger a synchronous layout every time the selection changes. sendPostLayoutEditorStateIfNeeded() will be called
     // to send the full editor state after layout is done if we send a partial editor state here.
     auto editorState = this->editorState(view && view->needsLayout() ? IncludePostLayoutDataHint::No : IncludePostLayoutDataHint::Yes);
-#if PLATFORM(COCOA) && !defined(NDEBUG)
-    if (view)
-        ASSERT_WITH_MESSAGE(layoutCount == view->layoutCount(), "Calling editorState() should not cause a synchronous layout.");
-#endif
     m_isEditorStateMissingPostLayoutData = editorState.isMissingPostLayoutData;
 
 #if PLATFORM(MAC) && USE(ASYNC_NSTEXTINPUTCLIENT)

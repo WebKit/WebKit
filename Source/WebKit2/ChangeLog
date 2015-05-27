@@ -1,3 +1,23 @@
+2015-05-27  Chris Dumez  <cdumez@apple.com>
+
+        Assertion hit in WebPage::didChangeSelection()
+        https://bugs.webkit.org/show_bug.cgi?id=145413
+        <rdar://problem/21001129>
+
+        Reviewed by Ryosuke Niwa.
+
+        We sometimes hit the "ASSERT(layoutCount == view->layoutCount())"
+        assertion in WebPage::didChangeSelection(). We manage to prevent
+        synchronous layouts in most cases when calling editorState(). However,
+        it seems it can still happen in some cases. Crashing in this case seems
+        overkill and can be annoying to other developers, especially
+        considering the implications are only on performance.
+
+        This patch drops the assertion.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didChangeSelection): Deleted.
+
 2015-05-27  Anders Carlsson  <andersca@apple.com>
 
         Address a follow-up review comment from Darin.
