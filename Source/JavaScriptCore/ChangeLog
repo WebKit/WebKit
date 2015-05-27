@@ -1,3 +1,19 @@
+2015-05-27  Geoffrey Garen  <ggaren@apple.com>
+
+        REGRESSION: These sorting idioms used by Peacekeeper and Browsermark are ~20X slower
+        https://bugs.webkit.org/show_bug.cgi?id=145412
+
+        Reviewed by Darin Adler.
+
+        Use @toString instead of the String constructor because calls to the
+        String constructor are never optimized. (See
+        https://bugs.webkit.org/show_bug.cgi?id=144458.)
+
+        This is a ~2X speedup.
+
+        * builtins/Array.prototype.js:
+        (sort.stringComparator):
+
 2015-05-27  Dan Bernstein  <mitz@apple.com>
 
         Remove JSC_OBJC_API_AVAILABLE_MAC_OS_X_1080

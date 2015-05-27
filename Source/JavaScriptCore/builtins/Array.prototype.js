@@ -286,8 +286,8 @@ function sort(comparator)
 
     function stringComparator(a, b)
     {
-        var aString = @String(a);
-        var bString = @String(b);
+        var aString = @toString(a);
+        var bString = @toString(b);
 
         var aLength = aString.length;
         var bLength = bString.length;
