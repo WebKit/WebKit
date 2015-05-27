@@ -534,7 +534,6 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVarDeclarati
 template <typename LexerType>
 template <class TreeBuilder> TreeDeconstructionPattern Parser<LexerType>::createBindingPattern(TreeBuilder& context, DeconstructionKind kind, const Identifier& name, int depth, JSToken token)
 {
-    ASSERT(!name.isEmpty());
     ASSERT(!name.isNull());
     
     ASSERT(name.impl()->isAtomic() || name.impl()->isSymbol());

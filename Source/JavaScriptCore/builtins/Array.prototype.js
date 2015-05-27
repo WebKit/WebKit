@@ -286,8 +286,8 @@ function sort(comparator)
 
     function stringComparator(a, b)
     {
-        var aString = @toString(a);
-        var bString = @toString(b);
+        var aString = a.string;
+        var bString = b.string;
 
         var aLength = aString.length;
         var bLength = bString.length;
@@ -300,19 +300,10 @@ function sort(comparator)
             if (aCharCode == bCharCode)
                 continue;
 
-            if (aCharCode < bCharCode)
-                return -1;
-
-            return 1;
+            return aCharCode - bCharCode;
         }
 
-        if (aLength == bLength)
-            return 0;
-
-        if (aLength < bLength)
-            return -1;
-
-        return 1;
+        return aLength - bLength;
     }
 
     // Move undefineds and holes to the end of a sparse array. Result is [values..., undefineds..., holes...].
@@ -440,6 +431,27 @@ function sort(comparator)
         mergeSort(array, valueCount, comparator);
     }
 
+    function stringSort(array)
+    {
+        var length = array.length >>> 0;
+
+        // For compatibility with Firefox and Chrome, do nothing observable
+        // to the target array if it has 0 or 1 sortable properties.
+        if (length < 2)
+            return;
+
+        var valueCount = compact(array, length);
+
+        var strings = new @Array(valueCount);
+        for (var i = 0; i < valueCount; ++i)
+            strings[i] = { string: @toString(array[i]), value: array[i] };
+
+        mergeSort(strings, valueCount, stringComparator);
+
+        for (var i = 0; i < valueCount; ++i)
+            array[i] = strings[i].value;
+    }
+
     if (this === null)
         throw new @TypeError("Array.prototype.sort requires that |this| not be null");
 
@@ -449,11 +461,13 @@ function sort(comparator)
     if (typeof this == "string")
         throw new @TypeError("Attempted to assign to readonly property.");
 
-    if (typeof comparator !== "function")
-        comparator = stringComparator;
-
     var array = @Object(this);
-    comparatorSort(array, comparator);
+
+    if (typeof comparator == "function")
+        comparatorSort(array, comparator);
+    else
+        stringSort(array);
+
     return array;
 }
 
