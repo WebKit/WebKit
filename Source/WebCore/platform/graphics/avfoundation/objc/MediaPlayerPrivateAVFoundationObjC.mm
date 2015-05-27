@@ -1545,9 +1545,75 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithImageGenerator(GraphicsContext
     }
 }
 
-static HashSet<String> mimeTypeCache()
+static bool unsupportedMIMEType(const String& type)
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<String>, cache, ());
+    // AVFoundation will return non-video MIME types which it claims to support, but which we
+    // do not support in the <video> element. Reject all non video/, audio/, and application/ types.
+    if (!type.startsWith("video/", false) && !type.startsWith("audio/", false) && !type.startsWith("application/", false))
+        return true;
+
+    // Reject types we know AVFoundation does not support that sites commonly ask about.
+    if (equalIgnoringCase(type, "video/webm") || equalIgnoringCase(type, "audio/webm") || equalIgnoringCase(type, "video/x-webm"))
+        return true;
+
+    if (equalIgnoringCase(type, "video/x-flv"))
+        return true;
+
+    if (equalIgnoringCase(type, "audio/ogg") || equalIgnoringCase(type, "video/ogg") || equalIgnoringCase(type, "application/ogg"))
+        return true;
+
+    if (equalIgnoringCase(type, "video/h264"))
+        return true;
+
+    return false;
+}
+
+static HashSet<String>& staticMimeTypeCache()
+{
+    static NeverDestroyed<HashSet<String>> cache;
+    static bool typeListInitialized = false;
+
+    if (typeListInitialized)
+        return cache;
+    typeListInitialized = true;
+
+    cache.get().add("application/vnd.apple.mpegurl");
+    cache.get().add("application/x-mpegurl");
+    cache.get().add("audio/3gpp");
+    cache.get().add("audio/aac");
+    cache.get().add("audio/aacp");
+    cache.get().add("audio/aiff");
+    cache.get().add("audio/basic");
+    cache.get().add("audio/mp3");
+    cache.get().add("audio/mp4");
+    cache.get().add("audio/mpeg");
+    cache.get().add("audio/mpeg3");
+    cache.get().add("audio/mpegurl");
+    cache.get().add("audio/mpg");
+    cache.get().add("audio/wav");
+    cache.get().add("audio/wave");
+    cache.get().add("audio/x-aac");
+    cache.get().add("audio/x-aiff");
+    cache.get().add("audio/x-m4a");
+    cache.get().add("audio/x-mpegurl");
+    cache.get().add("audio/x-wav");
+    cache.get().add("video/3gpp");
+    cache.get().add("video/3gpp2");
+    cache.get().add("video/mp4");
+    cache.get().add("video/mpeg");
+    cache.get().add("video/mpeg2");
+    cache.get().add("video/mpg");
+    cache.get().add("video/quicktime");
+    cache.get().add("video/x-m4v");
+    cache.get().add("video/x-mpeg");
+    cache.get().add("video/x-mpg");
+
+    return cache;
+} 
+
+static HashSet<String>& avfMimeTypeCache()
+{
+    static NeverDestroyed<HashSet<String>> cache;
     static bool typeListInitialized = false;
 
     if (typeListInitialized)
@@ -1556,7 +1622,7 @@ static HashSet<String> mimeTypeCache()
 
     NSArray *types = [AVURLAsset audiovisualMIMETypes];
     for (NSString *mimeType in types)
-        cache.add([mimeType lowercaseString]);
+        cache.get().add([mimeType lowercaseString]);
 
     return cache;
 } 
@@ -1585,7 +1651,7 @@ RetainPtr<CGImageRef> MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRe
 
 void MediaPlayerPrivateAVFoundationObjC::getSupportedTypes(HashSet<String>& supportedTypes)
 {
-    supportedTypes = mimeTypeCache();
+    supportedTypes = avfMimeTypeCache();
 } 
 
 #if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
@@ -1626,7 +1692,10 @@ MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationObjC::supportsType(const
         return MediaPlayer::IsNotSupported;
 #endif
 
-    if (!mimeTypeCache().contains(parameters.type))
+    if (unsupportedMIMEType(parameters.type))
+        return MediaPlayer::IsNotSupported;
+
+    if (!staticMimeTypeCache().contains(parameters.type) && !avfMimeTypeCache().contains(parameters.type))
         return MediaPlayer::IsNotSupported;
 
     // The spec says:
@@ -1649,7 +1718,10 @@ bool MediaPlayerPrivateAVFoundationObjC::supportsKeySystem(const String& keySyst
         if (!keySystemIsSupported(keySystem))
             return false;
 
-        if (!mimeType.isEmpty() && !mimeTypeCache().contains(mimeType))
+        if (!mimeType.isEmpty() && unsupportedMIMEType(mimeType))
+            return false;
+
+        if (!mimeType.isEmpty() && !staticMimeTypeCache().contains(mimeType) && !avfMimeTypeCache().contains(mimeType))
             return false;
 
         return true;
