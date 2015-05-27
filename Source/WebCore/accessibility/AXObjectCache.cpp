@@ -1300,20 +1300,30 @@ bool isNodeAriaVisible(Node* node)
 {
     if (!node)
         return false;
-    
-    // To determine if a node is ARIA visible, we need to check the parent hierarchy to see if anyone specifies
-    // aria-hidden explicitly.
+
+    // ARIA Node visibility is controlled by aria-hidden
+    //  1) if aria-hidden=true, the whole subtree is hidden
+    //  2) if aria-hidden=false, and the object is rendered, there's no effect
+    //  3) if aria-hidden=false, and the object is NOT rendered, then it must have
+    //     aria-hidden=false on each parent until it gets to a rendered object
+    //  3b) a text node inherits a parents aria-hidden value
+    bool requiresAriaHiddenFalse = !node->renderer();
+    bool ariaHiddenFalsePresent = false;
     for (Node* testNode = node; testNode; testNode = testNode->parentNode()) {
         if (is<Element>(*testNode)) {
             const AtomicString& ariaHiddenValue = downcast<Element>(*testNode).fastGetAttribute(aria_hiddenAttr);
-            if (equalIgnoringCase(ariaHiddenValue, "false"))
-                return true;
             if (equalIgnoringCase(ariaHiddenValue, "true"))
                 return false;
+            
+            bool ariaHiddenFalse = equalIgnoringCase(ariaHiddenValue, "false");
+            if (!testNode->renderer() && !ariaHiddenFalse)
+                return false;
+            if (!ariaHiddenFalsePresent && ariaHiddenFalse)
+                ariaHiddenFalsePresent = true;
         }
     }
     
-    return false;
+    return !requiresAriaHiddenFalse || ariaHiddenFalsePresent;
 }
 
 AccessibilityObject* AXObjectCache::rootWebArea()
