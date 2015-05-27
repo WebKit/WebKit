@@ -1,3 +1,21 @@
+2015-05-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: REGRESSION(r179286) Editing Style Metrics Values no longer works
+        https://bugs.webkit.org/show_bug.cgi?id=143164
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/BoxModelDetailsSectionRow.js:
+        (WebInspector.BoxModelDetailsSectionRow.prototype._updateMetrics.createElement):
+        (WebInspector.BoxModelDetailsSectionRow.prototype._applyUserInput.resolvedNode.toggleInlineStyleProperty):
+        (WebInspector.BoxModelDetailsSectionRow.prototype._applyUserInput.resolvedNode.didToggle):
+        (WebInspector.BoxModelDetailsSectionRow.prototype._applyUserInput.resolvedNode):
+        (WebInspector.BoxModelDetailsSectionRow.prototype._applyUserInput):
+        Make it so editing in the metrics pane just evaluates elem.style.setProperty
+        on the inspected page. Use "!important" to try and give the maximum priority
+        possible, which is a change from older behavior. Finally, refresh the sidebar
+        to update all values, and update the UI if bad input didn't change styles.
+
 2015-05-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Function parameter string parsing improperly handles empty parameter list

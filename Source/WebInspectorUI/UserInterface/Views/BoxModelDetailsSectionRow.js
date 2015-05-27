@@ -117,8 +117,7 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
             element.textContent = shouldRoundValue ? ("~" + Math.round(floatValue * 100) / 100) : value;
             if (shouldRoundValue)
                 element.title = value;
-            // FIXME: <https://webkit.org/b/143164> Web Inspector: REGRESSION(r179286) Editing Style Metrics Values no longer works
-            // element.addEventListener("dblclick", this._startEditing.bind(this, element, name, propertyName, style), false);
+            element.addEventListener("dblclick", this._startEditing.bind(this, element, name, propertyName, style), false);
             return element;
         }
 
@@ -413,8 +412,26 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
             userInput = userValuePx + "px";
         }
 
-        var property = this._nodeStyles.inlineStyle.propertyForName(context.styleProperty);
-        // FIXME: <https://webkit.org/b/143164> Web Inspector: REGRESSION(r179286) Editing Style Metrics Values no longer works
+        function resolvedNode(object)
+        {
+            if (!object)
+                return;
+
+            function toggleInlineStyleProperty(property, value)
+            {
+                this.style.setProperty(property, value, "!important");
+            }
+
+            function didToggle()
+            {
+                this._nodeStyles.refresh();
+            }
+
+            object.callFunction(toggleInlineStyleProperty, [styleProperty, userInput], false, didToggle.bind(this));
+            object.release();
+        }
+
+        WebInspector.RemoteObject.resolveNode(this._nodeStyles.node, "", resolvedNode.bind(this));
     }
 
     _editingCommitted(element, userInput, previousContent, context)
