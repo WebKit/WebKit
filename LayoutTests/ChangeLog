@@ -1,3 +1,10 @@
+2015-05-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Update Mac WebKit1 TestExpectations for platform/mac/fast/ruby/ruby-expansion-cjk-2.html
+
+        * platform/mac-wk1/TestExpectations: It's an image failure, so counter-intuitively,
+        Failure expectation is not the right one.
+
 2015-05-27  Daniel Bates  <dabates@apple.com>
 
         Update Mac WebKit1 TestExpectations for platform/mac/fast/ruby/ruby-expansion-cjk-2.html
