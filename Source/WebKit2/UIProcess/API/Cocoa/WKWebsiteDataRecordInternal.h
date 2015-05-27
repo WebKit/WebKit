@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKWebsiteDataRecord.h"
+#import "WKWebsiteDataRecordPrivate.h"
 
 #if WK_API_ENABLED
 
@@ -60,6 +60,8 @@ static inline WebKit::WebsiteDataTypes toWebsiteDataTypes(NSSet *wkWebsiteDataTy
         websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeWebSQLDatabases;
     if ([wkWebsiteDataTypes containsObject:WKWebsiteDataTypeIndexedDBDatabases])
         websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeIndexedDBDatabases;
+    if ([wkWebsiteDataTypes containsObject:_WKWebsiteDataTypeMediaKeys])
+        websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeMediaKeys;
 
     return static_cast<WebsiteDataTypes>(websiteDataTypes);
 }
@@ -86,6 +88,8 @@ static inline RetainPtr<NSSet> toWKWebsiteDataTypes(int websiteDataTypes)
         [wkWebsiteDataTypes addObject:WKWebsiteDataTypeWebSQLDatabases];
     if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeIndexedDBDatabases)
         [wkWebsiteDataTypes addObject:WKWebsiteDataTypeIndexedDBDatabases];
+    if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeMediaKeys)
+        [wkWebsiteDataTypes addObject:_WKWebsiteDataTypeMediaKeys];
 
     return wkWebsiteDataTypes;
 }

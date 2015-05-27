@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebsiteDataTypes_h
-#define WebsiteDataTypes_h
+#import <WebKit/WKWebsiteDataRecord.h>
 
-namespace WebKit {
+#if WK_API_ENABLED
 
-enum WebsiteDataTypes {
-    WebsiteDataTypeCookies = 1 << 0,
-    WebsiteDataTypeDiskCache = 1 << 1,
-    WebsiteDataTypeMemoryCache = 1 << 2,
-    WebsiteDataTypeOfflineWebApplicationCache = 1 << 3,
-    WebsiteDataTypeSessionStorage = 1 << 4,
-    WebsiteDataTypeLocalStorage = 1 << 5,
-    WebsiteDataTypeWebSQLDatabases = 1 << 6,
-    WebsiteDataTypeIndexedDBDatabases = 1 << 7,
-    WebsiteDataTypeMediaKeys = 1 << 8,
-};
+WK_EXTERN NSString * const _WKWebsiteDataTypeMediaKeys WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
-};
-
-#endif // WebsiteDataTypes_h
+#endif

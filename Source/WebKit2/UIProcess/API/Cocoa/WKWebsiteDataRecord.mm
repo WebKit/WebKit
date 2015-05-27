@@ -39,6 +39,8 @@ NSString * const WKWebsiteDataTypeLocalStorage = @"WKWebsiteDataTypeLocalStorage
 NSString * const WKWebsiteDataTypeWebSQLDatabases = @"WKWebsiteDataTypeWebSQLDatabases";
 NSString * const WKWebsiteDataTypeIndexedDBDatabases = @"WKWebsiteDataTypeIndexedDBDatabases";
 
+NSString * const _WKWebsiteDataTypeMediaKeys = @"_WKWebsiteDataTypeMediaKeys";
+
 @implementation WKWebsiteDataRecord
 
 - (void)dealloc
@@ -68,6 +70,8 @@ static NSString *dataTypesToString(NSSet *dataTypes)
         [array addObject:@"Web SQL"];
     if ([dataTypes containsObject:WKWebsiteDataTypeIndexedDBDatabases])
         [array addObject:@"IndexedDB"];
+    if ([dataTypes containsObject:_WKWebsiteDataTypeMediaKeys])
+        [array addObject:@"Media Keys"];
 
     return [array componentsJoinedByString:@", "];
 }

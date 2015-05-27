@@ -1,3 +1,57 @@
+2015-05-26  Anders Carlsson  <andersca@apple.com>
+
+        WKWebsiteDataStore should handle media keys
+        https://bugs.webkit.org/show_bug.cgi?id=145394
+        rdar://problem/20617794.
+
+        Reviewed by Darin Adler.
+
+        * Shared/WebsiteData/WebsiteDataTypes.h:
+        Add WebsiteDataTypeMediaKeys enum.
+
+        * UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm:
+        (API::WebsiteDataStore::defaultDataStoreConfiguration):
+        Set up mediaKeysStorageDirectory.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataRecord.mm:
+        (dataTypesToString):
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordInternal.h:
+        (WebKit::toWebsiteDataTypes):
+        (WebKit::toWKWebsiteDataTypes):
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordPrivate.h: Added.
+        Add _WKWebsiteDataTypeMediaKeys.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::legacyWebsiteDataStoreConfiguration):
+        Set up mediaKeysStorageDirectory.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::WebsiteDataStore):
+        Set m_mediaKeysStorageDirectory.
+
+        (WebKit::WebsiteDataStore::fetchData):
+        Make CallbackAggregator ThreadSafeRefCounted.
+        Handle WebsiteDataTypeMediaKeys by calling mediaKeyOrigins on our background queue.
+
+        (WebKit::WebsiteDataStore::removeData):
+        Make CallbackAggregator ThreadSafeRefCounted.
+        Handle WebsiteDataTypeMediaKeys by calling removeMediaKeys on our background queue.
+
+        (WebKit::WebsiteDataStore::mediaKeyOrigins):
+        Compute the origins.
+
+        (WebKit::computeMediaKeyFile):
+        Add helper function that returns the media key given a containing directory.
+
+        (WebKit::WebsiteDataStore::removeMediaKeys):
+        Remove media key files.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        Add new members.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
 2015-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.9.2 release.

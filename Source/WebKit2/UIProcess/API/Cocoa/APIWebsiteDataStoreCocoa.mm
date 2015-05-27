@@ -117,6 +117,7 @@ WebKit::WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfig
 
     configuration.webSQLDatabaseDirectory = websiteDataDirectoryFileSystemRepresentation("WebSQL");
     configuration.localStorageDirectory = websiteDataDirectoryFileSystemRepresentation("LocalStorage");
+    configuration.mediaKeysStorageDirectory = websiteDataDirectoryFileSystemRepresentation("MediaKeys");
 
     return configuration;
 }

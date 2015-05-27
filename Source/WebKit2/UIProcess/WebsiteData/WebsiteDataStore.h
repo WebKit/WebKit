@@ -28,6 +28,7 @@
 
 #include "WebProcessLifetimeObserver.h"
 #include "WebsiteDataTypes.h"
+#include <WebCore/SecurityOriginHash.h>
 #include <WebCore/SessionID.h>
 #include <functional>
 #include <wtf/HashSet.h>
@@ -35,6 +36,10 @@
 #include <wtf/RefPtr.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
+
+namespace WebCore {
+class SecurityOrigin;
+}
 
 namespace WebKit {
 
@@ -51,6 +56,7 @@ public:
 
         String webSQLDatabaseDirectory;
         String localStorageDirectory;
+        String mediaKeysStorageDirectory;
     };
     static RefPtr<WebsiteDataStore> createNonPersistent();
     static RefPtr<WebsiteDataStore> create(Configuration);
@@ -86,6 +92,10 @@ private:
 
     HashSet<RefPtr<WebProcessPool>> processPools() const;
 
+    static Vector<RefPtr<WebCore::SecurityOrigin>> mediaKeyOrigins(const String& mediaKeysStorageDirectory);
+    static void removeMediaKeys(const String& mediaKeysStorageDirectory, std::chrono::system_clock::time_point modifiedSince);
+    static void removeMediaKeys(const String& mediaKeysStorageDirectory, const HashSet<RefPtr<WebCore::SecurityOrigin>>&);
+
     const uint64_t m_identifier;
     const WebCore::SessionID m_sessionID;
 
@@ -93,6 +103,7 @@ private:
     const String m_applicationCacheDirectory;
 
     const String m_webSQLDatabaseDirectory;
+    const String m_mediaKeysStorageDirectory;
     const RefPtr<StorageManager> m_storageManager;
 
     Ref<WorkQueue> m_queue;
