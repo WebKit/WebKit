@@ -107,10 +107,9 @@ public:
 
     void willStartOptimizedFullscreen();
     void didStartOptimizedFullscreen();
+    void failedToStartOptimizedFullscreen();
     void willStopOptimizedFullscreen();
     void didStopOptimizedFullscreen();
-    void willCancelOptimizedFullscreen();
-    void didCancelOptimizedFullscreen();
     void prepareForOptimizedFullscreenStopWithCompletionHandler(void (^)(BOOL));
 
     void setMode(HTMLMediaElementEnums::VideoFullscreenMode);

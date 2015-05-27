@@ -204,6 +204,13 @@ static const char* boolString(bool val)
     self.fullscreenInterface->didStartOptimizedFullscreen();
 }
 
+- (void)playerViewControllerFailedToStartOptimizedFullscreen:(AVPlayerViewController *)playerViewController withError:(NSError *)error
+{
+    UNUSED_PARAM(playerViewController);
+    UNUSED_PARAM(error);
+    self.fullscreenInterface->failedToStartOptimizedFullscreen();
+}
+
 - (void)playerViewControllerWillStopOptimizedFullscreen:(AVPlayerViewController *)playerViewController
 {
     UNUSED_PARAM(playerViewController);
@@ -214,18 +221,6 @@ static const char* boolString(bool val)
 {
     UNUSED_PARAM(playerViewController);
     self.fullscreenInterface->didStopOptimizedFullscreen();
-}
-
-- (void)playerViewControllerWillCancelOptimizedFullscreen:(AVPlayerViewController *)playerViewController
-{
-    UNUSED_PARAM(playerViewController);
-    self.fullscreenInterface->willCancelOptimizedFullscreen();
-}
-
-- (void)playerViewControllerDidCancelOptimizedFullscreen:(AVPlayerViewController *)playerViewController
-{
-    UNUSED_PARAM(playerViewController);
-    self.fullscreenInterface->didCancelOptimizedFullscreen();
 }
 
 - (BOOL)playerViewController:(AVPlayerViewController *)playerViewController shouldExitFullScreenWithReason:(AVPlayerViewControllerExitFullScreenReason)reason
@@ -1033,7 +1028,11 @@ void WebVideoFullscreenInterfaceAVKit::enterFullscreenOptimized()
     RefPtr<WebVideoFullscreenInterfaceAVKit> strongThis(this);
 
     LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::enterFullscreenOptimized(%p)", this);
-    [m_playerViewController startOptimizedFullscreen];
+    
+    if ([m_playerViewController isOptimizedFullscreenPossible])
+        [m_playerViewController startOptimizedFullscreen];
+    else
+        failedToStartOptimizedFullscreen();
 }
 
 void WebVideoFullscreenInterfaceAVKit::enterFullscreenStandard()
@@ -1270,12 +1269,32 @@ void WebVideoFullscreenInterfaceAVKit::didStartOptimizedFullscreen()
 {
     LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::didStartOptimizedFullscreen(%p)", this);
     [m_playerViewController setShowsPlaybackControls:YES];
+    [m_window setHidden:YES];
 
     RefPtr<WebVideoFullscreenInterfaceAVKit> strongThis(this);
     WebThreadRun([strongThis] {
-        [strongThis->m_window setHidden:YES];
         if (strongThis->m_fullscreenChangeObserver)
             strongThis->m_fullscreenChangeObserver->didEnterFullscreen();
+    });
+}
+
+void WebVideoFullscreenInterfaceAVKit::failedToStartOptimizedFullscreen()
+{
+    LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::failedToStartOptimizedFullscreen(%p)", this);
+    [m_playerViewController setShowsPlaybackControls:YES];
+
+    RefPtr<WebVideoFullscreenInterfaceAVKit> strongThis(this);
+    WebThreadRun([strongThis, this] {
+        if (hasMode(HTMLMediaElementEnums::VideoFullscreenModeStandard))
+            return;
+
+        m_exitCompleted = true;
+
+        if (m_fullscreenChangeObserver)
+            m_fullscreenChangeObserver->didEnterFullscreen();
+
+        if (m_videoFullscreenModel)
+            m_videoFullscreenModel->requestExitFullscreen();
     });
 }
 
@@ -1301,35 +1320,6 @@ void WebVideoFullscreenInterfaceAVKit::didStopOptimizedFullscreen()
 
     [m_videoLayerContainer setBackgroundColor:[[getUIColorClass() clearColor] CGColor]];
     [[m_playerViewController view] setBackgroundColor:[getUIColorClass() clearColor]];
-
-    RefPtr<WebVideoFullscreenInterfaceAVKit> strongThis(this);
-    WebThreadRun([strongThis] {
-        strongThis->clearMode(HTMLMediaElementEnums::VideoFullscreenModeOptimized);
-        [strongThis->m_window setHidden:YES];
-        if (strongThis->m_fullscreenChangeObserver)
-            strongThis->m_fullscreenChangeObserver->didExitFullscreen();
-    });
-}
-
-void WebVideoFullscreenInterfaceAVKit::willCancelOptimizedFullscreen()
-{
-    LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::willCancelOptimizedFullscreen(%p)", this);
-    [m_window setHidden:NO];
-    [m_videoLayerContainer setBackgroundColor:[[getUIColorClass() clearColor] CGColor]];
-    [[m_playerViewController view] setBackgroundColor:[getUIColorClass() clearColor]];
-
-    RefPtr<WebVideoFullscreenInterfaceAVKit> strongThis(this);
-    WebThreadRun([strongThis] {
-        if (strongThis->m_videoFullscreenModel)
-            strongThis->m_videoFullscreenModel->requestExitFullscreen();
-    });
-}
-
-void WebVideoFullscreenInterfaceAVKit::didCancelOptimizedFullscreen()
-{
-    LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::didCancelOptimizedFullscreen(%p)", this);
-    if (hasMode(HTMLMediaElementEnums::VideoFullscreenModeStandard))
-        return;
 
     RefPtr<WebVideoFullscreenInterfaceAVKit> strongThis(this);
     WebThreadRun([strongThis] {
