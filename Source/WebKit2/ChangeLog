@@ -1,3 +1,10 @@
+2015-05-27  Anders Carlsson  <andersca@apple.com>
+
+        Address a follow-up review comment from Darin.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::removeMediaKeys):
+
 2015-05-26  Anders Carlsson  <andersca@apple.com>
 
         WKWebsiteDataStore should handle media keys

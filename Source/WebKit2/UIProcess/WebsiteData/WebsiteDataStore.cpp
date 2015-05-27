@@ -837,9 +837,6 @@ void WebsiteDataStore::removeMediaKeys(const String& mediaKeysStorageDirectory, 
     for (const auto& mediaKeyDirectory : WebCore::listDirectory(mediaKeysStorageDirectory, "*")) {
         auto mediaKeyFile = computeMediaKeyFile(mediaKeyDirectory);
 
-        if (!WebCore::fileExists(mediaKeyFile))
-            continue;
-
         time_t modificationTime;
         if (!WebCore::getFileModificationTime(mediaKeyFile, modificationTime))
             continue;
