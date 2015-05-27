@@ -1,3 +1,19 @@
+2015-05-27  Matt Baker  <mattbaker@apple.com>
+
+        [iOS] Rebaseline expected results for tests in LayoutTests/compositing
+        https://bugs.webkit.org/show_bug.cgi?id=145401
+
+        Reviewed by Simon Fraser.
+
+        Rebaselined iOS tests failing due to expected differences in converage rect, scrollbar and contentsScale.
+
+        * platform/ios-simulator/compositing/layer-creation/scale-rotation-animation-overlap-expected.txt: Added.
+        * platform/ios-simulator/compositing/masks/compositing-clip-path-change-no-repaint-expected.txt: Added.
+        * platform/ios-simulator/compositing/tiling/rotated-tiled-clamped-expected.txt:
+        * platform/ios-simulator/compositing/tiling/rotated-tiled-preserve3d-clamped-expected.txt:
+        * platform/ios-simulator/compositing/tiling/transform-origin-tiled-expected.txt: Copied from LayoutTests/platform/ios-simulator/compositing/tiling/rotated-tiled-clamped-expected.txt.
+        * platform/ios-simulator/compositing/visible-rect/backing-change-height-from-zero-expected.txt: Added.
+
 2015-05-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Arabic ligatures are broken in Google Maps
