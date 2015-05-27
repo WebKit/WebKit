@@ -1,3 +1,15 @@
+2015-05-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Network Cache: Add cache capacity to the totals of JSON file
+        https://bugs.webkit.org/show_bug.cgi?id=145246
+
+        Reviewed by Antti Koivisto.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::dumpContentsToFile):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        (WebKit::NetworkCache::Storage::capacity):
+
 2015-05-26  Anders Carlsson  <andersca@apple.com>
 
         Add a symlink for every file inside /S/L/F/WebKit.framework to the PrivateFrameworks mirror.

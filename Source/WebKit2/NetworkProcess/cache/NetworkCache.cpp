@@ -494,11 +494,15 @@ void Cache::dumpContentsToFile()
     };
     Totals totals;
     auto flags = Storage::TraverseFlag::ComputeWorth | Storage::TraverseFlag::ShareCount;
-    m_storage->traverse(flags, [fd, totals](const Storage::Record* record, const Storage::RecordInfo& info) mutable {
+    size_t capacity = m_storage->capacity();
+    m_storage->traverse(flags, [fd, totals, capacity](const Storage::Record* record, const Storage::RecordInfo& info) mutable {
         if (!record) {
             StringBuilder epilogue;
             epilogue.appendLiteral("{}\n],\n");
             epilogue.appendLiteral("\"totals\": {\n");
+            epilogue.appendLiteral("\"capacity\": ");
+            epilogue.appendNumber(capacity);
+            epilogue.appendLiteral(",\n");
             epilogue.appendLiteral("\"count\": ");
             epilogue.appendNumber(totals.count);
             epilogue.appendLiteral(",\n");
