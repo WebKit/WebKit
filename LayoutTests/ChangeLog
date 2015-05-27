@@ -1,3 +1,46 @@
+2015-05-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Arabic ligatures are broken in Google Maps
+        https://bugs.webkit.org/show_bug.cgi?id=145336
+        <rdar://problem/20689607>
+
+        Reviewed by Darin Adler.
+
+        This patch adds a DRT test to make sure that text gets drawn with the correct font.
+
+        It also updates expected results for 4 tests, which I have verified are still correct. However,
+        because the behavior of Mavericks differs from Yosemite, I copied the old expected results to
+        platform/mac-mavericks before updating the results in platform/mac.
+
+        This patch also moves fast/ruby/ruby-expansion-cjk*.html to platform/mac because they rely on
+        platform-specific screen-space quantization. This patch also skips these tests on Mavericks
+        because I can't add platform-specific expected results for reftests.
+
+        * platform/ios-simulator/fast/text/arabic-with-no-supporting-webfont-expected.txt:
+        * platform/ios-simulator/fast/text/arabic-with-no-supporting-webfont.html:
+
+        * platform/mac-mavericks/fast/css/font-face-opentype-expected.txt: Copied from platform/mac.
+        * platform/mac-mavericks/svg/batik/text/xmlSpace-expected.txt: Ditto.
+        * platform/mac-mavericks/svg/custom/svg-fonts-fallback-expected.txt: Ditto.
+        * platform/mac-mavericks/svg/custom/svg-fonts-without-missing-glyph-expected.txt: Ditto.
+        * platform/mac-mavericks/TestExpectations: Skip fast/ruyb/ruby-expansion-cjk*.html
+        * platform/mac/fast/css/font-face-opentype-expected.txt: Updated.
+        * platform/mac/svg/batik/text/xmlSpace-expected.txt: Ditto.
+        * platform/mac/svg/custom/svg-fonts-fallback-expected.txt: Ditto.
+        * platform/mac/svg/custom/svg-fonts-without-missing-glyph-expected.txt: Ditto.
+        * LayoutTests/platform/mac/fast/ruby/resources/green.png: Moved from fast/ruby/resources/green.png
+        * LayoutTests/platform/mac/fast/ruby/resources/ruby-expansion.svg: Moved from fast/ruby/resources/ruby-expansion.svg
+        * LayoutTests/platform/mac/fast/ruby/ruby-expansion-cjk-2-expected.html: Moved from fast/ruby/ruby-expansion-cjk-2-expected.html
+        * LayoutTests/platform/mac/fast/ruby/ruby-expansion-cjk-2.html: Moved from fast/ruby/ruby-expansion-cjk-2.html
+        * LayoutTests/platform/mac/fast/ruby/ruby-expansion-cjk-3-expected.html: Moved from fast/ruby/ruby-expansion-cjk-3-expected.html
+        * LayoutTests/platform/mac/fast/ruby/ruby-expansion-cjk-3.html: Moved from fast/ruby/ruby-expansion-cjk-3.html
+        * LayoutTests/platform/mac/fast/ruby/ruby-expansion-cjk-4-expected.html: Moved from fast/ruby/ruby-expansion-cjk-4-expected.html
+        * LayoutTests/platform/mac/fast/ruby/ruby-expansion-cjk-4.html: Moved from fast/ruby/ruby-expansion-cjk-4.html
+        * LayoutTests/platform/mac/fast/ruby/ruby-expansion-cjk-5-expected.html: Moved from fast/ruby/ruby-expansion-cjk-5-expected.html
+        * LayoutTests/platform/mac/fast/ruby/ruby-expansion-cjk-5.html: Moved from fast/ruby/ruby-expansion-cjk-5.html
+        * LayoutTests/platform/mac/fast/ruby/ruby-expansion-cjk-expected.html: Moved from fast/ruby/ruby-expansion-cjk-expected.html
+        * LayoutTests/platform/mac/fast/ruby/ruby-expansion-cjk.html: Moved from fast/ruby/ruby-expansion-cjk.html
+
 2015-05-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         An SVG with no intrinsic size does not draw correct slices when used as a border-image for an HTML element.

@@ -28,6 +28,14 @@
 #include <wtf/RetainPtr.h>
 
 typedef struct CGFont* CGFontRef;
+typedef const struct __CTFontDescriptor* CTFontDescriptorRef;
+
+// <rdar://problem/16980736> Web fonts crash on certain OSes when using CTFontManagerCreateFontDescriptorFromData()
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 80000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101000)
+#define CORETEXT_WEB_FONTS 0
+#else
+#define CORETEXT_WEB_FONTS 1
+#endif
 
 namespace WebCore {
 
@@ -37,8 +45,13 @@ class SharedBuffer;
 struct FontCustomPlatformData {
     WTF_MAKE_NONCOPYABLE(FontCustomPlatformData);
 public:
+#if CORETEXT_WEB_FONTS
+    explicit FontCustomPlatformData(CTFontDescriptorRef fontDescriptor)
+        : m_fontDescriptor(fontDescriptor)
+#else
     explicit FontCustomPlatformData(CGFontRef cgFont)
         : m_cgFont(cgFont)
+#endif
     {
     }
 
@@ -48,7 +61,11 @@ public:
 
     static bool supportsFormat(const String&);
 
+#if CORETEXT_WEB_FONTS
+    RetainPtr<CTFontDescriptorRef> m_fontDescriptor;
+#else
     RetainPtr<CGFontRef> m_cgFont;
+#endif
 };
 
 std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer&);
