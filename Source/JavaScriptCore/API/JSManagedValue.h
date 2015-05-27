@@ -50,11 +50,7 @@
  Objective-C heap object, as this can very easily create a reference cycle, 
  keeping the entire JSContext alive.
 */ 
-#ifndef JSC_OBJC_API_AVAILABLE_MAC_OS_X_1080
 NS_CLASS_AVAILABLE(10_9, 7_0)
-#else
-OBJC_VISIBLE
-#endif
 @interface JSManagedValue : NSObject
 
 /*!
