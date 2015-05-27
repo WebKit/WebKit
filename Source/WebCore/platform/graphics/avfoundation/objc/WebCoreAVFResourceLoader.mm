@@ -88,7 +88,7 @@ void WebCoreAVFResourceLoader::stopLoading()
     m_resource->removeClient(this);
     m_resource = 0;
 
-    if (m_parent)
+    if (m_parent && m_avRequest)
         m_parent->didStopLoadingRequest(m_avRequest.get());
 }
 
