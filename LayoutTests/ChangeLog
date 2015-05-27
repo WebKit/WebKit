@@ -5,6 +5,15 @@
 
         Reviewed by Darin Adler.
 
+        * platform/mac/accessibility/aria-hidden-false-works-in-subtrees-expected.txt:
+
+2015-05-26  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: display:none content exposed to accessibility when aria-hidden is toggled on ancestor element
+        https://bugs.webkit.org/show_bug.cgi?id=139142
+
+        Reviewed by Darin Adler.
+
         * accessibility/aria-hidden-false-works-in-subtrees.html:
 
 2015-05-26  Zalan Bujtas  <zalan@apple.com>
