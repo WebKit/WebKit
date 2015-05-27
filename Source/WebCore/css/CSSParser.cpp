@@ -1282,15 +1282,30 @@ PassRefPtr<CSSValueList> CSSParser::parseFontFaceValue(const AtomicString& strin
 {
     if (string.isEmpty())
         return nullptr;
-    RefPtr<MutableStyleProperties> dummyStyle = MutableStyleProperties::create();
 
-    if (parseValue(dummyStyle.get(), CSSPropertyFontFamily, string, false, CSSQuirksMode, nullptr) == ParseResult::Error)
-        return nullptr;
+    Ref<CSSValueList> valueList = CSSValueList::createCommaSeparated();
 
-    RefPtr<CSSValue> fontFamily = dummyStyle->getPropertyCSSValue(CSSPropertyFontFamily);
-    if (!fontFamily->isValueList())
-        return nullptr; // FIXME: "initial" and "inherit" should be parsed as font names in the face attribute.
-    return static_pointer_cast<CSSValueList>(fontFamily.release());
+    Vector<String> familyNames;
+    string.string().split(',', true, familyNames);
+
+    for (auto& familyName : familyNames) {
+        String stripped = stripLeadingAndTrailingHTMLSpaces(familyName);
+        if (stripped.isEmpty())
+            return nullptr;
+
+        RefPtr<CSSValue> value;
+        for (auto propertyID : { CSSValueSerif, CSSValueSansSerif, CSSValueCursive, CSSValueFantasy, CSSValueMonospace, CSSValueWebkitBody }) {
+            if (equalIgnoringCase(stripped, getValueName(propertyID))) {
+                value = cssValuePool().createIdentifierValue(propertyID);
+                break;
+            }
+        }
+        if (!value)
+            value = cssValuePool().createFontFamilyValue(stripped);
+        valueList->append(value.releaseNonNull());
+    }
+
+    return WTF::move(valueList);
 }
 
 CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties* declaration, CSSPropertyID propertyID, const String& string, bool important, CSSParserMode cssParserMode, StyleSheetContents* contextStyleSheet)

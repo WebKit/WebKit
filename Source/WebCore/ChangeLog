@@ -1,3 +1,25 @@
+2015-05-27  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r184894. rdar://problem/21097484
+
+    2015-05-26  Andreas Kling  <akling@apple.com>
+
+            <font face> doesn't support plus character in font family names.
+            <https://webkit.org/b/145400>
+            <rdar://problem/21097484>
+
+            Reviewed by Darin Adler.
+
+            Turn CSSParser::parseFontFaceValue() into a fast-path parser for
+            <font face> attributes.
+            Going through the full CSS parser was hurting us here, as it would
+            misunderstand unquoted family names and choke on e.g '+'.
+
+            Test: fast/dom/HTMLFontElement/face-attribute.html
+
+            * css/CSSParser.cpp:
+            (WebCore::CSSParser::parseFontFaceValue):
+
 2015-05-21  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r184728.
