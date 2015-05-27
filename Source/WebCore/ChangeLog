@@ -1,5 +1,9 @@
 2015-05-27  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Roll out r184894. rdar://problem/21097484
+
+2015-05-27  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r184894. rdar://problem/21097484
 
     2015-05-26  Andreas Kling  <akling@apple.com>
