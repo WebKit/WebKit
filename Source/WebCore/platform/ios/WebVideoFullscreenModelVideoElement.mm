@@ -179,125 +179,74 @@ void WebVideoFullscreenModelVideoElement::setVideoFullscreenLayer(PlatformLayer*
     [m_videoFullscreenLayer setAnchorPoint:CGPointMake(0.5, 0.5)];
     [m_videoFullscreenLayer setBounds:m_videoFrame];
     
-    __block RefPtr<WebVideoFullscreenModelVideoElement> protect(this);
-    WebThreadRun(^{
-        if (m_videoElement)
-            m_videoElement->setVideoFullscreenLayer(m_videoFullscreenLayer.get());
-        protect.clear();
-    });
+    if (m_videoElement)
+        m_videoElement->setVideoFullscreenLayer(m_videoFullscreenLayer.get());
 }
 
 void WebVideoFullscreenModelVideoElement::play()
 {
-    __block RefPtr<WebVideoFullscreenModelVideoElement> protect(this);
-    WebThreadRun(^{
-        if (m_videoElement)
-            m_videoElement->play();
-        protect.clear();
-    });
+    if (m_videoElement)
+        m_videoElement->play();
 }
 
 void WebVideoFullscreenModelVideoElement::pause()
 {
-    __block RefPtr<WebVideoFullscreenModelVideoElement> protect(this);
-    WebThreadRun(^{
-        if (m_videoElement)
-            m_videoElement->pause();
-        protect.clear();
-    });
+    if (m_videoElement)
+        m_videoElement->pause();
 }
 
 void WebVideoFullscreenModelVideoElement::togglePlayState()
 {
-    __block RefPtr<WebVideoFullscreenModelVideoElement> protect(this);
-    WebThreadRun(^{
-        if (m_videoElement)
-            m_videoElement->togglePlayState();
-        protect.clear();
-    });
+    if (m_videoElement)
+        m_videoElement->togglePlayState();
 }
 
 void WebVideoFullscreenModelVideoElement::beginScrubbing()
 {
-    __block RefPtr<WebVideoFullscreenModelVideoElement> protect(this);
-    WebThreadRun(^{
-        if (m_videoElement)
-            m_videoElement->beginScrubbing();
-        protect.clear();
-    });
+    if (m_videoElement)
+        m_videoElement->beginScrubbing();
 }
 
 void WebVideoFullscreenModelVideoElement::endScrubbing()
 {
-    __block RefPtr<WebVideoFullscreenModelVideoElement> protect(this);
-    WebThreadRun(^{
-        if (m_videoElement)
-            m_videoElement->endScrubbing();
-        protect.clear();
-    });
+    if (m_videoElement)
+        m_videoElement->endScrubbing();
 }
 
 void WebVideoFullscreenModelVideoElement::seekToTime(double time)
 {
-    __block RefPtr<WebVideoFullscreenModelVideoElement> protect(this);
-    WebThreadRun(^{
-        if (m_videoElement)
-            m_videoElement->setCurrentTime(time);
-        protect.clear();
-    });
+    if (m_videoElement)
+        m_videoElement->setCurrentTime(time);
 }
 
 void WebVideoFullscreenModelVideoElement::fastSeek(double time)
 {
-    __block RefPtr<WebVideoFullscreenModelVideoElement> protect(this);
-    WebThreadRun(^{
-        if (m_videoElement)
-            m_videoElement->fastSeek(time);
-        protect.clear();
-    });
+    if (m_videoElement)
+        m_videoElement->fastSeek(time);
 }
 
 void WebVideoFullscreenModelVideoElement::beginScanningForward()
 {
-    __block RefPtr<WebVideoFullscreenModelVideoElement> protect(this);
-    WebThreadRun(^{
-        if (m_videoElement)
-            m_videoElement->beginScanning(MediaControllerInterface::Forward);
-        protect.clear();
-    });
+    if (m_videoElement)
+        m_videoElement->beginScanning(MediaControllerInterface::Forward);
 }
 
 void WebVideoFullscreenModelVideoElement::beginScanningBackward()
 {
-    __block RefPtr<WebVideoFullscreenModelVideoElement> protect(this);
-    WebThreadRun(^{
-        if (m_videoElement)
-            m_videoElement->beginScanning(MediaControllerInterface::Backward);
-        protect.clear();
-    });
+    if (m_videoElement)
+        m_videoElement->beginScanning(MediaControllerInterface::Backward);
 }
 
 void WebVideoFullscreenModelVideoElement::endScanning()
 {
-    __block RefPtr<WebVideoFullscreenModelVideoElement> protect(this);
-    WebThreadRun(^{
-        if (m_videoElement)
-            m_videoElement->endScanning();
-        protect.clear();
-    });
+    if (m_videoElement)
+        m_videoElement->endScanning();
 }
 
 void WebVideoFullscreenModelVideoElement::requestExitFullscreen()
 {
-    if (!m_videoElement)
-        return;
-
-    __block RefPtr<WebVideoFullscreenModelVideoElement> protect(this);
-    WebThreadRun(^{
-        if (m_videoElement && m_videoElement->isFullscreen())
-            m_videoElement->exitFullscreen();
-        protect.clear();
-    });
+    if (m_videoElement && m_videoElement->isFullscreen())
+        m_videoElement->exitFullscreen();
 }
 
 void WebVideoFullscreenModelVideoElement::setVideoLayerFrame(FloatRect rect)
@@ -454,12 +403,8 @@ const AtomicString& WebVideoFullscreenModelVideoElement::eventNameAll()
 
 void WebVideoFullscreenModelVideoElement::fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode)
 {
-    __block RefPtr<WebVideoFullscreenModelVideoElement> protect(this);
-    WebThreadRun(^{
-        if (m_videoElement)
-            m_videoElement->fullscreenModeChanged(videoFullscreenMode);
-        protect.clear();
-    });
+    if (m_videoElement)
+        m_videoElement->fullscreenModeChanged(videoFullscreenMode);
 }
 
 #endif
