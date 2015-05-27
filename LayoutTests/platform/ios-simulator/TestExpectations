@@ -2608,11 +2608,6 @@ fast/borders/border-image-fill-no-border.html [ ImageOnlyFailure ]
 fast/forms/button-line-height.html [ ImageOnlyFailure ]
 fast/images/animated-png.html [ ImageOnlyFailure ]
 fast/regions/scrolling/scrollable-region-content-size-horiz-bt.html [ ImageOnlyFailure ]
-fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
-fast/ruby/ruby-expansion-cjk-3.html [ ImageOnlyFailure ]
-fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
-fast/ruby/ruby-expansion-cjk-5.html [ ImageOnlyFailure ]
-fast/ruby/ruby-expansion-cjk.html [ ImageOnlyFailure ]
 fast/text/baseline-inline-block.html [ ImageOnlyFailure ]
 
 # /fast text-only failures
