@@ -576,8 +576,8 @@ void EwkView::displayTimerFired()
 
     WKViewPaintToCurrentGLContext(wkView());
 
-    // sd->image is tied to a native surface, which is in the parent's coordinates.
-    evas_object_image_data_update_add(sd->image, sd->view.x, sd->view.y, sd->view.w, sd->view.h);
+    // sd->image should be updated from (0,0) when using the evasGL for graphics backend.
+    evas_object_image_data_update_add(sd->image, 0, 0, sd->view.w, sd->view.h);
 }
 
 void EwkView::scheduleUpdateDisplay()

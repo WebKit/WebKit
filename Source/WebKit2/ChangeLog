@@ -1,3 +1,16 @@
+2015-05-26  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL] webview should be updated from (0,0) when using the evasGL.
+        https://bugs.webkit.org/show_bug.cgi?id=137948
+
+        Reviewed by Gyuyoung Kim.
+
+        Changed the point of the start position to update the evasObject
+        correctly when using the evasGL for graphics backend.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::displayTimerFired):
+
 2015-05-26  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/21104551> Update build settings
