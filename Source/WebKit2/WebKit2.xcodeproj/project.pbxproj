@@ -9059,7 +9059,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "if [[ ${PLATFORM_NAME} != \"iphoneos\" ]]; then\n    exit 0;\nfi\n\nif [[ ! -d \"${INSTALL_DIR}/../PrivateFrameworks/WebKit.framework\" ]]; then\n    mkdir -p \"${INSTALL_DIR}/../PrivateFrameworks/WebKit.framework\"\nfi\n\n# If the symlinks already exist, remove them and create the new ones in their place.\nln -s -h -f ../../Frameworks/WebKit.framework/WebKit ${INSTALL_DIR}/../PrivateFrameworks/WebKit.framework/WebKit\nln -s -h -f ../../Frameworks/WebKit.framework/Headers ${INSTALL_DIR}/../PrivateFrameworks/WebKit.framework/Headers\nln -s -h -f ../../Frameworks/WebKit.framework/PrivateHeaders ${INSTALL_DIR}/../PrivateFrameworks/WebKit.framework/PrivateHeaders";
+			shellScript = "if [[ ${PLATFORM_NAME} != \"iphoneos\" ]]; then\n    exit 0;\nfi\n\nif [[ ! -d \"${INSTALL_DIR}/../PrivateFrameworks/WebKit.framework\" ]]; then\n    mkdir -p \"${INSTALL_DIR}/../PrivateFrameworks/WebKit.framework\"\nfi\n\ncd ${INSTALL_DIR}/../PrivateFrameworks/WebKit.framework\nln -s -h -f ../../Frameworks/WebKit.framework/* .";
 		};
 		1A1D2115191D96380001619F /* Postprocess Framework Headers */ = {
 			isa = PBXShellScriptBuildPhase;
