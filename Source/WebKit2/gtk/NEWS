@@ -1,4 +1,25 @@
 =================
+WebKitGTK+  2.9.2
+=================
+
+What's new in WebKitGTK+ 2.9.2?
+
+  - Add IndexedDB support using a dedicated database process.
+  - Add construct property to WebKitWebContext to set the IndexedDB database directory.
+  - Add allow-file-access-from-file-urls to WebKitSettings.
+  - Improve network process disk cache performance by mapping cached resources in the
+    web process instead of sending the resources data via IPC.
+  - Prevent WorkQueue objects from being leaked and ensure its worker thread always exits.
+  - webkit_dom_html_element_get_children() has been deprecated in favor of
+    webkit_dom_element_get_children() to match the DOM spec.
+  - ARIA menu items no longer have anonymous block children.
+  - Map pre element to ATK_ROLE_SECTION instead of ATK_ROLE_PANEL.
+  - Always include rows in the tree of accessible tables.
+  - Fix the build with Netscape plugins disabled.
+  - Fix XPixmaps leaked by GLContext when using EGL on X11.
+  - Translation updates: Catalan.
+
+=================
 WebKitGTK+  2.9.1
 =================
 
