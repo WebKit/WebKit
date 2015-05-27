@@ -48,7 +48,6 @@ IOChannel::IOChannel(const String& filePath, Type type)
     case Type::Create: {
         g_file_delete(file.get(), nullptr, nullptr);
         m_outputStream = adoptGRef(G_OUTPUT_STREAM(g_file_create(file.get(), static_cast<GFileCreateFlags>(G_FILE_CREATE_PRIVATE), nullptr, nullptr)));
-        ASSERT(m_outputStream);
 #if !HAVE(STAT_BIRTHTIME)
         GUniquePtr<char> birthtimeString(g_strdup_printf("%" G_GUINT64_FORMAT, std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())));
         g_file_set_attribute_string(file.get(), "xattr::birthtime", birthtimeString.get(), G_FILE_QUERY_INFO_NONE, nullptr, nullptr);
@@ -57,12 +56,10 @@ IOChannel::IOChannel(const String& filePath, Type type)
     }
     case Type::Write: {
         m_ioStream = adoptGRef(g_file_open_readwrite(file.get(), nullptr, nullptr));
-        ASSERT(m_ioStream);
         break;
     }
     case Type::Read:
         m_inputStream = adoptGRef(G_INPUT_STREAM(g_file_read(file.get(), nullptr, nullptr)));
-        ASSERT(m_inputStream);
         break;
     }
 }
@@ -142,7 +139,11 @@ static void inputStreamReadReadyCallback(GInputStream* stream, GAsyncResult* res
 
 void IOChannel::read(size_t offset, size_t size, std::function<void (Data&, int error)> completionHandler)
 {
-    ASSERT(m_inputStream);
+    if (!m_inputStream) {
+        Data data;
+        completionHandler(data, -1);
+        return;
+    }
 
     size_t bufferSize = std::min(size, gDefaultReadBufferSize);
     uint8_t* bufferData = static_cast<uint8_t*>(fastMalloc(bufferSize));
@@ -165,7 +166,12 @@ void IOChannel::read(size_t offset, size_t size, WorkQueue* queue, std::function
 // FIXME: It would be better to do without this.
 void IOChannel::readSync(size_t offset, size_t size, std::function<void (Data&, int error)> completionHandler)
 {
-    ASSERT(m_inputStream);
+    if (!m_inputStream) {
+        Data data;
+        completionHandler(data, -1);
+        return;
+    }
+
     size_t bufferSize = std::min(size, gDefaultReadBufferSize);
     uint8_t* bufferData = static_cast<uint8_t*>(fastMalloc(bufferSize));
     GRefPtr<SoupBuffer> readBuffer = adoptGRef(soup_buffer_new_with_owner(bufferData, bufferSize, bufferData, fastFree));
@@ -237,9 +243,17 @@ static void outputStreamWriteReadyCallback(GOutputStream* stream, GAsyncResult* 
 
 void IOChannel::write(size_t offset, const Data& data, std::function<void (int error)> completionHandler)
 {
-    ASSERT(m_outputStream || m_ioStream);
+    if (!m_outputStream && !m_ioStream) {
+        completionHandler(-1);
+        return;
+    }
 
     GOutputStream* stream = m_outputStream ? m_outputStream.get() : g_io_stream_get_output_stream(G_IO_STREAM(m_ioStream.get()));
+    if (!stream) {
+        completionHandler(-1);
+        return;
+    }
+
     WriteAsyncData* asyncData = new WriteAsyncData { this, data.soupBuffer(), completionHandler };
     // FIXME: implement offset.
     g_output_stream_write_async(stream, asyncData->buffer->data, data.size(), G_PRIORITY_DEFAULT, nullptr,

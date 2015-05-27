@@ -1,3 +1,24 @@
+2015-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Network Cache: Handle the case when we fail to create the IO stream
+        https://bugs.webkit.org/show_bug.cgi?id=145406
+
+        Reviewed by Sergio Villar Senin.
+
+        We were asserting in that case, but it can happen that we
+        fail to create the stream. It happened to me after r184690, that
+        changed the NetworkCache::Key hash. Since this was not expected to
+        happen, the async operation never finished and the completion
+        handler never called, leaving resources loading forever. We
+        should make sure we call the completion handler with an error
+        code, so that the load finishes and the entry is silently removed
+        from the cache.
+
+        * NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp:
+        (WebKit::NetworkCache::IOChannel::read):
+        (WebKit::NetworkCache::IOChannel::readSync):
+        (WebKit::NetworkCache::IOChannel::write):
+
 2015-05-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Network Cache: Add cache capacity to the totals of JSON file
