@@ -37,7 +37,6 @@
 #include "FontBaseline.h"
 #include "FontDescription.h"
 #include "GraphicsTypes.h"
-#include "LayoutBoxExtent.h"
 #include "Length.h"
 #include "LengthBox.h"
 #include "LengthFunctions.h"
@@ -531,12 +530,12 @@ public:
     bool operator==(const RenderStyle& other) const;
     bool operator!=(const RenderStyle& other) const { return !(*this == other); }
     bool isFloating() const { return noninherited_flags.isFloating(); }
-    bool hasMargin() const { return surround->margin.nonZero(); }
+    bool hasMargin() const { return !surround->margin.isZero(); }
     bool hasBorder() const { return surround->border.hasBorder(); }
     bool hasBorderFill() const { return surround->border.hasFill(); }
     bool hasBorderDecoration() const { return hasBorder() || hasBorderFill(); }
-    bool hasPadding() const { return surround->padding.nonZero(); }
-    bool hasOffset() const { return surround->offset.nonZero(); }
+    bool hasPadding() const { return !surround->padding.isZero(); }
+    bool hasOffset() const { return !surround->offset.isZero(); }
     bool hasMarginBeforeQuirk() const { return marginBefore().hasQuirk(); }
     bool hasMarginAfterQuirk() const { return marginAfter().hasQuirk(); }
 
@@ -558,7 +557,7 @@ public:
     LayoutBoxExtent imageOutsets(const NinePieceImage&) const;
     bool hasBorderImageOutsets() const
     {
-        return borderImage().hasImage() && borderImage().outset().nonZero();
+        return borderImage().hasImage() && !borderImage().outset().isZero();
     }
     LayoutBoxExtent borderImageOutsets() const
     {
@@ -595,8 +594,8 @@ public:
     const Length& bottom() const { return surround->offset.bottom(); }
 
     // Accessors for positioned object edges that take into account writing mode.
-    const Length& logicalLeft() const { return surround->offset.logicalLeft(writingMode()); }
-    const Length& logicalRight() const { return surround->offset.logicalRight(writingMode()); }
+    const Length& logicalLeft() const { return surround->offset.start(writingMode()); }
+    const Length& logicalRight() const { return surround->offset.end(writingMode()); }
     const Length& logicalTop() const { return surround->offset.before(writingMode()); }
     const Length& logicalBottom() const { return surround->offset.after(writingMode()); }
 
@@ -662,7 +661,8 @@ public:
     float borderBottomWidth() const { return surround->border.borderBottomWidth(); }
     EBorderStyle borderBottomStyle() const { return surround->border.bottom().style(); }
     bool borderBottomIsTransparent() const { return surround->border.bottom().isTransparent(); }
-    
+    FloatBoxExtent borderWidth() const { return surround->border.borderWidth(); }
+
     float borderBeforeWidth() const;
     float borderAfterWidth() const;
     float borderStartWidth() const;
@@ -1200,10 +1200,10 @@ public:
     void setPosition(EPosition v) { noninherited_flags.setPosition(v); }
     void setFloating(EFloat v) { noninherited_flags.setFloating(v); }
 
-    void setLeft(Length v) { SET_VAR(surround, offset.m_left, WTF::move(v)); }
-    void setRight(Length v) { SET_VAR(surround, offset.m_right, WTF::move(v)); }
-    void setTop(Length v) { SET_VAR(surround, offset.m_top, WTF::move(v)); }
-    void setBottom(Length v) { SET_VAR(surround, offset.m_bottom, WTF::move(v)); }
+    void setLeft(Length v) { SET_VAR(surround, offset.left(), WTF::move(v)); }
+    void setRight(Length v) { SET_VAR(surround, offset.right(), WTF::move(v)); }
+    void setTop(Length v) { SET_VAR(surround, offset.top(), WTF::move(v)); }
+    void setBottom(Length v) { SET_VAR(surround, offset.bottom(), WTF::move(v)); }
 
     void setWidth(Length v) { SET_VAR(m_box, m_width, WTF::move(v)); }
     void setHeight(Length v) { SET_VAR(m_box, m_height, WTF::move(v)); }
@@ -1239,10 +1239,10 @@ public:
     {
         StyleDashboardRegion region;
         region.label = label;
-        region.offset.m_top = WTF::move(t);
-        region.offset.m_right = WTF::move(r);
-        region.offset.m_bottom = WTF::move(b);
-        region.offset.m_left = WTF::move(l);
+        region.offset.top() = WTF::move(t);
+        region.offset.right() = WTF::move(r);
+        region.offset.bottom() = WTF::move(b);
+        region.offset.left() = WTF::move(l);
         region.type = type;
         if (!append)
             rareNonInheritedData.access()->m_dashboardRegions.clear();
@@ -1323,10 +1323,10 @@ public:
     void setVerticalAlignLength(Length length) { setVerticalAlign(LENGTH); SET_VAR(m_box, m_verticalAlign, WTF::move(length)); }
 
     void setHasClip(bool b = true) { SET_VAR(visual, hasClip, b); }
-    void setClipLeft(Length length) { SET_VAR(visual, clip.m_left, WTF::move(length)); }
-    void setClipRight(Length length) { SET_VAR(visual, clip.m_right, WTF::move(length)); }
-    void setClipTop(Length length) { SET_VAR(visual, clip.m_top, WTF::move(length)); }
-    void setClipBottom(Length length) { SET_VAR(visual, clip.m_bottom, WTF::move(length)); }
+    void setClipLeft(Length length) { SET_VAR(visual, clip.left(), WTF::move(length)); }
+    void setClipRight(Length length) { SET_VAR(visual, clip.right(), WTF::move(length)); }
+    void setClipTop(Length length) { SET_VAR(visual, clip.top(), WTF::move(length)); }
+    void setClipBottom(Length length) { SET_VAR(visual, clip.bottom(), WTF::move(length)); }
     void setClip(Length top, Length right, Length bottom, Length left);
     void setClip(LengthBox box) { SET_VAR(visual, clip, WTF::move(box)); }
 
@@ -1434,19 +1434,19 @@ public:
     void setListStylePosition(EListStylePosition v) { inherited_flags._list_style_position = v; }
 
     void resetMargin() { SET_VAR(surround, margin, LengthBox(Fixed)); }
-    void setMarginTop(Length length) { SET_VAR(surround, margin.m_top, WTF::move(length)); }
-    void setMarginBottom(Length length) { SET_VAR(surround, margin.m_bottom, WTF::move(length)); }
-    void setMarginLeft(Length length) { SET_VAR(surround, margin.m_left, WTF::move(length)); }
-    void setMarginRight(Length length) { SET_VAR(surround, margin.m_right, WTF::move(length)); }
+    void setMarginTop(Length length) { SET_VAR(surround, margin.top(), WTF::move(length)); }
+    void setMarginBottom(Length length) { SET_VAR(surround, margin.bottom(), WTF::move(length)); }
+    void setMarginLeft(Length length) { SET_VAR(surround, margin.left(), WTF::move(length)); }
+    void setMarginRight(Length length) { SET_VAR(surround, margin.right(), WTF::move(length)); }
     void setMarginStart(Length);
     void setMarginEnd(Length);
 
     void resetPadding() { SET_VAR(surround, padding, LengthBox(Auto)); }
     void setPaddingBox(LengthBox box) { SET_VAR(surround, padding, WTF::move(box)); }
-    void setPaddingTop(Length length) { SET_VAR(surround, padding.m_top, WTF::move(length)); }
-    void setPaddingBottom(Length length) { SET_VAR(surround, padding.m_bottom, WTF::move(length)); }
-    void setPaddingLeft(Length length) { SET_VAR(surround, padding.m_left, WTF::move(length)); }
-    void setPaddingRight(Length length) { SET_VAR(surround, padding.m_right, WTF::move(length)); }
+    void setPaddingTop(Length length) { SET_VAR(surround, padding.top(), WTF::move(length)); }
+    void setPaddingBottom(Length length) { SET_VAR(surround, padding.bottom(), WTF::move(length)); }
+    void setPaddingLeft(Length length) { SET_VAR(surround, padding.left(), WTF::move(length)); }
+    void setPaddingRight(Length length) { SET_VAR(surround, padding.right(), WTF::move(length)); }
 
     void setCursor(ECursor c) { inherited_flags._cursor_style = c; }
     void addCursor(PassRefPtr<StyleImage>, const IntPoint& hotSpot = IntPoint());

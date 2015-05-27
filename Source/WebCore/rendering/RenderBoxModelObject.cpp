@@ -921,11 +921,13 @@ static inline LayoutSize resolveAgainstIntrinsicRatio(const LayoutSize& size, co
     return LayoutSize(size.width(), solutionHeight);
 }
 
-LayoutSize RenderBoxModelObject::calculateImageIntrinsicDimensions(StyleImage* image, const LayoutSize& positioningAreaSize, ScaleByEffectiveZoomOrNot shouldScaleOrNot) const
+bool RenderBoxModelObject::calculateImageIntrinsicDimensions(StyleImage* image, const LayoutSize& positioningAreaSize, ScaleByEffectiveZoomOrNot shouldScaleOrNot, LayoutSize& imageSize) const
 {
     // A generated image without a fixed size, will always return the container size as intrinsic size.
-    if (image->isGeneratedImage() && image->usesImageContainerSize())
-        return LayoutSize(positioningAreaSize.width(), positioningAreaSize.height());
+    if (image->isGeneratedImage() && image->usesImageContainerSize()) {
+        imageSize = LayoutSize(positioningAreaSize.width(), positioningAreaSize.height());
+        return true;
+    }
 
     Length intrinsicWidth;
     Length intrinsicHeight;
@@ -935,31 +937,36 @@ LayoutSize RenderBoxModelObject::calculateImageIntrinsicDimensions(StyleImage* i
     ASSERT(!intrinsicWidth.isPercentOrCalculated());
     ASSERT(!intrinsicHeight.isPercentOrCalculated());
 
-    LayoutSize resolvedSize(intrinsicWidth.value(), intrinsicHeight.value());
-    LayoutSize minimumSize(resolvedSize.width() > 0 ? 1 : 0, resolvedSize.height() > 0 ? 1 : 0);
+    imageSize = LayoutSize(intrinsicWidth.value(), intrinsicHeight.value());
+    LayoutSize minimumSize(imageSize.width() > 0 ? 1 : 0, imageSize.height() > 0 ? 1 : 0);
     if (shouldScaleOrNot == ScaleByEffectiveZoom)
-        resolvedSize.scale(style().effectiveZoom());
-    resolvedSize.clampToMinimumSize(minimumSize);
+        imageSize.scale(style().effectiveZoom());
+    imageSize.clampToMinimumSize(minimumSize);
 
-    if (!resolvedSize.isEmpty())
-        return resolvedSize;
+    if (!imageSize.isEmpty())
+        return true;
 
     // If the image has one of either an intrinsic width or an intrinsic height:
     // * and an intrinsic aspect ratio, then the missing dimension is calculated from the given dimension and the ratio.
     // * and no intrinsic aspect ratio, then the missing dimension is assumed to be the size of the rectangle that
     //   establishes the coordinate system for the 'background-position' property.
-    if (resolvedSize.width() > 0 || resolvedSize.height() > 0)
-        return resolveAgainstIntrinsicWidthOrHeightAndRatio(positioningAreaSize, intrinsicRatio, resolvedSize.width(), resolvedSize.height());
+    if (imageSize.width() > 0 || imageSize.height() > 0) {
+        imageSize = resolveAgainstIntrinsicWidthOrHeightAndRatio(positioningAreaSize, intrinsicRatio, imageSize.width(), imageSize.height());
+        return true;
+    }
 
     // If the image has no intrinsic dimensions and has an intrinsic ratio the dimensions must be assumed to be the
     // largest dimensions at that ratio such that neither dimension exceeds the dimensions of the rectangle that
     // establishes the coordinate system for the 'background-position' property.
-    if (!intrinsicRatio.isEmpty())
-        return resolveAgainstIntrinsicRatio(positioningAreaSize, intrinsicRatio);
+    if (!intrinsicRatio.isEmpty()) {
+        imageSize = resolveAgainstIntrinsicRatio(positioningAreaSize, intrinsicRatio);
+        return false;
+    }
 
     // If the image has no intrinsic ratio either, then the dimensions must be assumed to be the rectangle that
     // establishes the coordinate system for the 'background-position' property.
-    return positioningAreaSize;
+    imageSize = positioningAreaSize;
+    return false;
 }
 
 LayoutSize RenderBoxModelObject::calculateFillTileSize(const FillLayer& fillLayer, const LayoutSize& positioningAreaSize) const
@@ -969,7 +976,7 @@ LayoutSize RenderBoxModelObject::calculateFillTileSize(const FillLayer& fillLaye
 
     LayoutSize imageIntrinsicSize;
     if (image) {
-        imageIntrinsicSize = calculateImageIntrinsicDimensions(image, positioningAreaSize, ScaleByEffectiveZoom);
+        calculateImageIntrinsicDimensions(image, positioningAreaSize, ScaleByEffectiveZoom, imageIntrinsicSize);
         imageIntrinsicSize.scale(1 / image->imageScaleFactor(), 1 / image->imageScaleFactor());
     } else
         imageIntrinsicSize = positioningAreaSize;
@@ -1238,15 +1245,6 @@ void RenderBoxModelObject::getGeometryForBackgroundImage(const RenderLayerModelO
     destRect = geometry.destRect();
 }
 
-static LayoutUnit computeBorderImageSide(Length borderSlice, LayoutUnit borderSide, LayoutUnit imageSide, LayoutUnit boxExtent)
-{
-    if (borderSlice.isRelative())
-        return borderSlice.value() * borderSide;
-    if (borderSlice.isAuto())
-        return imageSide;
-    return valueForLength(borderSlice, boxExtent);
-}
-
 bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext, const LayoutRect& rect, const RenderStyle& style,
                                                const NinePieceImage& ninePieceImage, CompositeOperator op)
 {
@@ -1263,152 +1261,18 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
     // FIXME: border-image is broken with full page zooming when tiling has to happen, since the tiling function
     // doesn't have any understanding of the zoom that is in effect on the tile.
     float deviceScaleFactor = document().deviceScaleFactor();
+
     LayoutRect rectWithOutsets = rect;
     rectWithOutsets.expand(style.imageOutsets(ninePieceImage));
-    LayoutRect borderImageRect = LayoutRect(snapRectToDevicePixels(rectWithOutsets, deviceScaleFactor));
+    LayoutRect destination = LayoutRect(snapRectToDevicePixels(rectWithOutsets, deviceScaleFactor));
 
-    LayoutSize imageSize = calculateImageIntrinsicDimensions(styleImage, borderImageRect.size(), DoNotScaleByEffectiveZoom);
+    LayoutSize source;
+    bool intrinsicSource = calculateImageIntrinsicDimensions(styleImage, destination.size(), DoNotScaleByEffectiveZoom, source);
 
     // If both values are ‘auto’ then the intrinsic width and/or height of the image should be used, if any.
-    styleImage->setContainerSizeForRenderer(this, imageSize, style.effectiveZoom());
+    styleImage->setContainerSizeForRenderer(this, source, style.effectiveZoom());
 
-    LayoutUnit imageWidth = imageSize.width();
-    LayoutUnit imageHeight = imageSize.height();
-
-    float imageScaleFactor = styleImage->imageScaleFactor();
-    LayoutUnit topSlice = std::min<LayoutUnit>(imageHeight, valueForLength(ninePieceImage.imageSlices().top(), imageHeight)) * imageScaleFactor;
-    LayoutUnit rightSlice = std::min<LayoutUnit>(imageWidth, valueForLength(ninePieceImage.imageSlices().right(), imageWidth)) * imageScaleFactor;
-    LayoutUnit bottomSlice = std::min<LayoutUnit>(imageHeight, valueForLength(ninePieceImage.imageSlices().bottom(), imageHeight)) * imageScaleFactor;
-    LayoutUnit leftSlice = std::min<LayoutUnit>(imageWidth, valueForLength(ninePieceImage.imageSlices().left(), imageWidth)) * imageScaleFactor;
-
-    ENinePieceImageRule hRule = ninePieceImage.horizontalRule();
-    ENinePieceImageRule vRule = ninePieceImage.verticalRule();
-
-    LayoutUnit topWidth = computeBorderImageSide(ninePieceImage.borderSlices().top(), style.borderTopWidth(), topSlice, borderImageRect.height());
-    LayoutUnit rightWidth = computeBorderImageSide(ninePieceImage.borderSlices().right(), style.borderRightWidth(), rightSlice, borderImageRect.width());
-    LayoutUnit bottomWidth = computeBorderImageSide(ninePieceImage.borderSlices().bottom(), style.borderBottomWidth(), bottomSlice, borderImageRect.height());
-    LayoutUnit leftWidth = computeBorderImageSide(ninePieceImage.borderSlices().left(), style.borderLeftWidth(), leftSlice, borderImageRect.width());
-
-    // Reduce the widths if they're too large.
-    // The spec says: Given Lwidth as the width of the border image area, Lheight as its height, and Wside as the border image width
-    // offset for the side, let f = min(Lwidth/(Wleft+Wright), Lheight/(Wtop+Wbottom)). If f < 1, then all W are reduced by
-    // multiplying them by f.
-    LayoutUnit borderSideWidth = std::max<LayoutUnit>(1 / deviceScaleFactor, leftWidth + rightWidth);
-    LayoutUnit borderSideHeight = std::max<LayoutUnit>(1 / deviceScaleFactor, topWidth + bottomWidth);
-    float borderSideScaleFactor = std::min((float)borderImageRect.width() / borderSideWidth, (float)borderImageRect.height() / borderSideHeight);
-    if (borderSideScaleFactor < 1) {
-        topWidth *= borderSideScaleFactor;
-        rightWidth *= borderSideScaleFactor;
-        bottomWidth *= borderSideScaleFactor;
-        leftWidth *= borderSideScaleFactor;
-    }
-
-    bool drawLeft = leftSlice > 0 && leftWidth > 0;
-    bool drawTop = topSlice > 0 && topWidth > 0;
-    bool drawRight = rightSlice > 0 && rightWidth > 0;
-    bool drawBottom = bottomSlice > 0 && bottomWidth > 0;
-    bool drawMiddle = ninePieceImage.fill() && (imageWidth - leftSlice - rightSlice) > 0 && (borderImageRect.width() - leftWidth - rightWidth) > 0
-                      && (imageHeight - topSlice - bottomSlice) > 0 && (borderImageRect.height() - topWidth - bottomWidth) > 0;
-
-    RefPtr<Image> image = styleImage->image(this, imageSize);
-    ColorSpace colorSpace = style.colorSpace();
-    
-    float destinationWidth = borderImageRect.width() - leftWidth - rightWidth;
-    float destinationHeight = borderImageRect.height() - topWidth - bottomWidth;
-    
-    float sourceWidth = imageWidth - leftSlice - rightSlice;
-    float sourceHeight = imageHeight - topSlice - bottomSlice;
-    
-    float leftSideScale = drawLeft ? (float)leftWidth / leftSlice : 1;
-    float rightSideScale = drawRight ? (float)rightWidth / rightSlice : 1;
-    float topSideScale = drawTop ? (float)topWidth / topSlice : 1;
-    float bottomSideScale = drawBottom ? (float)bottomWidth / bottomSlice : 1;
-
-    float x = borderImageRect.location().x();
-    float y = borderImageRect.location().y();
-    if (drawLeft) {
-        // Paint the top and bottom left corners.
-
-        // The top left corner rect is (tx, ty, leftWidth, topWidth)
-        // The rect to use from within the image is obtained from our slice, and is (0, 0, leftSlice, topSlice)
-        if (drawTop)
-            graphicsContext->drawImage(image.get(), colorSpace, snapRectToDevicePixels(x, y, leftWidth, topWidth, deviceScaleFactor),
-                snapRectToDevicePixels(0, 0, leftSlice, topSlice, deviceScaleFactor), op);
-
-        // The bottom left corner rect is (tx, ty + h - bottomWidth, leftWidth, bottomWidth)
-        // The rect to use from within the image is (0, imageHeight - bottomSlice, leftSlice, botomSlice)
-        if (drawBottom)
-            graphicsContext->drawImage(image.get(), colorSpace, snapRectToDevicePixels(x, borderImageRect.maxY() - bottomWidth, leftWidth, bottomWidth, deviceScaleFactor),
-                snapRectToDevicePixels(0, imageHeight - bottomSlice, leftSlice, bottomSlice, deviceScaleFactor), op);
-
-        // Paint the left edge.
-        // Have to scale and tile into the border rect.
-        if (sourceHeight > 0)
-            graphicsContext->drawTiledImage(image.get(), colorSpace, snapRectToDevicePixels(x, y + topWidth, leftWidth, destinationHeight, deviceScaleFactor),
-                snapRectToDevicePixels(0, topSlice, leftSlice, sourceHeight, deviceScaleFactor), FloatSize(leftSideScale, leftSideScale), Image::StretchTile, (Image::TileRule)vRule, op);
-    }
-
-    if (drawRight) {
-        // Paint the top and bottom right corners
-        // The top right corner rect is (tx + w - rightWidth, ty, rightWidth, topWidth)
-        // The rect to use from within the image is obtained from our slice, and is (imageWidth - rightSlice, 0, rightSlice, topSlice)
-        if (drawTop)
-            graphicsContext->drawImage(image.get(), colorSpace, snapRectToDevicePixels(borderImageRect.maxX() - rightWidth, y, rightWidth, topWidth, deviceScaleFactor),
-                snapRectToDevicePixels(imageWidth - rightSlice, 0, rightSlice, topSlice, deviceScaleFactor), op);
-
-        // The bottom right corner rect is (tx + w - rightWidth, ty + h - bottomWidth, rightWidth, bottomWidth)
-        // The rect to use from within the image is (imageWidth - rightSlice, imageHeight - bottomSlice, rightSlice, bottomSlice)
-        if (drawBottom)
-            graphicsContext->drawImage(image.get(), colorSpace, snapRectToDevicePixels(borderImageRect.maxX() - rightWidth, borderImageRect.maxY() - bottomWidth,
-                rightWidth, bottomWidth, deviceScaleFactor), snapRectToDevicePixels(imageWidth - rightSlice, imageHeight - bottomSlice, rightSlice, bottomSlice, deviceScaleFactor),
-                op);
-
-        // Paint the right edge.
-        if (sourceHeight > 0)
-            graphicsContext->drawTiledImage(image.get(), colorSpace, snapRectToDevicePixels(borderImageRect.maxX() - rightWidth, y + topWidth, rightWidth, destinationHeight, deviceScaleFactor),
-                snapRectToDevicePixels(imageWidth - rightSlice, topSlice, rightSlice, sourceHeight, deviceScaleFactor), FloatSize(rightSideScale, rightSideScale),
-                Image::StretchTile, (Image::TileRule)vRule, op);
-    }
-
-    // Paint the top edge.
-    if (drawTop && sourceWidth > 0)
-        graphicsContext->drawTiledImage(image.get(), colorSpace, snapRectToDevicePixels(x + leftWidth, y, destinationWidth, topWidth, deviceScaleFactor),
-            snapRectToDevicePixels(leftSlice, 0, sourceWidth, topSlice, deviceScaleFactor), FloatSize(topSideScale, topSideScale), (Image::TileRule)hRule, Image::StretchTile, op);
-
-    // Paint the bottom edge.
-    if (drawBottom && sourceWidth > 0)
-        graphicsContext->drawTiledImage(image.get(), colorSpace, snapRectToDevicePixels(x + leftWidth, borderImageRect.maxY() - bottomWidth, destinationWidth, bottomWidth, deviceScaleFactor),
-            snapRectToDevicePixels(leftSlice, imageHeight - bottomSlice, sourceWidth, bottomSlice, deviceScaleFactor), FloatSize(bottomSideScale, bottomSideScale),
-            (Image::TileRule)hRule, Image::StretchTile, op);
-
-    // Paint the middle.
-    if (drawMiddle) {
-        FloatSize middleScaleFactor(1, 1);
-        if (drawTop)
-            middleScaleFactor.setWidth(topSideScale);
-        else if (drawBottom)
-            middleScaleFactor.setWidth(bottomSideScale);
-        if (drawLeft)
-            middleScaleFactor.setHeight(leftSideScale);
-        else if (drawRight)
-            middleScaleFactor.setHeight(rightSideScale);
-            
-        // For "stretch" rules, just override the scale factor and replace. We only had to do this for the
-        // center tile, since sides don't even use the scale factor unless they have a rule other than "stretch".
-        // The middle however can have "stretch" specified in one axis but not the other, so we have to
-        // correct the scale here.
-        if (hRule == StretchImageRule)
-            middleScaleFactor.setWidth(destinationWidth / sourceWidth);
-            
-        if (vRule == StretchImageRule)
-            middleScaleFactor.setHeight(destinationHeight / sourceHeight);
-        
-        graphicsContext->drawTiledImage(image.get(), colorSpace,
-            snapRectToDevicePixels(x + leftWidth, y + topWidth, destinationWidth, destinationHeight, deviceScaleFactor),
-            snapRectToDevicePixels(leftSlice, topSlice, sourceWidth, sourceHeight, deviceScaleFactor),
-            middleScaleFactor, (Image::TileRule)hRule, (Image::TileRule)vRule, op);
-    }
-
+    ninePieceImage.paint(graphicsContext, this, style, destination, source, intrinsicSource, deviceScaleFactor, op);
     return true;
 }
 

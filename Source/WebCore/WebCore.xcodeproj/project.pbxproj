@@ -590,8 +590,6 @@
 		14115B7309F84CD600CA4FC1 /* JSNodeFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 14115B7109F84CD600CA4FC1 /* JSNodeFilter.h */; };
 		1411DCB1164C39A800D49BC1 /* WidthCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1411DCB0164C39A800D49BC1 /* WidthCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		141DC0481648348F00371E5A /* LayoutUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 141DC0471648348F00371E5A /* LayoutUnit.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		141DC04F164834B900371E5A /* LayoutBoxExtent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 141DC049164834B900371E5A /* LayoutBoxExtent.cpp */; };
-		141DC050164834B900371E5A /* LayoutBoxExtent.h in Headers */ = {isa = PBXBuildFile; fileRef = 141DC04A164834B900371E5A /* LayoutBoxExtent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		141DC051164834B900371E5A /* LayoutPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 141DC04B164834B900371E5A /* LayoutPoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		141DC052164834B900371E5A /* LayoutRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 141DC04C164834B900371E5A /* LayoutRect.cpp */; };
 		141DC053164834B900371E5A /* LayoutRect.h in Headers */ = {isa = PBXBuildFile; fileRef = 141DC04D164834B900371E5A /* LayoutRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -605,7 +603,6 @@
 		14476AA815DC4BB100305DB2 /* WritingMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 14476AA715DC4BB100305DB2 /* WritingMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1449E24C107D4A8400B5793F /* JSCallbackData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1449E24A107D4A8400B5793F /* JSCallbackData.h */; };
 		1449E287107D4DB400B5793F /* JSCallbackData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1449E286107D4DB400B5793F /* JSCallbackData.cpp */; };
-		146CC115156988E400109E37 /* LengthBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 146CC113156988BD00109E37 /* LengthBox.cpp */; };
 		1477E7760BF4134A00152872 /* PageCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1477E7740BF4134A00152872 /* PageCache.cpp */; };
 		1477E7770BF4134A00152872 /* PageCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1477E7750BF4134A00152872 /* PageCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1479FAED109AE37500DED655 /* RenderRuby.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1479FAE5109AE37500DED655 /* RenderRuby.cpp */; };
@@ -7665,8 +7662,6 @@
 		141B94E509EC4223000E9413 /* MouseEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = MouseEvent.idl; sourceTree = "<group>"; };
 		141B94EE09EC425A000E9413 /* UIEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = UIEvent.idl; sourceTree = "<group>"; };
 		141DC0471648348F00371E5A /* LayoutUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutUnit.h; sourceTree = "<group>"; };
-		141DC049164834B900371E5A /* LayoutBoxExtent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutBoxExtent.cpp; sourceTree = "<group>"; };
-		141DC04A164834B900371E5A /* LayoutBoxExtent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutBoxExtent.h; sourceTree = "<group>"; };
 		141DC04B164834B900371E5A /* LayoutPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutPoint.h; sourceTree = "<group>"; };
 		141DC04C164834B900371E5A /* LayoutRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutRect.cpp; sourceTree = "<group>"; };
 		141DC04D164834B900371E5A /* LayoutRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutRect.h; sourceTree = "<group>"; };
@@ -7681,7 +7676,6 @@
 		14476AA715DC4BB100305DB2 /* WritingMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WritingMode.h; sourceTree = "<group>"; };
 		1449E24A107D4A8400B5793F /* JSCallbackData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallbackData.h; sourceTree = "<group>"; };
 		1449E286107D4DB400B5793F /* JSCallbackData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCallbackData.cpp; sourceTree = "<group>"; };
-		146CC113156988BD00109E37 /* LengthBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LengthBox.cpp; sourceTree = "<group>"; };
 		1477E7740BF4134A00152872 /* PageCache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PageCache.cpp; sourceTree = "<group>"; };
 		1477E7750BF4134A00152872 /* PageCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PageCache.h; sourceTree = "<group>"; };
 		1479FAE5109AE37500DED655 /* RenderRuby.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderRuby.cpp; sourceTree = "<group>"; };
@@ -20880,8 +20874,6 @@
 				07AC46FF1952102100EE9723 /* ISOVTTCue.cpp */,
 				07AC47001952102100EE9723 /* ISOVTTCue.h */,
 				65CC6BED16014EC0000ED27D /* Latin1TextIterator.h */,
-				141DC049164834B900371E5A /* LayoutBoxExtent.cpp */,
-				141DC04A164834B900371E5A /* LayoutBoxExtent.h */,
 				141DC04B164834B900371E5A /* LayoutPoint.h */,
 				141DC04C164834B900371E5A /* LayoutRect.cpp */,
 				141DC04D164834B900371E5A /* LayoutRect.h */,
@@ -21767,7 +21759,6 @@
 				141DC0471648348F00371E5A /* LayoutUnit.h */,
 				BCE65BE80EACDF16007E4533 /* Length.cpp */,
 				BCE65BE90EACDF16007E4533 /* Length.h */,
-				146CC113156988BD00109E37 /* LengthBox.cpp */,
 				BCFF648F0EAD15C200C1D6F7 /* LengthBox.h */,
 				BCFF64900EAD15C200C1D6F7 /* LengthSize.h */,
 				A7AD2F850EC89D07008AB002 /* LinkHash.cpp */,
@@ -25708,7 +25699,6 @@
 				E4916FF7195DF6A0005AB349 /* LayerFlushThrottleState.h in Headers */,
 				580371641A66F1D300BAF519 /* LayerFragment.h in Headers */,
 				7AA3A6A0194B59B6001CBD24 /* LayerPool.h in Headers */,
-				141DC050164834B900371E5A /* LayoutBoxExtent.h in Headers */,
 				931D72F615FE695300C4C07E /* LayoutMilestones.h in Headers */,
 				141DC051164834B900371E5A /* LayoutPoint.h in Headers */,
 				141DC053164834B900371E5A /* LayoutRect.h in Headers */,
@@ -29304,7 +29294,6 @@
 				2917B5611473496C0052C9D0 /* LayerFlushScheduler.cpp in Sources */,
 				2917B566147349950052C9D0 /* LayerFlushSchedulerMac.cpp in Sources */,
 				7AA3A69F194B59B6001CBD24 /* LayerPool.cpp in Sources */,
-				141DC04F164834B900371E5A /* LayoutBoxExtent.cpp in Sources */,
 				141DC052164834B900371E5A /* LayoutRect.cpp in Sources */,
 				A120ACA413F998CA00FE4AC7 /* LayoutRepainter.cpp in Sources */,
 				2D9066060BE141D400956998 /* LayoutState.cpp in Sources */,
@@ -29316,7 +29305,6 @@
 				512DD8F40D91E6AF000F89EE /* LegacyWebArchive.cpp in Sources */,
 				51B2417B0D931F3F00E83F5C /* LegacyWebArchiveMac.mm in Sources */,
 				BCE65BEA0EACDF16007E4533 /* Length.cpp in Sources */,
-				146CC115156988E400109E37 /* LengthBox.cpp in Sources */,
 				E55F497A151B888000BB67DB /* LengthFunctions.cpp in Sources */,
 				FFB698CC1833EE0D00158A31 /* LineBreaker.cpp in Sources */,
 				89B5EAA111E8003D00F2367E /* LineEnding.cpp in Sources */,

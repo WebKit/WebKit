@@ -111,8 +111,8 @@ static void buildRendererHighlight(RenderObject* renderer, RenderRegion* region,
             if (!renderBox.isOutOfFlowPositioned() && region) {
                 RenderBox::LogicalExtentComputedValues computedValues;
                 renderBox.computeLogicalWidthInRegion(computedValues, region);
-                margins.mutableLogicalLeft(renderBox.style().writingMode()) = computedValues.m_margins.m_start;
-                margins.mutableLogicalRight(renderBox.style().writingMode()) = computedValues.m_margins.m_end;
+                margins.start(renderBox.style().writingMode()) = computedValues.m_margins.m_start;
+                margins.end(renderBox.style().writingMode()) = computedValues.m_margins.m_end;
             }
 
             paddingBox = renderBox.clientBoxRectInRegion(region);

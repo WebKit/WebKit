@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2005, 2006, 2007, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2005, 2006, 2007, 2008, 2013, 2015 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,15 +25,82 @@
 #define NinePieceImage_h
 
 #include "DataRef.h"
+#include "LayoutRect.h"
+#include "LayoutSize.h"
 #include "LayoutUnit.h"
 #include "LengthBox.h"
 #include "StyleImage.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
 enum ENinePieceImageRule {
     StretchImageRule, RoundImageRule, SpaceImageRule, RepeatImageRule
 };
+
+enum ImagePiece {
+    MinPiece = 0,
+    TopLeftPiece = MinPiece,
+    LeftPiece,
+    BottomLeftPiece,
+    TopRightPiece,
+    RightPiece,
+    BottomRightPiece,
+    TopPiece,
+    BottomPiece,
+    MiddlePiece,
+    MaxPiece
+};
+
+inline ImagePiece& operator++(ImagePiece& piece)
+{
+    piece = static_cast<ImagePiece>(static_cast<int>(piece) + 1);
+    return piece;
+}
+
+inline bool isCornerPiece(ImagePiece piece)
+{
+    return piece == TopLeftPiece || piece == TopRightPiece || piece == BottomLeftPiece || piece == BottomRightPiece;
+}
+
+inline bool isMiddlePiece(ImagePiece piece)
+{
+    return piece == MiddlePiece;
+}
+
+inline bool isHorizontalPiece(ImagePiece piece)
+{
+    return piece == TopPiece || piece == BottomPiece || piece == MiddlePiece;
+}
+
+inline bool isVerticalPiece(ImagePiece piece)
+{
+    return piece == LeftPiece || piece == RightPiece || piece == MiddlePiece;
+}
+
+inline PhysicalBoxSide imagePieceHorizontalSide(ImagePiece piece)
+{
+    if (piece == TopLeftPiece || piece == TopPiece || piece == TopRightPiece)
+        return TopSide;
+
+    if (piece == BottomLeftPiece || piece == BottomPiece || piece == BottomRightPiece)
+        return BottomSide;
+
+    return NilSide;
+}
+
+inline PhysicalBoxSide imagePieceVerticalSide(ImagePiece piece)
+{
+    if (piece == TopLeftPiece || piece == LeftPiece || piece == BottomLeftPiece)
+        return LeftSide;
+
+    if (piece == TopRightPiece || piece == RightPiece || piece == BottomRightPiece)
+        return RightSide;
+
+    return NilSide;
+}
+
+class RenderStyle;
 
 class NinePieceImageData : public RefCounted<NinePieceImageData> {
 public:
@@ -121,6 +188,25 @@ public:
             return outsetSide.value() * borderSide;
         return outsetSide.value();
     }
+
+    static LayoutUnit computeSlice(Length, LayoutUnit width, LayoutUnit slice, LayoutUnit extent);
+    static LayoutBoxExtent computeSlices(const LayoutSize&, const LengthBox& lengths, int scaleFactor);
+    static LayoutBoxExtent computeSlices(const LayoutSize&, const LengthBox& lengths, const FloatBoxExtent& widths, const LayoutBoxExtent& slices);
+
+    static bool isEmptyPieceRect(ImagePiece, const LayoutBoxExtent& slices);
+    static bool isEmptyPieceRect(ImagePiece, const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects);
+
+    static Vector<FloatRect> computeIntrinsicRects(const FloatRect& outer, const LayoutBoxExtent& slices, float deviceScaleFactor);
+    static Vector<FloatRect> computeNonIntrinsicRects(const Vector<FloatRect>& intrinsicRects, const LayoutBoxExtent& slices);
+
+    static void scaleSlicesIfNeeded(const LayoutSize&, LayoutBoxExtent& slices, int scaleFactor);
+
+    static FloatSize computeIntrinsicSideTileScale(ImagePiece, const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects);
+    static FloatSize computeIntrinsicMiddleTileScale(const Vector<FloatSize>& scales, const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects, ENinePieceImageRule hRule, ENinePieceImageRule vRule);
+    static Vector<FloatSize> computeIntrinsicTileScales(const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects, ENinePieceImageRule hRule, ENinePieceImageRule vRule);
+    static Vector<FloatSize> computeNonIntrinsicTileScales();
+
+    void paint(GraphicsContext*, RenderElement*, const RenderStyle&, const LayoutRect& destination, const LayoutSize& source, bool intrinsicSource, float deviceScaleFactor, CompositeOperator) const;
 
 private:
     DataRef<NinePieceImageData> m_data;

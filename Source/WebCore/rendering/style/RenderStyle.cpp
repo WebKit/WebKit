@@ -921,10 +921,10 @@ void RenderStyle::setMaskImage(const Vector<RefPtr<MaskImageOperation>>& ops)
 void RenderStyle::setClip(Length top, Length right, Length bottom, Length left)
 {
     StyleVisualData* data = visual.access();
-    data->clip.m_top = top;
-    data->clip.m_right = right;
-    data->clip.m_bottom = bottom;
-    data->clip.m_left = left;
+    data->clip.top() = top;
+    data->clip.right() = right;
+    data->clip.bottom() = bottom;
+    data->clip.left() = left;
 }
 
 void RenderStyle::addCursor(PassRefPtr<StyleImage> image, const IntPoint& hotSpot)
@@ -1309,10 +1309,10 @@ const Vector<StyleDashboardRegion>& RenderStyle::noneDashboardRegions()
     if (!noneListInitialized) {
         StyleDashboardRegion region;
         region.label = "";
-        region.offset.m_top  = Length();
-        region.offset.m_right = Length();
-        region.offset.m_bottom = Length();
-        region.offset.m_left = Length();
+        region.offset.top()  = Length();
+        region.offset.right() = Length();
+        region.offset.bottom() = Length();
+        region.offset.left() = Length();
         region.type = StyleDashboardRegion::None;
         noneList.append(region);
         noneListInitialized = true;

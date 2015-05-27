@@ -1113,9 +1113,6 @@
     <ClCompile Include="..\platform\Length.cpp">
       <Filter>platform</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\LengthBox.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\LinkHash.cpp">
       <Filter>platform</Filter>
     </ClCompile>
@@ -1369,9 +1366,6 @@
       <Filter>platform\graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\IntSize.cpp">
-      <Filter>platform\graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\LayoutBoxExtent.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\LayoutRect.cpp">
@@ -8494,9 +8488,6 @@
       <Filter>platform\graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\IntSizeHash.h">
-      <Filter>platform\graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\LayoutBoxExtent.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\LayoutPoint.h">

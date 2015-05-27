@@ -289,7 +289,7 @@ public:
     void moveChildrenTo(RenderBoxModelObject* toBoxModelObject, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, bool fullRemoveInsert = false);
 
     enum ScaleByEffectiveZoomOrNot { ScaleByEffectiveZoom, DoNotScaleByEffectiveZoom };
-    LayoutSize calculateImageIntrinsicDimensions(StyleImage*, const LayoutSize& scaledPositioningAreaSize, ScaleByEffectiveZoomOrNot) const;
+    bool calculateImageIntrinsicDimensions(StyleImage*, const LayoutSize& scaledPositioningAreaSize, ScaleByEffectiveZoomOrNot, LayoutSize& imageSize) const;
 
 private:
     LayoutUnit computedCSSPadding(const Length&) const;

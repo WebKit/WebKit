@@ -2044,7 +2044,6 @@ set(WebCore_SOURCES
     platform/KillRingNone.cpp
     platform/Language.cpp
     platform/Length.cpp
-    platform/LengthBox.cpp
     platform/LinkHash.cpp
     platform/Logging.cpp
     platform/MIMETypeRegistry.cpp
@@ -2151,7 +2150,6 @@ set(WebCore_SOURCES
     platform/graphics/IntRect.cpp
     platform/graphics/IntSize.cpp
     platform/graphics/ISOVTTCue.cpp
-    platform/graphics/LayoutBoxExtent.cpp
     platform/graphics/LayoutRect.cpp
     platform/graphics/MaskImageOperation.cpp
     platform/graphics/MediaPlayer.cpp

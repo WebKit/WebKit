@@ -55,6 +55,21 @@ inline bool isFlippedBlocksWritingMode(WritingMode writingMode)
     return writingMode == RightToLeftWritingMode || writingMode == BottomToTopWritingMode;
 }
 
+enum LogicalBoxSide {
+    BeforeSide,
+    EndSide,
+    AfterSide,
+    StartSide
+};
+
+enum PhysicalBoxSide {
+    NilSide = -1,
+    TopSide,
+    RightSide,
+    BottomSide,
+    LeftSide
+};
+
 } // namespace WebCore
 
 #endif // WritingMode_h

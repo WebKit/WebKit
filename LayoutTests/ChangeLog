@@ -1,3 +1,21 @@
+2015-05-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        An SVG with no intrinsic size does not draw correct slices when used as a border-image for an HTML element.
+        https://bugs.webkit.org/show_bug.cgi?id=139405
+
+        Reviewed by Darin Adler.
+
+        * fast/borders/border-image-fill-no-intrinsic-size-expected.html: Added.
+        * fast/borders/border-image-fill-no-intrinsic-size.html: Added.
+        * fast/borders/resources/svg-border-100x100-intrinsic.svg: Added.
+        * fast/borders/resources/svg-border-140x140-intrinsic.svg: Added.
+        * fast/borders/resources/svg-border-no-intrinsic.svg: Added.
+        Make sure the slices of the border-image are drawn correctly. When using an
+        image with no intrinsic size, all the slices has to be gotten from (0, 0)
+        of the source image.
+        
+        * TestExpectations: Removed previously-failing test.
+
 2015-05-26  Andreas Kling  <akling@apple.com>
 
         <font face> doesn't support plus character in font family names.

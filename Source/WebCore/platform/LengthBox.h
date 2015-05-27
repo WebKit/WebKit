@@ -1,6 +1,6 @@
 /*
     Copyright (C) 1999 Lars Knoll (knoll@kde.org)
-    Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+    Copyright (C) 2006, 2008, 2015 Apple Inc. All rights reserved.
     Copyright (c) 2012, Google Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
@@ -25,79 +25,150 @@
 #include "Length.h"
 #include "TextFlags.h"
 #include "WritingMode.h"
+#include <array>
 
 namespace WebCore {
 
-struct LengthBox {
+template<typename T> class BoxExtent {
+public:
+    BoxExtent()
+        : m_sides({{ T(0), T(0), T(0), T(0) }})
+    {
+    }
+
+    BoxExtent(const T& top, const T& right, const T& bottom, const T& left)
+        : m_sides({{ top, right, bottom, left }})
+    {
+    }
+
+    T& at(PhysicalBoxSide side) { return m_sides[side]; }
+    T& top() { return at(TopSide); }
+    T& right() { return at(RightSide); }
+    T& bottom() { return at(BottomSide); }
+    T& left() { return at(LeftSide); }
+
+    const T& at(PhysicalBoxSide side) const { return m_sides[side]; }
+    const T& top() const { return at(TopSide); }
+    const T& right() const { return at(RightSide); }
+    const T& bottom() const { return at(BottomSide); }
+    const T& left() const { return at(LeftSide); }
+
+    void setAt(PhysicalBoxSide side, const T& v) { at(side) = v; }
+    void setTop(const T& top) { setAt(TopSide, top); }
+    void setRight(const T& right) { setAt(RightSide, right); }
+    void setBottom(const T& bottom) { setAt(BottomSide, bottom); }
+    void setLeft(const T& left) { setAt(LeftSide, left); }
+
+    T& before(WritingMode writingMode)
+    {
+        return isHorizontalWritingMode(writingMode) ?
+            (isFlippedBlocksWritingMode(writingMode) ? bottom() : top()) :
+            (isFlippedBlocksWritingMode(writingMode) ? right() : left());
+    }
+
+    T& after(WritingMode writingMode)
+    {
+        return isHorizontalWritingMode(writingMode) ?
+            (isFlippedBlocksWritingMode(writingMode) ? top() : bottom()) :
+            (isFlippedBlocksWritingMode(writingMode) ? left() : right());
+    }
+
+    T& start(WritingMode writingMode, TextDirection direction = LTR)
+    {
+        return isHorizontalWritingMode(writingMode) ?
+            (isLeftToRightDirection(direction) ? left() : right()) :
+            (isLeftToRightDirection(direction) ? top() : bottom());
+    }
+
+    T& end(WritingMode writingMode, TextDirection direction = LTR)
+    {
+        return isHorizontalWritingMode(writingMode) ?
+            (isLeftToRightDirection(direction) ? right() : left()) :
+            (isLeftToRightDirection(direction) ? bottom() : top());
+    }
+
+    const T& before(WritingMode writingMode) const
+    {
+        return isHorizontalWritingMode(writingMode) ?
+            (isFlippedBlocksWritingMode(writingMode) ? bottom() : top()) :
+            (isFlippedBlocksWritingMode(writingMode) ? right() : left());
+    }
+
+    const T& after(WritingMode writingMode) const
+    {
+        return isHorizontalWritingMode(writingMode) ?
+            (isFlippedBlocksWritingMode(writingMode) ? top() : bottom()) :
+            (isFlippedBlocksWritingMode(writingMode) ? left() : right());
+    }
+
+    const T& start(WritingMode writingMode, TextDirection direction = LTR) const
+    {
+        return isHorizontalWritingMode(writingMode) ?
+            (isLeftToRightDirection(direction) ? left() : right()) :
+            (isLeftToRightDirection(direction) ? top() : bottom());
+    }
+
+    const T& end(WritingMode writingMode, TextDirection direction = LTR) const
+    {
+        return isHorizontalWritingMode(writingMode) ?
+            (isLeftToRightDirection(direction) ? right() : left()) :
+            (isLeftToRightDirection(direction) ? bottom() : top());
+    }
+
+    void setBefore(const T& before, WritingMode writingMode) { this->before(writingMode) = before; }
+    void setAfter(const T& after, WritingMode writingMode) { this->after(writingMode) = after; }
+    void setStart(const T& start, WritingMode writingMode, TextDirection direction = LTR) { this->start(writingMode, direction) = start; }
+    void setEnd(const T& end, WritingMode writingMode, TextDirection direction = LTR) { this->end(writingMode, direction) = end; }
+
+    bool operator==(const BoxExtent& other) const
+    {
+        return m_sides == other.m_sides;
+    }
+
+    bool operator!=(const BoxExtent& other) const
+    {
+        return m_sides != other.m_sides;
+    }
+
+protected:
+    std::array<T, 4> m_sides;
+};
+
+class LengthBox : public BoxExtent<Length> {
+public:
     LengthBox()
+        : LengthBox(Auto)
     {
     }
 
     explicit LengthBox(LengthType type)
-        : m_left(type)
-        , m_right(type)
-        , m_top(type)
-        , m_bottom(type)
+        : BoxExtent(Length(type), Length(type), Length(type), Length(type))
     {
     }
 
     explicit LengthBox(int v)
-        : m_left(Length(v, Fixed))
-        , m_right(Length(v, Fixed))
-        , m_top(Length(v, Fixed))
-        , m_bottom(Length(v, Fixed))
-    {
-    }
-
-    LengthBox(Length top, Length right, Length bottom, Length left)
-        : m_left(WTF::move(left))
-        , m_right(WTF::move(right))
-        , m_top(WTF::move(top))
-        , m_bottom(WTF::move(bottom))
+        : BoxExtent(Length(v, Fixed), Length(v, Fixed), Length(v, Fixed), Length(v, Fixed))
     {
     }
 
     LengthBox(int top, int right, int bottom, int left)
-        : m_left(Length(left, Fixed))
-        , m_right(Length(right, Fixed))
-        , m_top(Length(top, Fixed))
-        , m_bottom(Length(bottom, Fixed))
+        : BoxExtent(Length(top, Fixed), Length(right, Fixed), Length(bottom, Fixed), Length(left, Fixed))
     {
     }
 
-    const Length& left() const { return m_left; }
-    const Length& right() const { return m_right; }
-    const Length& top() const { return m_top; }
-    const Length& bottom() const { return m_bottom; }
-
-    const Length& logicalLeft(WritingMode) const;
-    const Length& logicalRight(WritingMode) const;
-
-    const Length& before(WritingMode) const;
-    const Length& after(WritingMode) const;
-    const Length& start(WritingMode, TextDirection) const;
-    const Length& end(WritingMode, TextDirection) const;
-
-    bool operator==(const LengthBox& other) const
+    LengthBox(const Length& top, const Length& right, const Length& bottom, const Length& left)
+        : BoxExtent(top, right, bottom, left)
     {
-        return m_left == other.m_left && m_right == other.m_right && m_top == other.m_top && m_bottom == other.m_bottom;
     }
 
-    bool operator!=(const LengthBox& other) const
+    bool isZero() const
     {
-        return !(*this == other);
+        return top().isZero() && right().isZero() && bottom().isZero() && left().isZero();
     }
-
-    bool nonZero() const
-    {
-        return !(m_left.isZero() && m_right.isZero() && m_top.isZero() && m_bottom.isZero());
-    }
-
-    Length m_left;
-    Length m_right;
-    Length m_top;
-    Length m_bottom;
 };
+
+typedef BoxExtent<LayoutUnit> LayoutBoxExtent;
+typedef BoxExtent<float> FloatBoxExtent;
 
 } // namespace WebCore
 

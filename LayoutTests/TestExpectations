@@ -433,7 +433,6 @@ webkit.org/b/139266 imported/mozilla/svg/text/dynamic-multiple-x.svg [ ImageOnly
 webkit.org/b/139282 imported/mozilla/svg/image/image-filter-01.svg [ ImageOnlyFailure ]
 webkit.org/b/139322 imported/mozilla/svg/text/dynamic-non-scaling-stroke.svg [ ImageOnlyFailure ]
 webkit.org/b/139407 imported/mozilla/svg/as-image/border-image-simple-1.html [ ImageOnlyFailure ]
-webkit.org/b/139405 imported/mozilla/svg/as-image/border-image-simple-2.html [ ImageOnlyFailure ]
 webkit.org/b/139412 imported/mozilla/svg/filters/svg-filter-chains/clip-input.svg [ ImageOnlyFailure ]
 webkit.org/b/139412 imported/mozilla/svg/filters/svg-filter-chains/clip-output.svg [ ImageOnlyFailure ]
 webkit.org/b/139414 imported/mozilla/svg/filters/feColorMatrix-1.svg [ ImageOnlyFailure ]

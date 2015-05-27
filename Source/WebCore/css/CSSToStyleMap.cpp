@@ -618,21 +618,21 @@ void CSSToStyleMap::mapNinePieceImageSlice(CSSValue& value, NinePieceImage& imag
     LengthBox box;
     Quad* slices = borderImageSlice.slices();
     if (slices->top()->isPercentage())
-        box.m_top = Length(slices->top()->getDoubleValue(), Percent);
+        box.top() = Length(slices->top()->getDoubleValue(), Percent);
     else
-        box.m_top = Length(slices->top()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
+        box.top() = Length(slices->top()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
     if (slices->bottom()->isPercentage())
-        box.m_bottom = Length(slices->bottom()->getDoubleValue(), Percent);
+        box.bottom() = Length(slices->bottom()->getDoubleValue(), Percent);
     else
-        box.m_bottom = Length((int)slices->bottom()->getFloatValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
+        box.bottom() = Length((int)slices->bottom()->getFloatValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
     if (slices->left()->isPercentage())
-        box.m_left = Length(slices->left()->getDoubleValue(), Percent);
+        box.left() = Length(slices->left()->getDoubleValue(), Percent);
     else
-        box.m_left = Length(slices->left()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
+        box.left() = Length(slices->left()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
     if (slices->right()->isPercentage())
-        box.m_right = Length(slices->right()->getDoubleValue(), Percent);
+        box.right() = Length(slices->right()->getDoubleValue(), Percent);
     else
-        box.m_right = Length(slices->right()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
+        box.right() = Length(slices->right()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
     image.setImageSlices(box);
 
     // Set our fill mode.
@@ -654,32 +654,32 @@ LengthBox CSSToStyleMap::mapNinePieceImageQuad(CSSValue& value)
     LengthBox box; // Defaults to 'auto' so we don't have to handle that explicitly below.
     Quad* slices = borderWidths.getQuadValue();
     if (slices->top()->isNumber())
-        box.m_top = Length(slices->top()->getIntValue(), Relative);
+        box.top() = Length(slices->top()->getIntValue(), Relative);
     else if (slices->top()->isPercentage())
-        box.m_top = Length(slices->top()->getDoubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
+        box.top() = Length(slices->top()->getDoubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
     else if (slices->top()->getValueID() != CSSValueAuto)
-        box.m_top = slices->top()->computeLength<Length>(conversionData);
+        box.top() = slices->top()->computeLength<Length>(conversionData);
 
     if (slices->right()->isNumber())
-        box.m_right = Length(slices->right()->getIntValue(), Relative);
+        box.right() = Length(slices->right()->getIntValue(), Relative);
     else if (slices->right()->isPercentage())
-        box.m_right = Length(slices->right()->getDoubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
+        box.right() = Length(slices->right()->getDoubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
     else if (slices->right()->getValueID() != CSSValueAuto)
-        box.m_right = slices->right()->computeLength<Length>(conversionData);
+        box.right() = slices->right()->computeLength<Length>(conversionData);
 
     if (slices->bottom()->isNumber())
-        box.m_bottom = Length(slices->bottom()->getIntValue(), Relative);
+        box.bottom() = Length(slices->bottom()->getIntValue(), Relative);
     else if (slices->bottom()->isPercentage())
-        box.m_bottom = Length(slices->bottom()->getDoubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
+        box.bottom() = Length(slices->bottom()->getDoubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
     else if (slices->bottom()->getValueID() != CSSValueAuto)
-        box.m_bottom = slices->bottom()->computeLength<Length>(conversionData);
+        box.bottom() = slices->bottom()->computeLength<Length>(conversionData);
 
     if (slices->left()->isNumber())
-        box.m_left = Length(slices->left()->getIntValue(), Relative);
+        box.left() = Length(slices->left()->getIntValue(), Relative);
     else if (slices->left()->isPercentage())
-        box.m_left = Length(slices->left()->getDoubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
+        box.left() = Length(slices->left()->getDoubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
     else if (slices->left()->getValueID() != CSSValueAuto)
-        box.m_left = slices->left()->computeLength<Length>(conversionData);
+        box.left() = slices->left()->computeLength<Length>(conversionData);
 
     return box;
 }

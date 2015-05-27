@@ -1,3 +1,16 @@
+2015-05-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        An SVG with no intrinsic size does not draw correct slices when used as a border-image for an HTML element.
+        https://bugs.webkit.org/show_bug.cgi?id=139405
+
+        Reviewed by Darin Adler.
+
+        * svg/as-image/border-image-simple-2.html: Add "border: 0px none;" to
+        style of the <div> although the style has "border-image: url() 0 fill;".
+        If the border width is not set to zero in the style, the <div> will have
+        a 3px border. This seems to be a bug in WebKit but should be unrelated to
+        the non-intrinsic-sized images with border-image.
+
 2014-12-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Import Mozilla test suite for SVG.

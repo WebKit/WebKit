@@ -92,6 +92,11 @@ public:
             return 0;
         return m_bottom.width();
     }
+
+    FloatBoxExtent borderWidth() const
+    {
+        return FloatBoxExtent(borderTopWidth(), borderRightWidth(), borderBottomWidth(), borderLeftWidth());
+    }
     
     bool operator==(const BorderData& o) const
     {

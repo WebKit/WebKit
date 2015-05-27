@@ -36,7 +36,7 @@ class StyleImage;
 class StyleResolver;
 class NinePieceImage;
 
-struct LengthBox;
+class LengthBox;
 
 class CSSToStyleMap {
     WTF_MAKE_NONCOPYABLE(CSSToStyleMap);

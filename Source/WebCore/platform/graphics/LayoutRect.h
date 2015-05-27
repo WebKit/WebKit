@@ -33,8 +33,8 @@
 
 #include "FloatRect.h"
 #include "IntRect.h"
-#include "LayoutBoxExtent.h"
 #include "LayoutPoint.h"
+#include "LengthBox.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {

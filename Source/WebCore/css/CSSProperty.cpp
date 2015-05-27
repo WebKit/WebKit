@@ -54,9 +54,6 @@ void CSSProperty::wrapValueInCommaSeparatedList()
     m_value = WTF::move(list);
 }
 
-enum LogicalBoxSide { BeforeSide, EndSide, AfterSide, StartSide };
-enum PhysicalBoxSide { TopSide, RightSide, BottomSide, LeftSide };
-
 static CSSPropertyID resolveToPhysicalProperty(TextDirection direction, WritingMode writingMode, LogicalBoxSide logicalSide, const StylePropertyShorthand& shorthand)
 {
     if (direction == LTR) {
