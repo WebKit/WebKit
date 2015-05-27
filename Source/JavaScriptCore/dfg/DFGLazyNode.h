@@ -34,8 +34,6 @@
 
 namespace JSC { namespace DFG {
 
-
-
 class LazyNode {
 public:
     static const size_t jsConstantTag = 0;
@@ -119,7 +117,7 @@ public:
 
     bool operator==(const LazyNode& other) const
     {
-        if (asValue())
+        if (asValue() || other.asValue())
             return m_value == other.m_value;
         return m_node == other.m_node;
     }

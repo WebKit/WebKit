@@ -1,3 +1,23 @@
+2015-05-27  Basile Clement  <basile_clement@apple.com>
+
+        LazyNode comparison can return incorrect results when comparing an empty value
+        https://bugs.webkit.org/show_bug.cgi?id=145421
+
+        Reviewed by Geoffrey Garen.
+
+        When comparing a LazyNode to another, we compare the value pointers if
+        we have one, and otherwise compare the nodes.
+        We should be comparing value pointers if the other LazyNode has one as
+        well, otherwise we risk an incoherency when we are a empty LazyNode
+        being compared to a FrozenValue without node.
+
+        Note that this is not a problem in any other case because if we don't
+        have a FrozenValue and we are not an empty LazyNode, we are a
+        non-constant node, and comparing the node pointers is correct.
+
+        * dfg/DFGLazyNode.h:
+        (JSC::DFG::LazyNode::operator==):
+
 2015-05-27  Geoffrey Garen  <ggaren@apple.com>
 
         REGRESSION: These sorting idioms used by Peacekeeper and Browsermark are ~20X slower
