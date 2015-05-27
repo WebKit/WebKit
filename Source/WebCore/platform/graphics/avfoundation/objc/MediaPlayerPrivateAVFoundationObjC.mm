@@ -1545,87 +1545,92 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithImageGenerator(GraphicsContext
     }
 }
 
-static bool unsupportedMIMEType(const String& type)
+static bool isUnsupportedMIMEType(const String& type)
 {
+    String lowerCaseType = type.convertToASCIILowercase();
+
     // AVFoundation will return non-video MIME types which it claims to support, but which we
     // do not support in the <video> element. Reject all non video/, audio/, and application/ types.
-    if (!type.startsWith("video/", false) && !type.startsWith("audio/", false) && !type.startsWith("application/", false))
+    if (!lowerCaseType.startsWith("video/") && !lowerCaseType.startsWith("audio/") && !lowerCaseType.startsWith("application/"))
         return true;
 
     // Reject types we know AVFoundation does not support that sites commonly ask about.
-    if (equalIgnoringCase(type, "video/webm") || equalIgnoringCase(type, "audio/webm") || equalIgnoringCase(type, "video/x-webm"))
+    if (lowerCaseType == "video/webm" || lowerCaseType == "audio/webm" || lowerCaseType == "video/x-webm")
         return true;
 
-    if (equalIgnoringCase(type, "video/x-flv"))
+    if (lowerCaseType == "video/x-flv")
         return true;
 
-    if (equalIgnoringCase(type, "audio/ogg") || equalIgnoringCase(type, "video/ogg") || equalIgnoringCase(type, "application/ogg"))
+    if (lowerCaseType == "audio/ogg" || lowerCaseType == "video/ogg" || lowerCaseType == "application/ogg")
         return true;
 
-    if (equalIgnoringCase(type, "video/h264"))
+    if (lowerCaseType == "video/h264")
         return true;
 
     return false;
 }
 
-static HashSet<String>& staticMimeTypeCache()
+static const HashSet<String>& staticMIMETypeList()
 {
-    static NeverDestroyed<HashSet<String>> cache;
-    static bool typeListInitialized = false;
+    static NeverDestroyed<HashSet<String>> cache = [] () {
+        HashSet<String> types;
 
-    if (typeListInitialized)
-        return cache;
-    typeListInitialized = true;
+        static const char* typeNames[] = {
+            "application/vnd.apple.mpegurl",
+            "application/x-mpegurl",
+            "audio/3gpp",
+            "audio/aac",
+            "audio/aacp",
+            "audio/aiff",
+            "audio/basic",
+            "audio/mp3",
+            "audio/mp4",
+            "audio/mpeg",
+            "audio/mpeg3",
+            "audio/mpegurl",
+            "audio/mpg",
+            "audio/wav",
+            "audio/wave",
+            "audio/x-aac",
+            "audio/x-aiff",
+            "audio/x-m4a",
+            "audio/x-mpegurl",
+            "audio/x-wav",
+            "video/3gpp",
+            "video/3gpp2",
+            "video/mp4",
+            "video/mpeg",
+            "video/mpeg2",
+            "video/mpg",
+            "video/quicktime",
+            "video/x-m4v",
+            "video/x-mpeg",
+            "video/x-mpg",
+        };
+        for (size_t i = 0; i < WTF_ARRAY_LENGTH(typeNames); ++i)
+            types.add(typeNames[i]);
 
-    cache.get().add("application/vnd.apple.mpegurl");
-    cache.get().add("application/x-mpegurl");
-    cache.get().add("audio/3gpp");
-    cache.get().add("audio/aac");
-    cache.get().add("audio/aacp");
-    cache.get().add("audio/aiff");
-    cache.get().add("audio/basic");
-    cache.get().add("audio/mp3");
-    cache.get().add("audio/mp4");
-    cache.get().add("audio/mpeg");
-    cache.get().add("audio/mpeg3");
-    cache.get().add("audio/mpegurl");
-    cache.get().add("audio/mpg");
-    cache.get().add("audio/wav");
-    cache.get().add("audio/wave");
-    cache.get().add("audio/x-aac");
-    cache.get().add("audio/x-aiff");
-    cache.get().add("audio/x-m4a");
-    cache.get().add("audio/x-mpegurl");
-    cache.get().add("audio/x-wav");
-    cache.get().add("video/3gpp");
-    cache.get().add("video/3gpp2");
-    cache.get().add("video/mp4");
-    cache.get().add("video/mpeg");
-    cache.get().add("video/mpeg2");
-    cache.get().add("video/mpg");
-    cache.get().add("video/quicktime");
-    cache.get().add("video/x-m4v");
-    cache.get().add("video/x-mpeg");
-    cache.get().add("video/x-mpg");
+        return types;
+    }();
 
     return cache;
-} 
+}
 
-static HashSet<String>& avfMimeTypeCache()
+static const HashSet<String>& avfMIMETypes()
 {
-    static NeverDestroyed<HashSet<String>> cache;
-    static bool typeListInitialized = false;
+    static NeverDestroyed<HashSet<String>> cache = [] () {
+        HashSet<String> types;
 
-    if (typeListInitialized)
-        return cache;
-    typeListInitialized = true;
+        NSArray *nsTypes = [AVURLAsset audiovisualMIMETypes];
+        for (NSString *mimeType in nsTypes)
+            types.add([mimeType lowercaseString]);
 
-    NSArray *types = [AVURLAsset audiovisualMIMETypes];
-    for (NSString *mimeType in types)
-        cache.get().add([mimeType lowercaseString]);
+        return types;
+    }();
 
+    
     return cache;
-} 
+}
 
 RetainPtr<CGImageRef> MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRect(float time, const FloatRect& rect)
 {
@@ -1651,13 +1656,13 @@ RetainPtr<CGImageRef> MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRe
 
 void MediaPlayerPrivateAVFoundationObjC::getSupportedTypes(HashSet<String>& supportedTypes)
 {
-    supportedTypes = avfMimeTypeCache();
+    supportedTypes = avfMIMETypes();
 } 
 
 #if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
 static bool keySystemIsSupported(const String& keySystem)
 {
-    if (equalIgnoringCase(keySystem, "com.apple.fps") || equalIgnoringCase(keySystem, "com.apple.fps.1_0") || equalIgnoringCase(keySystem, "org.w3c.clearkey"))
+    if (equalIgnoringASCIICase(keySystem, "com.apple.fps") || equalIgnoringASCIICase(keySystem, "com.apple.fps.1_0") || equalIgnoringASCIICase(keySystem, "org.w3c.clearkey"))
         return true;
     return false;
 }
@@ -1673,7 +1678,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationObjC::supportsType(const
     //    If keySystem is null, continue to the next step.
     if (!parameters.keySystem.isNull() && !parameters.keySystem.isEmpty()) {
         // "Clear Key" is only supported with HLS:
-        if (equalIgnoringCase(parameters.keySystem, "org.w3c.clearkey") && !parameters.type.isEmpty() && !equalIgnoringCase(parameters.type, "application/x-mpegurl"))
+        if (equalIgnoringASCIICase(parameters.keySystem, "org.w3c.clearkey") && !parameters.type.isEmpty() && !equalIgnoringASCIICase(parameters.type, "application/x-mpegurl"))
             return MediaPlayer::IsNotSupported;
 
         // If keySystem contains an unrecognized or unsupported Key System, return the empty string
@@ -1692,10 +1697,10 @@ MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationObjC::supportsType(const
         return MediaPlayer::IsNotSupported;
 #endif
 
-    if (unsupportedMIMEType(parameters.type))
+    if (isUnsupportedMIMEType(parameters.type))
         return MediaPlayer::IsNotSupported;
 
-    if (!staticMimeTypeCache().contains(parameters.type) && !avfMimeTypeCache().contains(parameters.type))
+    if (!staticMIMETypeList().contains(parameters.type) && !avfMIMETypes().contains(parameters.type))
         return MediaPlayer::IsNotSupported;
 
     // The spec says:
@@ -1712,16 +1717,16 @@ bool MediaPlayerPrivateAVFoundationObjC::supportsKeySystem(const String& keySyst
 #if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
     if (!keySystem.isEmpty()) {
         // "Clear Key" is only supported with HLS:
-        if (equalIgnoringCase(keySystem, "org.w3c.clearkey") && !mimeType.isEmpty() && !equalIgnoringCase(mimeType, "application/x-mpegurl"))
+        if (equalIgnoringASCIICase(keySystem, "org.w3c.clearkey") && !mimeType.isEmpty() && !equalIgnoringASCIICase(mimeType, "application/x-mpegurl"))
             return MediaPlayer::IsNotSupported;
 
         if (!keySystemIsSupported(keySystem))
             return false;
 
-        if (!mimeType.isEmpty() && unsupportedMIMEType(mimeType))
+        if (!mimeType.isEmpty() && isUnsupportedMIMEType(mimeType))
             return false;
 
-        if (!mimeType.isEmpty() && !staticMimeTypeCache().contains(mimeType) && !avfMimeTypeCache().contains(mimeType))
+        if (!mimeType.isEmpty() && !staticMIMETypeList().contains(mimeType) && !avfMIMETypes().contains(mimeType))
             return false;
 
         return true;
