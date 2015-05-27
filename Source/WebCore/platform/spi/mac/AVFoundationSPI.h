@@ -53,7 +53,7 @@
 
 #if PLATFORM(IOS)
 
-#if USE(APPLE_INTERNAL_SDK)
+#if HAVE(AVKIT) && USE(APPLE_INTERNAL_SDK)
 #import <AVKit/AVPlayerViewController_WebKitOnly.h>
 #endif
 
