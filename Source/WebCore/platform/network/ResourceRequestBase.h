@@ -147,9 +147,6 @@ namespace WebCore {
         bool hiddenFromInspector() const { return m_hiddenFromInspector; }
         void setHiddenFromInspector(bool hiddenFromInspector) { m_hiddenFromInspector = hiddenFromInspector; }
 
-        bool initiatedByUserGesture() const { return m_initiatedByUserGesture; }
-        void setInitiatedByUserGesture(bool initiatedByUserGesture) { m_initiatedByUserGesture = initiatedByUserGesture; }
-
         enum class Requester { Unspecified, Main, XHR };
         Requester requester() const { return m_requester; }
         void setRequester(Requester requester) { m_requester = requester; }
@@ -216,7 +213,6 @@ namespace WebCore {
         bool m_reportLoadTiming { false };
         bool m_reportRawHeaders { false };
         bool m_hiddenFromInspector { false };
-        bool m_initiatedByUserGesture { false };
         ResourceLoadPriority m_priority { ResourceLoadPriority::Low };
         Requester m_requester { Requester::Unspecified };
 
@@ -268,7 +264,6 @@ void ResourceRequestBase::encodeWithoutPlatformData(Encoder& encoder) const
     encoder << m_allowCookies;
     encoder.encodeEnum(m_priority);
     encoder.encodeEnum(m_requester);
-    encoder << m_initiatedByUserGesture;
 }
 
 template<class Decoder>
@@ -312,9 +307,6 @@ bool ResourceRequestBase::decodeWithoutPlatformData(Decoder& decoder)
     m_priority = priority;
 
     if (!decoder.decodeEnum(m_requester))
-        return false;
-
-    if (!decoder.decode(m_initiatedByUserGesture))
         return false;
 
     return true;

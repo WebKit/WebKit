@@ -186,11 +186,6 @@ void ResourceRequest::doUpdatePlatformRequest()
     }
 #endif
 
-#if !PLATFORM(WIN)
-    if (initiatedByUserGesture())
-        _CFURLRequestSetProtocolProperty(cfRequest, ResourceRequest::isUserInitiatedKey(), kCFBooleanTrue);
-#endif
-
     m_cfRequest = adoptCF(cfRequest);
 #if PLATFORM(COCOA)
     clearOrUpdateNSURLRequest();
@@ -294,12 +289,6 @@ void ResourceRequest::doUpdateResourceRequest()
     RetainPtr<CFStringRef> cachePartition = adoptCF(static_cast<CFStringRef>(_CFURLRequestCopyProtocolPropertyForKey(m_cfRequest.get(), wkCachePartitionKey())));
     if (cachePartition)
         m_cachePartition = cachePartition.get();
-#endif
-
-#if !PLATFORM(WIN)
-    RetainPtr<CFBooleanRef> initiatedByUserGesture = adoptCF(static_cast<CFBooleanRef>(_CFURLRequestCopyProtocolPropertyForKey(m_cfRequest.get(), ResourceRequest::isUserInitiatedKey())));
-    if (initiatedByUserGesture)
-        setInitiatedByUserGesture(CFBooleanGetValue(initiatedByUserGesture.get()));
 #endif
 }
 
