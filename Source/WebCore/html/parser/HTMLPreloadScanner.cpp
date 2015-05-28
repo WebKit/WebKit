@@ -112,7 +112,11 @@ public:
         // Resolve between src and srcSet if we have them and the tag is img.
         if (m_tagId == TagId::Img && !m_srcSetAttribute.isEmpty()) {
             float sourceSize = 0;
+#if ENABLE(PICTURE_SIZES)
             sourceSize = parseSizesAttribute(m_sizesAttribute, document.renderView(), document.frame());
+#else
+            UNUSED_PARAM(document);
+#endif
             ImageCandidate imageCandidate = bestFitSourceForImageAttributes(m_deviceScaleFactor, m_urlToLoad, m_srcSetAttribute, sourceSize);
             setUrlToLoad(imageCandidate.string.toString(), true);
         }
@@ -151,8 +155,10 @@ private:
                 setUrlToLoad(attributeValue);
             else if (match(attributeName, srcsetAttr) && m_srcSetAttribute.isNull())
                 m_srcSetAttribute = attributeValue;
+#if ENABLE(PICTURE_SIZES)
             else if (match(attributeName, sizesAttr) && m_sizesAttribute.isNull())
                 m_sizesAttribute = attributeValue;
+#endif
             else if (match(attributeName, crossoriginAttr) && !attributeValue.isNull())
                 m_crossOriginMode = stripLeadingAndTrailingHTMLSpaces(attributeValue);
         } else if (m_tagId == TagId::Link) {
@@ -235,7 +241,9 @@ private:
     TagId m_tagId;
     String m_urlToLoad;
     String m_srcSetAttribute;
+#if ENABLE(PICTURE_SIZES)
     String m_sizesAttribute;
+#endif
     String m_charset;
     String m_crossOriginMode;
     bool m_linkIsStyleSheet;
