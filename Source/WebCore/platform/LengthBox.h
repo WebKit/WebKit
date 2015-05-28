@@ -23,7 +23,6 @@
 #define LengthBox_h
 
 #include "Length.h"
-#include "TextFlags.h"
 #include "WritingMode.h"
 #include <array>
 
@@ -61,58 +60,42 @@ public:
 
     T& before(WritingMode writingMode)
     {
-        return isHorizontalWritingMode(writingMode) ?
-            (isFlippedBlocksWritingMode(writingMode) ? bottom() : top()) :
-            (isFlippedBlocksWritingMode(writingMode) ? right() : left());
+        return at(mapLogicalSideToPhysicalSide(writingMode, BeforeSide));
     }
 
     T& after(WritingMode writingMode)
     {
-        return isHorizontalWritingMode(writingMode) ?
-            (isFlippedBlocksWritingMode(writingMode) ? top() : bottom()) :
-            (isFlippedBlocksWritingMode(writingMode) ? left() : right());
+        return at(mapLogicalSideToPhysicalSide(writingMode, AfterSide));
     }
 
     T& start(WritingMode writingMode, TextDirection direction = LTR)
     {
-        return isHorizontalWritingMode(writingMode) ?
-            (isLeftToRightDirection(direction) ? left() : right()) :
-            (isLeftToRightDirection(direction) ? top() : bottom());
+        return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), StartSide));
     }
 
     T& end(WritingMode writingMode, TextDirection direction = LTR)
     {
-        return isHorizontalWritingMode(writingMode) ?
-            (isLeftToRightDirection(direction) ? right() : left()) :
-            (isLeftToRightDirection(direction) ? bottom() : top());
+        return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), EndSide));
     }
 
     const T& before(WritingMode writingMode) const
     {
-        return isHorizontalWritingMode(writingMode) ?
-            (isFlippedBlocksWritingMode(writingMode) ? bottom() : top()) :
-            (isFlippedBlocksWritingMode(writingMode) ? right() : left());
+        return at(mapLogicalSideToPhysicalSide(writingMode, BeforeSide));
     }
 
     const T& after(WritingMode writingMode) const
     {
-        return isHorizontalWritingMode(writingMode) ?
-            (isFlippedBlocksWritingMode(writingMode) ? top() : bottom()) :
-            (isFlippedBlocksWritingMode(writingMode) ? left() : right());
+        return at(mapLogicalSideToPhysicalSide(writingMode, AfterSide));
     }
 
     const T& start(WritingMode writingMode, TextDirection direction = LTR) const
     {
-        return isHorizontalWritingMode(writingMode) ?
-            (isLeftToRightDirection(direction) ? left() : right()) :
-            (isLeftToRightDirection(direction) ? top() : bottom());
+        return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), StartSide));
     }
 
     const T& end(WritingMode writingMode, TextDirection direction = LTR) const
     {
-        return isHorizontalWritingMode(writingMode) ?
-            (isLeftToRightDirection(direction) ? right() : left()) :
-            (isLeftToRightDirection(direction) ? bottom() : top());
+        return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), EndSide));
     }
 
     void setBefore(const T& before, WritingMode writingMode) { this->before(writingMode) = before; }

@@ -31,7 +31,7 @@
 #ifndef StringWithDirection_h
 #define StringWithDirection_h
 
-#include "TextFlags.h"
+#include "WritingMode.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

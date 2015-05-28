@@ -25,6 +25,7 @@
 #define TextRun_h
 
 #include "TextFlags.h"
+#include "WritingMode.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/StringView.h>
 

@@ -69,7 +69,7 @@ static inline FloatRect physicalRectToLogical(const FloatRect& rect, float logic
 {
     if (isHorizontalWritingMode(writingMode))
         return rect;
-    if (isFlippedBlocksWritingMode(writingMode))
+    if (isFlippedWritingMode(writingMode))
         return FloatRect(rect.y(), logicalBoxHeight - rect.maxX(), rect.height(), rect.width());
     return rect.transposedRect();
 }
@@ -78,7 +78,7 @@ static inline FloatPoint physicalPointToLogical(const FloatPoint& point, float l
 {
     if (isHorizontalWritingMode(writingMode))
         return point;
-    if (isFlippedBlocksWritingMode(writingMode))
+    if (isFlippedWritingMode(writingMode))
         return FloatPoint(point.y(), logicalBoxHeight - point.x());
     return point.transposedPoint();
 }

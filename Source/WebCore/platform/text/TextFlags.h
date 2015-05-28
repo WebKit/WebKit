@@ -28,8 +28,6 @@
 
 namespace WebCore {
 
-enum TextDirection { RTL, LTR };
-
 enum TextRenderingMode { AutoTextRendering, OptimizeSpeed, OptimizeLegibility, GeometricPrecision };
 
 enum FontSmoothingMode { AutoSmoothing, NoSmoothing, Antialiased, SubpixelAntialiased };
@@ -41,8 +39,6 @@ enum FontRenderingMode { NormalRenderingMode, AlternateRenderingMode };
 enum FontOrientation { Horizontal, Vertical };
 
 enum NonCJKGlyphOrientation { NonCJKGlyphOrientationVerticalRight, NonCJKGlyphOrientationUpright };
-
-inline bool isLeftToRightDirection(TextDirection direction) { return direction == LTR; }
 
 // Here, "Leading" and "Trailing" are relevant after the line has been rearranged for bidi.
 // ("Leading" means "left" and "Trailing" means "right.")

@@ -24,7 +24,7 @@
 #error "Please #include \"WKAPICast.h\" instead of this file directly."
 #endif
 
-#include <WebCore/TextFlags.h>
+#include <WebCore/WritingMode.h>
 #include <WebKit/WKPopupItem.h>
 
 #if ENABLE(TOUCH_EVENTS)
