@@ -532,13 +532,13 @@ namespace WTF {
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     inline HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::HashTable()
-        : m_table(0)
+        : m_table(nullptr)
         , m_tableSize(0)
         , m_tableSizeMask(0)
         , m_keyCount(0)
         , m_deletedCount(0)
 #if CHECK_HASHTABLE_ITERATORS
-        , m_iterators(0)
+        , m_iterators(nullptr)
         , m_mutex(std::make_unique<std::mutex>())
 #endif
 #if DUMP_HASHTABLE_STATS_PER_TABLE
@@ -1155,18 +1155,7 @@ namespace WTF {
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::HashTable(const HashTable& other)
-        : m_table(0)
-        , m_tableSize(0)
-        , m_tableSizeMask(0)
-        , m_keyCount(0)
-        , m_deletedCount(0)
-#if CHECK_HASHTABLE_ITERATORS
-        , m_iterators(0)
-        , m_mutex(std::make_unique<std::mutex>())
-#endif
-#if DUMP_HASHTABLE_STATS_PER_TABLE
-        , m_stats(std::make_unique<Stats>(*other.m_stats))
-#endif
+        : HashTable()
     {
         // Copy the hash table the dumb way, by adding each element to the new table.
         // It might be more efficient to copy the table slots, but it's not clear that efficiency is needed.
@@ -1206,29 +1195,9 @@ namespace WTF {
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     inline HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::HashTable(HashTable&& other)
-#if CHECK_HASHTABLE_ITERATORS
-        : m_iterators(nullptr)
-        , m_mutex(std::make_unique<std::mutex>())
-#endif
+        : HashTable()
     {
-        other.invalidateIterators();
-
-        m_table = other.m_table;
-        m_tableSize = other.m_tableSize;
-        m_tableSizeMask = other.m_tableSizeMask;
-        m_keyCount = other.m_keyCount;
-        m_deletedCount = other.m_deletedCount;
-
-        other.m_table = nullptr;
-        other.m_tableSize = 0;
-        other.m_tableSizeMask = 0;
-        other.m_keyCount = 0;
-        other.m_deletedCount = 0;
-
-#if DUMP_HASHTABLE_STATS_PER_TABLE
-        m_stats = WTF::move(other.m_stats);
-        other.m_stats = nullptr;
-#endif
+        swap(other);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>

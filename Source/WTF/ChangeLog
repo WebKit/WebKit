@@ -1,3 +1,19 @@
+2015-05-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        Clean up HashTable constructors
+        https://bugs.webkit.org/show_bug.cgi?id=145369
+
+        Reviewed by Andreas Kling.
+
+        Use nullptr to initialize pointer member variables in the HashTable
+        default constructor. Copy and move constructors can use constructor
+        delegation instead of replicating all member initializations. Move
+        constructor should simply call HashTable::swap() instead of replicating
+        all the swap operations.
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::HashTable):
+
 2015-05-27  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Fix clang static analyzer build
