@@ -2128,9 +2128,13 @@ private:
                     m_indexInBlock, SpecInt52AsDouble, DoubleRep, node->origin,
                     Edge(edge.node(), Int52RepUse));
             } else {
+                UseKind useKind = NotCellUse;
+                if (edge->shouldSpeculateNumber())
+                    useKind = NumberUse;
+
                 result = m_insertionSet.insertNode(
                     m_indexInBlock, SpecBytecodeDouble, DoubleRep, node->origin,
-                    Edge(edge.node(), NumberUse));
+                    Edge(edge.node(), useKind));
             }
 
             edge.setNode(result);

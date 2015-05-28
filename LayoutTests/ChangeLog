@@ -1,3 +1,14 @@
+2015-05-27  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Add undefined->double conversion to DoubleRep
+        https://bugs.webkit.org/show_bug.cgi?id=145293
+
+        Reviewed by Filip Pizlo.
+
+        * js/regress/math-with-out-of-bounds-array-values-expected.txt: Added.
+        * js/regress/math-with-out-of-bounds-array-values.html: Added.
+        * js/regress/script-tests/math-with-out-of-bounds-array-values.js: Added.
+
 2015-05-27  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r183820): webkit.org/blog/ background painting issue on reload, when the page contains videos

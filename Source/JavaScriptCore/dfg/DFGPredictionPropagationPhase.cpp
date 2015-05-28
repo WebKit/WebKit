@@ -402,6 +402,12 @@ private:
                 SpecNone);
             
             switch (arrayMode.type()) {
+            case Array::Int32:
+                if (arrayMode.isOutOfBounds())
+                    changed |= mergePrediction(node->getHeapPrediction() | SpecInt32);
+                else
+                    changed |= mergePrediction(SpecInt32);
+                break;
             case Array::Double:
                 if (arrayMode.isOutOfBounds())
                     changed |= mergePrediction(node->getHeapPrediction() | SpecDoubleReal);

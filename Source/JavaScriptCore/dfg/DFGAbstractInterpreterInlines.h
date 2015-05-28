@@ -360,7 +360,30 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setConstant(node, jsDoubleNumber(child.asNumber()));
             break;
         }
-        forNode(node).setType(m_graph, forNode(node->child1()).m_type);
+
+        SpeculatedType type = forNode(node->child1()).m_type;
+        switch (node->child1().useKind()) {
+        case NotCellUse: {
+            if (type & SpecOther) {
+                type &= ~SpecOther;
+                type |= SpecDoublePureNaN | SpecBoolInt32; // Null becomes zero, undefined becomes NaN.
+            }
+            if (type & SpecBoolean) {
+                type &= ~SpecBoolean;
+                type |= SpecBoolInt32; // True becomes 1, false becomes 0.
+            }
+            type &= SpecBytecodeNumber;
+            break;
+        }
+
+        case Int52RepUse:
+        case NumberUse:
+            break;
+
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        forNode(node).setType(type);
         forNode(node).fixTypeForRepresentation(m_graph, node);
         break;
     }

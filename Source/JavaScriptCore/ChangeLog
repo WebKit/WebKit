@@ -1,3 +1,61 @@
+2015-05-27  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Add undefined->double conversion to DoubleRep
+        https://bugs.webkit.org/show_bug.cgi?id=145293
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds undefined to double conversion to the DoubleRep
+        node for the cases were we speculate "undefined" as part of the types
+        processed.
+
+        The use case is doing math with accidental out-of-bounds access. For example,
+        something like:
+            for (var i = 0; i <= length; ++i)
+                ouptput += array[i];
+
+        would cause us to OSR exit every time i === length.
+
+        When hitting one of those cases, we would already speculate double math,
+        but the DoubleRep node was unable to convert the undefined and would exit.
+
+        With this patch the use kind NotCellUse cover this conversion for DoubleRep.
+        I have been quite conservative so in general we will not find "undefined"
+        until a few recompile but being optimistic seems better since this is a corner case.
+
+        This patch is a 80% progression on WebXPRT's DNA Sequencing test.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::injectTypeConversionsForEdge):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::sawUndefined):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileDoubleRep):
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileDoubleRep):
+        (JSC::FTL::LowerDFGToLLVM::jsValueToDouble):
+        * tests/stress/double-rep-with-undefined.js: Added.
+        (addArgsNumberAndUndefined):
+        (addArgsInt32AndUndefined):
+        (testFallbackWithDouble):
+        (addArgsDoubleAndUndefined):
+        (testFallbackWithObject.):
+        (testFallbackWithObject):
+        (addArgsOnlyUndefined):
+        (testFallbackWithString):
+
 2015-05-27  Dean Jackson  <dino@apple.com>
 
         img.currentSrc problem in strict mode with old picturefill
