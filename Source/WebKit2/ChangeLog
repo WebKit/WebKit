@@ -1,3 +1,27 @@
+2015-05-27  Antti Koivisto  <antti@apple.com>
+
+        Disable network cache for old clients
+        https://bugs.webkit.org/show_bug.cgi?id=145418
+        rdar://problem/21126587
+
+        Reviewed by Andy Estes.
+
+        Old clients might use NSURLCache API to clear the cache. New cache requires use of new APIs.
+
+        * UIProcess/Cocoa/VersionChecks.h: Added.
+        * UIProcess/Cocoa/VersionChecks.mm: Added.
+
+            Add linked-on-or-after check mechanism similar to WebKit1.
+
+        (WebKit::linkTimeVersion):
+        (WebKit::linkedOnOrAfter):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+
+            Use it when deciding whether to enable the cache.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-05-27  Dean Jackson  <dino@apple.com>
 
         img.currentSrc problem in strict mode with old picturefill
