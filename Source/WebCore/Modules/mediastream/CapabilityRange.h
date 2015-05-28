@@ -41,7 +41,7 @@ class CapabilityRange : public RefCounted<CapabilityRange>, public ScriptWrappab
 public:
     virtual ~CapabilityRange() { }
 
-    static RefPtr<CapabilityRange> create(const RealtimeMediaSourceCapabilityRange&);
+    static Ref<CapabilityRange> create(const RealtimeMediaSourceCapabilityRange&);
 
     Deprecated::ScriptValue min(JSC::ExecState*) const;
     Deprecated::ScriptValue max(JSC::ExecState*) const;

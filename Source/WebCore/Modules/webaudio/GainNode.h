@@ -39,9 +39,9 @@ class AudioContext;
 
 class GainNode : public AudioNode {
 public:
-    static PassRefPtr<GainNode> create(AudioContext* context, float sampleRate)
+    static Ref<GainNode> create(AudioContext* context, float sampleRate)
     {
-        return adoptRef(new GainNode(context, sampleRate));
+        return adoptRef(*new GainNode(context, sampleRate));
     }
 
     // AudioNode

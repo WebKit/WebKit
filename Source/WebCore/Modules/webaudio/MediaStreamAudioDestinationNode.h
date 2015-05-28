@@ -39,7 +39,7 @@ class MediaStreamAudioSource;
 
 class MediaStreamAudioDestinationNode : public AudioBasicInspectorNode {
 public:
-    static PassRefPtr<MediaStreamAudioDestinationNode> create(AudioContext*, size_t numberOfChannels);
+    static Ref<MediaStreamAudioDestinationNode> create(AudioContext*, size_t numberOfChannels);
 
     virtual ~MediaStreamAudioDestinationNode();
 

@@ -33,9 +33,9 @@
 
 namespace WebCore {
 
-RefPtr<MediaSourceStates> MediaSourceStates::create(const RealtimeMediaSourceStates& states)
+Ref<MediaSourceStates> MediaSourceStates::create(const RealtimeMediaSourceStates& states)
 {
-    return adoptRef(new MediaSourceStates(states));
+    return adoptRef(*new MediaSourceStates(states));
 }
 
 MediaSourceStates::MediaSourceStates(const RealtimeMediaSourceStates& states)

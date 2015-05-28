@@ -30,9 +30,9 @@
 
 namespace WebCore {
     
-PassRefPtr<SpeechSynthesisVoice> SpeechSynthesisVoice::create(PassRefPtr<PlatformSpeechSynthesisVoice> voice)
+Ref<SpeechSynthesisVoice> SpeechSynthesisVoice::create(PassRefPtr<PlatformSpeechSynthesisVoice> voice)
 {
-    return adoptRef(new SpeechSynthesisVoice(voice));
+    return adoptRef(*new SpeechSynthesisVoice(voice));
 }
 
 SpeechSynthesisVoice::SpeechSynthesisVoice(PassRefPtr<PlatformSpeechSynthesisVoice> voice)

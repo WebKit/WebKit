@@ -39,9 +39,9 @@ class RealtimeMediaSourceCapabilities;
 
 class AllAudioCapabilities : public MediaStreamCapabilities {
 public:
-    static RefPtr<AllAudioCapabilities> create(PassRefPtr<RealtimeMediaSourceCapabilities> capabilities)
+    static Ref<AllAudioCapabilities> create(PassRefPtr<RealtimeMediaSourceCapabilities> capabilities)
     {
-        return adoptRef(new AllAudioCapabilities(capabilities));
+        return adoptRef(*new AllAudioCapabilities(capabilities));
     }
     virtual ~AllAudioCapabilities() { }
 

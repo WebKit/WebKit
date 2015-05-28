@@ -45,7 +45,7 @@ namespace WebCore {
     
 using namespace VectorMath;
 
-PassRefPtr<PeriodicWave> PeriodicWave::create(float sampleRate, Float32Array* real, Float32Array* imag)
+RefPtr<PeriodicWave> PeriodicWave::create(float sampleRate, Float32Array* real, Float32Array* imag)
 {
     bool isGood = real && imag && real->length() == imag->length();
     ASSERT(isGood);
@@ -58,30 +58,30 @@ PassRefPtr<PeriodicWave> PeriodicWave::create(float sampleRate, Float32Array* re
     return nullptr;
 }
 
-PassRefPtr<PeriodicWave> PeriodicWave::createSine(float sampleRate)
+Ref<PeriodicWave> PeriodicWave::createSine(float sampleRate)
 {
-    RefPtr<PeriodicWave> waveTable = adoptRef(new PeriodicWave(sampleRate));
+    Ref<PeriodicWave> waveTable = adoptRef(*new PeriodicWave(sampleRate));
     waveTable->generateBasicWaveform(OscillatorNode::SINE);
     return waveTable;
 }
 
-PassRefPtr<PeriodicWave> PeriodicWave::createSquare(float sampleRate)
+Ref<PeriodicWave> PeriodicWave::createSquare(float sampleRate)
 {
-    RefPtr<PeriodicWave> waveTable = adoptRef(new PeriodicWave(sampleRate));
+    Ref<PeriodicWave> waveTable = adoptRef(*new PeriodicWave(sampleRate));
     waveTable->generateBasicWaveform(OscillatorNode::SQUARE);
     return waveTable;
 }
 
-PassRefPtr<PeriodicWave> PeriodicWave::createSawtooth(float sampleRate)
+Ref<PeriodicWave> PeriodicWave::createSawtooth(float sampleRate)
 {
-    RefPtr<PeriodicWave> waveTable = adoptRef(new PeriodicWave(sampleRate));
+    Ref<PeriodicWave> waveTable = adoptRef(*new PeriodicWave(sampleRate));
     waveTable->generateBasicWaveform(OscillatorNode::SAWTOOTH);
     return waveTable;
 }
 
-PassRefPtr<PeriodicWave> PeriodicWave::createTriangle(float sampleRate)
+Ref<PeriodicWave> PeriodicWave::createTriangle(float sampleRate)
 {
-    RefPtr<PeriodicWave> waveTable = adoptRef(new PeriodicWave(sampleRate));
+    Ref<PeriodicWave> waveTable = adoptRef(*new PeriodicWave(sampleRate));
     waveTable->generateBasicWaveform(OscillatorNode::TRIANGLE);
     return waveTable;
 }

@@ -40,9 +40,9 @@ const unsigned maxSampleRate = 192000;
 
 namespace WebCore {
 
-PassRefPtr<MediaElementAudioSourceNode> MediaElementAudioSourceNode::create(AudioContext* context, HTMLMediaElement* mediaElement)
+Ref<MediaElementAudioSourceNode> MediaElementAudioSourceNode::create(AudioContext* context, HTMLMediaElement* mediaElement)
 {
-    return adoptRef(new MediaElementAudioSourceNode(context, mediaElement));
+    return adoptRef(*new MediaElementAudioSourceNode(context, mediaElement));
 }
 
 MediaElementAudioSourceNode::MediaElementAudioSourceNode(AudioContext* context, HTMLMediaElement* mediaElement)

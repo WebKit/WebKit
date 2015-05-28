@@ -36,9 +36,9 @@ namespace WebCore {
 
 class NavigatorUserMediaError : public DOMError {
 public:
-    static PassRefPtr<NavigatorUserMediaError> create(const String& name, const String& constraintName)
+    static Ref<NavigatorUserMediaError> create(const String& name, const String& constraintName)
     {
-        return adoptRef(new NavigatorUserMediaError(name, constraintName));
+        return adoptRef(*new NavigatorUserMediaError(name, constraintName));
     }
 
     virtual ~NavigatorUserMediaError() { }

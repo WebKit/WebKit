@@ -49,14 +49,14 @@
 
 namespace WebCore {
 
-RefPtr<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext& context, MediaStreamTrackPrivate& privateTrack)
+Ref<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext& context, MediaStreamTrackPrivate& privateTrack)
 {
-    return adoptRef(new MediaStreamTrack(context, privateTrack));
+    return adoptRef(*new MediaStreamTrack(context, privateTrack));
 }
 
-RefPtr<MediaStreamTrack> MediaStreamTrack::create(MediaStreamTrack& track)
+Ref<MediaStreamTrack> MediaStreamTrack::create(MediaStreamTrack& track)
 {
-    return adoptRef(new MediaStreamTrack(track));
+    return adoptRef(*new MediaStreamTrack(track));
 }
 
 MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, MediaStreamTrackPrivate& privateTrack)

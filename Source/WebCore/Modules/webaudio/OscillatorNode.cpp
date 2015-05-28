@@ -121,22 +121,22 @@ bool OscillatorNode::setType(unsigned type)
     switch (type) {
     case SINE:
         if (!s_periodicWaveSine)
-            s_periodicWaveSine = PeriodicWave::createSine(sampleRate).leakRef();
+            s_periodicWaveSine = &PeriodicWave::createSine(sampleRate).leakRef();
         periodicWave = s_periodicWaveSine;
         break;
     case SQUARE:
         if (!s_periodicWaveSquare)
-            s_periodicWaveSquare = PeriodicWave::createSquare(sampleRate).leakRef();
+            s_periodicWaveSquare = &PeriodicWave::createSquare(sampleRate).leakRef();
         periodicWave = s_periodicWaveSquare;
         break;
     case SAWTOOTH:
         if (!s_periodicWaveSawtooth)
-            s_periodicWaveSawtooth = PeriodicWave::createSawtooth(sampleRate).leakRef();
+            s_periodicWaveSawtooth = &PeriodicWave::createSawtooth(sampleRate).leakRef();
         periodicWave = s_periodicWaveSawtooth;
         break;
     case TRIANGLE:
         if (!s_periodicWaveTriangle)
-            s_periodicWaveTriangle = PeriodicWave::createTriangle(sampleRate).leakRef();
+            s_periodicWaveTriangle = &PeriodicWave::createTriangle(sampleRate).leakRef();
         periodicWave = s_periodicWaveTriangle;
         break;
     case CUSTOM:

@@ -45,9 +45,9 @@ class SourceBuffer;
 
 class SourceBufferList final : public RefCounted<SourceBufferList>, public ScriptWrappable, public EventTargetWithInlineData {
 public:
-    static PassRefPtr<SourceBufferList> create(ScriptExecutionContext* context)
+    static Ref<SourceBufferList> create(ScriptExecutionContext* context)
     {
-        return adoptRef(new SourceBufferList(context));
+        return adoptRef(*new SourceBufferList(context));
     }
     virtual ~SourceBufferList();
 

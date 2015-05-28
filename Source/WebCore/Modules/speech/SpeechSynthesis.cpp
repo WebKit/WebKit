@@ -37,9 +37,9 @@
 
 namespace WebCore {
     
-PassRefPtr<SpeechSynthesis> SpeechSynthesis::create()
+Ref<SpeechSynthesis> SpeechSynthesis::create()
 {
-    return adoptRef(new SpeechSynthesis);
+    return adoptRef(*new SpeechSynthesis);
 }
     
 SpeechSynthesis::SpeechSynthesis()

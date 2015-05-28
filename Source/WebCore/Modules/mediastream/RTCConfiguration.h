@@ -44,7 +44,7 @@ namespace WebCore {
 
 class RTCConfiguration : public RefCounted<RTCConfiguration> {
 public:
-    static PassRefPtr<RTCConfiguration> create() { return adoptRef(new RTCConfiguration()); }
+    static Ref<RTCConfiguration> create() { return adoptRef(*new RTCConfiguration()); }
     virtual ~RTCConfiguration() { }
 
     void appendServer(PassRefPtr<RTCIceServer> server) { m_private->appendServer(server->privateServer()); }

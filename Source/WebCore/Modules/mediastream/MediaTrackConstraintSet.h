@@ -37,7 +37,7 @@ namespace WebCore {
 
 class MediaTrackConstraintSet : public RefCounted<MediaTrackConstraintSet>, public ScriptWrappable {
 public:
-    static RefPtr<MediaTrackConstraintSet> create(const Dictionary&);
+    static Ref<MediaTrackConstraintSet> create(const Dictionary&);
 
     virtual ~MediaTrackConstraintSet();
 

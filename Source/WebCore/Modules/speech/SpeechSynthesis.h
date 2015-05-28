@@ -44,7 +44,7 @@ class SpeechSynthesisVoice;
     
 class SpeechSynthesis : public PlatformSpeechSynthesizerClient, public RefCounted<SpeechSynthesis> {
 public:
-    static PassRefPtr<SpeechSynthesis> create();
+    static Ref<SpeechSynthesis> create();
     
     bool pending() const;
     bool speaking() const;

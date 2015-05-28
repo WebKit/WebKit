@@ -34,9 +34,9 @@
 
 namespace WebCore {
 
-RefPtr<MediaStreamAudioSource> MediaStreamAudioSource::create()
+Ref<MediaStreamAudioSource> MediaStreamAudioSource::create()
 {
-    return adoptRef(new MediaStreamAudioSource());
+    return adoptRef(*new MediaStreamAudioSource());
 }
 
 MediaStreamAudioSource::MediaStreamAudioSource()

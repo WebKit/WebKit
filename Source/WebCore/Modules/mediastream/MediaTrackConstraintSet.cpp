@@ -34,9 +34,9 @@ using namespace JSC;
 
 namespace WebCore {
 
-RefPtr<MediaTrackConstraintSet> MediaTrackConstraintSet::create(const Dictionary& constraints)
+Ref<MediaTrackConstraintSet> MediaTrackConstraintSet::create(const Dictionary& constraints)
 {
-    return adoptRef(new MediaTrackConstraintSet(constraints));
+    return adoptRef(*new MediaTrackConstraintSet(constraints));
 }
 
 MediaTrackConstraintSet::MediaTrackConstraintSet(const Dictionary& constraints)

@@ -37,7 +37,7 @@ namespace WebCore {
 
 class MediaSourceStates : public RefCounted<MediaSourceStates>, public ScriptWrappable {
 public:
-    static RefPtr<MediaSourceStates> create(const RealtimeMediaSourceStates&);
+    static Ref<MediaSourceStates> create(const RealtimeMediaSourceStates&);
 
     const AtomicString& sourceType() const;
     const AtomicString& sourceId() const { return m_sourceStates.sourceId(); }

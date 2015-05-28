@@ -38,9 +38,9 @@ using namespace JSC;
 
 namespace WebCore {
 
-RefPtr<MediaTrackConstraints> MediaTrackConstraints::create(PassRefPtr<MediaConstraintsImpl> constraints)
+Ref<MediaTrackConstraints> MediaTrackConstraints::create(PassRefPtr<MediaConstraintsImpl> constraints)
 {
-    return adoptRef(new MediaTrackConstraints(constraints));
+    return adoptRef(*new MediaTrackConstraints(constraints));
 }
 
 MediaTrackConstraints::MediaTrackConstraints(PassRefPtr<MediaConstraintsImpl> constraints)

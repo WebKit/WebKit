@@ -37,9 +37,9 @@ class RealtimeMediaSourceCapabilities;
 
 class AllVideoCapabilities : public MediaStreamCapabilities {
 public:
-    static RefPtr<AllVideoCapabilities> create(PassRefPtr<RealtimeMediaSourceCapabilities> capabilities)
+    static Ref<AllVideoCapabilities> create(PassRefPtr<RealtimeMediaSourceCapabilities> capabilities)
     {
-        return adoptRef(new AllVideoCapabilities(capabilities));
+        return adoptRef(*new AllVideoCapabilities(capabilities));
     }
     virtual ~AllVideoCapabilities() { }
 

@@ -33,9 +33,9 @@
 
 namespace WebCore {
 
-PassRefPtr<SourceInfo> SourceInfo::create(PassRefPtr<TrackSourceInfo> trackSourceInfo)
+Ref<SourceInfo> SourceInfo::create(PassRefPtr<TrackSourceInfo> trackSourceInfo)
 {
-    return adoptRef(new SourceInfo(trackSourceInfo));
+    return adoptRef(*new SourceInfo(trackSourceInfo));
 }
 
 SourceInfo::SourceInfo(PassRefPtr<TrackSourceInfo> trackSourceInfo)

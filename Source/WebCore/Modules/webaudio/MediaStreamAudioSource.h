@@ -42,7 +42,7 @@ class RealtimeMediaSourceCapabilities;
 
 class MediaStreamAudioSource : public RealtimeMediaSource {
 public:
-    static RefPtr<MediaStreamAudioSource> create();
+    static Ref<MediaStreamAudioSource> create();
 
     ~MediaStreamAudioSource() { }
 

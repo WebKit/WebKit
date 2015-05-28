@@ -41,7 +41,7 @@ class ScriptExecutionContext;
 
 class MediaStreamTrackSourcesRequest : public MediaStreamTrackSourcesRequestClient {
 public:
-    static PassRefPtr<MediaStreamTrackSourcesRequest> create(ScriptExecutionContext*, PassRefPtr<MediaStreamTrackSourcesCallback>);
+    static Ref<MediaStreamTrackSourcesRequest> create(ScriptExecutionContext*, PassRefPtr<MediaStreamTrackSourcesCallback>);
     virtual ~MediaStreamTrackSourcesRequest() { }
 
 private:

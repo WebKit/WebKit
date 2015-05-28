@@ -50,9 +50,9 @@ public:
         Persistent,
     };
 
-    static PassRefPtr<StorageQuota> create(Type type)
+    static Ref<StorageQuota> create(Type type)
     {
-        return adoptRef(new StorageQuota(type));
+        return adoptRef(*new StorageQuota(type));
     }
 
     void queryUsageAndQuota(ScriptExecutionContext*, PassRefPtr<StorageUsageCallback>, PassRefPtr<StorageErrorCallback>);

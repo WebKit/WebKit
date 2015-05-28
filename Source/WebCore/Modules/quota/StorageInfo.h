@@ -52,9 +52,9 @@ public:
         PERSISTENT,
     };
 
-    static PassRefPtr<StorageInfo> create()
+    static Ref<StorageInfo> create()
     {
-        return adoptRef(new StorageInfo());
+        return adoptRef(*new StorageInfo());
     }
 
     void queryUsageAndQuota(ScriptExecutionContext*, int storageType, PassRefPtr<StorageUsageCallback>, PassRefPtr<StorageErrorCallback>);

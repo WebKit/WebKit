@@ -35,9 +35,9 @@ class AudioContext;
     
 class DefaultAudioDestinationNode : public AudioDestinationNode {
 public:
-    static PassRefPtr<DefaultAudioDestinationNode> create(AudioContext* context)
+    static Ref<DefaultAudioDestinationNode> create(AudioContext* context)
     {
-        return adoptRef(new DefaultAudioDestinationNode(context));     
+        return adoptRef(*new DefaultAudioDestinationNode(context));     
     }
 
     virtual ~DefaultAudioDestinationNode();

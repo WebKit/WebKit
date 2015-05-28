@@ -38,14 +38,14 @@ namespace WebCore {
 
 class RTCIceServer : public RefCounted<RTCIceServer> {
 public:
-    static PassRefPtr<RTCIceServer> create(const Vector<String>& urls, const String& credential, const String& username)
+    static Ref<RTCIceServer> create(const Vector<String>& urls, const String& credential, const String& username)
     {
-        return adoptRef(new RTCIceServer(urls, credential, username));
+        return adoptRef(*new RTCIceServer(urls, credential, username));
     }
 
-    static PassRefPtr<RTCIceServer> create(PassRefPtr<RTCIceServerPrivate> server)
+    static Ref<RTCIceServer> create(PassRefPtr<RTCIceServerPrivate> server)
     {
-        return adoptRef(new RTCIceServer(server));
+        return adoptRef(*new RTCIceServer(server));
     }
 
     virtual ~RTCIceServer() { }

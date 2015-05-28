@@ -40,9 +40,9 @@ using namespace JSC;
 
 namespace WebCore {
 
-RefPtr<CapabilityRange> CapabilityRange::create(const RealtimeMediaSourceCapabilityRange& rangeInfo)
+Ref<CapabilityRange> CapabilityRange::create(const RealtimeMediaSourceCapabilityRange& rangeInfo)
 {
-    return adoptRef(new CapabilityRange(rangeInfo));
+    return adoptRef(*new CapabilityRange(rangeInfo));
 }
 
 CapabilityRange::CapabilityRange(const RealtimeMediaSourceCapabilityRange& rangeInfo)

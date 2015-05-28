@@ -63,9 +63,9 @@ public:
         EXPONENTIAL_DISTANCE = 2,
     };
 
-    static PassRefPtr<PannerNode> create(AudioContext* context, float sampleRate)
+    static Ref<PannerNode> create(AudioContext* context, float sampleRate)
     {
-        return adoptRef(new PannerNode(context, sampleRate));
+        return adoptRef(*new PannerNode(context, sampleRate));
     }
 
     virtual ~PannerNode();

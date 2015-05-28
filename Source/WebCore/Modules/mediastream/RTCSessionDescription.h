@@ -46,8 +46,8 @@ class RTCSessionDescriptionDescriptor;
 
 class RTCSessionDescription : public RefCounted<RTCSessionDescription>, public ScriptWrappable {
 public:
-    static PassRefPtr<RTCSessionDescription> create(const Dictionary&, ExceptionCode&);
-    static PassRefPtr<RTCSessionDescription> create(PassRefPtr<RTCSessionDescriptionDescriptor>);
+    static RefPtr<RTCSessionDescription> create(const Dictionary&, ExceptionCode&);
+    static RefPtr<RTCSessionDescription> create(PassRefPtr<RTCSessionDescriptionDescriptor>);
     virtual ~RTCSessionDescription();
 
     const String& type() const;

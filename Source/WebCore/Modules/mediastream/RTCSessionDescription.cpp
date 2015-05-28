@@ -46,7 +46,7 @@ static bool verifyType(const String& type)
     return type == "offer" || type == "pranswer" || type == "answer";
 }
 
-PassRefPtr<RTCSessionDescription> RTCSessionDescription::create(const Dictionary& dictionary, ExceptionCode& ec)
+RefPtr<RTCSessionDescription> RTCSessionDescription::create(const Dictionary& dictionary, ExceptionCode& ec)
 {
     String type;
     bool ok = dictionary.get("type", type);
@@ -62,13 +62,13 @@ PassRefPtr<RTCSessionDescription> RTCSessionDescription::create(const Dictionary
         return nullptr;
     }
 
-    return adoptRef(new RTCSessionDescription(RTCSessionDescriptionDescriptor::create(type, sdp)));
+    return adoptRef(*new RTCSessionDescription(RTCSessionDescriptionDescriptor::create(type, sdp)));
 }
 
-PassRefPtr<RTCSessionDescription> RTCSessionDescription::create(PassRefPtr<RTCSessionDescriptionDescriptor> descriptor)
+RefPtr<RTCSessionDescription> RTCSessionDescription::create(PassRefPtr<RTCSessionDescriptionDescriptor> descriptor)
 {
     ASSERT(descriptor);
-    return adoptRef(new RTCSessionDescription(descriptor));
+    return adoptRef(*new RTCSessionDescription(descriptor));
 }
 
 RTCSessionDescription::RTCSessionDescription(PassRefPtr<RTCSessionDescriptionDescriptor> descriptor)

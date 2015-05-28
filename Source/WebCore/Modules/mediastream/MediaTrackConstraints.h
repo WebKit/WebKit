@@ -42,7 +42,7 @@ class MediaTrackConstraints : public RefCounted<MediaTrackConstraints>, public S
 public:
     virtual ~MediaTrackConstraints() { }
 
-    static RefPtr<MediaTrackConstraints> create(PassRefPtr<MediaConstraintsImpl>);
+    static Ref<MediaTrackConstraints> create(PassRefPtr<MediaConstraintsImpl>);
 
     Vector<PassRefPtr<MediaTrackConstraint>> optional(bool) const;
     RefPtr<MediaTrackConstraintSet> mandatory(bool) const;

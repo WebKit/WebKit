@@ -30,9 +30,9 @@
 
 namespace WebCore {
 
-PassRefPtr<RTCStatsResponse> RTCStatsResponse::create()
+Ref<RTCStatsResponse> RTCStatsResponse::create()
 {
-    return adoptRef(new RTCStatsResponse());
+    return adoptRef(*new RTCStatsResponse());
 }
 
 RTCStatsResponse::RTCStatsResponse()

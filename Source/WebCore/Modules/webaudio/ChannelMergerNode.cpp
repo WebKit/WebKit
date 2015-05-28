@@ -40,12 +40,12 @@ const unsigned DefaultNumberOfOutputChannels = 1;
 
 namespace WebCore {
 
-PassRefPtr<ChannelMergerNode> ChannelMergerNode::create(AudioContext* context, float sampleRate, unsigned numberOfInputs)
+RefPtr<ChannelMergerNode> ChannelMergerNode::create(AudioContext* context, float sampleRate, unsigned numberOfInputs)
 {
     if (!numberOfInputs || numberOfInputs > AudioContext::maxNumberOfChannels())
         return nullptr;
     
-    return adoptRef(new ChannelMergerNode(context, sampleRate, numberOfInputs));      
+    return adoptRef(*new ChannelMergerNode(context, sampleRate, numberOfInputs));      
 }
 
 ChannelMergerNode::ChannelMergerNode(AudioContext* context, float sampleRate, unsigned numberOfInputs)

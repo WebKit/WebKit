@@ -33,9 +33,9 @@
 
 namespace WebCore {
 
-PassRefPtr<RTCStatsReport> RTCStatsReport::create(const String& id, const String& type, double timestamp)
+Ref<RTCStatsReport> RTCStatsReport::create(const String& id, const String& type, double timestamp)
 {
-    return adoptRef(new RTCStatsReport(id, type, timestamp));
+    return adoptRef(*new RTCStatsReport(id, type, timestamp));
 }
 
 RTCStatsReport::RTCStatsReport(const String& id, const String& type, double timestamp)

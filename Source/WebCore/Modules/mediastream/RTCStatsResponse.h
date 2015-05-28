@@ -41,7 +41,7 @@ namespace WebCore {
 
 class RTCStatsResponse : public RTCStatsResponseBase, public ScriptWrappable {
 public:
-    static PassRefPtr<RTCStatsResponse> create();
+    static Ref<RTCStatsResponse> create();
 
     const Vector<RefPtr<RTCStatsReport>>& result() const { return m_result; };
 
