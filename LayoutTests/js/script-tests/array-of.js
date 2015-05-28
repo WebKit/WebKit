@@ -1,5 +1,8 @@
 description("Tests for Array.of");
 
+shouldBe("Array.of.length", "0");
+shouldBe("Array.of.name", "'of'");
+
 shouldBe("Array.of(1)", "[1]");
 shouldBe("Array.of(1, 2)", "[1, 2]");
 shouldBe("Array.of(1, 2, 3)", "[1, 2, 3]");
@@ -22,3 +25,7 @@ Array.prototype.__defineSetter__("0", function (value) {
 
 shouldNotThrow("Array.of(1, 2, 3)");
 
+var Foo = function FooBar(length) { this.givenLength = length; };
+shouldBeTrue("Array.of.call(Foo, 'a', 'b', 'c') instanceof Foo")
+shouldBe("Array.of.call(Foo, 'a', 'b', 'c').givenLength", "3");
+shouldBe("var foo = Array.of.call(Foo, 'a', 'b', 'c'); [foo.length, foo[0], foo[1], foo[2]]", "[3, 'a', 'b', 'c']");

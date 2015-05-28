@@ -1,3 +1,17 @@
+2015-05-27  Jordan Harband  <ljharb@gmail.com>
+
+        Array.of should work with other constructors
+        https://bugs.webkit.org/show_bug.cgi?id=145365
+        Per https://people.mozilla.org/~jorendorff/es6-draft.html#sec-array.of
+        step 4
+
+        Reviewed by Yusuke Suzuki.
+
+        * builtins/ArrayConstructor.js:
+        (of):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::arrayConstructorOf): Deleted.
+
 2015-05-27  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Add undefined->double conversion to DoubleRep

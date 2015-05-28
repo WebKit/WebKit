@@ -37,7 +37,6 @@
 namespace JSC {
 
 static EncodedJSValue JSC_HOST_CALL arrayConstructorIsArray(ExecState*);
-static EncodedJSValue JSC_HOST_CALL arrayConstructorOf(ExecState*);
 
 }
 
@@ -127,19 +126,6 @@ CallType ArrayConstructor::getCallData(JSCell*, CallData& callData)
 EncodedJSValue JSC_HOST_CALL arrayConstructorIsArray(ExecState* exec)
 {
     return JSValue::encode(jsBoolean(exec->argument(0).inherits(JSArray::info())));
-}
-
-EncodedJSValue JSC_HOST_CALL arrayConstructorOf(ExecState* exec)
-{
-    ArgList args(exec);
-    size_t length = args.size();
-
-    JSArray* result = constructEmptyArray(exec, nullptr, length);
-
-    for (unsigned i = 0; i < length; i++)
-        result->putDirectIndex(exec, i, args.at(i));
-
-    return JSValue::encode(result);
 }
 
 } // namespace JSC
