@@ -1636,7 +1636,6 @@ set(WebCore_SOURCES
     html/HTMLMapElement.cpp
     html/HTMLMarqueeElement.cpp
     html/HTMLMediaElement.cpp
-    html/HTMLMediaSession.cpp
     html/HTMLMenuElement.cpp
     html/HTMLMetaElement.cpp
     html/HTMLMeterElement.cpp
@@ -1688,6 +1687,7 @@ set(WebCore_SOURCES
     html/LinkRelAttribute.cpp
     html/MediaController.cpp
     html/MediaDocument.cpp
+    html/MediaElementSession.cpp
     html/MediaFragmentURIParser.cpp
     html/MonthInputType.cpp
     html/NumberInputType.cpp

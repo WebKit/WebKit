@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLMediaSession_h
-#define HTMLMediaSession_h
+#ifndef MediaElementSession_h
+#define MediaElementSession_h
 
 #if ENABLE(VIDEO)
 
@@ -38,11 +38,11 @@ class Document;
 class HTMLMediaElement;
 class SourceBuffer;
 
-class HTMLMediaSession final : public MediaSession {
+class MediaElementSession final : public MediaSession {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit HTMLMediaSession(MediaSessionClient&);
-    virtual ~HTMLMediaSession() { }
+    explicit MediaElementSession(MediaSessionClient&);
+    virtual ~MediaElementSession() { }
 
     void registerWithDocument(const HTMLMediaElement&);
     void unregisterWithDocument(const HTMLMediaElement&);
@@ -129,6 +129,6 @@ private:
 
 }
 
-#endif // MediaSession_h
+#endif // MediaElementSession_h
 
 #endif // ENABLE(VIDEO)

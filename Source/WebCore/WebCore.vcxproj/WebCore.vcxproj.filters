@@ -7030,7 +7030,7 @@
     <ClCompile Include="..\Modules\gamepad\GamepadEvent.cpp">
       <Filter>Modules\gamepad</Filter>
     </ClCompile>
-    <ClCompile Include="..\html\HTMLMediaSession.cpp">
+    <ClCompile Include="..\html\MediaElementSession.cpp">
       <Filter>html</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\HTTPHeaderNames.cpp">

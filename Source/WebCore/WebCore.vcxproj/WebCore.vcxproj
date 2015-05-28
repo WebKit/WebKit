@@ -15098,7 +15098,7 @@
     <ClCompile Include="..\html\DOMSettableTokenList.cpp" />
     <ClCompile Include="..\html\DOMTokenList.cpp" />
     <ClCompile Include="..\html\DOMURL.cpp" />
-    <ClCompile Include="..\html\HTMLMediaSession.cpp" />
+    <ClCompile Include="..\html\MediaElementSession.cpp" />
     <ClCompile Include="..\html\EmailInputType.cpp" />
     <ClCompile Include="..\html\PublicURLManager.cpp" />
     <ClCompile Include="..\fileapi\File.cpp" />

@@ -2648,34 +2648,34 @@ void Internals::setMediaElementRestrictions(HTMLMediaElement* element, const Str
         return;
     }
 
-    HTMLMediaSession::BehaviorRestrictions restrictions = element->mediaSession().behaviorRestrictions();
+    MediaElementSession::BehaviorRestrictions restrictions = element->mediaSession().behaviorRestrictions();
     element->mediaSession().removeBehaviorRestriction(restrictions);
 
-    restrictions = HTMLMediaSession::NoRestrictions;
+    restrictions = MediaElementSession::NoRestrictions;
 
     Vector<String> restrictionsArray;
     restrictionsString.split(',', false, restrictionsArray);
     for (auto& restrictionString : restrictionsArray) {
         if (equalIgnoringCase(restrictionString, "NoRestrictions"))
-            restrictions |= HTMLMediaSession::NoRestrictions;
+            restrictions |= MediaElementSession::NoRestrictions;
         if (equalIgnoringCase(restrictionString, "RequireUserGestureForLoad"))
-            restrictions |= HTMLMediaSession::RequireUserGestureForLoad;
+            restrictions |= MediaElementSession::RequireUserGestureForLoad;
         if (equalIgnoringCase(restrictionString, "RequireUserGestureForRateChange"))
-            restrictions |= HTMLMediaSession::RequireUserGestureForRateChange;
+            restrictions |= MediaElementSession::RequireUserGestureForRateChange;
         if (equalIgnoringCase(restrictionString, "RequireUserGestureForFullscreen"))
-            restrictions |= HTMLMediaSession::RequireUserGestureForFullscreen;
+            restrictions |= MediaElementSession::RequireUserGestureForFullscreen;
         if (equalIgnoringCase(restrictionString, "RequirePageConsentToLoadMedia"))
-            restrictions |= HTMLMediaSession::RequirePageConsentToLoadMedia;
+            restrictions |= MediaElementSession::RequirePageConsentToLoadMedia;
         if (equalIgnoringCase(restrictionString, "RequirePageConsentToResumeMedia"))
-            restrictions |= HTMLMediaSession::RequirePageConsentToResumeMedia;
+            restrictions |= MediaElementSession::RequirePageConsentToResumeMedia;
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
         if (equalIgnoringCase(restrictionString, "RequireUserGestureToShowPlaybackTargetPicker"))
-            restrictions |= HTMLMediaSession::RequireUserGestureToShowPlaybackTargetPicker;
+            restrictions |= MediaElementSession::RequireUserGestureToShowPlaybackTargetPicker;
         if (equalIgnoringCase(restrictionString, "WirelessVideoPlaybackDisabled"))
-            restrictions |= HTMLMediaSession::WirelessVideoPlaybackDisabled;
+            restrictions |= MediaElementSession::WirelessVideoPlaybackDisabled;
 #endif
         if (equalIgnoringCase(restrictionString, "RequireUserGestureForAudioRateChange"))
-            restrictions |= HTMLMediaSession::RequireUserGestureForAudioRateChange;
+            restrictions |= MediaElementSession::RequireUserGestureForAudioRateChange;
     }
     element->mediaSession().addBehaviorRestriction(restrictions);
 }
@@ -2727,7 +2727,7 @@ void Internals::setAudioContextRestrictions(AudioContext* context, const String 
     AudioContext::BehaviorRestrictions restrictions = context->behaviorRestrictions();
     context->removeBehaviorRestriction(restrictions);
 
-    restrictions = HTMLMediaSession::NoRestrictions;
+    restrictions = MediaElementSession::NoRestrictions;
 
     Vector<String> restrictionsArray;
     restrictionsString.split(',', false, restrictionsArray);

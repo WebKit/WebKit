@@ -32,9 +32,9 @@
 #include "GenericEventQueue.h"
 #include "GenericTaskQueue.h"
 #include "HTMLMediaElementEnums.h"
-#include "HTMLMediaSession.h"
 #include "MediaCanStartListener.h"
 #include "MediaControllerInterface.h"
+#include "MediaElementSession.h"
 #include "MediaProducer.h"
 #include "PageThrottler.h"
 
@@ -416,7 +416,7 @@ public:
 #endif
 
     MediaPlayerEnums::Preload preloadValue() const { return m_preload; }
-    HTMLMediaSession& mediaSession() const { return *m_mediaSession; }
+    MediaElementSession& mediaSession() const { return *m_mediaSession; }
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     void pageScaleFactorChanged();
@@ -894,7 +894,7 @@ private:
     RefPtr<PlatformTextTrackMenuInterface> m_platformMenu;
 #endif
 
-    std::unique_ptr<HTMLMediaSession> m_mediaSession;
+    std::unique_ptr<MediaElementSession> m_mediaSession;
     PageActivityAssertionToken m_activityToken;
     size_t m_reportedExtraMemoryCost;
 

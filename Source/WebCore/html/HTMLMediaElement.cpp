@@ -351,7 +351,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
 #if ENABLE(WEB_AUDIO)
     , m_audioSourceNode(0)
 #endif
-    , m_mediaSession(std::make_unique<HTMLMediaSession>(*this))
+    , m_mediaSession(std::make_unique<MediaElementSession>(*this))
     , m_reportedExtraMemoryCost(0)
 #if ENABLE(MEDIA_STREAM)
     , m_mediaStreamSrcObject(nullptr)
@@ -360,36 +360,36 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     LOG(Media, "HTMLMediaElement::HTMLMediaElement(%p)", this);
     setHasCustomStyleResolveCallbacks();
 
-    m_mediaSession->addBehaviorRestriction(HTMLMediaSession::RequireUserGestureForFullscreen);
-    m_mediaSession->addBehaviorRestriction(HTMLMediaSession::RequirePageConsentToLoadMedia);
+    m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureForFullscreen);
+    m_mediaSession->addBehaviorRestriction(MediaElementSession::RequirePageConsentToLoadMedia);
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    m_mediaSession->addBehaviorRestriction(HTMLMediaSession::RequireUserGestureToAutoplayToExternalDevice);
+    m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureToAutoplayToExternalDevice);
 #endif
 
     // FIXME: We should clean up and look to better merge the iOS and non-iOS code below.
     Settings* settings = document.settings();
 #if !PLATFORM(IOS)
     if (settings && settings->requiresUserGestureForMediaPlayback()) {
-        m_mediaSession->addBehaviorRestriction(HTMLMediaSession::RequireUserGestureForRateChange);
-        m_mediaSession->addBehaviorRestriction(HTMLMediaSession::RequireUserGestureForLoad);
+        m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureForRateChange);
+        m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureForLoad);
     }
 #else
     m_sendProgressEvents = false;
     if (!settings || settings->requiresUserGestureForMediaPlayback()) {
         // Allow autoplay in a MediaDocument that is not in an iframe.
         if (document.ownerElement() || !document.isMediaDocument())
-            m_mediaSession->addBehaviorRestriction(HTMLMediaSession::RequireUserGestureForRateChange);
+            m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureForRateChange);
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-        m_mediaSession->addBehaviorRestriction(HTMLMediaSession::RequireUserGestureToShowPlaybackTargetPicker);
+        m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureToShowPlaybackTargetPicker);
 #endif
     } else {
         // Relax RequireUserGestureForFullscreen when requiresUserGestureForMediaPlayback is not set:
-        m_mediaSession->removeBehaviorRestriction(HTMLMediaSession::RequireUserGestureForFullscreen);
+        m_mediaSession->removeBehaviorRestriction(MediaElementSession::RequireUserGestureForFullscreen);
     }
 #endif // !PLATFORM(IOS)
 
     if (settings && settings->audioPlaybackRequiresUserGesture())
-        m_mediaSession->addBehaviorRestriction(HTMLMediaSession::RequireUserGestureForAudioRateChange);
+        m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureForAudioRateChange);
 
 #if ENABLE(VIDEO_TRACK)
     if (document.page())
@@ -1021,7 +1021,7 @@ void HTMLMediaElement::loadInternal()
     // Once the page has allowed an element to load media, it is free to load at will. This allows a 
     // playlist that starts in a foreground tab to continue automatically if the tab is subsequently 
     // put into the background.
-    m_mediaSession->removeBehaviorRestriction(HTMLMediaSession::RequirePageConsentToLoadMedia);
+    m_mediaSession->removeBehaviorRestriction(MediaElementSession::RequirePageConsentToLoadMedia);
 
 #if ENABLE(VIDEO_TRACK)
     if (hasMediaControls())
@@ -1200,7 +1200,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
 
 #if ENABLE(MEDIA_STREAM)
     if (MediaStreamRegistry::registry().lookup(url.string()))
-        m_mediaSession->removeBehaviorRestriction(HTMLMediaSession::RequireUserGestureForRateChange);
+        m_mediaSession->removeBehaviorRestriction(MediaElementSession::RequireUserGestureForRateChange);
 #endif
 
     if (m_sendProgressEvents) 
@@ -4835,7 +4835,7 @@ void HTMLMediaElement::suspend(ReasonForSuspension why)
     {
         case PageCache:
             stop();
-            m_mediaSession->addBehaviorRestriction(HTMLMediaSession::RequirePageConsentToResumeMedia);
+            m_mediaSession->addBehaviorRestriction(MediaElementSession::RequirePageConsentToResumeMedia);
             break;
         case DocumentWillBePaused:
         case JavaScriptDebuggerPaused:
@@ -4857,7 +4857,7 @@ void HTMLMediaElement::resume()
     else
         setPausedInternal(false);
 
-    m_mediaSession->removeBehaviorRestriction(HTMLMediaSession::RequirePageConsentToResumeMedia);
+    m_mediaSession->removeBehaviorRestriction(MediaElementSession::RequirePageConsentToResumeMedia);
 
     if (m_error && m_error->code() == MediaError::MEDIA_ERR_ABORTED) {
         // Restart the load if it was aborted in the middle by moving the document to the page cache.
@@ -5962,15 +5962,15 @@ double HTMLMediaElement::mediaPlayerRequestedPlaybackRate() const
 
 void HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture()
 {
-    HTMLMediaSession::BehaviorRestrictions restrictionsToRemove = HTMLMediaSession::RequireUserGestureForLoad
+    MediaElementSession::BehaviorRestrictions restrictionsToRemove = MediaElementSession::RequireUserGestureForLoad
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-        | HTMLMediaSession::RequireUserGestureToShowPlaybackTargetPicker
-        | HTMLMediaSession::RequireUserGestureToAutoplayToExternalDevice
+        | MediaElementSession::RequireUserGestureToShowPlaybackTargetPicker
+        | MediaElementSession::RequireUserGestureToAutoplayToExternalDevice
 #endif
-        | HTMLMediaSession::RequireUserGestureForLoad
-        | HTMLMediaSession::RequireUserGestureForRateChange
-        | HTMLMediaSession::RequireUserGestureForAudioRateChange
-        | HTMLMediaSession::RequireUserGestureForFullscreen;
+        | MediaElementSession::RequireUserGestureForLoad
+        | MediaElementSession::RequireUserGestureForRateChange
+        | MediaElementSession::RequireUserGestureForAudioRateChange
+        | MediaElementSession::RequireUserGestureForFullscreen;
     m_mediaSession->removeBehaviorRestriction(restrictionsToRemove);
 }
 
@@ -6295,7 +6295,7 @@ MediaProducer::MediaStateFlags HTMLMediaElement::mediaState() const
     if (!m_mediaSession->wirelessVideoPlaybackDisabled(*this) && m_hasPlaybackTargetAvailabilityListeners && m_player->canPlayToWirelessPlaybackTarget())
         state |= RequiresPlaybackTargetMonitoring;
 
-    bool requireUserGesture = m_mediaSession->hasBehaviorRestriction(HTMLMediaSession::RequireUserGestureToAutoplayToExternalDevice);
+    bool requireUserGesture = m_mediaSession->hasBehaviorRestriction(MediaElementSession::RequireUserGestureToAutoplayToExternalDevice);
     if (hasActiveVideo && (!requireUserGesture || (hasAudio && !loop())))
         state |= ExternalDeviceAutoPlayCandidate;
 #endif
