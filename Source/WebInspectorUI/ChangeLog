@@ -1,5 +1,19 @@
 2015-05-27  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Show Page Source does not switch to Resources tab if inspector was closed
+        https://bugs.webkit.org/show_bug.cgi?id=145423
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector._frameWasAdded.delayedWork):
+        (WebInspector._frameWasAdded):
+        In the special case where we are holding to show a frame's source code when
+        the frame becomes available (_frameIdentifierToShowSourceCodeWhenAvailable)
+        we should be forcing to show the tab.
+
+2015-05-27  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Toggling an inherited property sometimes stops working
         https://bugs.webkit.org/show_bug.cgi?id=145416
 

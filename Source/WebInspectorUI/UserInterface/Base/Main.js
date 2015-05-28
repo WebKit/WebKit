@@ -1111,7 +1111,7 @@ WebInspector._frameWasAdded = function(event)
 
     function delayedWork()
     {
-        this.showSourceCodeForFrame(frame.id);
+        this.showSourceCodeForFrame(frame.id, true);
     }
 
     // Delay showing the frame since FrameWasAdded is called before MainFrameChanged.
