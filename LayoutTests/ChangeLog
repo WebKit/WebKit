@@ -1,3 +1,12 @@
+2015-05-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Delete media/controls-layers.html. It's a bad test that fails and asserts, and there
+        are apparently no plans to fix any of that (see https://bugs.webkit.org/show_bug.cgi?id=145420).
+
+        * media/controls-layers.html: Removed.
+        * platform/mac-mavericks/media/controls-layers-expected.txt: Removed.
+        * platform/mac/media/controls-layers-expected.txt: Removed.
+
 2015-05-27  Jordan Harband  <ljharb@gmail.com>
 
         Array.of should work with other constructors
