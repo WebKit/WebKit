@@ -1,3 +1,11 @@
+2015-05-28  Jon Lee  <jonlee@apple.com>
+
+        Build fix after r184946.
+
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences allowsAirPlayForMediaPlayback]):
+        (-[WebPreferences setAllowsAirPlayForMediaPlayback:]):
+
 2015-05-19  Jon Honeycutt  <jhoneycutt@apple.com>
 
         [iOS] When viewing an MJPEG stream as the main resource, only the first

@@ -1154,6 +1154,22 @@ public:
     return [self _boolValueForKey:WebKitSuppressesIncrementalRenderingKey];
 }
 
+- (BOOL)allowsAirPlayForMediaPlayback
+{
+#if ENABLE(WIRELESS_TARGET_PLAYBACK)
+    return [self _boolValueForKey:WebKitAllowsAirPlayForMediaPlaybackPreferenceKey];
+#else
+    return false;
+#endif
+}
+
+- (void)setAllowsAirPlayForMediaPlayback:(BOOL)flag
+{
+#if ENABLE(WIRELESS_TARGET_PLAYBACK)
+    [self _setBoolValue:flag forKey:WebKitAllowsAirPlayForMediaPlaybackPreferenceKey];
+#endif
+}
+
 @end
 
 @implementation WebPreferences (WebPrivate)
@@ -2076,22 +2092,6 @@ static NSString *classIBCreatorID = nil;
 - (void)setEnableInheritURIQueryComponent:(BOOL)flag
 {
     [self _setBoolValue:flag forKey: WebKitEnableInheritURIQueryComponentPreferenceKey];
-}
-
-- (BOOL)allowsAirPlayForMediaPlayback
-{
-#if ENABLE(WIRELESS_TARGET_PLAYBACK)
-    return [self _boolValueForKey:WebKitAllowsAirPlayForMediaPlaybackPreferenceKey];
-#else
-    return false;
-#endif
-}
-
-- (void)setAllowsAirPlayForMediaPlayback:(BOOL)flag
-{
-#if ENABLE(WIRELESS_TARGET_PLAYBACK)
-    [self _setBoolValue:flag forKey:WebKitAllowsAirPlayForMediaPlaybackPreferenceKey];
-#endif
 }
 
 #if PLATFORM(IOS)
