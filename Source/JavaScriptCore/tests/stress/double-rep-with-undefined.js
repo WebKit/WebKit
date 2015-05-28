@@ -4,7 +4,7 @@ function addArgsNumberAndUndefined(a, b) {
 }
 noInline(addArgsNumberAndUndefined);
 
-for (var i = 0; i < 1e7; ++i) {
+for (var i = 0; i < 1e4; ++i) {
     var value = addArgsNumberAndUndefined(i, 1);
     if (value !== (i + 1))
         throw "addArgsNumberAndUndefined(i, 1) failed with i = " + i + " returned value = " + value;
@@ -41,7 +41,7 @@ function addArgsInt32AndUndefined(a, b) {
 }
 noInline(addArgsInt32AndUndefined);
 
-for (var i = 0; i < 1e7; ++i) {
+for (var i = 0; i < 1e4; ++i) {
     var value = addArgsInt32AndUndefined(i, 1);
     if (value !== (i + 1))
         throw "addArgsInt32AndUndefined(i, 1) failed with i = " + i + " returned value = " + value;
@@ -81,7 +81,7 @@ function addArgsDoubleAndUndefined(a, b) {
 }
 noInline(addArgsDoubleAndUndefined);
 
-for (var i = 0; i < 1e7; ++i) {
+for (var i = 0; i < 1e4; ++i) {
     var value = addArgsDoubleAndUndefined(0.5, i);
     if (value !== (i + 0.5))
         throw "addArgsDoubleAndUndefined(0.5, i) failed with i = " + i + " returned value = " + value;
@@ -113,7 +113,7 @@ function addArgsOnlyUndefined(a, b) {
 }
 noInline(addArgsOnlyUndefined);
 
-for (var i = 0; i < 1e7; ++i) {
+for (var i = 0; i < 1e4; ++i) {
     var value = addArgsOnlyUndefined(undefined, undefined);
     if (value === value)
         throw "addArgsOnlyUndefined(undefined, undefined) failed with i = " + i + " returned value = " + value;

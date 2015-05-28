@@ -1,3 +1,13 @@
+2015-05-28  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] reduction the iteration count of the DoubleRep stress tests
+
+        Once again, I used big numbers for manual testing and I forgot to fix them before landing.
+
+        * tests/stress/double-rep-with-non-cell.js:
+        * tests/stress/double-rep-with-null.js:
+        * tests/stress/double-rep-with-undefined.js:
+
 2015-05-28  Basile Clement  <basile_clement@apple.com>
 
         Add debug mode assertions for accessors casting JSC::DFG::Node.m_opInfo

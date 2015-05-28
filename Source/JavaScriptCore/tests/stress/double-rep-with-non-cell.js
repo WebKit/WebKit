@@ -4,7 +4,7 @@ function addNullBoolUndefined(a, b) {
 }
 noInline(addNullBoolUndefined);
 
-for (var i = 0; i < 1e7; ++i) {
+for (var i = 0; i < 1e4; ++i) {
     var value = addNullBoolUndefined(0.5, null);
     if (value !== 0.5)
         throw "addNullBoolUndefined(0.5, null) failed with i = " + i + " returned value = " + value;

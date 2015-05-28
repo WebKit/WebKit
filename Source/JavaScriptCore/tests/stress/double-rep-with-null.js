@@ -4,7 +4,7 @@ function addArgsNumberAndNull(a, b) {
 }
 noInline(addArgsNumberAndNull);
 
-for (var i = 0; i < 1e7; ++i) {
+for (var i = 0; i < 1e4; ++i) {
     var value = addArgsNumberAndNull(i, 1);
     if (value !== (i + 1))
         throw "addArgsNumberAndNull(i, 1) failed with i = " + i + " returned value = " + value;
@@ -33,7 +33,7 @@ function addArgsInt32AndNull(a, b) {
 }
 noInline(addArgsInt32AndNull);
 
-for (var i = 0; i < 1e7; ++i) {
+for (var i = 0; i < 1e4; ++i) {
     var value = addArgsInt32AndNull(i, 1);
     if (value !== (i + 1))
         throw "addArgsInt32AndNull(i, 1) failed with i = " + i + " returned value = " + value;
@@ -65,7 +65,7 @@ function addArgsDoubleAndNull(a, b) {
 }
 noInline(addArgsDoubleAndNull);
 
-for (var i = 0; i < 1e7; ++i) {
+for (var i = 0; i < 1e4; ++i) {
     var value = addArgsDoubleAndNull(0.5, i);
     if (value !== (i + 0.5))
         throw "addArgsDoubleAndNull(0.5, i) failed with i = " + i + " returned value = " + value;
@@ -93,7 +93,7 @@ function addArgsOnlyNull(a, b) {
 }
 noInline(addArgsOnlyNull);
 
-for (var i = 0; i < 1e7; ++i) {
+for (var i = 0; i < 1e4; ++i) {
     var value = addArgsOnlyNull(null, null);
     if (value !== 0)
         throw "addArgsOnlyNull(null, null) failed with i = " + i + " returned value = " + value;
