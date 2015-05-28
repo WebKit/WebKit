@@ -3000,22 +3000,35 @@ if (ENABLE_QUOTA)
 endif ()
 
 if (ENABLE_GRAPHICS_CONTEXT_3D)
-    # For platforms that want to use system-provided OpenGL (ES) headers,
-    # these include directories need to be added before the ANGLE directories.
-    if (OPENGL_FOUND)
+    # For platforms that want to use system-provided OpenGL (ES) / EGL headers,
+    # these include directories, libraries or definitions need to be
+    # added before the ANGLE directories.
+    if (USE_OPENGL)
         list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-            ${OPENGL_INCLUDE_DIR}
+            ${OPENGL_INCLUDE_DIRS}
         )
         list(APPEND WebCore_LIBRARIES
-            ${OPENGL_gl_LIBRARY}
+            ${OPENGL_LIBRARIES}
         )
-    elseif (OPENGLES2_FOUND)
+        add_definitions(${OPENGL_DEFINITIONS})
+    elseif (USE_OPENGL_ES_2)
         list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-            ${OPENGLES2_INCLUDE_DIR}
+            ${OPENGLES2_INCLUDE_DIRS}
         )
         list(APPEND WebCore_LIBRARIES
             ${OPENGLES2_LIBRARIES}
         )
+        add_definitions(${OPENGLES2_DEFINITIONS})
+    endif ()
+
+    if (USE_EGL)
+        list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+            ${EGL_INCLUDE_DIRS}
+        )
+        list(APPEND WebCore_LIBRARIES
+            ${EGL_LIBRARIES}
+        )
+        add_definitions(${EGL_DEFINITIONS})
     endif ()
 
     list(APPEND WebCore_INCLUDE_DIRECTORIES

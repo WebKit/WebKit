@@ -419,11 +419,6 @@ if (ENABLE_THREADED_COMPOSITOR)
     )
 endif ()
 
-if (USE_EGL)
-    list(APPEND WebCore_LIBRARIES
-        ${EGL_LIBRARY}
-    )
-endif ()
 
 if (USE_OPENGL_ES_2)
     list(APPEND WebCore_SOURCES

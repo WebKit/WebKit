@@ -1,3 +1,27 @@
+2015-05-28  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [CMake] Improve detection and usage of GL/GLES/EGL libraries.
+        https://bugs.webkit.org/show_bug.cgi?id=145408
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/FindEGL.cmake: Improve detection of EGL libraries.
+        * Source/cmake/FindGLES.cmake: Removed. It was used by the EGL port.
+        Remove it and make the EGL port use the improved FindOpenGLES2.cmake
+        instead.
+        * Source/cmake/FindOpenGL.cmake: Added. Add module to detect OpenGL
+        libraries. Detect also GLX libraries.
+        * Source/cmake/FindOpenGLES2.cmake: Improve detection of OpenGLES-v2
+        libraries. Use find_path() to get the include path.
+        * Source/cmake/OptionsEfl.cmake: Use now the improved FindOpenGLES2
+        module.
+        * Source/cmake/OptionsGTK.cmake: Set default value for ENABLE_GLES2
+        depending on the libraries found on the system.
+        Move the detection of GLX (and the include of CMakePushCheckState)
+        to FindOpenGL.cmake.
+        Ensure that we only define USE_GLX when we build with OpenGL
+        (but not with GLESv2).
+
 2015-05-27  Dean Jackson  <dino@apple.com>
 
         img.currentSrc problem in strict mode with old picturefill

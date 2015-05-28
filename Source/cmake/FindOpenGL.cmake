@@ -1,12 +1,12 @@
-# - Try to Find EGL
+# - Try to Find OpenGL
 # Once done, this will define
 #
-#  EGL_FOUND - system has EGL installed.
-#  EGL_INCLUDE_DIRS - directories which contain the EGL headers.
-#  EGL_LIBRARIES - libraries required to link against EGL.
-#  EGL_DEFINITIONS - Compiler switches required for using EGL.
+#  OPENGL_FOUND - system has OpenGL installed.
+#  OPENGL_INCLUDE_DIRS - directories which contain the OpenGL headers.
+#  OPENGL_LIBRARIES - libraries required to link against OpenGL.
+#  OPENGL_DEFINITIONS - Compiler switches required for using OpenGL.
 #
-# Copyright (C) 2012 Intel Corporation. All rights reserved.
+# Copyright (C) 2015 Igalia S.L.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -32,22 +32,33 @@
 
 find_package(PkgConfig)
 
-pkg_check_modules(PC_EGL egl)
+pkg_check_modules(PC_OPENGL gl)
 
-if (PC_EGL_FOUND)
-    set(EGL_DEFINITIONS ${PC_EGL_CFLAGS_OTHER})
+if (PC_OPENGL_FOUND)
+    set(OPENGL_DEFINITIONS ${PC_OPENGL_CFLAGS_OTHER})
 endif ()
 
-find_path(EGL_INCLUDE_DIRS NAMES EGL/egl.h
-    HINTS ${PC_EGL_INCLUDEDIR} ${PC_EGL_INCLUDE_DIRS}
+find_path(OPENGL_INCLUDE_DIRS NAMES GL/gl.h
+    HINTS ${PC_OPENGL_INCLUDEDIR} ${PC_OPENGL_INCLUDE_DIRS}
 )
 
-set(EGL_NAMES ${EGL_NAMES} egl EGL)
-find_library(EGL_LIBRARIES NAMES ${EGL_NAMES}
-    HINTS ${PC_EGL_LIBDIR} ${PC_EGL_LIBRARY_DIRS}
+set(OPENGL_NAMES ${OPENGL_NAMES} gl GL)
+find_library(OPENGL_LIBRARIES NAMES ${OPENGL_NAMES}
+    HINTS ${PC_OPENGL_LIBDIR} ${PC_OPENGL_LIBRARY_DIRS}
 )
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(EGL DEFAULT_MSG EGL_INCLUDE_DIRS EGL_LIBRARIES)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(OPENGL DEFAULT_MSG OPENGL_INCLUDE_DIRS OPENGL_LIBRARIES)
 
-mark_as_advanced(EGL_INCLUDE_DIRS EGL_LIBRARIES)
+mark_as_advanced(OPENGL_INCLUDE_DIRS OPENGL_LIBRARIES)
+
+if (OPENGL_FOUND)
+    # We don't use find_package for GLX because it is part of -lGL, unlike EGL. We need to
+    # have OPENGL_INCLUDE_DIRS as part of the directories check_include_files() looks for in
+    # case OpenGL is installed into a non-standard location.
+    include(CMakePushCheckState)
+    CMAKE_PUSH_CHECK_STATE()
+    set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${OPENGL_INCLUDE_DIRS})
+    check_include_files("GL/glx.h" GLX_FOUND)
+    CMAKE_POP_CHECK_STATE()
+endif ()

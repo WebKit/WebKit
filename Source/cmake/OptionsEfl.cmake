@@ -230,7 +230,7 @@ add_definitions(-DUSE_GRAPHICS_SURFACE=1)
 
 option(ENABLE_GLES2 "Enable GLES Support")
 if (ENABLE_GLES2)
-    find_package(GLES REQUIRED)
+    find_package(OpenGLES2 REQUIRED)
     set(USE_OPENGL_ES_2 1)
     add_definitions(-DUSE_OPENGL_ES_2=1)
 else ()

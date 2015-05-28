@@ -393,7 +393,6 @@ endif ()
 
 if (USE_EGL)
     list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-        ${EGL_INCLUDE_DIR}
         "${WEBCORE_DIR}/platform/graphics/surfaces/egl"
     )
 endif ()
@@ -427,11 +426,7 @@ else ()
     )
 endif ()
 
-if (USE_EGL)
-    list(APPEND WebCore_LIBRARIES
-        ${EGL_LIBRARY}
-    )
-elseif (X11_Xcomposite_FOUND AND X11_Xrender_FOUND)
+if (NOT USE_EGL AND X11_Xcomposite_FOUND AND X11_Xrender_FOUND)
     list(APPEND WebCore_LIBRARIES
         ${X11_Xcomposite_LIB}
         ${X11_Xrender_LIB}
