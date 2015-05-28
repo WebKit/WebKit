@@ -1,3 +1,19 @@
+2015-05-28  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet <youenn.fablet@crf.canon.fr>
+
+        [Streams API] ReadableStreamReader should not be exposed
+        https://bugs.webkit.org/show_bug.cgi?id=143564
+
+        Reviewed by Darin Adler.
+
+        Rebasing tests as ReadableStreamReader is no longer defined globally.
+
+        * js/dom/global-constructors-attributes-expected.txt:
+        * platform/efl/js/dom/global-constructors-attributes-expected.txt:
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-mavericks/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * platform/win/js/dom/global-constructors-attributes-expected.txt:
+
 2015-05-27  Alexey Proskuryakov  <ap@apple.com>
 
         Delete media/controls-layers.html. It's a bad test that fails and asserts, and there

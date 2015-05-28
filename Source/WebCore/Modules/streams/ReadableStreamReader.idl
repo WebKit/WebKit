@@ -28,8 +28,9 @@
  */
 
 [
-    CustomConstructor(any properties),
     Conditional=STREAMS_API,
+    CustomConstructor(any properties),
+    NoInterfaceObject,
     SkipVTableValidation
 ] interface ReadableStreamReader {
     // FIXME: Remove RaisesException once methods are implemented.
