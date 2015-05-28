@@ -372,15 +372,15 @@ uint64_t InjectedBundle::appCacheUsageForOrigin(const String& originString)
 
 void InjectedBundle::setApplicationCacheOriginQuota(const String& originString, uint64_t bytes)
 {
-    RefPtr<SecurityOrigin> origin = SecurityOrigin::createFromString(originString);
-    ApplicationCacheStorage::singleton().storeUpdatedQuotaForOrigin(origin.get(), bytes);
+    Ref<SecurityOrigin> origin = SecurityOrigin::createFromString(originString);
+    ApplicationCacheStorage::singleton().storeUpdatedQuotaForOrigin(origin.ptr(), bytes);
 }
 
 void InjectedBundle::resetApplicationCacheOriginQuota(const String& originString)
 {
-    RefPtr<SecurityOrigin> origin = SecurityOrigin::createFromString(originString);
+    Ref<SecurityOrigin> origin = SecurityOrigin::createFromString(originString);
     auto& cacheStorage = ApplicationCacheStorage::singleton();
-    cacheStorage.storeUpdatedQuotaForOrigin(origin.get(), cacheStorage.defaultOriginQuota());
+    cacheStorage.storeUpdatedQuotaForOrigin(origin.ptr(), cacheStorage.defaultOriginQuota());
 }
 
 PassRefPtr<API::Array> InjectedBundle::originsWithApplicationCache()

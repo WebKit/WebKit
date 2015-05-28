@@ -268,9 +268,9 @@ void NetworkProcess::destroyPrivateBrowsingSession(SessionID sessionID)
 }
 
 #if USE(CFURLCACHE)
-static Vector<RefPtr<SecurityOrigin>> cfURLCacheOrigins()
+static Vector<Ref<SecurityOrigin>> cfURLCacheOrigins()
 {
-    Vector<RefPtr<SecurityOrigin>> result;
+    Vector<Ref<SecurityOrigin>> result;
 
     WebResourceCacheManager::cfURLCacheHostNamesWithCallback([&result](RetainPtr<CFArrayRef> cfURLHosts) {
         for (CFIndex i = 0, size = CFArrayGetCount(cfURLHosts.get()); i < size; ++i) {

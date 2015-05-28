@@ -46,10 +46,10 @@ namespace WebKit {
 
 class StorageManager::StorageArea : public ThreadSafeRefCounted<StorageManager::StorageArea> {
 public:
-    static Ref<StorageArea> create(LocalStorageNamespace*, RefPtr<SecurityOrigin>&&, unsigned quotaInBytes);
+    static Ref<StorageArea> create(LocalStorageNamespace*, Ref<SecurityOrigin>&&, unsigned quotaInBytes);
     ~StorageArea();
 
-    SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
+    SecurityOrigin& securityOrigin() { return m_securityOrigin.get(); }
 
     void addListener(IPC::Connection&, uint64_t storageMapID);
     void removeListener(IPC::Connection&, uint64_t storageMapID);
@@ -66,7 +66,7 @@ public:
     bool isSessionStorage() const { return !m_localStorageNamespace; }
 
 private:
-    explicit StorageArea(LocalStorageNamespace*, RefPtr<SecurityOrigin>&&, unsigned quotaInBytes);
+    explicit StorageArea(LocalStorageNamespace*, Ref<SecurityOrigin>&&, unsigned quotaInBytes);
 
     void openDatabaseAndImportItemsIfNeeded();
 
@@ -77,7 +77,7 @@ private:
     RefPtr<LocalStorageDatabase> m_localStorageDatabase;
     bool m_didImportItemsFromDatabase;
 
-    RefPtr<SecurityOrigin> m_securityOrigin;
+    Ref<SecurityOrigin> m_securityOrigin;
     unsigned m_quotaInBytes;
 
     RefPtr<StorageMap> m_storageMap;
@@ -91,7 +91,7 @@ public:
 
     StorageManager* storageManager() const { return m_storageManager; }
 
-    Ref<StorageArea> getOrCreateStorageArea(RefPtr<SecurityOrigin>&&);
+    Ref<StorageArea> getOrCreateStorageArea(Ref<SecurityOrigin>&&);
     void didDestroyStorageArea(StorageArea*);
 
     void clearStorageAreasMatchingOrigin(const SecurityOrigin&);
@@ -119,9 +119,9 @@ public:
     {
     }
 
-    Ref<StorageArea> getOrCreateStorageArea(RefPtr<SecurityOrigin>&& securityOrigin)
+    Ref<StorageArea> getOrCreateStorageArea(Ref<SecurityOrigin>&& securityOrigin)
     {
-        auto& slot = m_storageAreaMap.add(securityOrigin, nullptr).iterator->value;
+        auto& slot = m_storageAreaMap.add(securityOrigin.ptr(), nullptr).iterator->value;
         if (slot)
             return *slot;
 
@@ -131,9 +131,9 @@ public:
         return storageArea;
     }
 
-    Vector<RefPtr<SecurityOrigin>> origins() const
+    Vector<Ref<SecurityOrigin>> origins() const
     {
-        Vector<RefPtr<SecurityOrigin>> origins;
+        Vector<Ref<SecurityOrigin>> origins;
 
         for (const auto& storageArea : m_storageAreaMap.values()) {
             if (!storageArea->items().isEmpty())
@@ -146,7 +146,7 @@ public:
     void clearStorageAreasMatchingOrigin(const SecurityOrigin& securityOrigin)
     {
         for (auto& storageArea : m_storageAreaMap.values()) {
-            if (storageArea->securityOrigin()->equal(&securityOrigin))
+            if (storageArea->securityOrigin().equal(&securityOrigin))
                 storageArea->clear();
         }
     }
@@ -167,12 +167,12 @@ private:
     HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea>> m_storageAreaMap;
 };
 
-Ref<StorageManager::StorageArea> StorageManager::StorageArea::create(LocalStorageNamespace* localStorageNamespace, RefPtr<SecurityOrigin>&& securityOrigin, unsigned quotaInBytes)
+Ref<StorageManager::StorageArea> StorageManager::StorageArea::create(LocalStorageNamespace* localStorageNamespace, Ref<SecurityOrigin>&& securityOrigin, unsigned quotaInBytes)
 {
     return adoptRef(*new StorageArea(localStorageNamespace, WTF::move(securityOrigin), quotaInBytes));
 }
 
-StorageManager::StorageArea::StorageArea(LocalStorageNamespace* localStorageNamespace, RefPtr<SecurityOrigin>&& securityOrigin, unsigned quotaInBytes)
+StorageManager::StorageArea::StorageArea(LocalStorageNamespace* localStorageNamespace, Ref<SecurityOrigin>&& securityOrigin, unsigned quotaInBytes)
     : m_localStorageNamespace(localStorageNamespace)
     , m_didImportItemsFromDatabase(false)
     , m_securityOrigin(WTF::move(securityOrigin))
@@ -293,7 +293,7 @@ void StorageManager::StorageArea::openDatabaseAndImportItemsIfNeeded()
 
     // We open the database here even if we've already imported our items to ensure that the database is open if we need to write to it.
     if (!m_localStorageDatabase)
-        m_localStorageDatabase = LocalStorageDatabase::create(m_localStorageNamespace->storageManager()->m_queue, m_localStorageNamespace->storageManager()->m_localStorageDatabaseTracker, m_securityOrigin.get());
+        m_localStorageDatabase = LocalStorageDatabase::create(m_localStorageNamespace->storageManager()->m_queue, m_localStorageNamespace->storageManager()->m_localStorageDatabaseTracker, m_securityOrigin.copyRef());
 
     if (m_didImportItemsFromDatabase)
         return;
@@ -330,9 +330,9 @@ StorageManager::LocalStorageNamespace::~LocalStorageNamespace()
     ASSERT(m_storageAreaMap.isEmpty());
 }
 
-Ref<StorageManager::StorageArea> StorageManager::LocalStorageNamespace::getOrCreateStorageArea(RefPtr<SecurityOrigin>&& securityOrigin)
+Ref<StorageManager::StorageArea> StorageManager::LocalStorageNamespace::getOrCreateStorageArea(Ref<SecurityOrigin>&& securityOrigin)
 {
-    auto& slot = m_storageAreaMap.add(securityOrigin, nullptr).iterator->value;
+    auto& slot = m_storageAreaMap.add(securityOrigin.ptr(), nullptr).iterator->value;
     if (slot)
         return *slot;
 
@@ -344,9 +344,9 @@ Ref<StorageManager::StorageArea> StorageManager::LocalStorageNamespace::getOrCre
 
 void StorageManager::LocalStorageNamespace::didDestroyStorageArea(StorageArea* storageArea)
 {
-    ASSERT(m_storageAreaMap.contains(storageArea->securityOrigin()));
+    ASSERT(m_storageAreaMap.contains(&storageArea->securityOrigin()));
 
-    m_storageAreaMap.remove(storageArea->securityOrigin());
+    m_storageAreaMap.remove(&storageArea->securityOrigin());
     if (!m_storageAreaMap.isEmpty())
         return;
 
@@ -378,13 +378,13 @@ public:
     IPC::Connection* allowedConnection() const { return m_allowedConnection.get(); }
     void setAllowedConnection(IPC::Connection*);
 
-    Ref<StorageArea> getOrCreateStorageArea(RefPtr<SecurityOrigin>&&);
+    Ref<StorageArea> getOrCreateStorageArea(Ref<SecurityOrigin>&&);
 
     void cloneTo(SessionStorageNamespace& newSessionStorageNamespace);
 
-    Vector<RefPtr<SecurityOrigin>> origins() const
+    Vector<Ref<SecurityOrigin>> origins() const
     {
-        Vector<RefPtr<SecurityOrigin>> origins;
+        Vector<Ref<SecurityOrigin>> origins;
 
         for (const auto& storageArea : m_storageAreaMap.values()) {
             if (!storageArea->items().isEmpty())
@@ -397,7 +397,7 @@ public:
     void clearStorageAreasMatchingOrigin(const SecurityOrigin& securityOrigin)
     {
         for (auto& storageArea : m_storageAreaMap.values()) {
-            if (storageArea->securityOrigin()->equal(&securityOrigin))
+            if (storageArea->securityOrigin().equal(&securityOrigin))
                 storageArea->clear();
         }
     }
@@ -438,9 +438,9 @@ void StorageManager::SessionStorageNamespace::setAllowedConnection(IPC::Connecti
     m_allowedConnection = allowedConnection;
 }
 
-Ref<StorageManager::StorageArea> StorageManager::SessionStorageNamespace::getOrCreateStorageArea(RefPtr<SecurityOrigin>&& securityOrigin)
+Ref<StorageManager::StorageArea> StorageManager::SessionStorageNamespace::getOrCreateStorageArea(Ref<SecurityOrigin>&& securityOrigin)
 {
-    auto& slot = m_storageAreaMap.add(securityOrigin, nullptr).iterator->value;
+    auto& slot = m_storageAreaMap.add(securityOrigin.ptr(), nullptr).iterator->value;
     if (!slot)
         slot = StorageArea::create(0, WTF::move(securityOrigin), m_quotaInBytes);
 

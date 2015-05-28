@@ -368,7 +368,7 @@ void DatabaseProcess::deleteIndexedDatabaseEntriesForOrigin(const SecurityOrigin
     if (m_indexedDatabaseDirectory.isEmpty())
         return;
 
-    RefPtr<SecurityOrigin> origin = originData.securityOrigin();
+    Ref<SecurityOrigin> origin = originData.securityOrigin();
     String databaseIdentifier = origin->databaseIdentifier();
     String originPath = pathByAppendingComponent(m_indexedDatabaseDirectory, databaseIdentifier);
 

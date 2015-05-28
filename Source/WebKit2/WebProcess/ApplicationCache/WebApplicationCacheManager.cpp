@@ -60,11 +60,7 @@ void WebApplicationCacheManager::getApplicationCacheOrigins(uint64_t callbackID)
     Vector<SecurityOriginData> identifiers;
     identifiers.reserveCapacity(origins.size());
 
-    HashSet<RefPtr<SecurityOrigin>>::iterator end = origins.end();
-    HashSet<RefPtr<SecurityOrigin>>::iterator i = origins.begin();
-    for (; i != end; ++i) {
-        RefPtr<SecurityOrigin> origin = *i;
-        
+    for (auto& origin : origins) {
         SecurityOriginData originData;
         originData.protocol = origin->protocol();
         originData.host = origin->host();

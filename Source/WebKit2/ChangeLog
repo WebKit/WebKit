@@ -1,3 +1,60 @@
+2015-05-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WK2] Handle WebCore::SecurityOrigin objects through Ref<> where possible
+        https://bugs.webkit.org/show_bug.cgi?id=145373
+
+        Reviewed by Andreas Kling.
+
+        WebCore::SecurityOrigin creation functions in most cases return a
+        Ref<WebCore::SecurityOrigin> object. In the WebKit2 layer, those objects
+        were still largely converted to RefPtr<>s.
+
+        This patch switches to using Ref<> where possible. The remaining uses of
+        RefPtr<WebCore::SecurityOrigin> are present due to HashTables, to-be-copied
+        Vectors, WebCore::DatabaseManager::origins() API and code where non-null
+        WebCore::SecurityOrigin can't be guaranteed.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::deleteIndexedDatabaseEntriesForOrigin):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::cfURLCacheOrigins):
+        * UIProcess/Storage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::create):
+        (WebKit::LocalStorageDatabase::LocalStorageDatabase):
+        (WebKit::LocalStorageDatabase::openDatabase):
+        (WebKit::LocalStorageDatabase::close):
+        * UIProcess/Storage/LocalStorageDatabase.h:
+        * UIProcess/Storage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::origins):
+        * UIProcess/Storage/LocalStorageDatabaseTracker.h:
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::StorageArea::securityOrigin):
+        (WebKit::StorageManager::TransientLocalStorageNamespace::getOrCreateStorageArea):
+        (WebKit::StorageManager::TransientLocalStorageNamespace::origins):
+        (WebKit::StorageManager::TransientLocalStorageNamespace::clearStorageAreasMatchingOrigin):
+        (WebKit::StorageManager::StorageArea::create):
+        (WebKit::StorageManager::StorageArea::StorageArea):
+        (WebKit::StorageManager::StorageArea::openDatabaseAndImportItemsIfNeeded):
+        (WebKit::StorageManager::LocalStorageNamespace::getOrCreateStorageArea):
+        (WebKit::StorageManager::LocalStorageNamespace::didDestroyStorageArea):
+        (WebKit::StorageManager::SessionStorageNamespace::origins):
+        (WebKit::StorageManager::SessionStorageNamespace::clearStorageAreasMatchingOrigin):
+        (WebKit::StorageManager::SessionStorageNamespace::getOrCreateStorageArea):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reachedApplicationCacheOriginQuota):
+        * WebProcess/ApplicationCache/WebApplicationCacheManager.cpp:
+        (WebKit::WebApplicationCacheManager::getApplicationCacheOrigins):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setApplicationCacheOriginQuota):
+        (WebKit::InjectedBundle::resetApplicationCacheOriginQuota):
+        * WebProcess/ResourceCache/WebResourceCacheManager.cpp:
+        (WebKit::WebResourceCacheManager::returnCacheOrigins):
+        (WebKit::WebResourceCacheManager::clearCacheForOrigin):
+        * WebProcess/WebCoreSupport/WebDatabaseManager.cpp:
+        (WebKit::WebDatabaseManager::deleteDatabaseWithNameForOrigin):
+        (WebKit::WebDatabaseManager::deleteDatabasesForOrigin):
+        (WebKit::WebDatabaseManager::setQuotaForOrigin):
+
 2015-05-19  Jon Honeycutt  <jhoneycutt@apple.com>
 
         [iOS] When viewing an MJPEG stream as the main resource, only the first

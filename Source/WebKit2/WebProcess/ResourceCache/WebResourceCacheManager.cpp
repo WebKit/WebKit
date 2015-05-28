@@ -77,10 +77,7 @@ void WebResourceCacheManager::returnCacheOrigins(uint64_t callbackID, const Memo
     Vector<SecurityOriginData> identifiers;
     identifiers.reserveCapacity(origins.size());
 
-    MemoryCache::SecurityOriginSet::iterator end = origins.end();
-    for (MemoryCache::SecurityOriginSet::iterator it = origins.begin(); it != end; ++it) {
-        RefPtr<SecurityOrigin> origin = *it;
-        
+    for (auto& origin : origins) {
         SecurityOriginData originData;
         originData.protocol = origin->protocol();
         originData.host = origin->host();
@@ -100,11 +97,8 @@ void WebResourceCacheManager::clearCacheForOrigin(const SecurityOriginData& orig
     UNUSED_PARAM(cachesToClear);
 #endif
 
-    RefPtr<SecurityOrigin> origin = SecurityOrigin::create(originData.protocol, originData.host, originData.port);
-    if (!origin)
-        return;
-
-    MemoryCache::singleton().removeResourcesWithOrigin(*origin);
+    Ref<SecurityOrigin> origin = SecurityOrigin::create(originData.protocol, originData.host, originData.port);
+    MemoryCache::singleton().removeResourcesWithOrigin(origin.get());
 
 #if USE(CFURLCACHE)
     if (resourceCachesToClear != InMemoryResourceCachesOnly) { 

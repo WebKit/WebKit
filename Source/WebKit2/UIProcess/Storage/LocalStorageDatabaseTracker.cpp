@@ -167,9 +167,9 @@ Vector<Ref<SecurityOrigin>> LocalStorageDatabaseTracker::deleteDatabasesModified
     return deletedDatabaseOrigins;
 }
 
-Vector<RefPtr<WebCore::SecurityOrigin>> LocalStorageDatabaseTracker::origins() const
+Vector<Ref<WebCore::SecurityOrigin>> LocalStorageDatabaseTracker::origins() const
 {
-    Vector<RefPtr<SecurityOrigin>> origins;
+    Vector<Ref<SecurityOrigin>> origins;
     origins.reserveInitialCapacity(m_origins.size());
 
     for (const String& origin : m_origins)
