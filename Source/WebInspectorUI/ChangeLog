@@ -1,5 +1,18 @@
 2015-05-27  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Toggling an inherited property sometimes stops working
+        https://bugs.webkit.org/show_bug.cgi?id=145416
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WebInspector.DOMNodeStyles.prototype._parseStyleDeclarationPayload):
+        Ensure we update the existing model objects with the new state information
+        before possibly bailing. This may produce changed events that update
+        parts of the inspector appropriately.
+
+2015-05-27  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: REGRESSION(r179286) Editing Style Metrics Values no longer works
         https://bugs.webkit.org/show_bug.cgi?id=143164
 
