@@ -14,6 +14,7 @@
 				1A50DB70110A3D67000D3FE5 /* Copy Files */,
 				BCFFCA8A160D6DEA003DF315 /* Add current version symlinks */,
 				BCFFCA8B160D6E7B003DF315 /* Copy XPC services for engineering builds */,
+				1A1A18301B17919B00B06F12 /* Add Symlinks in /System/Library/PrivateFrameworks/WebKit.framework */,
 			);
 			dependencies = (
 				1A6280F619199865006AD9F9 /* PBXTargetDependency */,
@@ -8678,7 +8679,6 @@
 				5DF408C6131DD49700130071 /* Check For Framework Include Consistency */,
 				5DF408D1131DDBEC00130071 /* Check For Inappropriate Files In Framework */,
 				A55DEAA61670402E003DB841 /* Check For Inappropriate Macros in External Headers */,
-				1A07D2F61919AB1B00ECDA16 /* Add Symlinks in /System/Library/PrivateFrameworks/WebKit.framework */,
 			);
 			buildRules = (
 			);
@@ -9058,7 +9058,7 @@
 			shellPath = /bin/sh;
 			shellScript = "if [[ ${PLATFORM_NAME} != \"macosx\" ]]; then\nexit 0\nfi\n\nln -sf Versions/Current/Frameworks \"$TARGET_BUILD_DIR/WebKit.framework/Frameworks\"\n";
 		};
-		1A07D2F61919AB1B00ECDA16 /* Add Symlinks in /System/Library/PrivateFrameworks/WebKit.framework */ = {
+		1A1A18301B17919B00B06F12 /* Add Symlinks in /System/Library/PrivateFrameworks/WebKit.framework */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 8;
 			files = (
@@ -9070,7 +9070,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "if [[ ${PLATFORM_NAME} != \"iphoneos\" ]]; then\n    exit 0;\nfi\n\nif [[ ! -d \"${INSTALL_DIR}/../PrivateFrameworks/WebKit.framework\" ]]; then\n    mkdir -p \"${INSTALL_DIR}/../PrivateFrameworks/WebKit.framework\"\nfi\n\ncd ${INSTALL_DIR}/../PrivateFrameworks/WebKit.framework\nln -s -h -f ../../Frameworks/WebKit.framework/* .";
+			shellScript = "if [[ ${PLATFORM_NAME} != \"iphoneos\" ]]; then\nexit 0;\nfi\n\nif [[ ! -d \"${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebKit.framework\" ]]; then\nmkdir -p \"${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebKit.framework\"\nfi\n\ncd ${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebKit.framework\nln -s -h -f ../../Frameworks/WebKit.framework/* .";
 		};
 		1A1D2115191D96380001619F /* Postprocess Framework Headers */ = {
 			isa = PBXShellScriptBuildPhase;
