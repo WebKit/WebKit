@@ -1,5 +1,13 @@
 2015-05-28  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed. Fixing the build after r184950.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::createSessionStorageMap): getOrCreateStorageArea()
+        now expects a Ref<WebCore::SecurityOrigin> object.
+
+2015-05-28  Zan Dobersek  <zdobersek@igalia.com>
+
         [WK2] Handle WebCore::SecurityOrigin objects through Ref<> where possible
         https://bugs.webkit.org/show_bug.cgi?id=145373
 

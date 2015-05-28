@@ -793,7 +793,7 @@ void StorageManager::createSessionStorageMap(IPC::Connection& connection, uint64
     // FIXME: This should be a message check.
     ASSERT(&connection == sessionStorageNamespace->allowedConnection());
 
-    auto storageArea = sessionStorageNamespace->getOrCreateStorageArea(securityOriginData.securityOrigin().ptr());
+    auto storageArea = sessionStorageNamespace->getOrCreateStorageArea(securityOriginData.securityOrigin());
     storageArea->addListener(connection, storageMapID);
 
     slot = WTF::move(storageArea);
