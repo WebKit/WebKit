@@ -2035,7 +2035,12 @@
 - path: js1_5/Array/regress-154338.js
   cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: js1_5/Array/regress-157652.js
-  cmd: defaultRunMozillaTest :normal, "../shell.js"
+  cmd: |
+      if ($architecture == "arm" and $hostOS == "darwin") and $memoryLimited
+          skip
+      else
+          defaultRunMozillaTest :normal, "../shell.js"
+      end
 - path: js1_5/Array/regress-178722.js
   cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: js1_5/Array/regress-94257.js

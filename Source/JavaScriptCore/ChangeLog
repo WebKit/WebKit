@@ -1,3 +1,15 @@
+2015-05-28  Michael Saboff  <msaboff@apple.com>
+
+        mozilla/js1_5/Array/regress-154338.js test causes ARM 32 bit iOS devices to run out of memory
+        https://bugs.webkit.org/show_bug.cgi?id=145444
+
+        Reviewed by Geoffrey Garen.
+
+        Disabled mozilla/js1_5/Array/regress-154338.js when run on iOS ARM 32 bit devices and
+        the --memory-limited option is passed to run-jsc-stress-tests.
+
+        * tests/mozilla/mozilla-tests.yaml:
+
 2015-05-28  Benjamin Poulain  <benjamin@webkit.org>
 
         [iOS8][ARMv7(s)] Optimized Object.create in 'use strict' context sometimes breaks.
