@@ -28,6 +28,10 @@
 
 #import <mach-o/dyld.h>
 
+#if PLATFORM(IOS)
+#import <WebCore/RuntimeApplicationChecksIOS.h>
+#endif
+
 namespace WebKit {
 
 static int linkTimeVersion()
@@ -37,6 +41,12 @@ static int linkTimeVersion()
 
 bool linkedOnOrAfter(LibraryVersion version)
 {
+#if PLATFORM(IOS)
+    // Always make new features available for Safari.
+    if (WebCore::applicationIsMobileSafari())
+        return true;
+#endif
+
     int linkedVersion = linkTimeVersion();
     if (linkedVersion == -1) {
         // Not linked against WebKit.
