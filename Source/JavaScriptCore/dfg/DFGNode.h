@@ -1321,6 +1321,7 @@ struct Node {
     
     WatchpointSet* watchpointSet()
     {
+        ASSERT(hasWatchpointSet());
         return reinterpret_cast<WatchpointSet*>(m_opInfo);
     }
     
@@ -1331,6 +1332,7 @@ struct Node {
     
     void* storagePointer()
     {
+        ASSERT(hasStoragePointer());
         return reinterpret_cast<void*>(m_opInfo);
     }
 
@@ -1412,6 +1414,7 @@ struct Node {
     
     MultiGetByOffsetData& multiGetByOffsetData()
     {
+        ASSERT(hasMultiGetByOffsetData());
         return *reinterpret_cast<MultiGetByOffsetData*>(m_opInfo);
     }
     
@@ -1422,6 +1425,7 @@ struct Node {
     
     MultiPutByOffsetData& multiPutByOffsetData()
     {
+        ASSERT(hasMultiPutByOffsetData());
         return *reinterpret_cast<MultiPutByOffsetData*>(m_opInfo);
     }
     
@@ -1995,13 +1999,25 @@ struct Node {
         return canSpeculateInt52(sourceFor(pass));
     }
 
+    bool hasTypeLocation()
+    {
+        return op() == ProfileType;
+    }
+
     TypeLocation* typeLocation()
     {
+        ASSERT(hasTypeLocation());
         return reinterpret_cast<TypeLocation*>(m_opInfo);
+    }
+
+    bool hasBasicBlockLocation()
+    {
+        return op() == ProfileControlFlow;
     }
 
     BasicBlockLocation* basicBlockLocation()
     {
+        ASSERT(hasBasicBlockLocation());
         return reinterpret_cast<BasicBlockLocation*>(m_opInfo);
     }
     

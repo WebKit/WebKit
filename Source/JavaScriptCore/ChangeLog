@@ -1,3 +1,25 @@
+2015-05-28  Basile Clement  <basile_clement@apple.com>
+
+        Add debug mode assertions for accessors casting JSC::DFG::Node.m_opInfo
+        https://bugs.webkit.org/show_bug.cgi?id=145441
+
+        Reviewed by Filip Pizlo.
+
+        Most accessor functions casting m_opInfo in JSC::DFG::Node are
+        performing debug checks that they are only accessed for node types that
+        should have them. This patch adds similar checks for the accessors that
+        were missing them.
+
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::watchpointSet):
+        (JSC::DFG::Node::storagePointer):
+        (JSC::DFG::Node::multiGetByOffsetData):
+        (JSC::DFG::Node::multiPutByOffsetData):
+        (JSC::DFG::Node::hasTypeLocation):
+        (JSC::DFG::Node::typeLocation):
+        (JSC::DFG::Node::hasBasicBlockLocation):
+        (JSC::DFG::Node::basicBlockLocation):
+
 2015-05-28  Matt Rajca  <mrajca@apple.com>
 
         Add ENABLE_MEDIA_SESSION feature flag (which is off by default).
