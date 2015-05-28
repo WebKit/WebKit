@@ -129,8 +129,6 @@ EXTERN_C void xpc_dictionary_set_uint64(xpc_object_t, const char* key, uint64_t 
 EXTERN_C void xpc_dictionary_set_value(xpc_object_t, const char*key, xpc_object_t value);
 EXTERN_C xpc_type_t xpc_get_type(xpc_object_t);
 EXTERN_C void xpc_main(xpc_connection_handler_t);
-EXTERN_C xpc_object_t xpc_retain(xpc_object_t);
-EXTERN_C void xpc_release(xpc_object_t);
 EXTERN_C const char* xpc_string_get_string_ptr(xpc_object_t);
 EXTERN_C void xpc_transaction_begin(void);
 EXTERN_C void xpc_track_activity(void);
@@ -147,12 +145,20 @@ EXTERN_C void xpc_connection_set_bootstrap(xpc_connection_t, xpc_object_t bootst
 EXTERN_C xpc_object_t xpc_copy_bootstrap(void);
 #endif
 
-#if !defined(xpc_retain) && OS_OBJECT_USE_OBJC_RETAIN_RELEASE
+#if OS_OBJECT_USE_OBJC_RETAIN_RELEASE
+#if !defined(xpc_retain)
 #define xpc_retain(object) ({ xpc_object_t _o = (object); _xpc_object_validate(_o); [_o retain]; })
 #endif
+#else
+EXTERN_C xpc_object_t xpc_retain(xpc_object_t);
+#endif
 
-#if !defined(xpc_release) && OS_OBJECT_USE_OBJC_RETAIN_RELEASE
+#if OS_OBJECT_USE_OBJC_RETAIN_RELEASE
+#if !defined(xpc_retain)
 #define xpc_release(object) ({ xpc_object_t _o = (object); _xpc_object_validate(_o); [_o release]; })
+#endif
+#else
+EXTERN_C void xpc_release(xpc_object_t);
 #endif
 
 #endif // XPCSPI_h

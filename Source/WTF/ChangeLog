@@ -1,3 +1,13 @@
+2015-05-27  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Fix clang static analyzer build
+        https://bugs.webkit.org/show_bug.cgi?id=145426
+        rdar://problem/20947408
+
+        Reviewed by Dan Bernstein.
+
+        * wtf/spi/darwin/XPCSPI.h: Correct declarations of xpc_retain and xpc_release.
+
 2015-05-27  Dean Jackson  <dino@apple.com>
 
         img.currentSrc problem in strict mode with old picturefill
