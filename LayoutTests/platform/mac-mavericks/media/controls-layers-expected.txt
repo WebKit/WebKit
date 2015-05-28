@@ -1,0 +1,124 @@
+ 
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (bounds 800.00 600.00)
+          (drawsContent 1)
+          (children 4
+            (GraphicsLayer
+              (position 8.00 8.00)
+              (bounds 320.00 240.00)
+              (children 14
+                (GraphicsLayer
+                  (bounds 320.00 240.00)
+                )
+                (GraphicsLayer
+                  (position 0.00 195.00)
+                  (bounds 320.00 45.00)
+                )
+                (GraphicsLayer
+                  (position 0.00 195.00)
+                  (bounds 320.00 45.00)
+                  (drawsContent 1)
+                )
+                (GraphicsLayer
+                  (position 8.00 220.00)
+                  (anchor 0.50 0.53)
+                  (bounds 12.00 15.00)
+                  (blendMode plus-lighter)
+                  (drawsContent 1)
+                )
+                (GraphicsLayer
+                  (position 36.00 219.00)
+                  (anchor 0.50 0.56)
+                  (bounds 16.00 16.00)
+                  (blendMode plus-lighter)
+                  (drawsContent 1)
+                )
+                (GraphicsLayer
+                  (position 60.00 219.00)
+                  (bounds 201.00 17.00)
+                )
+                (GraphicsLayer
+                  (position 68.00 220.00)
+                  (bounds 32.00 14.00)
+                  (opacity 0.45)
+                  (blendMode plus-lighter)
+                  (drawsContent 1)
+                )
+                (GraphicsLayer
+                  (position 110.00 219.00)
+                  (bounds 96.00 17.00)
+                )
+                (GraphicsLayer
+                  (position 110.00 219.00)
+                  (bounds 96.00 17.00)
+                  (blendMode plus-lighter)
+                  (drawsContent 1)
+                )
+                (GraphicsLayer
+                  (position 216.00 220.00)
+                  (bounds 37.00 14.00)
+                  (opacity 0.45)
+                  (blendMode plus-lighter)
+                  (drawsContent 1)
+                )
+                (GraphicsLayer
+                  (position 269.00 215.00)
+                  (bounds 14.00 25.00)
+                )
+                (GraphicsLayer
+                  (position 244.00 235.00)
+                  (opacity 0.00)
+                  (drawsContent 1)
+                )
+                (GraphicsLayer
+                  (position 269.00 220.00)
+                  (anchor 0.50 0.53)
+                  (bounds 14.00 15.00)
+                  (blendMode plus-lighter)
+                  (drawsContent 1)
+                )
+                (GraphicsLayer
+                  (position 299.00 220.00)
+                  (anchor 0.50 0.53)
+                  (bounds 14.00 15.00)
+                  (blendMode plus-lighter)
+                  (drawsContent 1)
+                )
+              )
+            )
+            (GraphicsLayer
+              (position 340.00 228.00)
+              (anchor 0.50 0.53)
+              (bounds 12.00 15.00)
+              (blendMode plus-lighter)
+              (drawsContent 1)
+            )
+            (GraphicsLayer
+              (position 368.00 227.00)
+              (anchor 0.50 0.56)
+              (bounds 16.00 16.00)
+              (blendMode plus-lighter)
+              (drawsContent 1)
+            )
+            (GraphicsLayer
+              (position 510.00 228.00)
+              (anchor 0.50 0.53)
+              (bounds 14.00 15.00)
+              (blendMode plus-lighter)
+              (drawsContent 1)
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

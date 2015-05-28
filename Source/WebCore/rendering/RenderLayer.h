@@ -702,7 +702,7 @@ private:
 
     // Non-auto z-index always implies stacking context here, because StyleResolver::adjustRenderStyle already adjusts z-index
     // based on positioning and other criteria.
-    bool isStackingContext(const RenderStyle* style) const { return !style->hasAutoZIndex() || isRootLayer(); }
+    bool isStackingContext(const RenderStyle* style) const { return !style->hasAutoZIndex() || isRootLayer() || m_forcedStackingContext; }
 
     bool isDirtyStackingContainer() const { return m_zOrderListsDirty && isStackingContainer(); }
 
@@ -991,6 +991,9 @@ private:
 private:
     // The bitfields are up here so they will fall into the padding from ScrollableArea on 64-bit.
 
+    const bool m_isRootLayer : 1;
+    const bool m_forcedStackingContext : 1;
+
     // Keeps track of whether the layer is currently resizing, so events can cause resizing to start and stop.
     bool m_inResizeMode : 1;
 
@@ -1018,8 +1021,6 @@ private:
     // descendants in stacking order. This is one of the requirements of being
     // able to safely become a stacking context.
     bool m_descendantsAreContiguousInStackingOrder : 1;
-
-    const bool m_isRootLayer : 1;
 
     bool m_usedTransparency : 1; // Tracks whether we need to close a transparent layer, i.e., whether
                                  // we ended up painting this layer or any descendants (and therefore need to

@@ -1,3 +1,16 @@
+2015-05-27  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r183820): webkit.org/blog/ background painting issue on reload, when the page contains videos
+        https://bugs.webkit.org/show_bug.cgi?id=145420
+
+        Reviewed by Dean Jackson.
+        
+        Test that dumps compositing layers in a document with media controls.
+
+        * media/controls-layers.html: Added.
+        * platform/mac/media/controls-layers-expected.txt: Added.
+        * platform/mac-mavericks/media/controls-layers-expected.txt: Added.
+
 2015-05-27  Alexey Proskuryakov  <ap@apple.com>
 
         Update Mac WebKit1 TestExpectations for platform/mac/fast/ruby/ruby-expansion-cjk-2.html
