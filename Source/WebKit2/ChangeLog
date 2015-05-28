@@ -1,3 +1,11 @@
+2015-05-28  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Unreviewed, Fix build break since r184930.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::createTransientLocalStorageMap): Pass a pointer of SecurityOrigin
+        in isSameSchemeHostPort().
+
 2015-05-28  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed. Fixing the build after r184950.
