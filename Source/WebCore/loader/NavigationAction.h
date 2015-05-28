@@ -37,31 +37,36 @@
 
 namespace WebCore {
 
-    class NavigationAction {
-    public:
-        WEBCORE_EXPORT NavigationAction();
-        WEBCORE_EXPORT explicit NavigationAction(const ResourceRequest&);
-        WEBCORE_EXPORT NavigationAction(const ResourceRequest&, NavigationType);
-        WEBCORE_EXPORT NavigationAction(const ResourceRequest&, FrameLoadType, bool isFormSubmission);
-        NavigationAction(const ResourceRequest&, NavigationType, PassRefPtr<Event>);
-        NavigationAction(const ResourceRequest&, FrameLoadType, bool isFormSubmission, PassRefPtr<Event>);
+class NavigationAction {
+public:
+    WEBCORE_EXPORT NavigationAction();
+    WEBCORE_EXPORT explicit NavigationAction(const ResourceRequest&);
+    WEBCORE_EXPORT NavigationAction(const ResourceRequest&, NavigationType);
+    WEBCORE_EXPORT NavigationAction(const ResourceRequest&, FrameLoadType, bool isFormSubmission);
+    NavigationAction(const ResourceRequest&, NavigationType, PassRefPtr<Event>);
+    NavigationAction(const ResourceRequest&, NavigationType, ShouldOpenExternalURLsPolicy);
+    NavigationAction(const ResourceRequest&, FrameLoadType, bool isFormSubmission, PassRefPtr<Event>);
 
-        bool isEmpty() const { return m_resourceRequest.url().isEmpty(); }
+    bool isEmpty() const { return m_resourceRequest.url().isEmpty(); }
 
-        URL url() const { return m_resourceRequest.url(); }
-        const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
+    URL url() const { return m_resourceRequest.url(); }
+    const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
 
-        NavigationType type() const { return m_type; }
-        const Event* event() const { return m_event.get(); }
+    NavigationType type() const { return m_type; }
+    const Event* event() const { return m_event.get(); }
 
-        bool processingUserGesture() const { return m_processingUserGesture; }
+    bool processingUserGesture() const { return m_processingUserGesture; }
 
-    private:
-        ResourceRequest m_resourceRequest;
-        NavigationType m_type;
-        RefPtr<Event> m_event;
-        bool m_processingUserGesture;
-    };
+    ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy() const { return m_shouldOpenExternalURLsPolicy; }
+    void setShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy policy) { m_shouldOpenExternalURLsPolicy = policy; }
+
+private:
+    ResourceRequest m_resourceRequest;
+    NavigationType m_type;
+    RefPtr<Event> m_event;
+    bool m_processingUserGesture;
+    ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
+};
 
 }
 

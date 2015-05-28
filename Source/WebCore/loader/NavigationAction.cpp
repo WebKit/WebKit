@@ -84,6 +84,13 @@ NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, Navig
 {
 }
 
+NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, NavigationType type, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
+    : m_resourceRequest(resourceRequest)
+    , m_type(type)
+    , m_shouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicy)
+{
+}
+
 NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, FrameLoadType frameLoadType,
         bool isFormSubmission, PassRefPtr<Event> event)
     : m_resourceRequest(resourceRequest)

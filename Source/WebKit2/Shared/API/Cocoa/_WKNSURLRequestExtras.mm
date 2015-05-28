@@ -26,23 +26,21 @@
 #import "config.h"
 #import "_WKNSURLRequestExtras.h"
 
-#import <WebCore/ResourceRequest.h>
-
 @implementation NSURLRequest (WKExtras)
 
-- (BOOL)_web_isUserInitiated
+- (BOOL)_web_shouldOpenExternalURLs
 {
-    NSNumber *userInitiated = [NSURLProtocol propertyForKey:(NSString *)WebCore::ResourceRequest::isUserInitiatedKey() inRequest:self];
-    return userInitiated.boolValue;
+    NSNumber *shouldOpenExternalURLs = [NSURLProtocol propertyForKey:@"WKNSURLRequestShouldOpenExternalURLsKey" inRequest:self];
+    return shouldOpenExternalURLs.boolValue;
 }
 
 @end
 
 @implementation NSMutableURLRequest (WKExtras)
 
-- (void)_web_setIsUserInitiated:(BOOL)userInitiated
+- (void)_web_setShouldOpenExternalURLs:(BOOL)shouldOpenExternalURLs
 {
-    [NSURLProtocol setProperty:userInitiated ? @YES : @NO forKey:(NSString *)WebCore::ResourceRequest::isUserInitiatedKey() inRequest:self];
+    [NSURLProtocol setProperty:shouldOpenExternalURLs ? @YES : @NO forKey:@"WKNSURLRequestShouldOpenExternalURLsKey" inRequest:self];
 }
 
 @end

@@ -125,7 +125,7 @@ messages -> WebPage LegacyReceiver {
     TryRestoreScrollPosition()
 
     LoadURLInFrame(String url, uint64_t frameID)
-    LoadRequest(uint64_t navigationID, WebCore::ResourceRequest request, WebKit::SandboxExtension::Handle sandboxExtensionHandle, WebKit::UserData userData)
+    LoadRequest(uint64_t navigationID, WebCore::ResourceRequest request, WebKit::SandboxExtension::Handle sandboxExtensionHandle, uint64_t shouldOpenExternalURLsPolicy, WebKit::UserData userData)
     LoadData(IPC::DataReference data, String MIMEType, String encoding, String baseURL, WebKit::UserData userData)
     LoadHTMLString(uint64_t navigationID, String htmlString, String baseURL, WebKit::UserData userData)
     LoadAlternateHTMLString(String htmlString, String baseURL, String unreachableURL, String provisionalLoadErrorURL, WebKit::UserData userData)

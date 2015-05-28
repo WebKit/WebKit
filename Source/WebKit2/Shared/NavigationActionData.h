@@ -37,16 +37,15 @@ class ArgumentEncoder;
 namespace WebKit {
 
 struct NavigationActionData {
-    NavigationActionData();
-
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, NavigationActionData&);
 
-    WebCore::NavigationType navigationType;
-    WebEvent::Modifiers modifiers;
-    WebMouseEvent::Button mouseButton;
-    bool isProcessingUserGesture;
-    bool canHandleRequest;
+    WebCore::NavigationType navigationType { WebCore::NavigationType::Other };
+    WebEvent::Modifiers modifiers { };
+    WebMouseEvent::Button mouseButton { WebMouseEvent::NoButton };
+    bool isProcessingUserGesture { false };
+    bool canHandleRequest { false };
+    bool shouldOpenExternalURLs { false };
 };
 
 }

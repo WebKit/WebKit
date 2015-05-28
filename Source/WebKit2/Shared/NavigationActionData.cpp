@@ -33,15 +33,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-NavigationActionData::NavigationActionData()
-    : navigationType(NavigationType::Other)
-    , modifiers()
-    , mouseButton(WebMouseEvent::NoButton)
-    , isProcessingUserGesture(false)
-    , canHandleRequest(false)
-{
-}
-
 void NavigationActionData::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder.encodeEnum(navigationType);
@@ -49,6 +40,7 @@ void NavigationActionData::encode(IPC::ArgumentEncoder& encoder) const
     encoder.encodeEnum(mouseButton);
     encoder << isProcessingUserGesture;
     encoder << canHandleRequest;
+    encoder << shouldOpenExternalURLs;
 }
 
 bool NavigationActionData::decode(IPC::ArgumentDecoder& decoder, NavigationActionData& result)
@@ -62,6 +54,8 @@ bool NavigationActionData::decode(IPC::ArgumentDecoder& decoder, NavigationActio
     if (!decoder.decode(result.isProcessingUserGesture))
         return false;
     if (!decoder.decode(result.canHandleRequest))
+        return false;
+    if (!decoder.decode(result.shouldOpenExternalURLs))
         return false;
 
     return true;

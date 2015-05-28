@@ -1553,6 +1553,13 @@ void DocumentLoader::handledOnloadEvents()
     applicationCacheHost()->stopDeferringEvents();
 }
 
+void DocumentLoader::setTriggeringAction(const NavigationAction& action)
+{
+    m_triggeringAction = action;
+    if (!m_triggeringAction.isEmpty())
+        m_triggeringAction.setShouldOpenExternalURLsPolicy(m_shouldOpenExternalURLsPolicy);
+}
+
 #if ENABLE(CONTENT_EXTENSIONS)
 void DocumentLoader::addPendingContentExtensionSheet(const String& identifier, StyleSheetContents& sheet)
 {

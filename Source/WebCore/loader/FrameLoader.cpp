@@ -1308,6 +1308,9 @@ void FrameLoader::load(const FrameLoadRequest& passedRequest)
         request.setSubstituteData(defaultSubstituteDataForURL(request.resourceRequest().url()));
 
     RefPtr<DocumentLoader> loader = m_client.createDocumentLoader(request.resourceRequest(), request.substituteData());
+    if (m_frame.isMainFrame())
+        loader->setShouldOpenExternalURLsPolicy(request.shouldOpenExternalURLsPolicy());
+
     load(loader.get());
 }
 

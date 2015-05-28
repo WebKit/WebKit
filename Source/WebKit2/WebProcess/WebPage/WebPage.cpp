@@ -1014,7 +1014,7 @@ void WebPage::loadURLInFrame(const String& url, uint64_t frameID)
     frame->coreFrame()->loader().load(FrameLoadRequest(frame->coreFrame(), ResourceRequest(URL(URL(), url))));
 }
 
-void WebPage::loadRequest(uint64_t navigationID, const ResourceRequest& request, const SandboxExtension::Handle& sandboxExtensionHandle, const UserData& userData)
+void WebPage::loadRequest(uint64_t navigationID, const ResourceRequest& request, const SandboxExtension::Handle& sandboxExtensionHandle, uint64_t shouldOpenExternalURLsPolicy, const UserData& userData)
 {
     SendStopResponsivenessTimer stopper(this);
 
@@ -1027,7 +1027,11 @@ void WebPage::loadRequest(uint64_t navigationID, const ResourceRequest& request,
     m_loaderClient.willLoadURLRequest(this, request, WebProcess::singleton().transformHandlesToObjects(userData.object()).get());
 
     // Initate the load in WebCore.
-    corePage()->userInputBridge().loadRequest(FrameLoadRequest(m_mainFrame->coreFrame(), request));
+    FrameLoadRequest frameLoadRequest(m_mainFrame->coreFrame(), request);
+    ShouldOpenExternalURLsPolicy externalURLsPolicy = static_cast<ShouldOpenExternalURLsPolicy>(shouldOpenExternalURLsPolicy);
+    frameLoadRequest.setShouldOpenExternalURLsPolicy(externalURLsPolicy);
+
+    corePage()->userInputBridge().loadRequest(frameLoadRequest);
 
     ASSERT(!m_pendingNavigationID);
 }

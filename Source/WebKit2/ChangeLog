@@ -1,3 +1,58 @@
+2015-05-27  Brady Eidson  <beidson@apple.com>
+
+        Add a "should open urls externally" flag to DocumentLoader.
+        rdar://problem/21025301 and https://bugs.webkit.org/show_bug.cgi?id=145417
+
+        Reviewed by Geoff Garen.
+
+        Rename "user initiated" to "should open external URLs":
+        * Shared/API/Cocoa/_WKNSURLRequestExtras.h:
+        * Shared/API/Cocoa/_WKNSURLRequestExtras.mm:
+        (-[NSURLRequest _web_shouldOpenExternalURLs]):
+        (-[NSMutableURLRequest _web_setShouldOpenExternalURLs:]):
+        (-[NSURLRequest _web_isUserInitiated]): Deleted.
+        (-[NSMutableURLRequest _web_setIsUserInitiated:]): Deleted.
+        
+        Hold the new flag as a bool, and encode/decode it across IPC:
+        * Shared/NavigationActionData.cpp:
+        (WebKit::NavigationActionData::encode):
+        (WebKit::NavigationActionData::decode):
+        (WebKit::NavigationActionData::NavigationActionData): Deleted.
+        * Shared/NavigationActionData.h:
+
+        * UIProcess/API/APINavigationAction.h: Add accessor for the bool flag.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageLoadURLWithUserData): Use "ShouldNotAllow" in the legacy C API for now.
+        (WKPageLoadURLRequestWithUserData): Ditto.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController loadRequest:userData:]): Set the value of the flag
+          based on whether or not the initiating NSURLRequest was user initiated.
+
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        (-[WKNavigationAction _shouldOpenExternalURLs]): Add accessor for the bool flag.
+        * UIProcess/API/Cocoa/WKNavigationActionPrivate.h:
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView loadRequest:]): Set the value of the flag based on whether or not the
+          initiating NSURLRequest was user initiated.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadRequest): Pass the value down to the WebProcess to load.
+        (WebKit::WebPageProxy::loadFile): Ditto, but always with "ShouldNotAllow".
+        * UIProcess/WebPageProxy.h:
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction): Translate 
+          the NavigationAction flag to a bool in the NavigationActionData object.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadRequest): Set the value of the flag in the FrameLoadRequest that
+          will be loaded.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2015-05-27  Anders Carlsson  <andersca@apple.com>
 
         Can't load local files in WKWebView from containerized app

@@ -104,6 +104,9 @@ public:
     // corresponding parameter from ScriptController::executeIfJavaScriptURL() is addressed.
     ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL() const { return m_shouldReplaceDocumentIfJavaScriptURL; }
 
+    void setShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy policy) { m_shouldOpenExternalURLsPolicy = policy; }
+    ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy() const { return m_shouldOpenExternalURLsPolicy; }
+
 private:
     RefPtr<SecurityOrigin> m_requester;
     ResourceRequest m_resourceRequest;
@@ -117,6 +120,7 @@ private:
     AllowNavigationToInvalidURL m_allowNavigationToInvalidURL;
     NewFrameOpenerPolicy m_newFrameOpenerPolicy;
     ShouldReplaceDocumentIfJavaScriptURL m_shouldReplaceDocumentIfJavaScriptURL;
+    ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
 };
 
 }

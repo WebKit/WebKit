@@ -71,6 +71,11 @@ enum class NavigationType {
     Other
 };
 
+enum class ShouldOpenExternalURLsPolicy {
+    ShouldNotAllow,
+    ShouldAllow,
+};
+
     enum ClearProvisionalItemPolicy {
         ShouldClearProvisionalItem,
         ShouldNotClearProvisionalItem

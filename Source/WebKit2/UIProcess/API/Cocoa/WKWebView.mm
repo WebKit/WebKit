@@ -73,6 +73,7 @@
 #import "_WKDiagnosticLoggingDelegate.h"
 #import "_WKFindDelegate.h"
 #import "_WKFormDelegate.h"
+#import "_WKNSURLRequestExtras.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKSessionStateInternal.h"
 #import "_WKVisitedLinkProviderInternal.h"
@@ -101,6 +102,7 @@
 #import "WebVideoFullscreenManagerProxy.h"
 #import <UIKit/UIApplication.h>
 #import <WebCore/CoreGraphicsSPI.h>
+#import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/InspectorOverlay.h>
 #import <WebCore/QuartzCoreSPI.h>
 
@@ -443,7 +445,8 @@ static bool shouldAllowAlternateFullscreen()
 
 - (WKNavigation *)loadRequest:(NSURLRequest *)request
 {
-    auto navigation = _page->loadRequest(request);
+    WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy = [request _web_shouldOpenExternalURLs] ? WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow : WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow;
+    auto navigation = _page->loadRequest(request, shouldOpenExternalURLsPolicy);
     if (!navigation)
         return nil;
 

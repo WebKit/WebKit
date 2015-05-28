@@ -63,6 +63,7 @@ public:
     WebKit::WebMouseEvent::Button mouseButton() const { return m_navigationActionData.mouseButton; }
     bool isProcessingUserGesture() const { return m_navigationActionData.isProcessingUserGesture; }
     bool canHandleRequest() const { return m_navigationActionData.canHandleRequest; }
+    bool shouldOpenExternalURLs() const { return m_navigationActionData.shouldOpenExternalURLs; }
 
 private:
     RefPtr<FrameInfo> m_sourceFrame;

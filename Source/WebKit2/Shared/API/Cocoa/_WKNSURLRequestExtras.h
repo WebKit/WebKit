@@ -27,12 +27,12 @@
 
 @interface NSURLRequest (WKExtras)
 
-- (BOOL)_web_isUserInitiated;
+- (BOOL)_web_shouldOpenExternalURLs;
 
 @end
 
 @interface NSMutableURLRequest (WKExtras)
 
-- (void)_web_setIsUserInitiated:(BOOL)userInitiated;
+- (void)_web_setShouldOpenExternalURLs:(BOOL)shouldOpenExternalURLs;
 
 @end
