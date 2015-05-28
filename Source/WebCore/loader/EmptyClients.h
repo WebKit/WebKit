@@ -317,6 +317,9 @@ public:
     virtual void willChangeTitle(DocumentLoader*) override { }
     virtual void didChangeTitle(DocumentLoader*) override { }
 
+    virtual void willReplaceMultipartContent() override { }
+    virtual void didReplaceMultipartContent() override { }
+
     virtual void committedLoad(DocumentLoader*, const char*, int) override { }
     virtual void finishedLoading(DocumentLoader*) override { }
 

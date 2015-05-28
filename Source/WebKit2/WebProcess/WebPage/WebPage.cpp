@@ -4571,6 +4571,28 @@ void WebPage::didCancelCheckingText(uint64_t requestID)
     request->didCancel();
 }
 
+void WebPage::willReplaceMultipartContent(const WebFrame& frame)
+{
+#if PLATFORM(IOS)
+    if (!frame.isMainFrame())
+        return;
+
+    m_previousExposedContentRect = m_drawingArea->exposedContentRect();
+#endif
+}
+
+void WebPage::didReplaceMultipartContent(const WebFrame& frame)
+{
+#if PLATFORM(IOS)
+    if (!frame.isMainFrame())
+        return;
+
+    // Restore the previous exposed content rect so that it remains fixed when replacing content
+    // from multipart/x-mixed-replace streams.
+    m_drawingArea->setExposedContentRect(m_previousExposedContentRect);
+#endif
+}
+
 void WebPage::didCommitLoad(WebFrame* frame)
 {
     if (!frame->isMainFrame())

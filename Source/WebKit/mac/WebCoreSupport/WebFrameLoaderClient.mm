@@ -999,6 +999,14 @@ void WebFrameLoaderClient::didChangeTitle(DocumentLoader* loader)
 #endif
 }
 
+void WebFrameLoaderClient::didReplaceMultipartContent()
+{
+#if PLATFORM(IOS)
+    if (FrameView *view = core(m_webFrame.get())->view())
+        view->didReplaceMultipartContent();
+#endif
+}
+
 void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const char* data, int length)
 {
     NSData *nsData = [[NSData alloc] initWithBytesNoCopy:(void*)data length:length freeWhenDone:NO];

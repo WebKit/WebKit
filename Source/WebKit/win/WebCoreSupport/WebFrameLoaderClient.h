@@ -127,6 +127,9 @@ public:
     virtual void willChangeTitle(WebCore::DocumentLoader*) override;
     virtual void didChangeTitle(WebCore::DocumentLoader*) override;
 
+    virtual void willReplaceMultipartContent() override { }
+    virtual void didReplaceMultipartContent() override { }
+
     virtual void updateGlobalHistory() override;
     virtual void updateGlobalHistoryRedirectLinks() override;
     virtual bool shouldGoToHistoryItem(WebCore::HistoryItem*) const override;

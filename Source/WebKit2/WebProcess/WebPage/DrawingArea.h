@@ -94,6 +94,7 @@ public:
     virtual void addFence(const WebCore::MachSendRight&) { }
 #endif
 #if PLATFORM(IOS)
+    virtual WebCore::FloatRect exposedContentRect() const = 0;
     virtual void setExposedContentRect(const WebCore::FloatRect&) = 0;
 #endif
     virtual void mainFrameScrollabilityChanged(bool) { }

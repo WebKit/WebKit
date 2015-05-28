@@ -345,6 +345,10 @@ public:
     void willPaintContents(GraphicsContext*, const IntRect& dirtyRect, PaintingState&);
     void didPaintContents(GraphicsContext*, const IntRect& dirtyRect, PaintingState&);
 
+#if PLATFORM(IOS)
+    WEBCORE_EXPORT void didReplaceMultipartContent();
+#endif
+
     WEBCORE_EXPORT void setPaintBehavior(PaintBehavior);
     WEBCORE_EXPORT PaintBehavior paintBehavior() const;
     bool isPainting() const;

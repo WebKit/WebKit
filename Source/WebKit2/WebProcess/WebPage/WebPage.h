@@ -253,6 +253,8 @@ public:
     void didStartPageTransition();
     void didCompletePageTransition();
     void didCommitLoad(WebFrame*);
+    void willReplaceMultipartContent(const WebFrame&);
+    void didReplaceMultipartContent(const WebFrame&);
     void didFinishLoad(WebFrame*);
     void show();
     String userAgent(const WebCore::URL&) const;
@@ -1337,6 +1339,7 @@ private:
     HashMap<std::pair<WebCore::IntSize, double>, WebCore::IntPoint> m_dynamicSizeUpdateHistory;
     RefPtr<WebCore::Node> m_pendingSyntheticClickNode;
     WebCore::FloatPoint m_pendingSyntheticClickLocation;
+    WebCore::FloatRect m_previousExposedContentRect;
 #endif
 
     WebInspectorClient* m_inspectorClient;

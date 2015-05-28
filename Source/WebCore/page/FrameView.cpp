@@ -419,6 +419,15 @@ void FrameView::clear()
 #endif
 }
 
+#if PLATFORM(IOS)
+void FrameView::didReplaceMultipartContent()
+{
+    // Re-enable tile updates that were disabled in clear().
+    if (LegacyTileCache* tileCache = legacyTileCache())
+        tileCache->setTilingMode(LegacyTileCache::Normal);
+}
+#endif
+
 bool FrameView::didFirstLayout() const
 {
     return !m_firstLayout;

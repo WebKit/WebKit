@@ -1,3 +1,36 @@
+2015-05-19  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        [iOS] When viewing an MJPEG stream as the main resource, only the first
+        frame paints
+
+        <https://bugs.webkit.org/show_bug.cgi?id=145185>
+        <rdar://problem/20124694>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::willReplaceMultipartContent):
+        Tell the WebPage that we will replace multipart content.
+
+        (WebKit::WebFrameLoaderClient::didReplaceMultipartContent):
+        Tell the WebPage that we did replace multipart content.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/DrawingArea.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::willReplaceMultipartContent):
+        Save the exposed content rect.
+        (WebKit::WebPage::didReplaceMultipartContent):
+        Restore the exposed content rect that was saved before this load. This
+        fixes the issue for WK2.
+
+        * WebProcess/WebPage/WebPage.h:
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::exposedContentRect):
+
 2015-05-22  Jon Lee  <jonlee@apple.com>
 
         Fix macros for wireless playback

@@ -913,6 +913,22 @@ void WebFrameLoaderClient::didChangeTitle(DocumentLoader*)
     notImplemented();
 }
 
+void WebFrameLoaderClient::willReplaceMultipartContent()
+{
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+    webPage->willReplaceMultipartContent(*m_frame);
+}
+
+void WebFrameLoaderClient::didReplaceMultipartContent()
+{
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+    webPage->didReplaceMultipartContent(*m_frame);
+}
+
 void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const char* data, int length)
 {
     if (!m_pluginView)

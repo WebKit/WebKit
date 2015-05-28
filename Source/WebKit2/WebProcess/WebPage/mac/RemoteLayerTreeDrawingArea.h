@@ -92,6 +92,7 @@ private:
     virtual void acceleratedAnimationDidEnd(uint64_t layerID, const String& key) override;
 
 #if PLATFORM(IOS)
+    virtual WebCore::FloatRect exposedContentRect() const override;
     virtual void setExposedContentRect(const WebCore::FloatRect&) override;
 #endif
 

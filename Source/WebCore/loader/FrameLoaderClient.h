@@ -199,6 +199,9 @@ namespace WebCore {
         virtual void willChangeTitle(DocumentLoader*) = 0;
         virtual void didChangeTitle(DocumentLoader*) = 0;
 
+        virtual void willReplaceMultipartContent() = 0;
+        virtual void didReplaceMultipartContent() = 0;
+
         virtual void committedLoad(DocumentLoader*, const char*, int) = 0;
         virtual void finishedLoading(DocumentLoader*) = 0;
         

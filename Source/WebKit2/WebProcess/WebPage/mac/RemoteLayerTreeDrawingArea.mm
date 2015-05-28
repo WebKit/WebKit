@@ -235,6 +235,15 @@ void RemoteLayerTreeDrawingArea::setExposedRect(const FloatRect& exposedRect)
 }
 
 #if PLATFORM(IOS)
+WebCore::FloatRect RemoteLayerTreeDrawingArea::exposedContentRect() const
+{
+    FrameView* frameView = m_webPage.mainFrameView();
+    if (!frameView)
+        return FloatRect();
+
+    return frameView->exposedContentRect();
+}
+
 void RemoteLayerTreeDrawingArea::setExposedContentRect(const FloatRect& exposedContentRect)
 {
     FrameView* frameView = m_webPage.mainFrameView();

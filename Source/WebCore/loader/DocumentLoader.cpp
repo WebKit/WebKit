@@ -762,6 +762,9 @@ void DocumentLoader::commitLoad(const char* data, int length)
         return;
 #endif
     frameLoader->client().committedLoad(this, data, length);
+
+    if (isMultipartReplacingLoad())
+        frameLoader->client().didReplaceMultipartContent();
 }
 
 ResourceError DocumentLoader::interruptedForPolicyChangeError() const
@@ -870,6 +873,8 @@ void DocumentLoader::setupForReplace()
 {
     if (!mainResourceData())
         return;
+
+    frameLoader()->client().willReplaceMultipartContent();
     
     maybeFinishLoadingMultipartContent();
     maybeCreateArchive();
