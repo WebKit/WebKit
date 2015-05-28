@@ -541,7 +541,7 @@ ControllerIOS.prototype = {
     showControls: function()
     {
         this.updateShouldListenForPlaybackTargetAvailabilityEvent();
-        if (this.showInlinePlaybackPlaceholderOnly())
+        if (!this.video.controls)
             return;
         
         this.updateForShowingControls();
