@@ -103,11 +103,13 @@ private:
         return nil;
     
 #if PLATFORM(IOS)
-    _mediaPlaybackRequiresUserAction = YES;
-    _mediaPlaybackAllowsAirPlay = YES;
+    _requiresUserActionForMediaPlayback = YES;
     _allowsAlternateFullscreen = YES;
 #endif
-    
+#if ENABLE(WIRELESS_TARGET_PLAYBACK)
+    _allowsAirPlayForMediaPlayback = YES;
+#endif
+
     return self;
 }
 
@@ -138,9 +140,11 @@ private:
 #if PLATFORM(IOS)
     configuration->_allowsInlineMediaPlayback = self->_allowsInlineMediaPlayback;
     configuration->_allowsAlternateFullscreen = self->_allowsAlternateFullscreen;
-    configuration->_mediaPlaybackRequiresUserAction = self->_mediaPlaybackRequiresUserAction;
-    configuration->_mediaPlaybackAllowsAirPlay = self->_mediaPlaybackAllowsAirPlay;
+    configuration->_requiresUserActionForMediaPlayback = self->_requiresUserActionForMediaPlayback;
     configuration->_selectionGranularity = self->_selectionGranularity;
+#endif
+#if ENABLE(WIRELESS_TARGET_PLAYBACK)
+    configuration->_allowsAirPlayForMediaPlayback = self->_allowsAirPlayForMediaPlayback;
 #endif
 
     return configuration;
@@ -320,6 +324,32 @@ static NSString *defaultApplicationNameForUserAgent()
     _allowsAlternateFullscreen = allowed;
 }
 #endif
+
+@end
+
+@implementation WKWebViewConfiguration (WKDeprecated)
+
+#if PLATFORM(IOS)
+- (BOOL)mediaPlaybackAllowsAirPlay
+{
+    return self.allowsAirPlayForMediaPlayback;
+}
+
+- (void)setMediaPlaybackAllowsAirPlay:(BOOL)allowed
+{
+    self.allowsAirPlayForMediaPlayback = allowed;
+}
+
+- (BOOL)mediaPlaybackRequiresUserAction
+{
+    return self.requiresUserActionForMediaPlayback;
+}
+
+- (void)setMediaPlaybackRequiresUserAction:(BOOL)required
+{
+    self.requiresUserActionForMediaPlayback = required;
+}
+#endif // PLATFORM(IOS)
 
 @end
 

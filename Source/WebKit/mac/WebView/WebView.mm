@@ -2343,6 +2343,9 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setRubberBandingForSubScrollableRegionsEnabled(false);
 #endif
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    settings.setAllowsAirPlayForMediaPlayback([preferences allowsAirPlayForMediaPlayback]);
+#endif
 #if PLATFORM(IOS)
     settings.setStandalone([preferences _standalone]);
     settings.setTelephoneNumberParsingEnabled([preferences _telephoneNumberParsingEnabled]);
@@ -2350,7 +2353,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setLayoutInterval(std::chrono::milliseconds([preferences _layoutInterval]));
     settings.setMaxParseDuration([preferences _maxParseDuration]);
     settings.setAlwaysUseAcceleratedOverflowScroll([preferences _alwaysUseAcceleratedOverflowScroll]);
-    settings.setAllowsAirPlayForMediaPlayback([preferences mediaPlaybackAllowsAirPlay]);
     settings.setAudioSessionCategoryOverride([preferences audioSessionCategoryOverride]);
     settings.setNetworkDataUsageTrackingEnabled([preferences networkDataUsageTrackingEnabled]);
     settings.setNetworkInterfaceName([preferences networkInterfaceName]);

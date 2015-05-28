@@ -529,7 +529,6 @@ public:
 #else
         [NSNumber numberWithBool:YES],  WebKitRequiresUserGestureForMediaPlaybackPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitAllowsInlineMediaPlaybackPreferenceKey,
-        [NSNumber numberWithBool:YES],  WebKitAllowsAirPlayForMediaPlaybackPreferenceKey,
         [NSNumber numberWithUnsignedInt:AudioSession::None],  WebKitAudioSessionCategoryOverride,
 #if HAVE(AVKIT)
         [NSNumber numberWithBool:YES],  WebKitAVKitEnabled,
@@ -545,6 +544,9 @@ public:
 
         [NSNumber numberWithBool:YES],   WebKitShouldRespectImageOrientationKey,
 #endif // PLATFORM(IOS)
+#if ENABLE(WIRELESS_TARGET_PLAYBACK)
+        [NSNumber numberWithBool:YES],  WebKitAllowsAirPlayForMediaPlaybackPreferenceKey,
+#endif
         [NSNumber numberWithBool:YES],  WebKitAllowsAlternateFullscreenPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitRequestAnimationFrameEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWantsBalancedSetDefersLoadingBehaviorKey,
@@ -2074,6 +2076,22 @@ static NSString *classIBCreatorID = nil;
 - (void)setEnableInheritURIQueryComponent:(BOOL)flag
 {
     [self _setBoolValue:flag forKey: WebKitEnableInheritURIQueryComponentPreferenceKey];
+}
+
+- (BOOL)allowsAirPlayForMediaPlayback
+{
+#if ENABLE(WIRELESS_TARGET_PLAYBACK)
+    return [self _boolValueForKey:WebKitAllowsAirPlayForMediaPlaybackPreferenceKey];
+#else
+    return false;
+#endif
+}
+
+- (void)setAllowsAirPlayForMediaPlayback:(BOOL)flag
+{
+#if ENABLE(WIRELESS_TARGET_PLAYBACK)
+    [self _setBoolValue:flag forKey:WebKitAllowsAirPlayForMediaPlaybackPreferenceKey];
+#endif
 }
 
 #if PLATFORM(IOS)
