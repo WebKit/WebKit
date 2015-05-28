@@ -1,3 +1,19 @@
+2015-05-27  Anders Carlsson  <andersca@apple.com>
+
+        Can't load local files in WKWebView from containerized app
+        https://bugs.webkit.org/show_bug.cgi?id=145424
+        rdar://problem/20831176
+
+        Reviewed by Dan Bernstein.
+
+        Allow the network process to load local files from its bundle as long as it has
+        the sandbox extensions to do so.
+
+        This was originally added to only allow SSO to read the Info.plist inside its own application
+        bundle, but being able to read the application bundle from within the network process should be OK.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
 2015-05-27  Andreas Kling  <akling@apple.com>
 
         [WK2] Local storage areas should get torn down when they have no remaining references.

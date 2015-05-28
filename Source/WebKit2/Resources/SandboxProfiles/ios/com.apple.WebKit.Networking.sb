@@ -42,29 +42,6 @@
 ;; bundle to find Info plists, so we jump through a few hoops here to provide
 ;; enough access to make it possible.
 
-;; Disallow networking process from reading any bundles, even with the read extension
-(deny file-read*
-    (require-all
-        (subpath "/Applications")
-        (extension "com.apple.app-sandbox.read")))
-(deny file-read*
-    (require-all
-        (subpath "/private/var/mobile/Containers/Bundle/Application")
-        (extension "com.apple.app-sandbox.read")))
-
-;; Allow the networking process to read directories inside the bundle directories
-;; that we may have killed off above
-(allow file-read*
-    (require-all
-        (extension "com.apple.app-sandbox.read")
-        (vnode-type DIRECTORY)))
-
-;; Allow the networking process to read the Info.plist files
-(allow file-read*
-    (require-all
-        (extension "com.apple.app-sandbox.read")
-        (regex #"/Info\.plist$")))
-
 ;; IOKit user clients
 (allow iokit-open
        (iokit-user-client-class "RootDomainUserClient"))
