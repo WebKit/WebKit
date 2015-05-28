@@ -67,13 +67,23 @@ StorageNamespaceImpl::~StorageNamespaceImpl()
 {
 }
 
+void StorageNamespaceImpl::didDestroyStorageAreaMap(StorageAreaMap& map)
+{
+    m_storageAreaMaps.remove(&map.securityOrigin());
+}
+
 PassRefPtr<StorageArea> StorageNamespaceImpl::storageArea(PassRefPtr<SecurityOrigin> securityOrigin)
 {
-    auto& slot = m_storageAreaMaps.add(securityOrigin.get(), nullptr).iterator->value;
-    if (!slot)
-        slot = StorageAreaMap::create(this, *securityOrigin);
+    RefPtr<StorageAreaMap> map;
 
-    return StorageAreaImpl::create(slot);
+    auto& slot = m_storageAreaMaps.add(securityOrigin.get(), nullptr).iterator->value;
+    if (!slot) {
+        map = StorageAreaMap::create(this, *securityOrigin);
+        slot = map.get();
+    } else
+        map = slot;
+
+    return StorageAreaImpl::create(WTF::move(map));
 }
 
 PassRefPtr<StorageNamespace> StorageNamespaceImpl::copy(Page* newPage)

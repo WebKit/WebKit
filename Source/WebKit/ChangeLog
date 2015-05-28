@@ -1,3 +1,15 @@
+2015-05-27  Andreas Kling  <akling@apple.com>
+
+        [WK2] Local storage areas should get torn down when they have no remaining references.
+        <https://webkit.org/b/143339>
+        <rdar://problem/20156436>
+
+        Reviewed by Darin Adler.
+
+        Add StorageArea::securityOrigin() implementation.
+
+        * Storage/StorageAreaImpl.h:
+
 2015-05-22  Tim Horton  <timothy_horton@apple.com>
 
         Remove action menu support

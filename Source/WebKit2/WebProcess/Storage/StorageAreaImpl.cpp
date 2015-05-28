@@ -127,4 +127,9 @@ void StorageAreaImpl::closeDatabaseIfIdle()
     ASSERT_NOT_REACHED();
 }
 
+WebCore::SecurityOrigin& StorageAreaImpl::securityOrigin()
+{
+    return m_storageAreaMap->securityOrigin();
+}
+
 } // namespace WebKit

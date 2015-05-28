@@ -31,6 +31,10 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 
+namespace WebCore {
+class SecurityOrigin;
+}
+
 namespace WebKit {
 
 class StorageAreaMap;
@@ -59,6 +63,7 @@ private:
     virtual void incrementAccessCount() override;
     virtual void decrementAccessCount() override;
     virtual void closeDatabaseIfIdle() override;
+    WebCore::SecurityOrigin& securityOrigin() override;
 
     uint64_t m_storageAreaID;
     RefPtr<StorageAreaMap> m_storageAreaMap;

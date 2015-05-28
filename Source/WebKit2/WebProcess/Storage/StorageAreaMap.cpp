@@ -59,7 +59,8 @@ PassRefPtr<StorageAreaMap> StorageAreaMap::create(StorageNamespaceImpl* storageN
 }
 
 StorageAreaMap::StorageAreaMap(StorageNamespaceImpl* storageNamespace, Ref<WebCore::SecurityOrigin>&& securityOrigin)
-    : m_storageMapID(generateStorageMapID())
+    : m_storageNamespace(*storageNamespace)
+    , m_storageMapID(generateStorageMapID())
     , m_storageType(storageNamespace->storageType())
     , m_storageNamespaceID(storageNamespace->storageNamespaceID())
     , m_quotaInBytes(storageNamespace->quotaInBytes())
@@ -89,6 +90,8 @@ StorageAreaMap::~StorageAreaMap()
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::StorageManager::DestroyStorageMap(m_storageMapID), 0);
     WebProcess::singleton().removeMessageReceiver(Messages::StorageAreaMap::messageReceiverName(), m_storageMapID);
+
+    m_storageNamespace->didDestroyStorageAreaMap(*this);
 }
 
 unsigned StorageAreaMap::length()

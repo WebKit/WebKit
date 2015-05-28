@@ -63,6 +63,7 @@ class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {
         virtual bool canAccessStorage(Frame*) override { return false; }
         virtual StorageType storageType() const override { return LocalStorage; }
         virtual size_t memoryBytesUsedByCache() override { return 0; }
+        SecurityOrigin& securityOrigin() override { return SecurityOrigin::createUnique(); }
     };
 
     struct EmptyStorageNamespace final : public StorageNamespace {

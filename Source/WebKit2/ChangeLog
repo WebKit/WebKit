@@ -1,3 +1,43 @@
+2015-05-27  Andreas Kling  <akling@apple.com>
+
+        [WK2] Local storage areas should get torn down when they have no remaining references.
+        <https://webkit.org/b/143339>
+        <rdar://problem/20156436>
+
+        Reviewed by Darin Adler.
+
+        Let StorageNamespaceImpl own its StorageAreaMaps weakly instead of through RefPtr.
+        Ownership is flipped so that StorageAreaMap refs the StorageNamespaceImpl instead.
+        This allows the StorageAreaMaps to get destroyed once all of its clients are gone.
+
+        Practically speaking, this means that the garbage collector now decides when local
+        storage databases can be closed, instead of us keeping them open for the lifetime
+        of the web process.
+
+        For session storage, it works a bit differently. In the web process, they get torn
+        down when their last client disappears, but they stay alive in the UI process.
+        If/when the web process asks the UI process to open session storage for an origin,
+        the UI process checks if one already exists, and if so, just updates the ID of the
+        old storage with the new one provided by the web process.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::StorageArea::isSessionStorage):
+        (WebKit::StorageManager::createTransientLocalStorageMap):
+        (WebKit::StorageManager::createSessionStorageMap):
+        (WebKit::StorageManager::destroyStorageMap):
+        * WebProcess/Storage/StorageAreaImpl.cpp:
+        (WebKit::StorageAreaImpl::securityOrigin):
+        * WebProcess/Storage/StorageAreaImpl.h:
+        * WebProcess/Storage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::StorageAreaMap):
+        (WebKit::StorageAreaMap::~StorageAreaMap):
+        * WebProcess/Storage/StorageAreaMap.h:
+        (WebKit::StorageAreaMap::securityOrigin):
+        * WebProcess/Storage/StorageNamespaceImpl.cpp:
+        (WebKit::StorageNamespaceImpl::didDestroyStorageAreaMap):
+        (WebKit::StorageNamespaceImpl::storageArea):
+        * WebProcess/Storage/StorageNamespaceImpl.h:
+
 2015-05-27  Antti Koivisto  <antti@apple.com>
 
         Disable network cache for old clients

@@ -63,6 +63,8 @@ public:
     const HashMap<String, String>& items();
     void clear();
 
+    bool isSessionStorage() const { return !m_localStorageNamespace; }
+
 private:
     explicit StorageArea(LocalStorageNamespace*, RefPtr<SecurityOrigin>&&, unsigned quotaInBytes);
 
@@ -738,6 +740,23 @@ void StorageManager::createTransientLocalStorageMap(IPC::Connection& connection,
     // FIXME: This should be a message check.
     ASSERT(m_storageAreasByConnection.isValidKey({ &connection, storageMapID }));
 
+    Ref<SecurityOrigin> origin = securityOriginData.securityOrigin();
+
+    // See if we already have session storage for this connection/origin combo.
+    // If so, update the map with the new ID, otherwise keep on trucking.
+    for (auto it = m_storageAreasByConnection.begin(), end = m_storageAreasByConnection.end(); it != end; ++it) {
+        if (it->key.first != &connection)
+            continue;
+        Ref<StorageArea> area = *it->value;
+        if (!area->isSessionStorage())
+            continue;
+        if (!origin->isSameSchemeHostPort(area->securityOrigin()))
+            continue;
+        m_storageAreasByConnection.remove(it);
+        m_storageAreasByConnection.add({ &connection, storageMapID }, WTF::move(area));
+        return;
+    }
+
     auto& slot = m_storageAreasByConnection.add({ &connection, storageMapID }, nullptr).iterator->value;
 
     // FIXME: This should be a message check.
@@ -774,7 +793,7 @@ void StorageManager::createSessionStorageMap(IPC::Connection& connection, uint64
     // FIXME: This should be a message check.
     ASSERT(&connection == sessionStorageNamespace->allowedConnection());
 
-    auto storageArea = sessionStorageNamespace->getOrCreateStorageArea(securityOriginData.securityOrigin());
+    auto storageArea = sessionStorageNamespace->getOrCreateStorageArea(securityOriginData.securityOrigin().ptr());
     storageArea->addListener(connection, storageMapID);
 
     slot = WTF::move(storageArea);
@@ -792,6 +811,10 @@ void StorageManager::destroyStorageMap(IPC::Connection& connection, uint64_t sto
         // The connection has been removed because the last page was closed.
         return;
     }
+
+    // Don't remove session storage maps. The web process may reconnect and expect the data to still be around.
+    if (it->value->isSessionStorage())
+        return;
 
     it->value->removeListener(connection, storageMapID);
     m_storageAreasByConnection.remove(connectionAndStorageMapIDPair);

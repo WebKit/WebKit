@@ -49,6 +49,8 @@ public:
     WebCore::SecurityOrigin* topLevelOrigin() const { return m_topLevelOrigin.get(); }
     unsigned quotaInBytes() const { return m_quotaInBytes; }
 
+    void didDestroyStorageAreaMap(StorageAreaMap&);
+
 private:
     explicit StorageNamespaceImpl(WebCore::StorageType, uint64_t storageNamespaceID, WebCore::SecurityOrigin* topLevelOrigin, unsigned quotaInBytes);
 
@@ -63,7 +65,7 @@ private:
 
     const unsigned m_quotaInBytes;
 
-    HashMap<RefPtr<WebCore::SecurityOrigin>, RefPtr<StorageAreaMap>> m_storageAreaMaps;
+    HashMap<RefPtr<WebCore::SecurityOrigin>, StorageAreaMap*> m_storageAreaMaps;
 };
 
 } // namespace WebKit

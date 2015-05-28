@@ -60,6 +60,8 @@ public:
     virtual void decrementAccessCount() override;
     virtual void closeDatabaseIfIdle() override;
 
+    SecurityOrigin& securityOrigin() override { return *m_securityOrigin; }
+
     PassRefPtr<StorageAreaImpl> copy();
     void close();
 
