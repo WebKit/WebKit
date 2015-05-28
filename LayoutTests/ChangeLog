@@ -1,3 +1,20 @@
+2015-05-28  Andreas Kling  <akling@apple.com>
+
+        GraphicsLayerCA should start out with m_intersectsCoverageRect=false
+        <https://webkit.org/b/145443>
+        <rdar://problem/19685798>
+
+        Reviewed by Simon Fraser.
+
+        Add a test (based on iframe-and-layers.html) that makes an iframe with compositing
+        layers inside it and places it far outside the visible viewport.
+
+        The layer dump should show that the "intersects coverage rect" flag is 0 for the
+        iframe and its sublayers.
+
+        * compositing/visible-rect/iframe-with-layers-outside-viewport-expected.txt: Added.
+        * compositing/visible-rect/iframe-with-layers-outside-viewport.html: Added.
+
 2015-05-28  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet <youenn.fablet@crf.canon.fr>
 
         [Streams API] ReadableStreamReader should not be exposed

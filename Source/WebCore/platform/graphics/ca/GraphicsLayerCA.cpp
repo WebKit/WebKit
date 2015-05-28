@@ -358,7 +358,7 @@ GraphicsLayerCA::GraphicsLayerCA(Type layerType, GraphicsLayerClient& client)
     , m_needsFullRepaint(false)
     , m_usingBackdropLayerType(false)
     , m_allowsBackingStoreDetachment(true)
-    , m_intersectsCoverageRect(true)
+    , m_intersectsCoverageRect(false)
 {
 }
 
