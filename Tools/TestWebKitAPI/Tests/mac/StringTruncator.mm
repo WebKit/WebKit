@@ -34,7 +34,7 @@ TEST(WebKit1, StringTruncator)
 {
     @autoreleasepool {
         EXPECT_STREQ([[WebStringTruncator centerTruncateString:@"abcdefghijklmnopqrstuvwxyz" toWidth:100 withFont:[NSFont fontWithName:@"Helvetica" size:12]] UTF8String], "abcdefg…tuvwxyz");
-        EXPECT_STREQ([[WebStringTruncator centerTruncateString:@"abcdefghijklmnopqrstuvwxyz" toWidth:100] UTF8String], "abcdef…uvwxyz");
+        EXPECT_STREQ([[WebStringTruncator centerTruncateString:@"abcdefghijklmnopqrstuvwxyz" toWidth:100] UTF8String], "abcdef…vwxyz");
         EXPECT_STREQ([[WebStringTruncator rightTruncateString:@"abcdefghijklmnopqrstuvwxyz" toWidth:100 withFont:[NSFont fontWithName:@"Helvetica" size:12]] UTF8String], "abcdefghijklmno…");
         EXPECT_STREQ([[WebStringTruncator centerTruncateString:@"ābcdefghijklmnopqrstuvwxyz" toWidth:100 withFont:[NSFont fontWithName:@"Helvetica" size:12]] UTF8String], "ābcdefg…tuvwxyz");
         EXPECT_STREQ([[WebStringTruncator rightTruncateString:@"ābcdefghijklmnopqrstuvwxyz" toWidth:100 withFont:[NSFont fontWithName:@"Helvetica" size:12]] UTF8String], "ābcdefghijklmno…");
