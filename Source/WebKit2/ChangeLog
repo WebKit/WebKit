@@ -1,3 +1,11 @@
+2015-05-29  Babak Shafiei  <bshafiei@apple.com>
+
+        Custom patch to turn off ENABLE_PICTURE_SIZES. rdar://problem/21155654
+
+        Reviewed by Dean Jackson and Jon Lee.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2015-05-20  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r184596.
