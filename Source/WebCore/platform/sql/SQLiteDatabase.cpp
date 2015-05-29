@@ -134,7 +134,7 @@ void SQLiteDatabase::close()
 
 void SQLiteDatabase::overrideUnauthorizedFunctions()
 {
-    std::pair<const char*, int> functionParameters[] = {
+    static const std::pair<const char*, int> functionParameters[] = {
         { "rtreenode", 2 },
         { "rtreedepth", 1 },
         { "eval", 1 },
@@ -145,7 +145,7 @@ void SQLiteDatabase::overrideUnauthorizedFunctions()
     };
 
     for (auto& functionParameter : functionParameters)
-        sqlite3_create_function(m_db, functionParameter.first, functionParameter.second, SQLITE_UTF8, (void*)functionParameter.first, unauthorizedSQLFunction, 0, 0);
+        sqlite3_create_function(m_db, functionParameter.first, functionParameter.second, SQLITE_UTF8, const_cast<char*>(functionParameter.first), unauthorizedSQLFunction, 0, 0);
 }
 
 void SQLiteDatabase::interrupt()
