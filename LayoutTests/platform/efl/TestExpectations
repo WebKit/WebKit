@@ -535,6 +535,9 @@ http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
 http/tests/security/webgl-remote-read-remote-image-allowed.html [ Skip ]
 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [ Skip ]
 
+webkit.org/b/142766 fast/overflow/overflow-height-float-not-removed-crash.html [ Crash ]
+webkit.org/b/142766 fast/overflow/overflow-height-float-not-removed-crash3.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # Old WebGL expectations before skipping all of them
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1584,6 +1587,18 @@ webkit.org/b/112014 accessibility/textarea-insertion-point-line-number.html [ Fa
 webkit.org/b/112018 accessibility/th-as-title-ui.html [ Failure ]
 webkit.org/b/112021 accessibility/visible-elements.html [ Failure Crash ]
 
+webkit.org/b/111985 accessibility/image-link.html [ Failure ]
+webkit.org/b/111985 accessibility/image-map2.html [ Failure ]
+webkit.org/b/111985 accessibility/list-detection.html [ Failure ]
+webkit.org/b/111985 accessibility/lists.html [ Failure ]
+webkit.org/b/111985 accessibility/table-attributes.html [ Failure ]
+webkit.org/b/111985 accessibility/table-cell-spans.html [ Failure ]
+webkit.org/b/111985 accessibility/table-cells.html [ Failure ]
+webkit.org/b/111985 accessibility/table-detection.html [ Failure ]
+webkit.org/b/111985 accessibility/table-one-cell.html [ Failure ]
+webkit.org/b/111985 accessibility/table-sections.html [ Failure ]
+webkit.org/b/111985 accessibility/table-with-rules.html [ Failure ]
+
 # New accessibility test added in r151079 that is failing for EFL.
 webkit.org/b/117182 accessibility/text-role-with-aria-hidden-inside.html [ Failure ]
 
@@ -1766,11 +1781,7 @@ webkit.org/b/124582 fast/flexbox/clear-overflow-before-scroll-update.html [ Fail
 
 webkit.org/b/124583 fast/images/pdf-as-image-with-annotations.html [ ImageOnlyFailure ]
 
-webkit.org/b/124585 fast/sub-pixel/sub-pixel-composited-layers.html [ ImageOnlyFailure ]
-
 webkit.org/b/124586 fast/text/complex-first-glyph-with-initial-advance.html [ ImageOnlyFailure ]
-
-webkit.org/b/124587 fast/text/international/synthesized-italic-vertical.html [ ImageOnlyFailure ]
 
 webkit.org/b/124589 http/tests/cache/partitioned-cache-iframe.html [ Failure ]
 webkit.org/b/124589 http/tests/cache/partitioned-cache.html [ Failure ]
@@ -2076,7 +2087,6 @@ webkit.org/b/141512 fast/css/pseudo-invalid-form-invalidation-optimization.html 
 webkit.org/b/141512 fast/css/pseudo-valid-form-invalidation-optimization.html [ Failure ]
 
 # Started failing since r148090
-webkit.org/b/114340 compositing/overlap-blending/nested-non-overlap-clipping.html [ ImageOnlyFailure ]
 webkit.org/b/114340 compositing/overlap-blending/nested-overlap.html [ ImageOnlyFailure ]
 
 # Probably started failing since r159110
@@ -2136,7 +2146,6 @@ webkit.org/b/142451 fast/text/emphasis-combined-text.html [ Failure ]
 webkit.org/b/142451 fast/text/emphasis-vertical.html [ Failure ]
 
 webkit.org/b/142452 fast/writing-mode/Kusa-Makura-background-canvas.html [ Failure ]
-webkit.org/b/142452 fast/writing-mode/broken-ideographic-font.html [ Failure ]
 
 # Need new baseline since r181260.
 webkit.org/b/142481 svg/text/select-textLength-spacingAndGlyphs-squeeze-1.svg [ Failure ]
@@ -2176,7 +2185,6 @@ webkit.org/b/131044 media/controls-without-preload.html [ Failure ]
 webkit.org/b/131044 media/media-controls-invalid-url.html [ Failure ]
 webkit.org/b/131044 media/media-controls-timeline-updates.html [ Failure ]
 webkit.org/b/131044 media/media-preload-no-delay-loadevent.html [ Failure ]
-webkit.org/b/131044 media/media-volume-slider-rendered-below.html [ Failure ]
 webkit.org/b/131044 media/media-volume-slider-rendered-normal.html [ Failure ]
 webkit.org/b/131044 media/track/track-cue-rendering-snap-to-lines-not-set.html [ Failure ]
 webkit.org/b/131044 media/track/track-long-word-container-sizing.html [ Failure ]
@@ -2270,8 +2278,3 @@ fast/events/wheelevent-in-text-node.html [ Skip ] #timeout
 fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ Skip ] #timeout
 fast/text/simple-lines-hover-after.html [ Skip ] #timeout
 media/click-volume-bar-not-pausing.html [ Skip ] #timeout
-
-webkit.org/b/144803 css3/viewport-percentage-lengths/viewport-percentage-lengths-anonymous-block.html [ Timeout ]
-webkit.org/b/144803 css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child.html [ Timeout ]
-webkit.org/b/144803 css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html [ Timeout ]
-webkit.org/b/144803 css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html [ Timeout ]

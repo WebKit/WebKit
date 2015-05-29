@@ -1,3 +1,12 @@
+2015-05-28  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Unreviewed gardening on 29th May
+
+        Unskip passing tests for viewport-percentage, text, sub-pixel
+        and update new failing accessibility, fast/overflow and so on.
+
+        * platform/efl/TestExpectations:
+
 2015-05-28  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Pixel crack in text selection of simple text in <textarea>.
