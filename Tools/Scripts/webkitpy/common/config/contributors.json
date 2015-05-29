@@ -4094,7 +4094,9 @@
       },
       "Gyuyoung Kim" : {
          "emails" : [
-            "gyuyoung.kim@webkit.org"
+            "gyuyoung.kim@webkit.org",
+            "gyuyoung.kim@navercorp.com",
+            "gyuyoung.kim@samsung.com"
          ],
          "expertise" : "The EFLWebKit Port, Navigator Content Utils, CMake build system",
          "nicks" : [
