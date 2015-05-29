@@ -1,3 +1,17 @@
+2015-05-29  Tobias Reiss  <tobi+webkit@basecode.de>
+
+        Web Inspector: Activity Viewer does not update on "clear all console messages"
+        https://bugs.webkit.org/show_bug.cgi?id=144681
+
+        Reviewed by Joseph Pecoraro.
+
+        Do not apply "ignoreDidClearMessages" hack on "Clear log" Button and Context menu.
+
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype._sessionStarted):
+        (WebInspector.LogContentView.prototype._clearLogIgnoringClearMessages):
+        (WebInspector.LogContentView.prototype._clearLog): Deleted.
+
 2015-05-29  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Remove unused expandTreeElementsWhenArrowing property from TreeOutline

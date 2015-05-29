@@ -303,7 +303,7 @@ WebInspector.LogContentView.prototype = {
     _sessionStarted: function(event)
     {
         if (this._clearLogOnReloadSetting.value)  {
-            this._clearLog();
+            this._clearLogIgnoringClearMessages();
             this._reappendProvisionalMessages();
             return;
         }
@@ -631,6 +631,14 @@ WebInspector.LogContentView.prototype = {
         this._ignoreDidClearMessages = false;
     },
 
+    // FIXME: <https://webkit.org/b/145466> Web Inspector: Activity Viewer does not update on "Clear Log on reload"
+    _clearLogIgnoringClearMessages: function()
+    {
+        this._ignoreDidClearMessages = true;
+        this._logViewController.clear();
+        this._ignoreDidClearMessages = false;
+    },
+
     _showConsoleTab: function()
     {
         WebInspector.showConsoleTab();
@@ -643,9 +651,7 @@ WebInspector.LogContentView.prototype = {
 
     _clearLog: function()
     {
-        this._ignoreDidClearMessages = true;
         this._logViewController.clear();
-        this._ignoreDidClearMessages = false;
     },
 
     _scopeBarSelectionDidChange: function(event)
