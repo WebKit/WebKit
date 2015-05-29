@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <TargetAvailability.h>
+
 @class WebView;
 @class WebDataSource;
 @class NSURLAuthenticationChallenge;
@@ -58,7 +60,7 @@
 - (NSURLRequest *)webThreadWebView:(WebView *)sender resource:(id)identifier willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse fromDataSource:(WebDataSource *)dataSource;
 - (void)webThreadWebView:(WebView *)sender resource:(id)identifier didReceiveContentLength:(WebNSInteger)length fromDataSource:(WebDataSource *)dataSource;
 - (void)webThreadWebView:(WebView *)sender resource:(id)identifier didReceiveResponse:(NSURLResponse *)response fromDataSource:(WebDataSource *)dataSource;
-- (void)webThreadWebView:(WebView *)webView didLoadResourceFromMemoryCache:(NSURLRequest *)request response:(NSURLResponse *)response length:(WebNSInteger)length fromDataSource:(WebDataSource *)dataSource;
+- (void)webThreadWebView:(WebView *)webView didLoadResourceFromMemoryCache:(NSURLRequest *)request response:(NSURLResponse *)response length:(NSInteger)length fromDataSource:(WebDataSource *)dataSource;
 - (void)webThreadWebView:(WebView *)sender resource:(id)identifier didFinishLoadingFromDataSource:(WebDataSource *)dataSource;
 - (void)webThreadWebView:(WebView *)sender resource:(id)identifier didFailLoadingWithError:(NSError *)error fromDataSource:(WebDataSource *)dataSource;
 - (NSCachedURLResponse *)webThreadWebView:(WebView *)sender resource:(id)identifier willCacheResponse:(NSCachedURLResponse *)response fromDataSource:(WebDataSource *)dataSource;
