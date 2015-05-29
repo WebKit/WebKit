@@ -2393,3 +2393,6 @@ imported/mozilla/svg/image/image-filter-01.svg [ Pass ]
 imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
 mathml/presentation/style-changed.html [ Pass ]
 transitions/svg-text-shadow-transition.html [ Pass ]
+
+# This requires a specific font on Mac
+fast/text/hidpi-text-selection-gap-between-words.html [ Skip ]

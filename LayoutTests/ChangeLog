@@ -1,3 +1,12 @@
+2015-05-29  Zalan Bujtas  <zalan@apple.com>
+
+        Unreviewed Win and GTK gardening.
+
+        Skip Mac font specific test.
+
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+
 2015-05-29  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         MediaDevices.getUserMedia should reject promise instead of throwing exceptions
