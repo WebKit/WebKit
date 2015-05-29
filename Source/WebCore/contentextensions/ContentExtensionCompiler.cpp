@@ -292,7 +292,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
         LOG_LARGE_STRUCTURES(bytecode, bytecode.capacity() * sizeof(uint8_t));
         client.writeFiltersWithoutDomainsBytecode(WTF::move(bytecode));
     }
-    LOG_LARGE_STRUCTURES(universalAction, universalAction.capacity() * sizeof(unsigned));
+    LOG_LARGE_STRUCTURES(universalActionsWithoutDomains, universalActionsWithoutDomains.capacity() * sizeof(unsigned));
     universalActionsWithoutDomains.clear();
     
     bool firstNFAWithDomainsSeen = false;
