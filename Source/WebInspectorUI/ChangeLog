@@ -1,3 +1,14 @@
+2015-05-29  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Remove unused expandTreeElementsWhenArrowing property from TreeOutline
+        https://bugs.webkit.org/show_bug.cgi?id=145470
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WebInspector.TreeOutline.prototype._treeKeyDown):
+        Replaced uses of removed property with boolean literal.
+
 2015-05-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Tabs should have Context Menus

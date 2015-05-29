@@ -40,7 +40,6 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
         this._childrenListNode.removeChildren();
         this._knownTreeElements = [];
         this._treeElementsExpandedState = [];
-        this.expandTreeElementsWhenArrowing = false;
         this.allowsRepeatSelection = false;
         this.root = true;
         this.hasChildren = false;
@@ -401,12 +400,12 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
         if (event.keyIdentifier === "Up" && !event.altKey) {
             nextSelectedElement = this.selectedTreeElement.traversePreviousTreeElement(true);
             while (nextSelectedElement && !nextSelectedElement.selectable)
-                nextSelectedElement = nextSelectedElement.traversePreviousTreeElement(!this.expandTreeElementsWhenArrowing);
+                nextSelectedElement = nextSelectedElement.traversePreviousTreeElement(true);
             handled = nextSelectedElement ? true : false;
         } else if (event.keyIdentifier === "Down" && !event.altKey) {
             nextSelectedElement = this.selectedTreeElement.traverseNextTreeElement(true);
             while (nextSelectedElement && !nextSelectedElement.selectable)
-                nextSelectedElement = nextSelectedElement.traverseNextTreeElement(!this.expandTreeElementsWhenArrowing);
+                nextSelectedElement = nextSelectedElement.traverseNextTreeElement(true);
             handled = nextSelectedElement ? true : false;
         } else if (event.keyIdentifier === "Left") {
             if (this.selectedTreeElement.expanded) {
