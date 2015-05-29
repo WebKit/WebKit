@@ -50,6 +50,16 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.Object
         this._contentViewContainer = new WebInspector.ContentViewContainer;
         this._element.appendChild(this._contentViewContainer.element);
 
+        var showNextTab = this._showNextTab.bind(this);
+        var showPreviousTab = this._showPreviousTab.bind(this);
+
+        this._showNextTabKeyboardShortcut1 = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, WebInspector.KeyboardShortcut.Key.RightCurlyBrace, showNextTab);
+        this._showPreviousTabKeyboardShortcut1 = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, WebInspector.KeyboardShortcut.Key.LeftCurlyBrace, showPreviousTab);
+        this._showNextTabKeyboardShortcut2 = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control, WebInspector.KeyboardShortcut.Key.Tab, showNextTab);
+        this._showPreviousTabKeyboardShortcut2 = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control | WebInspector.KeyboardShortcut.Modifier.Shift, WebInspector.KeyboardShortcut.Key.Tab, showPreviousTab);
+        this._showNextTabKeyboardShortcut3 = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, WebInspector.KeyboardShortcut.Key.Right, showNextTab);
+        this._showPreviousTabKeyboardShortcut3 = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, WebInspector.KeyboardShortcut.Key.Left, showPreviousTab);
+
         this._tabBar.newTabItem = new WebInspector.TabBarItem("Images/NewTabPlus.svg", WebInspector.UIString("Create a new tab"), true);
 
         this._tabBar.addEventListener(WebInspector.TabBar.Event.TabBarItemSelected, this._tabBarItemSelected, this);
@@ -330,6 +340,16 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.Object
         this._detailsSidebar.collapsed = tabContentView.detailsSidebarCollapsedSetting.value || !detailsSidebarPanels.length;
 
         this._ignoreSidebarEvents = false;
+    }
+
+    _showPreviousTab(event)
+    {
+        this._tabBar.selectPreviousTab();
+    }
+
+    _showNextTab(event)
+    {
+        this._tabBar.selectNextTab();
     }
 };
 

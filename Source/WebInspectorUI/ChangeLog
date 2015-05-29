@@ -1,5 +1,26 @@
 2015-05-28  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Should have a keyboard shortcut to switch between inspector tabs
+        https://bugs.webkit.org/show_bug.cgi?id=144207
+
+        Reviewed by Timothy Hatcher.
+
+        These keyboard shortcuts work well in an undocked inspector window.
+        Be careful that some keyboard shortcuts, when used inside a text
+        editor / text field are just text actions. However, some keyboard
+        shortcuts will work no matter where you trigger them.
+
+        * UserInterface/Models/KeyboardShortcut.js:
+        * UserInterface/Views/TabBar.js:
+        (WebInspector.TabBar.prototype.selectPreviousTab):
+        (WebInspector.TabBar.prototype.selectNextTab):
+        * UserInterface/Views/TabBrowser.js:
+        (WebInspector.TabBrowser):
+        (WebInspector.TabBrowser.prototype._showPreviousTab):
+        (WebInspector.TabBrowser.prototype._showNextTab):
+
+2015-05-28  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: NewTabContentView should update button disabled state as other tabs are added/removed
         https://bugs.webkit.org/show_bug.cgi?id=145448
 

@@ -288,6 +288,52 @@ WebInspector.TabBar = class TabBar extends WebInspector.Object
         return tabBarItem;
     }
 
+    selectPreviousTab()
+    {
+        if (this._tabBarItems.length <= 1)
+            return;
+
+        var startIndex = this._tabBarItems.indexOf(this._selectedTabBarItem);
+        var newIndex = startIndex;
+        do {
+            if (newIndex === 0)
+                newIndex = this._tabBarItems.length - 1;
+            else
+                newIndex--;
+
+            if (!this._tabBarItems[newIndex].pinned)
+                break;
+        } while (newIndex !== startIndex);
+
+        if (newIndex === startIndex)
+            return;
+
+        this.selectedTabBarItem = this._tabBarItems[newIndex];
+    }
+
+    selectNextTab()
+    {
+        if (this._tabBarItems.length <= 1)
+            return;
+
+        var startIndex = this._tabBarItems.indexOf(this._selectedTabBarItem);
+        var newIndex = startIndex;
+        do {
+            if (newIndex === this._tabBarItems.length - 1)
+                newIndex = 0;
+            else
+                newIndex++;
+
+            if (!this._tabBarItems[newIndex].pinned)
+                break;
+        } while (newIndex !== startIndex);
+
+        if (newIndex === startIndex)
+            return;
+
+        this.selectedTabBarItem = this._tabBarItems[newIndex];
+    }
+
     updateLayoutSoon()
     {
         if (this._updateLayoutIdentifier)
