@@ -259,8 +259,6 @@ public:
 #endif
 
     void focusDocumentView();
-
-    void capsLockStateMayHaveChanged(); // Only called by FrameSelection
     
     WEBCORE_EXPORT void sendScrollEvent(); // Ditto
 

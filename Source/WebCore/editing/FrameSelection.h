@@ -200,7 +200,7 @@ public:
     bool isCaretBlinkingSuspended() const { return m_isCaretBlinkingSuspended; }
 
     // Focus
-    WEBCORE_EXPORT void setFocused(bool);
+    void setFocused(bool);
     bool isFocused() const { return m_focused; }
     WEBCORE_EXPORT bool isFocusedAndActive() const;
     void pageActivationChanged();
