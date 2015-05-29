@@ -1,5 +1,16 @@
 2015-05-29  Anders Carlsson  <andersca@apple.com>
 
+        WebKit.framework installs or references Mac-only headers on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=145471
+        rdar://problem/21161459
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/C/mac/WKInspectorPrivateMac.h:
+        Add an #if !TARGET_OS_IPHONE guard around the entire header.
+
+2015-05-29  Anders Carlsson  <andersca@apple.com>
+
         WKScriptMessageInternal.h should be a project header, not a private header
         https://bugs.webkit.org/show_bug.cgi?id=145464
         rdar://problem/21161639

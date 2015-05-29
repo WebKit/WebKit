@@ -184,11 +184,17 @@ all : \
     $(PRIVATE_HEADERS_DIR)/DOMXPathResult.h \
     $(PRIVATE_HEADERS_DIR)/WebKitAvailability.h \
     $(PRIVATE_HEADERS_DIR)/WebScriptObject.h \
+#
+
+ifeq ($(PLATFORM_NAME), macosx)
+all : \
     $(PRIVATE_HEADERS_DIR)/npapi.h \
     $(PRIVATE_HEADERS_DIR)/npfunctions.h \
     $(PRIVATE_HEADERS_DIR)/npruntime.h \
     $(PRIVATE_HEADERS_DIR)/nptypes.h \
 #
+
+endif
 
 ifneq ($(PLATFORM_NAME), macosx)
 all : \

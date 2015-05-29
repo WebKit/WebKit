@@ -23,6 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <TargetConditionals.h>
+
+#if !TARGET_OS_IPHONE
+
 #import <AppKit/NSWindow.h>
 #import <WebKit/WKDeclarationSpecifiers.h>
 #import <WebKit/WKInspector.h>
@@ -46,4 +50,6 @@ WK_EXPORT @interface WKWebInspectorProxyObjCAdapter : NSObject <NSWindowDelegate
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

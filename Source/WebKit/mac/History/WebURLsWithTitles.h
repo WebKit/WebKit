@@ -26,6 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <TargetConditionals.h>
+
+#if !TARGET_OS_IPHONE
+
 #import <Cocoa/Cocoa.h>
 
 #define WebURLsWithTitlesPboardType     @"WebURLsWithTitlesPboardType"
@@ -53,3 +57,5 @@
 + (NSArray *)titlesFromPasteboard:(NSPasteboard *)pasteboard;
 
 @end
+
+#endif

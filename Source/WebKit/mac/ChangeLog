@@ -1,3 +1,17 @@
+2015-05-29  Anders Carlsson  <andersca@apple.com>
+
+        WebKit.framework installs or references Mac-only headers on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=145471
+        rdar://problem/21161459
+
+        Reviewed by Dan Bernstein.
+
+        * History/WebURLsWithTitles.h:
+        Add an #if !TARGET_OS_IPHONE guard around the entire header.
+
+        * MigrateHeaders.make:
+        Don't migrate the NPAPI headers on iOS.
+
 2015-05-28  Matt Rajca  <mrajca@apple.com>
 
         Add ENABLE_MEDIA_SESSION feature flag (which is off by default).
