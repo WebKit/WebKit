@@ -1,3 +1,24 @@
+2015-05-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: NewTabContentView should update button disabled state as other tabs are added/removed
+        https://bugs.webkit.org/show_bug.cgi?id=145448
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/NewTabContentView.js:
+        (WebInspector.NewTabContentView):
+        Always add a click listener and add the type as a private property on the element.
+
+        (WebInspector.NewTabContentView.prototype.shown):
+        (WebInspector.NewTabContentView.prototype.hidden):
+        Add / remove event listeners for tab changes. Also update the view when shown.
+        
+        (WebInspector.NewTabContentView.prototype._createNewTab):
+        A disabled button an now be clicked. Do nothing if a new tab of this type is not allowed.
+
+        (WebInspector.NewTabContentView.prototype._updateTabItems):
+        Refresh the disabled state for each of the buttons.
+
 2015-05-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Show Page Source does not switch to Resources tab if inspector was closed
