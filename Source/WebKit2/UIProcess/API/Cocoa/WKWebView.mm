@@ -73,7 +73,6 @@
 #import "_WKDiagnosticLoggingDelegate.h"
 #import "_WKFindDelegate.h"
 #import "_WKFormDelegate.h"
-#import "_WKNSURLRequestExtras.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKSessionStateInternal.h"
 #import "_WKVisitedLinkProviderInternal.h"
@@ -142,6 +141,7 @@ enum class DynamicViewportUpdateMode {
 #import <WebCore/ColorMac.h>
 #endif
 
+NSString * const _WKShouldOpenExternalURLsKey = @"_WKShouldOpenExternalURLsKey";
 
 static HashMap<WebKit::WebPageProxy*, WKWebView *>& pageToViewMap()
 {
@@ -447,12 +447,7 @@ static bool shouldAllowAlternateFullscreen()
 
 - (WKNavigation *)loadRequest:(NSURLRequest *)request
 {
-    WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy = [request _web_shouldOpenExternalURLs] ? WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow : WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow;
-    auto navigation = _page->loadRequest(request, shouldOpenExternalURLsPolicy);
-    if (!navigation)
-        return nil;
-
-    return [wrapper(*navigation.release().leakRef()) autorelease];
+    return [self _loadRequest:request withOptions:nil];
 }
 
 - (WKNavigation *)loadFileURL:(NSURL *)URL allowingReadAccessToURL:(NSURL *)readAccessURL
@@ -1776,6 +1771,18 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 @end
 
 @implementation WKWebView (WKPrivate)
+
+- (WKNavigation *)_loadRequest:(NSURLRequest *)request withOptions:(NSDictionary *)loadOptions
+{
+    bool shouldOpenExternalURLs = [loadOptions[_WKShouldOpenExternalURLsKey] boolValue];
+    WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy = shouldOpenExternalURLs ? WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow : WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow;
+
+    auto navigation = _page->loadRequest(request, shouldOpenExternalURLsPolicy);
+    if (!navigation)
+        return nil;
+
+    return [wrapper(*navigation.release().leakRef()) autorelease];
+}
 
 - (BOOL)_isEditable
 {

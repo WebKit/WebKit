@@ -55,7 +55,6 @@
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
 #import "WebProtectionSpace.h"
-#import "_WKNSURLRequestExtras.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import <wtf/NeverDestroyed.h>
 
@@ -192,7 +191,7 @@ static HashMap<WebPageProxy*, WKBrowsingContextController *>& browsingContextCon
     if (userData)
         wkUserData = ObjCObjectGraph::create(userData);
 
-    _page->loadRequest(request, [request _web_shouldOpenExternalURLs] ? ShouldOpenExternalURLsPolicy::ShouldAllow : ShouldOpenExternalURLsPolicy::ShouldNotAllow, wkUserData.get());
+    _page->loadRequest(request, ShouldOpenExternalURLsPolicy::ShouldNotAllow, wkUserData.get());
 }
 
 - (void)loadFileURL:(NSURL *)URL restrictToFilesWithin:(NSURL *)allowedDirectory

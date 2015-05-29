@@ -1,3 +1,29 @@
+2015-05-28  Brady Eidson  <beidson@apple.com>
+
+        Change method of signaling "should open external urls" to WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=145454
+
+        Reviewed by Dan Bernstein.
+
+        Making this a property on the request was never a good idea.
+
+        Adding a new extensible load SPI seems much better.
+
+        * Shared/API/Cocoa/_WKNSURLRequestExtras.h: Removed.
+        * Shared/API/Cocoa/_WKNSURLRequestExtras.mm: Removed.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController loadRequest:userData:]): Since this API is deprecated,
+          it always gets the default restrictive behavior.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView loadRequest:]):
+        (-[WKWebView loadRequest:withOptions:]): Take an options dictionary that, for now, 
+          only supports one option.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-05-28  Anders Carlsson  <andersca@apple.com>
 
         Make sure that we create the private WebKit.framework symlinks last
