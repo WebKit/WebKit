@@ -1,3 +1,19 @@
+2015-05-28  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Pixel crack in text selection of simple text in <textarea>.
+        https://bugs.webkit.org/show_bug.cgi?id=145393
+        rdar://problem/19918941
+
+        Reviewed by Darin Adler.
+
+        Float to LayoutUnit conversion is lossy. To ensure that selection
+        painting always lines up (snaps) properly, the calculated width needs to
+        be adjusted by ceiling the float to the next LayoutUnit value.
+
+        * fast/text/hidpi-text-selection-gap-between-words-expected.html: Added.
+        * fast/text/hidpi-text-selection-gap-between-words.html: Added.
+        * platform/mac/platform/mac/editing/input/caret-primary-bidi-expected.txt:
+
 2015-05-28  Andreas Kling  <akling@apple.com>
 
         GraphicsLayerCA should start out with m_intersectsCoverageRect=false

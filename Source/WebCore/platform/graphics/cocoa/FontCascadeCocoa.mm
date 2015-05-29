@@ -708,7 +708,7 @@ void FontCascade::adjustSelectionRectForComplexText(const TextRun& run, LayoutRe
         selectionRect.move(controller.totalWidth() - afterWidth + controller.leadingExpansion(), 0);
     else
         selectionRect.move(beforeWidth, 0);
-    selectionRect.setWidth(afterWidth - beforeWidth);
+    selectionRect.setWidth(LayoutUnit::fromFloatCeil(afterWidth - beforeWidth));
 }
 
 float FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, int from, int to, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot forTextEmphasis) const
