@@ -799,6 +799,11 @@ bool Internals::isRequestAnimationFrameThrottled() const
 #endif
 }
 
+bool Internals::areTimersThrottled() const
+{
+    return contextDocument()->isTimerThrottlingEnabled();
+}
+
 String Internals::visiblePlaceholder(Element* element)
 {
     if (is<HTMLTextFormControlElement>(element)) {

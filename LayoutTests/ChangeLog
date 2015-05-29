@@ -1,3 +1,19 @@
+2015-05-29  Chris Dumez  <cdumez@apple.com>
+
+        Consider throttling DOM timers in iframes outside the viewport
+        https://bugs.webkit.org/show_bug.cgi?id=145465
+        <rdar://problem/20768957>
+
+        Reviewed by Darin Adler.
+
+        Add a layout test to check that DOM timers in iframes outside the
+        viewport get throttled.
+
+        * fast/dom/resources/timer-frame-2.html: Added.
+        * fast/dom/resources/timer-frame.html: Added.
+        * fast/dom/timer-throttling-subframe-expected.txt: Added.
+        * fast/dom/timer-throttling-subframe.html: Added.
+
 2015-05-28  Filip Pizlo  <fpizlo@apple.com>
 
         Non-speculative Branch should be fast in the FTL

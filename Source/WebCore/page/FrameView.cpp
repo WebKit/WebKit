@@ -1807,7 +1807,7 @@ void FrameView::viewportContentsChanged()
     applyRecursivelyWithVisibleRect([] (FrameView& frameView, const IntRect& visibleRect) {
         frameView.resumeVisibleImageAnimations(visibleRect);
         frameView.updateThrottledDOMTimersState(visibleRect);
-        frameView.updateScriptedAnimationsThrottlingState(visibleRect);
+        frameView.updateScriptedAnimationsAndTimersThrottlingState(visibleRect);
     });
 }
 
@@ -2168,9 +2168,8 @@ void FrameView::resumeVisibleImageAnimations(const IntRect& visibleRect)
         renderView->resumePausedImageAnimationsIfNeeded(visibleRect);
 }
 
-void FrameView::updateScriptedAnimationsThrottlingState(const IntRect& visibleRect)
+void FrameView::updateScriptedAnimationsAndTimersThrottlingState(const IntRect& visibleRect)
 {
-#if ENABLE(REQUEST_ANIMATION_FRAME)
     if (frame().isMainFrame())
         return;
 
@@ -2178,17 +2177,16 @@ void FrameView::updateScriptedAnimationsThrottlingState(const IntRect& visibleRe
     if (!document)
         return;
 
-    auto* scriptedAnimationController = document->scriptedAnimationController();
-    if (!scriptedAnimationController)
-        return;
-
     // FIXME: This doesn't work for subframes of a "display: none" frame because
     // they have a non-null ownerRenderer.
     bool shouldThrottle = !frame().ownerRenderer() || visibleRect.isEmpty();
-    scriptedAnimationController->setThrottled(shouldThrottle);
-#else
-    UNUSED_PARAM(visibleRect);
+
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+    if (auto* scriptedAnimationController = document->scriptedAnimationController())
+        scriptedAnimationController->setThrottled(shouldThrottle);
 #endif
+
+    document->setTimerThrottlingEnabled(shouldThrottle);
 }
 
 

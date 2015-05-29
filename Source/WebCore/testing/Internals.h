@@ -116,6 +116,7 @@ public:
     // DOMTimers throttling testing.
     bool isTimerThrottled(int timeoutId, ExceptionCode&);
     bool isRequestAnimationFrameThrottled() const;
+    bool areTimersThrottled() const;
 
     // Spatial Navigation testing.
     unsigned lastSpatialNavigationCandidateCount(ExceptionCode&) const;

@@ -431,6 +431,9 @@ public:
     String visibilityState() const;
     bool hidden() const;
 
+    void setTimerThrottlingEnabled(bool);
+    bool isTimerThrottlingEnabled() const { return m_isTimerThrottlingEnabled; }
+
 #if ENABLE(CSP_NEXT)
     DOMSecurityPolicy& securityPolicy();
 #endif
@@ -1688,6 +1691,7 @@ private:
     bool m_hasPreparedForDestruction;
 
     bool m_hasStyleWithViewportUnits;
+    bool m_isTimerThrottlingEnabled { false };
 
     HashSet<MediaProducer*> m_audioProducers;
     MediaProducer::MediaStateFlags m_mediaState { MediaProducer::IsNotPlaying };

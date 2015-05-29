@@ -285,6 +285,7 @@ enum ResourceLoadPriority {
     [RaisesException] boolean isTimerThrottled(long timerHandle);
 
     boolean isRequestAnimationFrameThrottled();
+    boolean areTimersThrottled();
 
     [RaisesException] void startTrackingStyleRecalcs();
     [RaisesException] unsigned long styleRecalcCount();

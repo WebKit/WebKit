@@ -2750,8 +2750,24 @@ double Document::minimumTimerInterval() const
     return page->settings().minimumDOMTimerInterval();
 }
 
+void Document::setTimerThrottlingEnabled(bool shouldThrottle)
+{
+    if (m_isTimerThrottlingEnabled == shouldThrottle)
+        return;
+
+    double previousInterval = timerAlignmentInterval();
+
+    m_isTimerThrottlingEnabled = shouldThrottle;
+
+    if (previousInterval != timerAlignmentInterval())
+        didChangeTimerAlignmentInterval();
+}
+
 double Document::timerAlignmentInterval() const
 {
+    if (m_isTimerThrottlingEnabled)
+        return DOMTimer::hiddenPageAlignmentInterval();
+
     Page* page = this->page();
     if (!page)
         return ScriptExecutionContext::timerAlignmentInterval();
