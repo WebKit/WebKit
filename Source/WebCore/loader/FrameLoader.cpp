@@ -916,7 +916,8 @@ void FrameLoader::loadURLIntoChildFrame(const URL& url, const String& referer, F
     }
 
     FrameLoadRequest frameLoadRequest(m_frame.document()->securityOrigin(), ResourceRequest(url), "_self", LockHistory::No, LockBackForwardList::Yes, ShouldSendReferrer::MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Suppress, ReplaceDocumentIfJavaScriptURL);
-    childFrame->loader().loadURL(frameLoadRequest, referer, FrameLoadType::RedirectWithLockedBackForwardList, 0, 0);}
+    childFrame->loader().loadURL(frameLoadRequest, referer, FrameLoadType::RedirectWithLockedBackForwardList, 0, 0);
+}
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
 void FrameLoader::loadArchive(PassRefPtr<Archive> archive)
