@@ -1,3 +1,17 @@
+2015-05-29  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r184949.
+        https://bugs.webkit.org/show_bug.cgi?id=145458
+
+        Ends up generating worse code for HashTable move constructors
+        (Requested by zdobersek on #webkit).
+
+        Reverted changeset:
+
+        "Clean up HashTable constructors"
+        https://bugs.webkit.org/show_bug.cgi?id=145369
+        http://trac.webkit.org/changeset/184949
+
 2015-05-28  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Purge PassRefPtr in StringConcatenate.h
