@@ -1,3 +1,34 @@
+2015-05-29  Enrica Casucci  <enrica@apple.com>
+
+        [iOS] Cursor hidden in text area once it scrolls.
+        https://bugs.webkit.org/show_bug.cgi?id=145451
+        rdar://problem/20356413
+
+        Reviewed by Simon Fraser.
+
+        This patch fixes both the touch scrolling inside the
+        overflow area as well as the programmatic scroll that
+        occurs when inserting a new line. The first issue is fixed by
+        implementing the chrome client methods didLayout,
+        didStartOverflowScroll and didEndOverflowScroll. The second
+        required changing the implementation of notifyRevealedSelectionByScrollingFrame.
+        We not only need to notify the client to redraw the selection,
+        but we also need to recompute the editorState, because scrolling
+        might have occurred.
+        I've removed the NotifyRevealedSelection message that was not needed
+        any longer, since EditorStateChanged will do exactly what we want.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::editorStateChanged):
+        (WebKit::WebPageProxy::notifyRevealedSelection): Deleted.
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        (WebKit::WebChromeClient::notifyRevealedSelectionByScrollingFrame):
+        (WebKit::WebChromeClient::didLayout):
+        (WebKit::WebChromeClient::didStartOverflowScroll):
+        (WebKit::WebChromeClient::didEndOverflowScroll):
+
 2015-05-29  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Update WebContent process sandbox profile for AWD logging

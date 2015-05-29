@@ -608,11 +608,6 @@ void WebPageProxy::applicationDidBecomeActive()
     m_process->send(Messages::WebPage::ApplicationDidBecomeActive(), m_pageID);
 }
 
-void WebPageProxy::notifyRevealedSelection()
-{
-    m_pageClient.selectionDidChange();
-}
-
 void WebPageProxy::extendSelection(WebCore::TextGranularity granularity)
 {
     m_process->send(Messages::WebPage::ExtendSelection(static_cast<uint32_t>(granularity)), m_pageID);
@@ -924,7 +919,7 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
     
     // We always need to notify the client on iOS to make sure the selection is redrawn,
     // even during composition to support phrase boundary gesture.
-    notifyRevealedSelection();
+    m_pageClient.selectionDidChange();
 }
 
 #if USE(QUICK_LOOK)

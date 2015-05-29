@@ -1390,8 +1390,6 @@ private:
 
     void enableInspectorNodeSearch();
     void disableInspectorNodeSearch();
-
-    void notifyRevealedSelection();
 #endif // PLATFORM(IOS)
 
     void clearLoadDependentCallbacks();

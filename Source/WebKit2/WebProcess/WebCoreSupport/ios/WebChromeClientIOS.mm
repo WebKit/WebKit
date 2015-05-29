@@ -76,7 +76,7 @@ void WebChromeClient::clearContentChangeObservers(WebCore::Frame*)
 
 void WebChromeClient::notifyRevealedSelectionByScrollingFrame(WebCore::Frame*)
 {
-    m_page->send(Messages::WebPageProxy::NotifyRevealedSelection());
+    m_page->didChangeSelection();
 }
 
 bool WebChromeClient::isStopping()
@@ -85,19 +85,20 @@ bool WebChromeClient::isStopping()
     return false;
 }
 
-void WebChromeClient::didLayout(LayoutType)
+void WebChromeClient::didLayout(LayoutType type)
 {
-    notImplemented();
+    if (type == Scroll)
+        m_page->didChangeSelection();
 }
 
 void WebChromeClient::didStartOverflowScroll()
 {
-    notImplemented();
+    m_page->send(Messages::WebPageProxy::OverflowScrollWillStartScroll());
 }
 
 void WebChromeClient::didEndOverflowScroll()
 {
-    notImplemented();
+    m_page->send(Messages::WebPageProxy::OverflowScrollDidEndScroll());
 }
 
 bool WebChromeClient::hasStablePageScaleFactor() const
