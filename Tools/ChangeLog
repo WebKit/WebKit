@@ -1,3 +1,9 @@
+2015-05-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Update results of WebKit1.StringTruncator after r184965.
+
+        * TestWebKitAPI/Tests/mac/StringTruncator.mm: (TestWebKitAPI::TEST):
+
 2015-05-28  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Unreviewed, updated my list of email addresses.
