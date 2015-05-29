@@ -1,3 +1,16 @@
+2015-05-28  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Purge PassRefPtr in StringConcatenate.h
+        https://bugs.webkit.org/show_bug.cgi?id=145376
+
+        Reviewed by Darin Adler.
+
+        Replace PassRefPtr with RefPtr. Additionally use nullptr instead of 0.
+
+        * wtf/text/StringConcatenate.h:
+        (WTF::tryMakeString):
+        (WTF::makeString):
+
 2015-05-28  Zan Dobersek  <zdobersek@igalia.com>
 
         Clean up HashTable constructors
