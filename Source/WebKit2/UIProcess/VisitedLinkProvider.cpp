@@ -54,8 +54,10 @@ Ref<VisitedLinkProvider> VisitedLinkProvider::create()
 
 VisitedLinkProvider::~VisitedLinkProvider()
 {
-    for (WebProcessProxy* process : m_processes)
+    for (WebProcessProxy* process : m_processes) {
+        process->removeMessageReceiver(Messages::VisitedLinkProvider::messageReceiverName(), m_identifier);
         process->didDestroyVisitedLinkProvider(*this);
+    }
 }
 
 VisitedLinkProvider::VisitedLinkProvider()
