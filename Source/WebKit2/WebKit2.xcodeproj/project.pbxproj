@@ -1157,7 +1157,7 @@
 		7CBB811D1AA0F8B1006B1942 /* InjectedBundleFileHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CBB811B1AA0F8B1006B1942 /* InjectedBundleFileHandle.h */; };
 		7CBB81201AA0F970006B1942 /* WKBundleFileHandleRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CBB811E1AA0F970006B1942 /* WKBundleFileHandleRef.cpp */; };
 		7CBB81211AA0F970006B1942 /* WKBundleFileHandleRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CBB811F1AA0F970006B1942 /* WKBundleFileHandleRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7CC99A3618EF7CBC0048C8B4 /* WKScriptMessageInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CC99A3518EF7CBC0048C8B4 /* WKScriptMessageInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7CC99A3618EF7CBC0048C8B4 /* WKScriptMessageInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CC99A3518EF7CBC0048C8B4 /* WKScriptMessageInternal.h */; };
 		7CCCC8FA1A5F50FD008FB0DA /* WebNavigationState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CCCC8F81A5F50FD008FB0DA /* WebNavigationState.cpp */; };
 		7CCCC8FB1A5F50FD008FB0DA /* WebNavigationState.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CCCC8F91A5F50FD008FB0DA /* WebNavigationState.h */; };
 		7CD102DA1866770600ED429D /* AutoCorrectionCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD102D91866770600ED429D /* AutoCorrectionCallback.h */; };
