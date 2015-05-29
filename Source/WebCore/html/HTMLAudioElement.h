@@ -42,7 +42,7 @@ public:
 private:
     HTMLAudioElement(const QualifiedName&, Document&, bool);
 
-    virtual MediaSession::MediaType presentationType() const override { return MediaSession::Audio; }
+    virtual PlatformMediaSession::MediaType presentationType() const override { return PlatformMediaSession::Audio; }
 };
 
 } // namespace WebCore

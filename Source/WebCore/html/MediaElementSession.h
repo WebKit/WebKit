@@ -29,7 +29,7 @@
 #if ENABLE(VIDEO)
 
 #include "MediaPlayer.h"
-#include "MediaSession.h"
+#include "PlatformMediaSession.h"
 #include "Timer.h"
 
 namespace WebCore {
@@ -38,10 +38,10 @@ class Document;
 class HTMLMediaElement;
 class SourceBuffer;
 
-class MediaElementSession final : public MediaSession {
+class MediaElementSession final : public PlatformMediaSession {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit MediaElementSession(MediaSessionClient&);
+    explicit MediaElementSession(PlatformMediaSessionClient&);
     virtual ~MediaElementSession() { }
 
     void registerWithDocument(const HTMLMediaElement&);

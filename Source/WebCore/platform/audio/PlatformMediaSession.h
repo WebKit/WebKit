@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaSession_h
-#define MediaSession_h
+#ifndef PlatformMediaSession_h
+#define PlatformMediaSession_h
 
 #include "MediaProducer.h"
 #include "Timer.h"
@@ -38,18 +38,18 @@
 namespace WebCore {
 
 class MediaPlaybackTarget;
-class MediaSessionClient;
+class PlatformMediaSessionClient;
 
-class MediaSession
+class PlatformMediaSession
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     : public MediaPlaybackTargetClient
 #endif
 {
 public:
-    static std::unique_ptr<MediaSession> create(MediaSessionClient&);
+    static std::unique_ptr<PlatformMediaSession> create(PlatformMediaSessionClient&);
 
-    MediaSession(MediaSessionClient&);
-    virtual ~MediaSession();
+    PlatformMediaSession(PlatformMediaSessionClient&);
+    virtual ~PlatformMediaSession();
 
     enum MediaType {
         None = 0,
@@ -133,13 +133,13 @@ public:
 #endif
 
 protected:
-    MediaSessionClient& client() const { return m_client; }
+    PlatformMediaSessionClient& client() const { return m_client; }
 
 private:
     void clientDataBufferingTimerFired();
     void updateClientDataBuffering();
 
-    MediaSessionClient& m_client;
+    PlatformMediaSessionClient& m_client;
     Timer m_clientDataBufferingTimer;
     State m_state;
     State m_stateToRestore;
@@ -147,14 +147,14 @@ private:
     bool m_notifyingClient;
 };
 
-class MediaSessionClient {
-    WTF_MAKE_NONCOPYABLE(MediaSessionClient);
+class PlatformMediaSessionClient {
+    WTF_MAKE_NONCOPYABLE(PlatformMediaSessionClient);
 public:
-    MediaSessionClient() { }
+    PlatformMediaSessionClient() { }
     
-    virtual MediaSession::MediaType mediaType() const = 0;
-    virtual MediaSession::MediaType presentationType() const = 0;
-    virtual MediaSession::DisplayType displayType() const { return MediaSession::Normal; }
+    virtual PlatformMediaSession::MediaType mediaType() const = 0;
+    virtual PlatformMediaSession::MediaType presentationType() const = 0;
+    virtual PlatformMediaSession::DisplayType displayType() const { return PlatformMediaSession::Normal; }
 
     virtual void mayResumePlayback(bool shouldResume) = 0;
     virtual void suspendPlayback() = 0;
@@ -164,7 +164,7 @@ public:
     virtual double mediaSessionCurrentTime() const;
     
     virtual bool canReceiveRemoteControlCommands() const = 0;
-    virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) = 0;
+    virtual void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType) = 0;
 
     virtual void setShouldBufferData(bool) { }
     virtual bool elementIsHidden() const { return false; }
@@ -178,9 +178,9 @@ public:
     virtual void setShouldPlayToPlaybackTarget(bool) { }
 
 protected:
-    virtual ~MediaSessionClient() { }
+    virtual ~PlatformMediaSessionClient() { }
 };
 
 }
 
-#endif // MediaSession_h
+#endif // PlatformMediaSession_h

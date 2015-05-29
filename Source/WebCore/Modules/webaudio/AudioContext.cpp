@@ -129,7 +129,7 @@ RefPtr<AudioContext> AudioContext::create(Document& document, ExceptionCode& ec)
 // Constructor for rendering to the audio hardware.
 AudioContext::AudioContext(Document& document)
     : ActiveDOMObject(&document)
-    , m_mediaSession(MediaSession::create(*this))
+    , m_mediaSession(PlatformMediaSession::create(*this))
     , m_eventQueue(std::make_unique<GenericEventQueue>(*this))
     , m_graphOwnerThread(UndefinedThreadIdentifier)
 {
@@ -145,7 +145,7 @@ AudioContext::AudioContext(Document& document)
 AudioContext::AudioContext(Document& document, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)
     : ActiveDOMObject(&document)
     , m_isOfflineContext(true)
-    , m_mediaSession(MediaSession::create(*this))
+    , m_mediaSession(PlatformMediaSession::create(*this))
     , m_eventQueue(std::make_unique<GenericEventQueue>(*this))
     , m_graphOwnerThread(UndefinedThreadIdentifier)
 {
@@ -1200,7 +1200,7 @@ void AudioContext::suspendPlayback()
         return;
 
     if (m_state == State::Suspended) {
-        if (m_mediaSession->state() == MediaSession::Interrupted)
+        if (m_mediaSession->state() == PlatformMediaSession::Interrupted)
             setState(State::Interrupted);
         return;
     }
@@ -1209,7 +1209,7 @@ void AudioContext::suspendPlayback()
 
     RefPtr<AudioContext> strongThis(this);
     m_destinationNode->suspend([strongThis] {
-        bool interrupted = strongThis->m_mediaSession->state() == MediaSession::Interrupted;
+        bool interrupted = strongThis->m_mediaSession->state() == PlatformMediaSession::Interrupted;
         strongThis->setState(interrupted ? State::Interrupted : State::Suspended);
     });
 }

@@ -1347,7 +1347,7 @@ bool MediaPlayer::shouldWaitForResponseToAuthenticationChallenge(const Authentic
     return m_client.mediaPlayerShouldWaitForResponseToAuthenticationChallenge(challenge);
 }
 
-void MediaPlayer::handlePlaybackCommand(MediaSession::RemoteControlCommandType command)
+void MediaPlayer::handlePlaybackCommand(PlatformMediaSession::RemoteControlCommandType command)
 {
     m_client.mediaPlayerHandlePlaybackCommand(command);
 }

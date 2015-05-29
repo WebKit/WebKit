@@ -53,8 +53,8 @@ private:
 
     MediaSessionManageriOS();
 
-    virtual bool sessionWillBeginPlayback(MediaSession&) override;
-    virtual void sessionWillEndPlayback(MediaSession&) override;
+    virtual bool sessionWillBeginPlayback(PlatformMediaSession&) override;
+    virtual void sessionWillEndPlayback(PlatformMediaSession&) override;
     
     void updateNowPlayingInfo();
     
@@ -62,7 +62,7 @@ private:
 
     virtual void configureWireLessTargetMonitoring() override;
 
-    virtual bool sessionCanLoadMedia(const MediaSession&) const override;
+    virtual bool sessionCanLoadMedia(const PlatformMediaSession&) const override;
     
     RetainPtr<WebMediaSessionHelper> m_objcObserver;
 };

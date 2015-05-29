@@ -621,7 +621,7 @@ void MediaPlayerPrivateAVFoundation::rateChanged()
 {
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && PLATFORM(IOS)
     if (isCurrentPlaybackTargetWireless())
-        m_player->handlePlaybackCommand(rate() ? MediaSession::PlayCommand : MediaSession::PauseCommand);
+        m_player->handlePlaybackCommand(rate() ? PlatformMediaSession::PlayCommand : PlatformMediaSession::PauseCommand);
 #endif
 
     m_player->rateChanged();

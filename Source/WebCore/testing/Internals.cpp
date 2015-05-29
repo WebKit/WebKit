@@ -2578,15 +2578,15 @@ Vector<String> Internals::bufferedSamplesForTrackID(SourceBuffer* buffer, const 
 #if ENABLE(VIDEO)
 void Internals::beginMediaSessionInterruption()
 {
-    MediaSessionManager::sharedManager().beginInterruption(MediaSession::SystemInterruption);
+    MediaSessionManager::sharedManager().beginInterruption(PlatformMediaSession::SystemInterruption);
 }
 
 void Internals::endMediaSessionInterruption(const String& flagsString)
 {
-    MediaSession::EndInterruptionFlags flags = MediaSession::NoFlags;
+    PlatformMediaSession::EndInterruptionFlags flags = PlatformMediaSession::NoFlags;
 
     if (equalIgnoringCase(flagsString, "MayResumePlaying"))
-        flags = MediaSession::MayResumePlaying;
+        flags = PlatformMediaSession::MayResumePlaying;
     
     MediaSessionManager::sharedManager().endInterruption(flags);
 }
@@ -2603,13 +2603,13 @@ void Internals::applicationWillEnterBackground() const
 
 void Internals::setMediaSessionRestrictions(const String& mediaTypeString, const String& restrictionsString, ExceptionCode& ec)
 {
-    MediaSession::MediaType mediaType = MediaSession::None;
+    PlatformMediaSession::MediaType mediaType = PlatformMediaSession::None;
     if (equalIgnoringCase(mediaTypeString, "Video"))
-        mediaType = MediaSession::Video;
+        mediaType = PlatformMediaSession::Video;
     else if (equalIgnoringCase(mediaTypeString, "Audio"))
-        mediaType = MediaSession::Audio;
+        mediaType = PlatformMediaSession::Audio;
     else if (equalIgnoringCase(mediaTypeString, "WebAudio"))
-        mediaType = MediaSession::WebAudio;
+        mediaType = PlatformMediaSession::WebAudio;
     else {
         ec = INVALID_ACCESS_ERR;
         return;
@@ -2682,24 +2682,24 @@ void Internals::setMediaElementRestrictions(HTMLMediaElement* element, const Str
 
 void Internals::postRemoteControlCommand(const String& commandString, ExceptionCode& ec)
 {
-    MediaSession::RemoteControlCommandType command;
+    PlatformMediaSession::RemoteControlCommandType command;
     
     if (equalIgnoringCase(commandString, "Play"))
-        command = MediaSession::PlayCommand;
+        command = PlatformMediaSession::PlayCommand;
     else if (equalIgnoringCase(commandString, "Pause"))
-        command = MediaSession::PauseCommand;
+        command = PlatformMediaSession::PauseCommand;
     else if (equalIgnoringCase(commandString, "Stop"))
-        command = MediaSession::StopCommand;
+        command = PlatformMediaSession::StopCommand;
     else if (equalIgnoringCase(commandString, "TogglePlayPause"))
-        command = MediaSession::TogglePlayPauseCommand;
+        command = PlatformMediaSession::TogglePlayPauseCommand;
     else if (equalIgnoringCase(commandString, "BeginSeekingBackward"))
-        command = MediaSession::BeginSeekingBackwardCommand;
+        command = PlatformMediaSession::BeginSeekingBackwardCommand;
     else if (equalIgnoringCase(commandString, "EndSeekingBackward"))
-        command = MediaSession::EndSeekingBackwardCommand;
+        command = PlatformMediaSession::EndSeekingBackwardCommand;
     else if (equalIgnoringCase(commandString, "BeginSeekingForward"))
-        command = MediaSession::BeginSeekingForwardCommand;
+        command = PlatformMediaSession::BeginSeekingForwardCommand;
     else if (equalIgnoringCase(commandString, "EndSeekingForward"))
-        command = MediaSession::EndSeekingForwardCommand;
+        command = PlatformMediaSession::EndSeekingForwardCommand;
     else {
         ec = INVALID_ACCESS_ERR;
         return;

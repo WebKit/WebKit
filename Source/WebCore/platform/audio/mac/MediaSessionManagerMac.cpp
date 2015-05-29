@@ -39,11 +39,11 @@ static const size_t kLowPowerVideoBufferSize = 4096;
 
 void MediaSessionManager::updateSessionState()
 {
-    LOG(Media, "MediaSessionManager::updateSessionState() - types: Video(%d), Audio(%d), WebAudio(%d)", count(MediaSession::Video), count(MediaSession::Audio), count(MediaSession::WebAudio));
+    LOG(Media, "MediaSessionManager::updateSessionState() - types: Video(%d), Audio(%d), WebAudio(%d)", count(PlatformMediaSession::Video), count(PlatformMediaSession::Audio), count(PlatformMediaSession::WebAudio));
 
-    if (has(MediaSession::WebAudio))
+    if (has(PlatformMediaSession::WebAudio))
         AudioSession::sharedSession().setPreferredBufferSize(kWebAudioBufferSize);
-    else if ((has(MediaSession::Video) || has(MediaSession::Audio)) && Settings::lowPowerVideoAudioBufferSizeEnabled()) {
+    else if ((has(PlatformMediaSession::Video) || has(PlatformMediaSession::Audio)) && Settings::lowPowerVideoAudioBufferSizeEnabled()) {
         // FIXME: <http://webkit.org/b/116725> Figure out why enabling the code below
         // causes media LayoutTests to fail on 10.8.
 
@@ -60,9 +60,9 @@ void MediaSessionManager::updateSessionState()
     if (!Settings::shouldManageAudioSessionCategory())
         return;
 
-    if (has(MediaSession::Video) || has(MediaSession::Audio))
+    if (has(PlatformMediaSession::Video) || has(PlatformMediaSession::Audio))
         AudioSession::sharedSession().setCategory(AudioSession::MediaPlayback);
-    else if (has(MediaSession::WebAudio))
+    else if (has(PlatformMediaSession::WebAudio))
         AudioSession::sharedSession().setCategory(AudioSession::AmbientSound);
 #endif
 }

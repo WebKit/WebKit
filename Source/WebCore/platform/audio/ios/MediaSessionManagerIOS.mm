@@ -31,7 +31,7 @@
 #import "Logging.h"
 #import "MediaPlayer.h"
 #import "MediaPlayerSPI.h"
-#import "MediaSession.h"
+#import "PlatformMediaSession.h"
 #import "SoftLinking.h"
 #import "SystemMemory.h"
 #import "WebCoreSystemInterface.h"
@@ -138,27 +138,27 @@ void MediaSessionManageriOS::resetRestrictions()
 
     static wkDeviceClass deviceClass = iosDeviceClass();
     if (deviceClass == wkDeviceClassiPhone || deviceClass == wkDeviceClassiPod)
-        addRestriction(MediaSession::Video, InlineVideoPlaybackRestricted);
+        addRestriction(PlatformMediaSession::Video, InlineVideoPlaybackRestricted);
 
     if (ramSize() < systemMemoryRequiredForVideoInBackgroundTabs) {
         LOG(Media, "MediaSessionManageriOS::resetRestrictions - restricting video in background tabs because system memory = %zul", ramSize());
-        addRestriction(MediaSession::Video, BackgroundTabPlaybackRestricted);
+        addRestriction(PlatformMediaSession::Video, BackgroundTabPlaybackRestricted);
     }
 
-    addRestriction(MediaSession::Video, ConcurrentPlaybackNotPermitted);
-    addRestriction(MediaSession::Video, BackgroundProcessPlaybackRestricted);
+    addRestriction(PlatformMediaSession::Video, ConcurrentPlaybackNotPermitted);
+    addRestriction(PlatformMediaSession::Video, BackgroundProcessPlaybackRestricted);
 
-    removeRestriction(MediaSession::Audio, ConcurrentPlaybackNotPermitted);
-    removeRestriction(MediaSession::Audio, BackgroundProcessPlaybackRestricted);
+    removeRestriction(PlatformMediaSession::Audio, ConcurrentPlaybackNotPermitted);
+    removeRestriction(PlatformMediaSession::Audio, BackgroundProcessPlaybackRestricted);
 
-    removeRestriction(MediaSession::WebAudio, ConcurrentPlaybackNotPermitted);
-    removeRestriction(MediaSession::WebAudio, BackgroundProcessPlaybackRestricted);
+    removeRestriction(PlatformMediaSession::WebAudio, ConcurrentPlaybackNotPermitted);
+    removeRestriction(PlatformMediaSession::WebAudio, BackgroundProcessPlaybackRestricted);
 
-    removeRestriction(MediaSession::Audio, MetadataPreloadingNotPermitted);
-    removeRestriction(MediaSession::Video, MetadataPreloadingNotPermitted);
+    removeRestriction(PlatformMediaSession::Audio, MetadataPreloadingNotPermitted);
+    removeRestriction(PlatformMediaSession::Video, MetadataPreloadingNotPermitted);
 
-    addRestriction(MediaSession::Audio, AutoPreloadingNotPermitted);
-    addRestriction(MediaSession::Video, AutoPreloadingNotPermitted);
+    addRestriction(PlatformMediaSession::Audio, AutoPreloadingNotPermitted);
+    addRestriction(PlatformMediaSession::Video, AutoPreloadingNotPermitted);
 }
 
 bool MediaSessionManageriOS::hasWirelessTargetsAvailable()
@@ -168,7 +168,7 @@ bool MediaSessionManageriOS::hasWirelessTargetsAvailable()
 
 void MediaSessionManageriOS::configureWireLessTargetMonitoring()
 {
-    Vector<MediaSession*> sessions = this->sessions();
+    Vector<PlatformMediaSession*> sessions = this->sessions();
     bool requiresMonitoring = false;
 
     for (auto* session : sessions) {
@@ -186,7 +186,7 @@ void MediaSessionManageriOS::configureWireLessTargetMonitoring()
         [m_objcObserver stopMonitoringAirPlayRoutes];
 }
 
-bool MediaSessionManageriOS::sessionWillBeginPlayback(MediaSession& session)
+bool MediaSessionManageriOS::sessionWillBeginPlayback(PlatformMediaSession& session)
 {
     if (!MediaSessionManager::sessionWillBeginPlayback(session))
         return false;
@@ -195,7 +195,7 @@ bool MediaSessionManageriOS::sessionWillBeginPlayback(MediaSession& session)
     return true;
 }
     
-void MediaSessionManageriOS::sessionWillEndPlayback(MediaSession& session)
+void MediaSessionManageriOS::sessionWillEndPlayback(PlatformMediaSession& session)
 {
     MediaSessionManager::sessionWillEndPlayback(session);
     updateNowPlayingInfo();
@@ -206,7 +206,7 @@ void MediaSessionManageriOS::updateNowPlayingInfo()
     LOG(Media, "MediaSessionManageriOS::updateNowPlayingInfo");
 
     MPNowPlayingInfoCenter *nowPlaying = (MPNowPlayingInfoCenter *)[getMPNowPlayingInfoCenterClass() defaultCenter];
-    const MediaSession* currentSession = this->currentSession();
+    const PlatformMediaSession* currentSession = this->currentSession();
     
     if (!currentSession) {
         [nowPlaying setNowPlayingInfo:nil];
@@ -227,18 +227,18 @@ void MediaSessionManageriOS::updateNowPlayingInfo()
     if (std::isfinite(currentTime) && currentTime != MediaPlayer::invalidTime())
         [info setValue:@(currentTime) forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
     
-    [info setValue:(currentSession->state() == MediaSession::Playing ? @YES : @NO) forKey:MPNowPlayingInfoPropertyPlaybackRate];
+    [info setValue:(currentSession->state() == PlatformMediaSession::Playing ? @YES : @NO) forKey:MPNowPlayingInfoPropertyPlaybackRate];
     [nowPlaying setNowPlayingInfo:info.get()];
 }
 
-bool MediaSessionManageriOS::sessionCanLoadMedia(const MediaSession& session) const
+bool MediaSessionManageriOS::sessionCanLoadMedia(const PlatformMediaSession& session) const
 {
-    return session.state() == MediaSession::Playing || !session.isHidden() || session.displayType() == MediaSession::Optimized;
+    return session.state() == PlatformMediaSession::Playing || !session.isHidden() || session.displayType() == PlatformMediaSession::Optimized;
 }
 
 void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
 {
-    Vector<MediaSession*> sessionList = sessions();
+    Vector<PlatformMediaSession*> sessionList = sessions();
     bool haveTargets = [m_objcObserver hasWirelessTargetsAvailable];
     for (auto* session : sessionList)
         session->externalOutputDeviceAvailableDidChange(haveTargets);
@@ -383,19 +383,19 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
         return;
 
     NSUInteger type = [[[notification userInfo] objectForKey:AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
-    MediaSession::EndInterruptionFlags flags = MediaSession::NoFlags;
+    PlatformMediaSession::EndInterruptionFlags flags = PlatformMediaSession::NoFlags;
 
     LOG(Media, "-[WebMediaSessionHelper interruption] - type = %i", (int)type);
 
     if (type == AVAudioSessionInterruptionTypeEnded && [[[notification userInfo] objectForKey:AVAudioSessionInterruptionOptionKey] unsignedIntegerValue] == AVAudioSessionInterruptionOptionShouldResume)
-        flags = MediaSession::MayResumePlaying;
+        flags = PlatformMediaSession::MayResumePlaying;
 
     WebThreadRun(^{
         if (!_callback)
             return;
 
         if (type == AVAudioSessionInterruptionTypeBegan)
-            _callback->beginInterruption(MediaSession::SystemInterruption);
+            _callback->beginInterruption(PlatformMediaSession::SystemInterruption);
         else
             _callback->endInterruption(flags);
 

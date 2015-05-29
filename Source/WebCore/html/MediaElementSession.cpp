@@ -78,8 +78,8 @@ static String restrictionName(MediaElementSession::BehaviorRestrictions restrict
 }
 #endif
 
-MediaElementSession::MediaElementSession(MediaSessionClient& client)
-    : MediaSession(client)
+MediaElementSession::MediaElementSession(PlatformMediaSessionClient& client)
+    : PlatformMediaSession(client)
     , m_restrictions(NoRestrictions)
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     , m_targetAvailabilityChangedTimer(*this, &MediaElementSession::targetAvailabilityChangedTimerFired)

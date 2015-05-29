@@ -55,7 +55,7 @@ RemoteCommandListenerIOS::RemoteCommandListenerIOS(RemoteCommandListenerClient& 
         callOnMainThread([weakThis] {
             if (!weakThis)
                 return;
-            weakThis->m_client.didReceiveRemoteControlCommand(MediaSession::PauseCommand);
+            weakThis->m_client.didReceiveRemoteControlCommand(PlatformMediaSession::PauseCommand);
         });
 
         return MPRemoteCommandHandlerStatusSuccess;
@@ -65,7 +65,7 @@ RemoteCommandListenerIOS::RemoteCommandListenerIOS(RemoteCommandListenerClient& 
         callOnMainThread([weakThis] {
             if (!weakThis)
                 return;
-            weakThis->m_client.didReceiveRemoteControlCommand(MediaSession::PlayCommand);
+            weakThis->m_client.didReceiveRemoteControlCommand(PlatformMediaSession::PlayCommand);
         });
 
         return MPRemoteCommandHandlerStatusSuccess;
@@ -75,7 +75,7 @@ RemoteCommandListenerIOS::RemoteCommandListenerIOS(RemoteCommandListenerClient& 
         callOnMainThread([weakThis] {
             if (!weakThis)
                 return;
-            weakThis->m_client.didReceiveRemoteControlCommand(MediaSession::TogglePlayPauseCommand);
+            weakThis->m_client.didReceiveRemoteControlCommand(PlatformMediaSession::TogglePlayPauseCommand);
         });
 
         return MPRemoteCommandHandlerStatusSuccess;
@@ -85,7 +85,7 @@ RemoteCommandListenerIOS::RemoteCommandListenerIOS(RemoteCommandListenerClient& 
         ASSERT([event isKindOfClass:getMPSeekCommandEventClass()]);
 
         MPSeekCommandEvent* seekEvent = static_cast<MPSeekCommandEvent *>(event);
-        MediaSession::RemoteControlCommandType command = [seekEvent type] == MPSeekCommandEventTypeBeginSeeking ? MediaSession::BeginSeekingBackwardCommand : MediaSession::EndSeekingBackwardCommand;
+        PlatformMediaSession::RemoteControlCommandType command = [seekEvent type] == MPSeekCommandEventTypeBeginSeeking ? PlatformMediaSession::BeginSeekingBackwardCommand : PlatformMediaSession::EndSeekingBackwardCommand;
 
         callOnMainThread([weakThis, command] {
             if (!weakThis)
@@ -100,7 +100,7 @@ RemoteCommandListenerIOS::RemoteCommandListenerIOS(RemoteCommandListenerClient& 
         ASSERT([event isKindOfClass:getMPSeekCommandEventClass()]);
         MPSeekCommandEvent* seekEvent = static_cast<MPSeekCommandEvent *>(event);
 
-        MediaSession::RemoteControlCommandType command = [seekEvent type] == MPSeekCommandEventTypeBeginSeeking ? MediaSession::BeginSeekingForwardCommand : MediaSession::EndSeekingForwardCommand;
+        PlatformMediaSession::RemoteControlCommandType command = [seekEvent type] == MPSeekCommandEventTypeBeginSeeking ? PlatformMediaSession::BeginSeekingForwardCommand : PlatformMediaSession::EndSeekingForwardCommand;
 
         callOnMainThread([weakThis, command] {
             if (!weakThis)

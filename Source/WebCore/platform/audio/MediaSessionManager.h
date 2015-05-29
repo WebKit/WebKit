@@ -27,7 +27,7 @@
 #define MediaSessionManager_h
 
 #include "AudioHardwareListener.h"
-#include "MediaSession.h"
+#include "PlatformMediaSession.h"
 #include "RemoteCommandListener.h"
 #include "Settings.h"
 #include "SystemSleepListener.h"
@@ -37,7 +37,7 @@
 namespace WebCore {
 
 class HTMLMediaElement;
-class MediaSession;
+class PlatformMediaSession;
 class RemoteCommandListener;
 
 class MediaSessionManager : private RemoteCommandListenerClient, private SystemSleepListener::Client, private AudioHardwareListener::Client {
@@ -46,12 +46,12 @@ public:
     WEBCORE_EXPORT static MediaSessionManager& sharedManager();
     virtual ~MediaSessionManager() { }
 
-    bool has(MediaSession::MediaType) const;
-    int count(MediaSession::MediaType) const;
+    bool has(PlatformMediaSession::MediaType) const;
+    int count(PlatformMediaSession::MediaType) const;
     bool activeAudioSessionRequired() const;
 
-    WEBCORE_EXPORT void beginInterruption(MediaSession::InterruptionType);
-    WEBCORE_EXPORT void endInterruption(MediaSession::EndInterruptionFlags);
+    WEBCORE_EXPORT void beginInterruption(PlatformMediaSession::InterruptionType);
+    WEBCORE_EXPORT void endInterruption(PlatformMediaSession::EndInterruptionFlags);
 
     WEBCORE_EXPORT void applicationWillEnterForeground() const;
     WEBCORE_EXPORT void applicationWillEnterBackground() const;
@@ -68,34 +68,34 @@ public:
     };
     typedef unsigned SessionRestrictions;
 
-    WEBCORE_EXPORT void addRestriction(MediaSession::MediaType, SessionRestrictions);
-    WEBCORE_EXPORT void removeRestriction(MediaSession::MediaType, SessionRestrictions);
-    WEBCORE_EXPORT SessionRestrictions restrictions(MediaSession::MediaType);
+    WEBCORE_EXPORT void addRestriction(PlatformMediaSession::MediaType, SessionRestrictions);
+    WEBCORE_EXPORT void removeRestriction(PlatformMediaSession::MediaType, SessionRestrictions);
+    WEBCORE_EXPORT SessionRestrictions restrictions(PlatformMediaSession::MediaType);
     virtual void resetRestrictions();
 
-    virtual bool sessionWillBeginPlayback(MediaSession&);
-    virtual void sessionWillEndPlayback(MediaSession&);
+    virtual bool sessionWillBeginPlayback(PlatformMediaSession&);
+    virtual void sessionWillEndPlayback(PlatformMediaSession&);
 
-    bool sessionRestrictsInlineVideoPlayback(const MediaSession&) const;
+    bool sessionRestrictsInlineVideoPlayback(const PlatformMediaSession&) const;
 
-    virtual bool sessionCanLoadMedia(const MediaSession&) const;
+    virtual bool sessionCanLoadMedia(const PlatformMediaSession&) const;
 
 #if PLATFORM(IOS)
     virtual void configureWireLessTargetMonitoring() { }
     virtual bool hasWirelessTargetsAvailable() { return false; }
 #endif
 
-    void setCurrentSession(MediaSession&);
-    MediaSession* currentSession();
+    void setCurrentSession(PlatformMediaSession&);
+    PlatformMediaSession* currentSession();
 
 protected:
-    friend class MediaSession;
+    friend class PlatformMediaSession;
     explicit MediaSessionManager();
 
-    void addSession(MediaSession&);
-    void removeSession(MediaSession&);
+    void addSession(PlatformMediaSession&);
+    void removeSession(PlatformMediaSession&);
 
-    Vector<MediaSession*> sessions() { return m_sessions; }
+    Vector<PlatformMediaSession*> sessions() { return m_sessions; }
 
 private:
     friend class Internals;
@@ -103,7 +103,7 @@ private:
     void updateSessionState();
 
     // RemoteCommandListenerClient
-    WEBCORE_EXPORT virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) override;
+    WEBCORE_EXPORT virtual void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType) override;
 
     // AudioHardwareListenerClient
     virtual void audioHardwareDidBecomeActive() override { }
@@ -114,8 +114,8 @@ private:
     virtual void systemWillSleep() override;
     virtual void systemDidWake() override;
 
-    SessionRestrictions m_restrictions[MediaSession::WebAudio + 1];
-    Vector<MediaSession*> m_sessions;
+    SessionRestrictions m_restrictions[PlatformMediaSession::WebAudio + 1];
+    Vector<PlatformMediaSession*> m_sessions;
     std::unique_ptr<RemoteCommandListener> m_remoteCommandListener;
     std::unique_ptr<SystemSleepListener> m_systemSleepListener;
     RefPtr<AudioHardwareListener> m_audioHardwareListener;

@@ -4533,7 +4533,7 @@ bool HTMLMediaElement::stoppedDueToErrors() const
 
 bool HTMLMediaElement::pausedForUserInteraction() const
 {
-    if (m_mediaSession->state() == MediaSession::Interrupted)
+    if (m_mediaSession->state() == PlatformMediaSession::Interrupted)
         return true;
 
     return false;
@@ -6167,33 +6167,33 @@ unsigned long long HTMLMediaElement::fileSize() const
     return 0;
 }
 
-MediaSession::MediaType HTMLMediaElement::mediaType() const
+PlatformMediaSession::MediaType HTMLMediaElement::mediaType() const
 {
     if (m_player && m_readyState >= HAVE_METADATA)
-        return hasVideo() ? MediaSession::Video : MediaSession::Audio;
+        return hasVideo() ? PlatformMediaSession::Video : PlatformMediaSession::Audio;
 
     return presentationType();
 }
 
-MediaSession::MediaType HTMLMediaElement::presentationType() const
+PlatformMediaSession::MediaType HTMLMediaElement::presentationType() const
 {
     if (hasTagName(HTMLNames::videoTag))
-        return MediaSession::Video;
+        return PlatformMediaSession::Video;
 
-    return MediaSession::Audio;
+    return PlatformMediaSession::Audio;
 }
 
-MediaSession::DisplayType HTMLMediaElement::displayType() const
+PlatformMediaSession::DisplayType HTMLMediaElement::displayType() const
 {
     if (m_videoFullscreenMode == VideoFullscreenModeStandard)
-        return MediaSession::Fullscreen;
+        return PlatformMediaSession::Fullscreen;
     if (m_videoFullscreenMode & VideoFullscreenModeOptimized)
-        return MediaSession::Optimized;
+        return PlatformMediaSession::Optimized;
     if (m_videoFullscreenMode == VideoFullscreenModeNone)
-        return MediaSession::Normal;
+        return PlatformMediaSession::Normal;
 
     ASSERT_NOT_REACHED();
-    return MediaSession::Normal;
+    return PlatformMediaSession::Normal;
 }
 
 #if ENABLE(MEDIA_SOURCE)
@@ -6225,28 +6225,28 @@ String HTMLMediaElement::mediaSessionTitle() const
     return m_currentSrc;
 }
 
-void HTMLMediaElement::didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType command)
+void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType command)
 {
     LOG(Media, "HTMLMediaElement::didReceiveRemoteControlCommand(%p) - %i", this, static_cast<int>(command));
 
     switch (command) {
-    case MediaSession::PlayCommand:
+    case PlatformMediaSession::PlayCommand:
         play();
         break;
-    case MediaSession::PauseCommand:
+    case PlatformMediaSession::PauseCommand:
         pause();
         break;
-    case MediaSession::TogglePlayPauseCommand:
+    case PlatformMediaSession::TogglePlayPauseCommand:
         canPlay() ? play() : pause();
         break;
-    case MediaSession::BeginSeekingBackwardCommand:
+    case PlatformMediaSession::BeginSeekingBackwardCommand:
         beginScanning(Backward);
         break;
-    case MediaSession::BeginSeekingForwardCommand:
+    case PlatformMediaSession::BeginSeekingForwardCommand:
         beginScanning(Forward);
         break;
-    case MediaSession::EndSeekingBackwardCommand:
-    case MediaSession::EndSeekingForwardCommand:
+    case PlatformMediaSession::EndSeekingBackwardCommand:
+    case PlatformMediaSession::EndSeekingForwardCommand:
         endScanning();
         break;
     default:

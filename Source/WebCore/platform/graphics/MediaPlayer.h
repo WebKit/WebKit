@@ -36,10 +36,10 @@
 #include "URL.h"
 #include "LayoutRect.h"
 #include "MediaPlayerEnums.h"
-#include "MediaSession.h"
 #include "NativeImagePtr.h"
 #include "PlatformLayer.h"
 #include "PlatformMediaResourceLoader.h"
+#include "PlatformMediaSession.h"
 #include "Timer.h"
 #include "VideoTrackPrivate.h"
 #include <runtime/Uint8Array.h>
@@ -268,7 +268,7 @@ public:
 #endif
     
     virtual bool mediaPlayerShouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge&) { return false; }
-    virtual void mediaPlayerHandlePlaybackCommand(MediaSession::RemoteControlCommandType) { }
+    virtual void mediaPlayerHandlePlaybackCommand(PlatformMediaSession::RemoteControlCommandType) { }
 
     virtual String mediaPlayerSourceApplicationIdentifier() const { return emptyString(); }
 
@@ -594,7 +594,7 @@ public:
 #endif
 
     bool shouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge&);
-    void handlePlaybackCommand(MediaSession::RemoteControlCommandType);
+    void handlePlaybackCommand(PlatformMediaSession::RemoteControlCommandType);
     String sourceApplicationIdentifier() const;
     Vector<String> preferredAudioCharacteristics() const;
 

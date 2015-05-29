@@ -33,7 +33,7 @@
 #include "EventTarget.h"
 #include "MediaCanStartListener.h"
 #include "MediaProducer.h"
-#include "MediaSession.h"
+#include "PlatformMediaSession.h"
 #include <atomic>
 #include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
@@ -76,7 +76,7 @@ class PeriodicWave;
 // AudioContext is the cornerstone of the web audio API and all AudioNodes are created from it.
 // For thread safety between the audio thread and the main thread, it has a rendering graph locking mechanism. 
 
-class AudioContext : public ActiveDOMObject, public ThreadSafeRefCounted<AudioContext>, public EventTargetWithInlineData, public MediaCanStartListener, public MediaProducer, private MediaSessionClient {
+class AudioContext : public ActiveDOMObject, public ThreadSafeRefCounted<AudioContext>, public EventTargetWithInlineData, public MediaCanStartListener, public MediaProducer, private PlatformMediaSessionClient {
 public:
     // Create an AudioContext for rendering to the audio hardware.
     static RefPtr<AudioContext> create(Document&, ExceptionCode&);
@@ -308,13 +308,13 @@ private:
     // Make sure to dereference them here.
     void derefUnfinishedSourceNodes();
 
-    // MediaSessionClient
-    virtual MediaSession::MediaType mediaType() const override { return MediaSession::WebAudio; }
-    virtual MediaSession::MediaType presentationType() const override { return MediaSession::WebAudio; }
+    // PlatformMediaSessionClient
+    virtual PlatformMediaSession::MediaType mediaType() const override { return PlatformMediaSession::WebAudio; }
+    virtual PlatformMediaSession::MediaType presentationType() const override { return PlatformMediaSession::WebAudio; }
     virtual void mayResumePlayback(bool shouldResume) override;
     virtual void suspendPlayback() override;
     virtual bool canReceiveRemoteControlCommands() const override { return false; }
-    virtual void didReceiveRemoteControlCommand(MediaSession::RemoteControlCommandType) override { }
+    virtual void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType) override { }
     virtual bool overrideBackgroundPlaybackRestriction() const override { return false; }
 
     // EventTarget
@@ -363,7 +363,7 @@ private:
     Vector<AudioNode*> m_deferredFinishDerefList;
     Vector<Vector<std::function<void()>>> m_stateReactions;
 
-    std::unique_ptr<MediaSession> m_mediaSession;
+    std::unique_ptr<PlatformMediaSession> m_mediaSession;
     std::unique_ptr<GenericEventQueue> m_eventQueue;
 
     RefPtr<AudioBuffer> m_renderTarget;
