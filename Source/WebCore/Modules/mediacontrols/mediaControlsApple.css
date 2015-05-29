@@ -620,7 +620,7 @@ video:-webkit-full-screen::-webkit-media-controls-panel {
     
     width: 480px !important;
     height: 104px !important;
-    margin: 0 auto 32px auto !important;
+    margin: 0 auto 12px auto !important;
     padding: 20px;
     padding-top: 30px !important;
 
