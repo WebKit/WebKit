@@ -260,6 +260,16 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
         }
     },
 
+    highlightProperty: function(property)
+    {
+        if (this._propertiesTextEditor.highlightProperty(property)) {
+            this._element.scrollIntoView();
+            return true;
+        }
+
+        return false;
+    },
+
     updateLayout: function()
     {
         this._propertiesTextEditor.updateLayout();

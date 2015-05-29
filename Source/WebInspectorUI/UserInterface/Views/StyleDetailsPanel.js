@@ -86,7 +86,7 @@ WebInspector.StyleDetailsPanel = class StyleDetailsPanel extends WebInspector.Ob
 
         if (!this._nodeStyles || this._nodeStyles.node !== domNode) {
             if (this._nodeStyles) {
-                this._nodeStyles.removeEventListener(WebInspector.DOMNodeStyles.Event.Refreshed, this._nodeStylesRefreshed, this);
+                this._nodeStyles.removeEventListener(WebInspector.DOMNodeStyles.Event.Refreshed, this.nodeStylesRefreshed, this);
                 this._nodeStyles.removeEventListener(WebInspector.DOMNodeStyles.Event.NeedsRefresh, this._nodeStylesNeedsRefreshed, this);
             }
 
@@ -96,7 +96,7 @@ WebInspector.StyleDetailsPanel = class StyleDetailsPanel extends WebInspector.Ob
             if (!this._nodeStyles)
                 return;
 
-            this._nodeStyles.addEventListener(WebInspector.DOMNodeStyles.Event.Refreshed, this._nodeStylesRefreshed, this);
+            this._nodeStyles.addEventListener(WebInspector.DOMNodeStyles.Event.Refreshed, this.nodeStylesRefreshed, this);
             this._nodeStyles.addEventListener(WebInspector.DOMNodeStyles.Event.NeedsRefresh, this._nodeStylesNeedsRefreshed, this);
 
             this._forceSignificantChange = true;
@@ -109,6 +109,14 @@ WebInspector.StyleDetailsPanel = class StyleDetailsPanel extends WebInspector.Ob
     refresh(significantChange)
     {
         // Implemented by subclasses.
+    }
+
+    // Protected
+
+    nodeStylesRefreshed(event)
+    {
+        if (this._visible)
+            this._refreshPreservingScrollPosition(event.data.significantChange);
     }
 
     // Private
@@ -144,12 +152,6 @@ WebInspector.StyleDetailsPanel = class StyleDetailsPanel extends WebInspector.Ob
 
         if (this.element.parentNode)
             this.element.parentNode.scrollTop = previousScrollTop;
-    }
-
-    _nodeStylesRefreshed(event)
-    {
-        if (this._visible)
-            this._refreshPreservingScrollPosition(event.data.significantChange);
     }
 
     _nodeStylesNeedsRefreshed(event)

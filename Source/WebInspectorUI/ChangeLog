@@ -1,3 +1,44 @@
+2015-05-28  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Jump from a computed style to the rule it came from
+        https://bugs.webkit.org/show_bug.cgi?id=120640
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createTextMarkerForPropertyIfNeeded):
+        If the delegate of CSSStyleDeclarationTextEditor has cssStyleDeclarationTextEditorShouldAddPropertyGoToArrows set to true, add a goToArrow to all CSS property entries.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.highlightProperty.propertiesMatch):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.highlightProperty.hasMatchingLonghandProperty):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.highlightProperty):
+        Determines if a given CSS property is in the CSS style section and if so, select that CSS property, focus on the section containing that CSS property, and return true.
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection.prototype.highlightProperty):
+        Searches through the properties of the section for a given property and scrolls to it if found.
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.js:
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype.computedStyleDetailsPanelShowProperty):
+        Switches to the rulesStyleDetailsPanel and scrolls to and hightlights a given property in that panel.
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._navigationItemSelected):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._switchPanels):
+        Moved this function out of _navigationItemSelected for better reusablity.
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WebInspector.ComputedStyleDetailsPanel.prototype.cssStyleDeclarationTextEditorShowProperty):
+        Function that calls the delegate (which should be CSSStyleDetailsSidebarPanel) function computedStyleDetailsPanelShowProperty.
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel):
+        (WebInspector.RulesStyleDetailsPanel.prototype.refresh):
+        (WebInspector.RulesStyleDetailsPanel.prototype.scrollToSectionAndHighlightProperty):
+        Searches through all the sections of the RulesStyleDetailsPanel for a given CSS property.
+        (WebInspector.RulesStyleDetailsPanel.prototype.shown):
+        (WebInspector.RulesStyleDetailsPanel.prototype.hidden):
+        (WebInspector.RulesStyleDetailsPanel.prototype.nodeStylesRefreshed):
+        Added a flag to this function that will highlight and scroll to a given property (_propertyToSelectAndHighlight) if set on load.
+        * UserInterface/Views/StyleDetailsPanel.js:
+        (WebInspector.StyleDetailsPanel.prototype.markAsNeedsRefresh):
+        (WebInspector.StyleDetailsPanel.prototype.nodeStylesRefreshed):
+        Made into protected function to allow it to be overridden.
+        (WebInspector.StyleDetailsPanel.prototype._nodeStylesRefreshed): Deleted.
+
 2015-05-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Should have a keyboard shortcut to switch between inspector tabs

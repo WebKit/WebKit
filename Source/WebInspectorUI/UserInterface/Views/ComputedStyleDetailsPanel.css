@@ -35,3 +35,15 @@
 {
     vertical-align: top;
 }
+
+.details-section > .content > .group > .row .CodeMirror-code pre .go-to-arrow {
+    display: none;
+    position: absolute;
+    width: 12px;
+    height: 10px;
+    vertical-align: text-bottom;
+}
+
+.details-section > .content > .group > .row .CodeMirror-code pre:hover .go-to-arrow {
+    display: initial;
+}

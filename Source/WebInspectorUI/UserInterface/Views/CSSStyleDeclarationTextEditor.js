@@ -181,6 +181,46 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         this._codeMirror.refresh();
     }
 
+    highlightProperty(property)
+    {
+        function propertiesMatch(cssProperty)
+        {
+            if (cssProperty.enabled && !cssProperty.overridden) {
+                if (cssProperty.canonicalName === property.canonicalName || hasMatchingLonghandProperty(cssProperty))
+                    return true;
+            }
+
+            return false;
+        }
+
+        function hasMatchingLonghandProperty(cssProperty)
+        {
+            var cssProperties = cssProperty.relatedLonghandProperties;
+
+            if (!cssProperties.length)
+                return false;
+
+            for (var property of cssProperties) {
+                if (propertiesMatch(property))
+                    return true;
+            }
+
+            return false;
+        }
+
+        for (var cssProperty of this.style.properties) {
+            if (propertiesMatch(cssProperty)) {
+                var selection = cssProperty.__propertyTextMarker.find();
+                this._codeMirror.setSelection(selection.from, selection.to);
+                this.focus();
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     // Protected
 
     didDismissPopover(popover)
@@ -437,6 +477,17 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
             var checkboxMarker = this._codeMirror.setUniqueBookmark(from, checkboxElement);
             checkboxMarker.__propertyCheckbox = true;
+        } else if (this._delegate.cssStyleDeclarationTextEditorShouldAddPropertyGoToArrows
+                && !property.implicit && typeof this._delegate.cssStyleDeclarationTextEditorShowProperty === "function") {
+
+            var arrowElement = WebInspector.createGoToArrowButton();
+
+            var delegate = this._delegate;
+            arrowElement.addEventListener("click", function() {
+                delegate.cssStyleDeclarationTextEditorShowProperty(property);
+            });
+
+            this._codeMirror.setUniqueBookmark(to, arrowElement);
         }
 
         var classNames = ["css-style-declaration-property"];
