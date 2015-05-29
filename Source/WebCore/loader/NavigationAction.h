@@ -44,6 +44,7 @@ public:
     WEBCORE_EXPORT NavigationAction(const ResourceRequest&, NavigationType);
     WEBCORE_EXPORT NavigationAction(const ResourceRequest&, FrameLoadType, bool isFormSubmission);
     NavigationAction(const ResourceRequest&, NavigationType, PassRefPtr<Event>);
+    NavigationAction(const ResourceRequest&, NavigationType, PassRefPtr<Event>, ShouldOpenExternalURLsPolicy);
     NavigationAction(const ResourceRequest&, NavigationType, ShouldOpenExternalURLsPolicy);
     NavigationAction(const ResourceRequest&, FrameLoadType, bool isFormSubmission, PassRefPtr<Event>);
 
@@ -65,7 +66,7 @@ private:
     NavigationType m_type;
     RefPtr<Event> m_event;
     bool m_processingUserGesture;
-    ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
+    ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy;
 };
 
 }

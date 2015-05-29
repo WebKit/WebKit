@@ -48,55 +48,47 @@ static NavigationType navigationType(FrameLoadType frameLoadType, bool isFormSub
     return NavigationType::Other;
 }
 
-NavigationAction::NavigationAction()
-    : m_type(NavigationType::Other)
-    , m_processingUserGesture(ScriptController::processingUserGesture())
-{
-}
-
-NavigationAction::NavigationAction(const ResourceRequest& resourceRequest)
-    : m_resourceRequest(resourceRequest)
-    , m_type(NavigationType::Other)
-    , m_processingUserGesture(ScriptController::processingUserGesture())
-{
-}
-
-NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, NavigationType type)
-    : m_resourceRequest(resourceRequest)
-    , m_type(type)
-    , m_processingUserGesture(ScriptController::processingUserGesture())
-{
-}
-
-NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, FrameLoadType frameLoadType,
-        bool isFormSubmission)
-    : m_resourceRequest(resourceRequest)
-    , m_type(navigationType(frameLoadType, isFormSubmission, 0))
-    , m_processingUserGesture(ScriptController::processingUserGesture())
-{
-}
-
-NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, NavigationType type, PassRefPtr<Event> event)
+NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, NavigationType type, PassRefPtr<Event> event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
     : m_resourceRequest(resourceRequest)
     , m_type(type)
     , m_event(event)
     , m_processingUserGesture(ScriptController::processingUserGesture())
-{
-}
-
-NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, NavigationType type, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
-    : m_resourceRequest(resourceRequest)
-    , m_type(type)
     , m_shouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicy)
 {
 }
 
-NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, FrameLoadType frameLoadType,
-        bool isFormSubmission, PassRefPtr<Event> event)
-    : m_resourceRequest(resourceRequest)
-    , m_type(navigationType(frameLoadType, isFormSubmission, event))
-    , m_event(event)
-    , m_processingUserGesture(ScriptController::processingUserGesture())
+NavigationAction::NavigationAction()
+    : NavigationAction(ResourceRequest(), NavigationType::Other, nullptr, ShouldOpenExternalURLsPolicy::ShouldNotAllow)
+{
+}
+
+NavigationAction::NavigationAction(const ResourceRequest& resourceRequest)
+    : NavigationAction(resourceRequest, NavigationType::Other, nullptr, ShouldOpenExternalURLsPolicy::ShouldNotAllow)
+{
+}
+
+NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, NavigationType type)
+    : NavigationAction(resourceRequest, type, nullptr, ShouldOpenExternalURLsPolicy::ShouldNotAllow)
+{
+}
+
+NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, FrameLoadType frameLoadType, bool isFormSubmission)
+    : NavigationAction(resourceRequest, navigationType(frameLoadType, isFormSubmission, 0), nullptr, ShouldOpenExternalURLsPolicy::ShouldNotAllow)
+{
+}
+
+NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, NavigationType type, PassRefPtr<Event> event)
+    : NavigationAction(resourceRequest, type, event, ShouldOpenExternalURLsPolicy::ShouldNotAllow)
+{
+}
+
+NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, NavigationType type, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
+    : NavigationAction(resourceRequest, type, nullptr, shouldOpenExternalURLsPolicy)
+{
+}
+
+NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, FrameLoadType frameLoadType, bool isFormSubmission, PassRefPtr<Event> event)
+    : NavigationAction(resourceRequest, navigationType(frameLoadType, isFormSubmission, event), event, ShouldOpenExternalURLsPolicy::ShouldNotAllow)
 {
 }
 
