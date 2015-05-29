@@ -64,6 +64,7 @@ void MediaDevices::getUserMedia(const Dictionary& options, ResolveCallback resol
 {
     UserMediaController* userMedia = UserMediaController::from(document() ? document()->page() : nullptr);
     if (!userMedia) {
+        // FIXME: We probably want to return a MediaStreamError here using the rejectCallback, and get rid off the ExceptionCode parameter.
         ec = NOT_SUPPORTED_ERR;
         return;
     }

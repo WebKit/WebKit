@@ -55,8 +55,8 @@ public:
 
     Document* document() const;
 
-    typedef std::function<void(RefPtr<MediaStream>)> ResolveCallback;
-    typedef std::function<void(RefPtr<NavigatorUserMediaError>)> RejectCallback;
+    typedef std::function<void(MediaStream&)> ResolveCallback;
+    typedef std::function<void(NavigatorUserMediaError&)> RejectCallback;
 
     void getUserMedia(const Dictionary&, ResolveCallback, RejectCallback, ExceptionCode&) const;
 

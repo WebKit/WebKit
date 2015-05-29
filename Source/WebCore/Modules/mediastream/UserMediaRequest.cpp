@@ -75,12 +75,12 @@ RefPtr<UserMediaRequest> UserMediaRequest::create(ScriptExecutionContext* contex
 {
     ASSERT(successCallback);
 
-    auto resolveCallback = [successCallback](RefPtr<MediaStream> stream) mutable {
-        successCallback->handleEvent(stream.get());
+    auto resolveCallback = [successCallback](MediaStream& stream) mutable {
+        successCallback->handleEvent(&stream);
     };
-    auto rejectCallback = [errorCallback](RefPtr<NavigatorUserMediaError> error) mutable {
+    auto rejectCallback = [errorCallback](NavigatorUserMediaError& error) mutable {
         if (errorCallback)
-            errorCallback->handleEvent(error.get());
+            errorCallback->handleEvent(&error);
     };
 
     return UserMediaRequest::create(context, controller, options, WTF::move(resolveCallback), WTF::move(rejectCallback), ec);
@@ -177,7 +177,7 @@ void UserMediaRequest::didCreateStream(PassRefPtr<MediaStreamPrivate> privateStr
         for (auto& track : stream->getVideoTracks())
             track->applyConstraints(protectedThis->m_videoConstraints);
 
-        protectedThis->m_resolveCallback(stream.get());
+        protectedThis->m_resolveCallback(*stream);
     });
 }
 
@@ -190,7 +190,7 @@ void UserMediaRequest::failedToCreateStreamWithConstraintsError(const String& co
     RefPtr<UserMediaRequest> protectedThis(this);
     RefPtr<NavigatorUserMediaError> error = NavigatorUserMediaError::create(NavigatorUserMediaError::constraintNotSatisfiedErrorName(), constraintName);
     callOnMainThread([protectedThis, error] {
-        protectedThis->m_rejectCallback(error.get());
+        protectedThis->m_rejectCallback(*error);
     });
 }
 
@@ -203,7 +203,7 @@ void UserMediaRequest::failedToCreateStreamWithPermissionError()
     // FIXME: Replace NavigatorUserMediaError with MediaStreamError (see bug 143335)
     RefPtr<NavigatorUserMediaError> error = NavigatorUserMediaError::create(NavigatorUserMediaError::permissionDeniedErrorName(), emptyString());
     callOnMainThread([protectedThis, error] {
-        protectedThis->m_rejectCallback(error.get());
+        protectedThis->m_rejectCallback(*error);
     });
 }
 

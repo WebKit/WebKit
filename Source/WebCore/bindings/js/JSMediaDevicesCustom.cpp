@@ -46,29 +46,31 @@ namespace WebCore {
 
 JSValue JSMediaDevices::getUserMedia(ExecState* exec)
 {
-    Dictionary options(exec, exec->argument(0));
-    if (exec->hadException())
-        return jsUndefined();
+    DeferredWrapper wrapper(exec, globalObject());
 
-    if (!options.isObject()) {
-        throwVMError(exec, createTypeError(exec, "First argument of getUserMedia must be a valid Dictionary"));
-        return jsUndefined();
+    Dictionary options(exec, exec->argument(0));
+    if (exec->hadException()) {
+        wrapper.reject(exec->exception());
+        return wrapper.promise();
     }
 
-    DeferredWrapper wrapper(exec, globalObject());
-    auto resolveCallback = [wrapper](RefPtr<MediaStream> stream) mutable {
-        wrapper.resolve(stream.get());
+    if (!options.isObject()) {
+        JSValue error = createTypeError(exec, "First argument of getUserMedia must be a valid Dictionary");
+        wrapper.reject(error);
+        return wrapper.promise();
+    }
+
+    auto resolveCallback = [wrapper](MediaStream& stream) mutable {
+        wrapper.resolve(&stream);
     };
-    auto rejectCallback = [wrapper](RefPtr<NavigatorUserMediaError> error) mutable {
-        wrapper.reject(error.get());
+    auto rejectCallback = [wrapper](NavigatorUserMediaError& error) mutable {
+        wrapper.reject(&error);
     };
 
     ExceptionCode ec = 0;
     impl().getUserMedia(options, WTF::move(resolveCallback), WTF::move(rejectCallback), ec);
-    if (ec) {
-        setDOMException(exec, ec);
-        return jsUndefined();
-    }
+    if (ec)
+        wrapper.reject(ec);
 
     return wrapper.promise();
 }
