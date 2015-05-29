@@ -21,6 +21,8 @@
 #ifndef RetainPtr_h
 #define RetainPtr_h
 
+#include <wtf/Platform.h>
+
 #if USE(CF) || defined(__OBJC__)
 
 #include <wtf/HashTraits.h>

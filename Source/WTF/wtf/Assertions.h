@@ -26,6 +26,8 @@
 #ifndef WTF_Assertions_h
 #define WTF_Assertions_h
 
+#include <wtf/Platform.h>
+
 /*
    no namespaces because this file has to be includable from C and Objective-C
 
