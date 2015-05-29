@@ -6127,9 +6127,9 @@ private:
     {
         switch (edge.useKind()) {
         case BooleanUse:
-            return lowBoolean(m_node->child1());
+            return lowBoolean(edge);
         case Int32Use:
-            return m_out.notZero32(lowInt32(m_node->child1()));
+            return m_out.notZero32(lowInt32(edge));
         case DoubleRepUse:
             return m_out.doubleNotEqual(lowDouble(edge), m_out.doubleZero);
         case ObjectOrOtherUse:
@@ -6138,32 +6138,108 @@ private:
                     edge, CellCaseSpeculatesObject, SpeculateNullOrUndefined,
                     ManualOperandSpeculation));
         case StringUse: {
-            LValue stringValue = lowString(m_node->child1());
+            LValue stringValue = lowString(edge);
             LValue length = m_out.load32NonNegative(stringValue, m_heaps.JSString_length);
             return m_out.notEqual(length, m_out.int32Zero);
         }
         case UntypedUse: {
-            LValue value = lowJSValue(m_node->child1());
+            LValue value = lowJSValue(edge);
             
-            LBasicBlock slowCase = FTL_NEW_BLOCK(m_out, ("Boolify untyped slow case"));
-            LBasicBlock fastCase = FTL_NEW_BLOCK(m_out, ("Boolify untyped fast case"));
+            // Implements the following control flow structure:
+            // if (value is cell) {
+            //     if (value is string)
+            //         result = !!value->length
+            //     else {
+            //         do evil things for masquerades-as-undefined
+            //         result = true
+            //     }
+            // } else if (value is int32) {
+            //     result = !!unboxInt32(value)
+            // } else if (value is number) {
+            //     result = !!unboxDouble(value)
+            // } else {
+            //     result = value == jsTrue
+            // }
+            
+            LBasicBlock cellCase = FTL_NEW_BLOCK(m_out, ("Boolify untyped cell case"));
+            LBasicBlock stringCase = FTL_NEW_BLOCK(m_out, ("Boolify untyped string case"));
+            LBasicBlock notStringCase = FTL_NEW_BLOCK(m_out, ("Boolify untyped not string case"));
+            LBasicBlock notCellCase = FTL_NEW_BLOCK(m_out, ("Boolify untyped not cell case"));
+            LBasicBlock int32Case = FTL_NEW_BLOCK(m_out, ("Boolify untyped int32 case"));
+            LBasicBlock notInt32Case = FTL_NEW_BLOCK(m_out, ("Boolify untyped not int32 case"));
+            LBasicBlock doubleCase = FTL_NEW_BLOCK(m_out, ("Boolify untyped double case"));
+            LBasicBlock notDoubleCase = FTL_NEW_BLOCK(m_out, ("Boolify untyped not double case"));
             LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Boolify untyped continuation"));
             
-            m_out.branch(
-                isNotBoolean(value, provenType(m_node->child1())),
-                rarely(slowCase), usually(fastCase));
+            Vector<ValueFromBlock> results;
             
-            LBasicBlock lastNext = m_out.appendTo(fastCase, slowCase);
-            ValueFromBlock fastResult = m_out.anchor(unboxBoolean(value));
+            m_out.branch(isCell(value, provenType(edge)), unsure(cellCase), unsure(notCellCase));
+            
+            LBasicBlock lastNext = m_out.appendTo(cellCase, stringCase);
+            m_out.branch(
+                isString(value, provenType(edge) & SpecCell),
+                unsure(stringCase), unsure(notStringCase));
+            
+            m_out.appendTo(stringCase, notStringCase);
+            LValue nonEmptyString = m_out.notZero32(
+                m_out.load32NonNegative(value, m_heaps.JSString_length));
+            results.append(m_out.anchor(nonEmptyString));
             m_out.jump(continuation);
             
-            m_out.appendTo(slowCase, continuation);
-            ValueFromBlock slowResult = m_out.anchor(m_out.notNull(vmCall(
-                m_out.operation(operationConvertJSValueToBoolean), m_callFrame, value)));
+            m_out.appendTo(notStringCase, notCellCase);
+            LValue isTruthyObject;
+            if (masqueradesAsUndefinedWatchpointIsStillValid())
+                isTruthyObject = m_out.booleanTrue;
+            else {
+                LBasicBlock masqueradesCase = FTL_NEW_BLOCK(m_out, ("Boolify untyped masquerades case"));
+                
+                results.append(m_out.anchor(m_out.booleanFalse));
+                
+                m_out.branch(
+                    m_out.testIsZero8(
+                        m_out.load8(value, m_heaps.JSCell_typeInfoFlags),
+                        m_out.constInt8(MasqueradesAsUndefined)),
+                    usually(continuation), rarely(masqueradesCase));
+                
+                m_out.appendTo(masqueradesCase);
+                
+                isTruthyObject = m_out.notEqual(
+                    m_out.constIntPtr(m_graph.globalObjectFor(m_node->origin.semantic)),
+                    m_out.loadPtr(loadStructure(value), m_heaps.Structure_globalObject));
+            }
+            results.append(m_out.anchor(isTruthyObject));
+            m_out.jump(continuation);
+            
+            m_out.appendTo(notCellCase, int32Case);
+            m_out.branch(
+                isInt32(value, provenType(edge) & ~SpecCell),
+                unsure(int32Case), unsure(notInt32Case));
+            
+            m_out.appendTo(int32Case, notInt32Case);
+            results.append(m_out.anchor(m_out.notZero32(unboxInt32(value))));
+            m_out.jump(continuation);
+            
+            m_out.appendTo(notInt32Case, doubleCase);
+            m_out.branch(
+                isNumber(value, provenType(edge) & ~SpecCell),
+                unsure(doubleCase), unsure(notDoubleCase));
+            
+            m_out.appendTo(doubleCase, notDoubleCase);
+            // Note that doubleNotEqual() really means not-equal-and-ordered. It will return false
+            // if value is NaN.
+            LValue doubleIsTruthy = m_out.doubleNotEqual(
+                unboxDouble(value), m_out.constDouble(0));
+            results.append(m_out.anchor(doubleIsTruthy));
+            m_out.jump(continuation);
+            
+            m_out.appendTo(notDoubleCase, continuation);
+            LValue miscIsTruthy = m_out.equal(
+                value, m_out.constInt64(JSValue::encode(jsBoolean(true))));
+            results.append(m_out.anchor(miscIsTruthy));
             m_out.jump(continuation);
             
             m_out.appendTo(continuation, lastNext);
-            return m_out.phi(m_out.boolean, fastResult, slowResult);
+            return m_out.phi(m_out.boolean, results);
         }
         default:
             DFG_CRASH(m_graph, m_node, "Bad use kind");
@@ -7168,8 +7244,16 @@ private:
         return m_out.aShr(value, m_out.constInt64(JSValue::int52ShiftAmount));
     }
     
-    LValue isNotInt32(LValue jsValue)
+    LValue isInt32(LValue jsValue, SpeculatedType type = SpecFullTop)
     {
+        if (LValue proven = isProvenValue(type, SpecInt32))
+            return proven;
+        return m_out.aboveOrEqual(jsValue, m_tagTypeNumber);
+    }
+    LValue isNotInt32(LValue jsValue, SpeculatedType type = SpecFullTop)
+    {
+        if (LValue proven = isProvenValue(type, ~SpecInt32))
+            return proven;
         return m_out.below(jsValue, m_tagTypeNumber);
     }
     LValue unboxInt32(LValue jsValue)

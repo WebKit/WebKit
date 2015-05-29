@@ -87,8 +87,14 @@ private:
             
         case LogicalNot:
         case Branch:
-            if (m_node->child1().useKind() == ObjectOrOtherUse)
+            switch (m_node->child1().useKind()) {
+            case ObjectOrOtherUse:
+            case UntypedUse:
                 handleMasqueradesAsUndefined();
+                break;
+            default:
+                break;
+            }
             break;
             
         case NewArray:

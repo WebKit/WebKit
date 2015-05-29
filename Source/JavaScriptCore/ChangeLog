@@ -1,3 +1,42 @@
+2015-05-28  Filip Pizlo  <fpizlo@apple.com>
+
+        Non-speculative Branch should be fast in the FTL
+        https://bugs.webkit.org/show_bug.cgi?id=145452
+
+        Reviewed by Andreas Kling.
+        
+        Inlines the code for convertJSValueToBoolean into the FTL. This also includes some other
+        clean-ups that I found along the way.
+        
+        I found this by looking at the hottest functions in DeltaBlue. Despite having so many
+        Branch specializations, apparently there was still a hot one that we missed that was going
+        down the untyped path. It was either Int32 or Other. Maybe we could specialize for that
+        combo, but it makes so much sense to just make all of this nonsense fast.
+
+        * dfg/DFGWatchpointCollectionPhase.cpp:
+        (JSC::DFG::WatchpointCollectionPhase::handle): Need to watch the masquerades watchpoint on UntypedUse: forms of Branch now.
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::boolify): The actual fix.
+        (JSC::FTL::LowerDFGToLLVM::int52ToStrictInt52):
+        (JSC::FTL::LowerDFGToLLVM::isInt32):
+        (JSC::FTL::LowerDFGToLLVM::isNotInt32):
+        (JSC::FTL::LowerDFGToLLVM::unboxInt32):
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::toBoolean): Symbol is always true.
+        (JSC::JSCell::pureToBoolean): Symbol is always true.
+        * runtime/JSString.cpp:
+        (JSC::JSString::getPrimitiveNumber):
+        (JSC::JSString::toNumber):
+        (JSC::JSString::toBoolean): Deleted. This is a tiny method. It doesn't need to be out-of-line.
+        * runtime/JSString.h:
+        (JSC::JSString::length):
+        (JSC::JSString::toBoolean): This method shouldbe inline.
+        * runtime/Symbol.cpp:
+        (JSC::Symbol::toPrimitive):
+        (JSC::Symbol::getPrimitiveNumber):
+        (JSC::Symbol::toBoolean): Deleted. A Symbol is always true, so we don't need a method for this.
+        * runtime/Symbol.h:
+
 2015-05-29  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r184860.

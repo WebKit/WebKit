@@ -1,3 +1,15 @@
+2015-05-28  Filip Pizlo  <fpizlo@apple.com>
+
+        Non-speculative Branch should be fast in the FTL
+        https://bugs.webkit.org/show_bug.cgi?id=145452
+
+        Reviewed by Andreas Kling.
+
+        * js/regress/logical-not-weird-types-expected.txt: Added.
+        * js/regress/logical-not-weird-types.html: Added.
+        * js/regress/script-tests/logical-not-weird-types.js: Added.
+        (foo):
+
 2015-05-29  Filip Pizlo  <fpizlo@apple.com>
 
         Land some .html/-expected.txt files for some tests that were added without them.

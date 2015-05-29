@@ -150,7 +150,7 @@ public:
     unsigned length() const { return m_length; }
 
     JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
-    JS_EXPORT_PRIVATE bool toBoolean() const;
+    bool toBoolean() const { return !!m_length; }
     bool getPrimitiveNumber(ExecState*, double& number, JSValue&) const;
     JSObject* toObject(ExecState*, JSGlobalObject*) const;
     double toNumber(ExecState*) const;

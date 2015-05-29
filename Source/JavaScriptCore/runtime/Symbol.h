@@ -75,7 +75,6 @@ public:
     String descriptiveString() const;
 
     JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
-    JS_EXPORT_PRIVATE bool toBoolean() const;
     bool getPrimitiveNumber(ExecState*, double& number, JSValue&) const;
     JSObject* toObject(ExecState*, JSGlobalObject*) const;
     double toNumber(ExecState*) const;

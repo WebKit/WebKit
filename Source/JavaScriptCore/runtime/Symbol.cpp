@@ -65,11 +65,6 @@ JSValue Symbol::toPrimitive(ExecState*, PreferredPrimitiveType) const
     return const_cast<Symbol*>(this);
 }
 
-bool Symbol::toBoolean() const
-{
-    return true;
-}
-
 bool Symbol::getPrimitiveNumber(ExecState* exec, double& number, JSValue& result) const
 {
     result = this;

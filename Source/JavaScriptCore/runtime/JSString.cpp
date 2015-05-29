@@ -389,11 +389,6 @@ bool JSString::getPrimitiveNumber(ExecState* exec, double& number, JSValue& resu
     return false;
 }
 
-bool JSString::toBoolean() const
-{
-    return m_length;
-}
-
 double JSString::toNumber(ExecState* exec) const
 {
     return jsToNumber(view(exec));

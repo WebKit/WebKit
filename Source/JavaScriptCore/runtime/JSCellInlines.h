@@ -250,8 +250,6 @@ inline bool JSCell::toBoolean(ExecState* exec) const
 {
     if (isString())
         return static_cast<const JSString*>(this)->toBoolean();
-    if (isSymbol())
-        return static_cast<const Symbol*>(this)->toBoolean();
     return !structure()->masqueradesAsUndefined(exec->lexicalGlobalObject());
 }
 
@@ -260,7 +258,7 @@ inline TriState JSCell::pureToBoolean() const
     if (isString())
         return static_cast<const JSString*>(this)->toBoolean() ? TrueTriState : FalseTriState;
     if (isSymbol())
-        return static_cast<const Symbol*>(this)->toBoolean() ? TrueTriState : FalseTriState;
+        return TrueTriState;
     return MixedTriState;
 }
 
