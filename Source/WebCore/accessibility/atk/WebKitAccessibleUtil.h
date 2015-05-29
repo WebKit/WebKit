@@ -61,7 +61,7 @@ class VisibleSelection;
 
 AtkAttributeSet* addToAtkAttributeSet(AtkAttributeSet*, const char* name, const char* value);
 
-void contentsRelativeToAtkCoordinateType(WebCore::AccessibilityObject*, AtkCoordType, WebCore::IntRect, gint* x, gint* y, gint* width = 0, gint* height = 0);
+void contentsRelativeToAtkCoordinateType(WebCore::AccessibilityObject*, AtkCoordType, WebCore::IntRect, gint* x, gint* y, gint* width = nullptr, gint* height = nullptr);
 
 String accessibilityTitle(WebCore::AccessibilityObject*);
 

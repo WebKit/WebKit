@@ -89,7 +89,7 @@ static AtkAttributeSet* webkitAccessibleDocumentGetAttributes(AtkDocument* docum
     g_return_val_if_fail(ATK_IS_DOCUMENT(document), 0);
     returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(document), 0);
 
-    AtkAttributeSet* attributeSet = 0;
+    AtkAttributeSet* attributeSet = nullptr;
     const gchar* attributes[] = { "DocType", "Encoding", "URI" };
 
     for (unsigned i = 0; i < G_N_ELEMENTS(attributes); i++) {

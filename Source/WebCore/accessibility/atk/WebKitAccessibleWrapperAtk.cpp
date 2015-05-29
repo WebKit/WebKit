@@ -259,7 +259,7 @@ static void setAtkRelationSetFromCoreObject(AccessibilityObject* coreObject, Atk
     }
 }
 
-static gpointer webkitAccessibleParentClass = 0;
+static gpointer webkitAccessibleParentClass = nullptr;
 
 static bool isRootObject(AccessibilityObject* coreObject)
 {
@@ -340,7 +340,7 @@ static AtkObject* webkitAccessibleRefChild(AtkObject* object, gint index)
         return 0;
 
     AccessibilityObject* coreObject = core(object);
-    AccessibilityObject* coreChild = 0;
+    AccessibilityObject* coreChild = nullptr;
 
     const AccessibilityObject::AccessibilityChildrenVector& children = coreObject->children();
     if (static_cast<size_t>(index) >= children.size())
@@ -392,7 +392,7 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
     g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE(object), 0);
     returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(object), 0);
 
-    AtkAttributeSet* attributeSet = 0;
+    AtkAttributeSet* attributeSet = nullptr;
 #if PLATFORM(GTK)
     attributeSet = addToAtkAttributeSet(attributeSet, "toolkit", "WebKitGtk");
 #elif PLATFORM(EFL)
@@ -919,7 +919,7 @@ static const gchar* webkitAccessibleGetObjectLocale(AtkObject* object)
             return cacheAndReturnAtkProperty(object, AtkCachedDocumentLocale, language);
 
     } else if (ATK_IS_TEXT(object)) {
-        const gchar* locale = 0;
+        const gchar* locale = nullptr;
 
         AtkAttributeSet* textAttributes = atk_text_get_default_attributes(ATK_TEXT(object));
         for (AtkAttributeSet* attributes = textAttributes; attributes; attributes = attributes->next) {
@@ -1088,7 +1088,7 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
         interfaceMask |= 1 << WAISelection;
 
     // Get renderer if available.
-    RenderObject* renderer = 0;
+    RenderObject* renderer = nullptr;
     if (coreObject->isAccessibilityRenderObject())
         renderer = coreObject->renderer();
 
@@ -1269,7 +1269,7 @@ AccessibilityObject* objectFocusedAndCaretOffsetUnignored(AccessibilityObject* r
     if (referenceObject->isDescendantOfObject(firstUnignoredParent))
         referenceObject = firstUnignoredParent;
 
-    Node* startNode = 0;
+    Node* startNode = nullptr;
     if (firstUnignoredParent != referenceObject || firstUnignoredParent->isTextControl()) {
         // We need to use the first child's node of the reference
         // object as the start point to calculate the caret offset
@@ -1311,7 +1311,7 @@ AccessibilityObject* objectFocusedAndCaretOffsetUnignored(AccessibilityObject* r
 const char* cacheAndReturnAtkProperty(AtkObject* object, AtkCachedProperty property, String value)
 {
     WebKitAccessiblePrivate* priv = WEBKIT_ACCESSIBLE(object)->priv;
-    CString* propertyPtr = 0;
+    CString* propertyPtr = nullptr;
 
     switch (property) {
     case AtkCachedAccessibleName:

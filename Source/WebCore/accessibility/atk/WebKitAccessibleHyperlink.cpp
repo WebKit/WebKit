@@ -385,7 +385,7 @@ static void webkitAccessibleHyperlinkClassInit(AtkHyperlinkClass* klass)
 static void webkitAccessibleHyperlinkInit(AtkHyperlink* link)
 {
     WEBKIT_ACCESSIBLE_HYPERLINK(link)->priv = WEBKIT_ACCESSIBLE_HYPERLINK_GET_PRIVATE(link);
-    WEBKIT_ACCESSIBLE_HYPERLINK(link)->priv->hyperlinkImpl = 0;
+    WEBKIT_ACCESSIBLE_HYPERLINK(link)->priv->hyperlinkImpl = nullptr;
 }
 
 GType webkitAccessibleHyperlinkGetType()

@@ -168,8 +168,8 @@ static void notifyChildrenSelectionChange(AccessibilityObject* object)
     if (oldListObject.get() != listObject)
         oldFocusedObject.get() = 0;
 
-    AtkObject* axItem = item ? item->wrapper() : 0;
-    AtkObject* axOldFocusedObject = oldFocusedObject.get() ? oldFocusedObject.get()->wrapper() : 0;
+    AtkObject* axItem = item ? item->wrapper() : nullptr;
+    AtkObject* axOldFocusedObject = oldFocusedObject.get() ? oldFocusedObject.get()->wrapper() : nullptr;
 
     // Old focused object just lost focus, so emit the events.
     if (axOldFocusedObject && axItem != axOldFocusedObject) {

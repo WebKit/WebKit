@@ -65,9 +65,9 @@ AccessibilityObject* AccessibilityScrollView::scrollBar(AccessibilityOrientation
     
     switch (orientation) {
     case AccessibilityOrientationVertical:
-        return m_verticalScrollbar ? m_verticalScrollbar.get() : 0;
+        return m_verticalScrollbar ? m_verticalScrollbar.get() : nullptr;
     case AccessibilityOrientationHorizontal:
-        return m_horizontalScrollbar ? m_horizontalScrollbar.get() : 0;
+        return m_horizontalScrollbar ? m_horizontalScrollbar.get() : nullptr;
     }
     
     return nullptr;

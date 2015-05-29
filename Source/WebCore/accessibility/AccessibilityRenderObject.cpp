@@ -3852,8 +3852,8 @@ void AccessibilityRenderObject::mathPrescripts(AccessibilityMathMultiscriptPairs
                 else {
                     prescriptPair.second = axChild;
                     prescripts.append(prescriptPair);
-                    prescriptPair.first = 0;
-                    prescriptPair.second = 0;
+                    prescriptPair.first = nullptr;
+                    prescriptPair.second = nullptr;
                 }
             }
         } else if (child->hasTagName(MathMLNames::mprescriptsTag))
@@ -3887,8 +3887,8 @@ void AccessibilityRenderObject::mathPostscripts(AccessibilityMathMultiscriptPair
             else {
                 postscriptPair.second = axChild;
                 postscripts.append(postscriptPair);
-                postscriptPair.first = 0;
-                postscriptPair.second = 0;
+                postscriptPair.first = nullptr;
+                postscriptPair.second = nullptr;
             }
         }
     }
