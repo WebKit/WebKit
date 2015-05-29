@@ -12,6 +12,7 @@ import os
 import urlparse
 
 from benchmark_builder.benchmark_builder_factory import BenchmarkBuilderFactory
+from benchmark_results import BenchmarkResults
 from browser_driver.browser_driver_factory import BrowserDriverFactory
 from http_server_driver.http_server_driver_factory import HTTPServerDriverFactory
 from utils import loadModule, getPathFromProjectRoot
@@ -91,6 +92,7 @@ class BenchmarkRunner(object):
                 _log.info('End of %d iteration of current benchmark' % (x + 1))
         results = self.wrap(results)
         self.dump(results, self.outputFile if self.outputFile else self.plan['output_file'])
+        self.show_results(results)
         benchmarkBuilder.clean()
         return 0
 
@@ -106,13 +108,13 @@ class BenchmarkRunner(object):
 
     @classmethod
     def wrap(cls, dicts):
-        _log.info('Merging following results:\n%s', json.dumps(dicts))
+        _log.debug('Merging following results:\n%s', json.dumps(dicts))
         if not dicts:
             return None
         ret = {}
         for dic in dicts:
             ret = cls.merge(ret, dic)
-        _log.info('Results after merging:\n%s', json.dumps(ret))
+        _log.debug('Results after merging:\n%s', json.dumps(ret))
         return ret
 
     @classmethod
@@ -135,3 +137,8 @@ class BenchmarkRunner(object):
             return result
         # for other types
         return a + b
+
+    @classmethod
+    def show_results(cls, results):
+        results = BenchmarkResults(results)
+        print results.format()

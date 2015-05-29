@@ -1,3 +1,65 @@
+2015-05-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-benchmark should print out the results
+        https://bugs.webkit.org/show_bug.cgi?id=145398
+
+        Reviewed by Antti Koivisto.
+
+        Added BenchmarkResults to compute and format the aggregated values. It also does the syntax/semantic check
+        of the output to catch early errors.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_results.py: Added.
+        (BenchmarkResults): Added.
+        (BenchmarkResults.__init__): Added.
+        (BenchmarkResults.format): Added.
+        (BenchmarkResults._format_tests): Added. Used by BenchmarkResults.format.
+        (BenchmarkResults._format_values): Formats a list of values measured for a given metric on a given test.
+        Uses the sample standard deviation to compute the significant figures for the value.
+        (BenchmarkResults._unit_from_metric): Added.
+        (BenchmarkResults._aggregate_results): Added.
+        (BenchmarkResults._aggregate_results_for_test): Added.
+        (BenchmarkResults._flatten_list): Added.
+        (BenchmarkResults._subtest_values_by_config_iteration): Added. Organizes values measured for subtests
+        by the iteration number so that i-th array contains values for all subtests at i-th iteration.
+        (BenchmarkResults._aggregate_values): Added.
+        (BenchmarkResults._lint_results): Added.
+        (BenchmarkResults._lint_subtest_results): Added.
+        (BenchmarkResults._lint_aggregator_list): Added.
+        (BenchmarkResults._lint_configuration): Added.
+        (BenchmarkResults._lint_values): Added.
+        (BenchmarkResults._is_numeric): Added.
+        * Scripts/webkitpy/benchmark_runner/benchmark_results_unittest.py: Added.
+        (BenchmarkResultsTest):
+        (BenchmarkResultsTest.test_init):
+        (BenchmarkResultsTest.test_format):
+        (test_format_values_with_large_error):
+        (test_format_values_with_small_error):
+        (test_format_values_with_time):
+        (test_format_values_with_no_error):
+        (test_format_values_with_small_difference):
+        (test_aggregate_results):
+        (test_aggregate_results_with_gropus):
+        (test_aggregate_nested_results):
+        (test_lint_results):
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (BenchmarkRunner.execute): Added a call to show_results
+        (BenchmarkRunner.wrap): Only dump the merged JSON when debugging.
+        (BenchmarkRunner.show_results): Added.
+
+2015-05-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run_benchmark should have an option to specify the number of runs
+        https://bugs.webkit.org/show_bug.cgi?id=145091
+
+        Reviewed by Antti Koivisto.
+
+        Added --count option.
+
+        * Scripts/run-benchmark:
+        (main):
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (BenchmarkRunner.__init__):
+
 2015-05-28  Alexey Proskuryakov  <ap@apple.com>
 
         Update results of WebKit1.StringTruncator after r184965. I missed one letter.
