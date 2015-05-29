@@ -27,28 +27,8 @@
     align-items: center;
     justify-content: center;
 
-    border-radius: 4px;
-    background-color: rgb(252, 252, 252);
-
-    border: 1px solid transparent;
-    border-top-color: white;
-
-    box-shadow: rgba(0, 0, 0, 0.15) 0 1px 0;
-
     margin: 4px;
-
     padding: 0 10px;
-}
-
-.toolbar .item.button:active {
-    border-top-color: rgb(241, 241, 241);
-    background-color: rgb(228, 228, 228);
-}
-
-body.window-inactive .toolbar .item.button {
-    border: 1px solid rgb(220, 220, 220);
-    background-color: rgb(246, 246, 246);
-    box-shadow: none;
 }
 
 .toolbar.icon-and-label-vertical .item.button {
