@@ -1,3 +1,14 @@
+2015-05-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Land some .html/-expected.txt files for some tests that were added without them.
+
+        Rubber stamped by Andreas Kling.
+
+        * js/regress/cse-new-array-buffer-expected.txt: Added.
+        * js/regress/cse-new-array-buffer.html: Added.
+        * js/regress/cse-new-array-expected.txt: Added.
+        * js/regress/cse-new-array.html: Added.
+
 2015-05-29  Zalan Bujtas  <zalan@apple.com>
 
         Unreviewed Win and GTK gardening.
