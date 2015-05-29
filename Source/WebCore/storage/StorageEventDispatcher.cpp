@@ -64,9 +64,8 @@ void StorageEventDispatcher::dispatchLocalStorageEvents(const String& key, const
     Vector<RefPtr<Frame>> frames;
 
     // Send events to every page.
-    const HashSet<Page*>& pages = page->group().pages();
-    for (HashSet<Page*>::const_iterator it = pages.begin(), end = pages.end(); it != end; ++it) {
-        for (Frame* frame = &(*it)->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto& pageInGroup : page->group().pages()) {
+        for (Frame* frame = &pageInGroup->mainFrame(); frame; frame = frame->tree().traverseNext()) {
             if (sourceFrame != frame && frame->document()->securityOrigin()->equal(securityOrigin))
                 frames.append(frame);
         }
@@ -79,25 +78,24 @@ void StorageEventDispatcher::dispatchSessionStorageEventsToFrames(Page& page, co
 {
     InspectorInstrumentation::didDispatchDOMStorageEvent(key, oldValue, newValue, SessionStorage, securityOrigin, &page);
 
-    for (unsigned i = 0; i < frames.size(); ++i) {
+    for (auto& frame : frames) {
         ExceptionCode ec = 0;
-        Storage* storage = frames[i]->document()->domWindow()->sessionStorage(ec);
+        Storage* storage = frame->document()->domWindow()->sessionStorage(ec);
         if (!ec)
-            frames[i]->document()->enqueueWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, url, storage));
+            frame->document()->enqueueWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, url, storage));
     }
 }
 
 void StorageEventDispatcher::dispatchLocalStorageEventsToFrames(PageGroup& pageGroup, const Vector<RefPtr<Frame>>& frames, const String& key, const String& oldValue, const String& newValue, const String& url, SecurityOrigin* securityOrigin)
 {
-    const HashSet<Page*>& pages = pageGroup.pages();
-    for (HashSet<Page*>::const_iterator it = pages.begin(), end = pages.end(); it != end; ++it)
-        InspectorInstrumentation::didDispatchDOMStorageEvent(key, oldValue, newValue, LocalStorage, securityOrigin, *it);
+    for (auto& page : pageGroup.pages())
+        InspectorInstrumentation::didDispatchDOMStorageEvent(key, oldValue, newValue, LocalStorage, securityOrigin, page);
 
-    for (unsigned i = 0; i < frames.size(); ++i) {
+    for (auto& frame : frames) {
         ExceptionCode ec = 0;
-        Storage* storage = frames[i]->document()->domWindow()->localStorage(ec);
+        Storage* storage = frame->document()->domWindow()->localStorage(ec);
         if (!ec)
-            frames[i]->document()->enqueueWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, url, storage));
+            frame->document()->enqueueWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, url, storage));
     }
 }
 

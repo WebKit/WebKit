@@ -74,8 +74,7 @@ void PluginMainThreadScheduler::unregisterPlugin(NPP npp)
 
 void PluginMainThreadScheduler::dispatchCallsForPlugin(NPP npp, const Deque<Call>& calls)
 {
-    Deque<Call>::const_iterator end = calls.end();
-    for (Deque<Call>::const_iterator it = calls.begin(); it != end; ++it) {
+    for (auto& call : calls) {
         // Check if the plug-in has been destroyed.
         {
             MutexLocker lock(m_queueMutex);
@@ -83,7 +82,7 @@ void PluginMainThreadScheduler::dispatchCallsForPlugin(NPP npp, const Deque<Call
                 return;
         }
 
-        (*it).performCall();
+        call.performCall();
     }
 }
 
@@ -92,19 +91,15 @@ void PluginMainThreadScheduler::dispatchCalls()
     m_queueMutex.lock();
     CallQueueMap copy(m_callQueueMap);
 
-    {
-        // Empty all the queues in the original map
-        CallQueueMap::iterator end = m_callQueueMap.end();
-        for (CallQueueMap::iterator it = m_callQueueMap.begin(); it != end; ++it)
-            it->value.clear();
-    }
+    // Empty all the queues in the original map
+    for (auto& call : m_callQueueMap.values())
+        call.clear();
 
     m_callPending = false;
     m_queueMutex.unlock();
 
-    CallQueueMap::iterator end = copy.end();
-    for (CallQueueMap::iterator it = copy.begin(); it != end; ++it)
-        dispatchCallsForPlugin(it->key, it->value);
+    for (auto& entry : copy)
+        dispatchCallsForPlugin(entry.key, entry.value);
 }
 
 void PluginMainThreadScheduler::mainThreadCallback(void* context)

@@ -1383,8 +1383,8 @@ PassRefPtr<NodeList> Internals::nodesFromRect(Document* document, int centerX, i
         
         const HitTestResult::NodeSet& nodeSet = result.rectBasedTestResult();
         matches.reserveInitialCapacity(nodeSet.size());
-        for (auto it = nodeSet.begin(), end = nodeSet.end(); it != end; ++it)
-            matches.uncheckedAppend(*it->get());
+        for (auto& node : nodeSet)
+            matches.uncheckedAppend(*node);
     }
 
     return StaticNodeList::adopt(matches);

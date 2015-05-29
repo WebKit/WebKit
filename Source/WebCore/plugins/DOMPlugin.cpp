@@ -83,9 +83,10 @@ bool DOMPlugin::canGetItemsForName(const AtomicString& propertyName)
     Vector<MimeClassInfo> mimes;
     Vector<size_t> mimePluginIndices;
     m_pluginData->getWebVisibleMimesAndPluginIndices(mimes, mimePluginIndices);
-    for (unsigned i = 0; i < mimes.size(); ++i)
-        if (mimes[i].type == propertyName)
+    for (auto& mime : mimes) {
+        if (mime.type == propertyName)
             return true;
+    }
     return false;
 }
 

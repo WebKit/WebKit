@@ -52,8 +52,8 @@ void PluginData::getWebVisibleMimesAndPluginIndices(Vector<MimeClassInfo>& mimes
     const Vector<PluginInfo>& plugins = webVisiblePlugins();
     for (unsigned i = 0; i < plugins.size(); ++i) {
         const PluginInfo& plugin = plugins[i];
-        for (unsigned j = 0; j < plugin.mimes.size(); ++j) {
-            mimes.append(plugin.mimes[j]);
+        for (auto& mime : plugin.mimes) {
+            mimes.append(mime);
             mimePluginIndices.append(i);
         }
     }

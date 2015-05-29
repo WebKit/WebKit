@@ -54,9 +54,8 @@ static HashSet<Worker*>* allWorkers;
 
 void networkStateChanged(bool isOnLine)
 {
-    HashSet<Worker*>::iterator end = allWorkers->end();
-    for (HashSet<Worker*>::iterator it = allWorkers->begin(); it != end; ++it)
-        (*it)->notifyNetworkStateChange(isOnLine);
+    for (auto& worker : *allWorkers)
+        worker->notifyNetworkStateChange(isOnLine);
 }
 
 inline Worker::Worker(ScriptExecutionContext& context)

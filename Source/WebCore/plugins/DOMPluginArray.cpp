@@ -70,9 +70,8 @@ bool DOMPluginArray::canGetItemsForName(const AtomicString& propertyName)
     if (!data)
         return 0;
 
-    const Vector<PluginInfo>& plugins = data->webVisiblePlugins();
-    for (unsigned i = 0; i < plugins.size(); ++i) {
-        if (plugins[i].name == propertyName)
+    for (auto& plugin : data->webVisiblePlugins()) {
+        if (plugin.name == propertyName)
             return true;
     }
     return false;

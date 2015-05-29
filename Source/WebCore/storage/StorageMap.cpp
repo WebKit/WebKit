@@ -184,9 +184,9 @@ bool StorageMap::contains(const String& key) const
 
 void StorageMap::importItems(const HashMap<String, String>& items)
 {
-    for (HashMap<String, String>::const_iterator it = items.begin(), end = items.end(); it != end; ++it) {
-        const String& key = it->key;
-        const String& value = it->value;
+    for (auto& item : items) {
+        const String& key = item.key;
+        const String& value = item.value;
 
         HashMap<String, String>::AddResult result = m_map.add(key, value);
         ASSERT_UNUSED(result, result.isNewEntry); // True if the key didn't exist previously.
