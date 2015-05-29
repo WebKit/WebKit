@@ -140,7 +140,9 @@ private:
     void enableAuthorizer(bool enable);
     
     int pageSize();
-    
+
+    void overrideUnauthorizedFunctions();
+
     sqlite3* m_db;
     int m_pageSize;
     
