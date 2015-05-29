@@ -1,3 +1,18 @@
+2015-05-29  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Restoring the last selected DOM node fails on reload (DOMAgent: No node with given path found)
+        https://bugs.webkit.org/show_bug.cgi?id=144231
+
+        Reviewed by Timothy Hatcher.
+
+        Removed _restoreSelectedNodeIsAllowed flag from DOMTreeContentView. The frontend receives two documentUpdated
+        events from the DOM Agent during page reload, and the flag was preventing DOMTreeContentView from restoring
+        the previous selection in response to the second event.
+
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WebInspector.DOMTreeContentView.prototype.selectLastSelectedNode):
+        (WebInspector.DOMTreeContentView.prototype._restoreSelectedNodeAfterUpdate):
+
 2015-05-28  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Update toolbar styles

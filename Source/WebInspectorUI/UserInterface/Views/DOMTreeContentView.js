@@ -59,7 +59,6 @@ WebInspector.DOMTreeContentView = function(representedObject)
 
     this._lastSelectedNodePathSetting = new WebInspector.Setting("last-selected-node-path", null);
 
-    this._restoreSelectedNodeIsAllowed = true;
     this._numberOfSearchResults = null;
 };
 
@@ -146,7 +145,6 @@ WebInspector.DOMTreeContentView.prototype = {
 
     selectAndRevealDOMNode: function(domNode, preventFocusChange)
     {
-        this._restoreSelectedNodeIsAllowed = false;
         this._domTreeOutline.selectDOMNode(domNode, !preventFocusChange);
     },
 
@@ -324,7 +322,7 @@ WebInspector.DOMTreeContentView.prototype = {
 
     _restoreSelectedNodeAfterUpdate: function(documentURL, defaultNode)
     {
-        if (!this._restoreSelectedNodeIsAllowed || !WebInspector.domTreeManager.restoreSelectedNodeIsAllowed)
+        if (!WebInspector.domTreeManager.restoreSelectedNodeIsAllowed)
             return;
 
         function selectNode(lastSelectedNode)
@@ -347,7 +345,7 @@ WebInspector.DOMTreeContentView.prototype = {
 
         function selectLastSelectedNode(nodeId)
         {
-            if (!this._restoreSelectedNodeIsAllowed || !WebInspector.domTreeManager.restoreSelectedNodeIsAllowed)
+            if (!WebInspector.domTreeManager.restoreSelectedNodeIsAllowed)
                 return;
 
             selectNode.call(this, WebInspector.domTreeManager.nodeForId(nodeId));
