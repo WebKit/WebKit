@@ -1,3 +1,17 @@
+2015-05-29  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r184860.
+        https://bugs.webkit.org/show_bug.cgi?id=145456
+
+        May have caused ~1% Octane regression (Requested by kling on
+        #webkit).
+
+        Reverted changeset:
+
+        "Try to use StringView when comparing JSStrings for equality."
+        https://bugs.webkit.org/show_bug.cgi?id=145379
+        http://trac.webkit.org/changeset/184860
+
 2015-05-28  Michael Saboff  <msaboff@apple.com>
 
         mozilla/js1_5/Array/regress-154338.js test causes ARM 32 bit iOS devices to run out of memory

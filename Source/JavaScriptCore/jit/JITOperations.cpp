@@ -923,7 +923,7 @@ size_t JIT_OPERATION operationCompareStringEq(ExecState* exec, JSCell* left, JSC
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
 
-    bool result = WTF::equal(asString(left)->view(exec), asString(right)->view(exec));
+    bool result = WTF::equal(*asString(left)->value(exec).impl(), *asString(right)->value(exec).impl());
 #if USE(JSVALUE64)
     return JSValue::encode(jsBoolean(result));
 #else
