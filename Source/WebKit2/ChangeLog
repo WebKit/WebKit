@@ -1,3 +1,15 @@
+2015-05-29  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Update WebContent process sandbox profile for AWD logging
+        https://bugs.webkit.org/show_bug.cgi?id=145473
+        <rdar://problem/20543269>
+
+        Reviewed by Darin Adler.
+
+        Update WebContent process sandbox profile for AWD logging.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2015-05-29  Anders Carlsson  <andersca@apple.com>
 
         WebKit.framework installs or references Mac-only headers on iOS

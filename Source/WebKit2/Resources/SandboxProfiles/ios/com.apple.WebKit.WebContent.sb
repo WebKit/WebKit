@@ -82,7 +82,9 @@
 
 ;; AWD logging
 (allow mach-lookup (global-name "com.apple.awdd"))
+(allow-create-directory
+    (literal "/private/var/mobile/Library/Logs/awd"))
 (allow file-read* file-write*
-    (literal "/private/var/mobile/Library/Logs/awd/awd-com.apple.WebKit.WebContent.log"))
+    (subpath "/private/var/mobile/Library/Logs/awd"))
 
 (network-client (remote tcp))
