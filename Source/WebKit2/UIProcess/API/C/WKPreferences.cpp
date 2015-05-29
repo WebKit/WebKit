@@ -1366,3 +1366,13 @@ bool WKPreferencesGetMetaRefreshEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->metaRefreshEnabled();
 }
+
+void WKPreferencesSetAllowsAirPlayForMediaPlayback(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setAllowsAirPlayForMediaPlayback(enabled);
+}
+
+bool WKPreferencesGetAllowsAirPlayForMediaPlayback(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->allowsAirPlayForMediaPlayback();
+}

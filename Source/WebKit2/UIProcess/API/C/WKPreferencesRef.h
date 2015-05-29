@@ -258,6 +258,10 @@ WK_EXPORT WKDebugOverlayRegions WKPreferencesGetVisibleDebugOverlayRegions(WKPre
 WK_EXPORT void WKPreferencesSetIgnoreViewportScalingConstraints(WKPreferencesRef preferencesRef, bool enabled);
 WK_EXPORT bool WKPreferencesGetIgnoreViewportScalingConstraints(WKPreferencesRef preferencesRef);
 
+// Defaults to true.
+WK_EXPORT void WKPreferencesSetAllowsAirPlayForMediaPlayback(WKPreferencesRef preferencesRef, bool enabled);
+WK_EXPORT bool WKPreferencesGetAllowsAirPlayForMediaPlayback(WKPreferencesRef preferencesRef);
+
 #ifdef __cplusplus
 }
 #endif
