@@ -1,3 +1,22 @@
+2015-05-29  Zalan Bujtas  <zalan@apple.com>
+
+        Text disappears shortly after page load on Nexus 7 site.
+        https://bugs.webkit.org/show_bug.cgi?id=145467
+        rdar://problem/18327239
+
+        Reviewed by Simon Fraser.
+
+        This patch ensures that overlap testing for composited layers works properly when the sibling
+        layer gets composited through its child.
+
+        When a layer gets composited through its child content, the recursive overlap testing should build up the
+        overlapmap stack so that sibling content is intersected both against the child and its parent bounds.
+
+        * compositing/sibling-layer-does-not-get-composited-overflow-hidden-case-expected.html: Added.
+        * compositing/sibling-layer-does-not-get-composited-overflow-hidden-case.html: Added.
+        * compositing/sibling-layer-does-not-get-composited-transform-case-expected.html: Added.
+        * compositing/sibling-layer-does-not-get-composited-transform-case.html: Added.
+
 2015-05-29  Chris Dumez  <cdumez@apple.com>
 
         Consider throttling DOM timers in iframes outside the viewport
