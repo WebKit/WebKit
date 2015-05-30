@@ -2927,18 +2927,6 @@ sub GenerateImplementation
     }
 
     if ((!$hasParent && !GetCustomIsReachable($interface)) || GetGenerateIsReachable($interface) || $codeGenerator->InheritsExtendedAttribute($interface, "ActiveDOMObject")) {
-        if (GetGenerateIsReachable($interface)) {
-            push(@implContent, "static inline bool isObservable(JS${interfaceName}* js${interfaceName})\n");
-            push(@implContent, "{\n");
-            push(@implContent, "    if (js${interfaceName}->hasCustomProperties())\n");
-            push(@implContent, "        return true;\n");
-            if ($eventTarget) {
-                push(@implContent, "    if (js${interfaceName}->impl().hasEventListeners())\n");
-                push(@implContent, "        return true;\n");
-            }
-            push(@implContent, "    return false;\n");
-            push(@implContent, "}\n\n");
-        }
 
         push(@implContent, "bool JS${interfaceName}Owner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)\n");
         push(@implContent, "{\n");
@@ -2948,7 +2936,7 @@ sub GenerateImplementation
         # their pending activities complete. To wallpaper over this bug, JavaScript
         # wrappers unconditionally keep ActiveDOMObjects with pending activity alive.
         # FIXME: Fix this lifetime issue in the DOM, and move this hasPendingActivity
-        # check below the isObservable check.
+        # check just above the (GetGenerateIsReachable($interface) eq "Impl") check below.
         my $emittedJSCast = 0;
         if ($codeGenerator->InheritsExtendedAttribute($interface, "ActiveDOMObject")) {
             push(@implContent, "    auto* js${interfaceName} = jsCast<JS${interfaceName}*>(handle.slot()->asCell());\n");
@@ -2977,8 +2965,6 @@ sub GenerateImplementation
                 push(@implContent, "    auto* js${interfaceName} = jsCast<JS${interfaceName}*>(handle.slot()->asCell());\n");
                 $emittedJSCast = 1;
             }
-            push(@implContent, "    if (!isObservable(js${interfaceName}))\n");
-            push(@implContent, "        return false;\n");
 
             my $rootString;
             if (GetGenerateIsReachable($interface) eq "Impl") {

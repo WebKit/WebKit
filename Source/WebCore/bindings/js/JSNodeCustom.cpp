@@ -76,23 +76,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static inline bool isObservable(JSNode* jsNode, Node* node)
-{
-    // The root node keeps the tree intact.
-    if (!node->parentNode())
-        return true;
-
-    if (jsNode->hasCustomProperties())
-        return true;
-
-    // A node's JS wrapper is responsible for marking its JS event listeners.
-    if (node->hasEventListeners())
-        return true;
-
-    return false;
-}
-
-static inline bool isReachableFromDOM(JSNode* jsNode, Node* node, SlotVisitor& visitor)
+static inline bool isReachableFromDOM(Node* node, SlotVisitor& visitor)
 {
     if (!node->inDocument()) {
         if (is<Element>(*node)) {
@@ -121,13 +105,13 @@ static inline bool isReachableFromDOM(JSNode* jsNode, Node* node, SlotVisitor& v
             return true;
     }
 
-    return isObservable(jsNode, node) && visitor.containsOpaqueRoot(root(node));
+    return visitor.containsOpaqueRoot(root(node));
 }
 
 bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     JSNode* jsNode = jsCast<JSNode*>(handle.slot()->asCell());
-    return isReachableFromDOM(jsNode, &jsNode->impl(), visitor);
+    return isReachableFromDOM(&jsNode->impl(), visitor);
 }
 
 JSValue JSNode::insertBefore(ExecState* exec)
