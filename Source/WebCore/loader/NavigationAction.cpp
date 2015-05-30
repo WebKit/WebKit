@@ -48,7 +48,7 @@ static NavigationType navigationType(FrameLoadType frameLoadType, bool isFormSub
     return NavigationType::Other;
 }
 
-NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, NavigationType type, PassRefPtr<Event> event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
+NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, NavigationType type, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
     : m_resourceRequest(resourceRequest)
     , m_type(type)
     , m_event(event)
@@ -77,7 +77,7 @@ NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, Frame
 {
 }
 
-NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, NavigationType type, PassRefPtr<Event> event)
+NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, NavigationType type, Event* event)
     : NavigationAction(resourceRequest, type, event, ShouldOpenExternalURLsPolicy::ShouldNotAllow)
 {
 }
@@ -87,7 +87,7 @@ NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, Navig
 {
 }
 
-NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, FrameLoadType frameLoadType, bool isFormSubmission, PassRefPtr<Event> event)
+NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, FrameLoadType frameLoadType, bool isFormSubmission, Event* event)
     : NavigationAction(resourceRequest, navigationType(frameLoadType, isFormSubmission, event), event, ShouldOpenExternalURLsPolicy::ShouldNotAllow)
 {
 }

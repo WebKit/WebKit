@@ -43,10 +43,10 @@ public:
     WEBCORE_EXPORT explicit NavigationAction(const ResourceRequest&);
     WEBCORE_EXPORT NavigationAction(const ResourceRequest&, NavigationType);
     WEBCORE_EXPORT NavigationAction(const ResourceRequest&, FrameLoadType, bool isFormSubmission);
-    NavigationAction(const ResourceRequest&, NavigationType, PassRefPtr<Event>);
-    NavigationAction(const ResourceRequest&, NavigationType, PassRefPtr<Event>, ShouldOpenExternalURLsPolicy);
+    NavigationAction(const ResourceRequest&, NavigationType, Event*);
+    NavigationAction(const ResourceRequest&, NavigationType, Event*, ShouldOpenExternalURLsPolicy);
     NavigationAction(const ResourceRequest&, NavigationType, ShouldOpenExternalURLsPolicy);
-    NavigationAction(const ResourceRequest&, FrameLoadType, bool isFormSubmission, PassRefPtr<Event>);
+    NavigationAction(const ResourceRequest&, FrameLoadType, bool isFormSubmission, Event*);
 
     bool isEmpty() const { return m_resourceRequest.url().isEmpty(); }
 
