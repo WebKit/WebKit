@@ -1,3 +1,36 @@
+2015-05-29  Mark Lam  <mark.lam@apple.com>
+
+        Refactoring HandlerInfo and UnlinkedHandlerInfo.
+        https://bugs.webkit.org/show_bug.cgi?id=145480
+
+        Reviewed by Benjamin Poulain.
+
+        HandlerInfo and UnlinkedHandlerInfo have common parts, but are not currently
+        expressed as 2 unrelated structs that happen to have near identical fields.
+        We can refactor them to better express their relationship.  We can also add
+        some convenience functions to make the code that uses them a little more
+        readable.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::handlerForBytecodeOffset):
+        * bytecode/HandlerInfo.h:
+        (JSC::UnlinkedHandlerInfo::UnlinkedHandlerInfo):
+        (JSC::HandlerInfo::initialize):
+        - I chose to include CodeLocationLabel arg even though it is unused by
+          by non-JIT builds.  This makes the call site cleaner to read.
+
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedSimpleJumpTable::add):
+        (JSC::UnlinkedInstruction::UnlinkedInstruction):
+        (JSC::UnlinkedCodeBlock::numberOfExceptionHandlers):
+        (JSC::UnlinkedCodeBlock::addExceptionHandler):
+        (JSC::UnlinkedCodeBlock::exceptionHandler):
+        (JSC::UnlinkedCodeBlock::symbolTable):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+
 2015-05-28  Filip Pizlo  <fpizlo@apple.com>
 
         Non-speculative Branch should be fast in the FTL

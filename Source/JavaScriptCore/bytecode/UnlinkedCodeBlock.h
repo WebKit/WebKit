@@ -30,6 +30,7 @@
 #include "CodeSpecializationKind.h"
 #include "CodeType.h"
 #include "ExpressionRangeInfo.h"
+#include "HandlerInfo.h"
 #include "Identifier.h"
 #include "JSCell.h"
 #include "JSString.h"
@@ -246,13 +247,6 @@ struct UnlinkedSimpleJumpTable {
     }
 };
 
-struct UnlinkedHandlerInfo {
-    uint32_t start;
-    uint32_t end;
-    uint32_t target;
-    uint32_t scopeDepth;
-};
-
 struct UnlinkedInstruction {
     UnlinkedInstruction() { u.operand = 0; }
     UnlinkedInstruction(OpcodeID opcode) { u.opcode = opcode; }
@@ -427,7 +421,7 @@ public:
 
     // Exception handling support
     size_t numberOfExceptionHandlers() const { return m_rareData ? m_rareData->m_exceptionHandlers.size() : 0; }
-    void addExceptionHandler(const UnlinkedHandlerInfo& hanler) { createRareDataIfNecessary(); return m_rareData->m_exceptionHandlers.append(hanler); }
+    void addExceptionHandler(const UnlinkedHandlerInfo& handler) { createRareDataIfNecessary(); return m_rareData->m_exceptionHandlers.append(handler); }
     UnlinkedHandlerInfo& exceptionHandler(int index) { ASSERT(m_rareData); return m_rareData->m_exceptionHandlers[index]; }
 
     SymbolTable* symbolTable() const { return m_symbolTable.get(); }

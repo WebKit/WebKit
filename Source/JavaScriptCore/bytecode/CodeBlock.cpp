@@ -654,7 +654,9 @@ void CodeBlock::dumpBytecode(PrintStream& out)
         out.printf("\nException Handlers:\n");
         unsigned i = 0;
         do {
-            out.printf("\t %d: { start: [%4d] end: [%4d] target: [%4d] depth: [%4d] }\n", i + 1, m_rareData->m_exceptionHandlers[i].start, m_rareData->m_exceptionHandlers[i].end, m_rareData->m_exceptionHandlers[i].target, m_rareData->m_exceptionHandlers[i].scopeDepth);
+            HandlerInfo& handler = m_rareData->m_exceptionHandlers[i];
+            out.printf("\t %d: { start: [%4d] end: [%4d] target: [%4d] depth: [%4d] }\n",
+                i + 1, handler.start, handler.end, handler.target, handler.scopeDepth);
             ++i;
         } while (i < m_rareData->m_exceptionHandlers.size());
     }
@@ -1819,14 +1821,10 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             m_rareData->m_exceptionHandlers.resizeToFit(count);
             size_t nonLocalScopeDepth = scope->depth();
             for (size_t i = 0; i < count; i++) {
-                const UnlinkedHandlerInfo& handler = unlinkedCodeBlock->exceptionHandler(i);
-                m_rareData->m_exceptionHandlers[i].start = handler.start;
-                m_rareData->m_exceptionHandlers[i].end = handler.end;
-                m_rareData->m_exceptionHandlers[i].target = handler.target;
-                m_rareData->m_exceptionHandlers[i].scopeDepth = nonLocalScopeDepth + handler.scopeDepth;
-#if ENABLE(JIT)
-                m_rareData->m_exceptionHandlers[i].nativeCode = CodeLocationLabel(MacroAssemblerCodePtr::createFromExecutableAddress(LLInt::getCodePtr(op_catch)));
-#endif
+                const UnlinkedHandlerInfo& unlinkedHandler = unlinkedCodeBlock->exceptionHandler(i);
+                HandlerInfo& handler = m_rareData->m_exceptionHandlers[i];
+                handler.initialize(unlinkedHandler, nonLocalScopeDepth,
+                    CodeLocationLabel(MacroAssemblerCodePtr::createFromExecutableAddress(LLInt::getCodePtr(op_catch))));
             }
         }
 
@@ -2885,10 +2883,11 @@ HandlerInfo* CodeBlock::handlerForBytecodeOffset(unsigned bytecodeOffset)
     
     Vector<HandlerInfo>& exceptionHandlers = m_rareData->m_exceptionHandlers;
     for (size_t i = 0; i < exceptionHandlers.size(); ++i) {
+        HandlerInfo& handler = exceptionHandlers[i];
         // Handlers are ordered innermost first, so the first handler we encounter
         // that contains the source address is the correct handler to use.
-        if (exceptionHandlers[i].start <= bytecodeOffset && exceptionHandlers[i].end > bytecodeOffset)
-            return &exceptionHandlers[i];
+        if (handler.start <= bytecodeOffset && handler.end > bytecodeOffset)
+            return &handler;
     }
 
     return 0;

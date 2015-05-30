@@ -30,11 +30,37 @@
 
 namespace JSC {
 
-struct HandlerInfo {
+struct HandlerInfoBase {
     uint32_t start;
     uint32_t end;
     uint32_t target;
     uint32_t scopeDepth;
+};
+
+struct UnlinkedHandlerInfo : public HandlerInfoBase {
+    UnlinkedHandlerInfo(uint32_t start, uint32_t end, uint32_t target, uint32_t scopeDepth)
+    {
+        this->start = start;
+        this->end = end;
+        this->target = target;
+        this->scopeDepth = scopeDepth;
+    }
+};
+
+struct HandlerInfo : public HandlerInfoBase {
+    void initialize(const UnlinkedHandlerInfo& unlinkedInfo, size_t nonLocalScopeDepth, CodeLocationLabel label)
+    {
+        start = unlinkedInfo.start;
+        end = unlinkedInfo.end;
+        target = unlinkedInfo.target;
+        scopeDepth = unlinkedInfo.scopeDepth + nonLocalScopeDepth;
+#if ENABLE(JIT)
+        nativeCode = label;
+#else
+        UNUSED_PARAM(label);
+#endif
+    }
+
 #if ENABLE(JIT)
     CodeLocationLabel nativeCode;
 #endif

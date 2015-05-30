@@ -129,11 +129,8 @@ ParserError BytecodeGenerator::generate()
             continue;
         
         ASSERT(range.tryData->targetScopeDepth != UINT_MAX);
-        UnlinkedHandlerInfo info = {
-            static_cast<uint32_t>(start), static_cast<uint32_t>(end),
-            static_cast<uint32_t>(range.tryData->target->bind()),
-            range.tryData->targetScopeDepth
-        };
+        UnlinkedHandlerInfo info(static_cast<uint32_t>(start), static_cast<uint32_t>(end),
+            static_cast<uint32_t>(range.tryData->target->bind()), range.tryData->targetScopeDepth);
         m_codeBlock->addExceptionHandler(info);
     }
     
