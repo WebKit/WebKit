@@ -349,7 +349,9 @@ FloatRect TileController::computeTileCoverageRect(const FloatSize& newSize, cons
             futureRect.setY(futureRect.y() - verticalMargin);
     }
 
-    if (m_velocity.scaleChangeRate <= 0 && !m_velocity.horizontalVelocity && !m_velocity.verticalVelocity) {
+    if (!m_velocity.horizontalVelocity && !m_velocity.verticalVelocity) {
+        if (m_velocity.scaleChangeRate > 0)
+            return visibleRect;
         futureRect.setWidth(futureRect.width() + horizontalMargin);
         futureRect.setHeight(futureRect.height() + verticalMargin);
         futureRect.setX(futureRect.x() - horizontalMargin / 2);
