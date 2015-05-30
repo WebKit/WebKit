@@ -1,3 +1,15 @@
+2015-05-30  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL codegen for MultiGetByOffset and MultiPutByOffset where the structure set is already proved should have an unreachable default case instead of an exit
+        https://bugs.webkit.org/show_bug.cgi?id=145469
+
+        Reviewed by Geoffrey Garen.
+
+        * js/regress/repeat-multi-get-by-offset-expected.txt: Added.
+        * js/regress/repeat-multi-get-by-offset.html: Added.
+        * js/regress/script-tests/repeat-multi-get-by-offset.js: Added.
+        (foo):
+
 2015-05-29  Keith Miller  <keith_miller@apple.com>
 
         WeakMap reference w/ DOM element as key does not survive long enough.

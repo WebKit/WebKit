@@ -3778,11 +3778,13 @@ private:
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("MultiGetByOffset continuation"));
         
         Vector<SwitchCase, 2> cases;
+        StructureSet baseSet;
         for (unsigned i = data.variants.size(); i--;) {
             GetByIdVariant variant = data.variants[i];
             for (unsigned j = variant.structureSet().size(); j--;) {
-                cases.append(SwitchCase(
-                    weakStructureID(variant.structureSet()[j]), blocks[i], Weight(1)));
+                Structure* structure = variant.structureSet()[j];
+                baseSet.add(structure);
+                cases.append(SwitchCase(weakStructureID(structure), blocks[i], Weight(1)));
             }
         }
         m_out.switchInstruction(
@@ -3795,6 +3797,7 @@ private:
             m_out.appendTo(blocks[i], i + 1 < data.variants.size() ? blocks[i + 1] : exit);
             
             GetByIdVariant variant = data.variants[i];
+            baseSet.merge(variant.structureSet());
             LValue result;
             JSValue constantResult;
             if (variant.alternateBase()) {
@@ -3819,7 +3822,8 @@ private:
         }
         
         m_out.appendTo(exit, continuation);
-        speculate(BadCache, noValue(), nullptr, m_out.booleanTrue);
+        if (!m_interpreter.forNode(m_node->child1()).m_structure.isSubsetOf(baseSet))
+            speculate(BadCache, noValue(), nullptr, m_out.booleanTrue);
         m_out.unreachable();
         
         m_out.appendTo(continuation, lastNext);
@@ -3849,11 +3853,13 @@ private:
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("MultiPutByOffset continuation"));
         
         Vector<SwitchCase, 2> cases;
+        StructureSet baseSet;
         for (unsigned i = data.variants.size(); i--;) {
             PutByIdVariant variant = data.variants[i];
             for (unsigned j = variant.oldStructure().size(); j--;) {
-                cases.append(
-                    SwitchCase(weakStructureID(variant.oldStructure()[j]), blocks[i], Weight(1)));
+                Structure* structure = variant.oldStructure()[j];
+                baseSet.add(structure);
+                cases.append(SwitchCase(weakStructureID(structure), blocks[i], Weight(1)));
             }
         }
         m_out.switchInstruction(
@@ -3893,7 +3899,8 @@ private:
         }
         
         m_out.appendTo(exit, continuation);
-        speculate(BadCache, noValue(), nullptr, m_out.booleanTrue);
+        if (!m_interpreter.forNode(m_node->child1()).m_structure.isSubsetOf(baseSet))
+            speculate(BadCache, noValue(), nullptr, m_out.booleanTrue);
         m_out.unreachable();
         
         m_out.appendTo(continuation, lastNext);

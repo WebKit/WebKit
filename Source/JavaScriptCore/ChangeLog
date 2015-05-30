@@ -1,3 +1,18 @@
+2015-05-29  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL codegen for MultiGetByOffset and MultiPutByOffset where the structure set is already proved should have an unreachable default case instead of an exit
+        https://bugs.webkit.org/show_bug.cgi?id=145469
+
+        Reviewed by Geoffrey Garen.
+        
+        Omitting the speculation on the fail path when the speculation is guaranteed not to be
+        taken hints to LLVM that the default case is impossible. This enables some useful
+        optimizations.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileMultiGetByOffset):
+        (JSC::FTL::LowerDFGToLLVM::compileMultiPutByOffset):
+
 2015-05-29  Mark Lam  <mark.lam@apple.com>
 
         Refactoring HandlerInfo and UnlinkedHandlerInfo.
