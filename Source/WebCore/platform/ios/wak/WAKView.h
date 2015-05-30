@@ -36,6 +36,16 @@
 extern NSString *WAKViewFrameSizeDidChangeNotification;
 extern NSString *WAKViewDidScrollNotification;
 
+enum {
+    NSViewNotSizable = 0,
+    NSViewMinXMargin = 1,
+    NSViewWidthSizable = 2,
+    NSViewMaxXMargin = 4,
+    NSViewMinYMargin = 8,
+    NSViewHeightSizable = 16,
+    NSViewMaxYMargin = 32
+};
+
 @class WAKWindow;
 
 WEBCORE_EXPORT @interface WAKView : WAKResponder

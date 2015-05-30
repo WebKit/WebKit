@@ -39,7 +39,6 @@
 #import <sys/param.h>
 
 #if PLATFORM(IOS)
-#import <WebCore/WAKViewPrivate.h>
 #import <WebKitLegacy/DOM.h>
 #import <WebKitLegacy/WebFrame.h>
 #import <WebKitLegacy/WebFrameView.h>

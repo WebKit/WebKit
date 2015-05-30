@@ -31,7 +31,6 @@
 #import "GraphicsContext.h"
 #import "WAKClipView.h"
 #import "WAKScrollView.h"
-#import "WAKViewPrivate.h"
 #import "WAKWindow.h"
 #import "WKGraphics.h"
 #import "WKUtilities.h"

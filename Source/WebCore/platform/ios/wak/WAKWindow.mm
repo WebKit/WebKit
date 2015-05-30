@@ -29,7 +29,7 @@
 #if PLATFORM(IOS)
 
 #import "LegacyTileCache.h"
-#import "WAKViewPrivate.h"
+#import "WAKViewInternal.h"
 #import "WebCoreSystemInterface.h"
 #import "WebCoreThreadRun.h"
 #import "WebEvent.h"

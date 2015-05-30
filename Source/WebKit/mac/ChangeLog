@@ -1,5 +1,24 @@
 2015-05-29  Anders Carlsson  <andersca@apple.com>
 
+        Get rid of WAKViewPrivate.h
+        https://bugs.webkit.org/show_bug.cgi?id=145482
+        rdar://problem/21162149
+
+        Reviewed by Dan Bernstein.
+
+        Remove WAKViewPrivate.h imports.
+
+        * DefaultDelegates/WebDefaultUIDelegate.m:
+        * MigrateHeaders.make:
+        * Misc/WebKitNSStringExtras.mm:
+        * Misc/WebNSViewExtras.m:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebView/WebFrame.mm:
+        * WebView/WebFrameView.mm:
+        * WebView/WebHTMLView.mm:
+
+2015-05-29  Anders Carlsson  <andersca@apple.com>
+
         WebResourceLoadDelegatePrivate.h cannot be imported standalone (missing WebNSInteger type)
         https://bugs.webkit.org/show_bug.cgi?id=145476
         rdar://problem/21162400

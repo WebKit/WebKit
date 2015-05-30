@@ -25,7 +25,8 @@
 
 #if TARGET_OS_IPHONE
 
-#import "WAKViewPrivate.h"
+#import "WAKView.h"
+#import "WKView.h"
 
 @interface WAKView () {
 @package
@@ -39,6 +40,23 @@
     BOOL _drawsOwnDescendants;
 }
 
+- (WKViewRef)_viewRef;
++ (WAKView *)_wrapperForViewRef:(WKViewRef)_viewRef;
+- (id)_initWithViewRef:(WKViewRef)view;
+- (BOOL)_handleResponderCall:(WKViewResponderCallbackType)type;
+- (NSMutableSet *)_subviewReferences;
+- (BOOL)_selfHandleEvent:(WebEvent *)event;
+
 @end
+
+static inline WAKView *WAKViewForWKViewRef(WKViewRef view)
+{
+    if (!view)
+        return nil;
+    WAKView *wrapper = (WAKView *)view->wrapper;
+    if (wrapper)
+        return wrapper;
+    return [WAKView _wrapperForViewRef:view];
+}
 
 #endif

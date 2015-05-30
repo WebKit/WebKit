@@ -41,7 +41,6 @@
 #endif
 
 #if PLATFORM(IOS)
-#import <WebCore/WAKViewPrivate.h>
 #import <WebCore/WAKWindow.h>
 #endif
 

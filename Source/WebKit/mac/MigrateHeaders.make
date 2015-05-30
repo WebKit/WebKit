@@ -208,7 +208,6 @@ all : \
     $(PRIVATE_HEADERS_DIR)/WAKResponder.h \
     $(PRIVATE_HEADERS_DIR)/WAKScrollView.h \
     $(PRIVATE_HEADERS_DIR)/WAKView.h \
-    $(PRIVATE_HEADERS_DIR)/WAKViewPrivate.h \
     $(PRIVATE_HEADERS_DIR)/WAKWindow.h \
     $(PRIVATE_HEADERS_DIR)/WKContentObservation.h \
     $(PRIVATE_HEADERS_DIR)/WKGraphics.h \

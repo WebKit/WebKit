@@ -3830,7 +3830,6 @@
 		A14832B7187F636C00DA63A6 /* WAKScrollView.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1483293187F508700DA63A6 /* WAKScrollView.mm */; };
 		A14832B8187F638600DA63A6 /* WAKView.h in Headers */ = {isa = PBXBuildFile; fileRef = A1483294187F508700DA63A6 /* WAKView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A14832B9187F63D500DA63A6 /* WAKView.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1483295187F508700DA63A6 /* WAKView.mm */; };
-		A14832BA187F63E900DA63A6 /* WAKViewPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A1483296187F508700DA63A6 /* WAKViewPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A14832BB187F643200DA63A6 /* WAKWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = A1483297187F508700DA63A6 /* WAKWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A14832BC187F648E00DA63A6 /* WAKWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1483298187F508700DA63A6 /* WAKWindow.mm */; };
 		A14832BD187F64B400DA63A6 /* WKContentObservation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A14832A2187F508700DA63A6 /* WKContentObservation.cpp */; };
@@ -11134,7 +11133,6 @@
 		A1483293187F508700DA63A6 /* WAKScrollView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WAKScrollView.mm; sourceTree = "<group>"; };
 		A1483294187F508700DA63A6 /* WAKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WAKView.h; sourceTree = "<group>"; };
 		A1483295187F508700DA63A6 /* WAKView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WAKView.mm; sourceTree = "<group>"; };
-		A1483296187F508700DA63A6 /* WAKViewPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WAKViewPrivate.h; sourceTree = "<group>"; };
 		A1483297187F508700DA63A6 /* WAKWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WAKWindow.h; sourceTree = "<group>"; };
 		A1483298187F508700DA63A6 /* WAKWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WAKWindow.mm; sourceTree = "<group>"; };
 		A1483299187F508700DA63A6 /* WebCoreThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreThread.h; sourceTree = "<group>"; };
@@ -18789,7 +18787,6 @@
 				A1483294187F508700DA63A6 /* WAKView.h */,
 				A1483295187F508700DA63A6 /* WAKView.mm */,
 				1A874ADE19085E9100B03171 /* WAKViewInternal.h */,
-				A1483296187F508700DA63A6 /* WAKViewPrivate.h */,
 				A1483297187F508700DA63A6 /* WAKWindow.h */,
 				A1483298187F508700DA63A6 /* WAKWindow.mm */,
 				A1483299187F508700DA63A6 /* WebCoreThread.h */,
@@ -27028,7 +27025,6 @@
 				A14832B6187F631F00DA63A6 /* WAKScrollView.h in Headers */,
 				A14832B8187F638600DA63A6 /* WAKView.h in Headers */,
 				1A874ADF19085E9100B03171 /* WAKViewInternal.h in Headers */,
-				A14832BA187F63E900DA63A6 /* WAKViewPrivate.h in Headers */,
 				A14832BB187F643200DA63A6 /* WAKWindow.h in Headers */,
 				FD7F299213D4C0CB00AD9535 /* WaveShaperDSPKernel.h in Headers */,
 				FD7F299413D4C0CB00AD9535 /* WaveShaperNode.h in Headers */,

@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 #import "WKViewPrivate.h"
 
 #if PLATFORM(IOS)
 
-#import "WAKViewPrivate.h"
+#import "WAKViewInternal.h"
 #import "WAKWindow.h"
 #import "WKUtilities.h"
 #import <wtf/Assertions.h>

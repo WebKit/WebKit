@@ -34,7 +34,7 @@
 #import "WAKAppKitStubs.h"
 #import "WAKClipView.h"
 #import "WAKScrollView.h"
-#import "WAKViewPrivate.h"
+#import "WAKViewInternal.h"
 #import "WAKWindow.h"
 #import "WKViewPrivate.h"
 #import "WebCoreFrameView.h"
