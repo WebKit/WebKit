@@ -179,22 +179,23 @@ class BenchmarkResults(object):
     def _lint_subtest_results(cls, subtests, parent_needing_aggregation):
         iteration_groups_by_config = {}
         for test_name, test in subtests.iteritems():
-            if 'metrics' not in test:
-                raise TypeError('"%s" does not contain metrics' % test_name)
-
-            metrics = test['metrics']
-            if not isinstance(metrics, dict):
-                raise TypeError('The metrics in "%s" is not a dictionary' % test_name)
-
             needs_aggregation = False
-            for metric_name, metric in metrics.iteritems():
-                if isinstance(metric, list):
-                    cls._lint_aggregator_list(test_name, metric_name, metric)
-                    needs_aggregation = True
-                elif isinstance(metric, dict):
-                    cls._lint_configuration(test_name, metric_name, metric, parent_needing_aggregation, iteration_groups_by_config)
-                else:
-                    raise TypeError('"%s" metric of "%s" was not an aggregator list or a dictionary of configurations: %s' % (metric_name, test_name, str(metric)))
+
+            if 'metrics' not in test and 'tests' not in test:
+                raise TypeError('"%s" does not contain metrics or tests' % test_name)
+
+            if 'metrics' in test:
+                metrics = test['metrics']
+                if not isinstance(metrics, dict):
+                    raise TypeError('The metrics in "%s" is not a dictionary' % test_name)
+                for metric_name, metric in metrics.iteritems():
+                    if isinstance(metric, list):
+                        cls._lint_aggregator_list(test_name, metric_name, metric)
+                        needs_aggregation = True
+                    elif isinstance(metric, dict):
+                        cls._lint_configuration(test_name, metric_name, metric, parent_needing_aggregation, iteration_groups_by_config)
+                    else:
+                        raise TypeError('"%s" metric of "%s" was not an aggregator list or a dictionary of configurations: %s' % (metric_name, test_name, str(metric)))
 
             if 'tests' in test:
                 cls._lint_subtest_results(test['tests'], test_name if needs_aggregation else None)

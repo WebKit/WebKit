@@ -195,7 +195,7 @@ SomeTest:Time:Arithmetic: 3.0ms stdev=33.3%
                     'SubTest2': {'metrics': {'Time': {None: {'current': [5, 6]}}}, 'tests': {}}}}})
 
     def test_lint_results(self):
-        with self.assertRaisesRegexp(TypeError, r'"SomeTest" does not contain metrics'):
+        with self.assertRaisesRegexp(TypeError, r'"SomeTest" does not contain metrics or tests'):
             BenchmarkResults._lint_results({'SomeTest': {}})
 
         with self.assertRaisesRegexp(TypeError, r'The metrics in "SomeTest" is not a dictionary'):

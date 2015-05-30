@@ -1,3 +1,14 @@
+2015-05-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed build fix after r185014. Some tests only have subtests and not metrics.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_results.py:
+        (BenchmarkResults._lint_subtest_results):
+        * Scripts/webkitpy/benchmark_runner/benchmark_results_unittest.py:
+        (test_aggregate_nested_results):
+        (test_lint_results):
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherResource.h:
+
 2015-05-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-benchmark should print out the results
