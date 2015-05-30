@@ -151,18 +151,9 @@ JSValue JSTestGenerateIsReachable::getConstructor(VM& vm, JSGlobalObject* global
     return getDOMConstructor<JSTestGenerateIsReachableConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
-static inline bool isObservable(JSTestGenerateIsReachable* jsTestGenerateIsReachable)
-{
-    if (jsTestGenerateIsReachable->hasCustomProperties())
-        return true;
-    return false;
-}
-
 bool JSTestGenerateIsReachableOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     auto* jsTestGenerateIsReachable = jsCast<JSTestGenerateIsReachable*>(handle.slot()->asCell());
-    if (!isObservable(jsTestGenerateIsReachable))
-        return false;
     TestGenerateIsReachable* root = &jsTestGenerateIsReachable->impl();
     return visitor.containsOpaqueRoot(root);
 }
