@@ -2728,14 +2728,14 @@ void WebPage::applicationDidBecomeActive()
     [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationDidBecomeActiveNotification object:nil];
 }
 
-static inline void adjustVelocityDataForBoundedScale(double& horizontalVelocity, double& verticalVelocity, double& scaleChangeRate, double exposedRectScale, double boundedScale)
+static inline void adjustVelocityDataForBoundedScale(double& horizontalVelocity, double& verticalVelocity, double& scaleChangeRate, double exposedRectScale, double minimumScale, double maximumScale)
 {
     if (scaleChangeRate) {
         horizontalVelocity = 0;
         verticalVelocity = 0;
     }
 
-    if (exposedRectScale != boundedScale)
+    if (exposedRectScale >= maximumScale || exposedRectScale <= minimumScale)
         scaleChangeRate = 0;
 }
 
@@ -2814,7 +2814,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     double horizontalVelocity = visibleContentRectUpdateInfo.horizontalVelocity();
     double verticalVelocity = visibleContentRectUpdateInfo.verticalVelocity();
     double scaleChangeRate = visibleContentRectUpdateInfo.scaleChangeRate();
-    adjustVelocityDataForBoundedScale(horizontalVelocity, verticalVelocity, scaleChangeRate, visibleContentRectUpdateInfo.scale(), boundedScale);
+    adjustVelocityDataForBoundedScale(horizontalVelocity, verticalVelocity, scaleChangeRate, visibleContentRectUpdateInfo.scale(), m_viewportConfiguration.minimumScale(), m_viewportConfiguration.maximumScale());
 
     frameView.setScrollVelocity(horizontalVelocity, verticalVelocity, scaleChangeRate, visibleContentRectUpdateInfo.timestamp());
 

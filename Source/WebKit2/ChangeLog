@@ -1,3 +1,21 @@
+2015-05-29  Andreas Kling  <akling@apple.com>
+
+        [iOS] When bouncing back from max pinch zoom scale, scaleChangeRate should be 0.
+        <https://webkit.org/b/145487>
+        <rdar://problem/20989389>
+
+        Reviewed by Benjamin Poulain.
+
+        Make sure we don't send WebCore some velocity data with non-zero scaleChangeRate
+        when we bounce back from being pinch-zoomed past the maximum scale.
+
+        This fixes an issue where the bounce-back animation would cause a burst of
+        unnecessary tile generation.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::adjustVelocityDataForBoundedScale):
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2015-05-29  Jon Lee  <jonlee@apple.com>
 
         Fix preferences for wireless playback
