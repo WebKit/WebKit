@@ -1,5 +1,20 @@
 2015-05-29  Anders Carlsson  <andersca@apple.com>
 
+        Make the header replace rule more restrictive and get rid of a special case
+        https://bugs.webkit.org/show_bug.cgi?id=145486
+
+        Reviewed by Ryosuke Niwa.
+
+        We used to not run the header migration script on WAKScrollView.h since we had a rule that would transform
+        "<WebCore" to "<WebKitLegacy" to convert header #imports. However, WAKScrollView.h contains "WAKView <WebCoreFrameScrollView>" 
+        which would get transformed to "WAKView <WebKitLegacyFrameScrollView>".
+        
+        Instead, check for the trailing slash as well and stop special-casing WAKScrollView.h.
+
+        * MigrateHeaders.make:
+
+2015-05-29  Anders Carlsson  <andersca@apple.com>
+
         Get rid of WAKViewPrivate.h
         https://bugs.webkit.org/show_bug.cgi?id=145482
         rdar://problem/21162149
