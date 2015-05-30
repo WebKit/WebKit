@@ -1,3 +1,19 @@
+2015-05-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Crash closing a related tab with Web Inspector open while page is refreshing
+        https://bugs.webkit.org/show_bug.cgi?id=145488
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/WebPage/WebInspector.h:
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::~WebInspector):
+        Ensure, no matter how we close, that we have invalidated the
+        frontend connection of which we are the client.
+
+        (WebKit::WebInspector::createInspectorPage):
+        This member variable will never be null.
+
 2015-05-29  Andreas Kling  <akling@apple.com>
 
         [iOS] When bouncing back from max pinch zoom scale, scaleChangeRate should be 0.
