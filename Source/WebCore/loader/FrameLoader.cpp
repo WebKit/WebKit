@@ -317,14 +317,14 @@ void FrameLoader::changeLocation(const FrameLoadRequest& request)
     urlSelected(request, nullptr);
 }
 
-void FrameLoader::urlSelected(const URL& url, const String& passedTarget, PassRefPtr<Event> triggeringEvent, LockHistory lockHistory, LockBackForwardList lockBackForwardList, ShouldSendReferrer shouldSendReferrer)
+void FrameLoader::urlSelected(const URL& url, const String& passedTarget, Event* triggeringEvent, LockHistory lockHistory, LockBackForwardList lockBackForwardList, ShouldSendReferrer shouldSendReferrer)
 {
     NewFrameOpenerPolicy newFrameOpenerPolicy = shouldSendReferrer == NeverSendReferrer ? NewFrameOpenerPolicy::Suppress : NewFrameOpenerPolicy::Allow;
 
     urlSelected(FrameLoadRequest(m_frame.document()->securityOrigin(), ResourceRequest(url), passedTarget, lockHistory, lockBackForwardList, shouldSendReferrer, AllowNavigationToInvalidURL::Yes, newFrameOpenerPolicy, DoNotReplaceDocumentIfJavaScriptURL), triggeringEvent);
 }
 
-void FrameLoader::urlSelected(const FrameLoadRequest& passedRequest, PassRefPtr<Event> triggeringEvent)
+void FrameLoader::urlSelected(const FrameLoadRequest& passedRequest, Event* triggeringEvent)
 {
     Ref<Frame> protect(m_frame);
     FrameLoadRequest frameRequest(passedRequest);
@@ -1141,7 +1141,7 @@ void FrameLoader::setupForReplace()
     detachChildren();
 }
 
-void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, PassRefPtr<Event> event, PassRefPtr<FormState> formState)
+void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, Event* event, PassRefPtr<FormState> formState)
 {    
     // Protect frame from getting blown away inside dispatchBeforeLoadEvent in loadWithDocumentLoader.
     Ref<Frame> protect(m_frame);
@@ -1187,7 +1187,7 @@ void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, PassRefPtr<E
     }
 }
 
-void FrameLoader::loadURL(const FrameLoadRequest& frameLoadRequest, const String& referrer, FrameLoadType newLoadType, PassRefPtr<Event> event, PassRefPtr<FormState> prpFormState)
+void FrameLoader::loadURL(const FrameLoadRequest& frameLoadRequest, const String& referrer, FrameLoadType newLoadType, Event* event, PassRefPtr<FormState> prpFormState)
 {
     if (m_inStopAllLoaders)
         return;
@@ -1230,7 +1230,7 @@ void FrameLoader::loadURL(const FrameLoadRequest& frameLoadRequest, const String
     if (m_pageDismissalEventBeingDispatched != NoDismissal)
         return;
 
-    NavigationAction action(request, newLoadType, isFormSubmission, event.get());
+    NavigationAction action(request, newLoadType, isFormSubmission, event);
 
     if (!targetFrame && !frameName.isEmpty()) {
         policyChecker().checkNewWindowPolicy(action, request, formState.release(), frameName, [this, allowNavigationToInvalidURL, openerPolicy](const ResourceRequest& request, PassRefPtr<FormState> formState, const String& frameName, const NavigationAction& action, bool shouldContinue) {
@@ -2618,7 +2618,7 @@ void FrameLoader::addHTTPOriginIfNeeded(ResourceRequest& request, const String& 
     request.setHTTPOrigin(origin);
 }
 
-void FrameLoader::loadPostRequest(const FrameLoadRequest& request, const String& referrer, FrameLoadType loadType, PassRefPtr<Event> event, PassRefPtr<FormState> prpFormState)
+void FrameLoader::loadPostRequest(const FrameLoadRequest& request, const String& referrer, FrameLoadType loadType, Event* event, PassRefPtr<FormState> prpFormState)
 {
     RefPtr<FormState> formState = prpFormState;
 
@@ -2643,7 +2643,7 @@ void FrameLoader::loadPostRequest(const FrameLoadRequest& request, const String&
     workingResourceRequest.setHTTPContentType(contentType);
     addExtraFieldsToRequest(workingResourceRequest, loadType, true);
 
-    NavigationAction action(workingResourceRequest, loadType, true, event.get());
+    NavigationAction action(workingResourceRequest, loadType, true, event);
 
     if (!frameName.isEmpty()) {
         // The search for a target frame is done earlier in the case of form submission.

@@ -1,3 +1,13 @@
+2015-05-30  Brady Eidson  <beidson@apple.com>
+
+        Make FrameLoader methods that take PassRefPtr<Event> take raw pointers instead.
+        https://bugs.webkit.org/show_bug.cgi?id=145495
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::navigateToPDFLinkWithSimulatedClick):
+
 2015-05-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Crash closing a related tab with Web Inspector open while page is refreshing

@@ -1108,7 +1108,7 @@ void WebPage::navigateToPDFLinkWithSimulatedClick(const String& url, IntPoint do
 
     const int singleClick = 1;
     RefPtr<MouseEvent> mouseEvent = MouseEvent::create(eventNames().clickEvent, true, true, currentTime(), nullptr, singleClick, screenPoint.x(), screenPoint.y(), documentPoint.x(), documentPoint.y(), false, false, false, false, 0, nullptr, 0, nullptr);
-    mainFrame->loader().urlSelected(mainFrameDocument->completeURL(url), emptyString(), mouseEvent.release(), LockHistory::No, LockBackForwardList::No, ShouldSendReferrer::MaybeSendReferrer);
+    mainFrame->loader().urlSelected(mainFrameDocument->completeURL(url), emptyString(), mouseEvent.get(), LockHistory::No, LockBackForwardList::No, ShouldSendReferrer::MaybeSendReferrer);
 }
 
 void WebPage::stopLoadingFrame(uint64_t frameID)

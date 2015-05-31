@@ -109,7 +109,7 @@ public:
 
     // FIXME: These are all functions which start loads. We have too many.
     WEBCORE_EXPORT void loadURLIntoChildFrame(const URL&, const String& referer, Frame*);
-    WEBCORE_EXPORT void loadFrameRequest(const FrameLoadRequest&, PassRefPtr<Event>, PassRefPtr<FormState>); // Called by submitForm, calls loadPostRequest and loadURL.
+    WEBCORE_EXPORT void loadFrameRequest(const FrameLoadRequest&, Event*, PassRefPtr<FormState>); // Called by submitForm, calls loadPostRequest and loadURL.
 
     WEBCORE_EXPORT void load(const FrameLoadRequest&);
 
@@ -119,7 +119,7 @@ public:
     unsigned long loadResourceSynchronously(const ResourceRequest&, StoredCredentials, ClientCredentialPolicy, ResourceError&, ResourceResponse&, RefPtr<SharedBuffer>& data);
 
     void changeLocation(const FrameLoadRequest&);
-    WEBCORE_EXPORT void urlSelected(const URL&, const String& target, PassRefPtr<Event>, LockHistory, LockBackForwardList, ShouldSendReferrer);
+    WEBCORE_EXPORT void urlSelected(const URL&, const String& target, Event*, LockHistory, LockBackForwardList, ShouldSendReferrer);
     void submitForm(PassRefPtr<FormSubmission>);
 
     WEBCORE_EXPORT void reload(bool endToEndReload = false);
@@ -344,7 +344,7 @@ private:
 
     void dispatchDidCommitLoad();
 
-    void urlSelected(const FrameLoadRequest&, PassRefPtr<Event>);
+    void urlSelected(const FrameLoadRequest&, Event*);
 
     void loadWithDocumentLoader(DocumentLoader*, FrameLoadType, PassRefPtr<FormState>, AllowNavigationToInvalidURL); // Calls continueLoadAfterNavigationPolicy
     void load(DocumentLoader*);                                                         // Calls loadWithDocumentLoader   
@@ -352,8 +352,8 @@ private:
     void loadWithNavigationAction(const ResourceRequest&, const NavigationAction&,      // Calls loadWithDocumentLoader
         LockHistory, FrameLoadType, PassRefPtr<FormState>, AllowNavigationToInvalidURL);
 
-    void loadPostRequest(const FrameLoadRequest&, const String& referrer, FrameLoadType, PassRefPtr<Event>, PassRefPtr<FormState>);
-    void loadURL(const FrameLoadRequest&, const String& referrer, FrameLoadType, PassRefPtr<Event>, PassRefPtr<FormState>);
+    void loadPostRequest(const FrameLoadRequest&, const String& referrer, FrameLoadType, Event*, PassRefPtr<FormState>);
+    void loadURL(const FrameLoadRequest&, const String& referrer, FrameLoadType, Event*, PassRefPtr<FormState>);
 
     bool shouldReload(const URL& currentURL, const URL& destinationURL);
 
