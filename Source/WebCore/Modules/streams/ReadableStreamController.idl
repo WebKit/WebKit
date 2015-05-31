@@ -29,6 +29,7 @@
 
 [
     Conditional=STREAMS_API,
+    CustomConstructor,
     ImplementationLacksVTable,
     NoInterfaceObject
 ] interface ReadableStreamController {

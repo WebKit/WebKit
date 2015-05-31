@@ -16,13 +16,13 @@ test(function()
             assert_equals(this, source, 'source is this during start');
 
             // FIXME: We should add constructor at some point.
-            var methods = [ 'close', 'enqueue', 'error' ];
+            var methods = [ 'close', 'constructor', 'enqueue', 'error' ];
             var proto = Object.getPrototypeOf(controller);
 
             assert_array_equals(Object.getOwnPropertyNames(Object.getPrototypeOf(controller)).sort(), methods,
                         'the controller should have the right methods');
 
-            for (var m of methods) {
+            for (var m of [ 'close', 'enqueue', 'error' ]) {
                 var methodProperties = [ 'length', 'name' ];
                 var propDesc = Object.getOwnPropertyDescriptor(proto, m);
                 assert_equals(propDesc.enumerable, true, 'method should be enumerable');
@@ -35,7 +35,12 @@ test(function()
             assert_equals(controller.close.length, 0, 'close should have no parameters');
             assert_equals(controller.enqueue.length, 1, 'enqueue should have 1 parameter');
             assert_equals(controller.error.length, 1, 'error should have 1 parameter');
-            //assert_equals(controller.constructor.length, 1, 'constructor should have 1 parameters');
+
+            var propDesc = Object.getOwnPropertyDescriptor(proto, 'constructor');
+            assert_equals(propDesc.enumerable, false, 'constructor should not be enumerable');
+            assert_equals(propDesc.configurable, true, 'constructor should be configurable');
+            assert_equals(propDesc.writable, false, 'constructor should not be writable');
+            assert_equals(typeof controller.constructor, 'object', 'constructor should be an object');
 
             isStartCalled = true;
         }

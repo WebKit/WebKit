@@ -66,6 +66,11 @@ JSValue JSReadableStreamController::error(ExecState* exec)
     return jsUndefined();
 }
 
+EncodedJSValue JSC_HOST_CALL constructJSReadableStreamController(ExecState* exec)
+{
+    return throwVMError(exec, createTypeError(exec, ASCIILiteral("ReadableStreamController constructor should not be called directly")));
+}
+
 } // namespace WebCore
 
 #endif
