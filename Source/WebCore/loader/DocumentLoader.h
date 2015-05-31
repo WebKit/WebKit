@@ -158,6 +158,7 @@ namespace WebCore {
 
         WEBCORE_EXPORT bool scheduleArchiveLoad(ResourceLoader*, const ResourceRequest&);
 #endif
+        void scheduleSubstituteResourceLoad(ResourceLoader&, SubstituteResource&);
 
         // Return the ArchiveResource for the URL only when loading an Archive
         ArchiveResource* archiveResourceForURL(const URL&) const;
@@ -431,7 +432,6 @@ namespace WebCore {
         bool m_subresourceLoadersArePageCacheAcceptable;
         ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
 
-        friend class ApplicationCacheHost;  // for substitute resource delivery
         std::unique_ptr<ApplicationCacheHost> m_applicationCacheHost;
 
 #if ENABLE(CONTENT_FILTERING)

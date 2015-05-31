@@ -164,6 +164,24 @@ bool ResourceLoader::init(const ResourceRequest& r)
     return true;
 }
 
+void ResourceLoader::deliverResponseAndData(const ResourceResponse& response, RefPtr<SharedBuffer>&& buffer)
+{
+    Ref<ResourceLoader> protect(*this);
+
+    didReceiveResponse(response);
+    if (reachedTerminalState())
+        return;
+
+    if (buffer) {
+        unsigned size = buffer->size();
+        didReceiveBuffer(buffer.release(), size, DataPayloadWholeResource);
+        if (reachedTerminalState())
+            return;
+    }
+
+    didFinishLoading(0);
+}
+
 void ResourceLoader::start()
 {
     ASSERT(!m_handle);

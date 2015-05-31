@@ -64,6 +64,8 @@ public:
 private:
     ApplicationCacheResource(const URL&, const ResourceResponse&, unsigned type, PassRefPtr<SharedBuffer>, const String& path);
 
+    virtual void deliver(ResourceLoader&) override;
+
     unsigned m_type;
     unsigned m_storageID;
     int64_t m_estimatedSizeInStorage;

@@ -64,6 +64,8 @@ public:
 
     virtual bool init(const ResourceRequest&);
 
+    void deliverResponseAndData(const ResourceResponse&, RefPtr<SharedBuffer>&&);
+
 #if PLATFORM(IOS)
     virtual bool startLoading()
     {

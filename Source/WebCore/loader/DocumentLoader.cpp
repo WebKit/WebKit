@@ -1119,25 +1119,9 @@ void DocumentLoader::substituteResourceDeliveryTimerFired()
         RefPtr<ResourceLoader> loader = it->key;
         SubstituteResource* resource = it->value.get();
         
-        if (resource) {
-            SharedBuffer* data = resource->data();
-        
-            loader->didReceiveResponse(resource->response());
-
-            // Calling ResourceLoader::didReceiveResponse can end up cancelling the load,
-            // so we need to check if the loader has reached its terminal state.
-            if (loader->reachedTerminalState())
-                return;
-
-            loader->didReceiveData(data->data(), data->size(), data->size(), DataPayloadWholeResource);
-
-            // Calling ResourceLoader::didReceiveData can end up cancelling the load,
-            // so we need to check if the loader has reached its terminal state.
-            if (loader->reachedTerminalState())
-                return;
-
-            loader->didFinishLoading(0);
-        } else {
+        if (resource)
+            resource->deliver(*loader);
+        else {
             // A null resource means that we should fail the load.
             // FIXME: Maybe we should use another error here - something like "not in cache".
             loader->didFail(loader->cannotShowURLError());
@@ -1165,8 +1149,7 @@ void DocumentLoader::cancelPendingSubstituteLoad(ResourceLoader* loader)
 bool DocumentLoader::scheduleArchiveLoad(ResourceLoader* loader, const ResourceRequest& request)
 {
     if (ArchiveResource* resource = archiveResourceForURL(request.url())) {
-        m_pendingSubstituteResources.set(loader, resource);
-        deliverSubstituteResourcesAfterDelay();
+        scheduleSubstituteResourceLoad(*loader, *resource);
         return true;
     }
 
@@ -1188,6 +1171,12 @@ bool DocumentLoader::scheduleArchiveLoad(ResourceLoader* loader, const ResourceR
     }
 }
 #endif // ENABLE(WEB_ARCHIVE)
+
+void DocumentLoader::scheduleSubstituteResourceLoad(ResourceLoader& loader, SubstituteResource& resource)
+{
+    m_pendingSubstituteResources.set(&loader, &resource);
+    deliverSubstituteResourcesAfterDelay();
+}
 
 void DocumentLoader::addResponse(const ResourceResponse& r)
 {

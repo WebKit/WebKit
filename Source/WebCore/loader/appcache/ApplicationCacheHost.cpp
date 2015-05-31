@@ -178,9 +178,7 @@ bool ApplicationCacheHost::maybeLoadResource(ResourceLoader* loader, const Resou
     if (!shouldLoadResourceFromApplicationCache(request, resource))
         return false;
 
-    m_documentLoader.m_pendingSubstituteResources.set(loader, resource);
-    m_documentLoader.deliverSubstituteResourcesAfterDelay();
-
+    m_documentLoader.scheduleSubstituteResourceLoad(*loader, *resource);
     return true;
 }
 
@@ -436,8 +434,7 @@ bool ApplicationCacheHost::scheduleLoadFallbackResourceFromApplicationCache(Reso
 
     loader->willSwitchToSubstituteResource();
 
-    m_documentLoader.m_pendingSubstituteResources.set(loader, resource);
-    m_documentLoader.deliverSubstituteResourcesAfterDelay();
+    m_documentLoader.scheduleSubstituteResourceLoad(*loader, *resource);
 
     return true;
 }

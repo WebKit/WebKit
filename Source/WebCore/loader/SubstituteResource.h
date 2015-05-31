@@ -26,13 +26,9 @@
 #ifndef SubstituteResource_h
 #define SubstituteResource_h
 
-#include <wtf/RefCounted.h>
-
-#include "URL.h"
+#include "ResourceLoader.h"
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
-
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -44,6 +40,8 @@ public:
     const ResourceResponse& response() const { return m_response; }
     SharedBuffer* data() const { return m_data.get(); }
 
+    virtual void deliver(ResourceLoader& loader) { loader.deliverResponseAndData(m_response, m_data->copy()); }
+
 protected:
     SubstituteResource(const URL& url, const ResourceResponse& response, PassRefPtr<SharedBuffer> data)
         : m_url(url)
@@ -52,13 +50,13 @@ protected:
     {
         ASSERT(m_data);
     }
-    
+
 private:
     URL m_url;
     ResourceResponse m_response;
     RefPtr<SharedBuffer> m_data;
 };
-    
+
 }
 
 #endif // SubstituteResource_h

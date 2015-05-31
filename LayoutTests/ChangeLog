@@ -1,3 +1,14 @@
+2015-05-31  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Async XMLHttpRequest should get access to AppCache resources stored as flat files
+        https://bugs.webkit.org/show_bug.cgi?id=138506
+
+        Reviewed by Darin Adler.
+
+        * http/tests/appcache/resources/simple-video-async.manifest: Added.
+        * http/tests/appcache/simple-video-async-expected.txt: Added.
+        * http/tests/appcache/simple-video-async.html: Added.
+
 2015-05-31  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet <youenn.fablet@crf.canon.fr>
 
         [Streams API] Implement ReadableStreamController constructor
