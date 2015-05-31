@@ -1253,6 +1253,11 @@ unsigned ByteCodeParser::inliningCost(CallVariant callee, int argumentCountInclu
     // this function.
     // https://bugs.webkit.org/show_bug.cgi?id=127627
     
+    // FIXME: We currently inline functions that have run in LLInt but not in Baseline. These
+    // functions have very low fidelity profiling, and presumably they weren't very hot if they
+    // haven't gotten to Baseline yet. Consider not inlining these functions.
+    // https://bugs.webkit.org/show_bug.cgi?id=145503
+    
     // Have we exceeded inline stack depth, or are we trying to inline a recursive call to
     // too many levels? If either of these are detected, then don't inline. We adjust our
     // heuristics if we are dealing with a function that cannot otherwise be compiled.
