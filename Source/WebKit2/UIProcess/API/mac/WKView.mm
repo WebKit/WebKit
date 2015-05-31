@@ -4603,7 +4603,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_gestureController->setDidMoveSwipeSnapshotCallback(callback);
 }
 
-
 - (NSArray *)_actionMenuItemsForHitTestResult:(WKHitTestResultRef)hitTestResult withType:(_WKActionMenuType)type defaultActionMenuItems:(NSArray *)defaultMenuItems
 {
     return defaultMenuItems;
@@ -4633,7 +4632,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (void)_didChangeContentSize:(NSSize)newSize
 {
-
 }
 
 - (void)_dismissContentRelativeChildWindows
@@ -4647,9 +4645,11 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         if (Class lookupDefinitionModuleClass = getLULookupDefinitionModuleClass())
             [lookupDefinitionModuleClass hideDefinition];
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
         DDActionsManager *actionsManager = [getDDActionsManagerClass() sharedManager];
         if ([actionsManager respondsToSelector:@selector(requestBubbleClosureUnanchorOnFailure:)])
             [actionsManager requestBubbleClosureUnanchorOnFailure:YES];
+#endif
     }
 
     [self _clearTextIndicatorWithAnimation:TextIndicatorDismissalAnimation::FadeOut];
