@@ -1,3 +1,19 @@
+2015-05-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Drop WeakMap#clear
+        https://bugs.webkit.org/show_bug.cgi?id=145489
+
+        Reviewed by Mark Lam.
+
+        ES6 spec intentionally drops the WeakMap#clear
+        to allow engine to implement WeakMap as a per-object table.
+
+        This patch drops WeakMap.prototype.clear.
+
+        * runtime/WeakMapPrototype.cpp:
+        (JSC::WeakMapPrototype::finishCreation): Deleted.
+        (JSC::protoFuncWeakMapClear): Deleted.
+
 2015-05-31  Jordan Harband  <ljharb@gmail.com>
 
         Array#reduce and reduceRight don't follow ToLength

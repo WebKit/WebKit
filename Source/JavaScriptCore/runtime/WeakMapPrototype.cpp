@@ -35,7 +35,6 @@ namespace JSC {
 
 const ClassInfo WeakMapPrototype::s_info = { "WeakMap", &Base::s_info, 0, CREATE_METHOD_TABLE(WeakMapPrototype) };
 
-static EncodedJSValue JSC_HOST_CALL protoFuncWeakMapClear(ExecState*);
 static EncodedJSValue JSC_HOST_CALL protoFuncWeakMapDelete(ExecState*);
 static EncodedJSValue JSC_HOST_CALL protoFuncWeakMapGet(ExecState*);
 static EncodedJSValue JSC_HOST_CALL protoFuncWeakMapHas(ExecState*);
@@ -47,7 +46,6 @@ void WeakMapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     ASSERT(inherits(info()));
     vm.prototypeMap.addPrototype(this);
 
-    JSC_NATIVE_FUNCTION(vm.propertyNames->clear, protoFuncWeakMapClear, DontEnum, 0);
     JSC_NATIVE_FUNCTION(vm.propertyNames->deleteKeyword, protoFuncWeakMapDelete, DontEnum, 1);
     JSC_NATIVE_FUNCTION(vm.propertyNames->get, protoFuncWeakMapGet, DontEnum, 1);
     JSC_NATIVE_FUNCTION(vm.propertyNames->has, protoFuncWeakMapHas, DontEnum, 1);
@@ -66,15 +64,6 @@ static WeakMapData* getWeakMapData(CallFrame* callFrame, JSValue value)
 
     throwTypeError(callFrame, WTF::ASCIILiteral("Called WeakMap function on a non-WeakMap object"));
     return nullptr;
-}
-
-EncodedJSValue JSC_HOST_CALL protoFuncWeakMapClear(CallFrame* callFrame)
-{
-    WeakMapData* map = getWeakMapData(callFrame, callFrame->thisValue());
-    if (!map)
-        return JSValue::encode(jsUndefined());
-    map->clear();
-    return JSValue::encode(jsUndefined());
 }
 
 EncodedJSValue JSC_HOST_CALL protoFuncWeakMapDelete(CallFrame* callFrame)
