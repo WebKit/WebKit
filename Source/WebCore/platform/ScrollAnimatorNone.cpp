@@ -49,7 +49,6 @@ namespace WebCore {
 const double kFrameRate = 60;
 const double kTickTime = 1 / kFrameRate;
 const double kMinimumTimerInterval = .001;
-const double kZoomTicks = 11;
 
 std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollableArea)
 {
