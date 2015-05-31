@@ -24,6 +24,80 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+function reduce(callback /*, initialValue */)
+{
+    "use strict";
+    if (this === null)
+        throw new @TypeError("Array.prototype.reduce requires that |this| not be null");
+
+    if (this === undefined)
+        throw new @TypeError("Array.prototype.reduce requires that |this| not be undefined");
+
+    var array = @Object(this);
+    var length = @ToLength(array.length);
+
+    if (typeof callback !== "function")
+        throw new @TypeError("Array.prototype.reduce callback must be a function");
+
+    if (length === 0 && arguments.length < 2)
+        throw new @TypeError("reduce of empty array with no initial value");
+
+    var accumulator, k = 0;
+    if (arguments.length > 1)
+        accumulator = arguments[1];
+    else {
+        while (k < length && !(k in array))
+            k += 1;
+        if (k >= length)
+            throw new @TypeError("reduce of empty array with no initial value");
+        accumulator = array[k++];
+    }
+
+    while (k < length) {
+        if (k in array)
+            accumulator = callback.@call(undefined, accumulator, array[k], k, array);
+        k += 1;
+    }
+    return accumulator;
+}
+
+function reduceRight(callback /*, initialValue */)
+{
+    "use strict";
+    if (this === null)
+        throw new @TypeError("Array.prototype.reduceRight requires that |this| not be null");
+
+    if (this === undefined)
+        throw new @TypeError("Array.prototype.reduceRight requires that |this| not be undefined");
+
+    var array = @Object(this);
+    var length = @ToLength(array.length);
+
+    if (typeof callback !== "function")
+        throw new @TypeError("Array.prototype.reduceRight callback must be a function");
+
+    if (length === 0 && arguments.length < 2)
+        throw new @TypeError("reduceRight of empty array with no initial value");
+
+    var accumulator, k = length - 1;
+    if (arguments.length > 1)
+        accumulator = arguments[1];
+    else {
+        while (k >= 0 && !(k in array))
+            k -= 1;
+        if (k < 0)
+            throw new @TypeError("reduceRight of empty array with no initial value");
+        accumulator = array[k--];
+    }
+
+    while (k >= 0) {
+        if (k in array)
+            accumulator = callback.@call(undefined, accumulator, array[k], k, array);
+        k -= 1;
+    }
+    return accumulator;
+}
+
 function every(callback /*, thisArg */) {
     "use strict";
     if (this === null)

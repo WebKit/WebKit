@@ -1,3 +1,17 @@
+2015-05-31  Jordan Harband  <ljharb@gmail.com>
+
+        Array#reduce and reduceRight don't follow ToLength
+        https://bugs.webkit.org/show_bug.cgi?id=145364
+
+        Reviewed by Yusuke Suzuki.
+
+        * js/array-reduce-expected.txt:
+        * js/array-reduceRight-expected.txt:
+        * js/dom/array-prototype-properties-expected.txt:
+        * js/dom/script-tests/array-prototype-properties.js:
+        * js/script-tests/array-reduce.js:
+        * js/script-tests/array-reduceRight.js:
+
 2015-05-30  Filip Pizlo  <fpizlo@apple.com>
 
         FTL codegen for MultiGetByOffset and MultiPutByOffset where the structure set is already proved should have an unreachable default case instead of an exit

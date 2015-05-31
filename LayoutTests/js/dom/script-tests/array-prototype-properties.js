@@ -19,7 +19,7 @@ shouldThrow("Array.prototype.every.call(undefined, toString)");
 shouldThrow("Array.prototype.forEach.call(undefined, toString)");
 shouldThrow("Array.prototype.some.call(undefined, toString)");
 shouldThrow("Array.prototype.indexOf.call(undefined, 0)");
-shouldThrow("Array.prototype.indlastIndexOfexOf.call(undefined, 0)");
+shouldThrow("Array.prototype.lastIndexOf.call(undefined, 0)");
 shouldThrow("Array.prototype.filter.call(undefined, toString)");
 shouldThrow("Array.prototype.reduce.call(undefined, toString)");
 shouldThrow("Array.prototype.reduceRight.call(undefined, toString)");

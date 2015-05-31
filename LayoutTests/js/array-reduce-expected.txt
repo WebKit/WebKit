@@ -34,6 +34,7 @@ PASS toUnorderedObject([[0,1], [2,3], [4,5]]).reduce(function(a,b) {return a.con
 PASS toUnorderedObject([0,1,2,3,4,5]).reduce(function(a,b,i) {return a.concat([i,b]);}, []) is [0,0,1,1,2,2,3,3,4,4,5,5]
 PASS [0,1,2,3,4,5].reduce(function(a,b,i) {return a.concat([i,b]);}, []) is [0,0,1,1,2,2,3,3,4,4,5,5]
 PASS [2,3].reduce(function() {'use strict'; return this;}) is undefined
+PASS Array.prototype.reduce.call(negativeLengthObject, function (a, b) { return a + b; }, 100) is 100
 PASS successfullyParsed is true
 
 TEST COMPLETE

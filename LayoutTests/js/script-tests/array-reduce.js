@@ -66,3 +66,6 @@ shouldBe("toUnorderedObject([[0,1], [2,3], [4,5]]).reduce(function(a,b) {return 
 shouldBe("toUnorderedObject([0,1,2,3,4,5]).reduce(function(a,b,i) {return a.concat([i,b]);}, [])", "[0,0,1,1,2,2,3,3,4,4,5,5]");
 shouldBe("[0,1,2,3,4,5].reduce(function(a,b,i) {return a.concat([i,b]);}, [])", "[0,0,1,1,2,2,3,3,4,4,5,5]");
 shouldBe("[2,3].reduce(function() {'use strict'; return this;})", "undefined");
+
+var negativeLengthObject = { length: -1, 0: 1, 1: 2 };
+shouldBe("Array.prototype.reduce.call(negativeLengthObject, function (a, b) { return a + b; }, 100)", "100");
