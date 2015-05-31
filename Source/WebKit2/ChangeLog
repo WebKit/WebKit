@@ -1,3 +1,44 @@
+2015-05-31  Gavin Barraclough  <barraclough@apple.com>
+
+        PDFs always think they're visible on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=145493
+        <rdar://problem/19668879>
+
+        Reviewed by Andreas Kling.
+
+        The problem here is that WKContentView is currently responsible for notifying the WebPageProxy
+        that the visibility may have changed, but when a PDF isn't showing the WKContentView isn't in
+        the view hierarchy and doesn't receive the didMoveToWindow notifications – and the WKPDFView
+        (which is in the view hierarchy) does not listen for these events.
+
+        Visibility of the page should really just track the visibility of the WKWebView (and when
+        actually assessing the visibility it largely does - the page client checks the web view's
+        visibility, bar a FIXME, and the foreground/background check, which needs to change).
+        So notifications should really just come from the WKWebView.
+
+        The WKWebView already listens for the didMoveToWindow notification, it just was only updating
+        the IsInWindow flag. Instead just update all flags, and the call to viewStateDidChange from
+        WKContentView can just be removed.
+
+        There is one problem with this in that it would reverse the order of the calls to
+        viewStateDidChange & _updateForScreen:, which would mean the the view would become visible before
+        updating the screen pixel density. To fix this, move the call to _updateForScreen: to
+        willMoveToWindow:, to ensure it occurs before the page becomes visible.
+
+        This will also change behavior on Mac for WKWebView clients, in coalescing all view state changes
+        within the didMoveToWindow call. This is the direction we intended to go in anyway (the plan is
+        to remove the mayHaveChanged argument from viewStateDidChange - we're currently adding unnecessary
+        IPC traffic).
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView didMoveToWindow]):
+            - should update all view state flags.
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView willMoveToWindow:]):
+            - should _updateForScreen:
+        (-[WKContentView didMoveToWindow]): Deleted.
+            - functionality moved to -[WKWebView didMoveToWindow], -[WKContentView didMoveToWindow].
+
 2015-05-30  Brady Eidson  <beidson@apple.com>
 
         Make FrameLoader methods that take PassRefPtr<Event> take raw pointers instead.
