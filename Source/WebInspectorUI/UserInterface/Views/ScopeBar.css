@@ -41,6 +41,44 @@
     text-align: center;
 }
 
+.scope-bar > li.multiple {
+    position: relative;
+}
+
+.scope-bar > li.multiple > select {
+    display: none;
+    opacity: 0;
+
+ /* Positioned so the text in the menu aligns with the content text. */
+    position: absolute;
+    top: -5px;
+    left: -4px;
+    right: 0;
+    bottom: 0;
+}
+
+.scope-bar > li.multiple.selected > select {
+    display: block;
+}
+
+.scope-bar > li.multiple > .arrows {
+    width: 5px;
+    height: 12px;
+    display: inline-block;
+    vertical-align: -2px;
+    margin-left: 6px;
+    margin-top: -1px;
+    margin-bottom: -1px;
+}
+
+.scope-bar > li.multiple:matches(.selected, :hover, :active) > .arrows svg .filled {
+    fill: white !important;
+}
+
+.scope-bar > li.multiple:matches(.selected, :hover, :active) > .arrows svg .stroked {
+    stroke: white !important;
+}
+
 .scope-bar > li:matches(.selected, :active) {
     transition-duration: 75ms;
 }

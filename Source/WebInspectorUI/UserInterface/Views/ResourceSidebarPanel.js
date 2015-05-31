@@ -33,6 +33,26 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
 
         this.filterBar.placeholder = WebInspector.UIString("Filter Resource List");
 
+        this._navigationBar = new WebInspector.NavigationBar;
+        this.element.appendChild(this._navigationBar.element);
+
+        var scopeItemPrefix = "resource-sidebar-";
+        var scopeBarItems = [];
+
+        scopeBarItems.push(new WebInspector.ScopeBarItem(scopeItemPrefix + "type-all", WebInspector.UIString("All Resources"), true));
+
+        for (var key in WebInspector.Resource.Type) {
+            var value = WebInspector.Resource.Type[key];
+            var scopeBarItem = new WebInspector.ScopeBarItem(scopeItemPrefix + value, WebInspector.Resource.displayNameForType(value, true));
+            scopeBarItem.__resourceType = value;
+            scopeBarItems.push(scopeBarItem);
+        }
+
+        this._scopeBar = new WebInspector.ScopeBar("resource-sidebar-scope-bar", scopeBarItems, scopeBarItems[0], true);
+        this._scopeBar.addEventListener(WebInspector.ScopeBar.Event.SelectionChanged, this._scopeBarSelectionDidChange, this);
+
+        this._navigationBar.addNavigationItem(this._scopeBar);
+
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
         WebInspector.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
@@ -150,6 +170,49 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
         this._anonymousScriptsFolderTreeElement.appendChild(scriptTreeElement);
 
         return scriptTreeElement;
+    }
+
+    // Protected
+
+    hasCustomFilters()
+    {
+        console.assert(this._scopeBar.selectedItems.length === 1);
+        var selectedScopeBarItem = this._scopeBar.selectedItems[0];
+        return selectedScopeBarItem && !selectedScopeBarItem.exclusive;
+    }
+
+    matchTreeElementAgainstCustomFilters(treeElement, flags)
+    {
+        console.assert(this._scopeBar.selectedItems.length === 1);
+        var selectedScopeBarItem = this._scopeBar.selectedItems[0];
+
+        // Show everything if there is no selection or "All Resources" is selected (the exclusive item).
+        if (!selectedScopeBarItem || selectedScopeBarItem.exclusive)
+            return true;
+
+        // Folders are hidden on the first pass, but visible childen under the folder will force the folder visible again.
+        if (treeElement instanceof WebInspector.FolderTreeElement)
+            return false;
+
+        function match()
+        {
+            if (treeElement instanceof WebInspector.FrameTreeElement)
+                return selectedScopeBarItem.__resourceType === WebInspector.Resource.Type.Document;
+
+            if (treeElement instanceof WebInspector.ScriptTreeElement)
+                return selectedScopeBarItem.__resourceType === WebInspector.Resource.Type.Script;
+
+            console.assert(treeElement instanceof WebInspector.ResourceTreeElement, "Unknown treeElement", treeElement);
+            if (!(treeElement instanceof WebInspector.ResourceTreeElement))
+                return false;
+
+            return treeElement.resource.type === selectedScopeBarItem.__resourceType;
+        }
+
+        var matched = match();
+        if (matched)
+            flags.expandTreeElement = true;
+        return matched;
     }
 
     // Private
@@ -298,5 +361,10 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
     {
         if (WebInspector.debuggableType === WebInspector.DebuggableType.JavaScript)
             this.contentTreeOutline.element.classList.remove(WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName);
+    }
+
+    _scopeBarSelectionDidChange(event)
+    {
+        this.updateFilter();
     }
 };

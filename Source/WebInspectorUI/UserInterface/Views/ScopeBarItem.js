@@ -25,29 +25,44 @@
 
 WebInspector.ScopeBarItem = class ScopeBarItem extends WebInspector.Object
 {
-    constructor(id, label, isExclusive)
+    constructor(id, label, exclusive)
     {
         super();
 
-        this.id = id;
-        this.label = label;
-        this.isExclusive = isExclusive;
+        this._element = document.createElement("li");
+        this._element.classList.toggle("exclusive", exclusive);
+        this._element.textContent = label;
+        this._element.addEventListener("click", this._clicked.bind(this));
+
+        this._id = id;
+        this._label = label;
+        this._exclusive = exclusive;
 
         this._selectedSetting = new WebInspector.Setting("scopebaritem-" + id, false);
 
-        this._markElementSelected(this._selectedSetting.value);
+        this._element.classList.toggle("selected", this._selectedSetting.value);
     }
 
     // Public
 
     get element()
     {
-        if (!this._element) {
-            this._element = document.createElement("li");
-            this._element.textContent = this.label;
-            this._element.addEventListener("click", this._clicked.bind(this), false);
-        }
         return this._element;
+    }
+
+    get id()
+    {
+        return this._id;
+    }
+
+    get label()
+    {
+        return this._label;
+    }
+
+    get exclusive()
+    {
+        return this._exclusive;
     }
 
     get selected()
@@ -65,8 +80,7 @@ WebInspector.ScopeBarItem = class ScopeBarItem extends WebInspector.Object
         if (this._selectedSetting.value === selected)
             return;
 
-        this._markElementSelected(selected);
-
+        this._element.classList.toggle("selected", selected);
         this._selectedSetting.value = selected;
 
         this.dispatchEventToListeners(WebInspector.ScopeBarItem.Event.SelectionChanged, {withModifier});
@@ -74,22 +88,11 @@ WebInspector.ScopeBarItem = class ScopeBarItem extends WebInspector.Object
 
     // Private
 
-    _markElementSelected(selected)
-    {
-        if (selected)
-            this.element.classList.add(WebInspector.ScopeBarItem.SelectedStyleClassName);
-        else
-            this.element.classList.remove(WebInspector.ScopeBarItem.SelectedStyleClassName);
-    }
-
     _clicked(event)
     {
-        var withModifier = (event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey);
-        this.setSelected(!this.selected, withModifier);
+        this.setSelected(!this.selected, event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey);
     }
 };
-
-WebInspector.ScopeBarItem.SelectedStyleClassName = "selected";
 
 WebInspector.ScopeBarItem.Event = {
     SelectionChanged: "scope-bar-item-selection-did-change"

@@ -1,3 +1,80 @@
+2015-05-29  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Resources tab navigation sidebar should have a type filter header
+        https://bugs.webkit.org/show_bug.cgi?id=145474
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js: Updated.
+
+        * UserInterface/Images/UpDownArrows.svg: Make styleable.
+
+        * UserInterface/Main.html: Added new files.
+
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView): Drive-by fix. Mark All as exclusive.
+
+        * UserInterface/Views/MultipleScopeBarItem.js: Added.
+        (WebInspector.MultipleScopeBarItem):
+        (WebInspector.MultipleScopeBarItem.prototype.get element):
+        (WebInspector.MultipleScopeBarItem.prototype.get exclusive):
+        (WebInspector.MultipleScopeBarItem.prototype.get scopeBarItems):
+        (WebInspector.MultipleScopeBarItem.set scopeBarItems.createOption):
+        (WebInspector.MultipleScopeBarItem.prototype.set scopeBarItems):
+        (WebInspector.MultipleScopeBarItem.prototype.get selected):
+        (WebInspector.MultipleScopeBarItem.prototype.set selected):
+        (WebInspector.MultipleScopeBarItem.prototype.get selectedScopeBarItem):
+        (WebInspector.MultipleScopeBarItem.prototype.set selectedScopeBarItem):
+        (WebInspector.MultipleScopeBarItem.prototype._clicked):
+        (WebInspector.MultipleScopeBarItem.prototype._selectElementSelectionChanged):
+        (WebInspector.MultipleScopeBarItem.prototype._itemSelectionDidChange):
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype.matchTreeElementAgainstFilterFunctions):
+        (WebInspector.NavigationSidebarPanel.prototype.applyFiltersToTreeElement.matchTextFilter):
+        (WebInspector.NavigationSidebarPanel.prototype.applyFiltersToTreeElement.makeVisible):
+        (WebInspector.NavigationSidebarPanel.prototype.applyFiltersToTreeElement):
+        (WebInspector.NavigationSidebarPanel.prototype._updateFilter):
+        (WebInspector.NavigationSidebarPanel.prototype._treeElementAddedOrChanged):
+        Improve filtering so non-text filters can choose to auto-expand the tree.
+
+        * UserInterface/Views/ResourceSidebarPanel.css: Added.
+        (.sidebar > .panel.navigation.resource > :matches(.content, .empty-content-placeholder)):
+        (.sidebar > .panel.navigation.resource > .navigation-bar):
+
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel):
+        (WebInspector.ResourceSidebarPanel.prototype.hasCustomFilters):
+        (WebInspector.ResourceSidebarPanel.prototype.matchTreeElementAgainstCustomFilters.match):
+        (WebInspector.ResourceSidebarPanel.prototype.matchTreeElementAgainstCustomFilters):
+        (WebInspector.ResourceSidebarPanel.prototype._scopeBarSelectionDidChange):
+        Make a ScopeBar and make it filter the TreeOutline when needed.
+
+        * UserInterface/Views/ScopeBar.css:
+        (.scope-bar > li.multiple):
+        (.scope-bar > li.multiple > select):
+        (.scope-bar > li.multiple.selected > select):
+        (.scope-bar > li.multiple > .arrows):
+        (.scope-bar > li.multiple:matches(.selected, :hover, :active) > .arrows svg .filled):
+        (.scope-bar > li.multiple:matches(.selected, :hover, :active) > .arrows svg .stroked):
+
+        * UserInterface/Views/ScopeBar.js:
+        (WebInspector.ScopeBar): Support shouldGroupNonExclusiveItems which will use MultipleScopeBarItem.
+        (WebInspector.ScopeBar.prototype._populate):
+        (WebInspector.ScopeBar.prototype._itemSelectionDidChange):
+        (WebInspector.ScopeBar.prototype.updateLayout): Deleted. Not needed for our current styles.
+
+        * UserInterface/Views/ScopeBarItem.js:
+        (WebInspector.ScopeBarItem):
+        (WebInspector.ScopeBarItem.prototype.get id):
+        (WebInspector.ScopeBarItem.prototype.get label):
+        (WebInspector.ScopeBarItem.prototype.get exclusive):
+        (WebInspector.ScopeBarItem.prototype.setSelected):
+        (WebInspector.ScopeBarItem.prototype._clicked):
+        (WebInspector.ScopeBarItem.prototype.get element): Deleted.
+        (WebInspector.ScopeBarItem.prototype._markElementSelected): Deleted.
+        Cleaned up and modernized a bit.
+
 2015-05-29  Tobias Reiss  <tobi+webkit@basecode.de>
 
         Web Inspector: Activity Viewer does not update on "clear all console messages"

@@ -25,7 +25,7 @@
 
 WebInspector.ScopeBar = class ScopeBar extends WebInspector.NavigationItem
 {
-    constructor(identifier, items, defaultItem)
+    constructor(identifier, items, defaultItem, shouldGroupNonExclusiveItems)
     {
         super(identifier);
 
@@ -33,8 +33,8 @@ WebInspector.ScopeBar = class ScopeBar extends WebInspector.NavigationItem
 
         this._items = items;
         this._defaultItem = defaultItem;
+        this._shouldGroupNonExclusiveItems = shouldGroupNonExclusiveItems || false;
 
-        this._itemsById = [];
         this._populate();
     }
 
@@ -47,7 +47,7 @@ WebInspector.ScopeBar = class ScopeBar extends WebInspector.NavigationItem
 
     item(id)
     {
-        return this._itemsById[id];
+        return this._itemsById.get(id);
     }
 
     get selectedItems()
@@ -64,38 +64,35 @@ WebInspector.ScopeBar = class ScopeBar extends WebInspector.NavigationItem
         }, this);
     }
 
-    updateLayout(expandOnly)
-    {
-        if (expandOnly)
-            return;
-
-        for (var i = 0; i < this._items.length; ++i) {
-            var item = this._items[i];
-            var isSelected = item.selected;
-
-            if (!isSelected)
-                item.element.classList.add(WebInspector.ScopeBarItem.SelectedStyleClassName);
-
-            var selectedWidth = item.element.offsetWidth;
-            if (selectedWidth)
-                item.element.style.minWidth = selectedWidth + "px";
-
-            if (!isSelected)
-                item.element.classList.remove(WebInspector.ScopeBarItem.SelectedStyleClassName);
-        }
-    }
-
     // Private
 
     _populate()
     {
-        var item;
-        for (var i = 0; i < this._items.length; ++i) {
-            item = this._items[i];
-            this._itemsById[item.id] = item;
-            this._element.appendChild(item.element);
+        this._itemsById = new Map;
 
-            item.addEventListener(WebInspector.ScopeBarItem.Event.SelectionChanged, this._itemSelectionDidChange, this);
+        if (this._shouldGroupNonExclusiveItems) {
+            var nonExclusiveItems = [];
+
+            for (var item of this._items) {
+                this._itemsById.set(item.id, item);
+
+                if (item.exclusive)
+                    this._element.appendChild(item.element);
+                else
+                    nonExclusiveItems.push(item);
+
+                item.addEventListener(WebInspector.ScopeBarItem.Event.SelectionChanged, this._itemSelectionDidChange, this);
+            }
+
+            this._multipleItem = new WebInspector.MultipleScopeBarItem(nonExclusiveItems);
+            this._element.appendChild(this._multipleItem.element);
+        } else {
+            for (var item of this._items) {
+                this._itemsById.set(item.id, item);
+                this._element.appendChild(item.element);
+
+                item.addEventListener(WebInspector.ScopeBarItem.Event.SelectionChanged, this._itemSelectionDidChange, this);
+            }
         }
 
         if (!this.selectedItems.length && this._defaultItem)
@@ -108,17 +105,17 @@ WebInspector.ScopeBar = class ScopeBar extends WebInspector.NavigationItem
         var item;
 
         // An exclusive item was selected, unselect everything else.
-        if (sender.isExclusive && sender.selected) {
+        if (sender.exclusive && sender.selected) {
             for (var i = 0; i < this._items.length; ++i) {
                 item = this._items[i];
                 if (item !== sender)
                     item.selected = false;
             }
         } else {
-            var replacesCurrentSelection = !event.data.withModifier;
+            var replacesCurrentSelection = this._shouldGroupNonExclusiveItems || !event.data.withModifier;
             for (var i = 0; i < this._items.length; ++i) {
                 item = this._items[i];
-                if (item.isExclusive && item !== sender && sender.selected)
+                if (item.exclusive && item !== sender && sender.selected)
                     item.selected = false;
                 else if (sender.selected && replacesCurrentSelection && sender !== item)
                     item.selected = false;

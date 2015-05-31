@@ -306,13 +306,14 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
 
     matchTreeElementAgainstFilterFunctions(treeElement)
     {
-        if (!this._filterFunctions.length)
+        if (!this._filterFunctions || !this._filterFunctions.length)
             return true;
 
         for (var filterFunction of this._filterFunctions) {
             if (filterFunction(treeElement))
                 return true;
         }
+
         return false;
     }
 
@@ -333,7 +334,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
 
         var filterableData = treeElement.filterableData || {};
 
-        var matchedBuiltInFilters = false;
+        var flags = {expandTreeElement: false};
 
         var self = this;
         function matchTextFilter(inputs)
@@ -350,7 +351,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
                 if (!input)
                     continue;
                 if (self._textFilterRegex.test(input)) {
-                    matchedBuiltInFilters = true;
+                    flags.expandTreeElement = true;
                     return true;
                 }
             }
@@ -370,7 +371,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
                 currentAncestor.hidden = false;
 
                 // Only expand if the built-in filters matched, not custom filters.
-                if (matchedBuiltInFilters && !currentAncestor.expanded) {
+                if (flags.expandTreeElement && !currentAncestor.expanded) {
                     currentAncestor.__wasExpandedDuringFiltering = true;
                     currentAncestor.expand();
                 }
@@ -379,12 +380,12 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
             }
         }
 
-        if (matchTextFilter(filterableData.text) && this.matchTreeElementAgainstFilterFunctions(treeElement) && this.matchTreeElementAgainstCustomFilters(treeElement)) {
+        if (matchTextFilter(filterableData.text) && this.matchTreeElementAgainstFilterFunctions(treeElement, flags) && this.matchTreeElementAgainstCustomFilters(treeElement, flags)) {
             // Make this element visible since it matches.
             makeVisible();
 
             // If this tree element didn't match a built-in filter and was expanded earlier during filtering, collapse it again.
-            if (!matchedBuiltInFilters && treeElement.expanded && treeElement.__wasExpandedDuringFiltering) {
+            if (!flags.expandTreeElement && treeElement.expanded && treeElement.__wasExpandedDuringFiltering) {
                 delete treeElement.__wasExpandedDuringFiltering;
                 treeElement.collapse();
             }
@@ -519,7 +520,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
 
         // Don't populate if we don't have any active filters.
         // We only need to populate when a filter needs to reveal.
-        var dontPopulate = !this._filterBar.hasActiveFilters();
+        var dontPopulate = !this._filterBar.hasActiveFilters() && !this.hasCustomFilters();
 
         // Update the whole tree.
         var currentTreeElement = this._contentTreeOutline.children[0];
@@ -544,7 +545,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
     {
         // Don't populate if we don't have any active filters.
         // We only need to populate when a filter needs to reveal.
-        var dontPopulate = !this._filterBar.hasActiveFilters();
+        var dontPopulate = !this._filterBar.hasActiveFilters() && !this.hasCustomFilters();
 
         // Apply the filters to the tree element and its descendants.
         var currentTreeElement = treeElement;
