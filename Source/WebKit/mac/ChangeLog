@@ -1,3 +1,14 @@
+2015-06-01  Anders Carlsson  <andersca@apple.com>
+
+        WAKScrollView.h cannot be imported standalone
+        https://bugs.webkit.org/show_bug.cgi?id=145529
+
+        Reviewed by Dan Bernstein.
+
+        Don't migrate WAKScrollView.h, it's not used outside of WebKit.
+
+        * MigrateHeaders.make:
+
 2015-05-29  Anders Carlsson  <andersca@apple.com>
 
         Make the header replace rule more restrictive and get rid of a special case

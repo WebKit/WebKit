@@ -206,7 +206,6 @@ all : \
     $(PRIVATE_HEADERS_DIR)/SystemMemory.h \
     $(PRIVATE_HEADERS_DIR)/WAKAppKitStubs.h \
     $(PRIVATE_HEADERS_DIR)/WAKResponder.h \
-    $(PRIVATE_HEADERS_DIR)/WAKScrollView.h \
     $(PRIVATE_HEADERS_DIR)/WAKView.h \
     $(PRIVATE_HEADERS_DIR)/WAKWindow.h \
     $(PRIVATE_HEADERS_DIR)/WKContentObservation.h \
