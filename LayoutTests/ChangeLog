@@ -1,3 +1,15 @@
+2015-06-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test font selection for zh fonts
+        https://bugs.webkit.org/show_bug.cgi?id=145478
+
+        Reviewed by Zalan Bujtas.
+
+        We want to make sure that font selection works correctly for more than just Helvetica and Avenir.
+
+        * platform/mac/fast/text/font-weights-expected.txt:
+        * platform/mac/fast/text/font-weights.html:
+
 2015-06-01  Brady Eidson  <beidson@apple.com>
 
         Add WKTR support for "should open external URLs".
