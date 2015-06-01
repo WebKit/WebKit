@@ -65,7 +65,15 @@ void DFABytecodeInterpreter::interpretTestFlagsAndAppendAction(unsigned& program
 {
     ASSERT(getBits<DFABytecodeInstruction>(m_bytecode, m_bytecodeLength, programCounter, m_pagesUsed) == DFABytecodeInstruction::TestFlagsAndAppendAction
         || getBits<DFABytecodeInstruction>(m_bytecode, m_bytecodeLength, programCounter, m_pagesUsed) == DFABytecodeInstruction::TestFlagsAndAppendActionWithIfDomain);
-    if (flags & getBits<uint16_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode), m_pagesUsed))
+    uint16_t flagsToCheck = getBits<uint16_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode), m_pagesUsed);
+
+    uint16_t loadTypeFlags = flagsToCheck & LoadTypeMask;
+    uint16_t ressourceTypeFlags = flagsToCheck & ResourceTypeMask;
+    
+    bool loadTypeMatches = loadTypeFlags ? (loadTypeFlags & flags) : true;
+    bool ressourceTypeMatches = ressourceTypeFlags ? (ressourceTypeFlags & flags) : true;
+    
+    if (loadTypeMatches && ressourceTypeMatches)
         actions.add((ifDomain ? IfDomainFlag : 0) | static_cast<uint64_t>(getBits<unsigned>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecode) + sizeof(uint16_t), m_pagesUsed)));
     programCounter += instructionSizeWithArguments(DFABytecodeInstruction::TestFlagsAndAppendAction);
     ASSERT(instructionSizeWithArguments(DFABytecodeInstruction::TestFlagsAndAppendAction) == instructionSizeWithArguments(DFABytecodeInstruction::TestFlagsAndAppendActionWithIfDomain));

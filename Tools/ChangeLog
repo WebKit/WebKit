@@ -1,3 +1,14 @@
+2015-06-01  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] resource-type and load-type should be independent.
+        https://bugs.webkit.org/show_bug.cgi?id=145528
+        rdar://problem/21190765
+
+        Reviewed by Benjamin Poulain.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2015-06-01  Daniel Bates  <dabates@apple.com>
 
         Add ATS keys to WebKitTestRunnerApp

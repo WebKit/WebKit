@@ -44,12 +44,14 @@ enum class ResourceType : uint16_t {
     PlugInStream = 0x0100,
     Popup = 0x0200,
 };
+const uint16_t ResourceTypeMask = 0x03FF;
 
 enum class LoadType : uint16_t {
     Invalid = 0x0000,
     FirstParty = 0x0400,
     ThirdParty = 0x0800,
 };
+const uint16_t LoadTypeMask = 0x0C00;
 
 typedef uint16_t ResourceFlags;
 
