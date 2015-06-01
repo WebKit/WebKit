@@ -45,6 +45,13 @@ enum GridPositionType {
     NamedGridAreaPosition // <ident>
 };
 
+enum GridPositionSide {
+    ColumnStartSide,
+    ColumnEndSide,
+    RowStartSide,
+    RowEndSide
+};
+
 class GridPosition {
 public:
     GridPosition()
