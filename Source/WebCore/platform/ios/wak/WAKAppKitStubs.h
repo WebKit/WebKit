@@ -162,15 +162,11 @@ enum {
     NSNumericPadKeyMask = 1 << 21,
     NSHelpKeyMask =       1 << 22,
     NSFunctionKeyMask =   1 << 23,
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
     NSDeviceIndependentModifierFlagsMask = 0xffff0000U
-#endif
 };
 
 typedef enum _WKWritingDirection {
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
     WKWritingDirectionNatural     = -1, /* Determines direction using the Unicode Bidi Algorithm rules P2 and P3 */
-#endif /* MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4 */
     WKWritingDirectionLeftToRight = 0,  /* Left to right writing direction */
     WKWritingDirectionRightToLeft       /* Right to left writing direction */
 } WKWritingDirection;
