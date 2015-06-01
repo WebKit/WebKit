@@ -30,6 +30,11 @@
 
 namespace WebCore {
 
+MediaRemoteControls::MediaRemoteControls(ScriptExecutionContext& context)
+    : m_scriptExecutionContext(context)
+{
+}
+
 MediaRemoteControls::~MediaRemoteControls()
 {
     

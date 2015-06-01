@@ -35,6 +35,11 @@ namespace WebCore {
 
 class MediaRemoteControls : public RefCounted<MediaRemoteControls>, public EventTargetWithInlineData {
 public:
+    static Ref<MediaRemoteControls> create(ScriptExecutionContext& context)
+    {
+        return adoptRef(*new MediaRemoteControls(context));
+    }
+
     bool previousTrackEnabled() const { return m_previousTrackEnabled; }
     void setPreviousTrackEnabled(bool enabled) { m_previousTrackEnabled = enabled; }
 
@@ -52,14 +57,18 @@ public:
 
     virtual ~MediaRemoteControls();
 
-protected:
-    MediaRemoteControls() = default;
+    MediaRemoteControls(ScriptExecutionContext&);
+
+    virtual EventTargetInterface eventTargetInterface() const override { return MediaRemoteControlsEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const override { return &m_scriptExecutionContext; }
 
 private:
-    bool m_previousTrackEnabled;
-    bool m_nextTrackEnabled;
-    bool m_seekForwardEnabled;
-    bool m_seekBackwardEnabled;
+    ScriptExecutionContext& m_scriptExecutionContext;
+
+    bool m_previousTrackEnabled { false };
+    bool m_nextTrackEnabled { false };
+    bool m_seekForwardEnabled { false };
+    bool m_seekBackwardEnabled { false };
 
     virtual void refEventTarget() override final { ref(); }
     virtual void derefEventTarget() override final { deref(); }
