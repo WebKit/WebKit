@@ -43,13 +43,23 @@ PolymorphicCallNode::~PolymorphicCallNode()
 
 void PolymorphicCallNode::unlink(RepatchBuffer& repatchBuffer)
 {
-    if (Options::showDisassembly())
-        dataLog("Unlinking polymorphic call at ", m_callLinkInfo->callReturnLocation, ", ", m_callLinkInfo->codeOrigin, "\n");
-    
-    m_callLinkInfo->unlink(repatchBuffer);
-    
+    if (m_callLinkInfo) {
+        if (Options::showDisassembly())
+            dataLog("Unlinking polymorphic call at ", m_callLinkInfo->callReturnLocation, ", ", m_callLinkInfo->codeOrigin, "\n");
+
+        m_callLinkInfo->unlink(repatchBuffer);
+    }
+
     if (isOnList())
         remove();
+}
+
+void PolymorphicCallNode::clearCallLinkInfo()
+{
+    if (Options::showDisassembly())
+        dataLog("Clearing call link info for polymorphic call at ", m_callLinkInfo->callReturnLocation, ", ", m_callLinkInfo->codeOrigin, "\n");
+
+    m_callLinkInfo = nullptr;
 }
 
 void PolymorphicCallCase::dump(PrintStream& out) const
@@ -95,6 +105,16 @@ CallEdgeList PolymorphicCallStubRoutine::edges() const
     for (size_t i = 0; i < m_variants.size(); ++i)
         result.append(CallEdge(CallVariant(m_variants[i].get()), m_fastCounts[i]));
     return result;
+}
+
+void PolymorphicCallStubRoutine::clearCallNodesFor(CallLinkInfo* info)
+{
+    for (Bag<PolymorphicCallNode>::iterator iter = m_callNodes.begin(); !!iter; ++iter) {
+        PolymorphicCallNode& node = **iter;
+        // All nodes should point to info, but okay to be a little paranoid.
+        if (node.hasCallLinkInfo(info))
+            node.clearCallLinkInfo();
+    }
 }
 
 bool PolymorphicCallStubRoutine::visitWeak(RepatchBuffer&)
