@@ -324,6 +324,21 @@ WebInspector.NativePrototypeFunctionParameters = {
         __proto__: null,
     },
 
+    WeakMap: {
+        delete: "key",
+        get: "key",
+        has: "key",
+        set: "key, value",
+        __proto__: null,
+    },
+
+    WeakSet: {
+        delete: "value",
+        has: "value",
+        add: "value",
+        __proto__: null,
+    },
+
     Promise: {
         catch: "rejectionHandler",
         then: "resolvedHandler, rejectionHandler",
@@ -2072,9 +2087,6 @@ WebInspector.NativePrototypeFunctionParameters = {
         __proto__: null,
     },
 };
-
-WebInspector.NativePrototypeFunctionParameters.WeakMap = WebInspector.NativePrototypeFunctionParameters.Map;
-WebInspector.NativePrototypeFunctionParameters.WeakSet = WebInspector.NativePrototypeFunctionParameters.Set;
 
 (function() {
     var EventTarget = {

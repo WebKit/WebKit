@@ -1,3 +1,15 @@
+2015-05-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Web Inspector: Drop forEach from WeakMap / WeakSet native member function maps
+        https://bugs.webkit.org/show_bug.cgi?id=145497
+
+        Reviewed by Sam Weinig.
+
+        WeakMap / WeakSet don't have forEach method.
+        This patch drops it from the native prototype function parameters map.
+
+        * UserInterface/Models/NativeFunctionParameters.js:
+
 2015-05-29  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Resources tab navigation sidebar should have a type filter header
