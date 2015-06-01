@@ -1,3 +1,21 @@
+2015-06-01  Gavin Barraclough  <barraclough@apple.com>
+
+        PDFs always think they're visible on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=145493
+        <rdar://problem/19668879>
+
+        Unreviewed roll-out.
+
+        Temporarily reverting this change – will need a workaround for test harness craziness.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView didMoveToWindow]):
+        (-[WKWebView setOpaque:]):
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView willMoveToWindow:]):
+        (-[WKContentView didMoveToWindow]):
+        (-[WKContentView browsingContextController]):
+
 2015-06-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Remove unused const variable from EwkView.cpp

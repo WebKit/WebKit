@@ -281,9 +281,14 @@ private:
         if (_webView._allowsLinkPreview)
             [self _registerPreviewInWindow:newWindow];
 #endif
-
-        [self _updateForScreen:newWindow.screen];
     }
+}
+
+- (void)didMoveToWindow
+{
+    if (self.window)
+        [self _updateForScreen:self.window.screen];
+    _page->viewStateDidChange(ViewState::AllFlags);
 }
 
 - (WKBrowsingContextController *)browsingContextController
