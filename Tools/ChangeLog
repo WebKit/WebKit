@@ -1,3 +1,12 @@
+2015-06-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        EWS provides misleading information for not applyable patches
+        https://bugs.webkit.org/show_bug.cgi?id=145307
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/svn-apply: Die if there is no applyable diff in the patch.
+
 2015-06-01  Alexey Proskuryakov  <ap@apple.com>
 
         Further tweak results of WebKit1.StringTruncator after r184965.

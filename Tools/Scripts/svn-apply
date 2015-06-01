@@ -123,6 +123,7 @@ my %checkedDirectories;
 my @diffHashRefs = parsePatch(*ARGV);
 
 print "Parsed " . @diffHashRefs . " diffs from patch file(s).\n";
+die "No diff found." unless @diffHashRefs;
 
 my $preparedPatchHash = prepareParsedPatch($force, @diffHashRefs);
 
