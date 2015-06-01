@@ -1560,7 +1560,7 @@ class GitTestWithMock(unittest.TestCase):
 
     def make_scm(self, logging_executive=False):
         # We do this should_log dance to avoid logging when Git.__init__ runs sysctl on mac to check for 64-bit support.
-        scm = Git(cwd=".", executive=MockExecutive(), filesystem=MockFileSystem())
+        scm = Git(cwd=".", patch_directories=None, executive=MockExecutive(), filesystem=MockFileSystem())
         scm.read_git_config = lambda *args, **kw: "MOCKKEY:MOCKVALUE"
         scm._executive._should_log = logging_executive
         return scm

@@ -1,5 +1,15 @@
 2015-06-01  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Fix the webkitpy scm unittests after r174051
+        https://bugs.webkit.org/show_bug.cgi?id=145511
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        (GitTestWithMock.make_scm):
+
+2015-06-01  Csaba Osztrogonác  <ossy@webkit.org>
+
         EWS provides misleading information for not applyable patches
         https://bugs.webkit.org/show_bug.cgi?id=145307
 
