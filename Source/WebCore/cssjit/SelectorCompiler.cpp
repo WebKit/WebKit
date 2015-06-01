@@ -1243,7 +1243,15 @@ inline SelectorCompilationStatus SelectorCodeGenerator::compile(JSC::VM* vm, JSC
         return SelectorCompilationStatus::CannotCompile;
     }
 
-    JSC::LinkBuffer linkBuffer(*vm, m_assembler, CSS_CODE_ID);
+    JSC::LinkBuffer linkBuffer(*vm, m_assembler, CSS_CODE_ID, JSC::JITCompilationCanFail);
+    if (!linkBuffer.isValid()) {
+        // This could be SelectorCompilationStatus::NotCompiled but that would cause us to re-enter
+        // the CSS JIT every time we evaluate that selector.
+        // If we failed to allocate the buffer, we have bigger problems than CSS performance, it is fine
+        // to be slower.
+        return SelectorCompilationStatus::CannotCompile;
+    }
+
     for (unsigned i = 0; i < m_functionCalls.size(); i++)
         linkBuffer.link(m_functionCalls[i].first, m_functionCalls[i].second);
 
