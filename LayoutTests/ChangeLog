@@ -1,5 +1,15 @@
 2015-06-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Test gardening after r185074
+        https://bugs.webkit.org/show_bug.cgi?id=145478
+
+        Unreviewed.
+
+        * platform/mac-mavericks/fast/text/font-weights-expected.txt: Copied from LayoutTests/platform/mac/fast/text/font-weights-expected.txt.
+        * platform/mac/fast/text/font-weights-expected.txt: Yosemite-specific test results.
+
+2015-06-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Test font selection for zh fonts
         https://bugs.webkit.org/show_bug.cgi?id=145478
 
