@@ -1,3 +1,23 @@
+2015-05-31  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r185003.
+
+    2015-05-29  Brady Eidson  <beidson@apple.com>
+
+            WebSQL default functions can bypass authorizer.
+            <rdar://problem/21048994> and https://bugs.webkit.org/show_bug.cgi?id=145463
+
+            Reviewed by Sam Weinig and Alexey Proskuryakov.
+
+            No new tests yet.
+
+            * platform/sql/SQLiteDatabase.cpp:
+            (WebCore::unauthorizedSQLFunction): Function to install into SQLite to override some built-in functions.
+            (WebCore::SQLiteDatabase::open):
+            (WebCore::SQLiteDatabase::overrideUnauthorizedFunctions): Install function overrides for functions that
+               take arbitrary input that are also meant to be disabled by virtue of them not being whitelisted.
+            * platform/sql/SQLiteDatabase.h:
+
 2015-05-08  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r183649.
