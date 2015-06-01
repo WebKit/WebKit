@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Intel Corporation. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WorkQueueManager_h
-#define WorkQueueManager_h
+#ifndef WKBundleNavigationActionPrivate_h
+#define WKBundleNavigationActionPrivate_h
 
-#include <wtf/Deque.h>
-#include <wtf/text/WTFString.h>
+#include <WebKit/WKBase.h>
 
-namespace WTR {
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-class WorkQueueManager {
-    WTF_MAKE_NONCOPYABLE(WorkQueueManager);
-public:
-    WorkQueueManager();
-    ~WorkQueueManager();
+WK_EXPORT bool WKBundleNavigationActionGetShouldOpenExternalURLs(WKBundleNavigationActionRef);
 
-    bool isWorkQueueEmpty() const { return m_workQueue.isEmpty(); }
-    void clearWorkQueue();
-    bool processWorkQueue(); // Returns 'true' if queue is processed (no new loading is started), returns 'false' otherwise.
+#ifdef __cplusplus
+}
+#endif
 
-    void queueLoad(const String& url, const String& target, bool shouldOpenExternalURLs);
-    void queueLoadHTMLString(const String& content, const String& baseURL, const String& unreachableURL);
-    void queueBackNavigation(unsigned howFarBackward);
-    void queueForwardNavigation(unsigned howFarForward);
-    void queueReload();
-    void queueLoadingScript(const String& script);
-    void queueNonLoadingScript(const String& script);
-
-private:    
-    typedef Deque<std::unique_ptr<class WorkQueueItem>> WorkQueue;
-
-    void enqueue(WorkQueueItem*); // Adopts pointer.
-
-    WorkQueue m_workQueue;
-    bool m_processing;
-};
-
-} // namespace WTR
-
-#endif // WorkQueueManager_h
+#endif // WKBundleNavigationActionPrivate_h

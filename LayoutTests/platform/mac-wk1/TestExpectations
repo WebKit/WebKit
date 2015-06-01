@@ -102,5 +102,8 @@ fast/events/mouse-force-up.html [ Skip ]
 
 [ Yosemite+ ] platform/mac/fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
 
+# ShouldOpenExternalURLs not yet supported in WK1
+loader/navigation-policy [ Skip ]
+
 ### END OF (2) Failures without bug reports
 ########################################

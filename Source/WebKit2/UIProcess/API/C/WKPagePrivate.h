@@ -111,6 +111,8 @@ WK_EXPORT void WKPageSetAddsVisitedLinks(WKPageRef page, bool visitedLinks);
 WK_EXPORT bool WKPageIsPlayingAudio(WKPageRef page);
 WK_EXPORT void WKPageSetMuted(WKPageRef page, bool muted);
 
+WK_EXPORT void WKPageLoadURLWithShouldOpenExternalURLsPolicy(WKPageRef page, WKURLRef url, bool shouldOpenExternalURLs);
+
 #ifdef __cplusplus
 }
 #endif

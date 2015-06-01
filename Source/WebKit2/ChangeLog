@@ -1,3 +1,27 @@
+2015-06-01  Brady Eidson  <beidson@apple.com>
+
+        Add WKTR support for "should open external URLs".
+        https://bugs.webkit.org/show_bug.cgi?id=145505
+
+        Reviewed by Darin Adler.
+
+        Expose C-spi to allow WKTR to set this bit on new loads:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageLoadURLWithShouldOpenExternalURLsPolicy):
+        * UIProcess/API/C/WKPagePrivate.h:
+        
+        Expose the bit on NavigationAction for the policy delegate:        
+        * WebProcess/InjectedBundle/API/c/WKBundleNavigationAction.cpp:
+        (WKBundleNavigationActionGetShouldOpenExternalURLs):
+        * WebProcess/InjectedBundle/API/c/WKBundleNavigationActionPrivate.h: Copied from Tools/WebKitTestRunner/WorkQueueManager.h.
+
+        * WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp:
+        (WebKit::InjectedBundleNavigationAction::InjectedBundleNavigationAction):
+        * WebProcess/InjectedBundle/InjectedBundleNavigationAction.h:
+        (WebKit::InjectedBundleNavigationAction::shouldOpenExternalURLs):
+    
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-06-01  Gavin Barraclough  <barraclough@apple.com>
 
         PDFs always think they're visible on iOS.

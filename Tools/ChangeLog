@@ -1,3 +1,37 @@
+2015-06-01  Brady Eidson  <beidson@apple.com>
+
+        Add WKTR support for "should open external URLs".
+        https://bugs.webkit.org/show_bug.cgi?id=145505
+
+        Reviewed by Darin Adler.
+
+        - Add a new option to "queueLoad" to allow javascript to queue a load that has the
+          "should open external URLs" bit set.
+        
+        - Add a new "dumpPolicyDelegateCallbacks" call to dump the NavigationAction in
+          the policy delegate, including whether or not the bit was set.
+        
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::queueLoad):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (WTR::TestRunner::dumpPolicyDelegateCallbacks):
+        (WTR::TestRunner::shouldDumpPolicyCallbacks):
+        
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::queueLoad):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::decidePolicyForNavigationAction):
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+
+        * WebKitTestRunner/WorkQueueManager.cpp:
+        (WTR::WorkQueueManager::queueLoad):
+        * WebKitTestRunner/WorkQueueManager.h:
+
 2015-06-01  Mark Lam  <mark.lam@apple.com>
 
         build-jsc's --cloop option is broken.

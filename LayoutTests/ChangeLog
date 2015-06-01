@@ -1,3 +1,20 @@
+2015-06-01  Brady Eidson  <beidson@apple.com>
+
+        Add WKTR support for "should open external URLs".
+        https://bugs.webkit.org/show_bug.cgi?id=145505
+
+        Reviewed by Darin Adler.
+
+        * loader/navigation-policy/resources/notify-done.html: Added.
+        * loader/navigation-policy/should-load-external-urls-set-by-api-basic-expected.txt: Added.
+        * loader/navigation-policy/should-load-external-urls-set-by-api-basic.html: Added.
+        * loader/navigation-policy/should-not-load-external-urls-set-by-api-basic-expected.txt: Added.
+        * loader/navigation-policy/should-not-load-external-urls-set-by-api-basic.html: Added.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2015-06-01  Chris Dumez  <cdumez@apple.com>
 
         ASSERT(revalidatingResource.inCache()) in MemoryCache when reloading tumblr.com

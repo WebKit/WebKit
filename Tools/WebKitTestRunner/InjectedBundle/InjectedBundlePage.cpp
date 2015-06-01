@@ -39,6 +39,7 @@
 #include <WebKit/WKBundleFramePrivate.h>
 #include <WebKit/WKBundleHitTestResult.h>
 #include <WebKit/WKBundleNavigationAction.h>
+#include <WebKit/WKBundleNavigationActionPrivate.h>
 #include <WebKit/WKBundleNodeHandlePrivate.h>
 #include <WebKit/WKBundlePagePrivate.h>
 #include <WebKit/WKBundlePrivate.h>
@@ -1261,6 +1262,18 @@ WKBundlePagePolicyAction InjectedBundlePage::decidePolicyForNavigationAction(WKB
     auto& injectedBundle = InjectedBundle::singleton();
     if (!injectedBundle.isTestRunning())
         return WKBundlePagePolicyActionUse;
+
+    if (injectedBundle.testRunner()->shouldDumpPolicyCallbacks()) {
+        StringBuilder stringBuilder;
+        stringBuilder.appendLiteral(" - decidePolicyForNavigationAction \n");
+        dumpRequestDescriptionSuitableForTestResult(request, stringBuilder);
+        stringBuilder.appendLiteral(" is main frame - ");
+        stringBuilder.append(WKBundleFrameIsMainFrame(frame) ? "yes" : "no");
+        stringBuilder.appendLiteral(" should open URLs externally - ");
+        stringBuilder.append(WKBundleNavigationActionGetShouldOpenExternalURLs(navigationAction) ? "yes" : "no");
+        stringBuilder.append('\n');
+        injectedBundle.outputText(stringBuilder.toString());
+    }
 
     if (!injectedBundle.testRunner()->isPolicyDelegateEnabled())
         return WKBundlePagePolicyActionUse;

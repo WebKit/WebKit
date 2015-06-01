@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "WKBundleNavigationAction.h"
+#include "WKBundleNavigationActionPrivate.h"
 
 #include "InjectedBundleHitTestResult.h"
 #include "InjectedBundleNavigationAction.h"
@@ -64,4 +65,9 @@ WKBundleNodeHandleRef WKBundleNavigationActionCopyFormElement(WKBundleNavigation
 {
     RefPtr<InjectedBundleNodeHandle> formElement = toImpl(navigationActionRef)->formElement();
     return toAPI(formElement.release().leakRef());
+}
+
+bool WKBundleNavigationActionGetShouldOpenExternalURLs(WKBundleNavigationActionRef navigationActionRef)
+{
+    return toImpl(navigationActionRef)->shouldOpenExternalURLs();
 }

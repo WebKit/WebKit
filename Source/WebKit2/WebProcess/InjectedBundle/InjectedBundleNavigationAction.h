@@ -56,6 +56,8 @@ public:
     InjectedBundleHitTestResult* hitTestResult() const { return m_hitTestResult.get(); }
     InjectedBundleNodeHandle* formElement() const { return m_formElement.get(); }
 
+    bool shouldOpenExternalURLs() const { return m_shouldOpenExternalURLs; }
+
 private:
     InjectedBundleNavigationAction(WebFrame*, const WebCore::NavigationAction&, PassRefPtr<WebCore::FormState>);
 
@@ -64,6 +66,7 @@ private:
     WebMouseEvent::Button m_mouseButton;
     RefPtr<InjectedBundleHitTestResult> m_hitTestResult;
     RefPtr<InjectedBundleNodeHandle> m_formElement;
+    bool m_shouldOpenExternalURLs;
 };
 
 } // namespace WebKit

@@ -3101,3 +3101,6 @@ webkit.org/b/143420 fast/fixed-layout/fixed-layout.html [ Skip ]
 
 # Seems to be font metrics dependent.
 fast/text/simple-line-layout-text-stroke-width.html [ Failure ]
+
+# ShouldOpenExternalURLs not yet supported in WK1
+loader/navigation-policy [ Skip ]

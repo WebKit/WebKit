@@ -48,6 +48,7 @@ interface TestRunner {
     void dumpApplicationCacheDelegateCallbacks();
     void dumpDatabaseCallbacks();
     void dumpDOMAsWebArchive();
+    void dumpPolicyDelegateCallbacks();
 
     // Special options.
     void keepWebHistory();
@@ -180,7 +181,7 @@ interface TestRunner {
     // Work queue.
     void queueBackNavigation(unsigned long howFarBackward);
     void queueForwardNavigation(unsigned long howFarForward);
-    void queueLoad(DOMString url, DOMString target);
+    void queueLoad(DOMString url, DOMString target, optional boolean shouldOpenExternalURLs);
     void queueLoadHTMLString(DOMString content, optional DOMString baseURL, optional DOMString unreachableURL);
     void queueReload();
     void queueLoadingScript(DOMString script);

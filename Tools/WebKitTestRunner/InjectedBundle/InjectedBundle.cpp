@@ -544,7 +544,7 @@ void InjectedBundle::queueForwardNavigation(unsigned howFarForward)
     WKBundlePagePostMessage(page()->page(), messageName.get(), messageBody.get());
 }
 
-void InjectedBundle::queueLoad(WKStringRef url, WKStringRef target)
+void InjectedBundle::queueLoad(WKStringRef url, WKStringRef target, bool shouldOpenExternalURLs)
 {
     m_useWorkQueue = true;
 
@@ -557,6 +557,10 @@ void InjectedBundle::queueLoad(WKStringRef url, WKStringRef target)
 
     WKRetainPtr<WKStringRef> targetKey(AdoptWK, WKStringCreateWithUTF8CString("target"));
     WKDictionarySetItem(loadData.get(), targetKey.get(), target);
+
+    WKRetainPtr<WKStringRef> shouldOpenExternalURLsKey(AdoptWK, WKStringCreateWithUTF8CString("shouldOpenExternalURLs"));
+    WKRetainPtr<WKBooleanRef> shouldOpenExternalURLsValue(AdoptWK, WKBooleanCreate(shouldOpenExternalURLs));
+    WKDictionarySetItem(loadData.get(), shouldOpenExternalURLsKey.get(), shouldOpenExternalURLsValue.get());
 
     WKBundlePagePostMessage(page()->page(), messageName.get(), loadData.get());
 }

@@ -29,6 +29,7 @@
 #include "PlatformWebView.h"
 #include "TestController.h"
 #include <WebKit/WKPage.h>
+#include <WebKit/WKPagePrivate.h>
 #include <WebKit/WKRetainPtr.h>
 #include <stdio.h>
 #include <wtf/text/CString.h>
@@ -125,13 +126,14 @@ bool WorkQueueManager::processWorkQueue()
     return !m_processing;
 }
 
-void WorkQueueManager::queueLoad(const String& url, const String& target)
+void WorkQueueManager::queueLoad(const String& url, const String& target, bool shouldOpenExternalURLs)
 {
     class LoadItem : public WorkQueueItem {
     public:
-        LoadItem(const String& url, const String& target)
+        LoadItem(const String& url, const String& target, bool shouldOpenExternalURLs)
             : m_url(AdoptWK, WKURLCreateWithUTF8CString(url.utf8().data()))
             , m_target(target)
+            , m_shouldOpenExternalURLs(shouldOpenExternalURLs)
         {
         }
 
@@ -142,15 +144,16 @@ void WorkQueueManager::queueLoad(const String& url, const String& target)
                 fprintf(stderr, "queueLoad for a specific target is not implemented.\n");
                 return WorkQueueItem::NonLoading;
             }
-            WKPageLoadURL(mainPage(), m_url.get());
+            WKPageLoadURLWithShouldOpenExternalURLsPolicy(mainPage(), m_url.get(), m_shouldOpenExternalURLs);
             return WorkQueueItem::Loading;
         }
 
         WKRetainPtr<WKURLRef> m_url;
         String m_target;
+        bool m_shouldOpenExternalURLs;
     };
 
-    enqueue(new LoadItem(url, target));
+    enqueue(new LoadItem(url, target, shouldOpenExternalURLs));
 }
 
 void WorkQueueManager::queueLoadHTMLString(const String& content, const String& baseURL, const String& unreachableURL)
