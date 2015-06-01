@@ -90,8 +90,6 @@ using namespace EwkViewCallbacks;
 using namespace WebCore;
 using namespace WebKit;
 
-static const int defaultCursorSize = 16;
-
 // Auxiliary functions.
 
 const char EwkView::smartClassName[] = "EWK2_View";

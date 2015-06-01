@@ -1,5 +1,14 @@
 2015-06-01  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [EFL] Remove unused const variable from EwkView.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=145512
+
+        Reviewed by Gyuyoung Kim.
+
+        * UIProcess/API/efl/EwkView.cpp:
+
+2015-06-01  Csaba Osztrogonác  <ossy@webkit.org>
+
         [cmake] Suppress unused parameter warnings in WebKit2 and TestNetscapePlugIn
         https://bugs.webkit.org/show_bug.cgi?id=145264
 
