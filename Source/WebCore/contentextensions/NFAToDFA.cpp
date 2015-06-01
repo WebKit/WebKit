@@ -373,7 +373,8 @@ DFA NFAToDFA::convert(NFA& nfa)
         NodeIdSet setFallbackTransition;
         populateTransitions(transitionsFromClosedSet, setFallbackTransition, *uniqueNodeIdSetImpl, nfaGraph, nfaNodeClosures);
 
-        unsigned transitionsStart = dfa.transitions.size();
+        unsigned transitionsStart = dfa.transitionCharacters.size();
+        ASSERT(dfa.transitionCharacters.size() == dfa.transitionDestinations.size());
         for (unsigned key = 0; key < transitionsFromClosedSet.size(); ++key) {
             NodeIdSet& targetNodeSet = transitionsFromClosedSet[key];
 
@@ -382,11 +383,13 @@ DFA NFAToDFA::convert(NFA& nfa)
 
             unsigned targetNodeId = getOrCreateDFANode(targetNodeSet, nfaGraph, dfa, uniqueNodeIdSetTable, unprocessedNodes);
             RELEASE_ASSERT(key <= 127);
-            dfa.transitions.append(std::make_pair(static_cast<uint8_t>(key), targetNodeId));
+            dfa.transitionCharacters.append(static_cast<uint8_t>(key));
+            dfa.transitionDestinations.append(targetNodeId);
 
             targetNodeSet.clear();
         }
-        unsigned transitionsEnd = dfa.transitions.size();
+        unsigned transitionsEnd = dfa.transitionCharacters.size();
+        ASSERT(dfa.transitionCharacters.size() == dfa.transitionDestinations.size());
         unsigned transitionsLength = transitionsEnd - transitionsStart;
         RELEASE_ASSERT(transitionsLength <= 127);
         dfa.nodes[dfaNodeId].setTransitions(transitionsStart, static_cast<uint8_t>(transitionsLength));

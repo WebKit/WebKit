@@ -38,9 +38,10 @@ namespace ContentExtensions {
 size_t DFA::memoryUsed() const
 {
     return sizeof(DFA)
-        + actions.size() * sizeof(uint64_t)
-        + transitions.size() * sizeof(std::pair<uint8_t, uint32_t>)
-        + nodes.size() * sizeof(DFANode);
+        + actions.capacity() * sizeof(uint64_t)
+        + transitionCharacters.capacity() * sizeof(uint8_t)
+        + transitionDestinations.capacity() * sizeof(uint32_t)
+        + nodes.capacity() * sizeof(DFANode);
 }
 
 // FIXME: Make DFANode.cpp.
@@ -60,7 +61,7 @@ Vector<std::pair<uint8_t, uint32_t>> DFANode::transitions(const DFA& dfa) const
     Vector<std::pair<uint8_t, uint32_t>> vector;
     vector.reserveInitialCapacity(transitionsLength());
     for (uint32_t i = m_transitionsStart; i < m_transitionsStart + m_transitionsLength; ++i)
-        vector.uncheckedAppend(dfa.transitions[i]);
+        vector.uncheckedAppend(std::make_pair(dfa.transitionCharacters[i], dfa.transitionDestinations[i]));
     return vector;
 }
 
@@ -69,21 +70,24 @@ uint32_t DFANode::fallbackTransitionDestination(const DFA& dfa) const
     RELEASE_ASSERT(hasFallbackTransition());
 
     // If there is a fallback transition, it is just after the other transitions and has an invalid ASCII character to mark it as a fallback transition.
-    ASSERT(dfa.transitions[m_transitionsStart + m_transitionsLength].first == std::numeric_limits<uint8_t>::max());
-    return dfa.transitions[m_transitionsStart + m_transitionsLength].second;
+    ASSERT(dfa.transitionCharacters[m_transitionsStart + m_transitionsLength] == std::numeric_limits<uint8_t>::max());
+    return dfa.transitionDestinations[m_transitionsStart + m_transitionsLength];
 }
 
 void DFANode::changeFallbackTransition(DFA& dfa, uint32_t newDestination)
 {
     RELEASE_ASSERT(hasFallbackTransition());
-    ASSERT_WITH_MESSAGE(dfa.transitions[m_transitionsStart + m_transitionsLength].first == std::numeric_limits<uint8_t>::max(), "When changing a fallback transition, the fallback transition should already be marked as such");
-    dfa.transitions[m_transitionsStart + m_transitionsLength] = std::pair<uint8_t, uint32_t>(std::numeric_limits<uint8_t>::max(), newDestination);
+    ASSERT_WITH_MESSAGE(dfa.transitionCharacters[m_transitionsStart + m_transitionsLength] == std::numeric_limits<uint8_t>::max(), "When changing a fallback transition, the fallback transition should already be marked as such");
+    dfa.transitionCharacters[m_transitionsStart + m_transitionsLength] = std::numeric_limits<uint8_t>::max();
+    dfa.transitionDestinations[m_transitionsStart + m_transitionsLength] = newDestination;
 }
 
 void DFANode::addFallbackTransition(DFA& dfa, uint32_t destination)
 {
-    RELEASE_ASSERT_WITH_MESSAGE(dfa.transitions.size() == m_transitionsStart + m_transitionsLength, "Adding a fallback transition should only happen if the node is at the end");
-    dfa.transitions.append(std::pair<uint8_t, uint32_t>(std::numeric_limits<uint8_t>::max(), destination));
+    RELEASE_ASSERT(dfa.transitionCharacters.size() == dfa.transitionDestinations.size());
+    RELEASE_ASSERT_WITH_MESSAGE(dfa.transitionCharacters.size() == m_transitionsStart + m_transitionsLength, "Adding a fallback transition should only happen if the node is at the end");
+    dfa.transitionCharacters.append(std::numeric_limits<uint8_t>::max());
+    dfa.transitionDestinations.append(destination);
     ASSERT(!(m_flags & HasFallbackTransition));
     m_flags |= HasFallbackTransition;
 }
@@ -93,7 +97,7 @@ bool DFANode::containsTransition(uint8_t transition, DFA& dfa)
     // Called from DFAMinimizer, this loops though a maximum of 128 transitions, so it's not too slow.
     ASSERT(m_transitionsLength <= 128);
     for (unsigned i = m_transitionsStart; i < m_transitionsStart + m_transitionsLength; ++i) {
-        if (dfa.transitions[i].first == transition)
+        if (dfa.transitionCharacters[i] == transition)
             return true;
     }
     return false;
@@ -105,8 +109,10 @@ void DFANode::kill(DFA& dfa)
     m_flags = IsKilled; // Killed nodes don't have any other flags.
     
     // Invalidate the now-unused memory in the DFA to make finding bugs easier.
-    for (unsigned i = m_transitionsStart; i < m_transitionsStart + m_transitionsLength; ++i)
-        dfa.transitions[i] = std::make_pair(std::numeric_limits<uint8_t>::max(), std::numeric_limits<uint32_t>::max());
+    for (unsigned i = m_transitionsStart; i < m_transitionsStart + m_transitionsLength; ++i) {
+        dfa.transitionCharacters[i] = std::numeric_limits<uint8_t>::max();
+        dfa.transitionDestinations[i] = std::numeric_limits<uint32_t>::max();
+    }
     for (unsigned i = m_actionsStart; i < m_actionsStart + m_actionsLength; ++i)
         dfa.actions[i] = std::numeric_limits<uint64_t>::max();
 
