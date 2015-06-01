@@ -144,6 +144,7 @@ set(WebCore_IDL_INCLUDES
     Modules/geolocation
     Modules/indexeddb
     Modules/indieui
+    Modules/mediasession
     Modules/mediastream
     Modules/notifications
     Modules/proximity
@@ -216,6 +217,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/indieui/UIRequestEvent.idl
 
     Modules/mediacontrols/MediaControlsHost.idl
+
+    Modules/mediasession/MediaRemoteControls.idl
 
     Modules/mediasource/DOMURLMediaSource.idl
     Modules/mediasource/MediaSource.idl
@@ -869,6 +872,8 @@ set(WebCore_SOURCES
     Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.cpp
 
     Modules/mediacontrols/MediaControlsHost.cpp
+
+    Modules/mediasession/MediaRemoteControls.cpp
 
     Modules/mediasource/DOMURLMediaSource.cpp
     Modules/mediasource/MediaSource.cpp
