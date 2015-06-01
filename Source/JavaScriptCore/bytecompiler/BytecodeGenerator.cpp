@@ -129,8 +129,10 @@ ParserError BytecodeGenerator::generate()
             continue;
         
         ASSERT(range.tryData->targetScopeDepth != UINT_MAX);
+        ASSERT(range.tryData->handlerType != HandlerType::Illegal);
         UnlinkedHandlerInfo info(static_cast<uint32_t>(start), static_cast<uint32_t>(end),
-            static_cast<uint32_t>(range.tryData->target->bind()), range.tryData->targetScopeDepth);
+            static_cast<uint32_t>(range.tryData->target->bind()), range.tryData->targetScopeDepth,
+            range.tryData->handlerType);
         m_codeBlock->addExceptionHandler(info);
     }
     
@@ -2513,6 +2515,7 @@ TryData* BytecodeGenerator::pushTry(Label* start)
     TryData tryData;
     tryData.target = newLabel();
     tryData.targetScopeDepth = UINT_MAX;
+    tryData.handlerType = HandlerType::Illegal;
     m_tryData.append(tryData);
     TryData* result = &m_tryData.last();
     
@@ -2525,7 +2528,7 @@ TryData* BytecodeGenerator::pushTry(Label* start)
     return result;
 }
 
-RegisterID* BytecodeGenerator::popTryAndEmitCatch(TryData* tryData, RegisterID* targetRegister, Label* end)
+RegisterID* BytecodeGenerator::popTryAndEmitCatch(TryData* tryData, RegisterID* targetRegister, Label* end, HandlerType handlerType)
 {
     m_usesExceptions = true;
     
@@ -2540,6 +2543,7 @@ RegisterID* BytecodeGenerator::popTryAndEmitCatch(TryData* tryData, RegisterID* 
     
     emitLabel(tryRange.tryData->target.get());
     tryRange.tryData->targetScopeDepth = m_localScopeDepth;
+    tryRange.tryData->handlerType = handlerType;
 
     emitOpcode(op_catch);
     instructions().append(targetRegister->index());
@@ -2756,7 +2760,7 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
         // IteratorClose sequence for throw-ed control flow.
         {
             RefPtr<Label> catchHere = emitLabel(newLabel().get());
-            RefPtr<RegisterID> exceptionRegister = popTryAndEmitCatch(tryData, newTemporary(), catchHere.get());
+            RefPtr<RegisterID> exceptionRegister = popTryAndEmitCatch(tryData, newTemporary(), catchHere.get(), HandlerType::SynthesizedFinally);
             RefPtr<Label> catchDone = newLabel();
 
             RefPtr<RegisterID> returnMethod = emitGetById(newTemporary(), iterator.get(), propertyNames().returnKeyword);
@@ -2774,7 +2778,7 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
             emitThrow(exceptionRegister.get());
 
             // Absorb exception.
-            popTryAndEmitCatch(returnCallTryData, newTemporary(), catchDone.get());
+            popTryAndEmitCatch(returnCallTryData, newTemporary(), catchDone.get(), HandlerType::SynthesizedFinally);
             emitThrow(exceptionRegister.get());
         }
 

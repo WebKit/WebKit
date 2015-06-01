@@ -175,6 +175,7 @@ namespace JSC {
     struct TryData {
         RefPtr<Label> target;
         unsigned targetScopeDepth;
+        HandlerType handlerType;
     };
 
     struct TryContext {
@@ -552,7 +553,7 @@ namespace JSC {
         // Start a try block. 'start' must have been emitted.
         TryData* pushTry(Label* start);
         // End a try block. 'end' must have been emitted.
-        RegisterID* popTryAndEmitCatch(TryData*, RegisterID* targetRegister, Label* end);
+        RegisterID* popTryAndEmitCatch(TryData*, RegisterID* targetRegister, Label* end, HandlerType);
 
         void emitThrow(RegisterID* exc)
         { 

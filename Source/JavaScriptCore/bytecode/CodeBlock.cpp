@@ -655,8 +655,8 @@ void CodeBlock::dumpBytecode(PrintStream& out)
         unsigned i = 0;
         do {
             HandlerInfo& handler = m_rareData->m_exceptionHandlers[i];
-            out.printf("\t %d: { start: [%4d] end: [%4d] target: [%4d] depth: [%4d] }\n",
-                i + 1, handler.start, handler.end, handler.target, handler.scopeDepth);
+            out.printf("\t %d: { start: [%4d] end: [%4d] target: [%4d] depth: [%4d] } %s\n",
+                i + 1, handler.start, handler.end, handler.target, handler.scopeDepth, handler.typeName());
             ++i;
         } while (i < m_rareData->m_exceptionHandlers.size());
     }

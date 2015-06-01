@@ -1,3 +1,43 @@
+2015-06-01  Mark Lam  <mark.lam@apple.com>
+
+        Add the ability to tell between Catch and Finally blocks.
+        https://bugs.webkit.org/show_bug.cgi?id=145524 
+
+        Reviewed by Michael Saboff.
+
+        ... and also SynthesizedFinally blocks too.  A SynthesizedFinally block
+        is a finally block that is synthesized by the bytecode generator but
+        does not actually correspond to any exception handling construct at the
+        JS source code level.  An example of this is the "for ... of" statement
+        where it needs to do some "final" clean up before passing on the
+        exception.
+
+        Manually tested by inspecting the bytecode dump of functions with
+        try-catch-finally blocks as well as for of statements which have
+        synthesized finally blocks.  The bytecode dumps contains the exception
+        handlers table which has these blocks labelled with their newly added
+        types.  No automatic test because this type info is not visible to JS
+        code.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/HandlerInfo.h:
+        (JSC::HandlerInfoBase::type):
+        (JSC::HandlerInfoBase::setType):
+        (JSC::HandlerInfoBase::typeName):
+        (JSC::HandlerInfoBase::isCatchHandler):
+        (JSC::UnlinkedHandlerInfo::UnlinkedHandlerInfo):
+        (JSC::HandlerInfo::initialize):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::pushTry):
+        (JSC::BytecodeGenerator::popTryAndEmitCatch):
+        (JSC::BytecodeGenerator::emitEnumeration):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitThrow):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::TryNode::emitBytecode):
+
 2015-05-29  Geoffrey Garen  <ggaren@apple.com>
 
         REGRESSION: These sorting idioms used by Peacekeeper and Browsermark are ~20X slower
