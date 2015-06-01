@@ -420,8 +420,7 @@ function sort(comparator)
         return valueCount;
     }
 
-    // Move undefineds and holes to the end of an array. Result is [values..., undefineds..., holes...].
-    function compact(array, length)
+    function compactSlow(array, length)
     {
         var holeCount = 0;
 
@@ -436,6 +435,7 @@ function sort(comparator)
             var value = array[src];
             if (value === undefined)
                 continue;
+
             array[dst++] = value;
         }
 
@@ -449,6 +449,17 @@ function sort(comparator)
             delete array[i];
 
         return valueCount;
+    }
+
+    // Move undefineds and holes to the end of an array. Result is [values..., undefineds..., holes...].
+    function compact(array, length)
+    {
+        for (var i = 0; i < array.length; ++i) {
+            if (array[i] === undefined)
+                return compactSlow(array, length);
+        }
+
+        return length;
     }
 
     function merge(dst, src, srcIndex, srcEnd, width, comparator)
@@ -492,6 +503,39 @@ function sort(comparator)
         }
     }
 
+    function bucketSort(array, dst, bucket, depth)
+    {
+        if (bucket.length < 32 || depth > 32) {
+            mergeSort(bucket, bucket.length, stringComparator);
+            for (var i = 0; i < bucket.length; ++i)
+                array[dst++] = bucket[i].value;
+            return dst;
+        }
+
+        var buckets = [ ];
+        for (var i = 0; i < bucket.length; ++i) {
+            var entry = bucket[i];
+            var string = entry.string;
+            if (string.length == depth) {
+                array[dst++] = entry.value;
+                continue;
+            }
+
+            var c = string.@charCodeAt(depth);
+            if (!buckets[c])
+                buckets[c] = [ ];
+            buckets[c][buckets[c].length] = entry;
+        }
+
+        for (var i = 0; i < buckets.length; ++i) {
+            if (!buckets[i])
+                continue;
+            dst = bucketSort(array, dst, buckets[i], depth + 1);
+        }
+
+        return dst;
+    }
+
     function comparatorSort(array, comparator)
     {
         var length = array.length >>> 0;
@@ -520,10 +564,7 @@ function sort(comparator)
         for (var i = 0; i < valueCount; ++i)
             strings[i] = { string: @toString(array[i]), value: array[i] };
 
-        mergeSort(strings, valueCount, stringComparator);
-
-        for (var i = 0; i < valueCount; ++i)
-            array[i] = strings[i].value;
+        bucketSort(array, 0, strings, 0);
     }
 
     if (this === null)
