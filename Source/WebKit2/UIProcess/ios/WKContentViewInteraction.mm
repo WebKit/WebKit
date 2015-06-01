@@ -2695,7 +2695,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 
 - (UITextInputArrowKeyHistory *)_moveToStartOfLine:(BOOL) extending withHistory:(UITextInputArrowKeyHistory *)history
 {
-    [self executeEditCommandWithCallback:@"moveToStartOfLine"];
+    [self executeEditCommandWithCallback:@"moveToBeginningOfLine"];
     return nil;
 }
 

@@ -1,3 +1,17 @@
+2015-06-01  Enrica Casucci  <enrica@apple.com>
+
+        [iOS] Hardware Keyboard: Command + left arrow does not work.
+        https://bugs.webkit.org/show_bug.cgi?id=145531
+        rdar://problem/18576402
+
+        Reviewed by Anders Carlsson.
+
+        We were calling a non existent command (moveToStartOfLine) instead of
+        moveToBeginningOfLine.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _moveToStartOfLine:withHistory:]):
+
 2015-06-01  Brady Eidson  <beidson@apple.com>
 
         Add WKTR support for "should open external URLs".
