@@ -1303,7 +1303,11 @@ Vector<String> Internals::userPreferredAudioCharacteristics() const
     Document* document = contextDocument();
     if (!document || !document->page())
         return Vector<String>();
+#if ENABLE(VIDEO_TRACK)
     return document->page()->group().captionPreferences()->preferredAudioCharacteristics();
+#else
+    return Vector<String>();
+#endif
 }
 
 void Internals::setUserPreferredAudioCharacteristic(const String& characteristic)
@@ -1311,7 +1315,11 @@ void Internals::setUserPreferredAudioCharacteristic(const String& characteristic
     Document* document = contextDocument();
     if (!document || !document->page())
         return;
+#if ENABLE(VIDEO_TRACK)
     document->page()->group().captionPreferences()->setPreferredAudioCharacteristic(characteristic);
+#else
+    UNUSED_PARAM(characteristic);
+#endif
 }
 
 unsigned Internals::wheelEventHandlerCount(ExceptionCode& ec)
