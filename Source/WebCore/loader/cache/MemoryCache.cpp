@@ -129,7 +129,6 @@ void MemoryCache::revalidationSucceeded(CachedResource& revalidatingResource, co
     CachedResource& resource = *revalidatingResource.resourceToRevalidate();
     ASSERT(!resource.inCache());
     ASSERT(resource.isLoaded());
-    ASSERT(revalidatingResource.inCache());
 
     // Calling remove() can potentially delete revalidatingResource, which we use
     // below. This mustn't be the case since revalidation means it is loaded

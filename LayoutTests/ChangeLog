@@ -1,3 +1,17 @@
+2015-06-01  Chris Dumez  <cdumez@apple.com>
+
+        ASSERT(revalidatingResource.inCache()) in MemoryCache when reloading tumblr.com
+        https://bugs.webkit.org/show_bug.cgi?id=145518
+        <rdar://problem/21168573>
+
+        Reviewed by Darin Adler.
+
+        Add layout test to make sure we no longer crash if the memory cache is
+        pruned while a resource is being revalidated.
+
+        * http/tests/cache/memory-cache-pruning-during-revalidation-expected.txt: Added.
+        * http/tests/cache/memory-cache-pruning-during-revalidation.html: Added.
+
 2015-05-31  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Async XMLHttpRequest should get access to AppCache resources stored as flat files
