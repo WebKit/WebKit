@@ -1,3 +1,13 @@
+2015-06-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test font selection for zh fonts
+        https://bugs.webkit.org/show_bug.cgi?id=145478
+
+        Rubber-stamped by Zalan Bujtas.
+
+        * platform/mac/fast/text/font-weights-zh-expected.txt: Added.
+        * platform/mac/fast/text/font-weights-zh.html: Added.
+
 2015-06-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r185074 and r185085.
