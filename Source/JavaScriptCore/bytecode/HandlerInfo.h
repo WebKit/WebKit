@@ -48,20 +48,21 @@ struct UnlinkedHandlerInfo : public HandlerInfoBase {
 };
 
 struct HandlerInfo : public HandlerInfoBase {
-    void initialize(const UnlinkedHandlerInfo& unlinkedInfo, size_t nonLocalScopeDepth, CodeLocationLabel label)
+    void initialize(const UnlinkedHandlerInfo& unlinkedInfo, size_t nonLocalScopeDepth)
     {
         start = unlinkedInfo.start;
         end = unlinkedInfo.end;
         target = unlinkedInfo.target;
         scopeDepth = unlinkedInfo.scopeDepth + nonLocalScopeDepth;
-#if ENABLE(JIT)
-        nativeCode = label;
-#else
-        UNUSED_PARAM(label);
-#endif
     }
 
 #if ENABLE(JIT)
+    void initialize(const UnlinkedHandlerInfo& unlinkedInfo, size_t nonLocalScopeDepth, CodeLocationLabel label)
+    {
+        initialize(unlinkedInfo, nonLocalScopeDepth);
+        nativeCode = label;
+    }
+
     CodeLocationLabel nativeCode;
 #endif
 };

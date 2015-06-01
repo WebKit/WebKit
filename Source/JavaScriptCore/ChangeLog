@@ -1,3 +1,19 @@
+2015-06-01  Mark Lam  <mark.lam@apple.com>
+
+        HandlerInfo::initialize() should not assume that CodeLocationLabel is available.
+        https://bugs.webkit.org/show_bug.cgi?id=145515
+
+        Reviewed by Csaba Osztrogonác.
+
+        CodeLocationLabel is only defined for ENABLE(ASSEMBLER) builds.  r185022's
+        attempt at simplifying code to increase readability failed to take this into
+        account.  This patch fixes it.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/HandlerInfo.h:
+        (JSC::HandlerInfo::initialize):
+
 2015-05-31  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, add a FIXME referencing https://bugs.webkit.org/show_bug.cgi?id=145503.

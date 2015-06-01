@@ -1823,8 +1823,12 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             for (size_t i = 0; i < count; i++) {
                 const UnlinkedHandlerInfo& unlinkedHandler = unlinkedCodeBlock->exceptionHandler(i);
                 HandlerInfo& handler = m_rareData->m_exceptionHandlers[i];
+#if ENABLE(JIT)
                 handler.initialize(unlinkedHandler, nonLocalScopeDepth,
                     CodeLocationLabel(MacroAssemblerCodePtr::createFromExecutableAddress(LLInt::getCodePtr(op_catch))));
+#else
+                handler.initialize(unlinkedHandler, nonLocalScopeDepth);
+#endif
             }
         }
 
