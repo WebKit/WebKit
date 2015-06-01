@@ -90,9 +90,8 @@ class CMakeChecker(object):
 
     def check(self, lines):
         self._tab_checker.check(lines)
-        self._num_lines = len(lines)
-        for l in xrange(self._num_lines):
-            self._process_line(l + 1, lines[l])
+        for line_number, line in enumerate(lines, start=1):
+            self._process_line(line_number, line)
         self._check_list_order(lines)
 
     def _process_line(self, line_number, line_content):
@@ -151,12 +150,10 @@ class CMakeChecker(object):
     def _check_list_order(self, lines):
         last_line = None
 
-        line_number = 0
-        for line in lines:
+        for line_number, line in enumerate(lines, start=1):
             matched = search('\$\{.*\}', line)
             if matched:
                 continue
-            line_number += 1
             line = line.strip()
 
             if last_line == None:

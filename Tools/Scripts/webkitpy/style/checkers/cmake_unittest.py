@@ -131,8 +131,8 @@ class CMakeCheckerTest(unittest.TestCase):
             (24, 'list/parentheses', 5, 'The parentheses after the last listitem "b" should be in a new line.'),
             (31,  'list/duplicate', 5, 'The item "a" should be added only once to the list.'),
             (35, 'list/order', 5, 'Alphabetical sorting problem. "a" should be before "b".'),
-            (41, 'list/order', 5, 'Alphabetical sorting problem. "c/c.c" should be before "c/b/a.a".'),
-            (49, 'list/emptyline', 5, 'There should be no empty line between "a" and "b".'),
-            (54, 'list/emptyline', 5, 'There should be exactly one empty line instead of 0 between "a/b.b" and "b/a.a".'),
-            (57, 'list/emptyline', 5, 'There should be exactly one empty line instead of 2 between "b/a.a" and "c/a.a".'),
+            (42, 'list/order', 5, 'Alphabetical sorting problem. "c/c.c" should be before "c/b/a.a".'),
+            (50, 'list/emptyline', 5, 'There should be no empty line between "a" and "b".'),
+            (55, 'list/emptyline', 5, 'There should be exactly one empty line instead of 0 between "a/b.b" and "b/a.a".'),
+            (58, 'list/emptyline', 5, 'There should be exactly one empty line instead of 2 between "b/a.a" and "c/a.a".'),
             ])

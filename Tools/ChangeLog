@@ -1,5 +1,18 @@
 2015-06-01  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [CMake] check-webkit-style provides bogus explanation for alphabetical sorting error
+        https://bugs.webkit.org/show_bug.cgi?id=144959
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checkers/cmake.py:
+        (CMakeChecker.check): Use enumerate instead of xrange.
+        (CMakeChecker._check_list_order): Use enumerate instead of incrementing line_number manually.
+        * Scripts/webkitpy/style/checkers/cmake_unittest.py:
+        (CMakeCheckerTest.test_check): Update the expected results.
+
+2015-06-01  Csaba Osztrogonác  <ossy@webkit.org>
+
         Fix the webkitpy scm unittests after r174051
         https://bugs.webkit.org/show_bug.cgi?id=145511
 
