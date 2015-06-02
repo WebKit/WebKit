@@ -1,3 +1,21 @@
+2015-06-02  Keith Miller  <keith_miller@apple.com>
+
+        JavaScriptCore: JSExport protocol with an NSInteger property converts negative values to 18446744073709552000
+        https://bugs.webkit.org/show_bug.cgi?id=145563
+
+        Reviewed by Darin Adler.
+
+        The Objective-C bindings were improperly converting negative
+        long long/NSIntegers to 18446744073709552000 because they
+        were converted to unsigned numbers.
+
+        * API/ObjcRuntimeExtras.h:
+        (parseObjCType):
+        * API/tests/testapi.mm:
+        (testObjectiveCAPIMain):
+        (checkNegativeNSIntegers):
+        (testObjectiveCAPI):
+
 2015-06-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Heap-use-after-free read of size 4 in JavaScriptCore: WTF::StringImpl::isSymbol() (StringImpl.h:496)

@@ -164,7 +164,7 @@ typename DelegateType::ResultType parseObjCType(const char*& position)
     case 'l':
         return DelegateType::template typeInteger<long>();
     case 'q':
-        return DelegateType::template typeDouble<unsigned long long>();
+        return DelegateType::template typeDouble<long long>();
     case 'C':
         return DelegateType::template typeInteger<unsigned char>();
     case 'I':

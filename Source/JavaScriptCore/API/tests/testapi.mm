@@ -1416,9 +1416,41 @@ static void testObjectiveCAPIMain()
     runRegress141809();
 }
 
+@protocol NumberProtocol <JSExport>
+
+@property (nonatomic) NSInteger number;
+
+@end
+
+@interface NumberObject : NSObject <NumberProtocol>
+
+@property (nonatomic) NSInteger number;
+
+@end
+
+@implementation NumberObject
+
+@end
+
+// Check that negative NSIntegers retain the correct value when passed into JS code.
+static void checkNegativeNSIntegers()
+{
+    NumberObject *container = [[NumberObject alloc] init];
+    container.number = -1;
+    JSContext *context = [[JSContext alloc] init];
+    context[@"container"] = container;
+    NSString *jsID = @"var getContainerNumber = function() { return container.number }";
+    [context evaluateScript:jsID];
+    JSValue *jsFunction = context[@"getContainerNumber"];
+    JSValue *result = [jsFunction callWithArguments:@[]];
+    
+    checkResult(@"Negative number maintained its original value", [[result toString] isEqualToString:@"-1"]);
+}
+
 void testObjectiveCAPI()
 {
     NSLog(@"Testing Objective-C API");
+    checkNegativeNSIntegers();
     testWeakValue();
     testObjectiveCAPIMain();
 }
