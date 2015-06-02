@@ -5691,8 +5691,11 @@
 		C6F420A216B7164E0052A9F2 /* JSMutationCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F420A016B7164E0052A9F2 /* JSMutationCallback.cpp */; };
 		C6F420A316B7164E0052A9F2 /* JSMutationCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F420A116B7164E0052A9F2 /* JSMutationCallback.h */; };
 		C9026B651B1CF5FE001D99A7 /* JSMediaRemoteControls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C9026B631B1CF5AB001D99A7 /* JSMediaRemoteControls.cpp */; };
+		C9027F411B1D0AD200BFBFEF /* MediaSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C9027F3F1B1D0AD200BFBFEF /* MediaSession.cpp */; };
+		C9027F421B1D0AD200BFBFEF /* MediaSession.h in Headers */ = {isa = PBXBuildFile; fileRef = C9027F401B1D0AD200BFBFEF /* MediaSession.h */; };
 		C90843CF1B18E47D00B68564 /* MediaRemoteControls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C90843CD1B18E47D00B68564 /* MediaRemoteControls.cpp */; };
 		C90843D01B18E47D00B68564 /* MediaRemoteControls.h in Headers */ = {isa = PBXBuildFile; fileRef = C90843CE1B18E47D00B68564 /* MediaRemoteControls.h */; };
+		C9DADBCB1B1D3B97001F17D8 /* JSMediaSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C9DADBC91B1D3B25001F17D8 /* JSMediaSession.cpp */; };
 		CA3BF67C10D99BAE00E6CE53 /* ScrollAnimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CA3BF67B10D99BAE00E6CE53 /* ScrollAnimator.cpp */; };
 		CA3BF67E10D99BAE00E6CE53 /* ScrollAnimator.h in Headers */ = {isa = PBXBuildFile; fileRef = CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CAE9F90F146441F000C245B0 /* CSSAspectRatioValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CAE9F90D146441F000C245B0 /* CSSAspectRatioValue.cpp */; };
@@ -13252,9 +13255,14 @@
 		C6F420A116B7164E0052A9F2 /* JSMutationCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMutationCallback.h; sourceTree = "<group>"; };
 		C9026B631B1CF5AB001D99A7 /* JSMediaRemoteControls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaRemoteControls.cpp; sourceTree = "<group>"; };
 		C9026B641B1CF5AB001D99A7 /* JSMediaRemoteControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaRemoteControls.h; sourceTree = "<group>"; };
+		C9027F3E1B1D0AB900BFBFEF /* MediaSession.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaSession.idl; sourceTree = "<group>"; };
+		C9027F3F1B1D0AD200BFBFEF /* MediaSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSession.cpp; sourceTree = "<group>"; };
+		C9027F401B1D0AD200BFBFEF /* MediaSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaSession.h; sourceTree = "<group>"; };
 		C90843CD1B18E47D00B68564 /* MediaRemoteControls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaRemoteControls.cpp; sourceTree = "<group>"; };
 		C90843CE1B18E47D00B68564 /* MediaRemoteControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaRemoteControls.h; sourceTree = "<group>"; };
 		C93458BB1B18D77E0088EE12 /* MediaRemoteControls.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaRemoteControls.idl; sourceTree = "<group>"; };
+		C9DADBC91B1D3B25001F17D8 /* JSMediaSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaSession.cpp; sourceTree = "<group>"; };
+		C9DADBCA1B1D3B25001F17D8 /* JSMediaSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaSession.h; sourceTree = "<group>"; };
 		CA3BF67B10D99BAE00E6CE53 /* ScrollAnimator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollAnimator.cpp; sourceTree = "<group>"; };
 		CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollAnimator.h; sourceTree = "<group>"; };
 		CAE9F90D146441F000C245B0 /* CSSAspectRatioValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSAspectRatioValue.cpp; sourceTree = "<group>"; };
@@ -14601,6 +14609,9 @@
 				C90843CD1B18E47D00B68564 /* MediaRemoteControls.cpp */,
 				C90843CE1B18E47D00B68564 /* MediaRemoteControls.h */,
 				C93458BB1B18D77E0088EE12 /* MediaRemoteControls.idl */,
+				C9027F3F1B1D0AD200BFBFEF /* MediaSession.cpp */,
+				C9027F401B1D0AD200BFBFEF /* MediaSession.h */,
+				C9027F3E1B1D0AB900BFBFEF /* MediaSession.idl */,
 				0709D78C1AE55554004E42F8 /* WebMediaSessionManager.cpp */,
 				0709D78D1AE55554004E42F8 /* WebMediaSessionManager.h */,
 				0709D7941AE55A29004E42F8 /* WebMediaSessionManagerClient.h */,
@@ -19224,6 +19235,8 @@
 				CDB859F9160D493E00E5B07F /* JSMediaKeyEvent.h */,
 				C9026B631B1CF5AB001D99A7 /* JSMediaRemoteControls.cpp */,
 				C9026B641B1CF5AB001D99A7 /* JSMediaRemoteControls.h */,
+				C9DADBC91B1D3B25001F17D8 /* JSMediaSession.cpp */,
+				C9DADBCA1B1D3B25001F17D8 /* JSMediaSession.h */,
 				7E46F6F81627A2C900062223 /* JSOESElementIndexUint.cpp */,
 				7E46F6F91627A2C900062223 /* JSOESElementIndexUint.h */,
 				9001787E12E0370700648462 /* JSOESStandardDerivatives.cpp */,
@@ -25830,6 +25843,7 @@
 				C90843D01B18E47D00B68564 /* MediaRemoteControls.h in Headers */,
 				CEEFCD7A19DB31F7003876D7 /* MediaResourceLoader.h in Headers */,
 				CDBEAEAD19D92B6C00BEBA88 /* MediaSelectionGroupAVFObjC.h in Headers */,
+				C9027F421B1D0AD200BFBFEF /* MediaSession.h in Headers */,
 				07F944161864D046005D31CB /* MediaSessionManager.h in Headers */,
 				07638A991884487200E15A1B /* MediaSessionManagerIOS.h in Headers */,
 				CD3A495F17A9D01B00274E42 /* MediaSource.h in Headers */,
@@ -28926,6 +28940,7 @@
 				D3A94A46122DC40F00A37BBC /* JSMediaQueryList.cpp in Sources */,
 				7C5343FC17B74B63004232F0 /* JSMediaQueryListListener.cpp in Sources */,
 				C9026B651B1CF5FE001D99A7 /* JSMediaRemoteControls.cpp in Sources */,
+				C9DADBCB1B1D3B97001F17D8 /* JSMediaSession.cpp in Sources */,
 				CD9DE17417AAC74C00EA386D /* JSMediaSource.cpp in Sources */,
 				07C59B7117F79C7C000FBCBB /* JSMediaSourceStates.cpp in Sources */,
 				07C59B6E17F794F6000FBCBB /* JSMediaSourceStatesCustom.cpp in Sources */,
@@ -29414,6 +29429,7 @@
 				C90843CF1B18E47D00B68564 /* MediaRemoteControls.cpp in Sources */,
 				CEEFCD7919DB31F7003876D7 /* MediaResourceLoader.cpp in Sources */,
 				CDBEAEAC19D92B6C00BEBA88 /* MediaSelectionGroupAVFObjC.mm in Sources */,
+				C9027F411B1D0AD200BFBFEF /* MediaSession.cpp in Sources */,
 				CDAE8C091746B95700532D78 /* MediaSessionManager.cpp in Sources */,
 				07638A9A1884487200E15A1B /* MediaSessionManagerIOS.mm in Sources */,
 				07EDC3EE1AACB75D00983EB5 /* MediaSessionManagerMac.cpp in Sources */,

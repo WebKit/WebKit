@@ -219,6 +219,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediacontrols/MediaControlsHost.idl
 
     Modules/mediasession/MediaRemoteControls.idl
+    Modules/mediasession/MediaSession.idl
 
     Modules/mediasource/DOMURLMediaSource.idl
     Modules/mediasource/MediaSource.idl
@@ -874,6 +875,7 @@ set(WebCore_SOURCES
     Modules/mediacontrols/MediaControlsHost.cpp
 
     Modules/mediasession/MediaRemoteControls.cpp
+    Modules/mediasession/MediaSession.cpp
 
     Modules/mediasource/DOMURLMediaSource.cpp
     Modules/mediasource/MediaSource.cpp
