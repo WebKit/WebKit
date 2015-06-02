@@ -290,6 +290,9 @@ webkit.org/b/71849 webkit.org/b/124486 http/tests/webgl [ Skip ]
 webkit.org/b/71849 webkit.org/b/111477 inspector-protocol/layers [ Skip ]
 webkit.org/b/71849 webgl [ Skip ]
 
+# These tests reference specific fonts on Mac port.
+Bug(GTK) fast/text/font-weights-zh.html [ WontFix ]
+
 # LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
 Bug(GTK) compositing/visible-rect [ Skip ]
 

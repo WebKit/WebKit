@@ -282,6 +282,9 @@ webkit.org/b/87661 fast/history/page-cache-indexed-opened-db.html [ Skip ]
 # TESTS EXPECTED TO FAIL
 #////////////////////////////////////////////////////////////////////////////////////////
 
+# These tests reference specific fonts on Mac port.
+Bug(EFL) fast/text/font-weights-zh.html [ WontFix ]
+
 # These tests require DASHBOARD_SUPPORT but this feature is specific to Mac port.
 Bug(EFL) fast/canvas/canvas-gradient-addStop-error.html
 Bug(EFL) http/tests/xmlhttprequest/default-content-type-dashboard.html

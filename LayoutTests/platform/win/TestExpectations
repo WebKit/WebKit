@@ -512,6 +512,9 @@ fast/events/constructors/device-proximity-event-constructor.html
 # TODO Fail until SUBPIXEL_LAYOUT is enabled
 webkit.org/b/85532 fast/sub-pixel [ Skip ]
 
+# These tests reference specific fonts on Mac port.
+fast/text/font-weights-zh.html [ WontFix ]
+
 # TODO LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
 compositing/visible-rect/  [ Skip ]
 

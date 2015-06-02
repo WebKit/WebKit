@@ -1,3 +1,23 @@
+2015-06-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Fix Mac Mavericks layout test failure following <http://trac.webkit.org/changeset/185096>
+        (https://bugs.webkit.org/show_bug.cgi?id=145478)
+
+        Move fast/text/font-weights-zh.html out of the platform directory. The
+        webkit test runner is not smart enough to ignore the expected results 
+        in the mac directory and get it from the Mavericks directory, if it exists,
+        when running on Mavericks.
+        
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/text/font-weights-zh.html: Added.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/fast/text/font-weights-zh.html: Removed.
+        * platform/win/TestExpectations:
+        * platform/win-xp/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2015-06-02  Brady Eidson  <beidson@apple.com>
 
         Add more tests for "should open external urls" flag.
