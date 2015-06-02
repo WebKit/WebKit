@@ -45,6 +45,7 @@
 #include "SecurityOriginHash.h"
 #include "SQLiteFileSystem.h"
 #include "SQLiteStatement.h"
+#include "UUID.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
@@ -358,6 +359,16 @@ String DatabaseTracker::originPath(SecurityOrigin* origin) const
     return SQLiteFileSystem::appendDatabaseFileNameToPath(m_databaseDirectoryPath.isolatedCopy(), origin->databaseIdentifier());
 }
 
+static String generateDatabaseFileName()
+{
+    StringBuilder stringBuilder;
+
+    stringBuilder.append(createCanonicalUUIDString());
+    stringBuilder.appendLiteral(".db");
+
+    return stringBuilder.toString();
+}
+
 String DatabaseTracker::fullPathForDatabaseNoLock(SecurityOrigin* origin, const String& name, bool createIfNotExists)
 {
     ASSERT(!m_databaseGuard.tryLock());
@@ -393,7 +404,8 @@ String DatabaseTracker::fullPathForDatabaseNoLock(SecurityOrigin* origin, const 
     }
     statement.finalize();
 
-    String fileName = SQLiteFileSystem::getFileNameForNewDatabase(originPath, name, originIdentifier, &m_database);
+    String fileName = generateDatabaseFileName();
+
     if (!addDatabase(origin, name, fileName))
         return String();
 

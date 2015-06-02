@@ -54,15 +54,6 @@ public:
     //                     using a custom VFS.
     static int openDatabase(const String& filename, sqlite3** database, bool forWebSQLDatabase);
 
-    // Returns the file name for a database.
-    //
-    // dbDir - The directory where all databases are stored.
-    // dbName - The name of the database.
-    // originIdentifier - The origin that wants to use this database.
-    // db - A database with a number generator used to create unique file names.
-    static String getFileNameForNewDatabase(const String& dbDir, const String& dbName,
-                                            const String& originIdentifier, SQLiteDatabase* db);
-
     // Creates an absolute file path given a directory and a file name.
     //
     // path - The directory.
