@@ -34,9 +34,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>CFAppTransportSecurity</key>
+	<key>NSAppTransportSecurity</key>
 	<dict>
-		<key>AllowArbitraryInsecureHTTPLoads</key>
+		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
 	<key>UISupportedInterfaceOrientations~ipad</key>
