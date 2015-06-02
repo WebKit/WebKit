@@ -2718,8 +2718,28 @@ void WebPage::applicationWillResignActive()
     [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationWillResignActiveNotification object:nil];
 }
 
+void WebPage::volatilityTimerFired()
+{
+    if (!markLayersVolatileImmediatelyIfPossible())
+        return;
+
+    m_volatilityTimer.stop();
+}
+
+void WebPage::applicationDidEnterBackground()
+{
+    setLayerTreeStateIsFrozen(true);
+    if (markLayersVolatileImmediatelyIfPossible())
+        return;
+
+    m_volatilityTimer.startRepeating(std::chrono::milliseconds(200));
+}
+
 void WebPage::applicationWillEnterForeground()
 {
+    m_volatilityTimer.stop();
+    setLayerTreeStateIsFrozen(false);
+
     [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationWillEnterForegroundNotification object:nil];
 }
 

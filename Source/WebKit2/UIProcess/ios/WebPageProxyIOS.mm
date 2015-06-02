@@ -593,6 +593,11 @@ void WebPageProxy::didUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t fla
     m_pageClient.didUpdateBlockSelectionWithTouch(touch, flags, growThreshold, shrinkThreshold);
 }
 
+void WebPageProxy::applicationDidEnterBackground()
+{
+    m_process->send(Messages::WebPage::ApplicationDidEnterBackground(), m_pageID);
+}
+
 void WebPageProxy::applicationWillEnterForeground()
 {
     m_process->send(Messages::WebPage::ApplicationWillEnterForeground(), m_pageID);

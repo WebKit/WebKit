@@ -328,6 +328,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_availableScreenSize(parameters.availableScreenSize)
     , m_deviceOrientation(0)
     , m_inDynamicSizeUpdate(false)
+    , m_volatilityTimer(*this, &WebPage::volatilityTimerFired)
 #endif
     , m_inspectorClient(0)
     , m_backgroundColor(Color::white)
@@ -1858,6 +1859,24 @@ static const WebEvent* g_currentEvent = 0;
 const WebEvent* WebPage::currentEvent()
 {
     return g_currentEvent;
+}
+
+void WebPage::setLayerTreeStateIsFrozen(bool frozen)
+{
+    auto* drawingArea = this->drawingArea();
+    if (!drawingArea)
+        return;
+
+    drawingArea->setLayerTreeStateIsFrozen(frozen);
+}
+
+bool WebPage::markLayersVolatileImmediatelyIfPossible()
+{
+    auto* drawingArea = this->drawingArea();
+    if (!drawingArea)
+        return true;
+
+    return drawingArea->markLayersVolatileImmediatelyIfPossible();
 }
 
 class CurrentEvent {

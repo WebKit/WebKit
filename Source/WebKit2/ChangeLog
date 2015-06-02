@@ -1,3 +1,51 @@
+2015-06-02  Chris Dumez  <cdumez@apple.com>
+
+        [iOS][WK2] Always mark layers as volatile for background pages
+        https://bugs.webkit.org/show_bug.cgi?id=145547
+        <rdar://problem/20663184>
+
+        Reviewed by Simon Fraser.
+
+        We previously marked layers as volatile when the WebProcess was about
+        to be suspended. Most of the time the WebProcess gets suspended when a
+        page goes into the background. However, it is not always true (see
+        radar), in which case the layers won't be marked as volatile and use
+        memory even though they are not visible.
+
+        We now mark layers as volatile as soon as the page goes into the
+        background, instead of relying on the WebProcess suspension mechanism
+        to do so.
+
+        A new ApplicationDidEnterBackground IPC message from the UIProcess to
+        the WebProcess is added (in addition to the pre-existing
+        ApplicationWillEnterForeground one). When the WebProcess receives this
+        message, it will freeze the layer tree state and mark the layers as
+        volatile (with a timer to keep retrying if needed), similarly to what
+        is already done in WebProcess::actualPrepareToSuspend().
+        When the ApplicationWillEnterForeground is received, we unfreeze the
+        layer tree state. The layers' volatile state will be automatically
+        updated when they are displayed (see setBufferVolatility() call in
+        RemoteLayerBackingStore::display()).
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _applicationDidEnterBackground:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::applicationDidEnterBackground):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::setLayerTreeStateIsFrozen):
+        (WebKit::WebPage::markLayersVolatileImmediatelyIfPossible):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::volatilityTimerFired):
+        (WebKit::WebPage::applicationDidEnterBackground):
+        (WebKit::WebPage::applicationWillEnterForeground):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::markAllLayersVolatileIfPossible):
+        (WebKit::WebProcess::setAllLayerTreeStatesFrozen):
+
 2015-06-02  Brady Eidson  <beidson@apple.com>
 
         WebKit policy delegate should suggest if a navigation should be allowed to open URLs externally.

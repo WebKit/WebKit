@@ -498,6 +498,7 @@ public:
     void setAssistedNodeValue(const String&);
     void setAssistedNodeValueAsNumber(double);
     void setAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSelection = false);
+    void applicationDidEnterBackground();
     void applicationWillEnterForeground();
     void applicationWillResignActive();
     void applicationDidBecomeActive();

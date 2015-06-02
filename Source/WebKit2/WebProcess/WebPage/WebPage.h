@@ -553,6 +553,9 @@ public:
     void disableInspectorNodeSearch();
 #endif
 
+    void setLayerTreeStateIsFrozen(bool);
+    bool markLayersVolatileImmediatelyIfPossible();
+
     NotificationPermissionRequestManager* notificationPermissionRequestManager();
 
     void pageDidScroll();
@@ -789,6 +792,7 @@ public:
     bool scaleWasSetByUIProcess() const { return m_scaleWasSetByUIProcess; }
     void willStartUserTriggeredZooming();
     void applicationWillResignActive();
+    void applicationDidEnterBackground();
     void applicationWillEnterForeground();
     void applicationDidBecomeActive();
     void zoomToRect(WebCore::FloatRect, double minimumScale, double maximumScale);
@@ -918,6 +922,7 @@ private:
     void sendTapHighlightForNodeIfNecessary(uint64_t requestID, WebCore::Node*);
     void resetTextAutosizingBeforeLayoutIfNeeded(const WebCore::FloatSize& oldSize, const WebCore::FloatSize& newSize);
     WebCore::VisiblePosition visiblePositionInFocusedNodeForPoint(WebCore::Frame&, const WebCore::IntPoint&);
+    void volatilityTimerFired();
 #endif
 #if !PLATFORM(COCOA)
     static const char* interpretKeyEvent(const WebCore::KeyboardEvent*);
@@ -1340,6 +1345,7 @@ private:
     RefPtr<WebCore::Node> m_pendingSyntheticClickNode;
     WebCore::FloatPoint m_pendingSyntheticClickLocation;
     WebCore::FloatRect m_previousExposedContentRect;
+    WebCore::Timer m_volatilityTimer;
 #endif
 
     WebInspectorClient* m_inspectorClient;
