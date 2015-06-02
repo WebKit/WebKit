@@ -317,32 +317,13 @@ WebInspector.ContentBrowser.prototype = {
         this.goForward();
     },
 
-    _saveDataToFile: function(saveData, forceSaveAs)
-    {
-        console.assert(saveData);
-        if (!saveData)
-            return;
-
-        if (typeof saveData.customSaveHandler === "function") {
-            saveData.customSaveHandler(forceSaveAs);
-            return;
-        }
-
-        console.assert(saveData.url);
-        console.assert(typeof saveData.content === "string");
-        if (!saveData.url || typeof saveData.content !== "string")
-            return;
-
-        InspectorFrontendHost.save(saveData.url, saveData.content, false, forceSaveAs || saveData.forceSaveAs);
-    },
-
     _save: function(event)
     {
         var currentContentView = this.currentContentView;
         if (!currentContentView || !currentContentView.supportsSave)
             return;
 
-        this._saveDataToFile(currentContentView.saveData);
+        WebInspector.saveDataToFile(currentContentView.saveData);
     },
 
     _saveAs: function(event)
@@ -351,7 +332,7 @@ WebInspector.ContentBrowser.prototype = {
         if (!currentContentView || !currentContentView.supportsSave)
             return;
 
-        this._saveDataToFile(currentContentView.saveData, true);
+        WebInspector.saveDataToFile(currentContentView.saveData, true);
     },
 
     _showFindBanner: function(event)

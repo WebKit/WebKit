@@ -1,3 +1,33 @@
+2015-06-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Better handle keyboard events in the quick console prompt
+        https://bugs.webkit.org/show_bug.cgi?id=145548
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.saveDataToFile):
+        Move generic InspectorFrontendHost code here.
+
+        * UserInterface/Views/ContentBrowser.js:
+        (WebInspector.ContentBrowser.prototype._save):
+        (WebInspector.ContentBrowser.prototype._saveAs):
+        (WebInspector.ContentBrowser.prototype._saveDataToFile): Deleted.
+        Use the generic save code.
+
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WebInspector.JavaScriptLogViewController):
+        (WebInspector.JavaScriptLogViewController.prototype._save):
+        (WebInspector.JavaScriptLogViewController.prototype._saveAs):
+        Handle save keyboard shortcuts while the prompt is focused.
+
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype.focusSearchBar):
+        (WebInspector.LogContentView.prototype.save):
+        (WebInspector.LogContentView.prototype.saveAs):
+        Better handle keyboard shortcut cases in the console prompt for cases
+        like a collapsed or split console view.
+
 2015-06-01  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Pause/resume button in the debugger dashboard is vertically misaligned

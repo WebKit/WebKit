@@ -229,7 +229,32 @@ WebInspector.LogContentView.prototype = {
 
     focusSearchBar: function()
     {
+        if (!this.visible)
+            return;
+
         this._searchBar.focus();
+    },
+
+    save: function()
+    {
+        if (!this.visible)
+            return;
+
+        if (WebInspector.isShowingSplitConsole())
+            return;
+
+        WebInspector.saveDataToFile(this.saveData);
+    },
+
+    saveAs: function()
+    {
+        if (!this.visible)
+            return;
+
+        if (WebInspector.isShowingSplitConsole())
+            return;
+
+        WebInspector.saveDataToFile(this.saveData, true);
     },
 
     highlightPreviousSearchMatch: function()
