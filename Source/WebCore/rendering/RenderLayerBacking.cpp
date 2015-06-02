@@ -390,6 +390,13 @@ void RenderLayerBacking::updateBackdropFilters(const RenderStyle& style)
 {
     m_canCompositeBackdropFilters = m_graphicsLayer->setBackdropFilters(style.backdropFilter());
 }
+
+void RenderLayerBacking::updateBackdropFiltersGeometry()
+{
+    if (!m_canCompositeBackdropFilters)
+        return;
+    m_graphicsLayer->setBackdropFiltersRect(snapRectToDevicePixels(contentsBox(), deviceScaleFactor()));
+}
 #endif
 
 #if ENABLE(CSS_COMPOSITING)
@@ -990,7 +997,9 @@ void RenderLayerBacking::updateGeometry()
 
     // If this layer was created just for clipping or to apply perspective, it doesn't need its own backing store.
     setRequiresOwnBackingStore(compositor().requiresOwnBackingStore(m_owningLayer, compAncestor, enclosingRelativeCompositingBounds, ancestorCompositingBounds));
-
+#if ENABLE(FILTERS_LEVEL_2)
+    updateBackdropFiltersGeometry();
+#endif
     updateAfterWidgetResize();
 
     compositor().updateScrollCoordinatedStatus(m_owningLayer);

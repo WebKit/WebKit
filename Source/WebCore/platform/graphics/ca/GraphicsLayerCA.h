@@ -103,6 +103,7 @@ public:
     virtual bool filtersCanBeComposited(const FilterOperations&);
 
     WEBCORE_EXPORT virtual bool setBackdropFilters(const FilterOperations&) override;
+    WEBCORE_EXPORT virtual void setBackdropFiltersRect(const FloatRect&) override;
 
 #if ENABLE(CSS_COMPOSITING)
     WEBCORE_EXPORT virtual void setBlendMode(BlendMode) override;
@@ -398,6 +399,7 @@ private:
     void updateOpacityOnLayer();
     void updateFilters();
     void updateBackdropFilters();
+    void updateBackdropFiltersRect();
 
 #if ENABLE(CSS_COMPOSITING)
     void updateBlendMode();
@@ -465,13 +467,14 @@ private:
         CoverageRectChanged =           1LLU << 26,
         FiltersChanged =                1LLU << 27,
         BackdropFiltersChanged =        1LLU << 28,
-        TilingAreaChanged =             1LLU << 29,
-        TilesAdded =                    1LLU << 30,
-        DebugIndicatorsChanged =        1LLU << 31,
-        CustomAppearanceChanged =       1LLU << 32,
-        BlendModeChanged =              1LLU << 33,
-        ShapeChanged =                  1LLU << 34,
-        WindRuleChanged =               1LLU << 35,
+        BackdropFiltersRectChanged =    1LLU << 29,
+        TilingAreaChanged =             1LLU << 30,
+        TilesAdded =                    1LLU << 31,
+        DebugIndicatorsChanged =        1LLU << 32,
+        CustomAppearanceChanged =       1LLU << 33,
+        BlendModeChanged =              1LLU << 34,
+        ShapeChanged =                  1LLU << 35,
+        WindRuleChanged =               1LLU << 36,
     };
     typedef uint64_t LayerChangeFlags;
     enum ScheduleFlushOrNot { ScheduleFlush, DontScheduleFlush };

@@ -1,3 +1,23 @@
+2015-06-02  Zalan Bujtas  <zalan@apple.com>
+
+        Backdrop filter is pulling in content from behind the window.
+        https://bugs.webkit.org/show_bug.cgi?id=145561
+        rdar://problem/20909309
+
+        Reviewed by Simon Fraser.
+
+        This patch ensures that the backdrop filter layer is positioned and sized properly.
+
+        The backdrop filter layer should take its size and position from its renderer and not
+        directly from the composited layer.
+        In certain cases the composited layer's size is expanded to cover items like box shadow or an absolute positioned descendant.
+        In such cases, we ended up applying the backdrop filter to those areas as well.
+
+        * css3/filters/backdrop/backdrop-filter-does-not-size-properly-absolute-expected.txt: Added.
+        * css3/filters/backdrop/backdrop-filter-does-not-size-properly-absolute.html: Added.
+        * css3/filters/backdrop/backdrop-filter-does-not-size-properly-border-and-padding-expected.txt: Added.
+        * css3/filters/backdrop/backdrop-filter-does-not-size-properly-border-and-padding.html: Added.
+
 2015-06-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Fix Mac Mavericks layout test failure following <http://trac.webkit.org/changeset/185096>
