@@ -50,6 +50,7 @@
 .dashboard.debugger .navigation-bar .item.button {
     flex-direction: row;
     width: 16px;
+    height: 16px;
     cursor: pointer;
     padding: 0;
 }

@@ -1,3 +1,17 @@
+2015-06-01  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Pause/resume button in the debugger dashboard is vertically misaligned
+        https://bugs.webkit.org/show_bug.cgi?id=145534
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ButtonNavigationItem.css:
+        (.navigation-bar .item.button.suppress-emboss):
+        Never show borders for the pause/resume button.
+
+        * UserInterface/Views/DebuggerDashboardView.css:
+        (.dashboard.debugger .navigation-bar .item.button):
+
 2015-05-31  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Web Inspector: Drop forEach from WeakMap / WeakSet native member function maps
