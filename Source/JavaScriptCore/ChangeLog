@@ -1,3 +1,58 @@
+2015-06-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Heap-use-after-free read of size 4 in JavaScriptCore: WTF::StringImpl::isSymbol() (StringImpl.h:496)
+        https://bugs.webkit.org/show_bug.cgi?id=145532
+
+        Reviewed by Geoffrey Garen.
+
+        AtomicStringImpl::lookUp returns AtomicStringImpl*,
+        it doesn't give any ownership to the caller.
+        Originally, this is ok because the ownership is taken
+        by AtomicStringImpl's table (& the register side).
+
+        But if we would like to use this returned AtomicStringImpl*,
+        we should take its ownership immediately.
+        Because if the register side releases its ownership (ref count),
+        it will be destroyed.
+
+        In JSString::toExistingAtomicString, it returns AtomicStringImpl*.
+        But it's not appropriate.
+        If the owner of AtomicStringImpl* is always JSString*, it is ok.
+        But it looks up the table-registered AtomicStringImpl* from
+        the AtomicStringImpl table. So JSString* may not have the ownership
+        of the returned AtomicStringImpl*.
+
+        The failure situation is the following.
+
+        1. A creates AtomicStringImpl. A has its ownership.
+           And A registers it to AtomicStringImpl table.
+        2. JSString looks up the AtomicStringImpl from the table.
+           It gets AtomicStringImpl*. And JSString doesn't have its ownership.
+           It returns the raw pointer immediately to the users
+        3. A is released. There's no owner for AtomicStringImpl*.
+           So it's also destroyed.
+        4. Use looked up AtomicStringImpl in (2). It becomes use-after-free.
+
+        This patch fixes it by the following changes.
+
+        1. Change the signature of `AtomicStringImpl* AtomicStringImpl::lookUp(...)`
+           to `RefPtr<AtomicStringImpl> AtomicStringImpl::lookUp(..)`.
+           Use `RefPtr` because it may return `nullptr`.
+        2. Change the signature of `AtomicStringImpl* JSString::toExistingAtomicString(...)`
+           to `RefPtr<AtomicStringImpl> JSString::toExistingAtomicString(...)`.
+           Using `RefPtr` is the same reason.
+        3. Receive the result with `RefPtr<AtomicStringImpl>` in the caller side.
+
+        * dfg/DFGOperations.cpp:
+        * jit/JITOperations.cpp:
+        (JSC::getByVal):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::getByVal):
+        * runtime/JSString.cpp:
+        (JSC::JSRopeString::resolveRopeToExistingAtomicString):
+        * runtime/JSString.h:
+        (JSC::JSString::toExistingAtomicString):
+
 2015-05-30  Filip Pizlo  <fpizlo@apple.com>
 
         Any exit from any JIT due to profiling for an inline cache should force all future compilations to be wary

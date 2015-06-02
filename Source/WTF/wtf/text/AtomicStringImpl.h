@@ -29,15 +29,15 @@ class AtomicStringTable;
 
 class AtomicStringImpl : public UniquedStringImpl {
 public:
-    static AtomicStringImpl* lookUp(LChar* characters, unsigned length)
+    static RefPtr<AtomicStringImpl> lookUp(LChar* characters, unsigned length)
     {
         return lookUpInternal(characters, length);
     }
-    static AtomicStringImpl* lookUp(UChar* characters, unsigned length)
+    static RefPtr<AtomicStringImpl> lookUp(UChar* characters, unsigned length)
     {
         return lookUpInternal(characters, length);
     }
-    static AtomicStringImpl* lookUp(StringImpl* string)
+    static RefPtr<AtomicStringImpl> lookUp(StringImpl* string)
     {
         if (!string || string->isAtomic())
             return static_cast<AtomicStringImpl*>(string);
@@ -104,10 +104,10 @@ private:
     WTF_EXPORT_STRING_API static Ref<AtomicStringImpl> addSlowCase(StringImpl&);
     WTF_EXPORT_STRING_API static Ref<AtomicStringImpl> addSlowCase(AtomicStringTable&, StringImpl&);
 
-    WTF_EXPORT_STRING_API static AtomicStringImpl* lookUpSlowCase(StringImpl&);
+    WTF_EXPORT_STRING_API static RefPtr<AtomicStringImpl> lookUpSlowCase(StringImpl&);
 
-    WTF_EXPORT_STRING_API static AtomicStringImpl* lookUpInternal(const LChar*, unsigned length);
-    WTF_EXPORT_STRING_API static AtomicStringImpl* lookUpInternal(const UChar*, unsigned length);
+    WTF_EXPORT_STRING_API static RefPtr<AtomicStringImpl> lookUpInternal(const LChar*, unsigned length);
+    WTF_EXPORT_STRING_API static RefPtr<AtomicStringImpl> lookUpInternal(const UChar*, unsigned length);
 };
 
 #if !ASSERT_DISABLED

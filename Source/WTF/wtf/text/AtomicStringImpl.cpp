@@ -454,7 +454,7 @@ void AtomicStringImpl::remove(AtomicStringImpl* string)
     atomicStringTable.remove(iterator);
 }
 
-AtomicStringImpl* AtomicStringImpl::lookUpSlowCase(StringImpl& string)
+RefPtr<AtomicStringImpl> AtomicStringImpl::lookUpSlowCase(StringImpl& string)
 {
     ASSERT_WITH_MESSAGE(!string.isAtomic(), "AtomicStringImpls should return from the fast case.");
 
@@ -487,7 +487,7 @@ RefPtr<AtomicStringImpl> AtomicStringImpl::addUTF8(const char* charactersStart, 
     return addToStringTable<HashAndUTF8Characters, HashAndUTF8CharactersTranslator>(buffer);
 }
 
-AtomicStringImpl* AtomicStringImpl::lookUpInternal(const LChar* characters, unsigned length)
+RefPtr<AtomicStringImpl> AtomicStringImpl::lookUpInternal(const LChar* characters, unsigned length)
 {
     AtomicStringTableLocker locker;
     auto& table = stringTable();
@@ -499,7 +499,7 @@ AtomicStringImpl* AtomicStringImpl::lookUpInternal(const LChar* characters, unsi
     return nullptr;
 }
 
-AtomicStringImpl* AtomicStringImpl::lookUpInternal(const UChar* characters, unsigned length)
+RefPtr<AtomicStringImpl> AtomicStringImpl::lookUpInternal(const UChar* characters, unsigned length)
 {
     AtomicStringTableLocker locker;
     auto& table = stringTable();

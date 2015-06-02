@@ -142,7 +142,7 @@ public:
 
     Identifier toIdentifier(ExecState*) const;
     AtomicString toAtomicString(ExecState*) const;
-    AtomicStringImpl* toExistingAtomicString(ExecState*) const;
+    RefPtr<AtomicStringImpl> toExistingAtomicString(ExecState*) const;
     StringView view(ExecState*) const;
     const String& value(ExecState*) const;
     const String& tryGetValue() const;
@@ -361,7 +361,7 @@ private:
 
     JS_EXPORT_PRIVATE void resolveRope(ExecState*) const;
     JS_EXPORT_PRIVATE void resolveRopeToAtomicString(ExecState*) const;
-    JS_EXPORT_PRIVATE AtomicStringImpl* resolveRopeToExistingAtomicString(ExecState*) const;
+    JS_EXPORT_PRIVATE RefPtr<AtomicStringImpl> resolveRopeToExistingAtomicString(ExecState*) const;
     void resolveRopeSlowCase8(LChar*) const;
     void resolveRopeSlowCase(UChar*) const;
     void outOfMemory(ExecState*) const;
@@ -467,7 +467,7 @@ ALWAYS_INLINE AtomicString JSString::toAtomicString(ExecState* exec) const
     return AtomicString(m_value);
 }
 
-ALWAYS_INLINE AtomicStringImpl* JSString::toExistingAtomicString(ExecState* exec) const
+ALWAYS_INLINE RefPtr<AtomicStringImpl> JSString::toExistingAtomicString(ExecState* exec) const
 {
     if (isRope())
         return static_cast<const JSRopeString*>(this)->resolveRopeToExistingAtomicString(exec);
