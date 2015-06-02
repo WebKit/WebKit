@@ -3,7 +3,7 @@ PASS Running templatedRSEmpty with ReadableStream (empty)
 PASS instances have the correct methods and properties 
 PASS Running templatedRSEmptyReader with ReadableStream (empty) reader 
 PASS instances have the correct methods and properties 
-FAIL read() should return distinct promises each time read is not implemented
+PASS read() should return distinct promises each time 
 PASS getReader() again on the stream should fail 
 FAIL releasing the lock should cause further read() calls to resolve as if the stream is closed releaseLock is not implemented
 FAIL releasing the lock should cause closed to fulfill releaseLock is not implemented
@@ -14,7 +14,7 @@ FAIL cancel() should return a distinct fulfilled promise each time cancel is not
 PASS getReader() should be OK 
 PASS should be able to acquire multiple readers, since they are all auto-released 
 PASS Running templatedRSClosedReader with ReadableStream (closed via call in start) reader 
-FAIL read() should fulfill with { value: undefined, done: true } read is not implemented
+PASS read() should fulfill with { value: undefined, done: true } 
 PASS closed should fulfill with undefined 
 PASS Running templatedRSClosed with ReadableStream (closed via cancel) 
 FAIL cancel() should return a distinct fulfilled promise each time cancel is not implemented
@@ -24,26 +24,21 @@ PASS Running templatedRSClosedReader with ReadableStream (closed via cancel) rea
 FAIL read() should fulfill with { value: undefined, done: true } cancel is not implemented
 FAIL closed should fulfill with undefined cancel is not implemented
 PASS Running templatedRSErrored with ReadableStream (errored via call in start) 
-FAIL getReader() should return a reader that acts errored read is not implemented
+PASS getReader() should return a reader that acts errored 
 PASS Running templatedRSErroredSyncOnly with ReadableStream (errored via call in start) 
 FAIL cancel() should return a distinct rejected promise each time cancel is not implemented
 FAIL reader cancel() should return a distinct rejected promise each time cancel is not implemented
 PASS should be able to acquire multiple readers, since they are all auto-released 
-PASS Running templatedRSErrored with ReadableStream (errored via returning a rejected promise in start) 
-FAIL getReader() should return a reader that acts errored read is not implemented
-PASS Running templatedRSErroredReader with ReadableStream (errored via returning a rejected promise in start) reader 
-TIMEOUT closed should reject with the error Test timed out
-FAIL read() should reject with the error read is not implemented
 PASS Running templatedRSTwoChunksOpenReader with ReadableStream (two chunks enqueued, still open) reader 
-FAIL calling read() twice without waiting will eventually give both chunks read is not implemented
-FAIL calling read() twice with waiting will eventually give both chunks read is not implemented
-FAIL read() should return distinct promises each time read is not implemented
-FAIL cancel() after a read() should still give that single read result read is not implemented
+TIMEOUT calling read() twice without waiting will eventually give both chunks Test timed out
+TIMEOUT calling read() twice with waiting will eventually give both chunks Test timed out
+PASS read() should return distinct promises each time 
+FAIL cancel() after a read() should still give that single read result cancel is not implemented
 PASS Running templatedRSTwoChunksClosedReader with ReadableStream (two chunks enqueued, then closed) reader 
-FAIL third read(), without waiting, should give { value: undefined, done: true } read is not implemented
-FAIL third read, with waiting, should give { value: undefined, done: true } read is not implemented
-FAIL draining the stream via read() should cause the reader closed promise to fulfill read is not implemented
-FAIL releasing the lock after the stream is closed should do nothing read is not implemented
+FAIL third read(), without waiting, should give { value: undefined, done: true } assert_object_equals: first result should be correct property "done" expected object "[object Object]" got object "[object Object]"
+FAIL third read, with waiting, should give { value: undefined, done: true } assert_object_equals: first result should be correct property "done" expected object "[object Object]" got object "[object Object]"
+PASS draining the stream via read() should cause the reader closed promise to fulfill 
+FAIL releasing the lock after the stream is closed should do nothing releaseLock is not implemented
 FAIL releasing the lock should cause read() to act as if the stream is closed releaseLock is not implemented
-FAIL reader's closed property always returns the same promise read is not implemented
+FAIL reader's closed property always returns the same promise releaseLock is not implemented
 

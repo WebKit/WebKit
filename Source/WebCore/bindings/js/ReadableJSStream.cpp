@@ -148,6 +148,18 @@ void ReadableJSStream::storeError(JSC::ExecState& exec)
     changeStateToErrored();
 }
 
+bool ReadableJSStream::hasValue() const
+{
+    notImplemented();
+    return false;
+}
+
+JSValue ReadableJSStream::read()
+{
+    notImplemented();
+    return jsUndefined();
+}
+
 } // namespace WebCore
 
 #endif

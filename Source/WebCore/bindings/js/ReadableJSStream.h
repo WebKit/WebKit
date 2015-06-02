@@ -73,6 +73,9 @@ public:
 private:
     ReadableJSStream(ScriptExecutionContext&, Ref<ReadableJSStream::Source>&&);
 
+    virtual bool hasValue() const override;
+    virtual JSC::JSValue read() override;
+
     std::unique_ptr<ReadableStreamController> m_controller;
     JSC::Strong<JSC::Unknown> m_error;
 };

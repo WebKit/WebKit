@@ -53,7 +53,7 @@ test(function() {
     new ReadableStream({ strategy: 2 }); // Constructor should not throw when strategy is not an object.
 }, 'ReadableStream constructor can get initial garbage as strategy argument');
 
-var test1 = async_test('ReadableStream start should be able to return a promise');
+var test1 = async_test('ReadableStream start should be able to return a promise', { timeout: 50 });
 test1.step(function()
 {
     var readCalled = false;
@@ -146,7 +146,7 @@ test(function() {
     assert_throws(error, function() { new ReadableStream({ start() { throw error; } }) }, 'error should be re-thrown');
 }, 'ReadableStream: if start throws an error, it should be re-thrown');
 
-var test4 = async_test('ReadableStream: if pull rejects, it should error the stream');
+var test4 = async_test('ReadableStream: if pull rejects, it should error the stream', { timeout: 50 });
 test4.step(function() {
     var error = new Error('pull failure');
     var rs = new ReadableStream({
@@ -368,7 +368,7 @@ test4.step(function() {
 //     }), standardTimeout);
 // });
 
-var test11 = async_test('ReadableStream: should not call pull until the previous pull call\'s promise fulfills');
+var test11 = async_test('ReadableStream: should not call pull until the previous pull call\'s promise fulfills', { timeout: 50 });
 test11.step(function() {
     var resolve;
     var returnedPromise;
@@ -565,7 +565,7 @@ test(function() {
     });
 }, 'ReadableStream: enqueue should throw the stored error when the stream is errored');
 
-var test16 = async_test('ReadableStream: should call underlying source methods as methods');
+var test16 = async_test('ReadableStream: should call underlying source methods as methods', { timeout: 50 });
 test16.step(function() {
     var startCalled = 0;
     var pullCalled = 0;
@@ -658,7 +658,7 @@ test17.step(function() {
     })).catch(test17.step_func(function(e) { assert_unreached(e); } ));
 });
 
-var test18 = async_test('ReadableStream integration test: adapting a random push source');
+var test18 = async_test('ReadableStream integration test: adapting a random push source', { timeout: 50 });
 test18.step(function() {
     var pullChecked = false;
     var randomSource = new RandomPushSource(8);
@@ -702,7 +702,7 @@ test18.step(function() {
     }), test18.step_func(function(e) { assert_reached(e); }));
 });
 
-var test19 = async_test('ReadableStream integration test: adapting a sync pull source');
+var test19 = async_test('ReadableStream integration test: adapting a sync pull source', { timeout: 50 });
 test19.step(function() {
     var rs = sequentialReadableStream(10);
 
@@ -714,7 +714,7 @@ test19.step(function() {
     }));
 });
 
-var test20 = async_test('ReadableStream integration test: adapting an async pull source');
+var test20 = async_test('ReadableStream integration test: adapting an async pull source', { timeout: 50 });
 test20.step(function() {
     var rs = sequentialReadableStream(10, { async: true });
 

@@ -75,9 +75,14 @@ public:
 
     ReadableStreamSource& source() { return m_source.get(); }
 
+    typedef std::function<void(JSC::JSValue)> FailureCallback;
+
     typedef std::function<void()> ClosedSuccessCallback;
-    typedef std::function<void(JSC::JSValue)> ClosedFailureCallback;
-    void closed(ClosedSuccessCallback, ClosedFailureCallback);
+    void closed(ClosedSuccessCallback&&, FailureCallback&&);
+
+    typedef std::function<void(JSC::JSValue)> ReadSuccessCallback;
+    typedef std::function<void()> ReadEndCallback;
+    void read(ReadSuccessCallback&&, ReadEndCallback&&, FailureCallback&&);
 
 protected:
     ReadableStream(ScriptExecutionContext&, Ref<ReadableStreamSource>&&);
@@ -89,11 +94,21 @@ private:
 
     void clearCallbacks();
 
+    virtual bool hasValue() const = 0;
+    virtual JSC::JSValue read() = 0;
+
     std::unique_ptr<ReadableStreamReader> m_reader;
     Vector<std::unique_ptr<ReadableStreamReader>> m_releasedReaders;
 
     ClosedSuccessCallback m_closedSuccessCallback;
-    ClosedFailureCallback m_closedFailureCallback;
+    FailureCallback m_closedFailureCallback;
+
+    struct ReadCallbacks {
+        ReadSuccessCallback successCallback;
+        ReadEndCallback endCallback;
+        FailureCallback failureCallback;
+    };
+    Vector<ReadCallbacks> m_readRequests;
 
     State m_state { State::Readable };
     Ref<ReadableStreamSource> m_source;

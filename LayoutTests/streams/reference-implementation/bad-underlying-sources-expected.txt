@@ -5,8 +5,8 @@ FAIL Underlying source start: throwing getter assert_throws: constructing the st
 PASS Underlying source start: throwing method 
 TIMEOUT Underlying source: throwing pull getter (initial pull) Test timed out
 TIMEOUT Underlying source: throwing pull method (initial pull) Test timed out
-FAIL Underlying source: throwing pull getter (second pull) read is not implemented
-FAIL Underlying source: throwing pull method (second pull) read is not implemented
+TIMEOUT Underlying source: throwing pull getter (second pull) Test timed out
+TIMEOUT Underlying source: throwing pull method (second pull) Test timed out
 FAIL Underlying source: throwing cancel getter cancel is not implemented
 FAIL Underlying source: throwing cancel method cancel is not implemented
 FAIL Underlying source: throwing strategy getter assert_throws: enqueue should throw the error function "function () { c.enqueue('a'); }" did not throw
@@ -18,7 +18,7 @@ FAIL Underlying source: strategy.size returning NaN assert_unreached: enqueue di
 FAIL Underlying source: strategy.size returning -Infinity assert_unreached: enqueue didn't throw Reached unreachable code
 FAIL Underlying source: strategy.size returning +Infinity assert_unreached: enqueue didn't throw Reached unreachable code
 PASS Underlying source: calling close twice on an empty stream should throw the second time 
-FAIL Underlying source: calling close twice on a non-empty stream should throw the second time read is not implemented
+FAIL Underlying source: calling close twice on a non-empty stream should throw the second time assert_object_equals: read() should read the enqueued chunk property "done" expected object "[object Object]" got object "[object Object]"
 FAIL Underlying source: calling close on an empty canceled stream should not throw cancel is not implemented
 FAIL Underlying source: calling close on a non-empty canceled stream should not throw cancel is not implemented
 PASS Underlying source: calling close after error should throw 

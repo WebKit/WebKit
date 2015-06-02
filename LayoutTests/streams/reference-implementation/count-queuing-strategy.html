@@ -17,7 +17,7 @@ test(function() {
     new ReadableStream({ strategy: new CountQueuingStrategy({ "highWaterMark": 4 }) });
 }, 'Can construct a readable stream with a valid CountQueuingStrategy');
 
-var test1 = async_test('Correctly governs the return value of a ReadableStream\'s enqueue function (HWM = 0)');
+var test1 = async_test('Correctly governs the return value of a ReadableStream\'s enqueue function (HWM = 0)', { timeout: 50 });
 test1.step(function() {
     var enqueue;
     var rs = new ReadableStream({

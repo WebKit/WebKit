@@ -34,7 +34,7 @@
 
 #include "NotImplemented.h"
 #include "ReadableStreamReader.h"
-#include <runtime/JSCJSValue.h>
+#include <runtime/JSCJSValueInlines.h>
 #include <wtf/RefCountedLeakCounter.h>
 
 namespace WebCore {
@@ -62,6 +62,8 @@ void ReadableStream::clearCallbacks()
 {
     m_closedSuccessCallback = nullptr;
     m_closedFailureCallback = nullptr;
+
+    m_readRequests.clear();
 }
 
 void ReadableStream::changeStateToClosed()
@@ -76,6 +78,9 @@ void ReadableStream::changeStateToClosed()
     if (m_closedSuccessCallback)
         m_closedSuccessCallback();
 
+    for (auto& request : m_readRequests)
+        request.endCallback();
+
     clearCallbacks();
 }
 
@@ -88,8 +93,12 @@ void ReadableStream::changeStateToErrored()
     if (m_reader)
         m_releasedReaders.append(WTF::move(m_reader));
 
+    JSC::JSValue error = this->error();
     if (m_closedFailureCallback)
-        m_closedFailureCallback(error());
+        m_closedFailureCallback(error);
+
+    for (auto& request : m_readRequests)
+        request.failureCallback(error);
 
     clearCallbacks();
 }
@@ -110,7 +119,7 @@ ReadableStreamReader& ReadableStream::getReader()
     return reader;
 }
 
-void ReadableStream::closed(ClosedSuccessCallback successCallback, ClosedFailureCallback failureCallback)
+void ReadableStream::closed(ClosedSuccessCallback&& successCallback, FailureCallback&& failureCallback)
 {
     if (m_state == State::Closed) {
         successCallback();
@@ -122,6 +131,24 @@ void ReadableStream::closed(ClosedSuccessCallback successCallback, ClosedFailure
     }
     m_closedSuccessCallback = WTF::move(successCallback);
     m_closedFailureCallback = WTF::move(failureCallback);
+}
+
+void ReadableStream::read(ReadSuccessCallback&& successCallback, ReadEndCallback&& endCallback, FailureCallback&& failureCallback)
+{
+    if (m_state == State::Closed) {
+        endCallback();
+        return;
+    }
+    if (m_state == State::Errored) {
+        failureCallback(error());
+        return;
+    }
+    if (hasValue()) {
+        successCallback(read());
+        return;
+    }
+    m_readRequests.append({ WTF::move(successCallback), WTF::move(endCallback), WTF::move(failureCallback) });
+    // FIXME: We should try to pull.
 }
 
 void ReadableStream::start()

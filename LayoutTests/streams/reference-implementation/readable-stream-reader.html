@@ -107,7 +107,7 @@ test(function() {
     new ReadableStreamReader(rs); // Constructing directly should not throw.
 }, 'Constructing a ReadableStreamReader directly should be OK if the stream is errored');
 
-var test1 = async_test('Reading from a reader for an empty stream will wait until a chunk is available');
+var test1 = async_test('Reading from a reader for an empty stream will wait until a chunk is available', { timeout: 50 });
 test1.step(function() {
     var controller;
     var rs = new ReadableStream({

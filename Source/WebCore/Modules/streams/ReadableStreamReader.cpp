@@ -30,17 +30,28 @@
 #include "config.h"
 #include "ReadableStreamReader.h"
 
+#include <runtime/JSCJSValueInlines.h>
+
 #if ENABLE(STREAMS_API)
 
 namespace WebCore {
 
-void ReadableStreamReader::closed(ReadableStream::ClosedSuccessCallback successCallback, ReadableStream::ClosedFailureCallback failureCallback)
+void ReadableStreamReader::closed(ReadableStream::ClosedSuccessCallback&& successCallback, ReadableStream::FailureCallback&& failureCallback)
 {
     if (m_stream.isReadable() && m_stream.reader() != this) {
         successCallback();
         return;
     }
     m_stream.closed(WTF::move(successCallback), WTF::move(failureCallback));
+}
+
+void ReadableStreamReader::read(ReadableStream::ReadSuccessCallback&& successCallback, ReadableStream::ReadEndCallback&& endCallback, ReadableStream::FailureCallback&& failureCallback)
+{
+    if (m_stream.isReadable() && m_stream.reader() != this) {
+        successCallback(JSC::JSValue());
+        return;
+    }
+    m_stream.read(WTF::move(successCallback), WTF::move(endCallback), WTF::move(failureCallback));
 }
 
 }

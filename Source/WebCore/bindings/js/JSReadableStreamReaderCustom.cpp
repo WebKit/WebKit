@@ -37,6 +37,7 @@
 #include "JSReadableStream.h"
 #include "ReadableJSStream.h"
 #include <runtime/Error.h>
+#include <runtime/IteratorOperations.h>
 #include <wtf/NeverDestroyed.h>
 
 using namespace JSC;
@@ -45,8 +46,22 @@ namespace WebCore {
 
 JSValue JSReadableStreamReader::read(ExecState* exec)
 {
-    JSValue error = createError(exec, ASCIILiteral("read is not implemented"));
-    return exec->vm().throwException(exec, error);
+    DeferredWrapper wrapper(exec, globalObject());
+    auto successCallback = [wrapper](JSValue value) mutable {
+        JSValue result = createIteratorResultObject(wrapper.promise()->globalObject()->globalExec(), value, false);
+        wrapper.resolve(result);
+    };
+    auto endCallback = [wrapper]() mutable {
+        JSValue result = createIteratorResultObject(wrapper.promise()->globalObject()->globalExec(), JSC::jsUndefined(), true);
+        wrapper.resolve(result);
+    };
+    auto failureCallback = [wrapper](JSValue value) mutable {
+        wrapper.reject(value);
+    };
+
+    impl().read(WTF::move(successCallback), WTF::move(endCallback), WTF::move(failureCallback));
+
+    return wrapper.promise();
 }
 
 JSValue JSReadableStreamReader::closed(ExecState* exec) const

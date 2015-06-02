@@ -61,7 +61,7 @@ test2.step(function() {
         }));
 });
 
-var test3 = async_test('Underlying source: throwing pull getter (second pull)');
+var test3 = async_test('Underlying source: throwing pull getter (second pull)', { timeout: 50 });
 test3.step(function() {
     var theError = new Error('a unique string');
     var counter = 0;
@@ -89,7 +89,7 @@ test3.step(function() {
         }));
 });
 
-var test4 = async_test('Underlying source: throwing pull method (second pull)');
+var test4 = async_test('Underlying source: throwing pull method (second pull)', { timeout: 50 });
 test4.step(function() {
     var theError = new Error('a unique string');
     var counter = 0;
@@ -437,7 +437,7 @@ test18.step(function() {
     }));
 });
 
-var test19 = async_test('Underlying source: calling close after error should throw', { timeout: 50 });
+var test19 = async_test('Underlying source: calling close after error should throw');
 test19.step(function() {
     var theError = new Error('boo');
     var startCalled = false;
@@ -454,7 +454,7 @@ test19.step(function() {
     }));
 });
 
-var test20 = async_test('Underlying source: calling error twice should throw the second time', { timeout: 50 });
+var test20 = async_test('Underlying source: calling error twice should throw the second time');
 test20.step(function() {
     var theError = new Error('boo');
     var startCalled = false;
@@ -471,7 +471,7 @@ test20.step(function() {
     }));
 });
 
-var test21 = async_test('Underlying source: calling error after close should throw', { timeout: 50 });
+var test21 = async_test('Underlying source: calling error after close should throw');
 test21.step(function() {
     var startCalled = false;
     new ReadableStream({

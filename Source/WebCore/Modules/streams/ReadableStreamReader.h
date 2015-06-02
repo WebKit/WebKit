@@ -51,7 +51,8 @@ public:
     ReadableStreamReader(ReadableStream& stream)
         : m_stream(stream) { }
 
-    void closed(ReadableStream::ClosedSuccessCallback, ReadableStream::ClosedFailureCallback);
+    void closed(ReadableStream::ClosedSuccessCallback&&, ReadableStream::FailureCallback&&);
+    void read(ReadableStream::ReadSuccessCallback&&, ReadableStream::ReadEndCallback&&, ReadableStream::FailureCallback&&);
 
     void ref() { m_stream.ref(); }
     void deref() { m_stream.deref(); }

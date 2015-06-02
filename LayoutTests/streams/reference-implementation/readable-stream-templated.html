@@ -369,7 +369,7 @@ function templatedRSTwoChunksOpenReader(label, factory, chunks) {
     test(function() {
     }, 'Running templatedRSTwoChunksOpenReader with ' + label);
 
-    var test1 = async_test('calling read() twice without waiting will eventually give both chunks');
+    var test1 = async_test('calling read() twice without waiting will eventually give both chunks', { timeout: 50 });
     test1.step(function() {
         var { reader } = factory();
         var promiseCount = 0;
@@ -385,7 +385,7 @@ function templatedRSTwoChunksOpenReader(label, factory, chunks) {
         }));
     });
 
-    var test2 = async_test('calling read() twice with waiting will eventually give both chunks');
+    var test2 = async_test('calling read() twice with waiting will eventually give both chunks', { timeout: 50 });
     test2.step(function() {
         var { reader } = factory();
 
@@ -615,23 +615,24 @@ templatedRSErroredSyncOnly('ReadableStream (errored via call in start)', functio
     theError
 );
 
-templatedRSErrored('ReadableStream (errored via returning a rejected promise in start)', function() {
-    return new ReadableStream({
-        start: function() {
-            return Promise.reject(theError);
-        }
-    })},
-    theError
-);
+// FIXME: Activate these tests once Promise handling is supported in start function.
+// templatedRSErrored('ReadableStream (errored via returning a rejected promise in start)', function() {
+//     return new ReadableStream({
+//         start: function() {
+//             return Promise.reject(theError);
+//         }
+//     })},
+//     theError
+// );
 
-templatedRSErroredReader('ReadableStream (errored via returning a rejected promise in start) reader', function() {
-    return streamAndDefaultReader(new ReadableStream({
-        start: function() {
-            return Promise.reject(theError);
-        }
-    }))},
-    theError
-);
+// templatedRSErroredReader('ReadableStream (errored via returning a rejected promise in start) reader', function() {
+//     return streamAndDefaultReader(new ReadableStream({
+//         start: function() {
+//             return Promise.reject(theError);
+//         }
+//     }))},
+//     theError
+// );
 
 var chunks = ['a', 'b'];
 
