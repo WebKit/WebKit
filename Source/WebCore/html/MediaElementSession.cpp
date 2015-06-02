@@ -87,21 +87,21 @@ MediaElementSession::MediaElementSession(PlatformMediaSessionClient& client)
 {
 }
 
-void MediaElementSession::registerWithDocument(const HTMLMediaElement& element)
+void MediaElementSession::registerWithDocument(Document& document)
 {
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    element.document().addPlaybackTargetPickerClient(*this);
+    document.addPlaybackTargetPickerClient(*this);
 #else
-    UNUSED_PARAM(element);
+    UNUSED_PARAM(document);
 #endif
 }
 
-void MediaElementSession::unregisterWithDocument(const HTMLMediaElement& element)
+void MediaElementSession::unregisterWithDocument(Document& document)
 {
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    element.document().removePlaybackTargetPickerClient(*this);
+    document.removePlaybackTargetPickerClient(*this);
 #else
-    UNUSED_PARAM(element);
+    UNUSED_PARAM(document);
 #endif
 }
 

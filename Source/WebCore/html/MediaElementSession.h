@@ -44,8 +44,8 @@ public:
     explicit MediaElementSession(PlatformMediaSessionClient&);
     virtual ~MediaElementSession() { }
 
-    void registerWithDocument(const HTMLMediaElement&);
-    void unregisterWithDocument(const HTMLMediaElement&);
+    void registerWithDocument(Document&);
+    void unregisterWithDocument(Document&);
 
     bool playbackPermitted(const HTMLMediaElement&) const;
     bool dataLoadingPermitted(const HTMLMediaElement&) const;
