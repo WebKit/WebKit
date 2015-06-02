@@ -1,3 +1,27 @@
+2015-06-01  Enrica Casucci  <enrica@apple.com>
+
+        [iOS] Hardware Keyboard: All combinations for arrow keys with Shift do not extend the selection.
+        https://bugs.webkit.org/show_bug.cgi?id=145538
+        rdar://problem/18504199
+
+        Reviewed by Darin Adler.
+
+        The extend parameter was ignored in all the functions below.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _moveUp:withHistory:]):
+        (-[WKContentView _moveDown:withHistory:]):
+        (-[WKContentView _moveLeft:withHistory:]):
+        (-[WKContentView _moveRight:withHistory:]):
+        (-[WKContentView _moveToStartOfWord:withHistory:]):
+        (-[WKContentView _moveToStartOfParagraph:withHistory:]):
+        (-[WKContentView _moveToStartOfLine:withHistory:]):
+        (-[WKContentView _moveToStartOfDocument:withHistory:]):
+        (-[WKContentView _moveToEndOfWord:withHistory:]):
+        (-[WKContentView _moveToEndOfParagraph:withHistory:]):
+        (-[WKContentView _moveToEndOfLine:withHistory:]):
+        (-[WKContentView _moveToEndOfDocument:withHistory:]):
+
 2015-06-01  Anders Carlsson  <andersca@apple.com>
 
         Use xpc_connection_set_oneshot_instance where possible
