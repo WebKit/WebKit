@@ -1102,9 +1102,11 @@ void SVGToOTFFontConverter::appendKERNTable()
     size_t sizeOfVerticalSubtable = appendKERNSubtable<SVGVKernElement>(&SVGVKernElement::buildVerticalKerningPair, 0);
     ASSERT_UNUSED(sizeOfVerticalSubtable, subtablesOffset + sizeOfHorizontalSubtable + sizeOfVerticalSubtable == m_result.size());
 
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED <= 80000)
     // Work around a bug in Apple's font parser by adding some padding bytes. <rdar://problem/18401901>
     for (int i = 0; i < 6; ++i)
         m_result.append(0);
+#endif
 }
 
 template <typename V>
@@ -1398,9 +1400,11 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
             processGlyphElement(glyphElement, &glyphElement, defaultHorizontalAdvance, defaultVerticalAdvance, unicodeAttribute, initialGlyph);
     }
 
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED <= 80000)
     // <rdar://problem/20086223> Cocoa has a bug where glyph bounding boxes are not correctly respected for frustum culling. Work around this by
     // inflating the font's bounding box
     m_boundingBox.extend(FloatPoint(0, 0));
+#endif
 
     appendLigatureGlyphs();
 
