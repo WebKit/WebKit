@@ -121,7 +121,9 @@ public:
     bool compositingLayersNeedRebuild() const { return m_compositingLayersNeedRebuild; }
     
     void willRecalcStyle();
-    void didRecalcStyleWithNoPendingLayout();
+
+    // Returns true if the composited layers were actually updated.
+    bool didRecalcStyleWithNoPendingLayout();
 
     // GraphicsLayers buffer state, which gets pushed to the underlying platform layers
     // at specific times.
@@ -139,7 +141,7 @@ public:
     void didChangeVisibleRect();
     
     // Rebuild the tree of compositing layers
-    void updateCompositingLayers(CompositingUpdateType, RenderLayer* updateRoot = nullptr);
+    bool updateCompositingLayers(CompositingUpdateType, RenderLayer* updateRoot = nullptr);
     // This is only used when state changes and we do not exepect a style update or layout to happen soon (e.g. when
     // we discover that an iframe is overlapped during painting).
     void scheduleCompositingLayerUpdate();

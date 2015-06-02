@@ -758,17 +758,17 @@ void FrameView::willRecalcStyle()
     renderView->compositor().willRecalcStyle();
 }
 
-void FrameView::updateCompositingLayersAfterStyleChange()
+bool FrameView::updateCompositingLayersAfterStyleChange()
 {
     RenderView* renderView = this->renderView();
     if (!renderView)
-        return;
+        return false;
 
     // If we expect to update compositing after an incipient layout, don't do so here.
     if (inPreLayoutStyleUpdate() || layoutPending() || renderView->needsLayout())
-        return;
+        return false;
 
-    renderView->compositor().didRecalcStyleWithNoPendingLayout();
+    return renderView->compositor().didRecalcStyleWithNoPendingLayout();
 }
 
 void FrameView::updateCompositingLayersAfterLayout()

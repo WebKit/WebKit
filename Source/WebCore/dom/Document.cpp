@@ -1767,6 +1767,7 @@ void Document::recalcStyle(Style::Change change)
     // i.e. updating the flag here would be too late.
 
     m_inStyleRecalc = true;
+    bool updatedCompositingLayers = false;
     {
         Style::PostResolutionCallbackDisabler disabler(*this);
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
@@ -1781,7 +1782,7 @@ void Document::recalcStyle(Style::Change change)
 
         Style::resolveTree(*this, change);
 
-        frameView.updateCompositingLayersAfterStyleChange();
+        updatedCompositingLayers = frameView.updateCompositingLayersAfterStyleChange();
 
         clearNeedsStyleRecalc();
         clearChildNeedsStyleRecalc();
@@ -1807,7 +1808,7 @@ void Document::recalcStyle(Style::Change change)
     // Some animated images may now be inside the viewport due to style recalc,
     // resume them if necessary if there is no layout pending. Otherwise, we'll
     // check if they need to be resumed after layout.
-    if (!frameView.needsLayout())
+    if (updatedCompositingLayers && !frameView.needsLayout())
         frameView.viewportContentsChanged();
 
     // As a result of the style recalculation, the currently hovered element might have been

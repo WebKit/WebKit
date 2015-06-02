@@ -149,7 +149,7 @@ public:
 #endif
 
     void willRecalcStyle();
-    void updateCompositingLayersAfterStyleChange();
+    bool updateCompositingLayersAfterStyleChange();
     void updateCompositingLayersAfterLayout();
     bool flushCompositingStateForThisFrame(Frame* rootFrameForFlush);
 

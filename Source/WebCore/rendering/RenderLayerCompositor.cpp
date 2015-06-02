@@ -384,13 +384,13 @@ void RenderLayerCompositor::willRecalcStyle()
     m_layerNeedsCompositingUpdate = false;
 }
 
-void RenderLayerCompositor::didRecalcStyleWithNoPendingLayout()
+bool RenderLayerCompositor::didRecalcStyleWithNoPendingLayout()
 {
     if (!m_layerNeedsCompositingUpdate)
-        return;
+        return false;
     
     cacheAcceleratedCompositingFlags();
-    updateCompositingLayers(CompositingUpdateAfterStyleChange);
+    return updateCompositingLayers(CompositingUpdateAfterStyleChange);
 }
 
 void RenderLayerCompositor::customPositionForVisibleRectComputation(const GraphicsLayer* graphicsLayer, FloatPoint& position) const
@@ -663,7 +663,7 @@ void RenderLayerCompositor::cancelCompositingLayerUpdate()
     m_updateCompositingLayersTimer.stop();
 }
 
-void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType updateType, RenderLayer* updateRoot)
+bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType updateType, RenderLayer* updateRoot)
 {
     LOG(Compositing, "RenderLayerCompositor %p updateCompositingLayers %d %p", this, updateType, updateRoot);
 
@@ -673,17 +673,17 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     
     // Compositing layers will be updated in Document::setVisualUpdatesAllowed(bool) if suppressed here.
     if (!m_renderView.document().visualUpdatesAllowed())
-        return;
+        return false;
 
     // Avoid updating the layers with old values. Compositing layers will be updated after the layout is finished.
     if (m_renderView.needsLayout())
-        return;
+        return false;
 
     if ((m_forceCompositingMode || m_renderView.frame().mainFrame().pageOverlayController().overlayCount()) && !m_compositing)
         enableCompositingMode(true);
 
     if (!m_reevaluateCompositingAfterLayout && !m_compositing)
-        return;
+        return false;
 
     ++m_compositingUpdateCount;
 
@@ -711,7 +711,7 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     }
 
     if (!checkForHierarchyUpdate && !needGeometryUpdate)
-        return;
+        return false;
 
     bool needHierarchyUpdate = m_compositingLayersNeedRebuild;
     bool isFullUpdate = !updateRoot;
@@ -800,6 +800,8 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
     // Inform the inspector that the layer tree has changed.
     InspectorInstrumentation::layerTreeDidChange(page());
+
+    return true;
 }
 
 void RenderLayerCompositor::appendDocumentOverlayLayers(Vector<GraphicsLayer*>& childList)
