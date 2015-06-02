@@ -20,13 +20,13 @@
         if (window.testRunner)
             testRunner.dumpAsText();
 
+        if (window.internals)
+            window.internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
+
         function doTest()
         {
             if (window.eventSender)
                 eventSender.scalePageBy(3, 3);
-
-            if (window.internals)
-                window.internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
 
             if (window.testRunner)
               document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
