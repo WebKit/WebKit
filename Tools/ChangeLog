@@ -1,3 +1,33 @@
+2015-06-01  Daniel Bates  <dabates@apple.com>
+
+        Notify client that we began editing when text field is focused
+        https://bugs.webkit.org/show_bug.cgi?id=145439
+        <rdar://problem/21142108>
+
+        Reviewed by Anders Carlsson.
+
+        Add API test to ensure that we dispatch textFieldDid{Begin, End}Editing callbacks when
+        a text field is focused and defocused.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/PlatformEfl.cmake:
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/TextFieldDidBeginAndEndEditing.cpp: Added.
+        (TestWebKitAPI::WebKit2TextFieldBeginAndEditEditingTest::didReceiveMessageFromInjectedBundle):
+        (TestWebKitAPI::WebKit2TextFieldBeginAndEditEditingTest::didFinishLoadForFrame):
+        (TestWebKitAPI::WebKit2TextFieldBeginAndEditEditingTest::setInjectedBundleClient):
+        (TestWebKitAPI::WebKit2TextFieldBeginAndEditEditingTest::setPageLoaderClient):
+        (TestWebKitAPI::WebKit2TextFieldBeginAndEditEditingTest::nullJavaScriptCallback):
+        (TestWebKitAPI::WebKit2TextFieldBeginAndEditEditingTest::executeJavaScriptAndCheckDidReceiveMessage):
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebKit2/TextFieldDidBeginAndEndEditing_Bundle.cpp: Added.
+        (TestWebKitAPI::textFieldDidBeginEditing):
+        (TestWebKitAPI::textFieldDidEndEditing):
+        (TestWebKitAPI::TextFieldDidBeginAndEndEditingEventsTest::TextFieldDidBeginAndEndEditingEventsTest):
+        (TestWebKitAPI::TextFieldDidBeginAndEndEditingEventsTest::didCreatePage):
+        * TestWebKitAPI/Tests/WebKit2/input-focus-blur.html: Added.
+
 2015-06-01  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] resource-type and load-type should be independent.

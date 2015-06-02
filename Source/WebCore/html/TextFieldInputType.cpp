@@ -206,8 +206,11 @@ void TextFieldInputType::forwardEvent(Event* event)
                 }
 
                 capsLockStateMayHaveChanged();
-            } else if (event->type() == eventNames().focusEvent)
+            } else if (event->type() == eventNames().focusEvent) {
+                if (Frame* frame = element().document().frame())
+                    frame->editor().textFieldDidBeginEditing(&element());
                 capsLockStateMayHaveChanged();
+            }
 
             element().forwardEvent(event);
         }
@@ -482,7 +485,6 @@ String TextFieldInputType::convertFromVisibleValue(const String& visibleValue) c
 
 void TextFieldInputType::subtreeHasChanged()
 {
-    bool wasChanged = element().wasChangedSinceLastFormControlChangeEvent();
     element().setChangedSinceLastFormControlChangeEvent(true);
 
     // We don't need to call sanitizeUserInputValue() function here because
@@ -494,18 +496,15 @@ void TextFieldInputType::subtreeHasChanged()
     // Recalc for :invalid change.
     element().setNeedsStyleRecalc();
 
-    didSetValueByUserEdit(wasChanged ? ValueChangeStateChanged : ValueChangeStateNone);
+    didSetValueByUserEdit();
 }
 
-void TextFieldInputType::didSetValueByUserEdit(ValueChangeState state)
+void TextFieldInputType::didSetValueByUserEdit()
 {
     if (!element().focused())
         return;
-    if (Frame* frame = element().document().frame()) {
-        if (state == ValueChangeStateNone)
-            frame->editor().textFieldDidBeginEditing(&element());
+    if (Frame* frame = element().document().frame())
         frame->editor().textDidChangeInTextField(&element());
-    }
 }
 
 void TextFieldInputType::spinButtonStepDown()

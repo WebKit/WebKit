@@ -92,6 +92,7 @@ set(test_webkit2_api_BINARIES
     ResponsivenessTimerDoesntFireEarly
     ShouldGoToBackForwardListItem
     TerminateTwice
+    TextFieldDidBeginAndEndEditing
     WKPreferences
     WKString
     WKStringJSString

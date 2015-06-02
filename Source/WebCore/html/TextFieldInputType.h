@@ -72,11 +72,7 @@ protected:
 #endif
 
     virtual String convertFromVisibleValue(const String&) const;
-    enum ValueChangeState {
-        ValueChangeStateNone,
-        ValueChangeStateChanged
-    };
-    virtual void didSetValueByUserEdit(ValueChangeState);
+    virtual void didSetValueByUserEdit();
 
 private:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const override final;

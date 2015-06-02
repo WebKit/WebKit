@@ -57,7 +57,7 @@ private:
     virtual HTMLElement* resultsButtonElement() const override;
     virtual HTMLElement* cancelButtonElement() const override;
     virtual void handleKeydownEvent(KeyboardEvent*) override;
-    virtual void didSetValueByUserEdit(ValueChangeState) override;
+    virtual void didSetValueByUserEdit() override;
     virtual bool sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const override;
     virtual float decorationWidth() const override;
 

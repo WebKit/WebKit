@@ -183,7 +183,7 @@ bool SearchInputType::searchEventsShouldBeDispatched() const
     return element().fastHasAttribute(incrementalAttr);
 }
 
-void SearchInputType::didSetValueByUserEdit(ValueChangeState state)
+void SearchInputType::didSetValueByUserEdit()
 {
     if (m_cancelButton && element().renderer())
         downcast<RenderSearchField>(*element().renderer()).updateCancelButtonVisibility();
@@ -192,7 +192,7 @@ void SearchInputType::didSetValueByUserEdit(ValueChangeState state)
     if (searchEventsShouldBeDispatched())
         startSearchEventTimer();
 
-    TextFieldInputType::didSetValueByUserEdit(state);
+    TextFieldInputType::didSetValueByUserEdit();
 }
 
 bool SearchInputType::sizeShouldIncludeDecoration(int, int& preferredSize) const

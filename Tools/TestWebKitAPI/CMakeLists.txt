@@ -121,6 +121,7 @@ add_library(TestWebKitAPIInjectedBundle SHARED
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/ParentFrame_Bundle.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/ResponsivenessTimerDoesntFireEarly_Bundle.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/ShouldGoToBackForwardListItem_Bundle.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebKit2/TextFieldDidBeginAndEndEditing_Bundle.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/UserMessage_Bundle.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/WillLoad_Bundle.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/WillSendSubmitEvent_Bundle.cpp
