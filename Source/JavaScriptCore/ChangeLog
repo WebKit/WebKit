@@ -1,3 +1,12 @@
+2015-06-02  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: fix broken CLoop build.
+
+        Not reviewed.
+
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeExitSiteData):
+
 2015-06-02  Keith Miller  <keith_miller@apple.com>
 
         JavaScriptCore: JSExport protocol with an NSInteger property converts negative values to 18446744073709552000

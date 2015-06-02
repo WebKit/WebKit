@@ -115,7 +115,6 @@ CallLinkStatus::ExitSiteData CallLinkStatus::computeExitSiteData(
     UNUSED_PARAM(locker);
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
-    UNUSED_PARAM(exitingJITType);
 #endif
     
     return exitSiteData;
