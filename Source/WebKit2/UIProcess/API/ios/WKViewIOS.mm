@@ -113,6 +113,11 @@ using namespace WebKit;
         [self _frameOrBoundsChanged];
 }
 
+- (void)didMoveToWindow
+{
+    [_contentView page]->viewStateDidChange(WebCore::ViewState::AllFlags);
+}
+
 - (UIScrollView *)scrollView
 {
     return _scrollView.get();
