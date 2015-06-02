@@ -150,6 +150,11 @@ CallLinkStatus CallLinkStatus::computeFromCallLinkInfo(
     // that is still marginally valid (i.e. the pointers ain't stale). This kind of raciness
     // is probably OK for now.
     
+    // FIXME: If the GC often clears this call, we should probably treat it like it always takes the
+    // slow path. We could be smart about this; for example if we cleared a specific callee but the
+    // despecified executable was alive then we could note that separately.
+    // https://bugs.webkit.org/show_bug.cgi?id=145502
+    
     // PolymorphicCallStubRoutine is a GCAwareJITStubRoutine, so if non-null, it will stay alive
     // until next GC even if the CallLinkInfo is concurrently cleared. Also, the variants list is
     // never mutated after the PolymorphicCallStubRoutine is instantiated. We have some conservative
@@ -209,17 +214,18 @@ CallLinkStatus CallLinkStatus::computeFromCallLinkInfo(
         return result;
     }
     
-    if (callLinkInfo.slowPathCount >= Options::couldTakeSlowCaseMinimumCount())
-        return takesSlowPath();
+    CallLinkStatus result;
     
-    JSFunction* target = callLinkInfo.lastSeenCallee.get();
-    if (!target)
-        return takesSlowPath();
+    if (JSFunction* target = callLinkInfo.lastSeenCallee.get()) {
+        CallVariant variant(target);
+        if (callLinkInfo.hasSeenClosure)
+            variant = variant.despecifiedClosure();
+        result.m_variants.append(variant);
+    }
     
-    if (callLinkInfo.hasSeenClosure)
-        return CallLinkStatus(target->executable());
+    result.m_couldTakeSlowPath = !!callLinkInfo.slowPathCount;
 
-    return CallLinkStatus(target);
+    return result;
 }
 
 CallLinkStatus CallLinkStatus::computeFor(
