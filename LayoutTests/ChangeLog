@@ -1,3 +1,16 @@
+2015-05-30  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (179771): zooming on facebook images covers image
+        https://bugs.webkit.org/show_bug.cgi?id=145485
+
+        Reviewed by Simon Fraser.
+
+        Scaling an infinite rect should always produce an infinite rect.
+        (Based on Simon Fraser's patch)
+
+        * compositing/layer-creation/zoomed-clip-intersection-expected.txt: Added.
+        * compositing/layer-creation/zoomed-clip-intersection.html: Added.
+
 2015-06-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Test font selection for zh fonts
