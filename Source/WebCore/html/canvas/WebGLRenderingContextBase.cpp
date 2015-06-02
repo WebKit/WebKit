@@ -362,8 +362,10 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTM
     bool isPendingPolicyResolution = false;
     Document& topDocument = document.topDocument();
     Page* page = topDocument.page();
-    if (page && !topDocument.url().isLocalFile()) {
-        WebGLLoadPolicy policy = page->mainFrame().loader().client().webGLPolicyForURL(topDocument.url());
+    bool forcingPendingPolicy = frame->settings().isForcePendingWebGLPolicy();
+
+    if (forcingPendingPolicy || (page && !topDocument.url().isLocalFile())) {
+        WebGLLoadPolicy policy = forcingPendingPolicy ? WebGLPendingCreation : page->mainFrame().loader().client().webGLPolicyForURL(topDocument.url());
 
         if (policy == WebGLBlockCreation) {
             LOG(WebGL, "The policy for this URL (%s) is to block WebGL.", topDocument.url().host().utf8().data());
@@ -779,11 +781,17 @@ void WebGLRenderingContextBase::reshape(int width, int height)
 
 int WebGLRenderingContextBase::drawingBufferWidth() const
 {
+    if (m_isPendingPolicyResolution && !m_hasRequestedPolicyResolution)
+        return 0;
+
     return m_context->getInternalFramebufferSize().width();
 }
 
 int WebGLRenderingContextBase::drawingBufferHeight() const
 {
+    if (m_isPendingPolicyResolution && !m_hasRequestedPolicyResolution)
+        return 0;
+
     return m_context->getInternalFramebufferSize().height();
 }
 

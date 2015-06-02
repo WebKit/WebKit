@@ -85,6 +85,7 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_shouldDisplayTextDescriptions(settings.shouldDisplayTextDescriptions())
 #endif
     , m_defaultVideoPosterURL(settings.defaultVideoPosterURL())
+    , m_forcePendingWebGLPolicy(settings.isForcePendingWebGLPolicy())
     , m_originalTimeWithoutMouseMovementBeforeHidingControls(settings.timeWithoutMouseMovementBeforeHidingControls())
     , m_useLegacyBackgroundSizeShorthandBehavior(settings.useLegacyBackgroundSizeShorthandBehavior())
     , m_autoscrollForDragAndDropEnabled(settings.autoscrollForDragAndDropEnabled())
@@ -152,6 +153,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setShouldDisplayTextDescriptions(m_shouldDisplayTextDescriptions);
 #endif
     settings.setDefaultVideoPosterURL(m_defaultVideoPosterURL);
+    settings.setForcePendingWebGLPolicy(m_forcePendingWebGLPolicy);
     settings.setTimeWithoutMouseMovementBeforeHidingControls(m_originalTimeWithoutMouseMovementBeforeHidingControls);
     settings.setUseLegacyBackgroundSizeShorthandBehavior(m_useLegacyBackgroundSizeShorthandBehavior);
     settings.setAutoscrollForDragAndDropEnabled(m_autoscrollForDragAndDropEnabled);
@@ -210,6 +212,7 @@ void InternalSettings::resetToConsistentState()
 {
     page()->setPageScaleFactor(1, IntPoint(0, 0));
     page()->setCanStartMedia(true);
+    page()->settings().setForcePendingWebGLPolicy(false);
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     m_page->settings().setAllowsAirPlayForMediaPlayback(false);
 #endif
@@ -466,6 +469,12 @@ void InternalSettings::setDefaultVideoPosterURL(const String& url, ExceptionCode
 {
     InternalSettingsGuardForSettings();
     settings()->setDefaultVideoPosterURL(url);
+}
+
+void InternalSettings::setForcePendingWebGLPolicy(bool forced, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setForcePendingWebGLPolicy(forced);
 }
 
 void InternalSettings::setTimeWithoutMouseMovementBeforeHidingControls(double time, ExceptionCode& ec)
