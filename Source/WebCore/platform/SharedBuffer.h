@@ -102,7 +102,7 @@ public:
     void append(CFDataRef);
 #endif
 
-    WEBCORE_EXPORT PassRefPtr<SharedBuffer> copy() const;
+    WEBCORE_EXPORT Ref<SharedBuffer> copy() const;
     
     // Return the number of consecutive bytes after "position". "data"
     // points to the first byte.

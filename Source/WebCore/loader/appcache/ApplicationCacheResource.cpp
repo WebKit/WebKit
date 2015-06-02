@@ -40,12 +40,7 @@ ApplicationCacheResource::ApplicationCacheResource(const URL& url, const Resourc
 
 void ApplicationCacheResource::deliver(ResourceLoader& loader)
 {
-    RefPtr<SharedBuffer> buffer;
-    if (m_path.isEmpty())
-        buffer = data()->copy();
-    else
-        buffer = SharedBuffer::createWithContentsOfFile(m_path);
-    loader.deliverResponseAndData(response(), WTF::move(buffer));
+    loader.deliverResponseAndData(response(), m_path.isEmpty() ? data()->copy() : SharedBuffer::createWithContentsOfFile(m_path));
 }
 
 void ApplicationCacheResource::addType(unsigned type) 

@@ -250,13 +250,13 @@ void SharedBuffer::clear()
     clearDataBuffer();
 }
 
-PassRefPtr<SharedBuffer> SharedBuffer::copy() const
+Ref<SharedBuffer> SharedBuffer::copy() const
 {
-    RefPtr<SharedBuffer> clone { adoptRef(*new SharedBuffer) };
+    Ref<SharedBuffer> clone { adoptRef(*new SharedBuffer) };
 
     if (hasPlatformData() || m_fileData) {
         clone->append(data(), size());
-        return clone.release();
+        return clone;
     }
 
     clone->m_size = m_size;
@@ -272,7 +272,7 @@ PassRefPtr<SharedBuffer> SharedBuffer::copy() const
 #endif
     ASSERT(clone->size() == size());
 
-    return clone.release();
+    return clone;
 }
 
 void SharedBuffer::duplicateDataBufferIfNecessary() const
