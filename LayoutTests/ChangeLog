@@ -1,5 +1,11 @@
 2015-06-02  Dean Jackson  <dino@apple.com>
 
+        Skip webgl/useWhilePending.html on WebKit 1.
+
+        * platform/mac-wk1/TestExpectations:
+
+2015-06-02  Dean Jackson  <dino@apple.com>
+
         Crash in GraphicsContext3D::getInternalFramebufferSize
         https://bugs.webkit.org/show_bug.cgi?id=145479
         <rdar://problem/16461048>
