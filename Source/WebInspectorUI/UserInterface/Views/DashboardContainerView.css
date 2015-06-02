@@ -114,10 +114,11 @@
 
 .dashboard-container .advance-arrow {
     position: absolute;
-    right: 0px;
-    width: 10px;
-    height: 10px;
-    margin: 4px;
+    right: 0;
+    width: 12px;
+    top: 0;
+    bottom: 0;
+    padding: 4px 0;
     opacity: 0.6;
 
     z-index: 1000;
@@ -127,6 +128,7 @@
 
     transition-property: opacity;
     transition-duration: 0.2s;
+    background-clip: content-box;
 }
 
 .dashboard-container .advance-arrow:hover {
@@ -151,10 +153,10 @@
 
 .dashboard-container .advance-arrow.advance-forward {
     top: 0;
-    background-position: 0% 0%;
+    background-position: 50% 4px;
 }
 
 .dashboard-container .advance-arrow.advance-backward {
     bottom: 0;
-    background-position: 0% 100%;
+    background-position: 50% -4px;
 }
