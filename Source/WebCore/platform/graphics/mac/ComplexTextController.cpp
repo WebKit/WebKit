@@ -682,7 +682,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                 if (advance.width)
                     advance.width += m_font.letterSpacing();
 
-                bool lastCharacter = static_cast<unsigned>(characterIndex + 1) == m_run.length() || (U16_IS_SURROGATE_LEAD(ch) && static_cast<unsigned>(characterIndex + 2) == m_run.length() && U16_IS_SURROGATE_TRAIL(*(cp + characterIndex + 1)));
+                bool lastCharacter = static_cast<unsigned>(characterIndex + 1) == complexTextRun.stringLength() || (U16_IS_LEAD(ch) && static_cast<unsigned>(characterIndex + 2) == complexTextRun.stringLength() && U16_IS_TRAIL(*(cp + characterIndex + 1)));
 
                 bool forceLeadingExpansion = false; // On the left, regardless of m_run.ltr()
                 bool forceTrailingExpansion = false; // On the right, regardless of m_run.ltr()

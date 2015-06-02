@@ -1,3 +1,14 @@
+2015-06-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Out of bounds read in WebCore::ComplexTextController::adjustGlyphsAndAdvances
+        https://bugs.webkit.org/show_bug.cgi?id=145537
+        <rdar://problem/20959267>
+
+        Reviewed by Darin Adler.
+
+        * fast/text/crash-complex-text-surrogate.html: Added.
+        * platform/mac/fast/text/crash-complex-text-surrogate-expected.txt: Added.
+
 2015-05-30  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (179771): zooming on facebook images covers image
