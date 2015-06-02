@@ -1,3 +1,12 @@
+2015-06-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Fix Windows layout test failure following <http://trac.webkit.org/changeset/185095>
+        (https://bugs.webkit.org/show_bug.cgi?id=145537)
+
+        Unreviewed.
+
+        * platform/win/fast/text/crash-complex-text-surrogate-expected.txt: Added.
+
 2015-06-02  Zalan Bujtas  <zalan@apple.com>
 
         Backdrop filter is pulling in content from behind the window.
