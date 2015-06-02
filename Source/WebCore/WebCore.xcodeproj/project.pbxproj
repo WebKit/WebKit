@@ -3812,6 +3812,11 @@
 		A10DC76B14747BAB005E2471 /* StyleGridData.h in Headers */ = {isa = PBXBuildFile; fileRef = A10DC76914747BAB005E2471 /* StyleGridData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A110DB9B14F5DF7700A03B93 /* StyleGridItemData.h in Headers */ = {isa = PBXBuildFile; fileRef = A110DB9A14F5DF7700A03B93 /* StyleGridItemData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A110DB9D14F5DF8700A03B93 /* StyleGridItemData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A110DB9C14F5DF8700A03B93 /* StyleGridItemData.cpp */; };
+		A11E8C051B1E28F40003A7C7 /* copyCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = A11E8C001B1E28BE0003A7C7 /* copyCursor.png */; };
+		A11E8C061B1E28FA0003A7C7 /* moveCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = A11E8C011B1E28BE0003A7C7 /* moveCursor.png */; };
+		A11E8C071B1E28FE0003A7C7 /* northEastSouthWestResizeCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = A11E8C021B1E28BE0003A7C7 /* northEastSouthWestResizeCursor.png */; };
+		A11E8C081B1E29020003A7C7 /* northSouthResizeCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = A11E8C031B1E28BE0003A7C7 /* northSouthResizeCursor.png */; };
+		A11E8C091B1E29070003A7C7 /* northWestSouthEastResizeCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = A11E8C041B1E28BE0003A7C7 /* northWestSouthEastResizeCursor.png */; };
 		A120ACA413F998CA00FE4AC7 /* LayoutRepainter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A120ACA113F9984600FE4AC7 /* LayoutRepainter.cpp */; };
 		A12538D413F9B60A00024754 /* LayoutRepainter.h in Headers */ = {isa = PBXBuildFile; fileRef = A120ACA013F9983700FE4AC7 /* LayoutRepainter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A12705C31656BD6500C2E27C /* GridPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = A12705C21656BD6500C2E27C /* GridPosition.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11118,6 +11123,11 @@
 		A10DC76914747BAB005E2471 /* StyleGridData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleGridData.h; sourceTree = "<group>"; };
 		A110DB9A14F5DF7700A03B93 /* StyleGridItemData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleGridItemData.h; sourceTree = "<group>"; };
 		A110DB9C14F5DF8700A03B93 /* StyleGridItemData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleGridItemData.cpp; sourceTree = "<group>"; };
+		A11E8C001B1E28BE0003A7C7 /* copyCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = copyCursor.png; sourceTree = "<group>"; };
+		A11E8C011B1E28BE0003A7C7 /* moveCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = moveCursor.png; sourceTree = "<group>"; };
+		A11E8C021B1E28BE0003A7C7 /* northEastSouthWestResizeCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = northEastSouthWestResizeCursor.png; sourceTree = "<group>"; };
+		A11E8C031B1E28BE0003A7C7 /* northSouthResizeCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = northSouthResizeCursor.png; sourceTree = "<group>"; };
+		A11E8C041B1E28BE0003A7C7 /* northWestSouthEastResizeCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = northWestSouthEastResizeCursor.png; sourceTree = "<group>"; };
 		A120ACA013F9983700FE4AC7 /* LayoutRepainter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutRepainter.h; sourceTree = "<group>"; };
 		A120ACA113F9984600FE4AC7 /* LayoutRepainter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutRepainter.cpp; sourceTree = "<group>"; };
 		A12705C21656BD6500C2E27C /* GridPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridPosition.h; sourceTree = "<group>"; };
@@ -13238,8 +13248,8 @@
 		C6F0917E143A2BB900685849 /* JSMutationObserverCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMutationObserverCustom.cpp; sourceTree = "<group>"; };
 		C6F420A016B7164E0052A9F2 /* JSMutationCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMutationCallback.cpp; sourceTree = "<group>"; };
 		C6F420A116B7164E0052A9F2 /* JSMutationCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMutationCallback.h; sourceTree = "<group>"; };
-		C9026B631B1CF5AB001D99A7 /* JSMediaRemoteControls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSMediaRemoteControls.cpp; path = "JSMediaRemoteControls.cpp"; sourceTree = "<group>"; };
-		C9026B641B1CF5AB001D99A7 /* JSMediaRemoteControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSMediaRemoteControls.h; path = "JSMediaRemoteControls.h"; sourceTree = "<group>"; };
+		C9026B631B1CF5AB001D99A7 /* JSMediaRemoteControls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaRemoteControls.cpp; sourceTree = "<group>"; };
+		C9026B641B1CF5AB001D99A7 /* JSMediaRemoteControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaRemoteControls.h; sourceTree = "<group>"; };
 		C90843CD1B18E47D00B68564 /* MediaRemoteControls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaRemoteControls.cpp; sourceTree = "<group>"; };
 		C90843CE1B18E47D00B68564 /* MediaRemoteControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaRemoteControls.h; sourceTree = "<group>"; };
 		C93458BB1B18D77E0088EE12 /* MediaRemoteControls.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaRemoteControls.idl; sourceTree = "<group>"; };
@@ -15109,6 +15119,7 @@
 			children = (
 				CD0DBB3E142274E600280263 /* audio */,
 				65998A650E5F5FD3004E097A /* images */,
+				A11E8C001B1E28BE0003A7C7 /* copyCursor.png */,
 				7CC7E3D617208C0F003C5277 /* IDNScriptWhiteList.txt */,
 				2D9F0E1214FF1CBF00BA0FF7 /* linearSRGB.icc */,
 				BCAD1808131C7A0D00990406 /* Localizable.strings */,
@@ -15116,6 +15127,10 @@
 				93153BE114195A5700FCF5BE /* missingImage.png */,
 				93153BD914181F7A00FCF5BE /* missingImage@2x.png */,
 				CDF419991AB0DA14004E64E1 /* missingImage@3x.png */,
+				A11E8C011B1E28BE0003A7C7 /* moveCursor.png */,
+				A11E8C021B1E28BE0003A7C7 /* northEastSouthWestResizeCursor.png */,
+				A11E8C031B1E28BE0003A7C7 /* northSouthResizeCursor.png */,
+				A11E8C041B1E28BE0003A7C7 /* northWestSouthEastResizeCursor.png */,
 				713E70AF1733E8B300A22D00 /* plugIns.js */,
 				93153BDB141959BB00FCF5BE /* textAreaResizeCorner.png */,
 				9370918C1416D86B00477333 /* textAreaResizeCorner@2x.png */,
@@ -16925,7 +16940,6 @@
 				1403B99609EB13AF00797C7F /* DOMWindow.cpp */,
 				1403B99509EB13AF00797C7F /* DOMWindow.h */,
 				1403B90C09EB124500797C7F /* DOMWindow.idl */,
-				7C4189AC1B07CBF2000FA757 /* WindowEventHandlers.idl */,
 				517FBA17151AA71B00B57959 /* DOMWindowExtension.cpp */,
 				517FBA18151AA71B00B57959 /* DOMWindowExtension.h */,
 				97D2AD0114B823A60093DF32 /* DOMWindowProperty.cpp */,
@@ -17074,6 +17088,7 @@
 				93EC44A0188F4BB800661DF1 /* WheelEventDeltaTracker.h */,
 				7AE335EF1ACB09E200E401EF /* WheelEventTestTrigger.cpp */,
 				7AE335F01ACB09E200E401EF /* WheelEventTestTrigger.h */,
+				7C4189AC1B07CBF2000FA757 /* WindowEventHandlers.idl */,
 				BC8243E60D0CFD7500460C8F /* WindowFeatures.cpp */,
 				BC8243E70D0CFD7500460C8F /* WindowFeatures.h */,
 				7E99AF520B13846468FB01A5 /* WindowFocusAllowedIndicator.cpp */,
@@ -23850,7 +23865,6 @@
 				51741D0F0B07259A00ED442C /* BackForwardClient.h in Headers */,
 				BCA8C81E11E3D36900812FB7 /* BackForwardController.h in Headers */,
 				BCA8CA6011E4E6D100812FB7 /* BackForwardList.h in Headers */,
-				CD5209E61B0BD9E10077184E /* HTMLMediaElementEnums.h in Headers */,
 				BC124EE80C2641CD009E2349 /* BarProp.h in Headers */,
 				379E61CA126CA5C400B63E8D /* BaseButtonInputType.h in Headers */,
 				379E61CC126CA5C400B63E8D /* BaseCheckableInputType.h in Headers */,
@@ -24904,6 +24918,7 @@
 				A8EA7D2C0A19385500A8EF5F /* HTMLMapElement.h in Headers */,
 				A8EA7CAB0A192B9C00A8EF5F /* HTMLMarqueeElement.h in Headers */,
 				E44613A50CD6331000FADA75 /* HTMLMediaElement.h in Headers */,
+				CD5209E61B0BD9E10077184E /* HTMLMediaElementEnums.h in Headers */,
 				0779BF0E18453168000B6AE7 /* HTMLMediaElementMediaStream.h in Headers */,
 				A8EA79F40A1916DF00A8EF5F /* HTMLMenuElement.h in Headers */,
 				2BE8E2C712A589EC00FAD550 /* HTMLMetaCharsetParser.h in Headers */,
@@ -25795,6 +25810,7 @@
 				078E43DA1ABB6C7E001C2FA6 /* MediaPlaybackTargetPicker.h in Headers */,
 				078E43DD1ABB6F6F001C2FA6 /* MediaPlaybackTargetPickerMac.h in Headers */,
 				E44613E40CD681A200FADA75 /* MediaPlayer.h in Headers */,
+				CD5209E41B0BD8380077184E /* MediaPlayerEnums.h in Headers */,
 				076F0D0E12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h in Headers */,
 				DF9AFD7213FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.h in Headers */,
 				CDC8B5A3180463470016E685 /* MediaPlayerPrivateMediaSourceAVFObjC.h in Headers */,
@@ -27033,7 +27049,6 @@
 				7AF9B20618CFB2DF00C64BEF /* VTTRegionList.h in Headers */,
 				7A93868618DCC14500B8263D /* VTTScanner.h in Headers */,
 				A14832B0187F618D00DA63A6 /* WAKAppKitStubs.h in Headers */,
-				CD5209E41B0BD8380077184E /* MediaPlayerEnums.h in Headers */,
 				A14832B2187F61ED00DA63A6 /* WAKClipView.h in Headers */,
 				A14832B4187F629A00DA63A6 /* WAKResponder.h in Headers */,
 				A14832B6187F631F00DA63A6 /* WAKScrollView.h in Headers */,
@@ -27366,6 +27381,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A11E8C051B1E28F40003A7C7 /* copyCursor.png in Resources */,
 				D02B64B214089E56006EFA21 /* DictationPhraseWithAlternativesDot.png in Resources */,
 				D02B64B314089E56006EFA21 /* DictationPhraseWithAlternativesDot@2x.png in Resources */,
 				7CC7E3D717208C0F003C5277 /* IDNScriptWhiteList.txt in Resources */,
@@ -27379,6 +27395,10 @@
 				93153BE214195A5700FCF5BE /* missingImage.png in Resources */,
 				93153BDA14181F7A00FCF5BE /* missingImage@2x.png in Resources */,
 				318891611AB7EEA100EA627B /* missingImage@3x.png in Resources */,
+				A11E8C061B1E28FA0003A7C7 /* moveCursor.png in Resources */,
+				A11E8C071B1E28FE0003A7C7 /* northEastSouthWestResizeCursor.png in Resources */,
+				A11E8C081B1E29020003A7C7 /* northSouthResizeCursor.png in Resources */,
+				A11E8C091B1E29070003A7C7 /* northWestSouthEastResizeCursor.png in Resources */,
 				BE8C753110681324001E93F5 /* SpellingDot.png in Resources */,
 				01E6C2E41194B2820050821C /* SpellingDot@2x.png in Resources */,
 				1C2417BA1992C04100EF9938 /* SpellingDot@3x.png in Resources */,
