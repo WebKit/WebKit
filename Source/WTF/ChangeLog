@@ -1,3 +1,15 @@
+2015-06-01  Anders Carlsson  <andersca@apple.com>
+
+        Use xpc_connection_set_oneshot_instance where possible
+        https://bugs.webkit.org/show_bug.cgi?id=145535
+        rdar://problem/21109994
+
+        Reviewed by Sam Weinig.
+
+        Add SPI declaration.
+
+        * wtf/spi/darwin/XPCSPI.h:
+
 2015-05-29  Anders Carlsson  <andersca@apple.com>
 
         Missing #import of Platform.h in several WTF headers

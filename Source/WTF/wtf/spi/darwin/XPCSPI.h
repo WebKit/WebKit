@@ -143,6 +143,7 @@ EXTERN_C void xpc_dictionary_set_mach_send(xpc_object_t, const char*, mach_port_
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 EXTERN_C void xpc_connection_set_bootstrap(xpc_connection_t, xpc_object_t bootstrap);
 EXTERN_C xpc_object_t xpc_copy_bootstrap(void);
+EXTERN_C void xpc_connection_set_oneshot_instance(xpc_connection_t, uuid_t instance);
 #endif
 
 #if OS_OBJECT_USE_OBJC_RETAIN_RELEASE

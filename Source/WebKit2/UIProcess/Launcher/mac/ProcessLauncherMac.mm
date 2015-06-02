@@ -219,7 +219,11 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
 {
     // Create a connection to the WebKit XPC service.
     auto connection = adoptOSObject(xpc_connection_create(serviceName(launchOptions, forDevelopment), 0));
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    xpc_connection_set_oneshot_instance(connection.get(), instanceUUID->uuid);
+#else
     xpc_connection_set_instance(connection.get(), instanceUUID->uuid);
+#endif
 
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     // Inherit UI process localization. It can be different from child process default localization:
@@ -330,14 +334,17 @@ static void connectToReExecService(const ProcessLauncher::LaunchOptions& launchO
     }
 #endif
 
-    // Generate the uuid for the service instance we are about to create.
     // FIXME: This UUID should be stored on the ChildProcessProxy.
     RefPtr<UUIDHolder> instanceUUID = UUIDHolder::create();
 
     // FIXME: It would be nice if we could use OSObjectPtr for this connection as well, but we'd have to be careful
     // not to introduce any retain cycles in the call to xpc_connection_set_event_handler below.
     xpc_connection_t reExecConnection = xpc_connection_create(serviceName(launchOptions, true), 0);
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    xpc_connection_set_oneshot_instance(reExecConnection, instanceUUID->uuid);
+#else
     xpc_connection_set_instance(reExecConnection, instanceUUID->uuid);
+#endif
 
     // Keep the ProcessLauncher alive while we do the re-execing (balanced in event handler).
     that->ref();
