@@ -58,12 +58,11 @@ Vector<String> MediaStreamCapabilities::sourceType() const
     if (!count)
         return Vector<String>();
     
-    const Vector<RealtimeMediaSourceStates::SourceType>& sourceTypes = m_SourceCapabilities->sourceTypes();
     Vector<String> capabilities;
     capabilities.reserveCapacity(count);
     
-    for (size_t i = 0; i < count; ++i)
-        capabilities.append(RealtimeMediaSourceStates::sourceType(sourceTypes[i]));
+    for (auto& type : m_SourceCapabilities->sourceTypes())
+        capabilities.append(RealtimeMediaSourceStates::sourceType(type));
     
     return capabilities;
 }
@@ -73,13 +72,12 @@ Vector<String> MediaStreamCapabilities::sourceId() const
     size_t count = m_SourceCapabilities->sourceId().size();
     if (!count)
         return Vector<String>();
-    
-    const Vector<AtomicString>& sourceIds = m_SourceCapabilities->sourceId();
+
     Vector<String> capabilities;
     capabilities.reserveCapacity(count);
-    
-    for (size_t i = 0; i < count; ++i)
-        capabilities.append(sourceIds[i]);
+
+    for (auto& id : m_SourceCapabilities->sourceId())
+        capabilities.append(id);
     
     return capabilities;
 }
@@ -92,12 +90,11 @@ Vector<String> MediaStreamCapabilities::facingMode() const
     if (!count)
         return Vector<String>();
     
-    const Vector<RealtimeMediaSourceStates::VideoFacingMode>& facingModes = m_SourceCapabilities->facingModes();
     Vector<String> capabilities;
     capabilities.reserveCapacity(count);
     
-    for (size_t i = 0; i < count; ++i)
-        capabilities.append(RealtimeMediaSourceStates::facingMode(facingModes[i]));
+    for (auto& mode : m_SourceCapabilities->facingModes())
+        capabilities.append(RealtimeMediaSourceStates::facingMode(mode));
     
     return capabilities;
 }

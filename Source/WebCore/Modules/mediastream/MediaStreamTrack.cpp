@@ -290,8 +290,8 @@ void MediaStreamTrack::trackDidEnd()
 {
     m_privateTrack->setReadyState(RealtimeMediaSource::Ended);
 
-    for (Vector<Observer*>::iterator i = m_observers.begin(); i != m_observers.end(); ++i)
-        (*i)->trackDidEnd();
+    for (auto& observer : m_observers)
+        observer->trackDidEnd();
 }
 
 void MediaStreamTrack::stop()

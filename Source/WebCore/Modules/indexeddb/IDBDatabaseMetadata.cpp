@@ -39,8 +39,8 @@ IDBDatabaseMetadata IDBDatabaseMetadata::isolatedCopy() const
 
     result.name = name.isolatedCopy();
 
-    for (auto i = objectStores.begin(), end = objectStores.end(); i != end; ++i)
-        result.objectStores.set(i->key, i->value.isolatedCopy());
+    for (auto& objectStore : objectStores)
+        result.objectStores.set(objectStore.key, objectStore.value.isolatedCopy());
 
     return result;
 }
@@ -55,8 +55,8 @@ IDBObjectStoreMetadata IDBObjectStoreMetadata::isolatedCopy() const
     result.name = name.isolatedCopy();
     result.keyPath = keyPath.isolatedCopy();
 
-    for (auto i = indexes.begin(), end = indexes.end(); i != end; ++i)
-        result.indexes.set(i->key, i->value.isolatedCopy());
+    for (auto& index : indexes)
+        result.indexes.set(index.key, index.value.isolatedCopy());
 
     return result;
 }

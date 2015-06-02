@@ -836,8 +836,8 @@ void MediaSource::onReadyStateChange(const AtomicString& oldState, const AtomicS
     m_activeSourceBuffers->clear();
 
     // Clear SourceBuffer references to this object.
-    for (unsigned long i = 0, length =  m_sourceBuffers->length(); i < length; ++i)
-        m_sourceBuffers->item(i)->removedFromMediaSource();
+    for (auto& buffer : *m_sourceBuffers)
+        buffer->removedFromMediaSource();
     m_sourceBuffers->clear();
     
     scheduleEvent(eventNames().sourcecloseEvent);

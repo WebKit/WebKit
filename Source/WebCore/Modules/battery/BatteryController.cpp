@@ -37,8 +37,8 @@ BatteryController::BatteryController(BatteryClient* client)
 
 BatteryController::~BatteryController()
 {
-    for (ListenerVector::iterator it = m_listeners.begin(); it != m_listeners.end(); ++it)
-        (*it)->batteryControllerDestroyed();
+    for (auto& listener : m_listeners)
+        listener->batteryControllerDestroyed();
     m_client->batteryControllerDestroyed();
 }
 
@@ -75,8 +75,8 @@ void BatteryController::updateBatteryStatus(PassRefPtr<BatteryStatus> batterySta
         if (m_batteryStatus->level() != status->level())
             didChangeBatteryStatus(WebCore::eventNames().levelchangeEvent, status);
     } else {
-        for (ListenerVector::iterator it = m_listeners.begin(); it != m_listeners.end(); ++it)
-            (*it)->updateBatteryStatus(status);
+        for (auto& listener : m_listeners)
+            listener->updateBatteryStatus(status);
     }
 
     m_batteryStatus = status.release();
@@ -86,8 +86,8 @@ void BatteryController::didChangeBatteryStatus(const AtomicString& eventType, Pa
 {
     RefPtr<Event> event = Event::create(eventType, false, false);
     RefPtr<BatteryStatus> battery = batteryStatus;
-    for (ListenerVector::iterator it = m_listeners.begin(); it != m_listeners.end(); ++it)
-        (*it)->didChangeBatteryStatus(event, battery);
+    for (auto& listener : m_listeners)
+        listener->didChangeBatteryStatus(event, battery);
 }
 
 const char* BatteryController::supplementName()

@@ -208,13 +208,12 @@ void Geolocation::resumeTimerFired()
 
     // Resume GeoNotifier timeout timers.
     if (hasListeners()) {
-        GeoNotifierSet::const_iterator end = m_oneShots.end();
-        for (GeoNotifierSet::const_iterator it = m_oneShots.begin(); it != end; ++it)
-            (*it)->startTimerIfNeeded();
+        for (auto& notifier : m_oneShots)
+            notifier->startTimerIfNeeded();
         GeoNotifierVector watcherCopy;
         m_watchers.getNotifiersVector(watcherCopy);
-        for (size_t i = 0; i < watcherCopy.size(); ++i)
-            watcherCopy[i]->startTimerIfNeeded();
+        for (auto& watcher : watcherCopy)
+            watcher->startTimerIfNeeded();
     }
 
     if ((isAllowed() || isDenied()) && !m_pendingForPermissionNotifiers.isEmpty()) {
@@ -269,14 +268,13 @@ void Geolocation::resetAllGeolocationPermission()
     stopTimers();
 
     // Go over the one shot and re-request permission.
-    GeoNotifierSet::iterator end = m_oneShots.end();
-    for (GeoNotifierSet::iterator it = m_oneShots.begin(); it != end; ++it)
-        startRequest((*it).get());
+    for (auto& notifier : m_oneShots)
+        startRequest(notifier.get());
     // Go over the watchers and re-request permission.
     GeoNotifierVector watcherCopy;
     m_watchers.getNotifiersVector(watcherCopy);
-    for (size_t i = 0; i < watcherCopy.size(); ++i)
-        startRequest(watcherCopy[i].get());
+    for (auto& watcher : watcherCopy)
+        startRequest(watcher.get());
 }
 
 void Geolocation::stop()
@@ -392,15 +390,13 @@ void Geolocation::makeCachedPositionCallbacks()
     // All modifications to m_requestsAwaitingCachedPosition are done
     // asynchronously, so we don't need to worry about it being modified from
     // the callbacks.
-    GeoNotifierSet::const_iterator end = m_requestsAwaitingCachedPosition.end();
-    for (GeoNotifierSet::const_iterator iter = m_requestsAwaitingCachedPosition.begin(); iter != end; ++iter) {
-        GeoNotifier* notifier = iter->get();
+    for (auto& notifier : m_requestsAwaitingCachedPosition) {
         notifier->runSuccessCallback(lastPosition());
 
         // If this is a one-shot request, stop it. Otherwise, if the watch still
         // exists, start the service to get updates.
-        if (!m_oneShots.remove(notifier) && m_watchers.contains(notifier)) {
-            if (notifier->hasZeroTimeout() || startUpdating(notifier))
+        if (!m_oneShots.remove(notifier.get()) && m_watchers.contains(notifier.get())) {
+            if (notifier->hasZeroTimeout() || startUpdating(notifier.get()))
                 notifier->startTimerIfNeeded();
             else
                 notifier->setFatalError(PositionError::create(PositionError::POSITION_UNAVAILABLE, ASCIILiteral(failedToStartServiceErrorMessage)));
@@ -489,26 +485,20 @@ void Geolocation::setIsAllowed(bool allowed)
 
 void Geolocation::sendError(GeoNotifierVector& notifiers, PositionError* error)
 {
-     GeoNotifierVector::const_iterator end = notifiers.end();
-     for (GeoNotifierVector::const_iterator it = notifiers.begin(); it != end; ++it) {
-         RefPtr<GeoNotifier> notifier = *it;
-         
-         notifier->runErrorCallback(error);
-     }
+    for (auto& notifier : notifiers)
+        notifier->runErrorCallback(error);
 }
 
 void Geolocation::sendPosition(GeoNotifierVector& notifiers, Geoposition* position)
 {
-    GeoNotifierVector::const_iterator end = notifiers.end();
-    for (GeoNotifierVector::const_iterator it = notifiers.begin(); it != end; ++it)
-        (*it)->runSuccessCallback(position);
+    for (auto& notifier : notifiers)
+        notifier->runSuccessCallback(position);
 }
 
 void Geolocation::stopTimer(GeoNotifierVector& notifiers)
 {
-    GeoNotifierVector::const_iterator end = notifiers.end();
-    for (GeoNotifierVector::const_iterator it = notifiers.begin(); it != end; ++it)
-        (*it)->stopTimer();
+    for (auto& notifier : notifiers)
+        notifier->stopTimer();
 }
 
 void Geolocation::stopTimersForOneShots()
@@ -535,9 +525,8 @@ void Geolocation::stopTimers()
 
 void Geolocation::cancelRequests(GeoNotifierVector& notifiers)
 {
-    GeoNotifierVector::const_iterator end = notifiers.end();
-    for (GeoNotifierVector::const_iterator it = notifiers.begin(); it != end; ++it)
-        (*it)->setFatalError(PositionError::create(PositionError::POSITION_UNAVAILABLE, ASCIILiteral(framelessDocumentErrorMessage)));
+    for (auto& notifier : notifiers)
+        notifier->setFatalError(PositionError::create(PositionError::POSITION_UNAVAILABLE, ASCIILiteral(framelessDocumentErrorMessage)));
 }
 
 void Geolocation::cancelAllRequests()
@@ -552,25 +541,20 @@ void Geolocation::cancelAllRequests()
 void Geolocation::extractNotifiersWithCachedPosition(GeoNotifierVector& notifiers, GeoNotifierVector* cached)
 {
     GeoNotifierVector nonCached;
-    GeoNotifierVector::iterator end = notifiers.end();
-    for (GeoNotifierVector::const_iterator it = notifiers.begin(); it != end; ++it) {
-        GeoNotifier* notifier = it->get();
+    for (auto& notifier : notifiers) {
         if (notifier->useCachedPosition()) {
             if (cached)
-                cached->append(notifier);
+                cached->append(notifier.get());
         } else
-            nonCached.append(notifier);
+            nonCached.append(notifier.get());
     }
     notifiers.swap(nonCached);
 }
 
 void Geolocation::copyToSet(const GeoNotifierVector& src, GeoNotifierSet& dest)
 {
-     GeoNotifierVector::const_iterator end = src.end();
-     for (GeoNotifierVector::const_iterator it = src.begin(); it != end; ++it) {
-         GeoNotifier* notifier = it->get();
-         dest.add(notifier);
-     }
+    for (auto& notifier : src)
+        dest.add(notifier.get());
 }
 
 void Geolocation::handleError(PositionError* error)
@@ -695,14 +679,11 @@ void Geolocation::handlePendingPermissionNotifiers()
 {
     // While we iterate through the list, we need not worry about list being modified as the permission 
     // is already set to Yes/No and no new listeners will be added to the pending list
-    GeoNotifierSet::const_iterator end = m_pendingForPermissionNotifiers.end();
-    for (GeoNotifierSet::const_iterator iter = m_pendingForPermissionNotifiers.begin(); iter != end; ++iter) {
-        GeoNotifier* notifier = iter->get();
-
+    for (auto& notifier : m_pendingForPermissionNotifiers) {
         if (isAllowed()) {
             // start all pending notification requests as permission granted.
             // The notifier is always ref'ed by m_oneShots or m_watchers.
-            if (startUpdating(notifier))
+            if (startUpdating(notifier.get()))
                 notifier->startTimerIfNeeded();
             else
                 notifier->setFatalError(PositionError::create(PositionError::POSITION_UNAVAILABLE, ASCIILiteral(failedToStartServiceErrorMessage)));

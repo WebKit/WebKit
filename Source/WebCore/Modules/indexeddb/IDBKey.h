@@ -64,20 +64,20 @@ public:
         KeyArray result;
 
         size_t sizeEstimate = 0;
-        for (size_t i = 0; i < array.size(); i++) {
-            if (!array[i]->isValid())
+        for (auto& key : array) {
+            if (!key->isValid())
                 continue;
 
             bool skip = false;
-            for (size_t j = 0; j < result.size(); j++) {
-                if (array[i]->isEqual(result[j].get())) {
+            for (auto& resultKey : result) {
+                if (key->isEqual(resultKey.get())) {
                     skip = true;
                     break;
                 }
             }
             if (!skip) {
-                result.append(array[i]);
-                sizeEstimate += array[i]->m_sizeEstimate;
+                result.append(key);
+                sizeEstimate += key->m_sizeEstimate;
             }
         }
         RefPtr<IDBKey> idbKey = adoptRef(new IDBKey(result, sizeEstimate));
@@ -88,8 +88,8 @@ public:
     static Ref<IDBKey> createArray(const KeyArray& array)
     {
         size_t sizeEstimate = 0;
-        for (size_t i = 0; i < array.size(); ++i)
-            sizeEstimate += array[i]->m_sizeEstimate;
+        for (auto& key : array)
+            sizeEstimate += key->m_sizeEstimate;
 
         return adoptRef(*new IDBKey(array, sizeEstimate));
     }

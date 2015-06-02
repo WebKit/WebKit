@@ -497,10 +497,10 @@ void IDBDatabaseBackend::runIntVersionChangeTransaction(PassRefPtr<IDBCallbacks>
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<IDBDatabaseCallbacks> databaseCallbacks = prpDatabaseCallbacks;
     ASSERT(callbacks);
-    for (DatabaseCallbacksSet::const_iterator it = m_databaseCallbacksSet.begin(); it != m_databaseCallbacksSet.end(); ++it) {
+    for (auto& callback : m_databaseCallbacksSet) {
         // Front end ensures the event is not fired at connections that have closePending set.
-        if (*it != databaseCallbacks)
-            (*it)->onVersionChange(m_metadata.version, requestedVersion, IndexedDB::VersionNullness::Null);
+        if (callback != databaseCallbacks)
+            callback->onVersionChange(m_metadata.version, requestedVersion, IndexedDB::VersionNullness::Null);
     }
     // The spec dictates we wait until all the version change events are
     // delivered and then check m_databaseCallbacks.empty() before proceeding
@@ -531,9 +531,9 @@ void IDBDatabaseBackend::deleteDatabase(PassRefPtr<IDBCallbacks> prpCallbacks)
 {
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     if (isDeleteDatabaseBlocked()) {
-        for (DatabaseCallbacksSet::const_iterator it = m_databaseCallbacksSet.begin(); it != m_databaseCallbacksSet.end(); ++it) {
+        for (auto& callback : m_databaseCallbacksSet) {
             // Front end ensures the event is not fired at connections that have closePending set.
-            (*it)->onVersionChange(m_metadata.version, 0, IndexedDB::VersionNullness::Null);
+            callback->onVersionChange(m_metadata.version, 0, IndexedDB::VersionNullness::Null);
         }
         // FIXME: Only fire onBlocked if there are open connections after the
         // VersionChangeEvents are received, not just set up to fire.
@@ -603,8 +603,8 @@ void IDBDatabaseBackend::close(PassRefPtr<IDBDatabaseCallbacks> prpCallbacks)
     if (!connectionCount() && !m_pendingOpenCalls.size() && !m_pendingDeleteCalls.size()) {
         TransactionMap transactions(m_transactions);
         RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Connection is closing.");
-        for (TransactionMap::const_iterator::Values it = transactions.values().begin(), end = transactions.values().end(); it != end; ++it)
-            (*it)->abort(error);
+        for (auto& transaction : transactions.values())
+            transaction->abort(error);
 
         ASSERT(m_transactions.isEmpty());
 

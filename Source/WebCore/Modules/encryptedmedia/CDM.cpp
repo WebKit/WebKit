@@ -89,10 +89,9 @@ void CDM::registerCDMFactory(CreateCDM constructor, CDMSupportsKeySystem support
 
 static CDMFactory* CDMFactoryForKeySystem(const String& keySystem)
 {
-    Vector<CDMFactory*>& cdmFactories = installedCDMFactories();
-    for (size_t i = 0; i < cdmFactories.size(); ++i) {
-        if (cdmFactories[i]->supportsKeySystem(keySystem))
-            return cdmFactories[i];
+    for (auto& factory : installedCDMFactories()) {
+        if (factory->supportsKeySystem(keySystem))
+            return factory;
     }
     return 0;
 }

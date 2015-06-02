@@ -61,8 +61,8 @@ PassRefPtr<DOMStringList> IDBObjectStore::indexNames() const
 {
     LOG(StorageAPI, "IDBObjectStore::indexNames");
     RefPtr<DOMStringList> indexNames = DOMStringList::create();
-    for (IDBObjectStoreMetadata::IndexMap::const_iterator it = m_metadata.indexes.begin(); it != m_metadata.indexes.end(); ++it)
-        indexNames->append(it->value.name);
+    for (auto& index : m_metadata.indexes.values())
+        indexNames->append(index.name);
     indexNames->sort();
     return indexNames.release();
 }
@@ -194,15 +194,15 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(IDBDatabaseBackend::PutMode putMode, 
 
     Vector<int64_t> indexIds;
     Vector<IndexKeys> indexKeys;
-    for (IDBObjectStoreMetadata::IndexMap::const_iterator it = m_metadata.indexes.begin(); it != m_metadata.indexes.end(); ++it) {
+    for (auto& index : m_metadata.indexes) {
         Vector<IDBKeyData> keyDatas;
-        generateIndexKeysForValue(requestState.exec(), it->value, value, keyDatas);
-        indexIds.append(it->key);
+        generateIndexKeysForValue(requestState.exec(), index.value, value, keyDatas);
+        indexIds.append(index.key);
 
         // FIXME: Much of the Indexed DB code needs to use IDBKeyData directly to avoid wasteful conversions like this.
         Vector<RefPtr<IDBKey>> keys;
-        for (auto& i : keyDatas) {
-            RefPtr<IDBKey> key = i.maybeCreateIDBKey();
+        for (auto& keyData : keyDatas) {
+            RefPtr<IDBKey> key = keyData.maybeCreateIDBKey();
             if (key)
                 keys.append(key.release());
         }
@@ -324,8 +324,8 @@ private:
             generateIndexKeysForValue(request->requestState()->exec(), m_indexMetadata, value, indexKeyDatas);
 
             Vector<RefPtr<IDBKey>> indexKeys;
-            for (auto& i : indexKeyDatas) {
-                RefPtr<IDBKey> key = i.maybeCreateIDBKey();
+            for (auto& indexKeyData : indexKeyDatas) {
+                RefPtr<IDBKey> key = indexKeyData.maybeCreateIDBKey();
                 if (key)
                     indexKeys.append(key.release());
             }
@@ -430,9 +430,9 @@ PassRefPtr<IDBIndex> IDBObjectStore::index(const String& name, ExceptionCode& ec
     }
 
     const IDBIndexMetadata* indexMetadata(0);
-    for (IDBObjectStoreMetadata::IndexMap::const_iterator it = m_metadata.indexes.begin(); it != m_metadata.indexes.end(); ++it) {
-        if (it->value.name == name) {
-            indexMetadata = &it->value;
+    for (auto& index : m_metadata.indexes.values()) {
+        if (index.name == name) {
+            indexMetadata = &index;
             break;
         }
     }
@@ -555,10 +555,10 @@ void IDBObjectStore::transactionFinished()
 
 int64_t IDBObjectStore::findIndexId(const String& name) const
 {
-    for (IDBObjectStoreMetadata::IndexMap::const_iterator it = m_metadata.indexes.begin(); it != m_metadata.indexes.end(); ++it) {
-        if (it->value.name == name) {
-            ASSERT(it->key != IDBIndexMetadata::InvalidId);
-            return it->key;
+    for (auto& index : m_metadata.indexes) {
+        if (index.value.name == name) {
+            ASSERT(index.key != IDBIndexMetadata::InvalidId);
+            return index.key;
         }
     }
     return IDBIndexMetadata::InvalidId;

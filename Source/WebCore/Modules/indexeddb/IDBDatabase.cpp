@@ -145,8 +145,8 @@ void IDBDatabase::onComplete(int64_t transactionId)
 PassRefPtr<DOMStringList> IDBDatabase::objectStoreNames() const
 {
     RefPtr<DOMStringList> objectStoreNames = DOMStringList::create();
-    for (IDBDatabaseMetadata::ObjectStoreMap::const_iterator it = m_metadata.objectStores.begin(); it != m_metadata.objectStores.end(); ++it)
-        objectStoreNames->append(it->value.name);
+    for (auto& objectStore : m_metadata.objectStores.values())
+        objectStoreNames->append(objectStore.name);
     objectStoreNames->sort();
     return objectStoreNames.release();
 }
@@ -256,8 +256,8 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
     }
 
     Vector<int64_t> objectStoreIds;
-    for (size_t i = 0; i < scope.size(); ++i) {
-        int64_t objectStoreId = findObjectStoreId(scope[i]);
+    for (auto& name : scope) {
+        int64_t objectStoreId = findObjectStoreId(name);
         if (objectStoreId == IDBObjectStoreMetadata::InvalidId) {
             ec = IDBDatabaseException::NotFoundError;
             return 0;
@@ -281,8 +281,8 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
 
 void IDBDatabase::forceClose()
 {
-    for (TransactionMap::const_iterator::Values it = m_transactions.begin().values(), end = m_transactions.end().values(); it != end; ++it)
-        (*it)->abort(IGNORE_EXCEPTION);
+    for (auto& transaction : m_transactions.values())
+        transaction->abort(IGNORE_EXCEPTION);
     this->close();
 }
 
@@ -317,8 +317,8 @@ void IDBDatabase::closeConnection()
     // connection. They would have been scheduled by the backend when another
     // connection called setVersion, but the frontend connection is being
     // closed before they could fire.
-    for (size_t i = 0; i < m_enqueuedEvents.size(); ++i) {
-        bool removed = eventQueue.cancelEvent(*m_enqueuedEvents[i]);
+    for (auto& event : m_enqueuedEvents) {
+        bool removed = eventQueue.cancelEvent(*event);
         ASSERT_UNUSED(removed, removed);
     }
 
@@ -360,10 +360,10 @@ bool IDBDatabase::dispatchEvent(PassRefPtr<Event> event)
 
 int64_t IDBDatabase::findObjectStoreId(const String& name) const
 {
-    for (IDBDatabaseMetadata::ObjectStoreMap::const_iterator it = m_metadata.objectStores.begin(); it != m_metadata.objectStores.end(); ++it) {
-        if (it->value.name == name) {
-            ASSERT(it->key != IDBObjectStoreMetadata::InvalidId);
-            return it->key;
+    for (auto& objectStore : m_metadata.objectStores) {
+        if (objectStore.value.name == name) {
+            ASSERT(objectStore.key != IDBObjectStoreMetadata::InvalidId);
+            return objectStore.key;
         }
     }
     return IDBObjectStoreMetadata::InvalidId;

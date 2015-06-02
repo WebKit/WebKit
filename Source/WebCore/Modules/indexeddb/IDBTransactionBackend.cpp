@@ -44,8 +44,8 @@ namespace WebCore {
 Ref<IDBTransactionBackend> IDBTransactionBackend::create(IDBDatabaseBackend* databaseBackend, int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode)
 {
     HashSet<int64_t> objectStoreHashSet;
-    for (size_t i = 0; i < objectStoreIds.size(); ++i)
-        objectStoreHashSet.add(objectStoreIds[i]);
+    for (auto& id : objectStoreIds)
+        objectStoreHashSet.add(id);
 
     return adoptRef(*new IDBTransactionBackend(databaseBackend, id, callbacks, objectStoreHashSet, mode));
 }
@@ -307,8 +307,8 @@ void IDBTransactionBackend::taskTimerFired()
 
 void IDBTransactionBackend::closeOpenCursors()
 {
-    for (HashSet<IDBCursorBackend*>::iterator i = m_openCursors.begin(); i != m_openCursors.end(); ++i)
-        (*i)->close();
+    for (auto& cursor : m_openCursors)
+        cursor->close();
     m_openCursors.clear();
 }
 

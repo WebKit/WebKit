@@ -203,8 +203,8 @@ IDBKeyPath::IDBKeyPath(const Vector<String>& array)
     , m_array(array)
 {
 #ifndef NDEBUG
-    for (size_t i = 0; i < m_array.size(); ++i)
-        ASSERT(!m_array[i].isNull());
+    for (auto& key : array)
+        ASSERT(!key.isNull());
 #endif
 }
 
@@ -220,8 +220,8 @@ bool IDBKeyPath::isValid() const
     case ArrayType:
         if (m_array.isEmpty())
             return false;
-        for (size_t i = 0; i < m_array.size(); ++i) {
-            if (!IDBIsValidKeyPath(m_array[i]))
+        for (auto& key : m_array) {
+            if (!IDBIsValidKeyPath(key))
                 return false;
         }
         return true;
@@ -254,8 +254,8 @@ IDBKeyPath IDBKeyPath::isolatedCopy() const
     result.m_string = m_string.isolatedCopy();
 
     result.m_array.reserveInitialCapacity(m_array.size());
-    for (size_t i = 0; i < m_array.size(); ++i)
-        result.m_array.uncheckedAppend(m_array[i].isolatedCopy());
+    for (auto& key : m_array)
+        result.m_array.uncheckedAppend(key.isolatedCopy());
 
     return result;
 }

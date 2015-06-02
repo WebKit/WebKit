@@ -42,8 +42,8 @@ bool IDBKey::isValid() const
         return false;
 
     if (m_type == ArrayType) {
-        for (size_t i = 0; i < m_array.size(); i++) {
-            if (!m_array[i]->isValid())
+        for (auto& key : m_array) {
+            if (!key->isValid())
                 return false;
         }
     }

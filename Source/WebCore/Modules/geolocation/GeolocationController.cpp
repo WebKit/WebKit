@@ -104,16 +104,16 @@ void GeolocationController::positionChanged(GeolocationPosition* position)
     m_lastPosition = position;
     Vector<RefPtr<Geolocation>> observersVector;
     copyToVector(m_observers, observersVector);
-    for (size_t i = 0; i < observersVector.size(); ++i)
-        observersVector[i]->positionChanged();
+    for (auto& observer : observersVector)
+        observer->positionChanged();
 }
 
 void GeolocationController::errorOccurred(GeolocationError* error)
 {
     Vector<RefPtr<Geolocation>> observersVector;
     copyToVector(m_observers, observersVector);
-    for (size_t i = 0; i < observersVector.size(); ++i)
-        observersVector[i]->setError(error);
+    for (auto& observer : observersVector)
+        observer->setError(error);
 }
 
 GeolocationPosition* GeolocationController::lastPosition()

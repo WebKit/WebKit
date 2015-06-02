@@ -163,8 +163,8 @@ void IDBRequest::abort()
     RefPtr<IDBRequest> self(this);
 
     EventQueue& eventQueue = scriptExecutionContext()->eventQueue();
-    for (size_t i = 0; i < m_enqueuedEvents.size(); ++i) {
-        bool removed = eventQueue.cancelEvent(*m_enqueuedEvents[i]);
+    for (auto& event : m_enqueuedEvents) {
+        bool removed = eventQueue.cancelEvent(*event);
         ASSERT_UNUSED(removed, removed);
     }
     m_enqueuedEvents.clear();

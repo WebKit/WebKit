@@ -58,10 +58,8 @@ void IDBPendingTransactionMonitor::addNewTransaction(PassRefPtr<IDBTransaction> 
 void IDBPendingTransactionMonitor::deactivateNewTransactions()
 {
     ThreadSpecific<TransactionList>& list = transactions();
-    for (size_t i = 0; i < list->size(); ++i) {
-        RefPtr<IDBTransaction> transaction = list->at(i);
+    for (auto& transaction : *list)
         transaction->setActive(false);
-    }
     // FIXME: Exercise this call to clear() in a layout test.
     list->clear();
 }

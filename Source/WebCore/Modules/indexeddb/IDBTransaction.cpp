@@ -258,8 +258,8 @@ void IDBTransaction::closeOpenCursors()
 {
     HashSet<IDBCursor*> cursors;
     cursors.swap(m_openCursors);
-    for (HashSet<IDBCursor*>::iterator i = cursors.begin(); i != cursors.end(); ++i)
-        (*i)->close();
+    for (auto& cursor : cursors)
+        cursor->close();
 }
 
 void IDBTransaction::registerRequest(IDBRequest* request)
@@ -297,8 +297,8 @@ void IDBTransaction::onAbort(PassRefPtr<IDBDatabaseError> prpError)
     }
 
     if (isVersionChange()) {
-        for (IDBObjectStoreMetadataMap::iterator it = m_objectStoreCleanupMap.begin(); it != m_objectStoreCleanupMap.end(); ++it)
-            it->key->setMetadata(it->value);
+        for (auto& objectStore : m_objectStoreCleanupMap)
+            objectStore.key->setMetadata(objectStore.value);
         m_database->setMetadata(m_previousMetadata);
         m_database->close();
     }
@@ -370,11 +370,11 @@ bool IDBTransaction::dispatchEvent(PassRefPtr<Event> event)
     m_state = Finished;
 
     // Break reference cycles.
-    for (IDBObjectStoreMap::iterator it = m_objectStoreMap.begin(); it != m_objectStoreMap.end(); ++it)
-        it->value->transactionFinished();
+    for (auto& objectStore : m_objectStoreMap)
+        objectStore.value->transactionFinished();
     m_objectStoreMap.clear();
-    for (IDBObjectStoreSet::iterator it = m_deletedObjectStores.begin(); it != m_deletedObjectStores.end(); ++it)
-        (*it)->transactionFinished();
+    for (auto& objectStore : m_deletedObjectStores)
+        objectStore->transactionFinished();
     m_deletedObjectStores.clear();
 
     Vector<RefPtr<EventTarget>> targets;
