@@ -101,17 +101,16 @@ CallLinkStatus CallLinkStatus::computeFor(
 }
 
 CallLinkStatus::ExitSiteData CallLinkStatus::computeExitSiteData(
-    const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, unsigned bytecodeIndex,
-    ExitingJITType exitingJITType)
+    const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, unsigned bytecodeIndex)
 {
     ExitSiteData exitSiteData;
     
 #if ENABLE(DFG_JIT)
     exitSiteData.m_takesSlowPath =
-        profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadType, exitingJITType))
-        || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadExecutable, exitingJITType));
+        profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadType))
+        || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadExecutable));
     exitSiteData.m_badFunction =
-        profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCell, exitingJITType));
+        profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCell));
 #else
     UNUSED_PARAM(locker);
     UNUSED_PARAM(profiledBlock);
@@ -265,7 +264,7 @@ void CallLinkStatus::computeDFGStatuses(
         {
             ConcurrentJITLocker locker(currentBaseline->m_lock);
             exitSiteData = computeExitSiteData(
-                locker, currentBaseline, codeOrigin.bytecodeIndex, ExitFromFTL);
+                locker, currentBaseline, codeOrigin.bytecodeIndex);
         }
         
         {

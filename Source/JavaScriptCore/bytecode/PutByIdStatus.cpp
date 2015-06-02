@@ -54,10 +54,10 @@ bool PutByIdStatus::appendVariant(const PutByIdVariant& variant)
 }
 
 #if ENABLE(DFG_JIT)
-bool PutByIdStatus::hasExitSite(const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, unsigned bytecodeIndex, ExitingJITType exitType)
+bool PutByIdStatus::hasExitSite(const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, unsigned bytecodeIndex)
 {
-    return profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCache, exitType))
-        || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadConstantCache, exitType));
+    return profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCache))
+        || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadConstantCache));
     
 }
 #endif
@@ -281,10 +281,10 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* baselineBlock, CodeBlock* dfg
         CallLinkStatus::ExitSiteData exitSiteData;
         {
             ConcurrentJITLocker locker(baselineBlock->m_lock);
-            if (hasExitSite(locker, baselineBlock, codeOrigin.bytecodeIndex, ExitFromFTL))
+            if (hasExitSite(locker, baselineBlock, codeOrigin.bytecodeIndex))
                 return PutByIdStatus(TakesSlowPath);
             exitSiteData = CallLinkStatus::computeExitSiteData(
-                locker, baselineBlock, codeOrigin.bytecodeIndex, ExitFromFTL);
+                locker, baselineBlock, codeOrigin.bytecodeIndex);
         }
             
         PutByIdStatus result;

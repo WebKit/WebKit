@@ -59,10 +59,10 @@ bool GetByIdStatus::appendVariant(const GetByIdVariant& variant)
 }
 
 #if ENABLE(DFG_JIT)
-bool GetByIdStatus::hasExitSite(const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, unsigned bytecodeIndex, ExitingJITType jitType)
+bool GetByIdStatus::hasExitSite(const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, unsigned bytecodeIndex)
 {
-    return profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCache, jitType))
-        || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadConstantCache, jitType));
+    return profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCache))
+        || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadConstantCache));
 }
 #endif
 
@@ -232,7 +232,7 @@ GetByIdStatus GetByIdStatus::computeFor(
         {
             ConcurrentJITLocker locker(profiledBlock->m_lock);
             exitSiteData = CallLinkStatus::computeExitSiteData(
-                locker, profiledBlock, codeOrigin.bytecodeIndex, ExitFromFTL);
+                locker, profiledBlock, codeOrigin.bytecodeIndex);
         }
         
         GetByIdStatus result;
@@ -247,7 +247,7 @@ GetByIdStatus GetByIdStatus::computeFor(
     
         {
             ConcurrentJITLocker locker(profiledBlock->m_lock);
-            if (hasExitSite(locker, profiledBlock, codeOrigin.bytecodeIndex, ExitFromFTL))
+            if (hasExitSite(locker, profiledBlock, codeOrigin.bytecodeIndex))
                 return GetByIdStatus(TakesSlowPath, true);
         }
         

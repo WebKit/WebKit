@@ -1,3 +1,30 @@
+2015-05-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Any exit from any JIT due to profiling for an inline cache should force all future compilations to be wary
+        https://bugs.webkit.org/show_bug.cgi?id=145496
+
+        Reviewed by Geoffrey Garen.
+        
+        This pessimizes compilation a bit, but it reduces the likelihood of exiting from FTL. I
+        couldn't find any convincing reason not to do this, and we know from Speedometer that this
+        change is necessary for weirder code.
+
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFor):
+        (JSC::CallLinkStatus::computeExitSiteData):
+        (JSC::CallLinkStatus::computeDFGStatuses):
+        * bytecode/CallLinkStatus.h:
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::appendVariant):
+        (JSC::GetByIdStatus::hasExitSite):
+        (JSC::GetByIdStatus::computeFor):
+        * bytecode/GetByIdStatus.h:
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::appendVariant):
+        (JSC::PutByIdStatus::hasExitSite):
+        (JSC::PutByIdStatus::computeFor):
+        * bytecode/PutByIdStatus.h:
+
 2015-05-31  Filip Pizlo  <fpizlo@apple.com>
 
         If a call has ever taken the virtual slow path, make sure that the DFG knows this
