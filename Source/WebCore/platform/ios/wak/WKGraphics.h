@@ -31,7 +31,6 @@
 #import <CoreGraphics/CoreGraphics.h>
 
 typedef int WKCompositeOperation;
-typedef uint32_t CGFontAntialiasingStyle;
 
 #ifdef __cplusplus
 extern "C" {
@@ -49,37 +48,6 @@ void WKSetPattern(CGContextRef context, CGPatternRef pattern, bool fill, bool st
 
 #ifdef __cplusplus
 }
-#endif
-
-#ifdef __cplusplus
-class WKFontAntialiasingStateSaver
-{
-public:
-
-    WKFontAntialiasingStateSaver(CGContextRef context, bool useOrientationDependentFontAntialiasing)
-        : m_context(context)
-        , m_useOrientationDependentFontAntialiasing(useOrientationDependentFontAntialiasing)
-    {
-    }
-
-    void setup(bool isLandscapeOrientation);
-    void restore();
-
-private:
-
-#if TARGET_IPHONE_SIMULATOR
-#pragma clang diagnostic push
-#if defined(__has_warning) && __has_warning("-Wunused-private-field")
-#pragma clang diagnostic ignored "-Wunused-private-field"
-#endif
-#endif
-    CGContextRef m_context;
-    bool m_useOrientationDependentFontAntialiasing;
-    CGFontAntialiasingStyle m_oldAntialiasingStyle;
-#if TARGET_IPHONE_SIMULATOR
-#pragma clang diagnostic pop
-#endif
-};
 #endif
 
 #endif // TARGET_OS_IPHONE

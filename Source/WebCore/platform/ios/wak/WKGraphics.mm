@@ -172,24 +172,4 @@ void WKSetPattern(CGContextRef context, CGPatternRef pattern, bool fill, bool st
     CGColorSpaceRelease(colorspace);
 }
 
-void WKFontAntialiasingStateSaver::setup(bool isLandscapeOrientation)
-{
-#if !PLATFORM(IOS_SIMULATOR)
-    m_oldAntialiasingStyle = CGContextGetFontAntialiasingStyle(m_context);
-
-    if (m_useOrientationDependentFontAntialiasing)
-        CGContextSetFontAntialiasingStyle(m_context, isLandscapeOrientation ? kCGFontAntialiasingStyleFilterLight : kCGFontAntialiasingStyleUnfiltered);
-#else
-    UNUSED_PARAM(isLandscapeOrientation);
-#endif
-}
-
-void WKFontAntialiasingStateSaver::restore()
-{
-#if !PLATFORM(IOS_SIMULATOR)
-    if (m_useOrientationDependentFontAntialiasing)
-        CGContextSetFontAntialiasingStyle(m_context, m_oldAntialiasingStyle);
-#endif
-}
-
 #endif // PLATFORM(IOS)

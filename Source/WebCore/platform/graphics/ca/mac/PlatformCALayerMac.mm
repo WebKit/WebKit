@@ -29,6 +29,7 @@
 
 #import "AnimationUtilities.h"
 #import "BlockExceptions.h"
+#import "FontAntialiasingStateSaver.h"
 #import "GraphicsContext.h"
 #import "GraphicsLayerCA.h"
 #import "LengthFunctions.h"
@@ -1037,7 +1038,7 @@ void PlatformCALayer::drawLayerContents(CGContextRef context, WebCore::PlatformC
     ASSERT(layerContents->platformCALayerContentsOrientation() == GraphicsLayer::CompositingCoordinatesTopDown);
     
 #if PLATFORM(IOS)
-    WKFontAntialiasingStateSaver fontAntialiasingState(context, [platformCALayer->platformLayer() isOpaque]);
+    FontAntialiasingStateSaver fontAntialiasingState(context, [platformCALayer->platformLayer() isOpaque]);
     fontAntialiasingState.setup([WAKWindow hasLandscapeOrientation]);
 #else
     [NSGraphicsContext saveGraphicsState];

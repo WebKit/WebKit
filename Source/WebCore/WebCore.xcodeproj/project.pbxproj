@@ -824,6 +824,7 @@
 		1AC2260C0DB69F190089B669 /* JSDOMApplicationCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC2260A0DB69F190089B669 /* JSDOMApplicationCache.cpp */; };
 		1AC2260D0DB69F190089B669 /* JSDOMApplicationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC2260B0DB69F190089B669 /* JSDOMApplicationCache.h */; };
 		1AC2D845171734A100652FC0 /* Storage.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E3F9C40DA059DC00250911 /* Storage.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1AC2D89D1B1E291F00D52E87 /* FontAntialiasingStateSaver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC2D89C1B1E291F00D52E87 /* FontAntialiasingStateSaver.h */; };
 		1AC69593161A1E53003732CB /* GraphicsLayerFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC69592161A1E53003732CB /* GraphicsLayerFactory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AC900C31943C0FC008625B5 /* HTTPHeaderNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC900C01943C0A0008625B5 /* HTTPHeaderNames.cpp */; };
 		1ACADD791880D91C00D8B71D /* ProgressTrackerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACADD781880D91C00D8B71D /* ProgressTrackerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7928,6 +7929,7 @@
 		1ABC7108170E5E1B00F9A9D6 /* WorkerNavigatorStorageQuota.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerNavigatorStorageQuota.h; sourceTree = "<group>"; };
 		1AC2260A0DB69F190089B669 /* JSDOMApplicationCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMApplicationCache.cpp; sourceTree = "<group>"; };
 		1AC2260B0DB69F190089B669 /* JSDOMApplicationCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMApplicationCache.h; sourceTree = "<group>"; };
+		1AC2D89C1B1E291F00D52E87 /* FontAntialiasingStateSaver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontAntialiasingStateSaver.h; sourceTree = "<group>"; };
 		1AC69592161A1E53003732CB /* GraphicsLayerFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsLayerFactory.h; sourceTree = "<group>"; };
 		1AC900BF1943AF3D008625B5 /* HTTPHeaderNames.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = HTTPHeaderNames.in; sourceTree = "<group>"; };
 		1AC900C01943C0A0008625B5 /* HTTPHeaderNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPHeaderNames.cpp; sourceTree = "<group>"; };
@@ -16017,6 +16019,7 @@
 			children = (
 				2D29ECC9192F1F1D00984B78 /* DisplayRefreshMonitorIOS.h */,
 				0F97A657155DA81E00FADD4C /* DisplayRefreshMonitorIOS.mm */,
+				1AC2D89C1B1E291F00D52E87 /* FontAntialiasingStateSaver.h */,
 				3727DFD4142AAE4500D449CB /* FontCacheIOS.mm */,
 				C58361A71744523F00173511 /* FontServicesIOS.h */,
 				C58361A81744523F00173511 /* FontServicesIOS.mm */,
@@ -24406,6 +24409,7 @@
 				D359D791129CA3C00006E5D2 /* DOMHTMLDetailsElement.h in Headers */,
 				D359D793129CA3C00006E5D2 /* DOMHTMLDetailsElementInternal.h in Headers */,
 				85BA4D0B0AA688680088052D /* DOMHTMLDirectoryElement.h in Headers */,
+				1AC2D89D1B1E291F00D52E87 /* FontAntialiasingStateSaver.h in Headers */,
 				85E711A30AC5D5350053270F /* DOMHTMLDirectoryElementInternal.h in Headers */,
 				85BA4D0D0AA688680088052D /* DOMHTMLDivElement.h in Headers */,
 				85E711A40AC5D5350053270F /* DOMHTMLDivElementInternal.h in Headers */,
