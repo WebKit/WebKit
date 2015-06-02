@@ -1,3 +1,60 @@
+2015-06-02  Brady Eidson  <beidson@apple.com>
+
+        WebKit policy delegate should suggest if a navigation should be allowed to open URLs externally.
+        rdar://problem/21025301 and https://bugs.webkit.org/show_bug.cgi?id=145280
+
+        Reviewed by Alex Christensen.
+
+        * loader/navigation-policy/should-open-external-urls/main-frame-click-expected.txt: Added.
+        * loader/navigation-policy/should-open-external-urls/main-frame-click.html: Added.
+        * loader/navigation-policy/should-open-external-urls/main-frame-navigated-programatically-by-subframe-expected.txt: Added.
+        * loader/navigation-policy/should-open-external-urls/main-frame-navigated-programatically-by-subframe.html: Added.
+        * loader/navigation-policy/should-open-external-urls/main-frame-with-flag-progamatic-expected.txt: Added.
+        * loader/navigation-policy/should-open-external-urls/main-frame-with-flag-progamatic.html: Added.
+        * loader/navigation-policy/should-open-external-urls/main-frame-without-flag-programatic-expected.txt: Added.
+        * loader/navigation-policy/should-open-external-urls/main-frame-without-flag-programatic.html: Added.
+        * loader/navigation-policy/should-open-external-urls/resources/click-notify-done-in-main.html: Added.
+        * loader/navigation-policy/should-open-external-urls/resources/iframe-click-notify-done-target-self.html: Added.
+        * loader/navigation-policy/should-open-external-urls/resources/iframe-click-notify-done-target-top.html: Added.
+        * loader/navigation-policy/should-open-external-urls/resources/main-frame-with-subframe-click-targets-subframe.html: Added.
+        * loader/navigation-policy/should-open-external-urls/resources/main-frame-with-subframe-programatically-navigates-main.html: Added.
+        * loader/navigation-policy/should-open-external-urls/resources/programatically-navigate-to-notify-done-target-top.html: Added.
+        * loader/navigation-policy/should-open-external-urls/resources/programatically-navigate-to-notify-done.html: Added.
+        * loader/navigation-policy/should-open-external-urls/resources/user-gesture-target-blank-to-notify-done-from-subframe.html: Added.
+        * loader/navigation-policy/should-open-external-urls/resources/user-gesture-target-blank-to-notify-done.html: Added.
+        * loader/navigation-policy/should-open-external-urls/resources/user-gesture-window-open-to-notify-done-from-subframe.html: Added.
+        * loader/navigation-policy/should-open-external-urls/resources/user-gesture-window-open-to-notify-done.html: Added.
+        * loader/navigation-policy/should-open-external-urls/resources/window-open-to-notify-done-from-subframe.html: Added.
+        * loader/navigation-policy/should-open-external-urls/resources/window-open-to-notify-done.html: Added.
+        * loader/navigation-policy/should-open-external-urls/subframe-click-target-self-expected.txt: Added.
+        * loader/navigation-policy/should-open-external-urls/subframe-click-target-self.html: Added.
+        * loader/navigation-policy/should-open-external-urls/subframe-click-target-top-expected.txt: Added.
+        * loader/navigation-policy/should-open-external-urls/subframe-click-target-top.html: Added.
+        * loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag-expected.txt: Added.
+        * loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag-from-subframe-expected.txt: Added.
+        * loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag-from-subframe.html: Added.
+        * loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-with-flag.html: Added.
+        * loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-without-flag-expected.txt: Added.
+        * loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-without-flag-from-subframe-expected.txt: Added.
+        * loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-without-flag-from-subframe.html: Added.
+        * loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-without-flag.html: Added.
+        * loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with-flag-expected.txt: Added.
+        * loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with-flag-from-subframe-expected.txt: Added.
+        * loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with-flag-from-subframe.html: Added.
+        * loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with-flag.html: Added.
+        * loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag-expected.txt: Added.
+        * loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag-from-subframe-expected.txt: Added.
+        * loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag-from-subframe.html: Added.
+        * loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag.html: Added.
+        * loader/navigation-policy/should-open-external-urls/window-open-with-flag-expected.txt: Added.
+        * loader/navigation-policy/should-open-external-urls/window-open-with-flag-from-subframe-expected.txt: Added.
+        * loader/navigation-policy/should-open-external-urls/window-open-with-flag-from-subframe.html: Added.
+        * loader/navigation-policy/should-open-external-urls/window-open-with-flag.html: Added.
+        * loader/navigation-policy/should-open-external-urls/window-open-without-flag-expected.txt: Added.
+        * loader/navigation-policy/should-open-external-urls/window-open-without-flag-from-subframe-expected.txt: Added.
+        * loader/navigation-policy/should-open-external-urls/window-open-without-flag-from-subframe.html: Added.
+        * loader/navigation-policy/should-open-external-urls/window-open-without-flag.html: Added.
+
 2015-06-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [SVG -> OTF Converter] Remove unnecessary hacks

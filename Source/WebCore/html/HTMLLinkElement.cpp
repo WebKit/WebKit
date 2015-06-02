@@ -441,7 +441,7 @@ void HTMLLinkElement::handleClick(Event& event)
     Frame* frame = document().frame();
     if (!frame)
         return;
-    frame->loader().urlSelected(url, target(), &event, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer);
+    frame->loader().urlSelected(url, target(), &event, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate());
 }
 
 URL HTMLLinkElement::href() const

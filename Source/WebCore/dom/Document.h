@@ -165,6 +165,8 @@ class XPathExpression;
 class XPathNSResolver;
 class XPathResult;
 
+enum class ShouldOpenExternalURLsPolicy;
+
 #if ENABLE(XSLT)
 class TransformSource;
 #endif
@@ -1253,6 +1255,8 @@ public:
     void playbackTargetAvailabilityDidChange(uint64_t, bool);
     void setShouldPlayToPlaybackTarget(uint64_t, bool);
 #endif
+
+    ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicyToPropagate() const;
 
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };

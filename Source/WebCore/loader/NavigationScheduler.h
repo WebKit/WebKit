@@ -37,6 +37,7 @@
 
 namespace WebCore {
 
+class Document;
 class FormSubmission;
 class Frame;
 class ScheduledNavigation;
@@ -69,10 +70,10 @@ public:
     bool redirectScheduledDuringLoad();
     bool locationChangePending();
 
-    void scheduleRedirect(double delay, const URL&);
-    void scheduleLocationChange(SecurityOrigin*, const URL&, const String& referrer, LockHistory = LockHistory::Yes, LockBackForwardList = LockBackForwardList::Yes);
+    void scheduleRedirect(Document* initiatingDocument, double delay, const URL&);
+    void scheduleLocationChange(Document* initiatingDocument, SecurityOrigin*, const URL&, const String& referrer, LockHistory = LockHistory::Yes, LockBackForwardList = LockBackForwardList::Yes);
     void scheduleFormSubmission(PassRefPtr<FormSubmission>);
-    void scheduleRefresh();
+    void scheduleRefresh(Document* initiatingDocument);
     void scheduleHistoryNavigation(int steps);
     void scheduleSubstituteDataLoad(const URL& baseURL, const SubstituteData&);
 

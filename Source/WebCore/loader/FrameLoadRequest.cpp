@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-FrameLoadRequest::FrameLoadRequest(Frame* frame, const ResourceRequest& resourceRequest, const SubstituteData& substituteData)
+FrameLoadRequest::FrameLoadRequest(Frame* frame, const ResourceRequest& resourceRequest, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, const SubstituteData& substituteData)
     : m_requester(frame->document()->securityOrigin())
     , m_resourceRequest(resourceRequest)
     , m_shouldCheckNewWindowPolicy(false)
@@ -47,6 +47,7 @@ FrameLoadRequest::FrameLoadRequest(Frame* frame, const ResourceRequest& resource
     , m_allowNavigationToInvalidURL(AllowNavigationToInvalidURL::Yes)
     , m_newFrameOpenerPolicy(NewFrameOpenerPolicy::Allow)
     , m_shouldReplaceDocumentIfJavaScriptURL(ReplaceDocumentIfJavaScriptURL)
+    , m_shouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicy)
 {
 }
 

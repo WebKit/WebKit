@@ -284,7 +284,7 @@ Frame* SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement& ownerElemen
 {
     Frame* frame = ownerElement.contentFrame();
     if (frame)
-        frame->navigationScheduler().scheduleLocationChange(m_frame.document()->securityOrigin(), url, m_frame.loader().outgoingReferrer(), lockHistory, lockBackForwardList);
+        frame->navigationScheduler().scheduleLocationChange(m_frame.document(), m_frame.document()->securityOrigin(), url, m_frame.loader().outgoingReferrer(), lockHistory, lockBackForwardList);
     else
         frame = loadSubframe(ownerElement, url, frameName, m_frame.loader().outgoingReferrer());
 

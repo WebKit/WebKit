@@ -1549,9 +1549,15 @@ void DocumentLoader::handledOnloadEvents()
 
 void DocumentLoader::setTriggeringAction(const NavigationAction& action)
 {
-    m_triggeringAction = action;
-    if (!m_triggeringAction.isEmpty())
-        m_triggeringAction.setShouldOpenExternalURLsPolicy(m_shouldOpenExternalURLsPolicy);
+    m_triggeringAction = action.copyWithShouldOpenExternalURLsPolicy(m_frame ? shouldOpenExternalURLsPolicyToPropagate() : m_shouldOpenExternalURLsPolicy);
+}
+
+ShouldOpenExternalURLsPolicy DocumentLoader::shouldOpenExternalURLsPolicyToPropagate() const
+{
+    if (!m_frame || !m_frame->isMainFrame())
+        return ShouldOpenExternalURLsPolicy::ShouldNotAllow;
+
+    return m_shouldOpenExternalURLsPolicy;
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)

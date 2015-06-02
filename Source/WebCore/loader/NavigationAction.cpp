@@ -67,6 +67,11 @@ NavigationAction::NavigationAction(const ResourceRequest& resourceRequest)
 {
 }
 
+NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
+    : NavigationAction(resourceRequest, NavigationType::Other, nullptr, shouldOpenExternalURLsPolicy)
+{
+}
+
 NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, NavigationType type)
     : NavigationAction(resourceRequest, type, nullptr, ShouldOpenExternalURLsPolicy::ShouldNotAllow)
 {
@@ -90,6 +95,18 @@ NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, Navig
 NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, FrameLoadType frameLoadType, bool isFormSubmission, Event* event)
     : NavigationAction(resourceRequest, navigationType(frameLoadType, isFormSubmission, event), event, ShouldOpenExternalURLsPolicy::ShouldNotAllow)
 {
+}
+
+NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, FrameLoadType frameLoadType, bool isFormSubmission, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
+    : NavigationAction(resourceRequest, navigationType(frameLoadType, isFormSubmission, event), event, shouldOpenExternalURLsPolicy)
+{
+}
+
+NavigationAction NavigationAction::copyWithShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy) const
+{
+    NavigationAction result(*this);
+    result.m_shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicy;
+    return WTF::move(result);
 }
 
 }
