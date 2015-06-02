@@ -43,7 +43,7 @@ class RTCDTMFSenderHandler;
 
 class RTCDTMFSender final : public RefCounted<RTCDTMFSender>, public ScriptWrappable, public EventTargetWithInlineData, public RTCDTMFSenderHandlerClient, public ActiveDOMObject {
 public:
-    static PassRefPtr<RTCDTMFSender> create(ScriptExecutionContext*, RTCPeerConnectionHandler*, PassRefPtr<MediaStreamTrack>, ExceptionCode&);
+    static RefPtr<RTCDTMFSender> create(ScriptExecutionContext*, RTCPeerConnectionHandler*, PassRefPtr<MediaStreamTrack>, ExceptionCode&);
     ~RTCDTMFSender();
 
     bool canInsertDTMF() const;

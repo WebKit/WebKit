@@ -37,7 +37,7 @@ class IDBDatabaseCallbacks;
 
 class IDBOpenDBRequest : public IDBRequest {
 public:
-    static PassRefPtr<IDBOpenDBRequest> create(ScriptExecutionContext*, PassRefPtr<IDBDatabaseCallbacks>, int64_t transactionId, uint64_t version, IndexedDB::VersionNullness);
+    static Ref<IDBOpenDBRequest> create(ScriptExecutionContext*, PassRefPtr<IDBDatabaseCallbacks>, int64_t transactionId, uint64_t version, IndexedDB::VersionNullness);
     virtual ~IDBOpenDBRequest();
 
     using IDBRequest::onSuccess;

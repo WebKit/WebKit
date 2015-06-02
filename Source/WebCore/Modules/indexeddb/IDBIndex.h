@@ -45,9 +45,9 @@ class IDBObjectStore;
 
 class IDBIndex : public ScriptWrappable, public RefCounted<IDBIndex> {
 public:
-    static PassRefPtr<IDBIndex> create(const IDBIndexMetadata& metadata, IDBObjectStore* objectStore, IDBTransaction* transaction)
+    static Ref<IDBIndex> create(const IDBIndexMetadata& metadata, IDBObjectStore* objectStore, IDBTransaction* transaction)
     {
-        return adoptRef(new IDBIndex(metadata, objectStore, transaction));
+        return adoptRef(*new IDBIndex(metadata, objectStore, transaction));
     }
     ~IDBIndex();
 

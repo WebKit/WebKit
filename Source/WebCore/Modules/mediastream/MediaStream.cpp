@@ -39,12 +39,12 @@
 
 namespace WebCore {
 
-PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext& context)
+Ref<MediaStream> MediaStream::create(ScriptExecutionContext& context)
 {
     return MediaStream::create(context, MediaStreamPrivate::create(Vector<RefPtr<RealtimeMediaSource>>(), Vector<RefPtr<RealtimeMediaSource>>()));
 }
 
-PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext& context, PassRefPtr<MediaStream> stream)
+Ref<MediaStream> MediaStream::create(ScriptExecutionContext& context, PassRefPtr<MediaStream> stream)
 {
     ASSERT(stream);
 
@@ -60,7 +60,7 @@ PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext& context, Pas
     return MediaStream::create(context, MediaStreamPrivate::create(audioTracks, videoTracks));
 }
 
-PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext& context, const Vector<RefPtr<MediaStreamTrack>>& tracks)
+Ref<MediaStream> MediaStream::create(ScriptExecutionContext& context, const Vector<RefPtr<MediaStreamTrack>>& tracks)
 {
     Vector<RefPtr<MediaStreamTrackPrivate>> audioTracks;
     Vector<RefPtr<MediaStreamTrackPrivate>> videoTracks;
@@ -75,9 +75,9 @@ PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext& context, con
     return MediaStream::create(context, MediaStreamPrivate::create(audioTracks, videoTracks));
 }
 
-PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext& context, PassRefPtr<MediaStreamPrivate> privateStream)
+Ref<MediaStream> MediaStream::create(ScriptExecutionContext& context, PassRefPtr<MediaStreamPrivate> privateStream)
 {
-    return adoptRef(new MediaStream(context, privateStream));
+    return adoptRef(*new MediaStream(context, privateStream));
 }
 
 MediaStream::MediaStream(ScriptExecutionContext& context, PassRefPtr<MediaStreamPrivate> privateStream)

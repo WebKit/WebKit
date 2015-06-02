@@ -50,9 +50,9 @@ class IDBAny;
 
 class IDBObjectStore : public ScriptWrappable, public RefCounted<IDBObjectStore> {
 public:
-    static PassRefPtr<IDBObjectStore> create(const IDBObjectStoreMetadata& metadata, IDBTransaction* transaction)
+    static Ref<IDBObjectStore> create(const IDBObjectStoreMetadata& metadata, IDBTransaction* transaction)
     {
-        return adoptRef(new IDBObjectStore(metadata, transaction));
+        return adoptRef(*new IDBObjectStore(metadata, transaction));
     }
     ~IDBObjectStore() { }
 

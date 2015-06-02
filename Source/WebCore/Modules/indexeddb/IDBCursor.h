@@ -58,7 +58,7 @@ public:
     static IndexedDB::CursorDirection stringToDirection(const String& modeString, ExceptionCode&);
     static const AtomicString& directionToString(IndexedDB::CursorDirection mode);
 
-    static PassRefPtr<IDBCursor> create(PassRefPtr<IDBCursorBackend>, IndexedDB::CursorDirection, IDBRequest*, IDBAny* source, IDBTransaction*);
+    static Ref<IDBCursor> create(PassRefPtr<IDBCursorBackend>, IndexedDB::CursorDirection, IDBRequest*, IDBAny* source, IDBTransaction*);
     virtual ~IDBCursor();
 
     // Implement the IDL

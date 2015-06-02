@@ -37,14 +37,14 @@ namespace WebCore {
 
 class IDBRecordIdentifier : public RefCounted<IDBRecordIdentifier> {
 public:
-    static PassRefPtr<IDBRecordIdentifier> create(const Vector<char>& encodedPrimaryKey, int64_t version)
+    static Ref<IDBRecordIdentifier> create(const Vector<char>& encodedPrimaryKey, int64_t version)
     {
-        return adoptRef(new IDBRecordIdentifier(encodedPrimaryKey, version));
+        return adoptRef(*new IDBRecordIdentifier(encodedPrimaryKey, version));
     }
 
-    static PassRefPtr<IDBRecordIdentifier> create()
+    static Ref<IDBRecordIdentifier> create()
     {
-        return adoptRef(new IDBRecordIdentifier);
+        return adoptRef(*new IDBRecordIdentifier);
     }
 
     const Vector<char>& encodedPrimaryKey() const { return m_encodedPrimaryKey; }

@@ -40,13 +40,13 @@ class SharedBuffer;
 
 class IDBCursorBackend : public RefCounted<IDBCursorBackend> {
 public:
-    static PassRefPtr<IDBCursorBackend> create(int64_t cursorID, IndexedDB::CursorType cursorType, IDBTransactionBackend& transaction, int64_t objectStoreID)
+    static Ref<IDBCursorBackend> create(int64_t cursorID, IndexedDB::CursorType cursorType, IDBTransactionBackend& transaction, int64_t objectStoreID)
     {
-        return adoptRef(new IDBCursorBackend(cursorID, cursorType, IDBDatabaseBackend::NormalTask, transaction, objectStoreID));
+        return adoptRef(*new IDBCursorBackend(cursorID, cursorType, IDBDatabaseBackend::NormalTask, transaction, objectStoreID));
     }
-    static PassRefPtr<IDBCursorBackend> create(int64_t cursorID, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, IDBTransactionBackend& transaction, int64_t objectStoreID)
+    static Ref<IDBCursorBackend> create(int64_t cursorID, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, IDBTransactionBackend& transaction, int64_t objectStoreID)
     {
-        return adoptRef(new IDBCursorBackend(cursorID, cursorType, taskType, transaction, objectStoreID));
+        return adoptRef(*new IDBCursorBackend(cursorID, cursorType, taskType, transaction, objectStoreID));
     }
     ~IDBCursorBackend();
 

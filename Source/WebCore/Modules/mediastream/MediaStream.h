@@ -51,10 +51,10 @@ public:
         virtual void didAddOrRemoveTrack() = 0;
     };
 
-    static PassRefPtr<MediaStream> create(ScriptExecutionContext&);
-    static PassRefPtr<MediaStream> create(ScriptExecutionContext&, PassRefPtr<MediaStream>);
-    static PassRefPtr<MediaStream> create(ScriptExecutionContext&, const Vector<RefPtr<MediaStreamTrack>>&);
-    static PassRefPtr<MediaStream> create(ScriptExecutionContext&, PassRefPtr<MediaStreamPrivate>);
+    static Ref<MediaStream> create(ScriptExecutionContext&);
+    static Ref<MediaStream> create(ScriptExecutionContext&, PassRefPtr<MediaStream>);
+    static Ref<MediaStream> create(ScriptExecutionContext&, const Vector<RefPtr<MediaStreamTrack>>&);
+    static Ref<MediaStream> create(ScriptExecutionContext&, PassRefPtr<MediaStreamPrivate>);
     virtual ~MediaStream();
 
     String id() const { return m_private->id(); }

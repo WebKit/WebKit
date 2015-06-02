@@ -53,8 +53,8 @@ typedef int ExceptionCode;
 
 class IDBRequest : public ScriptWrappable, public IDBCallbacks, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
-    static PassRefPtr<IDBRequest> create(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBTransaction*);
-    static PassRefPtr<IDBRequest> create(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBDatabaseBackend::TaskType, IDBTransaction*);
+    static Ref<IDBRequest> create(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBTransaction*);
+    static Ref<IDBRequest> create(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBDatabaseBackend::TaskType, IDBTransaction*);
     virtual ~IDBRequest();
 
     PassRefPtr<IDBAny> result(ExceptionCode&) const;
@@ -136,7 +136,7 @@ private:
     virtual void refEventTarget() override final { ref(); }
     virtual void derefEventTarget() override final { deref(); }
 
-    PassRefPtr<IDBCursor> getResultCursor();
+    RefPtr<IDBCursor> getResultCursor();
     void setResultCursor(PassRefPtr<IDBCursor>, PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, const Deprecated::ScriptValue&);
 
     RefPtr<IDBAny> m_source;

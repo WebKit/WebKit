@@ -35,10 +35,10 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBKeyRange> IDBKeyRange::create(PassRefPtr<IDBKey> prpKey)
+Ref<IDBKeyRange> IDBKeyRange::create(PassRefPtr<IDBKey> prpKey)
 {
     RefPtr<IDBKey> key = prpKey;
-    return adoptRef(new IDBKeyRange(key, key, LowerBoundClosed, UpperBoundClosed));
+    return adoptRef(*new IDBKeyRange(key, key, LowerBoundClosed, UpperBoundClosed));
 }
 
 IDBKeyRange::IDBKeyRange(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, LowerBoundType lowerType, UpperBoundType upperType)

@@ -43,19 +43,19 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBTransaction> IDBTransaction::create(ScriptExecutionContext* context, int64_t id, const Vector<String>& objectStoreNames, IndexedDB::TransactionMode mode, IDBDatabase* db)
+Ref<IDBTransaction> IDBTransaction::create(ScriptExecutionContext* context, int64_t id, const Vector<String>& objectStoreNames, IndexedDB::TransactionMode mode, IDBDatabase* db)
 {
-    IDBOpenDBRequest* openDBRequest = 0;
-    RefPtr<IDBTransaction> transaction(adoptRef(new IDBTransaction(context, id, objectStoreNames, mode, db, openDBRequest, IDBDatabaseMetadata())));
+    IDBOpenDBRequest* openDBRequest = nullptr;
+    Ref<IDBTransaction> transaction(adoptRef(*new IDBTransaction(context, id, objectStoreNames, mode, db, openDBRequest, IDBDatabaseMetadata())));
     transaction->suspendIfNeeded();
-    return transaction.release();
+    return transaction;
 }
 
-PassRefPtr<IDBTransaction> IDBTransaction::create(ScriptExecutionContext* context, int64_t id, IDBDatabase* db, IDBOpenDBRequest* openDBRequest, const IDBDatabaseMetadata& previousMetadata)
+Ref<IDBTransaction> IDBTransaction::create(ScriptExecutionContext* context, int64_t id, IDBDatabase* db, IDBOpenDBRequest* openDBRequest, const IDBDatabaseMetadata& previousMetadata)
 {
-    RefPtr<IDBTransaction> transaction(adoptRef(new IDBTransaction(context, id, Vector<String>(), IndexedDB::TransactionMode::VersionChange, db, openDBRequest, previousMetadata)));
+    Ref<IDBTransaction> transaction(adoptRef(*new IDBTransaction(context, id, Vector<String>(), IndexedDB::TransactionMode::VersionChange, db, openDBRequest, previousMetadata)));
     transaction->suspendIfNeeded();
-    return transaction.release();
+    return transaction;
 }
 
 const AtomicString& IDBTransaction::modeReadOnly()

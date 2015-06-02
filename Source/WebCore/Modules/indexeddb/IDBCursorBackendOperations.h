@@ -36,9 +36,9 @@ namespace WebCore {
 
 class CursorIterationOperation : public IDBOperation {
 public:
-    static PassRefPtr<IDBOperation> create(PassRefPtr<IDBCursorBackend> cursor, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
+    static Ref<IDBOperation> create(PassRefPtr<IDBCursorBackend> cursor, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
     {
-        return adoptRef(new CursorIterationOperation(cursor, key, callbacks));
+        return adoptRef(*new CursorIterationOperation(cursor, key, callbacks));
     }
     virtual void perform(std::function<void()> completionCallback) override final;
 
@@ -60,9 +60,9 @@ private:
 
 class CursorAdvanceOperation : public IDBOperation {
 public:
-    static PassRefPtr<IDBOperation> create(PassRefPtr<IDBCursorBackend> cursor, unsigned long count, PassRefPtr<IDBCallbacks> callbacks)
+    static Ref<IDBOperation> create(PassRefPtr<IDBCursorBackend> cursor, unsigned long count, PassRefPtr<IDBCallbacks> callbacks)
     {
-        return adoptRef(new CursorAdvanceOperation(cursor, count, callbacks));
+        return adoptRef(*new CursorAdvanceOperation(cursor, count, callbacks));
     }
     virtual void perform(std::function<void()> completionCallback) override final;
 

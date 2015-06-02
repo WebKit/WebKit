@@ -28,9 +28,9 @@
 
 namespace WebCore {
 
-RefPtr<VideoPlaybackQuality> VideoPlaybackQuality::create(double creationTime, unsigned long totalVideoFrames, unsigned long droppedVideoFrames, unsigned long corruptedVideoFrames, double totalFrameDelay)
+Ref<VideoPlaybackQuality> VideoPlaybackQuality::create(double creationTime, unsigned long totalVideoFrames, unsigned long droppedVideoFrames, unsigned long corruptedVideoFrames, double totalFrameDelay)
 {
-    return adoptRef(new VideoPlaybackQuality(creationTime, totalVideoFrames, droppedVideoFrames, corruptedVideoFrames, totalFrameDelay));
+    return adoptRef(*new VideoPlaybackQuality(creationTime, totalVideoFrames, droppedVideoFrames, corruptedVideoFrames, totalFrameDelay));
 }
 
 VideoPlaybackQuality::VideoPlaybackQuality(double creationTime, unsigned long totalVideoFrames, unsigned long droppedVideoFrames, unsigned long corruptedVideoFrames, double totalFrameDelay)

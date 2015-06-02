@@ -34,7 +34,7 @@ namespace WebCore {
 class VideoPlaybackQuality : public RefCounted<VideoPlaybackQuality> {
     WTF_MAKE_NONCOPYABLE(VideoPlaybackQuality)
 public:
-    static RefPtr<VideoPlaybackQuality> create(double creationTime, unsigned long totalVideoFrames, unsigned long droppedVideoFrames, unsigned long corruptedVideoFrames, double totalFrameDelay);
+    static Ref<VideoPlaybackQuality> create(double creationTime, unsigned long totalVideoFrames, unsigned long droppedVideoFrames, unsigned long corruptedVideoFrames, double totalFrameDelay);
 
     double creationTime() const { return m_creationTime; }
     unsigned long totalVideoFrames() const { return m_totalVideoFrames; }

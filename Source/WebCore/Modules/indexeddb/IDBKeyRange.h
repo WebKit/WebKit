@@ -49,11 +49,11 @@ public:
         UpperBoundClosed
     };
 
-    static PassRefPtr<IDBKeyRange> create(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, LowerBoundType lowerType, UpperBoundType upperType)
+    static Ref<IDBKeyRange> create(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, LowerBoundType lowerType, UpperBoundType upperType)
     {
-        return adoptRef(new IDBKeyRange(lower, upper, lowerType, upperType));
+        return adoptRef(*new IDBKeyRange(lower, upper, lowerType, upperType));
     }
-    static PassRefPtr<IDBKeyRange> create(PassRefPtr<IDBKey> prpKey);
+    static Ref<IDBKeyRange> create(PassRefPtr<IDBKey> prpKey);
     ~IDBKeyRange() { }
 
     PassRefPtr<IDBKey> lower() const { return m_lower; }

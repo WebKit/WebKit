@@ -32,9 +32,9 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBDatabaseCallbacksImpl> IDBDatabaseCallbacksImpl::create()
+Ref<IDBDatabaseCallbacksImpl> IDBDatabaseCallbacksImpl::create()
 {
-    return adoptRef(new IDBDatabaseCallbacksImpl());
+    return adoptRef(*new IDBDatabaseCallbacksImpl());
 }
 
 IDBDatabaseCallbacksImpl::IDBDatabaseCallbacksImpl()

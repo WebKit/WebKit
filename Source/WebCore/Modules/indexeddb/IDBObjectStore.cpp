@@ -281,9 +281,9 @@ namespace {
 // cursor success handlers are kept alive.
 class IndexPopulator : public EventListener {
 public:
-    static PassRefPtr<IndexPopulator> create(PassRefPtr<IDBDatabaseBackend> backend, int64_t transactionId, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
+    static Ref<IndexPopulator> create(PassRefPtr<IDBDatabaseBackend> backend, int64_t transactionId, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
     {
-        return adoptRef(new IndexPopulator(backend, transactionId, objectStoreId, indexMetadata));
+        return adoptRef(*new IndexPopulator(backend, transactionId, objectStoreId, indexMetadata));
     }
 
     virtual bool operator==(const EventListener& other)

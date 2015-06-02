@@ -44,7 +44,7 @@ public:
 
     virtual String fullPathForDatabase(SecurityOrigin*, const String& name, bool createIfDoesNotExist);
 
-    virtual PassRefPtr<DatabaseBackendBase> openDatabase(RefPtr<DatabaseContext>&, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError&, String& errorMessage, OpenAttempt);
+    virtual RefPtr<DatabaseBackendBase> openDatabase(RefPtr<DatabaseContext>&, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError&, String& errorMessage, OpenAttempt);
 
     void closeAllDatabases() override;
 
@@ -65,7 +65,7 @@ public:
     virtual void interruptAllDatabasesForContext(const DatabaseContext*);
 
 protected:
-    virtual PassRefPtr<DatabaseBackendBase> createDatabase(RefPtr<DatabaseContext>&, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
+    virtual RefPtr<DatabaseBackendBase> createDatabase(RefPtr<DatabaseContext>&, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
 };
 
 } // namespace WebCore

@@ -60,7 +60,7 @@ class VoidCallback;
 
 class RTCPeerConnection final : public RefCounted<RTCPeerConnection>, public ScriptWrappable, public RTCPeerConnectionHandlerClient, public EventTargetWithInlineData, public ActiveDOMObject, public MediaStream::Observer {
 public:
-    static PassRefPtr<RTCPeerConnection> create(ScriptExecutionContext&, const Dictionary& rtcConfiguration, ExceptionCode&);
+    static RefPtr<RTCPeerConnection> create(ScriptExecutionContext&, const Dictionary& rtcConfiguration, ExceptionCode&);
     ~RTCPeerConnection();
 
     void createOffer(PassRefPtr<RTCSessionDescriptionCallback>, PassRefPtr<RTCPeerConnectionErrorCallback>, const Dictionary& offerOptions, ExceptionCode&);
@@ -126,7 +126,7 @@ public:
 private:
     RTCPeerConnection(ScriptExecutionContext&, PassRefPtr<RTCConfiguration>, ExceptionCode&);
 
-    static PassRefPtr<RTCConfiguration> parseConfiguration(const Dictionary& configuration, ExceptionCode&);
+    static RefPtr<RTCConfiguration> parseConfiguration(const Dictionary& configuration, ExceptionCode&);
     void scheduleDispatchEvent(PassRefPtr<Event>);
     void scheduledEventTimerFired();
     bool hasLocalStreamWithTrackId(const String& trackId);

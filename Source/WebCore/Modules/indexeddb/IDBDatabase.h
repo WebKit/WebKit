@@ -51,7 +51,7 @@ typedef int ExceptionCode;
 
 class IDBDatabase final : public RefCounted<IDBDatabase>, public ScriptWrappable, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
-    static PassRefPtr<IDBDatabase> create(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackend>, PassRefPtr<IDBDatabaseCallbacks>);
+    static Ref<IDBDatabase> create(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackend>, PassRefPtr<IDBDatabaseCallbacks>);
     ~IDBDatabase();
 
     void setMetadata(const IDBDatabaseMetadata& metadata) { m_metadata = metadata; }

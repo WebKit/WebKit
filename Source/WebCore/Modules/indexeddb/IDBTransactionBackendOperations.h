@@ -38,9 +38,9 @@ class IDBServerConnection;
 
 class CreateObjectStoreOperation : public IDBOperation {
 public:
-    static PassRefPtr<IDBOperation> create(IDBTransactionBackend* transaction, const IDBObjectStoreMetadata& objectStoreMetadata)
+    static Ref<IDBOperation> create(IDBTransactionBackend* transaction, const IDBObjectStoreMetadata& objectStoreMetadata)
     {
-        return adoptRef(new CreateObjectStoreOperation(transaction, objectStoreMetadata));
+        return adoptRef(*new CreateObjectStoreOperation(transaction, objectStoreMetadata));
     }
     virtual void perform(std::function<void()> successCallback) override final;
 
@@ -59,9 +59,9 @@ private:
 
 class DeleteObjectStoreOperation : public IDBOperation {
 public:
-    static PassRefPtr<IDBOperation> create(IDBTransactionBackend* transaction, const IDBObjectStoreMetadata& objectStoreMetadata)
+    static Ref<IDBOperation> create(IDBTransactionBackend* transaction, const IDBObjectStoreMetadata& objectStoreMetadata)
     {
-        return adoptRef(new DeleteObjectStoreOperation(transaction, objectStoreMetadata));
+        return adoptRef(*new DeleteObjectStoreOperation(transaction, objectStoreMetadata));
     }
     virtual void perform(std::function<void()> successCallback) override final;
 
@@ -81,9 +81,9 @@ private:
 
 class IDBDatabaseBackend::VersionChangeOperation : public IDBOperation {
 public:
-    static PassRefPtr<IDBOperation> create(IDBTransactionBackend* transaction, int64_t version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks)
+    static Ref<IDBOperation> create(IDBTransactionBackend* transaction, int64_t version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks)
     {
-        return adoptRef(new VersionChangeOperation(transaction, version, callbacks, databaseCallbacks));
+        return adoptRef(*new VersionChangeOperation(transaction, version, callbacks, databaseCallbacks));
     }
     virtual void perform(std::function<void()> successCallback) override final;
 
@@ -108,9 +108,9 @@ private:
 
 class CreateObjectStoreAbortOperation : public IDBSynchronousOperation {
 public:
-    static PassRefPtr<IDBSynchronousOperation> create(IDBTransactionBackend* transaction, int64_t objectStoreId)
+    static Ref<IDBSynchronousOperation> create(IDBTransactionBackend* transaction, int64_t objectStoreId)
     {
-        return adoptRef(new CreateObjectStoreAbortOperation(transaction, objectStoreId));
+        return adoptRef(*new CreateObjectStoreAbortOperation(transaction, objectStoreId));
     }
     virtual void perform() override final;
 private:
@@ -126,9 +126,9 @@ private:
 
 class DeleteObjectStoreAbortOperation : public IDBSynchronousOperation {
 public:
-    static PassRefPtr<IDBSynchronousOperation> create(IDBTransactionBackend* transaction, const IDBObjectStoreMetadata& objectStore)
+    static Ref<IDBSynchronousOperation> create(IDBTransactionBackend* transaction, const IDBObjectStoreMetadata& objectStore)
     {
-        return adoptRef(new DeleteObjectStoreAbortOperation(transaction, objectStore));
+        return adoptRef(*new DeleteObjectStoreAbortOperation(transaction, objectStore));
     }
     virtual void perform() override final;
 private:
@@ -144,9 +144,9 @@ private:
 
 class IDBDatabaseBackend::VersionChangeAbortOperation : public IDBSynchronousOperation {
 public:
-    static PassRefPtr<IDBSynchronousOperation> create(IDBTransactionBackend* transaction, const String& previousVersion, int64_t previousIntVersion)
+    static Ref<IDBSynchronousOperation> create(IDBTransactionBackend* transaction, const String& previousVersion, int64_t previousIntVersion)
     {
-        return adoptRef(new VersionChangeAbortOperation(transaction, previousVersion, previousIntVersion));
+        return adoptRef(*new VersionChangeAbortOperation(transaction, previousVersion, previousIntVersion));
     }
     virtual void perform() override final;
 private:
@@ -164,9 +164,9 @@ private:
 
 class CreateIndexOperation : public IDBOperation {
 public:
-    static PassRefPtr<IDBOperation> create(IDBTransactionBackend* transaction, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
+    static Ref<IDBOperation> create(IDBTransactionBackend* transaction, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
     {
-        return adoptRef(new CreateIndexOperation(transaction, objectStoreId, indexMetadata));
+        return adoptRef(*new CreateIndexOperation(transaction, objectStoreId, indexMetadata));
     }
     virtual void perform(std::function<void()> successCallback) override final;
 
@@ -188,9 +188,9 @@ private:
 
 class CreateIndexAbortOperation : public IDBSynchronousOperation {
 public:
-    static PassRefPtr<IDBSynchronousOperation> create(IDBTransactionBackend* transaction, int64_t objectStoreId, int64_t indexId)
+    static Ref<IDBSynchronousOperation> create(IDBTransactionBackend* transaction, int64_t objectStoreId, int64_t indexId)
     {
-        return adoptRef(new CreateIndexAbortOperation(transaction, objectStoreId, indexId));
+        return adoptRef(*new CreateIndexAbortOperation(transaction, objectStoreId, indexId));
     }
     virtual void perform() override final;
 private:
@@ -208,9 +208,9 @@ private:
 
 class DeleteIndexOperation : public IDBOperation {
 public:
-    static PassRefPtr<IDBOperation> create(IDBTransactionBackend* transaction, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
+    static Ref<IDBOperation> create(IDBTransactionBackend* transaction, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
     {
-        return adoptRef(new DeleteIndexOperation(transaction, objectStoreId, indexMetadata));
+        return adoptRef(*new DeleteIndexOperation(transaction, objectStoreId, indexMetadata));
     }
     virtual void perform(std::function<void()> successCallback) override final;
 
@@ -232,9 +232,9 @@ private:
 
 class DeleteIndexAbortOperation : public IDBSynchronousOperation {
 public:
-    static PassRefPtr<IDBSynchronousOperation> create(IDBTransactionBackend* transaction, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
+    static Ref<IDBSynchronousOperation> create(IDBTransactionBackend* transaction, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
     {
-        return adoptRef(new DeleteIndexAbortOperation(transaction, objectStoreId, indexMetadata));
+        return adoptRef(*new DeleteIndexAbortOperation(transaction, objectStoreId, indexMetadata));
     }
     virtual void perform() override final;
 private:
@@ -252,9 +252,9 @@ private:
 
 class GetOperation : public IDBOperation {
 public:
-    static PassRefPtr<IDBOperation> create(IDBTransactionBackend* transaction, const IDBDatabaseMetadata& metadata, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, IndexedDB::CursorType cursorType, PassRefPtr<IDBCallbacks> callbacks)
+    static Ref<IDBOperation> create(IDBTransactionBackend* transaction, const IDBDatabaseMetadata& metadata, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, IndexedDB::CursorType cursorType, PassRefPtr<IDBCallbacks> callbacks)
     {
-        return adoptRef(new GetOperation(transaction, metadata, objectStoreId, indexId, keyRange, cursorType, callbacks));
+        return adoptRef(*new GetOperation(transaction, metadata, objectStoreId, indexId, keyRange, cursorType, callbacks));
     }
     virtual void perform(std::function<void()> successCallback) override final;
 
@@ -292,9 +292,9 @@ private:
 
 class PutOperation : public IDBOperation {
 public:
-    static PassRefPtr<IDBOperation> create(IDBTransactionBackend* transaction, const IDBObjectStoreMetadata& objectStore, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey> key, IDBDatabaseBackend::PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
+    static Ref<IDBOperation> create(IDBTransactionBackend* transaction, const IDBObjectStoreMetadata& objectStore, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey> key, IDBDatabaseBackend::PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
     {
-        return adoptRef(new PutOperation(transaction, objectStore, value, key, putMode, callbacks, indexIds, indexKeys));
+        return adoptRef(*new PutOperation(transaction, objectStore, value, key, putMode, callbacks, indexIds, indexKeys));
     }
     virtual void perform(std::function<void()> successCallback) override final;
 
@@ -330,9 +330,9 @@ private:
 
 class SetIndexesReadyOperation : public IDBOperation {
 public:
-    static PassRefPtr<IDBOperation> create(IDBTransactionBackend* transaction, size_t indexCount)
+    static Ref<IDBOperation> create(IDBTransactionBackend* transaction, size_t indexCount)
     {
-        return adoptRef(new SetIndexesReadyOperation(transaction, indexCount));
+        return adoptRef(*new SetIndexesReadyOperation(transaction, indexCount));
     }
     virtual void perform(std::function<void()> successCallback) override final;
 private:
@@ -348,9 +348,9 @@ private:
 
 class OpenCursorOperation : public IDBOperation {
 public:
-    static PassRefPtr<IDBOperation> create(IDBTransactionBackend* transaction, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, IndexedDB::CursorDirection direction, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, PassRefPtr<IDBCallbacks> callbacks)
+    static Ref<IDBOperation> create(IDBTransactionBackend* transaction, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, IndexedDB::CursorDirection direction, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, PassRefPtr<IDBCallbacks> callbacks)
     {
-        return adoptRef(new OpenCursorOperation(transaction, objectStoreId, indexId, keyRange, direction, cursorType, taskType, callbacks));
+        return adoptRef(*new OpenCursorOperation(transaction, objectStoreId, indexId, keyRange, direction, cursorType, taskType, callbacks));
     }
     virtual void perform(std::function<void()> successCallback) override final;
 
@@ -388,9 +388,9 @@ private:
 
 class CountOperation : public IDBOperation {
 public:
-    static PassRefPtr<IDBOperation> create(IDBTransactionBackend* transaction, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
+    static Ref<IDBOperation> create(IDBTransactionBackend* transaction, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
     {
-        return adoptRef(new CountOperation(transaction, objectStoreId, indexId, keyRange, callbacks));
+        return adoptRef(*new CountOperation(transaction, objectStoreId, indexId, keyRange, callbacks));
     }
     virtual void perform(std::function<void()> successCallback) override final;
 
@@ -417,9 +417,9 @@ private:
 
 class DeleteRangeOperation : public IDBOperation {
 public:
-    static PassRefPtr<IDBOperation> create(IDBTransactionBackend* transaction, int64_t objectStoreId, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
+    static Ref<IDBOperation> create(IDBTransactionBackend* transaction, int64_t objectStoreId, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
     {
-        return adoptRef(new DeleteRangeOperation(transaction, objectStoreId, keyRange, callbacks));
+        return adoptRef(*new DeleteRangeOperation(transaction, objectStoreId, keyRange, callbacks));
     }
     virtual void perform(std::function<void()> successCallback) override final;
 
@@ -443,9 +443,9 @@ private:
 
 class ClearObjectStoreOperation : public IDBOperation {
 public:
-    static PassRefPtr<IDBOperation> create(IDBTransactionBackend* transaction, int64_t objectStoreId, PassRefPtr<IDBCallbacks> callbacks)
+    static Ref<IDBOperation> create(IDBTransactionBackend* transaction, int64_t objectStoreId, PassRefPtr<IDBCallbacks> callbacks)
     {
-        return adoptRef(new ClearObjectStoreOperation(transaction, objectStoreId, callbacks));
+        return adoptRef(*new ClearObjectStoreOperation(transaction, objectStoreId, callbacks));
     }
     virtual void perform(std::function<void()> successCallback) override final;
 

@@ -38,7 +38,7 @@ class IDBDatabase;
 
 class IDBDatabaseCallbacksImpl final : public IDBDatabaseCallbacks {
 public:
-    static PassRefPtr<IDBDatabaseCallbacksImpl> create();
+    static Ref<IDBDatabaseCallbacksImpl> create();
     virtual ~IDBDatabaseCallbacksImpl() override;
 
     // IDBDatabaseCallbacks

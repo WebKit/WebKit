@@ -48,24 +48,24 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBRequest> IDBRequest::create(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, IDBTransaction* transaction)
+Ref<IDBRequest> IDBRequest::create(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, IDBTransaction* transaction)
 {
-    RefPtr<IDBRequest> request(adoptRef(new IDBRequest(context, source, IDBDatabaseBackend::NormalTask, transaction)));
+    Ref<IDBRequest> request(adoptRef(*new IDBRequest(context, source, IDBDatabaseBackend::NormalTask, transaction)));
     request->suspendIfNeeded();
     // Requests associated with IDBFactory (open/deleteDatabase/getDatabaseNames) are not associated with transactions.
     if (transaction)
-        transaction->registerRequest(request.get());
-    return request.release();
+        transaction->registerRequest(request.ptr());
+    return request;
 }
 
-PassRefPtr<IDBRequest> IDBRequest::create(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, IDBDatabaseBackend::TaskType taskType, IDBTransaction* transaction)
+Ref<IDBRequest> IDBRequest::create(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, IDBDatabaseBackend::TaskType taskType, IDBTransaction* transaction)
 {
-    RefPtr<IDBRequest> request(adoptRef(new IDBRequest(context, source, taskType, transaction)));
+    Ref<IDBRequest> request(adoptRef(*new IDBRequest(context, source, taskType, transaction)));
     request->suspendIfNeeded();
     // Requests associated with IDBFactory (open/deleteDatabase/getDatabaseNames) are not associated with transactions.
     if (transaction)
-        transaction->registerRequest(request.get());
-    return request.release();
+        transaction->registerRequest(request.ptr());
+    return request;
 }
 
 IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, IDBDatabaseBackend::TaskType taskType, IDBTransaction* transaction)
@@ -202,15 +202,15 @@ void IDBRequest::setPendingCursor(PassRefPtr<IDBCursor> cursor)
     m_transaction->registerRequest(this);
 }
 
-PassRefPtr<IDBCursor> IDBRequest::getResultCursor()
+RefPtr<IDBCursor> IDBRequest::getResultCursor()
 {
     if (!m_result)
-        return 0;
+        return nullptr;
     if (m_result->type() == IDBAny::IDBCursorType)
         return m_result->idbCursor();
     if (m_result->type() == IDBAny::IDBCursorWithValueType)
         return m_result->idbCursorWithValue();
-    return 0;
+    return nullptr;
 }
 
 void IDBRequest::setResultCursor(PassRefPtr<IDBCursor> cursor, PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, const Deprecated::ScriptValue& value)

@@ -107,7 +107,7 @@ void DatabaseManager::setIsAvailable(bool available)
     m_databaseIsAvailable = available;
 }
 
-PassRefPtr<DatabaseContext> DatabaseManager::existingDatabaseContextFor(ScriptExecutionContext* context)
+RefPtr<DatabaseContext> DatabaseManager::existingDatabaseContextFor(ScriptExecutionContext* context)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -127,15 +127,15 @@ PassRefPtr<DatabaseContext> DatabaseManager::existingDatabaseContextFor(ScriptEx
         // We do this by ref'ing the reused databaseContext before returning it.
         databaseContext->ref();
     }
-    return databaseContext.release();
+    return databaseContext;
 }
 
-PassRefPtr<DatabaseContext> DatabaseManager::databaseContextFor(ScriptExecutionContext* context)
+RefPtr<DatabaseContext> DatabaseManager::databaseContextFor(ScriptExecutionContext* context)
 {
     RefPtr<DatabaseContext> databaseContext = existingDatabaseContextFor(context);
     if (!databaseContext)
-        databaseContext = adoptRef(new DatabaseContext(context));
-    return databaseContext.release();
+        databaseContext = adoptRef(*new DatabaseContext(context));
+    return databaseContext;
 }
 
 void DatabaseManager::registerDatabaseContext(DatabaseContext* databaseContext)
@@ -272,7 +272,7 @@ void DatabaseManager::removeProposedDatabase(ProposedDatabase* proposedDb)
     m_proposedDatabases.remove(proposedDb);
 }
 
-PassRefPtr<Database> DatabaseManager::openDatabase(ScriptExecutionContext* context,
+RefPtr<Database> DatabaseManager::openDatabase(ScriptExecutionContext* context,
     const String& name, const String& expectedVersion, const String& displayName,
     unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback,
     DatabaseError& error)
@@ -284,7 +284,7 @@ PassRefPtr<Database> DatabaseManager::openDatabase(ScriptExecutionContext* conte
     String errorMessage;
     RefPtr<DatabaseBackendBase> backend = openDatabaseBackend(context, name, expectedVersion, displayName, estimatedSize, setVersionInNewDatabase, error, errorMessage);
     if (!backend)
-        return 0;
+        return nullptr;
 
     RefPtr<Database> database = Database::create(context, backend);
 
@@ -302,7 +302,7 @@ PassRefPtr<Database> DatabaseManager::openDatabase(ScriptExecutionContext* conte
     }
 
     ASSERT(database);
-    return database.release();
+    return database;
 }
 
 bool DatabaseManager::hasOpenDatabases(ScriptExecutionContext* context)

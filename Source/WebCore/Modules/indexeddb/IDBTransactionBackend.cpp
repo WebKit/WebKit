@@ -41,13 +41,13 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBTransactionBackend> IDBTransactionBackend::create(IDBDatabaseBackend* databaseBackend, int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode)
+Ref<IDBTransactionBackend> IDBTransactionBackend::create(IDBDatabaseBackend* databaseBackend, int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode)
 {
     HashSet<int64_t> objectStoreHashSet;
     for (size_t i = 0; i < objectStoreIds.size(); ++i)
         objectStoreHashSet.add(objectStoreIds[i]);
 
-    return adoptRef(new IDBTransactionBackend(databaseBackend, id, callbacks, objectStoreHashSet, mode));
+    return adoptRef(*new IDBTransactionBackend(databaseBackend, id, callbacks, objectStoreHashSet, mode));
 }
 
 IDBTransactionBackend::IDBTransactionBackend(IDBDatabaseBackend* databaseBackend, int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode)

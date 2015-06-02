@@ -37,11 +37,11 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBOpenDBRequest> IDBOpenDBRequest::create(ScriptExecutionContext* context, PassRefPtr<IDBDatabaseCallbacks> callbacks, int64_t transactionId, uint64_t version, IndexedDB::VersionNullness versionNullness)
+Ref<IDBOpenDBRequest> IDBOpenDBRequest::create(ScriptExecutionContext* context, PassRefPtr<IDBDatabaseCallbacks> callbacks, int64_t transactionId, uint64_t version, IndexedDB::VersionNullness versionNullness)
 {
-    RefPtr<IDBOpenDBRequest> request(adoptRef(new IDBOpenDBRequest(context, callbacks, transactionId, version, versionNullness)));
+    Ref<IDBOpenDBRequest> request(adoptRef(*new IDBOpenDBRequest(context, callbacks, transactionId, version, versionNullness)));
     request->suspendIfNeeded();
-    return request.release();
+    return request;
 }
 
 IDBOpenDBRequest::IDBOpenDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBDatabaseCallbacks> callbacks, int64_t transactionId, uint64_t version, IndexedDB::VersionNullness versionNullness)

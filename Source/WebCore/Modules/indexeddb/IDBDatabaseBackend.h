@@ -59,7 +59,7 @@ typedef int ExceptionCode;
 
 class IDBDatabaseBackend : public RefCounted<IDBDatabaseBackend> {
 public:
-    WEBCORE_EXPORT static PassRefPtr<IDBDatabaseBackend> create(const String& name, const String& uniqueIdentifier, IDBFactoryBackendInterface*, IDBServerConnection&);
+    WEBCORE_EXPORT static Ref<IDBDatabaseBackend> create(const String& name, const String& uniqueIdentifier, IDBFactoryBackendInterface*, IDBServerConnection&);
     WEBCORE_EXPORT ~IDBDatabaseBackend();
 
     IDBServerConnection& serverConnection() { return m_serverConnection.get(); }

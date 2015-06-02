@@ -123,7 +123,7 @@ RefPtr<AudioContext> AudioContext::create(Document& document, ExceptionCode& ec)
 
     RefPtr<AudioContext> audioContext(adoptRef(new AudioContext(document)));
     audioContext->suspendIfNeeded();
-    return audioContext.release();
+    return audioContext;
 }
 
 // Constructor for rendering to the audio hardware.

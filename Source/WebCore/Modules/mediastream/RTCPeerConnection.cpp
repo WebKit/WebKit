@@ -110,7 +110,7 @@ static ExceptionCode processIceServer(const Dictionary& iceServer, RTCConfigurat
     return 0;
 }
 
-PassRefPtr<RTCConfiguration> RTCPeerConnection::parseConfiguration(const Dictionary& configuration, ExceptionCode& ec)
+RefPtr<RTCConfiguration> RTCPeerConnection::parseConfiguration(const Dictionary& configuration, ExceptionCode& ec)
 {
     if (configuration.isUndefinedOrNull())
         return nullptr;
@@ -152,10 +152,10 @@ PassRefPtr<RTCConfiguration> RTCPeerConnection::parseConfiguration(const Diction
             return nullptr;
     }
 
-    return rtcConfiguration.release();
+    return rtcConfiguration;
 }
 
-PassRefPtr<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext& context, const Dictionary& rtcConfiguration, ExceptionCode& ec)
+RefPtr<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext& context, const Dictionary& rtcConfiguration, ExceptionCode& ec)
 {
     RefPtr<RTCConfiguration> configuration = parseConfiguration(rtcConfiguration, ec);
     if (ec)

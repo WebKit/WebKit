@@ -40,7 +40,7 @@ class Dictionary;
 
 class RTCOfferAnswerOptions : public RefCounted<RTCOfferAnswerOptions> {
 public:
-    static PassRefPtr<RTCOfferAnswerOptions> create(const Dictionary&, ExceptionCode&);
+    static RefPtr<RTCOfferAnswerOptions> create(const Dictionary&, ExceptionCode&);
 
     const String& requestIdentity() const { return m_private->requestIdentity(); }
     RTCOfferAnswerOptionsPrivate* privateOfferAnswerOptions() const { return m_private.get(); }
@@ -56,7 +56,7 @@ protected:
 
 class RTCOfferOptions : public RTCOfferAnswerOptions {
 public:
-    static PassRefPtr<RTCOfferOptions> create(const Dictionary&, ExceptionCode&);
+    static RefPtr<RTCOfferOptions> create(const Dictionary&, ExceptionCode&);
 
     int64_t offerToReceiveVideo() const { return privateOfferOptions()->offerToReceiveVideo(); }
     int64_t offerToReceiveAudio() const { return privateOfferOptions()->offerToReceiveAudio(); }

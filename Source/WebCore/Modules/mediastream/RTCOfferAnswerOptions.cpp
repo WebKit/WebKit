@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-PassRefPtr<RTCOfferAnswerOptions> RTCOfferAnswerOptions::create(const Dictionary& options, ExceptionCode& ec)
+RefPtr<RTCOfferAnswerOptions> RTCOfferAnswerOptions::create(const Dictionary& options, ExceptionCode& ec)
 {
     RefPtr<RTCOfferAnswerOptions> offerAnswerOptions = adoptRef(new RTCOfferAnswerOptions());
     String requestIdentity;
@@ -43,7 +43,7 @@ PassRefPtr<RTCOfferAnswerOptions> RTCOfferAnswerOptions::create(const Dictionary
         return nullptr;
     }
 
-    return offerAnswerOptions.release();
+    return offerAnswerOptions;
 }
 
 bool RTCOfferAnswerOptions::initialize(const Dictionary& options)
@@ -59,7 +59,7 @@ bool RTCOfferAnswerOptions::initialize(const Dictionary& options)
     return true;
 }
 
-PassRefPtr<RTCOfferOptions> RTCOfferOptions::create(const Dictionary& options, ExceptionCode& ec)
+RefPtr<RTCOfferOptions> RTCOfferOptions::create(const Dictionary& options, ExceptionCode& ec)
 {
     RefPtr<RTCOfferOptions> offerOptions = adoptRef(new RTCOfferOptions());
     if (!offerOptions->initialize(options)) {
@@ -69,7 +69,7 @@ PassRefPtr<RTCOfferOptions> RTCOfferOptions::create(const Dictionary& options, E
         return nullptr;
     }
 
-    return offerOptions.release();
+    return offerOptions;
 }
 
 bool RTCOfferOptions::initialize(const Dictionary& options)

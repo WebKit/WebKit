@@ -43,12 +43,12 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBDatabaseBackend> IDBDatabaseBackend::create(const String& name, const String& uniqueIdentifier, IDBFactoryBackendInterface* factory, IDBServerConnection& serverConnection)
+Ref<IDBDatabaseBackend> IDBDatabaseBackend::create(const String& name, const String& uniqueIdentifier, IDBFactoryBackendInterface* factory, IDBServerConnection& serverConnection)
 {
-    RefPtr<IDBDatabaseBackend> backend = adoptRef(new IDBDatabaseBackend(name, uniqueIdentifier, factory, serverConnection));
+    Ref<IDBDatabaseBackend> backend = adoptRef(*new IDBDatabaseBackend(name, uniqueIdentifier, factory, serverConnection));
     backend->openInternalAsync();
     
-    return backend.release();
+    return backend;
 }
 
 IDBDatabaseBackend::IDBDatabaseBackend(const String& name, const String& uniqueIdentifier, IDBFactoryBackendInterface* factory, IDBServerConnection& serverConnection)

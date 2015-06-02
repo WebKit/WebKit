@@ -43,7 +43,7 @@ class IDBDatabaseCallbacks;
 
 class IDBTransactionBackend : public RefCounted<IDBTransactionBackend> {
 public:
-    static PassRefPtr<IDBTransactionBackend> create(IDBDatabaseBackend*, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode);
+    static Ref<IDBTransactionBackend> create(IDBDatabaseBackend*, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode);
     ~IDBTransactionBackend();
 
     void commit();
