@@ -1,3 +1,14 @@
+2015-06-02  Mark Lam  <mark.lam@apple.com>
+
+        build-jsc's --cloop option is broken.
+        https://bugs.webkit.org/show_bug.cgi?id=145516
+
+        Reviewed by Darin Adler.
+
+        * Scripts/build-jsc:
+        - Make sure to disable the JIT when --cloop is specified.
+          Did analogous fix for --ftljit.
+
 2015-06-02  Daniel Bates  <dabates@apple.com>
 
         Update ATS keys used in MiniBrowser and WebKitTestRunnerApp
