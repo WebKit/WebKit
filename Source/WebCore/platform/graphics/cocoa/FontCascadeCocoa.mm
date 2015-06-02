@@ -134,30 +134,8 @@ static void showLetterpressedGlyphsWithAdvances(const FloatPoint& point, const F
 class RenderingStyleSaver {
 public:
 #if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
-
     RenderingStyleSaver(CTFontRef, CGContextRef) { }
-
-#elif !defined(CORETEXT_HAS_CTFontSetRenderingStyle) || CORETEXT_HAS_CTFontSetRenderingStyle != 1
-
-    // This is very slow, but it's just a holdover until everyone migrates to CTFontSetRenderingStyle()
-    // FIXME: Delete this implementation when everyone has migrated off
-    RenderingStyleSaver(CTFontRef font, CGContextRef context)
-        : m_context(context)
-    {
-        CGContextSaveGState(context);
-        CTFontSetRenderingParameters(font, context);
-    }
-
-    ~RenderingStyleSaver()
-    {
-        CGContextRestoreGState(m_context);
-    }
-
-private:
-    CGContextRef m_context;
-
 #else
-
     RenderingStyleSaver(CTFontRef font, CGContextRef context)
         : m_context(context)
     {
@@ -177,7 +155,6 @@ private:
     CGContextRef m_context;
     CGFontRenderingStyle m_originalStyle;
     CGSize m_originalDilation;
-
 #endif
 };
 
