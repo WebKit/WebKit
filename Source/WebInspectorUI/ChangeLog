@@ -1,3 +1,15 @@
+2015-06-01  Jono Wells  <jonowells@apple.com>
+
+        Web Inspector: Type token text descenders touch bottom of container
+        https://bugs.webkit.org/show_bug.cgi?id=145544
+
+        Reviewed by Timothy Hatcher.
+
+        Move 1px padding from top to bottom of token.
+
+        * UserInterface/Views/TypeTokenView.css:
+        (.type-token):
+
 2015-06-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Better handle keyboard events in the quick console prompt
