@@ -2564,7 +2564,7 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderLayerModelObje
     if (!(m_compositingTriggers & ChromeClient::AnimationTrigger))
         return false;
 
-    const AnimationBase::RunningState activeAnimationState = AnimationBase::Running | AnimationBase::Paused | AnimationBase::FillingFowards;
+    const AnimationBase::RunningState activeAnimationState = AnimationBase::Running | AnimationBase::Paused;
     AnimationController& animController = renderer.animation();
     return (animController.isRunningAnimationOnRenderer(renderer, CSSPropertyOpacity, activeAnimationState)
             && (inCompositingMode() || (m_compositingTriggers & ChromeClient::AnimatedOpacityTrigger)))

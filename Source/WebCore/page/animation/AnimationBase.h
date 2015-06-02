@@ -163,7 +163,6 @@ public:
         Delaying = 1 << 0,
         Paused = 1 << 1,
         Running = 1 << 2,
-        FillingFowards = 1 << 3
     };
     typedef unsigned RunningState;
     bool isAnimatingProperty(CSSPropertyID property, bool acceleratedOnly, RunningState runningState) const
@@ -181,9 +180,6 @@ public:
             return true;
 
         if ((runningState & Running) && !inPausedState() && (m_animationState >= AnimationState::StartWaitStyleAvailable && m_animationState <= AnimationState::Done))
-            return true;
-
-        if ((runningState & FillingFowards) && m_animationState == AnimationState::FillingForwards)
             return true;
 
         return false;

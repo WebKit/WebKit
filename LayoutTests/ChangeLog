@@ -1,3 +1,25 @@
+2015-06-01  Andreas Kling  <akling@apple.com>
+
+        CSS animations in filling-forwards state shouldn't force compositing.
+        <https://webkit.org/b/145389>
+        <rdar://problem/17923642>
+
+        Reviewed by Simon Fraser.
+
+        Remove tests that were only here to check that animations in fill-forwards
+        state would participate in overlap testing.
+
+        * compositing/animation/layer-for-filling-animation-expected.txt: Update expected result
+        here to reflect that we no longer expect filling-forwards animations to get composited.
+
+        * compositing/animation/filling-animation-overlap-at-end-expected.txt: Removed.
+        * compositing/animation/filling-animation-overlap-at-end.html: Removed.
+        * compositing/animation/filling-animation-overlap-expected.txt: Removed.
+        * compositing/animation/filling-animation-overlap.html: Removed.
+        * platform/ios-sim-deprecated/compositing/animation/filling-animation-overlap-at-end-expected.txt: Removed.
+        * platform/ios-sim-deprecated/compositing/animation/filling-animation-overlap-expected.txt: Removed.
+        * platform/ios-sim-deprecated/compositing/animation/layer-for-filling-animation-expected.txt: Removed.
+
 2015-06-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Test gardening after r185087.
