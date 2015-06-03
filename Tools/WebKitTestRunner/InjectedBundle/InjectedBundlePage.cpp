@@ -1004,6 +1004,17 @@ void InjectedBundlePage::willPerformClientRedirectForFrame(WKBundlePageRef, WKBu
 
 void InjectedBundlePage::didSameDocumentNavigationForFrame(WKBundleFrameRef frame, WKSameDocumentNavigationType type)
 {
+    auto& injectedBundle = InjectedBundle::singleton();
+    if (!injectedBundle.isTestRunning())
+        return;
+
+    if (!injectedBundle.testRunner()->shouldDumpFrameLoadCallbacks())
+        return;
+
+    if (type != kWKSameDocumentNavigationAnchorNavigation)
+        return;
+
+    dumpLoadEvent(frame, "didChangeLocationWithinPageForFrame");
 }
 
 void InjectedBundlePage::didFinishDocumentLoadForFrame(WKBundleFrameRef frame)

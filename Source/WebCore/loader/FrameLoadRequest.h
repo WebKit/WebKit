@@ -63,6 +63,21 @@ public:
     {
     }
 
+    FrameLoadRequest(SecurityOrigin* requester, const ResourceRequest& resourceRequest, const String& frameName, LockHistory lockHistory, LockBackForwardList lockBackForwardList, ShouldSendReferrer shouldSendReferrer, AllowNavigationToInvalidURL allowNavigationToInvalidURL, NewFrameOpenerPolicy newFrameOpenerPolicy, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
+        : m_requester(requester)
+        , m_resourceRequest(resourceRequest)
+        , m_frameName(frameName)
+        , m_shouldCheckNewWindowPolicy(false)
+        , m_lockHistory(lockHistory)
+        , m_lockBackForwardList(lockBackForwardList)
+        , m_shouldSendReferrer(shouldSendReferrer)
+        , m_allowNavigationToInvalidURL(allowNavigationToInvalidURL)
+        , m_newFrameOpenerPolicy(newFrameOpenerPolicy)
+        , m_shouldReplaceDocumentIfJavaScriptURL(ReplaceDocumentIfJavaScriptURL)
+        , m_shouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicy)
+    {
+    }
+
     FrameLoadRequest(SecurityOrigin* requester, const ResourceRequest& resourceRequest, const String& frameName, LockHistory lockHistory, LockBackForwardList lockBackForwardList, ShouldSendReferrer shouldSendReferrer, AllowNavigationToInvalidURL allowNavigationToInvalidURL, NewFrameOpenerPolicy newFrameOpenerPolicy, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
         : m_requester(requester)
         , m_resourceRequest(resourceRequest)

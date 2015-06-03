@@ -223,7 +223,7 @@ void InspectorFrontendClientLocal::openInNewTab(const String& url)
 
     // FIXME: Why does one use mainFrame and the other frame?
     ResourceRequest resourceRequest(frame->document()->completeURL(url));
-    FrameLoadRequest frameRequest(mainFrame.document()->securityOrigin(), resourceRequest, emptyString(), LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, ReplaceDocumentIfJavaScriptURL, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
+    FrameLoadRequest frameRequest(mainFrame.document()->securityOrigin(), resourceRequest, "_self", LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, ReplaceDocumentIfJavaScriptURL, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
     frame->loader().changeLocation(frameRequest);
 }
 

@@ -1,3 +1,24 @@
+2015-06-03  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION (r183498): Certain types of frame loads in iframes with <base target="_blank"> can open urls in new window/tabs
+        https://bugs.webkit.org/show_bug.cgi?id=145580
+
+        Reviewed by Mark Lam.
+
+        * fast/loader/fragment-navigation-base-blank-expected.txt: Added.
+        * fast/loader/fragment-navigation-base-blank.html: Added.
+        * fast/loader/iframe-meta-refresh-base-blank-expected.txt: Added.
+        * fast/loader/iframe-meta-refresh-base-blank.html: Added.
+        * fast/loader/iframe-set-location-base-blank-expected.txt: Added.
+        * fast/loader/iframe-set-location-base-blank.html: Added.
+        * fast/loader/refresh-iframe-base-blank-expected.txt: Added.
+        * fast/loader/refresh-iframe-base-blank.html: Added.
+        * fast/loader/resources/fragment-navigation-base-blank.html: Added.
+        * fast/loader/resources/iframe-meta-refresh-base-blank.html: Added.
+        * fast/loader/resources/iframe-set-location-base-blank.html: Added.
+        * fast/loader/resources/notify-done-with-window-count.html: Added.
+        * fast/loader/resources/refresh-iframe-base-blank-frame.html: Added.
+
 2015-06-03  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Composited layer with subpixel gap does not get painted properly when its position changes.

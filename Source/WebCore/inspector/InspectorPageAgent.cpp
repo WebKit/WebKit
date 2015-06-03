@@ -419,7 +419,7 @@ void InspectorPageAgent::navigate(ErrorString&, const String& url)
     Frame& frame = m_page->mainFrame();
 
     ResourceRequest resourceRequest(frame.document()->completeURL(url));
-    FrameLoadRequest frameRequest(frame.document()->securityOrigin(), resourceRequest, emptyString(), LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::No, NewFrameOpenerPolicy::Allow, ShouldReplaceDocumentIfJavaScriptURL::ReplaceDocumentIfJavaScriptURL, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
+    FrameLoadRequest frameRequest(frame.document()->securityOrigin(), resourceRequest, "_self", LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::No, NewFrameOpenerPolicy::Allow, ShouldReplaceDocumentIfJavaScriptURL::ReplaceDocumentIfJavaScriptURL, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
     frame.loader().changeLocation(frameRequest);
 }
 

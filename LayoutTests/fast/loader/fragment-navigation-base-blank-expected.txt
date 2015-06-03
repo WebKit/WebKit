@@ -1,0 +1,11 @@
+frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
+frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+frame "<!--framePath //<!--frame0-->-->" - didChangeLocationWithinPageForFrame
+frame "<!--framePath //<!--frame0-->-->" - didHandleOnloadEventsForFrame
+frame "<!--framePath //<!--frame0-->-->" - didFinishLoadForFrame
+main frame - didFinishLoadForFrame
+ALERT: Test finished due to hash change with a window count of 1
+

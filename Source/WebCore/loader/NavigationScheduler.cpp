@@ -116,7 +116,7 @@ protected:
         UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
 
         ResourceRequest resourceRequest(m_url, m_referrer, UseProtocolCachePolicy);
-        FrameLoadRequest frameRequest(m_securityOrigin.get(), resourceRequest, lockHistory(), lockBackForwardList(), MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, m_shouldOpenExternalURLsPolicy);
+        FrameLoadRequest frameRequest(m_securityOrigin.get(), resourceRequest, "_self", lockHistory(), lockBackForwardList(), MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, m_shouldOpenExternalURLsPolicy);
 
         frame.loader().changeLocation(frameRequest);
     }
@@ -174,7 +174,7 @@ public:
         UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
         bool refresh = equalIgnoringFragmentIdentifier(frame.document()->url(), url());
         ResourceRequest resourceRequest(url(), referrer(), refresh ? ReloadIgnoringCacheData : UseProtocolCachePolicy);
-        FrameLoadRequest frameRequest(securityOrigin(), resourceRequest, lockHistory(), lockBackForwardList(), MaybeSendReferrer, AllowNavigationToInvalidURL::No, NewFrameOpenerPolicy::Allow, m_shouldOpenExternalURLsPolicy);
+        FrameLoadRequest frameRequest(securityOrigin(), resourceRequest, "_self", lockHistory(), lockBackForwardList(), MaybeSendReferrer, AllowNavigationToInvalidURL::No, NewFrameOpenerPolicy::Allow, m_shouldOpenExternalURLsPolicy);
 
         frame.loader().changeLocation(frameRequest);
     }
@@ -190,7 +190,7 @@ public:
         UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
 
         ResourceRequest resourceRequest(url(), referrer(), UseProtocolCachePolicy);
-        FrameLoadRequest frameRequest(securityOrigin(), resourceRequest, lockHistory(), lockBackForwardList(), MaybeSendReferrer, AllowNavigationToInvalidURL::No, NewFrameOpenerPolicy::Allow, m_shouldOpenExternalURLsPolicy);
+        FrameLoadRequest frameRequest(securityOrigin(), resourceRequest, "_self", lockHistory(), lockBackForwardList(), MaybeSendReferrer, AllowNavigationToInvalidURL::No, NewFrameOpenerPolicy::Allow, m_shouldOpenExternalURLsPolicy);
         frame.loader().changeLocation(frameRequest);
     }
 };
@@ -207,7 +207,7 @@ public:
         UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
 
         ResourceRequest resourceRequest(url(), referrer(), ReloadIgnoringCacheData);
-        FrameLoadRequest frameRequest(securityOrigin(), resourceRequest, lockHistory(), lockBackForwardList(), MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, m_shouldOpenExternalURLsPolicy);
+        FrameLoadRequest frameRequest(securityOrigin(), resourceRequest, "_self", lockHistory(), lockBackForwardList(), MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, m_shouldOpenExternalURLsPolicy);
         frame.loader().changeLocation(frameRequest);
     }
 };
@@ -411,7 +411,7 @@ void NavigationScheduler::scheduleLocationChange(Document* initiatingDocument, S
         ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy = ShouldOpenExternalURLsPolicy::ShouldNotAllow;
         if (initiatingDocument)
             shouldOpenExternalURLsPolicy = initiatingDocument->shouldOpenExternalURLsPolicyToPropagate();
-        FrameLoadRequest frameRequest(securityOrigin, resourceRequest, emptyString(), lockHistory, lockBackForwardList, MaybeSendReferrer, AllowNavigationToInvalidURL::No, NewFrameOpenerPolicy::Allow, ReplaceDocumentIfJavaScriptURL, shouldOpenExternalURLsPolicy);
+        FrameLoadRequest frameRequest(securityOrigin, resourceRequest, "_self", lockHistory, lockBackForwardList, MaybeSendReferrer, AllowNavigationToInvalidURL::No, NewFrameOpenerPolicy::Allow, ReplaceDocumentIfJavaScriptURL, shouldOpenExternalURLsPolicy);
         loader.changeLocation(frameRequest);
         return;
     }

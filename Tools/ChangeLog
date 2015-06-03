@@ -1,3 +1,13 @@
+2015-06-03  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION (r183498): Certain types of frame loads in iframes with <base target="_blank"> can open urls in new window/tabs
+        https://bugs.webkit.org/show_bug.cgi?id=145580
+
+        Reviewed by Mark Lam.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didSameDocumentNavigationForFrame): Implement the dump for "didChangeLocationWithinPageForFrame"
+
 2015-06-03  Alexey Proskuryakov  <ap@apple.com>
 
         Attempt to fix CSSPropertyParserTest.GridTrackLimits API test after http://trac.webkit.org/r185147

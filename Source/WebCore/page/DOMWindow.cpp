@@ -2114,7 +2114,7 @@ RefPtr<Frame> DOMWindow::createWindow(const String& urlString, const AtomicStrin
 
     if (created) {
         ResourceRequest resourceRequest(completedURL, referrer, UseProtocolCachePolicy);
-        FrameLoadRequest frameRequest(activeWindow.document()->securityOrigin(), resourceRequest, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, activeDocument->shouldOpenExternalURLsPolicyToPropagate());
+        FrameLoadRequest frameRequest(activeWindow.document()->securityOrigin(), resourceRequest, "_self", LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, activeDocument->shouldOpenExternalURLsPolicyToPropagate());
         newFrame->loader().changeLocation(frameRequest);
     } else if (!urlString.isEmpty()) {
         LockHistory lockHistory = ScriptController::processingUserGesture() ? LockHistory::No : LockHistory::Yes;
