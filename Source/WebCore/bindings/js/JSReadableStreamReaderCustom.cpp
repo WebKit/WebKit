@@ -66,8 +66,10 @@ JSValue JSReadableStreamReader::read(ExecState* exec)
 
 JSValue JSReadableStreamReader::closed(ExecState* exec) const
 {
-    if (!m_closedPromiseDeferred)
-        const_cast<JSReadableStreamReader*>(this)->m_closedPromiseDeferred.set(exec->vm(), JSPromiseDeferred::create(exec, globalObject()));
+    if (m_closedPromiseDeferred)
+        return m_closedPromiseDeferred->promise();
+
+    const_cast<JSReadableStreamReader*>(this)->m_closedPromiseDeferred.set(exec->vm(), JSPromiseDeferred::create(exec, globalObject()));
     DeferredWrapper wrapper(exec, globalObject(), m_closedPromiseDeferred.get());
 
     auto successCallback = [wrapper]() mutable {
