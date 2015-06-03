@@ -1,3 +1,23 @@
+2015-06-03  Michael Saboff  <msaboff@apple.com>
+
+        Improve test coverage for changes made in 145527
+        https://bugs.webkit.org/show_bug.cgi?id=145578
+
+        Reviewed by Geoffrey Garen.
+
+        Added more complexity to poly-setter-combo.js stress test to create more turmoil in the
+        polymorphic get-by-id / put-by-id with getters and setters to exercise the code change in
+        https://bugs.webkit.org/show_bug.cgi?id=145527.  By changing the objects that the main test
+        function sees, we are able to test those paths.  Verified with temporary logging code.
+
+        * tests/stress/poly-setter-combo.js:
+        (Cons2):
+        (Cons3):
+        (Cons4):
+        (foo):
+        (test):
+        (runTestWithConstructors):
+
 2015-06-02  Mark Lam  <mark.lam@apple.com>
 
         Gardening: fix broken CLoop build.
