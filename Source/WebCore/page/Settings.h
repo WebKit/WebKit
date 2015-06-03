@@ -270,6 +270,9 @@ public:
     const String& mediaKeysStorageDirectory() const { return m_mediaKeysStorageDirectory; }
 #endif
 
+    WEBCORE_EXPORT void setForcePendingWebGLPolicy(bool);
+    bool isForcePendingWebGLPolicy() const { return m_forcePendingWebGLPolicy; }
+
 private:
     explicit Settings(Page*);
 
@@ -322,6 +325,8 @@ private:
 #endif
     bool m_hiddenPageCSSAnimationSuspensionEnabled : 1;
     bool m_fontFallbackPrefersPictographs : 1;
+
+    bool m_forcePendingWebGLPolicy : 1;
 
 #if USE(AVFOUNDATION)
     WEBCORE_EXPORT static bool gAVFoundationEnabled;

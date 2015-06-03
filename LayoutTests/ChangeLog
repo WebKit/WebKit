@@ -1,3 +1,16 @@
+2015-06-03  Dean Jackson  <dino@apple.com>
+
+        Crash in GraphicsContext3D::getInternalFramebufferSize
+        https://bugs.webkit.org/show_bug.cgi?id=145479
+        <rdar://problem/16461048>
+
+        Reviewed by Eric Carlson.
+
+        Attemps to use a WebGL context while it is in the pending state.
+
+        * fast/canvas/webgl/useWhilePending-expected.txt: Added.
+        * fast/canvas/webgl/useWhilePending.html: Added.
+
 2015-06-03  Daniel Bates  <dabates@apple.com>
 
         AutoFill button should not be shown in read-only or disabled field
