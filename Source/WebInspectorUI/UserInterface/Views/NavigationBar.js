@@ -295,7 +295,7 @@ WebInspector.NavigationBar.prototype = {
         this._mouseMovedEventListener = this._mouseMoved.bind(this);
         this._mouseUpEventListener = this._mouseUp.bind(this);
 
-        // Register these listeners on the document so we can track the mouse if it leaves the resizer.
+        // Register these listeners on the document so we can track the mouse if it leaves the navigation bar.
         document.addEventListener("mousemove", this._mouseMovedEventListener, false);
         document.addEventListener("mouseup", this._mouseUpEventListener, false);
 
@@ -314,15 +314,15 @@ WebInspector.NavigationBar.prototype = {
         event.stopPropagation();
 
         var itemElement = event.target.enclosingNodeOrSelfWithClass(WebInspector.RadioButtonNavigationItem.StyleClassName);
-        if (!itemElement || !itemElement.navigationItem) {
+        if (!itemElement || !itemElement.navigationItem || !this._element.contains(itemElement)) {
             // Find the element that is at the X position of the mouse, even when the mouse is no longer
             // vertically in the navigation bar.
-            var element = document.elementFromPoint(event.pageX, this._element.totalOffsetTop);
+            var element = document.elementFromPoint(event.pageX, this._element.totalOffsetTop + (this._element.offsetHeight / 2));
             if (!element)
                 return;
 
             itemElement = element.enclosingNodeOrSelfWithClass(WebInspector.RadioButtonNavigationItem.StyleClassName);
-            if (!itemElement || !itemElement.navigationItem)
+            if (!itemElement || !itemElement.navigationItem || !this._element.contains(itemElement))
                 return;
         }
 

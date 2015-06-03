@@ -1,5 +1,20 @@
 2015-06-03  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Uncaught exception starting a NavigationBar drag and mousing over a different NavigationBar
+        https://bugs.webkit.org/show_bug.cgi?id=145589
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/NavigationBar.js:
+        (WebInspector.NavigationBar.prototype._mouseDown):
+        (WebInspector.NavigationBar.prototype._mouseUp):
+        When mouse dragging for navigation bars, only match against navigation
+        bar items inside this navigation bar. Also, fix horizontal detection
+        of navigation bar items by scanning in the middle of the navigation
+        bar instead of the top, which missed the items.
+
+2015-06-03  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Debugger Popover for Node object should have go-to-arrow to show the node in DOM tree
         https://bugs.webkit.org/show_bug.cgi?id=145594
 
