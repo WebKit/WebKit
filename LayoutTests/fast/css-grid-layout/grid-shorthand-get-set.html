@@ -157,7 +157,7 @@
     debug("");
     debug("Test getting and setting 'grid' shorthand through JS");
     testGridDefinitionsSetJSValues("10px / 20px", "10px", "20px", "none", "row", "auto", "auto", "10px", "20px", "none", "initial", "initial", "initial");
-    testGridDefinitionsSetJSValues("10px / (line) 'a' 20px", "10px", "(line) 20px", "\"a\"", "row", "auto", "auto", "10px", "(line) 20px", "\"a\"", "initial", "initial", "initial");
+    testGridDefinitionsSetJSValues("10px / [line] 'a' 20px", "10px", "[line] 20px", "\"a\"", "row", "auto", "auto", "10px", "[line] 20px", "\"a\"", "initial", "initial", "initial");
     testGridDefinitionsSetJSValues("row dense 20px", "none", "none", "none", "row dense", "20px", "20px", "initial", "initial", "initial", "row dense", "20px", "20px");
     testGridDefinitionsSetJSValues("column 20px / 10px", "none", "none", "none", "column", "20px", "10px", "initial", "initial", "initial", "column", "20px", "10px");
 

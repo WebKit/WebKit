@@ -419,6 +419,8 @@ closing_brace: '}' | %prec LOWEST_PREC TOKEN_EOF ;
 
 closing_parenthesis: ')' | %prec LOWEST_PREC TOKEN_EOF ;
 
+closing_bracket: ']' | %prec LOWEST_PREC TOKEN_EOF;
+
 charset:
   CHARSET_SYM maybe_space STRING maybe_space ';' {
      if (parser->m_styleSheet)
@@ -1585,13 +1587,13 @@ ident_list:
     ;
 
 track_names_list:
-    '(' maybe_space closing_parenthesis {
+    '[' maybe_space closing_bracket {
         $$.setFromValueList(std::make_unique<CSSParserValueList>());
     }
-    | '(' maybe_space ident_list closing_parenthesis {
+    | '[' maybe_space ident_list closing_bracket {
         $$.setFromValueList(std::unique_ptr<CSSParserValueList>($3));
     }
-    | '(' maybe_space expr_recovery closing_parenthesis {
+    | '[' maybe_space expr_recovery closing_bracket {
         $$.id = CSSValueInvalid;
         $$.unit = 0;
         YYERROR;
@@ -1864,7 +1866,7 @@ invalid_rule: error invalid_block ;
 
 invalid_block: '{' error_recovery closing_brace { parser->invalidBlockHit(); } ;
 
-invalid_square_brackets_block: '[' error_recovery ']' | '[' error_recovery TOKEN_EOF ;
+invalid_square_brackets_block: '[' error_recovery closing_bracket ;
 
 invalid_parentheses_block: opening_parenthesis error_recovery closing_parenthesis;
 

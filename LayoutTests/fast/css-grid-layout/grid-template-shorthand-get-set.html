@@ -22,19 +22,19 @@
     -webkit-grid-template: 10px / "a" 15px;
 }
 #gridTemplateComplexFormWithLineNames {
-    -webkit-grid-template: 10px / (head) "a" 15px (tail);
+    -webkit-grid-template: 10px / [head] "a" 15px [tail];
 }
 #gridTemplateComplexFormWithLineNamesMultipleColumns {
-    -webkit-grid-template: 10px / (head) "a b" 15px (tail)
+    -webkit-grid-template: 10px / [head] "a b" 15px [tail]
 }
 #gridTemplateComplexFormWithLineNamesMultipleRows {
-    -webkit-grid-template: 10px / (head1) "a" 15px (tail1)
-                          (head2) "b" 20px (tail2);
+    -webkit-grid-template: 10px / [head1] "a" 15px [tail1]
+                          [head2] "b" 20px [tail2];
 }
 #gridTemplateComplexFormWithLineNamesMultipleRowsAndColumns {
-    -webkit-grid-template: (first) 10px repeat(2, (nav nav2) 15px) /       "a b c" 100px (nav)
-                                                            (nav2) "d e f" 25px  (nav)
-                                                            (nav2) "g h i" 25px  (last);
+    -webkit-grid-template: [first] 10px repeat(2, [nav nav2] 15px) /       "a b c" 100px [nav]
+                                                            [nav2] "d e f" 25px  [nav]
+                                                            [nav2] "g h i" 25px  [last];
 }
 #gridTemplateComplexFormWithAuto {
     -webkit-grid-template: 10px / "a";
@@ -43,7 +43,7 @@
     -webkit-grid-template: "a";
 }
 #gridTemplateNoColumnsRowWithEmptyTrailingLineNames {
-    -webkit-grid-template: (first) "a" auto ();
+    -webkit-grid-template: [first] "a" auto [];
 }
 
 /* Bad values. */
@@ -61,13 +61,13 @@
     -webkit-grid-template: / 10px;
 }
 #gridTemplateSimpleFormNoColumnSize {
-    -webkit-grid-template: (line) / 10px;
+    -webkit-grid-template: [line] / 10px;
 }
 #gridTemplateSimpleFormWithFitContent {
     -webkit-grid-template: -webkit-fit-content / 10px;
 }
 #gridTemplateSimpleFormWithWrongRepeat {
-    -webkit-grid-template: repeat(2, 50% (title) a) / 10px;
+    -webkit-grid-template: repeat(2, 50% [title] a) / 10px;
 }
 #gridTemplateSimpleFormWithMisplacedNone1 {
     -webkit-grid-template: 10px / none 20px;
@@ -82,37 +82,37 @@
     -webkit-grid-template: 10px none / 20px;
 }
 #gridTemplateComplexFormWithRepeat {
-    -webkit-grid-template: 10px / "a" repeat(2, 50% (title));
+    -webkit-grid-template: 10px / "a" repeat(2, 50% [title]);
 }
 #gridTemplateComplexFormWithWrongRepeat {
-    -webkit-grid-template: repeat(2, 50% (title) a) / "a";
+    -webkit-grid-template: repeat(2, 50% [title] a) / "a";
 }
 #griTemplateComplexFormdWithFitAvailable {
     -webkit-grid-template: -webkit-fit-available / "a";
 }
 #gridTemplateComplexFormNoColumnSize {
-    -webkit-grid-template: (line) / "a";
+    -webkit-grid-template: [line] / "a";
 }
 #gridTemplateComplexFormMisplacedRowsSize1 {
     -webkit-grid-template: 25px / 10px "a";
 }
 #gridTemplateComplexFormMisplacedRowsSize2 {
-    -webkit-grid-template: 25px / "a" (name) 10px;
+    -webkit-grid-template: 25px / "a" [name] 10px;
 }
 #gridTemplateComplexFormColumnsNotParsing1 {
-    -webkit-grid-template: a / "a" (name) 10px;
+    -webkit-grid-template: a / "a" [name] 10px;
 }
 #gridTemplateComplexFormColumnsNotParsing2 {
-    -webkit-grid-template: "B" / "a" (name) 10px;
+    -webkit-grid-template: "B" / "a" [name] 10px;
 }
 #gridTemplateComplexFormWithNoneColumns {
-    -webkit-grid-template: none / "a" (name) 10px;
+    -webkit-grid-template: none / "a" [name] 10px;
 }
 #gridTemplateNoColumnsRowWithTwoEmptyTrailingLineNames {
-    -webkit-grid-template: (first) "a" auto () ();
+    -webkit-grid-template: [first] "a" auto [] [];
 }
 #gridTemplateNoColumnsRowWithEmptyTrailingLineNamesAndNonEmptyLeadingLineNames {
-    -webkit-grid-template: (first) "a" auto () (tail);
+    -webkit-grid-template: [first] "a" auto [] [tail];
 }
 
 </style>
@@ -166,13 +166,13 @@
     testGridDefinitionsValues(document.getElementById("gridTemplateSimpleFormWithNoneRows"), "10px", "none", "none");
     testGridDefinitionsValues(document.getElementById("gridTemplateSimpleFormWithNone"), "none", "none", "none");
     testGridDefinitionsValues(document.getElementById("gridTemplateComplexForm"), "10px", "15px", '"a"');
-    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithLineNames"), "10px", "(head) 15px (tail)", '"a"');
-    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithLineNamesMultipleColumns"), "10px", "(head) 15px (tail)", '"a b"');
-    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithLineNamesMultipleRows"), "10px", "(head1) 15px (tail1 head2) 20px (tail2)", '"a" "b"');
-    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithLineNamesMultipleRowsAndColumns"), "(first) 10px (nav nav2) 15px (nav nav2) 15px", "100px (nav nav2) 25px (nav nav2) 25px (last)", '"a b c" "d e f" "g h i"');
+    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithLineNames"), "10px", "[head] 15px [tail]", '"a"');
+    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithLineNamesMultipleColumns"), "10px", "[head] 15px [tail]", '"a b"');
+    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithLineNamesMultipleRows"), "10px", "[head1] 15px [tail1 head2] 20px [tail2]", '"a" "b"');
+    testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithLineNamesMultipleRowsAndColumns"), "[first] 10px [nav nav2] 15px [nav nav2] 15px", "100px [nav nav2] 25px [nav nav2] 25px [last]", '"a b c" "d e f" "g h i"');
     testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormWithAuto"), "10px", "0px", '"a"');
     testGridDefinitionsValues(document.getElementById("gridTemplateComplexFormOnlyAreas"), "none", "0px", '"a"');
-    testGridDefinitionsValues(document.getElementById("gridTemplateNoColumnsRowWithEmptyTrailingLineNames"), "none", "(first) 0px", '"a"');
+    testGridDefinitionsValues(document.getElementById("gridTemplateNoColumnsRowWithEmptyTrailingLineNames"), "none", "[first] 0px", '"a"');
 
     debug("");
     debug("Test getting wrong values for grid-template shorthand through CSS (they should resolve to the default: 'none')");
@@ -210,19 +210,19 @@
 
     debug("");
     debug("Test setting grid-template-columns and grid-template-rows back to 'none' through JS");
-    testGridDefinitionsSetJSValues("10px / (line) 'a' 20px", "10px", "(line) 20px", "\"a\"");
+    testGridDefinitionsSetJSValues("10px / [line] 'a' 20px", "10px", "[line] 20px", "\"a\"");
     testGridDefinitionsSetJSValues("none", "none", "none", "none");
 
     debug("");
     debug("Test getting and setting grid-template shorthand through JS");
     testGridDefinitionsSetJSValues("18px / 66px", "18px", "66px", "none");
-    testGridDefinitionsSetJSValues("10px / (head) 'a' 15px (tail)", "10px", "(head) 15px (tail)", "\"a\"");
+    testGridDefinitionsSetJSValues("10px / [head] 'a' 15px [tail]", "10px", "[head] 15px [tail]", "\"a\"");
     testGridDefinitionsSetJSValues("'a'", "none", "0px", "\"a\"", "none", "auto");
 
     debug("");
     debug("Test setting grid-template shorthand to bad values through JS");
     testGridDefinitionsSetBadJSValues("none / 'a'");
-    testGridDefinitionsSetBadJSValues("25px / 'a' (name) 10px");
+    testGridDefinitionsSetBadJSValues("25px / 'a' [name] 10px");
     testGridDefinitionsSetBadJSValues("'a' / 'b'");
     testGridDefinitionsSetBadJSValues("15px");
     testGridDefinitionsSetBadJSValues("15px / 20px none");
