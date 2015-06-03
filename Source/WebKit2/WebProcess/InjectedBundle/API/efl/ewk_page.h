@@ -49,6 +49,14 @@ struct EwkPageClient {
     void *data;
 
     /**
+     * Callbacks to report load started.
+     *
+     * @param page page to be started
+     * @param data data of a page client
+     */
+    void (*load_started)(EwkPage *page, void *data);
+
+    /**
      * Callbacks to report load finished.
      *
      * @param page page to be finished

@@ -1,3 +1,21 @@
+2015-06-02  Hyungwook Lee  <hyungwook.lee@navercorp.com>
+
+        [EFL] Implement load_started callback in EwkPageClient.
+        https://bugs.webkit.org/show_bug.cgi?id=145545
+
+        Reviewed by Gyuyoung Kim.
+
+        We need to provide load_started callback to web extension module.
+
+        * UIProcess/API/efl/tests/extensions/extension_sample.cpp:
+        * WebProcess/InjectedBundle/API/efl/ewk_page.cpp:
+        (EwkPage::EwkPage):
+        (EwkPage::remove):
+        (EwkPage::didStartProvisionalLoadForFrame):
+        (EwkPage::didFinishDocumentLoadForFrame):
+        * WebProcess/InjectedBundle/API/efl/ewk_page.h:
+        * WebProcess/InjectedBundle/API/efl/ewk_page_private.h:
+
 2015-06-02  Gavin Barraclough  <barraclough@apple.com>
 
         PDFs always think they're visible on iOS.

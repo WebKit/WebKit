@@ -42,6 +42,7 @@ public:
     void remove(const Ewk_Page_Client*);
 
 private:
+    static void didStartProvisionalLoadForFrame(WKBundlePageRef, WKBundleFrameRef, WKTypeRef*, const void *);
     static void didFinishDocumentLoadForFrame(WKBundlePageRef, WKBundleFrameRef, WKTypeRef*, const void *);
 
     WebKit::WebPage* m_page;

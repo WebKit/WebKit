@@ -48,7 +48,7 @@ EwkPage::EwkPage(WebPage* page)
             7, // version
             this, // clientInfo
         },
-        0, // didStartProvisionalLoadForFrame,
+        didStartProvisionalLoadForFrame,
         0, // didReceiveServerRedirectForProvisionalLoadForFrame,
         0, // didFailProvisionalLoadWithErrorForFrame
         0, // didCommitLoadForFrame
@@ -95,6 +95,18 @@ void EwkPage::append(const Ewk_Page_Client* client)
 void EwkPage::remove(const Ewk_Page_Client* client)
 {
     m_clients.remove(m_clients.find(client));
+}
+
+void EwkPage::didStartProvisionalLoadForFrame(WKBundlePageRef, WKBundleFrameRef frame, WKTypeRef*, const void* clientInfo)
+{
+    if (!WKBundleFrameIsMainFrame(frame))
+        return;
+
+    EwkPage* self = toEwkPage(clientInfo);
+    for (auto& it : self->m_clients) {
+        if (it->load_started)
+            it->load_started(self, it->data);
+    }
 }
 
 void EwkPage::didFinishDocumentLoadForFrame(WKBundlePageRef, WKBundleFrameRef frame, WKTypeRef*, const void* clientInfo)
