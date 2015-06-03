@@ -97,7 +97,7 @@ public:
 
 typedef Vector<std::pair<int, OriginalAdvancesForCharacterTreatedAsSpace>, 64> CharactersTreatedAsSpace;
 
-static inline float applyFontTransforms(GlyphBuffer* glyphBuffer, bool ltr, int& lastGlyphCount, const Font* font, WidthIterator& iterator, TypesettingFeatures typesettingFeatures, CharactersTreatedAsSpace& charactersTreatedAsSpace)
+static inline float applyFontTransforms(GlyphBuffer* glyphBuffer, bool ltr, int& lastGlyphCount, const Font* font, WidthIterator& iterator, TypesettingFeatures typesettingFeatures, bool force, CharactersTreatedAsSpace& charactersTreatedAsSpace)
 {
     ASSERT(typesettingFeatures & (Kerning | Ligatures));
 
@@ -105,7 +105,7 @@ static inline float applyFontTransforms(GlyphBuffer* glyphBuffer, bool ltr, int&
         return 0;
 
     int glyphBufferSize = glyphBuffer->size();
-    if (glyphBuffer->size() <= lastGlyphCount + 1) {
+    if (!force && glyphBufferSize <= lastGlyphCount + 1) {
         lastGlyphCount = glyphBufferSize;
         return 0;
     }
@@ -194,6 +194,20 @@ static inline std::pair<bool, bool> expansionLocation(bool ideograph, bool treat
     return std::make_pair(expandLeft, expandRight);
 }
 
+static inline bool isSoftBankEmoji(UChar32 codepoint)
+{
+    return codepoint >= 0xE001 && codepoint <= 0xE537;
+}
+
+inline auto WidthIterator::shouldApplyFontTransforms(const GlyphBuffer* glyphBuffer, int lastGlyphCount, UChar32 previousCharacter) const -> TransformsType
+{
+    if (glyphBuffer && glyphBuffer->size() == lastGlyphCount + 1 && isSoftBankEmoji(previousCharacter))
+        return TransformsType::Forced;
+    if (m_run.length() <= 1 || !(m_typesettingFeatures & (Kerning | Ligatures)))
+        return TransformsType::None;
+    return TransformsType::NotForced;
+}
+
 template <typename TextIterator>
 inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuffer* glyphBuffer)
 {
@@ -217,6 +231,7 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
     int lastGlyphCount = glyphBuffer ? glyphBuffer->size() : 0;
 
     UChar32 character = 0;
+    UChar32 previousCharacter = 0;
     unsigned clusterLength = 0;
     CharactersTreatedAsSpace charactersTreatedAsSpace;
     String normalizedSpacesStringCache;
@@ -252,8 +267,9 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
         }
 
         if (font != lastFontData && width) {
-            if (shouldApplyFontTransforms()) {
-                m_runWidthSoFar += applyFontTransforms(glyphBuffer, m_run.ltr(), lastGlyphCount, lastFontData, *this, m_typesettingFeatures, charactersTreatedAsSpace);
+            auto transformsType = shouldApplyFontTransforms(glyphBuffer, lastGlyphCount, previousCharacter);
+            if (transformsType != TransformsType::None) {
+                m_runWidthSoFar += applyFontTransforms(glyphBuffer, m_run.ltr(), lastGlyphCount, lastFontData, *this, m_typesettingFeatures, transformsType == TransformsType::Forced, charactersTreatedAsSpace);
                 if (glyphBuffer)
                     glyphBuffer->shrink(lastGlyphCount);
             }
@@ -343,7 +359,8 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
                 m_isAfterExpansion = false;
         }
 
-        if (shouldApplyFontTransforms() && glyphBuffer && FontCascade::treatAsSpace(character)) {
+        auto transformsType = shouldApplyFontTransforms(glyphBuffer, lastGlyphCount, previousCharacter);
+        if (transformsType != TransformsType::None && glyphBuffer && FontCascade::treatAsSpace(character)) {
             charactersTreatedAsSpace.append(std::make_pair(glyphBuffer->size(),
                 OriginalAdvancesForCharacterTreatedAsSpace(character == ' ', glyphBuffer->size() ? glyphBuffer->advanceAt(glyphBuffer->size() - 1).width() : 0, width)));
         }
@@ -398,6 +415,7 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
             m_minGlyphBoundingBoxY = std::min(m_minGlyphBoundingBoxY, bounds.y());
             m_lastGlyphOverflow = std::max<float>(0, bounds.maxX() - width);
         }
+        previousCharacter = character;
     }
 
     if (leftoverJustificationWidth) {
@@ -407,8 +425,9 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
             glyphBuffer->add(lastFontData->spaceGlyph(), lastFontData, leftoverJustificationWidth, m_run.length());
     }
 
-    if (shouldApplyFontTransforms()) {
-        m_runWidthSoFar += applyFontTransforms(glyphBuffer, m_run.ltr(), lastGlyphCount, lastFontData, *this, m_typesettingFeatures, charactersTreatedAsSpace);
+    auto transformsType = shouldApplyFontTransforms(glyphBuffer, lastGlyphCount, previousCharacter);
+    if (transformsType != TransformsType::None) {
+        m_runWidthSoFar += applyFontTransforms(glyphBuffer, m_run.ltr(), lastGlyphCount, lastFontData, *this, m_typesettingFeatures, transformsType == TransformsType::Forced, charactersTreatedAsSpace);
         if (glyphBuffer)
             glyphBuffer->shrink(lastGlyphCount);
     }

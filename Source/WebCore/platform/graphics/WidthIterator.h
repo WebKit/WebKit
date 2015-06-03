@@ -26,6 +26,7 @@
 #include "SVGGlyph.h"
 #include "TextRun.h"
 #include <wtf/HashSet.h>
+#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -88,7 +89,8 @@ private:
     template <typename TextIterator>
     inline unsigned advanceInternal(TextIterator&, GlyphBuffer*);
 
-    bool shouldApplyFontTransforms() const { return m_run.length() > 1 && (m_typesettingFeatures & (Kerning | Ligatures)); }
+    enum class TransformsType { None, Forced, NotForced };
+    TransformsType shouldApplyFontTransforms(const GlyphBuffer*, int lastGlyphCount, UChar32 previousCharacter) const;
 
     TypesettingFeatures m_typesettingFeatures;
     HashSet<const Font*>* m_fallbackFonts;
