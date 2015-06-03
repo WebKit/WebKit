@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if WK_HAVE_C_SPI
+#if WK_HAVE_C_SPI && !PLATFORM(MAC)
 
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"

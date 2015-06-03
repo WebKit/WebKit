@@ -1,3 +1,14 @@
+2015-06-03  Daniel Bates  <dabates@apple.com>
+
+        WebKit2.TextFieldDidBeginAndEndEditing is flaky on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=145616
+
+        Skip the test on Mac for now to avoid having the bots turn red due to the flakiness
+        of the test. Further investigation is needed.
+
+        * TestWebKitAPI/Tests/WebKit2/TextFieldDidBeginAndEndEditing.cpp:
+        * TestWebKitAPI/Tests/WebKit2/TextFieldDidBeginAndEndEditing_Bundle.cpp:
+
 2015-06-03  Brady Eidson  <beidson@apple.com>
 
         REGRESSION (r183498): Certain types of frame loads in iframes with <base target="_blank"> can open urls in new window/tabs
