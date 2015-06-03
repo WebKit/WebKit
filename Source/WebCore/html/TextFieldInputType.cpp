@@ -358,6 +358,7 @@ void TextFieldInputType::disabledAttributeChanged()
 {
     if (m_innerSpinButton)
         m_innerSpinButton->releaseCapture();
+    capsLockStateMayHaveChanged();
     updateAutoFillButton();
 }
 
@@ -365,6 +366,7 @@ void TextFieldInputType::readonlyAttributeChanged()
 {
     if (m_innerSpinButton)
         m_innerSpinButton->releaseCapture();
+    capsLockStateMayHaveChanged();
     updateAutoFillButton();
 }
 
@@ -549,6 +551,9 @@ bool TextFieldInputType::shouldSpinButtonRespondToWheelEvents()
 bool TextFieldInputType::shouldDrawCapsLockIndicator() const
 {
     if (element().document().focusedElement() != &element())
+        return false;
+
+    if (element().isDisabledOrReadOnly())
         return false;
 
     Frame* frame = element().document().frame();
