@@ -1,3 +1,18 @@
+2015-06-03  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Composited layer with subpixel gap does not get painted properly when its position changes.
+        https://bugs.webkit.org/show_bug.cgi?id=145587
+
+        Reviewed by Simon Fraser.
+
+        The composited layer always snaps to an enclosing device pixel (floors) while the renderer rounds.
+        At certain positions (for example 0.5px on a 1x display), a gap is formed between the layer(0px) and its renderer(1px).
+        In such cases, when the the renderer moves to a position (1.1px) where the gap is closed, we need to issue repaint on the layer
+        in order to get the renderering right.
+
+        * compositing/child-layer-with-subpixel-gap-needs-repaint-when-parent-moves-expected.html: Added.
+        * compositing/child-layer-with-subpixel-gap-needs-repaint-when-parent-moves.html: Added.
+
 2015-06-02  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Switch from parenthesis to brackets for grid line names

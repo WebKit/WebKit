@@ -536,7 +536,7 @@ void RenderLayerBacking::updateAfterLayout(UpdateAfterLayoutFlags flags)
         }
     }
     
-    if (flags & NeedsFullRepaint && !paintsIntoWindow() && !paintsIntoCompositedAncestor())
+    if (flags & NeedsFullRepaint && canIssueSetNeedsDisplay())
         setContentsNeedDisplay();
 }
 
@@ -655,6 +655,13 @@ static LayoutRect clipBox(RenderBox& renderer)
     return result;
 }
 
+static bool devicePixelFractionGapFromRendererChanged(const LayoutSize& previousDevicePixelFractionFromRenderer, const LayoutSize& currentDevicePixelFractionFromRenderer, float deviceScaleFactor)
+{
+    FloatSize previous = snapSizeToDevicePixel(previousDevicePixelFractionFromRenderer, LayoutPoint(), deviceScaleFactor);
+    FloatSize current = snapSizeToDevicePixel(currentDevicePixelFractionFromRenderer, LayoutPoint(), deviceScaleFactor);
+    return previous != current;
+}
+
 static FloatSize pixelFractionForLayerPainting(const LayoutPoint& point, float pixelSnappingFactor)
 {
     LayoutUnit x = point.x();
@@ -749,6 +756,7 @@ void RenderLayerBacking::updateGeometry()
     FloatSize devicePixelOffsetFromRenderer;
     LayoutSize devicePixelFractionFromRenderer;
     calculateDevicePixelOffsetFromRenderer(rendererOffsetFromGraphicsLayer, devicePixelOffsetFromRenderer, devicePixelFractionFromRenderer, deviceScaleFactor);
+    LayoutSize oldDevicePixelFractionFromRenderer = m_devicePixelFractionFromRenderer;
     m_devicePixelFractionFromRenderer = LayoutSize(-devicePixelFractionFromRenderer.width(), -devicePixelFractionFromRenderer.height());
 
     adjustAncestorCompositingBoundsForFlowThread(ancestorCompositingBounds, compAncestor);
@@ -1001,6 +1009,9 @@ void RenderLayerBacking::updateGeometry()
     updateBackdropFiltersGeometry();
 #endif
     updateAfterWidgetResize();
+
+    if (devicePixelFractionGapFromRendererChanged(oldDevicePixelFractionFromRenderer, m_devicePixelFractionFromRenderer, deviceScaleFactor) && canIssueSetNeedsDisplay())
+        setContentsNeedDisplay();
 
     compositor().updateScrollCoordinatedStatus(m_owningLayer);
 }
