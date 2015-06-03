@@ -201,7 +201,6 @@ Settings::Settings(Page* page)
 #endif
     , m_hiddenPageCSSAnimationSuspensionEnabled(false)
     , m_fontFallbackPrefersPictographs(false)
-    , m_forcePendingWebGLPolicy(false)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString
     // hash before trying to use it.
@@ -423,11 +422,6 @@ void Settings::setImagesEnabled(bool areImagesEnabled)
 
     // See comment in setLoadsImagesAutomatically.
     m_setImageLoadingSettingsTimer.startOneShot(0);
-}
-
-void Settings::setForcePendingWebGLPolicy(bool forced)
-{
-    m_forcePendingWebGLPolicy = forced;
 }
 
 void Settings::setPluginsEnabled(bool arePluginsEnabled)

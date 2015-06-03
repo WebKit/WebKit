@@ -83,7 +83,6 @@ public:
         bool m_shouldDisplayTextDescriptions;
 #endif
         String m_defaultVideoPosterURL;
-        bool m_forcePendingWebGLPolicy;
         bool m_originalTimeWithoutMouseMovementBeforeHidingControls;
         bool m_useLegacyBackgroundSizeShorthandBehavior;
         bool m_autoscrollForDragAndDropEnabled;
@@ -135,7 +134,6 @@ public:
     void setImagesEnabled(bool, ExceptionCode&);
     void setMinimumTimerInterval(double intervalInSeconds, ExceptionCode&);
     void setDefaultVideoPosterURL(const String& url, ExceptionCode&);
-    void setForcePendingWebGLPolicy(bool, ExceptionCode&);
     void setTimeWithoutMouseMovementBeforeHidingControls(double time, ExceptionCode&);
     void setUseLegacyBackgroundSizeShorthandBehavior(bool, ExceptionCode&);
     void setAutoscrollForDragAndDropEnabled(bool, ExceptionCode&);
