@@ -3485,6 +3485,62 @@ static RenderObject* rendererForView(NSView* view)
     return [attrString RTFFromRange: NSMakeRange(0, [attrString length]) documentAttributes:@{ }];
 }
 
+#if ENABLE(TREE_DEBUGGING)
+- (NSString *)debugDescriptionForTextMarker:(id)textMarker
+{
+    char description[1024];
+    [self visiblePositionForTextMarker:textMarker].formatForDebugger(description, sizeof(description));
+    return [NSString stringWithUTF8String:description];
+
+}
+
+- (NSString *)debugDescriptionForTextMarkerRange:(id)textMarkerRange
+{
+    VisiblePositionRange visiblePositionRange = [self visiblePositionRangeForTextMarkerRange:textMarkerRange];
+    if (visiblePositionRange.isNull())
+        return @"<null>";
+    char description[2048];
+    formatForDebugger(visiblePositionRange, description, sizeof(description));
+    return [NSString stringWithUTF8String:description];
+
+}
+
+- (void)showNodeForTextMarker:(id)textMarker
+{
+    VisiblePosition visiblePosition = [self visiblePositionForTextMarker:textMarker];
+    Node* node = visiblePosition.deepEquivalent().deprecatedNode();
+    if (!node)
+        return;
+    node->showNode();
+    node->showNodePathForThis();
+}
+
+- (void)showNodeTreeForTextMarker:(id)textMarker
+{
+    VisiblePosition visiblePosition = [self visiblePositionForTextMarker:textMarker];
+    Node* node = visiblePosition.deepEquivalent().deprecatedNode();
+    if (!node)
+        return;
+    node->showTreeForThis();
+}
+
+static void formatForDebugger(const VisiblePositionRange& range, char* buffer, unsigned length)
+{
+    StringBuilder result;
+    
+    const int FormatBufferSize = 1024;
+    char format[FormatBufferSize];
+    result.appendLiteral("from ");
+    range.start.formatForDebugger(format, FormatBufferSize);
+    result.append(format);
+    result.appendLiteral(" to ");
+    range.end.formatForDebugger(format, FormatBufferSize);
+    result.append(format);
+    
+    strlcpy(buffer, result.toString().utf8().data(), length);
+}
+#endif
+
 - (id)accessibilityAttributeValue:(NSString*)attribute forParameter:(id)parameter
 {
     id textMarker = nil;
@@ -3773,7 +3829,25 @@ static RenderObject* rendererForView(NSView* view)
         VisiblePositionRange visiblePosRange = [self visiblePositionRangeForTextMarkerRange:textMarkerRange];
         return [self textMarkerForVisiblePosition:visiblePosRange.end];
     }
-    
+
+#if ENABLE(TREE_DEBUGGING)
+    if ([attribute isEqualToString:@"AXTextMarkerDebugDescription"])
+        return [self debugDescriptionForTextMarker:textMarker];
+
+    if ([attribute isEqualToString:@"AXTextMarkerRangeDebugDescription"])
+        return [self debugDescriptionForTextMarkerRange:textMarkerRange];
+
+    if ([attribute isEqualToString:@"AXTextMarkerNodeDebugDescription"]) {
+        [self showNodeForTextMarker:textMarker];
+        return nil;
+    }
+
+    if ([attribute isEqualToString:@"AXTextMarkerNodeTreeDebugDescription"]) {
+        [self showNodeTreeForTextMarker:textMarker];
+        return nil;
+    }
+#endif
+
     if (is<AccessibilityTable>(*m_object) && downcast<AccessibilityTable>(*m_object).isExposableThroughAccessibility()) {
         if ([attribute isEqualToString:NSAccessibilityCellForColumnAndRowParameterizedAttribute]) {
             if (array == nil || [array count] != 2)

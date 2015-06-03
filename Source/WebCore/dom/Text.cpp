@@ -228,11 +228,14 @@ void Text::formatForDebugger(char* buffer, unsigned length) const
     if (s.length() > 0) {
         if (result.length())
             result.appendLiteral("; ");
-        result.appendLiteral("value=");
+        result.appendLiteral("length=");
+        result.appendNumber(s.length());
+        result.appendLiteral("; value=\"");
         result.append(s);
+        result.append('"');
     }
 
-    strncpy(buffer, result.toString().utf8().data(), length - 1);
+    strlcpy(buffer, result.toString().utf8().data(), length);
 }
 #endif
 
