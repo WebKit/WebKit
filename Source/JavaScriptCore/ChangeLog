@@ -1,3 +1,28 @@
+2015-06-02  Filip Pizlo  <fpizlo@apple.com>
+
+        GetById and PutById profiling should be more precise about it takes slow path
+        https://bugs.webkit.org/show_bug.cgi?id=145590
+
+        Reviewed by Geoffrey Garen.
+        
+        If a ById access ever takes slow path, we want the DFG and FTL to know this. Previously we
+        were relying on slow path counts, which conflate slow paths taken due to a megamorphic
+        access and slow paths taken due to IC building.
+
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFor):
+        (JSC::GetByIdStatus::computeForStubInfo):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFor):
+        (JSC::PutByIdStatus::computeForStubInfo):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::StructureStubInfo):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileGetById):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+
 2015-06-03  Michael Saboff  <msaboff@apple.com>
 
         Improve test coverage for changes made in 145527

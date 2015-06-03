@@ -113,8 +113,7 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& m
     UNUSED_PARAM(bytecodeIndex);
     UNUSED_PARAM(uid);
 #if ENABLE(DFG_JIT)
-    if (profiledBlock->likelyToTakeSlowCase(bytecodeIndex)
-        || hasExitSite(locker, profiledBlock, bytecodeIndex))
+    if (hasExitSite(locker, profiledBlock, bytecodeIndex))
         return PutByIdStatus(TakesSlowPath);
     
     StructureStubInfo* stubInfo = map.get(CodeOrigin(bytecodeIndex));
@@ -136,7 +135,13 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
     const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo,
     UniquedStringImpl* uid, CallLinkStatus::ExitSiteData callExitSiteData)
 {
-    if (!stubInfo || !stubInfo->seen)
+    if (!stubInfo)
+        return PutByIdStatus();
+    
+    if (stubInfo->tookSlowPath)
+        return PutByIdStatus(TakesSlowPath);
+    
+    if (!stubInfo->seen)
         return PutByIdStatus();
     
     switch (stubInfo->accessType) {

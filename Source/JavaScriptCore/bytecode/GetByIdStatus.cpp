@@ -103,8 +103,7 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& m
         CallLinkStatus::computeExitSiteData(locker, profiledBlock, bytecodeIndex));
     
     if (!result.takesSlowPath()
-        && (hasExitSite(locker, profiledBlock, bytecodeIndex)
-            || profiledBlock->likelyToTakeSlowCase(bytecodeIndex)))
+        && hasExitSite(locker, profiledBlock, bytecodeIndex))
         return GetByIdStatus(result.makesCalls() ? MakesCalls : TakesSlowPath, true);
 #else
     UNUSED_PARAM(map);
@@ -121,7 +120,10 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
     const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, UniquedStringImpl* uid,
     CallLinkStatus::ExitSiteData callExitSiteData)
 {
-    if (!stubInfo || !stubInfo->seen)
+    if (!stubInfo)
+        return GetByIdStatus(NoInformation);
+    
+    if (!stubInfo->seen)
         return GetByIdStatus(NoInformation);
     
     PolymorphicGetByIdList* list = 0;
@@ -134,6 +136,9 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
                 slowPathState = MakesCalls;
         }
     }
+    
+    if (stubInfo->tookSlowPath)
+        return GetByIdStatus(slowPathState);
     
     // Finally figure out if we can derive an access strategy.
     GetByIdStatus result;

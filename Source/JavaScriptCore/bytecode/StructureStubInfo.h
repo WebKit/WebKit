@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -94,6 +94,7 @@ struct StructureStubInfo {
         : accessType(access_unset)
         , seen(false)
         , resetByGC(false)
+        , tookSlowPath(false)
     {
     }
 
@@ -183,6 +184,7 @@ struct StructureStubInfo {
     int8_t accessType;
     bool seen : 1;
     bool resetByGC : 1;
+    bool tookSlowPath : 1;
 
     CodeOrigin codeOrigin;
 

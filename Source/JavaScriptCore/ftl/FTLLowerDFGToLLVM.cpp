@@ -2069,8 +2069,8 @@ private:
             
             m_out.appendTo(notCellCase, continuation);
             ValueFromBlock notCellResult = m_out.anchor(vmCall(
-                m_out.operation(operationGetById),
-                m_callFrame, getUndef(m_out.intPtr), value,
+                m_out.operation(operationGetByIdGeneric),
+                m_callFrame, value,
                 m_out.constIntPtr(m_graph.identifiers()[m_node->identifierNumber()])));
             m_out.jump(continuation);
             
