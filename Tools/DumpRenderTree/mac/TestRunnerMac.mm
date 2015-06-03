@@ -859,7 +859,7 @@ void TestRunner::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef glo
 
 #if PLATFORM(IOS)
 
-@interface APITestDelegateIPhone : NSObject
+@interface APITestDelegateIPhone : NSObject <WebFrameLoadDelegate>
 {
     TestRunner* testRunner;
     NSData *data;

@@ -1,3 +1,9 @@
+2015-06-03  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+
 2015-06-03  Daniel Bates  <dabates@apple.com>
 
         WebKit2.TextFieldDidBeginAndEndEditing is flaky on Mac
