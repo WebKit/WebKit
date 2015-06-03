@@ -1,3 +1,15 @@
+2015-06-03  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION: (r181879): Scrolling in select/option region in iFrame scrolls both select and iframe
+        https://bugs.webkit.org/show_bug.cgi?id=145574
+        <rdar://problem/20966828>
+
+        Reviewed by Simon Fraser.
+
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-iframe-latched-select-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/fast-scroll-iframe-latched-select.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/frames/select_iframe.html: Added.
+
 2015-06-03  Brady Eidson  <beidson@apple.com>
 
         REGRESSION (r183498): Certain types of frame loads in iframes with <base target="_blank"> can open urls in new window/tabs

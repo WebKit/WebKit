@@ -883,6 +883,26 @@ static bool latchingIsLockedToAncestorOfThisFrame(const Frame& frame)
     return false;
 }
 
+static ScrollableArea* scrollableAreaForContainerNode(ContainerNode& container)
+{
+    ScrollableArea* scrollableArea = nullptr;
+
+    if (RenderBox* box = container.renderBox()) {
+        if (is<RenderListBox>(*box))
+            scrollableArea = downcast<RenderListBox>(box);
+        else
+            scrollableArea = box->layer();
+    }
+
+    return scrollableArea;
+}
+
+static bool latchedToFrameOrBody(ContainerNode& container)
+{
+    // FIXME(106133): We might need to add or switch to is<HTMLDocumentElement> when this bug is fixed.
+    return is<HTMLFrameSetElement>(container) || is<HTMLBodyElement>(container);
+}
+
 void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheelEvent, const HitTestResult& result, RefPtr<Element>& wheelEventTarget, RefPtr<ContainerNode>& scrollableContainer, ScrollableArea*& scrollableArea, bool& isOverWidget)
 {
     FrameView* view = m_frame.view();
@@ -897,14 +917,9 @@ void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheel
             scrollableArea = scrollViewForEventTarget(wheelEventTarget.get());
         } else {
             scrollableContainer = findEnclosingOverflowScroll(wheelEventTarget.get());
-            if (scrollableContainer) {
-                if (RenderBox* box = scrollableContainer->renderBox()) {
-                    if (is<RenderListBox>(*box))
-                        scrollableArea = downcast<RenderListBox>(box);
-                    else
-                        scrollableArea = box->layer();
-                }
-            } else {
+            if (scrollableContainer)
+                scrollableArea = scrollableAreaForContainerNode(*scrollableContainer);
+            else {
                 scrollableContainer = view->frame().document()->bodyOrFrameset();
                 scrollableArea = view;
             }
@@ -944,6 +959,12 @@ void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheel
 
         wheelEventTarget = latchingState->wheelEventElement();
         isOverWidget = latchingState->widgetIsLatched();
+        scrollableContainer = latchingState->scrollableContainer();
+
+        if (scrollableContainer) {
+            if (!latchedToFrameOrBody(*scrollableContainer) && !latchingState->widgetIsLatched())
+                scrollableArea = scrollableAreaForContainerNode(*scrollableContainer);
+        }
     }
 }
 
