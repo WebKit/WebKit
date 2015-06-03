@@ -97,32 +97,25 @@ void TiledBackingStore::invalidate(const IntRect& contentsDirtyRect)
 
 void TiledBackingStore::updateTileBuffers()
 {
-    m_client->tiledBackingStorePaintBegin();
-
-    Vector<IntRect> paintedArea;
-    Vector<RefPtr<Tile> > dirtyTiles;
+    Vector<RefPtr<Tile>> dirtyTiles;
     for (auto& tile : m_tiles.values()) {
         if (!tile->isDirty())
             continue;
         dirtyTiles.append(tile);
     }
 
-    if (dirtyTiles.isEmpty()) {
-        m_client->tiledBackingStorePaintEnd(paintedArea);
+    if (dirtyTiles.isEmpty())
         return;
-    }
 
     // FIXME: In single threaded case, tile back buffers could be updated asynchronously 
     // one by one and then swapped to front in one go. This would minimize the time spent
     // blocking on tile updates.
-    unsigned size = dirtyTiles.size();
-    for (unsigned n = 0; n < size; ++n) {
-        Vector<IntRect> paintedRects = dirtyTiles[n]->updateBackBuffer();
-        paintedArea.appendVector(paintedRects);
-        dirtyTiles[n]->swapBackBufferToFront();
-    }
+    bool updated = false;
+    for (auto& tile : dirtyTiles)
+        updated |= tile->updateBackBuffer();
 
-    m_client->tiledBackingStorePaintEnd(paintedArea);
+    if (updated)
+        m_client->didUpdateTileBuffers();
 }
 
 IntRect TiledBackingStore::visibleRect() const

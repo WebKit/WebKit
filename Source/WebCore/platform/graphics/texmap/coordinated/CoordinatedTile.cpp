@@ -71,15 +71,15 @@ void CoordinatedTile::invalidate(const IntRect& dirtyRect)
     m_dirtyRect.unite(tileDirtyRect);
 }
 
-Vector<IntRect> CoordinatedTile::updateBackBuffer()
+bool CoordinatedTile::updateBackBuffer()
 {
     if (!isDirty())
-        return Vector<IntRect>();
+        return false;
 
     SurfaceUpdateInfo updateInfo;
 
     if (!m_tiledBackingStore->client()->paintToSurface(m_dirtyRect.size(), updateInfo.atlasID, updateInfo.surfaceOffset, this))
-        return Vector<IntRect>();
+        return false;
 
     updateInfo.updateRect = m_dirtyRect;
     updateInfo.updateRect.move(-m_rect.x(), -m_rect.y());
@@ -94,10 +94,9 @@ Vector<IntRect> CoordinatedTile::updateBackBuffer()
     }
     m_tiledBackingStore->client()->updateTile(m_ID, updateInfo, m_rect);
 
-    Vector<IntRect> updatedRects;
-    updatedRects.append(m_dirtyRect);
     m_dirtyRect = IntRect();
-    return updatedRects;
+
+    return true;
 }
 
 void CoordinatedTile::paintToSurfaceContext(GraphicsContext* context)
@@ -105,11 +104,6 @@ void CoordinatedTile::paintToSurfaceContext(GraphicsContext* context)
     context->translate(-m_dirtyRect.x(), -m_dirtyRect.y());
     context->scale(FloatSize(m_tiledBackingStore->contentsScale(), m_tiledBackingStore->contentsScale()));
     m_tiledBackingStore->client()->tiledBackingStorePaint(context, m_tiledBackingStore->mapToContents(m_dirtyRect));
-}
-
-void CoordinatedTile::swapBackBufferToFront()
-{
-    // Handled by tiledBackingStorePaintEnd.
 }
 
 bool CoordinatedTile::isReadyToPaint() const

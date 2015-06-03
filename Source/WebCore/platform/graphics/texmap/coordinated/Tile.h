@@ -40,8 +40,7 @@ public:
 
     virtual bool isDirty() const = 0;
     virtual void invalidate(const IntRect&) = 0;
-    virtual Vector<IntRect> updateBackBuffer() = 0;
-    virtual void swapBackBufferToFront() = 0;
+    virtual bool updateBackBuffer() = 0;
     virtual bool isReadyToPaint() const = 0;
     virtual void paint(GraphicsContext*, const IntRect&) = 0;
 

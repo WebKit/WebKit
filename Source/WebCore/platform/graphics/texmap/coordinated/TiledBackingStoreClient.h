@@ -33,13 +33,11 @@ class SurfaceUpdateInfo;
 class TiledBackingStoreClient {
 public:
     virtual ~TiledBackingStoreClient() { }
-    virtual void tiledBackingStorePaintBegin() = 0;
     virtual void tiledBackingStorePaint(GraphicsContext*, const IntRect&) = 0;
-    virtual void tiledBackingStorePaintEnd(const Vector<IntRect>& paintedArea) = 0;
+    virtual void didUpdateTileBuffers() = 0;
     virtual void tiledBackingStoreHasPendingTileCreation() { }
     virtual IntRect tiledBackingStoreContentsRect() = 0;
     virtual IntRect tiledBackingStoreVisibleRect() = 0;
-    virtual Color tiledBackingStoreBackgroundColor() const = 0;
 
     virtual void createTile(uint32_t tileID, float) = 0;
     virtual void updateTile(uint32_t tileID, const SurfaceUpdateInfo&, const IntRect&) = 0;

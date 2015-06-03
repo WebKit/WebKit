@@ -46,8 +46,7 @@ public:
 
     bool isDirty() const;
     void invalidate(const IntRect&);
-    Vector<IntRect> updateBackBuffer();
-    void swapBackBufferToFront();
+    bool updateBackBuffer();
     bool isReadyToPaint() const;
     void paint(GraphicsContext*, const IntRect&);
 
