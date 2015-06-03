@@ -1,3 +1,11 @@
+2015-06-03  Zalan Bujtas  <zalan@apple.com>
+
+        Skip Dromaeo/jslib-modify-prototype.html for now.
+
+        Unreviewed gardening.
+
+        * Skipped:
+
 2015-05-04  Filip Pizlo  <fpizlo@apple.com>
 
         Large array shouldn't be slow
