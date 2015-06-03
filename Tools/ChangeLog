@@ -1,3 +1,10 @@
+2015-06-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed build fix for Dromaeo.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_results.py:
+        (BenchmarkResults._aggregate_results_for_test):
+
 2015-06-03  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

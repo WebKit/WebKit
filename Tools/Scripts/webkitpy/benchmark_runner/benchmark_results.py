@@ -127,7 +127,7 @@ class BenchmarkResults(object):
     def _aggregate_results_for_test(cls, test):
         subtest_results = cls._aggregate_results(test['tests']) if 'tests' in test else {}
         results = {}
-        for metric_name, metric in test['metrics'].iteritems():
+        for metric_name, metric in test.get('metrics', {}).iteritems():
             if not isinstance(metric, list):
                 results[metric_name] = {None: {}}
                 for config_name, values in metric.iteritems():
