@@ -48,6 +48,14 @@ public:
     void releaseSession();
 
 private:
+    enum class State {
+        Idle,
+        Active,
+        Interrupted
+    };
+
+    State m_currentState { State::Idle };
+
     const String m_kind;
     RefPtr<MediaRemoteControls> m_controls;
 };
