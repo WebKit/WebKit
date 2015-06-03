@@ -1,3 +1,13 @@
+2015-06-03  Daniel Bates  <dabates@apple.com>
+
+        AutoFill button should not be shown in read-only or disabled field
+        https://bugs.webkit.org/show_bug.cgi?id=145579
+        <rdar://problem/21212494>
+
+        Update expected result for Windows that I inadvertently modified in <http://trac.webkit.org/changeset/185166>.
+
+        * platform/win/fast/forms/auto-fill-button/input-auto-fill-button-expected.txt:
+
 2015-06-03  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Skip compositing/layer-creation/zoomed-clip-intersection.html
