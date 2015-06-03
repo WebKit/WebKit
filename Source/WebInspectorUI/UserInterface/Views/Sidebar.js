@@ -281,11 +281,6 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.Object
         this.collapsed = (newWidth < (this.minimumWidth / 2));
     }
 
-    resizerDragEnded(resizer)
-    {
-        delete this._widthBeforeResize;
-    }
-
     // Private
 
     _navigationItemSelected(event)

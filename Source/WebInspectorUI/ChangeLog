@@ -1,5 +1,25 @@
 2015-06-02  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Remove uses of delete in Sidebar related code
+        https://bugs.webkit.org/show_bug.cgi?id=145592
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.js:
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype.refresh):
+        Clear value instead of deleting.
+
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WebInspector.SearchSidebarPanel.prototype.performSearch):
+        Just clear the search identifier. Also assert it (a required string) is always non-falsey.
+
+        * UserInterface/Views/Sidebar.js:
+        (WebInspector.Sidebar.prototype.resizerDragEnded): Deleted.
+        This entire callback is unnecessary because whenever we start
+        a drag we save the value.
+
+2015-06-02  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Sidebar and sometimes ContentView scroll position is lost when switching between tabs
         https://bugs.webkit.org/show_bug.cgi?id=145591
 

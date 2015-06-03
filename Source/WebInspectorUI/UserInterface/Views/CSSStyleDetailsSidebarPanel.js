@@ -101,9 +101,9 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
 
         this.contentElement.scrollTop = this._initialScrollOffset;
 
-        for (var i = 0; i < this._panels.length; ++i) {
-            delete this._panels[i].element._savedScrollTop;
-            this._panels[i].markAsNeedsRefresh(domNode);
+        for (var panel of this._panels) {
+            panel.element._savedScrollTop = undefined;
+            panel.markAsNeedsRefresh(domNode);
         }
 
         this._updatePseudoClassCheckboxes();

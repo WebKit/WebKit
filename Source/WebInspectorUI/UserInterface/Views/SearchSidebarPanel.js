@@ -211,6 +211,8 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
             if (error || !resultsCount)
                 return;
 
+            console.assert(searchId);
+
             this._domSearchIdentifier = searchId;
 
             function domSearchResults(error, nodeIds)
@@ -277,9 +279,9 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
         setTimeout(searchScripts.bind(this, WebInspector.debuggerManager.knownNonResourceScripts), 0);
 
         if (window.DOMAgent) {
-            if ("_domSearchIdentifier" in this) {
+            if (this._domSearchIdentifier) {
                 DOMAgent.discardSearchResults(this._domSearchIdentifier);
-                delete this._domSearchIdentifier;
+                this._domSearchIdentifier = undefined;
             }
 
             DOMAgent.performSearch(searchQuery, domCallback.bind(this));
