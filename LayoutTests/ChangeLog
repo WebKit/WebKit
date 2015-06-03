@@ -1,3 +1,12 @@
+2015-06-03  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] Skip compositing/layer-creation/zoomed-clip-intersection.html
+        eventSender.scalePageBy() needs to be implemented.
+
+        Unreviewed garderning.
+
+        * platform/ios-simulator/TestExpectations:
+
 2015-06-03  Daniel Bates  <dabates@apple.com>
 
         AutoFill button should not be shown in read-only or disabled field

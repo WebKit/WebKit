@@ -2613,3 +2613,6 @@ fast/text/baseline-inline-block.html [ ImageOnlyFailure ]
 # /fast text-only failures
 fast/events/change-frame-focus.html [ Failure Pass ]
 fast/fixed-layout/fixed-layout.html [ Failure Crash Pass ]
+
+# Not implemented
+webkit.org/b/145617 compositing/layer-creation/zoomed-clip-intersection.html [ Skip ]
