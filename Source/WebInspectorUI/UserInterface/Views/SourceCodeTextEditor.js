@@ -1502,6 +1502,22 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         titleElement.textContent = data.description;
         content.appendChild(titleElement);
 
+        if (data.subtype === "node") {
+            data.pushNodeToFrontend(function(nodeId) {
+                if (!nodeId)
+                    return;
+
+                var domNode = WebInspector.domTreeManager.nodeForId(nodeId);
+                if (!domNode.ownerDocument)
+                    return;
+
+                var goToButton = titleElement.appendChild(WebInspector.createGoToArrowButton());
+                goToButton.addEventListener("click", function() {
+                    WebInspector.domTreeManager.inspectElement(nodeId);
+                });
+            });
+        }
+
         // FIXME: If this is a variable, it would be nice to put the variable name in the PropertyPath.
         var objectTree = new WebInspector.ObjectTreeView(data);
         objectTree.showOnlyProperties();

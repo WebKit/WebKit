@@ -1,3 +1,23 @@
+2015-06-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Debugger Popover for Node object should have go-to-arrow to show the node in DOM tree
+        https://bugs.webkit.org/show_bug.cgi?id=145594
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/DOMTreeManager.js:
+        (WebInspector.DOMTreeManager.prototype.inspectElement):
+        Previously we could get an exception later on if we tried to
+        inspect an element that was not in the DOM. Bail if the node
+        is not in the DOM or not.
+
+        * UserInterface/Views/SourceCodeTextEditor.css:
+        (.popover .debugger-popover-content > .title > .go-to-arrow):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForObject.data.pushNodeToFrontend):
+        (WebInspector.SourceCodeTextEditor.prototype._showPopoverForObject):
+        For a node type, add a go-to-arrow in the popover if it is in the DOM or not.
+
 2015-06-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove uses of delete in Sidebar related code

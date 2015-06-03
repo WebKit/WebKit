@@ -266,8 +266,10 @@ WebInspector.DOMTreeManager = class DOMTreeManager extends WebInspector.Object
     inspectElement(nodeId)
     {
         var node = this._idToDOMNode[nodeId];
-        if (node)
-            this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.DOMNodeWasInspected, {node});
+        if (!node || !node.ownerDocument)
+            return;
+
+        this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.DOMNodeWasInspected, {node});
 
         this._inspectModeEnabled = false;
         this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.InspectModeStateChanged);

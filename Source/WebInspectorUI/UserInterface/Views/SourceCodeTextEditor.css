@@ -150,6 +150,14 @@
     white-space: nowrap;
 }
 
+.popover .debugger-popover-content > .title > .go-to-arrow {
+    position: relative;
+    top: 2px;
+    left: 4px;
+    width: 12px;
+    height: 12px;
+}
+
 .popover .debugger-popover-content > .body {
     border-top: 1px solid rgb(194, 194, 147);
     overflow: auto;
