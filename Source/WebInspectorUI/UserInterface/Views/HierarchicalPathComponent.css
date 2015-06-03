@@ -28,6 +28,9 @@
     position: relative;
     height: 20px;
     min-width: 32px;
+
+    font-family: -webkit-system-font, sans-serif;
+    font-size: 11px;
 }
 
 .hierarchical-path-component.show-selector-arrows {
