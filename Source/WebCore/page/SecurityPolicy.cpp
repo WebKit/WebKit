@@ -111,10 +111,10 @@ bool SecurityPolicy::allowSubstituteDataAccessToLocal()
 bool SecurityPolicy::isAccessWhiteListed(const SecurityOrigin* activeOrigin, const SecurityOrigin* targetOrigin)
 {
     if (OriginAccessWhiteList* list = originAccessMap().get(activeOrigin->toString())) {
-        for (size_t i = 0; i < list->size();  ++i) {
-           if (list->at(i).matchesOrigin(*targetOrigin))
-               return true;
-       }
+        for (auto& entry : *list) {
+            if (entry.matchesOrigin(*targetOrigin))
+                return true;
+        }
     }
     return false;
 }

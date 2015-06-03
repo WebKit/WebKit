@@ -76,11 +76,10 @@ void DeviceController::dispatchDeviceEvent(PassRefPtr<Event> prpEvent)
     RefPtr<Event> event = prpEvent;
     Vector<RefPtr<DOMWindow>> listenerVector;
     copyToVector(m_listeners, listenerVector);
-    for (size_t i = 0; i < listenerVector.size(); ++i) {
-        if (listenerVector[i]->document()
-            && !listenerVector[i]->document()->activeDOMObjectsAreSuspended()
-            && !listenerVector[i]->document()->activeDOMObjectsAreStopped())
-        listenerVector[i]->dispatchEvent(event);
+    for (auto& listener : listenerVector) {
+        auto document = listener->document();
+        if (document && !document->activeDOMObjectsAreSuspended() && !document->activeDOMObjectsAreStopped())
+            listener->dispatchEvent(event);
     }
 }
 
@@ -92,11 +91,10 @@ void DeviceController::fireDeviceEvent()
     Vector<RefPtr<DOMWindow>> listenerVector;
     copyToVector(m_lastEventListeners, listenerVector);
     m_lastEventListeners.clear();
-    for (size_t i = 0; i < listenerVector.size(); ++i) {
-        if (listenerVector[i]->document()
-            && !listenerVector[i]->document()->activeDOMObjectsAreSuspended()
-            && !listenerVector[i]->document()->activeDOMObjectsAreStopped())
-        listenerVector[i]->dispatchEvent(getLastEvent());
+    for (auto& listener : listenerVector) {
+        auto document = listener->document();
+        if (document && !document->activeDOMObjectsAreSuspended() && !document->activeDOMObjectsAreStopped())
+            listener->dispatchEvent(getLastEvent());
     }
 }
 

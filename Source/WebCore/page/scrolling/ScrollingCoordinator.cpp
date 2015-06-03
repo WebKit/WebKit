@@ -128,8 +128,7 @@ Region ScrollingCoordinator::absoluteNonFastScrollableRegionForFrame(const Frame
     // to not ask for regions at bad times.
 
     if (const FrameView::ScrollableAreaSet* scrollableAreas = frameView->scrollableAreas()) {
-        for (FrameView::ScrollableAreaSet::const_iterator it = scrollableAreas->begin(), end = scrollableAreas->end(); it != end; ++it) {
-            ScrollableArea* scrollableArea = *it;
+        for (auto& scrollableArea : *scrollableAreas) {
             // Composited scrollable areas can be scrolled off the main thread.
             if (scrollableArea->usesAsyncScrolling())
                 continue;
@@ -313,11 +312,10 @@ bool ScrollingCoordinator::hasVisibleSlowRepaintViewportConstrainedObjects(const
     if (!viewportConstrainedObjects)
         return false;
 
-    for (FrameView::ViewportConstrainedObjectSet::const_iterator it = viewportConstrainedObjects->begin(), end = viewportConstrainedObjects->end(); it != end; ++it) {
-        RenderObject& viewportConstrainedObject = **it;
-        if (!is<RenderBoxModelObject>(viewportConstrainedObject) || !viewportConstrainedObject.hasLayer())
+    for (auto& viewportConstrainedObject : *viewportConstrainedObjects) {
+        if (!is<RenderBoxModelObject>(*viewportConstrainedObject) || !viewportConstrainedObject->hasLayer())
             return true;
-        RenderLayer& layer = *downcast<RenderBoxModelObject>(viewportConstrainedObject).layer();
+        RenderLayer& layer = *downcast<RenderBoxModelObject>(*viewportConstrainedObject).layer();
         // Any explicit reason that a fixed position element is not composited shouldn't cause slow scrolling.
         if (!layer.isComposited() && layer.viewportConstrainedNotCompositedReason() == RenderLayer::NoNotCompositedReason)
             return true;

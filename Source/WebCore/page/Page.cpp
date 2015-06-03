@@ -121,15 +121,15 @@ static void networkStateChanged(bool isOnLine)
     Vector<Ref<Frame>> frames;
     
     // Get all the frames of all the pages in all the page groups
-    for (auto it = allPages->begin(), end = allPages->end(); it != end; ++it) {
-        for (Frame* frame = &(*it)->mainFrame(); frame; frame = frame->tree().traverseNext())
+    for (auto& page : *allPages) {
+        for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext())
             frames.append(*frame);
-        InspectorInstrumentation::networkStateChanged(*it);
+        InspectorInstrumentation::networkStateChanged(page);
     }
 
     AtomicString eventName = isOnLine ? eventNames().onlineEvent : eventNames().offlineEvent;
-    for (unsigned i = 0; i < frames.size(); i++)
-        frames[i]->document()->dispatchWindowEvent(Event::create(eventName, false, false));
+    for (auto& frame : frames)
+        frame->document()->dispatchWindowEvent(Event::create(eventName, false, false));
 }
 
 static const ViewState::Flags PageInitialViewState = ViewState::IsVisible | ViewState::IsInWindow;
@@ -401,9 +401,9 @@ static const ViewModeInfo viewModeMap[viewModeMapSize] = {
 
 Page::ViewMode Page::stringToViewMode(const String& text)
 {
-    for (int i = 0; i < viewModeMapSize; ++i) {
-        if (text == viewModeMap[i].name)
-            return viewModeMap[i].type;
+    for (auto& mode : viewModeMap) {
+        if (text == mode.name)
+            return mode.type;
     }
     return Page::ViewModeInvalid;
 }
@@ -482,9 +482,8 @@ void Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment()
 {
     if (!allPages)
         return;
-    HashSet<Page*>::iterator end = allPages->end();
-    for (HashSet<Page*>::iterator it = allPages->begin(); it != end; ++it)
-        for (Frame* frame = &(*it)->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto& page : *allPages) {
+        for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
             // If a change in the global environment has occurred, we need to
             // make sure all the properties a recomputed, therefore we invalidate
             // the properties cache.
@@ -492,6 +491,7 @@ void Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment()
                 styleResolver->invalidateMatchedPropertiesCache();
             frame->document()->scheduleForcedStyleRecalc();
         }
+    }
 }
 
 void Page::setNeedsRecalcStyleInAllFrames()
@@ -511,21 +511,20 @@ void Page::refreshPlugins(bool reload)
 
     Vector<Ref<Frame>> framesNeedingReload;
 
-    for (auto it = allPages->begin(), end = allPages->end(); it != end; ++it) {
-        Page& page = **it;
-        page.m_pluginData.clear();
+    for (auto& page : *allPages) {
+        page->m_pluginData.clear();
 
         if (!reload)
             continue;
         
-        for (Frame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
             if (frame->loader().subframeLoader().containsPlugins())
                 framesNeedingReload.append(*frame);
         }
     }
 
-    for (size_t i = 0; i < framesNeedingReload.size(); ++i)
-        framesNeedingReload[i]->loader().reload();
+    for (auto& frame : framesNeedingReload)
+        frame->loader().reload();
 }
 
 PluginData& Page::pluginData() const
@@ -900,10 +899,8 @@ void Page::lockAllOverlayScrollbarsToHidden(bool lockOverlayScrollbars)
         if (!scrollableAreas)
             continue;
 
-        for (HashSet<ScrollableArea*>::const_iterator it = scrollableAreas->begin(), end = scrollableAreas->end(); it != end; ++it) {
-            ScrollableArea* scrollableArea = *it;
+        for (auto& scrollableArea : *scrollableAreas)
             scrollableArea->lockOverlayScrollbarStateToHidden(lockOverlayScrollbars);
-        }
     }
 }
     
@@ -1176,10 +1173,9 @@ Vector<Ref<PluginViewBase>> Page::pluginViews()
         if (!view)
             break;
 
-        for (auto it = view->children().begin(), end = view->children().end(); it != end; ++it) {
-            Widget& widget = **it;
-            if (is<PluginViewBase>(widget))
-                views.append(downcast<PluginViewBase>(widget));
+        for (auto& widget : view->children()) {
+            if (is<PluginViewBase>(*widget))
+                views.append(downcast<PluginViewBase>(*widget));
         }
     }
 
@@ -1193,10 +1189,8 @@ void Page::storageBlockingStateChanged()
 
     // Collect the PluginViews in to a vector to ensure that action the plug-in takes
     // from below storageBlockingStateChanged does not affect their lifetime.
-    auto views = pluginViews();
-
-    for (unsigned i = 0; i < views.size(); ++i)
-        views[i]->storageBlockingStateChanged();
+    for (auto& view : pluginViews())
+        view->storageBlockingStateChanged();
 }
 
 void Page::enableLegacyPrivateBrowsing(bool privateBrowsingEnabled)
@@ -1312,8 +1306,8 @@ void Page::setIsVisibleInternal(bool isVisible)
     for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree().traverseNext())
         documents.append(*frame->document());
 
-    for (size_t i = 0, size = documents.size(); i < size; ++i)
-        documents[i]->visibilityStateChanged();
+    for (auto& document : documents)
+        document->visibilityStateChanged();
 
     if (!isVisible) {
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())

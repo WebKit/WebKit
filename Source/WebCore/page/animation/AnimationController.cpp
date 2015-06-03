@@ -115,9 +115,8 @@ double AnimationControllerPrivate::updateAnimations(SetChanged callSetChanged/* 
     double timeToNextService = -1;
     bool calledSetChanged = false;
 
-    auto end = m_compositeAnimations.end();
-    for (auto it = m_compositeAnimations.begin(); it != end; ++it) {
-        CompositeAnimation& animation = *it->value;
+    for (auto& compositeAnimation : m_compositeAnimations) {
+        CompositeAnimation& animation = *compositeAnimation.value;
         if (!animation.isSuspended() && animation.hasAnimations()) {
             double t = animation.timeToNextService();
             if (t != -1 && (t < timeToNextService || timeToNextService == -1))
@@ -125,7 +124,7 @@ double AnimationControllerPrivate::updateAnimations(SetChanged callSetChanged/* 
             if (!timeToNextService) {
                 if (callSetChanged != CallSetChanged)
                     break;
-                Element* element = it->key->element();
+                Element* element = compositeAnimation.key->element();
                 ASSERT(element);
                 ASSERT(!element->document().inPageCache());
                 element->setNeedsStyleRecalc(SyntheticStyleChange);
@@ -192,17 +191,16 @@ void AnimationControllerPrivate::fireEventsAndUpdateStyle()
 
     // fire all the events
     Vector<EventToDispatch> eventsToDispatch = WTF::move(m_eventsToDispatch);
-    Vector<EventToDispatch>::const_iterator eventsToDispatchEnd = eventsToDispatch.end();
-    for (Vector<EventToDispatch>::const_iterator it = eventsToDispatch.begin(); it != eventsToDispatchEnd; ++it) {
-        Element* element = it->element.get();
-        if (it->eventType == eventNames().transitionendEvent)
-            element->dispatchEvent(TransitionEvent::create(it->eventType, it->name, it->elapsedTime, PseudoElement::pseudoElementNameForEvents(element->pseudoId())));
+    for (auto& event : eventsToDispatch) {
+        Element& element = *event.element;
+        if (event.eventType == eventNames().transitionendEvent)
+            element.dispatchEvent(TransitionEvent::create(event.eventType, event.name, event.elapsedTime, PseudoElement::pseudoElementNameForEvents(element.pseudoId())));
         else
-            element->dispatchEvent(AnimationEvent::create(it->eventType, it->name, it->elapsedTime));
+            element.dispatchEvent(AnimationEvent::create(event.eventType, event.name, event.elapsedTime));
     }
 
-    for (unsigned i = 0, size = m_elementChangesToDispatch.size(); i < size; ++i)
-        m_elementChangesToDispatch[i]->setNeedsStyleRecalc(SyntheticStyleChange);
+    for (auto& change : m_elementChangesToDispatch)
+        change->setNeedsStyleRecalc(SyntheticStyleChange);
 
     m_elementChangesToDispatch.clear();
 
@@ -311,9 +309,9 @@ void AnimationControllerPrivate::suspendAnimationsForDocument(Document* document
 {
     AnimationPrivateUpdateBlock updateBlock(*this);
 
-    for (auto it = m_compositeAnimations.begin(), end = m_compositeAnimations.end(); it != end; ++it) {
-        if (&it->key->document() == document)
-            it->value->suspendAnimations();
+    for (auto& animation : m_compositeAnimations) {
+        if (&animation.key->document() == document)
+            animation.value->suspendAnimations();
     }
 
     updateAnimationTimer();
@@ -323,9 +321,9 @@ void AnimationControllerPrivate::resumeAnimationsForDocument(Document* document)
 {
     AnimationPrivateUpdateBlock updateBlock(*this);
 
-    for (auto it = m_compositeAnimations.begin(), end = m_compositeAnimations.end(); it != end; ++it) {
-        if (&it->key->document() == document)
-            it->value->resumeAnimations();
+    for (auto& animation : m_compositeAnimations) {
+        if (&animation.key->document() == document)
+            animation.value->resumeAnimations();
     }
 
     updateAnimationTimer();
@@ -435,9 +433,9 @@ unsigned AnimationControllerPrivate::numberOfActiveAnimations(Document* document
 {
     unsigned count = 0;
     
-    for (auto it = m_compositeAnimations.begin(), end = m_compositeAnimations.end(); it != end; ++it) {
-        if (&it->key->document() == document)
-            count += it->value->numberOfActiveAnimations();
+    for (auto& animation : m_compositeAnimations) {
+        if (&animation.key->document() == document)
+            count += animation.value->numberOfActiveAnimations();
     }
 
     return count;

@@ -118,8 +118,8 @@ PassRefPtr<PerformanceEntryList> Performance::webkitGetEntriesByType(const Strin
 
 #if ENABLE(RESOURCE_TIMING)
     if (equalIgnoringCase(entryType, "resource"))
-        for (Vector<RefPtr<PerformanceEntry>>::const_iterator resource = m_resourceTimingBuffer.begin(); resource != m_resourceTimingBuffer.end(); ++resource)
-            entries->append(*resource);
+        for (auto& resource : m_resourceTimingBuffer)
+            entries->append(resource);
 #endif // ENABLE(RESOURCE_TIMING)
 
 #if ENABLE(USER_TIMING)
@@ -141,9 +141,10 @@ PassRefPtr<PerformanceEntryList> Performance::webkitGetEntriesByName(const Strin
 
 #if ENABLE(RESOURCE_TIMING)
     if (entryType.isNull() || equalIgnoringCase(entryType, "resource"))
-        for (Vector<RefPtr<PerformanceEntry>>::const_iterator resource = m_resourceTimingBuffer.begin(); resource != m_resourceTimingBuffer.end(); ++resource)
-            if ((*resource)->name() == name)
-                entries->append(*resource);
+        for (auto& resource : m_resourceTimingBuffer) {
+            if (resource->name() == name)
+                entries->append(resource);
+        }
 #endif // ENABLE(RESOURCE_TIMING)
 
 #if ENABLE(USER_TIMING)

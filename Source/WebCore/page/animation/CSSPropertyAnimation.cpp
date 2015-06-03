@@ -1044,9 +1044,8 @@ public:
 
     virtual bool equals(const RenderStyle* a, const RenderStyle* b) const
     {
-        Vector<AnimationPropertyWrapperBase*>::const_iterator end = m_propertyWrappers.end();
-        for (Vector<AnimationPropertyWrapperBase*>::const_iterator it = m_propertyWrappers.begin(); it != end; ++it) {
-            if (!(*it)->equals(a, b))
+        for (auto& wrapper : m_propertyWrappers) {
+            if (!wrapper->equals(a, b))
                 return false;
         }
         return true;
@@ -1054,9 +1053,8 @@ public:
 
     virtual void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const
     {
-        Vector<AnimationPropertyWrapperBase*>::const_iterator end = m_propertyWrappers.end();
-        for (Vector<AnimationPropertyWrapperBase*>::const_iterator it = m_propertyWrappers.begin(); it != end; ++it)
-            (*it)->blend(anim, dst, a, b, progress);
+        for (auto& wrapper : m_propertyWrappers)
+            wrapper->blend(anim, dst, a, b, progress);
     }
 
     const Vector<AnimationPropertyWrapperBase*>& propertyWrappers() const { return m_propertyWrappers; }

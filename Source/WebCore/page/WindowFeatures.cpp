@@ -240,10 +240,7 @@ void WindowFeatures::parseDialogFeatures(const String& string, DialogFeaturesMap
 {
     Vector<String> vector;
     string.split(';', vector);
-    size_t size = vector.size();
-    for (size_t i = 0; i < size; ++i) {
-        const String& featureString = vector[i];
-
+    for (auto& featureString : vector) {
         size_t separatorPosition = featureString.find('=');
         size_t colonPosition = featureString.find(':');
         if (separatorPosition != notFound && colonPosition != notFound)

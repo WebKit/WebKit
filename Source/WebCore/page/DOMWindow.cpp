@@ -256,22 +256,21 @@ bool DOMWindow::dispatchAllPendingBeforeUnloadEvents()
 
     Vector<Ref<DOMWindow>> windows;
     windows.reserveInitialCapacity(set.size());
-    for (auto it = set.begin(), end = set.end(); it != end; ++it)
-        windows.uncheckedAppend(*it->key);
+    for (auto& window : set)
+        windows.uncheckedAppend(*window.key);
 
-    for (Ref<DOMWindow>& windowRef : windows) {
-        DOMWindow& window = windowRef;
-        if (!set.contains(&window))
+    for (auto& window : windows) {
+        if (!set.contains(window.ptr()))
             continue;
 
-        Frame* frame = window.frame();
+        Frame* frame = window->frame();
         if (!frame)
             continue;
 
         if (!frame->loader().shouldClose())
             return false;
 
-        window.enableSuddenTermination();
+        window->enableSuddenTermination();
     }
 
     alreadyDispatched = true;
@@ -299,15 +298,14 @@ void DOMWindow::dispatchAllPendingUnloadEvents()
     for (auto& keyValue : set)
         windows.uncheckedAppend(*keyValue.key);
 
-    for (Ref<DOMWindow>& windowRef : windows) {
-        DOMWindow& window = windowRef;
-        if (!set.contains(&window))
+    for (auto& window : windows) {
+        if (!set.contains(window.ptr()))
             continue;
 
-        window.dispatchEvent(PageTransitionEvent::create(eventNames().pagehideEvent, false), window.document());
-        window.dispatchEvent(Event::create(eventNames().unloadEvent, false, false), window.document());
+        window->dispatchEvent(PageTransitionEvent::create(eventNames().pagehideEvent, false), window->document());
+        window->dispatchEvent(Event::create(eventNames().unloadEvent, false, false), window->document());
 
-        window.enableSuddenTermination();
+        window->enableSuddenTermination();
     }
 
     alreadyDispatched = true;
@@ -495,8 +493,8 @@ void DOMWindow::willDestroyCachedFrame()
     // unregister themselves from the DOMWindow as a result of the call to willDestroyGlobalObjectInCachedFrame.
     Vector<DOMWindowProperty*> properties;
     copyToVector(m_properties, properties);
-    for (size_t i = 0; i < properties.size(); ++i)
-        properties[i]->willDestroyGlobalObjectInCachedFrame();
+    for (auto& property : properties)
+        property->willDestroyGlobalObjectInCachedFrame();
 }
 
 void DOMWindow::willDestroyDocumentInFrame()
@@ -505,8 +503,8 @@ void DOMWindow::willDestroyDocumentInFrame()
     // unregister themselves from the DOMWindow as a result of the call to willDestroyGlobalObjectInFrame.
     Vector<DOMWindowProperty*> properties;
     copyToVector(m_properties, properties);
-    for (size_t i = 0; i < properties.size(); ++i)
-        properties[i]->willDestroyGlobalObjectInFrame();
+    for (auto& property : properties)
+        property->willDestroyGlobalObjectInFrame();
 }
 
 void DOMWindow::willDetachDocumentFromFrame()
@@ -515,8 +513,8 @@ void DOMWindow::willDetachDocumentFromFrame()
     // unregister themselves from the DOMWindow as a result of the call to willDetachGlobalObjectFromFrame.
     Vector<DOMWindowProperty*> properties;
     copyToVector(m_properties, properties);
-    for (size_t i = 0; i < properties.size(); ++i)
-        properties[i]->willDetachGlobalObjectFromFrame();
+    for (auto& property : properties)
+        property->willDetachGlobalObjectFromFrame();
 }
 
 #if ENABLE(GAMEPAD)
@@ -571,8 +569,8 @@ void DOMWindow::disconnectDOMWindowProperties()
     // unregister themselves from the DOMWindow as a result of the call to disconnectFrameForPageCache.
     Vector<DOMWindowProperty*> properties;
     copyToVector(m_properties, properties);
-    for (size_t i = 0; i < properties.size(); ++i)
-        properties[i]->disconnectFrameForPageCache();
+    for (auto& property : properties)
+        property->disconnectFrameForPageCache();
 }
 
 void DOMWindow::reconnectDOMWindowProperties()
@@ -582,8 +580,8 @@ void DOMWindow::reconnectDOMWindowProperties()
     // unregister themselves from the DOMWindow as a result of the call to reconnectFromPageCache.
     Vector<DOMWindowProperty*> properties;
     copyToVector(m_properties, properties);
-    for (size_t i = 0; i < properties.size(); ++i)
-        properties[i]->reconnectFrameFromPageCache(m_frame);
+    for (auto& property : properties)
+        property->reconnectFrameFromPageCache(m_frame);
 }
 
 void DOMWindow::resetDOMWindowProperties()
@@ -1453,8 +1451,8 @@ PassRefPtr<CSSRuleList> DOMWindow::getMatchedCSSRules(Element* element, const St
         return 0;
 
     RefPtr<StaticCSSRuleList> ruleList = StaticCSSRuleList::create();
-    for (unsigned i = 0; i < matchedRules.size(); ++i)
-        ruleList->rules().append(matchedRules[i]->createCSSOMWrapper());
+    for (auto& rule : matchedRules)
+        ruleList->rules().append(rule->createCSSOMWrapper());
 
     return ruleList.release();
 }

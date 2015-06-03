@@ -33,11 +33,7 @@ namespace WebCore {
 
 PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page& page, bool deferSelf)
 {
-    const HashSet<Page*>& pages = page.group().pages();
-
-    HashSet<Page*>::const_iterator end = pages.end();
-    for (HashSet<Page*>::const_iterator it = pages.begin(); it != end; ++it) {
-        Page* otherPage = *it;
+    for (auto& otherPage : page.group().pages()) {
         if ((deferSelf || otherPage != &page)) {
             if (!otherPage->defersLoading()) {
                 m_deferredFrames.append(&otherPage->mainFrame());
@@ -50,16 +46,16 @@ PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page& page, bool deferSelf)
         }
     }
 
-    size_t count = m_deferredFrames.size();
-    for (size_t i = 0; i < count; ++i)
-        if (Page* page = m_deferredFrames[i]->page())
+    for (auto& deferredFrame : m_deferredFrames) {
+        if (Page* page = deferredFrame->page())
             page->setDefersLoading(true);
+    }
 }
 
 PageGroupLoadDeferrer::~PageGroupLoadDeferrer()
 {
-    for (size_t i = 0; i < m_deferredFrames.size(); ++i) {
-        if (Page* page = m_deferredFrames[i]->page()) {
+    for (auto& deferredFrame : m_deferredFrames) {
+        if (Page* page = deferredFrame->page()) {
             page->setDefersLoading(false);
 
             for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext())

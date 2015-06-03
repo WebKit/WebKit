@@ -37,9 +37,8 @@ bool UserContentURLPattern::matchesPatterns(const URL& url, const Vector<String>
     // If there is no whitelist at all, then all URLs are assumed to be in the whitelist.
     bool matchesWhitelist = whitelist.isEmpty();
     if (!matchesWhitelist) {
-        size_t whitelistSize = whitelist.size();
-        for (size_t i = 0; i < whitelistSize; ++i) {
-            UserContentURLPattern contentPattern(whitelist[i]);
+        for (auto& entry : whitelist) {
+            UserContentURLPattern contentPattern(entry);
             if (contentPattern.matches(url)) {
                 matchesWhitelist = true;
                 break;
@@ -49,9 +48,8 @@ bool UserContentURLPattern::matchesPatterns(const URL& url, const Vector<String>
 
     bool matchesBlacklist = false;
     if (!blacklist.isEmpty()) {
-        size_t blacklistSize = blacklist.size();
-        for (size_t i = 0; i < blacklistSize; ++i) {
-            UserContentURLPattern contentPattern(blacklist[i]);
+        for (auto& entry : blacklist) {
+            UserContentURLPattern contentPattern(entry);
             if (contentPattern.matches(url)) {
                 matchesBlacklist = true;
                 break;

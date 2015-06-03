@@ -343,8 +343,8 @@ bool CSPSourceList::matches(const URL& url)
 
     URL effectiveURL = SecurityOrigin::shouldUseInnerURL(url) ? SecurityOrigin::extractInnerURL(url) : url;
 
-    for (size_t i = 0; i < m_list.size(); ++i) {
-        if (m_list[i].matches(effectiveURL))
+    for (auto& entry : m_list) {
+        if (entry.matches(effectiveURL))
             return true;
     }
 
@@ -1100,8 +1100,8 @@ bool CSPDirectiveList::allowConnectToSource(const URL& url, ContentSecurityPolic
 
 void CSPDirectiveList::gatherReportURIs(DOMStringList& list) const
 {
-    for (size_t i = 0; i < m_reportURIs.size(); ++i)
-        list.append(m_reportURIs[i].string());
+    for (auto& uri : m_reportURIs)
+        list.append(uri.string());
 }
 
 bool CSPDirectiveList::allowFormAction(const URL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
@@ -1352,8 +1352,8 @@ ContentSecurityPolicy::~ContentSecurityPolicy()
 void ContentSecurityPolicy::copyStateFrom(const ContentSecurityPolicy* other) 
 {
     ASSERT(m_policies.isEmpty());
-    for (CSPDirectiveListVector::const_iterator iter = other->m_policies.begin(); iter != other->m_policies.end(); ++iter)
-        didReceiveHeader((*iter)->header(), (*iter)->headerType());
+    for (auto& policy : other->m_policies)
+        didReceiveHeader(policy->header(), policy->headerType());
 }
 
 void ContentSecurityPolicy::didReceiveHeader(const String& header, HeaderType type)
@@ -1401,8 +1401,8 @@ ContentSecurityPolicy::HeaderType ContentSecurityPolicy::deprecatedHeaderType() 
 template<bool (CSPDirectiveList::*allowed)(ContentSecurityPolicy::ReportingStatus) const>
 bool isAllowedByAll(const CSPDirectiveListVector& policies, ContentSecurityPolicy::ReportingStatus reportingStatus)
 {
-    for (size_t i = 0; i < policies.size(); ++i) {
-        if (!(policies[i].get()->*allowed)(reportingStatus))
+    for (auto& policy : policies) {
+        if (!(policy.get()->*allowed)(reportingStatus))
             return false;
     }
     return true;
@@ -1411,8 +1411,8 @@ bool isAllowedByAll(const CSPDirectiveListVector& policies, ContentSecurityPolic
 template<bool (CSPDirectiveList::*allowed)(JSC::ExecState* state, ContentSecurityPolicy::ReportingStatus) const>
 bool isAllowedByAllWithState(const CSPDirectiveListVector& policies, JSC::ExecState* state, ContentSecurityPolicy::ReportingStatus reportingStatus)
 {
-    for (size_t i = 0; i < policies.size(); ++i) {
-        if (!(policies[i].get()->*allowed)(state, reportingStatus))
+    for (auto& policy : policies) {
+        if (!(policy.get()->*allowed)(state, reportingStatus))
             return false;
     }
     return true;
@@ -1421,8 +1421,8 @@ bool isAllowedByAllWithState(const CSPDirectiveListVector& policies, JSC::ExecSt
 template<bool (CSPDirectiveList::*allowed)(const String&, const WTF::OrdinalNumber&, ContentSecurityPolicy::ReportingStatus) const>
 bool isAllowedByAllWithContext(const CSPDirectiveListVector& policies, const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus reportingStatus)
 {
-    for (size_t i = 0; i < policies.size(); ++i) {
-        if (!(policies[i].get()->*allowed)(contextURL, contextLine, reportingStatus))
+    for (auto& policy : policies) {
+        if (!(policy.get()->*allowed)(contextURL, contextLine, reportingStatus))
             return false;
     }
     return true;
@@ -1434,8 +1434,8 @@ bool isAllowedByAllWithURL(const CSPDirectiveListVector& policies, const URL& ur
     if (SchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol()))
         return true;
 
-    for (size_t i = 0; i < policies.size(); ++i) {
-        if (!(policies[i].get()->*allowFromURL)(url, reportingStatus))
+    for (auto& policy : policies) {
+        if (!(policy.get()->*allowFromURL)(url, reportingStatus))
             return false;
     }
     return true;
@@ -1470,17 +1470,17 @@ bool ContentSecurityPolicy::allowEval(JSC::ExecState* state, ContentSecurityPoli
 
 String ContentSecurityPolicy::evalDisabledErrorMessage() const
 {
-    for (size_t i = 0; i < m_policies.size(); ++i) {
-        if (!m_policies[i]->allowEval(0, SuppressReport))
-            return m_policies[i]->evalDisabledErrorMessage();
+    for (auto& policy : m_policies) {
+        if (!policy->allowEval(0, SuppressReport))
+            return policy->evalDisabledErrorMessage();
     }
     return String();
 }
 
 bool ContentSecurityPolicy::allowPluginType(const String& type, const String& typeAttribute, const URL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    for (size_t i = 0; i < m_policies.size(); ++i) {
-        if (!m_policies[i]->allowPluginType(type, typeAttribute, url, reportingStatus))
+    for (auto& policy : m_policies) {
+        if (!policy->allowPluginType(type, typeAttribute, url, reportingStatus))
             return false;
     }
     return true;
@@ -1544,17 +1544,17 @@ bool ContentSecurityPolicy::isActive() const
 ContentSecurityPolicy::ReflectedXSSDisposition ContentSecurityPolicy::reflectedXSSDisposition() const
 {
     ReflectedXSSDisposition disposition = ReflectedXSSUnset;
-    for (size_t i = 0; i < m_policies.size(); ++i) {
-        if (m_policies[i]->reflectedXSSDisposition() > disposition)
-            disposition = std::max(disposition, m_policies[i]->reflectedXSSDisposition());
+    for (auto& policy : m_policies) {
+        if (policy->reflectedXSSDisposition() > disposition)
+            disposition = std::max(disposition, policy->reflectedXSSDisposition());
     }
     return disposition;
 }
 
 void ContentSecurityPolicy::gatherReportURIs(DOMStringList& list) const
 {
-    for (size_t i = 0; i < m_policies.size(); ++i)
-        m_policies[i]->gatherReportURIs(list);
+    for (auto& policy : m_policies)
+        policy->gatherReportURIs(list);
 }
 
 SecurityOrigin* ContentSecurityPolicy::securityOrigin() const

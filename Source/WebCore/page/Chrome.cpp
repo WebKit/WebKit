@@ -635,8 +635,8 @@ void Chrome::unregisterPopupOpeningObserver(PopupOpeningObserver* observer)
 void Chrome::notifyPopupOpeningObservers() const
 {
     const Vector<PopupOpeningObserver*> observers(m_popupOpeningObservers);
-    for (size_t i = 0; i < observers.size(); ++i)
-        observers[i]->willOpenPopup();
+    for (auto& observer : observers)
+        observer->willOpenPopup();
 }
 
 void Chrome::didBeginTrackingPotentialLongMousePress(const IntPoint& mouseDownPosition, const HitTestResult& hitTestResult)

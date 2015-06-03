@@ -959,8 +959,7 @@ void ContextMenuController::populate()
                 bool badGrammar;
                 Vector<String> guesses = frame->editor().guessesForMisspelledOrUngrammatical(misspelling, badGrammar);
                 if (misspelling || badGrammar) {
-                    size_t size = guesses.size();
-                    if (!size) {
+                    if (guesses.isEmpty()) {
                         // If there's bad grammar but no suggestions (e.g., repeated word), just leave off the suggestions
                         // list and trailing separator rather than adding a "No Guesses Found" item (matches AppKit)
                         if (misspelling) {
@@ -968,8 +967,7 @@ void ContextMenuController::populate()
                             appendItem(*separatorItem(), m_contextMenu.get());
                         }
                     } else {
-                        for (unsigned i = 0; i < size; i++) {
-                            const String &guess = guesses[i];
+                        for (const auto& guess : guesses) {
                             if (!guess.isEmpty()) {
                                 ContextMenuItem item(ActionType, ContextMenuItemTagSpellingGuess, guess);
                                 appendItem(item, m_contextMenu.get());
@@ -1002,8 +1000,8 @@ void ContextMenuController::populate()
                 // Spelling and grammar checking is mutually exclusive with dictation alternatives.
                 Vector<String> dictationAlternatives = m_context.hitTestResult().dictationAlternatives();
                 if (!dictationAlternatives.isEmpty()) {
-                    for (size_t i = 0; i < dictationAlternatives.size(); ++i) {
-                        ContextMenuItem item(ActionType, ContextMenuItemTagDictationAlternative, dictationAlternatives[i]);
+                    for (auto& alternative : dictationAlternatives) {
+                        ContextMenuItem item(ActionType, ContextMenuItemTagDictationAlternative, alternative);
                         appendItem(item, m_contextMenu.get());
                     }
                     appendItem(*separatorItem(), m_contextMenu.get());

@@ -221,8 +221,7 @@ void PageSerializer::serializeFrame(Frame* frame)
     m_resources->append(Resource(url, document->suggestedMIMEType(), SharedBuffer::create(frameHTML.data(), frameHTML.length())));
     m_resourceURLs.add(url);
 
-    for (Vector<Node*>::iterator iter = nodes.begin(); iter != nodes.end(); ++iter) {
-        Node* node = *iter;
+    for (auto& node : nodes) {
         if (!is<Element>(*node))
             continue;
 

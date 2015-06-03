@@ -295,9 +295,9 @@ void Frame::orientationChanged()
     for (Frame* frame = this; frame; frame = frame->tree().traverseNext())
         frames.append(*frame);
 
-    for (unsigned i = 0; i < frames.size(); i++) {
-        if (Document* doc = frames[i]->document())
-            doc->dispatchWindowEvent(Event::create(eventNames().orientationchangeEvent, false, false));
+    for (auto& frame : frames) {
+        if (Document* document = frame->document())
+            document->dispatchWindowEvent(Event::create(eventNames().orientationchangeEvent, false, false));
     }
 }
 
@@ -719,10 +719,7 @@ void Frame::injectUserScriptsForWorld(DOMWrapperWorld& world, const UserScriptVe
     if (!doc)
         return;
 
-    Vector<ScriptSourceCode> sourceCode;
-    unsigned count = userScripts.size();
-    for (unsigned i = 0; i < count; ++i) {
-        UserScript* script = userScripts[i].get();
+    for (auto& script : userScripts) {
         if (script->injectedFrames() == InjectInTopFrameOnly && ownerElement())
             continue;
 

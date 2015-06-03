@@ -700,8 +700,7 @@ void FocusController::setIsVisibleAndActiveInternal(bool contentIsVisible)
         if (!scrollableAreas)
             continue;
 
-        for (HashSet<ScrollableArea*>::const_iterator it = scrollableAreas->begin(), end = scrollableAreas->end(); it != end; ++it) {
-            ScrollableArea* scrollableArea = *it;
+        for (auto& scrollableArea : *scrollableAreas) {
             ASSERT(scrollableArea->scrollbarsCanBeActive() || m_page.shouldSuppressScrollbarAnimations());
 
             contentAreaDidShowOrHide(scrollableArea, contentIsVisible);
