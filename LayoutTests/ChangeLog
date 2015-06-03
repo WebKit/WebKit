@@ -1,3 +1,14 @@
+2015-06-03  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Add missing expected result files for ios-simulator port following
+        <http://trac.webkit.org/changeset/185095>
+        <http://trac.webkit.org/changeset/185096>
+
+        Unreviewed.
+
+        * platform/ios-simulator/fast/text/crash-complex-text-surrogate-expected.txt: Added.
+        * platform/ios-simulator/fast/text/font-weights-zh-expected.txt: Added.
+
 2015-06-03  Dean Jackson  <dino@apple.com>
 
         Crash in GraphicsContext3D::getInternalFramebufferSize
