@@ -96,7 +96,7 @@ layer at (0,0) size 800x600
                                           text run at (445,21) width 265: "noch mal die Scripte runter laden und die"
                                           text run at (39,41) width 211: "admin.cgi erneuern, hier kommt "
                                           text run at (249,41) width 451: "noch das Password-Manager-Script dazu, sollte jetzt alles sicher sein! "
-                                        RenderBR {BR} at (0,0) size 0x0
+                                        RenderBR {BR} at (699,56) size 1x0
                                     RenderTableRow {TR} at (0,434) size 739x122
                                       RenderTableCell {TD} at (0,434) size 739x122 [border: (1px solid #000000)] [r=7 c=0 rs=1 cs=1]
                                         RenderText {#text} at (273,1) size 193x19

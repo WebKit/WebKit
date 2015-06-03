@@ -1,3 +1,30 @@
+2015-06-03  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] Rebaseline expected results for <br>
+
+        Unreviewed garderning.
+
+        * platform/ios-simulator-wk2/fast/css/text-overflow-ellipsis-bidi-expected.txt:
+        * platform/ios-simulator-wk2/fast/forms/listbox-hit-test-zoomed-expected.txt:
+        * platform/ios-simulator/http/tests/navigation/postredirect-basic-expected.txt:
+        * platform/ios-simulator/http/tests/navigation/postredirect-goback1-expected.txt:
+        * platform/ios-simulator/tables/mozilla/bugs/bug106795-expected.txt:
+        * platform/ios-simulator/tables/mozilla/bugs/bug1224-expected.txt:
+        * platform/ios-simulator/tables/mozilla/bugs/bug131020-expected.txt:
+        * platform/ios-simulator/tables/mozilla/bugs/bug131020_iframe-expected.txt:
+        * platform/ios-simulator/tables/mozilla/bugs/bug1430-expected.txt:
+        * platform/ios-simulator/tables/mozilla/bugs/bug16252-expected.txt:
+        * platform/ios-simulator/tables/mozilla/bugs/bug19599-expected.txt:
+        * platform/ios-simulator/tables/mozilla/bugs/bug20579-expected.txt:
+        * platform/ios-simulator/tables/mozilla/bugs/bug32205-3-expected.txt:
+        * platform/ios-simulator/tables/mozilla/bugs/bug82946-2-expected.txt:
+        * platform/ios-simulator/tables/mozilla/bugs/bug92143-expected.txt:
+        * platform/ios-simulator/tables/mozilla/marvin/tables_cellpadding-expected.txt:
+        * platform/ios-simulator/tables/mozilla/marvin/tables_cellspacing-expected.txt:
+        * platform/ios-simulator/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt:
+        * platform/ios-simulator/tables/mozilla_expected_failures/bugs/bug1262-expected.txt:
+        * platform/ios-simulator/tables/mozilla_expected_failures/bugs/bug56024-expected.txt:
+
 2015-06-03  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Add missing expected result files for GTK and EFL ports following
