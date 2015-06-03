@@ -125,7 +125,7 @@ body:not(.unknown-mac) .toolbar .dashboard-container {
 }
 
 body:not(.unknown-mac) .toolbar .search-bar > input[type="search"] {
-    box-shadow: hsla(0, 0%, 0%, 0.3) 0 1px 1px -1px, 0 0 0 7px hsla(211, 96%, 48%, 0);
+    box-shadow: 0 0 0 7px hsla(211, 96%, 48%, 0);
     transition: box-shadow .25s cubic-bezier(0.165, 0.840, 0.440, 1) /* easeOutQuart */;
 }
 
