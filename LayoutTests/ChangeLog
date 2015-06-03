@@ -1,3 +1,15 @@
+2015-06-03  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Add missing expected result files for GTK and EFL ports following
+        <http://trac.webkit.org/changeset/185095>
+        <http://trac.webkit.org/changeset/181351>
+
+        Unreviewed.
+
+        * platform/efl/fast/text/crash-complex-text-surrogate-expected.txt: Added.
+        * platform/gtk/editing/selection/extend-by-character-007-expected.txt: Added.
+        * platform/gtk/fast/text/crash-complex-text-surrogate-expected.txt: Added.
+
 2015-06-03  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION: (r181879): Scrolling in select/option region in iFrame scrolls both select and iframe
