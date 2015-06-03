@@ -1745,6 +1745,9 @@ void linkPolymorphicCall(
         }
     }
     
+    if (isClosureCall)
+        callLinkInfo.hasSeenClosure = true;
+    
     Vector<PolymorphicCallCase> callCases;
     
     // Figure out what our cases are.

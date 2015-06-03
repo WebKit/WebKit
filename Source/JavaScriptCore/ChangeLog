@@ -1,3 +1,28 @@
+2015-06-01  Filip Pizlo  <fpizlo@apple.com>
+
+        CallLinkStatus should return takesSlowPath if the GC often cleared the IC
+        https://bugs.webkit.org/show_bug.cgi?id=145502
+
+        Reviewed by Geoffrey Garen.
+        
+        CallLinkInfo now remembers when it has been cleared by GC. This has some safeguards for when
+        a call gets cleared by GC only because we hadn't converted it into a closure call; in that
+        case the GC will just tell us that it should be a closure call. The DFG will not optimize
+        a call that was cleared by GC, and the DFG will always prefer a closure call if the GC told
+        us that the specific callee was dead but the executable wasn't.
+        
+        This guards us from some scenarios that came up in Speedometer. It's neutral on the pure JS
+        benchmarks, most likely just because those benchmarks aren't real enough to have interesting
+        GC of code.
+
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::visitWeak):
+        (JSC::CallLinkInfo::dummy):
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::CallLinkInfo):
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFromCallLinkInfo):
+
 2015-06-02  Filip Pizlo  <fpizlo@apple.com>
 
         GetById and PutById profiling should be more precise about it takes slow path

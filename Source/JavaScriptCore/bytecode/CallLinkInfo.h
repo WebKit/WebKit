@@ -59,6 +59,7 @@ struct CallLinkInfo : public BasicRawSentinelNode<CallLinkInfo> {
         : isFTL(false)
         , hasSeenShouldRepatch(false)
         , hasSeenClosure(false)
+        , clearedByGC(false)
         , callType(None)
         , maxNumArguments(0)
         , slowPathCount(0)
@@ -92,7 +93,8 @@ struct CallLinkInfo : public BasicRawSentinelNode<CallLinkInfo> {
     bool isFTL : 1;
     bool hasSeenShouldRepatch : 1;
     bool hasSeenClosure : 1;
-    unsigned callType : 5; // CallType
+    bool clearedByGC : 1;
+    unsigned callType : 4; // CallType
     unsigned calleeGPR : 8;
     uint8_t maxNumArguments; // Only used for varargs calls.
     uint32_t slowPathCount;

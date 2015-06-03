@@ -58,6 +58,13 @@ void CallLinkInfo::unlink(RepatchBuffer& repatchBuffer)
 
 void CallLinkInfo::visitWeak(RepatchBuffer& repatchBuffer)
 {
+    auto handleSpecificCallee = [&] (JSFunction* callee) {
+        if (Heap::isMarked(callee->executable()))
+            hasSeenClosure = true;
+        else
+            clearedByGC = true;
+    };
+    
     if (isLinked()) {
         if (stub) {
             if (!stub->visitWeak(repatchBuffer)) {
@@ -68,6 +75,7 @@ void CallLinkInfo::visitWeak(RepatchBuffer& repatchBuffer)
                         ".\n");
                 }
                 unlink(repatchBuffer);
+                clearedByGC = true;
             }
         } else if (!Heap::isMarked(callee.get())) {
             if (Options::verboseOSR()) {
@@ -77,11 +85,14 @@ void CallLinkInfo::visitWeak(RepatchBuffer& repatchBuffer)
                     callee.get()->executable()->hashFor(specializationKind()),
                     ").\n");
             }
+            handleSpecificCallee(callee.get());
             unlink(repatchBuffer);
         }
     }
-    if (!!lastSeenCallee && !Heap::isMarked(lastSeenCallee.get()))
+    if (!!lastSeenCallee && !Heap::isMarked(lastSeenCallee.get())) {
+        handleSpecificCallee(lastSeenCallee.get());
         lastSeenCallee.clear();
+    }
 }
 
 CallLinkInfo& CallLinkInfo::dummy()
