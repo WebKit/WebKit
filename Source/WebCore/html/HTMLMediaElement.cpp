@@ -114,6 +114,10 @@
 #include "WebKitPlaybackTargetAvailabilityEvent.h"
 #endif
 
+#if ENABLE(MEDIA_SESSION)
+#include "MediaSession.h"
+#endif
+
 #if ENABLE(MEDIA_SOURCE)
 #include "DOMWindow.h"
 #include "MediaSource.h"
@@ -6353,6 +6357,20 @@ bool HTMLMediaElement::canSaveMediaData() const
 
     return false;
 }
+
+#if ENABLE(MEDIA_SESSION)
+
+MediaSession* HTMLMediaElement::session() const
+{
+    return m_session.get();
+}
+
+void HTMLMediaElement::setSession(MediaSession* session)
+{
+    m_session = session;
+}
+
+#endif
 
 }
 

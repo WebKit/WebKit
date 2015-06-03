@@ -104,6 +104,7 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.idl \
     $(WebCore)/Modules/indieui/UIRequestEvent.idl \
     $(WebCore)/Modules/mediacontrols/MediaControlsHost.idl \
+    $(WebCore)/Modules/mediasession/HTMLMediaElementMediaSession.idl \
     $(WebCore)/Modules/mediasession/MediaRemoteControls.idl \
     $(WebCore)/Modules/mediasession/MediaSession.idl \
 	$(WebCore)/Modules/mediasource/DOMURLMediaSource.idl \

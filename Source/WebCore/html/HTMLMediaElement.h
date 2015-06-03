@@ -72,6 +72,9 @@ class TimeRanges;
 #if ENABLE(ENCRYPTED_MEDIA_V2)
 class MediaKeys;
 #endif
+#if ENABLE(MEDIA_SESSION)
+class MediaSession;
+#endif
 #if ENABLE(MEDIA_SOURCE)
 class MediaSource;
 class SourceBuffer;
@@ -410,6 +413,14 @@ public:
 
     void mediaLoadingFailed(MediaPlayerEnums::NetworkState);
     void mediaLoadingFailedFatally(MediaPlayerEnums::NetworkState);
+
+#if ENABLE(MEDIA_SESSION)
+    const String& kind() const { return m_kind; }
+    void setKind(const String& kind) { m_kind = kind; }
+
+    MediaSession* session() const;
+    void setSession(MediaSession*);
+#endif
 
 #if ENABLE(MEDIA_SOURCE)
     RefPtr<VideoPlaybackQuality> getVideoPlaybackQuality();
@@ -788,6 +799,11 @@ private:
     // Counter incremented while processing a callback from the media player, so we can avoid
     // calling the media engine recursively.
     int m_processingMediaPlayerCallback;
+
+#if ENABLE(MEDIA_SESSION)
+    String m_kind;
+    RefPtr<MediaSession> m_session;
+#endif
 
 #if ENABLE(MEDIA_SOURCE)
     RefPtr<MediaSource> m_mediaSource;
