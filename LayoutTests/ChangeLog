@@ -1,3 +1,34 @@
+2015-06-03  Daniel Bates  <dabates@apple.com>
+
+        AutoFill button should not be shown in read-only or disabled field
+        https://bugs.webkit.org/show_bug.cgi?id=145579
+        <rdar://problem/21212494>
+
+        Reviewed by Darin Adler.
+
+        Add tests to ensure that we do no show the AutoFill button in a read-only or disabled field.
+
+        Additionally, create directory LayoutTests/fast/forms/auto-fill-button and move existing test
+        LayoutTests/fast/forms/input-auto-fill-button.html and associated test results into this directory
+        or the platform-specific variant of this directory.
+
+        * fast/forms/auto-fill-button/hide-auto-fill-button-when-input-becomes-disabled-expected.html: Added.
+        * fast/forms/auto-fill-button/hide-auto-fill-button-when-input-becomes-disabled.html: Added.
+        * fast/forms/auto-fill-button/hide-auto-fill-button-when-input-becomes-readonly-expected.html: Added.
+        * fast/forms/auto-fill-button/hide-auto-fill-button-when-input-becomes-readonly.html: Added.
+        * fast/forms/auto-fill-button/input-auto-fill-button-expected.txt: Renamed from LayoutTests/fast/forms/input-auto-fill-button-expected.txt.
+        * fast/forms/auto-fill-button/input-auto-fill-button.html: Renamed from LayoutTests/fast/forms/input-auto-fill-button.html.
+        * fast/forms/auto-fill-button/input-disabled-auto-fill-button-expected.html: Added.
+        * fast/forms/auto-fill-button/input-disabled-auto-fill-button.html: Added.
+        * fast/forms/auto-fill-button/input-readonly-auto-fill-button-expected.html: Added.
+        * fast/forms/auto-fill-button/input-readonly-auto-fill-button.html: Added.
+        * fast/forms/auto-fill-button/input-readonly-non-empty-auto-fill-button-expected.html: Added.
+        * fast/forms/auto-fill-button/input-readonly-non-empty-auto-fill-button.html: Added.
+        * platform/ios-simulator/fast/forms/auto-fill-button/input-auto-fill-button-expected.png: Renamed from LayoutTests/platform/ios-simulator/fast/forms/input-auto-fill-button-expected.png.
+        * platform/ios-simulator/fast/forms/auto-fill-button/input-auto-fill-button-expected.txt: Renamed from LayoutTests/platform/ios-simulator/fast/forms/input-auto-fill-button-expected.txt.
+        * platform/mac-mavericks/fast/forms/auto-fill-button/input-auto-fill-button-expected.txt: Renamed from LayoutTests/platform/mac-mavericks/fast/forms/input-auto-fill-button-expected.txt.
+        * platform/win/fast/forms/auto-fill-button/input-auto-fill-button-expected.txt: Renamed from LayoutTests/platform/win/fast/forms/input-auto-fill-button-expected.txt.
+
 2015-06-02  Filip Pizlo  <fpizlo@apple.com>
 
         GetById and PutById profiling should be more precise about it takes slow path

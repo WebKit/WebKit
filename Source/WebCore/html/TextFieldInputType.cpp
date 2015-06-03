@@ -358,12 +358,14 @@ void TextFieldInputType::disabledAttributeChanged()
 {
     if (m_innerSpinButton)
         m_innerSpinButton->releaseCapture();
+    updateAutoFillButton();
 }
 
 void TextFieldInputType::readonlyAttributeChanged()
 {
     if (m_innerSpinButton)
         m_innerSpinButton->releaseCapture();
+    updateAutoFillButton();
 }
 
 bool TextFieldInputType::supportsReadOnly() const
@@ -570,7 +572,7 @@ void TextFieldInputType::capsLockStateMayHaveChanged()
 
 bool TextFieldInputType::shouldDrawAutoFillButton() const
 {
-    return element().showAutoFillButton();
+    return !element().isDisabledOrReadOnly() && element().showAutoFillButton();
 }
 
 void TextFieldInputType::autoFillButtonElementWasClicked()
