@@ -93,6 +93,11 @@ WebInspector.Sidebar = class Sidebar extends WebInspector.Object
 
         sidebarPanel.willRemove();
 
+        if (sidebarPanel.visible) {
+            sidebarPanel.hidden();
+            sidebarPanel.visibilityDidChange();
+        }
+
         sidebarPanel._parentSidebar = null;
 
         if (this._selectedSidebarPanel === sidebarPanel) {

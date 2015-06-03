@@ -1,3 +1,31 @@
+2015-06-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Sidebar and sometimes ContentView scroll position is lost when switching between tabs
+        https://bugs.webkit.org/show_bug.cgi?id=145591
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/Sidebar.js:
+        (WebInspector.Sidebar.prototype.removeSidebarPanel):
+        When removing a sidebar panel, ensure we call hidden if it was the visible panel.
+
+        * UserInterface/Views/SidebarPanel.js:
+        (WebInspector.SidebarPanel):
+        (WebInspector.SidebarPanel.prototype.shown):
+        (WebInspector.SidebarPanel.prototype.hidden):
+        Save and restore content element scroll position when sidebar panels are shown / hidden.
+
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.js:
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype.visibilityDidChange):
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WebInspector.ComputedStyleDetailsPanel.prototype.shown):
+        * UserInterface/Views/DetailsSidebarPanel.js:
+        (WebInspector.DetailsSidebarPanel.prototype.shown):
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.js:
+        (WebInspector.LayerTreeDetailsSidebarPanel.prototype.shown):
+        (WebInspector.LayerTreeDetailsSidebarPanel.prototype.hidden):
+        Cleanup. Since sidebar panels are using ES6 classes, have super class calls use `super`!
+
 2015-06-02  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Use non-monospace font for the frame selector

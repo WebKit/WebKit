@@ -111,7 +111,7 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
 
     visibilityDidChange()
     {
-        WebInspector.SidebarPanel.prototype.visibilityDidChange.call(this);
+        super.visibilityDidChange();
 
         if (!this._selectedPanel)
             return;

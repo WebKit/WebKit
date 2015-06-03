@@ -159,7 +159,7 @@ WebInspector.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends
 
     shown()
     {
-        WebInspector.StyleDetailsPanel.prototype.shown.call(this);
+        super.shown();
 
         this._propertiesTextEditor.updateLayout();
     }

@@ -52,14 +52,14 @@ WebInspector.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel e
 
         this.needsRefresh();
 
-        WebInspector.DOMDetailsSidebarPanel.prototype.shown.call(this);
+        super.shown();
     }
 
     hidden()
     {
         WebInspector.layerTreeManager.removeEventListener(WebInspector.LayerTreeManager.Event.LayerTreeDidChange, this._layerTreeDidChange, this);
 
-        WebInspector.DOMDetailsSidebarPanel.prototype.hidden.call(this);
+        super.hidden();
     }
 
     refresh()

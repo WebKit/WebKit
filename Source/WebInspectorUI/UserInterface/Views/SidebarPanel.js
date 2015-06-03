@@ -31,6 +31,8 @@ WebInspector.SidebarPanel = class SidebarPanel extends WebInspector.Object
 
         this._identifier = identifier;
 
+        this._savedScrollPosition = 0;
+
         this._element = element || document.createElement("div");
         this._element.classList.add("panel", identifier);
 
@@ -129,11 +131,15 @@ WebInspector.SidebarPanel = class SidebarPanel extends WebInspector.Object
 
     shown()
     {
+        this._contentElement.scrollTop = this._savedScrollPosition;
+
         // Implemented by subclasses.
     }
 
     hidden()
     {
+        this._savedScrollPosition = this._contentElement.scrollTop;
+
         // Implemented by subclasses.
     }
 

@@ -49,8 +49,10 @@ WebInspector.DetailsSidebarPanel = class DetailsSidebarPanel extends WebInspecto
 
     shown()
     {
+        super.shown();
+
         if (this._needsRefresh) {
-            delete this._needsRefresh;
+            this._needsRefresh = false;
             this.refresh();
         }
     }
