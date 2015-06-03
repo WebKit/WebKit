@@ -1,3 +1,10 @@
+2015-06-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Attempt to fix CSSPropertyParserTest.GridTrackLimits API test after http://trac.webkit.org/r185147
+
+        * TestWebKitAPI/Tests/WebCore/CSSParser.cpp:
+        (TestWebKitAPI::TEST): Update the syntax.
+
 2015-06-02  Mark Lam  <mark.lam@apple.com>
 
         build-jsc's --cloop option is broken.
