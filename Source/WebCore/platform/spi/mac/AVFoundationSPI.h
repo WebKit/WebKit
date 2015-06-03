@@ -62,6 +62,10 @@
 
 #import <AVFoundation/AVPlayerLayer.h>
 
+#endif
+
+#if !USE(APPLE_INTERNAL_SDK) || __IPHONE_OS_VERSION_MIN_REQUIRED < 90000
+
 @interface AVPlayerLayer (AVPlayerLayerOptimizedFullscreenModeSupportPrivate)
 - (void)setEnterOptimizedFullscreenModeEnabled:(BOOL)flag;
 @end
