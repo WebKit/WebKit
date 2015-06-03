@@ -26,7 +26,6 @@
 #include "SVGGlyph.h"
 #include "TextRun.h"
 #include <wtf/HashSet.h>
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
