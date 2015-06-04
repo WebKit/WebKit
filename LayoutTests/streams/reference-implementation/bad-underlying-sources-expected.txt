@@ -18,7 +18,7 @@ FAIL Underlying source: strategy.size returning NaN assert_unreached: enqueue di
 FAIL Underlying source: strategy.size returning -Infinity assert_unreached: enqueue didn't throw Reached unreachable code
 FAIL Underlying source: strategy.size returning +Infinity assert_unreached: enqueue didn't throw Reached unreachable code
 PASS Underlying source: calling close twice on an empty stream should throw the second time 
-FAIL Underlying source: calling close twice on a non-empty stream should throw the second time assert_object_equals: read() should read the enqueued chunk property "done" expected object "[object Object]" got object "[object Object]"
+PASS Underlying source: calling close twice on a non-empty stream should throw the second time 
 FAIL Underlying source: calling close on an empty canceled stream should not throw cancel is not implemented
 FAIL Underlying source: calling close on a non-empty canceled stream should not throw cancel is not implemented
 PASS Underlying source: calling close after error should throw 

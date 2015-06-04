@@ -369,7 +369,7 @@ function templatedRSTwoChunksOpenReader(label, factory, chunks) {
     test(function() {
     }, 'Running templatedRSTwoChunksOpenReader with ' + label);
 
-    var test1 = async_test('calling read() twice without waiting will eventually give both chunks', { timeout: 50 });
+    var test1 = async_test('calling read() twice without waiting will eventually give both chunks');
     test1.step(function() {
         var { reader } = factory();
         var promiseCount = 0;

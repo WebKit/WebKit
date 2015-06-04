@@ -33,7 +33,6 @@
 #if ENABLE(STREAMS_API)
 
 #include "JSDOMBinding.h"
-#include "NotImplemented.h"
 #include "ReadableJSStream.h"
 #include <runtime/Error.h>
 
@@ -51,10 +50,15 @@ JSValue JSReadableStreamController::close(ExecState* exec)
     return jsUndefined();
 }
 
-JSValue JSReadableStreamController::enqueue(ExecState*)
+JSValue JSReadableStreamController::enqueue(ExecState* exec)
 {
-    notImplemented();
-    return jsBoolean(false);
+    ReadableJSStream& stream = impl().stream();
+    if (stream.isErrored())
+        return exec->vm().throwException(exec, stream.error());
+    if (stream.isCloseRequested())
+        return exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Calling enqueue on a stream which is closing")));
+    stream.enqueue(*exec);
+    return jsUndefined();
 }
 
 JSValue JSReadableStreamController::error(ExecState* exec)

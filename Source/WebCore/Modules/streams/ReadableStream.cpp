@@ -67,8 +67,18 @@ void ReadableStream::clearCallbacks()
 
 void ReadableStream::changeStateToClosed()
 {
-    if (m_state != State::Readable)
+    ASSERT(!m_closeRequested);
+    ASSERT(m_state != State::Errored);
+
+    m_closeRequested = true;
+
+    if (m_state != State::Readable || hasValue())
         return;
+    close();
+}
+
+void ReadableStream::close()
+{
     m_state = State::Closed;
 
     if (m_reader)
@@ -144,10 +154,22 @@ void ReadableStream::read(ReadSuccessCallback&& successCallback, ReadEndCallback
     }
     if (hasValue()) {
         successCallback(read());
+        if (m_closeRequested && !hasValue())
+            close();
         return;
     }
     m_readRequests.append({ WTF::move(successCallback), WTF::move(endCallback), WTF::move(failureCallback) });
     // FIXME: We should try to pull.
+}
+
+bool ReadableStream::resolveReadCallback(JSC::JSValue value)
+{
+    if (m_readRequests.isEmpty())
+        return false;
+
+    m_readRequests.first().successCallback(value);
+    m_readRequests.remove(0);
+    return true;
 }
 
 void ReadableStream::start()

@@ -30,13 +30,13 @@ FAIL cancel() should return a distinct rejected promise each time cancel is not 
 FAIL reader cancel() should return a distinct rejected promise each time cancel is not implemented
 PASS should be able to acquire multiple readers, since they are all auto-released 
 PASS Running templatedRSTwoChunksOpenReader with ReadableStream (two chunks enqueued, still open) reader 
-TIMEOUT calling read() twice without waiting will eventually give both chunks Test timed out
-TIMEOUT calling read() twice with waiting will eventually give both chunks Test timed out
+PASS calling read() twice without waiting will eventually give both chunks 
+PASS calling read() twice with waiting will eventually give both chunks 
 PASS read() should return distinct promises each time 
 FAIL cancel() after a read() should still give that single read result cancel is not implemented
 PASS Running templatedRSTwoChunksClosedReader with ReadableStream (two chunks enqueued, then closed) reader 
-FAIL third read(), without waiting, should give { value: undefined, done: true } assert_object_equals: first result should be correct property "done" expected object "[object Object]" got object "[object Object]"
-FAIL third read, with waiting, should give { value: undefined, done: true } assert_object_equals: first result should be correct property "done" expected object "[object Object]" got object "[object Object]"
+PASS third read(), without waiting, should give { value: undefined, done: true } 
+PASS third read, with waiting, should give { value: undefined, done: true } 
 PASS draining the stream via read() should cause the reader closed promise to fulfill 
 FAIL releasing the lock after the stream is closed should do nothing releaseLock is not implemented
 FAIL releasing the lock should cause read() to act as if the stream is closed releaseLock is not implemented

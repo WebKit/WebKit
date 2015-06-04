@@ -135,14 +135,30 @@ void ReadableJSStream::storeError(JSC::ExecState& exec)
 
 bool ReadableJSStream::hasValue() const
 {
-    notImplemented();
-    return false;
+    return m_chunkQueue.size();
 }
 
 JSValue ReadableJSStream::read()
 {
-    notImplemented();
-    return jsUndefined();
+    ASSERT(hasValue());
+
+    return m_chunkQueue.takeFirst().get();
+}
+
+void ReadableJSStream::enqueue(ExecState& exec)
+{
+    ASSERT(!isCloseRequested());
+
+    if (!isReadable())
+        return;
+
+    JSValue chunk = exec.argumentCount() ? exec.argument(0) : jsUndefined();
+    if (resolveReadCallback(chunk))
+        return;
+
+    m_chunkQueue.append(JSC::Strong<JSC::Unknown>(exec.vm(), chunk));
+    // FIXME: Compute chunk size.
+    // FIXME: Add pulling of data here and also when data is passed to resolve callback.
 }
 
 } // namespace WebCore

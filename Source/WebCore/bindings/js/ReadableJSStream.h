@@ -37,6 +37,7 @@
 #include <heap/StrongInlines.h>
 #include <runtime/JSCJSValue.h>
 #include <runtime/PrivateName.h>
+#include <wtf/Deque.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -53,6 +54,8 @@ public:
     void storeError(JSC::ExecState&);
     JSC::JSValue error() { return m_error.get(); }
 
+    void enqueue(JSC::ExecState&);
+
 private:
     ReadableJSStream(ScriptExecutionContext&, JSC::ExecState&, JSC::JSObject*);
 
@@ -66,6 +69,7 @@ private:
     std::unique_ptr<ReadableStreamController> m_controller;
     JSC::Strong<JSC::Unknown> m_error;
     JSC::Strong<JSC::JSObject> m_source;
+    Deque<JSC::Strong<JSC::Unknown>> m_chunkQueue;
 };
 
 } // namespace WebCore

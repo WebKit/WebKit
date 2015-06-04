@@ -368,7 +368,7 @@ test4.step(function() {
 //     }), standardTimeout);
 // });
 
-var test11 = async_test('ReadableStream: should not call pull until the previous pull call\'s promise fulfills', { timeout: 50 });
+var test11 = async_test('ReadableStream: should not call pull until the previous pull call\'s promise fulfills');
 test11.step(function() {
     var resolve;
     var returnedPromise;
@@ -565,7 +565,7 @@ test(function() {
     });
 }, 'ReadableStream: enqueue should throw the stored error when the stream is errored');
 
-var test16 = async_test('ReadableStream: should call underlying source methods as methods', { timeout: 50 });
+var test16 = async_test('ReadableStream: should call underlying source methods as methods');
 test16.step(function() {
     var startCalled = 0;
     var pullCalled = 0;
