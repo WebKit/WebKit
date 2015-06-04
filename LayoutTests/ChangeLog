@@ -1,5 +1,19 @@
 2015-06-04  Commit Queue  <commit-queue@webkit.org>
 
+        Unreviewed, rolling out r185211.
+        https://bugs.webkit.org/show_bug.cgi?id=145670
+
+        The test depends on a rolled out patch (Requested by ap on
+        #webkit).
+
+        Reverted changeset:
+
+        "Add WK1 versions of tests from Bugs 145637 and 145642"
+        https://bugs.webkit.org/show_bug.cgi?id=145649
+        http://trac.webkit.org/changeset/185211
+
+2015-06-04  Commit Queue  <commit-queue@webkit.org>
+
         Unreviewed, rolling out r185216.
         https://bugs.webkit.org/show_bug.cgi?id=145666
 
