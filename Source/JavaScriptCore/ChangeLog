@@ -1,3 +1,37 @@
+2015-06-04  Filip Pizlo  <fpizlo@apple.com>
+
+        SideState should be a distinct abstract heap from Heap and Stack
+        https://bugs.webkit.org/show_bug.cgi?id=145653
+
+        Reviewed by Geoffrey Garen.
+        
+        Before, SideState fit into the hierarchy like so:
+        
+        World
+           |
+           +-- Stack
+           |
+           +-- Heap
+                 |
+                 +-- SideState
+        
+        Now we will have:
+        
+        World
+           |
+           +-- Stack
+           |
+           +-- Heap
+           |
+           +-- SideState
+        
+        This makes it easy to ask if a writing operation wrote to anything that is observable even
+        if we don't exit. SideState is only observable if we exit.
+
+        * dfg/DFGAbstractHeap.h:
+        (JSC::DFG::AbstractHeap::AbstractHeap):
+        (JSC::DFG::AbstractHeap::supertype):
+
 2015-06-04  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Prune more resources from the MemoryCache before process suspension

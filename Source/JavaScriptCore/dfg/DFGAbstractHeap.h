@@ -190,7 +190,7 @@ public:
     
     AbstractHeap(AbstractHeapKind kind, Payload payload)
     {
-        ASSERT(kind != InvalidAbstractHeap && kind != World);
+        ASSERT(kind != InvalidAbstractHeap && kind != World && kind != Heap && kind != SideState);
         m_value = encode(kind, payload);
     }
     
@@ -215,6 +215,7 @@ public:
         case World:
             return AbstractHeap();
         case Heap:
+        case SideState:
             return World;
         default:
             if (payload().isTop()) {
