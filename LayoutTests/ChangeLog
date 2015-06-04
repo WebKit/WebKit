@@ -1,3 +1,15 @@
+2015-06-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Layer tree dumps should include mask layers
+        https://bugs.webkit.org/show_bug.cgi?id=145629
+
+        Reviewed by Zalan Bujtas.
+        
+        New results.
+
+        * compositing/masks/compositing-clip-path-change-no-repaint-expected.txt:
+        * compositing/masks/mask-layer-size-expected.txt:
+
 2015-06-03  Greg Hughes  <ghughes@apple.com>
 
         AX: Expose field sets to accessibility clients

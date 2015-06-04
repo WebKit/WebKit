@@ -781,6 +781,15 @@ void GraphicsLayer::dumpProperties(TextStream& ts, int indent, LayerTreeAsTextBe
         ts << "[" << m_childrenTransform.m41() << " " << m_childrenTransform.m42() << " " << m_childrenTransform.m43() << " " << m_childrenTransform.m44() << "])\n";
     }
 
+    if (m_maskLayer) {
+        writeIndent(ts, indent + 1);
+        ts << "(mask layer";
+        if (behavior & LayerTreeAsTextDebug)
+            ts << " " << m_maskLayer;
+        ts << ")\n";
+        m_maskLayer->dumpLayer(ts, indent + 2, behavior);
+    }
+
     if (m_replicaLayer) {
         writeIndent(ts, indent + 1);
         ts << "(replica layer";
