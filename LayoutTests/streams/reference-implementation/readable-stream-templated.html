@@ -385,7 +385,7 @@ function templatedRSTwoChunksOpenReader(label, factory, chunks) {
         }));
     });
 
-    var test2 = async_test('calling read() twice with waiting will eventually give both chunks', { timeout: 50 });
+    var test2 = async_test('calling read() twice with waiting will eventually give both chunks');
     test2.step(function() {
         var { reader } = factory();
 
