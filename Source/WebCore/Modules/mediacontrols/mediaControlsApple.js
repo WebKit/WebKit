@@ -611,6 +611,15 @@ Controller.prototype = {
         this.setNeedsUpdateForDisplayedWidth();
         this.updateLayoutForDisplayedWidth();
         this.setNeedsTimelineMetricsUpdate();
+
+        if (this.video.controls) {
+            this.controls.panel.classList.add(this.ClassNames.show);
+            this.controls.panel.classList.remove(this.ClassNames.hidden);
+            this.resetHideControlsTimer();
+        } else {
+            this.controls.panel.classList.remove(this.ClassNames.show);
+            this.controls.panel.classList.add(this.ClassNames.hidden);
+        }
     },
 
     isPlayable: function()
@@ -779,6 +788,9 @@ Controller.prototype = {
 
     handleWrapperMouseMove: function(event)
     {
+        if (!this.video.controls)
+            return;
+
         if (this.controlsAreHidden())
             this.showControls();
         this.resetHideControlsTimer();
@@ -1475,7 +1487,7 @@ Controller.prototype = {
     {
         this.base.appendChild(this.controls.inlinePlaybackPlaceholder);
         this.base.appendChild(this.controls.panel);
-        this.setNeedsTimelineMetricsUpdate();
+        this.updateControls();
     },
 
     updateTime: function()
@@ -1867,7 +1879,9 @@ Controller.prototype = {
     {
         if (this.hideTimer)
             clearTimeout(this.hideTimer);
-        this.hideTimer = setTimeout(this.hideControls.bind(this), this.HideControlsDelay);
+
+        if (this.isPlaying)
+            this.hideTimer = setTimeout(this.hideControls.bind(this), this.HideControlsDelay);
     },
 
     handleOptimizedFullscreenButtonClicked: function(event) {
