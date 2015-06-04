@@ -30,7 +30,7 @@ WebInspector.IssueManager = class IssueManager extends WebInspector.Object
         super();
 
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
-        WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.ActiveLogCleared, this._activeLogCleared, this);
+        WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.Cleared, this._logCleared, this);
 
         this.initialize();
     }
@@ -74,7 +74,7 @@ WebInspector.IssueManager = class IssueManager extends WebInspector.Object
 
     // Private
 
-    _activeLogCleared(event)
+    _logCleared(event)
     {
         this.initialize();
     }

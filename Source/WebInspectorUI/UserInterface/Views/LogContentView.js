@@ -71,19 +71,16 @@ WebInspector.LogContentView = function(representedObject)
     this._clearLogNavigationItem = new WebInspector.ButtonNavigationItem("clear-log", WebInspector.UIString("Clear log (%s or %s)").format(this._logViewController.messagesClearKeyboardShortcut.displayName, this._logViewController.messagesAlternateClearKeyboardShortcut.displayName), "Images/NavigationItemTrash.svg", 15, 15);
     this._clearLogNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._clearLog, this);
 
-    this._clearLogOnReloadSetting = new WebInspector.Setting("clear-log-on-reload", true);
-
     var toolTip = WebInspector.UIString("Show console tab");
     this._showConsoleTabNavigationItem = new WebInspector.ButtonNavigationItem("show-tab", toolTip, "Images/SplitToggleUp.svg", 16, 16);
     this._showConsoleTabNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._showConsoleTab, this);
 
     this.messagesElement.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), false);
 
-    WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.Cleared, this._sessionsCleared, this);
     WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.SessionStarted, this._sessionStarted, this);
     WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, this._messageAdded, this);
     WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.PreviousMessageRepeatCountUpdated, this._previousMessageRepeatCountUpdated, this);
-    WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.ActiveLogCleared, this._activeLogCleared, this);
+    WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.Cleared, this._logCleared, this);
 
     WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ProvisionalLoadStarted, this._provisionalLoadStarted, this);
 };
@@ -150,13 +147,6 @@ WebInspector.LogContentView.prototype = {
     get searchInProgress()
     {
         return this.messagesElement.classList.contains(WebInspector.LogContentView.SearchInProgressStyleClassName);
-    },
-
-    didClearMessages: function()
-    {
-        if (this._ignoreDidClearMessages)
-            return;
-        WebInspector.logManager.requestClearMessages();
     },
 
     didAppendConsoleMessageView: function(messageView)
@@ -318,17 +308,9 @@ WebInspector.LogContentView.prototype = {
         return data;
     },
 
-    _sessionsCleared: function(event)
-    {
-        this._ignoreDidClearMessages = true;
-        this._logViewController.clear();
-        this._ignoreDidClearMessages = false;
-    },
-
     _sessionStarted: function(event)
     {
-        if (this._clearLogOnReloadSetting.value)  {
-            this._clearLogIgnoringClearMessages();
+        if (WebInspector.clearLogOnReload.value) {
             this._reappendProvisionalMessages();
             return;
         }
@@ -369,7 +351,7 @@ WebInspector.LogContentView.prototype = {
         contextMenu.appendItem(WebInspector.UIString("Clear Log"), this._clearLog.bind(this));
         contextMenu.appendSeparator();
 
-        var clearLogOnReloadUIString = this._clearLogOnReloadSetting.value ? WebInspector.UIString("Keep Log on Reload") : WebInspector.UIString("Clear Log on Reload");
+        var clearLogOnReloadUIString = WebInspector.clearLogOnReload.value ? WebInspector.UIString("Keep Log on Reload") : WebInspector.UIString("Clear Log on Reload");
 
         contextMenu.appendItem(clearLogOnReloadUIString, this._toggleClearLogOnReloadSetting.bind(this));
 
@@ -649,19 +631,9 @@ WebInspector.LogContentView.prototype = {
         });
     },
 
-    _activeLogCleared: function(event)
+    _logCleared: function(event)
     {
-        this._ignoreDidClearMessages = true;
         this._logViewController.clear();
-        this._ignoreDidClearMessages = false;
-    },
-
-    // FIXME: <https://webkit.org/b/145466> Web Inspector: Activity Viewer does not update on "Clear Log on reload"
-    _clearLogIgnoringClearMessages: function()
-    {
-        this._ignoreDidClearMessages = true;
-        this._logViewController.clear();
-        this._ignoreDidClearMessages = false;
     },
 
     _showConsoleTab: function()
@@ -671,12 +643,12 @@ WebInspector.LogContentView.prototype = {
 
     _toggleClearLogOnReloadSetting: function()
     {
-        this._clearLogOnReloadSetting.value = !this._clearLogOnReloadSetting.value;
+        WebInspector.clearLogOnReload.value = !WebInspector.clearLogOnReload.value;
     },
 
     _clearLog: function()
     {
-        this._logViewController.clear();
+        WebInspector.logManager.requestClearMessages();
     },
 
     _scopeBarSelectionDidChange: function(event)
@@ -976,7 +948,7 @@ WebInspector.LogContentView.prototype = {
     _clearProvisionalState: function()
     {
         this._startedProvisionalLoad = false;
-        this._provisionalMessages = [];        
+        this._provisionalMessages = [];
     }
 };
 

@@ -85,9 +85,6 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
         this.startNewSession(true);
 
         this.prompt.focus();
-
-        if (this.delegate && typeof this.delegate.didClearMessages === "function")
-            this.delegate.didClearMessages();
     }
 
     startNewSession(clearPreviousSessions)
@@ -244,7 +241,7 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
 
     _handleClearShortcut()
     {
-        this.clear();
+        WebInspector.logManager.requestClearMessages();
     }
 
     _handleFindShortcut()

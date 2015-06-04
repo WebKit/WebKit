@@ -336,7 +336,6 @@ WebInspector.ObjectTreeView = class ObjectTreeView extends WebInspector.Object
 
         if (this._inConsole) {
             WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.Cleared, this._untrackWeakEntries, this);
-            WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.ActiveLogCleared, this._untrackWeakEntries, this);
             WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.SessionStarted, this._untrackWeakEntries, this);
         }
     }
@@ -355,7 +354,6 @@ WebInspector.ObjectTreeView = class ObjectTreeView extends WebInspector.Object
 
         if (this._inConsole) {
             WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.Cleared, this._untrackWeakEntries, this);
-            WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.ActiveLogCleared, this._untrackWeakEntries, this);
             WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.SessionStarted, this._untrackWeakEntries, this);
         }
 

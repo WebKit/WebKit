@@ -38,7 +38,6 @@ WebInspector.DefaultDashboard = class DefaultDashboard extends WebInspector.Obje
         // Necessary events required to track console messages.
         var logManager = WebInspector.logManager;
         logManager.addEventListener(WebInspector.LogManager.Event.Cleared, this._consoleWasCleared, this);
-        logManager.addEventListener(WebInspector.LogManager.Event.ActiveLogCleared, this._consoleWasCleared, this);
         logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, this._consoleMessageAdded, this);
         logManager.addEventListener(WebInspector.LogManager.Event.PreviousMessageRepeatCountUpdated, this._consoleMessageWasRepeated, this);
 

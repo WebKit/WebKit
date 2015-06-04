@@ -1,3 +1,61 @@
+2015-06-04  Tobias Reiss  <tobi+webkit@basecode.de>
+        
+        Web Inspector: Activity Viewer does not update on "Clear Log on reload"
+        https://bugs.webkit.org/show_bug.cgi?id=145466
+        
+        Reviewed by Joseph Pecoraro.
+
+        1. Isolate logic within LogManager and remove hacks/logic from all other files
+        2. Within LogManager: Differentiate "messagesCleared" calls
+         a) that happen as a result of a "requested clear" by Frontend (e.g. Button)
+         b) that happen on page reload and install "clear/keep-on-page-reload" logic
+         c) that happen on frame navigated, console.clear() or clear()
+        3. Unify "ActiveLogCleared" and "Cleared" events to "Cleared"
+        
+        For step 2b and 2c it is important to delay the handling and wait until
+        "_mainResourceDidChange" has determined whether a page reload happened or
+        not.
+        
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        Store "clear-log-on-reload" setting globally.
+        
+        * UserInterface/Controllers/IssueManager.js:
+        (WebInspector.IssueManager):
+        * UserInterface/Models/DefaultDashboard.js:
+        (WebInspector.DefaultDashboard): Deleted.
+        * UserInterface/Views/ObjectTreeView.js:
+        (WebInspector.ObjectTreeView.prototype._trackWeakEntries): Deleted.
+        (WebInspector.ObjectTreeView.prototype._untrackWeakEntries): Deleted.
+        (WebInspector.ObjectTreeView): Deleted.
+        Remove deleted events.
+        
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WebInspector.JavaScriptLogViewController.prototype._handleClearShortcut):
+        (WebInspector.JavaScriptLogViewController.prototype.clear): Deleted.
+        Remove delegate function call and call LogManager directly.
+        
+        * UserInterface/Controllers/LogManager.js:
+        (WebInspector.LogManager):
+        (WebInspector.LogManager.prototype.messagesCleared):
+        (WebInspector.LogManager.prototype._delayedMessagesCleared):
+        (WebInspector.LogManager.prototype.requestClearMessages):
+        (WebInspector.LogManager.prototype._mainResourceDidChange):
+        Isolate "clear log" logic, especially clear/keep-log-on-reload logic.
+        
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView):
+        (WebInspector.LogContentView.prototype._sessionStarted):
+        (WebInspector.LogContentView.prototype._handleContextMenuEvent):
+        (WebInspector.LogContentView.prototype._logCleared):
+        (WebInspector.LogContentView.prototype._toggleClearLogOnReloadSetting):
+        (WebInspector.LogContentView.prototype._clearLog):
+        (WebInspector.LogContentView.prototype.didClearMessages): Deleted.
+        (WebInspector.LogContentView.prototype._sessionsCleared): Deleted.
+        (WebInspector.LogContentView.prototype._activeLogCleared): Deleted.
+        (WebInspector.LogContentView.prototype._clearLogIgnoringClearMessages): Deleted.
+        Make it a consumer of LogManager and remove special hacks. Simplify code.
+
 2015-06-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: if a known CSS property has an unsupported value, only strikethrough the value
