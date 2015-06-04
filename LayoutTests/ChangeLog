@@ -1,5 +1,14 @@
 2015-06-03  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
+        Skip webgl/useWhilePending.html on WebKit 1 following:
+        <http://trac.webkit.org/changeset/185172>
+
+        Unreviewed.
+
+        * platform/mac-wk1/TestExpectations:
+
+2015-06-03  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
         Add missing expected result files for ios-simulator port following
         <http://trac.webkit.org/changeset/185095>
         <http://trac.webkit.org/changeset/185096>
