@@ -1,3 +1,18 @@
+2015-06-03  Zalan Bujtas  <zalan@apple.com>
+
+        Use borderBoxRect instead of contentBoxRect for backdrop filter.
+        https://bugs.webkit.org/show_bug.cgi?id=145606
+
+        Reviewed by Simon Fraser.
+
+        Backdrop filter should use border box rect. It also needs to take css clip into account.
+
+        * css3/filters/backdrop/backdrop-filter-does-not-size-properly-border-and-padding-expected.txt:
+        * css3/filters/backdrop/backdrop-filter-with-cliprect-expected.txt: Added.
+        * css3/filters/backdrop/backdrop-filter-with-cliprect.html: Added.
+        * css3/filters/backdrop/backdrop-filter-with-mask-expected.txt: Added.
+        * css3/filters/backdrop/backdrop-filter-with-mask.html: Added.
+
 2015-06-03  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Unreviewed gardening on 4th June.
