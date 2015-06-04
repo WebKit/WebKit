@@ -275,6 +275,16 @@ WebInspector.CSSCompletions = class CSSCompletions
     {
         return this._shorthands[longhand] || [];
     }
+
+    nameMatchesValidPropertyExactly(name)
+    {
+        for (var property of this._values) {
+            if (property === name)
+                return true;
+        }
+
+        return false;
+    }
 };
 
 WebInspector.CSSCompletions.cssNameCompletions = null;

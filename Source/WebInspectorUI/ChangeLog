@@ -1,3 +1,16 @@
+2015-06-03  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: if a known CSS property has an unsupported value, only strikethrough the value
+        https://bugs.webkit.org/show_bug.cgi?id=141262
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/CSSCompletions.js:
+        (WebInspector.CSSCompletions.prototype.nameMatchesValidPropertyExactly): Loops through the full property list and returns true only if a property exactly matches the given property name.
+        (WebInspector.CSSCompletions): Added nameMatchesValidPropertyExactly function.
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createTextMarkerForPropertyIfNeeded): Added logic to limit the invalid class marker to only the property value if the property name is an actual property.
+
 2015-06-03  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Search field bottom border doesn't match the rest of the toolbar

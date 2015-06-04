@@ -490,6 +490,10 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             this._codeMirror.setUniqueBookmark(to, arrowElement);
         }
 
+        var propertyNameIsValid = false;
+        if (WebInspector.CSSCompletions.cssNameCompletions)
+            propertyNameIsValid = WebInspector.CSSCompletions.cssNameCompletions.nameMatchesValidPropertyExactly(property.name);
+
         var classNames = ["css-style-declaration-property"];
 
         if (property.overridden)
@@ -503,7 +507,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
         if (!property.valid && property.hasOtherVendorNameOrKeyword())
             classNames.push("other-vendor");
-        else if (!property.valid)
+        else if (!property.valid && !propertyNameIsValid)
             classNames.push("invalid");
 
         if (!property.enabled)
@@ -530,6 +534,13 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         property.addEventListener(WebInspector.CSSProperty.Event.OverriddenStatusChanged, this._propertyOverriddenStatusChanged, this);
 
         this._removeCheckboxPlaceholder(from.line);
+
+        if (!property.valid && propertyNameIsValid) {
+            var start = {line: from.line, ch: from.ch + property.text.indexOf(property.value)};
+            var end = {line: to.line, ch: start.ch + property.value.length};
+
+            this._codeMirror.markText(start, end, {className: "invalid"});
+        }
     }
 
     _clearTextMarkers(nonatomic, all)
