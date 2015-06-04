@@ -1,3 +1,13 @@
+2015-06-03  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Expose interruptedForPolicyChangeError
+        https://bugs.webkit.org/show_bug.cgi?id=145627
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKErrorPrivate.h: Added WKErrorCodeFrameLoadInterruptedByPolicyChange with the same value as
+        kWKErrorCodeFrameLoadInterruptedByPolicyChange.
+
 2015-06-04  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Prune more resources from the MemoryCache before process suspension
