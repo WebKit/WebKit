@@ -121,7 +121,7 @@ em
       
 fieldset
       AXRole: AXGroup
-      AXSubrole: 
+      AXSubrole: AXFieldset
       AXRoleDescription: group
       
 legend

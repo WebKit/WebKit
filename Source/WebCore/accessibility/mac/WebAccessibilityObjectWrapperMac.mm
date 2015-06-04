@@ -2026,6 +2026,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if (m_object->isTreeItem())
         return NSAccessibilityOutlineRowSubrole;
     
+    if (m_object->isFieldset())
+        return @"AXFieldset";
+    
     if (is<AccessibilityList>(*m_object)) {
         auto& listObject = downcast<AccessibilityList>(*m_object);
         if (listObject.isUnorderedList() || listObject.isOrderedList())

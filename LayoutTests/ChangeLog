@@ -1,3 +1,14 @@
+2015-06-03  Greg Hughes  <ghughes@apple.com>
+
+        AX: Expose field sets to accessibility clients
+        https://bugs.webkit.org/show_bug.cgi?id=145585
+   
+        Updated role tests to include the new subrole for fieldsets
+
+        Reviewed by Chris Fleizach.
+
+        * platform/mac/accessibility/roles-exposed-expected.txt:
+
 2015-06-03  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Skip webgl/useWhilePending.html on WebKit 1 following:
