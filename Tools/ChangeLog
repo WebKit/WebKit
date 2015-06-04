@@ -1,3 +1,13 @@
+2015-06-04  Alexey Proskuryakov  <ap@apple.com>
+
+        WebKitTestRunner leaks strings in generateWhitelist()
+        https://bugs.webkit.org/show_bug.cgi?id=145665
+
+        Reviewed by Myles C. Maxfield.
+
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::generateWhitelist):
+
 2015-06-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Fix options in build-jsc for CMake builds
