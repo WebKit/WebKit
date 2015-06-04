@@ -1,5 +1,17 @@
 2015-06-03  Simon Fraser  <simon.fraser@apple.com>
 
+        REGRESSION (r184968): missing media player buttons (control bar exists, but no buttons)
+        https://bugs.webkit.org/show_bug.cgi?id=145630
+
+        Reviewed by Zalan Bujtas.
+
+        Test that dumps coverage info for a layer with a mask.
+
+        * compositing/visible-rect/mask-layer-coverage-expected.txt: Added.
+        * compositing/visible-rect/mask-layer-coverage.html: Added.
+
+2015-06-03  Simon Fraser  <simon.fraser@apple.com>
+
         Layer tree dumps should include mask layers
         https://bugs.webkit.org/show_bug.cgi?id=145629
 

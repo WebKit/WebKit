@@ -1284,6 +1284,11 @@ void GraphicsLayerCA::setVisibleAndCoverageRects(const VisibleAndCoverageRects& 
     if (intersectsCoverageRect != m_intersectsCoverageRect) {
         m_uncommittedChanges |= CoverageRectChanged;
         m_intersectsCoverageRect = intersectsCoverageRect;
+
+        if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer)) {
+            maskLayer->m_uncommittedChanges |= CoverageRectChanged;
+            maskLayer->m_intersectsCoverageRect = intersectsCoverageRect;
+        }
     }
 
     if (visibleRectChanged) {
