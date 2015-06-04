@@ -38,7 +38,7 @@
 #include "AudioSession.h"
 #include "FloatConversion.h"
 #include "Logging.h"
-#include "MediaSessionManager.h"
+#include "PlatformMediaSessionManager.h"
 #include "VectorMath.h"
 #include <CoreAudio/AudioHardware.h>
 

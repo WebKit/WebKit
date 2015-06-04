@@ -2111,10 +2111,10 @@ set(WebCore_SOURCES
     platform/audio/HRTFElevation.cpp
     platform/audio/HRTFKernel.cpp
     platform/audio/HRTFPanner.cpp
-    platform/audio/MediaSessionManager.cpp
     platform/audio/MultiChannelResampler.cpp
     platform/audio/Panner.cpp
     platform/audio/PlatformMediaSession.cpp
+    platform/audio/PlatformMediaSessionManager.cpp
     platform/audio/Reverb.cpp
     platform/audio/ReverbAccumulationBuffer.cpp
     platform/audio/ReverbConvolver.cpp

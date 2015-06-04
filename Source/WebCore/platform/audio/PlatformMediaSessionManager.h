@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaSessionManager_h
-#define MediaSessionManager_h
+#ifndef PlatformMediaSessionManager_h
+#define PlatformMediaSessionManager_h
 
 #include "AudioHardwareListener.h"
 #include "PlatformMediaSession.h"
@@ -40,11 +40,11 @@ class HTMLMediaElement;
 class PlatformMediaSession;
 class RemoteCommandListener;
 
-class MediaSessionManager : private RemoteCommandListenerClient, private SystemSleepListener::Client, private AudioHardwareListener::Client {
+class PlatformMediaSessionManager : private RemoteCommandListenerClient, private SystemSleepListener::Client, private AudioHardwareListener::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT static MediaSessionManager& sharedManager();
-    virtual ~MediaSessionManager() { }
+    WEBCORE_EXPORT static PlatformMediaSessionManager& sharedManager();
+    virtual ~PlatformMediaSessionManager() { }
 
     bool has(PlatformMediaSession::MediaType) const;
     int count(PlatformMediaSession::MediaType) const;
@@ -90,7 +90,7 @@ public:
 
 protected:
     friend class PlatformMediaSession;
-    explicit MediaSessionManager();
+    explicit PlatformMediaSessionManager();
 
     void addSession(PlatformMediaSession&);
     void removeSession(PlatformMediaSession&);
@@ -130,4 +130,4 @@ private:
 
 }
 
-#endif // MediaSessionManager_h
+#endif // PlatformMediaSessionManager_h

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "MediaSessionManager.h"
+#include "PlatformMediaSessionManager.h"
 
 #if USE(AUDIO_SESSION)
 
@@ -37,9 +37,9 @@ using namespace WebCore;
 static const size_t kWebAudioBufferSize = 128;
 static const size_t kLowPowerVideoBufferSize = 4096;
 
-void MediaSessionManager::updateSessionState()
+void PlatformMediaSessionManager::updateSessionState()
 {
-    LOG(Media, "MediaSessionManager::updateSessionState() - types: Video(%d), Audio(%d), WebAudio(%d)", count(PlatformMediaSession::Video), count(PlatformMediaSession::Audio), count(PlatformMediaSession::WebAudio));
+    LOG(Media, "PlatformMediaSessionManager::updateSessionState() - types: Video(%d), Audio(%d), WebAudio(%d)", count(PlatformMediaSession::Video), count(PlatformMediaSession::Audio), count(PlatformMediaSession::WebAudio));
 
     if (has(PlatformMediaSession::WebAudio))
         AudioSession::sharedSession().setPreferredBufferSize(kWebAudioBufferSize);

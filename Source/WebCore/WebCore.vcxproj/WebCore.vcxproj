@@ -7396,7 +7396,7 @@
     <ClCompile Include="..\platform\graphics\ISOVTTCue.cpp" />
     <ClCompile Include="..\platform\audio\AudioSession.cpp" />
     <ClCompile Include="..\platform\audio\PlatformMediaSession.cpp" />
-    <ClCompile Include="..\platform\audio\MediaSessionManager.cpp" />
+    <ClCompile Include="..\platform\audio\PlatformMediaSessionManager.cpp" />
     <ClCompile Include="..\platform\graphics\ANGLEWebKitBridge.cpp" />
     <ClCompile Include="..\platform\graphics\avfoundation\cf\InbandTextTrackPrivateAVCF.cpp" />
     <ClCompile Include="..\platform\graphics\avfoundation\cf\InbandTextTrackPrivateLegacyAVCF.cpp" />

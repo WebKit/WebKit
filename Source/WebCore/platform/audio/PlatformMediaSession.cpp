@@ -30,7 +30,7 @@
 #include "HTMLMediaElement.h"
 #include "Logging.h"
 #include "MediaPlayer.h"
-#include "MediaSessionManager.h"
+#include "PlatformMediaSessionManager.h"
 
 namespace WebCore {
 
@@ -65,12 +65,12 @@ PlatformMediaSession::PlatformMediaSession(PlatformMediaSessionClient& client)
     , m_notifyingClient(false)
 {
     ASSERT(m_client.mediaType() >= None && m_client.mediaType() <= WebAudio);
-    MediaSessionManager::sharedManager().addSession(*this);
+    PlatformMediaSessionManager::sharedManager().addSession(*this);
 }
 
 PlatformMediaSession::~PlatformMediaSession()
 {
-    MediaSessionManager::sharedManager().removeSession(*this);
+    PlatformMediaSessionManager::sharedManager().removeSession(*this);
 }
 
 void PlatformMediaSession::setState(State state)
@@ -118,7 +118,7 @@ bool PlatformMediaSession::clientWillBeginPlayback()
     if (m_notifyingClient)
         return true;
 
-    if (!MediaSessionManager::sharedManager().sessionWillBeginPlayback(*this)) {
+    if (!PlatformMediaSessionManager::sharedManager().sessionWillBeginPlayback(*this)) {
         if (state() == Interrupted)
             m_stateToRestore = Playing;
         return false;
@@ -142,7 +142,7 @@ bool PlatformMediaSession::clientWillPausePlayback()
     }
     
     setState(Paused);
-    MediaSessionManager::sharedManager().sessionWillEndPlayback(*this);
+    PlatformMediaSessionManager::sharedManager().sessionWillEndPlayback(*this);
     if (!m_clientDataBufferingTimer.isActive())
         m_clientDataBufferingTimer.startOneShot(kClientDataBufferingTimerThrottleDelay);
     return true;
@@ -204,8 +204,8 @@ void PlatformMediaSession::clientDataBufferingTimerFired()
     if (m_state != Playing || !m_client.elementIsHidden())
         return;
 
-    MediaSessionManager::SessionRestrictions restrictions = MediaSessionManager::sharedManager().restrictions(mediaType());
-    if ((restrictions & MediaSessionManager::BackgroundTabPlaybackRestricted) == MediaSessionManager::BackgroundTabPlaybackRestricted)
+    PlatformMediaSessionManager::SessionRestrictions restrictions = PlatformMediaSessionManager::sharedManager().restrictions(mediaType());
+    if ((restrictions & PlatformMediaSessionManager::BackgroundTabPlaybackRestricted) == PlatformMediaSessionManager::BackgroundTabPlaybackRestricted)
         pauseSession();
 }
 
@@ -214,7 +214,7 @@ void PlatformMediaSession::updateClientDataBuffering()
     if (m_clientDataBufferingTimer.isActive())
         m_clientDataBufferingTimer.stop();
 
-    m_client.setShouldBufferData(MediaSessionManager::sharedManager().sessionCanLoadMedia(*this));
+    m_client.setShouldBufferData(PlatformMediaSessionManager::sharedManager().sessionCanLoadMedia(*this));
 }
 
 bool PlatformMediaSession::isHidden() const

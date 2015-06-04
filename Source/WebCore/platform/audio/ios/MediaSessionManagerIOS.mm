@@ -110,14 +110,14 @@ using namespace WebCore;
 
 namespace WebCore {
 
-MediaSessionManager& MediaSessionManager::sharedManager()
+PlatformMediaSessionManager& PlatformMediaSessionManager::sharedManager()
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(MediaSessionManageriOS, manager, ());
     return manager;
 }
 
 MediaSessionManageriOS::MediaSessionManageriOS()
-    :MediaSessionManager()
+    : PlatformMediaSessionManager()
     , m_objcObserver(adoptNS([[WebMediaSessionHelper alloc] initWithCallback:this]))
 {
     resetRestrictions();
@@ -134,7 +134,7 @@ void MediaSessionManageriOS::resetRestrictions()
 
     LOG(Media, "MediaSessionManageriOS::resetRestrictions");
 
-    MediaSessionManager::resetRestrictions();
+    PlatformMediaSessionManager::resetRestrictions();
 
     static wkDeviceClass deviceClass = iosDeviceClass();
     if (deviceClass == wkDeviceClassiPhone || deviceClass == wkDeviceClassiPod)
@@ -188,7 +188,7 @@ void MediaSessionManageriOS::configureWireLessTargetMonitoring()
 
 bool MediaSessionManageriOS::sessionWillBeginPlayback(PlatformMediaSession& session)
 {
-    if (!MediaSessionManager::sessionWillBeginPlayback(session))
+    if (!PlatformMediaSessionManager::sessionWillBeginPlayback(session))
         return false;
 
     updateNowPlayingInfo();
@@ -197,7 +197,7 @@ bool MediaSessionManageriOS::sessionWillBeginPlayback(PlatformMediaSession& sess
     
 void MediaSessionManageriOS::sessionWillEndPlayback(PlatformMediaSession& session)
 {
-    MediaSessionManager::sessionWillEndPlayback(session);
+    PlatformMediaSessionManager::sessionWillEndPlayback(session);
     updateNowPlayingInfo();
 }
     

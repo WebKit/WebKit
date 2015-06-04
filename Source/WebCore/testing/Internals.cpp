@@ -79,7 +79,6 @@
 #include "MainFrame.h"
 #include "MallocStatistics.h"
 #include "MediaPlayer.h"
-#include "MediaSessionManager.h"
 #include "MemoryCache.h"
 #include "MemoryInfo.h"
 #include "MicroTask.h"
@@ -88,6 +87,7 @@
 #include "Page.h"
 #include "PageCache.h"
 #include "PageOverlay.h"
+#include "PlatformMediaSessionManager.h"
 #include "PrintContext.h"
 #include "PseudoElement.h"
 #include "Range.h"
@@ -322,7 +322,7 @@ void Internals::resetToConsistentState(Page* page)
     page->mainFrame().loader().clearTestingOverrides();
     ApplicationCacheStorage::singleton().setDefaultOriginQuota(ApplicationCacheStorage::noQuota());
 #if ENABLE(VIDEO)
-    MediaSessionManager::sharedManager().resetRestrictions();
+    PlatformMediaSessionManager::sharedManager().resetRestrictions();
 #endif
 #if HAVE(ACCESSIBILITY)
     AXObjectCache::setEnhancedUserInterfaceAccessibility(false);
@@ -2591,7 +2591,7 @@ Vector<String> Internals::bufferedSamplesForTrackID(SourceBuffer* buffer, const 
 #if ENABLE(VIDEO)
 void Internals::beginMediaSessionInterruption()
 {
-    MediaSessionManager::sharedManager().beginInterruption(PlatformMediaSession::SystemInterruption);
+    PlatformMediaSessionManager::sharedManager().beginInterruption(PlatformMediaSession::SystemInterruption);
 }
 
 void Internals::endMediaSessionInterruption(const String& flagsString)
@@ -2601,17 +2601,17 @@ void Internals::endMediaSessionInterruption(const String& flagsString)
     if (equalIgnoringCase(flagsString, "MayResumePlaying"))
         flags = PlatformMediaSession::MayResumePlaying;
     
-    MediaSessionManager::sharedManager().endInterruption(flags);
+    PlatformMediaSessionManager::sharedManager().endInterruption(flags);
 }
 
 void Internals::applicationWillEnterForeground() const
 {
-    MediaSessionManager::sharedManager().applicationWillEnterForeground();
+    PlatformMediaSessionManager::sharedManager().applicationWillEnterForeground();
 }
 
 void Internals::applicationWillEnterBackground() const
 {
-    MediaSessionManager::sharedManager().applicationWillEnterBackground();
+    PlatformMediaSessionManager::sharedManager().applicationWillEnterBackground();
 }
 
 void Internals::setMediaSessionRestrictions(const String& mediaTypeString, const String& restrictionsString, ExceptionCode& ec)
@@ -2628,30 +2628,30 @@ void Internals::setMediaSessionRestrictions(const String& mediaTypeString, const
         return;
     }
 
-    MediaSessionManager::SessionRestrictions restrictions = MediaSessionManager::sharedManager().restrictions(mediaType);
-    MediaSessionManager::sharedManager().removeRestriction(mediaType, restrictions);
+    PlatformMediaSessionManager::SessionRestrictions restrictions = PlatformMediaSessionManager::sharedManager().restrictions(mediaType);
+    PlatformMediaSessionManager::sharedManager().removeRestriction(mediaType, restrictions);
 
-    restrictions = MediaSessionManager::NoRestrictions;
+    restrictions = PlatformMediaSessionManager::NoRestrictions;
 
     Vector<String> restrictionsArray;
     restrictionsString.split(',', false, restrictionsArray);
     for (auto& restrictionString : restrictionsArray) {
         if (equalIgnoringCase(restrictionString, "ConcurrentPlaybackNotPermitted"))
-            restrictions |= MediaSessionManager::ConcurrentPlaybackNotPermitted;
+            restrictions |= PlatformMediaSessionManager::ConcurrentPlaybackNotPermitted;
         if (equalIgnoringCase(restrictionString, "InlineVideoPlaybackRestricted"))
-            restrictions |= MediaSessionManager::InlineVideoPlaybackRestricted;
+            restrictions |= PlatformMediaSessionManager::InlineVideoPlaybackRestricted;
         if (equalIgnoringCase(restrictionString, "MetadataPreloadingNotPermitted"))
-            restrictions |= MediaSessionManager::MetadataPreloadingNotPermitted;
+            restrictions |= PlatformMediaSessionManager::MetadataPreloadingNotPermitted;
         if (equalIgnoringCase(restrictionString, "AutoPreloadingNotPermitted"))
-            restrictions |= MediaSessionManager::AutoPreloadingNotPermitted;
+            restrictions |= PlatformMediaSessionManager::AutoPreloadingNotPermitted;
         if (equalIgnoringCase(restrictionString, "BackgroundProcessPlaybackRestricted"))
-            restrictions |= MediaSessionManager::BackgroundProcessPlaybackRestricted;
+            restrictions |= PlatformMediaSessionManager::BackgroundProcessPlaybackRestricted;
         if (equalIgnoringCase(restrictionString, "BackgroundTabPlaybackRestricted"))
-            restrictions |= MediaSessionManager::BackgroundTabPlaybackRestricted;
+            restrictions |= PlatformMediaSessionManager::BackgroundTabPlaybackRestricted;
         if (equalIgnoringCase(restrictionString, "InterruptedPlaybackNotPermitted"))
-            restrictions |= MediaSessionManager::InterruptedPlaybackNotPermitted;
+            restrictions |= PlatformMediaSessionManager::InterruptedPlaybackNotPermitted;
     }
-    MediaSessionManager::sharedManager().addRestriction(mediaType, restrictions);
+    PlatformMediaSessionManager::sharedManager().addRestriction(mediaType, restrictions);
 }
 
 void Internals::setMediaElementRestrictions(HTMLMediaElement* element, const String& restrictionsString, ExceptionCode& ec)
@@ -2718,7 +2718,7 @@ void Internals::postRemoteControlCommand(const String& commandString, ExceptionC
         return;
     }
     
-    MediaSessionManager::sharedManager().didReceiveRemoteControlCommand(command);
+    PlatformMediaSessionManager::sharedManager().didReceiveRemoteControlCommand(command);
 }
 
 bool Internals::elementIsBlockingDisplaySleep(Element* element) const
@@ -2759,14 +2759,14 @@ void Internals::setAudioContextRestrictions(AudioContext* context, const String 
 void Internals::simulateSystemSleep() const
 {
 #if ENABLE(VIDEO)
-    MediaSessionManager::sharedManager().systemWillSleep();
+    PlatformMediaSessionManager::sharedManager().systemWillSleep();
 #endif
 }
 
 void Internals::simulateSystemWake() const
 {
 #if ENABLE(VIDEO)
-    MediaSessionManager::sharedManager().systemDidWake();
+    PlatformMediaSessionManager::sharedManager().systemDidWake();
 #endif
 }
 
