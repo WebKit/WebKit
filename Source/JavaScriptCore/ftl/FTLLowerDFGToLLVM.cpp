@@ -958,12 +958,113 @@ private:
     void compileDoubleRep()
     {
         switch (m_node->child1().useKind()) {
+        case RealNumberUse: {
+            LValue value = lowJSValue(m_node->child1(), ManualOperandSpeculation);
+            
+            LValue doubleValue = unboxDouble(value);
+            
+            LBasicBlock intCase = FTL_NEW_BLOCK(m_out, ("DoubleRep RealNumberUse int case"));
+            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("DoubleRep continuation"));
+            
+            ValueFromBlock fastResult = m_out.anchor(doubleValue);
+            m_out.branch(
+                m_out.doubleEqual(doubleValue, doubleValue),
+                usually(continuation), rarely(intCase));
+            
+            LBasicBlock lastNext = m_out.appendTo(intCase, continuation);
+            
+            FTL_TYPE_CHECK(
+                jsValueValue(value), m_node->child1(), SpecBytecodeRealNumber,
+                isNotInt32(value, provenType(m_node->child1()) & ~SpecFullDouble));
+            ValueFromBlock slowResult = m_out.anchor(m_out.intToDouble(unboxInt32(value)));
+            m_out.jump(continuation);
+            
+            m_out.appendTo(continuation, lastNext);
+            
+            setDouble(m_out.phi(m_out.doubleType, fastResult, slowResult));
+            return;
+        }
+            
         case NotCellUse:
         case NumberUse: {
             bool shouldConvertNonNumber = m_node->child1().useKind() == NotCellUse;
-
+            
             LValue value = lowJSValue(m_node->child1(), ManualOperandSpeculation);
-            setDouble(jsValueToDouble(m_node->child1(), value, shouldConvertNonNumber));
+
+            LBasicBlock intCase = FTL_NEW_BLOCK(m_out, ("jsValueToDouble unboxing int case"));
+            LBasicBlock doubleTesting = FTL_NEW_BLOCK(m_out, ("jsValueToDouble testing double case"));
+            LBasicBlock doubleCase = FTL_NEW_BLOCK(m_out, ("jsValueToDouble unboxing double case"));
+            LBasicBlock nonDoubleCase = FTL_NEW_BLOCK(m_out, ("jsValueToDouble testing undefined case"));
+            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("jsValueToDouble unboxing continuation"));
+            
+            m_out.branch(
+                isNotInt32(value, provenType(m_node->child1())),
+                unsure(doubleTesting), unsure(intCase));
+            
+            LBasicBlock lastNext = m_out.appendTo(intCase, doubleTesting);
+            
+            ValueFromBlock intToDouble = m_out.anchor(
+                m_out.intToDouble(unboxInt32(value)));
+            m_out.jump(continuation);
+            
+            m_out.appendTo(doubleTesting, doubleCase);
+            LValue valueIsNumber = isNumber(value, provenType(m_node->child1()));
+            m_out.branch(valueIsNumber, usually(doubleCase), rarely(nonDoubleCase));
+
+            m_out.appendTo(doubleCase, nonDoubleCase);
+            ValueFromBlock unboxedDouble = m_out.anchor(unboxDouble(value));
+            m_out.jump(continuation);
+
+            if (shouldConvertNonNumber) {
+                LBasicBlock undefinedCase = FTL_NEW_BLOCK(m_out, ("jsValueToDouble converting undefined case"));
+                LBasicBlock testNullCase = FTL_NEW_BLOCK(m_out, ("jsValueToDouble testing null case"));
+                LBasicBlock nullCase = FTL_NEW_BLOCK(m_out, ("jsValueToDouble converting null case"));
+                LBasicBlock testBooleanTrueCase = FTL_NEW_BLOCK(m_out, ("jsValueToDouble testing boolean true case"));
+                LBasicBlock convertBooleanTrueCase = FTL_NEW_BLOCK(m_out, ("jsValueToDouble convert boolean true case"));
+                LBasicBlock convertBooleanFalseCase = FTL_NEW_BLOCK(m_out, ("jsValueToDouble convert boolean false case"));
+
+                m_out.appendTo(nonDoubleCase, undefinedCase);
+                LValue valueIsUndefined = m_out.equal(value, m_out.constInt64(ValueUndefined));
+                m_out.branch(valueIsUndefined, unsure(undefinedCase), unsure(testNullCase));
+
+                m_out.appendTo(undefinedCase, testNullCase);
+                ValueFromBlock convertedUndefined = m_out.anchor(m_out.constDouble(PNaN));
+                m_out.jump(continuation);
+
+                m_out.appendTo(testNullCase, nullCase);
+                LValue valueIsNull = m_out.equal(value, m_out.constInt64(ValueNull));
+                m_out.branch(valueIsNull, unsure(nullCase), unsure(testBooleanTrueCase));
+
+                m_out.appendTo(nullCase, testBooleanTrueCase);
+                ValueFromBlock convertedNull = m_out.anchor(m_out.constDouble(0));
+                m_out.jump(continuation);
+
+                m_out.appendTo(testBooleanTrueCase, convertBooleanTrueCase);
+                LValue valueIsBooleanTrue = m_out.equal(value, m_out.constInt64(ValueTrue));
+                m_out.branch(valueIsBooleanTrue, unsure(convertBooleanTrueCase), unsure(convertBooleanFalseCase));
+
+                m_out.appendTo(convertBooleanTrueCase, convertBooleanFalseCase);
+                ValueFromBlock convertedTrue = m_out.anchor(m_out.constDouble(1));
+                m_out.jump(continuation);
+
+                m_out.appendTo(convertBooleanFalseCase, continuation);
+
+                LValue valueIsNotBooleanFalse = m_out.notEqual(value, m_out.constInt64(ValueFalse));
+                FTL_TYPE_CHECK(jsValueValue(value), m_node->child1(), ~SpecCell, valueIsNotBooleanFalse);
+                ValueFromBlock convertedFalse = m_out.anchor(m_out.constDouble(0));
+                m_out.jump(continuation);
+
+                m_out.appendTo(continuation, lastNext);
+                setDouble(m_out.phi(m_out.doubleType, intToDouble, unboxedDouble, convertedUndefined, convertedNull, convertedTrue, convertedFalse));
+                return;
+            }
+            m_out.appendTo(nonDoubleCase, continuation);
+            FTL_TYPE_CHECK(jsValueValue(value), m_node->child1(), SpecBytecodeNumber, m_out.booleanTrue);
+            m_out.unreachable();
+
+            m_out.appendTo(continuation, lastNext);
+
+            setDouble(m_out.phi(m_out.doubleType, intToDouble, unboxedDouble));
             return;
         }
             
@@ -7293,87 +7394,6 @@ private:
     {
         return m_out.sub(m_out.bitCast(doubleValue, m_out.int64), m_tagTypeNumber);
     }
-    LValue jsValueToDouble(Edge edge, LValue boxedValue, bool shouldConvertNonNumber)
-    {
-        LBasicBlock intCase = FTL_NEW_BLOCK(m_out, ("jsValueToDouble unboxing int case"));
-        LBasicBlock doubleTesting = FTL_NEW_BLOCK(m_out, ("jsValueToDouble testing double case"));
-        LBasicBlock doubleCase = FTL_NEW_BLOCK(m_out, ("jsValueToDouble unboxing double case"));
-        LBasicBlock nonDoubleCase = FTL_NEW_BLOCK(m_out, ("jsValueToDouble testing undefined case"));
-        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("jsValueToDouble unboxing continuation"));
-            
-        LValue isNotInt32;
-        if (!m_interpreter.needsTypeCheck(edge, SpecInt32))
-            isNotInt32 = m_out.booleanFalse;
-        else if (!m_interpreter.needsTypeCheck(edge, ~SpecInt32))
-            isNotInt32 = m_out.booleanTrue;
-        else
-            isNotInt32 = this->isNotInt32(boxedValue);
-        m_out.branch(isNotInt32, unsure(doubleTesting), unsure(intCase));
-            
-        LBasicBlock lastNext = m_out.appendTo(intCase, doubleTesting);
-            
-        ValueFromBlock intToDouble = m_out.anchor(
-            m_out.intToDouble(unboxInt32(boxedValue)));
-        m_out.jump(continuation);
-            
-        m_out.appendTo(doubleTesting, doubleCase);
-        LValue valueIsNumber = isNumber(boxedValue);
-        m_out.branch(valueIsNumber, usually(doubleCase), rarely(nonDoubleCase));
-
-        m_out.appendTo(doubleCase, nonDoubleCase);
-        ValueFromBlock unboxedDouble = m_out.anchor(unboxDouble(boxedValue));
-        m_out.jump(continuation);
-
-        if (shouldConvertNonNumber) {
-            LBasicBlock undefinedCase = FTL_NEW_BLOCK(m_out, ("jsValueToDouble converting undefined case"));
-            LBasicBlock testNullCase = FTL_NEW_BLOCK(m_out, ("jsValueToDouble testing null case"));
-            LBasicBlock nullCase = FTL_NEW_BLOCK(m_out, ("jsValueToDouble converting null case"));
-            LBasicBlock testBooleanTrueCase = FTL_NEW_BLOCK(m_out, ("jsValueToDouble testing boolean true case"));
-            LBasicBlock convertBooleanTrueCase = FTL_NEW_BLOCK(m_out, ("jsValueToDouble convert boolean true case"));
-            LBasicBlock convertBooleanFalseCase = FTL_NEW_BLOCK(m_out, ("jsValueToDouble convert boolean false case"));
-
-            m_out.appendTo(nonDoubleCase, undefinedCase);
-            LValue valueIsUndefined = m_out.equal(boxedValue, m_out.constInt64(ValueUndefined));
-            m_out.branch(valueIsUndefined, unsure(undefinedCase), unsure(testNullCase));
-
-            m_out.appendTo(undefinedCase, testNullCase);
-            ValueFromBlock convertedUndefined = m_out.anchor(m_out.constDouble(PNaN));
-            m_out.jump(continuation);
-
-            m_out.appendTo(testNullCase, nullCase);
-            LValue valueIsNull = m_out.equal(boxedValue, m_out.constInt64(ValueNull));
-            m_out.branch(valueIsNull, unsure(nullCase), unsure(testBooleanTrueCase));
-
-            m_out.appendTo(nullCase, testBooleanTrueCase);
-            ValueFromBlock convertedNull = m_out.anchor(m_out.constDouble(0));
-            m_out.jump(continuation);
-
-            m_out.appendTo(testBooleanTrueCase, convertBooleanTrueCase);
-            LValue valueIsBooleanTrue = m_out.equal(boxedValue, m_out.constInt64(ValueTrue));
-            m_out.branch(valueIsBooleanTrue, unsure(convertBooleanTrueCase), unsure(convertBooleanFalseCase));
-
-            m_out.appendTo(convertBooleanTrueCase, convertBooleanFalseCase);
-            ValueFromBlock convertedTrue = m_out.anchor(m_out.constDouble(1));
-            m_out.jump(continuation);
-
-            m_out.appendTo(convertBooleanFalseCase, continuation);
-
-            LValue valueIsNotBooleanFalse = m_out.notEqual(boxedValue, m_out.constInt64(ValueFalse));
-            FTL_TYPE_CHECK(jsValueValue(boxedValue), edge, ~SpecCell, valueIsNotBooleanFalse);
-            ValueFromBlock convertedFalse = m_out.anchor(m_out.constDouble(0));
-            m_out.jump(continuation);
-
-            m_out.appendTo(continuation, lastNext);
-            return m_out.phi(m_out.doubleType, intToDouble, unboxedDouble, convertedUndefined, convertedNull, convertedTrue, convertedFalse);
-        }
-        m_out.appendTo(nonDoubleCase, continuation);
-        FTL_TYPE_CHECK(jsValueValue(boxedValue), edge, SpecBytecodeNumber, m_out.booleanTrue);
-        m_out.unreachable();
-
-        m_out.appendTo(continuation, lastNext);
-
-        return m_out.phi(m_out.doubleType, intToDouble, unboxedDouble);
-    }
     
     LValue jsValueToStrictInt52(Edge edge, LValue boxedValue)
     {
@@ -7590,8 +7610,11 @@ private:
         case NumberUse:
             speculateNumber(edge);
             break;
+        case RealNumberUse:
+            speculateRealNumber(edge);
+            break;
         case DoubleRepRealUse:
-            speculateDoubleReal(edge);
+            speculateDoubleRepReal(edge);
             break;
         case DoubleRepMachineIntUse:
             speculateDoubleRepMachineInt(edge);
@@ -7917,7 +7940,33 @@ private:
         FTL_TYPE_CHECK(jsValueValue(value), edge, SpecBytecodeNumber, isNotNumber(value));
     }
     
-    void speculateDoubleReal(Edge edge)
+    void speculateRealNumber(Edge edge)
+    {
+        // Do an early return here because lowDouble() can create a lot of control flow.
+        if (!m_interpreter.needsTypeCheck(edge))
+            return;
+        
+        LValue value = lowJSValue(edge, ManualOperandSpeculation);
+        LValue doubleValue = unboxDouble(value);
+        
+        LBasicBlock intCase = FTL_NEW_BLOCK(m_out, ("speculateRealNumber int case"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("speculateRealNumber continuation"));
+        
+        m_out.branch(
+            m_out.doubleEqual(doubleValue, doubleValue),
+            usually(continuation), rarely(intCase));
+        
+        LBasicBlock lastNext = m_out.appendTo(intCase, continuation);
+        
+        typeCheck(
+            jsValueValue(value), m_node->child1(), SpecBytecodeRealNumber,
+            isNotInt32(value, provenType(m_node->child1()) & ~SpecFullDouble));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+    }
+    
+    void speculateDoubleRepReal(Edge edge)
     {
         // Do an early return here because lowDouble() can create a lot of control flow.
         if (!m_interpreter.needsTypeCheck(edge))
