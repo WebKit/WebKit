@@ -1,3 +1,13 @@
+2015-06-04  Dan Bernstein  <mitz@apple.com>
+
+        Renamed the WebKit2SandboxProfiles target to Sandbox Profiles.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * WebKit2.xcodeproj/project.pbxproj: Renamed the target. For now, added an aggregate
+        target with the old name that depends on the renamed target. We can remove it once the build
+        system doesn’t reference to old name.
+
 2015-06-03  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Expose interruptedForPolicyChangeError
