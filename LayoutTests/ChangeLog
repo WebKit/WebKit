@@ -1,3 +1,20 @@
+2015-06-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Latching algorithm in findEnclosingOverflowScroll is broken
+        https://bugs.webkit.org/show_bug.cgi?id=145642
+        <rdar://problem/21242308>
+
+        Reviewed by Simon Fraser.
+
+        Revise the new latching test to remove the image "max-width: 100%" style, which was
+        preventing this example from having a horizontal scrollable region at the top of the
+        file.
+        
+        It still correctly tests the subpixel bug from Bug 145637.
+
+        * platform/mac-wk2/tiled-drawing/scrolling/resources/inner_content.html: Remove width
+        adjustment on image.
+
 2015-06-03  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r181879): Scrolling order on pages with focused iframe is broken.

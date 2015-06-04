@@ -771,7 +771,7 @@ unsigned EventHandler::accessKeyModifiers()
     return PlatformEvent::CtrlKey | PlatformEvent::AltKey;
 }
 
-static ContainerNode* findEnclosingOverflowScroll(ContainerNode* node)
+static ContainerNode* findEnclosingOverflowScrollForDominantDirection(ContainerNode* node, float deltaX, float deltaY)
 {
     // Find the first node with a valid scrollable area starting with the current
     // node and traversing its parents (or shadow hosts).
@@ -783,8 +783,10 @@ static ContainerNode* findEnclosingOverflowScroll(ContainerNode* node)
             return nullptr;
 
         RenderBox* box = candidate->renderBox();
-        if (box && box->canBeScrolledAndHasScrollableArea())
-            return candidate;
+        if (box && box->canBeScrolledAndHasScrollableArea()) {
+            if ((deltaY && box->hasScrollableOverflowY()) || (deltaX && box->hasScrollableOverflowX()))
+                return candidate;
+        }
     }
     
     return nullptr;
@@ -916,7 +918,7 @@ void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheel
             scrollableContainer = wheelEventTarget;
             scrollableArea = scrollViewForEventTarget(wheelEventTarget.get());
         } else {
-            scrollableContainer = findEnclosingOverflowScroll(wheelEventTarget.get());
+            scrollableContainer = findEnclosingOverflowScrollForDominantDirection(wheelEventTarget.get(), wheelEvent.deltaX(), wheelEvent.deltaY());
             if (scrollableContainer)
                 scrollableArea = scrollableAreaForContainerNode(*scrollableContainer);
             else {
