@@ -115,7 +115,6 @@ public:
     RetainPtr<CFTypeRef> objectForEqualityCheck() const;
 
     bool allowsLigatures() const;
-    bool roundsGlyphAdvances() const;
 
 #if USE(APPKIT)
     // FIXME: Remove this when all NSFont usage is removed.

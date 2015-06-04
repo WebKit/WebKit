@@ -130,16 +130,6 @@ void FontPlatformData::setFont(CTFontRef font)
     m_ctFont = nullptr;
 }
 
-bool FontPlatformData::roundsGlyphAdvances() const
-{
-#if USE(APPKIT)
-    return [(NSFont *)m_font renderingMode] == NSFontAntialiasedIntegerAdvancementsRenderingMode;
-#else
-    return false;
-#endif
-}
-
-
 bool FontPlatformData::allowsLigatures() const
 {
     if (!m_font)
