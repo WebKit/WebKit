@@ -1,3 +1,11 @@
+2015-06-04  Zalan Bujtas  <zalan@apple.com>
+
+        css3/filters/backdrop/backdrop-filter-with-mask.html is missing the mask layer.
+
+        Unreviewed gardening.
+
+        * css3/filters/backdrop/backdrop-filter-with-mask-expected.txt:
+
 2015-06-04  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet <youenn.fablet@crf.canon.fr>
 
         [Streams API] Implement ReadableStreamController enqueue
