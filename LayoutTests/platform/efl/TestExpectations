@@ -75,6 +75,7 @@ fast/events/mouse-force-up.html [ Skip ]
 
 # EFL WebKitTestRunner doesn't support this test based on emoji font
 editing/selection/extend-by-character-007.html [ Skip ]
+fast/text/softbank-emoji.html [ Skip ]
 
 # ----------------------------------------
 # Tests which also fail in other platforms
@@ -252,6 +253,7 @@ http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml
 http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html
 http/tests/xmlhttprequest/logout.html
 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
+http/tests/xmlhttprequest/open-async-overload.html
 
 # There are no expected result set yet.
 fast/dom/rtl-scroll-to-leftmost-and-resize.html
@@ -1396,6 +1398,7 @@ Bug(EFL) media/track/track-in-band.html [ Skip ]
 Bug(EFL) media/track/track-in-band-cues-added-once.html [ Skip ]
 Bug(EFL) media/track/track-in-band-style.html [ Skip ]
 Bug(EFL) media/track/track-in-band-legacy-api.html [ Skip ]
+Bug(EFL) media/track/track-in-band-duplicate-tracks-when-source-changes.html [ Skip ]
 Bug(EFL) media/track/track-forced-subtitles-in-band.html [ Skip ]
 Bug(EFL) media/track/track-in-band-mode.html [ Skip ]
 Bug(EFL) media/track/in-band [ Skip ]
@@ -2281,3 +2284,6 @@ fast/events/wheelevent-in-text-node.html [ Skip ] #timeout
 fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ Skip ] #timeout
 fast/text/simple-lines-hover-after.html [ Skip ] #timeout
 media/click-volume-bar-not-pausing.html [ Skip ] #timeout
+
+webkit.org/b/145632 fast/animation/request-animation-frame-throttle-subframe-display-none.html [ Timeout ]
+webkit.org/b/145632 fast/animation/request-animation-frame-throttle-subframe.html [ Timeout ]
