@@ -1,3 +1,21 @@
+2015-06-03  Hyungwook Lee  <hyungwook.lee@navercorp.com>
+
+        [EFL] Implement window_object_cleared callback in EwkPageClient.
+        https://bugs.webkit.org/show_bug.cgi?id=145603
+
+        Reviewed by Gyuyoung Kim.
+
+        We need to provide right timing for custom JS API that may need to work at the beginning of the page.
+
+        * UIProcess/API/efl/tests/extensions/extension_sample.cpp:
+        * WebProcess/InjectedBundle/API/efl/ewk_page.cpp:
+        (EwkPage::EwkPage):
+        (EwkPage::didStartProvisionalLoadForFrame):
+        (EwkPage::didClearWindowObjectForFrame):
+        (EwkPage::didFinishDocumentLoadForFrame):
+        * WebProcess/InjectedBundle/API/efl/ewk_page.h:
+        * WebProcess/InjectedBundle/API/efl/ewk_page_private.h:
+
 2015-06-03  Anders Carlsson  <andersca@apple.com>
 
         Add SPI that returns the snapshot layer contents for a given back/forward list item

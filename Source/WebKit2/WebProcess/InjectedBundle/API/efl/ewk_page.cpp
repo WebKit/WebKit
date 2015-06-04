@@ -62,7 +62,7 @@ EwkPage::EwkPage(WebPage* page)
         0, // didRemoveFrameFromHierarchy
         0, // didDisplayInsecureContentForFrame
         0, // didRunInsecureContentForFrame
-        0, // didClearWindowObjectForFrame,
+        didClearWindowObjectForFrame,
         0, // didCancelClientRedirectForFrame
         0, // willPerformClientRedirectForFrame
         0, // didHandleOnloadEventsForFrame
@@ -106,6 +106,18 @@ void EwkPage::didStartProvisionalLoadForFrame(WKBundlePageRef, WKBundleFrameRef 
     for (auto& it : self->m_clients) {
         if (it->load_started)
             it->load_started(self, it->data);
+    }
+}
+
+void EwkPage::didClearWindowObjectForFrame(WKBundlePageRef, WKBundleFrameRef frame, WKBundleScriptWorldRef, const void* clientInfo)
+{
+    if (!WKBundleFrameIsMainFrame(frame))
+        return;
+
+    EwkPage* self = toEwkPage(clientInfo);
+    for (auto& it : self->m_clients) {
+        if (it->window_object_cleared)
+            it->window_object_cleared(self, it->data);
     }
 }
 
