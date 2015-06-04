@@ -1,3 +1,13 @@
+2015-06-04  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Decrease tabs height to match Safari's tabs height
+        https://bugs.webkit.org/show_bug.cgi?id=145647
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TabBar.css:
+        (.tab-bar):
+
 2015-06-04  Tobias Reiss  <tobi+webkit@basecode.de>
         
         Web Inspector: Activity Viewer does not update on "Clear Log on reload"
