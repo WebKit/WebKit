@@ -26,7 +26,7 @@
 namespace WebCore {
 
 // Helper functions to determine the arabic character forms (initial, medial, terminal, isolated)
-enum ArabicCharShapingMode {
+enum ArabicCharShapingMode : uint8_t {
     SNone = 0,
     SRight = 1,
     SDual = 2
