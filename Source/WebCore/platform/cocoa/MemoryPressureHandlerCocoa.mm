@@ -34,7 +34,6 @@
 #import "LayerPool.h"
 #import "Logging.h"
 #import "WebCoreSystemInterface.h"
-#import <JavaScriptCore/IncrementalSweeper.h>
 #import <mach/mach.h>
 #import <mach/task_info.h>
 #import <malloc/malloc.h>
@@ -51,7 +50,7 @@ extern "C" void _sqlite3_purgeEligiblePagerCacheMemory(void);
 
 namespace WebCore {
 
-void MemoryPressureHandler::platformReleaseMemory(bool critical)
+void MemoryPressureHandler::platformReleaseMemory(Critical critical)
 {
     {
         ReliefLogger log("Purging SQLite caches");
@@ -71,7 +70,7 @@ void MemoryPressureHandler::platformReleaseMemory(bool critical)
 #endif
 
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    if (critical && !isUnderMemoryPressure()) {
+    if (critical == Critical::Yes && !isUnderMemoryPressure()) {
         // libcache listens to OS memory notifications, but for process suspension
         // or memory pressure simulation, we need to prod it manually:
         ReliefLogger log("Purging libcache caches");
@@ -79,24 +78,6 @@ void MemoryPressureHandler::platformReleaseMemory(bool critical)
     }
 #else
     UNUSED_PARAM(critical);
-#endif
-
-#if PLATFORM(IOS)
-    if (isUnderMemoryPressure()) {
-        gcController().garbageCollectSoon();
-    } else {
-        // If we're not under memory pressure, that means we're here due to impending process suspension.
-        // Do a full GC since this is our last chance to run any code.
-        ReliefLogger log("Collecting JavaScript garbage");
-        gcController().garbageCollectNow();
-    }
-
-    // Do a full sweep of collected objects.
-    {
-        ReliefLogger log("Full JavaScript garbage sweep");
-        JSC::JSLockHolder lock(JSDOMWindow::commonVM());
-        JSDOMWindow::commonVM().heap.sweeper()->fullSweep();
-    }
 #endif
 }
 
@@ -147,7 +128,7 @@ void MemoryPressureHandler::install()
                 if (ReliefLogger::loggingEnabled())
                     NSLog(@"Got memory pressure notification (%s)", critical ? "critical" : "non-critical");
 #endif
-                MemoryPressureHandler::singleton().respondToMemoryPressure(critical);
+                MemoryPressureHandler::singleton().respondToMemoryPressure(critical ? Critical::Yes : Critical::No);
             });
             dispatch_resume(_cache_event_source);
         }
@@ -155,11 +136,7 @@ void MemoryPressureHandler::install()
 
     // Allow simulation of memory pressure with "notifyutil -p org.WebKit.lowMemory"
     notify_register_dispatch("org.WebKit.lowMemory", &_notifyToken, dispatch_get_main_queue(), ^(int) {
-        MemoryPressureHandler::singleton().respondToMemoryPressure(true);
-
-        // We only do a synchronous GC when *simulating* memory pressure.
-        // This gives us a more consistent picture of live objects at the end of testing.
-        gcController().garbageCollectNow();
+        MemoryPressureHandler::singleton().respondToMemoryPressure(Critical::Yes, Synchronous::Yes);
 
         WTF::releaseFastMallocFreeMemory();
 
@@ -213,14 +190,14 @@ void MemoryPressureHandler::holdOff(unsigned seconds)
     });
 }
 
-void MemoryPressureHandler::respondToMemoryPressure(bool critical)
+void MemoryPressureHandler::respondToMemoryPressure(Critical critical, Synchronous synchronous)
 {
 #if !PLATFORM(IOS)
     uninstall();
     double startTime = monotonicallyIncreasingTime();
 #endif
 
-    m_lowMemoryHandler(critical);
+    m_lowMemoryHandler(critical, synchronous);
 
 #if !PLATFORM(IOS)
     unsigned holdOffTime = (monotonicallyIncreasingTime() - startTime) * s_holdOffMultiplier;

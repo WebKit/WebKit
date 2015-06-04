@@ -33,6 +33,7 @@
 #include "DownloadManager.h"
 #include "MessageReceiverMap.h"
 #include <WebCore/DiagnosticLoggingClient.h>
+#include <WebCore/MemoryPressureHandler.h>
 #include <WebCore/SessionID.h>
 #include <memory>
 #include <wtf/Forward.h>
@@ -97,8 +98,8 @@ private:
     virtual void terminate() override;
     void platformTerminate();
 
-    void lowMemoryHandler(bool critical);
-    void platformLowMemoryHandler(bool critical);
+    void lowMemoryHandler(WebCore::Critical);
+    void platformLowMemoryHandler(WebCore::Critical);
 
     // ChildProcess
     virtual void initializeProcess(const ChildProcessInitializationParameters&) override;

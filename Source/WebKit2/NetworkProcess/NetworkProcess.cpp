@@ -48,7 +48,6 @@
 #include "WebResourceCacheManager.h"
 #include "WebsiteData.h"
 #include <WebCore/Logging.h>
-#include <WebCore/MemoryPressureHandler.h>
 #include <WebCore/PlatformCookieJar.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SecurityOriginHash.h>
@@ -175,7 +174,7 @@ AuthenticationManager& NetworkProcess::downloadsAuthenticationManager()
     return authenticationManager();
 }
 
-void NetworkProcess::lowMemoryHandler(bool critical)
+void NetworkProcess::lowMemoryHandler(Critical critical)
 {
     platformLowMemoryHandler(critical);
     WTF::releaseFastMallocFreeMemory();
@@ -188,7 +187,7 @@ void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParame
     WTF::setCurrentThreadIsUserInitiated();
 
     auto& memoryPressureHandler = MemoryPressureHandler::singleton();
-    memoryPressureHandler.setLowMemoryHandler([this] (bool critical) {
+    memoryPressureHandler.setLowMemoryHandler([this] (Critical critical, Synchronous) {
         lowMemoryHandler(critical);
     });
     memoryPressureHandler.install();
@@ -516,13 +515,13 @@ void NetworkProcess::terminate()
 
 void NetworkProcess::processWillSuspendImminently(bool& handled)
 {
-    lowMemoryHandler(true);
+    lowMemoryHandler(Critical::Yes);
     handled = true;
 }
 
 void NetworkProcess::prepareToSuspend()
 {
-    lowMemoryHandler(true);
+    lowMemoryHandler(Critical::Yes);
     parentProcessConnection()->send(Messages::NetworkProcessProxy::ProcessReadyToSuspend(), 0);
 }
 
@@ -548,7 +547,7 @@ void NetworkProcess::initializeSandbox(const ChildProcessInitializationParameter
 {
 }
 
-void NetworkProcess::platformLowMemoryHandler(bool)
+void NetworkProcess::platformLowMemoryHandler(Critical)
 {
 }
 #endif

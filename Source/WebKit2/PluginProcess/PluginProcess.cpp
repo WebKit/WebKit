@@ -73,7 +73,7 @@ void PluginProcess::initializeProcess(const ChildProcessInitializationParameters
     platformInitializeProcess(parameters);
 
     auto& memoryPressureHandler = MemoryPressureHandler::singleton();
-    memoryPressureHandler.setLowMemoryHandler([this] (bool) {
+    memoryPressureHandler.setLowMemoryHandler([this] (Critical, Synchronous) {
         if (shouldTerminate())
             terminate();
     });

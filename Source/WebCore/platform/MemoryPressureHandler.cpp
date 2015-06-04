@@ -37,6 +37,7 @@
 #include "PageCache.h"
 #include "ScrollingThread.h"
 #include "WorkerThread.h"
+#include <JavaScriptCore/IncrementalSweeper.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
@@ -54,7 +55,7 @@ MemoryPressureHandler& MemoryPressureHandler::singleton()
 MemoryPressureHandler::MemoryPressureHandler() 
     : m_installed(false)
     , m_lastRespondTime(0)
-    , m_lowMemoryHandler([this] (bool critical) { releaseMemory(critical); })
+    , m_lowMemoryHandler([this] (Critical critical, Synchronous synchronous) { releaseMemory(critical, synchronous); })
     , m_underMemoryPressure(false)
 #if PLATFORM(IOS)
     // FIXME: Can we share more of this with OpenSource?
@@ -100,7 +101,7 @@ void MemoryPressureHandler::releaseNoncriticalMemory()
     }
 }
 
-void MemoryPressureHandler::releaseCriticalMemory()
+void MemoryPressureHandler::releaseCriticalMemory(Synchronous synchronous)
 {
     {
         ReliefLogger log("Empty the PageCache");
@@ -134,12 +135,29 @@ void MemoryPressureHandler::releaseCriticalMemory()
         ReliefLogger log("Invalidate font cache");
         FontCache::singleton().invalidate();
     }
+
+    if (synchronous == Synchronous::Yes) {
+        ReliefLogger log("Collecting JavaScript garbage");
+        gcController().garbageCollectNow();
+    } else {
+        // FIXME: We should do a garbage sweep and prune dead resources from the MemoryCache
+        // after the garbage collection has completed to free up more memory.
+        gcController().garbageCollectSoon();
+
+        // Do a full sweep of collected objects. garbageCollectNow() already does this so we only
+        // need to do this if it isn't called.
+        {
+            ReliefLogger log("Full JavaScript garbage sweep");
+            JSC::JSLockHolder lock(JSDOMWindow::commonVM());
+            JSDOMWindow::commonVM().heap.sweeper()->fullSweep();
+        }
+    }
 }
 
-void MemoryPressureHandler::releaseMemory(bool critical)
+void MemoryPressureHandler::releaseMemory(Critical critical, Synchronous synchronous)
 {
-    if (critical)
-        releaseCriticalMemory();
+    if (critical == Critical::Yes)
+        releaseCriticalMemory(synchronous);
 
     releaseNoncriticalMemory();
 
@@ -160,8 +178,8 @@ void MemoryPressureHandler::releaseMemory(bool critical)
 void MemoryPressureHandler::install() { }
 void MemoryPressureHandler::uninstall() { }
 void MemoryPressureHandler::holdOff(unsigned) { }
-void MemoryPressureHandler::respondToMemoryPressure(bool) { }
-void MemoryPressureHandler::platformReleaseMemory(bool) { }
+void MemoryPressureHandler::respondToMemoryPressure(Critical, Synchronous) { }
+void MemoryPressureHandler::platformReleaseMemory(Critical) { }
 void MemoryPressureHandler::ReliefLogger::platformLog() { }
 size_t MemoryPressureHandler::ReliefLogger::platformMemoryUsage() { return 0; }
 #endif

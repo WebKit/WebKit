@@ -132,6 +132,10 @@ void IncrementalSweeper::willFinishSweeping()
 {
 }
 
+void IncrementalSweeper::fullSweep()
+{
+}
+
 bool IncrementalSweeper::sweepNextBlock()
 {
     return false;

@@ -39,7 +39,7 @@
 
 namespace WebKit {
 
-void NetworkProcess::platformLowMemoryHandler(bool)
+void NetworkProcess::platformLowMemoryHandler(WebCore::Critical)
 {
     CFURLConnectionInvalidateConnectionCache();
     _CFURLCachePurgeMemoryCache(adoptCF(CFURLCacheCopySharedURLCache()).get());
