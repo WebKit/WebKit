@@ -75,4 +75,20 @@ using namespace WebKit;
 
 @end
 
+@implementation WKBackForwardListItem (WKPrivate)
+
+#if PLATFORM(IOS)
+
+- (id)_snapshotLayerContents
+{
+    if (auto* viewSnapshot = _item->snapshot())
+        return viewSnapshot->asLayerContents();
+
+    return nil;
+}
+
+#endif
+
+@end
+
 #endif // WK_API_ENABLED

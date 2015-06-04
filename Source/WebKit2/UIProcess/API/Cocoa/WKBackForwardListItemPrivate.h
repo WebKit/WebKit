@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKBackForwardListItemPrivate.h"
+#import <WebKit/WKBackForwardList.h>
 
 #if WK_API_ENABLED
 
-#import "WKObject.h"
-#import "WebBackForwardListItem.h"
+WK_ASSUME_NONNULL_BEGIN
 
-namespace WebKit {
-inline WKBackForwardListItem *wrapper(WebBackForwardListItem& item) { ASSERT([item.wrapper() isKindOfClass:[WKBackForwardListItem class]]); return (WKBackForwardListItem *)item.wrapper(); }
-}
+@interface WKBackForwardListItem (WKPrivate)
 
-@interface WKBackForwardListItem () <WKObject>
+#if TARGET_OS_IPHONE
 
-@property (readonly) WebKit::WebBackForwardListItem& _item;
+@property (WK_NULLABLE_PROPERTY nonatomic, readonly, strong) id _snapshotLayerContents WK_AVAILABLE(NA, WK_IOS_TBA);
+
+#endif
 
 @end
 
-#endif // WK_API_ENABLED
+WK_ASSUME_NONNULL_END
+
+#endif
