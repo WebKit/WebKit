@@ -149,13 +149,14 @@ public:
 #if PLATFORM(WIN) && !USE(CAIRO)
         return m_font ? m_font->hash() : 0;
 #elif OS(DARWIN)
+        ASSERT(m_font || !m_cgFont || isEmoji());
+        uintptr_t flags = static_cast<uintptr_t>(m_isHashTableDeletedValue << 4 | isEmoji() << 3 | m_orientation << 2 | m_syntheticBold << 1 | m_syntheticOblique);
 #if USE(APPKIT)
-        ASSERT(m_font || !m_cgFont);
-        uintptr_t hashCodes[3] = { reinterpret_cast<uintptr_t>(const_cast<__CTFont*>(m_font.get())), m_widthVariant, static_cast<uintptr_t>(m_isHashTableDeletedValue << 3 | m_orientation << 2 | m_syntheticBold << 1 | m_syntheticOblique) };
+        uintptr_t fontHash = reinterpret_cast<uintptr_t>(const_cast<__CTFont*>(m_font.get()));
 #else
-        ASSERT(m_font || !m_cgFont || m_isEmoji);
-        uintptr_t hashCodes[3] = { static_cast<uintptr_t>(CFHash(m_font.get())), m_widthVariant, static_cast<uintptr_t>(m_isHashTableDeletedValue << 4 | m_isEmoji << 3 | m_orientation << 2 | m_syntheticBold << 1 | m_syntheticOblique) };
+        uintptr_t fontHash = reinterpret_cast<uintptr_t>(CFHash(m_font.get()));
 #endif
+        uintptr_t hashCodes[3] = { fontHash, m_widthVariant, flags };
         return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
 #elif USE(CAIRO)
         return PtrHash<cairo_scaled_font_t*>::hash(m_scaledFont);
@@ -190,6 +191,14 @@ public:
     String description() const;
 #endif
 
+#if PLATFORM(IOS)
+    bool isEmoji() const { return m_isEmoji; }
+    void setIsEmoji(bool isEmoji) { m_isEmoji = isEmoji; }
+#elif PLATFORM(MAC)
+    bool isEmoji() const { return false; }
+    void setIsEmoji(bool) { }
+#endif
+
 private:
     bool platformIsEqual(const FontPlatformData&) const;
     void platformDataInit(const FontPlatformData&);
@@ -205,9 +214,6 @@ public:
     bool m_syntheticBold { false };
     bool m_syntheticOblique { false };
     FontOrientation m_orientation { Horizontal };
-#if PLATFORM(IOS)
-    bool m_isEmoji { false };
-#endif
     float m_size { 0 };
     FontWidthVariant m_widthVariant { RegularWidth };
 
@@ -230,6 +236,9 @@ private:
     bool m_isColorBitmapFont { false };
     bool m_isCompositeFontReference { false };
     bool m_isHashTableDeletedValue { false };
+#if PLATFORM(IOS)
+    bool m_isEmoji { false };
+#endif
 
 #if PLATFORM(WIN)
     bool m_useGDI { false };

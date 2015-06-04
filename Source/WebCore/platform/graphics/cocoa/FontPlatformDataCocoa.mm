@@ -58,9 +58,7 @@ void FontPlatformData::platformDataInit(const FontPlatformData& f)
 {
     m_font = f.m_font;
 
-#if PLATFORM(IOS)
-    m_isEmoji = f.m_isEmoji;
-#endif
+    setIsEmoji(f.isEmoji());
     m_cgFont = f.m_cgFont;
     m_ctFont = f.m_ctFont;
 }
@@ -68,9 +66,7 @@ void FontPlatformData::platformDataInit(const FontPlatformData& f)
 const FontPlatformData& FontPlatformData::platformDataAssign(const FontPlatformData& f)
 {
     m_cgFont = f.m_cgFont;
-#if PLATFORM(IOS)
-    m_isEmoji = f.m_isEmoji;
-#endif
+    setIsEmoji(f.isEmoji());
     if (m_font && f.m_font && CFEqual(m_font.get(), f.m_font.get()))
         return *this;
     m_font = f.m_font;
@@ -85,19 +81,13 @@ bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
     if (m_font || other.m_font) {
 #if PLATFORM(IOS)
         result = m_font && other.m_font && CFEqual(m_font.get(), other.m_font.get());
-#if !ASSERT_DISABLED
-        if (result)
-            ASSERT(m_isEmoji == other.m_isEmoji);
-#endif
 #else
         result = m_font == other.m_font;
 #endif
+        ASSERT(!result || isEmoji() == other.isEmoji());
         return result;
     }
-#if PLATFORM(IOS) && !ASSERT_DISABLED
-    if (m_cgFont == other.m_cgFont)
-        ASSERT(m_isEmoji == other.m_isEmoji);
-#endif
+    ASSERT(m_cgFont != other.m_cgFont || isEmoji() == other.isEmoji());
     return m_cgFont == other.m_cgFont;
 }
 
@@ -202,12 +192,8 @@ static CTFontDescriptorRef cascadeToLastResortAndDisableSwashesFontDescriptor()
 
 CGFloat FontPlatformData::ctFontSize() const
 {
-#if PLATFORM(IOS)
-    // Apple Color Emoji size is adjusted (and then re-adjusted by Core Text) and capped.
-    return !m_isEmoji ? m_size : m_size <= 15 ? 4 * (m_size + 2) / static_cast<CGFloat>(5) : 16;
-#else
-    return m_size;
-#endif
+    // On iOS, Apple Color Emoji size is adjusted (and then re-adjusted by Core Text) and capped.
+    return !isEmoji() ? m_size : m_size <= 15 ? 4 * (m_size + 2) / static_cast<CGFloat>(5) : 16;
 }
 
 CTFontRef FontPlatformData::ctFont() const
