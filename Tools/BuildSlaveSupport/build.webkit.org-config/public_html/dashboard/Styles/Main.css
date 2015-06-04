@@ -42,25 +42,26 @@ a:hover {
     text-decoration: underline;
 }
 
-div.cellButton {
+div.cellButton, div.accessibilityButton {
     font-family: "HelveticaNeue-Light", sans-serif;
     font-size: 12px;
     color: rgb(185, 175, 125);
     cursor: pointer;
 }
 
-div.cellButton.hide {
+div.cellButton.hide, div.accessibilityButton.hide {
     display: none;
     position: absolute;
     bottom: 2px;
     right: 4px;
 }
 
-div.cellButton.unhide {
+div.cellButton.unhide, div.accessibilityButton.unhide {
     display: none;
 }
 
-.settings-visible div.cellButton.hide, .settings-visible div.cellButton.unhide {
+.settings-visible div.cellButton.hide, .settings-visible div.cellButton.unhide,
+.settings-visible div.accessibilityButton.hide, .settings-visible div.accessibilityButton.unhide {
     display: block;
 }
 
@@ -199,4 +200,10 @@ table.queue-grid tr.platform.linux-efl img.logo {
 
 .popover-tracking:hover {
     text-shadow: 0px 0px 3px rgba(0, 0, 0, 0.2)
+}
+
+.accessibilityButton {
+    position: absolute;
+    left: 45px;
+    top: 13.5px;
 }

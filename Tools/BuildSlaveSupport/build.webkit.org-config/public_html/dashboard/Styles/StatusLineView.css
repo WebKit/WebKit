@@ -50,10 +50,6 @@
     background-color: rgb(181, 174, 148);
 }
 
-.status-line.good .bubble {
-    background-color: rgb(50, 219, 72);
-}
-
 .status-line.unauthorized .bubble {
     background-color: rgb(171, 61, 171);
 }
@@ -78,10 +74,6 @@
 .status-line.neutral .bubble.pictogram,
 .status-line.danger .bubble.pictogram {
     font-weight: bold;
-}
-
-.status-line.bad .bubble {
-    background-color: rgb(196, 49, 49);
 }
 
 .status-line.bad .bubble.pictogram {
@@ -129,19 +121,45 @@
     color: rgb(145, 135, 95);
 }
 
-.status-line.good .label,
-.status-line.good .message {
-    color: rgb(40, 177, 58);
+.status-line.bad .bubble {
+    background-color: rgb(191, 67, 41);
 }
 
-.status-line.danger .label,
-.status-line.danger .message {
-    color: rgb(230, 175, 44);
+.status-line.good .bubble {
+    background-color: rgb(76, 151, 61);
+}
+
+.status-line.good .label,
+.status-line.good .message {
+    color: rgb(76, 151, 61);
 }
 
 .status-line.bad .label,
 .status-line.bad .message {
     color: rgb(191, 67, 41);
+}
+
+body.accessibility-colors .status-line.good .bubble {
+    background-color: rgb(50, 219, 72);
+}
+
+body.accessibility-colors .status-line.bad .bubble {
+    background-color: rgb(196, 49, 49);
+}
+
+body.accessibility-colors .status-line.good .label,
+body.accessibility-colors .status-line.good .message {
+    color: rgb(40, 177, 58);
+}
+
+body.accessibility-colors .status-line.bad .label,
+body.accessibility-colors .status-line.bad .message {
+    color: rgb(191, 67, 41);
+}
+
+.status-line.danger .label,
+.status-line.danger .message {
+    color: rgb(230, 175, 44);
 }
 
 .status-line.unauthorized .label,

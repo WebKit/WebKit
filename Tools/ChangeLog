@@ -1,3 +1,49 @@
+2015-06-03  Matthew Daiter  <mdaiter@apple.com>
+
+        Added a patch so that the colors displayed on the page could be toggled
+        in case people need accessibility colors displayed in their browser.
+        https://bugs.webkit.org/show_bug.cgi?id=145570
+        <rdar://problem/20994468>
+
+        Added in CSS colors and toggle buttons for checkmarks in the page, so that
+        the page could be rendered in a specific way for accessibility needs if needed.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Main.js:
+        (updateHiddenPlatforms):
+        (applyAccessibilityColorSetting): Initial loading of accessibility colors if necessary
+        (toggleAccessibilityColors): Toggle colors on and off
+        (documentReady): Needed to make changes to the initialization
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Main.css:
+        (a:hover):
+        (div.cellButton, div.accessibilityButton): Added in similar properties for cellButton and accessibilityButton
+        (div.cellButton.hide, div.accessibilityButton.hide):
+        (div.cellButton.unhide, div.accessibilityButton.unhide):
+        (.settings-visible div.accessibilityButton.hide, .settings-visible div.accessibilityButton.unhide):
+        (.popover-tracking:hover):
+        (.accessibilityButton):
+        (div.cellButton): Deleted.
+        (div.cellButton.hide): Deleted.
+        (div.cellButton.unhide): Deleted.
+        (.settings-visible div.cellButton.hide, .settings-visible div.cellButton.unhide): Deleted.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/StatusLineView.css:
+        (.status-line.neutral .bubble):
+        (.status-line.unauthorized .bubble):
+        (.status-line.danger .bubble.pictogram):
+        (.status-line.bad .bubble.pictogram):
+        (.status-line.no-bubble .message):
+        (.status-line.bad .bubble):
+        (.status-line.good .bubble):
+        (.status-line.good .message):
+        (.status-line.bad .message):
+        (body.accessibility-colors .status-line.good .bubble):
+        (body.accessibility-colors .status-line.bad .bubble):
+        (body.accessibility-colors .status-line.good .message):
+        (body.accessibility-colors .status-line.bad .message):
+        (.status-line.danger .message):
+        (.status-line.unauthorized .message):
+
 2015-06-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed build fix for Dromaeo.

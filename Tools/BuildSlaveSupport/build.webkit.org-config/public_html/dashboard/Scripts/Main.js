@@ -136,6 +136,32 @@ function updateHiddenPlatforms()
         unhideButton.classList.add("hidden");
 }
 
+function applyAccessibilityColorSetting()
+{
+    var useAccessibleColors = settings.getObject("accessibilityColorsEnabled");
+    var toggleAccessibilityColorButton = document.getElementById("accessibilityButton");
+    if (useAccessibleColors) {
+        toggleAccessibilityColorButton.textContent = "disable accessibility colors";
+        document.body.classList.toggle("accessibility-colors");
+    } else
+        toggleAccessibilityColorButton.textContent = "enable accessibility colors";
+}
+
+function toggleAccessibilityColors()
+{
+    var isCurrentlyActivated = settings.getObject("accessibilityColorsEnabled");
+    if (isCurrentlyActivated === undefined)
+        isCurrentlyActivated = false;
+    
+    settings.setObject("accessibilityColorsEnabled", !isCurrentlyActivated);
+    document.body.classList.toggle("accessibility-colors");
+    var toggleAccessibilityColorButton = document.getElementById("accessibilityButton");
+    if (!isCurrentlyActivated)
+        toggleAccessibilityColorButton.textContent = "disable accessibility colors";
+    else
+        toggleAccessibilityColorButton.textContent = "enable accessibility colors";
+}
+
 function documentReady()
 {
     var table = document.createElement("table");
@@ -144,11 +170,12 @@ function documentReady()
     var row = document.createElement("tr");
     row.classList.add("headers");
 
-    var header = document.createElement("th");
+    var header = document.createElement("th"); 
     var unhideButton = document.createElement("div");
     unhideButton.addEventListener("click", function () { settings.clearHiddenPlatforms(); });
     unhideButton.textContent = "Show All Platforms";
     unhideButton.classList.add("cellButton", "unhide", "hidden");
+
     header.appendChild(unhideButton);
     row.appendChild(header);
 
@@ -260,6 +287,14 @@ function documentReady()
         settingsButton.classList.add("settings");
         document.body.appendChild(settingsButton);
 
+        var toggleAccessibilityColorButton = document.createElement("div");
+        toggleAccessibilityColorButton.addEventListener("click", function() { toggleAccessibilityColors(); });
+        toggleAccessibilityColorButton.setAttribute("class", "unhide hidden accessibilityButton");
+        toggleAccessibilityColorButton.setAttribute("id", "accessibilityButton");
+        toggleAccessibilityColorButton.textContent = "enable accessibility colors";
+        document.body.appendChild(toggleAccessibilityColorButton);
+        applyAccessibilityColorSetting();
+        
         updateHiddenPlatforms();
         settings.addSettingListener("hiddenPlatforms", updateHiddenPlatforms);
     }
