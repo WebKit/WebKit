@@ -59,7 +59,7 @@ typedef int ExceptionCode;
 class UserMediaRequest : public MediaStreamCreationClient, public ContextDestructionObserver {
 public:
     static RefPtr<UserMediaRequest> create(ScriptExecutionContext*, UserMediaController*, const Dictionary& options, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>, ExceptionCode&);
-    static RefPtr<UserMediaRequest> create(ScriptExecutionContext*, UserMediaController*, const Dictionary& options, MediaDevices::ResolveCallback, MediaDevices::RejectCallback, ExceptionCode&);
+    static RefPtr<UserMediaRequest> create(ScriptExecutionContext*, UserMediaController*, const Dictionary& options, MediaDevices::ResolveCallback&&, MediaDevices::RejectCallback&&, ExceptionCode&);
     ~UserMediaRequest();
 
     WEBCORE_EXPORT SecurityOrigin* securityOrigin() const;
@@ -72,7 +72,7 @@ public:
     bool requiresVideo() const { return m_videoConstraints; }
 
 private:
-    UserMediaRequest(ScriptExecutionContext*, UserMediaController*, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints, MediaDevices::ResolveCallback, MediaDevices::RejectCallback);
+    UserMediaRequest(ScriptExecutionContext*, UserMediaController*, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints, MediaDevices::ResolveCallback&&, MediaDevices::RejectCallback&&);
 
     // MediaStreamCreationClient
     virtual void constraintsValidated() override final;
