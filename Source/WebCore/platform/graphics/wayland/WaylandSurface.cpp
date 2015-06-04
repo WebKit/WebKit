@@ -30,7 +30,7 @@
 
 #include "GLContextEGL.h"
 #include "IntSize.h"
-#include "WaylandDisplay.h"
+#include "PlatformDisplayWayland.h"
 #include <EGL/egl.h>
 
 namespace WebCore {
@@ -54,8 +54,9 @@ WaylandSurface::WaylandSurface(struct wl_surface* wlSurface, EGLNativeWindowType
 WaylandSurface::~WaylandSurface()
 {
     // The surface couldn't have been created in the first place if WaylandDisplay wasn't properly initialized.
-    ASSERT(WaylandDisplay::instance());
-    eglMakeCurrent(WaylandDisplay::instance()->eglDisplay(), EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+    const PlatformDisplayWayland& waylandDisplay = downcast<PlatformDisplayWayland>(PlatformDisplay::sharedDisplay());
+    ASSERT(waylandDisplay.native());
+    eglMakeCurrent(waylandDisplay.native(), EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 
     wl_egl_window_destroy(m_nativeWindow);
     wl_surface_destroy(m_wlSurface);

@@ -84,7 +84,7 @@ bool LayerTreeHostGtk::makeContextCurrent()
         if (!m_layerTreeContext.contextID)
             return false;
 
-        m_context = GLContext::createContextForWindow(m_layerTreeContext.contextID, GLContext::sharingContext());
+        m_context = GLContext::createContextForWindow(reinterpret_cast<GLNativeWindowType>(m_layerTreeContext.contextID), GLContext::sharingContext());
         if (!m_context)
             return false;
     }

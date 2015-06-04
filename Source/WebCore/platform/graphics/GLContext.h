@@ -27,6 +27,10 @@
 #if USE(EGL) && !PLATFORM(GTK)
 #include "eglplatform.h"
 typedef EGLNativeWindowType GLNativeWindowType;
+#elif PLATFORM(GTK) && PLATFORM(WAYLAND) && !defined(GTK_API_VERSION_2)
+#include <wayland-egl.h>
+#include <EGL/eglplatform.h>
+typedef EGLNativeWindowType GLNativeWindowType;
 #else
 typedef uint64_t GLNativeWindowType;
 #endif
