@@ -176,8 +176,12 @@ CTFontRef FontPlatformData::ctFont() const
         RetainPtr<CFStringRef> postScriptName = adoptCF(CTFontCopyPostScriptName(m_ctFont.get()));
         fontDescriptor = cascadeToLastResortFontDescriptor();
         m_ctFont = adoptCF(CTFontCreateCopyWithAttributes(m_ctFont.get(), ctFontSize(), 0, fontDescriptor));
-    } else
+    } else {
+#if CORETEXT_WEB_FONTS
+        ASSERT_NOT_REACHED();
+#endif
         m_ctFont = adoptCF(CTFontCreateWithGraphicsFont(m_cgFont.get(), ctFontSize(), 0, cascadeToLastResortFontDescriptor()));
+    }
 
     if (m_widthVariant != RegularWidth) {
         int featureTypeValue = kTextSpacingType;
