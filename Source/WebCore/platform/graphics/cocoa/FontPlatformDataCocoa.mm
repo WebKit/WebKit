@@ -46,20 +46,17 @@ FontPlatformData::FontPlatformData(CTFontRef font, float size, bool syntheticBol
 {
     ASSERT_ARG(font, font);
     m_font = font;
-    CFRetain(m_font);
     m_isColorBitmapFont = CTFontGetSymbolicTraits(font) & kCTFontTraitColorGlyphs;
     m_isCompositeFontReference = CTFontGetSymbolicTraits(font) & kCTFontCompositeTrait;
 }
 
 FontPlatformData::~FontPlatformData()
 {
-    if (isValidCTFontRef(m_font))
-        CFRelease(m_font);
 }
 
 void FontPlatformData::platformDataInit(const FontPlatformData& f)
 {
-    m_font = isValidCTFontRef(f.m_font) ? static_cast<CTFontRef>(const_cast<void *>(CFRetain(f.m_font))) : f.m_font;
+    m_font = f.m_font;
 
 #if PLATFORM(IOS)
     m_isEmoji = f.m_isEmoji;
@@ -74,12 +71,8 @@ const FontPlatformData& FontPlatformData::platformDataAssign(const FontPlatformD
 #if PLATFORM(IOS)
     m_isEmoji = f.m_isEmoji;
 #endif
-    if (isValidCTFontRef(m_font) && isValidCTFontRef(f.m_font) && CFEqual(m_font, f.m_font))
+    if (m_font && f.m_font && CFEqual(m_font.get(), f.m_font.get()))
         return *this;
-    if (isValidCTFontRef(f.m_font))
-        CFRetain(f.m_font);
-    if (isValidCTFontRef(m_font))
-        CFRelease(m_font);
     m_font = f.m_font;
     m_ctFont = f.m_ctFont;
 
@@ -91,14 +84,14 @@ bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
     bool result = false;
     if (m_font || other.m_font) {
 #if PLATFORM(IOS)
-        result = isValidCTFontRef(m_font) && isValidCTFontRef(other.m_font) && CFEqual(m_font, other.m_font);
+        result = m_font && other.m_font && CFEqual(m_font.get(), other.m_font.get());
 #if !ASSERT_DISABLED
         if (result)
             ASSERT(m_isEmoji == other.m_isEmoji);
 #endif
 #else
         result = m_font == other.m_font;
-#endif // PLATFORM(IOS)
+#endif
         return result;
     }
 #if PLATFORM(IOS) && !ASSERT_DISABLED
@@ -111,19 +104,15 @@ bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
 void FontPlatformData::setFont(CTFontRef font)
 {
     ASSERT_ARG(font, font);
-    ASSERT(m_font != reinterpret_cast<CTFontRef>(-1));
 
     if (m_font == font)
         return;
 
-    CFRetain(font);
-    if (m_font)
-        CFRelease(m_font);
     m_font = font;
     m_size = CTFontGetSize(font);
     m_cgFont = adoptCF(CTFontCopyGraphicsFont(font, nullptr));
 
-    CTFontSymbolicTraits traits = CTFontGetSymbolicTraits(m_font);
+    CTFontSymbolicTraits traits = CTFontGetSymbolicTraits(m_font.get());
     m_isColorBitmapFont = traits & kCTFontTraitColorGlyphs;
     m_isCompositeFontReference = traits & kCTFontCompositeTrait;
     

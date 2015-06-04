@@ -107,7 +107,7 @@ public:
     HFONT hfont() const { return m_font ? m_font->get() : 0; }
     bool useGDI() const { return m_useGDI; }
 #elif PLATFORM(COCOA)
-    CTFontRef font() const { return m_font; }
+    CTFontRef font() const { return m_font.get(); }
     void setFont(CTFontRef);
 
     CTFontRef ctFont() const;
@@ -118,8 +118,8 @@ public:
 
 #if USE(APPKIT)
     // FIXME: Remove this when all NSFont usage is removed.
-    NSFont *nsFont() const { return (NSFont *)m_font; }
-    void setNSFont(NSFont *font) { setFont((CTFontRef)font); }
+    NSFont *nsFont() const { return reinterpret_cast<NSFont *>(const_cast<__CTFont*>(m_font.get())); }
+    void setNSFont(NSFont *font) { setFont(reinterpret_cast<CTFontRef>(font)); }
 #endif
 #endif
 
@@ -151,11 +151,11 @@ public:
 #elif OS(DARWIN)
 #if USE(APPKIT)
         ASSERT(m_font || !m_cgFont);
-        uintptr_t hashCodes[3] = { (uintptr_t)m_font, m_widthVariant, static_cast<uintptr_t>(m_orientation << 2 | m_syntheticBold << 1 | m_syntheticOblique) };
+        uintptr_t hashCodes[3] = { reinterpret_cast<uintptr_t>(const_cast<__CTFont*>(m_font.get())), m_widthVariant, static_cast<uintptr_t>(m_isHashTableDeletedValue << 3 | m_orientation << 2 | m_syntheticBold << 1 | m_syntheticOblique) };
 #else
         ASSERT(m_font || !m_cgFont || m_isEmoji);
-        uintptr_t hashCodes[3] = { static_cast<uintptr_t>(CFHash(m_font)), m_widthVariant, static_cast<uintptr_t>(m_isEmoji << 3 | m_orientation << 2 | m_syntheticBold << 1 | m_syntheticOblique) };
-#endif // !PLATFORM(IOS)
+        uintptr_t hashCodes[3] = { static_cast<uintptr_t>(CFHash(m_font.get())), m_widthVariant, static_cast<uintptr_t>(m_isHashTableDeletedValue << 4 | m_isEmoji << 3 | m_orientation << 2 | m_syntheticBold << 1 | m_syntheticOblique) };
+#endif
         return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
 #elif USE(CAIRO)
         return PtrHash<cairo_scaled_font_t*>::hash(m_scaledFont);
@@ -167,6 +167,7 @@ public:
     bool operator==(const FontPlatformData& other) const
     {
         return platformIsEqual(other)
+            && m_isHashTableDeletedValue == other.m_isHashTableDeletedValue
             && m_size == other.m_size
             && m_syntheticBold == other.m_syntheticBold
             && m_syntheticOblique == other.m_syntheticOblique
@@ -178,13 +179,7 @@ public:
 
     bool isHashTableDeletedValue() const
     {
-#if PLATFORM(WIN) && !USE(CAIRO)
-        return m_font.isHashTableDeletedValue();
-#elif PLATFORM(COCOA)
-        return m_font == hashTableDeletedFontValue();
-#elif USE(CAIRO)
-        return m_scaledFont == hashTableDeletedFontValue();
-#endif
+        return m_isHashTableDeletedValue;
     }
 
 #if PLATFORM(COCOA) || PLATFORM(WIN)
@@ -200,15 +195,10 @@ private:
     void platformDataInit(const FontPlatformData&);
     const FontPlatformData& platformDataAssign(const FontPlatformData&);
 #if PLATFORM(COCOA)
-    static CTFontRef hashTableDeletedFontValue() { return reinterpret_cast<CTFontRef>(-1); }
-    static bool isValidCTFontRef(CTFontRef font) { return font && font != hashTableDeletedFontValue(); }
     CGFloat ctFontSize() const;
 #endif
 #if PLATFORM(WIN)
     void platformDataInit(HFONT, float size, HDC, WCHAR* faceName);
-#endif
-#if USE(CAIRO)
-    static cairo_scaled_font_t* hashTableDeletedFontValue() { return reinterpret_cast<cairo_scaled_font_t*>(-1); }
 #endif
 
 public:
@@ -224,7 +214,7 @@ public:
 private:
 #if PLATFORM(COCOA)
     // FIXME: Get rid of one of these. These two fonts are subtly different, and it is not obvious which one to use where.
-    CTFontRef m_font { nullptr };
+    RetainPtr<CTFontRef> m_font;
     mutable RetainPtr<CTFontRef> m_ctFont;
 #elif PLATFORM(WIN)
     RefPtr<SharedGDIObject<HFONT>> m_font;
@@ -239,6 +229,7 @@ private:
 
     bool m_isColorBitmapFont { false };
     bool m_isCompositeFontReference { false };
+    bool m_isHashTableDeletedValue { false };
 
 #if PLATFORM(WIN)
     bool m_useGDI { false };

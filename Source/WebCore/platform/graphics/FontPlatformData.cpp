@@ -35,15 +35,8 @@
 namespace WebCore {
 
 FontPlatformData::FontPlatformData(WTF::HashTableDeletedValueType)
-#if PLATFORM(WIN)
-    : m_font(WTF::HashTableDeletedValue)
-#elif PLATFORM(COCOA)
-    : m_font(hashTableDeletedFontValue())
-#endif
+    : m_isHashTableDeletedValue(true)
 {
-#if USE(CAIRO)
-    m_scaledFont = hashTableDeletedFontValue();
-#endif
 }
 
 FontPlatformData::FontPlatformData()
@@ -70,6 +63,7 @@ FontPlatformData::FontPlatformData(CGFontRef cgFont, float size, bool syntheticB
 FontPlatformData::FontPlatformData(const FontPlatformData& source)
     : FontPlatformData(source.m_size, source.m_syntheticBold, source.m_syntheticOblique, source.m_orientation, source.m_widthVariant)
 {
+    m_isHashTableDeletedValue = source.m_isHashTableDeletedValue;
     m_isColorBitmapFont = source.m_isColorBitmapFont;
     m_isCompositeFontReference = source.m_isCompositeFontReference;
     platformDataInit(source);
@@ -81,6 +75,7 @@ const FontPlatformData& FontPlatformData::operator=(const FontPlatformData& othe
     if (this == &other)
         return *this;
 
+    m_isHashTableDeletedValue = other.m_isHashTableDeletedValue;
     m_syntheticBold = other.m_syntheticBold;
     m_syntheticOblique = other.m_syntheticOblique;
     m_orientation = other.m_orientation;

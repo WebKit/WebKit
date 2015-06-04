@@ -342,7 +342,6 @@ struct FontDataCacheKeyHash {
 
 struct FontDataCacheKeyTraits : WTF::GenericHashTraits<FontPlatformData> {
     static const bool emptyValueIsZero = true;
-    static const bool needsDestruction = true;
     static const FontPlatformData& emptyValue()
     {
         static NeverDestroyed<FontPlatformData> key(0.f, false, false);

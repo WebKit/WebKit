@@ -91,7 +91,7 @@ FontPlatformData::FontPlatformData(GDIObject<HFONT> font, cairo_font_face_t* fon
 
 FontPlatformData::~FontPlatformData()
 {
-    if (m_scaledFont && m_scaledFont != hashTableDeletedFontValue())
+    if (m_scaledFont)
         cairo_scaled_font_destroy(m_scaledFont);
 }
 
@@ -110,7 +110,7 @@ const FontPlatformData& FontPlatformData::platformDataAssign(const FontPlatformD
     m_font = other.m_font;
     m_useGDI = other.m_useGDI;
 
-    if (m_scaledFont && m_scaledFont != hashTableDeletedFontValue())
+    if (m_scaledFont)
         cairo_scaled_font_destroy(m_scaledFont);
 
     m_scaledFont = cairo_scaled_font_reference(other.m_scaledFont);
