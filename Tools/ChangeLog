@@ -1,3 +1,15 @@
+2015-06-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Fix options in build-jsc for CMake builds
+        https://bugs.webkit.org/show_bug.cgi?id=145636
+
+        Reviewed by Gyuyoung Kim.
+
+        CMake only accepts -DXXX=YYY style options.
+        And ensured that ENABLE_JIT=OFF when specifying `--cloop`.
+
+        * Scripts/build-jsc:
+
 2015-06-03  Matthew Daiter  <mdaiter@apple.com>
 
         Added a patch so that the colors displayed on the page could be toggled
