@@ -19465,7 +19465,6 @@
     <ClInclude Include="..\Modules\streams\ReadableStream.h" />
     <ClInclude Include="..\Modules\streams\ReadableStreamController.h" />
     <ClInclude Include="..\Modules\streams\ReadableStreamReader.h" />
-    <ClInclude Include="..\Modules\streams\ReadableStreamSource.h" />
     <ClInclude Include="..\Modules\webdatabase\AbstractDatabaseServer.h" />
     <ClInclude Include="..\Modules\webdatabase\ChangeVersionData.h" />
     <ClInclude Include="..\Modules\webdatabase\ChangeVersionWrapper.h" />

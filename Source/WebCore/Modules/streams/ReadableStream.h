@@ -33,10 +33,11 @@
 #if ENABLE(STREAMS_API)
 
 #include "ActiveDOMObject.h"
-#include "ReadableStreamSource.h"
 #include "ScriptWrappable.h"
 #include <functional>
 #include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace JSC {
 class JSValue;
@@ -73,8 +74,6 @@ public:
     void changeStateToClosed();
     void changeStateToErrored();
 
-    ReadableStreamSource& source() { return m_source.get(); }
-
     typedef std::function<void(JSC::JSValue)> FailureCallback;
 
     typedef std::function<void()> ClosedSuccessCallback;
@@ -85,7 +84,7 @@ public:
     void read(ReadSuccessCallback&&, ReadEndCallback&&, FailureCallback&&);
 
 protected:
-    ReadableStream(ScriptExecutionContext&, Ref<ReadableStreamSource>&&);
+    explicit ReadableStream(ScriptExecutionContext&);
 
 private:
     // ActiveDOMObject API.
@@ -111,7 +110,6 @@ private:
     Vector<ReadCallbacks> m_readRequests;
 
     State m_state { State::Readable };
-    Ref<ReadableStreamSource> m_source;
 };
 
 }

@@ -59,19 +59,7 @@ static inline JSValue callFunction(ExecState* exec, JSValue jsFunction, JSValue 
     return call(exec, jsFunction, callType, callData, thisValue, arguments, exception);
 }
 
-Ref<ReadableJSStream::Source> ReadableJSStream::Source::create(ExecState& exec)
-{
-    return adoptRef(*new Source(exec));
-}
-
-ReadableJSStream::Source::Source(ExecState& exec)
-{
-    ASSERT_WITH_MESSAGE(!exec.argumentCount() || exec.argument(0).isObject(), "Caller of ReadableJSStream::Source constructor should ensure that passed argument if any is an object.");
-    JSObject* source =  exec.argumentCount() ? exec.argument(0).getObject() : JSFinalObject::create(exec.vm(), JSFinalObject::createStructure(exec.vm(), exec.callee()->globalObject(), jsNull(), 1));
-    m_source.set(exec.vm(), source);
-}
-
-JSDOMGlobalObject* ReadableJSStream::Source::globalObject()
+JSDOMGlobalObject* ReadableJSStream::globalObject()
 {
     return jsDynamicCast<JSDOMGlobalObject*>(m_source->globalObject());
 }
@@ -84,7 +72,7 @@ static void startReadableStreamAsync(ReadableStream& readableStream)
     });
 }
 
-void ReadableJSStream::Source::start(ExecState& exec, ReadableJSStream& readableStream)
+void ReadableJSStream::doStart(ExecState& exec)
 {
     JSLockHolder lock(&exec);
 
@@ -93,12 +81,12 @@ void ReadableJSStream::Source::start(ExecState& exec, ReadableJSStream& readable
         if (!startFunction.isUndefined())
             throwVMError(&exec, createTypeError(&exec, ASCIILiteral("ReadableStream constructor object start property should be a function.")));
         else
-            startReadableStreamAsync(readableStream);
+            startReadableStreamAsync(*this);
         return;
     }
 
     MarkedArgumentBuffer arguments;
-    arguments.append(readableStream.jsController(exec, globalObject()));
+    arguments.append(jsController(exec, globalObject()));
 
     JSValue exception;
     callFunction(&exec, startFunction, m_source.get(), arguments, &exception);
@@ -109,26 +97,23 @@ void ReadableJSStream::Source::start(ExecState& exec, ReadableJSStream& readable
     }
 
     // FIXME: Implement handling promise as result of calling start function.
-    startReadableStreamAsync(readableStream);
+    startReadableStreamAsync(*this);
 }
 
 Ref<ReadableJSStream> ReadableJSStream::create(ExecState& exec, ScriptExecutionContext& scriptExecutionContext)
 {
-    Ref<ReadableJSStream::Source> source = ReadableJSStream::Source::create(exec);
-    Ref<ReadableJSStream> readableStream = adoptRef(*new ReadableJSStream(scriptExecutionContext, WTF::move(source)));
+    ASSERT_WITH_MESSAGE(!exec.argumentCount() || exec.argument(0).isObject(), "Caller of ReadableJSStream constructor should ensure that passed argument if any is an object.");
+    JSObject* source =  exec.argumentCount() ? exec.argument(0).getObject() : JSFinalObject::create(exec.vm(), JSFinalObject::createStructure(exec.vm(), exec.callee()->globalObject(), jsNull(), 1));
 
-    readableStream->jsSource().start(exec, readableStream.get());
+    Ref<ReadableJSStream> readableStream = adoptRef(*new ReadableJSStream(scriptExecutionContext, exec, source));
+    readableStream->doStart(exec);
     return readableStream;
 }
 
-ReadableJSStream::ReadableJSStream(ScriptExecutionContext& scriptExecutionContext, Ref<ReadableJSStream::Source>&& source)
-    : ReadableStream(scriptExecutionContext, WTF::move(source))
+ReadableJSStream::ReadableJSStream(ScriptExecutionContext& scriptExecutionContext, ExecState& exec, JSObject* source)
+    : ReadableStream(scriptExecutionContext)
 {
-}
-
-ReadableJSStream::Source& ReadableJSStream::jsSource()
-{
-    return static_cast<ReadableJSStream::Source&>(source());
+    m_source.set(exec.vm(), source);
 }
 
 JSValue ReadableJSStream::jsController(ExecState& exec, JSDOMGlobalObject* globalObject)
