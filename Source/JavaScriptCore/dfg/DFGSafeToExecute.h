@@ -50,7 +50,6 @@ public:
         case DoubleRepRealUse:
         case Int52RepUse:
         case NumberUse:
-        case RealNumberUse:
         case BooleanUse:
         case CellUse:
         case ObjectUse:

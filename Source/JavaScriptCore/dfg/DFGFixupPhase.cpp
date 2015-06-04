@@ -1723,7 +1723,6 @@ private:
                 m_profitabilityChanged |= variable->mergeIsProfitableToUnbox(true);
             break;
         case NumberUse:
-        case RealNumberUse:
         case DoubleRepUse:
         case DoubleRepRealUse:
             if (variable->doubleFormatState() == UsingDoubleFormat)
@@ -2103,13 +2102,6 @@ private:
                 edge.setUseKind(Int52RepUse);
             break;
             
-        case RealNumberUse:
-            if (edge->hasDoubleResult())
-                edge.setUseKind(DoubleRepRealUse);
-            else if (edge->hasInt52Result())
-                edge.setUseKind(Int52RepUse);
-            break;
-            
         default:
             break;
         }
@@ -2136,13 +2128,9 @@ private:
                     m_indexInBlock, SpecInt52AsDouble, DoubleRep, node->origin,
                     Edge(edge.node(), Int52RepUse));
             } else {
-                UseKind useKind;
-                if (edge->shouldSpeculateDoubleReal())
-                    useKind = RealNumberUse;
-                else if (edge->shouldSpeculateNumber())
+                UseKind useKind = NotCellUse;
+                if (edge->shouldSpeculateNumber())
                     useKind = NumberUse;
-                else
-                    useKind = NotCellUse;
 
                 result = m_insertionSet.insertNode(
                     m_indexInBlock, SpecBytecodeDouble, DoubleRep, node->origin,

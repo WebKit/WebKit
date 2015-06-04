@@ -2372,8 +2372,7 @@ public:
     void speculateDoubleRepMachineInt(Edge);
 #endif // USE(JSVALUE64)
     void speculateNumber(Edge);
-    void speculateRealNumber(Edge);
-    void speculateDoubleRepReal(Edge);
+    void speculateDoubleReal(Edge);
     void speculateBoolean(Edge);
     void speculateCell(Edge);
     void speculateObject(Edge);
