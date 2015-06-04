@@ -24,45 +24,44 @@
  */
 
 #include "config.h"
-#include "CoordinatedTile.h"
+#include "Tile.h"
 
 #if USE(COORDINATED_GRAPHICS)
-
 #include "GraphicsContext.h"
-#include "ImageBuffer.h"
 #include "SurfaceUpdateInfo.h"
+#include "TiledBackingStore.h"
 #include "TiledBackingStoreClient.h"
 
 namespace WebCore {
 
-static const uint32_t InvalidCoordinatedTileID = 0;
+static const uint32_t InvalidTileID = 0;
 
-PassRefPtr<Tile> CoordinatedTile::create(TiledBackingStore* tiledBackingStore, const Coordinate& tileCoordinate)
+PassRefPtr<Tile> Tile::create(TiledBackingStore& tiledBackingStore, const Coordinate& tileCoordinate)
 {
-    return adoptRef(new CoordinatedTile(tiledBackingStore, tileCoordinate));
+    return adoptRef(new Tile(tiledBackingStore, tileCoordinate));
 }
 
-CoordinatedTile::CoordinatedTile(TiledBackingStore* tiledBackingStore, const Coordinate& tileCoordinate)
+Tile::Tile(TiledBackingStore& tiledBackingStore, const Coordinate& tileCoordinate)
     : m_tiledBackingStore(tiledBackingStore)
     , m_coordinate(tileCoordinate)
-    , m_rect(tiledBackingStore->tileRectForCoordinate(tileCoordinate))
-    , m_ID(InvalidCoordinatedTileID)
+    , m_rect(tiledBackingStore.tileRectForCoordinate(tileCoordinate))
+    , m_ID(InvalidTileID)
     , m_dirtyRect(m_rect)
 {
 }
 
-CoordinatedTile::~CoordinatedTile()
+Tile::~Tile()
 {
-    if (m_ID != InvalidCoordinatedTileID)
-        m_tiledBackingStore->client()->removeTile(m_ID);
+    if (m_ID != InvalidTileID)
+        m_tiledBackingStore.client()->removeTile(m_ID);
 }
 
-bool CoordinatedTile::isDirty() const
+bool Tile::isDirty() const
 {
     return !m_dirtyRect.isEmpty();
 }
 
-void CoordinatedTile::invalidate(const IntRect& dirtyRect)
+void Tile::invalidate(const IntRect& dirtyRect)
 {
     IntRect tileDirtyRect = intersection(dirtyRect, m_rect);
     if (tileDirtyRect.isEmpty())
@@ -71,52 +70,47 @@ void CoordinatedTile::invalidate(const IntRect& dirtyRect)
     m_dirtyRect.unite(tileDirtyRect);
 }
 
-bool CoordinatedTile::updateBackBuffer()
+bool Tile::updateBackBuffer()
 {
     if (!isDirty())
         return false;
 
     SurfaceUpdateInfo updateInfo;
 
-    if (!m_tiledBackingStore->client()->paintToSurface(m_dirtyRect.size(), updateInfo.atlasID, updateInfo.surfaceOffset, this))
+    if (!m_tiledBackingStore.client()->paintToSurface(m_dirtyRect.size(), updateInfo.atlasID, updateInfo.surfaceOffset, this))
         return false;
 
     updateInfo.updateRect = m_dirtyRect;
     updateInfo.updateRect.move(-m_rect.x(), -m_rect.y());
 
     static uint32_t id = 1;
-    if (m_ID == InvalidCoordinatedTileID) {
+    if (m_ID == InvalidTileID) {
         m_ID = id++;
         // We may get an invalid ID due to wrap-around on overflow.
-        if (m_ID == InvalidCoordinatedTileID)
+        if (m_ID == InvalidTileID)
             m_ID = id++;
-        m_tiledBackingStore->client()->createTile(m_ID, m_tiledBackingStore->contentsScale());
+        m_tiledBackingStore.client()->createTile(m_ID, m_tiledBackingStore.contentsScale());
     }
-    m_tiledBackingStore->client()->updateTile(m_ID, updateInfo, m_rect);
+    m_tiledBackingStore.client()->updateTile(m_ID, updateInfo, m_rect);
 
     m_dirtyRect = IntRect();
 
     return true;
 }
 
-void CoordinatedTile::paintToSurfaceContext(GraphicsContext* context)
+void Tile::paintToSurfaceContext(GraphicsContext* context)
 {
     context->translate(-m_dirtyRect.x(), -m_dirtyRect.y());
-    context->scale(FloatSize(m_tiledBackingStore->contentsScale(), m_tiledBackingStore->contentsScale()));
-    m_tiledBackingStore->client()->tiledBackingStorePaint(context, m_tiledBackingStore->mapToContents(m_dirtyRect));
+    context->scale(FloatSize(m_tiledBackingStore.contentsScale(), m_tiledBackingStore.contentsScale()));
+    m_tiledBackingStore.client()->tiledBackingStorePaint(context, m_tiledBackingStore.mapToContents(m_dirtyRect));
 }
 
-bool CoordinatedTile::isReadyToPaint() const
+bool Tile::isReadyToPaint() const
 {
-    return m_ID != InvalidCoordinatedTileID;
+    return m_ID != InvalidTileID;
 }
 
-void CoordinatedTile::paint(GraphicsContext*, const IntRect&)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void CoordinatedTile::resize(const IntSize& newSize)
+void Tile::resize(const IntSize& newSize)
 {
     m_rect = IntRect(m_rect.location(), newSize);
     m_dirtyRect = m_rect;

@@ -23,7 +23,6 @@
 
 #include "CoordinatedGraphicsState.h"
 #include "CoordinatedImageBacking.h"
-#include "CoordinatedTile.h"
 #include "FloatPoint3D.h"
 #include "GraphicsLayer.h"
 #include "GraphicsLayerTransform.h"

@@ -6739,7 +6739,7 @@
     <ClCompile Include="..\platform\graphics\texmap\coordinated\CoordinatedSurface.cpp">
       <Filter>platform\graphics\texmap\coordinated</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\texmap\coordinated\CoordinatedTile.cpp">
+    <ClCompile Include="..\platform\graphics\texmap\coordinated\Tile.cpp">
       <Filter>platform\graphics\texmap\coordinated</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\texmap\coordinated\UpdateAtlas.cpp">
@@ -14147,10 +14147,10 @@
     <ClInclude Include="..\platform\graphics\texmap\coordinated\CoordinatedSurface.h">
       <Filter>platform\graphics\texmap\coordinated</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\graphics\texmap\coordinated\CoordinatedTile.h">
+    <ClInclude Include="..\platform\graphics\texmap\coordinated\SurfaceUpdateInfo.h">
       <Filter>platform\graphics\texmap\coordinated</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\graphics\texmap\coordinated\SurfaceUpdateInfo.h">
+    <ClInclude Include="..\platform\graphics\texmap\coordinated\Tile.h">
       <Filter>platform\graphics\texmap\coordinated</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\texmap\coordinated\UpdateAtlas.h">

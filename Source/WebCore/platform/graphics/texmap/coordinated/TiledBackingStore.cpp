@@ -21,8 +21,6 @@
 #include "TiledBackingStore.h"
 
 #if USE(COORDINATED_GRAPHICS)
-
-#include "CoordinatedTile.h"
 #include "GraphicsContext.h"
 #include "TiledBackingStoreClient.h"
 
@@ -256,7 +254,7 @@ void TiledBackingStore::createTiles()
     unsigned tilesToCreateCount = tilesToCreate.size();
     for (unsigned n = 0; n < tilesToCreateCount; ++n) {
         Tile::Coordinate coordinate = tilesToCreate[n];
-        setTile(coordinate, CoordinatedTile::create(this, coordinate));
+        setTile(coordinate, Tile::create(*this, coordinate));
     }
     requiredTileCount -= tilesToCreateCount;
 

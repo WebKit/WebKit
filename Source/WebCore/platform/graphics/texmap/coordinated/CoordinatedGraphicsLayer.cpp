@@ -25,7 +25,6 @@
 #if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedGraphicsLayer.h"
 
-#include "CoordinatedTile.h"
 #include "FloatQuad.h"
 #include "Frame.h"
 #include "FrameView.h"
