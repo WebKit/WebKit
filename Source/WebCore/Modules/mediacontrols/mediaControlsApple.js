@@ -612,7 +612,7 @@ Controller.prototype = {
         this.updateLayoutForDisplayedWidth();
         this.setNeedsTimelineMetricsUpdate();
 
-        if (this.video.controls) {
+        if (this.video.controls || this.isFullScreen()) {
             this.controls.panel.classList.add(this.ClassNames.show);
             this.controls.panel.classList.remove(this.ClassNames.hidden);
             this.resetHideControlsTimer();
