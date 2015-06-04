@@ -501,7 +501,7 @@ void Frame::scrollOverflowLayer(RenderLayer* layer, const IntRect& visibleRect, 
     int x = layer->scrollXOffset();
     int exposeLeft = exposeRect.x();
     int exposeRight = exposeLeft + exposeRect.width();
-    int clientWidth = box->clientWidth();
+    int clientWidth = roundToInt(box->clientWidth());
     if (exposeLeft <= 0)
         x = std::max(0, x + exposeLeft - clientWidth / 2);
     else if (exposeRight >= clientWidth)
@@ -510,7 +510,7 @@ void Frame::scrollOverflowLayer(RenderLayer* layer, const IntRect& visibleRect, 
     int y = layer->scrollYOffset();
     int exposeTop = exposeRect.y();
     int exposeBottom = exposeTop + exposeRect.height();
-    int clientHeight = box->clientHeight();
+    int clientHeight = roundToInt(box->clientHeight());
     if (exposeTop <= 0)
         y = std::max(0, y + exposeTop - clientHeight / 2);
     else if (exposeBottom >= clientHeight)

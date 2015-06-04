@@ -1,3 +1,17 @@
+2015-06-03  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r181879): Scrolling order on pages with focused iframe is broken.
+        https://bugs.webkit.org/show_bug.cgi?id=145637
+        <rdar://problem/20635581>
+
+        Reviewed by Zalan Bujtas.
+
+        * platform/mac-wk2/tiled-drawing/scrolling/iframe_in_iframe-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/iframe_in_iframe.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/resources/inner_content.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/resources/testContent.html: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/resources/testImage.png: Added.
+
 2015-06-04  Zalan Bujtas  <zalan@apple.com>
 
         css3/filters/backdrop/backdrop-filter-with-mask.html is missing the mask layer.

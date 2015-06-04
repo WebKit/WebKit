@@ -135,7 +135,7 @@ int RenderMarquee::computePosition(EMarqueeDirection dir, bool stopAtContentEdge
     }
     else {
         int contentHeight = box->layoutOverflowRect().maxY() - box->borderTop() + box->paddingBottom();
-        int clientHeight = box->clientHeight();
+        int clientHeight = roundToInt(box->clientHeight());
         if (dir == MUP) {
             if (stopAtContentEdge)
                  return std::min(contentHeight - clientHeight, 0);
@@ -271,7 +271,7 @@ void RenderMarquee::timerFired()
             addIncrement = !addIncrement;
         }
         bool positive = range > 0;
-        int clientSize = (isHorizontal() ? m_layer->renderBox()->clientWidth() : m_layer->renderBox()->clientHeight());
+        int clientSize = (isHorizontal() ? roundToInt(m_layer->renderBox()->clientWidth()) : roundToInt(m_layer->renderBox()->clientHeight()));
         int increment = abs(intValueForLength(m_layer->renderer().style().marqueeIncrement(), clientSize));
         int currentPos = (isHorizontal() ? m_layer->scrollXOffset() : m_layer->scrollYOffset());
         newPos =  currentPos + (addIncrement ? increment : -increment);
