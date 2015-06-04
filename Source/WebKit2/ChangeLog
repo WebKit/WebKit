@@ -1,3 +1,9 @@
+2015-06-03  Dan Bernstein  <mitz@apple.com>
+
+        Made WKBackForwardListItemPrivate.h a private header after it was added as internal in r185183.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-06-03  Hyungwook Lee  <hyungwook.lee@navercorp.com>
 
         [EFL] Implement window_object_cleared callback in EwkPageClient.
