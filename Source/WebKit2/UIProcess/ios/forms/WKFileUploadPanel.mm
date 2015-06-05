@@ -42,6 +42,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <CoreMedia/CoreMedia.h>
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <Photos/Photos.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/SoftLinking.h>
 #import <WebKit/WebNSFileManagerExtras.h>
@@ -55,6 +56,14 @@ SOFT_LINK_CLASS(AVFoundation, AVURLAsset);
 
 SOFT_LINK_FRAMEWORK(CoreMedia);
 SOFT_LINK_CONSTANT(CoreMedia, kCMTimeZero, CMTime);
+
+SOFT_LINK_FRAMEWORK(Photos);
+SOFT_LINK_CLASS(Photos, PHAsset);
+SOFT_LINK_CLASS(Photos, PHImageManager);
+SOFT_LINK_CLASS(Photos, PHImageRequestOptions);
+SOFT_LINK_CONSTANT(Photos, PHImageRequestOptionsResizeModeNone, NSString *);
+SOFT_LINK_CONSTANT(Photos, PHImageRequestOptionsVersionCurrent, NSString *);
+
 #define kCMTimeZero getkCMTimeZero()
 
 #pragma mark - Document picker icons
@@ -726,6 +735,93 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
     [self _uploadItemFromMediaInfo:info successBlock:uploadItemSuccessBlock failureBlock:failureBlock];
 }
 
+- (void)_uploadItemForImageData:(NSData *)imageData originalImage:(UIImage *)originalImage imageName:(NSString *)imageName successBlock:(void (^)(_WKFileUploadItem *))successBlock failureBlock:(void (^)(void))failureBlock
+{
+    ASSERT_ARG(imageData, imageData);
+    ASSERT_ARG(originalImage, originalImage);
+    ASSERT(!isMainThread());
+
+    NSString * const kTemporaryDirectoryName = @"WKWebFileUpload";
+
+    // Build temporary file path.
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSString *temporaryDirectory = [fileManager _webkit_createTemporaryDirectoryWithTemplatePrefix:kTemporaryDirectoryName];
+    NSString *filePath = [temporaryDirectory stringByAppendingPathComponent:imageName];
+    if (!filePath) {
+        LOG_ERROR("WKFileUploadPanel: Failed to create temporary directory to save image");
+        failureBlock();
+        return;
+    }
+
+    // Save the image to the temporary file.
+    NSError *error = nil;
+    [imageData writeToFile:filePath options:NSDataWritingAtomic error:&error];
+    if (error) {
+        LOG_ERROR("WKFileUploadPanel: Error writing image data to temporary file: %@", error);
+        failureBlock();
+        return;
+    }
+
+    successBlock(adoptNS([[_WKImageFileUploadItem alloc] initWithFileURL:[NSURL fileURLWithPath:filePath] originalImage:originalImage]).get());
+}
+
+- (void)_uploadItemForJPEGRepresentationOfImage:(UIImage *)image successBlock:(void (^)(_WKFileUploadItem *))successBlock failureBlock:(void (^)(void))failureBlock
+{
+    ASSERT_ARG(image, image);
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        // FIXME: Different compression for different devices?
+        // FIXME: Different compression for different UIImage sizes?
+        // FIXME: Should EXIF data be maintained?
+        const CGFloat compression = 0.8;
+        NSData *jpeg = UIImageJPEGRepresentation(image, compression);
+        if (!jpeg) {
+            LOG_ERROR("WKFileUploadPanel: Failed to create JPEG representation for image");
+            failureBlock();
+            return;
+        }
+
+        // FIXME: Should we get the photo asset and get the actual filename for the photo instead of
+        // naming each of the individual uploads image.jpg? This won't work for photos taken with
+        // the camera, but would work for photos picked from the library.
+        NSString * const kUploadImageName = @"image.jpg";
+        [self _uploadItemForImageData:jpeg originalImage:image imageName:kUploadImageName successBlock:successBlock failureBlock:failureBlock];
+    });
+}
+
+- (void)_uploadItemForImage:(UIImage *)image withAssetURL:(NSURL *)assetURL successBlock:(void (^)(_WKFileUploadItem *))successBlock failureBlock:(void (^)(void))failureBlock
+{
+    ASSERT_ARG(image, image);
+    ASSERT_ARG(assetURL, assetURL);
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        PHFetchResult *result = [getPHAssetClass() fetchAssetsWithALAssetURLs:@[assetURL] options:nil];
+        if (!result.count) {
+            LOG_ERROR("WKFileUploadPanel: Failed to fetch asset with URL %@", assetURL);
+            [self _uploadItemForJPEGRepresentationOfImage:image successBlock:successBlock failureBlock:failureBlock];
+            return;
+        }
+
+        RetainPtr<PHImageRequestOptions> options = adoptNS([allocPHImageRequestOptionsInstance() init]);
+        [options setVersion:PHImageRequestOptionsVersionCurrent];
+        [options setSynchronous:YES];
+        [options setResizeMode:PHImageRequestOptionsResizeModeNone];
+
+        PHImageManager *manager = (PHImageManager *)[getPHImageManagerClass() defaultManager];
+        [manager requestImageDataForAsset:result[0] options:options.get() resultHandler:^(NSData *imageData, NSString *dataUTI, UIImageOrientation, NSDictionary *info) {
+            if (!imageData) {
+                LOG_ERROR("WKFileUploadPanel: Failed to request image data for asset with URL %@", assetURL);
+                [self _uploadItemForJPEGRepresentationOfImage:image successBlock:successBlock failureBlock:failureBlock];
+                return;
+            }
+
+            RetainPtr<CFStringRef> extension = adoptCF(UTTypeCopyPreferredTagWithClass((CFStringRef)dataUTI, kUTTagClassFilenameExtension));
+            NSString *imageName = [@"image." stringByAppendingString:(extension ? (id)extension.get() : @"jpg")];
+            [self _uploadItemForImageData:imageData originalImage:image imageName:imageName successBlock:successBlock failureBlock:failureBlock];
+        }];
+    });
+}
+
 - (void)_uploadItemFromMediaInfo:(NSDictionary *)info successBlock:(void (^)(_WKFileUploadItem *))successBlock failureBlock:(void (^)(void))failureBlock
 {
     NSString *mediaType = [info objectForKey:UIImagePickerControllerMediaType];
@@ -744,62 +840,30 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
         return;
     }
 
-    // For images, we create a temporary file path and use the original image.
-    if (UTTypeConformsTo((CFStringRef)mediaType, kUTTypeImage)) {
-        UIImage *originalImage = [info objectForKey:UIImagePickerControllerOriginalImage];
-        if (!originalImage) {
-            LOG_ERROR("WKFileUploadPanel: Expected image data but there was none");
-            ASSERT_NOT_REACHED();
-            failureBlock();
-            return;
-        }
-
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            NSString * const kTemporaryDirectoryName = @"WKWebFileUpload";
-            NSString * const kUploadImageName = @"image.jpg";
-
-            // Build temporary file path.
-            // FIXME: Should we get the ALAsset for the mediaURL and get the actual filename for the photo
-            // instead of naming each of the individual uploads image.jpg? This won't work for photos
-            // taken with the camera, but would work for photos picked from the library.
-            NSFileManager *fileManager = [NSFileManager defaultManager];
-            NSString *temporaryDirectory = [fileManager _webkit_createTemporaryDirectoryWithTemplatePrefix:kTemporaryDirectoryName];
-            NSString *filePath = [temporaryDirectory stringByAppendingPathComponent:kUploadImageName];
-            if (!filePath) {
-                LOG_ERROR("WKFileUploadPanel: Failed to create temporary directory to save image");
-                failureBlock();
-                return;
-            }
-
-            // Compress to JPEG format.
-            // FIXME: Different compression for different devices?
-            // FIXME: Different compression for different UIImage sizes?
-            // FIXME: Should EXIF data be maintained?
-            const CGFloat compression = 0.8;
-            NSData *jpeg = UIImageJPEGRepresentation(originalImage, compression);
-            if (!jpeg) {
-                LOG_ERROR("WKFileUploadPanel: Failed to create JPEG representation for image");
-                failureBlock();
-                return;
-            }
-
-            // Save the image to the temporary file.
-            NSError *error = nil;
-            [jpeg writeToFile:filePath options:NSDataWritingAtomic error:&error];
-            if (error) {
-                LOG_ERROR("WKFileUploadPanel: Error writing image data to temporary file: %@", error);
-                failureBlock();
-                return;
-            }
-
-            successBlock(adoptNS([[_WKImageFileUploadItem alloc] initWithFileURL:[NSURL fileURLWithPath:filePath] originalImage:originalImage]).get());
-        });
+    if (!UTTypeConformsTo((CFStringRef)mediaType, kUTTypeImage)) {
+        LOG_ERROR("WKFileUploadPanel: Unexpected media type. Expected image or video, got: %@", mediaType);
+        ASSERT_NOT_REACHED();
+        failureBlock();
         return;
     }
 
-    // Unknown media type.
-    LOG_ERROR("WKFileUploadPanel: Unexpected media type. Expected image or video, got: %@", mediaType);
-    failureBlock();
+    UIImage *originalImage = [info objectForKey:UIImagePickerControllerOriginalImage];
+    if (!originalImage) {
+        LOG_ERROR("WKFileUploadPanel: Expected image data but there was none");
+        ASSERT_NOT_REACHED();
+        failureBlock();
+        return;
+    }
+
+    // If we have an asset URL, try to upload the native image.
+    NSURL *referenceURL = [info objectForKey:UIImagePickerControllerReferenceURL];
+    if (referenceURL) {
+        [self _uploadItemForImage:originalImage withAssetURL:referenceURL successBlock:successBlock failureBlock:failureBlock];
+        return;
+    }
+
+    // Photos taken with the camera will not have an asset URL. Fall back to a JPEG representation.
+    [self _uploadItemForJPEGRepresentationOfImage:originalImage successBlock:successBlock failureBlock:failureBlock];
 }
 
 - (NSString *)_displayStringForPhotos:(NSUInteger)imageCount videos:(NSUInteger)videoCount

@@ -1,3 +1,48 @@
+2015-06-01  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        [iOS] Uploading an animated GIF from the photo library uploads a JPEG
+
+        <https://bugs.webkit.org/show_bug.cgi?id=145539>
+        <rdar://problem/19760877
+
+        Selecting a photo from the photo library using UIImagePickerController
+        results in an NSDictionary with image info and a UIImage with the
+        image. It's not possible to get the original image data from the
+        UIImage, only a PNG or JPEG representation, so we were getting a JPEG
+        representation and uploading that to the server. For animated GIFs,
+        this meant a JPEG representation of the first frame.
+
+        To fix this, we'll get the asset URL, if available, and use the Photos
+        API to query for the original image data.
+
+        Reviewed by Andy Estes and Joe Pecoraro.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        Soft link the Photos framework.
+
+        (-[WKFileUploadPanel _uploadItemForImageData:originalImage:imageName:successBlock:failureBlock:]):
+        Save the image's data to a temporary location, and create a
+        _WKImageFileUploadItem. Code moved from
+        -_uploadItemFromMediaInfo:successBlock:failureBlock:.
+
+        (-[WKFileUploadPanel _uploadItemForJPEGRepresentationOfImage:successBlock:failureBlock:]):
+        Get a JPEG representation of the UIImage, and create an upload item
+        from that data.
+
+        (uploadImageNameFromUTI):
+        Return a filename for the uploaded image based on the UTI.
+
+        (-[WKFileUploadPanel _uploadItemForImage:withAssetURL:successBlock:failureBlock:]):
+        Fetch the photo asset with the given asset URL. Create an image manager
+        object, and request the image data for the photo asset. Create an
+        upload item from that data. If we fail, fall back to a JPEG
+        representation.
+
+        (-[WKFileUploadPanel _uploadItemFromMediaInfo:successBlock:failureBlock:]):
+        Return early if the media item is not an image type. If it is, and we
+        have an asset URL, try to create an upload item for the native image.
+        If we don't have an asset URL, use a JPEG representation of the image.
+
 2015-06-04  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         REGRESSION(r185091): Crash happens on indexdb tests
