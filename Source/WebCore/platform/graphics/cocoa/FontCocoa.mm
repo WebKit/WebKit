@@ -272,7 +272,6 @@ void Font::platformInit()
         m_fontMetrics.setAscent(thirdOfSize);
         m_fontMetrics.setDescent(thirdOfSize);
         m_fontMetrics.setLineGap(thirdOfSize);
-        m_fontMetrics.setLineSpacing(0);
     }
 #endif
 

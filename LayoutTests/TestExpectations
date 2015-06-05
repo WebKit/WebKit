@@ -120,7 +120,6 @@ webkit.org/b/132791 svg/as-object/sizing/svg-in-object-placeholder-height-auto.h
 
 webkit.org/b/133057 fast/table/border-collapsing/collapsed-borders-adjoining-sections.html [ ImageOnlyFailure ]
 
-webkit.org/b/141661 fast/text/emoji.html [ Failure ]
 webkit.org/b/142548 editing/selection/extend-by-character-007.html [ Failure ]
 
 webkit.org/b/128736 inspector-protocol/debugger/setBreakpoint-dfg.html [ Failure Pass ]

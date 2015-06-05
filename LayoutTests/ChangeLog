@@ -1,3 +1,18 @@
+2015-06-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Emoji overlap preceeding lines
+        https://bugs.webkit.org/show_bug.cgi?id=145678
+        <rdar://problem/10684914>
+
+        Reviewed by Enrica Casucci.
+
+        * fast/text/emoji.html:
+        * platform/mac/TestExpectations: Removed unnecessary line.
+        * platform/mac-mavericks/fast/text/emoji-expected.html:
+        * platform/mac/fast/text/emoji-expected.html:
+        * platform/ios-simulator/fast/text/emoji-expected.html:
+        * TestExpectations: Removed unnecessary line.
+
 2015-06-05  Mark Lam  <mark.lam@apple.com>
 
         finally blocks should not set the exception stack trace when re-throwing the exception.
