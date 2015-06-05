@@ -3899,7 +3899,7 @@ EXPRESSION: Promise.resolve({result:1})
 }
 
 -----------------------------------------------------
-EXPRESSION: Person = class Person { constructor(){} get fullName(){} methodName(p1, p2){} }; Person
+EXPRESSION: Person = class Person { constructor(name){} get fullName(){} methodName(p1, p2){} }; Person
 {
   "_type": "function",
   "_subtype": "class",
@@ -3909,7 +3909,8 @@ EXPRESSION: Person = class Person { constructor(){} get fullName(){} methodName(
     "_type": "object",
     "_objectId": "<filtered>",
     "_description": "Person"
-  }
+  },
+  "_functionDescription": "function Person(name){}"
 }
 
 -----------------------------------------------------
@@ -3931,7 +3932,8 @@ EXPRESSION: Alpha = class A { methodA(){} }; Beta = class B extends Alpha { meth
     "_type": "object",
     "_objectId": "<filtered>",
     "_description": "B"
-  }
+  },
+  "_functionDescription": "function B() { super(...arguments); }"
 }
 
 -----------------------------------------------------
@@ -3954,7 +3956,7 @@ EXPRESSION: [Beta]
         "_name": "0",
         "_type": "function",
         "_subtype": "class",
-        "_value": "B"
+        "_value": "class B"
       }
     ],
     "_entries": null

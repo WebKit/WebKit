@@ -31,7 +31,7 @@
 
 WebInspector.RemoteObject = class RemoteObject
 {
-    constructor(objectId, type, subtype, value, description, size, classPrototype, preview)
+    constructor(objectId, type, subtype, value, description, size, classPrototype, className, preview)
     {
         console.assert(type);
         console.assert(!preview || preview instanceof WebInspector.ObjectPreview);
@@ -52,8 +52,10 @@ WebInspector.RemoteObject = class RemoteObject
             this._classPrototype = classPrototype;
             this._preview = preview;
 
-            if (subtype === "class")
-                this._description = "class " + this._description;
+            if (subtype === "class") {
+                this._functionDescription = this._description;
+                this._description = "class " + className;
+            }
         } else {
             // Primitive or null.
             console.assert(type !== "object" || value === null);
@@ -69,7 +71,7 @@ WebInspector.RemoteObject = class RemoteObject
 
     static fromPrimitiveValue(value)
     {
-        return new WebInspector.RemoteObject(undefined, typeof value, undefined, value, undefined, undefined, undefined);
+        return new WebInspector.RemoteObject(undefined, typeof value, undefined, value, undefined, undefined, undefined, undefined);
     }
 
     static fromPayload(payload)
@@ -102,7 +104,7 @@ WebInspector.RemoteObject = class RemoteObject
             payload.preview = WebInspector.ObjectPreview.fromPayload(payload.preview);
         }
 
-        return new WebInspector.RemoteObject(payload.objectId, payload.type, payload.subtype, payload.value, payload.description, payload.size, payload.classPrototype, payload.preview);
+        return new WebInspector.RemoteObject(payload.objectId, payload.type, payload.subtype, payload.value, payload.description, payload.size, payload.classPrototype, payload.className, payload.preview);
     }
 
     static createCallArgument(valueOrObject)
@@ -161,6 +163,13 @@ WebInspector.RemoteObject = class RemoteObject
     get description()
     {
         return this._description;
+    }
+
+    get functionDescription()
+    {
+        console.assert(this.type === "function");
+
+        return this._functionDescription || this._description;
     }
 
     get hasChildren()

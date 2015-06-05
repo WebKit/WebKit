@@ -281,7 +281,7 @@ WebInspector.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement
             }
         }
 
-        var match = resolvedValue.description.match(/^function.*?(\([^)]*?\))/);
+        var match = resolvedValue.functionDescription.match(/^function.*?(\([^)]*?\))/);
         return match ? match[1] : "()";
     }
 
