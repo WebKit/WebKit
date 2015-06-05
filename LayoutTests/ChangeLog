@@ -1,3 +1,17 @@
+2015-06-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [iOS] Rebaseline expected results for svg font tests
+
+        Reviewed by Daniel Bates.
+
+        * platform/ios-simulator/svg/custom/svg-fonts-no-latin-glyph-expected.txt: Added.
+        * platform/ios-simulator/svg/custom/svg-fonts-segmented-expected.txt:
+        * platform/ios-simulator/svg/custom/svg-fonts-with-no-element-reference-expected.txt: Added.
+        * platform/ios-simulator/svg/text/text-overflow-ellipsis-svgfont-expected.txt:
+        * platform/ios-simulator/svg/text/text-overflow-ellipsis-svgfont-kerning-ligatures-expected.txt:
+        * svg/custom/svg-fonts-no-latin-glyph-expected.txt:
+        * svg/custom/svg-fonts-no-latin-glyph.html:
+
 2015-06-05  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Mask layer now is part of the layer tree output.
