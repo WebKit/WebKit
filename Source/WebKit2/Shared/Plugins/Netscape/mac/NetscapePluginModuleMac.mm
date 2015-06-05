@@ -92,6 +92,7 @@ static bool getPluginArchitecture(CFBundleRef bundle, PluginModuleInfo& plugin)
     return false;
 }
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
 static RetainPtr<CFDictionaryRef> contentsOfPropertyListAtURL(CFURLRef propertyListURL)
 {
     RetainPtr<NSData> propertyListData = adoptNS([[NSData alloc] initWithContentsOfURL:(NSURL *)propertyListURL]);
@@ -107,9 +108,11 @@ static RetainPtr<CFDictionaryRef> contentsOfPropertyListAtURL(CFURLRef propertyL
 
     return static_cast<CFDictionaryRef>(propertyList.get());
 }
+#endif
 
 static RetainPtr<CFDictionaryRef> getMIMETypesFromPluginBundle(CFBundleRef bundle, const PluginModuleInfo& plugin)
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
     CFStringRef propertyListFilename = static_cast<CFStringRef>(CFBundleGetValueForInfoDictionaryKey(bundle, CFSTR("WebPluginMIMETypesFilename")));
     if (propertyListFilename) {
         RetainPtr<CFStringRef> propertyListPath = adoptCF(CFStringCreateWithFormat(kCFAllocatorDefault, 0, CFSTR("%@/Library/Preferences/%@"), NSHomeDirectory(), propertyListFilename));
@@ -125,6 +128,7 @@ static RetainPtr<CFDictionaryRef> getMIMETypesFromPluginBundle(CFBundleRef bundl
         
         return static_cast<CFDictionaryRef>(CFDictionaryGetValue(propertyList.get(), CFSTR("WebPluginMIMETypes")));
     }
+#endif
     
     return static_cast<CFDictionaryRef>(CFBundleGetValueForInfoDictionaryKey(bundle, CFSTR("WebPluginMIMETypes")));
 }
@@ -408,6 +412,7 @@ bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleI
     return true;
 }
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
 bool NetscapePluginModule::createPluginMIMETypesPreferences(const String& pluginPath)
 {
     RetainPtr<CFURLRef> bundleURL = adoptCF(CFURLCreateWithFileSystemPath(kCFAllocatorDefault, pluginPath.createCFString().get(), kCFURLPOSIXPathStyle, false));
@@ -426,6 +431,7 @@ bool NetscapePluginModule::createPluginMIMETypesPreferences(const String& plugin
     createPluginMIMETypesPreferences();
     return true;
 }
+#endif
 
 // FIXME: This doesn't need to be platform-specific.
 class PluginVersion {

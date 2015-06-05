@@ -74,6 +74,7 @@ public:
         [NSApp _installAutoreleasePoolsOnCurrentThreadIfNecessary];
 #endif
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
         // Check if we're being spawned to write a MIME type preferences file.
         String pluginPath = m_commandLine["createPluginMIMETypesPreferences"];
         if (!pluginPath.isEmpty()) {
@@ -84,6 +85,7 @@ public:
                 exit(EXIT_FAILURE);
             exit(EXIT_SUCCESS);
         }
+#endif
     }
 
     virtual bool getExtraInitializationData(HashMap<String, String>& extraInitializationData) override
