@@ -248,7 +248,7 @@ void DFACombiner::combineDFAs(unsigned minimumSize, std::function<void(DFA&&)> h
         DFAMerger dfaMerger(a, b);
         DFA c = dfaMerger.merge();
 
-        if (c.graphSize() > minimumSize) {
+        if (c.graphSize() > minimumSize || m_dfas.isEmpty()) {
             // Minimizing is somewhat expensive. We only do it in bulk when we reach the threshold
             // to reduce the load.
             c.minimize();
