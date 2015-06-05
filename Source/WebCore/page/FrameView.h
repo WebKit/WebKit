@@ -43,7 +43,6 @@
 namespace WebCore {
 
 class AXObjectCache;
-class DOMTimer;
 class Element;
 class FloatSize;
 class Frame;
@@ -315,9 +314,6 @@ public:
     void restoreScrollbar();
 
     void postLayoutTimerFired();
-
-    void registerThrottledDOMTimer(DOMTimer*);
-    void unregisterThrottledDOMTimer(DOMTimer*);
 
     WEBCORE_EXPORT bool wasScrolledByUser() const;
     WEBCORE_EXPORT void setWasScrolledByUser(bool);
@@ -604,7 +600,6 @@ private:
     void autoSizeIfEnabled();
 
     void applyRecursivelyWithVisibleRect(const std::function<void (FrameView& frameView, const IntRect& visibleRect)>&);
-    void updateThrottledDOMTimersState(const IntRect& visibleRect);
     void resumeVisibleImageAnimations(const IntRect& visibleRect);
     void updateScriptedAnimationsAndTimersThrottlingState(const IntRect& visibleRect);
 
@@ -788,8 +783,6 @@ private:
 
     std::unique_ptr<ScrollableAreaSet> m_scrollableAreas;
     std::unique_ptr<ViewportConstrainedObjectSet> m_viewportConstrainedObjects;
-
-    HashSet<DOMTimer*> m_throttledTimers;
 
     int m_headerHeight;
     int m_footerHeight;

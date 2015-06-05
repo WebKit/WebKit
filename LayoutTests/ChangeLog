@@ -1,3 +1,29 @@
+2015-06-05  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r176212): Broke app switching on iCloud.com
+        https://bugs.webkit.org/show_bug.cgi?id=145708
+        <rdar://problem/21235277>
+
+        Reviewed by Simon Fraser.
+
+        Remove layout tests covering DOM Timer throttling.
+
+        * fast/canvas/canvas-outside-viewport-timer-throttling-expected.txt: Removed.
+        * fast/canvas/canvas-outside-viewport-timer-throttling.html: Removed.
+        * fast/dom/nested-timer-display-none-element-throttling-expected.txt: Removed.
+        * fast/dom/nested-timer-display-none-element-throttling.html: Removed.
+        * fast/dom/repeating-timer-display-none-element-throttling-expected.txt: Removed.
+        * fast/dom/repeating-timer-display-none-element-throttling.html: Removed.
+        * fast/dom/repeating-timer-element-overflow-hidden-throttling-expected.txt: Removed.
+        * fast/dom/repeating-timer-element-overflow-hidden-throttling.html: Removed.
+        * fast/dom/resources/timer-throttling-iframe.html: Removed.
+        * fast/dom/timer-throttle-on-scrolling-iframe-away-expected.txt: Removed.
+        * fast/dom/timer-throttle-on-scrolling-iframe-away.html: Removed.
+        * fast/dom/timer-unthrottle-on-layout-expected.txt: Removed.
+        * fast/dom/timer-unthrottle-on-layout.html: Removed.
+        * fast/dom/timer-unthrottle-on-scroll-expected.txt: Removed.
+        * fast/dom/timer-unthrottle-on-scroll.html: Removed.
+
 2015-06-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Emoji overlap preceeding lines

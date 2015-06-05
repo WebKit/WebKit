@@ -291,7 +291,6 @@ void FrameView::reset()
     m_isVisuallyNonEmpty = false;
     m_firstVisuallyNonEmptyLayoutCallbackPending = true;
     m_maintainScrollPositionAnchor = nullptr;
-    m_throttledTimers.clear();
 }
 
 void FrameView::removeFromAXObjectCache()
@@ -1806,7 +1805,6 @@ void FrameView::viewportContentsChanged()
     // check if we should resume animated images or unthrottle DOM timers.
     applyRecursivelyWithVisibleRect([] (FrameView& frameView, const IntRect& visibleRect) {
         frameView.resumeVisibleImageAnimations(visibleRect);
-        frameView.updateThrottledDOMTimersState(visibleRect);
         frameView.updateScriptedAnimationsAndTimersThrottlingState(visibleRect);
     });
 }
@@ -3120,29 +3118,6 @@ void FrameView::willEndLiveResize()
 void FrameView::postLayoutTimerFired()
 {
     performPostLayoutTasks();
-}
-
-void FrameView::registerThrottledDOMTimer(DOMTimer* timer)
-{
-    m_throttledTimers.add(timer);
-}
-
-void FrameView::unregisterThrottledDOMTimer(DOMTimer* timer)
-{
-    m_throttledTimers.remove(timer);
-}
-
-void FrameView::updateThrottledDOMTimersState(const IntRect& visibleRect)
-{
-    if (m_throttledTimers.isEmpty())
-        return;
-
-    // Do not iterate over the HashSet because calling DOMTimer::updateThrottlingStateAfterViewportChange()
-    // may cause timers to remove themselves from it while we are iterating.
-    Vector<DOMTimer*> timers;
-    copyToVector(m_throttledTimers, timers);
-    for (auto* timer : timers)
-        timer->updateThrottlingStateAfterViewportChange(visibleRect);
 }
 
 void FrameView::autoSizeIfEnabled()

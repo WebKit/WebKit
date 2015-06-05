@@ -1374,11 +1374,6 @@ URL Element::absoluteLinkURL() const
     return document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkAttribute));
 }
 
-WeakPtr<Element> Element::createWeakPtr()
-{
-    return ensureElementRareData().weakPtrFactory().createWeakPtr();
-}
-
 // Returns true is the given attribute is an event handler.
 // We consider an event handler any attribute that begins with "on".
 // It is a simple solution that has the advantage of not requiring any
