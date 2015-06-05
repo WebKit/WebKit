@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE html>
 <html>
 <head>
 <link href="resources/grid.css" rel="stylesheet">
@@ -25,9 +25,54 @@
                                  ".";
 }
 
+#gridWithSpanningRowsDotsTemplate {
+    -webkit-grid-template-areas: "span"
+                                 "....";
+}
+
 #gridWithDotColumn {
     -webkit-grid-template-areas: "header ."
                                  "footer .";
+}
+
+#gridWithDotsColumn {
+    -webkit-grid-template-areas: "header ......"
+                                 "footer ......";
+}
+
+#gridWithDotCells {
+    -webkit-grid-template-areas: "first ."
+                                 ". second";
+}
+
+#gridWithDotsCells {
+    -webkit-grid-template-areas: "first ......"
+                                 "..... second";
+}
+
+#gridWithComplexDotAreas {
+    -webkit-grid-template-areas: ". header header ."
+                                 ". . . ."
+                                 "nav main main aside"
+                                 "nav main main aside"
+                                 ". . . aside"
+                                 ". footer footer aside";
+}
+
+#gridWithComplexDotsAreas {
+    -webkit-grid-template-areas: "... header header ....."
+                                 "... ...... ...... ....."
+                                 "nav main   main   aside"
+                                 "nav main   main   aside"
+                                 "... ...... ...... aside"
+                                 "... footer footer aside";
+}
+
+#gridWithMixedDotAndDotsAreas {
+    -webkit-grid-template-areas: "... title ."
+                                 "..  main main"
+                                 "nav ................... aside"
+                                 ". footer ......";
 }
 
 #gridWithHorizontalRectangle {
@@ -51,7 +96,14 @@
 <div class="grid" id="gridWithTwoRowsTemplate"></div>
 <div class="grid" id="gridWithSpanningColumnsTemplate"></div>
 <div class="grid" id="gridWithSpanningRowsDotTemplate"></div>
+<div class="grid" id="gridWithSpanningRowsDotsTemplate"></div>
 <div class="grid" id="gridWithDotColumn"></div>
+<div class="grid" id="gridWithDotsColumn"></div>
+<div class="grid" id="gridWithDotCells"></div>
+<div class="grid" id="gridWithDotsCells"></div>
+<div class="grid" id="gridWithComplexDotAreas"></div>
+<div class="grid" id="gridWithComplexDotsAreas"></div>
+<div class="grid" id="gridWithMixedDotAndDotsAreas"></div>
 <div class="grid" id="gridWithHorizontalRectangle"></div>
 <div class="grid" id="gridWithVerticalRectangle"></div>
 <script>
@@ -73,7 +125,14 @@
     testGridTemplateAreas("gridWithTwoRowsTemplate", '"first" "second"');
     testGridTemplateAreas("gridWithSpanningColumnsTemplate", '"span span"');
     testGridTemplateAreas("gridWithSpanningRowsDotTemplate", '"span" "."');
+    testGridTemplateAreas("gridWithSpanningRowsDotsTemplate", '"span" "."');
     testGridTemplateAreas("gridWithDotColumn", '"header ." "footer ."');
+    testGridTemplateAreas("gridWithDotsColumn", '"header ." "footer ."');
+    testGridTemplateAreas("gridWithDotCells", '"first ." ". second"');
+    testGridTemplateAreas("gridWithDotsCells", '"first ." ". second"');
+    testGridTemplateAreas("gridWithComplexDotAreas", '". header header ." ". . . ." "nav main main aside" "nav main main aside" ". . . aside" ". footer footer aside"');
+    testGridTemplateAreas("gridWithComplexDotsAreas", '". header header ." ". . . ." "nav main main aside" "nav main main aside" ". . . aside" ". footer footer aside"');
+    testGridTemplateAreas("gridWithMixedDotAndDotsAreas", '". title ." ". main main" "nav . aside" ". footer ."');
     testGridTemplateAreas("gridWithHorizontalRectangle", '"a a a" "a a a"');
     testGridTemplateAreas("gridWithVerticalRectangle", '"a a" "a a" "a a"');
 

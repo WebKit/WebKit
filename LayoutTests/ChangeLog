@@ -1,3 +1,15 @@
+2015-06-05  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Support dots sequences in grid-template-areas
+        https://bugs.webkit.org/show_bug.cgi?id=145693
+
+        Reviewed by Sergio Villar Senin.
+
+        Added new test cases to check the new behavior.
+
+        * fast/css-grid-layout/grid-template-areas-get-set-expected.txt:
+        * fast/css-grid-layout/grid-template-areas-get-set.html:
+
 2015-06-03  Filip Pizlo  <fpizlo@apple.com>
 
         Simplify unboxing of double JSValues known to be not NaN and not Int32

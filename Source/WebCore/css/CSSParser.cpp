@@ -5961,6 +5961,17 @@ bool CSSParser::parseDashboardRegions(CSSPropertyID propId, bool important)
 #endif /* ENABLE(DASHBOARD_SUPPORT) */
 
 #if ENABLE(CSS_GRID_LAYOUT)
+static bool containsOnlyDots(const String& string)
+{
+    ASSERT(!string.isEmpty());
+    StringImpl& text = *string.impl();
+    for (unsigned i = 0; i < text.length(); ++i) {
+        if (text[i] != '.')
+            return false;
+    }
+    return true;
+}
+
 bool CSSParser::parseGridTemplateAreasRow(NamedGridAreaMap& gridAreaMap, const unsigned rowCount, unsigned& columnCount)
 {
     CSSParserValue* currentValue = m_valueList->current();
@@ -5986,7 +5997,7 @@ bool CSSParser::parseGridTemplateAreasRow(NamedGridAreaMap& gridAreaMap, const u
         const String& gridAreaName = columnNames[currentColumn];
 
         // Unamed areas are always valid (we consider them to be 1x1).
-        if (gridAreaName == ".")
+        if (containsOnlyDots(gridAreaName))
             continue;
 
         // We handle several grid areas with the same name at once to simplify the validation code.
