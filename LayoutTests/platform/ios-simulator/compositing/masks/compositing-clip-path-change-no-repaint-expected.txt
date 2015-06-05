@@ -14,11 +14,20 @@ Only the second box should have a repaint.
           (position 8.00 8.00)
           (bounds 300.00 300.00)
           (drawsContent 1)
+          (mask layer)
+            (GraphicsLayer
+              (bounds 300.00 300.00)
+            )
         )
         (GraphicsLayer
           (position 8.00 308.00)
           (bounds 300.00 300.00)
           (drawsContent 1)
+          (mask layer)
+            (GraphicsLayer
+              (bounds 300.00 300.00)
+              (drawsContent 1)
+            )
           (repaint rects
             (rect 0.00 0.00 300.00 300.00)
           )
