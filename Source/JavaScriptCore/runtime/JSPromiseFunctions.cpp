@@ -29,8 +29,7 @@
 #if ENABLE(PROMISES)
 
 #include "Error.h"
-#include "JSCJSValueInlines.h"
-#include "JSCellInlines.h"
+#include "JSCInlines.h"
 #include "JSPromise.h"
 #include "JSPromiseConstructor.h"
 #include "JSPromiseDeferred.h"

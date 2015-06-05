@@ -80,6 +80,11 @@ public:
             return !!m_table->get(i);
         return !!overflowStorage()[i - namedLength].get();
     }
+
+    bool canAccessArgumentIndexQuicklyInDFG(uint32_t i) const
+    {
+        return canAccessIndexQuickly(i);
+    }
     
     JSValue getIndexQuickly(uint32_t i) const
     {

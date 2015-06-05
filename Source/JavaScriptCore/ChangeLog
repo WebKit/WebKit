@@ -1,3 +1,104 @@
+2015-06-04  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Always track out-of-bounds array access explicitly instead of relying on the slow case
+        https://bugs.webkit.org/show_bug.cgi?id=145673
+
+        Reviewed by Geoffrey Garen.
+
+        Previously, we were deciding to use out-of-bounds speculation based on two informations:
+        -Explicitly detected out-of-bounds accesses tracked on ArrayProfile.
+        -The number of time we took the slow cases in the baseline JIT.
+
+        The heuristic based on slow cases was a little too fragile.
+
+        In some cases, we were running into that limit just because the indexing type changes between
+        two values (typically Int32Array and DoubleArray). Sometimes we were just unlucky on what
+        we used for the inline cache.
+
+        In Kraken, this was hurting us on "audio-beat-detection" and "audio-fft". The array types we see
+        change between Int32 and Double. We run into the slow path a bit but never hit
+        out-of-bounds.
+
+        By the time we compile in DFG, we have stable Double Arrays but we speculate out-of-bounds based
+        on the number of slow cases we took. Because of that, we start boxing the double on GetByVal,
+        using DoubleRep, etc. adding a ton of overhead over otherwise very simple operations.
+
+        WebXPRT was also suffering from this problem but the other way arround: we were missing
+        the out-of-bounds accesses due to changes in indexing types, we were below the threshold
+        of slow-path access, thus we predicted in-bounds accesses for code that was doing plenty
+        of out-of-bands.
+
+
+        This patch fixes the problem by tracking the out-of-bounds access explicitly any time we go
+        into the slow path in baseline JIT. Since we no longer miss any out-of-bounds, we can remove
+        the slow-path heuristic.
+
+        There is new additional special case in the C code regarding out-of-bounds: Arguments access.
+        Mispredicting out-of-bounds accesses on arguments is a disaster for performance, so those are
+        tracked in the way DFG expect it.
+
+
+        There are a few important cases that are still not covered optimally:
+        -PutByVal on Arguments.
+        -Get/Put ByVal on TypedArray.
+        Those are simply not used by DFG in any way. TypedArrays should probably be looked at in the future.
+
+        * bytecode/ArrayProfile.cpp:
+        (JSC::ArrayProfile::computeUpdatedPrediction):
+        The inline-cache repatch cases now update the ArrayProfile information. This has no value in baseline
+        JIT but it helps avoiding one recompile in DFG for the missing ArrayProfile information.
+
+        * bytecode/ArrayProfile.h:
+        (JSC::ArrayProfile::setOutOfBounds):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getArrayMode):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::getArrayModeConsideringSlowPath): Deleted.
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitSlow_op_has_indexed_property):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emitSlow_op_has_indexed_property):
+        * jit/JITOperations.cpp:
+        (JSC::canUseFastArgumentAccess):
+        This is not my favorite part of this patch.
+
+        I tried having JSObject::canGetIndexQuickly() handle arguments which would put everything
+        on the generic path. Unfortunately, that code is very performance sensitive and some benchmarks were
+        impacted by over 10%
+
+        I left JSObject::canGetIndexQuickly() alone, and I added the canUseFastArgumentAccess() mirroring
+        how DFG uses out-of-bounds for Arguments.
+
+        (JSC::getByVal):
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        * runtime/JSPromiseFunctions.cpp:
+        * tests/stress/get-by-val-out-of-bounds-basics.js: Added.
+        (opaqueGetByValOnInt32ArrayEarlyOutOfBounds):
+        (testInt32ArrayEarlyOutOfBounds):
+        (testIndexingTypeChangesOnInt32Array):
+        (opaqueGetByValOnStringArrayHotOutOfBounds):
+        (testStringArrayHotOutOfBounds):
+        (testIndexingTypeChangesOnStringArray):
+        (opaqueGetByValOnStringAndInt32ArrayHotOutOfBounds):
+        (testStringAndInt32ArrayHotOutOfBounds):
+        (opaqueGetByValOnDoubleArrayHotOutOfBounds):
+        * tests/stress/put-by-val-out-of-bounds-basics.js: Added.
+        (opaquePutByValOnInt32ArrayEarlyOutOfBounds):
+        (testInt32ArrayEarlyOutOfBounds):
+        (opaquePutByValOnStringArrayHotOutOfBounds):
+        (testStringArrayHotOutOfBounds):
+
 2015-06-03  Filip Pizlo  <fpizlo@apple.com>
 
         Simplify unboxing of double JSValues known to be not NaN and not Int32

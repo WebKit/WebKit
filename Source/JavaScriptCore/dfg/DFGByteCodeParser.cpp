@@ -745,27 +745,13 @@ private:
     {
         ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
         profile->computeUpdatedPrediction(locker, m_inlineStackTop->m_profiledBlock);
-        return ArrayMode::fromObserved(locker, profile, action, false);
+        bool makeSafe = profile->outOfBounds(locker);
+        return ArrayMode::fromObserved(locker, profile, action, makeSafe);
     }
     
     ArrayMode getArrayMode(ArrayProfile* profile)
     {
         return getArrayMode(profile, Array::Read);
-    }
-    
-    ArrayMode getArrayModeConsideringSlowPath(ArrayProfile* profile, Array::Action action)
-    {
-        ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-        
-        profile->computeUpdatedPrediction(locker, m_inlineStackTop->m_profiledBlock);
-        
-        bool makeSafe =
-            m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)
-            || profile->outOfBounds(locker);
-        
-        ArrayMode result = ArrayMode::fromObserved(locker, profile, action, makeSafe);
-        
-        return result;
     }
     
     Node* makeSafe(Node* node)
@@ -3099,7 +3085,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             SpeculatedType prediction = getPredictionWithoutOSRExit();
             
             Node* base = get(VirtualRegister(currentInstruction[2].u.operand));
-            ArrayMode arrayMode = getArrayModeConsideringSlowPath(currentInstruction[4].u.arrayProfile, Array::Read);
+            ArrayMode arrayMode = getArrayMode(currentInstruction[4].u.arrayProfile, Array::Read);
             Node* property = get(VirtualRegister(currentInstruction[3].u.operand));
             Node* getByVal = addToGraph(GetByVal, OpInfo(arrayMode.asWord()), OpInfo(prediction), base, property);
             set(VirtualRegister(currentInstruction[1].u.operand), getByVal);
@@ -3111,7 +3097,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_put_by_val: {
             Node* base = get(VirtualRegister(currentInstruction[1].u.operand));
 
-            ArrayMode arrayMode = getArrayModeConsideringSlowPath(currentInstruction[4].u.arrayProfile, Array::Write);
+            ArrayMode arrayMode = getArrayMode(currentInstruction[4].u.arrayProfile, Array::Write);
             
             Node* property = get(VirtualRegister(currentInstruction[2].u.operand));
             Node* value = get(VirtualRegister(currentInstruction[3].u.operand));
@@ -3864,7 +3850,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
         case op_has_indexed_property: {
             Node* base = get(VirtualRegister(currentInstruction[2].u.operand));
-            ArrayMode arrayMode = getArrayModeConsideringSlowPath(currentInstruction[4].u.arrayProfile, Array::Read);
+            ArrayMode arrayMode = getArrayMode(currentInstruction[4].u.arrayProfile, Array::Read);
             Node* property = get(VirtualRegister(currentInstruction[3].u.operand));
             Node* hasIterableProperty = addToGraph(HasIndexedProperty, OpInfo(arrayMode.asWord()), base, property);
             set(VirtualRegister(currentInstruction[1].u.operand), hasIterableProperty);

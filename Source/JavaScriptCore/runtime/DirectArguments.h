@@ -75,7 +75,12 @@ public:
     {
         return i < m_length && (!m_overrides || !m_overrides.get()[i]);
     }
-    
+
+    bool canAccessArgumentIndexQuicklyInDFG(uint32_t i) const
+    {
+        return i < m_length && !overrodeThings();
+    }
+
     JSValue getIndexQuickly(uint32_t i) const
     {
         ASSERT_WITH_SECURITY_IMPLICATION(canAccessIndexQuickly(i));
