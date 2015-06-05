@@ -1,5 +1,12 @@
 2015-06-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
+        Layout test http/tests/misc/acid3.html times out on Yosemite WK2 Debug.
+        https://bugs.webkit.org/show_bug.cgi?id=145702
+
+        * platform/mac-wk2/TestExpectations: Marking as flaky for now.
+
+2015-06-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
         [iOS] Rebaseline expected results for svg font tests
 
         Reviewed by Daniel Bates.
