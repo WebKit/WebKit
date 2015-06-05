@@ -1,3 +1,14 @@
+2015-06-05  Eric Carlson  <eric.carlson@apple.com>
+
+        Layout tests fullscreen/video-controls-drag.html and media/video-fullscreeen-only-controls.html
+        fail on WK1 and WK2
+        https://bugs.webkit.org/show_bug.cgi?id=145675
+
+        Reviewed by Dean Jackson.
+
+        * TestExpectations: Unskip tests.
+        * fullscreen/video-controls-drag.html: Minor cleanup, force layout before testing control location.
+
 2015-06-05  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Rebaseline expected results.

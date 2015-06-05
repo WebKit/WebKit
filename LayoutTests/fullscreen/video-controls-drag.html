@@ -5,18 +5,17 @@
     <script src="../media/media-controls.js"></script>
     <script>
         var video = document.getElementById('video');
-        var shadowRoot;
         var panel;
         var startBox;
         var endBox;
 
-        var fullscreenChanged = function(event)
-        {
-            if (callback)
-                callback(event)
-        };
         waitForEvent(document, 'webkitfullscreenchange', function() {
             if (window.internals) {
+
+                // Force a relayout to ensure that the controls in the shadow DOM have been 
+                // positioned correctly.
+                document.body.offsetTop;
+
                 panel = mediaControlsElement(internals.shadowRoot(video).firstChild, '-webkit-media-controls-panel');
                 startBox = internals.boundingBox(panel);
 

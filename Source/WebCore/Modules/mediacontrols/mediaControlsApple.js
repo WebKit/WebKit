@@ -612,7 +612,7 @@ Controller.prototype = {
         this.updateLayoutForDisplayedWidth();
         this.setNeedsTimelineMetricsUpdate();
 
-        if (this.video.controls || this.isFullScreen()) {
+        if (this.shouldHaveControls()) {
             this.controls.panel.classList.add(this.ClassNames.show);
             this.controls.panel.classList.remove(this.ClassNames.hidden);
             this.resetHideControlsTimer();
@@ -788,7 +788,7 @@ Controller.prototype = {
 
     handleWrapperMouseMove: function(event)
     {
-        if (!this.video.controls)
+        if (!this.video.controls && !this.isFullScreen())
             return;
 
         if (this.controlsAreHidden())
@@ -1024,7 +1024,7 @@ Controller.prototype = {
     updateFullscreenButtons: function()
     {
         var shouldBeHidden = !this.video.webkitSupportsFullscreen || !this.hasVideo();
-        this.controls.fullscreenButton.classList.toggle(this.ClassNames.hidden, shouldBeHidden);
+        this.controls.fullscreenButton.classList.toggle(this.ClassNames.hidden, shouldBeHidden && !this.isFullScreen());
         this.controls.optimizedFullscreenButton.classList.toggle(this.ClassNames.hidden, shouldBeHidden);
         this.setNeedsUpdateForDisplayedWidth();
         this.updateLayoutForDisplayedWidth();
