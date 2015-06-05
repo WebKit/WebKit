@@ -38,7 +38,7 @@ WebInspector.TimelineRecordFrame = function(graphDataSource, record)
 // FIXME: Move to a WebInspector.Object subclass and we can remove this.
 WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.TimelineRecordFrame);
 
-WebInspector.TimelineRecordFrame.MaximumWidthPixels = 16;
+WebInspector.TimelineRecordFrame.MaximumWidthPixels = 14;
 WebInspector.TimelineRecordFrame.MinimumWidthPixels = 4;
 
 WebInspector.TimelineRecordFrame.prototype = {

@@ -82,11 +82,11 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             this._chartColors = {
                 layout: "rgb(212, 108, 108)",
                 script: "rgb(153, 113, 185)",
-                other: "rgb(221, 221, 221)",
-                idle: "rgb(255, 255, 255)"
+                other: "rgb(221, 221, 221)"
             };
 
             this._frameSelectionChartRow = new WebInspector.ChartDetailsSectionRow(this);
+            this._frameSelectionChartRow.innerRadius = 0.5;
 
             var chartGroup = new WebInspector.DetailsSectionGroup([this._frameSelectionChartRow]);
             this._frameSelectionChartSection = new WebInspector.DetailsSection("frames-selection-chart", WebInspector.UIString("Selected Frames"), [chartGroup], null, true);
@@ -793,8 +793,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             this._frameSelectionChartRow.data = [
                 {label: WebInspector.UIString("Layout"), value: 0, color: this._chartColors.layout},
                 {label: WebInspector.UIString("Script"), value: 0, color: this._chartColors.script},
-                {label: WebInspector.UIString("Other"), value: 0, color: this._chartColors.other},
-                {label: WebInspector.UIString("Idle"), value: 0, color: this._chartColors.idle}
+                {label: WebInspector.UIString("Other"), value: 0, color: this._chartColors.other}
             ];
             return;
         }
@@ -821,13 +820,11 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         var layoutTime = durationForRecordType(WebInspector.TimelineRecord.Type.Layout);
         var scriptTime = durationForRecordType(WebInspector.TimelineRecord.Type.Script);
         var otherTime = durationForRecordType();
-        var idleTime = totalTime - layoutTime - scriptTime - otherTime;
 
         this._frameSelectionChartRow.data = [
             {label: WebInspector.UIString("Layout"), value: layoutTime, color: this._chartColors.layout},
             {label: WebInspector.UIString("Script"), value: scriptTime, color: this._chartColors.script},
-            {label: WebInspector.UIString("Other"), value: otherTime, color: this._chartColors.other},
-            {label: WebInspector.UIString("Idle"), value: idleTime, color: this._chartColors.idle}
+            {label: WebInspector.UIString("Other"), value: otherTime, color: this._chartColors.other}
         ];
     }
 

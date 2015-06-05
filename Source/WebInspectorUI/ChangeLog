@@ -1,3 +1,21 @@
+2015-06-05  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Switch to doughnut chart and remove idle time in the Rendering Frames timeline
+        https://bugs.webkit.org/show_bug.cgi?id=145671
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        "Idle" string no longer used.
+
+        * UserInterface/Views/TimelineRecordFrame.js:
+        Reduced maximum frame width by 2px.
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel):
+        (WebInspector.TimelineSidebarPanel.prototype._refreshFrameSelectionChart):
+        Added inner radius to chart and removed "Idle" value.
+
 2015-06-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Class constructor appearing as Object Tree property does not include parameters
