@@ -1,3 +1,14 @@
+2015-06-05  Alex Christensen  <achristensen@webkit.org>
+
+        [Web Timing] Use new SPI to enable data collection.
+        https://bugs.webkit.org/show_bug.cgi?id=145650
+        rdar://problem/21203358
+
+        Reviewed by Chris Dumez.
+
+        * wtf/Platform.h:
+        Added HAVE_TIMINGDATAOPTIONS for platform and version dependent feature.
+
 2015-06-05  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet <youenn.fablet@crf.canon.fr>
 
         [Streams API] ReadableStream should store callbacks as a Deque

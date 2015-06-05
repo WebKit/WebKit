@@ -69,7 +69,9 @@ CFDictionaryRef _CFURLConnectionCopyTimingData(CFURLConnectionRef);
 #import <Foundation/NSURLConnectionPrivate.h>
 #else
 @interface NSURLConnection (TimingData)
+#if !HAVE(TIMINGDATAOPTIONS)
 + (void)_setCollectsTimingData:(BOOL)collect;
+#endif
 - (NSDictionary *)_timingData;
 @end
 #endif
@@ -217,8 +219,12 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
     if (synchronousWillSendRequestEnabled())
         CFURLRequestSetShouldStartSynchronously([nsRequest _CFURLRequest], 1);
 #else
-    NSDictionary *propertyDictionary = [NSDictionary dictionaryWithObject:streamProperties forKey:@"kCFURLConnectionSocketStreamProperties"];
+    NSMutableDictionary *propertyDictionary = [NSMutableDictionary dictionaryWithObject:streamProperties forKey:@"kCFURLConnectionSocketStreamProperties"];
     const bool usesCache = true;
+#endif
+#if HAVE(TIMINGDATAOPTIONS)
+    const int64_t TimingDataOptionsEnableW3CNavigationTiming = (1 << 0);
+    [propertyDictionary setObject:@{@"_kCFURLConnectionPropertyTimingDataOptions": @(TimingDataOptionsEnableW3CNavigationTiming)} forKey:@"kCFURLConnectionURLConnectionProperties"];
 #endif
     d->m_connection = adoptNS([[NSURLConnection alloc] _initWithRequest:nsRequest delegate:delegate usesCache:usesCache maxContentLength:0 startImmediately:NO connectionProperties:propertyDictionary]);
 }
@@ -746,10 +752,12 @@ void ResourceHandle::getConnectionTimingData(NSDictionary *timingData, ResourceL
 
 void ResourceHandle::setCollectsTimingData()
 {
+#if !HAVE(TIMINGDATAOPTIONS)
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         [NSURLConnection _setCollectsTimingData:YES];
     });
+#endif
 }
 
 #if USE(CFNETWORK)
