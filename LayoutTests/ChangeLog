@@ -1,3 +1,15 @@
+2015-06-05  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] Rebaseline expected results.
+
+        Unreviewed gardening.
+
+        * platform/ios-simulator/compositing/overflow/overflow-positioning-expected.txt:
+        * platform/ios-simulator/css3/selectors3/xhtml/css3-modsel-15c-expected.txt:
+        * platform/ios-simulator/css3/selectors3/xml/css3-modsel-15c-expected.txt:
+        * platform/ios-simulator/ios/scrolling/overflow-div-scrolling-expected.txt:
+        * platform/ios-simulator/ios/touch/touch-handler-on-window-expected.txt:
+
 2015-06-05  David Hyatt  <hyatt@apple.com>
 
         Underlines too close in vertical Chinese text.
