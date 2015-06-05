@@ -1,3 +1,14 @@
+2015-06-05  Filip Pizlo  <fpizlo@apple.com>
+
+        speculateRealNumber() should early exit if you're already a real number, not if you're already a real double.
+
+        Rubber stamped by Mark Lam.
+        
+        This was causing: https://build.webkit.org/results/Apple%20Yosemite%20Debug%20WK1%20(Tests)/r185261%20(5180)/webaudio/note-grain-on-timing-crash-log.txt
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculateRealNumber):
+
 2015-06-05  Mark Lam  <mark.lam@apple.com>
 
         finally blocks should not set the exception stack trace when re-throwing the exception.

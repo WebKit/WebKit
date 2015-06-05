@@ -5405,7 +5405,7 @@ void SpeculativeJIT::speculateNumber(Edge edge)
 
 void SpeculativeJIT::speculateRealNumber(Edge edge)
 {
-    if (!needsTypeCheck(edge, SpecDoubleReal))
+    if (!needsTypeCheck(edge, SpecBytecodeRealNumber))
         return;
     
     JSValueOperand op1(this, edge, ManualOperandSpeculation);
