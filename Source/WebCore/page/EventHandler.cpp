@@ -390,7 +390,7 @@ EventHandler::EventHandler(Frame& frame)
     , m_fakeMouseMoveEventTimer(*this, &EventHandler::fakeMouseMoveEventTimerFired)
 #endif
     , m_svgPan(false)
-    , m_resizeLayer(0)
+    , m_resizeLayer(nullptr)
     , m_eventHandlerWillResetCapturingMouseEventsElement(false)
     , m_clickCount(0)
 #if ENABLE(IOS_GESTURE_EVENTS)
@@ -3004,7 +3004,7 @@ void EventHandler::setResizingFrameSet(HTMLFrameSetElement* frameSet)
 void EventHandler::resizeLayerDestroyed()
 {
     ASSERT(m_resizeLayer);
-    m_resizeLayer = 0;
+    m_resizeLayer = nullptr;
 }
 
 void EventHandler::hoverTimerFired()
@@ -3389,7 +3389,7 @@ void EventHandler::freeDataTransfer()
     if (!dragState().dataTransfer)
         return;
     dragState().dataTransfer->setAccessPolicy(DataTransferAccessPolicy::Numb);
-    dragState().dataTransfer = 0;
+    dragState().dataTransfer = nullptr;
 }
 
 void EventHandler::dragSourceEndedAt(const PlatformMouseEvent& event, DragOperation operation)
@@ -3404,7 +3404,7 @@ void EventHandler::dragSourceEndedAt(const PlatformMouseEvent& event, DragOperat
         dispatchDragSrcEvent(eventNames().dragendEvent, event);
     }
     freeDataTransfer();
-    dragState().source = 0;
+    dragState().source = nullptr;
     // In case the drag was ended due to an escape key press we need to ensure
     // that consecutive mousemove events don't reinitiate the drag and drop.
     m_mouseDownMayStartDrag = false;
@@ -3470,7 +3470,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
         } else if (!(dragState().type & (DragSourceActionDHTML | DragSourceActionLink))) {
             // ... but only bail if we're not over an unselectable element.
             m_mouseDownMayStartDrag = false;
-            dragState().source = 0;
+            dragState().source = nullptr;
             // ... but if this was the first click in the window, we don't even want to start selection
             if (eventActivatedView(event.event()))
                 m_mouseDownMayStartSelect = false;
@@ -3577,7 +3577,7 @@ cleanupDrag:
     if (!m_mouseDownMayStartDrag) {
         // Something failed to start the drag, clean up.
         freeDataTransfer();
-        dragState().source = 0;
+        dragState().source = nullptr;
     }
     
     // No more default handling (like selection), whether we're past the hysteresis bounds or not

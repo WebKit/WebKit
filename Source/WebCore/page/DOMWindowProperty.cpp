@@ -35,7 +35,7 @@ namespace WebCore {
 
 DOMWindowProperty::DOMWindowProperty(Frame* frame)
     : m_frame(frame)
-    , m_associatedDOMWindow(0)
+    , m_associatedDOMWindow(nullptr)
 {
     // FIXME: For now it *is* acceptable for a DOMWindowProperty to be created with a null frame.
     // See fast/dom/navigator-detached-no-crash.html for the recipe.
@@ -51,8 +51,8 @@ DOMWindowProperty::~DOMWindowProperty()
     if (m_associatedDOMWindow)
         m_associatedDOMWindow->unregisterProperty(this);
 
-    m_associatedDOMWindow = 0;
-    m_frame = 0;
+    m_associatedDOMWindow = nullptr;
+    m_frame = nullptr;
 }
 
 void DOMWindowProperty::disconnectFrameForPageCache()
@@ -62,7 +62,7 @@ void DOMWindowProperty::disconnectFrameForPageCache()
     ASSERT(m_frame);
     ASSERT(m_associatedDOMWindow);
 
-    m_frame = 0;
+    m_frame = nullptr;
 }
 
 void DOMWindowProperty::reconnectFrameFromPageCache(Frame* frame)
@@ -87,8 +87,8 @@ void DOMWindowProperty::willDestroyGlobalObjectInCachedFrame()
     // itself from any DOMWindow it is associated with if that DOMWindow is going away.
     if (m_associatedDOMWindow)
         m_associatedDOMWindow->unregisterProperty(this);
-    m_associatedDOMWindow = 0;
-    m_frame = 0;
+    m_associatedDOMWindow = nullptr;
+    m_frame = nullptr;
 }
 
 void DOMWindowProperty::willDestroyGlobalObjectInFrame()
@@ -101,8 +101,8 @@ void DOMWindowProperty::willDestroyGlobalObjectInFrame()
     // itself from any DOMWindow it is associated with if that DOMWindow is going away.
     if (m_associatedDOMWindow)
         m_associatedDOMWindow->unregisterProperty(this);
-    m_associatedDOMWindow = 0;
-    m_frame = 0;
+    m_associatedDOMWindow = nullptr;
+    m_frame = nullptr;
 }
 
 void DOMWindowProperty::willDetachGlobalObjectFromFrame()

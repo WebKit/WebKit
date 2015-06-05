@@ -43,7 +43,7 @@ namespace WebCore {
 
 History::History(Frame* frame)
     : DOMWindowProperty(frame)
-    , m_lastStateObjectRequested(0)
+    , m_lastStateObjectRequested(nullptr)
 {
 }
 

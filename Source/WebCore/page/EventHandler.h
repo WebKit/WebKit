@@ -187,9 +187,9 @@ public:
     static Frame* subframeForTargetNode(Node*);
     static Frame* subframeForHitTestResult(const MouseEventWithHitTestResults&);
 
-    WEBCORE_EXPORT bool scrollOverflow(ScrollDirection, ScrollGranularity, Node* startingNode = 0);
-    WEBCORE_EXPORT bool scrollRecursively(ScrollDirection, ScrollGranularity, Node* startingNode = 0);
-    WEBCORE_EXPORT bool logicalScrollRecursively(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = 0);
+    WEBCORE_EXPORT bool scrollOverflow(ScrollDirection, ScrollGranularity, Node* startingNode = nullptr);
+    WEBCORE_EXPORT bool scrollRecursively(ScrollDirection, ScrollGranularity, Node* startingNode = nullptr);
+    WEBCORE_EXPORT bool logicalScrollRecursively(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = nullptr);
 
     bool tabsToLinks(KeyboardEvent*) const;
     bool tabsToAllFormControls(KeyboardEvent*) const;
@@ -200,7 +200,7 @@ public:
     void lostMouseCapture();
 
     WEBCORE_EXPORT bool handleMousePressEvent(const PlatformMouseEvent&);
-    bool handleMouseMoveEvent(const PlatformMouseEvent&, HitTestResult* hoveredNode = 0, bool onlyUpdateScrollbars = false);
+    bool handleMouseMoveEvent(const PlatformMouseEvent&, HitTestResult* hoveredNode = nullptr, bool onlyUpdateScrollbars = false);
     WEBCORE_EXPORT bool handleMouseReleaseEvent(const PlatformMouseEvent&);
     bool handleMouseForceEvent(const PlatformMouseEvent&);
     WEBCORE_EXPORT bool handleWheelEvent(const PlatformWheelEvent&);
@@ -249,7 +249,7 @@ public:
     bool accessibilityPreventsEventPropogation(KeyboardEvent*);
     WEBCORE_EXPORT void handleKeyboardSelectionMovementForAccessibility(KeyboardEvent*);
 
-    bool handleTextInputEvent(const String& text, Event* underlyingEvent = 0, TextEventInputType = TextEventInputKeyboard);
+    bool handleTextInputEvent(const String& text, Event* underlyingEvent = nullptr, TextEventInputType = TextEventInputKeyboard);
     void defaultTextInputEventHandler(TextEvent*);
 
 #if ENABLE(DRAG_SUPPORT)
@@ -348,7 +348,7 @@ private:
     void cursorUpdateTimerFired();
 #endif
 
-    bool logicalScrollOverflow(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = 0);
+    bool logicalScrollOverflow(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = nullptr);
     
     bool shouldTurnVerticalTicksIntoHorizontal(const HitTestResult&, const PlatformWheelEvent&) const;
     
@@ -400,10 +400,10 @@ private:
     bool mouseMovementExceedsThreshold(const FloatPoint&, int pointsThreshold) const;
 
     bool passMousePressEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe);
-    bool passMouseMoveEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe, HitTestResult* hoveredNode = 0);
+    bool passMouseMoveEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe, HitTestResult* hoveredNode = nullptr);
     bool passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe);
 
-    bool passSubframeEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe, HitTestResult* hoveredNode = 0);
+    bool passSubframeEventToSubframe(MouseEventWithHitTestResults&, Frame* subframe, HitTestResult* hoveredNode = nullptr);
 
     bool passMousePressEventToScrollbar(MouseEventWithHitTestResults&, Scrollbar*);
 

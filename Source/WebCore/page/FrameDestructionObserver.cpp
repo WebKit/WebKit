@@ -31,14 +31,14 @@
 namespace WebCore {
 
 FrameDestructionObserver::FrameDestructionObserver(Frame* frame)
-    : m_frame(0)
+    : m_frame(nullptr)
 {
     observeFrame(frame);
 }
 
 FrameDestructionObserver::~FrameDestructionObserver()
 {
-    observeFrame(0);
+    observeFrame(nullptr);
 
 }
 
@@ -55,7 +55,7 @@ void FrameDestructionObserver::observeFrame(Frame* frame)
 
 void FrameDestructionObserver::frameDestroyed()
 {
-    m_frame = 0;
+    m_frame = nullptr;
 }
 
 void FrameDestructionObserver::willDetachPage()

@@ -57,7 +57,7 @@ static Frame* getMainFrame(Frame* frame)
 
 AutoscrollController::AutoscrollController()
     : m_autoscrollTimer(*this, &AutoscrollController::autoscrollTimerFired)
-    , m_autoscrollRenderer(0)
+    , m_autoscrollRenderer(nullptr)
     , m_autoscrollType(NoAutoscroll)
     , m_dragAndDropAutoscrollStartTime(0)
 {
@@ -90,7 +90,7 @@ void AutoscrollController::stopAutoscrollTimer(bool rendererIsBeingDestroyed)
 {
     RenderBox* scrollable = m_autoscrollRenderer;
     m_autoscrollTimer.stop();
-    m_autoscrollRenderer = 0;
+    m_autoscrollRenderer = nullptr;
 
     if (!scrollable)
         return;

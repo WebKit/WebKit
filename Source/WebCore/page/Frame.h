@@ -379,7 +379,7 @@ namespace WebCore {
 
     inline void Frame::detachFromPage()
     {
-        m_page = 0;
+        m_page = nullptr;
     }
 
     inline EventHandler& Frame::eventHandler() const

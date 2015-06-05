@@ -59,7 +59,7 @@ Performance::Performance(Frame* frame)
 #endif // ENABLE(RESOURCE_TIMING)
     , m_referenceTime(frame->document()->loader()->timing().referenceMonotonicTime())
 #if ENABLE(USER_TIMING)
-    , m_userTiming(0)
+    , m_userTiming(nullptr)
 #endif // ENABLE(USER_TIMING)
 {
     ASSERT(m_referenceTime);

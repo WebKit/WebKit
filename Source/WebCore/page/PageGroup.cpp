@@ -74,7 +74,7 @@ PageGroup::~PageGroup()
 }
 
 typedef HashMap<String, PageGroup*> PageGroupMap;
-static PageGroupMap* pageGroups = 0;
+static PageGroupMap* pageGroups = nullptr;
 
 PageGroup* PageGroup::pageGroup(const String& groupName)
 {

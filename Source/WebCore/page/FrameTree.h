@@ -35,8 +35,8 @@ namespace WebCore {
         FrameTree(Frame& thisFrame, Frame* parentFrame)
             : m_thisFrame(thisFrame)
             , m_parent(parentFrame)
-            , m_previousSibling(0)
-            , m_lastChild(0)
+            , m_previousSibling(nullptr)
+            , m_lastChild(nullptr)
             , m_scopedChildCount(invalidCount)
         {
         }
@@ -68,7 +68,7 @@ namespace WebCore {
         
         WEBCORE_EXPORT void appendChild(PassRefPtr<Frame>);
         bool transferChild(PassRefPtr<Frame>);
-        void detachFromParent() { m_parent = 0; }
+        void detachFromParent() { m_parent = nullptr; }
         void removeChild(Frame*);
 
         Frame* child(unsigned index) const;

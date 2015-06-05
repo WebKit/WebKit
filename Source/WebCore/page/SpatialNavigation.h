@@ -99,9 +99,9 @@ enum RectsAlignment {
 
 struct FocusCandidate {
     FocusCandidate()
-        : visibleNode(0)
-        , focusableNode(0)
-        , enclosingScrollableBox(0)
+        : visibleNode(nullptr)
+        , focusableNode(nullptr)
+        , enclosingScrollableBox(nullptr)
         , distance(maxDistance())
         , alignment(None)
         , isOffscreen(true)

@@ -181,8 +181,8 @@ Page::Page(PageConfiguration& pageConfiguration)
     , m_horizontalScrollElasticity(ScrollElasticityAllowed)
     , m_didLoadUserStyleSheet(false)
     , m_userStyleSheetModificationTime(0)
-    , m_group(0)
-    , m_debugger(0)
+    , m_group(nullptr)
+    , m_debugger(nullptr)
     , m_canStartMedia(true)
 #if ENABLE(VIEW_MODE_CSS_MEDIA)
     , m_viewMode(ViewModeWindowed)
@@ -244,7 +244,7 @@ Page::Page(PageConfiguration& pageConfiguration)
 
 Page::~Page()
 {
-    m_mainFrame->setView(0);
+    m_mainFrame->setView(nullptr);
     setGroupName(String());
     allPages->remove(this);
     
@@ -599,7 +599,7 @@ void Page::findStringMatchingRanges(const String& target, FindOptions options, i
     indexForSelection = 0;
 
     Frame* frame = &mainFrame();
-    Frame* frameWithSelection = 0;
+    Frame* frameWithSelection = nullptr;
     do {
         frame->editor().countMatchesForText(target, 0, options, limit ? (limit - matchRanges.size()) : 0, true, &matchRanges);
         if (frame->selection().isRange())

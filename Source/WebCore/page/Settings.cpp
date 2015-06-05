@@ -160,7 +160,7 @@ static const bool defaultSelectTrailingWhitespaceEnabled = false;
 static const auto layoutScheduleThreshold = std::chrono::milliseconds(250);
 
 Settings::Settings(Page* page)
-    : m_page(0)
+    : m_page(nullptr)
     , m_mediaTypeOverride("screen")
     , m_fontGenericFamilies(std::make_unique<FontGenericFamilies>())
     , m_storageBlockingPolicy(SecurityOrigin::AllowAllStorage)

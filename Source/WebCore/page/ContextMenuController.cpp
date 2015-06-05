@@ -93,7 +93,7 @@ void ContextMenuController::clearContextMenu()
     m_contextMenu = nullptr;
     if (m_menuProvider)
         m_menuProvider->contextMenuCleared();
-    m_menuProvider = 0;
+    m_menuProvider = nullptr;
 }
 
 void ContextMenuController::handleContextMenuEvent(Event* event)

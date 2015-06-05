@@ -38,7 +38,7 @@ namespace WebCore {
 FrameTree::~FrameTree()
 {
     for (Frame* child = firstChild(); child; child = child->tree().nextSibling())
-        child->setView(0);
+        child->setView(nullptr);
 }
 
 void FrameTree::setName(const AtomicString& name) 
@@ -108,7 +108,7 @@ void FrameTree::actuallyAppendChild(PassRefPtr<Frame> child)
 
 void FrameTree::removeChild(Frame* child)
 {
-    child->tree().m_parent = 0;
+    child->tree().m_parent = nullptr;
 
     // Slightly tricky way to prevent deleting the child until we are done with it, w/o
     // extra refs. These swaps leave the child in a circular list by itself. Clearing its
@@ -120,8 +120,8 @@ void FrameTree::removeChild(Frame* child)
     // For some inexplicable reason, the following line does not compile without the explicit std:: namespace
     std::swap(newLocationForPrevious, child->tree().m_previousSibling);
 
-    child->tree().m_previousSibling = 0;
-    child->tree().m_nextSibling = 0;
+    child->tree().m_previousSibling = nullptr;
+    child->tree().m_nextSibling = nullptr;
 
     m_scopedChildCount = invalidCount;
 }

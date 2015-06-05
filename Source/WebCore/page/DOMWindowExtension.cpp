@@ -62,7 +62,7 @@ void DOMWindowExtension::reconnectFrameFromPageCache(Frame* frame)
     ASSERT(m_disconnectedFrame == frame);
     
     DOMWindowProperty::reconnectFrameFromPageCache(frame);
-    m_disconnectedFrame = 0;
+    m_disconnectedFrame = nullptr;
 
     this->frame()->loader().client().dispatchDidReconnectDOMWindowExtensionToGlobalObject(this);
 }
@@ -76,7 +76,7 @@ void DOMWindowExtension::willDestroyGlobalObjectInCachedFrame()
     Ref<DOMWindowExtension> protect(*this);
 
     m_disconnectedFrame->loader().client().dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
-    m_disconnectedFrame = 0;
+    m_disconnectedFrame = nullptr;
 
     DOMWindowProperty::willDestroyGlobalObjectInCachedFrame();
 }

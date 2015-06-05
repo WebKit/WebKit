@@ -36,7 +36,7 @@ ScrollingTreeNode::ScrollingTreeNode(ScrollingTree& scrollingTree, ScrollingNode
     : m_scrollingTree(scrollingTree)
     , m_nodeType(nodeType)
     , m_nodeID(nodeID)
-    , m_parent(0)
+    , m_parent(nullptr)
 {
 }
 

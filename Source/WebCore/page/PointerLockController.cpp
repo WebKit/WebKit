@@ -121,7 +121,7 @@ void PointerLockController::didLosePointerLock()
 {
     enqueueEvent(eventNames().pointerlockchangeEvent, m_element ? &m_element->document() : m_documentOfRemovedElementWhileWaitingForUnlock.get());
     clearElement();
-    m_documentOfRemovedElementWhileWaitingForUnlock = 0;
+    m_documentOfRemovedElementWhileWaitingForUnlock = nullptr;
 }
 
 void PointerLockController::dispatchLockedMouseEvent(const PlatformMouseEvent& event, const AtomicString& eventType)
@@ -139,7 +139,7 @@ void PointerLockController::dispatchLockedMouseEvent(const PlatformMouseEvent& e
 void PointerLockController::clearElement()
 {
     m_lockPending = false;
-    m_element = 0;
+    m_element = nullptr;
 }
 
 void PointerLockController::enqueueEvent(const AtomicString& type, Element* element)

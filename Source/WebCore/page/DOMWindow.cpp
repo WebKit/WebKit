@@ -588,24 +588,24 @@ void DOMWindow::resetDOMWindowProperties()
 {
     m_properties.clear();
 
-    m_screen = 0;
-    m_history = 0;
-    m_crypto = 0;
-    m_locationbar = 0;
-    m_menubar = 0;
-    m_personalbar = 0;
-    m_scrollbars = 0;
-    m_statusbar = 0;
-    m_toolbar = 0;
-    m_navigator = 0;
+    m_screen = nullptr;
+    m_history = nullptr;
+    m_crypto = nullptr;
+    m_locationbar = nullptr;
+    m_menubar = nullptr;
+    m_personalbar = nullptr;
+    m_scrollbars = nullptr;
+    m_statusbar = nullptr;
+    m_toolbar = nullptr;
+    m_navigator = nullptr;
 #if ENABLE(WEB_TIMING)
-    m_performance = 0;
+    m_performance = nullptr;
 #endif
-    m_location = 0;
-    m_media = 0;
-    m_sessionStorage = 0;
-    m_localStorage = 0;
-    m_applicationCache = 0;
+    m_location = nullptr;
+    m_media = nullptr;
+    m_sessionStorage = nullptr;
+    m_localStorage = nullptr;
+    m_applicationCache = nullptr;
 }
 
 bool DOMWindow::isCurrentlyDisplayedInFrame() const
@@ -831,7 +831,7 @@ Storage* DOMWindow::localStorage(ExceptionCode& ec) const
     if (!document)
         return nullptr;
 
-    if (!document->securityOrigin()->canAccessLocalStorage(0)) {
+    if (!document->securityOrigin()->canAccessLocalStorage(nullptr)) {
         ec = SECURITY_ERR;
         return nullptr;
     }
@@ -987,7 +987,7 @@ void DOMWindow::focus(ScriptExecutionContext* context)
     // Clear the current frame's focused node if a new frame is about to be focused.
     Frame* focusedFrame = page->focusController().focusedFrame();
     if (focusedFrame && focusedFrame != m_frame)
-        focusedFrame->document()->setFocusedElement(0);
+        focusedFrame->document()->setFocusedElement(nullptr);
 
     m_frame->eventHandler().focusDocumentView();
 }

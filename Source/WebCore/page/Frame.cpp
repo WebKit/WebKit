@@ -214,7 +214,7 @@ Ref<Frame> Frame::create(Page* page, HTMLFrameOwnerElement* ownerElement, FrameL
 
 Frame::~Frame()
 {
-    setView(0);
+    setView(nullptr);
     loader().cancelAndClear();
 
     // FIXME: We should not be doing all this work inside the destructor
@@ -382,7 +382,7 @@ String Frame::searchForLabelsBeforeElement(const Vector<String>& labels, Element
     // charsSearchedThreshold, to make it more likely that we'll search whole nodes.
     const unsigned int maxCharsSearched = 600;
     // If the starting element is within a table, the cell that contains it
-    HTMLTableCellElement* startingTableCell = 0;
+    HTMLTableCellElement* startingTableCell = nullptr;
     bool searchedCellAbove = false;
 
     if (resultDistance)
@@ -787,7 +787,7 @@ void Frame::willDetachPage()
     // FIXME: It's unclear as to why this is called more than once, but it is,
     // so page() could be NULL.
     if (page() && page()->focusController().focusedFrame() == this)
-        page()->focusController().setFocusedFrame(0);
+        page()->focusController().setFocusedFrame(nullptr);
 
     if (page() && page()->scrollingCoordinator() && m_view)
         page()->scrollingCoordinator()->willDestroyScrollableArea(*m_view);
@@ -886,7 +886,7 @@ void Frame::createView(const IntSize& viewportSize, const Color& backgroundColor
     if (isMainFrame && view())
         view()->setParentVisible(false);
 
-    setView(0);
+    setView(nullptr);
 
     RefPtr<FrameView> frameView;
     if (isMainFrame) {

@@ -176,7 +176,7 @@ void DragController::clearDragCaret()
 
 void DragController::dragEnded()
 {
-    m_dragInitiator = 0;
+    m_dragInitiator = nullptr;
     m_didInitiateDrag = false;
     clearDragCaret();
     
@@ -234,17 +234,17 @@ bool DragController::performDragOperation(DragData& dragData)
         }
         if (preventedDefault) {
             clearDragCaret();
-            m_documentUnderMouse = 0;
+            m_documentUnderMouse = nullptr;
             return true;
         }
     }
 
     if ((m_dragDestinationAction & DragDestinationActionEdit) && concludeEditDrag(dragData)) {
-        m_documentUnderMouse = 0;
+        m_documentUnderMouse = nullptr;
         return true;
     }
 
-    m_documentUnderMouse = 0;
+    m_documentUnderMouse = nullptr;
 
     if (operationForLoad(dragData) == DragOperationNone)
         return false;
@@ -399,7 +399,7 @@ bool DragController::tryDocumentDrag(DragData& dragData, DragDestinationAction a
     clearDragCaret();
     if (m_fileInputElementUnderMouse)
         m_fileInputElementUnderMouse->setCanReceiveDroppedFiles(false);
-    m_fileInputElementUnderMouse = 0;
+    m_fileInputElementUnderMouse = nullptr;
     return false;
 }
 
@@ -452,7 +452,7 @@ bool DragController::concludeEditDrag(DragData& dragData)
     RefPtr<HTMLInputElement> fileInput = m_fileInputElementUnderMouse;
     if (m_fileInputElementUnderMouse) {
         m_fileInputElementUnderMouse->setCanReceiveDroppedFiles(false);
-        m_fileInputElementUnderMouse = 0;
+        m_fileInputElementUnderMouse = nullptr;
     }
 
     if (!m_documentUnderMouse)
@@ -780,7 +780,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
     m_draggingImageURL = URL();
     m_sourceDragOperation = srcOp;
 
-    DragImageRef dragImage = 0;
+    DragImageRef dragImage = nullptr;
     IntPoint dragLoc(0, 0);
     IntPoint dragImageOffset(0, 0);
 

@@ -55,9 +55,9 @@ static void entryAndExitPointsForDirection(FocusDirection, const LayoutRect& sta
 static bool isScrollableNode(const Node*);
 
 FocusCandidate::FocusCandidate(Node* node, FocusDirection direction)
-    : visibleNode(0)
-    , focusableNode(0)
-    , enclosingScrollableBox(0)
+    : visibleNode(nullptr)
+    , focusableNode(nullptr)
+    , enclosingScrollableBox(nullptr)
     , distance(maxDistance())
     , alignment(None)
     , isOffscreen(true)
