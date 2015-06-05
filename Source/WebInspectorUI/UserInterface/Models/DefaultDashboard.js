@@ -29,9 +29,8 @@ WebInspector.DefaultDashboard = class DefaultDashboard extends WebInspector.Obje
     {
         super();
 
-        this._waitingForFirstMainResourceToStartTrackingSize = true;
-
         // Necessary events required to track load of resources.
+        WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
         WebInspector.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.FrameWasAdded, this._frameWasAdded, this);
 
@@ -100,6 +99,15 @@ WebInspector.DefaultDashboard = class DefaultDashboard extends WebInspector.Obje
         this.dispatchEventToListeners(WebInspector.DefaultDashboard.Event.DataDidChange);
     }
 
+    _mainResourceDidChange(event)
+    {
+        if (!event.target.isMainFrame())
+            return;
+
+        this._resourcesCount = 1;
+        this._dataDidChange();
+    }
+
     _resourceWasAdded(event)
     {
         ++this.resourcesCount;
@@ -108,11 +116,6 @@ WebInspector.DefaultDashboard = class DefaultDashboard extends WebInspector.Obje
     _frameWasAdded(event)
     {
         ++this.resourcesCount;
-    }
-
-    _resourceSizeDidChange(event)
-    {
-        this.resourcesSize += event.target.size - event.data.previousSize;
     }
 
     _consoleMessageAdded(event)
