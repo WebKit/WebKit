@@ -417,19 +417,22 @@ static void paintToggleButton(ControlPart buttonType, ControlStates* controlStat
     }
 
     LocalCurrentGraphicsContext localContext(context);
-    NSView *view = ThemeMac::ensuredView(scrollView, controlStates);
+
+    bool useUnparentedView = false;
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    useUnparentedView = true;
+#endif
+    NSView *view = ThemeMac::ensuredView(scrollView, controlStates, useUnparentedView);
 
     bool isAnimating = false;
     bool needsRepaint = false;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if ([toggleButtonCell _stateAnimationRunning]) {
-        // AppKit's drawWithFrame appears to render the cell centered in the
-        // provided rectangle/frame, so we need to manually position the
-        // animated cell at the correct location.
         context->translate(inflatedRect.x(), inflatedRect.y());
         context->scale(FloatSize(1, -1));
         context->translate(0, -inflatedRect.height());
+
         [toggleButtonCell _renderCurrentAnimationFrameInContext:context->platformContext() atLocation:NSMakePoint(0, 0)];
         isAnimating = [toggleButtonCell _stateAnimationRunning];
     } else
@@ -639,10 +642,12 @@ static void paintStepper(ControlStates* states, GraphicsContext* context, const 
 
 // This will ensure that we always return a valid NSView, even if ScrollView doesn't have an associated document NSView.
 // If the ScrollView doesn't have an NSView, we will return a fake NSView set up in the way AppKit expects.
-NSView *ThemeMac::ensuredView(ScrollView* scrollView, const ControlStates* controlStates)
+NSView *ThemeMac::ensuredView(ScrollView* scrollView, const ControlStates* controlStates, bool useUnparentedView)
 {
-    if (NSView *documentView = scrollView->documentView())
-        return documentView;
+    if (!useUnparentedView) {
+        if (NSView *documentView = scrollView->documentView())
+            return documentView;
+    }
 
     // Use a fake view.
     static WebCoreThemeView *themeView = [[WebCoreThemeView alloc] init];
