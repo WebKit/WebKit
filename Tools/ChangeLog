@@ -1,3 +1,15 @@
+2015-06-04  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        check-webkit-style should recommend using nullptr instead of recommending using 0 for the null pointer in C++ code.
+        https://bugs.webkit.org/show_bug.cgi?id=145680
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_for_null):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_null_false_zero):
+
 2015-06-05  Stephanie Lewis  <slewis@apple.com>
 
         Make the web server more robust to timing issues..

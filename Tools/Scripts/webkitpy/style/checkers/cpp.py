@@ -2722,7 +2722,7 @@ def check_for_null(clean_lines, line_number, file_state, error):
     if search(r'\bNULL\b', line):
         # FIXME: We should recommend using nullptr instead of NULL in C++ code per
         # <http://www.webkit.org/coding/coding-style.html#zero-null>.
-        error(line_number, 'readability/null', 5, 'Use 0 instead of NULL.')
+        error(line_number, 'readability/null', 5, 'Use nullptr instead of NULL.')
         return
 
     line = clean_lines.raw_lines[line_number]
@@ -2730,9 +2730,7 @@ def check_for_null(clean_lines, line_number, file_state, error):
     # matches, then do the check with strings collapsed to avoid giving errors for
     # NULLs occurring in strings.
     if search(r'\bNULL\b', line) and search(r'\bNULL\b', CleansedLines.collapse_strings(line)):
-        # FIXME: We should recommend using nullptr instead of 0 or null in C++ code per
-        # <http://www.webkit.org/coding/coding-style.html#zero-null>.
-        error(line_number, 'readability/null', 4, 'Use 0 or null instead of NULL (even in *comments*).')
+        error(line_number, 'readability/null', 4, 'Use nullptr instead of NULL (even in *comments*).')
 
 def get_line_width(line):
     """Determines the width of the line in column positions.

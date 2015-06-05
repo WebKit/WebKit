@@ -4599,23 +4599,23 @@ class WebKitStyleTest(CppStyleTestBase):
             '')
 
     def test_null_false_zero(self):
-        # 1. In C++, the null pointer value should be written as 0. In C,
+        # 1. In C++, the null pointer value should be written as nullptr. In C,
         #    it should be written as NULL. In Objective-C and Objective-C++,
         #    follow the guideline for C or C++, respectively, but use nil to
         #    represent a null Objective-C object.
         self.assert_lint(
             'functionCall(NULL)',
-            'Use 0 instead of NULL.'
+            'Use nullptr instead of NULL.'
             '  [readability/null] [5]',
             'foo.cpp')
         self.assert_lint(
             "// Don't use NULL in comments since it isn't in code.",
-            'Use 0 or null instead of NULL (even in *comments*).'
+            'Use nullptr instead of NULL (even in *comments*).'
             '  [readability/null] [4]',
             'foo.cpp')
         self.assert_lint(
             '"A string with NULL" // and a comment with NULL is tricky to flag correctly in cpp_style.',
-            'Use 0 or null instead of NULL (even in *comments*).'
+            'Use nullptr instead of NULL (even in *comments*).'
             '  [readability/null] [4]',
             'foo.cpp')
         self.assert_lint(
@@ -4726,11 +4726,11 @@ class WebKitStyleTest(CppStyleTestBase):
             '')
         self.assert_lint(
             'gtk_widget_style_get_property(style, NULL, NULL);',
-            'Use 0 instead of NULL.  [readability/null] [5]',
+            'Use nullptr instead of NULL.  [readability/null] [5]',
             'foo.cpp')
         self.assert_lint(
             'gtk_widget_style_get_valist(style, NULL, NULL);',
-            'Use 0 instead of NULL.  [readability/null] [5]',
+            'Use nullptr instead of NULL.  [readability/null] [5]',
             'foo.cpp')
 
         # 2. C++ and C bool values should be written as true and
@@ -4791,10 +4791,10 @@ class WebKitStyleTest(CppStyleTestBase):
             '')
         self.assert_lint(
             'if (LIKELY(foo == NULL))',
-            'Use 0 instead of NULL.  [readability/null] [5]')
+            'Use nullptr instead of NULL.  [readability/null] [5]')
         self.assert_lint(
             'if (UNLIKELY(foo == NULL))',
-            'Use 0 instead of NULL.  [readability/null] [5]')
+            'Use nullptr instead of NULL.  [readability/null] [5]')
 
     def test_directive_indentation(self):
         self.assert_lint(
