@@ -35,9 +35,9 @@
 #include "ActiveDOMObject.h"
 #include "ScriptWrappable.h"
 #include <functional>
+#include <wtf/Deque.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
 
 namespace JSC {
 class JSValue;
@@ -112,7 +112,7 @@ private:
         ReadEndCallback endCallback;
         FailureCallback failureCallback;
     };
-    Vector<ReadCallbacks> m_readRequests;
+    Deque<ReadCallbacks> m_readRequests;
 
     bool m_closeRequested { false };
     State m_state { State::Readable };

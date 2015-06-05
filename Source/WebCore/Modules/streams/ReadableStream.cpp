@@ -167,8 +167,7 @@ bool ReadableStream::resolveReadCallback(JSC::JSValue value)
     if (m_readRequests.isEmpty())
         return false;
 
-    m_readRequests.first().successCallback(value);
-    m_readRequests.remove(0);
+    m_readRequests.takeFirst().successCallback(value);
     return true;
 }
 

@@ -82,6 +82,7 @@ public:
     const T& last() const { ASSERT(m_start != m_end); return *(--end()); }
     T takeLast();
 
+    void append(T&& value) { append<T>(std::forward<T>(value)); }
     template<typename U> void append(U&&);
     template<typename U> void prepend(U&&);
     void removeFirst();

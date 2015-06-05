@@ -1,3 +1,13 @@
+2015-06-05  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet <youenn.fablet@crf.canon.fr>
+
+        [Streams API] ReadableStream should store callbacks as a Deque
+        https://bugs.webkit.org/show_bug.cgi?id=145641
+
+        Reviewed by Darin Adler.
+
+        * wtf/Deque.h:
+        (WTF::Deque::append): Adding not templated append method, forwarding to templated append method.
+
 2015-06-02  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet <youenn.fablet@crf.canon.fr>
 
         [Streams API] Delegate ReadableStreamReader reference counting to ReadableStream
