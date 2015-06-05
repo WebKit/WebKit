@@ -1,3 +1,22 @@
+2015-06-05  Geoffrey Garen  <ggaren@apple.com>
+
+        DropAllLocks RELEASE_ASSERT on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=139654
+
+        Reviewed by Mark Lam.
+
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::dropAllLocks): Removed a comment because it duplicated
+        the code beneath it. Removed a FIXME because we can't ASSERT that
+        we're holding the lock. WebKit1 on iOS drops the lock before calling to
+        delegates, not knowing whether it holds the lock or not.
+
+        (JSC::JSLock::DropAllLocks::DropAllLocks): Only ASSERT that we are not
+        GC'ing if we hold the lock. If we do not hold the lock, it is perfectly
+        valid for some other thread, which does hold the lock, to be GC'ing.
+        What is not valid is to drop the lock in the middle of GC, since GC
+        must be atomic.
+
 2015-06-05  Filip Pizlo  <fpizlo@apple.com>
 
         speculateRealNumber() should early exit if you're already a real number, not if you're already a real double.
