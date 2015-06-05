@@ -1,3 +1,15 @@
+2015-06-05  Dean Jackson  <dino@apple.com>
+
+        [Mac] Popup focus is cut off
+        https://bugs.webkit.org/show_bug.cgi?id=145688
+        <rdar://problem/18313375>
+
+        Reviewed by Brent Fulgham.
+
+        * fast/forms/select-element-focus-ring.html: Added.
+        * platform/mac/fast/forms/select-element-focus-ring-expected.png: Added.
+        * platform/mac/fast/forms/select-element-focus-ring-expected.txt: Added.
+
 2015-06-05  Brent Fulgham  <bfulgham@apple.com>
 
         Add WK1 versions of tests from Bugs 145637 and 145642

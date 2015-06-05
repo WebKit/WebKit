@@ -929,8 +929,10 @@ bool RenderThemeMac::paintMenuList(const RenderObject& renderer, const PaintInfo
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
-    // On Leopard, the cell will draw outside of the given rect, so we have to clip to the rect
+    // Before Yosemite we did not want the cell to ever draw outside the given rectangle.
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
     paintInfo.context->clip(inflatedRect);
+#endif
 
     if (zoomLevel != 1.0f) {
         inflatedRect.setWidth(inflatedRect.width() / zoomLevel);
