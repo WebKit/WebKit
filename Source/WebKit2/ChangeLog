@@ -1,3 +1,22 @@
+2015-06-05  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][iOS] Limit the number of vnodes used by the WebContent processes
+        https://bugs.webkit.org/show_bug.cgi?id=145672
+        <rdar://problem/21126637>
+
+        Reviewed by Antti Koivisto.
+
+        Have the WebContent process register a vnode pressure handler on iOS,
+        which calls the memory pressure handler.
+
+        On non-critical pressure, it will prune dead resources from the memory
+        cache, which should free up some vnodes. On critical pressure, the
+        handler will clear the PageCache and do a JS GC, which should free even
+        more vnodes.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2015-06-05  Anders Carlsson  <andersca@apple.com>
 
         Fix refacto, don't put IndexedDB databases in the cache directory

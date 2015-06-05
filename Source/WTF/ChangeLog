@@ -1,3 +1,16 @@
+2015-06-05  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][iOS] Limit the number of vnodes used by the WebContent processes
+        https://bugs.webkit.org/show_bug.cgi?id=145672
+        <rdar://problem/21126637>
+
+        Reviewed by Antti Koivisto.
+
+        * wtf/RefCounter.h:
+        (WTF::RefCounter::value):
+
+        Expose the actual refcount instead of a boolean value.
+
 2015-06-05  Alex Christensen  <achristensen@webkit.org>
 
         [Web Timing] Use new SPI to enable data collection.

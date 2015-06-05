@@ -50,6 +50,7 @@
 #import <WebCore/MemoryCache.h>
 #import <WebCore/MemoryPressureHandler.h>
 #import <WebCore/PageCache.h>
+#import <WebCore/VNodeTracker.h>
 #import <WebCore/WebCoreNSURLExtras.h>
 #import <WebKitSystemInterface.h>
 #import <algorithm>
@@ -146,6 +147,15 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
     FontCascade::setDefaultTypesettingFeatures(parameters.shouldEnableKerningAndLigaturesByDefault ? Kerning | Ligatures : 0);
 
     MemoryPressureHandler::ReliefLogger::setLoggingEnabled(parameters.shouldEnableMemoryPressureReliefLogging);
+
+#if PLATFORM(IOS)
+    // Track the number of vnodes we are using on iOS and make sure we only use a
+    // reasonable amount because limits are fairly low on iOS devices and we can
+    // get killed when reaching the limit.
+    VNodeTracker::singleton().setPressureHandler([] (Critical critical) {
+        MemoryPressureHandler::singleton().releaseMemory(critical);
+    });
+#endif
 
     setEnhancedAccessibility(parameters.accessibilityEnhancedUserInterfaceEnabled);
 

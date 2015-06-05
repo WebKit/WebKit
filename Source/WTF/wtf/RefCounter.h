@@ -85,7 +85,7 @@ public:
         return Token<T>(m_count);
     }
 
-    bool value() const
+    unsigned value() const
     {
         return m_count->m_value;
     }

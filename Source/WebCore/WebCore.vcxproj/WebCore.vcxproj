@@ -8022,6 +8022,7 @@
     <ClCompile Include="..\platform\Timer.cpp" />
     <ClCompile Include="..\platform\UserActivity.cpp" />
     <ClCompile Include="..\platform\UUID.cpp" />
+    <ClCompile Include="..\platform\VNodeTracker.cpp" />
     <ClCompile Include="..\platform\Widget.cpp" />
     <ClCompile Include="..\platform\soup\SharedBufferSoup.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -19925,6 +19926,7 @@
     <ClInclude Include="..\platform\ThreadTimers.h" />
     <ClInclude Include="..\platform\Timer.h" />
     <ClInclude Include="..\platform\UserActivity.h" />
+    <ClInclude Include="..\platform\VNodeTracker.h" />
     <ClInclude Include="..\platform\HysteresisActivity.h" />
     <ClInclude Include="..\platform\UUID.h" />
     <ClInclude Include="..\platform\Widget.h" />
