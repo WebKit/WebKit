@@ -32,6 +32,7 @@
 #include "WaylandSurface.h"
 #include <cstring>
 #include <glib.h>
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 
@@ -57,13 +58,17 @@ void PlatformDisplayWayland::globalRemoveCallback(void*, struct wl_registry*, ui
 
 std::unique_ptr<PlatformDisplayWayland> PlatformDisplayWayland::create()
 {
-    struct wl_display* wlDisplay = wl_display_connect("webkitgtk-wayland-compositor-socket");
-    if (!wlDisplay)
+    struct wl_display* wlDisplay = wl_display_connect(nullptr);
+    if (!wlDisplay) {
+        WTFLogAlways("PlatformDisplayWayland initialization: failed to connect to the Wayland server socket. Check your WAYLAND_DISPLAY or WAYLAND_SOCKET environment variables.");
         return nullptr;
+    }
 
     auto display = std::unique_ptr<PlatformDisplayWayland>(new PlatformDisplayWayland(wlDisplay));
-    if (!display->isInitialized())
+    if (!display->isInitialized()) {
+        WTFLogAlways("PlatformDisplayWayland initialization: failed to complete the initialization of the display.");
         return nullptr;
+    }
 
     return display;
 }

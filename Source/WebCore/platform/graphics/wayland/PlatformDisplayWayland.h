@@ -58,7 +58,9 @@ private:
     static void globalRemoveCallback(void* data, struct wl_registry*, uint32_t name);
 
     PlatformDisplayWayland(struct wl_display*);
-    bool isInitialized() { return m_compositor && m_webkitgtk && m_eglDisplay != EGL_NO_DISPLAY && m_eglConfigChosen; }
+
+    // FIXME: This should check also for m_webkitgtk once the UIProcess embedded Wayland subcompositer is implemented.
+    bool isInitialized() { return m_compositor && m_eglDisplay != EGL_NO_DISPLAY && m_eglConfigChosen; }
 
     Type type() const override { return PlatformDisplay::Type::Wayland; }
 
