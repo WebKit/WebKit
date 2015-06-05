@@ -157,10 +157,6 @@ WebProcess::WebProcess()
     , m_inDidClose(false)
     , m_hasSetCacheModel(false)
     , m_cacheModel(CacheModelDocumentViewer)
-    , m_diskCacheIsDisabledForTesting(false)
-#if PLATFORM(COCOA)
-    , m_clearResourceCachesDispatchGroup(0)
-#endif
     , m_fullKeyboardAccessEnabled(false)
     , m_textCheckerState()
     , m_iconDatabaseProxy(new WebIconDatabaseProxy(this))
@@ -300,7 +296,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     if (!parameters.applicationCacheDirectory.isEmpty())
         ApplicationCacheStorage::singleton().setCacheDirectory(parameters.applicationCacheDirectory);
 
-    m_diskCacheIsDisabledForTesting = parameters.shouldUseTestingNetworkSession;
     setCacheModel(static_cast<uint32_t>(parameters.cacheModel));
 
     if (!parameters.languages.isEmpty())

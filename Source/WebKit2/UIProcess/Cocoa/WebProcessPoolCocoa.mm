@@ -174,10 +174,6 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
     parameters.accessibilityEnhancedUserInterfaceEnabled = false;
 #endif
 
-    NSURLCache *urlCache = [NSURLCache sharedURLCache];
-    parameters.nsURLCacheMemoryCapacity = [urlCache memoryCapacity];
-    parameters.nsURLCacheDiskCapacity = [urlCache diskCapacity];
-
     parameters.shouldEnableKerningAndLigaturesByDefault = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey];
     parameters.shouldEnableJIT = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitJSCJITEnabledDefaultsKey];
     parameters.shouldEnableFTLJIT = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitJSCFTLJITEnabledDefaultsKey];

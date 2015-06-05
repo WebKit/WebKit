@@ -80,6 +80,7 @@ std::unique_ptr<Storage> Storage::open(const String& cachePath)
     ASSERT(RunLoop::isMain());
 
     String networkCachePath = WebCore::pathByAppendingComponent(cachePath, networkCacheSubdirectory);
+
     if (!WebCore::makeAllDirectories(networkCachePath))
         return nullptr;
     return std::unique_ptr<Storage>(new Storage(networkCachePath));

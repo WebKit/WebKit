@@ -72,8 +72,6 @@ struct WebProcessCreationParameters {
     SandboxExtension::Handle applicationCacheDirectoryExtensionHandle;
     String webSQLDatabaseDirectory;
     SandboxExtension::Handle webSQLDatabaseDirectoryExtensionHandle;
-    String diskCacheDirectory;
-    SandboxExtension::Handle diskCacheDirectoryExtensionHandle;
 #if ENABLE(SECCOMP_FILTERS)
     String cookieStorageDirectory;
 #endif
@@ -137,9 +135,6 @@ struct WebProcessCreationParameters {
     pid_t presenterApplicationPid;
 
     bool accessibilityEnhancedUserInterfaceEnabled;
-
-    uint64_t nsURLCacheMemoryCapacity;
-    uint64_t nsURLCacheDiskCapacity;
 
     WebCore::MachSendRight acceleratedCompositingPort;
 

@@ -338,12 +338,10 @@ private:
 
     bool m_hasSetCacheModel;
     CacheModel m_cacheModel;
-    bool m_diskCacheIsDisabledForTesting;
 
 #if PLATFORM(COCOA)
     WebCore::MachSendRight m_compositingRenderServerPort;
     pid_t m_presenterApplicationPid;
-    dispatch_group_t m_clearResourceCachesDispatchGroup;
 #endif
 
     bool m_fullKeyboardAccessEnabled;

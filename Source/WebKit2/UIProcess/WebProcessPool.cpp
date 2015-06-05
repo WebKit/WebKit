@@ -617,10 +617,6 @@ WebProcessProxy& WebProcessPool::createNewWebProcess()
     if (!parameters.webSQLDatabaseDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.webSQLDatabaseDirectory, parameters.webSQLDatabaseDirectoryExtensionHandle);
 
-    parameters.diskCacheDirectory = diskCacheDirectory();
-    if (!parameters.diskCacheDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(parameters.diskCacheDirectory, parameters.diskCacheDirectoryExtensionHandle);
-
 #if ENABLE(SECCOMP_FILTERS)
     parameters.cookieStorageDirectory = this->cookieStorageDirectory();
 #endif

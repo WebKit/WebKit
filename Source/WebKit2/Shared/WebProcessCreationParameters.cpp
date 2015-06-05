@@ -40,8 +40,6 @@ WebProcessCreationParameters::WebProcessCreationParameters()
     , shouldUseFontSmoothing(true)
     , defaultRequestTimeoutInterval(INT_MAX)
 #if PLATFORM(COCOA)
-    , nsURLCacheMemoryCapacity(0)
-    , nsURLCacheDiskCapacity(0)
     , shouldEnableKerningAndLigaturesByDefault(false)
     , shouldEnableJIT(false)
     , shouldEnableFTLJIT(false)
@@ -71,8 +69,6 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << applicationCacheDirectoryExtensionHandle;
     encoder << webSQLDatabaseDirectory;
     encoder << webSQLDatabaseDirectoryExtensionHandle;
-    encoder << diskCacheDirectory;
-    encoder << diskCacheDirectoryExtensionHandle;
 #if ENABLE(SECCOMP_FILTERS)
     encoder << cookieStorageDirectory;
 #endif
@@ -122,8 +118,6 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
 #if PLATFORM(COCOA)
     encoder << presenterApplicationPid;
     encoder << accessibilityEnhancedUserInterfaceEnabled;
-    encoder << nsURLCacheMemoryCapacity;
-    encoder << nsURLCacheDiskCapacity;
     encoder << acceleratedCompositingPort;
     encoder << uiProcessBundleResourcePath;
     encoder << uiProcessBundleResourcePathExtensionHandle;
@@ -177,10 +171,6 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
     if (!decoder.decode(parameters.webSQLDatabaseDirectory))
         return false;
     if (!decoder.decode(parameters.webSQLDatabaseDirectoryExtensionHandle))
-        return false;
-    if (!decoder.decode(parameters.diskCacheDirectory))
-        return false;
-    if (!decoder.decode(parameters.diskCacheDirectoryExtensionHandle))
         return false;
 #if ENABLE(SECCOMP_FILTERS)
     if (!decoder.decode(parameters.cookieStorageDirectory))
@@ -267,10 +257,6 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
     if (!decoder.decode(parameters.presenterApplicationPid))
         return false;
     if (!decoder.decode(parameters.accessibilityEnhancedUserInterfaceEnabled))
-        return false;
-    if (!decoder.decode(parameters.nsURLCacheMemoryCapacity))
-        return false;
-    if (!decoder.decode(parameters.nsURLCacheDiskCapacity))
         return false;
     if (!decoder.decode(parameters.acceleratedCompositingPort))
         return false;
