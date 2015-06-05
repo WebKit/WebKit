@@ -1,5 +1,23 @@
 2015-06-04  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Close and open tabs on mouseup, not mousedown
+        https://bugs.webkit.org/show_bug.cgi?id=145656
+
+        Match Safari's behaviour.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TabBar.js:
+        (WebInspector.TabBar):
+        (WebInspector.TabBar.prototype.set newTabItem):
+        (WebInspector.TabBar.prototype._handleMouseDown):
+        (WebInspector.TabBar.prototype._handleClick): Added.
+        (WebInspector.TabBar.prototype._handleMouseUp):
+        (WebInspector.TabBar.prototype._handleNewTabClick): Added.
+        (WebInspector.TabBar.prototype._handleMouseMoved):
+
+2015-06-04  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Decrease tabs height to match Safari's tabs height
         https://bugs.webkit.org/show_bug.cgi?id=145647
 
