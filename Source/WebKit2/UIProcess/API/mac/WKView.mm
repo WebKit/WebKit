@@ -3473,7 +3473,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 {
     // The call below could release this WKView.
     RetainPtr<WKView> protector(self);
-    
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [view dragImage:image
@@ -3484,7 +3484,6 @@ static void* keyValueObservingContext = &keyValueObservingContext;
              source:self
           slideBack:YES];
 #pragma clang diagnostic pop
-    
 }
 
 static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension)

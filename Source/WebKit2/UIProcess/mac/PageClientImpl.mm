@@ -408,9 +408,10 @@ void PageClientImpl::setDragImage(const IntPoint& clientPosition, PassRefPtr<Sha
     [dragNSImage setSize:size];
 
 #if WK_API_ENABLED
-    if (m_webView)
-        [m_wkView _dragImageForView:m_webView withImage:dragNSImage.get() at:clientPosition linkDrag:isLinkDrag];
-    else
+    if (m_webView) {
+        NSPoint webViewPosition = [m_wkView convertPoint:clientPosition toView:m_webView];
+        [m_wkView _dragImageForView:m_webView withImage:dragNSImage.get() at:webViewPosition linkDrag:isLinkDrag];
+    } else
 #endif
         [m_wkView _dragImageForView:m_wkView withImage:dragNSImage.get() at:clientPosition linkDrag:isLinkDrag];
 }
