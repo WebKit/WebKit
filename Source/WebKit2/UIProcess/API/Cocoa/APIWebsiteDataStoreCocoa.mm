@@ -59,7 +59,7 @@ String WebsiteDataStore::defaultNetworkCacheDirectory()
 
 String WebsiteDataStore::defaultIndexedDBDatabaseDirectory()
 {
-    return cacheDirectoryFileSystemRepresentation("IndexedDB");
+    return websiteDataDirectoryFileSystemRepresentation("IndexedDB");
 }
 
 String WebsiteDataStore::defaultLocalStorageDirectory()

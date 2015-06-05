@@ -1,5 +1,15 @@
 2015-06-05  Anders Carlsson  <andersca@apple.com>
 
+        Fix refacto, don't put IndexedDB databases in the cache directory
+        https://bugs.webkit.org/show_bug.cgi?id=145714
+
+        Reviewed by Antti Koivisto.
+
+        * UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm:
+        (API::WebsiteDataStore::defaultIndexedDBDatabaseDirectory):
+
+2015-06-05  Anders Carlsson  <andersca@apple.com>
+
         Make the network cache directory part of WKContextConfigurationRef
         https://bugs.webkit.org/show_bug.cgi?id=145711
 
