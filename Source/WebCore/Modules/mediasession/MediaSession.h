@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+class HTMLMediaElement;
+
 class MediaSession final : public RefCounted<MediaSession> {
 public:
     static Ref<MediaSession> create(ScriptExecutionContext& context, const String& kind)
@@ -54,7 +56,15 @@ private:
         Interrupted
     };
 
+    friend class HTMLMediaElement;
+
+    void addMediaElement(HTMLMediaElement&);
+    void removeMediaElement(HTMLMediaElement&);
+
+    Vector<HTMLMediaElement*> activeParticipatingElements() const;
+
     State m_currentState { State::Idle };
+    Vector<HTMLMediaElement*> m_participatingElements;
 
     const String m_kind;
     RefPtr<MediaRemoteControls> m_controls;

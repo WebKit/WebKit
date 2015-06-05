@@ -457,6 +457,13 @@ HTMLMediaElement::~HTMLMediaElement()
         m_isolatedWorld->clearWrappers();
 #endif
 
+#if ENABLE(MEDIA_SESSION)
+    if (m_session) {
+        m_session->removeMediaElement(*this);
+        m_session = nullptr;
+    }
+#endif
+
     m_seekTaskQueue.close();
 
     m_completelyLoaded = true;
@@ -6367,7 +6374,13 @@ MediaSession* HTMLMediaElement::session() const
 
 void HTMLMediaElement::setSession(MediaSession* session)
 {
+    if (m_session)
+        m_session->removeMediaElement(*this);
+
     m_session = session;
+
+    if (session)
+        session->addMediaElement(*this);
 }
 
 #endif
