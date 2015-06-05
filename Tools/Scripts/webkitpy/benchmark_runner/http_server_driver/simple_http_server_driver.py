@@ -5,6 +5,7 @@ import os
 import re
 import socket
 import subprocess
+import sys
 import time
 
 from http_server_driver import HTTPServerDriver
@@ -19,23 +20,22 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
     """
 
     def __init__(self):
-        self.serverProcess = None
-        self.serverPort = 0
+        self.server_process = None
+        self.server_port = 0
         # FIXME: This may not be reliable.
         _log.info('Finding the IP address of current machine')
         try:
             self.ip = [ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")][0]
             _log.info('IP of current machine is: %s' % self.ip)
-        except:
-            _log.error('Cannot get the ip address of current machine')
+        except Exception as error:
+            _log.error('Cannot get the ip address of current machine - Error: %s' % error)
             raise
 
-    def serve(self, webRoot):
-        oldWorkingDirectory = os.getcwd()
-        os.chdir(os.path.dirname(os.path.abspath(__file__)))
+    def serve(self, web_root):
         _log.info('Launching an http server')
-        self.serverProcess = subprocess.Popen(['/usr/bin/python', 'http_server/twisted_http_server.py', webRoot], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        os.chdir(oldWorkingDirectory)
+        http_server_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "http_server/twisted_http_server.py")
+        self.server_process = subprocess.Popen(["/usr/bin/python", http_server_path, web_root], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
         maxAttempt = 5
         interval = 0.5
         _log.info('Start to fetching the port number of the http server')
@@ -43,46 +43,57 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
             import psutil
             for attempt in xrange(maxAttempt):
                 try:
-                    self.serverPort = psutil.Process(self.serverProcess.pid).connections()[0][3][1]
-                    if self.serverPort:
-                        _log.info('HTTP Server is serving at port: %d', self.serverPort)
+                    self.server_port = psutil.Process(self.server_process.pid).connections()[0][3][1]
+                    if self.server_port:
+                        _log.info('HTTP Server is serving at port: %d', self.server_port)
                         break
                 except IndexError:
                     pass
                 _log.info('Server port is not found this time, retry after %f seconds' % interval)
                 time.sleep(interval)
                 interval *= 2
+            else:
+                raise Exception("Cannot listen to server, max tries exceeded")
         except ImportError:
+            for attempt in xrange(maxAttempt):
+                try:
+                    output = subprocess.check_output(['/usr/sbin/lsof', '-a', '-iTCP', '-sTCP:LISTEN', '-p', str(self.server_process.pid)])
+                    self.server_port = int(re.search('TCP \*:(\d+) \(LISTEN\)', output).group(1))
+                    if self.server_port:
+                        _log.info('HTTP Server is serving at port: %d', self.server_port)
+                        break
+                except Exception as error:
+                     _log.info('Error: %s' % error)
+                _log.info('Server port is not found this time, retry after %f seconds' % interval)
+                time.sleep(interval)
+                interval *= 2
+            else:
+                raise Exception("Cannot listen to server, max tries exceeded")
+
+        # Wait for server to be up completely before exiting
+        for attempt in xrange(maxAttempt):
             try:
-                for attempt in xrange(maxAttempt):
-                    try:
-                        p = subprocess.Popen(' '.join(['/usr/sbin/lsof', '-a', '-iTCP', '-sTCP:LISTEN', '-p', str(self.serverProcess.pid)]), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                        self.serverPort = int(re.findall('TCP \*:(\d+) \(LISTEN\)', p.communicate()[0])[0])
-                        if self.serverPort:
-                            _log.info('HTTP Server is serving at port: %d', self.serverPort)
-                            break
-                    # Raising exception means the server is not ready to server, try later
-                    except ValueError:
-                        pass
-                    except IndexError:
-                        pass
-                    _log.info('Server port is not found this time, retry after %f seconds' % interval)
-                    time.sleep(interval)
-                    interval *= 2
-            except:
-                raise Exception("Server may not be serving")
+                subprocess.check_call(["curl", "--silent", "--head", "--fail", "--output", "/dev/null", self.baseUrl()])
+                return
+            except Exception as error:
+                _log.info('Server not running yet: %s' % error)
+                time.sleep(interval)
+        raise Exception('Server not running, max tries exceeded: %s' % error)
+
 
     def baseUrl(self):
-        return "http://%s:%d" % (self.ip, self.serverPort)
+        return "http://%s:%d" % (self.ip, self.server_port)
 
     def fetchResult(self):
-        return self.serverProcess.communicate()[0]
+        (stdout, stderr) = self.server_process.communicate()
+        print stderr
+        return stdout
 
     def killServer(self):
         try:
-            self.serverProcess.terminate()
-        except OSError:
-            _log.info('Invalid pid, server may exit properly')
+            self.server_process.terminate()
+        except OSError as error:
+            _log.info('Error terminating server process: %s' % (error))
 
     def getReturnCode(self):
-        return self.serverProcess.returncode
+        return self.server_process.returncode

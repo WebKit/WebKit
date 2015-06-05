@@ -1,5 +1,24 @@
 2015-06-05  Stephanie Lewis  <slewis@apple.com>
 
+        Make the web server more robust to timing issues..
+
+        Reviewed by Ryosuke Niwa.
+
+        Cleaned up exception handling.
+        Test server is actually serving pages before returning.
+        Clean up some style issues.
+
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server/twisted_http_server.py:
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/simple_http_server_driver.py:
+        (SimpleHTTPServerDriver.__init__):
+        (SimpleHTTPServerDriver.serve): check output, wait for pages to serve
+        (SimpleHTTPServerDriver.baseUrl): 
+        (SimpleHTTPServerDriver.fetchResult):
+        (SimpleHTTPServerDriver.killServer):
+        (SimpleHTTPServerDriver.getReturnCode):
+
+2015-06-05  Stephanie Lewis  <slewis@apple.com>
+
 
         Add errors to run-benchmark exception handling.
 

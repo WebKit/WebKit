@@ -1,22 +1,28 @@
 #!/usr/bin/env python
 
+import argparse
+import logging
+import sys
+
 from twisted.web import static, server
 from twisted.web.resource import Resource
 from twisted.internet import reactor
-import argparse
-import sys
 
+_log = logging.getLogger(__name__)
 
 class ServerControl(Resource):
     isLeaf = True
 
     def render_GET(self, request):
+        _log.info("Serving request %s" % request)
         reactor.stop()
         return ""
 
     def render_POST(self, request):
+        _log.info("Serving request %s" % request)
         sys.stdout.write(request.content.getvalue())
         sys.stdout.flush()
+        reactor.stop()
         return 'OK'
 
 
