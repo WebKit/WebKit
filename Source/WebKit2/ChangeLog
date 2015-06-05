@@ -1,3 +1,25 @@
+2015-06-04  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        REGRESSION(r185091): Crash happens on indexdb tests
+        https://bugs.webkit.org/show_bug.cgi?id=145549
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp: Remove leakRef() use.
+        (WebKit::WebIDBServerConnection::didCreateObjectStore):
+        (WebKit::WebIDBServerConnection::didCreateIndex):
+        (WebKit::WebIDBServerConnection::didDeleteIndex):
+        (WebKit::WebIDBServerConnection::didPutRecord):
+        (WebKit::WebIDBServerConnection::didGetRecord):
+        (WebKit::WebIDBServerConnection::didOpenCursor):
+        (WebKit::WebIDBServerConnection::didAdvanceCursor):
+        (WebKit::WebIDBServerConnection::didIterateCursor):
+        (WebKit::WebIDBServerConnection::didCount):
+        (WebKit::WebIDBServerConnection::didDeleteRange):
+        (WebKit::WebIDBServerConnection::didClearObjectStore):
+        (WebKit::WebIDBServerConnection::didDeleteObjectStore):
+        (WebKit::WebIDBServerConnection::didChangeDatabaseVersion):
+
 2015-06-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: REGRESSION: dragged node in the DOM Tree isn't positioned correctly

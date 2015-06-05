@@ -336,7 +336,7 @@ void WebIDBServerConnection::didCreateObjectStore(uint64_t requestID, bool succe
     if (!serverRequest)
         return;
 
-    serverRequest->completeRequest(success ? nullptr : &IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured creating object store").leakRef());
+    serverRequest->completeRequest(success ? nullptr : IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured creating object store"));
 }
 
 void WebIDBServerConnection::createIndex(IDBTransactionBackend&transaction, const CreateIndexOperation& operation, std::function<void (PassRefPtr<IDBDatabaseError>)> completionCallback)
@@ -365,7 +365,7 @@ void WebIDBServerConnection::didCreateIndex(uint64_t requestID, bool success)
     if (!serverRequest)
         return;
 
-    serverRequest->completeRequest(success ? nullptr : &IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured creating index").leakRef());
+    serverRequest->completeRequest(success ? nullptr : IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured creating index"));
 }
 
 void WebIDBServerConnection::deleteIndex(IDBTransactionBackend&transaction, const DeleteIndexOperation& operation, std::function<void (PassRefPtr<IDBDatabaseError>)> completionCallback)
@@ -394,7 +394,7 @@ void WebIDBServerConnection::didDeleteIndex(uint64_t requestID, bool success)
     if (!serverRequest)
         return;
 
-    serverRequest->completeRequest(success ? nullptr : &IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured deleting index").leakRef());
+    serverRequest->completeRequest(success ? nullptr : IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured deleting index"));
 }
 
 void WebIDBServerConnection::get(IDBTransactionBackend& transaction, const GetOperation& operation, std::function<void (const IDBGetResult&, PassRefPtr<IDBDatabaseError>)> completionCallback)
@@ -453,7 +453,7 @@ void WebIDBServerConnection::didPutRecord(uint64_t requestID, const WebCore::IDB
     if (!serverRequest)
         return;
 
-    serverRequest->completeRequest(resultKey.isNull ? nullptr : resultKey.maybeCreateIDBKey(), errorCode ? &IDBDatabaseError::create(errorCode, errorMessage).leakRef() : nullptr);
+    serverRequest->completeRequest(resultKey.isNull ? nullptr : resultKey.maybeCreateIDBKey(), errorCode ? IDBDatabaseError::create(errorCode, errorMessage) : nullptr);
 }
 
 void WebIDBServerConnection::didGetRecord(uint64_t requestID, const WebCore::IDBGetResult& getResult, uint32_t errorCode, const String& errorMessage)
@@ -465,7 +465,7 @@ void WebIDBServerConnection::didGetRecord(uint64_t requestID, const WebCore::IDB
     if (!serverRequest)
         return;
 
-    serverRequest->completeRequest(getResult, errorCode ? &IDBDatabaseError::create(errorCode, errorMessage).leakRef() : nullptr);
+    serverRequest->completeRequest(getResult, errorCode ? IDBDatabaseError::create(errorCode, errorMessage) : nullptr);
 }
 
 void WebIDBServerConnection::didOpenCursor(uint64_t requestID, int64_t cursorID, const IDBKeyData& key, const IDBKeyData& primaryKey, const IPC::DataReference& valueData, uint32_t errorCode, const String& errorMessage)
@@ -478,7 +478,7 @@ void WebIDBServerConnection::didOpenCursor(uint64_t requestID, int64_t cursorID,
         return;
 
     RefPtr<SharedBuffer> value = SharedBuffer::create(valueData.data(), valueData.size());
-    serverRequest->completeRequest(cursorID, key.maybeCreateIDBKey(), primaryKey.maybeCreateIDBKey(), value.release(), errorCode ? &IDBDatabaseError::create(errorCode, errorMessage).leakRef() : nullptr);
+    serverRequest->completeRequest(cursorID, key.maybeCreateIDBKey(), primaryKey.maybeCreateIDBKey(), value.release(), errorCode ? IDBDatabaseError::create(errorCode, errorMessage) : nullptr);
 }
 
 void WebIDBServerConnection::didAdvanceCursor(uint64_t requestID, const IDBKeyData& key, const IDBKeyData& primaryKey, const IPC::DataReference& valueData, uint32_t errorCode, const String& errorMessage)
@@ -491,7 +491,7 @@ void WebIDBServerConnection::didAdvanceCursor(uint64_t requestID, const IDBKeyDa
         return;
 
     RefPtr<SharedBuffer> value = SharedBuffer::create(valueData.data(), valueData.size());
-    serverRequest->completeRequest(key.maybeCreateIDBKey(), primaryKey.maybeCreateIDBKey(), value.release(), errorCode ? &IDBDatabaseError::create(errorCode, errorMessage).leakRef() : nullptr);
+    serverRequest->completeRequest(key.maybeCreateIDBKey(), primaryKey.maybeCreateIDBKey(), value.release(), errorCode ? IDBDatabaseError::create(errorCode, errorMessage) : nullptr);
 }
 
 void WebIDBServerConnection::didIterateCursor(uint64_t requestID, const IDBKeyData& key, const IDBKeyData& primaryKey, const IPC::DataReference& valueData, uint32_t errorCode, const String& errorMessage)
@@ -504,7 +504,7 @@ void WebIDBServerConnection::didIterateCursor(uint64_t requestID, const IDBKeyDa
         return;
 
     RefPtr<SharedBuffer> value = SharedBuffer::create(valueData.data(), valueData.size());
-    serverRequest->completeRequest(key.maybeCreateIDBKey(), primaryKey.maybeCreateIDBKey(), value.release(), errorCode ? &IDBDatabaseError::create(errorCode, errorMessage).leakRef() : nullptr);
+    serverRequest->completeRequest(key.maybeCreateIDBKey(), primaryKey.maybeCreateIDBKey(), value.release(), errorCode ? IDBDatabaseError::create(errorCode, errorMessage) : nullptr);
 }
 
 void WebIDBServerConnection::count(IDBTransactionBackend& transaction, const CountOperation& operation, std::function<void (int64_t, PassRefPtr<IDBDatabaseError>)> completionCallback)
@@ -533,7 +533,7 @@ void WebIDBServerConnection::didCount(uint64_t requestID, int64_t count, uint32_
     if (!serverRequest)
         return;
 
-    serverRequest->completeRequest(count, errorCode ? &IDBDatabaseError::create(errorCode, errorMessage).leakRef() : nullptr);
+    serverRequest->completeRequest(count, errorCode ? IDBDatabaseError::create(errorCode, errorMessage) : nullptr);
 }
 
 void WebIDBServerConnection::deleteRange(IDBTransactionBackend& transaction, const DeleteRangeOperation& operation, std::function<void (PassRefPtr<IDBDatabaseError>)> completionCallback)
@@ -562,7 +562,7 @@ void WebIDBServerConnection::didDeleteRange(uint64_t requestID, uint32_t errorCo
     if (!serverRequest)
         return;
 
-    serverRequest->completeRequest(errorCode ? &IDBDatabaseError::create(errorCode, errorMessage).leakRef() : nullptr);
+    serverRequest->completeRequest(errorCode ? IDBDatabaseError::create(errorCode, errorMessage) : nullptr);
 }
 
 void WebIDBServerConnection::clearObjectStore(IDBTransactionBackend&, const ClearObjectStoreOperation& operation, std::function<void (PassRefPtr<IDBDatabaseError>)> completionCallback)
@@ -591,7 +591,7 @@ void WebIDBServerConnection::didClearObjectStore(uint64_t requestID, bool succes
     if (!serverRequest)
         return;
 
-    serverRequest->completeRequest(success ? nullptr : &IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured clearing object store").leakRef());
+    serverRequest->completeRequest(success ? nullptr : IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured clearing object store"));
 }
 
 void WebIDBServerConnection::deleteObjectStore(IDBTransactionBackend&, const DeleteObjectStoreOperation& operation, std::function<void (PassRefPtr<IDBDatabaseError>)> completionCallback)
@@ -620,7 +620,7 @@ void WebIDBServerConnection::didDeleteObjectStore(uint64_t requestID, bool succe
     if (!serverRequest)
         return;
 
-    serverRequest->completeRequest(success ? nullptr : &IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured deleting object store").leakRef());
+    serverRequest->completeRequest(success ? nullptr : IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured deleting object store"));
 }
 
 void WebIDBServerConnection::changeDatabaseVersion(IDBTransactionBackend&, const IDBDatabaseBackend::VersionChangeOperation& operation, std::function<void (PassRefPtr<IDBDatabaseError>)> completionCallback)
@@ -649,7 +649,7 @@ void WebIDBServerConnection::didChangeDatabaseVersion(uint64_t requestID, bool s
     if (!serverRequest)
         return;
 
-    serverRequest->completeRequest(success ? nullptr : &IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured changing database version").leakRef());
+    serverRequest->completeRequest(success ? nullptr : IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured changing database version"));
 }
 
 void WebIDBServerConnection::openCursor(IDBTransactionBackend&, const OpenCursorOperation& operation, std::function<void (int64_t, PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SharedBuffer>, PassRefPtr<IDBDatabaseError>)> completionCallback)
