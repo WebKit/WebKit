@@ -42,6 +42,16 @@ WKContextConfigurationRef WKContextConfigurationCreate()
     return toAPI(&configuration.leakRef());
 }
 
+WKStringRef WKContextConfigurationCopyDiskCacheDirectory(WKContextConfigurationRef configuration)
+{
+    return toCopiedAPI(toImpl(configuration)->diskCacheDirectory());
+}
+
+void WKContextConfigurationSetDiskCacheDirectory(WKContextConfigurationRef configuration, WKStringRef diskCacheDirectory)
+{
+    toImpl(configuration)->setDiskCacheDirectory(toImpl(diskCacheDirectory)->string());
+}
+
 WKStringRef WKContextConfigurationCopyApplicationCacheDirectory(WKContextConfigurationRef configuration)
 {
     return toCopiedAPI(toImpl(configuration)->applicationCacheDirectory());

@@ -138,6 +138,7 @@ static WebsiteDataStore::Configuration legacyWebsiteDataStoreConfiguration(API::
     configuration.webSQLDatabaseDirectory = processPoolConfiguration.webSQLDatabaseDirectory();
     configuration.applicationCacheDirectory = WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory();
     configuration.mediaKeysStorageDirectory = WebProcessPool::legacyPlatformDefaultMediaKeysStorageDirectory();
+    configuration.networkCacheDirectory = WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory();
 
     return configuration;
 }
@@ -166,6 +167,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_initialHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain)
 #endif
     , m_applicationCacheDirectory(configuration.applicationCacheDirectory())
+    , m_diskCacheDirectory(configuration.diskCacheDirectory())
     , m_indexedDBDatabaseDirectory(configuration.indexedDBDatabaseDirectory())
     , m_mediaKeysStorageDirectory(configuration.mediaKeysStorageDirectory())
     , m_webSQLDatabaseDirectory(configuration.webSQLDatabaseDirectory())
@@ -416,7 +418,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess()
     parameters.diskCacheSizeOverride = m_diskCacheSizeOverride;
     parameters.canHandleHTTPSServerTrustEvaluation = m_canHandleHTTPSServerTrustEvaluation;
 
-    parameters.diskCacheDirectory = stringByResolvingSymlinksInPath(diskCacheDirectory());
+    parameters.diskCacheDirectory = m_diskCacheDirectory;
     if (!parameters.diskCacheDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.diskCacheDirectory, parameters.diskCacheDirectoryExtensionHandle);
 
@@ -1180,14 +1182,6 @@ String WebProcessPool::iconDatabasePath() const
         return m_overrideIconDatabasePath;
 
     return platformDefaultIconDatabasePath();
-}
-
-String WebProcessPool::diskCacheDirectory() const
-{
-    if (!m_overrideDiskCacheDirectory.isEmpty())
-        return m_overrideDiskCacheDirectory;
-
-    return platformDefaultDiskCacheDirectory();
 }
 
 #if ENABLE(SECCOMP_FILTERS)

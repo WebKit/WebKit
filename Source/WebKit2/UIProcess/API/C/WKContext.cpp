@@ -504,11 +504,6 @@ void WKContextAllowSpecificHTTPSCertificateForHost(WKContextRef contextRef, WKCe
     toImpl(contextRef)->allowSpecificHTTPSCertificateForHost(toImpl(certificateRef), toImpl(hostRef)->string());
 }
 
-WK_EXPORT void WKContextSetDiskCacheDirectory(WKContextRef contextRef, WKStringRef diskCacheDirectory)
-{
-    toImpl(contextRef)->setDiskCacheDirectory(toImpl(diskCacheDirectory)->string());
-}
-
 WK_EXPORT void WKContextSetCookieStorageDirectory(WKContextRef contextRef, WKStringRef cookieStorageDirectory)
 {
     toImpl(contextRef)->setCookieStorageDirectory(toImpl(cookieStorageDirectory)->string());

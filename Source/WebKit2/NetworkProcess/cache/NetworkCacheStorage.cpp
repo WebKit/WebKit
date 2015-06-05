@@ -41,7 +41,6 @@
 namespace WebKit {
 namespace NetworkCache {
 
-static const char networkCacheSubdirectory[] = "WebKitCache";
 static const char versionDirectoryPrefix[] = "Version ";
 static const char recordsDirectoryName[] = "Records";
 static const char blobsDirectoryName[] = "Blobs";
@@ -79,11 +78,9 @@ std::unique_ptr<Storage> Storage::open(const String& cachePath)
 {
     ASSERT(RunLoop::isMain());
 
-    String networkCachePath = WebCore::pathByAppendingComponent(cachePath, networkCacheSubdirectory);
-
-    if (!WebCore::makeAllDirectories(networkCachePath))
+    if (!WebCore::makeAllDirectories(cachePath))
         return nullptr;
-    return std::unique_ptr<Storage>(new Storage(networkCachePath));
+    return std::unique_ptr<Storage>(new Storage(cachePath));
 }
 
 static String makeVersionedDirectoryPath(const String& baseDirectoryPath)

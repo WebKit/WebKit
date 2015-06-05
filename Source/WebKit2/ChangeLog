@@ -1,5 +1,42 @@
 2015-06-05  Anders Carlsson  <andersca@apple.com>
 
+        Make the network cache directory part of WKContextConfigurationRef
+        https://bugs.webkit.org/show_bug.cgi?id=145711
+
+        Reviewed by Antti Koivisto.
+
+        Also, make the UI process be in control of where we place the new network cache.
+        When using the Modern WebKit API, put the cache in ~/Library/Caches/<Bundle ID>/WebKit/NetworkCache,
+        and put the cache in ~/Library/Caches/<Bundle ID>/WebKitCache otherwise (this is just for Safari).
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::open):
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::createWithLegacyOptions):
+        (API::ProcessPoolConfiguration::ProcessPoolConfiguration):
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetDiskCacheDirectory): Deleted.
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        (WKContextConfigurationCopyDiskCacheDirectory):
+        (WKContextConfigurationSetDiskCacheDirectory):
+        * UIProcess/API/C/WKContextConfigurationRef.h:
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        (WebKit::WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory):
+        (WebKit::WebProcessPool::isNetworkCacheEnabled):
+        (WebKit::WebProcessPool::platformDefaultDiskCacheDirectory): Deleted.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::legacyWebsiteDataStoreConfiguration):
+        (WebKit::WebProcessPool::WebProcessPool):
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::diskCacheDirectory): Deleted.
+        * UIProcess/WebProcessPool.h:
+
+2015-06-05  Anders Carlsson  <andersca@apple.com>
+
         Make the application cache directory part of WKContextConfigurationRef
         https://bugs.webkit.org/show_bug.cgi?id=145704
 
