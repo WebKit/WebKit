@@ -52,7 +52,7 @@ protected:
 
 class StaticCSSRuleList final : public CSSRuleList {
 public:
-    static PassRefPtr<StaticCSSRuleList> create() { return adoptRef(new StaticCSSRuleList()); }
+    static Ref<StaticCSSRuleList> create() { return adoptRef(*new StaticCSSRuleList); }
 
     virtual void ref() override { ++m_refCount; }
     virtual void deref() override;

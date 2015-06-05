@@ -39,17 +39,17 @@ class MediaQuery;
 
 class MediaQuerySet : public RefCounted<MediaQuerySet> {
 public:
-    static PassRefPtr<MediaQuerySet> create()
+    static Ref<MediaQuerySet> create()
     {
-        return adoptRef(new MediaQuerySet());
+        return adoptRef(*new MediaQuerySet);
     }
-    static PassRefPtr<MediaQuerySet> create(const String& mediaString)
+    static Ref<MediaQuerySet> create(const String& mediaString)
     {
-        return adoptRef(new MediaQuerySet(mediaString, false));
+        return adoptRef(*new MediaQuerySet(mediaString, false));
     }
-    static PassRefPtr<MediaQuerySet> createAllowingDescriptionSyntax(const String& mediaString)
+    static Ref<MediaQuerySet> createAllowingDescriptionSyntax(const String& mediaString)
     {
-        return adoptRef(new MediaQuerySet(mediaString, true));
+        return adoptRef(*new MediaQuerySet(mediaString, true));
     }
     ~MediaQuerySet();
     
@@ -80,13 +80,13 @@ private:
 
 class MediaList : public RefCounted<MediaList> {
 public:
-    static PassRefPtr<MediaList> create(MediaQuerySet* mediaQueries, CSSStyleSheet* parentSheet)
+    static Ref<MediaList> create(MediaQuerySet* mediaQueries, CSSStyleSheet* parentSheet)
     {
-        return adoptRef(new MediaList(mediaQueries, parentSheet));
+        return adoptRef(*new MediaList(mediaQueries, parentSheet));
     }
-    static PassRefPtr<MediaList> create(MediaQuerySet* mediaQueries, CSSRule* parentRule)
+    static Ref<MediaList> create(MediaQuerySet* mediaQueries, CSSRule* parentRule)
     {
-        return adoptRef(new MediaList(mediaQueries, parentRule));
+        return adoptRef(*new MediaList(mediaQueries, parentRule));
     }
 
     ~MediaList();

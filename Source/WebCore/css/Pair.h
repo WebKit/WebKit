@@ -34,13 +34,13 @@ namespace WebCore {
 // it (eliminating some extra -webkit- internal properties).
 class Pair : public RefCounted<Pair> {
 public:
-    static PassRefPtr<Pair> create()
+    static Ref<Pair> create()
     {
-        return adoptRef(new Pair);
+        return adoptRef(*new Pair);
     }
-    static PassRefPtr<Pair> create(PassRefPtr<CSSPrimitiveValue> first, PassRefPtr<CSSPrimitiveValue> second)
+    static Ref<Pair> create(PassRefPtr<CSSPrimitiveValue> first, PassRefPtr<CSSPrimitiveValue> second)
     {
-        return adoptRef(new Pair(first, second));
+        return adoptRef(*new Pair(first, second));
     }
     virtual ~Pair() { }
 

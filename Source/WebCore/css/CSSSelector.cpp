@@ -82,7 +82,7 @@ void CSSSelector::createRareData()
     if (m_hasRareData)
         return;
     // Move the value to the rare data stucture.
-    m_data.m_rareData = RareData::create(adoptRef(m_data.m_value)).leakRef();
+    m_data.m_rareData = &RareData::create(adoptRef(m_data.m_value)).leakRef();
     m_hasRareData = true;
 }
 

@@ -32,7 +32,7 @@ class StyleRule;
 
 class CSSStyleRule final : public CSSRule {
 public:
-    static PassRefPtr<CSSStyleRule> create(StyleRule& rule, CSSStyleSheet* sheet) { return adoptRef(new CSSStyleRule(rule, sheet)); }
+    static Ref<CSSStyleRule> create(StyleRule& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSStyleRule(rule, sheet)); }
 
     virtual ~CSSStyleRule();
 

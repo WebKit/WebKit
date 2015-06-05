@@ -5600,8 +5600,11 @@ bool CSSParser::parseGridLineNames(CSSParserValueList& inputList, CSSValueList& 
 
     // Need to ensure the identList is at the heading index, since the parserList might have been rewound.
     identList.setCurrentIndex(0);
-
-    RefPtr<CSSGridLineNamesValue> lineNames = previousNamedAreaTrailingLineNames ? previousNamedAreaTrailingLineNames : CSSGridLineNamesValue::create();
+    RefPtr<CSSGridLineNamesValue> lineNames;
+    if (previousNamedAreaTrailingLineNames)
+        lineNames = previousNamedAreaTrailingLineNames;
+    else
+        lineNames = CSSGridLineNamesValue::create();
     while (CSSParserValue* identValue = identList.current()) {
         ASSERT(identValue->unit == CSSPrimitiveValue::CSS_IDENT);
         lineNames->append(createPrimitiveStringValue(*identValue));
@@ -5847,16 +5850,16 @@ bool CSSParser::parseDashboardRegions(CSSPropertyID propId, bool important)
         return valid;
     }
 
-    RefPtr<DashboardRegion> firstRegion = DashboardRegion::create();
+    auto firstRegion = DashboardRegion::create();
     DashboardRegion* region = nullptr;
 
     while (value) {
         if (!region) {
-            region = firstRegion.get();
+            region = firstRegion.ptr();
         } else {
-            RefPtr<DashboardRegion> nextRegion = DashboardRegion::create();
-            region->m_next = nextRegion;
-            region = nextRegion.get();
+            auto nextRegion = DashboardRegion::create();
+            region->m_next = nextRegion.copyRef();
+            region = nextRegion.ptr();
         }
 
         if (value->unit != CSSParserValue::Function) {
@@ -5950,7 +5953,7 @@ bool CSSParser::parseDashboardRegions(CSSPropertyID propId, bool important)
     }
 
     if (valid)
-        addProperty(propId, cssValuePool().createValue(firstRegion.release()), important);
+        addProperty(propId, cssValuePool().createValue(RefPtr<DashboardRegion>(WTF::move(firstRegion))), important);
 
     return valid;
 }
@@ -6108,7 +6111,7 @@ bool CSSParser::parseClipShape(CSSPropertyID propId, bool important)
     // rect(t, r, b, l) || rect(t r b l)
     if (args->size() != 4 && args->size() != 7)
         return false;
-    RefPtr<Rect> rect = Rect::create();
+    auto rect = Rect::create();
     bool valid = true;
     int i = 0;
     CSSParserValue* argument = args->current();
@@ -6138,7 +6141,7 @@ bool CSSParser::parseClipShape(CSSPropertyID propId, bool important)
         i++;
     }
     if (valid) {
-        addProperty(propId, cssValuePool().createValue(rect.release()), important);
+        addProperty(propId, cssValuePool().createValue(WTF::move(rect)), important);
         m_valueList->next();
         return true;
     }
@@ -6538,7 +6541,7 @@ PassRefPtr<CSSPrimitiveValue> CSSParser::parseBasicShape()
         return nullptr;
 
     m_valueList->next();
-    return cssValuePool().createValue(shape.release());
+    return cssValuePool().createValue(shape.releaseNonNull());
 }
 
 // [ 'font-style' || 'font-variant' || 'font-weight' ]? 'font-size' [ / 'line-height' ]? 'font-family'
@@ -8106,14 +8109,14 @@ public:
             m_left = m_right;
 
         // Now build a rect value to hold all four of our primitive values.
-        RefPtr<Quad> quad = Quad::create();
+        auto quad = Quad::create();
         quad->setTop(m_top);
         quad->setRight(m_right);
         quad->setBottom(m_bottom);
         quad->setLeft(m_left);
 
         // Make our new border image value now.
-        return CSSBorderImageSliceValue::create(cssValuePool().createValue(quad.release()), m_fill);
+        return CSSBorderImageSliceValue::create(cssValuePool().createValue(WTF::move(quad)), m_fill);
     }
 
 private:
@@ -8224,14 +8227,14 @@ public:
             m_left = m_right;
 
         // Now build a quad value to hold all four of our primitive values.
-        RefPtr<Quad> quad = Quad::create();
+        auto quad = Quad::create();
         quad->setTop(m_top);
         quad->setRight(m_right);
         quad->setBottom(m_bottom);
         quad->setLeft(m_left);
 
         // Make our new value now.
-        return cssValuePool().createValue(quad.release());
+        return cssValuePool().createValue(WTF::move(quad));
     }
 
 private:

@@ -48,9 +48,9 @@ static const char* const defaultFontFamily = "sans-serif";
 
 class LoadFontCallback : public CSSSegmentedFontFace::LoadFontCallback {
 public:
-    static PassRefPtr<LoadFontCallback> create(int numLoading, FontLoader& fontLoader, PassRefPtr<VoidCallback> loadCallback, PassRefPtr<VoidCallback> errorCallback)
+    static Ref<LoadFontCallback> create(int numLoading, FontLoader& fontLoader, PassRefPtr<VoidCallback> loadCallback, PassRefPtr<VoidCallback> errorCallback)
     {
-        return adoptRef<LoadFontCallback>(new LoadFontCallback(numLoading, fontLoader, loadCallback, errorCallback));
+        return adoptRef(*new LoadFontCallback(numLoading, fontLoader, loadCallback, errorCallback));
     }
 
     static PassRefPtr<LoadFontCallback> createFromParams(const Dictionary& params, FontLoader& fontLoader, const FontCascade& font)

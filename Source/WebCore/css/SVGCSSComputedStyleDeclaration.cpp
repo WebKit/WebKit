@@ -29,39 +29,39 @@
 
 namespace WebCore {
 
-static PassRefPtr<CSSValue> paintOrder(PaintOrder paintOrder)
+static Ref<CSSValue> paintOrder(PaintOrder paintOrder)
 {
-    RefPtr<CSSValueList> paintOrderList = CSSValueList::createSpaceSeparated();
-    RefPtr<CSSValue> fill = CSSPrimitiveValue::createIdentifier(CSSValueFill);
-    RefPtr<CSSValue> stroke = CSSPrimitiveValue::createIdentifier(CSSValueStroke);
-    RefPtr<CSSValue> markers = CSSPrimitiveValue::createIdentifier(CSSValueMarkers);
+    Ref<CSSValueList> paintOrderList = CSSValueList::createSpaceSeparated();
+    Ref<CSSValue> fill = CSSPrimitiveValue::createIdentifier(CSSValueFill);
+    Ref<CSSValue> stroke = CSSPrimitiveValue::createIdentifier(CSSValueStroke);
+    Ref<CSSValue> markers = CSSPrimitiveValue::createIdentifier(CSSValueMarkers);
 
     switch (paintOrder) {
     case PaintOrderNormal:
         return CSSPrimitiveValue::createIdentifier(CSSValueNormal);
     case PaintOrderFill:
-        paintOrderList->append(fill.releaseNonNull());
+        paintOrderList->append(WTF::move(fill));
         break;
     case PaintOrderFillMarkers:
-        paintOrderList->append(fill.releaseNonNull());
-        paintOrderList->append(markers.releaseNonNull());
+        paintOrderList->append(WTF::move(fill));
+        paintOrderList->append(WTF::move(markers));
         break;
     case PaintOrderStroke:
-        paintOrderList->append(stroke.releaseNonNull());
+        paintOrderList->append(WTF::move(stroke));
         break;
     case PaintOrderStrokeMarkers:
-        paintOrderList->append(stroke.releaseNonNull());
-        paintOrderList->append(markers.releaseNonNull());
+        paintOrderList->append(WTF::move(stroke));
+        paintOrderList->append(WTF::move(markers));
         break;
     case PaintOrderMarkers:
-        paintOrderList->append(markers.releaseNonNull());
+        paintOrderList->append(WTF::move(markers));
         break;
     case PaintOrderMarkersStroke:
-        paintOrderList->append(markers.releaseNonNull());
-        paintOrderList->append(stroke.releaseNonNull());
+        paintOrderList->append(WTF::move(markers));
+        paintOrderList->append(WTF::move(stroke));
         break;
     }
-    return paintOrderList.release();
+    return WTF::move(paintOrderList);
 }
 
 static PassRefPtr<CSSPrimitiveValue> glyphOrientationToCSSPrimitiveValue(EGlyphOrientation orientation)
@@ -218,7 +218,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID prop
             return 0;
         }
         case CSSPropertyWebkitSvgShadow:
-            return valueForShadow(svgStyle.shadow(), propertyID, style);
+            return valueForShadow(svgStyle.shadow(), propertyID, *style);
         case CSSPropertyVectorEffect:
             return CSSPrimitiveValue::create(svgStyle.vectorEffect());
         case CSSPropertyMaskType:

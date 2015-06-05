@@ -38,7 +38,7 @@ class MediaQuerySet;
 
 class MediaQueryList : public RefCounted<MediaQueryList> {
 public:
-    static PassRefPtr<MediaQueryList> create(PassRefPtr<MediaQueryMatcher>, PassRefPtr<MediaQuerySet>, bool);
+    static Ref<MediaQueryList> create(PassRefPtr<MediaQueryMatcher>, PassRefPtr<MediaQuerySet>, bool);
     ~MediaQueryList();
 
     String media() const;

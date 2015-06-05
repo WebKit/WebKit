@@ -27,9 +27,9 @@
 
 namespace WebCore {
 
-PassRefPtr<MediaQueryList> MediaQueryList::create(PassRefPtr<MediaQueryMatcher> vector, PassRefPtr<MediaQuerySet> media, bool matches)
+Ref<MediaQueryList> MediaQueryList::create(PassRefPtr<MediaQueryMatcher> vector, PassRefPtr<MediaQuerySet> media, bool matches)
 {
-    return adoptRef(new MediaQueryList(vector, media, matches));
+    return adoptRef(*new MediaQueryList(vector, media, matches));
 }
 
 MediaQueryList::MediaQueryList(PassRefPtr<MediaQueryMatcher> vector, PassRefPtr<MediaQuerySet> media, bool matches)

@@ -43,9 +43,9 @@ class StyleRuleCSSStyleDeclaration;
 
 class WebKitCSSViewportRule final : public CSSRule {
 public:
-    static PassRefPtr<WebKitCSSViewportRule> create(StyleRuleViewport& viewportRule, CSSStyleSheet* sheet)
+    static Ref<WebKitCSSViewportRule> create(StyleRuleViewport& viewportRule, CSSStyleSheet* sheet)
     {
-        return adoptRef(new WebKitCSSViewportRule(viewportRule, sheet));
+        return adoptRef(*new WebKitCSSViewportRule(viewportRule, sheet));
     }
     virtual ~WebKitCSSViewportRule();
 

@@ -732,7 +732,7 @@ static PassRefPtr<CSSCalcExpressionNode> createCSS(const Length& length, const R
     switch (length.type()) {
     case Percent:
     case Fixed:
-        return CSSCalcPrimitiveValue::create(CSSPrimitiveValue::create(length, &style), length.value() == trunc(length.value()));
+        return CSSCalcPrimitiveValue::create(CSSPrimitiveValue::create(length, style), length.value() == trunc(length.value()));
     case Calculated:
         return createCSS(length.calculationValue().expression(), style);
     case Auto:
@@ -751,7 +751,7 @@ static PassRefPtr<CSSCalcExpressionNode> createCSS(const Length& length, const R
     return nullptr;
 }
 
-PassRefPtr<CSSCalcValue> CSSCalcValue::create(CSSParserString name, CSSParserValueList& parserValueList, CalculationPermittedValueRange range)
+RefPtr<CSSCalcValue> CSSCalcValue::create(CSSParserString name, CSSParserValueList& parserValueList, CalculationPermittedValueRange range)
 {
     CSSCalcExpressionNodeParser parser;
     RefPtr<CSSCalcExpressionNode> expression;
@@ -762,7 +762,7 @@ PassRefPtr<CSSCalcValue> CSSCalcValue::create(CSSParserString name, CSSParserVal
     return expression ? adoptRef(new CSSCalcValue(expression.releaseNonNull(), range != CalculationRangeAll)) : nullptr;
 }
 
-PassRefPtr<CSSCalcValue> CSSCalcValue::create(const CalculationValue& value, const RenderStyle& style)
+RefPtr<CSSCalcValue> CSSCalcValue::create(const CalculationValue& value, const RenderStyle& style)
 {
     RefPtr<CSSCalcExpressionNode> expression = createCSS(value.expression(), style);
     if (!expression)

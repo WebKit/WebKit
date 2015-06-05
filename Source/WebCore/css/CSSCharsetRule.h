@@ -28,9 +28,9 @@ namespace WebCore {
 
 class CSSCharsetRule final : public CSSRule {
 public:
-    static PassRefPtr<CSSCharsetRule> create(CSSStyleSheet* parent, const String& encoding)
+    static Ref<CSSCharsetRule> create(CSSStyleSheet* parent, const String& encoding)
     {
-        return adoptRef(new CSSCharsetRule(parent, encoding));
+        return adoptRef(*new CSSCharsetRule(parent, encoding));
     }
 
     virtual ~CSSCharsetRule() { }

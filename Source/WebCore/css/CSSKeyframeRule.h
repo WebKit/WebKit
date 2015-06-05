@@ -39,9 +39,9 @@ class CSSKeyframesRule;
 class StyleKeyframe : public RefCounted<StyleKeyframe> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<StyleKeyframe> create(Ref<StyleProperties>&& properties)
+    static Ref<StyleKeyframe> create(Ref<StyleProperties>&& properties)
     {
-        return adoptRef(new StyleKeyframe(WTF::move(properties)));
+        return adoptRef(*new StyleKeyframe(WTF::move(properties)));
     }
     ~StyleKeyframe();
 

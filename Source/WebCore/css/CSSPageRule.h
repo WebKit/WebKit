@@ -33,7 +33,7 @@ class StyleRuleCSSStyleDeclaration;
 
 class CSSPageRule final : public CSSRule {
 public:
-    static PassRefPtr<CSSPageRule> create(StyleRulePage& rule, CSSStyleSheet* sheet) { return adoptRef(new CSSPageRule(rule, sheet)); }
+    static Ref<CSSPageRule> create(StyleRulePage& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSPageRule(rule, sheet)); }
 
     virtual ~CSSPageRule();
 

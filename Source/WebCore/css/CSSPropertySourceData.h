@@ -67,9 +67,9 @@ struct CSSPropertySourceData {
 };
 
 struct CSSStyleSourceData : public RefCounted<CSSStyleSourceData> {
-    static PassRefPtr<CSSStyleSourceData> create()
+    static Ref<CSSStyleSourceData> create()
     {
-        return adoptRef(new CSSStyleSourceData());
+        return adoptRef(*new CSSStyleSourceData);
     }
 
     Vector<CSSPropertySourceData> propertyData;
@@ -95,14 +95,14 @@ struct CSSRuleSourceData : public RefCounted<CSSRuleSourceData> {
         SUPPORTS_RULE,
     };
 
-    static PassRefPtr<CSSRuleSourceData> create(Type type)
+    static Ref<CSSRuleSourceData> create(Type type)
     {
-        return adoptRef(new CSSRuleSourceData(type));
+        return adoptRef(*new CSSRuleSourceData(type));
     }
 
-    static PassRefPtr<CSSRuleSourceData> createUnknown()
+    static Ref<CSSRuleSourceData> createUnknown()
     {
-        return adoptRef(new CSSRuleSourceData(UNKNOWN_RULE));
+        return adoptRef(*new CSSRuleSourceData(UNKNOWN_RULE));
     }
 
     CSSRuleSourceData(Type type)

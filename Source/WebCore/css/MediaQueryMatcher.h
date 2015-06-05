@@ -40,7 +40,7 @@ class MediaQuerySet;
 
 class MediaQueryMatcher : public RefCounted<MediaQueryMatcher> {
 public:
-    static PassRefPtr<MediaQueryMatcher> create(Document* document) { return adoptRef(new MediaQueryMatcher(document)); }
+    static Ref<MediaQueryMatcher> create(Document* document) { return adoptRef(*new MediaQueryMatcher(document)); }
     ~MediaQueryMatcher();
     void documentDestroyed();
 

@@ -68,9 +68,9 @@ private:
 
 class Rect : public RectBase, public RefCounted<Rect> {
 public:
-    static PassRefPtr<Rect> create() { return adoptRef(new Rect); }
+    static Ref<Rect> create() { return adoptRef(*new Rect); }
     
-    PassRefPtr<Rect> cloneForCSSOM() const { return adoptRef(new Rect(*this)); }
+    Ref<Rect> cloneForCSSOM() const { return adoptRef(*new Rect(*this)); }
 
     String cssText() const
     {
@@ -88,9 +88,9 @@ private:
 
 class Quad : public RectBase, public RefCounted<Quad> {
 public:
-    static PassRefPtr<Quad> create() { return adoptRef(new Quad); }
+    static Ref<Quad> create() { return adoptRef(*new Quad); }
     
-    PassRefPtr<Quad> cloneForCSSOM() const { return adoptRef(new Quad(*this)); }
+    Ref<Quad> cloneForCSSOM() const { return adoptRef(*new Quad(*this)); }
 
     String cssText() const
     {

@@ -65,7 +65,7 @@ protected:
 
 class CSSBasicShapeInset final : public CSSBasicShape {
 public:
-    static PassRefPtr<CSSBasicShapeInset> create() { return adoptRef(new CSSBasicShapeInset); }
+    static Ref<CSSBasicShapeInset> create() { return adoptRef(*new CSSBasicShapeInset); }
 
     CSSPrimitiveValue* top() const { return m_top.get(); }
     CSSPrimitiveValue* right() const { return m_right.get(); }
@@ -131,7 +131,7 @@ private:
 
 class CSSBasicShapeCircle final : public CSSBasicShape {
 public:
-    static PassRefPtr<CSSBasicShapeCircle> create() { return adoptRef(new CSSBasicShapeCircle); }
+    static Ref<CSSBasicShapeCircle> create() { return adoptRef(*new CSSBasicShapeCircle); }
 
     virtual String cssText() const override;
     virtual bool equals(const CSSBasicShape&) const override;
@@ -156,7 +156,7 @@ private:
 
 class CSSBasicShapeEllipse final : public CSSBasicShape {
 public:
-    static PassRefPtr<CSSBasicShapeEllipse> create() { return adoptRef(new CSSBasicShapeEllipse); }
+    static Ref<CSSBasicShapeEllipse> create() { return adoptRef(*new CSSBasicShapeEllipse); }
 
     CSSPrimitiveValue* centerX() const { return m_centerX.get(); }
     CSSPrimitiveValue* centerY() const { return m_centerY.get(); }
@@ -184,7 +184,7 @@ private:
 
 class CSSBasicShapePolygon final : public CSSBasicShape {
 public:
-    static PassRefPtr<CSSBasicShapePolygon> create() { return adoptRef(new CSSBasicShapePolygon); }
+    static Ref<CSSBasicShapePolygon> create() { return adoptRef(*new CSSBasicShapePolygon); }
 
     void appendPoint(PassRefPtr<CSSPrimitiveValue> x, PassRefPtr<CSSPrimitiveValue> y)
     {

@@ -28,7 +28,7 @@
 #include "Color.h"
 #include "FontCascade.h"
 #include "Length.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 

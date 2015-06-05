@@ -324,7 +324,7 @@ namespace WebCore {
         CSSSelector& operator=(const CSSSelector&);
 
         struct RareData : public RefCounted<RareData> {
-            static PassRefPtr<RareData> create(PassRefPtr<AtomicStringImpl> value) { return adoptRef(new RareData(value)); }
+            static Ref<RareData> create(PassRefPtr<AtomicStringImpl> value) { return adoptRef(*new RareData(value)); }
             ~RareData();
 
             bool parseNth();

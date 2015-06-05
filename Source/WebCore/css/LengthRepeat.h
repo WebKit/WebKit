@@ -36,9 +36,9 @@ namespace WebCore {
 
 class LengthRepeat : public RefCounted<LengthRepeat> {
 public:
-    static PassRefPtr<LengthRepeat> create(PassRefPtr<CSSValue> interval) { return adoptRef(new LengthRepeat(interval)); }
+    static Ref<LengthRepeat> create(PassRefPtr<CSSValue> interval) { return adoptRef(*new LengthRepeat(interval)); }
 
-    PassRefPtr<LengthRepeat> cloneForCSSOM() const { return create(interval()); }
+    Ref<LengthRepeat> cloneForCSSOM() const { return create(interval()); }
 
     CSSValue* interval() const { return m_interval.get(); }
 

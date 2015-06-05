@@ -34,7 +34,7 @@ class StyleSheet;
 
 class StyleSheetList : public RefCounted<StyleSheetList> {
 public:
-    static PassRefPtr<StyleSheetList> create(Document* document) { return adoptRef(new StyleSheetList(document)); }
+    static Ref<StyleSheetList> create(Document* document) { return adoptRef(*new StyleSheetList(document)); }
     ~StyleSheetList();
 
     unsigned length() const;

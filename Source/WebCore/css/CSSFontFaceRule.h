@@ -32,7 +32,7 @@ class StyleRuleCSSStyleDeclaration;
 
 class CSSFontFaceRule final : public CSSRule {
 public:
-    static PassRefPtr<CSSFontFaceRule> create(StyleRuleFontFace& rule, CSSStyleSheet* sheet) { return adoptRef(new CSSFontFaceRule(rule, sheet)); }
+    static Ref<CSSFontFaceRule> create(StyleRuleFontFace& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSFontFaceRule(rule, sheet)); }
 
     virtual ~CSSFontFaceRule();
 

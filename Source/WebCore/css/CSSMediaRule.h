@@ -32,7 +32,7 @@ class StyleRuleMedia;
 
 class CSSMediaRule final : public CSSGroupingRule {
 public:
-    static PassRefPtr<CSSMediaRule> create(StyleRuleMedia& rule, CSSStyleSheet* sheet) { return adoptRef(new CSSMediaRule(rule, sheet)); }
+    static Ref<CSSMediaRule> create(StyleRuleMedia& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSMediaRule(rule, sheet)); }
 
     virtual ~CSSMediaRule();
 

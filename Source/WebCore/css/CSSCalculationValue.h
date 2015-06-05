@@ -86,8 +86,8 @@ private:
 
 class CSSCalcValue : public CSSValue {
 public:
-    static PassRefPtr<CSSCalcValue> create(CSSParserString name, CSSParserValueList& arguments, CalculationPermittedValueRange);
-    static PassRefPtr<CSSCalcValue> create(const CalculationValue&, const RenderStyle&);
+    static RefPtr<CSSCalcValue> create(CSSParserString name, CSSParserValueList& arguments, CalculationPermittedValueRange);
+    static RefPtr<CSSCalcValue> create(const CalculationValue&, const RenderStyle&);
 
     CalculationCategory category() const { return m_expression->category(); }
     bool isInt() const { return m_expression->isInteger(); }

@@ -935,7 +935,7 @@ void StyleResolver::keyframeStylesForAnimation(Element* e, const RenderStyle* el
     if (initialListSize > 0 && list[0].key()) {
         static StyleKeyframe* zeroPercentKeyframe;
         if (!zeroPercentKeyframe) {
-            zeroPercentKeyframe = StyleKeyframe::create(MutableStyleProperties::create()).leakRef();
+            zeroPercentKeyframe = &StyleKeyframe::create(MutableStyleProperties::create()).leakRef();
             zeroPercentKeyframe->setKeyText("0%");
         }
         KeyframeValue keyframeValue(0, nullptr);
@@ -947,7 +947,7 @@ void StyleResolver::keyframeStylesForAnimation(Element* e, const RenderStyle* el
     if (initialListSize > 0 && (list[list.size() - 1].key() != 1)) {
         static StyleKeyframe* hundredPercentKeyframe;
         if (!hundredPercentKeyframe) {
-            hundredPercentKeyframe = StyleKeyframe::create(MutableStyleProperties::create()).leakRef();
+            hundredPercentKeyframe = &StyleKeyframe::create(MutableStyleProperties::create()).leakRef();
             hundredPercentKeyframe->setKeyText("100%");
         }
         KeyframeValue keyframeValue(1, nullptr);

@@ -38,9 +38,9 @@ class StyleRuleSupports;
 
 class CSSSupportsRule final : public CSSGroupingRule {
 public:
-    static PassRefPtr<CSSSupportsRule> create(StyleRuleSupports& rule, CSSStyleSheet* sheet)
+    static Ref<CSSSupportsRule> create(StyleRuleSupports& rule, CSSStyleSheet* sheet)
     {
-        return adoptRef(new CSSSupportsRule(rule, sheet));
+        return adoptRef(*new CSSSupportsRule(rule, sheet));
     }
 
     virtual ~CSSSupportsRule() { }

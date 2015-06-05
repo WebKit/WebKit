@@ -98,7 +98,7 @@ public:
         CSSParserValue& value() const { return m_value; }
         operator CSSParserValue&() { return m_value; }
 
-        CSSCalcValue* calculation() const { return m_calculation.get(); }
+        RefPtr<CSSCalcValue> calculation() const { return m_calculation; }
         void setCalculation(RefPtr<CSSCalcValue>&& calculation)
         {
             ASSERT(isCalculation(m_value));

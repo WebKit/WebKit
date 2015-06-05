@@ -41,7 +41,7 @@ class StyleRuleRegion;
 
 class WebKitCSSRegionRule final : public CSSGroupingRule {
 public:
-    static PassRefPtr<WebKitCSSRegionRule> create(StyleRuleRegion& rule, CSSStyleSheet* sheet) { return adoptRef(new WebKitCSSRegionRule(rule, sheet)); }
+    static Ref<WebKitCSSRegionRule> create(StyleRuleRegion& rule, CSSStyleSheet* sheet) { return adoptRef(*new WebKitCSSRegionRule(rule, sheet)); }
 
     virtual CSSRule::Type type() const override { return WEBKIT_REGION_RULE; }
     virtual String cssText() const override;

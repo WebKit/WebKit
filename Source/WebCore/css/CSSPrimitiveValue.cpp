@@ -287,7 +287,7 @@ CSSPrimitiveValue::CSSPrimitiveValue(const Length& length)
     init(length);
 }
 
-CSSPrimitiveValue::CSSPrimitiveValue(const Length& length, const RenderStyle* style)
+CSSPrimitiveValue::CSSPrimitiveValue(const Length& length, const RenderStyle& style)
     : CSSValue(PrimitiveClass)
 {
     switch (length.type()) {
@@ -306,8 +306,7 @@ CSSPrimitiveValue::CSSPrimitiveValue(const Length& length, const RenderStyle* st
         m_value.num = adjustFloatForAbsoluteZoom(length.value(), style);
         return;
     case Calculated: {
-        RefPtr<CSSCalcValue> calcValue = CSSCalcValue::create(length.calculationValue(), *style);
-        init(calcValue.release());
+        init(CSSCalcValue::create(length.calculationValue(), style));
         return;
     }
     case Relative:
@@ -318,7 +317,7 @@ CSSPrimitiveValue::CSSPrimitiveValue(const Length& length, const RenderStyle* st
     ASSERT_NOT_REACHED();
 }
 
-CSSPrimitiveValue::CSSPrimitiveValue(const LengthSize& lengthSize, const RenderStyle* style)
+CSSPrimitiveValue::CSSPrimitiveValue(const LengthSize& lengthSize, const RenderStyle& style)
     : CSSValue(PrimitiveClass)
 {
     init(lengthSize, style);
@@ -373,11 +372,11 @@ void CSSPrimitiveValue::init(const Length& length)
     ASSERT_NOT_REACHED();
 }
 
-void CSSPrimitiveValue::init(const LengthSize& lengthSize, const RenderStyle* style)
+void CSSPrimitiveValue::init(const LengthSize& lengthSize, const RenderStyle& style)
 {
     m_primitiveUnitType = CSS_PAIR;
     m_hasCachedCSSText = false;
-    m_value.pair = Pair::create(create(lengthSize.width(), style), create(lengthSize.height(), style)).leakRef();
+    m_value.pair = &Pair::create(create(lengthSize.width(), style), create(lengthSize.height(), style)).leakRef();
 }
 
 void CSSPrimitiveValue::init(Ref<Counter>&& counter)
@@ -387,31 +386,31 @@ void CSSPrimitiveValue::init(Ref<Counter>&& counter)
     m_value.counter = &counter.leakRef();
 }
 
-void CSSPrimitiveValue::init(PassRefPtr<Rect> r)
+void CSSPrimitiveValue::init(Ref<Rect>&& r)
 {
     m_primitiveUnitType = CSS_RECT;
     m_hasCachedCSSText = false;
-    m_value.rect = r.leakRef();
+    m_value.rect = &r.leakRef();
 }
 
-void CSSPrimitiveValue::init(PassRefPtr<Quad> quad)
+void CSSPrimitiveValue::init(Ref<Quad>&& quad)
 {
     m_primitiveUnitType = CSS_QUAD;
     m_hasCachedCSSText = false;
-    m_value.quad = quad.leakRef();
+    m_value.quad = &quad.leakRef();
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)
-void CSSPrimitiveValue::init(PassRefPtr<LengthRepeat> lengthRepeat)
+void CSSPrimitiveValue::init(Ref<LengthRepeat>&& lengthRepeat)
 {
     m_primitiveUnitType = CSS_LENGTH_REPEAT;
     m_hasCachedCSSText = false;
-    m_value.lengthRepeat = lengthRepeat.leakRef();
+    m_value.lengthRepeat = &lengthRepeat.leakRef();
 }
 #endif
 
 #if ENABLE(DASHBOARD_SUPPORT)
-void CSSPrimitiveValue::init(PassRefPtr<DashboardRegion> r)
+void CSSPrimitiveValue::init(RefPtr<DashboardRegion>&& r)
 {
     m_primitiveUnitType = CSS_DASHBOARD_REGION;
     m_hasCachedCSSText = false;
@@ -419,25 +418,25 @@ void CSSPrimitiveValue::init(PassRefPtr<DashboardRegion> r)
 }
 #endif
 
-void CSSPrimitiveValue::init(PassRefPtr<Pair> p)
+void CSSPrimitiveValue::init(Ref<Pair>&& p)
 {
     m_primitiveUnitType = CSS_PAIR;
     m_hasCachedCSSText = false;
-    m_value.pair = p.leakRef();
+    m_value.pair = &p.leakRef();
 }
 
-void CSSPrimitiveValue::init(PassRefPtr<CSSCalcValue> c)
+void CSSPrimitiveValue::init(Ref<CSSBasicShape>&& shape)
+{
+    m_primitiveUnitType = CSS_SHAPE;
+    m_hasCachedCSSText = false;
+    m_value.shape = &shape.leakRef();
+}
+
+void CSSPrimitiveValue::init(RefPtr<CSSCalcValue>&& c)
 {
     m_primitiveUnitType = CSS_CALC;
     m_hasCachedCSSText = false;
     m_value.calc = c.leakRef();
-}
-
-void CSSPrimitiveValue::init(PassRefPtr<CSSBasicShape> shape)
-{
-    m_primitiveUnitType = CSS_SHAPE;
-    m_hasCachedCSSText = false;
-    m_value.shape = shape.leakRef();
 }
 
 CSSPrimitiveValue::~CSSPrimitiveValue()
@@ -1243,21 +1242,21 @@ PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValue::cloneForCSSOM() const
 #endif
     case CSS_PAIR:
         // Pair is not exposed to the CSSOM, no need for a deep clone.
-        result = CSSPrimitiveValue::create(m_value.pair);
+        result = CSSPrimitiveValue::create(Ref<Pair>(*m_value.pair));
         break;
 #if ENABLE(DASHBOARD_SUPPORT)
     case CSS_DASHBOARD_REGION:
         // DashboardRegion is not exposed to the CSSOM, no need for a deep clone.
-        result = CSSPrimitiveValue::create(m_value.region);
+        result = CSSPrimitiveValue::create(RefPtr<DashboardRegion>(m_value.region));
         break;
 #endif
     case CSS_CALC:
         // CSSCalcValue is not exposed to the CSSOM, no need for a deep clone.
-        result = CSSPrimitiveValue::create(m_value.calc);
+        result = CSSPrimitiveValue::create(RefPtr<CSSCalcValue>(m_value.calc));
         break;
     case CSS_SHAPE:
         // CSSShapeValue is not exposed to the CSSOM, no need for a deep clone.
-        result = CSSPrimitiveValue::create(m_value.shape);
+        result = CSSPrimitiveValue::create(Ref<CSSBasicShape>(*m_value.shape));
         break;
     case CSS_NUMBER:
     case CSS_PARSER_INTEGER:

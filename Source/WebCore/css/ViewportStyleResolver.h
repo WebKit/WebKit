@@ -46,9 +46,9 @@ class StyleRuleViewport;
 
 class ViewportStyleResolver : public RefCounted<ViewportStyleResolver> {
 public:
-    static PassRefPtr<ViewportStyleResolver> create(Document* document)
+    static Ref<ViewportStyleResolver> create(Document* document)
     {
-        return adoptRef(new ViewportStyleResolver(document));
+        return adoptRef(*new ViewportStyleResolver(document));
     }
 
     ~ViewportStyleResolver();

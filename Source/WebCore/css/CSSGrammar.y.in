@@ -644,11 +644,11 @@ media_query:
     }
     ;
 
-maybe_media_list: /* empty */ { $$ = MediaQuerySet::create().leakRef(); } | media_list ;
+maybe_media_list: /* empty */ { $$ = &MediaQuerySet::create().leakRef(); } | media_list ;
 
 media_list:
     media_query {
-        $$ = MediaQuerySet::create().leakRef();
+        $$ = &MediaQuerySet::create().leakRef();
         $$->addMediaQuery(std::unique_ptr<MediaQuery>($1));
         parser->updateLastMediaLine($$);
     }

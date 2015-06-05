@@ -67,7 +67,7 @@ private:
 
 class CSSKeyframesRule final : public CSSRule {
 public:
-    static PassRefPtr<CSSKeyframesRule> create(StyleRuleKeyframes& rule, CSSStyleSheet* sheet) { return adoptRef(new CSSKeyframesRule(rule, sheet)); }
+    static Ref<CSSKeyframesRule> create(StyleRuleKeyframes& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSKeyframesRule(rule, sheet)); }
 
     virtual ~CSSKeyframesRule();
 
