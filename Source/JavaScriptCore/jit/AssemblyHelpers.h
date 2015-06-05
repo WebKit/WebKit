@@ -457,6 +457,24 @@ public:
 #endif
     }
     
+    Jump branchIfInt32(JSValueRegs regs)
+    {
+#if USE(JSVALUE64)
+        return branch64(AboveOrEqual, regs.gpr(), GPRInfo::tagTypeNumberRegister);
+#else
+        return branch32(Equal, regs.tagGPR(), TrustedImm32(JSValue::Int32Tag));
+#endif
+    }
+    
+    Jump branchIfNotInt32(JSValueRegs regs)
+    {
+#if USE(JSVALUE64)
+        return branch64(Below, regs.gpr(), GPRInfo::tagTypeNumberRegister);
+#else
+        return branch32(NotEqual, regs.tagGPR(), TrustedImm32(JSValue::Int32Tag));
+#endif
+    }
+
     // Note that the tempGPR is not used in 64-bit mode.
     Jump branchIfNumber(JSValueRegs regs, GPRReg tempGPR)
     {
@@ -736,12 +754,16 @@ public:
         jitAssertIsJSDouble(gpr);
         return gpr;
     }
-    FPRReg unboxDouble(GPRReg gpr, FPRReg fpr)
+    FPRReg unboxDoubleWithoutAssertions(GPRReg gpr, FPRReg fpr)
     {
-        jitAssertIsJSDouble(gpr);
         add64(GPRInfo::tagTypeNumberRegister, gpr);
         move64ToDouble(gpr, fpr);
         return fpr;
+    }
+    FPRReg unboxDouble(GPRReg gpr, FPRReg fpr)
+    {
+        jitAssertIsJSDouble(gpr);
+        return unboxDoubleWithoutAssertions(gpr, fpr);
     }
     
     void boxDouble(FPRReg fpr, JSValueRegs regs)

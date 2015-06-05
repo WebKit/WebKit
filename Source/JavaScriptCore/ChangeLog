@@ -1,3 +1,84 @@
+2015-06-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Simplify unboxing of double JSValues known to be not NaN and not Int32
+        https://bugs.webkit.org/show_bug.cgi?id=145618
+
+        Reviewed by Geoffrey Garen.
+        
+        In many cases we know that we most likely loaded a non-NaN double value from the heap.
+        Prior to this patch, we would do two branches before unboxing the double. This patch
+        reduces this to one branch in the common case. Before:
+        
+            if (is int32)
+                unbox int32 and convert to double
+            else if (is number)
+                unbox double
+            else
+                exit
+        
+        After:
+
+            tmp = unbox double
+            if (tmp == tmp)
+                done
+            else if (is int32)
+                unbox int32 and convert to double
+            else
+                exit
+        
+        We only use the new style if we have profiling that tells us that we are unlikely to see
+        either Int32 or NaN - since we will now exit on NaN and int32 requires an extra branch.
+        
+        This is a 8% speed-up on Octane/box2d. On one microbenchmark this is a 25% speed-up.
+        
+        Rolling this back in after I made DFG::SpeculativeJIT call a new version of unboxDouble()
+        that doesn't assert that the JSValue is a double, since we are intentionally using it
+        before doing the "is a double" test. This wasn't a problem on 32-bit since unboxDouble()
+        does no such assertion on 32-bit.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::observeUseKindOnNode):
+        (JSC::DFG::FixupPhase::fixEdgeRepresentation):
+        (JSC::DFG::FixupPhase::injectTypeConversionsForEdge):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateDouble):
+        (JSC::DFG::Node::shouldSpeculateDoubleReal):
+        (JSC::DFG::Node::shouldSpeculateNumber):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileDoubleRep):
+        (JSC::DFG::SpeculativeJIT::speculateNumber):
+        (JSC::DFG::SpeculativeJIT::speculateRealNumber):
+        (JSC::DFG::SpeculativeJIT::speculateDoubleRepReal):
+        (JSC::DFG::SpeculativeJIT::speculate):
+        (JSC::DFG::SpeculativeJIT::speculateDoubleReal): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        (JSC::DFG::isNumerical):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileDoubleRep):
+        (JSC::FTL::LowerDFGToLLVM::boxDouble):
+        (JSC::FTL::LowerDFGToLLVM::jsValueToStrictInt52):
+        (JSC::FTL::LowerDFGToLLVM::speculate):
+        (JSC::FTL::LowerDFGToLLVM::speculateNumber):
+        (JSC::FTL::LowerDFGToLLVM::speculateRealNumber):
+        (JSC::FTL::LowerDFGToLLVM::speculateDoubleRepReal):
+        (JSC::FTL::LowerDFGToLLVM::jsValueToDouble): Deleted.
+        (JSC::FTL::LowerDFGToLLVM::speculateDoubleReal): Deleted.
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchIfNotOther):
+        (JSC::AssemblyHelpers::branchIfInt32):
+        (JSC::AssemblyHelpers::branchIfNotInt32):
+        (JSC::AssemblyHelpers::branchIfNumber):
+
 2015-06-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Class constructor appearing as Object Tree property does not include parameters

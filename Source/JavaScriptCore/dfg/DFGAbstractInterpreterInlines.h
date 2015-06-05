@@ -378,6 +378,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
         case Int52RepUse:
         case NumberUse:
+        case RealNumberUse:
             break;
 
         default:

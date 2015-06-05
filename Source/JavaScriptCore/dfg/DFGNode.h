@@ -1762,6 +1762,11 @@ struct Node {
         return isDoubleSpeculation(prediction());
     }
     
+    bool shouldSpeculateDoubleReal()
+    {
+        return isDoubleRealSpeculation(prediction());
+    }
+    
     bool shouldSpeculateNumber()
     {
         return isFullNumberSpeculation(prediction());
