@@ -35,6 +35,48 @@
 
 namespace API {
 
+String WebsiteDataStore::defaultApplicationCacheDirectory()
+{
+#if PLATFORM(IOS)
+    // This quirk used to make these apps share application cache storage, but doesn't accomplish that any more.
+    // Preserving it avoids the need to migrate data when upgrading.
+    // FIXME: Ideally we should just have Safari and WebApp create a data store with
+    // this application cache path, but that's not supported as of right now.
+    if (WebCore::applicationIsMobileSafari() || WebCore::applicationIsWebApp()) {
+        NSString *cachePath = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches/com.apple.WebAppCache"];
+
+        return WebKit::stringByResolvingSymlinksInPath(cachePath.stringByStandardizingPath);
+    }
+#endif
+
+    return cacheDirectoryFileSystemRepresentation("OfflineWebApplicationCache");
+}
+
+String WebsiteDataStore::defaultNetworkCacheDirectory()
+{
+    return cacheDirectoryFileSystemRepresentation("NetworkCache");
+}
+
+String WebsiteDataStore::defaultIndexedDBDatabaseDirectory()
+{
+    return cacheDirectoryFileSystemRepresentation("IndexedDB");
+}
+
+String WebsiteDataStore::defaultLocalStorageDirectory()
+{
+    return websiteDataDirectoryFileSystemRepresentation("LocalStorage");
+}
+
+String WebsiteDataStore::defaultMediaKeysStorageDirectory()
+{
+    return websiteDataDirectoryFileSystemRepresentation("MediaKeys");
+}
+
+String WebsiteDataStore::defaultWebSQLDatabaseDirectory()
+{
+    return websiteDataDirectoryFileSystemRepresentation("WebSQL");
+}
+
 String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName)
 {
     static dispatch_once_t onceToken;
@@ -91,33 +133,16 @@ String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const Stri
     return url.absoluteURL.path.fileSystemRepresentation;
 }
 
-static String applicationCacheDirectory()
-{
-#if PLATFORM(IOS)
-    // This quirk used to make these apps share application cache storage, but doesn't accomplish that any more.
-    // Preserving it avoids the need to migrate data when upgrading.
-    // FIXME: Ideally we should just have Safari and WebApp create a data store with
-    // this application cache path, but that's not supported as of right now.
-    if (WebCore::applicationIsMobileSafari() || WebCore::applicationIsWebApp()) {
-        NSString *cachePath = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches/com.apple.WebAppCache"];
-
-        return WebKit::stringByResolvingSymlinksInPath(cachePath.stringByStandardizingPath);
-    }
-#endif
-
-    return WebsiteDataStore::cacheDirectoryFileSystemRepresentation("OfflineWebApplicationCache");
-}
-
 WebKit::WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfiguration()
 {
     WebKit::WebsiteDataStore::Configuration configuration;
 
-    configuration.networkCacheDirectory = cacheDirectoryFileSystemRepresentation("NetworkCache");
-    configuration.applicationCacheDirectory = applicationCacheDirectory();
+    configuration.applicationCacheDirectory = defaultApplicationCacheDirectory();
+    configuration.networkCacheDirectory = defaultNetworkCacheDirectory();
 
-    configuration.webSQLDatabaseDirectory = websiteDataDirectoryFileSystemRepresentation("WebSQL");
-    configuration.localStorageDirectory = websiteDataDirectoryFileSystemRepresentation("LocalStorage");
-    configuration.mediaKeysStorageDirectory = websiteDataDirectoryFileSystemRepresentation("MediaKeys");
+    configuration.webSQLDatabaseDirectory = defaultWebSQLDatabaseDirectory();
+    configuration.localStorageDirectory = defaultLocalStorageDirectory();
+    configuration.mediaKeysStorageDirectory = defaultMediaKeysStorageDirectory();
 
     return configuration;
 }

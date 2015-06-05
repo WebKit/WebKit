@@ -53,10 +53,10 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithLegacyOptions(
 }
 
 ProcessPoolConfiguration::ProcessPoolConfiguration()
-    : m_indexedDBDatabaseDirectory(WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation("IndexedDB"))
-    , m_localStorageDirectory(WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation("LocalStorage"))
-    , m_webSQLDatabaseDirectory(WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation("WebSQL"))
-    , m_mediaKeysStorageDirectory(WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation("MediaKeys"))
+    : m_indexedDBDatabaseDirectory(WebsiteDataStore::defaultIndexedDBDatabaseDirectory())
+    , m_localStorageDirectory(WebsiteDataStore::defaultLocalStorageDirectory())
+    , m_webSQLDatabaseDirectory(WebsiteDataStore::defaultWebSQLDatabaseDirectory())
+    , m_mediaKeysStorageDirectory(WebsiteDataStore::defaultMediaKeysStorageDirectory())
 {
 }
 

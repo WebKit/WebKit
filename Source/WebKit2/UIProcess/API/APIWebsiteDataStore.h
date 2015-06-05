@@ -44,12 +44,20 @@ public:
 
     WebKit::WebsiteDataStore& websiteDataStore() { return *m_websiteDataStore; }
 
-    static String cacheDirectoryFileSystemRepresentation(const String& directoryName);
-    static String websiteDataDirectoryFileSystemRepresentation(const String& directoryName);
+    static String defaultApplicationCacheDirectory();
+    static String defaultNetworkCacheDirectory();
+
+    static String defaultIndexedDBDatabaseDirectory();
+    static String defaultLocalStorageDirectory();
+    static String defaultMediaKeysStorageDirectory();
+    static String defaultWebSQLDatabaseDirectory();
 
 private:
     WebsiteDataStore(WebKit::WebsiteDataStore::Configuration);
     WebsiteDataStore();
+
+    static String cacheDirectoryFileSystemRepresentation(const String& directoryName);
+    static String websiteDataDirectoryFileSystemRepresentation(const String& directoryName);
 
     static WebKit::WebsiteDataStore::Configuration defaultDataStoreConfiguration();
 

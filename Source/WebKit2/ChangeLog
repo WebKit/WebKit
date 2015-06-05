@@ -1,3 +1,23 @@
+2015-06-05  Anders Carlsson  <andersca@apple.com>
+
+        Consolidate default website data directory computations
+        https://bugs.webkit.org/show_bug.cgi?id=145698
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::ProcessPoolConfiguration):
+        * UIProcess/API/APIWebsiteDataStore.h:
+        * UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm:
+        (API::WebsiteDataStore::defaultApplicationCacheDirectory):
+        (API::WebsiteDataStore::defaultNetworkCacheDirectory):
+        (API::WebsiteDataStore::defaultIndexedDBDatabaseDirectory):
+        (API::WebsiteDataStore::defaultLocalStorageDirectory):
+        (API::WebsiteDataStore::defaultMediaKeysStorageDirectory):
+        (API::WebsiteDataStore::defaultWebSQLDatabaseDirectory):
+        (API::WebsiteDataStore::defaultDataStoreConfiguration):
+        (API::applicationCacheDirectory): Deleted.
+
 2015-06-01  Jon Honeycutt  <jhoneycutt@apple.com>
 
         [iOS] Uploading an animated GIF from the photo library uploads a JPEG
