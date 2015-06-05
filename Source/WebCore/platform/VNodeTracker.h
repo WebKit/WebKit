@@ -61,7 +61,7 @@ private:
     PressureHandler m_pressureHandler;
     RefCounter m_vnodeCounter;
     Timer m_pressureWarningTimer;
-    std::chrono::time_point<std::chrono::steady_clock> m_lastWarningTime;
+    std::chrono::steady_clock::time_point m_lastWarningTime;
 };
 
 inline void VNodeTracker::setPressureHandler(PressureHandler handler)
