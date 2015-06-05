@@ -1,3 +1,16 @@
+2015-06-05  Brent Fulgham  <bfulgham@apple.com>
+
+        Add WK1 versions of tests from Bugs 145637 and 145642
+        https://bugs.webkit.org/show_bug.cgi?id=145649
+
+        Reviewed by Zalan Bujtas.
+
+        * platform/mac/fast/scrolling/iframe_in_iframe-expected.txt: Added.
+        * platform/mac/fast/scrolling/iframe_in_iframe.html: Added.
+        * platform/mac/fast/scrolling/resources/inner_content.html: Added.
+        * platform/mac/fast/scrolling/resources/testContent.html: Added.
+        * platform/mac/fast/scrolling/resources/testImage.png: Added.
+
 2015-06-05  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Support dots sequences in grid-template-areas
