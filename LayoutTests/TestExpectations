@@ -525,3 +525,6 @@ webkit.org/b/144540 fast/frames/flattening/crash-remove-iframe-during-object-bef
 webkit.org/b/145007 js/regress-141098.html [ Skip ]
 
 webkit.org/b/145390 storage/indexeddb/deleteIndex-bug110792.html [ Pass Failure ]
+
+webkit.org/b/145675 fullscreen/video-controls-drag.html [ Skip ]
+webkit.org/b/145675 media/video-fullscreeen-only-controls.html [ Skip ]
