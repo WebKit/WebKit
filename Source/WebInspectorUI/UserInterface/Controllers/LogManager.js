@@ -33,6 +33,8 @@ WebInspector.LogManager = class LogManager extends WebInspector.Object
         this._clearMessagesRequested = false;
         this._isPageReload = false;
 
+        this.clearLogOnReloadSetting = new WebInspector.Setting("clear-log-on-reload", true);
+
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
     }
 
@@ -74,7 +76,7 @@ WebInspector.LogManager = class LogManager extends WebInspector.Object
     {
         if (this._isPageReload) {
             this._isPageReload = false;
-            if (WebInspector.clearLogOnReload.value)
+            if (this.clearLogOnReloadSetting.value)
                 this.dispatchEventToListeners(WebInspector.LogManager.Event.Cleared);
         } else {
             // A frame navigated, console.clear() or command line clear() happened.

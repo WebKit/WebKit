@@ -1,3 +1,23 @@
+2015-06-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION (r185213): TypeError: undefined is not an object (evaluating 'WebInspector.clearLogOnReload.value')
+        https://bugs.webkit.org/show_bug.cgi?id=145695
+
+        Reviewed by Mark Lam.
+
+        Move and rename the clear log on reload setting property from
+        WebInspector (Main.js) to LogManager (shared with tests).
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded): Deleted.
+        * UserInterface/Controllers/LogManager.js:
+        (WebInspector.LogManager):
+        (WebInspector.LogManager.prototype._delayedMessagesCleared):
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype._sessionStarted):
+        (WebInspector.LogContentView.prototype._handleContextMenuEvent):
+        (WebInspector.LogContentView.prototype._toggleClearLogOnReloadSetting):
+
 2015-06-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: [REGRESSION] Dashboard's resource count does not reset when main resource navigates
