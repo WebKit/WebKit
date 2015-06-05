@@ -42,6 +42,16 @@ WKContextConfigurationRef WKContextConfigurationCreate()
     return toAPI(&configuration.leakRef());
 }
 
+WKStringRef WKContextConfigurationCopyApplicationCacheDirectory(WKContextConfigurationRef configuration)
+{
+    return toCopiedAPI(toImpl(configuration)->applicationCacheDirectory());
+}
+
+void WKContextConfigurationSetApplicationCacheDirectory(WKContextConfigurationRef configuration, WKStringRef applicationCacheDirectory)
+{
+    toImpl(configuration)->setApplicationCacheDirectory(toImpl(applicationCacheDirectory)->string());
+}
+
 WKStringRef WKContextConfigurationCopyIndexedDBDatabaseDirectory(WKContextConfigurationRef configuration)
 {
     return toCopiedAPI(toImpl(configuration)->indexedDBDatabaseDirectory());

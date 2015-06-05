@@ -165,9 +165,10 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 #if USE(SOUP)
     , m_initialHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain)
 #endif
-    , m_webSQLDatabaseDirectory(configuration.webSQLDatabaseDirectory())
+    , m_applicationCacheDirectory(configuration.applicationCacheDirectory())
     , m_indexedDBDatabaseDirectory(configuration.indexedDBDatabaseDirectory())
     , m_mediaKeysStorageDirectory(configuration.mediaKeysStorageDirectory())
+    , m_webSQLDatabaseDirectory(configuration.webSQLDatabaseDirectory())
     , m_shouldUseTestingNetworkSession(false)
     , m_processTerminationEnabled(true)
 #if ENABLE(NETWORK_PROCESS)
@@ -609,7 +610,7 @@ WebProcessProxy& WebProcessPool::createNewWebProcess()
     if (!parameters.injectedBundlePath.isEmpty())
         SandboxExtension::createHandle(parameters.injectedBundlePath, SandboxExtension::ReadOnly, parameters.injectedBundlePathExtensionHandle);
 
-    parameters.applicationCacheDirectory = applicationCacheDirectory();
+    parameters.applicationCacheDirectory = m_applicationCacheDirectory;
     if (!parameters.applicationCacheDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.applicationCacheDirectory, parameters.applicationCacheDirectoryExtensionHandle);
 
@@ -1162,14 +1163,6 @@ void WebProcessPool::stopMemorySampler()
 #endif
 
     sendToAllProcesses(Messages::WebProcess::StopMemorySampler());
-}
-
-String WebProcessPool::applicationCacheDirectory() const
-{
-    if (!m_overrideApplicationCacheDirectory.isEmpty())
-        return m_overrideApplicationCacheDirectory;
-
-    return legacyPlatformDefaultApplicationCacheDirectory();
 }
 
 void WebProcessPool::setIconDatabasePath(const String& path)

@@ -34,6 +34,9 @@ extern "C" {
 
 WK_EXPORT WKContextConfigurationRef WKContextConfigurationCreate();
 
+WK_EXPORT WKStringRef WKContextConfigurationCopyApplicationCacheDirectory(WKContextConfigurationRef configuration);
+WK_EXPORT void WKContextConfigurationSetApplicationCacheDirectory(WKContextConfigurationRef configuration, WKStringRef applicationCacheDirectory);
+
 WK_EXPORT WKStringRef WKContextConfigurationCopyIndexedDBDatabaseDirectory(WKContextConfigurationRef configuration);
 WK_EXPORT void WKContextConfigurationSetIndexedDBDatabaseDirectory(WKContextConfigurationRef configuration, WKStringRef indexedDBDatabaseDirectory);
 

@@ -64,9 +64,6 @@ WK_EXPORT void WKContextSetIconDatabasePath(WKContextRef context, WKStringRef ic
 
 WK_EXPORT void WKContextAllowSpecificHTTPSCertificateForHost(WKContextRef context, WKCertificateInfoRef certificate, WKStringRef host);
 
-// FIXME: These functions are only effective if called before the Web process is launched. But
-// we should really change these settings to be on WebPreferences and changeable at runtime.
-WK_EXPORT void WKContextSetApplicationCacheDirectory(WKContextRef context, WKStringRef applicationCacheDirectory);
 WK_EXPORT void WKContextSetDiskCacheDirectory(WKContextRef context, WKStringRef diskCacheDirectory);
 WK_EXPORT void WKContextSetCookieStorageDirectory(WKContextRef context, WKStringRef cookieStorageDirectory);
 
