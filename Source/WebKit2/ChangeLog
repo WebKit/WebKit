@@ -1,5 +1,11 @@
 2015-06-04  Dan Bernstein  <mitz@apple.com>
 
+        Fixed the build.
+
+        * UIProcess/API/Cocoa/WKErrorPrivate.h:
+
+2015-06-04  Dan Bernstein  <mitz@apple.com>
+
         Renamed the WebKit2SandboxProfiles target to Sandbox Profiles.
 
         Rubber-stamped by Anders Carlsson.

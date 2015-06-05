@@ -30,7 +30,7 @@
 WK_EXTERN NSString * const _WKLegacyErrorDomain WK_AVAILABLE(WK_MAC_TBA, 8_3);
 
 typedef NS_ENUM(NSInteger, _WKLegacyErrorCode) {
-    _WKErrorCodeFrameLoadInterruptedByPolicyChange = 102 WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA),
+    _WKErrorCodeFrameLoadInterruptedByPolicyChange WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA) = 102,
     _WKLegacyErrorPlugInWillHandleLoad = 204,
 } WK_ENUM_AVAILABLE(WK_MAC_TBA, 8_3);
 
