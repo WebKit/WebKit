@@ -31,7 +31,7 @@ class GenericBenchmarkBuilder(object):
             if createScript:
                 self._runCreateScript(createScript)
             return self._applyPatch(patch)
-        except:
+        except Exception:
             self.clean()
             raise
 
@@ -42,7 +42,7 @@ class GenericBenchmarkBuilder(object):
         errorCode = subprocess.call(createScript)
         os.chdir(oldWorkingDirectory)
         if errorCode:
-            raise Exception('Cannot create the benchmark', errorCode)
+            raise Exception('Cannot create the benchmark - Error: %s' % errorCode)
 
     def _copyBenchmarkToTempDir(self, benchmarkPath):
         shutil.copytree(getPathFromProjectRoot(benchmarkPath), self.dest)
@@ -70,10 +70,10 @@ class GenericBenchmarkBuilder(object):
         errorCode = subprocess.call(['patch', '-p1', '-f', '-i', getPathFromProjectRoot(patch)])
         os.chdir(oldWorkingDirectory)
         if errorCode:
-            raise Exception('Cannot apply patch, will skip current benchmarkPath')
+            raise Exception('Cannot apply patch, will skip current benchmarkPath - Error: %s' % errorCode)
         return self.webRoot
 
     def clean(self):
-        _log.info('Cleanning Benchmark')
+        _log.info('Cleaning Benchmark')
         if self.webRoot:
             forceRemove(self.webRoot)

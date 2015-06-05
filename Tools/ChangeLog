@@ -1,5 +1,32 @@
 2015-06-05  Stephanie Lewis  <slewis@apple.com>
 
+
+        Add errors to run-benchmark exception handling.
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/run-benchmark:
+        (main):
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder/generic_benchmark_builder.py:
+        (GenericBenchmarkBuilder.prepare):
+        (GenericBenchmarkBuilder._runCreateScript):
+        (GenericBenchmarkBuilder._applyPatch):
+        (GenericBenchmarkBuilder.clean):
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (BenchmarkRunner.__init__):
+        (BenchmarkRunner.execute):
+        (BenchmarkRunner):
+        (BenchmarkRunner.cleanup):
+        * Scripts/webkitpy/benchmark_runner/generic_factory.py:
+        (GenericFactory.iterateGetItem):
+        (GenericFactory.create):
+        * Scripts/webkitpy/benchmark_runner/utils.py:
+        (loadModule):
+        (loadJSONFromFile):
+        (forceRemove):
+
+2015-06-05  Stephanie Lewis  <slewis@apple.com>
+
         Streamline run-benchmark browser
 
         Reviewed by Ryosuke Niwa.

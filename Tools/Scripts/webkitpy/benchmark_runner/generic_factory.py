@@ -27,5 +27,5 @@ class GenericFactory(object):
     def create(cls, descriptions):
         try:
             return loadModule(cls.iterateGetItem(cls.products, descriptions))()
-        except:
+        except Exception:
             raise

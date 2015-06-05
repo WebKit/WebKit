@@ -36,8 +36,11 @@ def main():
     _log.debug('\toutput file name\t: %s' % args.output)
     _log.debug('\tbuild directory\t: %s' % args.buildDir)
     _log.debug('\tplan name\t: %s', args.plan)
-    runner = BenchmarkRunner(args.plan, args.localCopy, args.countOverride, args.buildDir, args.output, args.platform, args.browser)
-    return runner.execute()
+    try:
+        runner = BenchmarkRunner(args.plan, args.localCopy, args.countOverride, args.buildDir, args.output, args.platform, args.browser)
+        runner.execute()
+    except Exception as error:
+        sys.exit("Error occurred running the benchmark: %s" % error)
 
 
 if __name__ == '__main__':

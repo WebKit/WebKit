@@ -5,6 +5,7 @@ import logging
 import shutil
 import signal
 import subprocess
+import sys
 import tempfile
 import time
 import types
@@ -39,12 +40,12 @@ class BenchmarkRunner(object):
                 self.httpServerDriver = HTTPServerDriverFactory.create([self.plan['http_server_driver']])
                 self.buildDir = os.path.abspath(buildDir) if buildDir else None
                 self.outputFile = outputFile
-        except IOError:
-            _log.error('Can not open plan file: %s' % planFile)
-            raise
-        except ValueError:
-            _log.error('Plan file:%s may not follow JSON format' % planFile)
-            raise
+        except IOError as error:
+            _log.error('Can not open plan file: %s - Error %s' % planFile, error)
+            raise error
+        except ValueError as error:
+            _log.error('Plan file: %s may not follow JSON format - Error %s' % planFile, error)
+            raise error
 
     def _findPlanFile(self, planFile):
         if not os.path.exists(planFile):
@@ -61,13 +62,13 @@ class BenchmarkRunner(object):
         _log.info('Start to execute the plan')
         _log.info('Start a new benchmark')
         results = []
-        benchmarkBuilder = BenchmarkBuilderFactory.create([self.plan['benchmark_builder']])
+        self.benchmarkBuilder = BenchmarkBuilderFactory.create([self.plan['benchmark_builder']])
 
         if not self.plan.get('local_copy') and not self.plan.get('remote_archive'):
             _log.error('Either local_copy or remote_archive must be specified in the plan')
-            return 2
+            sys.exit(2)
 
-        webRoot = benchmarkBuilder.prepare(self.planName, self.plan.get('local_copy'), self.plan.get('remote_archive'),
+        webRoot = self.benchmarkBuilder.prepare(self.planName, self.plan.get('local_copy'), self.plan.get('remote_archive'),
             self.plan.get('benchmark_patch'), self.plan.get('create_script'))
         for x in xrange(int(self.plan['count'])):
             _log.info('Start the iteration %d of current benchmark' % (x + 1))
@@ -77,24 +78,30 @@ class BenchmarkRunner(object):
             self.browserDriver.launchUrl(url, self.buildDir)
             try:
                 with timeout(self.plan['timeout']):
-                    result = json.loads(self.httpServerDriver.fetchResult())
+                    result = self.httpServerDriver.fetchResult()
                 assert(not self.httpServerDriver.getReturnCode())
                 assert(result)
-                results.append(result)
-            except:
-                _log.error('No result or server crashes. Something went wrong. Will skip current benchmark.')
-                self.browserDriver.closeBrowsers()
-                self.httpServerDriver.killServer()
-                benchmarkBuilder.clean()
-                return 1
+                results.append(json.loads(result))
+            except Exception as error:
+                _log.error('No result or the server crashed. Something went wrong. Will skip current benchmark.\nError: %s, Server return code: %d, result: %s' % (error, not self.httpServerDriver.getReturnCode(), result))
+                self.cleanup()
+                sys.exit(1)
             finally:
                 self.browserDriver.closeBrowsers()
                 _log.info('End of %d iteration of current benchmark' % (x + 1))
         results = self.wrap(results)
         self.dump(results, self.outputFile if self.outputFile else self.plan['output_file'])
         self.show_results(results)
-        benchmarkBuilder.clean()
-        return 0
+        self.benchmarkBuilder.clean()
+        sys.exit()
+
+    def cleanup(self):
+        if self.browserDriver:
+            self.browserDriver.closeBrowsers()
+        if self.httpServerDriver:
+            self.httpServerDriver.killServer()
+        if self.benchmarkBuilder:
+            self.benchmarkBuilder.clean()
 
     @classmethod
     def dump(cls, results, outputFile):
@@ -102,8 +109,8 @@ class BenchmarkRunner(object):
         try:
             with open(outputFile, 'w') as fp:
                 json.dump(results, fp)
-        except IOError:
-            _log.error('Cannot open output file: %s' % outputFile)
+        except IOError as error:
+            _log.error('Cannot open output file: %s - Error: %s' % outputFile, error)
             _log.error('Results are:\n %s', json.dumps(results))
 
     @classmethod

@@ -18,8 +18,8 @@ def loadModule(moduleDesc):
     try:
         ret = getattr(__import__(moduleDesc['filePath'], globals(), locals(), moduleDesc['moduleName'], -1), moduleDesc['moduleName'])
         return ret
-    except Exception as e:
-        raise ModuleNotFoundError('Module (%s) with path(%s) is not found' % (moduleDesc['moduleName'], moduleDesc['filePath']))
+    except Exception as error:
+        raise ModuleNotFoundError('Error loading module (%s) with path(%s): {%s}' % (moduleDesc['moduleName'], moduleDesc['filePath'], error))
 
 
 def getPathFromProjectRoot(relativePathToProjectRoot):
@@ -34,15 +34,16 @@ def loadJSONFromFile(filePath):
         jsonObject = json.load(open(filePath, 'r'))
         assert(jsonObject)
         return jsonObject
-    except:
-        raise Exception("Invalid json format or empty json was found in %s" % (filePath))
+    except Exception as error:
+        raise Exception("Invalid json format or empty json was found in %s - Error: %s" % (filePath, error))
 
 
 def forceRemove(path):
     try:
         shutil.rmtree(path)
-    except:
+    except Exception as error:
         # Directory/file does not exist or privilege issue, just ignore it
+        _log.info("Error removing %s: %s" % (path, error))
         pass
 
 # Borrow this code from
