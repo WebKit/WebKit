@@ -771,7 +771,15 @@ unsigned EventHandler::accessKeyModifiers()
     return PlatformEvent::CtrlKey | PlatformEvent::AltKey;
 }
 
-static ContainerNode* findEnclosingOverflowScroll(ContainerNode* node)
+static ScrollableArea* scrollableAreaForBox(RenderBox& box)
+{
+    if (is<RenderListBox>(box))
+        return downcast<RenderListBox>(&box);
+
+    return box.layer();
+}
+    
+static ContainerNode* findEnclosingScrollableContainer(ContainerNode* node, float deltaX, float deltaY)
 {
     // Find the first node with a valid scrollable area starting with the current
     // node and traversing its parents (or shadow hosts).
@@ -783,8 +791,14 @@ static ContainerNode* findEnclosingOverflowScroll(ContainerNode* node)
             return nullptr;
 
         RenderBox* box = candidate->renderBox();
-        if (box && box->canBeScrolledAndHasScrollableArea())
-            return candidate;
+        if (box && box->canBeScrolledAndHasScrollableArea()) {
+            if (ScrollableArea* scrollableArea = scrollableAreaForBox(*box)) {
+                if (((deltaY > 0) && !scrollableArea->scrolledToTop()) || ((deltaY < 0) && !scrollableArea->scrolledToBottom())
+                    || ((deltaX > 0) && !scrollableArea->scrolledToRight()) || ((deltaX < 0) && !scrollableArea->scrolledToLeft())) {
+                    return candidate;
+                }
+            }
+        }
     }
     
     return nullptr;
@@ -887,12 +901,8 @@ static ScrollableArea* scrollableAreaForContainerNode(ContainerNode& container)
 {
     ScrollableArea* scrollableArea = nullptr;
 
-    if (RenderBox* box = container.renderBox()) {
-        if (is<RenderListBox>(*box))
-            scrollableArea = downcast<RenderListBox>(box);
-        else
-            scrollableArea = box->layer();
-    }
+    if (RenderBox* box = container.renderBox())
+        scrollableArea = scrollableAreaForBox(*box);
 
     return scrollableArea;
 }
@@ -916,7 +926,7 @@ void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheel
             scrollableContainer = wheelEventTarget;
             scrollableArea = scrollViewForEventTarget(wheelEventTarget.get());
         } else {
-            scrollableContainer = findEnclosingOverflowScroll(wheelEventTarget.get());
+            scrollableContainer = findEnclosingScrollableContainer(wheelEventTarget.get(), wheelEvent.deltaX(), wheelEvent.deltaY());
             if (scrollableContainer)
                 scrollableArea = scrollableAreaForContainerNode(*scrollableContainer);
             else {
