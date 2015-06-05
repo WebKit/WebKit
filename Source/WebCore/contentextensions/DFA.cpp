@@ -127,6 +127,16 @@ void DFA::minimize()
     DFAMinimizer::minimize(*this);
 }
 
+unsigned DFA::graphSize() const
+{
+    unsigned count = 0;
+    for (const DFANode& node : nodes) {
+        if (!node.isKilled())
+            ++count;
+    }
+    return count;
+}
+
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
 static void printRange(bool firstRange, char rangeStart, char rangeEnd)
 {
@@ -212,14 +222,14 @@ void DFA::debugPrintDot() const
         }
 
         Vector<unsigned> correspondingNFANodes = nodes[i].correspondingNFANodes;
-        ASSERT(!correspondingNFANodes.isEmpty());
-        dataLogF("<BR/>NFA Nodes: ");
-        for (unsigned correspondingDFANodeIndex = 0; correspondingDFANodeIndex < correspondingNFANodes.size(); ++correspondingDFANodeIndex) {
-            if (correspondingDFANodeIndex)
-                dataLogF(", ");
-            dataLogF("%d", correspondingNFANodes[correspondingDFANodeIndex]);
+        if (!correspondingNFANodes.isEmpty()) {
+            dataLogF("<BR/>NFA Nodes: ");
+            for (unsigned correspondingDFANodeIndex = 0; correspondingDFANodeIndex < correspondingNFANodes.size(); ++correspondingDFANodeIndex) {
+                if (correspondingDFANodeIndex)
+                    dataLogF(", ");
+                dataLogF("%d", correspondingNFANodes[correspondingDFANodeIndex]);
+            }
         }
-
         dataLogF(">]");
 
         if (!actions.isEmpty())

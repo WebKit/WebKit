@@ -36,6 +36,7 @@
 #include "ContentExtensionRule.h"
 #include "ContentExtensionsDebugging.h"
 #include "DFABytecodeCompiler.h"
+#include "DFACombiner.h"
 #include "NFA.h"
 #include "NFAToDFA.h"
 #include "URLFilterParser.h"
@@ -235,6 +236,10 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
     LOG_LARGE_STRUCTURES(domainFilters, domainFilters.memoryUsed());
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
+    unsigned machinesWithoutDomainsCount = 0;
+    unsigned totalBytecodeSizeForMachinesWithoutDomains = 0;
+    unsigned machinesWithDomainsCount = 0;
+    unsigned totalBytecodeSizeForMachinesWithDomains = 0;
     double totalNFAToByteCodeBuildTimeStart = monotonicallyIncreasingTime();
 #endif
 
@@ -243,20 +248,9 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
     const unsigned maxNFASize = 30000;
     
     bool firstNFAWithoutDomainsSeen = false;
-    // FIXME: Combine small NFAs to reduce the number of NFAs.
-    filtersWithoutDomains.processNFAs(maxNFASize, [&](NFA&& nfa) {
-#if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-        dataLogF("filtersWithoutDomains NFA\n");
-        nfa.debugPrintDot();
-#endif
 
-        LOG_LARGE_STRUCTURES(nfa, nfa.memoryUsed());
-
-        DFA dfa = NFAToDFA::convert(nfa);
-        LOG_LARGE_STRUCTURES(dfa, dfa.memoryUsed());
-
-        dfa.minimize();
-
+    auto lowerFiltersWithoutDomainsDFAToBytecode = [&](DFA&& dfa)
+    {
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
         dataLogF("filtersWithoutDomains DFA\n");
         dfa.debugPrintDot();
@@ -272,10 +266,41 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
         DFABytecodeCompiler compiler(dfa, bytecode);
         compiler.compile();
         LOG_LARGE_STRUCTURES(bytecode, bytecode.capacity() * sizeof(uint8_t));
+#if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
+        ++machinesWithoutDomainsCount;
+        totalBytecodeSizeForMachinesWithoutDomains += bytecode.size();
+#endif
         client.writeFiltersWithoutDomainsBytecode(WTF::move(bytecode));
 
         firstNFAWithoutDomainsSeen = true;
+    };
+
+    const unsigned smallDFASize = 100;
+    DFACombiner smallFiltersWithoutDomainsDFACombiner;
+    filtersWithoutDomains.processNFAs(maxNFASize, [&](NFA&& nfa) {
+#if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
+        dataLogF("filtersWithoutDomains NFA\n");
+        nfa.debugPrintDot();
+#endif
+
+        LOG_LARGE_STRUCTURES(nfa, nfa.memoryUsed());
+        DFA dfa = NFAToDFA::convert(nfa);
+        LOG_LARGE_STRUCTURES(dfa, dfa.memoryUsed());
+
+        if (dfa.graphSize() < smallDFASize)
+            smallFiltersWithoutDomainsDFACombiner.addDFA(WTF::move(dfa));
+        else {
+            dfa.minimize();
+            lowerFiltersWithoutDomainsDFAToBytecode(WTF::move(dfa));
+        }
     });
+
+
+    smallFiltersWithoutDomainsDFACombiner.combineDFAs(smallDFASize, [&](DFA&& dfa) {
+        LOG_LARGE_STRUCTURES(dfa, dfa.memoryUsed());
+        lowerFiltersWithoutDomainsDFAToBytecode(WTF::move(dfa));
+    });
+
     ASSERT(filtersWithoutDomains.isEmpty());
 
     if (!firstNFAWithoutDomainsSeen) {
@@ -297,6 +322,27 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
     universalActionsWithoutDomains.clear();
     
     bool firstNFAWithDomainsSeen = false;
+    auto lowerFiltersWithDomainsDFAToBytecode = [&](DFA&& dfa)
+    {
+        if (!firstNFAWithDomainsSeen) {
+            // Put all the universal actions on the first DFA.
+            addUniversalActionsToDFA(dfa, universalActionsWithDomains);
+        }
+
+        Vector<DFABytecode> bytecode;
+        DFABytecodeCompiler compiler(dfa, bytecode);
+        compiler.compile();
+        LOG_LARGE_STRUCTURES(bytecode, bytecode.capacity() * sizeof(uint8_t));
+#if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
+        ++machinesWithDomainsCount;
+        totalBytecodeSizeForMachinesWithDomains += bytecode.size();
+#endif
+        client.writeFiltersWithDomainsBytecode(WTF::move(bytecode));
+
+        firstNFAWithDomainsSeen = true;
+    };
+
+    DFACombiner smallFiltersWithDomainsDFACombiner;
     filtersWithDomains.processNFAs(maxNFASize, [&](NFA&& nfa) {
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
         dataLogF("filtersWithDomains NFA\n");
@@ -309,25 +355,19 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
         dfa.debugPrintDot();
 #endif
         LOG_LARGE_STRUCTURES(dfa, dfa.memoryUsed());
-        // Minimizing this DFA would not be effective because all actions with domains are unique.
-#if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-        dataLogF("filtersWithDomains POST MINIMIZING DFA\n");
-        dfa.debugPrintDot();
-#endif
+
         ASSERT_WITH_MESSAGE(!dfa.nodes[dfa.root].hasActions(), "Filters with domains that match everything are not allowed right now.");
-        
-        if (!firstNFAWithDomainsSeen) {
-            // Put all the universal actions on the first DFA.
-            addUniversalActionsToDFA(dfa, universalActionsWithDomains);
+
+        if (dfa.graphSize() < smallDFASize)
+            smallFiltersWithDomainsDFACombiner.addDFA(WTF::move(dfa));
+        else {
+            dfa.minimize();
+            lowerFiltersWithDomainsDFAToBytecode(WTF::move(dfa));
         }
-        
-        Vector<DFABytecode> bytecode;
-        DFABytecodeCompiler compiler(dfa, bytecode);
-        compiler.compile();
-        LOG_LARGE_STRUCTURES(bytecode, bytecode.capacity() * sizeof(uint8_t));
-        client.writeFiltersWithDomainsBytecode(WTF::move(bytecode));
-        
-        firstNFAWithDomainsSeen = true;
+    });
+    smallFiltersWithDomainsDFACombiner.combineDFAs(smallDFASize, [&](DFA&& dfa) {
+        LOG_LARGE_STRUCTURES(dfa, dfa.memoryUsed());
+        lowerFiltersWithDomainsDFAToBytecode(WTF::move(dfa));
     });
     ASSERT(filtersWithDomains.isEmpty());
     
@@ -364,7 +404,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
         // Minimizing this DFA would not be effective because all actions are unique
         // and because of the tree-like structure of this DFA.
         ASSERT_WITH_MESSAGE(!dfa.nodes[dfa.root].hasActions(), "There should not be any domains that match everything.");
-        
+
         Vector<DFABytecode> bytecode;
         DFABytecodeCompiler compiler(dfa, bytecode);
         compiler.compile();
@@ -376,6 +416,9 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     double totalNFAToByteCodeBuildTimeEnd = monotonicallyIncreasingTime();
     dataLogF("    Time spent building and compiling the DFAs: %f\n", (totalNFAToByteCodeBuildTimeEnd - totalNFAToByteCodeBuildTimeStart));
+
+    dataLogF("    Number of machines without domain filters: %d (total bytecode size = %d)\n", machinesWithoutDomainsCount, totalBytecodeSizeForMachinesWithoutDomains);
+    dataLogF("    Number of machines with domain filters: %d (total bytecode size = %d)\n", machinesWithDomainsCount, totalBytecodeSizeForMachinesWithDomains);
 #endif
 
     client.finalize();

@@ -25,13 +25,8 @@
 
 #include "config.h"
 
-#include <WebCore/CombinedURLFilters.h>
-#include <WebCore/NFA.h>
-#include <WebCore/NFAToDFA.h>
-#include <WebCore/URLFilterParser.h>
+#include "DFAHelpers.h"
 #include <wtf/MainThread.h>
-
-using namespace WebCore;
 
 namespace TestWebKitAPI {
 
@@ -42,38 +37,6 @@ public:
         WTF::initializeMainThread();
     }
 };
-
-static unsigned countLiveNodes(const ContentExtensions::DFA& dfa)
-{
-    unsigned counter = 0;
-    for (const auto& node : dfa.nodes) {
-        if (!node.isKilled())
-            ++counter;
-    }
-    return counter;
-}
-
-static Vector<ContentExtensions::NFA> createNFAs(ContentExtensions::CombinedURLFilters& combinedURLFilters)
-{
-    Vector<ContentExtensions::NFA> nfas;
-
-    combinedURLFilters.processNFAs(std::numeric_limits<size_t>::max(), [&](ContentExtensions::NFA&& nfa) {
-        nfas.append(WTF::move(nfa));
-    });
-
-    return nfas;
-}
-
-ContentExtensions::DFA buildDFAFromPatterns(Vector<const char*> patterns)
-{
-    ContentExtensions::CombinedURLFilters combinedURLFilters;
-    ContentExtensions::URLFilterParser parser(combinedURLFilters);
-
-    for (const char* pattern : patterns)
-        parser.addPattern(pattern, false, 0);
-    Vector<ContentExtensions::NFA> nfas = createNFAs(combinedURLFilters);
-    return ContentExtensions::NFAToDFA::convert(nfas[0]);
-}
 
 TEST_F(DFAMinimizerTest, BasicSearch)
 {

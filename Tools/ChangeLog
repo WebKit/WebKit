@@ -1,3 +1,24 @@
+2015-06-04  Benjamin Poulain  <bpoulain@apple.com>
+
+        Combine tiny DFAs into slightly larger ones
+        https://bugs.webkit.org/show_bug.cgi?id=145572
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/DFACombiner.cpp: Added.
+        (TestWebKitAPI::DFACombinerTest::SetUp):
+        (TestWebKitAPI::combine):
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebCore/DFAHelpers.h: Copied from Source/WebCore/contentextensions/DFA.h.
+        (TestWebKitAPI::countLiveNodes):
+        (TestWebKitAPI::createNFAs):
+        (TestWebKitAPI::buildDFAFromPatterns):
+        * TestWebKitAPI/Tests/WebCore/DFAMinimizer.cpp:
+        (TestWebKitAPI::countLiveNodes): Deleted.
+        (TestWebKitAPI::createNFAs): Deleted.
+        (TestWebKitAPI::buildDFAFromPatterns): Deleted.
+
 2015-06-04  Alexey Proskuryakov  <ap@apple.com>
 
         WebKitTestRunner leaks strings in generateWhitelist()
