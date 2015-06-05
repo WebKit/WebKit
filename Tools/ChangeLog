@@ -1,3 +1,23 @@
+2015-06-05  Stephanie Lewis  <slewis@apple.com>
+
+        Streamline run-benchmark browser
+
+        Reviewed by Ryosuke Niwa.
+
+        Add Caffeinate so computer won't sleep while running.
+        Remove calls to collect output since we were just dumping to stdout anyway.
+        Add xpc dyld_path.
+        Default to system safari.
+
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_browser_driver.py:
+        (OSXBrowserDriver.launchProcess):
+        (OSXBrowserDriver.terminateProcesses):
+        (OSXBrowserDriver):
+        (OSXBrowserDriver.launchCaffeinateForProcess):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        (OSXSafariDriver.launchUrl):
+        (OSXSafariDriver.closeBrowsers):
+
 2015-06-04  Benjamin Poulain  <bpoulain@apple.com>
 
         Combine tiny DFAs into slightly larger ones

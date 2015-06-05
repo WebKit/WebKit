@@ -28,7 +28,8 @@ class OSXBrowserDriver(BrowserDriver):
         _log.info('Launching "%s" with url "%s"' % (appPath, url))
 
         # FIXME: May need to be modified for a local build such as setting up DYLD libraries
-        subprocess.Popen((['open', '-a', appPath] + args)).communicate()
+        args = ['open', '-a', appPath] + args
+        cls.launchProcessWithCaffinate(args)
 
     @classmethod
     def terminateProcesses(cls, bundleIdentifier):
@@ -36,3 +37,9 @@ class OSXBrowserDriver(BrowserDriver):
         processes = NSRunningApplication.runningApplicationsWithBundleIdentifier_(bundleIdentifier)
         for process in processes:
             process.terminate()
+
+    @classmethod
+    def launchProcessWithCaffinate(cls, args, env=None):
+        process = subprocess.Popen(args, env=env)
+        subprocess.Popen(["/usr/bin/caffeinate", "-disw", str(process.pid)])
+        return process
