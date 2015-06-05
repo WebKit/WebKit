@@ -1,3 +1,14 @@
+2015-06-05  David Hyatt  <hyatt@apple.com>
+
+        Underlines too close in vertical Chinese text.
+        https://bugs.webkit.org/show_bug.cgi?id=145651
+        <rdar://problem/11105920>
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/decorations-vertical-underline-expected.html: Added.
+        * fast/text/decorations-vertical-underline.html: Added.
+
 2015-06-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Layout test http/tests/misc/acid3.html times out on Yosemite WK2 Debug.
