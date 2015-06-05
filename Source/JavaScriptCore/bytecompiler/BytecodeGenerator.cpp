@@ -2528,7 +2528,7 @@ TryData* BytecodeGenerator::pushTry(Label* start)
     return result;
 }
 
-RegisterID* BytecodeGenerator::popTryAndEmitCatch(TryData* tryData, RegisterID* targetRegister, Label* end, HandlerType handlerType)
+void BytecodeGenerator::popTryAndEmitCatch(TryData* tryData, RegisterID* exceptionRegister, RegisterID* thrownValueRegister, Label* end, HandlerType handlerType)
 {
     m_usesExceptions = true;
     
@@ -2546,8 +2546,8 @@ RegisterID* BytecodeGenerator::popTryAndEmitCatch(TryData* tryData, RegisterID* 
     tryRange.tryData->handlerType = handlerType;
 
     emitOpcode(op_catch);
-    instructions().append(targetRegister->index());
-    return targetRegister;
+    instructions().append(exceptionRegister->index());
+    instructions().append(thrownValueRegister->index());
 }
 
 void BytecodeGenerator::emitThrowReferenceError(const String& message)
@@ -2760,7 +2760,11 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
         // IteratorClose sequence for throw-ed control flow.
         {
             RefPtr<Label> catchHere = emitLabel(newLabel().get());
-            RefPtr<RegisterID> exceptionRegister = popTryAndEmitCatch(tryData, newTemporary(), catchHere.get(), HandlerType::SynthesizedFinally);
+            RefPtr<RegisterID> exceptionRegister = newTemporary();
+            RefPtr<RegisterID> thrownValueRegister = newTemporary();
+            popTryAndEmitCatch(tryData, exceptionRegister.get(),
+                thrownValueRegister.get(), catchHere.get(), HandlerType::SynthesizedFinally);
+
             RefPtr<Label> catchDone = newLabel();
 
             RefPtr<RegisterID> returnMethod = emitGetById(newTemporary(), iterator.get(), propertyNames().returnKeyword);
@@ -2778,7 +2782,8 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
             emitThrow(exceptionRegister.get());
 
             // Absorb exception.
-            popTryAndEmitCatch(returnCallTryData, newTemporary(), catchDone.get(), HandlerType::SynthesizedFinally);
+            popTryAndEmitCatch(returnCallTryData, newTemporary(),
+                newTemporary(), catchDone.get(), HandlerType::SynthesizedFinally);
             emitThrow(exceptionRegister.get());
         }
 

@@ -54,7 +54,7 @@ private:
     // NOTE: Currently all exceptions are reported at the API boundary through reportAPIException.
     // Until a time comes where an exception can be caused outside of the API (e.g. setTimeout
     // or some other async operation in a pure JSContext) we can ignore exceptions reported here.
-    virtual void reportException(JSC::ExecState*, JSC::JSValue) const override { }
+    virtual void reportException(JSC::ExecState*, JSC::Exception*) const override { }
 
     ListenerSet m_listeners;
     JSC::JSGlobalObject& m_globalObject;

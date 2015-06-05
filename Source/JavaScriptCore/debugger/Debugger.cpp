@@ -487,7 +487,7 @@ bool Debugger::hasBreakpoint(SourceID sourceID, const TextPosition& position, Br
     // so make it looks like the debugger is already paused.
     TemporaryPausedState pausedState(*this);
 
-    JSValue exception;
+    Exception* exception;
     DebuggerCallFrame* debuggerCallFrame = currentDebuggerCallFrame();
     JSValue result = debuggerCallFrame->evaluate(breakpoint->condition, exception);
 
@@ -695,13 +695,13 @@ void Debugger::pauseIfNeeded(CallFrame* callFrame)
     }
 }
 
-void Debugger::exception(CallFrame* callFrame, JSValue exception, bool hasHandler)
+void Debugger::exception(CallFrame* callFrame, JSValue exception, bool hasCatchHandler)
 {
     if (m_isPaused)
         return;
 
     PauseReasonDeclaration reason(*this, PausedForException);
-    if (m_pauseOnExceptionsState == PauseOnAllExceptions || (m_pauseOnExceptionsState == PauseOnUncaughtExceptions && !hasHandler)) {
+    if (m_pauseOnExceptionsState == PauseOnAllExceptions || (m_pauseOnExceptionsState == PauseOnUncaughtExceptions && !hasCatchHandler)) {
         m_pauseOnNextStatement = true;
         setSteppingMode(SteppingModeEnabled);
     }

@@ -40,7 +40,7 @@ enum class HandlerType {
 struct HandlerInfoBase {
     HandlerType type() const { return static_cast<HandlerType>(typeBits); }
     void setType(HandlerType type) { typeBits = static_cast<uint32_t>(type); }
-    
+
     const char* typeName()
     {
         switch (type()) {
@@ -55,9 +55,9 @@ struct HandlerInfoBase {
         }
         return nullptr;
     }
-    
+
     bool isCatchHandler() const { return type() == HandlerType::Catch; }
-    
+
     uint32_t start;
     uint32_t end;
     uint32_t target;

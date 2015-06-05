@@ -1918,7 +1918,7 @@ void JIT_OPERATION operationThrow(ExecState* exec, EncodedJSValue encodedExcepti
     vm->throwException(exec, exceptionValue);
 
     // Results stored out-of-band in vm.targetMachinePCForThrow, vm.callFrameForThrow & vm.vmEntryFrameForThrow
-    genericUnwind(vm, exec, exceptionValue);
+    genericUnwind(vm, exec);
 }
 
 void JIT_OPERATION operationFlushWriteBarrierBuffer(ExecState* exec, JSCell* cell)
@@ -1957,11 +1957,7 @@ void JIT_OPERATION operationInitGlobalConst(ExecState* exec, Instruction* pc)
 void JIT_OPERATION lookupExceptionHandler(VM* vm, ExecState* exec)
 {
     NativeCallFrameTracer tracer(vm, exec);
-
-    JSValue exceptionValue = vm->exception();
-    ASSERT(exceptionValue);
-    
-    genericUnwind(vm, exec, exceptionValue);
+    genericUnwind(vm, exec);
     ASSERT(vm->targetMachinePCForThrow);
 }
 
@@ -1972,11 +1968,7 @@ void JIT_OPERATION lookupExceptionHandlerFromCallerFrame(VM* vm, ExecState* exec
     ASSERT(callerFrame);
 
     NativeCallFrameTracerWithRestore tracer(vm, vmEntryFrame, callerFrame);
-
-    JSValue exceptionValue = vm->exception();
-    ASSERT(exceptionValue);
-    
-    genericUnwind(vm, callerFrame, exceptionValue);
+    genericUnwind(vm, callerFrame);
     ASSERT(vm->targetMachinePCForThrow);
 }
 
@@ -1984,8 +1976,7 @@ void JIT_OPERATION operationVMHandleException(ExecState* exec)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
-
-    genericUnwind(vm, exec, vm->exception());
+    genericUnwind(vm, exec);
 }
 
 // This function "should" just take the ExecState*, but doing so would make it more difficult

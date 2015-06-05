@@ -29,6 +29,7 @@
 #if ENABLE(PROMISES)
 
 #include "Error.h"
+#include "Exception.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
 #include "JSGlobalObject.h"
@@ -88,7 +89,7 @@ void ExecutePromiseReactionMicrotask::run(ExecState* exec)
     //    [[Call]] internal method of deferred.[[Reject]] passing undefined as thisArgument
     //    and a List containing handlerResult.[[value]] as argumentsList.
     if (exec->hadException()) {
-        JSValue exception = exec->exception();
+        JSValue exception = exec->exception()->value();
         exec->clearException();
 
         performDeferredReject(exec, deferred, exception);

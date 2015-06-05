@@ -1,3 +1,15 @@
+2015-06-05  Mark Lam  <mark.lam@apple.com>
+
+        finally blocks should not set the exception stack trace when re-throwing the exception.
+        https://bugs.webkit.org/show_bug.cgi?id=145525
+
+        Reviewed by Geoffrey Garen.
+
+        * WebView/WebView.mm:
+        (+[WebView _reportException:inContext:]):
+        (WebKitInitializeApplicationCachePathIfNecessary):
+        - Changed to use the new Exception object.
+
 2015-06-03  Anders Carlsson  <andersca@apple.com>
 
         Define WK_ENABLE_FORMAL_DELEGATE_PROTOCOLS on iOS

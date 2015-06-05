@@ -26,6 +26,7 @@
 #include "CallFrame.h"
 #include "CodeProfiling.h"
 #include "Debugger.h"
+#include "Exception.h"
 #include "Interpreter.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
@@ -60,19 +61,18 @@ bool checkSyntax(VM& vm, const SourceCode& source, ParserError& error)
         JSParserStrictMode::NotStrict, JSParserCodeType::Program, error);
 }
 
-JSValue evaluate(ExecState* exec, const SourceCode& source, JSValue thisValue, JSValue* returnedException)
+JSValue evaluate(ExecState* exec, const SourceCode& source, JSValue thisValue, Exception*& returnedException)
 {
     JSLockHolder lock(exec);
     RELEASE_ASSERT(exec->vm().atomicStringTable() == wtfThreadData().atomicStringTable());
     RELEASE_ASSERT(!exec->vm().isCollectorBusy());
+    returnedException = nullptr;
 
     CodeProfiling profile(source);
 
     ProgramExecutable* program = ProgramExecutable::create(exec, source);
     if (!program) {
-        if (returnedException)
-            *returnedException = exec->vm().exception();
-
+        returnedException = exec->vm().exception();
         exec->vm().clearException();
         return jsUndefined();
     }
@@ -83,9 +83,7 @@ JSValue evaluate(ExecState* exec, const SourceCode& source, JSValue thisValue, J
     JSValue result = exec->interpreter()->execute(program, exec, thisObj);
 
     if (exec->hadException()) {
-        if (returnedException)
-            *returnedException = exec->exception();
-
+        returnedException = exec->exception();
         exec->clearException();
         return jsUndefined();
     }

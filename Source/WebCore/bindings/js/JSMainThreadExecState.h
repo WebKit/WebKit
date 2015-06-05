@@ -50,16 +50,22 @@ public:
         return s_mainThreadState;
     };
     
-    static JSC::JSValue call(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, JSC::JSValue* exception)
+    static JSC::JSValue call(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, JSC::Exception*& returnedException)
     {
         JSMainThreadExecState currentState(exec);
-        return JSC::call(exec, functionObject, callType, callData, thisValue, args, exception);
+        return JSC::call(exec, functionObject, callType, callData, thisValue, args, returnedException);
     };
 
-    static JSC::JSValue evaluate(JSC::ExecState* exec, const JSC::SourceCode& source, JSC::JSValue thisValue, JSC::JSValue* exception)
+    static JSC::JSValue evaluate(JSC::ExecState* exec, const JSC::SourceCode& source, JSC::JSValue thisValue, JSC::Exception*& returnedException)
     {
         JSMainThreadExecState currentState(exec);
-        return JSC::evaluate(exec, source, thisValue, exception);
+        return JSC::evaluate(exec, source, thisValue, returnedException);
+    };
+
+    static JSC::JSValue evaluate(JSC::ExecState* exec, const JSC::SourceCode& source, JSC::JSValue thisValue = JSC::JSValue())
+    {
+        JSC::Exception* unused;
+        return evaluate(exec, source, thisValue, unused);
     };
 
     static void runTask(JSC::ExecState* exec, JSC::Microtask& task)
@@ -121,8 +127,8 @@ private:
     JSC::ExecState* m_previousState;
 };
 
-JSC::JSValue functionCallHandlerFromAnyThread(JSC::ExecState*, JSC::JSValue functionObject, JSC::CallType, const JSC::CallData&, JSC::JSValue thisValue, const JSC::ArgList& args, JSC::JSValue* exception);
-JSC::JSValue evaluateHandlerFromAnyThread(JSC::ExecState*, const JSC::SourceCode&, JSC::JSValue thisValue, JSC::JSValue* exception);
+JSC::JSValue functionCallHandlerFromAnyThread(JSC::ExecState*, JSC::JSValue functionObject, JSC::CallType, const JSC::CallData&, JSC::JSValue thisValue, const JSC::ArgList& args, JSC::Exception*& returnedException);
+JSC::JSValue evaluateHandlerFromAnyThread(JSC::ExecState*, const JSC::SourceCode&, JSC::JSValue thisValue, JSC::Exception*& returnedException);
 
 } // namespace WebCore
 

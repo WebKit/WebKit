@@ -143,8 +143,20 @@ InspectorTestProxy.clearResults = function()
     }
 }
 
+InspectorTestProxy.needToSanitizeUncaughtExceptionURLs = false;
+
 InspectorTestProxy.reportUncaughtException = function(message, url, lineNumber)
 {
+    if (InspectorTestProxy.needToSanitizeUncaughtExceptionURLs) {
+        if (typeof url == "string") {
+            var lastSlash = url.lastIndexOf("/");
+            var lastBackSlash = url.lastIndexOf("\\");
+            var lastPathSeparator = Math.max(lastSlash, lastBackSlash);
+            if (lastPathSeparator > 0)
+                url = url.substr(lastPathSeparator + 1);
+        }
+    }
+
     var result = "Uncaught exception in test page: " + message + " [" + url + ":" + lineNumber + "]";
     InspectorTestProxy.addResult(result);
     InspectorTestProxy.completeTest();

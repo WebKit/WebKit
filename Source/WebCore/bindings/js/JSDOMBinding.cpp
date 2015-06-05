@@ -40,6 +40,7 @@
 #include <runtime/DateInstance.h>
 #include <runtime/Error.h>
 #include <runtime/ErrorHandlingScope.h>
+#include <runtime/Exception.h>
 #include <runtime/ExceptionHelpers.h>
 #include <runtime/JSFunction.h>
 #include <stdarg.h>
@@ -138,7 +139,7 @@ JSC::JSValue jsArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, Pass
     return JSC::constructArray(exec, 0, globalObject, list);
 }
 
-void reportException(ExecState* exec, JSValue exception, CachedScript* cachedScript)
+void reportException(ExecState* exec, Exception* exception, CachedScript* cachedScript)
 {
     RELEASE_ASSERT(exec->vm().currentThreadIsHoldingAPILock());
     if (isTerminatedExecutionException(exception))
@@ -148,7 +149,6 @@ void reportException(ExecState* exec, JSValue exception, CachedScript* cachedScr
 
     RefPtr<ScriptCallStack> callStack(createScriptCallStackFromException(exec, exception, ScriptCallStack::maxCallStackSizeToCapture));
     exec->clearException();
-    exec->clearSupplementaryExceptionInfo();
 
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
     if (JSDOMWindow* window = jsDynamicCast<JSDOMWindow*>(globalObject)) {
@@ -166,14 +166,13 @@ void reportException(ExecState* exec, JSValue exception, CachedScript* cachedScr
     }
 
     String errorMessage;
-    if (ExceptionBase* exceptionBase = toExceptionBase(exception))
+    if (ExceptionBase* exceptionBase = toExceptionBase(exception->value()))
         errorMessage = exceptionBase->message() + ": "  + exceptionBase->description();
     else {
         // FIXME: <http://webkit.org/b/115087> Web Inspector: WebCore::reportException should not evaluate JavaScript handling exceptions
         // If this is a custon exception object, call toString on it to try and get a nice string representation for the exception.
-        errorMessage = exception.toString(exec)->value(exec);
+        errorMessage = exception->value().toString(exec)->value(exec);
         exec->clearException();
-        exec->clearSupplementaryExceptionInfo();
     }
 
     ScriptExecutionContext* scriptExecutionContext = globalObject->scriptExecutionContext();
@@ -182,7 +181,7 @@ void reportException(ExecState* exec, JSValue exception, CachedScript* cachedScr
 
 void reportCurrentException(ExecState* exec)
 {
-    JSValue exception = exec->exception();
+    Exception* exception = exec->exception();
     exec->clearException();
     reportException(exec, exception);
 }

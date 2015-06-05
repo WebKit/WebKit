@@ -109,7 +109,7 @@ public:
 
     virtual void sourceParsed(ExecState*, SourceProvider*, int errorLineNumber, const WTF::String& errorMessage) = 0;
 
-    void exception(CallFrame*, JSValue exceptionValue, bool hasHandler);
+    void exception(CallFrame*, JSValue exceptionValue, bool hasCatchHandler);
     void atStatement(CallFrame*);
     void callEvent(CallFrame*);
     void returnEvent(CallFrame*);
@@ -124,7 +124,7 @@ public:
 protected:
     virtual bool needPauseHandling(JSGlobalObject*) { return false; }
     virtual void handleBreakpointHit(JSGlobalObject*, const Breakpoint&) { }
-    virtual void handleExceptionInBreakpointCondition(ExecState*, JSValue exception) const { UNUSED_PARAM(exception); }
+    virtual void handleExceptionInBreakpointCondition(ExecState*, Exception*) const { }
     virtual void handlePause(JSGlobalObject*, ReasonForPause) { }
     virtual void notifyDoneProcessingDebuggerEvents() { }
 

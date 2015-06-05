@@ -34,6 +34,7 @@
 namespace JSC {
 
 class ArgList;
+class Exception;
 class ExecState;
 class FunctionExecutable;
 class JSObject;
@@ -58,7 +59,7 @@ union CallData {
 };
 
 JS_EXPORT_PRIVATE JSValue call(ExecState*, JSValue functionObject, CallType, const CallData&, JSValue thisValue, const ArgList&);
-JS_EXPORT_PRIVATE JSValue call(ExecState*, JSValue functionObject, CallType, const CallData&, JSValue thisValue, const ArgList&, JSValue* exception);
+JS_EXPORT_PRIVATE JSValue call(ExecState*, JSValue functionObject, CallType, const CallData&, JSValue thisValue, const ArgList&, Exception*& returnedException);
 
 } // namespace JSC
 

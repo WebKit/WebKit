@@ -30,6 +30,7 @@
 #include "CommonSlowPaths.h"
 #include "Debugger.h"
 #include "DirectArguments.h"
+#include "Exception.h"
 #include "Executable.h"
 #include "Heap.h"
 #include "Interpreter.h"

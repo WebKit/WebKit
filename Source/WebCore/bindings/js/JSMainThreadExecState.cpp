@@ -46,18 +46,18 @@ void JSMainThreadExecState::didLeaveScriptContext()
     MutationObserver::deliverAllMutations();
 }
 
-JSC::JSValue functionCallHandlerFromAnyThread(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, JSC::JSValue* exception)
+JSC::JSValue functionCallHandlerFromAnyThread(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, JSC::Exception*& returnedException)
 {
     if (isMainThread())
-        return JSMainThreadExecState::call(exec, functionObject, callType, callData, thisValue, args, exception);
-    return JSC::call(exec, functionObject, callType, callData, thisValue, args, exception);
+        return JSMainThreadExecState::call(exec, functionObject, callType, callData, thisValue, args, returnedException);
+    return JSC::call(exec, functionObject, callType, callData, thisValue, args, returnedException);
 }
 
-JSC::JSValue evaluateHandlerFromAnyThread(JSC::ExecState* exec, const JSC::SourceCode& source, JSC::JSValue thisValue, JSC::JSValue* exception)
+JSC::JSValue evaluateHandlerFromAnyThread(JSC::ExecState* exec, const JSC::SourceCode& source, JSC::JSValue thisValue, JSC::Exception*& returnedException)
 {
     if (isMainThread())
-        return JSMainThreadExecState::evaluate(exec, source, thisValue, exception);
-    return JSC::evaluate(exec, source, thisValue, exception);
+        return JSMainThreadExecState::evaluate(exec, source, thisValue, returnedException);
+    return JSC::evaluate(exec, source, thisValue, returnedException);
 }
 
 } // namespace WebCore

@@ -42,6 +42,7 @@
 #include "DFGWorklist.h"
 #include "Disassembler.h"
 #include "ErrorInstance.h"
+#include "Exception.h"
 #include "FTLThunks.h"
 #include "FunctionConstructor.h"
 #include "GCActivityCallback.h"
@@ -235,6 +236,7 @@ VM::VM(VMType vmType, HeapType heapType)
     weakMapDataStructure.set(*this, WeakMapData::createStructure(*this, 0, jsNull()));
     inferredValueStructure.set(*this, InferredValue::createStructure(*this, 0, jsNull()));
     functionRareDataStructure.set(*this, FunctionRareData::createStructure(*this, 0, jsNull()));
+    exceptionStructure.set(*this, Exception::createStructure(*this, 0, jsNull()));
 #if ENABLE(PROMISES)
     promiseDeferredStructure.set(*this, JSPromiseDeferred::createStructure(*this, 0, jsNull()));
     promiseReactionStructure.set(*this, JSPromiseReaction::createStructure(*this, 0, jsNull()));
@@ -545,7 +547,7 @@ void VM::releaseExecutableMemory()
     heap.collectAllGarbage();
 }
 
-JSValue VM::throwException(ExecState* exec, JSValue error)
+void VM::throwException(ExecState* exec, Exception* exception)
 {
     if (Options::breakOnThrow()) {
         dataLog("In call frame ", RawPointer(exec), " for code block ", *exec->codeBlock(), "\n");
@@ -553,37 +555,22 @@ JSValue VM::throwException(ExecState* exec, JSValue error)
     }
     
     ASSERT(exec == topCallFrame || exec == exec->lexicalGlobalObject()->globalExec() || exec == exec->vmEntryGlobalObject()->globalExec());
-    
-    Vector<StackFrame> stackTrace;
-    interpreter->getStackTrace(stackTrace);
-    m_exceptionStack = RefCountedArray<StackFrame>(stackTrace);
-    m_exception = error;
-
-    return error;
+    setException(exception);
 }
-    
+
+JSValue VM::throwException(ExecState* exec, JSValue thrownValue)
+{
+    Exception* exception = jsDynamicCast<Exception*>(thrownValue);
+    if (!exception)
+        exception = Exception::create(*this, thrownValue);
+
+    throwException(exec, exception);
+    return JSValue(exception);
+}
+
 JSObject* VM::throwException(ExecState* exec, JSObject* error)
 {
     return asObject(throwException(exec, JSValue(error)));
-}
-void VM::getExceptionInfo(JSValue& exception, RefCountedArray<StackFrame>& exceptionStack)
-{
-    exception = m_exception;
-    exceptionStack = m_exceptionStack;
-}
-void VM::setExceptionInfo(JSValue& exception, RefCountedArray<StackFrame>& exceptionStack)
-{
-    m_exception = exception;
-    m_exceptionStack = exceptionStack;
-}
-
-void VM::clearException()
-{
-    m_exception = JSValue();
-}
-void VM:: clearExceptionStack()
-{
-    m_exceptionStack = RefCountedArray<StackFrame>();
 }
 
 void VM::setStackPointerAtVMEntry(void* sp)

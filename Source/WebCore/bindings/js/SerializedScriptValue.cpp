@@ -55,6 +55,7 @@
 #include <runtime/BooleanObject.h>
 #include <runtime/DateInstance.h>
 #include <runtime/Error.h>
+#include <runtime/Exception.h>
 #include <runtime/ExceptionHelpers.h>
 #include <runtime/JSArrayBuffer.h>
 #include <runtime/JSArrayBufferView.h>
@@ -2702,7 +2703,7 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(JSContextRef ori
     RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::create(exec, value, nullptr, nullptr);
     if (exec->hadException()) {
         if (exception)
-            *exception = toRef(exec, exec->exception());
+            *exception = toRef(exec, exec->exception()->value());
         exec->clearException();
         return 0;
     }
@@ -2732,7 +2733,7 @@ JSValueRef SerializedScriptValue::deserialize(JSContextRef destinationContext, J
     JSValue value = deserialize(exec, exec->lexicalGlobalObject(), nullptr);
     if (exec->hadException()) {
         if (exception)
-            *exception = toRef(exec, exec->exception());
+            *exception = toRef(exec, exec->exception()->value());
         exec->clearException();
         return nullptr;
     }

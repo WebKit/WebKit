@@ -29,6 +29,7 @@
 #if ENABLE(PROMISES)
 
 #include "Error.h"
+#include "Exception.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
 #include "JSPromise.h"
@@ -150,7 +151,7 @@ ThenableStatus updateDeferredFromPotentialThenable(ExecState* exec, JSValue x, J
         // i. Let 'rejectResult' be the result of calling the [[Call]] internal method of
         //    deferred.[[Reject]] with undefined as thisArgument and a List containing
         //    then.[[value]] as argumentsList.
-        JSValue exception = exec->exception();
+        JSValue exception = exec->exception()->value();
         exec->clearException();
 
         performDeferredReject(exec, deferred, exception);
@@ -185,7 +186,7 @@ ThenableStatus updateDeferredFromPotentialThenable(ExecState* exec, JSValue x, J
         // i. Let 'rejectResult' be the result of calling the [[Call]] internal method of
         //    deferred.[[Reject]] with undefined as thisArgument and a List containing
         //    thenCallResult.[[value]] as argumentsList.
-        JSValue exception = exec->exception();
+        JSValue exception = exec->exception()->value();
         exec->clearException();
 
         performDeferredReject(exec, deferred, exception);
@@ -228,7 +229,7 @@ void performDeferredReject(ExecState* exec, JSPromiseDeferred* deferred, JSValue
 JSValue abruptRejection(ExecState* exec, JSPromiseDeferred* deferred)
 {
     ASSERT(exec->hadException());
-    JSValue argument = exec->exception();
+    JSValue argument = exec->exception()->value();
     exec->clearException();
 
     // i. Let 'rejectResult' be the result of calling the [[Call]] internal method

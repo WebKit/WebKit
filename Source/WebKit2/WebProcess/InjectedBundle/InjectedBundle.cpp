@@ -50,6 +50,7 @@
 #include "WebProcessCreationParameters.h"
 #include "WebProcessPoolMessages.h"
 #include <JavaScriptCore/APICast.h>
+#include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/JSLock.h>
 #include <WebCore/ApplicationCache.h>
 #include <WebCore/ApplicationCacheStorage.h>
@@ -522,7 +523,7 @@ void InjectedBundle::reportException(JSContextRef context, JSValueRef exception)
     if (!toJSDOMWindow(execState->lexicalGlobalObject()))
         return;
 
-    WebCore::reportException(execState, toJS(execState, exception));
+    WebCore::reportException(execState, Exception::cast(toJS(execState, exception)));
 }
 
 void InjectedBundle::didCreatePage(WebPage* page)

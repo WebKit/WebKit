@@ -24,6 +24,7 @@
 #include "GetterSetter.h"
 
 #include "Error.h"
+#include "Exception.h"
 #include "JSObject.h"
 #include "JSCInlines.h"
 #include <wtf/Assertions.h>
@@ -75,7 +76,7 @@ JSValue callGetter(ExecState* exec, JSValue base, JSValue getterSetter)
     // FIXME: Some callers may invoke get() without checking for an exception first.
     // We work around that by checking here.
     if (exec->hadException())
-        return exec->exception();
+        return exec->exception()->value();
 
     JSObject* getter = jsCast<GetterSetter*>(getterSetter)->getter();
 

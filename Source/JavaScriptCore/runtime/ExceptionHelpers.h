@@ -37,8 +37,7 @@ namespace JSC {
 typedef JSObject* (*ErrorFactory)(ExecState*, const String&, ErrorInstance::SourceAppender);
 
 JSObject* createTerminatedExecutionException(VM*);
-bool isTerminatedExecutionException(JSObject*);
-JS_EXPORT_PRIVATE bool isTerminatedExecutionException(JSValue);
+JS_EXPORT_PRIVATE bool isTerminatedExecutionException(Exception*);
 JS_EXPORT_PRIVATE JSObject* createError(ExecState*, JSValue, const String&, ErrorInstance::SourceAppender);
 JS_EXPORT_PRIVATE JSObject* createStackOverflowError(ExecState*);
 JSObject* createUndefinedVariableError(ExecState*, const Identifier&);

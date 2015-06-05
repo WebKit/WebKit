@@ -30,6 +30,7 @@
 #include "APICast.h"
 #include "CallFrame.h"
 #include "Completion.h"
+#include "Exception.h"
 #include "GCActivityCallback.h"
 #include "InitializeThreading.h"
 #include "JSGlobalObject.h"
@@ -63,12 +64,12 @@ JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef th
     JSGlobalObject* globalObject = exec->vmEntryGlobalObject();
     SourceCode source = makeSource(script->string(), sourceURL ? sourceURL->string() : String(), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber::first()));
 
-    JSValue evaluationException;
-    JSValue returnValue = evaluate(globalObject->globalExec(), source, jsThisObject, &evaluationException);
+    Exception* evaluationException;
+    JSValue returnValue = evaluate(globalObject->globalExec(), source, jsThisObject, evaluationException);
 
     if (evaluationException) {
         if (exception)
-            *exception = toRef(exec, evaluationException);
+            *exception = toRef(exec, evaluationException->value());
 #if ENABLE(REMOTE_INSPECTOR)
         // FIXME: If we have a debugger attached we could learn about ParseError exceptions through
         // ScriptDebugServer::sourceParsed and this path could produce a duplicate warning. The
@@ -107,7 +108,8 @@ bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourc
         if (exception)
             *exception = toRef(exec, syntaxException);
 #if ENABLE(REMOTE_INSPECTOR)
-        exec->vmEntryGlobalObject()->inspectorController().reportAPIException(exec, syntaxException);
+        Exception* exception = Exception::create(exec->vm(), syntaxException);
+        exec->vmEntryGlobalObject()->inspectorController().reportAPIException(exec, exception);
 #endif
         return false;
     }

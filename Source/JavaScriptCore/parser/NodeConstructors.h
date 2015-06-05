@@ -811,10 +811,10 @@ namespace JSC {
     {
     }
 
-    inline TryNode::TryNode(const JSTokenLocation& location, StatementNode* tryBlock, const Identifier& exceptionIdent, StatementNode* catchBlock, StatementNode* finallyBlock)
+    inline TryNode::TryNode(const JSTokenLocation& location, StatementNode* tryBlock, const Identifier& thrownValueIdent, StatementNode* catchBlock, StatementNode* finallyBlock)
         : StatementNode(location)
         , m_tryBlock(tryBlock)
-        , m_exceptionIdent(exceptionIdent)
+        , m_thrownValueIdent(thrownValueIdent)
         , m_catchBlock(catchBlock)
         , m_finallyBlock(finallyBlock)
     {

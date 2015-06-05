@@ -39,6 +39,7 @@
 #include "JSDOMPromise.h"
 #include "JSMediaStream.h"
 #include "JSNavigatorUserMediaError.h"
+#include <runtime/Exception.h>
 
 using namespace JSC;
 
@@ -50,7 +51,9 @@ JSValue JSMediaDevices::getUserMedia(ExecState* exec)
 
     Dictionary options(exec, exec->argument(0));
     if (exec->hadException()) {
-        wrapper.reject(exec->exception());
+        Exception* exception = exec->exception();
+        exec->clearException();
+        wrapper.reject(exception->value());
         return wrapper.promise();
     }
 

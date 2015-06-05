@@ -32,6 +32,7 @@
 #include "CodeBlock.h"
 #include "DebuggerEvalEnabler.h"
 #include "DebuggerScope.h"
+#include "Exception.h"
 #include "Interpreter.h"
 #include "JSFunction.h"
 #include "JSLexicalEnvironment.h"
@@ -176,7 +177,7 @@ JSValue DebuggerCallFrame::thisValue() const
 }
 
 // Evaluate some JavaScript code in the scope of this frame.
-JSValue DebuggerCallFrame::evaluate(const String& script, JSValue& exception)
+JSValue DebuggerCallFrame::evaluate(const String& script, Exception*& exception)
 {
     ASSERT(isValid());
     CallFrame* callFrame = m_callFrame;

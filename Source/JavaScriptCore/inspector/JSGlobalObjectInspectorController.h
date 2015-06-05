@@ -43,6 +43,7 @@ class Stopwatch;
 
 namespace JSC {
 class ConsoleClient;
+class Exception;
 class ExecState;
 class JSGlobalObject;
 class JSValue;
@@ -81,7 +82,7 @@ public:
     void setIncludesNativeCallStackWhenReportingExceptions(bool includesNativeCallStack) { m_includeNativeCallStackWithExceptions = includesNativeCallStack; }
 
     void pause();
-    void reportAPIException(JSC::ExecState*, JSC::JSValue exception);
+    void reportAPIException(JSC::ExecState*, JSC::Exception*);
 
     JSC::ConsoleClient* consoleClient() const;
 

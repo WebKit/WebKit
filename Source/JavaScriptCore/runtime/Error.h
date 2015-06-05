@@ -76,6 +76,7 @@ JS_EXPORT_PRIVATE JSObject* throwTypeError(ExecState*);
 JS_EXPORT_PRIVATE JSObject* throwSyntaxError(ExecState*);
 
 // Convenience wrappers, wrap result as an EncodedJSValue.
+inline void throwVMError(ExecState* exec, Exception* exception) { exec->vm().throwException(exec, exception); }
 inline EncodedJSValue throwVMError(ExecState* exec, JSValue error) { return JSValue::encode(exec->vm().throwException(exec, error)); }
 inline EncodedJSValue throwVMTypeError(ExecState* exec) { return JSValue::encode(throwTypeError(exec)); }
 inline EncodedJSValue throwVMTypeError(ExecState* exec, const String& errorMessage) { return JSValue::encode(throwTypeError(exec, errorMessage)); }

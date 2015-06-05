@@ -99,7 +99,7 @@ void WorkerScriptDebugServer::runEventLoopWhilePaused()
     } while (result != MessageQueueTerminated && !m_doneProcessingDebuggerEvents);
 }
 
-void WorkerScriptDebugServer::reportException(JSC::ExecState* exec, JSC::JSValue exception) const
+void WorkerScriptDebugServer::reportException(JSC::ExecState* exec, JSC::Exception* exception) const
 {
     WebCore::reportException(exec, exception);
 }

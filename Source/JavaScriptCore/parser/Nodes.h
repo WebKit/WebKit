@@ -1511,7 +1511,7 @@ namespace JSC {
         virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
 
         StatementNode* m_tryBlock;
-        const Identifier& m_exceptionIdent;
+        const Identifier& m_thrownValueIdent;
         StatementNode* m_catchBlock;
         StatementNode* m_finallyBlock;
     };

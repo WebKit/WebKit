@@ -1375,8 +1375,7 @@ LLINT_SLOW_PATH_DECL(slow_path_profile_did_call)
 LLINT_SLOW_PATH_DECL(slow_path_handle_exception)
 {
     LLINT_BEGIN_NO_SET_PC();
-    ASSERT(vm.exception());
-    genericUnwind(&vm, exec, vm.exception());
+    genericUnwind(&vm, exec);
     LLINT_END_IMPL();
 }
 

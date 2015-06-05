@@ -28,6 +28,7 @@
 #import "APICast.h"
 #import "DateInstance.h"
 #import "Error.h"
+#import "Exception.h"
 #import "JavaScriptCore.h"
 #import "JSContextInternal.h"
 #import "JSVirtualMachineInternal.h"
@@ -645,9 +646,10 @@ JSContainerConvertor::Task JSContainerConvertor::take()
 }
 
 #if ENABLE(REMOTE_INSPECTOR)
-static void reportExceptionToInspector(JSGlobalContextRef context, JSC::JSValue exception)
+static void reportExceptionToInspector(JSGlobalContextRef context, JSC::JSValue exceptionValue)
 {
     JSC::ExecState* exec = toJS(context);
+    JSC::Exception* exception = JSC::Exception::create(exec->vm(), exceptionValue);
     exec->vmEntryGlobalObject()->inspectorController().reportAPIException(exec, exception);
 }
 #endif

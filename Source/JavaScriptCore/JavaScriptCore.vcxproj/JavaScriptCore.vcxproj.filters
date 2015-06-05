@@ -1698,6 +1698,9 @@
     <ClCompile Include="..\dfg\DFGValueStrength.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\Exception.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\runtime\ExceptionFuzz.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -4189,6 +4192,9 @@
     </ClInclude>
     <ClInclude Include="..\dfg\DFGValueStrength.h">
       <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\Exception.h">
+      <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\ExceptionFuzz.h">
       <Filter>runtime</Filter>

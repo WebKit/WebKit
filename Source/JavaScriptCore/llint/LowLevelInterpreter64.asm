@@ -1820,12 +1820,18 @@ _llint_op_catch:
     loadp VM::targetInterpreterPCForThrow[t3], PC
     subp PB, PC
     rshiftp 3, PC
+
     loadq VM::m_exception[t3], t0
     storeq 0, VM::m_exception[t3]
     loadisFromInstruction(1, t2)
     storeq t0, [cfr, t2, 8]
+
+    loadq Exception::m_value[t0], t3
+    loadisFromInstruction(2, t2)
+    storeq t3, [cfr, t2, 8]
+
     traceExecution()
-    dispatch(2)
+    dispatch(3)
 
 
 _llint_op_end:

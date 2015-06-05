@@ -33,7 +33,7 @@ namespace JSC {
 class ExecState;
 class VM;
 
-void genericUnwind(VM*, ExecState*, JSValue exceptionValue);
+void genericUnwind(VM*, ExecState*);
 
 } // namespace JSC
 

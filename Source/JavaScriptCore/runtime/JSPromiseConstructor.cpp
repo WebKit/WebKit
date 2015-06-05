@@ -29,6 +29,7 @@
 #if ENABLE(PROMISES)
 
 #include "Error.h"
+#include "Exception.h"
 #include "IteratorOperations.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
@@ -136,7 +137,7 @@ static EncodedJSValue JSC_HOST_CALL constructPromise(ExecState* exec)
 
     // 14. If result is an abrupt completion, call PromiseReject(promise, result.[[value]]).
     if (exec->hadException()) {
-        JSValue exception = exec->exception();
+        JSValue exception = exec->exception()->value();
         exec->clearException();
 
         promise->reject(vm, exception);

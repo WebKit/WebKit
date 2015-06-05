@@ -58,7 +58,6 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/RefCountedArray.h>
 #include <wtf/SimpleStats.h>
 #include <wtf/StackBounds.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -78,6 +77,7 @@ class CodeBlock;
 class CodeCache;
 class CommonIdentifiers;
 class ExecState;
+class Exception;
 class HandleStack;
 class TypeProfiler;
 class TypeProfilerLog;
@@ -274,6 +274,7 @@ public:
     Strong<Structure> weakMapDataStructure;
     Strong<Structure> inferredValueStructure;
     Strong<Structure> functionRareDataStructure;
+    Strong<Structure> exceptionStructure;
 #if ENABLE(PROMISES)
     Strong<Structure> promiseDeferredStructure;
     Strong<Structure> promiseReactionStructure;
@@ -372,14 +373,13 @@ public:
         return OBJECT_OFFSETOF(VM, targetMachinePCForThrow);
     }
 
-    JS_EXPORT_PRIVATE void clearException();
-    JS_EXPORT_PRIVATE void clearExceptionStack();
-    void getExceptionInfo(JSValue& exception, RefCountedArray<StackFrame>& exceptionStack);
-    void setExceptionInfo(JSValue& exception, RefCountedArray<StackFrame>& exceptionStack);
-    JSValue exception() const { return m_exception; }
-    JSValue* addressOfException() { return &m_exception; }
-    const RefCountedArray<StackFrame>& exceptionStack() const { return m_exceptionStack; }
+    void clearException() { m_exception = nullptr; }
+    void setException(Exception* exception) { m_exception = exception; }
 
+    Exception* exception() const { return m_exception; }
+    JSCell** addressOfException() { return reinterpret_cast<JSCell**>(&m_exception); }
+
+    JS_EXPORT_PRIVATE void throwException(ExecState*, Exception*);
     JS_EXPORT_PRIVATE JSValue throwException(ExecState*, JSValue);
     JS_EXPORT_PRIVATE JSObject* throwException(ExecState*, JSObject*);
 
@@ -569,12 +569,11 @@ private:
 #endif
 #endif
     void* m_lastStackTop;
-    JSValue m_exception;
+    Exception* m_exception { nullptr };
     bool m_inDefineOwnProperty;
     std::unique_ptr<CodeCache> m_codeCache;
     LegacyProfiler* m_enabledProfiler;
     std::unique_ptr<BuiltinExecutables> m_builtinExecutables;
-    RefCountedArray<StackFrame> m_exceptionStack;
     HashMap<String, RefPtr<WatchpointSet>> m_impurePropertyWatchpointSets;
     std::unique_ptr<TypeProfiler> m_typeProfiler;
     std::unique_ptr<TypeProfilerLog> m_typeProfilerLog;

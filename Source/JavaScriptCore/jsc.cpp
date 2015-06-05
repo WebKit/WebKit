@@ -29,6 +29,7 @@
 #include "Completion.h"
 #include "CopiedSpaceInlines.h"
 #include "Disassembler.h"
+#include "Exception.h"
 #include "ExceptionHelpers.h"
 #include "HeapStatistics.h"
 #include "InitializeThreading.h"
@@ -899,13 +900,13 @@ EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
     globalObject->putDirect(
         exec->vm(), Identifier::fromString(globalObject->globalExec(), "arguments"), array);
 
-    JSValue exception;
+    Exception* exception;
     StopWatch stopWatch;
     stopWatch.start();
-    evaluate(globalObject->globalExec(), jscSource(script.data(), fileName), JSValue(), &exception);
+    evaluate(globalObject->globalExec(), jscSource(script.data(), fileName), JSValue(), exception);
     stopWatch.stop();
 
-    if (!!exception) {
+    if (exception) {
         exec->vm().throwException(globalObject->globalExec(), exception);
         return JSValue::encode(jsUndefined());
     }
@@ -922,8 +923,8 @@ EncodedJSValue JSC_HOST_CALL functionLoad(ExecState* exec)
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     
-    JSValue evaluationException;
-    JSValue result = evaluate(globalObject->globalExec(), jscSource(script.data(), fileName), JSValue(), &evaluationException);
+    Exception* evaluationException;
+    JSValue result = evaluate(globalObject->globalExec(), jscSource(script.data(), fileName), JSValue(), evaluationException);
     if (evaluationException)
         exec->vm().throwException(exec, evaluationException);
     return JSValue::encode(result);
@@ -1285,15 +1286,15 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
 
         vm.startSampling();
 
-        JSValue evaluationException;
-        JSValue returnValue = evaluate(globalObject->globalExec(), jscSource(script, fileName), JSValue(), &evaluationException);
+        Exception* evaluationException;
+        JSValue returnValue = evaluate(globalObject->globalExec(), jscSource(script, fileName), JSValue(), evaluationException);
         success = success && !evaluationException;
         if (dump && !evaluationException)
             printf("End: %s\n", returnValue.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
         if (evaluationException) {
-            printf("Exception: %s\n", evaluationException.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
+            printf("Exception: %s\n", evaluationException->value().toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
             Identifier stackID = Identifier::fromString(globalObject->globalExec(), "stack");
-            JSValue stackValue = evaluationException.get(globalObject->globalExec(), stackID);
+            JSValue stackValue = evaluationException->value().get(globalObject->globalExec(), stackID);
             if (!stackValue.isUndefinedOrNull())
                 printf("%s\n", stackValue.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
         }
@@ -1349,8 +1350,8 @@ static void runInteractive(GlobalObject* globalObject)
         }
         
         
-        JSValue evaluationException;
-        JSValue returnValue = evaluate(globalObject->globalExec(), makeSource(source, interpreterName), JSValue(), &evaluationException);
+        Exception* evaluationException;
+        JSValue returnValue = evaluate(globalObject->globalExec(), makeSource(source, interpreterName), JSValue(), evaluationException);
 #else
         printf("%s", interactivePrompt);
         Vector<char, 256> line;
@@ -1365,11 +1366,11 @@ static void runInteractive(GlobalObject* globalObject)
             break;
         line.append('\0');
 
-        JSValue evaluationException;
-        JSValue returnValue = evaluate(globalObject->globalExec(), jscSource(line.data(), interpreterName), JSValue(), &evaluationException);
+        Exception* evaluationException;
+        JSValue returnValue = evaluate(globalObject->globalExec(), jscSource(line.data(), interpreterName), JSValue(), evaluationException);
 #endif
         if (evaluationException)
-            printf("Exception: %s\n", evaluationException.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
+            printf("Exception: %s\n", evaluationException->value().toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
         else
             printf("%s\n", returnValue.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
 

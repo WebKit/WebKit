@@ -303,7 +303,6 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_resolve_scope:
     case op_strcat:
     case op_to_primitive:
-    case op_catch:
     case op_create_this:
     case op_new_array:
     case op_new_array_buffer:
@@ -374,6 +373,7 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         return;
     }
+    case op_catch:
     case op_create_lexical_environment: {
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         functor(codeBlock, instruction, opcodeID, instruction[2].u.operand);

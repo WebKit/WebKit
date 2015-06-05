@@ -52,7 +52,7 @@ static inline JSValue getPropertyFromObject(ExecState* exec, JSObject* object, c
     return object->get(exec, Identifier::fromString(exec, identifier));
 }
 
-static inline JSValue callFunction(ExecState* exec, JSValue jsFunction, JSValue thisValue, const ArgList& arguments, JSValue* exception)
+static inline JSValue callFunction(ExecState* exec, JSValue jsFunction, JSValue thisValue, const ArgList& arguments, Exception*& exception)
 {
     CallData callData;
     CallType callType = getCallData(jsFunction, callData);
@@ -88,8 +88,8 @@ void ReadableJSStream::doStart(ExecState& exec)
     MarkedArgumentBuffer arguments;
     arguments.append(jsController(exec, globalObject()));
 
-    JSValue exception;
-    callFunction(&exec, startFunction, m_source.get(), arguments, &exception);
+    Exception* exception;
+    callFunction(&exec, startFunction, m_source.get(), arguments, exception);
 
     if (exception) {
         throwVMError(&exec, exception);

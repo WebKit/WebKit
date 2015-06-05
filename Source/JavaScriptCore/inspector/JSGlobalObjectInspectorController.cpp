@@ -29,6 +29,7 @@
 #include "Completion.h"
 #include "ConsoleMessage.h"
 #include "ErrorHandlingScope.h"
+#include "Exception.h"
 #include "InjectedScriptHost.h"
 #include "InjectedScriptManager.h"
 #include "InspectorAgent.h"
@@ -188,7 +189,7 @@ void JSGlobalObjectInspectorController::appendAPIBacktrace(ScriptCallStack* call
 #endif
 }
 
-void JSGlobalObjectInspectorController::reportAPIException(ExecState* exec, JSValue exception)
+void JSGlobalObjectInspectorController::reportAPIException(ExecState* exec, Exception* exception)
 {
     if (isTerminatedExecutionException(exception))
         return;
@@ -201,7 +202,7 @@ void JSGlobalObjectInspectorController::reportAPIException(ExecState* exec, JSVa
 
     // FIXME: <http://webkit.org/b/115087> Web Inspector: Should not evaluate JavaScript handling exceptions
     // If this is a custom exception object, call toString on it to try and get a nice string representation for the exception.
-    String errorMessage = exception.toString(exec)->value(exec);
+    String errorMessage = exception->value().toString(exec)->value(exec);
     exec->clearException();
 
     if (JSGlobalObjectConsoleClient::logToSystemConsole()) {

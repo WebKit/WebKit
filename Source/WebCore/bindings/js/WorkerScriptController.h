@@ -60,9 +60,9 @@ namespace WebCore {
         }
 
         void evaluate(const ScriptSourceCode&);
-        void evaluate(const ScriptSourceCode&, Deprecated::ScriptValue* exception);
+        void evaluate(const ScriptSourceCode&, JSC::Exception*& returnedException);
 
-        void setException(const Deprecated::ScriptValue&);
+        void setException(JSC::Exception*);
 
         // Async request to terminate a JS run execution. Eventually causes termination
         // exception raised during JS execution, if the worker thread happens to run JS.

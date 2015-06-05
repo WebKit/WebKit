@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CallData.h"
 
+#include "Exception.h"
 #include "Executable.h"
 #include "Interpreter.h"
 #include "JSFunction.h"
@@ -39,15 +40,15 @@ JSValue call(ExecState* exec, JSValue functionObject, CallType callType, const C
     return exec->interpreter()->executeCall(exec, asObject(functionObject), callType, callData, thisValue, args);
 }
 
-JSValue call(ExecState* exec, JSValue functionObject, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args, JSValue* exception)
+JSValue call(ExecState* exec, JSValue functionObject, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args, Exception*& returnedException)
 {
     JSValue result = call(exec, functionObject, callType, callData, thisValue, args);
     if (exec->hadException()) {
-        if (exception)
-            *exception = exec->exception();
+        returnedException = exec->exception();
         exec->clearException();
         return jsUndefined();
-    }
+    } else
+        returnedException = nullptr;
     RELEASE_ASSERT(result);
     return result;
 }

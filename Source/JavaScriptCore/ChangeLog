@@ -1,3 +1,331 @@
+2015-06-05  Mark Lam  <mark.lam@apple.com>
+
+        finally blocks should not set the exception stack trace when re-throwing the exception.
+        https://bugs.webkit.org/show_bug.cgi?id=145525
+
+        Reviewed by Geoffrey Garen.
+
+        How exceptions presently work:
+        =============================
+        1. op_throw can throw any JSValue.
+        2. the VM tries to capture the stack at the throw point and propagate that as needed.
+        3. finally blocks are implemented using op_catch to catch the thrown value, and throws it again using op_throw.
+
+        What's wrong with how it presently works:
+        ========================================
+        1. finally's makes for bad exception throw line numbers in the Inspector console.
+
+           The op_throw in finally will throw the value anew i.e. it captures a stack from the re-throw point.
+           As a result, the Inspector sees the finally block as the throw point.  The original stack is lost.
+
+        2. finally's breaks the Inspector's "Breaks on Uncaught Exception"
+
+           This is because finally blocks are indistinguishable from catch blocks.  As a result, a try-finally,
+           which should break in the Inspector on the throw, does not because the Inspector thought the
+           exception was "caught".
+
+        3. finally's yields confusing break points when the Inspector "Breaks on All Exceptions"
+
+           a. In a try-finally scenario, the Inspector breaks 2 times: 1 at the throw, 1 at the finally.
+           b. In a for-of loop (which has synthesized finallys), the Inspector will do another break.
+              Similarly for other cases of JS code which synthesize finallys.
+           c. At VM re-entry boundaries (e.g. js throws & returns to native code, which returns to js),
+              the Inspector will do another break if there's an uncaught exception.
+
+        How this patch fixes the issues:
+        ===============================
+        1. We introduce an Exception object that wraps the thrown value and the exception stack.
+
+           When throwing an exception, the VM will check if the thrown value is an Exception
+           object or not.  If it is not an Exception object, then we must be throwing a new
+           exception.  The VM will create an Exception object to wrap the thrown value and
+           capture the current stack for it.
+
+           If the thrown value is already an Exception object, then the requested throw operation
+           must be a re-throw.  The VM will not capture a new stack for it.
+
+        2. op_catch will now populate 2 locals: 1 for the Exception, 1 for the thrown JSValue.
+
+           The VM is aware of the Exception object and uses it for rethrows in finally blocks.
+           JS source code is never aware of the Exception object.
+
+           JS code is aware of the thrown value.  If it throws the caught thrown value, that
+           constitutes a new throw, and a new Exception object will be created for it.
+
+        3. The VM no longer tracks the thrown JSValue and the exception stack.  It will only
+           track a m_exception field which is an Exception*.
+
+        4. The BytecodeGenerator has already been updated in a prior patch to distinguish
+           between Catch, Finally, and SynthesizedFinally blocks.  The interpreter runtime will
+           now report to the debugger whether we have a Catch handler, not just any handlers.
+
+           The debugger will use this detail to determine whether to break or not.  "Break on
+           uncaught exceptions" will only break if no Catch handler was found.
+
+           This solves the issue of the debugger breaking at finally blocks, and for-of statements.
+
+        5. The Exception object will also have a flag to indicate whether the debugger has been
+           notified of the Exception being thrown.  Once the Interpreter notifies the debugger
+           of the Exception object, it will mark this flag and not repeat the notify the debugger
+           again of the same Exception.
+
+           This solves the issue of the debugger breaking at VM re-entry points due to uncaught
+           exceptions.
+
+        6. The life-cycle of the captured exception stack trace will now follow the life-cycle
+           of the Exception object.
+
+        Other changes:
+        7. Change all clients of the VM::exception() to expect an Exception* instead of JSValue.
+
+        8. Fixed a few bugs where thrown exceptions are not cleared before exiting the VM.
+
+        9. Also renamed some variables and classes to better describe what they are.
+
+        * API/JSBase.cpp:
+        (JSEvaluateScript):
+        (JSCheckScriptSyntax):
+
+        * API/JSObjectRef.cpp:
+        (handleExceptionIfNeeded):
+        - The functions below all do the same exception check.  Added this helper
+          to simplify the code.
+        (JSClassCreate):
+        (JSObjectMakeFunction):
+        (JSObjectMakeArray):
+        (JSObjectMakeDate):
+        (JSObjectMakeError):
+        (JSObjectMakeRegExp):
+        (JSObjectGetProperty):
+        (JSObjectSetProperty):
+        (JSObjectGetPropertyAtIndex):
+        (JSObjectSetPropertyAtIndex):
+        (JSObjectDeleteProperty):
+        (JSObjectCallAsFunction):
+        (JSObjectCallAsConstructor):
+
+        * API/JSScriptRef.cpp:
+        * API/JSValue.mm:
+        (JSContainerConvertor::take):
+        (reportExceptionToInspector):
+
+        * API/JSValueRef.cpp:
+        (handleExceptionIfNeeded):
+        - The functions below all do the same exception check.  Added this helper
+          to simplify the code.
+        (evernoteHackNeeded):
+        (JSValueIsEqual):
+        (JSValueIsInstanceOfConstructor):
+        (JSValueCreateJSONString):
+        (JSValueToNumber):
+        (JSValueToStringCopy):
+        (JSValueToObject):
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        - Added new files Exception.h and Exception.cpp.
+
+        * bindings/ScriptFunctionCall.cpp:
+        (Deprecated::ScriptFunctionCall::call):
+        * bindings/ScriptFunctionCall.h:
+
+        * bytecode/BytecodeList.json:
+        - op_catch now had 2 operands: the exception register, and the thrown value register.
+
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::handlerForBytecodeOffset):
+        * bytecode/CodeBlock.h:
+        - handlerForBytecodeOffset() now can look for just Catch handlers only.
+
+        * bytecode/HandlerInfo.h:
+        - Cleaned up some white space I accidentally added in a previous patch.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::pushTry):
+        (JSC::BytecodeGenerator::popTryAndEmitCatch):
+        (JSC::BytecodeGenerator::emitThrowReferenceError):
+        (JSC::BytecodeGenerator::emitEnumeration):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitThrow):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::TryNode::emitBytecode):
+        - Adding support for op_catch's 2 operands.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::hasBreakpoint):
+        (JSC::Debugger::pauseIfNeeded):
+        (JSC::Debugger::exception):
+        * debugger/Debugger.h:
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::thisValue):
+        (JSC::DebuggerCallFrame::evaluate):
+        * debugger/DebuggerCallFrame.h:
+        (JSC::DebuggerCallFrame::isValid):
+        * inspector/InjectedScriptManager.cpp:
+        (Inspector::InjectedScriptManager::createInjectedScript):
+        * inspector/InspectorEnvironment.h:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::appendAPIBacktrace):
+        (Inspector::JSGlobalObjectInspectorController::reportAPIException):
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/JSGlobalObjectScriptDebugServer.h:
+        * inspector/JSJavaScriptCallFrame.cpp:
+        (Inspector::JSJavaScriptCallFrame::evaluate):
+        * inspector/JavaScriptCallFrame.h:
+        (Inspector::JavaScriptCallFrame::vmEntryGlobalObject):
+        (Inspector::JavaScriptCallFrame::thisValue):
+        (Inspector::JavaScriptCallFrame::evaluate):
+        * inspector/ScriptCallStackFactory.cpp:
+        (Inspector::extractSourceInformationFromException):
+        (Inspector::createScriptCallStackFromException):
+        * inspector/ScriptCallStackFactory.h:
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::evaluateBreakpointAction):
+        (Inspector::ScriptDebugServer::handleBreakpointHit):
+        (Inspector::ScriptDebugServer::handleExceptionInBreakpointCondition):
+        * inspector/ScriptDebugServer.h:
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::clearException):
+        (JSC::ExecState::exception):
+        (JSC::ExecState::hadException):
+        (JSC::ExecState::atomicStringTable):
+        (JSC::ExecState::propertyNames):
+        (JSC::ExecState::clearSupplementaryExceptionInfo): Deleted.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::unwindCallFrame):
+        (JSC::Interpreter::stackTraceAsString):
+        (JSC::GetCatchHandlerFunctor::GetCatchHandlerFunctor):
+        (JSC::GetCatchHandlerFunctor::operator()):
+        (JSC::Interpreter::unwind):
+        - Added a check for didNotifyInspectorOfThrow() here to prevent duplicate reports
+          of the same Exception to the debugger.
+
+        (JSC::GetExceptionHandlerFunctor::GetExceptionHandlerFunctor): Deleted.
+        (JSC::GetExceptionHandlerFunctor::operator()): Deleted.
+        - Renamed GetExceptionHandlerFunctor to GetCatchHandlerFunctor since the debugger
+          is only interested in knowing whether we have Catch handlers.
+
+        * interpreter/Interpreter.h:
+        (JSC::SuspendExceptionScope::SuspendExceptionScope):
+        (JSC::SuspendExceptionScope::~SuspendExceptionScope):
+        (JSC::Interpreter::sampler):
+        (JSC::ClearExceptionScope::ClearExceptionScope): Deleted.
+        (JSC::ClearExceptionScope::~ClearExceptionScope): Deleted.
+        - Renamed ClearExceptionScope to SuspendExceptionScope because "clear" implies that
+          we're purging the exception.  Instead, we're merely suspending any handling of
+          that exception for a period defined by the scope.
+
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitExceptionCheck):
+
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+        - Removed the exception argument.  It is always the value in VM::exception() anyway.
+          genericUnwind() can just get it from the VM, and save everyone some work.
+
+        * jit/JITExceptions.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_catch):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        (JSC::JIT::emit_op_catch):
+        - Add support for the new op_catch operands.
+
+        * jit/JITOperations.cpp:
+        * jit/ThunkGenerators.cpp:
+        (JSC::nativeForGenerator):
+        * jsc.cpp:
+        (functionRun):
+        (functionLoad):
+        (runWithScripts):
+        (runInteractive):
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        - Add support for the new op_catch operands.  Also update the code to handle
+          VM::m_exception being an Exception pointer, not a JSValue.
+
+        * parser/NodeConstructors.h:
+        (JSC::TryNode::TryNode):
+        * parser/Nodes.h:
+        * runtime/CallData.cpp:
+        (JSC::call):
+        * runtime/CallData.h:
+
+        * runtime/Completion.cpp:
+        (JSC::evaluate):
+        * runtime/Completion.h:
+        (JSC::evaluate):
+        - Change evaluate() to take a reference to the returned exception value instead
+          of a pointer.  In all but 2 or 3 cases, we want the returned exception anyway.
+          Might as well simplify the code by requiring the reference.
+
+        * runtime/Error.h:
+        (JSC::throwVMError):
+        (JSC::throwVMTypeError):
+
+        * runtime/Exception.cpp: Added.
+        (JSC::Exception::create):
+        (JSC::Exception::destroy):
+        (JSC::Exception::createStructure):
+        (JSC::Exception::visitChildren):
+        (JSC::Exception::Exception):
+        (JSC::Exception::~Exception):
+        * runtime/Exception.h: Added.
+        (JSC::Exception::valueOffset):
+        (JSC::Exception::cast):
+        (JSC::Exception::value):
+        (JSC::Exception::stack):
+        (JSC::Exception::didNotifyInspectorOfThrow):
+        (JSC::Exception::setDidNotifyInspectorOfThrow):
+
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createTerminatedExecutionException):
+        (JSC::isTerminatedExecutionException):
+        (JSC::createStackOverflowError):
+        * runtime/ExceptionHelpers.h:
+        * runtime/GetterSetter.cpp:
+        (JSC::callGetter):
+        * runtime/IteratorOperations.cpp:
+        (JSC::iteratorClose):
+        * runtime/JSObject.cpp:
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::constructPromise):
+        * runtime/JSPromiseDeferred.cpp:
+        (JSC::updateDeferredFromPotentialThenable):
+        (JSC::abruptRejection):
+        * runtime/JSPromiseReaction.cpp:
+        (JSC::ExecutePromiseReactionMicrotask::run):
+
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::releaseExecutableMemory):
+        (JSC::VM::throwException):
+        (JSC::VM::setStackPointerAtVMEntry):
+        (JSC::VM::getExceptionInfo): Deleted.
+        (JSC::VM::setExceptionInfo): Deleted.
+        (JSC::VM::clearException): Deleted.
+        (JSC::clearExceptionStack): Deleted.
+        * runtime/VM.h:
+        (JSC::VM::targetMachinePCForThrowOffset):
+        (JSC::VM::clearException):
+        (JSC::VM::setException):
+        (JSC::VM::exception):
+        (JSC::VM::addressOfException):
+        (JSC::VM::exceptionStack): Deleted.
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::VMEntryScope):
+        (JSC::VMEntryScope::setEntryScopeDidPopListener):
+
 2015-06-04  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Always track out-of-bounds array access explicitly instead of relying on the slow case

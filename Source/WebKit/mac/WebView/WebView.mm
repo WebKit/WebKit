@@ -114,6 +114,7 @@
 #import <CoreFoundation/CFSet.h>
 #import <Foundation/NSURLConnection.h>
 #import <JavaScriptCore/APICast.h>
+#import <JavaScriptCore/Exception.h>
 #import <JavaScriptCore/JSValueRef.h>
 #import <WebCore/AlternativeTextUIController.h>
 #import <WebCore/AnimationController.h>
@@ -724,7 +725,8 @@ static String webKitBundleVersionString()
     if (!toJSDOMWindow(execState->lexicalGlobalObject()))
         return;
 
-    reportException(execState, toJS(execState, exception));
+    Exception* vmException = Exception::cast(toJS(execState, exception));
+    reportException(execState, vmException);
 }
 
 static void WebKitInitializeApplicationCachePathIfNecessary()

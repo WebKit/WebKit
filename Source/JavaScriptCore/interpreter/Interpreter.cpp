@@ -41,6 +41,7 @@
 #include "DebuggerCallFrame.h"
 #include "ErrorInstance.h"
 #include "EvalCodeCache.h"
+#include "Exception.h"
 #include "ExceptionHelpers.h"
 #include "GetterSetter.h"
 #include "JSArray.h"
@@ -435,7 +436,7 @@ static bool unwindCallFrame(StackVisitor& visitor)
 {
     CallFrame* callFrame = visitor->callFrame();
     if (Debugger* debugger = callFrame->vmEntryGlobalObject()->debugger()) {
-        ClearExceptionScope scope(&callFrame->vm());
+        SuspendExceptionScope scope(&callFrame->vm());
         if (jsDynamicCast<JSFunction*>(callFrame->callee()))
             debugger->returnEvent(callFrame);
         else
@@ -583,9 +584,9 @@ JSString* Interpreter::stackTraceAsString(ExecState* exec, Vector<StackFrame> st
     return jsString(&exec->vm(), builder.toString());
 }
 
-class GetExceptionHandlerFunctor {
+class GetCatchHandlerFunctor {
 public:
-    GetExceptionHandlerFunctor()
+    GetCatchHandlerFunctor()
         : m_handler(0)
     {
     }
@@ -599,7 +600,7 @@ public:
             return StackVisitor::Continue;
 
         unsigned bytecodeOffset = visitor->bytecodeOffset();
-        m_handler = codeBlock->handlerForBytecodeOffset(bytecodeOffset);
+        m_handler = codeBlock->handlerForBytecodeOffset(bytecodeOffset, CodeBlock::RequiredHandler::CatchHandler);
         if (m_handler)
             return StackVisitor::Done;
 
@@ -649,11 +650,12 @@ private:
     HandlerInfo*& m_handler;
 };
 
-NEVER_INLINE HandlerInfo* Interpreter::unwind(VMEntryFrame*& vmEntryFrame, CallFrame*& callFrame, JSValue& exceptionValue)
+NEVER_INLINE HandlerInfo* Interpreter::unwind(VMEntryFrame*& vmEntryFrame, CallFrame*& callFrame, Exception* exception)
 {
     CodeBlock* codeBlock = callFrame->codeBlock();
     bool isTermination = false;
 
+    JSValue exceptionValue = exception->value();
     ASSERT(!exceptionValue.isEmpty());
     ASSERT(!exceptionValue.isCell() || exceptionValue.asCell());
     // This shouldn't be possible (hence the assertions), but we're already in the slowest of
@@ -662,32 +664,35 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(VMEntryFrame*& vmEntryFrame, CallF
         exceptionValue = jsNull();
 
     if (exceptionValue.isObject())
-        isTermination = isTerminatedExecutionException(asObject(exceptionValue));
+        isTermination = isTerminatedExecutionException(exception);
 
-    ASSERT(callFrame->vm().exceptionStack().size());
+    ASSERT(callFrame->vm().exception() && callFrame->vm().exception()->stack().size());
 
     Debugger* debugger = callFrame->vmEntryGlobalObject()->debugger();
-    if (debugger && debugger->needsExceptionCallbacks()) {
-        // We need to clear the exception and the exception stack here in order to see if a new exception happens.
+    if (debugger && debugger->needsExceptionCallbacks() && !exception->didNotifyInspectorOfThrow()) {
+        // We need to clear the exception here in order to see if a new exception happens.
         // Afterwards, the values are put back to continue processing this error.
-        ClearExceptionScope scope(&callFrame->vm());
+        SuspendExceptionScope scope(&callFrame->vm());
         // This code assumes that if the debugger is enabled then there is no inlining.
         // If that assumption turns out to be false then we'll ignore the inlined call
         // frames.
         // https://bugs.webkit.org/show_bug.cgi?id=121754
 
-        bool hasHandler;
+        bool hasCatchHandler;
         if (isTermination)
-            hasHandler = false;
+            hasCatchHandler = false;
         else {
-            GetExceptionHandlerFunctor functor;
+            GetCatchHandlerFunctor functor;
             callFrame->iterate(functor);
-            hasHandler = !!functor.handler();
+            HandlerInfo* handler = functor.handler();
+            ASSERT(!handler || handler->isCatchHandler());
+            hasCatchHandler = !!handler;
         }
 
-        debugger->exception(callFrame, exceptionValue, hasHandler);
+        debugger->exception(callFrame, exceptionValue, hasCatchHandler);
         ASSERT(!callFrame->hadException());
     }
+    exception->setDidNotifyInspectorOfThrow();
 
     // Calculate an exception handler vPC, unwinding call frames as necessary.
     HandlerInfo* handler = 0;

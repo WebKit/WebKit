@@ -89,7 +89,7 @@ JSValue iteratorStep(ExecState* exec, JSValue iterator)
 
 void iteratorClose(ExecState* exec, JSValue iterator)
 {
-    JSValue exception;
+    Exception* exception = nullptr;
     if (exec->hadException()) {
         exception = exec->exception();
         exec->clearException();
@@ -99,7 +99,7 @@ void iteratorClose(ExecState* exec, JSValue iterator)
         return;
 
     if (returnFunction.isUndefined()) {
-        if (!exception.isEmpty())
+        if (exception)
             exec->vm().throwException(exec, exception);
         return;
     }
@@ -107,7 +107,7 @@ void iteratorClose(ExecState* exec, JSValue iterator)
     CallData returnFunctionCallData;
     CallType returnFunctionCallType = getCallData(returnFunction, returnFunctionCallData);
     if (returnFunctionCallType == CallTypeNone) {
-        if (!exception.isEmpty())
+        if (exception)
             exec->vm().throwException(exec, exception);
         else
             throwTypeError(exec);
@@ -117,7 +117,7 @@ void iteratorClose(ExecState* exec, JSValue iterator)
     MarkedArgumentBuffer returnFunctionArguments;
     JSValue innerResult = call(exec, returnFunction, returnFunctionCallType, returnFunctionCallData, iterator, returnFunctionArguments);
 
-    if (!exception.isEmpty()) {
+    if (exception) {
         exec->vm().throwException(exec, exception);
         return;
     }

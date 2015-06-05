@@ -32,6 +32,7 @@
 #include "CodeBlock.h"
 #include "CallFrame.h"
 #include "ErrorHandlingScope.h"
+#include "Exception.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSNotAnObject.h"
 #include "Interpreter.h"
@@ -59,16 +60,10 @@ JSObject* createTerminatedExecutionException(VM* vm)
     return TerminatedExecutionError::create(*vm);
 }
 
-bool isTerminatedExecutionException(JSObject* object)
+bool isTerminatedExecutionException(Exception* exception)
 {
-    return object->inherits(TerminatedExecutionError::info());
+    return exception->value().inherits(TerminatedExecutionError::info());
 }
-
-bool isTerminatedExecutionException(JSValue value)
-{
-    return value.inherits(TerminatedExecutionError::info());
-}
-
 
 JSObject* createStackOverflowError(ExecState* exec)
 {

@@ -33,6 +33,7 @@
 
 #include "DebuggerCallFrame.h"
 #include "DebuggerScope.h"
+#include "Exception.h"
 #include "JSJavaScriptCallFrame.h"
 #include "JSLock.h"
 #include "JavaScriptCallFrame.h"
@@ -93,7 +94,7 @@ bool ScriptDebugServer::evaluateBreakpointAction(const ScriptBreakpointAction& b
         break;
     }
     case ScriptBreakpointActionTypeEvaluate: {
-        JSValue exception;
+        Exception* exception;
         debuggerCallFrame->evaluate(breakpointAction.data, exception);
         if (exception)
             reportException(debuggerCallFrame->exec(), exception);
@@ -103,13 +104,13 @@ bool ScriptDebugServer::evaluateBreakpointAction(const ScriptBreakpointAction& b
         dispatchBreakpointActionSound(debuggerCallFrame->exec(), breakpointAction.identifier);
         break;
     case ScriptBreakpointActionTypeProbe: {
-        JSValue exception;
+        Exception* exception;
         JSValue result = debuggerCallFrame->evaluate(breakpointAction.data, exception);
         if (exception)
             reportException(debuggerCallFrame->exec(), exception);
         
         JSC::ExecState* state = debuggerCallFrame->scope()->globalObject()->globalExec();
-        Deprecated::ScriptValue wrappedResult = Deprecated::ScriptValue(state->vm(), exception ? exception : result);
+        Deprecated::ScriptValue wrappedResult = Deprecated::ScriptValue(state->vm(), exception ? exception->value() : result);
         dispatchBreakpointActionProbe(state, breakpointAction, wrappedResult);
         break;
     }
@@ -302,7 +303,7 @@ void ScriptDebugServer::handleBreakpointHit(JSC::JSGlobalObject* globalObject, c
     }
 }
 
-void ScriptDebugServer::handleExceptionInBreakpointCondition(JSC::ExecState* exec, JSC::JSValue exception) const
+void ScriptDebugServer::handleExceptionInBreakpointCondition(JSC::ExecState* exec, JSC::Exception* exception) const
 {
     reportException(exec, exception);
 }

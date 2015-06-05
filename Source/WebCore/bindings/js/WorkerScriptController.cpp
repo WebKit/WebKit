@@ -40,6 +40,7 @@
 #include <heap/StrongInlines.h>
 #include <interpreter/Interpreter.h>
 #include <runtime/Completion.h>
+#include <runtime/Exception.h>
 #include <runtime/ExceptionHelpers.h>
 #include <runtime/Error.h>
 #include <runtime/JSLock.h>
@@ -98,15 +99,15 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)
     if (isExecutionForbidden())
         return;
 
-    Deprecated::ScriptValue exception;
-    evaluate(sourceCode, &exception);
-    if (exception.jsValue()) {
+    Exception* exception;
+    evaluate(sourceCode, exception);
+    if (exception) {
         JSLockHolder lock(vm());
-        reportException(m_workerGlobalScopeWrapper->globalExec(), exception.jsValue());
+        reportException(m_workerGlobalScopeWrapper->globalExec(), exception);
     }
 }
 
-void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, Deprecated::ScriptValue* exception)
+void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, JSC::Exception*& returnedException)
 {
     if (isExecutionForbidden())
         return;
@@ -116,8 +117,8 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, Deprec
     ExecState* exec = m_workerGlobalScopeWrapper->globalExec();
     JSLockHolder lock(exec);
 
-    JSValue evaluationException;
-    JSC::evaluate(exec, sourceCode.jsSourceCode(), m_workerGlobalScopeWrapper->globalThis(), &evaluationException);
+    JSC::Exception* evaluationException;
+    JSC::evaluate(exec, sourceCode.jsSourceCode(), m_workerGlobalScopeWrapper->globalThis(), evaluationException);
 
     VM& vm = exec->vm();
     if ((evaluationException && isTerminatedExecutionException(evaluationException)) 
@@ -131,16 +132,19 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, Deprec
         int lineNumber = 0;
         int columnNumber = 0;
         String sourceURL = sourceCode.url().string();
-        if (m_workerGlobalScope->sanitizeScriptError(errorMessage, lineNumber, columnNumber, sourceURL, sourceCode.cachedScript()))
-            *exception = Deprecated::ScriptValue(*m_vm, exec->vm().throwException(exec, createError(exec, errorMessage.impl())));
-        else
-            *exception = Deprecated::ScriptValue(*m_vm, evaluationException);
+        if (m_workerGlobalScope->sanitizeScriptError(errorMessage, lineNumber, columnNumber, sourceURL, sourceCode.cachedScript())) {
+            vm.throwException(exec, createError(exec, errorMessage.impl()));
+            evaluationException = vm.exception();
+            vm.clearException();
+        }
     }
+    returnedException = evaluationException;
 }
 
-void WorkerScriptController::setException(const Deprecated::ScriptValue& exception)
+void WorkerScriptController::setException(JSC::Exception* exception)
 {
-    m_workerGlobalScopeWrapper->globalExec()->vm().throwException(m_workerGlobalScopeWrapper->globalExec(), exception.jsValue());
+    JSC::ExecState* exec = m_workerGlobalScopeWrapper->globalExec();
+    exec->vm().throwException(exec, exception);
 }
 
 void WorkerScriptController::scheduleExecutionTermination()

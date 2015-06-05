@@ -98,20 +98,20 @@ namespace JSC {
         void expressionInfo(int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column);
     };
 
-    class ClearExceptionScope {
+    class SuspendExceptionScope {
     public:
-        ClearExceptionScope(VM* vm): m_vm(vm)
+        SuspendExceptionScope(VM* vm)
+            : m_vm(vm)
         {
-            vm->getExceptionInfo(oldException, oldExceptionStack);
+            oldException = vm->exception();
             vm->clearException();
         }
-        ~ClearExceptionScope()
+        ~SuspendExceptionScope()
         {
-            m_vm->setExceptionInfo(oldException, oldExceptionStack);
+            m_vm->setException(oldException);
         }
     private:
-        JSC::JSValue oldException;
-        RefCountedArray<JSC::StackFrame> oldExceptionStack;
+        Exception* oldException;
         VM* m_vm;
     };
     
@@ -215,7 +215,7 @@ namespace JSC {
         
         SamplingTool* sampler() { return m_sampler.get(); }
 
-        NEVER_INLINE HandlerInfo* unwind(VMEntryFrame*&, CallFrame*&, JSValue&);
+        NEVER_INLINE HandlerInfo* unwind(VMEntryFrame*&, CallFrame*&, Exception*);
         NEVER_INLINE void debug(CallFrame*, DebugHookID);
         JSString* stackTraceAsString(ExecState*, Vector<StackFrame>);
 

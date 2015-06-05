@@ -54,7 +54,7 @@ private:
     virtual void didContinue(JSC::JSGlobalObject*) override;
     virtual void runEventLoopWhilePaused() override;
     virtual bool isContentScript(JSC::ExecState*) const override;
-    virtual void reportException(JSC::ExecState*, JSC::JSValue) const override;
+    virtual void reportException(JSC::ExecState*, JSC::Exception*) const override;
 
     void runEventLoopWhilePausedInternal();
 

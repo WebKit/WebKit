@@ -27,6 +27,7 @@
 
 #include "APICast.h"
 #include "Completion.h"
+#include "Exception.h"
 #include "JSBasePrivate.h"
 #include "VM.h"
 #include "JSScriptRefPrivate.h"
@@ -142,12 +143,12 @@ JSValueRef JSScriptEvaluate(JSContextRef context, JSScriptRef script, JSValueRef
         RELEASE_ASSERT_NOT_REACHED();
         return 0;
     }
-    JSValue internalException;
+    Exception* internalException;
     JSValue thisValue = thisValueRef ? toJS(exec, thisValueRef) : jsUndefined();
-    JSValue result = evaluate(exec, SourceCode(script), thisValue, &internalException);
+    JSValue result = evaluate(exec, SourceCode(script), thisValue, internalException);
     if (internalException) {
         if (exception)
-            *exception = toRef(exec, internalException);
+            *exception = toRef(exec, internalException->value());
         return 0;
     }
     ASSERT(result);

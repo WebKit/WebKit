@@ -31,6 +31,7 @@
 #include "BasicBlockLocation.h"
 #include "CopiedSpaceInlines.h"
 #include "Debugger.h"
+#include "Exception.h"
 #include "Heap.h"
 #include "JITInlines.h"
 #include "JSArray.h"
@@ -529,6 +530,9 @@ void JIT::emit_op_catch(Instruction* currentInstruction)
     load64(Address(regT3, VM::exceptionOffset()), regT0);
     store64(TrustedImm64(JSValue::encode(JSValue())), Address(regT3, VM::exceptionOffset()));
     emitPutVirtualRegister(currentInstruction[1].u.operand);
+
+    load64(Address(regT0, Exception::valueOffset()), regT0);
+    emitPutVirtualRegister(currentInstruction[2].u.operand);
 }
 
 void JIT::emit_op_switch_imm(Instruction* currentInstruction)
