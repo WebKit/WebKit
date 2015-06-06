@@ -97,13 +97,6 @@ static void *setMetaData(void* context)
     pthread_attr_destroy(&attr);
 }
 
-- (NSString *)_webkit_startupVolumeName
-{
-    RetainPtr<DASessionRef> session = adoptCF(DASessionCreate(kCFAllocatorDefault));
-    RetainPtr<DADiskRef> disk = adoptCF(DADiskCreateFromVolumePath(kCFAllocatorDefault, session.get(), (CFURLRef)[NSURL fileURLWithPath:@"/"]));
-    return [[(NSString *)CFDictionaryGetValue(adoptCF(DADiskCopyDescription(disk.get())).get(), kDADiskDescriptionVolumeNameKey) copy] autorelease];
-}
-
 #endif // !PLATFORM(IOS)
 
 // -[NSFileManager fileExistsAtPath:] returns NO if there is a broken symlink at the path.

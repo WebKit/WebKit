@@ -285,50 +285,6 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
     return [result autorelease];
 }
 
-#if !PLATFORM(IOS)
--(NSString *)_webkit_fixedCarbonPOSIXPath
-{
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    if ([fileManager fileExistsAtPath:self]) {
-        // Files exists, no need to fix.
-        return self;
-    }
-
-    NSMutableArray *pathComponents = [[[self pathComponents] mutableCopy] autorelease];
-    NSString *volumeName = [pathComponents objectAtIndex:1];
-    if ([volumeName isEqualToString:@"Volumes"]) {
-        // Path starts with "/Volumes", so the volume name is the next path component.
-        volumeName = [pathComponents objectAtIndex:2];
-        // Remove "Volumes" from the path because it may incorrectly be part of the path (3163647).
-        // We'll add it back if we have to.
-        [pathComponents removeObjectAtIndex:1];
-    }
-
-    if (!volumeName) {
-        // Should only happen if self == "/", so this shouldn't happen because that always exists.
-        return self;
-    }
-
-    if ([[fileManager _webkit_startupVolumeName] isEqualToString:volumeName]) {
-        // Startup volume name is included in path, remove it.
-        [pathComponents removeObjectAtIndex:1];
-    } else if ([[fileManager contentsOfDirectoryAtPath:@"/Volumes" error:NULL] containsObject:volumeName]) {
-        // Path starts with other volume name, prepend "/Volumes".
-        [pathComponents insertObject:@"Volumes" atIndex:1];
-    } else
-        // It's valid.
-        return self;
-
-    NSString *path = [NSString pathWithComponents:pathComponents];
-
-    if (![fileManager fileExistsAtPath:path])
-        // File at canonicalized path doesn't exist, return original.
-        return self;
-
-    return path;
-}
-#endif // !PLATFORM(IOS)
-
 #if PLATFORM(IOS)
 + (NSString *)_web_stringWithData:(NSData *)data textEncodingName:(NSString *)textEncodingName
 {

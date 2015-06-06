@@ -1,5 +1,20 @@
 2015-06-06  Anders Carlsson  <andersca@apple.com>
 
+        Remove now unused category methods
+        https://bugs.webkit.org/show_bug.cgi?id=145729
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/WebKitLegacy.xcconfig:
+        * Misc/WebKitNSStringExtras.h:
+        * Misc/WebKitNSStringExtras.mm:
+        (-[NSString _webkit_fixedCarbonPOSIXPath]): Deleted.
+        * Misc/WebNSFileManagerExtras.h:
+        * Misc/WebNSFileManagerExtras.mm:
+        (-[NSFileManager _webkit_startupVolumeName]): Deleted.
+
+2015-06-06  Anders Carlsson  <andersca@apple.com>
+
         Fix build.
 
         * WebKit.mac.exp:

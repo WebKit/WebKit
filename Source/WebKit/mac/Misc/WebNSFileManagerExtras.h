@@ -31,7 +31,6 @@
 @interface NSFileManager (WebNSFileManagerExtras)
 #if !TARGET_OS_IPHONE
 - (void)_webkit_setMetadataURL:(NSString *)URLString referrer:(NSString *)referrer atPath:(NSString *)path;
-- (NSString *)_webkit_startupVolumeName;
 #endif
 - (NSString *)_webkit_pathWithUniqueFilenameForPath:(NSString *)path;
 

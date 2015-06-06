@@ -63,9 +63,6 @@ extern NSString *WebKitLocalCacheDefaultsKey;
 - (NSString *)_webkit_stringByTrimmingWhitespace;
 - (NSString *)_webkit_stringByCollapsingNonPrintingCharacters;
 - (NSString *)_webkit_stringByCollapsingWhitespaceCharacters;
-#if !TARGET_OS_IPHONE
-- (NSString *)_webkit_fixedCarbonPOSIXPath;
-#endif
 
 #if TARGET_OS_IPHONE
 + (NSString *)_web_stringWithData:(NSData *)data textEncodingName:(NSString *)textEncodingName;
