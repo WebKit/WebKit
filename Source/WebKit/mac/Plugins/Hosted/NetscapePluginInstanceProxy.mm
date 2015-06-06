@@ -580,7 +580,7 @@ NPError NetscapePluginInstanceProxy::loadURL(const char* url, const char* target
                 path = [fileURL path];
             else
                 path = (NSString *)bufString.get();
-            httpBody = [NSData dataWithContentsOfFile:[path _webkit_fixedCarbonPOSIXPath]];
+            httpBody = [NSData dataWithContentsOfFile:path];
             if (!httpBody)
                 return NPERR_FILE_NOT_FOUND;
         } else
