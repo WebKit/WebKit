@@ -1,3 +1,9 @@
+2015-06-06  Dan Bernstein  <mitz@apple.com>
+
+        Fixed the build.
+
+        * Plugins/WebBasePluginPackage.mm:
+
 2015-06-06  Anders Carlsson  <andersca@apple.com>
 
         Remove support from getting plug-in information from Carbon resources
