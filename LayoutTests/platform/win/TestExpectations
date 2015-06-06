@@ -3107,3 +3107,6 @@ fast/text/simple-line-layout-text-stroke-width.html [ Failure ]
 
 # ShouldOpenExternalURLs not yet supported in WK1
 loader/navigation-policy [ Skip ]
+
+#Subpixel difference
+fast/text/decorations-vertical-underline.html [ Skip ]

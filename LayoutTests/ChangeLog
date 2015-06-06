@@ -1,5 +1,13 @@
 2015-06-05  Zalan Bujtas  <zalan@apple.com>
 
+        [Win] Skip fast/text/decorations-vertical-underline-expected.html
+
+        Unreviewed gardening.
+
+        * platform/win/TestExpectations:
+
+2015-06-05  Zalan Bujtas  <zalan@apple.com>
+
         [Win] Update expected results.
 
         Unreviewed gardening.
