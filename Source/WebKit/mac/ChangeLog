@@ -1,3 +1,13 @@
+2015-06-06  Anders Carlsson  <andersca@apple.com>
+
+        Only allow plug-ins to create custom MIME property lists on older versions of OS X
+        https://bugs.webkit.org/show_bug.cgi?id=145726
+
+        Reviewed by Dan Bernstein.
+
+        * Plugins/WebBasePluginPackage.mm:
+        (-[WebBasePluginPackage getPluginInfoFromPLists]):
+
 2015-06-05  Mark Lam  <mark.lam@apple.com>
 
         finally blocks should not set the exception stack trace when re-throwing the exception.

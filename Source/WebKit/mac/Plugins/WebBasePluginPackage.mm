@@ -180,6 +180,8 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
         return NO;
     
     NSDictionary *MIMETypes = nil;
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
     NSString *pListFilename = [self _objectForInfoDictionaryKey:WebPluginMIMETypesFilenameKey];
     
     // Check if the MIME types are claimed in a plist in the user's preferences directory.
@@ -196,6 +198,7 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
             // Plist doesn't exist, ask the plug-in to create it.
             MIMETypes = [[self pListForPath:pListPath createFile:YES] objectForKey:WebPluginMIMETypesKey];
     }
+#endif
 
     if (!MIMETypes) {
         MIMETypes = [self _objectForInfoDictionaryKey:WebPluginMIMETypesKey];
