@@ -130,27 +130,34 @@ class RuntimeArray;
 
 class Element : public JSNonFinalObject {
 public:
-    Element(VM& vm, Structure* structure, Root* root)
+    Element(VM& vm, Structure* structure)
         : Base(vm, structure)
-        , m_root(root)
     {
     }
 
     typedef JSNonFinalObject Base;
     static const bool needsDestruction = false;
 
-    Root* root() const { return m_root; }
-    void setRoot(Root* root) { m_root = root; }
+    Root* root() const { return m_root.get(); }
+    void setRoot(VM& vm, Root* root) { m_root.set(vm, this, root); }
 
     static Element* create(VM& vm, JSGlobalObject* globalObject, Root* root)
     {
         Structure* structure = createStructure(vm, globalObject, jsNull());
-        Element* element = new (NotNull, allocateCell<Element>(vm.heap, sizeof(Element))) Element(vm, structure, root);
-        element->finishCreation(vm);
+        Element* element = new (NotNull, allocateCell<Element>(vm.heap, sizeof(Element))) Element(vm, structure);
+        element->finishCreation(vm, root);
         return element;
     }
 
-    void finishCreation(VM&);
+    void finishCreation(VM&, Root*);
+
+    static void visitChildren(JSCell* cell, SlotVisitor& visitor)
+    {
+        Element* thisObject = jsCast<Element*>(cell);
+        ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+        Base::visitChildren(thisObject, visitor);
+        visitor.append(&thisObject->m_root);
+    }
 
     static ElementHandleOwner* handleOwner();
 
@@ -162,7 +169,7 @@ public:
     DECLARE_INFO;
 
 private:
-    Root* m_root;
+    WriteBarrier<Root> m_root;
 };
 
 class ElementHandleOwner : public WeakHandleOwner {
@@ -421,9 +428,10 @@ ElementHandleOwner* Element::handleOwner()
     return owner;
 }
 
-void Element::finishCreation(VM& vm)
+void Element::finishCreation(VM& vm, Root* root)
 {
     Base::finishCreation(vm);
+    setRoot(vm, root);
     m_root->setElement(this);
 }
 
@@ -786,7 +794,7 @@ EncodedJSValue JSC_HOST_CALL functionSetElementRoot(ExecState* exec)
     JSLockHolder lock(exec);
     Element* element = jsCast<Element*>(exec->argument(0));
     Root* root = jsCast<Root*>(exec->argument(1));
-    element->setRoot(root);
+    element->setRoot(exec->vm(), root);
     return JSValue::encode(jsUndefined());
 }
 

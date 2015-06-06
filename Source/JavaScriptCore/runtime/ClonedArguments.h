@@ -55,6 +55,8 @@ public:
     
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
 
+    static void visitChildren(JSCell*, SlotVisitor&);
+
     DECLARE_INFO;
 
 private:

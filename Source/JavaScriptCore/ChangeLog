@@ -1,3 +1,25 @@
+2015-06-05  Mark Lam  <mark.lam@apple.com>
+
+        Subclasses of JSNonFinalObject with gc'able children need to implement visitChildren().
+        https://bugs.webkit.org/show_bug.cgi?id=145709
+
+        Reviewed by Geoffrey Garen.
+
+        * jsc.cpp:
+        (functionSetElementRoot):
+        - The Element class has a member of type Root which extends JSDestructibleObject.
+          It should be stored in a WriteBarrier, and visited by visitChildren().  
+
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::materializeSpecialsIfNecessary):
+        (JSC::ClonedArguments::visitChildren):
+        * runtime/ClonedArguments.h:
+        - Add missing visitChildren().
+
+        * tests/stress/cloned-arguments-should-visit-callee-during-gc.js: Added.
+        (makeTransientFunction.transientFunc):
+        (makeTransientFunction):
+
 2015-06-05  Geoffrey Garen  <ggaren@apple.com>
 
         DropAllLocks RELEASE_ASSERT on iOS
