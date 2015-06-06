@@ -62,6 +62,7 @@
 #include "TiledBacking.h"
 #include "TransformState.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/RAMSize.h>
 #include <wtf/TemporaryChange.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -2465,7 +2466,25 @@ bool RenderLayerCompositor::requiresCompositingForTransform(RenderLayerModelObje
 
     // Note that we ask the renderer if it has a transform, because the style may have transforms,
     // but the renderer may be an inline that doesn't suppport them.
-    return renderer.hasTransform() && renderer.style().transform().has3DOperation();
+    if (!renderer.hasTransform())
+        return false;
+
+    if (!renderer.style().transform().has3DOperation())
+        return false;
+
+#if PLATFORM(IOS)
+    static uint64_t ramSizeInMB = ramSize() / 1024 / 1024;
+    if (ramSizeInMB <= 512) {
+        // Special policy for low-memory devices: Don't require compositing just because there's a no-op 3D transform.
+        for (auto& transform : renderer.style().transform().operations()) {
+            if (!transform->isIdentity())
+                return true;
+        }
+        return false;
+    }
+#endif
+
+    return true;
 }
 
 bool RenderLayerCompositor::requiresCompositingForBackfaceVisibility(RenderLayerModelObject& renderer) const
