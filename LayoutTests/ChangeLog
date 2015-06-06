@@ -1,3 +1,12 @@
+2015-06-05  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: skip some inspector-protocol tests while the issue is being investigated.
+        https://bugs.webkit.org/show_bug.cgi?id=145720
+
+        Not reviewed.
+
+        * platform/win/TestExpectations:
+
 2015-06-05  Zalan Bujtas  <zalan@apple.com>
 
         [Win] Skip fast/text/decorations-vertical-underline-expected.html
