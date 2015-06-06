@@ -1,3 +1,15 @@
+2015-06-05  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] API test has been broken since r184357
+        https://bugs.webkit.org/show_bug.cgi?id=145635
+
+        Reviewed by Darin Adler.
+
+        r184357 suppress cmake build warning using TARGET_FILE property. However
+        many EFL API test cases have been broken after applying it.
+
+        * TestWebKitAPI/CMakeLists.txt:
+
 2015-06-05  Anders Carlsson  <andersca@apple.com>
 
         Make the network cache directory part of WKContextConfigurationRef
