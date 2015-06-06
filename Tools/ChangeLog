@@ -1,3 +1,12 @@
+2015-06-05  Zalan Bujtas  <zalan@apple.com>
+
+        From r185273 on WTF::RefCounter exposes the actual refcount instead of a boolean value.
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/Tests/WTF/RefCounter.cpp:
+        (TestWebKitAPI::TEST):
+
 2015-06-05  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] API test has been broken since r184357

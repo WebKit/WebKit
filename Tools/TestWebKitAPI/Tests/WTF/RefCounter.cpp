@@ -88,47 +88,47 @@ TEST(WTF, RefCounter)
         });
         counterPtr = &counter;
         // Testing (4a) - after construction value() is 0.
-        EXPECT_EQ(false, static_cast<int>(counter.value()));
+        EXPECT_EQ(0, static_cast<int>(counter.value()));
 
         // Testing (3a) - ref with callback from 0 -> 1.
         callbackValue = CallbackExpected;
         TokenType incTo1(counter.token<CounterType>());
         // Testing (4b) & (4c) - values within & after callback.
         EXPECT_EQ(true, callbackValue);
-        EXPECT_EQ(true, static_cast<int>(counter.value()));
+        EXPECT_EQ(1, static_cast<int>(counter.value()));
 
         // Testing (3b) - ref with callback from 1 -> 2.
         TokenType incTo2(incTo1);
         // Testing (4b) & (4c) - values within & after callback.
-        EXPECT_EQ(true, static_cast<int>(counter.value()));
+        EXPECT_EQ(2, static_cast<int>(counter.value()));
 
         // Testing (3c) - deref with callback from >1 -> 1.
         incTo1 = nullptr;
         // Testing (4b) & (4c) - values within & after callback.
-        EXPECT_EQ(true, static_cast<int>(counter.value()));
+        EXPECT_EQ(1, static_cast<int>(counter.value()));
 
         {
             // Testing (3j) - ref using a Ref rather than a RefPtr.
             TokenType incTo2Again(counter.token<CounterType>());
             // Testing (4b) & (4c) - values within & after callback.
-            EXPECT_EQ(true, static_cast<int>(counter.value()));
+            EXPECT_EQ(2, static_cast<int>(counter.value()));
             // Testing (3k) - deref using a Ref rather than a RefPtr.
         }
-        EXPECT_EQ(true, static_cast<int>(counter.value()));
+        EXPECT_EQ(1, static_cast<int>(counter.value()));
         // Testing (4b) & (4c) - values within & after callback.
 
         // Testing (3d) - deref with callback from 1 -> 0.
         callbackValue = CallbackExpected;
         incTo2 = nullptr;
         // Testing (4b) & (4c) - values within & after callback.
-        EXPECT_EQ(false, callbackValue);
-        EXPECT_EQ(false, static_cast<int>(counter.value()));
+        EXPECT_EQ(0, callbackValue);
+        EXPECT_EQ(0, static_cast<int>(counter.value()));
 
         // Testing (2a) - Destruction where the RefCounter::Count has a non-zero reference count.
         callbackValue = CallbackExpected;
         incTo1Again = counter.token<CounterType>();
-        EXPECT_EQ(true, callbackValue);
-        EXPECT_EQ(true, static_cast<int>(counter.value()));
+        EXPECT_EQ(1, callbackValue);
+        EXPECT_EQ(1, static_cast<int>(counter.value()));
         callbackValue = CallbackNotExpected;
     }
 
@@ -142,15 +142,15 @@ TEST(WTF, RefCounter)
     // Testing (1b) - Construction without a callback.
     RefCounter counter;
     // Testing (4a) - after construction value() is 0.
-    EXPECT_EQ(false, static_cast<int>(counter.value()));
+    EXPECT_EQ(0, static_cast<int>(counter.value()));
     // Testing (3h) - ref without callback
     TokenType incTo1(counter.token<CounterType>());
     // Testing (4c) - value as read after the ref.
-    EXPECT_EQ(true, static_cast<int>(counter.value()));
+    EXPECT_EQ(1, static_cast<int>(counter.value()));
     // Testing (3i) - deref without callback
     incTo1 = nullptr;
     // Testing (4c) - value as read after the deref.
-    EXPECT_EQ(false, static_cast<int>(counter.value()));
+    EXPECT_EQ(0, static_cast<int>(counter.value()));
     // Testing (2b) - Destruction where the RefCounter::Count has a zero reference count.
     // ... not a lot to test here! - we can at least ensure this code path is run & we don't crash!
 }
