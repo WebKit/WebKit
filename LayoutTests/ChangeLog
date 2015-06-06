@@ -1,3 +1,12 @@
+2015-06-05  Zalan Bujtas  <zalan@apple.com>
+
+        [Win] Update expected results.
+
+        Unreviewed gardening.
+
+        * platform/win/fast/forms/select-element-focus-ring-expected.txt: Added.
+        * platform/win/fast/text/emoji-expected.txt: Added.
+
 2015-06-05  Chris Dumez  <cdumez@apple.com>
 
         Regression(r176212): Broke app switching on iCloud.com
