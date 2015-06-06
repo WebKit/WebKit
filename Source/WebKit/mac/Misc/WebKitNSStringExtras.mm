@@ -170,13 +170,6 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
     return newString;
 }
 
-#if !PLATFORM(IOS)
-+ (NSStringEncoding)_web_encodingForResource:(Handle)resource
-{
-    return CFStringConvertEncodingToNSStringEncoding(stringEncodingForResource(resource));
-}
-#endif
-
 - (BOOL)_webkit_isCaseInsensitiveEqualToString:(NSString *)string
 {
     return stringIsCaseInsensitiveEqualToString(self, string);

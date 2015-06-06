@@ -1,5 +1,24 @@
 2015-06-06  Anders Carlsson  <andersca@apple.com>
 
+        Remove support from getting plug-in information from Carbon resources
+        https://bugs.webkit.org/show_bug.cgi?id=145730
+
+        Reviewed by Dan Bernstein.
+
+        No current plug-in versions use this feature, and both Chrome and Mozilla for
+        Mac stopped looking at Carbon resources years ago.
+
+        * Misc/WebKitNSStringExtras.h:
+        * Misc/WebKitNSStringExtras.mm:
+        (+[NSString _web_encodingForResource:]): Deleted.
+        * Plugins/WebBasePluginPackage.mm:
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage _initWithPath:]):
+        (-[WebNetscapePluginPackage stringForStringListID:andIndex:]): Deleted.
+        (-[WebNetscapePluginPackage getPluginInfoFromResources]): Deleted.
+
+2015-06-06  Anders Carlsson  <andersca@apple.com>
+
         Remove now unused category methods
         https://bugs.webkit.org/show_bug.cgi?id=145729
 

@@ -44,9 +44,6 @@ WEBCORE_EXPORT BOOL hasCaseInsensitiveSuffix(NSString *, NSString *suffix);
 WEBCORE_EXPORT BOOL hasCaseInsensitivePrefix(NSString *, NSString *prefix);
 WEBCORE_EXPORT BOOL hasCaseInsensitiveSubstring(NSString *, NSString *substring);
 WEBCORE_EXPORT NSString *filenameByFixingIllegalCharacters(NSString *);
-#if !PLATFORM(IOS)
-WEBCORE_EXPORT CFStringEncoding stringEncodingForResource(Handle resource);
-#endif
 
 WEBCORE_EXPORT NSString *preferredBundleLocalizationName();
 NSString *canonicalLocaleName(NSString *);

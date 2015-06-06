@@ -1,3 +1,21 @@
+2015-06-06  Anders Carlsson  <andersca@apple.com>
+
+        Remove support from getting plug-in information from Carbon resources
+        https://bugs.webkit.org/show_bug.cgi?id=145730
+
+        Reviewed by Dan Bernstein.
+
+        No current plug-in versions use this feature, and both Chrome and Mozilla for
+        Mac stopped looking at Carbon resources years ago.
+
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::NetscapePluginModule::getPluginInfo):
+        (WebKit::ResourceMap::ResourceMap): Deleted.
+        (WebKit::ResourceMap::~ResourceMap): Deleted.
+        (WebKit::ResourceMap::isValid): Deleted.
+        (WebKit::getStringListResource): Deleted.
+        (WebKit::getPluginInfoFromCarbonResources): Deleted.
+
 2015-06-05  Anders Carlsson  <andersca@apple.com>
 
         Only allow plug-ins to create custom MIME property lists on older versions of OS X

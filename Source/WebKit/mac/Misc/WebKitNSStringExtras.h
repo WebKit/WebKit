@@ -50,10 +50,6 @@ extern NSString *WebKitLocalCacheDefaultsKey;
 
 - (NSString *)_web_stringByStrippingReturnCharacters;
 
-#if !TARGET_OS_IPHONE
-+ (NSStringEncoding)_web_encodingForResource:(Handle)resource;
-#endif
-
 - (BOOL)_webkit_isCaseInsensitiveEqualToString:(NSString *)string;
 - (BOOL)_webkit_hasCaseInsensitivePrefix:(NSString *)suffix;
 - (BOOL)_webkit_hasCaseInsensitiveSuffix:(NSString *)suffix;
