@@ -23,10 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSStyleDeclarationSection = function(style)
+WebInspector.CSSStyleDeclarationSection = function(delegate, style)
 {
     // FIXME: Convert this to a WebInspector.Object subclass, and call super().
     // WebInspector.Object.call(this);
+
+    this._delegate = delegate || null;
 
     console.assert(style);
     this._style = style || null;
@@ -273,6 +275,17 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
     updateLayout: function()
     {
         this._propertiesTextEditor.updateLayout();
+    },
+
+    clearSelection: function()
+    {
+        this._propertiesTextEditor.clearSelection();
+    },
+
+    cssStyleDeclarationTextEditorFocused: function()
+    {
+        if (typeof this._delegate.cssStyleDeclarationSectionEditorFocused === "function")
+            this._delegate.cssStyleDeclarationSectionEditorFocused(this);
     },
 
     // Private

@@ -70,6 +70,9 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         this._codeMirror.on("change", this._contentChanged.bind(this));
         this._codeMirror.on("blur", this._editorBlured.bind(this));
 
+        if (typeof this._delegate.cssStyleDeclarationTextEditorFocused === "function")
+            this._codeMirror.on("focus", this._editorFocused.bind(this));
+
         this.style = style;
     }
 
@@ -221,6 +224,11 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         return false;
     }
 
+    clearSelection()
+    {
+        this._codeMirror.setCursor({line: 0, ch: 0});
+    }
+
     // Protected
 
     didDismissPopover(popover)
@@ -314,6 +322,12 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         // Reset the content on blur since we stop accepting external changes while the the editor is focused.
         // This causes us to pick up any change that was suppressed while the editor was focused.
         this._resetContent();
+    }
+
+    _editorFocused(codeMirror)
+    {
+        if (typeof this._delegate.cssStyleDeclarationTextEditorFocused === "function")
+            this._delegate.cssStyleDeclarationTextEditorFocused();
     }
 
     _contentChanged(codeMirror, change)

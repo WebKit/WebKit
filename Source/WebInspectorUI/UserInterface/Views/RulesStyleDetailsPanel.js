@@ -120,7 +120,7 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
                 previousFocusedSection = section;
 
             if (!section) {
-                section = new WebInspector.CSSStyleDeclarationSection(style);
+                section = new WebInspector.CSSStyleDeclarationSection(this, style);
                 style.__rulesSection = section;
             } else
                 section.refresh();
@@ -255,6 +255,14 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
         }
 
         return false;
+    }
+
+    cssStyleDeclarationSectionEditorFocused(ignoredSection)
+    {
+        for (var section of this._sections) {
+            if (section !== ignoredSection)
+                section.clearSelection();
+        }
     }
 
     // Protected
