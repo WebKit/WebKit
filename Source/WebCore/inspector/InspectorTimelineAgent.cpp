@@ -673,6 +673,10 @@ void InspectorTimelineAgent::addRecordToTimeline(RefPtr<InspectorObject>&& recor
         sendEvent(WTF::move(recordObject));
     } else {
         const TimelineRecordEntry& parent = m_recordStack.last();
+        // Nested paint records are an implementation detail and add no information not already contained in the parent.
+        if (type == TimelineRecordType::Paint && parent.type == type)
+            return;
+
         parent.children->pushObject(WTF::move(record));
     }
 }
