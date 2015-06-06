@@ -109,6 +109,7 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)
 
 void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, JSC::Exception*& returnedException)
 {
+    returnedException = nullptr;
     if (isExecutionForbidden())
         return;
 

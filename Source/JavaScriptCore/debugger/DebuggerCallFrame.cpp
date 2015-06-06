@@ -180,6 +180,7 @@ JSValue DebuggerCallFrame::thisValue() const
 JSValue DebuggerCallFrame::evaluate(const String& script, Exception*& exception)
 {
     ASSERT(isValid());
+    exception = nullptr;
     CallFrame* callFrame = m_callFrame;
     if (!callFrame)
         return jsNull();

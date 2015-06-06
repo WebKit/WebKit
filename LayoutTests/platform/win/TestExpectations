@@ -2369,14 +2369,6 @@ webkit.org/b/128979 [ Release ] inspector-protocol/dom/getAccessibilityPropertie
 inspector-protocol/debugger/removeBreakpoint.html [ Skip ] # Crashing
 inspector-protocol/debugger/searchInContent-linebreaks.html [ Pass Crash ] # Flaky
 
-webkit.org/b/145720 [ Release ] inspector-protocol/debugger/didSampleProbe-multiple-probes.html [ Skip ]
-webkit.org/b/145720 [ Release ] inspector-protocol/debugger/hit-breakpoint-from-console.html [ Skip ]
-webkit.org/b/145720 [ Release ] inspector-protocol/debugger/setBreakpoint-condition.html [ Skip ]
-webkit.org/b/145720 [ Release ] inspector-protocol/debugger/breakpoint-inside-conditons-and-actions.html [ Failure ]
-webkit.org/b/145720 [ Release ] inspector-protocol/debugger/setBreakpoint-actions.html [ Failure ]
-webkit.org/b/145720 [ Release ] inspector-protocol/debugger/setBreakpoint-column.html [ Failure ]
-webkit.org/b/145720 [ Release ] inspector-protocol/debugger/setBreakpointByUrl-sourceURL.html [ Failure ]
-
 webkit.org/b/143548 inspector/console/console-api.html [ Skip ] # Timeout
 ################################################################################
 #################        End Inspector Issues               ####################

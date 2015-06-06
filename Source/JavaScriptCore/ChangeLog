@@ -1,3 +1,13 @@
+2015-06-06  Mark Lam  <mark.lam@apple.com>
+
+        Returned Exception* values need to be initialized to nullptr when no exceptions are thrown.
+        https://bugs.webkit.org/show_bug.cgi?id=145720
+
+        Reviewed by Dan Bernstein.
+
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluate):
+
 2015-06-05  Mark Lam  <mark.lam@apple.com>
 
         Subclasses of JSNonFinalObject with gc'able children need to implement visitChildren().
