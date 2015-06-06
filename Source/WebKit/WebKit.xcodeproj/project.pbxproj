@@ -95,8 +95,6 @@
 		1C7B0C660EB2464D00A28502 /* WebInspectorClientCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C7B0C650EB2464D00A28502 /* WebInspectorClientCF.cpp */; };
 		1C8CB07A0AE9830C00B1F6E9 /* WebEditingDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C8CB0790AE9830C00B1F6E9 /* WebEditingDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1CCFFD130B1F81F2002EE926 /* OldWebAssertions.c in Sources */ = {isa = PBXBuildFile; fileRef = 1CCFFD120B1F81F2002EE926 /* OldWebAssertions.c */; };
-		224100F3091818D900D2D266 /* WebPluginsPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 224100F2091818D900D2D266 /* WebPluginsPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		224100F90918190100D2D266 /* WebPluginsPrivate.m in Sources */ = {isa = PBXBuildFile; fileRef = 224100F80918190100D2D266 /* WebPluginsPrivate.m */; };
 		22F219CC08D236730030E078 /* WebBackForwardListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 22F219CB08D236730030E078 /* WebBackForwardListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		29AEF960134C76FB00FE5096 /* OutlookQuirksUserScript.js in Resources */ = {isa = PBXBuildFile; fileRef = 29AEF95D134C755400FE5096 /* OutlookQuirksUserScript.js */; };
 		2D25396618CE85C200270222 /* WebSharingServicePickerController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D25396418CE85C200270222 /* WebSharingServicePickerController.h */; };
@@ -559,8 +557,6 @@
 		1C904FD40BA9DD0F0081E9D0 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		1C904FD50BA9DD0F0081E9D0 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		1CCFFD120B1F81F2002EE926 /* OldWebAssertions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = OldWebAssertions.c; sourceTree = "<group>"; };
-		224100F2091818D900D2D266 /* WebPluginsPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginsPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		224100F80918190100D2D266 /* WebPluginsPrivate.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebPluginsPrivate.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		22F219CB08D236730030E078 /* WebBackForwardListPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardListPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2568C72C0174912D0ECA149E /* WebKit.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebKit.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		29AEF95D134C755400FE5096 /* OutlookQuirksUserScript.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = OutlookQuirksUserScript.js; sourceTree = "<group>"; };
@@ -1643,8 +1639,6 @@
 				83E4AF47036652150000E506 /* WebBasePluginPackage.mm */,
 				F5F717200288493C018635CA /* WebPluginDatabase.h */,
 				F5F717210288493C018635CA /* WebPluginDatabase.mm */,
-				224100F2091818D900D2D266 /* WebPluginsPrivate.h */,
-				224100F80918190100D2D266 /* WebPluginsPrivate.m */,
 			);
 			name = Plugins;
 			path = mac/Plugins;
@@ -1936,7 +1930,6 @@
 				939810380824BF01008DF038 /* WebPluginDatabase.h in Headers */,
 				939810390824BF01008DF038 /* WebPluginPackage.h in Headers */,
 				1A77B02E0EE7730500C8A1F9 /* WebPluginRequest.h in Headers */,
-				224100F3091818D900D2D266 /* WebPluginsPrivate.h in Headers */,
 				9398103A0824BF01008DF038 /* WebPluginViewFactory.h in Headers */,
 				A10C1D701820300E0036883A /* WebGeolocationPrivate.h in Headers */,
 				939810AC0824BF01008DF038 /* WebPluginViewFactoryPrivate.h in Headers */,
@@ -2337,7 +2330,6 @@
 				939810DB0824BF01008DF038 /* WebPluginDatabase.mm in Sources */,
 				939810DC0824BF01008DF038 /* WebPluginPackage.mm in Sources */,
 				1A77B02F0EE7730500C8A1F9 /* WebPluginRequest.m in Sources */,
-				224100F90918190100D2D266 /* WebPluginsPrivate.m in Sources */,
 				939811080824BF01008DF038 /* WebPolicyDelegate.mm in Sources */,
 				939810F80824BF01008DF038 /* WebPreferences.mm in Sources */,
 				9398111A0824BF01008DF038 /* WebResource.mm in Sources */,
