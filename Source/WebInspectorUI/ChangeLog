@@ -1,5 +1,18 @@
 2015-06-05  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Fixing code style and adding more limitations for bug 141262
+        https://bugs.webkit.org/show_bug.cgi?id=145668
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/CSSCompletions.js:
+        (WebInspector.CSSCompletions.prototype.isValidPropertyName): Loops through the full property list and returns true only if a property exactly matches the given property name.
+        (WebInspector.CSSCompletions): Added isValidPropertyName function.
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createTextMarkerForPropertyIfNeeded): Added logic to limit the invalid class marker to only the property value if the property name is an actual property and to prevent invalid style from being applied incorrectly.
+
+2015-06-05  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Highlighting a CSS section does not deselect previously highlighted CSS sections
         https://bugs.webkit.org/show_bug.cgi?id=145399
 

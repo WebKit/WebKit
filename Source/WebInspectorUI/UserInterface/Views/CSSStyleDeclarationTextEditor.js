@@ -506,7 +506,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
         var propertyNameIsValid = false;
         if (WebInspector.CSSCompletions.cssNameCompletions)
-            propertyNameIsValid = WebInspector.CSSCompletions.cssNameCompletions.nameMatchesValidPropertyExactly(property.name);
+            propertyNameIsValid = WebInspector.CSSCompletions.cssNameCompletions.isValidPropertyName(property.name);
 
         var classNames = ["css-style-declaration-property"];
 
@@ -549,8 +549,11 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
         this._removeCheckboxPlaceholder(from.line);
 
-        if (!property.valid && propertyNameIsValid) {
-            var start = {line: from.line, ch: from.ch + property.text.indexOf(property.value)};
+        if (!property.valid && propertyNameIsValid && !property.text.trim().endsWith(":")) {
+            // The property.text.trim().endsWith(":") is for the situation when a property only has a name and colon and the user leaves the value blank (it looks weird to have an invalid marker through just the colon).
+            // Creating the synthesizedText is necessary for if the user adds multiple spaces before the value, causing the markText to mark one of the spaces instead.
+            var synthesizedText = property.name + ": " + property.value + ";";
+            var start = {line: from.line, ch: from.ch + synthesizedText.indexOf(property.value)};
             var end = {line: to.line, ch: start.ch + property.value.length};
 
             this._codeMirror.markText(start, end, {className: "invalid"});
