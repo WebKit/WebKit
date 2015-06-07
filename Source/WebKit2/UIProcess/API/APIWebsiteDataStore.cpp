@@ -80,6 +80,43 @@ String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const Stri
     // FIXME: Implement.
     return String();
 }
+
+String WebsiteDataStore::defaultLocalStorageDirectory()
+{
+    // FIXME: Implement.
+    return String();
+}
+
+String WebsiteDataStore::defaultWebSQLDatabaseDirectory()
+{
+    // FIXME: Implement.
+    return String();
+}
+
+String WebsiteDataStore::defaultNetworkCacheDirectory()
+{
+    // FIXME: Implement.
+    return String();
+}
+
+String WebsiteDataStore::defaultApplicationCacheDirectory()
+{
+    // FIXME: Implement.
+    return String();
+}
+
+String WebsiteDataStore::defaultMediaKeysStorageDirectory()
+{
+    // FIXME: Implement.
+    return String();
+}
+
+String WebsiteDataStore::defaultIndexedDBDatabaseDirectory()
+{
+    // FIXME: Implement.
+    return String();
+}
+
 #endif
 
 }

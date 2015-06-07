@@ -1,3 +1,23 @@
+2015-06-07  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL][GTK] Fix build  break since r185262
+        https://bugs.webkit.org/show_bug.cgi?id=145724
+
+        Unreviewed, fix build break for EFL and GTK ports.
+
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        (API::WebsiteDataStore::defaultLocalStorageDirectory):
+        (API::WebsiteDataStore::defaultWebSQLDatabaseDirectory):
+        (API::WebsiteDataStore::defaultNetworkCacheDirectory):
+        (API::WebsiteDataStore::defaultApplicationCacheDirectory):
+        (API::WebsiteDataStore::defaultMediaKeysStorageDirectory):
+        (API::WebsiteDataStore::defaultIndexedDBDatabaseDirectory):
+        * UIProcess/efl/WebProcessPoolEfl.cpp:
+        (WebKit::WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory):
+        (WebKit::WebProcessPool::platformDefaultDiskCacheDirectory): Deleted.
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2015-06-06  Dan Bernstein  <mitz@apple.com>
 
         Don’t enable manual sandboxing in the iOS Simulator. This should fix all the tests timing out.

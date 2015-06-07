@@ -126,7 +126,7 @@ String WebProcessPool::legacyPlatformDefaultMediaKeysStorageDirectory()
     return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/MediaKeys";
 }
 
-String WebProcessPool::platformDefaultDiskCacheDirectory() const
+String WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory()
 {
     return String::fromUTF8(efreet_cache_home_get()) + "/WebKitEfl";
 }
