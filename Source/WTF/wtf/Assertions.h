@@ -372,6 +372,19 @@ while (0)
 
 /* UNREACHABLE_FOR_PLATFORM */
 
+#if COMPILER(CLANG)
+// This would be a macro except that its use of #pragma works best around
+// a function. Hence it uses macro naming convention.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
+static inline void UNREACHABLE_FOR_PLATFORM()
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+#pragma clang diagnostic pop
+#else
 #define UNREACHABLE_FOR_PLATFORM() RELEASE_ASSERT_NOT_REACHED()
+#endif
+
 
 #endif /* WTF_Assertions_h */
