@@ -1,3 +1,59 @@
+2015-06-07  Tobias Reiss  <tobi+webkit@basecode.de>
+
+        Web Inspector: Add PrettyPrinter CSSRule tests
+        https://bugs.webkit.org/show_bug.cgi?id=145740
+
+        Reviewed by Brian Burg.
+
+        * Tools/PrettyPrinting/css-rule-tests/add-whitespace-after-colon-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/add-whitespace-after-colon.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/add-whitespace-after-comma-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/add-whitespace-after-comma.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/do-not-append-semicolon-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/do-not-append-semicolon.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/invalid-property-is-not-removed-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/invalid-property-is-not-removed.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/keep-prefixed-value-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/keep-prefixed-value.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/remove-whitespace-before-colon-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/remove-whitespace-before-colon.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/remove-whitespace-before-comment-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/remove-whitespace-before-comment.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/remove-whitespace-before-invalid-property-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/remove-whitespace-before-invalid-property.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/remove-whitespace-before-prefixed-property-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/remove-whitespace-before-prefixed-property.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/remove-whitespace-before-property-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/remove-whitespace-before-property.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/remove-whitespace-before-semicolon-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/remove-whitespace-before-semicolon.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/split-comment-followed-by-comment-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/split-comment-followed-by-comment.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/split-comment-followed-by-invalid-property-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/split-comment-followed-by-invalid-property.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/split-comment-followed-by-prefixed-property-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/split-comment-followed-by-prefixed-property.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/split-comment-followed-by-property-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/split-comment-followed-by-property.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/split-invalid-property-followed-by-comment-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/split-invalid-property-followed-by-comment.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/split-invalid-property-followed-by-invalid-property-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/split-invalid-property-followed-by-invalid-property.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/split-invalid-property-followed-by-prefixed-property-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/split-invalid-property-followed-by-prefixed-property.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/split-invalid-property-followed-by-property-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/split-invalid-property-followed-by-property.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/split-property-followed-by-comment-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/split-property-followed-by-comment.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/split-property-followed-by-invalid-property-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/split-property-followed-by-invalid-property.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/split-property-followed-by-prefixed-property-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/split-property-followed-by-prefixed-property.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/split-property-followed-by-property-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/split-property-followed-by-property.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/split-property-without-semicolon-followed-by-comment-and-property-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/split-property-without-semicolon-followed-by-comment-and-property.css: Added.
+
 2015-06-05  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Fixing code style and adding more limitations for bug 141262
