@@ -747,10 +747,6 @@ Could be worth adding to the API.
 - (void)setMemoryCacheDelegateCallsEnabled:(BOOL)suspend;
 - (BOOL)areMemoryCacheDelegateCallsEnabled;
 
-#if !TARGET_OS_IPHONE
-+ (NSCursor *)_pointingHandCursor;
-#endif
-
 // SPI for DumpRenderTree
 - (BOOL)_postsAcceleratedCompositingNotifications;
 - (void)_setPostsAcceleratedCompositingNotifications:(BOOL)flag;

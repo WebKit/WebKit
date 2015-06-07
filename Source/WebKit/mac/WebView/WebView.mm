@@ -124,7 +124,6 @@
 #import <WebCore/CFNetworkSPI.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/ColorMac.h>
-#import <WebCore/Cursor.h>
 #import <WebCore/DatabaseManager.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
@@ -3836,13 +3835,6 @@ static inline IMP getMethod(id o, SEL s)
 {
     return _private->page->areMemoryCacheClientCallsEnabled();
 }
-
-#if !PLATFORM(IOS)
-+ (NSCursor *)_pointingHandCursor
-{
-    return handCursor().platformCursor();
-}
-#endif
 
 - (BOOL)_postsAcceleratedCompositingNotifications
 {
