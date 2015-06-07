@@ -317,11 +317,15 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, c
         ASSERT(!m_sheet);
         return;
     }
+    auto* frame = document().frame();
+    if (!frame)
+        return;
+
     // Completing the sheet load may cause scripts to execute.
     Ref<HTMLLinkElement> protect(*this);
 
     CSSParserContext parserContext(document(), baseURL, charset);
-    auto cachePolicy = document().frame()->loader().subresourceCachePolicy();
+    auto cachePolicy = frame->loader().subresourceCachePolicy();
 
     if (RefPtr<StyleSheetContents> restoredSheet = const_cast<CachedCSSStyleSheet*>(cachedStyleSheet)->restoreParsedStyleSheet(parserContext, cachePolicy)) {
         ASSERT(restoredSheet->isCacheable());
