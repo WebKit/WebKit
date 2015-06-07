@@ -459,7 +459,6 @@ Could be worth adding to the API.
 + (void)_clearMemoryPressure;
 + (BOOL)_shouldWaitForMemoryClearMessage;
 + (void)_releaseMemoryNow;
-+ (void)_clearPrivateBrowsingSessionCookieStorage;
 
 - (void)_replaceCurrentHistoryItem:(WebHistoryItem *)item;
 #endif // PLATFORM(IOS)

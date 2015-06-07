@@ -1328,11 +1328,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     });
 }
 
-+ (void)_clearPrivateBrowsingSessionCookieStorage
-{
-    WebFrameNetworkingContext::clearPrivateBrowsingSessionCookieStorage();
-}
-
 - (void)_replaceCurrentHistoryItem:(WebHistoryItem *)item
 {
     Frame* frame = [self _mainCoreFrame];

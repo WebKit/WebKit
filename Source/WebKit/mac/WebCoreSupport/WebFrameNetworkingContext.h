@@ -38,12 +38,6 @@ public:
     static void ensurePrivateBrowsingSession();
     static void destroyPrivateBrowsingSession();
 
-#if PLATFORM(IOS)
-    // FIXME: If MobileSafari ever switches to per-tab or non-shared private storage, then this can be removed.
-    // <rdar://problem/10075665> Sub-TLF: Per-tab private browsing
-    static void clearPrivateBrowsingSessionCookieStorage();
-#endif
-
 private:
 
     WebFrameNetworkingContext(WebCore::Frame* frame)

@@ -66,16 +66,6 @@ void WebFrameNetworkingContext::destroyPrivateBrowsingSession()
     privateSession() = nullptr;
 }
 
-#if PLATFORM(IOS)
-void WebFrameNetworkingContext::clearPrivateBrowsingSessionCookieStorage()
-{
-    ASSERT(isMainThread());
-    ASSERT(privateSession());
-
-    CFHTTPCookieStorageDeleteAllCookies(privateSession()->cookieStorage().get());
-}
-#endif
-
 bool WebFrameNetworkingContext::localFileContentSniffingEnabled() const
 {
     return frame() && frame()->settings().localFileContentSniffingEnabled();
