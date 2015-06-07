@@ -278,6 +278,14 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
     return [result autorelease];
 }
 
+#if PLATFORM(MAC)
+// FIXME: This is here only for binary compatibility with Safari 8 and earlier.
+-(NSString *)_webkit_fixedCarbonPOSIXPath
+{
+    return self;
+}
+#endif
+
 #if PLATFORM(IOS)
 + (NSString *)_web_stringWithData:(NSData *)data textEncodingName:(NSString *)textEncodingName
 {

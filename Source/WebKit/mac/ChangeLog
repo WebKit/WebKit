@@ -1,5 +1,15 @@
 2015-06-06  Dan Bernstein  <mitz@apple.com>
 
+        Restored binary compatibility with shipping Safari.
+
+        Suggested by Anders Carlsson.
+
+        * Misc/WebKitNSStringExtras.mm:
+        (-[NSString _webkit_fixedCarbonPOSIXPath]): Added an implementation that returns self, so
+        that Safari doesn’t crash when trying to call this method.
+
+2015-06-06  Dan Bernstein  <mitz@apple.com>
+
         Fixed the build.
 
         * Plugins/WebBasePluginPackage.mm:
