@@ -91,7 +91,6 @@
 #import "WebNodeHighlight.h"
 #import "WebNotificationClient.h"
 #import "WebPDFView.h"
-#import "WebPanelAuthenticationHandler.h"
 #import "WebPlatformStrategies.h"
 #import "WebPluginDatabase.h"
 #import "WebPolicyDelegate.h"
@@ -3782,14 +3781,6 @@ static inline IMP getMethod(id o, SEL s)
     
     return [[[WebTextIterator alloc] initWithRange:kit(selectionInsideRect.toNormalizedRange().get())] autorelease];
 }
-
-#if ENABLE(DASHBOARD_SUPPORT)
-- (void)handleAuthenticationForResource:(id)identifier challenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource 
-{
-    NSWindow *window = [self hostWindow] ? [self hostWindow] : [self window]; 
-    [[WebPanelAuthenticationHandler sharedHandler] startAuthentication:challenge window:window]; 
-} 
-#endif
 
 #if !PLATFORM(IOS)
 - (void)_clearUndoRedoOperations

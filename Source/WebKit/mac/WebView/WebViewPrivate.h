@@ -720,12 +720,6 @@ Could be worth adding to the API.
  */
 - (WebTextIterator *)textIteratorForRect:(NSRect)rect;
 
-#if ENABLE_DASHBOARD_SUPPORT
-// <rdar://problem/5217124> Clients other than Dashboard, don't use this.
-// As of this writing, Dashboard uses this on Tiger, but not on Leopard or newer.
-- (void)handleAuthenticationForResource:(id)identifier challenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource;
-#endif
-
 #if !TARGET_OS_IPHONE
 - (void)_clearUndoRedoOperations;
 #endif
