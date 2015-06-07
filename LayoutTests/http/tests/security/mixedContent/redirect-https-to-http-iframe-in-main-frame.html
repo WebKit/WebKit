@@ -10,10 +10,10 @@ if (window.testRunner) {
 }
 
 window.addEventListener("message", function (e) {
+	if (e.data == "done")
+	    alert("should not have loaded insecure content");
 	if (window.testRunner)
 		testRunner.notifyDone()
-	if (e.data == "done")
-	    throw "should not have loaded insecure content"
 }, false);
 
 </script>

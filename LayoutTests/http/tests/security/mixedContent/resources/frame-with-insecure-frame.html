@@ -1,12 +1,11 @@
 <script>
-function frameLoaded() {
-  if (window.opener)
-    window.opener.postMessage('done', '*');
+var frameDidLoad = false;
+
+onload = function()
+{
+    if (window.opener)
+        window.opener.postMessage(frameDidLoad ? 'done' : 'blocked', '*');
 }
-setTimeout(function(){
-  if (window.opener)
-    window.opener.postMessage('blocked', '*');
-}, 100)
 </script>
-<iframe onload="frameLoaded()"
+<iframe onload="frameDidLoad = true"
         src="http://127.0.0.1:8080/security/mixedContent/resources/boring.html"></iframe>

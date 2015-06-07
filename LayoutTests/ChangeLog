@@ -1,3 +1,28 @@
+2015-06-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Clean up tests for blocking mixed content
+        https://bugs.webkit.org/show_bug.cgi?id=145718
+
+        Reviewed by Darin Adler.
+
+        Stop using timeouts, which were making the tests flaky.
+
+        * http/tests/xmlhttprequest/access-control-response-with-body.html: This wasn't even
+        a mixed content test, but the file was reused in one. I now made a separate helper
+        document, so this is just a regular test now, not another test's resource.
+
+        * http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html:
+        * http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html:
+        * http/tests/security/mixedContent/resources/frame-with-insecure-frame.html:
+        * http/tests/security/mixedContent/resources/frame-with-redirect-http-to-https-frame.html:
+        * http/tests/security/mixedContent/resources/frame-with-redirect-https-to-http-frame.html:
+        Refactored to not depend on timeouts.
+
+        * http/tests/security/mixedContent/insecure-xhr-in-main-frame-expected.txt:
+        * http/tests/security/mixedContent/insecure-xhr-in-main-frame.html:
+        * http/tests/security/mixedContent/resources/insecure-xhr-in-main-frame-window.html: Added.
+        This test still needs a timeout, because of a WebKit bug. I just made it much longer.
+
 2015-06-06  Mark Lam  <mark.lam@apple.com>
 
         Returned Exception* values need to be initialized to nullptr when no exceptions are thrown.
