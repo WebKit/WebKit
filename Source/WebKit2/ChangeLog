@@ -1,9 +1,15 @@
 2015-06-06  Dan Bernstein  <mitz@apple.com>
 
+        Don’t enable manual sandboxing in the iOS Simulator. This should fix all the tests timing out.
+
+        * Configurations/DebugRelease.xcconfig:
+
+2015-06-06  Dan Bernstein  <mitz@apple.com>
+
         [iOS] Can’t debug with Development XPC services due to automatic sandboxing
         https://bugs.webkit.org/show_bug.cgi?id=145731
 
-        Reviewed by Darin Adler.
+        Rubber-stamped by Darin Adler.
 
         In iOS, the XPC services are automatically sandboxed based on their entitlements. The
         sandbox doesn’t allow them to re-exec, which is necessary for linking against engineering
