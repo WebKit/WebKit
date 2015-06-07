@@ -24,6 +24,7 @@
 #include "BaseXPCService.xcconfig"
 
 WK_XPC_SERVICE_VARIANT = Development;
+WK_XPC_SERVICE_IOS_ENTITLEMENTS_BASE = WebContent-iOS;
 
 PRODUCT_NAME = com.apple.WebKit.WebContent.Development;
 INFOPLIST_FILE[sdk=iphone*] = WebProcess/EntryPoint/mac/XPCService/WebContentService.Development/Info-iOS.plist;
@@ -35,8 +36,6 @@ BUNDLE_LOCALIZATION_KEY_macosx_1090 = CFBundleAllowMixedLocalizations;
 BUNDLE_LOCALIZATION_KEY_macosx_101000 = CFBundleFollowParentLocalization;
 BUNDLE_LOCALIZATION_KEY_macosx_101100 = CFBundleFollowParentLocalization;
 BUNDLE_LOCALIZATION_KEY_macosx_101200 = CFBundleFollowParentLocalization;
-
-CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*] = Configurations/WebContent-iOS.entitlements;
 
 OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_VERSIONED_FRAMEWORK_PATH) $(OTHER_LDFLAGS_PLATFORM);
 OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = -framework AppKit;

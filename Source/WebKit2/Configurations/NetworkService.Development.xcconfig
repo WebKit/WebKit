@@ -24,9 +24,8 @@
 #include "BaseXPCService.xcconfig"
 
 WK_XPC_SERVICE_VARIANT = Development;
+WK_XPC_SERVICE_IOS_ENTITLEMENTS_BASE = Network-iOS;
 
 PRODUCT_NAME = com.apple.WebKit.Networking.Development;
 INFOPLIST_FILE[sdk=iphone*] = NetworkProcess/EntryPoint/mac/XPCService/NetworkService.Development/Info-iOS.plist;
 INFOPLIST_FILE[sdk=macosx*] = NetworkProcess/EntryPoint/mac/XPCService/NetworkService.Development/Info-OSX.plist;
-
-CODE_SIGN_ENTITLEMENTS[sdk=iphone*] = Configurations/Network-iOS.entitlements;

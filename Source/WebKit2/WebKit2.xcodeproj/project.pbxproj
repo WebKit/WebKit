@@ -74,6 +74,7 @@
 			buildConfigurationList = C0CE72891247E68600BC0EC4 /* Build configuration list for PBXAggregateTarget "Derived Sources" */;
 			buildPhases = (
 				C0CE72841247E66800BC0EC4 /* Generate Derived Sources */,
+				3740E7281B23724A004ADEF1 /* Derive Entitlements for Manual Sandboxing */,
 			);
 			dependencies = (
 			);
@@ -8690,6 +8691,7 @@
 				1A1D2115191D96380001619F /* Postprocess Framework Headers */,
 				8DC2EF520486A6940098B216 /* Resources */,
 				7CB16FEE1724BA05007A0A95 /* Copy Plug-in Sandbox Profiles */,
+				37E531011B2391090074F0DF /* Copy iOS Sandbox Profiles for Manual Sandboxing */,
 				1A07D2F71919B36500ECDA16 /* Copy Message Generation Scripts */,
 				8DC2EF540486A6940098B216 /* Sources */,
 				8DC2EF560486A6940098B216 /* Frameworks */,
@@ -9201,6 +9203,26 @@
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../Tools/Scripts/check-for-inappropriate-objc-class-names WK _WK || exit $?\nfi";
 		};
+		3740E7281B23724A004ADEF1 /* Derive Entitlements for Manual Sandboxing */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Configurations/Databases-iOS.entitlements",
+				"$(SRCROOT)/Configurations/Network-iOS.entitlements",
+				"$(SRCROOT)/Configurations/WebContent-iOS.entitlements",
+			);
+			name = "Derive Entitlements for Manual Sandboxing";
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/Databases-iOS-no-sandbox.entitlements",
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/Network-iOS-no-sandbox.entitlements",
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebContent-iOS-no-sandbox.entitlements",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ \"${WK_MANUAL_SANDBOXING_ENABLED}\" != \"YES\" || \"${PLATFORM_NAME}\" == \"macosx\" ]]; then\n    exit\nfi\n\nif [[ \"${ACTION}\" == \"build\" || \"${ACTION}\" == \"install\" ]]; then\n    for ((i = 0; i < ${SCRIPT_INPUT_FILE_COUNT}; ++i)); do\n        eval ENTITLEMENTS=\\${SCRIPT_INPUT_FILE_${i}}\n        ENTITLEMENTS_BASE=${ENTITLEMENTS##*/}\n        ENTITLEMENTS_BASE=${ENTITLEMENTS_BASE%.entitlements}\n        plutil -remove seatbelt-profiles -o \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2/${ENTITLEMENTS_BASE}-no-sandbox.entitlements\" \"${ENTITLEMENTS}\"\n    done\nfi";
+		};
 		375A248817E5048E00C9A086 /* Postprocess WKBase.h */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -9215,6 +9237,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "WKBASE_H=${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}/WKBase.h\n\nunifdef -B -D__APPLE__ -UBUILDING_GTK__ -UUSE_SOUP -UBUILDING_EFL__ -UBUILDING_QT__ -o ${WKBASE_H}.unifdef ${WKBASE_H}\n\ncase $? in\n0)\n    rm ${WKBASE_H}.unifdef\n    ;;\n1)\n    mv ${WKBASE_H}{.unifdef,}\n    ;;\n*)\n    exit 1\nesac\n";
+		};
+		37E531011B2391090074F0DF /* Copy iOS Sandbox Profiles for Manual Sandboxing */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.Databases.sb",
+				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb",
+				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb",
+			);
+			name = "Copy iOS Sandbox Profiles for Manual Sandboxing";
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/com.apple.WebKit.Databases.sb",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/com.apple.WebKit.Networking.sb",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/com.apple.WebKit.WebContent.sb",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ \"${WK_MANUAL_SANDBOXING_ENABLED}\" != \"YES\" || \"${PLATFORM_NAME}\" == \"macosx\" ]]; then\n    exit\nfi\n\nif [[ \"${ACTION}\" == \"build\" || \"${ACTION}\" == \"install\" ]]; then\n    for ((i = 0; i < ${SCRIPT_INPUT_FILE_COUNT}; ++i)); do\n        eval SANDBOX_PROFILE=\\${SCRIPT_INPUT_FILE_${i}}\n        ditto \"${SANDBOX_PROFILE}\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/${SANDBOX_PROFILE##*/}\"\n    done\nfi";
 		};
 		5DF408C5131DD46700130071 /* Check For Weak VTables and Externals */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -11141,6 +11183,7 @@
 				377E7CD21B20FF9E00931AFC /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
 		};
 		510031F21379CACB00C8DFE4 /* Build configuration list for PBXNativeTarget "SecItemShim" */ = {
 			isa = XCConfigurationList;

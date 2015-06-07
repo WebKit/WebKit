@@ -1,3 +1,57 @@
+2015-06-06  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] Can’t debug with Development XPC services due to automatic sandboxing
+        https://bugs.webkit.org/show_bug.cgi?id=145731
+
+        Reviewed by Darin Adler.
+
+        In iOS, the XPC services are automatically sandboxed based on their entitlements. The
+        sandbox doesn’t allow them to re-exec, which is necessary for linking against engineering
+        builds of the WebKit frameworks placed in a non-system location.
+
+        The solution is to opt Engineering builds into manual sandboxing.
+
+        * Configurations/BaseTarget.xcconfig:
+        - Add ENABLE_MANUAL_SANDBOXING to
+          GCC_PREPROCESSOR_DEFINITIONS when WK_MANUAL_SANDBOXING_ENABLED is YES.
+        - Set WK_MANUAL_SANDBOXING_ENABLED to YES for OS X, because we always use manual
+          sandboxing on that platform.
+
+        * Configurations/DebugRelease.xcconfig: Removed unused definition of DEBUG_OR_RELEASE. Set
+          WK_MANUAL_SANDBOXING_ENABLED to YES for all engineering builds.
+
+        * Configurations/BaseXPCService.xcconfig: Define CODE_SIGN_ENTITLEMENTS for iOS to be empty
+          if the service is not installed; to use the base entitlements file from Configurations if
+          manual sandboxing is not enabled; and to use a derived entitlements file, which doesn’t
+          specify a sandbox profile, if manual sandboxing is enabled.
+
+        * Configurations/DatabaseService.Development.xcconfig: Define
+          WK_XPC_SERVICE_IOS_ENTITLEMENTS_BASE and let BaseXPCService.xcconfig define
+          CODE_SIGN_ENTITLEMENTS for iOS.
+
+        * Configurations/DatabaseService.xcconfig: Ditto.
+        * Configurations/NetworkService.Development.xcconfig: Ditto.
+        * Configurations/NetworkService.xcconfig: Ditto.
+        * Configurations/WebContentService.Development.xcconfig: Ditto.
+        * Configurations/WebContentService.xcconfig: Ditto.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        - In the Derived Sources target, added a Derive Entitlements for Manual Sandboxing script
+          build phase. When building for iOS with manual sandboxing enabled, it creates copies of
+          the iOS entitlements files with a -no-sandbox suffix and the seatbelt-profiles key
+          removed.
+        - In the WebKit target, added a Copy iOS Sandbox Profiles for Manual Sandboxing script build
+          phase. When building for iOS with manual sandboxing enabled, it copies the iOS sandbox
+          profiles into the framework, so that the services can apply them to themselves at runtime.
+
+        * Shared/ios/ChildProcessIOS.mm:
+        (WebKit::ChildProcess::initializeSandbox): Use ENABLE(MANUAL_SANDBOXING) and don’t define it
+        here.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::initializeSandbox): Use ENABLE(MANUAL_SANDBOXING) instead of defining
+        and using ENABLE_MANUAL_WEBPROCESS_SANDBOXING here.
+
 2015-06-06  Anders Carlsson  <andersca@apple.com>
 
         Remove support from getting plug-in information from Carbon resources

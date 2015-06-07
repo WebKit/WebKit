@@ -41,11 +41,7 @@
 
 #import <WebCore/FloatingPointEnvironment.h> 
 
-#ifndef ENABLE_MANUAL_SANDBOXING
-#define ENABLE_MANUAL_SANDBOXING 0
-#endif
-
-#if ENABLE_MANUAL_SANDBOXING
+#if ENABLE(MANUAL_SANDBOXING)
 
 // We have to #undef __APPLE_API_PRIVATE to prevent sandbox.h from looking for a header file that does not exist (<rdar://problem/9679211>).
 #undef __APPLE_API_PRIVATE
@@ -74,7 +70,7 @@ void ChildProcess::platformInitialize()
 
 void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
-#if ENABLE_MANUAL_SANDBOXING
+#if ENABLE(MANUAL_SANDBOXING)
     NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
     String defaultProfilePath = [webkit2Bundle pathForResource:[[NSBundle mainBundle] bundleIdentifier] ofType:@"sb"];
     if (sandboxParameters.systemDirectorySuffix().isNull()) {

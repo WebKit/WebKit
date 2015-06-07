@@ -59,8 +59,6 @@
 #import <stdio.h>
 #import <wtf/RAMSize.h>
 
-#define ENABLE_MANUAL_WEBPROCESS_SANDBOXING !PLATFORM(IOS)
-
 using namespace WebCore;
 
 namespace WebKit {
@@ -207,7 +205,7 @@ void WebProcess::platformTerminate()
 void WebProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
 #if ENABLE(WEB_PROCESS_SANDBOX)
-#if ENABLE_MANUAL_WEBPROCESS_SANDBOXING
+#if ENABLE(MANUAL_SANDBOXING)
     // Need to override the default, because service has a different bundle ID.
     NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
 #if PLATFORM(IOS)

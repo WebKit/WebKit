@@ -24,9 +24,7 @@
 #include "BaseXPCService.xcconfig"
 
 WK_XPC_SERVICE_VARIANT = Normal;
+WK_XPC_SERVICE_IOS_ENTITLEMENTS_BASE = WebContent-iOS;
 
 PRODUCT_NAME = com.apple.WebKit.Databases;
 INFOPLIST_FILE = DatabaseProcess/EntryPoint/mac/XPCService/DatabaseService/Info.plist;
-
-CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*] = Configurations/Databases-iOS.entitlements
-CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*] = Configurations/Databases-iOS.entitlements
