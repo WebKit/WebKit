@@ -49,7 +49,6 @@ private:
     virtual bool isList() const override { return true; }
     virtual bool computeAccessibilityIsIgnored() const override;
     virtual AccessibilityRole determineAccessibilityRole() override;
-    bool childHasPseudoVisibleListItemMarkers(RenderObject*);
 };
 
 } // namespace WebCore

@@ -1,3 +1,17 @@
+2015-06-08  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: improve list heuristics (presentational use versus actual lists)
+       ​https://bugs.webkit.org/show_bug.cgi?id=134187
+
+        Unreviewed. Rolling this change out temporarily.
+
+        * accessibility/list-detection-expected.txt:
+        * accessibility/list-detection.html:
+        * accessibility/list-detection2-expected.txt: Removed.
+        * accessibility/list-detection2.html: Removed.
+        * platform/gtk/accessibility/list-detection-expected.txt:
+        * platform/win/TestExpectations:
+
 2015-06-08  Alexey Proskuryakov  <ap@apple.com>
 
         Unskip http/tests/misc/webtiming-ssl.php, as it should be passing on Yosemite.
