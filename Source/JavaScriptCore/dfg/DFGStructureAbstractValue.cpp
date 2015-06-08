@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,14 +64,14 @@ void StructureAbstractValue::clobber()
     setClobbered(true);
         
     if (m_set.isThin()) {
-        if (!m_set.singleStructure())
+        if (!m_set.singleEntry())
             return;
-        if (!m_set.singleStructure()->dfgShouldWatch())
+        if (!m_set.singleEntry()->dfgShouldWatch())
             makeTopWhenThin();
         return;
     }
-        
-    StructureSet::OutOfLineList* list = m_set.structureList();
+    
+    StructureSet::OutOfLineList* list = m_set.list();
     for (unsigned i = list->m_length; i--;) {
         if (!list->list()[i]->dfgShouldWatch()) {
             makeTop();
@@ -268,25 +268,6 @@ void StructureAbstractValue::filter(const StructureAbstractValue& other)
     filter(other.m_set);
 }
 
-namespace {
-
-class ConformsToType {
-public:
-    ConformsToType(SpeculatedType type)
-        : m_type(type)
-    {
-    }
-    
-    bool operator()(Structure* structure)
-    {
-        return !!(speculationFromStructure(structure) & m_type);
-    }
-private:
-    SpeculatedType m_type;
-};
-
-} // anonymous namespace
-
 void StructureAbstractValue::filterSlow(SpeculatedType type)
 {
     SAMPLE("StructureAbstractValue filter type slow");
@@ -298,8 +279,10 @@ void StructureAbstractValue::filterSlow(SpeculatedType type)
     
     ASSERT(!isTop());
     
-    ConformsToType conformsToType(type);
-    m_set.genericFilter(conformsToType);
+    m_set.genericFilter(
+        [&] (Structure* structure) {
+            return !!(speculationFromStructure(structure) & type);
+        });
 }
 
 bool StructureAbstractValue::contains(Structure* structure) const

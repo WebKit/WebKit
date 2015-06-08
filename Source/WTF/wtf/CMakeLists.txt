@@ -94,6 +94,7 @@ set(WTF_HEADERS
     ThreadSpecific.h
     Threading.h
     ThreadingPrimitives.h
+    TinyPtrSet.h
     VMTags.h
     ValueCheck.h
     Vector.h

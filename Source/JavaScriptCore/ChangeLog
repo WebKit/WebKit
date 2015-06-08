@@ -1,3 +1,76 @@
+2015-06-07  Filip Pizlo  <fpizlo@apple.com>
+
+        The tiny set magic in StructureSet should be available in WTF
+        https://bugs.webkit.org/show_bug.cgi?id=145722
+
+        Reviewed by Geoffrey Garen.
+        
+        I moved the generic logic of small sets of pointers and moved it into WTF. Now,
+        StructureSet is a subclass of TinyPtrSet<Structure*>. There shouldn't be any functional
+        change.
+
+        * bytecode/StructureSet.cpp:
+        (JSC::StructureSet::filter):
+        (JSC::StructureSet::filterArrayModes):
+        (JSC::StructureSet::speculationFromStructures):
+        (JSC::StructureSet::arrayModesFromStructures):
+        (JSC::StructureSet::dumpInContext):
+        (JSC::StructureSet::dump):
+        (JSC::StructureSet::clear): Deleted.
+        (JSC::StructureSet::add): Deleted.
+        (JSC::StructureSet::remove): Deleted.
+        (JSC::StructureSet::contains): Deleted.
+        (JSC::StructureSet::merge): Deleted.
+        (JSC::StructureSet::exclude): Deleted.
+        (JSC::StructureSet::isSubsetOf): Deleted.
+        (JSC::StructureSet::overlaps): Deleted.
+        (JSC::StructureSet::operator==): Deleted.
+        (JSC::StructureSet::addOutOfLine): Deleted.
+        (JSC::StructureSet::containsOutOfLine): Deleted.
+        (JSC::StructureSet::copyFromOutOfLine): Deleted.
+        (JSC::StructureSet::OutOfLineList::create): Deleted.
+        (JSC::StructureSet::OutOfLineList::destroy): Deleted.
+        * bytecode/StructureSet.h:
+        (JSC::StructureSet::onlyStructure):
+        (JSC::StructureSet::StructureSet): Deleted.
+        (JSC::StructureSet::operator=): Deleted.
+        (JSC::StructureSet::~StructureSet): Deleted.
+        (JSC::StructureSet::isEmpty): Deleted.
+        (JSC::StructureSet::genericFilter): Deleted.
+        (JSC::StructureSet::isSupersetOf): Deleted.
+        (JSC::StructureSet::size): Deleted.
+        (JSC::StructureSet::at): Deleted.
+        (JSC::StructureSet::operator[]): Deleted.
+        (JSC::StructureSet::last): Deleted.
+        (JSC::StructureSet::iterator::iterator): Deleted.
+        (JSC::StructureSet::iterator::operator*): Deleted.
+        (JSC::StructureSet::iterator::operator++): Deleted.
+        (JSC::StructureSet::iterator::operator==): Deleted.
+        (JSC::StructureSet::iterator::operator!=): Deleted.
+        (JSC::StructureSet::begin): Deleted.
+        (JSC::StructureSet::end): Deleted.
+        (JSC::StructureSet::ContainsOutOfLine::ContainsOutOfLine): Deleted.
+        (JSC::StructureSet::ContainsOutOfLine::operator()): Deleted.
+        (JSC::StructureSet::copyFrom): Deleted.
+        (JSC::StructureSet::OutOfLineList::list): Deleted.
+        (JSC::StructureSet::OutOfLineList::OutOfLineList): Deleted.
+        (JSC::StructureSet::deleteStructureListIfNecessary): Deleted.
+        (JSC::StructureSet::isThin): Deleted.
+        (JSC::StructureSet::pointer): Deleted.
+        (JSC::StructureSet::singleStructure): Deleted.
+        (JSC::StructureSet::structureList): Deleted.
+        (JSC::StructureSet::set): Deleted.
+        (JSC::StructureSet::setEmpty): Deleted.
+        (JSC::StructureSet::getReservedFlag): Deleted.
+        (JSC::StructureSet::setReservedFlag): Deleted.
+        * dfg/DFGStructureAbstractValue.cpp:
+        (JSC::DFG::StructureAbstractValue::clobber):
+        (JSC::DFG::StructureAbstractValue::filter):
+        (JSC::DFG::StructureAbstractValue::filterSlow):
+        (JSC::DFG::StructureAbstractValue::contains):
+        * dfg/DFGStructureAbstractValue.h:
+        (JSC::DFG::StructureAbstractValue::makeTop):
+
 2015-06-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         [ARM] Add the missing setupArgumentsWithExecState functions after r185240
