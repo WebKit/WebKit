@@ -1,3 +1,9 @@
+2015-06-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix.
+
+        * wtf/TinyPtrSet.h: (WTF::TinyPtrSet::isEmpty): s/poointer/pointer/
+
 2015-06-07  Filip Pizlo  <fpizlo@apple.com>
 
         The tiny set magic in StructureSet should be available in WTF

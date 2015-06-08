@@ -97,7 +97,7 @@ public:
     {
         bool result = isThin() && !singleEntry();
         if (result)
-            ASSERT(m_poointer != reservedValue);
+            ASSERT(m_pointer != reservedValue);
         return result;
     }
     
