@@ -1101,9 +1101,6 @@ webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pa
 # FIXME: Needs bugzilla (<rdar://problem/16802068>)
 [ Yosemite+ ] fast/css/input-search-padding.html [ Failure ]
 
-# FIXME: Needs bugzilla (<rdar://problem/17458024>)
-[ Yosemite ] http/tests/misc/webtiming-ssl.php [ Skip ]
-
 # FIXME: Needs bugzilla (<rdar://problem/17458211>)
 [ Yosemite+ ] platform/mac/fast/text/systemFont.html [ Pass Failure ]
 [ Mavericks ] platform/mac/fast/text/systemFont.html [ Failure ]
