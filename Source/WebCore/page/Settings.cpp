@@ -70,7 +70,11 @@ static void invalidateAfterGenericFamilyChange(Page* page)
 }
 
 #if USE(AVFOUNDATION)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
 bool Settings::gAVFoundationEnabled = false;
+#else
+bool Settings::gAVFoundationEnabled = true;
+#endif
 #endif
 
 #if PLATFORM(COCOA)
