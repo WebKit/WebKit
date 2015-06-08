@@ -1938,6 +1938,17 @@ static int32_t activeOrientation(WKWebView *webView)
     }];
 }
 
+- (id)_snapshotLayerContentsForBackForwardListItem:(WKBackForwardListItem *)item
+{
+    if (_page->backForwardList().currentItem() == &item._item)
+        _page->recordNavigationSnapshot(*_page->backForwardList().currentItem());
+
+    if (auto* viewSnapshot = item._item.snapshot())
+        return viewSnapshot->asLayerContents();
+
+    return nil;
+}
+
 #endif
 
 - (void)_didRelaunchProcess

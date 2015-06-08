@@ -1,3 +1,21 @@
+2015-06-08  Anders Carlsson  <andersca@apple.com>
+
+        Move the snapshot layer contents SPI to the web view
+        https://bugs.webkit.org/show_bug.cgi?id=145771
+
+        Reviewed by Geoffrey Garen.
+
+        We need to potentially ask the web page to take a snapshot of the current item,
+        so move the SPI to WKWebView and name it appropriately.
+
+        * UIProcess/API/Cocoa/WKBackForwardListItem.mm:
+        (-[WKBackForwardListItem _snapshotLayerContents]): Deleted.
+        * UIProcess/API/Cocoa/WKBackForwardListItemPrivate.h: Removed.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _snapshotLayerContentsForBackForwardListItem:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-06-08  Brady Eidson  <beidson@apple.com>
 
         Completely remove all IDB properties/constructors when it is disabled at runtime.
