@@ -66,35 +66,13 @@ function constructorPropertiesOnGlobalObject(globalObject)
     return constructorNames.sort();
 }
 
-// The presence and correctness of these properties is tested elsewhere
-var propertiesToSkip = [
-    "IDBCursor", 
-    "IDBCursorWithValue", 
-    "IDBDatabase", 
-    "IDBFactory", 
-    "IDBIndex", 
-    "IDBKeyRange", 
-    "IDBObjectStore", 
-    "IDBOpenDBRequest", 
-    "IDBRequest", 
-    "IDBTransaction", 
-    "IDBVersionChangeEvent",
-    "webkitIDBCursor", 
-    "webkitIDBDatabase", 
-    "webkitIDBFactory", 
-    "webkitIDBIndex", 
-    "webkitIDBKeyRange", 
-    "webkitIDBObjectStore", 
-    "webkitIDBRequest", 
-    "webkitIDBTransaction" ];
-    
 var global = this;
 var constructorNames = constructorPropertiesOnGlobalObject(global);
 
 var constructorName;
 for (var i = 0; i < constructorNames.length; i++) {
     constructorName = constructorNames[i];
-    if (propertiesToSkip.indexOf(constructorName) != -1)
+    if (constructorName.indexOf("IDB") != 0 && constructorName.indexOf("webkitIDB") != 0)
         continue;
     descriptorShouldBe("global", "constructorName", {writable: true, enumerable: false, configurable: true, value: constructorName});
 }

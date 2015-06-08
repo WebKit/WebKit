@@ -1,0 +1,9 @@
+Test to ensure that IndexedDB global constructors have the right attributes
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

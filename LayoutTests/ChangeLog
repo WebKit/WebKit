@@ -1,3 +1,37 @@
+2015-06-08  Brady Eidson  <beidson@apple.com>
+
+        Fix up the layouttest situation after r185322.
+        https://bugs.webkit.org/show_bug.cgi?id=145777
+
+        Reviewed by Alexey Proskuryakov.
+
+        * js/dom/global-constructors-attributes-expected.txt:
+        * js/dom/global-constructors-attributes-idb-expected.txt: Added.
+        * js/dom/global-constructors-attributes-idb.html: Copied from LayoutTests/js/dom/global-constructors-attributes.html.
+        * js/dom/global-constructors-attributes.html:
+
+        Run this test only against IDB* and webkitIDB* constructors:
+        * js/dom/script-tests/global-constructors-attributes-idb.js: Copied from LayoutTests/js/dom/script-tests/global-constructors-attributes.js.
+        (.self.postMessage):
+        (.self.onconnect.self.postMessage):
+        (.self.onconnect):
+        (classNameForObject):
+        (constructorPropertiesOnGlobalObject):
+
+        Don’t run the test against known IDB constructors:
+        * js/dom/script-tests/global-constructors-attributes.js:
+
+        Update all the various platform-specific results for the main test to remove mentions of IDB.
+        * platform/efl/js/dom/global-constructors-attributes-expected.txt:
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt:
+        * platform/ios-sim-deprecated/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-mavericks/TestExpectations:
+        * platform/mac-mavericks/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-wk1/js/dom/global-constructors-attributes-expected.txt: Removed.
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * platform/win/js/dom/global-constructors-attributes-expected.txt:
+        * platform/wk2/js/dom/global-constructors-attributes-idb-expected.txt: Added.
+
 2015-06-08  Chris Dumez  <cdumez@apple.com>
 
         WebContent crash in WebCore::Page::sessionID() const + 0 (Page.cpp:1660)

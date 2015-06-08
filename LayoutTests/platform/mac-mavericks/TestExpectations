@@ -18,6 +18,3 @@ platform/mac/fast/ruby/ruby-expansion-cjk.html [ Skip ]
 platform/mac/fast/ruby/ruby-expansion-cjk-2.html [ Skip ]
 platform/mac/fast/ruby/ruby-expansion-cjk-3.html [ Skip ]
 platform/mac/fast/ruby/ruby-expansion-cjk-4.html [ Skip ]
-
-# Need to have Mavericks WK1 and Mavericks WK2 compare to different results which is not currently possible
-js/dom/global-constructors-attributes.html [ Skip ]

@@ -1,4 +1,4 @@
-Test to ensure that global constructors have the right attributes
+Test to ensure that global constructors (besides IndexedDB objects) have the right attributes
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
