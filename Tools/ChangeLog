@@ -1,3 +1,13 @@
+2015-06-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [GTK] Fix parentheses warning in TestWebKitWebView.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=145759
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebView.cpp:
+        (testWebViewSave):
+
 2015-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add editor mode to MiniBrowser

@@ -475,7 +475,7 @@ static void testWebViewSave(SaveWebViewTest* test, gconstpointer)
     gchar buffer[512] = { 0 };
     gssize readBytes = 0;
     gssize totalBytesFromStream = 0;
-    while (readBytes = g_input_stream_read(test->m_inputStream.get(), &buffer, 512, 0, &error.outPtr())) {
+    while ((readBytes = g_input_stream_read(test->m_inputStream.get(), &buffer, 512, 0, &error.outPtr()))) {
         g_assert(!error);
         totalBytesFromStream += readBytes;
     }
