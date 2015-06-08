@@ -38,6 +38,34 @@
     -webkit-grid-template-columns: [first nav] 10% [nav] 15% [last];
     -webkit-grid-template-rows: [first nav2] 25% [nav2] 75% [last];
 }
+.gridWithRepeat {
+    -webkit-grid-template-columns: [first] 10px repeat(2, [nav nav2] 50%);
+    -webkit-grid-template-rows: 100px repeat(2, [nav nav2] 25%) [last];
+}
+.gridWithEmptyBrackets {
+    -webkit-grid-template-columns: [] 10px;
+    -webkit-grid-template-rows: 20px [ ] 50px [];
+}
+.gridWithoutBrackets {
+    -webkit-grid-template-columns: first nav 10px;
+    -webkit-grid-template-rows: first 50% last;
+}
+.gridWithInvalidNestedBrackets {
+    -webkit-grid-template-columns: [first [nav]] 10px [last];
+    -webkit-grid-template-rows: [first] 50% [last [nav] nav2];
+}
+.gridWithUnbalancedBrackets {
+    -webkit-grid-template-columns: [first nav 10px;
+    -webkit-grid-template-rows: [first] 50% last];
+}
+.gridWithMisplacedBrackets {
+    -webkit-grid-template-columns: [first 10px] 50%;
+    -webkit-grid-template-rows: [first] [nav 50%];
+}
+.gridWithContiguousBrackets {
+    -webkit-grid-template-columns: [first] [nav] 10px;
+    -webkit-grid-template-rows: 50px [nav nav2] [middle] 10px;
+}
 </style>
 <script src="../../resources/js-test-pre.js"></script>
 </head>
@@ -55,6 +83,13 @@
 <div class="grid gridWithMinMax" id="gridWithMinMax"></div>
 <div class="grid gridWithFixedMultiple" id="gridWithFixedMultiple"></div>
 <div class="grid gridWithPercentageSameStringMultipleTimes" id="gridWithPercentageSameStringMultipleTimes"></div>
+<div class="grid gridWithRepeat" id="gridWithRepeatElement"></div>
+<div class="grid gridWithEmptyBrackets" id="gridWithEmptyBrackets"></div>
+<div class="grid gridWithoutBrackets" id="gridWithoutBrackets"></div>
+<div class="grid gridWithInvalidNestedBrackets" id="gridWithInvalidNestedBrackets"></div>
+<div class="grid gridWithUnbalancedBrackets" id="gridWithUnbalancedBrackets"></div>
+<div class="grid gridWithMisplacedBrackets" id="gridWithMisplacedBrackets"></div>
+<div class="grid gridWithContiguousBrackets" id="gridWithContiguousBrackets"></div>
 <script src="resources/grid-definitions-parsing-utils.js"></script>
 <script>
     description('Test that setting and getting grid-template-columns and grid-template-rows works as expected');
@@ -69,6 +104,8 @@
     testGridTemplatesValues(document.getElementById("gridWithMinMax"), "[first] 80px", "300px [last]");
     testGridTemplatesValues(document.getElementById("gridWithFixedMultiple"), "[first nav] 10px [last]", "[first nav] 15px [last]");
     testGridTemplatesValues(document.getElementById("gridWithPercentageSameStringMultipleTimes"), "[first nav] 80px [nav] 120px [last]", "[first nav2] 150px [nav2] 450px [last]");
+    testGridTemplatesValues(document.getElementById("gridWithRepeatElement"), "[first] 10px [nav nav2] 400px [nav nav2] 400px", "100px [nav nav2] 150px [nav nav2] 150px [last]");
+    testGridTemplatesValues(document.getElementById("gridWithEmptyBrackets"), "10px", "20px 50px");
 
     debug("");
     debug("Test getting and setting -webkit-grid-template-columns and -webkit-grid-template-rows through JS");
@@ -84,12 +121,28 @@
     testGridTemplatesSetJSValues("[first nav] minmax(-webkit-min-content, -webkit-max-content) [last]", "[first nav] minmax(-webkit-max-content, -webkit-min-content) [last]", "[first nav] 0px [last]", "[first nav] 0px [last]", "[first nav] minmax(-webkit-min-content, -webkit-max-content) [last]", "[first nav] minmax(-webkit-max-content, -webkit-min-content) [last]");
     testGridTemplatesSetJSValues("[first nav] minmax(-webkit-min-content, -webkit-max-content) [nav] auto [last]", "[first nav2] minmax(-webkit-max-content, -webkit-min-content) [nav2] minmax(10px, 15px) [last]", "[first nav] 0px [nav] 0px [last]", "[first nav2] 0px [nav2] 15px [last]", "[first nav] minmax(-webkit-min-content, -webkit-max-content) [nav] auto [last]", "[first nav2] minmax(-webkit-max-content, -webkit-min-content) [nav2] minmax(10px, 15px) [last]");
     testGridTemplatesSetJSValues("[foo bar] auto [foo] auto [bar]", "[foo bar] auto [foo] auto [bar]", "[foo bar] 0px [foo] 0px [bar]", "[foo bar] 0px [foo] 0px [bar]", "[foo bar] auto [foo] auto [bar]", "[foo bar] auto [foo] auto [bar]");
+    testGridTemplatesSetJSValues("[first] auto repeat(2, [foo bar] 20px)", "220px [foo] repeat(1, 50% [baz])", "[first] 0px [foo bar] 20px [foo bar] 20px", "220px [foo] 300px [baz]", "[first] auto [foo bar] 20px [foo bar] 20px", "220px [foo] 50% [baz]");
+
+    debug("");
+    debug("Test getting invalid grid-template-columns and grid-template-rows set through CSS");
+    testGridTemplatesValues(document.getElementById("gridWithoutBrackets"), "none", "none");
+    testGridTemplatesValues(document.getElementById("gridWithInvalidNestedBrackets"), "none", "none");
+    testGridTemplatesValues(document.getElementById("gridWithUnbalancedBrackets"), "none", "none");
+    testGridTemplatesValues(document.getElementById("gridWithMisplacedBrackets"), "none", "none");
+    testGridTemplatesValues(document.getElementById("gridWithContiguousBrackets"), "none", "none");
 
     debug("");
     debug("Test getting and setting invalid -webkit-grid-template-columns and -webkit-grid-template-rows through JS");
     testGridTemplatesSetBadJSValues("foo", "bar");
     testGridTemplatesSetBadJSValues("foo bar", "bar foo");
+    testGridTemplatesSetBadJSValues("[foo]", "[bar");
+    testGridTemplatesSetBadJSValues("[foo bar]", "[bar foo]");
+    testGridTemplatesSetBadJSValues("foo bar 10px", "50% baz bar foo 2em");
+    testGridTemplatesSetBadJSValues("[foo [bar]] 10px", "50% [[baz bar] foo] 2em");
+    testGridTemplatesSetBadJSValues("[foo bar 10px", "50% [baz bar] foo] 2em");
+    testGridTemplatesSetBadJSValues("[foo 10px] 2em", "[50% bar] [foo]");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
+

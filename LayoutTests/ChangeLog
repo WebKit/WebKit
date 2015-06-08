@@ -1,3 +1,17 @@
+2015-06-08  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Add some more testing for grid line names
+        https://bugs.webkit.org/show_bug.cgi?id=145691
+
+        Reviewed by Darin Adler.
+
+        After moving to the new syntax which uses brackets instead of
+        parentheses for grid line names lists, it's good to improve a bit
+        the testing of the feature with some more new test cases.
+
+        * fast/css-grid-layout/named-grid-line-get-set-expected.txt:
+        * fast/css-grid-layout/named-grid-line-get-set.html:
+
 2015-06-07  Darin Adler  <darin@apple.com>
 
         REGRESSION (r181720): Unnecessary layout triggered any time animated GIF advances to a new frame
