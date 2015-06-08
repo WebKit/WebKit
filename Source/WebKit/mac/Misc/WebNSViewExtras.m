@@ -159,61 +159,6 @@
     return NSDragOperationNone;
 }
 
-- (void)_web_DragImageForElement:(DOMElement *)element
-                         rect:(NSRect)rect
-                        event:(NSEvent *)event
-                   pasteboard:(NSPasteboard *)pasteboard 
-                       source:(id)source
-                       offset:(NSPoint *)dragImageOffset
-{
-    NSPoint mouseDownPoint = [self convertPoint:[event locationInWindow] fromView:nil];
-    NSImage *dragImage;
-    NSPoint origin;
-
-    NSImage *image = [element image];
-    if (image != nil && [image size].height * [image size].width <= WebMaxOriginalImageArea) {
-        NSSize originalSize = rect.size;
-        origin = rect.origin;
-        
-        dragImage = [[image copy] autorelease];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        [dragImage setScalesWhenResized:YES];
-#pragma clang diagnostic pop
-        [dragImage setSize:originalSize];
-        
-        [dragImage _web_scaleToMaxSize:WebMaxDragImageSize];
-        NSSize newSize = [dragImage size];
-        
-        [dragImage _web_dissolveToFraction:WebDragImageAlpha];
-        
-        // Properly orient the drag image and orient it differently if it's smaller than the original
-        origin.x = mouseDownPoint.x - (((mouseDownPoint.x - origin.x) / originalSize.width) * newSize.width);
-        origin.y = origin.y + originalSize.height;
-        origin.y = mouseDownPoint.y - (((mouseDownPoint.y - origin.y) / originalSize.height) * newSize.height);
-    } else {
-        // FIXME: This has been broken for a while.
-        // There's no way to get the MIME type for the image from a DOM element.
-        // The old code used [image MIMEType];
-        NSString *extension = @"";
-        dragImage = [[NSWorkspace sharedWorkspace] iconForFileType:extension];
-        NSSize offset = NSMakeSize([dragImage size].width - WebDragIconRightInset, -WebDragIconBottomInset);
-        origin = NSMakePoint(mouseDownPoint.x - offset.width, mouseDownPoint.y - offset.height);
-    }
-
-    // This is the offset from the lower left corner of the image to the mouse location.  Because we
-    // are a flipped view the calculation of Y is inverted.
-    if (dragImageOffset) {
-        dragImageOffset->x = mouseDownPoint.x - origin.x;
-        dragImageOffset->y = origin.y - mouseDownPoint.y;
-    }
-    
-    // Per kwebster, offset arg is ignored
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [self dragImage:dragImage at:origin offset:NSZeroSize event:event pasteboard:pasteboard source:source slideBack:YES];
-#pragma clang diagnostic pop
-}
 #endif // !PLATFORM(IOS)
 
 - (BOOL)_web_firstResponderIsSelfOrDescendantView
@@ -222,40 +167,6 @@
     return (responder && 
            (responder == self || 
            ([responder isKindOfClass:[NSView class]] && [(NSView *)responder isDescendantOf:self])));
-}
-
-- (NSRect)_web_convertRect:(NSRect)aRect toView:(NSView *)aView
-{
-    // Converting to this view's window; let -convertRect:toView: handle it
-    if (aView == nil)
-        return [self convertRect:aRect toView:nil];
-        
-    // This view must be in a window.  Do whatever weird thing -convertRect:toView: does in this situation.
-    NSWindow *thisWindow = [self window];
-    if (!thisWindow)
-        return [self convertRect:aRect toView:aView];
-    
-    // The other view must be in a window, too.
-    NSWindow *otherWindow = [aView window];
-    if (!otherWindow)
-        return [self convertRect:aRect toView:aView];
-
-    // Convert to this window's coordinates
-    NSRect convertedRect = [self convertRect:aRect toView:nil];
-    
-    // Convert to screen coordinates
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    convertedRect.origin = [thisWindow convertBaseToScreen:convertedRect.origin];
-
-    // Convert to other window's coordinates
-    convertedRect.origin = [otherWindow convertScreenToBase:convertedRect.origin];
-#pragma clang diagnostic pop
-    
-    // Convert to other view's coordinates
-    convertedRect = [aView convertRect:convertedRect fromView:nil];
-    
-    return convertedRect;
 }
 
 @end

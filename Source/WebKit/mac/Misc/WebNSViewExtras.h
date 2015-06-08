@@ -68,18 +68,9 @@
 // Returns NSDragOperationNone otherwise.
 - (NSDragOperation)_web_dragOperationForDraggingInfo:(id <NSDraggingInfo>)sender;
 
-// Resizes and applies alpha to image and drags it.
-- (void)_web_DragImageForElement:(DOMElement *)element
-                         rect:(NSRect)rect
-                        event:(NSEvent *)event
-                   pasteboard:(NSPasteboard *)pasteboard 
-                       source:(id)source
-                       offset:(NSPoint *)dragImageOffset;
 #endif
 
 - (BOOL)_web_firstResponderIsSelfOrDescendantView;
-
-- (NSRect)_web_convertRect:(NSRect)aRect toView:(NSView *)aView;
 
 @end
 
