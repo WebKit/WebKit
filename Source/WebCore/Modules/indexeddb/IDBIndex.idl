@@ -26,6 +26,7 @@
 [
     Conditional=INDEXED_DATABASE,
     ImplementationLacksVTable,
+    EnabledAtRuntime=IndexedDB,
 ] interface IDBIndex {
     readonly attribute DOMString name;
     readonly attribute IDBObjectStore objectStore;

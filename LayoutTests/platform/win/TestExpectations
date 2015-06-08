@@ -242,6 +242,10 @@ http/tests/security/no-indexeddb-from-sandbox.html [ Skip ]
 crypto/subtle/rsa-indexeddb.html [ Skip ]
 fast/history/page-cache-indexed-closed-db.html [ Skip ]
 fast/history/page-cache-indexed-opened-db.html [ Skip ]
+
+# But since it is disabled at runtime, we should make sure it is correctly disabled
+storage/indexeddb/properties-disabled-at-runtime.html [ Pass ]
+
 fast/history/page-cache-webdatabase-no-transaction-db.html [ Skip ]
 fast/history/page-cache-webdatabase-pending-transaction.html [ Skip ]
 

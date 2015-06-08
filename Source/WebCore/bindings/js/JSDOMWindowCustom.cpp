@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSDOMWindowCustom.h"
 
+#include "DOMWindowIndexedDatabase.h"
 #include "Frame.h"
 #include "HTMLCollection.h"
 #include "HTMLDocument.h"
@@ -29,10 +30,12 @@
 #include "JSHTMLAudioElement.h"
 #include "JSHTMLCollection.h"
 #include "JSHTMLOptionElement.h"
+#include "JSIDBFactory.h"
 #include "JSImageConstructor.h"
 #include "JSMessagePortCustom.h"
 #include "JSWorker.h"
 #include "Location.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScheduledAction.h"
 #include "Settings.h"
 
@@ -96,6 +99,23 @@ static EncodedJSValue jsDOMWindowWebKit(ExecState* exec, JSObject*, EncodedJSVal
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, castedThis->impl()))
         return JSValue::encode(jsUndefined());
     return JSValue::encode(toJS(exec, castedThis->globalObject(), castedThis->impl().webkitNamespace()));
+}
+#endif
+
+#if ENABLE(INDEXED_DATABASE)
+static EncodedJSValue jsDOMWindowIndexedDB(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
+{
+    UNUSED_PARAM(exec);
+    UNUSED_PARAM(slotBase);
+    UNUSED_PARAM(thisValue);
+    auto* castedThis = toJSDOMWindow(JSValue::decode(thisValue));
+    if (!RuntimeEnabledFeatures::sharedFeatures().indexedDBEnabled())
+        return JSValue::encode(jsUndefined());
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, castedThis->impl()))
+        return JSValue::encode(jsUndefined());
+    auto& impl = castedThis->impl();
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(DOMWindowIndexedDatabase::indexedDB(&impl)));
+    return JSValue::encode(result);
 }
 #endif
 
@@ -167,6 +187,18 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
             return true;
         }
     }
+
+#if ENABLE(INDEXED_DATABASE)
+    // FIXME: With generated JS bindings built on static property tables there is no way to
+    // completely remove a generated property at runtime.
+    // So to completely disable IndexedDB at runtime we have to not generate these accessors
+    // and have to handle them specially here.
+    // Once https://webkit.org/b/145669 is resolved, they can once again be auto generated.
+    if (RuntimeEnabledFeatures::sharedFeatures().indexedDBEnabled() && (propertyName == exec->propertyNames().indexedDB || propertyName == exec->propertyNames().webkitIndexedDB)) {
+        slot.setCustom(thisObject, allowsAccess ? DontDelete | ReadOnly | CustomAccessor : ReadOnly | DontDelete | DontEnum, jsDOMWindowIndexedDB);
+        return true;
+    }
+#endif
 
     const HashTableValue* entry = JSDOMWindow::info()->staticPropHashTable->entry(propertyName);
     if (entry) {

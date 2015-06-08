@@ -25,6 +25,7 @@
 
 [
     Conditional=INDEXED_DATABASE,
+    EnabledAtRuntime=IndexedDB,
 ] interface IDBCursor {
     readonly attribute IDBAny source;
     readonly attribute DOMString direction;

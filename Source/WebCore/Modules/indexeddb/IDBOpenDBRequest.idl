@@ -27,7 +27,8 @@
     Conditional=INDEXED_DATABASE,
     EventTarget,
     JSGenerateToJSObject,
-    JSGenerateToNativeObject
+    JSGenerateToNativeObject,
+    EnabledAtRuntime=IndexedDB,
 ] interface IDBOpenDBRequest : IDBRequest {
     attribute EventHandler onblocked;
     attribute EventHandler onupgradeneeded;

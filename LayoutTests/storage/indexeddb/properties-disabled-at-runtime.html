@@ -1,0 +1,81 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var counter = 1;
+
+alert(window.indexedDB);
+window.indexedDB = counter++; 
+alert(window.indexedDB);
+
+alert(window.webkitIndexedDB);
+window.webkitIndexedDB = counter++; 
+alert(window.webkitIndexedDB);
+
+alert(window.IDBCursorConstructor);
+window.IDBCursorConstructor = counter++; 
+alert(window.IDBCursorConstructor);
+
+alert(window.IDBDatabaseConstructor);
+window.IDBDatabaseConstructor = counter++; 
+alert(window.IDBDatabaseConstructor);
+
+alert(window.IDBFactoryConstructor);
+window.IDBFactoryConstructor = counter++; 
+alert(window.IDBFactoryConstructor);
+
+alert(window.IDBIndexConstructor);
+window.IDBIndexConstructor = counter++; 
+alert(window.IDBIndexConstructor);
+
+alert(window.IDBKeyRangeConstructor);
+window.IDBKeyRangeConstructor = counter++; 
+alert(window.IDBKeyRangeConstructor);
+
+alert(window.IDBObjectStoreConstructor);
+window.IDBObjectStoreConstructor = counter++; 
+alert(window.IDBObjectStoreConstructor);
+
+alert(window.IDBRequestConstructor);
+window.IDBRequestConstructor = counter++; 
+alert(window.IDBRequestConstructor);
+
+alert(window.IDBTransactionConstructor);
+window.IDBTransactionConstructor = counter++; 
+alert(window.IDBTransactionConstructor);
+
+alert(window.webkitIDBCursorConstructor);
+window.webkitIDBCursorConstructor = counter++; 
+alert(window.webkitIDBCursorConstructor);
+
+alert(window.webkitIDBDatabaseConstructor);
+window.webkitIDBDatabaseConstructor = counter++; 
+alert(window.webkitIDBDatabaseConstructor);
+
+alert(window.webkitIDBFactoryConstructor);
+window.webkitIDBFactoryConstructor = counter++; 
+alert(window.webkitIDBFactoryConstructor);
+
+alert(window.webkitIDBIndexConstructor);
+window.webkitIDBIndexConstructor = counter++; 
+alert(window.webkitIDBIndexConstructor);
+
+alert(window.webkitIDBKeyRangeConstructor);
+window.webkitIDBKeyRangeConstructor = counter++; 
+alert(window.webkitIDBKeyRangeConstructor);
+
+alert(window.webkitIDBObjectStoreConstructor);
+window.webkitIDBObjectStoreConstructor = counter++; 
+alert(window.webkitIDBObjectStoreConstructor);
+
+alert(window.webkitIDBRequestConstructor);
+window.webkitIDBRequestConstructor = counter++; 
+alert(window.webkitIDBRequestConstructor);
+
+alert(window.webkitIDBTransactionConstructor);
+window.webkitIDBTransactionConstructor = counter++; 
+alert(window.webkitIDBTransactionConstructor);
+</script>
+<body>
+This test makes sure objects/properties related to IndexedDatabase are both undefined and read/write when the feature is disabled at runtime.
+</body>

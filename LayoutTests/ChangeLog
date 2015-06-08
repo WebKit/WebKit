@@ -1,3 +1,19 @@
+2015-06-08  Brady Eidson  <beidson@apple.com>
+
+        Completely remove all IDB properties/constructors when it is disabled at runtime.
+        rdar://problem/18429374 and https://bugs.webkit.org/show_bug.cgi?id=137034
+
+        Reviewed by Geoffrey Garen.
+
+        * platform/mac-mavericks/TestExpectations: Disable global-constructors-attributes on Mavericks as
+          there is no way to have different WK1 and WK2 results.
+        * platform/mac-wk1/TestExpectations: Enable the new "properties are missing" test for Mac WK1.
+        * platform/mac-wk1/js/dom/global-constructors-attributes-expected.txt: Added.
+        * platform/win/TestExpectations: Enable the new "properties are missing" test for Win WK1
+        * platform/wk2/TestExpectations: Disable the new "properties are missing" test for all WK2.
+        * storage/indexeddb/properties-disabled-at-runtime-expected.txt: Added.
+        * storage/indexeddb/properties-disabled-at-runtime.html: Added.
+
 2015-06-08  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Add some more testing for grid line names

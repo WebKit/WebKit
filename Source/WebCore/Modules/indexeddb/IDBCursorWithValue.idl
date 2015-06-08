@@ -25,6 +25,7 @@
 
 [
     Conditional=INDEXED_DATABASE,
+    EnabledAtRuntime=IndexedDB,
 ] interface IDBCursorWithValue : IDBCursor {
     readonly attribute any value;
 };

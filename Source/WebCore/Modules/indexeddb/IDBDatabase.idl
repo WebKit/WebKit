@@ -30,6 +30,7 @@
     EventTarget,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
+    EnabledAtRuntime=IndexedDB,
 ] interface IDBDatabase : EventTarget {
     readonly attribute DOMString name;
     readonly attribute unsigned long long version;

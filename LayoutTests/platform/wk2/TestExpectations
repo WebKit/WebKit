@@ -678,6 +678,9 @@ fast/events/drag-display-none-element.html
 # Skip tests in fast/text/shaping
 fast/text/shaping
 
+# WebKit2 should always have IndexedDB enabled
+storage/indexeddb/properties-disabled-at-runtime.html [ Skip ]
+
 ### END OF (4) Features that are not supported in WebKit2 and likely never will be
 ########################################
 

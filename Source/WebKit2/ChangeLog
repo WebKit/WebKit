@@ -1,3 +1,13 @@
+2015-06-08  Brady Eidson  <beidson@apple.com>
+
+        Completely remove all IDB properties/constructors when it is disabled at runtime.
+        rdar://problem/18429374 and https://bugs.webkit.org/show_bug.cgi?id=137034
+
+        Reviewed by Geoffrey Garen.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess): Enable IDB at runtime if it's enabled at compile time.
+
 2015-06-08  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [SOUP] Performs DNS prefetch when a proxy is configured (information leak)

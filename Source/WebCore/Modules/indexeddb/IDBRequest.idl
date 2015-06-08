@@ -29,6 +29,7 @@
 
 [
     Conditional=INDEXED_DATABASE,
+    EnabledAtRuntime=IndexedDB,
     ActiveDOMObject,
     EventTarget,
     JSGenerateToJSObject,

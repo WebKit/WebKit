@@ -1,3 +1,12 @@
+2015-06-08  Brady Eidson  <beidson@apple.com>
+
+        Completely remove all IDB properties/constructors when it is disabled at runtime.
+        rdar://problem/18429374 and https://bugs.webkit.org/show_bug.cgi?id=137034
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/CommonIdentifiers.h:
+
 2015-06-06  Mark Lam  <mark.lam@apple.com>
 
         Returned Exception* values need to be initialized to nullptr when no exceptions are thrown.

@@ -27,6 +27,7 @@
     NoInterfaceObject,
     Conditional=INDEXED_DATABASE,
     CustomToJSObject,
+    EnabledAtRuntime=IndexedDB,
 ] interface IDBAny {
     // This space is intentionally left blank.
 };

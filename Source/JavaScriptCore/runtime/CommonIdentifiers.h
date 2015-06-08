@@ -118,6 +118,7 @@
     macro(id) \
     macro(ignoreCase) \
     macro(index) \
+    macro(indexedDB) \
     macro(inferredName) \
     macro(input) \
     macro(instructionCount) \
@@ -176,6 +177,7 @@
     macro(valueOf) \
     macro(values) \
     macro(webkit) \
+    macro(webkitIndexedDB) \
     macro(window) \
     macro(writable)
 
