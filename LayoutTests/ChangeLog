@@ -1,3 +1,16 @@
+2015-06-08  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout] Setting height on a grid item doesn't have any effect
+        https://bugs.webkit.org/show_bug.cgi?id=145604
+
+        Reviewed by Sergio Villar Senin.
+
+        Tests to verify that we clear the override height set by the stretching logic
+        whenever height or margin change in a way they don't allow stretching anymore.
+
+        * fast/css-grid-layout/grid-item-should-not-be-stretched-when-height-or-margin-change-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-should-not-be-stretched-when-height-or-margin-change.html: Added.
+
 2015-06-08  Brady Eidson  <beidson@apple.com>
 
         Completely remove all IDB properties/constructors when it is disabled at runtime.

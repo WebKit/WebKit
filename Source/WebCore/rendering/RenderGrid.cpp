@@ -1296,25 +1296,25 @@ LayoutUnit RenderGrid::availableAlignmentSpaceForChildBeforeStretching(LayoutUni
 // FIXME: This logic is shared by RenderFlexibleBox, so it should be moved to RenderBox.
 void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child, LayoutUnit gridAreaBreadthForChild)
 {
-    if (RenderStyle::resolveAlignment(style(), child.style(), ItemPositionStretch) != ItemPositionStretch)
+    if (!allowedToStretchLogicalHeightForChild(child) || RenderStyle::resolveAlignment(style(), child.style(), ItemPositionStretch) != ItemPositionStretch) {
+        child.clearOverrideLogicalContentHeight();
         return;
+    }
 
     bool hasOrthogonalWritingMode = child.isHorizontalWritingMode() != isHorizontalWritingMode();
-    if (allowedToStretchLogicalHeightForChild(child)) {
-        // FIXME: If the child has orthogonal flow, then it already has an override height set, so use it.
-        // FIXME: grid track sizing and positioning do not support orthogonal modes yet.
-        if (!hasOrthogonalWritingMode) {
-            LayoutUnit stretchedLogicalHeight = availableAlignmentSpaceForChildBeforeStretching(gridAreaBreadthForChild, child);
-            LayoutUnit desiredLogicalHeight = child.constrainLogicalHeightByMinMax(stretchedLogicalHeight);
+    // FIXME: If the child has orthogonal flow, then it already has an override height set, so use it.
+    // FIXME: grid track sizing and positioning do not support orthogonal modes yet.
+    if (!hasOrthogonalWritingMode) {
+        LayoutUnit stretchedLogicalHeight = availableAlignmentSpaceForChildBeforeStretching(gridAreaBreadthForChild, child);
+        LayoutUnit desiredLogicalHeight = child.constrainLogicalHeightByMinMax(stretchedLogicalHeight);
 
-            // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
-            bool childNeedsRelayout = desiredLogicalHeight != child.logicalHeight();
-            if (childNeedsRelayout || !child.hasOverrideLogicalContentHeight())
-                child.setOverrideLogicalContentHeight(desiredLogicalHeight - child.borderAndPaddingLogicalHeight());
-            if (childNeedsRelayout) {
-                child.setLogicalHeight(0);
-                child.setNeedsLayout();
-            }
+        // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
+        bool childNeedsRelayout = desiredLogicalHeight != child.logicalHeight();
+        if (childNeedsRelayout || !child.hasOverrideLogicalContentHeight())
+            child.setOverrideLogicalContentHeight(desiredLogicalHeight - child.borderAndPaddingLogicalHeight());
+        if (childNeedsRelayout) {
+            child.setLogicalHeight(0);
+            child.setNeedsLayout();
         }
     }
 }
