@@ -151,8 +151,7 @@ unsigned AudioNodeInput::numberOfChannels() const
     // Find the number of channels of the connection with the largest number of channels.
     unsigned maxChannels = 1; // one channel is the minimum allowed
 
-    for (HashSet<AudioNodeOutput*>::iterator i = m_outputs.begin(); i != m_outputs.end(); ++i) {
-        AudioNodeOutput* output = *i;
+    for (auto& output : m_outputs) {
         // Use output()->numberOfChannels() instead of output->bus()->numberOfChannels(),
         // because the calling of AudioNodeOutput::bus() is not safe here.
         maxChannels = std::max(maxChannels, output->numberOfChannels());
@@ -198,8 +197,7 @@ void AudioNodeInput::sumAllConnections(AudioBus* summingBus, size_t framesToProc
 
     AudioBus::ChannelInterpretation interpretation = node()->internalChannelInterpretation();
 
-    for (unsigned i = 0; i < numberOfRenderingConnections(); ++i) {
-        AudioNodeOutput* output = renderingOutput(i);
+    for (auto& output : m_renderingOutputs) {
         ASSERT(output);
 
         // Render audio from this output.

@@ -48,9 +48,8 @@ RTCStatsReport::RTCStatsReport(const String& id, const String& type, double time
 Vector<String> RTCStatsReport::names() const
 {
     Vector<String> result;
-    for (HashMap<String, String>::const_iterator it = m_stats.begin(); it != m_stats.end(); ++it) {
-        result.append(it->key);
-    }
+    for (auto& stat : m_stats.keys())
+        result.append(stat);
     return result;
 }
 

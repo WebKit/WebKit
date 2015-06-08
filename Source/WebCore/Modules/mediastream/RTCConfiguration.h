@@ -67,10 +67,8 @@ public:
     Vector<RefPtr<RTCIceServer>> iceServers() const
     {
         Vector<RefPtr<RTCIceServer>> servers;
-        Vector<RefPtr<RTCIceServerPrivate>> privateServers = m_private->iceServers();
-
-        for (auto iter = privateServers.begin(); iter != privateServers.end(); ++iter)
-            servers.append(RTCIceServer::create(*iter));
+        for (auto& server : m_private->iceServers())
+            servers.append(RTCIceServer::create(server));
 
         return servers;
     }

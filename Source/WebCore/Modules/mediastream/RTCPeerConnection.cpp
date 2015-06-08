@@ -95,8 +95,8 @@ static ExceptionCode processIceServer(const Dictionary& iceServer, RTCConfigurat
         return INVALID_ACCESS_ERR;
 
     if (urlString.find(',') != notFound && iceServer.get("urls", urlsList) && urlsList.size()) {
-        for (auto iter = urlsList.begin(); iter != urlsList.end(); ++iter) {
-            if (!validateIceServerURL(*iter))
+        for (auto& url : urlsList) {
+            if (!validateIceServerURL(url))
                 return INVALID_ACCESS_ERR;
         }
     } else {
@@ -203,8 +203,8 @@ RTCPeerConnection::~RTCPeerConnection()
 {
     stop();
 
-    for (auto stream = m_localStreams.begin(), end = m_localStreams.end(); stream != end; ++stream)
-        (*stream)->removeObserver(this);
+    for (auto& localStream : m_localStreams)
+        localStream->removeObserver(this);
 }
 
 void RTCPeerConnection::createOffer(PassRefPtr<RTCSessionDescriptionCallback> successCallback, PassRefPtr<RTCPeerConnectionErrorCallback> errorCallback, const Dictionary& offerOptions, ExceptionCode& ec)
@@ -514,14 +514,14 @@ Vector<RefPtr<MediaStream>> RTCPeerConnection::getRemoteStreams() const
 
 MediaStream* RTCPeerConnection::getStreamById(const String& streamId)
 {
-    for (auto iter = m_localStreams.begin(); iter != m_localStreams.end(); ++iter) {
-        if ((*iter)->id() == streamId)
-            return iter->get();
+    for (auto& localStream : m_localStreams) {
+        if (localStream->id() == streamId)
+            return localStream.get();
     }
 
-    for (auto iter = m_remoteStreams.begin(); iter != m_remoteStreams.end(); ++iter) {
-        if ((*iter)->id() == streamId)
-            return iter->get();
+    for (auto& remoteStream : m_remoteStreams) {
+        if (remoteStream->id() == streamId)
+            return remoteStream.get();
     }
 
     return nullptr;
@@ -551,8 +551,8 @@ PassRefPtr<RTCDataChannel> RTCPeerConnection::createDataChannel(String label, co
 
 bool RTCPeerConnection::hasLocalStreamWithTrackId(const String& trackId)
 {
-    for (auto iter = m_localStreams.begin(); iter != m_localStreams.end(); ++iter) {
-        if ((*iter)->getTrackById(trackId))
+    for (auto& localStream : m_localStreams) {
+        if (localStream->getTrackById(trackId))
             return true;
     }
     return false;
@@ -685,9 +685,8 @@ void RTCPeerConnection::stop()
     m_iceConnectionState = IceConnectionStateClosed;
     m_signalingState = SignalingStateClosed;
 
-    Vector<RefPtr<RTCDataChannel>>::iterator i = m_dataChannels.begin();
-    for (; i != m_dataChannels.end(); ++i)
-        (*i)->stop();
+    for (auto& channel : m_dataChannels)
+        channel->stop();
 }
 
 const char* RTCPeerConnection::activeDOMObjectName() const
@@ -743,9 +742,8 @@ void RTCPeerConnection::scheduledEventTimerFired()
     Vector<RefPtr<Event>> events;
     events.swap(m_scheduledEvents);
 
-    Vector<RefPtr<Event>>::iterator it = events.begin();
-    for (; it != events.end(); ++it)
-        dispatchEvent((*it).release());
+    for (auto& event : events)
+        dispatchEvent(event.release());
 
     events.clear();
 }

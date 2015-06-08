@@ -44,29 +44,8 @@ static HashSet<String>* protocolWhitelist;
 static void initProtocolHandlerWhitelist()
 {
     protocolWhitelist = new HashSet<String>;
-    static const char* protocols[] = {
-        "bitcoin",
-        "geo",
-        "im",
-        "irc",
-        "ircs",
-        "magnet",
-        "mailto",
-        "mms",
-        "news",
-        "nntp",
-        "sip",
-        "sms",
-        "smsto",
-        "ssh",
-        "tel",
-        "urn",
-        "webcal",
-        "wtai",
-        "xmpp",
-    };
-    for (size_t i = 0; i < WTF_ARRAY_LENGTH(protocols); ++i)
-        protocolWhitelist->add(protocols[i]);
+    for (auto* protocol : { "bitcoin", "geo", "im", "irc", "ircs", "magnet", "mailto", "mms", "news", "nntp", "sip", "sms", "smsto", "ssh", "tel", "urn", "webcal", "wtai", "xmpp" })
+        protocolWhitelist->add(protocol);
 }
 
 static bool verifyCustomHandlerURL(const URL& baseURL, const String& url, ExceptionCode& ec)

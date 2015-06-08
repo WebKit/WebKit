@@ -62,10 +62,9 @@ void AudioSummingJunction::updateRenderingState()
     if (m_renderingStateNeedUpdating && canUpdateState()) {
         // Copy from m_outputs to m_renderingOutputs.
         m_renderingOutputs.resize(m_outputs.size());
-        unsigned j = 0;
-        for (HashSet<AudioNodeOutput*>::iterator i = m_outputs.begin(); i != m_outputs.end(); ++i, ++j) {
-            AudioNodeOutput* output = *i;
-            m_renderingOutputs[j] = output;
+        unsigned i = 0;
+        for (auto& output : m_outputs) {
+            m_renderingOutputs[i++] = output;
             output->updateRenderingState();
         }
 

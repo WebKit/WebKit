@@ -320,11 +320,8 @@ void RTCDataChannel::scheduledEventTimerFired()
     Vector<RefPtr<Event>> events;
     events.swap(m_scheduledEvents);
 
-    Vector<RefPtr<Event>>::iterator it = events.begin();
-    for (; it != events.end(); ++it)
-        dispatchEvent((*it).release());
-
-    events.clear();
+    for (auto& event : events)
+        dispatchEvent(event.release());
 }
 
 } // namespace WebCore

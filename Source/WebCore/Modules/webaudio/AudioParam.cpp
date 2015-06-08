@@ -139,8 +139,7 @@ void AudioParam::calculateFinalValues(float* values, unsigned numberOfValues, bo
     RefPtr<AudioBus> summingBus = AudioBus::create(1, numberOfValues, false);
     summingBus->setChannelMemory(0, values, numberOfValues);
 
-    for (unsigned i = 0; i < numberOfRenderingConnections(); ++i) {
-        AudioNodeOutput* output = renderingOutput(i);
+    for (auto& output : m_renderingOutputs) {
         ASSERT(output);
 
         // Render audio from this output.

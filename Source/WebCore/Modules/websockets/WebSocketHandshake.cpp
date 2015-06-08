@@ -224,8 +224,8 @@ CString WebSocketHandshake::clientHandshakeMessage() const
     // order is not meaningful.  Thus, it's ok to send the order we constructed
     // the fields.
 
-    for (size_t i = 0; i < fields.size(); i++) {
-        builder.append(fields[i]);
+    for (auto& field : fields) {
+        builder.append(field);
         builder.appendLiteral("\r\n");
     }
 

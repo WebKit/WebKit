@@ -125,8 +125,8 @@ void AudioBuffer::zero()
 size_t AudioBuffer::memoryCost() const
 {
     size_t cost = 0;
-    for (unsigned i = 0; i < m_channels.size() ; ++i)
-        cost += m_channels[i]->byteLength();
+    for (auto& channel : m_channels)
+        cost += channel->byteLength();
     return cost;
 }
 

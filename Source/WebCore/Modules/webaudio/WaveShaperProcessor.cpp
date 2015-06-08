@@ -65,9 +65,9 @@ void WaveShaperProcessor::setOversample(OverSampleType oversample)
     m_oversample = oversample;
 
     if (oversample != OverSampleNone) {
-        for (unsigned i = 0; i < m_kernels.size(); ++i) {
-            WaveShaperDSPKernel* kernel = static_cast<WaveShaperDSPKernel*>(m_kernels[i].get());
-            kernel->lazyInitializeOversampling();
+        for (auto& audioDSPKernel : m_kernels) {
+            WaveShaperDSPKernel& kernel = static_cast<WaveShaperDSPKernel&>(*audioDSPKernel);
+            kernel.lazyInitializeOversampling();
         }
     }
 }

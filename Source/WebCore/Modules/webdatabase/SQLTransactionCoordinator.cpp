@@ -119,21 +119,14 @@ void SQLTransactionCoordinator::shutdown()
     m_isShuttingDown = true;
 
     // Notify all transactions in progress that the database thread is shutting down
-    for (CoordinationInfoMap::iterator coordinationInfoIterator = m_coordinationInfoMap.begin();
-         coordinationInfoIterator != m_coordinationInfoMap.end(); ++coordinationInfoIterator) {
-        CoordinationInfo& info = coordinationInfoIterator->value;
-
+    for (auto& info : m_coordinationInfoMap.values()) {
         // Clean up transactions that have reached "lockAcquired":
         // Transaction phase 4 cleanup. See comment on "What happens if a
         // transaction is interrupted?" at the top of SQLTransactionBackend.cpp.
         if (info.activeWriteTransaction)
             info.activeWriteTransaction->notifyDatabaseThreadIsShuttingDown();
-        for (HashSet<RefPtr<SQLTransactionBackend>>::iterator activeReadTransactionsIterator =
-                     info.activeReadTransactions.begin();
-             activeReadTransactionsIterator != info.activeReadTransactions.end();
-             ++activeReadTransactionsIterator) {
-            (*activeReadTransactionsIterator)->notifyDatabaseThreadIsShuttingDown();
-        }
+        for (auto& transaction : info.activeReadTransactions)
+            transaction->notifyDatabaseThreadIsShuttingDown();
 
         // Clean up transactions that have NOT reached "lockAcquired":
         // Transaction phase 3 cleanup. See comment on "What happens if a

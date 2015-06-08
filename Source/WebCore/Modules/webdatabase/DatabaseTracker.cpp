@@ -338,20 +338,16 @@ void DatabaseTracker::interruptAllDatabasesForContext(const DatabaseContext* con
         if (!nameMap)
             return;
 
-        DatabaseNameMap::const_iterator dbNameMapEndIt = nameMap->end();
-        for (DatabaseNameMap::const_iterator dbNameMapIt = nameMap->begin(); dbNameMapIt != dbNameMapEndIt; ++dbNameMapIt) {
-            DatabaseSet* databaseSet = dbNameMapIt->value;
-            DatabaseSet::const_iterator dbSetEndIt = databaseSet->end();
-            for (DatabaseSet::const_iterator dbSetIt = databaseSet->begin(); dbSetIt != dbSetEndIt; ++dbSetIt) {
-                if ((*dbSetIt)->databaseContext() == context)
-                    openDatabases.append(*dbSetIt);
+        for (auto& databaseSet : nameMap->values()) {
+            for (auto& database : *databaseSet) {
+                if (database->databaseContext() == context)
+                    openDatabases.append(database);
             }
         }
     }
 
-    Vector<RefPtr<DatabaseBackendBase>>::const_iterator openDatabasesEndIt = openDatabases.end();
-    for (Vector<RefPtr<DatabaseBackendBase>>::const_iterator openDatabasesIt = openDatabases.begin(); openDatabasesIt != openDatabasesEndIt; ++openDatabasesIt)
-        (*openDatabasesIt)->interrupt();
+    for (auto& openDatabase : openDatabases)
+        openDatabase->interrupt();
 }
 
 String DatabaseTracker::originPath(SecurityOrigin* origin) const
@@ -482,8 +478,8 @@ bool DatabaseTracker::databaseNamesForOrigin(SecurityOrigin* origin, Vector<Stri
           return false;
     }
 
-    for (Vector<String>::iterator iter = temp.begin(); iter != temp.end(); ++iter)
-        resultVector.append(iter->isolatedCopy());
+    for (auto& databaseName : temp)
+        resultVector.append(databaseName.isolatedCopy());
     return true;
 }
 
@@ -670,8 +666,8 @@ void DatabaseTracker::getOpenDatabases(SecurityOrigin* origin, const String& nam
     if (!databaseSet)
         return;
 
-    for (DatabaseSet::iterator it = databaseSet->begin(); it != databaseSet->end(); ++it)
-        databases->add(*it);
+    for (auto& database : *databaseSet)
+        databases->add(database);
 }
 
 RefPtr<OriginLock> DatabaseTracker::originLockFor(SecurityOrigin* origin)
@@ -724,12 +720,9 @@ unsigned long long DatabaseTracker::usageForOrigin(SecurityOrigin* origin)
 {
     String originPath = this->originPath(origin);
     unsigned long long diskUsage = 0;
-    Vector<String> fileNames = listDirectory(originPath, String("*.db"));
-    Vector<String>::iterator fileName = fileNames.begin();
-    Vector<String>::iterator lastFileName = fileNames.end();
-    for (; fileName != lastFileName; ++fileName) {
+    for (auto& fileName : listDirectory(originPath, ASCIILiteral("*.db"))) {
         long long size;
-        getFileSize(*fileName, size);
+        getFileSize(fileName, size);
         diskUsage += size;
     }
     return diskUsage;
@@ -855,8 +848,8 @@ void DatabaseTracker::deleteAllDatabases()
     Vector<RefPtr<SecurityOrigin>> originsCopy;
     origins(originsCopy);
 
-    for (unsigned i = 0; i < originsCopy.size(); ++i)
-        deleteOrigin(originsCopy[i].get());
+    for (auto& origin : originsCopy)
+        deleteOrigin(origin.get());
 }
 
 void DatabaseTracker::deleteDatabasesModifiedSince(std::chrono::system_clock::time_point time)
@@ -908,10 +901,10 @@ bool DatabaseTracker::deleteOrigin(SecurityOrigin* origin)
     }
 
     // We drop the lock here because holding locks during a call to deleteDatabaseFile will deadlock.
-    for (unsigned i = 0; i < databaseNames.size(); ++i) {
-        if (!deleteDatabaseFile(origin, databaseNames[i])) {
+    for (auto& name : databaseNames) {
+        if (!deleteDatabaseFile(origin, name)) {
             // Even if the file can't be deleted, we want to try and delete the rest, don't return early here.
-            LOG_ERROR("Unable to delete file for database %s in origin %s", databaseNames[i].ascii().data(), origin->databaseIdentifier().ascii().data());
+            LOG_ERROR("Unable to delete file for database %s in origin %s", name.ascii().data(), origin->databaseIdentifier().ascii().data());
         }
     }
 
@@ -973,8 +966,8 @@ bool DatabaseTracker::deleteOrigin(SecurityOrigin* origin)
 #if PLATFORM(IOS)
             m_client->dispatchDidDeleteDatabaseOrigin();
 #endif
-            for (unsigned i = 0; i < databaseNames.size(); ++i)
-                m_client->dispatchDidModifyDatabase(origin, databaseNames[i]);
+            for (auto& name : databaseNames)
+                m_client->dispatchDidModifyDatabase(origin, name);
         }
     }
     return true;
@@ -1178,16 +1171,15 @@ bool DatabaseTracker::deleteDatabaseFile(SecurityOrigin* origin, const String& n
                 DatabaseSet* databaseSet = nameMap->get(name);
                 if (databaseSet && databaseSet->size()) {
                     // We have some database open with this name. Mark them as deleted.
-                    DatabaseSet::const_iterator end = databaseSet->end();
-                    for (DatabaseSet::const_iterator it = databaseSet->begin(); it != end; ++it)
-                        deletedDatabases.append(*it);
+                    for (auto& database : *databaseSet)
+                        deletedDatabases.append(database);
                 }
             }
         }
     }
 
-    for (unsigned i = 0; i < deletedDatabases.size(); ++i)
-        deletedDatabases[i]->markAsDeletedAndClose();
+    for (auto& database : deletedDatabases)
+        database->markAsDeletedAndClose();
 
 #if !PLATFORM(IOS)
     return SQLiteFileSystem::deleteDatabaseFile(fullPath);
@@ -1230,17 +1222,15 @@ void DatabaseTracker::removeDeletedOpenedDatabases()
     {
         MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
         if (m_openDatabaseMap) {
-            DatabaseOriginMap::const_iterator originMapEnd = m_openDatabaseMap->end();
-            for (DatabaseOriginMap::const_iterator originMapIt = m_openDatabaseMap->begin(); originMapIt != originMapEnd; ++originMapIt) {
-                RefPtr<SecurityOrigin> origin = originMapIt->key;
-                DatabaseNameMap* databaseNameMap = originMapIt->value;
+            for (auto& openDatabase : *m_openDatabaseMap) {
+                auto& origin = openDatabase.key;
+                DatabaseNameMap* databaseNameMap = openDatabase.value;
                 Vector<String> deletedDatabaseNamesForThisOrigin;
 
                 // Loop through all opened databases in this origin.  Get the current database file path of each database and see if
                 // it still matches the path stored in the opened database object.
-                DatabaseNameMap::const_iterator dbNameMapEnd = databaseNameMap->end();
-                for (DatabaseNameMap::const_iterator dbNameMapIt = databaseNameMap->begin(); dbNameMapIt != dbNameMapEnd; ++dbNameMapIt) {
-                    String databaseName = dbNameMapIt->key;
+                for (auto& databases : *databaseNameMap) {
+                    String databaseName = databases.key;
                     String databaseFileName;
                     SQLiteStatement statement(m_database, "SELECT path FROM Databases WHERE origin=? AND name=?;");
                     if (statement.prepare() == SQLITE_OK) {
@@ -1252,11 +1242,7 @@ void DatabaseTracker::removeDeletedOpenedDatabases()
                     }
                     
                     bool foundDeletedDatabase = false;
-                    DatabaseSet* databaseSet = dbNameMapIt->value;
-                    DatabaseSet::const_iterator dbEnd = databaseSet->end();
-                    for (DatabaseSet::const_iterator dbIt = databaseSet->begin(); dbIt != dbEnd; ++dbIt) {
-                        Database* db = static_cast<Database*>(*dbIt);
-                        
+                    for (auto& db : *databases.value) {
                         // We are done if this database has already been marked as deleted.
                         if (db->deleted())
                             continue;
@@ -1279,19 +1265,18 @@ void DatabaseTracker::removeDeletedOpenedDatabases()
         }
     }
     
-    for (unsigned i = 0; i < deletedDatabases.size(); ++i)
-        deletedDatabases[i]->markAsDeletedAndClose();
-    
-    DeletedDatabaseMap::const_iterator end = deletedDatabaseMap.end();
-    for (DeletedDatabaseMap::const_iterator it = deletedDatabaseMap.begin(); it != end; ++it) {
-        SecurityOrigin* origin = it->key.get();
+    for (auto& deletedDatabase : deletedDatabases)
+        deletedDatabase->markAsDeletedAndClose();
+
+    for (auto& deletedDatabase : deletedDatabaseMap) {
+        SecurityOrigin* origin = deletedDatabase.key.get();
         if (m_client)
             m_client->dispatchDidModifyOrigin(origin);
         
-        const Vector<String>& databaseNames = it->value;
-        for (unsigned i = 0; i < databaseNames.size(); ++i) {
+        const Vector<String>& databaseNames = deletedDatabase.value;
+        for (auto& databaseName : databaseNames) {
             if (m_client)
-                m_client->dispatchDidModifyDatabase(origin, databaseNames[i]);
+                m_client->dispatchDidModifyDatabase(origin, databaseName);
         }        
     }
 }
@@ -1365,21 +1350,10 @@ void DatabaseTracker::setDatabasesPaused(bool paused)
 
     // This walking is - sadly - the only reliable way to get at each open database thread.
     // This will be cleaner once <rdar://problem/5680441> or some other DB thread consolidation takes place.
-    DatabaseOriginMap::iterator i = m_openDatabaseMap.get()->begin();
-    DatabaseOriginMap::iterator end = m_openDatabaseMap.get()->end();
-    
-    for (; i != end; ++i) {
-        DatabaseNameMap* databaseNameMap = i->value;
-        DatabaseNameMap::iterator j = databaseNameMap->begin();
-        DatabaseNameMap::iterator dbNameMapEnd = databaseNameMap->end();
-        for (; j != dbNameMapEnd; ++j) {
-            DatabaseSet* databaseSet = j->value;
-            DatabaseSet::iterator k = databaseSet->begin();
-            DatabaseSet::iterator dbSetEnd = databaseSet->end();
-            for (; k != dbSetEnd; ++k) {
-                DatabaseContext* context = (*k)->databaseContext();
-                context->setPaused(paused);
-            }
+    for (auto& databaseNameMap : m_openDatabaseMap->values()) {
+        for (auto& databaseSet : databaseNameMap->values()) {
+            for (auto& database : *databaseSet)
+                database->databaseContext()->setPaused(paused);
         }
     }
 }

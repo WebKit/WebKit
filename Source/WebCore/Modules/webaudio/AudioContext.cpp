@@ -460,12 +460,11 @@ PassRefPtr<MediaStreamAudioSourceNode> AudioContext::createMediaStreamSource(Med
 
     AudioSourceProvider* provider = 0;
 
-    Vector<RefPtr<MediaStreamTrack>> audioTracks = mediaStream->getAudioTracks();
     RefPtr<MediaStreamTrack> audioTrack;
 
     // FIXME: get a provider for non-local MediaStreams (like from a remote peer).
-    for (size_t i = 0; i < audioTracks.size(); ++i) {
-        audioTrack = audioTracks[i];
+    for (auto& track : mediaStream->getAudioTracks()) {
+        audioTrack = track;
         if (audioTrack->source()->isAudioStreamSource()) {
             auto source = static_cast<MediaStreamAudioSource*>(audioTrack->source());
             ASSERT(!source->deviceId().isEmpty());
@@ -664,8 +663,8 @@ void AudioContext::derefFinishedSourceNodes()
 {
     ASSERT(isGraphOwner());
     ASSERT(isAudioThread() || isAudioThreadFinished());
-    for (unsigned i = 0; i < m_finishedNodes.size(); i++)
-        derefNode(m_finishedNodes[i]);
+    for (auto& node : m_finishedNodes)
+        derefNode(node);
 
     m_finishedNodes.clear();
 }
@@ -692,8 +691,8 @@ void AudioContext::derefNode(AudioNode* node)
 void AudioContext::derefUnfinishedSourceNodes()
 {
     ASSERT(isMainThread() && isAudioThreadFinished());
-    for (unsigned i = 0; i < m_referencedNodes.size(); ++i)
-        m_referencedNodes[i]->deref(AudioNode::RefTypeConnection);
+    for (auto& node : m_referencedNodes)
+        node->deref(AudioNode::RefTypeConnection);
 
     m_referencedNodes.clear();
 }
@@ -825,10 +824,8 @@ void AudioContext::handlePostRenderTasks()
 void AudioContext::handleDeferredFinishDerefs()
 {
     ASSERT(isAudioThread() && isGraphOwner());
-    for (unsigned i = 0; i < m_deferredFinishDerefList.size(); ++i) {
-        AudioNode* node = m_deferredFinishDerefList[i];
+    for (auto& node : m_deferredFinishDerefList)
         node->finishDeref(AudioNode::RefTypeConnection);
-    }
     
     m_deferredFinishDerefList.clear();
 }
@@ -922,8 +919,8 @@ void AudioContext::handleDirtyAudioSummingJunctions()
 {
     ASSERT(isGraphOwner());    
 
-    for (HashSet<AudioSummingJunction*>::iterator i = m_dirtySummingJunctions.begin(); i != m_dirtySummingJunctions.end(); ++i)
-        (*i)->updateRenderingState();
+    for (auto& junction : m_dirtySummingJunctions)
+        junction->updateRenderingState();
 
     m_dirtySummingJunctions.clear();
 }
@@ -932,8 +929,8 @@ void AudioContext::handleDirtyAudioNodeOutputs()
 {
     ASSERT(isGraphOwner());    
 
-    for (HashSet<AudioNodeOutput*>::iterator i = m_dirtyAudioNodeOutputs.begin(); i != m_dirtyAudioNodeOutputs.end(); ++i)
-        (*i)->updateRenderingState();
+    for (auto& output : m_dirtyAudioNodeOutputs)
+        output->updateRenderingState();
 
     m_dirtyAudioNodeOutputs.clear();
 }
@@ -962,11 +959,9 @@ void AudioContext::updateAutomaticPullNodes()
         // Copy from m_automaticPullNodes to m_renderingAutomaticPullNodes.
         m_renderingAutomaticPullNodes.resize(m_automaticPullNodes.size());
 
-        unsigned j = 0;
-        for (HashSet<AudioNode*>::iterator i = m_automaticPullNodes.begin(); i != m_automaticPullNodes.end(); ++i, ++j) {
-            AudioNode* output = *i;
-            m_renderingAutomaticPullNodes[j] = output;
-        }
+        unsigned i = 0;
+        for (auto& output : m_automaticPullNodes)
+            m_renderingAutomaticPullNodes[i++] = output;
 
         m_automaticPullNodesNeedUpdating = false;
     }
@@ -976,8 +971,8 @@ void AudioContext::processAutomaticPullNodes(size_t framesToProcess)
 {
     ASSERT(isAudioThread());
 
-    for (unsigned i = 0; i < m_renderingAutomaticPullNodes.size(); ++i)
-        m_renderingAutomaticPullNodes[i]->processIfNecessary(framesToProcess);
+    for (auto& node : m_renderingAutomaticPullNodes)
+        node->processIfNecessary(framesToProcess);
 }
 
 ScriptExecutionContext* AudioContext::scriptExecutionContext() const

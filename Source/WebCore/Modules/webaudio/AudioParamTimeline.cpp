@@ -84,15 +84,17 @@ void AudioParamTimeline::insertEvent(const ParamEvent& event)
     
     unsigned i = 0;
     float insertTime = event.time();
-    for (i = 0; i < m_events.size(); ++i) {
+    for (auto& paramEvent : m_events) {
         // Overwrite same event type and time.
-        if (m_events[i].time() == insertTime && m_events[i].type() == event.type()) {
-            m_events[i] = event;
+        if (paramEvent.time() == insertTime && paramEvent.type() == event.type()) {
+            paramEvent = event;
             return;
         }
 
-        if (m_events[i].time() > insertTime)
+        if (paramEvent.time() > insertTime)
             break;
+
+        ++i;
     }
 
     m_events.insert(i, event);

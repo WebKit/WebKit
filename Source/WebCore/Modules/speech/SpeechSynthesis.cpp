@@ -74,10 +74,8 @@ const Vector<RefPtr<SpeechSynthesisVoice>>& SpeechSynthesis::getVoices()
         m_platformSpeechSynthesizer = std::make_unique<PlatformSpeechSynthesizer>(this);
 
     // If the voiceList is empty, that's the cue to get the voices from the platform again.
-    const Vector<RefPtr<PlatformSpeechSynthesisVoice>>& platformVoices = m_platformSpeechSynthesizer->voiceList();
-    size_t voiceCount = platformVoices.size();
-    for (size_t k = 0; k < voiceCount; k++)
-        m_voiceList.append(SpeechSynthesisVoice::create(platformVoices[k]));
+    for (auto& voice : m_platformSpeechSynthesizer->voiceList())
+        m_voiceList.append(SpeechSynthesisVoice::create(voice));
 
     return m_voiceList;
 }

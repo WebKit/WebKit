@@ -50,8 +50,8 @@ void WebSocketExtensionDispatcher::reset()
 
 void WebSocketExtensionDispatcher::addProcessor(std::unique_ptr<WebSocketExtensionProcessor> processor)
 {
-    for (size_t i = 0; i < m_processors.size(); ++i) {
-        if (m_processors[i]->extensionToken() == processor->extensionToken())
+    for (auto& extensionProcessor : m_processors) {
+        if (extensionProcessor->extensionToken() == processor->extensionToken())
             return;
     }
     ASSERT(processor->handshakeString().length());
@@ -81,12 +81,12 @@ void WebSocketExtensionDispatcher::appendAcceptedExtension(const String& extensi
         m_acceptedExtensionsBuilder.appendLiteral(", ");
     m_acceptedExtensionsBuilder.append(extensionToken);
     // FIXME: Should use ListHashSet to keep the order of the parameters.
-    for (HashMap<String, String>::const_iterator iterator = extensionParameters.begin(); iterator != extensionParameters.end(); ++iterator) {
+    for (auto& parameter : extensionParameters) {
         m_acceptedExtensionsBuilder.appendLiteral("; ");
-        m_acceptedExtensionsBuilder.append(iterator->key);
-        if (!iterator->value.isNull()) {
+        m_acceptedExtensionsBuilder.append(parameter.key);
+        if (!parameter.value.isNull()) {
             m_acceptedExtensionsBuilder.append('=');
-            m_acceptedExtensionsBuilder.append(iterator->value);
+            m_acceptedExtensionsBuilder.append(parameter.value);
         }
     }
 }
@@ -118,9 +118,8 @@ bool WebSocketExtensionDispatcher::processHeaderValue(const String& headerValue)
             return false;
         }
 
-        size_t index;
-        for (index = 0; index < m_processors.size(); ++index) {
-            WebSocketExtensionProcessor* processor = m_processors[index].get();
+        size_t index = 0;
+        for (auto& processor : m_processors) {
             if (extensionToken == processor->extensionToken()) {
                 if (processor->processResponse(extensionParameters)) {
                     appendAcceptedExtension(extensionToken, extensionParameters);
@@ -129,6 +128,7 @@ bool WebSocketExtensionDispatcher::processHeaderValue(const String& headerValue)
                 fail(processor->failureReason());
                 return false;
             }
+            ++index;
         }
         // There is no extension which can process the response.
         if (index == m_processors.size()) {

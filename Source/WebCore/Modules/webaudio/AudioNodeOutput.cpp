@@ -98,8 +98,7 @@ void AudioNodeOutput::propagateChannelCount()
     
     if (isChannelCountKnown()) {
         // Announce to any nodes we're connected to that we changed our channel count for its input.
-        for (InputsIterator i = m_inputs.begin(); i != m_inputs.end(); ++i) {
-            AudioNodeInput* input = *i;
+        for (auto& input : m_inputs) {
             AudioNode* connectionNode = input->node();
             connectionNode->checkNumberOfChannelsForInput(input);
         }
@@ -230,10 +229,8 @@ void AudioNodeOutput::disable()
     ASSERT(context()->isGraphOwner());
 
     if (m_isEnabled) {
-        for (InputsIterator i = m_inputs.begin(); i != m_inputs.end(); ++i) {
-            AudioNodeInput* input = *i;
+        for (auto& input : m_inputs)
             input->disable(this);
-        }
         m_isEnabled = false;
     }
 }
@@ -243,10 +240,8 @@ void AudioNodeOutput::enable()
     ASSERT(context()->isGraphOwner());
 
     if (!m_isEnabled) {
-        for (InputsIterator i = m_inputs.begin(); i != m_inputs.end(); ++i) {
-            AudioNodeInput* input = *i;
+        for (auto& input : m_inputs)
             input->enable(this);
-        }
         m_isEnabled = true;
     }
 }

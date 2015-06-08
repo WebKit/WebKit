@@ -161,9 +161,8 @@ void RTCDTMFSender::scheduledEventTimerFired()
     Vector<RefPtr<Event>> events;
     events.swap(m_scheduledEvents);
 
-    Vector<RefPtr<Event>>::iterator it = events.begin();
-    for (; it != events.end(); ++it)
-        dispatchEvent((*it).release());
+    for (auto& event : events)
+        dispatchEvent(event.release());
 }
 
 } // namespace WebCore
