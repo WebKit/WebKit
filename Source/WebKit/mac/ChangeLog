@@ -1,3 +1,10 @@
+2015-06-08  Dan Bernstein  <mitz@apple.com>
+
+        Fixed the build.
+
+        * WebView/WebView.mm:
+        (+[WebView _setCacheModel:]):
+
 2015-06-07  Anders Carlsson  <andersca@apple.com>
 
         Remove WebKitSystemBits

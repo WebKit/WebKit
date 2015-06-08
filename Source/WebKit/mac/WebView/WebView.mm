@@ -7715,7 +7715,7 @@ static WebFrameView *containingFrameView(NSView *view)
     static uint64_t memSize = ramSize() / 1024 / 1024;
 
     NSDictionary *fileSystemAttributesDictionary = [[NSFileManager defaultManager] attributesOfFileSystemForPath:nsurlCacheDirectory error:nullptr];
-    unsigned long long diskFreeSize = [fileSystemAttributesDictionary[NSFileSystemFreeSize] unsignedLongLongValue] / 1024 / 1000;
+    unsigned long long diskFreeSize = [[fileSystemAttributesDictionary objectForKey:NSFileSystemFreeSize] unsignedLongLongValue] / 1024 / 1000;
 
     NSURLCache *nsurlCache = [NSURLCache sharedURLCache];
 
