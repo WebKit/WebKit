@@ -235,7 +235,8 @@ void Text::formatForDebugger(char* buffer, unsigned length) const
         result.append('"');
     }
 
-    strncpy(buffer, result.toString().utf8().data(), length);
+    strncpy(buffer, result.toString().utf8().data(), length - 1);
+    buffer[length - 1] = '\0';
 }
 #endif
 
