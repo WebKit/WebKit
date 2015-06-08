@@ -1,3 +1,26 @@
+2015-06-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r185251): [GTK] webkit_web_context_set_disk_cache_directory() doesn't work when using shared secondary process model after r185251
+        https://bugs.webkit.org/show_bug.cgi?id=145751
+
+        Reviewed by Darin Adler.
+
+        In r185251 the CFNetwork cache was disabled in the web process,
+        but it also removed the disk cache directory web process
+        initialization parameter. While we support networking in the web
+        process when shared secondary process model is used, the network
+        cache should still work. We can remove this if we eventually
+        switch to use the network process unconditionally.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode): Encode disk cache directory.
+        (WebKit::WebProcessCreationParameters::decode): Decode disk cache directory.
+        * Shared/WebProcessCreationParameters.h: Bring back disk cache directory only for soup.
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess): Initialize disk cache directory parameter.
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess): Use the disck cache directory parameter again.
+
 2015-06-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         [GTK] Remove the unused scroll function from WebPageGtk.cpp

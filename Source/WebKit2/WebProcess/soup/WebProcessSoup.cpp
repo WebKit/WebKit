@@ -31,7 +31,6 @@
 #include "SeccompFiltersWebProcessEfl.h"
 #endif
 
-#include "APIProcessPoolConfiguration.h"
 #include "CertificateInfo.h"
 #include "WebCookieManager.h"
 #include "WebProcessCreationParameters.h"
@@ -136,16 +135,20 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
     if (usesNetworkProcess())
         return;
 
-    auto configuration = API::ProcessPoolConfiguration::createWithLegacyOptions();
-
-    ASSERT(!configuration->diskCacheDirectory().isEmpty());
+    ASSERT(!parameters.diskCacheDirectory.isEmpty());
 
     // We used to use the given cache directory for the soup cache, but now we use a subdirectory to avoid
     // conflicts with other cache files in the same directory. Remove the old cache files if they still exist.
-    WebCore::SoupNetworkSession::defaultSession().clearCache(configuration->diskCacheDirectory());
+    WebCore::SoupNetworkSession::defaultSession().clearCache(WebCore::directoryName(parameters.diskCacheDirectory));
 
-    String diskCachePath = WebCore::pathByAppendingComponent(configuration->diskCacheDirectory(), "webkit");
-    GRefPtr<SoupCache> soupCache = adoptGRef(soup_cache_new(diskCachePath.utf8().data(), SOUP_CACHE_SINGLE_USER));
+#if ENABLE(NETWORK_CACHE)
+    // When network cache is enabled, the disk cache directory is the network process one.
+    CString diskCachePath = WebCore::pathByAppendingComponent(WebCore::directoryName(parameters.diskCacheDirectory), "webkit").utf8();
+#else
+    CString diskCachePath = parameters.diskCacheDirectory.utf8();
+#endif
+
+    GRefPtr<SoupCache> soupCache = adoptGRef(soup_cache_new(diskCachePath.data(), SOUP_CACHE_SINGLE_USER));
     WebCore::SoupNetworkSession::defaultSession().setCache(soupCache.get());
     // Set an initial huge max_size for the SoupCache so the call to soup_cache_load() won't evict any cached
     // resource. The final size of the cache will be set by NetworkProcess::platformSetCacheModel().

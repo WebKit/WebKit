@@ -101,6 +101,7 @@ struct WebProcessCreationParameters {
 #endif
     Vector<String> urlSchemesRegisteredForCustomProtocols;
 #if USE(SOUP)
+    String diskCacheDirectory;
     String cookiePersistentStoragePath;
     uint32_t cookiePersistentStorageType;
     HTTPCookieAcceptPolicy cookieAcceptPolicy;
