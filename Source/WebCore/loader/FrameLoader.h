@@ -38,6 +38,7 @@
 #include "IconURL.h"
 #include "LayoutMilestones.h"
 #include "MixedContentChecker.h"
+#include "Page.h"
 #include "PageThrottler.h"
 #include "ResourceHandleTypes.h"
 #include "ResourceLoadNotifier.h"
@@ -271,13 +272,7 @@ public:
     
     void started();
 
-    enum PageDismissalType {
-        NoDismissal = 0,
-        BeforeUnloadDismissal = 1,
-        PageHideDismissal = 2,
-        UnloadDismissal = 3
-    };
-    PageDismissalType pageDismissalEventBeingDispatched() const { return m_pageDismissalEventBeingDispatched; }
+    Page::DismissalType pageDismissalEventBeingDispatched() const { return m_pageDismissalEventBeingDispatched; }
 
     WEBCORE_EXPORT NetworkingContext* networkingContext() const;
 
@@ -417,7 +412,22 @@ private:
 
     bool m_didCallImplicitClose;
     bool m_wasUnloadEventEmitted;
-    PageDismissalType m_pageDismissalEventBeingDispatched;
+
+    class PageDismissalEventType {
+    public:
+        PageDismissalEventType(Frame& frame)
+            : m_frame(frame)
+        { }
+
+        PageDismissalEventType& operator=(Page::DismissalType);
+        operator Page::DismissalType() const { return m_dismissalEventBeingDispatched; }
+
+    private:
+        Frame& m_frame;
+        Page::DismissalType m_dismissalEventBeingDispatched { Page::DismissalType::None };
+    };
+
+    PageDismissalEventType m_pageDismissalEventBeingDispatched;
     bool m_isComplete;
 
     RefPtr<SerializedScriptValue> m_pendingStateObject;

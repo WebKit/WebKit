@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<body onload="runTest()">
+<script src="/resources/js-test-pre.js"></script>
+<script>
+description("Tests that we don't crash when a load is started in a subframe on 'pagehide' handling");
+window.jsTestIsAsync = true;
+var totalLoaded = 0;
+
+if (window.testRunner)
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (event.persisted) {
+        testPassed("Page did enter and was restored from the page cache");
+        finishJSTest();
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache.");
+        finishJSTest();
+    }
+}, false);
+
+function runTest() {
+    totalLoaded++;
+    if (totalLoaded < 2)
+      return;
+
+    // This needs to happen in a setTimeout because a navigation inside the onload handler would
+    // not create a history entry.
+    setTimeout(function() {
+      // Force a back navigation back to this page.
+      window.location.href = "resources/page-cache-helper.html";
+    }, 4000);
+}
+
+</script>
+<iframe id="testFrame" src="resources/frame-pagehide-starts-load-in-subframe.html" onload="runTest()"></iframe>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

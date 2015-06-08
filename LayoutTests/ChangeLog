@@ -1,3 +1,31 @@
+2015-06-08  Chris Dumez  <cdumez@apple.com>
+
+        WebContent crash in WebCore::Page::sessionID() const + 0 (Page.cpp:1660)
+        https://bugs.webkit.org/show_bug.cgi?id=145748
+        <rdar://problem/21226577>
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/navigation/image-load-in-pagehide-handler-expected.txt: Added.
+        * http/tests/navigation/image-load-in-pagehide-handler.html: Added.
+        * http/tests/navigation/resources/image-load-in-pagehide-handler-2.html: Added.
+
+        Add layout test to make sure that ping loads in 'pagehide' handlers are
+        still going through after this change.
+
+        * http/tests/navigation/resources/frame-do-load.html: Added.
+        * http/tests/navigation/resources/frame-pagehide-starts-load-in-subframe.html: Added.
+        * http/tests/navigation/resources/frame-pagehide-starts-load.html: Added.
+        * http/tests/navigation/subframe-pagehide-handler-starts-load-expected.txt: Added.
+        * http/tests/navigation/subframe-pagehide-handler-starts-load.html: Added.
+        * http/tests/navigation/subframe-pagehide-handler-starts-load2-expected.txt: Added.
+        * http/tests/navigation/subframe-pagehide-handler-starts-load2.html: Added.
+
+        Add layout tests to make sure we don't crash if a frame starts an XHR load
+        from the 'pagehide' event handler. One of the tests covers the case where a
+        frame's pagehide handler starts a load in a subframe as this case is
+        requires a bit more handling.
+
 2015-06-08  Chris Fleizach  <cfleizach@apple.com>
 
         AX: improve list heuristics (presentational use versus actual lists)

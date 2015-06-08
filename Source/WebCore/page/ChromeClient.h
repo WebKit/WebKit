@@ -382,14 +382,6 @@ public:
 
     virtual WTF::Optional<ScrollbarOverlayStyle> preferredScrollbarOverlayStyle() { return ScrollbarOverlayStyleDefault; }
 
-    enum DialogType {
-        AlertDialog = 0,
-        ConfirmDialog = 1,
-        PromptDialog = 2,
-        HTMLDialog = 3
-    };
-    virtual bool shouldRunModalDialogDuringPageDismissal(const DialogType&, const String& dialogMessage, FrameLoader::PageDismissalType) const { UNUSED_PARAM(dialogMessage); return true; }
-
     virtual void wheelEventHandlersChanged(bool hasHandlers) = 0;
         
     virtual bool isSVGImageChromeClient() const { return false; }

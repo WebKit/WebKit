@@ -387,7 +387,7 @@ bool DOMWindow::canShowModalDialogNow(const Frame* frame)
     Page* page = frame->page();
     if (!page)
         return false;
-    return page->chrome().canRunModalNow();
+    return page->chrome().canRunModal();
 }
 
 DOMWindow::DOMWindow(Document* document)
