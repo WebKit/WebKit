@@ -188,8 +188,13 @@ editing/pasteboard/drop-inputtext-acquires-style.html
 editing/pasteboard/drop-link.html
 editing/pasteboard/drop-text-events.html
 editing/pasteboard/dataTransfer-setData-getData.html
+http/tests/local/drag-over-remote-content.html
 http/tests/local/fileapi/send-dragged-file.html
 http/tests/local/fileapi/send-sliced-dragged-file.html
+http/tests/misc/bubble-drag-events.html
+http/tests/security/drag-drop-local-file.html [ Failure ]
+http/tests/security/drag-drop-same-unique-origin.html [ Failure ]
+http/tests/security/drag-over-remote-content-iframe.html [ Failure ]
 
 # No support for force events
 fast/events/mouse-force-changed.html [ Skip ]
@@ -313,6 +318,69 @@ canvas/philip/tests/2d.canvas.readonly.html [ Skip ]
 
 # HTTP tests that time out:
 http/tests/security/XFrameOptions/x-frame-options-deny-delete-frame-in-load-event.html
+http/tests/download/default-encoding.html
+http/tests/local/blob/send-hybrid-blob.html
+http/tests/local/fileapi/upload-zip-bundle-as-blob.html
+http/tests/local/formdata/send-form-data-constructed-from-form.html
+http/tests/local/formdata/send-form-data-with-empty-file-filename.html
+http/tests/local/formdata/upload-events.html
+http/tests/misc/link-rel-prefetch-and-subresource.html
+http/tests/misc/prefetch-purpose.html
+http/tests/navigation/scrollstate-after-http-equiv-refresh-fragment-identifier-2.html
+http/tests/navigation/scrollstate-after-http-equiv-refresh-fragment-identifier.html
+http/tests/navigation/scrollstate-after-http-equiv-refresh.html
+http/tests/navigation/scrollstate-after-location-reload.html
+http/tests/security/contentSecurityPolicy/media-src-allowed.html
+http/tests/security/dataTransfer-set-data-file-url.html
+http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
+http/tests/canvas/webgl/origin-clean-conformance.html
+
+# HTTP tests that fail:
+http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
+http/tests/download/inherited-encoding.html [ Failure ]
+http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
+http/tests/loading/promote-img-preload-priority.html [ Failure ]
+http/tests/loading/sizes/preload-image-sizes.html [ Failure ]
+http/tests/local/fileapi/file-last-modified-after-delete.html [ Failure ]
+http/tests/local/fileapi/file-last-modified.html [ Failure ]
+http/tests/local/formdata/form-data-with-unknown-file-extension.html [ Failure ]
+http/tests/local/formdata/send-form-data-with-filename.html [ Failure ]
+http/tests/local/formdata/send-form-data-with-sliced-file.html [ Failure ]
+http/tests/local/formdata/send-form-data.html [ Failure ]
+http/tests/local/link-stylesheet-load-order-preload.html [ Failure ]
+http/tests/local/link-stylesheet-load-order.html [ Failure ]
+http/tests/misc/copy-resolves-urls.html [ Failure ]
+http/tests/misc/favicon-loads-with-icon-loading-override.html [ Failure ]
+http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
+http/tests/misc/object-embedding-svg-delayed-size-negotiation.xhtml [ Failure ]
+http/tests/misc/submit-post-keygen.html [ Failure ]
+http/tests/misc/willCacheResponse-delegate-callback.html [ Failure ]
+http/tests/multipart/multipart-replace-non-html-content.php [ Failure ]
+http/tests/multipart/policy-ignore-crash.php [ Failure ]
+http/tests/navigation/response204.html [ Failure ]
+http/tests/security/clipboard/clipboard-file-access.html [ Failure ]
+http/tests/security/contentSecurityPolicy/object-src-no-url-blocked.html [ Failure ]
+http/tests/security/contentSecurityPolicy/object-src-none-allowed.html [ Failure ]
+http/tests/security/contentSecurityPolicy/object-src-none-blocked.html [ Failure ]
+http/tests/security/cross-frame-access-put.html [ Failure ]
+http/tests/security/cross-origin-plugin-allowed.html [ Failure ]
+http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html [ Failure ]
+http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Failure ]
+http/tests/security/cross-origin-plugin.html [ Failure ]
+http/tests/security/cross-origin-worker-indexeddb-allowed.html [ Failure ]
+http/tests/security/cross-origin-worker-indexeddb.html [ Failure ]
+http/tests/security/local-user-CSS-from-remote.html [ Failure ]
+http/tests/security/storage-blocking-loosened-plugin.html [ Failure ]
+http/tests/security/storage-blocking-loosened-private-browsing-plugin.html [ Failure ]
+http/tests/security/storage-blocking-strengthened-plugin.html [ Failure ]
+http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Failure ]
+http/tests/security/svg-image-with-css-cross-domain.html [ ImageOnlyFailure ]
+
+# HTTP tests that are flaky:
+http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Failure Pass ]
+
+# HTTP test that assert:
+http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html
 
 # Compositing tests that fail:
 compositing/regions/abs-transformed-dynamic-update.html [ ImageOnlyFailure ]
@@ -2372,13 +2440,6 @@ fast/body-propagation/overflow/001.html
 fast/borders/0px-borders.html
 fast/box-decoration-break/box-decoration-break-rendering.html
 fast/box-shadow/border-radius-big.html
-
-# FIXME: ASSERT(absolutePathToLocalResource[0] == '/') in TestRunner::pathToLocalResource:
-fast/loader/local-image-from-local.html
-fast/loader/local-JavaScript-from-local.html
-fast/loader/local-CSS-from-local.html
-fast/loader/local-iFrame-source-from-local.html
-fast/dom/frame-loading-via-document-write.html
 
 # <rdar://problem/19226186> ASSERT(m_mainThreadLoader) fails in WorkerThreadableLoader::MainThreadBridge::MainThreadBridge()
 fast/workers/stress-js-execution.html

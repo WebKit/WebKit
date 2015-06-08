@@ -523,7 +523,6 @@ webarchive/test-script-src.html [ Failure ]
 # HTTP tests that fail:
 http/tests/appcache/interrupted-update.html [ Failure ]
 http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Failure ]
-http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
 http/tests/cookies/js-get-and-set-http-only-cookie.html [ Failure ]
 http/tests/cookies/third-party-cookie-relaxing.html [ Failure ]
 http/tests/css/vertical-align-baseline-after-image-load-2.html [ ImageOnlyFailure ]
@@ -537,40 +536,17 @@ http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authen
 http/tests/loading/bad-scheme-subframe.html [ Failure ]
 http/tests/loading/basic-auth-resend-wrong-credentials.html [ Failure ]
 http/tests/loading/basic-credentials-sent-automatically.html [ Failure ]
-http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
-http/tests/loading/promote-img-preload-priority.html [ Failure ]
-http/tests/loading/sizes/preload-image-sizes.html [ Failure ]
-http/tests/local/drag-over-remote-content.html [ Failure ]
-http/tests/local/fileapi/file-last-modified-after-delete.html [ Failure ]
-http/tests/local/fileapi/file-last-modified.html [ Failure ]
-http/tests/local/fileapi/send-dragged-file.html [ Failure ]
-http/tests/local/fileapi/send-sliced-dragged-file.html [ Failure ]
-http/tests/local/formdata/form-data-with-unknown-file-extension.html [ Failure ]
-http/tests/local/formdata/send-form-data-with-filename.html [ Failure ]
-http/tests/local/formdata/send-form-data-with-sliced-file.html [ Failure ]
-http/tests/local/formdata/send-form-data.html [ Failure ]
-http/tests/local/link-stylesheet-load-order-preload.html [ Failure ]
-http/tests/local/link-stylesheet-load-order.html [ Failure ]
 http/tests/misc/401-alternative-content.php [ Failure ]
 http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html [ Failure ]
 http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html [ Failure ]
 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Failure ]
 http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url.html [ Failure ]
-http/tests/misc/bubble-drag-events.html [ Failure ]
-http/tests/misc/copy-resolves-urls.html [ Failure ]
 http/tests/misc/empty-urls.html [ Failure ]
 http/tests/misc/favicon-as-image.html [ Failure ]
-http/tests/misc/favicon-loads-with-icon-loading-override.html [ Failure ]
 http/tests/misc/favicon-loads-with-images-disabled.html [ Failure ]
 http/tests/misc/iframe404.html [ Failure ]
-http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
-http/tests/misc/object-embedding-svg-delayed-size-negotiation.xhtml [ Failure ]
 http/tests/misc/redirect-to-external-url.html [ Failure ]
 http/tests/misc/slow-loading-image-in-pattern.html [ Failure ]
-http/tests/misc/submit-post-keygen.html [ Failure ]
-http/tests/misc/willCacheResponse-delegate-callback.html [ Failure ]
-http/tests/multipart/multipart-replace-non-html-content.php [ Failure ]
-http/tests/multipart/policy-ignore-crash.php [ Failure ]
 http/tests/navigation/anchor-frames-gbk.html [ Failure ]
 http/tests/navigation/anchor-frames-same-origin.html [ Failure ]
 http/tests/navigation/anchor-frames.html [ Failure ]
@@ -581,40 +557,22 @@ http/tests/navigation/metaredirect-subframeload.html [ Failure ]
 http/tests/navigation/redirect302-subframeload.html [ Failure ]
 http/tests/navigation/relativeanchor-frames.html [ Failure ]
 http/tests/navigation/reload-subframe-object.html [ Failure ]
-http/tests/navigation/response204.html [ Failure ]
 http/tests/navigation/success200-subframeload.html [ Failure ]
 http/tests/navigation/timerredirect-subframeload.html [ Failure ]
 http/tests/security/401-logout/401-logout.php [ Failure ]
 http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients.html [ Failure ]
-http/tests/security/clipboard/clipboard-file-access.html [ Failure ]
-http/tests/security/contentSecurityPolicy/object-src-no-url-blocked.html [ Failure ]
-http/tests/security/contentSecurityPolicy/object-src-none-allowed.html [ Failure ]
-http/tests/security/contentSecurityPolicy/object-src-none-blocked.html [ Failure ]
 http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW.html [ Failure ]
-http/tests/security/cross-frame-access-put.html [ Failure ]
-http/tests/security/cross-origin-plugin-allowed.html [ Failure ]
-http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html [ Failure ]
-http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Failure ]
-http/tests/security/cross-origin-plugin.html [ Failure ]
-http/tests/security/cross-origin-worker-indexeddb-allowed.html [ Failure ]
-http/tests/security/cross-origin-worker-indexeddb.html [ Failure ]
 http/tests/security/drag-drop-local-file.html [ Failure ]
 http/tests/security/drag-drop-same-unique-origin.html [ Failure ]
 http/tests/security/drag-over-remote-content-iframe.html [ Failure ]
 http/tests/security/isolatedWorld/events.html [ Failure ]
 http/tests/security/listener/xss-window-onclick-addEventListener.html [ Failure ]
 http/tests/security/listener/xss-window-onclick-shortcut.html [ Failure ]
-http/tests/security/local-user-CSS-from-remote.html [ Failure ]
 http/tests/security/local-video-source-from-remote.html [ Failure ]
 http/tests/security/mixedContent/insecure-plugin-in-iframe.html [ Failure ]
 http/tests/security/no-referrer.html [ Failure ]
 http/tests/security/redirect-BLOCKED-to-localURL.html [ Failure ]
 http/tests/security/setDomainRelaxationForbiddenForURLScheme.html [ Failure ]
-http/tests/security/storage-blocking-loosened-plugin.html [ Failure ]
-http/tests/security/storage-blocking-loosened-private-browsing-plugin.html [ Failure ]
-http/tests/security/storage-blocking-strengthened-plugin.html [ Failure ]
-http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Failure ]
-http/tests/security/svg-image-with-css-cross-domain.html [ ImageOnlyFailure ]
 http/tests/uri/css-href.php [ Failure ]
 
 # HTTP tests that assert:
@@ -662,7 +620,6 @@ http/tests/security/window-events-pass.html
 http/tests/security/xss-DENIED-synchronous-frame-load-in-javascript-url.html
 http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml
 http/tests/security/xssAuditor/link-opens-new-window.html
-http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html
 http/tests/xmlhttprequest/close-window.html
 http/tests/xmlhttprequest/cross-origin-authorization.html
 http/tests/xmlhttprequest/cross-origin-no-authorization.html
@@ -672,21 +629,12 @@ http/tests/appcache/auth.html
 http/tests/cache/history-only-cached-subresource-loads-max-age-https.html
 http/tests/cache/subresource-expiration-1.html
 http/tests/cache/subresource-expiration-2.html
-http/tests/canvas/webgl/origin-clean-conformance.html
-http/tests/download/default-encoding.html
 http/tests/download/inherited-encoding.html
 http/tests/loading/cross-origin-XHR-willLoadRequest.html
 http/tests/loading/unfinished-load-back-to-cached-page-callbacks.html
 http/tests/loading/unfinished-main-resource-back-to-cached-page-callbacks.html
-http/tests/local/blob/send-hybrid-blob.html
-http/tests/local/fileapi/upload-zip-bundle-as-blob.html
-http/tests/local/formdata/send-form-data-constructed-from-form.html
-http/tests/local/formdata/send-form-data-with-empty-file-filename.html
-http/tests/local/formdata/upload-events.html
 http/tests/misc/acid3.html
 http/tests/misc/isindex-with-no-form.html
-http/tests/misc/link-rel-prefetch-and-subresource.html
-http/tests/misc/prefetch-purpose.html
 http/tests/navigation/document-location-click-timeout.html
 http/tests/navigation/document-location-click.html
 http/tests/navigation/document-location-mouseover.html
@@ -704,17 +652,10 @@ http/tests/navigation/ping-cross-origin.html
 http/tests/navigation/ping-same-origin.html
 http/tests/navigation/redirect-preserves-referrer.html
 http/tests/navigation/redirect-to-random-url-versus-memory-cache.html
-http/tests/navigation/scrollstate-after-http-equiv-refresh-fragment-identifier-2.html
-http/tests/navigation/scrollstate-after-http-equiv-refresh-fragment-identifier.html
-http/tests/navigation/scrollstate-after-http-equiv-refresh.html
-http/tests/navigation/scrollstate-after-location-reload.html
 http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html
 http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html
 http/tests/security/aboutBlank/xss-DENIED-set-opener.html
-http/tests/security/contentSecurityPolicy/media-src-allowed.html
 http/tests/security/cookies/third-party-cookie-blocking-user-action.html
-http/tests/security/dataTransfer-set-data-file-url.html
-http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
 http/tests/security/isolatedWorld/cross-origin-xhr.html
 http/tests/security/isolatedWorld/userGestureEvents.html
 http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html
@@ -731,7 +672,6 @@ http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
 
 # HTTP tests that are flaky:
 http/tests/cache/iframe-304-crash.html [ Failure Pass ]
-http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Failure Pass ]
 http/tests/navigation/forward-and-cancel.html [ Failure Pass ]
 http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml [ Failure Pass ]
 http/tests/webarchive/cross-origin-stylesheet-crash.html [ Failure Pass ]
@@ -1226,6 +1166,12 @@ fast/text/font-size-zero.html [ Failure Pass ]
 fast/text/soft-hyphen-min-preferred-width.html [ ImageOnlyFailure Pass ]
 fast/text/word-space-nbsp.html [ ImageOnlyFailure Pass ]
 fast/workers/worker-crash-with-invalid-location.html [ Failure Pass ]
+
+# LayoutTest/fast/loader tests that fail or time out:
+fast/loader/local-CSS-from-local.html [ Failure ]
+fast/loader/local-JavaScript-from-local.html [ Failure ]
+fast/loader/local-image-from-local.html [ Failure ]
+fast/dom/frame-loading-via-document-write.html # Timeout
 
 # HTML table tests that fail:
 tables/mozilla/bugs/bug149275-1.html [ Failure ]

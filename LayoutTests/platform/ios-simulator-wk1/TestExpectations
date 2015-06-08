@@ -2,9 +2,6 @@
 #
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
-# <rdar://problem/19593910> Many LayoutTests/http tests time out in DumpRenderTree
-http
-
 # <rdar://problem/6501130> LayoutTests: Enable editing tests after we support editing
 editing/deleting/4922367.html
 editing/deleting/5126166.html
@@ -1446,6 +1443,127 @@ crypto/subtle/rsa-indexeddb-non-exportable.html
 crypto/subtle/rsa-indexeddb.html
 fast/history/page-cache-indexed-closed-db.html
 fast/history/page-cache-indexed-opened-db.html
+http/tests/security/no-indexeddb-from-sandbox.html [ Failure ]
 
 # ShouldOpenExternalURLs not yet supported in WK1
 loader/navigation-policy [ Skip ]
+
+# HTTP tests that time out:
+http/tests/cookies/double-quoted-value-with-semi-colon.html
+http/tests/cookies/http-get-cookie-set-in-js.html
+http/tests/cookies/js-get-and-set-http-only-cookie.html
+http/tests/css/border-image-loading.html
+http/tests/css/cross-fade-reload.html
+http/tests/css/css-image-loading.html
+http/tests/dom/document-contentType-meta.html
+http/tests/dom/document-contentType-xhr.html
+http/tests/dom/document-contentType.html
+http/tests/download/basic-ascii.html
+http/tests/download/inherited-encoding-form-submission-result.html
+http/tests/eventsource/eventsource-bad-mime-type.html
+http/tests/eventsource/eventsource-content-type-charset.html
+http/tests/eventsource/eventsource-cors-basic.html
+http/tests/eventsource/workers/eventsource-simple.html
+http/tests/fileapi/blob-url-in-subframe.html
+http/tests/fileapi/create-blob-url-from-data-url.html
+http/tests/fileapi/xhr-send-form-data-filename-escaping.html
+http/tests/fileapi/xhr-send-form-data-mimetype-normalization.html
+http/tests/globalhistory/history-delegate-basic-302-redirect.html
+http/tests/globalhistory/history-delegate-basic-refresh-redirect.html
+http/tests/globalhistory/history-delegate-basic-title.html
+http/tests/globalhistory/history-delegate-basic-visited-links.html
+http/tests/history/back-during-onload-triggered-by-back.html
+http/tests/history/back-to-post.php
+http/tests/history/back-with-fragment-change.php
+http/tests/history/cross-origin-replace-history-object-child.html
+http/tests/local/blob/send-sliced-data-blob.html
+http/tests/local/formdata/send-form-data-with-empty-blob-filename.html
+http/tests/local/formdata/send-form-data-with-string-containing-null.html
+http/tests/navigation/anchor-basic.html
+http/tests/navigation/anchor-frames-cross-origin.html
+http/tests/navigation/anchor-frames-gbk.html
+http/tests/security/contentSecurityPolicy/media-src-blocked.html
+http/tests/security/contentSecurityPolicy/media-src-track-block.html
+http/tests/security/inactive-document-with-empty-security-origin.html
+http/tests/security/isolatedWorld/all-window-properties.html
+http/tests/security/isolatedWorld/cross-origin-xhr.html
+http/tests/canvas/webgl/origin-clean-conformance.html
+http/tests/cookies/multiple-cookies.html
+http/tests/cookies/set-cookie-on-redirect.html
+http/tests/eventsource/eventsource-cors-no-server.html
+http/tests/eventsource/eventsource-cors-non-http.html
+http/tests/globalhistory/history-delegate-pushstate.html
+http/tests/globalhistory/history-delegate-replacestate.html
+http/tests/history/cross-origin-replace-history-object.html
+http/tests/history/history-navigations-set-referrer.html
+http/tests/images/jpeg-partial-load.html
+http/tests/images/png-partial-load-no-alpha.html
+http/tests/incremental/frame-focus-before-load.html
+http/tests/incremental/pause-in-script-element.pl
+http/tests/inspector-protocol/access-inspected-object.html
+http/tests/inspector-protocol/loading-iframe-document-node.html
+http/tests/navigation/metaredirect-frames.html
+http/tests/security/frameNavigation/context-for-location-assign.html
+http/tests/cache/cached-main-resource.html [ Timeout ]
+http/tests/canvas/philip/tests/security.drawImage.canvas.html [ Timeout ]
+http/tests/canvas/philip/tests/security.drawImage.image.html [ Timeout ]
+http/tests/contentfiltering/allow-after-redirect.html [ Timeout ]
+http/tests/contentfiltering/block-after-redirect.html [ Timeout ]
+http/tests/cookies/simple-cookies-expired.html [ Timeout ]
+http/tests/cookies/simple-cookies-max-age.html [ Timeout ]
+http/tests/eventsource/eventsource-cors-with-credentials.html [ Timeout ]
+http/tests/eventsource/eventsource-eof.html [ Timeout ]
+http/tests/history/popstate-fires-with-pending-requests.html [ Timeout ]
+http/tests/history/redirect-200-refresh-0-seconds.pl [ Timeout ]
+http/tests/images/png-partial-load.html [ Timeout ]
+http/tests/images/png-progressive-load.html [ Timeout ]
+http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html [ Timeout ]
+http/tests/loading/sizes/preload-image-sizes-2x.html [ Timeout ]
+http/tests/loading/sizes/preload-image-sizes.html [ Timeout ]
+http/tests/local/absolute-url-strip-whitespace.html [ Timeout ]
+http/tests/local/file-url-sent-as-referer.html [ Timeout ]
+http/tests/security/appcache-in-private-browsing.html [ Timeout ]
+
+# HTTP tests that fail:
+http/tests/loading/preload-img-srcset-sizes.html [ Failure ]
+http/tests/loading/progress-finished-callback.html [ Failure ]
+http/tests/misc/acid3.html [ Failure ]
+http/tests/navigation/javascriptlink-frames.html [ Failure ]
+http/tests/navigation/postredirect-basic.html [ Failure ]
+http/tests/navigation/postredirect-goback1.html [ Failure ]
+http/tests/navigation/relativeanchor-basic.html [ Failure ]
+http/tests/navigation/relativeanchor-goback.html [ Failure ]
+http/tests/navigation/target-blank-opener-post.html [ Failure ]
+http/tests/navigation/target-blank-opener.html [ Failure ]
+http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html [ Failure ]
+http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html [ Failure ]
+http/tests/security/aboutBlank/xss-DENIED-set-opener.html [ Failure ]
+http/tests/security/contentSecurityPolicy/object-src-url-allowed.html [ Failure ]
+http/tests/security/contentSecurityPolicy/object-src-url-blocked.html [ Failure ]
+http/tests/security/cross-origin-indexeddb-allowed.html [ Failure ]
+http/tests/security/cross-origin-indexeddb.html [ Failure ]
+http/tests/security/cross-origin-local-storage-wk1.html [ Failure ]
+http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open.html [ Failure ]
+http/tests/security/dataURL/xss-DENIED-to-data-url-window-open.html [ Failure ]
+http/tests/security/frameNavigation/not-opener.html [ Failure ]
+http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-window-open.html [ Failure ]
+http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Failure ]
+http/tests/security/mixedContent/insecure-css-in-main-frame.html [ Failure ]
+http/tests/security/mixedContent/insecure-iframe-in-main-frame.html [ Failure ]
+http/tests/security/mixedContent/insecure-image-in-main-frame.html [ Failure ]
+http/tests/security/mixedContent/insecure-plugin-in-iframe.html [ Failure ]
+http/tests/security/mixedContent/insecure-xhr-in-main-frame.html [ Failure ]
+http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html [ Failure ]
+http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html [ Failure ]
+http/tests/security/popup-allowed-by-sandbox-is-sandboxed.html [ Failure ]
+http/tests/security/redirect-BLOCKED-to-localURL.html [ Failure ]
+http/tests/security/video-cross-origin-accessfailure.html [ Failure ]
+http/tests/security/video-cross-origin-readback.html [ Failure ]
+http/tests/security/xssAuditor/link-opens-new-window.html [ Failure ]
+
+# HTTP tests that assert:
+http/tests/navigation/metaredirect-basic.html
+http/tests/navigation/metaredirect-goback.html
+
+# Disk cache is WK2 only
+http/tests/cache/disk-cache

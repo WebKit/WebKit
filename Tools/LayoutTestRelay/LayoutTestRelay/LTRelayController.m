@@ -213,7 +213,7 @@
             @"__XPC_DYLD_LIBRARY_PATH": productDirectory,
         } mutableCopy];
 
-        for (NSString *keyName in @[@"DYLD_INSERT_LIBRARIES", @"MallocStackLogging"]) {
+        for (NSString *keyName in @[@"DYLD_INSERT_LIBRARIES", @"MallocStackLogging", @"LOCAL_RESOURCE_ROOT", @"DUMPRENDERTREE_TEMP"]) {
             const char* value = getenv([keyName UTF8String]);
             if (value && strlen(value)) {
                 NSString *nsValue = [NSString stringWithUTF8String:value];

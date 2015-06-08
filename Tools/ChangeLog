@@ -1,3 +1,17 @@
+2015-06-08  Daniel Bates  <dabates@apple.com>
+
+        Many LayoutTests/http tests time out in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=145770
+        <rdar://problem/19593910>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DumpRenderTree/ios/Info.plist: Add ATS key.
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.m:
+        (-[LTRelayController _environmentVariables]): Copy environment variables LOCAL_RESOURCE_ROOT
+        and DUMPRENDERTREE_TEMP to the simulator environment to avoid assertion failures in tests
+        that make use of testRunner.pathToLocalResource().
+
 2015-06-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         [GTK] Fix parentheses warning in TestWebKitWebView.cpp
