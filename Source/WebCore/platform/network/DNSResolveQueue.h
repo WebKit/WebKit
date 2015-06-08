@@ -50,10 +50,11 @@ public:
 private:
     DNSResolveQueue();
 
-    bool isUsingProxy();
-
-    bool platformProxyIsEnabledInSystemPreferences();
-    void platformResolve(const String&);
+    // This function performs the actual DNS prefetch. Platforms must ensure that performing the
+    // prefetch will not violate the user's expectations of privacy; for example, if an HTTP proxy
+    // is in use, then performing a DNS lookup would be inappropriate, but this may be acceptable
+    // for other types of proxies (e.g. SOCKS proxies).
+    void platformMaybeResolveHost(const String&);
 
     void timerFired();
 
@@ -61,8 +62,6 @@ private:
 
     HashSet<String> m_names;
     std::atomic<int> m_requestsInFlight;
-    bool m_cachedProxyEnabledStatus;
-    double m_lastProxyEnabledStatusCheckTime;
 };
 
 }

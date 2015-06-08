@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc.  All rights reserved.
- * Copyright (C) 2009, 2012 Igalia S.L.
+ * Copyright (C) 2009, 2012, 2015 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,28 +33,46 @@
 #include "SoupNetworkSession.h"
 #include <libsoup/soup.h>
 #include <wtf/MainThread.h>
+#include <wtf/gobject/GRefPtr.h>
+#include <wtf/gobject/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
 
-// There is no current reliable way to know if we're behind a proxy at
-// this level. We'll have to implement it in
-// SoupSession/SoupProxyURIResolver/GProxyResolver
-bool DNSResolveQueue::platformProxyIsEnabledInSystemPreferences()
+static void gotProxySettingsCallback(GObject* sourceObject, GAsyncResult* result, void* userData)
 {
-    return false;
+    GProxyResolver* resolver = G_PROXY_RESOLVER(sourceObject);
+    GUniquePtr<char> hostname(static_cast<char*>(userData));
+    GUniqueOutPtr<GError> error;
+
+    GUniquePtr<char*> uris(g_proxy_resolver_lookup_finish(resolver, result, &error.outPtr()));
+    if (error) {
+        WTFLogAlways("Error determining proxy to use for %s: %s", hostname.get(), error->message);
+        return;
+    }
+
+    // We have a list of possible proxies to use for the URI. If the first item in the list is
+    // direct:// (the usual case), then the user prefers not to use a proxy. This is similar to
+    // resolving hostnames: there could be many possibilities returned in order of preference, and
+    // if we're trying to connect we should attempt each one in order, but here we are not trying
+    // to connect, merely to decide whether a proxy "should" be used.
+    if (uris && *uris.get() && !strcmp(*uris.get(), "direct://")) {
+        soup_session_prefetch_dns(SoupNetworkSession::defaultSession().soupSession(), hostname.get(), nullptr, [](SoupAddress*, guint, void*) {
+            DNSResolveQueue::singleton().decrementRequestCount();
+        }, nullptr);
+    }
 }
 
-static void resolvedCallback(SoupAddress*, guint, void*)
-{
-    DNSResolveQueue::singleton().decrementRequestCount();
-}
-
-void DNSResolveQueue::platformResolve(const String& hostname)
+void DNSResolveQueue::platformMaybeResolveHost(const String& hostname)
 {
     ASSERT(isMainThread());
 
-    soup_session_prefetch_dns(SoupNetworkSession::defaultSession().soupSession(), hostname.utf8().data(), nullptr, resolvedCallback, nullptr);
+    GRefPtr<GProxyResolver> resolver;
+    g_object_get(SoupNetworkSession::defaultSession().soupSession(), "proxy-resolver", &resolver.outPtr(), nullptr);
+    ASSERT_WITH_SECURITY_IMPLICATION(resolver);
+
+    char* uri = g_strdup(hostname.utf8().data()); // Freed by gotProxySettingsCallback.
+    g_proxy_resolver_lookup_async(resolver.get(), uri, nullptr, gotProxySettingsCallback, uri);
 }
 
 void prefetchDNS(const String& hostname)

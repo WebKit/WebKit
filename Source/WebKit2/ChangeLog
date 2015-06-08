@@ -1,3 +1,15 @@
+2015-06-08  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [SOUP] Performs DNS prefetch when a proxy is configured (information leak)
+        https://bugs.webkit.org/show_bug.cgi?id=145542
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add documentation to webkit_web_context_prefetch_dns to indicate that the function does
+        nothing if the system configuration indicates we should use a proxy to resolve the host.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+
 2015-06-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r185251): [GTK] webkit_web_context_set_disk_cache_directory() doesn't work when using shared secondary process model after r185251
