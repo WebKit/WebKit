@@ -506,7 +506,6 @@ private:
     String m_overrideCookieStorageDirectory;
 
     String m_applicationCacheDirectory;
-    String m_diskCacheDirectory;
     String m_indexedDBDatabaseDirectory;
     String m_mediaKeysStorageDirectory;
     String m_webSQLDatabaseDirectory;

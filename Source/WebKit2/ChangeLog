@@ -1,3 +1,27 @@
+2015-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r185262): [GTK] webkit_web_context_set_disk_cache_directory() doesn't work after r185262
+        https://bugs.webkit.org/show_bug.cgi?id=145735
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess): Use
+        the directory name to clear the old cache, since the disk cache
+        subdirectory is now added in the UI process.
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_set_disk_cache_directory): Update the
+        WebProcessPool configuration to override the disk cache directory.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess): Use the
+        configuration to get the disk cache directory.
+        (WebKit::WebProcessPool::WebProcessPool): Remove
+        m_diskCacheDirectory member initialization.
+        * UIProcess/WebProcessPool.h: Remove m_diskCacheDirectory member.
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        (WebKit::WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory):
+        Append the disk cache subdirectory.
+
 2015-06-07  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL][GTK] Fix build  break since r185262

@@ -1025,12 +1025,17 @@ void webkit_web_context_set_web_extensions_initialization_user_data(WebKitWebCon
  * This method must be called before loading anything in this context, otherwise
  * it will not have any effect.
  */
-void webkit_web_context_set_disk_cache_directory(WebKitWebContext*, const char* directory)
+void webkit_web_context_set_disk_cache_directory(WebKitWebContext* context, const char* directory)
 {
+    g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
     g_return_if_fail(directory);
 
-    auto configuration = API::ProcessPoolConfiguration::createWithLegacyOptions();
-    configuration->setDiskCacheDirectory(WebCore::filenameToString(directory));
+#if ENABLE(NETWORK_CACHE)
+    static const char networkCacheSubdirectory[] = "WebKitCache";
+#else
+    static const char networkCacheSubdirectory[] = "webkit";
+#endif
+    context->priv->context->configuration().setDiskCacheDirectory(WebCore::pathByAppendingComponent(WebCore::filenameToString(directory), networkCacheSubdirectory));
 }
 
 /**

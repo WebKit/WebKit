@@ -167,7 +167,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_initialHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain)
 #endif
     , m_applicationCacheDirectory(configuration.applicationCacheDirectory())
-    , m_diskCacheDirectory(configuration.diskCacheDirectory())
     , m_indexedDBDatabaseDirectory(configuration.indexedDBDatabaseDirectory())
     , m_mediaKeysStorageDirectory(configuration.mediaKeysStorageDirectory())
     , m_webSQLDatabaseDirectory(configuration.webSQLDatabaseDirectory())
@@ -418,7 +417,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess()
     parameters.diskCacheSizeOverride = m_diskCacheSizeOverride;
     parameters.canHandleHTTPSServerTrustEvaluation = m_canHandleHTTPSServerTrustEvaluation;
 
-    parameters.diskCacheDirectory = m_diskCacheDirectory;
+    parameters.diskCacheDirectory = m_configuration->diskCacheDirectory();
     if (!parameters.diskCacheDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.diskCacheDirectory, parameters.diskCacheDirectoryExtensionHandle);
 

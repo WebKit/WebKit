@@ -72,16 +72,15 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
 
 #if ENABLE(NETWORK_CACHE)
     // Clear the old soup cache if it exists.
-    SoupNetworkSession::defaultSession().clearCache(m_diskCacheDirectory);
+    SoupNetworkSession::defaultSession().clearCache(WebCore::directoryName(m_diskCacheDirectory));
 
     NetworkCache::singleton().initialize(m_diskCacheDirectory, parameters.shouldEnableNetworkCacheEfficacyLogging);
 #else
     // We used to use the given cache directory for the soup cache, but now we use a subdirectory to avoid
     // conflicts with other cache files in the same directory. Remove the old cache files if they still exist.
-    SoupNetworkSession::defaultSession().clearCache(parameters.diskCacheDirectory);
+    SoupNetworkSession::defaultSession().clearCache(WebCore::directoryName(m_diskCacheDirectory));
 
-    String diskCachePath = WebCore::pathByAppendingComponent(parameters.diskCacheDirectory, "webkit");
-    GRefPtr<SoupCache> soupCache = adoptGRef(soup_cache_new(diskCachePath.utf8().data(), SOUP_CACHE_SINGLE_USER));
+    GRefPtr<SoupCache> soupCache = adoptGRef(soup_cache_new(m_diskCacheDirectory.utf8().data(), SOUP_CACHE_SINGLE_USER));
     SoupNetworkSession::defaultSession().setCache(soupCache.get());
     // Set an initial huge max_size for the SoupCache so the call to soup_cache_load() won't evict any cached
     // resource. The final size of the cache will be set by NetworkProcess::platformSetCacheModel().

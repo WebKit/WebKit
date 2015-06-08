@@ -144,7 +144,12 @@ String WebProcessPool::legacyPlatformDefaultMediaKeysStorageDirectory()
 
 String WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory()
 {
-    GUniquePtr<char> diskCacheDirectory(g_build_filename(g_get_user_cache_dir(), g_get_prgname(), nullptr));
+#if ENABLE(NETWORK_CACHE)
+    static const char networkCacheSubdirectory[] = "WebKitCache";
+#else
+    static const char networkCacheSubdirectory[] = "webkit";
+#endif
+    GUniquePtr<char> diskCacheDirectory(g_build_filename(g_get_user_cache_dir(), g_get_prgname(), networkCacheSubdirectory, nullptr));
     return WebCore::filenameToString(diskCacheDirectory.get());
 }
 
