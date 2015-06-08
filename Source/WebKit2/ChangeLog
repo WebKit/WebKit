@@ -1,3 +1,16 @@
+2015-06-08  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        REGRESSION(r185262): [EFL] Modify legacyPlatformDefaultNetworkCacheDirectory() according to network cache
+        https://bugs.webkit.org/show_bug.cgi?id=145752
+
+        Reviewed by Carlos Garcia Campos.
+
+        EFL port needs to add different prefix for network cache directory since r185262.
+        Modify it basedon GTK port fix.
+
+        * UIProcess/efl/WebProcessPoolEfl.cpp:
+        (WebKit::WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory):
+
 2015-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r185262): [GTK] webkit_web_context_set_disk_cache_directory() doesn't work after r185262
