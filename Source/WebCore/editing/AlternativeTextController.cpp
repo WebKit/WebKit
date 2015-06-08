@@ -484,6 +484,8 @@ void AlternativeTextController::respondToAppliedEditing(CompositeEditCommand* co
 
     markPrecedingWhitespaceForDeletedAutocorrectionAfterCommand(command);
     m_originalStringForLastDeletedAutocorrection = String();
+
+    dismiss(ReasonForDismissingAlternativeTextIgnored);
 }
 
 void AlternativeTextController::respondToUnappliedEditing(EditCommandComposition* command)
