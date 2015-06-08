@@ -36,6 +36,7 @@
 ### (2) Classified failures without bug reports (yet)
 ### (3) Unclassified failures
 ### (4) Features that are not supported in WebKit2 and likely never will be
+### (5) Progressions, expected successes that are expected failures in WebKit1.
 
 
 ########################################
@@ -680,6 +681,15 @@ fast/text/shaping
 ### END OF (4) Features that are not supported in WebKit2 and likely never will be
 ########################################
 
+########################################
+### START OF (5) Progressions, expected successes that are expected failures in WebKit1.
+
+# DumpRenderTree does not allow GIFs to animate, thus animated GIF tests don't work in WebKit1.
+fast/images/animated-gif-no-layout.html [ Pass ]
+fast/images/gif-loop-count.html [ Pass ]
+
+### END OF (5) Progressions, expected successes that are expected failures in WebKit1.
+########################################
 
 ###### This file has four sections. When adding new tests, make sure to
 ###### add to the right section:
@@ -688,3 +698,4 @@ fast/text/shaping
 ### (2) Classified failures without bug reports (yet)
 ### (3) Unclassified failures
 ### (4) Features that are not supported in WebKit2 and likely never will be
+### (5) Progressions, expected successes that are expected failures in WebKit1.

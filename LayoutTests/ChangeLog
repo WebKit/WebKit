@@ -1,3 +1,25 @@
+2015-06-07  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r181720): Unnecessary layout triggered any time animated GIF advances to a new frame
+        https://bugs.webkit.org/show_bug.cgi?id=145733
+
+        Reviewed by Andreas Kling.
+
+        * TestExpectations: Expect image failures on the animated GIF tests (the one
+        old one I am fixing and the one new one I am adding) because they don't yet work
+        under DumpRenderTree.
+
+        * fast/images/animated-gif-no-layout-expected.html: Added.
+        * fast/images/animated-gif-no-layout.html: Added.
+
+        * fast/images/gif-loop-count-expected.html: Added. This test was worthless as a render
+        tree dump test, and only valuable as a pixel test. And that hid the fact that it was
+        failing under WebKit1. Changing it to a reference test makes it a valuable test again.
+        * fast/images/gif-loop-count-expected.png: Removed.
+        * fast/images/gif-loop-count-expected.txt: Removed.
+
+        * platform/wk2/TestExpectations: Expect successes on these two tests.
+
 2015-06-06  Alexey Proskuryakov  <ap@apple.com>
 
         Clean up tests for blocking mixed content
