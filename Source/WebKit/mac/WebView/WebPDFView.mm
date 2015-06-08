@@ -40,7 +40,6 @@
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
 #import "WebLocalizableStringsInternal.h"
-#import "WebNSArrayExtras.h"
 #import "WebNSPasteboardExtras.h"
 #import "WebNSViewExtras.h"
 #import "WebPDFRepresentation.h"
@@ -1145,6 +1144,31 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
         [PDFSubview performSelector:@selector(_searchInDictionary:) withObject:sender];
 }
 
+static void removeUselessMenuItemSeparators(NSMutableArray *menuItems)
+{
+    // Starting with a mutable array of NSMenuItems, removes any separators at the start,
+    // removes any separators at the end, and collapses any other adjacent separators to
+    // a single separator.
+
+    // Start this with YES so very last item will be removed if it's a separator.
+    BOOL removePreviousItemIfSeparator = YES;
+
+    for (NSInteger index = menuItems.count - 1; index >= 0; --index) {
+        NSMenuItem *item = menuItems[index];
+        ASSERT([item isKindOfClass:[NSMenuItem class]]);
+
+        BOOL itemIsSeparator = [item isSeparatorItem];
+        if (itemIsSeparator && (removePreviousItemIfSeparator || !index))
+            [menuItems removeObjectAtIndex:index];
+
+        removePreviousItemIfSeparator = itemIsSeparator;
+    }
+
+    // This could leave us with one initial separator; kill it off too
+    if (menuItems.count && [menuItems[0] isSeparatorItem])
+        [menuItems removeObjectAtIndex:0];
+}
+
 - (NSMutableArray *)_menuItemsFromPDFKitForEvent:(NSEvent *)theEvent
 {
     NSMutableArray *copiedItems = [NSMutableArray array];
@@ -1221,7 +1245,7 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
     // Since we might have removed elements supplied by PDFKit, and we want to minimize our hardwired
     // knowledge of the order and arrangement of PDFKit's menu items, we need to remove any bogus
     // separators that were left behind.
-    [copiedItems _webkit_removeUselessMenuItemSeparators];
+    removeUselessMenuItemSeparators(copiedItems);
     
     return copiedItems;
 }

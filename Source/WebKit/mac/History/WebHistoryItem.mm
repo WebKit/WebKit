@@ -35,7 +35,6 @@
 #import "WebIconDatabase.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
-#import "WebNSArrayExtras.h"
 #import "WebNSDictionaryExtras.h"
 #import "WebNSObjectExtras.h"
 #import "WebNSURLExtras.h"
@@ -362,9 +361,16 @@ WebHistoryItem *kit(HistoryItem* item)
     
     if (NSArray *redirectURLs = [dict _webkit_arrayForKey:redirectURLsKey]) {
         NSUInteger size = [redirectURLs count];
-        auto redirectURLsVector = std::make_unique<Vector<String>>(size);
-        for (NSUInteger i = 0; i < size; ++i)
-            (*redirectURLsVector)[i] = String([redirectURLs _webkit_stringAtIndex:i]);
+        auto redirectURLsVector = std::make_unique<Vector<String>>();
+
+        for (NSUInteger i = 0; i < size; ++i) {
+            id redirectURL = [redirectURLs objectAtIndex:i];
+            if (![redirectURL isKindOfClass:[NSString class]])
+                continue;
+
+            (*redirectURLsVector)[i] = (NSString *)redirectURL;
+        }
+
         core(_private)->setRedirectURLs(WTF::move(redirectURLsVector));
     }
 

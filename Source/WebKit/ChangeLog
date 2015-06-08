@@ -1,5 +1,14 @@
 2015-06-07  Anders Carlsson  <andersca@apple.com>
 
+        Remove WebNSArrayExtras
+        https://bugs.webkit.org/show_bug.cgi?id=145747
+
+        Reviewed by Darin Adler.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2015-06-07  Anders Carlsson  <andersca@apple.com>
+
         Remove WebKitSystemBits
         https://bugs.webkit.org/show_bug.cgi?id=145746
 

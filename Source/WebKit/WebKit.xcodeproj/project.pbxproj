@@ -458,8 +458,6 @@
 		E169836C11346D5600894115 /* ProxyRuntimeObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = E169836B11346D5600894115 /* ProxyRuntimeObject.mm */; };
 		ED5B9524111B725A00472298 /* WebLocalizableStrings.mm in Sources */ = {isa = PBXBuildFile; fileRef = ED5B9523111B725A00472298 /* WebLocalizableStrings.mm */; };
 		ED7F6D8B0980683500C235ED /* WebNSDataExtrasPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = ED7F6D8A0980683500C235ED /* WebNSDataExtrasPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		EDE983800BCDF5FE00FDAE28 /* WebNSArrayExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = EDE9837E0BCDF5FE00FDAE28 /* WebNSArrayExtras.h */; };
-		EDE983810BCDF5FE00FDAE28 /* WebNSArrayExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = EDE9837F0BCDF5FE00FDAE28 /* WebNSArrayExtras.m */; };
 		F834AAD70E64B1C700E2737C /* WebTextIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = F834AAD50E64B1C700E2737C /* WebTextIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F834AAD80E64B1C700E2737C /* WebTextIterator.mm in Sources */ = {isa = PBXBuildFile; fileRef = F834AAD60E64B1C700E2737C /* WebTextIterator.mm */; };
 /* End PBXBuildFile section */
@@ -880,8 +878,6 @@
 		EDD1A5C605C83987008E3150 /* WebNSPrintOperationExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSPrintOperationExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		EDD1A5C705C83987008E3150 /* WebNSPrintOperationExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSPrintOperationExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		EDE850CD06ECC79E005FAB05 /* WebPreferenceKeysPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPreferenceKeysPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		EDE9837E0BCDF5FE00FDAE28 /* WebNSArrayExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNSArrayExtras.h; sourceTree = "<group>"; };
-		EDE9837F0BCDF5FE00FDAE28 /* WebNSArrayExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSArrayExtras.m; sourceTree = "<group>"; };
 		F508946902B71D59018A9CD4 /* WebNSViewExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSViewExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F508946A02B71D59018A9CD4 /* WebNSViewExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSViewExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5143A370221DCCE01A80181 /* WebFrame.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFrame.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1129,8 +1125,6 @@
 				ED5B9523111B725A00472298 /* WebLocalizableStrings.mm */,
 				BC42D322131ED1E00075FA4B /* WebLocalizableStringsInternal.h */,
 				BC42D34C131ED3880075FA4B /* WebLocalizableStringsInternal.mm */,
-				EDE9837E0BCDF5FE00FDAE28 /* WebNSArrayExtras.h */,
-				EDE9837F0BCDF5FE00FDAE28 /* WebNSArrayExtras.m */,
 				9345DDB20365FFD0008635CE /* WebNSControlExtras.h */,
 				9345DDB30365FFD0008635CE /* WebNSControlExtras.m */,
 				BECD14290565830A005BB09C /* WebNSDataExtras.h */,
@@ -1884,7 +1878,6 @@
 				31C11A6E1476552E0049A4CC /* WebNotificationClient.h in Headers */,
 				312E2FE914E48215007CCA18 /* WebNotificationInternal.h in Headers */,
 				A10C1D781820300E0036883A /* WebVisiblePositionInternal.h in Headers */,
-				EDE983800BCDF5FE00FDAE28 /* WebNSArrayExtras.h in Headers */,
 				939810210824BF01008DF038 /* WebNSControlExtras.h in Headers */,
 				939810820824BF01008DF038 /* WebNSDataExtras.h in Headers */,
 				ED7F6D8B0980683500C235ED /* WebNSDataExtrasPrivate.h in Headers */,
@@ -2290,7 +2283,6 @@
 				A10C1D6C1820300E0036883A /* WebFrameIOS.mm in Sources */,
 				312E2FE614E48182007CCA18 /* WebNotification.mm in Sources */,
 				31C11A6F1476552E0049A4CC /* WebNotificationClient.mm in Sources */,
-				EDE983810BCDF5FE00FDAE28 /* WebNSArrayExtras.m in Sources */,
 				1A6B31391A51F3A900422975 /* StorageThread.cpp in Sources */,
 				A560946714D8AD2600799A8A /* WebIndicateLayer.mm in Sources */,
 				939810C60824BF01008DF038 /* WebNSControlExtras.m in Sources */,
