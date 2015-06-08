@@ -79,7 +79,6 @@
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
 #import "WebKitStatisticsPrivate.h"
-#import "WebKitSystemBits.h"
 #import "WebKitVersionChecks.h"
 #import "WebLocalizableStrings.h"
 #import "WebNSDataExtras.h"
@@ -7714,7 +7713,10 @@ static WebFrameView *containingFrameView(NSView *view)
         nsurlCacheDirectory = NSHomeDirectory();
 
     static uint64_t memSize = ramSize() / 1024 / 1024;
-    unsigned long long diskFreeSize = WebVolumeFreeSize(nsurlCacheDirectory) / 1024 / 1000;
+
+    NSDictionary *fileSystemAttributesDictionary = [[NSFileManager defaultManager] attributesOfFileSystemForPath:nsurlCacheDirectory error:nullptr];
+    unsigned long long diskFreeSize = [fileSystemAttributesDictionary[NSFileSystemFreeSize] unsignedLongLongValue] / 1024 / 1000;
+
     NSURLCache *nsurlCache = [NSURLCache sharedURLCache];
 
     unsigned cacheTotalCapacity = 0;
