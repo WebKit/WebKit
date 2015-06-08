@@ -691,6 +691,12 @@ static gboolean toggleFullScreen(BrowserWindow *window, gpointer user_data)
     return TRUE;
 }
 
+static void editingCommandCallback(GtkWidget*widget, BrowserWindow *window)
+{
+    webkit_web_view_execute_editing_command(window->webView, gtk_widget_get_name(widget));
+}
+
+
 static void browserWindowFinalize(GObject *gObject)
 {
     BrowserWindow *window = BROWSER_WINDOW(gObject);
@@ -740,6 +746,118 @@ static void browserWindowSetProperty(GObject *object, guint propId, const GValue
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, pspec);
     }
+}
+
+static void browserWindowSetupEditorToolbar(BrowserWindow *window)
+{
+    GtkWidget *toolbar = gtk_toolbar_new();
+    gtk_orientable_set_orientation(GTK_ORIENTABLE(toolbar), GTK_ORIENTATION_HORIZONTAL);
+    gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_BOTH_HORIZ);
+
+    GtkToolItem *item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_BOLD);
+    gtk_widget_set_name(GTK_WIDGET(item), "Bold");
+    g_signal_connect(G_OBJECT(item), "toggled", G_CALLBACK(editingCommandCallback), window);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+    gtk_widget_show(GTK_WIDGET(item));
+
+    item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_ITALIC);
+    gtk_widget_set_name(GTK_WIDGET(item), "Italic");
+    g_signal_connect(G_OBJECT(item), "toggled", G_CALLBACK(editingCommandCallback), window);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+    gtk_widget_show(GTK_WIDGET(item));
+
+    item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_UNDERLINE);
+    gtk_widget_set_name(GTK_WIDGET(item), "Underline");
+    g_signal_connect(G_OBJECT(item), "toggled", G_CALLBACK(editingCommandCallback), window);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+    gtk_widget_show(GTK_WIDGET(item));
+
+    item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_STRIKETHROUGH);
+    gtk_widget_set_name(GTK_WIDGET(item), "Strikethrough");
+    g_signal_connect(G_OBJECT(item), "toggled", G_CALLBACK(editingCommandCallback), window);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+    gtk_widget_show(GTK_WIDGET(item));
+
+    item = gtk_separator_tool_item_new();
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+    gtk_widget_show(GTK_WIDGET(item));
+
+    item = gtk_tool_button_new_from_stock(GTK_STOCK_CUT);
+    gtk_widget_set_name(GTK_WIDGET(item), WEBKIT_EDITING_COMMAND_CUT);
+    g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(editingCommandCallback), window);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+    gtk_widget_show(GTK_WIDGET(item));
+
+    item = gtk_tool_button_new_from_stock(GTK_STOCK_COPY);
+    gtk_widget_set_name(GTK_WIDGET(item), WEBKIT_EDITING_COMMAND_COPY);
+    g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(editingCommandCallback), window);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+    gtk_widget_show(GTK_WIDGET(item));
+
+    item = gtk_tool_button_new_from_stock(GTK_STOCK_PASTE);
+    gtk_widget_set_name(GTK_WIDGET(item), WEBKIT_EDITING_COMMAND_PASTE);
+    g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(editingCommandCallback), window);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+    gtk_widget_show(GTK_WIDGET(item));
+
+    item = gtk_separator_tool_item_new();
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+    gtk_widget_show(GTK_WIDGET(item));
+
+    item = gtk_tool_button_new_from_stock(GTK_STOCK_UNDO);
+    gtk_widget_set_name(GTK_WIDGET(item), WEBKIT_EDITING_COMMAND_UNDO);
+    g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(editingCommandCallback), window);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+    gtk_widget_show(GTK_WIDGET(item));
+
+    item = gtk_tool_button_new_from_stock(GTK_STOCK_REDO);
+    gtk_widget_set_name(GTK_WIDGET(item), WEBKIT_EDITING_COMMAND_REDO);
+    g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(editingCommandCallback), window);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+    gtk_widget_show(GTK_WIDGET(item));
+
+    item = gtk_separator_tool_item_new();
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+    gtk_widget_show(GTK_WIDGET(item));
+
+    item = gtk_radio_tool_button_new_from_stock(NULL, GTK_STOCK_JUSTIFY_LEFT);
+    GSList *justifyRadioGroup = gtk_radio_tool_button_get_group(GTK_RADIO_TOOL_BUTTON(item));
+    gtk_widget_set_name(GTK_WIDGET(item), "JustifyLeft");
+    g_signal_connect(G_OBJECT(item), "toggled", G_CALLBACK(editingCommandCallback), window);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+    gtk_widget_show(GTK_WIDGET(item));
+
+    item = gtk_radio_tool_button_new_from_stock(justifyRadioGroup, GTK_STOCK_JUSTIFY_CENTER);
+    justifyRadioGroup = gtk_radio_tool_button_get_group(GTK_RADIO_TOOL_BUTTON(item));
+    gtk_widget_set_name(GTK_WIDGET(item), "JustifyCenter");
+    g_signal_connect(G_OBJECT(item), "toggled", G_CALLBACK(editingCommandCallback), window);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+    gtk_widget_show(GTK_WIDGET(item));
+
+    item = gtk_radio_tool_button_new_from_stock(justifyRadioGroup, GTK_STOCK_JUSTIFY_RIGHT);
+    gtk_widget_set_name(GTK_WIDGET(item), "JustifyRight");
+    g_signal_connect(G_OBJECT(item), "toggled", G_CALLBACK(editingCommandCallback), window);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+    gtk_widget_show(GTK_WIDGET(item));
+
+    item = gtk_separator_tool_item_new();
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+    gtk_widget_show(GTK_WIDGET(item));
+
+    item = gtk_tool_button_new_from_stock(GTK_STOCK_INDENT);
+    gtk_widget_set_name(GTK_WIDGET(item), "Indent");
+    g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(editingCommandCallback), window);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+    gtk_widget_show(GTK_WIDGET(item));
+
+    item = gtk_tool_button_new_from_stock(GTK_STOCK_UNINDENT);
+    gtk_widget_set_name(GTK_WIDGET(item), "Outdent");
+    g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(editingCommandCallback), window);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+    gtk_widget_show(GTK_WIDGET(item));
+
+    gtk_box_pack_start(GTK_BOX(window->mainBox), toolbar, FALSE, FALSE, 0);
+    gtk_widget_show(toolbar);
 }
 
 static void browser_window_init(BrowserWindow *window)
@@ -886,6 +1004,8 @@ static void browserWindowConstructed(GObject *gObject)
     BrowserWindow *window = BROWSER_WINDOW(gObject);
 
     browserWindowUpdateZoomActions(window);
+    if (webkit_web_view_is_editable(window->webView))
+        browserWindowSetupEditorToolbar(window);
 
     g_signal_connect(window->webView, "notify::uri", G_CALLBACK(webViewURIChanged), window);
     g_signal_connect(window->webView, "notify::estimated-load-progress", G_CALLBACK(webViewLoadProgressChanged), window);
@@ -940,6 +1060,9 @@ static void browserWindowConstructed(GObject *gObject)
     gtk_widget_set_no_show_all(window->fullScreenMessageLabel, TRUE);
     gtk_overlay_add_overlay(GTK_OVERLAY(overlay), window->fullScreenMessageLabel);
     gtk_widget_show(GTK_WIDGET(window->webView));
+
+    if (webkit_web_view_is_editable(window->webView))
+        webkit_web_view_load_html(window->webView, "<html></html>", NULL);
 }
 
 static void browser_window_class_init(BrowserWindowClass *klass)

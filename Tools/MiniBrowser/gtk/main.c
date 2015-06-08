@@ -38,6 +38,7 @@
 static const gchar **uriArguments = NULL;
 static const char *miniBrowserAboutScheme = "minibrowser-about";
 static GdkRGBA *backgroundColor;
+static gboolean editorMode;
 
 typedef enum {
     MINI_BROWSER_ERROR_INVALID_ABOUT_PATH
@@ -60,16 +61,20 @@ static gchar *argumentToURL(const char *filename)
 static void createBrowserWindow(const gchar *uri, WebKitSettings *webkitSettings)
 {
     GtkWidget *webView = webkit_web_view_new();
+    if (editorMode)
+        webkit_web_view_set_editable(WEBKIT_WEB_VIEW(webView), TRUE);
     GtkWidget *mainWindow = browser_window_new(WEBKIT_WEB_VIEW(webView), NULL);
     if (backgroundColor)
         browser_window_set_background_color(BROWSER_WINDOW(mainWindow), backgroundColor);
-    gchar *url = argumentToURL(uri);
 
     if (webkitSettings)
         webkit_web_view_set_settings(WEBKIT_WEB_VIEW(webView), webkitSettings);
 
-    browser_window_load_uri(BROWSER_WINDOW(mainWindow), url);
-    g_free(url);
+    if (!editorMode) {
+        gchar *url = argumentToURL(uri);
+        browser_window_load_uri(BROWSER_WINDOW(mainWindow), url);
+        g_free(url);
+    }
 
     gtk_widget_grab_focus(webView);
     gtk_widget_show(mainWindow);
@@ -90,6 +95,7 @@ static gboolean parseBackgroundColor(const char *optionName, const char *value, 
 static const GOptionEntry commandLineOptions[] =
 {
     { "bg-color", 0, 0, G_OPTION_ARG_CALLBACK, parseBackgroundColor, "Background color", NULL },
+    { "editor-mode", 'e', 0, G_OPTION_ARG_NONE, &editorMode, "Run in editor mode", NULL },
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, 0, "[URL…]" },
     { 0, 0, 0, 0, 0, 0, 0 }
 };

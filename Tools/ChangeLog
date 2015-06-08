@@ -1,3 +1,20 @@
+2015-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add editor mode to MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=145595
+
+        Reviewed by Sergio Villar Senin.
+
+        It loads an empty editable web view with an edit toolbar. It makes
+        easier to test the editor, editing commands and input methods.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (editingCommandCallback):
+        (browserWindowSetupEditorToolbar):
+        (browserWindowConstructed):
+        * MiniBrowser/gtk/main.c:
+        (createBrowserWindow):
+
 2015-06-05  Zalan Bujtas  <zalan@apple.com>
 
         From r185273 on WTF::RefCounter exposes the actual refcount instead of a boolean value.
