@@ -1154,7 +1154,7 @@ static void removeUselessMenuItemSeparators(NSMutableArray *menuItems)
     BOOL removePreviousItemIfSeparator = YES;
 
     for (NSInteger index = menuItems.count - 1; index >= 0; --index) {
-        NSMenuItem *item = menuItems[index];
+        NSMenuItem *item = [menuItems objectAtIndex:index];
         ASSERT([item isKindOfClass:[NSMenuItem class]]);
 
         BOOL itemIsSeparator = [item isSeparatorItem];
@@ -1165,7 +1165,7 @@ static void removeUselessMenuItemSeparators(NSMutableArray *menuItems)
     }
 
     // This could leave us with one initial separator; kill it off too
-    if (menuItems.count && [menuItems[0] isSeparatorItem])
+    if (menuItems.count && [[menuItems objectAtIndex:0] isSeparatorItem])
         [menuItems removeObjectAtIndex:0];
 }
 
