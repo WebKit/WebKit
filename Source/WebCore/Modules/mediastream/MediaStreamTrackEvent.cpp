@@ -33,7 +33,7 @@
 namespace WebCore {
 
 MediaStreamTrackEventInit::MediaStreamTrackEventInit()
-    : track(0)
+    : track(nullptr)
 {
 }
 

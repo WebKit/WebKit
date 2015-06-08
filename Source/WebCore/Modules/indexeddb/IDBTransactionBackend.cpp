@@ -270,7 +270,7 @@ void IDBTransactionBackend::commit()
             m_database->transactionFinishedAndAbortFired(this);
         }
 
-        m_database = 0;
+        m_database = nullptr;
     });
 }
 

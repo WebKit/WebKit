@@ -62,7 +62,7 @@ std::unique_ptr<DatabaseTracker> DatabaseTracker::trackerWithDatabasePath(const 
     return std::unique_ptr<DatabaseTracker>(new DatabaseTracker(databasePath));
 }
 
-static DatabaseTracker* staticTracker = 0;
+static DatabaseTracker* staticTracker = nullptr;
 
 void DatabaseTracker::initializeTracker(const String& databasePath)
 {
@@ -82,7 +82,7 @@ DatabaseTracker& DatabaseTracker::tracker()
 }
 
 DatabaseTracker::DatabaseTracker(const String& databasePath)
-    : m_client(0)
+    : m_client(nullptr)
 {
     setDatabaseDirectoryPath(databasePath);
 }

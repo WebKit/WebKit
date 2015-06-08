@@ -66,7 +66,7 @@ RefPtr<MediaKeys> MediaKeys::create(const String& keySystem, ExceptionCode& ec)
 }
 
 MediaKeys::MediaKeys(const String& keySystem, std::unique_ptr<CDM> cdm)
-    : m_mediaElement(0)
+    : m_mediaElement(nullptr)
     , m_keySystem(keySystem)
     , m_cdm(WTF::move(cdm))
 {
@@ -79,7 +79,7 @@ MediaKeys::~MediaKeys()
     // When destroying a MediaKeys object, follow the steps in close().
     for (auto& session : m_sessions) {
         session->close();
-        session->setKeys(0);
+        session->setKeys(nullptr);
     }
 }
 

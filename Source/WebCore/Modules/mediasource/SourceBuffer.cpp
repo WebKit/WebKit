@@ -151,7 +151,7 @@ SourceBuffer::~SourceBuffer()
 {
     ASSERT(isRemoved());
 
-    m_private->setClient(0);
+    m_private->setClient(nullptr);
 }
 
 PassRefPtr<TimeRanges> SourceBuffer::buffered(ExceptionCode& ec) const
@@ -447,7 +447,7 @@ void SourceBuffer::removedFromMediaSource()
     }
 
     m_private->removedFromMediaSource();
-    m_source = 0;
+    m_source = nullptr;
 }
 
 void SourceBuffer::seekToTime(const MediaTime& time)

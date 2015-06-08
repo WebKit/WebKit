@@ -239,7 +239,7 @@ void IDBTransaction::OpenCursorNotifier::cursorFinished()
 {
     if (m_cursor) {
         m_transaction->unregisterOpenCursor(m_cursor);
-        m_cursor = 0;
+        m_cursor = nullptr;
         m_transaction.clear();
     }
 }

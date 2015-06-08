@@ -156,7 +156,7 @@ void OpenCursorOperation::perform(std::function<void()> completionCallback)
             m_callbacks->onError(error);
         } else if (!key) {
             // If there's no error but also no key, then the cursor had no records.
-            m_callbacks->onSuccess(static_cast<SharedBuffer*>(0));
+            m_callbacks->onSuccess(static_cast<SharedBuffer*>(nullptr));
         } else {
             RefPtr<IDBCursorBackend> cursor = IDBCursorBackend::create(cursorID, m_cursorType, m_taskType, *m_transaction, m_objectStoreID);
             cursor->updateCursorData(key.get(), primaryKey.get(), valueBuffer.get());

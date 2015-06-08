@@ -278,7 +278,7 @@ void WebSocketHandshake::reset()
 
 void WebSocketHandshake::clearScriptExecutionContext()
 {
-    m_context = 0;
+    m_context = nullptr;
 }
 
 int WebSocketHandshake::readServerHandshake(const char* header, size_t len)
@@ -401,8 +401,8 @@ int WebSocketHandshake::readStatusLine(const char* header, size_t headerLength, 
     statusCode = -1;
     statusText = String();
 
-    const char* space1 = 0;
-    const char* space2 = 0;
+    const char* space1 = nullptr;
+    const char* space2 = nullptr;
     const char* p;
     size_t consumedLength;
 

@@ -54,7 +54,7 @@
 namespace WebCore {
 
 Notification::Notification()
-    : ActiveDOMObject(0)
+    : ActiveDOMObject(nullptr)
 {
 }
 

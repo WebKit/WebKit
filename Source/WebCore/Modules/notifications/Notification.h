@@ -124,7 +124,7 @@ public:
 #if ENABLE(NOTIFICATIONS)
     static const String permission(ScriptExecutionContext*);
     WEBCORE_EXPORT static const String permissionString(NotificationClient::Permission);
-    static void requestPermission(ScriptExecutionContext*, PassRefPtr<NotificationPermissionCallback> = 0);
+    static void requestPermission(ScriptExecutionContext*, PassRefPtr<NotificationPermissionCallback> = nullptr);
 #endif
 
 private:

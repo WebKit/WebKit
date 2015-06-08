@@ -56,7 +56,7 @@ Ref<AudioBufferSourceNode> AudioBufferSourceNode::create(AudioContext* context, 
 
 AudioBufferSourceNode::AudioBufferSourceNode(AudioContext* context, float sampleRate)
     : AudioScheduledSourceNode(context, sampleRate)
-    , m_buffer(0)
+    , m_buffer(nullptr)
     , m_isLooping(false)
     , m_loopStart(0)
     , m_loopEnd(0)
@@ -65,7 +65,7 @@ AudioBufferSourceNode::AudioBufferSourceNode(AudioContext* context, float sample
     , m_grainOffset(0.0)
     , m_grainDuration(DefaultGrainDuration)
     , m_lastGain(1.0)
-    , m_pannerNode(0)
+    , m_pannerNode(nullptr)
 {
     setNodeType(NodeTypeAudioBufferSource);
 
@@ -601,7 +601,7 @@ void AudioBufferSourceNode::clearPannerNode()
 {
     if (m_pannerNode) {
         m_pannerNode->deref(AudioNode::RefTypeConnection);
-        m_pannerNode = 0;
+        m_pannerNode = nullptr;
     }
 }
 

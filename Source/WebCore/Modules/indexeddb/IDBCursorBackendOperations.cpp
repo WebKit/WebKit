@@ -47,7 +47,7 @@ void CursorAdvanceOperation::perform(std::function<void()> completionCallback)
         } else if (!key) {
             // If there's no error but also no key, then the cursor reached the end.
             m_cursor->clear();
-            m_callbacks->onSuccess(static_cast<SharedBuffer*>(0));
+            m_callbacks->onSuccess(static_cast<SharedBuffer*>(nullptr));
         } else {
             m_cursor->updateCursorData(key.get(), primaryKey.get(), valueBuffer.get());
             m_callbacks->onSuccess(key, primaryKey, valueBuffer);
@@ -72,7 +72,7 @@ void CursorIterationOperation::perform(std::function<void()> completionCallback)
         } else if (!key) {
             // If there's no error but also no key, then the cursor reached the end.
             m_cursor->clear();
-            m_callbacks->onSuccess(static_cast<SharedBuffer*>(0));
+            m_callbacks->onSuccess(static_cast<SharedBuffer*>(nullptr));
         } else {
             m_cursor->updateCursorData(key.get(), primaryKey.get(), valueBuffer.get());
             m_callbacks->onSuccess(key, primaryKey, valueBuffer);

@@ -41,10 +41,10 @@ namespace WebCore {
 
 using namespace VectorMath;
 
-PeriodicWave* OscillatorNode::s_periodicWaveSine = 0;
-PeriodicWave* OscillatorNode::s_periodicWaveSquare = 0;
-PeriodicWave* OscillatorNode::s_periodicWaveSawtooth = 0;
-PeriodicWave* OscillatorNode::s_periodicWaveTriangle = 0;
+PeriodicWave* OscillatorNode::s_periodicWaveSine = nullptr;
+PeriodicWave* OscillatorNode::s_periodicWaveSquare = nullptr;
+PeriodicWave* OscillatorNode::s_periodicWaveSawtooth = nullptr;
+PeriodicWave* OscillatorNode::s_periodicWaveTriangle = nullptr;
 
 Ref<OscillatorNode> OscillatorNode::create(AudioContext* context, float sampleRate)
 {
@@ -115,7 +115,7 @@ void OscillatorNode::setType(const String& type)
 
 bool OscillatorNode::setType(unsigned type)
 {
-    PeriodicWave* periodicWave = 0;
+    PeriodicWave* periodicWave = nullptr;
     float sampleRate = this->sampleRate();
 
     switch (type) {
@@ -269,8 +269,8 @@ void OscillatorNode::process(size_t framesToProcess)
     bool hasSampleAccurateValues = calculateSampleAccuratePhaseIncrements(framesToProcess);
 
     float frequency = 0;
-    float* higherWaveData = 0;
-    float* lowerWaveData = 0;
+    float* higherWaveData = nullptr;
+    float* lowerWaveData = nullptr;
     float tableInterpolationFactor;
 
     if (!hasSampleAccurateValues) {

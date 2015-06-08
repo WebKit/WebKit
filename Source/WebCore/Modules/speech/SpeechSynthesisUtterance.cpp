@@ -44,7 +44,7 @@ SpeechSynthesisUtterance::SpeechSynthesisUtterance(ScriptExecutionContext& conte
 
 SpeechSynthesisUtterance::~SpeechSynthesisUtterance()
 {
-    m_platformUtterance->setClient(0);
+    m_platformUtterance->setClient(nullptr);
 }
 
 SpeechSynthesisVoice* SpeechSynthesisUtterance::voice() const

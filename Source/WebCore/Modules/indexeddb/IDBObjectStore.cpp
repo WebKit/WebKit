@@ -104,7 +104,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::add(JSC::ExecState* state, Deprecated::Sc
 PassRefPtr<IDBRequest> IDBObjectStore::add(JSC::ExecState* state, Deprecated::ScriptValue& value, ExceptionCode& ec)
 {
     LOG(StorageAPI, "IDBObjectStore::add");
-    return put(IDBDatabaseBackend::AddOnly, IDBAny::create(this), state, value, static_cast<IDBKey*>(0), ec);
+    return put(IDBDatabaseBackend::AddOnly, IDBAny::create(this), state, value, static_cast<IDBKey*>(nullptr), ec);
 }
 
 PassRefPtr<IDBRequest> IDBObjectStore::put(JSC::ExecState* state, Deprecated::ScriptValue& value, const Deprecated::ScriptValue& key, ExceptionCode& ec)
@@ -116,7 +116,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(JSC::ExecState* state, Deprecated::Sc
 PassRefPtr<IDBRequest> IDBObjectStore::put(JSC::ExecState* state, Deprecated::ScriptValue& value, ExceptionCode& ec)
 {
     LOG(StorageAPI, "IDBObjectStore::put");
-    return put(IDBDatabaseBackend::AddOrUpdate, IDBAny::create(this), state, value, static_cast<IDBKey*>(0), ec);
+    return put(IDBDatabaseBackend::AddOrUpdate, IDBAny::create(this), state, value, static_cast<IDBKey*>(nullptr), ec);
 }
 
 PassRefPtr<IDBRequest> IDBObjectStore::put(IDBDatabaseBackend::PutMode putMode, PassRefPtr<IDBAny> source, JSC::ExecState* state, Deprecated::ScriptValue& value, const Deprecated::ScriptValue& keyValue, ExceptionCode& ec)
@@ -315,7 +315,7 @@ private:
         Vector<int64_t, 1> indexIds;
         indexIds.append(m_indexMetadata.id);
         if (cursor) {
-            cursor->continueFunction(static_cast<IDBKey*>(0), ASSERT_NO_EXCEPTION);
+            cursor->continueFunction(static_cast<IDBKey*>(nullptr), ASSERT_NO_EXCEPTION);
 
             RefPtr<IDBKey> primaryKey = cursor->idbPrimaryKey();
             Deprecated::ScriptValue value = cursor->value();
@@ -429,7 +429,7 @@ PassRefPtr<IDBIndex> IDBObjectStore::index(const String& name, ExceptionCode& ec
         return 0;
     }
 
-    const IDBIndexMetadata* indexMetadata(0);
+    const IDBIndexMetadata* indexMetadata(nullptr);
     for (auto& index : m_metadata.indexes.values()) {
         if (index.name == name) {
             indexMetadata = &index;
@@ -473,7 +473,7 @@ void IDBObjectStore::deleteIndex(const String& name, ExceptionCode& ec)
 
 PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, ExceptionCode& ec)
 {
-    return openCursor(context, static_cast<IDBKeyRange*>(0), ec);
+    return openCursor(context, static_cast<IDBKeyRange*>(nullptr), ec);
 }
 
 PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec)

@@ -221,8 +221,8 @@ void WebSocketChannel::disconnect()
         InspectorInstrumentation::didCloseWebSocket(m_document, m_identifier);
     if (m_handshake)
         m_handshake->clearScriptExecutionContext();
-    m_client = 0;
-    m_document = 0;
+    m_client = nullptr;
+    m_document = nullptr;
     if (m_handle)
         m_handle->disconnect();
 }
@@ -273,9 +273,9 @@ void WebSocketChannel::didCloseSocketStream(SocketStreamHandle* handle)
         if (m_suspended)
             return;
         WebSocketChannelClient* client = m_client;
-        m_client = 0;
-        m_document = 0;
-        m_handle = 0;
+        m_client = nullptr;
+        m_document = nullptr;
+        m_handle = nullptr;
         if (client)
             client->didClose(m_unhandledBufferedAmount, m_receivedClosingHandshake ? WebSocketChannelClient::ClosingHandshakeComplete : WebSocketChannelClient::ClosingHandshakeIncomplete, m_closeEventCode, m_closeEventReason);
     }

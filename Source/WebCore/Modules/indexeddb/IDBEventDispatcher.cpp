@@ -82,7 +82,7 @@ bool IDBEventDispatcher::dispatch(Event* event, Vector<RefPtr<EventTarget>>& eve
     //        event on the window until that has been implemented)." -- Jonas Sicking
 
 doneDispatching:
-    event->setCurrentTarget(0);
+    event->setCurrentTarget(nullptr);
     event->setEventPhase(0);
     return !event->defaultPrevented();
 }

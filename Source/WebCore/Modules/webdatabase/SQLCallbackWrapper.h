@@ -64,8 +64,8 @@ public:
                 return;
             }
             if (m_scriptExecutionContext->isContextThread()) {
-                m_callback = 0;
-                m_scriptExecutionContext = 0;
+                m_callback = nullptr;
+                m_scriptExecutionContext = nullptr;
                 return;
             }
             scriptExecutionContextPtr = m_scriptExecutionContext.release().leakRef();
@@ -85,7 +85,7 @@ public:
     {
         MutexLocker locker(m_mutex);
         ASSERT(!m_callback || m_scriptExecutionContext->isContextThread());
-        m_scriptExecutionContext = 0;
+        m_scriptExecutionContext = nullptr;
         return m_callback.release();
     }
 

@@ -213,7 +213,7 @@ void UserMediaRequest::contextDestroyed()
 
     if (m_controller) {
         m_controller->cancelRequest(*this);
-        m_controller = 0;
+        m_controller = nullptr;
     }
 
     ContextDestructionObserver::contextDestroyed();

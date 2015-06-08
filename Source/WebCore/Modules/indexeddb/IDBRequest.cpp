@@ -70,7 +70,7 @@ Ref<IDBRequest> IDBRequest::create(ScriptExecutionContext* context, PassRefPtr<I
 
 IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, IDBDatabaseBackend::TaskType taskType, IDBTransaction* transaction)
     : ActiveDOMObject(context)
-    , m_result(0)
+    , m_result(nullptr)
     , m_errorCode(0)
     , m_contextStopped(false)
     , m_transaction(transaction)
@@ -82,7 +82,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> sourc
     , m_cursorType(IndexedDB::CursorType::KeyAndValue)
     , m_cursorDirection(IndexedDB::CursorDirection::Next)
     , m_cursorFinished(false)
-    , m_pendingCursor(0)
+    , m_pendingCursor(nullptr)
     , m_didFireUpgradeNeededEvent(false)
     , m_preventPropagation(false)
     , m_requestState(context)

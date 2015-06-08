@@ -38,7 +38,7 @@ Ref<IDBDatabaseCallbacksImpl> IDBDatabaseCallbacksImpl::create()
 }
 
 IDBDatabaseCallbacksImpl::IDBDatabaseCallbacksImpl()
-    : m_database(0)
+    : m_database(nullptr)
 {
 }
 

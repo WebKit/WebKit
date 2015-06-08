@@ -46,7 +46,7 @@ BatteryManager::~BatteryManager()
 BatteryManager::BatteryManager(Navigator* navigator)
     : ActiveDOMObject(navigator->frame()->document())
     , m_batteryController(BatteryController::from(navigator->frame()->page()))
-    , m_batteryStatus(0)
+    , m_batteryStatus(nullptr)
 {
     m_batteryController->addListener(this);
 }

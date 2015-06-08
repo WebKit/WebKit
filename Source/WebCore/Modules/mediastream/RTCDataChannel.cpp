@@ -300,8 +300,8 @@ void RTCDataChannel::stop()
 {
     m_stopped = true;
     m_readyState = ReadyStateClosed;
-    m_handler->setClient(0);
-    m_scriptExecutionContext = 0;
+    m_handler->setClient(nullptr);
+    m_scriptExecutionContext = nullptr;
 }
 
 void RTCDataChannel::scheduleDispatchEvent(PassRefPtr<Event> event)

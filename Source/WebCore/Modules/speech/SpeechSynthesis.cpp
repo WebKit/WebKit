@@ -43,7 +43,7 @@ Ref<SpeechSynthesis> SpeechSynthesis::create()
 }
     
 SpeechSynthesis::SpeechSynthesis()
-    : m_currentSpeechUtterance(0)
+    : m_currentSpeechUtterance(nullptr)
     , m_isPaused(false)
 #if PLATFORM(IOS)
     , m_restrictions(RequireUserGestureForSpeechStartRestriction)
@@ -55,7 +55,7 @@ void SpeechSynthesis::setPlatformSynthesizer(std::unique_ptr<PlatformSpeechSynth
 {
     m_platformSpeechSynthesizer = WTF::move(synthesizer);
     m_voiceList.clear();
-    m_currentSpeechUtterance = 0;
+    m_currentSpeechUtterance = nullptr;
     m_utteranceQueue.clear();
     m_isPaused = false;
 }
@@ -145,7 +145,7 @@ void SpeechSynthesis::cancel()
     m_utteranceQueue.clear();
     if (m_platformSpeechSynthesizer)
         m_platformSpeechSynthesizer->cancel();
-    current = 0;
+    current = nullptr;
     
     // The platform should have called back immediately and cleared the current utterance.
     ASSERT(!m_currentSpeechUtterance);
@@ -174,7 +174,7 @@ void SpeechSynthesis::handleSpeakingCompleted(SpeechSynthesisUtterance* utteranc
     ASSERT(m_currentSpeechUtterance);
     RefPtr<SpeechSynthesisUtterance> protect(utterance);
     
-    m_currentSpeechUtterance = 0;
+    m_currentSpeechUtterance = nullptr;
 
     fireEvent(errorOccurred ? eventNames().errorEvent : eventNames().endEvent, utterance, 0, String());
 

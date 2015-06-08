@@ -43,7 +43,7 @@ namespace WebCore {
 ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper(ScriptExecutionContext* context, WebSocketChannelClient* client)
     : m_context(context)
     , m_client(client)
-    , m_peer(0)
+    , m_peer(nullptr)
     , m_failedWebSocketChannelCreation(false)
     , m_syncMethodDone(true)
     , m_sendRequestResult(ThreadableWebSocketChannel::SendFail)
@@ -85,7 +85,7 @@ void ThreadableWebSocketChannelClientWrapper::didCreateWebSocketChannel(WorkerTh
 
 void ThreadableWebSocketChannelClientWrapper::clearPeer()
 {
-    m_peer = 0;
+    m_peer = nullptr;
 }
 
 bool ThreadableWebSocketChannelClientWrapper::failedWebSocketChannelCreation() const
@@ -150,7 +150,7 @@ void ThreadableWebSocketChannelClientWrapper::setBufferedAmount(unsigned long bu
 
 void ThreadableWebSocketChannelClientWrapper::clearClient()
 {
-    m_client = 0;
+    m_client = nullptr;
 }
 
 void ThreadableWebSocketChannelClientWrapper::didConnect()

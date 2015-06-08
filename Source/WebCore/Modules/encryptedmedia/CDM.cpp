@@ -118,7 +118,7 @@ std::unique_ptr<CDM> CDM::create(const String& keySystem)
 
 CDM::CDM(const String& keySystem)
     : m_keySystem(keySystem)
-    , m_client(0)
+    , m_client(nullptr)
 {
     m_private = CDMFactoryForKeySystem(keySystem)->constructor(this);
 }

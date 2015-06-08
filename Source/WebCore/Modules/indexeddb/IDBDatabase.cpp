@@ -123,7 +123,7 @@ void IDBDatabase::transactionFinished(IDBTransaction* transaction)
 
     if (transaction->isVersionChange()) {
         ASSERT(m_versionChangeTransaction == transaction);
-        m_versionChangeTransaction = 0;
+        m_versionChangeTransaction = nullptr;
     }
 
     if (m_closePending && m_transactions.isEmpty())

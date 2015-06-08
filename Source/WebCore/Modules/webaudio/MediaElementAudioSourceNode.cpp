@@ -61,7 +61,7 @@ MediaElementAudioSourceNode::MediaElementAudioSourceNode(AudioContext* context, 
 
 MediaElementAudioSourceNode::~MediaElementAudioSourceNode()
 {
-    m_mediaElement->setAudioSourceNode(0);
+    m_mediaElement->setAudioSourceNode(nullptr);
     uninitialize();
 }
 

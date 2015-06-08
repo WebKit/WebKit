@@ -511,7 +511,7 @@ void WebSocket::stop()
     bool pending = hasPendingActivity();
     if (m_channel)
         m_channel->disconnect();
-    m_channel = 0;
+    m_channel = nullptr;
     m_state = CLOSED;
     m_pendingEvents.clear();
     ActiveDOMObject::stop();

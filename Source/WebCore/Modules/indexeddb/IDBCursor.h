@@ -71,7 +71,7 @@ public:
     PassRefPtr<IDBRequest> update(JSC::ExecState*, Deprecated::ScriptValue&, ExceptionCode&);
     void advance(unsigned long, ExceptionCode&);
     // FIXME: Try to modify the code generator so this overload is unneeded.
-    void continueFunction(ScriptExecutionContext*, ExceptionCode& ec) { continueFunction(static_cast<IDBKey*>(0), ec); }
+    void continueFunction(ScriptExecutionContext*, ExceptionCode& ec) { continueFunction(static_cast<IDBKey*>(nullptr), ec); }
     void continueFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&);
     PassRefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCode&);
 

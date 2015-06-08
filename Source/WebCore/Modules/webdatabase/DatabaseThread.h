@@ -52,7 +52,7 @@ public:
 
     bool start();
     void requestTermination(DatabaseTaskSynchronizer* cleanupSync);
-    bool terminationRequested(DatabaseTaskSynchronizer* taskSynchronizer = 0) const;
+    bool terminationRequested(DatabaseTaskSynchronizer* = nullptr) const;
 
     void scheduleTask(std::unique_ptr<DatabaseTask>);
     void scheduleImmediateTask(std::unique_ptr<DatabaseTask>); // This just adds the task to the front of the queue - the caller needs to be extremely careful not to create deadlocks when waiting for completion.

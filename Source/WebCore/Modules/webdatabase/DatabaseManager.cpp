@@ -66,7 +66,7 @@ DatabaseManager& DatabaseManager::singleton()
 
 DatabaseManager::DatabaseManager()
     : m_server(new DatabaseServer)
-    , m_client(0)
+    , m_client(nullptr)
     , m_databaseIsAvailable(true)
 #if !ASSERT_DISABLED
     , m_databaseContextRegisteredCount(0)

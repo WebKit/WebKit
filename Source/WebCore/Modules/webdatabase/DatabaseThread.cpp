@@ -45,7 +45,7 @@ DatabaseThread::DatabaseThread()
 #endif
     , m_transactionClient(std::make_unique<SQLTransactionClient>())
     , m_transactionCoordinator(std::make_unique<SQLTransactionCoordinator>())
-    , m_cleanupSync(0)
+    , m_cleanupSync(nullptr)
 {
     m_selfRef = this;
 }
@@ -213,7 +213,7 @@ void DatabaseThread::databaseThread()
     DatabaseTaskSynchronizer* cleanupSync = m_cleanupSync;
 
     // Clear the self refptr, possibly resulting in deletion
-    m_selfRef = 0;
+    m_selfRef = nullptr;
 
     if (cleanupSync) // Someone wanted to know when we were done cleaning up.
         cleanupSync->taskCompleted();

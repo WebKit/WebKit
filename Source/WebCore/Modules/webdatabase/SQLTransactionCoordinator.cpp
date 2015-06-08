@@ -106,7 +106,7 @@ void SQLTransactionCoordinator::releaseLock(SQLTransactionBackend* transaction)
         info.activeReadTransactions.remove(transaction);
     } else {
         ASSERT(info.activeWriteTransaction == transaction);
-        info.activeWriteTransaction = 0;
+        info.activeWriteTransaction = nullptr;
     }
 
     processPendingTransactions(info);

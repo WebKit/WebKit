@@ -242,7 +242,7 @@ void WorkerThreadableWebSocketChannel::Peer::disconnect()
     if (!m_mainWebSocketChannel)
         return;
     m_mainWebSocketChannel->disconnect();
-    m_mainWebSocketChannel = 0;
+    m_mainWebSocketChannel = nullptr;
 }
 
 void WorkerThreadableWebSocketChannel::Peer::suspend()
@@ -326,7 +326,7 @@ void WorkerThreadableWebSocketChannel::Peer::didStartClosingHandshake()
 void WorkerThreadableWebSocketChannel::Peer::didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus closingHandshakeCompletion, unsigned short code, const String& reason)
 {
     ASSERT(isMainThread());
-    m_mainWebSocketChannel = 0;
+    m_mainWebSocketChannel = nullptr;
 
     RefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper = m_workerClientWrapper;
     StringCapture capturedReason(reason);
@@ -353,7 +353,7 @@ WorkerThreadableWebSocketChannel::Bridge::Bridge(PassRefPtr<ThreadableWebSocketC
     , m_workerGlobalScope(workerGlobalScope)
     , m_loaderProxy(m_workerGlobalScope->thread().workerLoaderProxy())
     , m_taskMode(taskMode)
-    , m_peer(0)
+    , m_peer(nullptr)
 {
     ASSERT(m_workerClientWrapper.get());
 }

@@ -32,7 +32,7 @@ namespace WebCore {
 
 UIRequestEventInit::UIRequestEventInit()
     : UIEventInit(true, true)
-    , receiver(0)
+    , receiver(nullptr)
 {
 }
     
@@ -64,7 +64,7 @@ UIRequestEvent::UIRequestEvent(const AtomicString& type, bool bubbles, bool canc
 }
 
 UIRequestEvent::UIRequestEvent()
-    : m_receiver(0)
+    : m_receiver(nullptr)
 {
 }
 

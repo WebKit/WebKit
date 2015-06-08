@@ -458,7 +458,7 @@ PassRefPtr<MediaStreamAudioSourceNode> AudioContext::createMediaStreamSource(Med
     ASSERT(isMainThread());
     lazyInitialize();
 
-    AudioSourceProvider* provider = 0;
+    AudioSourceProvider* provider = nullptr;
 
     RefPtr<MediaStreamTrack> audioTrack;
 

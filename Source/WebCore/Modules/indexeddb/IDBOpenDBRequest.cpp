@@ -91,7 +91,7 @@ void IDBOpenDBRequest::onUpgradeNeeded(uint64_t oldVersion, PassRefPtr<IDBDataba
     RefPtr<IDBDatabase> idbDatabase = IDBDatabase::create(scriptExecutionContext(), databaseBackend, m_databaseCallbacks);
     idbDatabase->setMetadata(metadata);
     m_databaseCallbacks->connect(idbDatabase.get());
-    m_databaseCallbacks = 0;
+    m_databaseCallbacks = nullptr;
 
     IDBDatabaseMetadata oldMetadata(metadata);
     oldMetadata.version = oldVersion;
@@ -120,7 +120,7 @@ void IDBOpenDBRequest::onSuccess(PassRefPtr<IDBDatabaseBackend> prpBackend, cons
         ASSERT(m_databaseCallbacks);
         idbDatabase = IDBDatabase::create(scriptExecutionContext(), backend.release(), m_databaseCallbacks);
         m_databaseCallbacks->connect(idbDatabase.get());
-        m_databaseCallbacks = 0;
+        m_databaseCallbacks = nullptr;
         m_result = IDBAny::create(idbDatabase.get());
     }
     idbDatabase->setMetadata(metadata);

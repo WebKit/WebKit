@@ -235,7 +235,7 @@ void SQLStatementBackend::setFailureDueToQuota()
 void SQLStatementBackend::clearFailureDueToQuota()
 {
     if (lastExecutionFailedDueToQuota())
-        m_error = 0;
+        m_error = nullptr;
 }
 
 bool SQLStatementBackend::lastExecutionFailedDueToQuota() const
