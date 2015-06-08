@@ -1,5 +1,15 @@
 2015-06-08  Anders Carlsson  <andersca@apple.com>
 
+        Include IndexedDB databases in -[WKWebsiteDataStore allWebsiteDataTypes]
+        https://bugs.webkit.org/show_bug.cgi?id=145775
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (+[WKWebsiteDataStore allWebsiteDataTypes]):
+
+2015-06-08  Anders Carlsson  <andersca@apple.com>
+
         Move the snapshot layer contents SPI to the web view
         https://bugs.webkit.org/show_bug.cgi?id=145771
 
