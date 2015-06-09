@@ -75,9 +75,9 @@ if (${WTF_PLATFORM_WIN_CAIRO})
 endif ()
 
 set(WebCore_FORWARDING_HEADERS_DIRECTORIES
-    bridge/c
-
     Modules/indexeddb
+
+    bridge/c
 )
 
 WEBKIT_CREATE_FORWARDING_HEADERS(WebCore DIRECTORIES ${WebCore_FORWARDING_HEADERS_DIRECTORIES})

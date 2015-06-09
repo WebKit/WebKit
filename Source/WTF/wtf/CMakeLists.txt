@@ -100,8 +100,8 @@ set(WTF_HEADERS
     Vector.h
     VectorTraits.h
     WTFThreadData.h
-    WorkQueue.h
     WeakPtr.h
+    WorkQueue.h
     dtoa.h
 
     dtoa/bignum-dtoa.h
@@ -172,8 +172,8 @@ set(WTF_SOURCES
     RunLoop.cpp
     SHA1.cpp
     SixCharacterHash.cpp
-    StackStats.cpp
     StackBounds.cpp
+    StackStats.cpp
     StringPrintStream.cpp
     Threading.cpp
     WTFThreadData.cpp

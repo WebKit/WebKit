@@ -1,3 +1,12 @@
+2015-06-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [cmake] Fix the style issues in cmake project files
+        https://bugs.webkit.org/show_bug.cgi?id=145755
+
+        Reviewed by Darin Adler.
+
+        * CMakeLists.txt:
+
 2015-06-08  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Purge PassRefPtr in JavaScriptCore

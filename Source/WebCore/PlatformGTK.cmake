@@ -45,21 +45,22 @@ list(APPEND WebCore_SOURCES
     accessibility/atk/WebKitAccessibleUtil.cpp
     accessibility/atk/WebKitAccessibleWrapperAtk.cpp
 
-    editing/atk/FrameSelectionAtk.cpp
     editing/SmartReplace.cpp
+
+    editing/atk/FrameSelectionAtk.cpp
 
     loader/soup/CachedRawResourceSoup.cpp
     loader/soup/SubresourceLoaderSoup.cpp
 
     platform/PlatformStrategies.cpp
 
-    platform/audio/gtk/AudioBusGtk.cpp
-
     platform/audio/gstreamer/AudioDestinationGStreamer.cpp
     platform/audio/gstreamer/AudioFileReaderGStreamer.cpp
     platform/audio/gstreamer/AudioSourceProviderGStreamer.cpp
     platform/audio/gstreamer/FFTFrameGStreamer.cpp
     platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp
+
+    platform/audio/gtk/AudioBusGtk.cpp
 
     platform/geoclue/GeolocationProviderGeoclue1.cpp
     platform/geoclue/GeolocationProviderGeoclue2.cpp
@@ -142,6 +143,9 @@ list(APPEND WebCore_SOURCES
 
     platform/image-decoders/ImageDecoder.cpp
 
+    platform/image-decoders/bmp/BMPImageDecoder.cpp
+    platform/image-decoders/bmp/BMPImageReader.cpp
+
     platform/image-decoders/cairo/ImageDecoderCairo.cpp
 
     platform/image-decoders/gif/GIFImageDecoder.cpp
@@ -150,9 +154,6 @@ list(APPEND WebCore_SOURCES
     platform/image-decoders/ico/ICOImageDecoder.cpp
 
     platform/image-decoders/jpeg/JPEGImageDecoder.cpp
-
-    platform/image-decoders/bmp/BMPImageDecoder.cpp
-    platform/image-decoders/bmp/BMPImageReader.cpp
 
     platform/image-decoders/png/PNGImageDecoder.cpp
 
@@ -163,6 +164,8 @@ list(APPEND WebCore_SOURCES
 
     platform/mediastream/openwebrtc/OpenWebRTCUtilities.cpp
     platform/mediastream/openwebrtc/RealtimeMediaSourceCenterOwr.cpp
+
+    platform/network/gtk/CredentialBackingStore.cpp
 
     platform/network/soup/AuthenticationChallengeSoup.cpp
     platform/network/soup/CertificateInfo.cpp
@@ -190,8 +193,6 @@ list(APPEND WebCore_SOURCES
 
     platform/text/gtk/HyphenationLibHyphen.cpp
     platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp
-
-    platform/network/gtk/CredentialBackingStore.cpp
 )
 
 list(APPEND WebCorePlatformGTK_SOURCES
@@ -401,13 +402,15 @@ if (ENABLE_THREADED_COMPOSITOR)
         "${WEBCORE_DIR}/platform/graphics/texmap/threadedcompositor"
     )
     list(APPEND WebCore_SOURCES
-        page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp
-        page/scrolling/coordinatedgraphics/ScrollingStateNodeCoordinatedGraphics.cpp
-        page/scrolling/coordinatedgraphics/ScrollingStateScrollingNodeCoordinatedGraphics.cpp
         page/scrolling/ScrollingStateStickyNode.cpp
         page/scrolling/ScrollingThread.cpp
         page/scrolling/ScrollingTreeNode.cpp
         page/scrolling/ScrollingTreeScrollingNode.cpp
+
+        page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp
+        page/scrolling/coordinatedgraphics/ScrollingStateNodeCoordinatedGraphics.cpp
+        page/scrolling/coordinatedgraphics/ScrollingStateScrollingNodeCoordinatedGraphics.cpp
+
         platform/graphics/texmap/coordinated/AreaAllocator.cpp
         platform/graphics/texmap/coordinated/CompositingCoordinator.cpp
         platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp
@@ -699,8 +702,8 @@ list(APPEND GObjectDOMBindingsUnstable_IDL_FILES
     page/Screen.idl
     page/UserMessageHandler.idl
     page/UserMessageHandlersNamespace.idl
-    page/WebKitPoint.idl
     page/WebKitNamespace.idl
+    page/WebKitPoint.idl
 
     plugins/DOMMimeType.idl
     plugins/DOMMimeTypeArray.idl
@@ -889,25 +892,26 @@ if (ENABLE_SUBTLE_CRYPTO)
         crypto/CryptoKey.cpp
         crypto/CryptoKeyPair.cpp
         crypto/SubtleCrypto.cpp
+
         crypto/algorithms/CryptoAlgorithmAES_CBC.cpp
         crypto/algorithms/CryptoAlgorithmAES_KW.cpp
         crypto/algorithms/CryptoAlgorithmHMAC.cpp
         crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp
-        crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp
         crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp
+        crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp
         crypto/algorithms/CryptoAlgorithmSHA1.cpp
         crypto/algorithms/CryptoAlgorithmSHA224.cpp
         crypto/algorithms/CryptoAlgorithmSHA256.cpp
         crypto/algorithms/CryptoAlgorithmSHA384.cpp
         crypto/algorithms/CryptoAlgorithmSHA512.cpp
 
-        crypto/gnutls/CryptoAlgorithmRegistryGnuTLS.cpp
         crypto/gnutls/CryptoAlgorithmAES_CBCGnuTLS.cpp
         crypto/gnutls/CryptoAlgorithmAES_KWGnuTLS.cpp
         crypto/gnutls/CryptoAlgorithmHMACGnuTLS.cpp
         crypto/gnutls/CryptoAlgorithmRSAES_PKCS1_v1_5GnuTLS.cpp
-        crypto/gnutls/CryptoAlgorithmRSA_OAEPGnuTLS.cpp
         crypto/gnutls/CryptoAlgorithmRSASSA_PKCS1_v1_5GnuTLS.cpp
+        crypto/gnutls/CryptoAlgorithmRSA_OAEPGnuTLS.cpp
+        crypto/gnutls/CryptoAlgorithmRegistryGnuTLS.cpp
         crypto/gnutls/CryptoDigestGnuTLS.cpp
         crypto/gnutls/CryptoKeyRSAGnuTLS.cpp
         crypto/gnutls/SerializedCryptoKeyWrapGnuTLS.cpp

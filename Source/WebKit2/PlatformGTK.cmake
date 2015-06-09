@@ -58,8 +58,8 @@ list(APPEND WebKit2_SOURCES
     Shared/cairo/ShareableBitmapCairo.cpp
 
     Shared/gtk/ArgumentCodersGtk.cpp
-    Shared/gtk/KeyedEncoder.cpp
     Shared/gtk/KeyedDecoder.cpp
+    Shared/gtk/KeyedEncoder.cpp
     Shared/gtk/NativeContextMenuItemGtk.cpp
     Shared/gtk/NativeWebKeyboardEventGtk.cpp
     Shared/gtk/NativeWebMouseEventGtk.cpp
@@ -84,9 +84,6 @@ list(APPEND WebKit2_SOURCES
     Shared/unix/ChildProcessMain.cpp
 
     UIProcess/BackingStore.cpp
-
-    UIProcess/Databases/gtk/DatabaseProcessProxyGtk.cpp
-
     UIProcess/DefaultUndoController.cpp
     UIProcess/DrawingAreaProxyImpl.cpp
 
@@ -177,14 +174,14 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp
     UIProcess/API/gtk/WebKitNavigationPolicyDecision.h
     UIProcess/API/gtk/WebKitNavigationPolicyDecisionPrivate.h
+    UIProcess/API/gtk/WebKitNotification.cpp
+    UIProcess/API/gtk/WebKitNotification.h
     UIProcess/API/gtk/WebKitNotificationPermissionRequest.cpp
     UIProcess/API/gtk/WebKitNotificationPermissionRequest.h
     UIProcess/API/gtk/WebKitNotificationPermissionRequestPrivate.h
+    UIProcess/API/gtk/WebKitNotificationPrivate.h
     UIProcess/API/gtk/WebKitNotificationProvider.cpp
     UIProcess/API/gtk/WebKitNotificationProvider.h
-    UIProcess/API/gtk/WebKitNotification.cpp
-    UIProcess/API/gtk/WebKitNotification.h
-    UIProcess/API/gtk/WebKitNotificationPrivate.h
     UIProcess/API/gtk/WebKitPermissionRequest.cpp
     UIProcess/API/gtk/WebKitPermissionRequest.h
     UIProcess/API/gtk/WebKitPlugin.cpp
@@ -225,12 +222,12 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitURISchemeRequest.cpp
     UIProcess/API/gtk/WebKitURISchemeRequest.h
     UIProcess/API/gtk/WebKitURISchemeRequestPrivate.h
-    UIProcess/API/gtk/WebKitUserContent.h
     UIProcess/API/gtk/WebKitUserContent.cpp
-    UIProcess/API/gtk/WebKitUserContentPrivate.h
+    UIProcess/API/gtk/WebKitUserContent.h
+    UIProcess/API/gtk/WebKitUserContentManager.cpp
     UIProcess/API/gtk/WebKitUserContentManager.h
     UIProcess/API/gtk/WebKitUserContentManagerPrivate.h
-    UIProcess/API/gtk/WebKitUserContentManager.cpp
+    UIProcess/API/gtk/WebKitUserContentPrivate.h
     UIProcess/API/gtk/WebKitUserMediaPermissionRequest.cpp
     UIProcess/API/gtk/WebKitUserMediaPermissionRequest.h
     UIProcess/API/gtk/WebKitUserMediaPermissionRequestPrivate.h
@@ -258,6 +255,8 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitWindowPropertiesPrivate.h
     UIProcess/API/gtk/webkit2.h
 
+    UIProcess/Databases/gtk/DatabaseProcessProxyGtk.cpp
+
     UIProcess/InspectorServer/gtk/WebInspectorServerGtk.cpp
 
     UIProcess/InspectorServer/soup/WebSocketServerSoup.cpp
@@ -265,8 +264,10 @@ list(APPEND WebKit2_SOURCES
     UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp
 
     UIProcess/Network/CustomProtocols/soup/CustomProtocolManagerProxySoup.cpp
-    UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManagerClient.cpp
     UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManager.cpp
+    UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManagerClient.cpp
+
+    UIProcess/Network/soup/NetworkProcessProxySoup.cpp
 
     UIProcess/Plugins/gtk/PluginInfoCache.cpp
 
@@ -294,7 +295,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/gtk/WebProcessPoolGtk.cpp
     UIProcess/gtk/WebProcessProxyGtk.cpp
 
-    UIProcess/Network/soup/NetworkProcessProxySoup.cpp
     UIProcess/soup/WebCookieManagerProxySoup.cpp
     UIProcess/soup/WebProcessPoolSoup.cpp
 
@@ -666,12 +666,12 @@ if (ENABLE_PLUGIN_PROCESS_GTK2)
 
         Platform/unix/SharedMemoryUnix.cpp
 
-        PluginProcess/EntryPoint/unix/PluginProcessMain.cpp
-
         PluginProcess/PluginControllerProxy.cpp
         PluginProcess/PluginCreationParameters.cpp
         PluginProcess/PluginProcess.cpp
         PluginProcess/WebProcessConnection.cpp
+
+        PluginProcess/EntryPoint/unix/PluginProcessMain.cpp
 
         PluginProcess/unix/PluginControllerProxyUnix.cpp
         PluginProcess/unix/PluginProcessMainUnix.cpp
@@ -781,8 +781,10 @@ if (ENABLE_THREADED_COMPOSITOR)
         Shared/CoordinatedGraphics/CoordinatedBackingStore.cpp
         Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp
         Shared/CoordinatedGraphics/SimpleViewportController.cpp
-        Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp
+
         Shared/CoordinatedGraphics/threadedcompositor/ThreadSafeCoordinatedSurface.cpp
+        Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp
+
         WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp
     )
     list(APPEND WebKit2_INCLUDE_DIRECTORIES
@@ -997,6 +999,6 @@ add_custom_target(WebKit2-fake-api-headers
 )
 
 set(WEBKIT2_EXTRA_DEPENDENCIES
-     WebKit2-forwarding-headers
      WebKit2-fake-api-headers
+     WebKit2-forwarding-headers
 )

@@ -48,11 +48,16 @@ set(WebKit2_FORWARDING_HEADERS_FILES
 
 set(WebKit2_FORWARDING_HEADERS_DIRECTORIES
     Shared/API/c
+
     Shared/API/c/mac
-    UIProcess/API/C
+
     UIProcess/Cocoa
-    WebProcess/InjectedBundle/API/c
+
+    UIProcess/API/C
+
     WebProcess/WebPage
+
+    WebProcess/InjectedBundle/API/c
 )
 
 WEBKIT_CREATE_FORWARDING_HEADERS(WebKit FILES ${WebKit2_FORWARDING_HEADERS_FILES} DIRECTORIES ${WebKit2_FORWARDING_HEADERS_DIRECTORIES})

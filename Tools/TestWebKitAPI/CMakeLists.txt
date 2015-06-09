@@ -39,15 +39,15 @@ set(test_wtf_LIBRARIES
 )
 
 set(test_webcore_LIBRARIES
-    gtest
     WTF
     WebCore
+    gtest
 )
 
 set(test_webkit2_api_LIBRARIES
+    JavaScriptCore
     TestWebKitAPIBase
     WTF
-    JavaScriptCore
     WebKit2
     gtest
 )
@@ -58,8 +58,8 @@ set(TestWebKitAPI_LIBRARIES
 )
 
 set(TestJavaScriptCore_LIBRARIES
-    gtest
     JavaScriptCore
+    gtest
 )
 
 set(TestWTF_SOURCES

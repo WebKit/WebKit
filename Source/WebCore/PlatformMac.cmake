@@ -155,8 +155,8 @@ list(APPEND WebCore_SOURCES
     platform/cocoa/SystemVersion.mm
     platform/cocoa/TelephoneNumberDetectorCocoa.cpp
 
-    platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm
     platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm
+    platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm
     platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm
     platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp
     platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp
@@ -194,14 +194,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/ca/mac/PlatformCALayerMac.mm
     platform/graphics/ca/mac/WebTiledBackingLayer.mm
 
-    platform/graphics/cocoa/FontCascadeCocoa.mm
-    platform/graphics/cocoa/FontCocoa.mm
-    platform/graphics/cocoa/FontPlatformDataCocoa.mm
-    platform/graphics/cocoa/IOSurface.mm
-    platform/graphics/cocoa/IOSurfacePoolCocoa.mm
-    platform/graphics/cocoa/WebActionDisablingCALayerDelegate.mm
-    platform/graphics/cocoa/WebCoreCALayerExtras.mm
-
     platform/graphics/cg/BitmapImageCG.cpp
     platform/graphics/cg/ColorCG.cpp
     platform/graphics/cg/FloatPointCG.cpp
@@ -225,6 +217,14 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cg/PatternCG.cpp
     platform/graphics/cg/SubimageCacheWithTimer.cpp
     platform/graphics/cg/TransformationMatrixCG.cpp
+
+    platform/graphics/cocoa/FontCascadeCocoa.mm
+    platform/graphics/cocoa/FontCocoa.mm
+    platform/graphics/cocoa/FontPlatformDataCocoa.mm
+    platform/graphics/cocoa/IOSurface.mm
+    platform/graphics/cocoa/IOSurfacePoolCocoa.mm
+    platform/graphics/cocoa/WebActionDisablingCALayerDelegate.mm
+    platform/graphics/cocoa/WebCoreCALayerExtras.mm
 
     platform/graphics/mac/ColorMac.mm
     platform/graphics/mac/ComplexTextController.cpp
@@ -309,10 +309,6 @@ list(APPEND WebCore_SOURCES
     platform/mac/WebWindowAnimation.mm
     platform/mac/WidgetMac.mm
 
-    platform/network/cocoa/CredentialCocoa.mm
-    platform/network/cocoa/ProtectionSpaceCocoa.mm
-    platform/network/cocoa/ResourceRequestCocoa.mm
-
     platform/network/cf/AuthenticationCF.cpp
     platform/network/cf/CookieJarCFNet.cpp
     platform/network/cf/CookieStorageCFNet.cpp
@@ -331,6 +327,10 @@ list(APPEND WebCore_SOURCES
     platform/network/cf/SocketStreamHandleCFNet.cpp
     platform/network/cf/SynchronousLoaderClientCFNet.cpp
     platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp
+
+    platform/network/cocoa/CredentialCocoa.mm
+    platform/network/cocoa/ProtectionSpaceCocoa.mm
+    platform/network/cocoa/ResourceRequestCocoa.mm
 
     platform/network/mac/AuthenticationMac.mm
     platform/network/mac/BlobDataFileReferenceMac.mm
@@ -365,35 +365,17 @@ list(APPEND WebCore_SOURCES
 # Move some to WebCore_FORWARDING_HEADERS_FILES once people start actually maintaining this.
 set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     accessibility
-    bindings/js
-    bindings/objc
-    bindings/generic
     bridge
     contentextensions
     crypto
     css
     dom
     editing
-    editing/cocoa
-    editing/mac
     fileapi
     history
     html
-    html/forms
-    html/parser
-    html/shadow
     inspector
     loader
-
-    bridge/jsc
-    loader/appcache
-    loader/archive
-    loader/archive/cf
-    loader/cache
-    Modules/indexeddb
-    Modules/geolocation
-    Modules/notifications
-    Modules/webdatabase
     page
     platform
     plugins
@@ -403,11 +385,34 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     style
     svg
 
+    Modules/geolocation
+    Modules/indexeddb
+    Modules/notifications
+    Modules/webdatabase
+
+    bindings/generic
+    bindings/js
+    bindings/objc
+
+    bridge/jsc
+
+    editing/cocoa
+    editing/mac
+
+    html/forms
+    html/parser
+    html/shadow
+
+    loader/appcache
+    loader/archive
+    loader/cache
+
+    loader/archive/cf
+
     page/animation
+    page/cocoa
     page/mac
     page/scrolling
-
-    page/cocoa
 
     platform/animation
     platform/audio
@@ -441,6 +446,8 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
 )
 
 set(WebCore_FORWARDING_HEADERS_FILES
+    Modules/webdatabase/DatabaseDetails.h
+
     bridge/IdentifierRep.h
     bridge/npruntime_impl.h
     bridge/npruntime_internal.h
@@ -470,8 +477,6 @@ set(WebCore_FORWARDING_HEADERS_FILES
 
     loader/mac/LoaderNSURLExtras.h
 
-    Modules/webdatabase/DatabaseDetails.h
-
     platform/DisplaySleepDisabler.h
     platform/PlatformExportMacros.h
 
@@ -488,10 +493,10 @@ set(WebCore_FORWARDING_HEADERS_FILES
     platform/mac/SoftLinking.h
     platform/mac/WebCoreSystemInterface.h
 
-    platform/network/mac/AuthenticationMac.h
-
     platform/network/cf/CertificateInfo.h
     platform/network/cf/ResourceResponse.h
+
+    platform/network/mac/AuthenticationMac.h
 
     platform/sql/SQLiteDatabase.h
 

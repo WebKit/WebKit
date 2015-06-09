@@ -122,8 +122,8 @@ list(APPEND WebCore_SOURCES
     platform/network/curl/ProxyServerCurl.cpp
     platform/network/curl/ResourceHandleCurl.cpp
     platform/network/curl/ResourceHandleManager.cpp
-    platform/network/curl/SocketStreamHandleCurl.cpp
     platform/network/curl/SSLHandle.cpp
+    platform/network/curl/SocketStreamHandleCurl.cpp
 
     platform/network/win/DownloadBundleWin.cpp
 

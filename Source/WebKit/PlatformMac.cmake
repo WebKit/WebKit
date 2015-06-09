@@ -103,6 +103,15 @@ list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebKit_SOURCES
+    Storage/StorageAreaImpl.cpp
+    Storage/StorageAreaSync.cpp
+    Storage/StorageNamespaceImpl.cpp
+    Storage/StorageSyncManager.cpp
+    Storage/StorageThread.cpp
+    Storage/StorageTracker.cpp
+    Storage/WebDatabaseProvider.cpp
+    Storage/WebStorageNamespaceProvider.cpp
+
     mac/Carbon/CarbonUtils.m
     mac/Carbon/CarbonWindowAdapter.mm
     mac/Carbon/CarbonWindowContentView.m
@@ -258,15 +267,6 @@ list(APPEND WebKit_SOURCES
     mac/WebView/WebTextIterator.mm
     mac/WebView/WebView.mm
     mac/WebView/WebViewData.mm
-
-    Storage/StorageAreaImpl.cpp
-    Storage/StorageAreaSync.cpp
-    Storage/StorageNamespaceImpl.cpp
-    Storage/StorageSyncManager.cpp
-    Storage/StorageThread.cpp
-    Storage/StorageTracker.cpp
-    Storage/WebDatabaseProvider.cpp
-    Storage/WebStorageNamespaceProvider.cpp
 )
 
 set(WebKit_LIBRARY_TYPE SHARED)

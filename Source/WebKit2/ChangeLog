@@ -1,3 +1,14 @@
+2015-06-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [cmake] Fix the style issues in cmake project files
+        https://bugs.webkit.org/show_bug.cgi?id=145755
+
+        Reviewed by Darin Adler.
+
+        * CMakeLists.txt:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+
 2015-06-02  Jon Honeycutt  <jhoneycutt@apple.com>
 
         [iOS] UI process memory spike, hang when uploading a very large JPEG
