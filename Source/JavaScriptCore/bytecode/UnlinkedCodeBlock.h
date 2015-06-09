@@ -316,7 +316,6 @@ public:
     const Identifier& identifier(int index) const { return m_identifiers[index]; }
     const Vector<Identifier>& identifiers() const { return m_identifiers; }
 
-    size_t numberOfConstantRegisters() const { return m_constantRegisters.size(); }
     unsigned addConstant(JSValue v, SourceCodeRepresentation sourceCodeRepresentation = SourceCodeRepresentation::Other)
     {
         unsigned result = m_constantRegisters.size();
@@ -342,11 +341,9 @@ public:
         ASSERT(index < LinkTimeConstantCount);
         return m_linkTimeConstants[index];
     }
-    unsigned addOrFindConstant(JSValue);
     const Vector<WriteBarrier<Unknown>>& constantRegisters() { return m_constantRegisters; }
     const WriteBarrier<Unknown>& constantRegister(int index) const { return m_constantRegisters[index - FirstConstantRegisterIndex]; }
     ALWAYS_INLINE bool isConstantRegisterIndex(int index) const { return index >= FirstConstantRegisterIndex; }
-    ALWAYS_INLINE JSValue getConstant(int index) const { return m_constantRegisters[index - FirstConstantRegisterIndex].get(); }
     const Vector<SourceCodeRepresentation>& constantsSourceCodeRepresentation() { return m_constantsSourceCodeRepresentation; }
 
     // Jumps

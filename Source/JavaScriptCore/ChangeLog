@@ -1,5 +1,31 @@
 2015-06-09  Andreas Kling  <akling@apple.com>
 
+        [JSC] CodeBlock::m_constantRegisters should be sized-to-fit.
+        <https://webkit.org/b/145784>
+
+        Reviewed by Darin Adler.
+
+        Spotted this Vector looking chubby on cnet.com, with 1.23 MB of memory
+        allocated below CodeBlock::setConstantRegisters().
+
+        Use resizeToFit() instead since we know the final size up front.
+        Also removed some unused functions that operated on this constants vector
+        and the corresponding one in UnlinkedCodeBlock.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::addOrFindConstant): Deleted.
+        (JSC::CodeBlock::findConstant): Deleted.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setConstantRegisters):
+        (JSC::CodeBlock::numberOfConstantRegisters): Deleted.
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::addOrFindConstant): Deleted.
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::numberOfConstantRegisters): Deleted.
+        (JSC::UnlinkedCodeBlock::getConstant): Deleted.
+
+2015-06-09  Andreas Kling  <akling@apple.com>
+
         [JSC] Polymorphic{Get,Put}ByIdList::addAccess() should optimize for size, not speed.
         <https://webkit.org/b/145786>
 

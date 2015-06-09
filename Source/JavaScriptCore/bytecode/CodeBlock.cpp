@@ -2964,27 +2964,6 @@ void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
     } // else don't shrink these, because we would have already pointed pointers into these tables.
 }
 
-unsigned CodeBlock::addOrFindConstant(JSValue v)
-{
-    unsigned result;
-    if (findConstant(v, result))
-        return result;
-    return addConstant(v);
-}
-
-bool CodeBlock::findConstant(JSValue v, unsigned& index)
-{
-    unsigned numberOfConstants = numberOfConstantRegisters();
-    for (unsigned i = 0; i < numberOfConstants; ++i) {
-        if (getConstant(FirstConstantRegisterIndex + i) == v) {
-            index = i;
-            return true;
-        }
-    }
-    index = numberOfConstants;
-    return false;
-}
-
 #if ENABLE(JIT)
 void CodeBlock::unlinkCalls()
 {

@@ -80,16 +80,6 @@ static UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(
     return result;
 }
 
-unsigned UnlinkedCodeBlock::addOrFindConstant(JSValue v)
-{
-    unsigned numberOfConstants = numberOfConstantRegisters();
-    for (unsigned i = 0; i < numberOfConstants; ++i) {
-        if (getConstant(FirstConstantRegisterIndex + i) == v)
-            return i;
-    }
-    return addConstant(v);
-}
-
 UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* structure, const SourceCode& source, RefPtr<SourceProvider>&& sourceOverride, FunctionBodyNode* node, UnlinkedFunctionKind kind)
     : Base(*vm, structure)
     , m_name(node->ident())
