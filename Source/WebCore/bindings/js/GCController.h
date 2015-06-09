@@ -26,35 +26,33 @@
 #ifndef GCController_h
 #define GCController_h
 
-#include <wtf/FastMalloc.h>
+#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include "Timer.h"
 
 namespace WebCore {
 
-    class GCController {
-        WTF_MAKE_NONCOPYABLE(GCController); WTF_MAKE_FAST_ALLOCATED;
-        WEBCORE_EXPORT friend GCController& gcController();
+class GCController {
+    WTF_MAKE_NONCOPYABLE(GCController);
+    friend class WTF::NeverDestroyed<GCController>;
+public:
+    WEBCORE_EXPORT static GCController& singleton();
 
-    public:
-        WEBCORE_EXPORT void garbageCollectSoon();
-        WEBCORE_EXPORT void garbageCollectNow(); // It's better to call garbageCollectSoon, unless you have a specific reason not to.
-        void garbageCollectOnNextRunLoop();
+    WEBCORE_EXPORT void garbageCollectSoon();
+    WEBCORE_EXPORT void garbageCollectNow(); // It's better to call garbageCollectSoon, unless you have a specific reason not to.
+    void garbageCollectOnNextRunLoop();
 
-        WEBCORE_EXPORT void garbageCollectOnAlternateThreadForDebugging(bool waitUntilDone); // Used for stress testing.
-        WEBCORE_EXPORT void releaseExecutableMemory();
-        WEBCORE_EXPORT void setJavaScriptGarbageCollectorTimerEnabled(bool);
-        WEBCORE_EXPORT void discardAllCompiledCode();
+    WEBCORE_EXPORT void garbageCollectOnAlternateThreadForDebugging(bool waitUntilDone); // Used for stress testing.
+    WEBCORE_EXPORT void releaseExecutableMemory();
+    WEBCORE_EXPORT void setJavaScriptGarbageCollectorTimerEnabled(bool);
+    WEBCORE_EXPORT void discardAllCompiledCode();
 
-    private:
-        GCController(); // Use gcController() instead
+private:
+    GCController(); // Use singleton() instead.
 
-        void gcTimerFired();
-        Timer m_GCTimer;
-    };
-
-    // Function to obtain the global GC controller.
-    WEBCORE_EXPORT GCController& gcController() PURE_FUNCTION;
+    void gcTimerFired();
+    Timer m_GCTimer;
+};
 
 } // namespace WebCore
 

@@ -591,7 +591,7 @@ bool WebProcess::shouldTerminate()
 void WebProcess::terminate()
 {
 #ifndef NDEBUG
-    gcController().garbageCollectNow();
+    GCController::singleton().garbageCollectNow();
     FontCache::singleton().invalidate();
     MemoryCache::singleton().setDisabled(true);
 #endif
@@ -655,7 +655,7 @@ void WebProcess::didClose(IPC::Connection&)
         page->close();
     pages.clear();
 
-    gcController().garbageCollectSoon();
+    GCController::singleton().garbageCollectSoon();
     FontCache::singleton().invalidate();
     MemoryCache::singleton().setDisabled(true);
 #endif    
@@ -980,12 +980,12 @@ void WebProcess::getWebCoreStatistics(uint64_t callbackID)
 
 void WebProcess::garbageCollectJavaScriptObjects()
 {
-    gcController().garbageCollectNow();
+    GCController::singleton().garbageCollectNow();
 }
 
 void WebProcess::setJavaScriptGarbageCollectorTimerEnabled(bool flag)
 {
-    gcController().setJavaScriptGarbageCollectorTimerEnabled(flag);
+    GCController::singleton().setJavaScriptGarbageCollectorTimerEnabled(flag);
 }
 
 void WebProcess::handleInjectedBundleMessage(const String& messageName, const UserData& messageBody)

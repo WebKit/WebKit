@@ -109,7 +109,7 @@ void ScriptCachedFrameData::clear()
 
     JSLockHolder lock(JSDOMWindowBase::commonVM());
     m_windows.clear();
-    gcController().garbageCollectSoon();
+    GCController::singleton().garbageCollectSoon();
 }
 
 } // namespace WebCore

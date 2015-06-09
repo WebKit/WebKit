@@ -128,7 +128,7 @@ void MemoryPressureHandler::releaseCriticalMemory(Synchronous synchronous)
 
     {
         ReliefLogger log("Discard all JIT-compiled code");
-        gcController().discardAllCompiledCode();
+        GCController::singleton().discardAllCompiledCode();
     }
 
     {
@@ -138,11 +138,11 @@ void MemoryPressureHandler::releaseCriticalMemory(Synchronous synchronous)
 
     if (synchronous == Synchronous::Yes) {
         ReliefLogger log("Collecting JavaScript garbage");
-        gcController().garbageCollectNow();
+        GCController::singleton().garbageCollectNow();
     } else {
         // FIXME: We should do a garbage sweep and prune dead resources from the MemoryCache
         // after the garbage collection has completed to free up more memory.
-        gcController().garbageCollectSoon();
+        GCController::singleton().garbageCollectSoon();
 
         // Do a full sweep of collected objects. garbageCollectNow() already does this so we only
         // need to do this if it isn't called.

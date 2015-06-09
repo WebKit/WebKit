@@ -91,14 +91,14 @@ ULONG STDMETHODCALLTYPE WebJavaScriptCollector::Release(void)
 
 HRESULT STDMETHODCALLTYPE WebJavaScriptCollector::collect()
 {
-    gcController().garbageCollectNow();
+    GCController::singleton().garbageCollectNow();
     return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebJavaScriptCollector::collectOnAlternateThread( 
     /* [in] */ BOOL waitUntilDone)
 {
-    gcController().garbageCollectOnAlternateThreadForDebugging(!!waitUntilDone);
+    GCController::singleton().garbageCollectOnAlternateThreadForDebugging(!!waitUntilDone);
     return S_OK;
 }
 

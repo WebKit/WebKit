@@ -1350,7 +1350,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 {
     ASSERT(WebThreadIsCurrent());
     WebKit::MemoryMeasure measurer("Memory warning: Calling JavaScript GC.");
-    gcController().garbageCollectNow();
+    GCController::singleton().garbageCollectNow();
 }
 
 + (void)purgeInactiveFontData
@@ -1371,7 +1371,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 {
     ASSERT(WebThreadIsCurrent());
     WebKit::MemoryMeasure measurer("Memory warning: Discarding JIT'ed code.");
-    gcController().discardAllCompiledCode();
+    GCController::singleton().discardAllCompiledCode();
 }
 
 + (BOOL)isCharacterSmartReplaceExempt:(unichar)character isPreviousCharacter:(BOOL)b
@@ -1802,7 +1802,7 @@ static bool fastDocumentTeardownEnabled()
 #ifndef NDEBUG
     // Need this to make leak messages accurate.
     if (applicationIsTerminating) {
-        gcController().garbageCollectNow();
+        GCController::singleton().garbageCollectNow();
         [WebCache setDisabled:YES];
     }
 #endif

@@ -69,9 +69,9 @@ static void collectGarbageAfterWindowShellDestruction()
     if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
         // NOTE: We do the collection on next runloop to ensure that there's no pointer
         //       to the window object on the stack.
-        gcController().garbageCollectOnNextRunLoop();
+        GCController::singleton().garbageCollectOnNextRunLoop();
     } else
-        gcController().garbageCollectSoon();
+        GCController::singleton().garbageCollectSoon();
 }
 
 void ScriptController::initializeThreading()

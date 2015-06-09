@@ -246,19 +246,19 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::glyphPageCount(
 
 HRESULT WebCoreStatistics::garbageCollectJavaScriptObjects()
 {
-    gcController().garbageCollectNow();
+    GCController::singleton().garbageCollectNow();
     return S_OK;
 }
 
 HRESULT WebCoreStatistics::garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging(BOOL waitUntilDone)
 {
-    gcController().garbageCollectOnAlternateThreadForDebugging(waitUntilDone);
+    GCController::singleton().garbageCollectOnAlternateThreadForDebugging(waitUntilDone);
     return S_OK;
 }
 
 HRESULT WebCoreStatistics::setJavaScriptGarbageCollectorTimerEnabled(BOOL enable)
 {
-    gcController().setJavaScriptGarbageCollectorTimerEnabled(enable);
+    GCController::singleton().setJavaScriptGarbageCollectorTimerEnabled(enable);
     return S_OK;
 }
 

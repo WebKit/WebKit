@@ -32,6 +32,7 @@
 #include <heap/Heap.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/NeverDestroyed.h>
 
 using namespace JSC;
 
@@ -43,10 +44,10 @@ static void collect(void*)
     JSDOMWindow::commonVM().heap.collectAllGarbage();
 }
 
-GCController& gcController()
+GCController& GCController::singleton()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(GCController, staticGCController, ());
-    return staticGCController;
+    static NeverDestroyed<GCController> controller;
+    return controller;
 }
 
 GCController::GCController()

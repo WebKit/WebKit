@@ -1,3 +1,22 @@
+2015-06-08  Chris Dumez  <cdumez@apple.com>
+
+        Access GCController instance via GCController::singleton() instead of a free function
+        https://bugs.webkit.org/show_bug.cgi?id=145776
+
+        Reviewed by Darin Adler.
+
+        Access GCController instance via GCController::singleton() instead of a
+        free function as per coding style and for consistency with other
+        singleton classes in the codebase.
+
+        * WebCoreStatistics.cpp:
+        (WebCoreStatistics::garbageCollectJavaScriptObjects):
+        (WebCoreStatistics::garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging):
+        (WebCoreStatistics::setJavaScriptGarbageCollectorTimerEnabled):
+        * WebJavaScriptCollector.cpp:
+        (WebJavaScriptCollector::collect):
+        (WebJavaScriptCollector::collectOnAlternateThread):
+
 2015-06-05  Mark Lam  <mark.lam@apple.com>
 
         finally blocks should not set the exception stack trace when re-throwing the exception.

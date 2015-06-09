@@ -112,17 +112,17 @@ using namespace WebCore;
 
 + (void)garbageCollectJavaScriptObjects
 {
-    gcController().garbageCollectNow();
+    GCController::singleton().garbageCollectNow();
 }
 
 + (void)garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging:(BOOL)waitUntilDone
 {
-    gcController().garbageCollectOnAlternateThreadForDebugging(waitUntilDone);
+    GCController::singleton().garbageCollectOnAlternateThreadForDebugging(waitUntilDone);
 }
 
 + (void)setJavaScriptGarbageCollectorTimerEnabled:(BOOL)enable
 {
-    gcController().setJavaScriptGarbageCollectorTimerEnabled(enable);
+    GCController::singleton().setJavaScriptGarbageCollectorTimerEnabled(enable);
 }
 
 + (size_t)iconPageURLMappingCount

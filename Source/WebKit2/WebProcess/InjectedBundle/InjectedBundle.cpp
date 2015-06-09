@@ -497,12 +497,12 @@ void InjectedBundle::removeAllUserContent(WebPageGroupProxy* pageGroup)
 
 void InjectedBundle::garbageCollectJavaScriptObjects()
 {
-    gcController().garbageCollectNow();
+    GCController::singleton().garbageCollectNow();
 }
 
 void InjectedBundle::garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging(bool waitUntilDone)
 {
-    gcController().garbageCollectOnAlternateThreadForDebugging(waitUntilDone);
+    GCController::singleton().garbageCollectOnAlternateThreadForDebugging(waitUntilDone);
 }
 
 size_t InjectedBundle::javaScriptObjectsCount()

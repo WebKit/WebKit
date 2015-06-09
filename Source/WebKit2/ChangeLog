@@ -1,3 +1,23 @@
+2015-06-08  Chris Dumez  <cdumez@apple.com>
+
+        Access GCController instance via GCController::singleton() instead of a free function
+        https://bugs.webkit.org/show_bug.cgi?id=145776
+
+        Reviewed by Darin Adler.
+
+        Access GCController instance via GCController::singleton() instead of a
+        free function as per coding style and for consistency with other
+        singleton classes in the codebase.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::garbageCollectJavaScriptObjects):
+        (WebKit::InjectedBundle::garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::terminate):
+        (WebKit::WebProcess::didClose):
+        (WebKit::WebProcess::garbageCollectJavaScriptObjects):
+        (WebKit::WebProcess::setJavaScriptGarbageCollectorTimerEnabled):
+
 2015-06-08  Anders Carlsson  <andersca@apple.com>
 
         Include IndexedDB databases in -[WKWebsiteDataStore allWebsiteDataTypes]

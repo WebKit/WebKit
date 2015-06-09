@@ -66,7 +66,7 @@ void JSDOMWindowShell::setWindow(VM& vm, JSDOMWindow* window)
     ASSERT_ARG(window, window);
     setTarget(vm, window);
     structure()->setGlobalObject(vm, window);
-    gcController().garbageCollectSoon();
+    GCController::singleton().garbageCollectSoon();
 }
 
 void JSDOMWindowShell::setWindow(PassRefPtr<DOMWindow> domWindow)
