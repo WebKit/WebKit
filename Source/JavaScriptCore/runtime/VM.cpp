@@ -504,7 +504,7 @@ struct StackPreservingRecompiler : public MarkedBlock::VoidFunctor {
         FunctionExecutable* executable = jsCast<FunctionExecutable*>(cell);
         if (currentlyExecutingFunctions.contains(executable))
             return;
-        executable->clearCodeIfNotCompiling();
+        executable->clearCode();
     }
     IterationStatus operator()(JSCell* cell)
     {

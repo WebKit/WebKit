@@ -1,3 +1,31 @@
+2015-06-09  Andreas Kling  <akling@apple.com>
+
+        FunctionExecutable::isCompiling() is weird and wrong.
+        <https://webkit.org/b/145689>
+
+        Reviewed by Geoffrey Garen.
+
+        Remove FunctionExecutable::isCompiling() and the clearCodeIfNotCompiling() style
+        functions that called it before throwing away code.
+
+        isCompiling() would consider the executable to be "compiling" if it had a CodeBlock
+        but no JITCode. In practice, every executable gets a JITCode at the same time as it
+        gets a CodeBlock, by way of prepareForExecutionImpl().
+
+        * debugger/Debugger.cpp:
+        * heap/Heap.cpp:
+        (JSC::Heap::deleteAllCompiledCode):
+        (JSC::Heap::deleteAllUnlinkedFunctionCode):
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::TypeRecompiler::visit):
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::clearUnlinkedCodeForRecompilation):
+        (JSC::FunctionExecutable::clearCodeIfNotCompiling): Deleted.
+        (JSC::FunctionExecutable::clearUnlinkedCodeForRecompilationIfNotCompiling): Deleted.
+        * runtime/Executable.h:
+        * runtime/VM.cpp:
+        (JSC::StackPreservingRecompiler::visit):
+
 2015-06-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Introduce getter definition into static hash tables and use it for getters in RegExp.prototype.

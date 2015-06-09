@@ -315,8 +315,8 @@ public:
             return;
 
         FunctionExecutable* executable = jsCast<FunctionExecutable*>(cell);
-        executable->clearCodeIfNotCompiling();
-        executable->clearUnlinkedCodeForRecompilationIfNotCompiling();
+        executable->clearCode();
+        executable->clearUnlinkedCodeForRecompilation();
     }
     inline IterationStatus operator()(JSCell* cell)
     {

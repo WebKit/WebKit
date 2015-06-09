@@ -580,17 +580,8 @@ SymbolTable* FunctionExecutable::symbolTable(CodeSpecializationKind kind)
     return codeBlockFor(kind)->symbolTable();
 }
 
-void FunctionExecutable::clearCodeIfNotCompiling()
+void FunctionExecutable::clearUnlinkedCodeForRecompilation()
 {
-    if (isCompiling())
-        return;
-    clearCode();
-}
-
-void FunctionExecutable::clearUnlinkedCodeForRecompilationIfNotCompiling()
-{
-    if (isCompiling())
-        return;
     m_unlinkedExecutable->clearCodeForRecompilation();
 }
 

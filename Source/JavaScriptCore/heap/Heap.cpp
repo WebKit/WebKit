@@ -926,7 +926,7 @@ void Heap::deleteAllCompiledCode()
     for (ExecutableBase* current : m_compiledCode) {
         if (!current->isFunctionExecutable())
             continue;
-        static_cast<FunctionExecutable*>(current)->clearCodeIfNotCompiling();
+        static_cast<FunctionExecutable*>(current)->clearCode();
     }
 
     ASSERT(m_operationInProgress == FullCollection || m_operationInProgress == NoOperation);
@@ -939,7 +939,7 @@ void Heap::deleteAllUnlinkedFunctionCode()
     for (ExecutableBase* current : m_compiledCode) {
         if (!current->isFunctionExecutable())
             continue;
-        static_cast<FunctionExecutable*>(current)->clearUnlinkedCodeForRecompilationIfNotCompiling();
+        static_cast<FunctionExecutable*>(current)->clearUnlinkedCodeForRecompilation();
     }
 }
 
