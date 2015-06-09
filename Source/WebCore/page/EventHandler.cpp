@@ -2037,28 +2037,22 @@ void EventHandler::invalidateClick()
     m_clickNode = nullptr;
 }
 
-inline static bool mouseIsReleasedOnPressedElement(Node* targetNode, Node* clickNode)
+static Node* targetNodeForClickEvent(Node* mousePressNode, Node* mouseReleaseNode)
 {
-    if (targetNode == clickNode)
-        return true;
+    if (!mousePressNode || !mouseReleaseNode)
+        return nullptr;
 
-    if (!targetNode)
-        return false;
+    if (mousePressNode == mouseReleaseNode)
+        return mouseReleaseNode;
 
-    ShadowRoot* containingShadowRoot = targetNode->containingShadowRoot();
-    if (!containingShadowRoot)
-        return false;
-
-    // FIXME: When an element in UA ShadowDOM (e.g. inner element in <input>) is clicked,
-    // we assume that the host element is clicked. This is necessary for implementing <input type="range"> etc.
-    // However, we should not check ShadowRoot type basically.
-    // https://bugs.webkit.org/show_bug.cgi?id=108047
-    if (containingShadowRoot->type() != ShadowRoot::UserAgentShadowRoot)
-        return false;
-
-    Node* adjustedTargetNode = targetNode->shadowHost();
-    Node* adjustedClickNode = clickNode ? clickNode->shadowHost() : 0;
-    return adjustedTargetNode == adjustedClickNode;
+    Element* mouseReleaseShadowHost = mouseReleaseNode->shadowHost();
+    if (mouseReleaseShadowHost && mouseReleaseShadowHost == mousePressNode->shadowHost()) {
+        // We want to dispatch the click to the shadow tree host element to give listeners the illusion that the
+        // shadom tree is a single element. For example, we want to give the illusion that <input type="range">
+        // is a single element even though it is a composition of multiple shadom tree elements.
+        return mouseReleaseShadowHost;
+    }
+    return nullptr;
 }
 
 bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& platformMouseEvent)
@@ -2122,7 +2116,8 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& platformMou
 
     bool contextMenuEvent = platformMouseEvent.button() == RightButton;
 
-    bool swallowClickEvent = m_clickCount > 0 && !contextMenuEvent && mouseIsReleasedOnPressedElement(mouseEvent.targetNode(), m_clickNode.get()) && !dispatchMouseEvent(eventNames().clickEvent, mouseEvent.targetNode(), true, m_clickCount, platformMouseEvent, true);
+    Node* nodeToClick = targetNodeForClickEvent(m_clickNode.get(), mouseEvent.targetNode());
+    bool swallowClickEvent = m_clickCount > 0 && !contextMenuEvent && nodeToClick && !dispatchMouseEvent(eventNames().clickEvent, nodeToClick, true, m_clickCount, platformMouseEvent, true);
 
     if (m_resizeLayer) {
         m_resizeLayer->setInResizeMode(false);
