@@ -60,8 +60,11 @@ struct HashTableValue {
     NativeFunction function() const { ASSERT(m_attributes & Function); return reinterpret_cast<NativeFunction>(m_value1); }
     unsigned char functionLength() const { ASSERT(m_attributes & Function); return static_cast<unsigned char>(m_value2); }
 
-    GetFunction propertyGetter() const { ASSERT(!(m_attributes & BuiltinOrFunctionOrConstant)); return reinterpret_cast<GetFunction>(m_value1); }
-    PutFunction propertyPutter() const { ASSERT(!(m_attributes & BuiltinOrFunctionOrConstant)); return reinterpret_cast<PutFunction>(m_value2); }
+    GetFunction propertyGetter() const { ASSERT(!(m_attributes & BuiltinOrFunctionOrAccessorOrConstant)); return reinterpret_cast<GetFunction>(m_value1); }
+    PutFunction propertyPutter() const { ASSERT(!(m_attributes & BuiltinOrFunctionOrAccessorOrConstant)); return reinterpret_cast<PutFunction>(m_value2); }
+
+    NativeFunction accessorGetter() const { ASSERT(m_attributes & Accessor); return reinterpret_cast<NativeFunction>(m_value1); }
+    NativeFunction accessorSetter() const { ASSERT(m_attributes & Accessor); return reinterpret_cast<NativeFunction>(m_value2); }
 
     intptr_t constantInteger() const { ASSERT(m_attributes & ConstantInteger); return m_value1; }
 
@@ -191,6 +194,7 @@ private:
 };
 
 JS_EXPORT_PRIVATE bool setUpStaticFunctionSlot(ExecState*, const HashTableValue*, JSObject* thisObject, PropertyName, PropertySlot&);
+JS_EXPORT_PRIVATE void reifyStaticAccessor(VM&, const HashTableValue&, JSObject& thisObject, PropertyName);
 
 /**
  * This method does it all (looking in the hashtable, checking for function
@@ -206,7 +210,7 @@ inline bool getStaticPropertySlot(ExecState* exec, const HashTable& table, ThisI
     if (!entry) // not found, forward to parent
         return ParentImp::getOwnPropertySlot(thisObj, exec, propertyName, slot);
 
-    if (entry->attributes() & BuiltinOrFunction)
+    if (entry->attributes() & BuiltinOrFunctionOrAccessor)
         return setUpStaticFunctionSlot(exec, entry, thisObj, propertyName, slot);
 
     if (entry->attributes() & ConstantInteger) {
@@ -248,7 +252,7 @@ inline bool getStaticValueSlot(ExecState* exec, const HashTable& table, ThisImp*
     if (!entry) // not found, forward to parent
         return ParentImp::getOwnPropertySlot(thisObj, exec, propertyName, slot);
 
-    ASSERT(!(entry->attributes() & BuiltinOrFunction));
+    ASSERT(!(entry->attributes() & BuiltinOrFunctionOrAccessor));
 
     if (entry->attributes() & ConstantInteger) {
         slot.setValue(thisObj, entry->attributes(), jsNumber(entry->constantInteger()));
@@ -265,6 +269,9 @@ inline void putEntry(ExecState* exec, const HashTableValue* entry, JSObject* bas
     if (entry->attributes() & BuiltinOrFunction) {
         if (JSObject* thisObject = jsDynamicCast<JSObject*>(slot.thisValue()))
             thisObject->putDirect(exec->vm(), propertyName, value);
+    } else if (entry->attributes() & Accessor) {
+        if (slot.isStrictMode())
+            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
     } else if (!(entry->attributes() & ReadOnly)) {
         entry->propertyPutter()(exec, base, JSValue::encode(slot.thisValue()), JSValue::encode(value));
         slot.setCustomProperty(base, entry->propertyPutter());
@@ -294,7 +301,7 @@ inline void reifyStaticProperties(VM& vm, const HashTableValue (&values)[numberO
     BatchedTransitionOptimizer transitionOptimizer(vm, &thisObj);
     for (auto& value : values) {
         if (!value.m_key)
-            continue;                
+            continue;
 
         Identifier propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>(value.m_key), strlen(value.m_key));
         if (value.attributes() & Builtin) {
@@ -314,7 +321,7 @@ inline void reifyStaticProperties(VM& vm, const HashTableValue (&values)[numberO
         }
 
         if (value.attributes() & Accessor) {
-            RELEASE_ASSERT_NOT_REACHED();
+            reifyStaticAccessor(vm, value, thisObj, propertyName);
             continue;
         }
 

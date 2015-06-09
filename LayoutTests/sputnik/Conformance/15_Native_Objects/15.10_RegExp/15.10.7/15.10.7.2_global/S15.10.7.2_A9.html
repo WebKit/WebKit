@@ -68,25 +68,25 @@ try {
 /**
 * @name: S15.10.7.2_A9;
 * @section: 15.10.7.2;
-* @assertion: The RegExp instance global property has the attribute DontDelete;
+* @assertion: The RegExp instance global property does not have the attribute DontDelete;
 * @description: Checking if deleting the global property fails;
 */
 
 __re = new RegExp;
 
 //CHECK#0
-if (__re.hasOwnProperty('global') !== true) {
-  testFailed('#0: __re = new RegExp; __re.hasOwnProperty(\'global\') === true');
+if (__re.__proto__.hasOwnProperty('global') !== true) {
+  testFailed('#0: __re = new RegExp; __re.__proto__.hasOwnProperty(\'global\') === true');
 }
 
 //CHECK#1
-if ((delete __re.global) !== false) {
-  testFailed('#1: __re = new RegExp; (delete __re.global) === false');
+if ((delete __re.__proto__.global) !== true) {
+  testFailed('#1: __re = new RegExp; (delete __re.__proto__.global) === false');
 }
 
 //CHECK#2
-if (__re.hasOwnProperty('global') !== true) {
-  testFailed('#2: __re = new RegExp;delete __re.global === true; __re.hasOwnProperty(\'global\') === true');
+if (__re.__proto__.hasOwnProperty('global') !== false) {
+  testFailed('#2: __re = new RegExp;delete __re.__proto__.global === true; __re.__proto__.hasOwnProperty(\'global\') === false');
 }
 
 

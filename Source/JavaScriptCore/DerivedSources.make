@@ -54,7 +54,6 @@ all : \
     RegExpConstructor.lut.h \
     RegExpPrototype.lut.h \
     RegExpJitTables.h \
-    RegExpObject.lut.h \
     StringConstructor.lut.h \
     StringIteratorPrototype.lut.h \
     SymbolConstructor.lut.h \

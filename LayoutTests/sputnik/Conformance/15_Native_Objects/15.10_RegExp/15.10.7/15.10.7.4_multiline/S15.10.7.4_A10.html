@@ -68,14 +68,14 @@ try {
 /**
 * @name: S15.10.7.4_A10;
 * @section: 15.10.7.4;
-* @assertion: The RegExp instance multiline property has the attribute ReadOnly;
+* @assertion: The RegExp instance multiline property has a null setter;
 * @description: Checking if varying the multiline property fails;
 */
 
 __re = /\n/;
 
 //CHECK#1
-if (__re.hasOwnProperty('multiline') !== true) {
+if (__re.__proto__.hasOwnProperty('multiline') !== true) {
   testFailed('#1: __re = /\\n/; __re.hasOwnProperty(\'multiline\') === true');
 }
 

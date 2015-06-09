@@ -26,7 +26,6 @@ descriptorShouldBe("RegExp.prototype", "'exec'", {writable: true, enumerable: fa
 descriptorShouldBe("document.__proto__.__proto__", "'createElement'", {writable: true, enumerable: true, configurable: true, value:"document.createElement"});
 descriptorShouldBe("Number", "'NEGATIVE_INFINITY'", {writable: false, enumerable: false, configurable: false, value:"Number.NEGATIVE_INFINITY"});
 descriptorShouldBe("RegExp", "'$_'", {writable: true, enumerable: false, configurable: true, value:"RegExp.$_"});
-descriptorShouldBe("/a/g", "'global'", {writable: true, enumerable: false, configurable: false, value:true});
 descriptorShouldBe("Node", "'DOCUMENT_POSITION_DISCONNECTED'", {writable: false, enumerable: true, configurable: false, value:"Node.DOCUMENT_POSITION_DISCONNECTED"});
 descriptorShouldBe("Math", "'sin'", {writable: true, enumerable: false, configurable: true, value:"Math.sin"});
 descriptorShouldBe("[1,2,3]", "0", {writable: true, enumerable: true, configurable: true, value:"1"});
@@ -94,3 +93,6 @@ for (var property in Object.getOwnPropertyDescriptor(objectWithSetter, "setter")
 i = 0;
 for (var property in Object.getOwnPropertyDescriptor(objectWithAccessor, "accessor"))
     shouldBe('property', accessorOrder[i++]);
+
+var regexpPrototypeGlobalGetter = Object.getOwnPropertyDescriptor(RegExp.prototype, 'global').get;
+descriptorShouldBe("RegExp.prototype", "'global'", {get: 'regexpPrototypeGlobalGetter', set: undefined, enumerable: false, configurable: true});

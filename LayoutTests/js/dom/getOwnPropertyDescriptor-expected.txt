@@ -44,11 +44,6 @@ PASS Object.getOwnPropertyDescriptor(RegExp, '$_').hasOwnProperty('get') is fals
 PASS Object.getOwnPropertyDescriptor(RegExp, '$_').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(RegExp, '$_').enumerable is false
 PASS Object.getOwnPropertyDescriptor(RegExp, '$_').configurable is true
-PASS Object.getOwnPropertyDescriptor(/a/g, 'global').value is true
-PASS Object.getOwnPropertyDescriptor(/a/g, 'global').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(/a/g, 'global').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(/a/g, 'global').enumerable is false
-PASS Object.getOwnPropertyDescriptor(/a/g, 'global').configurable is false
 PASS Object.getOwnPropertyDescriptor(Node, 'DOCUMENT_POSITION_DISCONNECTED').value is Node.DOCUMENT_POSITION_DISCONNECTED
 PASS Object.getOwnPropertyDescriptor(Node, 'DOCUMENT_POSITION_DISCONNECTED').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(Node, 'DOCUMENT_POSITION_DISCONNECTED').hasOwnProperty('set') is false
@@ -224,6 +219,12 @@ PASS property is 'get'
 PASS property is 'set'
 PASS property is 'enumerable'
 PASS property is 'configurable'
+PASS Object.getOwnPropertyDescriptor(RegExp.prototype, 'global').get is regexpPrototypeGlobalGetter
+PASS Object.getOwnPropertyDescriptor(RegExp.prototype, 'global').set is undefined
+PASS Object.getOwnPropertyDescriptor(RegExp.prototype, 'global').hasOwnProperty('value') is false
+PASS Object.getOwnPropertyDescriptor(RegExp.prototype, 'global').hasOwnProperty('writable') is false
+PASS Object.getOwnPropertyDescriptor(RegExp.prototype, 'global').enumerable is false
+PASS Object.getOwnPropertyDescriptor(RegExp.prototype, 'global').configurable is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

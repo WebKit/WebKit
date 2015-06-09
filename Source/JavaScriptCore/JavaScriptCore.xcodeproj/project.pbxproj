@@ -1568,7 +1568,6 @@
 		BC18C46B0E16F5CD00B34460 /* SymbolTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 14A396A60CD2933100B5B4FF /* SymbolTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C47A0E16F5CD00B34460 /* WebKitAvailability.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DE3D0F40DD8DDFB00468714 /* WebKitAvailability.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC18C5240E16FC8A00B34460 /* ArrayPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C5230E16FC8A00B34460 /* ArrayPrototype.lut.h */; };
-		BC18C52C0E16FCD200B34460 /* RegExpObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C52B0E16FCD200B34460 /* RegExpObject.lut.h */; };
 		BC18C52E0E16FCE100B34460 /* Lexer.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C52D0E16FCE100B34460 /* Lexer.lut.h */; };
 		BC3046070E1F497F003232CF /* Error.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3046060E1F497F003232CF /* Error.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC6AAAE50E1F426500AD87D8 /* ClassInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6AAAE40E1F426500AD87D8 /* ClassInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3295,7 +3294,6 @@
 		BC18C3C50E16EE3300B34460 /* StringPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringPrototype.cpp; sourceTree = "<group>"; };
 		BC18C3C60E16EE3300B34460 /* StringPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringPrototype.h; sourceTree = "<group>"; };
 		BC18C5230E16FC8A00B34460 /* ArrayPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayPrototype.lut.h; sourceTree = "<group>"; };
-		BC18C52B0E16FCD200B34460 /* RegExpObject.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpObject.lut.h; sourceTree = "<group>"; };
 		BC18C52D0E16FCE100B34460 /* Lexer.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Lexer.lut.h; sourceTree = "<group>"; };
 		BC22A3980E16E14800AF21C8 /* JSObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSObject.cpp; sourceTree = "<group>"; };
 		BC22A3990E16E14800AF21C8 /* JSObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSObject.h; sourceTree = "<group>"; };
@@ -4263,7 +4261,6 @@
 				BC2680E60E16D52300A06E92 /* NumberConstructor.lut.h */,
 				BCD202D50E170708002C7E82 /* RegExpConstructor.lut.h */,
 				A718F61A11754A21002465A7 /* RegExpJitTables.h */,
-				BC18C52B0E16FCD200B34460 /* RegExpObject.lut.h */,
 				5D53727D0E1C55EC0021E549 /* TracingDtrace.h */,
 			);
 			name = "Derived Sources";
@@ -6412,7 +6409,6 @@
 				BCD202D60E170708002C7E82 /* RegExpConstructor.lut.h in Headers */,
 				A1712B4111C7B235007A5315 /* RegExpKey.h in Headers */,
 				BC18C45B0E16F5CD00B34460 /* RegExpObject.h in Headers */,
-				BC18C52C0E16FCD200B34460 /* RegExpObject.lut.h in Headers */,
 				70ECA6061AFDBEA200449739 /* JSTemplateRegistryKey.h in Headers */,
 				BCD202C40E1706A7002C7E82 /* RegExpPrototype.h in Headers */,
 				BC18C45D0E16F5CD00B34460 /* Register.h in Headers */,

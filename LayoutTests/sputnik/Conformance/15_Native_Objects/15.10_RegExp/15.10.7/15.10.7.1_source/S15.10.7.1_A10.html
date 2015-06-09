@@ -68,15 +68,15 @@ try {
 /**
 * @name: S15.10.7.1_A10;
 * @section: 15.10.7.1;
-* @assertion: The RegExp instance source property has the attribute ReadOnly;
+* @assertion: The RegExp instance source property has a null setter;
 * @description: Checking if varying the source property fails;
 */
 
 __re = /./;
 
 //CHECK#1
-if (__re.hasOwnProperty('source') !== true) {
-  testFailed('#1: __re = /./; __re.hasOwnProperty(\'source\') === true');
+if (__re.__proto__.hasOwnProperty('source') !== true) {
+  testFailed('#1: __re = /./; __re.__proto__.hasOwnProperty(\'source\') === true');
 }
 
 __obj = __re.source;

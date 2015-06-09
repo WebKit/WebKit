@@ -24,16 +24,18 @@ id: "15.2.3.3-4-212",
 
 path: "TestCases/chapter15/15.2/15.2.3/15.2.3.3/15.2.3.3-4-212.js",
 
-description: "Object.getOwnPropertyDescriptor returns data desc (all false) for properties on built-ins (RegExp.prototype.source)",
+description: "Object.getOwnPropertyDescriptor returns accessor desc (getter) for properties on built-ins (RegExp.prototype.source)",
 
 test: function testcase() {
   var desc = Object.getOwnPropertyDescriptor(RegExp.prototype, "source");
 
-  if (desc.writable === false &&
+  if (desc.hasOwnProperty('writable') === false &&
       desc.enumerable === false &&
-      desc.configurable === false &&
-      desc.hasOwnProperty('get') === false &&
-      desc.hasOwnProperty('set') === false) {
+      desc.configurable === true &&
+      desc.hasOwnProperty('get') === true &&
+      typeof desc.get === 'function' &&
+      desc.hasOwnProperty('set') === true &&
+      desc.set === undefined) {
     return true;
   }
  },

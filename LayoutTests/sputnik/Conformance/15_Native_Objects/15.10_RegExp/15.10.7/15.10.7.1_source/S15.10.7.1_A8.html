@@ -75,13 +75,13 @@ try {
 __re = new RegExp("[1-2]","i");
 
 //CHECK#0
-if (__re.hasOwnProperty('source') !== true) {
-	testFailed('#0: __re = new RegExp("[1-2]","i"); __re.hasOwnProperty(\'source\') === true');
+if (__re.__proto__.hasOwnProperty('source') !== true) {
+	testFailed('#0: __re = new RegExp("[1-2]","i"); __re.__proto__.hasOwnProperty(\'source\') === true');
 }
 
  //CHECK#1
-if (__re.propertyIsEnumerable('source') !== false) {
-	testFailed('#1: __re = new RegExp("[1-2]","i"); __re.propertyIsEnumerable(\'source\') === false');
+if (__re.__proto__.propertyIsEnumerable('source') !== false) {
+	testFailed('#1: __re = new RegExp("[1-2]","i"); __re.__proto__.propertyIsEnumerable(\'source\') === false');
 }
 
  //CHECK#2

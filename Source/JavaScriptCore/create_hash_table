@@ -94,6 +94,11 @@ while (<IN>) {
         if ($att =~ m/Function/) {
             push(@values, { "type" => "Function", "function" => $val, "params" => (length($param) ? $param : "") });
             #printf STDERR "WARNING: Number of arguments missing for $key/$val\n" if (length($param) == 0);
+        } elsif ($att =~ m/Accessor/) {
+            my $get = $val;
+            my $put = "nullptr";
+            $hasSetter = "true";
+            push(@values, { "type" => "Accessor", "get" => $get, "put" => $put });
         } elsif (length($att)) {
             my $get = $val;
             my $put = "0";
@@ -285,6 +290,11 @@ sub output() {
             $firstCastStr = "static_cast<NativeFunction>";
             $firstValue = $values[$i]{"function"};
             $secondValue = $values[$i]{"params"};
+        } elsif ($values[$i]{"type"} eq "Accessor") {
+            $firstCastStr = "static_cast<NativeFunction>";
+            $secondCastStr = "static_cast<NativeFunction>";
+            $firstValue = $values[$i]{"get"};
+            $secondValue = $values[$i]{"put"};
         } elsif ($values[$i]{"type"} eq "Property") {
             $firstCastStr = "static_cast<PropertySlot::GetValueFunc>";
             $secondCastStr = "static_cast<PutPropertySlot::PutValueFunc>";

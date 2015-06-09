@@ -68,14 +68,14 @@ try {
 /**
 * @name: S15.10.7.2_A10;
 * @section: 15.10.7.2;
-* @assertion: The RegExp instance global property has the attribute ReadOnly;
+* @assertion: The RegExp instance global property has a null setter;
 * @description: Checking if varying the global property fails;
 */
 
 __re = /^|^/;
 
 //CHECK#1
-if (__re.hasOwnProperty('global') !== true) {
+if (__re.__proto__.hasOwnProperty('global') !== true) {
   testFailed('#1: __re = /^|^/; __re.hasOwnProperty(\'global\') === true');
 }
 

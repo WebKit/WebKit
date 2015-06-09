@@ -67,8 +67,34 @@ you'll see a series of PASS messages below.
             o.ignoreCase;
     }
     var r=/a/;
-    testCustomGetter({__proto__: r});
-    testCustomGetter({__proto__: {__proto__: r}});
+    testCustomGetter(r);
+    var r2=/b/;
+    r2.__proto__ = r;
+    testCustomGetter(r2);
+    var r3=/c/;
+    r3.__proto__ = r2;
+    testCustomGetter(r3);
 
+    function shouldThrow(func, errorMessage) {
+        var errorThrown = false;
+        var error = null;
+        try {
+            func();
+        } catch (e) {
+            errorThrown = true;
+            error = e;
+        }
+        if (!errorThrown)
+            throw new Error('not thrown');
+        if (String(error) !== errorMessage)
+            throw new Error(`bad error: ${String(error)}`);
+    }
+
+    shouldThrow(function () {
+        testCustomGetter({__proto__: r});
+    }, "TypeError: Type error");
+    shouldThrow(function () {
+        testCustomGetter({__proto__: {__proto__: r}});
+    }, "TypeError: Type error");
 })();
 </script>

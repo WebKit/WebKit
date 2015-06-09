@@ -75,13 +75,13 @@ try {
 __re = new RegExp("[|||||||]","");
 
 //CHECK#0
-if (__re.hasOwnProperty('ignoreCase') !== true) {
-  testFailed('#0: __re = new RegExp("[|||||||]",""); __re.hasOwnProperty(\'ignoreCase\') === true');
+if (__re.__proto__.hasOwnProperty('ignoreCase') !== true) {
+  testFailed('#0: __re = new RegExp("[|||||||]",""); __re.__proto__.hasOwnProperty(\'ignoreCase\') === true');
 }
 
  //CHECK#1
-if (__re.propertyIsEnumerable('ignoreCase') !== false) {
-  testFailed('#1: __re = new RegExp("[|||||||]",""); __re.propertyIsEnumerable(\'ignoreCase\') === false');
+if (__re.__proto__.propertyIsEnumerable('ignoreCase') !== false) {
+  testFailed('#1: __re = new RegExp("[|||||||]",""); __re.__proto__.propertyIsEnumerable(\'ignoreCase\') === false');
 }
 
  //CHECK#2

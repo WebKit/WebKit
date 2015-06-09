@@ -29,6 +29,7 @@
 #include "JSObject.h"
 #include "JSString.h"
 #include "JSStringBuilder.h"
+#include "Lexer.h"
 #include "ObjectPrototype.h"
 #include "JSCInlines.h"
 #include "RegExpObject.h"
@@ -42,6 +43,10 @@ static EncodedJSValue JSC_HOST_CALL regExpProtoFuncTest(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState*);
+static EncodedJSValue JSC_HOST_CALL regExpProtoGetterGlobal(ExecState*);
+static EncodedJSValue JSC_HOST_CALL regExpProtoGetterIgnoreCase(ExecState*);
+static EncodedJSValue JSC_HOST_CALL regExpProtoGetterMultiline(ExecState*);
+static EncodedJSValue JSC_HOST_CALL regExpProtoGetterSource(ExecState*);
 
 }
 
@@ -53,10 +58,14 @@ const ClassInfo RegExpPrototype::s_info = { "RegExp", &RegExpObject::s_info, &re
 
 /* Source for RegExpPrototype.lut.h
 @begin regExpPrototypeTable
-  compile   regExpProtoFuncCompile      DontEnum|Function 2
-  exec      regExpProtoFuncExec         DontEnum|Function 1
-  test      regExpProtoFuncTest         DontEnum|Function 1
-  toString  regExpProtoFuncToString     DontEnum|Function 0
+  compile       regExpProtoFuncCompile      DontEnum|Function 2
+  exec          regExpProtoFuncExec         DontEnum|Function 1
+  test          regExpProtoFuncTest         DontEnum|Function 1
+  toString      regExpProtoFuncToString     DontEnum|Function 0
+  global        regExpProtoGetterGlobal     DontEnum|Accessor
+  ignoreCase    regExpProtoGetterIgnoreCase DontEnum|Accessor
+  multiline     regExpProtoGetterMultiline  DontEnum|Accessor
+  source        regExpProtoGetterSource     DontEnum|Accessor
 @end
 */
 
@@ -67,7 +76,7 @@ RegExpPrototype::RegExpPrototype(VM& vm, Structure* structure, RegExp* regExp)
 
 bool RegExpPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<RegExpObject>(exec, regExpPrototypeTable, jsCast<RegExpPrototype*>(object), propertyName, slot);
+    return getStaticFunctionSlot<Base>(exec, regExpPrototypeTable, jsCast<RegExpPrototype*>(object), propertyName, slot);
 }
 
 // ------------------------------ Functions ---------------------------
@@ -149,6 +158,151 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
     String source = thisObject->get(exec, exec->propertyNames().source).toString(exec)->value(exec);
     // If source is empty, use "/(?:)/" to avoid colliding with comment syntax
     return JSValue::encode(jsMakeNontrivialString(exec, "/", source, postfix));
+}
+
+EncodedJSValue JSC_HOST_CALL regExpProtoGetterGlobal(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    if (!thisValue.inherits(RegExpObject::info()))
+        return throwVMTypeError(exec);
+
+    return JSValue::encode(jsBoolean(asRegExpObject(thisValue)->regExp()->global()));
+}
+
+EncodedJSValue JSC_HOST_CALL regExpProtoGetterIgnoreCase(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    if (!thisValue.inherits(RegExpObject::info()))
+        return throwVMTypeError(exec);
+
+    return JSValue::encode(jsBoolean(asRegExpObject(thisValue)->regExp()->ignoreCase()));
+}
+
+EncodedJSValue JSC_HOST_CALL regExpProtoGetterMultiline(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    if (!thisValue.inherits(RegExpObject::info()))
+        return throwVMTypeError(exec);
+
+    return JSValue::encode(jsBoolean(asRegExpObject(thisValue)->regExp()->multiline()));
+}
+
+template <typename CharacterType>
+static inline void appendLineTerminatorEscape(StringBuilder&, CharacterType);
+
+template <>
+inline void appendLineTerminatorEscape<LChar>(StringBuilder& builder, LChar lineTerminator)
+{
+    if (lineTerminator == '\n')
+        builder.append('n');
+    else
+        builder.append('r');
+}
+
+template <>
+inline void appendLineTerminatorEscape<UChar>(StringBuilder& builder, UChar lineTerminator)
+{
+    if (lineTerminator == '\n')
+        builder.append('n');
+    else if (lineTerminator == '\r')
+        builder.append('r');
+    else if (lineTerminator == 0x2028)
+        builder.appendLiteral("u2028");
+    else
+        builder.appendLiteral("u2029");
+}
+
+template <typename CharacterType>
+static inline JSValue regExpProtoGetterSourceInternal(ExecState* exec, const String& pattern, const CharacterType* characters, unsigned length)
+{
+    bool previousCharacterWasBackslash = false;
+    bool inBrackets = false;
+    bool shouldEscape = false;
+
+    // 15.10.6.4 specifies that RegExp.prototype.toString must return '/' + source + '/',
+    // and also states that the result must be a valid RegularExpressionLiteral. '//' is
+    // not a valid RegularExpressionLiteral (since it is a single line comment), and hence
+    // source cannot ever validly be "". If the source is empty, return a different Pattern
+    // that would match the same thing.
+    if (!length)
+        return jsNontrivialString(exec, ASCIILiteral("(?:)"));
+
+    // early return for strings that don't contain a forwards slash and LineTerminator
+    for (unsigned i = 0; i < length; ++i) {
+        CharacterType ch = characters[i];
+        if (!previousCharacterWasBackslash) {
+            if (inBrackets) {
+                if (ch == ']')
+                    inBrackets = false;
+            } else {
+                if (ch == '/') {
+                    shouldEscape = true;
+                    break;
+                }
+                if (ch == '[')
+                    inBrackets = true;
+            }
+        }
+
+        if (Lexer<CharacterType>::isLineTerminator(ch)) {
+            shouldEscape = true;
+            break;
+        }
+
+        if (previousCharacterWasBackslash)
+            previousCharacterWasBackslash = false;
+        else
+            previousCharacterWasBackslash = ch == '\\';
+    }
+
+    if (!shouldEscape)
+        return jsString(exec, pattern);
+
+    previousCharacterWasBackslash = false;
+    inBrackets = false;
+    StringBuilder result;
+    for (unsigned i = 0; i < length; ++i) {
+        CharacterType ch = characters[i];
+        if (!previousCharacterWasBackslash) {
+            if (inBrackets) {
+                if (ch == ']')
+                    inBrackets = false;
+            } else {
+                if (ch == '/')
+                    result.append('\\');
+                else if (ch == '[')
+                    inBrackets = true;
+            }
+        }
+
+        // escape LineTerminator
+        if (Lexer<CharacterType>::isLineTerminator(ch)) {
+            if (!previousCharacterWasBackslash)
+                result.append('\\');
+
+            appendLineTerminatorEscape<CharacterType>(result, ch);
+        } else
+            result.append(ch);
+
+        if (previousCharacterWasBackslash)
+            previousCharacterWasBackslash = false;
+        else
+            previousCharacterWasBackslash = ch == '\\';
+    }
+
+    return jsString(exec, result.toString());
+}
+
+EncodedJSValue JSC_HOST_CALL regExpProtoGetterSource(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    if (!thisValue.inherits(RegExpObject::info()))
+        return throwVMTypeError(exec);
+
+    String pattern = asRegExpObject(thisValue)->regExp()->pattern();
+    if (pattern.is8Bit())
+        return JSValue::encode(regExpProtoGetterSourceInternal(exec, pattern, pattern.characters8(), pattern.length()));
+    return JSValue::encode(regExpProtoGetterSourceInternal(exec, pattern, pattern.characters16(), pattern.length()));
 }
 
 } // namespace JSC

@@ -628,7 +628,6 @@ set(JavaScriptCore_LUT_FILES
     runtime/NumberPrototype.cpp
     runtime/ObjectConstructor.cpp
     runtime/RegExpConstructor.cpp
-    runtime/RegExpObject.cpp
     runtime/RegExpPrototype.cpp
     runtime/StringConstructor.cpp
     runtime/StringIteratorPrototype.cpp

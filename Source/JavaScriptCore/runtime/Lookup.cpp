@@ -21,6 +21,7 @@
 #include "Lookup.h"
 
 #include "Executable.h"
+#include "GetterSetter.h"
 #include "JSFunction.h"
 #include "JSCInlines.h"
 
@@ -47,12 +48,26 @@ void HashTable::deleteTable() const
     }
 }
 
+void reifyStaticAccessor(VM& vm, const HashTableValue& value, JSObject& thisObj, PropertyName propertyName)
+{
+    JSGlobalObject* globalObject = thisObj.globalObject();
+    GetterSetter* accessor = GetterSetter::create(vm, globalObject);
+    if (value.accessorGetter()) {
+        RefPtr<StringImpl> getterName = WTF::tryMakeString(ASCIILiteral("get "), String(*propertyName.publicName()));
+        if (!getterName)
+            return;
+        accessor->setGetter(vm, globalObject, JSFunction::create(vm, globalObject, 0, *getterName, value.accessorGetter()));
+    }
+    thisObj.putDirectNonIndexAccessor(vm, propertyName, accessor, value.attributes());
+}
+
 bool setUpStaticFunctionSlot(ExecState* exec, const HashTableValue* entry, JSObject* thisObj, PropertyName propertyName, PropertySlot& slot)
 {
     ASSERT(thisObj->globalObject());
-    ASSERT(entry->attributes() & BuiltinOrFunction);
+    ASSERT(entry->attributes() & BuiltinOrFunctionOrAccessor);
     VM& vm = exec->vm();
     unsigned attributes;
+    bool isAccessor = entry->attributes() & Accessor;
     PropertyOffset offset = thisObj->getDirectOffset(vm, propertyName, attributes);
 
     if (!isValidOffset(offset)) {
@@ -60,19 +75,26 @@ bool setUpStaticFunctionSlot(ExecState* exec, const HashTableValue* entry, JSObj
         // all static functions at that time - after this we shouldn't be re-adding anything.
         if (thisObj->staticFunctionsReified())
             return false;
-    
+
         if (entry->attributes() & Builtin)
             thisObj->putDirectBuiltinFunction(vm, thisObj->globalObject(), propertyName, entry->builtinGenerator()(vm), entry->attributes());
-        else {
+        else if (entry->attributes() & Function) {
             thisObj->putDirectNativeFunction(
                 vm, thisObj->globalObject(), propertyName, entry->functionLength(),
                 entry->function(), entry->intrinsic(), entry->attributes());
+        } else {
+            ASSERT(isAccessor);
+            reifyStaticAccessor(vm, *entry, *thisObj, propertyName);
         }
+
         offset = thisObj->getDirectOffset(vm, propertyName, attributes);
         ASSERT(isValidOffset(offset));
     }
 
-    slot.setValue(thisObj, attributes, thisObj->getDirect(offset), offset);
+    if (isAccessor)
+        slot.setCacheableGetterSlot(thisObj, attributes, jsCast<GetterSetter*>(thisObj->getDirect(offset)), offset);
+    else
+        slot.setValue(thisObj, attributes, thisObj->getDirect(offset), offset);
     return true;
 }
 

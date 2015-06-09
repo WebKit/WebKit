@@ -29,8 +29,8 @@ var expectedPropertyNamesSet = {
     "new Date()": "[]",
     "(function(){var x=new Date();x.__proto__=[1,2,3];return x;})()": "[]",
 // RegExp objects
-    "new RegExp('foo')": "['global', 'ignoreCase', 'lastIndex', 'multiline', 'source']",
-    "(function(){var x=new RegExp();x.__proto__=[1,2,3];return x;})()": "['global', 'ignoreCase', 'lastIndex', 'multiline', 'source']",
+    "new RegExp('foo')": "['lastIndex']",
+    "(function(){var x=new RegExp();x.__proto__=[1,2,3];return x;})()": "['lastIndex']",
 // Arguments objects
      "argumentsObject()": "['callee', 'length']",
      "argumentsObject(1)": "['0', 'callee', 'length']",
