@@ -1,5 +1,28 @@
 2015-06-09  Anders Carlsson  <andersca@apple.com>
 
+        Change the PluginProcessManager data fetching function to take a completion handler
+        https://bugs.webkit.org/show_bug.cgi?id=145821
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::fetchWebsiteData):
+        (WebKit::PluginProcessManager::getSitesWithData): Deleted.
+        * UIProcess/Plugins/PluginProcessManager.h:
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::generateCallbackID):
+        (WebKit::PluginProcessProxy::~PluginProcessProxy):
+        (WebKit::PluginProcessProxy::fetchWebsiteData):
+        (WebKit::PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch):
+        (WebKit::PluginProcessProxy::didFinishLaunching):
+        (WebKit::PluginProcessProxy::didGetSitesWithData):
+        (WebKit::PluginProcessProxy::getSitesWithData): Deleted.
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/Plugins/WebPluginSiteDataManager.cpp:
+        (WebKit::WebPluginSiteDataManager::GetSitesWithDataState::getSitesWithDataForNextPlugin):
+
+2015-06-09  Anders Carlsson  <andersca@apple.com>
+
         Add code to keep track of plug-in data host names in website data records
         https://bugs.webkit.org/show_bug.cgi?id=145818
 

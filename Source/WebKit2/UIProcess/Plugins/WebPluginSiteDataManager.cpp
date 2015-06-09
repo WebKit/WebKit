@@ -56,7 +56,12 @@ public:
             return;
         }
 
-        PluginProcessManager::singleton().getSitesWithData(m_plugins.last(), m_webPluginSiteDataManager, m_callbackID);
+        RefPtr<WebPluginSiteDataManager> webPluginSiteDataManager = m_webPluginSiteDataManager;
+        uint64_t callbackID = m_callbackID;
+        PluginProcessManager::singleton().fetchWebsiteData(m_plugins.last(), [webPluginSiteDataManager, callbackID](Vector<String> hostNames) {
+            webPluginSiteDataManager->didGetSitesWithDataForSinglePlugin(sites, callbackID);
+        });
+
         m_plugins.removeLast();
     }
 

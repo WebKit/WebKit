@@ -78,9 +78,8 @@ public:
     // Asks the plug-in process to create a new connection to a web process. The connection identifier will be
     // encoded in the given argument encoder and sent back to the connection of the given web process.
     void getPluginProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>);
-    
-    // Asks the plug-in process to get a list of domains for which the plug-in has data stored.
-    void getSitesWithData(WebPluginSiteDataManager*, uint64_t callbackID);
+
+    void fetchWebsiteData(std::function<void (Vector<String>)> completionHandler);
 
     // Asks the plug-in process to clear the data for the given sites.
     void clearSiteData(WebPluginSiteDataManager*, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID);
@@ -164,8 +163,8 @@ private:
 
     Deque<RefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>> m_pendingConnectionReplies;
 
-    Vector<uint64_t> m_pendingGetSitesRequests;
-    HashMap<uint64_t, RefPtr<WebPluginSiteDataManager>> m_pendingGetSitesReplies;
+    Vector<uint64_t> m_pendingFetchWebsiteDataRequests;
+    HashMap<uint64_t, std::function<void (Vector<String>)>> m_pendingFetchWebsiteDataCallbacks;
 
     struct ClearSiteDataRequest {
         Vector<String> sites;
