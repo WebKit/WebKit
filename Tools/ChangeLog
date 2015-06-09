@@ -1,3 +1,16 @@
+2015-06-09  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Remove ewstool scripts used by chromium port
+        https://bugs.webkit.org/show_bug.cgi?id=145789
+
+        Reviewed by Csaba Osztrogonác.
+
+        * EWSTools/GoogleComputeEngine/build-chromium-ews.sh: Removed.
+        * EWSTools/GoogleComputeEngine/build-commit-queue.sh: Removed.
+        * EWSTools/GoogleComputeEngine/build-cr-linux-debug-ews.sh: Removed.
+        * EWSTools/GoogleComputeEngine/build-feeder-style-sheriffbot.sh: Removed.
+        * EWSTools/GoogleComputeEngine/findzone.sh: Removed.
+
 2015-06-09  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed, updated my list of email addresses.
