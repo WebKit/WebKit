@@ -48,14 +48,23 @@ String WebsiteDataRecord::displayNameForCookieHostName(const String& hostName)
         return displayNameForLocalFiles();
 #endif
 
-    // FIXME: This needs to handle the local file domain for cookies.
-
 #if ENABLE(PUBLIC_SUFFIX_LIST)
     return WebCore::topPrivatelyControlledDomain(hostName.startsWith('.') ? hostName.substring(1) : hostName);
 #endif
 
     return String();
 }
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
+String WebsiteDataRecord::displayNameForPluginDataHostName(const String& hostName)
+{
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    return WebCore::topPrivatelyControlledDomain(hostName);
+#endif
+
+    return String();
+}
+#endif
 
 String WebsiteDataRecord::displayNameForOrigin(const WebCore::SecurityOrigin& securityOrigin)
 {
@@ -85,5 +94,14 @@ void WebsiteDataRecord::addCookieHostName(const String& hostName)
 
     cookieHostNames.add(hostName);
 }
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
+void WebsiteDataRecord::addPluginDataHostName(const String& hostName)
+{
+    types |= WebsiteDataTypePlugInData;
+
+    pluginDataHostNames.add(hostName);
+}
+#endif
 
 }

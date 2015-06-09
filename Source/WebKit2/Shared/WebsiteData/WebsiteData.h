@@ -50,6 +50,10 @@ struct WebsiteData {
     Vector<Entry> entries;
     HashSet<String> hostNamesWithCookies;
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    HashSet<String> hostNamesWithPluginData;
+#endif
+
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebsiteData&);
 };

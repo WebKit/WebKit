@@ -1,5 +1,24 @@
 2015-06-09  Anders Carlsson  <andersca@apple.com>
 
+        Add code to keep track of plug-in data host names in website data records
+        https://bugs.webkit.org/show_bug.cgi?id=145818
+
+        Reviewed by Andreas Kling.
+
+        * Shared/WebsiteData/WebsiteData.cpp:
+        (WebKit::WebsiteData::encode):
+        (WebKit::WebsiteData::decode):
+        * Shared/WebsiteData/WebsiteData.h:
+        * UIProcess/WebsiteData/WebsiteDataRecord.cpp:
+        (WebKit::WebsiteDataRecord::displayNameForPluginDataHostName):
+        (WebKit::WebsiteDataRecord::addPluginDataHostName):
+        (WebKit::WebsiteDataRecord::displayNameForCookieHostName): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataRecord.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchData):
+
+2015-06-09  Anders Carlsson  <andersca@apple.com>
+
         Add Plug-in type declarations to WKWebsiteDataRecord and friends
         https://bugs.webkit.org/show_bug.cgi?id=145816
 

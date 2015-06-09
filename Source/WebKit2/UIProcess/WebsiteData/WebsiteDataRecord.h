@@ -40,15 +40,24 @@ namespace WebKit {
 
 struct WebsiteDataRecord {
     static String displayNameForCookieHostName(const String& hostName);
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    static String displayNameForPluginDataHostName(const String& hostName);
+#endif
     static String displayNameForOrigin(const WebCore::SecurityOrigin&);
 
     void add(WebsiteDataTypes, RefPtr<WebCore::SecurityOrigin>&&);
     void addCookieHostName(const String& hostName);
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    void addPluginDataHostName(const String& hostName);
+#endif
 
     String displayName;
     unsigned types { 0 };
     HashSet<RefPtr<WebCore::SecurityOrigin>> origins;
     HashSet<String> cookieHostNames;
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    HashSet<String> pluginDataHostNames;
+#endif
 };
 
 }

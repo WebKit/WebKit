@@ -187,6 +187,20 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
                 record.addCookieHostName(hostName);
             }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+            for (auto& hostName : websiteData.hostNamesWithPluginData) {
+                auto displayName = WebsiteDataRecord::displayNameForPluginDataHostName(hostName);
+                if (!displayName)
+                    continue;
+
+                auto& record = m_websiteDataRecords.add(displayName, WebsiteDataRecord { }).iterator->value;
+                if (!record.displayName)
+                    record.displayName = WTF::move(displayName);
+
+                record.addPluginDataHostName(hostName);
+            }
+#endif
+
             callIfNeeded();
         }
 
