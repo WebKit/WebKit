@@ -1,3 +1,10 @@
+2015-06-09  Daniel Bates  <dabates@apple.com>
+
+        Update iOS TestExpectations files 
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2015-06-09  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet <youenn.fablet@crf.canon.fr>
 
         [Streams API] ReadableJSStream should handle JS source getters that throw

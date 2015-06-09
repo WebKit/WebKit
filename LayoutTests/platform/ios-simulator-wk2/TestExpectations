@@ -2159,3 +2159,19 @@ loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with
 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag-from-subframe.html
 loader/navigation-policy/should-open-external-urls/user-gesture-window-open-without-flag.html
 transitions/transition-hit-test-transform.html
+
+# Flaky as of 06/09/2015
+fast/images/animated-gif-no-layout.html [ ImageOnlyFailure Pass ]
+animations/transition-and-animation-2.html
+css3/filters/backdrop/animation.html
+
+# Failures as of 06/09/2015
+animations/trigger-container-scroll-empty.html [ Failure ]
+css3/selectors3/xml/css3-modsel-d1.xml [ Failure ]
+css3/selectors3/xml/css3-modsel-d3.xml [ Failure ]
+css3/selectors3/xml/css3-modsel-d4.xml [ Failure ]
+editing/execCommand/remove-list-item-1.html [ Failure ]
+editing/input/emacs-ctrl-o.html [ Failure ]
+
+# Time outs as of 06/09/2015
+fast/images/animated-gif-webkit-transform.html

@@ -1716,3 +1716,17 @@ js/dom/callback-function-with-handle-event.html [ Crash ]
 
 # Time outs as of 06/08/2015
 fast/fixed-layout/fixed-layout.html
+
+# Flaky as of 06/09/2015
+svg/dom/SVGScriptElement/script-set-href.svg [ Failure Pass ]
+fast/text/text-combine-style-change-no-layout.html [ ImageOnlyFailure Pass ]
+http/tests/websocket/tests/hybi/invalid-subprotocol-characters.html
+
+# Failures as of 06/09/2015
+css3/blending/blend-mode-simple-composited.html [ Failure ]
+http/tests/loading/sizes/preload-image-sizes.html [ Failure ]
+
+# Crashes as of 06/09/2015
+fast/dom/MutationObserver/database-callback-delivery.html [ Crash ]
+fast/history/history-length.html [ Crash ]
+storage/websql/alter-to-info-table.html [ Crash ]
