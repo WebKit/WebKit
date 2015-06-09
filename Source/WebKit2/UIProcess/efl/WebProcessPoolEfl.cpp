@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebProcessPool.h"
 
+#include "APIProcessPoolConfiguration.h"
 #include "Logging.h"
 #include "WebCookieManagerProxy.h"
 #include "WebInspectorServer.h"
@@ -93,6 +94,7 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
     supplement<WebCookieManagerProxy>()->getCookiePersistentStorage(parameters.cookiePersistentStoragePath, parameters.cookiePersistentStorageType);
     parameters.cookieAcceptPolicy = m_initialHTTPCookieAcceptPolicy;
     parameters.ignoreTLSErrors = m_ignoreTLSErrors;
+    parameters.diskCacheDirectory = m_configuration->diskCacheDirectory();
 }
 
 void WebProcessPool::platformInvalidateContext()

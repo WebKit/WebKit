@@ -1,3 +1,15 @@
+2015-06-09  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Fix a crash on MiniBrowser when running on debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=145793
+
+        Reviewed by Carlos Garcia Campos.
+
+        r185314 missed to initialize parameters.diskCacheDirectory with configuration's one.
+
+        * UIProcess/efl/WebProcessPoolEfl.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+
 2015-06-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [cmake] Fix the style issues in cmake project files
