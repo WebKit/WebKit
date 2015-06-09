@@ -1,5 +1,21 @@
 2015-06-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [SOUP] Network Cache: Give more priority to reads over writes in IO WorkQueue
+        https://bugs.webkit.org/show_bug.cgi?id=145791
+
+        Reviewed by Sergio Villar Senin.
+
+        Keep using G_PRIORITY_DEFAULT for reads, but use
+        G_PRIORITY_DEFAULT_IDLE for writes now.
+
+        * NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp:
+        (WebKit::NetworkCache::outputStreamWriteReadyCallback): Use
+        G_PRIORITY_DEFAULT_IDLE for write async operations.
+        (WebKit::NetworkCache::IOChannel::write): Pass
+        G_PRIORITY_DEFAULT_IDLE to runTaskInQueue().
+
+2015-06-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [SOUP] Network Cache: run the IO completion handler in the given queue instead of the whole operation
         https://bugs.webkit.org/show_bug.cgi?id=145797
 
