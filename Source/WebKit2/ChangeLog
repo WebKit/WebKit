@@ -1,3 +1,10 @@
+2015-06-09  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r185357): Fix build for iOS 8.x
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (fallbackIconForFile): Add cast prior to iOS 9.
+
 2015-06-09  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Fix a crash on MiniBrowser when running on debug mode

@@ -139,7 +139,11 @@ static UIImage* fallbackIconForFile(NSURL *file)
     ASSERT_ARG(file, [file isFileURL]);
 
     UIDocumentInteractionController *interactionController = [UIDocumentInteractionController interactionControllerWithURL:file];
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 90000
+    return thumbnailSizedImageForImage(((UIImage *)interactionController.icons[0]).CGImage);
+#else
     return thumbnailSizedImageForImage(interactionController.icons[0].CGImage);
+#endif
 }
 
 static UIImage* iconForImageFile(NSURL *file)
