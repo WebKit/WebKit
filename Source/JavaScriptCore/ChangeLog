@@ -1,3 +1,19 @@
+2015-06-09  Andreas Kling  <akling@apple.com>
+
+        [JSC] String.prototype.indexOf() should use StringView.
+        <https://webkit.org/b/145351>
+
+        Reviewed by Darin Adler.
+
+        Use StringView::find() to implement String.prototype.indexOf().
+        This avoids reifying the needle and haystack JSStrings in case they
+        are substrings.
+
+        Reduces malloc memory by ~190 kB on cnet.com.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncIndexOf):
+
 2015-06-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [cmake] Fix the style issues in cmake project files
