@@ -70,7 +70,7 @@ void JSPropertyNameEnumerator::finishCreation(VM& vm, uint32_t indexedLength, ui
     m_endStructurePropertyIndex = endStructurePropertyIndex;
     m_endGenericPropertyIndex = vector.size();
 
-    m_propertyNames.resize(vector.size());
+    m_propertyNames.resizeToFit(vector.size());
     for (unsigned i = 0; i < vector.size(); ++i) {
         const Identifier& identifier = vector[i];
         m_propertyNames[i].set(vm, this, jsString(&vm, identifier.string()));

@@ -1,5 +1,18 @@
 2015-06-09  Andreas Kling  <akling@apple.com>
 
+        [JSC] JSPropertyNameEnumerator's property name vector should be sized-to-fit.
+        <https://webkit.org/b/145787>
+
+        Reviewed by Darin Adler.
+
+        Saw 108 kB worth of JSPropertyNameEnumerator backing store Vectors on cnet.com.
+        Use Vector::resizeToFit() since we know the perfect size up front.
+
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::JSPropertyNameEnumerator::finishCreation):
+
+2015-06-09  Andreas Kling  <akling@apple.com>
+
         FunctionExecutable::isCompiling() is weird and wrong.
         <https://webkit.org/b/145689>
 
