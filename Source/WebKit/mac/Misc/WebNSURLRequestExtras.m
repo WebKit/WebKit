@@ -34,31 +34,6 @@
 #define WebUserAgent    (@"User-Agent")
 #define WebReferrer     (@"Referer")
 
-@implementation NSURLRequest (WebNSURLRequestExtras)
-
-- (NSString *)_web_HTTPReferrer
-{
-    return [self valueForHTTPHeaderField:WebReferrer];
-}
-
-- (NSString *)_web_HTTPContentType
-{
-    return [self valueForHTTPHeaderField:WebContentType];
-}
-
-- (BOOL)_web_isConditionalRequest
-{
-    if ([self valueForHTTPHeaderField:@"If-Match"] ||
-        [self valueForHTTPHeaderField:@"If-Modified-Since"] ||
-        [self valueForHTTPHeaderField:@"If-None-Match"] ||
-        [self valueForHTTPHeaderField:@"If-Range"] ||
-        [self valueForHTTPHeaderField:@"If-Unmodified-Since"])
-        return YES;
-    return NO;
-}
-
-@end
-
 @implementation NSMutableURLRequest (WebNSURLRequestExtras)
 
 - (void)_web_setHTTPContentType:(NSString *)contentType

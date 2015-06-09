@@ -1,3 +1,16 @@
+2015-06-09  Anders Carlsson  <andersca@apple.com>
+
+        Remove more unused SPI methods
+        https://bugs.webkit.org/show_bug.cgi?id=145804
+
+        Reviewed by Simon Fraser.
+
+        * Misc/WebNSURLRequestExtras.h:
+        * Misc/WebNSURLRequestExtras.m:
+        (-[NSURLRequest _web_HTTPReferrer]): Deleted.
+        (-[NSURLRequest _web_HTTPContentType]): Deleted.
+        (-[NSURLRequest _web_isConditionalRequest]): Deleted.
+
 2015-06-08  Dan Bernstein  <mitz@apple.com>
 
         Removed WebDragSourceActionAttachment from the WebDragSourceAction enum.
