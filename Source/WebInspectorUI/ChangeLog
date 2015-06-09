@@ -1,3 +1,14 @@
+2015-06-08  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Clearing active Timeline recording should stop capturing
+        https://bugs.webkit.org/show_bug.cgi?id=145767
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._clearTimeline):
+        Stop capturing if necessary.
+
 2015-06-07  Tobias Reiss  <tobi+webkit@basecode.de>
 
         Web Inspector: Add PrettyPrinter CSSRule tests

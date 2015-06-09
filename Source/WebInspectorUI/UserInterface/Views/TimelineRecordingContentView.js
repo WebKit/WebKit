@@ -530,6 +530,9 @@ WebInspector.TimelineRecordingContentView.prototype = {
 
     _clearTimeline: function(event)
     {
+        if (WebInspector.timelineManager.activeRecording === this._recording && WebInspector.timelineManager.isCapturing())
+            WebInspector.timelineManager.stopCapturing();
+
         this._recording.reset();
     },
 
