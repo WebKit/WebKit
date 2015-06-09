@@ -76,6 +76,7 @@ class BenchmarkRunner(object):
             self.browserDriver.prepareEnv()
             url = urlparse.urljoin(self.httpServerDriver.baseUrl(), self.planName + '/' + self.plan['entry_point'])
             self.browserDriver.launchUrl(url, self.buildDir)
+            result = None
             try:
                 with timeout(self.plan['timeout']):
                     result = self.httpServerDriver.fetchResult()

@@ -1,5 +1,12 @@
 2015-06-08  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed build fix. Initialize result in the case things blow up below.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (BenchmarkRunner.execute):
+
+2015-06-08  Ryosuke Niwa  <rniwa@webkit.org>
+
         Partially revert and fix after r185243.
 
         * Scripts/benchmark_runner/benchmark_runner.py:
