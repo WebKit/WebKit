@@ -47,7 +47,7 @@ class ReadableStreamController;
 
 class ReadableJSStream: public ReadableStream {
 public:
-    static Ref<ReadableJSStream> create(JSC::ExecState&, ScriptExecutionContext&);
+    static RefPtr<ReadableJSStream> create(JSC::ExecState&, ScriptExecutionContext&);
 
     JSC::JSValue jsController(JSC::ExecState&, JSDOMGlobalObject*);
 
@@ -60,6 +60,8 @@ private:
     ReadableJSStream(ScriptExecutionContext&, JSC::ExecState&, JSC::JSObject*);
 
     void doStart(JSC::ExecState&);
+
+    JSC::JSValue invoke(JSC::ExecState&, const char*);
 
     virtual bool hasValue() const override;
     virtual JSC::JSValue read() override;

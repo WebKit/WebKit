@@ -1,5 +1,5 @@
 
-FAIL ReadableStream can be constructed with no errors ReadableStream constructor should get an object as argument.
+PASS ReadableStream can be constructed with no errors 
 FAIL ReadableStream instances should have the correct list of properties assert_array_equals: should have all the correct methods lengths differ, expected 6 got 5
 PASS ReadableStream constructor should throw for non-function start arguments 
 PASS ReadableStream constructor can get initial garbage as cancel argument 

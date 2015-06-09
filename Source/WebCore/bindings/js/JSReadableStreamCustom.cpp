@@ -40,6 +40,7 @@
 #include "ReadableStream.h"
 #include "ReadableStreamReader.h"
 #include <runtime/Error.h>
+#include <runtime/Exception.h>
 #include <wtf/NeverDestroyed.h>
 
 using namespace JSC;
@@ -73,13 +74,15 @@ JSValue JSReadableStream::pipeThrough(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL constructJSReadableStream(ExecState* exec)
 {
-    if (exec->argumentCount() && !exec->argument(0).isObject())
-        return throwVMError(exec, createTypeError(exec, ASCIILiteral("ReadableStream constructor should get an object as argument.")));
-
     DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec->callee());
     ASSERT(jsConstructor);
 
-    Ref<ReadableJSStream> readableStream = ReadableJSStream::create(*exec, *jsConstructor->scriptExecutionContext());
+    RefPtr<ReadableJSStream> readableStream = ReadableJSStream::create(*exec, *jsConstructor->scriptExecutionContext());
+
+    if (!readableStream) {
+        ASSERT(exec->hadException());
+        return JSValue::encode(jsUndefined());
+    }
     return JSValue::encode(toJS(exec, jsCast<JSDOMGlobalObject*>(exec->callee()->globalObject()), WTF::move(readableStream)));
 }
 
