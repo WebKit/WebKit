@@ -231,3 +231,5 @@ maximumSourceBufferSize type=int, initial=318767104, conditional=MEDIA_SOURCE
 
 serviceControlsEnabled initial=false, conditional=SERVICE_CONTROLS
 appleMailPaginationQuirkEnabled initial=false
+
+metaRefreshEnabled initial=true

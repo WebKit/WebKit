@@ -1285,3 +1285,13 @@ bool WKPreferencesGetGamepadsEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->gamepadsEnabled();
 }
+
+void WKPreferencesSetMetaRefreshEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setMetaRefreshEnabled(enabled);
+}
+
+bool WKPreferencesGetMetaRefreshEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->metaRefreshEnabled();
+}

@@ -440,6 +440,7 @@ public:
 #endif
         [NSNumber numberWithBool:YES],  WebKitPluginsEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitDatabasesEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitMetaRefreshEnabledPreferenceKey,
 #if PLATFORM(IOS)
         [NSNumber numberWithBool:NO],   WebKitStorageTrackerEnabledPreferenceKey,
 #endif
@@ -2554,6 +2555,16 @@ static bool needsScreenFontsEnabledQuirk()
 - (void)setMediaKeysStorageDirectory:(NSString *)directory
 {
     [self _setStringValue:directory forKey:WebKitMediaKeysStorageDirectoryKey];
+}
+
+- (void)setMetaRefreshEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitMetaRefreshEnabledPreferenceKey];
+}
+
+- (BOOL)metaRefreshEnabled
+{
+    return [self _boolValueForKey:WebKitMetaRefreshEnabledPreferenceKey];
 }
 
 @end

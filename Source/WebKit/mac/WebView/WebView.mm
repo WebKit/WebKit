@@ -2329,6 +2329,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     }
 
     settings.setPlugInSnapshottingEnabled([preferences plugInSnapshottingEnabled]);
+    settings.setMetaRefreshEnabled([preferences metaRefreshEnabled]);
 
     settings.setFixedPositionCreatesStackingContext(true);
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100

@@ -334,6 +334,10 @@ WK_EXPORT bool WKPreferencesGetImageControlsEnabled(WKPreferencesRef preferences
 WK_EXPORT void WKPreferencesSetGamepadsEnabled(WKPreferencesRef preferencesRef, bool enabled);
 WK_EXPORT bool WKPreferencesGetGamepadsEnabled(WKPreferencesRef preferencesRef);
 
+// Defaults to true.
+WK_EXPORT void WKPreferencesSetMetaRefreshEnabled(WKPreferencesRef preferences, bool enabled);
+WK_EXPORT bool WKPreferencesGetMetaRefreshEnabled(WKPreferencesRef preferences);
+
 #ifdef __cplusplus
 }
 #endif

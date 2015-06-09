@@ -2831,6 +2831,9 @@ void Document::processHttpEquiv(const String& equiv, const String& content)
         break;
 
     case HTTPHeaderName::Refresh: {
+        if (page() && !page()->settings().metaRefreshEnabled())
+            break;
+
         double delay;
         String urlString;
         if (frame && parseHTTPRefresh(content, true, delay, urlString)) {
