@@ -1,3 +1,12 @@
+2015-06-08  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Use generics in framework headers
+        https://bugs.webkit.org/show_bug.cgi?id=145781
+
+        Reviewed by Sam Weinig.
+
+        * mac/postprocess-framework-headers.sh: Use the parameter to WK_ARRAY and WK_SET.
+
 2015-06-08  Chris Dumez  <cdumez@apple.com>
 
         Access GCController instance via GCController::singleton() instead of a free function
