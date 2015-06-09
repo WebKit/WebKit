@@ -3578,7 +3578,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringI
         return throwThisTypeError(*exec, "TestObj", "methodWithOptionalStringIsNullString");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->impl();
-    String str = argumentOrNull(exec, 0).toString(exec)->value(exec);
+    String str = exec->argumentCount() <= 0 ? String() : exec->uncheckedArgument(0).toString(exec)->value(exec);
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
     impl.methodWithOptionalStringIsNullString(str);

@@ -238,11 +238,6 @@ template<typename WrapperClass, typename DOMClass> inline JSC::JSValue createNew
     return createWrapper<WrapperClass>(globalObject, domObject);
 }
 
-inline JSC::JSValue argumentOrNull(JSC::ExecState* exec, unsigned index)
-{
-    return index >= exec->argumentCount() ? JSC::JSValue() : exec->argument(index);
-}
-
 void addImpureProperty(const AtomicString&);
 
 const JSC::HashTable& getHashTableForGlobalData(JSC::VM&, const JSC::HashTable& staticTable);

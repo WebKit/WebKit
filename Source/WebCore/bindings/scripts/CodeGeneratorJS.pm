@@ -3335,7 +3335,16 @@ sub GenerateParametersCheck
                 push(@$outputArray, "    if ($name.isNull())\n");
                 push(@$outputArray, "        return JSValue::encode(jsNull());\n");
             } else {
-                push(@$outputArray, "    " . GetNativeTypeFromSignature($parameter) . " $name = " . JSValueToNative($parameter, $optional && $defaultAttribute && $defaultAttribute eq "NullString" ? "argumentOrNull(exec, $argsIndex)" : "exec->argument($argsIndex)", $function->signature->extendedAttributes->{"Conditional"}) . ";\n");
+                my $outer;
+                my $inner;
+                if ($optional && $defaultAttribute && $defaultAttribute eq "NullString") {
+                    $outer = "exec->argumentCount() <= $argsIndex ? String() : ";
+                    $inner = "exec->uncheckedArgument($argsIndex)";
+                } else {
+                    $outer = "";
+                    $inner = "exec->argument($argsIndex)";
+                }
+                push(@$outputArray, "    " . GetNativeTypeFromSignature($parameter) . " $name = $outer" . JSValueToNative($parameter, $inner, $function->signature->extendedAttributes->{"Conditional"}) . ";\n");
             }
 
             # If a parameter is "an index" and it's negative it should throw an INDEX_SIZE_ERR exception.
