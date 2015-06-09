@@ -29,7 +29,6 @@
 #include "Timer.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -79,10 +78,6 @@ private:
     void setCoverRect(const IntRect& rect) { m_coverRect = rect; }
     void setKeepRect(const IntRect&);
 
-    PassRefPtr<Tile> tileAt(const Tile::Coordinate&) const;
-    void setTile(const Tile::Coordinate&, PassRefPtr<Tile>);
-    void removeTile(const Tile::Coordinate&);
-
     IntRect visibleRect() const;
 
     float coverageRatio(const IntRect&) const;
@@ -93,7 +88,7 @@ private:
 private:
     TiledBackingStoreClient* m_client;
 
-    typedef HashMap<Tile::Coordinate, RefPtr<Tile> > TileMap;
+    typedef HashMap<Tile::Coordinate, std::unique_ptr<Tile>> TileMap;
     TileMap m_tiles;
 
     IntSize m_tileSize;

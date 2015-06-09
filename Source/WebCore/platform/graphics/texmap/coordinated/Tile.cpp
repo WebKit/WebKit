@@ -36,11 +36,6 @@ namespace WebCore {
 
 static const uint32_t InvalidTileID = 0;
 
-PassRefPtr<Tile> Tile::create(TiledBackingStore& tiledBackingStore, const Coordinate& tileCoordinate)
-{
-    return adoptRef(new Tile(tiledBackingStore, tileCoordinate));
-}
-
 Tile::Tile(TiledBackingStore& tiledBackingStore, const Coordinate& tileCoordinate)
     : m_tiledBackingStore(tiledBackingStore)
     , m_coordinate(tileCoordinate)

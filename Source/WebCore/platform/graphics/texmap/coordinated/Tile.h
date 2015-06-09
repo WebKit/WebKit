@@ -38,12 +38,11 @@ namespace WebCore {
 class GraphicsContext;
 class TiledBackingStore;
 
-class Tile : public RefCounted<Tile>, public CoordinatedSurface::Client {
+class Tile : public CoordinatedSurface::Client {
 public:
     typedef IntPoint Coordinate;
 
-    static PassRefPtr<Tile> create(TiledBackingStore&, const Coordinate&);
-
+    Tile(TiledBackingStore&, const Coordinate&);
     ~Tile();
 
     bool isDirty() const;
@@ -58,8 +57,6 @@ public:
     virtual void paintToSurfaceContext(GraphicsContext*) override;
 
 private:
-    Tile(TiledBackingStore&, const Coordinate&);
-
     TiledBackingStore& m_tiledBackingStore;
     Coordinate m_coordinate;
     IntRect m_rect;
