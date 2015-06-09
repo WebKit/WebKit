@@ -74,9 +74,9 @@ namespace JSC {
 
     class StringSourceProvider : public SourceProvider {
     public:
-        static PassRefPtr<StringSourceProvider> create(const String& source, const String& url, const TextPosition& startPosition = TextPosition::minimumPosition())
+        static Ref<StringSourceProvider> create(const String& source, const String& url, const TextPosition& startPosition = TextPosition::minimumPosition())
         {
-            return adoptRef(new StringSourceProvider(source, url, startPosition));
+            return adoptRef(*new StringSourceProvider(source, url, startPosition));
         }
 
         virtual const String& source() const override

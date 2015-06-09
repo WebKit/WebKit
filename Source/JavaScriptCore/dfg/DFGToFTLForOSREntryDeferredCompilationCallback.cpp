@@ -45,11 +45,10 @@ ToFTLForOSREntryDeferredCompilationCallback::~ToFTLForOSREntryDeferredCompilatio
 {
 }
 
-PassRefPtr<ToFTLForOSREntryDeferredCompilationCallback>
-ToFTLForOSREntryDeferredCompilationCallback::create(
+Ref<ToFTLForOSREntryDeferredCompilationCallback>ToFTLForOSREntryDeferredCompilationCallback::create(
     PassRefPtr<CodeBlock> dfgCodeBlock)
 {
-    return adoptRef(new ToFTLForOSREntryDeferredCompilationCallback(dfgCodeBlock));
+    return adoptRef(*new ToFTLForOSREntryDeferredCompilationCallback(dfgCodeBlock));
 }
 
 void ToFTLForOSREntryDeferredCompilationCallback::compilationDidBecomeReadyAsynchronously(

@@ -35,7 +35,7 @@ namespace JSC {
 
 class JS_EXPORT_PRIVATE Profile : public RefCounted<Profile> {
 public:
-    static PassRefPtr<Profile> create(const String& title, unsigned uid, double);
+    static Ref<Profile> create(const String& title, unsigned uid, double);
     virtual ~Profile();
 
     const String& title() const { return m_title; }

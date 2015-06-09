@@ -108,26 +108,26 @@ protected:
     }
 
     template <class Subclass>
-    static PassRefPtr<Subclass> create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
+    static RefPtr<Subclass> create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
     {
         RefPtr<ArrayBuffer> buf(buffer);
         if (!verifySubRange<T>(buf, byteOffset, length))
-            return 0;
+            return nullptr;
 
         return adoptRef(new Subclass(buf.release(), byteOffset, length));
     }
 
     template <class Subclass>
-    static PassRefPtr<Subclass> createUninitialized(unsigned length)
+    static RefPtr<Subclass> createUninitialized(unsigned length)
     {
         RefPtr<ArrayBuffer> buffer = ArrayBuffer::createUninitialized(length, sizeof(T));
         if (!buffer.get())
-            return 0;
+            return nullptr;
         return create<Subclass>(buffer.release(), 0, length);
     }
 
     template <class Subclass>
-    PassRefPtr<Subclass> subarrayImpl(int start, int end) const
+    RefPtr<Subclass> subarrayImpl(int start, int end) const
     {
         unsigned offset, length;
         calculateOffsetAndLength(start, end, m_length, &offset, &length);

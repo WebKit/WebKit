@@ -36,7 +36,7 @@ namespace Inspector {
 
 class JS_EXPORT_PRIVATE InjectedScriptHost : public RefCounted<InjectedScriptHost> {
 public:
-    static PassRefPtr<InjectedScriptHost> create() { return adoptRef(new InjectedScriptHost); }
+    static Ref<InjectedScriptHost> create() { return adoptRef(*new InjectedScriptHost); }
     virtual ~InjectedScriptHost();
 
     virtual JSC::JSValue subtype(JSC::ExecState*, JSC::JSValue) { return JSC::jsUndefined(); }

@@ -41,9 +41,9 @@ using namespace JSC;
 
 struct OpaqueJSScript : public SourceProvider {
 public:
-    static WTF::PassRefPtr<OpaqueJSScript> create(VM* vm, const String& url, int startingLineNumber, const String& source)
+    static WTF::RefPtr<OpaqueJSScript> create(VM* vm, const String& url, int startingLineNumber, const String& source)
     {
-        return WTF::adoptRef(new OpaqueJSScript(vm, url, startingLineNumber, source));
+        return WTF::adoptRef(*new OpaqueJSScript(vm, url, startingLineNumber, source));
     }
 
     virtual const String& source() const override

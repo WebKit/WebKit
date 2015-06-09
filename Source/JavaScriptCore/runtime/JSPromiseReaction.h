@@ -61,7 +61,7 @@ private:
     WriteBarrier<Unknown> m_handler;
 };
 
-PassRefPtr<Microtask> createExecutePromiseReactionMicrotask(VM&, JSPromiseReaction*, JSValue);
+Ref<Microtask> createExecutePromiseReactionMicrotask(VM&, JSPromiseReaction*, JSValue);
 
 } // namespace JSC
 

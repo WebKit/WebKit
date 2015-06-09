@@ -201,7 +201,7 @@ VM& JSDOMWindowBase::commonVM()
     static VM* vm = nullptr;
     if (!vm) {
         ScriptController::initializeThreading();
-        vm = VM::createLeaked(LargeHeap).leakRef();
+        vm = &VM::createLeaked(LargeHeap).leakRef();
 #if !PLATFORM(IOS)
         vm->setExclusiveThread(std::this_thread::get_id());
 #else

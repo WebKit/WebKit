@@ -37,8 +37,8 @@ protected:
     DataView(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned byteLength);
     
 public:
-    JS_EXPORT_PRIVATE static PassRefPtr<DataView> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
-    static PassRefPtr<DataView> create(PassRefPtr<ArrayBuffer>);
+    JS_EXPORT_PRIVATE static Ref<DataView> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
+    static Ref<DataView> create(PassRefPtr<ArrayBuffer>);
     
     virtual unsigned byteLength() const override
     {

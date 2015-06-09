@@ -76,7 +76,7 @@ const GlobalObjectMethodTable JSC::javaScriptCoreAPIGlobalObjectMethodTable = { 
 JSContextGroupRef JSContextGroupCreate()
 {
     initializeThreading();
-    return toRef(VM::createContextGroup().leakRef());
+    return toRef(&VM::createContextGroup().leakRef());
 }
 
 JSContextGroupRef JSContextGroupRetain(JSContextGroupRef group)

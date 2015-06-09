@@ -49,7 +49,7 @@ protected:
     virtual double deathRate() override;
 };
 
-inline PassRefPtr<GCActivityCallback> GCActivityCallback::createFullTimer(Heap* heap)
+inline RefPtr<GCActivityCallback> GCActivityCallback::createFullTimer(Heap* heap)
 {
     return s_shouldCreateGCTimer ? adoptRef(new FullGCActivityCallback(heap)) : nullptr;
 }

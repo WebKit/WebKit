@@ -59,9 +59,9 @@ private:
     Strong<Unknown> m_argument;
 };
 
-PassRefPtr<Microtask> createExecutePromiseReactionMicrotask(VM& vm, JSPromiseReaction* reaction, JSValue argument)
+Ref<Microtask> createExecutePromiseReactionMicrotask(VM& vm, JSPromiseReaction* reaction, JSValue argument)
 {
-    return adoptRef(new ExecutePromiseReactionMicrotask(vm, reaction, argument));
+    return adoptRef(*new ExecutePromiseReactionMicrotask(vm, reaction, argument));
 }
 
 void ExecutePromiseReactionMicrotask::run(ExecState* exec)

@@ -213,9 +213,9 @@ public:
     JS_EXPORT_PRIVATE static bool sharedInstanceExists();
     JS_EXPORT_PRIVATE static VM& sharedInstance();
 
-    JS_EXPORT_PRIVATE static PassRefPtr<VM> create(HeapType = SmallHeap);
-    JS_EXPORT_PRIVATE static PassRefPtr<VM> createLeaked(HeapType = SmallHeap);
-    static PassRefPtr<VM> createContextGroup(HeapType = SmallHeap);
+    JS_EXPORT_PRIVATE static Ref<VM> create(HeapType = SmallHeap);
+    JS_EXPORT_PRIVATE static Ref<VM> createLeaked(HeapType = SmallHeap);
+    static Ref<VM> createContextGroup(HeapType = SmallHeap);
     JS_EXPORT_PRIVATE ~VM();
 
 private:

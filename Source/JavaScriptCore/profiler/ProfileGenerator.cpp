@@ -39,9 +39,9 @@
 
 namespace JSC {
 
-PassRefPtr<ProfileGenerator> ProfileGenerator::create(ExecState* exec, const String& title, unsigned uid, PassRefPtr<Stopwatch> stopwatch)
+Ref<ProfileGenerator> ProfileGenerator::create(ExecState* exec, const String& title, unsigned uid, PassRefPtr<Stopwatch> stopwatch)
 {
-    return adoptRef(new ProfileGenerator(exec, title, uid, stopwatch));
+    return adoptRef(*new ProfileGenerator(exec, title, uid, stopwatch));
 }
 
 ProfileGenerator::ProfileGenerator(ExecState* exec, const String& title, unsigned uid, PassRefPtr<Stopwatch> stopwatch)

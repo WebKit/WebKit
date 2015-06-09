@@ -37,9 +37,9 @@
 
 namespace Inspector {
 
-PassRefPtr<ScriptArguments> ScriptArguments::create(JSC::ExecState* scriptState, Vector<Deprecated::ScriptValue>& arguments)
+Ref<ScriptArguments> ScriptArguments::create(JSC::ExecState* scriptState, Vector<Deprecated::ScriptValue>& arguments)
 {
-    return adoptRef(new ScriptArguments(scriptState, arguments));
+    return adoptRef(*new ScriptArguments(scriptState, arguments));
 }
 
 ScriptArguments::ScriptArguments(JSC::ExecState* execState, Vector<Deprecated::ScriptValue>& arguments)

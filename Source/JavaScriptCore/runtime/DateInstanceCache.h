@@ -37,7 +37,7 @@ namespace JSC {
 
 class DateInstanceData : public RefCounted<DateInstanceData> {
 public:
-    static PassRefPtr<DateInstanceData> create() { return adoptRef(new DateInstanceData); }
+    static Ref<DateInstanceData> create() { return adoptRef(*new DateInstanceData); }
 
     double m_gregorianDateTimeCachedForMS;
     GregorianDateTime m_cachedGregorianDateTime;

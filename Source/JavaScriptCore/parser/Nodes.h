@@ -1634,7 +1634,7 @@ namespace JSC {
         WTF_MAKE_FAST_ALLOCATED;
         WTF_MAKE_NONCOPYABLE(FunctionParameters);
     public:
-        static PassRefPtr<FunctionParameters> create(ParameterNode*);
+        static Ref<FunctionParameters> create(ParameterNode*);
         ~FunctionParameters();
 
         unsigned size() const { return m_size; }
@@ -1782,7 +1782,7 @@ namespace JSC {
 
     class ArrayPatternNode : public DeconstructionPatternNode {
     public:
-        static PassRefPtr<ArrayPatternNode> create();
+        static Ref<ArrayPatternNode> create();
         void appendIndex(const JSTokenLocation&, DeconstructionPatternNode* node)
         {
             m_targetPatterns.append(node);
@@ -1800,7 +1800,7 @@ namespace JSC {
     
     class ObjectPatternNode : public DeconstructionPatternNode {
     public:
-        static PassRefPtr<ObjectPatternNode> create();
+        static Ref<ObjectPatternNode> create();
         void appendEntry(const JSTokenLocation&, const Identifier& identifier, bool wasString, DeconstructionPatternNode* pattern)
         {
             m_targetPatterns.append(Entry(identifier, wasString, pattern));
@@ -1827,7 +1827,7 @@ namespace JSC {
 
     class BindingNode : public DeconstructionPatternNode {
     public:
-        static PassRefPtr<BindingNode> create(const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end);
+        static Ref<BindingNode> create(const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end);
         const Identifier& boundProperty() const { return m_boundProperty; }
 
         const JSTextPosition& divotStart() const { return m_divotStart; }

@@ -31,9 +31,9 @@
 
 namespace JSC {
 
-PassRefPtr<Profile> Profile::create(const String& title, unsigned uid, double startTime)
+Ref<Profile> Profile::create(const String& title, unsigned uid, double startTime)
 {
-    return adoptRef(new Profile(title, uid, startTime));
+    return adoptRef(*new Profile(title, uid, startTime));
 }
 
 Profile::Profile(const String& title, unsigned uid, double startTime)

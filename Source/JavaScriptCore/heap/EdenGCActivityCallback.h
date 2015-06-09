@@ -49,7 +49,7 @@ protected:
     virtual double deathRate() override;
 };
 
-inline PassRefPtr<GCActivityCallback> GCActivityCallback::createEdenTimer(Heap* heap)
+inline RefPtr<GCActivityCallback> GCActivityCallback::createEdenTimer(Heap* heap)
 {
     return s_shouldCreateGCTimer ? adoptRef(new EdenGCActivityCallback(heap)) : nullptr;
 }

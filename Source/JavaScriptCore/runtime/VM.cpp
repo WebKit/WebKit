@@ -340,17 +340,17 @@ VM::~VM()
 #endif
 }
 
-PassRefPtr<VM> VM::createContextGroup(HeapType heapType)
+Ref<VM> VM::createContextGroup(HeapType heapType)
 {
-    return adoptRef(new VM(APIContextGroup, heapType));
+    return adoptRef(*new VM(APIContextGroup, heapType));
 }
 
-PassRefPtr<VM> VM::create(HeapType heapType)
+Ref<VM> VM::create(HeapType heapType)
 {
-    return adoptRef(new VM(Default, heapType));
+    return adoptRef(*new VM(Default, heapType));
 }
 
-PassRefPtr<VM> VM::createLeaked(HeapType heapType)
+Ref<VM> VM::createLeaked(HeapType heapType)
 {
     return create(heapType);
 }

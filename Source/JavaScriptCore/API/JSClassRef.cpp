@@ -108,9 +108,9 @@ OpaqueJSClass::~OpaqueJSClass()
         JSClassRelease(prototypeClass);
 }
 
-PassRefPtr<OpaqueJSClass> OpaqueJSClass::createNoAutomaticPrototype(const JSClassDefinition* definition)
+Ref<OpaqueJSClass> OpaqueJSClass::createNoAutomaticPrototype(const JSClassDefinition* definition)
 {
-    return adoptRef(new OpaqueJSClass(definition, 0));
+    return adoptRef(*new OpaqueJSClass(definition, 0));
 }
 
 PassRefPtr<OpaqueJSClass> OpaqueJSClass::create(const JSClassDefinition* clientDefinition)

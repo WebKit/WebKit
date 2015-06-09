@@ -51,7 +51,7 @@ namespace Inspector {
 
 class JS_EXPORT_PRIVATE ScriptArguments : public RefCounted<ScriptArguments> {
 public:
-    static PassRefPtr<ScriptArguments> create(JSC::ExecState*, Vector<Deprecated::ScriptValue>& arguments);
+    static Ref<ScriptArguments> create(JSC::ExecState*, Vector<Deprecated::ScriptValue>& arguments);
     ~ScriptArguments();
 
     const Deprecated::ScriptValue& argumentAt(size_t) const;

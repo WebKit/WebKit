@@ -33,7 +33,7 @@ class PropertyNameArrayData : public RefCounted<PropertyNameArrayData> {
 public:
     typedef Vector<Identifier, 20> PropertyNameVector;
 
-    static PassRefPtr<PropertyNameArrayData> create() { return adoptRef(new PropertyNameArrayData); }
+    static Ref<PropertyNameArrayData> create() { return adoptRef(*new PropertyNameArrayData); }
 
     PropertyNameVector& propertyNameVector() { return m_propertyNameVector; }
 

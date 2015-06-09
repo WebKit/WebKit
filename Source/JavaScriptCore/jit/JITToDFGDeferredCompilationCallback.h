@@ -42,7 +42,7 @@ protected:
 public:
     virtual ~JITToDFGDeferredCompilationCallback();
 
-    static PassRefPtr<JITToDFGDeferredCompilationCallback> create();
+    static Ref<JITToDFGDeferredCompilationCallback> create();
     
     virtual void compilationDidBecomeReadyAsynchronously(CodeBlock*) override;
     virtual void compilationDidComplete(CodeBlock*, CompilationResult) override;

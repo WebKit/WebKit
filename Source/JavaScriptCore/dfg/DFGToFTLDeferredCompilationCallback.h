@@ -45,8 +45,7 @@ protected:
 public:
     virtual ~ToFTLDeferredCompilationCallback();
 
-    static PassRefPtr<ToFTLDeferredCompilationCallback> create(
-        PassRefPtr<CodeBlock> dfgCodeBlock);
+    static Ref<ToFTLDeferredCompilationCallback> create(PassRefPtr<CodeBlock> dfgCodeBlock);
     
     virtual void compilationDidBecomeReadyAsynchronously(CodeBlock*);
     virtual void compilationDidComplete(CodeBlock*, CompilationResult);

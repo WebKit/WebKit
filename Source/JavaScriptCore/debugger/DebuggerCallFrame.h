@@ -46,9 +46,9 @@ class DebuggerCallFrame : public RefCounted<DebuggerCallFrame> {
 public:
     enum Type { ProgramType, FunctionType };
 
-    static PassRefPtr<DebuggerCallFrame> create(CallFrame* callFrame)
+    static Ref<DebuggerCallFrame> create(CallFrame* callFrame)
     {
-        return adoptRef(new DebuggerCallFrame(callFrame));
+        return adoptRef(*new DebuggerCallFrame(callFrame));
     }
 
     JS_EXPORT_PRIVATE explicit DebuggerCallFrame(CallFrame*);

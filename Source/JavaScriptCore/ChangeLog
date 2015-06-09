@@ -1,3 +1,101 @@
+2015-06-08  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Purge PassRefPtr in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=145750
+
+        As a step to purge PassRefPtr, this patch replaces PassRefPtr with Ref or RefPtr.
+
+        Reviewed by Darin Adler.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::createNoAutomaticPrototype):
+        * API/JSClassRef.h:
+        * API/JSContextRef.cpp:
+        * API/JSScriptRef.cpp:
+        (OpaqueJSScript::create):
+        * API/JSStringRef.cpp:
+        (JSStringCreateWithCharacters):
+        (JSStringCreateWithUTF8CString):
+        * API/OpaqueJSString.cpp:
+        (OpaqueJSString::create):
+        * API/OpaqueJSString.h:
+        (OpaqueJSString::create):
+        * bytecompiler/StaticPropertyAnalysis.h:
+        (JSC::StaticPropertyAnalysis::create):
+        * debugger/DebuggerCallFrame.h:
+        (JSC::DebuggerCallFrame::create):
+        * dfg/DFGToFTLDeferredCompilationCallback.cpp:
+        (JSC::DFG::ToFTLDeferredCompilationCallback::create):
+        * dfg/DFGToFTLDeferredCompilationCallback.h:
+        * dfg/DFGToFTLForOSREntryDeferredCompilationCallback.cpp:
+        (JSC::DFG::Ref<ToFTLForOSREntryDeferredCompilationCallback>ToFTLForOSREntryDeferredCompilationCallback::create):
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::create): Deleted.
+        * dfg/DFGToFTLForOSREntryDeferredCompilationCallback.h:
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::create):
+        (JSC::DFG::ensureGlobalDFGWorklist):
+        (JSC::DFG::ensureGlobalFTLWorklist):
+        * dfg/DFGWorklist.h:
+        * heap/EdenGCActivityCallback.h:
+        (JSC::GCActivityCallback::createEdenTimer):
+        * heap/FullGCActivityCallback.h:
+        (JSC::GCActivityCallback::createFullTimer):
+        * heap/GCActivityCallback.h:
+        * inspector/InjectedScriptHost.h:
+        * inspector/JavaScriptCallFrame.h:
+        (Inspector::JavaScriptCallFrame::create):
+        * inspector/ScriptArguments.cpp:
+        (Inspector::ScriptArguments::create):
+        * inspector/ScriptArguments.h:
+        * jit/JITStubRoutine.h:
+        (JSC::JITStubRoutine::createSelfManagedRoutine):
+        * jit/JITToDFGDeferredCompilationCallback.cpp:
+        (JSC::JITToDFGDeferredCompilationCallback::create):
+        * jit/JITToDFGDeferredCompilationCallback.h:
+        * jsc.cpp:
+        (jscmain):
+        * parser/NodeConstructors.h:
+        (JSC::ArrayPatternNode::create):
+        (JSC::ObjectPatternNode::create):
+        (JSC::BindingNode::create):
+        * parser/Nodes.cpp:
+        (JSC::FunctionParameters::create):
+        * parser/Nodes.h:
+        * parser/SourceProvider.h:
+        (JSC::StringSourceProvider::create):
+        * profiler/Profile.cpp:
+        (JSC::Profile::create):
+        * profiler/Profile.h:
+        * profiler/ProfileGenerator.cpp:
+        (JSC::ProfileGenerator::create):
+        * profiler/ProfileGenerator.h:
+        * profiler/ProfileNode.h:
+        (JSC::ProfileNode::create):
+        * runtime/DataView.cpp:
+        (JSC::DataView::create):
+        * runtime/DataView.h:
+        * runtime/DateInstanceCache.h:
+        (JSC::DateInstanceData::create):
+        * runtime/JSPromiseReaction.cpp:
+        (JSC::createExecutePromiseReactionMicrotask):
+        * runtime/JSPromiseReaction.h:
+        * runtime/PropertyNameArray.h:
+        (JSC::PropertyNameArrayData::create):
+        * runtime/TypeSet.h:
+        (JSC::StructureShape::create):
+        (JSC::TypeSet::create):
+        * runtime/TypedArrayBase.h:
+        (JSC::TypedArrayBase::create):
+        (JSC::TypedArrayBase::createUninitialized):
+        (JSC::TypedArrayBase::subarrayImpl):
+        * runtime/VM.cpp:
+        (JSC::VM::createContextGroup):
+        (JSC::VM::create):
+        (JSC::VM::createLeaked):
+        * runtime/VM.h:
+        * yarr/RegularExpression.cpp:
+        (JSC::Yarr::RegularExpression::Private::create):
+
 2015-06-08  Filip Pizlo  <fpizlo@apple.com>
 
         It should be possible to hoist all constants in DFG SSA

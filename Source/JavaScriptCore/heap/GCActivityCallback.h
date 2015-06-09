@@ -30,7 +30,7 @@
 #define GCActivityCallback_h
 
 #include "HeapTimer.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 #if USE(CF)
 #include <CoreFoundation/CoreFoundation.h>
@@ -43,8 +43,8 @@ class Heap;
 class JS_EXPORT_PRIVATE GCActivityCallback : public HeapTimer, public ThreadSafeRefCounted<GCActivityCallback> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<GCActivityCallback> createFullTimer(Heap*);
-    static PassRefPtr<GCActivityCallback> createEdenTimer(Heap*);
+    static RefPtr<GCActivityCallback> createFullTimer(Heap*);
+    static RefPtr<GCActivityCallback> createEdenTimer(Heap*);
 
     GCActivityCallback(Heap*);
 

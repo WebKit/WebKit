@@ -38,9 +38,9 @@ namespace Inspector {
 
 class JavaScriptCallFrame : public RefCounted<JavaScriptCallFrame> {
 public:
-    static PassRefPtr<JavaScriptCallFrame> create(PassRefPtr<JSC::DebuggerCallFrame> debuggerCallFrame)
+    static Ref<JavaScriptCallFrame> create(PassRefPtr<JSC::DebuggerCallFrame> debuggerCallFrame)
     {
-        return adoptRef(new JavaScriptCallFrame(debuggerCallFrame));
+        return adoptRef(*new JavaScriptCallFrame(debuggerCallFrame));
     }
 
     JavaScriptCallFrame* caller();

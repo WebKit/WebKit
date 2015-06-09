@@ -68,9 +68,9 @@ void Worklist::finishCreation(unsigned numberOfThreads, int relativePriority)
     }
 }
 
-PassRefPtr<Worklist> Worklist::create(CString worklistName, unsigned numberOfThreads, int relativePriority)
+Ref<Worklist> Worklist::create(CString worklistName, unsigned numberOfThreads, int relativePriority)
 {
-    RefPtr<Worklist> result = adoptRef(new Worklist(worklistName));
+    Ref<Worklist> result = adoptRef(*new Worklist(worklistName));
     result->finishCreation(numberOfThreads, relativePriority);
     return result;
 }
@@ -406,7 +406,7 @@ Worklist* ensureGlobalDFGWorklist()
 {
     static std::once_flag initializeGlobalWorklistOnceFlag;
     std::call_once(initializeGlobalWorklistOnceFlag, [] {
-        theGlobalDFGWorklist = Worklist::create("DFG Worklist", Options::numberOfDFGCompilerThreads(), Options::priorityDeltaOfDFGCompilerThreads()).leakRef();
+        theGlobalDFGWorklist = &Worklist::create("DFG Worklist", Options::numberOfDFGCompilerThreads(), Options::priorityDeltaOfDFGCompilerThreads()).leakRef();
     });
     return theGlobalDFGWorklist;
 }
@@ -422,7 +422,7 @@ Worklist* ensureGlobalFTLWorklist()
 {
     static std::once_flag initializeGlobalWorklistOnceFlag;
     std::call_once(initializeGlobalWorklistOnceFlag, [] {
-        theGlobalFTLWorklist = Worklist::create("FTL Worklist", Options::numberOfFTLCompilerThreads(), Options::priorityDeltaOfFTLCompilerThreads()).leakRef();
+        theGlobalFTLWorklist = &Worklist::create("FTL Worklist", Options::numberOfFTLCompilerThreads(), Options::priorityDeltaOfFTLCompilerThreads()).leakRef();
     });
     return theGlobalFTLWorklist;
 }

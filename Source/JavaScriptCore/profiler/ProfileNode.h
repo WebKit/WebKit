@@ -44,14 +44,14 @@ namespace JSC {
 
     class ProfileNode : public RefCounted<ProfileNode> {
     public:
-        static PassRefPtr<ProfileNode> create(ExecState* callerCallFrame, const CallIdentifier& callIdentifier, ProfileNode* parentNode)
+        static Ref<ProfileNode> create(ExecState* callerCallFrame, const CallIdentifier& callIdentifier, ProfileNode* parentNode)
         {
-            return adoptRef(new ProfileNode(callerCallFrame, callIdentifier, parentNode));
+            return adoptRef(*new ProfileNode(callerCallFrame, callIdentifier, parentNode));
         }
 
-        static PassRefPtr<ProfileNode> create(ExecState* callerCallFrame, ProfileNode* node)
+        static Ref<ProfileNode> create(ExecState* callerCallFrame, ProfileNode* node)
         {
-            return adoptRef(new ProfileNode(callerCallFrame, node));
+            return adoptRef(*new ProfileNode(callerCallFrame, node));
         }
 
         struct Call {

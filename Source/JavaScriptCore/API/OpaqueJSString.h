@@ -36,22 +36,22 @@ namespace JSC {
 }
 
 struct OpaqueJSString : public ThreadSafeRefCounted<OpaqueJSString> {
-    static PassRefPtr<OpaqueJSString> create()
+    static Ref<OpaqueJSString> create()
     {
-        return adoptRef(new OpaqueJSString);
+        return adoptRef(*new OpaqueJSString);
     }
 
-    static PassRefPtr<OpaqueJSString> create(const LChar* characters, unsigned length)
+    static Ref<OpaqueJSString> create(const LChar* characters, unsigned length)
     {
-        return adoptRef(new OpaqueJSString(characters, length));
+        return adoptRef(*new OpaqueJSString(characters, length));
     }
 
-    static PassRefPtr<OpaqueJSString> create(const UChar* characters, unsigned length)
+    static Ref<OpaqueJSString> create(const UChar* characters, unsigned length)
     {
-        return adoptRef(new OpaqueJSString(characters, length));
+        return adoptRef(*new OpaqueJSString(characters, length));
     }
 
-    JS_EXPORT_PRIVATE static PassRefPtr<OpaqueJSString> create(const String&);
+    JS_EXPORT_PRIVATE static RefPtr<OpaqueJSString> create(const String&);
 
     JS_EXPORT_PRIVATE ~OpaqueJSString();
 

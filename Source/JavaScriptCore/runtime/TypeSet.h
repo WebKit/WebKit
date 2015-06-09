@@ -53,7 +53,7 @@ class StructureShape : public RefCounted<StructureShape> {
 public:
     StructureShape();
 
-    static PassRefPtr<StructureShape> create() { return adoptRef(new StructureShape); }
+    static Ref<StructureShape> create() { return adoptRef(*new StructureShape); }
     String propertyHash();
     void markAsFinal();
     void addProperty(UniquedStringImpl&);
@@ -82,7 +82,7 @@ private:
 class TypeSet : public RefCounted<TypeSet> {
 
 public:
-    static PassRefPtr<TypeSet> create() { return adoptRef(new TypeSet); }
+    static Ref<TypeSet> create() { return adoptRef(*new TypeSet); }
     TypeSet();
     void addTypeInformation(RuntimeType, PassRefPtr<StructureShape>, Structure*);
     void invalidateCache();

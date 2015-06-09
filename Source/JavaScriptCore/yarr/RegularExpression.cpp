@@ -37,9 +37,9 @@ namespace JSC { namespace Yarr {
 
 class RegularExpression::Private : public RefCounted<RegularExpression::Private> {
 public:
-    static PassRefPtr<Private> create(const String& pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode)
+    static Ref<Private> create(const String& pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode)
     {
-        return adoptRef(new Private(pattern, caseSensitivity, multilineMode));
+        return adoptRef(*new Private(pattern, caseSensitivity, multilineMode));
     }
 
     int lastMatchLength;

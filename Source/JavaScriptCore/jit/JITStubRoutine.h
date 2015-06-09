@@ -60,10 +60,10 @@ public:
     
     // Use this if you want to pass a CodePtr to someone who insists on taking
     // a RefPtr<JITStubRoutine>.
-    static PassRefPtr<JITStubRoutine> createSelfManagedRoutine(
+    static Ref<JITStubRoutine> createSelfManagedRoutine(
         MacroAssemblerCodePtr rawCodePointer)
     {
-        return adoptRef(new JITStubRoutine(MacroAssemblerCodeRef::createSelfManagedCodeRef(rawCodePointer)));
+        return adoptRef(*new JITStubRoutine(MacroAssemblerCodeRef::createSelfManagedCodeRef(rawCodePointer)));
     }
     
     virtual ~JITStubRoutine();

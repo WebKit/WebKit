@@ -37,13 +37,13 @@ DataView::DataView(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned
 {
 }
 
-PassRefPtr<DataView> DataView::create(
+Ref<DataView> DataView::create(
     PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned byteLength)
 {
-    return adoptRef(new DataView(buffer, byteOffset, byteLength));
+    return adoptRef(*new DataView(buffer, byteOffset, byteLength));
 }
 
-PassRefPtr<DataView> DataView::create(PassRefPtr<ArrayBuffer> passedBuffer)
+Ref<DataView> DataView::create(PassRefPtr<ArrayBuffer> passedBuffer)
 {
     RefPtr<ArrayBuffer> buffer = passedBuffer;
     return create(buffer, 0, buffer->byteLength());

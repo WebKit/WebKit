@@ -519,7 +519,7 @@ static void parseArguments(int argc, char** argv, CommandLine& options)
 
 int realMain(int argc, char** argv)
 {
-    VM* vm = VM::create(LargeHeap).leakRef();
+    VM* vm = &VM::create(LargeHeap).leakRef();
     JSLockHolder locker(vm);
 
     CommandLine options;

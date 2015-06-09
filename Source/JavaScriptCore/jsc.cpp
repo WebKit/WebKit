@@ -1504,7 +1504,7 @@ int jscmain(int argc, char** argv)
     // Note that the options parsing can affect VM creation, and thus
     // comes first.
     CommandLine options(argc, argv);
-    VM* vm = VM::create(LargeHeap).leakRef();
+    VM* vm = &VM::create(LargeHeap).leakRef();
     int result;
     {
         JSLockHolder locker(vm);
