@@ -29,6 +29,7 @@
 #if ENABLE(NETWORK_CACHE)
 
 #include "NetworkCacheFileSystemPosix.h"
+#include <wtf/MainThread.h>
 #include <wtf/gobject/GMainLoopSource.h>
 #include <wtf/gobject/GMutexLocker.h>
 #include <wtf/gobject/GUniquePtr.h>
@@ -102,6 +103,7 @@ static void fillDataFromReadBuffer(SoupBuffer* readBuffer, size_t size, Data& da
 struct ReadAsyncData {
     RefPtr<IOChannel> channel;
     GRefPtr<SoupBuffer> buffer;
+    RefPtr<WorkQueue> queue;
     size_t bytesToRead;
     std::function<void (Data&, int error)> completionHandler;
     Data data;
@@ -112,12 +114,22 @@ static void inputStreamReadReadyCallback(GInputStream* stream, GAsyncResult* res
     std::unique_ptr<ReadAsyncData> asyncData(static_cast<ReadAsyncData*>(userData));
     gssize bytesRead = g_input_stream_read_finish(stream, result, nullptr);
     if (bytesRead == -1) {
-        asyncData->completionHandler(asyncData->data, -1);
+        WorkQueue* queue = asyncData->queue.get();
+        auto* asyncDataPtr = asyncData.release();
+        runTaskInQueue([asyncDataPtr] {
+            std::unique_ptr<ReadAsyncData> asyncData(asyncDataPtr);
+            asyncData->completionHandler(asyncData->data, -1);
+        }, queue);
         return;
     }
 
     if (!bytesRead) {
-        asyncData->completionHandler(asyncData->data, 0);
+        WorkQueue* queue = asyncData->queue.get();
+        auto* asyncDataPtr = asyncData.release();
+        runTaskInQueue([asyncDataPtr] {
+            std::unique_ptr<ReadAsyncData> asyncData(asyncDataPtr);
+            asyncData->completionHandler(asyncData->data, 0);
+        }, queue);
         return;
     }
 
@@ -126,7 +138,12 @@ static void inputStreamReadReadyCallback(GInputStream* stream, GAsyncResult* res
 
     size_t pendingBytesToRead = asyncData->bytesToRead - asyncData->data.size();
     if (!pendingBytesToRead) {
-        asyncData->completionHandler(asyncData->data, 0);
+        WorkQueue* queue = asyncData->queue.get();
+        auto* asyncDataPtr = asyncData.release();
+        runTaskInQueue([asyncDataPtr] {
+            std::unique_ptr<ReadAsyncData> asyncData(asyncDataPtr);
+            asyncData->completionHandler(asyncData->data, 0);
+        }, queue);
         return;
     }
 
@@ -137,38 +154,44 @@ static void inputStreamReadReadyCallback(GInputStream* stream, GAsyncResult* res
         reinterpret_cast<GAsyncReadyCallback>(inputStreamReadReadyCallback), asyncData.release());
 }
 
-void IOChannel::read(size_t offset, size_t size, std::function<void (Data&, int error)> completionHandler)
+void IOChannel::read(size_t offset, size_t size, WorkQueue* queue, std::function<void (Data&, int error)> completionHandler)
 {
+    RefPtr<IOChannel> channel(this);
     if (!m_inputStream) {
-        Data data;
-        completionHandler(data, -1);
+        runTaskInQueue([channel, completionHandler] {
+            Data data;
+            completionHandler(data, -1);
+        }, queue);
         return;
     }
 
     size_t bufferSize = std::min(size, gDefaultReadBufferSize);
     uint8_t* bufferData = static_cast<uint8_t*>(fastMalloc(bufferSize));
     GRefPtr<SoupBuffer> buffer = adoptGRef(soup_buffer_new_with_owner(bufferData, bufferSize, bufferData, fastFree));
-    ReadAsyncData* asyncData = new ReadAsyncData { this, buffer.get(), size, completionHandler, { } };
+    ReadAsyncData* asyncData = new ReadAsyncData { this, buffer.get(), queue, size, completionHandler, { } };
 
     // FIXME: implement offset.
     g_input_stream_read_async(m_inputStream.get(), const_cast<char*>(buffer->data), bufferSize, G_PRIORITY_DEFAULT, nullptr,
         reinterpret_cast<GAsyncReadyCallback>(inputStreamReadReadyCallback), asyncData);
 }
 
-void IOChannel::read(size_t offset, size_t size, WorkQueue* queue, std::function<void (Data&, int error)> completionHandler)
-{
-    RefPtr<IOChannel> channel(this);
-    runTaskInQueue([channel, offset, size, completionHandler] {
-        channel->read(offset, size, completionHandler);
-    }, queue);
-}
-
 // FIXME: It would be better to do without this.
-void IOChannel::readSync(size_t offset, size_t size, std::function<void (Data&, int error)> completionHandler)
+void IOChannel::readSync(size_t offset, size_t size, WorkQueue* queue, std::function<void (Data&, int error)> completionHandler)
 {
+    ASSERT(!isMainThread());
+
+    static GMutex mutex;
+    static GCond condition;
+    WTF::GMutexLocker<GMutex> lock(mutex);
+    RefPtr<IOChannel> channel(this);
+
     if (!m_inputStream) {
-        Data data;
-        completionHandler(data, -1);
+        runTaskInQueue([channel, completionHandler] {
+            Data data;
+            completionHandler(data, -1);
+            g_cond_signal(&condition);
+        }, queue);
+        g_cond_wait(&condition, &mutex);
         return;
     }
 
@@ -196,18 +219,8 @@ void IOChannel::readSync(size_t offset, size_t size, std::function<void (Data&, 
         bytesToRead = std::min(pendingBytesToRead, readBuffer->length);
     } while (pendingBytesToRead);
 
-    completionHandler(data, 0);
-}
-
-void IOChannel::readSync(size_t offset, size_t size, WorkQueue* queue, std::function<void (Data&, int error)> completionHandler)
-{
-    static GMutex mutex;
-    static GCond condition;
-
-    WTF::GMutexLocker<GMutex> lock(mutex);
-    RefPtr<IOChannel> channel(this);
-    runTaskInQueue([channel, offset, size, completionHandler] {
-        channel->readSync(offset, size, completionHandler);
+    runTaskInQueue([channel, &data, completionHandler] {
+        completionHandler(data, 0);
         g_cond_signal(&condition);
     }, queue);
     g_cond_wait(&condition, &mutex);
@@ -216,6 +229,7 @@ void IOChannel::readSync(size_t offset, size_t size, WorkQueue* queue, std::func
 struct WriteAsyncData {
     RefPtr<IOChannel> channel;
     GRefPtr<SoupBuffer> buffer;
+    RefPtr<WorkQueue> queue;
     std::function<void (int error)> completionHandler;
 };
 
@@ -224,13 +238,23 @@ static void outputStreamWriteReadyCallback(GOutputStream* stream, GAsyncResult* 
     std::unique_ptr<WriteAsyncData> asyncData(static_cast<WriteAsyncData*>(userData));
     gssize bytesWritten = g_output_stream_write_finish(stream, result, nullptr);
     if (bytesWritten == -1) {
-        asyncData->completionHandler(-1);
+        WorkQueue* queue = asyncData->queue.get();
+        auto* asyncDataPtr = asyncData.release();
+        runTaskInQueue([asyncDataPtr] {
+            std::unique_ptr<WriteAsyncData> asyncData(asyncDataPtr);
+            asyncData->completionHandler(-1);
+        }, queue);
         return;
     }
 
     gssize pendingBytesToWrite = asyncData->buffer->length - bytesWritten;
     if (!pendingBytesToWrite) {
-        asyncData->completionHandler(0);
+        WorkQueue* queue = asyncData->queue.get();
+        auto* asyncDataPtr = asyncData.release();
+        runTaskInQueue([asyncDataPtr] {
+            std::unique_ptr<WriteAsyncData> asyncData(asyncDataPtr);
+            asyncData->completionHandler(0);
+        }, queue);
         return;
     }
 
@@ -241,31 +265,28 @@ static void outputStreamWriteReadyCallback(GOutputStream* stream, GAsyncResult* 
         reinterpret_cast<GAsyncReadyCallback>(outputStreamWriteReadyCallback), asyncData.release());
 }
 
-void IOChannel::write(size_t offset, const Data& data, std::function<void (int error)> completionHandler)
+void IOChannel::write(size_t offset, const Data& data, WorkQueue* queue, std::function<void (int error)> completionHandler)
 {
+    RefPtr<IOChannel> channel(this);
     if (!m_outputStream && !m_ioStream) {
-        completionHandler(-1);
+        runTaskInQueue([channel, completionHandler] {
+            completionHandler(-1);
+        }, queue);
         return;
     }
 
     GOutputStream* stream = m_outputStream ? m_outputStream.get() : g_io_stream_get_output_stream(G_IO_STREAM(m_ioStream.get()));
     if (!stream) {
-        completionHandler(-1);
+        runTaskInQueue([channel, completionHandler] {
+            completionHandler(-1);
+        }, queue);
         return;
     }
 
-    WriteAsyncData* asyncData = new WriteAsyncData { this, data.soupBuffer(), completionHandler };
+    WriteAsyncData* asyncData = new WriteAsyncData { this, data.soupBuffer(), queue, completionHandler };
     // FIXME: implement offset.
     g_output_stream_write_async(stream, asyncData->buffer->data, data.size(), G_PRIORITY_DEFAULT, nullptr,
         reinterpret_cast<GAsyncReadyCallback>(outputStreamWriteReadyCallback), asyncData);
-}
-
-void IOChannel::write(size_t offset, const Data& data, WorkQueue* queue, std::function<void (int error)> completionHandler)
-{
-    RefPtr<IOChannel> channel(this);
-    runTaskInQueue([channel, offset, data, completionHandler] {
-        channel->write(offset, data, completionHandler);
-    }, queue);
 }
 
 } // namespace NetworkCache

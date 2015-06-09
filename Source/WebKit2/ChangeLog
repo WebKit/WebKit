@@ -1,3 +1,25 @@
+2015-06-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Network Cache: run the IO completion handler in the given queue instead of the whole operation
+        https://bugs.webkit.org/show_bug.cgi?id=145797
+
+        Reviewed by Žan Doberšek.
+
+        I misunderstood what the WorkQueue parameter meant in the IO
+        channel operations. It's the queue where the completion handler
+        should be run, not the whole operation. Since our operations are
+        already non-blocking, we can just run the read/writes in the main
+        thread, and schedule the completion handler in the given work
+        queue when the operation finishes.
+
+        * NetworkProcess/cache/NetworkCacheIOChannel.h:
+        * NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp:
+        (WebKit::NetworkCache::inputStreamReadReadyCallback):
+        (WebKit::NetworkCache::IOChannel::read):
+        (WebKit::NetworkCache::IOChannel::readSync):
+        (WebKit::NetworkCache::outputStreamWriteReadyCallback):
+        (WebKit::NetworkCache::IOChannel::write):
+
 2015-06-09  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r185357): Fix build for iOS 8.x
