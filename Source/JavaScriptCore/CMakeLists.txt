@@ -154,6 +154,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGCompilationKey.cpp
     dfg/DFGCompilationMode.cpp
     dfg/DFGConstantFoldingPhase.cpp
+    dfg/DFGConstantHoistingPhase.cpp
     dfg/DFGCriticalEdgeBreakingPhase.cpp
     dfg/DFGDCEPhase.cpp
     dfg/DFGDesiredIdentifiers.cpp

@@ -37,6 +37,7 @@
 #include "DFGCSEPhase.h"
 #include "DFGCleanUpPhase.h"
 #include "DFGConstantFoldingPhase.h"
+#include "DFGConstantHoistingPhase.h"
 #include "DFGCriticalEdgeBreakingPhase.h"
 #include "DFGDCEPhase.h"
 #include "DFGFailedFinalizer.h"
@@ -353,6 +354,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performArgumentsElimination(dfg);
         performPutStackSinking(dfg);
         
+        performConstantHoisting(dfg);
         performGlobalCSE(dfg);
         performLivenessAnalysis(dfg);
         performCFA(dfg);

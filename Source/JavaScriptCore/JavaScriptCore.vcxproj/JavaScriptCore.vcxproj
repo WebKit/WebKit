@@ -389,6 +389,7 @@
     <ClCompile Include="..\dfg\DFGCompilationKey.cpp" />
     <ClCompile Include="..\dfg\DFGCompilationMode.cpp" />
     <ClCompile Include="..\dfg\DFGConstantFoldingPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGConstantHoistingPhase.cpp" />
     <ClCompile Include="..\dfg\DFGCPSRethreadingPhase.cpp" />
     <ClCompile Include="..\dfg\DFGCriticalEdgeBreakingPhase.cpp" />
     <ClCompile Include="..\dfg\DFGCSEPhase.cpp" />
@@ -1074,6 +1075,7 @@
     <ClInclude Include="..\dfg\DFGCompilationKey.h" />
     <ClInclude Include="..\dfg\DFGCompilationMode.h" />
     <ClInclude Include="..\dfg\DFGConstantFoldingPhase.h" />
+    <ClInclude Include="..\dfg\DFGConstantHoistingPhase.h" />
     <ClInclude Include="..\dfg\DFGCPSRethreadingPhase.h" />
     <ClInclude Include="..\dfg\DFGCriticalEdgeBreakingPhase.h" />
     <ClInclude Include="..\dfg\DFGCSEPhase.h" />

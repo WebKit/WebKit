@@ -674,6 +674,8 @@
 		0FEA0A33170D40BF00BB722C /* DFGJITCode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA0A2F170D40BF00BB722C /* DFGJITCode.cpp */; };
 		0FEA0A34170D40BF00BB722C /* DFGJITCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA0A30170D40BF00BB722C /* DFGJITCode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEB3ECF16237F6C00AB67AD /* MacroAssembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEB3ECE16237F6700AB67AD /* MacroAssembler.cpp */; };
+		0FED67B91B26256D0066CE15 /* DFGConstantHoistingPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FED67B71B26256D0066CE15 /* DFGConstantHoistingPhase.cpp */; };
+		0FED67BA1B26256D0066CE15 /* DFGConstantHoistingPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FED67B81B26256D0066CE15 /* DFGConstantHoistingPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEE98411A8865B700754E93 /* SetupVarargsFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEE98401A8865B600754E93 /* SetupVarargsFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEE98431A89227500754E93 /* SetupVarargsFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEE98421A89227500754E93 /* SetupVarargsFrame.cpp */; };
 		0FEFC9AA1681A3B300567F53 /* DFGOSRExitJumpPlaceholder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEFC9A71681A3B000567F53 /* DFGOSRExitJumpPlaceholder.cpp */; };
@@ -2431,6 +2433,8 @@
 		0FEA0A2F170D40BF00BB722C /* DFGJITCode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGJITCode.cpp; path = dfg/DFGJITCode.cpp; sourceTree = "<group>"; };
 		0FEA0A30170D40BF00BB722C /* DFGJITCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGJITCode.h; path = dfg/DFGJITCode.h; sourceTree = "<group>"; };
 		0FEB3ECE16237F6700AB67AD /* MacroAssembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacroAssembler.cpp; sourceTree = "<group>"; };
+		0FED67B71B26256D0066CE15 /* DFGConstantHoistingPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGConstantHoistingPhase.cpp; path = dfg/DFGConstantHoistingPhase.cpp; sourceTree = "<group>"; };
+		0FED67B81B26256D0066CE15 /* DFGConstantHoistingPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGConstantHoistingPhase.h; path = dfg/DFGConstantHoistingPhase.h; sourceTree = "<group>"; };
 		0FEE98401A8865B600754E93 /* SetupVarargsFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetupVarargsFrame.h; sourceTree = "<group>"; };
 		0FEE98421A89227500754E93 /* SetupVarargsFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetupVarargsFrame.cpp; sourceTree = "<group>"; };
 		0FEFC9A71681A3B000567F53 /* DFGOSRExitJumpPlaceholder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGOSRExitJumpPlaceholder.cpp; path = dfg/DFGOSRExitJumpPlaceholder.cpp; sourceTree = "<group>"; };
@@ -4922,6 +4926,8 @@
 				0F38B01617CFE75500B144D3 /* DFGCompilationMode.h */,
 				0F3B3A17153E68EF003ED0FF /* DFGConstantFoldingPhase.cpp */,
 				0F3B3A18153E68EF003ED0FF /* DFGConstantFoldingPhase.h */,
+				0FED67B71B26256D0066CE15 /* DFGConstantHoistingPhase.cpp */,
+				0FED67B81B26256D0066CE15 /* DFGConstantHoistingPhase.h */,
 				0FBE0F6B16C1DB010082C5E8 /* DFGCPSRethreadingPhase.cpp */,
 				0FBE0F6C16C1DB010082C5E8 /* DFGCPSRethreadingPhase.h */,
 				A7D89CE617A0B8CC00773AD8 /* DFGCriticalEdgeBreakingPhase.cpp */,
@@ -5982,6 +5988,7 @@
 				0FEA0A241709606900BB722C /* FTLIntrinsicRepository.h in Headers */,
 				0FEA0A0E170513DB00BB722C /* FTLJITCode.h in Headers */,
 				A78A9781179738D5009DF744 /* FTLJITFinalizer.h in Headers */,
+				0FED67BA1B26256D0066CE15 /* DFGConstantHoistingPhase.h in Headers */,
 				0F6B1CB6185FC9E900845D97 /* FTLJSCall.h in Headers */,
 				0F8F2B96172E04A3007DBDA5 /* FTLLink.h in Headers */,
 				0FCEFAE0180738C000472CE4 /* FTLLocation.h in Headers */,
@@ -7500,6 +7507,7 @@
 				14469DE6107EC7E700650446 /* ObjectPrototype.cpp in Sources */,
 				E124A8F80E555775003091F1 /* OpaqueJSString.cpp in Sources */,
 				969A079A0ED1D3AE00F1F681 /* Opcode.cpp in Sources */,
+				0FED67B91B26256D0066CE15 /* DFGConstantHoistingPhase.cpp in Sources */,
 				14280850107EC0D70013E7B2 /* Operations.cpp in Sources */,
 				0FE228EE1436AB2C00196C48 /* Options.cpp in Sources */,
 				148F21BC107EC54D0042EC2C /* Parser.cpp in Sources */,
