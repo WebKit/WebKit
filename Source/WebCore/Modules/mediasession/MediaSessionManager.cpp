@@ -24,62 +24,29 @@
  */
 
 #include "config.h"
-#include "MediaSession.h"
+#include "MediaSessionManager.h"
 
 #if ENABLE(MEDIA_SESSION)
 
-#include "HTMLMediaElement.h"
-#include "MediaSessionManager.h"
+#include "MediaSession.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-MediaSession::MediaSession(ScriptExecutionContext& context, const String& kind)
-    : m_kind(kind)
+MediaSessionManager& MediaSessionManager::singleton()
 {
-    if (m_kind == "content")
-        m_controls = adoptRef(*new MediaRemoteControls(context));
-
-    MediaSessionManager::singleton().addMediaSession(*this);
+    static NeverDestroyed<MediaSessionManager> manager;
+    return manager;
 }
 
-MediaSession::~MediaSession()
+void MediaSessionManager::addMediaSession(MediaSession& session)
 {
-    MediaSessionManager::singleton().removeMediaSession(*this);
+    m_sessions.add(&session);
 }
 
-MediaRemoteControls* MediaSession::controls(bool& isNull)
+void MediaSessionManager::removeMediaSession(MediaSession& session)
 {
-    MediaRemoteControls* controls = m_controls.get();
-    isNull = !controls;
-    return controls;
-}
-
-void MediaSession::addMediaElement(HTMLMediaElement& element)
-{
-    ASSERT(!m_participatingElements.contains(&element));
-    m_participatingElements.append(&element);
-}
-
-void MediaSession::removeMediaElement(HTMLMediaElement& element)
-{
-    ASSERT(m_participatingElements.contains(&element));
-    m_participatingElements.remove(m_participatingElements.find(&element));
-}
-
-Vector<HTMLMediaElement*> MediaSession::activeParticipatingElements() const
-{
-    Vector<HTMLMediaElement*> elements;
-
-    for (auto* element : m_participatingElements) {
-        if (element->isPlaying())
-            elements.append(element);
-    }
-
-    return elements;
-}
-
-void MediaSession::releaseSession()
-{
+    m_sessions.remove(&session);
 }
 
 }

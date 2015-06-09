@@ -5699,6 +5699,8 @@
 		C9027F421B1D0AD200BFBFEF /* MediaSession.h in Headers */ = {isa = PBXBuildFile; fileRef = C9027F401B1D0AD200BFBFEF /* MediaSession.h */; };
 		C90843CF1B18E47D00B68564 /* MediaRemoteControls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C90843CD1B18E47D00B68564 /* MediaRemoteControls.cpp */; };
 		C90843D01B18E47D00B68564 /* MediaRemoteControls.h in Headers */ = {isa = PBXBuildFile; fileRef = C90843CE1B18E47D00B68564 /* MediaRemoteControls.h */; };
+		C90F65551B2253B1002163A1 /* MediaSessionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C90F65531B225396002163A1 /* MediaSessionManager.cpp */; };
+		C90F65561B2253BE002163A1 /* MediaSessionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = C90F65541B225396002163A1 /* MediaSessionManager.h */; };
 		C937FE8D1B1F6821008ECC5D /* HTMLMediaElementMediaSession.h in Headers */ = {isa = PBXBuildFile; fileRef = C968B2E61B1E72F700EF1F81 /* HTMLMediaElementMediaSession.h */; };
 		C968B2E81B1E778100EF1F81 /* HTMLMediaElementMediaSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C968B2E71B1E778100EF1F81 /* HTMLMediaElementMediaSession.cpp */; };
 		C9DADBCB1B1D3B97001F17D8 /* JSMediaSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C9DADBC91B1D3B25001F17D8 /* JSMediaSession.cpp */; };
@@ -13270,6 +13272,8 @@
 		C9027F401B1D0AD200BFBFEF /* MediaSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaSession.h; sourceTree = "<group>"; };
 		C90843CD1B18E47D00B68564 /* MediaRemoteControls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaRemoteControls.cpp; sourceTree = "<group>"; };
 		C90843CE1B18E47D00B68564 /* MediaRemoteControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaRemoteControls.h; sourceTree = "<group>"; };
+		C90F65531B225396002163A1 /* MediaSessionManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSessionManager.cpp; sourceTree = "<group>"; };
+		C90F65541B225396002163A1 /* MediaSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaSessionManager.h; sourceTree = "<group>"; };
 		C93458BB1B18D77E0088EE12 /* MediaRemoteControls.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaRemoteControls.idl; sourceTree = "<group>"; };
 		C968B2E51B1E704500EF1F81 /* HTMLMediaElementMediaSession.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HTMLMediaElementMediaSession.idl; sourceTree = "<group>"; };
 		C968B2E61B1E72F700EF1F81 /* HTMLMediaElementMediaSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HTMLMediaElementMediaSession.h; sourceTree = "<group>"; };
@@ -14628,6 +14632,8 @@
 				C9027F3F1B1D0AD200BFBFEF /* MediaSession.cpp */,
 				C9027F401B1D0AD200BFBFEF /* MediaSession.h */,
 				C9027F3E1B1D0AB900BFBFEF /* MediaSession.idl */,
+				C90F65531B225396002163A1 /* MediaSessionManager.cpp */,
+				C90F65541B225396002163A1 /* MediaSessionManager.h */,
 				0709D78C1AE55554004E42F8 /* WebMediaSessionManager.cpp */,
 				0709D78D1AE55554004E42F8 /* WebMediaSessionManager.h */,
 				0709D7941AE55A29004E42F8 /* WebMediaSessionManagerClient.h */,
@@ -25867,6 +25873,7 @@
 				CEEFCD7A19DB31F7003876D7 /* MediaResourceLoader.h in Headers */,
 				CDBEAEAD19D92B6C00BEBA88 /* MediaSelectionGroupAVFObjC.h in Headers */,
 				C9027F421B1D0AD200BFBFEF /* MediaSession.h in Headers */,
+				C90F65561B2253BE002163A1 /* MediaSessionManager.h in Headers */,
 				07638A991884487200E15A1B /* MediaSessionManagerIOS.h in Headers */,
 				CD3A495F17A9D01B00274E42 /* MediaSource.h in Headers */,
 				CD641EB31818F5ED00EE4C41 /* MediaSourcePrivate.h in Headers */,
@@ -29456,6 +29463,7 @@
 				CEEFCD7919DB31F7003876D7 /* MediaResourceLoader.cpp in Sources */,
 				CDBEAEAC19D92B6C00BEBA88 /* MediaSelectionGroupAVFObjC.mm in Sources */,
 				C9027F411B1D0AD200BFBFEF /* MediaSession.cpp in Sources */,
+				C90F65551B2253B1002163A1 /* MediaSessionManager.cpp in Sources */,
 				07638A9A1884487200E15A1B /* MediaSessionManagerIOS.mm in Sources */,
 				07EDC3EE1AACB75D00983EB5 /* MediaSessionManagerMac.cpp in Sources */,
 				CD3A495E17A9D01B00274E42 /* MediaSource.cpp in Sources */,

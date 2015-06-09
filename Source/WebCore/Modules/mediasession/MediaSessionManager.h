@@ -23,65 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MediaSession.h"
+#ifndef MediaSessionManager_h
+#define MediaSessionManager_h
 
 #if ENABLE(MEDIA_SESSION)
 
-#include "HTMLMediaElement.h"
-#include "MediaSessionManager.h"
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 
-MediaSession::MediaSession(ScriptExecutionContext& context, const String& kind)
-    : m_kind(kind)
-{
-    if (m_kind == "content")
-        m_controls = adoptRef(*new MediaRemoteControls(context));
+class MediaSession;
 
-    MediaSessionManager::singleton().addMediaSession(*this);
-}
+class MediaSessionManager {
+public:
+    static MediaSessionManager& singleton();
 
-MediaSession::~MediaSession()
-{
-    MediaSessionManager::singleton().removeMediaSession(*this);
-}
+private:
+    friend class MediaSession;
 
-MediaRemoteControls* MediaSession::controls(bool& isNull)
-{
-    MediaRemoteControls* controls = m_controls.get();
-    isNull = !controls;
-    return controls;
-}
+    void addMediaSession(MediaSession&);
+    void removeMediaSession(MediaSession&);
 
-void MediaSession::addMediaElement(HTMLMediaElement& element)
-{
-    ASSERT(!m_participatingElements.contains(&element));
-    m_participatingElements.append(&element);
-}
+    HashSet<MediaSession*> m_sessions;
+};
 
-void MediaSession::removeMediaElement(HTMLMediaElement& element)
-{
-    ASSERT(m_participatingElements.contains(&element));
-    m_participatingElements.remove(m_participatingElements.find(&element));
-}
-
-Vector<HTMLMediaElement*> MediaSession::activeParticipatingElements() const
-{
-    Vector<HTMLMediaElement*> elements;
-
-    for (auto* element : m_participatingElements) {
-        if (element->isPlaying())
-            elements.append(element);
-    }
-
-    return elements;
-}
-
-void MediaSession::releaseSession()
-{
-}
-
-}
+} // namespace WebCore
 
 #endif /* ENABLE(MEDIA_SESSION) */
+
+#endif /* MediaSessionManager_h */
