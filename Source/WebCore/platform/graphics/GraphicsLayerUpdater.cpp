@@ -31,17 +31,19 @@
 
 namespace WebCore {
 
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 GraphicsLayerUpdater::GraphicsLayerUpdater(GraphicsLayerUpdaterClient& client, PlatformDisplayID displayID)
     : m_client(client)
 {
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     DisplayRefreshMonitorManager::sharedManager().registerClient(*this);
     DisplayRefreshMonitorManager::sharedManager().windowScreenDidChange(displayID, *this);
     DisplayRefreshMonitorManager::sharedManager().scheduleAnimation(*this);
-#else
-    UNUSED_PARAM(displayID);
-#endif
 }
+#else
+GraphicsLayerUpdater::GraphicsLayerUpdater(GraphicsLayerUpdaterClient&, PlatformDisplayID)
+{
+}
+#endif
 
 GraphicsLayerUpdater::~GraphicsLayerUpdater()
 {
