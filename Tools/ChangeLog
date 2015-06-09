@@ -1,3 +1,10 @@
+2015-06-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Partially revert and fix after r185243.
+
+        * Scripts/benchmark_runner/benchmark_runner.py:
+        * Scripts/run-benchmark:
+
 2015-06-08  Daniel Bates  <dabates@apple.com>
 
         Many LayoutTests/http tests time out in DumpRenderTree

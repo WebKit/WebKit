@@ -41,10 +41,10 @@ class BenchmarkRunner(object):
                 self.buildDir = os.path.abspath(buildDir) if buildDir else None
                 self.outputFile = outputFile
         except IOError as error:
-            _log.error('Can not open plan file: %s - Error %s' % planFile, error)
+            _log.error('Can not open plan file: %s - Error %s' % (planFile, error))
             raise error
         except ValueError as error:
-            _log.error('Plan file: %s may not follow JSON format - Error %s' % planFile, error)
+            _log.error('Plan file: %s may not follow JSON format - Error %s' % (planFile, error))
             raise error
 
     def _findPlanFile(self, planFile):
@@ -110,7 +110,7 @@ class BenchmarkRunner(object):
             with open(outputFile, 'w') as fp:
                 json.dump(results, fp)
         except IOError as error:
-            _log.error('Cannot open output file: %s - Error: %s' % outputFile, error)
+            _log.error('Cannot open output file: %s - Error: %s' % (outputFile, error))
             _log.error('Results are:\n %s', json.dumps(results))
 
     @classmethod
