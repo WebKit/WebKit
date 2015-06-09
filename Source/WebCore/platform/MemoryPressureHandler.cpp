@@ -139,19 +139,8 @@ void MemoryPressureHandler::releaseCriticalMemory(Synchronous synchronous)
     if (synchronous == Synchronous::Yes) {
         ReliefLogger log("Collecting JavaScript garbage");
         GCController::singleton().garbageCollectNow();
-    } else {
-        // FIXME: We should do a garbage sweep and prune dead resources from the MemoryCache
-        // after the garbage collection has completed to free up more memory.
-        GCController::singleton().garbageCollectSoon();
-
-        // Do a full sweep of collected objects. garbageCollectNow() already does this so we only
-        // need to do this if it isn't called.
-        {
-            ReliefLogger log("Full JavaScript garbage sweep");
-            JSC::JSLockHolder lock(JSDOMWindow::commonVM());
-            JSDOMWindow::commonVM().heap.sweeper()->fullSweep();
-        }
-    }
+    } else
+        GCController::singleton().garbageCollectNowIfNotDoneRecently();
 }
 
 void MemoryPressureHandler::releaseMemory(Critical critical, Synchronous synchronous)

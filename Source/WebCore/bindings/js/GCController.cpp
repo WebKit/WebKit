@@ -90,6 +90,17 @@ void GCController::garbageCollectNow()
     }
 }
 
+void GCController::garbageCollectNowIfNotDoneRecently()
+{
+#if USE(CF)
+    JSLockHolder lock(JSDOMWindow::commonVM());
+    if (!JSDOMWindow::commonVM().heap.isBusy())
+        JSDOMWindow::commonVM().heap.collectAllGarbageIfNotDoneRecently();
+#else
+    garbageCollectSoon();
+#endif
+}
+
 void GCController::garbageCollectOnAlternateThreadForDebugging(bool waitUntilDone)
 {
     ThreadIdentifier threadID = createThread(collect, 0, "WebCore: GCController");

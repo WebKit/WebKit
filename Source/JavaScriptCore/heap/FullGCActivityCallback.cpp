@@ -43,18 +43,19 @@ FullGCActivityCallback::FullGCActivityCallback(Heap* heap)
 
 void FullGCActivityCallback::doCollection()
 {
-    Heap* heap = &m_vm->heap;
+    Heap& heap = m_vm->heap;
+    m_didSyncGCRecently = false;
 
 #if !PLATFORM(IOS)
     double startTime = WTF::monotonicallyIncreasingTime();
-    if (heap->isPagedOut(startTime + pagingTimeOut)) {
+    if (heap.isPagedOut(startTime + pagingTimeOut)) {
         cancel();
-        heap->increaseLastFullGCLength(pagingTimeOut);
+        heap.increaseLastFullGCLength(pagingTimeOut);
         return;
     }
 #endif
 
-    heap->collect(FullCollection);
+    heap.collect(FullCollection);
 }
 
 double FullGCActivityCallback::lastGCLength()

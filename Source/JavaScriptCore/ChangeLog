@@ -1,3 +1,40 @@
+2015-06-09  Chris Dumez  <cdumez@apple.com>
+
+        Allow one sync GC per gcTimer interval on critical memory pressure warning
+        https://bugs.webkit.org/show_bug.cgi?id=145773
+
+        Reviewed by Geoffrey Garen.
+
+        On critical memory pressure warning, we were calling GCController::garbageCollectSoon(),
+        which does not offer any guarantee on when the garbage collection will actually take
+        place.
+
+        On critical memory pressure, we need to free up memory as soon as possible to avoid
+        getting killed so this is an issue. Also, the fact that we clear the PageCache on
+        critical memory pressure means a GC would likely be useful, even if the last
+        collection did not free much memory.
+
+        This patch adds a new GCController::garbageCollectNowIfNotDoneRecently() API that allows
+        one synchronous GC per gcTimer interval on critical memory pressure warning. This makes
+        us more responsive to critical memory pressure and avoids doing synchronous GCs too
+        often.
+
+        * heap/FullGCActivityCallback.cpp:
+        (JSC::FullGCActivityCallback::doCollection):
+        * heap/FullGCActivityCallback.h:
+        (JSC::GCActivityCallback::createFullTimer):
+        * heap/GCActivityCallback.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::collectAllGarbageIfNotDoneRecently):
+        * heap/Heap.h:
+
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::doWork): Deleted.
+        * heap/IncrementalSweeper.h:
+
+        Drop fullSweep() API as it no longer seems useful. garbageCollectNow()
+        already does a sweep after the full collection.
+
 2015-06-09  Andreas Kling  <akling@apple.com>
 
         [JSC] CodeBlock::m_constantRegisters should be sized-to-fit.

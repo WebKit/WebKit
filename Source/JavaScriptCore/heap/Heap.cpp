@@ -1408,6 +1408,23 @@ void Heap::addCompiledCode(ExecutableBase* executable)
     m_compiledCode.append(executable);
 }
 
+void Heap::collectAllGarbageIfNotDoneRecently()
+{
+    if (!m_fullActivityCallback) {
+        collectAllGarbage();
+        return;
+    }
+
+    if (m_fullActivityCallback->didSyncGCRecently()) {
+        // A synchronous GC was already requested recently so we merely accelerate next collection.
+        reportAbandonedObjectGraph();
+        return;
+    }
+
+    m_fullActivityCallback->setDidSyncGCRecently();
+    collectAllGarbage();
+}
+
 class Zombify : public MarkedBlock::VoidFunctor {
 public:
     inline void visit(JSCell* cell)

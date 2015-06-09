@@ -154,6 +154,7 @@ public:
     void notifyIsSafeToCollect() { m_isSafeToCollect = true; }
     bool isSafeToCollect() const { return m_isSafeToCollect; }
 
+    JS_EXPORT_PRIVATE void collectAllGarbageIfNotDoneRecently();
     void collectAllGarbage() { collectAndSweep(FullCollection); }
     JS_EXPORT_PRIVATE void collectAndSweep(HeapOperation collectionType = AnyCollection);
     bool shouldCollect();
@@ -394,7 +395,7 @@ private:
     Vector<WeakBlock*> m_logicallyEmptyWeakBlocks;
     size_t m_indexOfNextLogicallyEmptyWeakBlockToSweep { WTF::notFound };
     
-    RefPtr<GCActivityCallback> m_fullActivityCallback;
+    RefPtr<FullGCActivityCallback> m_fullActivityCallback;
     RefPtr<GCActivityCallback> m_edenActivityCallback;
     std::unique_ptr<IncrementalSweeper> m_sweeper;
     Vector<MarkedBlock*> m_blockSnapshot;

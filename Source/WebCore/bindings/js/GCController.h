@@ -40,6 +40,7 @@ public:
 
     WEBCORE_EXPORT void garbageCollectSoon();
     WEBCORE_EXPORT void garbageCollectNow(); // It's better to call garbageCollectSoon, unless you have a specific reason not to.
+    WEBCORE_EXPORT void garbageCollectNowIfNotDoneRecently();
     void garbageCollectOnNextRunLoop();
 
     WEBCORE_EXPORT void garbageCollectOnAlternateThreadForDebugging(bool waitUntilDone); // Used for stress testing.

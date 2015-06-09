@@ -43,7 +43,6 @@ public:
     explicit IncrementalSweeper(VM*);
 #endif
 
-    JS_EXPORT_PRIVATE void fullSweep();
     void startSweeping();
 
     JS_EXPORT_PRIVATE virtual void doWork() override;

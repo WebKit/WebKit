@@ -38,12 +38,13 @@
 
 namespace JSC {
 
+class FullGCActivityCallback;
 class Heap;
 
 class JS_EXPORT_PRIVATE GCActivityCallback : public HeapTimer, public ThreadSafeRefCounted<GCActivityCallback> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<GCActivityCallback> createFullTimer(Heap*);
+    static RefPtr<FullGCActivityCallback> createFullTimer(Heap*);
     static RefPtr<GCActivityCallback> createEdenTimer(Heap*);
 
     GCActivityCallback(Heap*);

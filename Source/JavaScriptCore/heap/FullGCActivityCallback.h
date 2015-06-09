@@ -36,6 +36,9 @@ public:
 
     virtual void doCollection() override;
 
+    bool didSyncGCRecently() const { return m_didSyncGCRecently; }
+    void setDidSyncGCRecently() { m_didSyncGCRecently = true; }
+
 protected:
 #if USE(CF)
     FullGCActivityCallback(Heap* heap, CFRunLoopRef runLoop)
@@ -47,9 +50,11 @@ protected:
     virtual double lastGCLength() override;
     virtual double gcTimeSlice(size_t bytes) override;
     virtual double deathRate() override;
+
+    bool m_didSyncGCRecently { false };
 };
 
-inline RefPtr<GCActivityCallback> GCActivityCallback::createFullTimer(Heap* heap)
+inline RefPtr<FullGCActivityCallback> GCActivityCallback::createFullTimer(Heap* heap)
 {
     return s_shouldCreateGCTimer ? adoptRef(new FullGCActivityCallback(heap)) : nullptr;
 }
