@@ -3,7 +3,7 @@
     "timeout": 300,
     "count": 5,
     "benchmark_builder": "GenericBenchmarkBuilder",
-    "local_copy": "../../../../PerformanceTests/SunSpider",
+    "svn_source": "https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/SunSpider/@r182170",
     "benchmark_patch": "data/patches/SunSpider.patch",
     "create_script": ["perl", "make-hosted"],
     "entry_point": "hosted/sunspider-1.0.1/driver.html",

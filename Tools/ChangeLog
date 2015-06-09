@@ -1,3 +1,25 @@
+2015-06-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-benchmark should either checkout JetStream 1.0.1 or support running the latest version
+        https://bugs.webkit.org/show_bug.cgi?id=145764
+
+        Reviewed by Darin Adler.
+
+        Added the support for checkout a subversion directory in run-benchmark and used in the plans for
+        JetStream and SunSpider.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder/generic_benchmark_builder.py:
+        (GenericBenchmarkBuilder):
+        (GenericBenchmarkBuilder.prepare): Instead of taking each argument from benchmark plan, just accept
+        the whole JSON as the input.
+        (GenericBenchmarkBuilder._checkoutWithSubverion): Added.
+        (GenericBenchmarkBuilder._applyPatch): Check the existence of benchmark_patch in prepare() instead.
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (BenchmarkRunner.execute): Removed the check for having either 'local_copy' or 'remote_archive' in
+        a benchmark plan now that it's checkedi in GenericBenchmarkBuilder.prepare.
+        * Scripts/webkitpy/benchmark_runner/data/plans/jetstream.plan:
+        * Scripts/webkitpy/benchmark_runner/data/plans/sunspider.plan:
+
 2015-06-09  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Remove ewstool scripts used by chromium port

@@ -16,21 +16,26 @@ _log = logging.getLogger(__name__)
 
 class GenericBenchmarkBuilder(object):
 
-    def prepare(self, name, benchmarkPath, archiveURL, patch, createScript):
+    def prepare(self, name, plan):
         self.name = name
         self.webRoot = tempfile.mkdtemp()
         self.dest = os.path.join(self.webRoot, self.name)
-        if benchmarkPath:
-            self._copyBenchmarkToTempDir(benchmarkPath)
+        if 'local_copy' in plan:
+            self._copyBenchmarkToTempDir(plan['local_copy'])
+        elif 'remote_archive' in plan:
+            self._fetchRemoteArchive(plan['remote_archive'])
+        elif 'svn_source' in plan:
+            self._checkoutWithSubverion(plan['svn_source'])
         else:
-            assert(archiveURL)
-            self._fetchRemoteArchive(archiveURL)
+            raise Exception('The benchmark location was not specified')
 
         _log.info('Copied the benchmark into: %s' % self.dest)
         try:
-            if createScript:
-                self._runCreateScript(createScript)
-            return self._applyPatch(patch)
+            if 'create_script' in plan:
+                self._runCreateScript(plan['create_script'])
+            if 'benchmark_patch' in plan:
+                self._applyPatch(plan['benchmark_patch'])
+            return self.webRoot
         except Exception:
             self.clean()
             raise
@@ -62,16 +67,19 @@ class GenericBenchmarkBuilder(object):
                 shutil.move(firstFile, self.webRoot)
                 os.rename(os.path.join(self.webRoot, unarchivedFiles[0]), self.dest)
 
+    def _checkoutWithSubverion(self, subversionURL):
+        _log.info('Checking out %s to %s' % (subversionURL, self.dest))
+        errorCode = subprocess.call(['svn', 'checkout', subversionURL, self.dest])
+        if errorCode:
+            raise Exception('Cannot checkout the benchmark - Error: %s' % errorCode)
+
     def _applyPatch(self, patch):
-        if not patch:
-            return self.webRoot
         oldWorkingDirectory = os.getcwd()
         os.chdir(self.dest)
         errorCode = subprocess.call(['patch', '-p1', '-f', '-i', getPathFromProjectRoot(patch)])
         os.chdir(oldWorkingDirectory)
         if errorCode:
             raise Exception('Cannot apply patch, will skip current benchmarkPath - Error: %s' % errorCode)
-        return self.webRoot
 
     def clean(self):
         _log.info('Cleaning Benchmark')

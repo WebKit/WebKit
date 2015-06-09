@@ -64,12 +64,7 @@ class BenchmarkRunner(object):
         results = []
         self.benchmarkBuilder = BenchmarkBuilderFactory.create([self.plan['benchmark_builder']])
 
-        if not self.plan.get('local_copy') and not self.plan.get('remote_archive'):
-            _log.error('Either local_copy or remote_archive must be specified in the plan')
-            sys.exit(2)
-
-        webRoot = self.benchmarkBuilder.prepare(self.planName, self.plan.get('local_copy'), self.plan.get('remote_archive'),
-            self.plan.get('benchmark_patch'), self.plan.get('create_script'))
+        webRoot = self.benchmarkBuilder.prepare(self.planName, self.plan)
         for x in xrange(int(self.plan['count'])):
             _log.info('Start the iteration %d of current benchmark' % (x + 1))
             self.httpServerDriver.serve(webRoot)

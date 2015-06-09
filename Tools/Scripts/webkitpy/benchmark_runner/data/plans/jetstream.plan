@@ -3,7 +3,7 @@
     "timeout" : 600,
     "count": 5,
     "benchmark_builder": "GenericBenchmarkBuilder",
-    "local_copy": "../../../../PerformanceTests/JetStream",
+    "svn_source": "https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/JetStream/@r183091",
     "benchmark_patch": "data/patches/JetStream.patch",
     "create_script": ["ruby", "create.rb"],
     "entry_point": "JetStream-1.0.1/index.html",
