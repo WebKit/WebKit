@@ -1,3 +1,11 @@
+2015-06-08  Dan Bernstein  <mitz@apple.com>
+
+        Removed WebDragSourceActionAttachment from the WebDragSourceAction enum.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * WebView/WebUIDelegate.h: Removed the value. It was added in r181760 and never used.
+
 2015-06-08  Chris Dumez  <cdumez@apple.com>
 
         Access GCController instance via GCController::singleton() instead of a free function
