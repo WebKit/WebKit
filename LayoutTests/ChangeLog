@@ -1,3 +1,13 @@
+2015-06-09  Darin Adler  <darin@apple.com>
+
+        Takes two delete key presses to delete pasted emoji up-pointing index finger with skin tone
+        https://bugs.webkit.org/show_bug.cgi?id=145823
+
+        Reviewed by Anders Carlsson.
+
+        * editing/deleting/delete-emoji-expected.txt: Updated to expect a little more testing.
+        * editing/deleting/delete-emoji.html: Added a test case and streamlined the test a bit.
+
 2015-06-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         feComposite filter does not clip the paint rect to its effect rect when the operator is 'in' or 'atop'

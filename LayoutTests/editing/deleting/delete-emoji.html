@@ -1,32 +1,18 @@
 <!DOCTYPE html>
 <html>
 <body>
-<div id="test" contenteditable="true">&#x1F466;&#x1F3FB;&#x1F466;&#x1F3FE;&#x1F3FB;&#x1F466;&#x1F3FE;&#x1F466;&#x1F469;&#x200D;&#x1F469;&#x200D;&#x1F466;&#x1F469;&#x200D;&#x2764;&#xFE0F;&#x200D;&#x1F469;&#x1F468;&#x200D;&#x2764;&#xFE0F;&#x200D;&#x1F468;&#x1F469;&#x200D;&#x2764;&#xFE0F;&#x200D;&#x1F48B;&#x200D;&#x1F469;&#x1F468;&#x200D;&#x2764;&#xFE0F;&#x200D;&#x1F48B;&#x200D;&#x1F468;
+<div id="test" contenteditable="true">&#x1F466;&#x1F3FB;&#x1F466;&#x1F3FE;&#x1F3FB;&#x1F466;&#x1F3FE;&#x1F466;&#x1F469;&#x200D;&#x1F469;&#x200D;&#x1F466;&#x1F469;&#x200D;&#x2764;&#xFE0F;&#x200D;&#x1F469;&#x1F468;&#x200D;&#x2764;&#xFE0F;&#x200D;&#x1F468;&#x1F469;&#x200D;&#x2764;&#xFE0F;&#x200D;&#x1F48B;&#x200D;&#x1F469;&#x1F468;&#x200D;&#x2764;&#xFE0F;&#x200D;&#x1F48B;&#x200D;&#x1F468;&#x261D;&#xFE0F;&#x1F3FB;
 </div>
 <script src="../../resources/dump-as-markup.js"></script>
 <script>
 Markup.description("This test verifies that emoji groups and emoji with variations are deleted correctly");
-
-var selection = window.getSelection();
 var testElement = document.getElementById('test');
-selection.setBaseAndExtent(testElement.firstChild, 56, testElement.firstChild, 56);
+getSelection().setBaseAndExtent(testElement.firstChild, testElement.firstChild.length, testElement.firstChild, testElement.firstChild.length);
 Markup.dump("test");
-document.execCommand("Delete");
-Markup.dump("test");
-document.execCommand("Delete");
-Markup.dump("test");
-document.execCommand("Delete");
-Markup.dump("test");
-document.execCommand("Delete");
-Markup.dump("test");
-document.execCommand("Delete");
-Markup.dump("test");
-document.execCommand("Delete");
-Markup.dump("test");
-document.execCommand("Delete");
-Markup.dump("test");
-document.execCommand("Delete");
-Markup.dump("test");
+while (testElement.firstChild.length) {
+    document.execCommand("Delete");
+    Markup.dump("test");
+}
 </script>
 </body>
 </html>

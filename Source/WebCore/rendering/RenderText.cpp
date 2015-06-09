@@ -1397,34 +1397,26 @@ int RenderText::previousOffset(int current) const
 
 #if PLATFORM(COCOA) || PLATFORM(EFL) || PLATFORM(GTK)
 
-#define HANGUL_CHOSEONG_START (0x1100)
-#define HANGUL_CHOSEONG_END (0x115F)
-#define HANGUL_JUNGSEONG_START (0x1160)
-#define HANGUL_JUNGSEONG_END (0x11A2)
-#define HANGUL_JONGSEONG_START (0x11A8)
-#define HANGUL_JONGSEONG_END (0x11F9)
-#define HANGUL_SYLLABLE_START (0xAC00)
-#define HANGUL_SYLLABLE_END (0xD7AF)
-#define HANGUL_JONGSEONG_COUNT (28)
+const UChar hangulChoseongStart = 0x1100;
+const UChar hangulChoseongEnd = 0x115F;
+const UChar hangulJungseongStart = 0x1160;
+const UChar hangulJungseongEnd = 0x11A2;
+const UChar hangulJongseongStart = 0x11A8;
+const UChar hangulJongseongEnd = 0x11F9;
+const UChar hangulSyllableStart = 0xAC00;
+const UChar hangulSyllableEnd = 0xD7AF;
+const UChar hangulJongseongCount = 28;
 
-enum HangulState {
-    HangulStateL,
-    HangulStateV,
-    HangulStateT,
-    HangulStateLV,
-    HangulStateLVT,
-    HangulStateBreak
-};
+enum class HangulState { L, V, T, LV, LVT, Break };
 
-static inline bool isHangulLVT(UChar32 character)
+static inline bool isHangulLVT(UChar character)
 {
-    return (character - HANGUL_SYLLABLE_START) % HANGUL_JONGSEONG_COUNT;
+    return (character - hangulSyllableStart) % hangulJongseongCount;
 }
 
 static inline bool isMark(UChar32 character)
 {
-    int8_t charType = u_charType(character);
-    return charType == U_NON_SPACING_MARK || charType == U_ENCLOSING_MARK || charType == U_COMBINING_SPACING_MARK;
+    return U_GET_GC_MASK(character) & U_GC_M_MASK;
 }
 
 static inline bool isRegionalIndicator(UChar32 character)
@@ -1433,25 +1425,31 @@ static inline bool isRegionalIndicator(UChar32 character)
     return 0x1F1E6 <= character && character <= 0x1F1FF;
 }
 
+static inline bool isInArmenianToLimbuRange(UChar32 character)
+{
+    return character >= 0x0530 && character < 0x1950;
+}
+
 #endif
 
 int RenderText::previousOffsetForBackwardDeletion(int current) const
 {
-#if PLATFORM(COCOA) || PLATFORM(EFL) || PLATFORM(GTK)
-    ASSERT(m_text);
+    ASSERT(!m_text.isNull());
     StringImpl& text = *m_text.impl();
-    UChar32 character;
+
+    // FIXME: Unclear why this has so much handrolled code rather than using TextBreakIterator.
+    // Also unclear why this is so different from advanceByCombiningCharacterSequence.
+
+    // FIXME: Seems like this fancier case could be used on all platforms now, no
+    // need for the #else case below.
+#if PLATFORM(COCOA) || PLATFORM(EFL) || PLATFORM(GTK)
     bool sawRegionalIndicator = false;
     bool sawEmojiGroupCandidate = false;
     bool sawEmojiModifier = false;
     
     while (current > 0) {
-        if (U16_IS_TRAIL(text[--current]))
-            --current;
-        if (current < 0)
-            break;
-
-        UChar32 character = text.characterStartingAt(current);
+        UChar32 character;
+        U16_PREV(text, 0, current, character);
 
         if (sawEmojiGroupCandidate) {
             sawEmojiGroupCandidate = false;
@@ -1464,9 +1462,13 @@ int RenderText::previousOffsetForBackwardDeletion(int current) const
         }
 
         if (sawEmojiModifier) {
-            if (isEmojiModifier(character))
+            if (isEmojiModifier(character)) {
+                // Don't treat two emoji modifiers in a row as a group.
                 U16_FWD_1_UNSAFE(text, current);
-            break;
+                break;
+            }
+            if (!isVariationSelector(character))
+                break;
         }
 
         if (sawRegionalIndicator) {
@@ -1480,7 +1482,7 @@ int RenderText::previousOffsetForBackwardDeletion(int current) const
         }
 
         // We don't combine characters in Armenian ... Limbu range for backward deletion.
-        if ((character >= 0x0530) && (character < 0x1950))
+        if (isInArmenianToLimbuRange(character))
             break;
 
         if (isRegionalIndicator(character)) {
@@ -1498,7 +1500,8 @@ int RenderText::previousOffsetForBackwardDeletion(int current) const
             continue;
         }
 
-        if (!isMark(character) && (character != 0xFF9E) && (character != 0xFF9F))
+        // FIXME: Why are FF9E and FF9F special cased here?
+        if (!isMark(character) && character != 0xFF9E && character != 0xFF9F)
             break;
     }
 
@@ -1506,55 +1509,50 @@ int RenderText::previousOffsetForBackwardDeletion(int current) const
         return current;
 
     // Hangul
-    character = text.characterStartingAt(current);
-    if (((character >= HANGUL_CHOSEONG_START) && (character <= HANGUL_JONGSEONG_END)) || ((character >= HANGUL_SYLLABLE_START) && (character <= HANGUL_SYLLABLE_END))) {
+    UChar character = text[current];
+    if ((character >= hangulChoseongStart && character <= hangulJongseongEnd) || (character >= hangulSyllableStart && character <= hangulSyllableEnd)) {
         HangulState state;
 
-        if (character < HANGUL_JUNGSEONG_START)
-            state = HangulStateL;
-        else if (character < HANGUL_JONGSEONG_START)
-            state = HangulStateV;
-        else if (character < HANGUL_SYLLABLE_START)
-            state = HangulStateT;
+        if (character < hangulJungseongStart)
+            state = HangulState::L;
+        else if (character < hangulJongseongStart)
+            state = HangulState::V;
+        else if (character < hangulSyllableStart)
+            state = HangulState::T;
         else
-            state = isHangulLVT(character) ? HangulStateLVT : HangulStateLV;
+            state = isHangulLVT(character) ? HangulState::LVT : HangulState::LV;
 
-        while (current > 0 && ((character = text.characterStartingAt(current - 1)) >= HANGUL_CHOSEONG_START) && (character <= HANGUL_SYLLABLE_END) && ((character <= HANGUL_JONGSEONG_END) || (character >= HANGUL_SYLLABLE_START))) {
+        while (current > 0 && (character = text[current - 1]) >= hangulChoseongStart && character <= hangulSyllableEnd && (character <= hangulJongseongEnd || character >= hangulSyllableStart)) {
             switch (state) {
-            case HangulStateV:
-                if (character <= HANGUL_CHOSEONG_END)
-                    state = HangulStateL;
-                else if ((character >= HANGUL_SYLLABLE_START) && (character <= HANGUL_SYLLABLE_END) && !isHangulLVT(character))
-                    state = HangulStateLV;
-                else if (character > HANGUL_JUNGSEONG_END)
-                    state = HangulStateBreak;
+            case HangulState::V:
+                if (character <= hangulChoseongEnd)
+                    state = HangulState::L;
+                else if (character >= hangulSyllableStart && character <= hangulSyllableEnd && !isHangulLVT(character))
+                    state = HangulState::LV;
+                else if (character > hangulJungseongEnd)
+                    state = HangulState::Break;
                 break;
-            case HangulStateT:
-                if ((character >= HANGUL_JUNGSEONG_START) && (character <= HANGUL_JUNGSEONG_END))
-                    state = HangulStateV;
-                else if ((character >= HANGUL_SYLLABLE_START) && (character <= HANGUL_SYLLABLE_END))
-                    state = (isHangulLVT(character) ? HangulStateLVT : HangulStateLV);
-                else if (character < HANGUL_JUNGSEONG_START)
-                    state = HangulStateBreak;
+            case HangulState::T:
+                if (character >= hangulJungseongStart && character <= hangulJungseongEnd)
+                    state = HangulState::V;
+                else if (character >= hangulSyllableStart && character <= hangulSyllableEnd)
+                    state = isHangulLVT(character) ? HangulState::LVT : HangulState::LV;
+                else if (character < hangulJungseongStart)
+                    state = HangulState::Break;
                 break;
             default:
-                state = (character < HANGUL_JUNGSEONG_START) ? HangulStateL : HangulStateBreak;
+                state = (character < hangulJungseongStart) ? HangulState::L : HangulState::Break;
                 break;
             }
-            if (state == HangulStateBreak)
+            if (state == HangulState::Break)
                 break;
-
             --current;
         }
     }
 
     return current;
 #else
-    // Platforms other than Mac delete by one code point.
-    if (U16_IS_TRAIL(m_text[--current]))
-        --current;
-    if (current < 0)
-        current = 0;
+    U16_BACK_1(text, 0, current);
     return current;
 #endif
 }
