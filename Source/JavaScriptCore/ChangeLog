@@ -1,5 +1,23 @@
 2015-06-09  Andreas Kling  <akling@apple.com>
 
+        [JSC] JSString::getIndex() should avoid reifying substrings.
+        <https://webkit.org/b/145803>
+
+        Reviewed by Darin Adler.
+
+        Implement getIndex() using JSString::view(), which cuts it down to a one-liner
+        and also avoids reifying substrings.
+
+        I saw 178 kB of reified substrings below operationGetByVal -> getIndex()
+        on cnet.com, so this should help.
+
+        * runtime/JSString.cpp:
+        (JSC::JSRopeString::getIndexSlowCase): Deleted.
+        * runtime/JSString.h:
+        (JSC::JSString::getIndex):
+
+2015-06-09  Andreas Kling  <akling@apple.com>
+
         [JSC] String.prototype.indexOf() should use StringView.
         <https://webkit.org/b/145351>
 

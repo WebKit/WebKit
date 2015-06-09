@@ -365,18 +365,6 @@ void JSRopeString::outOfMemory(ExecState* exec) const
         throwOutOfMemoryError(exec);
 }
 
-JSString* JSRopeString::getIndexSlowCase(ExecState* exec, unsigned i)
-{
-    ASSERT(isRope());
-    resolveRope(exec);
-    // Return a safe no-value result, this should never be used, since the excetion will be thrown.
-    if (exec->exception())
-        return jsEmptyString(exec);
-    ASSERT(!isRope());
-    RELEASE_ASSERT(i < m_value.length());
-    return jsSingleCharacterString(exec, m_value[i]);
-}
-
 JSValue JSString::toPrimitive(ExecState*, PreferredPrimitiveType) const
 {
     return const_cast<JSString*>(this);

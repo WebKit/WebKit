@@ -372,8 +372,6 @@ private:
     void clearFibers() const;
     StringView view(ExecState*) const;
 
-    JS_EXPORT_PRIVATE JSString* getIndexSlowCase(ExecState*, unsigned);
-
     WriteBarrierBase<JSString>& fiber(unsigned i) const
     {
         ASSERT(!isSubstring());
@@ -493,10 +491,7 @@ inline const String& JSString::tryGetValue() const
 inline JSString* JSString::getIndex(ExecState* exec, unsigned i)
 {
     ASSERT(canGetIndex(i));
-    if (isRope())
-        return static_cast<JSRopeString*>(this)->getIndexSlowCase(exec, i);
-    ASSERT(i < m_value.length());
-    return jsSingleCharacterString(exec, m_value[i]);
+    return jsSingleCharacterString(exec, view(exec)[i]);
 }
 
 inline JSString* jsString(VM* vm, const String& s)
