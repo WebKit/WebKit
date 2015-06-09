@@ -13,6 +13,7 @@ _log = logging.getLogger(__name__)
 
 
 class OSXSafariDriver(OSXBrowserDriver):
+    bundleIdentifier = 'com.apple.Safari'
 
     def prepareEnv(self):
         self.safariProcess = None
@@ -42,7 +43,6 @@ class OSXSafariDriver(OSXBrowserDriver):
         subprocess.Popen(['open', url])
 
     def closeBrowsers(self):
-        if self.safariProcess:
-            self.terminateProcesses('com.apple.Safari')
-            if self.safariProcess.returncode:
-                _log.error('Safari Crashed!')
+        self.closeBrowsers()
+        if self.safariProcess and self.safariProcess.returncode:
+            sys.exit('Browser crashed with exitcode %d' % self._process.returncode)

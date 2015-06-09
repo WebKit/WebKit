@@ -1,5 +1,14 @@
 2015-06-08  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Yet another unreviewed build fix :(
+
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        (OSXSafariDriver):
+        (OSXSafariDriver.launchUrl):
+        (OSXSafariDriver.closeBrowsers):
+
+2015-06-08  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed build fix. Initialize result in the case things blow up below.
 
         * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
