@@ -41,6 +41,10 @@ NSString * const WKWebsiteDataTypeIndexedDBDatabases = @"WKWebsiteDataTypeIndexe
 
 NSString * const _WKWebsiteDataTypeMediaKeys = @"_WKWebsiteDataTypeMediaKeys";
 
+#if PLATFORM(MAC)
+NSString * const _WKWebsiteDataTypePlugInData = @"_WKWebsiteDataTypePlugInData";
+#endif
+
 @implementation WKWebsiteDataRecord
 
 - (void)dealloc
@@ -72,6 +76,10 @@ static NSString *dataTypesToString(NSSet *dataTypes)
         [array addObject:@"IndexedDB"];
     if ([dataTypes containsObject:_WKWebsiteDataTypeMediaKeys])
         [array addObject:@"Media Keys"];
+#if PLATFORM(MAC)
+    if ([dataTypes containsObject:_WKWebsiteDataTypePlugInData])
+        [array addObject:@"Plug-in Data"];
+#endif
 
     return [array componentsJoinedByString:@", "];
 }

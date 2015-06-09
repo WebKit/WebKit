@@ -62,7 +62,10 @@ static inline WebKit::WebsiteDataTypes toWebsiteDataTypes(NSSet *wkWebsiteDataTy
         websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeIndexedDBDatabases;
     if ([wkWebsiteDataTypes containsObject:_WKWebsiteDataTypeMediaKeys])
         websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeMediaKeys;
-
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    if ([wkWebsiteDataTypes containsObject:_WKWebsiteDataTypePlugInData])
+        websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypePlugInData;
+#endif
     return static_cast<WebsiteDataTypes>(websiteDataTypes);
 }
 
@@ -90,6 +93,10 @@ static inline RetainPtr<NSSet> toWKWebsiteDataTypes(int websiteDataTypes)
         [wkWebsiteDataTypes addObject:WKWebsiteDataTypeIndexedDBDatabases];
     if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeMediaKeys)
         [wkWebsiteDataTypes addObject:_WKWebsiteDataTypeMediaKeys];
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypePlugInData)
+        [wkWebsiteDataTypes addObject:_WKWebsiteDataTypePlugInData];
+#endif
 
     return wkWebsiteDataTypes;
 }

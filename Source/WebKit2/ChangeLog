@@ -1,3 +1,18 @@
+2015-06-09  Anders Carlsson  <andersca@apple.com>
+
+        Add Plug-in type declarations to WKWebsiteDataRecord and friends
+        https://bugs.webkit.org/show_bug.cgi?id=145816
+
+        Reviewed by Andreas Kling.
+
+        * Shared/WebsiteData/WebsiteDataTypes.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataRecord.mm:
+        (dataTypesToString):
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordInternal.h:
+        (WebKit::toWebsiteDataTypes):
+        (WebKit::toWKWebsiteDataTypes):
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordPrivate.h:
+
 2015-06-09  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r185262): NetworkCache is in wrong location on OS X

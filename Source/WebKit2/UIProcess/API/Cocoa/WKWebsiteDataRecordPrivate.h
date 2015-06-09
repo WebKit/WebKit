@@ -29,4 +29,8 @@
 
 WK_EXTERN NSString * const _WKWebsiteDataTypeMediaKeys WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
+#if !TARGET_OS_IPHONE
+WK_EXTERN NSString * const _WKWebsiteDataTypePlugInData WK_AVAILABLE(WK_MAC_TBA, NA);
+#endif
+
 #endif
