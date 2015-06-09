@@ -1,5 +1,12 @@
 2015-06-09  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * UIProcess/Plugins/WebPluginSiteDataManager.cpp:
+        (WebKit::WebPluginSiteDataManager::GetSitesWithDataState::getSitesWithDataForNextPlugin):
+
+2015-06-09  Anders Carlsson  <andersca@apple.com>
+
         Change the PluginProcessManager data fetching function to take a completion handler
         https://bugs.webkit.org/show_bug.cgi?id=145821
 

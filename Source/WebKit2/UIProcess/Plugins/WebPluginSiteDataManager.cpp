@@ -59,7 +59,7 @@ public:
         RefPtr<WebPluginSiteDataManager> webPluginSiteDataManager = m_webPluginSiteDataManager;
         uint64_t callbackID = m_callbackID;
         PluginProcessManager::singleton().fetchWebsiteData(m_plugins.last(), [webPluginSiteDataManager, callbackID](Vector<String> hostNames) {
-            webPluginSiteDataManager->didGetSitesWithDataForSinglePlugin(sites, callbackID);
+            webPluginSiteDataManager->didGetSitesWithDataForSinglePlugin(hostNames, callbackID);
         });
 
         m_plugins.removeLast();
