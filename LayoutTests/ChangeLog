@@ -1,3 +1,15 @@
+2015-06-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        feComposite filter does not clip the paint rect to its effect rect when the operator is 'in' or 'atop'
+        https://bugs.webkit.org/show_bug.cgi?id=137856
+
+        Reviewed by Darin Adler.
+
+        * svg/filters/feComposite-background-rect-control-operators-expected.svg: Added.
+        * svg/filters/feComposite-background-rect-control-operators.svg: Added.
+        Ensure the painting rect of the feComposite filter with operator 'in' or
+        'atop' is clipped to its bounding rectangle
+
 2015-06-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Introduce getter definition into static hash tables and use it for getters in RegExp.prototype.
