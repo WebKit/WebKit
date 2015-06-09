@@ -1,5 +1,26 @@
 2015-06-09  Andreas Kling  <akling@apple.com>
 
+        [JSC] Polymorphic{Get,Put}ByIdList::addAccess() should optimize for size, not speed.
+        <https://webkit.org/b/145786>
+
+        Reviewed by Darin Adler.
+
+        These functions already contained comments saying they optimize for size over speed,
+        but they were using Vector::resize() which adds the usual slack for faster append().
+
+        Switch them over to using Vector::resizeToFit() instead, which makes the Vector
+        allocate a perfectly sized backing store.
+
+        Spotted 670 kB of the GetById ones, and 165 kB of PutById on cnet.com, so these
+        Vectors are definitely worth shrink-wrapping.
+
+        * bytecode/PolymorphicGetByIdList.cpp:
+        (JSC::PolymorphicGetByIdList::addAccess):
+        * bytecode/PolymorphicPutByIdList.cpp:
+        (JSC::PolymorphicPutByIdList::addAccess):
+
+2015-06-09  Andreas Kling  <akling@apple.com>
+
         [JSC] JSPropertyNameEnumerator's property name vector should be sized-to-fit.
         <https://webkit.org/b/145787>
 

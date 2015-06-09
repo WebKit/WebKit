@@ -116,7 +116,7 @@ void PolymorphicGetByIdList::addAccess(const GetByIdAccess& access)
 {
     ASSERT(!isFull());
     // Make sure that the resizing optimizes for space, not time.
-    m_list.resize(m_list.size() + 1);
+    m_list.resizeToFit(m_list.size() + 1);
     m_list.last() = access;
 }
 
