@@ -270,7 +270,7 @@ void setJSTestSerializedScriptValueInterfaceValue(ExecState* exec, JSObject* bas
         return;
     }
     auto& impl = castedThis->impl();
-    RefPtr<SerializedScriptValue> nativeValue(SerializedScriptValue::create(exec, value, 0, 0));
+    RefPtr<SerializedScriptValue> nativeValue = SerializedScriptValue::create(exec, value, 0, 0);
     if (UNLIKELY(exec->hadException()))
         return;
     impl.setValue(nativeValue);
@@ -290,7 +290,7 @@ void setJSTestSerializedScriptValueInterfaceCachedValue(ExecState* exec, JSObjec
         return;
     }
     auto& impl = castedThis->impl();
-    RefPtr<SerializedScriptValue> nativeValue(SerializedScriptValue::create(exec, value, 0, 0));
+    RefPtr<SerializedScriptValue> nativeValue = SerializedScriptValue::create(exec, value, 0, 0);
     if (UNLIKELY(exec->hadException()))
         return;
     impl.setCachedValue(nativeValue);

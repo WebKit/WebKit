@@ -42,29 +42,27 @@ void JSVideoTrack::visitAdditionalChildren(SlotVisitor& visitor)
 
 void JSVideoTrack::setKind(ExecState* exec, JSValue value)
 {
-    UNUSED_PARAM(exec);
 #if ENABLE(MEDIA_SOURCE)
-    const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
+    auto& string = value.toString(exec)->value(exec);
     if (exec->hadException())
         return;
-    impl().setKind(nativeValue);
+    impl().setKind(string);
 #else
+    UNUSED_PARAM(exec);
     UNUSED_PARAM(value);
-    return;
 #endif
 }
 
 void JSVideoTrack::setLanguage(ExecState* exec, JSValue value)
 {
-    UNUSED_PARAM(exec);
 #if ENABLE(MEDIA_SOURCE)
-    const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
+    auto& string = value.toString(exec)->value(exec);
     if (exec->hadException())
         return;
-    impl().setLanguage(nativeValue);
+    impl().setLanguage(string);
 #else
+    UNUSED_PARAM(exec);
     UNUSED_PARAM(value);
-    return;
 #endif
 }
 

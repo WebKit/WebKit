@@ -43,10 +43,10 @@ void JSAudioTrack::visitAdditionalChildren(SlotVisitor& visitor)
 void JSAudioTrack::setKind(ExecState* exec, JSValue value)
 {
 #if ENABLE(MEDIA_SOURCE)
-    const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
+    auto& string = value.toString(exec)->value(exec);
     if (exec->hadException())
         return;
-    impl().setKind(nativeValue);
+    impl().setKind(string);
 #else
     UNUSED_PARAM(exec);
     UNUSED_PARAM(value);
@@ -56,10 +56,10 @@ void JSAudioTrack::setKind(ExecState* exec, JSValue value)
 void JSAudioTrack::setLanguage(ExecState* exec, JSValue value)
 {
 #if ENABLE(MEDIA_SOURCE)
-    const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
+    auto& string = value.toString(exec)->value(exec);
     if (exec->hadException())
         return;
-    impl().setLanguage(nativeValue);
+    impl().setLanguage(string);
 #else
     UNUSED_PARAM(exec);
     UNUSED_PARAM(value);

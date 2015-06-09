@@ -378,7 +378,7 @@ void setJSTestNondeterministicNondeterministicWriteableAttr(ExecState* exec, JSO
         return;
     }
     auto& impl = castedThis->impl();
-    const String nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
+    String nativeValue = value.toString(exec)->value(exec);
     if (UNLIKELY(exec->hadException()))
         return;
     impl.setNondeterministicWriteableAttr(nativeValue);
@@ -398,7 +398,7 @@ void setJSTestNondeterministicNondeterministicExceptionAttr(ExecState* exec, JSO
         return;
     }
     auto& impl = castedThis->impl();
-    const String nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
+    String nativeValue = value.toString(exec)->value(exec);
     if (UNLIKELY(exec->hadException()))
         return;
     impl.setNondeterministicExceptionAttr(nativeValue);
@@ -418,7 +418,7 @@ void setJSTestNondeterministicNondeterministicGetterExceptionAttr(ExecState* exe
         return;
     }
     auto& impl = castedThis->impl();
-    const String nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
+    String nativeValue = value.toString(exec)->value(exec);
     if (UNLIKELY(exec->hadException()))
         return;
     impl.setNondeterministicGetterExceptionAttr(nativeValue);
@@ -439,7 +439,7 @@ void setJSTestNondeterministicNondeterministicSetterExceptionAttr(ExecState* exe
     }
     auto& impl = castedThis->impl();
     ExceptionCode ec = 0;
-    const String nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
+    String nativeValue = value.toString(exec)->value(exec);
     if (UNLIKELY(exec->hadException()))
         return;
     impl.setNondeterministicSetterExceptionAttr(nativeValue, ec);

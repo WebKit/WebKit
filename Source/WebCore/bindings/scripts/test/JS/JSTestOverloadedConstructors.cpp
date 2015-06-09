@@ -94,7 +94,7 @@ EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::constructJ
     auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(exec->callee());
     if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    ArrayBuffer* arrayBuffer(toArrayBuffer(exec->argument(0)));
+    ArrayBuffer* arrayBuffer = toArrayBuffer(exec->argument(0));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
     RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(arrayBuffer);
@@ -106,7 +106,7 @@ EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::constructJ
     auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(exec->callee());
     if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    RefPtr<ArrayBufferView> arrayBufferView(toArrayBufferView(exec->argument(0)));
+    RefPtr<ArrayBufferView> arrayBufferView = toArrayBufferView(exec->argument(0));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
     RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(arrayBufferView);
@@ -118,7 +118,7 @@ EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::constructJ
     auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(exec->callee());
     if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    Blob* blob(JSBlob::toWrapped(exec->argument(0)));
+    Blob* blob = JSBlob::toWrapped(exec->argument(0));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
     RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(blob);
@@ -130,7 +130,7 @@ EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::constructJ
     auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(exec->callee());
     if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    const String string(exec->argument(0).isEmpty() ? String() : exec->argument(0).toString(exec)->value(exec));
+    String string = exec->argument(0).toString(exec)->value(exec);
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
     RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(string);

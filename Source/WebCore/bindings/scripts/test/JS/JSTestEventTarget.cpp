@@ -243,7 +243,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(ExecState* e
     auto& impl = castedThis->impl();
     if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    int index(toUInt32(exec, exec->argument(0), NormalConversion));
+    int index = toUInt32(exec, exec->argument(0), NormalConversion);
     if (index < 0) {
         setDOMException(exec, INDEX_SIZE_ERR);
         return JSValue::encode(jsUndefined());
@@ -295,7 +295,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionDispatchEvent(Exe
     if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
-    Event* evt(JSEvent::toWrapped(exec->argument(0)));
+    Event* evt = JSEvent::toWrapped(exec->argument(0));
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
     JSValue result = jsBoolean(impl.dispatchEvent(evt, ec));

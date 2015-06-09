@@ -2638,7 +2638,7 @@ sub GenerateImplementation
                     }
                 }
 
-                push(@implContent, "    " . GetNativeTypeFromSignature($attribute->signature) . " nativeValue(" . JSValueToNative($attribute->signature, "value", $attribute->signature->extendedAttributes->{"Conditional"}) . ");\n");
+                push(@implContent, "    " . GetNativeTypeFromSignature($attribute->signature) . " nativeValue = " . JSValueToNative($attribute->signature, "value", $attribute->signature->extendedAttributes->{"Conditional"}) . ";\n");
                 push(@implContent, "    if (UNLIKELY(exec->hadException()))\n");
                 push(@implContent, "        return;\n");
 
@@ -3294,9 +3294,11 @@ sub GenerateParametersCheck
             $implIncludes{"<runtime/Error.h>"} = 1;
 
             my $argValue = "exec->argument($argsIndex)";
-            push(@$outputArray, "    const String ${name}(${argValue}.isEmpty() ? String() : ${argValue}.toString(exec)->value(exec));\n");
+            push(@$outputArray, "    // Keep pointer to the JSString in a local so we don't need to ref the String.\n");
+            push(@$outputArray, "    auto* ${name}String = ${argValue}.toString(exec);\n");
             push(@$outputArray, "    if (UNLIKELY(exec->hadException()))\n");
             push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
+            push(@$outputArray, "    auto& $name = ${name}String->value(exec);\n");
 
             my @enumValues = $codeGenerator->ValidEnumValues($argType);
             my @enumChecks = ();
@@ -3328,12 +3330,12 @@ sub GenerateParametersCheck
             }
 
             if ($parameter->extendedAttributes->{"RequiresExistingAtomicString"}) {
-                push(@$outputArray, "    RefPtr<AtomicStringImpl> existing_$name = exec->argument($argsIndex).isEmpty() ? nullptr : exec->argument($argsIndex).toString(exec)->toExistingAtomicString(exec);\n");
-                push(@$outputArray, "    if (!existing_$name)\n");
+                # FIXME: This could be made slightly more efficient if we added an AtomicString(RefPtr<AtomicStringImpl>&&) constructor and removed the call to get() here.
+                push(@$outputArray, "    AtomicString $name = exec->argument($argsIndex).toString(exec)->toExistingAtomicString(exec).get();\n");
+                push(@$outputArray, "    if ($name.isNull())\n");
                 push(@$outputArray, "        return JSValue::encode(jsNull());\n");
-                push(@$outputArray, "    const AtomicString $name(*existing_$name);\n");
             } else {
-                push(@$outputArray, "    " . GetNativeTypeFromSignature($parameter) . " $name(" . JSValueToNative($parameter, $optional && $defaultAttribute && $defaultAttribute eq "NullString" ? "argumentOrNull(exec, $argsIndex)" : "exec->argument($argsIndex)", $function->signature->extendedAttributes->{"Conditional"}) . ");\n");
+                push(@$outputArray, "    " . GetNativeTypeFromSignature($parameter) . " $name = " . JSValueToNative($parameter, $optional && $defaultAttribute && $defaultAttribute eq "NullString" ? "argumentOrNull(exec, $argsIndex)" : "exec->argument($argsIndex)", $function->signature->extendedAttributes->{"Conditional"}) . ";\n");
             }
 
             # If a parameter is "an index" and it's negative it should throw an INDEX_SIZE_ERR exception.
@@ -3672,7 +3674,7 @@ sub GetNativeTypeFromSignature
 
 my %nativeType = (
     "CompareHow" => "Range::CompareHow",
-    "DOMString" => "const String",
+    "DOMString" => "String",
     "NodeFilter" => "RefPtr<NodeFilter>",
     "SerializedScriptValue" => "RefPtr<SerializedScriptValue>",
     "Date" => "double",
@@ -3711,7 +3713,7 @@ sub GetNativeType
     return "Vector<" . GetNativeVectorInnerType($arrayOrSequenceType) . ">" if $arrayOrSequenceType;
 
     if ($codeGenerator->IsEnumType($type)) {
-        return "const String";
+        return "String";
     }
 
     # For all other types, the native type is a pointer with same type name as the IDL type.
@@ -3823,14 +3825,14 @@ sub JSValueToNative
             return "valueToStringWithNullCheck(exec, $value)"
         }
         if ($signature->extendedAttributes->{"AtomicString"}) {
-            return "$value.isEmpty() ? AtomicString() : $value.toString(exec)->toAtomicString(exec)";
+            return "$value.toString(exec)->toAtomicString(exec)";
         }
         # FIXME: Add the case for 'if ($signature->extendedAttributes->{"TreatUndefinedAs"} and $signature->extendedAttributes->{"TreatUndefinedAs"} eq "NullString"))'.
-        return "$value.isEmpty() ? String() : $value.toString(exec)->value(exec)";
+        return "$value.toString(exec)->value(exec)";
     }
 
     if ($type eq "any") {
-        return "exec->vm(), $value";
+        return "{ exec->vm(), $value }";
     }
 
     if ($type eq "NodeFilter") {
@@ -3845,7 +3847,7 @@ sub JSValueToNative
 
     if ($type eq "Dictionary") {
         AddToImplIncludes("Dictionary.h", $conditional);
-        return "exec, $value";
+        return "{ exec, $value }";
     }
 
     if ($type eq "DOMStringList" ) {
@@ -3873,7 +3875,7 @@ sub JSValueToNative
     }
 
     if ($codeGenerator->IsEnumType($type)) {
-        return "$value.isEmpty() ? String() : $value.toString(exec)->value(exec)";
+        return "$value.toString(exec)->value(exec)";
     }
 
     # Default, assume autogenerated type conversion routines
