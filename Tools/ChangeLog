@@ -1,5 +1,12 @@
 2015-06-08  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix a typo in r185345.
+
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        (OSXSafariDriver.closeBrowsers):
+
+2015-06-08  Ryosuke Niwa  <rniwa@webkit.org>
+
         Yet another unreviewed build fix :(
 
         * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:

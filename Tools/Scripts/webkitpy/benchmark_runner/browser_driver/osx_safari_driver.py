@@ -43,6 +43,6 @@ class OSXSafariDriver(OSXBrowserDriver):
         subprocess.Popen(['open', url])
 
     def closeBrowsers(self):
-        self.closeBrowsers()
+        super(OSXSafariDriver, self).closeBrowsers()
         if self.safariProcess and self.safariProcess.returncode:
             sys.exit('Browser crashed with exitcode %d' % self._process.returncode)
