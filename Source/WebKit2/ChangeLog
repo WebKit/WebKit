@@ -1,3 +1,18 @@
+2015-06-09  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r185262): NetworkCache is in wrong location on OS X
+        https://bugs.webkit.org/show_bug.cgi?id=145812
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::legacyPlatformDefaultWebSQLDatabaseDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultLocalStorageDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultMediaKeysStorageDirectory):
+        (WebKit::WebProcessPool::isNetworkCacheEnabled):
+
+            Make sure static functions that use NSUserDefaults call registerUserDefaultsIfNeeded() first.
+
 2015-06-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Crash when passing Symbol to NPAPI plugin objects

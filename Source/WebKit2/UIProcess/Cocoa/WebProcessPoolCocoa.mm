@@ -322,6 +322,8 @@ String WebProcessPool::containerTemporaryDirectory() const
 
 String WebProcessPool::legacyPlatformDefaultWebSQLDatabaseDirectory()
 {
+    registerUserDefaultsIfNeeded();
+
     NSString *databasesDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebDatabaseDirectoryDefaultsKey];
     if (!databasesDirectory || ![databasesDirectory isKindOfClass:[NSString class]])
         databasesDirectory = @"~/Library/WebKit/Databases";
@@ -339,6 +341,8 @@ String WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory()
 
 String WebProcessPool::legacyPlatformDefaultLocalStorageDirectory()
 {
+    registerUserDefaultsIfNeeded();
+
     NSString *localStorageDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebStorageDirectoryDefaultsKey];
     if (!localStorageDirectory || ![localStorageDirectory isKindOfClass:[NSString class]])
         localStorageDirectory = @"~/Library/WebKit/LocalStorage";
@@ -347,6 +351,8 @@ String WebProcessPool::legacyPlatformDefaultLocalStorageDirectory()
 
 String WebProcessPool::legacyPlatformDefaultMediaKeysStorageDirectory()
 {
+    registerUserDefaultsIfNeeded();
+
     NSString *mediaKeysStorageDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebKitMediaKeysStorageDirectoryDefaultsKey];
     if (!mediaKeysStorageDirectory || ![mediaKeysStorageDirectory isKindOfClass:[NSString class]])
         mediaKeysStorageDirectory = @"~/Library/WebKit/MediaKeys";
@@ -398,6 +404,8 @@ String WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory()
 bool WebProcessPool::isNetworkCacheEnabled()
 {
 #if ENABLE(NETWORK_CACHE)
+    registerUserDefaultsIfNeeded();
+
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
     bool networkCacheEnabledByDefaults = [defaults boolForKey:WebKitNetworkCacheEnabledDefaultsKey] && ![defaults boolForKey:WebKitNetworkCacheTemporarilyDisabledForTestingKey];
