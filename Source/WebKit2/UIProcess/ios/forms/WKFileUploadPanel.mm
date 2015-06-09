@@ -90,43 +90,42 @@ static inline UIImage *cameraIcon()
 
 #pragma mark - Icon generation
 
+static const CGFloat iconSideLength = 100;
+
 static CGRect squareCropRectForSize(CGSize size)
 {
     CGFloat smallerSide = MIN(size.width, size.height);
     CGRect cropRect = CGRectMake(0, 0, smallerSide, smallerSide);
 
     if (size.width < size.height)
-        cropRect.origin.y = rintf((size.height - smallerSide) / 2);
+        cropRect.origin.y = std::round((size.height - smallerSide) / 2);
     else
-        cropRect.origin.x = rintf((size.width - smallerSide) / 2);
+        cropRect.origin.x = std::round((size.width - smallerSide) / 2);
 
     return cropRect;
 }
 
-static UIImage *squareImage(UIImage *image)
+static UIImage *squareImage(CGImageRef image)
 {
     if (!image)
         return nil;
 
-    CGImageRef imageRef = [image CGImage];
-    CGSize imageSize = CGSizeMake(CGImageGetWidth(imageRef), CGImageGetHeight(imageRef));
+    CGSize imageSize = CGSizeMake(CGImageGetWidth(image), CGImageGetHeight(image));
     if (imageSize.width == imageSize.height)
-        return image;
+        return [UIImage imageWithCGImage:image];
 
     CGRect squareCropRect = squareCropRectForSize(imageSize);
-    CGImageRef squareImageRef = CGImageCreateWithImageInRect(imageRef, squareCropRect);
-    UIImage *squareImage = [[UIImage alloc] initWithCGImage:squareImageRef imageOrientation:[image imageOrientation]];
-    CGImageRelease(squareImageRef);
-    return [squareImage autorelease];
+    RetainPtr<CGImageRef> squareImage = adoptCF(CGImageCreateWithImageInRect(image, squareCropRect));
+    return [UIImage imageWithCGImage:squareImage.get()];
 }
 
-static UIImage *thumbnailSizedImageForImage(UIImage *image)
+static UIImage *thumbnailSizedImageForImage(CGImageRef image)
 {
     UIImage *squaredImage = squareImage(image);
     if (!squaredImage)
         return nil;
 
-    CGRect destRect = CGRectMake(0, 0, 100, 100);
+    CGRect destRect = CGRectMake(0, 0, iconSideLength, iconSideLength);
     UIGraphicsBeginImageContext(destRect.size);
     CGContextSetInterpolationQuality(UIGraphicsGetCurrentContext(), kCGInterpolationHigh);
     [squaredImage drawInRect:destRect];
@@ -140,18 +139,26 @@ static UIImage* fallbackIconForFile(NSURL *file)
     ASSERT_ARG(file, [file isFileURL]);
 
     UIDocumentInteractionController *interactionController = [UIDocumentInteractionController interactionControllerWithURL:file];
-    return thumbnailSizedImageForImage(interactionController.icons[0]);
+    return thumbnailSizedImageForImage(interactionController.icons[0].CGImage);
 }
 
 static UIImage* iconForImageFile(NSURL *file)
 {
     ASSERT_ARG(file, [file isFileURL]);
 
-    if (UIImage *image = [UIImage imageWithContentsOfFile:file.path])
-        return thumbnailSizedImageForImage(image);
+    NSDictionary *options = @{
+        (id)kCGImageSourceCreateThumbnailFromImageIfAbsent: @YES,
+        (id)kCGImageSourceThumbnailMaxPixelSize: @(iconSideLength),
+        (id)kCGImageSourceCreateThumbnailWithTransform: @YES,
+    };
+    RetainPtr<CGImageSource> imageSource = adoptCF(CGImageSourceCreateWithURL((CFURLRef)file, 0));
+    RetainPtr<CGImageRef> thumbnail = adoptCF(CGImageSourceCreateThumbnailAtIndex(imageSource.get(), 0, (CFDictionaryRef)options));
+    if (!thumbnail) {
+        LOG_ERROR("WKFileUploadPanel: Error creating thumbnail image for image: %@", file);
+        return fallbackIconForFile(file);
+    }
 
-    LOG_ERROR("WKFileUploadPanel: Error creating thumbnail image for image: %@", file);
-    return fallbackIconForFile(file);
+    return thumbnailSizedImageForImage(thumbnail.get());
 }
 
 static UIImage* iconForVideoFile(NSURL *file)
@@ -169,8 +176,7 @@ static UIImage* iconForVideoFile(NSURL *file)
         return fallbackIconForFile(file);
     }
 
-    RetainPtr<UIImage> image = adoptNS([[UIImage alloc] initWithCGImage:imageRef.get()]);
-    return thumbnailSizedImageForImage(image.get());
+    return thumbnailSizedImageForImage(imageRef.get());
 }
 
 static UIImage* iconForFile(NSURL *file)
@@ -238,21 +244,9 @@ static UIImage* iconForFile(NSURL *file)
 
 
 @interface _WKImageFileUploadItem : _WKFileUploadItem
-- (instancetype)initWithFileURL:(NSURL *)fileURL originalImage:(UIImage *)originalImage;
 @end
 
-@implementation _WKImageFileUploadItem {
-    RetainPtr<UIImage> _originalImage;
-}
-
-- (instancetype)initWithFileURL:(NSURL *)fileURL originalImage:(UIImage *)originalImage
-{
-    if (!(self = [super initWithFileURL:fileURL]))
-        return nil;
-
-    _originalImage = originalImage;
-    return self;
-}
+@implementation _WKImageFileUploadItem
 
 - (BOOL)isVideo
 {
@@ -261,7 +255,7 @@ static UIImage* iconForFile(NSURL *file)
 
 - (UIImage *)displayImage
 {
-    return thumbnailSizedImageForImage(_originalImage.get());
+    return iconForImageFile(self.fileURL);
 }
 
 @end
@@ -735,10 +729,9 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
     [self _uploadItemFromMediaInfo:info successBlock:uploadItemSuccessBlock failureBlock:failureBlock];
 }
 
-- (void)_uploadItemForImageData:(NSData *)imageData originalImage:(UIImage *)originalImage imageName:(NSString *)imageName successBlock:(void (^)(_WKFileUploadItem *))successBlock failureBlock:(void (^)(void))failureBlock
+- (void)_uploadItemForImageData:(NSData *)imageData imageName:(NSString *)imageName successBlock:(void (^)(_WKFileUploadItem *))successBlock failureBlock:(void (^)(void))failureBlock
 {
     ASSERT_ARG(imageData, imageData);
-    ASSERT_ARG(originalImage, originalImage);
     ASSERT(!isMainThread());
 
     NSString * const kTemporaryDirectoryName = @"WKWebFileUpload";
@@ -762,7 +755,7 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
         return;
     }
 
-    successBlock(adoptNS([[_WKImageFileUploadItem alloc] initWithFileURL:[NSURL fileURLWithPath:filePath] originalImage:originalImage]).get());
+    successBlock(adoptNS([[_WKImageFileUploadItem alloc] initWithFileURL:[NSURL fileURLWithPath:filePath]]).get());
 }
 
 - (void)_uploadItemForJPEGRepresentationOfImage:(UIImage *)image successBlock:(void (^)(_WKFileUploadItem *))successBlock failureBlock:(void (^)(void))failureBlock
@@ -785,7 +778,7 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
         // naming each of the individual uploads image.jpg? This won't work for photos taken with
         // the camera, but would work for photos picked from the library.
         NSString * const kUploadImageName = @"image.jpg";
-        [self _uploadItemForImageData:jpeg originalImage:image imageName:kUploadImageName successBlock:successBlock failureBlock:failureBlock];
+        [self _uploadItemForImageData:jpeg imageName:kUploadImageName successBlock:successBlock failureBlock:failureBlock];
     });
 }
 
@@ -817,7 +810,7 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
 
             RetainPtr<CFStringRef> extension = adoptCF(UTTypeCopyPreferredTagWithClass((CFStringRef)dataUTI, kUTTagClassFilenameExtension));
             NSString *imageName = [@"image." stringByAppendingString:(extension ? (id)extension.get() : @"jpg")];
-            [self _uploadItemForImageData:imageData originalImage:image imageName:imageName successBlock:successBlock failureBlock:failureBlock];
+            [self _uploadItemForImageData:imageData imageName:imageName successBlock:successBlock failureBlock:failureBlock];
         }];
     });
 }

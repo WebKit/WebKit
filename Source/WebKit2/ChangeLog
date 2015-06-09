@@ -1,3 +1,44 @@
+2015-06-02  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        [iOS] UI process memory spike, hang when uploading a very large JPEG
+
+        <https://bugs.webkit.org/show_bug.cgi?id=145567>
+        <rdar://problem/21206699>
+
+        When uploading an image, we generate a thumbnail to use for an icon
+        that sits next to the control. To do this, we load the image and draw
+        it into a thumbnail-sized canvas. This can be very expensive for large
+        images.
+
+        To fix this, we'll use CGImageSource API, which will allow us to get
+        any existing thumbnail that exists in the source file.
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (squareCropRectForSize):
+        Use std::round, based on Darin's review feedback that a) rintf is
+        incorrect in 64-bit systems where CGFloat is a double, b) rintf uses a
+        variable rounding mode, which is undesirable.
+        (squareImage):
+        Changed to take a CGImageRef.
+        Use RetainPtr and +[UIImage imageWithCGImage:] to match other code in
+        this file.
+        (thumbnailSizedImageForImage):
+        Changed to take a CGImageRef and to use iconSideLength.
+        (iconForImageFile):
+        Create an image source for the file, then use CGImageSource API to
+        generate a thumbnail.
+        (-[_WKImageFileUploadItem initWithFileURL:originalImage:]): Deleted.
+        (-[_WKImageFileUploadItem displayImage]):
+        Use iconForImageFile() rather than trying to generate an icon from the
+        UIImage.
+        (-[WKFileUploadPanel _uploadItemForImageData:imageName:successBlock:failureBlock:]):
+        Removed originalImage parameter; _WKImageFileUploadItem no longer uses
+        it.
+        (-[WKFileUploadPanel _uploadItemForJPEGRepresentationOfImage:successBlock:failureBlock:]):
+        (-[WKFileUploadPanel _uploadItemForImage:withAssetURL:successBlock:failureBlock:]):
+
 2015-06-08  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Use generics in framework headers
