@@ -221,7 +221,8 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
     macro(WebKitShouldRespectImageOrientation, ShouldRespectImageOrientation, shouldRespectImageOrientation) \
     macro(WebKitEnableCaretBrowsing, CaretBrowsingEnabled, caretBrowsingEnabled) \
     macro(WebKitDisplayImagesKey, LoadsImagesAutomatically, loadsImagesAutomatically) \
-    macro(WebKitMediaStreamEnabled, MediaStreamEnabled, mediaStreamEnabled)
+    macro(WebKitMediaStreamEnabled, MediaStreamEnabled, mediaStreamEnabled) \
+    macro(WebKitMetaRefreshEnabled, MetaRefreshEnabled, metaRefreshEnabled)
 
 #define OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES(TestRunnerName, SettingsName, WebPreferencesName) \
     if (preference == #TestRunnerName) { \
