@@ -50,8 +50,9 @@ namespace WebKit {
 static NPIdentifier npIdentifierFromIdentifier(PropertyName propertyName)
 {
     String name(propertyName.publicName());
+    // If the propertyName is Symbol.
     if (name.isNull())
-        return 0;
+        return nullptr;
     return static_cast<NPIdentifier>(IdentifierRep::get(name.utf8().data()));
 }
 
@@ -109,6 +110,10 @@ JSValue JSNPObject::callMethod(ExecState* exec, NPIdentifier methodName)
     ASSERT_GC_OBJECT_INHERITS(this, info());
     if (!m_npObject)
         return throwInvalidAccessError(exec);
+
+    // If the propertyName is symbol.
+    if (!methodName)
+        return jsUndefined();
 
     size_t argumentCount = exec->argumentCount();
     Vector<NPVariant, 8> arguments(argumentCount);
@@ -268,6 +273,9 @@ bool JSNPObject::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
     }
     
     NPIdentifier npIdentifier = npIdentifierFromIdentifier(propertyName);
+    // If the propertyName is symbol.
+    if (!npIdentifier)
+        return false;
 
     // Calling NPClass::invoke will call into plug-in code, and there's no telling what the plug-in can do.
     // (including destroying the plug-in). Because of this, we make sure to keep the plug-in alive until 
@@ -299,6 +307,9 @@ void JSNPObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
     }
 
     NPIdentifier npIdentifier = npIdentifierFromIdentifier(propertyName);
+    // If the propertyName is symbol.
+    if (!npIdentifier)
+        return;
     
     if (!thisObject->m_npObject->_class->hasProperty || !thisObject->m_npObject->_class->hasProperty(thisObject->m_npObject, npIdentifier)) {
         // FIXME: Should we throw an exception here?
@@ -341,6 +352,11 @@ bool JSNPObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned p
 bool JSNPObject::deleteProperty(ExecState* exec, NPIdentifier propertyName)
 {
     ASSERT_GC_OBJECT_INHERITS(this, info());
+
+    // If the propertyName is symbol.
+    if (!propertyName)
+        return false;
+
     if (!m_npObject) {
         throwInvalidAccessError(exec);
         return false;
@@ -440,6 +456,10 @@ EncodedJSValue JSNPObject::propertyGetter(ExecState* exec, JSObject* slotBase, E
     {
         JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
         NPIdentifier npIdentifier = npIdentifierFromIdentifier(propertyName);
+        // If the propertyName is symbol.
+        if (!npIdentifier)
+            return JSValue::encode(jsUndefined());
+
         returnValue = thisObj->m_npObject->_class->getProperty(thisObj->m_npObject, npIdentifier, &result);
         
         NPRuntimeObjectMap::moveGlobalExceptionToExecState(exec);
@@ -462,6 +482,10 @@ EncodedJSValue JSNPObject::methodGetter(ExecState* exec, JSObject* slotBase, Enc
         return JSValue::encode(throwInvalidAccessError(exec));
 
     NPIdentifier npIdentifier = npIdentifierFromIdentifier(propertyName);
+    // If the propertyName is symbol.
+    if (!npIdentifier)
+        return JSValue::encode(throwInvalidAccessError(exec));
+
     return JSValue::encode(JSNPMethod::create(exec, thisObj->globalObject(), propertyName.publicName(), npIdentifier));
 }
 

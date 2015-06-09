@@ -70,6 +70,8 @@ CClass* CClass::classForIsA(NPClass* isa)
 Method* CClass::methodNamed(PropertyName propertyName, Instance* instance) const
 {
     String name(propertyName.publicName());
+    if (name.isNull())
+        return nullptr;
     
     if (Method* method = m_methods.get(name.impl()))
         return method;
@@ -90,6 +92,8 @@ Method* CClass::methodNamed(PropertyName propertyName, Instance* instance) const
 Field* CClass::fieldNamed(PropertyName propertyName, Instance* instance) const
 {
     String name(propertyName.publicName());
+    if (name.isNull())
+        return nullptr;
     
     if (Field* field = m_fields.get(name.impl()))
         return field;

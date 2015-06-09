@@ -99,7 +99,7 @@ Method* ObjcClass::methodNamed(PropertyName propertyName, Instance*) const
 {
     String name(propertyName.publicName());
     if (name.isNull())
-        return 0;
+        return nullptr;
 
     if (Method* method = m_methodCache.get(name.impl()))
         return method;
@@ -150,7 +150,7 @@ Field* ObjcClass::fieldNamed(PropertyName propertyName, Instance* instance) cons
 {
     String name(propertyName.publicName());
     if (name.isNull())
-        return 0;
+        return nullptr;
 
     Field* field = m_fieldCache.get(name.impl());
     if (field)
@@ -239,6 +239,10 @@ JSValue ObjcClass::fallbackObject(ExecState* exec, Instance* instance, PropertyN
     
     if (![targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)])
         return jsUndefined();
+
+    if (!propertyName.publicName())
+        return jsUndefined();
+
     return ObjcFallbackObjectImp::create(exec, exec->lexicalGlobalObject(), objcInstance, propertyName.publicName());
 }
 
