@@ -4046,10 +4046,11 @@ static inline LayoutRect computeReferenceBox(const RenderObject& renderer, const
 Path RenderLayer::computeClipPath(const LayoutSize& offsetFromRoot, LayoutRect& rootRelativeBounds, WindRule& windRule) const
 {
     const RenderStyle& style = renderer().style();
+    float deviceSaleFactor = renderer().document().deviceScaleFactor();
 
     if (is<ShapeClipPathOperation>(*style.clipPath())) {
         auto& clipPath = downcast<ShapeClipPathOperation>(*style.clipPath());
-        LayoutRect referenceBox = computeReferenceBox(renderer(), clipPath, offsetFromRoot, rootRelativeBounds);
+        FloatRect referenceBox = snapRectToDevicePixels(computeReferenceBox(renderer(), clipPath, offsetFromRoot, rootRelativeBounds), deviceSaleFactor);
 
         windRule = clipPath.windRule();
         return clipPath.pathForReferenceRect(referenceBox);
@@ -4059,7 +4060,7 @@ Path RenderLayer::computeClipPath(const LayoutSize& offsetFromRoot, LayoutRect& 
 
         auto& clipPath = downcast<BoxClipPathOperation>(*style.clipPath());
 
-        RoundedRect shapeRect = computeRoundedRectForBoxShape(clipPath.referenceBox(), downcast<RenderBox>(renderer()));
+        FloatRoundedRect shapeRect = computeRoundedRectForBoxShape(clipPath.referenceBox(), downcast<RenderBox>(renderer())).pixelSnappedRoundedRectForPainting(deviceSaleFactor);
         shapeRect.move(offsetFromRoot);
 
         windRule = RULE_NONZERO;
@@ -4083,7 +4084,8 @@ bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInf
     ASSERT(style.clipPath());
     if (is<ShapeClipPathOperation>(*style.clipPath()) || (is<BoxClipPathOperation>(*style.clipPath()) && is<RenderBox>(renderer()))) {
         WindRule windRule;
-        Path path = computeClipPath(offsetFromRoot, rootRelativeBounds, windRule);
+        LayoutSize paintingOffsetFromRoot = LayoutSize(snapSizeToDevicePixel(offsetFromRoot + paintingInfo.subpixelAccumulation, LayoutPoint(), renderer().document().deviceScaleFactor()));
+        Path path = computeClipPath(paintingOffsetFromRoot, rootRelativeBounds, windRule);
         context->save();
         context->clipPath(path, windRule);
         return true;

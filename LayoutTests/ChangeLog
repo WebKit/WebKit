@@ -1,3 +1,19 @@
+2015-06-08  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: Clip-path does not work properly on subpixel positions.
+        https://bugs.webkit.org/show_bug.cgi?id=145749
+        rdar://problem/20824305
+
+        Reviewed by Simon Fraser.
+
+        This patch ensures that clip-path is device pixel snapped both for composited and
+        non-composited content.
+
+        * compositing/masks/compositing-clip-path-on-subpixel-position-expected.html: Added.
+        * compositing/masks/compositing-clip-path-on-subpixel-position.html: Added.
+        * fast/masking/clip-path-on-subpixel-position-expected.html: Added.
+        * fast/masking/clip-path-on-subpixel-position.html: Added.
+
 2015-06-08  Daniel Bates  <dabates@apple.com>
 
         Mouse release on AutoFill button activates it; should only activate on click

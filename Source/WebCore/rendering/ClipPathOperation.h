@@ -140,7 +140,7 @@ public:
         return adoptRef(*new BoxClipPathOperation(referenceBox));
     }
 
-    const Path pathForReferenceRect(const RoundedRect& boundingRect) const
+    const Path pathForReferenceRect(const FloatRoundedRect& boundingRect) const
     {
         Path path;
         path.addRoundedRect(boundingRect);

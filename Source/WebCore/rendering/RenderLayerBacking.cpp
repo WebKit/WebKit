@@ -1056,8 +1056,10 @@ void RenderLayerBacking::updateMaskingLayerGeometry()
 
             WindRule windRule;
             // FIXME: Use correct reference box for inlines: https://bugs.webkit.org/show_bug.cgi?id=129047
-            LayoutRect referenceBoxForClippedInline = m_owningLayer.boundingBox(&m_owningLayer);
-            Path clipPath = m_owningLayer.computeClipPath(LayoutSize(), referenceBoxForClippedInline, windRule);
+            LayoutRect boundingBox = m_owningLayer.boundingBox(&m_owningLayer);
+            LayoutRect referenceBoxForClippedInline = LayoutRect(snapRectToDevicePixels(boundingBox, deviceScaleFactor()));
+            LayoutSize offset = LayoutSize(snapSizeToDevicePixel(m_devicePixelFractionFromRenderer, LayoutPoint(), deviceScaleFactor()));
+            Path clipPath = m_owningLayer.computeClipPath(offset, referenceBoxForClippedInline, windRule);
 
             m_maskLayer->setShapeLayerPath(clipPath);
             m_maskLayer->setShapeLayerWindRule(windRule);
