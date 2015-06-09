@@ -170,6 +170,7 @@ editing/pasteboard/data-transfer-items-drag-drop-file.html
 editing/pasteboard/data-transfer-items-drag-drop-string.html
 editing/pasteboard/data-transfer-items-image-png.html
 editing/pasteboard/data-transfer-items.html
+editing/pasteboard/drag-and-drop-attachment-contenteditable.html
 editing/pasteboard/drag-and-drop-image-contenteditable.html
 editing/pasteboard/drag-and-drop-inputimage-contenteditable.html
 editing/pasteboard/drag-and-drop-objectimage-contenteditable.html
@@ -192,14 +193,17 @@ http/tests/local/drag-over-remote-content.html
 http/tests/local/fileapi/send-dragged-file.html
 http/tests/local/fileapi/send-sliced-dragged-file.html
 http/tests/misc/bubble-drag-events.html
-http/tests/security/drag-drop-local-file.html [ Failure ]
-http/tests/security/drag-drop-same-unique-origin.html [ Failure ]
-http/tests/security/drag-over-remote-content-iframe.html [ Failure ]
+http/tests/security/drag-drop-local-file.html
+http/tests/security/drag-drop-same-unique-origin.html
+http/tests/security/drag-over-remote-content-iframe.html
 
 # No support for force events
 fast/events/mouse-force-changed.html [ Skip ]
 fast/events/mouse-force-down.html [ Skip ]
 fast/events/mouse-force-up.html [ Skip ]
+
+# AutoFill button is not supported
+fast/forms/auto-fill-button/mouse-down-input-mouse-release-auto-fill-button.html
 
 ###
 # Known failures
