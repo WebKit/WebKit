@@ -65,10 +65,11 @@ private:
     void addMediaElement(HTMLMediaElement&);
     void removeMediaElement(HTMLMediaElement&);
 
-    Vector<HTMLMediaElement*> activeParticipatingElements() const;
+    void addActiveMediaElement(HTMLMediaElement&);
 
     State m_currentState { State::Idle };
     Vector<HTMLMediaElement*> m_participatingElements;
+    HashSet<HTMLMediaElement*> m_activeParticipatingElements;
 
     const String m_kind;
     RefPtr<MediaRemoteControls> m_controls;

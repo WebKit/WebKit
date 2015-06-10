@@ -2829,6 +2829,19 @@ void HTMLMediaElement::playInternal()
             scheduleEvent(eventNames().waitingEvent);
         else if (m_readyState >= HAVE_FUTURE_DATA)
             scheduleEvent(eventNames().playingEvent);
+
+#if ENABLE(MEDIA_SESSION)
+        // 6.3 Activating a media session from a media element
+        // When the play() method is invoked, the paused attribute is true, and the readyState attribute has the value
+        // HAVE_FUTURE_DATA or HAVE_ENOUGH_DATA, then
+        // 1. Let media session be the value of the current media session.
+        // 2. If we are not currently in media session's list of active participating media elements then append
+        //    ourselves to this list.
+        if (m_readyState == HAVE_ENOUGH_DATA || m_readyState == HAVE_FUTURE_DATA) {
+            if (m_session)
+                m_session->addActiveMediaElement(*this);
+        }
+#endif
     }
     m_autoplaying = false;
     updatePlayState();

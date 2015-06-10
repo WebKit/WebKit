@@ -66,16 +66,9 @@ void MediaSession::removeMediaElement(HTMLMediaElement& element)
     m_participatingElements.remove(m_participatingElements.find(&element));
 }
 
-Vector<HTMLMediaElement*> MediaSession::activeParticipatingElements() const
+void MediaSession::addActiveMediaElement(HTMLMediaElement& element)
 {
-    Vector<HTMLMediaElement*> elements;
-
-    for (auto* element : m_participatingElements) {
-        if (element->isPlaying())
-            elements.append(element);
-    }
-
-    return elements;
+    m_activeParticipatingElements.add(&element);
 }
 
 void MediaSession::releaseSession()
@@ -84,7 +77,7 @@ void MediaSession::releaseSession()
 
 void MediaSession::togglePlayback()
 {
-    for (auto* element : activeParticipatingElements()) {
+    for (auto* element : m_activeParticipatingElements) {
         if (element->paused())
             element->play();
         else
