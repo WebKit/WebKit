@@ -82,6 +82,16 @@ void MediaSession::releaseSession()
 {
 }
 
+void MediaSession::togglePlayback()
+{
+    for (auto* element : activeParticipatingElements()) {
+        if (element->paused())
+            element->play();
+        else
+            element->pause();
+    }
+}
+
 }
 
 #endif /* ENABLE(MEDIA_SESSION) */

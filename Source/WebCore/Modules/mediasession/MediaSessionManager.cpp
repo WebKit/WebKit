@@ -49,6 +49,15 @@ void MediaSessionManager::removeMediaSession(MediaSession& session)
     m_sessions.remove(&session);
 }
 
+void MediaSessionManager::togglePlayback()
+{
+    for (auto* session : m_sessions) {
+        String sessionKind = session->kind();
+        if (session->currentState() == MediaSession::State::Active && (sessionKind == "content" || sessionKind == ""))
+            session->togglePlayback();
+    }
+}
+
 }
 
 #endif /* ENABLE(MEDIA_SESSION) */

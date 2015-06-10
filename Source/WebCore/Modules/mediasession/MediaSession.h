@@ -36,6 +36,12 @@ class HTMLMediaElement;
 
 class MediaSession final : public RefCounted<MediaSession> {
 public:
+    enum class State {
+        Idle,
+        Active,
+        Interrupted
+    };
+    
     static Ref<MediaSession> create(ScriptExecutionContext& context, const String& kind)
     {
         return adoptRef(*new MediaSession(context, kind));
@@ -46,16 +52,14 @@ public:
 
     String kind() const { return m_kind; }
     MediaRemoteControls* controls(bool& isNull);
+    
+    State currentState() const { return m_currentState; }
 
     void releaseSession();
 
-private:
-    enum class State {
-        Idle,
-        Active,
-        Interrupted
-    };
+    void togglePlayback();
 
+private:
     friend class HTMLMediaElement;
 
     void addMediaElement(HTMLMediaElement&);

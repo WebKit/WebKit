@@ -38,6 +38,8 @@ class MediaSessionManager {
 public:
     static MediaSessionManager& singleton();
 
+    void togglePlayback();
+    
 private:
     friend class MediaSession;
 
