@@ -1,3 +1,17 @@
+2015-06-10  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Meta refresh preference is not respected on fast path WebView
+        initialization
+
+        <https://bugs.webkit.org/show_bug.cgi?id=145861>
+        <rdar://problem/21309911>
+
+        Reviewed by Brady Eidson.
+
+        * WebView/WebView.mm:
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+        Set the WebCore setting from the WebPreferences preference.
+
 2015-06-09  Anders Carlsson  <andersca@apple.com>
 
         Remove more unused SPI methods
