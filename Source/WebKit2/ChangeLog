@@ -1,3 +1,10 @@
+2015-06-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Fixing the build for the GTK port with Clang.
+
+        * UIProcess/gtk/InputMethodFilter.h: Add the <functional> header inclusion
+        to avoid compilation errors due to missing std::function<>.
+
 2015-06-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Move KeyBindingTranslator from platform to WebKit2 layer

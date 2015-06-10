@@ -21,6 +21,7 @@
 #define InputMethodFilter_h
 
 #include <WebCore/IntPoint.h>
+#include <functional>
 #include <wtf/Noncopyable.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/WTFString.h>
