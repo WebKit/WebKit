@@ -110,6 +110,8 @@ public:
     virtual void didAddHorizontalScrollbar(Scrollbar*) { }
     virtual void willRemoveHorizontalScrollbar(Scrollbar*) { }
 
+    virtual void invalidateScrollbarPartLayers(Scrollbar*) { }
+
     virtual void verticalScrollbarLayerDidChange() { }
     virtual void horizontalScrollbarLayerDidChange() { }
 

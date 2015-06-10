@@ -115,6 +115,8 @@ private:
     virtual void didAddHorizontalScrollbar(Scrollbar*);
     virtual void willRemoveHorizontalScrollbar(Scrollbar*);
 
+    void invalidateScrollbarPartLayers(Scrollbar*) override;
+
     virtual void verticalScrollbarLayerDidChange();
     virtual void horizontalScrollbarLayerDidChange();
 

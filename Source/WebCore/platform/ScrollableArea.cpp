@@ -341,11 +341,15 @@ void ScrollableArea::setScrollbarOverlayStyle(ScrollbarOverlayStyle overlayStyle
     if (horizontalScrollbar()) {
         ScrollbarTheme::theme()->updateScrollbarOverlayStyle(horizontalScrollbar());
         horizontalScrollbar()->invalidate();
+        if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
+            scrollAnimator->invalidateScrollbarPartLayers(horizontalScrollbar());
     }
     
     if (verticalScrollbar()) {
         ScrollbarTheme::theme()->updateScrollbarOverlayStyle(verticalScrollbar());
         verticalScrollbar()->invalidate();
+        if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
+            scrollAnimator->invalidateScrollbarPartLayers(verticalScrollbar());
     }
 }
 
