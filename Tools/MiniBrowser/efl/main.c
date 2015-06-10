@@ -1038,7 +1038,7 @@ static char *
 url_from_user_input(const char *arg)
 {
     /* If it is already a URL, return the argument as is. */
-    if (has_scheme(arg) || !strcasecmp(arg, "about:blank"))
+    if (has_scheme(arg) || eina_str_has_prefix(arg, "javascript:") || !strcasecmp(arg, "about:blank"))
         return strdup(arg);
 
     Eina_Strbuf *buf = eina_strbuf_manage_new(eina_file_path_sanitize(arg));
@@ -1060,6 +1060,18 @@ url_from_user_input(const char *arg)
     return url;
 }
 
+static Eina_Bool
+url_load_from_user_input(Evas_Object *ewk_view, const char *url)
+{
+    if (!ewk_view || !url)
+        return EINA_FALSE;
+
+    if (eina_str_has_prefix(url, "javascript:"))
+        return ewk_view_script_execute(ewk_view, strstr(url, "javascript:"), 0, 0);
+
+    return ewk_view_url_set(ewk_view, url);
+}
+
 static void
 on_url_bar_activated(void *user_data, Evas_Object *url_bar, void *event_info)
 {
@@ -1068,7 +1080,7 @@ on_url_bar_activated(void *user_data, Evas_Object *url_bar, void *event_info)
     const char *markup_url = elm_entry_entry_get(url_bar);
     char *user_url = elm_entry_markup_to_utf8(markup_url);
     char *url = url_from_user_input(user_url);
-    ewk_view_url_set(window->ewk_view, url);
+    url_load_from_user_input(window->ewk_view, url);
 
     free(user_url);
     free(url);
@@ -2461,7 +2473,7 @@ elm_main(int argc, char *argv[])
 
     if (args < argc) {
         char *url = url_from_user_input(argv[args]);
-        ewk_view_url_set(window->ewk_view, url);
+        url_load_from_user_input(window->ewk_view, url);
         free(url);
     } else
         ewk_view_url_set(window->ewk_view, DEFAULT_URL);

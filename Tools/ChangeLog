@@ -1,3 +1,18 @@
+2015-06-10  Hyungwook Lee  <hyungwook.lee@navercorp.com>
+
+        [EFL] Execute Javascript method in mini browser address bar.
+        https://bugs.webkit.org/show_bug.cgi?id=145725
+
+        Reviewed by Gyuyoung Kim.
+
+        Support 'javascript:' scheme in WebKit EFL Mini Browser.
+
+        * MiniBrowser/efl/main.c:
+        (url_from_user_input):
+        (url_load_from_user_input):
+        (on_url_bar_activated):
+        (elm_main):
+
 2015-06-09  Hyungwook Lee  <hyungwook.lee@navercorp.com>
 
         Implement dumpProgressFinishedCallback() for Win layoutTestController.
