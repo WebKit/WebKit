@@ -48,6 +48,10 @@ class WebPageProxy;
 class WebProcessPool;
 struct WebsiteDataRecord;
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+struct PluginModuleInfo;
+#endif
+
 class WebsiteDataStore : public RefCounted<WebsiteDataStore>, public WebProcessLifetimeObserver {
 public:
     struct Configuration {
@@ -91,6 +95,10 @@ private:
     void platformDestroy();
 
     HashSet<RefPtr<WebProcessPool>> processPools() const;
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    Vector<PluginModuleInfo> plugins() const;
+#endif
 
     static Vector<RefPtr<WebCore::SecurityOrigin>> mediaKeyOrigins(const String& mediaKeysStorageDirectory);
     static void removeMediaKeys(const String& mediaKeysStorageDirectory, std::chrono::system_clock::time_point modifiedSince);

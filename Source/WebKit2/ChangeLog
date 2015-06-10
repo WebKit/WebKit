@@ -1,3 +1,15 @@
+2015-06-09  Anders Carlsson  <andersca@apple.com>
+
+        Support fetching website data
+        https://bugs.webkit.org/show_bug.cgi?id=145828
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchData):
+        (WebKit::WebsiteDataStore::plugins):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2015-06-10  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed. Fixing the build for the GTK port with Clang.
