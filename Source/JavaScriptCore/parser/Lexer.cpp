@@ -1040,6 +1040,7 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::p
 
 template<typename CharacterType> template<bool shouldCreateIdentifier> JSTokenType Lexer<CharacterType>::parseIdentifierSlowCase(JSTokenData* tokenData, unsigned lexerFlags, bool strictMode)
 {
+    const ptrdiff_t remaining = m_codeEnd - m_code;
     auto identifierStart = currentSourcePtr();
     bool bufferRequired = false;
 
@@ -1085,13 +1086,18 @@ template<typename CharacterType> template<bool shouldCreateIdentifier> JSTokenTy
     } else
         tokenData->ident = nullptr;
 
-    if (LIKELY(!(lexerFlags & LexerFlagsIgnoreReservedWords))) {
+    if (LIKELY(!bufferRequired && !(lexerFlags & LexerFlagsIgnoreReservedWords))) {
         ASSERT(shouldCreateIdentifier);
-        const HashTableValue* entry = m_vm->keywords->getKeyword(*ident);
-        if (!entry)
-            return IDENT;
-        JSTokenType token = static_cast<JSTokenType>(entry->lexerValue());
-        return (token != RESERVED_IF_STRICT) || strictMode ? token : IDENT;
+        // Keywords must not be recognized if there was an \uXXXX in the identifier.
+        if (remaining < maxTokenLength) {
+            const HashTableValue* entry = m_vm->keywords->getKeyword(*ident);
+            ASSERT((remaining < maxTokenLength) || !entry);
+            if (!entry)
+                return IDENT;
+            JSTokenType token = static_cast<JSTokenType>(entry->lexerValue());
+            return (token != RESERVED_IF_STRICT) || strictMode ? token : IDENT;
+        }
+        return IDENT;
     }
 
     m_buffer16.shrink(0);
