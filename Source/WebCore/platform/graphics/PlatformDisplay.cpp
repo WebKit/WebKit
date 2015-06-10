@@ -109,7 +109,9 @@ PlatformDisplay::PlatformDisplay()
 
 PlatformDisplay::~PlatformDisplay()
 {
-#if USE(EGL)
+    // WinCairo crashes when terminating EGL on exit.
+    // https://bugs.webkit.org/show_bug.cgi?id=145832
+#if USE(EGL) && !PLATFORM(WIN)
     terminateEGLDisplay();
 #endif
 }
