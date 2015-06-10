@@ -19,13 +19,13 @@
 #ifndef KeyBindingTranslator_h
 #define KeyBindingTranslator_h
 
-#include "GRefPtrGtk.h"
+#include <WebCore/GRefPtrGtk.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 typedef struct _GdkEventKey GdkEventKey;
 
-namespace WebCore {
+namespace WebKit {
 
 class KeyBindingTranslator {
 public:
@@ -39,7 +39,7 @@ private:
     Vector<String> m_pendingEditorCommands;
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif
 

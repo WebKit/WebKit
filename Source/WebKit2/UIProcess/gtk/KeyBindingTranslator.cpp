@@ -19,13 +19,10 @@
 #include "config.h"
 #include "KeyBindingTranslator.h"
 
-#include "GtkVersioning.h"
 #include <gdk/gdkkeysyms.h>
-#include <wtf/HashMap.h>
+#include <gtk/gtk.h>
 
-namespace WebCore {
-
-typedef HashMap<int, const char*> IntConstCharHashMap;
+namespace WebKit {
 
 static void backspaceCallback(GtkWidget* widget, KeyBindingTranslator* translator)
 {
@@ -116,7 +113,7 @@ static void deleteFromCursorCallback(GtkWidget* widget, GtkDeleteType deleteType
 
     const char* rawCommand = gtkDeleteCommands[deleteType][direction];
     if (!rawCommand)
-      return;
+        return;
 
     for (int i = 0; i < abs(count); i++)
         translator->addPendingEditorCommand(rawCommand);
@@ -185,30 +182,24 @@ struct KeyCombinationEntry {
 };
 
 static const KeyCombinationEntry customKeyBindings[] = {
-    { GDK_b,         GDK_CONTROL_MASK,               "ToggleBold"    },
-    { GDK_i,         GDK_CONTROL_MASK,               "ToggleItalic"  },
-    { GDK_Escape,    0,                              "Cancel"        },
-    { GDK_greater,   GDK_CONTROL_MASK,               "Cancel"        },
-    { GDK_Tab,       0,                              "InsertTab"     },
-    { GDK_Tab,       GDK_SHIFT_MASK,                 "InsertBacktab" },
+    { GDK_KEY_b,         GDK_CONTROL_MASK,               "ToggleBold"    },
+    { GDK_KEY_i,         GDK_CONTROL_MASK,               "ToggleItalic"  },
+    { GDK_KEY_Escape,    0,                              "Cancel"        },
+    { GDK_KEY_greater,   GDK_CONTROL_MASK,               "Cancel"        },
+    { GDK_KEY_Tab,       0,                              "InsertTab"     },
+    { GDK_KEY_Tab,       GDK_SHIFT_MASK,                 "InsertBacktab" },
 };
 
 Vector<String> KeyBindingTranslator::commandsForKeyEvent(GdkEventKey* event)
 {
     ASSERT(m_pendingEditorCommands.isEmpty());
 
-    // FIXME: Move KeyBindingTranslator to WebKit layer and remove the GTK2 code.
-#ifdef GTK_API_VERSION_2
-    gtk_bindings_activate_event(GTK_OBJECT(m_nativeWidget.get()), event);
-#else
     gtk_bindings_activate_event(G_OBJECT(m_nativeWidget.get()), event);
-#endif
-
     if (!m_pendingEditorCommands.isEmpty())
         return WTF::move(m_pendingEditorCommands);
 
     // Special-case enter keys for we want them to work regardless of modifier.
-    if ((event->keyval == GDK_Return || event->keyval == GDK_KP_Enter || event->keyval == GDK_ISO_Enter))
+    if ((event->keyval == GDK_KEY_Return || event->keyval == GDK_KEY_KP_Enter || event->keyval == GDK_KEY_ISO_Enter))
         return { "InsertNewLine" };
 
     // For keypress events, we want charCode(), but keyCode() does that.
@@ -224,4 +215,4 @@ Vector<String> KeyBindingTranslator::commandsForKeyEvent(GdkEventKey* event)
     return { };
 }
 
-} // namespace WebCore
+} // namespace WebKit

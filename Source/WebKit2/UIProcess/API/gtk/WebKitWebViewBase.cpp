@@ -31,6 +31,7 @@
 
 #include "DrawingAreaProxyImpl.h"
 #include "InputMethodFilter.h"
+#include "KeyBindingTranslator.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
@@ -53,7 +54,6 @@
 #include <WebCore/GUniquePtrGtk.h>
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/GtkVersioning.h>
-#include <WebCore/KeyBindingTranslator.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PasteboardHelper.h>
 #include <WebCore/PlatformDisplay.h>

@@ -1,5 +1,33 @@
 2015-06-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Move KeyBindingTranslator from platform to WebKit2 layer
+        https://bugs.webkit.org/show_bug.cgi?id=145840
+
+        Reviewed by Martin Robinson.
+
+        It's currently used only by WebKit2 in the UI process and it's
+        another file built twice because of the GTK2 plugin process.
+
+        * PlatformGTK.cmake:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        * UIProcess/gtk/KeyBindingTranslator.cpp: Renamed from Source/WebCore/platform/gtk/KeyBindingTranslator.cpp.
+        (WebKit::backspaceCallback):
+        (WebKit::selectAllCallback):
+        (WebKit::cutClipboardCallback):
+        (WebKit::copyClipboardCallback):
+        (WebKit::pasteClipboardCallback):
+        (WebKit::toggleOverwriteCallback):
+        (WebKit::popupMenuCallback):
+        (WebKit::showHelpCallback):
+        (WebKit::deleteFromCursorCallback):
+        (WebKit::moveCursorCallback):
+        (WebKit::KeyBindingTranslator::KeyBindingTranslator):
+        (WebKit::KeyBindingTranslator::commandsForKeyEvent):
+        * UIProcess/gtk/KeyBindingTranslator.h: Renamed from Source/WebCore/platform/gtk/KeyBindingTranslator.h.
+        (WebKit::KeyBindingTranslator::addPendingEditorCommand):
+
+2015-06-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Get rid of GetEditorCommandsForKeyEvent sync message
         https://bugs.webkit.org/show_bug.cgi?id=145598
 

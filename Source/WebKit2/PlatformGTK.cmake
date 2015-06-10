@@ -282,6 +282,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/gtk/ExperimentalFeatures.cpp
     UIProcess/gtk/GestureController.cpp
     UIProcess/gtk/InputMethodFilter.cpp
+    UIProcess/gtk/KeyBindingTranslator.cpp
     UIProcess/gtk/RedirectedXCompositeWindow.cpp
     UIProcess/gtk/TextCheckerGtk.cpp
     UIProcess/gtk/WebColorPickerGtk.cpp
