@@ -27,7 +27,7 @@ test(function() {
     }, 'constructing the stream should re-throw the error');
 }, 'Underlying source start: throwing method');
 
-var test1 = async_test('Underlying source: throwing pull getter (initial pull)', { timeout: 50 });
+var test1 = async_test('Underlying source: throwing pull getter (initial pull)');
 test1.step(function() {
     var theError = new Error('a unique string');
     var rs = new ReadableStream({
@@ -44,7 +44,7 @@ test1.step(function() {
         }));
 });
 
-var test2 = async_test('Underlying source: throwing pull method (initial pull)', { timeout: 50 });
+var test2 = async_test('Underlying source: throwing pull method (initial pull)');
 test2.step(function() {
     var theError = new Error('a unique string');
     var rs = new ReadableStream({
@@ -61,7 +61,7 @@ test2.step(function() {
         }));
 });
 
-var test3 = async_test('Underlying source: throwing pull getter (second pull)', { timeout: 50 });
+var test3 = async_test('Underlying source: throwing pull getter (second pull)');
 test3.step(function() {
     var theError = new Error('a unique string');
     var counter = 0;
@@ -89,7 +89,7 @@ test3.step(function() {
         }));
 });
 
-var test4 = async_test('Underlying source: throwing pull method (second pull)', { timeout: 50 });
+var test4 = async_test('Underlying source: throwing pull method (second pull)');
 test4.step(function() {
     var theError = new Error('a unique string');
     var counter = 0;

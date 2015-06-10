@@ -62,9 +62,12 @@ private:
     void doStart(JSC::ExecState&);
 
     JSC::JSValue invoke(JSC::ExecState&, const char*);
+    void storeException(JSC::ExecState&);
+    void storeError(JSC::ExecState&, JSC::JSValue);
 
     virtual bool hasValue() const override;
     virtual JSC::JSValue read() override;
+    virtual void doPull() override;
 
     JSDOMGlobalObject* globalObject();
 

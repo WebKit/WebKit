@@ -89,6 +89,7 @@ protected:
     explicit ReadableStream(ScriptExecutionContext&);
 
     bool resolveReadCallback(JSC::JSValue);
+    void pull();
 
 private:
     // ActiveDOMObject API.
@@ -100,6 +101,7 @@ private:
 
     virtual bool hasValue() const = 0;
     virtual JSC::JSValue read() = 0;
+    virtual void doPull() = 0;
 
     std::unique_ptr<ReadableStreamReader> m_reader;
     Vector<std::unique_ptr<ReadableStreamReader>> m_releasedReaders;
@@ -114,6 +116,7 @@ private:
     };
     Deque<ReadCallbacks> m_readRequests;
 
+    bool m_isStarted { false };
     bool m_closeRequested { false };
     State m_state { State::Readable };
 };

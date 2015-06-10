@@ -1,3 +1,24 @@
+2015-06-10  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet <youenn.fablet@crf.canon.fr>
+
+        [Streams API] Implement pulling of a source by a ReadableStream
+        https://bugs.webkit.org/show_bug.cgi?id=145262
+
+        Reviewed by Darin Adler
+
+        Rebased expectations, removed some "timeout: 50" parameters.
+        Removed a test from streams/reference-implementation/readable-stream.html that cannot pass
+        until promises returned to start and pull JS callbacks are handled.
+        Fixed bug in streams-utils.js (was using the old API replaced by controller).
+
+        * streams/reference-implementation/bad-underlying-sources-expected.txt:
+        * streams/reference-implementation/bad-underlying-sources.html:
+        * streams/reference-implementation/readable-stream-expected.txt:
+        * streams/reference-implementation/readable-stream.html:
+        * streams/reference-implementation/resources/streams-utils.js:
+        (.stream.new.ReadableStream.):
+        (.stream.new.ReadableStream):
+        (sequentialReadableStream):
+
 2015-06-09  Daegyu Lee  <daegyu.lee@navercorp.com>
 
         3D-transformed video does not display on platforms without accelerated video rendering

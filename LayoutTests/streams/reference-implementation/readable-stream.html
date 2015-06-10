@@ -516,7 +516,7 @@ test14.step(function() {
     }));
 });
 
-var test15 = async_test('ReadableStream pull should be able to close a stream.', { timeout: 50 });
+var test15 = async_test('ReadableStream pull should be able to close a stream.');
 test15.step(function() {
     var pullCalled = false;
     var rs = new ReadableStream({
@@ -702,7 +702,7 @@ test18.step(function() {
     }), test18.step_func(function(e) { assert_reached(e); }));
 });
 
-var test19 = async_test('ReadableStream integration test: adapting a sync pull source', { timeout: 50 });
+var test19 = async_test('ReadableStream integration test: adapting a sync pull source');
 test19.step(function() {
     var rs = sequentialReadableStream(10);
 
@@ -713,7 +713,7 @@ test19.step(function() {
         test19.done();
     }));
 });
-
+/*
 var test20 = async_test('ReadableStream integration test: adapting an async pull source', { timeout: 50 });
 test20.step(function() {
     var rs = sequentialReadableStream(10, { async: true });
@@ -725,4 +725,5 @@ test20.step(function() {
         test20.done();
     }));
 });
+*/
 </script>

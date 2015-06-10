@@ -39,6 +39,7 @@
 #include "NotImplemented.h"
 #include "ScriptExecutionContext.h"
 #include <runtime/Error.h>
+#include <runtime/Exception.h>
 #include <runtime/JSCJSValueInlines.h>
 #include <runtime/JSString.h>
 #include <runtime/StructureInlines.h>
@@ -102,6 +103,21 @@ void ReadableJSStream::doStart(ExecState& exec)
     startReadableStreamAsync(*this);
 }
 
+void ReadableJSStream::doPull()
+{
+    ExecState& state = *globalObject()->globalExec();
+    JSLockHolder lock(&state);
+
+    invoke(state, "pull");
+
+    if (state.hadException()) {
+        storeException(state);
+        ASSERT(!state.hadException());
+        return;
+    }
+    // FIXME: Implement handling promise as result of calling pull function.
+}
+
 RefPtr<ReadableJSStream> ReadableJSStream::create(ExecState& exec, ScriptExecutionContext& scriptExecutionContext)
 {
     JSObject* jsSource;
@@ -136,11 +152,22 @@ JSValue ReadableJSStream::jsController(ExecState& exec, JSDOMGlobalObject* globa
     return toJS(&exec, globalObject, m_controller.get());
 }
 
+void ReadableJSStream::storeException(JSC::ExecState& state)
+{
+    JSValue exception = state.exception()->value();
+    state.clearException();
+    storeError(state, exception);
+}
+
 void ReadableJSStream::storeError(JSC::ExecState& exec)
+{
+    storeError(exec, exec.argumentCount() ? exec.argument(0) : createError(&exec, ASCIILiteral("Error function called.")));
+}
+
+void ReadableJSStream::storeError(JSC::ExecState& exec, JSValue error)
 {
     if (m_error)
         return;
-    JSValue error = exec.argumentCount() ? exec.argument(0) : createError(&exec, ASCIILiteral("Error function called."));
     m_error.set(exec.vm(), error);
 
     changeStateToErrored();
@@ -166,12 +193,14 @@ void ReadableJSStream::enqueue(ExecState& exec)
         return;
 
     JSValue chunk = exec.argumentCount() ? exec.argument(0) : jsUndefined();
-    if (resolveReadCallback(chunk))
+    if (resolveReadCallback(chunk)) {
+        pull();
         return;
+    }
 
     m_chunkQueue.append(JSC::Strong<JSC::Unknown>(exec.vm(), chunk));
     // FIXME: Compute chunk size.
-    // FIXME: Add pulling of data here and also when data is passed to resolve callback.
+    pull();
 }
 
 } // namespace WebCore

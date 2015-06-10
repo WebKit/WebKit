@@ -112,6 +112,23 @@ void ReadableStream::changeStateToErrored()
     clearCallbacks();
 }
 
+void ReadableStream::start()
+{
+    m_isStarted = true;
+    pull();
+}
+
+void ReadableStream::pull()
+{
+    if (!m_isStarted || m_state == State::Closed || m_state == State::Errored || m_closeRequested)
+        return;
+    // FIXME: Implement queueSize check.
+    if (m_readRequests.isEmpty() && hasValue())
+        return;
+    // FIXME: Implement async pull check.
+    doPull();
+}
+
 ReadableStreamReader& ReadableStream::getReader()
 {
     ASSERT(!m_reader);
@@ -154,12 +171,14 @@ void ReadableStream::read(ReadSuccessCallback&& successCallback, ReadEndCallback
     }
     if (hasValue()) {
         successCallback(read());
-        if (m_closeRequested && !hasValue())
+        if (!m_closeRequested)
+            pull();
+        else if (!hasValue())
             close();
         return;
     }
     m_readRequests.append({ WTF::move(successCallback), WTF::move(endCallback), WTF::move(failureCallback) });
-    // FIXME: We should try to pull.
+    pull();
 }
 
 bool ReadableStream::resolveReadCallback(JSC::JSValue value)
@@ -169,11 +188,6 @@ bool ReadableStream::resolveReadCallback(JSC::JSValue value)
 
     m_readRequests.takeFirst().successCallback(value);
     return true;
-}
-
-void ReadableStream::start()
-{
-    notImplemented();
 }
 
 const char* ReadableStream::activeDOMObjectName() const

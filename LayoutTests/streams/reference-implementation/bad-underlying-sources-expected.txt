@@ -1,10 +1,10 @@
 
 PASS Underlying source start: throwing getter 
 PASS Underlying source start: throwing method 
-TIMEOUT Underlying source: throwing pull getter (initial pull) Test timed out
-TIMEOUT Underlying source: throwing pull method (initial pull) Test timed out
-TIMEOUT Underlying source: throwing pull getter (second pull) Test timed out
-TIMEOUT Underlying source: throwing pull method (second pull) Test timed out
+PASS Underlying source: throwing pull getter (initial pull) 
+PASS Underlying source: throwing pull method (initial pull) 
+PASS Underlying source: throwing pull getter (second pull) 
+PASS Underlying source: throwing pull method (second pull) 
 FAIL Underlying source: throwing cancel getter cancel is not implemented
 FAIL Underlying source: throwing cancel method cancel is not implemented
 FAIL Underlying source: throwing strategy getter assert_throws: enqueue should throw the error function "function () { c.enqueue('a'); }" did not throw

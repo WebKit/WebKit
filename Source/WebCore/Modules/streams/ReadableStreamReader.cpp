@@ -48,7 +48,7 @@ void ReadableStreamReader::closed(ReadableStream::ClosedSuccessCallback&& succes
 void ReadableStreamReader::read(ReadableStream::ReadSuccessCallback&& successCallback, ReadableStream::ReadEndCallback&& endCallback, ReadableStream::FailureCallback&& failureCallback)
 {
     if (m_stream.isReadable() && m_stream.reader() != this) {
-        successCallback(JSC::JSValue());
+        endCallback();
         return;
     }
     m_stream.read(WTF::move(successCallback), WTF::move(endCallback), WTF::move(failureCallback));

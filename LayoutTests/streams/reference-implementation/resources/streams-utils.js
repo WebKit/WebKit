@@ -150,25 +150,27 @@ function sequentialReadableStream(limit, options) {
                 sequentialSource.open(function(err) {
                     if (err) {
                         reject(err);
+                        return;
                     }
                     resolve();
                 });
             });
         },
 
-        pull: function(enqueue, finish, error) {
+        pull: function(c) {
             sequentialSource.read(function(err, done, chunk) {
                 if (err) {
-                    error(err);
+                    c.error(err);
                 } else if (done) {
                     sequentialSource.close(function(err) {
                         if (err) {
-                            error(err);
+                            c.error(err);
+                            return;
                         }
-                        finish();
+                        c.close();
                     });
                 } else {
-                    enqueue(chunk);
+                    c.enqueue(chunk);
                 }
             });
         },
