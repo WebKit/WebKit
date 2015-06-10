@@ -21,33 +21,19 @@
 #include "WebEditorClient.h"
 
 #include "PlatformKeyboardEvent.h"
-#include "WebPage.h"
-#include "WebPageProxyMessages.h"
-#include "WebProcess.h"
 #include <WebCore/DataObjectGtk.h>
 #include <WebCore/Document.h>
+#include <WebCore/Editor.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameDestructionObserver.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/Pasteboard.h>
-#include <WebCore/WindowsKeyboardCodes.h>
 #include <WebCore/markup.h>
 #include <wtf/gobject/GRefPtr.h>
 
 using namespace WebCore;
 
 namespace WebKit {
-
-void WebEditorClient::getEditorCommandsForKeyEvent(const KeyboardEvent* event, Vector<WTF::String>& pendingEditorCommands)
-{
-    ASSERT(event->type() == eventNames().keydownEvent || event->type() == eventNames().keypressEvent);
-
-    /* First try to interpret the command in the UI and get the commands.
-       UI needs to receive event type because only knows current NativeWebKeyboardEvent.*/
-    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::GetEditorCommandsForKeyEvent(event->type()),
-                                                Messages::WebPageProxy::GetEditorCommandsForKeyEvent::Reply(pendingEditorCommands),
-                                                m_page->pageID(), std::chrono::milliseconds::max());
-}
 
 bool WebEditorClient::executePendingEditorCommands(Frame* frame, const Vector<WTF::String>& pendingEditorCommands, bool allowTextInsertion)
 {
@@ -70,21 +56,20 @@ bool WebEditorClient::executePendingEditorCommands(Frame* frame, const Vector<WT
 
 void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
 {
-    Node* node = event->target()->toNode();
-    ASSERT(node);
-    Frame* frame = node->document().frame();
-    ASSERT(frame);
-
     const PlatformKeyboardEvent* platformEvent = event->keyEvent();
     if (!platformEvent)
         return;
 
     // If this was an IME event don't do anything.
-    if (platformEvent->windowsVirtualKeyCode() == VK_PROCESSKEY)
+    if (platformEvent->handledByInputMethod())
         return;
 
-    Vector<WTF::String> pendingEditorCommands;
-    getEditorCommandsForKeyEvent(event, pendingEditorCommands);
+    Node* node = event->target()->toNode();
+    ASSERT(node);
+    Frame* frame = node->document().frame();
+    ASSERT(frame);
+
+    const Vector<String> pendingEditorCommands = platformEvent->commands();
     if (!pendingEditorCommands.isEmpty()) {
 
         // During RawKeyDown events if an editor command will insert text, defer
@@ -129,8 +114,8 @@ void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
 void WebEditorClient::handleInputMethodKeydown(KeyboardEvent* event)
 {
     const PlatformKeyboardEvent* platformEvent = event->keyEvent();
-    if (platformEvent && platformEvent->windowsVirtualKeyCode() == VK_PROCESSKEY)
-        event->preventDefault();
+    if (platformEvent && platformEvent->handledByInputMethod())
+        event->setDefaultHandled();
 }
 
 #if PLATFORM(X11)

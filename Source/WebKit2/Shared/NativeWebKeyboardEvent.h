@@ -63,7 +63,7 @@ public:
     NativeWebKeyboardEvent(NSEvent *, bool handledByInputMethod, const Vector<WebCore::KeypressCommand>&);
 #elif PLATFORM(GTK)
     NativeWebKeyboardEvent(const NativeWebKeyboardEvent&);
-    NativeWebKeyboardEvent(GdkEvent*, const WebCore::CompositionResults&, InputMethodFilter::EventFakedForComposition);
+    NativeWebKeyboardEvent(GdkEvent*, const WebCore::CompositionResults&, InputMethodFilter::EventFakedForComposition, Vector<String>&& commands);
 #elif PLATFORM(EFL)
     NativeWebKeyboardEvent(const Evas_Event_Key_Down*, bool);
     NativeWebKeyboardEvent(const Evas_Event_Key_Up*);

@@ -184,61 +184,44 @@ struct KeyCombinationEntry {
     const char* name;
 };
 
-static const KeyCombinationEntry keyDownEntries[] = {
+static const KeyCombinationEntry customKeyBindings[] = {
     { GDK_b,         GDK_CONTROL_MASK,               "ToggleBold"    },
     { GDK_i,         GDK_CONTROL_MASK,               "ToggleItalic"  },
     { GDK_Escape,    0,                              "Cancel"        },
     { GDK_greater,   GDK_CONTROL_MASK,               "Cancel"        },
-};
-
-// These commands are text insertion commands, so should take place
-// while handling the KeyPress event.
-static const KeyCombinationEntry keyPressEntries[] = {
     { GDK_Tab,       0,                              "InsertTab"     },
     { GDK_Tab,       GDK_SHIFT_MASK,                 "InsertBacktab" },
 };
 
-void KeyBindingTranslator::getEditorCommandsForKeyEvent(GdkEventKey* event, EventType type, Vector<WTF::String>& commandList)
+Vector<String> KeyBindingTranslator::commandsForKeyEvent(GdkEventKey* event)
 {
-    m_pendingEditorCommands.clear();
+    ASSERT(m_pendingEditorCommands.isEmpty());
 
+    // FIXME: Move KeyBindingTranslator to WebKit layer and remove the GTK2 code.
 #ifdef GTK_API_VERSION_2
     gtk_bindings_activate_event(GTK_OBJECT(m_nativeWidget.get()), event);
 #else
     gtk_bindings_activate_event(G_OBJECT(m_nativeWidget.get()), event);
 #endif
 
-    if (!m_pendingEditorCommands.isEmpty()) {
-        commandList.appendVector(m_pendingEditorCommands);
-        return;
-    }
-
-    DEPRECATED_DEFINE_STATIC_LOCAL(IntConstCharHashMap, keyDownCommandsMap, ());
-    DEPRECATED_DEFINE_STATIC_LOCAL(IntConstCharHashMap, keyPressCommandsMap, ());
-
-    if (keyDownCommandsMap.isEmpty()) {
-        for (unsigned i = 0; i < G_N_ELEMENTS(keyDownEntries); i++)
-            keyDownCommandsMap.set(keyDownEntries[i].state << 16 | keyDownEntries[i].gdkKeyCode, keyDownEntries[i].name);
-
-        for (unsigned i = 0; i < G_N_ELEMENTS(keyPressEntries); i++)
-            keyPressCommandsMap.set(keyPressEntries[i].state << 16 | keyPressEntries[i].gdkKeyCode, keyPressEntries[i].name);
-    }
+    if (!m_pendingEditorCommands.isEmpty())
+        return WTF::move(m_pendingEditorCommands);
 
     // Special-case enter keys for we want them to work regardless of modifier.
-    if ((event->keyval == GDK_Return || event->keyval == GDK_KP_Enter || event->keyval == GDK_ISO_Enter) && type == KeyPress) {
-        commandList.append("InsertNewLine");
-        return;
-    }
+    if ((event->keyval == GDK_Return || event->keyval == GDK_KP_Enter || event->keyval == GDK_ISO_Enter))
+        return { "InsertNewLine" };
 
     // For keypress events, we want charCode(), but keyCode() does that.
-    int mapKey = event->state << 16 | event->keyval;
-    if (mapKey) {
-        HashMap<int, const char*>* commandMap = type == KeyDown ?  &keyDownCommandsMap : &keyPressCommandsMap;
-        if (const char* commandString = commandMap->get(mapKey)) {
-            commandList.append(commandString);
-            return;
-        }
+    unsigned mapKey = event->state << 16 | event->keyval;
+    if (!mapKey)
+        return { };
+
+    for (unsigned i = 0; i < G_N_ELEMENTS(customKeyBindings); ++i) {
+        if (mapKey == (customKeyBindings[i].state << 16 | customKeyBindings[i].gdkKeyCode))
+            return { customKeyBindings[i].name };
     }
+
+    return { };
 }
 
 } // namespace WebCore

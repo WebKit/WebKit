@@ -204,9 +204,6 @@ messages -> WebPageProxy {
     PluginZoomFactorDidChange(double zoomFactor)
 
 #if PLATFORM(GTK)
-    # Support for GTK+ platform keybindings
-    GetEditorCommandsForKeyEvent(AtomicString eventType) -> (Vector<String> commandsList)
-
     # Support for connecting the Accessibility worlds of the UI and the Web processes
     BindAccessibilityTree(String plugID)
 

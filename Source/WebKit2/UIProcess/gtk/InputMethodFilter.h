@@ -29,6 +29,7 @@ typedef struct _GdkEventKey GdkEventKey;
 typedef struct _GtkIMContext GtkIMContext;
 
 namespace WebCore {
+class CompositionResults;
 class IntRect;
 }
 
@@ -54,7 +55,8 @@ public:
     void setEnabled(bool);
     void setCursorRect(const WebCore::IntRect&);
 
-    void filterKeyEvent(GdkEventKey*);
+    using FilterKeyEventCompletionHandler = std::function<void (const WebCore::CompositionResults&, InputMethodFilter::EventFakedForComposition)>;
+    void filterKeyEvent(GdkEventKey*, FilterKeyEventCompletionHandler&& = nullptr);
     void notifyFocusedIn();
     void notifyFocusedOut();
     void notifyMouseButtonPress();
@@ -110,6 +112,8 @@ private:
     WebCore::IntPoint m_lastCareLocation;
     String m_confirmedComposition;
     String m_preedit;
+
+    FilterKeyEventCompletionHandler m_filterKeyEventCompletionHandler;
 
 #if ENABLE(API_TESTS)
     bool m_testingMode;

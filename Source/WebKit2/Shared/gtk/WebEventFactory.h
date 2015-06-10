@@ -38,7 +38,7 @@ class WebEventFactory {
 public:
     static WebMouseEvent createWebMouseEvent(const GdkEvent*, int);
     static WebWheelEvent createWebWheelEvent(const GdkEvent*);
-    static WebKeyboardEvent createWebKeyboardEvent(const GdkEvent*, const WebCore::CompositionResults&);
+    static WebKeyboardEvent createWebKeyboardEvent(const GdkEvent*, const WebCore::CompositionResults&, Vector<String>&& commands);
     static WebTouchEvent createWebTouchEvent(const GdkEvent*, Vector<WebPlatformTouchPoint>&&);
 };
 

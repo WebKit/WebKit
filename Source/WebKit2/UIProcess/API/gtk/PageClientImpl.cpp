@@ -56,15 +56,6 @@ PageClientImpl::PageClientImpl(GtkWidget* viewWidget)
 {
 }
 
-void PageClientImpl::getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent& event, const AtomicString& eventType, Vector<WTF::String>& commandList)
-{
-    ASSERT(eventType == eventNames().keydownEvent || eventType == eventNames().keypressEvent);
-
-    KeyBindingTranslator::EventType type = eventType == eventNames().keydownEvent ?
-        KeyBindingTranslator::KeyDown : KeyBindingTranslator::KeyPress;
-    m_keyBindingTranslator.getEditorCommandsForKeyEvent(const_cast<GdkEventKey*>(&event.nativeEvent()->key), type, commandList);
-}
-
 // PageClient's pure virtual functions
 std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
 {

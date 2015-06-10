@@ -61,7 +61,7 @@ namespace WebCore {
             , m_windowsVirtualKeyCode(0)
             , m_nativeVirtualKeyCode(0)
             , m_macCharCode(0)
-#if USE(APPKIT)
+#if USE(APPKIT) || PLATFORM(GTK)
             , m_handledByInputMethod(false)
 #endif
             , m_autoRepeat(false)
@@ -81,7 +81,7 @@ namespace WebCore {
             , m_windowsVirtualKeyCode(windowsVirtualKeyCode)
             , m_nativeVirtualKeyCode(nativeVirtualKeyCode)
             , m_macCharCode(macCharCode)
-#if USE(APPKIT)
+#if USE(APPKIT) || PLATFORM(GTK)
             , m_handledByInputMethod(false)
 #endif
             , m_autoRepeat(isAutoRepeat)
@@ -115,9 +115,13 @@ namespace WebCore {
         int nativeVirtualKeyCode() const { return m_nativeVirtualKeyCode; }
         int macCharCode() const { return m_macCharCode; }
 
-#if USE(APPKIT)
+#if USE(APPKIT) || PLATFORM(GTK)
         bool handledByInputMethod() const { return m_handledByInputMethod; }
+#endif
+#if USE(APPKIT)
         const Vector<KeypressCommand>& commands() const { return m_commands; }
+#elif PLATFORM(GTK)
+        const Vector<String>& commands() const { return m_commands; }
 #endif
 
         bool isAutoRepeat() const { return m_autoRepeat; }
@@ -162,9 +166,13 @@ namespace WebCore {
         int m_windowsVirtualKeyCode;
         int m_nativeVirtualKeyCode;
         int m_macCharCode;
-#if USE(APPKIT)
+#if USE(APPKIT) || PLATFORM(GTK)
         bool m_handledByInputMethod;
+#endif
+#if USE(APPKIT)
         Vector<KeypressCommand> m_commands;
+#elif PLATFORM(GTK)
+        Vector<String> m_commands;
 #endif
         bool m_autoRepeat;
         bool m_isKeypad;

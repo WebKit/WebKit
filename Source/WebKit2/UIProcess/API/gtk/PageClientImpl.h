@@ -29,11 +29,9 @@
 #define PageClientImpl_h
 
 #include "DefaultUndoController.h"
-#include "KeyBindingTranslator.h"
 #include "PageClient.h"
 #include "WebFullScreenManagerProxy.h"
 #include "WebPageProxy.h"
-#include "WindowsKeyboardCodes.h"
 #include <WebCore/IntSize.h>
 #include <gtk/gtk.h>
 #include <memory>
@@ -91,7 +89,6 @@ private:
     virtual void setTextIndicator(Ref<WebCore::TextIndicator>, WebCore::TextIndicatorLifetime = WebCore::TextIndicatorLifetime::Permanent) override;
     virtual void clearTextIndicator(WebCore::TextIndicatorDismissalAnimation = WebCore::TextIndicatorDismissalAnimation::FadeOut) override;
     virtual void setTextIndicatorAnimationProgress(float) override;
-    virtual void getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent&, const AtomicString&, Vector<WTF::String>&) override;
     virtual void updateTextInputState() override;
 #if ENABLE(DRAG_SUPPORT)
     virtual void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage) override;
@@ -138,7 +135,6 @@ private:
     // Members of PageClientImpl class
     GtkWidget* m_viewWidget;
     DefaultUndoController m_undoController;
-    WebCore::KeyBindingTranslator m_keyBindingTranslator;
 };
 
 } // namespace WebKit

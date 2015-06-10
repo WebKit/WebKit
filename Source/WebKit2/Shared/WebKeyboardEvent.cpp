@@ -54,6 +54,25 @@ WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& 
     ASSERT(isKeyboardEventType(type));
 }
 
+#elif PLATFORM(GTK)
+
+WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool handledByInputMethod, Vector<String>&& commands, bool isKeypad, Modifiers modifiers, double timestamp)
+    : WebEvent(type, modifiers, timestamp)
+    , m_text(text)
+    , m_unmodifiedText(text)
+    , m_keyIdentifier(keyIdentifier)
+    , m_windowsVirtualKeyCode(windowsVirtualKeyCode)
+    , m_nativeVirtualKeyCode(nativeVirtualKeyCode)
+    , m_macCharCode(0)
+    , m_handledByInputMethod(handledByInputMethod)
+    , m_commands(WTF::move(commands))
+    , m_isAutoRepeat(false)
+    , m_isKeypad(isKeypad)
+    , m_isSystemKey(false)
+{
+    ASSERT(isKeyboardEventType(type));
+}
+
 #else
 
 WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& unmodifiedText, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey, Modifiers modifiers, double timestamp)
@@ -87,7 +106,7 @@ void WebKeyboardEvent::encode(IPC::ArgumentEncoder& encoder) const
     encoder << m_windowsVirtualKeyCode;
     encoder << m_nativeVirtualKeyCode;
     encoder << m_macCharCode;
-#if USE(APPKIT)
+#if USE(APPKIT) || PLATFORM(GTK)
     encoder << m_handledByInputMethod;
     encoder << m_commands;
 #endif
@@ -113,7 +132,7 @@ bool WebKeyboardEvent::decode(IPC::ArgumentDecoder& decoder, WebKeyboardEvent& r
         return false;
     if (!decoder.decode(result.m_macCharCode))
         return false;
-#if USE(APPKIT)
+#if USE(APPKIT) || PLATFORM(GTK)
     if (!decoder.decode(result.m_handledByInputMethod))
         return false;
     if (!decoder.decode(result.m_commands))

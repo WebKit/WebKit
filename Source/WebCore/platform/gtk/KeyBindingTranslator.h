@@ -31,13 +31,12 @@ class KeyBindingTranslator {
 public:
     KeyBindingTranslator();
 
-    enum EventType { KeyDown, KeyPress };
-    void getEditorCommandsForKeyEvent(GdkEventKey*, EventType, Vector<WTF::String>&);
+    Vector<String> commandsForKeyEvent(GdkEventKey*);
     void addPendingEditorCommand(const char* command) { m_pendingEditorCommands.append(command); }
 
 private:
     GRefPtr<GtkWidget> m_nativeWidget;
-    Vector<WTF::String> m_pendingEditorCommands;
+    Vector<String> m_pendingEditorCommands;
 };
 
 } // namespace WebCore

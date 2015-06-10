@@ -1,5 +1,79 @@
 2015-06-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Get rid of GetEditorCommandsForKeyEvent sync message
+        https://bugs.webkit.org/show_bug.cgi?id=145598
+
+        Reviewed by Žan Doberšek.
+
+        We are sending GetEditorCommandsForKeyEvent sync message from web
+        process to the UI process for every key pressed. And if the
+        keydown event doesn't handle the key, the message is sent again
+        for the keypress event, so in many cases it happens twice per
+        keypress. We can get the list of commands when the key press event
+        happens in the web view, and send it to the web process as part of
+        the keyboard event like mac port does. In the web process,
+        commands not inserting text will be handled by keydown and the
+        rest in keypress without having to use any other IPC message for that.
+
+        * Shared/NativeWebKeyboardEvent.h: Add command list parameter to
+        the constructor.
+        * Shared/WebEvent.h: Add GTK specific constructor that receives a
+        list of commands and whether the event was handled by input methods.
+        (WebKit::WebKeyboardEvent::commands): Returns the list of commands.
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformKeyboardEvent::WebKit2PlatformKeyboardEvent):
+        Also copy the commands and handledByInputMethod member.
+        * Shared/WebKeyboardEvent.cpp:
+        (WebKit::WebKeyboardEvent::WebKeyboardEvent): Implement GTK
+        specific constructor that receives a list of commands and whether
+        the event was handled by input methods.
+        (WebKit::WebKeyboardEvent::encode): Encode commands and handledByInputMethod.
+        (WebKit::WebKeyboardEvent::decode): Decode commands and handledByInputMethod.
+        * Shared/gtk/NativeWebKeyboardEventGtk.cpp:
+        (WebKit::NativeWebKeyboardEvent::NativeWebKeyboardEvent): Add
+        command list parameter to the constructor.
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebKeyboardEvent): Use the new
+        WebKeyboardEvent constructor and simplify the code. We don't need
+        to explicitly set VK_PROCESSKEY as windows virtual key code when
+        the event was handled by input methods. The WebCore event handler
+        already does that.
+        * Shared/gtk/WebEventFactory.h:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::getEditorCommandsForKeyEvent): Deleted.
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp: Add a
+        KeyBindingTranslator member.
+        (webkitWebViewBaseKeyPressEvent): Use the new
+        InputMethodFilter::filterKeyEvent() API and get the list of
+        commands for the key when events was not handled by input methods.
+        (webkitWebViewBaseKeyReleaseEvent): Use the new
+        InputMethodFilter::filterKeyEvent() API.
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.messages.in: Remove GetEditorCommandsForKeyEvent message.
+        * UIProcess/gtk/InputMethodFilter.cpp:
+        (WebKit::InputMethodFilter::handleKeyboardEvent): Call the
+        completation handler.
+        (WebKit::InputMethodFilter::handleKeyboardEventWithCompositionResults): Ditto.
+        (WebKit::InputMethodFilter::filterKeyEvent): Use a completion
+        handler for the task, so that the caller (the web view) can handle
+        the keyboard event.
+        * UIProcess/gtk/InputMethodFilter.h:
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::getEditorCommandsForKeyEvent): Deleted.
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp:
+        (WebKit::WebEditorClient::handleKeyboardEvent): Return earlier if
+        the event was handled by input methods. And get the list of
+        commands from the PlatformKeyboardEvent instead of sending a sync
+        message to the UI process.
+        (WebKit::WebEditorClient::handleInputMethodKeydown): If the event
+        was handled by inpout methods, set the event as default handled so
+        that the WebCore event handler sets VK_PROCESSKEY as windows
+        virtual key code.
+        (WebKit::WebEditorClient::getEditorCommandsForKeyEvent): Deleted.
+
+2015-06-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK build after r185412.
 
         Add missing include.

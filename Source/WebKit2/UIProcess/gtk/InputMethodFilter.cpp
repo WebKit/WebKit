@@ -20,7 +20,6 @@
 #include "config.h"
 #include "InputMethodFilter.h"
 
-#include "NativeWebKeyboardEvent.h"
 #include "WebPageProxy.h"
 #include <WebCore/Color.h>
 #include <WebCore/CompositionResults.h>
@@ -122,7 +121,10 @@ void InputMethodFilter::handleKeyboardEvent(GdkEventKey* event, const String& si
         return;
     }
 #endif
-    m_page->handleKeyboardEvent(NativeWebKeyboardEvent(reinterpret_cast<GdkEvent*>(event), CompositionResults(simpleString), faked));
+
+    ASSERT(m_filterKeyEventCompletionHandler);
+    m_filterKeyEventCompletionHandler(CompositionResults(simpleString), faked);
+    m_filterKeyEventCompletionHandler = nullptr;
 }
 
 void InputMethodFilter::handleKeyboardEventWithCompositionResults(GdkEventKey* event, ResultsToSend resultsToSend, EventFakedForComposition faked)
@@ -133,7 +135,10 @@ void InputMethodFilter::handleKeyboardEventWithCompositionResults(GdkEventKey* e
         return;
     }
 #endif
-    m_page->handleKeyboardEvent(NativeWebKeyboardEvent(reinterpret_cast<GdkEvent*>(event), CompositionResults(CompositionResults::WillSendCompositionResultsSoon), faked));
+
+    ASSERT(m_filterKeyEventCompletionHandler);
+    m_filterKeyEventCompletionHandler(CompositionResults(CompositionResults::WillSendCompositionResultsSoon), faked);
+    m_filterKeyEventCompletionHandler = nullptr;
 
     if (resultsToSend & Composition && !m_confirmedComposition.isNull())
         m_page->confirmComposition(m_confirmedComposition, -1, 0);
@@ -144,13 +149,14 @@ void InputMethodFilter::handleKeyboardEventWithCompositionResults(GdkEventKey* e
     }
 }
 
-void InputMethodFilter::filterKeyEvent(GdkEventKey* event)
+void InputMethodFilter::filterKeyEvent(GdkEventKey* event, FilterKeyEventCompletionHandler&& completionHandler)
 {
 #if ENABLE(API_TESTS)
     ASSERT(m_page || m_testingMode);
 #else
     ASSERT(m_page);
 #endif
+    m_filterKeyEventCompletionHandler = WTF::move(completionHandler);
     if (!m_enabled) {
         handleKeyboardEvent(event);
         return;

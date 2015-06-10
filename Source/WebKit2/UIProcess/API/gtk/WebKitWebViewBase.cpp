@@ -31,6 +31,7 @@
 
 #include "DrawingAreaProxyImpl.h"
 #include "InputMethodFilter.h"
+#include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
 #include "PageClientImpl.h"
@@ -52,6 +53,7 @@
 #include <WebCore/GUniquePtrGtk.h>
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/GtkVersioning.h>
+#include <WebCore/KeyBindingTranslator.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PasteboardHelper.h>
 #include <WebCore/PlatformDisplay.h>
@@ -163,6 +165,7 @@ struct _WebKitWebViewBasePrivate {
     GUniquePtr<GdkEvent> contextMenuEvent;
     WebContextMenuProxyGtk* activeContextMenuProxy;
     InputMethodFilter inputMethodFilter;
+    KeyBindingTranslator keyBindingTranslator;
     TouchEventsMap touchEvents;
 
     GtkWindow* toplevelOnScreenWindow;
@@ -749,7 +752,12 @@ static gboolean webkitWebViewBaseKeyPressEvent(GtkWidget* widget, GdkEventKey* e
         priv->shouldForwardNextKeyEvent = FALSE;
         return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->key_press_event(widget, event);
     }
-    priv->inputMethodFilter.filterKeyEvent(event);
+
+    priv->inputMethodFilter.filterKeyEvent(event, [priv, event](const WebCore::CompositionResults& compositionResults, InputMethodFilter::EventFakedForComposition faked) {
+        priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(reinterpret_cast<GdkEvent*>(event), compositionResults, faked,
+            !compositionResults.compositionUpdated() ? priv->keyBindingTranslator.commandsForKeyEvent(event) : Vector<String>()));
+    });
+
     return TRUE;
 }
 
@@ -762,7 +770,11 @@ static gboolean webkitWebViewBaseKeyReleaseEvent(GtkWidget* widget, GdkEventKey*
         priv->shouldForwardNextKeyEvent = FALSE;
         return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->key_release_event(widget, event);
     }
-    priv->inputMethodFilter.filterKeyEvent(event);
+
+    priv->inputMethodFilter.filterKeyEvent(event, [priv, event](const WebCore::CompositionResults& compositionResults, InputMethodFilter::EventFakedForComposition faked) {
+        priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(reinterpret_cast<GdkEvent*>(event), compositionResults, faked, { }));
+    });
+
     return TRUE;
 }
 

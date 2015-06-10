@@ -196,9 +196,6 @@ public:
 #endif
 #endif
 
-#if PLATFORM(GTK)
-    virtual void getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent&, const AtomicString&, Vector<WTF::String>&) = 0;
-#endif
     virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&) = 0;
     virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&) = 0;
     virtual WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) = 0;

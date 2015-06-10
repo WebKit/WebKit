@@ -181,27 +181,19 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event)
                          gdk_event_get_time(event));
 }
 
-WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, const WebCore::CompositionResults& compositionResults)
+WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, const WebCore::CompositionResults& compositionResults, Vector<String>&& commands)
 {
-    unsigned int keyValue = event->key.keyval;
-    String text = compositionResults.simpleString.length() ?
-         compositionResults.simpleString : PlatformKeyboardEvent::singleCharacterString(keyValue);
-
-    int windowsVirtualKeyCode = compositionResults.compositionUpdated() ?
-         VK_PROCESSKEY : PlatformKeyboardEvent::windowsKeyCodeForGdkKeyCode(event->key.keyval);
-
-    return WebKeyboardEvent((event->type == GDK_KEY_RELEASE) ? WebEvent::KeyUp : WebEvent::KeyDown,
-                            text,
-                            text,
-                            PlatformKeyboardEvent::keyIdentifierForGdkKeyCode(keyValue),
-                            windowsVirtualKeyCode,
-                            static_cast<int>(keyValue),
-                            0 /* macCharCode */,
-                            false /* isAutoRepeat */,
-                            isGdkKeyCodeFromKeyPad(keyValue),
-                            false /* isSystemKey */,
-                            modifiersForEvent(event),
-                            gdk_event_get_time(event));
+    return WebKeyboardEvent(
+        event->type == GDK_KEY_RELEASE ? WebEvent::KeyUp : WebEvent::KeyDown,
+        compositionResults.simpleString.length() ? compositionResults.simpleString : PlatformKeyboardEvent::singleCharacterString(event->key.keyval),
+        PlatformKeyboardEvent::keyIdentifierForGdkKeyCode(event->key.keyval),
+        PlatformKeyboardEvent::windowsKeyCodeForGdkKeyCode(event->key.keyval),
+        static_cast<int>(event->key.keyval),
+        compositionResults.compositionUpdated(),
+        WTF::move(commands),
+        isGdkKeyCodeFromKeyPad(event->key.keyval),
+        modifiersForEvent(event),
+        gdk_event_get_time(event));
 }
 
 WebTouchEvent WebEventFactory::createWebTouchEvent(const GdkEvent* event, Vector<WebPlatformTouchPoint>&& touchPoints)
