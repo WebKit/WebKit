@@ -28,7 +28,7 @@
 
 #if ENABLE(NETWORK_CACHE)
 
-#include "NetworkCacheFileSystemPosix.h"
+#include "NetworkCacheFileSystem.h"
 #include <dispatch/dispatch.h>
 #include <mach/vm_param.h>
 #include <sys/mman.h>

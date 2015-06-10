@@ -32,7 +32,7 @@
 #include "NetworkCacheData.h"
 #include "NetworkCacheDecoder.h"
 #include "NetworkCacheEncoder.h"
-#include "NetworkCacheFileSystemPosix.h"
+#include "NetworkCacheFileSystem.h"
 #include "SharedMemory.h"
 #include "WebCompiledContentExtension.h"
 #include <WebCore/ContentExtensionCompiler.h>

@@ -28,7 +28,7 @@
 
 #if ENABLE(NETWORK_CACHE)
 
-#include "NetworkCacheFileSystemPosix.h"
+#include "NetworkCacheFileSystem.h"
 #include <wtf/MainThread.h>
 #include <wtf/gobject/GMainLoopSource.h>
 #include <wtf/gobject/GMutexLocker.h>

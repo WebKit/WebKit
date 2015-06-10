@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetworkCacheFileSystemPosix_h
-#define NetworkCacheFileSystemPosix_h
+#include "config.h"
+#include "NetworkCacheFileSystem.h"
 
 #if ENABLE(NETWORK_CACHE)
 
@@ -41,41 +41,57 @@
 namespace WebKit {
 namespace NetworkCache {
 
-template <typename Function>
-static void traverseDirectory(const String& path, uint8_t type, const Function& function)
+static DirectoryEntryType directoryEntryType(uint8_t dtype)
+{
+    switch (dtype) {
+    case DT_DIR:
+        return DirectoryEntryType::Directory;
+    case DT_REG:
+        return DirectoryEntryType::File;
+    default:
+        ASSERT_NOT_REACHED();
+        return DirectoryEntryType::File;
+    }
+}
+
+void traverseDirectory(const String& path, const std::function<void (const String&, DirectoryEntryType)>& function)
 {
     DIR* dir = opendir(WebCore::fileSystemRepresentation(path).data());
     if (!dir)
         return;
-    struct dirent* dp;
+    dirent* dp;
     while ((dp = readdir(dir))) {
-        if (dp->d_type != type)
+        if (dp->d_type != DT_DIR && dp->d_type != DT_REG)
             continue;
         const char* name = dp->d_name;
         if (!strcmp(name, ".") || !strcmp(name, ".."))
             continue;
-        function(String(name));
+        auto nameString = String::fromUTF8(name);
+        if (nameString.isNull())
+            continue;
+        function(nameString, directoryEntryType(dp->d_type));
     }
     closedir(dir);
 }
 
-template <typename Function>
-inline void traverseCacheFiles(const String& cachePath, const Function& function)
+void deleteDirectoryRecursively(const String& path)
 {
-    traverseDirectory(cachePath, DT_DIR, [&cachePath, &function](const String& subdirName) {
-        String partitionPath = WebCore::pathByAppendingComponent(cachePath, subdirName);
-        traverseDirectory(partitionPath, DT_REG, [&function, &partitionPath](const String& fileName) {
-            function(fileName, partitionPath);
-        });
+    traverseDirectory(path, [&path](const String& name, DirectoryEntryType type) {
+        String entryPath = WebCore::pathByAppendingComponent(path, name);
+        switch (type) {
+        case DirectoryEntryType::File:
+            WebCore::deleteFile(entryPath);
+            break;
+        case DirectoryEntryType::Directory:
+            deleteDirectoryRecursively(entryPath);
+            break;
+        // This doesn't follow symlinks.
+        }
     });
+    WebCore::deleteEmptyDirectory(path);
 }
 
-struct FileTimes {
-    std::chrono::system_clock::time_point creation;
-    std::chrono::system_clock::time_point modification;
-};
-
-inline FileTimes fileTimes(const String& path)
+FileTimes fileTimes(const String& path)
 {
 #if HAVE(STAT_BIRTHTIME)
     struct stat fileInfo;
@@ -96,7 +112,7 @@ inline FileTimes fileTimes(const String& path)
 #endif
 }
 
-inline void updateFileModificationTimeIfNeeded(const String& path)
+void updateFileModificationTimeIfNeeded(const String& path)
 {
     auto times = fileTimes(path);
     if (times.creation != times.modification) {
@@ -105,13 +121,10 @@ inline void updateFileModificationTimeIfNeeded(const String& path)
             return;
     }
     // This really updates both the access time and the modification time.
-    utimes(WebCore::fileSystemRepresentation(path).data(), 0);
+    utimes(WebCore::fileSystemRepresentation(path).data(), nullptr);
 }
 
 }
 }
 
 #endif // ENABLE(NETWORK_CACHE)
-
-#endif // NetworkCacheFileSystemPosix_h
-

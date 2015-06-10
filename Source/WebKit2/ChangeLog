@@ -1,3 +1,65 @@
+2015-06-10  Antti Koivisto  <antti@apple.com>
+
+        NetworkCache: Delete old cache versions
+        https://bugs.webkit.org/show_bug.cgi?id=145800
+
+        Reviewed by Darin Adler.
+
+        * CMakeLists.txt:
+        * NetworkProcess/cache/NetworkCacheBlobStorage.cpp:
+        (WebKit::NetworkCache::BlobStorage::synchronize):
+        * NetworkProcess/cache/NetworkCacheFileSystem.cpp: Added.
+        (WebKit::NetworkCache::directoryEntryType):
+        (WebKit::NetworkCache::traverseDirectory):
+
+            Pass entry type as callback argument.
+
+        (WebKit::NetworkCache::deleteDirectoryRecursively):
+
+            Add helper.
+
+        (WebKit::NetworkCache::fileTimes):
+        (WebKit::NetworkCache::updateFileModificationTimeIfNeeded):
+        * NetworkProcess/cache/NetworkCacheFileSystem.h: Copied from Source/WebKit2/NetworkProcess/cache/NetworkCacheFileSystemPosix.h.
+
+            Move code to cpp.
+
+        (WebKit::NetworkCache::traverseDirectory): Deleted.
+        (WebKit::NetworkCache::traverseCacheFiles): Deleted.
+        (WebKit::NetworkCache::fileTimes): Deleted.
+        (WebKit::NetworkCache::updateFileModificationTimeIfNeeded): Deleted.
+        * NetworkProcess/cache/NetworkCacheFileSystemPosix.h: Removed.
+        * NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm:
+        * NetworkProcess/cache/NetworkCacheStatistics.cpp:
+        (WebKit::NetworkCache::Statistics::bootstrapFromNetworkCache):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::makeBlobDirectoryPath):
+        (WebKit::NetworkCache::traverseRecordsFiles):
+
+            Move cache hierarchy aware traversal code here from NetworkCacheFileSystem (for better layering).
+            Rename for clarity.
+
+        (WebKit::NetworkCache::deleteEmptyRecordsDirectories):
+
+            Factor to a function.
+
+        (WebKit::NetworkCache::Storage::Storage):
+        (WebKit::NetworkCache::Storage::synchronize):
+        (WebKit::NetworkCache::Storage::traverse):
+        (WebKit::NetworkCache::Storage::clear):
+
+            Use traverseRecordsFiles for traversal.
+
+        (WebKit::NetworkCache::Storage::shrink):
+        (WebKit::NetworkCache::Storage::deleteOldVersions):
+
+            Delete version subdirectories with version number less than the current version.
+            Remove code for clearing unversioned V1 caches. No one should have them.
+
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        * UIProcess/API/APIUserContentExtensionStore.cpp:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-06-10  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Web Inspector is broken

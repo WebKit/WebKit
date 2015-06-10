@@ -29,10 +29,11 @@
 #if ENABLE(NETWORK_CACHE)
 
 #include "Logging.h"
-#include "NetworkCacheFileSystemPosix.h"
+#include "NetworkCacheFileSystem.h"
 #include <WebCore/FileSystem.h>
 #include <fcntl.h>
 #include <sys/mman.h>
+#include <sys/stat.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SHA1.h>
 #include <wtf/text/StringBuilder.h>
@@ -58,7 +59,9 @@ void BlobStorage::synchronize()
 
     m_approximateSize = 0;
     auto blobDirectory = blobDirectoryPath();
-    traverseDirectory(blobDirectory, DT_REG, [this, &blobDirectory](const String& name) {
+    traverseDirectory(blobDirectory, [this, &blobDirectory](const String& name, DirectoryEntryType type) {
+        if (type != DirectoryEntryType::File)
+            return;
         auto path = WebCore::pathByAppendingComponent(blobDirectory, name);
         auto filePath = WebCore::fileSystemRepresentation(path);
         struct stat stat;

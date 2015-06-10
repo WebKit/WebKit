@@ -158,6 +158,9 @@ private:
     BlobStorage m_blobStorage;
 };
 
+// FIXME: Remove, used by NetworkCacheStatistics only.
+void traverseRecordsFiles(const String& recordsPath, const std::function<void (const String&, const String&)>&);
+
 }
 }
 #endif

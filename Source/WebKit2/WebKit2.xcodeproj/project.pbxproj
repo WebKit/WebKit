@@ -1199,7 +1199,7 @@
 		7CF47FFF17276AE3008ACB91 /* WKBundlePageBannerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CF47FFD17276AE3008ACB91 /* WKBundlePageBannerMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7EC4F0FB18E4ACBB008056AF /* NetworkProcessCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7EC4F0F918E4A945008056AF /* NetworkProcessCocoa.mm */; };
 		83048AE61ACA45DC0082C832 /* ProcessThrottlerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 83048AE51ACA45DC0082C832 /* ProcessThrottlerClient.h */; };
-		834B250F1A831A8D00CFB150 /* NetworkCacheFileSystemPosix.h in Headers */ = {isa = PBXBuildFile; fileRef = 834B250E1A831A8D00CFB150 /* NetworkCacheFileSystemPosix.h */; };
+		834B250F1A831A8D00CFB150 /* NetworkCacheFileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 834B250E1A831A8D00CFB150 /* NetworkCacheFileSystem.h */; };
 		834B25121A842C8700CFB150 /* NetworkCacheStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = 834B25101A842C8700CFB150 /* NetworkCacheStatistics.h */; };
 		8360349F1ACB34D600626549 /* WebSQLiteDatabaseTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8360349D1ACB34D600626549 /* WebSQLiteDatabaseTracker.cpp */; };
 		836034A01ACB34D600626549 /* WebSQLiteDatabaseTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 8360349E1ACB34D600626549 /* WebSQLiteDatabaseTracker.h */; };
@@ -1805,6 +1805,7 @@
 		E4436ECE1A0D040B00EAD204 /* NetworkCacheKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E4436EC11A0CFDB200EAD204 /* NetworkCacheKey.h */; };
 		E4436ECF1A0D040B00EAD204 /* NetworkCacheStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = E4436EC21A0CFDB200EAD204 /* NetworkCacheStorage.h */; };
 		E4436ED01A0D040B00EAD204 /* NetworkCacheStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4436EC31A0CFDB200EAD204 /* NetworkCacheStorage.cpp */; };
+		E4697CCD1B25EB8F001B0A6C /* NetworkCacheFileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4697CCC1B25EB8F001B0A6C /* NetworkCacheFileSystem.cpp */; };
 		E47D1E981B0649FB002676A8 /* NetworkCacheData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E47D1E961B062B66002676A8 /* NetworkCacheData.cpp */; };
 		E489D28A1A0A2DB80078C06A /* NetworkCacheCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = E489D2831A0A2DB80078C06A /* NetworkCacheCoder.h */; };
 		E489D28B1A0A2DB80078C06A /* NetworkCacheCoders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E489D2841A0A2DB80078C06A /* NetworkCacheCoders.cpp */; };
@@ -3434,7 +3435,7 @@
 		7CF47FFD17276AE3008ACB91 /* WKBundlePageBannerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundlePageBannerMac.h; sourceTree = "<group>"; };
 		7EC4F0F918E4A945008056AF /* NetworkProcessCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkProcessCocoa.mm; path = NetworkProcess/cocoa/NetworkProcessCocoa.mm; sourceTree = "<group>"; };
 		83048AE51ACA45DC0082C832 /* ProcessThrottlerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessThrottlerClient.h; sourceTree = "<group>"; };
-		834B250E1A831A8D00CFB150 /* NetworkCacheFileSystemPosix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheFileSystemPosix.h; sourceTree = "<group>"; };
+		834B250E1A831A8D00CFB150 /* NetworkCacheFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheFileSystem.h; sourceTree = "<group>"; };
 		834B25101A842C8700CFB150 /* NetworkCacheStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheStatistics.h; sourceTree = "<group>"; };
 		8360349D1ACB34D600626549 /* WebSQLiteDatabaseTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSQLiteDatabaseTracker.cpp; sourceTree = "<group>"; };
 		8360349E1ACB34D600626549 /* WebSQLiteDatabaseTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSQLiteDatabaseTracker.h; sourceTree = "<group>"; };
@@ -4084,6 +4085,7 @@
 		E4436EC11A0CFDB200EAD204 /* NetworkCacheKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheKey.h; sourceTree = "<group>"; };
 		E4436EC21A0CFDB200EAD204 /* NetworkCacheStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheStorage.h; sourceTree = "<group>"; };
 		E4436EC31A0CFDB200EAD204 /* NetworkCacheStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheStorage.cpp; sourceTree = "<group>"; };
+		E4697CCC1B25EB8F001B0A6C /* NetworkCacheFileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheFileSystem.cpp; sourceTree = "<group>"; };
 		E47D1E961B062B66002676A8 /* NetworkCacheData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheData.cpp; sourceTree = "<group>"; };
 		E489D2831A0A2DB80078C06A /* NetworkCacheCoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheCoder.h; sourceTree = "<group>"; };
 		E489D2841A0A2DB80078C06A /* NetworkCacheCoders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheCoders.cpp; sourceTree = "<group>"; };
@@ -7569,7 +7571,8 @@
 				E489D2891A0A2DB80078C06A /* NetworkCacheEncoder.h */,
 				E413F59E1AC1AF9D00345360 /* NetworkCacheEntry.cpp */,
 				E413F59B1AC1ADB600345360 /* NetworkCacheEntry.h */,
-				834B250E1A831A8D00CFB150 /* NetworkCacheFileSystemPosix.h */,
+				834B250E1A831A8D00CFB150 /* NetworkCacheFileSystem.h */,
+				E4697CCC1B25EB8F001B0A6C /* NetworkCacheFileSystem.cpp */,
 				E42E060B1AA7440D00B11699 /* NetworkCacheIOChannel.h */,
 				E42E060D1AA750E500B11699 /* NetworkCacheIOChannelCocoa.mm */,
 				E4436EC01A0CFDB200EAD204 /* NetworkCacheKey.cpp */,
@@ -7864,7 +7867,7 @@
 				E489D28E1A0A2DB80078C06A /* NetworkCacheDecoder.h in Headers */,
 				E489D2901A0A2DB80078C06A /* NetworkCacheEncoder.h in Headers */,
 				E413F59D1AC1ADC400345360 /* NetworkCacheEntry.h in Headers */,
-				834B250F1A831A8D00CFB150 /* NetworkCacheFileSystemPosix.h in Headers */,
+				834B250F1A831A8D00CFB150 /* NetworkCacheFileSystem.h in Headers */,
 				E42E06101AA7523B00B11699 /* NetworkCacheIOChannel.h in Headers */,
 				E4436ECE1A0D040B00EAD204 /* NetworkCacheKey.h in Headers */,
 				834B25121A842C8700CFB150 /* NetworkCacheStatistics.h in Headers */,
@@ -9676,6 +9679,7 @@
 				E42E06141AA75B7000B11699 /* NetworkCacheDataCocoa.mm in Sources */,
 				E489D28D1A0A2DB80078C06A /* NetworkCacheDecoder.cpp in Sources */,
 				E489D28F1A0A2DB80078C06A /* NetworkCacheEncoder.cpp in Sources */,
+				E4697CCD1B25EB8F001B0A6C /* NetworkCacheFileSystem.cpp in Sources */,
 				E413F59F1AC1AF9D00345360 /* NetworkCacheEntry.cpp in Sources */,
 				E42E060F1AA7523400B11699 /* NetworkCacheIOChannelCocoa.mm in Sources */,
 				E4436ECD1A0D040B00EAD204 /* NetworkCacheKey.cpp in Sources */,

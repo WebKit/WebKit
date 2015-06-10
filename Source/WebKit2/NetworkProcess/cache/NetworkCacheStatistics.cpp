@@ -30,7 +30,7 @@
 
 #include "Logging.h"
 #include "NetworkCache.h"
-#include "NetworkCacheFileSystemPosix.h"
+#include "NetworkCacheFileSystem.h"
 #include "NetworkProcess.h"
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/DiagnosticLoggingResultType.h>
@@ -144,7 +144,7 @@ void Statistics::bootstrapFromNetworkCache(const String& networkCachePath)
     LOG(NetworkCache, "(NetworkProcess) Bootstrapping the network cache statistics database from the network cache...");
 
     Vector<StringCapture> hashes;
-    traverseCacheFiles(networkCachePath, [&hashes](const String& hashString, const String&) {
+    traverseRecordsFiles(networkCachePath, [&hashes](const String& hashString, const String&) {
         Key::HashType hash;
         if (!Key::stringToHash(hashString, hash))
             return;
