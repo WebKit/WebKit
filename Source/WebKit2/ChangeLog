@@ -1,3 +1,16 @@
+2015-06-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Web Inspector is broken
+        https://bugs.webkit.org/show_bug.cgi?id=145836
+
+        Reviewed by Carlos Garcia Campos.
+
+        * PlatformGTK.cmake: Thread the InspectorBackendCommands.js file as a separate
+        dependency of InspectorGResourceBundle.xml. It can't be listed under the InspectorFiles
+        variable and then searched via the CMake glob command because it probably won't exist
+        at the time the command is run (since it's copied into the specified path), so it won't
+        be listed among the dependencies at all.
+
 2015-06-09  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
