@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoDocument(ContainerNode& node)
+void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoDocument(ContainerNode& node, NodeVector& postInsertionNotificationTargets)
 {
     ChildNodesLazySnapshot snapshot(node);
     while (RefPtr<Node> child = snapshot.nextNode()) {
@@ -37,7 +37,7 @@ void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoDocument(ContainerN
         // we don't want to tell the rest of our children that they've been
         // inserted into the document because they haven't.
         if (node.inDocument() && child->parentNode() == &node)
-            notifyNodeInsertedIntoDocument(*child);
+            notifyNodeInsertedIntoDocument(*child, postInsertionNotificationTargets);
     }
 
     if (!is<Element>(node))
@@ -45,19 +45,19 @@ void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoDocument(ContainerN
 
     if (RefPtr<ShadowRoot> root = downcast<Element>(node).shadowRoot()) {
         if (node.inDocument() && root->hostElement() == &node)
-            notifyNodeInsertedIntoDocument(*root);
+            notifyNodeInsertedIntoDocument(*root, postInsertionNotificationTargets);
     }
 }
 
-void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoTree(ContainerNode& node)
+void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoTree(ContainerNode& node, NodeVector& postInsertionNotificationTargets)
 {
     for (Node* child = node.firstChild(); child; child = child->nextSibling()) {
         if (is<ContainerNode>(*child))
-            notifyNodeInsertedIntoTree(downcast<ContainerNode>(*child));
+            notifyNodeInsertedIntoTree(downcast<ContainerNode>(*child), postInsertionNotificationTargets);
     }
 
     if (ShadowRoot* root = node.shadowRoot())
-        notifyNodeInsertedIntoTree(*root);
+        notifyNodeInsertedIntoTree(*root, postInsertionNotificationTargets);
 }
 
 void ChildNodeRemovalNotifier::notifyDescendantRemovedFromDocument(ContainerNode& node)

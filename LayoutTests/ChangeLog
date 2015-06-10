@@ -1,3 +1,23 @@
+2015-06-10  Chris Dumez  <cdumez@apple.com>
+
+        ASSERT_WITH_SECURITY_IMPLICATION in WebCore::DocumentOrderedMap::getElementById
+        https://bugs.webkit.org/show_bug.cgi?id=145857
+        <rdar://problem/16798440>
+
+        Reviewed by Darin Adler.
+
+        Add layout tests covering different crashes caused by the same bug.
+
+        * fast/dom/script-getElementById-during-insertion-expected.txt: Added.
+        * fast/dom/script-getElementById-during-insertion.html: Added.
+
+        Reduction test case for <rdar://problem/16798440>.
+
+        * fast/dom/script-remove-child-id-map-expected.txt: Added.
+        * fast/dom/script-remove-child-id-map.html: Added.
+
+        Test imported from Blink r178976.
+
 2015-06-10  Jordan Harband  <ljharb@gmail.com>
 
         Implement RegExp.prototype.flags
