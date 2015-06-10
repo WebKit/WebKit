@@ -1,3 +1,13 @@
+2015-06-09  Hyungwook Lee  <hyungwook.lee@navercorp.com>
+
+        Implement dumpProgressFinishedCallback() for Win layoutTestController.
+        https://bugs.webkit.org/show_bug.cgi?id=66773
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        * DumpRenderTree/win/FrameLoadDelegate.h:
+
 2015-06-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-benchmark should either checkout JetStream 1.0.1 or support running the latest version

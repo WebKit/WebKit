@@ -457,9 +457,6 @@ fast/css/draggable-region-parser.html [ Skip ]
 # Font feature settings is not implemented.
 css3/font-feature-settings-rendering.html [ Skip ]
 
-# TODO Implement dumpProgressFinishedCallback
-webkit.org/b/66773 http/tests/loading/progress-finished-callback.html
-
 # TODO HiDPI tests require test infrastructure enhancements (e.g. testRunner.setBackingScaleFactor)
 # https://bugs.webkit.org/show_bug.cgi?id=87919
 webkit.org/b/87919 compositing/tiled-layers-hidpi.html

@@ -1,3 +1,13 @@
+2015-06-09  Hyungwook Lee  <hyungwook.lee@navercorp.com>
+
+        Implement dumpProgressFinishedCallback() for Win layoutTestController.
+        https://bugs.webkit.org/show_bug.cgi?id=66773
+
+        Reviewed by Darin Adler.
+
+        * WebView.cpp:
+        (WebView::setFrameLoadDelegatePrivate):
+
 2015-06-08  Chris Dumez  <cdumez@apple.com>
 
         Access GCController instance via GCController::singleton() instead of a free function

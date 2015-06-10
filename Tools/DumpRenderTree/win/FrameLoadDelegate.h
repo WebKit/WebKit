@@ -35,7 +35,7 @@ class AccessibilityController;
 class TextInputController;
 class GCController;
 
-class FrameLoadDelegate : public IWebFrameLoadDelegate, public IWebFrameLoadDelegatePrivate2 {
+class FrameLoadDelegate : public IWebFrameLoadDelegate, public IWebFrameLoadDelegatePrivate2, public IWebNotificationObserver {
 public:
     FrameLoadDelegate();
     virtual ~FrameLoadDelegate();
@@ -150,11 +150,15 @@ JSContextRef, JSObjectRef windowObject);
         /* [in] */ IWebView *sender,
         /* [in] */ IWebFrame *frame) { return E_NOTIMPL; } 
 
+    // IWebNotificationObserver
+    virtual HRESULT STDMETHODCALLTYPE onNotify(IWebNotification*);
+
 private:
     void didClearWindowObjectForFrameInIsolatedWorld(IWebFrame*, IWebScriptWorld*);
     void didClearWindowObjectForFrameInStandardWorld(IWebFrame*);
 
     void locationChangeDone(IWebError*, IWebFrame*);
+    void webViewProgressFinishedNotification();
 
     ULONG m_refCount;
     std::unique_ptr<GCController> m_gcController;

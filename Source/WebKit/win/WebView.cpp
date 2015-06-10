@@ -5249,7 +5249,23 @@ HRESULT STDMETHODCALLTYPE WebView::formDelegate(
 HRESULT STDMETHODCALLTYPE WebView::setFrameLoadDelegatePrivate( 
     /* [in] */ IWebFrameLoadDelegatePrivate* d)
 {
+    if (m_frameLoadDelegatePrivate == d)
+        return S_OK;
+
+    static BSTR webViewProgressFinishedNotificationName = SysAllocString(WebViewProgressFinishedNotification);
+
+    IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
+
+    COMPtr<IWebNotificationObserver> wasObserver(Query, m_frameLoadDelegatePrivate);
+    if (wasObserver)
+        notifyCenter->removeObserver(wasObserver.get(), webViewProgressFinishedNotificationName, nullptr);
+
     m_frameLoadDelegatePrivate = d;
+
+    COMPtr<IWebNotificationObserver> isObserver(Query, m_frameLoadDelegatePrivate);
+    if (isObserver)
+        notifyCenter->addObserver(isObserver.get(), webViewProgressFinishedNotificationName, nullptr);
+
     return S_OK;
 }
 

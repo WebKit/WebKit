@@ -96,6 +96,8 @@ HRESULT FrameLoadDelegate::QueryInterface(REFIID riid, void** ppvObject)
         *ppvObject = static_cast<IWebFrameLoadDelegatePrivate*>(this);
     else if (IsEqualGUID(riid, IID_IWebFrameLoadDelegatePrivate2))
         *ppvObject = static_cast<IWebFrameLoadDelegatePrivate2*>(this);
+    else if (IsEqualGUID(riid, IID_IWebNotificationObserver))
+        *ppvObject = static_cast<IWebNotificationObserver*>(this);
     else
         return E_NOINTERFACE;
 
@@ -423,4 +425,25 @@ HRESULT FrameLoadDelegate::didRunInsecureContent(IWebView* /*sender*/, IWebSecur
         printf("didRunInsecureContent\n");
 
     return S_OK;
+}
+
+HRESULT FrameLoadDelegate::onNotify(IWebNotification* notification)
+{
+    _bstr_t notificationName;
+    HRESULT hr = notification->name(&notificationName.GetBSTR());
+    if (FAILED(hr))
+        return hr;
+
+    static _bstr_t webViewProgressFinishedNotificationName(WebViewProgressFinishedNotification);
+
+    if (!wcscmp(notificationName, webViewProgressFinishedNotificationName))
+        webViewProgressFinishedNotification();
+
+    return S_OK;
+}
+
+void FrameLoadDelegate::webViewProgressFinishedNotification()
+{
+    if (!done && gTestRunner->dumpProgressFinishedCallback())
+        printf("postProgressFinishedNotification\n");
 }
