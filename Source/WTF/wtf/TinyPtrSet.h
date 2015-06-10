@@ -343,7 +343,7 @@ public:
         {
         }
         
-        T operator*() const { return m_set->at(index); }
+        T operator*() const { return m_set->at(m_index); }
         iterator& operator++()
         {
             m_index++;

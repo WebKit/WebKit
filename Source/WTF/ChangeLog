@@ -1,3 +1,10 @@
+2015-06-10  Basile Clement  <basile_clement@apple.com>
+
+        Unreviewed, fix an typo in unused template code.
+
+        * wtf/TinyPtrSet.h:
+        (WTF::TinyPtrSet::iterator::operator*): s/at(index)/at(m_index)/
+
 2015-06-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [cmake] Fix the style issues in cmake project files
