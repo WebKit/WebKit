@@ -894,6 +894,11 @@ Vector<PluginModuleInfo> WebsiteDataStore::plugins() const
 }
 #endif
 
+static String computeMediaKeyFile(const String& mediaKeyDirectory)
+{
+    return WebCore::pathByAppendingComponent(mediaKeyDirectory, "SecureStop.plist");
+}
+
 Vector<RefPtr<WebCore::SecurityOrigin>> WebsiteDataStore::mediaKeyOrigins(const String& mediaKeysStorageDirectory)
 {
     ASSERT(!mediaKeysStorageDirectory.isEmpty());
@@ -901,6 +906,10 @@ Vector<RefPtr<WebCore::SecurityOrigin>> WebsiteDataStore::mediaKeyOrigins(const 
     Vector<RefPtr<WebCore::SecurityOrigin>> origins;
 
     for (const auto& originPath : WebCore::listDirectory(mediaKeysStorageDirectory, "*")) {
+        auto mediaKeyFile = computeMediaKeyFile(originPath);
+        if (!WebCore::fileExists(mediaKeyFile))
+            continue;
+
         auto mediaKeyIdentifier = WebCore::pathGetFileName(originPath);
 
         if (auto securityOrigin = WebCore::SecurityOrigin::maybeCreateFromDatabaseIdentifier(mediaKeyIdentifier))
@@ -908,11 +917,6 @@ Vector<RefPtr<WebCore::SecurityOrigin>> WebsiteDataStore::mediaKeyOrigins(const 
     }
 
     return origins;
-}
-
-static String computeMediaKeyFile(const String& mediaKeyDirectory)
-{
-    return WebCore::pathByAppendingComponent(mediaKeyDirectory, "SecureStop.plist");
 }
 
 void WebsiteDataStore::removeMediaKeys(const String& mediaKeysStorageDirectory, std::chrono::system_clock::time_point modifiedSince)
@@ -940,7 +944,7 @@ void WebsiteDataStore::removeMediaKeys(const String& mediaKeysStorageDirectory, 
 
     for (const auto& origin : origins) {
         auto mediaKeyDirectory = WebCore::pathByAppendingComponent(mediaKeysStorageDirectory, origin->databaseIdentifier());
-        auto mediaKeyFile = WebCore::pathByAppendingComponent(mediaKeyDirectory, "SecureStop.plist");
+        auto mediaKeyFile = computeMediaKeyFile(mediaKeyDirectory);
 
         WebCore::deleteFile(mediaKeyFile);
         WebCore::deleteEmptyDirectory(mediaKeyDirectory);
