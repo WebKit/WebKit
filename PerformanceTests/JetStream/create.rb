@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Copyright (C) 2014 Apple Inc. All rights reserved.
+# Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 require "pathname"
 require "shellwords"
 
-VERSION = "1.0.1"
+VERSION = "1.1-alpha1"
 DIRECTORY_NAME = "JetStream-#{VERSION}"
 
 raise unless system("rm -rf " + DIRECTORY_NAME)

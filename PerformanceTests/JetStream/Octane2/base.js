@@ -1,4 +1,5 @@
 // Copyright 2013 the V8 project authors. All rights reserved.
+// Copyright (C) 2015 Apple Inc. All rights reserved.
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
 // met:
@@ -46,14 +47,14 @@ performance.now = (function() {
 // arguments are functions that will be invoked before and after
 // running the benchmark, but the running time of these functions will
 // not be accounted for in the benchmark score.
-function Benchmark(name, doWarmup, doDeterministic, run, setup, tearDown, rmsResult, minIterations) {
+function Benchmark(name, doWarmup, doDeterministic, run, setup, tearDown, latencyResult, minIterations) {
   this.name = name;
   this.doWarmup = doWarmup;
   this.doDeterministic = doDeterministic;
   this.run = run;
   this.Setup = setup ? setup : function() { };
   this.TearDown = tearDown ? tearDown : function() { };
-  this.rmsResult = rmsResult ? rmsResult : null; 
+  this.latencyResult = latencyResult ? latencyResult : null; 
   this.minIterations = minIterations ? minIterations : 32;
 }
 
@@ -189,7 +190,46 @@ BenchmarkSuite.GeometricMeanTime = function(measurements) {
 }
 
 
-// Computes the geometric mean of a set of rms measurements.
+// Computes the average of the worst samples. For example, if percentile is 99, this will report the
+// average of the worst 1% of the samples.
+BenchmarkSuite.AverageAbovePercentile = function(numbers, percentile) {
+  // Don't change the original array.
+  numbers = numbers.slice();
+  
+  // Sort in ascending order.
+  numbers.sort(function(a, b) { return a - b; });
+  
+  // Now the elements we want are at the end. Keep removing them until the array size shrinks too much.
+  // Examples assuming percentile = 99:
+  //
+  // - numbers.length starts at 100: we will remove just the worst entry and then not remove anymore,
+  //   since then numbers.length / originalLength = 0.99.
+  //
+  // - numbers.length starts at 1000: we will remove the ten worst.
+  //
+  // - numbers.length starts at 10: we will remove just the worst.
+  var numbersWeWant = [];
+  var originalLength = numbers.length;
+  while (numbers.length / originalLength > percentile / 100)
+    numbersWeWant.push(numbers.pop());
+  
+  var sum = 0;
+  for (var i = 0; i < numbersWeWant.length; ++i)
+    sum += numbersWeWant[i];
+  
+  var result = sum / numbersWeWant.length;
+  
+  // Do a sanity check.
+  if (numbers.length && result < numbers[numbers.length - 1]) {
+    throw "Sanity check fail: the worst case result is " + result +
+      " but we didn't take into account " + numbers;
+  }
+  
+  return result;
+}
+
+
+// Computes the geometric mean of a set of latency measurements.
 BenchmarkSuite.GeometricMeanLatency = function(measurements) {
   var log = 0;
   var hasLatencyResult = false;
@@ -293,8 +333,10 @@ BenchmarkSuite.prototype.RunSingleBenchmark = function(benchmark, data) {
     // If we've run too few iterations, we continue for another second.
     if (data.runs < benchmark.minIterations) return data;
     var usec = (data.elapsed * 1000) / data.runs;
-    var rms = (benchmark.rmsResult != null) ? benchmark.rmsResult() : 0;
-    this.NotifyStep(new BenchmarkResult(benchmark, usec, rms));
+    var latencySamples = (benchmark.latencyResult != null) ? benchmark.latencyResult() : [0];
+    var percentile = 95;
+    var latency = BenchmarkSuite.AverageAbovePercentile(latencySamples, percentile) * 1000;
+    this.NotifyStep(new BenchmarkResult(benchmark, usec, latency));
     return null;
   }
 }

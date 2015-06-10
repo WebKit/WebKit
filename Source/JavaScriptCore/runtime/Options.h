@@ -204,11 +204,13 @@ typedef const char* optionString;
     \
     v(unsigned, maximumOptimizationCandidateInstructionCount, 100000, nullptr) \
     \
-    v(unsigned, maximumFunctionForCallInlineCandidateInstructionCount, 180, nullptr) \
-    v(unsigned, maximumFunctionForClosureCallInlineCandidateInstructionCount, 100, nullptr) \
-    v(unsigned, maximumFunctionForConstructInlineCandidateInstructionCount, 100, nullptr) \
+    v(unsigned, maximumFunctionForCallInlineCandidateInstructionCount, 250, nullptr) \
+    v(unsigned, maximumFunctionForClosureCallInlineCandidateInstructionCount, 180, nullptr) \
+    v(unsigned, maximumFunctionForConstructInlineCandidateInstructionCount, 180, nullptr) \
     \
     v(unsigned, maximumFTLCandidateInstructionCount, 20000, nullptr) \
+    \
+    v(double, exitSitePowerForInlineCost, 0.5, nullptr) \
     \
     /* Depth of inline stack, so 1 = no inlining, 2 = one level, etc. */ \
     v(unsigned, maximumInliningDepth, 5, "maximum allowed inlining depth.  Depth of 1 means no inlining") \

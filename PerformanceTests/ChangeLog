@@ -1,3 +1,60 @@
+2015-06-08  Filip Pizlo  <fpizlo@apple.com>
+
+        JetStream should have a more rational story for jitter-oriented latency tests
+        https://bugs.webkit.org/show_bug.cgi?id=145762
+
+        Reviewed by Geoffrey Garen.
+        
+        JetStream has some latency tests that are meant to measure jitter.  Prior to this change, they
+        did this by computing the RMS.  But the RMS is a pretty bad metric.  The thing that it rewards
+        isn't really the thing that you'd want your browser to do.  These RMS-based tests involve taking
+        the geomean of the RMS of some samples and the sample average.  The lower the geomean, the better
+        (in the JetStream harness we then invert the scores so that higher is better, but let's ignore
+        that for this discussion and assume that lower is better).  Here's an example of how this can go
+        bad.  A browser that always computes a task in some horribly long time (say, 1000ms) but never
+        varies that time will perform better than a browser that usually computes the task super quickly
+        (say, 10ms) and sometimes just a little bit less quickly (say, 15ms).  The former browser will
+        have an RMS of 0 and an average of 1000.  The latter will have a RMS somewhere around 3.5 and an
+        average of 12.5 (assuming equal probability of 10ms and 15ms).  The geomean of (0, 1000) is 0.
+        The geomean of (3.5, 12.5) is 6.6.  Lower is better, so the former browser scores higher - even
+        though it's obviously never better to have a browser always complete a task in 1000ms when a
+        different browser can do it in 15ms in the worst case.
+
+        JetStream should not have this pathology.  The right way of avoiding it is to replace RMS with
+        some other metric of how bad things get.  A good metric is the average of the worst percentile.
+        The worst 1% or the worst 5% would be good things to average.  This will catch cases where the VM
+        jittered due to JIT or GC, but it never have the pathology that we end up giving the better score
+        to a VM whose best case is worst than another VM's worst case.
+        
+        For now, this change uses the highest samples above the 95% percentile. I'm not yet sure if that
+        is the best thing - it might include too many scores that are around the best-case performance -
+        but it's certainly better than RMS and it might be good enough to keep. But because of that
+        uncertainty, I'm setting the version to be "1.1-alpha1" to indicate that we aren't ready to
+        release this yet.
+
+        * JetStream/Octane2/base.js:
+        (.this.Setup.setup.setup):
+        (.this.TearDown.tearDown.tearDown):
+        (BenchmarkSuite.GeometricMeanTime):
+        (BenchmarkSuite.AverageAbovePercentile):
+        (BenchmarkSuite.GeometricMeanLatency):
+        (BenchmarkSuite.prototype.NotifyStep):
+        (BenchmarkSuite.prototype.RunSingleBenchmark):
+        * JetStream/Octane2/mandreel.js:
+        (setupMandreel):
+        (updateMandreelStats):
+        (startMandreelTimer):
+        (latencyMandreel):
+        (tearDownMandreel):
+        (RMSMandreel): Deleted.
+        * JetStream/Octane2/splay.js:
+        (GenerateKey):
+        (SplayUpdateStats):
+        (InsertNewNode):
+        (SplayTearDown):
+        (SplayRMS): Deleted.
+        * JetStream/create.rb:
+
 2015-06-03  Zalan Bujtas  <zalan@apple.com>
 
         Skip Dromaeo/jslib-modify-prototype.html for now.

@@ -1,4 +1,5 @@
 // Copyright 2009 the V8 project authors. All rights reserved.
+// Copyright (C) 2015 Apple Inc. All rights reserved.
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
 // met:
@@ -35,7 +36,7 @@
 
 var Splay = new BenchmarkSuite('Splay', [81491, 2739514], [
   new Benchmark("Splay", true, false, 
-    SplayRun, SplaySetup, SplayTearDown, SplayRMS)
+    SplayRun, SplaySetup, SplayTearDown, SplayLatency)
 ]);
 
 
@@ -68,18 +69,16 @@ function GenerateKey() {
   return Math.random();
 }
 
-var splaySamples = 0;
-var splaySumOfSquaredPauses = 0;
+var splaySamples = [];
 
-function SplayRMS() {
-  return Math.round(Math.sqrt(splaySumOfSquaredPauses / splaySamples) * 10000);
+function SplayLatency() {
+  return splaySamples;
 }
 
 function SplayUpdateStats(time) {
   var pause = time - splaySampleTimeStart;
   splaySampleTimeStart = time;
-  splaySamples++;
-  splaySumOfSquaredPauses += pause * pause;
+  splaySamples.push(pause);
 }
 
 function InsertNewNode() {
@@ -119,8 +118,7 @@ function SplayTearDown() {
   var keys = splayTree.exportKeys();
   splayTree = null;
 
-  splaySamples = 0;
-  splaySumOfSquaredPauses = 0;
+  splaySamples = [];
 
   // Verify that the splay tree has the right size.
   var length = keys.length;
