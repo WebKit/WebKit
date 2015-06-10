@@ -1,3 +1,9 @@
+2015-06-10  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Unreviewed, EFL gardening on Jun 10th
+
+        * platform/efl/TestExpectations: Mark fast tests to flaky since r183540.
+
 2015-06-10  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet <youenn.fablet@crf.canon.fr>
 
         [Streams API] Implement pulling of a source by a ReadableStream
