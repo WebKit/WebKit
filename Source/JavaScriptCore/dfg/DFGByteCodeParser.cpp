@@ -4032,7 +4032,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         } else
             m_inlineCallFrame->isClosureCall = true;
         m_inlineCallFrame->caller = byteCodeParser->currentCodeOrigin();
-        m_inlineCallFrame->arguments.resize(argumentCountIncludingThis); // Set the number of arguments including this, but don't configure the value recoveries, yet.
+        m_inlineCallFrame->arguments.resizeToFit(argumentCountIncludingThis); // Set the number of arguments including this, but don't configure the value recoveries, yet.
         m_inlineCallFrame->kind = kind;
         
         byteCodeParser->buildOperandMapsIfNecessary();

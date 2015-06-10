@@ -1,3 +1,18 @@
+2015-06-10  Andreas Kling  <akling@apple.com>
+
+        [JSC] InlineCallFrame::arguments should be sized-to-fit.
+        <https://webkit.org/b/145782>
+
+        Reviewed by Darin Adler.
+
+        I spotted this Vector<ValueRecovery> looking a bit chubby in Instruments,
+        with 354 kB of memory allocated on cnet.com.
+
+        Use resizeToFit() instead of resize() since we know the final size up front.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+
 2015-06-09  Chris Dumez  <cdumez@apple.com>
 
         Allow one sync GC per gcTimer interval on critical memory pressure warning
