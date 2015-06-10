@@ -119,15 +119,17 @@ bool compressRGBABigEndianToJPEG(unsigned char* rgbaBigEndianData, const IntSize
     jpeg_start_compress(&compressData, TRUE);
     rowBuffer.resize(compressData.image_width * 3);
 
+    // add offset to prevent clobbered error caused by setjmp and longjmp.
+    unsigned offset = 0;
     const unsigned char* pixel = rgbaBigEndianData;
     const unsigned char* pixelEnd = pixel + compressData.image_width * compressData.image_height * 4;
-    while (pixel < pixelEnd) {
+    while (pixel + offset < pixelEnd) {
         JSAMPLE* output = rowBuffer.data();
-        for (const unsigned char* rowEnd = pixel + compressData.image_width * 4; pixel < rowEnd;) {
-            *output++ = static_cast<JSAMPLE>(*pixel++ & 0xFF); // red
-            *output++ = static_cast<JSAMPLE>(*pixel++ & 0xFF); // green
-            *output++ = static_cast<JSAMPLE>(*pixel++ & 0xFF); // blue
-            ++pixel; // skip alpha
+        for (const unsigned char* rowEnd = pixel + offset + compressData.image_width * 4; pixel + offset < rowEnd;) {
+            *output++ = static_cast<JSAMPLE>(*(pixel + offset++) & 0xFF); // red
+            *output++ = static_cast<JSAMPLE>(*(pixel + offset++) & 0xFF); // green
+            *output++ = static_cast<JSAMPLE>(*(pixel + offset++) & 0xFF); // blue
+            ++offset; // skip alpha
         }
         output = rowBuffer.data();
         jpeg_write_scanlines(&compressData, &output, 1);
