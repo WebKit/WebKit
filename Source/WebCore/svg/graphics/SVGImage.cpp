@@ -48,8 +48,9 @@
 
 namespace WebCore {
 
-SVGImage::SVGImage(ImageObserver* observer)
-    : Image(observer)
+SVGImage::SVGImage(ImageObserver& observer, const URL& url)
+    : Image(&observer)
+    , m_url(url)
 {
 }
 

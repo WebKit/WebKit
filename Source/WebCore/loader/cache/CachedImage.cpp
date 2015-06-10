@@ -109,7 +109,7 @@ CachedImage::~CachedImage()
 
 void CachedImage::load(CachedResourceLoader& cachedResourceLoader, const ResourceLoaderOptions& options)
 {
-    if (cachedResourceLoader.shouldPerformImageLoad(resourceRequest().url()))
+    if (cachedResourceLoader.shouldPerformImageLoad(url()))
         CachedResource::load(cachedResourceLoader, options);
     else
         setLoading(false);
@@ -320,7 +320,7 @@ void CachedImage::checkShouldPaintBrokenImage()
     if (!m_loader || m_loader->reachedTerminalState())
         return;
 
-    m_shouldPaintBrokenImage = m_loader->frameLoader()->client().shouldPaintBrokenImage(m_resourceRequest.url());
+    m_shouldPaintBrokenImage = m_loader->frameLoader()->client().shouldPaintBrokenImage(url());
 }
 
 void CachedImage::clear()
@@ -342,7 +342,7 @@ inline void CachedImage::createImage()
         m_image = PDFDocumentImage::create(this);
 #endif
     else if (m_response.mimeType() == "image/svg+xml") {
-        RefPtr<SVGImage> svgImage = SVGImage::create(this);
+        RefPtr<SVGImage> svgImage = SVGImage::create(*this, url());
         m_svgImageCache = std::make_unique<SVGImageCache>(svgImage.get());
         m_image = svgImage.release();
     } else {
