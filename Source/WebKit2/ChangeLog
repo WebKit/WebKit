@@ -1,3 +1,11 @@
+2015-06-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK build after r185412.
+
+        Add missing include.
+
+        * NetworkProcess/cache/NetworkCacheFileSystem.cpp:
+
 2015-06-10  Antti Koivisto  <antti@apple.com>
 
         NetworkCache: Delete old cache versions

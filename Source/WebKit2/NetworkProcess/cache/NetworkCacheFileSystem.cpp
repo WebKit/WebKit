@@ -35,6 +35,7 @@
 #include <wtf/text/CString.h>
 
 #if USE(SOUP)
+#include <gio/gio.h>
 #include <wtf/gobject/GRefPtr.h>
 #endif
 
