@@ -51,6 +51,7 @@
 #include "GenericEventQueue.h"
 #include "HRTFDatabaseLoader.h"
 #include "HRTFPanner.h"
+#include "JSDOMPromise.h"
 #include "OfflineAudioCompletionEvent.h"
 #include "OfflineAudioDestinationNode.h"
 #include "OscillatorNode.h"
@@ -277,13 +278,13 @@ bool AudioContext::isInitialized() const
     return m_isInitialized;
 }
 
-void AudioContext::addReaction(State state, std::function<void()> reaction)
+void AudioContext::addReaction(State state, Promise&& promise)
 {
     size_t stateIndex = static_cast<size_t>(state);
     if (stateIndex >= m_stateReactions.size())
         m_stateReactions.resize(stateIndex + 1);
 
-    m_stateReactions[stateIndex].append(reaction);
+    m_stateReactions[stateIndex].append(WTF::move(promise));
 }
 
 void AudioContext::setState(State state)
@@ -298,11 +299,11 @@ void AudioContext::setState(State state)
     if (stateIndex >= m_stateReactions.size())
         return;
 
-    Vector<std::function<void()>> reactions;
+    Vector<Promise> reactions;
     m_stateReactions[stateIndex].swap(reactions);
 
-    for (auto& reaction : reactions)
-        reaction();
+    for (auto& promise : reactions)
+        promise.resolve(nullptr);
 }
 
 const AtomicString& AudioContext::state() const
@@ -1096,27 +1097,24 @@ void AudioContext::decrementActiveSourceCount()
     --m_activeSourceCount;
 }
 
-void AudioContext::suspendContext(std::function<void()> successCallback, FailureCallback failureCallback)
+void AudioContext::suspend(Promise&& promise)
 {
-    ASSERT(successCallback);
-    ASSERT(failureCallback);
-
     if (isOfflineContext()) {
-        failureCallback(INVALID_STATE_ERR);
+        promise.reject(INVALID_STATE_ERR);
         return;
     }
 
     if (m_state == State::Suspended) {
-        successCallback();
+        promise.resolve(nullptr);
         return;
     }
 
     if (m_state == State::Closed || m_state == State::Interrupted || !m_destinationNode) {
-        failureCallback(0);
+        promise.reject(0);
         return;
     }
 
-    addReaction(State::Suspended, successCallback);
+    addReaction(State::Suspended, WTF::move(promise));
 
     if (!willPausePlayback())
         return;
@@ -1129,27 +1127,24 @@ void AudioContext::suspendContext(std::function<void()> successCallback, Failure
     });
 }
 
-void AudioContext::resumeContext(std::function<void()> successCallback, FailureCallback failureCallback)
+void AudioContext::resume(Promise&& promise)
 {
-    ASSERT(successCallback);
-    ASSERT(failureCallback);
-
     if (isOfflineContext()) {
-        failureCallback(INVALID_STATE_ERR);
+        promise.reject(INVALID_STATE_ERR);
         return;
     }
 
     if (m_state == State::Running) {
-        successCallback();
+        promise.resolve(nullptr);
         return;
     }
 
     if (m_state == State::Closed || !m_destinationNode) {
-        failureCallback(0);
+        promise.reject(0);
         return;
     }
 
-    addReaction(State::Running, successCallback);
+    addReaction(State::Running, WTF::move(promise));
 
     if (!willBeginPlayback())
         return;
@@ -1162,27 +1157,24 @@ void AudioContext::resumeContext(std::function<void()> successCallback, FailureC
     });
 }
 
-void AudioContext::closeContext(std::function<void()> successCallback, FailureCallback failureCallback)
+void AudioContext::close(Promise&& promise)
 {
-    ASSERT(successCallback);
-    ASSERT(failureCallback);
-
     if (isOfflineContext()) {
-        failureCallback(INVALID_STATE_ERR);
+        promise.reject(INVALID_STATE_ERR);
         return;
     }
 
     if (m_state == State::Closed || !m_destinationNode) {
-        successCallback();
+        promise.resolve(nullptr);
         return;
     }
 
-    addReaction(State::Closed, successCallback);
+    addReaction(State::Closed, WTF::move(promise));
 
     lazyInitialize();
 
     RefPtr<AudioContext> strongThis(this);
-    m_destinationNode->close([strongThis, successCallback] {
+    m_destinationNode->close([strongThis] {
         strongThis->setState(State::Closed);
         strongThis->uninitialize();
     });

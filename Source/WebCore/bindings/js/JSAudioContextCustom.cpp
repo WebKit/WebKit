@@ -111,50 +111,29 @@ EncodedJSValue JSC_HOST_CALL constructJSAudioContext(ExecState* exec)
     return JSValue::encode(CREATE_DOM_WRAPPER(jsConstructor->globalObject(), AudioContext, audioContext.get()));
 }
 
-JSValue JSAudioContext::suspend(ExecState* exec)
+JSValue JSAudioContext::suspend(ExecState* state)
 {
-    JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(exec, globalObject());
-    DeferredWrapper wrapper(exec, globalObject(), promiseDeferred);
-    auto successCallback = [wrapper]() mutable {
-        wrapper.resolve(nullptr);
-    };
-    auto failureCallback = [wrapper](ExceptionCode value) mutable {
-        wrapper.reject(value);
-    };
+    JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(state, globalObject());
 
-    impl().suspendContext(WTF::move(successCallback), WTF::move(failureCallback));
+    impl().suspend(DeferredWrapper(state, globalObject(), promiseDeferred));
 
     return promiseDeferred->promise();
 }
 
-JSValue JSAudioContext::resume(ExecState* exec)
+JSValue JSAudioContext::resume(ExecState* state)
 {
-    JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(exec, globalObject());
-    DeferredWrapper wrapper(exec, globalObject(), promiseDeferred);
-    auto successCallback = [wrapper]() mutable {
-        wrapper.resolve(nullptr);
-    };
-    auto failureCallback = [wrapper](ExceptionCode value) mutable {
-        wrapper.reject(value);
-    };
+    JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(state, globalObject());
 
-    impl().resumeContext(WTF::move(successCallback), WTF::move(failureCallback));
+    impl().resume(DeferredWrapper(state, globalObject(), promiseDeferred));
 
     return promiseDeferred->promise();
 }
 
-JSValue JSAudioContext::close(ExecState* exec)
+JSValue JSAudioContext::close(ExecState* state)
 {
-    JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(exec, globalObject());
-    DeferredWrapper wrapper(exec, globalObject(), promiseDeferred);
-    auto successCallback = [wrapper]() mutable {
-        wrapper.resolve(nullptr);
-    };
-    auto failureCallback = [wrapper](ExceptionCode value) mutable {
-        wrapper.reject(value);
-    };
+    JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(state, globalObject());
 
-    impl().closeContext(WTF::move(successCallback), WTF::move(failureCallback));
+    impl().close(DeferredWrapper(state, globalObject(), promiseDeferred));
 
     return promiseDeferred->promise();
 }
