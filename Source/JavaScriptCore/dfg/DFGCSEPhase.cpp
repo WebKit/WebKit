@@ -409,23 +409,12 @@ public:
 
         bool changed = iterate();
         
-        // Iterating a second time should not find new CSE opportunities, unless we have a bug.
-        if (validationEnabled()) {
-            reset();
-            DFG_ASSERT(m_graph, nullptr, !iterate());
-        }
+        // FIXME: It should be possible to assert that CSE will not find any new opportunities if you
+        // run it a second time. Unfortunately, we cannot assert this right now. Note that if we did
+        // this, we'd have to first reset all of our state.
+        // https://bugs.webkit.org/show_bug.cgi?id=145853
         
         return changed;
-    }
-    
-    void reset()
-    {
-        m_pureValues.clear();
-        
-        for (BlockIndex i = m_impureDataMap.size(); i--;) {
-            m_impureDataMap[i].availableAtTail.clear();
-            m_impureDataMap[i].didVisit = false;
-        }
     }
     
     bool iterate()
