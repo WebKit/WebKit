@@ -134,6 +134,11 @@ void GraphicsContext::restore()
     m_state = m_stack.last();
     m_stack.removeLast();
 
+    // Make sure we deallocate the state stack buffer when it goes empty.
+    // Canvas elements will immediately save() again, but that goes into inline capacity.
+    if (m_stack.isEmpty())
+        m_stack.clear();
+
     restorePlatformState();
 }
 
