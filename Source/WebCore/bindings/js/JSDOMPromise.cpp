@@ -32,12 +32,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-DeferredWrapper::DeferredWrapper(ExecState* exec, JSDOMGlobalObject* globalObject)
-    : m_globalObject(exec->vm(), globalObject)
-    , m_deferred(exec->vm(), JSPromiseDeferred::create(exec, globalObject))
-{
-}
-
 DeferredWrapper::DeferredWrapper(ExecState* exec, JSDOMGlobalObject* globalObject, JSPromiseDeferred* promiseDeferred)
     : m_globalObject(exec->vm(), globalObject)
     , m_deferred(exec->vm(), promiseDeferred)
@@ -46,6 +40,8 @@ DeferredWrapper::DeferredWrapper(ExecState* exec, JSDOMGlobalObject* globalObjec
 
 JSObject* DeferredWrapper::promise() const
 {
+    // FIXME: Remove this accessor once ReadableStreamReader custom binding does not need it.
+    ASSERT(m_deferred);
     return m_deferred->promise();
 }
 
@@ -61,6 +57,9 @@ void DeferredWrapper::resolve(ExecState* exec, JSValue resolution)
     arguments.append(resolution);
 
     call(exec, deferredResolve, resolveCallType, resolveCallData, jsUndefined(), arguments);
+
+    m_globalObject.clear();
+    m_deferred.clear();
 }
 
 void DeferredWrapper::reject(ExecState* exec, JSValue reason)
@@ -75,6 +74,9 @@ void DeferredWrapper::reject(ExecState* exec, JSValue reason)
     arguments.append(reason);
 
     call(exec, deferredReject, rejectCallType, rejectCallData, jsUndefined(), arguments);
+
+    m_globalObject.clear();
+    m_deferred.clear();
 }
 
 }

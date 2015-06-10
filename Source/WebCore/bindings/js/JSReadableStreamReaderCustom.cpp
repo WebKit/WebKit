@@ -46,7 +46,9 @@ namespace WebCore {
 
 JSValue JSReadableStreamReader::read(ExecState* exec)
 {
-    DeferredWrapper wrapper(exec, globalObject());
+    JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(exec, globalObject());
+    DeferredWrapper wrapper(exec, globalObject(), promiseDeferred);
+
     auto successCallback = [wrapper](JSValue value) mutable {
         JSValue result = createIteratorResultObject(wrapper.promise()->globalObject()->globalExec(), value, false);
         wrapper.resolve(result);
@@ -61,7 +63,7 @@ JSValue JSReadableStreamReader::read(ExecState* exec)
 
     impl().read(WTF::move(successCallback), WTF::move(endCallback), WTF::move(failureCallback));
 
-    return wrapper.promise();
+    return promiseDeferred->promise();
 }
 
 JSValue JSReadableStreamReader::closed(ExecState* exec) const
@@ -81,7 +83,7 @@ JSValue JSReadableStreamReader::closed(ExecState* exec) const
 
     impl().closed(WTF::move(successCallback), WTF::move(failureCallback));
 
-    return wrapper.promise();
+    return m_closedPromiseDeferred->promise();
 }
 
 JSValue JSReadableStreamReader::cancel(ExecState* exec)

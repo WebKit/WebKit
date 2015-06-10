@@ -38,7 +38,6 @@ namespace WebCore {
 
 class DeferredWrapper {
 public:
-    DeferredWrapper(JSC::ExecState*, JSDOMGlobalObject*);
     DeferredWrapper(JSC::ExecState*, JSDOMGlobalObject*, JSC::JSPromiseDeferred*);
 
     template<class ResolveResultType>
@@ -60,6 +59,8 @@ private:
 template<class ResolveResultType>
 inline void DeferredWrapper::resolve(const ResolveResultType& result)
 {
+    ASSERT(m_deferred);
+    ASSERT(m_globalObject);
     JSC::ExecState* exec = m_globalObject->globalExec();
     JSC::JSLockHolder locker(exec);
     resolve(exec, toJS(exec, m_globalObject.get(), result));
@@ -68,6 +69,8 @@ inline void DeferredWrapper::resolve(const ResolveResultType& result)
 template<class RejectResultType>
 inline void DeferredWrapper::reject(const RejectResultType& result)
 {
+    ASSERT(m_deferred);
+    ASSERT(m_globalObject);
     JSC::ExecState* exec = m_globalObject->globalExec();
     JSC::JSLockHolder locker(exec);
     reject(exec, toJS(exec, m_globalObject.get(), result));
@@ -76,6 +79,8 @@ inline void DeferredWrapper::reject(const RejectResultType& result)
 template<>
 inline void DeferredWrapper::reject(const std::nullptr_t&)
 {
+    ASSERT(m_deferred);
+    ASSERT(m_globalObject);
     JSC::ExecState* exec = m_globalObject->globalExec();
     JSC::JSLockHolder locker(exec);
     reject(exec, JSC::jsNull());
@@ -84,6 +89,8 @@ inline void DeferredWrapper::reject(const std::nullptr_t&)
 template<>
 inline void DeferredWrapper::reject(const JSC::JSValue& value)
 {
+    ASSERT(m_deferred);
+    ASSERT(m_globalObject);
     JSC::ExecState* exec = m_globalObject->globalExec();
     JSC::JSLockHolder locker(exec);
     reject(exec, value);
@@ -92,6 +99,8 @@ inline void DeferredWrapper::reject(const JSC::JSValue& value)
 template<>
 inline void DeferredWrapper::reject<ExceptionCode>(const ExceptionCode& ec)
 {
+    ASSERT(m_deferred);
+    ASSERT(m_globalObject);
     JSC::ExecState* exec = m_globalObject->globalExec();
     JSC::JSLockHolder locker(exec);
     reject(exec, createDOMException(exec, ec));
@@ -100,6 +109,8 @@ inline void DeferredWrapper::reject<ExceptionCode>(const ExceptionCode& ec)
 template<>
 inline void DeferredWrapper::resolve<String>(const String& result)
 {
+    ASSERT(m_deferred);
+    ASSERT(m_globalObject);
     JSC::ExecState* exec = m_globalObject->globalExec();
     JSC::JSLockHolder locker(exec);
     resolve(exec, jsString(exec, result));
@@ -108,6 +119,8 @@ inline void DeferredWrapper::resolve<String>(const String& result)
 template<>
 inline void DeferredWrapper::resolve<bool>(const bool& result)
 {
+    ASSERT(m_deferred);
+    ASSERT(m_globalObject);
     JSC::ExecState* exec = m_globalObject->globalExec();
     JSC::JSLockHolder locker(exec);
     resolve(exec, JSC::jsBoolean(result));
@@ -116,6 +129,8 @@ inline void DeferredWrapper::resolve<bool>(const bool& result)
 template<>
 inline void DeferredWrapper::resolve<JSC::JSValue>(const JSC::JSValue& value)
 {
+    ASSERT(m_deferred);
+    ASSERT(m_globalObject);
     JSC::ExecState* exec = m_globalObject->globalExec();
     JSC::JSLockHolder locker(exec);
     resolve(exec, value);
@@ -123,6 +138,8 @@ inline void DeferredWrapper::resolve<JSC::JSValue>(const JSC::JSValue& value)
 template<>
 inline void DeferredWrapper::resolve<Vector<unsigned char>>(const Vector<unsigned char>& result)
 {
+    ASSERT(m_deferred);
+    ASSERT(m_globalObject);
     JSC::ExecState* exec = m_globalObject->globalExec();
     JSC::JSLockHolder locker(exec);
     RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(result.data(), result.size());
@@ -132,6 +149,8 @@ inline void DeferredWrapper::resolve<Vector<unsigned char>>(const Vector<unsigne
 template<>
 inline void DeferredWrapper::resolve(const std::nullptr_t&)
 {
+    ASSERT(m_deferred);
+    ASSERT(m_globalObject);
     JSC::ExecState* exec = m_globalObject->globalExec();
     JSC::JSLockHolder locker(exec);
     resolve(exec, JSC::jsUndefined());
@@ -140,6 +159,8 @@ inline void DeferredWrapper::resolve(const std::nullptr_t&)
 template<>
 inline void DeferredWrapper::reject<String>(const String& result)
 {
+    ASSERT(m_deferred);
+    ASSERT(m_globalObject);
     JSC::ExecState* exec = m_globalObject->globalExec();
     JSC::JSLockHolder locker(exec);
     reject(exec, jsString(exec, result));

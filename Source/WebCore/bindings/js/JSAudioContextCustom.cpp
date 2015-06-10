@@ -113,7 +113,8 @@ EncodedJSValue JSC_HOST_CALL constructJSAudioContext(ExecState* exec)
 
 JSValue JSAudioContext::suspend(ExecState* exec)
 {
-    DeferredWrapper wrapper(exec, globalObject());
+    JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(exec, globalObject());
+    DeferredWrapper wrapper(exec, globalObject(), promiseDeferred);
     auto successCallback = [wrapper]() mutable {
         wrapper.resolve(nullptr);
     };
@@ -123,12 +124,13 @@ JSValue JSAudioContext::suspend(ExecState* exec)
 
     impl().suspendContext(WTF::move(successCallback), WTF::move(failureCallback));
 
-    return wrapper.promise();
+    return promiseDeferred->promise();
 }
 
 JSValue JSAudioContext::resume(ExecState* exec)
 {
-    DeferredWrapper wrapper(exec, globalObject());
+    JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(exec, globalObject());
+    DeferredWrapper wrapper(exec, globalObject(), promiseDeferred);
     auto successCallback = [wrapper]() mutable {
         wrapper.resolve(nullptr);
     };
@@ -138,12 +140,13 @@ JSValue JSAudioContext::resume(ExecState* exec)
 
     impl().resumeContext(WTF::move(successCallback), WTF::move(failureCallback));
 
-    return wrapper.promise();
+    return promiseDeferred->promise();
 }
 
 JSValue JSAudioContext::close(ExecState* exec)
 {
-    DeferredWrapper wrapper(exec, globalObject());
+    JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(exec, globalObject());
+    DeferredWrapper wrapper(exec, globalObject(), promiseDeferred);
     auto successCallback = [wrapper]() mutable {
         wrapper.resolve(nullptr);
     };
@@ -153,7 +156,7 @@ JSValue JSAudioContext::close(ExecState* exec)
 
     impl().closeContext(WTF::move(successCallback), WTF::move(failureCallback));
 
-    return wrapper.promise();
+    return promiseDeferred->promise();
 }
 
 } // namespace WebCore
