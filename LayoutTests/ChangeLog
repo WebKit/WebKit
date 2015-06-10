@@ -1,3 +1,19 @@
+2015-06-10  Alex Christensen  <achristensen@webkit.org>
+
+        Move all content extension tests to same directory to fix flakiness.
+        https://bugs.webkit.org/show_bug.cgi?id=145854
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/tests/contentextensions/loading/main-resource-redirect-blocked-expected.txt: Removed.
+        * http/tests/contentextensions/loading/main-resource-redirect-blocked.php: Removed.
+        * http/tests/contentextensions/loading/main-resource-redirect-blocked.php.json: Removed.
+        * http/tests/contentextensions/loading/resources/main-resource-redirect-blocked-target.html: Removed.
+        * http/tests/contentextensions/main-resource-redirect-blocked-expected.txt: Copied from http/tests/contentextensions/loading/main-resource-redirect-blocked-expected.txt.
+        * http/tests/contentextensions/main-resource-redirect-blocked.php: Copied from http/tests/contentextensions/loading/main-resource-redirect-blocked.php.
+        * http/tests/contentextensions/main-resource-redirect-blocked.php.json: Copied from http/tests/contentextensions/loading/main-resource-redirect-blocked.php.json.
+        * http/tests/contentextensions/resources/main-resource-redirect-blocked-target.html: Copied from http/tests/contentextensions/loading/resources/main-resource-redirect-blocked-target.html.
+
 2015-06-10  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Unreviewed, EFL gardening on Jun 10th
