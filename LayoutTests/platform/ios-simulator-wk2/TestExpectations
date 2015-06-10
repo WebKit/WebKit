@@ -2164,6 +2164,7 @@ transitions/transition-hit-test-transform.html
 fast/images/animated-gif-no-layout.html [ ImageOnlyFailure Pass ]
 animations/transition-and-animation-2.html
 css3/filters/backdrop/animation.html
+http/tests/cache/disk-cache/disk-cache-validation.html
 
 # Failures as of 06/09/2015
 animations/trigger-container-scroll-empty.html [ Failure ]

@@ -1118,7 +1118,6 @@ css2.1/t1508-c527-font-07-b.html [ Failure ]
 css2.1/t1508-c527-font-08-b.html [ Failure ]
 css2.1/t1508-c527-font-09-b.html [ Failure ]
 css2.1/t1508-c527-font-10-c.html [ Failure ]
-css3/blending/blend-mode-simple-composited.html [ ImageOnlyFailure ]
 css3/filters/remove-filter-repaint.html [ ImageOnlyFailure ]
 css3/flexbox/content-height-with-scrollbars.html [ ImageOnlyFailure ]
 css3/masking/mask-repeat-space-border.html [ ImageOnlyFailure ]
@@ -1195,7 +1194,6 @@ svg/css/svg-resource-fragment-identifier-img-src.html [ ImageOnlyFailure ]
 svg/custom/hidpi-masking-clipping.svg [ ImageOnlyFailure ]
 svg/custom/svg-fonts-fallback.xhtml [ Failure ]
 svg/filters/feTurbulence_bad_seeds.html [ ImageOnlyFailure ]
-svg/repaint/buffered-rendering-dynamic-image.html [ Failure ]
 svg/stroke/animated-non-scaling-stroke.html [ ImageOnlyFailure ]
 
 # LayoutTests/fast tests that fail:
@@ -1519,7 +1517,6 @@ http/tests/images/png-partial-load.html [ Timeout ]
 http/tests/images/png-progressive-load.html [ Timeout ]
 http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html [ Timeout ]
 http/tests/loading/sizes/preload-image-sizes-2x.html [ Timeout ]
-http/tests/loading/sizes/preload-image-sizes.html [ Timeout ]
 http/tests/local/absolute-url-strip-whitespace.html [ Timeout ]
 http/tests/local/file-url-sent-as-referer.html [ Timeout ]
 http/tests/security/appcache-in-private-browsing.html [ Timeout ]
@@ -1721,10 +1718,13 @@ fast/fixed-layout/fixed-layout.html
 svg/dom/SVGScriptElement/script-set-href.svg [ Failure Pass ]
 fast/text/text-combine-style-change-no-layout.html [ ImageOnlyFailure Pass ]
 http/tests/websocket/tests/hybi/invalid-subprotocol-characters.html
+fast/css3-text/css3-word-spacing-percentage/word-spacing-change-font.html [ ImageOnlyFailure Pass ]
+svg/repaint/buffered-rendering-dynamic-image.html [ ImageOnlyFailure ]
 
 # Failures as of 06/09/2015
 css3/blending/blend-mode-simple-composited.html [ Failure ]
 http/tests/loading/sizes/preload-image-sizes.html [ Failure ]
+fast/files/file-reader-sandbox-iframe.html [ Failure Pass ]
 
 # Crashes as of 06/09/2015
 fast/dom/MutationObserver/database-callback-delivery.html [ Crash ]
