@@ -2983,7 +2983,7 @@ void FrameView::performPostLayoutTasks()
 
     m_postLayoutTasksTimer.stop();
 
-    frame().selection().didLayout();
+    frame().selection().updateAppearanceAfterLayout();
 
     if (m_nestedLayoutCount <= 1 && frame().document()->documentElement())
         fireLayoutRelatedMilestonesIfNeeded();

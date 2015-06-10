@@ -2222,7 +2222,7 @@ void FrameSelection::setShouldShowBlockCursor(bool shouldShowBlockCursor)
     updateAppearance();
 }
 
-void FrameSelection::didLayout()
+void FrameSelection::updateAppearanceAfterLayout()
 {
     setCaretRectNeedsUpdate();
     updateAndRevealSelection(AXTextStateChangeIntent());

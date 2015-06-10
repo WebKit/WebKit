@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests modifying selection after triggering a style change. Selection should be updated immediately.
+You should see the "hello" selected below as "world" turns red.</p>
+<input type="text" value="hello"/>
+<input type="text" value="world"/>
+<style> * {outline: none} </style>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+var inputs = document.querySelectorAll('input');
+inputs[0].focus();
+inputs[0].setSelectionRange(0, 0);
+setTimeout(function () {
+    inputs[1].style.color = 'red';
+    inputs[0].select();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 50);
+
+</script>
+</body>
+</html>

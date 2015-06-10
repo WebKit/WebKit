@@ -151,7 +151,7 @@ public:
     WEBCORE_EXPORT void clear();
     void prepareForDestruction();
 
-    void didLayout();
+    void updateAppearanceAfterLayout();
     void setNeedsSelectionUpdate();
 
     bool contains(const LayoutPoint&);
