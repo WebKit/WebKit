@@ -2387,6 +2387,8 @@ webkit.org/b/141835 media/video-controls-no-scripting.html [ Failure ]
 webkit.org/b/145048 http/tests/misc/bad-charset-alias.html [ Failure ]
 webkit.org/b/145049 fast/text/simple-line-layout-text-stroke-width.html [ Failure ]
 
+webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

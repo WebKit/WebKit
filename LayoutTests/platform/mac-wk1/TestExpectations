@@ -34,6 +34,8 @@ webkit.org/b/139862 editing/spelling/grammar-edit-word.html [ Skip ]
 
 webkit.org/b/144127 compositing/scrolling/touch-scroll-to-clip.html [ Pass Failure ]
 
+webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
+
 ### END OF (1) Failures with bug reports
 ########################################
 

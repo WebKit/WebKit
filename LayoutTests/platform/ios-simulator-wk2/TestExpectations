@@ -2176,3 +2176,5 @@ editing/input/emacs-ctrl-o.html [ Failure ]
 
 # Time outs as of 06/09/2015
 fast/images/animated-gif-webkit-transform.html
+
+webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]

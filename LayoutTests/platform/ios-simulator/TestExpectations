@@ -2612,6 +2612,8 @@ platform/ios-simulator/ios/scrolling/scrolling-content-clip-to-viewport.html [ F
 platform/ios-simulator/ios/scrolling/textarea-scroll-touch.html [ Failure ]
 platform/ios-simulator/ios/scrolling/touch-stacking.html [ Failure ]
 
+webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
+
 # iOS tests that assert:
 platform/ios-simulator/ios/fast/text/combining-enclosing-keycap.html
 platform/ios-simulator/ios/plugin/youtube-flash-plugin-iframe-no-height-or-width.html

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript">
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function dumpLayers()
+        {
+            if (window.testRunner) {
+                document.getElementById('outText').textContent = window.internals.layerTreeAsText(document);
+                testRunner.notifyDone();
+            }
+        }
+
+        function rotate() {
+            videoRotate.play();
+            videoRotate.style.webkitTransform = "rotateY(180deg)";
+            dumpLayers();
+        }
+
+        window.addEventListener('load', rotate, false);
+</script>
+</head>
+<body>
+    <pre id="outText"></pre>
+    <video id="videoRotate" width="480" height="270" type="video/mp4" src="test.mp4"/>
+</body>
+</html>
