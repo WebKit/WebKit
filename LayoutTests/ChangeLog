@@ -1,3 +1,17 @@
+2015-06-10  Jordan Harband  <ljharb@gmail.com>
+
+        Implement RegExp.prototype.flags
+        https://bugs.webkit.org/show_bug.cgi?id=145599
+
+        Reviewed by Geoffrey Garen.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/regexp-flags-expected.txt: Added.
+        * js/regexp-flags.html: Added.
+        * js/script-tests/Object-getOwnPropertyNames.js:
+        * js/script-tests/regexp-flags.js: Added.
+        (.get shouldBe):
+
 2015-06-10  Alex Christensen  <achristensen@webkit.org>
 
         Move all content extension tests to same directory to fix flakiness.

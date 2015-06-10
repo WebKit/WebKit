@@ -103,6 +103,7 @@
     macro(exec) \
     macro(executionCount) \
     macro(exitKind) \
+    macro(flags) \
     macro(focus) \
     macro(forEach) \
     macro(forward) \

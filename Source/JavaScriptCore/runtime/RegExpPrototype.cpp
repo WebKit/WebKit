@@ -47,6 +47,7 @@ static EncodedJSValue JSC_HOST_CALL regExpProtoGetterGlobal(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoGetterIgnoreCase(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoGetterMultiline(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoGetterSource(ExecState*);
+static EncodedJSValue JSC_HOST_CALL regExpProtoGetterFlags(ExecState*);
 
 }
 
@@ -66,6 +67,7 @@ const ClassInfo RegExpPrototype::s_info = { "RegExp", &RegExpObject::s_info, &re
   ignoreCase    regExpProtoGetterIgnoreCase DontEnum|Accessor
   multiline     regExpProtoGetterMultiline  DontEnum|Accessor
   source        regExpProtoGetterSource     DontEnum|Accessor
+  flags         regExpProtoGetterFlags      DontEnum|Accessor
 @end
 */
 
@@ -135,6 +137,30 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
 
+static inline String flagsString(ExecState *exec, JSObject* regexp)
+{
+    char flags[4] = { 0, 0, 0, 0 };
+    int index = 0;
+
+    JSValue globalValue = regexp->get(exec, exec->propertyNames().global);
+    if (exec->hadException())
+        return String();
+    JSValue ignoreCaseValue = regexp->get(exec, exec->propertyNames().ignoreCase);
+    if (exec->hadException())
+        return String();
+    JSValue multilineValue = regexp->get(exec, exec->propertyNames().multiline);
+    if (exec->hadException())
+        return String();
+
+    if (globalValue.toBoolean(exec))
+        flags[index++] = 'g';
+    if (ignoreCaseValue.toBoolean(exec))
+        flags[index++] = 'i';
+    if (multilineValue.toBoolean(exec))
+        flags[index] = 'm';
+    return String(flags);
+}
+
 EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
@@ -147,17 +173,19 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
     if (JSValue earlyReturnValue = checker.earlyReturnValue())
         return JSValue::encode(earlyReturnValue);
 
-    char postfix[5] = { '/', 0, 0, 0, 0 };
-    int index = 1;
-    if (thisObject->get(exec, exec->propertyNames().global).toBoolean(exec))
-        postfix[index++] = 'g';
-    if (thisObject->get(exec, exec->propertyNames().ignoreCase).toBoolean(exec))
-        postfix[index++] = 'i';
-    if (thisObject->get(exec, exec->propertyNames().multiline).toBoolean(exec))
-        postfix[index] = 'm';
-    String source = thisObject->get(exec, exec->propertyNames().source).toString(exec)->value(exec);
+    JSValue sourceValue = thisObject->get(exec, exec->propertyNames().source);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    String source = sourceValue.toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    String flags = flagsString(exec, thisObject);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
     // If source is empty, use "/(?:)/" to avoid colliding with comment syntax
-    return JSValue::encode(jsMakeNontrivialString(exec, "/", source, postfix));
+    return JSValue::encode(jsMakeNontrivialString(exec, "/", source, "/", flags));
 }
 
 EncodedJSValue JSC_HOST_CALL regExpProtoGetterGlobal(ExecState* exec)
@@ -186,6 +214,21 @@ EncodedJSValue JSC_HOST_CALL regExpProtoGetterMultiline(ExecState* exec)
 
     return JSValue::encode(jsBoolean(asRegExpObject(thisValue)->regExp()->multiline()));
 }
+
+EncodedJSValue JSC_HOST_CALL regExpProtoGetterFlags(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    if (!thisValue.isObject())
+        return JSValue::encode(throwTypeError(exec));
+
+    String flagsStr = flagsString(exec, asObject(thisValue));
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    JSValue flags = jsMakeNontrivialString(exec, flagsStr);
+    return JSValue::encode(flags);
+}
+
 
 template <typename CharacterType>
 static inline void appendLineTerminatorEscape(StringBuilder&, CharacterType);

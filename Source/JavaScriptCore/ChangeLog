@@ -1,3 +1,18 @@
+2015-06-10  Jordan Harband  <ljharb@gmail.com>
+
+        Implement RegExp.prototype.flags
+        https://bugs.webkit.org/show_bug.cgi?id=145599
+
+        Reviewed by Geoffrey Garen.
+        Per https://people.mozilla.org/~jorendorff/es6-draft.html#sec-get-regexp.prototype.flags
+
+        * runtime/CommonIdentifiers.h:
+        * runtime/RegExpPrototype.cpp:
+        (JSC::flagsString):
+        (JSC::regExpProtoFuncToString):
+        (JSC::regExpProtoGetterFlags):
+        * tests/stress/static-getter-in-names.js:
+
 2015-06-10  Filip Pizlo  <fpizlo@apple.com>
 
         DFG ASSERTION FAILED: !iterate() on stress/singleton-scope-then-overwrite.js.ftl-eager
