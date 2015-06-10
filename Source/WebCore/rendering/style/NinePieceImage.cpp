@@ -81,10 +81,10 @@ LayoutBoxExtent NinePieceImage::computeSlices(const LayoutSize& size, const Leng
     return LayoutBoxExtent(top, right, bottom, left);
 }
 
-void NinePieceImage::scaleSlicesIfNeeded(const LayoutSize& size, LayoutBoxExtent& slices, int scaleFactor)
+void NinePieceImage::scaleSlicesIfNeeded(const LayoutSize& size, LayoutBoxExtent& slices, float deviceScaleFactor)
 {
-    LayoutUnit width  = std::max<LayoutUnit>(1 / scaleFactor, slices.left() + slices.right());
-    LayoutUnit height = std::max<LayoutUnit>(1 / scaleFactor, slices.top() + slices.bottom());
+    LayoutUnit width  = std::max<LayoutUnit>(1 / deviceScaleFactor, slices.left() + slices.right());
+    LayoutUnit height = std::max<LayoutUnit>(1 / deviceScaleFactor, slices.top() + slices.bottom());
 
     float sliceScaleFactor = std::min((float)size.width() / width, (float)size.height() / height);
 
@@ -157,7 +157,7 @@ FloatSize NinePieceImage::computeIntrinsicSideTileScale(ImagePiece piece, const 
         return FloatSize(1, 1);
 
     float scale;
-    if (isVerticalPiece(piece))
+    if (isHorizontalPiece(piece))
         scale = destinationRects[piece].height() / sourceRects[piece].height();
     else
         scale = destinationRects[piece].width() / sourceRects[piece].width();

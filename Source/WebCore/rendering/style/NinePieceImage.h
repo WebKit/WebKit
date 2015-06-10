@@ -199,7 +199,7 @@ public:
     static Vector<FloatRect> computeIntrinsicRects(const FloatRect& outer, const LayoutBoxExtent& slices, float deviceScaleFactor);
     static Vector<FloatRect> computeNonIntrinsicRects(const Vector<FloatRect>& intrinsicRects, const LayoutBoxExtent& slices);
 
-    static void scaleSlicesIfNeeded(const LayoutSize&, LayoutBoxExtent& slices, int scaleFactor);
+    static void scaleSlicesIfNeeded(const LayoutSize&, LayoutBoxExtent& slices, float deviceScaleFactor);
 
     static FloatSize computeIntrinsicSideTileScale(ImagePiece, const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects);
     static FloatSize computeIntrinsicMiddleTileScale(const Vector<FloatSize>& scales, const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects, ENinePieceImageRule hRule, ENinePieceImageRule vRule);

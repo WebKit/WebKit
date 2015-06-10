@@ -1,3 +1,17 @@
+2015-06-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r184895): Vertical border elements ([-webkit]-border-image set to 'repeat') that used to render perfectly are now rendering incorrectly.
+        https://bugs.webkit.org/show_bug.cgi?id=145801
+
+        Reviewed by Simon Fraser.
+
+        * fast/borders/border-image-repeat-stretch-expected.html: Added.
+        * fast/borders/border-image-repeat-stretch.html: Added.
+        * fast/borders/resources/border-image-repeat-stretch-expected.svg: Added.
+        * fast/borders/resources/border-image.svg: Added.
+        Ensure that the sides of a border-images are drawn correctly in the cases
+        of 'repeat' and 'stretch'.
+
 2015-06-10  Chris Dumez  <cdumez@apple.com>
 
         ASSERT_WITH_SECURITY_IMPLICATION in WebCore::DocumentOrderedMap::getElementById
