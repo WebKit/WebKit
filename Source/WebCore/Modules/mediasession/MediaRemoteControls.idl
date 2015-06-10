@@ -28,6 +28,7 @@
     Constructor,
     ConstructorCallWith=ScriptExecutionContext,
     EventTarget,
+    JSGenerateToJSObject,
 ] interface MediaRemoteControls : EventTarget {
     attribute boolean previousTrackEnabled;
     attribute boolean nextTrackEnabled;
