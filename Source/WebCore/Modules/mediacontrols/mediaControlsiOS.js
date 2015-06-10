@@ -25,7 +25,6 @@ function ControllerIOS(root, video, host)
 /* Enums */
 ControllerIOS.StartPlaybackControls = 2;
 
-
 ControllerIOS.prototype = {
     /* Constants */
     MinimumTimelineWidth: 200,
@@ -617,6 +616,36 @@ ControllerIOS.prototype = {
         return Controller.prototype.controlsAlwaysVisible.call(this);
     },
 
+    get pageScaleFactor()
+    {
+        return this._pageScaleFactor;
+    },
+
+    set pageScaleFactor(newScaleFactor)
+    {
+        if (!newScaleFactor || this._pageScaleFactor === newScaleFactor)
+            return;
+
+        this._pageScaleFactor = newScaleFactor;
+
+        var scaleValue = 1 / newScaleFactor;
+        var scaleTransform = "scale(" + scaleValue + ")";
+        if (this.controls.startPlaybackButton)
+            this.controls.startPlaybackButton.style.webkitTransform = scaleTransform;
+        if (this.controls.panel) {
+            var bottomAligment = -2 * scaleValue;
+            this.controls.panel.style.bottom = bottomAligment + "px";
+            this.controls.panel.style.paddingBottom = -(newScaleFactor * bottomAligment) + "px";
+            this.controls.panel.style.width = Math.round(newScaleFactor * 100) + "%";
+            this.controls.panel.style.webkitTransform = scaleTransform;
+
+            this.controls.panelBackground.style.height = (50 * scaleValue) + "px";
+
+            this.setNeedsTimelineMetricsUpdate();
+            this.updateProgress();
+            this.scheduleUpdateLayoutForDisplayedWidth();
+        }
+    },
 
 };
 

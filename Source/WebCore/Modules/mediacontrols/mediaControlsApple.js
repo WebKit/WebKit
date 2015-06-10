@@ -2034,12 +2034,6 @@ Controller.prototype = {
             return;
 
         this._pageScaleFactor = newScaleFactor;
-
-        // FIXME: this should react to the scale change by
-        // unscaling the controls panel. However, this
-        // hits a bug with the backdrop blur layer getting
-        // too big and moving to a tiled layer.
-        // https://bugs.webkit.org/show_bug.cgi?id=142317
     },
 
     handleRootResize: function(event)
