@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ImageBuffer.h"
 
+#include "MIMETypeRegistry.h"
 #include "image-encoders/JPEGImageEncoder.h"
 
 #include <cairo.h>
