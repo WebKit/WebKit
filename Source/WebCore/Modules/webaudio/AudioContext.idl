@@ -50,9 +50,9 @@ enum AudioContextState {
     // All panning is relative to this listener.
     readonly attribute AudioListener listener;
 
-    Promise suspend();
-    Promise resume();
-    Promise close();
+    [Custom] Promise suspend();
+    [Custom] Promise resume();
+    [Custom] Promise close();
 
     readonly attribute AudioContextState state;
     attribute EventHandler onstatechange;

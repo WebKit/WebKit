@@ -1047,7 +1047,7 @@ sub GenerateHeader
                 $needsVisitChildren = 1;
                 push(@headerContent, "#endif\n") if $conditionalString;
             }
-            elsif (IsReturningPromise($attribute)) {
+            elsif ($attribute->signature->type eq "Promise") {
                 $headerIncludes{"JSDOMPromise.h"} = 1;
 
                 my $conditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
@@ -2759,7 +2759,7 @@ sub GenerateImplementation
 
             next if $isCustom && $isOverloaded && $function->{overloadIndex} > 1;
 
-            AddIncludesForTypeInImpl($function->signature->type) unless $isCustom or IsReturningPromise($function);
+            AddIncludesForTypeInImpl($function->signature->type) unless $isCustom;
 
             my $functionName = GetFunctionName($className, $function);
 
@@ -3386,8 +3386,6 @@ sub GenerateParametersCheck
         $argsIndex++;
     }
 
-    push(@arguments, "DeferredWrapper(exec, castedThis->globalObject(), promiseDeferred)") if IsReturningPromise($function);
-
     push(@arguments, "ec") if $raisesException;
 
     return ("$functionName(" . join(", ", @arguments) . ")", scalar @arguments);
@@ -3656,17 +3654,9 @@ sub GenerateImplementationFunctionCall()
             push(@implContent, "#else\n");
             push(@implContent, $indent . "result = " . NativeToJSValue($function->signature, 1, $interfaceName, $functionString, $thisObject) . ";\n");
             push(@implContent, "#endif\n");
-        } elsif (IsReturningPromise($function)) {
-            AddToImplIncludes("JSDOMPromise.h");
-
-            push(@implContent, $indent . "auto* promiseDeferred = JSPromiseDeferred::create(exec, castedThis->globalObject());\n");
-            push(@implContent, $indent . $functionString . ";\n");
-            push(@implContent, $indent . "JSValue result = promiseDeferred->promise();\n");
-
         } else {
             push(@implContent, $indent . "JSValue result = " . NativeToJSValue($function->signature, 1, $interfaceName, $functionString, $thisObject) . ";\n");
         }
-        # FIXME: In case of IsReturningPromise($function), the function should not throw. Exception should be used to reject the promise callback.
         push(@implContent, "\n" . $indent . "setDOMException(exec, ec);\n") if $raisesException;
 
         if ($codeGenerator->ExtendedAttributeContains($function->signature->extendedAttributes->{"CallWith"}, "ScriptState")) {
@@ -4782,13 +4772,6 @@ sub NeedsConstructorProperty
     my $interface = shift;
 
     return !$interface->extendedAttributes->{"NoInterfaceObject"} || $interface->extendedAttributes->{"CustomConstructor"};
-}
-
-sub IsReturningPromise
-{
-    my $function = shift;
-
-    return $function->signature->type eq "Promise";
 }
 
 sub IsConstructable
