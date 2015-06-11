@@ -1638,7 +1638,9 @@ static void
 on_fullscreen_accept(void *user_data, Evas_Object *obj, void *event_info)
 {
     PermissionData *permission_data = (PermissionData *)user_data;
+    Browser_Window *window = window_find_with_ewk_view(permission_data->ewk_view);
 
+    elm_win_resize_object_del(window->elm_window, permission_data->permission_popup);
     evas_object_del(permission_data->permission_popup);
     evas_object_focus_set(permission_data->ewk_view, EINA_TRUE);
     free(permission_data);
@@ -1648,8 +1650,10 @@ static void
 on_fullscreen_deny(void *user_data, Evas_Object *obj, void *event_info)
 {
     PermissionData *permission_data = (PermissionData *)user_data;
+    Browser_Window *window = window_find_with_ewk_view(permission_data->ewk_view);
 
     ewk_view_fullscreen_exit(permission_data->ewk_view);
+    elm_win_resize_object_del(window->elm_window, permission_data->permission_popup);
     evas_object_del(permission_data->permission_popup);
     evas_object_focus_set(permission_data->ewk_view, EINA_TRUE);
     free(permission_data);
@@ -1685,7 +1689,7 @@ static Eina_Bool on_fullscreen_enter(Ewk_View_Smart_Data *sd, Ewk_Security_Origi
     elm_object_text_set(deny_button, "Deny");
     elm_object_part_content_set(permission_popup, "button2", deny_button);
     evas_object_smart_callback_add(deny_button, "clicked", on_fullscreen_deny, permission_data);
-
+    elm_win_resize_object_add(window->elm_window, permission_popup);
     evas_object_show(permission_popup);
 
     return EINA_TRUE;
