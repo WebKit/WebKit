@@ -64,6 +64,7 @@ public:
 
     void fetchWebsiteData(const PluginModuleInfo&, std::function<void (Vector<String>)> completionHandler);
     void deleteWebsiteData(const PluginModuleInfo&, std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler);
+    void deleteWebsiteDataForHostNames(const PluginModuleInfo&, const Vector<String>& hostNames, std::function<void ()> completionHandler);
     void clearSiteData(const PluginModuleInfo&, WebPluginSiteDataManager*, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID);
 
 #if PLATFORM(COCOA)

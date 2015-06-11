@@ -40,6 +40,7 @@ messages -> PluginProcess LegacyReceiver {
     ClearSiteData(Vector<String> sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
 
     DeleteWebsiteData(std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
+    DeleteWebsiteDataForHostNames(Vector<String> hostNames, uint64_t callbackID)
 
     SetProcessSuppressionEnabled(bool flag)
 #if PLATFORM(COCOA)

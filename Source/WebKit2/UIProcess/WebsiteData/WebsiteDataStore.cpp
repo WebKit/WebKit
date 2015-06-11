@@ -862,6 +862,62 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<Websi
         });
     }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    if (dataTypes & WebsiteDataTypePlugInData && isPersistent()) {
+        Vector<String> hostNames;
+        for (const auto& dataRecord : dataRecords) {
+            for (const auto& hostName : dataRecord.pluginDataHostNames)
+                hostNames.append(hostName);
+        }
+
+
+        class State {
+        public:
+            static void deleteData(Ref<CallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins, Vector<String>&& hostNames)
+            {
+                new State(WTF::move(callbackAggregator), WTF::move(plugins), WTF::move(hostNames));
+            }
+
+        private:
+            State(Ref<CallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins, Vector<String>&& hostNames)
+                : m_callbackAggregator(WTF::move(callbackAggregator))
+                , m_plugins(WTF::move(plugins))
+                , m_hostNames(WTF::move(hostNames))
+            {
+                m_callbackAggregator->addPendingCallback();
+
+                deleteWebsiteDataForNextPlugin();
+            }
+
+            ~State()
+            {
+                ASSERT(m_plugins.isEmpty());
+            }
+
+            void deleteWebsiteDataForNextPlugin()
+            {
+                if (m_plugins.isEmpty()) {
+                    m_callbackAggregator->removePendingCallback();
+
+                    delete this;
+                    return;
+                }
+
+                auto plugin = m_plugins.takeLast();
+                PluginProcessManager::singleton().deleteWebsiteDataForHostNames(plugin, m_hostNames, [this] {
+                    deleteWebsiteDataForNextPlugin();
+                });
+            }
+
+            Ref<CallbackAggregator> m_callbackAggregator;
+            Vector<PluginModuleInfo> m_plugins;
+            Vector<String> m_hostNames;
+        };
+
+        State::deleteData(*callbackAggregator, plugins(), WTF::move(hostNames));
+    }
+#endif
+
     // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.
     callbackAggregator->callIfNeeded();
 }

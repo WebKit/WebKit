@@ -28,6 +28,7 @@ messages -> PluginProcessProxy {
     DidGetSitesWithData(Vector<String> sites, uint64_t callbackID)
     DidClearSiteData(uint64_t callbackID)
     DidDeleteWebsiteData(uint64_t callbackID)
+    DidDeleteWebsiteDataForHostNames(uint64_t callbackID)
 
 #if PLATFORM(COCOA)
     SetModalWindowIsShowing(bool modalWindowIsShowing)

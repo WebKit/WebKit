@@ -81,6 +81,7 @@ public:
 
     void fetchWebsiteData(std::function<void (Vector<String>)> completionHandler);
     void deleteWebsiteData(std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler);
+    void deleteWebsiteDataForHostNames(const Vector<String>& hostNames, std::function<void ()> completionHandler);
 
     // Asks the plug-in process to clear the data for the given sites.
     void clearSiteData(WebPluginSiteDataManager*, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID);
@@ -130,6 +131,7 @@ private:
     void didGetSitesWithData(const Vector<String>& sites, uint64_t callbackID);
     void didClearSiteData(uint64_t callbackID);
     void didDeleteWebsiteData(uint64_t callbackID);
+    void didDeleteWebsiteDataForHostNames(uint64_t callbackID);
 
 #if PLATFORM(COCOA)
     bool getPluginProcessSerialNumber(ProcessSerialNumber&);
@@ -174,6 +176,13 @@ private:
     };
     Vector<DeleteWebsiteDataRequest> m_pendingDeleteWebsiteDataRequests;
     HashMap<uint64_t, std::function<void ()>> m_pendingDeleteWebsiteDataCallbacks;
+
+    struct DeleteWebsiteDataForHostNamesRequest {
+        Vector<String> hostNames;
+        uint64_t callbackID;
+    };
+    Vector<DeleteWebsiteDataForHostNamesRequest> m_pendingDeleteWebsiteDataForHostNamesRequests;
+    HashMap<uint64_t, std::function<void ()>> m_pendingDeleteWebsiteDataForHostNamesCallbacks;
 
     struct ClearSiteDataRequest {
         Vector<String> sites;

@@ -109,6 +109,12 @@ void PluginProcessManager::deleteWebsiteData(const PluginModuleInfo& plugin, std
     pluginProcess->deleteWebsiteData(modifiedSince, WTF::move(completionHandler));
 }
 
+void PluginProcessManager::deleteWebsiteDataForHostNames(const PluginModuleInfo& plugin, const Vector<String>& hostNames, std::function<void ()> completionHandler)
+{
+    PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(pluginProcessToken(plugin, PluginProcessTypeNormal, PluginProcessSandboxPolicyNormal));
+    pluginProcess->deleteWebsiteDataForHostNames(hostNames, WTF::move(completionHandler));
+}
+
 void PluginProcessManager::clearSiteData(const PluginModuleInfo& plugin, WebPluginSiteDataManager* webPluginSiteDataManager, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
 {
     PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(pluginProcessToken(plugin, PluginProcessTypeNormal, PluginProcessSandboxPolicyNormal));

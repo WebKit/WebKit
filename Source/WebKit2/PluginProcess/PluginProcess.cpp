@@ -229,6 +229,16 @@ void PluginProcess::deleteWebsiteData(std::chrono::system_clock::time_point modi
     parentProcessConnection()->send(Messages::PluginProcessProxy::DidDeleteWebsiteData(callbackID), 0);
 }
 
+void PluginProcess::deleteWebsiteDataForHostNames(const Vector<String>& hostNames, uint64_t callbackID)
+{
+    if (auto* module = netscapePluginModule()) {
+        for (auto& hostName : hostNames)
+            module->clearSiteData(hostName, NP_CLEAR_ALL, std::numeric_limits<uint64_t>::max());
+    }
+
+    parentProcessConnection()->send(Messages::PluginProcessProxy::DidDeleteWebsiteDataForHostNames(callbackID), 0);
+}
+
 void PluginProcess::setMinimumLifetime(double lifetime)
 {
     if (lifetime <= 0.0)
