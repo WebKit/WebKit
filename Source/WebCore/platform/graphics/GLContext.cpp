@@ -123,7 +123,7 @@ std::unique_ptr<GLContext> GLContext::createContextForWindow(GLNativeWindowType 
 #endif
 
 #if USE(GLX)
-    if (auto glxContext = GLContextGLX::createContext(reinterpret_cast<XID>(windowHandle), sharingContext))
+    if (auto glxContext = GLContextGLX::createContext(windowHandle, sharingContext))
         return WTF::move(glxContext);
 #endif
 #if USE(EGL)

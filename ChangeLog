@@ -1,3 +1,17 @@
+2015-06-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r185453.
+        https://bugs.webkit.org/show_bug.cgi?id=145881
+
+        it broke the 32-bit build (Requested by clopez on #webkit).
+
+        Reverted changeset:
+
+        "[GTK] [Wayland] Should be possible to build with support for
+        both X11 and Wayland."
+        https://bugs.webkit.org/show_bug.cgi?id=145701
+        http://trac.webkit.org/changeset/185453
+
 2015-06-11  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] [Wayland] Should be possible to build with support for both X11 and Wayland.
