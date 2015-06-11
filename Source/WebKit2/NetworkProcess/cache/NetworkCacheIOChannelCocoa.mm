@@ -46,6 +46,7 @@ IOChannel::IOChannel(const String& filePath, Type type)
     auto path = WebCore::fileSystemRepresentation(filePath);
     int oflag;
     mode_t mode;
+    bool useLowIOPriority = false;
 
     switch (m_type) {
     case Type::Create:
@@ -53,10 +54,12 @@ IOChannel::IOChannel(const String& filePath, Type type)
         unlink(path.data());
         oflag = O_RDWR | O_CREAT | O_NONBLOCK;
         mode = S_IRUSR | S_IWUSR;
+        useLowIOPriority = true;
         break;
     case Type::Write:
         oflag = O_WRONLY | O_NONBLOCK;
         mode = S_IRUSR | S_IWUSR;
+        useLowIOPriority = true;
         break;
     case Type::Read:
         oflag = O_RDONLY | O_NONBLOCK;
@@ -70,8 +73,14 @@ IOChannel::IOChannel(const String& filePath, Type type)
         close(fd);
     }));
     ASSERT(m_dispatchIO.get());
+
     // This makes the channel read/write all data before invoking the handlers.
     dispatch_io_set_low_water(m_dispatchIO.get(), std::numeric_limits<size_t>::max());
+
+    if (useLowIOPriority) {
+        // The target queue of a dispatch I/O channel specifies the priority of the global queue where its I/O operations are executed.
+        dispatch_set_target_queue(m_dispatchIO.get(), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0));
+    }
 }
 
 Ref<IOChannel> IOChannel::open(const String& filePath, IOChannel::Type type)

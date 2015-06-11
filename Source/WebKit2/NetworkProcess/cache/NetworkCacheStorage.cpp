@@ -126,6 +126,7 @@ static void deleteEmptyRecordsDirectories(const String& recordsPath)
 Storage::Storage(const String& baseDirectoryPath)
     : m_basePath(baseDirectoryPath)
     , m_recordsPath(makeRecordsDirectoryPath(baseDirectoryPath))
+    , m_writeOperationDispatchTimer(*this, &Storage::dispatchPendingWriteOperations)
     , m_ioQueue(WorkQueue::create("com.apple.WebKit.Cache.Storage", WorkQueue::Type::Concurrent))
     , m_backgroundIOQueue(WorkQueue::create("com.apple.WebKit.Cache.Storage.background", WorkQueue::Type::Concurrent, WorkQueue::QOS::Background))
     , m_serialBackgroundIOQueue(WorkQueue::create("com.apple.WebKit.Cache.Storage.serialBackground", WorkQueue::Type::Serial, WorkQueue::QOS::Background))
@@ -543,7 +544,7 @@ void Storage::dispatchPendingReadOperations()
         auto& pendingRetrieveQueue = m_pendingReadOperationsByPriority[priority];
         if (pendingRetrieveQueue.isEmpty())
             continue;
-        auto readOperation = pendingRetrieveQueue.takeFirst();
+        auto readOperation = pendingRetrieveQueue.takeLast();
         auto& read = *readOperation;
         m_activeReadOperations.add(WTF::move(readOperation));
         dispatchReadOperation(read);
@@ -569,14 +570,14 @@ void Storage::dispatchPendingWriteOperations()
 {
     ASSERT(RunLoop::isMain());
 
-    const int maximumActiveWriteOperationCount { 3 };
+    const int maximumActiveWriteOperationCount { 1 };
 
     while (!m_pendingWriteOperations.isEmpty()) {
         if (m_activeWriteOperations.size() >= maximumActiveWriteOperationCount) {
             LOG(NetworkCacheStorage, "(NetworkProcess) limiting parallel writes");
             return;
         }
-        auto writeOperation = m_pendingWriteOperations.takeFirst();
+        auto writeOperation = m_pendingWriteOperations.takeLast();
         auto& write = *writeOperation;
         m_activeWriteOperations.add(WTF::move(writeOperation));
 
@@ -659,7 +660,7 @@ void Storage::retrieve(const Key& key, unsigned priority, RetrieveCompletionHand
     if (retrieveFromMemory(m_activeWriteOperations, key, completionHandler))
         return;
 
-    m_pendingReadOperationsByPriority[priority].append(new ReadOperation { key, WTF::move(completionHandler) } );
+    m_pendingReadOperationsByPriority[priority].prepend(new ReadOperation { key, WTF::move(completionHandler) } );
     dispatchPendingReadOperations();
 }
 
@@ -671,12 +672,19 @@ void Storage::store(const Record& record, MappedBodyHandler&& mappedBodyHandler)
     if (!m_capacity)
         return;
 
-    m_pendingWriteOperations.append(new WriteOperation { record, WTF::move(mappedBodyHandler) });
+    m_pendingWriteOperations.prepend(new WriteOperation { record, WTF::move(mappedBodyHandler) });
 
     // Add key to the filter already here as we do lookups from the pending operations too.
     addToRecordFilter(record.key);
 
-    dispatchPendingWriteOperations();
+    bool isInitialWrite = m_pendingWriteOperations.size() == 1;
+    if (!isInitialWrite)
+        return;
+
+    // Delay the start of writes a bit to avoid affecting early page load.
+    // Completing writes will dispatch more writes without delay.
+    static const auto initialWriteDelay = 1_s;
+    m_writeOperationDispatchTimer.startOneShot(initialWriteDelay);
 }
 
 void Storage::traverse(TraverseFlags flags, TraverseHandler&& traverseHandler)
