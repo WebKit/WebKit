@@ -160,7 +160,7 @@ WebInspector.StorageSidebarPanel = class StorageSidebarPanel extends WebInspecto
 
     _indexedDatabaseWasAdded(event)
     {
-        this._addIndexedDatabaseWasAdded(event.data.indexedDatabase);
+        this._addIndexedDatabase(event.data.indexedDatabase);
     }
 
     _addIndexedDatabase(indexedDatabase)

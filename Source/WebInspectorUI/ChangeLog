@@ -1,3 +1,15 @@
+2015-06-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: IndexedDB data not showing for MDN example page
+        https://bugs.webkit.org/show_bug.cgi?id=145851
+
+        Reviewed by Anders Carlsson.
+
+        * UserInterface/Views/StorageSidebarPanel.js:
+        (WebInspector.StorageSidebarPanel.prototype._indexedDatabaseWasAdded):
+        Fix typo in Storage tab refactoring that was causing an
+        uncaught exception and not showing Indexed DBs.
+
 2015-06-11  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: font-family names interpreted as color
