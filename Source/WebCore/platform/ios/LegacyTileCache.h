@@ -34,6 +34,7 @@
 #include "IntSize.h"
 #include "Timer.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/Optional.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Threading.h>
@@ -139,6 +140,7 @@ public:
     CALayer* hostLayer() const;
     unsigned tileCapacityForGrid(LegacyTileGrid*);
     Color colorForGridTileBorder(LegacyTileGrid*) const;
+    void setOverrideVisibleRect(Optional<FloatRect>);
 
     void doPendingRepaints();
 
@@ -182,6 +184,8 @@ private:
     bool m_hasPendingUpdateTilingMode;
     // Ensure there are no async calls on a dead tile cache.
     RetainPtr<LegacyTileCacheTombstone> m_tombstone;
+
+    Optional<FloatRect> m_overrideVisibleRect;
 
     TilingMode m_tilingMode;
     TilingDirection m_tilingDirection;

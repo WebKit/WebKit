@@ -32,7 +32,10 @@
 #include "LegacyTileGrid.h"
 #include "WebCoreThread.h"
 
+using namespace WebCore;
+
 @implementation LegacyTileHostLayer
+
 - (id)initWithTileGrid:(WebCore::LegacyTileGrid*)tileGrid
 {
     self = [super init];
@@ -54,8 +57,14 @@
 {
     if (pthread_main_np())
         WebThreadLock();
+
+    CGRect dirtyRect = CGContextGetClipBoundingBox(context);
+    _tileGrid->tileCache().setOverrideVisibleRect(FloatRect(dirtyRect));
     _tileGrid->tileCache().doLayoutTiles();
+
     [super renderInContext:context];
+
+    _tileGrid->tileCache().setOverrideVisibleRect(Nullopt);
 }
 @end
 

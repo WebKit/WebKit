@@ -110,7 +110,15 @@ CALayer* LegacyTileCache::hostLayer() const
 
 FloatRect LegacyTileCache::visibleRectInLayer(CALayer *layer) const
 {
+    if (m_overrideVisibleRect)
+        return [layer convertRect:m_overrideVisibleRect.value() fromLayer:hostLayer()];
+
     return [layer convertRect:[m_window extendedVisibleRect] fromLayer:hostLayer()];
+}
+
+void LegacyTileCache::setOverrideVisibleRect(Optional<FloatRect> rect)
+{
+    m_overrideVisibleRect = rect;
 }
 
 bool LegacyTileCache::tilesOpaque() const
