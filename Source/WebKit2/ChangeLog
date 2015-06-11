@@ -1,3 +1,18 @@
+2015-06-10  Anders Carlsson  <andersca@apple.com>
+
+        Rewrite WKPluginSiteDataManager using WebsiteDataStore functions
+        https://bugs.webkit.org/show_bug.cgi?id=145868
+
+        Reviewed by Antti Koivisto.
+
+        * UIProcess/API/C/WKPluginSiteDataManager.cpp:
+        (WKPluginSiteDataManagerGetSitesWithData):
+        (WKPluginSiteDataManagerClearSiteData):
+        (WKPluginSiteDataManagerClearAllSiteData):
+        (toNPClearSiteDataFlags): Deleted.
+        * UIProcess/Plugins/WebPluginSiteDataManager.h:
+        (WebKit::WebPluginSiteDataManager::processPool):
+
 2015-06-11  Antti Koivisto  <antti@apple.com>
 
         3% cold PLT regression from network cache on iOS

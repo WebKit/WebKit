@@ -47,6 +47,8 @@ public:
     static PassRefPtr<WebPluginSiteDataManager> create(WebProcessPool*);
     virtual ~WebPluginSiteDataManager();
 
+    WebProcessPool& processPool() { return *m_processPool; }
+
     void invalidate();
     void clearProcessPool() { m_processPool = nullptr; }
 
