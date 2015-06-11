@@ -481,7 +481,6 @@ set(WebKit2_SOURCES
     UIProcess/Plugins/PluginInfoStore.cpp
     UIProcess/Plugins/PluginProcessManager.cpp
     UIProcess/Plugins/PluginProcessProxy.cpp
-    UIProcess/Plugins/WebPluginSiteDataManager.cpp
 
     UIProcess/Storage/LocalStorageDatabase.cpp
     UIProcess/Storage/LocalStorageDatabaseTracker.cpp
