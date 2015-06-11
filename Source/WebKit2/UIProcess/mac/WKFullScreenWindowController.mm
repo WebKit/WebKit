@@ -278,6 +278,8 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     [[self window] enterFullScreenMode:self];
 }
 
+static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with mediaControlsApple.css (video:-webkit-full-screen::-webkit-media-controls-panel)
+
 - (void)finishedEnterFullScreenAnimation:(bool)completed
 {
     if (_fullScreenState != EnteringFullScreen)
@@ -298,6 +300,12 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
 
         [_webViewPlaceholder setExitWarningVisible:YES];
         [_webViewPlaceholder setTarget:self];
+
+        [_webView _setLayoutMode:kWKLayoutModeDynamicSizeWithMinimumViewSize];
+        
+        NSSize minContentSize = self.window.contentMinSize;
+        minContentSize.width = minVideoWidth;
+        self.window.contentMinSize = minContentSize;
     } else {
         // Transition to fullscreen failed. Clean up.
         _fullScreenState = NotInFullScreen;
@@ -384,6 +392,7 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     makeResponderFirstResponderIfDescendantOfView(_webView.window, firstResponder, _webView);
 
     [[_webView window] makeKeyAndOrderFront:self];
+    [_webView _setLayoutMode:kWKLayoutModeViewSize];
 
     // These messages must be sent after the swap or flashing will occur during forceRepaint:
     [self _manager]->didExitFullScreen();
