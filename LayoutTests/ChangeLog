@@ -1,3 +1,13 @@
+2015-06-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Update plugins/embed-attributes-style.html to not use the QuickTime plug-in
+        https://bugs.webkit.org/show_bug.cgi?id=145891
+
+        Reviewed by Anders Carlsson.
+
+        * platform/mac/plugins/embed-attributes-style-expected.png:
+        * plugins/embed-attributes-style.html:
+
 2015-06-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r185465.
