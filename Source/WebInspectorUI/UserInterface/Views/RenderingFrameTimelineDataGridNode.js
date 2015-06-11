@@ -52,9 +52,11 @@ WebInspector.RenderingFrameTimelineDataGridNode.prototype = {
 
     get data()
     {
-        var layoutTime = this._record.durationForRecords(WebInspector.TimelineRecord.Type.Layout);
-        var scriptTime = this._record.durationForRecords(WebInspector.TimelineRecord.Type.Script);
-        return {startTime: this._record.startTime, layoutTime, scriptTime, otherTime: this._record.durationRemainder, totalTime: this._record.duration};
+        var scriptTime = this._record.durationForTask(WebInspector.RenderingFrameTimelineRecord.TaskType.Script);
+        var layoutTime = this._record.durationForTask(WebInspector.RenderingFrameTimelineRecord.TaskType.Layout);
+        var paintTime = this._record.durationForTask(WebInspector.RenderingFrameTimelineRecord.TaskType.Paint);
+        var otherTime = this._record.durationForTask(WebInspector.RenderingFrameTimelineRecord.TaskType.Other);
+        return {startTime: this._record.startTime, scriptTime, layoutTime, paintTime, otherTime, totalTime: this._record.duration};
     },
 
     createCellContent: function(columnIdentifier, cell)
@@ -66,8 +68,9 @@ WebInspector.RenderingFrameTimelineDataGridNode.prototype = {
         case "startTime":
             return isNaN(value) ? emptyValuePlaceholderString : Number.secondsToString(value - this._baseStartTime, true);
 
-        case "layoutTime":
         case "scriptTime":
+        case "layoutTime":
+        case "paintTime":
         case "otherTime":
         case "totalTime":
             return (isNaN(value) || value === 0) ? emptyValuePlaceholderString : Number.secondsToString(value, true);

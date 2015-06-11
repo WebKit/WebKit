@@ -31,7 +31,7 @@ WebInspector.RenderingFrameTimelineView = function(timeline, extraArguments)
 
     this.navigationSidebarTreeOutline.element.classList.add("rendering-frame");
 
-    var columns = {location: {}, startTime: {}, layoutTime: {}, scriptTime: {}, otherTime: {}, totalTime: {}};
+    var columns = {location: {}, startTime: {}, scriptTime: {}, paintTime: {}, layoutTime: {}, otherTime: {}, totalTime: {}};
 
     columns.location.title = WebInspector.UIString("Location");
 
@@ -39,16 +39,20 @@ WebInspector.RenderingFrameTimelineView = function(timeline, extraArguments)
     columns.startTime.width = "15%";
     columns.startTime.aligned = "right";
 
-    columns.layoutTime.title = WebInspector.UIString("Layout");
-    columns.layoutTime.width = "15%";
-    columns.layoutTime.aligned = "right";
-
-    columns.scriptTime.title = WebInspector.UIString("Script");
-    columns.scriptTime.width = "15%";
+    columns.scriptTime.title = WebInspector.RenderingFrameTimelineRecord.displayNameForTaskType(WebInspector.RenderingFrameTimelineRecord.TaskType.Script);
+    columns.scriptTime.width = "10%";
     columns.scriptTime.aligned = "right";
 
-    columns.otherTime.title = WebInspector.UIString("Other");
-    columns.otherTime.width = "15%";
+    columns.layoutTime.title = WebInspector.RenderingFrameTimelineRecord.displayNameForTaskType(WebInspector.RenderingFrameTimelineRecord.TaskType.Layout);
+    columns.layoutTime.width = "10%";
+    columns.layoutTime.aligned = "right";
+
+    columns.paintTime.title = WebInspector.RenderingFrameTimelineRecord.displayNameForTaskType(WebInspector.RenderingFrameTimelineRecord.TaskType.Paint);
+    columns.paintTime.width = "10%";
+    columns.paintTime.aligned = "right";
+
+    columns.otherTime.title = WebInspector.RenderingFrameTimelineRecord.displayNameForTaskType(WebInspector.RenderingFrameTimelineRecord.TaskType.Other);
+    columns.otherTime.width = "10%";
     columns.otherTime.aligned = "right";
 
     columns.totalTime.title = WebInspector.UIString("Total Time");

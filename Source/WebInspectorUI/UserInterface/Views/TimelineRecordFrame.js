@@ -105,26 +105,21 @@ WebInspector.TimelineRecordFrame.prototype = {
         var frameHeight = this._record.duration / graphDataSource.graphHeightSeconds;
         this._updateElementPosition(frameElement, frameHeight, "height");
 
-        function createDurationElement(duration, recordType)
+        function createDurationElement(duration, taskType)
         {
             var element = document.createElement("div");
             this._updateElementPosition(element, duration / this._record.duration, "height");
-            element.classList.add("duration");
-            if (recordType)
-                element.classList.add(recordType);
+            element.classList.add("duration", taskType);
             return element;
         }
 
-        if (this._record.durationRemainder > 0)
-            frameElement.appendChild(createDurationElement.call(this, this._record.durationRemainder));
-
-        for (var type in WebInspector.TimelineRecord.Type) {
-            var recordType = WebInspector.TimelineRecord.Type[type];
-            var duration = this._record.durationForRecords(recordType);
+        Object.keys(WebInspector.RenderingFrameTimelineRecord.TaskType).forEach(function(key) {
+            var taskType = WebInspector.RenderingFrameTimelineRecord.TaskType[key];
+            var duration = this._record.durationForTask(taskType);
             if (duration === 0)
-                continue;
-            frameElement.appendChild(createDurationElement.call(this, duration, recordType));
-        }
+                return;
+            frameElement.insertBefore(createDurationElement.call(this, duration, taskType), frameElement.firstChild);
+        }, this);
     },
 
     _updateElementPosition(element, newPosition, property)

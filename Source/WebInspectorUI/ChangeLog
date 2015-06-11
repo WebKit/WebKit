@@ -1,5 +1,63 @@
 2015-06-11  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Rendering Frames timeline should distinguish between layout and painting
+        https://bugs.webkit.org/show_bug.cgi?id=145856
+
+        Reviewed by Timothy Hatcher.
+
+        This patch formalizes the runloop task concept in the frontend, adds new Paint task type to the Rendering
+        Frames timeline, and reorders UI elements such as chart sections and frame "segments" to match the order in
+        which tasks are executed within the runloop.
+
+        We will need to make UI changes to the standard Timelines view in a follow up patch, since tree element icons
+        for Paint records now use a different color that those of other Layout records.
+
+        * UserInterface/Images/TimelineRecordPaint.svg:
+        Changed to use green color.
+
+        * UserInterface/Models/RenderingFrameTimelineRecord.js:
+        (WebInspector.RenderingFrameTimelineRecord):
+        (WebInspector.RenderingFrameTimelineRecord.displayNameForTaskType):
+        (WebInspector.RenderingFrameTimelineRecord.prototype.durationForTask.get validRecordForTaskType):
+        (WebInspector.RenderingFrameTimelineRecord.prototype.durationForTask.set return):
+        (WebInspector.RenderingFrameTimelineRecord.prototype.durationForTask):
+        (WebInspector.RenderingFrameTimelineRecord.prototype.get durationRemainder): Deleted.
+        (WebInspector.RenderingFrameTimelineRecord.prototype.durationForRecords.get var): Deleted.
+        Added TaskType enum to decouple runloop task types from timeline record types, and removed duration remainder
+        support now that "Other" has an associated task type.
+
+        * UserInterface/Views/RenderingFrameTimelineDataGridNode.js:
+        (WebInspector.RenderingFrameTimelineDataGridNode.prototype.get data):
+        (WebInspector.RenderingFrameTimelineDataGridNode.prototype.createCellContent):
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WebInspector.RenderingFrameTimelineView):
+        Added new grid column for Paint task, reordered columns to be consistent with the rest of the UI.
+
+        * UserInterface/Views/TimelineRecordFrame.css:
+        (.timeline-record-frame > .frame > .duration.rendering-frame-timeline-record-script):
+        (.timeline-record-frame > .frame > .duration.rendering-frame-timeline-record-layout):
+        (.timeline-record-frame > .frame > .duration.rendering-frame-timeline-record-paint):
+        (.timeline-record-frame > .frame > .duration): Deleted.
+        (.timeline-record-frame > .frame > .duration.timeline-record-type-network): Deleted.
+        (.timeline-record-frame > .frame > .duration.timeline-record-type-layout): Deleted.
+        (.timeline-record-frame > .frame > .duration.timeline-record-type-script): Deleted.
+        Updated styles for Render Frame tasks.
+
+        * UserInterface/Views/TimelineRecordFrame.js:
+        (WebInspector.TimelineRecordFrame.prototype._updateChildElements.createDurationElement):
+        Updated to use Render Frame task types. Frame segment insertion order is now consistent with the rest of the UI.
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel._refreshFrameSelectionChart.chartData.Object.keys.map):
+        (WebInspector.TimelineSidebarPanel.set this):
+        (WebInspector.TimelineSidebarPanel._refreshFrameSelectionChart.get this):
+        (WebInspector.TimelineSidebarPanel): Deleted.
+        (WebInspector.TimelineSidebarPanel.prototype._refreshFrameSelectionChart.durationForRecordType): Deleted.
+        (WebInspector.TimelineSidebarPanel.prototype._refreshFrameSelectionChart): Deleted.
+        Updated to use Render Frame task types.
+
+2015-06-11  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Wrong overview graph shown after switching from Frames to Timelines
         https://bugs.webkit.org/show_bug.cgi?id=145778
 

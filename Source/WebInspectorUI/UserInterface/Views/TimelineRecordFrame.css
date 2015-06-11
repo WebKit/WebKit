@@ -50,7 +50,6 @@
     box-sizing: border-box;
 
     background-color: rgb(221, 221, 221);
-
     border-bottom: solid 1px rgb(245, 245, 245);
 }
 
@@ -58,14 +57,14 @@
     border-bottom-style: none;
 }
 
-.timeline-record-frame > .frame > .duration.timeline-record-type-network {
-    background-color: rgb(61, 147, 200);
+.timeline-record-frame > .frame > .duration.rendering-frame-timeline-record-script {
+    background-color: rgb(153, 113, 185);
 }
 
-.timeline-record-frame > .frame > .duration.timeline-record-type-layout {
+.timeline-record-frame > .frame > .duration.rendering-frame-timeline-record-layout {
     background-color: rgb(212, 108, 108);
 }
 
-.timeline-record-frame > .frame > .duration.timeline-record-type-script {
-    background-color: rgb(153, 113, 185);
+.timeline-record-frame > .frame > .duration.rendering-frame-timeline-record-paint {
+    background-color: rgb(152, 188, 77);
 }
