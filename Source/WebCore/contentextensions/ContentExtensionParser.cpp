@@ -239,6 +239,9 @@ static std::error_code loadEncodedRules(ExecState& exec, const String& rules, Ve
     Vector<ContentExtensionRule> localRuleList;
 
     unsigned length = topLevelArray->length();
+    const unsigned maxRuleCount = 50000;
+    if (length > maxRuleCount)
+        return ContentExtensionError::JSONTooManyRules;
     for (unsigned i = 0; i < length; ++i) {
         JSValue value = topLevelArray->getIndex(&exec, i);
         if (exec.hadException() || !value)

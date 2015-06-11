@@ -1,3 +1,14 @@
+2015-06-10  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Make max NFA size and max rule count user defaults.
+        https://bugs.webkit.org/show_bug.cgi?id=145663
+        rdar://problem/21242407
+
+        Reviewed by Benjamin Poulain.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2015-06-10  Hyungwook Lee  <hyungwook.lee@navercorp.com>
 
         [EFL] Execute Javascript method in mini browser address bar.
