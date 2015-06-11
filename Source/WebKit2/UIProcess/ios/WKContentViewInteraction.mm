@@ -3152,12 +3152,16 @@ static bool isAssistableInputType(InputType type)
 
 - (void)willPresentPreviewViewController:(UIViewController *)viewController forPosition:(CGPoint)position inSourceView:(UIView *)sourceView
 {
+    [self removeGestureRecognizer:_touchEventGestureRecognizer.get()];
+
     [self _cancelInteraction];
     [[viewController presentationController] setSourceRect:_positionInformation.bounds];
 }
 
 - (void)didDismissPreviewViewController:(UIViewController *)viewController committing:(BOOL)committing
 {
+    [self addGestureRecognizer:_touchEventGestureRecognizer.get()];
+
     id<WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
     if ([uiDelegate respondsToSelector:@selector(_webView:didDismissPreviewViewController:)])
         [uiDelegate _webView:_webView didDismissPreviewViewController:viewController];

@@ -1,3 +1,17 @@
+2015-06-10  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Don't send touch events on link preview.
+        https://bugs.webkit.org/show_bug.cgi?id=145863
+
+        Disable web touch event recognizer on link preview. We do the same when finding nodes in inspector or when long press gesture
+        is recognized (by _cancelAllTouches). 
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView willPresentPreviewViewController:forPosition:inSourceView:]): Remove touch event gesture recognizer on preview start.
+        (-[WKContentView didDismissPreviewViewController:committing:]): Add the gesture recognizer back on dismiss.
+
 2015-06-10  Anders Carlsson  <andersca@apple.com>
 
         WKWebsiteDataStore should handle removing plug-in data for individual records
