@@ -1,3 +1,28 @@
+2015-06-10  Anders Carlsson  <andersca@apple.com>
+
+        WKWebsiteDataStore should handle removing plug-in data
+        https://bugs.webkit.org/show_bug.cgi?id=145862
+
+        Reviewed by Sam Weinig.
+
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::deleteWebsiteData):
+        * PluginProcess/PluginProcess.h:
+        * PluginProcess/PluginProcess.messages.in:
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::deleteWebsiteData):
+        * UIProcess/Plugins/PluginProcessManager.h:
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::~PluginProcessProxy):
+        (WebKit::PluginProcessProxy::deleteWebsiteData):
+        (WebKit::PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch):
+        (WebKit::PluginProcessProxy::didFinishLaunching):
+        (WebKit::PluginProcessProxy::didDeleteWebsiteData):
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/Plugins/PluginProcessProxy.messages.in:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::removeData):
+
 2015-06-10  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2] Do not indicate Media Keys are present when they are not

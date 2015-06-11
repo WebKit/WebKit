@@ -80,6 +80,7 @@ public:
     void getPluginProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>);
 
     void fetchWebsiteData(std::function<void (Vector<String>)> completionHandler);
+    void deleteWebsiteData(std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler);
 
     // Asks the plug-in process to clear the data for the given sites.
     void clearSiteData(WebPluginSiteDataManager*, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID);
@@ -128,6 +129,7 @@ private:
     void didCreateWebProcessConnection(const IPC::Attachment&, bool supportsAsynchronousPluginInitialization);
     void didGetSitesWithData(const Vector<String>& sites, uint64_t callbackID);
     void didClearSiteData(uint64_t callbackID);
+    void didDeleteWebsiteData(uint64_t callbackID);
 
 #if PLATFORM(COCOA)
     bool getPluginProcessSerialNumber(ProcessSerialNumber&);
@@ -165,6 +167,13 @@ private:
 
     Vector<uint64_t> m_pendingFetchWebsiteDataRequests;
     HashMap<uint64_t, std::function<void (Vector<String>)>> m_pendingFetchWebsiteDataCallbacks;
+
+    struct DeleteWebsiteDataRequest {
+        std::chrono::system_clock::time_point modifiedSince;
+        uint64_t callbackID;
+    };
+    Vector<DeleteWebsiteDataRequest> m_pendingDeleteWebsiteDataRequests;
+    HashMap<uint64_t, std::function<void ()>> m_pendingDeleteWebsiteDataCallbacks;
 
     struct ClearSiteDataRequest {
         Vector<String> sites;

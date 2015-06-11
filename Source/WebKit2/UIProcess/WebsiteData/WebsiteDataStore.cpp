@@ -621,6 +621,55 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
         });
     }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    if (dataTypes & WebsiteDataTypePlugInData && isPersistent()) {
+        class State {
+        public:
+            static void deleteData(Ref<CallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins, std::chrono::system_clock::time_point modifiedSince)
+            {
+                new State(WTF::move(callbackAggregator), WTF::move(plugins), modifiedSince);
+            }
+
+        private:
+            State(Ref<CallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins, std::chrono::system_clock::time_point modifiedSince)
+                : m_callbackAggregator(WTF::move(callbackAggregator))
+                , m_plugins(WTF::move(plugins))
+                , m_modifiedSince(modifiedSince)
+            {
+                m_callbackAggregator->addPendingCallback();
+
+                deleteWebsiteDataForNextPlugin();
+            }
+
+            ~State()
+            {
+                ASSERT(m_plugins.isEmpty());
+            }
+
+            void deleteWebsiteDataForNextPlugin()
+            {
+                if (m_plugins.isEmpty()) {
+                    m_callbackAggregator->removePendingCallback();
+
+                    delete this;
+                    return;
+                }
+
+                auto plugin = m_plugins.takeLast();
+                PluginProcessManager::singleton().deleteWebsiteData(plugin, m_modifiedSince, [this] {
+                    deleteWebsiteDataForNextPlugin();
+                });
+            }
+
+            Ref<CallbackAggregator> m_callbackAggregator;
+            Vector<PluginModuleInfo> m_plugins;
+            std::chrono::system_clock::time_point m_modifiedSince;
+        };
+
+        State::deleteData(*callbackAggregator, plugins(), modifiedSince);
+    }
+#endif
+
     // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.
     callbackAggregator->callIfNeeded();
 }
