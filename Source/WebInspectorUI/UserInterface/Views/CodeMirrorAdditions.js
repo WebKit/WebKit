@@ -511,7 +511,7 @@
             while (match) {
 
                 // Act as a negative look-behind and disallow the color from being prefixing with certain characters.
-                if (match.index > 0 && /[-.]/.test(lineContent[match.index - 1])) {
+                if (match.index > 0 && /[-.\"\']/.test(lineContent[match.index - 1])) {
                     match = colorRegex.exec(lineContent);
                     continue;
                 }
