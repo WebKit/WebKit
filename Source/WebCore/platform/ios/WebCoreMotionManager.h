@@ -35,7 +35,7 @@
 
 #import <CoreMotion/CoreMotion.h>
 
-const float kMotionUpdateInterval = 0.05f;
+const float kMotionUpdateInterval = 1.0f / 60.0f;
 
 @interface WebCoreMotionManager : NSObject {
     CMMotionManager* m_motionManager;
