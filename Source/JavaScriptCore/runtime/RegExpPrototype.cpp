@@ -221,12 +221,11 @@ EncodedJSValue JSC_HOST_CALL regExpProtoGetterFlags(ExecState* exec)
     if (!thisValue.isObject())
         return JSValue::encode(throwTypeError(exec));
 
-    String flagsStr = flagsString(exec, asObject(thisValue));
+    String flags = flagsString(exec, asObject(thisValue));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    JSValue flags = jsMakeNontrivialString(exec, flagsStr);
-    return JSValue::encode(flags);
+    return JSValue::encode(jsString(exec, flags));
 }
 
 

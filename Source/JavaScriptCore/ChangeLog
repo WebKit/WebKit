@@ -1,5 +1,18 @@
 2015-06-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        ASSERTION FAILED: s.length() > 1 on LayoutTests/js/regexp-flags.html
+        https://bugs.webkit.org/show_bug.cgi?id=145599
+
+        Unreviewed, simple follow up patch.
+
+        use jsString instead of jsMakeNontrivialString
+        since the flag string may be trivial (0 or 1 length).
+
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoGetterFlags):
+
+2015-06-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         JavaScript: Drop the “escaped reserved words as identifiers” compatibility measure
         https://bugs.webkit.org/show_bug.cgi?id=90678
 
