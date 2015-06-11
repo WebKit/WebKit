@@ -1,3 +1,12 @@
+2015-06-11  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] [Wayland] Should be possible to build with support for both X11 and Wayland.
+        https://bugs.webkit.org/show_bug.cgi?id=145701
+
+        Reviewed by Žan Doberšek.
+
+        * Source/cmake/OptionsGTK.cmake: Remove conflicting options.
+
 2015-06-03  Daniel Bates  <dabates@apple.com>
 
         Caps lock indicator should not be shown in read-only or disabled field
