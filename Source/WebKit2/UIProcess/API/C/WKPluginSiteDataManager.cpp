@@ -36,17 +36,13 @@ using namespace WebKit;
 
 WKTypeID WKPluginSiteDataManagerGetTypeID()
 {
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    return toAPI(WebPluginSiteDataManager::APIType);
-#else
-    return toAPI(API::Object::Type::Null);
-#endif
+    return toAPI(API::WebsiteDataStore::APIType);
 }
 
 void WKPluginSiteDataManagerGetSitesWithData(WKPluginSiteDataManagerRef manager, void* context, WKPluginSiteDataManagerGetSitesWithDataFunction callback)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    auto& websiteDataStore = toImpl(manager)->processPool().websiteDataStore()->websiteDataStore();
+    auto& websiteDataStore = toImpl(reinterpret_cast<WKWebsiteDataStoreRef>(manager))->websiteDataStore();
     websiteDataStore.fetchData(WebsiteDataTypes::WebsiteDataTypePlugInData, [context, callback](Vector<WebsiteDataRecord> dataRecords) {
         Vector<String> hostNames;
         for (const auto& dataRecord : dataRecords) {
@@ -74,7 +70,7 @@ void WKPluginSiteDataManagerClearSiteData(WKPluginSiteDataManagerRef manager, WK
     for (const auto& string : toImpl(sites)->elementsOfType<API::String>())
         dataRecord.pluginDataHostNames.add(string->string());
 
-    auto& websiteDataStore = toImpl(manager)->processPool().websiteDataStore()->websiteDataStore();
+    auto& websiteDataStore = toImpl(reinterpret_cast<WKWebsiteDataStoreRef>(manager))->websiteDataStore();
     websiteDataStore.removeData(WebsiteDataTypes::WebsiteDataTypePlugInData, { dataRecord }, [context, callback] {
         callback(nullptr, context);
     });
@@ -91,7 +87,7 @@ void WKPluginSiteDataManagerClearSiteData(WKPluginSiteDataManagerRef manager, WK
 void WKPluginSiteDataManagerClearAllSiteData(WKPluginSiteDataManagerRef manager, void* context, WKPluginSiteDataManagerClearSiteDataFunction callback)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    auto& websiteDataStore = toImpl(manager)->processPool().websiteDataStore()->websiteDataStore();
+    auto& websiteDataStore = toImpl(reinterpret_cast<WKWebsiteDataStoreRef>(manager))->websiteDataStore();
     websiteDataStore.removeData(WebsiteDataTypes::WebsiteDataTypePlugInData, std::chrono::system_clock::time_point::min(), [context, callback] {
         callback(nullptr, context);
     });

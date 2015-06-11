@@ -1,3 +1,19 @@
+2015-06-11  Anders Carlsson  <andersca@apple.com>
+
+        Make WKWebsiteDataStoreRef backed by an API::WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=145882
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetPluginSiteDataManager):
+        * UIProcess/API/C/WKPluginSiteDataManager.cpp:
+        (WKPluginSiteDataManagerGetTypeID):
+        (WKPluginSiteDataManagerGetSitesWithData):
+        (WKPluginSiteDataManagerClearSiteData):
+        (WKPluginSiteDataManagerClearAllSiteData):
+
 2015-06-11  Antti Koivisto  <antti@apple.com>
 
         Network process crashes decoding invalid cache entry on 32bit system

@@ -464,13 +464,13 @@ WKNotificationManagerRef WKContextGetNotificationManager(WKContextRef contextRef
     return toAPI(toImpl(contextRef)->supplement<WebNotificationManagerProxy>());
 }
 
-WKPluginSiteDataManagerRef WKContextGetPluginSiteDataManager(WKContextRef contextRef)
+WKPluginSiteDataManagerRef WKContextGetPluginSiteDataManager(WKContextRef context)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    return toAPI(toImpl(contextRef)->pluginSiteDataManager());
+    return reinterpret_cast<WKPluginSiteDataManagerRef>(toAPI(toImpl(context)->websiteDataStore()));
 #else
-    UNUSED_PARAM(contextRef);
-    return 0;
+    UNUSED_PARAM(context);
+    return nullptr;
 #endif
 }
 
