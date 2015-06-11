@@ -52,7 +52,6 @@ enum class ContentExtensionError {
     JSONInvalidDomainList,
     JSONDomainNotLowerCaseASCII,
     JSONUnlessAndIfDomain,
-    JSONTooManyRules,
     
     JSONInvalidAction,
     JSONInvalidActionType,
