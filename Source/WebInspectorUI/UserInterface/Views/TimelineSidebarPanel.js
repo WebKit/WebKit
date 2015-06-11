@@ -490,6 +490,8 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         console.assert(timeline instanceof WebInspector.Timeline, timeline);
         console.assert(this._displayedRecording.timelines.get(timeline.type) === timeline, timeline);
 
+        this._previousSelectedTimelineType = timeline.type;
+
         this._displayedContentView.showTimelineViewForTimeline(timeline);
         this.contentBrowser.showContentView(this._displayedContentView);
     }
@@ -741,15 +743,16 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         }
 
         if (selectedByUser) {
+            var timelineType = this._previousSelectedTimelineType;
             if (this._viewMode === WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames) {
                 if (this._timelinesTreeOutline.selectedTreeElement)
-                    this._previousTimelineSelection = this._timelinesTreeOutline.selectedTreeElement.representedObject;
+                    this._previousSelectedTimelineType = this._timelinesTreeOutline.selectedTreeElement.representedObject.type;
+                timelineType = WebInspector.TimelineRecord.Type.RenderingFrame;
+            }
 
-                console.assert(this._displayedRecording);
-                this.showTimelineViewForTimeline(this._displayedRecording.timelines.get(WebInspector.TimelineRecord.Type.RenderingFrame));
-            } else if (this._previousTimelineSelection) {
-                this.showTimelineViewForTimeline(this._previousTimelineSelection);
-                this._previousTimelineSelection = null;
+            if (timelineType) {
+                console.assert(this._displayedRecording.timelines.has(timelineType), timelineType);
+                this.showTimelineViewForTimeline(this._displayedRecording.timelines.get(timelineType));
             } else
                 this.showTimelineOverview();
         }

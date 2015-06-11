@@ -1,3 +1,25 @@
+2015-06-11  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Wrong overview graph shown after switching from Frames to Timelines
+        https://bugs.webkit.org/show_bug.cgi?id=145778
+
+        Reviewed by Timothy Hatcher.
+
+        TimelineSidebarPanel stores a reference to the selected timeline before switching to the Rendering Frames view,
+        which is used to restore the tree selection, overview graph, and content views when switching back to the
+        standard Timelines view. However if another recording is created before switching, the previously selected
+        timeline tracked by the sidebar cannot be restored, since it doesn't belong to the active recording.
+
+        This is addressed by storing the previously selected timeline type, rather than the timeline object itself.
+        The type is also updated whenever the selected timeline in the tree outline changes, ensuring that the correct
+        timeline will always be restored.
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.prototype.treeElementForRepresentedObject.get if.get if):
+        (WebInspector.TimelineSidebarPanel.get else): Deleted.
+        (WebInspector.TimelineSidebarPanel.prototype.treeElementForRepresentedObject.get if): Deleted.
+        (WebInspector.TimelineSidebarPanel.prototype.treeElementForRepresentedObject): Deleted.
+
 2015-06-08  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Clearing active Timeline recording should stop capturing
