@@ -1,3 +1,18 @@
+2015-06-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r185465.
+        https://bugs.webkit.org/show_bug.cgi?id=145893
+
+        "This patch is breaking 32bit mac build" (Requested by youenn
+        on #webkit).
+
+        Reverted changeset:
+
+        "[Streams API] ReadableJSStream should handle promises
+        returned by JS source start callback"
+        https://bugs.webkit.org/show_bug.cgi?id=145792
+        http://trac.webkit.org/changeset/185465
+
 2015-06-11  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] ReadableJSStream should handle promises returned by JS source start callback

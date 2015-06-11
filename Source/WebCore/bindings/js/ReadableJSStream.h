@@ -40,11 +40,6 @@
 #include <wtf/Deque.h>
 #include <wtf/Ref.h>
 
-namespace JSC {
-class JSFunction;
-class JSPromise;
-}
-    
 namespace WebCore {
 
 class JSDOMGlobalObject;
@@ -66,7 +61,7 @@ private:
 
     void doStart(JSC::ExecState&);
 
-    JSC::JSPromise* invoke(JSC::ExecState&, const char*);
+    JSC::JSValue invoke(JSC::ExecState&, const char*);
     void storeException(JSC::ExecState&);
     void storeError(JSC::ExecState&, JSC::JSValue);
 
@@ -78,7 +73,6 @@ private:
 
     std::unique_ptr<ReadableStreamController> m_controller;
     JSC::Strong<JSC::Unknown> m_error;
-    JSC::Strong<JSC::JSFunction> m_errorFunction;
     JSC::Strong<JSC::JSObject> m_source;
     Deque<JSC::Strong<JSC::Unknown>> m_chunkQueue;
 };

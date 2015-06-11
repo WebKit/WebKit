@@ -42,7 +42,7 @@ public:
     static JSPromise* create(VM&, JSGlobalObject*, JSPromiseConstructor*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    DECLARE_EXPORT_INFO;
+    DECLARE_INFO;
 
     enum class Status {
         Unresolved,

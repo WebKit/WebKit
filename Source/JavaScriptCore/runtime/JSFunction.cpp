@@ -4,7 +4,6 @@
  *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2015 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
- *  Copyright (C) 2015 Canon Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -67,47 +66,20 @@ JSFunction* JSFunction::create(VM& vm, FunctionExecutable* executable, JSScope* 
     return result;
 }
 
-static inline NativeExecutable* getNativeExecutable(VM& vm, NativeFunction nativeFunction, Intrinsic intrinsic, NativeFunction nativeConstructor)
+JSFunction* JSFunction::create(VM& vm, JSGlobalObject* globalObject, int length, const String& name, NativeFunction nativeFunction, Intrinsic intrinsic, NativeFunction nativeConstructor)
 {
+    NativeExecutable* executable;
 #if !ENABLE(JIT)
     UNUSED_PARAM(intrinsic);
 #else
     if (intrinsic != NoIntrinsic && vm.canUseJIT()) {
         ASSERT(nativeConstructor == callHostFunctionAsConstructor);
-        return vm.getHostFunction(nativeFunction, intrinsic);
+        executable = vm.getHostFunction(nativeFunction, intrinsic);
     } else
 #endif
-    return vm.getHostFunction(nativeFunction, nativeConstructor);
-}
+        executable = vm.getHostFunction(nativeFunction, nativeConstructor);
 
-JSFunction* JSFunction::create(VM& vm, JSGlobalObject* globalObject, int length, const String& name, NativeFunction nativeFunction, Intrinsic intrinsic, NativeFunction nativeConstructor)
-{
-    NativeExecutable* executable = getNativeExecutable(vm, nativeFunction, intrinsic, nativeConstructor);
     JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm.heap)) JSFunction(vm, globalObject, globalObject->functionStructure());
-    // Can't do this during initialization because getHostFunction might do a GC allocation.
-    function->finishCreation(vm, executable, length, name);
-    return function;
-}
-
-struct JSStdFunction: public JSFunction {
-    JSStdFunction(VM& vm, JSGlobalObject* object, Structure* structure, NativeStdFunction&& function)
-        : JSFunction(vm, object, structure)
-        , stdFunction(WTF::move(function)) { }
-
-    NativeStdFunction stdFunction;
-};
-
-static EncodedJSValue JSC_HOST_CALL runStdFunction(ExecState* state)
-{
-    JSStdFunction* jsFunction = jsCast<JSStdFunction*>(state->callee());
-    ASSERT(jsFunction);
-    return jsFunction->stdFunction(state);
-}
-
-JSFunction* JSFunction::create(VM& vm, JSGlobalObject* globalObject, int length, const String& name, NativeStdFunction&& nativeStdFunction, Intrinsic intrinsic, NativeFunction nativeConstructor)
-{
-    NativeExecutable* executable = getNativeExecutable(vm, runStdFunction, intrinsic, nativeConstructor);
-    JSStdFunction* function = new (NotNull, allocateCell<JSStdFunction>(vm.heap)) JSStdFunction(vm, globalObject, globalObject->functionStructure(), WTF::move(nativeStdFunction));
     // Can't do this during initialization because getHostFunction might do a GC allocation.
     function->finishCreation(vm, executable, length, name);
     return function;
