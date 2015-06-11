@@ -125,7 +125,6 @@ void InitWebCoreSystemInterface(void)
     INIT(GetScreenScaleFactor);
     INIT(IsGB18030ComplianceRequired);
     INIT(IsOptimizedFullscreenSupported);
-    INIT(GetMediaUIImageData);
 #endif
 
 #if !PLATFORM(IOS)

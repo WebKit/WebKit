@@ -11,7 +11,7 @@ var UIStringTable = {
     'Captions': 'Captions',
     'Choose Wireless Display': 'Choose Wireless Display',
     'Display Full Screen': 'Display Full Screen',
-    'Display Optimized Full Screen': 'Display Optimized Full Screen',
+    'Display Picture in Picture': 'Display Picture in Picture',
     'Duration': 'Duration',
     'Elapsed': 'Elapsed',
     'Error': 'Error',
@@ -31,8 +31,10 @@ var UIStringTable = {
     'Start Playback': 'Start Playback',
     'Subtitles': 'Subtitles',
     'Suspended': 'Suspended',
+    'This video is playing in Picture in Picture': 'This video is playing in Picture in Picture',
     'Unmute': 'Unmute',
     'Video Playback': 'Video Playback',
+    'Video Playback Placeholder': 'Video Playback Placeholder',
     'Volume': 'Volume',
     'Waiting': 'Waiting'
 };

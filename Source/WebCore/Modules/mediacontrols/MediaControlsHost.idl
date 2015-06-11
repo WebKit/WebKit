@@ -29,13 +29,6 @@ enum DeviceType {
     "tvout"
 };
 
-enum MediaUIPartID {
-    "optimized-fullscreen-button",
-    "optimized-fullscreen-return-button",
-    "optimized-fullscreen-placeholder",
-    "optimized-fullscreen-placeholder-text"
-};
-
 [
     NoInterfaceObject,
     Conditional=MEDIA_CONTROLS_SCRIPT,
@@ -62,8 +55,6 @@ enum MediaUIPartID {
     void updateTextTrackContainer();
     void enteredFullscreen();
     void exitedFullscreen();
-    void enterFullscreenOptimized();
-    DOMString mediaUIImageData(MediaUIPartID partID);
 
     DOMString generateUUID();
 };

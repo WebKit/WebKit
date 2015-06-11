@@ -437,8 +437,8 @@ audio::-webkit-media-controls-fullscreen-button.exit {
     margin-top: 6px;
 }
 
-video::-webkit-media-controls-optimized-fullscreen-button,
-audio::-webkit-media-controls-optimized-fullscreen-button {
+video::-webkit-media-controls-picture-in-picture-button,
+audio::-webkit-media-controls-picture-in-picture-button {
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15" transform="rotate(90,0,0)"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(216, 216, 216)"/><stop offset="0.4375" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(208, 208, 208)"/><stop offset="0.5" stop-color="rgb(200, 200, 200)"/><stop offset="1" stop-color="rgb(208, 208, 208)"/></linearGradient><path d="M 7,8 m 0,6 -2,-2 -2,2 c 0,0 -1,1 -2,0 -1,-1 0,-2 0,-2 l 2,-2 -2,-2 6,0 z" style="fill:url(#gradient) "/><path d="M 8,7 m 0,-6 2,2 2,-2 c 0,0 1,-1 2,0 1,1 0,2 0,2 l -2,2 2,2 -6,0 z" style="fill:url(#gradient) "/></svg>');
     margin: 0 7px;
 }

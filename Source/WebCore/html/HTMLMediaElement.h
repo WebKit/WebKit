@@ -368,7 +368,6 @@ public:
     void enterFullscreen(VideoFullscreenMode);
     virtual void enterFullscreen() override;
     WEBCORE_EXPORT void exitFullscreen();
-    void enterFullscreenOptimized();
 
     virtual bool hasClosedCaptions() const override;
     virtual bool closedCaptionsVisible() const override;

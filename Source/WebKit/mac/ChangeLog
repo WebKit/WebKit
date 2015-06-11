@@ -1,3 +1,14 @@
+2015-06-11  Jon Lee  <jonlee@apple.com>
+
+        Update media controls JS and CSS to use picture-in-picture
+        https://bugs.webkit.org/show_bug.cgi?id=145827
+        <rdar://problem/21311576>
+
+        Reviewed by Dean Jackson.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Deleted GetMediaUIImageData.
+
 2015-06-10  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Meta refresh preference is not respected on fast path WebView

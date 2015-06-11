@@ -188,14 +188,7 @@ void MediaControlsHost::exitedFullscreen()
     if (m_textTrackContainer)
         m_textTrackContainer->exitedFullscreen();
 }
-    
-void MediaControlsHost::enterFullscreenOptimized()
-{
-#if PLATFORM(IOS)
-    m_mediaElement->enterFullscreenOptimized();
-#endif
-}
-    
+
 void MediaControlsHost::updateCaptionDisplaySizes()
 {
     if (m_textTrackContainer)
@@ -276,27 +269,6 @@ bool MediaControlsHost::controlsDependOnPageScaleFactor() const
 void MediaControlsHost::setControlsDependOnPageScaleFactor(bool value)
 {
     m_mediaElement->setMediaControlsDependOnPageScaleFactor(value);
-}
-
-String MediaControlsHost::mediaUIImageData(const String& partID) const
-{
-#if PLATFORM(IOS)
-    if (partID == "optimized-fullscreen-button")
-        return wkGetMediaUIImageData(wkMediaUIPartOptimizedFullscreenButton);
-
-    if (partID == "optimized-fullscreen-return-button")
-        return wkGetMediaUIImageData(wkMediaUIPartOptimizedFullscreenReturnButton);
-
-    if (partID == "optimized-fullscreen-placeholder")
-        return wkGetMediaUIImageData(wkMediaUIPartOptimizedFullscreenPlaceholder);
-
-    if (partID == "optimized-fullscreen-placeholder-text")
-        return wkGetMediaUIImageData(wkMediaUIPartOptimizedFullscreenPlaceholderText);
-#else
-    UNUSED_PARAM(partID);
-#endif
-
-    return emptyString();
 }
 
 String MediaControlsHost::generateUUID() const
