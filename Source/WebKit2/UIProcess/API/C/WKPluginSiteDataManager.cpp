@@ -28,7 +28,6 @@
 
 #include "APIObject.h"
 #include "WKAPICast.h"
-#include "WebPluginSiteDataManager.h"
 #include "WebProcessPool.h"
 #include "WebsiteDataRecord.h"
 

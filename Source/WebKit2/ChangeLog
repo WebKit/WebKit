@@ -1,5 +1,57 @@
 2015-06-11  Anders Carlsson  <andersca@apple.com>
 
+        Remove WebPluginSiteDataManager
+        https://bugs.webkit.org/show_bug.cgi?id=145884
+
+        Reviewed by Andreas Kling.
+
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::clearSiteData): Deleted.
+        * PluginProcess/PluginProcess.h:
+        * PluginProcess/PluginProcess.messages.in:
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKContext.cpp:
+        * UIProcess/API/C/WKPluginSiteDataManager.cpp:
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::clearSiteData): Deleted.
+        * UIProcess/Plugins/PluginProcessManager.h:
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::clearSiteData): Deleted.
+        (WebKit::PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch): Deleted.
+        (WebKit::PluginProcessProxy::didFinishLaunching): Deleted.
+        (WebKit::PluginProcessProxy::didClearSiteData): Deleted.
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/Plugins/PluginProcessProxy.messages.in:
+        * UIProcess/Plugins/WebPluginSiteDataManager.cpp: Removed.
+        (WebKit::WebPluginSiteDataManager::GetSitesWithDataState::GetSitesWithDataState): Deleted.
+        (WebKit::WebPluginSiteDataManager::GetSitesWithDataState::getSitesWithDataForNextPlugin): Deleted.
+        (WebKit::WebPluginSiteDataManager::GetSitesWithDataState::didGetSitesWithDataForSinglePlugin): Deleted.
+        (WebKit::WebPluginSiteDataManager::ClearSiteDataState::ClearSiteDataState): Deleted.
+        (WebKit::WebPluginSiteDataManager::ClearSiteDataState::clearSiteDataForNextPlugin): Deleted.
+        (WebKit::WebPluginSiteDataManager::ClearSiteDataState::didClearSiteDataForSinglePlugin): Deleted.
+        (WebKit::WebPluginSiteDataManager::create): Deleted.
+        (WebKit::WebPluginSiteDataManager::WebPluginSiteDataManager): Deleted.
+        (WebKit::WebPluginSiteDataManager::~WebPluginSiteDataManager): Deleted.
+        (WebKit::WebPluginSiteDataManager::invalidate): Deleted.
+        (WebKit::WebPluginSiteDataManager::getSitesWithData): Deleted.
+        (WebKit::WebPluginSiteDataManager::didGetSitesWithData): Deleted.
+        (WebKit::WebPluginSiteDataManager::clearSiteData): Deleted.
+        (WebKit::WebPluginSiteDataManager::didClearSiteData): Deleted.
+        (WebKit::WebPluginSiteDataManager::didGetSitesWithDataForSinglePlugin): Deleted.
+        (WebKit::WebPluginSiteDataManager::didGetSitesWithDataForAllPlugins): Deleted.
+        (WebKit::WebPluginSiteDataManager::didClearSiteDataForSinglePlugin): Deleted.
+        (WebKit::WebPluginSiteDataManager::didClearSiteDataForAllPlugins): Deleted.
+        * UIProcess/Plugins/WebPluginSiteDataManager.h: Removed.
+        (WebKit::WebPluginSiteDataManager::processPool): Deleted.
+        (WebKit::WebPluginSiteDataManager::clearProcessPool): Deleted.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::~WebProcessPool): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2015-06-11  Anders Carlsson  <andersca@apple.com>
+
         Make WKWebsiteDataStoreRef backed by an API::WebsiteDataStore
         https://bugs.webkit.org/show_bug.cgi?id=145882
 

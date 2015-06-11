@@ -33,7 +33,6 @@
 #include "PluginProcessManager.h"
 #include "PluginProcessMessages.h"
 #include "WebCoreArgumentCoders.h"
-#include "WebPluginSiteDataManager.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include <WebCore/NotImplemented.h>
@@ -149,25 +148,6 @@ void PluginProcessProxy::deleteWebsiteDataForHostNames(const Vector<String>& hos
     m_connection->send(Messages::PluginProcess::DeleteWebsiteDataForHostNames(hostNames, callbackID), 0);
 }
 
-void PluginProcessProxy::clearSiteData(WebPluginSiteDataManager* webPluginSiteDataManager, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
-{
-    ASSERT(!m_pendingClearSiteDataReplies.contains(callbackID));
-    m_pendingClearSiteDataReplies.set(callbackID, webPluginSiteDataManager);
-
-    if (state() == State::Launching) {
-        ClearSiteDataRequest request;
-        request.sites = sites;
-        request.flags = flags;
-        request.maxAgeInSeconds = maxAgeInSeconds;
-        request.callbackID = callbackID;
-        m_pendingClearSiteDataRequests.append(request);
-        return;
-    }
-
-    // Ask the plug-in process to clear the site data.
-    m_connection->send(Messages::PluginProcess::ClearSiteData(sites, flags, maxAgeInSeconds, callbackID), 0);
-}
-
 void PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch()
 {
     // The plug-in process must have crashed or exited, send any pending sync replies we might have.
@@ -197,9 +177,6 @@ void PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch()
     for (const auto& callback : m_pendingDeleteWebsiteDataForHostNamesCallbacks.values())
         callback();
     m_pendingDeleteWebsiteDataForHostNamesCallbacks.clear();
-
-    while (!m_pendingClearSiteDataReplies.isEmpty())
-        didClearSiteData(m_pendingClearSiteDataReplies.begin()->key);
 
     // Tell the plug-in process manager to forget about this plug-in process proxy. This may cause us to be deleted.
     m_pluginProcessManager->removePluginProcessProxy(this);
@@ -273,12 +250,6 @@ void PluginProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection::I
         m_connection->send(Messages::PluginProcess::DeleteWebsiteDataForHostNames(request.hostNames, request.callbackID), 0);
     m_pendingDeleteWebsiteDataForHostNamesRequests.clear();
 
-    for (size_t i = 0; i < m_pendingClearSiteDataRequests.size(); ++i) {
-        const ClearSiteDataRequest& request = m_pendingClearSiteDataRequests[i];
-        m_connection->send(Messages::PluginProcess::ClearSiteData(request.sites, request.flags, request.maxAgeInSeconds, request.callbackID), 0);
-    }
-    m_pendingClearSiteDataRequests.clear();
-
     for (unsigned i = 0; i < m_numPendingConnectionRequests; ++i)
         m_connection->send(Messages::PluginProcess::CreateWebProcessConnection(), 0);
     
@@ -310,14 +281,6 @@ void PluginProcessProxy::didGetSitesWithData(const Vector<String>& sites, uint64
 {
     auto callback = m_pendingFetchWebsiteDataCallbacks.take(callbackID);
     callback(sites);
-}
-
-void PluginProcessProxy::didClearSiteData(uint64_t callbackID)
-{
-    RefPtr<WebPluginSiteDataManager> webPluginSiteDataManager = m_pendingClearSiteDataReplies.take(callbackID);
-    ASSERT(webPluginSiteDataManager);
-    
-    webPluginSiteDataManager->didClearSiteDataForSinglePlugin(callbackID);
 }
 
 void PluginProcessProxy::didDeleteWebsiteData(uint64_t callbackID)

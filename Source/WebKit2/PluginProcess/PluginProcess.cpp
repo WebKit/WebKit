@@ -199,21 +199,6 @@ void PluginProcess::getSitesWithData(uint64_t callbackID)
     parentProcessConnection()->send(Messages::PluginProcessProxy::DidGetSitesWithData(sites, callbackID), 0);
 }
 
-void PluginProcess::clearSiteData(const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
-{
-    if (NetscapePluginModule* module = netscapePluginModule()) {
-        if (sites.isEmpty()) {
-            // Clear everything.
-            module->clearSiteData(String(), flags, maxAgeInSeconds);
-        } else {
-            for (size_t i = 0; i < sites.size(); ++i)
-                module->clearSiteData(sites[i], flags, maxAgeInSeconds);
-        }
-    }
-
-    parentProcessConnection()->send(Messages::PluginProcessProxy::DidClearSiteData(callbackID), 0);
-}
-
 void PluginProcess::deleteWebsiteData(std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
 {
     if (auto* module = netscapePluginModule()) {

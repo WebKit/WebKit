@@ -102,7 +102,6 @@ class WebOpenPanelResultListenerProxy;
 class WebOriginDataManagerProxy;
 class WebPageGroup;
 class WebPageProxy;
-class WebPluginSiteDataManager;
 class WebPreferences;
 class WebProcessPool;
 class WebProtectionSpace;

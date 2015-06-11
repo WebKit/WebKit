@@ -26,7 +26,6 @@ messages -> PluginProcessProxy {
     DidCreateWebProcessConnection(IPC::Attachment connectionIdentifier, bool supportsAsynchronousPluginInitialization)
 
     DidGetSitesWithData(Vector<String> sites, uint64_t callbackID)
-    DidClearSiteData(uint64_t callbackID)
     DidDeleteWebsiteData(uint64_t callbackID)
     DidDeleteWebsiteDataForHostNames(uint64_t callbackID)
 

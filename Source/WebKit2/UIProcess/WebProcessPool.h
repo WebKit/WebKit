@@ -232,9 +232,6 @@ public:
     WebContextClient& client() { return m_client; }
 
     WebIconDatabase* iconDatabase() const { return m_iconDatabase.get(); }
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    WebPluginSiteDataManager* pluginSiteDataManager() const { return m_pluginSiteDataManager.get(); }
-#endif
 
     struct Statistics {
         unsigned wkViewCount;
@@ -481,9 +478,6 @@ private:
     double m_memorySamplerInterval;
 
     RefPtr<WebIconDatabase> m_iconDatabase;
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    RefPtr<WebPluginSiteDataManager> m_pluginSiteDataManager;
-#endif
 
     const RefPtr<API::WebsiteDataStore> m_websiteDataStore;
 

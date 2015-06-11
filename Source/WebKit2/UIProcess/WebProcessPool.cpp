@@ -52,7 +52,6 @@
 #include "WebMemorySampler.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebPageGroup.h"
-#include "WebPluginSiteDataManager.h"
 #include "WebPreferences.h"
 #include "WebProcessCreationParameters.h"
 #include "WebProcessMessages.h"
@@ -194,9 +193,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 
     // NOTE: These sub-objects must be initialized after m_messageReceiverMap..
     m_iconDatabase = WebIconDatabase::create(this);
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    m_pluginSiteDataManager = WebPluginSiteDataManager::create(this);
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
     addSupplement<WebApplicationCacheManagerProxy>();
     addSupplement<WebCookieManagerProxy>();
@@ -260,11 +256,6 @@ WebProcessPool::~WebProcessPool()
     m_iconDatabase->clearProcessPool();
     WebIconDatabase* rawIconDatabase = m_iconDatabase.release().leakRef();
     rawIconDatabase->derefWhenAppropriate();
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    m_pluginSiteDataManager->invalidate();
-    m_pluginSiteDataManager->clearProcessPool();
-#endif
 
     invalidateCallbackMap(m_dictionaryCallbacks, CallbackBase::Error::OwnerWasInvalidated);
 

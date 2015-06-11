@@ -39,7 +39,6 @@
 #include "WKRetainPtr.h"
 #include "WebCertificateInfo.h"
 #include "WebIconDatabase.h"
-#include "WebPluginSiteDataManager.h"
 #include "WebProcessPool.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
