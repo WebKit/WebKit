@@ -36,11 +36,11 @@
 #include "JSDOMPromise.h"
 #include "JSReadableStream.h"
 #include "JSReadableStreamController.h"
-#include "NotImplemented.h"
 #include "ScriptExecutionContext.h"
 #include <runtime/Error.h>
 #include <runtime/Exception.h>
 #include <runtime/JSCJSValueInlines.h>
+#include <runtime/JSPromise.h>
 #include <runtime/JSString.h>
 #include <runtime/StructureInlines.h>
 
@@ -60,21 +60,38 @@ static inline JSValue callFunction(ExecState& exec, JSValue jsFunction, JSValue 
     return call(&exec, jsFunction, callType, callData, thisValue, arguments);
 }
 
-JSValue ReadableJSStream::invoke(ExecState& exec, const char* propertyName)
+JSPromise* ReadableJSStream::invoke(ExecState& state, const char* propertyName)
 {
-    JSValue function = getPropertyFromObject(exec, m_source.get(), propertyName);
-    if (exec.hadException())
-        return jsUndefined();
+    JSValue function = getPropertyFromObject(state, m_source.get(), propertyName);
+    if (state.hadException())
+        return nullptr;
 
     if (!function.isFunction()) {
         if (!function.isUndefined())
-            throwVMError(&exec, createTypeError(&exec, ASCIILiteral("ReadableStream trying to call a property that is not callable")));
-        return jsUndefined();
+            throwVMError(&state, createTypeError(&state, ASCIILiteral("ReadableStream trying to call a property that is not callable")));
+        return nullptr;
     }
 
     MarkedArgumentBuffer arguments;
-    arguments.append(jsController(exec, globalObject()));
-    return callFunction(exec, function, m_source.get(), arguments);
+    arguments.append(jsController(state, globalObject()));
+
+    JSPromise* promise = jsDynamicCast<JSPromise*>(callFunction(state, function, m_source.get(), arguments));
+
+    ASSERT(!(promise && state.hadException()));
+    return promise;
+}
+
+static void thenPromise(ExecState& state, JSPromise* deferredPromise, JSValue fullfilFunction, JSValue rejectFunction)
+{
+    JSValue thenValue = deferredPromise->get(&state, state.vm().propertyNames->then);
+    if (state.hadException())
+        return;
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(fullfilFunction);
+    arguments.append(rejectFunction);
+
+    callFunction(state, thenValue, deferredPromise, arguments);
 }
 
 JSDOMGlobalObject* ReadableJSStream::globalObject()
@@ -82,7 +99,16 @@ JSDOMGlobalObject* ReadableJSStream::globalObject()
     return jsDynamicCast<JSDOMGlobalObject*>(m_source->globalObject());
 }
 
-static void startReadableStreamAsync(ReadableStream& readableStream)
+static inline JSFunction* createStartResultFulfilledFunction(ExecState& state, ReadableStream& readableStream)
+{
+    RefPtr<ReadableStream> stream = &readableStream;
+    return JSFunction::create(state.vm(), state.callee()->globalObject(), 1, String(), [stream](ExecState*) {
+        stream->start();
+        return JSValue::encode(jsUndefined());
+    });
+}
+
+static inline void startReadableStreamAsync(ReadableStream& readableStream)
 {
     RefPtr<ReadableStream> stream = &readableStream;
     stream->scriptExecutionContext()->postTask([stream](ScriptExecutionContext&) {
@@ -94,13 +120,17 @@ void ReadableJSStream::doStart(ExecState& exec)
 {
     JSLockHolder lock(&exec);
 
-    invoke(exec, "start");
+    JSPromise* promise = invoke(exec, "start");
 
     if (exec.hadException())
         return;
 
-    // FIXME: Implement handling promise as result of calling start function.
-    startReadableStreamAsync(*this);
+    if (!promise) {
+        startReadableStreamAsync(*this);
+        return;
+    }
+
+    thenPromise(exec, promise, createStartResultFulfilledFunction(exec, *this), m_errorFunction.get());
 }
 
 void ReadableJSStream::doPull()
@@ -139,10 +169,16 @@ RefPtr<ReadableJSStream> ReadableJSStream::create(ExecState& exec, ScriptExecuti
     return readableStream;
 }
 
-ReadableJSStream::ReadableJSStream(ScriptExecutionContext& scriptExecutionContext, ExecState& exec, JSObject* source)
+ReadableJSStream::ReadableJSStream(ScriptExecutionContext& scriptExecutionContext, ExecState& state, JSObject* source)
     : ReadableStream(scriptExecutionContext)
 {
-    m_source.set(exec.vm(), source);
+    m_source.set(state.vm(), source);
+    // We do not take a Ref to the stream as this would cause a Ref cycle.
+    // The resolution callback used jointly with m_errorFunction as promise callbacks should protect the stream instead.
+    m_errorFunction.set(state.vm(), JSFunction::create(state.vm(), state.callee()->globalObject(), 1, String(), [this](ExecState* state) {
+        storeError(*state);
+        return JSValue::encode(jsUndefined());
+    }));
 }
 
 JSValue ReadableJSStream::jsController(ExecState& exec, JSDOMGlobalObject* globalObject)

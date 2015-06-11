@@ -32,7 +32,6 @@
 
 #if ENABLE(STREAMS_API)
 
-#include "NotImplemented.h"
 #include "ReadableStreamReader.h"
 #include <runtime/JSCJSValueInlines.h>
 #include <wtf/RefCountedLeakCounter.h>

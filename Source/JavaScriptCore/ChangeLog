@@ -1,3 +1,19 @@
+2015-06-11  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Streams API] ReadableJSStream should handle promises returned by JS source start callback
+        https://bugs.webkit.org/show_bug.cgi?id=145792
+
+        Reviewed by Darin Adler.
+
+        Added support for JSFunction implemented by std::function.
+
+        * runtime/JSFunction.cpp:
+        (JSC::getNativeExecutable): Refactored code to share it with the two JSFunction::create
+        (JSC::JSFunction::create):
+        (JSC::runStdFunction):
+        * runtime/JSFunction.h: Added std::function based JSFunction::create prototype.
+        * runtime.JSPromise.h:
+
 2015-06-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         ASSERTION FAILED: s.length() > 1 on LayoutTests/js/regexp-flags.html
