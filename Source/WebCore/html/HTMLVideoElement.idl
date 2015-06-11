@@ -24,7 +24,7 @@
  */
 
 // FIXME: This should be Conditional=VIDEO_PRESENTATION_MODE.
-enum VideoPresentationMode { "fullscreen", "optimized", "inline" };
+enum VideoPresentationMode { "fullscreen", "picture-in-picture", "inline" };
 
 [
     Conditional=VIDEO,

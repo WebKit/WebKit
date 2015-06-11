@@ -179,7 +179,7 @@ ControllerIOS.prototype = {
             // Hide the scrubber on audio until the user starts playing.
             this.controls.timelineBox.classList.add(this.ClassNames.hidden);
         } else {
-            if (Controller.gSimulateOptimizedFullscreenAvailable || ('webkitSupportsPresentationMode' in this.video && this.video.webkitSupportsPresentationMode('optimized')))
+            if (Controller.gSimulateOptimizedFullscreenAvailable || ('webkitSupportsPresentationMode' in this.video && this.video.webkitSupportsPresentationMode('picture-in-picture')))
                 this.controls.panel.appendChild(this.controls.optimizedFullscreenButton);
             this.controls.panel.appendChild(this.controls.fullscreenButton);
         }
@@ -392,7 +392,7 @@ ControllerIOS.prototype = {
 
     isFullScreen: function()
     {
-        return this.video.webkitDisplayingFullscreen && this.presentationMode() != 'optimized';
+        return this.video.webkitDisplayingFullscreen && this.presentationMode() != 'picture-in-picture';
     },
 
     handleFullscreenButtonClicked: function(event) {
@@ -432,10 +432,10 @@ ControllerIOS.prototype = {
         if (!('webkitSetPresentationMode' in this.video))
             return;
 
-        if (this.presentationMode() === 'optimized')
+        if (this.presentationMode() === 'picture-in-picture')
             this.video.webkitSetPresentationMode('inline');
         else
-            this.video.webkitSetPresentationMode('optimized');
+            this.video.webkitSetPresentationMode('picture-in-picture');
     },
 
     handleOptimizedFullscreenTouchStart: function() {
@@ -570,7 +570,7 @@ ControllerIOS.prototype = {
 
                 this.controls.optimizedFullscreenButton.classList.remove(this.ClassNames.returnFromOptimized);
                 break;
-            case 'optimized':
+            case 'picture-in-picture':
                 var backgroundImage = "url('" + this.host.mediaUIImageData("optimized-fullscreen-placeholder") + "')";
                 this.controls.inlinePlaybackPlaceholder.style.backgroundImage = backgroundImage;
                 this.controls.inlinePlaybackPlaceholder.setAttribute('aria-label', "video playback placeholder");
@@ -608,7 +608,7 @@ ControllerIOS.prototype = {
 
     controlsAlwaysVisible: function()
     {
-        if (this.presentationMode() === 'optimized')
+        if (this.presentationMode() === 'picture-in-picture')
             return true;
 
         return Controller.prototype.controlsAlwaysVisible.call(this);
