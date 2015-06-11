@@ -363,7 +363,7 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<NSFont>& result)
     NSFontDescriptor *fontDescriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:fontAttributes.get()];
     result = [NSFont fontWithDescriptor:fontDescriptor size:0];
 
-    return true;
+    return result;
 }
 #endif
 
