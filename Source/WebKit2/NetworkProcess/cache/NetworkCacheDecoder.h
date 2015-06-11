@@ -42,9 +42,6 @@ public:
     size_t length() const { return m_bufferEnd - m_buffer; }
     size_t currentOffset() const { return m_bufferPosition - m_buffer; }
 
-    bool isInvalid() const { return m_bufferPosition > m_bufferEnd; }
-    void markInvalid() { m_bufferPosition = m_bufferEnd + 1; }
-
     bool verifyChecksum();
 
     bool decodeFixedLengthData(uint8_t*, size_t);

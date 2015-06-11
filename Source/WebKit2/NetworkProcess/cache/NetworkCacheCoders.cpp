@@ -76,10 +76,8 @@ bool Coder<CString>::decode(Decoder& decoder, CString& result)
     }
 
     // Before allocating the string, make sure that the decoder buffer is big enough.
-    if (!decoder.bufferIsLargeEnoughToContain<char>(length)) {
-        decoder.markInvalid();
+    if (!decoder.bufferIsLargeEnoughToContain<char>(length))
         return false;
-    }
 
     char* buffer;
     CString string = CString::newUninitialized(length, buffer);
@@ -114,11 +112,9 @@ template <typename CharacterType>
 static inline bool decodeStringText(Decoder& decoder, uint32_t length, String& result)
 {
     // Before allocating the string, make sure that the decoder buffer is big enough.
-    if (!decoder.bufferIsLargeEnoughToContain<CharacterType>(length)) {
-        decoder.markInvalid();
+    if (!decoder.bufferIsLargeEnoughToContain<CharacterType>(length))
         return false;
-    }
-    
+
     CharacterType* buffer;
     String string = String::createUninitialized(length, buffer);
     if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length * sizeof(CharacterType)))
@@ -167,11 +163,7 @@ bool Coder<WebCore::CertificateInfo>::decode(Decoder& decoder, WebCore::Certific
     if (!decoder.decodeFixedLengthData(data.data(), data.size()))
         return false;
     IPC::ArgumentDecoder argumentDecoder(data.data(), data.size());
-    if (!argumentDecoder.decode(certificateInfo)) {
-        decoder.markInvalid();
-        return false;
-    }
-    return true;
+    return argumentDecoder.decode(certificateInfo);
 }
 
 void Coder<MD5::Digest>::encode(Encoder& encoder, const MD5::Digest& digest)

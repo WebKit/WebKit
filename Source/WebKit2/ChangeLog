@@ -1,3 +1,39 @@
+2015-06-11  Antti Koivisto  <antti@apple.com>
+
+        Network process crashes decoding invalid cache entry on 32bit system
+        https://bugs.webkit.org/show_bug.cgi?id=145842
+        rdar://problem/21228334
+
+        Reviewed by Anders Carlsson.
+
+        After cache scheme changes we may end up decoding invalid cache entries. This is by design,
+        we should just fail decoding and delete these entries.
+
+        However Decoder::bufferIsLargeEnoughToContain test in some cases would allow corrupted large
+        sizes due to overflow in 32bit pointer math and we would crash when allocating a string.
+
+        * NetworkProcess/cache/NetworkCacheCoders.cpp:
+        (WebKit::NetworkCache::Coder<CString>::decode):
+        (WebKit::NetworkCache::decodeStringText):
+        (WebKit::NetworkCache::Coder<WebCore::CertificateInfo>::decode):
+        (WebKit::NetworkCache::Coder<MD5::Digest>::encode):
+        * NetworkProcess/cache/NetworkCacheCoders.h:
+        * NetworkProcess/cache/NetworkCacheDecoder.cpp:
+        (WebKit::NetworkCache::Decoder::Decoder):
+        (WebKit::NetworkCache::Decoder::bufferIsLargeEnoughToContain):
+
+            Reshuffle to avoid sum.
+
+        (WebKit::NetworkCache::Decoder::decodeFixedLengthData):
+        * NetworkProcess/cache/NetworkCacheDecoder.h:
+        (WebKit::NetworkCache::Decoder::bufferSize):
+        (WebKit::NetworkCache::Decoder::currentOffset):
+        (WebKit::NetworkCache::Decoder::length): Deleted.
+        (WebKit::NetworkCache::Decoder::isInvalid): Deleted.
+        (WebKit::NetworkCache::Decoder::markInvalid): Deleted.
+
+            Remove these, they are not really used or needed.
+
 2015-06-10  Anders Carlsson  <andersca@apple.com>
 
         Rewrite WKPluginSiteDataManager using WebsiteDataStore functions

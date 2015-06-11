@@ -47,7 +47,7 @@ Decoder::~Decoder()
 
 bool Decoder::bufferIsLargeEnoughToContain(size_t size) const
 {
-    return m_bufferPosition + size <= m_bufferEnd;
+    return size <= static_cast<size_t>(m_bufferEnd - m_bufferPosition);
 }
 
 bool Decoder::decodeFixedLengthData(uint8_t* data, size_t size)
