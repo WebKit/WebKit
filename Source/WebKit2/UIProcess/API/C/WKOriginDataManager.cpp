@@ -26,38 +26,68 @@
 #include "config.h"
 #include "WKOriginDataManager.h"
 
+#include "APIWebsiteDataStore.h"
 #include "WKAPICast.h"
-#include "WebOriginDataManagerProxy.h"
+#include "WebsiteDataRecord.h"
 
 using namespace WebKit;
 
 WKTypeID WKOriginDataManagerGetTypeID()
 {
-    return toAPI(WebOriginDataManagerProxy::APIType);
+    return toAPI(API::WebsiteDataStore::APIType);
 }
 
-void WKOriginDataManagerGetOrigins(WKOriginDataManagerRef originDataManagerRef, WKOriginDataTypes types, void* context, WKOriginDataManagerGetOriginsFunction callback)
+void WKOriginDataManagerGetOrigins(WKOriginDataManagerRef originDataManager, WKOriginDataTypes types, void* context, WKOriginDataManagerGetOriginsFunction callback)
 {
-    toImpl(originDataManagerRef)->getOrigins(types, toGenericCallbackFunction(context, callback));
-}
+    // This is the only type supported.
+    ASSERT_UNUSED(types, types == kWKIndexedDatabaseData);
 
-void WKOriginDataManagerDeleteEntriesForOrigin(WKOriginDataManagerRef originDataManagerRef, WKOriginDataTypes types, WKSecurityOriginRef originRef, void* context, WKOriginDataManagerDeleteEntriesCallbackFunction callback)
-{
-    toImpl(originDataManagerRef)->deleteEntriesForOrigin(types, toImpl(originRef), [context, callback](CallbackBase::Error error) {
-        callback(error != CallbackBase::Error::None ? toAPI(API::Error::create().ptr()) : 0, context);
+    auto& websiteDataStore = toImpl(reinterpret_cast<WKWebsiteDataStoreRef>(originDataManager))->websiteDataStore();
+    websiteDataStore.fetchData(WebsiteDataTypes::WebsiteDataTypeIndexedDBDatabases, [context, callback](Vector<WebsiteDataRecord> dataRecords) {
+        Vector<RefPtr<API::Object>> securityOrigins;
+        for (const auto& dataRecord : dataRecords) {
+            for (const auto& origin : dataRecord.origins)
+                securityOrigins.append(API::SecurityOrigin::create(origin));
+        }
+
+        callback(toAPI(API::Array::create(WTF::move(securityOrigins)).ptr()), nullptr, context);
     });
 }
 
-void WKOriginDataManagerDeleteEntriesModifiedBetweenDates(WKOriginDataManagerRef originDataManagerRef, WKOriginDataTypes types, double startDate, double endDate, void* context, WKOriginDataManagerDeleteEntriesCallbackFunction callback)
+void WKOriginDataManagerDeleteEntriesForOrigin(WKOriginDataManagerRef originDataManager, WKOriginDataTypes types, WKSecurityOriginRef origin, void* context, WKOriginDataManagerDeleteEntriesCallbackFunction callback)
 {
-    toImpl(originDataManagerRef)->deleteEntriesModifiedBetweenDates(types, startDate, endDate, [context, callback](CallbackBase::Error error) {
-        callback(error != CallbackBase::Error::None ? toAPI(API::Error::create().ptr()) : 0, context);
+    // This is the only type supported.
+    ASSERT_UNUSED(types, types == kWKIndexedDatabaseData);
+
+    auto& websiteDataStore = toImpl(reinterpret_cast<WKWebsiteDataStoreRef>(originDataManager))->websiteDataStore();
+
+    WebsiteDataRecord dataRecord;
+    dataRecord.add(WebsiteDataTypes::WebsiteDataTypeIndexedDBDatabases, &toImpl(origin)->securityOrigin());
+
+    websiteDataStore.removeData(WebsiteDataTypes::WebsiteDataTypeIndexedDBDatabases, { dataRecord }, [context, callback] {
+        callback(nullptr, context);
     });
 }
 
-void WKOriginDataManagerDeleteAllEntries(WKOriginDataManagerRef originDataManagerRef, WKOriginDataTypes types, void* context, WKOriginDataManagerDeleteEntriesCallbackFunction callback)
+void WKOriginDataManagerDeleteEntriesModifiedBetweenDates(WKOriginDataManagerRef originDataManager, WKOriginDataTypes types, double startDate, double endDate, void* context, WKOriginDataManagerDeleteEntriesCallbackFunction callback)
 {
-    toImpl(originDataManagerRef)->deleteAllEntries(types, [context, callback](CallbackBase::Error error) {
-        callback(error != CallbackBase::Error::None ? toAPI(API::Error::create().ptr()) : 0, context);
+    // This is the only type supported.
+    ASSERT_UNUSED(types, types == kWKIndexedDatabaseData);
+    UNUSED_PARAM(endDate);
+
+    auto& websiteDataStore = toImpl(reinterpret_cast<WKWebsiteDataStoreRef>(originDataManager))->websiteDataStore();
+    websiteDataStore.removeData(WebsiteDataTypes::WebsiteDataTypeIndexedDBDatabases, std::chrono::system_clock::from_time_t(startDate), [context, callback] {
+        callback(nullptr, context);
+    });
+}
+
+void WKOriginDataManagerDeleteAllEntries(WKOriginDataManagerRef originDataManager, WKOriginDataTypes types, void* context, WKOriginDataManagerDeleteEntriesCallbackFunction callback)
+{
+    // This is the only type supported.
+    ASSERT_UNUSED(types, types == kWKIndexedDatabaseData);
+
+    auto& websiteDataStore = toImpl(reinterpret_cast<WKWebsiteDataStoreRef>(originDataManager))->websiteDataStore();
+    websiteDataStore.removeData(WebsiteDataTypes::WebsiteDataTypeIndexedDBDatabases, std::chrono::system_clock::time_point::min(), [context, callback] {
+        callback(nullptr, context);
     });
 }

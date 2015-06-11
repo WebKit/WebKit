@@ -1,3 +1,20 @@
+2015-06-11  Anders Carlsson  <andersca@apple.com>
+
+        Reimplement WKOriginDataManager in terms of API::WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=145889
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetOriginDataManager):
+        * UIProcess/API/C/WKOriginDataManager.cpp:
+        (WKOriginDataManagerGetTypeID):
+        (WKOriginDataManagerGetOrigins):
+        (WKOriginDataManagerDeleteEntriesForOrigin):
+        (WKOriginDataManagerDeleteEntriesModifiedBetweenDates):
+        (WKOriginDataManagerDeleteAllEntries):
+
 2015-06-11  Brent Fulgham  <bfulgham@apple.com>
 
         Full screen video space can be resized to 1pt wide

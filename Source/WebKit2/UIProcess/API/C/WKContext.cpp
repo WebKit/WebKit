@@ -478,9 +478,9 @@ WKResourceCacheManagerRef WKContextGetResourceCacheManager(WKContextRef contextR
     return toAPI(toImpl(contextRef)->supplement<WebResourceCacheManagerProxy>());
 }
 
-WKOriginDataManagerRef WKContextGetOriginDataManager(WKContextRef contextRef)
+WKOriginDataManagerRef WKContextGetOriginDataManager(WKContextRef context)
 {
-    return toAPI(toImpl(contextRef)->supplement<WebOriginDataManagerProxy>());
+    return reinterpret_cast<WKOriginDataManagerRef>(toAPI(toImpl(context)->websiteDataStore()));
 }
 
 void WKContextStartMemorySampler(WKContextRef contextRef, WKDoubleRef interval)
