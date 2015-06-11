@@ -1,3 +1,17 @@
+2015-06-11  Dean Jackson  <dino@apple.com>
+
+        Add an appearance keyword for wireless playback / airplay icon
+        https://bugs.webkit.org/show_bug.cgi?id=145892
+        <rdar://problem/21344872>
+
+        Reviewed by Simon Fraser.
+
+        Simple test that makes sure we parse and evaluate
+        the new appearance value.
+
+        * fast/css/appearance-airplay-expected.txt: Added.
+        * fast/css/appearance-airplay.html: Added.
+
 2015-06-11  Alexey Proskuryakov  <ap@apple.com>
 
         Update plugins/embed-attributes-style.html to not use the QuickTime plug-in

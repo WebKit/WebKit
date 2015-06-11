@@ -1,0 +1,28 @@
+<!DOCTYPE>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+#target {
+  -webkit-appearance: -apple-airplay;
+}
+</style>
+</head>
+<body>
+<div id="target"></div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test the -apple-airplay appearance keyword value.");
+
+var target = document.getElementById("target");
+var filterStyle = window.getComputedStyle(target).getPropertyValue('-webkit-appearance');
+shouldBe('filterStyle', "'-apple-airplay'");
+
+successfullyParsed = true;
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

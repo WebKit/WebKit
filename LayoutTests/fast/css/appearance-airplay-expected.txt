@@ -1,0 +1,10 @@
+Test the -apple-airplay appearance keyword value.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS filterStyle is '-apple-airplay'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

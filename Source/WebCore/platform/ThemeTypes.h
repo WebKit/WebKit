@@ -46,6 +46,7 @@ enum ControlPart {
     SearchFieldResultsDecorationPart, SearchFieldResultsButtonPart,
     SearchFieldCancelButtonPart, SnapshottedPluginOverlayPart, TextFieldPart,
     RelevancyLevelIndicatorPart, ContinuousCapacityLevelIndicatorPart, DiscreteCapacityLevelIndicatorPart, RatingLevelIndicatorPart,
+    WirelessPlaybackIconPart,
 #if ENABLE(SERVICE_CONTROLS)
     ImageControlsButtonPart,
 #endif

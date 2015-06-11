@@ -760,6 +760,7 @@ relevancy-level-indicator
 continuous-capacity-level-indicator
 discrete-capacity-level-indicator
 rating-level-indicator
+-apple-airplay
 #if defined(ENABLE_SERVICE_CONTROLS) && ENABLE_SERVICE_CONTROLS
 image-controls-button
 #endif
