@@ -314,6 +314,10 @@ messages -> WebPage LegacyReceiver {
     SetMuted(bool muted)
     SetMayStartMediaWhenInWindow(bool mayStartMedia)
 
+#if ENABLE(MEDIA_SESSION)
+    HandleMediaEvent(uint32_t eventType)
+#endif
+
     // FIXME: This a dummy message, to avoid breaking the build for platforms that don't require
     // any synchronous messages, and should be removed when <rdar://problem/8775115> is fixed.
     Dummy() -> (bool dummyReturn)

@@ -922,6 +922,10 @@ public:
     void setMayStartMediaWhenInWindow(bool);
     bool mayStartMediaWhenInWindow() const { return m_mayStartMediaWhenInWindow; }
         
+#if ENABLE(MEDIA_SESSION)
+    void handleMediaEvent(WebCore::MediaEventType);
+#endif
+
     // WebPopupMenuProxy::Client
     virtual NativeWebMouseEvent* currentlyProcessedMouseDownEvent() override;
 

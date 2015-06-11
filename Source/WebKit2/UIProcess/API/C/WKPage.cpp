@@ -78,6 +78,10 @@
 #include "WebVibrationProxy.h"
 #endif
 
+#if ENABLE(MEDIA_SESSION)
+#include <WebCore/MediaEventTypes.h>
+#endif
+
 using namespace WebCore;
 using namespace WebKit;
 
@@ -2119,6 +2123,32 @@ void WKPageSetMediaVolume(WKPageRef page, float volume)
 void WKPageSetMuted(WKPageRef page, bool muted)
 {
     toImpl(page)->setMuted(muted);
+}
+
+void WKPageHandleMediaEvent(WKPageRef page, WKMediaEventType wkEventType)
+{
+#if ENABLE(MEDIA_SESSION)
+    MediaEventType eventType;
+
+    switch (wkEventType) {
+    case kWKMediaEventTypePlayPause:
+        eventType = MediaEventType::PlayPause;
+        break;
+    case kWKMediaEventTypeTrackNext:
+        eventType = MediaEventType::TrackNext;
+        break;
+    case kWKMediaEventTypeTrackPrevious:
+        eventType = MediaEventType::TrackPrevious;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    toImpl(page)->handleMediaEvent(eventType);
+#else
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(wkEventType);
+#endif
 }
 
 void WKPagePostMessageToInjectedBundle(WKPageRef pageRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef)

@@ -54,6 +54,10 @@
 #include <wtf/SchedulePair.h>
 #endif
 
+#if ENABLE(MEDIA_SESSION)
+#include "MediaEventTypes.h"
+#endif
+
 namespace JSC {
 class Debugger;
 }
@@ -442,6 +446,10 @@ public:
     void updateIsPlayingMedia();
     bool isMuted() const { return m_muted; }
     WEBCORE_EXPORT void setMuted(bool);
+
+#if ENABLE(MEDIA_SESSION)
+    WEBCORE_EXPORT void handleMediaEvent(MediaEventType);
+#endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void addPlaybackTargetPickerClient(uint64_t);

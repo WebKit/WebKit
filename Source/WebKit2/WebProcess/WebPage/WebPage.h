@@ -740,6 +740,10 @@ public:
     void setMuted(bool);
     void setMayStartMediaWhenInWindow(bool);
 
+#if ENABLE(MEDIA_SESSION)
+    void handleMediaEvent(uint32_t /* WebCore::MediaEventType */);
+#endif
+
     void updateMainFrameScrollOffsetPinning();
 
     bool mainFrameHasCustomContentProvider() const;

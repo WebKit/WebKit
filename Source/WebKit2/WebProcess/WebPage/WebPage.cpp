@@ -4048,6 +4048,13 @@ void WebPage::setMuted(bool muted)
     m_page->setMuted(muted);
 }
 
+#if ENABLE(MEDIA_SESSION)
+void WebPage::handleMediaEvent(uint32_t eventType)
+{
+    m_page->handleMediaEvent(static_cast<MediaEventType>(eventType));
+}
+#endif
+
 void WebPage::setMayStartMediaWhenInWindow(bool mayStartMedia)
 {
     if (mayStartMedia == m_mayStartMediaWhenInWindow)

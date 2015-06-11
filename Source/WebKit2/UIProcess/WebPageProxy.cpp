@@ -3774,6 +3774,16 @@ void WebPageProxy::setMuted(bool muted)
     m_process->send(Messages::WebPage::SetMuted(muted), m_pageID);
 }
 
+#if ENABLE(MEDIA_SESSION)
+void WebPageProxy::handleMediaEvent(MediaEventType eventType)
+{
+    if (!isValid())
+        return;
+    
+    m_process->send(Messages::WebPage::HandleMediaEvent(eventType), m_pageID);
+}
+#endif
+
 void WebPageProxy::setMayStartMediaWhenInWindow(bool mayStartMedia)
 {
     if (mayStartMedia == m_mayStartMediaWhenInWindow)

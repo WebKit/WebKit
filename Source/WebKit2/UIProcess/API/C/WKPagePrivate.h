@@ -111,6 +111,15 @@ WK_EXPORT void WKPageSetAddsVisitedLinks(WKPageRef page, bool visitedLinks);
 WK_EXPORT bool WKPageIsPlayingAudio(WKPageRef page);
 WK_EXPORT void WKPageSetMuted(WKPageRef page, bool muted);
 
+enum {
+    kWKMediaEventTypePlayPause,
+    kWKMediaEventTypeTrackNext,
+    kWKMediaEventTypeTrackPrevious
+};
+typedef uint32_t WKMediaEventType;
+
+WK_EXPORT void WKPageHandleMediaEvent(WKPageRef page, WKMediaEventType event);
+
 WK_EXPORT void WKPageLoadURLWithShouldOpenExternalURLsPolicy(WKPageRef page, WKURLRef url, bool shouldOpenExternalURLs);
 
 #ifdef __cplusplus

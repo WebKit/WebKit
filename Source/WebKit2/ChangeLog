@@ -1,3 +1,21 @@
+2015-06-11  Matt Rajca  <mrajca@apple.com>
+
+        Media Session: Add plumbing for media control event delivery.
+        https://bugs.webkit.org/show_bug.cgi?id=145859
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageHandleMediaEvent):
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleMediaEvent):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::handleMediaEvent):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2015-06-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [OS X] Decoding fonts may return nil when using force click

@@ -110,6 +110,10 @@
 #include "MediaPlaybackTarget.h"
 #endif
 
+#if ENABLE(MEDIA_SESSION)
+#include "MediaSessionManager.h"
+#endif
+
 namespace WebCore {
 
 static HashSet<Page*>* allPages;
@@ -1226,6 +1230,19 @@ void Page::setMuted(bool muted)
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
         frame->document()->pageMutedStateDidChange();
 }
+
+#if ENABLE(MEDIA_SESSION)
+void Page::handleMediaEvent(MediaEventType eventType)
+{
+    switch (eventType) {
+    case MediaEventType::PlayPause:
+        MediaSessionManager::singleton().togglePlayback();
+        break;
+    default:
+        break;
+    }
+}
+#endif
 
 #if !ASSERT_DISABLED
 void Page::checkSubframeCountConsistency() const
