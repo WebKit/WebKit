@@ -394,7 +394,6 @@ public:
     virtual bool isInRange() const { return false; }
     virtual bool isOutOfRange() const { return false; }
     virtual bool isFrameElementBase() const { return false; }
-    virtual bool isSearchFieldCancelButtonElement() const { return false; }
 
     virtual bool canContainRangeEndPoint() const override;
 

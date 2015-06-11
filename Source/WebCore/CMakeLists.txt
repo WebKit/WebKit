@@ -1054,7 +1054,6 @@ set(WebCore_SOURCES
     accessibility/AccessibilitySVGRoot.cpp
     accessibility/AccessibilityScrollView.cpp
     accessibility/AccessibilityScrollbar.cpp
-    accessibility/AccessibilitySearchFieldButtons.cpp
     accessibility/AccessibilitySlider.cpp
     accessibility/AccessibilitySpinButton.cpp
     accessibility/AccessibilityTable.cpp

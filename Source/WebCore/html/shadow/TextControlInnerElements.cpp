@@ -28,12 +28,13 @@
 #include "TextControlInnerElements.h"
 
 #include "Document.h"
-#include "EventHandler.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "LocalizedStrings.h"
 #include "MouseEvent.h"
+#include "PlatformMouseEvent.h"
 #include "RenderSearchField.h"
 #include "RenderTextControl.h"
 #include "RenderView.h"
@@ -170,10 +171,12 @@ bool SearchFieldResultsButtonElement::willRespondToMouseClickEvents()
 
 inline SearchFieldCancelButtonElement::SearchFieldCancelButtonElement(Document& document)
     : HTMLDivElement(divTag, document)
-    , m_capturing(false)
 {
     setPseudo(AtomicString("-webkit-search-cancel-button", AtomicString::ConstructFromLiteral));
-    setHasCustomStyleResolveCallbacks();
+#if !PLATFORM(IOS)
+    setAttribute(aria_labelAttr, AXSearchFieldCancelButtonText());
+#endif
+    setAttribute(roleAttr, AtomicString("button", AtomicString::ConstructFromLiteral));
 }
 
 Ref<SearchFieldCancelButtonElement> SearchFieldCancelButtonElement::create(Document& document)
@@ -181,17 +184,8 @@ Ref<SearchFieldCancelButtonElement> SearchFieldCancelButtonElement::create(Docum
     return adoptRef(*new SearchFieldCancelButtonElement(document));
 }
 
-void SearchFieldCancelButtonElement::willDetachRenderers()
-{
-    if (m_capturing) {
-        if (Frame* frame = document().frame())
-            frame->eventHandler().setCapturingMouseEventsElement(nullptr);
-    }
-}
-
 void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
 {
-    // If the element is visible, on mouseup, clear the value, and set selection
     RefPtr<HTMLInputElement> input(downcast<HTMLInputElement>(shadowHost()));
     if (!input || input->isDisabledOrReadOnly()) {
         if (!event->defaultHandled())
@@ -200,29 +194,15 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
     }
 
     if (event->type() == eventNames().mousedownEvent && is<MouseEvent>(*event) && downcast<MouseEvent>(*event).button() == LeftButton) {
-        if (renderer() && renderer()->visibleToHitTesting()) {
-            if (Frame* frame = document().frame()) {
-                frame->eventHandler().setCapturingMouseEventsElement(this);
-                m_capturing = true;
-            }
-        }
         input->focus();
         input->select();
         event->setDefaultHandled();
     }
-    if (event->type() == eventNames().mouseupEvent && is<MouseEvent>(*event) && downcast<MouseEvent>(*event).button() == LeftButton) {
-        if (m_capturing) {
-            if (Frame* frame = document().frame()) {
-                frame->eventHandler().setCapturingMouseEventsElement(nullptr);
-                m_capturing = false;
-            }
-            if (hovered()) {
-                String oldValue = input->value();
-                input->setValueForUser("");
-                input->onSearch();
-                event->setDefaultHandled();
-            }
-        }
+
+    if (event->type() == eventNames().clickEvent) {
+        input->setValueForUser(emptyString());
+        input->onSearch();
+        event->setDefaultHandled();
     }
 
     if (!event->defaultHandled())

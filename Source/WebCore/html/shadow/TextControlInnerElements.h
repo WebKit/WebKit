@@ -89,17 +89,13 @@ public:
     static Ref<SearchFieldCancelButtonElement> create(Document&);
 
     virtual void defaultEventHandler(Event*) override;
-    virtual bool isSearchFieldCancelButtonElement() const override { return true; }
 #if !PLATFORM(IOS)
     virtual bool willRespondToMouseClickEvents() override;
 #endif
 
 private:
     SearchFieldCancelButtonElement(Document&);
-    virtual void willDetachRenderers() override;
     virtual bool isMouseFocusable() const override { return false; }
-
-    bool m_capturing;
 };
 
 } // namespace WebCore

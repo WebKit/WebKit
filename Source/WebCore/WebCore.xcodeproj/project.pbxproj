@@ -1402,7 +1402,6 @@
 		37F57AC41A50729300876F98 /* AccessibilityRenderObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAA6131822EC00D12F2A /* AccessibilityRenderObject.cpp */; };
 		37F57AC51A50729700876F98 /* AccessibilityScrollbar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAA7131822EC00D12F2A /* AccessibilityScrollbar.cpp */; };
 		37F57AC61A50729B00876F98 /* AccessibilityScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAA8131822EC00D12F2A /* AccessibilityScrollView.cpp */; };
-		37F57AC71A5072A100876F98 /* AccessibilitySearchFieldButtons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 415B3A6917CBE172000FCCE8 /* AccessibilitySearchFieldButtons.cpp */; };
 		37F57AC81A5072BC00876F98 /* AccessibilitySlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAA9131822EC00D12F2A /* AccessibilitySlider.cpp */; };
 		37F57AC91A5072CC00876F98 /* AccessibilitySVGRoot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC08CF015F941FC00F1E188 /* AccessibilitySVGRoot.cpp */; };
 		37F57ACA1A5072CF00876F98 /* AccessibilityTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAAA131822EC00D12F2A /* AccessibilityTable.cpp */; };
@@ -1453,7 +1452,6 @@
 		4150F9F212B6E0E70008C860 /* SliderThumbElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4150F9F012B6E0E70008C860 /* SliderThumbElement.cpp */; };
 		4157AF8012F1FB0400A8C6F5 /* MediaControlsApple.h in Headers */ = {isa = PBXBuildFile; fileRef = 4157AF7E12F1FB0400A8C6F5 /* MediaControlsApple.h */; };
 		4157AF8112F1FB0400A8C6F5 /* MediaControlsApple.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4157AF7F12F1FB0400A8C6F5 /* MediaControlsApple.cpp */; };
-		415B3A6E17CBE267000FCCE8 /* AccessibilitySearchFieldButtons.h in Headers */ = {isa = PBXBuildFile; fileRef = 415B3A6A17CBE172000FCCE8 /* AccessibilitySearchFieldButtons.h */; };
 		4162A450101145AE00DFF3ED /* DedicatedWorkerGlobalScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4162A44D101145AE00DFF3ED /* DedicatedWorkerGlobalScope.cpp */; };
 		4162A451101145AE00DFF3ED /* DedicatedWorkerGlobalScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 4162A44E101145AE00DFF3ED /* DedicatedWorkerGlobalScope.h */; };
 		4162A454101145E300DFF3ED /* JSDedicatedWorkerGlobalScopeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4162A453101145E300DFF3ED /* JSDedicatedWorkerGlobalScopeCustom.cpp */; };
@@ -8605,8 +8603,6 @@
 		4150F9F012B6E0E70008C860 /* SliderThumbElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SliderThumbElement.cpp; sourceTree = "<group>"; };
 		4157AF7E12F1FB0400A8C6F5 /* MediaControlsApple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControlsApple.h; sourceTree = "<group>"; };
 		4157AF7F12F1FB0400A8C6F5 /* MediaControlsApple.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaControlsApple.cpp; sourceTree = "<group>"; };
-		415B3A6917CBE172000FCCE8 /* AccessibilitySearchFieldButtons.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilitySearchFieldButtons.cpp; sourceTree = "<group>"; };
-		415B3A6A17CBE172000FCCE8 /* AccessibilitySearchFieldButtons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilitySearchFieldButtons.h; sourceTree = "<group>"; };
 		4162A44D101145AE00DFF3ED /* DedicatedWorkerGlobalScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DedicatedWorkerGlobalScope.cpp; sourceTree = "<group>"; };
 		4162A44E101145AE00DFF3ED /* DedicatedWorkerGlobalScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DedicatedWorkerGlobalScope.h; sourceTree = "<group>"; };
 		4162A44F101145AE00DFF3ED /* DedicatedWorkerGlobalScope.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DedicatedWorkerGlobalScope.idl; sourceTree = "<group>"; };
@@ -15723,8 +15719,6 @@
 				93C4F6E91108F9A50099D0DB /* AccessibilityScrollbar.h */,
 				2981CAA8131822EC00D12F2A /* AccessibilityScrollView.cpp */,
 				29489FC512C00F0300D83F0F /* AccessibilityScrollView.h */,
-				415B3A6917CBE172000FCCE8 /* AccessibilitySearchFieldButtons.cpp */,
-				415B3A6A17CBE172000FCCE8 /* AccessibilitySearchFieldButtons.h */,
 				2981CAA9131822EC00D12F2A /* AccessibilitySlider.cpp */,
 				0709FC4D1025DEE30059CDBA /* AccessibilitySlider.h */,
 				29D7BCF51444AF580070619C /* AccessibilitySpinButton.cpp */,
@@ -23790,7 +23784,6 @@
 				29A812390FBB9C1D00510293 /* AccessibilityRenderObject.h in Headers */,
 				93C4F6EB1108F9A50099D0DB /* AccessibilityScrollbar.h in Headers */,
 				29489FC712C00F0300D83F0F /* AccessibilityScrollView.h in Headers */,
-				415B3A6E17CBE267000FCCE8 /* AccessibilitySearchFieldButtons.h in Headers */,
 				0709FC4E1025DEE30059CDBA /* AccessibilitySlider.h in Headers */,
 				29D7BCFA1444AF7D0070619C /* AccessibilitySpinButton.h in Headers */,
 				AAC08CF315F941FD00F1E188 /* AccessibilitySVGRoot.h in Headers */,
@@ -27599,7 +27592,6 @@
 				37F57AC41A50729300876F98 /* AccessibilityRenderObject.cpp in Sources */,
 				37F57AC51A50729700876F98 /* AccessibilityScrollbar.cpp in Sources */,
 				37F57AC61A50729B00876F98 /* AccessibilityScrollView.cpp in Sources */,
-				37F57AC71A5072A100876F98 /* AccessibilitySearchFieldButtons.cpp in Sources */,
 				37F57AC81A5072BC00876F98 /* AccessibilitySlider.cpp in Sources */,
 				29D7BCF61444AF580070619C /* AccessibilitySpinButton.cpp in Sources */,
 				37F57AC91A5072CC00876F98 /* AccessibilitySVGRoot.cpp in Sources */,

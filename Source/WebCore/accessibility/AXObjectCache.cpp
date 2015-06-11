@@ -48,7 +48,6 @@
 #include "AccessibilitySVGRoot.h"
 #include "AccessibilityScrollView.h"
 #include "AccessibilityScrollbar.h"
-#include "AccessibilitySearchFieldButtons.h"
 #include "AccessibilitySlider.h"
 #include "AccessibilitySpinButton.h"
 #include "AccessibilityTable.h"
@@ -297,10 +296,6 @@ static Ref<AccessibilityObject> createFromRenderer(RenderObject* renderer)
 
     if (is<RenderSVGRoot>(*renderer))
         return AccessibilitySVGRoot::create(renderer);
-    
-    // Search field buttons
-    if (is<Element>(node) && downcast<Element>(*node).isSearchFieldCancelButtonElement())
-        return AccessibilitySearchFieldCancelButton::create(renderer);
     
     if (is<RenderBoxModelObject>(*renderer)) {
         RenderBoxModelObject& cssBox = downcast<RenderBoxModelObject>(*renderer);

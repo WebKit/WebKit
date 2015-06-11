@@ -6610,9 +6610,6 @@
     <ClCompile Include="..\rendering\ImageQualityController.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
-    <ClCompile Include="..\accessibility\AccessibilitySearchFieldButtons.cpp">
-      <Filter>accessibility</Filter>
-    </ClCompile>
     <ClCompile Include="..\dom\ElementData.cpp">
       <Filter>dom</Filter>
     </ClCompile>
@@ -13996,9 +13993,6 @@
     </ClInclude>
     <ClInclude Include="..\rendering\ImageQualityController.h">
       <Filter>rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\accessibility\AccessibilitySearchFieldButtons.h">
-      <Filter>accessibility</Filter>
     </ClInclude>
     <ClInclude Include="..\dom\ElementAncestorIterator.h">
       <Filter>dom</Filter>
