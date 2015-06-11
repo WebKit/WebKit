@@ -1,3 +1,18 @@
+2015-06-11  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Cannot run run-webkit-tests with public SDK; LayoutTestRelay fails to build
+        https://bugs.webkit.org/show_bug.cgi?id=145319
+
+        Reviewed by David Kilzer.
+
+        Add SPI wrapper header for CoreSimulator and update the source files to reference
+        it instead of directly referencing the CoreSimulator header.
+
+        * LayoutTestRelay/LayoutTestRelay.xcodeproj/project.pbxproj:
+        * LayoutTestRelay/LayoutTestRelay/CoreSimulatorSPI.h: Added.
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.m:
+        * LayoutTestRelay/LayoutTestRelay/main.m:
+
 2015-06-10  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] dimmed area for popup does not cover the fullscreen mode.

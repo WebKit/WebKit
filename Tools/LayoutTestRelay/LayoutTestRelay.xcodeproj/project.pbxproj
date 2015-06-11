@@ -34,6 +34,7 @@
 		2E8D3F0319881FE2004F6CC2 /* LTPipeRelay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LTPipeRelay.h; sourceTree = "<group>"; };
 		2E8D3F0419882406004F6CC2 /* LTRelayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LTRelayController.h; sourceTree = "<group>"; };
 		2E8D3F0519882406004F6CC2 /* LTRelayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LTRelayController.m; sourceTree = "<group>"; };
+		CE1FBC151B290E79000136F5 /* CoreSimulatorSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreSimulatorSPI.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +70,7 @@
 			isa = PBXGroup;
 			children = (
 				2E8D3EF719881D43004F6CC2 /* main.m */,
+				CE1FBC151B290E79000136F5 /* CoreSimulatorSPI.h */,
 				2E8D3F0019881F29004F6CC2 /* LTRelay.h */,
 				2E8D3F0119881FD0004F6CC2 /* LTPipeRelay.m */,
 				2E8D3F0319881FE2004F6CC2 /* LTPipeRelay.h */,

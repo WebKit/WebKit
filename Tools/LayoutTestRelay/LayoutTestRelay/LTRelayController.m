@@ -24,10 +24,10 @@
  */
 
 #import "LTRelayController.h"
-#import "LTPipeRelay.h"
 
+#import "CoreSimulatorSPI.h"
+#import "LTPipeRelay.h"
 #import <AppKit/AppKit.h>
-#import <CoreSimulator/CoreSimulator.h>
 
 @interface LTRelayController ()
 @property (readonly, strong) dispatch_source_t standardInputDispatchSource;

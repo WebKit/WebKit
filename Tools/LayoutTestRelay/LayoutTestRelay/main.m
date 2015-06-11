@@ -23,9 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "CoreSimulatorSPI.h"
 #import "LTRelayController.h"
-
-#import <CoreSimulator/CoreSimulator.h>
 #import <Foundation/Foundation.h>
 
 static LTRelayController *relayController;
