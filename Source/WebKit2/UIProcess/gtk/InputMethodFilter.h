@@ -30,7 +30,7 @@ typedef struct _GdkEventKey GdkEventKey;
 typedef struct _GtkIMContext GtkIMContext;
 
 namespace WebCore {
-class CompositionResults;
+struct CompositionResults;
 class IntRect;
 }
 
