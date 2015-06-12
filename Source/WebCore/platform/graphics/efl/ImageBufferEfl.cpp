@@ -42,22 +42,14 @@ static cairo_status_t writeFunction(void* output, const unsigned char* data, uns
     return CAIRO_STATUS_SUCCESS;
 }
 
-static bool encodeImage(cairo_surface_t* image, const String& mimeType, Vector<char>* output, const double* quality)
+static bool encodeImagePNG(cairo_surface_t* image, Vector<char>* output)
 {
-    ASSERT_UNUSED(mimeType, mimeType == "image/png" || mimeType == "image/jpeg"); // Only PNG  and JPEG output are supported for now.
-    bool result = false;    
+    return cairo_surface_write_to_png_stream(image, writeFunction, output) == CAIRO_STATUS_SUCCESS;
+}
 
-    if (mimeType == "image/png")
-        result = cairo_surface_write_to_png_stream(image, writeFunction, output) == CAIRO_STATUS_SUCCESS;
-
-    if (mimeType == "image/jpeg") {
-        unsigned char* imageData = cairo_image_surface_get_data(image);
-        int width = cairo_image_surface_get_width(image);
-        int height = cairo_image_surface_get_height(image);
-        result = compressRGBABigEndianToJPEG(imageData, IntSize(width, height), *output, quality);
-    }
-
-    return result;
+static bool encodeImageJPEG(unsigned char* data, IntSize size, Vector<char>* output, const double* quality)
+{    
+    return compressRGBABigEndianToJPEG(data, size, *output, quality);
 }
 
 String ImageBuffer::toDataURL(const String& mimeType, const double* quality, CoordinateSystem) const
@@ -67,8 +59,26 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality, Coo
     cairo_surface_t* image = cairo_get_target(context()->platformContext()->cr());
 
     Vector<char> encodedImage;
-    if (!image || !encodeImage(image, mimeType, &encodedImage, quality))
+
+    if (!image)
         return "data:,";
+
+    if (mimeType == "image/png") {
+        if (!encodeImagePNG(image, &encodedImage))
+            return "data:,";
+    }
+
+    if (mimeType == "image/jpeg") {
+        int width = cairo_image_surface_get_width(image);
+        int height = cairo_image_surface_get_height(image);
+
+        IntSize size(width, height);
+        IntRect dataRect(IntPoint(), size);
+        RefPtr<Uint8ClampedArray> myData = getPremultipliedImageData(dataRect);
+
+        if (!encodeImageJPEG(myData->data(), size, &encodedImage, quality))
+            return "data:,";
+    }
 
     Vector<char> base64Data;
     base64Encode(encodedImage, base64Data);

@@ -104,9 +104,11 @@ bool compressRGBABigEndianToJPEG(unsigned char* rgbaBigEndianData, const IntSize
     compressData.in_color_space = JCS_RGB;
     jpeg_set_defaults(&compressData);
     int compressionQuality = 65;
+
     if (quality && *quality >= 0.0 && *quality <= 1.0)
         compressionQuality = static_cast<int>(*quality * 100 + 0.5);
-    jpeg_set_quality(&compressData, compressionQuality, FALSE);
+
+    jpeg_set_quality(&compressData, compressionQuality, TRUE);
 
     // rowBuffer must be defined here so that its destructor is always called even when "setjmp" catches an error.
     Vector<JSAMPLE, 600 * 3> rowBuffer;
