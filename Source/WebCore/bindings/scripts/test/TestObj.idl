@@ -274,6 +274,8 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     // Promise attributes
     [CustomGetter] readonly attribute Promise testPromiseAttr;
 
+    // Promise function
+    Promise testPromiseFunction();
 };
 
 // The following comment should not generate any code.

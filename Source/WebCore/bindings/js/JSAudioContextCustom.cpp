@@ -111,33 +111,6 @@ EncodedJSValue JSC_HOST_CALL constructJSAudioContext(ExecState* exec)
     return JSValue::encode(CREATE_DOM_WRAPPER(jsConstructor->globalObject(), AudioContext, audioContext.get()));
 }
 
-JSValue JSAudioContext::suspend(ExecState* state)
-{
-    JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(state, globalObject());
-
-    impl().suspend(DeferredWrapper(state, globalObject(), promiseDeferred));
-
-    return promiseDeferred->promise();
-}
-
-JSValue JSAudioContext::resume(ExecState* state)
-{
-    JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(state, globalObject());
-
-    impl().resume(DeferredWrapper(state, globalObject(), promiseDeferred));
-
-    return promiseDeferred->promise();
-}
-
-JSValue JSAudioContext::close(ExecState* state)
-{
-    JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(state, globalObject());
-
-    impl().close(DeferredWrapper(state, globalObject(), promiseDeferred));
-
-    return promiseDeferred->promise();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

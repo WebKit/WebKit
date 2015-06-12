@@ -173,4 +173,5 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 - (void)variadicDoubleMethod:(double)head tail:(double)tail;
 - (void)variadicNodeMethod:(DOMNode *)head tail:(DOMNode *)tail;
 - (void)any:(float)a b:(int)b;
+- (DOMPromise *)testPromiseFunction;
 @end

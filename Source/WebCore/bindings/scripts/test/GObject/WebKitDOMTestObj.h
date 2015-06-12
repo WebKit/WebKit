@@ -651,6 +651,17 @@ WEBKIT_API void
 webkit_dom_test_obj_any(WebKitDOMTestObj* self, gfloat a, glong b);
 
 /**
+ * webkit_dom_test_obj_test_promise_function:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns: (transfer none): A #WebKitDOMPromise
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API WebKitDOMPromise*
+webkit_dom_test_obj_test_promise_function(WebKitDOMTestObj* self);
+
+/**
  * webkit_dom_test_obj_get_read_only_long_attr:
  * @self: A #WebKitDOMTestObj
  *
