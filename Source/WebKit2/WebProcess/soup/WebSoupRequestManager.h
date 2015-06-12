@@ -27,7 +27,7 @@
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 typedef struct _GInputStream GInputStream;

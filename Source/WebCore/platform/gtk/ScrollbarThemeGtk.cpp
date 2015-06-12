@@ -32,7 +32,7 @@
 #include "Scrollbar.h"
 #include <gtk/gtk.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 namespace WebCore {
 

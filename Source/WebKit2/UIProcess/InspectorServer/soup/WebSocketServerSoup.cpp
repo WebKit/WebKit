@@ -31,7 +31,7 @@
 #include <WebCore/SocketStreamHandle.h>
 #include <gio/gio.h>
 #include <glib.h>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;

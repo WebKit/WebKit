@@ -24,7 +24,7 @@
 #include <gio/gio.h>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GUniquePtr.h>
 
 static HashSet<GObject*> s_watchedObjects;
 

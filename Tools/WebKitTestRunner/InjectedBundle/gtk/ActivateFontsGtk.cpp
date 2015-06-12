@@ -34,8 +34,8 @@
 #include "InjectedBundleUtilities.h"
 #include <fontconfig/fontconfig.h>
 #include <gtk/gtk.h>
-#include <wtf/gobject/GUniquePtr.h>
-#include <wtf/gobject/GlibUtilities.h>
+#include <wtf/glib/GLibUtilities.h>
+#include <wtf/glib/GUniquePtr.h>
 
 namespace WTR {
 

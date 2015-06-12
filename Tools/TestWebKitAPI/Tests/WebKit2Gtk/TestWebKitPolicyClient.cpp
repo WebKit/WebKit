@@ -21,7 +21,7 @@
 
 #include "LoadTrackingTest.h"
 #include "WebKitTestServer.h"
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
 
 static WebKitTestServer* kServer;

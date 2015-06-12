@@ -27,7 +27,7 @@
 #include "WebKitUserContentPrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebScriptMessageHandler.h"
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 using namespace WebCore;
 using namespace WebKit;

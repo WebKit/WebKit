@@ -36,7 +36,7 @@
 #include "WebKitDOMEvent.h"
 #include "WebKitDOMEventTargetPrivate.h"
 #include "WebKitDOMPrivate.h"
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 typedef WebKitDOMEventTargetIface WebKitDOMEventTargetInterface;
 

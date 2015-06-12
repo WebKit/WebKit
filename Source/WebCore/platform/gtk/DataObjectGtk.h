@@ -22,7 +22,7 @@
 #include "FileList.h"
 #include "URL.h"
 #include <wtf/RefCounted.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {

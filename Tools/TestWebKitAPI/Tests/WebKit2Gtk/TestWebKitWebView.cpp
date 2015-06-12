@@ -24,7 +24,7 @@
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/JSValueRef.h>
 #include <glib/gstdio.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 class IsPlayingAudioWebViewTest : public WebViewTest {
 public:

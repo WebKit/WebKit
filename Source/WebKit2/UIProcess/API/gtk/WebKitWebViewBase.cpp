@@ -63,7 +63,7 @@
 #include <gdk/gdkkeysyms.h>
 #include <memory>
 #include <wtf/HashMap.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(FULLSCREEN_API)

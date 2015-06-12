@@ -21,7 +21,7 @@
 #define WebPopupMenuProxyGtk_h
 
 #include "WebPopupMenuProxy.h"
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 typedef struct _GMainLoop GMainLoop;

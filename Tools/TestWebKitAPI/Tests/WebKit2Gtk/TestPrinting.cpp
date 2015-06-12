@@ -20,7 +20,7 @@
 #include "config.h"
 #include "WebViewTest.h"
 #include <glib/gstdio.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 #ifdef HAVE_GTK_UNIX_PRINTING
 #include <gtk/gtkunixprint.h>

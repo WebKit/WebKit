@@ -25,7 +25,7 @@
 #include "BatteryProviderUPowerClient.h"
 #include <cmath>
 #include <limits>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GUniquePtr.h>
 
 using namespace WebCore;
 

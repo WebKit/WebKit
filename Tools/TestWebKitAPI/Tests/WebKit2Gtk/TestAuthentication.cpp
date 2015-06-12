@@ -20,7 +20,7 @@
 #include "config.h"
 #include "LoadTrackingTest.h"
 #include "WebKitTestServer.h"
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 static WebKitTestServer* kServer;
 

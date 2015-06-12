@@ -39,7 +39,7 @@
 
 #if PLATFORM(GTK) || PLATFORM(EFL)
 #include <glib.h>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GUniquePtr.h>
 #endif
 
 #if PLATFORM(GTK)

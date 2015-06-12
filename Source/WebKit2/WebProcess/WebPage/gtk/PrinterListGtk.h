@@ -30,7 +30,7 @@
 
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 typedef struct _GtkPrinter GtkPrinter;
 

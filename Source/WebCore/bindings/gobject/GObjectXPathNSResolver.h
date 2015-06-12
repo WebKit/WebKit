@@ -22,7 +22,7 @@
 #include "WebKitDOMXPathNSResolver.h"
 #include "XPathNSResolver.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 namespace WebCore {
 

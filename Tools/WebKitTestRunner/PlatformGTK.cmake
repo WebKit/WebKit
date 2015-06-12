@@ -19,7 +19,7 @@ list(APPEND WebKitTestRunner_SOURCES
 
 list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
     ${FORWARDING_HEADERS_DIR}
-    ${WTF_DIR}/wtf/gobject
+    ${WTF_DIR}/wtf/glib
     ${ATK_INCLUDE_DIRS}
     ${CAIRO_INCLUDE_DIRS}
     ${GTK3_INCLUDE_DIRS}

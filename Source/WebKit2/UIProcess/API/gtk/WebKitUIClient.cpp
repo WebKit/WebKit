@@ -33,7 +33,7 @@
 #include "WebKitWindowPropertiesPrivate.h"
 #include "WebPageProxy.h"
 #include <WebCore/GtkUtilities.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 using namespace WebKit;
 

@@ -42,8 +42,8 @@
 #include <WebCore/SoupNetworkSession.h>
 #include <libsoup/soup.h>
 #include <wtf/RAMSize.h>
-#include <wtf/gobject/GRefPtr.h>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {
 

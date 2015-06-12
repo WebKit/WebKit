@@ -27,7 +27,7 @@
 #define ArgumentCodersGtk_h
 
 #include "ArgumentCoders.h"
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 typedef struct _GtkPrintSettings GtkPrintSettings;
 typedef struct _GtkPageSetup GtkPageSetup;

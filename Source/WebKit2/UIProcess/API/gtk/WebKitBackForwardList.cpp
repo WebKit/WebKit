@@ -23,7 +23,7 @@
 #include "WebKitBackForwardListPrivate.h"
 #include "WebKitMarshal.h"
 #include "WebKitPrivate.h"
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 /**
  * SECTION: WebKitBackForwardList

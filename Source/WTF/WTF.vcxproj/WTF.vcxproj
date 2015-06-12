@@ -73,7 +73,7 @@
     <ClCompile Include="..\wtf\FastMalloc.cpp" />
     <ClCompile Include="..\wtf\FilePrintStream.cpp" />
     <ClCompile Include="..\wtf\FunctionDispatcher.cpp" />
-    <ClCompile Include="..\wtf\gobject\GlibUtilities.cpp">
+    <ClCompile Include="..\wtf\glib\GLibUtilities.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
@@ -83,7 +83,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\wtf\gobject\GMainLoopSource.cpp">
+    <ClCompile Include="..\wtf\glib\GMainLoopSource.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
@@ -93,7 +93,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\wtf\gobject\GRefPtr.cpp">
+    <ClCompile Include="..\wtf\glib\GRefPtr.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
@@ -103,7 +103,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\wtf\gobject\GThreadSafeMainLoopSource.cpp" />
+    <ClCompile Include="..\wtf\glib\GThreadSafeMainLoopSource.cpp" />
     <ClCompile Include="..\wtf\GregorianDateTime.cpp" />
     <ClCompile Include="..\wtf\HashTable.cpp" />
     <ClCompile Include="..\wtf\MainThread.cpp" />
@@ -204,13 +204,13 @@
     <ClInclude Include="..\wtf\FunctionDispatcher.h" />
     <ClInclude Include="..\wtf\Functional.h" />
     <ClInclude Include="..\wtf\GetPtr.h" />
-    <ClInclude Include="..\wtf\gobject\GlibUtilities.h" />
-    <ClInclude Include="..\wtf\gobject\GMainLoopSource.h" />
-    <ClInclude Include="..\wtf\gobject\GMutexLocker.h" />
-    <ClInclude Include="..\wtf\gobject\GRefPtr.h" />
-    <ClInclude Include="..\wtf\gobject\GThreadSafeMainLoopSource.h" />
-    <ClInclude Include="..\wtf\gobject\GTypedefs.h" />
-    <ClInclude Include="..\wtf\gobject\GUniquePtr.h" />
+    <ClInclude Include="..\wtf\glib\GLibUtilities.h" />
+    <ClInclude Include="..\wtf\glib\GMainLoopSource.h" />
+    <ClInclude Include="..\wtf\glib\GMutexLocker.h" />
+    <ClInclude Include="..\wtf\glib\GTypedefs.h" />
+    <ClInclude Include="..\wtf\glib\GRefPtr.h" />
+    <ClInclude Include="..\wtf\glib\GThreadSafeMainLoopSource.h" />
+    <ClInclude Include="..\wtf\glib\GUniquePtr.h" />
     <ClInclude Include="..\wtf\GregorianDateTime.h" />
     <ClInclude Include="..\wtf\HashCountedSet.h" />
     <ClInclude Include="..\wtf\HashFunctions.h" />

@@ -22,7 +22,7 @@
 
 #include "WebKitNavigationActionPrivate.h"
 #include <gdk/gdk.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 using namespace WebKit;
 

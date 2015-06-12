@@ -32,9 +32,9 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceHandleInternal.h>
 #include <gio/gio.h>
-#include <wtf/gobject/GMainLoopSource.h>
-#include <wtf/gobject/GRefPtr.h>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GMainLoopSource.h>
+#include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 #if PLATFORM(GTK)

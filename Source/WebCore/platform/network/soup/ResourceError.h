@@ -30,7 +30,7 @@
 
 #if USE(SOUP)
 
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 typedef struct _GTlsCertificate GTlsCertificate;
 typedef struct _SoupRequest SoupRequest;

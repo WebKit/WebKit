@@ -4,9 +4,9 @@ list(APPEND WTF_SOURCES
     efl/RunLoopEfl.cpp
     efl/WorkQueueEfl.cpp
 
-    gobject/GMainLoopSource.cpp
-    gobject/GRefPtr.cpp
-    gobject/GThreadSafeMainLoopSource.cpp
+    glib/GMainLoopSource.cpp
+    glib/GRefPtr.cpp
+    glib/GThreadSafeMainLoopSource.cpp
 )
 
 list(APPEND WTF_LIBRARIES

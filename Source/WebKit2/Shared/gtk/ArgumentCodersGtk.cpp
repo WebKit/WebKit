@@ -34,7 +34,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GtkVersioning.h>
 #include <WebCore/PlatformContextCairo.h>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GUniquePtr.h>
 
 using namespace WebCore;
 using namespace WebKit;

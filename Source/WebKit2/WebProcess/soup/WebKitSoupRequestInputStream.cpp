@@ -21,7 +21,7 @@
 #include "WebKitSoupRequestInputStream.h"
 
 #include <wtf/Threading.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 struct AsyncReadData {
     AsyncReadData(GSimpleAsyncResult* result, void* buffer, gsize count, GCancellable* cancellable)

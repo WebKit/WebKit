@@ -35,7 +35,7 @@
 
 #if USE(SOUP)
 #include <gio/gio.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 #endif
 
 namespace WebCore {

@@ -29,7 +29,7 @@
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/Pasteboard.h>
 #include <WebCore/markup.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 using namespace WebCore;
 

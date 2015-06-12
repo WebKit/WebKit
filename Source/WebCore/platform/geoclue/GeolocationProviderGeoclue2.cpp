@@ -28,8 +28,8 @@
 
 #if ENABLE(GEOLOCATION) && USE(GEOCLUE2)
 
-#include <wtf/gobject/GUniquePtr.h>
-#include <wtf/gobject/GlibUtilities.h>
+#include <wtf/glib/GLibUtilities.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 const char* gGeoclueBusName = "org.freedesktop.GeoClue2";

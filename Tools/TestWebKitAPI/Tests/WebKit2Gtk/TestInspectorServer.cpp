@@ -25,7 +25,7 @@
 #include "config.h"
 
 #include "WebViewTest.h"
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 // Name of the test server application creating the webView object.

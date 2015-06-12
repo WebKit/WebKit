@@ -18,7 +18,7 @@
  */
 
 #include "config.h"
-#include "GlibUtilities.h"
+#include "GLibUtilities.h"
 
 #if OS(WINDOWS)
 #include <windows.h>

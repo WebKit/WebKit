@@ -21,7 +21,7 @@
 #define GRefPtrGStreamer_h
 #if USE(GSTREAMER)
 
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 typedef struct _GstElement GstElement;
 typedef struct _GstPad GstPad;

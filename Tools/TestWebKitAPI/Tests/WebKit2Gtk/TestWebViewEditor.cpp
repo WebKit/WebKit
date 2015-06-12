@@ -19,7 +19,7 @@
 
 #include "config.h"
 #include "WebViewTest.h"
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 class EditorTest: public WebViewTest {
 public:

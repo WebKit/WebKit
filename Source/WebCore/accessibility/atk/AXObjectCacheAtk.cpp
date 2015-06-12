@@ -31,7 +31,7 @@
 #include "TextIterator.h"
 #include "WebKitAccessibleWrapperAtk.h"
 #include <wtf/NeverDestroyed.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {

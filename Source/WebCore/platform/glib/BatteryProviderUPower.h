@@ -23,7 +23,7 @@
 #if ENABLE(BATTERY_STATUS)
 
 #include <libupower-glib/upower.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 namespace WebCore {
 

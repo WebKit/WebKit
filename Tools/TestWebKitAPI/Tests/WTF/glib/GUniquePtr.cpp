@@ -80,7 +80,7 @@ static void (* _g_key_file_free)(GKeyFile*) = g_key_file_free;
     log() << "g_key_file_free(" << ptr << ");"; \
     _g_key_file_free(x);
 
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GUniquePtr.h>
 
 namespace TestWebKitAPI {
 

@@ -34,8 +34,8 @@
 #include <gio/gunixinputstream.h>
 #include <gudev/gudev.h>
 #include <wtf/HashMap.h>
-#include <wtf/gobject/GRefPtr.h>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 

@@ -39,7 +39,7 @@
 #include "SourceBufferPrivateGStreamer.h"
 #include "WebKitMediaSourceGStreamer.h"
 
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 namespace WebCore {
 

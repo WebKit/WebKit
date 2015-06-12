@@ -42,7 +42,7 @@
 #include <gtk/gtk.h>
 #include <memory>
 #include <wtf/Vector.h>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GUniquePtr.h>
 
 #if HAVE(GTK_UNIX_PRINTING)
 #include "PrinterListGtk.h"

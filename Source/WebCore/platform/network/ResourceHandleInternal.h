@@ -51,8 +51,8 @@
 #if USE(SOUP)
 #include "GUniquePtrSoup.h"
 #include <libsoup/soup.h>
-#include <wtf/gobject/GMainLoopSource.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GMainLoopSource.h>
+#include <wtf/glib/GRefPtr.h>
 #endif
 
 #if PLATFORM(COCOA)

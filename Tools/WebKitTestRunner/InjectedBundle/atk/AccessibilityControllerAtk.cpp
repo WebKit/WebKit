@@ -36,7 +36,7 @@
 #include <WebKit/WKBundlePagePrivate.h>
 #include <atk/atk.h>
 #include <cstdio>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WTR {

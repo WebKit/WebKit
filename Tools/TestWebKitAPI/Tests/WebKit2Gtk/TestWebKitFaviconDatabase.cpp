@@ -23,7 +23,7 @@
 #include "WebViewTest.h"
 #include <glib/gstdio.h>
 #include <libsoup/soup.h>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GUniquePtr.h>
 
 static WebKitTestServer* kServer;
 

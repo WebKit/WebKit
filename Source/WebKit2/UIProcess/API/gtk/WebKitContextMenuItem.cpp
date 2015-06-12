@@ -30,8 +30,8 @@
 #include <WebCore/ContextMenuItem.h>
 #include <gtk/gtk.h>
 #include <memory>
-#include <wtf/gobject/GRefPtr.h>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GUniquePtr.h>
 
 using namespace WebKit;
 using namespace WebCore;

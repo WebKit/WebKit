@@ -29,7 +29,7 @@
 #include <WebCore/KeyedCoding.h>
 #include <glib.h>
 #include <wtf/HashMap.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 

@@ -31,7 +31,7 @@ OBJC_CLASS NSPrintInfo;
 #elif PLATFORM(GTK)
 typedef struct _GtkPrintSettings GtkPrintSettings;
 typedef struct _GtkPageSetup GtkPageSetup;
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 #else
 // FIXME: This should use the windows equivalent.
 class NSPrintInfo;

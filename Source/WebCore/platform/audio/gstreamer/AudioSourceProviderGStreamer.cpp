@@ -26,7 +26,7 @@
 #include <gst/app/gstappsink.h>
 #include <gst/audio/audio-info.h>
 #include <gst/base/gstadapter.h>
-#include <wtf/gobject/GMutexLocker.h>
+#include <wtf/glib/GMutexLocker.h>
 
 
 namespace WebCore {

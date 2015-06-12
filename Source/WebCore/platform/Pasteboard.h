@@ -34,7 +34,7 @@
 
 #if PLATFORM(GTK)
 typedef struct _GtkClipboard GtkClipboard;
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 #endif
 
 #if PLATFORM(IOS)

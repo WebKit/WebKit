@@ -29,7 +29,7 @@
 #include "Pasteboard.h"
 #include "TextResourceDecoder.h"
 #include <gtk/gtk.h>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {

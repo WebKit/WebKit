@@ -22,7 +22,7 @@
 #include "LoadTrackingTest.h"
 #include <gtk/gtk.h>
 #include <webkit2/webkit2.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 static const char* testString = "<html><body>first testing second testing secondHalf</body></html>";
 

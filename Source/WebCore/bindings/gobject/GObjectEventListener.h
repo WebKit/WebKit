@@ -22,7 +22,7 @@
 #include "EventListener.h"
 #include "EventTarget.h"
 #include <wtf/RefPtr.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
 
 typedef struct _GObject GObject;

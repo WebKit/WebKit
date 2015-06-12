@@ -256,8 +256,8 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport/efl"
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport/soup"
     "${WEBKIT2_DIR}/WebProcess/WebPage/CoordinatedGraphics"
-    "${WTF_DIR}/wtf/efl/"
-    "${WTF_DIR}/wtf/gobject"
+    "${WTF_DIR}/wtf/efl"
+    "${WTF_DIR}/wtf/glib"
 )
 
 list(APPEND WebKit2_SYSTEM_INCLUDE_DIRECTORIES

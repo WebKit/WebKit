@@ -24,7 +24,7 @@
 #if ENABLE(GEOLOCATION)
 
 #include "GeolocationProviderGeoclueClient.h"
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 #if USE(GEOCLUE2)
 #include "Geoclue2Interface.h"

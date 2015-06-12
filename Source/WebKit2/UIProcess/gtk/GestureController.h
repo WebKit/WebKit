@@ -30,8 +30,8 @@
 
 #include <WebCore/FloatPoint.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/gobject/GMainLoopSource.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GMainLoopSource.h>
+#include <wtf/glib/GRefPtr.h>
 
 typedef union _GdkEvent GdkEvent;
 typedef struct _GdkEventSequence GdkEventSequence;

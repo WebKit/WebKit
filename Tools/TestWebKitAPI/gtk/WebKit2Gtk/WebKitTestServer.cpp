@@ -21,7 +21,7 @@
 #include "WebKitTestServer.h"
 
 #include "TestMain.h"
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GUniquePtr.h>
 
 WebKitTestServer::WebKitTestServer(ServerType type)
 {

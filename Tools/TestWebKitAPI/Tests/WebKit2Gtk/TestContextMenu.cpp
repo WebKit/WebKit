@@ -20,7 +20,7 @@
 #include "config.h"
 #include "WebViewTest.h"
 #include <wtf/Vector.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 class ContextMenuTest: public WebViewTest {
 public:

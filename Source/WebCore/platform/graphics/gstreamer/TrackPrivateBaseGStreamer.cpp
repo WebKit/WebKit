@@ -35,7 +35,7 @@
 #include <glib-object.h>
 #include <gst/gst.h>
 #include <gst/tag/tag.h>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 GST_DEBUG_CATEGORY_EXTERN(webkit_media_player_debug);

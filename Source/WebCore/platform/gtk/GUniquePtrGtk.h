@@ -21,7 +21,7 @@
 #define GUniquePtrGtk_h
 
 #include <gtk/gtk.h>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GUniquePtr.h>
 
 namespace WTF {
 

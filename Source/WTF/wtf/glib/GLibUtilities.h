@@ -17,8 +17,8 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef GlibUtilities_h
-#define GlibUtilities_h
+#ifndef GLibUtilities_h
+#define GLibUtilities_h
 
 #include <wtf/Assertions.h>
 #include <wtf/text/CString.h>

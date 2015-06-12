@@ -38,7 +38,7 @@
 #include "VideoSinkGStreamer.h"
 #include "WebKitWebSourceGStreamer.h"
 #include <gst/gst.h>
-#include <wtf/gobject/GMutexLocker.h>
+#include <wtf/glib/GMutexLocker.h>
 #include <wtf/text/CString.h>
 
 #include <gst/audio/streamvolume.h>

@@ -31,7 +31,7 @@
 #include <glib.h>
 
 #if ENABLE(DEVELOPER_MODE)
-#include <wtf/gobject/GlibUtilities.h>
+#include <wtf/glib/GLibUtilities.h>
 #endif
 
 using namespace WebCore;

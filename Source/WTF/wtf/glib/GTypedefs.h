@@ -17,8 +17,8 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef GtkTypedefs_h
-#define GtkTypedefs_h
+#ifndef WTF_GTypedefs_h
+#define WTF_GTypedefs_h
 
 /* Vanilla C code does not seem to be able to handle forward-declaration typedefs. */
 #ifdef  __cplusplus
@@ -107,4 +107,4 @@ typedef struct _GtkStyleContext GtkStyleContext;
 #endif
 
 #endif
-#endif /* GtkTypedefs_h */
+#endif // WTF_GTypedefs_h

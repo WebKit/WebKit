@@ -29,8 +29,8 @@
 #include <WebCore/ErrorsGtk.h>
 #include <WebCore/ResourceResponse.h>
 #include <glib/gi18n-lib.h>
-#include <wtf/gobject/GRefPtr.h>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GUniquePtr.h>
 
 using namespace WebKit;
 using namespace WebCore;

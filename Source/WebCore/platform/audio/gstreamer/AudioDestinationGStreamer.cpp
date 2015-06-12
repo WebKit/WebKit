@@ -29,7 +29,7 @@
 #include "Logging.h"
 #include "WebKitWebAudioSourceGStreamer.h"
 #include <gst/gst.h>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GUniquePtr.h>
 
 namespace WebCore {
 

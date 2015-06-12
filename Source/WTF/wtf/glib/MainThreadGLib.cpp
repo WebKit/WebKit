@@ -30,7 +30,7 @@
 #include "config.h"
 #include "MainThread.h"
 
-#include <wtf/gobject/GMainLoopSource.h>
+#include <wtf/glib/GMainLoopSource.h>
 
 namespace WTF {
 

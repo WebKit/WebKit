@@ -34,7 +34,7 @@
 #include "TextureMapperLayer.h"
 #include <WebCore/GLContext.h>
 #include <WebCore/GraphicsLayerClient.h>
-#include <wtf/gobject/GMainLoopSource.h>
+#include <wtf/glib/GMainLoopSource.h>
 
 namespace WebKit {
 

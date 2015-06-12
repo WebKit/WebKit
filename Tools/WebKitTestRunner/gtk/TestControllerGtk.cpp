@@ -30,8 +30,8 @@
 #include "PlatformWebView.h"
 #include <gtk/gtk.h>
 #include <wtf/Platform.h>
-#include <wtf/gobject/GMainLoopSource.h>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GMainLoopSource.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTR {

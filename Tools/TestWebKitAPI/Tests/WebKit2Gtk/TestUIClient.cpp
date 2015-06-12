@@ -20,7 +20,7 @@
 #include "config.h"
 #include "WebViewTest.h"
 #include <wtf/HashSet.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 #include <wtf/text/StringHash.h>
 
 static const char* kAlertDialogMessage = "WebKitGTK+ alert dialog message";

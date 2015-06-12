@@ -21,7 +21,7 @@
 
 #include "WebKitTestBus.h"
 #include "WebViewTest.h"
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 static const char* webExtensionsUserData = "Web Extensions user data";
 static WebKitTestBus* bus;

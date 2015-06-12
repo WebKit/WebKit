@@ -24,8 +24,8 @@
 #include <glib-object.h>
 #include <webkit2/webkit2.h>
 #include <wtf/HashSet.h>
-#include <wtf/gobject/GRefPtr.h>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 #define MAKE_GLIB_TEST_FIXTURE(ClassName) \

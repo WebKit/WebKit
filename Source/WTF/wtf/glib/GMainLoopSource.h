@@ -31,7 +31,7 @@
 #include <functional>
 #include <glib.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 typedef struct _GSocket GSocket;
 

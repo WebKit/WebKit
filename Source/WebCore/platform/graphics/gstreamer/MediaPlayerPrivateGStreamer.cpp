@@ -40,7 +40,7 @@
 #include <limits>
 #include <wtf/HexNumber.h>
 #include <wtf/MediaTime.h>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(VIDEO_TRACK)

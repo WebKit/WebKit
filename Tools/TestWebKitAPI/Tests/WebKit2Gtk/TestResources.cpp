@@ -22,9 +22,9 @@
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
 #include <wtf/Vector.h>
-#include <wtf/gobject/GMainLoopSource.h>
-#include <wtf/gobject/GMutexLocker.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GMainLoopSource.h>
+#include <wtf/glib/GMutexLocker.h>
+#include <wtf/glib/GRefPtr.h>
 
 static WebKitTestServer* kServer;
 

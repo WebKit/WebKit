@@ -27,8 +27,8 @@
 #include <webkit2/webkit-web-extension.h>
 #include <wtf/Deque.h>
 #include <wtf/ProcessID.h>
-#include <wtf/gobject/GRefPtr.h>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 #define WEBKIT_DOM_USE_UNSTABLE_API

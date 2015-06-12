@@ -1,3 +1,86 @@
+2015-06-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GLib] Move files under Source/WTF/wtf/gobject to Source/WTF/wtf/glib
+        https://bugs.webkit.org/show_bug.cgi?id=145799
+
+        Reviewed by Carlos Garcia Campos.
+
+        Update header inclusions for headers that have been moved
+        to Source/WTF/wtf/glib/.
+
+        * NetworkProcess/cache/NetworkCacheFileSystemPosix.h:
+        * NetworkProcess/cache/NetworkCacheIOChannel.h:
+        * NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp:
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * Shared/Downloads/soup/DownloadSoup.cpp:
+        * Shared/Network/CustomProtocols/soup/CustomProtocolManagerImpl.h:
+        * Shared/PrintInfo.h:
+        * Shared/gtk/ArgumentCodersGtk.cpp:
+        * Shared/gtk/ArgumentCodersGtk.h:
+        * Shared/gtk/KeyedDecoder.h:
+        * Shared/gtk/KeyedEncoder.h:
+        * Shared/gtk/ProcessExecutablePathGtk.cpp:
+        * UIProcess/API/gtk/WebKitBackForwardList.cpp:
+        * UIProcess/API/gtk/WebKitBackForwardListItem.cpp:
+        * UIProcess/API/gtk/WebKitColorChooser.h:
+        * UIProcess/API/gtk/WebKitContextMenu.cpp:
+        * UIProcess/API/gtk/WebKitContextMenuItem.cpp:
+        * UIProcess/API/gtk/WebKitCookieManager.cpp:
+        * UIProcess/API/gtk/WebKitDownload.cpp:
+        * UIProcess/API/gtk/WebKitDownloadClient.cpp:
+        * UIProcess/API/gtk/WebKitFaviconDatabase.cpp:
+        * UIProcess/API/gtk/WebKitFileChooserRequest.cpp:
+        * UIProcess/API/gtk/WebKitFindController.cpp:
+        * UIProcess/API/gtk/WebKitFormClient.cpp:
+        * UIProcess/API/gtk/WebKitFormSubmissionRequest.cpp:
+        * UIProcess/API/gtk/WebKitInjectedBundleClient.cpp:
+        * UIProcess/API/gtk/WebKitJavascriptResult.cpp:
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
+        * UIProcess/API/gtk/WebKitMimeInfo.cpp:
+        * UIProcess/API/gtk/WebKitNavigationAction.cpp:
+        * UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:
+        * UIProcess/API/gtk/WebKitPolicyClient.cpp:
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        * UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+        * UIProcess/API/gtk/WebKitURISchemeRequest.cpp:
+        * UIProcess/API/gtk/WebKitUserContentManager.cpp:
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        * UIProcess/API/gtk/WebKitWebInspector.cpp:
+        * UIProcess/API/gtk/WebKitWebResource.cpp:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        * UIProcess/InspectorServer/WebSocketServer.h:
+        * UIProcess/InspectorServer/gtk/WebInspectorServerGtk.cpp:
+        * UIProcess/InspectorServer/soup/WebSocketServerSoup.cpp:
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        * UIProcess/Plugins/gtk/PluginInfoCache.h:
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp:
+        * UIProcess/gtk/DragAndDropHandler.cpp:
+        * UIProcess/gtk/GestureController.h:
+        * UIProcess/gtk/InputMethodFilter.cpp:
+        * UIProcess/gtk/InputMethodFilter.h:
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        * UIProcess/gtk/WebPopupMenuProxyGtk.cpp:
+        * UIProcess/gtk/WebPopupMenuProxyGtk.h:
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        * WebProcess/Cookies/soup/WebCookieManagerSoup.cpp:
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.cpp:
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebHitTestResult.cpp:
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.h:
+        * WebProcess/WebPage/gtk/PrinterListGtk.h:
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.h:
+        * WebProcess/gtk/WebGtkExtensionManager.h:
+        * WebProcess/soup/WebKitSoupRequestInputStream.cpp:
+        * WebProcess/soup/WebProcessSoup.cpp:
+        * WebProcess/soup/WebSoupRequestManager.h:
+
 2015-06-12  Antti Koivisto  <antti@apple.com>
 
         Network Cache: Use SHA1 for key hash

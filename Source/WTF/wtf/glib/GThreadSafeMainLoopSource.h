@@ -28,7 +28,7 @@
 
 #if USE(GLIB)
 
-#include <wtf/gobject/GMainLoopSource.h>
+#include <wtf/glib/GMainLoopSource.h>
 
 typedef struct _GRecMutex GRecMutex;
 

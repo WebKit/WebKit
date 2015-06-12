@@ -30,9 +30,9 @@
 #include <gst/audio/audio-info.h>
 #include <gst/gst.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/gobject/GRefPtr.h>
-#include <wtf/gobject/GThreadSafeMainLoopSource.h>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GThreadSafeMainLoopSource.h>
+#include <wtf/glib/GUniquePtr.h>
 
 namespace WebCore {
 

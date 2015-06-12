@@ -30,7 +30,7 @@
 #include "NetworkingContext.h"
 #include "PlatformCookieJar.h"
 #include "SoupNetworkSession.h"
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {

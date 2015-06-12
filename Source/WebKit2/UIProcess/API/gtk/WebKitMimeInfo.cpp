@@ -21,7 +21,7 @@
 #include "WebKitMimeInfo.h"
 
 #include "WebKitMimeInfoPrivate.h"
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
 
 struct _WebKitMimeInfo {

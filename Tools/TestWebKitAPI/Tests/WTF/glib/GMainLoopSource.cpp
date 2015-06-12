@@ -19,7 +19,7 @@
 
 #include "config.h"
 
-#include <wtf/gobject/GThreadSafeMainLoopSource.h>
+#include <wtf/glib/GThreadSafeMainLoopSource.h>
 #include <stdio.h>
 
 namespace TestWebKitAPI {

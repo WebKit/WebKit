@@ -24,7 +24,7 @@
 #include "WebKitDOMNodeFilter.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 namespace WebCore {
 class Node;

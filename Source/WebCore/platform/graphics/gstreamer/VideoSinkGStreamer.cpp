@@ -35,8 +35,8 @@
 #include <glib.h>
 #include <gst/gst.h>
 #include <gst/video/gstvideometa.h>
-#include <wtf/gobject/GMutexLocker.h>
-#include <wtf/gobject/GThreadSafeMainLoopSource.h>
+#include <wtf/glib/GMutexLocker.h>
+#include <wtf/glib/GThreadSafeMainLoopSource.h>
 
 using namespace WebCore;
 

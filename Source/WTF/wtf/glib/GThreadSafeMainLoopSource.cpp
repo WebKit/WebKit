@@ -29,7 +29,7 @@
 #if USE(GLIB)
 
 #include <gio/gio.h>
-#include <wtf/gobject/GMutexLocker.h>
+#include <wtf/glib/GMutexLocker.h>
 
 namespace WTF {
 

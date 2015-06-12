@@ -1,3 +1,101 @@
+2015-06-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GLib] Move files under Source/WTF/wtf/gobject to Source/WTF/wtf/glib
+        https://bugs.webkit.org/show_bug.cgi?id=145799
+
+        Reviewed by Carlos Garcia Campos.
+
+        Update header inclusions for headers that have been moved
+        to Source/WTF/wtf/glib/.
+
+        Also move the unit tests under TestWebKitAPI/Tests/WTF/gobject/
+        to TestWebKitAPI/Tests/WTF/glib/ and update the build rules.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/Tests/WTF/glib/GMainLoopSource.cpp: Renamed from Tools/TestWebKitAPI/Tests/WTF/gobject/GMainLoopSource.cpp.
+        (TestWebKitAPI::GMainLoopSourceTest::GMainLoopSourceTest):
+        (TestWebKitAPI::GMainLoopSourceTest::~GMainLoopSourceTest):
+        (TestWebKitAPI::GMainLoopSourceTest::runLoop):
+        (TestWebKitAPI::GMainLoopSourceTest::delayedFinish):
+        (TestWebKitAPI::GMainLoopSourceTest::finish):
+        (TestWebKitAPI::GMainLoopSourceTest::source):
+        (TestWebKitAPI::basicRescheduling):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::reentrantRescheduling):
+        (TestWebKitAPI::cancelRepeatingSourceDuringDispatch):
+        (TestWebKitAPI::basicDestroyCallbacks):
+        (TestWebKitAPI::destroyCallbacksAfterCancellingDuringDispatch):
+        (TestWebKitAPI::destroyCallbacksAfterReschedulingDuringDispatch):
+        * TestWebKitAPI/Tests/WTF/glib/GUniquePtr.cpp: Renamed from Tools/TestWebKitAPI/Tests/WTF/gobject/GUniquePtr.cpp.
+        (log):
+        (takeLogStr):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::returnOutChar):
+        * TestWebKitAPI/Tests/WTF/glib/WorkQueueGLib.cpp:
+        * TestWebKitAPI/Tests/WTF/gobject/GMainLoopSource.cpp:
+        (TestWebKitAPI::GMainLoopSourceTest::GMainLoopSourceTest): Deleted.
+        (TestWebKitAPI::GMainLoopSourceTest::~GMainLoopSourceTest): Deleted.
+        (TestWebKitAPI::GMainLoopSourceTest::runLoop): Deleted.
+        (TestWebKitAPI::GMainLoopSourceTest::delayedFinish): Deleted.
+        (TestWebKitAPI::GMainLoopSourceTest::finish): Deleted.
+        (TestWebKitAPI::GMainLoopSourceTest::source): Deleted.
+        (TestWebKitAPI::basicRescheduling): Deleted.
+        (TestWebKitAPI::TEST): Deleted.
+        (TestWebKitAPI::reentrantRescheduling): Deleted.
+        (TestWebKitAPI::cancelRepeatingSourceDuringDispatch): Deleted.
+        (TestWebKitAPI::basicDestroyCallbacks): Deleted.
+        (TestWebKitAPI::destroyCallbacksAfterCancellingDuringDispatch): Deleted.
+        (TestWebKitAPI::destroyCallbacksAfterReschedulingDuringDispatch): Deleted.
+        * TestWebKitAPI/Tests/WTF/gobject/GUniquePtr.cpp:
+        (log): Deleted.
+        (takeLogStr): Deleted.
+        (TestWebKitAPI::TEST): Deleted.
+        (TestWebKitAPI::returnOutChar): Deleted.
+        * TestWebKitAPI/Tests/WebKit2/gtk/InputMethodFilter.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/DOMNodeFilterTest.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/DOMNodeTest.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/DOMXPathNSResolverTest.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestAuthentication.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestContextMenu.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestDownloads.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestInspector.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestInspectorServer.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestPrinting.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestResources.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestUIClient.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebExtensions.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitAccessibility.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitFaviconDatabase.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitFindController.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitPolicyClient.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitSettings.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitUserContentManager.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebContext.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebView.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebViewEditor.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebExtensionTest.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebProcessTest.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebProcessTest.h:
+        * TestWebKitAPI/gtk/PlatformUtilitiesGtk.cpp:
+        * TestWebKitAPI/gtk/PlatformWebViewGtk.cpp:
+        * TestWebKitAPI/gtk/WebKit2Gtk/TestMain.h:
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebKitTestBus.cpp:
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebKitTestBus.h:
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebKitTestServer.cpp:
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebKitTestServer.h:
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityControllerAtk.cpp:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.cpp:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.h:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        * WebKitTestRunner/InjectedBundle/gtk/ActivateFontsGtk.cpp:
+        * WebKitTestRunner/InjectedBundle/gtk/InjectedBundleUtilities.cpp:
+        * WebKitTestRunner/InjectedBundle/gtk/TestRunnerGtk.cpp:
+        * WebKitTestRunner/PlatformGTK.cmake:
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+
 2015-06-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Fix deprecated declarations warnings related to WK2 versioned structs

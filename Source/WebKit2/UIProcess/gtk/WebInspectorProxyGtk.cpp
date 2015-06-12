@@ -37,7 +37,7 @@
 #include <WebCore/NotImplemented.h>
 #include <glib/gi18n-lib.h>
 #include <gtk/gtk.h>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 

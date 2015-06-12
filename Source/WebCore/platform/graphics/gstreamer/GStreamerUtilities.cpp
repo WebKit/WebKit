@@ -28,7 +28,7 @@
 #include <gst/gst.h>
 #include <gst/video/video-info.h>
 #include <wtf/MathExtras.h>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GUniquePtr.h>
 
 #if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
 #define GST_USE_UNSTABLE_API

@@ -29,7 +29,7 @@
 #include "WebKitWebPagePrivate.h"
 #include <WebCore/DNS.h>
 #include <wtf/HashMap.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 using namespace WebKit;
 

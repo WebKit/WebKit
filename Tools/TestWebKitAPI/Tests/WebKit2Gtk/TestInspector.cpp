@@ -21,7 +21,7 @@
 
 #include "WebViewTest.h"
 #include <wtf/Vector.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 class InspectorTest: public WebViewTest {
 public:

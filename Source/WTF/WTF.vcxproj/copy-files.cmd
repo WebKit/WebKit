@@ -13,7 +13,7 @@ for %%d in (
     wtf
     wtf\cf
     wtf\dtoa
-    wtf\gobject
+    wtf\glib
     wtf\text
     wtf\threads
     wtf\unicode

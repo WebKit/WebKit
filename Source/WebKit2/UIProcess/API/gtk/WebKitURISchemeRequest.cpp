@@ -29,7 +29,7 @@
 #include <WebCore/GUniquePtrSoup.h>
 #include <WebCore/ResourceError.h>
 #include <libsoup/soup.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
 
 using namespace WebKit;

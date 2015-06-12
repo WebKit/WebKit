@@ -59,7 +59,7 @@
 #endif
 #include <wtf/CurrentTime.h>
 #include <wtf/SHA1.h>
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 

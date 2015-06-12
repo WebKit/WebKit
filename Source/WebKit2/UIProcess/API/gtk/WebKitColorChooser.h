@@ -22,7 +22,7 @@
 
 #include "WebColorPickerGtk.h"
 #include "WebKitPrivate.h"
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 typedef struct _WebKitColorChooserRequest WebKitColorChooserRequest;
 

@@ -20,7 +20,7 @@
 #include "config.h"
 #include "WebKitTestBus.h"
 
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/WTFString.h>
 
 WebKitTestBus::WebKitTestBus()

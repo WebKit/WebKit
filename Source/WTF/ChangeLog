@@ -1,3 +1,203 @@
+2015-06-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GLib] Move files under Source/WTF/wtf/gobject to Source/WTF/wtf/glib
+        https://bugs.webkit.org/show_bug.cgi?id=145799
+
+        Reviewed by Carlos Garcia Campos.
+
+        Move the GLib-specific files to the Source/WTF/wtf/glib/ directory.
+        'gobject' wasn't the most appropriate name for the directory since
+        GObject is a submodule of GLib, but a lot of the code there didn't
+        have much to do with GObject specifically.
+
+        Build rules for the moved files are also updated.
+
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * wtf/Platform.h:
+        * wtf/PlatformEfl.cmake:
+        * wtf/PlatformGTK.cmake:
+        * wtf/RunLoop.h:
+        * wtf/WorkQueue.h:
+        * wtf/glib/GLibUtilities.cpp: Renamed from Source/WTF/wtf/gobject/GlibUtilities.cpp.
+        (getCurrentExecutablePath):
+        * wtf/glib/GLibUtilities.h: Renamed from Source/WTF/wtf/gobject/GlibUtilities.h.
+        * wtf/glib/GMainLoopSource.cpp: Renamed from Source/WTF/wtf/gobject/GMainLoopSource.cpp.
+        (WTF::GMainLoopSource::create):
+        (WTF::GMainLoopSource::GMainLoopSource):
+        (WTF::GMainLoopSource::~GMainLoopSource):
+        (WTF::GMainLoopSource::isScheduled):
+        (WTF::GMainLoopSource::isActive):
+        (WTF::GMainLoopSource::cancel):
+        (WTF::GMainLoopSource::scheduleIdleSource):
+        (WTF::GMainLoopSource::schedule):
+        (WTF::GMainLoopSource::scheduleTimeoutSource):
+        (WTF::GMainLoopSource::scheduleAfterDelay):
+        (WTF::createMicrosecondsTimeoutSource):
+        (WTF::GMainLoopSource::scheduleAndDeleteOnDestroy):
+        (WTF::GMainLoopSource::scheduleAfterDelayAndDeleteOnDestroy):
+        (WTF::GMainLoopSource::prepareVoidCallback):
+        (WTF::GMainLoopSource::finishVoidCallback):
+        (WTF::GMainLoopSource::voidCallback):
+        (WTF::GMainLoopSource::prepareBoolCallback):
+        (WTF::GMainLoopSource::finishBoolCallback):
+        (WTF::GMainLoopSource::boolCallback):
+        (WTF::GMainLoopSource::socketCallback):
+        (WTF::GMainLoopSource::voidSourceCallback):
+        (WTF::GMainLoopSource::boolSourceCallback):
+        (WTF::GMainLoopSource::socketSourceCallback):
+        (WTF::GMainLoopSource::Context::destroySource):
+        * wtf/glib/GMainLoopSource.h: Renamed from Source/WTF/wtf/gobject/GMainLoopSource.h.
+        (WTF::GMainLoopSource::Context::operator=):
+        * wtf/glib/GMutexLocker.h: Renamed from Source/WTF/wtf/gobject/GMutexLocker.h.
+        (WTF::MutexWrapper<GMutex>::lock):
+        (WTF::MutexWrapper<GMutex>::unlock):
+        (WTF::MutexWrapper<GRecMutex>::lock):
+        (WTF::MutexWrapper<GRecMutex>::unlock):
+        (WTF::GMutexLocker::GMutexLocker):
+        (WTF::GMutexLocker::~GMutexLocker):
+        (WTF::GMutexLocker::lock):
+        (WTF::GMutexLocker::unlock):
+        * wtf/glib/GRefPtr.cpp: Renamed from Source/WTF/wtf/gobject/GRefPtr.cpp.
+        (WTF::refGPtr):
+        (WTF::derefGPtr):
+        * wtf/glib/GRefPtr.h: Renamed from Source/WTF/wtf/gobject/GRefPtr.h.
+        (WTF::GRefPtr::GRefPtr):
+        (WTF::GRefPtr::~GRefPtr):
+        (WTF::GRefPtr::clear):
+        (WTF::GRefPtr::outPtr):
+        (WTF::GRefPtr::isHashTableDeletedValue):
+        (WTF::GRefPtr::get):
+        (WTF::GRefPtr::operator*):
+        (WTF::GRefPtr::operator->):
+        (WTF::GRefPtr::operator!):
+        (WTF::GRefPtr::operator UnspecifiedBoolType):
+        (WTF::GRefPtr::hashTableDeletedValue):
+        (WTF::=):
+        (WTF::GRefPtr<T>::swap):
+        (WTF::swap):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::static_pointer_cast):
+        (WTF::const_pointer_cast):
+        (WTF::adoptGRef):
+        (WTF::refGPtr):
+        (WTF::derefGPtr):
+        * wtf/glib/GThreadSafeMainLoopSource.cpp: Renamed from Source/WTF/wtf/gobject/GThreadSafeMainLoopSource.cpp.
+        (WTF::GThreadSafeMainLoopSource::GThreadSafeMainLoopSource):
+        (WTF::GThreadSafeMainLoopSource::~GThreadSafeMainLoopSource):
+        (WTF::GThreadSafeMainLoopSource::cancel):
+        (WTF::GThreadSafeMainLoopSource::schedule):
+        (WTF::GThreadSafeMainLoopSource::scheduleAfterDelay):
+        (WTF::GThreadSafeMainLoopSource::prepareVoidCallback):
+        (WTF::GThreadSafeMainLoopSource::finishVoidCallback):
+        (WTF::GThreadSafeMainLoopSource::voidCallback):
+        (WTF::GThreadSafeMainLoopSource::prepareBoolCallback):
+        (WTF::GThreadSafeMainLoopSource::finishBoolCallback):
+        (WTF::GThreadSafeMainLoopSource::boolCallback):
+        * wtf/glib/GThreadSafeMainLoopSource.h: Renamed from Source/WTF/wtf/gobject/GThreadSafeMainLoopSource.h.
+        * wtf/glib/GTypedefs.h: Renamed from Source/WTF/wtf/gobject/GTypedefs.h.
+        * wtf/glib/GUniquePtr.h: Renamed from Source/WTF/wtf/gobject/GUniquePtr.h.
+        (WTF::GPtrDeleter::operator()):
+        (WTF::GUniqueOutPtr::GUniqueOutPtr):
+        (WTF::GUniqueOutPtr::~GUniqueOutPtr):
+        (WTF::GUniqueOutPtr::outPtr):
+        (WTF::GUniqueOutPtr::release):
+        (WTF::GUniqueOutPtr::operator*):
+        (WTF::GUniqueOutPtr::operator->):
+        (WTF::GUniqueOutPtr::get):
+        (WTF::GUniqueOutPtr::operator!):
+        (WTF::GUniqueOutPtr::operator UnspecifiedBoolType):
+        (WTF::GUniqueOutPtr::reset):
+        * wtf/glib/MainThreadGLib.cpp:
+        * wtf/gobject/GMainLoopSource.cpp:
+        (WTF::GMainLoopSource::create): Deleted.
+        (WTF::GMainLoopSource::GMainLoopSource): Deleted.
+        (WTF::GMainLoopSource::~GMainLoopSource): Deleted.
+        (WTF::GMainLoopSource::isScheduled): Deleted.
+        (WTF::GMainLoopSource::isActive): Deleted.
+        (WTF::GMainLoopSource::cancel): Deleted.
+        (WTF::GMainLoopSource::scheduleIdleSource): Deleted.
+        (WTF::GMainLoopSource::schedule): Deleted.
+        (WTF::GMainLoopSource::scheduleTimeoutSource): Deleted.
+        (WTF::GMainLoopSource::scheduleAfterDelay): Deleted.
+        (WTF::createMicrosecondsTimeoutSource): Deleted.
+        (WTF::GMainLoopSource::scheduleAndDeleteOnDestroy): Deleted.
+        (WTF::GMainLoopSource::scheduleAfterDelayAndDeleteOnDestroy): Deleted.
+        (WTF::GMainLoopSource::prepareVoidCallback): Deleted.
+        (WTF::GMainLoopSource::finishVoidCallback): Deleted.
+        (WTF::GMainLoopSource::voidCallback): Deleted.
+        (WTF::GMainLoopSource::prepareBoolCallback): Deleted.
+        (WTF::GMainLoopSource::finishBoolCallback): Deleted.
+        (WTF::GMainLoopSource::boolCallback): Deleted.
+        (WTF::GMainLoopSource::socketCallback): Deleted.
+        (WTF::GMainLoopSource::voidSourceCallback): Deleted.
+        (WTF::GMainLoopSource::boolSourceCallback): Deleted.
+        (WTF::GMainLoopSource::socketSourceCallback): Deleted.
+        (WTF::GMainLoopSource::Context::destroySource): Deleted.
+        * wtf/gobject/GMainLoopSource.h:
+        (WTF::GMainLoopSource::Context::operator=): Deleted.
+        * wtf/gobject/GMutexLocker.h:
+        (WTF::MutexWrapper<GMutex>::lock): Deleted.
+        (WTF::MutexWrapper<GMutex>::unlock): Deleted.
+        (WTF::MutexWrapper<GRecMutex>::lock): Deleted.
+        (WTF::MutexWrapper<GRecMutex>::unlock): Deleted.
+        (WTF::GMutexLocker::GMutexLocker): Deleted.
+        (WTF::GMutexLocker::~GMutexLocker): Deleted.
+        (WTF::GMutexLocker::lock): Deleted.
+        (WTF::GMutexLocker::unlock): Deleted.
+        * wtf/gobject/GRefPtr.cpp:
+        (WTF::refGPtr): Deleted.
+        (WTF::derefGPtr): Deleted.
+        * wtf/gobject/GRefPtr.h:
+        (WTF::GRefPtr::GRefPtr): Deleted.
+        (WTF::GRefPtr::~GRefPtr): Deleted.
+        (WTF::GRefPtr::clear): Deleted.
+        (WTF::GRefPtr::outPtr): Deleted.
+        (WTF::GRefPtr::isHashTableDeletedValue): Deleted.
+        (WTF::GRefPtr::get): Deleted.
+        (WTF::GRefPtr::operator*): Deleted.
+        (WTF::GRefPtr::operator->): Deleted.
+        (WTF::GRefPtr::operator!): Deleted.
+        (WTF::GRefPtr::operator UnspecifiedBoolType): Deleted.
+        (WTF::GRefPtr::hashTableDeletedValue): Deleted.
+        (WTF::=): Deleted.
+        (WTF::GRefPtr<T>::swap): Deleted.
+        (WTF::swap): Deleted.
+        (WTF::operator==): Deleted.
+        (WTF::operator!=): Deleted.
+        (WTF::static_pointer_cast): Deleted.
+        (WTF::const_pointer_cast): Deleted.
+        (WTF::adoptGRef): Deleted.
+        (WTF::refGPtr): Deleted.
+        (WTF::derefGPtr): Deleted.
+        * wtf/gobject/GThreadSafeMainLoopSource.cpp:
+        (WTF::GThreadSafeMainLoopSource::GThreadSafeMainLoopSource): Deleted.
+        (WTF::GThreadSafeMainLoopSource::~GThreadSafeMainLoopSource): Deleted.
+        (WTF::GThreadSafeMainLoopSource::cancel): Deleted.
+        (WTF::GThreadSafeMainLoopSource::schedule): Deleted.
+        (WTF::GThreadSafeMainLoopSource::scheduleAfterDelay): Deleted.
+        (WTF::GThreadSafeMainLoopSource::prepareVoidCallback): Deleted.
+        (WTF::GThreadSafeMainLoopSource::finishVoidCallback): Deleted.
+        (WTF::GThreadSafeMainLoopSource::voidCallback): Deleted.
+        (WTF::GThreadSafeMainLoopSource::prepareBoolCallback): Deleted.
+        (WTF::GThreadSafeMainLoopSource::finishBoolCallback): Deleted.
+        (WTF::GThreadSafeMainLoopSource::boolCallback): Deleted.
+        * wtf/gobject/GUniquePtr.h:
+        (WTF::GPtrDeleter::operator()): Deleted.
+        (WTF::GUniqueOutPtr::GUniqueOutPtr): Deleted.
+        (WTF::GUniqueOutPtr::~GUniqueOutPtr): Deleted.
+        (WTF::GUniqueOutPtr::outPtr): Deleted.
+        (WTF::GUniqueOutPtr::release): Deleted.
+        (WTF::GUniqueOutPtr::operator*): Deleted.
+        (WTF::GUniqueOutPtr::operator->): Deleted.
+        (WTF::GUniqueOutPtr::get): Deleted.
+        (WTF::GUniqueOutPtr::operator!): Deleted.
+        (WTF::GUniqueOutPtr::operator UnspecifiedBoolType): Deleted.
+        (WTF::GUniqueOutPtr::reset): Deleted.
+        * wtf/gobject/GlibUtilities.cpp:
+        (getCurrentExecutablePath): Deleted.
+
 2015-06-10  Basile Clement  <basile_clement@apple.com>
 
         Unreviewed, fix an typo in unused template code.

@@ -21,7 +21,7 @@
 #ifndef GRefPtrGtk_h
 #define GRefPtrGtk_h
 
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 typedef struct _SecretValue SecretValue;
 

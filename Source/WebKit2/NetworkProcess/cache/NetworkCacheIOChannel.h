@@ -35,7 +35,7 @@
 #include <wtf/text/WTFString.h>
 
 #if USE(SOUP)
-#include <wtf/gobject/GRefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 #endif
 
 namespace WebKit {

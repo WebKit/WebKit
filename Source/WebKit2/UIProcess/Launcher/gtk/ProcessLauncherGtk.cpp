@@ -38,10 +38,10 @@
 #include <glib.h>
 #include <locale.h>
 #include <wtf/RunLoop.h>
+#include <wtf/glib/GLibUtilities.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
-#include <wtf/gobject/GUniquePtr.h>
-#include <wtf/gobject/GlibUtilities.h>
 
 using namespace WebCore;
 

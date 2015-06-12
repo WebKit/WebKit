@@ -30,7 +30,7 @@
 #include <WebKit/WKBundlePagePrivate.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 

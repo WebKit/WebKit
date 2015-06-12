@@ -22,7 +22,7 @@
 #include "WebProcessTest.h"
 #include <gio/gio.h>
 #include <webkit2/webkit-web-extension.h>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GUniquePtr.h>
 
 class WebKitDOMNodeTest : public WebProcessTest {
 public:

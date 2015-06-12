@@ -24,8 +24,8 @@
 #include <cstdarg>
 #include <gtk/gtk.h>
 #include <webkit2/webkit2.h>
-#include <wtf/gobject/GRefPtr.h>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GUniquePtr.h>
 
 class UserContentManagerTest : public WebViewTest {
 public:

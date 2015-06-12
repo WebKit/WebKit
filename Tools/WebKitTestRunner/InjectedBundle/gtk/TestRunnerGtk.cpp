@@ -30,7 +30,7 @@
 #include "InjectedBundle.h"
 #include "InjectedBundleUtilities.h"
 #include <glib.h>
-#include <wtf/gobject/GUniquePtr.h>
+#include <wtf/glib/GUniquePtr.h>
 
 namespace WTR {
 
