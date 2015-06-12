@@ -59,6 +59,11 @@ void promoteHeapAccess(Node* node, const WriteFunctor& write, const ReadFunctor&
         }
         break;
     }
+
+    case GetClosureVar:
+        if (node->child1()->isPhantomActivationAllocation())
+            read(PromotedHeapLocation(ClosureVarPLoc, node->child1(), node->scopeOffset().offset()));
+        break;
         
     case PutHint: {
         ASSERT(node->child1()->isPhantomAllocation());

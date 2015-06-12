@@ -900,6 +900,13 @@ private:
             break;
         }
 
+        case GetClosureVar: {
+            Node* target = node->child1().node();
+            if (!target->isActivationAllocation())
+                escape(target);
+            break;
+        }
+
         case PutClosureVar: {
             Node* target = node->child1().node();
             if (!target->isActivationAllocation())

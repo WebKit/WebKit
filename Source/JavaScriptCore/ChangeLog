@@ -1,3 +1,24 @@
+2015-06-12  Basile Clement  <basile_clement@apple.com>
+
+        DFG Object Allocation Sinking should not consider GetClosureVar as escapes
+        https://bugs.webkit.org/show_bug.cgi?id=145904
+
+        Reviewed by Filip Pizlo.
+
+        The object allocation sinking phase is currently able to sink
+        CreateActivation nodes, but will consider any GetClosureVar node as
+        escaping.
+
+        This is not problematic in general as most of the GetClosureVar nodes
+        we would have been able to sink over will have been eliminated by CSE
+        anyway. Still, this is an oversight that we should fix since the
+        machinery is already in place.
+
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        (JSC::DFG::ObjectAllocationSinkingPhase::handleNode):
+        * dfg/DFGPromoteHeapAccess.h:
+        (JSC::DFG::promoteHeapAccess):
+
 2015-06-11  Mark Lam  <mark.lam@apple.com>
 
         WebCore::reportException() needs to be able to accept a raw thrown value in addition to Exception objects.
