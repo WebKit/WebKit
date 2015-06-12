@@ -5961,34 +5961,15 @@ bool CSSParser::parseDashboardRegions(CSSPropertyID propId, bool important)
 #endif /* ENABLE(DASHBOARD_SUPPORT) */
 
 #if ENABLE(CSS_GRID_LAYOUT)
-static Vector<String> parseGridTemplateAreasColumnNames(const String& gridRowNames)
+static bool containsOnlyDots(const String& string)
 {
-    ASSERT(!gridRowNames.isEmpty());
-    Vector<String> columnNames;
-    // Using StringImpl to avoid checks and indirection in every call to String::operator[].
-    StringImpl& text = *gridRowNames.impl();
-    unsigned length = text.length();
-    unsigned index = 0;
-    while (index < length) {
-        if (text[index] != ' ' && text[index] != '.') {
-            unsigned gridAreaStart = index;
-            while (text[index] != ' ' && text[index] != '.' && index < length)
-                index++;
-            columnNames.append(text.substring(gridAreaStart, index - gridAreaStart));
-            continue;
-        }
-
-        if (text[index] == '.') {
-            while (text[index] == '.' && index < length)
-                index++;
-            columnNames.append(".");
-            continue;
-        }
-
-        index++;
+    ASSERT(!string.isEmpty());
+    StringImpl& text = *string.impl();
+    for (unsigned i = 0; i < text.length(); ++i) {
+        if (text[i] != '.')
+            return false;
     }
-
-    return columnNames;
+    return true;
 }
 
 bool CSSParser::parseGridTemplateAreasRow(NamedGridAreaMap& gridAreaMap, const unsigned rowCount, unsigned& columnCount)
@@ -6001,7 +5982,9 @@ bool CSSParser::parseGridTemplateAreasRow(NamedGridAreaMap& gridAreaMap, const u
     if (gridRowNames.containsOnlyWhitespace())
         return false;
 
-    Vector<String> columnNames = parseGridTemplateAreasColumnNames(gridRowNames);
+    Vector<String> columnNames;
+    gridRowNames.split(' ', columnNames);
+
     if (!columnCount) {
         columnCount = columnNames.size();
         ASSERT(columnCount);
@@ -6014,7 +5997,7 @@ bool CSSParser::parseGridTemplateAreasRow(NamedGridAreaMap& gridAreaMap, const u
         const String& gridAreaName = columnNames[currentColumn];
 
         // Unamed areas are always valid (we consider them to be 1x1).
-        if (gridAreaName == ".")
+        if (containsOnlyDots(gridAreaName))
             continue;
 
         // We handle several grid areas with the same name at once to simplify the validation code.

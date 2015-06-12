@@ -75,39 +75,6 @@
                                  ". footer ......";
 }
 
-#gridWithDotsNoSpaceTwoColumns {
-    -webkit-grid-template-areas: "...A"
-                                 ".A"
-                                 "B.."
-                                 "B.";
-}
-
-#gridWithDotsNoSpaceThreeColumns {
-    -webkit-grid-template-areas: "...A.."
-                                 ".A."
-                                 "B..C"
-                                 "B.C";
-}
-
-#gridWithDotsNoSpaceFourColumns {
-    -webkit-grid-template-areas: "...A..B"
-                                 ".A.B"
-                                 "..A.B"
-                                 ".A...B"
-                                 "C....D....."
-                                 "C.D."
-                                 "C...D."
-                                 "C.D....";
-}
-
-#gridWithDotsNoSpaceComplex {
-    -webkit-grid-template-areas: ".title...nav. ..main test"
-                                 "... title.nav... .main test"
-                                 "..title .. nav . .. main test"
-                                 ". title .nav... . main test";
-                                 ".... title ...nav ... ...main test";
-}
-
 #gridWithHorizontalRectangle {
     -webkit-grid-template-areas: "a a a"
                                  "a a a";
@@ -137,10 +104,6 @@
 <div class="grid" id="gridWithComplexDotAreas"></div>
 <div class="grid" id="gridWithComplexDotsAreas"></div>
 <div class="grid" id="gridWithMixedDotAndDotsAreas"></div>
-<div class="grid" id="gridWithDotsNoSpaceTwoColumns"></div>
-<div class="grid" id="gridWithDotsNoSpaceThreeColumns"></div>
-<div class="grid" id="gridWithDotsNoSpaceFourColumns"></div>
-<div class="grid" id="gridWithDotsNoSpaceComplex"></div>
 <div class="grid" id="gridWithHorizontalRectangle"></div>
 <div class="grid" id="gridWithVerticalRectangle"></div>
 <script>
@@ -170,10 +133,6 @@
     testGridTemplateAreas("gridWithComplexDotAreas", '". header header ." ". . . ." "nav main main aside" "nav main main aside" ". . . aside" ". footer footer aside"');
     testGridTemplateAreas("gridWithComplexDotsAreas", '". header header ." ". . . ." "nav main main aside" "nav main main aside" ". . . aside" ". footer footer aside"');
     testGridTemplateAreas("gridWithMixedDotAndDotsAreas", '". title ." ". main main" "nav . aside" ". footer ."');
-    testGridTemplateAreas("gridWithDotsNoSpaceTwoColumns", '". A" ". A" "B ." "B ."');
-    testGridTemplateAreas("gridWithDotsNoSpaceThreeColumns", '". A ." ". A ." "B . C" "B . C"');
-    testGridTemplateAreas("gridWithDotsNoSpaceFourColumns", '". A . B" ". A . B" ". A . B" ". A . B" "C . D ." "C . D ." "C . D ." "C . D ."');
-    testGridTemplateAreas("gridWithDotsNoSpaceComplex", '". title . nav . . main test" ". title . nav . . main test" ". title . nav . . main test" ". title . nav . . main test"');
     testGridTemplateAreas("gridWithHorizontalRectangle", '"a a a" "a a a"');
     testGridTemplateAreas("gridWithVerticalRectangle", '"a a" "a a" "a a"');
 
