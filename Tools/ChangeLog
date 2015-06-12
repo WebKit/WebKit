@@ -1,3 +1,13 @@
+2015-06-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the libusrsctp build with clang
+        https://bugs.webkit.org/show_bug.cgi?id=145128
+
+        Reviewed by Gyuyoung Kim.
+
+        * efl/jhbuild.modules:
+        * gtk/jhbuild.modules:
+
 2015-06-11  Mark Lam  <mark.lam@apple.com>
 
         WebCore::reportException() needs to be able to accept a raw thrown value in addition to Exception objects.
