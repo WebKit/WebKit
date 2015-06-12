@@ -82,7 +82,9 @@ public:
     WebCoreSynchronousLoader(ResourceError& error, ResourceResponse& response, SoupSession* session, Vector<char>& data, StoredCredentials storedCredentials)
         : m_error(error)
         , m_response(response)
+#if !SOUP_CHECK_VERSION(2, 49, 91)
         , m_session(session)
+#endif
         , m_data(data)
         , m_finished(false)
         , m_storedCredentials(storedCredentials)
@@ -97,6 +99,8 @@ public:
 
 #if !SOUP_CHECK_VERSION(2, 49, 91)
         adjustMaxConnections(1);
+#else
+        UNUSED_PARAM(session);
 #endif
     }
 
@@ -186,7 +190,9 @@ public:
 private:
     ResourceError& m_error;
     ResourceResponse& m_response;
+#if !SOUP_CHECK_VERSION(2, 49, 91)
     SoupSession* m_session;
+#endif
     Vector<char>& m_data;
     bool m_finished;
     GRefPtr<GMainLoop> m_mainLoop;
