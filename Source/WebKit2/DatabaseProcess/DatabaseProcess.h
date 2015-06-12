@@ -57,11 +57,6 @@ public:
 
     WorkQueue& queue() { return m_queue.get(); }
 
-    Vector<SecurityOriginData> getIndexedDatabaseOrigins();
-    void deleteIndexedDatabaseEntriesForOrigin(const SecurityOriginData&);
-    void deleteIndexedDatabaseEntriesModifiedBetweenDates(double startDate, double endDate);
-    void deleteAllIndexedDatabaseEntries();
-
     void postDatabaseTask(std::unique_ptr<AsyncTask>);
 
 private:
@@ -89,6 +84,10 @@ private:
     void fetchWebsiteData(WebCore::SessionID, uint64_t websiteDataTypes, uint64_t callbackID);
     void deleteWebsiteData(WebCore::SessionID, uint64_t websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID);
     void deleteWebsiteDataForOrigins(WebCore::SessionID, uint64_t websiteDataTypes, const Vector<SecurityOriginData>& origins, uint64_t callbackID);
+
+    Vector<RefPtr<WebCore::SecurityOrigin>> indexedDatabaseOrigins();
+    void deleteIndexedDatabaseEntriesForOrigins(const Vector<RefPtr<WebCore::SecurityOrigin>>&);
+    void deleteIndexedDatabaseEntriesModifiedSince(std::chrono::system_clock::time_point modifiedSince);
 
     // For execution on work queue thread only
     void performNextDatabaseTask();

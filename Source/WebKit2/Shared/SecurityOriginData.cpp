@@ -48,7 +48,7 @@ SecurityOriginData SecurityOriginData::fromSecurityOrigin(const SecurityOrigin& 
 
 Ref<SecurityOrigin> SecurityOriginData::securityOrigin() const
 {
-    return SecurityOrigin::create(protocol, host, port);
+    return SecurityOrigin::create(protocol.isolatedCopy(), host.isolatedCopy(), port);
 }
 
 void SecurityOriginData::encode(IPC::ArgumentEncoder& encoder) const

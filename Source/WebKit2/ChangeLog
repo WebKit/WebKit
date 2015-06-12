@@ -1,3 +1,41 @@
+2015-06-12  Anders Carlsson  <andersca@apple.com>
+
+        Clean up IndexedDB website data retrieval and removal
+        https://bugs.webkit.org/show_bug.cgi?id=145941
+
+        Reviewed by Andreas Kling.
+
+        - Use SecurityOrigin instead of SecurityOriginData; It's not possible to pass SecurityOriginData
+        safely between threads.
+        
+        - Use std::chrono instead of double for modification times.
+        
+        - Get rid of endTime since it's not used.
+        
+        - Change deleteIndexedDatabaseEntriesForOrigin to deleteIndexedDatabaseEntriesForOrigins and make it take
+        a vector of origins instead of a single one.
+
+        - Get rid of deleteAllIndexedDatabaseEntries.
+
+        - Change SecurityOriginData::securityOrigin to call isolatedCopy on the origin components, since it's common
+        to pass origins to other threads and we want that to be safe.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::fetchWebsiteData):
+        (WebKit::DatabaseProcess::deleteWebsiteData):
+        (WebKit::DatabaseProcess::deleteWebsiteDataForOrigins):
+        (WebKit::DatabaseProcess::indexedDatabaseOrigins):
+        (WebKit::removeAllDatabasesForOriginPath):
+        (WebKit::DatabaseProcess::deleteIndexedDatabaseEntriesForOrigins):
+        (WebKit::DatabaseProcess::deleteIndexedDatabaseEntriesModifiedSince):
+        (WebKit::DatabaseProcess::getIndexedDatabaseOrigins): Deleted.
+        (WebKit::DatabaseProcess::deleteIndexedDatabaseEntriesForOrigin): Deleted.
+        (WebKit::DatabaseProcess::deleteIndexedDatabaseEntriesModifiedBetweenDates): Deleted.
+        (WebKit::DatabaseProcess::deleteAllIndexedDatabaseEntries): Deleted.
+        * DatabaseProcess/DatabaseProcess.h:
+        * Shared/SecurityOriginData.cpp:
+        (WebKit::SecurityOriginData::securityOrigin):
+
 2015-06-12  Antti Koivisto  <antti@apple.com>
 
         Network Cache: Use SHA1 for header checksum
