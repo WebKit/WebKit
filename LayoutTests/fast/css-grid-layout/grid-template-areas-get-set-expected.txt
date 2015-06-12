@@ -18,6 +18,10 @@ PASS getComputedStyle(gridWithDotsCells).getPropertyValue('-webkit-grid-template
 PASS getComputedStyle(gridWithComplexDotAreas).getPropertyValue('-webkit-grid-template-areas') is "\". header header .\" \". . . .\" \"nav main main aside\" \"nav main main aside\" \". . . aside\" \". footer footer aside\""
 PASS getComputedStyle(gridWithComplexDotsAreas).getPropertyValue('-webkit-grid-template-areas') is "\". header header .\" \". . . .\" \"nav main main aside\" \"nav main main aside\" \". . . aside\" \". footer footer aside\""
 PASS getComputedStyle(gridWithMixedDotAndDotsAreas).getPropertyValue('-webkit-grid-template-areas') is "\". title .\" \". main main\" \"nav . aside\" \". footer .\""
+PASS getComputedStyle(gridWithDotsNoSpaceTwoColumns).getPropertyValue('-webkit-grid-template-areas') is "\". A\" \". A\" \"B .\" \"B .\""
+PASS getComputedStyle(gridWithDotsNoSpaceThreeColumns).getPropertyValue('-webkit-grid-template-areas') is "\". A .\" \". A .\" \"B . C\" \"B . C\""
+PASS getComputedStyle(gridWithDotsNoSpaceFourColumns).getPropertyValue('-webkit-grid-template-areas') is "\". A . B\" \". A . B\" \". A . B\" \". A . B\" \"C . D .\" \"C . D .\" \"C . D .\" \"C . D .\""
+PASS getComputedStyle(gridWithDotsNoSpaceComplex).getPropertyValue('-webkit-grid-template-areas') is "\". title . nav . . main test\" \". title . nav . . main test\" \". title . nav . . main test\" \". title . nav . . main test\""
 PASS getComputedStyle(gridWithHorizontalRectangle).getPropertyValue('-webkit-grid-template-areas') is "\"a a a\" \"a a a\""
 PASS getComputedStyle(gridWithVerticalRectangle).getPropertyValue('-webkit-grid-template-areas') is "\"a a\" \"a a\" \"a a\""
 Test grid-template-areas: initial

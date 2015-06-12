@@ -1,3 +1,14 @@
+2015-06-12  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Fix grid-template-areas parsing to avoid spaces
+        https://bugs.webkit.org/show_bug.cgi?id=145860
+
+        Reviewed by Sergio Villar Senin.
+
+        * fast/css-grid-layout/grid-template-areas-get-set-expected.txt:
+        * fast/css-grid-layout/grid-template-areas-get-set.html: Add new test
+        cases.
+
 2015-06-11  Zalan Bujtas  <zalan@apple.com>
 
         Do not crash when the descendant frame tree is destroyed during layout.
