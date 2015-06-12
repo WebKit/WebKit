@@ -37,9 +37,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebContextMenuProxyEfl::WebContextMenuProxyEfl(EwkView* view, WebPageProxy* page)
-    : m_view(view)
-    , m_page(page)
+WebContextMenuProxyEfl::WebContextMenuProxyEfl(EwkView*, WebPageProxy*)
 {
 }
 
