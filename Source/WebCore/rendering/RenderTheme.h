@@ -326,9 +326,6 @@ protected:
     virtual bool paintAttachment(const RenderObject&, const PaintInfo&, const IntRect&);
 #endif
 
-    virtual void adjustWirelessPlaybackIconStyle(StyleResolver&, RenderStyle&, Element*) const;
-    virtual bool paintWirelessPlaybackIcon(const RenderObject&, const PaintInfo&, const IntRect&);
-
     virtual void adjustProgressBarStyle(StyleResolver&, RenderStyle&, Element*) const;
     virtual bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 

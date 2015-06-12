@@ -257,8 +257,6 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
     case AttachmentPart:
         return adjustAttachmentStyle(styleResolver, style, element);
 #endif
-    case WirelessPlaybackIconPart:
-        return adjustWirelessPlaybackIconStyle(styleResolver, style, element);
     default:
         break;
     }
@@ -401,8 +399,6 @@ bool RenderTheme::paint(const RenderObject& o, ControlStates* controlStates, con
     case AttachmentPart:
         return paintAttachment(o, paintInfo, integralSnappedRect);
 #endif
-    case WirelessPlaybackIconPart:
-        return paintWirelessPlaybackIcon(o, paintInfo, integralSnappedRect);
     default:
         break;
     }
@@ -998,15 +994,6 @@ bool RenderTheme::paintAttachment(const RenderObject&, const PaintInfo&, const I
     return false;
 }
 #endif
-
-void RenderTheme::adjustWirelessPlaybackIconStyle(StyleResolver&, RenderStyle&, Element*) const
-{
-}
-
-bool RenderTheme::paintWirelessPlaybackIcon(const RenderObject&, const PaintInfo&, const IntRect&)
-{
-    return false;
-}
 
 #if ENABLE(DATALIST_ELEMENT)
 LayoutUnit RenderTheme::sliderTickSnappingThreshold() const

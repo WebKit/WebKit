@@ -1,3 +1,17 @@
+2015-06-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r185470.
+        https://bugs.webkit.org/show_bug.cgi?id=145902
+
+        Caused ASan violations (Requested by ap on #webkit).
+
+        Reverted changeset:
+
+        "Add an appearance keyword for wireless playback / airplay
+        icon"
+        https://bugs.webkit.org/show_bug.cgi?id=145892
+        http://trac.webkit.org/changeset/185470
+
 2015-06-11  Brady Eidson  <beidson@apple.com>
 
         IndexedDB onupgradeneeded event has incorrect value for oldVersion.

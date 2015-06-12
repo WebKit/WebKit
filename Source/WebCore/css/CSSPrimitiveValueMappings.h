@@ -616,9 +616,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
         m_value.valueID = CSSValueImageControlsButton;
         break;
 #endif
-    case WirelessPlaybackIconPart:
-        m_value.valueID = CSSValueAppleAirplay;
-        break;
     }
 }
 

@@ -2613,15 +2613,6 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
-void RenderThemeMac::adjustWirelessPlaybackIconStyle(StyleResolver&, RenderStyle&, Element*) const
-{
-}
-
-bool RenderThemeMac::paintWirelessPlaybackIcon(const RenderObject&, const PaintInfo&, const IntRect&)
-{
-    return false;
-}
-
 } // namespace WebCore
 
 #endif // !PLATFORM(IOS)

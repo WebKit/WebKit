@@ -173,9 +173,6 @@ protected:
     virtual bool paintAttachment(const RenderObject&, const PaintInfo&, const IntRect&) override;
 #endif
 
-    virtual void adjustWirelessPlaybackIconStyle(StyleResolver&, RenderStyle&, Element*) const override;
-    virtual bool paintWirelessPlaybackIcon(const RenderObject&, const PaintInfo&, const IntRect&) override;
-
 private:
     virtual String fileListNameForWidth(const FileList*, const FontCascade&, int width, bool multipleFilesAllowed) const override;
 
