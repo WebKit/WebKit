@@ -36,7 +36,11 @@ public:
     typedef JSNonFinalObject Base;
     static const unsigned StructureFlags = StructureIsImmortal | Base::StructureFlags;
 
-    static Exception* create(VM&, JSValue thrownValue);
+    enum StackCaptureAction {
+        CaptureStack,
+        DoNotCaptureStack
+    };
+    JS_EXPORT_PRIVATE static Exception* create(VM&, JSValue thrownValue, StackCaptureAction = CaptureStack);
 
     static const bool needsDestruction = true;
     static void destroy(JSCell*);
@@ -52,11 +56,6 @@ public:
         return OBJECT_OFFSETOF(Exception, m_value);
     }
 
-    static Exception* cast(JSValue exceptionAsJSValue)
-    {
-        return jsCast<Exception*>(exceptionAsJSValue.asCell());
-    }
-
     JSValue value() const { return m_value.get(); }
     const RefCountedArray<StackFrame>& stack() const { return m_stack; }
 
@@ -67,7 +66,7 @@ public:
 
 private:
     Exception(VM&);
-    void finishCreation(VM&, JSValue thrownValue);
+    void finishCreation(VM&, JSValue thrownValue, StackCaptureAction);
 
     WriteBarrier<Unknown> m_value;
     RefCountedArray<StackFrame> m_stack;

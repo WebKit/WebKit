@@ -523,7 +523,7 @@ void InjectedBundle::reportException(JSContextRef context, JSValueRef exception)
     if (!toJSDOMWindow(execState->lexicalGlobalObject()))
         return;
 
-    WebCore::reportException(execState, Exception::cast(toJS(execState, exception)));
+    WebCore::reportException(execState, toJS(execState, exception));
 }
 
 void InjectedBundle::didCreatePage(WebPage* page)

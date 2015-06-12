@@ -1,3 +1,71 @@
+2015-06-11  Mark Lam  <mark.lam@apple.com>
+
+        WebCore::reportException() needs to be able to accept a raw thrown value in addition to Exception objects.
+        https://bugs.webkit.org/show_bug.cgi?id=145872
+
+        Reviewed by Michael Saboff.
+
+        In r185259, we changed exception handling code inside the VM to work with
+        Exception objects instead of the thrown JSValue.  The handling code will get the
+        exception stack trace from the Exception object.
+
+        However, there is some code that cannot be updated to pass the Exception object.
+        An example of this are the ObjC API functions.  Those functions are specified to
+        return any thrown exception JSValue in a JSValueRef.  Since these APIs are
+        public, we cannot arbitrarily change them to use the Exception object.
+
+        There are client code that calls these APIs and then passes the returned exception
+        JSValue to WebCore::reportException() to be reported.  WebCore::reportException()
+        previously relied on the VM::exceptionStackTrace() to provide a cache of the
+        stack trace of the last thrown exception.  VM::exceptionStackTrace() no longer
+        exists in the current code.
+
+        To restore this functionality, we will introduce VM::lastException() which
+        caches the last thrown Exception object.  With this, if the exception passed to
+        WebCore::reportException() to be reported isn't an Exception object (which has its
+        own stack trace), reportException() can again use the cached exception stack trace
+        which is available from VM::lastException().
+
+        * heap/Heap.cpp:
+        (JSC::Heap::visitException):
+        - visit VM::m_lastException on GCs.
+
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::lastException):
+        (JSC::ExecState::clearLastException):
+        - convenience functions to get and clear the last exception.
+
+        * runtime/Exception.cpp:
+        (JSC::Exception::create):
+        (JSC::Exception::finishCreation):
+        - add support to create an Exception object without capturing the JS stack trace.
+          This is needed for making an Exception object to wrap a thrown value that does
+          not have a stack trace.
+          Currently, this is only used by WebCore::reportException() when there is no
+          Exception object and no last exception available to provide a stack trace.
+
+        * runtime/Exception.h:
+        (JSC::Exception::cast): Deleted.  No longer needed.
+
+        * runtime/VM.h:
+        (JSC::VM::clearLastException):
+        (JSC::VM::setException):
+        (JSC::VM::lastException):
+        (JSC::VM::addressOfLastException):
+        - Added support for VM::m_lastException.
+          VM::m_lastException serves to cache the exception stack of the most recently
+          thrown exception like VM::exceptionStackTrace() used to before r185259.
+
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::VMEntryScope):
+        - Clear VM::m_lastException when we re-enter the VM.  Exceptions should have been
+          handled before we re-enter the VM anyway.  So, this is a good place to release
+          the cached last exception.
+
+          NOTE: this is also where the old code before r185259 clears the last exception
+          stack trace.  So, we're just restoring the previous behavior here in terms of
+          the lifecycle of the last exception stack.
+
 2015-06-11  Andreas Kling  <akling@apple.com>
 
         jsSubstring() should support creating substrings from substrings.

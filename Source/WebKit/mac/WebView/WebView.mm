@@ -722,8 +722,7 @@ static String webKitBundleVersionString()
     if (!toJSDOMWindow(execState->lexicalGlobalObject()))
         return;
 
-    Exception* vmException = Exception::cast(toJS(execState, exception));
-    reportException(execState, vmException);
+    reportException(execState, toJS(execState, exception));
 }
 
 static void WebKitInitializeApplicationCachePathIfNecessary()

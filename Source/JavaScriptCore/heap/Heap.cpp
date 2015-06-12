@@ -717,10 +717,11 @@ void Heap::visitArgumentBuffers(HeapRootVisitor& visitor)
 void Heap::visitException(HeapRootVisitor& visitor)
 {
     GCPHASE(MarkingException);
-    if (!m_vm->exception())
+    if (!m_vm->exception() && !m_vm->lastException())
         return;
 
     visitor.visit(m_vm->addressOfException());
+    visitor.visit(m_vm->addressOfLastException());
 
     if (Options::logGC() == GCLogging::Verbose)
         dataLog("Exceptions:\n", m_slotVisitor);

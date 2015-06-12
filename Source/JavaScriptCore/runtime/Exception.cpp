@@ -32,10 +32,10 @@ namespace JSC {
 
 const ClassInfo Exception::s_info = { "Exception", &Base::s_info, 0, CREATE_METHOD_TABLE(Exception) };
 
-Exception* Exception::create(VM& vm, JSValue thrownValue)
+Exception* Exception::create(VM& vm, JSValue thrownValue, StackCaptureAction action)
 {
     Exception* result = new (NotNull, allocateCell<Exception>(vm.heap)) Exception(vm);
-    result->finishCreation(vm, thrownValue);
+    result->finishCreation(vm, thrownValue, action);
     return result;
 }
 
@@ -68,14 +68,15 @@ Exception::~Exception()
 {
 }
 
-void Exception::finishCreation(VM& vm, JSValue thrownValue)
+void Exception::finishCreation(VM& vm, JSValue thrownValue, StackCaptureAction action)
 {
     Base::finishCreation(vm);
 
     m_value.set(vm, this, thrownValue);
 
     Vector<StackFrame> stackTrace;
-    vm.interpreter->getStackTrace(stackTrace);
+    if (action == StackCaptureAction::CaptureStack)
+        vm.interpreter->getStackTrace(stackTrace);
     m_stack = RefCountedArray<StackFrame>(stackTrace);
 }
 

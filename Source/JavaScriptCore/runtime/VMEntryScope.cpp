@@ -49,6 +49,8 @@ VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
         // observe time xone changes.
         vm.resetDateCache();
     }
+
+    vm.clearLastException();
 }
 
 void VMEntryScope::setEntryScopeDidPopListener(void* key, EntryScopeDidPopListener listener)

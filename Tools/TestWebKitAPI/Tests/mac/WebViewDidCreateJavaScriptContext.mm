@@ -28,6 +28,7 @@
 #import <JavaScriptCore/JSExport.h>
 #import <JavaScriptCore/JSContext.h>
 #import <WebKit/WebFrameLoadDelegatePrivate.h>
+#import <WebKit/WebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 #if JSC_OBJC_API_ENABLED
@@ -39,6 +40,7 @@ static bool didCompleteTestSuccessfully = false;
 static bool didCallWindowCallback = false;
 static bool didFindMyCustomProperty = false;
 static bool didInsertMyCustomProperty = true;
+static bool didReportException = false;
 
 @protocol MyConsole<JSExport>
 - (void)log:(NSString *)s;
@@ -106,6 +108,27 @@ static bool didInsertMyCustomProperty = true;
         JSValue *fortyTwo = [JSValue valueWithInt32:42 inContext:[JSContext currentContext]];
         [element setValue:fortyTwo forProperty:@"myCustomProperty"];
         didInsertMyCustomProperty = true;
+    };
+
+    context[@"testReportException"] = ^{
+        JSContext* context = [JSContext currentContext];
+        [context evaluateScript:@"function doThrow() { throw 'TestError'; }"];
+
+        JSGlobalContextRef globalContext = [context JSGlobalContextRef];
+        JSObjectRef globalObject = JSContextGetGlobalObject(globalContext);
+
+        JSStringRef jsString = JSStringCreateWithUTF8CString("doThrow");
+        JSValueRef function = JSObjectGetProperty(globalContext, globalObject, jsString, nullptr);
+        JSStringRelease(jsString);
+
+        const JSValueRef arguments[] = { };
+
+        JSValueRef exception = 0;
+        JSObjectCallAsFunction(globalContext, (JSObjectRef)function, globalObject, 0, arguments, &exception);
+        if (exception) {
+            [WebView _reportException:exception inContext:globalContext];
+            didReportException = true;
+        }
     };
 }
 
@@ -280,6 +303,29 @@ TEST(WebKit1, DidCreateJavaScriptContextBackForwardCacheTest)
             EXPECT_TRUE(didFindMyCustomProperty);
         } else
             EXPECT_TRUE(false);
+    }
+}
+
+TEST(WebKit1, ReportExceptionTest)
+{
+    didReportException = false;
+    @autoreleasepool {
+        RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
+        RetainPtr<DidCreateJavaScriptContextFrameLoadDelegate> frameLoadDelegate = adoptNS([[DidCreateJavaScriptContextFrameLoadDelegate alloc] init]);
+        
+        webView.get().frameLoadDelegate = frameLoadDelegate.get();
+        WebFrame *mainFrame = webView.get().mainFrame;
+        
+        NSString *bodyString =
+            @"<body> \
+                <script> \
+                    testReportException(); \
+                </script> \
+            </body>";
+        NSURL *aboutBlankURL = [NSURL URLWithString:@"about:blank"];
+        
+        [mainFrame loadHTMLString:bodyString baseURL:aboutBlankURL];
+        Util::run(&didReportException);
     }
 }
 

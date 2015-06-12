@@ -6046,8 +6046,7 @@ HRESULT STDMETHODCALLTYPE WebView::reportException(
     if (!toJSDOMWindow(execState->lexicalGlobalObject()))
         return E_FAIL;
 
-    JSC::Exception* vmException = JSC::Exception::cast(toJS(execState, exception));
-    WebCore::reportException(execState, vmException);
+    WebCore::reportException(execState, toJS(execState, exception));
     return S_OK;
 }
 

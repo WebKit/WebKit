@@ -139,6 +139,19 @@ JSC::JSValue jsArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, Pass
     return JSC::constructArray(exec, 0, globalObject, list);
 }
 
+void reportException(ExecState* exec, JSValue exceptionValue, CachedScript* cachedScript)
+{
+    RELEASE_ASSERT(exec->vm().currentThreadIsHoldingAPILock());
+    Exception* exception = jsDynamicCast<Exception*>(exceptionValue);
+    if (!exception) {
+        exception = exec->lastException();
+        if (!exception)
+            exception = Exception::create(exec->vm(), exceptionValue, Exception::DoNotCaptureStack);
+    }
+
+    reportException(exec, exception, cachedScript);
+}
+
 void reportException(ExecState* exec, Exception* exception, CachedScript* cachedScript)
 {
     RELEASE_ASSERT(exec->vm().currentThreadIsHoldingAPILock());
@@ -149,6 +162,7 @@ void reportException(ExecState* exec, Exception* exception, CachedScript* cached
 
     RefPtr<ScriptCallStack> callStack(createScriptCallStackFromException(exec, exception, ScriptCallStack::maxCallStackSizeToCapture));
     exec->clearException();
+    exec->clearLastException();
 
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
     if (JSDOMWindow* window = jsDynamicCast<JSDOMWindow*>(globalObject)) {
@@ -172,7 +186,11 @@ void reportException(ExecState* exec, Exception* exception, CachedScript* cached
         // FIXME: <http://webkit.org/b/115087> Web Inspector: WebCore::reportException should not evaluate JavaScript handling exceptions
         // If this is a custon exception object, call toString on it to try and get a nice string representation for the exception.
         errorMessage = exception->value().toString(exec)->value(exec);
+
+        // We need to clear any new exception that may be thrown in the toString() call above.
+        // reportException() is not supposed to be making new exceptions.
         exec->clearException();
+        exec->clearLastException();
     }
 
     ScriptExecutionContext* scriptExecutionContext = globalObject->scriptExecutionContext();

@@ -79,6 +79,9 @@ namespace JSC  {
         Exception* exception() const { return vm().exception(); }
         bool hadException() const { return !!vm().exception(); }
 
+        Exception* lastException() const { return vm().lastException(); }
+        void clearLastException() { vm().clearLastException(); }
+
         AtomicStringTable* atomicStringTable() const { return vm().atomicStringTable(); }
         const CommonIdentifiers& propertyNames() const { return *vm().propertyNames; }
         const MarkedArgumentBuffer& emptyList() const { return *vm().emptyList; }

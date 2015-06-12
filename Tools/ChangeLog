@@ -1,3 +1,17 @@
+2015-06-11  Mark Lam  <mark.lam@apple.com>
+
+        WebCore::reportException() needs to be able to accept a raw thrown value in addition to Exception objects.
+        https://bugs.webkit.org/show_bug.cgi?id=145872
+
+        Reviewed by Michael Saboff.
+
+        * TestWebKitAPI/Tests/mac/WebViewDidCreateJavaScriptContext.mm:
+        (-[DidCreateJavaScriptContextFrameLoadDelegate webView:didCreateJavaScriptContext:forFrame:]):
+        - Exercises the JSC ObjC API to call a function which throws an exception.  That
+          exception will be returned as a JSValue instead of an Exception object.  We
+          will use this JSValue to test WebCore::reportException() to confirm that it is
+          able to handle an exception value which is not an Exception object.
+
 2015-06-11  Dewei Zhu  <dewei_zhu@apple.com>
 
         Move cursor to corner and fix safari window size before running benchmark

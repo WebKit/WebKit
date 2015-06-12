@@ -374,10 +374,19 @@ public:
     }
 
     void clearException() { m_exception = nullptr; }
-    void setException(Exception* exception) { m_exception = exception; }
+    void clearLastException() { m_lastException = nullptr; }
+
+    void setException(Exception* exception)
+    {
+        m_exception = exception;
+        m_lastException = exception;
+    }
 
     Exception* exception() const { return m_exception; }
     JSCell** addressOfException() { return reinterpret_cast<JSCell**>(&m_exception); }
+
+    Exception* lastException() const { return m_lastException; }
+    JSCell** addressOfLastException() { return reinterpret_cast<JSCell**>(&m_lastException); }
 
     JS_EXPORT_PRIVATE void throwException(ExecState*, Exception*);
     JS_EXPORT_PRIVATE JSValue throwException(ExecState*, JSValue);
@@ -570,6 +579,7 @@ private:
 #endif
     void* m_lastStackTop;
     Exception* m_exception { nullptr };
+    Exception* m_lastException { nullptr };
     bool m_inDefineOwnProperty;
     std::unique_ptr<CodeCache> m_codeCache;
     LegacyProfiler* m_enabledProfiler;

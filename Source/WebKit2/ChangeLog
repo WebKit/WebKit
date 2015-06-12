@@ -1,3 +1,15 @@
+2015-06-11  Mark Lam  <mark.lam@apple.com>
+
+        WebCore::reportException() needs to be able to accept a raw thrown value in addition to Exception objects.
+        https://bugs.webkit.org/show_bug.cgi?id=145872
+
+        Reviewed by Michael Saboff.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::reportException):
+        - Don't assume we have an Exception object.  Let WebCore::reportException() take
+          care of it.
+
 2015-06-11  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [CMake] Unreviewed build fix after r185479.
