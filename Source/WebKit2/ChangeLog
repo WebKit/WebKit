@@ -1,3 +1,28 @@
+2015-06-12  Antti Koivisto  <antti@apple.com>
+
+        Network Cache: Use SHA1 for header checksum
+        https://bugs.webkit.org/show_bug.cgi?id=145928
+
+        Reviewed by Chris Dumez.
+
+        Use SHA1 everywhere for consistency and robustness.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::bodyPathForKey):
+        (WebKit::NetworkCache::RecordMetaData::RecordMetaData):
+        (WebKit::NetworkCache::decodeRecordMetaData):
+        (WebKit::NetworkCache::decodeRecordHeader):
+        (WebKit::NetworkCache::encodeRecordMetaData):
+        (WebKit::NetworkCache::Storage::encodeRecord):
+        (WebKit::NetworkCache::hashData): Deleted.
+
+            This was the last user of 32 bit hashes in cache code.
+
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+
+            Also bump the cache version number as recent changes have changed the format.
+            Old caches would transition fine but this makes it easier to identify which version user has.
+
 2015-06-12  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Video with reflection crashes WebKit and Safari
