@@ -1056,6 +1056,7 @@ void ScrollView::setScrollbarOverlayStyle(ScrollbarOverlayStyle overlayStyle)
 
 void ScrollView::setFrameRect(const IntRect& newRect)
 {
+    Ref<ScrollView> protect(*this);
     IntRect oldRect = frameRect();
     
     if (newRect == oldRect)

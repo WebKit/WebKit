@@ -159,7 +159,7 @@ void Widget::setFrameRect(const IntRect& rect)
         return;
 
     // Take a reference to this Widget, because sending messages to outerView can invoke arbitrary
-    // code, which can deref it.
+    // code including recalc style/layout, which can deref it.
     Ref<Widget> protect(*this);
 
     NSRect frame = rect;

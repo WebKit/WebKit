@@ -1,3 +1,15 @@
+2015-06-11  Zalan Bujtas  <zalan@apple.com>
+
+        Do not crash when the descendant frame tree is destroyed during layout.
+        https://bugs.webkit.org/show_bug.cgi?id=144540
+        rdar://problem/20793184
+
+        Reviewed by Andreas Kling.
+
+        Unskip fast/frames/flattening/crash-remove-iframe-during-object-beforeload.html.
+
+        * TestExpectations:
+
 2015-06-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r185470.
