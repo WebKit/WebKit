@@ -27,6 +27,7 @@
 #include "config.h"
 #include "WebChromeClient.h"
 
+#include "APIArray.h"
 #include "APISecurityOrigin.h"
 #include "DrawingArea.h"
 #include "InjectedBundleNavigationAction.h"

@@ -28,6 +28,7 @@
 #include "config.h"
 #include "WebPage.h"
 
+#include "APIArray.h"
 #include "APIGeometry.h"
 #include "Arguments.h"
 #include "DataReference.h"

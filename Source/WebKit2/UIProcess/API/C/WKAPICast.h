@@ -99,7 +99,6 @@ class WebNotificationManagerProxy;
 class WebNotificationProvider;
 class WebOpenPanelParameters;
 class WebOpenPanelResultListenerProxy;
-class WebOriginDataManagerProxy;
 class WebPageGroup;
 class WebPageProxy;
 class WebPreferences;

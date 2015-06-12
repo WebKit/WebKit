@@ -30,7 +30,6 @@
 
 #include "ChildProcess.h"
 #include "UniqueIDBDatabaseIdentifier.h"
-#include "WebOriginDataManagerSupplement.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
@@ -38,11 +37,10 @@ namespace WebKit {
 class AsyncTask;
 class DatabaseToWebProcessConnection;
 class UniqueIDBDatabase;
-class WebOriginDataManager;
 
 struct DatabaseProcessCreationParameters;
 
-class DatabaseProcess : public ChildProcess, public WebOriginDataManagerSupplement  {
+class DatabaseProcess : public ChildProcess {
     WTF_MAKE_NONCOPYABLE(DatabaseProcess);
     friend class NeverDestroyed<DatabaseProcess>;
 public:
@@ -96,12 +94,6 @@ private:
     void performNextDatabaseTask();
     void ensurePathExists(const String&);
 
-    // WebOriginDataManagerSupplement
-    virtual void getOrigins(WKOriginDataTypes, std::function<void (const Vector<SecurityOriginData>&)> completion) override;
-    virtual void deleteEntriesForOrigin(WKOriginDataTypes, const SecurityOriginData&, std::function<void ()> completion) override;
-    virtual void deleteEntriesModifiedBetweenDates(WKOriginDataTypes, double startDate, double endDate, std::function<void ()> completion) override;
-    virtual void deleteAllEntries(WKOriginDataTypes, std::function<void ()> completion) override;
-
     Vector<RefPtr<DatabaseToWebProcessConnection>> m_databaseToWebProcessConnections;
 
     Ref<WorkQueue> m_queue;
@@ -112,8 +104,6 @@ private:
 
     Deque<std::unique_ptr<AsyncTask>> m_databaseTasks;
     Mutex m_databaseTaskMutex;
-
-    std::unique_ptr<WebOriginDataManager> m_webOriginDataManager;
 };
 
 } // namespace WebKit

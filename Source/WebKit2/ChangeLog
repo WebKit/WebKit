@@ -1,3 +1,73 @@
+2015-06-11  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of WebOriginDataManager
+        https://bugs.webkit.org/show_bug.cgi?id=145896
+
+        Reviewed by Andreas Kling.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::DatabaseProcess): Deleted.
+        (WebKit::DatabaseProcess::getOrigins): Deleted.
+        (WebKit::DatabaseProcess::deleteEntriesForOrigin): Deleted.
+        (WebKit::DatabaseProcess::deleteEntriesModifiedBetweenDates): Deleted.
+        (WebKit::DatabaseProcess::deleteAllEntries): Deleted.
+        * DatabaseProcess/DatabaseProcess.h:
+        * DerivedSources.make:
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKContext.cpp:
+        * UIProcess/Databases/DatabaseProcessProxy.cpp:
+        (WebKit::DatabaseProcessProxy::didReceiveMessage): Deleted.
+        * UIProcess/WebOriginDataManagerProxy.cpp: Removed.
+        (WebKit::WebOriginDataManagerProxy::supplementName): Deleted.
+        (WebKit::WebOriginDataManagerProxy::create): Deleted.
+        (WebKit::WebOriginDataManagerProxy::WebOriginDataManagerProxy): Deleted.
+        (WebKit::WebOriginDataManagerProxy::~WebOriginDataManagerProxy): Deleted.
+        (WebKit::WebOriginDataManagerProxy::processPoolDestroyed): Deleted.
+        (WebKit::WebOriginDataManagerProxy::processDidClose): Deleted.
+        (WebKit::WebOriginDataManagerProxy::shouldTerminate): Deleted.
+        (WebKit::WebOriginDataManagerProxy::refWebContextSupplement): Deleted.
+        (WebKit::WebOriginDataManagerProxy::derefWebContextSupplement): Deleted.
+        (WebKit::CallbackSynchronizer::create): Deleted.
+        (WebKit::CallbackSynchronizer::~CallbackSynchronizer): Deleted.
+        (WebKit::CallbackSynchronizer::taskStarted): Deleted.
+        (WebKit::CallbackSynchronizer::taskCompleted): Deleted.
+        (WebKit::CallbackSynchronizer::CallbackSynchronizer): Deleted.
+        (WebKit::createSynchronizedCallback): Deleted.
+        (WebKit::sendMessageToAllProcessesInProcessPool): Deleted.
+        (WebKit::WebOriginDataManagerProxy::getOrigins): Deleted.
+        (WebKit::WebOriginDataManagerProxy::didGetOrigins): Deleted.
+        (WebKit::WebOriginDataManagerProxy::deleteEntriesForOrigin): Deleted.
+        (WebKit::WebOriginDataManagerProxy::deleteEntriesModifiedBetweenDates): Deleted.
+        (WebKit::WebOriginDataManagerProxy::didDeleteEntries): Deleted.
+        (WebKit::WebOriginDataManagerProxy::deleteAllEntries): Deleted.
+        (WebKit::WebOriginDataManagerProxy::didDeleteAllEntries): Deleted.
+        * UIProcess/WebOriginDataManagerProxy.h: Removed.
+        * UIProcess/WebOriginDataManagerProxy.messages.in: Removed.
+        * UIProcess/WebProcessPool.cpp:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/OriginData/WebOriginDataManager.cpp: Removed.
+        (WebKit::WebOriginDataManager::WebOriginDataManager): Deleted.
+        (WebKit::WebOriginDataManager::getOrigins): Deleted.
+        (WebKit::WebOriginDataManager::deleteEntriesForOrigin): Deleted.
+        (WebKit::WebOriginDataManager::deleteEntriesModifiedBetweenDates): Deleted.
+        (WebKit::WebOriginDataManager::deleteAllEntries): Deleted.
+        * WebProcess/OriginData/WebOriginDataManager.h: Removed.
+        * WebProcess/OriginData/WebOriginDataManager.messages.in: Removed.
+        * WebProcess/OriginData/WebOriginDataManagerSupplement.h: Removed.
+        (WebKit::WebOriginDataManagerSupplement::WebOriginDataManagerSupplement): Deleted.
+        (WebKit::WebOriginDataManagerSupplement::~WebOriginDataManagerSupplement): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::~WebProcess):
+        (WebKit::WebProcess::WebProcess): Deleted.
+        (WebKit::WebProcess::getOrigins): Deleted.
+        (WebKit::WebProcess::deleteEntriesForOrigin): Deleted.
+        (WebKit::WebProcess::deleteEntriesModifiedBetweenDates): Deleted.
+        (WebKit::WebProcess::deleteAllEntries): Deleted.
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+
 2015-06-11  Matt Rajca  <mrajca@apple.com>
 
         Media Session: Add plumbing for media control event delivery.

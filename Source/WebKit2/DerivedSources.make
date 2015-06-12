@@ -125,8 +125,6 @@ MESSAGE_RECEIVERS = \
     WebMediaCacheManager \
     WebMediaCacheManagerProxy \
     WebNotificationManager \
-    WebOriginDataManager \
-    WebOriginDataManagerProxy \
     WebPage \
     WebPageGroupProxy \
     WebPageProxy \

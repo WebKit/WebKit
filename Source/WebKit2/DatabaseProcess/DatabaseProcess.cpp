@@ -35,9 +35,6 @@
 #include "DatabaseToWebProcessConnection.h"
 #include "UniqueIDBDatabase.h"
 #include "WebCrossThreadCopier.h"
-#include "WebOriginDataManager.h"
-#include "WebOriginDataManagerMessages.h"
-#include "WebOriginDataManagerProxyMessages.h"
 #include "WebsiteData.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/NotImplemented.h>
@@ -56,7 +53,6 @@ DatabaseProcess& DatabaseProcess::singleton()
 
 DatabaseProcess::DatabaseProcess()
     : m_queue(WorkQueue::create("com.apple.WebKit.DatabaseProcess"))
-    , m_webOriginDataManager(std::make_unique<WebOriginDataManager>(*this, *this))
 {
     // Make sure the UTF8Encoding encoding and the text encoding maps have been built on the main thread before a background thread needs it.
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=135365 - Need a more explicit way of doing this besides accessing the UTF8Encoding.
@@ -393,57 +389,6 @@ void DatabaseProcess::deleteAllIndexedDatabaseEntries()
     Vector<String> originPaths = listDirectory(m_indexedDatabaseDirectory, "*");
     for (auto& originPath : originPaths)
         removeAllDatabasesForOriginPath(originPath, std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max());
-}
-
-void DatabaseProcess::getOrigins(WKOriginDataTypes types, std::function<void (const Vector<SecurityOriginData>&)> completion)
-{
-    if (!(types & kWKWebSQLDatabaseOriginData)) {
-        completion(Vector<SecurityOriginData>());
-        return;
-    }
-
-    postDatabaseTask(std::make_unique<AsyncTask>([completion, this] {
-        completion(getIndexedDatabaseOrigins());
-    }));
-}
-
-void DatabaseProcess::deleteEntriesForOrigin(WKOriginDataTypes types, const SecurityOriginData& origin, std::function<void ()> completion)
-{
-    if (!(types & kWKWebSQLDatabaseOriginData)) {
-        completion();
-        return;
-    }
-
-    postDatabaseTask(std::make_unique<AsyncTask>([this, origin, completion] {
-        deleteIndexedDatabaseEntriesForOrigin(origin);
-        completion();
-    }));
-}
-
-void DatabaseProcess::deleteEntriesModifiedBetweenDates(WKOriginDataTypes types, double startDate, double endDate, std::function<void ()> completion)
-{
-    if (!(types & kWKWebSQLDatabaseOriginData)) {
-        completion();
-        return;
-    }
-
-    postDatabaseTask(std::make_unique<AsyncTask>([this, startDate, endDate, completion] {
-        deleteIndexedDatabaseEntriesModifiedBetweenDates(startDate, endDate);
-        completion();
-    }));
-}
-
-void DatabaseProcess::deleteAllEntries(WKOriginDataTypes types, std::function<void ()> completion)
-{
-    if (!(types & kWKWebSQLDatabaseOriginData)) {
-        completion();
-        return;
-    }
-
-    postDatabaseTask(std::make_unique<AsyncTask>([this, completion] {
-        deleteAllIndexedDatabaseEntries();
-        completion();
-    }));
 }
 
 #if !PLATFORM(COCOA)
