@@ -9,12 +9,12 @@ function merge_platforms($platform_to_merge, $destination_platform) {
 
     // First, move all test runs to the test configurations in the destination for all test configurations that
     // exist in both the original platform and the platform into which we're merging.
-    if (!$db->query_and_get_affected_rows('UPDATE test_runs SET run_config = destination.config_id
+    if ($db->query_and_get_affected_rows('UPDATE test_runs SET run_config = destination.config_id
         FROM test_configurations as merged, test_configurations as destination
         WHERE merged.config_platform = $1 AND destination.config_platform = $2
             AND run_config = merged.config_id
             AND destination.config_type = merged.config_type
-            AND destination.config_metric = merged.config_metric', array($platform_to_merge, $destination_platform))) {
+            AND destination.config_metric = merged.config_metric', array($platform_to_merge, $destination_platform)) === FALSE) {
         $db->rollback_transaction();
         return notice("Failed to migrate test runs for $platform_to_merge that have test configurations in $destination_platform.");
     }
@@ -33,6 +33,21 @@ function merge_platforms($platform_to_merge, $destination_platform) {
         // We should never reach here.
         $db->rollback_transaction();
         return notice('Failed to migrate all test runs.');
+    }
+
+    if ($db->query_and_get_affected_rows('UPDATE analysis_tasks SET task_platform = $1 WHERE task_platform = $2',
+        array($destination_platform, $platform_to_merge)) === FALSE) {
+        $db->rollback_transaction();
+        return notice('Failed to migrate analysis tasks.');
+    }
+
+    $db->query_and_get_affected_rows('DELETE FROM triggerable_configurations WHERE trigconfig_platform = $1',
+        array($platform_to_merge));
+
+    if ($db->query_and_get_affected_rows('UPDATE build_requests SET request_platform = $1 WHERE request_platform = $2',
+        array($destination_platform, $platform_to_merge)) === FALSE) {
+        $db->rollback_transaction();
+        return notice('Failed to migrate build requests.');
     }
 
     $db->query_and_get_affected_rows('DELETE FROM platforms WHERE platform_id = $1', array($platform_to_merge));

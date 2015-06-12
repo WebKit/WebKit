@@ -1,3 +1,9 @@
+2015-06-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed build fix for merging platforms.
+
+        * public/admin/platforms.php:
+
 2015-06-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed build fix. Some builder names are really long.
