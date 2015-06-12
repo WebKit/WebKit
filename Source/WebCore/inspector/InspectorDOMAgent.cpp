@@ -966,11 +966,14 @@ void InspectorDOMAgent::inspect(Node* inspectedNode)
 {
     ErrorString unused;
     RefPtr<Node> node = inspectedNode;
-    setSearchingForNode(unused, false, 0);
+    setSearchingForNode(unused, false, nullptr);
 
     if (node->nodeType() != Node::ELEMENT_NODE && node->nodeType() != Node::DOCUMENT_NODE)
         node = node->parentNode();
     m_nodeToFocus = node;
+
+    if (!m_nodeToFocus)
+        return;
 
     focusNode();
 }
@@ -983,7 +986,7 @@ void InspectorDOMAgent::focusNode()
     ASSERT(m_nodeToFocus);
 
     RefPtr<Node> node = m_nodeToFocus.get();
-    m_nodeToFocus = 0;
+    m_nodeToFocus = nullptr;
 
     Frame* frame = node->document().frame();
     if (!frame)
