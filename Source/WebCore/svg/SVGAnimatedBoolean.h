@@ -29,7 +29,10 @@ typedef SVGAnimatedStaticPropertyTearOff<bool> SVGAnimatedBoolean;
 
 // Helper macros to declare/define a SVGAnimatedBoolean object
 #define DECLARE_ANIMATED_BOOLEAN(UpperProperty, LowerProperty) \
-DECLARE_ANIMATED_PROPERTY(SVGAnimatedBoolean, bool, UpperProperty, LowerProperty)
+DECLARE_ANIMATED_PROPERTY(SVGAnimatedBoolean, bool, UpperProperty, LowerProperty, )
+
+#define DECLARE_ANIMATED_BOOLEAN_OVERRIDE(UpperProperty, LowerProperty) \
+DECLARE_ANIMATED_PROPERTY(SVGAnimatedBoolean, bool, UpperProperty, LowerProperty, override)
 
 #define DEFINE_ANIMATED_BOOLEAN(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
 DEFINE_ANIMATED_PROPERTY(AnimatedBoolean, OwnerType, DOMAttribute, DOMAttribute.localName(), UpperProperty, LowerProperty)

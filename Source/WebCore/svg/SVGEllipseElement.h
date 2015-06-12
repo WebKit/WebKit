@@ -50,7 +50,7 @@ private:
         DECLARE_ANIMATED_LENGTH(Cy, cy)
         DECLARE_ANIMATED_LENGTH(Rx, rx)
         DECLARE_ANIMATED_LENGTH(Ry, ry)
-        DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+        DECLARE_ANIMATED_BOOLEAN_OVERRIDE(ExternalResourcesRequired, externalResourcesRequired)
     END_DECLARE_ANIMATED_PROPERTIES
 };
 

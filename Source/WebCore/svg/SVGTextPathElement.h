@@ -139,7 +139,7 @@ private:
         DECLARE_ANIMATED_LENGTH(StartOffset, startOffset)
         DECLARE_ANIMATED_ENUMERATION(Method, method, SVGTextPathMethodType)
         DECLARE_ANIMATED_ENUMERATION(Spacing, spacing, SVGTextPathSpacingType)
-        DECLARE_ANIMATED_STRING(Href, href)
+        DECLARE_ANIMATED_STRING_OVERRIDE(Href, href)
     END_DECLARE_ANIMATED_PROPERTIES
 };
 

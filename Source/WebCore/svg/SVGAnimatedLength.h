@@ -30,7 +30,7 @@ typedef SVGAnimatedPropertyTearOff<SVGLength> SVGAnimatedLength;
 
 // Helper macros to declare/define a SVGAnimatedLength object
 #define DECLARE_ANIMATED_LENGTH(UpperProperty, LowerProperty) \
-DECLARE_ANIMATED_PROPERTY(SVGAnimatedLength, SVGLength, UpperProperty, LowerProperty)
+DECLARE_ANIMATED_PROPERTY(SVGAnimatedLength, SVGLength, UpperProperty, LowerProperty, )
 
 #define DEFINE_ANIMATED_LENGTH(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
 DEFINE_ANIMATED_PROPERTY(AnimatedLength, OwnerType, DOMAttribute, DOMAttribute.localName(), UpperProperty, LowerProperty)

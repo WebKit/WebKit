@@ -78,8 +78,8 @@ private:
 #endif
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGScriptElement)
-        DECLARE_ANIMATED_STRING(Href, href)
-        DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+        DECLARE_ANIMATED_STRING_OVERRIDE(Href, href)
+        DECLARE_ANIMATED_BOOLEAN_OVERRIDE(ExternalResourcesRequired, externalResourcesRequired)
     END_DECLARE_ANIMATED_PROPERTIES
 
     Timer m_svgLoadEventTimer;

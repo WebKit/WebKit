@@ -50,6 +50,7 @@ public:
     }
 
 protected:
+    virtual String& hrefBaseValue() const = 0;
     virtual void setHrefBaseValue(const String&, const bool validValue = true) = 0;
 };
 

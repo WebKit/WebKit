@@ -51,7 +51,7 @@ private:
         DECLARE_ANIMATED_LENGTH(Y1, y1)
         DECLARE_ANIMATED_LENGTH(X2, x2)
         DECLARE_ANIMATED_LENGTH(Y2, y2)
-        DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+        DECLARE_ANIMATED_BOOLEAN_OVERRIDE(ExternalResourcesRequired, externalResourcesRequired)
     END_DECLARE_ANIMATED_PROPERTIES
 };
 

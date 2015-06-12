@@ -47,7 +47,7 @@ private:
     virtual bool rendererIsNeeded(const RenderStyle&) override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGGElement)
-        DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+        DECLARE_ANIMATED_BOOLEAN_OVERRIDE(ExternalResourcesRequired, externalResourcesRequired)
     END_DECLARE_ANIMATED_PROPERTIES
 };
 

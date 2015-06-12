@@ -225,7 +225,7 @@ private:
     void adjustForInheritance(SVGElement* targetElement, const QualifiedName& attributeName, String&);
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGAnimationElement)
-        DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+        DECLARE_ANIMATED_BOOLEAN_OVERRIDE(ExternalResourcesRequired, externalResourcesRequired)
     END_DECLARE_ANIMATED_PROPERTIES
 
     // SVGTests

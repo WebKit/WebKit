@@ -207,7 +207,7 @@ private:
 
     HashSet<SVGElement*> m_elementsWithRelativeLengths;
 
-    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGElement)
+    BEGIN_DECLARE_ANIMATED_PROPERTIES_BASE(SVGElement)
         DECLARE_ANIMATED_STRING(ClassName, className)
     END_DECLARE_ANIMATED_PROPERTIES
 

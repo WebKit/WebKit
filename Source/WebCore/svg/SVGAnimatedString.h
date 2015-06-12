@@ -30,7 +30,10 @@ typedef SVGAnimatedStaticPropertyTearOff<String> SVGAnimatedString;
 
 // Helper macros to declare/define a SVGAnimatedString object
 #define DECLARE_ANIMATED_STRING(UpperProperty, LowerProperty) \
-DECLARE_ANIMATED_PROPERTY(SVGAnimatedString, String, UpperProperty, LowerProperty)
+DECLARE_ANIMATED_PROPERTY(SVGAnimatedString, String, UpperProperty, LowerProperty, )
+
+#define DECLARE_ANIMATED_STRING_OVERRIDE(UpperProperty, LowerProperty) \
+DECLARE_ANIMATED_PROPERTY(SVGAnimatedString, String, UpperProperty, LowerProperty, override)
 
 #define DEFINE_ANIMATED_STRING(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
 DEFINE_ANIMATED_PROPERTY(AnimatedString, OwnerType, DOMAttribute, DOMAttribute.localName(), UpperProperty, LowerProperty)

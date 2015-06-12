@@ -58,7 +58,7 @@ private:
     virtual void buildPendingResource() override;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGTRefElement)
-        DECLARE_ANIMATED_STRING(Href, href)
+        DECLARE_ANIMATED_STRING_OVERRIDE(Href, href)
     END_DECLARE_ANIMATED_PROPERTIES
 
     Ref<SVGTRefTargetEventListener> m_targetListener;

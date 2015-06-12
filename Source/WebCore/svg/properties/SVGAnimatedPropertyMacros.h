@@ -100,7 +100,7 @@ const SVGPropertyInfo* OwnerType::LowerProperty##PropertyInfo() { \
 } 
 
 // Property declaration helpers (used in SVG*.h files)
-#define BEGIN_DECLARE_ANIMATED_PROPERTIES(OwnerType) \
+#define BEGIN_DECLARE_ANIMATED_PROPERTIES_BASE(OwnerType) \
 public: \
     static SVGAttributeToPropertyMap& attributeToPropertyMap(); \
     virtual SVGAttributeToPropertyMap& localAttributeToPropertyMap() \
@@ -109,7 +109,16 @@ public: \
     } \
     typedef OwnerType UseOwnerType;
 
-#define DECLARE_ANIMATED_PROPERTY(TearOffType, PropertyType, UpperProperty, LowerProperty) \
+#define BEGIN_DECLARE_ANIMATED_PROPERTIES(OwnerType) \
+public: \
+    static SVGAttributeToPropertyMap& attributeToPropertyMap(); \
+    SVGAttributeToPropertyMap& localAttributeToPropertyMap() override \
+    { \
+        return attributeToPropertyMap(); \
+    } \
+    typedef OwnerType UseOwnerType;
+
+#define DECLARE_ANIMATED_PROPERTY(TearOffType, PropertyType, UpperProperty, LowerProperty, OverrideSpecifier) \
 public: \
     static const SVGPropertyInfo* LowerProperty##PropertyInfo(); \
     PropertyType& LowerProperty() const \
@@ -121,12 +130,12 @@ public: \
         return m_##LowerProperty.value; \
     } \
 \
-    PropertyType& LowerProperty##BaseValue() const \
+    PropertyType& LowerProperty##BaseValue() const OverrideSpecifier \
     { \
         return m_##LowerProperty.value; \
     } \
 \
-    void set##UpperProperty##BaseValue(const PropertyType& type, const bool validValue = true) \
+    void set##UpperProperty##BaseValue(const PropertyType& type, const bool validValue = true) OverrideSpecifier \
     { \
         m_##LowerProperty.value = type; \
         m_##LowerProperty.isValid = validValue; \
@@ -172,7 +181,7 @@ private: \
 
 // List specific definition/declaration helpers
 #define DECLARE_ANIMATED_LIST_PROPERTY(TearOffType, PropertyType, UpperProperty, LowerProperty) \
-DECLARE_ANIMATED_PROPERTY(TearOffType, PropertyType, UpperProperty, LowerProperty) \
+DECLARE_ANIMATED_PROPERTY(TearOffType, PropertyType, UpperProperty, LowerProperty, ) \
 void detachAnimated##UpperProperty##ListWrappers(unsigned newListSize) \
 { \
     if (TearOffType* wrapper = SVGAnimatedProperty::lookupWrapper<UseOwnerType, TearOffType>(this, LowerProperty##PropertyInfo())) \

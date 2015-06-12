@@ -52,7 +52,7 @@ private:
     virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGGlyphRefElement)
-        DECLARE_ANIMATED_STRING(Href, href)
+        DECLARE_ANIMATED_STRING_OVERRIDE(Href, href)
     END_DECLARE_ANIMATED_PROPERTIES
 
     float m_x;

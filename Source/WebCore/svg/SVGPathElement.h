@@ -113,7 +113,7 @@ private:
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGPathElement)
         DECLARE_ANIMATED_NUMBER(PathLength, pathLength)
-        DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+        DECLARE_ANIMATED_BOOLEAN_OVERRIDE(ExternalResourcesRequired, externalResourcesRequired)
     END_DECLARE_ANIMATED_PROPERTIES
 
     virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;

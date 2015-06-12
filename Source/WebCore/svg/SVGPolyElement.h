@@ -54,7 +54,7 @@ private:
     static Ref<SVGAnimatedProperty> lookupOrCreatePointsWrapper(SVGElement* contextElement);
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGPolyElement)
-        DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+        DECLARE_ANIMATED_BOOLEAN_OVERRIDE(ExternalResourcesRequired, externalResourcesRequired)
     END_DECLARE_ANIMATED_PROPERTIES
 
 protected:

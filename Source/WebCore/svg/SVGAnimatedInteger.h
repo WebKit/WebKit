@@ -30,7 +30,7 @@ typedef SVGAnimatedStaticPropertyTearOff<int> SVGAnimatedInteger;
 
 // Helper macros to declare/define a SVGAnimatedInteger object
 #define DECLARE_ANIMATED_INTEGER(UpperProperty, LowerProperty) \
-DECLARE_ANIMATED_PROPERTY(SVGAnimatedInteger, int, UpperProperty, LowerProperty)
+DECLARE_ANIMATED_PROPERTY(SVGAnimatedInteger, int, UpperProperty, LowerProperty, )
 
 #define DEFINE_ANIMATED_INTEGER(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
 DEFINE_ANIMATED_PROPERTY(AnimatedInteger, OwnerType, DOMAttribute, DOMAttribute.localName(), UpperProperty, LowerProperty)

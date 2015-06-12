@@ -42,7 +42,7 @@ public:
 
     virtual void setValue(SVGMatrix& value) override { m_parent->propertyReference().setMatrix(value); }
 
-    virtual void commitChange()
+    virtual void commitChange() override
     {
         m_parent->propertyReference().updateSVGMatrix();
         m_parent->commitChange();

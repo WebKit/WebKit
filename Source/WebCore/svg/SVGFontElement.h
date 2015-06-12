@@ -92,7 +92,7 @@ private:
     void registerLigaturesInGlyphCache(Vector<String>&);
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFontElement)
-        DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
+        DECLARE_ANIMATED_BOOLEAN_OVERRIDE(ExternalResourcesRequired, externalResourcesRequired)
     END_DECLARE_ANIMATED_PROPERTIES
 
     SVGKerningMap m_horizontalKerningMap;
