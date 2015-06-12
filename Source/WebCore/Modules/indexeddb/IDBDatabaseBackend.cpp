@@ -500,7 +500,7 @@ void IDBDatabaseBackend::runIntVersionChangeTransaction(PassRefPtr<IDBCallbacks>
     for (auto& callback : m_databaseCallbacksSet) {
         // Front end ensures the event is not fired at connections that have closePending set.
         if (callback != databaseCallbacks)
-            callback->onVersionChange(m_metadata.version, requestedVersion, IndexedDB::VersionNullness::Null);
+            callback->onVersionChange(m_metadata.version, requestedVersion);
     }
     // The spec dictates we wait until all the version change events are
     // delivered and then check m_databaseCallbacks.empty() before proceeding
@@ -533,7 +533,7 @@ void IDBDatabaseBackend::deleteDatabase(PassRefPtr<IDBCallbacks> prpCallbacks)
     if (isDeleteDatabaseBlocked()) {
         for (auto& callback : m_databaseCallbacksSet) {
             // Front end ensures the event is not fired at connections that have closePending set.
-            callback->onVersionChange(m_metadata.version, 0, IndexedDB::VersionNullness::Null);
+            callback->onVersionChange(m_metadata.version, 0);
         }
         // FIXME: Only fire onBlocked if there are open connections after the
         // VersionChangeEvents are received, not just set up to fire.

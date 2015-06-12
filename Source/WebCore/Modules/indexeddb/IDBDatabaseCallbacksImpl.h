@@ -43,7 +43,7 @@ public:
 
     // IDBDatabaseCallbacks
     virtual void onForcedClose() override;
-    virtual void onVersionChange(uint64_t oldVersion, uint64_t newVersion, IndexedDB::VersionNullness newVersionNullness) override;
+    virtual void onVersionChange(uint64_t oldVersion, uint64_t newVersion) override;
 
     virtual void onAbort(int64_t transactionId, PassRefPtr<IDBDatabaseError>) override;
     virtual void onComplete(int64_t transactionId) override;

@@ -38,24 +38,23 @@ namespace WebCore {
 
 class IDBVersionChangeEvent : public Event {
 public:
-    static Ref<IDBVersionChangeEvent> create(unsigned long long oldVersion = 0, unsigned long long newVersion = 0, IndexedDB::VersionNullness newVersionNullness = IndexedDB::VersionNullness::Null, const AtomicString& eventType = AtomicString())
+    static Ref<IDBVersionChangeEvent> create(unsigned long long oldVersion = 0, unsigned long long newVersion = 0, const AtomicString& eventType = AtomicString())
     {
-        return adoptRef(*new IDBVersionChangeEvent(oldVersion, newVersion, newVersionNullness, eventType));
+        return adoptRef(*new IDBVersionChangeEvent(oldVersion, newVersion, eventType));
     }
 
     virtual ~IDBVersionChangeEvent();
 
     virtual unsigned long long oldVersion() { return m_oldVersion; }
-    virtual unsigned long long newVersion(bool& isNull) { isNull = (m_newVersionNullness == IndexedDB::VersionNullness::Null); return m_newVersion; }
+    virtual unsigned long long newVersion() { return m_newVersion; }
 
     virtual EventInterface eventInterface() const;
 
 private:
-    IDBVersionChangeEvent(unsigned long long oldVersion, unsigned long long newVersion, IndexedDB::VersionNullness newVersionNullness, const AtomicString& eventType);
+    IDBVersionChangeEvent(unsigned long long oldVersion, unsigned long long newVersion, const AtomicString& eventType);
 
     unsigned long long m_oldVersion;
     unsigned long long m_newVersion;
-    IndexedDB::VersionNullness m_newVersionNullness;
 };
 
 } // namespace WebCore

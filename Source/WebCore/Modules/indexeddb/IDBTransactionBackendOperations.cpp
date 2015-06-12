@@ -238,8 +238,11 @@ void IDBDatabaseBackend::VersionChangeOperation::perform(std::function<void()> c
     LOG(StorageAPI, "VersionChangeOperation");
 
     uint64_t oldVersion = m_transaction->database().metadata().version;
+    if (oldVersion == IDBDatabaseMetadata::NoIntVersion)
+        oldVersion = 0;
+
     RefPtr<IDBDatabaseBackend::VersionChangeOperation> operation(this);
-    ASSERT(static_cast<uint64_t>(m_version) > oldVersion || oldVersion == IDBDatabaseMetadata::NoIntVersion);
+    ASSERT(static_cast<uint64_t>(m_version) > oldVersion);
 
     std::function<void(PassRefPtr<IDBDatabaseError>)> operationCallback = [oldVersion, operation, this, completionCallback](PassRefPtr<IDBDatabaseError> prpError) {
         RefPtr<IDBDatabaseError> error = prpError;

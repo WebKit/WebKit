@@ -30,11 +30,10 @@
 
 namespace WebCore {
 
-IDBVersionChangeEvent::IDBVersionChangeEvent(unsigned long long oldVersion, unsigned long long newVersion, IndexedDB::VersionNullness newVersionNullness, const AtomicString& eventType)
+IDBVersionChangeEvent::IDBVersionChangeEvent(unsigned long long oldVersion, unsigned long long newVersion, const AtomicString& eventType)
     : Event(eventType, false /*canBubble*/, false /*cancelable*/)
     , m_oldVersion(oldVersion)
     , m_newVersion(newVersion)
-    , m_newVersionNullness(newVersionNullness)
 {
 }
 

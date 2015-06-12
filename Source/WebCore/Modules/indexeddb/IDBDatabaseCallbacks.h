@@ -42,7 +42,7 @@ public:
     virtual ~IDBDatabaseCallbacks() { }
 
     virtual void onForcedClose() = 0;
-    virtual void onVersionChange(uint64_t oldVersion, uint64_t newVersion, IndexedDB::VersionNullness newVersionNullness) = 0;
+    virtual void onVersionChange(uint64_t oldVersion, uint64_t newVersion) = 0;
 
     virtual void onAbort(int64_t transactionId, PassRefPtr<IDBDatabaseError>) = 0;
     virtual void onComplete(int64_t transactionId) = 0;

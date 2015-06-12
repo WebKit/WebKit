@@ -1,3 +1,13 @@
+2015-06-11  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB onupgradeneeded event has incorrect value for oldVersion.
+        <rdar://problem/18309792> and https://bugs.webkit.org/show_bug.cgi?id=136888
+
+        Reviewed by Sam Weinig.
+
+        * storage/indexeddb/version-change-event-basic-expected.txt: Added.
+        * storage/indexeddb/version-change-event-basic.html: Added.
+
 2015-06-11  Dean Jackson  <dino@apple.com>
 
         Add an appearance keyword for wireless playback / airplay icon

@@ -69,7 +69,7 @@ void IDBOpenDBRequest::onBlocked(uint64_t oldVersion)
     if (!shouldEnqueueEvent())
         return;
     
-    enqueueEvent(IDBVersionChangeEvent::create(oldVersion, m_version, m_versionNullness, eventNames().blockedEvent));
+    enqueueEvent(IDBVersionChangeEvent::create(oldVersion, m_version, eventNames().blockedEvent));
 }
 
 void IDBOpenDBRequest::onUpgradeNeeded(uint64_t oldVersion, PassRefPtr<IDBDatabaseBackend> prpDatabaseBackend, const IDBDatabaseMetadata& metadata)
@@ -101,7 +101,7 @@ void IDBOpenDBRequest::onUpgradeNeeded(uint64_t oldVersion, PassRefPtr<IDBDataba
 
     if (m_versionNullness == IndexedDB::VersionNullness::Null)
         m_version = 1;
-    enqueueEvent(IDBVersionChangeEvent::create(oldVersion, m_version, m_versionNullness, eventNames().upgradeneededEvent));
+    enqueueEvent(IDBVersionChangeEvent::create(oldVersion, m_version, eventNames().upgradeneededEvent));
 }
 
 void IDBOpenDBRequest::onSuccess(PassRefPtr<IDBDatabaseBackend> prpBackend, const IDBDatabaseMetadata& metadata)

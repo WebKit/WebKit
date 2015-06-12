@@ -72,7 +72,7 @@ public:
     void close();
 
     // IDBDatabaseCallbacks
-    virtual void onVersionChange(uint64_t oldVersion, uint64_t newVersion, IndexedDB::VersionNullness newVersionNullness);
+    virtual void onVersionChange(uint64_t oldVersion, uint64_t newVersion);
     virtual void onAbort(int64_t, PassRefPtr<IDBDatabaseError>);
     virtual void onComplete(int64_t);
 

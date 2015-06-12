@@ -325,7 +325,7 @@ void IDBDatabase::closeConnection()
     m_isClosed = true;
 }
 
-void IDBDatabase::onVersionChange(uint64_t oldVersion, uint64_t newVersion, IndexedDB::VersionNullness newVersionNullness)
+void IDBDatabase::onVersionChange(uint64_t oldVersion, uint64_t newVersion)
 {
     LOG(StorageAPI, "IDBDatabase::onVersionChange");
     if (m_contextStopped || !scriptExecutionContext())
@@ -334,7 +334,8 @@ void IDBDatabase::onVersionChange(uint64_t oldVersion, uint64_t newVersion, Inde
     if (m_closePending)
         return;
 
-    enqueueEvent(IDBVersionChangeEvent::create(oldVersion, newVersion, newVersionNullness, eventNames().versionchangeEvent));
+    ASSERT(newVersion != IDBDatabaseMetadata::NoIntVersion && newVersion != IDBDatabaseMetadata::DefaultIntVersion);
+    enqueueEvent(IDBVersionChangeEvent::create(oldVersion, newVersion, eventNames().versionchangeEvent));
 }
 
 void IDBDatabase::enqueueEvent(PassRefPtr<Event> event)
