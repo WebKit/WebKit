@@ -67,7 +67,7 @@ private:
 
     void deleteCharacter();
 
-    virtual void doApply();
+    virtual void doApply() override;
 
     virtual bool isInsertTextCommand() const override { return true; }
 

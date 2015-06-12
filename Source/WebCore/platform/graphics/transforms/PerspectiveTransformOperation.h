@@ -49,7 +49,7 @@ public:
     
 private:
     virtual bool isIdentity() const override { return !floatValueForLength(m_p, 1); }
-    virtual bool isAffectedByTransformOrigin() const { return !isIdentity(); }
+    virtual bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
 
     virtual OperationType type() const override { return PERSPECTIVE; }
     virtual bool isSameType(const TransformOperation& o) const override { return o.type() == PERSPECTIVE; }

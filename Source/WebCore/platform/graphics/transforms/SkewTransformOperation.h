@@ -47,7 +47,7 @@ public:
 
 private:
     virtual bool isIdentity() const override { return m_angleX == 0 && m_angleY == 0; }
-    virtual bool isAffectedByTransformOrigin() const { return !isIdentity(); }
+    virtual bool isAffectedByTransformOrigin() const override { return !isIdentity(); }
 
     virtual OperationType type() const override { return m_type; }
     virtual bool isSameType(const TransformOperation& o) const override { return o.type() == m_type; }

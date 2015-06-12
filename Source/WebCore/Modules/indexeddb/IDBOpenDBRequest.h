@@ -47,7 +47,7 @@ public:
     virtual void onSuccess(PassRefPtr<IDBDatabaseBackend>, const IDBDatabaseMetadata&) override;
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const;
+    virtual EventTargetInterface eventTargetInterface() const override;
     virtual bool dispatchEvent(PassRefPtr<Event>) override;
 
 protected:

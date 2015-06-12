@@ -85,70 +85,70 @@ class NullMediaPlayerPrivate : public MediaPlayerPrivateInterface {
 public:
     explicit NullMediaPlayerPrivate(MediaPlayer*) { }
 
-    virtual void load(const String&) { }
+    void load(const String&) override { }
 #if ENABLE(MEDIA_SOURCE)
-    virtual void load(const String&, MediaSourcePrivateClient*) { }
+    void load(const String&, MediaSourcePrivateClient*) override { }
 #endif
 #if ENABLE(MEDIA_STREAM)
-    virtual void load(MediaStreamPrivate*) { }
+    void load(MediaStreamPrivate*) override { }
 #endif
-    virtual void cancelLoad() { }
+    void cancelLoad() override { }
 
-    virtual void prepareToPlay() { }
-    virtual void play() { }
-    virtual void pause() { }    
+    void prepareToPlay() override { }
+    void play() override { }
+    void pause() override { }
 
-    virtual PlatformMedia platformMedia() const { return NoPlatformMedia; }
-    virtual PlatformLayer* platformLayer() const { return 0; }
+    PlatformMedia platformMedia() const override { return NoPlatformMedia; }
+    PlatformLayer* platformLayer() const override { return 0; }
 
-    virtual FloatSize naturalSize() const { return FloatSize(); }
+    FloatSize naturalSize() const override { return FloatSize(); }
 
-    virtual bool hasVideo() const { return false; }
-    virtual bool hasAudio() const { return false; }
+    bool hasVideo() const override { return false; }
+    bool hasAudio() const override { return false; }
 
-    virtual void setVisible(bool) { }
+    void setVisible(bool) override { }
 
-    virtual double durationDouble() const { return 0; }
+    double durationDouble() const override { return 0; }
 
-    virtual double currentTimeDouble() const { return 0; }
-    virtual void seekDouble(double) { }
-    virtual bool seeking() const { return false; }
+    double currentTimeDouble() const override { return 0; }
+    void seekDouble(double) override { }
+    bool seeking() const override { return false; }
 
-    virtual void setRateDouble(double) { }
-    virtual void setPreservesPitch(bool) { }
-    virtual bool paused() const { return false; }
+    void setRateDouble(double) override { }
+    void setPreservesPitch(bool) override { }
+    bool paused() const override { return false; }
 
-    virtual void setVolumeDouble(double) { }
+    void setVolumeDouble(double) override { }
 
-    virtual bool supportsMuting() const { return false; }
-    virtual void setMuted(bool) { }
+    bool supportsMuting() const override { return false; }
+    void setMuted(bool) override { }
 
-    virtual bool hasClosedCaptions() const { return false; }
-    virtual void setClosedCaptionsVisible(bool) { };
+    bool hasClosedCaptions() const override { return false; }
+    void setClosedCaptionsVisible(bool) override { };
 
-    virtual MediaPlayer::NetworkState networkState() const { return MediaPlayer::Empty; }
-    virtual MediaPlayer::ReadyState readyState() const { return MediaPlayer::HaveNothing; }
+    MediaPlayer::NetworkState networkState() const override { return MediaPlayer::Empty; }
+    MediaPlayer::ReadyState readyState() const override { return MediaPlayer::HaveNothing; }
 
-    virtual double maxTimeSeekableDouble() const { return 0; }
-    virtual double minTimeSeekable() const { return 0; }
-    virtual std::unique_ptr<PlatformTimeRanges> buffered() const { return std::make_unique<PlatformTimeRanges>(); }
+    float maxTimeSeekable() const override { return 0; }
+    double minTimeSeekable() const override { return 0; }
+    std::unique_ptr<PlatformTimeRanges> buffered() const override { return std::make_unique<PlatformTimeRanges>(); }
 
-    virtual unsigned long long totalBytes() const { return 0; }
-    virtual bool didLoadingProgress() const { return false; }
+    unsigned long long totalBytes() const override { return 0; }
+    bool didLoadingProgress() const override { return false; }
 
-    virtual void setSize(const IntSize&) { }
+    void setSize(const IntSize&) override { }
 
-    virtual void paint(GraphicsContext*, const FloatRect&) override { }
+    void paint(GraphicsContext*, const FloatRect&) override { }
 
-    virtual bool canLoadPoster() const { return false; }
-    virtual void setPoster(const String&) { }
+    bool canLoadPoster() const override { return false; }
+    void setPoster(const String&) override { }
 
-    virtual bool hasSingleSecurityOrigin() const { return true; }
+    bool hasSingleSecurityOrigin() const override { return true; }
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    virtual MediaPlayer::MediaKeyException generateKeyRequest(const String&, const unsigned char*, unsigned) override { return MediaPlayer::InvalidPlayerState; }
-    virtual MediaPlayer::MediaKeyException addKey(const String&, const unsigned char*, unsigned, const unsigned char*, unsigned, const String&) override { return MediaPlayer::InvalidPlayerState; }
-    virtual MediaPlayer::MediaKeyException cancelKeyRequest(const String&, const String&) override { return MediaPlayer::InvalidPlayerState; }
+    MediaPlayer::MediaKeyException generateKeyRequest(const String&, const unsigned char*, unsigned) override { return MediaPlayer::InvalidPlayerState; }
+    MediaPlayer::MediaKeyException addKey(const String&, const unsigned char*, unsigned, const unsigned char*, unsigned, const String&) override { return MediaPlayer::InvalidPlayerState; }
+    MediaPlayer::MediaKeyException cancelKeyRequest(const String&, const String&) override { return MediaPlayer::InvalidPlayerState; }
 #endif
 };
 

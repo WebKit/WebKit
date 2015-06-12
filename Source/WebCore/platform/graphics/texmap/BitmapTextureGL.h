@@ -36,22 +36,22 @@ class FilterOperation;
 class BitmapTextureGL : public BitmapTexture {
 public:
     BitmapTextureGL(PassRefPtr<GraphicsContext3D>);
+    virtual ~BitmapTextureGL();
 
-    virtual IntSize size() const;
-    virtual bool isValid() const;
-    virtual bool canReuseWith(const IntSize& contentsSize, Flags = 0);
-    virtual void didReset();
+    virtual IntSize size() const override;
+    virtual bool isValid() const override;
+    virtual bool canReuseWith(const IntSize& contentsSize, Flags = 0) override;
+    virtual void didReset() override;
     void bindAsSurface(GraphicsContext3D*);
     void initializeStencil();
     void initializeDepthBuffer();
-    ~BitmapTextureGL();
     virtual uint32_t id() const { return m_id; }
     uint32_t textureTarget() const { return GraphicsContext3D::TEXTURE_2D; }
     IntSize textureSize() const { return m_textureSize; }
-    void updateContents(Image*, const IntRect&, const IntPoint&, UpdateContentsFlag);
-    virtual void updateContents(const void*, const IntRect& target, const IntPoint& sourceOffset, int bytesPerLine, UpdateContentsFlag);
+    virtual void updateContents(Image*, const IntRect&, const IntPoint&, UpdateContentsFlag) override;
+    virtual void updateContents(const void*, const IntRect& target, const IntPoint& sourceOffset, int bytesPerLine, UpdateContentsFlag) override;
     void updateContentsNoSwizzle(const void*, const IntRect& target, const IntPoint& sourceOffset, int bytesPerLine, unsigned bytesPerPixel = 4, Platform3DObject glFormat = GraphicsContext3D::RGBA);
-    virtual bool isBackedByOpenGL() const { return true; }
+    virtual bool isBackedByOpenGL() const override { return true; }
 
     virtual PassRefPtr<BitmapTexture> applyFilters(TextureMapper*, const FilterOperations&) override;
     struct FilterInfo {

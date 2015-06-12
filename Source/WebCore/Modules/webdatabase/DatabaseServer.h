@@ -36,33 +36,33 @@ public:
     DatabaseServer() { };
     virtual ~DatabaseServer() { }
 
-    virtual void initialize(const String& databasePath);
+    void initialize(const String& databasePath) override;
 
-    virtual void setClient(DatabaseManagerClient*);
-    virtual String databaseDirectoryPath() const;
-    virtual void setDatabaseDirectoryPath(const String&);
+    void setClient(DatabaseManagerClient*) override;
+    String databaseDirectoryPath() const override;
+    void setDatabaseDirectoryPath(const String&) override;
 
-    virtual String fullPathForDatabase(SecurityOrigin*, const String& name, bool createIfDoesNotExist);
+    String fullPathForDatabase(SecurityOrigin*, const String& name, bool createIfDoesNotExist) override;
 
-    virtual RefPtr<DatabaseBackendBase> openDatabase(RefPtr<DatabaseContext>&, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError&, String& errorMessage, OpenAttempt);
+    RefPtr<DatabaseBackendBase> openDatabase(RefPtr<DatabaseContext>&, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError&, String& errorMessage, OpenAttempt) override;
 
     void closeAllDatabases() override;
 
-    virtual bool hasEntryForOrigin(SecurityOrigin*);
-    virtual void origins(Vector<RefPtr<SecurityOrigin>>& result);
-    virtual bool databaseNamesForOrigin(SecurityOrigin*, Vector<String>& result);
-    virtual DatabaseDetails detailsForNameAndOrigin(const String&, SecurityOrigin*);
+    bool hasEntryForOrigin(SecurityOrigin*) override;
+    void origins(Vector<RefPtr<SecurityOrigin>>& result) override;
+    bool databaseNamesForOrigin(SecurityOrigin*, Vector<String>& result) override;
+    DatabaseDetails detailsForNameAndOrigin(const String&, SecurityOrigin*) override;
 
-    virtual unsigned long long usageForOrigin(SecurityOrigin*);
-    virtual unsigned long long quotaForOrigin(SecurityOrigin*);
+    unsigned long long usageForOrigin(SecurityOrigin*) override;
+    unsigned long long quotaForOrigin(SecurityOrigin*) override;
 
-    virtual void setQuota(SecurityOrigin*, unsigned long long);
+    void setQuota(SecurityOrigin*, unsigned long long) override;
 
-    virtual void deleteAllDatabases();
-    virtual bool deleteOrigin(SecurityOrigin*);
-    virtual bool deleteDatabase(SecurityOrigin*, const String& name);
+    void deleteAllDatabases() override;
+    bool deleteOrigin(SecurityOrigin*) override;
+    bool deleteDatabase(SecurityOrigin*, const String& name) override;
 
-    virtual void interruptAllDatabasesForContext(const DatabaseContext*);
+    void interruptAllDatabasesForContext(const DatabaseContext*) override;
 
 protected:
     virtual RefPtr<DatabaseBackendBase> createDatabase(RefPtr<DatabaseContext>&, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);

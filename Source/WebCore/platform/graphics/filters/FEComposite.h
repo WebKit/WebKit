@@ -60,12 +60,12 @@ public:
 
     virtual void correctFilterResultIfNeeded() override;
 
-    virtual void platformApplySoftware();
-    virtual void dump();
+    virtual void platformApplySoftware() override;
+    virtual void dump() override;
     
-    virtual void determineAbsolutePaintRect();
+    virtual void determineAbsolutePaintRect() override;
 
-    virtual TextStream& externalRepresentation(TextStream&, int indention) const;
+    virtual TextStream& externalRepresentation(TextStream&, int indention) const override;
 
 protected:
     virtual bool requiresValidPreMultipliedPixels() override { return m_type != FECOMPOSITE_OPERATOR_ARITHMETIC; }

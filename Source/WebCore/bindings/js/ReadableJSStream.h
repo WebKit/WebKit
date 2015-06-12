@@ -52,7 +52,7 @@ public:
     JSC::JSValue jsController(JSC::ExecState&, JSDOMGlobalObject*);
 
     void storeError(JSC::ExecState&);
-    JSC::JSValue error() { return m_error.get(); }
+    JSC::JSValue error() override { return m_error.get(); }
 
     void enqueue(JSC::ExecState&);
 
