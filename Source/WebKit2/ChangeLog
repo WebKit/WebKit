@@ -1,3 +1,19 @@
+2015-06-12  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Video with reflection crashes WebKit and Safari
+        https://bugs.webkit.org/show_bug.cgi?id=145905
+        rdar://problem/18364939
+
+        Reviewed by Anders Carlsson.
+        
+        On iOS, AVPlayerLayers are contained inside a WebVideoContainerLayer, but
+        the layer type is still LayerTypeAVPlayerLayer.
+        
+        Avoid throwing exceptions when cloning such layers by checking the layer class.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.mm:
+        (WebKit::PlatformCALayerRemoteCustom::clone):
+
 2015-06-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Fix unused private field warning in WebContextMenuProxyEfl.cpp

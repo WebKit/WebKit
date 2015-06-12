@@ -104,13 +104,20 @@ PassRefPtr<WebCore::PlatformCALayer> PlatformCALayerRemoteCustom::clone(Platform
     bool copyContents = true;
 
     if (layerType() == LayerTypeAVPlayerLayer) {
-        clonedLayer = adoptNS([allocAVPlayerLayerInstance() init]);
+        
+        if ([platformLayer() isKindOfClass:getAVPlayerLayerClass()]) {
+            clonedLayer = adoptNS([allocAVPlayerLayerInstance() init]);
 
-        AVPlayerLayer* destinationPlayerLayer = static_cast<AVPlayerLayer *>(clonedLayer.get());
-        AVPlayerLayer* sourcePlayerLayer = static_cast<AVPlayerLayer *>(platformLayer());
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [destinationPlayerLayer setPlayer:[sourcePlayerLayer player]];
-        });
+            AVPlayerLayer* destinationPlayerLayer = static_cast<AVPlayerLayer *>(clonedLayer.get());
+            AVPlayerLayer* sourcePlayerLayer = static_cast<AVPlayerLayer *>(platformLayer());
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [destinationPlayerLayer setPlayer:[sourcePlayerLayer player]];
+            });
+        } else {
+            // On iOS, the AVPlayerLayer is inside a WebVideoContainerLayer. This code needs to share logic with MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer().
+            clonedLayer = adoptNS([[CALayer alloc] init]);
+        }
+
         copyContents = false;
     } else if (layerType() == LayerTypeWebGLLayer) {
         clonedLayer = adoptNS([[CALayer alloc] init]);
