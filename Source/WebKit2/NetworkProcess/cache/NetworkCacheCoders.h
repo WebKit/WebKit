@@ -35,7 +35,6 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/MD5.h>
 #include <wtf/SHA1.h>
 #include <wtf/Vector.h>
 
@@ -252,11 +251,6 @@ template<> struct Coder<String> {
 template<> struct Coder<WebCore::CertificateInfo> {
     static void encode(Encoder&, const WebCore::CertificateInfo&);
     static bool decode(Decoder&, WebCore::CertificateInfo&);
-};
-
-template<> struct Coder<MD5::Digest> {
-    static void encode(Encoder&, const MD5::Digest&);
-    static bool decode(Decoder&, MD5::Digest&);
 };
 
 template<> struct Coder<SHA1::Digest> {

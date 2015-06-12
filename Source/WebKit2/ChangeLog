@@ -1,3 +1,24 @@
+2015-06-12  Antti Koivisto  <antti@apple.com>
+
+        Network Cache: Use SHA1 for key hash
+        https://bugs.webkit.org/show_bug.cgi?id=143829
+
+        Reviewed by Anders Carlsson.
+
+        For consistency with blobs, use SHA1 instead of MD5.
+
+        * NetworkProcess/cache/NetworkCacheCoders.cpp:
+        (WebKit::NetworkCache::Coder<MD5::Digest>::encode): Deleted.
+        (WebKit::NetworkCache::Coder<MD5::Digest>::decode): Deleted.
+
+            No longer needed.
+
+        * NetworkProcess/cache/NetworkCacheCoders.h:
+        * NetworkProcess/cache/NetworkCacheKey.cpp:
+        (WebKit::NetworkCache::hashString):
+        (WebKit::NetworkCache::Key::computeHash):
+        * NetworkProcess/cache/NetworkCacheKey.h:
+
 2015-06-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix mismatched-tags warning in Source/WebKit2/UIProcess/gtk/InputMethodFilter.h

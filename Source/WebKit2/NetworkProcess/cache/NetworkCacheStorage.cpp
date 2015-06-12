@@ -222,6 +222,8 @@ void Storage::synchronize()
 
         m_blobStorage.synchronize();
 
+        deleteEmptyRecordsDirectories(recordsPath());
+
         LOG(NetworkCacheStorage, "(NetworkProcess) cache synchronization completed size=%zu count=%d", recordsSize, count);
     });
 }
@@ -858,8 +860,6 @@ void Storage::shrink()
                 m_blobStorage.remove(bodyPath);
             }
         });
-
-        deleteEmptyRecordsDirectories(recordsPath);
 
         RunLoop::main().dispatch([this] {
             m_shrinkInProgress = false;

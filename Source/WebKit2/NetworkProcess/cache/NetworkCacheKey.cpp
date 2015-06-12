@@ -64,34 +64,33 @@ Key& Key::operator=(const Key& other)
     return *this;
 }
 
-static void hashString(MD5& md5, const String& string)
+static void hashString(SHA1& sha1, const String& string)
 {
-    const uint8_t zero = 0;
-
     if (string.isNull())
         return;
 
     if (string.is8Bit() && string.containsOnlyASCII()) {
-        md5.addBytes(string.characters8(), string.length());
-        md5.addBytes(&zero, 1);
+        const uint8_t nullByte = 0;
+        sha1.addBytes(string.characters8(), string.length());
+        sha1.addBytes(&nullByte, 1);
         return;
     }
     auto cString = string.utf8();
-    md5.addBytes(reinterpret_cast<const uint8_t*>(cString.data()), cString.length());
-    md5.addBytes(&zero, 1);
+    // Include terminating null byte.
+    sha1.addBytes(reinterpret_cast<const uint8_t*>(cString.data()), cString.length() + 1);
 }
 
 Key::HashType Key::computeHash() const
 {
     // We don't really need a cryptographic hash. The key is always verified against the entry header.
-    // MD5 just happens to be suitably sized, fast and available.
-    MD5 md5;
-    hashString(md5, m_method);
-    hashString(md5, m_partition);
-    hashString(md5, m_identifier);
-    hashString(md5, m_range);
-    MD5::Digest hash;
-    md5.checksum(hash);
+    // SHA1 just happens to be suitably sized, fast and available.
+    SHA1 sha1;
+    hashString(sha1, m_method);
+    hashString(sha1, m_partition);
+    hashString(sha1, m_identifier);
+    hashString(sha1, m_range);
+    SHA1::Digest hash;
+    sha1.computeHash(hash);
     return hash;
 }
 

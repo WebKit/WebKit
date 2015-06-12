@@ -166,16 +166,6 @@ bool Coder<WebCore::CertificateInfo>::decode(Decoder& decoder, WebCore::Certific
     return argumentDecoder.decode(certificateInfo);
 }
 
-void Coder<MD5::Digest>::encode(Encoder& encoder, const MD5::Digest& digest)
-{
-    encoder.encodeFixedLengthData(digest.data(), sizeof(digest));
-}
-
-bool Coder<MD5::Digest>::decode(Decoder& decoder, MD5::Digest& digest)
-{
-    return decoder.decodeFixedLengthData(digest.data(), sizeof(digest));
-}
-
 void Coder<SHA1::Digest>::encode(Encoder& encoder, const SHA1::Digest& digest)
 {
     encoder.encodeFixedLengthData(digest.data(), sizeof(digest));
