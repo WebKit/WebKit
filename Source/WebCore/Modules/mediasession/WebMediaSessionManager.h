@@ -75,6 +75,7 @@ private:
         TargetMonitoringConfigurationTask = 1 << 2,
     };
     typedef unsigned ConfigurationTasks;
+    String toString(ConfigurationTasks);
 
     void scheduleDelayedTask(ConfigurationTasks);
     void taskTimerFired();

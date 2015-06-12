@@ -32,6 +32,7 @@
 #include "Logging.h"
 #include "MediaPlaybackTargetPickerMac.h"
 #include "WebMediaSessionManagerClient.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -60,6 +61,29 @@ static bool flagsAreSet(MediaProducer::MediaStateFlags value, unsigned flags)
 {
     return value & flags;
 }
+
+#if !LOG_DISABLED
+static String mediaProducerStateString(MediaProducer::MediaStateFlags flags)
+{
+    StringBuilder string;
+    if (flags & MediaProducer::IsPlayingAudio)
+        string.append("IsPlayingAudio + ");
+    if (flags & MediaProducer::IsPlayingVideo)
+        string.append("IsPlayingVideo + ");
+    if (flags & MediaProducer::IsPlayingToExternalDevice)
+        string.append("IsPlayingToExternalDevice + ");
+    if (flags & MediaProducer::RequiresPlaybackTargetMonitoring)
+        string.append("RequiresPlaybackTargetMonitoring + ");
+    if (flags & MediaProducer::ExternalDeviceAutoPlayCandidate)
+        string.append("ExternalDeviceAutoPlayCandidate + ");
+    if (string.isEmpty())
+        string.append("IsNotPlaying");
+    else
+        string.resize(string.length() - 2);
+
+    return string.toString();
+}
+#endif
 
 WebMediaSessionManager::WebMediaSessionManager()
     : m_taskTimer(RunLoop::current(), this, &WebMediaSessionManager::taskTimerFired)
@@ -136,7 +160,7 @@ void WebMediaSessionManager::clientStateDidChange(WebMediaSessionManagerClient& 
 
     auto& changedClientState = m_clientState[index];
     MediaProducer::MediaStateFlags oldFlags = changedClientState->flags;
-    LOG(Media, "WebMediaSessionManager::clientStateDidChange(%p + %llu) - new flags = 0x%x, old flags = 0x%x", &client, contextId, newFlags, oldFlags);
+    LOG(Media, "WebMediaSessionManager::clientStateDidChange(%p + %llu) - new flags = %s, old flags = %s", &client, contextId, mediaProducerStateString(newFlags).utf8().data(), mediaProducerStateString(oldFlags).utf8().data());
     if (newFlags == oldFlags)
         return;
 
@@ -265,14 +289,37 @@ void WebMediaSessionManager::configurePlaybackTargetMonitoring()
         targetPicker().stopMonitoringPlaybackTargets();
 }
 
+#if !LOG_DISABLED
+String WebMediaSessionManager::toString(ConfigurationTasks tasks)
+{
+    StringBuilder string;
+    if (tasks & InitialConfigurationTask)
+        string.append("InitialConfigurationTask + ");
+    if (tasks & TargetClientsConfigurationTask)
+        string.append("TargetClientsConfigurationTask + ");
+    if (tasks & TargetMonitoringConfigurationTask)
+        string.append("TargetMonitoringConfigurationTask + ");
+    if (string.isEmpty())
+        string.append("NoTask");
+    else
+        string.resize(string.length() - 2);
+    
+    return string.toString();
+}
+#endif
+
 void WebMediaSessionManager::scheduleDelayedTask(ConfigurationTasks tasks)
 {
+    LOG(Media, "WebMediaSessionManager::scheduleDelayedTask - tasks = %s", toString(tasks).utf8().data());
+
     m_taskFlags |= tasks;
     m_taskTimer.startOneShot(taskDelayInterval);
 }
 
 void WebMediaSessionManager::taskTimerFired()
 {
+    LOG(Media, "WebMediaSessionManager::taskTimerFired - tasks = %s", toString(m_taskFlags).utf8().data());
+
     if (m_taskFlags & InitialConfigurationTask)
         configureNewClients();
     if (m_taskFlags & TargetClientsConfigurationTask)

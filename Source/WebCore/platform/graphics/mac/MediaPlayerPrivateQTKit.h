@@ -183,6 +183,7 @@ private:
     virtual bool isCurrentPlaybackTargetWireless() const override;
     virtual void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&);
     virtual void setShouldPlayToPlaybackTarget(bool) override;
+    bool wirelessVideoPlaybackDisabled() const override { return false; }
 #endif
 
     MediaPlayer* m_player;
