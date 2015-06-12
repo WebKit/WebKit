@@ -276,7 +276,7 @@ void WebViewTest::selectAll()
 
 bool WebViewTest::isEditable()
 {
-    webkit_web_view_is_editable(m_webView);
+    return webkit_web_view_is_editable(m_webView);
 }
 
 void WebViewTest::setEditable(bool editable)
