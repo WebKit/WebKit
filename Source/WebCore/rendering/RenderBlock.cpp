@@ -193,9 +193,10 @@ RenderBlock::RenderBlock(Document& document, Ref<RenderStyle>&& style, unsigned 
 
 static void removeBlockFromDescendantAndContainerMaps(RenderBlock* block, TrackedDescendantsMap*& descendantMap, TrackedContainerMap*& containerMap)
 {
-    if (auto descendantSet = descendantMap->take(block)) {
-        for (auto& box : *descendantSet) {
-            auto it = containerMap->find(box);
+    if (std::unique_ptr<TrackedRendererListHashSet> descendantSet = descendantMap->take(block)) {
+        TrackedRendererListHashSet::iterator end = descendantSet->end();
+        for (TrackedRendererListHashSet::iterator descendant = descendantSet->begin(); descendant != end; ++descendant) {
+            TrackedContainerMap::iterator it = containerMap->find(*descendant);
             ASSERT(it != containerMap->end());
             if (it == containerMap->end())
                 continue;
@@ -1050,7 +1051,9 @@ void RenderBlock::addOverflowFromPositionedObjects()
     if (!positionedDescendants)
         return;
 
-    for (auto& positionedObject : *positionedDescendants) {
+    for (auto it = positionedDescendants->begin(), end = positionedDescendants->end(); it != end; ++it) {
+        RenderBox* positionedObject = *it;
+        
         // Fixed positioned elements don't contribute to layout overflow, since they don't scroll with the content.
         if (positionedObject->style().position() != FixedPosition) {
             LayoutUnit x = positionedObject->x();
@@ -1145,7 +1148,8 @@ void RenderBlock::dirtyForLayoutFromPercentageHeightDescendants()
     if (!descendants)
         return;
 
-    for (auto& box : *descendants) {
+    for (auto it = descendants->begin(), end = descendants->end(); it != end; ++it) {
+        RenderBox* box = *it;
         while (box != this) {
             if (box->normalChildNeedsLayout())
                 break;
@@ -1182,9 +1186,11 @@ void RenderBlock::simplifiedNormalFlowLayout()
 
         // FIXME: Glyph overflow will get lost in this case, but not really a big deal.
         // FIXME: Find a way to invalidate the knownToHaveNoOverflow flag on the InlineBoxes.
-        GlyphOverflowAndFallbackFontsMap textBoxDataMap;
-        for (auto& box : lineBoxes)
+        GlyphOverflowAndFallbackFontsMap textBoxDataMap;                  
+        for (auto it = lineBoxes.begin(), end = lineBoxes.end(); it != end; ++it) {
+            RootInlineBox* box = *it;
             box->computeOverflow(box->lineTop(), box->lineBottom(), textBoxDataMap);
+        }
     } else {
         for (auto box = firstChildBox(); box; box = box->nextSiblingBox()) {
             if (!box->isOutOfFlowPositioned())
@@ -1293,15 +1299,17 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren, bool fixedPosit
     if (!positionedDescendants)
         return;
 
-    for (auto& box : *positionedDescendants) {
-        estimateRegionRangeForBoxChild(*box);
+    for (auto it = positionedDescendants->begin(), end = positionedDescendants->end(); it != end; ++it) {
+        RenderBox& r = **it;
+        
+        estimateRegionRangeForBoxChild(r);
 
         // A fixed position element with an absolute positioned ancestor has no way of knowing if the latter has changed position. So
         // if this is a fixed position element, mark it for layout if it has an abspos ancestor and needs to move with that ancestor, i.e. 
         // it has static position.
-        markFixedPositionObjectForLayoutIfNeeded(*box);
+        markFixedPositionObjectForLayoutIfNeeded(r);
         if (fixedPositionObjectsOnly) {
-            box->layoutIfNeeded();
+            r.layoutIfNeeded();
             continue;
         }
 
@@ -1309,43 +1317,43 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren, bool fixedPosit
         // non-positioned block.  Rather than trying to detect all of these movement cases, we just always lay out positioned
         // objects that are positioned implicitly like this.  Such objects are rare, and so in typical DHTML menu usage (where everything is
         // positioned explicitly) this should not incur a performance penalty.
-        if (relayoutChildren || (box->style().hasStaticBlockPosition(isHorizontalWritingMode()) && box->parent() != this))
-            box->setChildNeedsLayout(MarkOnlyThis);
+        if (relayoutChildren || (r.style().hasStaticBlockPosition(isHorizontalWritingMode()) && r.parent() != this))
+            r.setChildNeedsLayout(MarkOnlyThis);
             
         // If relayoutChildren is set and the child has percentage padding or an embedded content box, we also need to invalidate the childs pref widths.
-        if (relayoutChildren && box->needsPreferredWidthsRecalculation())
-            box->setPreferredLogicalWidthsDirty(true, MarkOnlyThis);
+        if (relayoutChildren && r.needsPreferredWidthsRecalculation())
+            r.setPreferredLogicalWidthsDirty(true, MarkOnlyThis);
         
-        box->markForPaginationRelayoutIfNeeded();
+        r.markForPaginationRelayoutIfNeeded();
         
         // We don't have to do a full layout.  We just have to update our position. Try that first. If we have shrink-to-fit width
         // and we hit the available width constraint, the layoutIfNeeded() will catch it and do a full layout.
-        if (box->needsPositionedMovementLayoutOnly() && box->tryLayoutDoingPositionedMovementOnly())
-            box->clearNeedsLayout();
+        if (r.needsPositionedMovementLayoutOnly() && r.tryLayoutDoingPositionedMovementOnly())
+            r.clearNeedsLayout();
             
         // If we are paginated or in a line grid, compute a vertical position for our object now.
         // If it's wrong we'll lay out again.
         LayoutUnit oldLogicalTop = 0;
-        bool needsBlockDirectionLocationSetBeforeLayout = box->needsLayout() && view().layoutState()->needsBlockDirectionLocationSetBeforeLayout();
+        bool needsBlockDirectionLocationSetBeforeLayout = r.needsLayout() && view().layoutState()->needsBlockDirectionLocationSetBeforeLayout();
         if (needsBlockDirectionLocationSetBeforeLayout) {
-            if (isHorizontalWritingMode() == box->isHorizontalWritingMode())
-                box->updateLogicalHeight();
+            if (isHorizontalWritingMode() == r.isHorizontalWritingMode())
+                r.updateLogicalHeight();
             else
-                box->updateLogicalWidth();
-            oldLogicalTop = logicalTopForChild(*box);
+                r.updateLogicalWidth();
+            oldLogicalTop = logicalTopForChild(r);
         }
 
-        box->layoutIfNeeded();
+        r.layoutIfNeeded();
 
         // Lay out again if our estimate was wrong.
-        if (needsBlockDirectionLocationSetBeforeLayout && logicalTopForChild(*box) != oldLogicalTop) {
-            box->setChildNeedsLayout(MarkOnlyThis);
-            box->layoutIfNeeded();
+        if (needsBlockDirectionLocationSetBeforeLayout && logicalTopForChild(r) != oldLogicalTop) {
+            r.setChildNeedsLayout(MarkOnlyThis);
+            r.layoutIfNeeded();
         }
 
-        if (updateRegionRangeForBoxChild(*box)) {
-            box->setNeedsLayout(MarkOnlyThis);
-            box->layoutIfNeeded();
+        if (updateRegionRangeForBoxChild(r)) {
+            r.setNeedsLayout(MarkOnlyThis);
+            r.layoutIfNeeded();
         }
     }
 }
@@ -1356,8 +1364,10 @@ void RenderBlock::markPositionedObjectsForLayout()
     if (!positionedDescendants)
         return;
 
-    for (auto& box : *positionedDescendants)
-        box->setChildNeedsLayout();
+    for (auto it = positionedDescendants->begin(), end = positionedDescendants->end(); it != end; ++it) {
+        RenderBox* r = *it;
+        r->setChildNeedsLayout();
+    }
 }
 
 void RenderBlock::markForPaginationRelayoutIfNeeded()
@@ -1681,8 +1691,10 @@ void RenderBlock::paintContinuationOutlines(PaintInfo& info, const LayoutPoint& 
 
     LayoutPoint accumulatedPaintOffset = paintOffset;
     // Paint each continuation outline.
-    for (auto& flow : *continuations) {
+    ListHashSet<RenderInline*>::iterator end = continuations->end();
+    for (ListHashSet<RenderInline*>::iterator it = continuations->begin(); it != end; ++it) {
         // Need to add in the coordinates of the intervening blocks.
+        RenderInline* flow = *it;
         RenderBlock* block = flow->containingBlock();
         for ( ; block && block != this; block = block->containingBlock())
             accumulatedPaintOffset.moveBy(block->location());
@@ -1776,8 +1788,11 @@ static void clipOutPositionedObjects(const PaintInfo* paintInfo, const LayoutPoi
     if (!positionedObjects)
         return;
     
-    for (auto& object : *positionedObjects)
-        paintInfo->context->clipOut(IntRect(offset.x() + object->x(), offset.y() + object->y(), object->width(), object->height()));
+    TrackedRendererListHashSet::const_iterator end = positionedObjects->end();
+    for (TrackedRendererListHashSet::const_iterator it = positionedObjects->begin(); it != end; ++it) {
+        RenderBox* r = *it;
+        paintInfo->context->clipOut(IntRect(offset.x() + r->x(), offset.y() + r->y(), r->width(), r->height()));
+    }
 }
 
 LayoutUnit blockDirectionOffset(RenderBlock& rootBlock, const LayoutSize& offsetFromRootBlock)
@@ -2108,7 +2123,9 @@ void RenderBlock::removeFromTrackedRendererMaps(RenderBox& descendant, TrackedDe
     if (!containerSet)
         return;
     
-    for (auto& container : *containerSet) {
+    for (auto it = containerSet->begin(), end = containerSet->end(); it != end; ++it) {
+        RenderBlock* container = *it;
+
         // FIXME: Disabling this assert temporarily until we fix the layout
         // bugs associated with positioned objects not properly cleared from
         // their ancestor chain before being moved. See webkit bug 93766.
@@ -2156,25 +2173,26 @@ void RenderBlock::removePositionedObjects(RenderBlock* o, ContainingBlockState c
     
     Vector<RenderBox*, 16> deadObjects;
 
-    for (auto& box : *positionedDescendants) {
-        if (!o || box->isDescendantOf(o)) {
+    for (auto it = positionedDescendants->begin(), end = positionedDescendants->end(); it != end; ++it) {
+        RenderBox* r = *it;
+        if (!o || r->isDescendantOf(o)) {
             if (containingBlockState == NewContainingBlock)
-                box->setChildNeedsLayout(MarkOnlyThis);
+                r->setChildNeedsLayout(MarkOnlyThis);
             
             // It is parent blocks job to add positioned child to positioned objects list of its containing block
             // Parent layout needs to be invalidated to ensure this happens.
-            RenderElement* p = box->parent();
+            RenderElement* p = r->parent();
             while (p && !p->isRenderBlock())
                 p = p->parent();
             if (p)
                 p->setChildNeedsLayout();
             
-            deadObjects.append(box);
+            deadObjects.append(r);
         }
     }
     
-    for (auto& object : deadObjects)
-        removePositionedObject(*object);
+    for (unsigned i = 0; i < deadObjects.size(); i++)
+        removePositionedObject(*deadObjects.at(i));
 }
 
 void RenderBlock::addPercentHeightDescendant(RenderBox& descendant)
@@ -3725,8 +3743,10 @@ void RenderBlock::checkPositionedObjectsNeedLayout()
     if (!positionedDescendantSet)
         return;
 
-    for (auto& box : *positionedDescendantSet)
-        ASSERT(!box->needsLayout());
+    for (auto it = positionedDescendantSet->begin(), end = positionedDescendantSet->end(); it != end; ++it) {
+        RenderBox* currBox = *it;
+        ASSERT(!currBox->needsLayout());
+    }
 }
 
 #endif

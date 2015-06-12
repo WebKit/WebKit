@@ -299,8 +299,8 @@ bool RenderFlowThread::updateAllLayerToRegionMappings()
     RenderLayerList* lists[] = { layer()->negZOrderList(), layer()->normalFlowList(), layer()->posZOrderList() };
     for (size_t listIndex = 0; listIndex < sizeof(lists) / sizeof(lists[0]); ++listIndex) {
         if (RenderLayerList* list = lists[listIndex]) {
-            for (auto& layer : *list)
-                updateLayerToRegionMappings(*layer, layerToRegionMap, regionToLayerListMap, needsLayerUpdate);
+            for (size_t i = 0, listSize = list->size(); i < listSize; ++i)
+                updateLayerToRegionMappings(*list->at(i), layerToRegionMap, regionToLayerListMap, needsLayerUpdate);
         }
     }
 

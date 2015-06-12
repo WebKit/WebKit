@@ -630,7 +630,12 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         paintDocumentMarkers(context, boxOrigin, lineStyle, font, false);
 
         if (useCustomUnderlines) {
-            for (auto& underline : renderer().frame().editor().customCompositionUnderlines()) {
+            const Vector<CompositionUnderline>& underlines = renderer().frame().editor().customCompositionUnderlines();
+            size_t numUnderlines = underlines.size();
+
+            for (size_t index = 0; index < numUnderlines; ++index) {
+                const CompositionUnderline& underline = underlines[index];
+
                 if (underline.endOffset <= start())
                     // underline is completely before this run.  This might be an underline that sits
                     // before the first run we draw, or underlines that were within runs we skipped 

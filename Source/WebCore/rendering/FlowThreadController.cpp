@@ -274,7 +274,8 @@ void FlowThreadController::collectFixedPositionedLayers(Vector<RenderLayer*>& fi
 
         RenderLayer* flowThreadLayer = flowRenderer->layer();
         if (Vector<RenderLayer*>* negZOrderList = flowThreadLayer->negZOrderList()) {
-            for (auto& currLayer : *negZOrderList) {
+            for (size_t i = 0, size = negZOrderList->size(); i < size; ++i) {
+                RenderLayer* currLayer = negZOrderList->at(i);
                 if (currLayer->renderer().style().position() != FixedPosition)
                     continue;
                 fixedPosLayers.append(currLayer);
@@ -282,7 +283,8 @@ void FlowThreadController::collectFixedPositionedLayers(Vector<RenderLayer*>& fi
         }
 
         if (Vector<RenderLayer*>* posZOrderList = flowThreadLayer->posZOrderList()) {
-            for (auto& currLayer : *posZOrderList) {
+            for (size_t i = 0, size = posZOrderList->size(); i < size; ++i) {
+                RenderLayer* currLayer = posZOrderList->at(i);
                 if (currLayer->renderer().style().position() != FixedPosition)
                     continue;
                 fixedPosLayers.append(currLayer);

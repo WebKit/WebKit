@@ -198,8 +198,8 @@ void RenderMultiColumnSet::distributeImplicitBreaks()
 {
 #ifndef NDEBUG
     // There should be no implicit breaks assumed at this point.
-    for (auto& forcedBreak : m_contentRuns)
-        ASSERT(!forcedBreak.assumedImplicitBreaks());
+    for (unsigned i = 0; i < forcedBreaksCount(); i++)
+        ASSERT(!m_contentRuns[i].assumedImplicitBreaks());
 #endif // NDEBUG
 
     // Insert a final content run to encompass all content. This will include overflow if this is

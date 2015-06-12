@@ -702,8 +702,8 @@ void HitTestResult::append(const HitTestResult& other)
 
     if (other.m_rectBasedTestResult) {
         NodeSet& set = mutableRectBasedTestResult();
-        for (auto& result : *other.m_rectBasedTestResult)
-            set.add(result);
+        for (NodeSet::const_iterator it = other.m_rectBasedTestResult->begin(), last = other.m_rectBasedTestResult->end(); it != last; ++it)
+            set.add(it->get());
     }
 }
 

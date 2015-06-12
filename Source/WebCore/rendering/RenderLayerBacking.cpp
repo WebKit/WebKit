@@ -1898,7 +1898,9 @@ static bool descendantLayerPaintsIntoAncestor(RenderLayer& parent)
 #endif
 
     if (Vector<RenderLayer*>* normalFlowList = parent.normalFlowList()) {
-        for (auto& curLayer : *normalFlowList) {
+        size_t listSize = normalFlowList->size();
+        for (size_t i = 0; i < listSize; ++i) {
+            RenderLayer* curLayer = normalFlowList->at(i);
             if (!compositedWithOwnBackingStore(curLayer)
                 && (curLayer->isVisuallyNonEmpty() || descendantLayerPaintsIntoAncestor(*curLayer)))
                 return true;
@@ -1911,7 +1913,9 @@ static bool descendantLayerPaintsIntoAncestor(RenderLayer& parent)
 
         // Use the m_hasCompositingDescendant bit to optimize?
         if (Vector<RenderLayer*>* negZOrderList = parent.negZOrderList()) {
-            for (auto& curLayer : *negZOrderList) {
+            size_t listSize = negZOrderList->size();
+            for (size_t i = 0; i < listSize; ++i) {
+                RenderLayer* curLayer = negZOrderList->at(i);
                 if (!compositedWithOwnBackingStore(curLayer)
                     && (curLayer->isVisuallyNonEmpty() || descendantLayerPaintsIntoAncestor(*curLayer)))
                     return true;
@@ -1919,7 +1923,9 @@ static bool descendantLayerPaintsIntoAncestor(RenderLayer& parent)
         }
 
         if (Vector<RenderLayer*>* posZOrderList = parent.posZOrderList()) {
-            for (auto& curLayer : *posZOrderList) {
+            size_t listSize = posZOrderList->size();
+            for (size_t i = 0; i < listSize; ++i) {
+                RenderLayer* curLayer = posZOrderList->at(i);
                 if (!compositedWithOwnBackingStore(curLayer)
                     && (curLayer->isVisuallyNonEmpty() || descendantLayerPaintsIntoAncestor(*curLayer)))
                     return true;
@@ -2496,7 +2502,9 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation* anim
     KeyframeValueList backdropFilterVector(AnimatedPropertyWebkitBackdropFilter);
 #endif
 
-    for (auto& currentKeyframe : keyframes.keyframes()) {
+    size_t numKeyframes = keyframes.size();
+    for (size_t i = 0; i < numKeyframes; ++i) {
+        const KeyframeValue& currentKeyframe = keyframes[i];
         const RenderStyle* keyframeStyle = currentKeyframe.style();
         double key = currentKeyframe.key();
 

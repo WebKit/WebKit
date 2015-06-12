@@ -1707,7 +1707,10 @@ void RenderInline::addAnnotatedRegions(Vector<AnnotatedRegionValue>& regions)
         return;
 
     const Vector<StyleDashboardRegion>& styleRegions = style().dashboardRegions();
-    for (auto& styleRegion : styleRegions) {
+    unsigned i, count = styleRegions.size();
+    for (i = 0; i < count; i++) {
+        StyleDashboardRegion styleRegion = styleRegions[i];
+
         LayoutRect linesBoundingBox = this->linesBoundingBox();
         LayoutUnit w = linesBoundingBox.width();
         LayoutUnit h = linesBoundingBox.height();

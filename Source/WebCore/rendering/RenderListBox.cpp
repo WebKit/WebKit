@@ -107,8 +107,12 @@ HTMLSelectElement& RenderListBox::selectElement() const
 void RenderListBox::updateFromElement()
 {
     if (m_optionsChanged) {
+        const Vector<HTMLElement*>& listItems = selectElement().listItems();
+        int size = numItems();
+        
         float width = 0;
-        for (auto& element : selectElement().listItems()) {
+        for (int i = 0; i < size; ++i) {
+            HTMLElement* element = listItems[i];
             String text;
             FontCascade itemFont = style().fontCascade();
             if (is<HTMLOptionElement>(*element))

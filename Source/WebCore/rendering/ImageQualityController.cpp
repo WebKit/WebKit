@@ -88,8 +88,8 @@ void ImageQualityController::highQualityRepaintTimerFired()
         return;
     }
 
-    for (auto& object : m_objectLayerSizeMap.keys())
-        object->repaint();
+    for (auto it = m_objectLayerSizeMap.begin(), end = m_objectLayerSizeMap.end(); it != end; ++it)
+        it->key->repaint();
 
     m_liveResizeOptimizationIsActive = false;
 }
