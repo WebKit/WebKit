@@ -376,7 +376,6 @@ set(WebKit2_SOURCES
     UIProcess/WebMediaCacheManagerProxy.cpp
     UIProcess/WebNavigationState.cpp
     UIProcess/WebOpenPanelResultListenerProxy.cpp
-    UIProcess/WebOriginDataManagerProxy.cpp
     UIProcess/WebPageDiagnosticLoggingClient.cpp
     UIProcess/WebPageGroup.cpp
     UIProcess/WebPageInjectedBundleClient.cpp
@@ -566,8 +565,6 @@ set(WebKit2_SOURCES
     WebProcess/Notifications/NotificationPermissionRequestManager.cpp
     WebProcess/Notifications/WebNotificationManager.cpp
 
-    WebProcess/OriginData/WebOriginDataManager.cpp
-
     WebProcess/Plugins/Plugin.cpp
     WebProcess/Plugins/PluginProcessConnection.cpp
     WebProcess/Plugins/PluginProcessConnectionManager.cpp
@@ -672,7 +669,6 @@ set(WebKit2_MESSAGES_IN_FILES
     UIProcess/WebIconDatabase.messages.in
     UIProcess/WebInspectorProxy.messages.in
     UIProcess/WebMediaCacheManagerProxy.messages.in
-    UIProcess/WebOriginDataManagerProxy.messages.in
     UIProcess/WebPageProxy.messages.in
     UIProcess/WebPasteboardProxy.messages.in
     UIProcess/WebProcessPool.messages.in
@@ -716,8 +712,6 @@ set(WebKit2_MESSAGES_IN_FILES
     WebProcess/Network/WebResourceLoader.messages.in
 
     WebProcess/Notifications/WebNotificationManager.messages.in
-
-    WebProcess/OriginData/WebOriginDataManager.messages.in
 
     WebProcess/Plugins/PluginProcessConnection.messages.in
     WebProcess/Plugins/PluginProcessConnectionManager.messages.in

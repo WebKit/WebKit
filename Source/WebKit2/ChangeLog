@@ -1,3 +1,9 @@
+2015-06-11  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [CMake] Unreviewed build fix after r185479.
+
+        * CMakeLists.txt: Unlist the files that r185479 deleted.
+
 2015-06-11  Anders Carlsson  <andersca@apple.com>
 
         Get rid of WebOriginDataManager
