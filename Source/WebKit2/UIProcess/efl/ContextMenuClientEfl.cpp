@@ -59,7 +59,7 @@ ContextMenuClientEfl::ContextMenuClientEfl(EwkView* view)
     ASSERT(pageRef);
 
     WKPageContextMenuClientV3 contextMenuClient;
-    memset(&contextMenuClient, 0, sizeof(WKPageContextMenuClient));
+    memset(&contextMenuClient, 0, sizeof(WKPageContextMenuClientV3));
     contextMenuClient.base.version = 3;
     contextMenuClient.base.clientInfo = this;
     contextMenuClient.getContextMenuFromProposedMenu_deprecatedForUseWithV0 = 0;

@@ -1,3 +1,25 @@
+2015-06-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] Fix deprecated declarations warnings related to WK2 versioned structs
+        https://bugs.webkit.org/show_bug.cgi?id=145913
+
+        Reviewed by Gyuyoung Kim.
+
+        * UIProcess/API/efl/ewk_favicon_database.cpp:
+        (EwkFaviconDatabase::EwkFaviconDatabase):
+        * UIProcess/efl/ContextHistoryClientEfl.cpp:
+        (WebKit::ContextHistoryClientEfl::ContextHistoryClientEfl):
+        * UIProcess/efl/ContextMenuClientEfl.cpp:
+        (ContextMenuClientEfl::ContextMenuClientEfl):
+        * UIProcess/efl/DownloadManagerEfl.cpp:
+        (WebKit::DownloadManagerEfl::DownloadManagerEfl):
+        * UIProcess/efl/FindClientEfl.cpp:
+        (WebKit::FindClientEfl::FindClientEfl):
+        * UIProcess/efl/FormClientEfl.cpp:
+        (WebKit::FormClientEfl::FormClientEfl):
+        * UIProcess/efl/PageUIClientEfl.cpp:
+        (WebKit::PageUIClientEfl::PageUIClientEfl):
+
 2015-06-11  Mark Lam  <mark.lam@apple.com>
 
         WebCore::reportException() needs to be able to accept a raw thrown value in addition to Exception objects.

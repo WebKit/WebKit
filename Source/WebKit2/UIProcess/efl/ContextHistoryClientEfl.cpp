@@ -117,7 +117,7 @@ ContextHistoryClientEfl::ContextHistoryClientEfl(WKContextRef context)
     ASSERT(m_context);
 
     WKContextHistoryClientV0 wkHistoryClient;
-    memset(&wkHistoryClient, 0, sizeof(WKContextHistoryClient));
+    memset(&wkHistoryClient, 0, sizeof(WKContextHistoryClientV0));
 
     wkHistoryClient.base.version = 0;
     wkHistoryClient.base.clientInfo = this;

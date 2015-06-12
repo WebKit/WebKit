@@ -53,7 +53,7 @@ PageUIClientEfl::PageUIClientEfl(EwkView* view)
     ASSERT(pageRef);
 
     WKPageUIClientV2 uiClient;
-    memset(&uiClient, 0, sizeof(WKPageUIClient));
+    memset(&uiClient, 0, sizeof(WKPageUIClientV2));
     uiClient.base.version = 2;
     uiClient.base.clientInfo = this;
     uiClient.close = close;

@@ -67,7 +67,7 @@ static void setPageLoaderClient(WKPageRef page)
     WKPageLoaderClientV3 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
 
-    loaderClient.base.version = kWKPageLoaderClientCurrentVersion;
+    loaderClient.base.version = 3;
     loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
     loaderClient.didLayout = didLayout;
 

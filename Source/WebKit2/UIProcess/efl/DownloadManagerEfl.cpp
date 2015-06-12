@@ -134,7 +134,7 @@ DownloadManagerEfl::DownloadManagerEfl(WKContextRef context)
     memset(&m_clientCallbacks, 0, sizeof(ClientDownloadCallbacks));
 
     WKContextDownloadClientV0 wkDownloadClient;
-    memset(&wkDownloadClient, 0, sizeof(WKContextDownloadClient));
+    memset(&wkDownloadClient, 0, sizeof(WKContextDownloadClientV0));
 
     wkDownloadClient.base.version = 0;
     wkDownloadClient.base.clientInfo = this;

@@ -43,8 +43,8 @@ EwkFaviconDatabase::EwkFaviconDatabase(WKIconDatabaseRef iconDatabase)
     : m_iconDatabase(iconDatabase)
 {
     WKIconDatabaseClientV1 iconDatabaseClient;
-    memset(&iconDatabaseClient, 0, sizeof(WKIconDatabaseClient));
-    iconDatabaseClient.base.version = kWKIconDatabaseClientCurrentVersion;
+    memset(&iconDatabaseClient, 0, sizeof(WKIconDatabaseClientV1));
+    iconDatabaseClient.base.version = 1;
     iconDatabaseClient.base.clientInfo = this;
     iconDatabaseClient.iconDataReadyForPageURL = iconDataReadyForPageURL;
     WKIconDatabaseSetIconDatabaseClient(m_iconDatabase.get(), &iconDatabaseClient.base);

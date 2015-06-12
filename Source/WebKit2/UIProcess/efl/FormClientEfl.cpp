@@ -54,7 +54,7 @@ FormClientEfl::FormClientEfl(EwkView* viewImpl)
     ASSERT(pageRef);
 
     WKPageFormClientV0 formClient;
-    memset(&formClient, 0, sizeof(WKPageFormClient));
+    memset(&formClient, 0, sizeof(WKPageFormClientV0));
     formClient.base.version = 0;
     formClient.base.clientInfo = this;
     formClient.willSubmitForm = willSubmitForm;

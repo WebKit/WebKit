@@ -81,7 +81,7 @@ public:
         WKPageLoaderClientV3 loaderClient;
         memset(&loaderClient, 0, sizeof(loaderClient));
 
-        loaderClient.base.version = kWKPageLoaderClientCurrentVersion;
+        loaderClient.base.version = 3;
         loaderClient.base.clientInfo = clientInfo;
         loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
 

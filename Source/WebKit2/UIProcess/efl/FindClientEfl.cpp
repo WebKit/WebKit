@@ -59,7 +59,7 @@ FindClientEfl::FindClientEfl(EwkView* viewImpl)
     ASSERT(pageRef);
 
     WKPageFindClientV0 findClient;
-    memset(&findClient, 0, sizeof(WKPageFindClient));
+    memset(&findClient, 0, sizeof(WKPageFindClientV0));
     findClient.base.version = 0;
     findClient.base.clientInfo = this;
     findClient.didFindString = didFindString;

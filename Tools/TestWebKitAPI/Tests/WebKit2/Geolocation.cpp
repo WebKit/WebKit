@@ -106,7 +106,7 @@ void decidePolicyForGeolocationPermissionRequestCallBack(WKPageRef page, WKFrame
 void setupGeolocationProvider(WKContextRef context, void *clientInfo)
 {
     WKGeolocationProviderV1 providerCallback;
-    memset(&providerCallback, 0, sizeof(WKGeolocationProvider));
+    memset(&providerCallback, 0, sizeof(WKGeolocationProviderV1));
 
     providerCallback.base.version = 1;
     providerCallback.base.clientInfo = clientInfo;
