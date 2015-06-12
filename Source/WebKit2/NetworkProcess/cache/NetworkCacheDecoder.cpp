@@ -37,7 +37,6 @@ Decoder::Decoder(const uint8_t* buffer, size_t bufferSize)
     : m_buffer(buffer)
     , m_bufferPosition(buffer)
     , m_bufferEnd(buffer + bufferSize)
-    , m_checksum(0)
 {
 }
 
@@ -58,7 +57,7 @@ bool Decoder::decodeFixedLengthData(uint8_t* data, size_t size)
     memcpy(data, m_bufferPosition, size);
     m_bufferPosition += size;
 
-    Encoder::updateChecksumForData(m_checksum, data, size);
+    Encoder::updateChecksumForData(m_sha1, data, size);
     return true;
 }
 
@@ -71,7 +70,7 @@ bool Decoder::decodeNumber(Type& value)
     memcpy(&value, m_bufferPosition, sizeof(value));
     m_bufferPosition += sizeof(Type);
 
-    Encoder::updateChecksumForNumber(m_checksum, value);
+    Encoder::updateChecksumForNumber(m_sha1, value);
     return true;
 }
 
@@ -122,11 +121,14 @@ bool Decoder::decode(double& result)
 
 bool Decoder::verifyChecksum()
 {
-    unsigned computedChecksum = m_checksum;
-    unsigned decodedChecksum;
-    if (!decodeNumber(decodedChecksum))
+    SHA1::Digest computedHash;
+    m_sha1.computeHash(computedHash);
+
+    SHA1::Digest savedHash;
+    if (!decodeFixedLengthData(savedHash.data(), sizeof(savedHash)))
         return false;
-    return computedChecksum == decodedChecksum;
+
+    return computedHash == savedHash;
 }
 
 }

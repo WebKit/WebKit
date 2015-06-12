@@ -32,7 +32,6 @@ namespace WebKit {
 namespace NetworkCache {
 
 Encoder::Encoder()
-    : m_checksum(0)
 {
 }
 
@@ -47,17 +46,16 @@ uint8_t* Encoder::grow(size_t size)
     return m_buffer.data() + newPosition;
 }
 
-void Encoder::updateChecksumForData(unsigned& checksum, const uint8_t* data, size_t size)
+void Encoder::updateChecksumForData(SHA1& sha1, const uint8_t* data, size_t size)
 {
-    // FIXME: hashMemory should not require alignment.
-    size_t hashSize = size - size % 2;
-    unsigned hash = StringHasher::hashMemory(data, hashSize) ^ Encoder::Salt<uint8_t*>::value;
-    checksum = WTF::pairIntHash(checksum, hash);
+    auto typeSalt = Salt<uint8_t*>::value;
+    sha1.addBytes(reinterpret_cast<uint8_t*>(&typeSalt), sizeof(typeSalt));
+    sha1.addBytes(data, size);
 }
 
 void Encoder::encodeFixedLengthData(const uint8_t* data, size_t size)
 {
-    updateChecksumForData(m_checksum, data, size);
+    updateChecksumForData(m_sha1, data, size);
 
     uint8_t* buffer = grow(size);
     memcpy(buffer, data, size);
@@ -66,7 +64,7 @@ void Encoder::encodeFixedLengthData(const uint8_t* data, size_t size)
 template<typename Type>
 void Encoder::encodeNumber(Type value)
 {
-    Encoder::updateChecksumForNumber(m_checksum, value);
+    Encoder::updateChecksumForNumber(m_sha1, value);
 
     uint8_t* buffer = grow(sizeof(Type));
     memcpy(buffer, &value, sizeof(Type));
@@ -119,7 +117,9 @@ void Encoder::encode(double value)
 
 void Encoder::encodeChecksum()
 {
-    encodeNumber(m_checksum);
+    SHA1::Digest hash;
+    m_sha1.computeHash(hash);
+    encodeFixedLengthData(hash.data(), hash.size());
 }
 
 }

@@ -1,3 +1,30 @@
+2015-06-12  Antti Koivisto  <antti@apple.com>
+
+        Use SHA1 for cache coder checksums
+        https://bugs.webkit.org/show_bug.cgi?id=145880
+
+        Reviewed by Anders Carlsson.
+
+        Make cache data error detection more robust by using SHA1 for checksums.
+
+        * NetworkProcess/cache/NetworkCacheDecoder.cpp:
+        (WebKit::NetworkCache::Decoder::Decoder):
+        (WebKit::NetworkCache::Decoder::decodeFixedLengthData):
+        (WebKit::NetworkCache::Decoder::decodeNumber):
+        (WebKit::NetworkCache::Decoder::verifyChecksum):
+        * NetworkProcess/cache/NetworkCacheDecoder.h:
+        * NetworkProcess/cache/NetworkCacheEncoder.cpp:
+        (WebKit::NetworkCache::Encoder::Encoder):
+        (WebKit::NetworkCache::Encoder::grow):
+        (WebKit::NetworkCache::Encoder::updateChecksumForData):
+        (WebKit::NetworkCache::Encoder::encodeFixedLengthData):
+        (WebKit::NetworkCache::Encoder::encodeNumber):
+        (WebKit::NetworkCache::Encoder::encodeChecksum):
+        * NetworkProcess/cache/NetworkCacheEncoder.h:
+        (WebKit::NetworkCache::Encoder::buffer):
+        (WebKit::NetworkCache::Encoder::bufferSize):
+        (WebKit::NetworkCache::Encoder::updateChecksumForNumber):
+
 2015-06-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Fix deprecated declarations warnings related to WK2 versioned structs

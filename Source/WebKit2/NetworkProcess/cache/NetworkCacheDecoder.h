@@ -29,6 +29,7 @@
 #if ENABLE(NETWORK_CACHE)
 
 #include "NetworkCacheCoder.h"
+#include <wtf/SHA1.h>
 
 namespace WebKit {
 namespace NetworkCache {
@@ -92,7 +93,7 @@ private:
     const uint8_t* m_bufferPosition;
     const uint8_t* m_bufferEnd;
 
-    unsigned m_checksum;
+    SHA1 m_sha1;
 };
 
 } 

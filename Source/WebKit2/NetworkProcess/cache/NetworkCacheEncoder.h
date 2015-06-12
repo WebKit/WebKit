@@ -29,8 +29,7 @@
 #if ENABLE(NETWORK_CACHE)
 
 #include "NetworkCacheCoder.h"
-#include <wtf/HashFunctions.h>
-#include <wtf/StringHasher.h>
+#include <wtf/SHA1.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
@@ -69,8 +68,8 @@ public:
     const uint8_t* buffer() const { return m_buffer.data(); }
     size_t bufferSize() const { return m_buffer.size(); }
 
-    static void updateChecksumForData(unsigned& checksum, const uint8_t*, size_t);
-    template <typename Type> static void updateChecksumForNumber(unsigned& checksum, Type);
+    static void updateChecksumForData(SHA1&, const uint8_t*, size_t);
+    template <typename Type> static void updateChecksumForNumber(SHA1&, Type);
 
 private:
     void encode(bool);
@@ -90,7 +89,7 @@ private:
     template <typename Type> struct Salt;
 
     Vector<uint8_t, 4096> m_buffer;
-    unsigned m_checksum;
+    SHA1 m_sha1;
 };
 
 template <> struct Encoder::Salt<bool> { static const unsigned value = 3; };
@@ -105,10 +104,11 @@ template <> struct Encoder::Salt<double> { static const unsigned value = 29; };
 template <> struct Encoder::Salt<uint8_t*> { static const unsigned value = 101; };
 
 template <typename Type>
-void Encoder::updateChecksumForNumber(unsigned& checksum, Type value)
+void Encoder::updateChecksumForNumber(SHA1& sha1, Type value)
 {
-    unsigned hash = WTF::intHash(static_cast<uint64_t>(value)) ^ Encoder::Salt<Type>::value;
-    checksum = WTF::pairIntHash(checksum, hash);
+    auto typeSalt = Salt<Type>::value;
+    sha1.addBytes(reinterpret_cast<uint8_t*>(&typeSalt), sizeof(typeSalt));
+    sha1.addBytes(reinterpret_cast<uint8_t*>(&value), sizeof(value));
 }
 
 }
