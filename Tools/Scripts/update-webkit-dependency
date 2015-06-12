@@ -39,7 +39,9 @@ use File::Spec;
 use File::Temp ();
 use FindBin;
 use HTTP::Date qw(str2time time2str);
+use HTTP::Request;
 use LWP::Simple;
+use LWP::UserAgent;
 use POSIX;
 use lib $FindBin::Bin;
 use webkitdirs;
@@ -73,19 +75,24 @@ my $zipFile = "$file.zip";
 my $webkitLibrariesDir = $ENV{'WEBKIT_LIBRARIES'} || File::Spec->catdir($sourceDir, "WebKitLibraries", "win");
 my $tmpRelativeDir = File::Temp::tempdir("webkitlibsXXXXXXX", TMPDIR => 1, CLEANUP => 1);
 my $tmpAbsDir = File::Spec->rel2abs($tmpRelativeDir);
+my $ua = LWP::UserAgent->new();
 
 print "Checking Last-Modified date of $zipFile...\n";
 
-my ($content_type, $document_length, $modified_time, $expires, $server) = head($libsURL);
+my $response = $ua->get($libsURL);
+
+die "Could not access $libsURL:\n" . $response->headers_as_string . "\n" unless ($response->is_success);
+
+my $content_type = $response->header('Content-Type');
+my $document_length = $response->header('Content-Length');
+my $modified_time = str2time($response->header('Last-Modified')); 
 
 if (defined $modified_time) {
-
+    print STDERR "Located a file of type $content_type, of size $document_length.\n";
     open NEW, ">", File::Spec->catfile($tmpAbsDir, "$file.headers");
     print NEW "Last-Modified: " . time2str($modified_time) . "\n";
     close NEW;
-
 } else {
-
     #Note: Neither GitHub nor DropBox emit the Last-Modified HTTP header, so fall back to a file
 	#containing the necessary information if we do not receive the information in our initial query.
     my $headerURL = $libsURL;
@@ -95,6 +102,7 @@ if (defined $modified_time) {
 
     if (!is_success($result)) {
         print STDERR "Couldn't check Last-Modified date of new $zipFile.\n";
+        print STDERR "Response was: $result.\n";
         print STDERR "Please ensure that Perl can use LWP::Simple to connect to HTTPS urls, and that $libsURL is reachable.\n";
         print STDERR "You may have to run \$ cpan LWP::Protocol::https\n";
 

@@ -1,3 +1,13 @@
+2015-06-12  Brent Fulgham  <bfulgham@apple.com>
+
+        Revise update-webkit-dependency to use LWP::UserAgent instead of LWP::Simple for better handling of https
+        https://bugs.webkit.org/show_bug.cgi?id=145938
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/update-webkit-dependency: Switch from LWP::Simple to
+        LWP::UserAgent to get access to more robust HTTPS support.
+
 2015-06-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [GTK] Fix return type warning in WebViewTest.cpp
