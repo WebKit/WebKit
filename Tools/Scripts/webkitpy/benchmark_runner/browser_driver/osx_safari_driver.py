@@ -17,8 +17,8 @@ class OSXSafariDriver(OSXBrowserDriver):
     bundleIdentifier = 'com.apple.Safari'
 
     def prepareEnv(self):
-        super(OSXSafariDriver, self).closeBrowsers()
         self.safariProcess = None
+        super(OSXSafariDriver, self).prepareEnv()
         forceRemove(os.path.join(os.path.expanduser('~'), 'Library/Saved Application State/com.apple.Safari.savedState'))
         forceRemove(os.path.join(os.path.expanduser('~'), 'Library/Safari/LastSession.plist'))
         self.maximizeWindow()

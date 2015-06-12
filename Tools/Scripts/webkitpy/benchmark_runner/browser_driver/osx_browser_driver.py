@@ -5,11 +5,7 @@ import subprocess
 
 from AppKit import NSRunningApplication
 from AppKit import NSScreen
-from Quartz.CoreGraphics import CGEventCreateMouseEvent
-from Quartz.CoreGraphics import CGEventPost
-from Quartz.CoreGraphics import kCGEventMouseMoved
-from Quartz.CoreGraphics import kCGHIDEventTap
-from Quartz.CoreGraphics import kCGMouseButtonLeft
+from Quartz import CGWarpMouseCursorPosition
 from browser_driver import BrowserDriver
 
 
@@ -21,7 +17,7 @@ class OSXBrowserDriver(BrowserDriver):
 
     def prepareEnv(self):
         self.closeBrowsers()
-        self.moveCursor(0, 0)
+        CGWarpMouseCursorPosition((10, 0))
 
     def closeBrowsers(self):
         self.terminateProcesses(self.bundleIdentifier)
@@ -50,11 +46,6 @@ class OSXBrowserDriver(BrowserDriver):
         process = subprocess.Popen(args, env=env)
         subprocess.Popen(["/usr/bin/caffeinate", "-disw", str(process.pid)])
         return process
-
-    @classmethod
-    def moveCursor(cls, x, y):
-        moveEvent = CGEventCreateMouseEvent(None, kCGEventMouseMoved, (x, y), kCGMouseButtonLeft)
-        CGEventPost(kCGHIDEventTap, moveEvent)
 
     @classmethod
     def screenSize(cls):

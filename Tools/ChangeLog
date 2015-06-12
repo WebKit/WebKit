@@ -1,3 +1,17 @@
+2015-06-12  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Move cursor to (10, 0) instead of (0, 0) and polish the mouse move code
+        https://bugs.webkit.org/show_bug.cgi?id=145945
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_browser_driver.py:
+        (OSXBrowserDriver.prepareEnv):
+        (OSXBrowserDriver.moveCursor): Deleted.
+        (OSXBrowserDriver): Deleted.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        (OSXSafariDriver.prepareEnv):
+
 2015-06-12  Brent Fulgham  <bfulgham@apple.com>
 
         Revise update-webkit-dependency to use LWP::UserAgent instead of LWP::Simple for better handling of https
