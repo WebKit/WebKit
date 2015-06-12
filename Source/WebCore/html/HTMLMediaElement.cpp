@@ -2837,9 +2837,17 @@ void HTMLMediaElement::playInternal()
         // 1. Let media session be the value of the current media session.
         // 2. If we are not currently in media session's list of active participating media elements then append
         //    ourselves to this list.
+        // 3. Let activated be the result of running the media session invocation algorithm for media session.
+        // 4. If activated is failure, pause ourselves.
         if (m_readyState == HAVE_ENOUGH_DATA || m_readyState == HAVE_FUTURE_DATA) {
-            if (m_session)
+            if (m_session) {
                 m_session->addActiveMediaElement(*this);
+                
+                if (!m_session->invoke()) {
+                    pause();
+                    return;
+                }
+            }
         }
 #endif
     }

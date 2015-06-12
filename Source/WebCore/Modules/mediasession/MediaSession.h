@@ -56,6 +56,9 @@ public:
     State currentState() const { return m_currentState; }
 
     void releaseSession();
+    
+    // Runs the media session invocation algorithm and returns true on success.
+    bool invoke();
 
     void togglePlayback();
 
