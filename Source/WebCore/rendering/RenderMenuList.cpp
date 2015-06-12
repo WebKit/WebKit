@@ -58,12 +58,9 @@ using namespace HTMLNames;
 #if PLATFORM(IOS)
 static size_t selectedOptionCount(const RenderMenuList& renderMenuList)
 {
-    const Vector<HTMLElement*>& listItems = renderMenuList.selectElement().listItems();
-    size_t numberOfItems = listItems.size();
-
     size_t count = 0;
-    for (size_t i = 0; i < numberOfItems; ++i) {
-        if (is<HTMLOptionElement>(*listItems[i]) && downcast<HTMLOptionElement>(*listItems[i]).selected())
+    for (auto& element : renderMenuList.selectElement().listItems()) {
+        if (is<HTMLOptionElement>(*element) && downcast<HTMLOptionElement>(*element).selected())
             ++count;
     }
     return count;
@@ -206,11 +203,7 @@ void RenderMenuList::styleDidChange(StyleDifference diff, const RenderStyle* old
 void RenderMenuList::updateOptionsWidth()
 {
     float maxOptionWidth = 0;
-    const Vector<HTMLElement*>& listItems = selectElement().listItems();
-    int size = listItems.size();    
-
-    for (int i = 0; i < size; ++i) {
-        HTMLElement* element = listItems[i];
+    for (auto& element : selectElement().listItems()) {
         if (!is<HTMLOptionElement>(*element))
             continue;
 

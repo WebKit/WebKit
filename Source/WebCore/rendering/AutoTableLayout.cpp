@@ -226,17 +226,17 @@ void AutoTableLayout::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, Layout
     const float epsilon = 1 / 128.0f;
 
     float remainingPercent = 100;
-    for (size_t i = 0; i < m_layoutStruct.size(); ++i) {
-        minWidth += m_layoutStruct[i].effectiveMinLogicalWidth;
-        maxWidth += m_layoutStruct[i].effectiveMaxLogicalWidth;
+    for (auto& layout : m_layoutStruct) {
+        minWidth += layout.effectiveMinLogicalWidth;
+        maxWidth += layout.effectiveMaxLogicalWidth;
         if (scaleColumns) {
-            if (m_layoutStruct[i].effectiveLogicalWidth.isPercent()) {
-                float percent = std::min(m_layoutStruct[i].effectiveLogicalWidth.percent(), remainingPercent);
-                float logicalWidth = static_cast<float>(m_layoutStruct[i].effectiveMaxLogicalWidth) * 100 / std::max(percent, epsilon);
+            if (layout.effectiveLogicalWidth.isPercent()) {
+                float percent = std::min(layout.effectiveLogicalWidth.percent(), remainingPercent);
+                float logicalWidth = static_cast<float>(layout.effectiveMaxLogicalWidth) * 100 / std::max(percent, epsilon);
                 maxPercent = std::max(logicalWidth,  maxPercent);
                 remainingPercent -= percent;
             } else
-                maxNonPercent += m_layoutStruct[i].effectiveMaxLogicalWidth;
+                maxNonPercent += layout.effectiveMaxLogicalWidth;
         }
     }
 
@@ -264,17 +264,15 @@ int AutoTableLayout::calcEffectiveLogicalWidth()
 {
     int maxLogicalWidth = 0;
 
-    size_t nEffCols = m_layoutStruct.size();
     int spacingInRowDirection = m_table->hBorderSpacing();
 
-    for (size_t i = 0; i < nEffCols; ++i) {
-        m_layoutStruct[i].effectiveLogicalWidth = m_layoutStruct[i].logicalWidth;
-        m_layoutStruct[i].effectiveMinLogicalWidth = m_layoutStruct[i].minLogicalWidth;
-        m_layoutStruct[i].effectiveMaxLogicalWidth = m_layoutStruct[i].maxLogicalWidth;
+    for (auto& layout : m_layoutStruct) {
+        layout.effectiveLogicalWidth = layout.logicalWidth;
+        layout.effectiveMinLogicalWidth = layout.minLogicalWidth;
+        layout.effectiveMaxLogicalWidth = layout.maxLogicalWidth;
     }
 
-    for (size_t i = 0; i < m_spanCells.size(); ++i) {
-        RenderTableCell* cell = m_spanCells[i];
+    for (auto& cell : m_spanCells) {
         if (!cell)
             break;
 
@@ -296,7 +294,7 @@ int AutoTableLayout::calcEffectiveLogicalWidth()
         bool haveAuto = false;
         bool spanHasEmptyCellsOnly = true;
         int fixedWidth = 0;
-        while (lastCol < nEffCols && span > 0) {
+        while (lastCol < m_layoutStruct.size() && span > 0) {
             Layout& columnLayout = m_layoutStruct[lastCol];
             switch (columnLayout.logicalWidth.type()) {
             case Percent:

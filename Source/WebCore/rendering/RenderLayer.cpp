@@ -729,10 +729,8 @@ void RenderLayer::updateDescendantsAreContiguousInStackingOrder()
     }
 
     if (posZOrderList) {
-        size_t listSize = posZOrderList->size();
         int stackingOrderIndex = 1;
-        for (size_t i = 0; i < listSize; ++i) {
-            RenderLayer* currentLayer = posZOrderList->at(i);
+        for (auto& currentLayer : *posZOrderList) {
             if (!currentLayer->isStackingContext())
                 continue;
             lookup.set(currentLayer, stackingOrderIndex++);
@@ -1186,9 +1184,8 @@ void RenderLayer::updateDescendantDependentFlags(HashSet<const RenderObject*>* o
                 childOutOfFlowDescendantContainingBlocks.add(child->renderer().containingBlock());
 
             if (outOfFlowDescendantContainingBlocks) {
-                HashSet<const RenderObject*>::const_iterator it = childOutOfFlowDescendantContainingBlocks.begin();
-                for (; it != childOutOfFlowDescendantContainingBlocks.end(); ++it)
-                    outOfFlowDescendantContainingBlocks->add(*it);
+                for (auto& block : childOutOfFlowDescendantContainingBlocks)
+                    outOfFlowDescendantContainingBlocks->add(block);
             }
 
             hasVisibleDescendant |= child->m_hasVisibleContent || child->m_hasVisibleDescendant;

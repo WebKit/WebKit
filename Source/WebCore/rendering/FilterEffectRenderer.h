@@ -120,10 +120,8 @@ public:
 private:
     void setMaxEffectRects(const FloatRect& effectRect)
     {
-        for (size_t i = 0; i < m_effects.size(); ++i) {
-            RefPtr<FilterEffect> effect = m_effects.at(i);
+        for (auto& effect : m_effects)
             effect->setMaxEffectRect(effectRect);
-        }
     }
 
     FilterEffect* lastEffect() const

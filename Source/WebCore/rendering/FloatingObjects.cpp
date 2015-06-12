@@ -266,9 +266,9 @@ FloatingObjects::~FloatingObjects()
 void FloatingObjects::clearLineBoxTreePointers()
 {
     // Clear references to originating lines, since the lines are being deleted
-    for (auto it = m_set.begin(), end = m_set.end(); it != end; ++it) {
-        ASSERT(!((*it)->originatingLine()) || &((*it)->originatingLine()->renderer()) == &m_renderer);
-        (*it)->setOriginatingLine(0);
+    for (auto& floatingObject : m_set) {
+        ASSERT(!floatingObject->originatingLine() || &floatingObject->originatingLine()->renderer() == &m_renderer);
+        floatingObject->setOriginatingLine(nullptr);
     }
 }
 
@@ -282,12 +282,12 @@ void FloatingObjects::clear()
 
 void FloatingObjects::moveAllToFloatInfoMap(RendererToFloatInfoMap& map)
 {
-    for (auto it = m_set.begin(), end = m_set.end(); it != end; ++it) {
-        auto& renderer = it->get()->renderer();
+    for (auto& floatingObject : m_set) {
+        auto& renderer = floatingObject->renderer();
         // FIXME: The only reason it is safe to move these out of the set is that
         // we are about to clear it. Otherwise it would break the hash table invariant.
         // A clean way to do this would be to add a takeAll function to HashSet.
-        map.add(&renderer, WTF::move(*it));
+        map.add(&renderer, WTF::move(floatingObject));
     }
     clear();
 }
@@ -374,10 +374,9 @@ void FloatingObjects::computePlacedFloatsTree()
         return;
 
     m_placedFloatsTree = std::make_unique<FloatingObjectTree>();
-    for (auto it = m_set.begin(), end = m_set.end(); it != end; ++it) {
-        FloatingObject* floatingObject = it->get();
+    for (auto& floatingObject : m_set) {
         if (floatingObject->isPlaced())
-            m_placedFloatsTree->add(intervalForFloatingObject(floatingObject));
+            m_placedFloatsTree->add(intervalForFloatingObject(floatingObject.get()));
     }
 }
 

@@ -512,9 +512,8 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
             } else
                 measuredWidth += wordMeasurement.width;
             if (!wordMeasurement.fallbackFonts.isEmpty()) {
-                HashSet<const Font*>::const_iterator end = wordMeasurement.fallbackFonts.end();
-                for (HashSet<const Font*>::const_iterator it = wordMeasurement.fallbackFonts.begin(); it != end; ++it)
-                    fallbackFonts.add(*it);
+                for (auto& font : wordMeasurement.fallbackFonts)
+                    fallbackFonts.add(font);
             }
         }
         if (measuredWidth && lastEndOffset != run->m_stop) {
@@ -1336,8 +1335,8 @@ void RenderBlockFlow::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, I
             }
         }
 
-        for (size_t i = 0; i < lineBreaker.positionedObjects().size(); ++i)
-            setStaticPositions(*this, *lineBreaker.positionedObjects()[i]);
+        for (auto& positionedObject : lineBreaker.positionedObjects())
+            setStaticPositions(*this, *positionedObject);
 
         if (!layoutState.lineInfo().isEmpty()) {
             layoutState.lineInfo().setFirstLine(false);
@@ -1454,8 +1453,7 @@ void RenderBlockFlow::linkToEndLineIfNeeded(LineLayoutState& layoutState)
                 if (layoutState.flowThread())
                     updateRegionForLine(line);
                 if (Vector<RenderBox*>* cleanLineFloats = line->floatsPtr()) {
-                    for (auto it = cleanLineFloats->begin(), end = cleanLineFloats->end(); it != end; ++it) {
-                        RenderBox* floatingBox = *it;
+                    for (auto& floatingBox : *cleanLineFloats) {
                         FloatingObject* floatingObject = insertFloatingObject(*floatingBox);
                         ASSERT(!floatingObject->originatingLine());
                         floatingObject->setOriginatingLine(line);
@@ -1512,13 +1510,12 @@ void RenderBlockFlow::linkToEndLineIfNeeded(LineLayoutState& layoutState)
 
 void RenderBlockFlow::repaintDirtyFloats(Vector<FloatWithRect>& floats)
 {
-    size_t floatCount = floats.size();
     // Floats that did not have layout did not repaint when we laid them out. They would have
     // painted by now if they had moved, but if they stayed at (0, 0), they still need to be
     // painted.
-    for (size_t i = 0; i < floatCount; ++i) {
-        if (!floats[i].everHadLayout) {
-            RenderBox& box = floats[i].object;
+    for (auto& floatWithRect : floats) {
+        if (!floatWithRect.everHadLayout) {
+            RenderBox& box = floatWithRect.object;
             if (!box.x() && !box.y() && box.checkForRepaintDuringLayout())
                 box.repaint();
         }
@@ -1606,8 +1603,8 @@ void RenderBlockFlow::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repaint
             }
         }
 
-        for (size_t i = 0; i < replacedChildren.size(); i++)
-             replacedChildren[i]->layoutIfNeeded();
+        for (auto& child : replacedChildren)
+            child->layoutIfNeeded();
 
         layoutRunsAndFloats(layoutState, hasInlineChild);
     }
@@ -1645,8 +1642,7 @@ void RenderBlockFlow::checkFloatsInCleanLine(RootInlineBox* line, Vector<FloatWi
         return;
     }
 
-    for (auto it = cleanLineFloats->begin(), end = cleanLineFloats->end(); it != end; ++it) {
-        RenderBox* floatingBox = *it;
+    for (auto& floatingBox : *cleanLineFloats) {
         floatingBox->layoutIfNeeded();
         LayoutSize newSize(floatingBox->width() + floatingBox->horizontalMarginExtent(), floatingBox->height() + floatingBox->verticalMarginExtent());
         ASSERT_WITH_SECURITY_IMPLICATION(floatIndex < floats.size());
@@ -1747,8 +1743,7 @@ RootInlineBox* RenderBlockFlow::determineStartPosition(LineLayoutState& layoutSt
         RootInlineBox* line = firstRootBox();
         while (line != curr) {
             if (Vector<RenderBox*>* cleanLineFloats = line->floatsPtr()) {
-                for (auto it = cleanLineFloats->begin(), end = cleanLineFloats->end(); it != end; ++it) {
-                    RenderBox* floatingBox = *it;
+                for (auto& floatingBox : *cleanLineFloats) {
                     FloatingObject* floatingObject = insertFloatingObject(*floatingBox);
                     ASSERT(!floatingObject->originatingLine());
                     floatingObject->setOriginatingLine(line);
@@ -1855,11 +1850,8 @@ bool RenderBlockFlow::checkPaginationAndFloatsAtEndLine(LineLayoutState& layoutS
 
     LayoutUnit logicalBottom = lastLine->lineBottomWithLeading() + absoluteValue(lineDelta);
 
-    const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-    auto end = floatingObjectSet.end();
-    for (auto it = floatingObjectSet.begin(); it != end; ++it) {
-        FloatingObject* floatingObject = it->get();
-        if (logicalBottomForFloat(floatingObject) >= logicalTop && logicalBottomForFloat(floatingObject) < logicalBottom)
+    for (auto& floatingObject : m_floatingObjects->set()) {
+        if (logicalBottomForFloat(floatingObject.get()) >= logicalTop && logicalBottomForFloat(floatingObject.get()) < logicalBottom)
             return false;
     }
 

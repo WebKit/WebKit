@@ -455,11 +455,8 @@ void RenderCounter::destroyCounterNodes(RenderElement& owner)
     CounterMaps::iterator mapsIterator = maps.find(&owner);
     if (mapsIterator == maps.end())
         return;
-    CounterMap* map = mapsIterator->value.get();
-    CounterMap::const_iterator end = map->end();
-    for (CounterMap::const_iterator it = map->begin(); it != end; ++it) {
-        destroyCounterNodeWithoutMapRemoval(it->key, it->value.get());
-    }
+    for (auto& counter : *mapsIterator->value.get())
+        destroyCounterNodeWithoutMapRemoval(counter.key, counter.value.get());
     maps.remove(mapsIterator);
     owner.setHasCounterNodeMap(false);
 }
@@ -508,25 +505,24 @@ static void updateCounters(RenderElement& renderer)
     const CounterDirectiveMap* directiveMap = renderer.style().counterDirectives();
     if (!directiveMap)
         return;
-    CounterDirectiveMap::const_iterator end = directiveMap->end();
     if (!renderer.hasCounterNodeMap()) {
-        for (CounterDirectiveMap::const_iterator it = directiveMap->begin(); it != end; ++it)
-            makeCounterNode(renderer, it->key, false);
+        for (auto& key : directiveMap->keys())
+            makeCounterNode(renderer, key, false);
         return;
     }
     CounterMap* counterMap = counterMaps().get(&renderer);
     ASSERT(counterMap);
-    for (CounterDirectiveMap::const_iterator it = directiveMap->begin(); it != end; ++it) {
-        RefPtr<CounterNode> node = counterMap->get(it->key);
+    for (auto& key : directiveMap->keys()) {
+        RefPtr<CounterNode> node = counterMap->get(key);
         if (!node) {
-            makeCounterNode(renderer, it->key, false);
+            makeCounterNode(renderer, key, false);
             continue;
         }
         RefPtr<CounterNode> newParent = 0;
         RefPtr<CounterNode> newPreviousSibling = 0;
         
-        findPlaceForCounter(renderer, it->key, node->hasResetType(), newParent, newPreviousSibling);
-        if (node != counterMap->get(it->key))
+        findPlaceForCounter(renderer, key, node->hasResetType(), newParent, newPreviousSibling);
+        if (node != counterMap->get(key))
             continue;
         CounterNode* parent = node->parent();
         if (newParent == parent && newPreviousSibling == node->previousSibling())
@@ -534,7 +530,7 @@ static void updateCounters(RenderElement& renderer)
         if (parent)
             parent->removeChild(node.get());
         if (newParent)
-            newParent->insertAfter(node.get(), newPreviousSibling.get(), it->key);
+            newParent->insertAfter(node.get(), newPreviousSibling.get(), key);
     }
 }
 
@@ -564,36 +560,33 @@ void RenderCounter::rendererStyleChanged(RenderElement& renderer, const RenderSt
     const CounterDirectiveMap* oldCounterDirectives;
     if (oldStyle && (oldCounterDirectives = oldStyle->counterDirectives())) {
         if (newStyle && (newCounterDirectives = newStyle->counterDirectives())) {
-            CounterDirectiveMap::const_iterator newMapEnd = newCounterDirectives->end();
-            CounterDirectiveMap::const_iterator oldMapEnd = oldCounterDirectives->end();
-            for (CounterDirectiveMap::const_iterator it = newCounterDirectives->begin(); it != newMapEnd; ++it) {
-                CounterDirectiveMap::const_iterator oldMapIt = oldCounterDirectives->find(it->key);
-                if (oldMapIt != oldMapEnd) {
-                    if (oldMapIt->value == it->value)
+            for (auto& directive : *newCounterDirectives) {
+                auto oldMapIt = oldCounterDirectives->find(directive.key);
+                if (oldMapIt != oldCounterDirectives->end()) {
+                    if (oldMapIt->value == directive.value)
                         continue;
-                    RenderCounter::destroyCounterNode(renderer, it->key);
+                    RenderCounter::destroyCounterNode(renderer, directive.key);
                 }
                 // We must create this node here, because the changed node may be a node with no display such as
                 // as those created by the increment or reset directives and the re-layout that will happen will
                 // not catch the change if the node had no children.
-                makeCounterNode(renderer, it->key, false);
+                makeCounterNode(renderer, directive.key, false);
             }
             // Destroying old counters that do not exist in the new counterDirective map.
-            for (CounterDirectiveMap::const_iterator it = oldCounterDirectives->begin(); it !=oldMapEnd; ++it) {
-                if (!newCounterDirectives->contains(it->key))
-                    RenderCounter::destroyCounterNode(renderer, it->key);
+            for (auto& key : oldCounterDirectives->keys()) {
+                if (!newCounterDirectives->contains(key))
+                    RenderCounter::destroyCounterNode(renderer, key);
             }
         } else {
             if (renderer.hasCounterNodeMap())
                 RenderCounter::destroyCounterNodes(renderer);
         }
     } else if (newStyle && (newCounterDirectives = newStyle->counterDirectives())) {
-        CounterDirectiveMap::const_iterator newMapEnd = newCounterDirectives->end();
-        for (CounterDirectiveMap::const_iterator it = newCounterDirectives->begin(); it != newMapEnd; ++it) {
+        for (auto& key : newCounterDirectives->keys()) {
             // We must create this node here, because the added node may be a node with no display such as
             // as those created by the increment or reset directives and the re-layout that will happen will
             // not catch the change if the node had no children.
-            makeCounterNode(renderer, it->key, false);
+            makeCounterNode(renderer, key, false);
         }
     }
 }
