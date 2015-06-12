@@ -1,3 +1,26 @@
+2015-06-11  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Move cursor to corner and fix safari window size before running benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=145858
+
+        Reviewed by Ryosuke Niwa
+
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_browser_driver.py:
+        (OSXBrowserDriver.prepareEnv):
+        (OSXBrowserDriver):
+        (OSXBrowserDriver.moveCursor):
+        (OSXBrowserDriver.getScreenSize):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_chrome_driver.py:
+        (OSXChromeDriver.launchUrl):
+        (OSXChromeCanaryDriver.launchUrl):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_firefox_driver.py:
+        (OSXFirefoxDriver.launchUrl):
+        (OSXFirefoxNightlyDriver.launchUrl):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        (OSXSafariDriver.prepareEnv):
+        (OSXSafariDriver):
+        (OSXSafariDriver.maximizeWindow):
+
 2015-06-11  Daniel Bates  <dabates@apple.com>
 
         [iOS] Cannot run run-webkit-tests with public SDK; LayoutTestRelay fails to build

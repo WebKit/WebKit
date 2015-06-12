@@ -15,11 +15,11 @@ class OSXFirefoxDriver(OSXBrowserDriver):
     bundleIdentifier = 'org.mozilla.firefox'
 
     def launchUrl(self, url, browserBuildPath):
-        self.launchProcess(buildDir=browserBuildPath, appName='Firefox.app', url=url, args=[url])
+        self.launchProcess(buildDir=browserBuildPath, appName='Firefox.app', url=url, args=[url, '--args', '-width', str(int(self.screenSize().width)), '-height', str(int(self.screenSize().height))])
 
 
 class OSXFirefoxNightlyDriver(OSXBrowserDriver):
     bundleIdentifier = 'org.mozilla.nightly'
 
     def launchUrl(self, url, browserBuildPath):
-        self.launchProcess(buildDir=browserBuildPath, appName='FirefoxNightly.app', url=url, args=[url])
+        self.launchProcess(buildDir=browserBuildPath, appName='FirefoxNightly.app', url=url, args=[url, '--args', '-width', str(int(self.screenSize().width)), '-height', str(int(self.screenSize().height))])

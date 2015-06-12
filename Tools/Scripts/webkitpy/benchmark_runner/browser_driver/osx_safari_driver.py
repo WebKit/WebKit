@@ -2,6 +2,7 @@
 
 import logging
 import os
+import re
 import subprocess
 import time
 
@@ -16,10 +17,11 @@ class OSXSafariDriver(OSXBrowserDriver):
     bundleIdentifier = 'com.apple.Safari'
 
     def prepareEnv(self):
+        super(OSXSafariDriver, self).closeBrowsers()
         self.safariProcess = None
-        self.closeBrowsers()
         forceRemove(os.path.join(os.path.expanduser('~'), 'Library/Saved Application State/com.apple.Safari.savedState'))
         forceRemove(os.path.join(os.path.expanduser('~'), 'Library/Safari/LastSession.plist'))
+        self.maximizeWindow()
         self.safariPreferences = ["-HomePage", "about:blank", "-WarnAboutFraudulentWebsites", "0", "-ExtensionsEnabled", "0", "-ShowStatusBar", "0", "-NewWindowBehavior", "1", "-NewTabBehavior", "1"]
 
     def launchUrl(self, url, browserBuildPath):
@@ -46,3 +48,10 @@ class OSXSafariDriver(OSXBrowserDriver):
         super(OSXSafariDriver, self).closeBrowsers()
         if self.safariProcess and self.safariProcess.returncode:
             sys.exit('Browser crashed with exitcode %d' % self._process.returncode)
+
+    @classmethod
+    def maximizeWindow(cls):
+        try:
+            subprocess.check_call(['/usr/bin/defaults', 'write', 'com.apple.Safari', 'NSWindow Frame BrowserWindowFrame', ' '.join(['0', '0', str(cls.screenSize().width), str(cls.screenSize().height)] * 2)])
+        except Exception as error:
+            _log.error('Reset safari window size failed - Error: {}'.format(error))
