@@ -335,7 +335,9 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
         if (treeElement instanceof WebInspector.FolderTreeElement)
             return;
 
-        if (treeElement instanceof WebInspector.ResourceTreeElement || treeElement instanceof WebInspector.ScriptTreeElement) {
+        if (treeElement instanceof WebInspector.ResourceTreeElement
+            || treeElement instanceof WebInspector.ScriptTreeElement
+            || treeElement instanceof WebInspector.ContentFlowTreeElement) {
             WebInspector.showRepresentedObject(treeElement.representedObject);
             return;
         }

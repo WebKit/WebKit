@@ -49,7 +49,10 @@ WebInspector.ResourcesTabContentView.prototype = {
 
     canShowRepresentedObject: function(representedObject)
     {
-        return representedObject instanceof WebInspector.Frame || representedObject instanceof WebInspector.Resource || representedObject instanceof WebInspector.Script;
+        return representedObject instanceof WebInspector.Frame
+            || representedObject instanceof WebInspector.Resource
+            || representedObject instanceof WebInspector.Script
+            || representedObject instanceof WebInspector.ContentFlow;
     }
 };
 

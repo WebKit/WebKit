@@ -1,5 +1,27 @@
 2015-06-11  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: CSS Regions not displaying DOM Trees in inspector
+        https://bugs.webkit.org/show_bug.cgi?id=145903
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/DOMTreeManager.js:
+        (WebInspector.DOMTreeManager.prototype._updateContentFlowFromPayload):
+        Fix function inside the assertion to actually return a value.
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WebInspector.DOMTreeOutline.prototype.update):
+        For DOMTreeOutlines without a root node, don't clear the tree on updates,
+        since that will clear the nodes that have already been added explicitly.
+
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype._treeElementSelected):
+        * UserInterface/Views/ResourcesTabContentView.js:
+        (WebInspector.ResourcesTabContentView.prototype.canShowRepresentedObject):
+        ResourceTab and sidebar can deal with ContentFlow related views.
+
+2015-06-11  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: IndexedDB data not showing for MDN example page
         https://bugs.webkit.org/show_bug.cgi?id=145851
 
