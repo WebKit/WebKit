@@ -1,3 +1,22 @@
+2015-06-11  Andreas Kling  <akling@apple.com>
+
+        jsSubstring() should support creating substrings from substrings.
+        <https://webkit.org/b/145427>
+
+        Reviewed by Geoffrey Garen
+
+        Tweak jsSubstring() to support base strings that are themselves substrings.
+        They will now share the same grandparent base. This avoids creating a new StringImpl.
+
+        * runtime/JSString.h:
+        (JSC::jsSubstring): Don't force rope resolution here. Instead do that in finishCreation()
+        if the base string is a non-substring rope. Note that resolveRope() is the very last thing
+        called, since it may allocate and the JSRopeString needs to be ready for marking.
+
+        (JSC::JSString::isSubstring): Added a helper to find out if a JSString is
+        a substring. This is just for internal use, so you don't have to cast to
+        JSRopeString for the real substringness flag.
+
 2015-06-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r185465.

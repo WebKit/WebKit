@@ -186,6 +186,7 @@ protected:
     friend class JSValue;
 
     bool isRope() const { return m_value.isNull(); }
+    bool isSubstring() const;
     bool is8Bit() const { return m_flags & Is8Bit; }
     void setIs8Bit(bool flag) const
     {
@@ -291,17 +292,29 @@ private:
         fiber(2).set(vm, this, s3);
     }
 
-    void finishCreation(VM& vm, JSString* base, unsigned offset, unsigned length)
+    void finishCreation(ExecState& exec, JSString& base, unsigned offset, unsigned length)
     {
+        VM& vm = exec.vm();
         Base::finishCreation(vm);
-        ASSERT(!base->isRope());
         ASSERT(!sumOverflows<int32_t>(offset, length));
-        ASSERT(offset + length <= base->length());
+        ASSERT(offset + length <= base.length());
         m_length = length;
-        setIs8Bit(base->is8Bit());
+        setIs8Bit(base.is8Bit());
         setIsSubstring(true);
-        substringBase().set(vm, this, base);
-        substringOffset() = offset;
+        if (base.isSubstring()) {
+            JSRopeString& baseRope = static_cast<JSRopeString&>(base);
+            substringBase().set(vm, this, baseRope.substringBase().get());
+            substringOffset() = baseRope.substringOffset() + offset;
+        } else {
+            substringBase().set(vm, this, &base);
+            substringOffset() = offset;
+
+            // For now, let's not allow substrings with a rope base.
+            // Resolve non-substring rope bases so we don't have to deal with it.
+            // FIXME: Evaluate if this would be worth adding more branches.
+            if (base.isRope())
+                static_cast<JSRopeString&>(base).resolveRope(&exec);
+        }
     }
 
     void finishCreation(VM& vm)
@@ -342,10 +355,10 @@ public:
         return newString;
     }
 
-    static JSString* create(VM& vm, JSString* base, unsigned offset, unsigned length)
+    static JSString* create(ExecState& exec, JSString& base, unsigned offset, unsigned length)
     {
-        JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(vm.heap)) JSRopeString(vm);
-        newString->finishCreation(vm, base, offset, length);
+        JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(exec.vm().heap)) JSRopeString(exec.vm());
+        newString->finishCreation(exec, base, offset, length);
         return newString;
     }
 
@@ -515,8 +528,7 @@ inline JSString* jsSubstring(ExecState* exec, JSString* s, unsigned offset, unsi
     VM& vm = exec->vm();
     if (!length)
         return vm.smallStrings.emptyString();
-    s->value(exec); // For effect. We need to ensure that any string that is used as a substring base is not a rope.
-    return JSRopeString::create(vm, s, offset, length);
+    return JSRopeString::create(*exec, *s, offset, length);
 }
 
 inline JSString* jsSubstring8(VM* vm, const String& s, unsigned offset, unsigned length)
@@ -701,6 +713,11 @@ ALWAYS_INLINE StringView JSString::view(ExecState* exec) const
     if (isRope())
         return static_cast<const JSRopeString*>(this)->view(exec);
     return StringView(m_value);
+}
+
+inline bool JSString::isSubstring() const
+{
+    return isRope() && static_cast<const JSRopeString*>(this)->isSubstring();
 }
 
 } // namespace JSC
