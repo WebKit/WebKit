@@ -1,3 +1,21 @@
+2015-06-12  Darin Adler  <darin@apple.com>
+
+        Fix minor ES6 compliance issue in RegExp.prototype.toString and optimize performance a little
+        https://bugs.webkit.org/show_bug.cgi?id=145935
+
+        Reviewed by Anders Carlsson.
+
+        Test: js/regexp-toString.html
+
+        * runtime/RegExpPrototype.cpp:
+        (JSC::getFlags): Avoid memory allocation for the flags string by returning it in a character
+        buffer instead of constructing a WTF::String for it.
+        (JSC::regExpProtoFuncToString): Require only that the this value be an object; don't require
+        that it is actually a regular expression object. This is covered in the ES6 specification.
+        Also removed comment about the "/(?:)/" trick since that is now the repsonsibility of the
+        getter for the "source" property. Updated to use getFlags so we do one less memory allocation.
+        (JSC::regExpProtoGetterFlags): Chagned to use getFlags instead of the old flagsString.
+
 2015-06-12  Basile Clement  <basile_clement@apple.com>
 
         DFG Object Allocation Sinking should not consider GetClosureVar as escapes

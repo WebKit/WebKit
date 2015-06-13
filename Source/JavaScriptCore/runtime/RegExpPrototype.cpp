@@ -137,37 +137,39 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
 
-static inline String flagsString(ExecState *exec, JSObject* regexp)
+typedef std::array<char, 3 + 1> FlagsString; // 3 different flags and a null character terminator.
+
+static inline FlagsString flagsString(ExecState* exec, JSObject* regexp)
 {
-    char flags[4] = { 0, 0, 0, 0 };
-    int index = 0;
+    FlagsString string;
 
     JSValue globalValue = regexp->get(exec, exec->propertyNames().global);
     if (exec->hadException())
-        return String();
+        return string;
     JSValue ignoreCaseValue = regexp->get(exec, exec->propertyNames().ignoreCase);
     if (exec->hadException())
-        return String();
+        return string;
     JSValue multilineValue = regexp->get(exec, exec->propertyNames().multiline);
-    if (exec->hadException())
-        return String();
 
+    unsigned index = 0;
     if (globalValue.toBoolean(exec))
-        flags[index++] = 'g';
+        string[index++] = 'g';
     if (ignoreCaseValue.toBoolean(exec))
-        flags[index++] = 'i';
+        string[index++] = 'i';
     if (multilineValue.toBoolean(exec))
-        flags[index] = 'm';
-    return String(flags);
+        string[index++] = 'm';
+    ASSERT(index < string.size());
+    string[index] = 0;
+    return string;
 }
 
 EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
-    if (!thisValue.inherits(RegExpObject::info()))
+    if (!thisValue.isObject())
         return throwVMTypeError(exec);
 
-    RegExpObject* thisObject = asRegExpObject(thisValue);
+    JSObject* thisObject = asObject(thisValue);
 
     StringRecursionChecker checker(exec, thisObject);
     if (JSValue earlyReturnValue = checker.earlyReturnValue())
@@ -180,12 +182,11 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    String flags = flagsString(exec, thisObject);
+    auto flags = flagsString(exec, thisObject);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    // If source is empty, use "/(?:)/" to avoid colliding with comment syntax
-    return JSValue::encode(jsMakeNontrivialString(exec, "/", source, "/", flags));
+    return JSValue::encode(jsMakeNontrivialString(exec, '/', source, '/', flags.data()));
 }
 
 EncodedJSValue JSC_HOST_CALL regExpProtoGetterGlobal(ExecState* exec)
@@ -219,15 +220,14 @@ EncodedJSValue JSC_HOST_CALL regExpProtoGetterFlags(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
     if (!thisValue.isObject())
-        return JSValue::encode(throwTypeError(exec));
+        return throwVMTypeError(exec);
 
-    String flags = flagsString(exec, asObject(thisValue));
+    auto flags = flagsString(exec, asObject(thisValue));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    return JSValue::encode(jsString(exec, flags));
+    return JSValue::encode(jsString(exec, flags.data()));
 }
-
 
 template <typename CharacterType>
 static inline void appendLineTerminatorEscape(StringBuilder&, CharacterType);

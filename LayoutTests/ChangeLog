@@ -1,3 +1,14 @@
+2015-06-12  Darin Adler  <darin@apple.com>
+
+        Fix minor ES6 compliance issue in RegExp.prototype.toString and optimize performance a little
+        https://bugs.webkit.org/show_bug.cgi?id=145935
+
+        Reviewed by Anders Carlsson.
+
+        * js/regexp-toString-expected.txt: Added.
+        * js/regexp-toString.html: Added.
+        * js/script-tests/regexp-toString.js: Added.
+
 2015-06-12  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Fix grid-template-areas parsing to avoid spaces
