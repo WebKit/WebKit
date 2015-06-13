@@ -53,7 +53,7 @@ test(function() {
     new ReadableStream({ strategy: 2 }); // Constructor should not throw when strategy is not an object.
 }, 'ReadableStream constructor can get initial garbage as strategy argument');
 
-var test1 = async_test('ReadableStream start should be able to return a promise', { timeout: 50 });
+var test1 = async_test('ReadableStream start should be able to return a promise');
 test1.step(function()
 {
     var readCalled = false;
@@ -82,7 +82,7 @@ test1.step(function()
     }));
 });
 
-var test2 = async_test('ReadableStream start should be able to return a promise and reject it', { timeout: 100 });
+var test2 = async_test('ReadableStream start should be able to return a promise and reject it');
 test2.step(function()
 {
     var theError = new Error('rejected!');
@@ -658,7 +658,7 @@ test17.step(function() {
     })).catch(test17.step_func(function(e) { assert_unreached(e); } ));
 });
 
-var test18 = async_test('ReadableStream integration test: adapting a random push source', { timeout: 50 });
+var test18 = async_test('ReadableStream integration test: adapting a random push source');
 test18.step(function() {
     var pullChecked = false;
     var randomSource = new RandomPushSource(8);

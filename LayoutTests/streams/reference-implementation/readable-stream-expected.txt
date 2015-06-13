@@ -5,8 +5,8 @@ PASS ReadableStream constructor should throw for non-function start arguments
 PASS ReadableStream constructor can get initial garbage as cancel argument 
 PASS ReadableStream constructor can get initial garbage as pull argument 
 PASS ReadableStream constructor can get initial garbage as strategy argument 
-TIMEOUT ReadableStream start should be able to return a promise Test timed out
-TIMEOUT ReadableStream start should be able to return a promise and reject it Test timed out
+PASS ReadableStream start should be able to return a promise 
+PASS ReadableStream start should be able to return a promise and reject it 
 PASS ReadableStream should be able to enqueue different objects. 
 PASS ReadableStream: if start throws an error, it should be re-thrown 
 TIMEOUT ReadableStream: if pull rejects, it should error the stream Test timed out
@@ -20,6 +20,6 @@ PASS ReadableStream: enqueue should throw the stored error when the stream is er
 FAIL ReadableStream: should call underlying source methods as methods releaseLock is not implemented
 FAIL ReadableStream strategies: the default strategy should return false for all but the first enqueue call assert_equals: first enqueue should return true expected (boolean) true but got (undefined) undefined
 FAIL ReadableStream strategies: the default strategy should continue returning true from enqueue if the chunks are read immediately assert_equals: first enqueue should return true expected (boolean) true but got (undefined) undefined
-TIMEOUT ReadableStream integration test: adapting a random push source Test timed out
+PASS ReadableStream integration test: adapting a random push source 
 PASS ReadableStream integration test: adapting a sync pull source 
 
