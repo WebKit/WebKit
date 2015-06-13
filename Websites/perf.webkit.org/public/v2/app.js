@@ -586,8 +586,10 @@ App.Pane = Ember.Object.extend({
 
         var rawValues = chartData.current.rawValues();
         var movingAverageIsSetByUser = movingAverageStrategy && movingAverageStrategy.execute;
-        var movingAverageValues = Statistics.executeStrategy(
-            movingAverageIsSetByUser ? movingAverageStrategy : Statistics.MovingAverageStrategies[0], rawValues);
+        if (!movingAverageIsSetByUser)
+            return null;
+
+        var movingAverageValues = Statistics.executeStrategy(movingAverageStrategy, rawValues);
         if (!movingAverageValues)
             return null;
 
@@ -595,33 +597,23 @@ App.Pane = Ember.Object.extend({
         if (movingAverageStrategy && movingAverageStrategy.isSegmentation && testRangeSelectionStrategy && testRangeSelectionStrategy.execute)
             testRangeCandidates = Statistics.executeStrategy(testRangeSelectionStrategy, rawValues, [movingAverageValues]);
 
-        var envelopeIsSetByUser = envelopingStrategy && envelopingStrategy.execute;
-        var envelopeDelta = Statistics.executeStrategy(envelopeIsSetByUser ? envelopingStrategy : Statistics.EnvelopingStrategies[0],
-            rawValues, [movingAverageValues]);
-
-        for (var i = 0; i < currentTimeSeriesData.length; i++) {
-            var currentValue = currentTimeSeriesData[i].value;
-            var movingAverageValue = movingAverageValues[i];
-            if (currentValue < movingAverageValue - envelopeDelta || movingAverageValue + envelopeDelta < currentValue)
-                currentTimeSeriesData[i].isOutlier = true;
-        }
-        if (!envelopeIsSetByUser)
-            envelopeDelta = null;
-
-        var anomalies = {};
-        if (anomalyDetectionStrategies.length) {
-            var isAnomalyArray = new Array(currentTimeSeriesData.length);
-            for (var strategy of anomalyDetectionStrategies) {
-                var anomalyLengths = Statistics.executeStrategy(strategy, rawValues, [movingAverageValues, envelopeDelta]);
-                for (var i = 0; i < currentTimeSeriesData.length; i++)
-                    isAnomalyArray[i] = isAnomalyArray[i] || anomalyLengths[i];
-            }
-            for (var i = 0; i < isAnomalyArray.length; i++) {
-                if (!isAnomalyArray[i])
-                    continue;
-                anomalies[currentTimeSeriesData[i].measurement.id()] = true;
-                while (isAnomalyArray[i] && i < isAnomalyArray.length)
-                    ++i;
+        if (envelopingStrategy && envelopingStrategy.execute) {
+            var envelopeDelta = Statistics.executeStrategy(envelopingStrategy, rawValues, [movingAverageValues]);
+            var anomalies = {};
+            if (anomalyDetectionStrategies.length) {
+                var isAnomalyArray = new Array(currentTimeSeriesData.length);
+                for (var strategy of anomalyDetectionStrategies) {
+                    var anomalyLengths = Statistics.executeStrategy(strategy, rawValues, [movingAverageValues, envelopeDelta]);
+                    for (var i = 0; i < currentTimeSeriesData.length; i++)
+                        isAnomalyArray[i] = isAnomalyArray[i] || anomalyLengths[i];
+                }
+                for (var i = 0; i < isAnomalyArray.length; i++) {
+                    if (!isAnomalyArray[i])
+                        continue;
+                    anomalies[currentTimeSeriesData[i].measurement.id()] = true;
+                    while (isAnomalyArray[i] && i < isAnomalyArray.length)
+                        ++i;
+                }
             }
         }
 

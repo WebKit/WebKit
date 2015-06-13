@@ -1,3 +1,15 @@
+2015-06-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf dashboard's v2 UI shouldn't hide auto-detected outliers
+        https://bugs.webkit.org/show_bug.cgi?id=145940
+
+        Reviewed by Darin Adler.
+
+        Don't fallback to the default strategies for moving averages and envelope when one is not specified.
+        Also deleted the code to mark points outside the envelop as outliers.
+
+        * public/v2/app.js:
+
 2015-06-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed build fix for merging platforms.
