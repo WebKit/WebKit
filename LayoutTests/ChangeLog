@@ -1,3 +1,15 @@
+2015-06-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: console.table() with a list of objects no longer works
+        https://bugs.webkit.org/show_bug.cgi?id=145952
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/console/console-api.html:
+        * inspector/console/console-table-expected.txt: Added.
+        * inspector/console/console-table.html:
+        Add a similiar console API test all about console.table().
+
 2015-06-13  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Mark fast/forms/select-element-focus-ring.html to Missing

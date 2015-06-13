@@ -1,3 +1,16 @@
+2015-06-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: console.table() with a list of objects no longer works
+        https://bugs.webkit.org/show_bug.cgi?id=145952
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._appendMessageTextAndArguments):
+        (WebInspector.ConsoleMessageView.prototype._formatParameterAsTable):
+        Don't allow expanding a cosole.table message, and don't output the total
+        object even if the table preview was lossless, as the experience is poor.
+
 2015-06-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: CSS Regions not displaying DOM Trees in inspector

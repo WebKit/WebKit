@@ -1102,7 +1102,8 @@ InjectedScript.RemoteObject.prototype = {
                 continue;
 
             // If we have a filter, only show properties in the filter.
-            if (firstLevelKeys && firstLevelKeys.indexOf(name) === -1)
+            // FIXME: Currently these filters do nothing on the backend.
+            if (firstLevelKeys && !firstLevelKeys.includes(name))
                 continue;
 
             // Getter/setter.
@@ -1157,14 +1158,8 @@ InjectedScript.RemoteObject.prototype = {
                 property.subtype = subtype;
 
             // Second level.
-            if (secondLevelKeys === null || secondLevelKeys) {
-                var subPreview = this._generatePreview(value, secondLevelKeys || undefined, undefined);
-                property.valuePreview = subPreview;
-                if (!subPreview.lossless)
-                    preview.lossless = false;
-                if (subPreview.overflow)
-                    preview.overflow = true;
-            } else if (this._isPreviewableObject(value)) {
+            if ((secondLevelKeys === null || secondLevelKeys) || this._isPreviewableObject(value)) {
+                // FIXME: If we want secondLevelKeys filter to continue we would need some refactoring.
                 var subPreview = this._createObjectPreviewForValue(value);
                 property.valuePreview = subPreview;
                 if (!subPreview.lossless)

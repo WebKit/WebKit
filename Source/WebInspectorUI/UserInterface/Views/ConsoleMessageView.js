@@ -243,9 +243,9 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
                 break;
 
             case WebInspector.ConsoleMessage.MessageType.Table:
-                // FIXME: Remove messageText?
-                var args = this._message.parameters || [this._message.messageText];
+                var args = this._message.parameters;
                 element.appendChild(this._formatParameterAsTable(args));
+                this._extraParameters = null;
                 break;
 
             default:
@@ -735,12 +735,11 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
             }
         }
 
-        // If lossless or not table data, output the object so full data can be gotten.
-        if (!preview.lossless || !flatValues.length) {
-            element.appendChild(this._formatParameter(table));
-            if (!flatValues.length)
-                return element;
-        }
+        // If no table data show nothing.
+        if (!flatValues.length)
+            return element;
+
+        // FIXME: Should we output something extra if the preview is lossless?
 
         var dataGrid = WebInspector.DataGrid.createSortableDataGrid(columnNames, flatValues);
         dataGrid.element.classList.add("inline");

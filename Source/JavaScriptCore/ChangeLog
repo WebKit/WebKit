@@ -1,3 +1,17 @@
+2015-06-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: console.table() with a list of objects no longer works
+        https://bugs.webkit.org/show_bug.cgi?id=145952
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.RemoteObject.prototype._generatePreview):
+        Calling generatePreview again was actually starting with a preview
+        of the current object instead of the sub-value. Go down the other
+        path that correctly generates sub-previews. Leave filtering on the
+        backend unimplemented, which we were already ignoring.
+
 2015-06-13  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] ReadableJSStream should handle promises returned by JS source start callback
