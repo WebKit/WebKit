@@ -18,12 +18,9 @@ function main($post_data) {
             exit_with_error('MissingRepositoryName', array('commit' => $commit_info));
         if (!array_key_exists('revision', $commit_info))
             exit_with_error('MissingRevision', array('commit' => $commit_info));
-        if (!ctype_alnum($commit_info['revision']))
-            exit_with_error('InvalidRevision', array('commit' => $commit_info));
-        if (!array_key_exists('time', $commit_info))
-            exit_with_error('MissingTimestamp', array('commit' => $commit_info));
-        if (!array_key_exists('author', $commit_info) || !is_array($commit_info['author']))
-            exit_with_error('MissingAuthorOrInvalidFormat', array('commit' => $commit_info));
+        require_format('Revision', $commit_info['revision'], '/^[A-Za-z0-9 \.]+$/');
+        if (array_key_exists('author', $commit_info) && !is_array($commit_info['author']))
+            exit_with_error('InvalidAuthorFormat', array('commit' => $commit_info));
     }
 
     $db->begin_transaction();
@@ -34,16 +31,20 @@ function main($post_data) {
             exit_with_error('FailedToInsertRepository', array('commit' => $commit_info));
         }
 
-        $account = array_get($commit_info['author'], 'account');
-        $committer_query = array('repository' => $repository_id, 'account' => $account);
-        $committer_data = $committer_query;
-        $name = array_get($commit_info['author'], 'name');
-        if ($name)
-            $committer_data['name'] = $name;
-        $committer_id = $db->update_or_insert_row('committers', 'committer', $committer_query, $committer_data);
-        if (!$committer_id) {
-            $db->rollback_transaction();
-            exit_with_error('FailedToInsertCommitter', array('committer' => $committer_data));
+        $author = array_get($commit_info, 'author');
+        $committer_id = NULL;
+        if ($author) {
+            $account = array_get($author, 'account');
+            $committer_query = array('repository' => $repository_id, 'account' => $account);
+            $committer_data = $committer_query;
+            $name = array_get($author, 'name');
+            if ($name)
+                $committer_data['name'] = $name;
+            $committer_id = $db->update_or_insert_row('committers', 'committer', $committer_query, $committer_data);
+            if (!$committer_id) {
+                $db->rollback_transaction();
+                exit_with_error('FailedToInsertCommitter', array('committer' => $committer_data));
+            }
         }
 
         $parent_revision = array_get($commit_info, 'parent');
@@ -61,9 +62,9 @@ function main($post_data) {
             'repository' => $repository_id,
             'revision' => $commit_info['revision'],
             'parent' => $parent_id,
-            'time' => $commit_info['time'],
+            'time' => array_get($commit_info, 'time'),
             'committer' => $committer_id,
-            'message' => $commit_info['message'],
+            'message' => array_get($commit_info, 'message'),
             'reported' => true,
         );
         $db->update_or_insert_row('commits', 'commit', array('repository' => $repository_id, 'revision' => $data['revision']), $data);

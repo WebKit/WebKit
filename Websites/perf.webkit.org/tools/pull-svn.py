@@ -8,6 +8,8 @@ import time
 import urllib2
 
 from xml.dom.minidom import parseString as parseXmlString
+from util import submit_commits
+from util import text_content
 
 
 def main(argv):
@@ -103,9 +105,9 @@ def fetch_commit(repository_name, repository_url, revision):
             return None
         raise error
     xml = parseXmlString(output)
-    time = textContent(xml.getElementsByTagName("date")[0])
-    author_account = textContent(xml.getElementsByTagName("author")[0])
-    message = textContent(xml.getElementsByTagName("msg")[0])
+    time = text_content(xml.getElementsByTagName("date")[0])
+    author_account = text_content(xml.getElementsByTagName("author")[0])
+    message = text_content(xml.getElementsByTagName("msg")[0])
     return {
         'repository': repository_name,
         'revision': revision,
@@ -113,16 +115,6 @@ def fetch_commit(repository_name, repository_url, revision):
         'author': {'account': author_account},
         'message': message,
     }
-
-
-def textContent(element):
-    text = ''
-    for child in element.childNodes:
-        if child.nodeType == child.TEXT_NODE:
-            text += child.data
-        else:
-            text += textContent(child)
-    return text
 
 
 name_account_compound_regex = re.compile(r'^\s*(?P<name>(\".+\"|[^<]+?))\s*\<(?P<account>.+)\>\s*$')
@@ -134,29 +126,6 @@ def resolve_author_name_from_account(helper, account):
     if match:
         return match.group('name').strip('"')
     return output.strip()
-
-
-def submit_commits(commits, dashboard_url, slave_name, slave_password):
-    try:
-        payload = json.dumps({
-            'slaveName': slave_name,
-            'slavePassword': slave_password,
-            'commits': commits,
-        })
-        request = urllib2.Request(dashboard_url + '/api/report-commits')
-        request.add_header('Content-Type', 'application/json')
-        request.add_header('Content-Length', len(payload))
-
-        output = urllib2.urlopen(request, payload).read()
-        try:
-            result = json.loads(output)
-        except Exception, error:
-            raise Exception(error, output)
-
-        if result.get('status') != 'OK':
-            raise Exception(result)
-    except Exception as error:
-        sys.exit('Failed to submit commits: %s' % str(error))
 
 
 if __name__ == "__main__":

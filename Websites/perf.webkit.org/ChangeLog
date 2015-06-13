@@ -1,5 +1,31 @@
 2015-06-13  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add a script to post new OS X builds to perf dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=145955
+
+        Reviewed by Darin Adler.
+
+        Added a new script pull-osx.py and relaxed the restrictions on commits accepted by the dashboard API.
+
+        * public/api/report-commits.php:
+        (main): Allow more characters than [A-Za-z0-9] in revision. e.g. "10.10.3 14D136".
+        Also allow commits without the author, commit time, and commit message as OS versions do not have those.
+
+        * tools/pull-osx.py: Added.
+        (main): Fetch the list of builds from a website and submit them per submissionSize with submissionInterval.
+        Once all builds have been submitted, wait for a long time as specified by fetchInterval.
+        (setup_auth): Sets up basic or digest auth to access the dashboard.
+        (fetch_available_builds): Fetches and parses the XML document from an internal website.
+        (textContent): A helper function to get the text content out of a XML node.
+        (submit_commits): Submits commits to the perf dashboard.
+
+        * tools/pull-svn.py:
+        (fetch_commit):
+
+        * tools/util.py: Extracted submit_commits and text_content from pull-svn.py to be reused in pull-osx.py.
+
+2015-06-13  Ryosuke Niwa  <rniwa@webkit.org>
+
         Perf dashboard's v2 UI shouldn't hide auto-detected outliers
         https://bugs.webkit.org/show_bug.cgi?id=145940
 
