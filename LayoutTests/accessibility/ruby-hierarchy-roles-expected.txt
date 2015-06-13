@@ -1,0 +1,9 @@
+This tests that the ruby containers are exposed with the appropriate hierarchy and roles.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+basetext rubytext

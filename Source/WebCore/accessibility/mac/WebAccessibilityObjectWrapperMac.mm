@@ -120,6 +120,26 @@ using namespace HTMLNames;
 #define NSAccessibilityContentSeparatorSubrole @"AXContentSeparator"
 #endif
 
+#ifndef NSAccessibilityRubyBaseSubRole
+#define NSAccessibilityRubyBaseSubrole @"AXRubyBase"
+#endif
+
+#ifndef NSAccessibilityRubyBlockSubrole
+#define NSAccessibilityRubyBlockSubrole @"AXRubyBlock"
+#endif
+
+#ifndef NSAccessibilityRubyInlineSubrole
+#define NSAccessibilityRubyInlineSubrole @"AXRubyInline"
+#endif
+
+#ifndef NSAccessibilityRubyRunSubrole
+#define NSAccessibilityRubyRunSubrole @"AXRubyRun"
+#endif
+
+#ifndef NSAccessibilityRubyTextSubrole
+#define NSAccessibilityRubyTextSubrole @"AXRubyText"
+#endif
+
 // Miscellaneous
 #ifndef NSAccessibilityBlockQuoteLevelAttribute
 #define NSAccessibilityBlockQuoteLevelAttribute @"AXBlockQuoteLevel"
@@ -1960,6 +1980,11 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { SwitchRole, NSAccessibilityCheckBoxRole },
         { SearchFieldRole, NSAccessibilityTextFieldRole },
         { PreRole, NSAccessibilityGroupRole },
+        { RubyBaseRole, NSAccessibilityGroupRole },
+        { RubyBlockRole, NSAccessibilityGroupRole },
+        { RubyInlineRole, NSAccessibilityGroupRole },
+        { RubyRunRole, NSAccessibilityGroupRole },
+        { RubyTextRole, NSAccessibilityGroupRole },
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
     
@@ -2142,6 +2167,22 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
     if (m_object->isSwitch())
         return NSAccessibilitySwitchSubrole;
+
+    // Ruby subroles
+    switch (role) {
+    case RubyBaseRole:
+        return NSAccessibilityRubyBaseSubrole;
+    case RubyBlockRole:
+        return NSAccessibilityRubyBlockSubrole;
+    case RubyInlineRole:
+        return NSAccessibilityRubyInlineSubrole;
+    case RubyRunRole:
+        return NSAccessibilityRubyRunSubrole;
+    case RubyTextRole:
+        return NSAccessibilityRubyTextSubrole;
+    default:
+        break;
+    }
     
     return nil;
 }

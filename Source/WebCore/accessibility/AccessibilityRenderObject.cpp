@@ -1382,7 +1382,11 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     if (node && node->hasTagName(dfnTag))
         return false;
     
-    // By default, objects should be ignored so that the AX hierarchy is not 
+    // Make sure that ruby containers are not ignored.
+    if (m_renderer->isRubyRun() || m_renderer->isRubyBlock() || m_renderer->isRubyInline())
+        return false;
+
+    // By default, objects should be ignored so that the AX hierarchy is not
     // filled with unnecessary items.
     return true;
 }
@@ -2575,9 +2579,18 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (node && node->hasTagName(dlTag))
         return DescriptionListRole;
 
-    if (node && (node->hasTagName(rpTag) || node->hasTagName(rtTag)))
-        return AnnotationRole;
-
+    // Check for Ruby elements
+    if (m_renderer->isRubyText())
+        return RubyTextRole;
+    if (m_renderer->isRubyBase())
+        return RubyBaseRole;
+    if (m_renderer->isRubyRun())
+        return RubyRunRole;
+    if (m_renderer->isRubyBlock())
+        return RubyBlockRole;
+    if (m_renderer->isRubyInline())
+        return RubyInlineRole;
+    
     // This return value is what will be used if AccessibilityTableCell determines
     // the cell should not be treated as a cell (e.g. because it is a layout table.
     // In ATK, there is a distinction between generic text block elements and other
