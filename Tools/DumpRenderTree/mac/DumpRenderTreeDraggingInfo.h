@@ -53,11 +53,7 @@
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wincompatible-property-type"
-// FIXME (<rdar://problem/20880213>): Replace NSInteger with an actual type when we can.
-@property (readonly) NSInteger springLoadingHighlight;
-#pragma clang diagnostic pop
+@property (readonly) NSSpringLoadingHighlight springLoadingHighlight;
 - (void)resetSpringLoading;
 #endif
 @end

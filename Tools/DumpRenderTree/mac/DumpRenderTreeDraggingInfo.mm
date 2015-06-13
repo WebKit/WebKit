@@ -143,9 +143,9 @@
 }
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
--(NSInteger)springLoadingHighlight
+-(NSSpringLoadingHighlight)springLoadingHighlight
 {
-    return 0;
+    return NSSpringLoadingHighlightNone;
 }
 
 - (void)resetSpringLoading

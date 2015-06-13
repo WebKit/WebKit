@@ -1,3 +1,16 @@
+2015-06-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Update springLoadingHighlight type
+        https://bugs.webkit.org/show_bug.cgi?id=145939
+        rdar://problem/20880213
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/mac/DumpRenderTreeDraggingInfo.h:
+        * DumpRenderTree/mac/DumpRenderTreeDraggingInfo.mm:
+        * WebKitTestRunner/mac/WebKitTestRunnerDraggingInfo.h:
+        * WebKitTestRunner/mac/WebKitTestRunnerDraggingInfo.mm:
+
 2015-06-12  Dewei Zhu  <dewei_zhu@apple.com>
 
         Move cursor to (10, 0) instead of (0, 0) and polish the mouse move code
