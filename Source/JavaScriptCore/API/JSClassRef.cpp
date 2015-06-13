@@ -113,7 +113,7 @@ Ref<OpaqueJSClass> OpaqueJSClass::createNoAutomaticPrototype(const JSClassDefini
     return adoptRef(*new OpaqueJSClass(definition, 0));
 }
 
-PassRefPtr<OpaqueJSClass> OpaqueJSClass::create(const JSClassDefinition* clientDefinition)
+Ref<OpaqueJSClass> OpaqueJSClass::create(const JSClassDefinition* clientDefinition)
 {
     JSClassDefinition definition = *clientDefinition; // Avoid modifying client copy.
 
@@ -124,7 +124,7 @@ PassRefPtr<OpaqueJSClass> OpaqueJSClass::create(const JSClassDefinition* clientD
     // We are supposed to use JSClassRetain/Release but since we know that we currently have
     // the only reference to this class object we cheat and use a RefPtr instead.
     RefPtr<OpaqueJSClass> protoClass = adoptRef(new OpaqueJSClass(&protoDefinition, 0));
-    return adoptRef(new OpaqueJSClass(&definition, protoClass.get()));
+    return adoptRef(*new OpaqueJSClass(&definition, protoClass.get()));
 }
 
 OpaqueJSClassContextData::OpaqueJSClassContextData(JSC::VM&, OpaqueJSClass* jsClass)

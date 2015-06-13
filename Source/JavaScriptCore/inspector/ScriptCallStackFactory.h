@@ -46,10 +46,10 @@ class ScriptArguments;
 class ScriptCallStack;
 
 // FIXME: The subtle differences between these should be eliminated.
-JS_EXPORT_PRIVATE PassRefPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState*, size_t maxStackSize);
-JS_EXPORT_PRIVATE PassRefPtr<ScriptCallStack> createScriptCallStackForConsole(JSC::ExecState*, size_t maxStackSize);
-JS_EXPORT_PRIVATE PassRefPtr<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState*, JSC::Exception*, size_t maxStackSize);
-JS_EXPORT_PRIVATE PassRefPtr<ScriptArguments> createScriptArguments(JSC::ExecState*, unsigned skipArgumentCount);
+JS_EXPORT_PRIVATE Ref<ScriptCallStack> createScriptCallStack(JSC::ExecState*, size_t maxStackSize);
+JS_EXPORT_PRIVATE Ref<ScriptCallStack> createScriptCallStackForConsole(JSC::ExecState*, size_t maxStackSize);
+JS_EXPORT_PRIVATE Ref<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState*, JSC::Exception*, size_t maxStackSize);
+JS_EXPORT_PRIVATE Ref<ScriptArguments> createScriptArguments(JSC::ExecState*, unsigned skipArgumentCount);
 
 } // namespace Inspector
 

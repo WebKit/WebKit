@@ -199,7 +199,7 @@ void ScriptExecutable::installCode(CodeBlock* genericCodeBlock)
     Heap::heap(this)->writeBarrier(this);
 }
 
-PassRefPtr<CodeBlock> ScriptExecutable::newCodeBlockFor(
+RefPtr<CodeBlock> ScriptExecutable::newCodeBlockFor(
     CodeSpecializationKind kind, JSFunction* function, JSScope* scope, JSObject*& exception)
 {
     VM* vm = scope->vm();
@@ -244,7 +244,7 @@ PassRefPtr<CodeBlock> ScriptExecutable::newCodeBlockFor(
         exception = vm->throwException(
             globalObject->globalExec(),
             error.toErrorObject(globalObject, executable->m_source));
-        return 0;
+        return nullptr;
     }
 
     // Parsing reveals whether our function uses features that require a separate function name object in the scope chain.

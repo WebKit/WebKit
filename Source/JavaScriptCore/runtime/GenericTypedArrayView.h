@@ -37,11 +37,11 @@ protected:
     GenericTypedArrayView(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
 
 public:
-    static PassRefPtr<GenericTypedArrayView> create(unsigned length);
-    static PassRefPtr<GenericTypedArrayView> create(const typename Adaptor::Type* array, unsigned length);
-    static PassRefPtr<GenericTypedArrayView> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
+    static RefPtr<GenericTypedArrayView> create(unsigned length);
+    static RefPtr<GenericTypedArrayView> create(const typename Adaptor::Type* array, unsigned length);
+    static RefPtr<GenericTypedArrayView> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
     
-    static PassRefPtr<GenericTypedArrayView> createUninitialized(unsigned length);
+    static RefPtr<GenericTypedArrayView> createUninitialized(unsigned length);
     
     typename Adaptor::Type* data() const { return static_cast<typename Adaptor::Type*>(baseAddress()); }
     
@@ -98,8 +98,8 @@ public:
             && offset + pos >= offset);
     }
     
-    PassRefPtr<GenericTypedArrayView> subarray(int start) const;
-    PassRefPtr<GenericTypedArrayView> subarray(int start, int end) const;
+    RefPtr<GenericTypedArrayView> subarray(int start) const;
+    RefPtr<GenericTypedArrayView> subarray(int start, int end) const;
     
     virtual TypedArrayType getType() const override
     {

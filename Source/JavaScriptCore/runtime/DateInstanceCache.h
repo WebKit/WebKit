@@ -30,7 +30,6 @@
 #include "JSDateMath.h"
 #include <array>
 #include <wtf/HashFunctions.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace JSC {

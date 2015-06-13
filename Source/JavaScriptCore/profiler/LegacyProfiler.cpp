@@ -78,7 +78,7 @@ void LegacyProfiler::startProfiling(ExecState* exec, const String& title, PassRe
     m_currentProfiles.append(profileGenerator);
 }
 
-PassRefPtr<Profile> LegacyProfiler::stopProfiling(ExecState* exec, const String& title)
+RefPtr<Profile> LegacyProfiler::stopProfiling(ExecState* exec, const String& title)
 {
     if (!exec)
         return nullptr;

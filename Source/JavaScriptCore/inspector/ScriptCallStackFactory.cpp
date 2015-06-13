@@ -84,7 +84,7 @@ private:
     size_t m_remainingCapacityForFrameCapture;
 };
 
-PassRefPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec, size_t maxStackSize)
+Ref<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec, size_t maxStackSize)
 {
     if (!exec)
         return ScriptCallStack::create();
@@ -98,7 +98,7 @@ PassRefPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec, size_t m
     return ScriptCallStack::create(frames);
 }
 
-PassRefPtr<ScriptCallStack> createScriptCallStackForConsole(JSC::ExecState* exec, size_t maxStackSize)
+Ref<ScriptCallStack> createScriptCallStackForConsole(JSC::ExecState* exec, size_t maxStackSize)
 {
     if (!exec)
         return ScriptCallStack::create();
@@ -129,7 +129,7 @@ static void extractSourceInformationFromException(JSC::ExecState* exec, JSObject
     exec->clearException();
 }
 
-PassRefPtr<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState* exec, JSC::Exception* exception, size_t maxStackSize)
+Ref<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState* exec, JSC::Exception* exception, size_t maxStackSize)
 {
     Vector<ScriptCallFrame> frames;
     RefCountedArray<StackFrame> stackTrace = exception->stack();
@@ -162,7 +162,7 @@ PassRefPtr<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState* e
     return ScriptCallStack::create(frames);
 }
 
-PassRefPtr<ScriptArguments> createScriptArguments(JSC::ExecState* exec, unsigned skipArgumentCount)
+Ref<ScriptArguments> createScriptArguments(JSC::ExecState* exec, unsigned skipArgumentCount)
 {
     Vector<Deprecated::ScriptValue> arguments;
     size_t argumentCount = exec->argumentCount();

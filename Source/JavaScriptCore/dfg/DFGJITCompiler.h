@@ -313,7 +313,7 @@ public:
         entry->m_reshufflings.shrinkToFit();
     }
     
-    PassRefPtr<JITCode> jitCode() { return m_jitCode; }
+    RefPtr<JITCode> jitCode() { return m_jitCode; }
     
     Vector<Label>& blockHeads() { return m_blockHeads; }
 

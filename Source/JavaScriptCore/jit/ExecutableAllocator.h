@@ -32,7 +32,6 @@
 #include <wtf/MetaAllocatorHandle.h>
 #include <wtf/MetaAllocator.h>
 #include <wtf/PageAllocation.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -113,7 +112,7 @@ public:
     static void dumpProfile() { }
 #endif
 
-    PassRefPtr<ExecutableMemoryHandle> allocate(VM&, size_t sizeInBytes, void* ownerUID, JITCompilationEffort);
+    RefPtr<ExecutableMemoryHandle> allocate(VM&, size_t sizeInBytes, void* ownerUID, JITCompilationEffort);
 
 #if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
     static void makeWritable(void* start, size_t size)

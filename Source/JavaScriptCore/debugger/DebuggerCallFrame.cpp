@@ -88,7 +88,7 @@ DebuggerCallFrame::DebuggerCallFrame(CallFrame* callFrame)
     m_position = positionForCallFrame(m_callFrame);
 }
 
-PassRefPtr<DebuggerCallFrame> DebuggerCallFrame::callerFrame()
+RefPtr<DebuggerCallFrame> DebuggerCallFrame::callerFrame()
 {
     ASSERT(isValid());
     if (!isValid())
@@ -102,7 +102,7 @@ PassRefPtr<DebuggerCallFrame> DebuggerCallFrame::callerFrame()
 
     CallFrame* callerFrame = functor.getCallerFrame();
     if (!callerFrame)
-        return 0;
+        return nullptr;
 
     m_caller = DebuggerCallFrame::create(callerFrame);
     return m_caller;

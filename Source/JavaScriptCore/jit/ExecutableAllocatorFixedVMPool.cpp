@@ -159,7 +159,7 @@ double ExecutableAllocator::memoryPressureMultiplier(size_t addedMemoryUsage)
     return result;
 }
 
-PassRefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(VM&, size_t sizeInBytes, void* ownerUID, JITCompilationEffort effort)
+RefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(VM&, size_t sizeInBytes, void* ownerUID, JITCompilationEffort effort)
 {
     if (effort != JITCompilationCanFail && Options::reportMustSucceedExecutableAllocations()) {
         dataLog("Allocating ", sizeInBytes, " bytes of executable memory with JITCompilationMustSucceed.\n");
@@ -178,7 +178,7 @@ PassRefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(VM&, size_t siz
         }
         return nullptr;
     }
-    return result.release();
+    return result;
 }
 
 size_t ExecutableAllocator::committedByteCount()

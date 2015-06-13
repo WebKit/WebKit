@@ -53,7 +53,7 @@ public:
 
     JS_EXPORT_PRIVATE explicit DebuggerCallFrame(CallFrame*);
 
-    JS_EXPORT_PRIVATE PassRefPtr<DebuggerCallFrame> callerFrame();
+    JS_EXPORT_PRIVATE RefPtr<DebuggerCallFrame> callerFrame();
     ExecState* exec() const { return m_callFrame; }
     JS_EXPORT_PRIVATE SourceID sourceID() const;
 

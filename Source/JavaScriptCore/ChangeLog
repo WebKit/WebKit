@@ -1,3 +1,44 @@
+2015-06-12  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Purge PassRefPtr in JavaScriptCore - 2
+        https://bugs.webkit.org/show_bug.cgi?id=145834
+
+        Reviewed by Darin Adler.
+
+        As a step to remove PassRefPtr, this patch cleans up PassRefPtr as much as possible
+        in JavaScriptCore.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::create):
+        * API/JSClassRef.h:
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::callerFrame):
+        * debugger/DebuggerCallFrame.h:
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::jitCode):
+        * inspector/ScriptCallStackFactory.cpp:
+        (Inspector::createScriptCallStack):
+        (Inspector::createScriptCallStackForConsole):
+        (Inspector::createScriptCallStackFromException):
+        (Inspector::createScriptArguments):
+        * inspector/ScriptCallStackFactory.h:
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::allocate):
+        * jit/ExecutableAllocator.h:
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::ExecutableAllocator::allocate):
+        * profiler/LegacyProfiler.cpp:
+        (JSC::LegacyProfiler::stopProfiling):
+        * profiler/LegacyProfiler.h:
+        * runtime/DateInstanceCache.h:
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        * runtime/Executable.h:
+        * runtime/GenericTypedArrayView.h:
+        * runtime/GenericTypedArrayViewInlines.h:
+        (JSC::GenericTypedArrayView<Adaptor>::create):
+        (JSC::GenericTypedArrayView<Adaptor>::createUninitialized):
+
 2015-06-12  Darin Adler  <darin@apple.com>
 
         Fix minor ES6 compliance issue in RegExp.prototype.toString and optimize performance a little

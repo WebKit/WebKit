@@ -40,25 +40,25 @@ GenericTypedArrayView<Adaptor>::GenericTypedArrayView(
 }
 
 template<typename Adaptor>
-PassRefPtr<GenericTypedArrayView<Adaptor>> GenericTypedArrayView<Adaptor>::create(unsigned length)
+RefPtr<GenericTypedArrayView<Adaptor>> GenericTypedArrayView<Adaptor>::create(unsigned length)
 {
     RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(length, sizeof(typename Adaptor::Type));
     if (!buffer)
-        return 0;
+        return nullptr;
     return create(buffer.release(), 0, length);
 }
 
 template<typename Adaptor>
-PassRefPtr<GenericTypedArrayView<Adaptor>> GenericTypedArrayView<Adaptor>::create(
+RefPtr<GenericTypedArrayView<Adaptor>> GenericTypedArrayView<Adaptor>::create(
     const typename Adaptor::Type* array, unsigned length)
 {
     RefPtr<GenericTypedArrayView> result = create(length);
     memcpy(result->data(), array, length * sizeof(typename Adaptor::Type));
-    return result.release();
+    return result;
 }
 
 template<typename Adaptor>
-PassRefPtr<GenericTypedArrayView<Adaptor>> GenericTypedArrayView<Adaptor>::create(
+RefPtr<GenericTypedArrayView<Adaptor>> GenericTypedArrayView<Adaptor>::create(
     PassRefPtr<ArrayBuffer> passedBuffer, unsigned byteOffset, unsigned length)
 {
     RefPtr<ArrayBuffer> buffer = passedBuffer;
@@ -71,25 +71,25 @@ PassRefPtr<GenericTypedArrayView<Adaptor>> GenericTypedArrayView<Adaptor>::creat
 }
 
 template<typename Adaptor>
-PassRefPtr<GenericTypedArrayView<Adaptor>>
+RefPtr<GenericTypedArrayView<Adaptor>>
 GenericTypedArrayView<Adaptor>::createUninitialized(unsigned length)
 {
     RefPtr<ArrayBuffer> buffer =
         ArrayBuffer::createUninitialized(length, sizeof(typename Adaptor::Type));
     if (!buffer)
-        return 0;
+        return nullptr;
     return create(buffer.release(), 0, length);
 }
 
 template<typename Adaptor>
-PassRefPtr<GenericTypedArrayView<Adaptor>>
+RefPtr<GenericTypedArrayView<Adaptor>>
 GenericTypedArrayView<Adaptor>::subarray(int start) const
 {
     return subarray(start, length());
 }
 
 template<typename Adaptor>
-PassRefPtr<GenericTypedArrayView<Adaptor>>
+RefPtr<GenericTypedArrayView<Adaptor>>
 GenericTypedArrayView<Adaptor>::subarray(int start, int end) const
 {
     unsigned offset, length;

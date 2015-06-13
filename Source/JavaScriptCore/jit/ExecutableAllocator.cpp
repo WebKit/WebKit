@@ -213,11 +213,11 @@ double ExecutableAllocator::memoryPressureMultiplier(size_t addedMemoryUsage)
 
 }
 
-PassRefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(VM&, size_t sizeInBytes, void* ownerUID, JITCompilationEffort effort)
+RefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(VM&, size_t sizeInBytes, void* ownerUID, JITCompilationEffort effort)
 {
     RefPtr<ExecutableMemoryHandle> result = allocator()->allocate(sizeInBytes, ownerUID);
     RELEASE_ASSERT(result || effort != JITCompilationMustSucceed);
-    return result.release();
+    return result;
 }
 
 size_t ExecutableAllocator::committedByteCount()

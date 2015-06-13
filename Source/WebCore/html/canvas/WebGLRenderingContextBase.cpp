@@ -2498,7 +2498,7 @@ WebGLGetInfo WebGLRenderingContextBase::getUniform(WebGLProgram* program, const 
             m_context->getUniformfv(objectOrZero(program), location, value);
         if (length == 1)
             return WebGLGetInfo(value[0]);
-        return WebGLGetInfo(Float32Array::create(value, length));
+        return WebGLGetInfo(Float32Array::create(value, length).release());
     }
     case GraphicsContext3D::INT: {
         GC3Dint value[4] = {0};
@@ -2508,7 +2508,7 @@ WebGLGetInfo WebGLRenderingContextBase::getUniform(WebGLProgram* program, const 
             m_context->getUniformiv(objectOrZero(program), location, value);
         if (length == 1)
             return WebGLGetInfo(value[0]);
-        return WebGLGetInfo(Int32Array::create(value, length));
+        return WebGLGetInfo(Int32Array::create(value, length).release());
     }
     case GraphicsContext3D::BOOL: {
         GC3Dint value[4] = {0};
@@ -2607,7 +2607,7 @@ WebGLGetInfo WebGLRenderingContextBase::getVertexAttrib(GC3Duint index, GC3Denum
     case GraphicsContext3D::VERTEX_ATTRIB_ARRAY_TYPE:
         return WebGLGetInfo(state.type);
     case GraphicsContext3D::CURRENT_VERTEX_ATTRIB:
-        return WebGLGetInfo(Float32Array::create(m_vertexAttribValue[index].value, 4));
+        return WebGLGetInfo(Float32Array::create(m_vertexAttribValue[index].value, 4).release());
     default:
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getVertexAttrib", "invalid parameter name");
         return WebGLGetInfo();
@@ -3986,7 +3986,7 @@ WebGLGetInfo WebGLRenderingContextBase::getWebGLFloatArrayParameter(GC3Denum pna
     default:
         notImplemented();
     }
-    return WebGLGetInfo(Float32Array::create(value, length));
+    return WebGLGetInfo(Float32Array::create(value, length).release());
 }
 
 WebGLGetInfo WebGLRenderingContextBase::getWebGLIntArrayParameter(GC3Denum pname)
@@ -4005,7 +4005,7 @@ WebGLGetInfo WebGLRenderingContextBase::getWebGLIntArrayParameter(GC3Denum pname
     default:
         notImplemented();
     }
-    return WebGLGetInfo(Int32Array::create(value, length));
+    return WebGLGetInfo(Int32Array::create(value, length).release());
 }
 
 void WebGLRenderingContextBase::checkTextureCompleteness(const char* functionName, bool prepareToDraw)

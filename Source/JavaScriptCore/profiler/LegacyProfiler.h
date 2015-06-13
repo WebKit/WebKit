@@ -51,7 +51,7 @@ public:
     static CallIdentifier createCallIdentifier(ExecState*, JSValue, const WTF::String& sourceURL, unsigned defaultLineNumber, unsigned defaultColumnNumber);
 
     JS_EXPORT_PRIVATE void startProfiling(ExecState*, const WTF::String& title, PassRefPtr<Stopwatch>);
-    JS_EXPORT_PRIVATE PassRefPtr<Profile> stopProfiling(ExecState*, const WTF::String& title);
+    JS_EXPORT_PRIVATE RefPtr<Profile> stopProfiling(ExecState*, const WTF::String& title);
     void stopProfiling(JSGlobalObject*);
 
     // Used to ignore profile node subtrees rooted at InjectedScript calls.
