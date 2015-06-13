@@ -1,5 +1,21 @@
 2015-06-12  Anders Carlsson  <andersca@apple.com>
 
+        Reimplement WKResourceCacheManagerRef on top of WKWebsiteDataStoreRef
+        https://bugs.webkit.org/show_bug.cgi?id=145951
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetResourceCacheManager):
+        * UIProcess/API/C/WKResourceCacheManager.cpp:
+        (WKResourceCacheManagerGetTypeID):
+        (toWebsiteDataTypes):
+        (WKResourceCacheManagerGetCacheOrigins):
+        (WKResourceCacheManagerClearCacheForOrigin):
+        (WKResourceCacheManagerClearCacheForAllOrigins):
+
+2015-06-12  Anders Carlsson  <andersca@apple.com>
+
         Reimplement WKApplicationCacheManagerRef as WKWebsiteDataStoreRef
         https://bugs.webkit.org/show_bug.cgi?id=145950
 

@@ -472,9 +472,9 @@ WKPluginSiteDataManagerRef WKContextGetPluginSiteDataManager(WKContextRef contex
 #endif
 }
 
-WKResourceCacheManagerRef WKContextGetResourceCacheManager(WKContextRef contextRef)
+WKResourceCacheManagerRef WKContextGetResourceCacheManager(WKContextRef context)
 {
-    return toAPI(toImpl(contextRef)->supplement<WebResourceCacheManagerProxy>());
+    return reinterpret_cast<WKResourceCacheManagerRef>(WKContextGetWebsiteDataStore(context));
 }
 
 WKOriginDataManagerRef WKContextGetOriginDataManager(WKContextRef context)
