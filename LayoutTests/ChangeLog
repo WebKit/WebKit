@@ -1,3 +1,13 @@
+2015-06-12  Chris Fleizach  <cfleizach@apple.com>
+
+        AX:ARIA Toggle buttons aren't properly conveyed on iOS using VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=145949
+
+        Reviewed by Darin Adler.
+
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode-expected.txt:
+        * inspector-protocol/dom/getAccessibilityPropertiesForNode.html:
+
 2015-06-12  Darin Adler  <darin@apple.com>
 
         Fix minor ES6 compliance issue in RegExp.prototype.toString and optimize performance a little

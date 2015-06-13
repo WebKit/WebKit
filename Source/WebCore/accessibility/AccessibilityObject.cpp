@@ -2213,6 +2213,11 @@ void AccessibilityObject::classList(Vector<String>& classList) const
         classList.append(list.item(k).string());
 }
 
+bool AccessibilityObject::supportsARIAPressed() const
+{
+    const AtomicString& expanded = getAttribute(aria_pressedAttr);
+    return equalIgnoringCase(expanded, "true") || equalIgnoringCase(expanded, "false");
+}
     
 bool AccessibilityObject::supportsARIAExpanded() const
 {

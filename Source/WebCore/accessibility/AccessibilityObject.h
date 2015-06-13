@@ -606,6 +606,7 @@ public:
     bool ariaPressedIsPresent() const;
     bool ariaIsMultiline() const;
     String invalidStatus() const;
+    bool supportsARIAPressed() const;
     bool supportsARIAExpanded() const;
     bool supportsChecked() const;
     AccessibilitySortDirection sortDirection() const;
