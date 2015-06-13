@@ -2412,3 +2412,6 @@ media/click-volume-bar-not-pausing.html [ Skip ] #timeout
 
 webkit.org/b/145632 fast/animation/request-animation-frame-throttle-subframe-display-none.html [ Timeout ]
 webkit.org/b/145632 fast/animation/request-animation-frame-throttle-subframe.html [ Timeout ]
+
+#r185249 added this test for mac port. Need to decide if EFL port also support this test.
+fast/forms/select-element-focus-ring.html [ Missing ]

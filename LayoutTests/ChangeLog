@@ -1,3 +1,11 @@
+2015-06-13  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Mark fast/forms/select-element-focus-ring.html to Missing
+
+        Unreviwed, gardening for EFL port.
+
+        * platform/efl/TestExpectations: The test was added only for Mac port.
+
 2015-06-13  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet <youenn.fablet@crf.canon.fr>
 
         [Streams API] ReadableJSStream should handle promises returned by JS source start callback
