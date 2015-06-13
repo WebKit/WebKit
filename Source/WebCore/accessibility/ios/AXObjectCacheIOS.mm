@@ -85,6 +85,9 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
         case AXValueChanged:
             [obj->wrapper() postValueChangedNotification];
             break;
+        case AXExpandedChanged:
+            [obj->wrapper() postExpandedChangedNotification];
+            break;
         case AXSelectedChildrenChanged:
         case AXCheckedStateChanged:
         default:

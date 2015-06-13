@@ -63,6 +63,7 @@
 - (void)postLiveRegionCreatedNotification;
 - (void)postScrollStatusChangeNotification;
 - (void)postValueChangedNotification;
+- (void)postExpandedChangedNotification;
 
 @end
 

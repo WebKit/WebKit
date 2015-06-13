@@ -1515,6 +1515,11 @@ static RenderObject* rendererForView(WAKView* view)
     // The UIKit accessibility wrapper will override and post appropriate notification.
 }
 
+- (void)postExpandedChangedNotification
+{
+    // The UIKit accessibility wrapper will override and post appropriate notification.
+}
+
 - (void)postScrollStatusChangeNotification
 {
     // The UIKit accessibility wrapper will override and post appropriate notification.
