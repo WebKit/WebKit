@@ -26,27 +26,43 @@
 #include "config.h"
 #include "WKApplicationCacheManager.h"
 
+#include "APIWebsiteDataStore.h"
 #include "WKAPICast.h"
-#include "WebApplicationCacheManagerProxy.h"
+#include "WebsiteDataRecord.h"
 
 using namespace WebKit;
 
 WKTypeID WKApplicationCacheManagerGetTypeID()
 {
-    return toAPI(WebApplicationCacheManagerProxy::APIType);
+    return toAPI(API::WebsiteDataStore::APIType);
 }
 
-void WKApplicationCacheManagerGetApplicationCacheOrigins(WKApplicationCacheManagerRef applicationCacheManagerRef, void* context, WKApplicationCacheManagerGetApplicationCacheOriginsFunction callback)
+void WKApplicationCacheManagerGetApplicationCacheOrigins(WKApplicationCacheManagerRef applicationCacheManager, void* context, WKApplicationCacheManagerGetApplicationCacheOriginsFunction callback)
 {
-    toImpl(applicationCacheManagerRef)->getApplicationCacheOrigins(toGenericCallbackFunction(context, callback));
+    auto& websiteDataStore = toImpl(reinterpret_cast<WKWebsiteDataStoreRef>(applicationCacheManager))->websiteDataStore();
+    websiteDataStore.fetchData(WebsiteDataTypes::WebsiteDataTypeOfflineWebApplicationCache, [context, callback](Vector<WebsiteDataRecord> dataRecords) {
+        Vector<RefPtr<API::Object>> securityOrigins;
+        for (const auto& dataRecord : dataRecords) {
+            for (const auto& origin : dataRecord.origins)
+                securityOrigins.append(API::SecurityOrigin::create(origin));
+        }
+
+        callback(toAPI(API::Array::create(WTF::move(securityOrigins)).ptr()), nullptr, context);
+    });
 }
 
-void WKApplicationCacheManagerDeleteEntriesForOrigin(WKApplicationCacheManagerRef applicationCacheManagerRef, WKSecurityOriginRef originRef)
+void WKApplicationCacheManagerDeleteEntriesForOrigin(WKApplicationCacheManagerRef applicationCacheManager, WKSecurityOriginRef origin)
 {
-    toImpl(applicationCacheManagerRef)->deleteEntriesForOrigin(toImpl(originRef));
+    auto& websiteDataStore = toImpl(reinterpret_cast<WKWebsiteDataStoreRef>(applicationCacheManager))->websiteDataStore();
+
+    WebsiteDataRecord dataRecord;
+    dataRecord.add(WebsiteDataTypes::WebsiteDataTypeIndexedDBDatabases, &toImpl(origin)->securityOrigin());
+
+    websiteDataStore.removeData(WebsiteDataTypes::WebsiteDataTypeOfflineWebApplicationCache, { dataRecord }, [] { });
 }
 
-void WKApplicationCacheManagerDeleteAllEntries(WKApplicationCacheManagerRef applicationCacheManagerRef)
+void WKApplicationCacheManagerDeleteAllEntries(WKApplicationCacheManagerRef applicationCacheManager)
 {
-    toImpl(applicationCacheManagerRef)->deleteAllEntries();
+    auto& websiteDataStore = toImpl(reinterpret_cast<WKWebsiteDataStoreRef>(applicationCacheManager))->websiteDataStore();
+    websiteDataStore.removeData(WebsiteDataTypes::WebsiteDataTypeOfflineWebApplicationCache, std::chrono::system_clock::time_point::min(), [] { });
 }
