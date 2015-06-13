@@ -36,7 +36,6 @@ namespace SimpleLineLayout {
 
 static Vector<FlowContents::Segment> initializeSegments(const RenderBlockFlow& flow)
 {
-
     unsigned numberOfChildren = 0;
     auto children = childrenOfType<RenderObject>(flow);
     for (auto it = children.begin(), end = children.end(); it != end; ++it)
@@ -45,15 +44,18 @@ static Vector<FlowContents::Segment> initializeSegments(const RenderBlockFlow& f
     segments.reserveCapacity(numberOfChildren);
     unsigned startPosition = 0;
     for (const auto& child : childrenOfType<RenderObject>(flow)) {
+        if (is<RenderText>(child)) {
+            const auto& textChild = downcast<RenderText>(child);
+            unsigned textLength = textChild.text()->length();
+            segments.append(FlowContents::Segment { startPosition, startPosition + textLength, textChild.text(), textChild });
+            startPosition += textLength;
+            continue;
+        }
         if (is<RenderLineBreak>(child)) {
             segments.append(FlowContents::Segment { startPosition, startPosition, String(), child });
             continue;
         }
-        ASSERT(is<RenderText>(child));
-        const auto& textChild = downcast<RenderText>(child);
-        unsigned textLength = textChild.text()->length();
-        segments.append(FlowContents::Segment { startPosition, startPosition + textLength, textChild.text(), textChild });
-        startPosition += textLength;
+        ASSERT_NOT_REACHED();
     }
     return segments;
 }
