@@ -95,6 +95,19 @@ bool moveFile(const String& oldPath, const String& newPath)
 }
 
 #if !PLATFORM(IOS)
+bool deleteEmptyDirectory(const String& path)
+{
+    auto fileManager = adoptNS([[NSFileManager alloc] init]);
+
+    if (NSArray *directoryContents = [fileManager contentsOfDirectoryAtPath:path error:nullptr]) {
+        // Explicitly look for and delete .DS_Store files.
+        if (directoryContents.count == 1 && [directoryContents.firstObject isEqualToString:@".DS_Store"])
+            [fileManager removeItemAtPath:[path stringByAppendingPathComponent:directoryContents.firstObject] error:nullptr];
+    }
+
+    // rmdir(...) returns 0 on successful deletion of the path and non-zero in any other case (including invalid permissions or non-existent file)
+    return !rmdir(fileSystemRepresentation(path).data());
+}
 
 void setMetadataURL(String& URLString, const String& referrer, const String& path)
 {

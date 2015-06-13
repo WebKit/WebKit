@@ -156,6 +156,7 @@ bool unlockFile(PlatformFileHandle handle)
 }
 #endif
 
+#if !PLATFORM(MAC)
 bool deleteEmptyDirectory(const String& path)
 {
     CString fsRep = fileSystemRepresentation(path);
@@ -166,6 +167,7 @@ bool deleteEmptyDirectory(const String& path)
     // rmdir(...) returns 0 on successful deletion of the path and non-zero in any other case (including invalid permissions or non-existent file)
     return !rmdir(fsRep.data());
 }
+#endif
 
 bool getFileSize(const String& path, long long& result)
 {
