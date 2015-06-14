@@ -1,3 +1,14 @@
+2015-06-14  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Clean up postprocess-framework-headers.sh
+        https://bugs.webkit.org/show_bug.cgi?id=145962
+
+        Reviewed by Darin Adler.
+
+        * mac/postprocess-framework-headers.sh: Gather all the sed options in a variable, and then
+        run sed only once on each header. Also, correctly exit with the sed return value if it
+        fails.
+
 2015-06-13  Chris Dumez  <cdumez@apple.com>
 
         [WK2] API::Navigation objects are leaked on history navigation to HistoryItems in PageCache
