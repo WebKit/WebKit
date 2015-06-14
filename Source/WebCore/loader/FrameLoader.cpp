@@ -3177,6 +3177,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loa
 
     if (CachedPage* cachedPage = PageCache::singleton().get(item, m_frame.page())) {
         auto documentLoader = cachedPage->documentLoader();
+        m_client.updateCachedDocumentLoader(*documentLoader);
         documentLoader->setTriggeringAction(NavigationAction(documentLoader->request(), loadType, false));
         documentLoader->setLastCheckedRequest(ResourceRequest());
         loadWithDocumentLoader(documentLoader, loadType, 0, AllowNavigationToInvalidURL::Yes);

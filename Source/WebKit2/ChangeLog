@@ -1,3 +1,36 @@
+2015-06-13  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] API::Navigation objects are leaked on history navigation to HistoryItems in PageCache
+        https://bugs.webkit.org/show_bug.cgi?id=145948
+
+        Reviewed by Darin Adler.
+
+        API::Navigation objects were leaked on history navigation to
+        HistoryItems in PageCache. In such case, we would create 2 Navigation
+        objects instead of 1 and the first one would be leaked. The reason
+        we create the second one is because we fail to pass along the
+        navigationID from the UIProcess to the WebProcess and then back to the
+        UIProcess. On the IPC back to the UIProcess, the navigationID ends up
+        being 0 so the UIProcess creates a new Navigation object, thinking that
+        the load was triggered by the WebContent process.
+
+        We now pass along the navigationID, even if the HistoryItem is in the
+        PageCache and we end up reusing the cached DocumentLoader, instead of
+        creating a new one. A new updateCachedDocumentLoader() delegate is
+        added to the FrameLoaderClient, similarly to the pre-existing
+        createDocumentLoader() but for the case where the DocumentLoader gets
+        reused.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::updateCachedDocumentLoader):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::goForward):
+        (WebKit::WebPage::goBack):
+        (WebKit::WebPage::goToBackForwardItem):
+        (WebKit::WebPage::updateCachedDocumentLoader):
+        * WebProcess/WebPage/WebPage.h:
+
 2015-06-12  Gavin Barraclough  <barraclough@apple.com>
 
         Add private API to force page to always run at foreground priority
