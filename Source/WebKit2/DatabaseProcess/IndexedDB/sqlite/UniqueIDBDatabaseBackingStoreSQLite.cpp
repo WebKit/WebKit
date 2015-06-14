@@ -614,7 +614,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::deleteObjectStore(const IDBIdentifier&
         if (sql.prepare() != SQLITE_OK
             || sql.bindInt64(1, objectStoreID) != SQLITE_OK
             || sql.step() != SQLITE_DONE) {
-            LOG_ERROR("Could not delete object store id %lli from ObjectStoreInfo table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            LOG_ERROR("Could not delete object store id %" PRIi64 " from ObjectStoreInfo table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
             return false;
         }
     }
@@ -636,7 +636,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::deleteObjectStore(const IDBIdentifier&
         if (sql.prepare() != SQLITE_OK
             || sql.bindInt64(1, objectStoreID) != SQLITE_OK
             || sql.step() != SQLITE_DONE) {
-            LOG_ERROR("Could not delete records for object store %lli (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            LOG_ERROR("Could not delete records for object store %" PRIi64 " (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
             return false;
         }
     }
@@ -687,7 +687,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::clearObjectStore(const IDBIdentifier& 
         if (sql.prepare() != SQLITE_OK
             || sql.bindInt64(1, objectStoreID) != SQLITE_OK
             || sql.step() != SQLITE_DONE) {
-            LOG_ERROR("Could not delete records from object store id %lli (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            LOG_ERROR("Could not delete records from object store id %" PRIi64 " (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
             return false;
         }
     }
@@ -697,7 +697,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::clearObjectStore(const IDBIdentifier& 
         if (sql.prepare() != SQLITE_OK
             || sql.bindInt64(1, objectStoreID) != SQLITE_OK
             || sql.step() != SQLITE_DONE) {
-            LOG_ERROR("Could not delete records from index record store id %lli (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            LOG_ERROR("Could not delete records from index record store id %" PRIi64 " (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
             return false;
         }
     }
@@ -809,7 +809,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::deleteIndex(const IDBIdentifier& trans
             || sql.bindInt64(1, indexID) != SQLITE_OK
             || sql.bindInt64(2, objectStoreID) != SQLITE_OK
             || sql.step() != SQLITE_DONE) {
-            LOG_ERROR("Could not delete index id %lli from IndexInfo table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            LOG_ERROR("Could not delete index id %" PRIi64 " from IndexInfo table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
             return false;
         }
     }
@@ -820,7 +820,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::deleteIndex(const IDBIdentifier& trans
             || sql.bindInt64(1, indexID) != SQLITE_OK
             || sql.bindInt64(2, objectStoreID) != SQLITE_OK
             || sql.step() != SQLITE_DONE) {
-            LOG_ERROR("Could not delete index records for index id %lli from IndexRecords table (%i) - %s", indexID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            LOG_ERROR("Could not delete index records for index id %" PRIi64 " from IndexRecords table (%i) - %s", indexID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
             return false;
         }
     }
@@ -852,7 +852,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::generateKeyNumber(const IDBIdentifier&
         SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("SELECT currentKey FROM KeyGenerators WHERE objectStoreID = ?;"));
         if (sql.prepare() != SQLITE_OK
             || sql.bindInt64(1, objectStoreID) != SQLITE_OK) {
-            LOG_ERROR("Could not delete index id %lli from IndexInfo table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            LOG_ERROR("Could not delete index id %" PRIi64 " from IndexInfo table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
             return false;
         }
         int result = sql.step();
@@ -925,7 +925,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::keyExistsInObjectStore(const IDBIdenti
     if (sql.prepare() != SQLITE_OK
         || sql.bindInt64(1, objectStoreID) != SQLITE_OK
         || sql.bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLITE_OK) {
-        LOG_ERROR("Could not get record from object store %lli from Records table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+        LOG_ERROR("Could not get record from object store %" PRIi64 " from Records table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
         return false;
     }
 
@@ -973,7 +973,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::putRecord(const IDBIdentifier& transac
             || sql.bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLITE_OK
             || sql.bindBlob(3, valueBuffer, valueSize) != SQLITE_OK
             || sql.step() != SQLITE_DONE) {
-            LOG_ERROR("Could not put record for object store %lli in Records table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            LOG_ERROR("Could not put record for object store %" PRIi64 " in Records table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
             return false;
         }
     }
@@ -1021,7 +1021,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::uncheckedPutIndexRecord(int64_t object
             || sql.bindBlob(3, indexKeyBuffer->data(), indexKeyBuffer->size()) != SQLITE_OK
             || sql.bindBlob(4, valueBuffer->data(), valueBuffer->size()) != SQLITE_OK
             || sql.step() != SQLITE_DONE) {
-            LOG_ERROR("Could not put index record for index %lli in object store %lli in Records table (%i) - %s", indexID, objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            LOG_ERROR("Could not put index record for index %" PRIi64 " in object store %" PRIi64 " in Records table (%i) - %s", indexID, objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
             return false;
         }
     }
@@ -1165,7 +1165,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::deleteRecord(SQLiteIDBTransaction& tra
             || sql.bindInt64(1, objectStoreID) != SQLITE_OK
             || sql.bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLITE_OK
             || sql.step() != SQLITE_DONE) {
-            LOG_ERROR("Could not delete record from object store %lli (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            LOG_ERROR("Could not delete record from object store %" PRIi64 " (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
             return false;
         }
     }
@@ -1178,7 +1178,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::deleteRecord(SQLiteIDBTransaction& tra
             || sql.bindInt64(1, objectStoreID) != SQLITE_OK
             || sql.bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLITE_OK
             || sql.step() != SQLITE_DONE) {
-            LOG_ERROR("Could not delete record from indexes for object store %lli (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            LOG_ERROR("Could not delete record from indexes for object store %" PRIi64 " (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
             return false;
         }
     }
@@ -1209,7 +1209,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRecordFromObjectStore(const IDBI
         if (sql.prepare() != SQLITE_OK
             || sql.bindInt64(1, objectStoreID) != SQLITE_OK
             || sql.bindBlob(2, keyBuffer->data(), keyBuffer->size()) != SQLITE_OK) {
-            LOG_ERROR("Could not get record from object store %lli from Records table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            LOG_ERROR("Could not get record from object store %" PRIi64 " from Records table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
             return false;
         }
 
@@ -1220,7 +1220,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRecordFromObjectStore(const IDBI
         }
         if (sqlResult != SQLITE_ROW) {
             // There was an error fetching the record from the database.
-            LOG_ERROR("Could not get record from object store %lli from Records table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            LOG_ERROR("Could not get record from object store %" PRIi64 " from Records table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
             return false;
         }
 
@@ -1262,7 +1262,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRangeRecordFromObjectStore(const
             || sql.bindInt64(1, objectStoreID) != SQLITE_OK
             || sql.bindBlob(2, lowerBuffer->data(), lowerBuffer->size()) != SQLITE_OK
             || sql.bindBlob(3, upperBuffer->data(), upperBuffer->size()) != SQLITE_OK) {
-            LOG_ERROR("Could not get key range record from object store %lli from Records table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            LOG_ERROR("Could not get key range record from object store %" PRIi64 " from Records table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
             return false;
         }
 
@@ -1274,7 +1274,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::getKeyRangeRecordFromObjectStore(const
         }
         if (sqlResult != SQLITE_ROW) {
             // There was an error fetching the record from the database.
-            LOG_ERROR("Could not get record from object store %lli from Records table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            LOG_ERROR("Could not get record from object store %" PRIi64 " from Records table (%i) - %s", objectStoreID, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
             return false;
         }
 
@@ -1358,7 +1358,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::advanceCursor(const IDBIdentifier& cur
     }
 
     if (!cursor->advance(count)) {
-        LOG_ERROR("Attempt to advance cursor %lli steps failed", count);
+        LOG_ERROR("Attempt to advance cursor %" PRIi64 " steps failed", count);
         return false;
     }
 

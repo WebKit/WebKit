@@ -1,3 +1,47 @@
+2015-06-14  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Format string misuse in DatabaseProcessIDBConnection.cpp and UniqueIDBDatabaseBackingStoreSQLite.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=145960
+
+        Reviewed by Darin Adler.
+
+        Use PRIu64 and PRIi64 to print uint64_t and int64_t, respectively. These things are
+        different types on x86_64 Linux (unsigned long) and on Mac (unsigned long long).
+
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+        (WebKit::DatabaseProcessIDBConnection::getOrEstablishIDBDatabaseMetadata):
+        (WebKit::DatabaseProcessIDBConnection::deleteDatabase):
+        (WebKit::DatabaseProcessIDBConnection::openTransaction):
+        (WebKit::DatabaseProcessIDBConnection::beginTransaction):
+        (WebKit::DatabaseProcessIDBConnection::commitTransaction):
+        (WebKit::DatabaseProcessIDBConnection::resetTransaction):
+        (WebKit::DatabaseProcessIDBConnection::rollbackTransaction):
+        (WebKit::DatabaseProcessIDBConnection::changeDatabaseVersion):
+        (WebKit::DatabaseProcessIDBConnection::createObjectStore):
+        (WebKit::DatabaseProcessIDBConnection::deleteObjectStore):
+        (WebKit::DatabaseProcessIDBConnection::clearObjectStore):
+        (WebKit::DatabaseProcessIDBConnection::createIndex):
+        (WebKit::DatabaseProcessIDBConnection::deleteIndex):
+        (WebKit::DatabaseProcessIDBConnection::putRecord):
+        (WebKit::DatabaseProcessIDBConnection::getRecord):
+        (WebKit::DatabaseProcessIDBConnection::count):
+        (WebKit::DatabaseProcessIDBConnection::deleteRange):
+        (WebKit::DatabaseProcessIDBConnection::openCursor):
+        (WebKit::DatabaseProcessIDBConnection::cursorAdvance):
+        (WebKit::DatabaseProcessIDBConnection::cursorIterate):
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::deleteObjectStore):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::clearObjectStore):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::deleteIndex):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::generateKeyNumber):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::keyExistsInObjectStore):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::putRecord):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::uncheckedPutIndexRecord):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::deleteRecord):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::getKeyRecordFromObjectStore):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::getKeyRangeRecordFromObjectStore):
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::advanceCursor):
+
 2015-06-14  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Clean up postprocess-framework-headers.sh
