@@ -262,6 +262,10 @@ struct WebPageConfiguration {
 
     bool treatsSHA1SignedCertificatesAsInsecure = false;
 
+#if PLATFORM(IOS)
+    bool alwaysRunsAtForegroundPriority = false;
+#endif
+
     WebPreferencesStore::ValueMap preferenceValues;
 };
 
@@ -1541,8 +1545,8 @@ private:
 
     WebCore::ViewState::Flags m_viewState;
     bool m_viewWasEverInWindow;
-
 #if PLATFORM(IOS)
+    bool m_alwaysRunsAtForegroundPriority;
     ProcessThrottler::ForegroundActivityToken m_activityToken;
 #endif
         

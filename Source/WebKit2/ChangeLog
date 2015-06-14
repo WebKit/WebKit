@@ -1,3 +1,29 @@
+2015-06-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Add private API to force page to always run at foreground priority
+        https://bugs.webkit.org/show_bug.cgi?id=145946
+        <rdar://problem/21267221>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+            - copy _alwaysRunsAtForegroundPriority to WebPageConfiguration.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _alwaysRunsAtForegroundPriority]):
+        (-[WKWebViewConfiguration _setAlwaysRunsAtForegroundPriority:]):
+            - added _alwaysRunsAtForegroundPriority.
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+            - added _alwaysRunsAtForegroundPriority.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+            - initialize m_alwaysRunsAtForegroundPriority.
+        (WebKit::WebPageProxy::updateActivityToken):
+            - if m_alwaysRunsAtForegroundPriority is set always take the foreground activity token.
+        * UIProcess/WebPageProxy.h:
+            - added m_alwaysRunsAtForegroundPriority, alwaysRunsAtForegroundPriority.
+
 2015-06-12  Anders Carlsson  <andersca@apple.com>
 
         Reimplement WKResourceCacheManagerRef on top of WKWebsiteDataStoreRef

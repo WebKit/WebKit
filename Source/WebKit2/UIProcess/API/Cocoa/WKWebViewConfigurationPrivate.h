@@ -46,6 +46,8 @@
 
 #if TARGET_OS_IPHONE
 @property (nonatomic, setter=_setAllowsAlternateFullscreen:) BOOL _allowsAlternateFullscreen WK_AVAILABLE(NA, WK_IOS_TBA);
+
+@property (nonatomic, setter=_setAlwaysRunsAtForegroundPriority:) BOOL _alwaysRunsAtForegroundPriority WK_AVAILABLE(NA, WK_IOS_TBA);
 #endif
 
 @end

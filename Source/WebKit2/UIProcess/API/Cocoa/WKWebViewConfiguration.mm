@@ -94,6 +94,7 @@ private:
 #if PLATFORM(IOS)
     LazyInitialized<RetainPtr<WKWebViewContentProviderRegistry>> _contentProviderRegistry;
     BOOL _allowsAlternateFullscreen;
+    BOOL _alwaysRunsAtForegroundPriority;
 #endif
 }
 
@@ -140,6 +141,7 @@ private:
 #if PLATFORM(IOS)
     configuration->_allowsInlineMediaPlayback = self->_allowsInlineMediaPlayback;
     configuration->_allowsAlternateFullscreen = self->_allowsAlternateFullscreen;
+    configuration->_alwaysRunsAtForegroundPriority = _alwaysRunsAtForegroundPriority;
     configuration->_requiresUserActionForMediaPlayback = self->_requiresUserActionForMediaPlayback;
     configuration->_selectionGranularity = self->_selectionGranularity;
 #endif
@@ -322,6 +324,16 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setAllowsAlternateFullscreen:(BOOL)allowed
 {
     _allowsAlternateFullscreen = allowed;
+}
+
+- (BOOL)_alwaysRunsAtForegroundPriority
+{
+    return _alwaysRunsAtForegroundPriority;
+}
+
+- (void)_setAlwaysRunsAtForegroundPriority:(BOOL)alwaysRunsAtForegroundPriority
+{
+    _alwaysRunsAtForegroundPriority = alwaysRunsAtForegroundPriority;
 }
 #endif
 

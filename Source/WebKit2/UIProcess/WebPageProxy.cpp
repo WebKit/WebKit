@@ -309,6 +309,9 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_userMediaPermissionRequestManager(*this)
     , m_viewState(ViewState::NoFlags)
     , m_viewWasEverInWindow(false)
+#if PLATFORM(IOS)
+    , m_alwaysRunsAtForegroundPriority(configuration.alwaysRunsAtForegroundPriority)
+#endif
     , m_backForwardList(WebBackForwardList::create(*this))
     , m_maintainsInactiveSelection(false)
     , m_isEditable(false)
@@ -1414,7 +1417,7 @@ void WebPageProxy::updateActivityToken()
         m_pageIsUserObservableCount = m_process->processPool().userObservablePageCount();
 
 #if PLATFORM(IOS)
-    if (!isViewVisible())
+    if (!isViewVisible() && !m_alwaysRunsAtForegroundPriority)
         m_activityToken = nullptr;
     else if (!m_activityToken)
         m_activityToken = m_process->throttler().foregroundActivityToken();
