@@ -1,3 +1,14 @@
+2015-06-13  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WebKit exposes all Ruby Text as Unknown (Japanese EPUB accessibility blocker)
+        https://bugs.webkit.org/show_bug.cgi?id=141303
+
+        Unreviewed. Move ruby tests to Mac platform only, since they don't apply to other platforms.
+
+        * accessibility/ruby-hierarchy-roles-expected.txt: Removed.
+        * accessibility/ruby-hierarchy-roles.html: Removed.
+        * platform/mac/accessibility/ruby-hierarchy-roles.html: Copied from LayoutTests/accessibility/ruby-hierarchy-roles.html.
+
 2015-06-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: console.table() with a list of objects no longer works
