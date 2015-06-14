@@ -1,3 +1,13 @@
+2015-06-14  Andres Gomez  <agomez@igalia.com>
+
+        [GTK] Web Inspector: Update icon so Rendering Frames timeline distinguish between layout and painting
+        https://bugs.webkit.org/show_bug.cgi?id=145956
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UserInterface/Images/gtk/TimelineRecordPaint.svg:
+        Changed to use green color.
+
 2015-06-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: console.table() with a list of objects no longer works

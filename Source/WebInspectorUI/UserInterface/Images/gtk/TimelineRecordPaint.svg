@@ -8,15 +8,15 @@
   </radialGradient>
   <radialGradient id="a" cx="24.446" cy="35.878" r="20.531" gradientUnits="userSpaceOnUse" gradientTransform="matrix(.85696 3.2529e-7 -1.253e-7 .33010 -12.949 .77181)">
    <stop stop-color="#fff" offset="0"/>
-   <stop stop-color="#fabebe" offset="1"/>
+   <stop stop-color="#dcf6c2" offset="1"/>
   </radialGradient>
   <linearGradient id="c" x1="321.57" x2="311.65" y1="145.52" y2="118.5" gradientUnits="userSpaceOnUse" gradientTransform="matrix(.55569 0 0 .55568 -169.27 -70.906)">
-   <stop stop-color="#a40000" offset="0"/>
-   <stop stop-color="#f9adad" offset="1"/>
+   <stop stop-color="#4e9a06" offset="0"/>
+   <stop stop-color="#d3f4b2" offset="1"/>
   </linearGradient>
-  <linearGradient id="d" x1="491.22" x2="491.22" y1="506.65" y2="732.05" gradientUnits="userSpaceOnUse" gradientTransform="matrix(.093294 0 0 .093294 -35.871 -43.769)">
-   <stop stop-color="#a40000" offset="0"/>
-   <stop stop-color="#f9adad" offset="1"/>
+  <linearGradient id="d" x1="491.22" x2="491.22" y1="506.65" y2="732.05" gradientUnits="userSpaceOnUse" gradientTransform="matrix(.093294 0 0 .093294 -35.84 -43.769)">
+   <stop stop-color="#4e9a06" offset="0"/>
+   <stop stop-color="#8ae234" offset="1"/>
   </linearGradient>
  </defs>
  <rect width="15.004" height="15.003" x=".49815" y=".49833" fill="url(#a)" fill-rule="evenodd" stroke="url(#c)" stroke-miterlimit="10" rx="1.5143" ry="1.5143" stroke-linejoin="bevel" class="filled"/>
