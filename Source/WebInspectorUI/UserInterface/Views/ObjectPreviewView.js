@@ -218,6 +218,8 @@ WebInspector.ObjectPreviewView = class ObjectPreviewView extends WebInspector.Ob
 
             if (property.valuePreview)
                 this._appendPreview(element, property.valuePreview);
+            else if (property.subtype === "node")
+                element.appendChild(WebInspector.FormattedValue.createElementForNodePreview(property));
             else
                 element.appendChild(WebInspector.FormattedValue.createElementForPropertyPreview(property));
         }

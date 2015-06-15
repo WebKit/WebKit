@@ -67,6 +67,48 @@ WebInspector.FormattedValue.createElementForNode = function(object)
     return span;
 };
 
+WebInspector.FormattedValue.createElementForNodePreview = function(preview)
+{
+    var span = document.createElement("span");
+    span.className = "formatted-node-preview syntax-highlighted";
+
+    // A node preview has a very strict format, with at most a single attribute.
+    // We can style it up like a DOMNode without interactivity.
+    var matches = preview.value.match(/^<(\S+?)(?: (\S+?)="(.*?)")?>$/);
+    if (!matches) {
+        console.error("Node preview did not match format.", preview.value)
+        span.textContent = preview.value;
+        return span;
+    }
+
+    var tag = document.createElement("span");
+    tag.className = "html-tag";
+    tag.appendChild(document.createTextNode("<"));
+
+    var tagName = tag.appendChild(document.createElement("span"));
+    tagName.className = "html-tag-name";
+    tagName.textContent = matches[1];
+
+    if (matches[2]) {
+        tag.appendChild(document.createTextNode(" "));
+        var attribute = tag.appendChild(document.createElement("span"));
+        attribute.className = "html-attribute";
+        var attributeName = attribute.appendChild(document.createElement("span"));
+        attributeName.className = "html-attribute-name";
+        attributeName.textContent = matches[2];
+        attribute.appendChild(document.createTextNode("=\""));
+        var attributeValue = attribute.appendChild(document.createElement("span"));
+        attributeValue.className = "html-attribute-value";
+        attributeValue.textContent = matches[3];
+        attribute.appendChild(document.createTextNode("\""));
+    }
+
+    tag.appendChild(document.createTextNode(">"));
+    span.appendChild(tag);
+
+    return span;
+};
+
 WebInspector.FormattedValue.createElementForTypesAndValue = function(type, subtype, displayString, size, isPreview, hadException)
 {
     var span = document.createElement("span");
