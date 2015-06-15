@@ -1,3 +1,9 @@
+2015-06-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed, gardening for Windows.
+
+        * platform/win/TestExpectations:
+
 2015-06-15  Chris Fleizach  <cfleizach@apple.com>
 
         AX: no accessibility support for details element
