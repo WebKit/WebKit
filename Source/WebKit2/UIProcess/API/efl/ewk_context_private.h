@@ -48,8 +48,7 @@ public:
     EWK_OBJECT_DECLARE(EwkContext)
 
     static PassRefPtr<EwkContext> findOrCreateWrapper(WKContextRef context);
-    static PassRefPtr<EwkContext> create();
-    static PassRefPtr<EwkContext> create(const String& injectedBundlePath);
+    static PassRefPtr<EwkContext> create(const String& extensionsPath = String());
 
     static EwkContext* defaultContext();
 

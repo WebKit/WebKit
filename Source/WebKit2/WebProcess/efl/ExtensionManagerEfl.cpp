@@ -50,11 +50,13 @@ void ExtensionManagerEfl::initialize(WKBundleRef bundle, WKTypeRef userData)
 {
     ASSERT(!m_extension);
 
+    m_extension = std::make_unique<EwkExtension>(toImpl(bundle));    
+    if (!userData)
+        return;
+
     String extensionsDirectory = toImpl(static_cast<WKStringRef>(userData))->string();
     if (extensionsDirectory.isEmpty())
         return;
-
-    m_extension = std::make_unique<EwkExtension>(toImpl(bundle));
 
     Vector<String> modulePaths = WebCore::listDirectory(extensionsDirectory, ASCIILiteral("*.so"));
 

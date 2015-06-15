@@ -99,17 +99,15 @@ EwkContext::EwkContext(WKContextRef context, const String& extensionsPath)
     m_callbackForMessageFromExtension.callback = nullptr;
     m_callbackForMessageFromExtension.userData = nullptr;
 
-    if (!extensionsPath.isEmpty()) {
-        WKContextInjectedBundleClientV1 client;
-        memset(&client, 0, sizeof(client));
+    WKContextInjectedBundleClientV1 client;
+    memset(&client, 0, sizeof(client));
 
-        client.base.version = 1;
-        client.base.clientInfo = this;
-        client.didReceiveMessageFromInjectedBundle = didReceiveMessageFromInjectedBundle;
-        client.getInjectedBundleInitializationUserData = getInjectedBundleInitializationUserData;
+    client.base.version = 1;
+    client.base.clientInfo = this;
+    client.didReceiveMessageFromInjectedBundle = didReceiveMessageFromInjectedBundle;
+    client.getInjectedBundleInitializationUserData = getInjectedBundleInitializationUserData;
 
-        WKContextSetInjectedBundleClient(m_context.get(), &client.base);
-    }
+    WKContextSetInjectedBundleClient(m_context.get(), &client.base);
 }
 
 EwkContext::~EwkContext()
@@ -128,11 +126,6 @@ PassRefPtr<EwkContext> EwkContext::findOrCreateWrapper(WKContextRef context)
         return contextMap().get(context);
 
     return adoptRef(new EwkContext(context));
-}
-
-PassRefPtr<EwkContext> EwkContext::create()
-{
-    return adoptRef(new EwkContext(adoptWK(WKContextCreate()).get()));
 }
 
 static String bundlePathForExtension()
