@@ -1,3 +1,24 @@
+2015-06-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Make WebKitSoupRequestGeneric independent from CustomProtocolManagerImpl
+        https://bugs.webkit.org/show_bug.cgi?id=145966
+
+        Reviewed by Sergio Villar Senin.
+
+        Add WebKitSoupRequestGenericClient with start and finish methods,
+        that are implemented by WebKitSoupRequestGeneric.
+        This allows us to move WebKitSoupRequestGeneric to platform layer.
+
+        * Shared/Network/CustomProtocols/soup/CustomProtocolManagerImpl.cpp:
+        (WebKit::CustomProtocolManagerImpl::registerScheme):
+        (WebKit::CustomProtocolManagerImpl::start):
+        * Shared/Network/CustomProtocols/soup/CustomProtocolManagerImpl.h:
+        * WebProcess/soup/WebKitSoupRequestGeneric.cpp:
+        (webkitSoupRequestGenericSendAsync):
+        (webkitSoupRequestGenericSendFinish):
+        * WebProcess/soup/WebKitSoupRequestGeneric.h:
+        * WebProcess/soup/WebKitSoupRequestGenericClient.h: Added.
+
 2015-06-14  Dan Bernstein  <mitz@apple.com>
 
         Fixed the build.

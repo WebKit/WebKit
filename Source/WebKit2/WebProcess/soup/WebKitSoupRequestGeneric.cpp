@@ -46,17 +46,17 @@ static void webkit_soup_request_generic_init(WebKitSoupRequestGeneric* request)
 
 static void webkitSoupRequestGenericSendAsync(SoupRequest* request, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
 {
-    CustomProtocolManagerImpl* customProtocolManager = WEBKIT_SOUP_REQUEST_GENERIC_GET_CLASS(request)->customProtocolManager;
-    ASSERT(customProtocolManager);
-    customProtocolManager->send(g_task_new(request, cancellable, callback, userData));
+    WebKitSoupRequestGenericClient* client = WEBKIT_SOUP_REQUEST_GENERIC_GET_CLASS(request)->client;
+    ASSERT(client);
+    client->start(g_task_new(request, cancellable, callback, userData));
 }
 
 static GInputStream* webkitSoupRequestGenericSendFinish(SoupRequest* request, GAsyncResult* result, GError** error)
 {
-    g_return_val_if_fail(g_task_is_valid(result, request), 0);
-    CustomProtocolManagerImpl* customProtocolManager = WEBKIT_SOUP_REQUEST_GENERIC_GET_CLASS(request)->customProtocolManager;
-    ASSERT(customProtocolManager);
-    return customProtocolManager->finish(G_TASK(result), error);
+    g_return_val_if_fail(g_task_is_valid(result, request), nullptr);
+    WebKitSoupRequestGenericClient* client = WEBKIT_SOUP_REQUEST_GENERIC_GET_CLASS(request)->client;
+    ASSERT(client);
+    return client->finish(G_TASK(result), error);
 }
 
 static goffset webkitSoupRequestGenericGetContentLength(SoupRequest* request)

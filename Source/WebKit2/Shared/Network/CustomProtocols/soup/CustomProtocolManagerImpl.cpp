@@ -93,7 +93,7 @@ void CustomProtocolManagerImpl::registerScheme(const String& scheme)
     SoupSession* session = WebCore::SoupNetworkSession::defaultSession().soupSession();
     SoupRequestClass* genericRequestClass = static_cast<SoupRequestClass*>(g_type_class_ref(WEBKIT_TYPE_SOUP_REQUEST_GENERIC));
     genericRequestClass->schemes = const_cast<const char**>(reinterpret_cast<char**>(m_schemes->pdata));
-    static_cast<WebKitSoupRequestGenericClass*>(g_type_class_ref(WEBKIT_TYPE_SOUP_REQUEST_GENERIC))->customProtocolManager = this;
+    static_cast<WebKitSoupRequestGenericClass*>(g_type_class_ref(WEBKIT_TYPE_SOUP_REQUEST_GENERIC))->client = this;
     soup_session_add_feature_by_type(session, WEBKIT_TYPE_SOUP_REQUEST_GENERIC);
 }
 
@@ -184,7 +184,7 @@ void CustomProtocolManagerImpl::didFinishLoading(uint64_t customProtocolID)
     m_customProtocolMap.remove(customProtocolID);
 }
 
-void CustomProtocolManagerImpl::send(GTask* task)
+void CustomProtocolManagerImpl::start(GTask* task)
 {
     uint64_t customProtocolID = generateCustomProtocolID();
     WebKitSoupRequestGeneric* request = WEBKIT_SOUP_REQUEST_GENERIC(g_task_get_source_object(task));

@@ -20,7 +20,7 @@
 #ifndef WebKitSoupRequestGeneric_h
 #define WebKitSoupRequestGeneric_h
 
-#include "CustomProtocolManagerImpl.h"
+#include "WebKitSoupRequestGenericClient.h"
 #include <glib-object.h>
 #include <libsoup/soup.h>
 
@@ -46,7 +46,7 @@ struct _WebKitSoupRequestGeneric {
 struct _WebKitSoupRequestGenericClass {
     SoupRequestClass parent;
 
-    WebKit::CustomProtocolManagerImpl* customProtocolManager;
+    WebKit::WebKitSoupRequestGenericClient* client;
 };
 
 GType webkit_soup_request_generic_get_type();
