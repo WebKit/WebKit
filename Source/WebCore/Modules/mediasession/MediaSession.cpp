@@ -94,7 +94,9 @@ bool MediaSession::invoke()
 
 void MediaSession::togglePlayback()
 {
-    for (auto* element : m_activeParticipatingElements) {
+    HashSet<HTMLMediaElement*> activeParticipatingElementsCopy = m_activeParticipatingElements;
+
+    for (auto* element : activeParticipatingElementsCopy) {
         if (element->paused())
             element->play();
         else
