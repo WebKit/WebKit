@@ -1,3 +1,14 @@
+2015-06-15  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r182215): Reproducible crash at drawsvg.org due to reentrant layout
+        https://bugs.webkit.org/show_bug.cgi?id=145964
+
+        Reviewed by Simon Fraser.
+
+        * svg/as-object/mutate-on-load-expected.html: Added.
+        * svg/as-object/mutate-on-load.html: Added.
+        * svg/as-object/resources/embedded-mutates-on-load.svg: Added.
+
 2015-06-15  Michael Saboff  <msaboff@apple.com>
 
         JIT bug - fails when inspector closed, works when open
