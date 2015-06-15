@@ -1,3 +1,15 @@
+2015-06-15  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        Fix build break when ENABLE_SECCOMP_FILTERS is ON
+        https://bugs.webkit.org/show_bug.cgi?id=145967
+
+        Reviewed by Carlos Garcia Campos.
+
+        Since r183189, ArgumentEncoder::addAttachment requires rvalue reference.
+
+        * Shared/linux/SeccompFilters/OpenSyscall.cpp:
+        (WebKit::OpenSyscallResult::encode): Use WTF::move().
+
 2015-06-15  Chris Dumez  <cdumez@apple.com>
 
         [WK2] BrowsingContextController.loadData API is leaking Navigation objects

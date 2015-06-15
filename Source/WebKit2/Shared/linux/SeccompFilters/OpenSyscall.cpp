@@ -200,7 +200,7 @@ void OpenSyscallResult::encode(IPC::ArgumentEncoder& encoder) const
 
     if (m_fd >= 0) {
         IPC::Attachment attachment(m_fd);
-        encoder.addAttachment(attachment);
+        encoder.addAttachment(WTF::move(attachment));
     }
 
     encoder << m_errorNumber;
