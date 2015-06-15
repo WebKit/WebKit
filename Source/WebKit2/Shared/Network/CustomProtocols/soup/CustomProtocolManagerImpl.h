@@ -20,7 +20,7 @@
 #ifndef CustomProtocolManagerImpl_h
 #define CustomProtocolManagerImpl_h
 
-#include "WebKitSoupRequestGenericClient.h"
+#include <WebCore/WebKitSoupRequestGenericClient.h>
 #include <wtf/HashMap.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -39,7 +39,7 @@ namespace WebKit {
 class ChildProcess;
 struct WebSoupRequestAsyncData;
 
-class CustomProtocolManagerImpl : public WebKitSoupRequestGenericClient {
+class CustomProtocolManagerImpl : public WebCore::WebKitSoupRequestGenericClient {
     WTF_MAKE_NONCOPYABLE(CustomProtocolManagerImpl);
 public:
     explicit CustomProtocolManagerImpl(ChildProcess*);

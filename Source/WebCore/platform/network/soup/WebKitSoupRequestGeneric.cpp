@@ -22,7 +22,7 @@
 
 #include <wtf/text/CString.h>
 
-using namespace WebKit;
+using namespace WebCore;
 
 G_DEFINE_TYPE(WebKitSoupRequestGeneric, webkit_soup_request_generic, SOUP_TYPE_REQUEST)
 

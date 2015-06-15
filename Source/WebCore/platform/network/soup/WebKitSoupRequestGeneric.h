@@ -46,7 +46,7 @@ struct _WebKitSoupRequestGeneric {
 struct _WebKitSoupRequestGenericClass {
     SoupRequestClass parent;
 
-    WebKit::WebKitSoupRequestGenericClient* client;
+    WebCore::WebKitSoupRequestGenericClient* client;
 };
 
 GType webkit_soup_request_generic_get_type();

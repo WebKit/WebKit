@@ -1,3 +1,15 @@
+2015-06-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Move WebKitSoupRequestGeneric to platform layer
+        https://bugs.webkit.org/show_bug.cgi?id=145968
+
+        Reviewed by Sergio Villar Senin.
+
+        * PlatformEfl.cmake: Remove WebKitSoupRequestGeneric.
+        * PlatformGTK.cmake: Ditto.
+        * Shared/Network/CustomProtocols/soup/CustomProtocolManagerImpl.cpp:
+        * Shared/Network/CustomProtocols/soup/CustomProtocolManagerImpl.h:
+
 2015-06-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix unused private field warning in PageBanner.h

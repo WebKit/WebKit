@@ -337,7 +337,6 @@ list(APPEND WebKit2_SOURCES
     WebProcess/gtk/WebGtkInjectedBundleMain.cpp
     WebProcess/gtk/WebProcessMainGtk.cpp
 
-    WebProcess/soup/WebKitSoupRequestGeneric.cpp
     WebProcess/soup/WebKitSoupRequestInputStream.cpp
     WebProcess/soup/WebProcessSoup.cpp
 )

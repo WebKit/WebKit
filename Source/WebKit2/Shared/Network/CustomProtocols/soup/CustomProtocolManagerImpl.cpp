@@ -24,12 +24,12 @@
 #include "CustomProtocolManagerProxyMessages.h"
 #include "DataReference.h"
 #include "WebCoreArgumentCoders.h"
-#include "WebKitSoupRequestGeneric.h"
 #include "WebKitSoupRequestInputStream.h"
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SoupNetworkSession.h>
+#include <WebCore/WebKitSoupRequestGeneric.h>
 
 namespace WebKit {
 

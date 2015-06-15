@@ -210,7 +210,6 @@ list(APPEND WebKit2_SOURCES
     WebProcess/efl/SeccompFiltersWebProcessEfl.cpp
     WebProcess/efl/WebProcessMainEfl.cpp
 
-    WebProcess/soup/WebKitSoupRequestGeneric.cpp
     WebProcess/soup/WebKitSoupRequestInputStream.cpp
     WebProcess/soup/WebProcessSoup.cpp
 )

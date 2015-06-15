@@ -24,7 +24,7 @@ typedef struct _GError GError;
 typedef struct _GInputStream GInputStream;
 typedef struct _GTask GTask;
 
-namespace WebKit {
+namespace WebCore {
 
 class WebKitSoupRequestGenericClient {
 public:
@@ -32,6 +32,6 @@ public:
     virtual GInputStream* finish(GTask*, GError**) = 0;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // WebKitSoupRequestGenericClient_h
