@@ -1,3 +1,13 @@
+2015-06-15  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Make max NFA size and max rule count user defaults.
+        https://bugs.webkit.org/show_bug.cgi?id=145663
+
+        Reviewed by Benjamin Poulain.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2015-06-12  Alexey Proskuryakov  <ap@apple.com>
 
         -[WKWebView evaluateJavaScript] provides a misleading error when the return cannot be serialized
