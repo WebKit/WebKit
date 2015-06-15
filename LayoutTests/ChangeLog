@@ -1,3 +1,18 @@
+2015-06-15  Zalan Bujtas  <zalan@apple.com>
+
+        RootInlineBox::m_lineBreakObj becomes invalid when a child renderer is removed and the line does not get marked dirty.
+        https://bugs.webkit.org/show_bug.cgi?id=145988
+        rdar://problem/20959137
+
+        Reviewed by David Hyatt.
+
+        This patch ensures that we find the right first inline box so that we can dirty the
+        the appropriate line boxes.
+        With marking the right line boxes dirty, now we can update RootInlineBox::m_lineBreakObj at the next layout.
+
+        * fast/inline/crash-when-child-renderer-is-removed-and-line-stays-clean-expected.txt: Added.
+        * fast/inline/crash-when-child-renderer-is-removed-and-line-stays-clean.html: Added.
+
 2015-06-15  Darin Adler  <darin@apple.com>
 
         REGRESSION (r182215): Reproducible crash at drawsvg.org due to reentrant layout
