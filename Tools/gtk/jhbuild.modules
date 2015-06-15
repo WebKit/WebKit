@@ -172,7 +172,9 @@
     <branch module="/pub/GNOME/sources/glib/2.41/glib-2.41.2.tar.xz" version="2.41.2"
             repo="ftp.gnome.org"
             hash="sha256:da1f7258655f0e196b9304cb9515784634f3797437923e236bb3466348811c96"
-            md5sum="9636f60e99b98fd0fdb5239f905ac008"/>
+            md5sum="9636f60e99b98fd0fdb5239f905ac008">
+      <patch file="glib-warning-fix.patch" strip="1"/>
+    </branch>
   </autotools>
 
   <autotools id="glib-networking">
