@@ -214,6 +214,16 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     g_assert_cmpint(mainResourceDataSize, ==, strlen(echoHTML.get()));
     g_assert(!strncmp(mainResourceData, echoHTML.get(), mainResourceDataSize));
 
+    test->loadURI("echo:with#fragment");
+    test->waitUntilLoadFinished();
+    g_assert_cmpstr(webkit_uri_scheme_request_get_path(test->m_uriSchemeRequest.get()), ==, "with");
+    g_assert_cmpstr(webkit_uri_scheme_request_get_uri(test->m_uriSchemeRequest.get()), ==, "echo:with#fragment");
+    echoHTML.reset(g_strdup_printf(kEchoHTMLFormat, webkit_uri_scheme_request_get_path(test->m_uriSchemeRequest.get())));
+    mainResourceDataSize = 0;
+    mainResourceData = test->mainResourceData(mainResourceDataSize);
+    g_assert_cmpint(mainResourceDataSize, ==, strlen(echoHTML.get()));
+    g_assert(!strncmp(mainResourceData, echoHTML.get(), mainResourceDataSize));
+
     test->registerURISchemeHandler("nomime", kBarHTML, -1, 0);
     test->m_loadEvents.clear();
     test->loadURI("nomime:foo-bar");

@@ -1,3 +1,17 @@
+2015-06-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Custom URI schemes don't work for requests containing a fragment identifier
+        https://bugs.webkit.org/show_bug.cgi?id=145969
+
+        Reviewed by Sergio Villar Senin.
+
+        Use the WebKitSoupRequestGeneric request instead of creating a new one
+        from the SoupRequest URI, since that is the network one and doesn't
+        contain the fragment identifier part.
+
+        * Shared/Network/CustomProtocols/soup/CustomProtocolManagerImpl.cpp:
+        (WebKit::CustomProtocolManagerImpl::start):
+
 2015-06-15  Hyungwook Lee  <hyungwook.lee@navercorp.com>
 
         [EFL] Make send/receive messages to communicate the Web and UI Processes using Injected Bundle.

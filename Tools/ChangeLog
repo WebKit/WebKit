@@ -1,3 +1,15 @@
+2015-06-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Custom URI schemes don't work for requests containing a fragment identifier
+        https://bugs.webkit.org/show_bug.cgi?id=145969
+
+        Reviewed by Sergio Villar Senin.
+
+        Add a test case to the custom URI schemes unit test.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebContext.cpp:
+        (testWebContextURIScheme):
+
 2015-06-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         [GTK] Fix deprecated-register warning in the generated WebKitMarshal.cpp

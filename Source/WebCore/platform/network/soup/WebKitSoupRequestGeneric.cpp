@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitSoupRequestGeneric.h"
 
+#include "ResourceRequest.h"
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
@@ -29,6 +30,7 @@ G_DEFINE_TYPE(WebKitSoupRequestGeneric, webkit_soup_request_generic, SOUP_TYPE_R
 struct _WebKitSoupRequestGenericPrivate {
     CString mimeType;
     goffset contentLength;
+    ResourceRequest resourceRequest;
 };
 
 static void webkitSoupRequestGenericFinalize(GObject* object)
@@ -91,4 +93,14 @@ void webkitSoupRequestGenericSetContentLength(WebKitSoupRequestGeneric* request,
 void webkitSoupRequestGenericSetContentType(WebKitSoupRequestGeneric* request, const char* mimeType)
 {
     request->priv->mimeType = mimeType;
+}
+
+void webkitSoupRequestGenericSetRequest(WebKitSoupRequestGeneric* request, const ResourceRequest& resourceRequest)
+{
+    request->priv->resourceRequest = resourceRequest;
+}
+
+const ResourceRequest& webkitSoupRequestGenericGetRequest(WebKitSoupRequestGeneric* request)
+{
+    return request->priv->resourceRequest;
 }
