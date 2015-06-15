@@ -820,14 +820,14 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case GetFromArguments: {
         AbstractHeap heap(DirectArgumentsProperties, node->capturedArgumentsOffset().offset());
         read(heap);
-        def(HeapLocation(DirectArgumentsLoc, heap), LazyNode(node));
+        def(HeapLocation(DirectArgumentsLoc, heap, node->child1()), LazyNode(node));
         return;
     }
         
     case PutToArguments: {
         AbstractHeap heap(DirectArgumentsProperties, node->capturedArgumentsOffset().offset());
         write(heap);
-        def(HeapLocation(DirectArgumentsLoc, heap), LazyNode(node->child2().node()));
+        def(HeapLocation(DirectArgumentsLoc, heap, node->child1()), LazyNode(node->child2().node()));
         return;
     }
         

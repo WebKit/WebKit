@@ -1,3 +1,17 @@
+2015-06-15  Michael Saboff  <msaboff@apple.com>
+
+        JIT bug - fails when inspector closed, works when open
+        https://bugs.webkit.org/show_bug.cgi?id=145243
+
+        Reviewed by Oliver Hunt.
+
+        We need to provide the Arguments object as the base when creating the HeapLocation for
+        GetFromArguments and PutToArguments.  Otherwise we endup creating a HeapLocation for
+        any arguments object, not the one we need.
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+
 2015-06-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: console.table() with a list of objects no longer works

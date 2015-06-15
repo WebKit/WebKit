@@ -1,3 +1,19 @@
+2015-06-15  Michael Saboff  <msaboff@apple.com>
+
+        JIT bug - fails when inspector closed, works when open
+        https://bugs.webkit.org/show_bug.cgi?id=145243
+
+        Reviewed by Oliver Hunt.
+
+        New regression test.
+
+        * js/regress-145243-expected.txt: Added.
+        * js/regress-145243.html: Added.
+        * js/script-tests/regress-145243.js: Added.
+        (bar):
+        (foo):
+        (test):
+
 2015-06-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed, gardening for Windows.
