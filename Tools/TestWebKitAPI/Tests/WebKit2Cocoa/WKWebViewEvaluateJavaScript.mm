@@ -60,4 +60,34 @@ TEST(WKWebView, EvaluateJavaScriptBlockCrash)
     TestWebKitAPI::Util::run(&isDone);
 }
 
+TEST(WKWebView, EvaluateJavaScriptErrorCases)
+{
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+
+    [webView evaluateJavaScript:@"document.body" completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(result);
+        EXPECT_WK_STREQ(@"WKErrorDomain", [error domain]);
+        EXPECT_EQ(5, [error code]);
+
+        isDone = true;
+    }];
+
+    isDone = false;
+    TestWebKitAPI::Util::run(&isDone);
+
+    [webView evaluateJavaScript:@"document.body.insertBefore(document, document)" completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(result);
+        EXPECT_WK_STREQ(@"WKErrorDomain", [error domain]);
+        EXPECT_EQ(4, [error code]);
+
+        isDone = true;
+    }];
+
+    isDone = false;
+    TestWebKitAPI::Util::run(&isDone);
+}
+
 #endif

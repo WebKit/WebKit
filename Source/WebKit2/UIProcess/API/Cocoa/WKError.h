@@ -36,16 +36,18 @@ WK_EXTERN NSString * const WKErrorDomain WK_AVAILABLE(10_10, 8_0);
 
 /*! @enum WKErrorCode
  @abstract Constants used by NSError to indicate errors in the WebKit domain.
- @constant WKErrorUnknown                       Indicates that an unknown error occurred.
- @constant WKErrorWebContentProcessTerminated   Indicates that the Web Content process was terminated.
- @constant WKErrorWebViewInvalidated            Indicates that the WKWebView was invalidated.
- @constant WKErrorJavaScriptExceptionOccurred   Indicates that a JavaScript exception occurred.
+ @constant WKErrorUnknown                           Indicates that an unknown error occurred.
+ @constant WKErrorWebContentProcessTerminated       Indicates that the Web Content process was terminated.
+ @constant WKErrorWebViewInvalidated                Indicates that the WKWebView was invalidated.
+ @constant WKErrorJavaScriptExceptionOccurred       Indicates that a JavaScript exception occurred.
+ @constant WKErrorJavaScriptResultTypeIsUnsupported Indicates that the result of JavaScript execution could not be returned.
  */
 typedef NS_ENUM(NSInteger, WKErrorCode) {
     WKErrorUnknown = 1,
     WKErrorWebContentProcessTerminated,
     WKErrorWebViewInvalidated,
     WKErrorJavaScriptExceptionOccurred,
+    WKErrorJavaScriptResultTypeIsUnsupported WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA),
 } WK_ENUM_AVAILABLE(10_10, 8_0);
 
 WK_ASSUME_NONNULL_END

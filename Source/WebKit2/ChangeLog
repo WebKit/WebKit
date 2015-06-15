@@ -1,3 +1,32 @@
+2015-06-12  Alexey Proskuryakov  <ap@apple.com>
+
+        -[WKWebView evaluateJavaScript] provides a misleading error when the return cannot be serialized
+        https://bugs.webkit.org/show_bug.cgi?id=145900
+
+        Reviewed by Sam Weinig.
+
+        We used to conflate to cases: (1) when there was a JavaScript exception, and
+        (2) when the result could not be serialized for IPC. Turns out that it was quite
+        misleading!
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageRunJavaScriptInMainFrame):
+        * UIProcess/API/Cocoa/WKError.h:
+        * UIProcess/API/Cocoa/WKError.mm:
+        (localizedDescriptionForErrorCode):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView evaluateJavaScript:completionHandler:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runJavaScriptInMainFrame):
+        (WebKit::WebPageProxy::scriptValueCallback):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScriptInMainFrame):
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_run_javascript):
+        (resourcesStreamReadCallback):
+
 2015-06-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Custom URI schemes don't work for requests containing a fragment identifier

@@ -91,6 +91,9 @@
 /* WKErrorJavaScriptExceptionOccurred description */
 "A JavaScript exception occurred" = "A JavaScript exception occurred";
 
+/* WKErrorJavaScriptResultTypeIsUnsupported */
+"JavaScript execution returned a result of an unsupported type" = "JavaScript execution returned a result of an unsupported type";
+
 /* action menu item */
 "Add to Photos (action menu item)" = "Add to Photos";
 

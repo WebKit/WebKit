@@ -49,6 +49,9 @@ static NSString *localizedDescriptionForErrorCode(WKErrorCode errorCode)
 
     case WKErrorJavaScriptExceptionOccurred:
         return WEB_UI_STRING("A JavaScript exception occurred", "WKErrorJavaScriptExceptionOccurred description");
+
+    case WKErrorJavaScriptResultTypeIsUnsupported:
+        return WEB_UI_STRING("JavaScript execution returned a result of an unsupported type", "WKErrorJavaScriptResultTypeIsUnsupported description");
     }
 }
 
