@@ -113,6 +113,12 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 @property (nonatomic) WKSelectionGranularity selectionGranularity;
 
+/*! @abstract A Boolean value indicating whether HTML5 videos may play
+ picture-in-picture.
+ @discussion The default value is YES.
+ */
+@property (nonatomic) BOOL allowsPictureInPictureMediaPlayback WK_AVAILABLE(NA, WK_IOS_TBA);
+
 #endif
 
 @end

@@ -1,3 +1,24 @@
+2015-06-11  Jon Lee  <jonlee@apple.com>
+
+        [WK2] Add allowsPictureInPictureMediaPlayback
+        https://bugs.webkit.org/show_bug.cgi?id=145901
+        rdar://problem/21349851
+
+        Reviewed by Anders Carlsson.
+
+        Replace _allowsAlternateFullscreen with allowsPictureInPictureMediaPlayback.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h: Add allowsPictureInPictureMediaPlayback.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]): Remove _allowsAlternateFullscreen.
+        (-[WKWebViewConfiguration copyWithZone:]): Replace the variable.
+        (-[WKWebViewConfiguration _allowsAlternateFullscreen]): Deleted.
+        (-[WKWebViewConfiguration _setAllowsAlternateFullscreen:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h: Remove the SPI.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]): Update to use the new API.
+
 2015-06-12  Alexey Proskuryakov  <ap@apple.com>
 
         -[WKWebView evaluateJavaScript] provides a misleading error when the return cannot be serialized
