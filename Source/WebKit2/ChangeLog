@@ -1,3 +1,15 @@
+2015-06-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix unused private field warning in PageBanner.h
+        https://bugs.webkit.org/show_bug.cgi?id=145925
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/PageBanner.cpp:
+        (WebKit::PageBanner::~PageBanner):
+        * WebProcess/WebPage/PageBanner.h: Initialize m_type, m_webPage, m_mouseDownInBanner, and m_isHidden here instead of in the constructor.
+        * WebProcess/WebPage/mac/PageBannerMac.mm: Use PLATFORM(MAC) instead of !PLATFORM(IOS), they are same in objc files.
+
 2015-06-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Make WebKitSoupRequestGeneric independent from CustomProtocolManagerImpl

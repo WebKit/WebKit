@@ -83,14 +83,14 @@ private:
     explicit PageBanner(CALayer *, int height, Client*);
 #endif
 
-    Type m_type;
     Client* m_client;
-    WebPage* m_webPage;
-
-    bool m_mouseDownInBanner;
-    bool m_isHidden;
 
 #if PLATFORM(MAC)
+    Type m_type = NotSet;
+    WebPage* m_webPage = 0;
+    bool m_mouseDownInBanner = false;
+    bool m_isHidden = false;
+
     RetainPtr<CALayer> m_layer;
     int m_height;
 #endif

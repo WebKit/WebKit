@@ -33,11 +33,13 @@ namespace WebKit {
 
 PageBanner::~PageBanner()
 {
+#if PLATFORM(MAC)
     ASSERT(!m_webPage);
+#endif
     m_client->pageBannerDestroyed(this);
 }
 
-#if !PLATFORM(COCOA)
+#if !PLATFORM(MAC)
 void PageBanner::addToPage(Type, WebPage*)
 {
 }
