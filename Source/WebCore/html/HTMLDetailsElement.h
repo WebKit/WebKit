@@ -31,7 +31,8 @@ public:
     void toggleOpen();
 
     const Element* findMainSummary() const;
-
+    bool isOpen() const { return m_isOpen; }
+    
 private:
     HTMLDetailsElement(const QualifiedName&, Document&);
 

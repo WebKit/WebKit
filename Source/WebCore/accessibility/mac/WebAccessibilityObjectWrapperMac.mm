@@ -1214,7 +1214,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, const Visibl
     if (m_object->isToggleButton())
         [additional addObject:NSAccessibilityValueAttribute];
     
-    if (m_object->supportsARIAExpanded())
+    if (m_object->supportsExpanded())
         [additional addObject:NSAccessibilityExpandedAttribute];
     
     if (m_object->isScrollbar())
@@ -1985,6 +1985,8 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { RubyInlineRole, NSAccessibilityGroupRole },
         { RubyRunRole, NSAccessibilityGroupRole },
         { RubyTextRole, NSAccessibilityGroupRole },
+        { DetailsRole, NSAccessibilityGroupRole },
+        { SummaryRole, NSAccessibilityGroupRole },
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
     
@@ -2161,6 +2163,10 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return @"AXVideo";
     if (role == AudioRole)
         return @"AXAudio";
+    if (role == DetailsRole)
+        return @"AXDetails";
+    if (role == SummaryRole)
+        return @"AXSummary";
     
     if (m_object->isMediaTimeline())
         return NSAccessibilityTimelineSubrole;

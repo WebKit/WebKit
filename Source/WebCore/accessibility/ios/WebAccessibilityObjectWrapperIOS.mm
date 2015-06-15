@@ -2326,7 +2326,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     if (![self _prepareAccessibilityCall])
         return NO;
     
-    return m_object->supportsARIAExpanded();
+    return m_object->supportsExpanded();
 }
 
 - (BOOL)accessibilityIsExpanded

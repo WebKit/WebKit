@@ -1256,6 +1256,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     case AudioRole:
     case DescriptionListTermRole:
     case DescriptionListDetailRole:
+    case DetailsRole:
     case DocumentArticleRole:
     case DocumentRegionRole:
     case ListItemRole:
@@ -2650,6 +2651,11 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
 
     if (node && node->hasTagName(preTag))
         return PreRole;
+
+    if (is<HTMLDetailsElement>(node))
+        return DetailsRole;
+    if (is<HTMLSummaryElement>(node))
+        return SummaryRole;
 
 #if ENABLE(VIDEO)
     if (is<HTMLVideoElement>(node))

@@ -118,6 +118,7 @@ enum AccessibilityRole {
     DescriptionListRole,
     DescriptionListTermRole,
     DescriptionListDetailRole,
+    DetailsRole,
     DirectoryRole,
     DisclosureTriangleRole,
     DivRole,
@@ -195,6 +196,7 @@ enum AccessibilityRole {
     SplitGroupRole,
     SplitterRole,
     StaticTextRole,
+    SummaryRole,
     SwitchRole,
     SystemWideRole,
     SVGRootRole,
@@ -612,7 +614,7 @@ public:
     bool ariaIsMultiline() const;
     String invalidStatus() const;
     bool supportsARIAPressed() const;
-    bool supportsARIAExpanded() const;
+    bool supportsExpanded() const;
     bool supportsChecked() const;
     AccessibilitySortDirection sortDirection() const;
     virtual bool canvasHasFallbackContent() const { return false; }

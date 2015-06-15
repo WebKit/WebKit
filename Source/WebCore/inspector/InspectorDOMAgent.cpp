@@ -1510,7 +1510,7 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
             disabled = !axObject->isEnabled(); 
             exists = true;
             
-            supportsExpanded = axObject->supportsARIAExpanded();
+            supportsExpanded = axObject->supportsExpanded();
             if (supportsExpanded)
                 expanded = axObject->isExpanded();
 

@@ -41,6 +41,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameSelection.h"
+#include "HTMLDetailsElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
@@ -2219,7 +2220,7 @@ bool AccessibilityObject::supportsARIAPressed() const
     return equalIgnoringCase(expanded, "true") || equalIgnoringCase(expanded, "false");
 }
     
-bool AccessibilityObject::supportsARIAExpanded() const
+bool AccessibilityObject::supportsExpanded() const
 {
     // Undefined values should not result in this attribute being exposed to ATs according to ARIA.
     const AtomicString& expanded = getAttribute(aria_expandedAttr);
@@ -2228,6 +2229,7 @@ bool AccessibilityObject::supportsARIAExpanded() const
     switch (roleValue()) {
     case ComboBoxRole:
     case DisclosureTriangleRole:
+    case DetailsRole:
         return true;
     default:
         return false;
@@ -2238,6 +2240,9 @@ bool AccessibilityObject::isExpanded() const
 {
     if (equalIgnoringCase(getAttribute(aria_expandedAttr), "true"))
         return true;
+    
+    if (is<HTMLDetailsElement>(node()))
+        return downcast<HTMLDetailsElement>(node())->isOpen();
     
     return false;  
 }

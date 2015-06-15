@@ -1,3 +1,13 @@
+2015-06-15  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: no accessibility support for details element
+        https://bugs.webkit.org/show_bug.cgi?id=131111
+
+        Reviewed by Darin Adler.
+
+        * platform/mac/accessibility/details-summary-expected.txt: Added.
+        * platform/mac/accessibility/details-summary.html: Added.
+
 2015-06-13  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WebKit exposes all Ruby Text as Unknown (Japanese EPUB accessibility blocker)

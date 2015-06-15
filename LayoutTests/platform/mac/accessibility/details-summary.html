@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<details open id="details1">
+  <summary>Some open info</summary>
+  <p>Details about the open topic.</p>
+</details>
+
+<details id="details2">
+  <summary>Some open info</summary>
+  <p>Details about the open topic.</p>
+</details>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests some basic attributes about the details element.");
+
+    if (window.accessibilityController) {
+
+        var details1 = accessibilityController.accessibleElementById("details1");
+        shouldBe("details1.role", "'AXRole: AXGroup'");
+        shouldBe("details1.subrole", "'AXSubrole: AXDetails'");
+        shouldBeTrue("details1.isExpanded");
+        shouldBe("details1.childAtIndex(0).role", "'AXRole: AXGroup'");
+        shouldBe("details1.childAtIndex(0).subrole", "'AXSubrole: AXSummary'");
+
+        var details2 = accessibilityController.accessibleElementById("details2");
+        shouldBe("details2.subrole", "'AXSubrole: AXDetails'");
+        shouldBeFalse("details2.isExpanded");
+    }
+
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
