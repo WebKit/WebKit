@@ -1,3 +1,17 @@
+2015-06-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Improve some cases of "Object?" Type Annotations
+        https://bugs.webkit.org/show_bug.cgi?id=145954
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TypeTokenView.js:
+        (WebInspector.TypeTokenView.prototype._displayTypeName):
+        The TypeSet inclusions cover all types, so we can use the leastCommonAncestor
+        name as long as the type set is just object or object and null/undefined.
+        If the typeset includes other primitives then it will gracefully go down
+        below to become something like Object or (many). 
+
 2015-06-14  Andres Gomez  <agomez@igalia.com>
 
         [GTK] Web Inspector: Update icon so Rendering Frames timeline distinguish between layout and painting

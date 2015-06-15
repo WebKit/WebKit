@@ -132,7 +132,7 @@ WebInspector.TypeTokenView = class TypeTokenView extends WebInspector.Object
 
         var typeSet = this._typeDescription.typeSet;
 
-        if (this._typeDescription.leastCommonAncestor && !this._typeDescription.typeSet.primitiveTypeNames.length) {
+        if (this._typeDescription.leastCommonAncestor) {
             if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Object))
                 return this._typeDescription.leastCommonAncestor;
             if (typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Object | WebInspector.TypeSet.NullOrUndefinedTypeBits))
