@@ -1,3 +1,9 @@
+2015-06-14  Dan Bernstein  <mitz@apple.com>
+
+        Fixed the build.
+
+        * mac/postprocess-framework-headers.sh:
+
 2015-06-14  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Format string misuse in DatabaseProcessIDBConnection.cpp and UniqueIDBDatabaseBackingStoreSQLite.cpp

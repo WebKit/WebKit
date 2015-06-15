@@ -66,9 +66,9 @@ function rewrite_headers () {
         -e s/WK_DEPRECATED/NS_DEPRECATED/
         -e s/WK_DESIGNATED_INITIALIZER/NS_DESIGNATED_INITIALIZER/
         -e s/WK_ENUM_AVAILABLE/NS_ENUM_AVAILABLE/
-        -e s/WK_NULLABLE/nullable/g
         -e s/WK_NULLABLE_PROPERTY/nullable,/
         -e s/WK_NULLABLE_SPECIFIER/__nullable/g
+        -e s/WK_NULLABLE/nullable/g
         -e s/WK_NULL_UNSPECIFIED/null_unspecified/
         -e s/WK_UNAVAILABLE/NS_UNAVAILABLE/
         -e s/^WK_CLASS_AVAILABLE/NS_CLASS_AVAILABLE/
