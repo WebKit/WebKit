@@ -73,6 +73,7 @@ private:
     State m_currentState { State::Idle };
     Vector<HTMLMediaElement*> m_participatingElements;
     HashSet<HTMLMediaElement*> m_activeParticipatingElements;
+    HashSet<HTMLMediaElement*>* m_iteratedActiveParticipatingElements { nullptr };
 
     const String m_kind;
     RefPtr<MediaRemoteControls> m_controls;

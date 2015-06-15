@@ -94,14 +94,21 @@ bool MediaSession::invoke()
 
 void MediaSession::togglePlayback()
 {
-    HashSet<HTMLMediaElement*> activeParticipatingElementsCopy = m_activeParticipatingElements;
+    ASSERT(!m_iteratedActiveParticipatingElements);
 
-    for (auto* element : activeParticipatingElementsCopy) {
+    HashSet<HTMLMediaElement*> activeParticipatingElementsCopy = m_activeParticipatingElements;
+    m_iteratedActiveParticipatingElements = &activeParticipatingElementsCopy;
+
+    while (!activeParticipatingElementsCopy.isEmpty()) {
+        HTMLMediaElement* element = activeParticipatingElementsCopy.takeAny();
+
         if (element->paused())
             element->play();
         else
             element->pause();
     }
+
+    m_iteratedActiveParticipatingElements = nullptr;
 }
 
 }
