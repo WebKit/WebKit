@@ -1,3 +1,19 @@
+2015-06-16  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Add API tests for ewk_page
+        https://bugs.webkit.org/show_bug.cgi?id=146004
+
+        Reviewed by Gyuyoung Kim.
+
+        Add unit test for load_started/load_finished callbacks of ewk_page.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/tests/extensions/extension_sample.cpp:
+        * UIProcess/API/efl/tests/test_ewk2_page.cpp: Added.
+        (EWK2PageTest::messageReceivedCallback):
+        (EWK2PageTest::EWK2PageTest):
+        (TEST_F):
+
 2015-06-15  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] position:fixed elements sometimes truncated on scroll view bouncing

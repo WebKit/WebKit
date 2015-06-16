@@ -512,6 +512,7 @@ set(EWK2UnitTests_BINARIES
     test_ewk2_file_chooser_request
     test_ewk2_javascript_binding
     test_ewk2_object
+    test_ewk2_page
     test_ewk2_page_group
     test_ewk2_popup_menu
     test_ewk2_settings
