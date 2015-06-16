@@ -1,3 +1,18 @@
+2015-06-16  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r185552.
+        https://bugs.webkit.org/show_bug.cgi?id=146015
+
+         It broke some WK2 API tests on EFL bots (Requested by
+        gyuyoung on #webkit).
+
+        Reverted changeset:
+
+        "[EFL] Make send/receive messages to communicate the Web and
+        UI Processes using Injected Bundle."
+        https://bugs.webkit.org/show_bug.cgi?id=145685
+        http://trac.webkit.org/changeset/185552
+
 2015-06-16  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [EFL] Add API tests for ewk_page
