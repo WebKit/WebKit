@@ -248,6 +248,8 @@ protected:
     
     WriteBarrier<Structure> m_iteratorResultStructure;
 
+    WriteBarrier<Structure> m_regExpMatchesArrayStructure;
+
 #if ENABLE(PROMISES)
     WriteBarrier<Structure> m_promiseStructure;
 #endif // ENABLE(PROMISES)
@@ -488,6 +490,7 @@ public:
     Structure* symbolObjectStructure() const { return m_symbolObjectStructure.get(); }
     Structure* iteratorResultStructure() const { return m_iteratorResultStructure.get(); }
     static ptrdiff_t iteratorResultStructureOffset() { return OBJECT_OFFSETOF(JSGlobalObject, m_iteratorResultStructure); }
+    Structure* regExpMatchesArrayStructure() const { return m_regExpMatchesArrayStructure.get(); }
 
 #if ENABLE(PROMISES)
     Structure* promiseStructure() const { return m_promiseStructure.get(); }

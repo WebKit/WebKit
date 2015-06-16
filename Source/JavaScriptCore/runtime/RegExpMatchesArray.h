@@ -27,6 +27,7 @@
 namespace JSC {
 
 JSArray* createRegExpMatchesArray(ExecState*, JSString*, RegExp*, MatchResult);
+Structure* createRegExpMatchesArrayStructure(VM&, JSGlobalObject&);
 
 }
 

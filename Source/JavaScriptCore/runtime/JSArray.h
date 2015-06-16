@@ -53,6 +53,7 @@ protected:
 
 public:
     static JSArray* create(VM&, Structure*, unsigned initialLength = 0);
+    static JSArray* createWithButterfly(VM&, Structure*, Butterfly*);
 
     // tryCreateUninitialized is used for fast construction of arrays whose size and
     // contents are known at time of creation. Clients of this interface must:
@@ -213,9 +214,8 @@ inline JSArray* JSArray::create(VM& vm, Structure* structure, unsigned initialLe
             || structure->indexingType() == ArrayWithArrayStorage);
         butterfly = createArrayButterfly(vm, 0, initialLength);
     }
-    JSArray* array = new (NotNull, allocateCell<JSArray>(vm.heap)) JSArray(vm, structure, butterfly);
-    array->finishCreation(vm);
-    return array;
+
+    return createWithButterfly(vm, structure, butterfly);
 }
 
 inline JSArray* JSArray::tryCreateUninitialized(VM& vm, Structure* structure, unsigned initialLength)
@@ -253,7 +253,12 @@ inline JSArray* JSArray::tryCreateUninitialized(VM& vm, Structure* structure, un
         storage->m_sparseMap.clear();
         storage->m_numValuesInVector = initialLength;
     }
-        
+
+    return createWithButterfly(vm, structure, butterfly);
+}
+
+inline JSArray* JSArray::createWithButterfly(VM& vm, Structure* structure, Butterfly* butterfly)
+{
     JSArray* array = new (NotNull, allocateCell<JSArray>(vm.heap)) JSArray(vm, structure, butterfly);
     array->finishCreation(vm);
     return array;

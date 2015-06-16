@@ -1011,7 +1011,7 @@ protected:
     void finishCreation(VM& vm)
     {
         Base::finishCreation(vm);
-        ASSERT(!this->structure()->totalStorageCapacity());
+        ASSERT(!this->structure()->hasInlineStorage());
         ASSERT(classInfo());
     }
 };

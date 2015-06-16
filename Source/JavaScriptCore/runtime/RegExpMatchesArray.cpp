@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,11 +31,30 @@
 
 namespace JSC {
 
+static const PropertyOffset indexPropertyOffset = 100;
+static const PropertyOffset inputPropertyOffset = 101;
+
+static JSArray* tryCreateUninitializedRegExpMatchesArray(VM& vm, Structure* structure, unsigned initialLength)
+{
+    unsigned vectorLength = std::max(BASE_VECTOR_LEN, initialLength);
+    if (vectorLength > MAX_STORAGE_VECTOR_LENGTH)
+        return 0;
+
+    void* temp;
+    if (!vm.heap.tryAllocateStorage(0, Butterfly::totalSize(0, structure->outOfLineCapacity(), true, vectorLength * sizeof(EncodedJSValue)), &temp))
+        return 0;
+    Butterfly* butterfly = Butterfly::fromBase(temp, 0, structure->outOfLineCapacity());
+    butterfly->setVectorLength(vectorLength);
+    butterfly->setPublicLength(initialLength);
+
+    return JSArray::createWithButterfly(vm, structure, butterfly);
+}
+
 JSArray* createRegExpMatchesArray(ExecState* exec, JSString* input, RegExp* regExp, MatchResult result)
 {
     ASSERT(result);
     VM& vm = exec->vm();
-    JSArray* array = JSArray::tryCreateUninitialized(vm, exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), regExp->numSubpatterns() + 1);
+    JSArray* array = tryCreateUninitializedRegExpMatchesArray(vm, exec->lexicalGlobalObject()->regExpMatchesArrayStructure(), regExp->numSubpatterns() + 1);
     RELEASE_ASSERT(array);
 
     SamplingRegion samplingRegion("Reifying substring properties");
@@ -58,10 +77,21 @@ JSArray* createRegExpMatchesArray(ExecState* exec, JSString* input, RegExp* regE
         }
     }
 
-    array->putDirect(vm, vm.propertyNames->index, jsNumber(result.start));
-    array->putDirect(vm, vm.propertyNames->input, input);
+    array->putDirect(vm, indexPropertyOffset, jsNumber(result.start));
+    array->putDirect(vm, inputPropertyOffset, input);
 
     return array;
+}
+
+Structure* createRegExpMatchesArrayStructure(VM& vm, JSGlobalObject& globalObject)
+{
+    Structure* structure = globalObject.arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
+    PropertyOffset offset;
+    structure = structure->addPropertyTransition(vm, structure, vm.propertyNames->index, 0, offset);
+    ASSERT(offset == indexPropertyOffset);
+    structure = structure->addPropertyTransition(vm, structure, vm.propertyNames->input, 0, offset);
+    ASSERT(offset == inputPropertyOffset);
+    return structure;
 }
 
 } // namespace JSC

@@ -1,3 +1,44 @@
+2015-06-16  Andreas Kling  <akling@apple.com>
+
+        [JSC] Pre-bake final Structure for RegExp matches arrays.
+        <https://webkit.org/b/146006>
+
+        Reviewed by Darin Adler.
+
+        Since we always add the "index" and "input" fields to RegExp matches arrays,
+        cache a finished structure on the global object so we can create these arrays without
+        starting from scratch with a bare array every time.
+
+        10% progression on Octane/regexp (on my MBP.)
+
+        * runtime/JSArray.h:
+        (JSC::JSArray::create):
+        (JSC::JSArray::tryCreateUninitialized):
+        (JSC::JSArray::createWithButterfly): Factored out JSArray construction into a helper
+        so we can call this from RegExpMatchesArray.cpp.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::regExpMatchesArrayStructure): Add a cached Structure for RegExp
+        subpattern matches arrays.
+
+        * runtime/JSObject.h:
+        (JSC::JSNonFinalObject::finishCreation): Tweak assertion that used to check that
+        JSNonFinalObjects always start out with zero capacity. Since RegExp matches arrays now
+        start out with capacity for 2 properties, that won't work. Change it to check that we
+        don't have inline storage instead, since that should only be used by final objects.
+
+        * runtime/RegExpMatchesArray.h:
+        * runtime/RegExpMatchesArray.cpp:
+        (JSC::tryCreateUninitializedRegExpMatchesArray): Helper to construct a JSArray with
+        the cached Structure and a Butterfly with 2 slots of property storage.
+
+        (JSC::createRegExpMatchesArray):
+        (JSC::createRegExpMatchesArrayStructure): Creates the array Structure that gets cached
+        by the JSGlobalObject.
+
 2015-06-16  Saam Barati  <saambarati1@gmail.com>
 
         LLInt's code path for get_from_scope with case GlobalVarWithVarInjectionChecks has dead code
