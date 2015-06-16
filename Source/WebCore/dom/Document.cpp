@@ -2760,22 +2760,19 @@ void Document::setTimerThrottlingEnabled(bool shouldThrottle)
     if (m_isTimerThrottlingEnabled == shouldThrottle)
         return;
 
-    double previousInterval = timerAlignmentInterval();
-
     m_isTimerThrottlingEnabled = shouldThrottle;
-
-    if (previousInterval != timerAlignmentInterval())
-        didChangeTimerAlignmentInterval();
+    didChangeTimerAlignmentInterval();
 }
 
-double Document::timerAlignmentInterval() const
+double Document::timerAlignmentInterval(bool hasReachedMaxNestingLevel) const
 {
-    if (m_isTimerThrottlingEnabled)
+    // Apply Document-level DOMTimer throttling only if timers have reached their maximum nesting level as the Page may still be visible.
+    if (m_isTimerThrottlingEnabled && hasReachedMaxNestingLevel)
         return DOMTimer::hiddenPageAlignmentInterval();
 
     Page* page = this->page();
     if (!page)
-        return ScriptExecutionContext::timerAlignmentInterval();
+        return ScriptExecutionContext::timerAlignmentInterval(hasReachedMaxNestingLevel);
     return page->settings().domTimerAlignmentInterval();
 }
 

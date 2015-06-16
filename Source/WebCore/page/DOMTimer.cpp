@@ -428,7 +428,7 @@ double DOMTimer::intervalClampedToMinimum() const
 
 double DOMTimer::alignedFireTime(double fireTime) const
 {
-    if (double alignmentInterval = scriptExecutionContext()->timerAlignmentInterval())
+    if (double alignmentInterval = scriptExecutionContext()->timerAlignmentInterval(m_nestingLevel >= maxTimerNestingLevel))
         return ceil(fireTime / alignmentInterval) * alignmentInterval;
 
     return fireTime;

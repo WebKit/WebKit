@@ -449,7 +449,7 @@ void ScriptExecutionContext::didChangeTimerAlignmentInterval()
         timer->didChangeAlignmentInterval();
 }
 
-double ScriptExecutionContext::timerAlignmentInterval() const
+double ScriptExecutionContext::timerAlignmentInterval(bool) const
 {
     return DOMTimer::defaultAlignmentInterval();
 }

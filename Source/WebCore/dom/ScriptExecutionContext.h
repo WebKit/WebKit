@@ -173,7 +173,7 @@ public:
     virtual double minimumTimerInterval() const;
 
     void didChangeTimerAlignmentInterval();
-    virtual double timerAlignmentInterval() const;
+    virtual double timerAlignmentInterval(bool hasReachedMaxNestingLevel) const;
 
     virtual EventQueue& eventQueue() const = 0;
 

@@ -1301,7 +1301,7 @@ private:
 
     virtual double minimumTimerInterval() const override final;
 
-    virtual double timerAlignmentInterval() const override final;
+    virtual double timerAlignmentInterval(bool hasReachedMaxNestingLevel) const override final;
 
     void updateTitle(const StringWithDirection&);
     void updateFocusAppearanceTimerFired();
