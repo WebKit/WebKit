@@ -70,7 +70,7 @@ static bool operator!=(const PresentationAttributeCacheKey& a, const Presentatio
 
 static PresentationAttributeCache& presentationAttributeCache()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(PresentationAttributeCache, cache, ());
+    static NeverDestroyed<PresentationAttributeCache> cache;
     return cache;
 }
 
@@ -114,8 +114,13 @@ private:
 
 static PresentationAttributeCacheCleaner& presentationAttributeCacheCleaner()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(PresentationAttributeCacheCleaner, cleaner, ());
+    static NeverDestroyed<PresentationAttributeCacheCleaner> cleaner;
     return cleaner;
+}
+
+void StyledElement::clearPresentationAttributeCache()
+{
+    presentationAttributeCache().clear();
 }
 
 void StyledElement::synchronizeStyleAttributeInternal(StyledElement* styledElement)

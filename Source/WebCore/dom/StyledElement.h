@@ -63,6 +63,8 @@ public:
     const StyleProperties* presentationAttributeStyle();
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) { }
 
+    static void clearPresentationAttributeCache();
+
 protected:
     StyledElement(const QualifiedName& name, Document& document, ConstructionType type)
         : Element(name, document, type)

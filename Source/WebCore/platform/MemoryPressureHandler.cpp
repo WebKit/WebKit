@@ -36,6 +36,7 @@
 #include "Page.h"
 #include "PageCache.h"
 #include "ScrollingThread.h"
+#include "StyledElement.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/IncrementalSweeper.h>
 #include <wtf/CurrentTime.h>
@@ -98,6 +99,11 @@ void MemoryPressureHandler::releaseNoncriticalMemory()
     {
         ReliefLogger log("Prune MemoryCache dead resources");
         MemoryCache::singleton().pruneDeadResourcesToSize(0);
+    }
+
+    {
+        ReliefLogger log("Prune presentation attribute cache");
+        StyledElement::clearPresentationAttributeCache();
     }
 }
 
