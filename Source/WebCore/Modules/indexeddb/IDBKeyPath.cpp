@@ -300,6 +300,7 @@ bool IDBKeyPath::decode(KeyedDecoder& decoder, IDBKeyPath& result)
         return decoder.decodeString("string", result);
     };
 
+    result.m_array.clear();
     return decoder.decodeObjects("array", result.m_array, arrayFunction);
 }
 

@@ -35,15 +35,23 @@ store = transaction.objectStore('store')
 index = store.index('index')
 
 request = store.put({a: 1, b: 2, c: 3, d: 4})
+request = store.put({a: 5, b: 6, c: 7, d: 8})
 request = store.openCursor()
 cursor = request.result
 PASS cursor is non-null.
 PASS JSON.stringify(cursor.key) is "[1,2]"
+cursor = request.result
+PASS cursor is non-null.
+PASS JSON.stringify(cursor.key) is "[5,6]"
 request = index.openCursor()
 cursor = request.result
 PASS cursor is non-null.
 PASS JSON.stringify(cursor.primaryKey) is "[1,2]"
 PASS JSON.stringify(cursor.key) is "[3,4]"
+cursor = request.result
+PASS cursor is non-null.
+PASS JSON.stringify(cursor.primaryKey) is "[5,6]"
+PASS JSON.stringify(cursor.key) is "[7,8]"
 PASS successfullyParsed is true
 
 TEST COMPLETE

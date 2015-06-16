@@ -201,6 +201,8 @@ bool IDBKeyData::decode(KeyedDecoder& decoder, IDBKeyData& result)
     auto arrayFunction = [](KeyedDecoder& decoder, IDBKeyData& result) {
         return decode(decoder, result);
     };
+    
+    result.arrayValue.clear();
     return decoder.decodeObjects("array", result.arrayValue, arrayFunction);
 }
 

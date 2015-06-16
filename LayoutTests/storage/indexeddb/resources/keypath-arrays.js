@@ -35,6 +35,9 @@ function testKeyPaths()
     debug("");
     evalAndLog("request = store.put({a: 1, b: 2, c: 3, d: 4})");
     request.onerror = unexpectedErrorCallback;
+    evalAndLog("request = store.put({a: 5, b: 6, c: 7, d: 8})");
+    request.onerror = unexpectedErrorCallback;
+    iteration = 0;
     checkStore();
 
     function checkStore() {
@@ -43,8 +46,15 @@ function testKeyPaths()
         request.onsuccess = function () {
             evalAndLog("cursor = request.result");
             shouldBeNonNull("cursor");
-            shouldBeEqualToString("JSON.stringify(cursor.key)", "[1,2]");
-            checkIndex();
+            shouldBeEqualToString("JSON.stringify(cursor.key)", ["[1,2]", "[5,6]"][iteration]);
+            if (0 === iteration) {
+              ++iteration;
+              cursor.continue();
+            }
+            else {
+              iteration = 0;
+              checkIndex();
+            }
         };
     };
 
@@ -54,8 +64,12 @@ function testKeyPaths()
         request.onsuccess = function () {
             evalAndLog("cursor = request.result");
             shouldBeNonNull("cursor");
-            shouldBeEqualToString("JSON.stringify(cursor.primaryKey)", "[1,2]");
-            shouldBeEqualToString("JSON.stringify(cursor.key)", "[3,4]");
+            shouldBeEqualToString("JSON.stringify(cursor.primaryKey)", ["[1,2]", "[5,6]"][iteration]);
+            shouldBeEqualToString("JSON.stringify(cursor.key)", ["[3,4]", "[7,8]"][iteration]);
+            if (0 === iteration) {
+              ++iteration;
+              cursor.continue();
+            }
         };
     };
 
