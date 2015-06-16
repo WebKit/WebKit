@@ -1,5 +1,16 @@
 2015-06-16  Youenn Fablet <youenn.fablet@crf.canon.fr> and Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
+        [Streams API] Calling controller.error() should trigger storing an undefined error
+        https://bugs.webkit.org/show_bug.cgi?id=145976
+
+        Reviewed by Darin Adler.
+
+        * streams/readable-stream-controller-error-expected.txt: Rebasing expectation as test is passing now.
+        * streams/readable-stream-reader-read-expected.txt:
+        * streams/readable-stream-reader-read.html: Adding test for promise rejection without any parameter.
+
+2015-06-16  Youenn Fablet <youenn.fablet@crf.canon.fr> and Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
         [Streams API] Sync tests with spec
         https://bugs.webkit.org/show_bug.cgi?id=145839
 

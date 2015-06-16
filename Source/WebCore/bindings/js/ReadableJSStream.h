@@ -56,7 +56,7 @@ public:
 
     JSC::JSValue jsController(JSC::ExecState&, JSDOMGlobalObject*);
 
-    void storeError(JSC::ExecState&);
+    void storeError(JSC::ExecState&, JSC::JSValue);
     JSC::JSValue error() override { return m_error.get(); }
 
     void enqueue(JSC::ExecState&);
@@ -68,7 +68,6 @@ private:
 
     JSC::JSPromise* invoke(JSC::ExecState&, const char*);
     void storeException(JSC::ExecState&);
-    void storeError(JSC::ExecState&, JSC::JSValue);
 
     virtual bool hasValue() const override;
     virtual JSC::JSValue read() override;

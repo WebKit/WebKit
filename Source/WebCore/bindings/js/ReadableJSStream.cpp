@@ -176,7 +176,7 @@ ReadableJSStream::ReadableJSStream(ScriptExecutionContext& scriptExecutionContex
     // We do not take a Ref to the stream as this would cause a Ref cycle.
     // The resolution callback used jointly with m_errorFunction as promise callbacks should protect the stream instead.
     m_errorFunction.set(state.vm(), JSFunction::create(state.vm(), state.callee()->globalObject(), 1, String(), [this](ExecState* state) {
-        storeError(*state);
+        storeError(*state, state->argument(0));
         return JSValue::encode(jsUndefined());
     }));
 }
@@ -193,11 +193,6 @@ void ReadableJSStream::storeException(JSC::ExecState& state)
     JSValue exception = state.exception()->value();
     state.clearException();
     storeError(state, exception);
-}
-
-void ReadableJSStream::storeError(JSC::ExecState& exec)
-{
-    storeError(exec, exec.argumentCount() ? exec.argument(0) : createError(&exec, ASCIILiteral("Error function called.")));
 }
 
 void ReadableJSStream::storeError(JSC::ExecState& exec, JSValue error)

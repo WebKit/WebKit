@@ -159,4 +159,19 @@ test5.step(function() {
     }));
     controller.close();
 });
+
+var test6 = async_test('ReadableStream: if start rejects with no parameter, it should error the stream with an undefined error');
+test6.step(function() {
+    var rs = new ReadableStream({
+        start: function(c) {
+            return Promise.reject();
+        }
+    });
+
+    rs.getReader().read().catch(test6.step_func(function(e) {
+        assert_equals(typeof e, "undefined");
+        test6.done();
+    }));
+});
+
 </script>
