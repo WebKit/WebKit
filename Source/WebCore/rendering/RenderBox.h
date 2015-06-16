@@ -625,6 +625,8 @@ public:
     bool canHaveOutsideRegionRange() const { return !isInFlowRenderFlowThread(); }
     virtual bool needsLayoutAfterRegionRangeChange() const { return false; }
 
+    const RenderBox* findEnclosingScrollableContainer() const;
+
 protected:
     RenderBox(Element&, Ref<RenderStyle>&&, unsigned baseTypeFlags);
     RenderBox(Document&, Ref<RenderStyle>&&, unsigned baseTypeFlags);

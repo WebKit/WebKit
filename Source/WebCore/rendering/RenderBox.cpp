@@ -4948,4 +4948,14 @@ LayoutUnit RenderBox::offsetFromLogicalTopOfFirstPage() const
     return containerBlock->offsetFromLogicalTopOfFirstPage() + logicalTop();
 }
 
+const RenderBox* RenderBox::findEnclosingScrollableContainer() const
+{
+    for (auto& candidate : lineageOfType<RenderBox>(*this)) {
+        if (candidate.hasOverflowClip())
+            return &candidate;
+    }
+    
+    return nullptr;
+}
+
 } // namespace WebCore

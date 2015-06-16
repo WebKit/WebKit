@@ -31,6 +31,7 @@
 #include "HTMLElement.h"
 #include "Length.h"
 #include "RenderBox.h"
+#include "RenderView.h"
 #include "ScrollableArea.h"
 #include "StyleScrollSnapPoints.h"
 
@@ -40,28 +41,34 @@ namespace WebCore {
 
 static void appendChildSnapOffsets(HTMLElement& parent, bool shouldAddHorizontalChildOffsets, Vector<LayoutUnit>& horizontalSnapOffsetSubsequence, bool shouldAddVerticalChildOffsets, Vector<LayoutUnit>& verticalSnapOffsetSubsequence)
 {
-    // FIXME: Instead of traversing all children, register children with snap coordinates before appending to snapOffsetSubsequence.
-    for (auto& child : childrenOfType<Element>(parent)) {
-        if (RenderBox* box = child.renderBox()) {
-            const auto& scrollSnapCoordinates = box->style().scrollSnapCoordinates();
-            if (scrollSnapCoordinates.isEmpty())
-                continue;
+    RenderElement* scrollContainer = parent.renderer();
+    ASSERT(scrollContainer);
+    
+    RenderView& renderView = scrollContainer->view();
 
-            LayoutRect viewSize = box->contentBoxRect();
-            LayoutUnit viewWidth = viewSize.width();
-            LayoutUnit viewHeight = viewSize.height();
-            FloatPoint position = box->localToContainerPoint(FloatPoint(), parent.renderBox());
-            LayoutUnit left = position.x();
-            LayoutUnit top = position.y();
-            for (auto& coordinate : scrollSnapCoordinates) {
-                LayoutUnit lastPotentialSnapPositionX = left + valueForLength(coordinate.width(), viewWidth);
-                if (shouldAddHorizontalChildOffsets && lastPotentialSnapPositionX > 0)
-                    horizontalSnapOffsetSubsequence.append(lastPotentialSnapPositionX);
+    Vector<const RenderBox*> elements;
+    for (auto& element : renderView.boxesWithScrollSnapCoordinates()) {
+        if (element->findEnclosingScrollableContainer() != scrollContainer)
+            continue;
 
-                LayoutUnit lastPotentialSnapPositionY = top + valueForLength(coordinate.height(), viewHeight);
-                if (shouldAddVerticalChildOffsets && lastPotentialSnapPositionY > 0)
-                    verticalSnapOffsetSubsequence.append(lastPotentialSnapPositionY);
-            }
+        elements.append(element);
+    }
+
+    for (auto& box : elements) {
+        auto& scrollSnapCoordinates = box->style().scrollSnapCoordinates();
+        if (scrollSnapCoordinates.isEmpty())
+            continue;
+        
+        LayoutRect viewSize = box->contentBoxRect();
+        FloatPoint position = box->localToContainerPoint(FloatPoint(), parent.renderBox());
+        for (auto& coordinate : scrollSnapCoordinates) {
+            LayoutUnit lastPotentialSnapPositionX = position.x() + valueForLength(coordinate.width(), viewSize.width());
+            if (shouldAddHorizontalChildOffsets && lastPotentialSnapPositionX > 0)
+                horizontalSnapOffsetSubsequence.append(lastPotentialSnapPositionX);
+            
+            LayoutUnit lastPotentialSnapPositionY = position.y() + valueForLength(coordinate.height(), viewSize.height());
+            if (shouldAddVerticalChildOffsets && lastPotentialSnapPositionY > 0)
+                verticalSnapOffsetSubsequence.append(lastPotentialSnapPositionY);
         }
     }
 }

@@ -1428,4 +1428,16 @@ unsigned RenderView::pageCount() const
     return 0;
 }
 
+#if ENABLE(CSS_SCROLL_SNAP)
+void RenderView::registerBoxWithScrollSnapCoordinates(const RenderBox& box)
+{
+    m_boxesWithScrollSnapCoordinates.add(&box);
+}
+
+void RenderView::unregisterBoxWithScrollSnapCoordinates(const RenderBox& box)
+{
+    m_boxesWithScrollSnapCoordinates.remove(&box);
+}
+#endif
+
 } // namespace WebCore

@@ -1,3 +1,16 @@
+2015-06-16  Brent Fulgham  <bfulgham@apple.com>
+
+        CSS Scroll Snap - support snapping to nested elements
+        https://bugs.webkit.org/show_bug.cgi?id=145843
+        <rdar://problem/21339581>
+
+        Reviewed by Darin Adler.
+
+        * css3/scroll-snap/nested-elements-expected.txt: Added.
+        * css3/scroll-snap/nested-elements.html: Added.
+        * css3/scroll-snap/scroll-snap-offsets-expected.txt: Updated to
+          account for 50%/50% scroll-snap-coordinates.
+
 2015-06-16  Brady Eidson  <beidson@apple.com>
 
         [IndexedDB] array index keys are concatenated across cursor lifetime

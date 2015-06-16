@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006, 2015 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -245,6 +245,12 @@ public:
     void protectRenderWidgetUntilLayoutIsDone(RenderWidget& widget) { m_protectedRenderWidgets.append(&widget); }
     void releaseProtectedRenderWidgets() { m_protectedRenderWidgets.clear(); }
 
+#if ENABLE(CSS_SCROLL_SNAP)
+    void registerBoxWithScrollSnapCoordinates(const RenderBox&);
+    void unregisterBoxWithScrollSnapCoordinates(const RenderBox&);
+    const HashSet<const RenderBox*>& boxesWithScrollSnapCoordinates() { return m_boxesWithScrollSnapCoordinates; }
+#endif
+
 protected:
     virtual void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags, bool* wasFixed) const override;
     virtual const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const override;
@@ -366,6 +372,9 @@ private:
 
 #if ENABLE(SERVICE_CONTROLS)
     SelectionRectGatherer m_selectionRectGatherer;
+#endif
+#if ENABLE(CSS_SCROLL_SNAP)
+    HashSet<const RenderBox*> m_boxesWithScrollSnapCoordinates;
 #endif
 };
 
