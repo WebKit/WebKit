@@ -2497,17 +2497,17 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             validPrimitive = validateUnit(valueWithCalculation, FPositiveInteger);
             if (!validPrimitive)
                 return false;
-            RefPtr<CSSPrimitiveValue> parsedValue1 = createPrimitiveNumericValue(valueWithCalculation);
-            RefPtr<CSSPrimitiveValue> parsedValue2;
+            RefPtr<CSSPrimitiveValue> height = createPrimitiveNumericValue(valueWithCalculation);
+            RefPtr<CSSPrimitiveValue> position;
             if (num == 2) {
                 ValueWithCalculation nextValueWithCalculation(*m_valueList->next());
                 validPrimitive = validateUnit(nextValueWithCalculation, FPositiveInteger);
                 if (!validPrimitive)
                     return false;
-                parsedValue2 = createPrimitiveNumericValue(nextValueWithCalculation);
+                position = createPrimitiveNumericValue(nextValueWithCalculation);
             } else
-                parsedValue2 = parsedValue1;
-            addProperty(propId, createPrimitiveValuePair(parsedValue1.release(), parsedValue2.release()), important);
+                position = height;
+            addProperty(propId, createPrimitiveValuePair(position.release(), height.release()), important);
             return true;
         }
         break;

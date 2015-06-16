@@ -1,3 +1,18 @@
+2015-06-16  sylvain-galineau  <galineau@adobe.com>
+
+        Incorrect order of arguments in initial-letter property
+        https://bugs.webkit.org/show_bug.cgi?id=139667
+
+        Reviewed by Sam Weinig.
+
+        Update initial-letter tests to reflect the value's new ordering, per CSS Inline Layout module.
+
+        * fast/css-generated-content/initial-letter-border-padding.html:
+        * fast/css-generated-content/initial-letter-clearance.html:
+        * fast/css-generated-content/initial-letter-descender.html:
+        * fast/css-generated-content/initial-letter-raised.html:
+        * fast/css-generated-content/initial-letter-sunken.html:
+
 2015-06-16  Youenn Fablet <youenn.fablet@crf.canon.fr> and Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [Streams API] Calling controller.error() should trigger storing an undefined error
