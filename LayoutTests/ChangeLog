@@ -1,3 +1,14 @@
+2015-06-16  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed test update: Add multiple scroll-snap-coordinate test.
+        https://bugs.webkit.org/show_bug.cgi?id=145843
+
+        Add a test that confirms that we properly understand scroll-snap-coordinate
+        declarations with sets of points on a single element.
+
+        * css3/scroll-snap/scroll-snap-coordinate.html: Added.
+        * css3/scroll-snap/scroll-snap-coordinate-expected.txt: Added.
+
 2015-06-16  Alexey Proskuryakov  <ap@apple.com>
 
         Tweak results for fast/canvas/canvas-too-large-to-draw.html
