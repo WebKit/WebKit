@@ -881,6 +881,20 @@ App.ChartsController = Ember.Controller.extend({
                 showingDetails: false
             }));
         },
+        addAlternativePanes: function (pane, platform, metrics)
+        {
+            var panes = this.panes;
+            var store = this.store;
+            var startingIndex = panes.indexOf(pane) + 1;
+            metrics.forEach(function (metric, index) {
+                panes.insertAt(startingIndex + index, App.Pane.create({
+                    store: store,
+                    platformId: platform.get('id'),
+                    metricId: metric.get('id'),
+                    showingDetails: false
+                }));
+            })
+        }
     },
 
     init: function ()
@@ -922,6 +936,21 @@ App.TestProxyForPopup = Ember.ObjectProxy.extend({
     platform: null,
     children: function ()
     {
+        this._updateChildren();
+        return this._children;
+    }.property('childTests', 'metrics'),
+    actionName: function ()
+    {
+        this._updateChildren();
+        return this._actionName;
+    }.property('childTests', 'metrics'),
+    actionArgument: function ()
+    {
+        this._updateChildren();
+        return this._actionArgument;
+    }.property('childTests', 'metrics'),
+    _updateChildren: function ()
+    {
         var platform = this.get('platform');
         var action = this.get('action');
         var position = this.get('position');
@@ -945,9 +974,16 @@ App.TestProxyForPopup = Ember.ObjectProxy.extend({
 
         if (childTests.length && metrics.length)
             metrics.push({isSeparator: true});
+        else if (metrics.length == 1) {
+            this._actionName = action;
+            this._actionArgument = metrics[0].actionArgument;
+            return;
+        }
 
-        return metrics.concat(childTests);
-    }.property('childTests', 'metrics'),
+        this._actionName = null;
+        this._actionArgument = null;
+        this._children = metrics.concat(childTests);
+    },
 });
 
 App.domainsAreEqual = function (domain1, domain2) {
@@ -1106,6 +1142,45 @@ App.PaneController = Ember.ObjectController.extend({
             alert('Failed to update the status:' + error);
         });
     }.observes('selectedItemIsMarkedOutlier'),
+    alternativePanes: function ()
+    {
+        var pane = this.get('model');
+        var metric = pane.get('metric');
+        var currentPlatform = pane.get('platform');
+        var platforms = App.Manifest.get('platforms');
+        if (!platforms || !metric)
+            return;
+
+        var exitingPlatforms = {};
+        this.get('parentController').get('panes').forEach(function (pane) {
+            if (pane.get('metricId') == metric.get('id'))
+                exitingPlatforms[pane.get('platformId')] = true;
+        });
+
+        var alternativePanes = platforms.filter(function (platform) {
+            return !exitingPlatforms[platform.get('id')] && platform.containsMetric(metric);
+        }).map(function (platform) {
+            return {
+                pane: pane,
+                platform: platform,
+                metrics: [metric],
+                label: platform.get('label')
+            };
+        });
+
+        var childMetrics = metric.get('childMetrics');
+        if (childMetrics && childMetrics.length) {
+            alternativePanes.push({
+                pane: pane,
+                platform: currentPlatform,
+                metrics: childMetrics,
+                label: 'Breakdown',
+            });
+        }
+
+        return alternativePanes;
+    }.property('model.metric', 'model.platform', 'App.Manifest.platforms',
+        'parentController.panes.@each.platformId', 'parentController.panes.@each.metricId'),
 });
 
 App.AnalysisRoute = Ember.Route.extend({

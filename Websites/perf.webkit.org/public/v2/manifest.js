@@ -37,6 +37,17 @@ App.Metric = App.NameLabelModel.extend({
         return this.get('path').join(' \u220b ') /* &ni; */
             + ' : ' + this.get('label');
     }.property('path', 'label'),
+    childMetrics: function ()
+    {
+        var test = this.get('test');
+        var childMetrics = [];
+        test.get('childTests').forEach(function (childTest) {
+            childTest.get('metrics').forEach(function (metric) {
+                childMetrics.push(metric);
+            });
+        });
+        return childMetrics;
+    }.property('test.childTests'),
 });
 
 App.Builder = App.NameLabelModel.extend({

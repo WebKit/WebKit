@@ -465,3 +465,39 @@ a.outlier-button.show g.hide-outlier-icon {
 .chart .rangeBar.testingRange {
     background-color: #333;
 }
+
+.chart-pane.in-charts {
+    margin-bottom: 2.5rem;
+}
+
+.alternative-pane-actions ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    left: 0.5rem;
+}
+
+.alternative-pane-actions li {
+    color: #666;
+    font-size: 0.8rem;
+    border: solid 1px #bbb;
+    border-top: none;
+    border-bottom-left-radius: 0.3rem;
+    border-bottom-right-radius: 0.3rem;
+    float: left;
+    list-style: none;
+    margin: 0;
+    margin-right: 0.2rem;
+    padding: 0.2rem 0.4rem;
+}
+
+.alternative-pane-actions li:hover {
+    background-color: rgba(204, 153, 51, 0.1);
+    padding-top: 0.5rem;
+}
+
+.alternative-pane-actions li a {
+    text-decoration: none;
+    color: inherit;
+}

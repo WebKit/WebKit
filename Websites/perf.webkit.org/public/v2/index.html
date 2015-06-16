@@ -143,9 +143,9 @@
         </header>
 
         {{#each panes itemController="pane"}}
-            <section class="chart-pane" tabindex="0">
+            <section class="chart-pane in-charts" tabindex="0">
                 <header>
-                    <h1 {{action "toggleDetails"}}>{{metric.fullName}} - {{ platform.name}}</h1>
+                    <h1 {{action "toggleDetails"}}>{{metric.fullName}} - {{platform.name}}</h1>
                     <a href="javascript:false" title="Close" class="close-button" {{action "close"}}>{{partial "close-button"}}</a>
                     {{#if movingAverageStrategies}}
                         <a href="javascript:false" title="Statistical Tools" class="stat-button" {{action "toggleStatPane"}}>{{partial "stat-button"}}</a>
@@ -228,6 +228,14 @@
                 </form>
 
                 {{partial "stat-pane"}}
+
+                <nav class="alternative-pane-actions">
+                    <ul>
+                        {{#each alternativePanes}}
+                            <li><a href="javascript:false" {{action "addAlternativePanes" pane platform metrics}}>{{label}}</a></li>
+                        {{/each}}
+                    </ul>
+                </nav>
             </section>
         {{/each}}
     </script>

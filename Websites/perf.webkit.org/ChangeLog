@@ -1,3 +1,31 @@
+2015-06-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        v2 UI should have buttons to breakdown a test
+        https://bugs.webkit.org/show_bug.cgi?id=146010
+
+        Reviewed by Chris Dumez.
+
+        Added buttons beneath each chart pane to add "alternative panes". By default, it shows every platform
+        as well as "Breakdown" to add all subtests' metrics.
+
+        Also removed the metric submenu from tests that had exactly one metric. When a test only measures Time
+        for example, we make the test itself clickable instead of showing a submenu that only contains one item.
+
+        * public/v2/app.js:
+        (App.ChartsController.addAlternativePanes): Added.
+        (App.TestProxyForPopup.children): Calls _updateChildren and returns this._children.
+        (App.TestProxyForPopup.actionName): Added.
+        (App.TestProxyForPopup.actionArgument): Added.
+        (App.TestProxyForPopup._updateChildren): Extracted from children. Now also sets _actionName and
+        _actionArgument in the case there was exactly one metric so that showing submenu is unnecessary.
+        (App.PaneController.alternativePanes): Added. Returns the list of alternative panes. The platform list
+        excludes ones that don't have this metric (e.g. iOS doesn't have desktop PLT results) as well as ones
+        that are already present in the list of panes.
+        * public/v2/chart-pane.css: Added CSS rules for alternative pane buttons beneath the chart panes.
+        * public/v2/index.html:
+        * public/v2/manifest.js:
+        (App.Metric.childMetrics): Added.
+
 2015-06-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r185574.
