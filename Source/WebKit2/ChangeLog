@@ -1,3 +1,47 @@
+2015-06-16  Anders Carlsson  <andersca@apple.com>
+
+        WebResourceCacheManager is unused, get rid of it
+        https://bugs.webkit.org/show_bug.cgi?id=146027
+
+        Reviewed by Sam Weinig.
+
+        * DerivedSources.make:
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKContext.cpp:
+        * UIProcess/WebProcessPool.cpp:
+        * UIProcess/WebResourceCacheManagerProxy.cpp: Removed.
+        (WebKit::WebResourceCacheManagerProxy::supplementName): Deleted.
+        (WebKit::WebResourceCacheManagerProxy::create): Deleted.
+        (WebKit::WebResourceCacheManagerProxy::WebResourceCacheManagerProxy): Deleted.
+        (WebKit::WebResourceCacheManagerProxy::~WebResourceCacheManagerProxy): Deleted.
+        (WebKit::WebResourceCacheManagerProxy::processPoolDestroyed): Deleted.
+        (WebKit::WebResourceCacheManagerProxy::processDidClose): Deleted.
+        (WebKit::WebResourceCacheManagerProxy::shouldTerminate): Deleted.
+        (WebKit::WebResourceCacheManagerProxy::refWebContextSupplement): Deleted.
+        (WebKit::WebResourceCacheManagerProxy::derefWebContextSupplement): Deleted.
+        (WebKit::WebResourceCacheManagerProxy::getCacheOrigins): Deleted.
+        (WebKit::WebResourceCacheManagerProxy::didGetCacheOrigins): Deleted.
+        (WebKit::WebResourceCacheManagerProxy::clearCacheForOrigin): Deleted.
+        (WebKit::WebResourceCacheManagerProxy::clearCacheForAllOrigins): Deleted.
+        * UIProcess/WebResourceCacheManagerProxy.h: Removed.
+        * UIProcess/WebResourceCacheManagerProxy.messages.in: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/ResourceCache/WebResourceCacheManager.cpp: Removed.
+        (WebKit::WebResourceCacheManager::supplementName): Deleted.
+        (WebKit::WebResourceCacheManager::WebResourceCacheManager): Deleted.
+        (WebKit::WebResourceCacheManager::getCacheOrigins): Deleted.
+        (WebKit::WebResourceCacheManager::returnCacheOrigins): Deleted.
+        (WebKit::WebResourceCacheManager::clearCacheForOrigin): Deleted.
+        (WebKit::WebResourceCacheManager::clearCacheForAllOrigins): Deleted.
+        * WebProcess/ResourceCache/WebResourceCacheManager.h: Removed.
+        * WebProcess/ResourceCache/WebResourceCacheManager.messages.in: Removed.
+        * WebProcess/ResourceCache/cf/WebResourceCacheManagerCFNet.mm: Removed.
+        (WebKit::partitionName): Deleted.
+        (WebKit::WebResourceCacheManager::cfURLCacheHostNamesWithCallback): Deleted.
+        (WebKit::WebResourceCacheManager::clearCFURLCacheForHostNames): Deleted.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess): Deleted.
+
 2015-06-16  Alex Christensen  <achristensen@webkit.org>
 
         CMake build fix after r185601.

@@ -131,8 +131,6 @@ MESSAGE_RECEIVERS = \
     WebProcessConnection \
     WebProcessPool \
     WebProcessProxy \
-    WebResourceCacheManager \
-    WebResourceCacheManagerProxy \
     WebResourceLoader \
     WebUserContentController \
     WebUserContentControllerProxy \
