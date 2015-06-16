@@ -67,7 +67,11 @@ static const int DefaultHeight = 150;
 // Firefox limits width/height to 32767 pixels, but slows down dramatically before it
 // reaches that limit. We limit by area instead, giving us larger maximum dimensions,
 // in exchange for a smaller maximum canvas size. The maximum canvas size is in device pixels.
-static const float MaxCanvasArea = 16384 * 16384;
+#if PLATFORM(IOS)
+static const unsigned MaxCanvasArea = 4096 * 4096;
+#else
+static const unsigned MaxCanvasArea = 16384 * 16384;
+#endif
 
 HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)

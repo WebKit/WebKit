@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: line 18: Canvas area exceeds the maximum limit (width * height > 2.68435e+8).
+CONSOLE MESSAGE: line 18: Canvas area exceeds the maximum limit (width * height > 268435456).
 PASS: Saw exception.
