@@ -1,3 +1,64 @@
+2015-06-16  Youenn Fablet <youenn.fablet@crf.canon.fr> and Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [Streams API] Sync tests with spec
+        https://bugs.webkit.org/show_bug.cgi?id=145839
+
+        Reviewed by Darin Adler.
+
+        Considered all changes in the spec tests and brought them to WebKit.
+
+        Some of those changes were related to spec changes, like the strategy or some of the algorithms. Some like the
+        tee ones were newly added as they will be implemented soon. There are also some tests that shuffled around
+        because they were just moved at the spec or integrated from the changes we submitted, which was substantially
+        important as it allowed us to remove some of our custom tests that are now covered by the spec ones.
+
+        * resources/gc.js: Added warning about using gcRec, results might not be reliable.
+        * streams/readable-stream-controller-error-expected.txt:
+        * streams/readable-stream-controller-error.html: New failing test due to discrepancies with the reference
+        implementation. Something we will address.
+        * streams/readable-stream-expected.txt: Removed.
+        * streams/readable-stream-gc.html: Renumbered.
+        * streams/readable-stream-reader-expected.txt: Removed.
+        * streams/readable-stream-reader-read.html: Renumbered.
+        * streams/readable-stream-reader.html: Removed.
+        * streams/readable-stream.html: Removed.
+        * streams/reference-implementation/bad-strategies-expected.txt: Added.
+        * streams/reference-implementation/bad-strategies.html: Added.
+        * streams/reference-implementation/bad-underlying-sources-expected.txt:
+        * streams/reference-implementation/bad-underlying-sources.html: Updated from spec and expectations.
+        * streams/reference-implementation/brand-checks-expected.txt:
+        * streams/reference-implementation/brand-checks.html: Updated from spec and expectations.
+        * streams/reference-implementation/byte-length-queuing-strategy-expected.txt: Added.
+        * streams/reference-implementation/byte-length-queuing-strategy.html: Added.
+        * streams/reference-implementation/count-queuing-strategy-expected.txt:
+        * streams/reference-implementation/count-queuing-strategy.html: Updated from spec and expectations.
+        * streams/reference-implementation/readable-stream-cancel-expected.txt:
+        * streams/reference-implementation/readable-stream-cancel.html: Updated from spec and expectations and corrected
+        timeouts to try to overcome problems in slower bots.
+        * streams/reference-implementation/readable-stream-expected.txt:
+        * streams/reference-implementation/readable-stream-reader-expected.txt:
+        * streams/reference-implementation/readable-stream-reader.html: Updated from spec and expectations.
+        * streams/reference-implementation/readable-stream-tee-expected.txt: Added.
+        * streams/reference-implementation/readable-stream-tee.html: Added.
+        * streams/reference-implementation/readable-stream-templated-expected.txt:
+        * streams/reference-implementation/readable-stream-templated.html: Updated from spec and expectations.
+        * streams/reference-implementation/readable-stream.html: Updated from spec and expectations.
+        * streams/reference-implementation/resources/byte-length-queuing-strategy.js:
+        (ByteLengthQueuingStrategy): Updated from spec.
+        (typeIsObject): Deleted.
+        (ByteLengthQueuingStrategy.prototype.shouldApplyBackpressure): Deleted.
+        * streams/reference-implementation/resources/count-queuing-strategy.js:
+        (CountQueuingStrategy): Updated from spec.
+        (typeIsObject): Deleted.
+        (CountQueuingStrategy.prototype.shouldApplyBackpressure): Deleted.
+        * streams/reference-implementation/resources/streams-utils.js:
+        (RandomPushSource.prototype.readStart.writeChunk):
+        (RandomPushSource.prototype.readStart): Renamed stream as source
+        (.stream.new.ReadableStream):
+        (sequentialReadableStream): Updated from spec.
+        (typeIsObject): Added.
+        (createDataProperty): Added.
+
 2015-06-16  Alexey Proskuryakov  <ap@apple.com>
 
         Fix a lint error by removing an obsolete expectation - this test doesn't fail

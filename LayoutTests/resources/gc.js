@@ -7,6 +7,8 @@ if (!window.gc)
     {
         if (window.GCController)
             return GCController.collect();
+
+        console.warn('Tests are running without the ability to do manual garbage collection. They will still work, but coverage will be suboptimal.');
         function gcRec(n) {
             if (n < 1)
                 return {};

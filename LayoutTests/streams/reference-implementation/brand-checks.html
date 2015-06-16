@@ -25,9 +25,10 @@ test(function() {
 function fakeReadableStream() {
     return {
         cancel: function(reason) { return Promise.resolve(); },
+        getReader: function() { return new ReadableStream(new ReadableStream()); },
         pipeThrough: function(obj, options) { return obj.readable; },
         pipeTo: function() { return Promise.resolve(); },
-        getReader: function() { return new ReadableStream(new ReadableStream()); }
+        tee: function() { return [realReadableStream(), realReadableStream()]; }
     };
 }
 
@@ -54,9 +55,7 @@ function fakeReadableStreamController() {
 
 function fakeByteLengthQueuingStrategy() {
     return {
-        shouldApplyBackpressure: function(queueSize) {
-            return queueSize > 1;
-        },
+        highWaterMark: 0,
         size: function(chunk) {
             return chunk.byteLength;
         }
@@ -64,22 +63,20 @@ function fakeByteLengthQueuingStrategy() {
 }
 
 function realByteLengthQueuingStrategy() {
-    return new ByteLengthQueuingStrategy({ "highWaterMark": 1});
+    return new ByteLengthQueuingStrategy({ highWaterMark: 1 });
 }
 
 function fakeCountQueuingStrategy() {
     return {
-        shouldApplyBackpressure: function(queueSize) {
-            return queueSize > 1;
-        },
+        highWaterMark: 0,
         size: function(chunk) {
             return 1;
         }
-    };
+    }
 }
 
 function realCountQueuingStrategy() {
-    return new CountQueuingStrategy({ "highWaterMark": 1});
+    return new CountQueuingStrategy({ highWaterMark: 1 });
 }
 
 function getterRejects(test, obj, getterName, target, endTest) {
@@ -115,6 +112,22 @@ function methodThrows(obj, methodName, target) {
 }
 
 test(function() {
+    var pipeToArguments;
+    var thisValue = {
+        pipeTo: function() {
+            pipeToArguments = arguments;
+        }
+    };
+
+    var input = { readable: {}, writable: {} };
+    var options = {};
+    var result = ReadableStream.prototype.pipeThrough.call(thisValue, input, options);
+
+    assert_array_equals(pipeToArguments, [input.writable, options], 'correct arguments should be passed to thisValue.pipeTo');
+    assert_equals(result, input.readable, 'return value should be the passed readable property');
+}, 'ReadableStream.prototype.pipeThrough works generically on its this and its arguments');
+
+test(function() {
     assert_throws(new TypeError(), function() { new ReadableStreamReader(fakeReadableStream()); }, 'Constructing a ReadableStreamReader should throw');
 }, 'ReadableStreamReader enforces a brand check on its argument');
 
@@ -134,6 +147,12 @@ var test3 = async_test('ReadableStreamReader.prototype.read enforces a brand che
 test3.step(function() {
     methodRejects(test3, ReadableStreamReader.prototype, 'read', fakeReadableStreamReader());
     methodRejects(test3, ReadableStreamReader.prototype, 'read', realReadableStream(), true);
+});
+
+var test4 = async_test('ReadableStreamReader.prototype.read enforces a brand check');
+test4.step(function() {
+    methodRejects(test4, ReadableStreamReader.prototype, 'read', fakeReadableStreamReader());
+    methodRejects(test4, ReadableStreamReader.prototype, 'read', realReadableStream(), true);
 });
 
 test(function() {
@@ -162,11 +181,6 @@ test(function() {
 }, 'ReadableStreamController.prototype.error enforces a brand check');
 
 test(function() {
-    methodThrows(ByteLengthQueuingStrategy.prototype, 'shouldApplyBackpressure', fakeByteLengthQueuingStrategy());
-    methodThrows(ByteLengthQueuingStrategy.prototype, 'shouldApplyBackpressure', realCountQueuingStrategy());
-}, 'ByteLengthQueuingStrategy.prototype.shouldApplyBackpressure enforces a brand check');
-
-test(function() {
     var thisValue = null;
     var returnValue = { 'returned from': 'byteLength getter' };
     var chunk = {
@@ -177,11 +191,6 @@ test(function() {
 
     assert_equals(ByteLengthQueuingStrategy.prototype.size.call(thisValue, chunk), returnValue);
 }, 'ByteLengthQueuingStrategy.prototype.size should work generically on its this and its arguments');
-
-test(function() {
-    methodThrows(CountQueuingStrategy.prototype, 'shouldApplyBackpressure', fakeCountQueuingStrategy());
-    methodThrows(CountQueuingStrategy.prototype, 'shouldApplyBackpressure', realByteLengthQueuingStrategy());
-}, 'CountQueuingStrategy.prototype.shouldApplyBackpressure enforces a brand check');
 
 test(function() {
     var thisValue = null;

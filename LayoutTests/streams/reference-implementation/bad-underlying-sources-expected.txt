@@ -7,14 +7,10 @@ PASS Underlying source: throwing pull getter (second pull)
 PASS Underlying source: throwing pull method (second pull) 
 FAIL Underlying source: throwing cancel getter cancel is not implemented
 FAIL Underlying source: throwing cancel method cancel is not implemented
-FAIL Underlying source: throwing strategy getter assert_throws: enqueue should throw the error function "function () { c.enqueue('a'); }" did not throw
-FAIL Underlying source: throwing strategy.size getter assert_throws: enqueue should throw the error function "function () { c.enqueue('a'); }" did not throw
-FAIL Underlying source: throwing strategy.size method assert_throws: enqueue should throw the error function "function () { c.enqueue('a'); }" did not throw
-FAIL Underlying source: throwing strategy.shouldApplyBackpressure getter assert_throws: enqueue should throw the error function "function () { c.enqueue('a'); }" did not throw
-FAIL Underlying source: throwing strategy.shouldApplyBackpressure method assert_throws: enqueue should throw the error function "function () { c.enqueue('a'); }" did not throw
-FAIL Underlying source: strategy.size returning NaN assert_unreached: enqueue didn't throw Reached unreachable code
-FAIL Underlying source: strategy.size returning -Infinity assert_unreached: enqueue didn't throw Reached unreachable code
-FAIL Underlying source: strategy.size returning +Infinity assert_unreached: enqueue didn't throw Reached unreachable code
+FAIL Underlying source: calling enqueue on an empty canceled stream should not throw cancel is not implemented
+FAIL Underlying source: calling enqueue on a non-empty canceled stream should not throw cancel is not implemented
+PASS Underlying source: calling enqueue on a closed stream should throw 
+PASS Underlying source: calling enqueue on an errored stream should throw 
 PASS Underlying source: calling close twice on an empty stream should throw the second time 
 PASS Underlying source: calling close twice on a non-empty stream should throw the second time 
 FAIL Underlying source: calling close on an empty canceled stream should not throw cancel is not implemented
@@ -22,4 +18,6 @@ FAIL Underlying source: calling close on a non-empty canceled stream should not 
 PASS Underlying source: calling close after error should throw 
 PASS Underlying source: calling error twice should throw the second time 
 PASS Underlying source: calling error after close should throw 
+PASS Underlying source: calling error and returning a rejected promise from start should cause the stream to error with the first error 
+PASS Underlying source: calling error and returning a rejected promise from pull should cause the stream to error with the first error 
 

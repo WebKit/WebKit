@@ -1,0 +1,30 @@
+
+FAIL Readable stream: throwing strategy.size getter assert_throws: construction should re-throw the error function "function () {
+        new ReadableStream({}, {
+          ..." did not throw
+FAIL Readable stream: throwing strategy.size method assert_throws: enqueue should throw the error function "function () { c.enqueue('a'); }" did not throw
+FAIL Readable stream: throwing strategy.highWaterMark getter assert_throws: construction should re-throw the error function "function () {
+        new ReadableStream({}, {
+          ..." did not throw
+FAIL Readable stream: invalid strategy.highWaterMark assert_throws: construction should throw a RangeError for -1 function "function () {
+            new ReadableStream({}, {
+      ..." did not throw
+FAIL Readable stream: negative strategy.highWaterMark assert_throws: construction should throw a RangeError function "function () {
+        new ReadableStream({}, {
+          ..." did not throw
+FAIL Readable stream: strategy.size returning NaN assert_equals: enqueue should throw a RangeError expected function "function RangeError() {
+    [native code]
+}" but got function "function AssertionError(message)
+    {
+        this.messa..."
+FAIL Readable stream: strategy.size returning -Infinity assert_equals: enqueue should throw a RangeError expected function "function RangeError() {
+    [native code]
+}" but got function "function AssertionError(message)
+    {
+        this.messa..."
+FAIL Readable stream: strategy.size returning +Infinity assert_equals: enqueue should throw a RangeError expected function "function RangeError() {
+    [native code]
+}" but got function "function AssertionError(message)
+    {
+        this.messa..."
+

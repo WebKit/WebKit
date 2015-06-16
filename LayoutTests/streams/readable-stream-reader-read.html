@@ -2,8 +2,8 @@
 <script src='../resources/testharness.js'></script>
 <script src='../resources/testharnessreport.js'></script>
 <script>
-var t1 = async_test('Reading twice on a stream that gets closed');
-t1.step(function() {
+var test1 = async_test('Reading twice on a stream that gets closed');
+test1.step(function() {
     var controller;
     var rs = new ReadableStream({
         start: function(c) {
@@ -13,18 +13,18 @@ t1.step(function() {
     var counter = 0;
     var reader = rs.getReader();
 
-    reader.read().then(t1.step_func(function(result) {
+    reader.read().then(test1.step_func(function(result) {
         assert_object_equals(result, { value: undefined, done: true }, 'read() should fulfill with close');
         assert_equals(counter, 1);
         counter++;
     }));
-    reader.read().then(t1.step_func(function(result) {
+    reader.read().then(test1.step_func(function(result) {
         assert_object_equals(result, { value: undefined, done: true }, 'read() should fulfill with close');
         assert_equals(counter, 2);
         counter++;
-        t1.done();
+        test1.done();
     }));
-    reader.closed.then(t1.step_func(function() {
+    reader.closed.then(test1.step_func(function() {
         assert_equals(counter, 0);
         counter++;
     }));
@@ -32,8 +32,8 @@ t1.step(function() {
     controller.close();
 });
 
-var t2 = async_test('Reading twice on a closed stream');
-t2.step(function() {
+var test2 = async_test('Reading twice on a closed stream');
+test2.step(function() {
     var controller;
     var rs = new ReadableStream({
         start: function(c) {
@@ -46,25 +46,25 @@ t2.step(function() {
     var counter = 0;
     var reader = rs.getReader();
 
-    reader.read().then(t2.step_func(function(result) {
+    reader.read().then(test2.step_func(function(result) {
         assert_object_equals(result, { value: undefined, done: true }, 'read() should fulfill with close');
         assert_equals(counter, 0);
         counter++;
     }));
-    reader.read().then(t2.step_func(function(result) {
+    reader.read().then(test2.step_func(function(result) {
         assert_object_equals(result, { value: undefined, done: true }, 'read() should fulfill with close');
         assert_equals(counter, 1);
         counter++;
     }));
-    reader.closed.then(t2.step_func(function() {
+    reader.closed.then(test2.step_func(function() {
         assert_equals(counter, 2);
         counter++;
-        t2.done();
+        test2.done();
     }));
 });
 
-var t3 = async_test('Reading twice on an errored stream');
-t3.step(function() {
+var test3 = async_test('Reading twice on an errored stream');
+test3.step(function() {
     var controller;
     var rs = new ReadableStream({
         start: function(c) {
@@ -78,32 +78,32 @@ t3.step(function() {
     var counter = 0;
     var reader = rs.getReader();
 
-    reader.read().then(t3.step_func(function() {
+    reader.read().then(test3.step_func(function() {
         assert_unreached('read() should reject on an errored stream');
-    }), t3.step_func(function(err) {
+    }), test3.step_func(function(err) {
         assert_equals(myError, err);
         assert_equals(counter, 0);
         counter++;
     }));
-    reader.read().then(t3.step_func(function() {
+    reader.read().then(test3.step_func(function() {
         assert_unreached('read() should reject on an errored stream');
-    }), t3.step_func(function(err) {
+    }), test3.step_func(function(err) {
         assert_equals(myError, err);
         assert_equals(counter, 1);
         counter++;
     }));
-    reader.closed.then(t3.step_func(function() {
+    reader.closed.then(test3.step_func(function() {
         assert_unreached('read() should reject on an errored stream');
-    }), t3.step_func(function(err) {
+    }), test3.step_func(function(err) {
         assert_equals(myError, err);
         assert_equals(counter, 2);
         counter++;
-        t3.done();
+        test3.done();
     }));
 });
 
-var t4 = async_test('Reading twice on a stream that gets errored');
-t4.step(function() {
+var test4 = async_test('Reading twice on a stream that gets errored');
+test4.step(function() {
     var controller;
     var rs = new ReadableStream({
         start: function(c) {
@@ -114,24 +114,24 @@ t4.step(function() {
     var counter = 0;
     var reader = rs.getReader();
 
-    reader.read().then(t4.step_func(function() {
+    reader.read().then(test4.step_func(function() {
         assert_unreached('read() should reject on an errored stream');
-    }), t4.step_func(function(err) {
+    }), test4.step_func(function(err) {
         assert_equals(myError, err);
         assert_equals(counter, 1);
         counter++;
     }));
-    reader.read().then(t4.step_func(function() {
+    reader.read().then(test4.step_func(function() {
         assert_unreached('read() should reject on an errored stream');
-    }), t4.step_func(function(err) {
+    }), test4.step_func(function(err) {
         assert_equals(myError, err);
         assert_equals(counter, 2);
         counter++;
-        t4.done();
+        test4.done();
     }));
-    reader.closed.then(t4.step_func(function() {
+    reader.closed.then(test4.step_func(function() {
         assert_unreached('read() should reject on an errored stream');
-    }), t4.step_func(function(err) {
+    }), test4.step_func(function(err) {
         assert_equals(myError, err);
         assert_equals(counter, 0);
         counter++;
@@ -141,8 +141,8 @@ t4.step(function() {
     controller.error(myError);
  });
 
-var t5 = async_test('Reading within a read promise resolve callback on a stream that gets closed');
-t5.step(function() {
+var test5 = async_test('Reading within a read promise resolve callback on a stream that gets closed');
+test5.step(function() {
     var controller;
     var rs = new ReadableStream({
         start: function(c) {
@@ -152,9 +152,9 @@ t5.step(function() {
 
     var reader = rs.getReader();
 
-    reader.read().then(t5.step_func(function() {
-        reader.read().then(t5.step_func(function() {
-            t5.done();
+    reader.read().then(test5.step_func(function() {
+        reader.read().then(test5.step_func(function() {
+            test5.done();
         }));
     }));
     controller.close();
