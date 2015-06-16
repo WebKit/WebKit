@@ -1261,3 +1261,32 @@ webkit.org/b/142548 [ Yosemite+ ] editing/selection/extend-by-character-007.html
 media/accessiblity-describes-video.html [ Pass Failure ]
 
 webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
+
+# <rdar://problem/19588632>
+[ ElCapitan+ ] http/tests/media/track-in-band-hls-metadata.html [ Timeout ]
+
+# <rdar://problem/19893462>
+[ ElCapitan+ ] sputnik/Unicode/Unicode_510/S7.6_A3.1.html [ Failure ]
+[ ElCapitan+ ] sputnik/Unicode/Unicode_510/S7.6_A3.2.html [ Failure ]
+[ ElCapitan+ ] sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html [ Failure ]
+[ ElCapitan+ ] sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html [ Failure ]
+
+# <rdar://problem/20417352>
+[ ElCapitan+ ] accessibility/deleting-iframe-destroys-axcache.html [ Pass Failure ]
+
+# <rdar://problem/20622665> WebKit media doesn't get a canplay event when load stalls
+[ ElCapitan+ ] http/tests/media/video-play-stall.html [ Failure ]
+
+# rdar://problem/21391628
+[ ElCapitan+ ] platform/mac/fast/text/font-weights.html [ Failure ]
+
+# rdar://problem/21391673
+[ ElCapitan+ ] fast/text/font-weights-zh.html [ Failure ]
+
+# <rdar://problem/21263363>
+[ ElCapitan+ ] http/tests/media/remove-while-loading.html [ Skip ]
+[ ElCapitan+ ] http/tests/media/video-accept-encoding.html [ Failure ]
+[ ElCapitan+ ] http/tests/media/video-cancel-load.html [ Skip ]
+[ ElCapitan+ ] http/tests/media/video-served-as-text.html [ Failure ]
+[ ElCapitan+ ] http/tests/media/video-throttled-load-metadata.html [ Failure ]
+[ ElCapitan+ ] http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Skip ]

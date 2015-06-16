@@ -155,6 +155,7 @@ class PlatformInfo(object):
             8: 'mountainlion',
             9: 'mavericks',
             10: 'yosemite',
+            11: 'elcapitan',
         }
         assert release_version >= min(version_strings.keys())
         return version_strings.get(release_version, 'future')

@@ -19,11 +19,13 @@ Alignment 4
     LineBreakMode: 0
     Tabs: ()
     DefaultTabInterval: 36
-    Blocks: (null)
-    Lists: (null)
+    Blocks: (
+)
+    Lists: (
+)
     BaseWritingDirection: 0
     HyphenationFactor: 0
-    TighteningFactor: 0.05
+    TighteningForTruncation: YES
     HeaderLevel: 0
 [italic]
     NSColor: #000000 (NSDeviceRGBColorSpace)

@@ -37,7 +37,7 @@ def _should_file_trigger_build(target_platform, file):
     # and start using it for their bots. Someone familiar with each platform
     # will have to figure out what the right set of directories/patterns is for
     # that platform.
-    assert(target_platform in ("mac-mavericks", "mac-yosemite", "win"))
+    assert(target_platform in ("mac-mavericks", "mac-yosemite", "mac-elcapitan", "win"))
 
     directories = [
         # Directories that shouldn't trigger builds on any bots.
@@ -56,8 +56,9 @@ def _should_file_trigger_build(target_platform, file):
         # Directories that should trigger builds on only some bots.
         ("LayoutTests/platform/mac-mavericks", ["mac-mavericks"]),
         ("LayoutTests/platform/mac-yosemite", ["mac-mavericks", "mac-yosemite"]),
-        ("LayoutTests/platform/mac-wk2", ["mac-mavericks", "mac-yosemite"]),
-        ("LayoutTests/platform/mac-wk1", ["mac-mavericks", "mac-yosemite"]),
+        ("LayoutTests/platform/mac-elcapitan", ["mac-mavericks", "mac-yosemite", "mac-elcapitan"]),
+        ("LayoutTests/platform/mac-wk2", ["mac-mavericks", "mac-yosemite", "mac-elcapitan"]),
+        ("LayoutTests/platform/mac-wk1", ["mac-mavericks", "mac-yosemite", "mac-elcapitan"]),
         ("LayoutTests/platform/mac", ["mac", "win"]),
         ("LayoutTests/platform/wk2", ["mac"]),
         ("cairo", ["gtk", "wincairo"]),

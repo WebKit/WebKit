@@ -1,3 +1,77 @@
+2015-06-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Add test expectations for El Capitan
+        https://bugs.webkit.org/show_bug.cgi?id=146005
+
+        Rubber-stamped by Dan Bernstein.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-yosemite: Added.
+        * platform/mac-yosemite/fast: Added.
+        * platform/mac-yosemite/fast/dom: Added.
+        * platform/mac-yosemite/fast/dom/52776-expected.txt: Copied from LayoutTests/platform/mac/fast/dom/52776-expected.txt.
+        * platform/mac-yosemite/fast/text: Added.
+        * platform/mac-yosemite/fast/text/complex-text-opacity-expected.txt: Copied from LayoutTests/platform/mac/fast/text/complex-text-opacity-expected.txt.
+        * platform/mac-yosemite/fast/text/hyphenate-locale-expected.txt: Copied from LayoutTests/platform/mac/fast/text/hyphenate-locale-expected.txt.
+        * platform/mac-yosemite/fast/text/international: Added.
+        * platform/mac-yosemite/fast/text/international/arabic-justify-expected.txt: Copied from LayoutTests/platform/mac/fast/text/international/arabic-justify-expected.txt.
+        * platform/mac-yosemite/fast/text/international/bidi-AN-after-L-expected.txt: Copied from LayoutTests/platform/mac/fast/text/international/bidi-AN-after-L-expected.txt.
+        * platform/mac-yosemite/fast/text/international/bidi-mirror-he-ar-expected.txt: Copied from LayoutTests/platform/mac/fast/text/international/bidi-mirror-he-ar-expected.txt.
+        * platform/mac-yosemite/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.txt: Copied from LayoutTests/platform/mac/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.txt.
+        * platform/mac-yosemite/fast/text/international/bidi-neutral-run-expected.txt: Copied from LayoutTests/platform/mac/fast/text/international/bidi-neutral-run-expected.txt.
+        * platform/mac-yosemite/fast/text/line-initial-and-final-swashes-expected.txt: Copied from LayoutTests/platform/mac/fast/text/line-initial-and-final-swashes-expected.txt.
+        * platform/mac-yosemite/js: Added.
+        * platform/mac-yosemite/js/dom: Added.
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt: Copied from LayoutTests/platform/mac/js/dom/global-constructors-attributes-expected.txt.
+        * platform/mac-yosemite/platform: Added.
+        * platform/mac-yosemite/platform/mac: Added.
+        * platform/mac-yosemite/platform/mac/editing: Added.
+        * platform/mac-yosemite/platform/mac/editing/attributed-string: Added.
+        * platform/mac-yosemite/platform/mac/editing/attributed-string/anchor-element-expected.txt: Copied from LayoutTests/platform/mac/editing/attributed-string/anchor-element-expected.txt.
+        * platform/mac-yosemite/platform/mac/editing/attributed-string/basic-expected.txt: Copied from LayoutTests/platform/mac/editing/attributed-string/basic-expected.txt.
+        * platform/mac-yosemite/platform/mac/editing/attributed-string/font-size-expected.txt: Copied from LayoutTests/platform/mac/editing/attributed-string/font-size-expected.txt.
+        * platform/mac-yosemite/platform/mac/editing/attributed-string/font-style-variant-effect-expected.txt: Copied from LayoutTests/platform/mac/editing/attributed-string/font-style-variant-effect-expected.txt.
+        * platform/mac-yosemite/platform/mac/editing/attributed-string/font-weight-expected.txt: Copied from LayoutTests/platform/mac/editing/attributed-string/font-weight-expected.txt.
+        * platform/mac-yosemite/platform/mac/editing/attributed-string/letter-spacing-expected.txt: Copied from LayoutTests/platform/mac/editing/attributed-string/letter-spacing-expected.txt.
+        * platform/mac-yosemite/platform/mac/editing/attributed-string/text-decorations-expected.txt: Copied from LayoutTests/platform/mac/editing/attributed-string/text-decorations-expected.txt.
+        * platform/mac-yosemite/platform/mac/editing/attributed-string/vertical-align-expected.txt: Copied from LayoutTests/platform/mac/editing/attributed-string/vertical-align-expected.txt.
+        * platform/mac-yosemite/platform/mac/fast: Added.
+        * platform/mac-yosemite/platform/mac/fast/text: Added.
+        * platform/mac-yosemite/platform/mac/fast/text/ligature-subdivision-expected.txt: Copied from LayoutTests/platform/mac/fast/text/ligature-subdivision-expected.txt.
+        * platform/mac-yosemite/svg: Added.
+        * platform/mac-yosemite/svg/W3C-SVG-1.1: Added.
+        * platform/mac-yosemite/svg/W3C-SVG-1.1-SE: Added.
+        * platform/mac-yosemite/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.png: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.png.
+        * platform/mac-yosemite/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt.
+        * platform/mac-yosemite/svg/W3C-SVG-1.1/text-intro-05-t-expected.txt: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/text-intro-05-t-expected.txt.
+        * platform/mac-yosemite/svg/text: Added.
+        * platform/mac-yosemite/svg/text-intro-05-t-expected.txt: Copied from LayoutTests/platform/mac/svg/text/text-intro-05-t-expected.txt.
+        * platform/mac-yosemite/svg/text/text-intro-05-t-expected.txt: Added.
+        * platform/mac/TestExpectations:
+        * platform/mac/editing/attributed-string/anchor-element-expected.txt:
+        * platform/mac/editing/attributed-string/basic-expected.txt:
+        * platform/mac/editing/attributed-string/font-size-expected.txt:
+        * platform/mac/editing/attributed-string/font-style-variant-effect-expected.txt:
+        * platform/mac/editing/attributed-string/font-weight-expected.txt:
+        * platform/mac/editing/attributed-string/letter-spacing-expected.txt:
+        * platform/mac/editing/attributed-string/text-decorations-expected.txt:
+        * platform/mac/editing/attributed-string/vertical-align-expected.txt:
+        * platform/mac/fast/dom/52776-expected.txt:
+        * platform/mac/fast/text/complex-text-opacity-expected.txt:
+        * platform/mac/fast/text/hyphenate-locale-expected.txt:
+        * platform/mac/fast/text/international/arabic-justify-expected.txt:
+        * platform/mac/fast/text/international/bidi-AN-after-L-expected.txt:
+        * platform/mac/fast/text/international/bidi-mirror-he-ar-expected.txt:
+        * platform/mac/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.txt:
+        * platform/mac/fast/text/international/bidi-neutral-run-expected.txt:
+        * platform/mac/fast/text/ligature-subdivision-expected.txt:
+        * platform/mac/fast/text/line-initial-and-final-swashes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-05-t-expected.txt:
+        * platform/mac/svg/text/text-intro-05-t-expected.txt:
+
 2015-06-15  Zalan Bujtas  <zalan@apple.com>
 
         RootInlineBox::m_lineBreakObj becomes invalid when a child renderer is removed and the line does not get marked dirty.

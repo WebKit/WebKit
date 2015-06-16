@@ -24,11 +24,13 @@ Alignment 4
     LineBreakMode: 0
     Tabs: ()
     DefaultTabInterval: 36
-    Blocks: (null)
-    Lists: (null)
+    Blocks: (
+)
+    Lists: (
+)
     BaseWritingDirection: 0
     HyphenationFactor: 0
-    TighteningFactor: 0.05
+    TighteningForTruncation: YES
     HeaderLevel: 0
 [small element]
     NSColor: #000000 (NSDeviceRGBColorSpace)
@@ -49,11 +51,13 @@ Alignment 4
     LineBreakMode: 0
     Tabs: ()
     DefaultTabInterval: 36
-    Blocks: (null)
-    Lists: (null)
+    Blocks: (
+)
+    Lists: (
+)
     BaseWritingDirection: 0
     HyphenationFactor: 0
-    TighteningFactor: 0.05
+    TighteningForTruncation: YES
     HeaderLevel: 0
 [ ]
     NSColor: #000000 (NSDeviceRGBColorSpace)
@@ -74,11 +78,13 @@ Alignment 4
     LineBreakMode: 0
     Tabs: ()
     DefaultTabInterval: 36
-    Blocks: (null)
-    Lists: (null)
+    Blocks: (
+)
+    Lists: (
+)
     BaseWritingDirection: 0
     HyphenationFactor: 0
-    TighteningFactor: 0.05
+    TighteningForTruncation: YES
     HeaderLevel: 0
 [xx-small]
     NSColor: #000000 (NSDeviceRGBColorSpace)
@@ -99,11 +105,13 @@ Alignment 4
     LineBreakMode: 0
     Tabs: ()
     DefaultTabInterval: 36
-    Blocks: (null)
-    Lists: (null)
+    Blocks: (
+)
+    Lists: (
+)
     BaseWritingDirection: 0
     HyphenationFactor: 0
-    TighteningFactor: 0.05
+    TighteningForTruncation: YES
     HeaderLevel: 0
 [ ]
     NSColor: #000000 (NSDeviceRGBColorSpace)
@@ -124,11 +132,13 @@ Alignment 4
     LineBreakMode: 0
     Tabs: ()
     DefaultTabInterval: 36
-    Blocks: (null)
-    Lists: (null)
+    Blocks: (
+)
+    Lists: (
+)
     BaseWritingDirection: 0
     HyphenationFactor: 0
-    TighteningFactor: 0.05
+    TighteningForTruncation: YES
     HeaderLevel: 0
 [x-small]
     NSColor: #000000 (NSDeviceRGBColorSpace)
@@ -149,11 +159,13 @@ Alignment 4
     LineBreakMode: 0
     Tabs: ()
     DefaultTabInterval: 36
-    Blocks: (null)
-    Lists: (null)
+    Blocks: (
+)
+    Lists: (
+)
     BaseWritingDirection: 0
     HyphenationFactor: 0
-    TighteningFactor: 0.05
+    TighteningForTruncation: YES
     HeaderLevel: 0
 [ ]
     NSColor: #000000 (NSDeviceRGBColorSpace)
@@ -174,11 +186,13 @@ Alignment 4
     LineBreakMode: 0
     Tabs: ()
     DefaultTabInterval: 36
-    Blocks: (null)
-    Lists: (null)
+    Blocks: (
+)
+    Lists: (
+)
     BaseWritingDirection: 0
     HyphenationFactor: 0
-    TighteningFactor: 0.05
+    TighteningForTruncation: YES
     HeaderLevel: 0
 [small]
     NSColor: #000000 (NSDeviceRGBColorSpace)
@@ -199,11 +213,13 @@ Alignment 4
     LineBreakMode: 0
     Tabs: ()
     DefaultTabInterval: 36
-    Blocks: (null)
-    Lists: (null)
+    Blocks: (
+)
+    Lists: (
+)
     BaseWritingDirection: 0
     HyphenationFactor: 0
-    TighteningFactor: 0.05
+    TighteningForTruncation: YES
     HeaderLevel: 0
 [ normal ]
     NSColor: #000000 (NSDeviceRGBColorSpace)
@@ -224,11 +240,13 @@ Alignment 4
     LineBreakMode: 0
     Tabs: ()
     DefaultTabInterval: 36
-    Blocks: (null)
-    Lists: (null)
+    Blocks: (
+)
+    Lists: (
+)
     BaseWritingDirection: 0
     HyphenationFactor: 0
-    TighteningFactor: 0.05
+    TighteningForTruncation: YES
     HeaderLevel: 0
 [large]
     NSColor: #000000 (NSDeviceRGBColorSpace)
@@ -249,11 +267,13 @@ Alignment 4
     LineBreakMode: 0
     Tabs: ()
     DefaultTabInterval: 36
-    Blocks: (null)
-    Lists: (null)
+    Blocks: (
+)
+    Lists: (
+)
     BaseWritingDirection: 0
     HyphenationFactor: 0
-    TighteningFactor: 0.05
+    TighteningForTruncation: YES
     HeaderLevel: 0
 [ ]
     NSColor: #000000 (NSDeviceRGBColorSpace)
@@ -274,11 +294,13 @@ Alignment 4
     LineBreakMode: 0
     Tabs: ()
     DefaultTabInterval: 36
-    Blocks: (null)
-    Lists: (null)
+    Blocks: (
+)
+    Lists: (
+)
     BaseWritingDirection: 0
     HyphenationFactor: 0
-    TighteningFactor: 0.05
+    TighteningForTruncation: YES
     HeaderLevel: 0
 [x-large]
     NSColor: #000000 (NSDeviceRGBColorSpace)
@@ -299,11 +321,13 @@ Alignment 4
     LineBreakMode: 0
     Tabs: ()
     DefaultTabInterval: 36
-    Blocks: (null)
-    Lists: (null)
+    Blocks: (
+)
+    Lists: (
+)
     BaseWritingDirection: 0
     HyphenationFactor: 0
-    TighteningFactor: 0.05
+    TighteningForTruncation: YES
     HeaderLevel: 0
 [ ]
     NSColor: #000000 (NSDeviceRGBColorSpace)
@@ -324,11 +348,13 @@ Alignment 4
     LineBreakMode: 0
     Tabs: ()
     DefaultTabInterval: 36
-    Blocks: (null)
-    Lists: (null)
+    Blocks: (
+)
+    Lists: (
+)
     BaseWritingDirection: 0
     HyphenationFactor: 0
-    TighteningFactor: 0.05
+    TighteningForTruncation: YES
     HeaderLevel: 0
 [xx-large]
     NSColor: #000000 (NSDeviceRGBColorSpace)
@@ -349,11 +375,13 @@ Alignment 4
     LineBreakMode: 0
     Tabs: ()
     DefaultTabInterval: 36
-    Blocks: (null)
-    Lists: (null)
+    Blocks: (
+)
+    Lists: (
+)
     BaseWritingDirection: 0
     HyphenationFactor: 0
-    TighteningFactor: 0.05
+    TighteningForTruncation: YES
     HeaderLevel: 0
 [ ]
     NSColor: #000000 (NSDeviceRGBColorSpace)
@@ -374,11 +402,13 @@ Alignment 4
     LineBreakMode: 0
     Tabs: ()
     DefaultTabInterval: 36
-    Blocks: (null)
-    Lists: (null)
+    Blocks: (
+)
+    Lists: (
+)
     BaseWritingDirection: 0
     HyphenationFactor: 0
-    TighteningFactor: 0.05
+    TighteningForTruncation: YES
     HeaderLevel: 0
 [5pt]
     NSColor: #000000 (NSDeviceRGBColorSpace)
@@ -399,11 +429,13 @@ Alignment 4
     LineBreakMode: 0
     Tabs: ()
     DefaultTabInterval: 36
-    Blocks: (null)
-    Lists: (null)
+    Blocks: (
+)
+    Lists: (
+)
     BaseWritingDirection: 0
     HyphenationFactor: 0
-    TighteningFactor: 0.05
+    TighteningForTruncation: YES
     HeaderLevel: 0
 [ ]
     NSColor: #000000 (NSDeviceRGBColorSpace)
@@ -424,11 +456,13 @@ Alignment 4
     LineBreakMode: 0
     Tabs: ()
     DefaultTabInterval: 36
-    Blocks: (null)
-    Lists: (null)
+    Blocks: (
+)
+    Lists: (
+)
     BaseWritingDirection: 0
     HyphenationFactor: 0
-    TighteningFactor: 0.05
+    TighteningForTruncation: YES
     HeaderLevel: 0
 [15pt]
     NSColor: #000000 (NSDeviceRGBColorSpace)
@@ -449,11 +483,13 @@ Alignment 4
     LineBreakMode: 0
     Tabs: ()
     DefaultTabInterval: 36
-    Blocks: (null)
-    Lists: (null)
+    Blocks: (
+)
+    Lists: (
+)
     BaseWritingDirection: 0
     HyphenationFactor: 0
-    TighteningFactor: 0.05
+    TighteningForTruncation: YES
     HeaderLevel: 0
 [ ]
     NSColor: #000000 (NSDeviceRGBColorSpace)
