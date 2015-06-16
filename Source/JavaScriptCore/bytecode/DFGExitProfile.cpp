@@ -44,9 +44,15 @@ bool ExitProfile::add(const ConcurrentJITLocker&, const FrequentExitSite& site)
         m_frequentExitSites->append(site);
         return true;
     }
-
-    // Always add even if it's a duplicate. The side-effect of doing this is it gives us a
-    // complete count of the number of times we've exited here. 
+    
+    // Don't add it if it's already there. This is O(n), but that's OK, because we
+    // know that the total number of places where code exits tends to not be large,
+    // and this code is only used when recompilation is triggered.
+    for (unsigned i = 0; i < m_frequentExitSites->size(); ++i) {
+        if (m_frequentExitSites->at(i) == site)
+            return false;
+    }
+    
     m_frequentExitSites->append(site);
     return true;
 }

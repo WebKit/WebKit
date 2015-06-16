@@ -179,13 +179,6 @@ public:
         return hasExitSite(locker, FrequentExitSite(bytecodeIndex, kind));
     }
     
-    size_t size() const
-    {
-        if (!m_frequentExitSites)
-            return 0;
-        return m_frequentExitSites->size();
-    }
-    
 private:
     friend class QueryableExitProfile;
     

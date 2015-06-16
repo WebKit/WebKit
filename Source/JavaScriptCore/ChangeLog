@@ -1,3 +1,20 @@
+2015-06-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out unintended JSC change from https://trac.webkit.org/changeset/185425.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::hasExitSite):
+        (JSC::CodeBlock::exitProfile):
+        (JSC::CodeBlock::numberOfExitSites): Deleted.
+        * bytecode/DFGExitProfile.cpp:
+        (JSC::DFG::ExitProfile::add):
+        * bytecode/DFGExitProfile.h:
+        (JSC::DFG::ExitProfile::hasExitSite):
+        (JSC::DFG::ExitProfile::size): Deleted.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::inliningCost):
+        * runtime/Options.h:
+
 2015-06-16  Mark Lam  <mark.lam@apple.com>
 
         Use NakedPtr<Exception>& to return exception results.

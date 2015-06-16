@@ -1273,7 +1273,7 @@ unsigned ByteCodeParser::inliningCost(CallVariant callee, int argumentCountInclu
         dataLog("    Inlining should be possible.\n");
     
     // It might be possible to inline.
-    return codeBlock->instructionCount() * pow(1 + codeBlock->numberOfExitSites(), Options::exitSitePowerForInlineCost());
+    return codeBlock->instructionCount();
 }
 
 template<typename ChecksFunctor>

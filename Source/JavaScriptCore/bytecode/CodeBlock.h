@@ -537,12 +537,6 @@ public:
         ConcurrentJITLocker locker(m_lock);
         return hasExitSite(locker, site);
     }
-    
-    size_t numberOfExitSites() const
-    {
-        ConcurrentJITLocker locker(m_lock);
-        return m_exitProfile.size();
-    }
 
     DFG::ExitProfile& exitProfile() { return m_exitProfile; }
 
