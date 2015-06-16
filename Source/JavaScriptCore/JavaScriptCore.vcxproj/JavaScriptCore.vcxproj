@@ -678,7 +678,6 @@
     <ClCompile Include="..\runtime\ArrayBufferNeuteringWatchpoint.cpp" />
     <ClCompile Include="..\runtime\ArrayBufferView.cpp" />
     <ClCompile Include="..\runtime\ArrayConstructor.cpp" />
-    <ClCompile Include="..\runtime\ArrayIteratorConstructor.cpp" />
     <ClCompile Include="..\runtime\ArrayIteratorPrototype.cpp" />
     <ClCompile Include="..\runtime\ArrayPrototype.cpp" />
     <ClCompile Include="..\runtime\BasicBlockLocation.cpp" />
@@ -730,6 +729,7 @@
     <ClCompile Include="..\runtime\IntendedStructureChain.cpp" />
     <ClCompile Include="..\runtime\InternalFunction.cpp" />
     <ClCompile Include="..\runtime\IteratorOperations.cpp" />
+    <ClCompile Include="..\runtime\IteratorPrototype.cpp" />
     <ClCompile Include="..\runtime\JSAPIValueWrapper.cpp" />
     <ClCompile Include="..\runtime\JSLexicalEnvironment.cpp" />
     <ClCompile Include="..\runtime\JSArray.cpp" />
@@ -786,7 +786,6 @@
     <ClCompile Include="..\runtime\LiteralParser.cpp" />
     <ClCompile Include="..\runtime\Lookup.cpp" />
     <ClCompile Include="..\runtime\MapConstructor.cpp" />
-    <ClCompile Include="..\runtime\MapIteratorConstructor.cpp" />
     <ClCompile Include="..\runtime\MapIteratorPrototype.cpp" />
     <ClCompile Include="..\runtime\MapPrototype.cpp" />
     <ClCompile Include="..\runtime\MathCommon.cpp" />
@@ -817,7 +816,6 @@
     <ClCompile Include="..\runtime\RuntimeType.cpp" />
     <ClCompile Include="..\runtime\SamplingCounter.cpp" />
     <ClCompile Include="..\runtime\SetConstructor.cpp" />
-    <ClCompile Include="..\runtime\SetIteratorConstructor.cpp" />
     <ClCompile Include="..\runtime\SetIteratorPrototype.cpp" />
     <ClCompile Include="..\runtime\SetPrototype.cpp" />
     <ClCompile Include="..\runtime\ScopeOffset.cpp" />
@@ -829,7 +827,6 @@
     <ClCompile Include="..\runtime\StrictEvalActivation.cpp" />
     <ClCompile Include="..\runtime\StringConstructor.cpp" />
     <ClCompile Include="..\runtime\StringObject.cpp" />
-    <ClCompile Include="..\runtime\StringIteratorConstructor.cpp" />
     <ClCompile Include="..\runtime\StringIteratorPrototype.cpp" />
     <ClCompile Include="..\runtime\StringPrototype.cpp" />
     <ClCompile Include="..\runtime\StringRecursionChecker.cpp" />
@@ -1461,7 +1458,6 @@
     <ClInclude Include="..\runtime\ArrayBufferView.h" />
     <ClInclude Include="..\runtime\ArrayConstructor.h" />
     <ClInclude Include="..\runtime\ArrayConventions.h" />
-    <ClInclude Include="..\runtime\ArrayIteratorConstructor.h" />
     <ClInclude Include="..\runtime\ArrayIteratorPrototype.h" />
     <ClInclude Include="..\runtime\ArrayPrototype.h" />
     <ClInclude Include="..\runtime\ArrayStorage.h" />
@@ -1536,6 +1532,7 @@
     <ClInclude Include="..\runtime\Intrinsic.h" />
     <ClInclude Include="..\runtime\IterationStatus.h" />
     <ClInclude Include="..\runtime\IteratorOperations.h" />
+    <ClInclude Include="..\runtime\IteratorPrototype.h" />
     <ClInclude Include="..\runtime\JSAPIValueWrapper.h" />
     <ClInclude Include="..\runtime\JSLexicalEnvironment.h" />
     <ClInclude Include="..\runtime\JSArray.h" />
@@ -1617,7 +1614,6 @@
     <ClInclude Include="..\runtime\MapConstructor.h" />
     <ClInclude Include="..\runtime\MapData.h" />
     <ClInclude Include="..\runtime\MapDataInlines.h" />
-    <ClInclude Include="..\runtime\MapIteratorConstructor.h" />
     <ClInclude Include="..\runtime\MapIteratorPrototype.h" />
     <ClInclude Include="..\runtime\MapPrototype.h" />
     <ClInclude Include="..\runtime\MatchResult.h" />
@@ -1665,7 +1661,6 @@
     <ClInclude Include="..\runtime\ScopedArguments.h" />
     <ClInclude Include="..\runtime\ScopedArgumentsTable.h" />
     <ClInclude Include="..\runtime\SetConstructor.h" />
-    <ClInclude Include="..\runtime\SetIteratorConstructor.h" />
     <ClInclude Include="..\runtime\SetIteratorPrototype.h" />
     <ClInclude Include="..\runtime\SetPrototype.h" />
     <ClInclude Include="..\runtime\SimpleTypedArrayController.h" />
@@ -1674,7 +1669,6 @@
     <ClInclude Include="..\runtime\StackAlignment.h" />
     <ClInclude Include="..\runtime\StrictEvalActivation.h" />
     <ClInclude Include="..\runtime\StringConstructor.h" />
-    <ClInclude Include="..\runtime\StringIteratorConstructor.h" />
     <ClInclude Include="..\runtime\StringIteratorPrototype.h" />
     <ClInclude Include="..\runtime\StringObject.h" />
     <ClInclude Include="..\runtime\StringPrototype.h" />

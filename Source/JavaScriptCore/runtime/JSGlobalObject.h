@@ -105,21 +105,28 @@ struct HashTable;
     DEFINE_STANDARD_BUILTIN(macro, WeakMap, weakMap) \
     DEFINE_STANDARD_BUILTIN(macro, WeakSet, weakSet) \
 
-#define FOR_EACH_SIMPLE_BUILTIN_TYPE(macro) \
-    FOR_EACH_SIMPLE_BUILTIN_TYPE_WITH_CONSTRUCTOR(macro) \
-    FOR_EACH_EXPERIMENTAL_BUILTIN_TYPE_WITH_CONSTRUCTOR(macro) \
+#define FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(macro) \
     DEFINE_STANDARD_BUILTIN(macro, ArrayIterator, arrayIterator) \
     DEFINE_STANDARD_BUILTIN(macro, MapIterator, mapIterator) \
     DEFINE_STANDARD_BUILTIN(macro, SetIterator, setIterator) \
     DEFINE_STANDARD_BUILTIN(macro, StringIterator, stringIterator) \
 
+#define FOR_EACH_BUILTIN_ITERATOR_TYPE(macro) \
+    DEFINE_STANDARD_BUILTIN(macro, Iterator, iterator) \
+    FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(macro) \
+
+#define FOR_EACH_SIMPLE_BUILTIN_TYPE(macro) \
+    FOR_EACH_SIMPLE_BUILTIN_TYPE_WITH_CONSTRUCTOR(macro) \
+    FOR_EACH_EXPERIMENTAL_BUILTIN_TYPE_WITH_CONSTRUCTOR(macro) \
 
 #define DECLARE_SIMPLE_BUILTIN_TYPE(capitalName, lowerName, properName, instanceType, jsName) \
     class JS ## capitalName; \
     class capitalName ## Prototype; \
     class capitalName ## Constructor;
 
+class IteratorPrototype;
 FOR_EACH_SIMPLE_BUILTIN_TYPE(DECLARE_SIMPLE_BUILTIN_TYPE)
+FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(DECLARE_SIMPLE_BUILTIN_TYPE)
 
 #undef DECLARE_SIMPLE_BUILTIN_TYPE
 
@@ -200,6 +207,7 @@ protected:
     WriteBarrier<FunctionPrototype> m_functionPrototype;
     WriteBarrier<ArrayPrototype> m_arrayPrototype;
     WriteBarrier<RegExpPrototype> m_regExpPrototype;
+    WriteBarrier<IteratorPrototype> m_iteratorPrototype;
 #if ENABLE(PROMISES)
     WriteBarrier<JSPromisePrototype> m_promisePrototype;
 #endif
@@ -249,6 +257,7 @@ protected:
     WriteBarrier<Structure> m_ ## properName ## Structure;
 
     FOR_EACH_SIMPLE_BUILTIN_TYPE(DEFINE_STORAGE_FOR_SIMPLE_TYPE)
+    FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(DEFINE_STORAGE_FOR_SIMPLE_TYPE)
 
 #undef DEFINE_STORAGE_FOR_SIMPLE_TYPE
 
@@ -419,6 +428,7 @@ public:
     DatePrototype* datePrototype() const { return m_datePrototype.get(); }
     RegExpPrototype* regExpPrototype() const { return m_regExpPrototype.get(); }
     ErrorPrototype* errorPrototype() const { return m_errorPrototype.get(); }
+    IteratorPrototype* iteratorPrototype() const { return m_iteratorPrototype.get(); }
 #if ENABLE(PROMISES)
     JSPromisePrototype* promisePrototype() const { return m_promisePrototype.get(); }
 #endif
@@ -508,6 +518,7 @@ public:
     Structure* properName ## Structure() { return m_ ## properName ## Structure.get(); }
 
     FOR_EACH_SIMPLE_BUILTIN_TYPE(DEFINE_ACCESSORS_FOR_SIMPLE_TYPE)
+    FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(DEFINE_ACCESSORS_FOR_SIMPLE_TYPE)
 
 #undef DEFINE_ACCESSORS_FOR_SIMPLE_TYPE
 

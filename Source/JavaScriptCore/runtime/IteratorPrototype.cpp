@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple, Inc. All rights reserved.
+ * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,27 +20,31 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
-#include "MapIteratorConstructor.h"
+#include "IteratorPrototype.h"
 
+#include "JSCBuiltins.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
 #include "JSGlobalObject.h"
-#include "JSMapIterator.h"
-#include "MapIteratorPrototype.h"
+#include "ObjectConstructor.h"
 #include "StructureInlines.h"
 
 namespace JSC {
 
-const ClassInfo MapIteratorConstructor::s_info = { "MapIterator Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(MapIteratorConstructor) };
+const ClassInfo IteratorPrototype::s_info = { "Iterator", &Base::s_info, nullptr, CREATE_METHOD_TABLE(IteratorPrototype) };
 
-void MapIteratorConstructor::finishCreation(VM& vm, MapIteratorPrototype* prototype)
+void IteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
+    ASSERT(inherits(info()));
+    vm.prototypeMap.addPrototype(this);
+
+    JSFunction* iteratorPrototypeFunction = JSFunction::createBuiltinFunction(vm, iteratorPrototypeSymbolIteratorCodeGenerator(vm), globalObject, "[Symbol.iterator]");
+    putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, iteratorPrototypeFunction, DontEnum);
 }
 
-}
+} // namespace JSC

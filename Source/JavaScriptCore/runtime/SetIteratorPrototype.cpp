@@ -36,9 +36,7 @@ namespace JSC {
 
 const ClassInfo SetIteratorPrototype::s_info = { "Set Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(SetIteratorPrototype) };
 
-static EncodedJSValue JSC_HOST_CALL SetIteratorPrototypeFuncIterator(ExecState*);
 static EncodedJSValue JSC_HOST_CALL SetIteratorPrototypeFuncNext(ExecState*);
-
 
 void SetIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
@@ -46,13 +44,7 @@ void SetIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     ASSERT(inherits(info()));
     vm.prototypeMap.addPrototype(this);
 
-    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorSymbol, SetIteratorPrototypeFuncIterator, DontEnum, 0);
     JSC_NATIVE_FUNCTION(vm.propertyNames->next, SetIteratorPrototypeFuncNext, DontEnum, 0);
-}
-
-EncodedJSValue JSC_HOST_CALL SetIteratorPrototypeFuncIterator(CallFrame* callFrame)
-{
-    return JSValue::encode(callFrame->thisValue());
 }
 
 EncodedJSValue JSC_HOST_CALL SetIteratorPrototypeFuncNext(CallFrame* callFrame)

@@ -28,8 +28,6 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL arrayIteratorProtoFuncIterator(ExecState*);
-
 }
 
 #include "ArrayIteratorPrototype.lut.h"
@@ -54,12 +52,11 @@ const ClassInfo ArrayIteratorPrototype::s_info = { "Array Iterator", &Base::s_in
 @end
 */
 
-void ArrayIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
+void ArrayIteratorPrototype::finishCreation(VM& vm, JSGlobalObject*)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     vm.prototypeMap.addPrototype(this);
-    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorSymbol, arrayIteratorProtoFuncIterator, DontEnum, 0);
 }
 
 bool ArrayIteratorPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -68,10 +65,5 @@ bool ArrayIteratorPrototype::getOwnPropertySlot(JSObject* object, ExecState* exe
 }
 
 // ------------------------------ Array Functions ----------------------------
-
-EncodedJSValue JSC_HOST_CALL arrayIteratorProtoFuncIterator(ExecState* exec)
-{
-    return JSValue::encode(exec->thisValue());
-}
 
 } // namespace JSC

@@ -36,8 +36,6 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL stringIteratorPrototypeIterator(ExecState*);
-
 }
 
 #include "StringIteratorPrototype.lut.h"
@@ -52,23 +50,16 @@ const ClassInfo StringIteratorPrototype::s_info = { "String Iterator", &Base::s_
 @end
 */
 
-void StringIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
+void StringIteratorPrototype::finishCreation(VM& vm, JSGlobalObject*)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     vm.prototypeMap.addPrototype(this);
-
-    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorSymbol, stringIteratorPrototypeIterator, DontEnum, 0);
 }
 
 bool StringIteratorPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     return getStaticFunctionSlot<Base>(exec, stringIteratorPrototypeTable, jsCast<StringIteratorPrototype*>(object), propertyName, slot);
-}
-
-EncodedJSValue JSC_HOST_CALL stringIteratorPrototypeIterator(CallFrame* callFrame)
-{
-    return JSValue::encode(callFrame->thisValue());
 }
 
 } // namespace JSC

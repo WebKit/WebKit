@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple, Inc. All rights reserved.
+ * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,24 +20,43 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ArrayIteratorConstructor.h"
+#ifndef IteratorPrototype_h
+#define IteratorPrototype_h
 
-#include "JSCJSValueInlines.h"
-#include "JSCellInlines.h"
-#include "JSGlobalObject.h"
-#include "StructureInlines.h"
+#include "JSObject.h"
 
 namespace JSC {
 
-const ClassInfo ArrayIteratorConstructor::s_info = { "Function", &Base::s_info, 0, CREATE_METHOD_TABLE(ArrayIteratorConstructor) };
+class IteratorPrototype : public JSNonFinalObject {
+public:
+    typedef JSNonFinalObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags;
 
-void ArrayIteratorConstructor::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
+    static IteratorPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
+    {
+        IteratorPrototype* prototype = new (NotNull, allocateCell<IteratorPrototype>(vm.heap)) IteratorPrototype(vm, structure);
+        prototype->finishCreation(vm, globalObject);
+        return prototype;
+    }
+
+    DECLARE_INFO;
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    }
+
+private:
+    IteratorPrototype(VM& vm, Structure* structure)
+        : Base(vm, structure)
+    {
+    }
+    void finishCreation(VM&, JSGlobalObject*);
+};
+
 }
 
-}
+#endif // !defined(IteratorPrototype_h)

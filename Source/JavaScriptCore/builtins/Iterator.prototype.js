@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple, Inc. All rights reserved.
+ * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,44 +20,11 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MapIteratorConstructor_h
-#define MapIteratorConstructor_h
-
-#include "JSObject.h"
-
-namespace JSC {
-
-class MapIteratorPrototype;
-
-class MapIteratorConstructor : public JSNonFinalObject {
-public:
-    typedef JSNonFinalObject Base;
-
-    static MapIteratorConstructor* create(VM& vm, Structure* structure, MapIteratorPrototype* prototype)
-    {
-        MapIteratorConstructor* constructor = new (NotNull, allocateCell<MapIteratorConstructor>(vm.heap)) MapIteratorConstructor(vm, structure);
-        constructor->finishCreation(vm, prototype);
-        return constructor;
-    }
-
-    DECLARE_INFO;
-
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-    {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
-    }
-
-private:
-    MapIteratorConstructor(VM& vm, Structure* structure)
-        : Base(vm, structure)
-    {
-    }
-    void finishCreation(VM&, MapIteratorPrototype*);
-};
-
+function SymbolIterator()
+{
+    'use strict';
+    return this;
 }
-
-#endif // !defined(MapConstructor_h)

@@ -31,7 +31,6 @@
 #include "JSGlobalObject.h"
 
 #include "ArrayConstructor.h"
-#include "ArrayIteratorConstructor.h"
 #include "ArrayIteratorPrototype.h"
 #include "ArrayPrototype.h"
 #include "BooleanConstructor.h"
@@ -54,6 +53,7 @@
 #include "GetterSetter.h"
 #include "HeapIterationScope.h"
 #include "Interpreter.h"
+#include "IteratorPrototype.h"
 #include "JSAPIWrapperObject.h"
 #include "JSArrayBuffer.h"
 #include "JSArrayBufferConstructor.h"
@@ -94,7 +94,6 @@
 #include "LegacyProfiler.h"
 #include "Lookup.h"
 #include "MapConstructor.h"
-#include "MapIteratorConstructor.h"
 #include "MapIteratorPrototype.h"
 #include "MapPrototype.h"
 #include "MathObject.h"
@@ -115,12 +114,10 @@
 #include "RegExpPrototype.h"
 #include "ScopedArguments.h"
 #include "SetConstructor.h"
-#include "SetIteratorConstructor.h"
 #include "SetIteratorPrototype.h"
 #include "SetPrototype.h"
 #include "StrictEvalActivation.h"
 #include "StringConstructor.h"
-#include "StringIteratorConstructor.h"
 #include "StringIteratorPrototype.h"
 #include "StringPrototype.h"
 #include "Symbol.h"
@@ -335,7 +332,17 @@ m_ ## properName ## Structure.set(vm, this, instanceType::createStructure(vm, th
     FOR_EACH_SIMPLE_BUILTIN_TYPE(CREATE_PROTOTYPE_FOR_SIMPLE_TYPE)
     
 #undef CREATE_PROTOTYPE_FOR_SIMPLE_TYPE
+
+    m_iteratorPrototype.set(vm, this, IteratorPrototype::create(vm, this, IteratorPrototype::createStructure(vm, this, m_objectPrototype.get())));
+
+#define CREATE_PROTOTYPE_FOR_DERIVED_ITERATOR_TYPE(capitalName, lowerName, properName, instanceType, jsName) \
+m_ ## lowerName ## Prototype.set(vm, this, capitalName##Prototype::create(vm, this, capitalName##Prototype::createStructure(vm, this, m_iteratorPrototype.get()))); \
+m_ ## properName ## Structure.set(vm, this, instanceType::createStructure(vm, this, m_ ## lowerName ## Prototype.get()));
     
+    FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(CREATE_PROTOTYPE_FOR_DERIVED_ITERATOR_TYPE)
+    
+#undef CREATE_PROTOTYPE_FOR_DERIVED_ITERATOR_TYPE
+
     // Constructors
     
     ObjectConstructor* objectConstructor = ObjectConstructor::create(vm, this, ObjectConstructor::createStructure(vm, this, m_functionPrototype.get()), m_objectPrototype.get());
@@ -737,6 +744,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_functionPrototype);
     visitor.append(&thisObject->m_arrayPrototype);
     visitor.append(&thisObject->m_errorPrototype);
+    visitor.append(&thisObject->m_iteratorPrototype);
 #if ENABLE(PROMISES)
     visitor.append(&thisObject->m_promisePrototype);
 #endif
@@ -783,6 +791,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_ ## properName ## Structure); \
 
     FOR_EACH_SIMPLE_BUILTIN_TYPE(VISIT_SIMPLE_TYPE)
+    FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(VISIT_SIMPLE_TYPE)
 
 #undef VISIT_SIMPLE_TYPE
 

@@ -75,6 +75,7 @@ public:
     static JSFunction* create(VM&, FunctionExecutable*, JSScope*);
 
     static JSFunction* createBuiltinFunction(VM&, FunctionExecutable*, JSGlobalObject*);
+    static JSFunction* createBuiltinFunction(VM&, FunctionExecutable*, JSGlobalObject*, const String& name);
 
     JS_EXPORT_PRIVATE String name(ExecState*);
     JS_EXPORT_PRIVATE String displayName(ExecState*);

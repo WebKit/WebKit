@@ -36,9 +36,7 @@ namespace JSC {
 
 const ClassInfo MapIteratorPrototype::s_info = { "Map Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(MapIteratorPrototype) };
 
-static EncodedJSValue JSC_HOST_CALL MapIteratorPrototypeFuncIterator(ExecState*);
 static EncodedJSValue JSC_HOST_CALL MapIteratorPrototypeFuncNext(ExecState*);
-
 
 void MapIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
@@ -46,13 +44,7 @@ void MapIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     ASSERT(inherits(info()));
     vm.prototypeMap.addPrototype(this);
 
-    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorSymbol, MapIteratorPrototypeFuncIterator, DontEnum, 0);
     JSC_NATIVE_FUNCTION(vm.propertyNames->next, MapIteratorPrototypeFuncNext, DontEnum, 0);
-}
-
-EncodedJSValue JSC_HOST_CALL MapIteratorPrototypeFuncIterator(CallFrame* callFrame)
-{
-    return JSValue::encode(callFrame->thisValue());
 }
 
 EncodedJSValue JSC_HOST_CALL MapIteratorPrototypeFuncNext(CallFrame* callFrame)

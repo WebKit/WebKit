@@ -1,3 +1,80 @@
+2015-06-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Introduce %IteratorPrototype% and drop all XXXIteratorConstructor
+        https://bugs.webkit.org/show_bug.cgi?id=145963
+
+        Reviewed by Darin Adler.
+
+        ES6 iterators inherit %IteratorPrototype%.
+        And these prototype objects of derived iterators don't have @@iterator methods.
+        Instead they use the %IteratorPrototype%[@@iterator] method.
+
+        To encourage inlining in for-of statement, we define this method in JS builtins.
+
+        And these iterator prototype objects don't have any constructor function.
+        This patch drops them (like StringIteratorConstructor).
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/Iterator.prototype.js: Renamed from Source/JavaScriptCore/runtime/StringIteratorConstructor.cpp.
+        (SymbolIterator):
+        * runtime/ArrayIteratorConstructor.cpp:
+        (JSC::ArrayIteratorConstructor::finishCreation): Deleted.
+        * runtime/ArrayIteratorConstructor.h: Removed.
+        (JSC::ArrayIteratorConstructor::create): Deleted.
+        (JSC::ArrayIteratorConstructor::createStructure): Deleted.
+        (JSC::ArrayIteratorConstructor::ArrayIteratorConstructor): Deleted.
+        * runtime/ArrayIteratorPrototype.cpp:
+        (JSC::ArrayIteratorPrototype::finishCreation):
+        (JSC::arrayIteratorProtoFuncIterator): Deleted.
+        * runtime/IteratorPrototype.cpp: Renamed from Source/JavaScriptCore/runtime/ArrayIteratorConstructor.cpp.
+        (JSC::IteratorPrototype::finishCreation):
+        * runtime/IteratorPrototype.h: Renamed from Source/JavaScriptCore/runtime/SetIteratorConstructor.h.
+        (JSC::IteratorPrototype::create):
+        (JSC::IteratorPrototype::createStructure):
+        (JSC::IteratorPrototype::IteratorPrototype):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::createBuiltinFunction):
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::iteratorPrototype):
+        * runtime/MapIteratorConstructor.cpp: Removed.
+        (JSC::MapIteratorConstructor::finishCreation): Deleted.
+        * runtime/MapIteratorConstructor.h: Removed.
+        (JSC::MapIteratorConstructor::create): Deleted.
+        (JSC::MapIteratorConstructor::createStructure): Deleted.
+        (JSC::MapIteratorConstructor::MapIteratorConstructor): Deleted.
+        * runtime/MapIteratorPrototype.cpp:
+        (JSC::MapIteratorPrototype::finishCreation): Deleted.
+        (JSC::MapIteratorPrototypeFuncIterator): Deleted.
+        * runtime/SetIteratorConstructor.cpp: Removed.
+        (JSC::SetIteratorConstructor::finishCreation): Deleted.
+        * runtime/SetIteratorConstructor.h:
+        (JSC::SetIteratorConstructor::create): Deleted.
+        (JSC::SetIteratorConstructor::createStructure): Deleted.
+        (JSC::SetIteratorConstructor::SetIteratorConstructor): Deleted.
+        * runtime/SetIteratorPrototype.cpp:
+        (JSC::SetIteratorPrototype::finishCreation): Deleted.
+        (JSC::SetIteratorPrototypeFuncIterator): Deleted.
+        * runtime/StringIteratorConstructor.cpp:
+        (JSC::StringIteratorConstructor::finishCreation): Deleted.
+        * runtime/StringIteratorConstructor.h: Removed.
+        (JSC::StringIteratorConstructor::create): Deleted.
+        (JSC::StringIteratorConstructor::createStructure): Deleted.
+        (JSC::StringIteratorConstructor::StringIteratorConstructor): Deleted.
+        * runtime/StringIteratorPrototype.cpp:
+        (JSC::StringIteratorPrototype::finishCreation):
+        (JSC::stringIteratorPrototypeIterator): Deleted.
+        * tests/stress/iterator-prototype.js: Added.
+        (shouldBe):
+        (inheritIteratorPrototype):
+        (testChain):
+
 2015-06-15  Michael Saboff  <msaboff@apple.com>
 
         JIT bug - fails when inspector closed, works when open

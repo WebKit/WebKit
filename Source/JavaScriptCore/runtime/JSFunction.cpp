@@ -137,6 +137,14 @@ JSFunction* JSFunction::createBuiltinFunction(VM& vm, FunctionExecutable* execut
     return function;
 }
 
+JSFunction* JSFunction::createBuiltinFunction(VM& vm, FunctionExecutable* executable, JSGlobalObject* globalObject, const String& name)
+{
+    JSFunction* function = create(vm, executable, globalObject);
+    function->putDirect(vm, vm.propertyNames->name, jsString(&vm, name), DontDelete | ReadOnly | DontEnum);
+    function->putDirect(vm, vm.propertyNames->length, jsNumber(executable->parameterCount()), DontDelete | ReadOnly | DontEnum);
+    return function;
+}
+
 FunctionRareData* JSFunction::allocateAndInitializeRareData(ExecState* exec, size_t inlineCapacity)
 {
     ASSERT(!m_rareData);
