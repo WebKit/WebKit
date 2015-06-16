@@ -1,3 +1,83 @@
+2015-06-16  Mark Lam  <mark.lam@apple.com>
+
+        Use NakedPtr<Exception>& to return exception results.
+        https://bugs.webkit.org/show_bug.cgi?id=145870
+
+        Reviewed by Anders Carlsson and Filip Pizlo.
+
+        Before r185259, calls into the VM takes a JSValue* exception result argument for
+        returning any uncaught exception that may have been thrown while executing JS code.
+        As a result, clients of the VM functions will declare a local JSValue exception
+        result which is automatically initialized to a null value (i.e. the empty value,
+        not the JS null value).
+
+        With r185259, the VM functions were changed to take an Exception*& exception result
+        instead, and the VM functions are responsible for initializing the exception result
+        to null if no exception is thrown.
+
+        This introduces 2 issues:
+
+        1. the VM functions are vulnerable to modifications that may add early returns
+           before the exception result is nullified.  This can result in the exception
+           result being used without initialization.
+
+        2. Previously, a client could technically use the same exception result for more
+           than one calls into the VM functions.  If an earlier call sets it to a thrown
+           value, the thrown value will stick unless a subsequent call throws a different
+           exception.
+
+           With the new Exception*& exception result, the VM functions will always clear
+           the exception result before proceeding.  As a result, the client's exception
+           result will be null after the second call even though the first call saw an
+           exception thrown.  This is a change in the expected behavior.
+
+        To fix these issues, we'll introduce a NakedPtr smart pointer whose sole purpose
+        is to guarantee that the pointer is initialized.  The VM functions will now take
+        a NakedPtr<Exception>& instead of the Exception*&.  This ensures that the
+        exception result is initialized.
+
+        The VM functions be also reverted to only set the exception result if a new
+        exception is thrown.
+
+        * API/JSBase.cpp:
+        (JSEvaluateScript):
+        * API/JSScriptRef.cpp:
+        * bindings/ScriptFunctionCall.cpp:
+        (Deprecated::ScriptFunctionCall::call):
+        * bindings/ScriptFunctionCall.h:
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::hasBreakpoint):
+        * debugger/Debugger.h:
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::thisValue):
+        (JSC::DebuggerCallFrame::evaluate):
+        * debugger/DebuggerCallFrame.h:
+        (JSC::DebuggerCallFrame::isValid):
+        * inspector/InjectedScriptManager.cpp:
+        (Inspector::InjectedScriptManager::createInjectedScript):
+        * inspector/InspectorEnvironment.h:
+        * inspector/JSJavaScriptCallFrame.cpp:
+        (Inspector::JSJavaScriptCallFrame::evaluate):
+        * inspector/JavaScriptCallFrame.h:
+        (Inspector::JavaScriptCallFrame::vmEntryGlobalObject):
+        (Inspector::JavaScriptCallFrame::thisValue):
+        (Inspector::JavaScriptCallFrame::evaluate):
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::evaluateBreakpointAction):
+        * jsc.cpp:
+        (functionRun):
+        (functionLoad):
+        (runWithScripts):
+        (runInteractive):
+        * runtime/CallData.cpp:
+        (JSC::call):
+        * runtime/CallData.h:
+        * runtime/Completion.cpp:
+        (JSC::checkSyntax):
+        (JSC::evaluate):
+        * runtime/Completion.h:
+        (JSC::evaluate):
+
 2015-06-15  Filip Pizlo  <fpizlo@apple.com>
 
         FTL boolify() UntypedUse is wrong in the masquerades-as-undefined case

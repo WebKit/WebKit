@@ -99,7 +99,7 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)
     if (isExecutionForbidden())
         return;
 
-    Exception* exception;
+    NakedPtr<Exception> exception;
     evaluate(sourceCode, exception);
     if (exception) {
         JSLockHolder lock(vm());
@@ -107,9 +107,8 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)
     }
 }
 
-void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, JSC::Exception*& returnedException)
+void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, NakedPtr<JSC::Exception>& returnedException)
 {
-    returnedException = nullptr;
     if (isExecutionForbidden())
         return;
 
@@ -118,28 +117,26 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, JSC::E
     ExecState* exec = m_workerGlobalScopeWrapper->globalExec();
     JSLockHolder lock(exec);
 
-    JSC::Exception* evaluationException;
-    JSC::evaluate(exec, sourceCode.jsSourceCode(), m_workerGlobalScopeWrapper->globalThis(), evaluationException);
+    JSC::evaluate(exec, sourceCode.jsSourceCode(), m_workerGlobalScopeWrapper->globalThis(), returnedException);
 
     VM& vm = exec->vm();
-    if ((evaluationException && isTerminatedExecutionException(evaluationException)) 
+    if ((returnedException && isTerminatedExecutionException(returnedException))
         || (vm.watchdog && vm.watchdog->didFire())) {
         forbidExecution();
         return;
     }
 
-    if (evaluationException) {
+    if (returnedException) {
         String errorMessage;
         int lineNumber = 0;
         int columnNumber = 0;
         String sourceURL = sourceCode.url().string();
         if (m_workerGlobalScope->sanitizeScriptError(errorMessage, lineNumber, columnNumber, sourceURL, sourceCode.cachedScript())) {
             vm.throwException(exec, createError(exec, errorMessage.impl()));
-            evaluationException = vm.exception();
+            returnedException = vm.exception();
             vm.clearException();
         }
     }
-    returnedException = evaluationException;
 }
 
 void WorkerScriptController::setException(JSC::Exception* exception)

@@ -25,7 +25,6 @@
 #include "CodeBlock.h"
 #include "DebuggerCallFrame.h"
 #include "Error.h"
-
 #include "HeapIterationScope.h"
 #include "Interpreter.h"
 #include "JSCJSValueInlines.h"
@@ -487,7 +486,7 @@ bool Debugger::hasBreakpoint(SourceID sourceID, const TextPosition& position, Br
     // so make it looks like the debugger is already paused.
     TemporaryPausedState pausedState(*this);
 
-    Exception* exception;
+    NakedPtr<Exception> exception;
     DebuggerCallFrame* debuggerCallFrame = currentDebuggerCallFrame();
     JSValue result = debuggerCallFrame->evaluate(breakpoint->condition, exception);
 

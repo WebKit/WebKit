@@ -1,3 +1,18 @@
+2015-06-16  Mark Lam  <mark.lam@apple.com>
+
+        Use NakedPtr<Exception>& to return exception results.
+        https://bugs.webkit.org/show_bug.cgi?id=145870
+
+        Reviewed by Anders Carlsson and Filip Pizlo.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj.filters:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/NakedPtr.cpp: Added.
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::nakedPtrFoo):
+
 2015-06-16  Tobias Reiss  <tobi+webkit@basecode.de>
 
         Unreviewed. Adding myself as a committer.

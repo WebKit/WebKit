@@ -50,13 +50,13 @@ public:
         return s_mainThreadState;
     };
     
-    static JSC::JSValue call(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, JSC::Exception*& returnedException)
+    static JSC::JSValue call(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException)
     {
         JSMainThreadExecState currentState(exec);
         return JSC::call(exec, functionObject, callType, callData, thisValue, args, returnedException);
     };
 
-    static JSC::JSValue evaluate(JSC::ExecState* exec, const JSC::SourceCode& source, JSC::JSValue thisValue, JSC::Exception*& returnedException)
+    static JSC::JSValue evaluate(JSC::ExecState* exec, const JSC::SourceCode& source, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException)
     {
         JSMainThreadExecState currentState(exec);
         return JSC::evaluate(exec, source, thisValue, returnedException);
@@ -64,7 +64,7 @@ public:
 
     static JSC::JSValue evaluate(JSC::ExecState* exec, const JSC::SourceCode& source, JSC::JSValue thisValue = JSC::JSValue())
     {
-        JSC::Exception* unused;
+        NakedPtr<JSC::Exception> unused;
         return evaluate(exec, source, thisValue, unused);
     };
 
@@ -127,8 +127,8 @@ private:
     JSC::ExecState* m_previousState;
 };
 
-JSC::JSValue functionCallHandlerFromAnyThread(JSC::ExecState*, JSC::JSValue functionObject, JSC::CallType, const JSC::CallData&, JSC::JSValue thisValue, const JSC::ArgList& args, JSC::Exception*& returnedException);
-JSC::JSValue evaluateHandlerFromAnyThread(JSC::ExecState*, const JSC::SourceCode&, JSC::JSValue thisValue, JSC::Exception*& returnedException);
+JSC::JSValue functionCallHandlerFromAnyThread(JSC::ExecState*, JSC::JSValue functionObject, JSC::CallType, const JSC::CallData&, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException);
+JSC::JSValue evaluateHandlerFromAnyThread(JSC::ExecState*, const JSC::SourceCode&, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException);
 
 } // namespace WebCore
 

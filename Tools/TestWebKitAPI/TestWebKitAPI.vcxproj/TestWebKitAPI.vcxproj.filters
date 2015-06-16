@@ -75,6 +75,9 @@
     <ClCompile Include="..\Tests\WTF\MediaTime.cpp">
       <Filter>Tests\WTF</Filter>
     </ClCompile>
+    <ClCompile Include="..\Tests\WTF\NakedPtr.cpp">
+      <Filter>Tests\WTF</Filter>
+    </ClCompile>
     <ClCompile Include="..\Tests\WTF\Ref.cpp">
       <Filter>Tests\WTF</Filter>
     </ClCompile>

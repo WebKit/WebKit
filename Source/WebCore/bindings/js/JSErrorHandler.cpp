@@ -98,7 +98,7 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext,
         VM& vm = globalObject->vm();
         VMEntryScope entryScope(vm, vm.entryScope ? vm.entryScope->globalObject() : globalObject);
 
-        Exception* exception;
+        NakedPtr<Exception> exception;
         JSValue returnValue = scriptExecutionContext->isDocument()
             ? JSMainThreadExecState::call(exec, jsFunction, callType, callData, globalObject, args, exception)
             : JSC::call(exec, jsFunction, callType, callData, globalObject, args, exception);

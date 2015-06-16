@@ -31,6 +31,7 @@
 #include <debugger/Debugger.h>
 #include <heap/Strong.h>
 #include <wtf/Forward.h>
+#include <wtf/NakedPtr.h>
 #include <wtf/Threading.h>
 
 namespace Deprecated {
@@ -60,7 +61,7 @@ namespace WebCore {
         }
 
         void evaluate(const ScriptSourceCode&);
-        void evaluate(const ScriptSourceCode&, JSC::Exception*& returnedException);
+        void evaluate(const ScriptSourceCode&, NakedPtr<JSC::Exception>& returnedException);
 
         void setException(JSC::Exception*);
 

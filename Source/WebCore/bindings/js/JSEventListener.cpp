@@ -124,7 +124,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
         InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(scriptExecutionContext, callType, callData);
 
         JSValue thisValue = handleEventFunction == jsFunction ? toJS(exec, globalObject, event->currentTarget()) : jsFunction;
-        Exception* exception;
+        NakedPtr<Exception> exception;
         JSValue retval = scriptExecutionContext->isDocument()
             ? JSMainThreadExecState::call(exec, handleEventFunction, callType, callData, thisValue, args, exception)
             : JSC::call(exec, handleEventFunction, callType, callData, thisValue, args, exception);

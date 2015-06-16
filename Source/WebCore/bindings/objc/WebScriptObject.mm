@@ -342,7 +342,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     if (![self _isSafeScript])
         return nil;
 
-    JSC::Exception* exception;
+    NakedPtr<JSC::Exception> exception;
     JSC::JSValue result = JSMainThreadExecState::call(exec, function, callType, callData, [self _imp], argList, exception);
 
     if (exception) {

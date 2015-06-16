@@ -908,7 +908,7 @@ EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
     globalObject->putDirect(
         exec->vm(), Identifier::fromString(globalObject->globalExec(), "arguments"), array);
 
-    Exception* exception;
+    NakedPtr<Exception> exception;
     StopWatch stopWatch;
     stopWatch.start();
     evaluate(globalObject->globalExec(), jscSource(script.data(), fileName), JSValue(), exception);
@@ -931,7 +931,7 @@ EncodedJSValue JSC_HOST_CALL functionLoad(ExecState* exec)
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     
-    Exception* evaluationException;
+    NakedPtr<Exception> evaluationException;
     JSValue result = evaluate(globalObject->globalExec(), jscSource(script.data(), fileName), JSValue(), evaluationException);
     if (evaluationException)
         exec->vm().throwException(exec, evaluationException);
@@ -1294,7 +1294,7 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
 
         vm.startSampling();
 
-        Exception* evaluationException;
+        NakedPtr<Exception> evaluationException;
         JSValue returnValue = evaluate(globalObject->globalExec(), jscSource(script, fileName), JSValue(), evaluationException);
         success = success && !evaluationException;
         if (dump && !evaluationException)
@@ -1358,7 +1358,7 @@ static void runInteractive(GlobalObject* globalObject)
         }
         
         
-        Exception* evaluationException;
+        NakedPtr<Exception> evaluationException;
         JSValue returnValue = evaluate(globalObject->globalExec(), makeSource(source, interpreterName), JSValue(), evaluationException);
 #else
         printf("%s", interactivePrompt);
@@ -1374,7 +1374,7 @@ static void runInteractive(GlobalObject* globalObject)
             break;
         line.append('\0');
 
-        Exception* evaluationException;
+        NakedPtr<Exception> evaluationException;
         JSValue returnValue = evaluate(globalObject->globalExec(), jscSource(line.data(), interpreterName), JSValue(), evaluationException);
 #endif
         if (evaluationException)

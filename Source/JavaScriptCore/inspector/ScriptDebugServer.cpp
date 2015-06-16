@@ -94,7 +94,7 @@ bool ScriptDebugServer::evaluateBreakpointAction(const ScriptBreakpointAction& b
         break;
     }
     case ScriptBreakpointActionTypeEvaluate: {
-        Exception* exception;
+        NakedPtr<Exception> exception;
         debuggerCallFrame->evaluate(breakpointAction.data, exception);
         if (exception)
             reportException(debuggerCallFrame->exec(), exception);
@@ -104,7 +104,7 @@ bool ScriptDebugServer::evaluateBreakpointAction(const ScriptBreakpointAction& b
         dispatchBreakpointActionSound(debuggerCallFrame->exec(), breakpointAction.identifier);
         break;
     case ScriptBreakpointActionTypeProbe: {
-        Exception* exception;
+        NakedPtr<Exception> exception;
         JSValue result = debuggerCallFrame->evaluate(breakpointAction.data, exception);
         if (exception)
             reportException(debuggerCallFrame->exec(), exception);

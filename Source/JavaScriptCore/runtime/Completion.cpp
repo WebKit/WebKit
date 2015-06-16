@@ -61,12 +61,11 @@ bool checkSyntax(VM& vm, const SourceCode& source, ParserError& error)
         JSParserStrictMode::NotStrict, JSParserCodeType::Program, error);
 }
 
-JSValue evaluate(ExecState* exec, const SourceCode& source, JSValue thisValue, Exception*& returnedException)
+JSValue evaluate(ExecState* exec, const SourceCode& source, JSValue thisValue, NakedPtr<Exception>& returnedException)
 {
     JSLockHolder lock(exec);
     RELEASE_ASSERT(exec->vm().atomicStringTable() == wtfThreadData().atomicStringTable());
     RELEASE_ASSERT(!exec->vm().isCollectorBusy());
-    returnedException = nullptr;
 
     CodeProfiling profile(source);
 

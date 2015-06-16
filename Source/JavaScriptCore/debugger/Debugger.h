@@ -34,6 +34,7 @@
 namespace JSC {
 
 class CodeBlock;
+class Exception;
 class ExecState;
 class JSGlobalObject;
 class SourceProvider;

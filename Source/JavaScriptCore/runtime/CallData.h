@@ -30,6 +30,7 @@
 #define CallData_h
 
 #include "JSCJSValue.h"
+#include <wtf/NakedPtr.h>
 
 namespace JSC {
 
@@ -59,7 +60,7 @@ union CallData {
 };
 
 JS_EXPORT_PRIVATE JSValue call(ExecState*, JSValue functionObject, CallType, const CallData&, JSValue thisValue, const ArgList&);
-JS_EXPORT_PRIVATE JSValue call(ExecState*, JSValue functionObject, CallType, const CallData&, JSValue thisValue, const ArgList&, Exception*& returnedException);
+JS_EXPORT_PRIVATE JSValue call(ExecState*, JSValue functionObject, CallType, const CallData&, JSValue thisValue, const ArgList&, NakedPtr<Exception>& returnedException);
 
 } // namespace JSC
 

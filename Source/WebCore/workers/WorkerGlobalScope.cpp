@@ -197,7 +197,7 @@ void WorkerGlobalScope::importScripts(const Vector<String>& urls, ExceptionCode&
 
         InspectorInstrumentation::scriptImported(scriptExecutionContext(), scriptLoader->identifier(), scriptLoader->script());
 
-        JSC::Exception* exception;
+        NakedPtr<JSC::Exception> exception;
         m_script->evaluate(ScriptSourceCode(scriptLoader->script(), scriptLoader->responseURL()), exception);
         if (exception) {
             m_script->setException(exception);

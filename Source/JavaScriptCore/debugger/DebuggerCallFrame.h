@@ -31,6 +31,7 @@
 
 #include "DebuggerPrimitives.h"
 #include "Strong.h"
+#include <wtf/NakedPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/TextPosition.h>
@@ -67,7 +68,7 @@ public:
     JS_EXPORT_PRIVATE String functionName() const;
     JS_EXPORT_PRIVATE Type type() const;
     JS_EXPORT_PRIVATE JSValue thisValue() const;
-    JSValue evaluate(const String&, Exception*&);
+    JSValue evaluate(const String&, NakedPtr<Exception>&);
 
     bool isValid() const { return !!m_callFrame; }
     JS_EXPORT_PRIVATE void invalidate();

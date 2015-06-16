@@ -139,7 +139,7 @@ Deprecated::ScriptObject InjectedScriptManager::createInjectedScript(const Strin
     JSGlobalObject* globalObject = scriptState->lexicalGlobalObject();
     JSValue globalThisValue = scriptState->globalThisValue();
 
-    Exception* evaluationException;
+    NakedPtr<Exception> evaluationException;
     InspectorEvaluateHandler evaluateHandler = m_environment.evaluateHandler();
     JSValue functionValue = evaluateHandler(scriptState, sourceCode, globalThisValue, evaluationException);
     if (evaluationException)

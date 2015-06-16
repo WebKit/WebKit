@@ -143,7 +143,7 @@ JSValueRef JSScriptEvaluate(JSContextRef context, JSScriptRef script, JSValueRef
         RELEASE_ASSERT_NOT_REACHED();
         return 0;
     }
-    Exception* internalException;
+    NakedPtr<Exception> internalException;
     JSValue thisValue = thisValueRef ? toJS(exec, thisValueRef) : jsUndefined();
     JSValue result = evaluate(exec, SourceCode(script), thisValue, internalException);
     if (internalException) {

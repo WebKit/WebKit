@@ -93,7 +93,7 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
     MarkedArgumentBuffer args;
     args.append(jsStringWithCache(exec, prefix));
 
-    Exception* exception;
+    NakedPtr<Exception> exception;
     JSValue retval = JSMainThreadExecState::call(exec, function, callType, callData, m_customResolver.get(), args, exception);
 
     String result;

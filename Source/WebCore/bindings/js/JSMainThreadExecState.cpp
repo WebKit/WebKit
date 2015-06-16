@@ -46,14 +46,14 @@ void JSMainThreadExecState::didLeaveScriptContext()
     MutationObserver::deliverAllMutations();
 }
 
-JSC::JSValue functionCallHandlerFromAnyThread(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, JSC::Exception*& returnedException)
+JSC::JSValue functionCallHandlerFromAnyThread(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException)
 {
     if (isMainThread())
         return JSMainThreadExecState::call(exec, functionObject, callType, callData, thisValue, args, returnedException);
     return JSC::call(exec, functionObject, callType, callData, thisValue, args, returnedException);
 }
 
-JSC::JSValue evaluateHandlerFromAnyThread(JSC::ExecState* exec, const JSC::SourceCode& source, JSC::JSValue thisValue, JSC::Exception*& returnedException)
+JSC::JSValue evaluateHandlerFromAnyThread(JSC::ExecState* exec, const JSC::SourceCode& source, JSC::JSValue thisValue, NakedPtr<JSC::Exception>& returnedException)
 {
     if (isMainThread())
         return JSMainThreadExecState::evaluate(exec, source, thisValue, returnedException);

@@ -133,7 +133,7 @@ Deprecated::ScriptValue ScriptFunctionCall::call(bool& hadException)
         return Deprecated::ScriptValue();
 
     JSValue result;
-    Exception* exception;
+    NakedPtr<Exception> exception;
     if (m_callHandler)
         result = m_callHandler(m_exec, function, callType, callData, thisObject, m_arguments, exception);
     else

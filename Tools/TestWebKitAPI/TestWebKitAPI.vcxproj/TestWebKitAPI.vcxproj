@@ -323,6 +323,7 @@
     <ClCompile Include="..\Tests\WTF\MathExtras.cpp" />
     <ClCompile Include="..\Tests\WTF\MediaTime.cpp" />
     <ClCompile Include="..\Tests\WTF\MetaAllocator.cpp" />
+    <ClCompile Include="..\Tests\WTF\NakedPtr.cpp" />
     <ClCompile Include="..\Tests\WTF\Optional.cpp" />
     <ClCompile Include="..\Tests\WTF\RedBlackTree.cpp" />
     <ClCompile Include="..\Tests\WTF\Ref.cpp" />
