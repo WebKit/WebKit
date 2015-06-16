@@ -1,3 +1,13 @@
+2015-06-15  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        [iOS] Crash long pressing on <input type=file>
+        https://bugs.webkit.org/show_bug.cgi?id=146009
+        <rdar://problem/21234453>
+
+        Reviewed by Ryosuke Niwa.
+
+        * ManualTests/ios/long-press-input-type-file-crash.html: Added.
+
 2015-06-16  Brent Fulgham  <bfulgham@apple.com>
 
         Rollout accidental Xcode project change.

@@ -476,7 +476,9 @@ bool Position::atStartOfTree() const
 {
     if (isNull())
         return true;
-    if (findParent(containerNode()))
+
+    Node* container = containerNode();
+    if (container && findParent(container))
         return false;
 
     switch (m_anchorType) {
@@ -499,7 +501,9 @@ bool Position::atEndOfTree() const
 {
     if (isNull())
         return true;
-    if (findParent(containerNode()))
+
+    Node* container = containerNode();
+    if (container && findParent(container))
         return false;
 
     switch (m_anchorType) {
