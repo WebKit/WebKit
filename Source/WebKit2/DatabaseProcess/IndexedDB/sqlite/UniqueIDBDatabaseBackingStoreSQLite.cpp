@@ -54,25 +54,37 @@ namespace WebKit {
 // Current version of the metadata schema being used in the metadata database.
 static const int currentMetadataVersion = 1;
 
+static const String v1RecordsTableSchema(const String& tableName)
+{
+    return makeString("CREATE TABLE ", tableName, " (objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, value NOT NULL ON CONFLICT FAIL)");
+}
+
 static const String& v1RecordsTableSchema()
 {
-    static NeverDestroyed<WTF::String> v1RecordsTableSchemaString(ASCIILiteral(
-        "CREATE TABLE Records (objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, value NOT NULL ON CONFLICT FAIL)"));
+    static NeverDestroyed<WTF::String> v1RecordsTableSchemaString(v1RecordsTableSchema("Records"));
+    return v1RecordsTableSchemaString;
+}
+
+static const String& v1RecordsTableSchemaAlternate()
+{
+    static NeverDestroyed<WTF::String> v1RecordsTableSchemaString(v1RecordsTableSchema("\"Records\""));
     return v1RecordsTableSchemaString;
 }
 
 static const String v2RecordsTableSchema(const String& tableName)
 {
-    StringBuilder builder;
-    builder.appendLiteral("CREATE TABLE ");
-    builder.append(tableName);
-    builder.appendLiteral(" (objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL, value NOT NULL ON CONFLICT FAIL)");
-    return builder.toString();
+    return makeString("CREATE TABLE ", tableName, " (objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL, value NOT NULL ON CONFLICT FAIL)");
 }
 
 static const String& v2RecordsTableSchema()
 {
     static NeverDestroyed<WTF::String> v2RecordsTableSchemaString(v2RecordsTableSchema("Records"));
+    return v2RecordsTableSchemaString;
+}
+
+static const String& v2RecordsTableSchemaAlternate()
+{
+    static NeverDestroyed<WTF::String> v2RecordsTableSchemaString(v2RecordsTableSchema("\"Records\""));
     return v2RecordsTableSchemaString;
 }
 
@@ -140,14 +152,13 @@ static bool createOrMigrateRecordsTableIfNecessary(SQLiteDatabase& database)
     ASSERT(!currentSchema.isEmpty());
 
     // If the schema in the backing store is the current schema, we're done.
-    if (currentSchema == v2RecordsTableSchema())
+    if (currentSchema == v2RecordsTableSchema() || currentSchema == v2RecordsTableSchemaAlternate())
         return true;
 
-    // Currently the Records table should only be one of either the v1 or v2 schemas.
-    if (currentSchema != v1RecordsTableSchema()) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
+    // If the record table is not the current schema then it must be one of the previous schemas.
+    // If it is not then the database is in an unrecoverable state and this should be considered a fatal error.
+    if (currentSchema != v1RecordsTableSchema() && currentSchema != v1RecordsTableSchemaAlternate())
+        RELEASE_ASSERT_NOT_REACHED();
 
     SQLiteTransaction transaction(database);
     transaction.begin();

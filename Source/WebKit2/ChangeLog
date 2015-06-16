@@ -1,3 +1,18 @@
+2015-06-16  Brady Eidson  <beidson@apple.com>
+
+        IDB: Records table migration doesn't work with all versions of SQLite.
+        https://bugs.webkit.org/show_bug.cgi?id=145993
+
+        Reviewed by Darin Adler, provisionally reviewed by Jon Lee.
+
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::v1RecordsTableSchema):
+        (WebKit::v1RecordsTableSchemaAlternate):
+        (WebKit::v2RecordsTableSchema):
+        (WebKit::v2RecordsTableSchemaAlternate):
+        (WebKit::createOrMigrateRecordsTableIfNecessary): Check both v1 and v1 Alternate whenever we check for the v1 schema.
+          Ditto for the v2 schema. Crash all builds if the current schema is none of these.
+
 2015-06-16  Dan Bernstein  <mitz@apple.com>
 
         Build fix.
