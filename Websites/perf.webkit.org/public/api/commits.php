@@ -70,20 +70,26 @@ function fetch_commits_between($db, $repository_id, $first, $second, $keyword = 
         committer_name as "authorName",
         committer_account as "authorEmail",
         commit_message as "message"
-        FROM commits JOIN committers ON commit_committer = committer_id
+        FROM commits LEFT OUTER JOIN committers ON commit_committer = committer_id
         WHERE commit_repository = $1 AND commit_reported = true';
     $values = array($repository_id);
 
     if ($first && $second) {
-        $fitrt_commit = commit_from_revision($db, $repository_id, $first);
+        $first_commit = commit_from_revision($db, $repository_id, $first);
         $second_commit = commit_from_revision($db, $repository_id, $second);
-        $first = $fitrt_commit['commit_time'];
+        $first = $first_commit['commit_time'];
         $second = $second_commit['commit_time'];
+        $column = 'commit_time';
+        if (!$first && !$second) {
+            $first = $first_commit['commit_revision'];
+            $second = $second_commit['commit_revision'];
+            $column = 'commit_revision';
+        }
         $in_order = $first < $second;
         array_push($values, $in_order ? $first : $second);
-        $statements .= ' AND commit_time >= $' . count($values);
+        $statements .= ' AND ' . $column . ' >= $' . count($values);
         array_push($values, $in_order ? $second : $first);
-        $statements .= ' AND commit_time <= $' . count($values);
+        $statements .= ' AND ' . $column . ' <= $' . count($values);
     }
 
     if ($keyword) {

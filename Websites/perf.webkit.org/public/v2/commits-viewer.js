@@ -14,7 +14,7 @@ App.CommitsViewerComponent = Ember.Component.extend({
             return;
 
         var self = this;
-        CommitLogs.fetchForTimeRange(repository.get('id'), from, to).then(function (commits) {
+        CommitLogs.fetchCommits(repository.get('id'), from, to).then(function (commits) {
             if (self.isDestroyed)
                 return;
             self.set('commits', commits.map(function (commit) {

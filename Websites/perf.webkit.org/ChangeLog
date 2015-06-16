@@ -1,3 +1,29 @@
+2015-06-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Analysis task should show all possible revisions for A/B testing
+        https://bugs.webkit.org/show_bug.cgi?id=145996
+
+        Reviewed by Chris Dumez.
+
+        * public/api/commits.php:
+        (fetch_commits_between): When the time stamp is not available for commits, use revision numbers
+        to find revisions between two ranges. This is necessary for OS X and iOS versions since they don't
+        have a "commit time".
+
+        * public/v2/app.js:
+        (App.AnalysisTaskController.updateRootConfigurations): Fetch commits between two end points.
+        (App.AnalysisTaskController._createConfiguration): Extracted from updateRootConfigurations. List
+        the fetched list of commits if available.
+        (App.AnalysisTaskController._serializeNumbersSkippingConsecutiveEntries): Added. Serializes an list
+        of numbers intelligently. For example, [1, 2, 4, 5] turns into "1-2, 4-5". Without this, some lists
+        of points shown in the A/B testing configurations become too long. 
+
+        * public/v2/commits-viewer.js:
+        (App.CommitsViewerComponent.commitsChanged):
+
+        * public/v2/data.js:
+        (CommitLogs.fetchCommits): Renamed from fetchForTimeRange.
+
 2015-06-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a script to post new OS X builds to perf dashboard

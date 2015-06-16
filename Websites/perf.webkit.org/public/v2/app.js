@@ -1250,43 +1250,92 @@ App.AnalysisTaskController = Ember.Controller.extend({
             var revisions = point.measurement.formattedRevisions();
             for (var repositoryId in revisions) {
                 if (!repositoryToRevisions[repositoryId])
-                    repositoryToRevisions[repositoryId] = new Array(analysisPoints.length);
+                    repositoryToRevisions[repositoryId] = {commits: null, revisions: []};
                 var revision = revisions[repositoryId];
-                repositoryToRevisions[repositoryId][pointIndex] = {
+                repositoryToRevisions[repositoryId].revisions[pointIndex] = {
                     label: point.label + ': ' + revision.label,
                     value: revision.currentRevision,
                 };
             }
         });
 
+        var commitsPromises = [];
+        var repositoryToIndex = {};
+        for (var repositoryId in repositoryToRevisions) {
+            var revisions = repositoryToRevisions[repositoryId].revisions;
+            repositoryToIndex[repositoryId] = commitsPromises.length;
+            console.log(repositoryId)
+            commitsPromises.push(CommitLogs.fetchCommits(repositoryId, revisions[0].value, revisions[revisions.length - 1].value));
+        }
+
         var self = this;
         this.get('model').get('triggerable').then(function (triggerable) {
             if (!triggerable)
                 return;
-
-            self.set('configurations', ['A', 'B']);
-            self.set('rootConfigurations', triggerable.get('acceptedRepositories').map(function (repository) {
-                var repositoryId = repository.get('id');
-                var options = [{label: 'None'}].concat((repositoryToRevisions[repositoryId] || []).map(function (option, index) {
-                    if (!option || !option['value'])
-                        return {value: '', label: analysisPoints[index].label + ': None'}; 
-                    return option;
+            Ember.RSVP.Promise.all(commitsPromises).then(function (commitsList) {
+                self.set('configurations', ['A', 'B']);
+                self.set('rootConfigurations', triggerable.get('acceptedRepositories').map(function (repository) {
+                    return self._createConfiguration(repository, commitsList[repositoryToIndex[repository.get('id')]], analysisPoints);
                 }));
-                return Ember.Object.create({
-                    repository: repository,
-                    name: repository.get('name'),
-                    sets: [
-                        Ember.Object.create({name: 'A[' + repositoryId + ']',
-                            options: options,
-                            selection: options[1]}),
-                        Ember.Object.create({name: 'B[' + repositoryId + ']',
-                            options: options,
-                            selection: options[options.length - 1]}),
-                    ],
-                });
-            }));
+            });
         });
     }.observes('analysisPoints'),
+    _createConfiguration: function(repository, commits, analysisPoints) {
+        var repositoryId = repository.get('id');
+
+        var options = [{label: 'None'}];
+        var revisionToPoints = {};
+        analysisPoints.forEach(function (point, pointIndex) {
+            var revision = point.measurement.revisionForRepository(repositoryId);
+            if (!revision)
+                return;
+            if (!revisionToPoints[revision])
+                revisionToPoints[revision] = [];
+            revisionToPoints[revision].push(pointIndex);
+        });
+
+        if (!commits || !commits.length) {
+            commits = [];
+            for (var revision in revisionToPoints)
+                commits.push({revision: revision});
+        }
+
+        for (var commit of commits) {
+            var revision = commit.revision;
+            var label = Measurement.formatRevisionRange(revision).label;
+            var points = revisionToPoints[revision];
+            if (points) {
+                var serializedPoints = this._serializeNumbersSkippingConsecutiveEntries(revisionToPoints[revision]);
+                label += ' ' + ['(', points.length > 1 ? 'points' : 'point', serializedPoints, ')'].join(' ');
+            }
+            options.push({value: revision, label: label});
+        }
+
+        return Ember.Object.create({
+            repository: repository,
+            name: repository.get('name'),
+            sets: [
+                Ember.Object.create({name: 'A[' + repositoryId + ']',
+                    options: options,
+                    selection: options[1]}),
+                Ember.Object.create({name: 'B[' + repositoryId + ']',
+                    options: options,
+                    selection: options[options.length - 1]}),
+            ]});
+    },
+    _serializeNumbersSkippingConsecutiveEntries: function (numbers) {
+        var result = numbers[0];
+        for (var i = 1; i < numbers.length; i++) {
+            if (numbers[i - 1] + 1 == numbers[i]) {
+                while (numbers[i] + 1 == numbers[i + 1])
+                    i++;
+                result += '-' + numbers[i];
+                continue;
+            }
+            result += ', ' + numbers[i]
+        }
+        return result;
+    },
     actions: {
         addBug: function (bugTracker, bugNumber)
         {
