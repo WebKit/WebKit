@@ -2267,7 +2267,7 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoOutput()
 
     [m_avPlayerItem.get() addOutput:m_videoOutput.get()];
 
-#if USE(VIDEOTOOLBOX) && (!defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || __MAC_OS_X_VERSION_MIN_REQUIRED < 101000)
+#if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
     waitForVideoOutputMediaDataWillChange();
 #endif
 
