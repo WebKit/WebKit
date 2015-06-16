@@ -1,3 +1,16 @@
+2015-06-16  Saam Barati  <saambarati1@gmail.com>
+
+        LLInt's code path for get_from_scope with case GlobalVarWithVarInjectionChecks has dead code
+        https://bugs.webkit.org/show_bug.cgi?id=144268
+
+        Reviewed by Darin Adler.
+
+        The call to loadVariable(.) both for 32bit and 64bit is unnecessary. 
+        It grabs a value that is immediately overwritten by a call to getGlobalVar(). 
+
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2015-06-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Introduce %IteratorPrototype% and drop all XXXIteratorConstructor
