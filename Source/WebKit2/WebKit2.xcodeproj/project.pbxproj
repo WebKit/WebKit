@@ -908,14 +908,6 @@
 		512A976A180E09B80039A149 /* DatabaseProcessProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 512A9768180E09B80039A149 /* DatabaseProcessProxyMessages.h */; };
 		512E34E4130B4D0500ABD19A /* WKApplicationCacheManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A33B3130B308C00F80CB5 /* WKApplicationCacheManager.cpp */; };
 		512E34E5130B4D0500ABD19A /* WKApplicationCacheManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A33B4130B308C00F80CB5 /* WKApplicationCacheManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		512E3524130B550600ABD19A /* WebApplicationCacheManagerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512E3520130B550100ABD19A /* WebApplicationCacheManagerProxy.cpp */; };
-		512E3525130B550600ABD19A /* WebApplicationCacheManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 512E3521130B550100ABD19A /* WebApplicationCacheManagerProxy.h */; };
-		512E352E130B55AF00ABD19A /* WebApplicationCacheManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512E352B130B55AF00ABD19A /* WebApplicationCacheManager.cpp */; };
-		512E352F130B55AF00ABD19A /* WebApplicationCacheManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 512E352C130B55AF00ABD19A /* WebApplicationCacheManager.h */; };
-		512E356A130B57F000ABD19A /* WebApplicationCacheManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512E3568130B57F000ABD19A /* WebApplicationCacheManagerMessageReceiver.cpp */; };
-		512E356B130B57F000ABD19A /* WebApplicationCacheManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 512E3569130B57F000ABD19A /* WebApplicationCacheManagerMessages.h */; };
-		512E35F8130B642E00ABD19A /* WebApplicationCacheManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512E35F6130B642E00ABD19A /* WebApplicationCacheManagerProxyMessageReceiver.cpp */; };
-		512E35F9130B642E00ABD19A /* WebApplicationCacheManagerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 512E35F7130B642E00ABD19A /* WebApplicationCacheManagerProxyMessages.h */; };
 		512F589612A8838800629530 /* AuthenticationChallengeProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512F588E12A8838800629530 /* AuthenticationChallengeProxy.cpp */; };
 		512F589712A8838800629530 /* AuthenticationChallengeProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F588F12A8838800629530 /* AuthenticationChallengeProxy.h */; };
 		512F589812A8838800629530 /* AuthenticationDecisionListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512F589012A8838800629530 /* AuthenticationDecisionListener.cpp */; };
@@ -3103,16 +3095,6 @@
 		512A9766180E05D20039A149 /* DatabaseProcessProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = DatabaseProcessProxy.messages.in; path = Databases/DatabaseProcessProxy.messages.in; sourceTree = "<group>"; };
 		512A9767180E09B80039A149 /* DatabaseProcessProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseProcessProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		512A9768180E09B80039A149 /* DatabaseProcessProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseProcessProxyMessages.h; sourceTree = "<group>"; };
-		512E3520130B550100ABD19A /* WebApplicationCacheManagerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebApplicationCacheManagerProxy.cpp; sourceTree = "<group>"; };
-		512E3521130B550100ABD19A /* WebApplicationCacheManagerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebApplicationCacheManagerProxy.h; sourceTree = "<group>"; };
-		512E352B130B55AF00ABD19A /* WebApplicationCacheManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebApplicationCacheManager.cpp; path = ApplicationCache/WebApplicationCacheManager.cpp; sourceTree = "<group>"; };
-		512E352C130B55AF00ABD19A /* WebApplicationCacheManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebApplicationCacheManager.h; path = ApplicationCache/WebApplicationCacheManager.h; sourceTree = "<group>"; };
-		512E352D130B55AF00ABD19A /* WebApplicationCacheManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebApplicationCacheManager.messages.in; path = ApplicationCache/WebApplicationCacheManager.messages.in; sourceTree = "<group>"; };
-		512E3568130B57F000ABD19A /* WebApplicationCacheManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebApplicationCacheManagerMessageReceiver.cpp; sourceTree = "<group>"; };
-		512E3569130B57F000ABD19A /* WebApplicationCacheManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebApplicationCacheManagerMessages.h; sourceTree = "<group>"; };
-		512E35F0130B638C00ABD19A /* WebApplicationCacheManagerProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebApplicationCacheManagerProxy.messages.in; sourceTree = "<group>"; };
-		512E35F6130B642E00ABD19A /* WebApplicationCacheManagerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebApplicationCacheManagerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
-		512E35F7130B642E00ABD19A /* WebApplicationCacheManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebApplicationCacheManagerProxyMessages.h; sourceTree = "<group>"; };
 		512F588E12A8838800629530 /* AuthenticationChallengeProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticationChallengeProxy.cpp; sourceTree = "<group>"; };
 		512F588F12A8838800629530 /* AuthenticationChallengeProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuthenticationChallengeProxy.h; sourceTree = "<group>"; };
 		512F589012A8838800629530 /* AuthenticationDecisionListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticationDecisionListener.cpp; sourceTree = "<group>"; };
@@ -5652,16 +5634,6 @@
 			path = Databases;
 			sourceTree = "<group>";
 		};
-		512E352A130B559900ABD19A /* ApplicationCache */ = {
-			isa = PBXGroup;
-			children = (
-				512E352B130B55AF00ABD19A /* WebApplicationCacheManager.cpp */,
-				512E352C130B55AF00ABD19A /* WebApplicationCacheManager.h */,
-				512E352D130B55AF00ABD19A /* WebApplicationCacheManager.messages.in */,
-			);
-			name = ApplicationCache;
-			sourceTree = "<group>";
-		};
 		512F588D12A8836F00629530 /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
@@ -6001,7 +5973,6 @@
 		BC032D5C10F436D50058C15A /* WebProcess */ = {
 			isa = PBXGroup;
 			children = (
-				512E352A130B559900ABD19A /* ApplicationCache */,
 				7C6E70F818B2D47E00F24E2E /* cocoa */,
 				3309344B1315B93A0097A7BC /* Cookies */,
 				512A9754180DF9270039A149 /* Databases */,
@@ -6193,9 +6164,6 @@
 				1A0F29E1120B44420053D1B9 /* VisitedLinkProvider.cpp */,
 				1A0F29E2120B44420053D1B9 /* VisitedLinkProvider.h */,
 				1A60224918C16B0800C3E8C9 /* VisitedLinkProvider.messages.in */,
-				512E3520130B550100ABD19A /* WebApplicationCacheManagerProxy.cpp */,
-				512E3521130B550100ABD19A /* WebApplicationCacheManagerProxy.h */,
-				512E35F0130B638C00ABD19A /* WebApplicationCacheManagerProxy.messages.in */,
 				BC72BA1B11E64907001EB4EA /* WebBackForwardList.cpp */,
 				BC72BA1C11E64907001EB4EA /* WebBackForwardList.h */,
 				F036978715F4BF0500C3A80E /* WebColorPicker.cpp */,
@@ -7300,10 +7268,6 @@
 				1A60224B18C16B9F00C3E8C9 /* VisitedLinkProviderMessages.h */,
 				1A8E7D3A18C15149005A702A /* VisitedLinkTableControllerMessageReceiver.cpp */,
 				1A8E7D3B18C15149005A702A /* VisitedLinkTableControllerMessages.h */,
-				512E3568130B57F000ABD19A /* WebApplicationCacheManagerMessageReceiver.cpp */,
-				512E3569130B57F000ABD19A /* WebApplicationCacheManagerMessages.h */,
-				512E35F6130B642E00ABD19A /* WebApplicationCacheManagerProxyMessageReceiver.cpp */,
-				512E35F7130B642E00ABD19A /* WebApplicationCacheManagerProxyMessages.h */,
 				1A1FEC1A1627B45600700F6D /* WebConnectionMessageReceiver.cpp */,
 				1A1FEC1B1627B45700700F6D /* WebConnectionMessages.h */,
 				330934431315B9220097A7BC /* WebCookieManagerMessageReceiver.cpp */,
@@ -7986,10 +7950,6 @@
 				1A8E7D3D18C15149005A702A /* VisitedLinkTableControllerMessages.h in Headers */,
 				1AA9BAE1184FFAC7003B6BC6 /* WeakObjCPtr.h in Headers */,
 				CEDA12E3152CD1B300D9E08D /* WebAlternativeTextClient.h in Headers */,
-				512E352F130B55AF00ABD19A /* WebApplicationCacheManager.h in Headers */,
-				512E356B130B57F000ABD19A /* WebApplicationCacheManagerMessages.h in Headers */,
-				512E3525130B550600ABD19A /* WebApplicationCacheManagerProxy.h in Headers */,
-				512E35F9130B642E00ABD19A /* WebApplicationCacheManagerProxyMessages.h in Headers */,
 				BC72BA1E11E64907001EB4EA /* WebBackForwardList.h in Headers */,
 				518D2CAE12D5153B003BB93B /* WebBackForwardListItem.h in Headers */,
 				BC72B9FB11E6476B001EB4EA /* WebBackForwardListProxy.h in Headers */,
@@ -9808,10 +9768,6 @@
 				1AF4CEEF18BC481800BC2D34 /* VisitedLinkTableController.cpp in Sources */,
 				1A8E7D3C18C15149005A702A /* VisitedLinkTableControllerMessageReceiver.cpp in Sources */,
 				CEDA12E2152CD1AE00D9E08D /* WebAlternativeTextClient.cpp in Sources */,
-				512E352E130B55AF00ABD19A /* WebApplicationCacheManager.cpp in Sources */,
-				512E356A130B57F000ABD19A /* WebApplicationCacheManagerMessageReceiver.cpp in Sources */,
-				512E3524130B550600ABD19A /* WebApplicationCacheManagerProxy.cpp in Sources */,
-				512E35F8130B642E00ABD19A /* WebApplicationCacheManagerProxyMessageReceiver.cpp in Sources */,
 				BC72BA1D11E64907001EB4EA /* WebBackForwardList.cpp in Sources */,
 				518D2CAD12D5153B003BB93B /* WebBackForwardListItem.cpp in Sources */,
 				BC72B9FA11E6476B001EB4EA /* WebBackForwardListProxy.cpp in Sources */,

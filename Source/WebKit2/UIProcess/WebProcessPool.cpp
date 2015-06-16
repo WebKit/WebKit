@@ -38,7 +38,6 @@
 #include "StatisticsData.h"
 #include "TextChecker.h"
 #include "WKContextPrivate.h"
-#include "WebApplicationCacheManagerProxy.h"
 #include "WebCertificateInfo.h"
 #include "WebContextSupplement.h"
 #include "WebCookieManagerProxy.h"
@@ -193,7 +192,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     // NOTE: These sub-objects must be initialized after m_messageReceiverMap..
     m_iconDatabase = WebIconDatabase::create(this);
 
-    addSupplement<WebApplicationCacheManagerProxy>();
     addSupplement<WebCookieManagerProxy>();
     addSupplement<WebGeolocationManagerProxy>();
     addSupplement<WebKeyValueStorageManager>();

@@ -105,8 +105,6 @@ MESSAGE_RECEIVERS = \
     ViewUpdateDispatcher \
     VisitedLinkProvider \
     VisitedLinkTableController \
-    WebApplicationCacheManager \
-    WebApplicationCacheManagerProxy \
     WebConnection \
     WebCookieManager \
     WebCookieManagerProxy \

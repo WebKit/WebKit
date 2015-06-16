@@ -45,7 +45,6 @@
 #include <wtf/text/WTFString.h>
 
 // Supplements
-#include "WebApplicationCacheManagerProxy.h"
 #include "WebCookieManagerProxy.h"
 #include "WebDatabaseManagerProxy.h"
 #include "WebGeolocationManagerProxy.h"

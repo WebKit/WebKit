@@ -40,7 +40,6 @@
 #include "SessionTracker.h"
 #include "StatisticsData.h"
 #include "UserData.h"
-#include "WebApplicationCacheManager.h"
 #include "WebConnectionToUIProcess.h"
 #include "WebCookieManager.h"
 #include "WebCoreArgumentCoders.h"
@@ -184,7 +183,6 @@ WebProcess::WebProcess()
     // so that ports have a chance to customize, and ifdefs in this file are
     // limited.
     addSupplement<WebGeolocationManager>();
-    addSupplement<WebApplicationCacheManager>();
     addSupplement<WebResourceCacheManager>();
     addSupplement<WebCookieManager>();
     addSupplement<WebMediaCacheManager>();

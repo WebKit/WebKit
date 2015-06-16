@@ -1,3 +1,46 @@
+2015-06-16  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of the application cache manager classes, they are no longer used
+        https://bugs.webkit.org/show_bug.cgi?id=146024
+
+        Reviewed by Sam Weinig.
+
+        * DerivedSources.make:
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKContext.cpp:
+        * UIProcess/WebApplicationCacheManagerProxy.cpp: Removed.
+        (WebKit::WebApplicationCacheManagerProxy::supplementName): Deleted.
+        (WebKit::WebApplicationCacheManagerProxy::create): Deleted.
+        (WebKit::WebApplicationCacheManagerProxy::WebApplicationCacheManagerProxy): Deleted.
+        (WebKit::WebApplicationCacheManagerProxy::~WebApplicationCacheManagerProxy): Deleted.
+        (WebKit::WebApplicationCacheManagerProxy::processPoolDestroyed): Deleted.
+        (WebKit::WebApplicationCacheManagerProxy::processDidClose): Deleted.
+        (WebKit::WebApplicationCacheManagerProxy::shouldTerminate): Deleted.
+        (WebKit::WebApplicationCacheManagerProxy::refWebContextSupplement): Deleted.
+        (WebKit::WebApplicationCacheManagerProxy::derefWebContextSupplement): Deleted.
+        (WebKit::WebApplicationCacheManagerProxy::getApplicationCacheOrigins): Deleted.
+        (WebKit::WebApplicationCacheManagerProxy::didGetApplicationCacheOrigins): Deleted.
+        (WebKit::WebApplicationCacheManagerProxy::deleteEntriesForOrigin): Deleted.
+        (WebKit::WebApplicationCacheManagerProxy::deleteAllEntries): Deleted.
+        * UIProcess/WebApplicationCacheManagerProxy.h: Removed.
+        * UIProcess/WebApplicationCacheManagerProxy.messages.in: Removed.
+        * UIProcess/WebProcessPool.cpp:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/ApplicationCache/WebApplicationCacheManager.cpp: Removed.
+        (WebKit::WebApplicationCacheManager::supplementName): Deleted.
+        (WebKit::WebApplicationCacheManager::WebApplicationCacheManager): Deleted.
+        (WebKit::WebApplicationCacheManager::getApplicationCacheOrigins): Deleted.
+        (WebKit::WebApplicationCacheManager::deleteEntriesForOrigin): Deleted.
+        (WebKit::WebApplicationCacheManager::deleteAllEntries): Deleted.
+        (WebKit::WebApplicationCacheManager::setAppCacheMaximumSize): Deleted.
+        * WebProcess/ApplicationCache/WebApplicationCacheManager.h: Removed.
+        * WebProcess/ApplicationCache/WebApplicationCacheManager.messages.in: Removed.
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::clearApplicationCache):
+        (WebKit::InjectedBundle::setAppCacheMaximumSize):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess): Deleted.
+
 2015-06-16  Brady Eidson  <beidson@apple.com>
 
         IDB: Records table migration doesn't work with all versions of SQLite.

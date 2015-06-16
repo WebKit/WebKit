@@ -74,7 +74,6 @@ class DownloadProxy;
 class GeolocationPermissionRequestProxy;
 class NotificationPermissionRequest;
 class UserMediaPermissionRequestProxy;
-class WebApplicationCacheManagerProxy;
 class WebBackForwardList;
 class WebBackForwardListItem;
 class WebBatteryManagerProxy;
