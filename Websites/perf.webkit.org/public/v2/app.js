@@ -1264,7 +1264,6 @@ App.AnalysisTaskController = Ember.Controller.extend({
         for (var repositoryId in repositoryToRevisions) {
             var revisions = repositoryToRevisions[repositoryId].revisions;
             repositoryToIndex[repositoryId] = commitsPromises.length;
-            console.log(repositoryId)
             commitsPromises.push(CommitLogs.fetchCommits(repositoryId, revisions[0].value, revisions[revisions.length - 1].value));
         }
 

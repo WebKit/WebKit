@@ -1,5 +1,11 @@
 2015-06-15  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Removed a superfluous console.log per Chris's comment.
+
+        * public/v2/app.js:
+
+2015-06-15  Ryosuke Niwa  <rniwa@webkit.org>
+
         Analysis task should show all possible revisions for A/B testing
         https://bugs.webkit.org/show_bug.cgi?id=145996
 
