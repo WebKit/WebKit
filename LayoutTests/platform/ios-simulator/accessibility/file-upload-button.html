@@ -20,8 +20,8 @@ var successfullyParsed = false;
     if (window.accessibilityController) {
 
         var button1 = accessibilityController.accessibleElementById("file-input");
-        shouldBe("button1.iphoneLabel", "'AXLabel: Choose File'");
-        shouldBe("button1.iphoneValue", "'AXValue: no file selected'");
+        shouldBe("button1.description", "'AXLabel: Choose File'");
+        shouldBe("button1.stringValue", "'AXValue: no file selected'");
     }
 
     successfullyParsed = true;

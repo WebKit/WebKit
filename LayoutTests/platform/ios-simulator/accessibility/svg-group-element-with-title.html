@@ -23,8 +23,8 @@
 
           debug("Verify that the SVG group is returned as an accessible element.");
           var group1 = accessibilityController.accessibleElementById("group1");
-          shouldBe("group1.iphoneLabel", "'AXLabel: SVG TITLE 1'");
-          shouldBeTrue("group1.iphoneIsElement");
+          shouldBe("group1.description", "'AXLabel: SVG TITLE 1'");
+          shouldBeFalse("group1.isIgnored");
 
           debug("\nVerify that you can hit-test to the SVG group.");
           var hitTestElement = accessibilityController.elementAtPoint(group1.clickPointX, group1.clickPointY);

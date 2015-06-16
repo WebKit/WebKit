@@ -23,8 +23,8 @@
         var body = accessibilityController.rootElement;
 
         // Get access to the text inside the link.
-        var textInsideLink = body.childAtIndex(0).childAtIndex(0).childAtIndex(0);
-        shouldBe("textInsideLink.iphoneLabel", "'AXLabel: link1'");
+        var textInsideLink = accessibilityController.accessibleElementById("link1").childAtIndex(0);
+        shouldBe("textInsideLink.description", "'AXLabel: link1'");
 
         // Simulate VoiceOver focus onto the element.
         textInsideLink.assistiveTechnologySimulatedFocus();
@@ -35,8 +35,8 @@
         // Repeat for text inside link inside heading.
 
         // Get access to the text inside the link.
-        var textInsideHeading = body.childAtIndex(1).childAtIndex(0);
-        shouldBe("textInsideHeading.iphoneLabel", "'AXLabel: heading1'");
+        var textInsideHeading = accessibilityController.accessibleElementById("heading1").childAtIndex(0);
+        shouldBe("textInsideHeading.description", "'AXLabel: heading1'");
 
         // Simulate VoiceOver focus onto the element.
         textInsideHeading.assistiveTechnologySimulatedFocus();

@@ -263,6 +263,18 @@ public:
     // Make sure you call remove, because you can't rely on objects being deallocated in a timely fashion.
     bool removeNotificationListener();
     
+    JSRetainPtr<JSStringRef> identifier();
+    JSRetainPtr<JSStringRef> traits();
+    int elementTextPosition();
+    int elementTextLength();
+    JSRetainPtr<JSStringRef> stringForSelection();
+    JSValueRef elementsForRange(unsigned location, unsigned length);
+    void increaseTextSelection();
+    void decreaseTextSelection();
+    PassRefPtr<AccessibilityUIElement> linkedElement();
+    PassRefPtr<AccessibilityUIElement> headerElementAtIndex(unsigned index);
+    void assistiveTechnologySimulatedFocus();
+    
 private:
     AccessibilityUIElement(PlatformUIElement);
     AccessibilityUIElement(const AccessibilityUIElement&);

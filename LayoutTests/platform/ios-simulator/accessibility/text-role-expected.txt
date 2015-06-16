@@ -4,7 +4,7 @@ This test ensures that the "text" role works as expected. That is, it creates a 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS textrole.iphoneLabel is 'AXLabel: all at once'
+PASS textrole.description is 'AXLabel: all at once'
 PASS successfullyParsed is true
 
 TEST COMPLETE

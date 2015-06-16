@@ -26,10 +26,10 @@ text
     if (window.accessibilityController) {
 
         var main = accessibilityController.accessibleElementById("main");
-        shouldBe("main.iphoneLabel", "'AXLabel: main'");
+        shouldBe("main.description", "'AXLabel: main'");
 
         var banner = accessibilityController.accessibleElementById("banner");
-        shouldBe("banner.iphoneLabel", "'AXLabel: banner'");
+        shouldBe("banner.description", "'AXLabel: banner'");
     }
 
     successfullyParsed = true;

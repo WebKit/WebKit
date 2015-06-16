@@ -1,6 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
 <script>
     if (window.testRunner)
         testRunner.dumpAsText();
@@ -8,38 +10,25 @@
 </head>
 <body>
 
-<a href="#">This is a link that <b>would</b> normally appear <b>as multiple</b> elements</a>.
+<a id="link" href="#">This is a link that <b>would</b> normally appear <b>as multiple</b> elements</a>.
+
+<p id="description"></p>
+<div id="console"></div>
 
 <script>
 
-    //description("This test makes sure that only one element is returned for the link object, instead of many elements that are all links.");
+    description("This test makes sure that only one element is returned for the link object, instead of many elements that are all links.");
 
     if (window.accessibilityController) {
 
-        var obj = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0);
-        var succeeded = obj.iphoneLabel == "AXLabel: This is a link that would normally appear as multiple elements";
-        //  shouldBe("succeeded", "true");
-        var failed = false;
-        if (!succeeded) {
-            failed = true;
-        }
-
-        succeeded = obj.iphoneIsElement;
-        //  shouldBe("succeeded", "true");
-
-        if (!succeeded) {
-           failed = true;
-        }
-
-        if (failed)
-            alert("Tests failed");
-        else
-           alert("Tests passed");
-
+        var obj = accessibilityController.accessibleElementById("link");
+        shouldBe("obj.description", "'AXLabel: This is a link that would normally appear as multiple elements'");
+        shouldBeFalse("obj.isIgnored");
     }
 
     successfullyParsed = true;
 </script>
+<script src="../../../resources/js-test-post.js"></script>
 
 
 </body>

@@ -68,7 +68,18 @@ void AccessibilityController::resetToConsistentState()
 
 static id findAccessibleObjectById(id obj, NSString *idAttribute)
 {
-    return 0;
+    id objIdAttribute = [obj accessibilityIdentifier];
+    if ([objIdAttribute isKindOfClass:[NSString class]] && [objIdAttribute isEqualToString:idAttribute])
+        return obj;
+    
+    NSUInteger childrenCount = [obj accessibilityElementCount];
+    for (NSUInteger i = 0; i < childrenCount; ++i) {
+        id result = findAccessibleObjectById([obj accessibilityElementAtIndex:i], idAttribute);
+        if (result)
+            return result;
+    }
+    
+    return nil;
 }
 
 PassRefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSStringRef idAttribute)

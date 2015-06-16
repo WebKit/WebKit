@@ -33,15 +33,15 @@ if (window.testRunner)
         document.getElementById("pop").focus();
         var pass = accessibilityController.focusedElement;
 
-        shouldBe("pass.iphoneValue", "'AXValue: item 1'");
-        shouldBe("pass.iphoneLabel", "'AXLabel: '");
+        shouldBe("pass.stringValue", "'AXValue: item 1'");
+        shouldBe("pass.description", "'AXLabel: '");
 
         // Check the second popup button.
         document.getElementById("pop2").focus();
         pass = accessibilityController.focusedElement;
 
-        shouldBe("pass.iphoneValue", "'AXValue: item 2'");
-        shouldBe("pass.iphoneLabel", "'AXLabel: Popup'");
+        shouldBe("pass.stringValue", "'AXValue: item 2'");
+        shouldBe("pass.description", "'AXLabel: Popup'");
     }
 
     successfullyParsed = true;

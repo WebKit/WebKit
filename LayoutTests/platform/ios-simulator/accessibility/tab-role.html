@@ -25,14 +25,14 @@ if (window.testRunner)
 
         document.getElementById("fakeButton").focus();
         var tab = accessibilityController.focusedElement;
-        shouldBe("tab.iphoneLabel", "'AXLabel: tab1'");
+        shouldBe("tab.description", "'AXLabel: tab1'");
 
         // Now make sure it has the same traits as a button.
         document.getElementById("realButton").focus();
         var button = accessibilityController.focusedElement;
 
-        shouldBeTrue("button.iphoneTraits != tab.iphoneTraits");
-        shouldBeTrue("tab.iphoneTraits != 0");
+        shouldBeTrue("button.traits != tab.traits");
+        shouldBeTrue("tab.traits != 0");
 
         shouldBeTrue("tab.isSelected");
     }

@@ -1,3 +1,134 @@
+2015-06-15  Chris Fleizach  <cfleizach@apple.com>
+
+        AX:  iOS accessibility tests are not running because we need WKTR support
+        https://bugs.webkit.org/show_bug.cgi?id=145991
+
+        Reviewed by Daniel Bates.
+
+        Add support for WKTR iOS accessibility.
+        Utilize the notification handling mechanisms that Mac already uses.
+        Rename iphone* DRT methods to either use existing methods that are similar, or rename to more generic names.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (stringForSelectionCallback):
+        (getIdentifierCallback):
+        (getTraitsCallback):
+        (getElementTextPositionCallback):
+        (getElementTextLengthCallback):
+        (AccessibilityUIElement::getJSClass):
+        (getIPhoneLabelCallback): Deleted.
+        (getIPhoneHintCallback): Deleted.
+        (getIPhoneValueCallback): Deleted.
+        (getIPhoneIdentifierCallback): Deleted.
+        (getIPhoneTraitsCallback): Deleted.
+        (getIPhoneIsElementCallback): Deleted.
+        (getIPhoneElementTextPositionCallback): Deleted.
+        (getIPhoneElementTextLengthCallback): Deleted.
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::identifier):
+        (AccessibilityUIElement::traits):
+        (AccessibilityUIElement::elementTextPosition):
+        (AccessibilityUIElement::elementTextLength):
+        (AccessibilityUIElement::description):
+        (AccessibilityUIElement::orientation):
+        (AccessibilityUIElement::stringValue):
+        (AccessibilityUIElement::language):
+        (AccessibilityUIElement::helpText):
+        (AccessibilityUIElement::intValue):
+        (AccessibilityUIElement::isSelected):
+        (AccessibilityUIElement::isExpanded):
+        (AccessibilityUIElement::documentURI):
+        (AccessibilityUIElement::addNotificationListener):
+        (AccessibilityUIElement::removeNotificationListener):
+        (AccessibilityUIElement::isFocusable):
+        (AccessibilityUIElement::isIgnored):
+        (AccessibilityUIElement::hasPopup):
+        (AccessibilityUIElement::iphoneLabel): Deleted.
+        (AccessibilityUIElement::iphoneHint): Deleted.
+        (AccessibilityUIElement::iphoneValue): Deleted.
+        (AccessibilityUIElement::iphoneIdentifier): Deleted.
+        (AccessibilityUIElement::iphoneTraits): Deleted.
+        (AccessibilityUIElement::iphoneIsElement): Deleted.
+        (AccessibilityUIElement::iphoneElementTextPosition): Deleted.
+        (AccessibilityUIElement::iphoneElementTextLength): Deleted.
+        (_accessibilityNotificationCallback): Deleted.
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::isValid):
+        (WTR::AccessibilityUIElement::identifier):
+        (WTR::AccessibilityUIElement::traits):
+        (WTR::AccessibilityUIElement::elementTextPosition):
+        (WTR::AccessibilityUIElement::elementTextLength):
+        (WTR::AccessibilityUIElement::stringForSelection):
+        (WTR::AccessibilityUIElement::elementsForRange):
+        (WTR::AccessibilityUIElement::increaseTextSelection):
+        (WTR::AccessibilityUIElement::decreaseTextSelection):
+        (WTR::AccessibilityUIElement::linkedElement):
+        (WTR::AccessibilityUIElement::headerElementAtIndex):
+        (WTR::AccessibilityUIElement::assistiveTechnologySimulatedFocus):
+        (WTR::AccessibilityUIElement::characterAtOffset):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityControllerIOS.mm:
+        (WTR::findAccessibleObjectById):
+        (WTR::AccessibilityController::accessibleElementById):
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (+[NSString stringWithJSStringRef:]):
+        (-[NSString createJSStringRef]):
+        (WTR::convertNSArrayToVector):
+        (WTR::concatenateAttributeAndValue):
+        (WTR::AccessibilityUIElement::AccessibilityUIElement):
+        (WTR::AccessibilityUIElement::isEqual):
+        (WTR::AccessibilityUIElement::headerElementAtIndex):
+        (WTR::AccessibilityUIElement::linkedElement):
+        (WTR::AccessibilityUIElement::getLinkedUIElements):
+        (WTR::AccessibilityUIElement::elementAtPoint):
+        (WTR::convertElementsToObjectArray):
+        (WTR::AccessibilityUIElement::elementsForRange):
+        (WTR::AccessibilityUIElement::indexOfChild):
+        (WTR::AccessibilityUIElement::stringAttributeValue):
+        (WTR::AccessibilityUIElement::description):
+        (WTR::AccessibilityUIElement::orientation):
+        (WTR::AccessibilityUIElement::stringValue):
+        (WTR::AccessibilityUIElement::language):
+        (WTR::AccessibilityUIElement::helpText):
+        (WTR::AccessibilityUIElement::x):
+        (WTR::AccessibilityUIElement::clickPointX):
+        (WTR::AccessibilityUIElement::clickPointY):
+        (WTR::AccessibilityUIElement::intValue):
+        (WTR::AccessibilityUIElement::minValue):
+        (WTR::AccessibilityUIElement::maxValue):
+        (WTR::AccessibilityUIElement::valueDescription):
+        (WTR::AccessibilityUIElement::isSelected):
+        (WTR::AccessibilityUIElement::isSelectedOptionActive):
+        (WTR::AccessibilityUIElement::stringForRange):
+        (WTR::AccessibilityUIElement::attributedStringForRange):
+        (WTR::AccessibilityUIElement::attributesOfHeader):
+        (WTR::AccessibilityUIElement::traits):
+        (WTR::AccessibilityUIElement::identifier):
+        (WTR::AccessibilityUIElement::rowCount):
+        (WTR::AccessibilityUIElement::rowIndexRange):
+        (WTR::AccessibilityUIElement::columnIndexRange):
+        (WTR::AccessibilityUIElement::cellForColumnAndRow):
+        (WTR::AccessibilityUIElement::horizontalScrollbar):
+        (WTR::AccessibilityUIElement::documentURI):
+        (WTR::AccessibilityUIElement::assistiveTechnologySimulatedFocus):
+        (WTR::AccessibilityUIElement::increaseTextSelection):
+        (WTR::AccessibilityUIElement::decreaseTextSelection):
+        (WTR::AccessibilityUIElement::stringForSelection):
+        (WTR::AccessibilityUIElement::elementTextPosition):
+        (WTR::AccessibilityUIElement::elementTextLength):
+        (WTR::AccessibilityUIElement::url):
+        (WTR::AccessibilityUIElement::addNotificationListener):
+        (WTR::AccessibilityUIElement::removeNotificationListener):
+        (WTR::AccessibilityUIElement::isFocusable):
+        (WTR::AccessibilityUIElement::isIgnored):
+        (WTR::AccessibilityUIElement::hasPopup):
+        (WTR::AccessibilityUIElement::mathPrescriptsDescription):
+        (WTR::_CGPathEnumerationIteration):
+        (WTR::AccessibilityUIElement::pathDescription):
+        (WTR::AccessibilityUIElement::supportedActions):
+
 2015-06-16  Mark Lam  <mark.lam@apple.com>
 
         Use NakedPtr<Exception>& to return exception results.

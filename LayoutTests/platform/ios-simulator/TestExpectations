@@ -2580,7 +2580,6 @@ sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html [ Failure ]
 storage/websql/sql-error-codes.html [ Failure ]
 
 # iOS-specific tests that fail:
-platform/ios-simulator/accessibility/text-marker-list-item.html [ Failure ]
 platform/ios-simulator/ios/compositing/overlap-page-scale.html [ Failure ]
 platform/ios-simulator/ios/fast/fixed/absolute-over-fixed.html [ Failure ]
 platform/ios-simulator/ios/fast/fixed/fixed-in-transform.html [ Failure ]

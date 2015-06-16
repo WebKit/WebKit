@@ -21,7 +21,7 @@ var successfullyParsed = false;
 
         document.getElementById("link").focus();
         var link = accessibilityController.focusedElement;
-        shouldBe("link.iphoneHint", "'AXHint: This is a hint'");
+        shouldBe("link.helpText", "'AXHint: This is a hint'");
     }
 
     successfullyParsed = true;

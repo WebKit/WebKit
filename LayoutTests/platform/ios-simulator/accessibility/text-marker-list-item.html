@@ -8,7 +8,7 @@ var successfullyParsed = false;
 </head>
 <body id="body">
 
-<ol>
+<ol id="list">
 <li>item 1</li>
 </ol>
 
@@ -21,7 +21,7 @@ var successfullyParsed = false;
 
     if (window.accessibilityController) {
 
-        var obj = accessibilityController.rootElement;
+        var obj = accessibilityController.accessibleElementById("list");
         var text = obj.stringForRange(0, 6);
         shouldBe("text", "'1. item 1'");
     }

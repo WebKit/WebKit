@@ -29,19 +29,19 @@ if (window.testRunner)
     if (window.accessibilityController) {
 
         document.getElementById("check1").focus();
-        shouldBe("accessibilityController.focusedElement.iphoneValue", "'AXValue: 0'");
+        shouldBe("accessibilityController.focusedElement.stringValue", "'AXValue: 0'");
 
         document.getElementById("check2").focus();
-        shouldBe("accessibilityController.focusedElement.iphoneValue", "'AXValue: 1'");
+        shouldBe("accessibilityController.focusedElement.stringValue", "'AXValue: 1'");
 
         document.getElementById("check3").focus();
-        shouldBe("accessibilityController.focusedElement.iphoneValue", "'AXValue: 2'");
+        shouldBe("accessibilityController.focusedElement.stringValue", "'AXValue: 2'");
 
         document.getElementById("check4").focus();
-        shouldBe("accessibilityController.focusedElement.iphoneValue", "'AXValue: 1'");
+        shouldBe("accessibilityController.focusedElement.stringValue", "'AXValue: 1'");
 
         document.getElementById("check5").focus();
-        shouldBe("accessibilityController.focusedElement.iphoneValue", "'AXValue: 0'");
+        shouldBe("accessibilityController.focusedElement.stringValue", "'AXValue: 0'");
     }
 
     successfullyParsed = true;

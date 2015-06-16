@@ -24,19 +24,19 @@ var successfullyParsed = false;
 
         var button1 = accessibilityController.accessibleElementById("button1");
         debug("Button 1 should expose alternative text only.");
-        shouldBe("button1.iphoneLabel", "'AXLabel: PLAY'");
+        shouldBe("button1.description", "'AXLabel: PLAY'");
 
         var button2 = accessibilityController.accessibleElementById("button2");
         debug("Button 2 should expose internal text only.");
-        shouldBe("button2.iphoneLabel", "'AXLabel: 1'");
+        shouldBe("button2.description", "'AXLabel: 1'");
 
         var text1 = accessibilityController.accessibleElementById("text1");
         debug("Text 1 should rely on the stringValue() in the label field.");
-        shouldBe("text1.iphoneLabel", "'AXLabel: text1'");
+        shouldBe("text1.description", "'AXLabel: text1'");
 
         var link1 = accessibilityController.accessibleElementById("link1");
         debug("Link1 should combine the title field and the aria-label field.");
-        shouldBe("link1.iphoneLabel", "'AXLabel: link1, link1-title'");
+        shouldBe("link1.description", "'AXLabel: link1, link1-title'");
     }
 
     successfullyParsed = true;

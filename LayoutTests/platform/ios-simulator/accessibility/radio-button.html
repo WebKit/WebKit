@@ -32,12 +32,12 @@
         var radio3 = accessibilityController.focusedElement;
 
         // Verify checkbox and radio have different traits.
-        shouldBeTrue("checkbox.iphoneTraits != radio1.iphoneTraits");
+        shouldBeTrue("checkbox.traits != radio1.traits");
 
         // Verify the value of the checked radio item is correct.
-        shouldBe("radio1.iphoneValue", "'AXValue: 1'");
-        shouldBe("radio2.iphoneValue", "'AXValue: 0'");
-        shouldBe("radio3.iphoneValue", "'AXValue: 0'");
+        shouldBe("radio1.stringValue", "'AXValue: 1'");
+        shouldBe("radio2.stringValue", "'AXValue: 0'");
+        shouldBe("radio3.stringValue", "'AXValue: 0'");
 
         // Verify the radio buttons are part of a group.
         shouldBe("radio1.rowIndexRange()", "'{0, 3}'");

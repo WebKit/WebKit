@@ -20,7 +20,7 @@ var successfullyParsed = false;
 
     var focusChangeCount = 0;
     var rootElement = 0;
-    function focusCallback(notification) {
+    function focusCallback(notification) { 
         if (notification == "AXFocusChanged") {
             focusChangeCount++;
 
@@ -34,10 +34,15 @@ var successfullyParsed = false;
 
     if (window.accessibilityController) {
         // Make sure AX gets turned on.
-        rootElement = accessibilityController.rootElement;
+        rootElement = accessibilityController.rootElement.childAtIndex(0);
         window.testRunner.waitUntilDone();
 
         var addedNotification = rootElement.addNotificationListener(focusCallback);
+        if (!addedNotification) {
+            rootElement = accessibilityController.rootElement;
+            addedNotification = rootElement.addNotificationListener(focusCallback);
+        }
+
         shouldBe("addedNotification", "true");
 
         // Switch focus from h1.

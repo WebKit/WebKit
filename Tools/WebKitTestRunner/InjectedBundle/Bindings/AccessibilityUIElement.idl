@@ -201,7 +201,21 @@ interface AccessibilityUIElement {
     readonly attribute DOMString mathPrescriptsDescription;
 
     readonly attribute DOMString pathDescription;
-    
+
+    // iOS specific accessibility methods.
+    readonly attribute DOMString identifier;
+    readonly attribute DOMString traits;
+    readonly attribute int elementTextPosition;
+    readonly attribute int elementTextLength;
+    readonly attribute DOMString stringForSelection;
+    object elementsForRange(unsigned long location, unsigned long length);
+    void increaseTextSelection();
+    void decreaseTextSelection();
+    AccessibilityUIElement linkedElement();
+    AccessibilityUIElement headerElementAtIndex(unsigned long index);
+    // This will simulate the accessibilityDidBecomeFocused API in UIKit.
+    void assistiveTechnologySimulatedFocus();
+
     // Notification support.
     boolean addNotificationListener(object callbackFunction);
     boolean removeNotificationListener();

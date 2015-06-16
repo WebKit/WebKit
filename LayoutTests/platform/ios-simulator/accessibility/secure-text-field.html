@@ -18,9 +18,9 @@
 
     if (window.accessibilityController) {
 
-        var passfield = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0);
-        var textfield = accessibilityController.rootElement.childAtIndex(0).childAtIndex(1);
-        var succeeded = passfield.iphoneTraits != textfield.iphoneTraits;
+        var passfield = accessibilityController.accessibleElementById("pass");
+        var textfield = accessibilityController.accessibleElementById("text");
+        var succeeded = passfield.traits != textfield.traits;
 
         //  shouldBe("succeeded", "true");
         var failed = false;

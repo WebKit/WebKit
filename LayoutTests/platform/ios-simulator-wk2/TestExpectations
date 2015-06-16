@@ -1707,8 +1707,6 @@ platform/ios-simulator/ios/fast/coordinates/mouse-event-zoomed.html
 platform/ios-simulator/ios/fast/coordinates/mouse-event.html
 
 # iOS-specific tests that time out or fail in WebKitTestRunner due to missing DRT-specific functionality:
-platform/ios-simulator/accessibility
-platform/ios-simulator/ios/accessibility
 platform/ios-simulator/ios/fast/coordinates/touch-event-zoomed.html
 platform/ios-simulator/ios/fast/coordinates/touch-event.html
 platform/ios-simulator/ios/fast/events/touch/input-touch-target.html

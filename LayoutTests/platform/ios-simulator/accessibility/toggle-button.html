@@ -21,12 +21,12 @@ var successfullyParsed = false;
     if (window.accessibilityController) {
 
         var button1 = accessibilityController.accessibleElementById("button1");
-        debug("Button1 : " + button1.iphoneLabel);
-        debug("Button1 : " + button1.iphoneValue);
+        debug("Button1 : " + button1.description);
+        debug("Button1 : " + button1.stringValue);
 
         var button2 = accessibilityController.accessibleElementById("button2");
-        debug("Button2 : " + button2.iphoneLabel);
-        debug("Button2 : " + button2.iphoneValue);
+        debug("Button2 : " + button2.description);
+        debug("Button2 : " + button2.stringValue);
     }
 
     successfullyParsed = true;

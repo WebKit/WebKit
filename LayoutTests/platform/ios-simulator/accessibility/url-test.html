@@ -8,9 +8,9 @@ var successfullyParsed = false;
 </head>
 <body id="body">
 
-<input type="image" src="url-test1.html"><BR>
-<a href="#url-test2.html">test</a><BR>
-<img src="url-test3.png" width=100 height=100 alt="test"><BR>
+<input id="element1" type="image" src="url-test1.html"><BR>
+<a id="element2" href="#url-test2.html">test</a><BR>
+<img id="element3" src="url-test3.png" width=100 height=100 alt="test"><BR>
 
 
 <p id="description"></p>
@@ -22,13 +22,13 @@ var successfullyParsed = false;
 
     if (window.accessibilityController) {
 
-        var element = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0);
+        var element = accessibilityController.accessibleElementById("element1");
         shouldBe("element.url.indexOf('url-test1.html') != -1", "true");
 
-        element = accessibilityController.rootElement.childAtIndex(0).childAtIndex(1);
+        element = accessibilityController.accessibleElementById("element2");
         shouldBe("element.url.indexOf('url-test2.html') != -1", "true");
 
-        element = accessibilityController.rootElement.childAtIndex(0).childAtIndex(2);
+        element = accessibilityController.accessibleElementById("element3");
         shouldBe("element.url.indexOf('url-test3.png') != -1", "true");
     }
 

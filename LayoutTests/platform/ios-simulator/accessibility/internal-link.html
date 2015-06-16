@@ -28,7 +28,7 @@ if (window.testRunner)
 
         document.getElementById("name").focus();
         var link = accessibilityController.focusedElement;
-        shouldBe("link.linkedElement().iphoneLabel", "'AXLabel: Linked Element'");
+        shouldBe("link.linkedElement().description", "'AXLabel: Linked Element'");
     }
 
     successfullyParsed = true;

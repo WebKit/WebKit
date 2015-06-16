@@ -1,12 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
-<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
 <script>
 var successfullyParsed = false;
-if (window.testRunner)
-  testRunner.dumpAsText();
 </script>
 </head>
 <body>
@@ -32,11 +29,11 @@ if (window.testRunner)
 
        document.getElementById("button2").focus();
        var btn2 = accessibilityController.focusedElement;
-       shouldBe("btn1.iphoneTraits != btn2.iphoneTraits", "true");
+       shouldBe("btn1.traits != btn2.traits", "true");
 
        document.getElementById("button3").focus();
        var btn3 = accessibilityController.focusedElement;
-       shouldBe("btn2.iphoneTraits == btn3.iphoneTraits", "true");
+       shouldBe("btn2.traits == btn3.traits", "true");
 
        document.getElementById("select1").focus();
        var select1 = accessibilityController.focusedElement;
@@ -44,13 +41,13 @@ if (window.testRunner)
        document.getElementById("select2").focus();
        var select2 = accessibilityController.focusedElement;
 
-       shouldBe("select1.iphoneTraits != select2.iphoneTraits", "true");
+       shouldBe("select1.traits != select2.traits", "true");
    }
 
    successfullyParsed = true;
 </script>
 
-<script src="../../../fast/js/resources/js-test-post.js"></script>
+<script src="../../../resources/js-test-post.js"></script>
 
 </body>
 </html>

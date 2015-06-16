@@ -24,7 +24,7 @@ if (window.testRunner)
         // Make sure a checkbox with a label DOES NOT have the same center point as the frame
         document.getElementById("button1").focus();
         var button1 = accessibilityController.focusedElement;
-        shouldBe("button1.iphoneIdentifier", "'AXIdentifier: button1'");
+        shouldBe("button1.identifier", "'AXIdentifier: button1'");
     }
 
     successfullyParsed = true;

@@ -274,14 +274,10 @@ public:
     void removeNotificationListener();
     
 #if PLATFORM(IOS)
-    JSStringRef iphoneLabel();
-    JSStringRef iphoneValue();
-    JSStringRef iphoneTraits();
-    JSStringRef iphoneHint();
-    JSStringRef iphoneIdentifier();
-    bool iphoneIsElement();
-    int iphoneElementTextPosition();
-    int iphoneElementTextLength();
+    JSStringRef traits();
+    JSStringRef identifier();
+    int elementTextPosition();
+    int elementTextLength();
     AccessibilityUIElement headerElementAtIndex(unsigned);
     // This will simulate the accessibilityDidBecomeFocused API in UIKit.
     void assistiveTechnologySimulatedFocus();
@@ -300,9 +296,7 @@ private:
     static JSClassRef getJSClass();
     PlatformUIElement m_element;
     
-#if PLATFORM(IOS) 
-    JSObjectRef m_notificationFunctionCallback;
-#elif PLATFORM(MAC)
+#if PLATFORM(COCOA)
     // A retained, platform specific object used to help manage notifications for this object.
     NotificationHandler m_notificationHandler;
 #endif

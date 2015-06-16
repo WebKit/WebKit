@@ -23,9 +23,8 @@ var successfullyParsed = false;
 
     if (window.accessibilityController) {
 
-        document.getElementById("textrole").focus();
-        var textrole = accessibilityController.rootElement.childAtIndex(0);
-        shouldBe("textrole.iphoneLabel", "'AXLabel: all at once'");
+        var textrole = accessibilityController.accessibleElementById("textrole");
+        shouldBe("textrole.description", "'AXLabel: all at once'");
     }
 
     successfullyParsed = true;

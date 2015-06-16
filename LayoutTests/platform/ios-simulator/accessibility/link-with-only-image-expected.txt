@@ -4,8 +4,8 @@ This test makes sure that a link with only an image will report the correct labe
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS obj.iphoneIsElement is true
-PASS obj.iphoneLabel is 'AXLabel: Hello World'
+FAIL obj.isIgnored should be false. Was true.
+PASS obj.description is 'AXLabel: Hello World'
 PASS successfullyParsed is true
 
 TEST COMPLETE

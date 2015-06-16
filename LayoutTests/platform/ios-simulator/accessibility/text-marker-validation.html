@@ -8,10 +8,10 @@ var successfullyParsed = false;
 </head>
 <body>
 
-<div>element 1</div>
-<div>element 2</div>
-<div>element 3</div>
-<div>element 4</div>
+<div id="element1">element 1</div>
+<div id="element2">element 2</div>
+<div id="element3">element 3</div>
+<div id="element4">element 4</div>
 
 <p id="description"></p>
 <div id="console"></div>
@@ -22,10 +22,10 @@ var successfullyParsed = false;
 
     if (window.accessibilityController) {
 
-        var obj = accessibilityController.rootElement.childAtIndex(2);
+        var obj = accessibilityController.accessibleElementById("element3");
 
-        var textPos = obj.iphoneElementTextPosition;
-        var textLen = obj.iphoneElementTextLength;
+        var textPos = obj.elementTextPosition;
+        var textLen = obj.elementTextLength;
 
         var succeeded = textPos == 20 && textLen == 9;
         shouldBe("succeeded", "true");

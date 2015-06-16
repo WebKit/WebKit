@@ -20,9 +20,9 @@ var successfullyParsed = false;
     if (window.accessibilityController) {
 
         var button1 = accessibilityController.accessibleElementById("progressbar");
-        shouldBe("button1.iphoneLabel", "'AXLabel: Popularity'");
-        shouldBe("button1.iphoneValue", "'AXValue: 5.00'");
-        shouldBeTrue("button1.iphoneIsElement");
+        shouldBe("button1.description", "'AXLabel: Popularity'");
+        shouldBe("button1.stringValue", "'AXValue: 5.00'");
+        shouldBeFalse("button1.isIgnored");
         shouldBe("button1.minValue", "1");
         shouldBe("button1.maxValue", "12");
     }

@@ -1304,50 +1304,27 @@ static JSValueRef stringForSelectionCallback(JSContextRef context, JSObjectRef t
     return JSValueMakeString(context, labelString.get());
 }
 
-static JSValueRef getIPhoneLabelCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+static JSValueRef getIdentifierCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> labelString(Adopt, toAXElement(thisObject)->iphoneLabel());
-    return JSValueMakeString(context, labelString.get());
-}
-
-static JSValueRef getIPhoneHintCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
-{
-    JSRetainPtr<JSStringRef> hintString(Adopt, toAXElement(thisObject)->iphoneHint());
-    return JSValueMakeString(context, hintString.get());
-}
-
-static JSValueRef getIPhoneValueCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
-{
-    JSRetainPtr<JSStringRef> valueString(Adopt, toAXElement(thisObject)->iphoneValue());
-    return JSValueMakeString(context, valueString.get());
-}
-
-static JSValueRef getIPhoneIdentifierCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
-{
-    JSRetainPtr<JSStringRef> valueString(Adopt, toAXElement(thisObject)->iphoneIdentifier());
+    JSRetainPtr<JSStringRef> valueString(Adopt, toAXElement(thisObject)->identifier());
     return JSValueMakeString(context, valueString.get());
 }
 
 
-static JSValueRef getIPhoneTraitsCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+static JSValueRef getTraitsCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSRetainPtr<JSStringRef> valueString(Adopt, toAXElement(thisObject)->iphoneTraits());
+    JSRetainPtr<JSStringRef> valueString(Adopt, toAXElement(thisObject)->traits());
     return JSValueMakeString(context, valueString.get());
 }
 
-static JSValueRef getIPhoneIsElementCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+static JSValueRef getElementTextPositionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    return JSValueMakeBoolean(context, toAXElement(thisObject)->iphoneIsElement());
+    return JSValueMakeNumber(context, toAXElement(thisObject)->elementTextPosition());
 }
 
-static JSValueRef getIPhoneElementTextPositionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+static JSValueRef getElementTextLengthCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    return JSValueMakeNumber(context, toAXElement(thisObject)->iphoneElementTextPosition());
-}
-
-static JSValueRef getIPhoneElementTextLengthCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
-{
-    return JSValueMakeNumber(context, toAXElement(thisObject)->iphoneElementTextLength());
+    return JSValueMakeNumber(context, toAXElement(thisObject)->elementTextLength());
 }
 
 #endif // PLATFORM(IOS)
@@ -1599,14 +1576,10 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "startTextMarker", startTextMarkerCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "endTextMarker", endTextMarkerCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #if PLATFORM(IOS)
-        { "iphoneLabel", getIPhoneLabelCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "iphoneHint", getIPhoneHintCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "iphoneValue", getIPhoneValueCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "iphoneIdentifier", getIPhoneIdentifierCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "iphoneTraits", getIPhoneTraitsCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "iphoneIsElement", getIPhoneIsElementCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "iphoneElementTextPosition", getIPhoneElementTextPositionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "iphoneElementTextLength", getIPhoneElementTextLengthCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "identifier", getIdentifierCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "traits", getTraitsCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "elementTextPosition", getElementTextPositionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "elementTextLength", getElementTextLengthCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "stringForSelection", stringForSelectionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #endif // PLATFORM(IOS)
 #if PLATFORM(MAC) && !PLATFORM(IOS)

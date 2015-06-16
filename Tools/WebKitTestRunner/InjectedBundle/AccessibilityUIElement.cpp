@@ -53,6 +53,21 @@ bool AccessibilityUIElement::isValid() const
     return m_element;            
 }
 
+// iOS specific methods
+#if !PLATFORM(IOS)
+JSRetainPtr<JSStringRef> AccessibilityUIElement::identifier() { return nullptr; }
+JSRetainPtr<JSStringRef> AccessibilityUIElement::traits() { return nullptr; }
+int AccessibilityUIElement::elementTextPosition() { return 0; }
+int AccessibilityUIElement::elementTextLength() { return 0; }
+JSRetainPtr<JSStringRef> AccessibilityUIElement::stringForSelection() { return nullptr; }
+JSValueRef AccessibilityUIElement::elementsForRange(unsigned, unsigned) { return nullptr; }
+void AccessibilityUIElement::increaseTextSelection() { }
+void AccessibilityUIElement::decreaseTextSelection() { }
+PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::linkedElement() { return nullptr; }
+PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::headerElementAtIndex(unsigned) { return nullptr; }
+void AccessibilityUIElement::assistiveTechnologySimulatedFocus() { return; }
+#endif
+    
 // Unsupported methods on various platforms. As they're implemented on other platforms this list should be modified.
 #if (!PLATFORM(GTK) && !PLATFORM(EFL)) || !HAVE(ACCESSIBILITY)
 JSRetainPtr<JSStringRef> AccessibilityUIElement::characterAtOffset(int) { return 0; }

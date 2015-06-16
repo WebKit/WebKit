@@ -2525,24 +2525,6 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     return m_object->clickPoint();
 }
 
-// These are used by DRT so that it can know when notifications are sent.
-// Since they are static, only one callback can be installed at a time (that's all DRT should need).
-typedef void (*AXPostedNotificationCallback)(id element, NSString* notification, void* context);
-static AXPostedNotificationCallback AXNotificationCallback = nullptr;
-static void* AXPostedNotificationContext = nullptr;
-
-- (void)accessibilitySetPostedNotificationCallback:(AXPostedNotificationCallback)function withContext:(void*)context
-{
-    AXNotificationCallback = function;
-    AXPostedNotificationContext = context;
-}
-
-- (void)accessibilityPostedNotification:(NSString *)notificationName
-{
-    if (AXNotificationCallback && notificationName)
-        AXNotificationCallback(self, notificationName, AXPostedNotificationContext);
-}
-
 #ifndef NDEBUG
 - (NSString *)description
 {

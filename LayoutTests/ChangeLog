@@ -1,3 +1,77 @@
+2015-06-15  Chris Fleizach  <cfleizach@apple.com>
+
+        AX:  iOS accessibility tests are not running because we need WKTR support
+        https://bugs.webkit.org/show_bug.cgi?id=145991
+
+        Reviewed by Daniel Bates.
+
+        Alter tests so that it addresses:
+           1) Utilize the new AX methods which created new expectations.
+           2) There were some expectations checked in with failures that are now fixed.
+           3) Remove failing test expectations from TestExpectations.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/accessibility: Replaced with LayoutTests/platform/ios-simulator/accessibility.
+        * platform/ios-simulator/accessibility/accessibility-crash-in-axcontainer-expected.txt:
+        * platform/ios-simulator/accessibility/accessibility-crash-in-axcontainer.html:
+        * platform/ios-simulator/accessibility/accessibility-hint-expected.txt:
+        * platform/ios-simulator/accessibility/accessibility-hint.html:
+        * platform/ios-simulator/accessibility/aria-label-with-internal-text-expected.txt:
+        * platform/ios-simulator/accessibility/aria-label-with-internal-text.html:
+        * platform/ios-simulator/accessibility/disabled-states-expected.txt:
+        * platform/ios-simulator/accessibility/disabled-states.html:
+        * platform/ios-simulator/accessibility/dom-focus-fires-on-correct-element-expected.txt:
+        * platform/ios-simulator/accessibility/dom-focus-fires-on-correct-element.html:
+        * platform/ios-simulator/accessibility/file-upload-button-expected.txt:
+        * platform/ios-simulator/accessibility/file-upload-button.html:
+        * platform/ios-simulator/accessibility/focus-change-notifications.html:
+        * platform/ios-simulator/accessibility/identifier-expected.txt:
+        * platform/ios-simulator/accessibility/identifier.html:
+        * platform/ios-simulator/accessibility/internal-link-expected.txt:
+        * platform/ios-simulator/accessibility/internal-link.html:
+        * platform/ios-simulator/accessibility/landmark-type-expected.txt:
+        * platform/ios-simulator/accessibility/landmark-type.html:
+        * platform/ios-simulator/accessibility/link-with-images-text-expected.txt:
+        * platform/ios-simulator/accessibility/link-with-images-text.html:
+        * platform/ios-simulator/accessibility/link-with-only-image-expected.txt:
+        * platform/ios-simulator/accessibility/link-with-only-image.html:
+        * platform/ios-simulator/accessibility/math-expected.txt:
+        * platform/ios-simulator/accessibility/math.html:
+        * platform/ios-simulator/accessibility/mixed-checkboxes-expected.txt:
+        * platform/ios-simulator/accessibility/mixed-checkboxes.html:
+        * platform/ios-simulator/accessibility/no-child-link-header.html:
+        * platform/ios-simulator/accessibility/non-contiguous-link-expected.txt:
+        * platform/ios-simulator/accessibility/non-contiguous-link.html:
+        * platform/ios-simulator/accessibility/password-value-expected.txt:
+        * platform/ios-simulator/accessibility/password-value.html:
+        * platform/ios-simulator/accessibility/placeholder-value-expected.txt:
+        * platform/ios-simulator/accessibility/placeholder-value.html:
+        * platform/ios-simulator/accessibility/popup-button-value-label-expected.txt:
+        * platform/ios-simulator/accessibility/popup-button-value-label.html:
+        * platform/ios-simulator/accessibility/progressbar-expected.txt:
+        * platform/ios-simulator/accessibility/progressbar.html:
+        * platform/ios-simulator/accessibility/radio-button-expected.txt:
+        * platform/ios-simulator/accessibility/radio-button.html:
+        * platform/ios-simulator/accessibility/secure-text-field.html:
+        * platform/ios-simulator/accessibility/selected-buttons-expected.txt:
+        * platform/ios-simulator/accessibility/svg-group-element-with-title-expected.txt:
+        * platform/ios-simulator/accessibility/svg-group-element-with-title.html:
+        * platform/ios-simulator/accessibility/tab-role-expected.txt:
+        * platform/ios-simulator/accessibility/tab-role.html:
+        * platform/ios-simulator/accessibility/tables-lists-expected.txt:
+        * platform/ios-simulator/accessibility/tables-lists.html:
+        * platform/ios-simulator/accessibility/text-marker-list-item-expected.txt:
+        * platform/ios-simulator/accessibility/text-marker-list-item.html:
+        * platform/ios-simulator/accessibility/text-marker-validation.html:
+        * platform/ios-simulator/accessibility/text-role-expected.txt:
+        * platform/ios-simulator/accessibility/text-role.html:
+        * platform/ios-simulator/accessibility/textfield-in-axvalue-expected.txt:
+        * platform/ios-simulator/accessibility/textfield-in-axvalue.html:
+        * platform/ios-simulator/accessibility/toggle-button.html:
+        * platform/ios-simulator/accessibility/url-test.html:
+
 2015-06-16  Brent Fulgham  <bfulgham@apple.com>
 
         CSS Scroll Snap - support snapping to nested elements
