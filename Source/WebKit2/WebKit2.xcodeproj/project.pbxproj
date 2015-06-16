@@ -36,17 +36,6 @@
 			name = All;
 			productName = WebKit2;
 		};
-		377E7CCE1B20FF9E00931AFC /* WebKit2SandboxProfiles */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 377E7CCF1B20FF9E00931AFC /* Build configuration list for PBXAggregateTarget "WebKit2SandboxProfiles" */;
-			buildPhases = (
-			);
-			dependencies = (
-				377E7CD41B20FFAB00931AFC /* PBXTargetDependency */,
-			);
-			name = WebKit2SandboxProfiles;
-			productName = WebKit2SandboxProfiles;
-		};
 		A7AADA1019395CA9003EA1C7 /* Sandbox Profiles */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = A7AADA1419395CA9003EA1C7 /* Build configuration list for PBXAggregateTarget "Sandbox Profiles" */;
@@ -1903,13 +1892,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
 			remoteInfo = WebKit;
-		};
-		377E7CD31B20FFAB00931AFC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A7AADA1019395CA9003EA1C7;
-			remoteInfo = "Sandbox Profiles";
 		};
 		37F7407812721F740093869B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -8752,11 +8734,6 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0600;
-				TargetAttributes = {
-					377E7CCE1B20FF9E00931AFC = {
-						CreatedOnToolsVersion = 7.0;
-					};
-				};
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "WebKit2" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -8797,7 +8774,6 @@
 				5180C713180CCA3100FDA612 /* Databases.Development */,
 				A7AADA1019395CA9003EA1C7 /* Sandbox Profiles */,
 				A7C0DC2D19804DEE00253CED /* WebKit2SandboxProfiles-IOSOverride */,
-				377E7CCE1B20FF9E00931AFC /* WebKit2SandboxProfiles */,
 			);
 		};
 /* End PBXProject section */
@@ -10253,11 +10229,6 @@
 			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
 			targetProxy = 375E063E191EAA33004E3CAF /* PBXContainerItemProxy */;
 		};
-		377E7CD41B20FFAB00931AFC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = A7AADA1019395CA9003EA1C7 /* Sandbox Profiles */;
-			targetProxy = 377E7CD31B20FFAB00931AFC /* PBXContainerItemProxy */;
-		};
 		37F7407912721F740093869B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C0CE72851247E66800BC0EC4 /* Derived Sources */;
@@ -10501,27 +10472,6 @@
 			buildSettings = {
 			};
 			name = Release;
-		};
-		377E7CD01B20FF9E00931AFC /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		377E7CD11B20FF9E00931AFC /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		377E7CD21B20FF9E00931AFC /* Production */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Production;
 		};
 		510031F31379CACB00C8DFE4 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -11007,16 +10957,6 @@
 				1DEB91B208733DA50010E9CD /* Debug */,
 				1DEB91B308733DA50010E9CD /* Release */,
 				5D22D69B11A7534600BF30E5 /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		377E7CCF1B20FF9E00931AFC /* Build configuration list for PBXAggregateTarget "WebKit2SandboxProfiles" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				377E7CD01B20FF9E00931AFC /* Debug */,
-				377E7CD11B20FF9E00931AFC /* Release */,
-				377E7CD21B20FF9E00931AFC /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

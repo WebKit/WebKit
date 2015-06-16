@@ -1,3 +1,14 @@
+2015-06-16  Dan Bernstein  <mitz@apple.com>
+
+        Removed the WebKit2SandboxProfiles target.
+
+        Rubber-stamped by Anders Carlsson.
+
+        WebKit2SandboxProfiles was just an alias for the Sandbox Profiles target, and it’s not
+        needed anymore.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-06-16  Anders Carlsson  <andersca@apple.com>
 
         Fold WebKeyValueStorageManager into WKKeyValueStorageManager
