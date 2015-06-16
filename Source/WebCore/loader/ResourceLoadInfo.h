@@ -60,6 +60,7 @@ typedef uint16_t ResourceFlags;
 // The next bit is used to mark actions that are from a rule with an if-domain condition.
 // The next bit is used to mark actions that in the default stylesheet.
 // The values -1 and -2 are used for removed and empty values in HashTables.
+const uint64_t ActionFlagMask = 0x0000FFFF00000000;
 const uint64_t IfDomainFlag = 0x0001000000000000;
 const uint64_t DisplayNoneStyleSheetFlag = 0x0002000000000000;
 

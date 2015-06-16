@@ -43,15 +43,40 @@ inline void append(Vector<DFABytecode>& bytecode, IntType value)
     *reinterpret_cast<IntType*>(&bytecode[bytecode.size() - sizeof(IntType)]) = value;
 }
 
-inline void set32Bits(Vector<DFABytecode>& bytecode, uint32_t index, uint32_t value)
+inline void appendZeroes(Vector<DFABytecode>& bytecode, DFABytecodeJumpSize jumpSize)
 {
-    *reinterpret_cast<uint32_t*>(&bytecode[index]) = value;
+    switch (jumpSize) {
+    case DFABytecodeJumpSize::Int8:
+        append<int8_t>(bytecode, 0); // This value will be set when linking.
+        break;
+    case DFABytecodeJumpSize::Int16:
+        append<int16_t>(bytecode, 0); // This value will be set when linking.
+        break;
+    case DFABytecodeJumpSize::Int32:
+        append<int32_t>(bytecode, 0); // This value will be set when linking.
+        break;
+    }
 }
 
+template <typename IntType>
+inline void setBits(Vector<DFABytecode>& bytecode, uint32_t index, IntType value)
+{
+    RELEASE_ASSERT(index + sizeof(IntType) <= bytecode.size());
+    ASSERT_WITH_MESSAGE(!*reinterpret_cast<IntType*>(&bytecode[index]), "Right now we should only be using setBits to overwrite values that were zero as a placeholder.");
+    *reinterpret_cast<IntType*>(&bytecode[index]) = value;
+}
+
+static unsigned appendActionBytecodeSize(uint64_t action)
+{
+    if (action & ActionFlagMask)
+        return sizeof(DFABytecodeInstruction) + sizeof(uint16_t) + sizeof(uint32_t);
+    return sizeof(DFABytecodeInstruction) + sizeof(uint32_t);
+}
+    
 void DFABytecodeCompiler::emitAppendAction(uint64_t action)
 {
     // High bits are used to store flags. See compileRuleList.
-    if (action & 0xFFFF00000000) {
+    if (action & ActionFlagMask) {
         ASSERT(!(action & DisplayNoneStyleSheetFlag));
         if (action & IfDomainFlag)
             append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::TestFlagsAndAppendActionWithIfDomain);
@@ -71,30 +96,62 @@ void DFABytecodeCompiler::emitAppendAction(uint64_t action)
     }
 }
 
-void DFABytecodeCompiler::emitJump(uint32_t destinationNodeIndex)
+int32_t DFABytecodeCompiler::longestPossibleJump(uint32_t instructionLocation, uint32_t sourceNodeIndex, uint32_t destinationNodeIndex)
 {
-    append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::Jump);
-    m_linkRecords.append(std::make_pair(m_bytecode.size(), destinationNodeIndex));
-    append<uint32_t>(m_bytecode, 0); // This value will be set when linking.
+    if (m_nodeStartOffsets[destinationNodeIndex] == std::numeric_limits<uint32_t>::max()) {
+        // Jumping to a node that hasn't been compiled yet, we don't know exactly how far forward we will need to jump,
+        // so make sure we have enough room for the worst possible case, the farthest possible jump
+        // which would be the distance if there were no compacted branches between this jump and its destination.
+        ASSERT(instructionLocation >= m_nodeStartOffsets[sourceNodeIndex]);
+        ASSERT(m_maxNodeStartOffsets[destinationNodeIndex] > m_maxNodeStartOffsets[sourceNodeIndex]);
+        ASSERT(m_nodeStartOffsets[sourceNodeIndex] != std::numeric_limits<uint32_t>::max());
+        return m_maxNodeStartOffsets[destinationNodeIndex] - m_maxNodeStartOffsets[sourceNodeIndex] - (m_nodeStartOffsets[sourceNodeIndex] - instructionLocation);
+    }
+    
+    // Jumping to an already compiled node, we already know exactly where we will need to jump to.
+    ASSERT(m_nodeStartOffsets[destinationNodeIndex] <= instructionLocation);
+    return m_nodeStartOffsets[destinationNodeIndex] - instructionLocation;
+}
+    
+void DFABytecodeCompiler::emitJump(uint32_t sourceNodeIndex, uint32_t destinationNodeIndex)
+{
+    uint32_t instructionLocation = m_bytecode.size();
+    uint32_t jumpLocation = instructionLocation + sizeof(uint8_t);
+    int32_t longestPossibleJumpDistance = longestPossibleJump(instructionLocation, sourceNodeIndex, destinationNodeIndex);
+    DFABytecodeJumpSize jumpSize = smallestPossibleJumpSize(longestPossibleJumpDistance);
+    append<uint8_t>(m_bytecode, static_cast<uint8_t>(DFABytecodeInstruction::Jump) | jumpSize);
+
+    m_linkRecords.append(LinkRecord({jumpSize, longestPossibleJumpDistance, instructionLocation, jumpLocation, destinationNodeIndex}));
+    appendZeroes(m_bytecode, jumpSize);
 }
 
-void DFABytecodeCompiler::emitCheckValue(uint8_t value, uint32_t destinationNodeIndex, bool caseSensitive)
+void DFABytecodeCompiler::emitCheckValue(uint8_t value, uint32_t sourceNodeIndex, uint32_t destinationNodeIndex, bool caseSensitive)
 {
-    append<DFABytecodeInstruction>(m_bytecode, caseSensitive ? DFABytecodeInstruction::CheckValueCaseSensitive : DFABytecodeInstruction::CheckValueCaseInsensitive);
+    uint32_t instructionLocation = m_bytecode.size();
+    uint32_t jumpLocation = instructionLocation + 2 * sizeof(uint8_t);
+    int32_t longestPossibleJumpDistance = longestPossibleJump(instructionLocation, sourceNodeIndex, destinationNodeIndex);
+    DFABytecodeJumpSize jumpSize = smallestPossibleJumpSize(longestPossibleJumpDistance);
+    DFABytecodeInstruction instruction = caseSensitive ? DFABytecodeInstruction::CheckValueCaseSensitive : DFABytecodeInstruction::CheckValueCaseInsensitive;
+    append<uint8_t>(m_bytecode, static_cast<uint8_t>(instruction) | jumpSize);
     append<uint8_t>(m_bytecode, value);
-    m_linkRecords.append(std::make_pair(m_bytecode.size(), destinationNodeIndex));
-    append<uint32_t>(m_bytecode, 0); // This value will be set when linking.
+    m_linkRecords.append(LinkRecord({jumpSize, longestPossibleJumpDistance, instructionLocation, jumpLocation, destinationNodeIndex}));
+    appendZeroes(m_bytecode, jumpSize);
 }
 
-void DFABytecodeCompiler::emitCheckValueRange(uint8_t lowValue, uint8_t highValue, uint32_t destinationNodeIndex, bool caseSensitive)
+void DFABytecodeCompiler::emitCheckValueRange(uint8_t lowValue, uint8_t highValue, uint32_t sourceNodeIndex, uint32_t destinationNodeIndex, bool caseSensitive)
 {
     ASSERT_WITH_MESSAGE(lowValue < highValue, "The instruction semantic impose lowValue is strictly less than highValue.");
 
-    append<DFABytecodeInstruction>(m_bytecode, caseSensitive ? DFABytecodeInstruction::CheckValueRangeCaseSensitive : DFABytecodeInstruction::CheckValueRangeCaseInsensitive);
+    uint32_t instructionLocation = m_bytecode.size();
+    uint32_t jumpLocation = instructionLocation + 3 * sizeof(uint8_t);
+    int32_t longestPossibleJumpDistance = longestPossibleJump(instructionLocation, sourceNodeIndex, destinationNodeIndex);
+    DFABytecodeJumpSize jumpSize = smallestPossibleJumpSize(longestPossibleJumpDistance);
+    DFABytecodeInstruction instruction = caseSensitive ? DFABytecodeInstruction::CheckValueRangeCaseSensitive : DFABytecodeInstruction::CheckValueRangeCaseInsensitive;
+    append<uint8_t>(m_bytecode, static_cast<uint8_t>(instruction) | jumpSize);
     append<uint8_t>(m_bytecode, lowValue);
     append<uint8_t>(m_bytecode, highValue);
-    m_linkRecords.append(std::make_pair(m_bytecode.size(), destinationNodeIndex));
-    append<uint32_t>(m_bytecode, 0); // This value will be set when linking.
+    m_linkRecords.append(LinkRecord({jumpSize, longestPossibleJumpDistance, instructionLocation, jumpLocation, destinationNodeIndex}));
+    appendZeroes(m_bytecode, jumpSize);
 }
 
 void DFABytecodeCompiler::emitTerminate()
@@ -104,9 +161,11 @@ void DFABytecodeCompiler::emitTerminate()
 
 void DFABytecodeCompiler::compileNode(uint32_t index, bool root)
 {
+    unsigned startSize = m_bytecode.size();
+    
     const DFANode& node = m_dfa.nodes[index];
     if (node.isKilled()) {
-        m_nodeStartOffsets[index] = std::numeric_limits<uint32_t>::max();
+        ASSERT(m_nodeStartOffsets[index] == std::numeric_limits<uint32_t>::max());
         return;
     }
 
@@ -122,10 +181,24 @@ void DFABytecodeCompiler::compileNode(uint32_t index, bool root)
     if (root)
         m_nodeStartOffsets[index] = m_bytecode.size();
     
-    compileNodeTransitions(node);
+    compileNodeTransitions(index);
+    
+    ASSERT_UNUSED(startSize, m_bytecode.size() - startSize <= compiledNodeMaxBytecodeSize(index));
+}
+    
+unsigned DFABytecodeCompiler::compiledNodeMaxBytecodeSize(uint32_t index)
+{
+    const DFANode& node = m_dfa.nodes[index];
+    if (node.isKilled())
+        return 0;
+    unsigned size = 0;
+    for (uint64_t action : node.actions(m_dfa))
+        size += appendActionBytecodeSize(action);
+    size += nodeTransitionsMaxBytecodeSize(node);
+    return size;
 }
 
-void DFABytecodeCompiler::compileNodeTransitions(const DFANode& node)
+Vector<DFABytecodeCompiler::Range> DFABytecodeCompiler::ranges(const DFANode& node)
 {
     uint32_t destinations[128];
     memset(destinations, 0xff, sizeof(destinations));
@@ -187,32 +260,82 @@ void DFABytecodeCompiler::compileNodeTransitions(const DFANode& node)
         // If a range goes to 127, there will never be values higher than it, so checking for case-insensitive ranges would always fail.
         ranges.append(Range(rangeMin, 127, destinations[rangeMin], true));
     }
-
-    for (const auto& range : ranges)
-        compileCheckForRange(range);
-    if (node.hasFallbackTransition())
-        emitJump(node.fallbackTransitionDestination(m_dfa));
-    else
-        emitTerminate();
+    return ranges;
+}
+    
+unsigned DFABytecodeCompiler::checkForRangeMaxBytecodeSize(const Range& range)
+{
+    if (range.min == range.max)
+        return sizeof(DFABytecodeInstruction::CheckValueCaseInsensitive) + sizeof(uint8_t) + sizeof(uint32_t);
+    return sizeof(DFABytecodeInstruction::CheckValueRangeCaseInsensitive) + 2 * sizeof(uint8_t) + sizeof(uint32_t);
 }
 
-void DFABytecodeCompiler::compileCheckForRange(const Range& range)
+void DFABytecodeCompiler::compileCheckForRange(uint32_t nodeIndex, const Range& range)
 {
+    unsigned startSize = m_bytecode.size();
     ASSERT_WITH_MESSAGE(range.max < 128, "The DFA engine only supports the ASCII alphabet.");
     ASSERT(range.min <= range.max);
 
     if (range.min == range.max)
-        emitCheckValue(range.min, range.destination, range.caseSensitive);
+        emitCheckValue(range.min, nodeIndex, range.destination, range.caseSensitive);
     else
-        emitCheckValueRange(range.min, range.max, range.destination, range.caseSensitive);
+        emitCheckValueRange(range.min, range.max, nodeIndex, range.destination, range.caseSensitive);
+    
+    ASSERT_UNUSED(startSize, m_bytecode.size() - startSize <= checkForRangeMaxBytecodeSize(range));
+}
+
+unsigned DFABytecodeCompiler::nodeTransitionsMaxBytecodeSize(const DFANode& node)
+{
+    unsigned size = 0;
+    for (const auto& range : ranges(node))
+        size += checkForRangeMaxBytecodeSize(range);
+    if (node.hasFallbackTransition())
+        size += sizeof(DFABytecodeInstruction::Jump) + sizeof(uint32_t);
+    else
+        size += instructionSizeWithArguments(DFABytecodeInstruction::Terminate);
+    return size;
+}
+
+void DFABytecodeCompiler::compileNodeTransitions(uint32_t nodeIndex)
+{
+    const DFANode& node = m_dfa.nodes[nodeIndex];
+    unsigned startSize = m_bytecode.size();
+    
+    for (const auto& range : ranges(node))
+        compileCheckForRange(nodeIndex, range);
+    if (node.hasFallbackTransition())
+        emitJump(nodeIndex, node.fallbackTransitionDestination(m_dfa));
+    else
+        emitTerminate();
+
+    ASSERT_UNUSED(startSize, m_bytecode.size() - startSize <= nodeTransitionsMaxBytecodeSize(node));
 }
 
 void DFABytecodeCompiler::compile()
 {
-    // DFA header.
     uint32_t startLocation = m_bytecode.size();
-    append<uint32_t>(m_bytecode, 0);
+    append<DFAHeader>(m_bytecode, 0); // This will be set when we are finished compiling this DFA.
+
     m_nodeStartOffsets.resize(m_dfa.nodes.size());
+    for (unsigned i = 0; i < m_dfa.nodes.size(); ++i)
+        m_nodeStartOffsets[i] = std::numeric_limits<uint32_t>::max();
+    
+    // Populate m_maxNodeStartOffsets with a worst-case index of where the node would be with no branch compaction.
+    // Compacting the branches using 1-4 byte signed jump distances should only make nodes closer together than this.
+    ASSERT(m_maxNodeStartOffsets.isEmpty());
+    m_maxNodeStartOffsets.clear();
+    m_maxNodeStartOffsets.resize(m_dfa.nodes.size());
+    unsigned rootActionsSize = 0;
+    for (uint64_t action : m_dfa.nodes[m_dfa.root].actions(m_dfa))
+        rootActionsSize += appendActionBytecodeSize(action);
+    m_maxNodeStartOffsets[m_dfa.root] = sizeof(DFAHeader) + rootActionsSize;
+    unsigned nextIndex = sizeof(DFAHeader) + compiledNodeMaxBytecodeSize(m_dfa.root);
+    for (uint32_t i = 0; i < m_dfa.nodes.size(); i++) {
+        if (i != m_dfa.root) {
+            m_maxNodeStartOffsets[i] = nextIndex;
+            nextIndex += compiledNodeMaxBytecodeSize(i);
+        }
+    }
     
     // Make sure the root is always at the beginning of the bytecode.
     compileNode(m_dfa.root, true);
@@ -220,19 +343,36 @@ void DFABytecodeCompiler::compile()
         if (i != m_dfa.root)
             compileNode(i, false);
     }
+    
+    ASSERT(m_maxNodeStartOffsets.size() == m_nodeStartOffsets.size());
+    for (unsigned i = 0; i < m_dfa.nodes.size(); ++i) {
+        if (m_nodeStartOffsets[i] != std::numeric_limits<uint32_t>::max())
+            ASSERT(m_maxNodeStartOffsets[i] >= m_nodeStartOffsets[i]);
+    }
 
     // Link.
     for (const auto& linkRecord : m_linkRecords) {
-        uint32_t offset = linkRecord.first;
-        ASSERT(!(*reinterpret_cast<uint32_t*>(&m_bytecode[offset])));
-
-        uint32_t target = m_nodeStartOffsets[linkRecord.second];
-        RELEASE_ASSERT(target != std::numeric_limits<uint32_t>::max());
-        set32Bits(m_bytecode, offset, m_nodeStartOffsets[linkRecord.second]);
+        uint32_t destination = m_nodeStartOffsets[linkRecord.destinationNodeIndex];
+        RELEASE_ASSERT(destination < std::numeric_limits<int32_t>::max());
+        int32_t distance = destination - linkRecord.instructionLocation;
+        ASSERT(abs(distance) <= abs(linkRecord.longestPossibleJump));
+        
+        switch (linkRecord.jumpSize) {
+        case Int8:
+            RELEASE_ASSERT(distance == static_cast<int8_t>(distance));
+            setBits<int8_t>(m_bytecode, linkRecord.jumpLocation, static_cast<int8_t>(distance));
+            break;
+        case Int16:
+            RELEASE_ASSERT(distance == static_cast<int16_t>(distance));
+            setBits<int16_t>(m_bytecode, linkRecord.jumpLocation, static_cast<int16_t>(distance));
+            break;
+        case Int32:
+            setBits<int32_t>(m_bytecode, linkRecord.jumpLocation, distance);
+            break;
+        }
     }
     
-    // Set size header.
-    set32Bits(m_bytecode, startLocation, m_bytecode.size() - startLocation);
+    setBits<DFAHeader>(m_bytecode, startLocation, m_bytecode.size() - startLocation);
 }
     
 } // namespace ContentExtensions

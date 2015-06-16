@@ -1,3 +1,13 @@
+2015-06-16  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Implement branch compaction for DFA bytecode.
+        https://bugs.webkit.org/show_bug.cgi?id=145619
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/API/APIUserContentExtensionStore.h:
+        Increment version number to reflect changes to bytecode.
+
 2015-06-16  Anders Carlsson  <andersca@apple.com>
 
         WebResourceCacheManager is unused, get rid of it
