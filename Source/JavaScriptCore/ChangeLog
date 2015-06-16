@@ -1,3 +1,15 @@
+2015-06-15  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL boolify() UntypedUse is wrong in the masquerades-as-undefined case
+        https://bugs.webkit.org/show_bug.cgi?id=146002
+
+        Reviewed by Darin Adler.
+
+        * ftl/FTLLowerDFGToLLVM.cpp: Put this in an anonymous namespace. We should have done that all along. It makes it easier to add debug code.
+        (JSC::FTL::DFG::LowerDFGToLLVM::boolify): Fix the bug.
+        * tests/stress/logical-not-masquerades.js: Added. This test creates a masquerader so that the watchpoint is invalid. Previously this would fail for the normal object cases.
+        (foo):
+
 2015-06-16  Andreas Kling  <akling@apple.com>
 
         [JSC] Pre-bake final Structure for RegExp matches arrays.

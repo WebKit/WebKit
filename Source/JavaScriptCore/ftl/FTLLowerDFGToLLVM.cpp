@@ -63,7 +63,9 @@ namespace JSC { namespace FTL {
 
 using namespace DFG;
 
-static std::atomic<int> compileCounter;
+namespace {
+
+std::atomic<int> compileCounter;
 
 #if ASSERT_DISABLED
 NO_RETURN_DUE_TO_CRASH static void ftlUnreachable()
@@ -6301,7 +6303,7 @@ private:
             else {
                 LBasicBlock masqueradesCase = FTL_NEW_BLOCK(m_out, ("Boolify untyped masquerades case"));
                 
-                results.append(m_out.anchor(m_out.booleanFalse));
+                results.append(m_out.anchor(m_out.booleanTrue));
                 
                 m_out.branch(
                     m_out.testIsZero8(
@@ -8659,6 +8661,8 @@ private:
     unsigned m_tbaaKind;
     unsigned m_tbaaStructKind;
 };
+
+} // anonymous namespace
 
 void lowerDFGToLLVM(State& state)
 {
