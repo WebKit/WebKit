@@ -2321,10 +2321,8 @@ AccessibilityButtonState AccessibilityObject::checkboxOrRadioValue() const
 // Note that the return value represents the ideal new scroll offset.
 // This may be out of range - the calling function should clip this
 // to the available range.
-static int computeBestScrollOffset(int currentScrollOffset,
-                                   int subfocusMin, int subfocusMax,
-                                   int objectMin, int objectMax,
-                                   int viewportMin, int viewportMax) {
+static int computeBestScrollOffset(int currentScrollOffset, int subfocusMin, int objectMin, int objectMax, int viewportMin, int viewportMax)
+{
     int viewportSize = viewportMax - viewportMin;
 
     // If the focus size is larger than the viewport size, shrink it in the
@@ -2332,12 +2330,8 @@ static int computeBestScrollOffset(int currentScrollOffset,
     if (objectMax - objectMin > viewportSize) {
         // Subfocus must be within focus:
         subfocusMin = std::max(subfocusMin, objectMin);
-        subfocusMax = std::min(subfocusMax, objectMax);
 
         // Subfocus must be no larger than the viewport size; favor top/left.
-        if (subfocusMax - subfocusMin > viewportSize)
-            subfocusMax = subfocusMin + viewportSize;
-
         if (subfocusMin + viewportSize > objectMax)
             objectMin = objectMax - viewportSize;
         else {
@@ -2424,12 +2418,12 @@ void AccessibilityObject::scrollToMakeVisibleWithSubFocus(const IntRect& subfocu
 
     int desiredX = computeBestScrollOffset(
         scrollPosition.x(),
-        objectRect.x() + subfocus.x(), objectRect.x() + subfocus.maxX(),
+        objectRect.x() + subfocus.x(),
         objectRect.x(), objectRect.maxX(),
         0, scrollVisibleRect.width());
     int desiredY = computeBestScrollOffset(
         scrollPosition.y(),
-        objectRect.y() + subfocus.y(), objectRect.y() + subfocus.maxY(),
+        objectRect.y() + subfocus.y(),
         objectRect.y(), objectRect.maxY(),
         0, scrollVisibleRect.height());
 
@@ -2476,12 +2470,12 @@ void AccessibilityObject::scrollToGlobalPoint(const IntPoint& globalPoint) const
 
         int desiredX = computeBestScrollOffset(
             0,
-            objectRect.x(), objectRect.maxX(),
+            objectRect.x(),
             objectRect.x(), objectRect.maxX(),
             point.x(), point.x());
         int desiredY = computeBestScrollOffset(
             0,
-            objectRect.y(), objectRect.maxY(),
+            objectRect.y(),
             objectRect.y(), objectRect.maxY(),
             point.y(), point.y());
         outer->scrollTo(IntPoint(desiredX, desiredY));

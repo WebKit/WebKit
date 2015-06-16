@@ -3604,7 +3604,6 @@ static void formatForDebugger(const VisiblePositionRange& range, char* buffer, u
     NSRange range = {0, 0};
     bool rangeSet = false;
     NSRect rect = NSZeroRect;
-    bool rectSet = false;
     
     // basic parameter validation
     if (!m_object || !attribute || !parameter)
@@ -3634,17 +3633,16 @@ static void formatForDebugger(const VisiblePositionRange& range, char* buffer, u
     else if ([parameter isKindOfClass:[NSDictionary self]])
         dictionary = parameter;
     
-    else if ([parameter isKindOfClass:[NSValue self]] && strcmp([(NSValue*)parameter objCType], @encode(NSPoint)) == 0) {
+    else if ([parameter isKindOfClass:[NSValue self]] && !strcmp([(NSValue*)parameter objCType], @encode(NSPoint))) {
         pointSet = true;
         point = [(NSValue*)parameter pointValue];
         
-    } else if ([parameter isKindOfClass:[NSValue self]] && strcmp([(NSValue*)parameter objCType], @encode(NSRange)) == 0) {
+    } else if ([parameter isKindOfClass:[NSValue self]] && !strcmp([(NSValue*)parameter objCType], @encode(NSRange))) {
         rangeSet = true;
         range = [(NSValue*)parameter rangeValue];
-    } else if ([parameter isKindOfClass:[NSValue self]] && strcmp([(NSValue*)parameter objCType], @encode(NSRect)) == 0) {
-        rectSet = true;
+    } else if ([parameter isKindOfClass:[NSValue self]] && !strcmp([(NSValue*)parameter objCType], @encode(NSRect)))
         rect = [(NSValue*)parameter rectValue];
-    } else {
+    else {
         // Attribute type is not supported. Allow super to handle.
         return [super accessibilityAttributeValue:attribute forParameter:parameter];
     }

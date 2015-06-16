@@ -271,8 +271,6 @@ LayoutRect InlineTextBox::localSelectionRect(int startPos, int endPos) const
     String hyphenatedStringBuffer;
     bool respectHyphen = ePos == m_len && hasHyphen();
     TextRun textRun = constructTextRun(lineStyle, font, respectHyphen ? &hyphenatedStringBuffer : 0);
-    if (respectHyphen)
-        endPos = textRun.length();
 
     LayoutRect selectionRect = LayoutRect(LayoutPoint(logicalLeft(), selectionTop), LayoutSize(m_logicalWidth, selectionHeight));
     // Avoid computing the font width when the entire line box is selected as an optimization.

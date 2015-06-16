@@ -1719,17 +1719,8 @@ bool RenderElement::getTrailingCorner(FloatPoint& point) const
 LayoutRect RenderElement::anchorRect() const
 {
     FloatPoint leading, trailing;
-    bool foundLeading = getLeadingCorner(leading);
-    bool foundTrailing = getTrailingCorner(trailing);
-    
-    // If we've found one corner, but not the other,
-    // then we should just return a point at the corner that we did find.
-    if (foundLeading != foundTrailing) {
-        if (foundLeading)
-            foundTrailing = foundLeading;
-        else
-            foundLeading = foundTrailing;
-    }
+    getLeadingCorner(leading);
+    getTrailingCorner(trailing);
 
     FloatPoint upperLeft = leading;
     FloatPoint lowerRight = trailing;

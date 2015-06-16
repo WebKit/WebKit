@@ -172,7 +172,7 @@ static unsigned leftTruncateToBuffer(const String& string, unsigned length, unsi
 
     NonSharedCharacterBreakIterator it(string);
     unsigned adjustedStartIndex = startIndex;
-    startIndex = boundedTextBreakFollowing(it, startIndex, length - startIndex);
+    boundedTextBreakFollowing(it, startIndex, length - startIndex);
 
     // Strip single character after ellipsis character, when that character is preceded by a space
     if (adjustedStartIndex < length && string[adjustedStartIndex] != space

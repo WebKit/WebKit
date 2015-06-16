@@ -213,15 +213,11 @@ void SVGTextQuery::modifyStartEndPositionsRespectingLigatures(Data* queryData, i
         return;
 
     if (lastPositionOffset != -1 && lastPositionOffset - positionOffset > 1) {
-        if (alterStartPosition && startPosition > lastPositionOffset && startPosition < static_cast<int>(positionOffset)) {
+        if (alterStartPosition && startPosition > lastPositionOffset && startPosition < static_cast<int>(positionOffset))
             startPosition = lastPositionOffset;
-            alterStartPosition = false;
-        }
 
-        if (alterEndPosition && endPosition > lastPositionOffset && endPosition < static_cast<int>(positionOffset)) {
+        if (alterEndPosition && endPosition > lastPositionOffset && endPosition < static_cast<int>(positionOffset))
             endPosition = positionOffset;
-            alterEndPosition = false;
-        }
     }
 }
 

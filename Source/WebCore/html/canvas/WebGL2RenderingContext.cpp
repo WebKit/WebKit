@@ -1969,7 +1969,7 @@ bool WebGL2RenderingContext::validateTexFuncData(const char* functionName, GC3Di
     }
     if (pixels->byteLength() < totalBytesRequired) {
         if (m_unpackAlignment != 1) {
-            error = m_context->computeImageSizeInBytes(format, type, width, height, 1, &totalBytesRequired, 0);
+            m_context->computeImageSizeInBytes(format, type, width, height, 1, &totalBytesRequired, 0);
             if (pixels->byteLength() == totalBytesRequired) {
                 synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "ArrayBufferView not big enough for request with UNPACK_ALIGNMENT > 1");
                 return false;

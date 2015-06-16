@@ -1191,7 +1191,6 @@ void MediaPlayerPrivateQTKit::paintCurrentFrameInContext(GraphicsContext* contex
         // Set up a QTVideoRenderer to use, but one that doesn't register for
         // update callbacks. That way, it won't bother us asking to repaint.
         createQTVideoRenderer(QTVideoRendererModeDefault);
-        qtVideoRenderer = m_qtVideoRenderer.get();
     }
     paint(context, r);
 }

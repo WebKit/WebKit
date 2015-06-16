@@ -179,7 +179,6 @@ unsigned TextFragmentIterator::skipToNextPosition(PositionType positionType, uns
     bool measureText = positionType != NonWhitespace || !m_style.collapseWhitespace;
     if (measureText) {
         float textWidth = this->textWidth(currentPosition, nextPosition, xPosition);
-        xPosition += textWidth;
         width += textWidth;
     } else if (startPosition < nextPosition)
         width = m_style.spaceWidth;
