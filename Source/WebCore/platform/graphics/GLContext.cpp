@@ -123,7 +123,12 @@ std::unique_ptr<GLContext> GLContext::createContextForWindow(GLNativeWindowType 
 #endif
 
 #if USE(GLX)
-    if (auto glxContext = GLContextGLX::createContext(windowHandle, sharingContext))
+#if PLATFORM(WAYLAND) // Building both X11 and Wayland targets
+    XID GLXWindowHandle = reinterpret_cast<XID>(windowHandle);
+#else
+    XID GLXWindowHandle = static_cast<XID>(windowHandle);
+#endif
+    if (auto glxContext = GLContextGLX::createContext(GLXWindowHandle, sharingContext))
         return WTF::move(glxContext);
 #endif
 #if USE(EGL)

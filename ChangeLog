@@ -1,3 +1,12 @@
+2015-06-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] [Wayland] Should be possible to build with support for both X11 and Wayland.
+        https://bugs.webkit.org/show_bug.cgi?id=145701
+
+        Reviewed by Darin Adler.
+
+        * Source/cmake/OptionsGTK.cmake: Remove conflicting options.
+
 2015-06-15  Jon Honeycutt  <jhoneycutt@apple.com>
 
         [iOS] Crash long pressing on <input type=file>

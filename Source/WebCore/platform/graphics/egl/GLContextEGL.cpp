@@ -37,6 +37,7 @@
 
 #if PLATFORM(X11)
 #include "PlatformDisplayX11.h"
+#include <X11/Xlib.h>
 #endif
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
@@ -171,7 +172,7 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createPixmapContext(EGLContext shari
         return nullptr;
     }
 
-    EGLSurface surface = eglCreatePixmapSurface(display, config, pixmap.get(), 0);
+    EGLSurface surface = eglCreatePixmapSurface(display, config, reinterpret_cast<EGLNativePixmapType>(pixmap.get()), 0);
     if (surface == EGL_NO_SURFACE) {
         eglDestroyContext(display, context);
         return nullptr;
