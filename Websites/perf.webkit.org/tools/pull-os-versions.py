@@ -59,7 +59,7 @@ def main(argv):
 
             time.sleep(config['submissionInterval'])
 
-        print "Sleeping for %d seconds", config['fetchInterval']
+        print "Sleeping for %d seconds" % config['fetchInterval']
         time.sleep(config['fetchInterval'])
 
 

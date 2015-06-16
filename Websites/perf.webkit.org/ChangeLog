@@ -1,5 +1,12 @@
 2015-06-15  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix a typo.
+
+        * tools/pull-os-versions.py:
+        (main):
+
+2015-06-15  Ryosuke Niwa  <rniwa@webkit.org>
+
         Perf dashboard should be able to list iOS versions as well as OS X versions
         https://bugs.webkit.org/show_bug.cgi?id=146003
 
