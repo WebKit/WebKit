@@ -344,7 +344,6 @@ set(WebKit2_SOURCES
     UIProcess/UserMediaPermissionRequestManagerProxy.cpp
     UIProcess/UserMediaPermissionRequestProxy.cpp
     UIProcess/VisitedLinkProvider.cpp
-    UIProcess/WebApplicationCacheManagerProxy.cpp
     UIProcess/WebBackForwardList.cpp
     UIProcess/WebBatteryManagerProxy.cpp
     UIProcess/WebBatteryProvider.cpp
@@ -494,8 +493,6 @@ set(WebKit2_SOURCES
 
     WebProcess/WebConnectionToUIProcess.cpp
     WebProcess/WebProcess.cpp
-
-    WebProcess/ApplicationCache/WebApplicationCacheManager.cpp
 
     WebProcess/Battery/WebBatteryManager.cpp
 
@@ -660,7 +657,6 @@ set(WebKit2_MESSAGES_IN_FILES
 
     UIProcess/DrawingAreaProxy.messages.in
     UIProcess/VisitedLinkProvider.messages.in
-    UIProcess/WebApplicationCacheManagerProxy.messages.in
     UIProcess/WebBatteryManagerProxy.messages.in
     UIProcess/WebCookieManagerProxy.messages.in
     UIProcess/WebDatabaseManagerProxy.messages.in
@@ -691,8 +687,6 @@ set(WebKit2_MESSAGES_IN_FILES
     UIProcess/UserContent/WebUserContentControllerProxy.messages.in
 
     WebProcess/WebProcess.messages.in
-
-    WebProcess/ApplicationCache/WebApplicationCacheManager.messages.in
 
     WebProcess/Battery/WebBatteryManager.messages.in
 
