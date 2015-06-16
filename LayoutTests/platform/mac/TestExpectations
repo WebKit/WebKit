@@ -1289,5 +1289,5 @@ webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 [ ElCapitan+ ] http/tests/media/video-throttled-load-metadata.html [ Failure ]
 [ ElCapitan+ ] http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Skip ]
 
-# rdar://problem/21408930
-fast/canvas/canvas-too-large-to-draw.html [ Skip ]
+# rdar://problem/20575487, rdar://problem/21409769
+[ Mavericks Yosemite ] fast/canvas/canvas-too-large-to-draw.html [ Skip ]

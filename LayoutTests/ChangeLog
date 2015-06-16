@@ -1,5 +1,11 @@
 2015-06-16  Alexey Proskuryakov  <ap@apple.com>
 
+        Tweak results for fast/canvas/canvas-too-large-to-draw.html
+
+        * platform/mac/TestExpectations:
+
+2015-06-16  Alexey Proskuryakov  <ap@apple.com>
+
         Skip the new test, fast/canvas/canvas-too-large-to-draw.html
 
         * platform/mac/TestExpectations:
