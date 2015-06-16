@@ -1,3 +1,17 @@
+2015-06-15  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Unreviewed, gardening on Jun 16th.
+
+        Too many flaky tests happens on efl bot when enabling USE_NATIVE_XDISPLAY and DISPLAY.
+        Those options were enabled for removing TextureMapperImageBuffer. However now EFL Layout Test
+        can be run without enabling the options. To remove many flaky tests, EFL buildbot disables
+        the env variables.
+
+        Thanks to disable it, many tests can be unskipped which were marked to failure, imageonlyfailure
+        and so on since r183540.
+
+        * platform/efl/TestExpectations: Unskip passing tests, mark failure tests after disabling USE_NATIVE_XDISPLAY.
+
 2015-06-15  Alexey Proskuryakov  <ap@apple.com>
 
         Add test expectations for El Capitan
