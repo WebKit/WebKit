@@ -1,3 +1,10 @@
+2015-06-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix a lint error by removing an obsolete expectation - this test doesn't fail
+        on Yosemite and below.
+
+        * platform/mac/TestExpectations:
+
 2015-06-15  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Unreviewed, following gardening of r185583.
