@@ -1,5 +1,12 @@
 2015-06-15  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Build fix after r185574.
+
+        * public/v2/app.js:
+        (set get App.Pane.Ember.Object.extend.):
+
+2015-06-15  Ryosuke Niwa  <rniwa@webkit.org>
+
         Fix a typo.
 
         * tools/pull-os-versions.py:

@@ -303,7 +303,7 @@ App.Pane = Ember.Object.extend({
     searchCommit: function (repository, keyword) {
         var self = this;
         var repositoryId = repository.get('id');
-        CommitLogs.fetchForTimeRange(repositoryId, null, null, keyword).then(function (commits) {
+        CommitLogs.fetchCommits(repositoryId, null, null, keyword).then(function (commits) {
             if (self.isDestroyed || !self.get('chartData') || !commits.length)
                 return;
             var currentRuns = self.get('chartData').current.series();
