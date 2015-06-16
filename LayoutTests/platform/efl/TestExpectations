@@ -534,9 +534,7 @@ http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
 http/tests/security/webgl-remote-read-remote-image-allowed.html [ Skip ]
 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [ Skip ]
 
-# Crash happens after disabling USE_NATIVE_DISPLAY on efl buildbot
-fast/selectors/querySelector-in-range-crash.html [ Crash ]
-perf/accessibility-title-ui-element.html [ Crash ]
+inspector/event-listener.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # Old WebGL expectations before skipping all of them
@@ -856,7 +854,6 @@ webkit.org/b/125517 compositing/regions/propagate-region-box-shadow-border-paddi
 webkit.org/b/125517 compositing/regions/propagate-region-box-shadow-border-padding-for-video.html [ ImageOnlyFailure Crash Pass ]
 webkit.org/b/125517 compositing/regions/region-as-layer-in-another-flowthread.html [ Crash Pass ]
 webkit.org/b/125517 compositing/regions/transformed-layer-inside-transformed-layer.html [ Crash Pass ]
-webkit.org/b/125517 compositing/regions/transform-transparent-positioned-video-inside-region.html [ ImageOnlyFailure Crash ]
 webkit.org/b/125517 compositing/regions/z-index-update.html [ Crash Pass ]
 
 webkit.org/b/125573 compositing/backgrounds/fixed-backgrounds.html [ Crash Pass ]
@@ -1055,7 +1052,6 @@ webkit.org/b/145835 fast/writing-mode/flipped-blocks-inline-map-local-to-contain
 webkit.org/b/145835 fast/writing-mode/vertical-float-margin.html [ ImageOnlyFailure Pass ]
 webkit.org/b/145835 fast/dom/HTMLAnchorElement/anchor-download-unset.html [ Timeout Pass ]
 webkit.org/b/145835 fast/events/scroll-event-phase.html [ Timeout Pass ]
-webkit.org/b/145835 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure Timeout ]
 webkit.org/b/145835 fast/forms/range/range-change-min-max.html [ ImageOnlyFailure Pass ]
 webkit.org/b/145835 fast/forms/text/text-height-grow.html [ ImageOnlyFailure Pass ]
 webkit.org/b/145835 fast/forms/textarea/textarea-placeholder-paint-order-2.html [ ImageOnlyFailure Pass ]
@@ -1066,6 +1062,15 @@ webkit.org/b/145835 fast/lists/rtl-marker.html [ ImageOnlyFailure Pass ]
 webkit.org/b/145835 fast/multicol/newmulticol/compare-with-old-impl/BottomToTop-tb.html [ ImageOnlyFailure Pass ]
 webkit.org/b/145835 js/dom/create-lots-of-workers.html [ Crash Timeout Pass Failure ]
 webkit.org/b/145835 js/dom/cross-frame-bad-time.html [ Timeout Pass ]
+
+# EFL port shows these tests are flaky though the tests are marked with failure in wk2 TestExpectation.
+css3/device-adapt/opera/cascading-001.xhtml [ Failure Pass ]
+fast/dom/adopt-node-crash-2.html [ Failure Pass ]
+fast/selectors/hover-strict.html [ Failure Pass ]
+webaudio/delaynode-max-default-delay.html [ Failure Pass ]
+http/tests/media/video-redirect.html [ Crash Timeout Pass ]
+http/tests/xmlhttprequest/xmlhttprequest-post-crash.html [ Timeout Pass ]
+media/track/track-cues-pause-on-exit.html [ Failure Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
@@ -1228,6 +1233,13 @@ imported/mozilla/svg/text/textLength-5.svg [ Pass ]
 imported/mozilla/svg/text/textLength-6.svg [ Pass ]
 imported/mozilla/svg/text/textpath-multiline-2.svg [ Pass ]
 imported/mozilla/svg/text/textpath-multiline.svg [ Pass ]
+css3/conditional/w3c/at-supports-010.html [ Pass ]
+css3/conditional/w3c/at-supports-014.html [ Pass ]
+fast/borders/border-painting-dashed.html [ Pass ]
+fast/borders/border-painting-dotted.html [ Pass ]
+fast/borders/border-painting-double.html [ Pass ]
+fast/table/border-collapsing/collapsed-borders-adjoining-sections.html [ Pass ]
+mathml/roots-removeChild.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
@@ -1408,9 +1420,6 @@ webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Skip ]
 webkit.org/b/87226 printing/iframe-print.html [ Failure ]
 
 Bug(EFL) [ Debug ] http/tests/incremental/slow-utf8-html.pl [ Pass Slow ]
-
-# Tests imported in r116658
-webkit.org/b/85308 ietestcenter/css3/valuesandunits/units-000.htm [ Crash ImageOnlyFailure ]
 
 # LEGACY_VIEWPORT_ADAPTION flag is not enabled on EFL port
 webkit.org/b/88191 fast/viewport/viewport-legacy-handheldfriendly.html [ Failure ]
@@ -1693,10 +1702,6 @@ webkit.org/b/114920 fast/repaint/moving-shadow-on-container.html [ Failure ]
 webkit.org/b/114920 fast/repaint/moving-shadow-on-path.html [ Failure ]
 
 # Compositing reftests added in r148172 fail on EFL
-webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-contain.html [ ImageOnlyFailure Crash ]
-webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-cover.html [ ImageOnlyFailure Crash ]
-webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-position.html [ ImageOnlyFailure Crash ]
-webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-size.html [ ImageOnlyFailure Crash ]
 webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-contain-no-repeat.html [ Pass Crash ]
 
 # Unidentified failing media tests
@@ -1972,10 +1977,6 @@ webkit.org/b/127118 compositing/regions/fixed-in-named-flow-from-outflow.html [ 
 webkit.org/b/127118 compositing/regions/fixed-in-named-flow-lost-transformed-parent.html [ Failure ]
 webkit.org/b/127118 compositing/regions/fixed-in-named-flow.html [ Failure ]
 
-# Failing since added in r162960
-webkit.org/b/128733 fast/css/sticky/sticky-table-row-top.html [ ImageOnlyFailure ]
-webkit.org/b/128733 fast/css/sticky/sticky-table-thead-top.html [ ImageOnlyFailure ]
-
 # Failing since r164015
 webkit.org/b/128734 plugins/nested-plugin-objects.html [ Failure ]
 webkit.org/b/128734 plugins/netscape-destroy-plugin-script-objects.html [ Failure ]
@@ -2216,8 +2217,6 @@ webkit.org/b/143878 http/tests/navigation/postredirect-goback1.html [ Failure ]
 # New failing compositing tests, needs more investigation
 compositing/masks/compositing-clip-path-change-no-repaint.html [ Failure ]
 compositing/tiling/transform-origin-tiled.html [ Failure ]
-compositing/masks/compositing-clip-path-mask-change.html [ ImageOnlyFailure ]
-compositing/overlap-blending/nested-overlap-overflow.html [ ImageOnlyFailure ]
 
 # [EFL] REGRESSION(r183907): It made all inspector-protocol test crash
 webkit.org/b/144737 inspector-protocol [ Skip ]
@@ -2277,3 +2276,4 @@ mathml/presentation/mfrac-linethickness3.html [ ImageOnlyFailure ]
 mathml/presentation/mo-stretchy-vertical-bar.html [ ImageOnlyFailure ]
 mathml/presentation/scripts-font-size.html [ ImageOnlyFailure ]
 mathml/presentation/style-color-sqrt.html [ ImageOnlyFailure ]
+animations/trigger-container-scroll-empty.html [ Failure ]
