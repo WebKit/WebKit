@@ -28,7 +28,6 @@
 
 #include "LocalStorageDatabase.h"
 #include "LocalStorageDatabaseTracker.h"
-#include "LocalStorageDetails.h"
 #include "SecurityOriginData.h"
 #include "StorageAreaMapMessages.h"
 #include "StorageManagerMessages.h"
@@ -624,15 +623,15 @@ void StorageManager::getLocalStorageOrigins(std::function<void (HashSet<RefPtr<W
     });
 }
 
-void StorageManager::getLocalStorageDetailsByOrigin(std::function<void (Vector<LocalStorageDetails>)> completionHandler)
+void StorageManager::getLocalStorageOriginDetails(std::function<void (Vector<LocalStorageDatabaseTracker::OriginDetails>)> completionHandler)
 {
     RefPtr<StorageManager> storageManager(this);
 
     m_queue->dispatch([storageManager, completionHandler] {
-        auto storageDetails = storageManager->m_localStorageDatabaseTracker->details();
+        auto originDetails = storageManager->m_localStorageDatabaseTracker->originDetails();
 
-        RunLoop::main().dispatch([storageDetails, completionHandler]() mutable {
-            completionHandler(WTF::move(storageDetails));
+        RunLoop::main().dispatch([originDetails, completionHandler]() mutable {
+            completionHandler(WTF::move(originDetails));
         });
     });
 }
@@ -650,21 +649,6 @@ void StorageManager::deleteLocalStorageEntriesForOrigin(const SecurityOrigin& se
             transientLocalStorageNamespace->clearStorageAreasMatchingOrigin(*copiedOrigin);
 
         storageManager->m_localStorageDatabaseTracker->deleteDatabaseWithOrigin(copiedOrigin.get());
-    });
-}
-
-void StorageManager::deleteAllLocalStorageEntries()
-{
-    RefPtr<StorageManager> storageManager(this);
-
-    m_queue->dispatch([storageManager] {
-        for (auto& localStorageNamespace : storageManager->m_localStorageNamespaces.values())
-            localStorageNamespace->clearAllStorageAreas();
-
-        for (auto& transientLocalStorageNamespace : storageManager->m_transientLocalStorageNamespaces.values())
-            transientLocalStorageNamespace->clearAllStorageAreas();
-
-        storageManager->m_localStorageDatabaseTracker->deleteAllDatabases();
     });
 }
 

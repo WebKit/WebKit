@@ -28,7 +28,6 @@
 
 #include "APIDictionary.h"
 #include "APIWebsiteDataStore.h"
-#include "LocalStorageDetails.h"
 #include "StorageManager.h"
 #include "WKAPICast.h"
 #include "WebsiteDataStore.h"
@@ -90,12 +89,12 @@ void WKKeyValueStorageManagerGetStorageDetailsByOrigin(WKKeyValueStorageManagerR
         return;
     }
 
-    storageManager->getLocalStorageDetailsByOrigin([context, callback](Vector<LocalStorageDetails> storageDetails) {
+    storageManager->getLocalStorageOriginDetails([context, callback](Vector<LocalStorageDatabaseTracker::OriginDetails> storageDetails) {
         HashMap<String, RefPtr<API::Object>> detailsMap;
         Vector<RefPtr<API::Object>> result;
         result.reserveInitialCapacity(storageDetails.size());
 
-        for (const LocalStorageDetails& originDetails : storageDetails) {
+        for (const auto& originDetails : storageDetails) {
             HashMap<String, RefPtr<API::Object>> detailsMap;
 
             RefPtr<API::Object> origin = API::SecurityOrigin::create(WebCore::SecurityOrigin::createFromDatabaseIdentifier(originDetails.originIdentifier));
@@ -128,5 +127,5 @@ void WKKeyValueStorageManagerDeleteAllEntries(WKKeyValueStorageManagerRef keyVal
     if (!storageManager)
         return;
 
-    storageManager->deleteAllLocalStorageEntries();
+    storageManager->deleteLocalStorageOriginsModifiedSince(std::chrono::system_clock::time_point::min(), [] { });
 }

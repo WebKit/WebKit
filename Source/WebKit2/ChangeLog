@@ -1,3 +1,25 @@
+2015-06-16  Anders Carlsson  <andersca@apple.com>
+
+        Move LocalStorageDetails into the local storage database tracker
+        https://bugs.webkit.org/show_bug.cgi?id=146034
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/API/C/WKKeyValueStorageManager.cpp:
+        (WKKeyValueStorageManagerGetStorageDetailsByOrigin):
+        (WKKeyValueStorageManagerDeleteAllEntries):
+        * UIProcess/LocalStorageDetails.h: Removed.
+        * UIProcess/Storage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::originDetails):
+        (WebKit::LocalStorageDatabaseTracker::details): Deleted.
+        * UIProcess/Storage/LocalStorageDatabaseTracker.h:
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::getLocalStorageOriginDetails):
+        (WebKit::StorageManager::getLocalStorageDetailsByOrigin): Deleted.
+        (WebKit::StorageManager::deleteAllLocalStorageEntries): Deleted.
+        * UIProcess/Storage/StorageManager.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-06-16  Dan Bernstein  <mitz@apple.com>
 
         Removed the WebKit2SandboxProfiles target.

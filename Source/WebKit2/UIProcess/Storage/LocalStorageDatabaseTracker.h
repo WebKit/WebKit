@@ -28,6 +28,7 @@
 
 #include <WebCore/SQLiteDatabase.h>
 #include <wtf/HashSet.h>
+#include <wtf/Optional.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -58,7 +59,13 @@ public:
     Vector<Ref<WebCore::SecurityOrigin>> deleteDatabasesModifiedSince(std::chrono::system_clock::time_point);
 
     Vector<Ref<WebCore::SecurityOrigin>> origins() const;
-    Vector<LocalStorageDetails> details();
+
+    struct OriginDetails {
+        String originIdentifier;
+        Optional<time_t> creationTime;
+        Optional<time_t> modificationTime;
+    };
+    Vector<OriginDetails> originDetails();
 
 private:
     LocalStorageDatabaseTracker(PassRefPtr<WorkQueue>, const String& localStorageDirectory);
