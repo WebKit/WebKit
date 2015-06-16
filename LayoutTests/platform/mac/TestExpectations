@@ -1504,3 +1504,6 @@ webkit.org/b/138115 css3/line-break/line-break-auto-sound-marks.html [ ImageOnly
 
 # platform/mac/fast/text/multiple-codeunit-vertical-upright.html fails on safari-600.6-branch
 webkit.org/b/144303 platform/mac/fast/text/multiple-codeunit-vertical-upright.html [ ImageOnlyFailure ]
+
+platform/mac/fast/text/vertical-no-sideways.html [ Pass Failure ]
+fast/canvas/image-potential-subsample.html [ Pass Failure ]

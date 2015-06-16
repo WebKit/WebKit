@@ -1,3 +1,11 @@
+2015-06-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Add expectations for a couple flaky tests:
+        - fast/canvas/image-potential-subsample.html
+        - platform/mac/fast/text/vertical-no-sideways.html
+
+        * platform/mac/TestExpectations:
+
 2015-06-08  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r183682.
