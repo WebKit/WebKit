@@ -1,3 +1,10 @@
+2015-06-16  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION: js/dom/navigator-plugins-crash.html asserts a lot
+        https://bugs.webkit.org/show_bug.cgi?id=144399
+
+        * TestExpectations: Marked it as flakily crashing.
+
 2015-06-16  sylvain-galineau  <galineau@adobe.com>
 
         Incorrect order of arguments in initial-letter property

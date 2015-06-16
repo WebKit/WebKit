@@ -547,3 +547,5 @@ webkit.org/b/145090 inspector/debugger/break-on-uncaught-exception-window-onerro
 # DumpRenderTree does not allow GIFs to animate, thus animated GIF tests don't work in WebKit1.
 fast/images/animated-gif-no-layout.html [ ImageOnlyFailure ]
 fast/images/gif-loop-count.html [ ImageOnlyFailure ]
+
+webkit.org/b/144399 js/dom/navigator-plugins-crash.html [ Pass Crash ]
