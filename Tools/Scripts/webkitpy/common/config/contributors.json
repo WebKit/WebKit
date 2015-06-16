@@ -2651,6 +2651,15 @@
             "mtibor"
          ]
       },
+      "Tobias Reiss" : {
+         "emails" : [
+            "tobi+webkit@basecode.de"
+         ],
+         "expertise" : "Web Inspector",
+         "nicks" : [
+            "basecode"
+         ]
+      },
       "Tom Hudson" : {
          "emails" : [
             "tomhudson@google.com",
