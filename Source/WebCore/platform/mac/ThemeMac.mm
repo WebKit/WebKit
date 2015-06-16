@@ -26,6 +26,7 @@
 #import "config.h"
 #import "ThemeMac.h"
 
+#import "AXObjectCache.h"
 #import "BlockExceptions.h"
 #import "GraphicsContext.h"
 #import "LocalCurrentGraphicsContext.h"
@@ -194,6 +195,12 @@ static void updateStates(NSCell* cell, const ControlStates* controlStates, bool 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
     UNUSED_PARAM(useAnimation);
 #endif
+
+    // The animated state cause this thread to start and stop repeatedly on CoreAnimation synchronize calls.
+    // This short burts of activity in between are not long enough for VoiceOver to retrieve accessibility attributes and makes the process appear unresponsive.
+    if (AXObjectCache::accessibilityEnhancedUserInterfaceEnabled())
+        useAnimation = false;
+    
     ControlStates::States states = controlStates->states();
 
     // Hover state is not supported by Aqua.
