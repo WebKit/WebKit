@@ -1,3 +1,9 @@
+2015-06-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Skip the new test, fast/canvas/canvas-too-large-to-draw.html
+
+        * platform/mac/TestExpectations:
+
 2015-06-15  Chris Fleizach  <cfleizach@apple.com>
 
         AX:  iOS accessibility tests are not running because we need WKTR support
