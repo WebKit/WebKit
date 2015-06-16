@@ -1,3 +1,25 @@
+2015-06-15  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] position:fixed elements sometimes truncated on scroll view bouncing
+        https://bugs.webkit.org/show_bug.cgi?id=146000
+        rdar://problem/19448439
+
+        Reviewed by Benjamin Poulain.
+        
+        When in the middle of a rubber-band (UIScrollView bounce), we could send a bad 
+        fixed position rect down to WebCore, causing 100% height elements to get laid out
+        at the wrong height, possible too short. This occurred when -_updateVisibleContentRects
+        said we were in a stable state, but the rubber-band offset caused WebPageProxy::computeCustomFixedPositionRect()
+        to compute a bad rect via constrainedUnobscuredRect.intersect(documentRect).
+        
+        Fix by not claiming to be in a stable state during rubber-banding. Added _scrollViewIsRubberBanding
+        to compute that, taking care with floating point comparisons for 3x devices.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (isGreaterInDevicePixels):
+        (-[WKWebView _scrollViewIsRubberBanding]):
+        (-[WKWebView _updateVisibleContentRects]):
+
 2015-06-15  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         Fix build break when ENABLE_SECCOMP_FILTERS is ON

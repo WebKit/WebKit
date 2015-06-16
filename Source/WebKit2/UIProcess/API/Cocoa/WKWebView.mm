@@ -689,6 +689,12 @@ static inline CGFloat floorToDevicePixel(CGFloat input, float deviceScaleFactor)
     return CGFloor(input * deviceScaleFactor) / deviceScaleFactor;
 }
 
+static inline bool pointsEqualInDevicePixels(CGPoint a, CGPoint b, float deviceScaleFactor)
+{
+    return fabs(a.x * deviceScaleFactor - b.x * deviceScaleFactor) < std::numeric_limits<float>::epsilon()
+        && fabs(a.y * deviceScaleFactor - b.y * deviceScaleFactor) < std::numeric_limits<float>::epsilon();
+}
+
 static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSize contentSize)
 {
     float deviceScaleFactor = page.deviceScaleFactor();
@@ -1513,6 +1519,16 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     return [self convertRect:unobscuredRect toView:self._currentContentView];
 }
 
+// Ideally UIScrollView would expose this for us: <rdar://problem/21394567>.
+- (BOOL)_scrollViewIsRubberBanding
+{
+    float deviceScaleFactor = _page->deviceScaleFactor();
+
+    CGPoint contentOffset = [_scrollView contentOffset];
+    CGPoint boundedOffset = contentOffsetBoundedInValidRange(_scrollView.get(), contentOffset);
+    return !pointsEqualInDevicePixels(contentOffset, boundedOffset, deviceScaleFactor);
+}
+
 - (void)_updateVisibleContentRects
 {
     if (![self usesStandardContentView]) {
@@ -1539,7 +1555,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     CGFloat scaleFactor = contentZoomScale(self);
 
-    BOOL isStableState = !(_isChangingObscuredInsetsInteractively || [_scrollView isDragging] || [_scrollView isDecelerating] || [_scrollView isZooming] || [_scrollView isZoomBouncing] || [_scrollView _isAnimatingZoom] || [_scrollView _isScrollingToTop]);
+    BOOL isStableState = !(_isChangingObscuredInsetsInteractively || [_scrollView isDragging] || [_scrollView isDecelerating] || [_scrollView isZooming] || [_scrollView isZoomBouncing] || [_scrollView _isAnimatingZoom] || [_scrollView _isScrollingToTop] || [self _scrollViewIsRubberBanding]);
 
     // FIXME: this can be made static after we stop supporting iOS 8.x.
     if (isStableState && [_scrollView respondsToSelector:@selector(_isInterruptingDeceleration)])
