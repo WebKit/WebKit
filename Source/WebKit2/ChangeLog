@@ -1,3 +1,40 @@
+2015-06-16  Anders Carlsson  <andersca@apple.com>
+
+        Fold WebKeyValueStorageManager into WKKeyValueStorageManager
+        https://bugs.webkit.org/show_bug.cgi?id=146030
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetKeyValueStorageManager):
+        * UIProcess/API/C/WKKeyValueStorageManager.cpp:
+        (WKKeyValueStorageManagerGetTypeID):
+        (WKKeyValueStorageManagerGetOriginKey):
+        (WKKeyValueStorageManagerGetCreationTimeKey):
+        (WKKeyValueStorageManagerGetModificationTimeKey):
+        (WKKeyValueStorageManagerGetKeyValueStorageOrigins):
+        (WKKeyValueStorageManagerGetStorageDetailsByOrigin):
+        (WKKeyValueStorageManagerDeleteEntriesForOrigin):
+        (WKKeyValueStorageManagerDeleteAllEntries):
+        * UIProcess/WebKeyValueStorageManager.cpp: Removed.
+        (WebKit::WebKeyValueStorageManager::supplementName): Deleted.
+        (WebKit::WebKeyValueStorageManager::originKey): Deleted.
+        (WebKit::WebKeyValueStorageManager::creationTimeKey): Deleted.
+        (WebKit::WebKeyValueStorageManager::modificationTimeKey): Deleted.
+        (WebKit::WebKeyValueStorageManager::create): Deleted.
+        (WebKit::WebKeyValueStorageManager::WebKeyValueStorageManager): Deleted.
+        (WebKit::WebKeyValueStorageManager::~WebKeyValueStorageManager): Deleted.
+        (WebKit::WebKeyValueStorageManager::refWebContextSupplement): Deleted.
+        (WebKit::WebKeyValueStorageManager::derefWebContextSupplement): Deleted.
+        (WebKit::WebKeyValueStorageManager::getKeyValueStorageOrigins): Deleted.
+        (WebKit::WebKeyValueStorageManager::getStorageDetailsByOrigin): Deleted.
+        (WebKit::WebKeyValueStorageManager::deleteEntriesForOrigin): Deleted.
+        (WebKit::WebKeyValueStorageManager::deleteAllEntries): Deleted.
+        * UIProcess/WebKeyValueStorageManager.h: Removed.
+        * UIProcess/WebProcessPool.cpp:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-06-16  Alex Christensen  <achristensen@webkit.org>
 
         CMake build fix after r185615.
