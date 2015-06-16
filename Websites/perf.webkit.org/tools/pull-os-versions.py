@@ -2,7 +2,9 @@
 
 import argparse
 import json
+import re
 import sys
+import subprocess
 import time
 import urllib
 import urllib2
@@ -28,17 +30,25 @@ def main(argv):
 
     setup_auth(config['server'])
 
-    url = config['buildSourceURL']
     submission_size = config['submissionSize']
     reported_revisions = set()
 
     while True:
-        print "Fetching available builds from %s" % url
-        available_builds = fetch_available_builds(url, config['trainVersionMap'])
+        if 'customCommands' in config:
+            available_builds = []
+            for command in config['customCommands']:
+                print "Executing", ' '.join(command['command'])
+                available_builds += available_builds_from_command(config['repositoryName'], command['command'], command['linesToIgnore'])
+                print "Got %d builds" % len(available_builds)
+        else:
+            url = config['buildSourceURL']
+            print "Fetching available builds from", url
+            available_builds = fetch_available_builds(config['repositoryName'], url, config['trainVersionMap'])
+
         available_builds = filter(lambda commit: commit['revision'] not in reported_revisions, available_builds)
         print "%d builds available" % len(available_builds)
 
-        while True:
+        while available_builds:
             commits_to_submit = available_builds[:submission_size]
             revisions_to_report = map(lambda commit: commit['revision'], commits_to_submit)
             print "Submitting builds (%d remaining):" % len(available_builds), json.dumps(revisions_to_report)
@@ -49,6 +59,7 @@ def main(argv):
 
             time.sleep(config['submissionInterval'])
 
+        print "Sleeping for %d seconds", config['fetchInterval']
         time.sleep(config['fetchInterval'])
 
 
@@ -63,7 +74,17 @@ def setup_auth(server):
     urllib2.install_opener(urllib2.build_opener(auth_handler))
 
 
-def fetch_available_builds(url, train_version_map):
+def available_builds_from_command(repository_name, command, lines_to_ignore):
+    try:
+        output = subprocess.check_output(command, stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as error:
+        print "Failed:", str(error)
+
+    regex = re.compile(lines_to_ignore)
+    return [{'repository': repository_name, 'revision': line} for line in output.split('\n') if not regex.match(line)]
+
+
+def fetch_available_builds(repository_name, url, train_version_map):
     output = urllib2.urlopen(url).read()
     try:
         xml = parseXmlString(output)
@@ -77,7 +98,7 @@ def fetch_available_builds(url, train_version_map):
         if train not in train_version_map:
             continue
         available_builds.append({
-            'repository': 'OS X',
+            'repository': repository_name,
             'revision': train_version_map[train] + ' ' + build})
 
     return available_builds

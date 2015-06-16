@@ -1,5 +1,20 @@
 2015-06-15  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Perf dashboard should be able to list iOS versions as well as OS X versions
+        https://bugs.webkit.org/show_bug.cgi?id=146003
+
+        Reviewed by Stephanie Lewis.
+
+        Generalized pull-osx.py so that it can run an arbitrary shell command to fetch OS versions based on
+        information specified in config.json.
+
+        * tools/pull-os-versions.py: Renamed from pull-osx.py.
+        (main): Use available_builds_from_command when 'customCommands' is specified.
+        (available_builds_from_command): Added. Executes a shell command to fetch a list of available builds.
+        (fetch_available_builds): Now takes the repository name.
+
+2015-06-15  Ryosuke Niwa  <rniwa@webkit.org>
+
         Removed a superfluous console.log per Chris's comment.
 
         * public/v2/app.js:
