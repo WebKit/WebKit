@@ -45,7 +45,6 @@
 #include "StatisticsData.h"
 #include "WebCookieManager.h"
 #include "WebProcessPoolMessages.h"
-#include "WebResourceCacheManager.h"
 #include "WebsiteData.h"
 #include <WebCore/Logging.h>
 #include <WebCore/PlatformCookieJar.h>
@@ -266,23 +265,6 @@ void NetworkProcess::destroyPrivateBrowsingSession(SessionID sessionID)
     SessionTracker::destroySession(sessionID);
 }
 
-#if USE(CFURLCACHE)
-static Vector<Ref<SecurityOrigin>> cfURLCacheOrigins()
-{
-    Vector<Ref<SecurityOrigin>> result;
-
-    WebResourceCacheManager::cfURLCacheHostNamesWithCallback([&result](RetainPtr<CFArrayRef> cfURLHosts) {
-        for (CFIndex i = 0, size = CFArrayGetCount(cfURLHosts.get()); i < size; ++i) {
-            CFStringRef host = static_cast<CFStringRef>(CFArrayGetValueAtIndex(cfURLHosts.get(), i));
-
-            result.append(SecurityOrigin::create("http", host, 0));
-        }
-    });
-
-    return result;
-}
-#endif
-
 static void fetchDiskCacheEntries(SessionID sessionID, std::function<void (Vector<WebsiteData::Entry>)> completionHandler)
 {
 #if ENABLE(NETWORK_CACHE)
@@ -315,7 +297,7 @@ static void fetchDiskCacheEntries(SessionID sessionID, std::function<void (Vecto
     Vector<WebsiteData::Entry> entries;
 
 #if USE(CFURLCACHE)
-    for (auto& origin : cfURLCacheOrigins())
+    for (auto& origin : NetworkProcess::cfURLCacheOrigins())
         entries.append(WebsiteData::Entry { WTF::move(origin), WebsiteDataTypeDiskCache });
 #endif
 
@@ -418,12 +400,7 @@ static void clearDiskCacheEntries(const Vector<SecurityOriginData>& origins, std
 #endif
 
 #if USE(CFURLCACHE)
-    auto hostNames = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, 0, &kCFTypeArrayCallBacks));
-    for (auto& origin : origins)
-        CFArrayAppendValue(hostNames.get(), origin.host.createCFString().get());
-
-    CFShow(hostNames.get());
-    WebResourceCacheManager::clearCFURLCacheForHostNames(hostNames.get());
+    NetworkProcess::clearCFURLCacheForOrigins(origins);
 #endif
 
     RunLoop::main().dispatch(WTF::move(completionHandler));

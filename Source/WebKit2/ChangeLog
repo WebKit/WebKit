@@ -1,5 +1,25 @@
 2015-06-16  Anders Carlsson  <andersca@apple.com>
 
+        Stop calling into WebResourceCacheManager
+        https://bugs.webkit.org/show_bug.cgi?id=146026
+
+        Reviewed by Andreas Kling.
+
+        Copy the cache clearing code into NetworkProcessCocoa in preparation of getting rid of
+        the WebResourceCacheManager code.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::fetchDiskCacheEntries):
+        (WebKit::clearDiskCacheEntries):
+        (WebKit::cfURLCacheOrigins): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::partitionName):
+        (WebKit::NetworkProcess::cfURLCacheOrigins):
+        (WebKit::NetworkProcess::clearCFURLCacheForOrigins):
+
+2015-06-16  Anders Carlsson  <andersca@apple.com>
+
         Get rid of the application cache manager classes, they are no longer used
         https://bugs.webkit.org/show_bug.cgi?id=146024
 
