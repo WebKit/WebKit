@@ -1,3 +1,13 @@
+2015-06-17  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/19034131> Cleaned up the WebDownload.h framework header.
+
+        Reviewed by Anders Carlsson.
+
+        * Misc/WebDownload.h: Changed to use USE_APPLE_INTERNAL_SDK instead of __has_include.
+        * postprocess-headers.sh: Define USE_APPLE_INTERNAL_SDK when postprocessing framework
+        headers.
+
 2015-06-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r185636.
