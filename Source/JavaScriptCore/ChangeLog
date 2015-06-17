@@ -1,3 +1,18 @@
+2015-06-17  Andreas Kling  <akling@apple.com>
+
+        [JSC] jsSubstring() should have a fast path for 0..baseLength "substrings."
+        <https://webkit.org/b/146051>
+
+        Reviewed by Anders Carlsson.
+
+        If asked to make a substring that actually spans the entire base string,
+        have jsSubstring() just return the base instead of allocating a new JSString.
+
+        3% speed-up on Octane/regexp.
+
+        * runtime/JSString.h:
+        (JSC::jsSubstring):
+
 2015-06-16  Alex Christensen  <achristensen@webkit.org>
 
         32-bit build fix after r185640.

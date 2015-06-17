@@ -528,6 +528,8 @@ inline JSString* jsSubstring(ExecState* exec, JSString* s, unsigned offset, unsi
     VM& vm = exec->vm();
     if (!length)
         return vm.smallStrings.emptyString();
+    if (!offset && length == s->length())
+        return s;
     return JSRopeString::create(*exec, *s, offset, length);
 }
 
