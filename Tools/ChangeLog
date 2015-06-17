@@ -1,3 +1,9 @@
+2015-06-17  Matt Rajca  <mrajca@apple.com>
+
+        Unreviewed. Added myself as a committer.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2015-06-17  Daniel Bates  <dabates@apple.com>
 
         Export VCSUtils::gitTreeDirectory()
