@@ -141,6 +141,16 @@ static const unsigned webViewCloseTimeout = 60;
     static_cast<WebInspectorProxy*>(_inspectorProxy)->close();
 }
 
+- (void)windowDidEnterFullScreen:(NSNotification *)notification
+{
+    static_cast<WebInspectorProxy*>(_inspectorProxy)->windowFullScreenDidChange();
+}
+
+- (void)windowDidExitFullScreen:(NSNotification *)notification
+{
+    static_cast<WebInspectorProxy*>(_inspectorProxy)->windowFullScreenDidChange();
+}
+
 - (void)ignoreNextInspectedViewFrameDidChange
 {
     _ignoreNextInspectedViewFrameDidChange = YES;
@@ -304,6 +314,14 @@ void WebInspectorProxy::createInspectorWindow()
     [window setDelegate:m_inspectorProxyObjCAdapter.get()];
     [window setMinSize:NSMakeSize(minimumWindowWidth, minimumWindowHeight)];
     [window setReleasedWhenClosed:NO];
+    [window setCollectionBehavior:([window collectionBehavior] | NSWindowCollectionBehaviorFullScreenAuxiliary)];
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    CGFloat approximatelyHalfScreenSize = (window.screen.frame.size.width / 2) - 4;
+    CGFloat minimumFullScreenWidth = std::max<CGFloat>(636, approximatelyHalfScreenSize);
+    [window setMinFullScreenContentSize:NSMakeSize(minimumFullScreenWidth, minimumWindowHeight)];
+    [window setCollectionBehavior:([window collectionBehavior] | NSWindowCollectionBehaviorFullScreenAllowsTiling)];
+#endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     window.titlebarAppearsTransparent = YES;
@@ -463,6 +481,9 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
 
 bool WebInspectorProxy::platformCanAttach(bool webProcessCanAttach)
 {
+    if ([m_inspectorWindow styleMask] & NSFullScreenWindowMask)
+        return false;
+
     NSView *inspectedView = inspectedPage()->wkView()._inspectorAttachmentView;
     if ([inspectedView isKindOfClass:[WKView class]])
         return webProcessCanAttach;
@@ -635,13 +656,25 @@ void WebInspectorProxy::windowFrameDidChange()
     inspectedPage()->pageGroup().preferences().setInspectorWindowFrame(frameString);
 }
 
+void WebInspectorProxy::windowFullScreenDidChange()
+{
+    ASSERT(!m_isAttached);
+    ASSERT(m_isVisible);
+    ASSERT(m_inspectorWindow);
+
+    if (m_isAttached || !m_isVisible || !m_inspectorWindow)
+        return;
+
+    attachAvailabilityChanged(platformCanAttach(canAttach()));    
+}
+
 void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
 {
     if (!m_isVisible)
         return;
 
     if (!m_isAttached) {
-        // Check if the attach avaibility changed. We need to do this here in case
+        // Check if the attach availability changed. We need to do this here in case
         // the attachment view is not the WKView.
         attachAvailabilityChanged(platformCanAttach(canAttach()));
         return;

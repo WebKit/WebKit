@@ -101,6 +101,7 @@ public:
     void updateInspectorWindowTitle() const;
     void inspectedViewFrameDidChange(CGFloat = 0);
     void windowFrameDidChange();
+    void windowFullScreenDidChange();
     NSWindow* inspectorWindow() const { return m_inspectorWindow.get(); }
 
     void setInspectorWindowFrame(WKRect&);
