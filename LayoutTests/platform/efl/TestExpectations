@@ -533,8 +533,7 @@ http/tests/canvas/webgl/origin-clean-conformance.html [ Skip ]
 http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html [ Skip ]
 http/tests/security/webgl-remote-read-remote-image-allowed.html [ Skip ]
 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [ Skip ]
-
-inspector/event-listener.html [ Crash ]
+mathml/presentation/fractions-box.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # Old WebGL expectations before skipping all of them
@@ -1071,6 +1070,12 @@ webaudio/delaynode-max-default-delay.html [ Failure Pass ]
 http/tests/media/video-redirect.html [ Crash Timeout Pass ]
 http/tests/xmlhttprequest/xmlhttprequest-post-crash.html [ Timeout Pass ]
 media/track/track-cues-pause-on-exit.html [ Failure Timeout Pass ]
+js/dom/cross-frame-prototype.html [ Crash Pass ]
+pageoverlay/overlay-large-document-scrolled.html [ Crash Pass ]
+http/tests/misc/iframe-reparenting-id-collision.html [ Crash Pass ]
+http/tests/loading/text-content-type-with-binary-extension.html [ Failure Pass ]
+perf/rel-list-remove.html [ Failure Pass ]
+http/tests/media/video-redirect.html [ Crash Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
@@ -2244,7 +2249,6 @@ http/tests/local/link-stylesheet-load-order-preload.html [ Failure ]
 http/tests/local/link-stylesheet-load-order.html [ Failure ]
 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Failure ]
 http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Failure ]
-http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Failure ]
 js/dom/global-constructors-attributes-idb.html [ Failure ]
 js/dom/global-constructors-attributes.html [ Failure ]
 media/accessiblity-describes-video.html [ Failure ]
