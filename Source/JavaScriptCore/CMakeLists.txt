@@ -181,6 +181,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGInPlaceAbstractState.cpp
     dfg/DFGInsertOSRHintsForUpdate.cpp
     dfg/DFGIntegerCheckCombiningPhase.cpp
+    dfg/DFGIntegerRangeOptimizationPhase.cpp
     dfg/DFGInvalidationPointInjectionPhase.cpp
     dfg/DFGJITCode.cpp
     dfg/DFGJITCompiler.cpp

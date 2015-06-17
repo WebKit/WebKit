@@ -418,6 +418,7 @@
     <ClCompile Include="..\dfg\DFGInPlaceAbstractState.cpp" />
     <ClCompile Include="..\dfg\DFGInsertOSRHintsForUpdate.cpp" />
     <ClCompile Include="..\dfg\DFGIntegerCheckCombiningPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGIntegerRangeOptimizationPhase.cpp" />
     <ClCompile Include="..\dfg\DFGInvalidationPointInjectionPhase.cpp" />
     <ClCompile Include="..\dfg\DFGJITCode.cpp" />
     <ClCompile Include="..\dfg\DFGJITCompiler.cpp" />
@@ -1109,6 +1110,7 @@
     <ClInclude Include="..\dfg\DFGInsertOSRHintsForUpdate.h" />
     <ClInclude Include="..\dfg\DFGInsertionSet.h" />
     <ClInclude Include="..\dfg\DFGIntegerCheckCombiningPhase.h" />
+    <ClInclude Include="..\dfg\DFGIntegerRangeOptimizationPhase.h" />
     <ClInclude Include="..\dfg\DFGInvalidationPointInjectionPhase.h" />
     <ClInclude Include="..\dfg\DFGJITCode.h" />
     <ClInclude Include="..\dfg\DFGJITCompiler.h" />

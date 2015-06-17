@@ -44,6 +44,7 @@
 #include "DFGFixupPhase.h"
 #include "DFGGraphSafepoint.h"
 #include "DFGIntegerCheckCombiningPhase.h"
+#include "DFGIntegerRangeOptimizationPhase.h"
 #include "DFGInvalidationPointInjectionPhase.h"
 #include "DFGJITCompiler.h"
 #include "DFGLICMPhase.h"
@@ -356,6 +357,8 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         
         performConstantHoisting(dfg);
         performGlobalCSE(dfg);
+        performLivenessAnalysis(dfg);
+        performIntegerRangeOptimization(dfg);
         performLivenessAnalysis(dfg);
         performCFA(dfg);
         performConstantFolding(dfg);

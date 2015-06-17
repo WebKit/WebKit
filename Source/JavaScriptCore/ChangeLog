@@ -1,3 +1,41 @@
+2015-06-09  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should eliminate array bounds checks in loops
+        https://bugs.webkit.org/show_bug.cgi?id=145768
+
+        Reviewed by Benjamin Poulain.
+        
+        This adds a phase that does forward propagation of integer inequalities. This allows us
+        to do the algebraic reasoning we need to eliminate array bounds checks in loops. It
+        also eliminates overflow checks on ArithAdd with a constant.
+        
+        The phase's analysis produces results that are powerful enough to do speculative bounds
+        check hoisting, but this phase currently only does elimination. We can implement
+        hoisting later.
+        
+        On programs that just loop over an array like:
+        
+            for (var i = 0; i < array.length; ++i)
+                thingy += array[i]
+        
+        This change is a 60% speed-up.
+        
+        This is also a ~3% speed-up on Kraken, and it shows various speed-ups on individual
+        tests in Octane.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp: Added.
+        (JSC::DFG::performIntegerRangeOptimization):
+        * dfg/DFGIntegerRangeOptimizationPhase.h: Added.
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * tests/stress/add-overflows-after-not-equal.js: Added.
+        * tests/stress/no-abc-skippy-loop.js: Added.
+        * tests/stress/no-abc-skippy-paired-loop.js: Added.
+        * tests/stress/sub-overflows-after-not-equal.js: Added.
+
 2015-06-16  Andreas Kling  <akling@apple.com>
 
         Remove unused template parameter InlineCapacity from SegmentedVector.

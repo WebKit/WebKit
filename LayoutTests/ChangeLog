@@ -1,3 +1,26 @@
+2015-06-10  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should eliminate array bounds checks in loops
+        https://bugs.webkit.org/show_bug.cgi?id=145768
+
+        Reviewed by Benjamin Poulain.
+
+        * js/regress/abc-forward-loop-equal-expected.txt: Added.
+        * js/regress/abc-forward-loop-equal.html: Added.
+        * js/regress/abc-postfix-backward-loop-expected.txt: Added.
+        * js/regress/abc-postfix-backward-loop.html: Added.
+        * js/regress/abc-skippy-loop-expected.txt: Added.
+        * js/regress/abc-skippy-loop.html: Added.
+        * js/regress/abc-simple-backward-loop-expected.txt: Added.
+        * js/regress/abc-simple-backward-loop.html: Added.
+        * js/regress/abc-simple-forward-loop-expected.txt: Added.
+        * js/regress/abc-simple-forward-loop.html: Added.
+        * js/regress/script-tests/abc-forward-loop-equal.js: Added.
+        * js/regress/script-tests/abc-postfix-backward-loop.js: Added.
+        * js/regress/script-tests/abc-skippy-loop.js: Added.
+        * js/regress/script-tests/abc-simple-backward-loop.js: Added.
+        * js/regress/script-tests/abc-simple-forward-loop.js: Added.
+
 2015-06-16  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Unreviewed, EFL gardening on 17th June.
