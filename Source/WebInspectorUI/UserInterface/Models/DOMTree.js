@@ -210,7 +210,7 @@ WebInspector.DOMTree = class DOMTree extends WebInspector.Object
             // COMPATIBILITY (iOS 6): Execution context identifiers (contextId) did not exist
             // in iOS 6. Fallback to including the frame identifier (frameId).
             var contextId = this._frame.pageExecutionContext ? this._frame.pageExecutionContext.id : undefined;
-            RuntimeAgent.evaluate.invoke({expression: "document", objectGroup: "", includeCommandLineAPI: false, doNotPauseOnExceptionsAndMuteConsole: true, contextId, frameId: this._frame.id, returnByValue: false, generatePreview: false}, rootObjectAvailable.bind(this));
+            RuntimeAgent.evaluate.invoke({expression: appendWebInspectorSourceURL("document"), objectGroup: "", includeCommandLineAPI: false, doNotPauseOnExceptionsAndMuteConsole: true, contextId, frameId: this._frame.id, returnByValue: false, generatePreview: false}, rootObjectAvailable.bind(this));
         }
     }
 

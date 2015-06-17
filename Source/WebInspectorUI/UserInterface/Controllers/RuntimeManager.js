@@ -43,6 +43,8 @@ WebInspector.RuntimeManager = class RuntimeManager extends WebInspector.Object
             expression = "this";
         }
 
+        expression = appendWebInspectorSourceURL(expression);
+
         function evalCallback(error, result, wasThrown, savedResultIndex)
         {
             this.dispatchEventToListeners(WebInspector.RuntimeManager.Event.DidEvaluate);

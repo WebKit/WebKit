@@ -1,3 +1,35 @@
+2015-06-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Inspector Scripts evaluated in the page should not be searchable
+        https://bugs.webkit.org/show_bug.cgi?id=146040
+
+        Reviewed by Darin Adler.
+
+        Any script with a __WebInspector source URL will be hidden by the tools.
+        There were a number of ways the inspector could evaluate script on the page
+        without getting the sourceURL and therefore not getting hidden. Audit
+        all cases of Runtime.evaluate, Runtime.callFunctionOn, and
+        Debugger.evaluateOnCallFrame, to ensure we have an appropriate source URL.
+
+        * UserInterface/Base/Utilities.js:
+        (appendWebInspectorSourceURL):
+        Helper to append a __WebInspectorInternal__ sourceURL to a string that may
+        be evaluated directly on the inspected context.
+
+        * UserInterface/Controllers/DOMTreeManager.js:
+        (WebInspector.DOMTreeManager.domNodeResolved):
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WebInspector.JavaScriptLogViewController.prototype.consolePromptTextCommitted): Deleted.
+        * UserInterface/Controllers/RuntimeManager.js:
+        * UserInterface/Models/DOMTree.js:
+        (WebInspector.DOMTree.prototype._requestRootDOMNode):
+        * UserInterface/Protocol/RemoteObject.js:
+        (WebInspector.RemoteObject.):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._tokenTrackingControllerHighlightedJavaScriptExpression):
+        Ensure all cases that evaluate directly on the inspected page / context
+        have the intenral source URL.
+
 2015-06-16  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: REGRESSION (r171645): up/down key navigation of timeline sidebar tree elements is broken when scope bar filters are applied

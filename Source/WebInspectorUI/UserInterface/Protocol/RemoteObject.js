@@ -306,7 +306,8 @@ WebInspector.RemoteObject = class RemoteObject
             return;
         }
 
-        RuntimeAgent.evaluate.invoke({expression:value, doNotPauseOnExceptionsAndMuteConsole:true}, evaluatedCallback.bind(this));
+        // FIXME: It doesn't look like setPropertyValue is used yet. This will need to be tested when it is again (editable ObjectTrees).
+        RuntimeAgent.evaluate.invoke({expression:appendWebInspectorSourceURL(value), doNotPauseOnExceptionsAndMuteConsole:true}, evaluatedCallback.bind(this));
 
         function evaluatedCallback(error, result, wasThrown)
         {
@@ -322,7 +323,7 @@ WebInspector.RemoteObject = class RemoteObject
 
             delete result.description; // Optimize on traffic.
 
-            RuntimeAgent.callFunctionOn(this._objectId, setPropertyValue.toString(), [{value:name}, result], true, undefined, propertySetCallback.bind(this));
+            RuntimeAgent.callFunctionOn(this._objectId, appendWebInspectorSourceURL(setPropertyValue.toString()), [{value:name}, result], true, undefined, propertySetCallback.bind(this));
 
             if (result._objectId)
                 RuntimeAgent.releaseObject(result._objectId);
@@ -406,7 +407,7 @@ WebInspector.RemoteObject = class RemoteObject
         if (args)
             args = args.map(WebInspector.RemoteObject.createCallArgument);
 
-        RuntimeAgent.callFunctionOn(this._objectId, functionDeclaration.toString(), args, true, undefined, generatePreview, mycallback);
+        RuntimeAgent.callFunctionOn(this._objectId, appendWebInspectorSourceURL(functionDeclaration.toString()), args, true, undefined, generatePreview, mycallback);
     }
 
     callFunctionJSON(functionDeclaration, args, callback)
@@ -416,7 +417,7 @@ WebInspector.RemoteObject = class RemoteObject
             callback((error || wasThrown) ? null : result.value);
         }
 
-        RuntimeAgent.callFunctionOn(this._objectId, functionDeclaration.toString(), args, true, true, mycallback);
+        RuntimeAgent.callFunctionOn(this._objectId, appendWebInspectorSourceURL(functionDeclaration.toString()), args, true, true, mycallback);
     }
     
     invokeGetter(getterRemoteObject, callback)

@@ -1007,6 +1007,11 @@ Object.defineProperty(Array.prototype, "binaryIndexOf",
     }
 });
 
+function appendWebInspectorSourceURL(string)
+{
+    return string + "\n//# sourceURL=__WebInspectorInternal__\n";
+}
+
 function isFunctionStringNativeCode(str)
 {
     return str.endsWith("{\n    [native code]\n}");

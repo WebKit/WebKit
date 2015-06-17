@@ -597,7 +597,7 @@ WebInspector.DOMTreeManager = class DOMTreeManager extends WebInspector.Object
             // passing the DOMNode as the "this" reference.
             var evalParameters = {
                 objectId: remoteObject.objectId,
-                functionDeclaration: backendFunction.toString(),
+                functionDeclaration: appendWebInspectorSourceURL(backendFunction.toString()),
                 doNotPauseOnExceptionsAndMuteConsole: true,
                 returnByValue: false,
                 generatePreview: false

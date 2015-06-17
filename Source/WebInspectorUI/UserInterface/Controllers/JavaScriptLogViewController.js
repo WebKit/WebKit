@@ -232,8 +232,6 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
             this._appendConsoleMessageView(commandResultMessageView, true);
         }
 
-        text += "\n//# sourceURL=__WebInspectorConsole__\n";
-
         WebInspector.runtimeManager.evaluateInInspectedWindow(text, "console", true, false, false, true, true, printResult.bind(this));
     }
 
