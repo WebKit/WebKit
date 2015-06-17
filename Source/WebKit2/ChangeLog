@@ -1,3 +1,9 @@
+2015-06-16  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        Unreviewed build fix attempt on CMake based port after r185623.
+
+        * CMakeLists.txt:
+
 2015-06-16  Anders Carlsson  <andersca@apple.com>
 
         Move LocalStorageDetails into the local storage database tracker
