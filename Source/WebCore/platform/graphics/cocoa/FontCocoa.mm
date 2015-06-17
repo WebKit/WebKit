@@ -311,11 +311,13 @@ void Font::platformDestroy()
 
 PassRefPtr<Font> Font::platformCreateScaledFont(const FontDescription&, float scaleFactor) const
 {
+#if !CORETEXT_WEB_FONTS
     if (isCustomFont()) {
         FontPlatformData scaledFontData(m_platformData);
         scaledFontData.m_size = scaledFontData.m_size * scaleFactor;
         return Font::create(scaledFontData, true, false);
     }
+#endif
 
     float size = m_platformData.size() * scaleFactor;
 

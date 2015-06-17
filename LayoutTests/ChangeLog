@@ -1,3 +1,14 @@
+2015-06-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font-variant: small-caps is not honored with web fonts
+        https://bugs.webkit.org/show_bug.cgi?id=145873
+        <rdar://problem/21314282>
+
+        Reviewed by Dean Jackson.
+
+        * fast/text/small-caps-web-font-expected.html: Added.
+        * fast/text/small-caps-web-font.html: Added.
+
 2015-06-16  Michael Saboff  <msaboff@apple.com>
 
         Inlining in the DFG trashes ByteCodeParser::m_currentInstruction for the calling function
