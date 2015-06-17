@@ -1848,6 +1848,9 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
     if (renderer().isRenderReplaced() && (!isCompositedPlugin(renderer()) || isRestartedPlugin(renderer())))
         return false;
 
+    if (renderer().isTextControl())
+        return false;
+
     if (paintsBoxDecorations() || paintsChildren())
         return false;
 

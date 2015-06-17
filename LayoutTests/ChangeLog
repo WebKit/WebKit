@@ -1,3 +1,16 @@
+2015-06-17  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r173283-r173296): Amazon.com front page has no caret in the search field
+        https://bugs.webkit.org/show_bug.cgi?id=146073
+        rdar://problem/21022203
+
+        Reviewed by Tim Horton.
+
+        Dump layers for composited text inputs and textareas.
+
+        * compositing/backing/form-controls-backing-expected.txt: Added.
+        * compositing/backing/form-controls-backing.html: Added.
+
 2015-06-17  Zalan Bujtas  <zalan@apple.com>
 
         Selection cache produces invalid result when ancestor has float element.
