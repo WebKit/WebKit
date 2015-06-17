@@ -1369,6 +1369,7 @@
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0700;
 				TargetAttributes = {
 					7CCE7E8B1A41144E00447C4C = {
 						CreatedOnToolsVersion = 6.3;

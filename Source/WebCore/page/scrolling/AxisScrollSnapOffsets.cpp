@@ -85,9 +85,6 @@ static void updateFromStyle(Vector<LayoutUnit>& snapOffsets, const RenderStyle& 
     if (snapOffsetSubsequence.isEmpty())
         snapOffsetSubsequence.append(0);
 
-    // Always put a snap point on the zero offset.
-    snapOffsets.append(0);
-
     auto* points = (axis == ScrollEventAxis::Horizontal) ? style.scrollSnapPointsX() : style.scrollSnapPointsY();
     bool hasRepeat = points ? points->hasRepeat : false;
     LayoutUnit repeatOffset = points ? valueForLength(points->repeatOffset, viewSize) : LayoutUnit();
@@ -112,6 +109,13 @@ static void updateFromStyle(Vector<LayoutUnit>& snapOffsets, const RenderStyle& 
         }
         curSnapPositionShift = lastSnapPosition + repeatOffset;
     } while (hasRepeat && curSnapPositionShift < maxScrollOffset);
+
+    if (snapOffsets.isEmpty())
+        return;
+
+    // Always put a snap point on the zero offset.
+    if (snapOffsets.first())
+        snapOffsets.insert(0, 0);
 
     // Always put a snap point on the maximum scroll offset.
     // Not a part of the spec, but necessary to prevent unreachable content when snapping.
@@ -179,12 +183,18 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, HTMLElem
     if (canComputeHorizontalOffsets) {
         auto horizontalSnapOffsets = std::make_unique<Vector<LayoutUnit>>();
         updateFromStyle(*horizontalSnapOffsets, scrollingElementStyle, ScrollEventAxis::Horizontal, viewWidth, scrollWidth, horizontalSnapOffsetSubsequence);
-        scrollableArea.setHorizontalSnapOffsets(WTF::move(horizontalSnapOffsets));
+        if (horizontalSnapOffsets->isEmpty())
+            scrollableArea.clearHorizontalSnapOffsets();
+        else
+            scrollableArea.setHorizontalSnapOffsets(WTF::move(horizontalSnapOffsets));
     }
     if (canComputeVerticalOffsets) {
         auto verticalSnapOffsets = std::make_unique<Vector<LayoutUnit>>();
         updateFromStyle(*verticalSnapOffsets, scrollingElementStyle, ScrollEventAxis::Vertical, viewHeight, scrollHeight, verticalSnapOffsetSubsequence);
-        scrollableArea.setVerticalSnapOffsets(WTF::move(verticalSnapOffsets));
+        if (verticalSnapOffsets->isEmpty())
+            scrollableArea.clearVerticalSnapOffsets();
+        else
+            scrollableArea.setVerticalSnapOffsets(WTF::move(verticalSnapOffsets));
     }
 }
 

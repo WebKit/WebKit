@@ -119,6 +119,7 @@
 		A54C224D148B23DE00373FA3 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 0600;
 				ORGANIZATIONNAME = Apple;
 			};
