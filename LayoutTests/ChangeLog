@@ -1,3 +1,15 @@
+2015-06-17  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet <youenn.fablet@crf.canon.fr>
+
+        [Streams API] ReadableJSStream should handle promises returned by JS source pull callback
+        https://bugs.webkit.org/show_bug.cgi?id=145965
+
+        Reviewed by Darin Adler.
+
+        Rebasing tests and removing timeout: 50 for test that is passing..
+
+        * streams/reference-implementation/readable-stream-expected.txt:
+        * streams/reference-implementation/readable-stream.html:
+
 2015-06-16  Youenn Fablet <youenn.fablet@crf.canon.fr> and Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [Streams API] Implement ReadableStream locked property

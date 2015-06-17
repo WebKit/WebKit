@@ -224,7 +224,7 @@ test4.step(function() {
     }));
 });
 
-var test5 = async_test('ReadableStream: if pull rejects, it should error the stream', { timeout: 50 });
+var test5 = async_test('ReadableStream: if pull rejects, it should error the stream');
 test5.step(function() {
     var error = new Error('pull failure');
     var rs = new ReadableStream({

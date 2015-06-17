@@ -133,19 +133,32 @@ void ReadableJSStream::doStart(ExecState& exec)
     thenPromise(exec, promise, createStartResultFulfilledFunction(exec, *this), m_errorFunction.get());
 }
 
-void ReadableJSStream::doPull()
+static inline JSFunction* createPullResultFulfilledFunction(ExecState& exec, ReadableJSStream& stream)
+{
+    RefPtr<ReadableJSStream> readableStream = &stream;
+    return JSFunction::create(exec.vm(), exec.callee()->globalObject(), 0, String(), [readableStream](ExecState*) {
+        readableStream->finishPulling();
+        return JSValue::encode(jsUndefined());
+    });
+}
+
+bool ReadableJSStream::doPull()
 {
     ExecState& state = *globalObject()->globalExec();
     JSLockHolder lock(&state);
 
-    invoke(state, "pull");
+    JSPromise* promise = invoke(state, "pull");
+
+    if (promise)
+        thenPromise(state, promise, createPullResultFulfilledFunction(state, *this), m_errorFunction.get());
 
     if (state.hadException()) {
         storeException(state);
         ASSERT(!state.hadException());
-        return;
+        return true;
     }
-    // FIXME: Implement handling promise as result of calling pull function.
+
+    return !promise;
 }
 
 RefPtr<ReadableJSStream> ReadableJSStream::create(ExecState& exec, ScriptExecutionContext& scriptExecutionContext)

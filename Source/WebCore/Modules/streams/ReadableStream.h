@@ -76,6 +76,7 @@ public:
     void start();
     void changeStateToClosed();
     void changeStateToErrored();
+    void finishPulling();
 
     typedef std::function<void(JSC::JSValue)> FailureCallback;
 
@@ -102,7 +103,7 @@ private:
 
     virtual bool hasValue() const = 0;
     virtual JSC::JSValue read() = 0;
-    virtual void doPull() = 0;
+    virtual bool doPull() = 0;
 
     std::unique_ptr<ReadableStreamReader> m_reader;
     Vector<std::unique_ptr<ReadableStreamReader>> m_releasedReaders;
@@ -118,6 +119,8 @@ private:
     Deque<ReadCallbacks> m_readRequests;
 
     bool m_isStarted { false };
+    bool m_isPulling { false };
+    bool m_shouldPullAgain { false };
     bool m_closeRequested { false };
     State m_state { State::Readable };
 };

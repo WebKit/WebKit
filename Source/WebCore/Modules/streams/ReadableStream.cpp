@@ -124,8 +124,24 @@ void ReadableStream::pull()
     // FIXME: Implement queueSize check.
     if (m_readRequests.isEmpty() && hasValue())
         return;
-    // FIXME: Implement async pull check.
-    doPull();
+
+    if (m_isPulling) {
+        m_shouldPullAgain = true;
+        return;
+    }
+
+    m_isPulling = true;
+    if (doPull())
+        finishPulling();
+}
+
+void ReadableStream::finishPulling()
+{
+    m_isPulling = false;
+    if (m_shouldPullAgain) {
+        m_shouldPullAgain = false;
+        pull();
+    }
 }
 
 ReadableStreamReader& ReadableStream::getReader()
