@@ -54,11 +54,11 @@ template<typename... Args>
 int clampedSum(Args... args)
 {
     int64_t result = clampedSumImpl(args...);
-    return std::min(
+    return static_cast<int>(std::min(
         static_cast<int64_t>(std::numeric_limits<int>::max()),
         std::max(
             static_cast<int64_t>(std::numeric_limits<int>::min()),
-            result));
+            result)));
 }
 
 class Relationship {

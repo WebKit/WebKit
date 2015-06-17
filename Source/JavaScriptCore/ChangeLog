@@ -1,3 +1,10 @@
+2015-06-16  Alex Christensen  <achristensen@webkit.org>
+
+        32-bit build fix after r185640.
+
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+        Explicitly cast clamped int64_t to an int.
+
 2015-06-09  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should eliminate array bounds checks in loops
