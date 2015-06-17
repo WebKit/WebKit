@@ -1,5 +1,17 @@
 2015-06-17  Javier Fernandez  <jfernandez@igalia.com>
 
+        [CSS Grid Layout] We should add performance tests for stretching logic
+        https://bugs.webkit.org/show_bug.cgi?id=146063
+
+        Reviewed by Sergio Villar Senin.
+
+        Added a new performance test for Grid Layout to ensure there are no
+        regressions in the stretching alignment logic.
+
+        * Layout/fixed-grid-lots-of-stretched-data.html: Added.
+
+2015-06-17  Javier Fernandez  <jfernandez@igalia.com>
+
         [CSS Grid Layout] Performance tests are using the old syntax
         https://bugs.webkit.org/show_bug.cgi?id=146061
 
