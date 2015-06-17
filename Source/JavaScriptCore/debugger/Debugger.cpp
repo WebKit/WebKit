@@ -76,7 +76,7 @@ inline void Recompiler::visit(JSCell* cell)
         return;
 
     JSFunction* function = jsCast<JSFunction*>(cell);
-    if (function->executable()->isHostFunction())
+    if (function->isHostOrBuiltinFunction())
         return;
 
     FunctionExecutable* executable = function->jsExecutable();
