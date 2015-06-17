@@ -21,7 +21,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:alert, xml-roles:alert, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:alert, xml-roles:alert, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXAlert
 AXParent: AXWebArea
@@ -40,7 +40,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:alertdialog, xml-roles:alertdialog, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:alertdialog, xml-roles:alertdialog, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXEmbedded
 AXParent: AXWebArea
@@ -59,7 +59,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:application, xml-roles:application, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:application, xml-roles:application, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXArticle
 AXParent: AXWebArea
@@ -78,7 +78,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:article, xml-roles:article, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:article, xml-roles:article, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXLandmarkBanner
 AXParent: AXWebArea
@@ -97,7 +97,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:banner, xml-roles:banner, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:banner, xml-roles:banner, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXButton
 AXParent: AXWebArea
@@ -116,7 +116,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:button, xml-roles:button, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:button, xml-roles:button, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXCheckBox
 AXParent: AXWebArea
@@ -135,7 +135,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:checkbox, xml-roles:checkbox, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:checkbox, xml-roles:checkbox, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXComboBox
 AXParent: AXWebArea
@@ -154,7 +154,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:combobox, xml-roles:combobox, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:combobox, xml-roles:combobox, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXLandmarkComplementary
 AXParent: AXWebArea
@@ -173,7 +173,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:complementary, xml-roles:complementary, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:complementary, xml-roles:complementary, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXLandmarkContentInfo
 AXParent: AXWebArea
@@ -192,7 +192,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:contentinfo, xml-roles:contentinfo, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:contentinfo, xml-roles:contentinfo, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXDefinition
 AXParent: AXWebArea
@@ -211,7 +211,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:definition, xml-roles:definition, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:definition, xml-roles:definition, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXDialog
 AXParent: AXWebArea
@@ -230,7 +230,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:dialog, xml-roles:dialog, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:dialog, xml-roles:dialog, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXList
 AXParent: AXWebArea
@@ -249,7 +249,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:list, xml-roles:list, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:list, xml-roles:list, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXDocument
 AXParent: AXWebArea
@@ -268,7 +268,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:document, xml-roles:document, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:document, xml-roles:document, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXForm
 AXParent: AXWebArea
@@ -287,7 +287,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:form, xml-roles:form, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:form, xml-roles:form, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXGroup
 AXParent: AXWebArea
@@ -306,7 +306,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:group, xml-roles:group, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:group, xml-roles:group, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXHeading
 AXParent: AXWebArea
@@ -325,7 +325,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:heading, xml-roles:heading, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:heading, xml-roles:heading, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXImage
 AXParent: AXWebArea
@@ -344,7 +344,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:img, xml-roles:img, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:img, xml-roles:img, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXLink
 AXParent: AXWebArea
@@ -364,7 +364,7 @@ AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
 AXURL: (null)
-AXPlatformAttributes: computed-role:link, xml-roles:link, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:link, xml-roles:link, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXLog
 AXParent: AXWebArea
@@ -383,7 +383,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:log, xml-roles:log, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:log, xml-roles:log, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXLandmarkMain
 AXParent: AXWebArea
@@ -402,7 +402,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:main, xml-roles:main, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:main, xml-roles:main, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXMarquee
 AXParent: AXWebArea
@@ -421,7 +421,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:marquee, xml-roles:marquee, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:marquee, xml-roles:marquee, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXMath
 AXParent: AXWebArea
@@ -440,7 +440,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:math, xml-roles:math, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:math, xml-roles:math, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXLandmarkNavigation
 AXParent: AXWebArea
@@ -459,7 +459,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:navigation, xml-roles:navigation, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:navigation, xml-roles:navigation, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXComment
 AXParent: AXWebArea
@@ -478,7 +478,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:note, xml-roles:note, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:note, xml-roles:note, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXProgressIndicator
 AXParent: AXWebArea
@@ -497,7 +497,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:progressbar, xml-roles:progressbar, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:progressbar, xml-roles:progressbar, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXRadioButton
 AXParent: AXWebArea
@@ -516,7 +516,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:radio, xml-roles:radio, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:radio, xml-roles:radio, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXGroup
 AXParent: AXWebArea
@@ -535,7 +535,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:region, xml-roles:region, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:region, xml-roles:region, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXScrollBar
 AXParent: AXWebArea
@@ -554,7 +554,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:scrollbar, xml-roles:scrollbar, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:scrollbar, xml-roles:scrollbar, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXLandmarkSearch
 AXParent: AXWebArea
@@ -573,7 +573,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:search, xml-roles:search, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:search, xml-roles:search, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXTextField
 AXParent: AXWebArea
@@ -592,7 +592,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:searchbox, xml-roles:searchbox, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:searchbox, xml-roles:searchbox, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXSeparator
 AXParent: AXWebArea
@@ -611,7 +611,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:separator, xml-roles:separator, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:separator, xml-roles:separator, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXSlider
 AXParent: AXWebArea
@@ -630,7 +630,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:slider, xml-roles:slider, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:slider, xml-roles:slider, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXSpinButton
 AXParent: AXWebArea
@@ -649,7 +649,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:spinbutton, xml-roles:spinbutton, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:spinbutton, xml-roles:spinbutton, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXStatusBar
 AXParent: AXWebArea
@@ -668,7 +668,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:status, xml-roles:status, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:status, xml-roles:status, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXToggleButton
 AXParent: AXWebArea
@@ -687,7 +687,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:switch, xml-roles:switch, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:switch, xml-roles:switch, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXTextField
 AXParent: AXWebArea
@@ -706,7 +706,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXTimer
 AXParent: AXWebArea
@@ -725,7 +725,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:timer, xml-roles:timer, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:timer, xml-roles:timer, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXToolbar
 AXParent: AXWebArea
@@ -744,7 +744,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:toolbar, xml-roles:toolbar, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:toolbar, xml-roles:toolbar, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXUserInterfaceTooltip
 AXParent: AXWebArea
@@ -763,7 +763,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:tooltip, xml-roles:tooltip, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:tooltip, xml-roles:tooltip, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXParagraph
 AXParent: AXWebArea
@@ -782,7 +782,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: html-id:description, toolkit:WebKitGtk
+AXPlatformAttributes: html-id:description, tag:p, toolkit:WebKitGtk
 ------------
 
 PASS successfullyParsed is true

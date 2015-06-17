@@ -408,6 +408,9 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
     // for this information.
     Element* element = coreObject->element() ? coreObject->element() : coreObject->actionElement();
     if (element) {
+        String tagName = element->tagName();
+        if (!tagName.isEmpty())
+            attributeSet = addToAtkAttributeSet(attributeSet, "tag", tagName.lower().utf8().data());
         String id = element->getIdAttribute().string();
         if (!id.isEmpty())
             attributeSet = addToAtkAttributeSet(attributeSet, "html-id", id.utf8().data());

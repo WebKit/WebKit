@@ -21,7 +21,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:grid, html-id:testTable2, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:grid, html-id:testTable2, tag:table, toolkit:WebKitGtk
 
 AXRole: AXTable
 AXParent: AXWebArea
@@ -39,7 +39,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:grid, html-id:testTable3, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:grid, html-id:testTable3, tag:table, toolkit:WebKitGtk
 
 AXRole: AXTable
 AXParent: AXWebArea
@@ -57,7 +57,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:grid, html-id:testTable4, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:grid, html-id:testTable4, tag:table, toolkit:WebKitGtk
 
 AXRole: AXSection
 AXParent: AXWebArea
@@ -76,7 +76,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: tag:td, toolkit:WebKitGtk
 
 AXRole: AXSection
 AXParent: AXWebArea
@@ -95,6 +95,6 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: tag:td, toolkit:WebKitGtk
 
 
