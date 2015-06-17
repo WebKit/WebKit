@@ -1,3 +1,20 @@
+2015-06-16  Hyungwook Lee  <hyungwook.lee@navercorp.com>
+
+        [Win] Implement WebViewGroup to support WebView::addxxxToGroup().
+        https://bugs.webkit.org/show_bug.cgi?id=145908
+
+        Reviewed by Brent Fulgham.
+
+        Make WebViewGroup class sharing on Mac and Win port.
+
+        * WebCoreSupport: Added.
+        * WebCoreSupport/WebViewGroup.cpp: Copied from Source/WebKit/mac/WebCoreSupport/WebViewGroup.mm.
+        * WebCoreSupport/WebViewGroup.h: Copied from Source/WebKit/mac/WebCoreSupport/WebViewGroup.h.
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj:
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj.filters:
+        * WebKit.vcxproj/WebKit/WebKitCommon.props:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2015-06-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [cmake] Fix the style issues in cmake project files

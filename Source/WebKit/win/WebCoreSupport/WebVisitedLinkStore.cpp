@@ -34,20 +34,27 @@ using namespace WebCore;
 
 static bool s_shouldTrackVisitedLinks;
 
-WebVisitedLinkStore& WebVisitedLinkStore::singleton()
+static HashSet<WebVisitedLinkStore*>& visitedLinkStores()
 {
-    static WebVisitedLinkStore& visitedLinkStore = *adoptRef(new WebVisitedLinkStore).leakRef();
-    
-    return visitedLinkStore;
+    static NeverDestroyed<HashSet<WebVisitedLinkStore*>> visitedLinkStores;
+
+    return visitedLinkStores;
+}
+
+Ref<WebVisitedLinkStore> WebVisitedLinkStore::create()
+{
+    return adoptRef(*new WebVisitedLinkStore);
 }
 
 WebVisitedLinkStore::WebVisitedLinkStore()
     : m_visitedLinksPopulated(false)
 {
+    visitedLinkStores().add(this);
 }
 
 WebVisitedLinkStore::~WebVisitedLinkStore()
 {
+    visitedLinkStores().remove(this);
 }
 
 void WebVisitedLinkStore::setShouldTrackVisitedLinks(bool shouldTrackVisitedLinks)
@@ -62,7 +69,8 @@ void WebVisitedLinkStore::setShouldTrackVisitedLinks(bool shouldTrackVisitedLink
 
 void WebVisitedLinkStore::removeAllVisitedLinks()
 {
-    WebVisitedLinkStore::singleton().removeVisitedLinkHashes();
+    for (auto& visitedLinkStore : visitedLinkStores())
+        visitedLinkStore->removeVisitedLinkHashes();
     PageCache::singleton().markPagesForVisitedLinkStyleRecalc();
 }
 

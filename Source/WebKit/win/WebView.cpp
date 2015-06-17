@@ -69,6 +69,7 @@
 #include "WebPreferences.h"
 #include "WebScriptWorld.h"
 #include "WebStorageNamespaceProvider.h"
+#include "WebViewGroup.h"
 #include "WebVisitedLinkStore.h"
 #include "resource.h"
 #include <JavaScriptCore/APICast.h>
@@ -152,6 +153,7 @@
 #include <WebCore/SecurityPolicy.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SystemInfo.h>
+#include <WebCore/UserContentController.h>
 #include <WebCore/WindowMessageBroadcaster.h>
 #include <WebCore/WindowsTouch.h>
 #include <bindings/ScriptValue.h>
@@ -456,6 +458,8 @@ WebView::~WebView()
 #if USE(CA)
     ASSERT(!m_layerTreeHost);
 #endif
+
+    m_webViewGroup->removeWebView(this);
 
     WebViewCount--;
     gClassCount--;
@@ -2818,6 +2822,9 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
 
     m_inspectorClient = new WebInspectorClient(this);
 
+    m_webViewGroup = WebViewGroup::getOrCreate(groupName, localStorageDatabasePath(m_preferences.get()));
+    m_webViewGroup->addWebView(this);
+
     PageConfiguration configuration;
     configuration.chromeClient = new WebChromeClient(this);
     configuration.contextMenuClient = new WebContextMenuClient(this);
@@ -2826,9 +2833,10 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     configuration.inspectorClient = m_inspectorClient;
     configuration.loaderClientForMainFrame = new WebFrameLoaderClient;
     configuration.databaseProvider = &WebDatabaseProvider::singleton();
-    configuration.storageNamespaceProvider = WebStorageNamespaceProvider::create(localStorageDatabasePath(m_preferences.get()));
+    configuration.storageNamespaceProvider = &m_webViewGroup->storageNamespaceProvider();
     configuration.progressTrackerClient = static_cast<WebFrameLoaderClient*>(configuration.loaderClientForMainFrame);
-    configuration.visitedLinkStore = &WebVisitedLinkStore::singleton();
+    configuration.userContentController = &m_webViewGroup->userContentController();
+    configuration.visitedLinkStore = &m_webViewGroup->visitedLinkStore();
 
     m_page = new Page(configuration);
     provideGeolocationTo(m_page, new WebGeolocationClient(this));
@@ -3695,8 +3703,17 @@ HRESULT STDMETHODCALLTYPE WebView::registerViewClass(
 HRESULT STDMETHODCALLTYPE WebView::setGroupName( 
         /* [in] */ BSTR groupName)
 {
+    if (m_webViewGroup)
+        m_webViewGroup->removeWebView(this);
+
+    m_webViewGroup = WebViewGroup::getOrCreate(groupName, localStorageDatabasePath(m_preferences.get()));
+    m_webViewGroup->addWebView(this);
+
     if (!m_page)
         return S_OK;
+
+    m_page->setUserContentController(&m_webViewGroup->userContentController());
+    m_page->setVisitedLinkStore(m_webViewGroup->visitedLinkStore());
     m_page->setGroupName(toString(groupName));
     return S_OK;
 }
@@ -6503,7 +6520,7 @@ HRESULT WebView::historyDelegate(IWebHistoryDelegate** historyDelegate)
 
 HRESULT WebView::addVisitedLinks(BSTR* visitedURLs, unsigned visitedURLCount)
 {
-    auto& visitedLinkStore = WebVisitedLinkStore::singleton();
+    auto& visitedLinkStore = m_webViewGroup->visitedLinkStore();
     PageGroup& group = core(this)->group();
     
     for (unsigned i = 0; i < visitedURLCount; ++i) {

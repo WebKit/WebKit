@@ -297,6 +297,7 @@
     <ClCompile Include="..\..\Storage\WebDatabaseProvider.cpp" />
     <ClCompile Include="..\..\Storage\WebStorageNamespaceProvider.cpp" />
     <ClCompile Include="..\..\cf\WebCoreSupport\WebInspectorClientCF.cpp" />
+    <ClCompile Include="..\..\WebCoreSupport\WebViewGroup.cpp" />
     <ClCompile Include="..\..\win\Plugins\npapi.cpp" />
     <ClCompile Include="..\..\win\Plugins\PluginDatabase.cpp" />
     <ClCompile Include="..\..\win\Plugins\PluginDebug.cpp" />
@@ -450,6 +451,7 @@
     <ClInclude Include="..\..\Storage\StorageTrackerClient.h" />
     <ClInclude Include="..\..\Storage\WebDatabaseProvider.h" />
     <ClInclude Include="..\..\Storage\WebStorageNamespaceProvider.h" />
+    <ClInclude Include="..\..\WebCoreSupport\WebViewGroup.h" />
     <ClInclude Include="..\..\win\Plugins\PluginDatabase.h" />
     <ClInclude Include="..\..\win\Plugins\PluginDebug.h" />
     <ClInclude Include="..\..\win\Plugins\PluginPackage.h" />
