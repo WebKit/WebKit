@@ -638,8 +638,11 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         case MenuButtonRole:
         case ValueIndicatorRole:
         case ImageRole:
+        case ImageMapLinkRole:
         case ProgressIndicatorRole:
         case MenuItemRole:
+        case MenuItemCheckboxRole:
+        case MenuItemRadioRole:
         case IncrementorRole:
         case ComboBoxRole:
         case DisclosureTriangleRole:
@@ -649,8 +652,10 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         case TabRole:
         case DocumentMathRole:
         case HorizontalRuleRole:
+        case SliderThumbRole:
         case SwitchRole:
         case SearchFieldRole:
+        case SpinButtonRole:
             return true;
         case StaticTextRole:
         {
@@ -682,40 +687,105 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
                 return true;
             FALLTHROUGH;
         // All other elements are ignored on the iphone.
-        default:
-        case UnknownRole:
-        case TabGroupRole:
-        case ScrollAreaRole:
-        case TableRole:
+        case AnnotationRole:
         case ApplicationRole:
-        case RadioGroupRole:
+        case ApplicationAlertRole:
+        case ApplicationAlertDialogRole:
+        case ApplicationDialogRole:
+        case ApplicationLogRole:
+        case ApplicationMarqueeRole:
+        case ApplicationStatusRole:
+        case ApplicationTimerRole:
+        case AudioRole:
+        case BlockquoteRole:
+        case BrowserRole:
+        case BusyIndicatorRole:
+        case CanvasRole:
+        case CaptionRole:
+        case CellRole:
+        case ColorWellRole:
+        case ColumnRole:
+        case ColumnHeaderRole:
+        case DefinitionRole:
+        case DescriptionListRole:
+        case DescriptionListTermRole:
+        case DescriptionListDetailRole:
+        case DetailsRole:
+        case DirectoryRole:
+        case DivRole:
+        case DocumentRole:
+        case DocumentArticleRole:
+        case DocumentNoteRole:
+        case DocumentRegionRole:
+        case DrawerRole:
+        case EditableTextRole:
+        case FooterRole:
+        case FormRole:
+        case GridRole:
+        case GrowAreaRole:
+        case HelpTagRole:
+        case IgnoredRole:
+        case InlineRole:
+        case LabelRole:
+        case LandmarkApplicationRole:
+        case LandmarkBannerRole:
+        case LandmarkComplementaryRole:
+        case LandmarkContentInfoRole:
+        case LandmarkMainRole:
+        case LandmarkNavigationRole:
+        case LandmarkSearchRole:
+        case LegendRole:
         case ListRole:
         case ListBoxRole:
-        case ScrollBarRole:
-        case MenuBarRole:
-        case MenuRole:
-        case ColumnRole:
-        case RowRole:
-        case ToolbarRole:
-        case BusyIndicatorRole:
-        case WindowRole:
-        case DrawerRole:
-        case SystemWideRole:
-        case OutlineRole:
-        case BrowserRole:
-        case SplitGroupRole:
-        case SplitterRole:
-        case ColorWellRole:
-        case GrowAreaRole:
-        case SheetRole:
-        case HelpTagRole:
+        case ListItemRole:
+        case MathElementRole:
         case MatteRole:
+        case MenuRole:
+        case MenuBarRole:
+        case MenuListPopupRole:
+        case MenuListOptionRole:
+        case OutlineRole:
+        case ParagraphRole:
+        case PreRole:
+        case PresentationalRole:
+        case RadioGroupRole:
+        case RowHeaderRole:
+        case RowRole:
+        case RubyBaseRole:
+        case RubyBlockRole:
+        case RubyInlineRole:
+        case RubyRunRole:
+        case RubyTextRole:
         case RulerRole:
         case RulerMarkerRole:
-        case GridRole:
+        case ScrollAreaRole:
+        case ScrollBarRole:
+        case SheetRole:
+        case SpinButtonPartRole:
+        case SplitGroupRole:
+        case SplitterRole:
+        case SummaryRole:
+        case SystemWideRole:
+        case SVGRootRole:
+        case TabGroupRole:
+        case TabListRole:
+        case TabPanelRole:
+        case TableRole:
+        case TableHeaderContainerRole:
+        case TreeRole:
+        case TreeItemRole:
+        case TreeGridRole:
+        case ToolbarRole:
+        case UnknownRole:
+        case UserInterfaceTooltipRole:
+        case VideoRole:
         case WebAreaRole:
+        case WindowRole:
             return false;
     }
+    
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 - (BOOL)isAccessibilityElement
