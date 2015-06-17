@@ -433,16 +433,17 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 - (BOOL)_accessibilityIsLandmarkRole:(AccessibilityRole)role
 {
     switch (role) {
-        case LandmarkApplicationRole:
-        case LandmarkBannerRole:
-        case LandmarkComplementaryRole:
-        case LandmarkContentInfoRole:
-        case LandmarkMainRole:
-        case LandmarkNavigationRole:
-        case LandmarkSearchRole:
-            return YES;
-        default:
-            return NO;
+    case DocumentRegionRole:
+    case LandmarkApplicationRole:
+    case LandmarkBannerRole:
+    case LandmarkComplementaryRole:
+    case LandmarkContentInfoRole:
+    case LandmarkMainRole:
+    case LandmarkNavigationRole:
+    case LandmarkSearchRole:
+        return YES;
+    default:
+        return NO;
     }    
 }
 

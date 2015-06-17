@@ -1,3 +1,5 @@
+non landmark
+text
 text
 text
 This tests that landmarks return their type as part of the AX label.
@@ -6,7 +8,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS main.description is 'AXLabel: main'
+PASS main.childAtIndex(0).traits != nonLandmarkText.traits is true
 PASS banner.description is 'AXLabel: banner'
+PASS banner.childAtIndex(0).traits != nonLandmarkText.traits is true
+PASS region.description is 'AXLabel: testregion, region'
+PASS region.childAtIndex(0).traits != nonLandmarkText.traits is true
+PASS region.childAtIndex(0).traits == main.childAtIndex(0).traits is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

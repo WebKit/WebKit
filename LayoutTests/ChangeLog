@@ -1,3 +1,13 @@
+2015-06-17  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: VoiceOver in iOS not announcing generic WAI-ARIA region, even if labelled properly
+        https://bugs.webkit.org/show_bug.cgi?id=146066
+
+        Reviewed by Darin Adler.
+
+        * platform/ios-simulator/accessibility/landmark-type-expected.txt:
+        * platform/ios-simulator/accessibility/landmark-type.html:
+
 2015-06-17  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r173283-r173296): Amazon.com front page has no caret in the search field
