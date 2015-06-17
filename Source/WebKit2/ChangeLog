@@ -1,3 +1,28 @@
+2015-06-17  Tim Horton  <timothy_horton@apple.com>
+
+        Repro crash when swiping back from a NY Times article @ WebPageProxy::navigationGestureDidEnd
+        https://bugs.webkit.org/show_bug.cgi?id=146083
+        <rdar://problem/20974232>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::didSameDocumentNavigationForMainFrame):
+        (WebKit::ViewGestureController::activeLoadMonitoringTimerFired):
+        It is possible to get didSameDocumentNavigationForMainFrame *before*
+        endSwipeGesture, while the user is still interactively swiping. We
+        cannot remove the snapshot in this case, nor should we start the active
+        load monitoring timer; all of these things should happen only after the
+        swipe is completed and we've performed the navigation.
+
+        This was particularly bad (a crash instead of just a disappearing snapshot)
+        because removing the snapshot also causes m_webPageProxyForBackForwardListForCurrentSwipe
+        to be nulled out, but then it is dereferenced during endSwipeGesture.
+
+        Make sure that we never call removeSwipeSnapshotIfReady unless we were actually
+        waiting to remove the swipe snapshot (because the gesture had completed).
+        Most callers already did ensure this, but these two did not.
+
 2015-06-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve Full Screen support for Web Inspector windows

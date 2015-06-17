@@ -391,6 +391,9 @@ void ViewGestureController::didSameDocumentNavigationForMainFrame(SameDocumentNa
         return;
 
     // This is nearly equivalent to didFinishLoad in the same document navigation case.
+    if (!m_swipeWaitingForDidFinishLoad)
+        return;
+
     m_swipeWaitingForDidFinishLoad = false;
 
     if (type != SameDocumentNavigationSessionStateReplace && type != SameDocumentNavigationSessionStatePop)
@@ -402,6 +405,9 @@ void ViewGestureController::didSameDocumentNavigationForMainFrame(SameDocumentNa
 void ViewGestureController::activeLoadMonitoringTimerFired()
 {
     if (m_webPageProxy.pageLoadState().isLoading())
+        return;
+
+    if (!m_swipeWaitingForSubresourceLoads)
         return;
 
     m_swipeWaitingForSubresourceLoads = false;
