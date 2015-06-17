@@ -1,3 +1,20 @@
+2015-06-16  Michael Saboff  <msaboff@apple.com>
+
+        Inlining in the DFG trashes ByteCodeParser::m_currentInstruction for the calling function
+        https://bugs.webkit.org/show_bug.cgi?id=146029
+
+        Reviewed by Benjamin Poulain.
+
+        New regression test.
+
+        * js/regress-146029-expected.txt: Added.
+        * js/regress-146029.html: Added.
+        * js/script-tests/regress-146029.js: Added.
+        (myPush):
+        (myPop):
+        (foo):
+        (test):
+
 2015-06-16  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test update: Add multiple scroll-snap-coordinate test.

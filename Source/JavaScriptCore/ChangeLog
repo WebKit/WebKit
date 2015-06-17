@@ -1,3 +1,19 @@
+2015-06-16  Michael Saboff  <msaboff@apple.com>
+
+        Inlining in the DFG trashes ByteCodeParser::m_currentInstruction for the calling function
+        https://bugs.webkit.org/show_bug.cgi?id=146029
+
+        Reviewed by Benjamin Poulain.
+
+        Save and restore m_currentInstruction around call to ByteCodeParser::inlineCall() as it will
+        use m_currentInstruction during its own parsing.  This happens because inlineCall() parses the
+        inlined callee's bytecodes by calling parseCodeBlock() which calls parseBlock() on each block.
+        It is in parseBlock() that we set m_currentInstruction to an instruction before we parse it.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::attemptToInlineCall):
+        (JSC::DFG::ByteCodeParser::parseBlock): Added an ASSERT to catch this issue.
+
 2015-06-16  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll out unintended JSC change from https://trac.webkit.org/changeset/185425.
