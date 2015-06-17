@@ -1,3 +1,21 @@
+2015-06-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER doesn't disable memory cache when set before the web process is launched
+        https://bugs.webkit.org/show_bug.cgi?id=146053
+
+        Reviewed by Martin Robinson.
+
+        The cache is disabled in WebProcess::platformSetCacheModel() when
+        the cache model is CacheModelDocumentViewer, but it's enabled
+        again by WebProcess::setMemoryCacheDisabled() when
+        memoryCacheDisabled creation parameter is processed. We need to
+        make sure the cache model and memoryCacheDisabled parameters are consistent.
+
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess): Initialize
+        memoryCacheDisabled parameter to true if memory cache was
+        explicitly disabled or cache model is CacheModelDocumentViewer.
+
 2015-06-17  Zan Dobersek  <zdobersek@igalia.com>
 
         [WK2] valueForKey() shouldn't copy the defaults map
