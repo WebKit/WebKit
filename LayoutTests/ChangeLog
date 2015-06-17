@@ -1,3 +1,15 @@
+2015-06-16  Youenn Fablet <youenn.fablet@crf.canon.fr> and Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [Streams API] Implement ReadableStream locked property
+        https://bugs.webkit.org/show_bug.cgi?id=146023
+
+        Reviewed by Darin Adler.
+
+        Rebasing tests.
+
+        * streams/reference-implementation/readable-stream-expected.txt:
+        * streams/reference-implementation/readable-stream-templated-expected.txt:
+
 2015-06-10  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should eliminate array bounds checks in loops

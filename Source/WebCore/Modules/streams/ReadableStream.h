@@ -64,7 +64,8 @@ public:
 
     ReadableStreamReader& getReader();
     const ReadableStreamReader* reader() const { return m_reader.get(); }
-    bool isLocked() const { return !!m_reader; }
+
+    bool locked() const { return !!m_reader; }
 
     bool isErrored() const { return m_state == State::Errored; }
     bool isReadable() const { return m_state == State::Readable; }

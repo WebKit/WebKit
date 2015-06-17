@@ -37,4 +37,6 @@
     [Custom, RaisesException] ReadableStreamReader getReader();
     [Custom, RaisesException] Promise pipeTo(any streams, any options);
     [Custom, RaisesException] Object pipeThrough(any dest, any options);
+
+    readonly attribute boolean locked;
 };

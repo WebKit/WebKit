@@ -1,9 +1,9 @@
 
 PASS Running templatedRSEmpty with ReadableStream (empty) 
-FAIL instances have the correct methods and properties assert_equals: has a boolean locked getter expected "boolean" but got "undefined"
+FAIL instances have the correct methods and properties assert_equals: has a tee method expected "function" but got "undefined"
 PASS Running templatedRSEmptyReader with ReadableStream (empty) reader 
 PASS instances have the correct methods and properties 
-FAIL locked should be true assert_true: locked getter should return true expected true got undefined
+PASS locked should be true 
 PASS read() should never settle 
 PASS two read()s should both never settle 
 PASS read() should return distinct promises each time 
@@ -16,7 +16,7 @@ FAIL canceling via the reader should cause the reader to act closed cancel is no
 FAIL canceling via the stream should fail cancel is not implemented
 PASS Running templatedRSClosed with ReadableStream (closed via call in start) 
 FAIL cancel() should return a distinct fulfilled promise each time cancel is not implemented
-FAIL locked should be false assert_false: locked getter should return false expected false got undefined
+PASS locked should be false 
 PASS getReader() should be OK 
 PASS should be able to acquire multiple readers, since they are all auto-released 
 PASS Running templatedRSClosedReader with ReadableStream (closed via call in start) reader 
@@ -34,14 +34,14 @@ FAIL closed should fulfill with undefined cancel is not implemented
 FAIL cancel() should return a distinct fulfilled promise each time cancel is not implemented
 PASS Running templatedRSErrored with ReadableStream (errored via call in start) 
 PASS getReader() should return a reader that acts errored 
-FAIL locked should be false assert_false: locked getter should return false expected false got undefined
+PASS locked should be false 
 PASS Running templatedRSErroredSyncOnly with ReadableStream (errored via call in start) 
 FAIL cancel() should return a distinct rejected promise each time cancel is not implemented
 FAIL reader cancel() should return a distinct rejected promise each time cancel is not implemented
 PASS should be able to acquire multiple readers, since they are all auto-released 
 PASS Running templatedRSErrored with ReadableStream (errored via returning a rejected promise in start) 
 PASS getReader() should return a reader that acts errored 
-FAIL locked should be false assert_false: locked getter should return false expected false got undefined
+PASS locked should be false 
 PASS Running templatedRSErroredReader with ReadableStream (errored via returning a rejected promise in start) reader 
 PASS closed should reject with the error 
 PASS read() should reject with the error 
@@ -53,7 +53,7 @@ FAIL cancel() after a read() should still give that single read result cancel is
 PASS Running templatedRSTwoChunksClosedReader with ReadableStream (two chunks enqueued, then closed) reader 
 PASS third read(), without waiting, should give { value: undefined, done: true } 
 PASS third read, with waiting, should give { value: undefined, done: true } 
-FAIL draining the stream via read() should cause the reader closed promise to fulfill and locked to be false assert_false: stream should no longer be locked expected false got undefined
+PASS draining the stream via read() should cause the reader closed promise to fulfill and locked to be false 
 FAIL releasing the lock after the stream is closed should do nothing releaseLock is not implemented
 FAIL releasing the lock should cause read() to act as if the stream is closed releaseLock is not implemented
 FAIL reader's closed property always returns the same promise releaseLock is not implemented

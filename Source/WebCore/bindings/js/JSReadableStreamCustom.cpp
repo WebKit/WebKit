@@ -55,7 +55,7 @@ JSValue JSReadableStream::cancel(ExecState* exec)
 
 JSValue JSReadableStream::getReader(ExecState* exec)
 {
-    if (impl().isLocked())
+    if (impl().locked())
         return exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("ReadableStream is locked")));
     return toJS(exec, globalObject(), impl().getReader());
 }
