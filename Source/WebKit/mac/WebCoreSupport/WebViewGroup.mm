@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebViewGroup.h"
+#import "WebViewGroup.h"
 
-#include "WebStorageNamespaceProvider.h"
-#include "WebView.h"
-#include "WebVisitedLinkStore.h"
-#include <WebCore/UserContentController.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/text/StringHash.h>
+#import "WebStorageNamespaceProvider.h"
+#import "WebView.h"
+#import "WebVisitedLinkStore.h"
+#import <WebCore/UserContentController.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/text/StringHash.h>
 
 using namespace WebCore;
 

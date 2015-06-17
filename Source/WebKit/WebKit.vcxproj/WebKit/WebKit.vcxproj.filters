@@ -333,9 +333,6 @@
     <ClCompile Include="..\..\win\WebKitMessageLoop.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\WebCoreSupport\WebViewGroup.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\win\WebCoreSupport\EmbeddedWidget.h">
@@ -655,9 +652,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\win\WebKitMessageLoop.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\WebCoreSupport\WebViewGroup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

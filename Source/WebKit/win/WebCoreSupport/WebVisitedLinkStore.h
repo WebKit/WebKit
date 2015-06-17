@@ -32,7 +32,8 @@
 
 class WebVisitedLinkStore final : public WebCore::VisitedLinkStore {
 public:
-    static Ref<WebVisitedLinkStore> create();
+    static WebVisitedLinkStore& singleton();
+    WebVisitedLinkStore();
     virtual ~WebVisitedLinkStore();
 
     static void setShouldTrackVisitedLinks(bool);
@@ -41,8 +42,6 @@ public:
     void addVisitedLink(const String& urlString);
 
 private:
-    WebVisitedLinkStore();
-
     virtual bool isLinkVisited(WebCore::Page&, WebCore::LinkHash, const WebCore::URL& baseURL, const AtomicString& attributeURL) override;
     virtual void addVisitedLink(WebCore::Page&, WebCore::LinkHash) override;
 
