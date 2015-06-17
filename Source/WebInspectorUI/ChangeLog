@@ -1,3 +1,21 @@
+2015-06-16  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: REGRESSION (r171645): up/down key navigation of timeline sidebar tree elements is broken when scope bar filters are applied
+        https://bugs.webkit.org/show_bug.cgi?id=142315
+
+        Reviewed by Timothy Hatcher.
+
+        TreeOutline's element traversal algorithms have been rewritten to correctly skip over unrevealed tree elements.
+        Previously traversal would halt after encountering a hidden element. We now use an iterative approach, with
+        each iteration producing the next (or previous) element, with respect to the last candidate element. Iteration
+        begins with the current node, and halts once a valid element is found or candidate elements are exhausted.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WebInspector.TreeElement.prototype.traverseNextTreeElement.shouldSkip):
+        (WebInspector.TreeElement.prototype.traverseNextTreeElement):
+        (WebInspector.TreeElement.prototype.traversePreviousTreeElement.shouldSkip):
+        (WebInspector.TreeElement.prototype.traversePreviousTreeElement):
+
 2015-06-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Stylize Node Previews
