@@ -184,7 +184,7 @@ static MappedType valueForKey(const WebPreferencesStore::ValueMap& values, const
     if (overridenDefaultsIt != overridenDefaults.end() && overridenDefaultsIt->value.type() == ToType<MappedType>::value)
         return as<MappedType>(overridenDefaultsIt->value);
 
-    auto defaultsMap = defaults();
+    auto& defaultsMap = defaults();
     auto defaultsIt = defaultsMap.find(key);
     if (defaultsIt != defaultsMap.end() && defaultsIt->value.type() == ToType<MappedType>::value)
         return as<MappedType>(defaultsIt->value);

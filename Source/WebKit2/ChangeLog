@@ -1,3 +1,13 @@
+2015-06-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WK2] valueForKey() shouldn't copy the defaults map
+        https://bugs.webkit.org/show_bug.cgi?id=146050
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::valueForKey): Avoid copying the defaults HashMap by binding the return value to a reference.
+
 2015-06-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Inhibit screen saver when playing full screen video
