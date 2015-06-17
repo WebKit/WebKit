@@ -1,3 +1,15 @@
+2015-06-17  Alexey Proskuryakov  <ap@apple.com>
+
+        Update test results after https://bugs.webkit.org/show_bug.cgi?id=145873
+
+        The changes appear expected, however looking at previous pixel results, we seem
+        to have a (much much earlier) regression, as small caps are rotated incorrectly.
+
+        * platform/mac-mavericks/fast/writing-mode/broken-ideograph-small-caps-expected.png: Copied from LayoutTests/platform/mac/fast/writing-mode/broken-ideograph-small-caps-expected.png.
+        * platform/mac-mavericks/fast/writing-mode/broken-ideograph-small-caps-expected.txt: Copied from LayoutTests/platform/mac/fast/writing-mode/broken-ideograph-small-caps-expected.txt.
+        * platform/mac/fast/writing-mode/broken-ideograph-small-caps-expected.png:
+        * platform/mac/fast/writing-mode/broken-ideograph-small-caps-expected.txt:
+
 2015-06-17  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet <youenn.fablet@crf.canon.fr>
 
         [Streams API] ReadableJSStream should handle promises returned by JS source pull callback
