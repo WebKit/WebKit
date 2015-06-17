@@ -48,8 +48,8 @@ class WebArchiveResource : public API::ObjectImpl<API::Object::Type::WebArchiveR
 public:
     virtual ~WebArchiveResource();
 
-    static PassRefPtr<WebArchiveResource> create(API::Data*, const String& URL, const String& MIMEType, const String& textEncoding);
-    static PassRefPtr<WebArchiveResource> create(PassRefPtr<WebCore::ArchiveResource>);
+    static Ref<WebArchiveResource> create(API::Data*, const String& URL, const String& MIMEType, const String& textEncoding);
+    static Ref<WebArchiveResource> create(PassRefPtr<WebCore::ArchiveResource>);
 
     Ref<API::Data> data();
     String URL();

@@ -29,7 +29,6 @@
 #include "UnitTestUtils/EWK2UnitTestServer.h"
 #include "WKEinaSharedString.h"
 #include "ewk_object_private.h"
-#include <wtf/PassRefPtr.h>
 
 using namespace EWK2UnitTest;
 using namespace WTF;
@@ -40,10 +39,10 @@ class TestEwkObject1 : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(TestEwkObject)
 
-    static PassRefPtr<TestEwkObject1> create()
+    static Ref<TestEwkObject1> create()
     {
         wasDeleted = false;
-        return adoptRef(new TestEwkObject1());
+        return adoptRef(*new TestEwkObject1());
     }
 
     static bool wasDeleted; // We always test only one instance of TestEwkObject.
@@ -60,9 +59,9 @@ class TestEwkObject2 : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(TestEwkObject2)
 
-    static PassRefPtr<TestEwkObject2> create()
+    static Ref<TestEwkObject2> create()
     {
-        return adoptRef(new TestEwkObject2());
+        return adoptRef(*new TestEwkObject2());
     }
 };
 

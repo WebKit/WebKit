@@ -35,7 +35,7 @@ namespace WebKit {
 class WebKitNotificationProvider : public RefCounted<WebKitNotificationProvider> {
 public:
     virtual ~WebKitNotificationProvider();
-    static PassRefPtr<WebKitNotificationProvider> create(WebNotificationManagerProxy*);
+    static Ref<WebKitNotificationProvider> create(WebNotificationManagerProxy*);
 
     void show(WebPageProxy*, const WebNotification&);
     void cancel(const WebNotification&);

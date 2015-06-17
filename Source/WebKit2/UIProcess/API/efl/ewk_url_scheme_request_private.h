@@ -41,10 +41,10 @@ class EwkUrlSchemeRequest : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkUrlSchemeRequest)
 
-    static PassRefPtr<EwkUrlSchemeRequest> create(WKSoupCustomProtocolRequestManagerRef manager, API::URLRequest* urlRequest, uint64_t requestID)
+    static RefPtr<EwkUrlSchemeRequest> create(WKSoupCustomProtocolRequestManagerRef manager, API::URLRequest* urlRequest, uint64_t requestID)
     {
         if (!manager || !urlRequest)
-            return 0;
+            return nullptr;
 
         return adoptRef(new EwkUrlSchemeRequest(manager, urlRequest, requestID));
     }

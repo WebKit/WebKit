@@ -1,3 +1,119 @@
+2015-06-16  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Purge PassRefPtr with Ref or RefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=146001
+
+        Reviewed by Darin Adler.
+
+        As step to remove PassRefPtr, this patch reduces use of PassRefPtr in WebKit2.
+        If function can't return nullptr, PassRefPtr is changed with Ref. If not, the function
+        returns RefPtr.
+
+        * DatabaseProcess/DatabaseToWebProcessConnection.cpp:
+        (WebKit::DatabaseToWebProcessConnection::create):
+        * DatabaseProcess/DatabaseToWebProcessConnection.h:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.h:
+        (WebKit::DatabaseProcessIDBConnection::create):
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+        (WebKit::UniqueIDBDatabase::create):
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::create):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/RemoteNetworkingContext.h:
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::create):
+        * PluginProcess/WebProcessConnection.h:
+        * Shared/API/APINumber.h:
+        (API::Number::create):
+        * Shared/API/APISecurityOrigin.h:
+        (API::SecurityOrigin::createFromString):
+        (API::SecurityOrigin::create):
+        * Shared/API/APISerializedScriptValue.h:
+        (API::SerializedScriptValue::create):
+        (API::SerializedScriptValue::adopt):
+        * Shared/APIWebArchive.h:
+        * Shared/APIWebArchive.mm:
+        (API::WebArchive::create):
+        * Shared/APIWebArchiveResource.h:
+        * Shared/APIWebArchiveResource.mm:
+        (API::WebArchiveResource::create):
+        * Shared/AsyncRequest.h:
+        * UIProcess/API/efl/ewk_url_request_private.h:
+        (EwkUrlRequest::create):
+        * UIProcess/API/efl/ewk_url_response_private.h:
+        (EwkUrlResponse::create):
+        * UIProcess/API/efl/ewk_url_scheme_request_private.h:
+        (EwkUrlSchemeRequest::create):
+        * UIProcess/API/efl/ewk_window_features_private.h:
+        (EwkWindowFeatures::create):
+        * UIProcess/API/efl/tests/test_ewk2_object.cpp:
+        (TestEwkObject1::create):
+        (TestEwkObject2::create):
+        * UIProcess/API/gtk/WebKitBatteryProvider.cpp:
+        (WebKitBatteryProvider::create):
+        * UIProcess/API/gtk/WebKitBatteryProvider.h:
+        * UIProcess/API/gtk/WebKitColorChooser.cpp:
+        (WebKit::WebKitColorChooser::create):
+        * UIProcess/API/gtk/WebKitGeolocationProvider.cpp:
+        (WebKitGeolocationProvider::create):
+        * UIProcess/API/gtk/WebKitNotificationProvider.cpp:
+        (WebKitNotificationProvider::create):
+        * UIProcess/API/gtk/WebKitNotificationProvider.h:
+        * UIProcess/GeolocationPermissionRequestProxy.h:
+        (WebKit::GeolocationPermissionRequestProxy::create):
+        * UIProcess/InspectorServer/HTTPRequest.h:
+        (WebKit::HTTPRequest::create):
+        * UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManager.cpp:
+        (WebKit::WebSoupCustomProtocolRequestManager::create):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::create):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Notifications/NotificationPermissionRequest.cpp:
+        (WebKit::NotificationPermissionRequest::create):
+        * UIProcess/Notifications/NotificationPermissionRequest.h:
+        * UIProcess/Notifications/WebNotification.h:
+        (WebKit::WebNotification::create):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::scriptValueCallback):
+        * UIProcess/WebVibrationProxy.cpp:
+        (WebKit::WebVibrationProxy::create):
+        * UIProcess/WebVibrationProxy.h:
+        * UIProcess/WebViewportAttributes.h:
+        (WebKit::WebViewportAttributes::create):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::createNonPersistent):
+        (WebKit::WebsiteDataStore::create):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * UIProcess/gtk/WebColorPickerGtk.cpp:
+        (WebKit::WebColorPickerGtk::create):
+        * UIProcess/gtk/WebColorPickerGtk.h:
+        * UIProcess/gtk/WebContextMenuProxyGtk.h:
+        (WebKit::WebContextMenuProxyGtk::create):
+        * UIProcess/gtk/WebPopupMenuProxyGtk.h:
+        (WebKit::WebPopupMenuProxyGtk::create):
+        * UIProcess/mac/ViewSnapshotStore.h:
+        * UIProcess/mac/ViewSnapshotStore.mm:
+        (WebKit::ViewSnapshot::create):
+        * UIProcess/mac/WebColorPickerMac.h:
+        * UIProcess/mac/WebColorPickerMac.mm:
+        (WebKit::WebColorPickerMac::create):
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        (WebKit::WebContextMenuProxyMac::create):
+        * UIProcess/mac/WebPopupMenuProxyMac.h:
+        (WebKit::WebPopupMenuProxyMac::create):
+        * WebProcess/Databases/IndexedDB/WebIDBFactoryBackend.h:
+        * WebProcess/Databases/WebToDatabaseProcessConnection.h:
+        (WebKit::WebToDatabaseProcessConnection::create):
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::create):
+        * WebProcess/FullScreen/WebFullScreenManager.h:
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp:
+        (WebKit::InjectedBundleRangeHandle::create):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.h:
+        * WebProcess/InjectedBundle/InjectedBundleBackForwardList.h:
+        (WebKit::InjectedBundleBackForwardList::create):
+
 2015-06-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Unreviewed build fix after r185615.

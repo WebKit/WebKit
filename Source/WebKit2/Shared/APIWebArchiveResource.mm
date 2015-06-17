@@ -37,14 +37,14 @@ using namespace WebCore;
 
 namespace API {
 
-PassRefPtr<WebArchiveResource> WebArchiveResource::create(API::Data* data, const String& URL, const String& MIMEType, const String& textEncoding)
+Ref<WebArchiveResource> WebArchiveResource::create(API::Data* data, const String& URL, const String& MIMEType, const String& textEncoding)
 {
-    return adoptRef(new WebArchiveResource(data, URL, MIMEType, textEncoding));
+    return adoptRef(*new WebArchiveResource(data, URL, MIMEType, textEncoding));
 }
 
-PassRefPtr<WebArchiveResource> WebArchiveResource::create(PassRefPtr<ArchiveResource> archiveResource)
+Ref<WebArchiveResource> WebArchiveResource::create(PassRefPtr<ArchiveResource> archiveResource)
 {
-    return adoptRef(new WebArchiveResource(archiveResource));
+    return adoptRef(*new WebArchiveResource(archiveResource));
 }
 
 WebArchiveResource::WebArchiveResource(API::Data* data, const String& URL, const String& MIMEType, const String& textEncoding)

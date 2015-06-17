@@ -29,9 +29,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebKitColorChooser> WebKitColorChooser::create(WebPageProxy& page, const WebCore::Color& initialColor, const WebCore::IntRect& rect)
+Ref<WebKitColorChooser> WebKitColorChooser::create(WebPageProxy& page, const WebCore::Color& initialColor, const WebCore::IntRect& rect)
 {
-    return adoptRef(new WebKitColorChooser(page, initialColor, rect));
+    return adoptRef(*new WebKitColorChooser(page, initialColor, rect));
 }
 
 WebKitColorChooser::WebKitColorChooser(WebPageProxy& page, const Color& initialColor, const IntRect& rect)

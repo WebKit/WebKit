@@ -40,9 +40,9 @@ class WebPageProxy;
 
 class WebPopupMenuProxyMac : public WebPopupMenuProxy {
 public:
-    static PassRefPtr<WebPopupMenuProxyMac> create(WKView *webView, WebPopupMenuProxy::Client* client)
+    static Ref<WebPopupMenuProxyMac> create(WKView *webView, WebPopupMenuProxy::Client* client)
     {
-        return adoptRef(new WebPopupMenuProxyMac(webView, client));
+        return adoptRef(*new WebPopupMenuProxyMac(webView, client));
     }
     ~WebPopupMenuProxyMac();
 

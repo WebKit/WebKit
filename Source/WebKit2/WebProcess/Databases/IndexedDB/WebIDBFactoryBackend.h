@@ -35,7 +35,7 @@ namespace WebKit {
 
 class WebIDBFactoryBackend final : public WebCore::IDBFactoryBackendInterface {
 public:
-    static PassRefPtr<WebIDBFactoryBackend> create() { return adoptRef(new WebIDBFactoryBackend); }
+    static Ref<WebIDBFactoryBackend> create() { return adoptRef(*new WebIDBFactoryBackend); }
 
     virtual ~WebIDBFactoryBackend();
 

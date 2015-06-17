@@ -37,9 +37,9 @@ class EwkWindowFeatures : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkWindowFeatures)
 
-    static PassRefPtr<EwkWindowFeatures> create(WKDictionaryRef windowFeatures, EwkView* viewImpl)
+    static Ref<EwkWindowFeatures> create(WKDictionaryRef windowFeatures, EwkView* viewImpl)
     {
-        return adoptRef(new EwkWindowFeatures(windowFeatures, viewImpl));
+        return adoptRef(*new EwkWindowFeatures(windowFeatures, viewImpl));
     }
 
     const Evas_Coord_Rectangle& geometry() const { return m_geometry; }

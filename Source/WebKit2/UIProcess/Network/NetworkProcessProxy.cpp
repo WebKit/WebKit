@@ -59,9 +59,9 @@ static uint64_t generateCallbackID()
     return ++callbackID;
 }
 
-PassRefPtr<NetworkProcessProxy> NetworkProcessProxy::create(WebProcessPool& processPool)
+Ref<NetworkProcessProxy> NetworkProcessProxy::create(WebProcessPool& processPool)
 {
-    return adoptRef(new NetworkProcessProxy(processPool));
+    return adoptRef(*new NetworkProcessProxy(processPool));
 }
 
 NetworkProcessProxy::NetworkProcessProxy(WebProcessPool& processPool)

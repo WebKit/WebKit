@@ -50,10 +50,10 @@ class WebArchive : public API::ObjectImpl<API::Object::Type::WebArchive> {
 public:
     virtual ~WebArchive();
 
-    static PassRefPtr<WebArchive> create(WebArchiveResource* mainResource, PassRefPtr<API::Array> subresources, PassRefPtr<API::Array> subframeArchives);
-    static PassRefPtr<WebArchive> create(API::Data*);
-    static PassRefPtr<WebArchive> create(PassRefPtr<WebCore::LegacyWebArchive>);
-    static PassRefPtr<WebArchive> create(WebCore::Range*);
+    static Ref<WebArchive> create(WebArchiveResource* mainResource, PassRefPtr<API::Array> subresources, PassRefPtr<API::Array> subframeArchives);
+    static Ref<WebArchive> create(API::Data*);
+    static Ref<WebArchive> create(PassRefPtr<WebCore::LegacyWebArchive>);
+    static Ref<WebArchive> create(WebCore::Range*);
 
     WebArchiveResource* mainResource();
     API::Array* subresources();

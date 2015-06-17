@@ -62,9 +62,9 @@ class WebPageProxy;
 class ViewSnapshot : public RefCounted<ViewSnapshot> {
 public:
 #if USE_IOSURFACE_VIEW_SNAPSHOTS
-    static PassRefPtr<ViewSnapshot> create(std::unique_ptr<WebCore::IOSurface>);
+    static Ref<ViewSnapshot> create(std::unique_ptr<WebCore::IOSurface>);
 #elif USE_RENDER_SERVER_VIEW_SNAPSHOTS
-    static PassRefPtr<ViewSnapshot> create(uint32_t slotID, WebCore::IntSize, size_t imageSizeInBytes);
+    static Ref<ViewSnapshot> create(uint32_t slotID, WebCore::IntSize, size_t imageSizeInBytes);
 #endif
 
     ~ViewSnapshot();

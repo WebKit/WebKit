@@ -61,9 +61,9 @@ WebKitNotificationProvider::~WebKitNotificationProvider()
 {
 }
 
-PassRefPtr<WebKitNotificationProvider> WebKitNotificationProvider::create(WebNotificationManagerProxy* notificationManager)
+Ref<WebKitNotificationProvider> WebKitNotificationProvider::create(WebNotificationManagerProxy* notificationManager)
 {
-    return adoptRef(new WebKitNotificationProvider(notificationManager));
+    return adoptRef(*new WebKitNotificationProvider(notificationManager));
 }
 
 WebKitNotificationProvider::WebKitNotificationProvider(WebNotificationManagerProxy* notificationManager)

@@ -38,24 +38,24 @@ using namespace WebCore;
 
 namespace API {
 
-PassRefPtr<WebArchive> WebArchive::create(WebArchiveResource* mainResource, PassRefPtr<API::Array> subresources, PassRefPtr<API::Array> subframeArchives)
+Ref<WebArchive> WebArchive::create(WebArchiveResource* mainResource, PassRefPtr<API::Array> subresources, PassRefPtr<API::Array> subframeArchives)
 {
-    return adoptRef(new WebArchive(mainResource, subresources, subframeArchives));
+    return adoptRef(*new WebArchive(mainResource, subresources, subframeArchives));
 }
 
-PassRefPtr<WebArchive> WebArchive::create(API::Data* data)
+Ref<WebArchive> WebArchive::create(API::Data* data)
 {
-    return adoptRef(new WebArchive(data));
+    return adoptRef(*new WebArchive(data));
 }
 
-PassRefPtr<WebArchive> WebArchive::create(PassRefPtr<LegacyWebArchive> legacyWebArchive)
+Ref<WebArchive> WebArchive::create(PassRefPtr<LegacyWebArchive> legacyWebArchive)
 {
-    return adoptRef(new WebArchive(legacyWebArchive));
+    return adoptRef(*new WebArchive(legacyWebArchive));
 }
 
-PassRefPtr<WebArchive> WebArchive::create(Range* range)
+Ref<WebArchive> WebArchive::create(Range* range)
 {
-    return adoptRef(new WebArchive(LegacyWebArchive::create(range)));
+    return adoptRef(*new WebArchive(LegacyWebArchive::create(range)));
 }
 
 WebArchive::WebArchive(WebArchiveResource* mainResource, PassRefPtr<API::Array> subresources, PassRefPtr<API::Array> subframeArchives)

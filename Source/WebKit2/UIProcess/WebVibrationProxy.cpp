@@ -35,9 +35,9 @@
 
 namespace WebKit {
 
-PassRefPtr<WebVibrationProxy> WebVibrationProxy::create(WebPageProxy* page)
+Ref<WebVibrationProxy> WebVibrationProxy::create(WebPageProxy* page)
 {
-    return adoptRef(new WebVibrationProxy(page));
+    return adoptRef(*new WebVibrationProxy(page));
 }
 
 WebVibrationProxy::WebVibrationProxy(WebPageProxy* page)

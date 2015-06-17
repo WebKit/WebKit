@@ -37,9 +37,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebColorPickerGtk> WebColorPickerGtk::create(WebPageProxy& page, const Color& initialColor, const IntRect& rect)
+Ref<WebColorPickerGtk> WebColorPickerGtk::create(WebPageProxy& page, const Color& initialColor, const IntRect& rect)
 {
-    return adoptRef(new WebColorPickerGtk(page, initialColor, rect));
+    return adoptRef(*new WebColorPickerGtk(page, initialColor, rect));
 }
 
 WebColorPickerGtk::WebColorPickerGtk(WebPageProxy& page, const Color& initialColor, const IntRect&)

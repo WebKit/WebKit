@@ -39,7 +39,7 @@ class WebPageProxy;
 
 class WebVibrationProxy : public API::ObjectImpl<API::Object::Type::Vibration>, private IPC::MessageReceiver {
 public:
-    static PassRefPtr<WebVibrationProxy> create(WebPageProxy*);
+    static Ref<WebVibrationProxy> create(WebPageProxy*);
     virtual ~WebVibrationProxy();
 
     void invalidate();

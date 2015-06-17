@@ -40,9 +40,9 @@ const char* WebSoupCustomProtocolRequestManager::supplementName()
     return "WebSoupCustomProtocolRequestManager";
 }
 
-PassRefPtr<WebSoupCustomProtocolRequestManager> WebSoupCustomProtocolRequestManager::create(WebProcessPool* processPool)
+Ref<WebSoupCustomProtocolRequestManager> WebSoupCustomProtocolRequestManager::create(WebProcessPool* processPool)
 {
-    return adoptRef(new WebSoupCustomProtocolRequestManager(processPool));
+    return adoptRef(*new WebSoupCustomProtocolRequestManager(processPool));
 }
 
 WebSoupCustomProtocolRequestManager::WebSoupCustomProtocolRequestManager(WebProcessPool* processPool)

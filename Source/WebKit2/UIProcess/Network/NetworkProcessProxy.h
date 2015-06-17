@@ -54,7 +54,7 @@ struct NetworkProcessCreationParameters;
 
 class NetworkProcessProxy : public ChildProcessProxy, private ProcessThrottlerClient {
 public:
-    static PassRefPtr<NetworkProcessProxy> create(WebProcessPool&);
+    static Ref<NetworkProcessProxy> create(WebProcessPool&);
     ~NetworkProcessProxy();
 
     void getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>);

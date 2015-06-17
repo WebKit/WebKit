@@ -36,9 +36,9 @@ namespace API {
 template<typename NumberType, API::Object::Type APIObjectType>
 class Number : public ObjectImpl<APIObjectType> {
 public:
-    static PassRefPtr<Number> create(NumberType value)
+    static Ref<Number> create(NumberType value)
     {
-        return adoptRef(new Number(value));
+        return adoptRef(*new Number(value));
     }
 
     NumberType value() const { return m_value; }

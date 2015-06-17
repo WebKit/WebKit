@@ -75,9 +75,9 @@ PassRefPtr<InjectedBundleRangeHandle> InjectedBundleRangeHandle::getOrCreate(Ran
     return rangeHandle.release();
 }
 
-PassRefPtr<InjectedBundleRangeHandle> InjectedBundleRangeHandle::create(Range* range)
+Ref<InjectedBundleRangeHandle> InjectedBundleRangeHandle::create(Range* range)
 {
-    return adoptRef(new InjectedBundleRangeHandle(range));
+    return adoptRef(*new InjectedBundleRangeHandle(range));
 }
 
 InjectedBundleRangeHandle::InjectedBundleRangeHandle(Range* range)

@@ -75,9 +75,9 @@ using namespace WebKit;
 
 namespace WebKit {
 
-PassRefPtr<WebColorPickerMac> WebColorPickerMac::create(WebColorPicker::Client* client, const WebCore::Color& initialColor, const WebCore::IntRect& rect, WKView* view)
+Ref<WebColorPickerMac> WebColorPickerMac::create(WebColorPicker::Client* client, const WebCore::Color& initialColor, const WebCore::IntRect& rect, WKView* view)
 {
-    return adoptRef(new WebColorPickerMac(client, initialColor, rect, view));
+    return adoptRef(*new WebColorPickerMac(client, initialColor, rect, view));
 }
 
 WebColorPickerMac::~WebColorPickerMac()

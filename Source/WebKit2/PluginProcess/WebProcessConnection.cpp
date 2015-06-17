@@ -46,9 +46,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebProcessConnection> WebProcessConnection::create(IPC::Connection::Identifier connectionIdentifier)
+RefPtr<WebProcessConnection> WebProcessConnection::create(IPC::Connection::Identifier connectionIdentifier)
 {
-    return adoptRef(new WebProcessConnection(connectionIdentifier));
+    return adoptRef(*new WebProcessConnection(connectionIdentifier));
 }
 
 WebProcessConnection::~WebProcessConnection()

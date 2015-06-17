@@ -41,9 +41,9 @@ class WebPageProxy;
 
 class WebContextMenuProxyGtk : public WebContextMenuProxy {
 public:
-    static PassRefPtr<WebContextMenuProxyGtk> create(GtkWidget* webView, WebPageProxy* page)
+    static Ref<WebContextMenuProxyGtk> create(GtkWidget* webView, WebPageProxy* page)
     {
-        return adoptRef(new WebContextMenuProxyGtk(webView, page));
+        return adoptRef(*new WebContextMenuProxyGtk(webView, page));
     }
     ~WebContextMenuProxyGtk();
 

@@ -60,14 +60,14 @@ class AsyncRequestImpl final : public AsyncRequest {
 public:
     template<typename T> using ArgumentType = typename std::conditional<std::is_integral<T>::value, T, const T&>::type;
 
-    static PassRefPtr<AsyncRequest> create(std::function<void (ArgumentType<Arguments>...)> completionHandler)
+    static Ref<AsyncRequest> create(std::function<void(ArgumentType<Arguments>...)> completionHandler)
     {
-        return adoptRef(new AsyncRequestImpl<Arguments...>(WTF::move(completionHandler), nullptr));
+        return adoptRef(*new AsyncRequestImpl<Arguments...>(WTF::move(completionHandler), nullptr));
     }
 
-    static PassRefPtr<AsyncRequest> create(std::function<void (ArgumentType<Arguments>...)> completionHandler, std::function<void ()> abortHandler)
+    static Ref<AsyncRequest> create(std::function<void(ArgumentType<Arguments>...)> completionHandler, std::function<void()> abortHandler)
     {
-        return adoptRef(new AsyncRequestImpl<Arguments...>(WTF::move(completionHandler), WTF::move(abortHandler)));
+        return adoptRef(*new AsyncRequestImpl<Arguments...>(WTF::move(completionHandler), WTF::move(abortHandler)));
     }
 
     virtual ~AsyncRequestImpl()

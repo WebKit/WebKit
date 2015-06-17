@@ -47,9 +47,9 @@ class UniqueIDBDatabase;
 
 class DatabaseProcessIDBConnection : public RefCounted<DatabaseProcessIDBConnection>, public IPC::MessageSender {
 public:
-    static RefPtr<DatabaseProcessIDBConnection> create(DatabaseToWebProcessConnection& connection, uint64_t serverConnectionIdentifier)
+    static Ref<DatabaseProcessIDBConnection> create(DatabaseToWebProcessConnection& connection, uint64_t serverConnectionIdentifier)
     {
-        return adoptRef(new DatabaseProcessIDBConnection(connection, serverConnectionIdentifier));
+        return adoptRef(*new DatabaseProcessIDBConnection(connection, serverConnectionIdentifier));
     }
 
     virtual ~DatabaseProcessIDBConnection();

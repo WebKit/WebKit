@@ -59,9 +59,9 @@ static IntRect screenRectOfContents(Element* element)
     return element->screenRect();
 }
 
-PassRefPtr<WebFullScreenManager> WebFullScreenManager::create(WebPage* page)
+Ref<WebFullScreenManager> WebFullScreenManager::create(WebPage* page)
 {
-    return adoptRef(new WebFullScreenManager(page));
+    return adoptRef(*new WebFullScreenManager(page));
 }
 
 WebFullScreenManager::WebFullScreenManager(WebPage* page)

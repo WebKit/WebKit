@@ -30,9 +30,9 @@
 
 namespace WebKit {
     
-PassRefPtr<NotificationPermissionRequest> NotificationPermissionRequest::create(WebKit::NotificationPermissionRequestManagerProxy *manager, uint64_t notificationID)
+Ref<NotificationPermissionRequest> NotificationPermissionRequest::create(WebKit::NotificationPermissionRequestManagerProxy *manager, uint64_t notificationID)
 {
-    return adoptRef(new NotificationPermissionRequest(manager, notificationID));
+    return adoptRef(*new NotificationPermissionRequest(manager, notificationID));
 }
 
 NotificationPermissionRequest::NotificationPermissionRequest(NotificationPermissionRequestManagerProxy* manager, uint64_t notificationID)

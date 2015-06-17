@@ -105,7 +105,7 @@ void WebViewClient::didChangeViewportAttributes(WebView* view, const ViewportAtt
     if (!m_client.didChangeViewportAttributes)
         return;
 
-    WKRetainPtr<WKViewportAttributesRef> wkAttributes = adoptWK(toAPI(WebViewportAttributes::create(attributes).leakRef()));
+    WKRetainPtr<WKViewportAttributesRef> wkAttributes = adoptWK(toAPI(&WebViewportAttributes::create(attributes).leakRef()));
     m_client.didChangeViewportAttributes(toAPI(view), wkAttributes.get(), m_client.base.clientInfo);
 }
 

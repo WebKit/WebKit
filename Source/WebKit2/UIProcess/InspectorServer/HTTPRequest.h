@@ -43,8 +43,8 @@ namespace WebKit {
 
 class HTTPRequest : public RefCounted<HTTPRequest> {
 public:
-    static PassRefPtr<HTTPRequest> create() { return adoptRef(new HTTPRequest()); }
-    static PassRefPtr<HTTPRequest> create(const String& requestMethod, const WebCore::URL& url, WebCore::HTTPVersion version) { return adoptRef(new HTTPRequest(requestMethod, url, version)); }
+    static Ref<HTTPRequest> create() { return adoptRef(*new HTTPRequest()); }
+    static Ref<HTTPRequest> create(const String& requestMethod, const WebCore::URL& url, WebCore::HTTPVersion version) { return adoptRef(*new HTTPRequest(requestMethod, url, version)); }
     static PassRefPtr<HTTPRequest> parseHTTPRequestFromBuffer(const char* data, size_t length, String& failureReason);
     virtual ~HTTPRequest();
 

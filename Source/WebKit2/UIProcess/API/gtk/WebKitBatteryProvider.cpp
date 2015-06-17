@@ -43,9 +43,9 @@ static void stopUpdatingCallback(WKBatteryManagerRef batteryManager, const void*
     toBatteryProvider(clientInfo)->stopUpdating();
 }
 
-PassRefPtr<WebKitBatteryProvider> WebKitBatteryProvider::create(WebBatteryManagerProxy* batteryManager)
+Ref<WebKitBatteryProvider> WebKitBatteryProvider::create(WebBatteryManagerProxy* batteryManager)
 {
-    return adoptRef(new WebKitBatteryProvider(batteryManager));
+    return adoptRef(*new WebKitBatteryProvider(batteryManager));
 }
 
 WebKitBatteryProvider::WebKitBatteryProvider(WebBatteryManagerProxy* batteryManager)

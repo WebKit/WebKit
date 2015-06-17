@@ -36,22 +36,22 @@ namespace API {
 
 class SerializedScriptValue : public API::ObjectImpl<API::Object::Type::SerializedScriptValue> {
 public:
-    static PassRefPtr<SerializedScriptValue> create(PassRefPtr<WebCore::SerializedScriptValue> serializedValue)
+    static Ref<SerializedScriptValue> create(PassRefPtr<WebCore::SerializedScriptValue> serializedValue)
     {
-        return adoptRef(new SerializedScriptValue(serializedValue));
+        return adoptRef(*new SerializedScriptValue(serializedValue));
     }
     
-    static PassRefPtr<SerializedScriptValue> create(JSContextRef context, JSValueRef value, JSValueRef* exception)
+    static RefPtr<SerializedScriptValue> create(JSContextRef context, JSValueRef value, JSValueRef* exception)
     {
         RefPtr<WebCore::SerializedScriptValue> serializedValue = WebCore::SerializedScriptValue::create(context, value, exception);
         if (!serializedValue)
-            return 0;
-        return adoptRef(new SerializedScriptValue(serializedValue.get()));
+            return nullptr;
+        return adoptRef(*new SerializedScriptValue(serializedValue.get()));
     }
     
-    static PassRefPtr<SerializedScriptValue> adopt(Vector<uint8_t>& buffer)
+    static Ref<SerializedScriptValue> adopt(Vector<uint8_t>& buffer)
     {
-        return adoptRef(new SerializedScriptValue(WebCore::SerializedScriptValue::adopt(buffer)));
+        return adoptRef(*new SerializedScriptValue(WebCore::SerializedScriptValue::adopt(buffer)));
     }
     
     JSValueRef deserialize(JSContextRef context, JSValueRef* exception)

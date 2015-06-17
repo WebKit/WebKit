@@ -62,8 +62,8 @@ public:
         String localStorageDirectory;
         String mediaKeysStorageDirectory;
     };
-    static RefPtr<WebsiteDataStore> createNonPersistent();
-    static RefPtr<WebsiteDataStore> create(Configuration);
+    static Ref<WebsiteDataStore> createNonPersistent();
+    static Ref<WebsiteDataStore> create(Configuration);
     virtual ~WebsiteDataStore();
 
     uint64_t identifier() const { return m_identifier; }

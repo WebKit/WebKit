@@ -60,7 +60,7 @@ namespace WebKit {
     
 class WebColorPickerMac : public WebColorPicker {
 public:        
-    static PassRefPtr<WebColorPickerMac> create(WebColorPicker::Client*, const WebCore::Color&, const WebCore::IntRect&, WKView*);
+    static Ref<WebColorPickerMac> create(WebColorPicker::Client*, const WebCore::Color&, const WebCore::IntRect&, WKView*);
     ~WebColorPickerMac();
 
     virtual void endPicker() override;

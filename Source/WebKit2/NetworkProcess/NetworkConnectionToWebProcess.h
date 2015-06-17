@@ -48,7 +48,7 @@ typedef uint64_t ResourceLoadIdentifier;
 
 class NetworkConnectionToWebProcess : public RefCounted<NetworkConnectionToWebProcess>, IPC::Connection::Client {
 public:
-    static PassRefPtr<NetworkConnectionToWebProcess> create(IPC::Connection::Identifier);
+    static Ref<NetworkConnectionToWebProcess> create(IPC::Connection::Identifier);
     virtual ~NetworkConnectionToWebProcess();
 
     IPC::Connection* connection() const { return m_connection.get(); }

@@ -34,9 +34,9 @@ namespace WebKit {
 
 class RemoteNetworkingContext final : public WebCore::NetworkingContext {
 public:
-    static PassRefPtr<RemoteNetworkingContext> create(WebCore::SessionID sessionID, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
+    static Ref<RemoteNetworkingContext> create(WebCore::SessionID sessionID, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
     {
-        return adoptRef(new RemoteNetworkingContext(sessionID, shouldClearReferrerOnHTTPSToHTTPRedirect));
+        return adoptRef(*new RemoteNetworkingContext(sessionID, shouldClearReferrerOnHTTPSToHTTPRedirect));
     }
     virtual ~RemoteNetworkingContext();
 

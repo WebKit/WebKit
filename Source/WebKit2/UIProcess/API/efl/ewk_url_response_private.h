@@ -40,10 +40,10 @@ class EwkUrlResponse : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkUrlResponse)
 
-    static PassRefPtr<EwkUrlResponse> create(WKURLResponseRef wkResponse)
+    static RefPtr<EwkUrlResponse> create(WKURLResponseRef wkResponse)
     {
         if (!wkResponse)
-            return 0;
+            return nullptr;
 
         return adoptRef(new EwkUrlResponse(wkResponse));
     }

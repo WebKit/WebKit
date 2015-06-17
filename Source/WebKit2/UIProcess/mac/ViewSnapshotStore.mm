@@ -134,14 +134,14 @@ void ViewSnapshotStore::discardSnapshotImages()
 
 
 #if USE_IOSURFACE_VIEW_SNAPSHOTS
-PassRefPtr<ViewSnapshot> ViewSnapshot::create(std::unique_ptr<IOSurface> surface)
+Ref<ViewSnapshot> ViewSnapshot::create(std::unique_ptr<IOSurface> surface)
 {
-    return adoptRef(new ViewSnapshot(WTF::move(surface)));
+    return adoptRef(*new ViewSnapshot(WTF::move(surface)));
 }
 #elif USE_RENDER_SERVER_VIEW_SNAPSHOTS
-PassRefPtr<ViewSnapshot> ViewSnapshot::create(uint32_t slotID, IntSize size, size_t imageSizeInBytes)
+Ref<ViewSnapshot> ViewSnapshot::create(uint32_t slotID, IntSize size, size_t imageSizeInBytes)
 {
-    return adoptRef(new ViewSnapshot(slotID, size, imageSizeInBytes));
+    return adoptRef(*new ViewSnapshot(slotID, size, imageSizeInBytes));
 }
 #endif
 

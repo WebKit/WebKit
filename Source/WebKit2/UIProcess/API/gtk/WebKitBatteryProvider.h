@@ -32,7 +32,7 @@ namespace WebKit {
 
 class WebKitBatteryProvider : public RefCounted<WebKitBatteryProvider>, public WebCore::BatteryProviderUPowerClient {
 public:
-    static PassRefPtr<WebKitBatteryProvider> create(WebBatteryManagerProxy*);
+    static Ref<WebKitBatteryProvider> create(WebBatteryManagerProxy*);
     virtual ~WebKitBatteryProvider();
 
     void startUpdating();

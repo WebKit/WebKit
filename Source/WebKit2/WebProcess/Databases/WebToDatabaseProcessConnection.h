@@ -40,9 +40,9 @@ class WebProcessIDBDatabaseBackend;
 
 class WebToDatabaseProcessConnection : public RefCounted<WebToDatabaseProcessConnection>, public IPC::Connection::Client, public IPC::MessageSender {
 public:
-    static PassRefPtr<WebToDatabaseProcessConnection> create(IPC::Connection::Identifier connectionIdentifier)
+    static Ref<WebToDatabaseProcessConnection> create(IPC::Connection::Identifier connectionIdentifier)
     {
-        return adoptRef(new WebToDatabaseProcessConnection(connectionIdentifier));
+        return adoptRef(*new WebToDatabaseProcessConnection(connectionIdentifier));
     }
     ~WebToDatabaseProcessConnection();
     

@@ -42,7 +42,7 @@ namespace WebKit {
 
 class WebColorPickerGtk : public WebColorPicker {
 public:
-    static PassRefPtr<WebColorPickerGtk> create(WebPageProxy&, const WebCore::Color&, const WebCore::IntRect&);
+    static Ref<WebColorPickerGtk> create(WebPageProxy&, const WebCore::Color&, const WebCore::IntRect&);
     virtual ~WebColorPickerGtk();
 
     virtual void endPicker() override;

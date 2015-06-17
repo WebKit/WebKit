@@ -45,7 +45,7 @@ class WebSoupCustomProtocolRequestManager : public API::ObjectImpl<API::Object::
 public:
     static const char* supplementName();
 
-    static PassRefPtr<WebSoupCustomProtocolRequestManager> create(WebProcessPool*);
+    static Ref<WebSoupCustomProtocolRequestManager> create(WebProcessPool*);
     virtual ~WebSoupCustomProtocolRequestManager();
 
     void initializeClient(const WKSoupCustomProtocolRequestManagerClientBase*);

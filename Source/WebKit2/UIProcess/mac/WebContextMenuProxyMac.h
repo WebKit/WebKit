@@ -43,9 +43,9 @@ class WebPageProxy;
 
 class WebContextMenuProxyMac : public WebContextMenuProxy {
 public:
-    static PassRefPtr<WebContextMenuProxyMac> create(WKView* webView, WebPageProxy* page)
+    static Ref<WebContextMenuProxyMac> create(WKView* webView, WebPageProxy* page)
     {
-        return adoptRef(new WebContextMenuProxyMac(webView, page));
+        return adoptRef(*new WebContextMenuProxyMac(webView, page));
     }
     ~WebContextMenuProxyMac();
 

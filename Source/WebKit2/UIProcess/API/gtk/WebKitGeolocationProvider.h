@@ -33,7 +33,7 @@ namespace WebKit {
 class WebKitGeolocationProvider : public RefCounted<WebKitGeolocationProvider>, public WebCore::GeolocationProviderGeoclueClient {
 public:
     virtual ~WebKitGeolocationProvider();
-    static PassRefPtr<WebKitGeolocationProvider> create(WebGeolocationManagerProxy*);
+    static Ref<WebKitGeolocationProvider> create(WebGeolocationManagerProxy*);
 
     void startUpdating();
     void stopUpdating();

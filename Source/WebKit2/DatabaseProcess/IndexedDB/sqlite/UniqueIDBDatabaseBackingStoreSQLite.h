@@ -51,9 +51,9 @@ class SQLiteIDBTransaction;
 
 class UniqueIDBDatabaseBackingStoreSQLite final : public UniqueIDBDatabaseBackingStore {
 public:
-    static PassRefPtr<UniqueIDBDatabaseBackingStore> create(const UniqueIDBDatabaseIdentifier& identifier, const String& databaseDirectory)
+    static Ref<UniqueIDBDatabaseBackingStore> create(const UniqueIDBDatabaseIdentifier& identifier, const String& databaseDirectory)
     {
-        return adoptRef(new UniqueIDBDatabaseBackingStoreSQLite(identifier, databaseDirectory));
+        return adoptRef(*new UniqueIDBDatabaseBackingStoreSQLite(identifier, databaseDirectory));
     }
 
     virtual ~UniqueIDBDatabaseBackingStoreSQLite();

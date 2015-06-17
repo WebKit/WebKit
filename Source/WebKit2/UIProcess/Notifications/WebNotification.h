@@ -43,9 +43,9 @@ namespace WebKit {
 
 class WebNotification : public API::ObjectImpl<API::Object::Type::Notification> {
 public:
-    static PassRefPtr<WebNotification> create(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, const String& dir, const String& originString, uint64_t notificationID)
+    static Ref<WebNotification> create(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, const String& dir, const String& originString, uint64_t notificationID)
     {
-        return adoptRef(new WebNotification(title, body, iconURL, tag, lang, dir, originString, notificationID));
+        return adoptRef(*new WebNotification(title, body, iconURL, tag, lang, dir, originString, notificationID));
     }
 
     const String& title() const { return m_title; }

@@ -48,7 +48,7 @@ class WebPage;
 
 class WebFullScreenManager : public RefCounted<WebFullScreenManager> {
 public:
-    static PassRefPtr<WebFullScreenManager> create(WebPage*);
+    static Ref<WebFullScreenManager> create(WebPage*);
     virtual ~WebFullScreenManager();
 
     void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&);

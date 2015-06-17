@@ -40,9 +40,9 @@ class EwkUrlRequest : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkUrlRequest)
 
-    static PassRefPtr<EwkUrlRequest> create(WKURLRequestRef requestRef)
+    static Ref<EwkUrlRequest> create(WKURLRequestRef requestRef)
     {
-        return adoptRef(new EwkUrlRequest(requestRef));
+        return adoptRef(*new EwkUrlRequest(requestRef));
     }
 
     const char* url() const;

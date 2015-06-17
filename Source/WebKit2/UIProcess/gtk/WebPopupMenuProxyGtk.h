@@ -37,9 +37,9 @@ class WebPageProxy;
 
 class WebPopupMenuProxyGtk : public WebPopupMenuProxy {
 public:
-    static PassRefPtr<WebPopupMenuProxyGtk> create(GtkWidget* webView, WebPopupMenuProxy::Client* client)
+    static Ref<WebPopupMenuProxyGtk> create(GtkWidget* webView, WebPopupMenuProxy::Client* client)
     {
-        return adoptRef(new WebPopupMenuProxyGtk(webView, client));
+        return adoptRef(*new WebPopupMenuProxyGtk(webView, client));
     }
     ~WebPopupMenuProxyGtk();
 

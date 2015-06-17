@@ -35,9 +35,9 @@
 
 namespace WebKit {
 
-PassRefPtr<DatabaseToWebProcessConnection> DatabaseToWebProcessConnection::create(IPC::Connection::Identifier connectionIdentifier)
+Ref<DatabaseToWebProcessConnection> DatabaseToWebProcessConnection::create(IPC::Connection::Identifier connectionIdentifier)
 {
-    return adoptRef(new DatabaseToWebProcessConnection(connectionIdentifier));
+    return adoptRef(*new DatabaseToWebProcessConnection(connectionIdentifier));
 }
 
 DatabaseToWebProcessConnection::DatabaseToWebProcessConnection(IPC::Connection::Identifier connectionIdentifier)

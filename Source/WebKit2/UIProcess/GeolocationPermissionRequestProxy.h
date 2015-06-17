@@ -35,9 +35,9 @@ class GeolocationPermissionRequestManagerProxy;
 
 class GeolocationPermissionRequestProxy : public API::ObjectImpl<API::Object::Type::GeolocationPermissionRequest> {
 public:
-    static PassRefPtr<GeolocationPermissionRequestProxy> create(GeolocationPermissionRequestManagerProxy* manager, uint64_t geolocationID)
+    static Ref<GeolocationPermissionRequestProxy> create(GeolocationPermissionRequestManagerProxy* manager, uint64_t geolocationID)
     {
-        return adoptRef(new GeolocationPermissionRequestProxy(manager, geolocationID));
+        return adoptRef(*new GeolocationPermissionRequestProxy(manager, geolocationID));
     }
 
     void allow();

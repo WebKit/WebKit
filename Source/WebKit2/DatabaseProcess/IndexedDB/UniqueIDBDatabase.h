@@ -68,9 +68,9 @@ enum class UniqueIDBDatabaseShutdownType {
 
 class UniqueIDBDatabase : public ThreadSafeRefCounted<UniqueIDBDatabase> {
 public:
-    static PassRefPtr<UniqueIDBDatabase> create(const UniqueIDBDatabaseIdentifier& identifier)
+    static Ref<UniqueIDBDatabase> create(const UniqueIDBDatabaseIdentifier& identifier)
     {
-        return adoptRef(new UniqueIDBDatabase(identifier));
+        return adoptRef(*new UniqueIDBDatabase(identifier));
     }
 
     ~UniqueIDBDatabase();

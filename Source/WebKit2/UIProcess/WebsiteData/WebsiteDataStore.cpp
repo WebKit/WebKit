@@ -58,14 +58,14 @@ static uint64_t generateIdentifier()
     return ++identifier;
 }
 
-RefPtr<WebsiteDataStore> WebsiteDataStore::createNonPersistent()
+Ref<WebsiteDataStore> WebsiteDataStore::createNonPersistent()
 {
-    return adoptRef(new WebsiteDataStore(generateNonPersistentSessionID()));
+    return adoptRef(*new WebsiteDataStore(generateNonPersistentSessionID()));
 }
 
-RefPtr<WebsiteDataStore> WebsiteDataStore::create(Configuration configuration)
+Ref<WebsiteDataStore> WebsiteDataStore::create(Configuration configuration)
 {
-    return adoptRef(new WebsiteDataStore(WTF::move(configuration)));
+    return adoptRef(*new WebsiteDataStore(WTF::move(configuration)));
 }
 
 WebsiteDataStore::WebsiteDataStore(Configuration configuration)

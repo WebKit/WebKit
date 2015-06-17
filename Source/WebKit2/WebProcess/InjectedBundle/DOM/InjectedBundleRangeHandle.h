@@ -55,7 +55,7 @@ public:
     WebCore::Range* coreRange() const;
 
 private:
-    static PassRefPtr<InjectedBundleRangeHandle> create(WebCore::Range*);
+    static Ref<InjectedBundleRangeHandle> create(WebCore::Range*);
     InjectedBundleRangeHandle(WebCore::Range*);
 
     RefPtr<WebCore::Range> m_range;
