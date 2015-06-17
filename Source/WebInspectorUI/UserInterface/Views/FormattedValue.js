@@ -69,15 +69,34 @@ WebInspector.FormattedValue.createElementForNode = function(object)
 
 WebInspector.FormattedValue.createElementForNodePreview = function(preview)
 {
+    var value = preview.value;
     var span = document.createElement("span");
     span.className = "formatted-node-preview syntax-highlighted";
 
-    // A node preview has a very strict format, with at most a single attribute.
+    // Comment node preview.
+    if (value.startsWith("<!--")) {
+        var comment = span.appendChild(document.createElement("span"));
+        comment.className = "html-comment";
+        comment.textContent = value;
+        return span;
+    }
+
+    // Doctype node preview.
+    if (value.startsWith("<!DOCTYPE")) {
+        var doctype = span.appendChild(document.createElement("span"));
+        doctype.className = "html-doctype";
+        doctype.textContent = value;
+        return span;
+    }
+
+    // Element node previews have a very strict format, with at most a single attribute.
     // We can style it up like a DOMNode without interactivity.
-    var matches = preview.value.match(/^<(\S+?)(?: (\S+?)="(.*?)")?>$/);
+    var matches = value.match(/^<(\S+?)(?: (\S+?)="(.*?)")?>$/);
+
+    // Remaining node types are often #text, #document, etc, with attribute nodes potentially being any string.
     if (!matches) {
-        console.error("Node preview did not match format.", preview.value)
-        span.textContent = preview.value;
+        console.assert(!value.startsWith("<"), "Unexpected node preview format: " + value);
+        span.textContent = value;
         return span;
     }
 
