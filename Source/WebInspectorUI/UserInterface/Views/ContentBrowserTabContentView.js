@@ -227,6 +227,7 @@ WebInspector.ContentBrowserTabContentView.prototype = {
         if (!this.visible)
             return;
 
+        this._showDetailsSidebarItem.activated = !WebInspector.detailsSidebar.collapsed;
         this._showDetailsSidebarItem.enabled = WebInspector.detailsSidebar.sidebarPanels.length;
 
         if (!WebInspector.detailsSidebar.selectedSidebarPanel || this._ignoreDetailsSidebarPanelSelectedEvent)
