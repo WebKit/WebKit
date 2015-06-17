@@ -88,6 +88,7 @@ private:
         bool webViewDecideDatabaseQuotaForSecurityOriginCurrentQuotaCurrentOriginUsageCurrentDatabaseUsageExpectedUsageDecisionHandler : 1;
         bool webViewDecideWebApplicationCacheQuotaForSecurityOriginCurrentQuotaTotalBytesNeeded : 1;
         bool webViewPrintFrame : 1;
+        bool webViewDidClose : 1;
         bool webViewClose : 1;
         bool webViewFullscreenMayReturnToInline : 1;
         bool webViewDidEnterFullscreen : 1;

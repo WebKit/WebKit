@@ -71,6 +71,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewDecideDatabaseQuotaForSecurityOriginCurrentQuotaCurrentOriginUsageCurrentDatabaseUsageExpectedUsageDecisionHandler = [delegate respondsToSelector:@selector(_webView:decideDatabaseQuotaForSecurityOrigin:currentQuota:currentOriginUsage:currentDatabaseUsage:expectedUsage:decisionHandler:)];
     m_delegateMethods.webViewDecideWebApplicationCacheQuotaForSecurityOriginCurrentQuotaTotalBytesNeeded = [delegate respondsToSelector:@selector(_webView:decideWebApplicationCacheQuotaForSecurityOrigin:currentQuota:totalBytesNeeded:decisionHandler:)];
     m_delegateMethods.webViewPrintFrame = [delegate respondsToSelector:@selector(_webView:printFrame:)];
+    m_delegateMethods.webViewDidClose = [delegate respondsToSelector:@selector(webViewDidClose:)];
     m_delegateMethods.webViewClose = [delegate respondsToSelector:@selector(_webViewClose:)];
     m_delegateMethods.webViewFullscreenMayReturnToInline = [delegate respondsToSelector:@selector(_webViewFullscreenMayReturnToInline:)];
     m_delegateMethods.webViewDidEnterFullscreen = [delegate respondsToSelector:@selector(_webViewDidEnterFullscreen:)];
@@ -232,14 +233,23 @@ void UIDelegate::UIClient::printFrame(WebKit::WebPageProxy*, WebKit::WebFramePro
 
 void UIDelegate::UIClient::close(WebKit::WebPageProxy*)
 {
-    if (!m_uiDelegate.m_delegateMethods.webViewClose)
+    if (m_uiDelegate.m_delegateMethods.webViewClose) {
+        auto delegate = m_uiDelegate.m_delegate.get();
+        if (!delegate)
+            return;
+
+        [(id <WKUIDelegatePrivate>)delegate _webViewClose:m_uiDelegate.m_webView];
+        return;
+    }
+
+    if (!m_uiDelegate.m_delegateMethods.webViewDidClose)
         return;
 
     auto delegate = m_uiDelegate.m_delegate.get();
     if (!delegate)
         return;
 
-    [(id <WKUIDelegatePrivate>)delegate _webViewClose:m_uiDelegate.m_webView];
+    [delegate webViewDidClose:m_uiDelegate.m_webView];
 }
 
 void UIDelegate::UIClient::fullscreenMayReturnToInline(WebKit::WebPageProxy*)

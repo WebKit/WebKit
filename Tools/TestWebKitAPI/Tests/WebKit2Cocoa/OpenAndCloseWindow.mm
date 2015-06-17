@@ -45,7 +45,7 @@ static RetainPtr<OpenAndCloseWindowUIDelegate> sharedUIDelegate;
 
 @implementation OpenAndCloseWindowUIDelegate
 
-- (void)_webViewClose:(WKWebView *)webView
+- (void)webViewDidClose:(WKWebView *)webView
 {
     EXPECT_EQ(openedWebView, webView);
     isDone = true;
