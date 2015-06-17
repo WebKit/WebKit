@@ -1,3 +1,15 @@
+2015-06-16  Andreas Kling  <akling@apple.com>
+
+        Remove unused template parameter InlineCapacity from SegmentedVector.
+        <https://webkit.org/b/146044>
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/SegmentedVector.h:
+        (WTF::SegmentedVectorIterator::operator=):
+        (WTF::SegmentedVectorIterator::SegmentedVectorIterator):
+        (WTF::SegmentedVector::at):
+
 2015-06-16  Mark Lam  <mark.lam@apple.com>
 
         Use NakedPtr<Exception>& to return exception results.
