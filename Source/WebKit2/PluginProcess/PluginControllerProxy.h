@@ -95,7 +95,6 @@ private:
     virtual void setStatusbarText(const String&) override;
     virtual bool isAcceleratedCompositingEnabled() override;
     virtual void pluginProcessCrashed() override;
-    virtual void willSendEventToPlugin() override;
     virtual void didInitializePlugin() override;
     virtual void didFailToInitializePlugin() override;
 

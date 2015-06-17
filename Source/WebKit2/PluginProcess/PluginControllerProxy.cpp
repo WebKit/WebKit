@@ -325,12 +325,6 @@ void PluginControllerProxy::pluginProcessCrashed()
     ASSERT_NOT_REACHED();
 }
 
-void PluginControllerProxy::willSendEventToPlugin()
-{
-    // This is only used when running plugins in the web process.
-    ASSERT_NOT_REACHED();
-}
-
 void PluginControllerProxy::didInitializePlugin()
 {
     // This should only be called on the plugin in the web process.

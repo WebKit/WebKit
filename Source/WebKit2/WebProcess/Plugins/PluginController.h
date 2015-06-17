@@ -95,10 +95,7 @@ public:
 
     // Tells the controller that the plug-in process has crashed.
     virtual void pluginProcessCrashed() = 0;
-    
-    // Tells the controller that we're about to dispatch an event to the plug-in.
-    virtual void willSendEventToPlugin() = 0;
-    
+
 #if PLATFORM(COCOA)
     // Tells the controller that the plug-in focus or window focus did change.
     virtual void pluginFocusOrWindowFocusChanged(bool) = 0;

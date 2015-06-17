@@ -207,7 +207,6 @@ private:
     virtual void setStatusbarText(const String&) override;
     virtual bool isAcceleratedCompositingEnabled() override;
     virtual void pluginProcessCrashed() override;
-    virtual void willSendEventToPlugin() override;
 #if PLATFORM(COCOA)
     virtual void pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus) override;
     virtual void setComplexTextInputState(PluginComplexTextInputState) override;
