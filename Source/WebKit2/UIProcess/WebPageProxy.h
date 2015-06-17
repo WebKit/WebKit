@@ -1447,6 +1447,9 @@ private:
     void didPerformImmediateActionHitTest(const WebHitTestResult::Data&, bool contentPreventsDefault, const UserData&);
 #endif
 
+    void useFixedLayoutDidChange(bool useFixedLayout) { m_useFixedLayout = useFixedLayout; }
+    void fixedLayoutSizeDidChange(WebCore::IntSize fixedLayoutSize) { m_fixedLayoutSize = fixedLayoutSize; }
+
     void handleAutoFillButtonClick(const UserData&);
 
     void handleMessage(IPC::Connection&, const String& messageName, const UserData& messageBody);

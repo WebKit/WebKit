@@ -1,3 +1,18 @@
+2015-06-17  Tim Horton  <timothy_horton@apple.com>
+
+        Safari tabs still have shrunken content after coming out of fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=146037
+        <rdar://problem/21105960>
+
+        Reviewed by Simon Fraser and Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/ShrinkToFit.mm: Added.
+        (-[ShrinkToFitNavigationDelegate webView:didFinishNavigation:]):
+        (TEST):
+        Add a test that ensures that disabling scale-to-fit mode correctly updates
+        the page's layout.
+
 2015-06-17  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Expose UIDelegate::UIClient::close via WKUIDelegate

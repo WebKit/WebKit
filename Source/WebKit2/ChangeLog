@@ -1,3 +1,29 @@
+2015-06-17  Tim Horton  <timothy_horton@apple.com>
+
+        Safari tabs still have shrunken content after coming out of fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=146037
+        <rdar://problem/21105960>
+
+        Reviewed by Simon Fraser and Darin Adler.
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::useFixedLayoutDidChange):
+        (WebKit::WebPageProxy::fixedLayoutSizeDidChange):
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setUseFixedLayout):
+        (WebKit::WebPage::setFixedLayoutSize):
+        Keep the UI process up-to-date when fixed layout is enabled or the size changes.
+        This is important because these things can change from the Web process side too,
+        and the UI process uses its (potentially stale) version to do some short-circuiting.
+        This was causing us to fail to turn off fixed layout when it was turned
+        on from the Web process side (by TiledCoreAnimationDrawingArea).
+
+        * UIProcess/mac/WKViewLayoutStrategy.mm:
+        (-[WKViewDynamicSizeComputedFromMinimumDocumentSizeLayoutStrategy willChangeLayoutStrategy]):
+        Reset the view scale, which WKViewDynamicSizeComputedFromMinimumDocumentSizeLayoutStrategy
+        makes heavy use of, just like the others.
+
 2015-06-17  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Expose UIDelegate::UIClient::close via WKUIDelegate

@@ -439,4 +439,6 @@ messages -> WebPageProxy {
     PlaybackTargetPickerClientStateDidChange(uint64_t contextId, unsigned mediaState)
 #endif
 
+    UseFixedLayoutDidChange(bool useFixedLayout)
+    FixedLayoutSizeDidChange(WebCore::IntSize fixedLayoutSize)
 }

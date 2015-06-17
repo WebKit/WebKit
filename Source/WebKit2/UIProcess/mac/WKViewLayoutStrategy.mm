@@ -401,6 +401,7 @@ using namespace WebKit;
 - (void)willChangeLayoutStrategy
 {
     _page->setShouldScaleViewToFitDocument(false);
+    _page->scaleView(1);
 }
 
 @end

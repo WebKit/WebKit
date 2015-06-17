@@ -1537,6 +1537,8 @@ void WebPage::setUseFixedLayout(bool fixed)
     view->setUseFixedLayout(fixed);
     if (!fixed)
         setFixedLayoutSize(IntSize());
+
+    send(Messages::WebPageProxy::UseFixedLayoutDidChange(fixed));
 }
 
 void WebPage::setFixedLayoutSize(const IntSize& size)
@@ -1546,6 +1548,8 @@ void WebPage::setFixedLayoutSize(const IntSize& size)
         return;
 
     view->setFixedLayoutSize(size);
+
+    send(Messages::WebPageProxy::FixedLayoutSizeDidChange(size));
 }
 
 IntSize WebPage::fixedLayoutSize() const
