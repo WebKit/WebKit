@@ -44,56 +44,41 @@ namespace WTF {
 
         ~SegmentedVectorIterator() { }
 
-        T& operator*() const { return m_vector.m_segments.at(m_segment)->at(m_index); }
-        T* operator->() const { return &m_vector.m_segments.at(m_segment)->at(m_index); }
+        T& operator*() const { return m_vector.at(m_index); }
+        T* operator->() const { return &m_vector.at(m_index); }
 
         // Only prefix ++ operator supported
         Iterator& operator++()
         {
-            ASSERT(m_index != SegmentSize);
-            ++m_index;
-            if (m_index >= m_vector.m_segments.at(m_segment)->size())  {
-                if (m_segment + 1 < m_vector.m_segments.size()) {
-                    ASSERT(m_vector.m_segments.at(m_segment)->size() > 0);
-                    ++m_segment;
-                    m_index = 0;
-                } else {
-                    // Points to the "end" symbol
-                    m_segment = 0;
-                    m_index = SegmentSize;
-                }
-            }
+            m_index++;
             return *this;
         }
 
         bool operator==(const Iterator& other) const
         {
-            return m_index == other.m_index && m_segment == other.m_segment && &m_vector == &other.m_vector;
+            return m_index == other.m_index && &m_vector == &other.m_vector;
         }
 
         bool operator!=(const Iterator& other) const
         {
-            return m_index != other.m_index || m_segment != other.m_segment || &m_vector != &other.m_vector;
+            return m_index != other.m_index || &m_vector != &other.m_vector;
         }
 
         SegmentedVectorIterator& operator=(const SegmentedVectorIterator<T, SegmentSize>& other)
         {
             m_vector = other.m_vector;
-            m_segment = other.m_segment;
             m_index = other.m_index;
             return *this;
         }
 
     private:
-        SegmentedVectorIterator(SegmentedVector<T, SegmentSize>& vector, size_t segment, size_t index)
+        SegmentedVectorIterator(SegmentedVector<T, SegmentSize>& vector, size_t index)
             : m_vector(vector)
-            , m_segment(segment)
             , m_index(index)
         {
         }
 
         SegmentedVector<T, SegmentSize>& m_vector;
-        size_t m_segment;
         size_t m_index;
     };
 
@@ -110,10 +95,7 @@ namespace WTF {
     public:
         typedef SegmentedVectorIterator<T, SegmentSize> Iterator;
 
-        SegmentedVector()
-            : m_size(0)
-        {
-        }
+        SegmentedVector() = default;
 
         ~SegmentedVector()
         {
@@ -125,7 +107,8 @@ namespace WTF {
 
         T& at(size_t index)
         {
-            return segmentFor(index)->at(subscriptFor(index));
+            ASSERT_WITH_SECURITY_IMPLICATION(index < m_size);
+            return segmentFor(index)->entries[subscriptFor(index)];
         }
 
         const T& at(size_t index) const
@@ -151,10 +134,9 @@ namespace WTF {
         template <typename U> void append(U&& value)
         {
             ++m_size;
-
             if (!segmentExistsFor(m_size - 1))
-                m_segments.append(new Segment);
-            segmentFor(m_size - 1)->uncheckedAppend(std::forward<U>(value));
+                allocateSegment();
+            new (NotNull, &last()) T(std::forward<U>(value));
         }
 
         template<typename... Args>
@@ -166,7 +148,7 @@ namespace WTF {
 
         void removeLast()
         {
-            segmentFor(m_size - 1)->removeLast();
+            last().~T();
             --m_size;
         }
 
@@ -174,7 +156,10 @@ namespace WTF {
         {
             ASSERT(size > m_size);
             ensureSegmentsFor(size);
+            size_t oldSize = m_size;
             m_size = size;
+            for (size_t i = oldSize; i < m_size; ++i)
+                new (NotNull, &at(i)) T();
         }
 
         void clear()
@@ -186,12 +171,12 @@ namespace WTF {
 
         Iterator begin()
         {
-            return Iterator(*this, 0, m_size ? 0 : SegmentSize);
+            return Iterator(*this, 0);
         }
 
         Iterator end()
         {
-            return Iterator(*this, 0, SegmentSize);
+            return Iterator(*this, m_size);
         }
         
         void shrinkToFit()
@@ -200,12 +185,16 @@ namespace WTF {
         }
 
     private:
-        typedef Vector<T, SegmentSize> Segment;
+        struct Segment {
+            T entries[0];
+        };
 
         void deleteAllSegments()
         {
-            for (size_t i = 0; i < m_segments.size(); i++)
-                delete m_segments[i];
+            for (size_t i = 0; i < m_size; ++i)
+                at(i).~T();
+            for (size_t i = 0; i < m_segments.size(); ++i)
+                fastFree(m_segments[i]);
         }
 
         bool segmentExistsFor(size_t index)
@@ -228,24 +217,23 @@ namespace WTF {
             size_t segmentCount = (m_size + SegmentSize - 1) / SegmentSize;
             size_t neededSegmentCount = (size + SegmentSize - 1) / SegmentSize;
 
-            // Fill up to N - 1 segments.
-            size_t end = neededSegmentCount - 1;
-            for (size_t i = segmentCount ? segmentCount - 1 : 0; i < end; ++i)
-                ensureSegment(i, SegmentSize);
-
-            // Grow segment N to accomodate the remainder.
-            ensureSegment(end, subscriptFor(size - 1) + 1);
+            for (size_t i = segmentCount ? segmentCount - 1 : 0; i < neededSegmentCount; ++i)
+                ensureSegment(i);
         }
 
-        void ensureSegment(size_t segmentIndex, size_t size)
+        void ensureSegment(size_t segmentIndex)
         {
             ASSERT_WITH_SECURITY_IMPLICATION(segmentIndex <= m_segments.size());
             if (segmentIndex == m_segments.size())
-                m_segments.append(new Segment);
-            m_segments[segmentIndex]->grow(size);
+                allocateSegment();
         }
 
-        size_t m_size;
+        void allocateSegment()
+        {
+            m_segments.append(static_cast<Segment*>(fastMalloc(sizeof(T) * SegmentSize)));
+        }
+
+        size_t m_size { 0 };
         Vector<Segment*> m_segments;
     };
 
