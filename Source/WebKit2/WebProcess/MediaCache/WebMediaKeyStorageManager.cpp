@@ -30,6 +30,7 @@
 #include "WebProcessCreationParameters.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/URL.h>
 
 using namespace WebCore;
 

@@ -28,6 +28,7 @@
 
 #include "ArgumentCoders.h"
 #include "SecurityOriginData.h"
+#include <wtf/text/StringHash.h>
 
 namespace WebKit {
 

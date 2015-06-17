@@ -40,11 +40,17 @@
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
+namespace IPC {
+class DataReference;
+}
+
 namespace WebCore {
 class SharedBuffer;
 
 struct IDBDatabaseMetadata;
+struct IDBGetResult;
 struct IDBKeyData;
+struct IDBKeyRangeData;
 }
 
 namespace WebKit {

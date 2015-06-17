@@ -32,6 +32,10 @@
 #include "UniqueIDBDatabaseIdentifier.h"
 #include <wtf/NeverDestroyed.h>
 
+namespace WebCore {
+class SessionID;
+}
+
 namespace WebKit {
 
 class AsyncTask;

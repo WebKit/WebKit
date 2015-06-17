@@ -35,6 +35,7 @@
 #include "DatabaseToWebProcessConnectionMessages.h"
 #include "Logging.h"
 #include "SecurityOriginData.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include "WebToDatabaseProcessConnection.h"
 #include <WebCore/IDBDatabaseMetadata.h>

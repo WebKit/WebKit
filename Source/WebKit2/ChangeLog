@@ -1,3 +1,23 @@
+2015-06-16  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of performAPICallbackWithSecurityOriginDataVector
+        https://bugs.webkit.org/show_bug.cgi?id=146039
+
+        Reviewed by Andreas Kling.
+
+        Get rid of performAPICallbackWithSecurityOriginDataVector since it's now no longer used
+        and add a bunch of includes to make up for SecurityOriginData.h no longer including GenericCallback.h.
+        * DatabaseProcess/DatabaseProcess.cpp:
+        * DatabaseProcess/DatabaseProcess.h:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+        * Shared/SecurityOriginData.cpp:
+        (WebKit::performAPICallbackWithSecurityOriginDataVector): Deleted.
+        * Shared/SecurityOriginData.h:
+        * Shared/WebsiteData/WebsiteData.cpp:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        * WebProcess/MediaCache/WebMediaKeyStorageManager.cpp:
+
 2015-06-16  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         Unreviewed build fix attempt on CMake based port after r185623.
