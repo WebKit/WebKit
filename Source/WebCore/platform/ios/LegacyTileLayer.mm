@@ -76,6 +76,10 @@ static LegacyTileLayer *layerBeingPainted;
 
 - (void)setNeedsDisplayInRect:(CGRect)rect
 {
+    // We need to do WebKit layout before painting. Layout may generate new repaint rects and
+    // invalidate more tiles, something that is not allowed in drawInContext.
+    // Calling setNeedsLayout ensures that layoutSublayers will get called before drawInContext and
+    // we do WebKit layout there.
     [self setNeedsLayout];
     [super setNeedsDisplayInRect:rect];
 }
@@ -91,6 +95,15 @@ static LegacyTileLayer *layerBeingPainted;
 
 - (void)drawInContext:(CGContextRef)context
 {
+    // Bugs in clients or other frameworks may cause tile invalidation from within a CA commit.
+    // In that case we maybe left with dirty tiles that have display still pending. Some future
+    // commit will flush such tiles and they will get painted without holding the web lock.
+    // rdar://problem/21149759
+    // Still assert as the condition is not normal and may cause graphical glitches.
+    ASSERT(WebThreadIsLockedOrDisabled());
+    if (pthread_main_np())
+        WebThreadLock();
+
     if (_tileGrid)
         _tileGrid->tileCache().drawLayer(self, context);
 }
