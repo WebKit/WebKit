@@ -19,7 +19,7 @@ App.PopupView = Ember.View.extend({
     },
     scheduleHiding: function ()
     {
-        this._hidingTimer = Ember.run.later(this, this.hideNow, 100);
+        this._hidingTimer = Ember.run.later(this, this.hideNow, 500);
     },
     unscheduleHiding: function ()
     {
