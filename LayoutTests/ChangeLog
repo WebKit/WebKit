@@ -1,3 +1,18 @@
+2015-06-17  Zalan Bujtas  <zalan@apple.com>
+
+        Selection cache produces invalid result when ancestor has float element.
+        https://bugs.webkit.org/show_bug.cgi?id=146042
+        rdar://problem/20604592
+
+        Reviewed by Ryosuke Niwa.
+
+        Selection cache already takes floats into account, however it's not enough to check current
+        block against floats. Any of the ancestor's float starting from the selection root block
+        can impact the selection offsets.
+
+        * fast/block/selection-cache-is-incorrect-when-non-direct-parent-has-float-expected.txt: Added.
+        * fast/block/selection-cache-is-incorrect-when-non-direct-parent-has-float.html: Added.
+
 2015-06-17  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Expose element tag name as an object attribute
