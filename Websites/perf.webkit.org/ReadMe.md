@@ -84,7 +84,7 @@ Reporting Results
 
 To submit the results of a new test to an instance of the app, you need the following:
 
- - A builder already added on `/admin/builders`
+ - A slave on `/admin/slaves`
  - A script that submits a JSON payload of the supported format via a HTTP/HTTPS request to `/api/report`
 
 JSON Format
@@ -93,8 +93,9 @@ JSON Format
 The JSON submitted to `/api/report` should be an array of dictionaries, each of which should
 contain the following key-value pairs representing a single run of tests on a single build:
 
-- `builderName` - The name of a builder present on `/admin/builders`.
-- `builderPassword` - The password associated with the builder.
+- `builderName` - The name of a builder. A single slave may submit to multiple builders.
+- `slaveName` - The name of a slave present on `/admin/slaves`.
+- `slavePassword` - The password associated with the slave.
 - `buildNumber` - The string that uniquely identifies a given build on the builder.
 - `buildTime` - The time at which this build started in **UTC** (Use ISO time format such as
    2013-01-31T22:22:12.121051). This is completely independent of timestamp of repository revisions.
@@ -113,13 +114,18 @@ contain the following key-value pairs representing a single run of tests on a si
         in the application.
     - `tests` - A dictionary of tests; the same format as this dictionary.
 
-A sample JSON:
+In the example below, we have the top-level test named "PageLoadTime". It measures two metrics: `Time` and `FrameRate`.
+`Time` metric is the arithmetic mean of each subtest's `Time` metric (webkit.org and www.w3.org).
+The computed arithmetic means are `[965.6, 981.35, 947.15]` in this case.
+The test also reports `FrameRate` but this metric is measured only for the entire suite not per each subtest.
 
+```json
 [{
     "buildNumber": "651",
     "buildTime": "2013-01-31T22:22:12.121051",
-    "builderName": "bot-111",
-    "builderPassword": "********",
+    "builderName": "Trunk Mountain Lion Performance Tests",
+    "slaveName": "bot-111",
+    "slavePassword": "somePassword",
     "platform": "Mountain Lion",
     "revisions": {
         "OS X": {
@@ -131,29 +137,34 @@ A sample JSON:
         }
     },
     "tests": {
-        "PageLoadingTest": {
+        "PageLoadTime": {
             "metrics": {
-                "Time": [
-                    "Arithmetic",
-                    "Geometric"
-                ]
-            },
+                "Time": ["Arithmetic"],
+                "FrameRate": {
+                    "current": [31, 24, 29]
+                }
+            }
             "tests": {
                 "webkit.org": {
                     "metrics": {
                         "Time": {
-                            "current": [
-                                629.1,
-                                654.8,
-                                598.9
-                            ]
+                            "current": [629.1, 654.8, 598.9]
                         }
-                    }
+                    },
+                    "url": "https://webkit.org/"
                 },
-                "url": "http://www.webkit.org/"
-            }
-        }
+                "www.w3.org": {
+                    "metrics": {
+                        "Time": {
+                            "current": [1302.1, 1307.9, 1295.4]
+                        }
+                    },
+                    "url": "https://www.w3.org/"
+                },
+            },
+        },
     }
 }]
+```
 
 FIXME: Add a section describing how the application is structured.

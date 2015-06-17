@@ -32,7 +32,6 @@ You can use apachectl to start/stop/restart apache server from the command line:
 
      1. Change DocumentRoot to `/Volumes/Data/perf.webkit.org/public/`
      2. Uncomment `"LoadModule php5_module libexec/apache2/libphp5.so"`
-     3. Disable directives for CGI-Executables
 
  - In Mavericks and later, copy php.ini to load pdo_pgsql.so pgsql.so.
     `sudo cp /Applications/Server.app/Contents/ServerRoot/etc/php.ini /etc/`
@@ -67,39 +66,39 @@ builders, and other entities in the database and may even execute arbitrary Java
 
 We recommend protection via Digest Auth on https connection.
 
-Generate a password file via `htdigest -c <path> <realm> <username>`, and then create admin/.htaccess with:
+Generate a password file via `htdigest -c <path> <realm> <username>`, and then create admin/.htaccess with the following directives
+where `<Realm>` is replaced with the realm of your choice, which will be displayed on the username/password input box:
 
-	AuthType Digest
-	AuthName "<Realm>"
-	AuthDigestProvider file
-	AuthUserFile "<Realm>"
-	Require valid-user
-
-where <Realm> is replaced with the realm of your choice, which will be displayed on the username/password input box.
-
+```
+AuthType Digest
+AuthName "<Realm>"
+AuthDigestProvider file
+AuthUserFile "<Realm>"
+Require valid-user
+```
 
 # Configuring PostgreSQL
 
 1. Create database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/initdb /Volumes/Data/perf.webkit.org/PostgresSQL`
-2. Start database:
-   `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_ctl -D /Volumes/Data/perf.webkit.org/PostgresSQL
-   -l logfile -o "-k /Volumes/Data/perf.webkit.org/PostgresSQL" start`
+2. Start database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_ctl -D /Volumes/Data/perf.webkit.org/PostgresSQL -l logfile -o "-k /Volumes/Data/perf.webkit.org/PostgresSQL" start`
 
 ## Creating a Database and a User
 
 The binaries located in PostgreSQL's directory, or if you're using Server.app in /Applications/Server.app/Contents/ServerRoot/usr/bin/
 
-1. Create a database: `createdb webkit-perf-db -h localhost`
-2. Create a user: `createuser -P -S -e webkit-perf-db-user -h localhost`
-3. Connect to database: `psql webkit-perf-db -h localhost`
+1. Create a database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/createdb webkit-perf-db -h localhost`
+2. Create a user: `/Applications/Server.app/Contents/ServerRoot/usr/bin/createuser -P -S -e webkit-perf-db-user -h localhost`
+3. Connect to database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/psql webkit-perf-db -h localhost`
 4. Grant all permissions to the new user: `grant all privileges on database "webkit-perf-db" to "webkit-perf-db-user";`
 5. Update database/config.json.
 
 ## Initializing the Database
 
 Run `database/init-database.sql` in psql as `webkit-perf-db-user`:
-`psql webkit-perf-db -h localhost --username webkit-perf-db-user -f init-database.sql`
+`/Applications/Server.app/Contents/ServerRoot/usr/bin/psql webkit-perf-db -h localhost --username webkit-perf-db-user -f init-database.sql`
 
 ## Making a Backup of the Database
 
-Run `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_dump -h localhost --no-owner -f <filepath> safari-perf-db`
+Run `/Applications/Server.app/Contents/ServerRoot/usr/bin/pg_dump -h localhost --no-owner -f <filepath> webkit-perf-db | gzip > backup.gz`
+
+To restore, setup a new database and run `gunzip backup.gz | /Applications/Server.app/Contents/ServerRoot/usr/bin/psql webkit-perf-db -h localhost --username webkit-perf-db-user`
