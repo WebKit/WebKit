@@ -1,3 +1,11 @@
+2015-06-16  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Unreviewed build fix after r185615.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_clear_cache): Comment the call to the code
+        removed and write down the bugzilla link for reimplementation.
+
 2015-06-16  Anders Carlsson  <andersca@apple.com>
 
         Get rid of performAPICallbackWithSecurityOriginDataVector
