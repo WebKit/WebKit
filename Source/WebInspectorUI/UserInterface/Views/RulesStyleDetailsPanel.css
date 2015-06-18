@@ -52,7 +52,33 @@
     opacity: 0.5;
 }
 
-.sidebar > .panel.details.css-style .rules .new-rule + .style-declaration-section {
+.sidebar > .panel.details.css-style > .content.filter-in-progress .label {
+    padding-top: 15px;
+}
+
+.sidebar > .panel.details.css-style > .content.filter-in-progress .label ~ .label {
+    padding-top: 0;
+}
+
+.sidebar > .panel.details.css-style > .content.filter-in-progress .label.filter-matching-label {
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgb(179, 179, 179);
+}
+
+.sidebar > .panel.details.css-style > .content.filter-in-progress .new-rule {
+    display: none;
+}
+
+.sidebar > .panel.details.css-style > .content.filter-in-progress .style-declaration-section:not(.filter-section-non-matching) ~ .label:not(.filter-section-non-matching) {
+    padding-top: 15px;
+}
+
+.sidebar > .panel.details.css-style > .content:not(.filter-in-progress) > .rules > .new-rule + .style-declaration-section {
+    border-top: 1px solid rgb(179, 179, 179);
+}
+
+.sidebar > .panel.details.css-style > .content:not(.filter-in-progress) > .rules > .new-rule + .label {
+    padding-top: 10px;
     border-top: 1px solid rgb(179, 179, 179);
 }
 
@@ -73,4 +99,29 @@
 
 .sidebar > .panel.details.css-style .rules .new-rule:active {
     opacity: 0.7;
+}
+
+.sidebar > .panel.details.css-style > .content > .rules:not(.filter-non-matching) > .no-filter-results {
+    display: none;
+}
+
+.sidebar > .panel.details.css-style > .content.filter-in-progress > .rules.filter-non-matching > .no-filter-results {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sidebar > .panel.details.css-style > .content.filter-in-progress > .rules.filter-non-matching > .no-filter-results > .no-filter-results-message {
+    font-size: 13px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.15);
+    text-shadow: rgba(0, 0, 0, 0.2) 0 1px 0;
+    box-shadow: inset rgba(0, 0, 0, 0.2) 0 1px 0, rgba(255, 255, 255, 0.4) 0 1px 0;
+    border-radius: 6px;
+    padding: 5px 15px 6px;
 }

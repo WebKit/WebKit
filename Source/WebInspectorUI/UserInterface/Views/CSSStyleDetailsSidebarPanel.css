@@ -42,6 +42,10 @@
     overflow-x: hidden;
 }
 
+.sidebar > .panel.details.css-style > .content.has-filter-bar {
+    bottom: 28px;
+}
+
 .sidebar > .panel.details.css-style > .content > .pseudo-classes {
     padding: 10px;
     border-bottom: 1px solid rgb(179, 179, 179);
@@ -67,4 +71,50 @@
 
     display: inline-block;
     white-space: nowrap;
+}
+
+.sidebar > .panel.details.css-style > .content.has-filter-bar + .filter-bar {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: white;
+    border-top: 1px solid rgb(179, 179, 179);
+}
+
+.sidebar > .panel.details.css-style > .content:not(.has-filter-bar) + .filter-bar {
+    display: none;
+}
+
+.sidebar > .panel.details.css-style > .content.filter-in-progress .filter-matching {
+    display: inline;
+    background-color: rgba(235, 215, 38, 0.5);
+    border-bottom: 1px solid rgb(237, 202, 71);
+    opacity: 1;
+}
+
+.sidebar > .panel.details.css-style > .content.filter-in-progress .style-declaration-section {
+    margin-bottom: 0;
+}
+
+.sidebar > .panel.details.css-style > .content.filter-in-progress .style-declaration-section.last-in-group.filter-section-non-matching + .style-declaration-section.filter-section-has-label {
+    margin-top: 0;
+    border-top: none;
+}
+
+.sidebar > .panel.details.css-style > .content.filter-in-progress .style-declaration-section:not(.filter-section-has-label) {
+    margin-top: 0;
+    border-top: none;
+    border-bottom: 1px solid rgb(179, 179, 179);
+}
+
+.sidebar > .panel.details.css-style > .content.filter-in-progress .style-declaration-section > .header > .selector > .filter-matching {
+    color: black;
+}
+
+.sidebar > .panel.details.css-style > .content.filter-in-progress .filter-section-non-matching {
+    display: none;
+}
+
+.sidebar > .panel.details.css-style > .content.filter-in-progress .filter-property-non-matching {
+    opacity: 0.5;
 }

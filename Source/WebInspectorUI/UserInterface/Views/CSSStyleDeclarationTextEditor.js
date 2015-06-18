@@ -36,6 +36,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
         this._showsImplicitProperties = true;
         this._alwaysShowPropertyNames = {};
+        this._filterResultPropertyNames = null;
         this._sortProperties = false;
 
         this._prefixWhitespace = "";
@@ -227,6 +228,78 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
     clearSelection()
     {
         this._codeMirror.setCursor({line: 0, ch: 0});
+    }
+
+    findMatchingProperties(needle)
+    {
+        if (!needle) {
+            this.resetFilteredProperties();
+            return false;
+        }
+
+        var propertiesList = this._style.visibleProperties.length ? this._style.visibleProperties : this._style.properties;
+        var matchingProperties = [];
+
+        for (var property of propertiesList)
+            matchingProperties.push(property.text.includes(needle));
+
+        if (!matchingProperties.includes(true)) {
+            this.resetFilteredProperties();
+            return false;
+        }
+
+        for (var i = 0; i < matchingProperties.length; ++i) {
+            var property = propertiesList[i];
+
+            if (matchingProperties[i])
+                property.__filterResultClassName = WebInspector.CSSStyleDetailsSidebarPanel.FilterMatchSectionClassName;
+            else
+                property.__filterResultClassName = WebInspector.CSSStyleDetailsSidebarPanel.NoFilterMatchInPropertyClassName;
+
+            this._updateTextMarkerForPropertyIfNeeded(property);
+        }
+
+        return true;
+    }
+
+    resetFilteredProperties()
+    {
+        var propertiesList = this._style.visibleProperties.length ? this._style.visibleProperties : this._style.properties;
+
+        for (var property of propertiesList) {
+            if (property.__filterResultClassName) {
+                property.__filterResultClassName = null;
+                this._updateTextMarkerForPropertyIfNeeded(property)
+            }
+        }
+    }
+
+    removeNonMatchingProperties(needle)
+    {
+        this._filterResultPropertyNames = null;
+
+        if (!needle) {
+            this._resetContent();
+            return false;
+        }
+
+        var matchingPropertyNames = [];
+
+        for (var property of this._style.properties) {
+            var indexesOfNeedle = property.text.getMatchingIndexes(needle);
+
+            if (indexesOfNeedle.length) {
+                matchingPropertyNames.push(property.name);
+                property.__filterResultClassName = WebInspector.CSSStyleDetailsSidebarPanel.FilterMatchSectionClassName;
+                property.__filterResultNeedlePosition = {start: indexesOfNeedle, length: needle.length};
+            }
+        }
+
+        this._filterResultPropertyNames = matchingPropertyNames.length ? matchingPropertyNames.keySet() : {};
+
+        this._resetContent();
+
+        return matchingPropertyNames.length > 0;
     }
 
     // Protected
@@ -527,6 +600,9 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         if (!property.enabled)
             classNames.push("disabled");
 
+        if (property.__filterResultClassName && !property.__filterResultNeedlePosition)
+            classNames.push(property.__filterResultClassName);
+
         var classNamesString = classNames.join(" ");
 
         // If there is already a text marker and it's in the same document, then try to avoid recreating it.
@@ -557,6 +633,15 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             var end = {line: to.line, ch: start.ch + property.value.length};
 
             this._codeMirror.markText(start, end, {className: "invalid"});
+        }
+
+        if (property.__filterResultClassName && property.__filterResultNeedlePosition) {
+            for (var needlePosition of property.__filterResultNeedlePosition.start) {
+                var start = {line: from.line, ch: needlePosition};
+                var end = {line: to.line, ch: start.ch + property.__filterResultNeedlePosition.length};
+
+                this._codeMirror.markText(start, end, {className: property.__filterResultClassName});
+            }
         }
     }
 
@@ -597,7 +682,14 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
     {
         var properties = onlyVisibleProperties ? this._style.visibleProperties : this._style.properties;
 
-        if (!onlyVisibleProperties) {
+        if (this._filterResultPropertyNames) {
+            properties = properties.filter(function(property) {
+                return (!property.implicit || this._showsImplicitProperties) && property.name in this._filterResultPropertyNames;
+            }, this);
+
+            if (this._sortProperties)
+                properties.sort(function(a, b) { return a.name.localeCompare(b.name); });
+        } else if (!onlyVisibleProperties) {
             // Filter based on options only when all properties are used.
             properties = properties.filter(function(property) {
                 return !property.implicit || this._showsImplicitProperties || property.canonicalName in this._alwaysShowPropertyNames;

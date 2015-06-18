@@ -25,9 +25,9 @@
 
 WebInspector.MetricsStyleDetailsPanel = class MetricsStyleDetailsPanel extends WebInspector.StyleDetailsPanel
 {
-    constructor()
+    constructor(delegate)
     {
-        super("metrics", "metrics", WebInspector.UIString("Metrics"));
+        super(delegate, "metrics", "metrics", WebInspector.UIString("Metrics"));
 
         this._boxModelDiagramRow = new WebInspector.BoxModelDetailsSectionRow;
 
@@ -42,5 +42,7 @@ WebInspector.MetricsStyleDetailsPanel = class MetricsStyleDetailsPanel extends W
     refresh()
     {
         this._boxModelDiagramRow.nodeStyles = this.nodeStyles;
+
+        super.refresh();
     }
 };

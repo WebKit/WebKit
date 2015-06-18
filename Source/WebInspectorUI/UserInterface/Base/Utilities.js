@@ -748,6 +748,22 @@ Object.defineProperty(String.prototype, "removeWordBreakCharacters",
     }
 });
 
+Object.defineProperty(String.prototype, "getMatchingIndexes",
+{
+    value: function(needle)
+    {
+        var indexesOfNeedle = [];
+        var index = this.indexOf(needle);
+
+        while (index >= 0) {
+            indexesOfNeedle.push(index);
+            index = this.indexOf(needle, index + 1);
+        }
+
+        return indexesOfNeedle;
+    }
+});
+
 Object.defineProperty(Number, "constrain",
 {
     value: function(num, min, max)

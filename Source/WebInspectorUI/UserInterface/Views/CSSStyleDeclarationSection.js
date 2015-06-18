@@ -32,6 +32,7 @@ WebInspector.CSSStyleDeclarationSection = function(delegate, style)
 
     console.assert(style);
     this._style = style || null;
+    this._selectorElements = [];
 
     this._element = document.createElement("div");
     this._element.className = "style-declaration-section";
@@ -164,6 +165,7 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
     {
         this._selectorElement.removeChildren();
         this._originElement.removeChildren();
+        this._selectorElements = [];
 
         this._originElement.appendChild(document.createTextNode(" \u2014 "));
 
@@ -196,6 +198,7 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
             }
 
             this._selectorElement.appendChild(selectorElement);
+            this._selectorElements.push(selectorElement);
         }
 
         function appendSelectorTextKnownToMatch(selectorText)
@@ -272,6 +275,36 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
         }
 
         return false;
+    },
+
+    findMatchingPropertiesAndSelectors: function(needle)
+    {
+        this._element.classList.remove(WebInspector.CSSStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName, WebInspector.CSSStyleDetailsSidebarPanel.FilterMatchingSectionHasLabelClassName);
+
+        var hasMatchingSelector = false;
+
+        for (var selectorElement of this._selectorElements) {
+            selectorElement.classList.remove(WebInspector.CSSStyleDetailsSidebarPanel.FilterMatchSectionClassName);
+
+            if (needle && selectorElement.textContent.includes(needle)) {
+                selectorElement.classList.add(WebInspector.CSSStyleDetailsSidebarPanel.FilterMatchSectionClassName);
+                hasMatchingSelector = true;
+            }
+        }
+
+        if (!needle) {
+            this._propertiesTextEditor.resetFilteredProperties();
+            return false;
+        }
+
+        var hasMatchingProperty = this._propertiesTextEditor.findMatchingProperties(needle);
+
+        if (!hasMatchingProperty && !hasMatchingSelector) {
+            this._element.classList.add(WebInspector.CSSStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
+            return false;
+        }
+
+        return true;
     },
 
     updateLayout: function()

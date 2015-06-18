@@ -25,13 +25,22 @@
 
 WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebInspector.StyleDetailsPanel
 {
-    constructor()
+    constructor(delegate)
     {
-        super("rules", "rules", WebInspector.UIString("Rules"));
+        super(delegate, "rules", "rules", WebInspector.UIString("Rules"));
 
         this._sections = [];
         this._previousFocusedSection = null;
+        this._ruleMediaAndInherticanceList = [];
         this._propertyToSelectAndHighlight = null;
+
+        this._emptyFilterResultsElement = document.createElement("div");
+        this._emptyFilterResultsElement.classList.add("no-filter-results");
+
+        this._emptyFilterResultsMessage = document.createElement("div");
+        this._emptyFilterResultsMessage.classList.add("no-filter-results-message");
+        this._emptyFilterResultsMessage.textContent = WebInspector.UIString("No Results Found");
+        this._emptyFilterResultsElement.appendChild(this._emptyFilterResultsMessage);
     }
 
     // Public
@@ -40,8 +49,10 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
     {
         // We only need to do a rebuild on significant changes. Other changes are handled
         // by the sections and text editors themselves.
-        if (!significantChange)
+        if (!significantChange) {
+            super.refresh();
             return;
+        }
 
         var newSections = [];
         var newDOMFragment = document.createDocumentFragment();
@@ -170,10 +181,13 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
         }
 
         var addedNewRuleButton = false;
+        this._ruleMediaAndInherticanceList = [];
 
         var orderedStyles = uniqueOrderedStyles(this.nodeStyles.orderedStyles);
         for (var i = 0; i < orderedStyles.length; ++i) {
             var style = orderedStyles[i];
+
+            var hasMediaOrInherited = [];
 
             if (style.type === WebInspector.CSSStyleDeclaration.Type.Rule && !addedNewRuleButton)
                 addNewRuleButton.call(this);
@@ -189,6 +203,8 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
                 inheritedLabel.appendChild(prefixElement);
                 inheritedLabel.appendChild(WebInspector.linkifyNodeReference(style.node));
                 newDOMFragment.appendChild(inheritedLabel);
+
+                hasMediaOrInherited.push(inheritedLabel);
             }
 
             // Only include the media list if it is different from the previous media list shown.
@@ -218,8 +234,15 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
                     }
 
                     newDOMFragment.appendChild(mediaLabel);
+
+                    hasMediaOrInherited.push(mediaLabel);
                 }
             }
+
+            if (!hasMediaOrInherited.length && previousSection && !previousSection.lastInGroup)
+                hasMediaOrInherited = this._ruleMediaAndInherticanceList.lastValue;
+
+            this._ruleMediaAndInherticanceList.push(hasMediaOrInherited);
 
             appendStyleSection.call(this, style);
         }
@@ -232,11 +255,14 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
 
         this.element.removeChildren();
         this.element.appendChild(newDOMFragment);
+        this.element.appendChild(this._emptyFilterResultsElement);
 
         this._sections = newSections;
 
         for (var i = 0; i < this._sections.length; ++i)
             this._sections[i].updateLayout();
+
+        super.refresh();
     }
 
     scrollToSectionAndHighlightProperty(property)
@@ -260,6 +286,35 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
             if (section !== ignoredSection)
                 section.clearSelection();
         }
+    }
+
+    filterDidChange(filterBar)
+    {
+        for (var labels of this._ruleMediaAndInherticanceList) {
+            for (var i = 0; i < labels.length; ++i) {
+                labels[i].classList.toggle(WebInspector.CSSStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName, filterBar.hasActiveFilters());
+
+                if (i === labels.length - 1)
+                    labels[i].classList.toggle("filter-matching-label", filterBar.hasActiveFilters());
+            }
+        }
+
+        var matchFound = !filterBar.hasActiveFilters();
+        for (var i = 0; i < this._sections.length; ++i) {
+            var section = this._sections[i];
+
+            if (section.findMatchingPropertiesAndSelectors(filterBar.filters.text) && filterBar.hasActiveFilters()) {
+                if (this._ruleMediaAndInherticanceList[i].length) {
+                    for (var label of this._ruleMediaAndInherticanceList[i])
+                        label.classList.remove(WebInspector.CSSStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
+                } else
+                    section.element.classList.add(WebInspector.CSSStyleDetailsSidebarPanel.FilterMatchingSectionHasLabelClassName);
+                
+                matchFound = true;
+            }
+        }
+
+        this.element.classList.toggle("filter-non-matching", !matchFound);
     }
 
     // Protected

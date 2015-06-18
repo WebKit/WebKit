@@ -43,6 +43,8 @@ WebInspector.FilterBar = class FilterBar extends WebInspector.Object
         this._inputField.incremental = true;
         this._inputField.addEventListener("search", this._handleFilterChanged.bind(this), false);
         this._element.appendChild(this._inputField);
+
+        this._lastFilterValue = this.filters;
     }
 
     // Public
@@ -99,6 +101,21 @@ WebInspector.FilterBar = class FilterBar extends WebInspector.Object
         return !!this._inputField.value || !!this._filterFunctionsMap.size;
     }
 
+    hasFilterChanged()
+    {
+        var currentFunctions = this.filters.functions;
+
+        if (this._lastFilterValue.text !== this._inputField.value || this._lastFilterValue.functions.length !== currentFunctions.length)
+            return true;
+
+        for (var i = 0; i < currentFunctions.length; ++i) {
+            if (this._lastFilterValue.functions[i] !== currentFunctions[i])
+                return true;
+        }
+
+        return false;
+    }
+
     // Private
 
     _handleFilterBarButtonClicked(event)
@@ -119,7 +136,10 @@ WebInspector.FilterBar = class FilterBar extends WebInspector.Object
 
     _handleFilterChanged()
     {
-        this.dispatchEventToListeners(WebInspector.FilterBar.Event.FilterDidChange);
+        if (this.hasFilterChanged()) {
+            this._lastFilterValue = this.filters;
+            this.dispatchEventToListeners(WebInspector.FilterBar.Event.FilterDidChange);
+        }
     }
 };
 

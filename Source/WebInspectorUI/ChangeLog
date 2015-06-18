@@ -1,5 +1,52 @@
 2015-06-18  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Add a filter for CSS properties in the Styles sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=145536
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Utilities.js: Added function to Strings that returns an array of all matching indexes of a given string.
+        (.value):
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection):
+        (WebInspector.CSSStyleDeclarationSection.prototype.refresh.appendSelector):
+        (WebInspector.CSSStyleDeclarationSection.prototype.findMatchingPropertiesAndSelectors): Loops through the property list and selectors of each section to find matches to the filtered text.
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.findMatchingProperties): Searches through the properties list to find and highlight all matching properties.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.removeNonMatchingProperties): Removes all properties that do not match and highlights the specific matched text in matching properties.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.resetFilteredProperties): Restores all properties to full visibility and removes any highlighting.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createTextMarkerForPropertyIfNeeded): Classes are added to selections of the text editor of that partiular selection contains text which matches the filter (see CSSStyleDetailsSidebarPanel.css for different classes).
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._iterateOverProperties): If a filter is active, find properties matching the filter instead of all properties.
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.css-style > .content.has-filter-bar + .filter-bar):
+        (.sidebar > .panel.details.css-style > .content:not(.has-filter-bar) + .filter-bar):
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.js:
+        (WebInspector.CSSStyleDetailsSidebarPanel): Added a filter bar to the CSS sidebar.
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._switchPanels): Switching panels preserves and applies filter bar text.
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._filterDidChange): Function called when the filter bar text changes that calls the current panel's filterDidChange function if it exists.
+        * UserInterface/Views/FilterBar.js: Added function and variable to check if the text in the filter bar had changed.
+        * UserInterface/Views/MetricsStyleDetailsPanel.js:
+        (WebInspector.MetricsStyleDetailsPanel.prototype.refresh): Now calls superclass refresh.
+        (WebInspector.MetricsStyleDetailsPanel): Added delegate variable to constructor.
+        * UserInterface/Views/RulesStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress .label):
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress .label ~ .label):
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress .label.filter-matching-label):
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress .new-rule):
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress .style-declaration-section:not(.filter-section-non-matching) ~ .label:not(.filter-section-non-matching)):
+        (.sidebar > .panel.details.css-style > .content:not(.filter-in-progress) > .rules > .new-rule + .style-declaration-section):
+        (.sidebar > .panel.details.css-style > .content > .rules:not(.filter-non-matching) > .no-filter-results):
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress > .rules.filter-non-matching > .no-filter-results):
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress > .rules.filter-non-matching > .no-filter-results > .no-filter-results-message):
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel): Added delegate variable to constructor.
+        (WebInspector.RulesStyleDetailsPanel.prototype.refresh): Now calls superclass refresh.
+        (WebInspector.RulesStyleDetailsPanel.prototype.filterDidChange): Function to search through the computed styles list and highlight all matched properties and selectors of the filter bar text, turning all non matching properties slightly opaque (unless a selector for that property is a match).
+        (WebInspector.StyleDetailsPanel): Added delegate variable to constructor.
+        (WebInspector.StyleDetailsPanel.prototype.refresh): Added event dispatch for panel refresh.
+
+2015-06-18  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Ability to Copy entire CSS Rule from Styles Sidebar
         https://bugs.webkit.org/show_bug.cgi?id=138812
 
