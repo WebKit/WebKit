@@ -934,9 +934,10 @@ void DOMWindow::dispatchMessageEventWithOriginCheck(SecurityOrigin* intendedTarg
     if (intendedTargetOrigin) {
         // Check target origin now since the target document may have changed since the timer was scheduled.
         if (!intendedTargetOrigin->isSameSchemeHostPort(document()->securityOrigin())) {
-            String message = "Unable to post message to " + intendedTargetOrigin->toString() +
-                             ". Recipient has origin " + document()->securityOrigin()->toString() + ".\n";
-            console()->addMessage(MessageSource::Security, MessageLevel::Error, message, stackTrace);
+            if (PageConsoleClient* pageConsole = console()) {
+                String message = makeString("Unable to post message to ", intendedTargetOrigin->toString(), ". Recipient has origin ", document()->securityOrigin()->toString(), ".\n");
+                pageConsole->addMessage(MessageSource::Security, MessageLevel::Error, message, stackTrace);
+            }
             return;
         }
     }
