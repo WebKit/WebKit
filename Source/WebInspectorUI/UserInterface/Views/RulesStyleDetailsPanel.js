@@ -30,6 +30,7 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
         super("rules", "rules", WebInspector.UIString("Rules"));
 
         this._sections = [];
+        this._previousFocusedSection = null;
         this._propertyToSelectAndHighlight = null;
     }
 
@@ -47,7 +48,6 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
 
         var previousMediaList = [];
         var previousSection = null;
-        var previousFocusedSection = null;
 
         function mediaListsEqual(a, b)
         {
@@ -116,8 +116,8 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
         function appendStyleSection(style)
         {
             var section = style.__rulesSection;
-            if (section && section.focused && !previousFocusedSection)
-                previousFocusedSection = section;
+            if (section && section.focused && !this._previousFocusedSection)
+                this._previousFocusedSection = section;
 
             if (!section) {
                 section = new WebInspector.CSSStyleDeclarationSection(this, style);
@@ -126,7 +126,7 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
                 section.refresh();
 
             if (this._focusNextNewInspectorRule && style.ownerRule && style.ownerRule.type === WebInspector.CSSRule.Type.Inspector) {
-                previousFocusedSection = section;
+                this._previousFocusedSection = section;
                 delete this._focusNextNewInspectorRule;
             }
 
@@ -237,9 +237,6 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
 
         for (var i = 0; i < this._sections.length; ++i)
             this._sections[i].updateLayout();
-
-        if (previousFocusedSection)
-            previousFocusedSection.focus();
     }
 
     scrollToSectionAndHighlightProperty(property)
@@ -303,6 +300,11 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
         if (this._propertyToSelectAndHighlight) {
             this.scrollToSectionAndHighlightProperty(this._propertyToSelectAndHighlight);
             this._propertyToSelectAndHighlight = null;
+        }
+
+        if (this._previousFocusedSection && this._visible) {
+            this._previousFocusedSection.focus();
+            this._previousFocusedSection = null;
         }
     }
 
