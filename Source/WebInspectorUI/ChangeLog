@@ -1,3 +1,16 @@
+2015-06-18  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Ability to Copy entire CSS Rule from Styles Sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=138812
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection): Right clicking on the header of a rule will replcae the default context menu to allow copying of the entire rule to the clipboard.
+        (WebInspector.CSSStyleDeclarationSection.prototype._handleContextMenuEvent): Creates a new context menu to copy the entire CSS rule.
+        (WebInspector.CSSStyleDeclarationSection.prototype._generateCSSRuleString): Generates a string representing the formatted CSS rule.
+
 2015-06-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve a few more node preview types
