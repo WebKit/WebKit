@@ -1,3 +1,16 @@
+2015-06-18  Tim Horton  <timothy_horton@apple.com>
+
+        Use SFSafariViewController for previews
+        https://bugs.webkit.org/show_bug.cgi?id=146092
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView previewViewControllerForPosition:inSourceView:]):
+        (-[WKContentView commitPreviewViewController:]):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * Source/WebKit2/Platform/spi/ios/SafariServicesSPI.h:
+
 2015-06-18  Antti Koivisto  <antti@apple.com>
 
         ~4% Membuster regression after WebKit r185452

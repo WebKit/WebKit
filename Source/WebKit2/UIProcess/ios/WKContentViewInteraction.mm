@@ -34,6 +34,7 @@
 #import "ManagedConfigurationSPI.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebTouchEvent.h"
+#import "SafariServicesSPI.h"
 #import "SmartMagnificationController.h"
 #import "TextInputSPI.h"
 #import "UIKitSPI.h"
@@ -3131,7 +3132,9 @@ static bool isAssistableInputType(InputType type)
     if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:)])
         return [uiDelegate _webView:_webView previewViewControllerForURL:targetURL];
 
-    return WKGetPreviewViewController(targetURL);
+    SFSafariViewController *previewViewController = [allocSFSafariViewControllerInstance() initWithURL:targetURL];
+    previewViewController._showingLinkPreview = YES;
+    return previewViewController;
 }
 
 - (void)commitPreviewViewController:(UIViewController *)viewController
@@ -3142,11 +3145,16 @@ static bool isAssistableInputType(InputType type)
         return;
     }
 
-    UIViewController *presentingViewController = viewController.presentingViewController ?: self.window.rootViewController;
-    WKWillCommitPreviewViewController(viewController);
+    if (![viewController isKindOfClass:getSFSafariViewControllerClass()])
+        return;
+
+    SFSafariViewController *safariViewController = (SFSafariViewController *)viewController;
+    safariViewController._showingLinkPreview = NO;
 
     viewController.transitioningDelegate = nil;
     viewController.modalPresentationStyle = UIModalPresentationFullScreen;
+
+    UIViewController *presentingViewController = viewController.presentingViewController ?: self.window.rootViewController;
     [presentingViewController presentViewController:viewController animated:NO completion:nil];
 }
 
