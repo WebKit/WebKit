@@ -1,3 +1,9 @@
+2015-06-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Mark mathml/very-large-stretchy-operators.html as Slow on newer OS X versions.
+
+        * platform/mac/TestExpectations:
+
 2015-06-18  Saam Barati  <saambarati1@gmail.com>
 
         [ES6] support default values in deconstruction parameter nodes
