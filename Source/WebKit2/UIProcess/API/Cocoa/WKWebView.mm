@@ -242,15 +242,15 @@ static int32_t deviceOrientation()
     return deviceOrientationForUIInterfaceOrientation([[UIApplication sharedApplication] statusBarOrientation]);
 }
 
-- (BOOL)_isShowingVideoOptimized
+- (BOOL)_isShowingVideoPictureInPicture
 {
     if (!_page || !_page->videoFullscreenManager())
         return false;
     
-    return _page->videoFullscreenManager()->hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModeOptimized);
+    return _page->videoFullscreenManager()->hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
 }
 
-- (BOOL)_mayAutomaticallyShowVideoOptimized
+- (BOOL)_mayAutomaticallyShowVideoPictureInPicture
 {
 #if (__IPHONE_OS_VERSION_MIN_REQUIRED <= 80200) || !HAVE(AVKIT)
     return false;
@@ -258,15 +258,15 @@ static int32_t deviceOrientation()
     if (!_page || !_page->videoFullscreenManager())
         return false;
 
-    return _page->videoFullscreenManager()->mayAutomaticallyShowVideoOptimized();
+    return _page->videoFullscreenManager()->mayAutomaticallyShowVideoPictureInPicture();
 #endif
 }
 
-static bool shouldAllowAlternateFullscreen()
+static bool shouldAllowPictureInPictureMediaPlayback()
 {
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
-    static bool shouldAllowAlternateFullscreen = iosExecutableWasLinkedOnOrAfterVersion(wkIOSSystemVersion_9_0);
-    return shouldAllowAlternateFullscreen;
+    static bool shouldAllowPictureInPictureMediaPlayback = iosExecutableWasLinkedOnOrAfterVersion(wkIOSSystemVersion_9_0);
+    return shouldAllowPictureInPictureMediaPlayback;
 #else
     return false;
 #endif
@@ -323,7 +323,7 @@ static bool shouldAllowAlternateFullscreen()
     webPageConfiguration.alwaysRunsAtForegroundPriority = [_configuration _alwaysRunsAtForegroundPriority];
 
     webPageConfiguration.preferenceValues.set(WebKit::WebPreferencesKey::allowsInlineMediaPlaybackKey(), WebKit::WebPreferencesStore::Value(!![_configuration allowsInlineMediaPlayback]));
-    webPageConfiguration.preferenceValues.set(WebKit::WebPreferencesKey::allowsAlternateFullscreenKey(), WebKit::WebPreferencesStore::Value(!![_configuration allowsPictureInPictureMediaPlayback] && shouldAllowAlternateFullscreen()));
+    webPageConfiguration.preferenceValues.set(WebKit::WebPreferencesKey::allowsPictureInPictureMediaPlaybackKey(), WebKit::WebPreferencesStore::Value(!![_configuration allowsPictureInPictureMediaPlayback] && shouldAllowPictureInPictureMediaPlayback()));
     webPageConfiguration.preferenceValues.set(WebKit::WebPreferencesKey::requiresUserGestureForMediaPlaybackKey(), WebKit::WebPreferencesStore::Value(!![_configuration requiresUserActionForMediaPlayback]));
 #endif
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

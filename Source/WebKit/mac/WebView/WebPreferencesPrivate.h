@@ -253,6 +253,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setAllowsAlternateFullscreen:(BOOL)flag;
 - (BOOL)allowsAlternateFullscreen;
 
+- (void)setAllowsPictureInPictureMediaPlayback:(BOOL)flag;
+- (BOOL)allowsPictureInPictureMediaPlayback;
+
 - (NSString *)pictographFontFamily;
 - (void)setPictographFontFamily:(NSString *)family;
 

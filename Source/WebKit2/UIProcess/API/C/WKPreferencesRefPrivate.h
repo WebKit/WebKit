@@ -179,10 +179,6 @@ WK_EXPORT bool WKPreferencesGetMediaPlaybackRequiresUserGesture(WKPreferencesRef
 WK_EXPORT void WKPreferencesSetMediaPlaybackAllowsInline(WKPreferencesRef preferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetMediaPlaybackAllowsInline(WKPreferencesRef preferencesRef);
 
-// Defaults to true.
-WK_EXPORT void WKPreferencesSetAllowsAlternateFullscreen(WKPreferencesRef preferencesRef, bool flag);
-WK_EXPORT bool WKPreferencesGetAllowsAlternateFullscreen(WKPreferencesRef preferencesRef);
-
 // Defaults to false.
 WK_EXPORT void WKPreferencesSetShowsToolTipOverTruncatedText(WKPreferencesRef preferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetShowsToolTipOverTruncatedText(WKPreferencesRef preferencesRef);

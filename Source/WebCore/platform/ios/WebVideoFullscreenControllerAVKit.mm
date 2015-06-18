@@ -518,11 +518,11 @@ void WebVideoFullscreenControllerContext::setUpFullscreen(HTMLVideoElement& vide
         m_model->setVideoElement(m_videoElement.get());
         m_videoFullscreenLayer = [CALayer layer];
         
-        bool allowsAlternateFullscreen = m_videoElement->mediaSession().allowsAlternateFullscreen(*m_videoElement.get());
+        bool allowsPictureInPicture = m_videoElement->mediaSession().allowsPictureInPicture(*m_videoElement.get());
         IntRect videoElementClientRect = m_videoElement->clientRect();
         
-        dispatch_async(dispatch_get_main_queue(), [strongThis, this, videoElementClientRect, viewRef, mode, allowsAlternateFullscreen] {
-            m_interface->setupFullscreen(*m_videoFullscreenLayer.get(), videoElementClientRect, viewRef.get(), mode, allowsAlternateFullscreen);
+        dispatch_async(dispatch_get_main_queue(), [strongThis, this, videoElementClientRect, viewRef, mode, allowsPictureInPicture] {
+            m_interface->setupFullscreen(*m_videoFullscreenLayer.get(), videoElementClientRect, viewRef.get(), mode, allowsPictureInPicture);
         });
     });
 }

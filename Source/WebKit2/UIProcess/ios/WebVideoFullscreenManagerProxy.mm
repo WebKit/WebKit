@@ -62,7 +62,7 @@ bool WebVideoFullscreenManagerProxy::hasMode(HTMLMediaElementEnums::VideoFullscr
     return false;
 }
 
-bool WebVideoFullscreenManagerProxy::mayAutomaticallyShowVideoOptimized() const
+bool WebVideoFullscreenManagerProxy::mayAutomaticallyShowVideoPictureInPicture() const
 {
     return false;
 }
@@ -266,10 +266,10 @@ bool WebVideoFullscreenManagerProxy::hasMode(HTMLMediaElementEnums::VideoFullscr
     return false;
 }
 
-bool WebVideoFullscreenManagerProxy::mayAutomaticallyShowVideoOptimized() const
+bool WebVideoFullscreenManagerProxy::mayAutomaticallyShowVideoPictureInPicture() const
 {
     for (auto& tuple : m_contextMap.values()) {
-        if (std::get<1>(tuple)->mayAutomaticallyShowVideoOptimized())
+        if (std::get<1>(tuple)->mayAutomaticallyShowVideoPictureInPicture())
             return true;
     }
     return false;
@@ -306,7 +306,7 @@ WebCore::WebVideoFullscreenInterfaceAVKit& WebVideoFullscreenManagerProxy::ensur
 
 #pragma mark Messages from WebVideoFullscreenManager
 
-void WebVideoFullscreenManagerProxy::setupFullscreenWithID(uint64_t contextId, uint32_t videoLayerID, const WebCore::IntRect& initialRect, float hostingDeviceScaleFactor, HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowOptimizedFullscreen)
+void WebVideoFullscreenManagerProxy::setupFullscreenWithID(uint64_t contextId, uint32_t videoLayerID, const WebCore::IntRect& initialRect, float hostingDeviceScaleFactor, HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture)
 {
     ASSERT(videoLayerID);
     RefPtr<WebVideoFullscreenModelContext> model;
@@ -323,7 +323,7 @@ void WebVideoFullscreenManagerProxy::setupFullscreenWithID(uint64_t contextId, u
     }
 
     UIView *parentView = downcast<RemoteLayerTreeDrawingAreaProxy>(*m_page->drawingArea()).remoteLayerTreeHost().rootLayer();
-    interface->setupFullscreen(*model->layerHost(), initialRect, parentView, videoFullscreenMode, allowOptimizedFullscreen);
+    interface->setupFullscreen(*model->layerHost(), initialRect, parentView, videoFullscreenMode, allowsPictureInPicture);
 }
 
 void WebVideoFullscreenManagerProxy::resetMediaState(uint64_t contextId)

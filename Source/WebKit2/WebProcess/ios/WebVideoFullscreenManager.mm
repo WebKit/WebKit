@@ -240,9 +240,9 @@ void WebVideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoEle
         return;
     interface->setIsAnimating(true);
 
-    bool allowOptimizedFullscreen = videoElement.mediaSession().allowsAlternateFullscreen(videoElement);
+    bool allowsPictureInPicture = videoElement.mediaSession().allowsPictureInPicture(videoElement);
     
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetupFullscreenWithID(contextId, interface->layerHostingContext()->contextID(), clientRectForElement(&videoElement), m_page->deviceScaleFactor(), interface->fullscreenMode(), allowOptimizedFullscreen), m_page->pageID());
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetupFullscreenWithID(contextId, interface->layerHostingContext()->contextID(), clientRectForElement(&videoElement), m_page->deviceScaleFactor(), interface->fullscreenMode(), allowsPictureInPicture), m_page->pageID());
 }
 
 void WebVideoFullscreenManager::exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement& videoElement)

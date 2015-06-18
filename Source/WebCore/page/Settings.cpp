@@ -147,7 +147,7 @@ static const bool defaultImageSubsamplingEnabled = false;
 static const bool defaultScrollingTreeIncludesFrames = false;
 #endif
 
-static const bool defaultAllowsAlternateFullscreen = true;
+static const bool defaultAllowsPictureInPictureMediaPlayback = true;
 
 static const double defaultIncrementalRenderingSuppressionTimeoutInSeconds = 5;
 #if USE(UNIFIED_TEXT_CHECKING)

@@ -191,35 +191,35 @@ static const char* boolString(bool val)
     return self.playerControllerProxy;
 }
 
-- (void)playerViewControllerWillStartOptimizedFullscreen:(AVPlayerViewController *)playerViewController
+- (void)playerViewControllerWillStartPictureInPicture:(AVPlayerViewController *)playerViewController
 {
     UNUSED_PARAM(playerViewController);
-    self.fullscreenInterface->willStartOptimizedFullscreen();
+    self.fullscreenInterface->willStartPictureInPicture();
 }
 
-- (void)playerViewControllerDidStartOptimizedFullscreen:(AVPlayerViewController *)playerViewController
+- (void)playerViewControllerDidStartPictureInPicture:(AVPlayerViewController *)playerViewController
 {
     UNUSED_PARAM(playerViewController);
-    self.fullscreenInterface->didStartOptimizedFullscreen();
+    self.fullscreenInterface->didStartPictureInPicture();
 }
 
-- (void)playerViewControllerFailedToStartOptimizedFullscreen:(AVPlayerViewController *)playerViewController withError:(NSError *)error
+- (void)playerViewControllerFailedToStartPictureInPicture:(AVPlayerViewController *)playerViewController withError:(NSError *)error
 {
     UNUSED_PARAM(playerViewController);
     UNUSED_PARAM(error);
-    self.fullscreenInterface->failedToStartOptimizedFullscreen();
+    self.fullscreenInterface->failedToStartPictureInPicture();
 }
 
-- (void)playerViewControllerWillStopOptimizedFullscreen:(AVPlayerViewController *)playerViewController
+- (void)playerViewControllerWillStopPictureInPicture:(AVPlayerViewController *)playerViewController
 {
     UNUSED_PARAM(playerViewController);
-    self.fullscreenInterface->willStopOptimizedFullscreen();
+    self.fullscreenInterface->willStopPictureInPicture();
 }
 
-- (void)playerViewControllerDidStopOptimizedFullscreen:(AVPlayerViewController *)playerViewController
+- (void)playerViewControllerDidStopPictureInPicture:(AVPlayerViewController *)playerViewController
 {
     UNUSED_PARAM(playerViewController);
-    self.fullscreenInterface->didStopOptimizedFullscreen();
+    self.fullscreenInterface->didStopPictureInPicture();
 }
 
 - (BOOL)playerViewController:(AVPlayerViewController *)playerViewController shouldExitFullScreenWithReason:(AVPlayerViewControllerExitFullScreenReason)reason
@@ -236,10 +236,10 @@ static const char* boolString(bool val)
     return NO;
 }
 
-- (void)playerViewController:(AVPlayerViewController *)playerViewController restoreUserInterfaceForOptimizedFullscreenStopWithCompletionHandler:(void (^)(BOOL restored))completionHandler
+- (void)playerViewController:(AVPlayerViewController *)playerViewController restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:(void (^)(BOOL restored))completionHandler
 {
     UNUSED_PARAM(playerViewController);
-    self.fullscreenInterface->prepareForOptimizedFullscreenStopWithCompletionHandler(completionHandler);
+    self.fullscreenInterface->prepareForPictureInPictureStopWithCompletionHandler(completionHandler);
 }
 
 - (void)play:(id)sender
@@ -547,9 +547,9 @@ static const char* boolString(bool val)
     return [NSSet setWithObjects:@"externalPlaybackActive", nil];
 }
 
-- (BOOL)isOptimizedFullscreenPossible
+- (BOOL)isPictureInPicturePossible
 {
-    return self.fullscreenInterface->allowOptimizedFullscreen();
+    return self.fullscreenInterface->allowsPictureInPicturePlayback();
 }
 @end
 
@@ -876,12 +876,12 @@ void WebVideoFullscreenInterfaceAVKit::setExternalPlayback(bool enabled, Externa
     [m_videoLayerContainer.get() setHidden:enabled];
 }
 
-void WebVideoFullscreenInterfaceAVKit::setupFullscreen(PlatformLayer& videoLayer, const WebCore::IntRect& initialRect, UIView* parentView, HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowOptimizedFullscreen)
+void WebVideoFullscreenInterfaceAVKit::setupFullscreen(PlatformLayer& videoLayer, const WebCore::IntRect& initialRect, UIView* parentView, HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback)
 {
     ASSERT(mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
     LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::setupFullscreen(%p)", this);
 
-    m_allowOptimizedFullscreen = allowOptimizedFullscreen;
+    m_allowsPictureInPicturePlayback = allowsPictureInPicturePlayback;
 
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
@@ -919,7 +919,7 @@ void WebVideoFullscreenInterfaceAVKit::setupFullscreen(PlatformLayer& videoLayer
     [m_playerViewController setShowsPlaybackControls:NO];
     [m_playerViewController setPlayerController:(AVPlayerController *)m_playerController.get()];
     [m_playerViewController setDelegate:m_playerController.get()];
-    [m_playerViewController setAllowsOptimizedFullscreen:allowOptimizedFullscreen];
+    [m_playerViewController setAllowsPictureInPicturePlayback:m_allowsPictureInPicturePlayback];
 
     [m_videoLayerContainer setPlayerViewController:m_playerViewController.get()];
 
@@ -951,22 +951,22 @@ void WebVideoFullscreenInterfaceAVKit::enterFullscreen()
     m_enterRequested = true;
 
     [m_videoLayerContainer setBackgroundColor:[[getUIColorClass() blackColor] CGColor]];
-    if (mode() == HTMLMediaElementEnums::VideoFullscreenModeOptimized)
-        enterFullscreenOptimized();
+    if (mode() == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture)
+        enterPictureInPicture();
     else if (mode() == HTMLMediaElementEnums::VideoFullscreenModeStandard)
         enterFullscreenStandard();
     else
         ASSERT_NOT_REACHED();
 }
 
-void WebVideoFullscreenInterfaceAVKit::enterFullscreenOptimized()
+void WebVideoFullscreenInterfaceAVKit::enterPictureInPicture()
 {
-    LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::enterFullscreenOptimized(%p)", this);
+    LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::enterPictureInPicture(%p)", this);
     
-    if ([m_playerViewController isOptimizedFullscreenPossible])
-        [m_playerViewController startOptimizedFullscreen];
+    if ([m_playerViewController isPictureInPicturePossible])
+        [m_playerViewController startPictureInPicture];
     else
-        failedToStartOptimizedFullscreen();
+        failedToStartPictureInPicture();
 }
 
 void WebVideoFullscreenInterfaceAVKit::enterFullscreenStandard()
@@ -1004,14 +1004,14 @@ void WebVideoFullscreenInterfaceAVKit::exitFullscreen(const WebCore::IntRect& fi
     [[m_playerViewController view] layoutIfNeeded];
 
 
-    if (isMode(HTMLMediaElementEnums::VideoFullscreenModeOptimized)) {
+    if (isMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture)) {
         [m_window setHidden:NO];
-        [m_playerViewController stopOptimizedFullscreen];
-    } else if (isMode(HTMLMediaElementEnums::VideoFullscreenModeOptimized | HTMLMediaElementEnums::VideoFullscreenModeStandard)) {
+        [m_playerViewController stopPictureInPicture];
+    } else if (isMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture | HTMLMediaElementEnums::VideoFullscreenModeStandard)) {
         RefPtr<WebVideoFullscreenInterfaceAVKit> strongThis(this);
         [m_playerViewController exitFullScreenAnimated:NO completionHandler:[strongThis, this] (BOOL, NSError*) {
             [m_window setHidden:NO];
-            [m_playerViewController stopOptimizedFullscreen];
+            [m_playerViewController stopPictureInPicture];
         }];
     } else if (isMode(HTMLMediaElementEnums::VideoFullscreenModeStandard)) {
         RefPtr<WebVideoFullscreenInterfaceAVKit> strongThis(this);
@@ -1054,8 +1054,8 @@ void WebVideoFullscreenInterfaceAVKit::cleanupFullscreen()
     [m_playerViewController setDelegate:nil];
     [m_playerViewController setPlayerController:nil];
     
-    if (hasMode(HTMLMediaElementEnums::VideoFullscreenModeOptimized))
-        [m_playerViewController stopOptimizedFullscreen];
+    if (hasMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture))
+        [m_playerViewController stopPictureInPicture];
     if (hasMode(HTMLMediaElementEnums::VideoFullscreenModeStandard))
         [m_playerViewController exitFullScreenAnimated:NO completionHandler:[] (BOOL, NSError *) { }];
     
@@ -1099,7 +1099,7 @@ void WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen()
     if (!m_enterRequested)
         return;
     
-    if (hasMode(HTMLMediaElementEnums::VideoFullscreenModeOptimized))
+    if (hasMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture))
         return;
     
     LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen(%p)", this);
@@ -1127,7 +1127,7 @@ void WebVideoFullscreenInterfaceAVKit::preparedToReturnToInline(bool visible, co
     }
 }
 
-bool WebVideoFullscreenInterfaceAVKit::mayAutomaticallyShowVideoOptimized() const
+bool WebVideoFullscreenInterfaceAVKit::mayAutomaticallyShowVideoPictureInPicture() const
 {
     return [m_playerController isPlaying] && m_mode == HTMLMediaElementEnums::VideoFullscreenModeStandard && wkIsOptimizedFullscreenSupported();
 }
@@ -1139,17 +1139,17 @@ void WebVideoFullscreenInterfaceAVKit::fullscreenMayReturnToInline(std::function
         m_fullscreenChangeObserver->fullscreenMayReturnToInline();
 }
 
-void WebVideoFullscreenInterfaceAVKit::willStartOptimizedFullscreen()
+void WebVideoFullscreenInterfaceAVKit::willStartPictureInPicture()
 {
-    LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::willStartOptimizedFullscreen(%p)", this);
-    setMode(HTMLMediaElementEnums::VideoFullscreenModeOptimized);
+    LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::willStartPictureInPicture(%p)", this);
+    setMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
 
     if (!hasMode(HTMLMediaElementEnums::VideoFullscreenModeStandard))
         return;
 
     RefPtr<WebVideoFullscreenInterfaceAVKit> strongThis(this);
     fullscreenMayReturnToInline([strongThis, this](bool visible) {
-        LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::willStartOptimizedFullscreen - lambda(%p) - visible(%s)", this, boolString(visible));
+        LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::willStartPictureInPicture - lambda(%p) - visible(%s)", this, boolString(visible));
 
         if (!visible) {
             [m_window setHidden:YES];
@@ -1167,9 +1167,9 @@ void WebVideoFullscreenInterfaceAVKit::willStartOptimizedFullscreen()
     });
 }
 
-void WebVideoFullscreenInterfaceAVKit::didStartOptimizedFullscreen()
+void WebVideoFullscreenInterfaceAVKit::didStartPictureInPicture()
 {
-    LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::didStartOptimizedFullscreen(%p)", this);
+    LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::didStartPictureInPicture(%p)", this);
     [m_playerViewController setShowsPlaybackControls:YES];
     [m_window setHidden:YES];
 
@@ -1177,9 +1177,9 @@ void WebVideoFullscreenInterfaceAVKit::didStartOptimizedFullscreen()
         m_fullscreenChangeObserver->didEnterFullscreen();
 }
 
-void WebVideoFullscreenInterfaceAVKit::failedToStartOptimizedFullscreen()
+void WebVideoFullscreenInterfaceAVKit::failedToStartPictureInPicture()
 {
-    LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::failedToStartOptimizedFullscreen(%p)", this);
+    LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::failedToStartPictureInPicture(%p)", this);
     [m_playerViewController setShowsPlaybackControls:YES];
 
     if (hasMode(HTMLMediaElementEnums::VideoFullscreenModeStandard))
@@ -1194,18 +1194,18 @@ void WebVideoFullscreenInterfaceAVKit::failedToStartOptimizedFullscreen()
         m_videoFullscreenModel->requestExitFullscreen();
 }
 
-void WebVideoFullscreenInterfaceAVKit::willStopOptimizedFullscreen()
+void WebVideoFullscreenInterfaceAVKit::willStopPictureInPicture()
 {
-    LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::willStopOptimizedFullscreen(%p)", this);
+    LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::willStopPictureInPicture(%p)", this);
     [m_window setHidden:NO];
 
     if (m_videoFullscreenModel)
         m_videoFullscreenModel->requestExitFullscreen();
 }
 
-void WebVideoFullscreenInterfaceAVKit::didStopOptimizedFullscreen()
+void WebVideoFullscreenInterfaceAVKit::didStopPictureInPicture()
 {
-    LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::didStopOptimizedFullscreen(%p)", this);
+    LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::didStopPictureInPicture(%p)", this);
     if (hasMode(HTMLMediaElementEnums::VideoFullscreenModeStandard))
         return;
 
@@ -1214,20 +1214,20 @@ void WebVideoFullscreenInterfaceAVKit::didStopOptimizedFullscreen()
     [m_videoLayerContainer setBackgroundColor:[[getUIColorClass() clearColor] CGColor]];
     [[m_playerViewController view] setBackgroundColor:[getUIColorClass() clearColor]];
 
-    clearMode(HTMLMediaElementEnums::VideoFullscreenModeOptimized);
+    clearMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
     [m_window setHidden:YES];
     
     if (m_fullscreenChangeObserver)
         m_fullscreenChangeObserver->didExitFullscreen();
 }
 
-void WebVideoFullscreenInterfaceAVKit::prepareForOptimizedFullscreenStopWithCompletionHandler(void (^completionHandler)(BOOL restored))
+void WebVideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletionHandler(void (^completionHandler)(BOOL restored))
 {
-    LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::prepareForOptimizedFullscreenStopWithCompletionHandler(%p)", this);
+    LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletionHandler(%p)", this);
     RefPtr<WebVideoFullscreenInterfaceAVKit> strongThis(this);
     RetainPtr<id> strongCompletionHandler = adoptNS([completionHandler copy]);
     fullscreenMayReturnToInline([strongThis, strongCompletionHandler](bool restored)  {
-        LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::prepareForOptimizedFullscreenStopWithCompletionHandler lambda(%p) - restored(%s)", strongThis.get(), boolString(restored));
+        LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletionHandler lambda(%p) - restored(%s)", strongThis.get(), boolString(restored));
         void (^completionHandler)(BOOL restored) = strongCompletionHandler.get();
         completionHandler(restored);
     });

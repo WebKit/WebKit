@@ -38,7 +38,7 @@ public:
     enum {
         VideoFullscreenModeNone = 0,
         VideoFullscreenModeStandard = 1 << 0,
-        VideoFullscreenModeOptimized = 1 << 1,
+        VideoFullscreenModePictureInPicture = 1 << 1,
     };
     typedef uint32_t VideoFullscreenMode;
 };

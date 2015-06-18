@@ -1,3 +1,37 @@
+2015-06-18  Jon Lee  <jonlee@apple.com>
+
+        Update AVKit usage of pip
+        https://bugs.webkit.org/show_bug.cgi?id=146095
+        <rdar://problem/21386853>
+
+        Reviewed by Eric Carlson.
+
+        - Rename preference key
+        - Rename shouldAllowAlternateFullscreen to shouldAllowPictureInPictureMediaPlayback
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp: Remove unused preference calls.
+        (WKPreferencesSetAllowsAlternateFullscreen): Deleted.
+        (WKPreferencesGetAllowsAlternateFullscreen): Deleted.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _isShowingVideoPictureInPicture]): Renamed.
+        (-[WKWebView _isShowingVideoOptimized]): Deleted.
+        (-[WKWebView _mayAutomaticallyShowVideoPictureInPicture]): Renamed.
+        (-[WKWebView _mayAutomaticallyShowVideoOptimized]): Deleted.
+        (shouldAllowPictureInPictureMediaPlayback): Renamed.
+        (shouldAllowAlternateFullscreen): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.h: Rename local variables.
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.messages.in:
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::mayAutomaticallyShowVideoPictureInPicture): Renamed.
+        (WebKit::WebVideoFullscreenManagerProxy::mayAutomaticallyShowVideoOptimized): Deleted.
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/ios/WebVideoFullscreenManager.mm:
+
 2015-06-18  Jeremy Jones  <jeremyj@apple.com>
 
         Fix crash when entering fullscreen during exit fullscreen animation.

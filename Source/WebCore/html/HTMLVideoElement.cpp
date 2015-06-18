@@ -369,7 +369,7 @@ bool HTMLVideoElement::webkitSupportsPresentationMode(const String& mode) const
         return mediaSession().fullscreenPermitted(*this) && supportsFullscreen();
 
     if (mode == presentationModePictureInPicture())
-        return wkIsOptimizedFullscreenSupported() && mediaSession().allowsAlternateFullscreen(*this) && supportsFullscreen();
+        return wkIsOptimizedFullscreenSupported() && mediaSession().allowsPictureInPicture(*this) && supportsFullscreen();
 
     if (mode == presentationModeInline())
         return !mediaSession().requiresFullscreenForVideoPlayback(*this);
@@ -392,7 +392,7 @@ void HTMLVideoElement::webkitSetPresentationMode(const String& mode)
     if (mode == presentationModeFullscreen())
         enterFullscreen(VideoFullscreenModeStandard);
     else if (mode == presentationModePictureInPicture())
-        enterFullscreen(VideoFullscreenModeOptimized);
+        enterFullscreen(VideoFullscreenModePictureInPicture);
 }
 
 String HTMLVideoElement::webkitPresentationMode() const
@@ -402,7 +402,7 @@ String HTMLVideoElement::webkitPresentationMode() const
     if (mode == VideoFullscreenModeStandard)
         return presentationModeFullscreen();
 
-    if (mode & VideoFullscreenModeOptimized)
+    if (mode & VideoFullscreenModePictureInPicture)
         return presentationModePictureInPicture();
 
     if (mode == VideoFullscreenModeNone)

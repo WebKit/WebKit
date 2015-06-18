@@ -69,7 +69,7 @@ public:
 #endif
 
     bool requiresFullscreenForVideoPlayback(const HTMLMediaElement&) const;
-    WEBCORE_EXPORT bool allowsAlternateFullscreen(const HTMLMediaElement&) const;
+    WEBCORE_EXPORT bool allowsPictureInPicture(const HTMLMediaElement&) const;
     MediaPlayer::Preload effectivePreloadForElement(const HTMLMediaElement&) const;
 
     void mediaEngineUpdated(const HTMLMediaElement&);

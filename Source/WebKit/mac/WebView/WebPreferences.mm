@@ -546,7 +546,7 @@ public:
 #if ENABLE(WIRELESS_TARGET_PLAYBACK)
         [NSNumber numberWithBool:YES],  WebKitAllowsAirPlayForMediaPlaybackPreferenceKey,
 #endif
-        [NSNumber numberWithBool:YES],  WebKitAllowsAlternateFullscreenPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitAllowsPictureInPictureMediaPlaybackPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitRequestAnimationFrameEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWantsBalancedSetDefersLoadingBehaviorKey,
         [NSNumber numberWithBool:NO],   WebKitDiagnosticLoggingEnabledKey,
@@ -2197,12 +2197,22 @@ static NSString *classIBCreatorID = nil;
 
 - (BOOL)allowsAlternateFullscreen
 {
-    return [self _boolValueForKey:WebKitAllowsAlternateFullscreenPreferenceKey];
+    return [self allowsPictureInPictureMediaPlayback];
 }
 
 - (void)setAllowsAlternateFullscreen:(BOOL)flag
 {
-    [self _setBoolValue:flag forKey:WebKitAllowsAlternateFullscreenPreferenceKey];
+    [self setAllowsPictureInPictureMediaPlayback:flag];
+}
+
+- (BOOL)allowsPictureInPictureMediaPlayback
+{
+    return [self _boolValueForKey:WebKitAllowsPictureInPictureMediaPlaybackPreferenceKey];
+}
+
+- (void)setAllowsPictureInPictureMediaPlayback:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitAllowsPictureInPictureMediaPlaybackPreferenceKey];
 }
 
 - (BOOL)mockScrollbarsEnabled

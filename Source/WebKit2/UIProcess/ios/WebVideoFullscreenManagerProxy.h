@@ -108,7 +108,7 @@ public:
 
     void requestHideAndExitFullscreen();
     bool hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) const;
-    bool mayAutomaticallyShowVideoOptimized() const;
+    bool mayAutomaticallyShowVideoPictureInPicture() const;
 
 private:
     friend class WebVideoFullscreenModelContext;
@@ -123,7 +123,7 @@ private:
     WebCore::WebVideoFullscreenInterfaceAVKit& ensureInterface(uint64_t contextId);
 
     // Messages from WebVideoFullscreenManager
-    void setupFullscreenWithID(uint64_t contextId, uint32_t videoLayerID, const WebCore::IntRect& initialRect, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool allowOptimizedFullscreen);
+    void setupFullscreenWithID(uint64_t contextId, uint32_t videoLayerID, const WebCore::IntRect& initialRect, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicture);
     void resetMediaState(uint64_t contextId);
     void setCurrentTime(uint64_t contextId, double currentTime, double hostTime);
     void setBufferedTime(uint64_t contextId, double bufferedTime);

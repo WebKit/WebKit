@@ -185,10 +185,10 @@ bool PageClientImpl::isViewVisible()
     if (isViewInWindow() && !m_contentView.isBackground)
         return true;
     
-    if ([m_webView _isShowingVideoOptimized])
+    if ([m_webView _isShowingVideoPictureInPicture])
         return true;
     
-    if ([m_webView _mayAutomaticallyShowVideoOptimized])
+    if ([m_webView _mayAutomaticallyShowVideoPictureInPicture])
         return true;
     
     return false;

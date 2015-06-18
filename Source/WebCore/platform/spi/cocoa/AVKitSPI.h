@@ -78,20 +78,18 @@ typedef NS_ENUM(NSInteger, AVPlayerViewControllerExitFullScreenReason) {
     AVPlayerViewControllerExitFullScreenReasonRemoteControlStopEventReceived = 3,
 };
 - (BOOL)playerViewController:(AVPlayerViewController *)playerViewController shouldExitFullScreenWithReason:(AVPlayerViewControllerExitFullScreenReason)reason;
-- (void)playerViewController:(AVPlayerViewController *)playerViewController restoreUserInterfaceForOptimizedFullscreenStopWithCompletionHandler:(void (^)(BOOL restored))completionHandler;
+- (void)playerViewController:(AVPlayerViewController *)playerViewController restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:(void (^)(BOOL restored))completionHandler;
 @end
-
-typedef NSInteger AVPlayerViewControllerOptimizedFullscreenStopReason;
 
 @interface AVPlayerViewController (Details)
 - (instancetype)initWithVideoLayer:(CALayer <AVVideoLayer> *)videoLayer;
 - (void)enterFullScreenAnimated:(BOOL)animated completionHandler:(void (^)(BOOL success, NSError *))completionHandler;
 - (void)exitFullScreenAnimated:(BOOL)animated completionHandler:(void (^)(BOOL success, NSError *))completionHandler;
 
-- (BOOL)isOptimizedFullscreenPossible;
-- (void)startOptimizedFullscreen;
-- (void)stopOptimizedFullscreen;
-- (void)setAllowsOptimizedFullscreen:(BOOL)allowsOptimizedFullscreen;
+- (BOOL)isPictureInPicturePossible;
+- (void)startPictureInPicture;
+- (void)stopPictureInPicture;
+- (void)setAllowsPictureInPicturePlayback:(BOOL)allow;
 
 @property (nonatomic, strong) AVPlayerController *playerController;
 @property (nonatomic, weak) id <AVPlayerViewControllerDelegate> delegate;

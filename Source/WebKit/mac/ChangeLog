@@ -1,3 +1,24 @@
+2015-06-18  Jon Lee  <jonlee@apple.com>
+
+        Update AVKit usage of pip
+        https://bugs.webkit.org/show_bug.cgi?id=146095
+        <rdar://problem/21386853>
+
+        Reviewed by Eric Carlson.
+
+        - Rename preference key
+        - Rename shouldAllowAlternateFullscreen to shouldAllowPictureInPictureMediaPlayback
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences allowsAlternateFullscreen]): Call allowsPictureInPictureMediaPlayback.
+        (-[WebPreferences setAllowsAlternateFullscreen:]):
+        (-[WebPreferences allowsPictureInPictureMediaPlayback]): Added.
+        (-[WebPreferences setAllowsPictureInPictureMediaPlayback:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+
 2015-06-18  Anders Carlsson  <andersca@apple.com>
 
         Remove shouldInterruptJavaScript

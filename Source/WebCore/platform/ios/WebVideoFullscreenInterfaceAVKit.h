@@ -91,7 +91,7 @@ public:
     WEBCORE_EXPORT virtual void setLegibleMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex) override;
     WEBCORE_EXPORT virtual void setExternalPlayback(bool enabled, ExternalPlaybackTargetType, WTF::String localizedDeviceName) override;
     
-    WEBCORE_EXPORT virtual void setupFullscreen(PlatformLayer&, const IntRect& initialRect, UIView *, HTMLMediaElementEnums::VideoFullscreenMode, bool allowOptimizedFullscreen);
+    WEBCORE_EXPORT virtual void setupFullscreen(PlatformLayer&, const IntRect& initialRect, UIView *, HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicturePlayback);
     WEBCORE_EXPORT virtual void enterFullscreen();
     WEBCORE_EXPORT virtual void exitFullscreen(const IntRect& finalRect);
     WEBCORE_EXPORT virtual void cleanupFullscreen();
@@ -100,17 +100,16 @@ public:
     WEBCORE_EXPORT virtual void preparedToReturnToInline(bool visible, const IntRect& inlineRect);
 
     HTMLMediaElementEnums::VideoFullscreenMode mode() const { return m_mode; }
-    bool allowOptimizedFullscreen() const { return m_allowOptimizedFullscreen; }
-    void setIsOptimized(bool);
-    WEBCORE_EXPORT bool mayAutomaticallyShowVideoOptimized() const;
+    bool allowsPictureInPicturePlayback() const { return m_allowsPictureInPicturePlayback; }
+    WEBCORE_EXPORT bool mayAutomaticallyShowVideoPictureInPicture() const;
     void fullscreenMayReturnToInline(std::function<void(bool)> callback);
 
-    void willStartOptimizedFullscreen();
-    void didStartOptimizedFullscreen();
-    void failedToStartOptimizedFullscreen();
-    void willStopOptimizedFullscreen();
-    void didStopOptimizedFullscreen();
-    void prepareForOptimizedFullscreenStopWithCompletionHandler(void (^)(BOOL));
+    void willStartPictureInPicture();
+    void didStartPictureInPicture();
+    void failedToStartPictureInPicture();
+    void willStopPictureInPicture();
+    void didStopPictureInPicture();
+    void prepareForPictureInPictureStopWithCompletionHandler(void (^)(BOOL));
 
     void setMode(HTMLMediaElementEnums::VideoFullscreenMode);
     void clearMode(HTMLMediaElementEnums::VideoFullscreenMode);
@@ -120,7 +119,7 @@ public:
 protected:
     WEBCORE_EXPORT WebVideoFullscreenInterfaceAVKit();
     void beginSession();
-    void enterFullscreenOptimized();
+    void enterPictureInPicture();
     void enterFullscreenStandard();
 
     RetainPtr<WebAVPlayerController> m_playerController;
@@ -138,7 +137,7 @@ protected:
     RetainPtr<UIWindow> m_parentWindow;
     HTMLMediaElementEnums::VideoFullscreenMode m_mode { HTMLMediaElementEnums::VideoFullscreenModeNone };
     std::function<void(bool)> m_prepareToInlineCallback;
-    bool m_allowOptimizedFullscreen { false };
+    bool m_allowsPictureInPicturePlayback { false };
     bool m_exitRequested { false };
     bool m_exitCompleted { false };
     bool m_enterRequested { false };

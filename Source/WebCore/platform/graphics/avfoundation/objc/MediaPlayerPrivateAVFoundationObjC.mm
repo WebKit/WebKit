@@ -693,8 +693,8 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
         [m_videoInlineLayer insertSublayer:m_videoLayer.get() atIndex:0];
         [m_videoLayer setFrame:m_videoInlineLayer.get().bounds];
     }
-    if ([m_videoLayer respondsToSelector:@selector(setEnterOptimizedFullscreenModeEnabled:)])
-        [m_videoLayer setEnterOptimizedFullscreenModeEnabled:(player()->fullscreenMode() & MediaPlayer::VideoFullscreenModeOptimized)];
+    if ([m_videoLayer respondsToSelector:@selector(setPIPModeEnabled:)])
+        [m_videoLayer setPIPModeEnabled:(player()->fullscreenMode() & MediaPlayer::VideoFullscreenModePictureInPicture)];
 #else
     [m_videoLayer setFrame:CGRectMake(0, 0, defaultSize.width(), defaultSize.height())];
 #endif
@@ -1186,8 +1186,8 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenGravity(MediaPlayer::
 
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode mode)
 {
-    if (m_videoLayer && [m_videoLayer respondsToSelector:@selector(setEnterOptimizedFullscreenModeEnabled:)])
-        [m_videoLayer setEnterOptimizedFullscreenModeEnabled:(mode & MediaPlayer::VideoFullscreenModeOptimized)];
+    if (m_videoLayer && [m_videoLayer respondsToSelector:@selector(setPIPModeEnabled:)])
+        [m_videoLayer setPIPModeEnabled:(mode & MediaPlayer::VideoFullscreenModePictureInPicture)];
 }
 
 NSArray *MediaPlayerPrivateAVFoundationObjC::timedMetadata() const

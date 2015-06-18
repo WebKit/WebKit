@@ -379,10 +379,10 @@ void MediaElementSession::mediaEngineUpdated(const HTMLMediaElement& element)
     
 }
 
-bool MediaElementSession::allowsAlternateFullscreen(const HTMLMediaElement& element) const
+bool MediaElementSession::allowsPictureInPicture(const HTMLMediaElement& element) const
 {
     Settings* settings = element.document().settings();
-    return settings && settings->allowsAlternateFullscreen();
+    return settings && settings->allowsPictureInPictureMediaPlayback();
 }
 
 #if ENABLE(MEDIA_SOURCE)
