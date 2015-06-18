@@ -123,12 +123,11 @@ static const char* gSoupRequestInitiatingPageIDKey = "wk-soup-request-initiating
 
 void ResourceRequest::updateSoupRequest(SoupRequest* soupRequest) const
 {
-    if (!m_initiatingPageID)
-        return;
-
-    uint64_t* initiatingPageIDPtr = static_cast<uint64_t*>(fastMalloc(sizeof(uint64_t)));
-    *initiatingPageIDPtr = m_initiatingPageID;
-    g_object_set_data_full(G_OBJECT(soupRequest), g_intern_static_string(gSoupRequestInitiatingPageIDKey), initiatingPageIDPtr, fastFree);
+    if (m_initiatingPageID) {
+        uint64_t* initiatingPageIDPtr = static_cast<uint64_t*>(fastMalloc(sizeof(uint64_t)));
+        *initiatingPageIDPtr = m_initiatingPageID;
+        g_object_set_data_full(G_OBJECT(soupRequest), g_intern_static_string(gSoupRequestInitiatingPageIDKey), initiatingPageIDPtr, fastFree);
+    }
 
     if (WEBKIT_IS_SOUP_REQUEST_GENERIC(soupRequest))
         webkitSoupRequestGenericSetRequest(WEBKIT_SOUP_REQUEST_GENERIC(soupRequest), *this);
