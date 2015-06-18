@@ -8,10 +8,10 @@ PASS read() should never settle
 PASS two read()s should both never settle 
 PASS read() should return distinct promises each time 
 PASS getReader() again on the stream should fail 
-FAIL releasing the lock with pending read requests should throw but the read requests should stay pending releaseLock is not implemented
-FAIL releasing the lock should cause further read() calls to resolve as if the stream is closed releaseLock is not implemented
-FAIL releasing the lock should cause closed to fulfill releaseLock is not implemented
-FAIL releasing the lock should cause locked to become false releaseLock is not implemented
+FAIL releasing the lock with pending read requests should throw but the read requests should stay pending Type error
+PASS releasing the lock should cause further read() calls to resolve as if the stream is closed 
+PASS releasing the lock should cause closed to fulfill 
+PASS releasing the lock should cause locked to become false 
 FAIL canceling via the reader should cause the reader to act closed cancel is not implemented
 FAIL canceling via the stream should fail cancel is not implemented
 PASS Running templatedRSClosed with ReadableStream (closed via call in start) 
@@ -54,7 +54,7 @@ PASS Running templatedRSTwoChunksClosedReader with ReadableStream (two chunks en
 PASS third read(), without waiting, should give { value: undefined, done: true } 
 PASS third read, with waiting, should give { value: undefined, done: true } 
 PASS draining the stream via read() should cause the reader closed promise to fulfill and locked to be false 
-FAIL releasing the lock after the stream is closed should do nothing releaseLock is not implemented
-FAIL releasing the lock should cause read() to act as if the stream is closed releaseLock is not implemented
-FAIL reader's closed property always returns the same promise releaseLock is not implemented
+PASS releasing the lock after the stream is closed should do nothing 
+PASS releasing the lock should cause read() to act as if the stream is closed 
+PASS reader's closed property always returns the same promise 
 

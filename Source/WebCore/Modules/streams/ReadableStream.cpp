@@ -79,10 +79,11 @@ void ReadableStream::changeStateToClosed()
 void ReadableStream::close()
 {
     m_state = State::Closed;
+    releaseReader();
+}
 
-    if (m_reader)
-        m_releasedReaders.append(WTF::move(m_reader));
-
+void ReadableStream::releaseReader()
+{
     if (m_closedSuccessCallback)
         m_closedSuccessCallback();
 
@@ -90,6 +91,8 @@ void ReadableStream::close()
         request.endCallback();
 
     clearCallbacks();
+    if (m_reader)
+        m_releasedReaders.append(WTF::move(m_reader));
 }
 
 void ReadableStream::changeStateToErrored()
@@ -97,9 +100,6 @@ void ReadableStream::changeStateToErrored()
     if (m_state != State::Readable)
         return;
     m_state = State::Errored;
-
-    if (m_reader)
-        m_releasedReaders.append(WTF::move(m_reader));
 
     JSC::JSValue error = this->error();
     if (m_closedFailureCallback)
@@ -109,6 +109,8 @@ void ReadableStream::changeStateToErrored()
         request.failureCallback(error);
 
     clearCallbacks();
+    if (m_reader)
+        releaseReader();
 }
 
 void ReadableStream::start()

@@ -30,6 +30,7 @@
 #include "config.h"
 #include "ReadableStreamReader.h"
 
+#include "ExceptionCode.h"
 #include <runtime/JSCJSValueInlines.h>
 
 #if ENABLE(STREAMS_API)
@@ -52,6 +53,17 @@ void ReadableStreamReader::read(ReadableStream::ReadSuccessCallback&& successCal
         return;
     }
     m_stream.read(WTF::move(successCallback), WTF::move(endCallback), WTF::move(failureCallback));
+}
+
+void ReadableStreamReader::releaseLock(ExceptionCode& ec)
+{
+    if (m_stream.reader() != this)
+        return;
+    if (m_stream.hasReadPendingRequests()) {
+        ec = TypeError;
+        return;
+    }
+    m_stream.releaseReader();
 }
 
 }

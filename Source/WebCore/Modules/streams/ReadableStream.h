@@ -67,6 +67,9 @@ public:
 
     bool locked() const { return !!m_reader; }
 
+    void releaseReader();
+    bool hasReadPendingRequests() { return !m_readRequests.isEmpty(); }
+
     bool isErrored() const { return m_state == State::Errored; }
     bool isReadable() const { return m_state == State::Readable; }
     bool isCloseRequested() const { return m_closeRequested; }

@@ -92,12 +92,6 @@ JSValue JSReadableStreamReader::cancel(ExecState* exec)
     return exec->vm().throwException(exec, error);
 }
 
-JSValue JSReadableStreamReader::releaseLock(ExecState* exec)
-{
-    JSValue error = createError(exec, ASCIILiteral("releaseLock is not implemented"));
-    return exec->vm().throwException(exec, error);
-}
-
 EncodedJSValue JSC_HOST_CALL constructJSReadableStreamReader(ExecState* exec)
 {
     if (!exec->argumentCount())

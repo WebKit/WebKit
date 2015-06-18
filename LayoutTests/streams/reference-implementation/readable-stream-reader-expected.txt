@@ -12,10 +12,10 @@ PASS Constructing a ReadableStreamReader directly should be OK if the stream is 
 PASS Reading from a reader for an empty stream will wait until a chunk is available 
 FAIL cancel() on a reader releases the reader before calling through cancel is not implemented
 PASS closed should be fulfilled after stream is closed (.closed access before acquiring) 
-FAIL closed should be fulfilled after reader releases its lock (multiple stream locks) releaseLock is not implemented
-FAIL Multiple readers can access the stream in sequence releaseLock is not implemented
-FAIL Cannot use an already-released reader to unlock a stream again releaseLock is not implemented
-FAIL cancel() on a released reader is a no-op and does not pass through releaseLock is not implemented
+PASS closed should be fulfilled after reader releases its lock (multiple stream locks) 
+PASS Multiple readers can access the stream in sequence 
+PASS Cannot use an already-released reader to unlock a stream again 
+FAIL cancel() on a released reader is a no-op and does not pass through cancel is not implemented
 PASS Getting a second reader after erroring the stream should succeed 
 PASS Garbage-collecting a ReadableStreamReader should not unlock its stream 
 
