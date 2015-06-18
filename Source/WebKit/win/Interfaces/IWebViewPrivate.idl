@@ -295,4 +295,6 @@ interface IWebViewPrivate : IUnknown
     HRESULT setLoadResourcesSerially([in] BOOL serialize);
 
     HRESULT scaleWebView([in] double scale, [in] POINT origin);
+
+    HRESULT dispatchPendingLoadRequests();
 }

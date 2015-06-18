@@ -135,9 +135,6 @@ fast/history/page-cache-notification-suspendable.html [ Skip ]
 # TODO DumpRenderTree code to enable Java is currently a no-op. Windows doesn't come with Java by default.
 java/ [ Skip ]
 
-# TODO Implement testRunner.dispatchPendingLoadRequests
-webkit.org/b/26481 http/tests/loading/deleted-host-in-resource-load-delegate-callback.html [ Skip ]
-
 # TODO No support for print-to-pdf in Windows DRT
 printing/compositing-layer-printing.html [ Skip ]
 printing/media-queries-print.html [ Skip ]

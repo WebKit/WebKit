@@ -1021,6 +1021,7 @@ private:
 
     HRESULT STDMETHODCALLTYPE setLoadResourcesSerially(BOOL);
     HRESULT STDMETHODCALLTYPE scaleWebView(double scale, POINT origin);
+    HRESULT STDMETHODCALLTYPE dispatchPendingLoadRequests();
 
 protected:
     static bool registerWebViewWindowClass();

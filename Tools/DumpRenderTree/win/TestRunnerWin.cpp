@@ -812,8 +812,15 @@ void TestRunner::setViewModeMediaFeature(JSStringRef mode)
 
 void TestRunner::dispatchPendingLoadRequests()
 {
-    // FIXME: Implement for testing fix for 6727495
-    printf("ERROR: TestRunner::dispatchPendingLoadRequests() not implemented\n");
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebViewPrivate> viewPrivate;
+    if (FAILED(webView->QueryInterface(&viewPrivate)))
+        return;
+
+    viewPrivate->dispatchPendingLoadRequests();
 }
 
 void TestRunner::overridePreference(JSStringRef key, JSStringRef value)

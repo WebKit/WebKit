@@ -1,3 +1,16 @@
+2015-06-17  Hyungwook Lee  <hyungwook.lee@navercorp.com>
+
+        [Win]Implement layoutTestController.dispatchPendingLoadRequests. 
+        https://bugs.webkit.org/show_bug.cgi?id=26481
+
+        Reviewed by Darin Adler.
+
+        Implement WebView::dispatchPendingLoadRequests() private API for test runner.
+
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::dispatchPendingLoadRequests):
+        (TestRunner::overridePreference):
+
 2015-06-17  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Fail to parse invalid arrays

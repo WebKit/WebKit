@@ -7126,3 +7126,9 @@ HRESULT WebView::scaleWebView(double scale, POINT origin)
 
     return S_OK;
 }
+
+HRESULT WebView::dispatchPendingLoadRequests()
+{
+    resourceLoadScheduler()->servePendingRequests();
+    return S_OK;
+}

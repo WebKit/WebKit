@@ -1,3 +1,14 @@
+2015-06-17  Hyungwook Lee  <hyungwook.lee@navercorp.com>
+
+        [Win]Implement layoutTestController.dispatchPendingLoadRequests.
+        https://bugs.webkit.org/show_bug.cgi?id=26481
+
+        Reviewed by Darin Adler.
+
+        Implement WebView::dispatchPendingLoadRequests() private API for test runner.
+
+        * platform/win/TestExpectations:
+
 2015-06-17  Chris Fleizach  <cfleizach@apple.com>
 
         AX: VoiceOver in iOS not announcing generic WAI-ARIA region, even if labelled properly
