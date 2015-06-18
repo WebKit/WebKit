@@ -161,12 +161,38 @@ static inline int nextBreakablePositionLoosely(LazyLineBreakIterator& lazyBreakI
     return len;
 }
 
-inline int nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, int pos)
+template<typename CharacterType, NBSPBehavior nbspBehavior>
+inline unsigned nextBreakablePositionKeepingAllWords(const CharacterType* string, unsigned length, unsigned startPosition)
+{
+    for (unsigned i = startPosition; i < length; i++) {
+        if (isBreakableSpace<nbspBehavior>(string[i]))
+            return i;
+    }
+    return length;
+}
+
+inline unsigned nextBreakablePositionKeepingAllWords(LazyLineBreakIterator& lazyBreakIterator, int startPosition)
 {
     String string = lazyBreakIterator.string();
     if (string.is8Bit())
-        return nextBreakablePositionNonLoosely<LChar, NBSPBehavior::TreatNBSPAsBreak>(lazyBreakIterator, string.characters8(), string.length(), pos);
-    return nextBreakablePositionNonLoosely<UChar, NBSPBehavior::TreatNBSPAsBreak>(lazyBreakIterator, string.characters16(), string.length(), pos);
+        return nextBreakablePositionKeepingAllWords<LChar, NBSPBehavior::TreatNBSPAsBreak>(string.characters8(), string.length(), startPosition);
+    return nextBreakablePositionKeepingAllWords<UChar, NBSPBehavior::TreatNBSPAsBreak>(string.characters16(), string.length(), startPosition);
+}
+
+inline unsigned nextBreakablePositionKeepingAllWordsIgnoringNBSP(LazyLineBreakIterator& iterator, int startPosition)
+{
+    String string = iterator.string();
+    if (string.is8Bit())
+        return nextBreakablePositionKeepingAllWords<LChar, NBSPBehavior::IgnoreNBSP>(string.characters8(), string.length(), startPosition);
+    return nextBreakablePositionKeepingAllWords<UChar, NBSPBehavior::IgnoreNBSP>(string.characters16(), string.length(), startPosition);
+}
+
+inline int nextBreakablePosition(LazyLineBreakIterator& iterator, int pos)
+{
+    String string = iterator.string();
+    if (string.is8Bit())
+        return nextBreakablePositionNonLoosely<LChar, NBSPBehavior::TreatNBSPAsBreak>(iterator, string.characters8(), string.length(), pos);
+    return nextBreakablePositionNonLoosely<UChar, NBSPBehavior::TreatNBSPAsBreak>(iterator, string.characters16(), string.length(), pos);
 }
 
 inline int nextBreakablePositionIgnoringNBSP(LazyLineBreakIterator& lazyBreakIterator, int pos)
@@ -193,12 +219,17 @@ inline int nextBreakablePositionIgnoringNBSPLoose(LazyLineBreakIterator& lazyBre
     return nextBreakablePositionLoosely<UChar, NBSPBehavior::IgnoreNBSP>(lazyBreakIterator, string.characters16(), string.length(), pos);
 }
 
-inline bool isBreakable(LazyLineBreakIterator& lazyBreakIterator, int pos, int& nextBreakable, bool breakNBSP, bool isLooseMode)
+inline bool isBreakable(LazyLineBreakIterator& lazyBreakIterator, int pos, int& nextBreakable, bool breakNBSP, bool isLooseMode, bool keepAllWords)
 {
     if (pos <= nextBreakable)
         return pos == nextBreakable;
 
-    if (isLooseMode) {
+    if (keepAllWords) {
+        if (breakNBSP)
+            nextBreakable = static_cast<int>(nextBreakablePositionKeepingAllWords(lazyBreakIterator, pos));
+        else
+            nextBreakable = static_cast<int>(nextBreakablePositionKeepingAllWordsIgnoringNBSP(lazyBreakIterator, pos));
+    } else if (isLooseMode) {
         if (breakNBSP)
             nextBreakable = nextBreakablePositionLoose(lazyBreakIterator, pos);
         else

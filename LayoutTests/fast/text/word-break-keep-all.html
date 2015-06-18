@@ -1,0 +1,15 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style>
+div{width:150px;border:2px solid black;}
+</style>
+</head>
+<body>
+This test checks whether word-break:keep-all keeps the words
+
+<p>On the next line, lines should break between any two Korean syllables (word-break: normal)</p>
+<div style="word-break: normal;">각 줄의 마지막에 한글이 올 때 줄 나눔 기준을 글자 또는 어절 단위로 한다.</div>
+
+<p>On the next line, lines should break only at spaces like English (word-break: keep-all)<p> 
+<div style="word-break: keep-all;">각 줄의 마지막에 한글이 올 때 줄 나눔 기준을 글자 또는 어절 단위로 한다.</div>

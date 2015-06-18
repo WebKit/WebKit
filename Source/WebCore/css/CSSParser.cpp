@@ -1029,8 +1029,8 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueNormal || valueID == CSSValuePre || valueID == CSSValuePreWrap || valueID == CSSValuePreLine || valueID == CSSValueNowrap)
             return true;
         break;
-    case CSSPropertyWordBreak: // normal | break-all | break-word (this is a custom extension)
-        if (valueID == CSSValueNormal || valueID == CSSValueBreakAll || valueID == CSSValueBreakWord)
+    case CSSPropertyWordBreak: // normal | break-all | keep-all | break-word (this is a custom extension)
+        if (valueID == CSSValueNormal || valueID == CSSValueBreakAll || valueID == CSSValueKeepAll || valueID == CSSValueBreakWord)
             return true;
         break;
 #if ENABLE(CSS_TRAILING_WORD)

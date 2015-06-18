@@ -680,6 +680,7 @@ skip-white-space
 // CSS_PROP_WORD_BREAK
 //
 break-all
+keep-all
 
 //
 // CSS_PROP_WORD_WRAP

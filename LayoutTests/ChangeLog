@@ -1,3 +1,14 @@
+2015-06-18  KyungTae Kim  <ktf.kim@samsung.com> and Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [CSS3] Add support for the word-break:keep-all CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=123782
+
+        Reviewed by Darin Adler.
+
+        * fast/text/word-break-keep-all.html: Added.
+        * platform/mac/fast/text/word-break-keep-all-expected.png: Added.
+        * platform/mac/fast/text/word-break-keep-all-expected.txt: Added.
+
 2015-06-18  Conrad Shultz  <conrad_shultz@apple.com>
 
         REGRESSION: js/dom/navigator-plugins-crash.html asserts a lot
