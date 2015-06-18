@@ -1183,12 +1183,6 @@
     IMPL->any(a, b);
 }
 
-- (DOMPromise *)testPromiseFunction
-{
-    WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->testPromiseFunction()));
-}
-
 @end
 
 WebCore::TestObj* core(DOMTestObj *wrapper)

@@ -362,6 +362,10 @@ sub SkipFunction {
         return 1;
     }
 
+    if ($function->signature->type eq "Promise") {
+        return 1;
+    }
+
     return 0;
 }
 

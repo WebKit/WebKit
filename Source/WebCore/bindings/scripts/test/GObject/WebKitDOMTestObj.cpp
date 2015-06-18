@@ -33,7 +33,6 @@
 #include "WebKitDOMDocumentPrivate.h"
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
-#include "WebKitDOMPromisePrivate.h"
 #include "WebKitDOMSVGPointPrivate.h"
 #include "WebKitDOMTestEnumTypePrivate.h"
 #include "WebKitDOMTestNodePrivate.h"
@@ -1550,15 +1549,6 @@ void webkit_dom_test_obj_any(WebKitDOMTestObj* self, gfloat a, glong b)
     g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
     WebCore::TestObj* item = WebKit::core(self);
     item->any(a, b);
-}
-
-WebKitDOMPromise* webkit_dom_test_obj_test_promise_function(WebKitDOMTestObj* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
-    WebCore::TestObj* item = WebKit::core(self);
-    RefPtr<WebCore::Promise> gobjectResult = WTF::getPtr(item->testPromiseFunction());
-    return WebKit::kit(gobjectResult.get());
 }
 
 glong webkit_dom_test_obj_get_read_only_long_attr(WebKitDOMTestObj* self)
