@@ -1,3 +1,30 @@
+2015-06-18  Mark Lam  <mark.lam@apple.com>
+
+        Refactor CheckedArithmeticOperations.cpp to use templates instead of macros.
+        https://bugs.webkit.org/show_bug.cgi?id=146103
+
+        Reviewed by Anders Carlsson.
+
+        Presently, the tests in CheckedArithmeticOperations.cpp are all implemented as
+        part of a large macro.  This makes them harder to:
+
+        1. write: no editor help with indentations, have to add trailing '\'s,
+           inconvenient to add line breaks and comments.
+
+        2. read: no chroma coding / syntax highlighting.
+
+        3. debug: compile time errors are reported as being on the single line where
+           the macro is used.
+
+        Refactoring the tests to use C++ templates solves all these issues.
+
+        * TestWebKitAPI/Tests/WTF/CheckedArithmeticOperations.cpp:
+        (TestWebKitAPI::CheckedArithmeticTester::run):
+        (TestWebKitAPI::AllowMixedSignednessTest::run):
+        (TestWebKitAPI::IgnoreMixedSignednessTest::run):
+        (TestWebKitAPI::CoerceLiteralToUnsigned::coerce):
+        (TestWebKitAPI::CoerceLiteralNop::coerce):
+
 2015-06-18  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [EFL][WK2] Use Web Browser cache model in MiniBrowser
