@@ -1,3 +1,18 @@
+2015-06-17  Tim Horton  <timothy_horton@apple.com>
+
+        Swipe gesture can get stuck, preventing scrolling and other gestures
+        https://bugs.webkit.org/show_bug.cgi?id=146088
+        <rdar://problem/16056087>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::trackSwipeGesture):
+        Ignore mouse events that come in while we're doing a swipe.
+        This prevents potentially problematic mouse events (especially context menus)
+        won't be processed during a swipe, avoiding situations that can cause
+        the swipe gesture to get stuck.
+
 2015-06-17  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         Remove willSendEventToPlugin() from PluginController.h.
