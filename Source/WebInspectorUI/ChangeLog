@@ -1,3 +1,17 @@
+2015-06-18  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r185671.
+        https://bugs.webkit.org/show_bug.cgi?id=146114
+
+        Caused frequent flaky failures on profiler tests (Requested by
+        ap on #webkit).
+
+        Reverted changeset:
+
+        "Web Inspector: Improve a few more node preview types"
+        https://bugs.webkit.org/show_bug.cgi?id=146048
+        http://trac.webkit.org/changeset/185671
+
 2015-06-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve a few more node preview types
