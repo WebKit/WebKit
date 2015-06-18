@@ -131,18 +131,20 @@ static std::error_code loadTrigger(ExecState& exec, JSObject& ruleObject, Trigge
         trigger.urlFilterIsCaseSensitive = urlFilterCaseValue.toBoolean(&exec);
 
     JSValue resourceTypeValue = triggerObject.get(&exec, Identifier::fromString(&exec, "resource-type"));
-    if (resourceTypeValue && !exec.hadException()) {
+    if (!exec.hadException() && resourceTypeValue.isObject()) {
         auto typeFlagsError = getTypeFlags(exec, resourceTypeValue, trigger.flags, readResourceType);
         if (typeFlagsError)
             return typeFlagsError;
-    }
+    } else if (!resourceTypeValue.isUndefined())
+        return ContentExtensionError::JSONInvalidTriggerFlagsArray;
 
     JSValue loadTypeValue = triggerObject.get(&exec, Identifier::fromString(&exec, "load-type"));
-    if (loadTypeValue && !exec.hadException()) {
+    if (!exec.hadException() && loadTypeValue.isObject()) {
         auto typeFlagsError = getTypeFlags(exec, loadTypeValue, trigger.flags, readLoadType);
         if (typeFlagsError)
             return typeFlagsError;
-    }
+    } else if (!loadTypeValue.isUndefined())
+        return ContentExtensionError::JSONInvalidTriggerFlagsArray;
 
     JSValue ifDomain = triggerObject.get(&exec, Identifier::fromString(&exec, "if-domain"));
     if (!exec.hadException() && ifDomain.isObject()) {
@@ -153,7 +155,8 @@ static std::error_code loadTrigger(ExecState& exec, JSObject& ruleObject, Trigge
             return ContentExtensionError::JSONInvalidDomainList;
         ASSERT(trigger.domainCondition == Trigger::DomainCondition::None);
         trigger.domainCondition = Trigger::DomainCondition::IfDomain;
-    }
+    } else if (!ifDomain.isUndefined())
+        return ContentExtensionError::JSONInvalidDomainList;
     
     JSValue unlessDomain = triggerObject.get(&exec, Identifier::fromString(&exec, "unless-domain"));
     if (!exec.hadException() && unlessDomain.isObject()) {
@@ -165,7 +168,8 @@ static std::error_code loadTrigger(ExecState& exec, JSObject& ruleObject, Trigge
         if (trigger.domains.isEmpty())
             return ContentExtensionError::JSONInvalidDomainList;
         trigger.domainCondition = Trigger::DomainCondition::UnlessDomain;
-    }
+    } else if (!unlessDomain.isUndefined())
+        return ContentExtensionError::JSONInvalidDomainList;
 
     return { };
 }

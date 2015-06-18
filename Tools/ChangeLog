@@ -1,3 +1,15 @@
+2015-06-17  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Fail to parse invalid arrays
+        https://bugs.webkit.org/show_bug.cgi?id=146079
+        rdar://problem/21422649
+
+        Reviewed by Benjamin Poulain.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::TEST_F):
+        Correct and add parsing tests with invalid arrays.
+
 2015-06-17  Matt Rajca  <mrajca@apple.com>
 
         Unreviewed. Added myself as a committer.
