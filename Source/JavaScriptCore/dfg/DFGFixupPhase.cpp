@@ -1482,8 +1482,12 @@ private:
                 m_indexInBlock, SpecString, ToString, node->origin, Edge(toPrimitive));
             
             fixupToPrimitive(toPrimitive);
-            fixupToStringOrCallStringConstructor(toString);
-            
+
+            // Don't fix up ToString. ToString and ToPrimitive are originated from the same bytecode and
+            // ToPrimitive may have an observable side effect. ToString should not be converted into Check
+            // with speculative type check because OSR exit reproduce an observable side effect done in
+            // ToPrimitive.
+
             right.setNode(toString);
         }
         

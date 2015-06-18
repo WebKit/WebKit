@@ -1,3 +1,34 @@
+2015-06-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Avoid OSR exit in the middle of string concatenation
+        https://bugs.webkit.org/show_bug.cgi?id=145820
+
+        Reviewed by Filip Pizlo.
+
+        DFG attempt to compile ValueAdd with String type into MakeRope(left, ToString(ToPrimitive(right))).
+
+        So when right is speculated as SpecObject, ToPrimitive(SpecObject) is speculated as SpecString.
+        It leads ToString to become Identity with a speculated type check.
+
+        However, ToPrimitive and ToString are originated from the same bytecode. And ToPrimitive may have
+        an observable side effect when the given parameter is an object (calling object.{toString,valueOf}).
+
+        So when object.toString() returns a number (it is allowed in the ES spec), ToPrimitive performs
+        observable `object.toString()` calling. But ToString is converted into a speculated type check for
+        SpecString and it raises OSR exit. And we exit to the original ValueAdd's bytecode position and
+        it redundantly performs an observable ToPrimitive execution.
+
+        To fix this, this patch avoid fixing up for newly introduced ToString node.
+        Since fix up phase is not iterated repeatedly, by avoiding fixing up when generating the node,
+        we can avoid conversion from ToString to Check.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::attemptToMakeFastStringAdd):
+        * tests/stress/toprimitive-speculated-types.js: Added.
+        (shouldBe):
+        (raw):
+        (Counter):
+
 2015-06-18  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: improve generated types for objects passed to backend commands
