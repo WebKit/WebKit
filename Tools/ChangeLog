@@ -1,3 +1,9 @@
+2015-06-18  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed. Add Matt Daiter as a contributor.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2015-06-18  Mark Lam  <mark.lam@apple.com>
 
         Refactor CheckedArithmeticOperations.cpp to use templates instead of macros.
