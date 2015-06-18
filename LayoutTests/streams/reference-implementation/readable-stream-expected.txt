@@ -9,7 +9,7 @@ FAIL ReadableStream start should be called with the proper parameters assert_arr
 FAIL ReadableStream start controller parameter should be extensible assert_array_equals: prototype should have the right properties lengths differ, expected 5 got 4
 PASS ReadableStream should be able to call start method within prototype chain of its source 
 PASS ReadableStream start should be able to return a promise 
-TIMEOUT ReadableStream start should be able to return a promise and reject it Test timed out
+PASS ReadableStream start should be able to return a promise and reject it 
 PASS ReadableStream should be able to enqueue different objects. 
 PASS ReadableStream: if pull rejects, it should error the stream 
 PASS ReadableStream: should only call pull once upon starting the stream 

@@ -1,3 +1,13 @@
+2015-06-18  Youenn Fablet <youenn.fablet@crf.canon.fr> and Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [Streams API] Rejected start promise test does not timeout anymore
+        https://bugs.webkit.org/show_bug.cgi?id=146065
+
+        Reviewed by Darin Adler.
+
+        * streams/reference-implementation/readable-stream-expected.txt: Updated expectations to PASS.
+        * streams/reference-implementation/readable-stream.html: Removed timeout
+
 2015-06-17  Hyungwook Lee  <hyungwook.lee@navercorp.com>
 
         [Win]Implement layoutTestController.dispatchPendingLoadRequests.
