@@ -1,3 +1,14 @@
+2015-06-18  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Remove redundant Chromium bug keyword
+        https://bugs.webkit.org/show_bug.cgi?id=146097
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser._parse_modifiers): Remove BUGCR for TestExpectations.
+        (TestExpectationLine._format_line): Deleted.
+
 2015-06-17  Daniel Bates  <dabates@apple.com>
 
         Client may receive began editing callback for already focused text field
