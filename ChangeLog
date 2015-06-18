@@ -1,3 +1,12 @@
+2015-06-18  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Use SET_AND_EXPOSE_TO_BUILD instead of definitions
+        https://bugs.webkit.org/show_bug.cgi?id=146108
+
+        Reviewed by Gyuyoung Kim.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2015-06-16  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [EFL] Remove duplicated PUBLIC argument in OptionsEfl.cmake
