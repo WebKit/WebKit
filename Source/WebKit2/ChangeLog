@@ -1,3 +1,16 @@
+2015-06-17  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Also turn off long press on link preview.
+        https://bugs.webkit.org/show_bug.cgi?id=146084
+
+        Also turn off long presss gesture when previewing. Turn that back on when preview is completed.
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView willPresentPreviewViewController:forPosition:inSourceView:]):
+        (-[WKContentView didDismissPreviewViewController:committing:]):
+
 2015-06-17  Brent Fulgham  <bfulgham@apple.com>
 
         Overflow regions with scroll snap points are not reliably rubber banding
