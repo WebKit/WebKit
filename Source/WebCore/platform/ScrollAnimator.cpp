@@ -33,6 +33,7 @@
 #include "ScrollAnimator.h"
 
 #include "FloatPoint.h"
+#include "LayoutSize.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollableArea.h"
 #include <algorithm>
@@ -212,6 +213,11 @@ void ScrollAnimator::immediateScrollOnAxis(ScrollEventAxis axis, float delta)
         scrollToOffsetWithoutAnimation(FloatPoint(currentPosition.x() + delta, currentPosition.y()));
     else
         scrollToOffsetWithoutAnimation(FloatPoint(currentPosition.x(), currentPosition.y() + delta));
+}
+
+LayoutSize ScrollAnimator::scrollExtent() const
+{
+    return m_scrollableArea.contentsSize();
 }
 #endif
 

@@ -135,6 +135,7 @@ public:
     void immediateScrollOnAxis(ScrollEventAxis, float delta) override;
     bool activeScrollSnapIndexDidChange() const;
     unsigned activeScrollSnapIndexForAxis(ScrollEventAxis) const;
+    LayoutSize scrollExtent() const override;
 #endif
 
 protected:

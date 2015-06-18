@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ScrollController.h"
 
+#include "LayoutSize.h"
 #include "PlatformWheelEvent.h"
 #include "WebCoreSystemInterface.h"
 #include "WheelEventTestTrigger.h"
@@ -752,18 +753,24 @@ void ScrollController::beginScrollSnapAnimation(ScrollEventAxis axis, ScrollSnap
 
     LayoutUnit offset = m_client.scrollOffsetOnAxis(axis);
     float initialWheelDelta = newState == ScrollSnapState::Gliding ? snapState.averageInitialWheelDelta() : 0;
-    LayoutUnit projectedScrollDestination = newState == ScrollSnapState::Gliding ? snapState.m_beginTrackingWheelDeltaOffset + LayoutUnit(projectedInertialScrollDistance(initialWheelDelta)) : offset;
+    LayoutUnit scaledProjectedScrollDestination = newState == ScrollSnapState::Gliding ? snapState.m_beginTrackingWheelDeltaOffset + LayoutUnit(projectedInertialScrollDistance(initialWheelDelta)) : offset;
     if (snapState.m_snapOffsets.isEmpty())
         return;
 
     float scaleFactor = m_client.pageScaleFactor();
+    LayoutUnit originalProjectedScrollDestination = scaledProjectedScrollDestination / scaleFactor;
     
-    projectedScrollDestination = std::min(std::max(LayoutUnit(projectedScrollDestination / scaleFactor), snapState.m_snapOffsets.first()), snapState.m_snapOffsets.last());
+    LayoutUnit clampedScrollDestination = std::min(std::max(originalProjectedScrollDestination, snapState.m_snapOffsets.first()), snapState.m_snapOffsets.last());
     snapState.m_initialOffset = offset;
     m_activeScrollSnapIndexDidChange = false;
-    snapState.m_targetOffset = scaleFactor * closestSnapOffset<LayoutUnit, float>(snapState.m_snapOffsets, projectedScrollDestination, initialWheelDelta, snapState.m_activeSnapIndex);
+    snapState.m_targetOffset = scaleFactor * closestSnapOffset<LayoutUnit, float>(snapState.m_snapOffsets, clampedScrollDestination, initialWheelDelta, snapState.m_activeSnapIndex);
     if (snapState.m_initialOffset == snapState.m_targetOffset)
         return;
+
+    LayoutUnit scrollExtent = (axis == ScrollEventAxis::Horizontal) ? m_client.scrollExtent().width() : m_client.scrollExtent().height();
+    LayoutUnit projectedScrollDestination = clampedScrollDestination;
+    if (originalProjectedScrollDestination < 0 || originalProjectedScrollDestination > scrollExtent)
+        projectedScrollDestination = originalProjectedScrollDestination;
     
     m_activeScrollSnapIndexDidChange = true;
     snapState.m_currentState = newState;

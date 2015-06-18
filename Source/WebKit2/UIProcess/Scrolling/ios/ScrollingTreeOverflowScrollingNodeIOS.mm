@@ -80,11 +80,14 @@ using namespace WebCore;
 #if ENABLE(CSS_SCROLL_SNAP)
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
 {
+    CGFloat horizontalTarget = targetContentOffset->x;
+    CGFloat verticalTarget = targetContentOffset->y;
+
     unsigned ignore;
-    if (!_scrollingTreeNode->horizontalSnapOffsets().isEmpty())
-        targetContentOffset->x = closestSnapOffset<float, CGFloat>(_scrollingTreeNode->horizontalSnapOffsets(), targetContentOffset->x, velocity.x, ignore);
-    if (!_scrollingTreeNode->verticalSnapOffsets().isEmpty())
-        targetContentOffset->y = closestSnapOffset<float, CGFloat>(_scrollingTreeNode->verticalSnapOffsets(), targetContentOffset->y, velocity.y, ignore);
+    if (!_scrollingTreeNode->horizontalSnapOffsets().isEmpty() && horizontalTarget >= 0 && horizontalTarget <= scrollView.contentSize.width)
+        targetContentOffset->x = closestSnapOffset<float, CGFloat>(_scrollingTreeNode->horizontalSnapOffsets(), horizontalTarget, velocity.x, ignore);
+    if (!_scrollingTreeNode->verticalSnapOffsets().isEmpty() && verticalTarget >= 0 && verticalTarget <= scrollView.contentSize.height)
+        targetContentOffset->y = closestSnapOffset<float, CGFloat>(_scrollingTreeNode->verticalSnapOffsets(), verticalTarget, velocity.y, ignore);
 }
 #endif
 

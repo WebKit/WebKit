@@ -88,6 +88,7 @@ private:
     float pageScaleFactor() const override;
     void startScrollSnapTimer(ScrollEventAxis) override;
     void stopScrollSnapTimer(ScrollEventAxis) override;
+    LayoutSize scrollExtent() const override;
 #endif
 
     void logExposedUnfilledArea();

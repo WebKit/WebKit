@@ -1,3 +1,18 @@
+2015-06-17  Brent Fulgham  <bfulgham@apple.com>
+
+        Overflow regions with scroll snap points are not reliably rubber banding
+        https://bugs.webkit.org/show_bug.cgi?id=142522
+        <rdar://problem/20100726>
+
+        Reviewed by Darin Adler.
+
+        Make sure we don't block rubberbanding behavior when a scroll gesture should take us past
+        the end of the scroll container.
+
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (-[WKOverflowScrollViewDelegate scrollViewWillEndDragging:withVelocity:targetContentOffset:]): Don't adjust
+        target point if we were going to scroll past the edges of the scroll container.
+
 2015-06-17  Anders Carlsson  <andersca@apple.com>
 
         Would like a way, in the API, to get notified about a web process crash

@@ -29,6 +29,7 @@
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
 #import "FrameView.h"
+#import "LayoutSize.h"
 #import "Logging.h"
 #import "NSScrollerImpDetails.h"
 #import "PlatformWheelEvent.h"
@@ -586,6 +587,11 @@ void ScrollingTreeFrameScrollingNodeMac::stopScrollSnapTimer(ScrollEventAxis axi
     ScrollEventAxis otherAxis = (axis == ScrollEventAxis::Horizontal) ? ScrollEventAxis::Vertical : ScrollEventAxis::Horizontal;
     if (!m_scrollController.hasActiveScrollSnapTimerForAxis(otherAxis))
         scrollingTree().setMainFrameIsScrollSnapping(false);
+}
+    
+LayoutSize ScrollingTreeFrameScrollingNodeMac::scrollExtent() const
+{
+    return LayoutSize(totalContentsSize());
 }
 #endif
 

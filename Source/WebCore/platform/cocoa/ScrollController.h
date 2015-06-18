@@ -41,6 +41,7 @@
 
 namespace WebCore {
 
+class LayoutSize;
 class PlatformWheelEvent;
 class ScrollableArea;
 class WheelEventTestTrigger;
@@ -102,6 +103,8 @@ public:
     {
         return 0;
     }
+
+    virtual LayoutSize scrollExtent() const = 0;
 #endif
 };
 
