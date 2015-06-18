@@ -340,8 +340,11 @@ private:
     Assembler::Jump modulo(JSC::MacroAssembler::ResultCondition, Assembler::RegisterID inputDividend, int divisor);
     void moduloIsZero(Assembler::JumpList& failureCases, Assembler::RegisterID inputDividend, int divisor);
 
+    void pushMacroAssemblerRegisters();
+    void popMacroAssemblerRegisters(StackAllocator&);
     bool generatePrologue();
-    void generateEpilogue();
+    void generateEpilogue(StackAllocator&);
+    StackAllocator::StackReferenceVector m_macroAssemblerRegistersStackReferences;
     StackAllocator::StackReferenceVector m_prologueStackReferences;
 
     Assembler m_assembler;
@@ -1679,6 +1682,25 @@ void computeBacktrackingInformation(SelectorFragmentList& selectorFragments, uns
     }
 }
 
+inline void SelectorCodeGenerator::pushMacroAssemblerRegisters()
+{
+#if CPU(ARM_THUMB2)
+    // r6 is tempRegister in RegisterAllocator.h and addressTempRegister in MacroAssemblerARMv7.h and must be preserved by the callee.
+    Vector<JSC::MacroAssembler::RegisterID, 1> macroAssemblerRegisters({ JSC::ARMRegisters::r6 });
+    m_macroAssemblerRegistersStackReferences = m_stackAllocator.push(macroAssemblerRegisters);
+#endif
+}
+
+inline void SelectorCodeGenerator::popMacroAssemblerRegisters(StackAllocator& stackAllocator)
+{
+#if CPU(ARM_THUMB2)
+    Vector<JSC::MacroAssembler::RegisterID, 1> macroAssemblerRegisters({ JSC::ARMRegisters::r6 });
+    stackAllocator.pop(m_macroAssemblerRegistersStackReferences, macroAssemblerRegisters);
+#else
+    UNUSED_PARAM(stackAllocator);
+#endif
+}
+
 inline bool SelectorCodeGenerator::generatePrologue()
 {
 #if CPU(ARM64)
@@ -1688,10 +1710,8 @@ inline bool SelectorCodeGenerator::generatePrologue()
     m_prologueStackReferences = m_stackAllocator.push(prologueRegisters);
     return true;
 #elif CPU(ARM_THUMB2)
-    Vector<JSC::MacroAssembler::RegisterID, 2> prologueRegisters;
+    Vector<JSC::MacroAssembler::RegisterID, 1> prologueRegisters;
     prologueRegisters.append(JSC::ARMRegisters::lr);
-    // r6 is tempRegister in RegisterAllocator.h and addressTempRegister in MacroAssemblerARMv7.h and must be preserved by the callee.
-    prologueRegisters.append(JSC::ARMRegisters::r6);
     m_prologueStackReferences = m_stackAllocator.push(prologueRegisters);
     return true;
 #elif CPU(X86_64) && CSS_SELECTOR_JIT_DEBUGGING
@@ -1703,22 +1723,19 @@ inline bool SelectorCodeGenerator::generatePrologue()
     return false;
 }
 
-inline void SelectorCodeGenerator::generateEpilogue()
+inline void SelectorCodeGenerator::generateEpilogue(StackAllocator& stackAllocator)
 {
 #if CPU(ARM64)
-    Vector<JSC::MacroAssembler::RegisterID, 2> prologueRegisters;
-    prologueRegisters.append(JSC::ARM64Registers::lr);
-    prologueRegisters.append(JSC::ARM64Registers::fp);
-    m_stackAllocator.pop(m_prologueStackReferences, prologueRegisters);
+    Vector<JSC::MacroAssembler::RegisterID, 2> prologueRegisters({ JSC::ARM64Registers::lr, JSC::ARM64Registers::fp });
+    stackAllocator.pop(m_prologueStackReferences, prologueRegisters);
 #elif CPU(ARM_THUMB2)
-    Vector<JSC::MacroAssembler::RegisterID, 2> prologueRegisters;
-    prologueRegisters.append(JSC::ARMRegisters::lr);
-    prologueRegisters.append(JSC::ARMRegisters::r6);
-    m_stackAllocator.pop(m_prologueStackReferences, prologueRegisters);
+    Vector<JSC::MacroAssembler::RegisterID, 1> prologueRegister({ JSC::ARMRegisters::lr });
+    stackAllocator.pop(m_prologueStackReferences, prologueRegister);
 #elif CPU(X86_64) && CSS_SELECTOR_JIT_DEBUGGING
-    Vector<JSC::MacroAssembler::RegisterID, 1> prologueRegister;
-    prologueRegister.append(callFrameRegister);
-    m_stackAllocator.pop(m_prologueStackReferences, prologueRegister);
+    Vector<JSC::MacroAssembler::RegisterID, 1> prologueRegister({ callFrameRegister });
+    stackAllocator.pop(m_prologueStackReferences, prologueRegister);
+#else
+    UNUSED_PARAM(stackAllocator);
 #endif
 }
 
@@ -1734,6 +1751,9 @@ static bool shouldMarkStyleIsAffectedByPreviousSibling(const SelectorFragment& f
 
 void SelectorCodeGenerator::generateSelectorChecker()
 {
+    pushMacroAssemblerRegisters();
+    StackAllocator earlyFailureStack = m_stackAllocator;
+
     Assembler::JumpList failureOnFunctionEntry;
     // Test selector's pseudo element equals to requested PseudoId.
     if (m_selectorContext != SelectorContext::QuerySelector && m_functionType == FunctionType::SelectorCheckerWithCheckingContext) {
@@ -1760,6 +1780,7 @@ void SelectorCodeGenerator::generateSelectorChecker()
     unsigned maximumBacktrackingAllocations = 8;
     if (m_selectorFragments.stackRequirements > maximumBacktrackingAllocations) {
         m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
+        popMacroAssemblerRegisters(m_stackAllocator);
         m_assembler.ret();
         return;
     }
@@ -1818,9 +1839,13 @@ void SelectorCodeGenerator::generateSelectorChecker()
 
     if (m_functionType == FunctionType::SimpleSelectorChecker) {
         if (temporaryStackBase == m_stackAllocator.stackTop() && !reservedCalleeSavedRegisters && !needsEpilogue) {
+            StackAllocator successStack = m_stackAllocator;
+            StackAllocator failureStack = m_stackAllocator;
+
             ASSERT(!m_selectorFragments.stackRequirements);
             // Success.
             m_assembler.move(Assembler::TrustedImm32(1), returnRegister);
+            popMacroAssemblerRegisters(successStack);
             m_assembler.ret();
 
             // Failure.
@@ -1828,8 +1853,12 @@ void SelectorCodeGenerator::generateSelectorChecker()
             if (!failureCases.empty()) {
                 failureCases.link(&m_assembler);
                 m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
+                popMacroAssemblerRegisters(failureStack);
                 m_assembler.ret();
-            }
+            } else
+                failureStack = successStack;
+
+            m_stackAllocator.merge(WTF::move(successStack), WTF::move(failureStack));
             return;
         }
     }
@@ -1849,16 +1878,22 @@ void SelectorCodeGenerator::generateSelectorChecker()
         m_stackAllocator.popAndDiscardUpTo(temporaryStackBase);
     if (reservedCalleeSavedRegisters)
         m_stackAllocator.pop(calleeSavedRegisterStackReferences, m_registerAllocator.restoreCalleeSavedRegisters());
+
+    StackAllocator successStack = m_stackAllocator;
     if (needsEpilogue)
-        generateEpilogue();
+        generateEpilogue(successStack);
+    popMacroAssemblerRegisters(successStack);
     m_assembler.ret();
 
     // Early failure on function entry case.
     if (!failureOnFunctionEntry.empty()) {
         failureOnFunctionEntry.link(&m_assembler);
         m_assembler.move(Assembler::TrustedImm32(0), returnRegister);
+        popMacroAssemblerRegisters(earlyFailureStack);
         m_assembler.ret();
-    }
+    } else
+        earlyFailureStack = successStack;
+    m_stackAllocator.merge(WTF::move(successStack), WTF::move(earlyFailureStack));
 }
 
 void SelectorCodeGenerator::generateSelectorCheckerExcludingPseudoElements(Assembler::JumpList& failureCases, const SelectorFragmentList& selectorFragmentList)

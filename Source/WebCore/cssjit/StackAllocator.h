@@ -239,6 +239,15 @@ public:
         return JSC::MacroAssembler::Address(JSC::MacroAssembler::stackPointerRegister, offsetToStackReference(stackReference));
     }
 
+    StackAllocator& operator=(const StackAllocator& other)
+    {
+        RELEASE_ASSERT(&m_assembler == &other.m_assembler);
+        m_offsetFromTop = other.m_offsetFromTop;
+        m_hasFunctionCallPadding = other.m_hasFunctionCallPadding;
+        return *this;
+    }
+
+
 private:
     static unsigned stackUnitInBytes()
     {
