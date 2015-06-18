@@ -33,12 +33,12 @@ namespace TestWebKitAPI {
     { \
         typedef Coercer<type> CoercerType; \
         typedef MixedSignednessTester<type, CoercerType> MixedSignednessTesterType; \
-        CheckedArithmeticTester<type, CoercerType, MixedSignednessTesterType>(); \
+        CheckedArithmeticTester<type, CoercerType, MixedSignednessTesterType>::run(); \
     }
     
-#define coerceLiteral(x) Coerser::coerce(x)
+#define coerceLiteral(x) Coercer::coerce(x)
     
-template <typename type, typename Coerser, typename MixedSignednessTester>
+template <typename type, typename Coercer, typename MixedSignednessTester>
 class CheckedArithmeticTester {
 public:
     static void run()
@@ -125,7 +125,7 @@ public:
     }
 };
 
-template <typename type, typename Coerser>
+template <typename type, typename Coercer>
 class AllowMixedSignednessTest {
 public:
     static void run()
@@ -164,7 +164,7 @@ public:
     }
 };
 
-template <typename type, typename Coerser>
+template <typename type, typename Coercer>
 class IgnoreMixedSignednessTest {
 public:
     static void run() { }

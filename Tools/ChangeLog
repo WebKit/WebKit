@@ -1,3 +1,17 @@
+2015-06-18  Mark Lam  <mark.lam@apple.com>
+
+        Refactor CheckedArithmeticOperations.cpp to use templates instead of macros.
+        https://bugs.webkit.org/show_bug.cgi?id=146103
+
+        Not reviewed.
+
+        Follow up to fix some typos not caught before original patch was landed.
+
+        * TestWebKitAPI/Tests/WTF/CheckedArithmeticOperations.cpp:
+        (TestWebKitAPI::CheckedArithmeticTester::run):
+        (TestWebKitAPI::AllowMixedSignednessTest::run):
+        (TestWebKitAPI::IgnoreMixedSignednessTest::run):
+
 2015-06-18  Daniel Bates  <dabates@apple.com>
 
         Make webkitdirs::runGitUpdate() work when invoked in more than one Git checkout
