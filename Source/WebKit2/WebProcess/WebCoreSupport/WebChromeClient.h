@@ -101,7 +101,6 @@ private:
     virtual bool runJavaScriptConfirm(WebCore::Frame*, const String&) override;
     virtual bool runJavaScriptPrompt(WebCore::Frame*, const String& message, const String& defaultValue, String& result) override;
     virtual void setStatusbarText(const String&) override;
-    virtual bool shouldInterruptJavaScript() override;
 
     virtual WebCore::KeyboardUIMode keyboardUIMode() override;
 

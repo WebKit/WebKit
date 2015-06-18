@@ -145,7 +145,6 @@ public:
     bool runJavaScriptConfirm(Frame*, const String&);
     bool runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result);
     WEBCORE_EXPORT void setStatusbarText(Frame*, const String&);
-    bool shouldInterruptJavaScript();
 
     IntRect windowResizerRect() const;
 

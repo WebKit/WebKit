@@ -214,8 +214,6 @@ extern NSString *WebConsoleMessageErrorMessageLevel;
 #endif
 - (void)webView:(WebView *)sender didDrawRect:(NSRect)rect;
 - (void)webView:(WebView *)sender didScrollDocumentInFrameView:(WebFrameView *)frameView;
-// FIXME: If we ever make this method public, it should include a WebFrame parameter.
-- (BOOL)webViewShouldInterruptJavaScript:(WebView *)sender;
 #if !TARGET_OS_IPHONE
 - (void)webView:(WebView *)sender willPopupMenu:(NSMenu *)menu;
 - (void)webView:(WebView *)sender contextMenuItemSelected:(NSMenuItem *)item forElement:(NSDictionary *)element;

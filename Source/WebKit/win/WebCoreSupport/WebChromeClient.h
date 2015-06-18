@@ -88,7 +88,6 @@ public:
     virtual bool runJavaScriptConfirm(WebCore::Frame*, const WTF::String&);
     virtual bool runJavaScriptPrompt(WebCore::Frame*, const WTF::String& message, const WTF::String& defaultValue, WTF::String& result);
     virtual void setStatusbarText(const WTF::String&);
-    virtual bool shouldInterruptJavaScript();
 
     virtual WebCore::KeyboardUIMode keyboardUIMode();
     virtual WebCore::IntRect windowResizerRect() const;

@@ -28,7 +28,6 @@ messages -> WebPageProxy {
     RunJavaScriptAlert(uint64_t frameID, String message) -> () Delayed
     RunJavaScriptConfirm(uint64_t frameID, String message) -> (bool result) Delayed
     RunJavaScriptPrompt(uint64_t frameID, String message, String defaultValue) -> (String result) Delayed
-    ShouldInterruptJavaScript() -> (bool shouldInterupt)
     MouseDidMoveOverElement(WebKit::WebHitTestResult::Data hitTestResultData, uint32_t modifiers, WebKit::UserData userData)
 
     DidBeginTrackingPotentialLongMousePress(WebCore::IntPoint mouseDownPosition, WebKit::WebHitTestResult::Data hitTestResultData, WebKit::UserData userData)

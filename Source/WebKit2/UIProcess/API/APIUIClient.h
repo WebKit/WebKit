@@ -141,8 +141,6 @@ public:
 
     virtual void saveDataToFileInDownloadsFolder(WebKit::WebPageProxy*, const WTF::String&, const WTF::String&, const WTF::String&, API::Data*) { }
 
-    virtual bool shouldInterruptJavaScript(WebKit::WebPageProxy*) { return false; }
-
     virtual void pinnedStateDidChange(WebKit::WebPageProxy&) { }
 
     virtual void didBeginTrackingPotentialLongMousePress(WebKit::WebPageProxy*, const WebCore::IntPoint&, const WebKit::WebHitTestResult::Data&, API::Object*) { }

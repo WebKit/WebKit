@@ -80,7 +80,6 @@ typedef void (*WKPageDrawHeaderCallback)(WKPageRef page, WKFrameRef frame, WKRec
 typedef void (*WKPageDrawFooterCallback)(WKPageRef page, WKFrameRef frame, WKRect rect, const void* clientInfo);
 typedef void (*WKPagePrintFrameCallback)(WKPageRef page, WKFrameRef frame, const void* clientInfo);
 typedef void (*WKPageSaveDataToFileInDownloadsFolderCallback)(WKPageRef page, WKStringRef suggestedFilename, WKStringRef mimeType, WKURLRef originatingURL, WKDataRef data, const void* clientInfo);
-typedef bool (*WKPageShouldInterruptJavaScriptCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageDecidePolicyForNotificationPermissionRequestCallback)(WKPageRef page, WKSecurityOriginRef origin, WKNotificationPermissionRequestRef permissionRequest, const void *clientInfo);
 typedef void (*WKPageShowColorPickerCallback)(WKPageRef page, WKStringRef initialColor, WKColorPickerResultListenerRef listener, const void* clientInfo);
 typedef void (*WKPageHideColorPickerCallback)(WKPageRef page, const void* clientInfo);
@@ -146,7 +145,7 @@ typedef struct WKPageUIClientV0 {
     WKPageUIClientCallback                                              runModal;
     void*                                                               unused1; // Used to be didCompleteRubberBandForMainFrame
     WKPageSaveDataToFileInDownloadsFolderCallback                       saveDataToFileInDownloadsFolder;
-    WKPageShouldInterruptJavaScriptCallback                             shouldInterruptJavaScript;    
+    void*                                                               shouldInterruptJavaScript_unavailable;
 } WKPageUIClientV0;
 
 typedef struct WKPageUIClientV1 {
@@ -191,7 +190,7 @@ typedef struct WKPageUIClientV1 {
     WKPageUIClientCallback                                              runModal;
     void*                                                               unused1; // Used to be didCompleteRubberBandForMainFrame
     WKPageSaveDataToFileInDownloadsFolderCallback                       saveDataToFileInDownloadsFolder;
-    WKPageShouldInterruptJavaScriptCallback                             shouldInterruptJavaScript;    
+    void*                                                               shouldInterruptJavaScript_unavailable;
 
     // Version 1.
     WKPageCreateNewPageCallback                                         createNewPage;
@@ -242,7 +241,7 @@ typedef struct WKPageUIClientV2 {
     WKPageUIClientCallback                                              runModal;
     void*                                                               unused1; // Used to be didCompleteRubberBandForMainFrame
     WKPageSaveDataToFileInDownloadsFolderCallback                       saveDataToFileInDownloadsFolder;
-    WKPageShouldInterruptJavaScriptCallback                             shouldInterruptJavaScript;    
+    void*                                                               shouldInterruptJavaScript_unavailable;
 
     // Version 1.
     WKPageCreateNewPageCallback                                         createNewPage;
@@ -298,7 +297,7 @@ typedef struct WKPageUIClientV3 {
     WKPageUIClientCallback                                              runModal;
     void*                                                               unused1; // Used to be didCompleteRubberBandForMainFrame
     WKPageSaveDataToFileInDownloadsFolderCallback                       saveDataToFileInDownloadsFolder;
-    WKPageShouldInterruptJavaScriptCallback                             shouldInterruptJavaScript;    
+    void*                                                               shouldInterruptJavaScript_unavailable;
 
     // Version 1.
     WKPageCreateNewPageCallback                                         createNewPage;
@@ -357,7 +356,7 @@ typedef struct WKPageUIClientV4 {
     WKPageUIClientCallback                                              runModal;
     void*                                                               unused1; // Used to be didCompleteRubberBandForMainFrame
     WKPageSaveDataToFileInDownloadsFolderCallback                       saveDataToFileInDownloadsFolder;
-    WKPageShouldInterruptJavaScriptCallback                             shouldInterruptJavaScript;
+    void*                                                               shouldInterruptJavaScript_unavailable;
 
     // Version 1.
     WKPageCreateNewPageCallback                                         createNewPage;
@@ -422,7 +421,7 @@ typedef struct WKPageUIClientV5 {
     WKPageUIClientCallback                                              runModal;
     void*                                                               unused1; // Used to be didCompleteRubberBandForMainFrame
     WKPageSaveDataToFileInDownloadsFolderCallback                       saveDataToFileInDownloadsFolder;
-    WKPageShouldInterruptJavaScriptCallback                             shouldInterruptJavaScript;
+    void*                                                               shouldInterruptJavaScript_unavailable;
 
     // Version 1.
     WKPageCreateNewPageCallback                                         createNewPage;
@@ -493,7 +492,7 @@ typedef struct WKPageUIClient {
     WKPageUIClientCallback                                              runModal;
     void*                                                               unused1; // Used to be didCompleteRubberBandForMainFrame
     WKPageSaveDataToFileInDownloadsFolderCallback                       saveDataToFileInDownloadsFolder;
-    WKPageShouldInterruptJavaScriptCallback                             shouldInterruptJavaScript;    
+    void*                                                               shouldInterruptJavaScript_unavailable;
 
     // Version 1.
     WKPageCreateNewPageCallback                                         createNewPage;

@@ -149,7 +149,7 @@ bool JSDOMWindowBase::shouldInterruptScript(const JSGlobalObject* object)
     const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
     ASSERT(thisObject->impl().frame());
     Page* page = thisObject->impl().frame()->page();
-    return shouldInterruptScriptToPreventInfiniteRecursionWhenClosingPage(page) || page->chrome().shouldInterruptJavaScript();
+    return shouldInterruptScriptToPreventInfiniteRecursionWhenClosingPage(page);
 }
 
 bool JSDOMWindowBase::shouldInterruptScriptBeforeTimeout(const JSGlobalObject* object)

@@ -347,15 +347,6 @@ void Chrome::setStatusbarText(Frame* frame, const String& status)
     m_client.setStatusbarText(frame->displayStringModifiedByEncoding(status));
 }
 
-bool Chrome::shouldInterruptJavaScript()
-{
-    // Defer loads in case the client method runs a new event loop that would
-    // otherwise cause the load to continue while we're in the middle of executing JavaScript.
-    PageGroupLoadDeferrer deferrer(m_page, true);
-
-    return m_client.shouldInterruptJavaScript();
-}
-
 IntRect Chrome::windowResizerRect() const
 {
     return m_client.windowResizerRect();

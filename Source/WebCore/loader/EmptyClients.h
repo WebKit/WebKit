@@ -114,7 +114,6 @@ public:
     virtual void runJavaScriptAlert(Frame*, const String&) override { }
     virtual bool runJavaScriptConfirm(Frame*, const String&) override { return false; }
     virtual bool runJavaScriptPrompt(Frame*, const String&, const String&, String&) override { return false; }
-    virtual bool shouldInterruptJavaScript() override { return false; }
 
     virtual bool selectItemWritingDirectionIsNatural() override { return false; }
     virtual bool selectItemAlignmentFollowsMenuWritingDirection() override { return false; }

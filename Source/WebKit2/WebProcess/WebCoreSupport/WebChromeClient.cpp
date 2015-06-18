@@ -421,15 +421,6 @@ void WebChromeClient::setStatusbarText(const String& statusbarText)
     m_page->send(Messages::WebPageProxy::SetStatusText(statusbarText));
 }
 
-bool WebChromeClient::shouldInterruptJavaScript()
-{
-    bool shouldInterrupt = false;
-    if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::ShouldInterruptJavaScript(), Messages::WebPageProxy::ShouldInterruptJavaScript::Reply(shouldInterrupt), m_page->pageID()))
-        return false;
-
-    return shouldInterrupt;
-}
-
 KeyboardUIMode WebChromeClient::keyboardUIMode()
 {
     return m_page->keyboardUIMode();
