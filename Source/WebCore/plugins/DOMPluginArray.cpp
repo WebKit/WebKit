@@ -61,7 +61,7 @@ PassRefPtr<DOMPlugin> DOMPluginArray::item(unsigned index)
     const Vector<PluginInfo>& plugins = data->webVisiblePlugins();
     if (index >= plugins.size())
         return 0;
-    return DOMPlugin::create(data, m_frame, index);
+    return DOMPlugin::create(data, m_frame, plugins[index]);
 }
 
 bool DOMPluginArray::canGetItemsForName(const AtomicString& propertyName)
@@ -83,10 +83,9 @@ PassRefPtr<DOMPlugin> DOMPluginArray::namedItem(const AtomicString& propertyName
     if (!data)
         return 0;
 
-    const Vector<PluginInfo>& plugins = data->webVisiblePlugins();
-    for (unsigned i = 0; i < plugins.size(); ++i) {
-        if (plugins[i].name == propertyName)
-            return DOMPlugin::create(data, m_frame, i);
+    for (auto& plugin : data->webVisiblePlugins()) {
+        if (plugin.name == propertyName)
+            return DOMPlugin::create(data, m_frame, plugin);
     }
     return 0;
 }

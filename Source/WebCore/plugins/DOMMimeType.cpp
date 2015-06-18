@@ -32,8 +32,12 @@ namespace WebCore {
 DOMMimeType::DOMMimeType(PassRefPtr<PluginData> pluginData, Frame* frame, unsigned index)
     : FrameDestructionObserver(frame)
     , m_pluginData(pluginData)
-    , m_index(index)
 {
+    Vector<MimeClassInfo> mimes;
+    Vector<size_t> mimePluginIndices;
+    m_pluginData->getWebVisibleMimesAndPluginIndices(mimes, mimePluginIndices);
+    m_mimeClassInfo = mimes[index];
+    m_pluginInfo = m_pluginData->webVisiblePlugins()[mimePluginIndices[index]];
 }
 
 DOMMimeType::~DOMMimeType()
@@ -42,12 +46,12 @@ DOMMimeType::~DOMMimeType()
 
 String DOMMimeType::type() const
 {
-    return mimeClassInfo().type;
+    return m_mimeClassInfo.type;
 }
 
 String DOMMimeType::suffixes() const
 {
-    const Vector<String>& extensions = mimeClassInfo().extensions;
+    const Vector<String>& extensions = m_mimeClassInfo.extensions;
 
     StringBuilder builder;
     for (size_t i = 0; i < extensions.size(); ++i) {
@@ -60,15 +64,7 @@ String DOMMimeType::suffixes() const
 
 String DOMMimeType::description() const
 {
-    return mimeClassInfo().desc;
-}
-
-MimeClassInfo DOMMimeType::mimeClassInfo() const
-{
-    Vector<MimeClassInfo> mimes;
-    Vector<size_t> mimePluginIndices;
-    m_pluginData->getWebVisibleMimesAndPluginIndices(mimes, mimePluginIndices);
-    return mimes[m_index];
+    return m_mimeClassInfo.desc;
 }
 
 PassRefPtr<DOMPlugin> DOMMimeType::enabledPlugin() const
@@ -79,7 +75,7 @@ PassRefPtr<DOMPlugin> DOMMimeType::enabledPlugin() const
     Vector<MimeClassInfo> mimes;
     Vector<size_t> mimePluginIndices;
     m_pluginData->getWebVisibleMimesAndPluginIndices(mimes, mimePluginIndices);
-    return DOMPlugin::create(m_pluginData.get(), m_frame, mimePluginIndices[m_index]);
+    return DOMPlugin::create(m_pluginData.get(), m_frame, m_pluginInfo);
 }
 
 } // namespace WebCore

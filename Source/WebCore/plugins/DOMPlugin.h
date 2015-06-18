@@ -33,7 +33,7 @@ class PluginData;
 
 class DOMPlugin : public ScriptWrappable, public RefCounted<DOMPlugin>, public FrameDestructionObserver {
 public:
-    static Ref<DOMPlugin> create(PluginData* pluginData, Frame* frame, unsigned index) { return adoptRef(*new DOMPlugin(pluginData, frame, index)); }
+    static Ref<DOMPlugin> create(PluginData* pluginData, Frame* frame, PluginInfo pluginInfo) { return adoptRef(*new DOMPlugin(pluginData, frame, WTF::move(pluginInfo))); }
     ~DOMPlugin();
 
     String name() const;
@@ -47,11 +47,9 @@ public:
     PassRefPtr<DOMMimeType> namedItem(const AtomicString& propertyName);
 
 private:
-    PluginInfo pluginInfo() const;
-
-    DOMPlugin(PluginData*, Frame*, unsigned index);
+    DOMPlugin(PluginData*, Frame*, PluginInfo);
     RefPtr<PluginData> m_pluginData;
-    unsigned m_index;
+    PluginInfo m_pluginInfo;
 };
 
 } // namespace WebCore

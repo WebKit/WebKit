@@ -73,6 +73,15 @@ struct PluginInfo {
 #endif
 };
 
+inline bool operator==(PluginInfo& a, PluginInfo& b)
+{
+    bool result = a.name == b.name && a.file == b.file && a.desc == b.desc && a.mimes == b.mimes && a.isApplicationPlugin == b.isApplicationPlugin && a.clientLoadPolicy == b.clientLoadPolicy;
+#if PLATFORM(MAC)
+    result = result && a.bundleIdentifier == b.bundleIdentifier && a.versionString == b.versionString;
+#endif
+    return result;
+}
+
 // FIXME: merge with PluginDatabase in the future
 class PluginData : public RefCounted<PluginData> {
 public:

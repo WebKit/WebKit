@@ -42,11 +42,10 @@ public:
     PassRefPtr<DOMPlugin> enabledPlugin() const;
 
 private:
-    MimeClassInfo mimeClassInfo() const;
-
     DOMMimeType(PassRefPtr<PluginData>, Frame*, unsigned index);
+    MimeClassInfo m_mimeClassInfo;
     RefPtr<PluginData> m_pluginData;
-    unsigned m_index;
+    PluginInfo m_pluginInfo;
 };
 
 } // namespace WebCore

@@ -25,10 +25,10 @@
 
 namespace WebCore {
 
-DOMPlugin::DOMPlugin(PluginData* pluginData, Frame* frame, unsigned index)
+DOMPlugin::DOMPlugin(PluginData* pluginData, Frame* frame, PluginInfo pluginInfo)
     : FrameDestructionObserver(frame)
     , m_pluginData(pluginData)
-    , m_index(index)
+    , m_pluginInfo(WTF::move(pluginInfo))
 {
 }
 
@@ -38,41 +38,37 @@ DOMPlugin::~DOMPlugin()
 
 String DOMPlugin::name() const
 {
-    return pluginInfo().name;
+    return m_pluginInfo.name;
 }
 
 String DOMPlugin::filename() const
 {
-    return pluginInfo().file;
+    return m_pluginInfo.file;
 }
 
 String DOMPlugin::description() const
 {
-    return pluginInfo().desc;
+    return m_pluginInfo.desc;
 }
 
 unsigned DOMPlugin::length() const
 {
-    return pluginInfo().mimes.size();
-}
-
-PluginInfo DOMPlugin::pluginInfo() const
-{
-    return m_pluginData->webVisiblePlugins()[m_index];
+    return m_pluginInfo.mimes.size();
 }
 
 PassRefPtr<DOMMimeType> DOMPlugin::item(unsigned index)
 {
-    if (index >= pluginInfo().mimes.size())
+    if (index >= m_pluginInfo.mimes.size())
         return 0;
 
-    MimeClassInfo mime = pluginInfo().mimes[index];
+    MimeClassInfo mime = m_pluginInfo.mimes[index];
 
     Vector<MimeClassInfo> mimes;
     Vector<size_t> mimePluginIndices;
+    Vector<PluginInfo> plugins = m_pluginData->webVisiblePlugins();
     m_pluginData->getWebVisibleMimesAndPluginIndices(mimes, mimePluginIndices);
     for (unsigned i = 0; i < mimes.size(); ++i) {
-        if (mimes[i] == mime && mimePluginIndices[i] == m_index)
+        if (mimes[i] == mime && plugins[mimePluginIndices[i]] == m_pluginInfo)
             return DOMMimeType::create(m_pluginData.get(), m_frame, i);
     }
     return 0;
