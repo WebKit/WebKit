@@ -1,3 +1,29 @@
+2015-06-18  Daniel Bates  <dabates@apple.com>
+
+        Make webkitdirs::runGitUpdate() work when invoked in more than one Git checkout
+        https://bugs.webkit.org/show_bug.cgi?id=146082
+
+        Reviewed by Darin Adler.
+
+        The function webkitdirs::runGitUpdate may not update the Git checkout in the current
+        working directory after being invoked in a different Git checkout. In particular,
+        calling runGitUpdate() inside a Git SVN checkout and subsequently calling it inside
+        a pure Git checkout g will fail to update g.
+
+        Currently webkitdirs::runGitUpdate() calls VCSUtils::isGitSVN() to determine whether
+        the current working directory is a Git SVN checkout. And isGitSVN() caches its result
+        to speed up subsequent queries. This prevents runGitUpdate() from being used to update
+        an arbitrary Git checkout (since isGitSVN() may return a cached result for a directory
+        different than the current working directory). Instead runGitUpdate() should check
+        whether the current working directory is a Git SVN checkout on each invocation.
+
+        * Scripts/VCSUtils.pm: Export function isGitSVNDirectory so that it can be used from webkitdirs::runGitUpdate().
+        (isGitSVNDirectory): Extracted logic to determine whether a directory is a Git
+        SVN directory from isGitSVN().
+        (isGitSVN): Implemented in terms of isGitSVNDirectory().
+        * Scripts/webkitdirs.pm:
+        (runGitUpdate): Modified to use isGitSVNDirectory().
+
 2015-06-18  Mark Lam  <mark.lam@apple.com>
 
         Refactor CheckedArithmeticOperations.cpp to use templates instead of macros.

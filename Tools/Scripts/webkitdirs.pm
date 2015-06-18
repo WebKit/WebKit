@@ -2494,7 +2494,7 @@ sub runGitUpdate()
     # Doing a git fetch first allows setups with svn-remote.svn.fetch = trunk:refs/remotes/origin/master
     # to perform the rebase much much faster.
     system("git", "fetch");
-    if (isGitSVN()) {
+    if (isGitSVNDirectory(".")) {
         system("git", "svn", "rebase") == 0 or die;
     } else {
         # This will die if branch.$BRANCHNAME.merge isn't set, which is
