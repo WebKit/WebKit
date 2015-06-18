@@ -1,3 +1,20 @@
+2015-06-17  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Log blocked loads to the WebInspector console
+        https://bugs.webkit.org/show_bug.cgi?id=146089
+
+        Reviewed by Joseph Pecoraro.
+
+        * http/tests/contentextensions/basic-filter-expected.txt:
+        * http/tests/contentextensions/character-set-basic-support-expected.txt:
+        * http/tests/contentextensions/domain-rules-expected.txt:
+        * http/tests/contentextensions/filters-with-quantifiers-combined-expected.txt:
+        * http/tests/contentextensions/main-resource-redirect-blocked-expected.txt:
+        * http/tests/contentextensions/media-filtered-expected.txt:
+        * http/tests/contentextensions/subresource-redirect-blocked-expected.txt:
+        * http/tests/contentextensions/text-track-blocked-expected.txt:
+        Add new logs.
+
 2015-06-18  Alexey Proskuryakov  <ap@apple.com>
 
         Mark mathml/very-large-stretchy-operators.html as Slow on newer OS X versions.

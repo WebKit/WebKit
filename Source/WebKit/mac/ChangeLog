@@ -1,3 +1,14 @@
+2015-06-17  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Log blocked loads to the WebInspector console
+        https://bugs.webkit.org/show_bug.cgi?id=146089
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (stringForMessageSource):
+        Added content blocker message source.
+
 2015-06-17  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/19034131> Cleaned up the WebDownload.h framework header.

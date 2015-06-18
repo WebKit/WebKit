@@ -38,6 +38,7 @@ enum class MessageSource {
     Rendering,
     CSS,
     Security,
+    ContentBlocker,
     Other,
 };
 

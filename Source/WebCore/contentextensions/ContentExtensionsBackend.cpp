@@ -210,8 +210,11 @@ void ContentExtensionsBackend::processContentExtensionRulesForLoad(ResourceReque
         }
     }
 
-    if (willBlockLoad)
+    if (willBlockLoad) {
+        if (currentDocument)
+            currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, makeString("Content blocker prevented frame displaying ", mainDocumentURL.string(), " from loading a resource from ", request.url().string()));
         request = ResourceRequest();
+    }
 }
 
 const String& ContentExtensionsBackend::displayNoneCSSRule()

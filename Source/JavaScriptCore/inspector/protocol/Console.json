@@ -7,7 +7,7 @@
             "type": "object",
             "description": "Console message.",
             "properties": [
-                { "name": "source", "type": "string", "enum": ["xml", "javascript", "network", "console-api", "storage", "appcache", "rendering", "css", "security", "other"], "description": "Message source." },
+                { "name": "source", "type": "string", "enum": ["xml", "javascript", "network", "console-api", "storage", "appcache", "rendering", "css", "security", "content-blocker", "other"], "description": "Message source." },
                 { "name": "level", "type": "string", "enum": ["log", "info", "warning", "error", "debug"], "description": "Message severity." },
                 { "name": "text", "type": "string", "description": "Message text." },
                 { "name": "type", "type": "string", "optional": true, "enum": ["log", "dir", "dirxml", "table", "trace", "clear", "startGroup", "startGroupCollapsed", "endGroup", "assert", "timing", "profile", "profileEnd"], "description": "Console message type." },

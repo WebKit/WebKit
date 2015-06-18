@@ -141,6 +141,7 @@ static Inspector::Protocol::Console::ConsoleMessage::Source messageSourceValue(M
     case MessageSource::Rendering: return Inspector::Protocol::Console::ConsoleMessage::Source::Rendering;
     case MessageSource::CSS: return Inspector::Protocol::Console::ConsoleMessage::Source::CSS;
     case MessageSource::Security: return Inspector::Protocol::Console::ConsoleMessage::Source::Security;
+    case MessageSource::ContentBlocker: return Inspector::Protocol::Console::ConsoleMessage::Source::ContentBlocker;
     case MessageSource::Other: return Inspector::Protocol::Console::ConsoleMessage::Source::Other;
     }
     return Inspector::Protocol::Console::ConsoleMessage::Source::Other;
