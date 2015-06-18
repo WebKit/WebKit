@@ -1,5 +1,19 @@
 2015-06-17  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Reading the list of analysis tasks is extremely slow
+        https://bugs.webkit.org/show_bug.cgi?id=146086
+
+        Reviewed by Darin Adler.
+
+        The bug was caused by Ember data requesting manifest.js hundreds of times.
+        Fetch it ahead of time in each route instead.
+
+        * public/v2/app.js:
+        (App.AnalysisRoute.model):
+        (App.AnalysisTaskRoute.model):
+
+2015-06-17  Ryosuke Niwa  <rniwa@webkit.org>
+
         Update ReadMe.md and Install.md per database changes
         https://bugs.webkit.org/show_bug.cgi?id=146076
 

@@ -1185,8 +1185,11 @@ App.PaneController = Ember.ObjectController.extend({
 
 App.AnalysisRoute = Ember.Route.extend({
     model: function () {
-        return this.store.findAll('analysisTask').then(function (tasks) {
-            return Ember.Object.create({'tasks': tasks.sortBy('createdAt').toArray().reverse()});
+        var store = this.store;
+        return App.Manifest.fetch(store).then(function () {
+            return store.findAll('analysisTask').then(function (tasks) {
+                return Ember.Object.create({'tasks': tasks.sortBy('createdAt').toArray().reverse()});
+            });
         });
     },
 });
@@ -1194,7 +1197,10 @@ App.AnalysisRoute = Ember.Route.extend({
 App.AnalysisTaskRoute = Ember.Route.extend({
     model: function (param)
     {
-        return this.store.find('analysisTask', param.taskId);
+        var store = this.store;
+        return App.Manifest.fetch(store).then(function () {
+            return store.find('analysisTask', param.taskId);
+        });
     },
 });
 
