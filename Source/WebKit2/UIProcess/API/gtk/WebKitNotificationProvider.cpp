@@ -72,8 +72,10 @@ WebKitNotificationProvider::WebKitNotificationProvider(WebNotificationManagerPro
     ASSERT(notificationManager);
 
     WKNotificationProviderV0 wkNotificationProvider = {
-        kWKNotificationProviderCurrentVersion,
-        this, // clientInfo,
+        {
+            0, // version
+            this, // clientInfo
+        },
         showCallback,
         cancelCallback,
         0, // didDestroyNotificationCallback,
