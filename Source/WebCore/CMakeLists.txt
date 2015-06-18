@@ -3580,6 +3580,12 @@ endif ()
 if (ENABLE_GRAPHICS_CONTEXT_3D)
     add_library(ANGLESupport STATIC ${ANGLESupport_SOURCES})
     set_target_properties(ANGLESupport PROPERTIES FOLDER "WebCore")
+
+    # Suppress null conversion warnings for sources in Source/ThirdParty/ANGLE
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+        ADD_TARGET_PROPERTIES(ANGLESupport COMPILE_FLAGS "-Wno-null-conversion")
+    endif ()
+
     target_include_directories(ANGLESupport PRIVATE
         "${THIRDPARTY_DIR}/ANGLE/include"
         "${THIRDPARTY_DIR}/ANGLE/src"
