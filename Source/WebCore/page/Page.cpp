@@ -1238,7 +1238,11 @@ void Page::handleMediaEvent(MediaEventType eventType)
     case MediaEventType::PlayPause:
         MediaSessionManager::singleton().togglePlayback();
         break;
-    default:
+    case MediaEventType::TrackNext:
+        MediaSessionManager::singleton().skipToNextTrack();
+        break;
+    case MediaEventType::TrackPrevious:
+        MediaSessionManager::singleton().skipToPreviousTrack();
         break;
     }
 }

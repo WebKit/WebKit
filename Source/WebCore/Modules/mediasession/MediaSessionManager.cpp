@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+static const char* contentSessionKind = "content";
+
 MediaSessionManager& MediaSessionManager::singleton()
 {
     static NeverDestroyed<MediaSessionManager> manager;
@@ -53,8 +55,30 @@ void MediaSessionManager::togglePlayback()
 {
     for (auto* session : m_sessions) {
         String sessionKind = session->kind();
-        if (session->currentState() == MediaSession::State::Active && (sessionKind == "content" || sessionKind == ""))
+        if (session->currentState() == MediaSession::State::Active && (sessionKind == contentSessionKind || sessionKind == ""))
             session->togglePlayback();
+    }
+}
+
+void MediaSessionManager::skipToNextTrack()
+{
+    // 5.2.2 When the user presses the MediaTrackNext media key, then for each Content-based media session that is
+    // currently ACTIVE and has a media remote controller with its nextTrackEnabled attribute set to true, queue a task
+    // to fire a simple event named nexttrack at its media remote controller.
+    for (auto* session : m_sessions) {
+        if (session->currentState() == MediaSession::State::Active && session->kind() == contentSessionKind)
+            session->skipToNextTrack();
+    }
+}
+
+void MediaSessionManager::skipToPreviousTrack()
+{
+    // 5.2.2 When the user presses the MediaTrackPrevious media key, then for each Content-based media session that is
+    // currently ACTIVE and has a media remote controller with its previousTrackEnabled attribute set to true, queue a task
+    // to fire a simple event named previoustrack at its media remote controller.
+    for (auto* session : m_sessions) {
+        if (session->currentState() == MediaSession::State::Active && session->kind() == contentSessionKind)
+            session->skipToPreviousTrack();
     }
 }
 

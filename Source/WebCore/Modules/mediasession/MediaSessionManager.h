@@ -39,7 +39,9 @@ public:
     static MediaSessionManager& singleton();
 
     void togglePlayback();
-    
+    void skipToNextTrack();
+    void skipToPreviousTrack();
+
 private:
     friend class MediaSession;
 

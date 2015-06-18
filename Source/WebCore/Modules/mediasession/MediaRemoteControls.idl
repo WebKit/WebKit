@@ -34,4 +34,7 @@
     attribute boolean nextTrackEnabled;
     attribute boolean seekForwardEnabled;
     attribute boolean seekBackwardEnabled;
+
+    attribute EventHandler onprevioustrack;
+    attribute EventHandler onnexttrack;
 };

@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_SESSION)
 
+#include "Event.h"
 #include "HTMLMediaElement.h"
 #include "MediaSessionManager.h"
 
@@ -109,6 +110,18 @@ void MediaSession::togglePlayback()
     }
 
     m_iteratedActiveParticipatingElements = nullptr;
+}
+
+void MediaSession::skipToNextTrack()
+{
+    if (m_controls && m_controls->nextTrackEnabled())
+        m_controls->dispatchEvent(Event::create(eventNames().nexttrackEvent, false, false));
+}
+
+void MediaSession::skipToPreviousTrack()
+{
+    if (m_controls && m_controls->previousTrackEnabled())
+        m_controls->dispatchEvent(Event::create(eventNames().previoustrackEvent, false, false));
 }
 
 }

@@ -61,6 +61,8 @@ public:
     bool invoke();
 
     void togglePlayback();
+    void skipToNextTrack();
+    void skipToPreviousTrack();
 
 private:
     friend class HTMLMediaElement;
