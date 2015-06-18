@@ -56,12 +56,12 @@ class InspectorCSSId {
 public:
     InspectorCSSId() { }
 
-    explicit InspectorCSSId(const RefPtr<Inspector::InspectorObject>&& value)
+    explicit InspectorCSSId(const Inspector::InspectorObject& value)
     {
-        if (!value->getString(ASCIILiteral("styleSheetId"), m_styleSheetId))
+        if (!value.getString(ASCIILiteral("styleSheetId"), m_styleSheetId))
             return;
 
-        if (!value->getInteger(ASCIILiteral("ordinal"), m_ordinal))
+        if (!value.getInteger(ASCIILiteral("ordinal"), m_ordinal))
             m_styleSheetId = String();
     }
 

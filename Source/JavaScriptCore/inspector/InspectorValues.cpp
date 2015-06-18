@@ -839,7 +839,7 @@ InspectorArrayBase::InspectorArrayBase()
 {
 }
 
-RefPtr<InspectorValue> InspectorArrayBase::get(size_t index)
+RefPtr<InspectorValue> InspectorArrayBase::get(size_t index) const
 {
     ASSERT_WITH_SECURITY_IMPLICATION(index < m_data.size());
     return m_data[index];

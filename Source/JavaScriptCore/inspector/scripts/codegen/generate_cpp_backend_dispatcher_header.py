@@ -127,7 +127,11 @@ class CppBackendDispatcherHeaderGenerator(Generator):
         lines = []
         parameters = ['ErrorString&']
         for _parameter in command.call_parameters:
-            parameters.append("%s in_%s" % (CppGenerator.cpp_type_for_unchecked_formal_in_parameter(_parameter), _parameter.parameter_name))
+            parameter_name = 'in_' + _parameter.parameter_name
+            if _parameter.is_optional:
+                parameter_name = 'opt_' + parameter_name
+
+            parameters.append("%s %s" % (CppGenerator.cpp_type_for_unchecked_formal_in_parameter(_parameter), parameter_name))
 
             if isinstance(_parameter.type, EnumType) and _parameter.parameter_name not in used_enum_names:
                 lines.append(self._generate_anonymous_enum_for_parameter(_parameter, command))
@@ -155,7 +159,11 @@ class CppBackendDispatcherHeaderGenerator(Generator):
 
         in_parameters = ['ErrorString&']
         for _parameter in command.call_parameters:
-            in_parameters.append("%s in_%s" % (CppGenerator.cpp_type_for_unchecked_formal_in_parameter(_parameter), _parameter.parameter_name))
+            parameter_name = 'in_' + _parameter.parameter_name
+            if _parameter.is_optional:
+                parameter_name = 'opt_' + parameter_name
+
+            in_parameters.append("%s %s" % (CppGenerator.cpp_type_for_unchecked_formal_in_parameter(_parameter), parameter_name))
         in_parameters.append("Ref<%s>&& callback" % callbackName)
 
         out_parameters = []

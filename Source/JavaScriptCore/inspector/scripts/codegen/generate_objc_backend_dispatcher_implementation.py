@@ -158,8 +158,10 @@ class ObjCConfigurationImplementationGenerator(Generator):
             if isinstance(_type, EnumType):
                 _type = _type.primitive_type  # Fall through to primitive.
             if isinstance(_type, PrimitiveType):
+                if _type.raw_name() in ['array', 'any', 'object']:
+                    return '&%s' % param_name if not parameter.is_optional else param_name
                 return '*%s' % param_name if parameter.is_optional else param_name
-            return '%s.copyRef()' % param_name
+            return '&%s' % param_name if not parameter.is_optional else param_name
 
         for parameter in command.call_parameters:
             in_param_name = 'in_%s' % parameter.parameter_name

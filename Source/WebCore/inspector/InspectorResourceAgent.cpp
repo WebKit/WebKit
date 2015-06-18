@@ -299,14 +299,8 @@ void InspectorResourceAgent::willSendRequest(unsigned long identifier, DocumentL
 
     m_resourcesData->setResourceType(requestId, type);
 
-    if (m_extraRequestHeaders) {
-        InspectorObject::const_iterator end = m_extraRequestHeaders->end();
-        for (InspectorObject::const_iterator it = m_extraRequestHeaders->begin(); it != end; ++it) {
-            String value;
-            if (it->value->asString(value))
-                request.setHTTPHeaderField(it->key, value);
-        }
-    }
+    for (auto& entry : m_extraRequestHeaders)
+        request.setHTTPHeaderField(entry.key, entry.value);
 
     request.setReportLoadTiming(true);
     request.setReportRawHeaders(true);
@@ -624,9 +618,13 @@ void InspectorResourceAgent::disable(ErrorString&)
     m_extraRequestHeaders.clear();
 }
 
-void InspectorResourceAgent::setExtraHTTPHeaders(ErrorString&, const RefPtr<InspectorObject>&& headers)
+void InspectorResourceAgent::setExtraHTTPHeaders(ErrorString&, const InspectorObject& headers)
 {
-    m_extraRequestHeaders = headers.copyRef();
+    for (auto& entry : headers) {
+        String stringValue;
+        if (entry.value->asString(stringValue))
+            m_extraRequestHeaders.set(entry.key, stringValue);
+    }
 }
 
 void InspectorResourceAgent::getResponseBody(ErrorString& errorString, const String& requestId, String* content, bool* base64Encoded)

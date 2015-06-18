@@ -329,15 +329,15 @@ void InspectorReplayAgent::stopCapturing(ErrorString& errorString)
     m_page.replayController().stopCapturing();
 }
 
-void InspectorReplayAgent::replayToPosition(ErrorString& errorString, const RefPtr<InspectorObject>&& positionObject, bool fastReplay)
+void InspectorReplayAgent::replayToPosition(ErrorString& errorString, const InspectorObject& positionObject, bool fastReplay)
 {
     ReplayPosition position;
-    if (!positionObject->getInteger(ASCIILiteral("segmentOffset"), position.segmentOffset)) {
+    if (!positionObject.getInteger(ASCIILiteral("segmentOffset"), position.segmentOffset)) {
         errorString = ASCIILiteral("Couldn't decode ReplayPosition segment offset provided to ReplayAgent.replayToPosition.");
         return;
     }
 
-    if (!positionObject->getInteger(ASCIILiteral("inputOffset"), position.inputOffset)) {
+    if (!positionObject.getInteger(ASCIILiteral("inputOffset"), position.inputOffset)) {
         errorString = ASCIILiteral("Couldn't decode ReplayPosition input offset provided to ReplayAgent.replayToPosition.");
         return;
     }

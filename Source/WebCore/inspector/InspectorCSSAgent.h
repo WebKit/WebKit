@@ -115,11 +115,11 @@ public:
     virtual void getStyleSheet(ErrorString&, const String& styleSheetId, RefPtr<Inspector::Protocol::CSS::CSSStyleSheetBody>& result) override;
     virtual void getStyleSheetText(ErrorString&, const String& styleSheetId, String* result) override;
     virtual void setStyleSheetText(ErrorString&, const String& styleSheetId, const String& text) override;
-    virtual void setStyleText(ErrorString&, const RefPtr<Inspector::InspectorObject>&& styleId, const String& text, RefPtr<Inspector::Protocol::CSS::CSSStyle>& result) override;
-    virtual void setRuleSelector(ErrorString&, const RefPtr<Inspector::InspectorObject>&& ruleId, const String& selector, RefPtr<Inspector::Protocol::CSS::CSSRule>& result) override;
+    virtual void setStyleText(ErrorString&, const Inspector::InspectorObject& styleId, const String& text, RefPtr<Inspector::Protocol::CSS::CSSStyle>& result) override;
+    virtual void setRuleSelector(ErrorString&, const Inspector::InspectorObject& ruleId, const String& selector, RefPtr<Inspector::Protocol::CSS::CSSRule>& result) override;
     virtual void addRule(ErrorString&, int contextNodeId, const String& selector, RefPtr<Inspector::Protocol::CSS::CSSRule>& result) override;
     virtual void getSupportedCSSProperties(ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSPropertyInfo>>& result) override;
-    virtual void forcePseudoState(ErrorString&, int nodeId, const RefPtr<Inspector::InspectorArray>&& forcedPseudoClasses) override;
+    virtual void forcePseudoState(ErrorString&, int nodeId, const Inspector::InspectorArray& forcedPseudoClasses) override;
     virtual void getNamedFlowCollection(ErrorString&, int documentNodeId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::NamedFlow>>& result) override;
 
 private:

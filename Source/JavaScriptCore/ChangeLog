@@ -1,3 +1,51 @@
+2015-06-18  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: improve generated types for objects passed to backend commands
+        https://bugs.webkit.org/show_bug.cgi?id=146091
+
+        Reviewed by Joseph Pecoraro.
+
+        The main change is that objects passed in will have a type like const T& or const T*,
+        rather than const RefPtr<T>&&. These protocol objects are owned by the generated dispatcher
+        methods and only exist to pass data to backend command implementations. So, there is no
+        reason for callees to add a reference or take ownership of these inputs.
+
+        Some small improvements were made in the code generator to standardize how these
+        expressions are generated for parameters. Optional in parameters are now prefixed with
+        'opt_in_' to make the generated method signatures and implementations clearer.
+
+        * inspector/InspectorValues.cpp:
+        (Inspector::InspectorArrayBase::get): Add const qualifier.
+        * inspector/InspectorValues.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::setBreakpointByUrl):
+        (Inspector::parseLocation):
+        (Inspector::InspectorDebuggerAgent::setBreakpoint):
+        (Inspector::InspectorDebuggerAgent::continueToLocation):
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::callFunctionOn):
+        (Inspector::InspectorRuntimeAgent::saveResult):
+        (Inspector::InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets):
+        * inspector/agents/InspectorRuntimeAgent.h:
+
+        * inspector/scripts/codegen/cpp_generator.py: Always generate PrimitiveType('array').
+        (CppGenerator.cpp_type_for_unchecked_formal_in_parameter): Alter the type signature
+        for an unchecked input to use pointers or references.
+
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_header.py:
+        (CppBackendDispatcherHeaderGenerator._generate_handler_declaration_for_command):
+        (CppBackendDispatcherHeaderGenerator._generate_async_handler_declaration_for_command):
+        Local variables for optional parameters now have the 'opt_' prefix.
+
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_implementation.py:
+        (CppBackendDispatcherImplementationGenerator._generate_async_dispatcher_class_for_domain):
+        (CppBackendDispatcherImplementationGenerator._generate_dispatcher_implementation_for_command):
+        Local variables for optional parameters now have the 'opt_' prefix.
+        Split parameterName and parameterKey into two separate template variables to avoid mixups.
+
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+
 2015-06-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed. Rollout r185670 as it caused some tests to be flakey.

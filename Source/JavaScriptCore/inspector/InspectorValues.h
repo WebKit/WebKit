@@ -279,7 +279,7 @@ protected:
     void pushObject(RefPtr<InspectorObjectBase>&&);
     void pushArray(RefPtr<InspectorArrayBase>&&);
 
-    RefPtr<InspectorValue> get(size_t index);
+    RefPtr<InspectorValue> get(size_t index) const;
 
     virtual void writeJSON(StringBuilder& output) const override;
 

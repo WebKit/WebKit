@@ -117,7 +117,7 @@ public:
     // Called from frontend.
     virtual void enable(ErrorString&) override;
     virtual void disable(ErrorString&) override;
-    virtual void setExtraHTTPHeaders(ErrorString&, const RefPtr<Inspector::InspectorObject>&&) override;
+    virtual void setExtraHTTPHeaders(ErrorString&, const Inspector::InspectorObject& headers) override;
     virtual void getResponseBody(ErrorString&, const String& requestId, String* content, bool* base64Encoded) override;
     virtual void canClearBrowserCache(ErrorString&, bool*) override;
     virtual void clearBrowserCache(ErrorString&) override;
@@ -139,7 +139,7 @@ private:
     bool m_enabled;
     bool m_cacheDisabled;
     bool m_loadingXHRSynchronously;
-    RefPtr<Inspector::InspectorObject> m_extraRequestHeaders;
+    HashMap<String, String> m_extraRequestHeaders;
 
     HashSet<unsigned long> m_hiddenRequestIdentifiers;
 

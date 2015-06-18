@@ -72,18 +72,18 @@ enum ForcePseudoClassFlags {
     PseudoClassVisited = 1 << 3
 };
 
-static unsigned computePseudoClassMask(InspectorArray* pseudoClassArray)
+static unsigned computePseudoClassMask(const InspectorArray& pseudoClassArray)
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(String, active, (ASCIILiteral("active")));
     DEPRECATED_DEFINE_STATIC_LOCAL(String, hover, (ASCIILiteral("hover")));
     DEPRECATED_DEFINE_STATIC_LOCAL(String, focus, (ASCIILiteral("focus")));
     DEPRECATED_DEFINE_STATIC_LOCAL(String, visited, (ASCIILiteral("visited")));
-    if (!pseudoClassArray || !pseudoClassArray->length())
+    if (!pseudoClassArray.length())
         return PseudoClassNone;
 
     unsigned result = PseudoClassNone;
-    for (size_t i = 0; i < pseudoClassArray->length(); ++i) {
-        RefPtr<InspectorValue> pseudoClassValue = pseudoClassArray->get(i);
+    for (size_t i = 0; i < pseudoClassArray.length(); ++i) {
+        RefPtr<InspectorValue> pseudoClassValue = pseudoClassArray.get(i);
         String pseudoClass;
         bool success = pseudoClassValue->asString(pseudoClass);
         if (!success)
@@ -624,9 +624,9 @@ void InspectorCSSAgent::setStyleSheetText(ErrorString& errorString, const String
     errorString = InspectorDOMAgent::toErrorString(ec);
 }
 
-void InspectorCSSAgent::setStyleText(ErrorString& errorString, const RefPtr<InspectorObject>&& fullStyleId, const String& text, RefPtr<Inspector::Protocol::CSS::CSSStyle>& result)
+void InspectorCSSAgent::setStyleText(ErrorString& errorString, const InspectorObject& fullStyleId, const String& text, RefPtr<Inspector::Protocol::CSS::CSSStyle>& result)
 {
-    InspectorCSSId compoundId(fullStyleId.copyRef());
+    InspectorCSSId compoundId(fullStyleId);
     ASSERT(!compoundId.isEmpty());
 
     InspectorStyleSheet* inspectorStyleSheet = assertStyleSheetForId(errorString, compoundId.styleSheetId());
@@ -640,9 +640,9 @@ void InspectorCSSAgent::setStyleText(ErrorString& errorString, const RefPtr<Insp
     errorString = InspectorDOMAgent::toErrorString(ec);
 }
 
-void InspectorCSSAgent::setRuleSelector(ErrorString& errorString, const RefPtr<InspectorObject>&& fullRuleId, const String& selector, RefPtr<Inspector::Protocol::CSS::CSSRule>& result)
+void InspectorCSSAgent::setRuleSelector(ErrorString& errorString, const InspectorObject& fullRuleId, const String& selector, RefPtr<Inspector::Protocol::CSS::CSSRule>& result)
 {
-    InspectorCSSId compoundId(fullRuleId.copyRef());
+    InspectorCSSId compoundId(fullRuleId);
     ASSERT(!compoundId.isEmpty());
 
     InspectorStyleSheet* inspectorStyleSheet = assertStyleSheetForId(errorString, compoundId.styleSheetId());
@@ -708,13 +708,13 @@ void InspectorCSSAgent::getSupportedCSSProperties(ErrorString&, RefPtr<Inspector
     cssProperties = WTF::move(properties);
 }
 
-void InspectorCSSAgent::forcePseudoState(ErrorString& errorString, int nodeId, const RefPtr<InspectorArray>&& forcedPseudoClasses)
+void InspectorCSSAgent::forcePseudoState(ErrorString& errorString, int nodeId, const InspectorArray& forcedPseudoClasses)
 {
     Element* element = m_domAgent->assertElement(errorString, nodeId);
     if (!element)
         return;
 
-    unsigned forcedPseudoState = computePseudoClassMask(forcedPseudoClasses.get());
+    unsigned forcedPseudoState = computePseudoClassMask(forcedPseudoClasses);
     NodeIdToForcedPseudoState::iterator it = m_nodeIdToForcedPseudoState.find(nodeId);
     unsigned currentForcedPseudoState = it == m_nodeIdToForcedPseudoState.end() ? 0 : it->value;
     bool needStyleRecalc = forcedPseudoState != currentForcedPseudoState;

@@ -39,6 +39,7 @@ _PRIMITIVE_TO_CPP_NAME_MAP = {
     'number': 'double',
     'string': 'String',
     'object': 'Inspector::InspectorObject',
+    'array': 'Inspector::InspectorArray',
     'any': 'Inspector::InspectorValue'
 }
 
@@ -119,9 +120,17 @@ class CppGenerator:
 
         # This handles the 'any' type and objects with defined properties.
         if isinstance(_type, ObjectType) or _type.qualified_name() is 'object':
-            return 'const RefPtr<Inspector::InspectorObject>&&'
+            cpp_name = 'Inspector::InspectorObject'
+            if parameter.is_optional:
+                return 'const %s*' % cpp_name
+            else:
+                return 'const %s&' % cpp_name
         if isinstance(_type, ArrayType):
-            return 'const RefPtr<Inspector::InspectorArray>&&'
+            cpp_name = 'Inspector::InspectorArray'
+            if parameter.is_optional:
+                return 'const %s*' % cpp_name
+            else:
+                return 'const %s&' % cpp_name
         if isinstance(_type, PrimitiveType):
             cpp_name = CppGenerator.cpp_name_for_primitive_type(_type)
             if parameter.is_optional:

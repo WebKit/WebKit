@@ -92,10 +92,10 @@ void InspectorDOMStorageAgent::disable(ErrorString&)
     m_enabled = false;
 }
 
-void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString& errorString, const RefPtr<InspectorObject>&& storageId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Array<String>>>& items)
+void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString& errorString, const InspectorObject& storageId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Array<String>>>& items)
 {
     Frame* frame;
-    RefPtr<StorageArea> storageArea = findStorageArea(errorString, storageId.copyRef(), frame);
+    RefPtr<StorageArea> storageArea = findStorageArea(errorString, storageId, frame);
     if (!storageArea) {
         errorString = ASCIILiteral("No StorageArea for given storageId");
         return;
@@ -116,10 +116,10 @@ void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString& errorString, cons
     items = WTF::move(storageItems);
 }
 
-void InspectorDOMStorageAgent::setDOMStorageItem(ErrorString& errorString, const RefPtr<InspectorObject>&& storageId, const String& key, const String& value)
+void InspectorDOMStorageAgent::setDOMStorageItem(ErrorString& errorString, const InspectorObject& storageId, const String& key, const String& value)
 {
     Frame* frame;
-    RefPtr<StorageArea> storageArea = findStorageArea(errorString, storageId.copyRef(), frame);
+    RefPtr<StorageArea> storageArea = findStorageArea(errorString, storageId, frame);
     if (!storageArea) {
         errorString = ASCIILiteral("Storage not found");
         return;
@@ -131,10 +131,10 @@ void InspectorDOMStorageAgent::setDOMStorageItem(ErrorString& errorString, const
         errorString = ExceptionCodeDescription(QUOTA_EXCEEDED_ERR).name;
 }
 
-void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString& errorString, const RefPtr<InspectorObject>&& storageId, const String& key)
+void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString& errorString, const InspectorObject& storageId, const String& key)
 {
     Frame* frame;
-    RefPtr<StorageArea> storageArea = findStorageArea(errorString, storageId.copyRef(), frame);
+    RefPtr<StorageArea> storageArea = findStorageArea(errorString, storageId, frame);
     if (!storageArea) {
         errorString = ASCIILiteral("Storage not found");
         return;
@@ -180,13 +180,13 @@ void InspectorDOMStorageAgent::didDispatchDOMStorageEvent(const String& key, con
         m_frontendDispatcher->domStorageItemUpdated(id, key, oldValue, newValue);
 }
 
-RefPtr<StorageArea> InspectorDOMStorageAgent::findStorageArea(ErrorString& errorString, const RefPtr<InspectorObject>&& storageId, Frame*& targetFrame)
+RefPtr<StorageArea> InspectorDOMStorageAgent::findStorageArea(ErrorString& errorString, const InspectorObject& storageId, Frame*& targetFrame)
 {
     String securityOrigin;
     bool isLocalStorage = false;
-    bool success = storageId->getString(ASCIILiteral("securityOrigin"), securityOrigin);
+    bool success = storageId.getString(ASCIILiteral("securityOrigin"), securityOrigin);
     if (success)
-        success = storageId->getBoolean(ASCIILiteral("isLocalStorage"), isLocalStorage);
+        success = storageId.getBoolean(ASCIILiteral("isLocalStorage"), isLocalStorage);
     if (!success) {
         errorString = ASCIILiteral("Invalid storageId format");
         targetFrame = nullptr;

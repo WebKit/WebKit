@@ -275,7 +275,7 @@ bool InspectorDebuggerAgent::breakpointActionsFromProtocol(ErrorString& errorStr
     return true;
 }
 
-void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString& errorString, int lineNumber, const String* const optionalURL, const String* const optionalURLRegex, const int* const optionalColumnNumber, const RefPtr<InspectorObject>&& options, Inspector::Protocol::Debugger::BreakpointId* outBreakpointIdentifier, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Debugger::Location>>& locations)
+void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString& errorString, int lineNumber, const String* const optionalURL, const String* const optionalURLRegex, const int* const optionalColumnNumber, const InspectorObject* options, Inspector::Protocol::Debugger::BreakpointId* outBreakpointIdentifier, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Debugger::Location>>& locations)
 {
     locations = Inspector::Protocol::Array<Inspector::Protocol::Debugger::Location>::create();
     if (!optionalURL == !optionalURLRegex) {
@@ -321,7 +321,7 @@ void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString& errorString, int li
     *outBreakpointIdentifier = breakpointIdentifier;
 }
 
-static bool parseLocation(ErrorString& errorString, InspectorObject& location, JSC::SourceID& sourceID, unsigned& lineNumber, unsigned& columnNumber)
+static bool parseLocation(ErrorString& errorString, const InspectorObject& location, JSC::SourceID& sourceID, unsigned& lineNumber, unsigned& columnNumber)
 {
     String scriptIDStr;
     if (!location.getString(ASCIILiteral("scriptId"), scriptIDStr) || !location.getInteger(ASCIILiteral("lineNumber"), lineNumber)) {
@@ -336,12 +336,12 @@ static bool parseLocation(ErrorString& errorString, InspectorObject& location, J
     return true;
 }
 
-void InspectorDebuggerAgent::setBreakpoint(ErrorString& errorString, const RefPtr<InspectorObject>&& location, const RefPtr<InspectorObject>&& options, Inspector::Protocol::Debugger::BreakpointId* outBreakpointIdentifier, RefPtr<Inspector::Protocol::Debugger::Location>& actualLocation)
+void InspectorDebuggerAgent::setBreakpoint(ErrorString& errorString, const InspectorObject& location, const InspectorObject* options, Inspector::Protocol::Debugger::BreakpointId* outBreakpointIdentifier, RefPtr<Inspector::Protocol::Debugger::Location>& actualLocation)
 {
     JSC::SourceID sourceID;
     unsigned lineNumber;
     unsigned columnNumber;
-    if (!parseLocation(errorString, *location, sourceID, lineNumber, columnNumber))
+    if (!parseLocation(errorString, location, sourceID, lineNumber, columnNumber))
         return;
 
     String condition = emptyString();
@@ -388,7 +388,7 @@ void InspectorDebuggerAgent::removeBreakpoint(ErrorString&, const String& breakp
     }
 }
 
-void InspectorDebuggerAgent::continueToLocation(ErrorString& errorString, const RefPtr<InspectorObject>&& location)
+void InspectorDebuggerAgent::continueToLocation(ErrorString& errorString, const InspectorObject& location)
 {
     if (m_continueToLocationBreakpointID != JSC::noBreakpointID) {
         scriptDebugServer().removeBreakpoint(m_continueToLocationBreakpointID);
@@ -398,7 +398,7 @@ void InspectorDebuggerAgent::continueToLocation(ErrorString& errorString, const 
     JSC::SourceID sourceID;
     unsigned lineNumber;
     unsigned columnNumber;
-    if (!parseLocation(errorString, *location, sourceID, lineNumber, columnNumber))
+    if (!parseLocation(errorString, location, sourceID, lineNumber, columnNumber))
         return;
 
     ScriptBreakpoint breakpoint(lineNumber, columnNumber, "", false);

@@ -103,7 +103,7 @@ using namespace HTMLNames;
 static const size_t maxTextSize = 10000;
 static const UChar ellipsisUChar[] = { 0x2026, 0 };
 
-static Color parseColor(const RefPtr<InspectorObject>&& colorObject)
+static Color parseColor(const InspectorObject* colorObject)
 {
     if (!colorObject)
         return Color::transparent;
@@ -127,23 +127,22 @@ static Color parseColor(const RefPtr<InspectorObject>&& colorObject)
     return Color(r, g, b, static_cast<int>(a * 255));
 }
 
-static Color parseConfigColor(const String& fieldName, InspectorObject* configObject)
+static Color parseConfigColor(const String& fieldName, const InspectorObject* configObject)
 {
     RefPtr<InspectorObject> colorObject;
     configObject->getObject(fieldName, colorObject);
-    return parseColor(WTF::move(colorObject));
+
+    return parseColor(colorObject.get());
 }
 
-static bool parseQuad(const RefPtr<InspectorArray>& quadArray, FloatQuad* quad)
+static bool parseQuad(const InspectorArray& quadArray, FloatQuad* quad)
 {
-    if (!quadArray)
-        return false;
     const size_t coordinatesInQuad = 8;
     double coordinates[coordinatesInQuad];
-    if (quadArray->length() != coordinatesInQuad)
+    if (quadArray.length() != coordinatesInQuad)
         return false;
     for (size_t i = 0; i < coordinatesInQuad; ++i) {
-        if (!quadArray->get(i)->asDouble(*(coordinates + i)))
+        if (!quadArray.get(i)->asDouble(*(coordinates + i)))
             return false;
     }
     quad->setP1(FloatPoint(coordinates[0], coordinates[1]));
@@ -874,7 +873,7 @@ void InspectorDOMAgent::getAccessibilityPropertiesForNode(ErrorString& errorStri
     axProperties = buildObjectForAccessibilityProperties(node);
 }
 
-void InspectorDOMAgent::performSearch(ErrorString& errorString, const String& whitespaceTrimmedQuery, const RefPtr<InspectorArray>&& nodeIds, String* searchId, int* resultCount)
+void InspectorDOMAgent::performSearch(ErrorString& errorString, const String& whitespaceTrimmedQuery, const InspectorArray* nodeIds, String* searchId, int* resultCount)
 {
     // FIXME: Search works with node granularity - number of matches within node is not calculated.
     InspectorNodeFinder finder(whitespaceTrimmedQuery);
@@ -1012,7 +1011,7 @@ void InspectorDOMAgent::mouseDidMoveOverElement(const HitTestResult& result, uns
         m_overlay->highlightNode(node, *m_inspectModeHighlightConfig);
 }
 
-void InspectorDOMAgent::setSearchingForNode(ErrorString& errorString, bool enabled, InspectorObject* highlightInspectorObject)
+void InspectorDOMAgent::setSearchingForNode(ErrorString& errorString, bool enabled, const InspectorObject* highlightInspectorObject)
 {
     if (m_searchingForNode == enabled)
         return;
@@ -1027,7 +1026,7 @@ void InspectorDOMAgent::setSearchingForNode(ErrorString& errorString, bool enabl
     m_overlay->didSetSearchingForNode(m_searchingForNode);
 }
 
-std::unique_ptr<HighlightConfig> InspectorDOMAgent::highlightConfigFromInspectorObject(ErrorString& errorString, InspectorObject* highlightInspectorObject)
+std::unique_ptr<HighlightConfig> InspectorDOMAgent::highlightConfigFromInspectorObject(ErrorString& errorString, const InspectorObject* highlightInspectorObject)
 {
     if (!highlightInspectorObject) {
         errorString = ASCIILiteral("Internal error: highlight configuration parameter is missing");
@@ -1046,37 +1045,37 @@ std::unique_ptr<HighlightConfig> InspectorDOMAgent::highlightConfigFromInspector
     return highlightConfig;
 }
 
-void InspectorDOMAgent::setInspectModeEnabled(ErrorString& errorString, bool enabled, const RefPtr<InspectorObject>&& highlightConfig)
+void InspectorDOMAgent::setInspectModeEnabled(ErrorString& errorString, bool enabled, const InspectorObject* highlightConfig)
 {
-    setSearchingForNode(errorString, enabled, highlightConfig ? highlightConfig.get() : nullptr);
+    setSearchingForNode(errorString, enabled, highlightConfig ? highlightConfig : nullptr);
 }
 
-void InspectorDOMAgent::highlightRect(ErrorString&, int x, int y, int width, int height, const RefPtr<InspectorObject>&& color, const RefPtr<InspectorObject>&& outlineColor, const bool* usePageCoordinates)
+void InspectorDOMAgent::highlightRect(ErrorString&, int x, int y, int width, int height, const InspectorObject* color, const InspectorObject* outlineColor, const bool* usePageCoordinates)
 {
     auto quad = std::make_unique<FloatQuad>(FloatRect(x, y, width, height));
-    innerHighlightQuad(WTF::move(quad), color.copyRef(), outlineColor.copyRef(), usePageCoordinates);
+    innerHighlightQuad(WTF::move(quad), color, outlineColor, usePageCoordinates);
 }
 
-void InspectorDOMAgent::highlightQuad(ErrorString& errorString, const RefPtr<InspectorArray>&& quadArray, const RefPtr<InspectorObject>&& color, const RefPtr<InspectorObject>&& outlineColor, const bool* usePageCoordinates)
+void InspectorDOMAgent::highlightQuad(ErrorString& errorString, const InspectorArray& quadArray, const InspectorObject* color, const InspectorObject* outlineColor, const bool* usePageCoordinates)
 {
     auto quad = std::make_unique<FloatQuad>();
     if (!parseQuad(quadArray, quad.get())) {
         errorString = ASCIILiteral("Invalid Quad format");
         return;
     }
-    innerHighlightQuad(WTF::move(quad), color.copyRef(), outlineColor.copyRef(), usePageCoordinates);
+    innerHighlightQuad(WTF::move(quad), color, outlineColor, usePageCoordinates);
 }
 
-void InspectorDOMAgent::innerHighlightQuad(std::unique_ptr<FloatQuad> quad, const RefPtr<InspectorObject>&& color, const RefPtr<InspectorObject>&& outlineColor, const bool* usePageCoordinates)
+void InspectorDOMAgent::innerHighlightQuad(std::unique_ptr<FloatQuad> quad, const InspectorObject* color, const InspectorObject* outlineColor, const bool* usePageCoordinates)
 {
     auto highlightConfig = std::make_unique<HighlightConfig>();
-    highlightConfig->content = parseColor(color.copyRef());
-    highlightConfig->contentOutline = parseColor(outlineColor.copyRef());
+    highlightConfig->content = parseColor(color);
+    highlightConfig->contentOutline = parseColor(outlineColor);
     highlightConfig->usePageCoordinates = usePageCoordinates ? *usePageCoordinates : false;
     m_overlay->highlightQuad(WTF::move(quad), *highlightConfig);
 }
 
-void InspectorDOMAgent::highlightNode(ErrorString& errorString, const RefPtr<InspectorObject>&& highlightInspectorObject, const int* nodeId, const String* objectId)
+void InspectorDOMAgent::highlightNode(ErrorString& errorString, const InspectorObject& highlightInspectorObject, const int* nodeId, const String* objectId)
 {
     Node* node = 0;
     if (nodeId) {
@@ -1091,21 +1090,21 @@ void InspectorDOMAgent::highlightNode(ErrorString& errorString, const RefPtr<Ins
     if (!node)
         return;
 
-    std::unique_ptr<HighlightConfig> highlightConfig = highlightConfigFromInspectorObject(errorString, highlightInspectorObject.get());
+    std::unique_ptr<HighlightConfig> highlightConfig = highlightConfigFromInspectorObject(errorString, &highlightInspectorObject);
     if (!highlightConfig)
         return;
 
     m_overlay->highlightNode(node, *highlightConfig);
 }
 
-void InspectorDOMAgent::highlightFrame(ErrorString&, const String& frameId, const RefPtr<InspectorObject>&& color, const RefPtr<InspectorObject>&& outlineColor)
+void InspectorDOMAgent::highlightFrame(ErrorString&, const String& frameId, const InspectorObject* color, const InspectorObject* outlineColor)
 {
     Frame* frame = m_pageAgent->frameForId(frameId);
     if (frame && frame->ownerElement()) {
         auto highlightConfig = std::make_unique<HighlightConfig>();
         highlightConfig->showInfo = true; // Always show tooltips for frames.
-        highlightConfig->content = parseColor(color.copyRef());
-        highlightConfig->contentOutline = parseColor(outlineColor.copyRef());
+        highlightConfig->content = parseColor(color);
+        highlightConfig->contentOutline = parseColor(outlineColor);
         m_overlay->highlightNode(frame->ownerElement(), *highlightConfig);
     }
 }
