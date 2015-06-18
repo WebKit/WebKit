@@ -3119,17 +3119,28 @@ RegisterID* DeconstructingAssignmentNode::emitBytecode(BytecodeGenerator& genera
 DeconstructionPatternNode::~DeconstructionPatternNode()
 {
 }
+
+static void assignDefaultValueIfUndefined(BytecodeGenerator& generator, RegisterID* maybeUndefined, ExpressionNode* defaultValue)
+{
+    ASSERT(defaultValue);
+    RefPtr<Label> isNotUndefined = generator.newLabel();
+    generator.emitJumpIfFalse(generator.emitIsUndefined(generator.newTemporary(), maybeUndefined), isNotUndefined.get());
+    generator.emitNode(maybeUndefined, defaultValue);
+    generator.emitLabel(isNotUndefined.get());
+}
     
 void ArrayPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs) const
 {
     for (size_t i = 0; i < m_targetPatterns.size(); i++) {
         auto target = m_targetPatterns[i];
-        if (!target)
+        if (!target.pattern)
             continue;
         RefPtr<RegisterID> temp = generator.newTemporary();
         generator.emitLoad(temp.get(), jsNumber(i));
         generator.emitGetByVal(temp.get(), rhs, temp.get());
-        target->bindValue(generator, temp.get());
+        if (target.defaultValue)
+            assignDefaultValueIfUndefined(generator, temp.get(), target.defaultValue);
+        target.pattern->bindValue(generator, temp.get());
     }
 }
 
@@ -3152,13 +3163,15 @@ RegisterID* ArrayPatternNode::emitDirectBinding(BytecodeGenerator& generator, Re
     for (size_t i = 0; i < m_targetPatterns.size(); i++) {
         registers.uncheckedAppend(generator.newTemporary());
         generator.emitNode(registers.last().get(), elements[i]);
+        if (m_targetPatterns[i].defaultValue)
+            assignDefaultValueIfUndefined(generator, registers.last().get(), m_targetPatterns[i].defaultValue);
         if (resultRegister)
             generator.emitPutByIndex(resultRegister.get(), i, registers.last().get());
     }
     
     for (size_t i = 0; i < m_targetPatterns.size(); i++) {
-        if (m_targetPatterns[i])
-            m_targetPatterns[i]->bindValue(generator, registers[i].get());
+        if (m_targetPatterns[i].pattern)
+            m_targetPatterns[i].pattern->bindValue(generator, registers[i].get());
     }
     if (resultRegister)
         return generator.moveToDestinationIfNeeded(dst, resultRegister.get());
@@ -3169,11 +3182,11 @@ void ArrayPatternNode::toString(StringBuilder& builder) const
 {
     builder.append('[');
     for (size_t i = 0; i < m_targetPatterns.size(); i++) {
-        if (!m_targetPatterns[i]) {
+        if (!m_targetPatterns[i].pattern) {
             builder.append(',');
             continue;
         }
-        m_targetPatterns[i]->toString(builder);
+        m_targetPatterns[i].pattern->toString(builder);
         if (i < m_targetPatterns.size() - 1)
             builder.append(',');
     }
@@ -3183,7 +3196,7 @@ void ArrayPatternNode::toString(StringBuilder& builder) const
 void ArrayPatternNode::collectBoundIdentifiers(Vector<Identifier>& identifiers) const
 {
     for (size_t i = 0; i < m_targetPatterns.size(); i++) {
-        if (DeconstructionPatternNode* node = m_targetPatterns[i].get())
+        if (DeconstructionPatternNode* node = m_targetPatterns[i].pattern.get())
             node->collectBoundIdentifiers(identifiers);
     }
 }
@@ -3210,6 +3223,8 @@ void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs)
         auto& target = m_targetPatterns[i];
         RefPtr<RegisterID> temp = generator.newTemporary();
         generator.emitGetById(temp.get(), rhs, target.propertyName);
+        if (target.defaultValue)
+            assignDefaultValueIfUndefined(generator, temp.get(), target.defaultValue);
         target.pattern->bindValue(generator, temp.get());
     }
 }

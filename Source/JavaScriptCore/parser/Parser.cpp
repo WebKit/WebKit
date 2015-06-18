@@ -613,7 +613,9 @@ template <class TreeBuilder> TreeDeconstructionPattern Parser<LexerType>::parseD
             if (kind == DeconstructToExpressions && !innerPattern)
                 return 0;
             failIfFalse(innerPattern, "Cannot parse this deconstruction pattern");
-            context.appendArrayPatternEntry(arrayPattern, location, innerPattern);
+            TreeExpression defaultValue = parseDefaultValueForDeconstructionPattern(context);
+            failIfTrue(kind == DeconstructToParameters && defaultValue,  "Default values in destructuring parameters are currently not supported");
+            context.appendArrayPatternEntry(arrayPattern, location, innerPattern, defaultValue);
         } while (consume(COMMA));
         
         if (kind == DeconstructToExpressions && !match(CLOSEBRACKET))
@@ -679,7 +681,9 @@ template <class TreeBuilder> TreeDeconstructionPattern Parser<LexerType>::parseD
             if (kind == DeconstructToExpressions && !innerPattern)
                 return 0;
             failIfFalse(innerPattern, "Cannot parse this deconstruction pattern");
-            context.appendObjectPatternEntry(objectPattern, location, wasString, propertyName, innerPattern);
+            TreeExpression defaultValue = parseDefaultValueForDeconstructionPattern(context);
+            failIfTrue(kind == DeconstructToParameters && defaultValue, "Default values in destructuring parameters are currently not supported");
+            context.appendObjectPatternEntry(objectPattern, location, wasString, propertyName, innerPattern, defaultValue);
         } while (consume(COMMA));
         if (kind == DeconstructToExpressions && !match(CLOSEBRACE))
             return 0;
@@ -702,6 +706,16 @@ template <class TreeBuilder> TreeDeconstructionPattern Parser<LexerType>::parseD
     }
     m_nonLHSCount = nonLHSCount;
     return pattern;
+}
+
+template <typename LexerType>
+template <class TreeBuilder> TreeExpression Parser<LexerType>::parseDefaultValueForDeconstructionPattern(TreeBuilder& context)
+{
+    if (!match(EQUAL))
+        return 0;
+
+    next(TreeBuilder::DontBuildStrings); // consume '='
+    return parseAssignmentExpression(context);
 }
 
 template <typename LexerType>

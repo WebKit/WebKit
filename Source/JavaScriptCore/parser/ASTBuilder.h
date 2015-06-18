@@ -737,12 +737,12 @@ public:
     
     void appendArrayPatternSkipEntry(ArrayPattern node, const JSTokenLocation& location)
     {
-        node->appendIndex(location, 0);
+        node->appendIndex(location, 0, nullptr);
     }
 
-    void appendArrayPatternEntry(ArrayPattern node, const JSTokenLocation& location, DeconstructionPattern pattern)
+    void appendArrayPatternEntry(ArrayPattern node, const JSTokenLocation& location, DeconstructionPattern pattern, ExpressionNode* defaultValue)
     {
-        node->appendIndex(location, pattern.get());
+        node->appendIndex(location, pattern.get(), defaultValue);
     }
     
     ObjectPattern createObjectPattern(const JSTokenLocation&)
@@ -750,9 +750,9 @@ public:
         return ObjectPatternNode::create();
     }
     
-    void appendObjectPatternEntry(ObjectPattern node, const JSTokenLocation& location, bool wasString, const Identifier& identifier, DeconstructionPattern pattern)
+    void appendObjectPatternEntry(ObjectPattern node, const JSTokenLocation& location, bool wasString, const Identifier& identifier, DeconstructionPattern pattern, ExpressionNode* defaultValue)
     {
-        node->appendEntry(location, identifier, wasString, pattern.get());
+        node->appendEntry(location, identifier, wasString, pattern.get(), defaultValue);
     }
     
     BindingPattern createBindingLocation(const JSTokenLocation&, const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end)
