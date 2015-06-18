@@ -1,3 +1,11 @@
+2015-06-18  Conrad Shultz  <conrad_shultz@apple.com>
+
+        REGRESSION: js/dom/navigator-plugins-crash.html asserts a lot
+        https://bugs.webkit.org/show_bug.cgi?id=144399
+
+        * TestExpectations:
+        Revert change marking navigator-plugins-crash.html as flaky now that the underlying bug has been addressed.
+
 2015-06-17  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Log blocked loads to the WebInspector console
