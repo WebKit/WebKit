@@ -862,6 +862,13 @@ void Storage::shrink()
     });
 }
 
+void Storage::clearWriteQueue()
+{
+    LOG(NetworkCacheStorage, "(NetworkProcess) clearing write queue");
+
+    m_pendingWriteOperations.clear();
+}
+
 void Storage::deleteOldVersions()
 {
     backgroundIOQueue().dispatch([this] {
