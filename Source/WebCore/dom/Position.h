@@ -198,7 +198,7 @@ public:
     static bool nodeIsUserSelectAll(const Node*) { return false; }
     static Node* rootUserSelectAllForNode(Node*) { return 0; }
 #endif
-    static ContainerNode* findParent(const Node*);
+    static ContainerNode* findParent(const Node&);
     
     void debugPosition(const char* msg = "") const;
 
