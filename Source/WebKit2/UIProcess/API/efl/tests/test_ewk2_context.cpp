@@ -210,12 +210,13 @@ TEST_F(EWK2ContextTest, ewk_context_network_process_model)
 
     ASSERT_EQ(webView1WebProcessID, webView2WebProcessID);
 
-    ASSERT_TRUE(toImpl(EWKViewGetWKView(webView1))->page()->process().processPool().networkProcess() == nullptr);
-    ASSERT_TRUE(toImpl(EWKViewGetWKView(webView2))->page()->process().processPool().networkProcess() == nullptr);
+    PlatformProcessIdentifier webView1NetworkProcessID = toImpl(EWKViewGetWKView(webView1))->page()->process().processPool().networkProcess()->processIdentifier();
+    PlatformProcessIdentifier webView2NetworkProcessID = toImpl(EWKViewGetWKView(webView2))->page()->process().processPool().networkProcess()->processIdentifier();
+
+    ASSERT_EQ(webView1NetworkProcessID, webView2NetworkProcessID);
 }
 
-
-TEST_F(EWK2ContextTestMultipleProcesses, DISABLED_ewk_context_network_process_model)
+TEST_F(EWK2ContextTestMultipleProcesses, ewk_context_network_process_model)
 {
     Ewk_Context* context = ewk_view_context_get(webView());
 
