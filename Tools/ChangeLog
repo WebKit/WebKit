@@ -1,3 +1,19 @@
+2015-06-17  Daniel Bates  <dabates@apple.com>
+
+        Client may receive began editing callback for already focused text field
+        https://bugs.webkit.org/show_bug.cgi?id=146074
+        <rdar://problem/21293562>
+
+        Reviewed by Darin Adler.
+
+        Add a unit test to ensure that a client receives exactly one began editing
+        callback when a text field is newly focused. In particular, dispatching
+        a DOM focus event at an already focused text field does not dispatch a
+        began editing callback to the client.
+
+        * TestWebKitAPI/Tests/WebKit2/TextFieldDidBeginAndEndEditing.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2015-06-17  Hyungwook Lee  <hyungwook.lee@navercorp.com>
 
         [Win]Implement layoutTestController.dispatchPendingLoadRequests. 

@@ -206,15 +206,19 @@ void TextFieldInputType::forwardEvent(Event* event)
                 }
 
                 capsLockStateMayHaveChanged();
-            } else if (event->type() == eventNames().focusEvent) {
-                if (Frame* frame = element().document().frame())
-                    frame->editor().textFieldDidBeginEditing(&element());
+            } else if (event->type() == eventNames().focusEvent)
                 capsLockStateMayHaveChanged();
-            }
 
             element().forwardEvent(event);
         }
     }
+}
+
+void TextFieldInputType::handleFocusEvent(Node* oldFocusedNode, FocusDirection)
+{
+    ASSERT_UNUSED(oldFocusedNode, oldFocusedNode != &element());
+    if (Frame* frame = element().document().frame())
+        frame->editor().textFieldDidBeginEditing(&element());
 }
 
 void TextFieldInputType::handleBlurEvent()

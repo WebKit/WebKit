@@ -120,6 +120,12 @@ TEST_F(WebKit2TextFieldBeginAndEditEditingTest, TextFieldDidBeginAndEndEditingEv
     executeJavaScriptAndCheckDidReceiveMessage("blurTextField('readonly')", "DidReceiveTextFieldDidEndEditing");
 }
 
+TEST_F(WebKit2TextFieldBeginAndEditEditingTest, TextFieldDidBeginShouldNotBeDispatchedForAlreadyFocusedField)
+{
+    executeJavaScriptAndCheckDidReceiveMessage("focusTextField('input'); focusTextField('input')", "DidReceiveTextFieldDidBeginEditing");
+    executeJavaScriptAndCheckDidReceiveMessage("blurTextField('input')", "DidReceiveTextFieldDidEndEditing");
+}
+
 } // namespace TestWebKitAPI
 
 #endif
