@@ -1,3 +1,9 @@
+2015-06-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed. Rollout r185670 as it caused some tests to be flakey.
+
+        * debugger/Debugger.cpp:
+
 2015-06-17  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Log blocked loads to the WebInspector console
