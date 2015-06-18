@@ -1,3 +1,17 @@
+2015-06-18  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [EFL][WK2] Use Web Browser cache model in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=112273
+
+        Reviewed by Laszlo Gombos.
+
+        Set cache model to EWK_CACHE_MODEL_PRIMARY_WEBBROWSER in EFL's MiniBrowser
+        instead of leaving the default value (EWK_CACHE_MODEL_DOCUMENT_VIEWER).
+        This way we have a decent cache capacity and the page cache actually works.
+
+        * MiniBrowser/efl/main.c:
+        (elm_main):
+
 2015-06-18  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Remove redundant Chromium bug keyword
