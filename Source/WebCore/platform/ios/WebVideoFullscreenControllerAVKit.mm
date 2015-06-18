@@ -529,7 +529,7 @@ void WebVideoFullscreenControllerContext::setUpFullscreen(HTMLVideoElement& vide
 
 void WebVideoFullscreenControllerContext::exitFullscreen()
 {
-    ASSERT(WebThreadIsCurrent());
+    ASSERT(WebThreadIsCurrent() || isMainThread());
     IntRect screenRect = m_videoElement->screenRect();
     RefPtr<WebVideoFullscreenControllerContext> strongThis(this);
     dispatch_async(dispatch_get_main_queue(), [strongThis, this, screenRect] {
@@ -577,7 +577,7 @@ void WebVideoFullscreenControllerContext::requestHideAndExitFullscreen()
 
 - (void)exitFullscreen
 {
-    ASSERT(WebThreadIsCurrent());
+    ASSERT(WebThreadIsCurrent() || isMainThread());
     _context->exitFullscreen();
 }
 

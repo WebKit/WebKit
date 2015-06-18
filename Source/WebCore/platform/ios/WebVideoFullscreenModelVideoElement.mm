@@ -82,9 +82,6 @@ void WebVideoFullscreenModelVideoElement::setVideoElement(HTMLVideoElement* vide
     if (m_videoFullscreenInterface)
         m_videoFullscreenInterface->resetMediaState();
 
-    if (m_videoElement && m_videoElement->fullscreenMode())
-        m_videoElement->fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenModeNone);
-
     if (m_videoElement && m_videoElement->videoFullscreenLayer())
         m_videoElement->setVideoFullscreenLayer(nullptr);
 

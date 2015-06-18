@@ -1,3 +1,17 @@
+2015-06-18  Jeremy Jones  <jeremyj@apple.com>
+
+        Fix crash when entering fullscreen during exit fullscreen animation.
+        https://bugs.webkit.org/show_bug.cgi?id=146117
+
+        Reviewed by Simon Fraser.
+
+        A partial teardown left the LayerHostingContext in a bad state when attempting to reuse the model and interface
+        objects. Instead, complete the teardown and don't reuse the objects.
+
+        * WebProcess/ios/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::didEnterFullscreen): WebThreadRun is a no-op in WK2. Use dispatch_async.
+        (WebKit::WebVideoFullscreenManager::didCleanupFullscreen): Do complete teardown before entering fullscreen again.
+
 2015-06-18  Anders Carlsson  <andersca@apple.com>
 
         Remove shouldInterruptJavaScript

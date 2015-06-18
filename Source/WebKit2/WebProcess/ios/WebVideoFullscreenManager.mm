@@ -449,7 +449,7 @@ void WebVideoFullscreenManager::didEnterFullscreen(uint64_t contextId)
 
     // exit fullscreen now if it was previously requested during an animation.
     RefPtr<WebVideoFullscreenManager> strongThis(this);
-    WebThreadRun([strongThis, videoElement] {
+    dispatch_async(dispatch_get_main_queue(), [strongThis, videoElement] {
         strongThis->exitVideoFullscreenForVideoElement(*videoElement);
     });
 }
@@ -482,25 +482,22 @@ void WebVideoFullscreenManager::didCleanupFullscreen(uint64_t contextId)
     interface->setIsAnimating(false);
     interface->setIsFullscreen(false);
     HTMLMediaElementEnums::VideoFullscreenMode mode = interface->fullscreenMode();
+    bool targetIsFullscreen = interface->targetIsFullscreen();
 
     model->setVideoFullscreenLayer(nil);
     RefPtr<HTMLVideoElement> videoElement = model->videoElement();
 
-    if (!interface->targetIsFullscreen()) {
-        model->setVideoElement(nullptr);
-        model->setWebVideoFullscreenInterface(nullptr);
-        interface->invalidate();
-        m_videoElements.remove(videoElement.get());
-        m_contextMap.remove(contextId);
-        return;
-    }
+    model->setVideoElement(nullptr);
+    model->setWebVideoFullscreenInterface(nullptr);
+    interface->invalidate();
+    m_videoElements.remove(videoElement.get());
+    m_contextMap.remove(contextId);
 
-    if (!videoElement)
+    if (!videoElement || !targetIsFullscreen)
         return;
 
-    // exit fullscreen now if it was previously requested during an animation.
     RefPtr<WebVideoFullscreenManager> strongThis(this);
-    WebThreadRun([strongThis, videoElement, mode] {
+    dispatch_async(dispatch_get_main_queue(), [strongThis, videoElement, mode] {
         strongThis->enterVideoFullscreenForVideoElement(*videoElement, mode);
     });
 }
