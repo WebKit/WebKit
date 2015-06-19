@@ -265,11 +265,12 @@ WebInspector.TimelineRecordingContentView.prototype = {
 
             if (this._renderingFrameTimeline && this._renderingFrameTimeline.records.length) {
                 var records = this._renderingFrameTimeline.records;
-                var startIndex = Math.floor(startTime);
+                var startIndex = this._currentTimelineOverview.timelineRuler.snapInterval ? startTime : Math.floor(startTime);
                 if (startIndex >= records.length)
                     return false;
 
-                var endIndex = Math.min(Math.floor(endTime), records.length - 1);
+                var endIndex = this._currentTimelineOverview.timelineRuler.snapInterval ? endTime - 1: Math.floor(endTime);
+                endIndex = Math.min(endIndex, records.length - 1);
                 console.assert(startIndex <= endIndex, startIndex);
 
                 startTime = records[startIndex].startTime;
@@ -671,7 +672,7 @@ WebInspector.TimelineRecordingContentView.prototype = {
             return;
 
         var startIndex = this._renderingFrameTimelineOverview.selectionStartTime;
-        var endIndex = startIndex + this._renderingFrameTimelineOverview.selectionDuration;
+        var endIndex = startIndex + this._renderingFrameTimelineOverview.selectionDuration - 1;
         this._timelineSidebarPanel.updateFrameSelection(startIndex, endIndex);
     }
 };

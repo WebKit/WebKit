@@ -317,9 +317,6 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
     {
         console.assert(startFrameIndex <= endFrameIndex);
         console.assert(this.viewMode === WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames, this._viewMode);
-
-        startFrameIndex = Math.floor(startFrameIndex);
-        endFrameIndex = Math.floor(endFrameIndex);
         if (this._startFrameIndex === startFrameIndex && this._endFrameIndex === endFrameIndex)
             return;
 

@@ -1,3 +1,29 @@
+2015-06-18  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Rendering Frames timeline selection should snap to frame boundaries
+        https://bugs.webkit.org/show_bug.cgi?id=146120
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/RenderingFrameTimelineOverview.js:
+        Enable snapping to frame boundaries.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._updateFrameSelection):
+        Updated filtering to account for ruler snapping.
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype.get snapInterval):
+        (WebInspector.TimelineRuler.prototype.set snapInterval):
+        (WebInspector.TimelineRuler.prototype.set selectionStartTime):
+        (WebInspector.TimelineRuler.prototype.set selectionEndTime):
+        (WebInspector.TimelineRuler.prototype._snapValue):
+        (WebInspector.TimelineRuler.prototype._handleMouseMove):
+        Added support for snapping to a specified interval.
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        Removed unnecessary code.
+
 2015-06-18  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Add a filter for CSS properties in the Styles sidebar

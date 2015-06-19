@@ -37,6 +37,7 @@ WebInspector.RenderingFrameTimelineOverview = function(timelineRecording)
 
     WebInspector.TimelineOverview.call(this, "frames", timelineRecording, minimumDurationPerPixel, maximumDurationPerPixel, defaultSettingsValues);
 
+    this.timelineRuler.snapInterval = 1;
     this.timelineRuler.formatLabelCallback = function(value) {
         return value.toFixed(0);
     };

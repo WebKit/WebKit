@@ -253,6 +253,19 @@ WebInspector.TimelineRuler.prototype = {
         this._needsLayout();
     },
 
+    get snapInterval()
+    {
+        return this._snapInterval;
+    },
+
+    set snapInterval(x)
+    {
+        if (this._snapInterval === x)
+            return;
+
+        this._snapInterval = x;
+    },
+
     get selectionStartTime()
     {
         return this._selectionStartTime;
@@ -260,6 +273,7 @@ WebInspector.TimelineRuler.prototype = {
 
     set selectionStartTime(x)
     {
+        x = this._snapValue(x);
         if (this._selectionStartTime === x)
             return;
 
@@ -276,6 +290,7 @@ WebInspector.TimelineRuler.prototype = {
 
     set selectionEndTime(x)
     {
+        x = this._snapValue(x);
         if (this._selectionEndTime === x)
             return;
 
@@ -604,6 +619,14 @@ WebInspector.TimelineRuler.prototype = {
         return Number.secondsToString(value, true);
     },
 
+    _snapValue: function(value)
+    {
+        if (!value || !this.snapInterval)
+            return value;
+
+        return Math.round(value / this.snapInterval) * this.snapInterval;
+    },
+
     _dispatchTimeRangeSelectionChangedEvent: function()
     {
         delete this._timeRangeSelectionChanged;
@@ -657,9 +680,22 @@ WebInspector.TimelineRuler.prototype = {
 
             var offsetTime = (currentMousePosition - this._lastMousePosition) * this.secondsPerPixel;
             var selectionDuration = this.selectionEndTime - this.selectionStartTime;
+            var oldSelectionStartTime = this.selectionStartTime;
 
             this.selectionStartTime = Math.max(this.startTime, Math.min(this.selectionStartTime + offsetTime, this.endTime - selectionDuration));
             this.selectionEndTime = this.selectionStartTime + selectionDuration;
+
+            if (this.snapInterval) {
+                // When snapping we need to check the mouse position delta relative to the last snap, rather than the
+                // last mouse move. If a snap occurs we adjust for the amount the cursor drifted, so that the mouse
+                // position relative to the selection remains constant.
+                var snapOffset = this.selectionStartTime - oldSelectionStartTime;
+                if (!snapOffset)
+                    return;
+
+                var positionDrift = (offsetTime - snapOffset * this.snapInterval) / this.secondsPerPixel;
+                currentMousePosition -= positionDrift;
+            }
 
             this._lastMousePosition = currentMousePosition;
         } else {
