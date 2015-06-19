@@ -641,7 +641,7 @@ public:
         return unsafeGet() < rhs.unsafeGet();
     }
 
-    template bool operator<(T rhs) const
+    bool operator<(T rhs) const
     {
         return unsafeGet() < rhs;
     }
@@ -651,7 +651,7 @@ public:
         return unsafeGet() <= rhs.unsafeGet();
     }
 
-    template bool operator<=(T rhs) const
+    bool operator<=(T rhs) const
     {
         return unsafeGet() <= rhs;
     }
@@ -661,7 +661,7 @@ public:
         return unsafeGet() > rhs.unsafeGet();
     }
 
-    template bool operator>(T rhs) const
+    bool operator>(T rhs) const
     {
         return unsafeGet() > rhs;
     }
@@ -671,7 +671,7 @@ public:
         return unsafeGet() >= rhs.unsafeGet();
     }
 
-    template bool operator>=(T rhs) const
+    bool operator>=(T rhs) const
     {
         return unsafeGet() >= rhs;
     }
