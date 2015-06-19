@@ -1,5 +1,12 @@
 2015-06-19  Anders Carlsson  <andersca@apple.com>
 
+        Address review feedback from Darin.
+
+        * Shared/mac/HangDetectionDisablerMac.mm:
+        (WebKit::clientsMayIgnoreEvents):
+
+2015-06-19  Anders Carlsson  <andersca@apple.com>
+
         Disable SpinTracer detection while loading sync XHR
         https://bugs.webkit.org/show_bug.cgi?id=146150
         rdar://problem/21462023
