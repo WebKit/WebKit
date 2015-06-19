@@ -1289,6 +1289,7 @@ set(WebCore_SOURCES
     css/CSSKeyframesRule.cpp
     css/CSSLineBoxContainValue.cpp
     css/CSSMediaRule.cpp
+    css/CSSNamedImageValue.cpp
     css/CSSOMUtils.cpp
     css/CSSPageRule.cpp
     css/CSSParser.cpp
@@ -2163,6 +2164,7 @@ set(WebCore_SOURCES
     platform/graphics/LayoutRect.cpp
     platform/graphics/MaskImageOperation.cpp
     platform/graphics/MediaPlayer.cpp
+    platform/graphics/NamedImageGeneratedImage.cpp
     platform/graphics/Path.cpp
     platform/graphics/PathTraversalState.cpp
     platform/graphics/Pattern.cpp

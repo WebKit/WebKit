@@ -79,6 +79,7 @@ public:
     bool isFontValue() const { return m_classType == FontClass; }
     bool isImageGeneratorValue() const { return m_classType >= CanvasClass && m_classType <= RadialGradientClass; }
     bool isGradientValue() const { return m_classType >= LinearGradientClass && m_classType <= RadialGradientClass; }
+    bool isNamedImageValue() const { return m_classType == NamedImageClass; }
 #if ENABLE(CSS_IMAGE_SET)
     bool isImageSetValue() const { return m_classType == ImageSetClass; }
 #endif
@@ -139,6 +140,7 @@ protected:
 
         // Image generator classes.
         CanvasClass,
+        NamedImageClass,
         CrossfadeClass,
         FilterImageClass,
         LinearGradientClass,

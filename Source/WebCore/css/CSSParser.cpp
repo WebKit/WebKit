@@ -50,6 +50,7 @@
 #include "CSSKeyframesRule.h"
 #include "CSSLineBoxContainValue.h"
 #include "CSSMediaRule.h"
+#include "CSSNamedImageValue.h"
 #include "CSSPageRule.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
@@ -9152,7 +9153,8 @@ bool CSSParser::isGeneratedImageValue(CSSParserValue& value) const
         || equalIgnoringCase(value.function->name, "repeating-radial-gradient(")
         || equalIgnoringCase(value.function->name, "-webkit-canvas(")
         || equalIgnoringCase(value.function->name, "-webkit-cross-fade(")
-        || equalIgnoringCase(value.function->name, "-webkit-filter(");
+        || equalIgnoringCase(value.function->name, "-webkit-filter(")
+        || equalIgnoringCase(value.function->name, "-webkit-named-image(");
 }
 
 bool CSSParser::parseGeneratedImage(CSSParserValueList& valueList, RefPtr<CSSValue>& value)
@@ -9197,6 +9199,9 @@ bool CSSParser::parseGeneratedImage(CSSParserValueList& valueList, RefPtr<CSSVal
 
     if (equalIgnoringCase(parserValue.function->name, "-webkit-filter("))
         return parseFilterImage(valueList, value);
+
+    if (equalIgnoringCase(parserValue.function->name, "-webkit-named-image("))
+        return parseNamedImage(valueList, value);
 
     return false;
 }
@@ -9307,6 +9312,21 @@ bool CSSParser::parseCanvas(CSSParserValueList& valueList, RefPtr<CSSValue>& can
         return false;
 
     canvas = CSSCanvasValue::create(value->string);
+    return true;
+}
+
+bool CSSParser::parseNamedImage(CSSParserValueList& valueList, RefPtr<CSSValue>& namedImage)
+{
+    CSSParserValueList* args = valueList.current()->function->args.get();
+    if (!args || args->size() != 1)
+        return false;
+
+    // The only argument is the image name.
+    CSSParserValue* value = args->current();
+    if (!value || value->unit != CSSPrimitiveValue::CSS_IDENT)
+        return false;
+
+    namedImage = CSSNamedImageValue::create(value->string);
     return true;
 }
 

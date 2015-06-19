@@ -57,6 +57,7 @@
 #include "CSSInitialValue.cpp"
 #include "CSSLineBoxContainValue.cpp"
 #include "CSSMediaRule.cpp"
+#include "CSSNamedImageValue.cpp"
 #include "CSSOMUtils.cpp"
 #include "CSSPageRule.cpp"
 #include "CSSParser.cpp"

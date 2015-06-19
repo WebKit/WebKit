@@ -26,7 +26,7 @@
 #ifndef ThemeMac_h
 #define ThemeMac_h
 
-#include "Theme.h"
+#include "ThemeCocoa.h"
 
 @interface NSFont(WebCoreTheme)
 - (NSString*)webCoreFamilyName;
@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class ThemeMac : public Theme {
+class ThemeMac : public ThemeCocoa {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ThemeMac() { }

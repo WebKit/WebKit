@@ -34,8 +34,6 @@
 
 namespace WebCore {
 
-class CSSCrossfadeValue;
-
 class CrossfadeGeneratedImage final : public GeneratedImage {
 public:
     static Ref<CrossfadeGeneratedImage> create(Image* fromImage, Image* toImage, float percentage, const FloatSize& crossfadeSize, const FloatSize& size)

@@ -32,6 +32,7 @@
 #include "CSSFilterImageValue.h"
 #include "CSSGradientValue.h"
 #include "CSSImageValue.h"
+#include "CSSNamedImageValue.h"
 #include "GeneratedImage.h"
 #include "RenderElement.h"
 #include "StyleCachedImage.h"
@@ -110,6 +111,8 @@ PassRefPtr<Image> CSSImageGeneratorValue::image(RenderElement* renderer, const F
     switch (classType()) {
     case CanvasClass:
         return downcast<CSSCanvasValue>(*this).image(renderer, size);
+    case NamedImageClass:
+        return downcast<CSSNamedImageValue>(*this).image(renderer, size);
     case CrossfadeClass:
         return downcast<CSSCrossfadeValue>(*this).image(renderer, size);
     case FilterImageClass:
@@ -129,6 +132,8 @@ bool CSSImageGeneratorValue::isFixedSize() const
     switch (classType()) {
     case CanvasClass:
         return downcast<CSSCanvasValue>(*this).isFixedSize();
+    case NamedImageClass:
+        return downcast<CSSNamedImageValue>(*this).isFixedSize();
     case CrossfadeClass:
         return downcast<CSSCrossfadeValue>(*this).isFixedSize();
     case FilterImageClass:
@@ -169,6 +174,8 @@ bool CSSImageGeneratorValue::isPending() const
         return downcast<CSSCrossfadeValue>(*this).isPending();
     case CanvasClass:
         return downcast<CSSCanvasValue>(*this).isPending();
+    case NamedImageClass:
+        return downcast<CSSNamedImageValue>(*this).isPending();
     case FilterImageClass:
         return downcast<CSSFilterImageValue>(*this).isPending();
     case LinearGradientClass:
@@ -187,6 +194,8 @@ bool CSSImageGeneratorValue::knownToBeOpaque(const RenderElement* renderer) cons
     case CrossfadeClass:
         return downcast<CSSCrossfadeValue>(*this).knownToBeOpaque(renderer);
     case CanvasClass:
+        return false;
+    case NamedImageClass:
         return false;
     case FilterImageClass:
         return downcast<CSSFilterImageValue>(*this).knownToBeOpaque(renderer);

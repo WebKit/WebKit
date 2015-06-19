@@ -26,11 +26,11 @@
 #ifndef ThemeIOS_h
 #define ThemeIOS_h
 
-#include "Theme.h"
+#include "ThemeCocoa.h"
 
 namespace WebCore {
 
-class ThemeIOS : public Theme {
+class ThemeIOS : public ThemeCocoa {
 public:
     ThemeIOS() { }
     virtual ~ThemeIOS() { }

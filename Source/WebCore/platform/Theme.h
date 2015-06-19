@@ -29,6 +29,7 @@
 #include "Color.h"
 #include "ControlStates.h"
 #include "FontCascade.h"
+#include "GraphicsTypes.h"
 #include "IntRect.h"
 #include "LengthBox.h"
 #include "LengthSize.h"
@@ -106,7 +107,9 @@ public:
     // The rect passed in is in zoomed coordinates, so the inflation should take that into account and make sure the inflation
     // amount is also scaled by the zoomFactor.
     virtual void inflateControlPaintRect(ControlPart, const ControlStates*, FloatRect& /*zoomedRect*/, float /*zoomFactor*/) const { }
-    
+
+    virtual void drawNamedImage(const String&, GraphicsContext*, const FloatRect&) const;
+
     // This method is called once, from RenderTheme::adjustDefaultStyleSheet(), to let each platform adjust
     // the default CSS rules in html.css.
     static String defaultStyleSheet();

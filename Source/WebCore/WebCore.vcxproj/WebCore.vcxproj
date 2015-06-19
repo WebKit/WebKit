@@ -8203,6 +8203,7 @@
     <ClCompile Include="..\platform\graphics\IntSize.cpp" />
     <ClCompile Include="..\platform\graphics\LayoutRect.cpp" />
     <ClCompile Include="..\platform\graphics\MediaPlayer.cpp" />
+    <ClCompile Include="..\platform\graphics\NamedImageGeneratedImage.cpp" />
     <ClCompile Include="..\platform\graphics\Path.cpp" />
     <ClCompile Include="..\platform\graphics\PathTraversalState.cpp" />
     <ClCompile Include="..\platform\graphics\Pattern.cpp" />
@@ -9621,6 +9622,20 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\css\CSSMediaRule.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\css\CSSNamedImageValue.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
@@ -19999,6 +20014,7 @@
     <ClInclude Include="..\platform\graphics\LayoutRect.h" />
     <ClInclude Include="..\platform\graphics\LayoutSize.h" />
     <ClInclude Include="..\platform\graphics\MediaPlayer.h" />
+    <ClInclude Include="..\platform\graphics\NamedImageGeneratedImage.h" />
     <ClInclude Include="..\platform\graphics\NativeImagePtr.h" />
     <ClInclude Include="..\platform\graphics\Path.h" />
     <ClInclude Include="..\platform\graphics\PathTraversalState.h" />
@@ -20504,6 +20520,7 @@
     <ClInclude Include="..\css\CSSInitialValue.h" />
     <ClInclude Include="..\css\CSSLineBoxContainValue.h" />
     <ClInclude Include="..\css\CSSMediaRule.h" />
+    <ClInclude Include="..\css\CSSNamedImageValue.h" />
     <ClInclude Include="..\css\CSSOMUtils.h" />
     <ClInclude Include="..\css\CSSPageRule.h" />
     <ClInclude Include="..\css\CSSParser.h" />

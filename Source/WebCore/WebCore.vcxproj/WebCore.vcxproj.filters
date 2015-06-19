@@ -1377,6 +1377,9 @@
     <ClCompile Include="..\platform\graphics\MediaPlayer.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\graphics\NamedImageGeneratedImage.cpp">
+      <Filter>platform\graphics</Filter>
+    </ClCompile>
     <ClCompile Include="..\platform\graphics\Path.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
@@ -2146,6 +2149,9 @@
       <Filter>css</Filter>
     </ClCompile>
     <ClCompile Include="..\css\CSSMediaRule.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
+    <ClCompile Include="..\css\CSSNamedImageValue.cpp">
       <Filter>css</Filter>
     </ClCompile>
     <ClCompile Include="..\css\CSSOMUtils.cpp">
@@ -8502,6 +8508,9 @@
     <ClInclude Include="..\platform\graphics\MediaPlayer.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
+    <ClInclude Include="..\platform\graphics\NamedImageGeneratedImage.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
     <ClInclude Include="..\platform\graphics\NativeImagePtr.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
@@ -9124,6 +9133,9 @@
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\CSSMediaRule.h">
+      <Filter>css</Filter>
+    </ClInclude>
+    <ClInclude Include="..\css\CSSNamedImageValue.h">
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\CSSOMUtils.h">

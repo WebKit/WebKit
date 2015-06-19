@@ -290,6 +290,7 @@ public:
 
     // Image generators
     bool parseCanvas(CSSParserValueList&, RefPtr<CSSValue>&);
+    bool parseNamedImage(CSSParserValueList&, RefPtr<CSSValue>&);
 
     bool parseDeprecatedGradient(CSSParserValueList&, RefPtr<CSSValue>&);
     bool parseDeprecatedLinearGradient(CSSParserValueList&, RefPtr<CSSValue>&, CSSGradientRepeat repeating);

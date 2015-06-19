@@ -47,6 +47,7 @@
 #include "CSSInheritedValue.h"
 #include "CSSInitialValue.h"
 #include "CSSLineBoxContainValue.h"
+#include "CSSNamedImageValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSReflectValue.h"
 #include "CSSShadowValue.h"
@@ -168,6 +169,8 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSBorderImageSliceValue>(*this, other);
         case CanvasClass:
             return compareCSSValues<CSSCanvasValue>(*this, other);
+        case NamedImageClass:
+            return compareCSSValues<CSSNamedImageValue>(*this, other);
         case CursorImageClass:
             return compareCSSValues<CSSCursorImageValue>(*this, other);
         case FilterImageClass:
@@ -260,6 +263,8 @@ String CSSValue::cssText() const
         return downcast<CSSBorderImageSliceValue>(*this).customCSSText();
     case CanvasClass:
         return downcast<CSSCanvasValue>(*this).customCSSText();
+    case NamedImageClass:
+        return downcast<CSSNamedImageValue>(*this).customCSSText();
     case CursorImageClass:
         return downcast<CSSCursorImageValue>(*this).customCSSText();
     case FilterImageClass:
@@ -351,6 +356,9 @@ void CSSValue::destroy()
         return;
     case CanvasClass:
         delete downcast<CSSCanvasValue>(this);
+        return;
+    case NamedImageClass:
+        delete downcast<CSSNamedImageValue>(this);
         return;
     case CursorImageClass:
         delete downcast<CSSCursorImageValue>(this);
