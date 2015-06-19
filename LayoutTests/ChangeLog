@@ -1,3 +1,15 @@
+2015-06-19  Dean Jackson  <dino@apple.com>
+
+        Extremely large canvas crashes on pre-El Capitan machines
+        https://bugs.webkit.org/show_bug.cgi?id=146169
+        <rdar://problem/21410046>
+
+        Reviewed by Tim Horton.
+
+        Un-skip fast/canvas/canvas-too-large-to-draw.html.
+
+        * platform/mac/TestExpectations:
+
 2015-06-19  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: TimelineAgent needs to handle nested runloops
