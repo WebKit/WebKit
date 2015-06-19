@@ -1,3 +1,28 @@
+2015-06-19  Anders Carlsson  <andersca@apple.com>
+
+        Spintracer treats the web process as hung when it's showing JavaScript dialogs in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=146124
+        rdar://problem/21449395
+
+        Reviewed by Geoffrey Garen.
+
+        Add a HangDetectionDisabler RAII object and use it for JavaScript panels.
+
+        * Shared/HangDetectionDisabler.h: Added.
+        (WebKit::HangDetectionDisabler::HangDetectionDisabler):
+        (WebKit::HangDetectionDisabler::~HangDetectionDisabler):
+        * Shared/mac/HangDetectionDisablerMac.mm: Added.
+        (WebKit::clientsMayIgnoreEvents):
+        (WebKit::setClientsMayIgnoreEvents):
+        (WebKit::HangDetectionDisabler::HangDetectionDisabler):
+        (WebKit::HangDetectionDisabler::~HangDetectionDisabler):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::runBeforeUnloadConfirmPanel):
+        (WebKit::WebChromeClient::runJavaScriptAlert):
+        (WebKit::WebChromeClient::runJavaScriptConfirm):
+        (WebKit::WebChromeClient::runJavaScriptPrompt):
+
 2015-06-19  Dan Bernstein  <mitz@apple.com>
 
         Fixed the build for platforms that don’t have SafariServices.
