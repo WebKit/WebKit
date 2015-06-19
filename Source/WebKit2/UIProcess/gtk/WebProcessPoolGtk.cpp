@@ -109,7 +109,7 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
         parameters.diskCacheDirectory = m_configuration->diskCacheDirectory();
     }
 
-    parameters.memoryCacheDisabled = m_memoryCacheDisabled || m_cacheModel == CacheModelDocumentViewer;
+    parameters.memoryCacheDisabled = m_memoryCacheDisabled || cacheModel() == CacheModelDocumentViewer;
 }
 
 void WebProcessPool::platformInvalidateContext()

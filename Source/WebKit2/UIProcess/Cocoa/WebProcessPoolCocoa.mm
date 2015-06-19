@@ -118,7 +118,7 @@ static void registerUserDefaultsIfNeeded()
 void WebProcessPool::updateProcessSuppressionState()
 {
 #if ENABLE(NETWORK_PROCESS)
-    if (m_usesNetworkProcess && m_networkProcess)
+    if (usesNetworkProcess() && m_networkProcess)
         m_networkProcess->setProcessSuppressionEnabled(processSuppressionEnabled());
 #endif
 
@@ -192,7 +192,7 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
     parameters.uiProcessBundleIdentifier = String([[NSBundle mainBundle] bundleIdentifier]);
 
 #if ENABLE(NETWORK_PROCESS)
-    if (!m_usesNetworkProcess) {
+    if (!usesNetworkProcess()) {
 #endif
         for (const auto& scheme : globalURLSchemesWithCustomProtocolHandlers())
             parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);

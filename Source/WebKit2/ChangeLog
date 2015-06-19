@@ -1,3 +1,50 @@
+2015-06-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Do not store configuration parameters twice in WebProcessPool
+        https://bugs.webkit.org/show_bug.cgi?id=146102
+
+        Reviewed by Sam Weinig.
+
+        Since we are copying the given WebProcessPoolConfiguration and
+        keeping it as a member, we don't need to keep an additional copy
+        of its contents as extra members. This also prevents
+        inconsistencies between the values in the configuration and the
+        members when any of them are modified by WebProcessPool API.
+
+        * UIProcess/API/APIProcessPoolConfiguration.h: Return a const
+        reference instead of a temporary in methods returning a String.
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::updateProcessSuppressionState):
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setProcessModel):
+        (WebKit::WebProcessPool::setMaximumNumberOfProcesses):
+        (WebKit::WebProcessPool::networkingProcessConnection):
+        (WebKit::WebProcessPool::languageChanged):
+        (WebKit::WebProcessPool::setUsesNetworkProcess):
+        (WebKit::WebProcessPool::usesNetworkProcess):
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::ensureDatabaseProcess):
+        (WebKit::WebProcessPool::ensureSharedWebProcess):
+        (WebKit::WebProcessPool::createNewWebProcess):
+        (WebKit::WebProcessPool::warmInitialProcess):
+        (WebKit::WebProcessPool::disconnectProcess):
+        (WebKit::WebProcessPool::createNewWebProcessRespectingProcessCountLimit):
+        (WebKit::WebProcessPool::createWebPage):
+        (WebKit::WebProcessPool::postMessageToInjectedBundle):
+        (WebKit::WebProcessPool::setCanHandleHTTPSServerTrustEvaluation):
+        (WebKit::WebProcessPool::setCacheModel):
+        (WebKit::WebProcessPool::allowSpecificHTTPSCertificateForHost):
+        (WebKit::WebProcessPool::requestWebContentStatistics):
+        (WebKit::WebProcessPool::requestNetworkingStatistics):
+        * UIProcess/WebProcessPool.h:
+        (WebKit::WebProcessPool::sendToNetworkingProcess):
+        (WebKit::WebProcessPool::sendToNetworkingProcessRelaunchingIfNecessary):
+        (WebKit::WebProcessPool::sendToAllProcessesRelaunchingThemIfNecessary):
+        (WebKit::WebProcessPool::sendToOneProcess):
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+
 2015-06-18  Jon Lee  <jonlee@apple.com>
 
         Update AVKit usage of pip

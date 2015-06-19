@@ -28,6 +28,7 @@
 
 #include "APIDictionary.h"
 #include "APIObject.h"
+#include "APIProcessPoolConfiguration.h"
 #include "APIWebsiteDataStore.h"
 #include "DownloadProxyMap.h"
 #include "GenericCallback.h"
@@ -71,7 +72,6 @@ OBJC_CLASS NSString;
 namespace API {
 class DownloadClient;
 class LegacyContextHistoryClient;
-class ProcessPoolConfiguration;
 }
 
 namespace WebKit {
@@ -139,10 +139,10 @@ public:
     void setDownloadClient(std::unique_ptr<API::DownloadClient>);
 
     void setProcessModel(ProcessModel); // Can only be called when there are no processes running.
-    ProcessModel processModel() const { return m_processModel; }
+    ProcessModel processModel() const { return m_configuration->processModel(); }
 
     void setMaximumNumberOfProcesses(unsigned); // Can only be called when there are no processes running.
-    unsigned maximumNumberOfProcesses() const { return m_webProcessCountLimit; }
+    unsigned maximumNumberOfProcesses() const { return !m_configuration->maximumProcessCount() ? UINT_MAX : m_configuration->maximumProcessCount(); }
 
     const Vector<RefPtr<WebProcessProxy>>& processes() const { return m_processes; }
 
@@ -169,7 +169,7 @@ public:
 
     PassRefPtr<WebPageProxy> createWebPage(PageClient&, WebPageConfiguration);
 
-    const String& injectedBundlePath() const { return m_injectedBundlePath; }
+    const String& injectedBundlePath() const { return m_configuration->injectedBundlePath(); }
 
     DownloadProxy* download(WebPageProxy* initiatingPage, const WebCore::ResourceRequest&);
     DownloadProxy* resumeDownload(const API::Data* resumeData, const String& path);
@@ -212,7 +212,7 @@ public:
     VisitedLinkProvider& visitedLinkProvider() { return m_visitedLinkProvider.get(); }
 
     void setCacheModel(CacheModel);
-    CacheModel cacheModel() const { return m_cacheModel; }
+    CacheModel cacheModel() const { return m_configuration->cacheModel(); }
 
     void setDefaultRequestTimeoutInterval(double);
 
@@ -423,9 +423,6 @@ private:
 
     IPC::MessageReceiverMap m_messageReceiverMap;
 
-    ProcessModel m_processModel;
-    unsigned m_webProcessCountLimit; // The limit has no effect when process model is ProcessModelSharedSecondaryProcess.
-    
     Vector<RefPtr<WebProcessProxy>> m_processes;
     bool m_haveInitialEmptyProcess;
 
@@ -434,7 +431,6 @@ private:
     Ref<WebPageGroup> m_defaultPageGroup;
 
     RefPtr<API::Object> m_injectedBundleInitializationUserData;
-    String m_injectedBundlePath;
     WebContextInjectedBundleClient m_injectedBundleClient;
 
     WebContextClient m_client;
@@ -471,9 +467,6 @@ private:
     // The client should use initialization messages instead, so that a restarted process would get the same state.
     Vector<std::pair<String, RefPtr<API::Object>>> m_messagesToInjectedBundlePostedToEmptyContext;
 
-    CacheModel m_cacheModel;
-    uint64_t m_diskCacheSizeOverride;
-
     bool m_memorySamplerEnabled;
     double m_memorySamplerInterval;
 
@@ -499,18 +492,12 @@ private:
     String m_overrideIconDatabasePath;
     String m_overrideCookieStorageDirectory;
 
-    String m_applicationCacheDirectory;
-    String m_indexedDBDatabaseDirectory;
-    String m_mediaKeysStorageDirectory;
-    String m_webSQLDatabaseDirectory;
-
     bool m_shouldUseTestingNetworkSession;
 
     bool m_processTerminationEnabled;
 
 #if ENABLE(NETWORK_PROCESS)
     bool m_canHandleHTTPSServerTrustEvaluation;
-    bool m_usesNetworkProcess;
     RefPtr<NetworkProcessProxy> m_networkProcess;
 #endif
 
@@ -547,10 +534,10 @@ private:
 template<typename T>
 void WebProcessPool::sendToNetworkingProcess(T&& message)
 {
-    switch (m_processModel) {
+    switch (processModel()) {
     case ProcessModelSharedSecondaryProcess:
 #if ENABLE(NETWORK_PROCESS)
-        if (m_usesNetworkProcess) {
+        if (usesNetworkProcess()) {
             if (m_networkProcess && m_networkProcess->canSendMessage())
                 m_networkProcess->send(std::forward<T>(message), 0);
             return;
@@ -574,10 +561,10 @@ void WebProcessPool::sendToNetworkingProcess(T&& message)
 template<typename T>
 void WebProcessPool::sendToNetworkingProcessRelaunchingIfNecessary(T&& message)
 {
-    switch (m_processModel) {
+    switch (processModel()) {
     case ProcessModelSharedSecondaryProcess:
 #if ENABLE(NETWORK_PROCESS)
-        if (m_usesNetworkProcess) {
+        if (usesNetworkProcess()) {
             ensureNetworkProcess();
             m_networkProcess->send(std::forward<T>(message), 0);
             return;
@@ -624,7 +611,7 @@ template<typename T>
 void WebProcessPool::sendToAllProcessesRelaunchingThemIfNecessary(const T& message)
 {
     // FIXME (Multi-WebProcess): WebProcessPool doesn't track processes that have exited, so it cannot relaunch these. Perhaps this functionality won't be needed in this mode.
-    if (m_processModel == ProcessModelSharedSecondaryProcess)
+    if (processModel() == ProcessModelSharedSecondaryProcess)
         ensureSharedWebProcess();
     sendToAllProcesses(message);
 }
@@ -632,7 +619,7 @@ void WebProcessPool::sendToAllProcessesRelaunchingThemIfNecessary(const T& messa
 template<typename T>
 void WebProcessPool::sendToOneProcess(T&& message)
 {
-    if (m_processModel == ProcessModelSharedSecondaryProcess)
+    if (processModel() == ProcessModelSharedSecondaryProcess)
         ensureSharedWebProcess();
 
     bool messageSent = false;
@@ -646,7 +633,7 @@ void WebProcessPool::sendToOneProcess(T&& message)
         }
     }
 
-    if (!messageSent && m_processModel == ProcessModelMultipleSecondaryProcesses) {
+    if (!messageSent && processModel() == ProcessModelMultipleSecondaryProcesses) {
         warmInitialProcess();
         RefPtr<WebProcessProxy> process = m_processes.last();
         if (process->canSendMessage())

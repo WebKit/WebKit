@@ -63,25 +63,25 @@ public:
     int64_t diskCacheSizeOverride() const { return m_diskCacheSizeOverride; }
     void setDiskCacheSizeOverride(int64_t size) { m_diskCacheSizeOverride = size; }
 
-    WTF::String applicationCacheDirectory() const { return m_applicationCacheDirectory; }
+    const WTF::String& applicationCacheDirectory() const { return m_applicationCacheDirectory; }
     void setApplicationCacheDirectory(const WTF::String& applicationCacheDirectory) { m_applicationCacheDirectory = applicationCacheDirectory; }
 
-    WTF::String diskCacheDirectory() const { return m_diskCacheDirectory; }
+    const WTF::String& diskCacheDirectory() const { return m_diskCacheDirectory; }
     void setDiskCacheDirectory(const WTF::String& diskCacheDirectory) { m_diskCacheDirectory = diskCacheDirectory; }
 
-    WTF::String indexedDBDatabaseDirectory() const { return m_indexedDBDatabaseDirectory; }
+    const WTF::String& indexedDBDatabaseDirectory() const { return m_indexedDBDatabaseDirectory; }
     void setIndexedDBDatabaseDirectory(const WTF::String& indexedDBDatabaseDirectory) { m_indexedDBDatabaseDirectory = indexedDBDatabaseDirectory; }
 
-    WTF::String injectedBundlePath() const { return m_injectedBundlePath; }
+    const WTF::String& injectedBundlePath() const { return m_injectedBundlePath; }
     void setInjectedBundlePath(const WTF::String& injectedBundlePath) { m_injectedBundlePath = injectedBundlePath; }
 
-    WTF::String localStorageDirectory() const { return m_localStorageDirectory; }
+    const WTF::String& localStorageDirectory() const { return m_localStorageDirectory; }
     void setLocalStorageDirectory(const WTF::String& localStorageDirectory) { m_localStorageDirectory = localStorageDirectory; }
 
-    WTF::String webSQLDatabaseDirectory() const { return m_webSQLDatabaseDirectory; }
+    const WTF::String& webSQLDatabaseDirectory() const { return m_webSQLDatabaseDirectory; }
     void setWebSQLDatabaseDirectory(const WTF::String& webSQLDatabaseDirectory) { m_webSQLDatabaseDirectory = webSQLDatabaseDirectory; }
 
-    WTF::String mediaKeysStorageDirectory() const { return m_mediaKeysStorageDirectory; }
+    const WTF::String& mediaKeysStorageDirectory() const { return m_mediaKeysStorageDirectory; }
     void setMediaKeysStorageDirectory(const WTF::String& mediaKeysStorageDirectory) { m_mediaKeysStorageDirectory = mediaKeysStorageDirectory; }
 
     const Vector<WTF::String>& cachePartitionedURLSchemes() { return m_cachePartitionedURLSchemes; }
