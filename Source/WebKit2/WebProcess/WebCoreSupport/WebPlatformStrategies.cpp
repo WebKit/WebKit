@@ -28,6 +28,7 @@
 
 #include "BlockingResponseMap.h"
 #include "DataReference.h"
+#include "HangDetectionDisabler.h"
 #include "NetworkResourceLoadParameters.h"
 #include "PluginInfoStore.h"
 #include "SessionTracker.h"
@@ -238,6 +239,8 @@ void WebPlatformStrategies::loadResourceSynchronously(NetworkingContext* context
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = context->shouldClearReferrerOnHTTPSToHTTPRedirect();
 
     data.resize(0);
+
+    HangDetectionDisabler hangDetectionDisabler;
 
     if (!webProcess.networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad(loadParameters), Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::Reply(error, response, data), 0)) {
         response = ResourceResponse();
