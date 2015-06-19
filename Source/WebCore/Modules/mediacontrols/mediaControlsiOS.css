@@ -167,7 +167,7 @@ video::-webkit-media-controls-panel {
 
 audio::-webkit-media-controls-panel {
     height: 39px;
-    background-color: rgba(228, 228, 228, 1);
+    background-color: rgba(212, 212, 212, 1);
 }
 
 video::-webkit-media-controls-panel.show,
@@ -360,6 +360,9 @@ audio::-webkit-media-controls-timeline {
     border-radius: 0 !important;
     box-sizing: content-box !important;
     -webkit-transform: translate3d(0, 0, 0);
+}
+
+video::-webkit-media-controls-timeline {
     mix-blend-mode: plus-darker;
 }
 
