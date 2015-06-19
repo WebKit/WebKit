@@ -1,3 +1,16 @@
+2015-06-19  Jon Lee  <jonlee@apple.com>
+
+        Update font and font-family keyword completions
+        https://bugs.webkit.org/show_bug.cgi?id=144558
+        <rdar://problem/20795292>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/CSSKeywordCompletions.js: Replace -webkit-system-font and
+        -apple-system-font with -apple-system, which is the recommended token for getting the
+        system font. Also add -title{1,2,3} for font, as they were missing, but already exist
+        in font-family.
+
 2015-06-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Avoid getOwnPropertyNames/Symbols on very large lists
