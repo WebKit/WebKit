@@ -134,6 +134,11 @@ PassRefPtr<ScrollingTreeNode> RemoteScrollingTree::createScrollingTreeNode(Scrol
     return nullptr;
 }
 
+void RemoteScrollingTree::currentSnapPointIndicesDidChange(ScrollingNodeID nodeID, unsigned horizontal, unsigned vertical)
+{
+    m_scrollingCoordinatorProxy.currentSnapPointIndicesDidChange(nodeID, horizontal, vertical);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(ASYNC_SCROLLING)

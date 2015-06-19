@@ -1,3 +1,38 @@
+2015-06-18  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] scrollIntoViewIfNeeded is not working with scroll-snap points
+        https://bugs.webkit.org/show_bug.cgi?id=145318
+        <rdar://problem/21081501>
+
+        Reviewed by Simon Fraser.
+
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateScrollingNode>::encode): Handle scroll snap point offset indices.
+        (ArgumentCoder<ScrollingStateScrollingNode>::decode): Ditto.
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::currentSnapPointIndicesDidChange): Added. Send message
+        to WebProcess when scroll snap indices have changed.
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/Scrolling/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::currentSnapPointIndicesDidChange): Added. Notify the
+        RemoteScrollingCoordinatorProxy when scroll snap indices have changed.
+        * UIProcess/Scrolling/RemoteScrollingTree.h:
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.h:
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (-[WKOverflowScrollViewDelegate scrollViewWillEndDragging:withVelocity:targetContentOffset:]): Revised.
+        Identify changes in the current scroll snap point offset index (in either the horizontal or vertical
+        directions), and send a notification when this happens.
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::currentSnapPointIndicesDidChange): Added. Notify the
+        Scrolling Tree when indices changed.
+        * UIProcess/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::adjustTargetContentOffsetForSnapping): Revised. Always compute
+        the new scroll snap offset index (even when we will rubber band).
+        * WebProcess/Scrolling/RemoteScrollingCoordinator.h:
+        * WebProcess/Scrolling/RemoteScrollingCoordinator.messages.in: Add a new message to relay changes in scroll
+        snap index.
+        * WebProcess/Scrolling/RemoteScrollingCoordinator.mm:
+        (WebKit::RemoteScrollingCoordinator::currentSnapPointIndicesChangedForNode): Added.
+
 2015-06-19  Jeremy Jones  <jeremyj@apple.com>
 
         Revert switch to _synchronizedDrawingFence.

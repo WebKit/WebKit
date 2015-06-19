@@ -59,6 +59,10 @@ public:
 #if ENABLE(CSS_SCROLL_SNAP)
     const Vector<float>& horizontalSnapOffsets() const { return m_horizontalSnapOffsets; }
     const Vector<float>& verticalSnapOffsets() const { return m_verticalSnapOffsets; }
+    unsigned currentHorizontalSnapPointIndex() const { return m_currentHorizontalSnapPointIndex; }
+    unsigned currentVerticalSnapPointIndex() const { return m_currentVerticalSnapPointIndex; }
+    void setCurrentHorizontalSnapPointIndex(unsigned index) { m_currentHorizontalSnapPointIndex = index; }
+    void setCurrentVerticalSnapPointIndex(unsigned index) { m_currentVerticalSnapPointIndex = index; }
 #endif
 
 protected:
@@ -99,6 +103,8 @@ private:
 #if ENABLE(CSS_SCROLL_SNAP)
     Vector<float> m_horizontalSnapOffsets;
     Vector<float> m_verticalSnapOffsets;
+    unsigned m_currentHorizontalSnapPointIndex { 0 };
+    unsigned m_currentVerticalSnapPointIndex { 0 };
 #endif
     ScrollableAreaParameters m_scrollableAreaParameters;
 };

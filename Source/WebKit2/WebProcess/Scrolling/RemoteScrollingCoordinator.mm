@@ -102,6 +102,11 @@ void RemoteScrollingCoordinator::scrollPositionChangedForNode(ScrollingNodeID no
     scheduleUpdateScrollPositionAfterAsyncScroll(nodeID, scrollPosition, false /* FIXME */, syncLayerPosition ? SyncScrollingLayerPosition : SetScrollingLayerPosition);
 }
 
+void RemoteScrollingCoordinator::currentSnapPointIndicesChangedForNode(ScrollingNodeID nodeID, unsigned horizontal, unsigned vertical)
+{
+    setActiveScrollSnapIndices(nodeID, horizontal, vertical);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(ASYNC_SCROLLING)

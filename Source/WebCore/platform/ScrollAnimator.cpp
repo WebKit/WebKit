@@ -49,7 +49,7 @@ std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollabl
 
 ScrollAnimator::ScrollAnimator(ScrollableArea& scrollableArea)
     : m_scrollableArea(scrollableArea)
-#if (ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)) && PLATFORM(MAC)
+#if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
     , m_scrollController(*this)
 #endif
     , m_currentPosX(0)
@@ -84,11 +84,13 @@ void ScrollAnimator::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
     updateActiveScrollSnapIndexForOffset();
 }
 
-#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
+#if ENABLE(CSS_SCROLL_SNAP)
+#if PLATFORM(MAC)
 bool ScrollAnimator::processWheelEventForScrollSnap(const PlatformWheelEvent& wheelEvent)
 {
     return m_scrollController.processWheelEventForScrollSnap(wheelEvent);
 }
+#endif
 
 bool ScrollAnimator::activeScrollSnapIndexDidChange() const
 {
@@ -180,7 +182,7 @@ FloatPoint ScrollAnimator::currentPosition() const
 
 void ScrollAnimator::updateActiveScrollSnapIndexForOffset()
 {
-#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
+#if ENABLE(CSS_SCROLL_SNAP)
     m_scrollController.setActiveScrollSnapIndicesForOffset(m_currentPosX, m_currentPosY);
     if (m_scrollController.activeScrollSnapIndexDidChange()) {
         m_scrollableArea.setCurrentHorizontalSnapPointIndex(m_scrollController.activeScrollSnapIndexForAxis(ScrollEventAxis::Horizontal));
@@ -195,10 +197,10 @@ void ScrollAnimator::notifyPositionChanged(const FloatSize& delta)
     m_scrollableArea.setScrollOffsetFromAnimation(IntPoint(m_currentPosX, m_currentPosY));
 }
 
-#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
-void ScrollAnimator::updateScrollAnimatorsAndTimers()
+#if ENABLE(CSS_SCROLL_SNAP)
+void ScrollAnimator::updateScrollSnapState()
 {
-    m_scrollController.updateScrollAnimatorsAndTimers(m_scrollableArea);
+    m_scrollController.updateScrollSnapState(m_scrollableArea);
 }
 
 LayoutUnit ScrollAnimator::scrollOffsetOnAxis(ScrollEventAxis axis) const

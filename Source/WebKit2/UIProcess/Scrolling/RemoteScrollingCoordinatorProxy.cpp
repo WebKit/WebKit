@@ -159,6 +159,11 @@ void RemoteScrollingCoordinatorProxy::viewportChangedViaDelegatedScrolling(Scrol
     m_scrollingTree->viewportChangedViaDelegatedScrolling(nodeID, fixedPositionRect, scale);
 }
 
+void RemoteScrollingCoordinatorProxy::currentSnapPointIndicesDidChange(WebCore::ScrollingNodeID nodeID, unsigned horizontal, unsigned vertical)
+{
+    m_webPageProxy.send(Messages::RemoteScrollingCoordinator::CurrentSnapPointIndicesChangedForNode(nodeID, horizontal, vertical));
+}
+
 // This comes from the scrolling tree.
 void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll(ScrollingNodeID scrolledNodeID, const FloatPoint& newScrollPosition, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
 {

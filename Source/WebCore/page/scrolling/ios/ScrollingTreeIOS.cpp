@@ -118,6 +118,17 @@ FloatRect ScrollingTreeIOS::fixedPositionRect()
     return FloatRect();
 }
 
+void ScrollingTreeIOS::currentSnapPointIndicesDidChange(WebCore::ScrollingNodeID nodeID, unsigned horizontal, unsigned vertical)
+{
+    if (!m_scrollingCoordinator)
+        return;
+    
+    RefPtr<AsyncScrollingCoordinator> scrollingCoordinator = m_scrollingCoordinator;
+    callOnMainThread([scrollingCoordinator, nodeID, horizontal, vertical] {
+        scrollingCoordinator->setActiveScrollSnapIndices(nodeID, horizontal, vertical);
+    });
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)

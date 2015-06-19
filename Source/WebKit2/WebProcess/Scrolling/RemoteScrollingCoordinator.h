@@ -73,6 +73,7 @@ private:
     
     // Respond to UI process changes.
     void scrollPositionChangedForNode(WebCore::ScrollingNodeID, const WebCore::FloatPoint& scrollPosition, bool syncLayerPosition);
+    void currentSnapPointIndicesChangedForNode(WebCore::ScrollingNodeID, unsigned horizontal, unsigned vertical);
 
     WebPage* m_webPage;
 };

@@ -123,6 +123,24 @@ void ScrollingStateScrollingNode::setVerticalSnapOffsets(const Vector<float>& sn
     m_verticalSnapOffsets = snapOffsets;
     setPropertyChanged(VerticalSnapOffsets);
 }
+
+void ScrollingStateScrollingNode::setCurrentHorizontalSnapPointIndex(unsigned index)
+{
+    if (m_currentHorizontalSnapPointIndex == index)
+        return;
+    
+    m_currentHorizontalSnapPointIndex = index;
+    setPropertyChanged(CurrentHorizontalSnapOffsetIndex);
+}
+
+void ScrollingStateScrollingNode::setCurrentVerticalSnapPointIndex(unsigned index)
+{
+    if (m_currentVerticalSnapPointIndex == index)
+        return;
+    
+    m_currentVerticalSnapPointIndex = index;
+    setPropertyChanged(CurrentVerticalSnapOffsetIndex);
+}
 #endif
 
 void ScrollingStateScrollingNode::setScrollableAreaParameters(const ScrollableAreaParameters& parameters)

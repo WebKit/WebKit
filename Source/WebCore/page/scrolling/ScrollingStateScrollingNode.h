@@ -50,6 +50,8 @@ public:
 #if ENABLE(CSS_SCROLL_SNAP)
         HorizontalSnapOffsets,
         VerticalSnapOffsets,
+        CurrentHorizontalSnapOffsetIndex,
+        CurrentVerticalSnapOffsetIndex,
 #endif
         ExpectsWheelEventTestTrigger,
     };
@@ -75,6 +77,12 @@ public:
 
     const Vector<float>& verticalSnapOffsets() const { return m_verticalSnapOffsets; }
     WEBCORE_EXPORT void setVerticalSnapOffsets(const Vector<float>&);
+
+    unsigned currentHorizontalSnapPointIndex() const { return m_currentHorizontalSnapPointIndex; }
+    WEBCORE_EXPORT void setCurrentHorizontalSnapPointIndex(unsigned);
+
+    unsigned currentVerticalSnapPointIndex() const { return m_currentVerticalSnapPointIndex; }
+    WEBCORE_EXPORT void setCurrentVerticalSnapPointIndex(unsigned);
 #endif
 
     const ScrollableAreaParameters& scrollableAreaParameters() const { return m_scrollableAreaParameters; }
@@ -103,6 +111,8 @@ private:
 #if ENABLE(CSS_SCROLL_SNAP)
     Vector<float> m_horizontalSnapOffsets;
     Vector<float> m_verticalSnapOffsets;
+    unsigned m_currentHorizontalSnapPointIndex { 0 };
+    unsigned m_currentVerticalSnapPointIndex { 0 };
 #endif
     ScrollableAreaParameters m_scrollableAreaParameters;
     bool m_requestedScrollPositionRepresentsProgrammaticScroll { false };

@@ -111,6 +111,17 @@ void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, c
     });
 }
 
+void ThreadedScrollingTree::currentSnapPointIndicesDidChange(ScrollingNodeID nodeID, unsigned horizontal, unsigned vertical)
+{
+    if (!m_scrollingCoordinator)
+        return;
+
+    RefPtr<AsyncScrollingCoordinator> scrollingCoordinator = m_scrollingCoordinator;
+    RunLoop::main().dispatch([scrollingCoordinator, nodeID, horizontal, vertical] {
+        scrollingCoordinator->setActiveScrollSnapIndices(nodeID, horizontal, vertical);
+    });
+}
+
 #if PLATFORM(MAC)
 void ThreadedScrollingTree::handleWheelEventPhase(PlatformWheelEventPhase phase)
 {

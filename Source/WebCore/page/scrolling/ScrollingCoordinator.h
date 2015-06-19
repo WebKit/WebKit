@@ -168,6 +168,8 @@ public:
 #if ENABLE(CSS_SCROLL_SNAP)
         Vector<LayoutUnit> horizontalSnapOffsets;
         Vector<LayoutUnit> verticalSnapOffsets;
+        unsigned currentHorizontalSnapPointIndex;
+        unsigned currentVerticalSnapPointIndex;
 #endif
     };
 

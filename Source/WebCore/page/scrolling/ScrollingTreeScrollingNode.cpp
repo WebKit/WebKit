@@ -73,6 +73,12 @@ void ScrollingTreeScrollingNode::updateBeforeChildren(const ScrollingStateNode& 
 
     if (state.hasChangedProperty(ScrollingStateScrollingNode::VerticalSnapOffsets))
         m_verticalSnapOffsets = state.verticalSnapOffsets();
+
+    if (state.hasChangedProperty(ScrollingStateScrollingNode::CurrentHorizontalSnapOffsetIndex))
+        m_currentHorizontalSnapPointIndex = state.currentHorizontalSnapPointIndex();
+
+    if (state.hasChangedProperty(ScrollingStateScrollingNode::CurrentVerticalSnapOffsetIndex))
+        m_currentVerticalSnapPointIndex = state.currentVerticalSnapPointIndex();
 #endif
 
     if (state.hasChangedProperty(ScrollingStateScrollingNode::ScrollableAreaParams))

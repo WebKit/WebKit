@@ -146,6 +146,9 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView& frameView)
 
     if (const Vector<LayoutUnit>* verticalSnapOffsets = frameView.verticalSnapOffsets())
         setStateScrollingNodeSnapOffsetsAsFloat(*node, ScrollEventAxis::Vertical, *verticalSnapOffsets, m_page->deviceScaleFactor());
+
+    node->setCurrentHorizontalSnapPointIndex(frameView.currentHorizontalSnapPointIndex());
+    node->setCurrentVerticalSnapPointIndex(frameView.currentVerticalSnapPointIndex());
 #endif
 
 #if PLATFORM(COCOA)
@@ -484,6 +487,8 @@ void AsyncScrollingCoordinator::updateOverflowScrollingNode(ScrollingNodeID node
 #if ENABLE(CSS_SCROLL_SNAP)
         setStateScrollingNodeSnapOffsetsAsFloat(*node, ScrollEventAxis::Horizontal, scrollingGeometry->horizontalSnapOffsets, m_page->deviceScaleFactor());
         setStateScrollingNodeSnapOffsetsAsFloat(*node, ScrollEventAxis::Vertical, scrollingGeometry->verticalSnapOffsets, m_page->deviceScaleFactor());
+        node->setCurrentHorizontalSnapPointIndex(scrollingGeometry->currentHorizontalSnapPointIndex);
+        node->setCurrentVerticalSnapPointIndex(scrollingGeometry->currentVerticalSnapPointIndex);
 #endif
     }
 }
