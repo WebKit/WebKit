@@ -119,7 +119,7 @@ Motion.prototype.findIntersection = function(other) {
                 return result;
         }
 
-return null;
+        return null;
     }
     
     // the planes have the same speeds and are moving in parallel (or they are not moving at all)
