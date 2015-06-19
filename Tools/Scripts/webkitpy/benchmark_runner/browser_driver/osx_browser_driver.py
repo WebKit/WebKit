@@ -15,7 +15,7 @@ _log = logging.getLogger(__name__)
 class OSXBrowserDriver(BrowserDriver):
     bundleIdentifier = None
 
-    def prepareEnv(self):
+    def prepareEnv(self, deviceID):
         self.closeBrowsers()
         CGWarpMouseCursorPosition((10, 0))
 

@@ -6,7 +6,7 @@ import abc
 class BrowserDriver(object):
 
     @abc.abstractmethod
-    def prepareEnv(self):
+    def prepareEnv(self, deviceID):
         pass
 
     @abc.abstractmethod

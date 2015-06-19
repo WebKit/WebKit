@@ -25,8 +25,7 @@ _log = logging.getLogger(__name__)
 
 class BenchmarkRunner(object):
 
-    def __init__(self, planFile, localCopy, countOverride, buildDir, outputFile, platform, browser):
-        _log.info('Initializing benchmark running')
+    def __init__(self, planFile, localCopy, countOverride, buildDir, outputFile, platform, browser, httpServerDriverOverride=None, deviceID=None):
         try:
             planFile = self._findPlanFile(planFile)
             with open(planFile, 'r') as fp:
@@ -36,10 +35,14 @@ class BenchmarkRunner(object):
                     self.plan['local_copy'] = localCopy
                 if countOverride:
                     self.plan['count'] = countOverride
+                if httpServerDriverOverride:
+                    self.plan['http_server_driver'] = httpServerDriverOverride
                 self.browserDriver = BrowserDriverFactory.create([platform, browser])
                 self.httpServerDriver = HTTPServerDriverFactory.create([self.plan['http_server_driver']])
+                self.httpServerDriver.setDeviceID(deviceID)
                 self.buildDir = os.path.abspath(buildDir) if buildDir else None
                 self.outputFile = outputFile
+                self.deviceID = deviceID
         except IOError as error:
             _log.error('Can not open plan file: %s - Error %s' % (planFile, error))
             raise error
@@ -68,7 +71,7 @@ class BenchmarkRunner(object):
         for x in xrange(int(self.plan['count'])):
             _log.info('Start the iteration %d of current benchmark' % (x + 1))
             self.httpServerDriver.serve(webRoot)
-            self.browserDriver.prepareEnv()
+            self.browserDriver.prepareEnv(self.deviceID)
             url = urlparse.urljoin(self.httpServerDriver.baseUrl(), self.planName + '/' + self.plan['entry_point'])
             self.browserDriver.launchUrl(url, self.buildDir)
             result = None

@@ -1,3 +1,35 @@
+2015-06-18  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Extend capability of run-benchmark script to support mobile device
+        https://bugs.webkit.org/show_bug.cgi?id=146125
+
+        Reviewed by Ryosuke Niwa.
+
+        Extend capability of run-benchmark to support mobile device, and move majority of run-benchmark script code to
+        benchmark_runner directory, and make run-benchmark a wrapping script. Also correct a typo.
+
+        * Scripts/run-benchmark:
+        (main): Deleted.
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (BenchmarkRunner.__init__):
+        (BenchmarkRunner.execute):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/browser_driver.py:
+        (BrowserDriver.prepareEnv):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_browser_driver.py:
+        (OSXBrowserDriver.prepareEnv):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        (OSXSafariDriver.prepareEnv):
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server_driver.py:
+        (HTTPServerDriver.getReturnCode):
+        (HTTPServerDriver):
+        (HTTPServerDriver.setDeviceID):
+        * Scripts/webkitpy/benchmark_runner/run_benchmark.py: Copied from Tools/Scripts/run-benchmark.
+        (parse_args):
+        (start):
+        (main):
+        * Scripts/webkitpy/benchmark_runner/utils.py:
+        (getPathFromProjectRoot):
+
 2015-06-18  Jon Lee  <jonlee@apple.com>
 
         Unreviewed. Add Matt Daiter as a contributor.

@@ -19,3 +19,7 @@ class HTTPServerDriver(object):
     @abstractmethod
     def getReturnCode(self):
         pass
+
+    @abstractmethod
+    def setDeviceID(self, deviceID):
+        pass

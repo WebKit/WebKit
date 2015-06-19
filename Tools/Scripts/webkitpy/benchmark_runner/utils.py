@@ -23,7 +23,7 @@ def loadModule(moduleDesc):
 
 
 def getPathFromProjectRoot(relativePathToProjectRoot):
-    # Choose the directory containning current file as start point,
+    # Choose the directory containing current file as start point,
     # compute relative path base on the parameter,
     # and return an absolute path
     return os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), relativePathToProjectRoot))

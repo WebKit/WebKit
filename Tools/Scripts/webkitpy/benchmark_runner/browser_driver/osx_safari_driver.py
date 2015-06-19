@@ -16,7 +16,7 @@ _log = logging.getLogger(__name__)
 class OSXSafariDriver(OSXBrowserDriver):
     bundleIdentifier = 'com.apple.Safari'
 
-    def prepareEnv(self):
+    def prepareEnv(self, deviceID):
         self.safariProcess = None
         super(OSXSafariDriver, self).prepareEnv()
         forceRemove(os.path.join(os.path.expanduser('~'), 'Library/Saved Application State/com.apple.Safari.savedState'))
