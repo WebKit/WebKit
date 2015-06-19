@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -617,13 +617,14 @@ void BitmapImage::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, 
     }
     if (!m_cachedImage) {
         std::unique_ptr<ImageBuffer> buffer = ImageBuffer::create(expandedIntSize(tileRect.size()));
-        ASSERT(buffer.get());
+        if (!buffer)
+            return;
 
         ImageObserver* observer = imageObserver();
         ASSERT(observer);
 
         // Temporarily reset image observer, we don't want to receive any changeInRect() calls due to this relayout.
-        setImageObserver(0);
+        setImageObserver(nullptr);
 
         draw(buffer->context(), tileRect, tileRect, styleColorSpace, op, blendMode, ImageOrientationDescription());
 
@@ -631,9 +632,10 @@ void BitmapImage::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, 
         buffer->convertToLuminanceMask();
 
         m_cachedImage = buffer->copyImage(DontCopyBackingStore, Unscaled);
-        m_cachedImage->setSpaceSize(spaceSize());
+        if (!m_cachedImage)
+            return;
 
-        setImageObserver(observer);
+        m_cachedImage->setSpaceSize(spaceSize());
     }
 
     ctxt->setDrawLuminanceMask(false);

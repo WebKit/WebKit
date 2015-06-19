@@ -1,3 +1,19 @@
+2015-06-19  Brent Fulgham  <bfulgham@apple.com>
+
+        All calls of ImageBuffer::create should null check the return value
+        https://bugs.webkit.org/show_bug.cgi?id=22132
+
+        Reviewed by Zalan Bujtas.
+
+        ImageBuffer::create returns nullptr for a number of reasons, and should be
+        expected to do so. We missed this check in a few places, resulting in
+        crashes on some systems. Likewise, ImageBuffer::copyImage may return nullptr
+        in normal use and should be checked.
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::imageForCurrentSharingServicePickerItem): Add nullptr check
+        for copyImage.
+
 2015-06-18  Jon Lee  <jonlee@apple.com>
 
         Update AVKit usage of pip

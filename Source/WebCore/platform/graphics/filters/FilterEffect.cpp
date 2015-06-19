@@ -3,6 +3,7 @@
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2012 University of Szeged
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -268,7 +269,7 @@ void FilterEffect::clearResultsRecursive()
 ImageBuffer* FilterEffect::asImageBuffer()
 {
     if (!hasResult())
-        return 0;
+        return nullptr;
     if (m_imageBufferResult)
         return m_imageBufferResult.get();
 #if ENABLE(OPENCL)
@@ -276,6 +277,9 @@ ImageBuffer* FilterEffect::asImageBuffer()
         return openCLImageToImageBuffer();
 #endif
     m_imageBufferResult = ImageBuffer::create(m_absolutePaintRect.size(), m_filter.filterScale(), m_resultColorSpace, m_filter.renderingMode());
+    if (!m_imageBufferResult)
+        return nullptr;
+
     IntRect destinationRect(IntPoint(), m_absolutePaintRect.size());
     if (m_premultipliedImageResult)
         m_imageBufferResult->putByteArray(Premultiplied, m_premultipliedImageResult.get(), destinationRect.size(), destinationRect, IntPoint());
@@ -291,7 +295,7 @@ ImageBuffer* FilterEffect::openCLImageToImageBuffer()
     ASSERT(context);
 
     if (context->inError())
-        return 0;
+        return nullptr;
 
     size_t origin[3] = { 0, 0, 0 };
     size_t region[3] = { m_absolutePaintRect.width(), m_absolutePaintRect.height(), 1 };
@@ -299,12 +303,15 @@ ImageBuffer* FilterEffect::openCLImageToImageBuffer()
     RefPtr<Uint8ClampedArray> destinationPixelArray = Uint8ClampedArray::create(m_absolutePaintRect.width() * m_absolutePaintRect.height() * 4);
 
     if (context->isFailed(clFinish(context->commandQueue())))
-        return 0;
+        return nullptr;
 
     if (context->isFailed(clEnqueueReadImage(context->commandQueue(), m_openCLImageResult, CL_TRUE, origin, region, 0, 0, destinationPixelArray->data(), 0, 0, 0)))
-        return 0;
+        return nullptr;
 
     m_imageBufferResult = ImageBuffer::create(m_absolutePaintRect.size());
+    if (!m_imageBufferResult)
+        return nullptr;
+
     IntRect destinationRect(IntPoint(), m_absolutePaintRect.size());
     m_imageBufferResult->putByteArray(Unmultiplied, destinationPixelArray.get(), destinationRect.size(), destinationRect, IntPoint());
 

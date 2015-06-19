@@ -50,6 +50,8 @@ void BitmapTexture::updateContents(TextureMapper* textureMapper, GraphicsLayer* 
     sourceLayer->paintGraphicsLayerContents(*context, sourceRect);
 
     RefPtr<Image> image = imageBuffer->copyImage(DontCopyBackingStore);
+    if (!image)
+        return;
 
     updateContents(image.get(), targetRect, IntPoint(), updateContentsFlag);
 }
