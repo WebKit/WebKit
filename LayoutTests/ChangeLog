@@ -1,3 +1,12 @@
+2015-06-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove the useless LayoutTests/platform/wincairo/TestExpectations file
+        https://bugs.webkit.org/show_bug.cgi?id=146105
+
+        Reviewed by Darin Adler.
+
+        * platform/wincairo/TestExpectations: Removed.
+
 2015-06-19  Zalan Bujtas  <zalan@apple.com>
 
         RenderRubyText requires RenderRubyRun parent.
