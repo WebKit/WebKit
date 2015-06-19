@@ -190,7 +190,7 @@ void CustomProtocolManagerImpl::start(GTask* task)
     WebKitSoupRequestGeneric* request = WEBKIT_SOUP_REQUEST_GENERIC(g_task_get_source_object(task));
     m_customProtocolMap.set(customProtocolID, std::make_unique<WebSoupRequestAsyncData>(task, request));
 
-    m_childProcess->send(Messages::CustomProtocolManagerProxy::StartLoading(customProtocolID, webkitSoupRequestGenericGetRequest(request)), 0);
+    m_childProcess->send(Messages::CustomProtocolManagerProxy::StartLoading(customProtocolID, *webkitSoupRequestGenericGetRequest(request)), 0);
 }
 
 GInputStream* CustomProtocolManagerImpl::finish(GTask* task, GError** error)

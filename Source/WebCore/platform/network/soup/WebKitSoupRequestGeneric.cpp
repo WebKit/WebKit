@@ -100,7 +100,7 @@ void webkitSoupRequestGenericSetRequest(WebKitSoupRequestGeneric* request, const
     request->priv->resourceRequest = resourceRequest;
 }
 
-const ResourceRequest& webkitSoupRequestGenericGetRequest(WebKitSoupRequestGeneric* request)
+const ResourceRequest* webkitSoupRequestGenericGetRequest(WebKitSoupRequestGeneric* request)
 {
-    return request->priv->resourceRequest;
+    return &request->priv->resourceRequest;
 }
