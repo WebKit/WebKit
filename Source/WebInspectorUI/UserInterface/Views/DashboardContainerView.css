@@ -73,7 +73,7 @@
 }
 
 .toolbar .dashboard:not(.visible) {
-    opacity: 0;
+    display: none !important;
 }
 
 .toolbar .dashboard.slide-out-up {
