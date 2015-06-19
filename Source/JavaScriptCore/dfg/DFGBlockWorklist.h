@@ -65,11 +65,7 @@ struct BlockWith {
     {
     }
     
-    typedef void* (BlockWith<T>::*UnspecifiedBoolType);
-    operator UnspecifiedBoolType*() const
-    {
-        return block ? reinterpret_cast<UnspecifiedBoolType*>(1) : nullptr;
-    }
+    explicit operator bool() const { return block; }
 
     BasicBlock* block;
     T data;
@@ -141,11 +137,7 @@ struct BlockWithOrder {
     {
     }
     
-    typedef void* (BlockWithOrder::*UnspecifiedBoolType);
-    operator UnspecifiedBoolType*() const
-    {
-        return block ? reinterpret_cast<UnspecifiedBoolType*>(1) : nullptr;
-    }
+    explicit operator bool() const { return block; }
 
     BasicBlock* block;
     VisitOrder order;

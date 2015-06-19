@@ -45,7 +45,7 @@ struct LLIntCallLinkInfo : public BasicRawSentinelNode<LLIntCallLinkInfo> {
             remove();
     }
     
-    bool isLinked() { return callee; }
+    bool isLinked() { return !!callee; }
     
     void unlink()
     {

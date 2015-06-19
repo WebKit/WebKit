@@ -318,11 +318,7 @@ public:
     void* dataLocation() const { ASSERT_VALID_CODE_POINTER(m_value); return m_value; }
 #endif
 
-    typedef void* (MacroAssemblerCodePtr::*UnspecifiedBoolType);
-    operator UnspecifiedBoolType*() const
-    {
-        return !!m_value ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0;
-    }
+    explicit operator bool() const { return m_value; }
     
     bool operator==(const MacroAssemblerCodePtr& other) const
     {
@@ -442,11 +438,7 @@ public:
         return JSC::tryToDisassemble(m_codePtr, size(), prefix, WTF::dataFile());
     }
     
-    typedef void* (MacroAssemblerCodeRef::*UnspecifiedBoolType);
-    operator UnspecifiedBoolType*() const
-    {
-        return !!m_codePtr ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0;
-    }
+    explicit operator bool() const { return !!m_codePtr; }
     
     void dump(PrintStream& out) const
     {

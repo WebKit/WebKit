@@ -141,12 +141,7 @@ public:
 
     bool operator!() const { return !asValue() && !asNode(); }
 
-    typedef void* (LazyNode::*UnspecifiedBoolType);
-
-    operator UnspecifiedBoolType*() const
-    {
-        return !!*this ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0;
-    }
+    explicit operator bool() const { return !!*this; }
 
     void dump(PrintStream& out) const;
 

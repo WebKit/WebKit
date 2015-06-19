@@ -77,8 +77,8 @@ public:
     bool writablePresent() const { return m_seenAttributes & WritablePresent; }
     bool enumerablePresent() const { return m_seenAttributes & EnumerablePresent; }
     bool configurablePresent() const { return m_seenAttributes & ConfigurablePresent; }
-    bool setterPresent() const { return m_setter; }
-    bool getterPresent() const { return m_getter; }
+    bool setterPresent() const { return !!m_setter; }
+    bool getterPresent() const { return !!m_getter; }
     bool equalTo(ExecState*, const PropertyDescriptor& other) const;
     bool attributesEqual(const PropertyDescriptor& other) const;
     unsigned attributesOverridingCurrent(const PropertyDescriptor& current) const;

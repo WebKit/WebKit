@@ -74,7 +74,7 @@ bool CodeOrigin::isApproximatelyEqualTo(const CodeOrigin& other) const
         if (!a.inlineCallFrame)
             return true;
         
-        if (a.inlineCallFrame->executable != b.inlineCallFrame->executable)
+        if (a.inlineCallFrame->executable.get() != b.inlineCallFrame->executable.get())
             return false;
         
         a = a.inlineCallFrame->caller;

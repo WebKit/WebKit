@@ -50,8 +50,7 @@ public:
     
     bool operator!() const { return !m_value; }
     
-    typedef T* (CopyWriteBarrier::*UnspecifiedBoolType);
-    operator UnspecifiedBoolType*() const { return m_value ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0; }
+    explicit operator bool() const { return m_value; }
     
     T* get() const
     {

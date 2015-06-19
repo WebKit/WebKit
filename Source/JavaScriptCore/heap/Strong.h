@@ -84,9 +84,7 @@ public:
 
     bool operator!() const { return !slot() || !*slot(); }
 
-    // This conversion operator allows implicit conversion to bool but not to other integer types.
-    typedef JSValue (HandleBase::*UnspecifiedBoolType);
-    operator UnspecifiedBoolType*() const { return !!*this ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0; }
+    explicit operator bool() const { return !!*this; }
 
     void swap(Strong& other)
     {

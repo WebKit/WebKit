@@ -114,10 +114,7 @@ public:
     
     typedef void* (Relationship::*UnspecifiedBoolType);
 
-    operator UnspecifiedBoolType*() const
-    {
-        return m_left ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0;
-    }
+    explicit operator bool() const { return m_left; }
     
     Node* left() const { return m_left; }
     Node* right() const { return m_right; }

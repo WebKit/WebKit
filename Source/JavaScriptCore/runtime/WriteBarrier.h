@@ -113,8 +113,7 @@ public:
     
     T** slot() { return reinterpret_cast<T**>(&m_cell); }
     
-    typedef T* (WriteBarrierBase::*UnspecifiedBoolType);
-    operator UnspecifiedBoolType*() const { return m_cell ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0; }
+    explicit operator bool() const { return m_cell; }
     
     bool operator!() const { return !m_cell; }
 
@@ -165,8 +164,7 @@ public:
     int32_t* tagPointer() { return &bitwise_cast<EncodedValueDescriptor*>(&m_value)->asBits.tag; }
     int32_t* payloadPointer() { return &bitwise_cast<EncodedValueDescriptor*>(&m_value)->asBits.payload; }
     
-    typedef JSValue (WriteBarrierBase::*UnspecifiedBoolType);
-    operator UnspecifiedBoolType*() const { return get() ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0; }
+    explicit operator bool() const { return !!get(); }
     bool operator!() const { return !get(); } 
     
 private:

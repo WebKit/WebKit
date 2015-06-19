@@ -1,3 +1,89 @@
+2015-06-19  Mark Lam  <mark.lam@apple.com>
+
+        Employ explicit operator bool() instead of using the UnspecifiedBoolType workaround.
+        https://bugs.webkit.org/show_bug.cgi?id=146154
+
+        Reviewed by Darin Adler.
+
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::MacroAssemblerCodePtr::dataLocation):
+        (JSC::MacroAssemblerCodePtr::operator bool):
+        (JSC::MacroAssemblerCodePtr::operator==):
+        (JSC::MacroAssemblerCodeRef::tryToDisassemble):
+        (JSC::MacroAssemblerCodeRef::operator bool):
+        (JSC::MacroAssemblerCodeRef::dump):
+        (JSC::MacroAssemblerCodePtr::operator UnspecifiedBoolType*): Deleted.
+        (JSC::MacroAssemblerCodeRef::operator UnspecifiedBoolType*): Deleted.
+
+        * bytecode/CodeOrigin.cpp:
+        (JSC::CodeOrigin::isApproximatelyEqualTo):
+        - Fixed a bug here where we were expecting to compare Executable pointers, but
+          ended up comparing a (UnspecifiedBoolType*)1 with another
+          (UnspecifiedBoolType*)1.
+
+        * bytecode/LLIntCallLinkInfo.h:
+        (JSC::LLIntCallLinkInfo::~LLIntCallLinkInfo):
+        (JSC::LLIntCallLinkInfo::isLinked):
+        (JSC::LLIntCallLinkInfo::unlink):
+        * dfg/DFGBlockWorklist.h:
+        (JSC::DFG::BlockWith::BlockWith):
+        (JSC::DFG::BlockWith::operator bool):
+        (JSC::DFG::BlockWithOrder::BlockWithOrder):
+        (JSC::DFG::BlockWithOrder::operator bool):
+        (JSC::DFG::BlockWith::operator UnspecifiedBoolType*): Deleted.
+        (JSC::DFG::BlockWithOrder::operator UnspecifiedBoolType*): Deleted.
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+        * dfg/DFGLazyNode.h:
+        (JSC::DFG::LazyNode::operator!):
+        (JSC::DFG::LazyNode::operator bool):
+        (JSC::DFG::LazyNode::operator UnspecifiedBoolType*): Deleted.
+        * heap/CopyWriteBarrier.h:
+        (JSC::CopyWriteBarrier::operator!):
+        (JSC::CopyWriteBarrier::operator bool):
+        (JSC::CopyWriteBarrier::get):
+        (JSC::CopyWriteBarrier::operator UnspecifiedBoolType*): Deleted.
+        * heap/Handle.h:
+        (JSC::HandleBase::operator!):
+        (JSC::HandleBase::operator bool):
+        (JSC::HandleBase::slot):
+        (JSC::HandleBase::operator UnspecifiedBoolType*): Deleted.
+        * heap/Strong.h:
+        (JSC::Strong::operator!):
+        (JSC::Strong::operator bool):
+        (JSC::Strong::swap):
+        (JSC::Strong::operator UnspecifiedBoolType*): Deleted.
+        * jit/JITWriteBarrier.h:
+        (JSC::JITWriteBarrierBase::operator bool):
+        (JSC::JITWriteBarrierBase::operator!):
+        (JSC::JITWriteBarrierBase::setFlagOnBarrier):
+        (JSC::JITWriteBarrierBase::operator UnspecifiedBoolType*): Deleted.
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::setLengthWithArrayStorage):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::JSValue):
+        (JSC::JSValue::operator bool):
+        (JSC::JSValue::operator==):
+        (JSC::JSValue::operator UnspecifiedBoolType*): Deleted.
+        * runtime/JSObject.h:
+        (JSC::JSObject::hasSparseMap):
+        * runtime/PropertyDescriptor.h:
+        (JSC::PropertyDescriptor::writablePresent):
+        (JSC::PropertyDescriptor::enumerablePresent):
+        (JSC::PropertyDescriptor::configurablePresent):
+        (JSC::PropertyDescriptor::setterPresent):
+        (JSC::PropertyDescriptor::getterPresent):
+        * runtime/WriteBarrier.h:
+        (JSC::WriteBarrierBase::slot):
+        (JSC::WriteBarrierBase::operator bool):
+        (JSC::WriteBarrierBase::operator!):
+        (JSC::WriteBarrierBase<Unknown>::tagPointer):
+        (JSC::WriteBarrierBase<Unknown>::payloadPointer):
+        (JSC::WriteBarrierBase<Unknown>::operator bool):
+        (JSC::WriteBarrierBase<Unknown>::operator!):
+        (JSC::WriteBarrierBase::operator UnspecifiedBoolType*): Deleted.
+        (JSC::WriteBarrierBase<Unknown>::operator UnspecifiedBoolType*): Deleted.
+
 2015-06-19  Anders Carlsson  <andersca@apple.com>
 
         Add a JSC symlink in /System/Library/PrivateFrameworks

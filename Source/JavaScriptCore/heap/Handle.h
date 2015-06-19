@@ -52,9 +52,7 @@ class HandleBase {
 public:
     bool operator!() const { return !m_slot || !*m_slot; }
 
-    // This conversion operator allows implicit conversion to bool but not to other integer types.
-    typedef JSValue (HandleBase::*UnspecifiedBoolType);
-    operator UnspecifiedBoolType*() const { return (m_slot && *m_slot) ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0; }
+    explicit operator bool() const { return m_slot && *m_slot; }
 
     HandleSlot slot() const { return m_slot; }
 
