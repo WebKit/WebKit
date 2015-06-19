@@ -1,3 +1,18 @@
+2015-06-19  Zalan Bujtas  <zalan@apple.com>
+
+        RenderRubyText requires RenderRubyRun parent.
+        https://bugs.webkit.org/show_bug.cgi?id=146148
+        rdar://problem/21423319
+
+        Reviewed by Simon Fraser.
+
+        RenderRubyText expects its parent to be RenderRubyRun and since a
+        a non-block <rt> requires anonymous wrapper, we should check whether
+        the display type is actually block.
+
+        * fast/ruby/crash-when-ruby-rt-is-non-block-expected.txt: Added.
+        * fast/ruby/crash-when-ruby-rt-is-non-block.html: Added.
+
 2015-06-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove unnecessary svn:executable flags

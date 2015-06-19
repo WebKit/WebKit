@@ -48,7 +48,7 @@ Ref<RubyTextElement> RubyTextElement::create(const QualifiedName& tagName, Docum
 RenderPtr<RenderElement> RubyTextElement::createElementRenderer(Ref<RenderStyle>&& style, const RenderTreePosition& insertionPosition)
 {
     // RenderRubyText requires its parent to be RenderRubyRun.
-    if (isRuby(insertionPosition.parent()))
+    if (isRuby(insertionPosition.parent()) && style.get().display() == BLOCK)
         return createRenderer<RenderRubyText>(*this, WTF::move(style));
     return HTMLElement::createElementRenderer(WTF::move(style), insertionPosition);
 }
