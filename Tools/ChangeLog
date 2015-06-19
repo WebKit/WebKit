@@ -1,3 +1,16 @@
+2015-06-19  Per Arne Vollan  <peavo@outlook.com>
+
+        Fix the Windows build after r185721
+        https://bugs.webkit.org/show_bug.cgi?id=146146
+
+        Reviewed by Csaba Osztrogonác.
+
+        Speculative buildfix.
+
+        * DumpRenderTree/win/UIDelegate.h:
+        (UIDelegate::unused4): Added.
+        (UIDelegate::webViewShouldInterruptJavaScript): Deleted.
+
 2015-06-19  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed. Add myself as a committer.

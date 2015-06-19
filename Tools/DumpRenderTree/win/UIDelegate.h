@@ -317,7 +317,9 @@ protected:
     virtual HRESULT STDMETHODCALLTYPE unused2() { return E_NOTIMPL; }
     
     virtual HRESULT STDMETHODCALLTYPE unused3() { return E_NOTIMPL; }
-    
+
+    virtual HRESULT STDMETHODCALLTYPE unused4() { return E_NOTIMPL; }
+
     virtual HRESULT STDMETHODCALLTYPE webViewScrolled( 
         /* [in] */ IWebView *sender) { return E_NOTIMPL; }
     
@@ -327,10 +329,6 @@ protected:
         /* [in] */ int lineNumber,
         /* [in] */ BSTR url,
         /* [in] */ BOOL isError);
-    
-    virtual HRESULT STDMETHODCALLTYPE webViewShouldInterruptJavaScript( 
-        /* [in] */ IWebView *sender,
-        /* [retval][out] */ BOOL *result) { return E_NOTIMPL; }
     
     virtual HRESULT STDMETHODCALLTYPE webViewReceivedFocus( 
         /* [in] */ IWebView *sender) { return E_NOTIMPL; }
