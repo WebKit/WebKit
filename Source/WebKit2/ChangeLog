@@ -1,3 +1,16 @@
+2015-06-19  Jeremy Jones  <jeremyj@apple.com>
+
+        Revert switch to _synchronizedDrawingFence.
+        https://bugs.webkit.org/show_bug.cgi?id=146136
+        <rdar://problem/21227992>
+
+        Reviewed by Simon Fraser.
+
+        Revert _synchronizedDrawingFence code path that leaks a port.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::setVideoLayerFrame):
+
 2015-06-19  Anders Carlsson  <andersca@apple.com>
 
         Address review feedback from Darin.
