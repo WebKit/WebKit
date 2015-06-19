@@ -75,7 +75,7 @@ void FETile::platformApplySoftware()
     if (!tileImageCopy)
         return;
 
-    auto pattern = Pattern::create(tileImageCopy, true, true);
+    auto pattern = Pattern::create(WTF::move(tileImageCopy), true, true);
 
     AffineTransform patternTransform;
     patternTransform.translate(inMaxEffectLocation.x() - maxEffectLocation.x(), inMaxEffectLocation.y() - maxEffectLocation.y());
