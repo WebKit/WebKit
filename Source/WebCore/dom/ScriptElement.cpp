@@ -79,10 +79,15 @@ ScriptElement::~ScriptElement()
     stopLoadRequest();
 }
 
-void ScriptElement::insertedInto(ContainerNode& insertionPoint)
+bool ScriptElement::shouldNotifySubtreeInsertions(ContainerNode& insertionPoint)
 {
-    if (insertionPoint.inDocument() && !m_parserInserted)
-        prepareScript(); // FIXME: Provide a real starting line number here.
+    return insertionPoint.inDocument() && !m_parserInserted;
+}
+
+void ScriptElement::didNotifySubtreeInsertions()
+{
+    ASSERT(!m_parserInserted);
+    prepareScript(); // FIXME: Provide a real starting line number here.
 }
 
 void ScriptElement::childrenChanged()

@@ -1,3 +1,22 @@
+2015-06-19  Andy Estes  <aestes@apple.com>
+
+        Various assertion failures occur when executing script in the midst of DOM insertion
+        https://bugs.webkit.org/show_bug.cgi?id=132482
+
+        Reviewed by Darin Adler.
+
+        Wrote named-map-removed-while-inserting-parent-crash.html by reducing the test case attached to bug 132482.
+        The remaining tests were taken from blink r132482.
+
+        * fast/dom/element-removed-while-inserting-parent-crash-expected.txt: Added.
+        * fast/dom/element-removed-while-inserting-parent-crash.html: Added.
+        * fast/dom/named-map-removed-while-inserting-parent-crash-expected.txt: Added.
+        * fast/dom/named-map-removed-while-inserting-parent-crash.html: Added.
+        * fast/forms/form-control-removed-while-inserting-parent-crash-expected.txt: Added.
+        * fast/forms/form-control-removed-while-inserting-parent-crash.html: Added.
+        * svg/dom/element-removed-while-inserting-parent-crash-expected.txt: Added.
+        * svg/dom/element-removed-while-inserting-parent-crash.html: Added.
+
 2015-06-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove the useless LayoutTests/platform/wincairo/TestExpectations file
