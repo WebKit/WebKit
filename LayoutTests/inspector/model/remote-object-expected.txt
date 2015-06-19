@@ -273,26 +273,6 @@ EXPRESSION: / /
         "_name": "lastIndex",
         "_type": "number",
         "_value": "0"
-      },
-      {
-        "_name": "global",
-        "_type": "boolean",
-        "_value": "false"
-      },
-      {
-        "_name": "ignoreCase",
-        "_type": "boolean",
-        "_value": "false"
-      },
-      {
-        "_name": "multiline",
-        "_type": "boolean",
-        "_value": "false"
-      },
-      {
-        "_name": "source",
-        "_type": "string",
-        "_value": " "
       }
     ],
     "_entries": null
@@ -317,26 +297,6 @@ EXPRESSION: /(?:)/
         "_name": "lastIndex",
         "_type": "number",
         "_value": "0"
-      },
-      {
-        "_name": "global",
-        "_type": "boolean",
-        "_value": "false"
-      },
-      {
-        "_name": "ignoreCase",
-        "_type": "boolean",
-        "_value": "false"
-      },
-      {
-        "_name": "multiline",
-        "_type": "boolean",
-        "_value": "false"
-      },
-      {
-        "_name": "source",
-        "_type": "string",
-        "_value": "(?:)"
       }
     ],
     "_entries": null
@@ -361,26 +321,6 @@ EXPRESSION: /^r(e)g[e]{1,}x+/
         "_name": "lastIndex",
         "_type": "number",
         "_value": "0"
-      },
-      {
-        "_name": "global",
-        "_type": "boolean",
-        "_value": "false"
-      },
-      {
-        "_name": "ignoreCase",
-        "_type": "boolean",
-        "_value": "false"
-      },
-      {
-        "_name": "multiline",
-        "_type": "boolean",
-        "_value": "false"
-      },
-      {
-        "_name": "source",
-        "_type": "string",
-        "_value": "^r(e)g[e]{1,}x+"
       }
     ],
     "_entries": null
@@ -405,26 +345,6 @@ EXPRESSION: /^r(e)g[e]{1,}x+/ig
         "_name": "lastIndex",
         "_type": "number",
         "_value": "0"
-      },
-      {
-        "_name": "global",
-        "_type": "boolean",
-        "_value": "true"
-      },
-      {
-        "_name": "ignoreCase",
-        "_type": "boolean",
-        "_value": "true"
-      },
-      {
-        "_name": "multiline",
-        "_type": "boolean",
-        "_value": "false"
-      },
-      {
-        "_name": "source",
-        "_type": "string",
-        "_value": "^r(e)g[e]{1,}x+"
       }
     ],
     "_entries": null
@@ -449,26 +369,6 @@ EXPRESSION: new RegExp('')
         "_name": "lastIndex",
         "_type": "number",
         "_value": "0"
-      },
-      {
-        "_name": "global",
-        "_type": "boolean",
-        "_value": "false"
-      },
-      {
-        "_name": "ignoreCase",
-        "_type": "boolean",
-        "_value": "false"
-      },
-      {
-        "_name": "multiline",
-        "_type": "boolean",
-        "_value": "false"
-      },
-      {
-        "_name": "source",
-        "_type": "string",
-        "_value": "(?:)"
       }
     ],
     "_entries": null
@@ -493,26 +393,6 @@ EXPRESSION: new RegExp('test', 'i')
         "_name": "lastIndex",
         "_type": "number",
         "_value": "0"
-      },
-      {
-        "_name": "global",
-        "_type": "boolean",
-        "_value": "false"
-      },
-      {
-        "_name": "ignoreCase",
-        "_type": "boolean",
-        "_value": "true"
-      },
-      {
-        "_name": "multiline",
-        "_type": "boolean",
-        "_value": "false"
-      },
-      {
-        "_name": "source",
-        "_type": "string",
-        "_value": "test"
       }
     ],
     "_entries": null
@@ -563,7 +443,7 @@ EXPRESSION: [0, -0, 1, 2]
       {
         "_name": "1",
         "_type": "number",
-        "_value": "0"
+        "_value": "-0"
       },
       {
         "_name": "2",
@@ -1199,6 +1079,77 @@ EXPRESSION: var intArray = new Int32Array(new ArrayBuffer(16)); for (var i = 0; 
 }
 
 -----------------------------------------------------
+EXPRESSION: var buffer = new ArrayBuffer(10000000); var int8View = new Int8Array(buffer); int8View
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Int8Array",
+  "_size": 10000000,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Int8Array",
+    "_lossless": false,
+    "_overflow": true,
+    "_size": 10000000,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "1",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "2",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "3",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "4",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "5",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "6",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "7",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "8",
+        "_type": "number",
+        "_value": "0"
+      },
+      {
+        "_name": "9",
+        "_type": "number",
+        "_value": "0"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
 EXPRESSION: ({})
 {
   "_type": "object",
@@ -1261,7 +1212,7 @@ EXPRESSION: ({a: 1, b: 0, c: -0})
       {
         "_name": "c",
         "_type": "number",
-        "_value": "0"
+        "_value": "-0"
       }
     ],
     "_entries": null

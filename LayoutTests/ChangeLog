@@ -1,3 +1,16 @@
+2015-06-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Avoid getOwnPropertyNames/Symbols on very large lists
+        https://bugs.webkit.org/show_bug.cgi?id=146141
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/model/remote-object-expected.txt:
+        * inspector/model/remote-object.html:
+        There were existing progressions (0 => -1).
+        There were existing regressions (RegExp properties moving to prototype with descriptors on the prototype).
+        Add a test for a very large list that would have caused out of memory / hang.
+
 2015-06-18  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Unreviewed, gardening on June 19th.

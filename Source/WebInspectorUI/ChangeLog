@@ -1,3 +1,16 @@
+2015-06-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Avoid getOwnPropertyNames/Symbols on very large lists
+        https://bugs.webkit.org/show_bug.cgi?id=146141
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/JavaScriptRuntimeCompletionProvider.js:
+        (WebInspector.JavaScriptRuntimeCompletionProvider.prototype.completionControllerCompletionsNeeded):
+        When building completions for a large array, instead of building a list of all the indices
+        just send a single number back to the frontend and let it generate a list for completion.
+        We should do even better and avoid building a lookup table here for completion of an index.
+
 2015-06-18  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Rendering Frames timeline selection should snap to frame boundaries

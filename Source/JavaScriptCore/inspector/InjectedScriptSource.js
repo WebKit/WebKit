@@ -698,12 +698,34 @@ InjectedScript.prototype = {
             }
         }
 
-        // Iterate prototype chain.
+        function arrayIndexPropertyNames(o, length)
+        {
+            var array = new Array(length);
+            for (var i = 0; i < length; ++i) {
+                if (i in o)
+                    array.push("" + i);
+            }
+            return array;
+        }
+
+        // FIXME: <https://webkit.org/b/143589> Web Inspector: Better handling for large collections in Object Trees
+        // For array types with a large length we attempt to skip getOwnPropertyNames and instead just sublist of indexes.
+        var isArrayTypeWithLargeLength = false;
+        try {
+            isArrayTypeWithLargeLength = injectedScript._subtype(object) === "array" && isFinite(object.length) && object.length > 100;
+        } catch(e) {}
+
         for (var o = object; this._isDefined(o); o = o.__proto__) {
             var isOwnProperty = o === object;
-            processProperties(o, Object.getOwnPropertyNames(o), isOwnProperty);
-            if (Object.getOwnPropertySymbols)
-                processProperties(o, Object.getOwnPropertySymbols(o), isOwnProperty);
+
+            if (isArrayTypeWithLargeLength && isOwnProperty)
+                processProperties(o, arrayIndexPropertyNames(o, 100), isOwnProperty);
+            else {
+                processProperties(o, Object.getOwnPropertyNames(o), isOwnProperty);
+                if (Object.getOwnPropertySymbols)
+                    processProperties(o, Object.getOwnPropertySymbols(o), isOwnProperty);
+            }
+
             if (collectionMode === InjectedScript.CollectionMode.OwnProperties)
                 break;
         }

@@ -87,6 +87,7 @@ function test()
         {expression: "a = null; (function() { a = arguments; })(1, '2', /3/); a"},
         {expression: "new Int32Array(new ArrayBuffer(16))"},
         {expression: "var intArray = new Int32Array(new ArrayBuffer(16)); for (var i = 0; i < intArray.length; ++i) intArray[i] = i; intArray"},
+        {expression: "var buffer = new ArrayBuffer(10000000); var int8View = new Int8Array(buffer); int8View"}, // 10000000 elements.
 
         // Object
         {expression: "({})"},

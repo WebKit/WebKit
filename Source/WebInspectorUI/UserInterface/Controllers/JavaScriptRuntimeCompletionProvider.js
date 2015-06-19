@@ -125,6 +125,34 @@ WebInspector.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeComple
                 return;
             }
 
+            function getArrayCompletions(primitiveType)
+            {
+                var array = this;
+                var arrayLength;
+
+                var resultSet = {};
+                for (var o = array; o; o = o.__proto__) {
+                    try {
+                        if (o === array && o.length) {
+                            // If the array type has a length, don't include a list of all the indexes.
+                            // Include it at the end and the frontend can build the list.
+                            arrayLength = o.length;
+                        } else {
+                            var names = Object.getOwnPropertyNames(o);
+                            for (var i = 0; i < names.length; ++i)
+                                resultSet[names[i]] = true;
+                        }
+                    } catch (e) {
+                        // Ignore
+                    }
+                }
+
+                if (arrayLength)
+                    resultSet["length"] = arrayLength;
+
+                return resultSet;
+            }
+
             function getCompletions(primitiveType)
             {
                 var object;
@@ -151,7 +179,9 @@ WebInspector.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeComple
                 return resultSet;
             }
 
-            if (result.type === "object" || result.type === "function")
+            if (result.subtype === "array")
+                result.callFunctionJSON(getArrayCompletions, undefined, receivedArrayPropertyNames.bind(this));
+            else if (result.type === "object" || result.type === "function")
                 result.callFunctionJSON(getCompletions, undefined, receivedPropertyNames.bind(this));
             else if (result.type === "string" || result.type === "number" || result.type === "boolean")
                 WebInspector.runtimeManager.evaluateInInspectedWindow("(" + getCompletions + ")(\"" + result.type + "\")", "completion", false, true, true, false, false, receivedPropertyNamesFromEvaluate.bind(this));
@@ -162,6 +192,20 @@ WebInspector.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeComple
         function receivedPropertyNamesFromEvaluate(object, wasThrown, result)
         {
             receivedPropertyNames.call(this, result && !wasThrown ? result.value : null);
+        }
+
+        function receivedArrayPropertyNames(propertyNames)
+        {
+            // FIXME: <https://webkit.org/b/143589> Web Inspector: Better handling for large collections in Object Trees
+            // If there was an array like object, we generate autocompletion up to 1000 indexes, but this should
+            // handle a list with arbitrary length.
+            if (propertyNames && typeof propertyNames.length === "number") {
+                var max = Math.min(propertyNames.length, 1000);
+                for (var i = 0; i < max; ++i)
+                    propertyNames[i] = true;
+            }
+
+            receivedPropertyNames.call(this, propertyNames);
         }
 
         function receivedPropertyNames(propertyNames)
