@@ -1,3 +1,114 @@
+2015-06-19  Filip Pizlo  <fpizlo@apple.com>
+
+        JetStream should include a JavaScript version of the CDx real-time benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=146156
+
+        Reviewed by Geoffrey Garen.
+        
+        This adds a JavaScript port of the CDx real-time benchmark to JetStream, and retires
+        the cordic test because it was previously the smallest and probably least interesting.
+        
+        The new test, "cdjs", is mostly a faithful rewrite of the Java code into JavaScript.
+        I got the Java code from https://www.cs.purdue.edu/sss/projects/cdx/.
+        
+        There are some differences:
+        
+        - It uses RedBlackTree's for all sets and maps rather than hashtables. This is clearly
+          more in the spirit of real-time than the CDx benchmark. FWIW, CDx used to use trees
+          and I don't know why that changed in the latest version.
+        
+        - CDjs doesn't attempt to avoid memory allocations, unlike the real-time Java version.
+          I wrote the code that I wanted to write for aesthetics, rather than the code that I
+          would have written if I tried to write the fastest code possible. Again, I believe
+          that this is in the spirit of CDj - it's meant to test what would happen if you wrote
+          real-timey stuff in a high level language and actually took advantage of that
+          language to be more productive.
+        
+        The test score reflects the average latency of the worst 10 samples out of 200 samples.
+        The simulation uses 1000 aircraft, flying along paths that result in some detected
+        collisions every once in a while. The benchmark validates its results by checking the
+        total number of collisions detected.
+        
+        Apart from the integration into the JetStream harness, the CDjs directory contains a
+        fully self-contained benchmark that could be run either in the jsc shell or in browser.
+        
+        This new code uses the same 3-clause BSD license as the Purdue code, and gives
+        attribution to Purdue in almost all files. I believe that is appropriate since I wrote
+        most of the JS files by looking at the Purdue Java code and trascribing to JavaScript.
+        In some cases, I even copy-pasted the Java code, like the complicated math for
+        four-dimensional intersections and voxel hashing.
+
+        * JetStream/CDjsSetup.js: Added.
+        * JetStream/Octane2Setup.js:
+        * JetStream/Reference.js:
+        * JetStream/cdjs: Added.
+        * JetStream/cdjs/benchmark.js: Added.
+        (benchmark):
+        * JetStream/cdjs/call_sign.js: Added.
+        (CallSign):
+        (CallSign.prototype.compareTo):
+        (CallSign.prototype.toString):
+        * JetStream/cdjs/collision.js: Added.
+        (Collision):
+        (Collision.prototype.toString):
+        * JetStream/cdjs/collision_detector.js: Added.
+        (CollisionDetector):
+        (CollisionDetector.prototype.handleNewFrame.get for):
+        (CollisionDetector.prototype.handleNewFrame):
+        * JetStream/cdjs/constants.js: Added.
+        * JetStream/cdjs/main.html: Added.
+        * JetStream/cdjs/main.js: Added.
+        * JetStream/cdjs/motion.js: Added.
+        (Motion):
+        (Motion.prototype.toString):
+        (Motion.prototype.delta):
+        (Motion.prototype.findIntersection):
+        * JetStream/cdjs/motion_test.js: Added.
+        (checkDoesIntersect):
+        (checkDoesNotIntersect):
+        (makeMotion):
+        * JetStream/cdjs/red_black_tree.js: Added.
+        (RedBlackTree):
+        (RedBlackTree.):
+        * JetStream/cdjs/red_black_tree_test.js: Added.
+        (test):
+        (test.):
+        * JetStream/cdjs/reduce_collision_set.js: Added.
+        (drawMotionOnVoxelMap):
+        (drawMotionOnVoxelMap.):
+        (.get reduceCollisionSet):
+        * JetStream/cdjs/reduce_collision_set_test.js: Added.
+        (makeMotion):
+        (keys):
+        (test):
+        * JetStream/cdjs/simulator.js: Added.
+        (Simulator):
+        (Simulator.prototype.simulate):
+        * JetStream/cdjs/util.js: Added.
+        (compareNumbers):
+        (averageAbovePercentile):
+        (currentTime):
+        (else.currentTime):
+        * JetStream/cdjs/vector_2d.js: Added.
+        (Vector2D):
+        (Vector2D.prototype.plus):
+        (Vector2D.prototype.minus):
+        (Vector2D.prototype.toString):
+        (Vector2D.prototype.compareTo):
+        * JetStream/cdjs/vector_3d.js: Added.
+        (Vector3D):
+        (Vector3D.prototype.plus):
+        (Vector3D.prototype.minus):
+        (Vector3D.prototype.dot):
+        (Vector3D.prototype.squaredMagnitude):
+        (Vector3D.prototype.magnitude):
+        (Vector3D.prototype.times):
+        (Vector3D.prototype.as2D):
+        (Vector3D.prototype.toString):
+        * JetStream/create.rb:
+        * JetStream/index-TEMPLATE.html:
+        * JetStream/sunspider/cordic.js: Removed.
+
 2015-06-17  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] We should add performance tests for stretching logic

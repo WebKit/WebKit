@@ -1,4 +1,4 @@
-// Copyright (C) 2014 Apple Inc. All rights reserved.
+// Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -25,7 +25,6 @@ JetStream.addReferences({
     "3d-cube": 7.3,
     "3d-raytrace": 8.05,
     "base64": 4.2,
-    "cordic": 3,
     "crypto-aes": 6.6,
     "crypto-md5": 3,
     "crypto-sha1": 2.05,
@@ -65,5 +64,6 @@ JetStream.addReferences({
     "zlib": 887.666666666666,
     "typescript": 1149.9999999999993,
     "lua": 29858,
+    "cdjs": 14,
     "geomean": 31.556451704472156,
 });

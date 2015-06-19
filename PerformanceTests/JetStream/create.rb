@@ -26,7 +26,7 @@
 require "pathname"
 require "shellwords"
 
-VERSION = "1.1-alpha1"
+VERSION = "1.1-alpha2"
 DIRECTORY_NAME = "JetStream-#{VERSION}"
 
 raise unless system("rm -rf " + DIRECTORY_NAME)
@@ -34,7 +34,7 @@ raise unless system("mkdir -p " + DIRECTORY_NAME)
 raise unless system("mkdir -p #{DIRECTORY_NAME}/sunspider")
 raise unless system("mkdir -p #{DIRECTORY_NAME}/sources")
 raise unless system("cp sunspider/*.js #{DIRECTORY_NAME}/sunspider")
-raise unless system("cp -r JetStream.css JetStreamDriver.js LLVM-test-suite-LICENSE.txt simple Octane2 Octane2Setup.js SimpleSetup.js SunSpiderSetup.js Octane OctaneSetup.js Reference.js TestingSetup.js JetStream-Logo.png JetStream-Logo@2x.png Swoosh.png Swoosh@2x.png " + DIRECTORY_NAME)
+raise unless system("cp -r JetStream.css JetStreamDriver.js LLVM-test-suite-LICENSE.txt simple Octane2 Octane2Setup.js SimpleSetup.js SunSpiderSetup.js Octane OctaneSetup.js CDjsSetup.js cdjs Reference.js TestingSetup.js JetStream-Logo.png JetStream-Logo@2x.png Swoosh.png Swoosh@2x.png " + DIRECTORY_NAME)
 
 def detemplatize(basename)
     File.open(DIRECTORY_NAME + "/#{basename}.html", "w") {
@@ -116,6 +116,7 @@ transferSource("code-first-load", "Octane2/code-load.js")
 transferSource("box2d", "Octane2/box2d.js")
 transferSource("zlib", "Octane2/zlib.js", "Octane2/zlib-data.js")
 transferSource("typescript", "Octane2/typescript.js", "Octane2/typescript-compiler.js", "Octane2/typescript-input.js")
+transferSource("cdjs", "cdjs/constants.js", "cdjs/util.js", "cdjs/red_black_tree.js", "cdjs/call_sign.js", "cdjs/vector_2d.js", "cdjs/vector_3d.js", "cdjs/motion.js", "cdjs/reduce_collision_set.js", "cdjs/simulator.js", "cdjs/collision.js", "cdjs/collision_detector.js", "cdjs/benchmark.js")
 
 puts "You can now run JetStream by navigating to file://" + (Pathname.new(DIRECTORY_NAME) + "index.html").realpath.to_s
 
