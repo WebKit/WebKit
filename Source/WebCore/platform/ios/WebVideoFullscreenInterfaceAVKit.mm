@@ -569,6 +569,12 @@ static const char* boolString(bool val)
     RetainPtr<CALayer> _videoSublayer;
 }
 
+- (void)dealloc
+{
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resolveBounds) object:nil];
+    [super dealloc];
+}
+
 - (void)setVideoSublayer:(CALayer*)videoSublayer
 {
     _videoSublayer = videoSublayer;
@@ -659,12 +665,6 @@ static const char* boolString(bool val)
         [self setVideoLayerGravity:AVVideoLayerGravityResizeAspect];
     }
     return self;
-}
-
-- (void)dealloc
-{
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resolveBounds) object:nil];
-    [super dealloc];
 }
 
 - (void)setPlayerController:(AVPlayerController *)playerController
