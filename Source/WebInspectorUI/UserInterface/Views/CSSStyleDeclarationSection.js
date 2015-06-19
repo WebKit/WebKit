@@ -33,6 +33,7 @@ WebInspector.CSSStyleDeclarationSection = function(delegate, style)
     console.assert(style);
     this._style = style || null;
     this._selectorElements = [];
+    this._ruleDisabled = false;
 
     this._element = document.createElement("div");
     this._element.className = "style-declaration-section";
@@ -86,6 +87,13 @@ WebInspector.CSSStyleDeclarationSection = function(delegate, style)
         else
             iconClassName = WebInspector.DOMTreeElementPathComponent.DOMElementIconStyleClassName;
         break;
+    }
+
+    // Matches all situations except for User Agent styles.
+    if (!(style.ownerRule && style.ownerRule.type === WebInspector.CSSRule.Type.UserAgent)) {
+        this._iconElement.classList.add("toggle-able");
+        this._iconElement.title = WebInspector.UIString("Comment All Properties");
+        this._iconElement.addEventListener("click", this._toggleRuleOnOff.bind(this));
     }
 
     console.assert(iconClassName);
@@ -374,6 +382,13 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
         styleText += "}";
 
         return styleText;
+    },
+
+    _toggleRuleOnOff: function()
+    {
+        this._ruleDisabled = this._ruleDisabled ? !this._propertiesTextEditor.uncommentAllProperties() : this._propertiesTextEditor.commentAllProperties();
+        this._iconElement.title = this._ruleDisabled ? WebInspector.UIString("Uncomment All Properties") : WebInspector.UIString("Comment All Properties");
+        this._element.classList.toggle("rule-disabled", this._ruleDisabled);
     },
 
     _commitSelector: function(mutations)

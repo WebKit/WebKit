@@ -302,6 +302,39 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         return matchingPropertyNames.length > 0;
     }
 
+    uncommentAllProperties()
+    {
+        function uncommentProperties(properties)
+        {
+            if (!properties.length)
+                return false;
+
+            for (var property of properties) {
+                if (property._commentRange) {
+                    this._uncommentRange(property._commentRange);
+                    property._commentRange = null;
+                }
+            }
+
+            return true;
+        }
+
+        return uncommentProperties.call(this, this._style.pendingProperties) || uncommentProperties.call(this, this._style.properties);
+    }
+
+    commentAllProperties()
+    {
+        if (!this._style.properties.length)
+            return false;
+
+        for (var property of this._style.properties) {
+            if (property.__propertyTextMarker)
+                this._commentProperty(property);
+        }
+
+        return true;
+    }
+
     // Protected
 
     didDismissPopover(popover)
@@ -712,6 +745,11 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         if (!property)
             return;
 
+        this._commentProperty(property);
+    }
+
+    _commentProperty(property)
+    {
         var textMarker = property.__propertyTextMarker;
         console.assert(textMarker);
         if (!textMarker)
@@ -722,6 +760,9 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         var range = textMarker.find();
         if (!range)
             return;
+
+        property._commentRange = range;
+        property._commentRange.to.ch += 6; // Number of characters added by comments.
 
         var text = this._codeMirror.getRange(range.from, range.to);
 
@@ -750,6 +791,11 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         if (!range)
             return;
 
+        this._uncommentRange(range);
+    }
+
+    _uncommentRange(range)
+    {
         var text = this._codeMirror.getRange(range.from, range.to);
 
         // Remove the comment prefix and suffix.

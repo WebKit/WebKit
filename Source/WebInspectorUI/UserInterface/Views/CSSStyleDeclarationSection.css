@@ -68,6 +68,14 @@
     height: 16px;
 }
 
+.style-declaration-section > .header > .icon.toggle-able:hover {
+    -webkit-filter: brightness(0.9);
+}
+
+.style-declaration-section.rule-disabled > .header > .icon {
+    opacity: 0.5;
+}
+
 .style-declaration-section > .header > .selector {
     font-family: Menlo, monospace;
     color: rgb(128, 128, 128);
