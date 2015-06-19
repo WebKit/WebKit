@@ -3125,16 +3125,21 @@ static bool isAssistableInputType(InputType type)
     if (absoluteLinkURL.isEmpty() || !WebCore::protocolIsInHTTPFamily(absoluteLinkURL))
         return nil;
 
-    _highlightLongPressCanClick = NO;
-
     NSURL *targetURL = [NSURL URLWithString:_positionInformation.url];
     id<WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
-    if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:)])
+    if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:)]) {
+        _highlightLongPressCanClick = NO;
         return [uiDelegate _webView:_webView previewViewControllerForURL:targetURL];
+    }
 
+#if HAVE(SAFARI_SERVICES_FRAMEWORK)
     SFSafariViewController *previewViewController = [allocSFSafariViewControllerInstance() initWithURL:targetURL];
     previewViewController._showingLinkPreview = YES;
+    _highlightLongPressCanClick = NO;
     return previewViewController;
+#else
+    return nil;
+#endif
 }
 
 - (void)commitPreviewViewController:(UIViewController *)viewController
@@ -3145,6 +3150,7 @@ static bool isAssistableInputType(InputType type)
         return;
     }
 
+#if HAVE(SAFARI_SERVICES_FRAMEWORK)
     if (![viewController isKindOfClass:getSFSafariViewControllerClass()])
         return;
 
@@ -3156,6 +3162,7 @@ static bool isAssistableInputType(InputType type)
 
     UIViewController *presentingViewController = viewController.presentingViewController ?: self.window.rootViewController;
     [presentingViewController presentViewController:viewController animated:NO completion:nil];
+#endif
 }
 
 - (void)willPresentPreviewViewController:(UIViewController *)viewController forPosition:(CGPoint)position inSourceView:(UIView *)sourceView

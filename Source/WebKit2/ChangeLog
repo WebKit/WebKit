@@ -1,3 +1,12 @@
+2015-06-19  Dan Bernstein  <mitz@apple.com>
+
+        Fixed the build for platforms that don’t have SafariServices.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView previewViewControllerForPosition:inSourceView:]):
+        (-[WKContentView commitPreviewViewController:]):
+        (-[WKContentView willPresentPreviewViewController:forPosition:inSourceView:]):
+
 2015-06-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove unnecessary svn:executable flags
