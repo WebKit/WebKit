@@ -956,7 +956,6 @@ webkit.org/b/145835 fast/multicol/newmulticol/block-becomes-spanner.html [ Image
 webkit.org/b/145835 fast/multicol/newmulticol/cell-shrinkback.html [ ImageOnlyFailure Pass ]
 webkit.org/b/145835 fast/multicol/newmulticol/change-spanner-display.html [ ImageOnlyFailure Pass ]
 webkit.org/b/145835 fast/multicol/newmulticol/change-spanner-parent-display.html [ ImageOnlyFailure Pass ]
-webkit.org/b/145835 fast/multicol/newmulticol/clipping.html [ ImageOnlyFailure Pass ]
 webkit.org/b/145835 fast/multicol/newmulticol/compare-with-old-impl/before-child-anonymous-column-block.html [ ImageOnlyFailure Pass ]
 webkit.org/b/145835 fast/multicol/newmulticol/compare-with-old-impl/column-rules-stacking.html [ ImageOnlyFailure Pass ]
 webkit.org/b/145835 fast/multicol/newmulticol/compare-with-old-impl/shrink-to-column-height-for-pagination.html [ ImageOnlyFailure Pass ]
@@ -1059,7 +1058,6 @@ webkit.org/b/145835 fast/innerHTML/001.html [ ImageOnlyFailure Pass ]
 webkit.org/b/145835 fast/innerHTML/003.html [ ImageOnlyFailure Pass ]
 webkit.org/b/145835 fast/lists/rtl-marker.html [ ImageOnlyFailure Pass ]
 webkit.org/b/145835 fast/multicol/newmulticol/compare-with-old-impl/BottomToTop-tb.html [ ImageOnlyFailure Pass ]
-webkit.org/b/145835 js/dom/create-lots-of-workers.html [ Crash Timeout Pass Failure ]
 webkit.org/b/145835 js/dom/cross-frame-bad-time.html [ Timeout Pass ]
 
 # EFL port shows these tests are flaky though the tests are marked with failure in wk2 TestExpectation.
@@ -1067,7 +1065,6 @@ css3/device-adapt/opera/cascading-001.xhtml [ Failure Pass ]
 fast/dom/adopt-node-crash-2.html [ Failure Pass ]
 fast/selectors/hover-strict.html [ Failure Pass ]
 webaudio/delaynode-max-default-delay.html [ Failure Pass ]
-http/tests/media/video-redirect.html [ Crash Timeout Pass ]
 http/tests/xmlhttprequest/xmlhttprequest-post-crash.html [ Timeout Pass ]
 media/track/track-cues-pause-on-exit.html [ Failure Timeout Pass ]
 js/dom/cross-frame-prototype.html [ Crash Pass ]
@@ -1075,7 +1072,6 @@ pageoverlay/overlay-large-document-scrolled.html [ Crash Pass ]
 http/tests/misc/iframe-reparenting-id-collision.html [ Crash Pass ]
 http/tests/loading/text-content-type-with-binary-extension.html [ Failure Pass ]
 perf/rel-list-remove.html [ Failure Pass ]
-http/tests/media/video-redirect.html [ Crash Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
@@ -1531,8 +1527,6 @@ webkit.org/b/88238 editing/pasteboard/paste-global-selection.html [ Skip ]
 
 webkit.org/b/98564 fast/table/colspanMinWidth-vertical.html [ Missing Failure ]
 
-webkit.org/b/99878 css3/flexbox/flexbox-baseline-margins.html [ Missing ImageOnlyFailure ]
-
 # Occasionally fails if run after right after
 # fast/selectors/unqualified-hover-quirks.html or itself.
 webkit.org/b/10890 fast/selectors/unqualified-hover-strict.html [ Failure Pass ]
@@ -1567,7 +1561,6 @@ Bug(EFL) fast/text/whitespace/019.html [ Failure ]
 Bug(EFL) fast/text/whitespace/023.html [ Failure ]
 Bug(EFL) fast/text/whitespace/028.html [ Failure ]
 Bug(EFL) fullscreen/full-screen-iframe-legacy.html [ Failure Pass ]
-Bug(EFL) media/track/track-cues-pause-on-exit.html [ Failure Pass ]
 Bug(EFL) media/video-played-collapse.html [ Failure Pass ]
 Bug(EFL) svg/animations/reinserting-svg-into-document.html [ Failure Pass ]
 Bug(EFL) transitions/negative-delay.html [ Failure Pass ]
@@ -1880,14 +1873,11 @@ Bug(EFL) fast/media/media-query-list-06.html [ Failure ]
 
 webkit.org/b/120105 http/tests/navigation/post-frames-goback1-uncached.html [ Failure ]
 
-#webkit.org/b/120682 inspector-protocol/page/archive.html [ Timeout ]
-
 webkit.org/b/124582 fast/flexbox/clear-overflow-before-scroll-update.html [ Failure ]
 
 webkit.org/b/124589 http/tests/cache/partitioned-cache-iframe.html [ Failure ]
 webkit.org/b/124589 http/tests/cache/partitioned-cache.html [ Failure ]
 
-webkit.org/b/118126 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
 webkit.org/b/118126 fast/flexbox/image-percent-max-height.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/124657 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Failure ]
@@ -2210,8 +2200,6 @@ webkit.org/b/131044 media/video-controls-toggling.html [ Timeout ]
 
 webkit.org/b/143663 accessibility/plugin.html [ Failure ]
 
-webkit.org/b/143877 fast/forms/input-auto-fill-button.html [ Failure ]
-webkit.org/b/143877 fast/forms/listbox-visible-size.html [ Failure ]
 webkit.org/b/143877 fast/forms/range/slider-padding.html [ Failure ]
 webkit.org/b/143877 fast/forms/textarea-scroll-height.html [ Failure ]
 
@@ -2281,3 +2269,7 @@ mathml/presentation/mo-stretchy-vertical-bar.html [ ImageOnlyFailure ]
 mathml/presentation/scripts-font-size.html [ ImageOnlyFailure ]
 mathml/presentation/style-color-sqrt.html [ ImageOnlyFailure ]
 animations/trigger-container-scroll-empty.html [ Failure ]
+accessibility/math-multiscript-attributes.html [ Failure ]
+accessibility/transformed-element.html [ Failure ]
+
+webkit.org/b/146139 fast/css/named-images.html [ Missing ]

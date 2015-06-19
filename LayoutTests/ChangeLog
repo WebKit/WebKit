@@ -1,3 +1,12 @@
+2015-06-18  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Unreviewed, gardening on June 19th.
+
+        Mark fast/css/named-images.html to Missing. Additionally accessibility/math-multiscript-attributes.html
+        and accessibility/transformed-element.html are treated as failure.
+
+        * platform/efl/TestExpectations:
+
 2015-06-18  Dean Jackson  <dino@apple.com>
 
         Provide a way for web developers to draw a Theme-specific Wireless Playback icon
