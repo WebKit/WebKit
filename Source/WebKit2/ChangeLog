@@ -1,3 +1,20 @@
+2015-06-19  Brady Eidson  <beidson@apple.com>
+
+        Rename WKSecurityOrigin.h/cpp to WKSecurityOriginRef.h/cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=146152
+
+        Reviewed by Dan Bernstein.
+
+        * CMakeLists.txt:
+
+        * Shared/API/c/WKSecurityOriginRef.cpp: Renamed from Source/WebKit2/Shared/API/c/WKSecurityOrigin.cpp.
+        * Shared/API/c/WKSecurityOriginRef.h: Renamed from Source/WebKit2/Shared/API/c/WKSecurityOrigin.h.
+
+        * UIProcess/API/efl/ewk_security_origin.cpp:
+        * UIProcess/API/efl/ewk_storage_manager.cpp:
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-06-18  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] scrollIntoViewIfNeeded is not working with scroll-snap points

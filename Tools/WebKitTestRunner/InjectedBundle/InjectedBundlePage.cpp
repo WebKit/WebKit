@@ -43,7 +43,7 @@
 #include <WebKit/WKBundleNodeHandlePrivate.h>
 #include <WebKit/WKBundlePagePrivate.h>
 #include <WebKit/WKBundlePrivate.h>
-#include <WebKit/WKSecurityOrigin.h>
+#include <WebKit/WKSecurityOriginRef.h>
 #include <WebKit/WKURLRequest.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>

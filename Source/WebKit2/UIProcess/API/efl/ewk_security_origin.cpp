@@ -27,7 +27,7 @@
 #include "ewk_security_origin.h"
 
 #include "WKAPICast.h"
-#include "WKSecurityOrigin.h"
+#include "WKSecurityOriginRef.h"
 #include "WKString.h"
 #include "ewk_security_origin_private.h"
 

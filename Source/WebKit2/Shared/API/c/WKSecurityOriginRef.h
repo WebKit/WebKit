@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKSecurityOrigin_h
-#define WKSecurityOrigin_h
+#ifndef WKSecurityOriginRef_h
+#define WKSecurityOriginRef_h
 
 #include <WebKit/WKBase.h>
 
@@ -48,4 +48,4 @@ WK_EXPORT unsigned short WKSecurityOriginGetPort(WKSecurityOriginRef securityOri
 }
 #endif
 
-#endif /* WKSecurityOrigin_h */
+#endif /* WKSecurityOriginRef_h */

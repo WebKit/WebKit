@@ -295,7 +295,7 @@ set(WebKit2_SOURCES
     Shared/API/c/WKPluginInformation.cpp
     Shared/API/c/WKRenderLayer.cpp
     Shared/API/c/WKRenderObject.cpp
-    Shared/API/c/WKSecurityOrigin.cpp
+    Shared/API/c/WKSecurityOriginRef.cpp
     Shared/API/c/WKSerializedScriptValue.cpp
     Shared/API/c/WKString.cpp
     Shared/API/c/WKType.cpp

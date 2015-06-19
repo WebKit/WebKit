@@ -29,7 +29,7 @@
 #include <WebKit/WKMutableArray.h>
 #include <WebKit/WKNotification.h>
 #include <WebKit/WKNumber.h>
-#include <WebKit/WKSecurityOrigin.h>
+#include <WebKit/WKSecurityOriginRef.h>
 #include <wtf/Assertions.h>
 
 namespace WTR {

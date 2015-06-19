@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "WKSecurityOrigin.h"
+#include "WKSecurityOriginRef.h"
 
 #include "APISecurityOrigin.h"
 #include "WKAPICast.h"
