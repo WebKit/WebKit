@@ -127,7 +127,13 @@ bool JITFinalizer::finalizeFunction()
                 toCString(CodeBlockWithJITType(m_plan.codeBlock.get(), JITCode::FTLJIT)).data()))
             .executableMemory());
     }
-    
+
+    for (unsigned i = 0; i < outOfLineCodeInfos.size(); ++i) {
+        jitCode->addHandle(FINALIZE_DFG_CODE(
+            *outOfLineCodeInfos[i].m_linkBuffer,
+            ("FTL out of line code for %s", outOfLineCodeInfos[i].m_codeDescription)).executableMemory());
+    }
+
     jitCode->initializeArityCheckEntrypoint(
         FINALIZE_DFG_CODE(
             *entrypointLinkBuffer,

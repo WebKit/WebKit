@@ -1,3 +1,32 @@
+2015-06-19  Michael Saboff  <msaboff@apple.com>
+
+        Crash in com.apple.WebKit.WebContent at com.apple.JavaScriptCore: JSC::FTL::fixFunctionBasedOnStackMaps + 17225
+        https://bugs.webkit.org/show_bug.cgi?id=146133
+
+        Reviewed by Geoffrey Garen.
+
+        When generating code to put in inline caching areas, if there isn't enough space,
+        then create and link to an out of line area.  We connect the inline code to this
+        out of line code area by planting a jump from the inline area to the out of line
+        code and appending a jump at the end of the out of line code bck to the instruction
+        following the inline area.  We fill the unused inline area with nops, primarily to 
+        ensure the disassembler doesn't get confused.
+
+        * ftl/FTLCompile.cpp:
+        (generateInlineIfPossibleOutOfLineIfNot): New function that determines if there is enough space
+        in the inline code area for the code to link.  If so, it links inline, otherwise it links the
+        code out of line and plants appropriate jumps to/from the out of line code.
+        (generateICFastPath):
+        (generateCheckInICFastPath):
+        (fixFunctionBasedOnStackMaps):
+        Use generateInlineIfPossibleOutOfLineIfNot() to link code intended for inline cache space.
+
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+        * ftl/FTLJITFinalizer.h:
+        (JSC::FTL::OutOfLineCodeInfo::OutOfLineCodeInfo):
+        Added code to finalize any out of line LinkBuffer created by generateInlineIfPossibleOutOfLineIfNot().
+
 2015-06-19  Geoffrey Garen  <ggaren@apple.com>
 
         WebKit crash while loading nytimes at JavaScriptCore: JSC::ExecutableAllocator::allocate + 276

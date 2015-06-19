@@ -155,6 +155,49 @@ static int offsetOfStackRegion(StackMaps::RecordMap& recordMap, uint32_t stackma
     return capturedLocation.addend() / sizeof(Register);
 }
 
+static void generateInlineIfPossibleOutOfLineIfNot(State& state, VM& vm, CodeBlock* codeBlock, CCallHelpers& code, char* startOfInlineCode, size_t sizeOfInlineCode, const char* codeDescription, const std::function<void(LinkBuffer&, CCallHelpers&, bool wasCompiledInline)>& callback)
+{
+    std::unique_ptr<LinkBuffer> codeLinkBuffer;
+    size_t actualCodeSize = code.m_assembler.buffer().codeSize();
+
+    if (actualCodeSize <= sizeOfInlineCode) {
+        LinkBuffer codeLinkBuffer(vm, code, startOfInlineCode, sizeOfInlineCode);
+
+        // Fill the remainder of the inline space with nops to avoid confusing the disassembler.
+        MacroAssembler::AssemblerType_T::fillNops(bitwise_cast<char*>(startOfInlineCode) + actualCodeSize, sizeOfInlineCode - actualCodeSize);
+
+        callback(codeLinkBuffer, code, true);
+
+        return;
+    }
+
+    // If there isn't enough space in the provided inline code area, allocate out of line
+    // executable memory to link the provided code. Place a jump at the beginning of the
+    // inline area and jump to the out of line code. Similarly return by appending a jump
+    // to the provided code that goes to the instruction after the inline code.
+    // Fill the middle with nop's.
+    MacroAssembler::Jump returnToMainline = code.jump();
+
+    // Allocate out of line executable memory and link the provided code there.
+    codeLinkBuffer = std::make_unique<LinkBuffer>(vm, code, codeBlock, JITCompilationMustSucceed);
+
+    // Plant a jmp in the inline buffer to the out of line code.
+    MacroAssembler callToOutOfLineCode;
+    MacroAssembler::Jump jumpToOutOfLine = callToOutOfLineCode.jump();
+    LinkBuffer inlineBuffer(vm, callToOutOfLineCode, startOfInlineCode, sizeOfInlineCode);
+    inlineBuffer.link(jumpToOutOfLine, codeLinkBuffer->entrypoint());
+
+    // Fill the remainder of the inline space with nops to avoid confusing the disassembler.
+    MacroAssembler::AssemblerType_T::fillNops(bitwise_cast<char*>(startOfInlineCode) + inlineBuffer.size(), sizeOfInlineCode - inlineBuffer.size());
+
+    // Link the end of the out of line code to right after the inline area.
+    codeLinkBuffer->link(returnToMainline, CodeLocationLabel(MacroAssemblerCodePtr::createFromExecutableAddress(startOfInlineCode)).labelAtOffset(sizeOfInlineCode));
+
+    callback(*codeLinkBuffer.get(), code, false);
+
+    state.finalizer->outOfLineCodeInfos.append(OutOfLineCodeInfo(WTF::move(codeLinkBuffer), codeDescription));
+}
+
 template<typename DescriptorType>
 void generateICFastPath(
     State& state, CodeBlock* codeBlock, GeneratedFunction generatedFunction,
@@ -181,23 +224,16 @@ void generateICFastPath(
         
         char* startOfIC =
             bitwise_cast<char*>(generatedFunction) + record.instructionOffset;
-        
-        LinkBuffer linkBuffer(vm, fastPathJIT, startOfIC, sizeOfIC);
-        // Note: we could handle the !isValid() case. We just don't appear to have a
-        // reason to do so, yet.
-        RELEASE_ASSERT(linkBuffer.isValid());
-        
-        MacroAssembler::AssemblerType_T::fillNops(
-            startOfIC + linkBuffer.size(), sizeOfIC - linkBuffer.size());
-        
-        state.finalizer->sideCodeLinkBuffer->link(
-            ic.m_slowPathDone[i], CodeLocationLabel(startOfIC + sizeOfIC));
-        
-        linkBuffer.link(
-            generator.slowPathJump(),
-            state.finalizer->sideCodeLinkBuffer->locationOf(generator.slowPathBegin()));
-        
-        generator.finalize(linkBuffer, *state.finalizer->sideCodeLinkBuffer);
+
+        generateInlineIfPossibleOutOfLineIfNot(state, vm, codeBlock, fastPathJIT, startOfIC, sizeOfIC, "inline cache fast path", [&] (LinkBuffer& linkBuffer, CCallHelpers&, bool) {
+            state.finalizer->sideCodeLinkBuffer->link(ic.m_slowPathDone[i],
+                CodeLocationLabel(startOfIC + sizeOfIC));
+
+            linkBuffer.link(generator.slowPathJump(),
+                state.finalizer->sideCodeLinkBuffer->locationOf(generator.slowPathBegin()));
+
+            generator.finalize(linkBuffer, *state.finalizer->sideCodeLinkBuffer);
+        });
     }
 }
 
@@ -232,33 +268,29 @@ static void generateCheckInICFastPath(
 
         char* startOfIC =
             bitwise_cast<char*>(generatedFunction) + record.instructionOffset;
-        
-        LinkBuffer fastPath(vm, fastPathJIT, startOfIC, sizeOfIC);
-        LinkBuffer& slowPath = *state.finalizer->sideCodeLinkBuffer;
-        // Note: we could handle the !isValid() case. We just don't appear to have a
-        // reason to do so, yet.
-        RELEASE_ASSERT(fastPath.isValid());
 
-        MacroAssembler::AssemblerType_T::fillNops(
-            startOfIC + fastPath.size(), sizeOfIC - fastPath.size());
-        
-        state.finalizer->sideCodeLinkBuffer->link(
-            ic.m_slowPathDone[i], CodeLocationLabel(startOfIC + sizeOfIC));
-        
-        CodeLocationLabel slowPathBeginLoc = slowPath.locationOf(slowPathBegin);
-        fastPath.link(jump, slowPathBeginLoc);
+        auto postLink = [&] (LinkBuffer& fastPath, CCallHelpers&, bool) {
+            LinkBuffer& slowPath = *state.finalizer->sideCodeLinkBuffer;
 
-        CodeLocationCall callReturnLocation = slowPath.locationOf(call);
+            state.finalizer->sideCodeLinkBuffer->link(
+                ic.m_slowPathDone[i], CodeLocationLabel(startOfIC + sizeOfIC));
 
-        stubInfo.patch.deltaCallToDone = MacroAssembler::differenceBetweenCodePtr(
-            callReturnLocation, fastPath.locationOf(done));
+            CodeLocationLabel slowPathBeginLoc = slowPath.locationOf(slowPathBegin);
+            fastPath.link(jump, slowPathBeginLoc);
 
-        stubInfo.patch.deltaCallToJump = MacroAssembler::differenceBetweenCodePtr(
-            callReturnLocation, fastPath.locationOf(jump));
-        stubInfo.callReturnLocation = callReturnLocation;
-        stubInfo.patch.deltaCallToSlowCase = MacroAssembler::differenceBetweenCodePtr(
-            callReturnLocation, slowPathBeginLoc);
-        
+            CodeLocationCall callReturnLocation = slowPath.locationOf(call);
+
+            stubInfo.patch.deltaCallToDone = MacroAssembler::differenceBetweenCodePtr(
+                callReturnLocation, fastPath.locationOf(done));
+
+            stubInfo.patch.deltaCallToJump = MacroAssembler::differenceBetweenCodePtr(
+                callReturnLocation, fastPath.locationOf(jump));
+            stubInfo.callReturnLocation = callReturnLocation;
+            stubInfo.patch.deltaCallToSlowCase = MacroAssembler::differenceBetweenCodePtr(
+                callReturnLocation, slowPathBeginLoc);
+        };
+
+        generateInlineIfPossibleOutOfLineIfNot(state, vm, codeBlock, fastPathJIT, startOfIC, sizeOfIC, "CheckIn inline cache", postLink);
     }
 }
 
@@ -559,19 +591,12 @@ static void fixFunctionBasedOnStackMaps(
 
         CCallHelpers fastPathJIT(&vm, codeBlock);
         call.emit(fastPathJIT);
-        
+
         char* startOfIC = bitwise_cast<char*>(generatedFunction) + call.m_instructionOffset;
-        
-        LinkBuffer linkBuffer(vm, fastPathJIT, startOfIC, sizeOfCall());
-        if (!linkBuffer.isValid()) {
-            dataLog("Failed to insert inline cache for call because we thought the size would be ", sizeOfCall(), " but it ended up being ", fastPathJIT.m_assembler.codeSize(), " prior to compaction.\n");
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-        
-        MacroAssembler::AssemblerType_T::fillNops(
-            startOfIC + linkBuffer.size(), sizeOfCall() - linkBuffer.size());
-        
-        call.link(vm, linkBuffer);
+
+        generateInlineIfPossibleOutOfLineIfNot(state, vm, codeBlock, fastPathJIT, startOfIC, sizeOfCall(), "JSCall inline cache", [&] (LinkBuffer& linkBuffer, CCallHelpers&, bool) {
+            call.link(vm, linkBuffer);
+        });
     }
     
     adjustCallICsForStackmaps(state.jsCallVarargses, recordMap);
@@ -581,20 +606,13 @@ static void fixFunctionBasedOnStackMaps(
         
         CCallHelpers fastPathJIT(&vm, codeBlock);
         call.emit(fastPathJIT, varargsSpillSlotsOffset);
-        
+
         char* startOfIC = bitwise_cast<char*>(generatedFunction) + call.m_instructionOffset;
         size_t sizeOfIC = sizeOfICFor(call.node());
 
-        LinkBuffer linkBuffer(vm, fastPathJIT, startOfIC, sizeOfIC);
-        if (!linkBuffer.isValid()) {
-            dataLog("Failed to insert inline cache for varargs call (specifically, ", Graph::opName(call.node()->op()), ") because we thought the size would be ", sizeOfIC, " but it ended up being ", fastPathJIT.m_assembler.codeSize(), " prior to compaction.\n");
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-        
-        MacroAssembler::AssemblerType_T::fillNops(
-            startOfIC + linkBuffer.size(), sizeOfIC - linkBuffer.size());
-        
-        call.link(vm, linkBuffer, state.finalizer->handleExceptionsLinkBuffer->entrypoint());
+        generateInlineIfPossibleOutOfLineIfNot(state, vm, codeBlock, fastPathJIT, startOfIC, sizeOfIC, "varargs call inline cache", [&] (LinkBuffer& linkBuffer, CCallHelpers&, bool) {
+            call.link(vm, linkBuffer, state.finalizer->handleExceptionsLinkBuffer->entrypoint());
+        });
     }
     
     RepatchBuffer repatchBuffer(codeBlock);
