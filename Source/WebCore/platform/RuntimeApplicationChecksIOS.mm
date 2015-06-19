@@ -31,12 +31,6 @@
 
 namespace WebCore {
 
-bool applicationIsAdSheet()
-{
-    static const bool isAdSheet = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.AdSheetPhone"];
-    return isAdSheet;
-}
-
 bool applicationIsMobileMail()
 {
     static const bool isMobileMail = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.mobilemail"];

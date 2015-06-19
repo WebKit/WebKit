@@ -876,6 +876,10 @@ void WebVideoFullscreenInterfaceAVKit::setExternalPlayback(bool enabled, Externa
     [m_videoLayerContainer.get() setHidden:enabled];
 }
 
+@interface UIWindow ()
+-(BOOL)_isHostedInAnotherProcess;
+@end
+
 void WebVideoFullscreenInterfaceAVKit::setupFullscreen(PlatformLayer& videoLayer, const WebCore::IntRect& initialRect, UIView* parentView, HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback)
 {
     ASSERT(mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
@@ -890,7 +894,7 @@ void WebVideoFullscreenInterfaceAVKit::setupFullscreen(PlatformLayer& videoLayer
     m_parentView = parentView;
     m_parentWindow = parentView.window;
 
-    if (!applicationIsAdSheet()) {
+    if (![[parentView window] _isHostedInAnotherProcess]) {
         m_window = adoptNS([allocUIWindowInstance() initWithFrame:[[getUIScreenClass() mainScreen] bounds]]);
         [m_window setBackgroundColor:[getUIColorClass() clearColor]];
         m_viewController = adoptNS([allocUIViewControllerInstance() init]);
@@ -926,11 +930,10 @@ void WebVideoFullscreenInterfaceAVKit::setupFullscreen(PlatformLayer& videoLayer
     if (m_viewController) {
         [m_viewController addChildViewController:m_playerViewController.get()];
         [[m_viewController view] addSubview:[m_playerViewController view]];
-        [m_playerViewController view].frame = [parentView convertRect:initialRect toView:nil];
-    } else {
-        [parentView addSubview:[m_playerViewController view]];
-        [m_playerViewController view].frame = initialRect;
-    }
+    } else
+        [parentView.window addSubview:[m_playerViewController view]];
+
+    [m_playerViewController view].frame = [parentView convertRect:initialRect toView:nil];
 
     [[m_playerViewController view] setBackgroundColor:[getUIColorClass() clearColor]];
     [[m_playerViewController view] setNeedsLayout];
@@ -1002,7 +1005,6 @@ void WebVideoFullscreenInterfaceAVKit::exitFullscreen(const WebCore::IntRect& fi
     if ([m_videoLayerContainer videoLayerGravity] != AVVideoLayerGravityResizeAspect)
         [m_videoLayerContainer setVideoLayerGravity:AVVideoLayerGravityResizeAspect];
     [[m_playerViewController view] layoutIfNeeded];
-
 
     if (isMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture)) {
         [m_window setHidden:NO];
@@ -1105,6 +1107,7 @@ void WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen()
     LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen(%p)", this);
 
     [m_window setHidden:YES];
+    [[m_playerViewController view] setHidden:YES];
 
     if (m_videoFullscreenModel && !m_exitRequested) {
         m_videoFullscreenModel->pause();
@@ -1117,10 +1120,7 @@ void WebVideoFullscreenInterfaceAVKit::preparedToReturnToInline(bool visible, co
     LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::preparedToReturnToInline(%p) - visible(%s)", this, boolString(visible));
     if (m_prepareToInlineCallback) {
         
-        if (m_viewController)
-            [m_playerViewController view].frame = [m_parentView convertRect:inlineRect toView:nil];
-        else
-            [m_playerViewController view].frame = inlineRect;
+        [m_playerViewController view].frame = [m_parentView convertRect:inlineRect toView:nil];
 
         std::function<void(bool)> callback = WTF::move(m_prepareToInlineCallback);
         callback(visible);
@@ -1153,6 +1153,7 @@ void WebVideoFullscreenInterfaceAVKit::willStartPictureInPicture()
 
         if (!visible) {
             [m_window setHidden:YES];
+            [[m_playerViewController view] setHidden:YES];
             return;
         }
 
@@ -1163,6 +1164,7 @@ void WebVideoFullscreenInterfaceAVKit::willStartPictureInPicture()
                 return;
             clearMode(HTMLMediaElementEnums::VideoFullscreenModeStandard);
             [m_window setHidden:YES];
+            [[m_playerViewController view] setHidden:YES];
         }];
     });
 }
@@ -1172,6 +1174,7 @@ void WebVideoFullscreenInterfaceAVKit::didStartPictureInPicture()
     LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::didStartPictureInPicture(%p)", this);
     [m_playerViewController setShowsPlaybackControls:YES];
     [m_window setHidden:YES];
+    [[m_playerViewController view] setHidden:YES];
 
     if (m_fullscreenChangeObserver)
         m_fullscreenChangeObserver->didEnterFullscreen();
@@ -1198,6 +1201,7 @@ void WebVideoFullscreenInterfaceAVKit::willStopPictureInPicture()
 {
     LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::willStopPictureInPicture(%p)", this);
     [m_window setHidden:NO];
+    [[m_playerViewController view] setHidden:NO];
 
     if (m_videoFullscreenModel)
         m_videoFullscreenModel->requestExitFullscreen();
@@ -1216,6 +1220,7 @@ void WebVideoFullscreenInterfaceAVKit::didStopPictureInPicture()
 
     clearMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
     [m_window setHidden:YES];
+    [[m_playerViewController view] setHidden:YES];
     
     if (m_fullscreenChangeObserver)
         m_fullscreenChangeObserver->didExitFullscreen();

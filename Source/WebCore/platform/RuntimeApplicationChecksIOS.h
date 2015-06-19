@@ -29,7 +29,6 @@
 // FIXME: We should consider merging this file with RuntimeApplicationChecks.h.
 namespace WebCore {
 
-bool applicationIsAdSheet();
 WEBCORE_EXPORT bool applicationIsMobileMail();
 WEBCORE_EXPORT bool applicationIsMobileSafari();
 bool applicationIsDumpRenderTree();
