@@ -1,5 +1,27 @@
 2015-06-19  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Remove unnecessary svn:executable flags
+        https://bugs.webkit.org/show_bug.cgi?id=146107
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/images/favicon-green.png: Removed property svn:executable.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/images/favicon-red.png: Removed property svn:executable.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/External/daterangepicker.css: Removed property svn:executable.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/External/jquery.daterangepicker.js: Removed property svn:executable.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/External/moment.min.js: Removed property svn:executable.
+        * BuildSlaveSupport/build.webkit.org-config/templates/root.html: Removed property svn:executable.
+        * CygwinDownloader/cygwin-downloader.zip: Removed property svn:executable.
+        * DumpRenderTree/ForwardingHeaders/runtime/JSExportMacros.h: Removed property svn:executable.
+        * DumpRenderTree/win/TextInputController.cpp: Removed property svn:executable.
+        * DumpRenderTree/win/TextInputController.h: Removed property svn:executable.
+        * DumpRenderTree/win/TextInputControllerWin.cpp: Removed property svn:executable.
+        * Scripts/webkitpy/port/base_unittest.py: Removed property svn:executable.
+        * Scripts/webkitpy/port/driver.py: Removed property svn:executable.
+        * Scripts/webkitpy/w3c/test_parser.py: Removed property svn:executable.
+
+2015-06-19  Csaba Osztrogonác  <ossy@webkit.org>
+
         Disable tests on the WinCairo buildbot
         https://bugs.webkit.org/show_bug.cgi?id=146106
 

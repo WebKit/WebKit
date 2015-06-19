@@ -1,3 +1,119 @@
+2015-06-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove unnecessary svn:executable flags
+        https://bugs.webkit.org/show_bug.cgi?id=146107
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/block/float/intruding-float-not-removed-writing-mode.xhtml: Removed property svn:executable.
+        * fast/canvas/script-tests/canvas-image-shadow.js: Removed property svn:executable.
+        * fast/css-grid-layout/resources/display-grid-set-get.js: Removed property svn:executable.
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set.js: Removed property svn:executable.
+        * fast/css-grid-layout/resources/non-grid-columns-rows-get-set.js: Removed property svn:executable.
+        * fast/css/readonly-pseudoclass-common-element.html: Removed property svn:executable.
+        * fast/css/readwrite-pseudoclass-editable.html: Removed property svn:executable.
+        * fast/dom/HTMLObjectElement/beforeload-set-text-crash.xhtml: Removed property svn:executable.
+        * fast/dom/resources/node-move-to-new-document-crash.svg: Removed property svn:executable.
+        * fast/dom/text-node-attach-crash.xhtml: Removed property svn:executable.
+        * fast/dynamic/crash-paint-no-documentElement-renderer.html-disabled: Removed property svn:executable.
+        * fast/frames/resources/subframe-load-crash.svg: Removed property svn:executable.
+        * fast/text/split-text-crash.xhtml: Removed property svn:executable.
+        * http/tests/appcache/resources/abort-cache-onchecking.manifest: Removed property svn:executable.
+        * http/tests/appcache/resources/abort-cache-onchecking.text: Removed property svn:executable.
+        * http/tests/appcache/resources/abort-cache-ondownloading-resource-404.manifest: Removed property svn:executable.
+        * http/tests/appcache/resources/abort-cache-ondownloading.manifest: Removed property svn:executable.
+        * http/tests/appcache/resources/abort-cache-ondownloading.text: Removed property svn:executable.
+        * http/tests/appcache/resources/abort-cache-onprogress-1.text: Removed property svn:executable.
+        * http/tests/appcache/resources/abort-cache-onprogress-2.text: Removed property svn:executable.
+        * http/tests/appcache/resources/abort-cache-onprogress-3.text: Removed property svn:executable.
+        * http/tests/appcache/resources/abort-cache-onprogress-4.text: Removed property svn:executable.
+        * http/tests/xmlhttprequest/methods-async-expected.txt: Removed property svn:executable.
+        * http/tests/xmlhttprequest/methods-expected.txt: Removed property svn:executable.
+        * http/tests/xmlhttprequest/workers/methods-async-expected.txt: Removed property svn:executable.
+        * http/tests/xmlhttprequest/workers/methods-expected.txt: Removed property svn:executable.
+        * platform/efl/mathml/presentation/menclose-notation-default-longdiv-expected.png: Removed property svn:executable.
+        * platform/gtk/mathml/presentation/menclose-notation-default-longdiv-expected.png: Removed property svn:executable.
+        * platform/mac/fast/css-generated-content/nested-tables-with-before-after-content-crash-expected.png: Removed property svn:executable.
+        * platform/mac/mathml/presentation/menclose-notation-default-longdiv-expected.png: Removed property svn:executable.
+        * platform/win/fast/canvas/fallback-content-expected.txt: Removed property svn:executable.
+        * platform/win/fast/dom/tabindex-clamp-expected.txt: Removed property svn:executable.
+        * platform/win/fast/events/ondrop-text-html-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/basic-textareas-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/basic-textareas-quirks-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/button-inner-block-reuse-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/control-clip-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/fieldset-align-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/fieldset-legend-padding-unclipped-fieldset-border-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/fieldset-with-float-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/float-before-fieldset-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/focus-selection-textarea-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/indeterminate-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/input-appearance-readonly-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/input-appearance-visibility-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/input-first-letter-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/input-readonly-dimmed-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/input-spaces-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/input-text-click-outside-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/input-type-text-min-width-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/input-width-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/listbox-onchange-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/menulist-option-wrap-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/menulist-separator-painting-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/negativeLineHeight-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/onselect-textarea-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/placeholder-pseudo-style-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/range/input-appearance-range-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/range/range-thumb-height-percentage-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/range/slider-padding-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/range/slider-thumb-shared-style-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/range/slider-thumb-stylability-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/range/thumbslider-no-parent-slider-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/search-cancel-button-style-sharing-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/search-display-none-cancel-button-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/search-rtl-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/search-vertical-alignment-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/select-background-none-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/select-empty-option-height-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/select-size-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/select-style-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/select-visual-hebrew-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/selectlist-minsize-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/stuff-on-my-optgroup-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/textAreaLineHeight-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/textarea-align-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/textarea-metrics-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/textarea-placeholder-pseudo-style-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/textarea-scroll-height-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/textarea-scrolled-type-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/textarea-setinnerhtml-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/textfield-overflow-by-value-update-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/textfield-overflow-expected.txt: Removed property svn:executable.
+        * platform/win/fast/html/details-no-summary4-expected.txt: Removed property svn:executable.
+        * platform/win/fast/html/details-open-javascript-expected.txt: Removed property svn:executable.
+        * platform/win/fast/html/details-open2-expected.txt: Removed property svn:executable.
+        * platform/win/fast/html/details-open4-expected.txt: Removed property svn:executable.
+        * platform/win/fast/repaint/slider-thumb-drag-release-expected.txt: Removed property svn:executable.
+        * platform/win/fast/repaint/slider-thumb-float-expected.txt: Removed property svn:executable.
+        * platform/win/fast/replaced/table-percent-height-expected.txt: Removed property svn:executable.
+        * platform/win/fast/replaced/three-selects-break-expected.txt: Removed property svn:executable.
+        * platform/win/fast/transforms/transformed-focused-text-input-expected.txt: Removed property svn:executable.
+        * platform/win/inverted-colors/non-composited-expected.png: Removed property svn:executable.
+        * platform/win/inverted-colors/resources/gradient.png: Removed property svn:executable.
+        * platform/win/js/dom/constructor-length-expected.txt: Removed property svn:executable.
+        * platform/win/platform/win/accessibility/option-element-position-and-size-expected.txt: Removed property svn:executable.
+        * platform/win/tables/mozilla/bugs/bug131020-expected.png: Removed property svn:executable.
+        * platform/wk2/http/tests/media/video-auth-expected.txt: Removed property svn:executable.
+        * svg/animations/animate-beginElementAt.svg: Removed property svn:executable.
+        * svg/animations/animate-calcMode-spline-crash-bad-array-length.xhtml: Removed property svn:executable.
+        * svg/custom/assert-empty-layout-attributes.svg: Removed property svn:executable.
+        * svg/custom/crash-text-in-textpath.svg: Removed property svn:executable.
+        * svg/custom/intersection-list-crash.svg: Removed property svn:executable.
+        * svg/custom/resources/crash-textPath-attributes-iframe.svg: Removed property svn:executable.
+        * svg/custom/symbol-viewport-element-crash.svg: Removed property svn:executable.
+        * svg/custom/text-node-in-text-invalidated.svg: Removed property svn:executable.
+        * svg/dom/resources/SVGStyledElement-pendingResource-crash.svg: Removed property svn:executable.
+        * svg/text/font-size-null-assertion.svg: Removed property svn:executable.
+
 2015-06-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Avoid getOwnPropertyNames/Symbols on very large lists

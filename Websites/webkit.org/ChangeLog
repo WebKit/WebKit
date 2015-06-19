@@ -1,3 +1,19 @@
+2015-06-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove unnecessary svn:executable flags
+        https://bugs.webkit.org/show_bug.cgi?id=146107
+
+        Reviewed by Alexey Proskuryakov.
+
+        * blog-files/inspector/css_as_authored.png: Removed property svn:executable.
+        * blog-files/inspector/css_autocomplete.png: Removed property svn:executable.
+        * blog-files/inspector/css_rule_diff.png: Removed property svn:executable.
+        * blog-files/inspector/css_unknown_properties.png: Removed property svn:executable.
+        * blog-files/inspector/warning_10x10.png: Removed property svn:executable.
+        * demos/regions/pizza-regions-manifesto-regionstyling.html: Removed property svn:executable.
+        * demos/regions/pizza-regions-manifesto.html: Removed property svn:executable.
+        * demos/regions/yellow-pizza.jpg: Removed property svn:executable.
+
 2015-05-20  Jon Davis  <jond@apple.com>
 
         Upgrading WordPress to 4.2.2 release.

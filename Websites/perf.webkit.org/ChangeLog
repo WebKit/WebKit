@@ -1,3 +1,28 @@
+2015-06-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove unnecessary svn:executable flags
+        https://bugs.webkit.org/show_bug.cgi?id=146107
+
+        Reviewed by Alexey Proskuryakov.
+
+        * public/js/helper-classes.js: Removed property svn:executable.
+        * public/js/jquery.flot.plugins.js: Removed property svn:executable.
+        * public/v2/app.css: Removed property svn:executable.
+        * public/v2/app.js: Removed property svn:executable.
+        * public/v2/chart-pane.css: Removed property svn:executable.
+        * public/v2/data.js: Removed property svn:executable.
+        * public/v2/index.html: Removed property svn:executable.
+        * public/v2/js/d3/LICENSE: Removed property svn:executable.
+        * public/v2/js/d3/d3.js: Removed property svn:executable.
+        * public/v2/js/d3/d3.min.js: Removed property svn:executable.
+        * public/v2/js/ember-data.js: Removed property svn:executable.
+        * public/v2/js/ember.js: Removed property svn:executable.
+        * public/v2/js/handlebars.js: Removed property svn:executable.
+        * public/v2/js/jquery.min.js: Removed property svn:executable.
+        * public/v2/js/statistics.js: Removed property svn:executable.
+        * public/v2/manifest.js: Removed property svn:executable.
+        * public/v2/popup.js: Removed property svn:executable.
+
 2015-06-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reading the list of analysis tasks is extremely slow

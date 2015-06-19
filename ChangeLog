@@ -1,3 +1,16 @@
+2015-06-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove unnecessary svn:executable flags
+        https://bugs.webkit.org/show_bug.cgi?id=146107
+
+        Reviewed by Alexey Proskuryakov.
+
+        * ManualTests/iframe_notifications/iframe-reparenting-close-window-child.html: Removed property svn:executable.
+        * ManualTests/iframe_notifications/iframe-reparenting-close-window-iframe.html: Removed property svn:executable.
+        * ManualTests/iframe_notifications/iframe-reparenting-close-window.html: Removed property svn:executable.
+        * ManualTests/select-menu-list-wrongly-positioned.html: Removed property svn:executable.
+        * ManualTests/svg-text-float-not-removed-crash.html: Removed property svn:executable.
+
 2015-06-18  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [EFL] Use SET_AND_EXPOSE_TO_BUILD instead of definitions
