@@ -1,3 +1,21 @@
+2015-06-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r185475): [Mac] ASSERT() when clicking on text using web fonts with force touch trackpad
+        https://bugs.webkit.org/show_bug.cgi?id=145890
+        <rdar://problem/21390877>
+
+        Reviewed by Darin Adler and Tim Horton.
+
+        The best place to stop the serialization of unserializable fonts is inside WebKit2's IPC code. We want
+        this logic to occur when encoding an NSAttributedString, rather than when encoding an NSDictionary,
+        because changing the shape of an NSAttributedString is less likely to result in problems rather than
+        changing the shape of an NSDictionary.
+
+        * Shared/mac/ArgumentCodersMac.mm:
+        (IPC::fontIsSerializable):
+        (IPC::filterUnserializableValues):
+        (IPC::encode):
+
 2015-06-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [SOUP] Fix return-type-c-linkage warning after r185553

@@ -26,6 +26,11 @@
 #import "config.h"
 #import "ArgumentCodersMac.h"
 
+#import <CoreText/CoreText.h>
+#if PLATFORM(IOS)
+#import <UIKit/UIKit.h>
+#endif
+
 #import "ArgumentCodersCF.h"
 #import "ArgumentDecoder.h"
 #import "ArgumentEncoder.h"
@@ -210,6 +215,41 @@ bool decode(ArgumentDecoder& decoder, RetainPtr<id>& result)
     return false;
 }
 
+static inline bool isSerializableFont(CTFontRef font)
+{
+    return adoptCF(CTFontCopyAttribute(font, kCTFontURLAttribute));
+}
+
+static inline bool isSerializableValue(id value)
+{
+#if USE(APPKIT)
+    auto fontClass = [NSFont class];
+#else
+    auto fontClass = [UIFont class];
+#endif
+    return ![value isKindOfClass:fontClass] || isSerializableFont(reinterpret_cast<CTFontRef>(value));
+}
+
+static inline RetainPtr<NSDictionary> filterUnserializableValues(NSDictionary *dictionary)
+{
+    __block bool modificationNecessary = false;
+    [dictionary enumerateKeysAndObjectsUsingBlock:^(id key, id object, BOOL *stop) {
+        if (!isSerializableValue(object)) {
+            modificationNecessary = true;
+            *stop = YES;
+        }
+    }];
+    if (!modificationNecessary)
+        return dictionary;
+
+    auto result = adoptNS([[NSMutableDictionary alloc] init]);
+    [dictionary enumerateKeysAndObjectsUsingBlock:^(id key, id object, BOOL *stop) {
+        if (isSerializableValue(object))
+            [result setObject:object forKey:key];
+    }];
+    return result;
+}
+
 void encode(ArgumentEncoder& encoder, NSAttributedString *string)
 {
     // Even though NSAttributedString is toll free bridged with CFAttributedStringRef, attributes' values may be not, so we should stay within this file's code.
@@ -229,7 +269,7 @@ void encode(ArgumentEncoder& encoder, NSAttributedString *string)
         ASSERT(effectiveRange.length);
         ASSERT(NSMaxRange(effectiveRange) <= length);
 
-        ranges.append(std::make_pair(effectiveRange, attributesAtIndex));
+        ranges.append(std::make_pair(effectiveRange, filterUnserializableValues(attributesAtIndex.get())));
 
         position = NSMaxRange(effectiveRange);
     }
@@ -313,6 +353,7 @@ void encode(ArgumentEncoder& encoder, NSDictionary *dictionary)
         ASSERT(key);
         ASSERT([key isKindOfClass:[NSString class]]);
         ASSERT(value);
+        ASSERT(isSerializableValue(value));
 
         // Ignore values we don't recognize.
         if (typeFromObject(value) == Unknown)
@@ -408,6 +449,8 @@ void encode(ArgumentEncoder& encoder, NSArray *array)
         // Ignore values we don't recognize.
         if (typeFromObject(value) == Unknown)
             continue;
+
+        ASSERT(isSerializableValue(value));
 
         encode(encoder, value);
     }
