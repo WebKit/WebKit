@@ -287,14 +287,18 @@ PluginView::PluginView(PassRefPtr<HTMLPlugInElement> pluginElement, PassRefPtr<P
     , m_isWaitingUntilMediaCanStart(false)
     , m_isBeingDestroyed(false)
     , m_pluginProcessHasCrashed(false)
+#if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     , m_didPlugInStartOffScreen(false)
+#endif
     , m_pendingURLRequestsTimer(RunLoop::main(), this, &PluginView::pendingURLRequestsTimerFired)
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , m_npRuntimeObjectMap(this)
 #endif
     , m_manualStreamState(StreamStateInitial)
     , m_pluginSnapshotTimer(*this, &PluginView::pluginSnapshotTimerFired, pluginSnapshotTimerDelay)
+#if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC) || PLATFORM(COCOA)
     , m_countSnapshotRetries(0)
+#endif
     , m_didReceiveUserInteraction(false)
     , m_pageScaleFactor(1)
     , m_pluginIsPlayingAudio(false)

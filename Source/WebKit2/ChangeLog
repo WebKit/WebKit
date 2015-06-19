@@ -1,3 +1,15 @@
+2015-06-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [WK2] Fix unused-private-field warning in WebProcess/Plugins/PluginView.<h|cpp>
+        https://bugs.webkit.org/show_bug.cgi?id=145252
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::PluginView): Added the necessary ifdef guard.
+        * WebProcess/Plugins/PluginView.h: Added the necessary ifdef guard.
+        * WebProcess/WebPage/WebPage.h: Moved the definition of ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC to WTF.
+
 2015-06-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Do not store configuration parameters twice in WebProcessPool

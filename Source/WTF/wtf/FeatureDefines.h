@@ -166,6 +166,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_XSLT 0
 #endif
 
+#if !defined(ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
+#define ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC 1
+#endif
+
 #endif /* PLATFORM(IOS) */
 
 /* --------- Apple MAC port (not IOS) --------- */
@@ -244,6 +248,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 
 #if !defined(ENABLE_FILE_REPLACEMENT)
 #define ENABLE_FILE_REPLACEMENT 1
+#endif
+
+#if !defined(ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
+#define ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC 1
 #endif
 
 #endif /* PLATFORM(MAC) */
