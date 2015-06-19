@@ -156,6 +156,8 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicDoubleMethod
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicNodeMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAny(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunction(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgument(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionWithException(JSC::ExecState*);
 
 // Attributes
 
@@ -651,6 +653,8 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "variadicNodeMethod", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVariadicNodeMethod), (intptr_t) (2) },
     { "any", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionAny), (intptr_t) (2) },
     { "testPromiseFunction", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionTestPromiseFunction), (intptr_t) (0) },
+    { "testPromiseFunctionWithFloatArgument", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgument), (intptr_t) (1) },
+    { "testPromiseFunctionWithException", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionTestPromiseFunctionWithException), (intptr_t) (0) },
 };
 
 const ClassInfo JSTestObjPrototype::s_info = { "TestObjectPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestObjPrototype) };
@@ -4426,6 +4430,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAny(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
 
+static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionPromise(ExecState*, JSTestObj*, JSPromiseDeferred*);
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunction(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
@@ -4433,11 +4438,61 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunction(ExecS
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*exec, "TestObj", "testPromiseFunction");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    return JSValue::encode(callPromiseFunction(*exec, *castedThis, jsTestObjPrototypeFunctionTestPromiseFunctionPromise));
+}
+
+static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionPromise(ExecState* exec, JSTestObj* castedThis, JSPromiseDeferred* promiseDeferred)
+{
     auto& impl = castedThis->impl();
-    JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(exec, castedThis->globalObject());
     impl.testPromiseFunction(DeferredWrapper(exec, castedThis->globalObject(), promiseDeferred));
-    JSValue result = promiseDeferred->promise();
-    return JSValue::encode(result);
+    return JSValue::encode(jsUndefined());
+}
+
+static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgumentPromise(ExecState*, JSTestObj*, JSPromiseDeferred*);
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgument(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*exec, "TestObj", "testPromiseFunctionWithFloatArgument");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    return JSValue::encode(callPromiseFunction(*exec, *castedThis, jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgumentPromise));
+}
+
+static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgumentPromise(ExecState* exec, JSTestObj* castedThis, JSPromiseDeferred* promiseDeferred)
+{
+    auto& impl = castedThis->impl();
+    if (UNLIKELY(exec->argumentCount() < 1))
+        return throwVMError(exec, createNotEnoughArgumentsError(exec));
+    float a = exec->argument(0).toFloat(exec);
+    if (UNLIKELY(exec->hadException()))
+        return JSValue::encode(jsUndefined());
+    if (!std::isfinite(a)) {
+        setDOMException(exec, TypeError);
+        return JSValue::encode(jsUndefined());
+    }
+    impl.testPromiseFunctionWithFloatArgument(a, DeferredWrapper(exec, castedThis->globalObject(), promiseDeferred));
+    return JSValue::encode(jsUndefined());
+}
+
+static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithExceptionPromise(ExecState*, JSTestObj*, JSPromiseDeferred*);
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionWithException(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*exec, "TestObj", "testPromiseFunctionWithException");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    return JSValue::encode(callPromiseFunction(*exec, *castedThis, jsTestObjPrototypeFunctionTestPromiseFunctionWithExceptionPromise));
+}
+
+static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithExceptionPromise(ExecState* exec, JSTestObj* castedThis, JSPromiseDeferred* promiseDeferred)
+{
+    auto& impl = castedThis->impl();
+    ExceptionCode ec = 0;
+    impl.testPromiseFunctionWithException(DeferredWrapper(exec, castedThis->globalObject(), promiseDeferred), ec);
+    setDOMException(exec, ec);
+    return JSValue::encode(jsUndefined());
 }
 
 void JSTestObj::visitChildren(JSCell* cell, SlotVisitor& visitor)

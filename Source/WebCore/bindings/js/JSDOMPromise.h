@@ -57,6 +57,19 @@ private:
     JSC::Strong<JSC::JSPromiseDeferred> m_deferred;
 };
 
+void rejectPromiseWithExceptionIfAny(JSC::ExecState&, JSDOMGlobalObject&, JSC::JSPromiseDeferred&);
+
+template<class JSClassName>
+inline JSC::JSValue callPromiseFunction(JSC::ExecState& state, JSClassName& jsObject, JSC::EncodedJSValue promiseFunction(JSC::ExecState*, JSClassName*, JSC::JSPromiseDeferred*))
+{
+    JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::create(&state, jsObject.globalObject());
+    promiseFunction(&state, &jsObject, promiseDeferred);
+
+    rejectPromiseWithExceptionIfAny(state, *jsObject.globalObject(), *promiseDeferred);
+    ASSERT(!state.hadException());
+    return promiseDeferred->promise();
+}
+
 template <typename Value, typename Error>
 class DOMPromise {
 public:

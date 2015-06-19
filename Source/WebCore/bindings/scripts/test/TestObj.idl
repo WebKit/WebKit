@@ -276,6 +276,8 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
 
     // Promise function
     Promise testPromiseFunction();
+    Promise testPromiseFunctionWithFloatArgument(float a);
+    [RaisesException] Promise testPromiseFunctionWithException();
 };
 
 // The following comment should not generate any code.

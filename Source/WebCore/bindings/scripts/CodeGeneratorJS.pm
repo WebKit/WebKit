@@ -2780,7 +2780,23 @@ sub GenerateImplementation
 
             my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementedAs"} || $codeGenerator->WK_lcfirst($function->signature->name);
 
-            push(@implContent, "EncodedJSValue JSC_HOST_CALL ${functionName}(ExecState* exec)\n");
+            if (IsReturningPromise($function) && !$isCustom) {
+                AddToImplIncludes("JSDOMPromise.h");
+
+                push(@implContent, "static inline EncodedJSValue ${functionName}Promise(ExecState*, " . $className . "*, JSPromiseDeferred*);\n");
+                push(@implContent, "EncodedJSValue JSC_HOST_CALL ${functionName}(ExecState* exec)\n");
+                push(@implContent, "{\n");
+
+                GenerateFunctionCastedThis($interface, $interfaceName, $className, $function);
+                push(@implContent, "    return JSValue::encode(callPromiseFunction(*exec, *castedThis, ${functionName}Promise));\n");
+
+                push(@implContent, "}\n");
+                push(@implContent, "\nstatic inline EncodedJSValue ${functionName}Promise(ExecState* exec, " . $className . "* castedThis, JSPromiseDeferred* promiseDeferred)\n");
+            }
+            else {
+                push(@implContent, "EncodedJSValue JSC_HOST_CALL ${functionName}(ExecState* exec)\n");
+            }
+
             push(@implContent, "{\n");
 
             $implIncludes{"<runtime/Error.h>"} = 1;
@@ -2799,23 +2815,7 @@ sub GenerateImplementation
                     GenerateImplementationFunctionCall($function, $functionString, "    ", $svgPropertyType, $interfaceName);
                 }
             } else {
-                if ($interface->extendedAttributes->{"CustomProxyToJSObject"}) {
-                    push(@implContent, "    $className* castedThis = to${className}(exec->thisValue().toThis(exec, NotStrictMode));\n");
-                    push(@implContent, "    if (UNLIKELY(!castedThis))\n");
-                    push(@implContent, "        return throwVMTypeError(exec);\n");
-                } elsif ($interface->extendedAttributes->{"WorkerGlobalScope"}) {
-                    push(@implContent, "    $className* castedThis = to${className}(exec->thisValue().toThis(exec, NotStrictMode));\n");
-                    push(@implContent, "    if (UNLIKELY(!castedThis))\n");
-                    push(@implContent, "        return throwVMTypeError(exec);\n");
-                } else {
-                    push(@implContent, "    JSValue thisValue = exec->thisValue();\n");
-                    push(@implContent, "    $className* castedThis = " . GetCastingHelperForThisObject($interface) . "(thisValue);\n");
-                    my $domFunctionName = $function->signature->name;
-                    push(@implContent, "    if (UNLIKELY(!castedThis))\n");
-                    push(@implContent, "        return throwThisTypeError(*exec, \"$interfaceName\", \"$domFunctionName\");\n");
-                }
-
-                push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(castedThis, ${className}::info());\n");
+                GenerateFunctionCastedThis($interface, $interfaceName, $className, $function) if not (IsReturningPromise($function) && !$isCustom);
 
                 if ($interface->extendedAttributes->{"CheckSecurity"} and
                     !$function->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
@@ -3109,6 +3109,31 @@ END
 
     my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
     push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
+}
+
+sub GenerateFunctionCastedThis
+{
+    my $interface = shift;
+    my $interfaceName = shift;
+    my $className = shift;
+    my $function = shift;
+    if ($interface->extendedAttributes->{"CustomProxyToJSObject"}) {
+        push(@implContent, "    $className* castedThis = to${className}(exec->thisValue().toThis(exec, NotStrictMode));\n");
+        push(@implContent, "    if (UNLIKELY(!castedThis))\n");
+        push(@implContent, "        return throwVMTypeError(exec);\n");
+    } elsif ($interface->extendedAttributes->{"WorkerGlobalScope"}) {
+        push(@implContent, "    $className* castedThis = to${className}(exec->thisValue().toThis(exec, NotStrictMode));\n");
+        push(@implContent, "    if (UNLIKELY(!castedThis))\n");
+        push(@implContent, "        return throwVMTypeError(exec);\n");
+    } else {
+        push(@implContent, "    JSValue thisValue = exec->thisValue();\n");
+        push(@implContent, "    $className* castedThis = " . GetCastingHelperForThisObject($interface) . "(thisValue);\n");
+        my $domFunctionName = $function->signature->name;
+        push(@implContent, "    if (UNLIKELY(!castedThis))\n");
+        push(@implContent, "        return throwThisTypeError(*exec, \"$interfaceName\", \"$domFunctionName\");\n");
+    }
+
+    push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(castedThis, ${className}::info());\n");
 }
 
 sub GenerateCallWith
@@ -3595,7 +3620,7 @@ sub GenerateImplementationFunctionCall()
     my $nondeterministic = $function->signature->extendedAttributes->{"Nondeterministic"};
     my $raisesException = $function->signature->extendedAttributes->{"RaisesException"};
 
-    if ($function->signature->type eq "void") {
+    if ($function->signature->type eq "void" || IsReturningPromise($function)) {
         if ($nondeterministic) {
             AddToImplIncludes("<replay/InputCursor.h>", "WEB_REPLAY");
             push(@implContent, "#if ENABLE(WEB_REPLAY)\n");
@@ -3656,17 +3681,9 @@ sub GenerateImplementationFunctionCall()
             push(@implContent, "#else\n");
             push(@implContent, $indent . "result = " . NativeToJSValue($function->signature, 1, $interfaceName, $functionString, $thisObject) . ";\n");
             push(@implContent, "#endif\n");
-        } elsif (IsReturningPromise($function)) {
-            AddToImplIncludes("JSDOMPromise.h");
-
-            push(@implContent, $indent . "JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(exec, castedThis->globalObject());\n");
-            push(@implContent, $indent . $functionString . ";\n");
-            push(@implContent, $indent . "JSValue result = promiseDeferred->promise();\n");
-
         } else {
             push(@implContent, $indent . "JSValue result = " . NativeToJSValue($function->signature, 1, $interfaceName, $functionString, $thisObject) . ";\n");
         }
-        # FIXME: In case of IsReturningPromise($function), the function should not throw. Exception should be used to reject the promise callback.
         push(@implContent, "\n" . $indent . "setDOMException(exec, ec);\n") if $raisesException;
 
         if ($codeGenerator->ExtendedAttributeContains($function->signature->extendedAttributes->{"CallWith"}, "ScriptState")) {

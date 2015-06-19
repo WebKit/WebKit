@@ -29,6 +29,7 @@
 #if ENABLE(PROMISES)
 
 #include "ExceptionCode.h"
+#include <runtime/Exception.h>
 
 using namespace JSC;
 
@@ -60,6 +61,17 @@ void DeferredWrapper::callFunction(ExecState& exec, JSValue function, JSValue re
 
     m_globalObject.clear();
     m_deferred.clear();
+}
+
+void rejectPromiseWithExceptionIfAny(JSC::ExecState& state, JSDOMGlobalObject& globalObject, JSPromiseDeferred& promiseDeferred)
+{
+    if (!state.hadException())
+        return;
+
+    JSValue error = state.exception()->value();
+    state.clearException();
+
+    DeferredWrapper(&state, &globalObject, &promiseDeferred).reject(error);
 }
 
 }
