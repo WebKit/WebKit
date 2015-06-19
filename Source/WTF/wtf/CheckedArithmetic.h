@@ -75,10 +75,15 @@ class CrashOnOverflow {
 public:
     static NO_RETURN_DUE_TO_CRASH void overflowed()
     {
-        CRASH();
+        crash();
     }
 
     void clearOverflow() { }
+
+    static NO_RETURN_DUE_TO_CRASH void crash()
+    {
+        CRASH();
+    }
 
 public:
     bool hasOverflowed() const { return false; }
@@ -99,6 +104,11 @@ protected:
     void clearOverflow()
     {
         m_overflowed = false;
+    }
+
+    static NO_RETURN_DUE_TO_CRASH void crash()
+    {
+        CRASH();
     }
 
 public:
@@ -517,23 +527,22 @@ public:
     bool operator!() const
     {
         if (this->hasOverflowed())
-            CRASH();
+            this->crash();
         return !m_value;
     }
 
-    typedef void* (Checked::*UnspecifiedBoolType);
-    operator UnspecifiedBoolType*() const
+    explicit operator bool() const
     {
         if (this->hasOverflowed())
-            CRASH();
-        return (m_value) ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0;
+            this->crash();
+        return m_value;
     }
 
     // Value accessors. unsafeGet() will crash if there's been an overflow.
     T unsafeGet() const
     {
         if (this->hasOverflowed())
-            CRASH();
+            this->crash();
         return m_value;
     }
     
@@ -612,7 +621,7 @@ public:
     template <typename U> bool operator==(U rhs)
     {
         if (this->hasOverflowed())
-            this->overflowed();
+            this->crash();
         return safeEquals(m_value, rhs);
     }
     
@@ -624,6 +633,47 @@ public:
     template <typename U> bool operator!=(U rhs)
     {
         return !(*this == rhs);
+    }
+
+    // Other comparisons
+    template <typename V> bool operator<(Checked<T, V> rhs) const
+    {
+        return unsafeGet() < rhs.unsafeGet();
+    }
+
+    template bool operator<(T rhs) const
+    {
+        return unsafeGet() < rhs;
+    }
+
+    template <typename V> bool operator<=(Checked<T, V> rhs) const
+    {
+        return unsafeGet() <= rhs.unsafeGet();
+    }
+
+    template bool operator<=(T rhs) const
+    {
+        return unsafeGet() <= rhs;
+    }
+
+    template <typename V> bool operator>(Checked<T, V> rhs) const
+    {
+        return unsafeGet() > rhs.unsafeGet();
+    }
+
+    template bool operator>(T rhs) const
+    {
+        return unsafeGet() > rhs;
+    }
+
+    template <typename V> bool operator>=(Checked<T, V> rhs) const
+    {
+        return unsafeGet() >= rhs.unsafeGet();
+    }
+
+    template bool operator>=(T rhs) const
+    {
+        return unsafeGet() >= rhs;
     }
 
 private:

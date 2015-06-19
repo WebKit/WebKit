@@ -1,3 +1,30 @@
+2015-06-19  Mark Lam  <mark.lam@apple.com>
+
+        CheckedArithmetic's operator bool() and operator==() is broken.
+        https://bugs.webkit.org/show_bug.cgi?id=146129
+
+        Reviewed by Geoffrey Garen and Oliver Hunt.
+
+        Added API tests for operator ==, !=, <, <=, >, and >=, and tested for both normal
+        and overflow scenarios in usage of the Checked arithmetic class.
+
+        * TestWebKitAPI/Tests/WTF/CheckedArithmeticOperations.cpp:
+        (TestWebKitAPI::OverflowCrashLogger::overflowed):
+        (TestWebKitAPI::OverflowCrashLogger::clearOverflow):
+        (TestWebKitAPI::OverflowCrashLogger::crash):
+        (TestWebKitAPI::OverflowCrashLogger::reset):
+        (TestWebKitAPI::OverflowCrashLogger::hasOverflowed):
+        (TestWebKitAPI::OverflowCrashLogger::overflowCount):
+        (TestWebKitAPI::OverflowCrashLogger::didCrash):
+        - crash logger for verifying that a crash occurs when expected. 
+
+        (TestWebKitAPI::resetOverflow):
+        - convenience function for resetting a test value to an initial overflowed state
+          before a crash.  We will use this value in the overflow testing.
+
+        (TestWebKitAPI::CheckedArithmeticTester::run):
+        - Added new tests for all the comparison operators.
+
 2015-06-19  Per Arne Vollan  <peavo@outlook.com>
 
         Fix the Windows build after r185721

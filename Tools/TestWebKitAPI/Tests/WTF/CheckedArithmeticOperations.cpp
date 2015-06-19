@@ -25,8 +25,53 @@
 
 #include "config.h"
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/DataLog.h> // mlam
 
 namespace TestWebKitAPI {
+
+class OverflowCrashLogger {
+protected:
+    void overflowed()
+    {
+        m_overflowCount++;
+    }
+    
+    void clearOverflow()
+    {
+        m_overflowCount = 0;
+    }
+    
+    static void crash()
+    {
+        s_didCrash = true;
+    }
+    
+public:
+    void reset()
+    {
+        m_overflowCount = 0;
+        s_didCrash = false;
+    }
+    
+    bool hasOverflowed() const { return m_overflowCount > 0; }
+    int overflowCount() const { return m_overflowCount; }
+
+    bool didCrash() const { return s_didCrash; }
+    
+private:
+    int m_overflowCount { 0 };
+    static bool s_didCrash;
+};
+
+bool OverflowCrashLogger::s_didCrash = false;
+
+template <typename type>
+static void resetOverflow(Checked<type, OverflowCrashLogger>& value)
+{
+    value.reset();
+    value = 100;
+    value *= std::numeric_limits<type>::max();
+}
 
 #define CheckedArithmeticTest(type, Coercer, MixedSignednessTester) \
     TEST(WTF, Checked_##type) \
@@ -120,6 +165,201 @@ public:
         EXPECT_EQ(true, CheckedState::DidOverflow == (Checked<type, RecordOverflow>(std::numeric_limits<type>::max()) * (type)2).safeGet(_value));
         value = 10;
         EXPECT_EQ(true, (value * Checked<type, RecordOverflow>(std::numeric_limits<type>::max())).hasOverflowed());
+
+
+        Checked<type, OverflowCrashLogger> nvalue; // to hold a not overflowed value.
+        Checked<type, OverflowCrashLogger> ovalue; // to hold an overflowed value.
+        bool unused;
+
+        _value = 75;
+        type _largeValue = 100;
+        type _smallValue = 50;
+
+        value = _smallValue;
+        nvalue = _value;
+        ovalue = _value;
+
+        // Make sure the OverflowCrashLogger is working as expected.
+        EXPECT_EQ(false, (ovalue.hasOverflowed()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), ovalue.hasOverflowed()));
+        EXPECT_EQ(false, (resetOverflow(ovalue), ovalue.didCrash()));
+        EXPECT_EQ(true, (unused = (ovalue == ovalue), ovalue.didCrash()));
+        EXPECT_EQ(false, (resetOverflow(ovalue), ovalue.didCrash()));
+
+        EXPECT_EQ(false, nvalue.hasOverflowed());
+        EXPECT_EQ(false, nvalue.didCrash());
+
+        // Test operator== that should not overflow nor crash.
+        EXPECT_EQ(true, (nvalue == nvalue));
+        EXPECT_EQ(true, (nvalue == Checked<type, OverflowCrashLogger>(_value)));
+        EXPECT_EQ(false, (nvalue == value));
+        EXPECT_EQ(true, (nvalue == _value));
+        EXPECT_EQ(false, (nvalue == Checked<type, OverflowCrashLogger>(std::numeric_limits<type>::max())));
+        EXPECT_EQ(false, (nvalue == std::numeric_limits<type>::max()));
+
+        EXPECT_EQ(false, nvalue.hasOverflowed());
+        EXPECT_EQ(false, nvalue.didCrash());
+
+        // Test operator!= that should not overflow nor crash.
+        EXPECT_EQ(false, (nvalue != nvalue));
+        EXPECT_EQ(false, (nvalue != Checked<type, OverflowCrashLogger>(_value)));
+        EXPECT_EQ(true, (nvalue != value));
+        EXPECT_EQ(false, (nvalue != _value));
+        EXPECT_EQ(true, (nvalue != Checked<type, OverflowCrashLogger>(std::numeric_limits<type>::max())));
+        EXPECT_EQ(true, (nvalue != std::numeric_limits<type>::max()));
+
+        EXPECT_EQ(false, nvalue.hasOverflowed());
+        EXPECT_EQ(false, nvalue.didCrash());
+
+        // Test operator< that should not overflow nor crash.
+        EXPECT_EQ(false, (nvalue < nvalue));
+        EXPECT_EQ(false, (nvalue < value));
+        EXPECT_EQ(true, (nvalue < Checked<type, OverflowCrashLogger>(_largeValue)));
+        EXPECT_EQ(false, (nvalue < Checked<type, OverflowCrashLogger>(_value)));
+        EXPECT_EQ(false, (nvalue < Checked<type, OverflowCrashLogger>(_smallValue)));
+        EXPECT_EQ(true, (nvalue < _largeValue));
+        EXPECT_EQ(false, (nvalue < _value));
+        EXPECT_EQ(false, (nvalue < _smallValue));
+        EXPECT_EQ(true, (nvalue < Checked<type, OverflowCrashLogger>(std::numeric_limits<type>::max())));
+        EXPECT_EQ(true, (nvalue < std::numeric_limits<type>::max()));
+
+        EXPECT_EQ(false, nvalue.hasOverflowed());
+        EXPECT_EQ(false, nvalue.didCrash());
+
+        // Test operator<= that should not overflow nor crash.
+        EXPECT_EQ(true, (nvalue <= nvalue));
+        EXPECT_EQ(false, (nvalue <= value));
+        EXPECT_EQ(true, (nvalue <= Checked<type, OverflowCrashLogger>(_largeValue)));
+        EXPECT_EQ(true, (nvalue <= Checked<type, OverflowCrashLogger>(_value)));
+        EXPECT_EQ(false, (nvalue <= Checked<type, OverflowCrashLogger>(_smallValue)));
+        EXPECT_EQ(true, (nvalue <= _largeValue));
+        EXPECT_EQ(true, (nvalue <= _value));
+        EXPECT_EQ(false, (nvalue <= _smallValue));
+        EXPECT_EQ(true, (nvalue <= Checked<type, OverflowCrashLogger>(std::numeric_limits<type>::max())));
+        EXPECT_EQ(true, (nvalue <= std::numeric_limits<type>::max()));
+
+        EXPECT_EQ(false, nvalue.hasOverflowed());
+        EXPECT_EQ(false, nvalue.didCrash());
+
+        // Test operator> that should not overflow nor crash.
+        EXPECT_EQ(false, (nvalue > nvalue));
+        EXPECT_EQ(true, (nvalue > value));
+        EXPECT_EQ(false, (nvalue > Checked<type, OverflowCrashLogger>(_largeValue)));
+        EXPECT_EQ(false, (nvalue > Checked<type, OverflowCrashLogger>(_value)));
+        EXPECT_EQ(true, (nvalue > Checked<type, OverflowCrashLogger>(_smallValue)));
+        EXPECT_EQ(false, (nvalue > _largeValue));
+        EXPECT_EQ(false, (nvalue > _value));
+        EXPECT_EQ(true, (nvalue > _smallValue));
+        EXPECT_EQ(false, (nvalue > Checked<type, OverflowCrashLogger>(std::numeric_limits<type>::max())));
+        EXPECT_EQ(false, (nvalue > std::numeric_limits<type>::max()));
+
+        EXPECT_EQ(false, nvalue.hasOverflowed());
+        EXPECT_EQ(false, nvalue.didCrash());
+
+        // Test operator>= that should not overflow nor crash.
+        EXPECT_EQ(true, (nvalue >= nvalue));
+        EXPECT_EQ(true, (nvalue >= value));
+        EXPECT_EQ(false, (nvalue >= Checked<type, OverflowCrashLogger>(_largeValue)));
+        EXPECT_EQ(true, (nvalue >= Checked<type, OverflowCrashLogger>(_value)));
+        EXPECT_EQ(true, (nvalue >= Checked<type, OverflowCrashLogger>(_smallValue)));
+        EXPECT_EQ(false, (nvalue >= _largeValue));
+        EXPECT_EQ(true, (nvalue >= _value));
+        EXPECT_EQ(true, (nvalue >= _smallValue));
+        EXPECT_EQ(false, (nvalue >= Checked<type, OverflowCrashLogger>(std::numeric_limits<type>::max())));
+        EXPECT_EQ(false, (nvalue >= std::numeric_limits<type>::max()));
+
+        EXPECT_EQ(false, nvalue.hasOverflowed());
+        EXPECT_EQ(false, nvalue.didCrash());
+
+        // Test operator== with an overflowed value.
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue == ovalue), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue == Checked<type, OverflowCrashLogger>(_value)), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue == value), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue == _value), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue == _value * std::numeric_limits<type>::max()), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue == Checked<type, OverflowCrashLogger>(std::numeric_limits<type>::max())), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue == std::numeric_limits<type>::max()), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue == nvalue), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (nvalue == ovalue), ovalue.didCrash()));
+
+        EXPECT_EQ(false, nvalue.hasOverflowed());
+
+        // Test operator!= with an overflowed value.
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue != ovalue), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue != Checked<type, OverflowCrashLogger>(_value)), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue != value), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue != _value), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue != _value * std::numeric_limits<type>::max()), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue != Checked<type, OverflowCrashLogger>(std::numeric_limits<type>::max())), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue != std::numeric_limits<type>::max()), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue != nvalue), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (nvalue != ovalue), ovalue.didCrash()));
+
+        EXPECT_EQ(false, nvalue.hasOverflowed());
+
+        // Test operator< with an overflowed value.
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue < ovalue), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue < value), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue < Checked<type, OverflowCrashLogger>(_largeValue)), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue < Checked<type, OverflowCrashLogger>(_value)), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue < Checked<type, OverflowCrashLogger>(_smallValue)), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue < _largeValue), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue < _value), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue < _smallValue), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue < Checked<type, OverflowCrashLogger>(std::numeric_limits<type>::max())), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue < std::numeric_limits<type>::max()), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue < nvalue), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (nvalue < ovalue), ovalue.didCrash()));
+
+        EXPECT_EQ(false, nvalue.hasOverflowed());
+
+        // Test operator<= with an overflowed value.
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue <= ovalue), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue <= value), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue <= Checked<type, OverflowCrashLogger>(_largeValue)), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue <= Checked<type, OverflowCrashLogger>(_value)), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue <= Checked<type, OverflowCrashLogger>(_smallValue)), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue <= _largeValue), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue <= _value), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue <= _smallValue), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue <= Checked<type, OverflowCrashLogger>(std::numeric_limits<type>::max())), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue <= std::numeric_limits<type>::max()), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue <= nvalue), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (nvalue <= ovalue), ovalue.didCrash()));
+
+        EXPECT_EQ(false, nvalue.hasOverflowed());
+
+        // Test operator> with an overflowed value.
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue > ovalue), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue > value), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue > Checked<type, OverflowCrashLogger>(_largeValue)), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue > Checked<type, OverflowCrashLogger>(_value)), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue > Checked<type, OverflowCrashLogger>(_smallValue)), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue > _largeValue), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue > _value), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue > _smallValue), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue > Checked<type, OverflowCrashLogger>(std::numeric_limits<type>::max())), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue > std::numeric_limits<type>::max()), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue > nvalue), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (nvalue > ovalue), ovalue.didCrash()));
+
+        EXPECT_EQ(false, nvalue.hasOverflowed());
+
+        // Test operator>= with an overflowed value.
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue >= ovalue), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue >= value), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue >= Checked<type, OverflowCrashLogger>(_largeValue)), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue >= Checked<type, OverflowCrashLogger>(_value)), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue >= Checked<type, OverflowCrashLogger>(_smallValue)), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue >= _largeValue), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue >= _value), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue >= _smallValue), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue >= Checked<type, OverflowCrashLogger>(std::numeric_limits<type>::max())), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue >= std::numeric_limits<type>::max()), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (ovalue >= nvalue), ovalue.didCrash()));
+        EXPECT_EQ(true, (resetOverflow(ovalue), unused = (nvalue >= ovalue), ovalue.didCrash()));
+
+        EXPECT_EQ(false, nvalue.hasOverflowed());
 
         MixedSignednessTester::run();
     }

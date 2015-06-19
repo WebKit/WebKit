@@ -1,3 +1,48 @@
+2015-06-19  Mark Lam  <mark.lam@apple.com>
+
+        CheckedArithmetic's operator bool() and operator==() is broken.
+        https://bugs.webkit.org/show_bug.cgi?id=146129
+
+        Reviewed by Geoffrey Garen and Oliver Hunt.
+
+        The existing operator UnspecifiedBoolType*() in CheckedArithmetic is erroneously
+        allowing the Checked value to be implicitly casted into pointer types.  This is
+        because it is doing a reinterpret_cast<UnspecifiedBoolType*>(1) whereas the idiom
+        relies on the address of a member e.g. &Checked::m_value.  As a result,
+        ImageBufferData::putData() was getting an implicit cast of a Checked value to
+        (void*)1 and doing incorrect pointer comparisons on it.
+
+        Also, 2 of CheckedArithmetic's operator==() will crash if used on an overflowed
+        value, while a 3rd one does not.  The 3rd one should be consistent and also crash
+        if used on an overflowed Checked value.
+
+        In this fix, we replace operator UnspecifiedBoolType*() with an explicit operator
+        bool().  We also add the missing operators <, <=, >, and >=.  That takes care of
+        the comparisons in ImageBufferData::putData().
+
+        * wtf/CheckedArithmetic.h:
+        (WTF::CrashOnOverflow::overflowed):
+        (WTF::CrashOnOverflow::crash):
+        (WTF::RecordOverflow::crash):
+
+        (WTF::Checked::operator!):
+        (WTF::Checked::operator bool):
+        (WTF::Checked::unsafeGet):
+        - Don't call CRASH() directly.  Delegate to the handler.
+
+        (WTF::Checked::operator==):
+        - Should call the handler's crash() to be consistent with the other 2 versions of
+          operator== which will crash in unsafeGet() if used on an overflowed Checked
+          value.
+
+        (WTF::Checked::operator<):
+        (WTF::Checked::operator<=):
+        (WTF::Checked::operator>):
+        (WTF::Checked::operator>=):
+        - Add missing operators.
+
+        (WTF::Checked::operator UnspecifiedBoolType*): Deleted.
+
 2015-06-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         [WK2] Fix unused-private-field warning in WebProcess/Plugins/PluginView.<h|cpp>
