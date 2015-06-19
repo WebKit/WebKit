@@ -140,7 +140,10 @@ void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
     else
         m_maxCallStackDepth = 5;
 
-    m_instrumentingAgents->inspectorEnvironment().executionStopwatch()->start();
+    // If the debugger is paused the environment's stopwatch will be stopped, and shouldn't be
+    // restarted until the debugger continues.
+    if (!m_scriptDebugServer->isPaused())
+        m_instrumentingAgents->inspectorEnvironment().executionStopwatch()->start();
 
     m_instrumentingAgents->setInspectorTimelineAgent(this);
 
@@ -153,27 +156,32 @@ void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
 
 #if PLATFORM(COCOA)
     m_frameStartObserver = RunLoopObserver::create(0, [this]() {
-        if (!m_enabled || m_didStartRecordingRunLoop)
+        if (!m_enabled || m_scriptDebugServer->isPaused())
             return;
 
-        pushCurrentRecord(InspectorObject::create(), TimelineRecordType::RenderingFrame, false, nullptr);
-        m_didStartRecordingRunLoop = true;
+        if (!m_runLoopNestingLevel)
+            pushCurrentRecord(InspectorObject::create(), TimelineRecordType::RenderingFrame, false, nullptr);
+        m_runLoopNestingLevel++;
     });
 
     m_frameStopObserver = RunLoopObserver::create(frameStopRunLoopOrder, [this]() {
-        if (!m_enabled || !m_didStartRecordingRunLoop)
+        if (!m_enabled || m_scriptDebugServer->isPaused())
             return;
 
-        didCompleteCurrentRecord(TimelineRecordType::RenderingFrame);
-        m_didStartRecordingRunLoop = false;
+        ASSERT(m_runLoopNestingLevel > 0);
+        m_runLoopNestingLevel--;
+        if (!m_runLoopNestingLevel)
+            didCompleteCurrentRecord(TimelineRecordType::RenderingFrame);
     });
 
-    m_frameStartObserver->schedule(currentRunLoop(), kCFRunLoopAfterWaiting | kCFRunLoopBeforeTimers);
-    m_frameStopObserver->schedule(currentRunLoop(), kCFRunLoopBeforeWaiting | kCFRunLoopExit);
+    m_frameStartObserver->schedule(currentRunLoop(), kCFRunLoopEntry | kCFRunLoopAfterWaiting);
+    m_frameStopObserver->schedule(currentRunLoop(), kCFRunLoopExit | kCFRunLoopBeforeWaiting);
 
-    // Create a runloop record immediately in order to capture the rest of the current runloop.
+    // Create a runloop record and increment the runloop nesting level, to capture the current turn of the main runloop
+    // (which is the outer runloop if recording started while paused in the debugger).
     pushCurrentRecord(InspectorObject::create(), TimelineRecordType::RenderingFrame, false, nullptr);
-    m_didStartRecordingRunLoop = true;
+
+    m_runLoopNestingLevel = 1;
 #endif
 
     if (m_frontendDispatcher)
@@ -198,13 +206,11 @@ void InspectorTimelineAgent::internalStop()
 #if PLATFORM(COCOA)
     m_frameStartObserver = nullptr;
     m_frameStopObserver = nullptr;
-    if (m_didStartRecordingRunLoop) {
-        m_didStartRecordingRunLoop = false;
+    m_runLoopNestingLevel = 0;
 
-        // Complete all pending records to prevent discarding events that are currently in progress.
-        while (!m_recordStack.isEmpty())
-            didCompleteCurrentRecord(m_recordStack.last().type);
-    }
+    // Complete all pending records to prevent discarding events that are currently in progress.
+    while (!m_recordStack.isEmpty())
+        didCompleteCurrentRecord(m_recordStack.last().type);
 #endif
 
     clearRecordStack();
@@ -722,7 +728,7 @@ InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentin
     , m_client(client)
     , m_enabled(false)
     , m_enabledFromFrontend(false)
-    , m_didStartRecordingRunLoop(false)
+    , m_runLoopNestingLevel(0)
 {
 }
 

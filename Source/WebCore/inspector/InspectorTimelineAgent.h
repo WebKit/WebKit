@@ -251,7 +251,7 @@ private:
     std::unique_ptr<WebCore::RunLoopObserver> m_frameStartObserver;
     std::unique_ptr<WebCore::RunLoopObserver> m_frameStopObserver;
 #endif
-    bool m_didStartRecordingRunLoop;
+    int m_runLoopNestingLevel;
 };
 
 } // namespace WebCore

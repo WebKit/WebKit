@@ -1,3 +1,13 @@
+2015-06-19  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: TimelineAgent needs to handle nested runloops
+        https://bugs.webkit.org/show_bug.cgi?id=145090
+
+        Reviewed by Joseph Pecoraro.
+
+        * TestExpectations:
+        Unskip tests after improvements to nested runloop handling in InspectorTimelineAgent.
+
 2015-06-19  Andy Estes  <aestes@apple.com>
 
         Various assertion failures occur when executing script in the midst of DOM insertion
