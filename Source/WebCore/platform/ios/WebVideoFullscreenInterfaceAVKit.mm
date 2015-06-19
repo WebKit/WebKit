@@ -693,8 +693,10 @@ static const char* boolString(bool val)
 {
     [super setBounds:bounds];
 
-    [_videoSublayer setPosition:CGPointMake(CGRectGetMidX(bounds), CGRectGetMidY(bounds))];
-    [_videoSublayer setBounds:bounds];
+    if ([_videoSublayer superlayer] == self) {
+        [_videoSublayer setPosition:CGPointMake(CGRectGetMidX(bounds), CGRectGetMidY(bounds))];
+        [_videoSublayer setBounds:bounds];
+    }
 }
 
 - (void)setVideoLayerGravity:(AVVideoLayerGravity)videoLayerGravity
