@@ -1,3 +1,12 @@
+2015-06-19  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: fix build for EWS bots.
+
+        Not reviewed.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::setLengthWithArrayStorage):
+
 2015-06-19  Michael Saboff  <msaboff@apple.com>
 
         Crash in com.apple.WebKit.WebContent at com.apple.JavaScriptCore: JSC::FTL::fixFunctionBasedOnStackMaps + 17225

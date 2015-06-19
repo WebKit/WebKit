@@ -376,7 +376,7 @@ bool JSArray::setLengthWithArrayStorage(ExecState* exec, unsigned newLength, boo
         unsigned usedVectorLength = min(length, storage->vectorLength());
         for (unsigned i = newLength; i < usedVectorLength; ++i) {
             WriteBarrier<Unknown>& valueSlot = storage->m_vector[i];
-            bool hadValue  { valueSlot };
+            bool hadValue = !!valueSlot;
             valueSlot.clear();
             storage->m_numValuesInVector -= hadValue;
         }
