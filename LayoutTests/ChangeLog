@@ -1,5 +1,27 @@
 2015-06-20  David Kilzer  <ddkilzer@apple.com>
 
+        REGRESSION (r185779): fast/canvas/canvas-too-large-to-draw.html is still broken
+
+        This layout test started failing after the fix for:
+
+            Extremely large canvas crashes on pre-El Capitan machines
+            https://bugs.webkit.org/show_bug.cgi?id=146169
+            <rdar://problem/21410046>
+
+        Different limits require different test results for each
+        platform.  Also update the line number from 35 to 36 since the
+        html test file was modified in r185792.
+
+        * fast/canvas/canvas-too-large-to-draw-expected.txt:
+        - Update limit to 16384x16384 for El Capitan (and other ports)
+          and update line number.
+        * platform/ios-simulator/fast/canvas/canvas-too-large-to-draw-expected.txt: Added.
+        - New results with 4096x4096 limit for iOS.
+        * platform/mac-yosemite/fast/canvas/canvas-too-large-to-draw-expected.txt: Added.
+        - New results with 8192x8192 limit for Mac OS X 10.10.x and older.
+
+2015-06-20  David Kilzer  <ddkilzer@apple.com>
+
         REGRESSION (r185779): fast/canvas/canvas-too-large-to-draw.html broken prior to El Capitan
 
         This layout test started failing after the fix for:
