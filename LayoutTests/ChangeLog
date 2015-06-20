@@ -1,5 +1,18 @@
 2015-06-20  David Kilzer  <ddkilzer@apple.com>
 
+        fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html is slow on Mavericks WK1 Debug builds
+
+        The Flakiness Dashboard says that this test times out, but only
+        on Mavericks WK1 Debug builds:
+
+        <https://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=fast%2Fcanvas%2Fwebgl%2Ftex-image-and-uniform-binding-bugs.html>
+
+        * platform/mac-wk1/TestExpectations: Mark test as slow on
+        Mavericks Debug builds:
+        - fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html
+
+2015-06-20  David Kilzer  <ddkilzer@apple.com>
+
         editing/selection/leak-document-with-selection-inside.html is flaky
         <http://webkit.org/b/146182>
 
