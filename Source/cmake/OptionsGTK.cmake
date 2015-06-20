@@ -244,7 +244,7 @@ set(glib_components gio gobject gthread gmodule)
 if (ENABLE_GAMEPAD_DEPRECATED OR ENABLE_GEOLOCATION)
     list(APPEND glib_components gio-unix)
 endif ()
-find_package(GLIB 2.33.2 REQUIRED COMPONENTS ${glib_components})
+find_package(GLIB 2.36 REQUIRED COMPONENTS ${glib_components})
 
 if (ENABLE_CREDENTIAL_STORAGE)
     find_package(Libsecret)
