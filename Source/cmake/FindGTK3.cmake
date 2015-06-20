@@ -4,9 +4,12 @@
 #  GTK3_FOUND - system has GTK+ 3.
 #  GTK3_INCLUDE_DIRS - the GTK+ 3. include directories
 #  GTK3_LIBRARIES - link these to use GTK+ 3.
+#  GTK3_SUPPORTS_GESTURES - GTK+ supports gestures (GTK+ >= 3.14)
+#  GTK3_SUPPORTS_X11 - GTK+ supports X11 backend
+#  GTK3_SUPPORTS_WAYLAND - GTK+ supports Wayland backend
 #
 # Copyright (C) 2012 Raphael Kubo da Costa <rakuco@webkit.org>
-# Copyright (C) 2013 Igalia S.L.
+# Copyright (C) 2013, 2015 Igalia S.L.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -45,29 +48,22 @@ if (GTK3_VERSION)
     endif ()
 endif ()
 
-if (GTK3_VERSION AND VERSION_OK AND ENABLE_X11_TARGET)
+if (GTK3_VERSION AND VERSION_OK)
     pkg_check_modules(GTK3_X11 gtk+-x11-3.0)
-    if (NOT("${GTK3_X11_VERSION}" VERSION_EQUAL "${GTK3_VERSION}"))
-        set(ENABLE_X11_TARGET OFF)
+    if ("${GTK3_X11_VERSION}" VERSION_EQUAL "${GTK3_VERSION}")
+        set(GTK3_SUPPORTS_X11 TRUE)
     endif ()
-endif ()
 
-if (GTK3_VERSION AND VERSION_OK AND ENABLE_WAYLAND_TARGET)
     pkg_check_modules(GTK3_WAYLAND gtk+-wayland-3.0)
-    if (NOT("${GTK3_WAYLAND_VERSION}" VERSION_EQUAL "${GTK3_VERSION}"))
-        set(ENABLE_WAYLAND_TARGET OFF)
+    if ("${GTK3_WAYLAND_VERSION}" VERSION_EQUAL "${GTK3_VERSION}")
+        set(GTK3_SUPPORTS_WAYLAND TRUE)
     endif ()
-endif ()
 
-if (NOT(ENABLE_X11_TARGET OR ENABLE_WAYLAND_TARGET))
-    message(FATAL_ERROR "At least one of the following windowing targets must "
-        "be enabled and also supported by the GTK+ dependency: X11, Wayland")
-endif ()
-
-if (GTK3_VERSION AND VERSION_OK AND NOT("${GTK3_VERSION}" VERSION_LESS "3.14.0"))
-    set(GTK_SUPPORTS_GESTURES ON)
-else ()
-    set(GTK_SUPPORTS_GESTURES OFF)
+    if (NOT("${GTK3_VERSION}" VERSION_LESS "3.14.0"))
+        set(GTK3_SUPPORTS_GESTURES ON)
+    else ()
+        set(GTK3_SUPPORTS_GESTURES OFF)
+    endif ()
 endif ()
 
 include(FindPackageHandleStandardArgs)

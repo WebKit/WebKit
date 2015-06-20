@@ -237,8 +237,8 @@ set(GTK_INCLUDE_DIRS ${GTK3_INCLUDE_DIRS})
 set(GDK_LIBRARIES ${GDK3_LIBRARIES})
 set(GDK_INCLUDE_DIRS ${GDK3_INCLUDE_DIRS})
 
+SET_AND_EXPOSE_TO_BUILD(HAVE_GTK_GESTURES ${GTK3_SUPPORTS_GESTURES})
 SET_AND_EXPOSE_TO_BUILD(HAVE_GTK_UNIX_PRINTING ${GTK_UNIX_PRINT_FOUND})
-SET_AND_EXPOSE_TO_BUILD(HAVE_GTK_GESTURES ${GTK_SUPPORTS_GESTURES})
 
 set(glib_components gio gobject gthread gmodule)
 if (ENABLE_GAMEPAD_DEPRECATED OR ENABLE_GEOLOCATION)
@@ -378,6 +378,10 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
 endif ()
 
 if (ENABLE_X11_TARGET)
+    if (NOT GTK3_SUPPORTS_X11)
+        message(FATAL_ERROR "Recompile GTK+ with X11 backend to use ENABLE_X11_TARGET")
+    endif ()
+
     find_package(X11 REQUIRED)
     if (NOT X11_Xcomposite_FOUND)
         message(FATAL_ERROR "libXcomposite is required for ENABLE_X11_TARGET")
@@ -391,6 +395,10 @@ if (ENABLE_X11_TARGET)
 endif ()
 
 if (ENABLE_WAYLAND_TARGET)
+    if (NOT GTK3_SUPPORTS_WAYLAND)
+        message(FATAL_ERROR "Recompile GTK+ with Wayland backend to use ENABLE_WAYLAND_TARGET")
+    endif ()
+
     find_package(Wayland REQUIRED)
 endif ()
 
