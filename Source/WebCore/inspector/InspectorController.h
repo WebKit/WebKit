@@ -114,7 +114,7 @@ public:
 
     void setIndicating(bool);
 
-    WEBCORE_EXPORT RefPtr<Inspector::Protocol::OverlayTypes::NodeHighlightData> buildObjectForHighlightedNode() const;
+    WEBCORE_EXPORT Ref<Inspector::Protocol::Array<Inspector::Protocol::OverlayTypes::NodeHighlightData>> buildObjectForHighlightedNodes() const;
 
     bool isUnderTest() const { return m_isUnderTest; }
     void setIsUnderTest(bool isUnderTest) { m_isUnderTest = isUnderTest; }

@@ -487,26 +487,32 @@ function hidePageIndication()
     document.body.classList.remove("indicate");
 }
 
-function drawNodeHighlight(highlight)
+function drawNodeHighlight(allHighlights)
 {
-    context.save();
-    context.translate(-highlight.scrollOffset.x, -highlight.scrollOffset.y);
-
-    for (var i = 0; i < highlight.fragments.length; ++i)
-        _drawFragmentHighlight(highlight.fragments[i]);
-
-    if (highlight.elementData && highlight.elementData.regionFlowData)
-        _drawRegionsHighlight(highlight.elementData.regionFlowData.regions);
-
-    if (highlight.elementData && highlight.elementData.shapeOutsideData)
-        _drawShapeHighlight(highlight.elementData.shapeOutsideData);
-
-    context.restore();
-
     var elementTitleContainer = document.getElementById("element-title-container");
-    elementTitleContainer.innerHTML = "";
-    for (var i = 0; i < highlight.fragments.length; ++i)
-        _drawElementTitle(highlight.elementData, highlight.fragments[i], highlight.scrollOffset);
+    while (elementTitleContainer.hasChildNodes())
+        elementTitleContainer.removeChild(elementTitleContainer.lastChild);
+
+    for (var highlight of allHighlights) {
+        context.save();
+        context.translate(-highlight.scrollOffset.x, -highlight.scrollOffset.y);
+
+        for (var fragment of highlight.fragments)
+            _drawFragmentHighlight(fragment);
+
+        if (highlight.elementData && highlight.elementData.regionFlowData)
+            _drawRegionsHighlight(highlight.elementData.regionFlowData.regions);
+
+        if (highlight.elementData && highlight.elementData.shapeOutsideData)
+            _drawShapeHighlight(highlight.elementData.shapeOutsideData);
+
+        context.restore();
+
+        if (allHighlights.length === 1) {
+            for (var fragment of highlight.fragments)
+                _drawElementTitle(highlight.elementData, fragment, highlight.scrollOffset);
+        }
+    }
 }
 
 function drawQuadHighlight(highlight)

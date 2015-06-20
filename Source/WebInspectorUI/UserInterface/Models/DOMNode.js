@@ -87,6 +87,9 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
             this._renumber();
         }
 
+        if (payload.frameId)
+            this._frameIdentifier = payload.frameId;
+
         if (this._nodeType === Node.ELEMENT_NODE) {
             // HTML and BODY from internal iframes should not overwrite top-level ones.
             if (this.ownerDocument && !this.ownerDocument.documentElement && this._nodeName === "HTML")
@@ -581,6 +584,11 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
             if (callback)
                 callback.apply(null, arguments);
         };
+    }
+
+    get frameIdentifier()
+    {
+        return this._frameIdentifier;
     }
 };
 

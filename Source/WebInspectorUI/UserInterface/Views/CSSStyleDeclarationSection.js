@@ -48,6 +48,8 @@ WebInspector.CSSStyleDeclarationSection = function(delegate, style)
     this._selectorElement = document.createElement("span");
     this._selectorElement.className = "selector";
     this._selectorElement.setAttribute("spellcheck", "false");
+    this._selectorElement.addEventListener("mouseover", this._highlightNodesWithSelector.bind(this));
+    this._selectorElement.addEventListener("mouseout", this._hideHighlightOnNodesWithSelector.bind(this));
     this._headerElement.appendChild(this._selectorElement);
 
     this._originElement = document.createElement("span");
@@ -389,6 +391,31 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
         this._ruleDisabled = this._ruleDisabled ? !this._propertiesTextEditor.uncommentAllProperties() : this._propertiesTextEditor.commentAllProperties();
         this._iconElement.title = this._ruleDisabled ? WebInspector.UIString("Uncomment All Properties") : WebInspector.UIString("Comment All Properties");
         this._element.classList.toggle("rule-disabled", this._ruleDisabled);
+    },
+
+    _highlightNodesWithSelector: function()
+    {
+        var highlightConfig = {
+            borderColor: {r: 255, g: 229, b: 153, a: 0.66},
+            contentColor: {r: 111, g: 168, b: 220, a: 0.66},
+            marginColor: {r: 246, g: 178, b: 107, a: 0.66},
+            paddingColor: {r: 147, g: 196, b: 125, a: 0.66},
+            showInfo: true
+        };
+
+        if (!this._style.ownerRule) {
+            // COMPATIBILITY (iOS 6): Order of parameters changed in iOS 7.
+            DOMAgent.highlightNode.invoke({nodeId: this._style.node.id, highlightConfig});
+            return;
+        }
+
+        if (DOMAgent.highlightSelector)
+            DOMAgent.highlightSelector(highlightConfig, this._style.ownerRule.selectorText, this._style.node.ownerDocument.frameIdentifier);
+    },
+
+    _hideHighlightOnNodesWithSelector: function()
+    {
+        DOMAgent.hideHighlight();
     },
 
     _commitSelector: function(mutations)

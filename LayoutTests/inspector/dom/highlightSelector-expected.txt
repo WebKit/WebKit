@@ -1,0 +1,1350 @@
+
+SELECTOR: div
+FRAMEID: 0.1
+FOUND: 3
+[
+  {
+    "scrollOffset": {
+      "x": 0,
+      "y": 0
+    },
+    "fragments": [
+      {
+        "quads": [
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 792,
+              "y": 8
+            },
+            {
+              "x": 792,
+              "y": 162
+            },
+            {
+              "x": 8,
+              "y": 162
+            }
+          ],
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 792,
+              "y": 8
+            },
+            {
+              "x": 792,
+              "y": 162
+            },
+            {
+              "x": 8,
+              "y": 162
+            }
+          ],
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 792,
+              "y": 8
+            },
+            {
+              "x": 792,
+              "y": 162
+            },
+            {
+              "x": 8,
+              "y": 162
+            }
+          ],
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 792,
+              "y": 8
+            },
+            {
+              "x": 792,
+              "y": 162
+            },
+            {
+              "x": 8,
+              "y": 162
+            }
+          ]
+        ],
+        "contentColor": "#ffffff",
+        "contentOutlineColor": "rgba(0, 0, 0, 0)",
+        "paddingColor": "#ffffff",
+        "borderColor": "#ffffff",
+        "marginColor": "#ffffff"
+      }
+    ],
+    "elementData": {
+      "tagName": "div",
+      "idValue": "",
+      "size": {
+        "width": 784,
+        "height": 154
+      },
+      "role": ""
+    }
+  },
+  {
+    "scrollOffset": {
+      "x": 0,
+      "y": 0
+    },
+    "fragments": [
+      {
+        "quads": [
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 792,
+              "y": 8
+            },
+            {
+              "x": 792,
+              "y": 8
+            },
+            {
+              "x": 8,
+              "y": 8
+            }
+          ],
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 792,
+              "y": 8
+            },
+            {
+              "x": 792,
+              "y": 8
+            },
+            {
+              "x": 8,
+              "y": 8
+            }
+          ],
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 792,
+              "y": 8
+            },
+            {
+              "x": 792,
+              "y": 8
+            },
+            {
+              "x": 8,
+              "y": 8
+            }
+          ],
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 792,
+              "y": 8
+            },
+            {
+              "x": 792,
+              "y": 8
+            },
+            {
+              "x": 8,
+              "y": 8
+            }
+          ]
+        ],
+        "contentColor": "#ffffff",
+        "contentOutlineColor": "rgba(0, 0, 0, 0)",
+        "paddingColor": "#ffffff",
+        "borderColor": "#ffffff",
+        "marginColor": "#ffffff"
+      }
+    ],
+    "elementData": {
+      "tagName": "div",
+      "idValue": "",
+      "className": ".class-one",
+      "size": {
+        "width": 784,
+        "height": 0
+      },
+      "role": ""
+    }
+  },
+  {
+    "scrollOffset": {
+      "x": 0,
+      "y": 0
+    },
+    "fragments": [
+      {
+        "quads": [
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 792,
+              "y": 8
+            },
+            {
+              "x": 792,
+              "y": 8
+            },
+            {
+              "x": 8,
+              "y": 8
+            }
+          ],
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 792,
+              "y": 8
+            },
+            {
+              "x": 792,
+              "y": 8
+            },
+            {
+              "x": 8,
+              "y": 8
+            }
+          ],
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 792,
+              "y": 8
+            },
+            {
+              "x": 792,
+              "y": 8
+            },
+            {
+              "x": 8,
+              "y": 8
+            }
+          ],
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 792,
+              "y": 8
+            },
+            {
+              "x": 792,
+              "y": 8
+            },
+            {
+              "x": 8,
+              "y": 8
+            }
+          ]
+        ],
+        "contentColor": "#ffffff",
+        "contentOutlineColor": "rgba(0, 0, 0, 0)",
+        "paddingColor": "#ffffff",
+        "borderColor": "#ffffff",
+        "marginColor": "#ffffff"
+      }
+    ],
+    "elementData": {
+      "tagName": "div",
+      "idValue": "id-one",
+      "className": ".class-two",
+      "size": {
+        "width": 784,
+        "height": 0
+      },
+      "role": ""
+    }
+  }
+]
+
+
+SELECTOR: .class-one
+FRAMEID: 0.1
+FOUND: 2
+[
+  {
+    "scrollOffset": {
+      "x": 0,
+      "y": 0
+    },
+    "fragments": [
+      {
+        "quads": [
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 8,
+              "y": 8
+            }
+          ],
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 8,
+              "y": 8
+            }
+          ],
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 8,
+              "y": 8
+            }
+          ],
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 8,
+              "y": 8
+            }
+          ]
+        ],
+        "contentColor": "#ffffff",
+        "contentOutlineColor": "rgba(0, 0, 0, 0)",
+        "paddingColor": "#ffffff",
+        "borderColor": "#ffffff",
+        "marginColor": "#ffffff"
+      }
+    ],
+    "elementData": {
+      "tagName": "div",
+      "idValue": "",
+      "className": ".class-one",
+      "size": {
+        "width": 769,
+        "height": 0
+      },
+      "role": ""
+    }
+  },
+  {
+    "scrollOffset": {
+      "x": 0,
+      "y": 0
+    },
+    "fragments": [
+      {
+        "quads": [
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 312,
+              "y": 8
+            },
+            {
+              "x": 312,
+              "y": 162
+            },
+            {
+              "x": 8,
+              "y": 162
+            }
+          ],
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 312,
+              "y": 8
+            },
+            {
+              "x": 312,
+              "y": 162
+            },
+            {
+              "x": 8,
+              "y": 162
+            }
+          ],
+          [
+            {
+              "x": 10,
+              "y": 10
+            },
+            {
+              "x": 310,
+              "y": 10
+            },
+            {
+              "x": 310,
+              "y": 160
+            },
+            {
+              "x": 10,
+              "y": 160
+            }
+          ],
+          [
+            {
+              "x": 10,
+              "y": 10
+            },
+            {
+              "x": 310,
+              "y": 10
+            },
+            {
+              "x": 310,
+              "y": 160
+            },
+            {
+              "x": 10,
+              "y": 160
+            }
+          ]
+        ],
+        "contentColor": "#ffffff",
+        "contentOutlineColor": "rgba(0, 0, 0, 0)",
+        "paddingColor": "#ffffff",
+        "borderColor": "#ffffff",
+        "marginColor": "#ffffff"
+      }
+    ],
+    "elementData": {
+      "tagName": "iframe",
+      "idValue": "",
+      "className": ".class-one",
+      "size": {
+        "width": 304,
+        "height": 154
+      },
+      "role": "group"
+    }
+  }
+]
+
+
+SELECTOR: #id-one
+FRAMEID: 0.1
+FOUND: 1
+[
+  {
+    "scrollOffset": {
+      "x": 0,
+      "y": 0
+    },
+    "fragments": [
+      {
+        "quads": [
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 8,
+              "y": 8
+            }
+          ],
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 8,
+              "y": 8
+            }
+          ],
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 8,
+              "y": 8
+            }
+          ],
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 8,
+              "y": 8
+            }
+          ]
+        ],
+        "contentColor": "#ffffff",
+        "contentOutlineColor": "rgba(0, 0, 0, 0)",
+        "paddingColor": "#ffffff",
+        "borderColor": "#ffffff",
+        "marginColor": "#ffffff"
+      }
+    ],
+    "elementData": {
+      "tagName": "div",
+      "idValue": "id-one",
+      "className": ".class-two",
+      "size": {
+        "width": 769,
+        "height": 0
+      },
+      "role": ""
+    }
+  }
+]
+
+
+SELECTOR: .class-one, .class-two
+FRAMEID: 0.1
+FOUND: 3
+[
+  {
+    "scrollOffset": {
+      "x": 0,
+      "y": 0
+    },
+    "fragments": [
+      {
+        "quads": [
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 8,
+              "y": 8
+            }
+          ],
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 8,
+              "y": 8
+            }
+          ],
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 8,
+              "y": 8
+            }
+          ],
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 8,
+              "y": 8
+            }
+          ]
+        ],
+        "contentColor": "#ffffff",
+        "contentOutlineColor": "rgba(0, 0, 0, 0)",
+        "paddingColor": "#ffffff",
+        "borderColor": "#ffffff",
+        "marginColor": "#ffffff"
+      }
+    ],
+    "elementData": {
+      "tagName": "div",
+      "idValue": "",
+      "className": ".class-one",
+      "size": {
+        "width": 769,
+        "height": 0
+      },
+      "role": ""
+    }
+  },
+  {
+    "scrollOffset": {
+      "x": 0,
+      "y": 0
+    },
+    "fragments": [
+      {
+        "quads": [
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 8,
+              "y": 8
+            }
+          ],
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 8,
+              "y": 8
+            }
+          ],
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 8,
+              "y": 8
+            }
+          ],
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 777,
+              "y": 8
+            },
+            {
+              "x": 8,
+              "y": 8
+            }
+          ]
+        ],
+        "contentColor": "#ffffff",
+        "contentOutlineColor": "rgba(0, 0, 0, 0)",
+        "paddingColor": "#ffffff",
+        "borderColor": "#ffffff",
+        "marginColor": "#ffffff"
+      }
+    ],
+    "elementData": {
+      "tagName": "div",
+      "idValue": "id-one",
+      "className": ".class-two",
+      "size": {
+        "width": 769,
+        "height": 0
+      },
+      "role": ""
+    }
+  },
+  {
+    "scrollOffset": {
+      "x": 0,
+      "y": 0
+    },
+    "fragments": [
+      {
+        "quads": [
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 312,
+              "y": 8
+            },
+            {
+              "x": 312,
+              "y": 162
+            },
+            {
+              "x": 8,
+              "y": 162
+            }
+          ],
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 312,
+              "y": 8
+            },
+            {
+              "x": 312,
+              "y": 162
+            },
+            {
+              "x": 8,
+              "y": 162
+            }
+          ],
+          [
+            {
+              "x": 10,
+              "y": 10
+            },
+            {
+              "x": 310,
+              "y": 10
+            },
+            {
+              "x": 310,
+              "y": 160
+            },
+            {
+              "x": 10,
+              "y": 160
+            }
+          ],
+          [
+            {
+              "x": 10,
+              "y": 10
+            },
+            {
+              "x": 310,
+              "y": 10
+            },
+            {
+              "x": 310,
+              "y": 160
+            },
+            {
+              "x": 10,
+              "y": 160
+            }
+          ]
+        ],
+        "contentColor": "#ffffff",
+        "contentOutlineColor": "rgba(0, 0, 0, 0)",
+        "paddingColor": "#ffffff",
+        "borderColor": "#ffffff",
+        "marginColor": "#ffffff"
+      }
+    ],
+    "elementData": {
+      "tagName": "iframe",
+      "idValue": "",
+      "className": ".class-one",
+      "size": {
+        "width": 304,
+        "height": 154
+      },
+      "role": "group"
+    }
+  }
+]
+
+
+SELECTOR: iframe.class-one
+FRAMEID: undefined
+FOUND: 1
+[
+  {
+    "scrollOffset": {
+      "x": 0,
+      "y": 0
+    },
+    "fragments": [
+      {
+        "quads": [
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 312,
+              "y": 8
+            },
+            {
+              "x": 312,
+              "y": 162
+            },
+            {
+              "x": 8,
+              "y": 162
+            }
+          ],
+          [
+            {
+              "x": 8,
+              "y": 8
+            },
+            {
+              "x": 312,
+              "y": 8
+            },
+            {
+              "x": 312,
+              "y": 162
+            },
+            {
+              "x": 8,
+              "y": 162
+            }
+          ],
+          [
+            {
+              "x": 10,
+              "y": 10
+            },
+            {
+              "x": 310,
+              "y": 10
+            },
+            {
+              "x": 310,
+              "y": 160
+            },
+            {
+              "x": 10,
+              "y": 160
+            }
+          ],
+          [
+            {
+              "x": 10,
+              "y": 10
+            },
+            {
+              "x": 310,
+              "y": 10
+            },
+            {
+              "x": 310,
+              "y": 160
+            },
+            {
+              "x": 10,
+              "y": 160
+            }
+          ]
+        ],
+        "contentColor": "#ffffff",
+        "contentOutlineColor": "rgba(0, 0, 0, 0)",
+        "paddingColor": "#ffffff",
+        "borderColor": "#ffffff",
+        "marginColor": "#ffffff"
+      }
+    ],
+    "elementData": {
+      "tagName": "iframe",
+      "idValue": "",
+      "className": ".class-one",
+      "size": {
+        "width": 304,
+        "height": 154
+      },
+      "role": "group"
+    }
+  }
+]
+
+
+PASS: Expected error: No frame for given id found
+SELECTOR: div
+FRAMEID: 0.2
+
+
+SELECTOR: .no-elements
+FRAMEID: 0.1
+FOUND: 0
+[]
+
+
+PASS: Expected error: DOM Error while querying
+SELECTOR: $%foobar
+FRAMEID: 0.1
+
+
+SELECTOR: div
+FRAMEID: 0.3
+FOUND: 2
+[
+  {
+    "scrollOffset": {
+      "x": 0,
+      "y": 0
+    },
+    "fragments": [
+      {
+        "quads": [
+          [
+            {
+              "x": 18,
+              "y": 18
+            },
+            {
+              "x": 302,
+              "y": 18
+            },
+            {
+              "x": 302,
+              "y": 18
+            },
+            {
+              "x": 18,
+              "y": 18
+            }
+          ],
+          [
+            {
+              "x": 18,
+              "y": 18
+            },
+            {
+              "x": 302,
+              "y": 18
+            },
+            {
+              "x": 302,
+              "y": 18
+            },
+            {
+              "x": 18,
+              "y": 18
+            }
+          ],
+          [
+            {
+              "x": 18,
+              "y": 18
+            },
+            {
+              "x": 302,
+              "y": 18
+            },
+            {
+              "x": 302,
+              "y": 18
+            },
+            {
+              "x": 18,
+              "y": 18
+            }
+          ],
+          [
+            {
+              "x": 18,
+              "y": 18
+            },
+            {
+              "x": 302,
+              "y": 18
+            },
+            {
+              "x": 302,
+              "y": 18
+            },
+            {
+              "x": 18,
+              "y": 18
+            }
+          ]
+        ],
+        "contentColor": "#ffffff",
+        "contentOutlineColor": "rgba(0, 0, 0, 0)",
+        "paddingColor": "#ffffff",
+        "borderColor": "#ffffff",
+        "marginColor": "#ffffff"
+      }
+    ],
+    "elementData": {
+      "tagName": "div",
+      "idValue": "id-one",
+      "size": {
+        "width": 284,
+        "height": 0
+      },
+      "role": ""
+    }
+  },
+  {
+    "scrollOffset": {
+      "x": 0,
+      "y": 0
+    },
+    "fragments": [
+      {
+        "quads": [
+          [
+            {
+              "x": 18,
+              "y": 18
+            },
+            {
+              "x": 302,
+              "y": 18
+            },
+            {
+              "x": 302,
+              "y": 18
+            },
+            {
+              "x": 18,
+              "y": 18
+            }
+          ],
+          [
+            {
+              "x": 18,
+              "y": 18
+            },
+            {
+              "x": 302,
+              "y": 18
+            },
+            {
+              "x": 302,
+              "y": 18
+            },
+            {
+              "x": 18,
+              "y": 18
+            }
+          ],
+          [
+            {
+              "x": 18,
+              "y": 18
+            },
+            {
+              "x": 302,
+              "y": 18
+            },
+            {
+              "x": 302,
+              "y": 18
+            },
+            {
+              "x": 18,
+              "y": 18
+            }
+          ],
+          [
+            {
+              "x": 18,
+              "y": 18
+            },
+            {
+              "x": 302,
+              "y": 18
+            },
+            {
+              "x": 302,
+              "y": 18
+            },
+            {
+              "x": 18,
+              "y": 18
+            }
+          ]
+        ],
+        "contentColor": "#ffffff",
+        "contentOutlineColor": "rgba(0, 0, 0, 0)",
+        "paddingColor": "#ffffff",
+        "borderColor": "#ffffff",
+        "marginColor": "#ffffff"
+      }
+    ],
+    "elementData": {
+      "tagName": "div",
+      "idValue": "",
+      "size": {
+        "width": 284,
+        "height": 0
+      },
+      "role": ""
+    }
+  }
+]
+
+
+SELECTOR: #id-one
+FRAMEID: 0.3
+FOUND: 1
+[
+  {
+    "scrollOffset": {
+      "x": 0,
+      "y": 0
+    },
+    "fragments": [
+      {
+        "quads": [
+          [
+            {
+              "x": 18,
+              "y": 18
+            },
+            {
+              "x": 302,
+              "y": 18
+            },
+            {
+              "x": 302,
+              "y": 18
+            },
+            {
+              "x": 18,
+              "y": 18
+            }
+          ],
+          [
+            {
+              "x": 18,
+              "y": 18
+            },
+            {
+              "x": 302,
+              "y": 18
+            },
+            {
+              "x": 302,
+              "y": 18
+            },
+            {
+              "x": 18,
+              "y": 18
+            }
+          ],
+          [
+            {
+              "x": 18,
+              "y": 18
+            },
+            {
+              "x": 302,
+              "y": 18
+            },
+            {
+              "x": 302,
+              "y": 18
+            },
+            {
+              "x": 18,
+              "y": 18
+            }
+          ],
+          [
+            {
+              "x": 18,
+              "y": 18
+            },
+            {
+              "x": 302,
+              "y": 18
+            },
+            {
+              "x": 302,
+              "y": 18
+            },
+            {
+              "x": 18,
+              "y": 18
+            }
+          ]
+        ],
+        "contentColor": "#ffffff",
+        "contentOutlineColor": "rgba(0, 0, 0, 0)",
+        "paddingColor": "#ffffff",
+        "borderColor": "#ffffff",
+        "marginColor": "#ffffff"
+      }
+    ],
+    "elementData": {
+      "tagName": "div",
+      "idValue": "id-one",
+      "size": {
+        "width": 284,
+        "height": 0
+      },
+      "role": ""
+    }
+  }
+]
+
+
+

@@ -926,8 +926,8 @@ String Internals::inspectorHighlightObject(ExceptionCode& ec)
         ec = INVALID_ACCESS_ERR;
         return String();
     }
-    auto object = document->page()->inspectorController().buildObjectForHighlightedNode();
-    return object ? object->toJSONString() : String();
+
+    return document->page()->inspectorController().buildObjectForHighlightedNodes()->toJSONString();
 }
 
 unsigned Internals::markerCountForNode(Node* node, const String& markerType, ExceptionCode& ec)

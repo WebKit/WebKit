@@ -143,6 +143,7 @@ public:
     virtual void hideHighlight(ErrorString&) override;
     virtual void highlightRect(ErrorString&, int x, int y, int width, int height, const Inspector::InspectorObject* color, const Inspector::InspectorObject* outlineColor, const bool* usePageCoordinates) override;
     virtual void highlightQuad(ErrorString&, const Inspector::InspectorArray& quad, const Inspector::InspectorObject* color, const Inspector::InspectorObject* outlineColor, const bool* usePageCoordinates) override;
+    virtual void highlightSelector(ErrorString&, const Inspector::InspectorObject& highlightConfig, const String& selectorString, const String* frameId) override;
     virtual void highlightNode(ErrorString&, const Inspector::InspectorObject& highlightConfig, const int* nodeId, const String* objectId) override;
     virtual void highlightFrame(ErrorString&, const String& frameId, const Inspector::InspectorObject* color, const Inspector::InspectorObject* outlineColor) override;
 

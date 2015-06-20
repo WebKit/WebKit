@@ -324,9 +324,9 @@ void InspectorController::getHighlight(Highlight& highlight, InspectorOverlay::C
     m_overlay->getHighlight(highlight, coordinateSystem);
 }
 
-RefPtr<Inspector::Protocol::OverlayTypes::NodeHighlightData> InspectorController::buildObjectForHighlightedNode() const
+Ref<Inspector::Protocol::Array<Inspector::Protocol::OverlayTypes::NodeHighlightData>> InspectorController::buildObjectForHighlightedNodes() const
 {
-    return m_overlay->buildObjectForHighlightedNode();
+    return m_overlay->buildObjectForHighlightedNodes();
 }
 
 void InspectorController::inspect(Node* node)

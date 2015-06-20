@@ -1075,6 +1075,41 @@ void InspectorDOMAgent::innerHighlightQuad(std::unique_ptr<FloatQuad> quad, cons
     m_overlay->highlightQuad(WTF::move(quad), *highlightConfig);
 }
 
+void InspectorDOMAgent::highlightSelector(ErrorString& errorString, const InspectorObject& highlightInspectorObject, const String& selectorString, const String* frameId)
+{
+    RefPtr<Document> document;
+
+    if (frameId) {
+        Frame* frame = m_pageAgent->frameForId(*frameId);
+        if (!frame) {
+            errorString = ASCIILiteral("No frame for given id found");
+            return;
+        }
+
+        document = frame->document();
+    } else
+        document = m_document;
+
+    if (!document) {
+        errorString = ASCIILiteral("Document could not be found");
+        return;
+    }
+
+    ExceptionCode ec = 0;
+    RefPtr<NodeList> nodes = document->querySelectorAll(selectorString, ec);
+    // FIXME: <https://webkit.org/b/146161> Web Inspector: DOM.highlightSelector should work for "a:visited"
+    if (ec) {
+        errorString = ASCIILiteral("DOM Error while querying");
+        return;
+    }
+
+    std::unique_ptr<HighlightConfig> highlightConfig = highlightConfigFromInspectorObject(errorString, &highlightInspectorObject);
+    if (!highlightConfig)
+        return;
+
+    m_overlay->highlightNodeList(nodes, *highlightConfig);
+}
+
 void InspectorDOMAgent::highlightNode(ErrorString& errorString, const InspectorObject& highlightInspectorObject, const int* nodeId, const String* objectId)
 {
     Node* node = 0;
@@ -1294,6 +1329,7 @@ Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* 
 
     } else if (is<Document>(*node)) {
         Document& document = downcast<Document>(*node);
+        value->setFrameId(m_pageAgent->frameId(document.frame()));
         value->setDocumentURL(documentURLString(&document));
         value->setBaseURL(documentBaseURLString(&document));
         value->setXmlVersion(document.xmlVersion());

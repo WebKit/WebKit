@@ -32,7 +32,9 @@
 #include "Color.h"
 #include "FloatQuad.h"
 #include "LayoutRect.h"
+#include "NodeList.h"
 #include "Timer.h"
+#include <inspector/InspectorProtocolObjects.h>
 #include <wtf/Deque.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -72,6 +74,7 @@ public:
 
 enum class HighlightType {
     Node, // Provides 4 quads: margin, border, padding, content.
+    NodeList, // Provides a list of nodes.
     Rects, // Provides a list of quads.
 };
 
@@ -117,6 +120,7 @@ public:
     void setPausedInDebuggerMessage(const String*);
 
     void hideHighlight();
+    void highlightNodeList(PassRefPtr<NodeList>, const HighlightConfig&);
     void highlightNode(Node*, const HighlightConfig&);
     void highlightQuad(std::unique_ptr<FloatQuad>, const HighlightConfig&);
     
@@ -129,7 +133,8 @@ public:
 
     void setIndicating(bool indicating);
 
-    RefPtr<Inspector::Protocol::OverlayTypes::NodeHighlightData> buildObjectForHighlightedNode() const;
+    RefPtr<Inspector::Protocol::OverlayTypes::NodeHighlightData> buildHighlightObjectForNode(Node*, HighlightType) const;
+    Ref<Inspector::Protocol::Array<Inspector::Protocol::OverlayTypes::NodeHighlightData>> buildObjectForHighlightedNodes() const;
 
     void freePage();
 private:
@@ -153,6 +158,7 @@ private:
     InspectorClient* m_client;
     String m_pausedInDebuggerMessage;
     RefPtr<Node> m_highlightNode;
+    RefPtr<NodeList> m_highlightNodeList;
     HighlightConfig m_nodeHighlightConfig;
     std::unique_ptr<FloatQuad> m_highlightQuad;
     std::unique_ptr<Page> m_overlayPage;

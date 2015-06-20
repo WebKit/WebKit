@@ -331,6 +331,15 @@
             "description": "Highlights given quad. Coordinates are absolute with respect to the main frame viewport."
         },
         {
+            "name": "highlightSelector",
+            "parameters": [
+                { "name": "highlightConfig", "$ref": "HighlightConfig", "description": "A descriptor for the highlight appearance." },
+                { "name": "selectorString", "type": "string", "description": "A CSS selector for finding matching nodes to highlight." },
+                { "name": "frameId", "type": "string", "optional": true, "description": "Identifier of the frame which will be searched using the selector.  If not provided, the main frame will be used." }
+            ],
+            "description": "Highlights all DOM nodes that match a given selector. A string containing a CSS selector must be specified."
+        },
+        {
             "name": "highlightNode",
             "parameters": [
                 { "name": "highlightConfig", "$ref": "HighlightConfig", "description": "A descriptor for the highlight appearance." },

@@ -1,3 +1,18 @@
+2015-06-19  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Highlight currently edited CSS selector
+        https://bugs.webkit.org/show_bug.cgi?id=145658
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection): Added event listeners on the selector text for mouseover and mouseout.
+        (WebInspector.CSSStyleDeclarationSection.prototype._highlightNodesWithSelector): Selector text mouseover action that highlights all nodes that match the selector string in the corresponding frame.
+        (WebInspector.CSSStyleDeclarationSection.prototype._hideHighlightOnNodesWithSelector): Selector text mouseout action that clears all highlights on matching nodes.
+        * UserInterface/Views/DOMNode.js:
+        (WebInspector.DOMNode): If the payload contains a frameId, then save it.
+        (WebInspector.DOMNode.frameIdentifier):
+
 2015-06-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Overlapping dashboard views causing lots of layers in source view
