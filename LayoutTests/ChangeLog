@@ -1,5 +1,30 @@
 2015-06-20  David Kilzer  <ddkilzer@apple.com>
 
+        REGRESSION (r185779): fast/canvas/{canvas-toDataURL-crash,pattern-too-large-to-create}.html are broken
+
+        This layout test started failing after the fix for:
+
+            Extremely large canvas crashes on pre-El Capitan machines
+            https://bugs.webkit.org/show_bug.cgi?id=146169
+            <rdar://problem/21410046>
+
+        Different limits require different test results for each
+        platform.  This is the same fix for these tests as r185793.
+
+        * fast/canvas/canvas-toDataURL-crash-expected.txt: Update.
+        * fast/canvas/pattern-too-large-to-create-expected.txt: Update.
+        - Set limit to 268435456.
+
+        * platform/ios-simulator/fast/canvas/canvas-toDataURL-crash-expected.txt: Copied from LayoutTests/fast/canvas/canvas-toDataURL-crash-expected.txt.
+        * platform/ios-simulator/fast/canvas/pattern-too-large-to-create-expected.txt: Copied from LayoutTests/fast/canvas/pattern-too-large-to-create-expected.txt.
+        - Set limit to 16777216.
+
+        * platform/mac-yosemite/fast/canvas/canvas-toDataURL-crash-expected.txt: Copied from LayoutTests/fast/canvas/canvas-toDataURL-crash-expected.txt.
+        * platform/mac-yosemite/fast/canvas/pattern-too-large-to-create-expected.txt: Copied from LayoutTests/fast/canvas/pattern-too-large-to-create-expected.txt.
+        - Set limit to 67108864.
+
+2015-06-20  David Kilzer  <ddkilzer@apple.com>
+
         fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html is slow on Mavericks WK1 Debug builds
 
         The Flakiness Dashboard says that this test times out, but only
