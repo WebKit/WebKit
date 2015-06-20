@@ -336,7 +336,7 @@ if (ENABLE_SECCOMP_FILTERS)
 
     # If building with jhbuild, add the root build directory to the
     # filesystem access policy.
-    if (IS_DIRECTORY ${CMAKE_SOURCE_DIR}/WebKitBuild/DependenciesEFL)
+    if (DEVELOPER_MODE AND IS_DIRECTORY ${CMAKE_SOURCE_DIR}/WebKitBuild/DependenciesEFL)
         add_definitions(-DSOURCE_DIR=\"${CMAKE_SOURCE_DIR}\")
     endif ()
 endif ()

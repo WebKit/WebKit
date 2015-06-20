@@ -1,3 +1,16 @@
+2015-06-20  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Do not consider test directories when DEVELOPER_MODE is OFF
+        https://bugs.webkit.org/show_bug.cgi?id=146171
+
+        Reviewed by Gyuyoung Kim.
+
+        * PlatformEfl.cmake:
+        Do not define SOURCE_DIR when DEVELOPER_MODE is OFF for seccomp filter
+        not to allow jhbuild directory.
+        * Shared/efl/ProcessExecutablePathEfl.cpp:
+        (WebKit::findProcessPath): Guard test code to ENABLE(DEVELOPER_MODE).
+
 2015-06-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r185475): [Mac] ASSERT() when clicking on text using web fonts with force touch trackpad
