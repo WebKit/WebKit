@@ -2933,7 +2933,7 @@ RegisterID* BytecodeGenerator::emitIsUndefined(RegisterID* dst, RegisterID* src)
     return dst;
 }
 
-void BytecodeGenerator::emitIteratorClose(RegisterID* iterator, ThrowableExpressionData* node)
+void BytecodeGenerator::emitIteratorClose(RegisterID* iterator, const ThrowableExpressionData* node)
 {
     RefPtr<Label> done = newLabel();
     RefPtr<RegisterID> returnMethod = emitGetById(newTemporary(), iterator, propertyNames().returnKeyword);

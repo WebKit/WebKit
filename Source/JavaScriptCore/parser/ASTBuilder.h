@@ -744,6 +744,11 @@ public:
     {
         node->appendIndex(location, pattern.get(), defaultValue);
     }
+
+    void finishArrayPattern(ArrayPattern node, const JSTextPosition& divotStart, const JSTextPosition& divot, const JSTextPosition& divotEnd)
+    {
+        setExceptionLocation(node.get(), divotStart, divot, divotEnd);
+    }
     
     ObjectPattern createObjectPattern(const JSTokenLocation&)
     {

@@ -775,13 +775,13 @@ PASS Valid:   "var {x}=1"
 PASS Valid:   "function f() { var {x}=1 }"
 PASS Valid:   "var {x, y}=1"
 PASS Valid:   "function f() { var {x, y}=1 }"
-PASS Valid:   "var [x]=1"
+PASS Valid:   "var [x]=1" with TypeError
 PASS Valid:   "function f() { var [x]=1 }"
-PASS Valid:   "var [x, y]=1"
+PASS Valid:   "var [x, y]=1" with TypeError
 PASS Valid:   "function f() { var [x, y]=1 }"
-PASS Valid:   "[x]=1"
+PASS Valid:   "[x]=1" with TypeError
 PASS Valid:   "function f() { [x]=1 }"
-PASS Valid:   "var [x]=1"
+PASS Valid:   "var [x]=1" with TypeError
 PASS Valid:   "function f() { var [x]=1 }"
 PASS Valid:   "({[x]: 1})"
 PASS Valid:   "function f() { ({[x]: 1}) }"

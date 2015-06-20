@@ -1,3 +1,17 @@
+2015-06-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Destructuring assignment need to accept iterables
+        https://bugs.webkit.org/show_bug.cgi?id=144111
+
+        Reviewed by Darin Adler.
+
+        From this patch, we use iterators for destructuring assignments to array binding patterns.
+        So test results become different.
+
+        * js/destructuring-assignment-expected.txt:
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/destructuring-assignment.js:
+
 2015-06-19  Dean Jackson  <dino@apple.com>
 
         Extremely large canvas crashes on pre-El Capitan machines

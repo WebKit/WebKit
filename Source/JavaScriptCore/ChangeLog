@@ -1,3 +1,37 @@
+2015-06-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Destructuring assignment need to accept iterables
+        https://bugs.webkit.org/show_bug.cgi?id=144111
+
+        Reviewed by Darin Adler.
+
+        This patch makes that destructuring assignments to array binding patterns accept iterables.
+        Previously, it just access the indexed properties.
+        After this patch, it iterates the given value by using ES6 iterator protocol.
+
+        The iteration becomes different from the for-of case.
+        1. Since there's no break/continue case, finally scope is not necessary.
+        2. When the error is raised, the close status of the iterator becomes true. So IteratorClose is not called for that.
+        3. Since the array binding patterns requires a limited count of iterations (if there is no rest(...rest) case), IteratorClose is called when the iteration does not consume the all values of the iterator.
+        4. Since the array binding patterns requires a specified count of iterations, iterator's next call is skipped when iterator becomes closed.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitIteratorClose):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ArrayPatternNode::bindValue):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::finishArrayPattern):
+        * parser/Nodes.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseDeconstructionPattern):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::operatorStackPop):
+        * tests/stress/destructuring-assignment-accepts-iterables.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (.set shouldThrow):
+
 2015-06-19  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Highlight currently edited CSS selector

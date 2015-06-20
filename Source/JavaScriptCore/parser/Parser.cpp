@@ -597,6 +597,7 @@ template <class TreeBuilder> TreeDeconstructionPattern Parser<LexerType>::parseD
     TreeDeconstructionPattern pattern;
     switch (m_token.m_type) {
     case OPENBRACKET: {
+        JSTextPosition divotStart = tokenStartPosition();
         auto arrayPattern = context.createArrayPattern(m_token.m_location);
         next();
         if (kind == DeconstructToExpressions && match(CLOSEBRACKET))
@@ -622,6 +623,7 @@ template <class TreeBuilder> TreeDeconstructionPattern Parser<LexerType>::parseD
             return 0;
 
         consumeOrFail(CLOSEBRACKET, "Expected either a closing ']' or a ',' following an element deconstruction pattern");
+        context.finishArrayPattern(arrayPattern, divotStart, divotStart, lastTokenEndPosition());
         pattern = arrayPattern;
         break;
     }

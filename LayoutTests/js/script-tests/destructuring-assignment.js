@@ -48,7 +48,7 @@ shouldBe("testDeconstructArgs('1', '2')", "'12'");
 shouldBe("testDeconstructArgLength('1', '2')", "2");
 var text = '3';
 Object.prototype.__defineGetter__(1, function(){ var r = text; text = "fail"; return r; })
-shouldBe("testDeconstructArgs('2')", "'23'");
+shouldBe("testDeconstructArgs('2')", "'2undefined'");
 
 var [a,b] = [1,2], [c,d] = [3,4]
 

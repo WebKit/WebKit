@@ -1780,7 +1780,7 @@ namespace JSC {
         DeconstructionPatternNode();
     };
 
-    class ArrayPatternNode : public DeconstructionPatternNode {
+    class ArrayPatternNode : public DeconstructionPatternNode, public ThrowableExpressionData {
     public:
         static Ref<ArrayPatternNode> create();
         void appendIndex(const JSTokenLocation&, DeconstructionPatternNode* node, ExpressionNode* defaultValue)
