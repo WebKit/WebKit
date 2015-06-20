@@ -1,3 +1,11 @@
+2015-06-20  Dan Bernstein  <mitz@apple.com>
+
+        Added availability information to a recently-added delegate method.
+
+        Suggested by Alexey Proskuryakov and Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKUIDelegate.h: Annotated -webViewDidClose:.
+
 2015-06-20  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [EFL] Do not consider test directories when DEVELOPER_MODE is OFF
@@ -5636,7 +5644,7 @@
 
 2015-05-12  Dan Bernstein  <mitz@apple.com>
 
-        In Safari, Debug > Get Bytecode Profile crashes the Web Content process
+        <rdar://problem/17414349> In Safari, Debug > Get Bytecode Profile crashes the Web Content process
         https://bugs.webkit.org/show_bug.cgi?id=144944
 
         Reviewed by Darin Adler.
