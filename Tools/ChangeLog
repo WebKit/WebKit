@@ -1,3 +1,11 @@
+2015-06-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r146125.
+
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        (OSXSafariDriver):
+        (OSXSafariDriver.prepareEnv):
+
 2015-06-19  Brady Eidson  <beidson@apple.com>
 
         Rename WKSecurityOrigin.h/cpp to WKSecurityOriginRef.h/cpp.
