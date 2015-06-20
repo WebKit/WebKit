@@ -492,6 +492,10 @@
 #define GDK_VERSION_MIN_REQUIRED GDK_VERSION_3_6
 #endif
 
+#if USE(SOUP)
+#define SOUP_VERSION_MIN_REQUIRED SOUP_VERSION_2_42
+#endif
+
 /* On Windows, use QueryPerformanceCounter by default */
 #if OS(WINDOWS)
 #define USE_QUERY_PERFORMANCE_COUNTER  1

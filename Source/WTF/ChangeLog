@@ -1,3 +1,14 @@
+2015-06-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [SOUP] Define SOUP_VERSION_MIN_REQUIRED
+        https://bugs.webkit.org/show_bug.cgi?id=146165
+
+        Reviewed by Martin Robinson.
+
+        Define SOUP_VERSION_MIN_REQUIRED to avoid deprecation warnings.
+
+        * wtf/Platform.h:
+
 2015-06-19  Mark Lam  <mark.lam@apple.com>
 
         Gardening: build fixes for GTK and EFL for CheckedArithmetic change.
