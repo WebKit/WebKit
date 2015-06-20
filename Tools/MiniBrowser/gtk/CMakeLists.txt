@@ -49,6 +49,8 @@ if (DEVELOPER_MODE)
     add_definitions(-DWEBKIT_INJECTED_BUNDLE_PATH="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
 endif ()
 
+add_definitions(-DGDK_VERSION_MIN_REQUIRED=GDK_VERSION_3_6)
+
 include_directories(${MiniBrowser_INCLUDE_DIRECTORIES})
 add_executable(MiniBrowser ${MiniBrowser_SOURCES})
 target_link_libraries(MiniBrowser ${MiniBrowser_LIBRARIES})
