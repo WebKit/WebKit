@@ -1052,19 +1052,16 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             var styleText = this._style.text.trim();
             var findWhitespace = /\s+/g;
 
-            // Only format non-empty styles. Keep in mind that styleText is always empty
-            // for "readOnly" Editors. But prepare Checkbox placeholders in any case.
-            // Because that will indent the cursor when the User starts typing.
+            // We only need to format non-empty styles, but prepare checkbox placeholders
+            // in any case because that will indent the cursor when the User starts typing.
             if (!styleText && !isEditorReadOnly) {
                 this._markLinesWithCheckboxPlaceholder();
                 return;
             }
 
-            // Set non-optimized, valid and invalid styles in preparation for the Formatter.
-            // Set empty string in case of readonly styles.
-            this._codeMirror.setValue(styleText);
-
+            // Generate formatted content for readonly editors by iterating properties.
             if (isEditorReadOnly) {
+                this._codeMirror.setValue("");
                 var lineNumber = 0;
                 this._iterateOverProperties(false, function(property) {
                     var from = {line: lineNumber, ch: 0};
@@ -1074,9 +1071,11 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
                     this._createTextMarkerForPropertyIfNeeded(from, to, property);
                     lineNumber++;
                 });
-
                 return;
             }
+
+            // Set non-optimized, valid and invalid styles in preparation for the Formatter.
+            this._codeMirror.setValue(styleText);
 
             // Now the Formatter pretty prints the styles.
             this._codeMirror.setValue(this._formattedContentFromEditor());

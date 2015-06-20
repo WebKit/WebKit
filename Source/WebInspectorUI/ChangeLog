@@ -1,3 +1,15 @@
+2015-06-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Duplication of style attribute in rules panel for shadow content
+        https://bugs.webkit.org/show_bug.cgi?id=146176
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        The styleText can be non-empty for a readonly editor if the editor is for
+        the style attribute of a shadow dom node. Instead of assuming it is empty
+        we can just clear the editor ourselves and regenerate from properties.
+
 2015-06-19  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Highlight currently edited CSS selector
