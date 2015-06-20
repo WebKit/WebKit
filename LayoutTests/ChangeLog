@@ -1,5 +1,13 @@
 2015-06-20  David Kilzer  <ddkilzer@apple.com>
 
+        editing/selection/leak-document-with-selection-inside.html is flaky
+        <http://webkit.org/b/146182>
+
+        * TestExpectations: Mark as flaky:
+        - editing/selection/leak-document-with-selection-inside.html
+
+2015-06-20  David Kilzer  <ddkilzer@apple.com>
+
         REGRESSION (r185779): fast/canvas/canvas-too-large-to-draw.html is still broken
 
         This layout test started failing after the fix for:
