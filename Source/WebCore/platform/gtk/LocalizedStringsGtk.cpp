@@ -664,7 +664,7 @@ String localizedMediaTimeDescription(float time)
     if (!std::isfinite(time))
         return String::fromUTF8(_("indefinite time"));
 
-    int seconds = static_cast<int>(abs(time));
+    int seconds = abs(static_cast<int>(time));
     int days = seconds / (60 * 60 * 24);
     int hours = seconds / (60 * 60);
     int minutes = (seconds / 60) % 60;
