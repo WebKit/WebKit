@@ -2941,11 +2941,11 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
 #endif
 
     auto transaction = m_pageLoadState.transaction();
-
-    if (frame->isMainFrame()) {
-        bool hasInsecureCertificateChain = m_treatsSHA1CertificatesAsInsecure && certificateInfo.containsNonRootSHA1SignedCertificate();
-        m_pageLoadState.didCommitLoad(transaction, hasInsecureCertificateChain);
-    }
+    bool markPageInsecure = m_treatsSHA1CertificatesAsInsecure && certificateInfo.containsNonRootSHA1SignedCertificate();
+    if (frame->isMainFrame())
+        m_pageLoadState.didCommitLoad(transaction, markPageInsecure);
+    else if (markPageInsecure)
+        m_pageLoadState.didDisplayOrRunInsecureContent(transaction);
 
 #if USE(APPKIT)
     // FIXME (bug 59111): didCommitLoadForFrame comes too late when restoring a page from b/f cache, making us disable secure event mode in password fields.

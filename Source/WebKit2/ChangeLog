@@ -1,3 +1,15 @@
+2015-06-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Check for SHA1 certificates ignores subresources
+        https://bugs.webkit.org/show_bug.cgi?id=146159
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame): Call
+        PageLoadState::didDisplayOrRunInsecureContent if a certificate chain contains a non-root
+        SHA1 certificate when the frame is not the main frame.
+
 2015-06-20  Dan Bernstein  <mitz@apple.com>
 
         Added availability information to a recently-added delegate method.
