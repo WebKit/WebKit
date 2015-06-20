@@ -84,6 +84,12 @@ WebInspector.HierarchicalPathComponent = class HierarchicalPathComponent extends
 
     // Public
 
+    get selectedPathComponent()
+    {
+        var selectElement = this._selectElement[this._selectElement.selectedIndex];
+        return selectElement && selectElement._pathComponent || null;
+    }
+
     get element()
     {
         return this._element;
@@ -305,12 +311,12 @@ WebInspector.HierarchicalPathComponent = class HierarchicalPathComponent extends
 
     _selectElementMouseUp(event)
     {
-        this.dispatchEventToListeners(WebInspector.HierarchicalPathComponent.Event.Clicked);
+        this.dispatchEventToListeners(WebInspector.HierarchicalPathComponent.Event.Clicked, {pathComponent: this.selectedPathComponent});
     }
 
     _selectElementSelectionChanged(event)
     {
-        this.dispatchEventToListeners(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, {pathComponent: this._selectElement[this._selectElement.selectedIndex]._pathComponent});
+        this.dispatchEventToListeners(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, {pathComponent: this.selectedPathComponent});
     }
 };
 

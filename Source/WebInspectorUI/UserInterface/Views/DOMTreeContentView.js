@@ -123,7 +123,7 @@ WebInspector.DOMTreeContentView.prototype = {
             }
 
             var pathComponent = new WebInspector.DOMTreeElementPathComponent(treeElement, treeElement.representedObject);
-            pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.SiblingWasSelected, this._pathComponentSelected, this);
+            pathComponent.addEventListener(WebInspector.HierarchicalPathComponent.Event.Clicked, this._pathComponentSelected, this);
             pathComponents.unshift(pathComponent);
             treeElement = treeElement.parent;
         }

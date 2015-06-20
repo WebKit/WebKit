@@ -1,3 +1,19 @@
+2015-06-20  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Unable to select parent element in the DOM tree path bar
+        https://bugs.webkit.org/show_bug.cgi?id=145810
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WebInspector.DOMTreeContentView.prototype.get selectionPathComponents):
+        * UserInterface/Views/HierarchicalPathComponent.js:
+        (WebInspector.HierarchicalPathComponent.prototype.get selectedPathComponent):
+        (WebInspector.HierarchicalPathComponent.prototype._selectElementMouseUp):
+        (WebInspector.HierarchicalPathComponent.prototype._selectElementSelectionChanged):
+        (WebInspector.HierarchicalPathComponent):
+        (WebInspector.HierarchicalPathComponent.prototype._selectElementMouseDown): Deleted.
+
 2015-06-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Duplication of style attribute in rules panel for shadow content
