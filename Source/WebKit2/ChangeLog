@@ -1,3 +1,37 @@
+2015-06-20  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][iOS] Avoid synchronous IPC on view state change when the content is not visible
+        https://bugs.webkit.org/show_bug.cgi?id=146179
+        <rdar://problem/20923432>
+
+        Reviewed by Tim Horton.
+
+        After r170787, viewStateChange() would cause a synchronous IPC between
+        the UIProcess and the WebProcess when the view becomes visible. This
+        was to avoid painting empty / black tiles when unsuspending the
+        WebProcess on tab switch, in the event volatile IOSurfaces were purged.
+
+        However, this sync IPC can have performance implications and is not
+        needed when the content is not actually visible yet (e.g.
+        hideContentUntilNextUpdate() was called, or the tab was killed).
+
+        This patch avoids the synchronous IPC when the content is hidden and
+        exposes a private API on WKWebView so that clients can ask for the
+        content to be hidden until the next update. This would allow for
+        clients to avoid the synchronous IPC if they don't need the content
+        to be displayed synchronously (e.g. the view is obscured).
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _hideContentUntilNextUpdate]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::hasVisibleContent):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dispatchViewStateChange):
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::isContentHidden):
+
 2015-06-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Check for SHA1 certificates ignores subresources

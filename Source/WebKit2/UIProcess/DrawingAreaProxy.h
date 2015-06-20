@@ -90,6 +90,7 @@ public:
     virtual void dispatchAfterEnsuringDrawing(std::function<void (CallbackBase::Error)>) { ASSERT_NOT_REACHED(); }
 
     virtual void hideContentUntilNextUpdate() { ASSERT_NOT_REACHED(); }
+    virtual bool hasVisibleContent() const { return true; }
 
     virtual void willSendUpdateGeometry() { }
 

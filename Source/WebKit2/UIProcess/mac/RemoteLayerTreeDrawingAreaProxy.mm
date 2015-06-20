@@ -421,4 +421,9 @@ void RemoteLayerTreeDrawingAreaProxy::hideContentUntilNextUpdate()
     m_remoteLayerTreeHost.detachRootLayer();
 }
 
+bool RemoteLayerTreeDrawingAreaProxy::hasVisibleContent() const
+{
+    return m_remoteLayerTreeHost.rootLayer();
+}
+
 } // namespace WebKit

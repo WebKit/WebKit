@@ -134,6 +134,7 @@ WK_EXTERN NSString * const _WKShouldOpenExternalURLsKey WK_AVAILABLE(WK_MAC_TBA,
 
 - (void)_beginInteractiveObscuredInsetsChange;
 - (void)_endInteractiveObscuredInsetsChange;
+- (void)_hideContentUntilNextUpdate;
 
 - (void)_beginAnimatedResizeWithUpdates:(void (^)(void))updateBlock;
 - (void)_endAnimatedResize;

@@ -2591,6 +2591,12 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     [self _updateVisibleContentRects];
 }
 
+- (void)_hideContentUntilNextUpdate
+{
+    if (auto* area = _page->drawingArea())
+        area->hideContentUntilNextUpdate();
+}
+
 - (void)_beginAnimatedResizeWithUpdates:(void (^)(void))updateBlock
 {
     CGRect oldBounds = self.bounds;

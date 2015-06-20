@@ -1372,7 +1372,7 @@ void WebPageProxy::dispatchViewStateChange()
     ViewState::Flags changed = m_viewState ^ previousViewState;
 
     // We always want to wait for the Web process to reply if we've been in-window before and are coming back in-window.
-    if (m_viewWasEverInWindow && (changed & ViewState::IsInWindow) && isInWindow())
+    if (m_viewWasEverInWindow && (changed & ViewState::IsInWindow) && isInWindow() && m_drawingArea->hasVisibleContent())
         m_viewStateChangeWantsSynchronousReply = true;
 
     // Don't wait synchronously if the view state is not visible. (This matters in particular on iOS, where a hidden page may be suspended.)

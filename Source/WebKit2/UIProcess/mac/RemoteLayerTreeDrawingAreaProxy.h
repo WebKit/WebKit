@@ -39,7 +39,7 @@ namespace WebKit {
 class RemoteLayerTreeTransaction;
 class RemoteScrollingCoordinatorTransaction;
 
-class RemoteLayerTreeDrawingAreaProxy : public DrawingAreaProxy {
+class RemoteLayerTreeDrawingAreaProxy final : public DrawingAreaProxy {
 public:
     explicit RemoteLayerTreeDrawingAreaProxy(WebPageProxy&);
     virtual ~RemoteLayerTreeDrawingAreaProxy();
@@ -77,6 +77,7 @@ private:
 
     virtual void waitForDidUpdateViewState() override;
     virtual void hideContentUntilNextUpdate() override;
+    virtual bool hasVisibleContent() const override;
     
     WebCore::FloatPoint indicatorLocation() const;
 
