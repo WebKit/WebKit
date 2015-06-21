@@ -21,6 +21,9 @@ include_directories(
     ${FORWARDING_HEADERS_WEBKIT2GTK_DIR}
     ${FORWARDING_HEADERS_WEBKIT2GTK_EXTENSION_DIR}
     ${TOOLS_DIR}/TestWebKitAPI/gtk/WebKit2Gtk
+)
+
+include_directories(SYSTEM
     ${ATSPI_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
     ${GTK3_INCLUDE_DIRS}

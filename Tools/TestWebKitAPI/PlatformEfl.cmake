@@ -11,6 +11,9 @@ include_directories(
     ${WEBKIT2_DIR}/UIProcess/API/C/soup
     ${WEBKIT2_DIR}/UIProcess/API/C/efl
     ${WEBKIT2_DIR}/UIProcess/API/efl
+)
+
+include_directories(SYSTEM
     ${ECORE_EVAS_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
     ${LIBSOUP_INCLUDE_DIRS}

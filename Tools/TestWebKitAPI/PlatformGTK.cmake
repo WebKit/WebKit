@@ -15,11 +15,15 @@ include_directories(
     ${WEBKIT2_DIR}/UIProcess/API/C/soup
     ${WEBKIT2_DIR}/UIProcess/API/C/gtk
     ${WEBKIT2_DIR}/UIProcess/API/gtk
+)
+
+include_directories(SYSTEM
     ${GDK3_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
     ${GTK3_INCLUDE_DIRS}
     ${LIBSOUP_INCLUDE_DIRS}
 )
+
 set(test_main_SOURCES
     ${TESTWEBKITAPI_DIR}/gtk/main.cpp
 )

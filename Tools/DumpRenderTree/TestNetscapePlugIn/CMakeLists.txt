@@ -33,10 +33,14 @@ set(WebKitTestNetscapePlugin_INCLUDE_DIRECTORIES
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/unix/ForwardingHeaders
     ${WEBCORE_DIR}
+)
+
+set(WebKitTestNetscapePlugin_SYSTEM_INCLUDE_DIRECTORIES
     ${X11_INCLUDE_DIR}
 )
 
 include_directories(${WebKitTestNetscapePlugin_INCLUDE_DIRECTORIES})
+include_directories(SYSTEM ${WebKitTestNetscapePlugin_SYSTEM_INCLUDE_DIRECTORIES})
 
 set(WebKitTestNetscapePlugin_LIBRARIES
     ${X11_LIBRARIES}

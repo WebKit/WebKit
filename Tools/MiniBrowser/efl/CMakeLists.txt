@@ -11,8 +11,14 @@ set(MiniBrowser_SOURCES
 )
 
 set(MiniBrowser_INCLUDE_DIRECTORIES
-    ${CAIRO_INCLUDE_DIRS}
     ${DERIVED_SOURCES_WEBKIT2_DIR}/include
+    ${WEBKIT2_DIR}/UIProcess/API/efl
+    ${WEBKIT2_DIR}
+    ${CMAKE_SOURCE_DIR}/Source
+)
+
+set(MiniBrowser_SYSTEM_INCLUDE_DIRECTORIES
+    ${CAIRO_INCLUDE_DIRS}
     ${ECORE_INCLUDE_DIRS}
     ${ECORE_EVAS_INCLUDE_DIRS}
     ${ECORE_CON_INCLUDE_DIRS}
@@ -30,9 +36,6 @@ set(MiniBrowser_INCLUDE_DIRECTORIES
     ${ETHUMB_INCLUDE_DIRS}
     ${ETHUMB_CLIENT_INCLUDE_DIRS}
     ${EVAS_INCLUDE_DIRS}
-    ${WEBKIT2_DIR}/UIProcess/API/efl
-    ${WEBKIT2_DIR}
-    ${CMAKE_SOURCE_DIR}/Source
 )
 
 set(MiniBrowser_LIBRARIES
@@ -61,6 +64,7 @@ set(MiniBrowser_LIBRARIES
 
 if (ELEMENTARY_FOUND)
     include_directories(${MiniBrowser_INCLUDE_DIRECTORIES})
+    include_directories(SYSTEM ${MiniBrowser_SYSTEM_INCLUDE_DIRECTORIES})
     add_executable(MiniBrowser ${MiniBrowser_SOURCES})
     target_link_libraries(MiniBrowser ${MiniBrowser_LIBRARIES})
     set_target_properties(MiniBrowser PROPERTIES FOLDER "Tools")

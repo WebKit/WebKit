@@ -1,3 +1,26 @@
+2015-06-21  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] Ignore warnings from system headers when compiling Tools
+        https://bugs.webkit.org/show_bug.cgi?id=146185
+
+        Reviewed by Martin Robinson.
+
+        Use the SYSTEM argument to the include_directories() command to silence compiler warnings
+        from system headers that we don't control.
+
+        * DumpRenderTree/TestNetscapePlugIn/CMakeLists.txt:
+        * ImageDiff/CMakeLists.txt: Also, remove an EFL include directory from here...
+        * ImageDiff/PlatformEfl.cmake: ...and put it here where it belongs.
+        * ImageDiff/PlatformGTK.cmake:
+        * MiniBrowser/efl/CMakeLists.txt:
+        * MiniBrowser/gtk/CMakeLists.txt:
+        * TestWebKitAPI/PlatformEfl.cmake:
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/Tests/WebKit2Gtk/CMakeLists.txt:
+        * WebKitTestRunner/CMakeLists.txt:
+        * WebKitTestRunner/PlatformEfl.cmake:
+        * WebKitTestRunner/PlatformGTK.cmake:
+
 2015-06-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Define GDK_VERSION_MIN_REQUIRED when compiling MiniBrowser
