@@ -1,5 +1,16 @@
 2015-06-21  David Kilzer  <ddkilzer@apple.com>
 
+        REGRESSION (r185809): fast/css-grid-layout/flex-content-sized-columns-resize.html hangs on WK1
+
+        Since window.resize() occurs in the same runloop as the load on
+        WK1, testRunner.notifyDone() would never get called.
+
+        * fast/css-grid-layout/flex-content-sized-columns-resize.html:
+        Call document.body.offsetTop to ensure layout occurs at the
+        initial window size before calling window.resize().
+
+2015-06-21  David Kilzer  <ddkilzer@apple.com>
+
         fast/css-grid-layout/flex-content-sized-columns-resize.html is flaky
 
         The Flakiness Dashboard says this test is flaky on Apple and EFL
