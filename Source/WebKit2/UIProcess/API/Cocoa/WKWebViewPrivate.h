@@ -205,7 +205,7 @@ WK_EXTERN NSString * const _WKShouldOpenExternalURLsKey WK_AVAILABLE(WK_MAC_TBA,
 @property (nonatomic, setter=_setScrollPerformanceDataCollectionEnabled:) BOOL _scrollPerformanceDataCollectionEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 @property (nonatomic, readonly) NSArray *_scrollPerformanceData WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
-- (WKNavigation *)_loadRequest:(NSURLRequest *)request withOptions:(NSDictionary *)loadOptions WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+- (WKNavigation *)_loadRequest:(NSURLRequest *)request withOptions:(WK_DICTIONARY(NSString *, id) *)loadOptions WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 @end
 

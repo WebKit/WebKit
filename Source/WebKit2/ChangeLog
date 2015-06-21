@@ -1,3 +1,23 @@
+2015-06-20  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Actually use Objective-C lightweight generics when the compiler supports them
+        https://bugs.webkit.org/show_bug.cgi?id=146183
+
+        Reviewed by Sam Weinig.
+
+        * Shared/API/Cocoa/WKFoundation.h: When the compiler supports Objective-C generics, define
+        WK_ARRAY and WK_SET to use them. Also added a definition of WK_DICTIONARY.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: Use WK_DICTIONARY for the options dictionary of
+        -_loadRequest:withOptions:.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore fetchDataRecordsOfTypes:completionHandler:]): Made the completion
+        halder type match the declaration, now that NSArray and WK_ARRAY(WKWebsiteDataRecord *) are
+        not the same.
+
+        * mac/postprocess-framework-headers.sh: Also rewrite WK_DICTIONARY.
+
 2015-06-20  Chris Dumez  <cdumez@apple.com>
 
         [WK2][iOS] Avoid synchronous IPC on view state change when the content is not visible

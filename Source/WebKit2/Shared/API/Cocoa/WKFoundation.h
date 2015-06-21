@@ -49,8 +49,19 @@
 #define WK_ENUM_AVAILABLE(_mac, _ios)
 #define WK_ENUM_AVAILABLE_IOS(_ios)
 
+#if __has_feature(objc_generics)
+
+#define WK_ARRAY(_objectType) NSArray<_objectType>
+#define WK_DICTIONARY(_keyType, _valueType) NSDictionary<_keyType, _valueType>
+#define WK_SET(_objectType) NSSet<_objectType>
+
+#else
+
 #define WK_ARRAY(...) NSArray
+#define WK_DICTIONARY(...) NSDictionary
 #define WK_SET(...) NSSet
+
+#endif
 
 #ifndef __NSi_8_3
 #define __NSi_8_3 introduced=8.3
