@@ -1,5 +1,19 @@
 2015-06-21  David Kilzer  <ddkilzer@apple.com>
 
+        fast/fixed-layout/fixed-layout.html times out on Apple WK2 bots
+
+        The Flakiness Dashboard says this test times out on Apple
+        WebKit2 platforms by not calling testRunner.notifyDone():
+
+        <http://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=fast%2Ffixed-layout%2Ffixed-layout.html>
+
+        * fast/css-grid-layout/flex-content-sized-columns-resize.html:
+        Use the same mechanism here that was just added in r185811.
+        * fast/fixed-layout/fixed-layout.html: Switch to using a
+        zero-delay timer instead of document.body.offsetTop.
+
+2015-06-21  David Kilzer  <ddkilzer@apple.com>
+
         REGRESSION (r185809): fast/css-grid-layout/flex-content-sized-columns-resize.html hangs on WK1
 
         Since window.resize() occurs in the same runloop as the load on

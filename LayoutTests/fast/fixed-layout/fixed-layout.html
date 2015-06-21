@@ -6,15 +6,17 @@ window.onload = function () {
         return;
     }
 
-    // Ensure layout is up to date here so that we get a resize event instead of just using
-    // 200x200 as the initial size, in WebKit1 (causing the test to hang).
-    document.body.offsetTop;
-
     testRunner.waitUntilDone();
-    window.resizeTo(200, 200);
+
+    // Prevent WebKit1 hangs by ensuring layout is up-to-date before resize.
+    setTimeout(function() { window.resizeTo(200, 200); }, 0);
 }
 
 window.onresize = function () {
+    if (!window.testRunner) {
+        return;
+    }
+
     internals.setUseFixedLayout(true);
     internals.setFixedLayoutSize(400, 400);
 

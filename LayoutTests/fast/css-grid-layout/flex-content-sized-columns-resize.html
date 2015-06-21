@@ -18,9 +18,7 @@ window.onload = function () {
     }
 
     // Prevent WebKit1 hangs by ensuring layout is up-to-date before resize.
-    document.body.offsetTop;
-
-    window.resizeTo(600, 600);
+    setTimeout(function() { window.resizeTo(600, 600); }, 0);
 }
 
 window.onresize = function () {
