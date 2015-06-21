@@ -102,12 +102,10 @@ using namespace WebCore;
     self.wantsLayer = YES;
     self.layer.anchorPoint = CGPointZero;
 
-    bool wantsCrossfade = _textIndicator->wantsContentCrossfade();
-
     FloatSize contentsImageLogicalSize = _textIndicator->contentImage()->size();
     contentsImageLogicalSize.scale(1 / _textIndicator->contentImageScaleFactor());
     RetainPtr<CGImageRef> contentsImage;
-    if (wantsCrossfade)
+    if (_textIndicator->wantsContentCrossfade())
         contentsImage = _textIndicator->contentImageWithHighlight()->getCGImageRef();
     else
         contentsImage = _textIndicator->contentImage()->getCGImageRef();
@@ -137,7 +135,7 @@ using namespace WebCore;
         FloatRect yellowHighlightRect(FloatPoint(), bounceLayerRect.size());
         // FIXME (138888): Ideally we wouldn't remove the margin in this case, but we need to
         // ensure that the yellow highlight and contentImageWithHighlight overlap precisely.
-        if (wantsCrossfade) {
+        if (!_textIndicator->wantsMargin()) {
             yellowHighlightRect.inflateX(-horizontalBorder);
             yellowHighlightRect.inflateY(-verticalBorder);
         }

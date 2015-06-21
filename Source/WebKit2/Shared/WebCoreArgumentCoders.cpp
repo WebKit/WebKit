@@ -2102,6 +2102,7 @@ void ArgumentCoder<TextIndicatorData>::encode(ArgumentEncoder& encoder, const Te
     encoder << textIndicatorData.textBoundingRectInRootViewCoordinates;
     encoder << textIndicatorData.textRectsInBoundingRectCoordinates;
     encoder << textIndicatorData.contentImageScaleFactor;
+    encoder << textIndicatorData.wantsMargin;
     encoder.encodeEnum(textIndicatorData.presentationTransition);
 
     bool hasImage = textIndicatorData.contentImage;
@@ -2127,6 +2128,9 @@ bool ArgumentCoder<TextIndicatorData>::decode(ArgumentDecoder& decoder, TextIndi
         return false;
 
     if (!decoder.decode(textIndicatorData.contentImageScaleFactor))
+        return false;
+
+    if (!decoder.decode(textIndicatorData.wantsMargin))
         return false;
 
     if (!decoder.decodeEnum(textIndicatorData.presentationTransition))

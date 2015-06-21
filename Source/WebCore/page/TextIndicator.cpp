@@ -36,6 +36,7 @@
 #include "ImageBuffer.h"
 #include "IntRect.h"
 #include "Page.h"
+#include "Range.h"
 
 using namespace WebCore;
 
@@ -103,6 +104,8 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, TextInd
     RefPtr<TextIndicator> indicator = TextIndicator::createWithSelectionInFrame(*frame, presentationTransition);
 
     frame->selection().setSelection(oldSelection);
+
+    indicator->setWantsMargin(!areRangesEqual(&range, oldSelection.toNormalizedRange().get()));
     
     return indicator.release();
 }
@@ -141,7 +144,7 @@ RefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame, Te
         return nullptr;
 
     RefPtr<Image> indicatorBitmapWithHighlight;
-    if (presentationTransition == TextIndicatorPresentationTransition::BounceAndCrossfade || presentationTransition == TextIndicatorPresentationTransition::Crossfade)
+    if (presentationTransition == TextIndicatorPresentationTransition::BounceAndCrossfade)
         indicatorBitmapWithHighlight = snapshotSelectionWithHighlight(frame);
 
     // Store the selection rect in window coordinates, to be used subsequently
@@ -176,6 +179,7 @@ RefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame, Te
     data.contentImage = indicatorBitmap;
     data.contentImageWithHighlight = indicatorBitmapWithHighlight;
     data.presentationTransition = presentationTransition;
+    data.wantsMargin = true;
 
     return TextIndicator::create(data);
 }
@@ -203,7 +207,6 @@ bool TextIndicator::wantsBounce() const
         return true;
         
     case TextIndicatorPresentationTransition::FadeIn:
-    case TextIndicatorPresentationTransition::Crossfade:
     case TextIndicatorPresentationTransition::None:
         return false;
     }
@@ -219,7 +222,6 @@ bool TextIndicator::wantsContentCrossfade() const
     
     switch (m_data.presentationTransition) {
     case TextIndicatorPresentationTransition::BounceAndCrossfade:
-    case TextIndicatorPresentationTransition::Crossfade:
         return true;
         
     case TextIndicatorPresentationTransition::Bounce:
@@ -240,7 +242,6 @@ bool TextIndicator::wantsFadeIn() const
         
     case TextIndicatorPresentationTransition::Bounce:
     case TextIndicatorPresentationTransition::BounceAndCrossfade:
-    case TextIndicatorPresentationTransition::Crossfade:
     case TextIndicatorPresentationTransition::None:
         return false;
     }
@@ -253,7 +254,6 @@ bool TextIndicator::wantsManualAnimation() const
 {
     switch (m_data.presentationTransition) {
     case TextIndicatorPresentationTransition::FadeIn:
-    case TextIndicatorPresentationTransition::Crossfade:
         return true;
 
     case TextIndicatorPresentationTransition::Bounce:

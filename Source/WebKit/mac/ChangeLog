@@ -1,3 +1,15 @@
+2015-06-20  Tim Horton  <timothy_horton@apple.com>
+
+        Deselection of text causes a noticeable jump on force touch machines
+        https://bugs.webkit.org/show_bug.cgi?id=146173
+        <rdar://problem/20992842>
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController _animationControllerForText]):
+        Get rid of TextIndicatorPresentationTransition::Crossfade.
+
 2015-06-19  Brent Fulgham  <bfulgham@apple.com>
 
         All calls of ImageBuffer::create should null check the return value

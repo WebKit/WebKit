@@ -1062,20 +1062,6 @@ String WebPage::platformUserAgent(const URL&) const
     return String();
 }
 
-static TextIndicatorPresentationTransition textIndicatorTransitionForImmediateAction(Range* selectionRange, Range& indicatorRange, bool forDataDetectors)
-{
-    if (areRangesEqual(&indicatorRange, selectionRange))
-        return TextIndicatorPresentationTransition::Crossfade;
-    return TextIndicatorPresentationTransition::FadeIn;
-}
-
-#if ENABLE(PDFKIT_PLUGIN)
-static TextIndicatorPresentationTransition textIndicatorTransitionForImmediateAction()
-{
-    return TextIndicatorPresentationTransition::FadeIn;
-}
-#endif
-
 void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locationInViewCoordinates)
 {
     layoutIfNeeded();
@@ -1104,7 +1090,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
     Element *URLElement = hitTestResult.URLElement();
     if (!absoluteLinkURL.isEmpty() && URLElement) {
         RefPtr<Range> linkRange = rangeOfContents(*URLElement);
-        immediateActionResult.linkTextIndicator = TextIndicator::createWithRange(*linkRange, textIndicatorTransitionForImmediateAction(selectionRange.get(), *linkRange, false));
+        immediateActionResult.linkTextIndicator = TextIndicator::createWithRange(*linkRange, TextIndicatorPresentationTransition::FadeIn);
     }
 
     NSDictionary *options = nil;
@@ -1114,7 +1100,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
     if (lookupRange) {
         if (Node* node = hitTestResult.innerNode()) {
             if (Frame* hitTestResultFrame = node->document().frame())
-                immediateActionResult.dictionaryPopupInfo = dictionaryPopupInfoForRange(hitTestResultFrame, *lookupRange.get(), &options, textIndicatorTransitionForImmediateAction(selectionRange.get(), *lookupRange, false));
+                immediateActionResult.dictionaryPopupInfo = dictionaryPopupInfoForRange(hitTestResultFrame, *lookupRange.get(), &options, TextIndicatorPresentationTransition::FadeIn);
         }
     }
 
@@ -1140,7 +1126,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
             detectedDataBoundingBox.unite(frameView->contentsToWindow(quad.enclosingBoundingBox()));
 
         immediateActionResult.detectedDataBoundingBox = detectedDataBoundingBox;
-        immediateActionResult.detectedDataTextIndicator = TextIndicator::createWithRange(*mainResultRange, textIndicatorTransitionForImmediateAction(selectionRange.get(), *mainResultRange, true));
+        immediateActionResult.detectedDataTextIndicator = TextIndicator::createWithRange(*mainResultRange, TextIndicatorPresentationTransition::FadeIn);
         immediateActionResult.detectedDataOriginatingPageOverlay = overlay->pageOverlayID();
 
         break;
@@ -1153,7 +1139,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
         immediateActionResult.detectedDataActionContext = DataDetection::detectItemAroundHitTestResult(hitTestResult, detectedDataBoundingBox, detectedDataRange);
         if (immediateActionResult.detectedDataActionContext && detectedDataRange) {
             immediateActionResult.detectedDataBoundingBox = detectedDataBoundingBox;
-            immediateActionResult.detectedDataTextIndicator = TextIndicator::createWithRange(*detectedDataRange, textIndicatorTransitionForImmediateAction(selectionRange.get(), *detectedDataRange, true));
+            immediateActionResult.detectedDataTextIndicator = TextIndicator::createWithRange(*detectedDataRange, TextIndicatorPresentationTransition::FadeIn);
         }
     }
 
@@ -1181,7 +1167,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
                 immediateActionResult.isSelected = true;
                 immediateActionResult.allowsCopy = true;
 
-                immediateActionResult.dictionaryPopupInfo = dictionaryPopupInfoForSelectionInPDFPlugin(selection, *pdfPugin, &options, textIndicatorTransitionForImmediateAction());
+                immediateActionResult.dictionaryPopupInfo = dictionaryPopupInfoForSelectionInPDFPlugin(selection, *pdfPugin, &options, TextIndicatorPresentationTransition::FadeIn);
             }
         }
     }

@@ -528,8 +528,7 @@ static DictionaryPopupInfo dictionaryPopupInfoForRange(Frame* frame, Range& rang
         return nil;
 
     RefPtr<Range> selectionRange = frame->page()->focusController().focusedOrMainFrame().selection().selection().firstRange();
-    bool rangeMatchesSelection = areRangesEqual(dictionaryRange.get(), selectionRange.get());
-    DictionaryPopupInfo dictionaryPopupInfo = dictionaryPopupInfoForRange(frame, *dictionaryRange, options, rangeMatchesSelection ? TextIndicatorPresentationTransition::Crossfade : TextIndicatorPresentationTransition::FadeIn);
+    DictionaryPopupInfo dictionaryPopupInfo = dictionaryPopupInfoForRange(frame, *dictionaryRange, options, TextIndicatorPresentationTransition::FadeIn);
     if (!dictionaryPopupInfo.attributedString)
         return nil;
 
