@@ -1,3 +1,9 @@
+2015-06-21  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * Shared/API/Cocoa/WKFoundation.h: Don’t use generics if the SDK doesn’t support them.
+
 2015-06-21  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [SOUP] Use GTask in WebKitSoupRequestInputStream

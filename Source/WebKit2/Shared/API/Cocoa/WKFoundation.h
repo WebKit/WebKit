@@ -49,7 +49,7 @@
 #define WK_ENUM_AVAILABLE(_mac, _ios)
 #define WK_ENUM_AVAILABLE_IOS(_ios)
 
-#if __has_feature(objc_generics)
+#if __has_feature(objc_generics) && (!defined(__MAC_OS_X_VERSION_MAX_ALLOWED) || __MAC_OS_X_VERSION_MAX_ALLOWED >= 101100)
 
 #define WK_ARRAY(_objectType) NSArray<_objectType>
 #define WK_DICTIONARY(_keyType, _valueType) NSDictionary<_keyType, _valueType>
