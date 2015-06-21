@@ -377,8 +377,8 @@ void Cache::retrieve(const WebCore::ResourceRequest& originalRequest, uint64_t w
         };
 
 #if !LOG_DISABLED
-        auto elapsedMS = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime).count();
-        LOG(NetworkCache, "(NetworkProcess) retrieve complete useDecision=%d priority=%u time=%lldms", useDecision, originalRequest.priority(), elapsedMS);
+        auto elapsedMS = static_cast<int64_t>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime).count());
+        LOG(NetworkCache, "(NetworkProcess) retrieve complete useDecision=%d priority=%u time=%" PRIi64 "ms", useDecision, originalRequest.priority(), elapsedMS);
 #endif
         completionHandler(WTF::move(entry));
 

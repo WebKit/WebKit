@@ -96,14 +96,14 @@ void WebIDBServerConnection::deleteDatabase(const String& name, BoolCallbackFunc
     ASSERT(!m_serverRequests.contains(requestID));
     m_serverRequests.add(requestID, serverRequest.release());
 
-    LOG(IDB, "WebProcess deleteDatabase request ID %llu", requestID);
+    LOG(IDB, "WebProcess deleteDatabase request ID %" PRIu64, requestID);
 
     send(Messages::DatabaseProcessIDBConnection::DeleteDatabase(requestID, name));
 }
 
 void WebIDBServerConnection::didDeleteDatabase(uint64_t requestID, bool success)
 {
-    LOG(IDB, "WebProcess didDeleteDatabase request ID %llu", requestID);
+    LOG(IDB, "WebProcess didDeleteDatabase request ID %" PRIu64, requestID);
 
     RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
 
@@ -126,14 +126,14 @@ void WebIDBServerConnection::getOrEstablishIDBDatabaseMetadata(GetIDBDatabaseMet
     ASSERT(!m_serverRequests.contains(requestID));
     m_serverRequests.add(requestID, serverRequest.release());
 
-    LOG(IDB, "WebProcess getOrEstablishIDBDatabaseMetadata request ID %llu", requestID);
+    LOG(IDB, "WebProcess getOrEstablishIDBDatabaseMetadata request ID %" PRIu64, requestID);
 
     send(Messages::DatabaseProcessIDBConnection::GetOrEstablishIDBDatabaseMetadata(requestID));
 }
 
 void WebIDBServerConnection::didGetOrEstablishIDBDatabaseMetadata(uint64_t requestID, bool success, const IDBDatabaseMetadata& metadata)
 {
-    LOG(IDB, "WebProcess didGetOrEstablishIDBDatabaseMetadata request ID %llu", requestID);
+    LOG(IDB, "WebProcess didGetOrEstablishIDBDatabaseMetadata request ID %" PRIu64, requestID);
 
     RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
 
@@ -169,7 +169,7 @@ void WebIDBServerConnection::openTransaction(int64_t transactionID, const HashSe
     ASSERT(!m_serverRequests.contains(requestID));
     m_serverRequests.add(requestID, serverRequest.release());
 
-    LOG(IDB, "WebProcess openTransaction ID %lli (request ID %llu)", transactionID, requestID);
+    LOG(IDB, "WebProcess openTransaction ID %" PRIi64 " (request ID %" PRIu64 ")", transactionID, requestID);
 
     Vector<int64_t> objectStoreIDVector;
     copyToVector(objectStoreIDs, objectStoreIDVector);
@@ -178,7 +178,7 @@ void WebIDBServerConnection::openTransaction(int64_t transactionID, const HashSe
 
 void WebIDBServerConnection::didOpenTransaction(uint64_t requestID, bool success)
 {
-    LOG(IDB, "WebProcess didOpenTransaction request ID %llu", requestID);
+    LOG(IDB, "WebProcess didOpenTransaction request ID %" PRIu64, requestID);
 
     RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
 
@@ -196,14 +196,14 @@ void WebIDBServerConnection::beginTransaction(int64_t transactionID, std::functi
     ASSERT(!m_serverRequests.contains(requestID));
     m_serverRequests.add(requestID, serverRequest.release());
 
-    LOG(IDB, "WebProcess beginTransaction ID %lli (request ID %llu)", transactionID, requestID);
+    LOG(IDB, "WebProcess beginTransaction ID %" PRIi64 " (request ID %" PRIu64 ")", transactionID, requestID);
 
     send(Messages::DatabaseProcessIDBConnection::BeginTransaction(requestID, transactionID));
 }
 
 void WebIDBServerConnection::didBeginTransaction(uint64_t requestID, bool)
 {
-    LOG(IDB, "WebProcess didBeginTransaction request ID %llu", requestID);
+    LOG(IDB, "WebProcess didBeginTransaction request ID %" PRIu64, requestID);
 
     RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
 
@@ -225,14 +225,14 @@ void WebIDBServerConnection::commitTransaction(int64_t transactionID, BoolCallba
     ASSERT(!m_serverRequests.contains(requestID));
     m_serverRequests.add(requestID, serverRequest.release());
 
-    LOG(IDB, "WebProcess commitTransaction ID %lli (request ID %llu)", transactionID, requestID);
+    LOG(IDB, "WebProcess commitTransaction ID %" PRIi64 " (request ID %" PRIu64 ")", transactionID, requestID);
 
     send(Messages::DatabaseProcessIDBConnection::CommitTransaction(requestID, transactionID));
 }
 
 void WebIDBServerConnection::didCommitTransaction(uint64_t requestID, bool success)
 {
-    LOG(IDB, "WebProcess didCommitTransaction request ID %llu", requestID);
+    LOG(IDB, "WebProcess didCommitTransaction request ID %" PRIu64, requestID);
 
     RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
 
@@ -250,14 +250,14 @@ void WebIDBServerConnection::resetTransaction(int64_t transactionID, std::functi
     ASSERT(!m_serverRequests.contains(requestID));
     m_serverRequests.add(requestID, serverRequest.release());
 
-    LOG(IDB, "WebProcess resetTransaction ID %lli (request ID %llu)", transactionID, requestID);
+    LOG(IDB, "WebProcess resetTransaction ID %" PRIi64 " (request ID %" PRIu64 ")", transactionID, requestID);
 
     send(Messages::DatabaseProcessIDBConnection::ResetTransaction(requestID, transactionID));
 }
 
 void WebIDBServerConnection::didResetTransaction(uint64_t requestID, bool)
 {
-    LOG(IDB, "WebProcess didResetTransaction request ID %llu", requestID);
+    LOG(IDB, "WebProcess didResetTransaction request ID %" PRIu64, requestID);
 
     RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
 
@@ -282,14 +282,14 @@ void WebIDBServerConnection::rollbackTransaction(int64_t transactionID, std::fun
     ASSERT(!m_serverRequests.contains(requestID));
     m_serverRequests.add(requestID, serverRequest.release());
 
-    LOG(IDB, "WebProcess rollbackTransaction ID %lli (request ID %llu)", transactionID, requestID);
+    LOG(IDB, "WebProcess rollbackTransaction ID %" PRIi64 " (request ID %" PRIu64 ")", transactionID, requestID);
 
     send(Messages::DatabaseProcessIDBConnection::RollbackTransaction(requestID, transactionID));
 }
 
 void WebIDBServerConnection::didRollbackTransaction(uint64_t requestID, bool)
 {
-    LOG(IDB, "WebProcess didRollbackTransaction request ID %llu", requestID);
+    LOG(IDB, "WebProcess didRollbackTransaction request ID %" PRIu64, requestID);
 
     RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
 
@@ -323,14 +323,14 @@ void WebIDBServerConnection::createObjectStore(IDBTransactionBackend& transactio
     ASSERT(!m_serverRequests.contains(requestID));
     m_serverRequests.add(requestID, serverRequest.release());
 
-    LOG(IDB, "WebProcess createObjectStore '%s' in transaction ID %llu (request ID %llu)", operation.objectStoreMetadata().name.utf8().data(), transaction.id(), requestID);
+    LOG(IDB, "WebProcess createObjectStore '%s' in transaction ID %" PRIi64 " (request ID %" PRIu64 ")", operation.objectStoreMetadata().name.utf8().data(), transaction.id(), requestID);
 
     send(Messages::DatabaseProcessIDBConnection::CreateObjectStore(requestID, transaction.id(), operation.objectStoreMetadata()));
 }
 
 void WebIDBServerConnection::didCreateObjectStore(uint64_t requestID, bool success)
 {
-    LOG(IDB, "WebProcess didCreateObjectStore request ID %llu", requestID);
+    LOG(IDB, "WebProcess didCreateObjectStore request ID %" PRIu64, requestID);
 
     RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
 
@@ -352,14 +352,14 @@ void WebIDBServerConnection::createIndex(IDBTransactionBackend&transaction, cons
     ASSERT(!m_serverRequests.contains(requestID));
     m_serverRequests.add(requestID, serverRequest.release());
 
-    LOG(IDB, "WebProcess create index request ID %llu", requestID);
+    LOG(IDB, "WebProcess create index request ID %" PRIu64, requestID);
 
     send(Messages::DatabaseProcessIDBConnection::CreateIndex(requestID, transaction.id(), operation.objectStoreID(), operation.idbIndexMetadata()));
 }
 
 void WebIDBServerConnection::didCreateIndex(uint64_t requestID, bool success)
 {
-    LOG(IDB, "WebProcess didCreateIndex request ID %llu", requestID);
+    LOG(IDB, "WebProcess didCreateIndex request ID %" PRIu64, requestID);
 
     RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
 
@@ -381,14 +381,14 @@ void WebIDBServerConnection::deleteIndex(IDBTransactionBackend&transaction, cons
     ASSERT(!m_serverRequests.contains(requestID));
     m_serverRequests.add(requestID, serverRequest.release());
 
-    LOG(IDB, "WebProcess delete index request ID %llu", requestID);
+    LOG(IDB, "WebProcess delete index request ID %" PRIu64, requestID);
 
     send(Messages::DatabaseProcessIDBConnection::DeleteIndex(requestID, transaction.id(), operation.objectStoreID(), operation.idbIndexMetadata().id));
 }
 
 void WebIDBServerConnection::didDeleteIndex(uint64_t requestID, bool success)
 {
-    LOG(IDB, "WebProcess didDeleteIndex request ID %llu", requestID);
+    LOG(IDB, "WebProcess didDeleteIndex request ID %" PRIu64, requestID);
 
     RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
 
@@ -410,7 +410,7 @@ void WebIDBServerConnection::get(IDBTransactionBackend& transaction, const GetOp
     ASSERT(!m_serverRequests.contains(requestID));
     m_serverRequests.add(requestID, serverRequest.release());
 
-    LOG(IDB, "WebProcess get request ID %llu", requestID);
+    LOG(IDB, "WebProcess get request ID %" PRIu64, requestID);
 
     ASSERT(operation.keyRange());
 
@@ -429,7 +429,7 @@ void WebIDBServerConnection::put(IDBTransactionBackend& transaction, const PutOp
     ASSERT(!m_serverRequests.contains(requestID));
     m_serverRequests.add(requestID, serverRequest.release());
 
-    LOG(IDB, "WebProcess put request ID %llu", requestID);
+    LOG(IDB, "WebProcess put request ID %" PRIu64, requestID);
 
     ASSERT(operation.value());
 
@@ -447,7 +447,7 @@ void WebIDBServerConnection::put(IDBTransactionBackend& transaction, const PutOp
 
 void WebIDBServerConnection::didPutRecord(uint64_t requestID, const WebCore::IDBKeyData& resultKey, uint32_t errorCode, const String& errorMessage)
 {
-    LOG(IDB, "WebProcess didPutRecord request ID %llu (error - %s)", requestID, errorMessage.utf8().data());
+    LOG(IDB, "WebProcess didPutRecord request ID %" PRIu64 " (error - %s)", requestID, errorMessage.utf8().data());
 
     RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
 
@@ -459,7 +459,7 @@ void WebIDBServerConnection::didPutRecord(uint64_t requestID, const WebCore::IDB
 
 void WebIDBServerConnection::didGetRecord(uint64_t requestID, const WebCore::IDBGetResult& getResult, uint32_t errorCode, const String& errorMessage)
 {
-    LOG(IDB, "WebProcess didGetRecord request ID %llu (error - %s)", requestID, errorMessage.utf8().data());
+    LOG(IDB, "WebProcess didGetRecord request ID %" PRIu64 " (error - %s)", requestID, errorMessage.utf8().data());
 
     RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
 
@@ -471,7 +471,7 @@ void WebIDBServerConnection::didGetRecord(uint64_t requestID, const WebCore::IDB
 
 void WebIDBServerConnection::didOpenCursor(uint64_t requestID, int64_t cursorID, const IDBKeyData& key, const IDBKeyData& primaryKey, const IPC::DataReference& valueData, uint32_t errorCode, const String& errorMessage)
 {
-    LOG(IDB, "WebProcess didOpenCursor request ID %llu (error - %s)", requestID, errorMessage.utf8().data());
+    LOG(IDB, "WebProcess didOpenCursor request ID %" PRIu64 " (error - %s)", requestID, errorMessage.utf8().data());
 
     RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
 
@@ -484,7 +484,7 @@ void WebIDBServerConnection::didOpenCursor(uint64_t requestID, int64_t cursorID,
 
 void WebIDBServerConnection::didAdvanceCursor(uint64_t requestID, const IDBKeyData& key, const IDBKeyData& primaryKey, const IPC::DataReference& valueData, uint32_t errorCode, const String& errorMessage)
 {
-    LOG(IDB, "WebProcess didAdvanceCursor request ID %llu (error - %s)", requestID, errorMessage.utf8().data());
+    LOG(IDB, "WebProcess didAdvanceCursor request ID %" PRIu64 " (error - %s)", requestID, errorMessage.utf8().data());
 
     RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
 
@@ -497,7 +497,7 @@ void WebIDBServerConnection::didAdvanceCursor(uint64_t requestID, const IDBKeyDa
 
 void WebIDBServerConnection::didIterateCursor(uint64_t requestID, const IDBKeyData& key, const IDBKeyData& primaryKey, const IPC::DataReference& valueData, uint32_t errorCode, const String& errorMessage)
 {
-    LOG(IDB, "WebProcess didIterateCursor request ID %llu (error - %s)", requestID, errorMessage.utf8().data());
+    LOG(IDB, "WebProcess didIterateCursor request ID %" PRIu64 " (error - %s)", requestID, errorMessage.utf8().data());
 
     RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
 
@@ -520,14 +520,14 @@ void WebIDBServerConnection::count(IDBTransactionBackend& transaction, const Cou
     ASSERT(!m_serverRequests.contains(requestID));
     m_serverRequests.add(requestID, serverRequest.release());
 
-    LOG(IDB, "WebProcess count request ID %llu", requestID);
+    LOG(IDB, "WebProcess count request ID %" PRIu64, requestID);
 
     send(Messages::DatabaseProcessIDBConnection::Count(requestID, transaction.id(), operation.objectStoreID(), operation.indexID(), IDBKeyRangeData(operation.keyRange())));
 }
 
 void WebIDBServerConnection::didCount(uint64_t requestID, int64_t count, uint32_t errorCode, const String& errorMessage)
 {
-    LOG(IDB, "WebProcess didCount %lli request ID %llu (error - %s)", count, requestID, errorMessage.utf8().data());
+    LOG(IDB, "WebProcess didCount %" PRIi64 " request ID %" PRIu64 " (error - %s)", count, requestID, errorMessage.utf8().data());
 
     RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
 
@@ -549,14 +549,14 @@ void WebIDBServerConnection::deleteRange(IDBTransactionBackend& transaction, con
     ASSERT(!m_serverRequests.contains(requestID));
     m_serverRequests.add(requestID, serverRequest.release());
 
-    LOG(IDB, "WebProcess deleteRange request ID %llu", requestID);
+    LOG(IDB, "WebProcess deleteRange request ID %" PRIu64, requestID);
 
     send(Messages::DatabaseProcessIDBConnection::DeleteRange(requestID, transaction.id(), operation.objectStoreID(), IDBKeyRangeData(operation.keyRange())));
 }
 
 void WebIDBServerConnection::didDeleteRange(uint64_t requestID, uint32_t errorCode, const String& errorMessage)
 {
-    LOG(IDB, "WebProcess didDeleteRange request ID %llu", requestID);
+    LOG(IDB, "WebProcess didDeleteRange request ID %" PRIu64, requestID);
 
     RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
 
@@ -578,14 +578,14 @@ void WebIDBServerConnection::clearObjectStore(IDBTransactionBackend&, const Clea
     ASSERT(!m_serverRequests.contains(requestID));
     m_serverRequests.add(requestID, serverRequest.release());
 
-    LOG(IDB, "WebProcess clearObjectStore request ID %llu", requestID);
+    LOG(IDB, "WebProcess clearObjectStore request ID %" PRIu64, requestID);
 
     send(Messages::DatabaseProcessIDBConnection::ClearObjectStore(requestID, operation.transaction()->id(), operation.objectStoreID()));
 }
 
 void WebIDBServerConnection::didClearObjectStore(uint64_t requestID, bool success)
 {
-    LOG(IDB, "WebProcess didClearObjectStore request ID %llu", requestID);
+    LOG(IDB, "WebProcess didClearObjectStore request ID %" PRIu64, requestID);
 
     RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
 
@@ -607,14 +607,14 @@ void WebIDBServerConnection::deleteObjectStore(IDBTransactionBackend&, const Del
     ASSERT(!m_serverRequests.contains(requestID));
     m_serverRequests.add(requestID, serverRequest.release());
 
-    LOG(IDB, "WebProcess deleteObjectStore request ID %llu", requestID);
+    LOG(IDB, "WebProcess deleteObjectStore request ID %" PRIu64, requestID);
 
     send(Messages::DatabaseProcessIDBConnection::DeleteObjectStore(requestID, operation.transaction()->id(), operation.objectStoreMetadata().id));
 }
 
 void WebIDBServerConnection::didDeleteObjectStore(uint64_t requestID, bool success)
 {
-    LOG(IDB, "WebProcess didDeleteObjectStore request ID %llu", requestID);
+    LOG(IDB, "WebProcess didDeleteObjectStore request ID %" PRIu64, requestID);
 
     RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
 
@@ -636,14 +636,14 @@ void WebIDBServerConnection::changeDatabaseVersion(IDBTransactionBackend&, const
     ASSERT(!m_serverRequests.contains(requestID));
     m_serverRequests.add(requestID, serverRequest.release());
 
-    LOG(IDB, "WebProcess changeDatabaseVersion request ID %llu", requestID);
+    LOG(IDB, "WebProcess changeDatabaseVersion request ID %" PRIu64, requestID);
 
     send(Messages::DatabaseProcessIDBConnection::ChangeDatabaseVersion(requestID, operation.transaction()->id(), static_cast<uint64_t>(operation.version())));
 }
 
 void WebIDBServerConnection::didChangeDatabaseVersion(uint64_t requestID, bool success)
 {
-    LOG(IDB, "WebProcess didChangeDatabaseVersion request ID %llu", requestID);
+    LOG(IDB, "WebProcess didChangeDatabaseVersion request ID %" PRIu64, requestID);
 
     RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
 
@@ -665,7 +665,7 @@ void WebIDBServerConnection::openCursor(IDBTransactionBackend&, const OpenCursor
     ASSERT(!m_serverRequests.contains(requestID));
     m_serverRequests.add(requestID, serverRequest.release());
 
-    LOG(IDB, "WebProcess openCursor request ID %llu", requestID);
+    LOG(IDB, "WebProcess openCursor request ID %" PRIu64, requestID);
 
     send(Messages::DatabaseProcessIDBConnection::OpenCursor(requestID, operation.transactionID(), operation.objectStoreID(), operation.indexID(), static_cast<int64_t>(operation.direction()), static_cast<int64_t>(operation.cursorType()), static_cast<int64_t>(operation.taskType()), operation.keyRange()));
 }
@@ -682,7 +682,7 @@ void WebIDBServerConnection::cursorAdvance(IDBCursorBackend&, const CursorAdvanc
     ASSERT(!m_serverRequests.contains(requestID));
     m_serverRequests.add(requestID, serverRequest.release());
 
-    LOG(IDB, "WebProcess cursorAdvance request ID %llu", requestID);
+    LOG(IDB, "WebProcess cursorAdvance request ID %" PRIu64, requestID);
 
     send(Messages::DatabaseProcessIDBConnection::CursorAdvance(requestID, operation.cursorID(), operation.count()));
 }
@@ -699,7 +699,7 @@ void WebIDBServerConnection::cursorIterate(IDBCursorBackend&, const CursorIterat
     ASSERT(!m_serverRequests.contains(requestID));
     m_serverRequests.add(requestID, serverRequest.release());
 
-    LOG(IDB, "WebProcess cursorIterate request ID %llu", requestID);
+    LOG(IDB, "WebProcess cursorIterate request ID %" PRIu64, requestID);
 
     send(Messages::DatabaseProcessIDBConnection::CursorIterate(requestID, operation.cursorID(), operation.key()));
 }
