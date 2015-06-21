@@ -79,12 +79,12 @@ Node::InsertionNotificationRequest SVGScriptElement::insertedInto(ContainerNode&
     SVGElement::insertedInto(rootParent);
     if (rootParent.inDocument())
         SVGExternalResourcesRequired::insertedIntoDocument(this);
-    return shouldNotifySubtreeInsertions(rootParent) ? InsertionShouldCallDidNotifySubtreeInsertions : InsertionDone;
+    return shouldCallFinishedInsertingSubtree(rootParent) ? InsertionShouldCallFinishedInsertingSubtree : InsertionDone;
 }
 
-void SVGScriptElement::didNotifySubtreeInsertions()
+void SVGScriptElement::finishedInsertingSubtree()
 {
-    ScriptElement::didNotifySubtreeInsertions();
+    ScriptElement::finishedInsertingSubtree();
 }
 
 void SVGScriptElement::childrenChanged(const ChildChange& change)

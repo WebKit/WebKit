@@ -52,7 +52,7 @@ protected:
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override final;
-    virtual void didNotifySubtreeInsertions() override final;
+    virtual void finishedInsertingSubtree() override final;
     virtual void didAttachRenderers() override;
 
 private:

@@ -79,12 +79,12 @@ ScriptElement::~ScriptElement()
     stopLoadRequest();
 }
 
-bool ScriptElement::shouldNotifySubtreeInsertions(ContainerNode& insertionPoint)
+bool ScriptElement::shouldCallFinishedInsertingSubtree(ContainerNode& insertionPoint)
 {
     return insertionPoint.inDocument() && !m_parserInserted;
 }
 
-void ScriptElement::didNotifySubtreeInsertions()
+void ScriptElement::finishedInsertingSubtree()
 {
     ASSERT(!m_parserInserted);
     prepareScript(); // FIXME: Provide a real starting line number here.

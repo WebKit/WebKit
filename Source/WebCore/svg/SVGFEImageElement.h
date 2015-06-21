@@ -45,7 +45,7 @@ public:
 private:
     SVGFEImageElement(const QualifiedName&, Document&);
 
-    virtual void didNotifySubtreeInsertions() override;
+    virtual void finishedInsertingSubtree() override;
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual void svgAttributeChanged(const QualifiedName&) override;

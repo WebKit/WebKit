@@ -176,10 +176,10 @@ void SVGTextPathElement::buildPendingResource()
 Node::InsertionNotificationRequest SVGTextPathElement::insertedInto(ContainerNode& rootParent)
 {
     SVGTextContentElement::insertedInto(rootParent);
-    return InsertionShouldCallDidNotifySubtreeInsertions;
+    return InsertionShouldCallFinishedInsertingSubtree;
 }
 
-void SVGTextPathElement::didNotifySubtreeInsertions()
+void SVGTextPathElement::finishedInsertingSubtree()
 {
     buildPendingResource();
 }

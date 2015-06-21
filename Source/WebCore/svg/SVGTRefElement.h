@@ -47,7 +47,7 @@ private:
 
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
     virtual void removedFrom(ContainerNode&) override;
-    virtual void didNotifySubtreeInsertions() override;
+    virtual void finishedInsertingSubtree() override;
 
     virtual void clearTarget() override;
 

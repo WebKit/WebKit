@@ -1636,7 +1636,7 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
     ChildNodeInsertionNotifier(*this).notify(shadowRoot, postInsertionNotificationTargets);
 
     for (auto& target : postInsertionNotificationTargets)
-        target->didNotifySubtreeInsertions();
+        target->finishedInsertingSubtree();
 
     resetNeedsNodeRenderingTraversalSlowPath();
 

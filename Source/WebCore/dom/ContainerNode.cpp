@@ -347,7 +347,7 @@ void ContainerNode::notifyChildInserted(Node& child, ChildChangeSource source)
     childrenChanged(change);
 
     for (auto& target : postInsertionNotificationTargets)
-        target->didNotifySubtreeInsertions();
+        target->finishedInsertingSubtree();
 }
 
 void ContainerNode::notifyChildRemoved(Node& child, Node* previousSibling, Node* nextSibling, ChildChangeSource source)

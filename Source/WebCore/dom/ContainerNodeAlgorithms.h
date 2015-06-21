@@ -195,7 +195,7 @@ namespace Private {
 inline void ChildNodeInsertionNotifier::notifyNodeInsertedIntoDocument(Node& node, NodeVector& postInsertionNotificationTargets)
 {
     ASSERT(m_insertionPoint.inDocument());
-    if (Node::InsertionShouldCallDidNotifySubtreeInsertions == node.insertedInto(m_insertionPoint))
+    if (Node::InsertionShouldCallFinishedInsertingSubtree == node.insertedInto(m_insertionPoint))
         postInsertionNotificationTargets.append(node);
     if (is<ContainerNode>(node))
         notifyDescendantInsertedIntoDocument(downcast<ContainerNode>(node), postInsertionNotificationTargets);
@@ -206,7 +206,7 @@ inline void ChildNodeInsertionNotifier::notifyNodeInsertedIntoTree(ContainerNode
     NoEventDispatchAssertion assertNoEventDispatch;
     ASSERT(!m_insertionPoint.inDocument());
 
-    if (Node::InsertionShouldCallDidNotifySubtreeInsertions == node.insertedInto(m_insertionPoint))
+    if (Node::InsertionShouldCallFinishedInsertingSubtree == node.insertedInto(m_insertionPoint))
         postInsertionNotificationTargets.append(node);
     notifyDescendantInsertedIntoTree(node, postInsertionNotificationTargets);
 }

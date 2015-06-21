@@ -143,10 +143,10 @@ void SVGFEImageElement::svgAttributeChanged(const QualifiedName& attrName)
 Node::InsertionNotificationRequest SVGFEImageElement::insertedInto(ContainerNode& rootParent)
 {
     SVGFilterPrimitiveStandardAttributes::insertedInto(rootParent);
-    return InsertionShouldCallDidNotifySubtreeInsertions;
+    return InsertionShouldCallFinishedInsertingSubtree;
 }
 
-void SVGFEImageElement::didNotifySubtreeInsertions()
+void SVGFEImageElement::finishedInsertingSubtree()
 {
     buildPendingResource();
 }

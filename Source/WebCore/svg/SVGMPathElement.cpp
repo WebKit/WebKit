@@ -90,11 +90,11 @@ Node::InsertionNotificationRequest SVGMPathElement::insertedInto(ContainerNode& 
 {
     SVGElement::insertedInto(rootParent);
     if (rootParent.inDocument())
-        return InsertionShouldCallDidNotifySubtreeInsertions;
+        return InsertionShouldCallFinishedInsertingSubtree;
     return InsertionDone;
 }
 
-void SVGMPathElement::didNotifySubtreeInsertions()
+void SVGMPathElement::finishedInsertingSubtree()
 {
     buildPendingResource();
 }

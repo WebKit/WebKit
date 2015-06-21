@@ -133,11 +133,11 @@ Node::InsertionNotificationRequest HTMLFrameElementBase::insertedInto(ContainerN
 {
     HTMLFrameOwnerElement::insertedInto(insertionPoint);
     if (insertionPoint.inDocument())
-        return InsertionShouldCallDidNotifySubtreeInsertions;
+        return InsertionShouldCallFinishedInsertingSubtree;
     return InsertionDone;
 }
 
-void HTMLFrameElementBase::didNotifySubtreeInsertions()
+void HTMLFrameElementBase::finishedInsertingSubtree()
 {
     if (!inDocument())
         return;

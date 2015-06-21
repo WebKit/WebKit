@@ -260,10 +260,10 @@ Node::InsertionNotificationRequest SVGSMILElement::insertedInto(ContainerNode& r
     if (m_timeContainer)
         m_timeContainer->notifyIntervalsChanged();
 
-    return InsertionShouldCallDidNotifySubtreeInsertions;
+    return InsertionShouldCallFinishedInsertingSubtree;
 }
 
-void SVGSMILElement::didNotifySubtreeInsertions()
+void SVGSMILElement::finishedInsertingSubtree()
 {
     buildPendingResource();
 }

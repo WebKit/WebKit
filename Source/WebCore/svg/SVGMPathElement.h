@@ -53,7 +53,7 @@ private:
     virtual void svgAttributeChanged(const QualifiedName&) override;
 
     virtual bool rendererIsNeeded(const RenderStyle&) override { return false; }
-    virtual void didNotifySubtreeInsertions() override;
+    virtual void finishedInsertingSubtree() override;
 
     void notifyParentOfPathChange(ContainerNode*);
 
