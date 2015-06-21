@@ -1,3 +1,19 @@
+2015-06-21  David Kilzer  <ddkilzer@apple.com>
+
+        fast/css-grid-layout/flex-content-sized-columns-resize.html is flaky
+
+        The Flakiness Dashboard says this test is flaky on Apple and EFL
+        WebKit2 platforms:
+
+        <http://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=fast%2Fcss-grid-layout%2Fflex-content-sized-columns-resize.html>
+
+        It currently doesn't wait for window.resize() to complete, which
+        is likely the source of flakiness.
+
+        * fast/css-grid-layout/flex-content-sized-columns-resize.html:
+        Switch to using notifyDone() inside a window.onresize function,
+        and make the test work in a web browser without TestRunner.
+
 2015-06-20  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r185779): fast/canvas/{canvas-toDataURL-crash,pattern-too-large-to-create}.html are broken
