@@ -1,3 +1,14 @@
+2015-06-21  Philip Chimento  <philip.chimento@gmail.com>
+
+        libwebkit2gtk fails to link without opengl
+        https://bugs.webkit.org/show_bug.cgi?id=138332
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/OptionsGTK.cmake: USE(TEXTURE_MAPPER) must be
+        enabled regardless of whether OpenGL is, because certain symbols
+        such as WebCore::GraphicsLayer::create() need to be built.
+
 2015-06-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [EFL][GTK] Define GLIB_VERSION_MIN_REQUIRED and require glib 2.36 for GTK

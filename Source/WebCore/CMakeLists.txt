@@ -3047,8 +3047,6 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
     endif ()
 
     list(APPEND WebCore_INCLUDE_DIRECTORIES
-        "${THIRDPARTY_DIR}/ANGLE/"
-        "${THIRDPARTY_DIR}/ANGLE/include/KHR"
         "${WEBCORE_DIR}/platform/graphics/gpu"
     )
 
@@ -3147,6 +3145,11 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
         platform/graphics/GraphicsContext3D.cpp
     )
 endif ()
+
+list(APPEND WebCore_INCLUDE_DIRECTORIES
+    "${THIRDPARTY_DIR}/ANGLE/"
+    "${THIRDPARTY_DIR}/ANGLE/include/KHR"
+)
 
 if (ENABLE_WEB_REPLAY)
     list(APPEND WebCore_INCLUDE_DIRECTORIES
