@@ -1,5 +1,21 @@
 2015-06-21  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [SOUP] Use GTask in WebKitSoupRequestInputStream
+        https://bugs.webkit.org/show_bug.cgi?id=146184
+
+        Reviewed by Carlos Garcia Campos.
+
+        Replace deprecated use of GSimpleAsyncResult with GTask.
+
+        * WebProcess/soup/WebKitSoupRequestInputStream.cpp:
+        (AsyncReadData::AsyncReadData):
+        (webkitSoupRequestInputStreamReadAsyncResultComplete):
+        (webkitSoupRequestInputStreamPendingReadAsyncComplete):
+        (webkitSoupRequestInputStreamReadAsync):
+        (webkitSoupRequestInputStreamReadFinish):
+
+2015-06-21  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Fix format strings in NetworkCache.cpp and NetworkCacheStatistics.cpp and WebIDBServerConnection.cpp
         https://bugs.webkit.org/show_bug.cgi?id=146172
 

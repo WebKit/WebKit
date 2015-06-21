@@ -24,18 +24,16 @@
 #include <wtf/glib/GRefPtr.h>
 
 struct AsyncReadData {
-    AsyncReadData(GSimpleAsyncResult* result, void* buffer, gsize count, GCancellable* cancellable)
-        : result(result)
+    AsyncReadData(GTask* task, void* buffer, gsize count)
+        : task(task)
         , buffer(buffer)
         , count(count)
-        , cancellable(cancellable)
     {
     }
 
-    GRefPtr<GSimpleAsyncResult> result;
+    GRefPtr<GTask> task;
     void* buffer;
     size_t count;
-    GRefPtr<GCancellable> cancellable;
 };
 
 struct _WebKitSoupRequestInputStreamPrivate {
@@ -49,16 +47,16 @@ struct _WebKitSoupRequestInputStreamPrivate {
 
 G_DEFINE_TYPE(WebKitSoupRequestInputStream, webkit_soup_request_input_stream, G_TYPE_MEMORY_INPUT_STREAM)
 
-static void webkitSoupRequestInputStreamReadAsyncResultComplete(WebKitSoupRequestInputStream* stream, GSimpleAsyncResult* result, void* buffer, gsize count, GCancellable* cancellable)
+static void webkitSoupRequestInputStreamReadAsyncResultComplete(GTask* task, void* buffer, gsize count)
 {
-    GError* error = 0;
-    gssize bytesRead = G_INPUT_STREAM_GET_CLASS(stream)->read_fn(G_INPUT_STREAM(stream), buffer, count, cancellable, &error);
+    WebKitSoupRequestInputStream* stream = WEBKIT_SOUP_REQUEST_INPUT_STREAM(g_task_get_source_object(task));
+    GError* error = nullptr;
+    gssize bytesRead = G_INPUT_STREAM_GET_CLASS(stream)->read_fn(G_INPUT_STREAM(stream), buffer, count, g_task_get_cancellable(task), &error);
     if (!error) {
-        g_simple_async_result_set_op_res_gssize(result, bytesRead);
         stream->priv->bytesRead += bytesRead;
+        g_task_return_int(task, bytesRead);
     } else
-        g_simple_async_result_take_error(result, error);
-    g_simple_async_result_complete_in_idle(result);
+        g_task_return_error(task, error);
 }
 
 static void webkitSoupRequestInputStreamPendingReadAsyncComplete(WebKitSoupRequestInputStream* stream)
@@ -67,7 +65,7 @@ static void webkitSoupRequestInputStreamPendingReadAsyncComplete(WebKitSoupReque
         return;
 
     AsyncReadData* data = stream->priv->pendingAsyncRead.get();
-    webkitSoupRequestInputStreamReadAsyncResultComplete(stream, data->result.get(), data->buffer, data->count, data->cancellable.get());
+    webkitSoupRequestInputStreamReadAsyncResultComplete(data->task.get(), data->buffer, data->count);
     stream->priv->pendingAsyncRead = nullptr;
 }
 
@@ -84,30 +82,28 @@ static bool webkitSoupRequestInputStreamIsWaitingForData(WebKitSoupRequestInputS
 static void webkitSoupRequestInputStreamReadAsync(GInputStream* inputStream, void* buffer, gsize count, int /*priority*/, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
 {
     WebKitSoupRequestInputStream* stream = WEBKIT_SOUP_REQUEST_INPUT_STREAM(inputStream);
-    GRefPtr<GSimpleAsyncResult> result = adoptGRef(g_simple_async_result_new(G_OBJECT(stream), callback, userData, reinterpret_cast<void*>(webkitSoupRequestInputStreamReadAsync)));
+    GRefPtr<GTask> task = adoptGRef(g_task_new(stream, cancellable, callback, userData));
 
     MutexLocker locker(stream->priv->readLock);
 
     if (!webkitSoupRequestInputStreamHasDataToRead(stream) && !webkitSoupRequestInputStreamIsWaitingForData(stream)) {
-        g_simple_async_result_set_op_res_gssize(result.get(), 0);
-        g_simple_async_result_complete_in_idle(result.get());
+        g_task_return_int(task.get(), 0);
         return;
     }
 
     if (webkitSoupRequestInputStreamHasDataToRead(stream)) {
-        webkitSoupRequestInputStreamReadAsyncResultComplete(stream, result.get(), buffer, count, cancellable);
+        webkitSoupRequestInputStreamReadAsyncResultComplete(task.get(), buffer, count);
         return;
     }
 
-    stream->priv->pendingAsyncRead = std::make_unique<AsyncReadData>(result.get(), buffer, count, cancellable);
+    stream->priv->pendingAsyncRead = std::make_unique<AsyncReadData>(task.get(), buffer, count);
 }
 
-static gssize webkitSoupRequestInputStreamReadFinish(GInputStream*, GAsyncResult* result, GError**)
+static gssize webkitSoupRequestInputStreamReadFinish(GInputStream* inputStream, GAsyncResult* result, GError** error)
 {
-    GSimpleAsyncResult* simpleResult = G_SIMPLE_ASYNC_RESULT(result);
-    g_warn_if_fail(g_simple_async_result_get_source_tag(simpleResult) == webkitSoupRequestInputStreamReadAsync);
+    g_return_val_if_fail(g_task_is_valid(result, inputStream), 0);
 
-    return g_simple_async_result_get_op_res_gssize(simpleResult);
+    return g_task_propagate_int(G_TASK(result), error);
 }
 
 static void webkitSoupRequestInputStreamFinalize(GObject* object)
