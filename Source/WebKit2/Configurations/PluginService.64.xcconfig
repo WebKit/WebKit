@@ -32,7 +32,7 @@ VALID_ARCHS_macosx_NO = x86_64;
 PRODUCT_NAME = com.apple.WebKit.Plugin.64;
 INFOPLIST_FILE = PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64.Info.plist;
 INFOPLIST_FILE[sdk=macosx10.9*] = PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64-10.9-10.10.Info.plist;
-INFOPLIST_FILE[sdk=macosx10.10] = PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64-10.9-10.10.Info.plist;
+INFOPLIST_FILE[sdk=macosx10.10*] = PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64-10.9-10.10.Info.plist;
 
 OTHER_LDFLAGS = $(OTHER_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM) $(OTHER_LDFLAGS_VERSIONED_FRAMEWORK_PATH);
 OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = -framework AppKit $(BUILT_PRODUCTS_DIR)/PluginProcessShim.dylib;

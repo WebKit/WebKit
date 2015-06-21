@@ -1,5 +1,16 @@
 2015-06-21  Dan Bernstein  <mitz@apple.com>
 
+        <rdar://problem/21444762> REGRESSION (r184215): Plug-in services crash on launch on Yosemite
+        https://bugs.webkit.org/show_bug.cgi?id=146195
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/PluginService.32.xcconfig: Changed the Yosemite definition of
+        INFOPLIST_FILE such that it would also apply to the macosx10.10.internal SDK.
+        * Configurations/PluginService.64.xcconfig: Ditto.
+
+2015-06-21  Dan Bernstein  <mitz@apple.com>
+
         Build fix.
 
         * Shared/API/Cocoa/WKFoundation.h: Don’t use generics if the SDK doesn’t support them.
