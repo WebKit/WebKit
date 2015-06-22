@@ -1,3 +1,23 @@
+2015-06-22  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of the Windows specific BinarySemaphore implementation
+        https://bugs.webkit.org/show_bug.cgi?id=146216
+
+        Reviewed by Andreas Kling.
+
+        The fact that the Windows implementation uses a HEVENT internally was only useful
+        to the Windows port of WebKit2; we can get rid of it now.
+
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * wtf/threads/BinarySemaphore.h:
+        (WTF::BinarySemaphore::event): Deleted.
+        * wtf/threads/win/BinarySemaphoreWin.cpp: Removed.
+        (WTF::BinarySemaphore::BinarySemaphore): Deleted.
+        (WTF::BinarySemaphore::~BinarySemaphore): Deleted.
+        (WTF::BinarySemaphore::signal): Deleted.
+        (WTF::BinarySemaphore::wait): Deleted.
+
 2015-06-21  Gavin Barraclough  <barraclough@apple.com>
 
         Page load performance regression due to bugs.webkit.org/show_bug.cgi?id=145542

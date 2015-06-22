@@ -145,7 +145,6 @@
     <ClCompile Include="..\wtf\ThreadingWin.cpp" />
     <ClCompile Include="..\wtf\threadspecificWin.cpp" />
     <ClCompile Include="..\wtf\threads\BinarySemaphore.cpp" />
-    <ClCompile Include="..\wtf\threads\win\BinarySemaphoreWin.cpp" />
     <ClCompile Include="..\wtf\unicode\icu\CollatorICU.cpp" />
     <ClCompile Include="..\wtf\unicode\UTF8.cpp" />
     <ClCompile Include="..\wtf\win\MainThreadWin.cpp" />
