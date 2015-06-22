@@ -239,7 +239,7 @@ function templatedRSEmptyReader(label, factory) {
             test3.step_func(function() { assert_unreached('closed should not reject'); })
         );
 
-        assert_throws(new TypeError(), test3.step_func(function() { reader.releaseLock(); }, 'releaseLock should throw a TypeError'));
+        assert_throws(new TypeError(), function() { reader.releaseLock(); }, 'releaseLock should throw a TypeError');
 
         setTimeout(test3.step_func(function() { test3.done(); }), 1000);
     });

@@ -8,7 +8,7 @@ PASS read() should never settle
 PASS two read()s should both never settle 
 PASS read() should return distinct promises each time 
 PASS getReader() again on the stream should fail 
-FAIL releasing the lock with pending read requests should throw but the read requests should stay pending Type error
+PASS releasing the lock with pending read requests should throw but the read requests should stay pending 
 PASS releasing the lock should cause further read() calls to resolve as if the stream is closed 
 PASS releasing the lock should cause closed to fulfill 
 PASS releasing the lock should cause locked to become false 
