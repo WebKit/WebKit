@@ -74,8 +74,11 @@ typedef NS_ENUM(NSInteger, AVVideoLayerGravity) {
 @protocol AVPlayerViewControllerDelegate <NSObject>
 @optional
 typedef NS_ENUM(NSInteger, AVPlayerViewControllerExitFullScreenReason) {
-    AVPlayerViewControllerExitFullScreenReasonDoneButtonTapped = 0,
-    AVPlayerViewControllerExitFullScreenReasonRemoteControlStopEventReceived = 3,
+    AVPlayerViewControllerExitFullScreenReasonDoneButtonTapped,
+    AVPlayerViewControllerExitFullScreenReasonFullScreenButtonTapped,
+    AVPlayerViewControllerExitFullScreenReasonPinchGestureHandled,
+    AVPlayerViewControllerExitFullScreenReasonRemoteControlStopEventReceived,
+    AVPlayerViewControllerExitFullScreenReasonPictureInPictureStarted
 };
 - (BOOL)playerViewController:(AVPlayerViewController *)playerViewController shouldExitFullScreenWithReason:(AVPlayerViewControllerExitFullScreenReason)reason;
 - (void)playerViewController:(AVPlayerViewController *)playerViewController restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:(void (^)(BOOL restored))completionHandler;

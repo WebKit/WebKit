@@ -99,6 +99,15 @@ public:
     WEBCORE_EXPORT virtual void requestHideAndExitFullscreen();
     WEBCORE_EXPORT virtual void preparedToReturnToInline(bool visible, const IntRect& inlineRect);
 
+    enum class ExitFullScreenReason {
+        DoneButtonTapped,
+        FullScreenButtonTapped,
+        PinchGestureHandled,
+        RemoteControlStopEventReceived,
+        PictureInPictureStarted
+    };
+
+    bool shouldExitFullscreenWithReason(ExitFullScreenReason);
     HTMLMediaElementEnums::VideoFullscreenMode mode() const { return m_mode; }
     bool allowsPictureInPicturePlayback() const { return m_allowsPictureInPicturePlayback; }
     WEBCORE_EXPORT bool mayAutomaticallyShowVideoPictureInPicture() const;

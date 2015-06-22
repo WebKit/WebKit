@@ -222,18 +222,26 @@ static const char* boolString(bool val)
     self.fullscreenInterface->didStopPictureInPicture();
 }
 
+static WebVideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScreenReason(AVPlayerViewControllerExitFullScreenReason reason)
+{
+    switch (reason) {
+    case AVPlayerViewControllerExitFullScreenReasonDoneButtonTapped:
+        return WebVideoFullscreenInterfaceAVKit::ExitFullScreenReason::DoneButtonTapped;
+    case AVPlayerViewControllerExitFullScreenReasonFullScreenButtonTapped:
+        return WebVideoFullscreenInterfaceAVKit::ExitFullScreenReason::FullScreenButtonTapped;
+    case AVPlayerViewControllerExitFullScreenReasonPictureInPictureStarted:
+        return WebVideoFullscreenInterfaceAVKit::ExitFullScreenReason::PictureInPictureStarted;
+    case AVPlayerViewControllerExitFullScreenReasonPinchGestureHandled:
+        return WebVideoFullscreenInterfaceAVKit::ExitFullScreenReason::PinchGestureHandled;
+    case AVPlayerViewControllerExitFullScreenReasonRemoteControlStopEventReceived:
+        return WebVideoFullscreenInterfaceAVKit::ExitFullScreenReason::RemoteControlStopEventReceived;
+    }
+}
+
 - (BOOL)playerViewController:(AVPlayerViewController *)playerViewController shouldExitFullScreenWithReason:(AVPlayerViewControllerExitFullScreenReason)reason
 {
     UNUSED_PARAM(playerViewController);
-    UNUSED_PARAM(reason);
-    if (!self.delegate)
-        return YES;
-    
-    if (reason == AVPlayerViewControllerExitFullScreenReasonDoneButtonTapped || reason == AVPlayerViewControllerExitFullScreenReasonRemoteControlStopEventReceived)
-        self.delegate->pause();
-    
-    self.delegate->requestExitFullscreen();
-    return NO;
+    return self.fullscreenInterface->shouldExitFullscreenWithReason(convertToExitFullScreenReason(reason));
 }
 
 - (void)playerViewController:(AVPlayerViewController *)playerViewController restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:(void (^)(BOOL restored))completionHandler
@@ -1145,30 +1153,6 @@ void WebVideoFullscreenInterfaceAVKit::willStartPictureInPicture()
 {
     LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::willStartPictureInPicture(%p)", this);
     setMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
-
-    if (!hasMode(HTMLMediaElementEnums::VideoFullscreenModeStandard))
-        return;
-
-    RefPtr<WebVideoFullscreenInterfaceAVKit> strongThis(this);
-    fullscreenMayReturnToInline([strongThis, this](bool visible) {
-        LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::willStartPictureInPicture - lambda(%p) - visible(%s)", this, boolString(visible));
-
-        if (!visible) {
-            [m_window setHidden:YES];
-            [[m_playerViewController view] setHidden:YES];
-            return;
-        }
-
-        [[m_playerViewController view] layoutIfNeeded];
-
-        [m_playerViewController exitFullScreenAnimated:YES completionHandler:[strongThis, this] (BOOL completed, NSError*) {
-            if (!completed)
-                return;
-            clearMode(HTMLMediaElementEnums::VideoFullscreenModeStandard);
-            [m_window setHidden:YES];
-            [[m_playerViewController view] setHidden:YES];
-        }];
-    });
 }
 
 void WebVideoFullscreenInterfaceAVKit::didStartPictureInPicture()
@@ -1238,6 +1222,24 @@ void WebVideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithComplet
         void (^completionHandler)(BOOL restored) = strongCompletionHandler.get();
         completionHandler(restored);
     });
+}
+
+bool WebVideoFullscreenInterfaceAVKit::shouldExitFullscreenWithReason(WebVideoFullscreenInterfaceAVKit::ExitFullScreenReason reason)
+{
+    if (!m_videoFullscreenModel)
+        return true;
+
+    if (reason == ExitFullScreenReason::PictureInPictureStarted) {
+        clearMode(HTMLMediaElementEnums::VideoFullscreenModeStandard);
+        return true;
+    }
+
+    if (reason == ExitFullScreenReason::DoneButtonTapped || reason == ExitFullScreenReason::RemoteControlStopEventReceived)
+        m_videoFullscreenModel->pause();
+    
+    m_videoFullscreenModel->requestExitFullscreen();
+    
+    return false;
 }
 
 void WebVideoFullscreenInterfaceAVKit::setMode(HTMLMediaElementEnums::VideoFullscreenMode mode)
