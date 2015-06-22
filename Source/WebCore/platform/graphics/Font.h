@@ -322,6 +322,10 @@ private:
 #endif
 };
 
+#if PLATFORM(IOS)
+bool fontFamilyShouldNotBeUsedForArabic(CFStringRef);
+#endif
+
 ALWAYS_INLINE FloatRect Font::boundsForGlyph(Glyph glyph) const
 {
     if (isZeroWidthSpaceGlyph(glyph))

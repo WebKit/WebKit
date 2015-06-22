@@ -79,7 +79,7 @@ static NSString *webFallbackFontFamily(void)
     return webFallbackFontFamily;
 }
 #else
-static bool fontFamilyShouldNotBeUsedForArabic(CFStringRef fontFamilyName)
+bool fontFamilyShouldNotBeUsedForArabic(CFStringRef fontFamilyName)
 {
     if (!fontFamilyName)
         return false;

@@ -1,3 +1,18 @@
+2015-06-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Arabic text styled with Georgia is rendered as boxes
+        https://bugs.webkit.org/show_bug.cgi?id=145681
+        <rdar://problem/21169844>
+
+        Reviewed by Darin Adler.
+
+        * fast/text/arabic-times-new-roman.html: Added.
+        * platform/ios-simulator/fast/text/arabic-times-new-roman-expected.txt: Added.
+        * platform/ios-simulator/fast/text/arabic-times-new-roman-expected.png: Added.
+        * platform/mac-mavericks/fast/text/arabic-times-new-roman-expected.txt: Added.
+        * platform/mac/fast/text/arabic-times-new-roman-expected.txt: Added.
+        * platform/mac/fast/text/arabic-times-new-roman-expected.png: Added.
+
 2015-06-22  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION(r169105) Dangling renderer pointer in SelectionSubtreeRoot::SelectionSubtreeData.

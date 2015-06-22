@@ -446,8 +446,14 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
     }
 #else
     RetainPtr<CTFontDescriptorRef> fallbackFontDescriptor = adoptCF(CTFontCreatePhysicalFontDescriptorForCharactersWithLanguage(originalFontData->getCTFont(), characters, length, nullptr, nullptr));
-    if (RetainPtr<CFStringRef> foundFontName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(fallbackFontDescriptor.get(), kCTFontNameAttribute))))
+    if (auto foundFontName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(fallbackFontDescriptor.get(), kCTFontNameAttribute)))) {
+        if (c >= 0x0600 && c <= 0x06ff) { // Arabic
+            auto familyName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(fallbackFontDescriptor.get(), kCTFontFamilyNameAttribute)));
+            if (fontFamilyShouldNotBeUsedForArabic(familyName.get()))
+                foundFontName = isFontWeightBold(description.weight()) ? CFSTR("GeezaPro-Bold") : CFSTR("GeezaPro");
+        }
         font = fontForFamily(description, foundFontName.get(), false);
+    }
 #endif
 
     if (font)
