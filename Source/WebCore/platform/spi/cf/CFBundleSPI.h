@@ -36,6 +36,9 @@
 
 extern "C" {
 void _CFBundleSetupXPCBootstrap(xpc_object_t bootstrap);
+
+Boolean CFBundleGetLocalizationInfoForLocalization(CFStringRef localizationName, SInt32 *languageCode, SInt32 *regionCode, SInt32 *scriptCode, CFStringEncoding *stringEncoding);
+CFStringRef CFBundleCopyLocalizationForLocalizationInfo(SInt32 languageCode, SInt32 regionCode, SInt32 scriptCode, CFStringEncoding stringEncoding);
 }
 
 #endif
