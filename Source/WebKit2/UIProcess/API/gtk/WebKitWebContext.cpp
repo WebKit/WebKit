@@ -1044,9 +1044,7 @@ void webkit_web_context_set_disk_cache_directory(WebKitWebContext* context, cons
  * @hostname: a hostname to be resolved
  *
  * Resolve the domain name of the given @hostname in advance, so that if a URI
- * of @hostname is requested the load will be performed more quickly. This
- * function does nothing if the system has been configured to use a proxy to
- * resolve @hostname.
+ * of @hostname is requested the load will be performed more quickly.
  */
 void webkit_web_context_prefetch_dns(WebKitWebContext* context, const char* hostname)
 {

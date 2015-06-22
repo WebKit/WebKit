@@ -31,7 +31,6 @@
 
 #include "URL.h"
 #include "Timer.h"
-#include <wtf/CurrentTime.h>
 #include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
 #include <wtf/RetainPtr.h>
@@ -49,7 +48,7 @@
 
 namespace WebCore {
 
-static bool proxyIsEnabledInSystemPreferences()
+bool DNSResolveQueue::platformProxyIsEnabledInSystemPreferences()
 {
     // Don't do DNS prefetch if proxies are involved. For many proxy types, the user agent is never exposed
     // to the IP address during normal operation. Querying an internal DNS server may not help performance,
@@ -76,31 +75,18 @@ static bool proxyIsEnabledInSystemPreferences()
     return httpProxyCount || httpsProxyCount;
 }
 
-static bool isUsingProxy()
-{
-    static bool cachedProxyEnabledStatus = false;
-    static double lastProxyEnabledStatusCheckTime = 0;
-    static const double minimumProxyCheckDelay = 5;
-    double time = monotonicallyIncreasingTime();
-    if (time - lastProxyEnabledStatusCheckTime > minimumProxyCheckDelay) {
-        lastProxyEnabledStatusCheckTime = time;
-        cachedProxyEnabledStatus = proxyIsEnabledInSystemPreferences();
-    }
-    return cachedProxyEnabledStatus;
-}
-
 static void clientCallback(CFHostRef theHost, CFHostInfoType, const CFStreamError*, void*)
 {
     DNSResolveQueue::singleton().decrementRequestCount(); // It's ok to call singleton() from a secondary thread, the static variable has already been initialized by now.
     CFRelease(theHost);
 }
 
-void DNSResolveQueue::platformMaybeResolveHost(const String& hostname)
+void DNSResolveQueue::platformResolve(const String& hostname)
 {
     ASSERT(isMainThread());
 
     RetainPtr<CFHostRef> host = adoptCF(CFHostCreateWithName(0, hostname.createCFString().get()));
-    if (!host || isUsingProxy()) {
+    if (!host) {
         decrementRequestCount();
         return;
     }

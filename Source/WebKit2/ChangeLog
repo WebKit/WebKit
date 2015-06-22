@@ -1,3 +1,13 @@
+2015-06-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Page load performance regression due to bugs.webkit.org/show_bug.cgi?id=145542
+        https://bugs.webkit.org/show_bug.cgi?id=146198
+
+        Unreviewed rollout.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_prefetch_dns):
+
 2015-06-21  Hyungwook Lee  <hyungwook.lee@navercorp.com>
 
         WKApplicationCacheManagerDeleteEntriesForOrigin() has wrong WebsiteDataTypes.

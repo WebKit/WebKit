@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc.  All rights reserved.
- * Copyright (C) 2009, 2012, 2015 Igalia S.L.
+ * Copyright (C) 2009, 2012 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions

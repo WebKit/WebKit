@@ -27,6 +27,7 @@
 #include "config.h"
 #include "DNSResolveQueue.h"
 
+#include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -59,15 +60,30 @@ DNSResolveQueue& DNSResolveQueue::singleton()
 DNSResolveQueue::DNSResolveQueue()
     : m_timer(*this, &DNSResolveQueue::timerFired)
     , m_requestsInFlight(0)
+    , m_cachedProxyEnabledStatus(false)
+    , m_lastProxyEnabledStatusCheckTime(0)
 {
+}
+
+bool DNSResolveQueue::isUsingProxy()
+{
+    double time = monotonicallyIncreasingTime();
+    static const double minimumProxyCheckDelay = 5;
+    if (time - m_lastProxyEnabledStatusCheckTime > minimumProxyCheckDelay) {
+        m_lastProxyEnabledStatusCheckTime = time;
+        m_cachedProxyEnabledStatus = platformProxyIsEnabledInSystemPreferences();
+    }
+    return m_cachedProxyEnabledStatus;
 }
 
 void DNSResolveQueue::add(const String& hostname)
 {
     // If there are no names queued, and few enough are in flight, resolve immediately (the mouse may be over a link).
     if (!m_names.size()) {
+        if (isUsingProxy())
+            return;
         if (++m_requestsInFlight <= gNamesToResolveImmediately) {
-            platformMaybeResolveHost(hostname);
+            platformResolve(hostname);
             return;
         }
         --m_requestsInFlight;
@@ -84,12 +100,17 @@ void DNSResolveQueue::add(const String& hostname)
 
 void DNSResolveQueue::timerFired()
 {
+    if (isUsingProxy()) {
+        m_names.clear();
+        return;
+    }
+
     int requestsAllowed = gMaxSimultaneousRequests - m_requestsInFlight;
 
     for (; !m_names.isEmpty() && requestsAllowed > 0; --requestsAllowed) {
         ++m_requestsInFlight;
         HashSet<String>::iterator currentName = m_names.begin();
-        platformMaybeResolveHost(*currentName);
+        platformResolve(*currentName);
         m_names.remove(currentName);
     }
 
