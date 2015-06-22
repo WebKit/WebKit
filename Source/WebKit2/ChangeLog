@@ -1,3 +1,19 @@
+2015-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r182303): [GTK] Context menu API is broken since r182303
+        https://bugs.webkit.org/show_bug.cgi?id=146202
+
+        Reviewed by Žan Doberšek.
+
+        The problem is that ContextMenuclient API changed in r182303, but
+        we didn't notice it either, and the default handler for
+        getContextMenuFromProposedMenu was executed. An override keyword
+        would have caught this.
+
+        * UIProcess/API/gtk/WebKitContextMenuClient.cpp: Build a Vector of
+        WebContextMenuItemData as expected by our API, and add add
+        override keyword to ensure this doesn't happen again.
+
 2015-06-22  Zan Dobersek  <zdobersek@igalia.com>
 
         [WK2] ConnectionUnix should use FastMalloc to allocate on-heap resources
