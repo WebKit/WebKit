@@ -46,6 +46,8 @@
 webkit.org/b/101773 fast/repaint/body-background-image.html [ ImageOnlyFailure Pass ]
 
 # AX tests that require hit testing do not work in WK2.
+webkit.org/b/71298 accessibility/hit-test-input-auto-fill-button.html
+webkit.org/b/71298 accessibility/hit-test-input-search-cancel-button.html
 webkit.org/b/71298 accessibility/loading-iframe-updates-axtree.html
 webkit.org/b/71298 platform/mac/accessibility/html-slider-indicator.html
 webkit.org/b/71298 platform/mac/accessibility/listbox-hit-test.html

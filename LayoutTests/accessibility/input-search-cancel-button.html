@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<input type="search" id="search" value="d" autofocus>
+<div id="console"></div>
+<script>
+description("This tests that there exists an accessibility element for the search cancel button.");
+
+if (!window.internals || !window.accessibilityController)
+    testFailed("You must run this test in the test tool and have implemented window.internals and window.accessibilityController.");
+else {
+    shouldBeEqualToString('accessibilityController.accessibleElementById("search").childAtIndex(1).description', "AXDescription: cancel");
+    shouldBeEqualToString('accessibilityController.accessibleElementById("search").childAtIndex(1).role', "AXRole: AXButton");
+}
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

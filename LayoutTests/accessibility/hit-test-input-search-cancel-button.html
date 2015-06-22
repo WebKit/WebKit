@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="resources/shouldBeAccessibleByCursor.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<input type="search" id="search" value="d" autofocus>
+<div id="console"></div>
+<script>
+description("This tests that the search cancel button is hit testable.");
+
+if (!window.internals || !window.accessibilityController)
+    testFailed("You must run this test in the test tool and have implemented window.internals and window.accessibilityController.");
+else {
+    shouldBeAccessibleByCursor(accessibilityController.accessibleElementById("search").childAtIndex(1), "search cancel button");
+}
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

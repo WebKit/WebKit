@@ -2195,6 +2195,16 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityImageMapHitTest(HTM
     return nullptr;
 }
 
+AccessibilityObject* AccessibilityRenderObject::accessibilityTextFieldDecorationHitTest(const HTMLInputElement& inputElement, const Node& decoration) const
+{
+    if (inputElement.autoFillButtonElement() == &decoration || inputElement.cancelButtonElement() == &decoration) {
+        AccessibilityObject* object = axObjectCache()->getOrCreate(decoration.renderer());
+        if (object && !object->accessibilityIsIgnored())
+            return object;
+    }
+    return nullptr;
+}
+
 AccessibilityObject* AccessibilityRenderObject::remoteSVGElementHitTest(const IntPoint& point) const
 {
     AccessibilityObject* remote = remoteSVGRootElement();
@@ -2229,6 +2239,11 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityHitTest(const IntPo
         return nullptr;
     Node* node = hitTestResult.innerNode()->deprecatedShadowAncestorNode();
     ASSERT(node);
+
+    if (is<HTMLInputElement>(*node)) {
+        if (AccessibilityObject* object = accessibilityTextFieldDecorationHitTest(downcast<HTMLInputElement>(*node), *hitTestResult.innerNode()))
+            return object;
+    }
 
     if (is<HTMLAreaElement>(*node))
         return accessibilityImageMapHitTest(downcast<HTMLAreaElement>(node), point);

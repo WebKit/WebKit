@@ -1,3 +1,27 @@
+2015-06-22  Daniel Bates  <dabates@apple.com>
+
+        AX: UI Automation cannot find AutoFill or search cancel buttons
+        https://bugs.webkit.org/show_bug.cgi?id=145241
+        <rdar://problem/21051411>
+
+        Reviewed by Chris Fleizach.
+
+        Add tests to ensure that there exists an accessibility element for the
+        search cancel button and that it can be hit using a cursor position. Also
+        add a test to ensue that the AutoFill button can be hit using a cursor position.
+
+        * accessibility/hit-test-input-auto-fill-button-expected.txt: Added.
+        * accessibility/hit-test-input-auto-fill-button.html: Copied from LayoutTests/accessibility/input-auto-fill-button.html.
+        * accessibility/hit-test-input-search-cancel-button-expected.txt: Added.
+        * accessibility/hit-test-input-search-cancel-button.html: Added.
+        * accessibility/input-search-cancel-button-expected.txt: Added.
+        * accessibility/input-search-cancel-button.html: Copied from LayoutTests/accessibility/input-auto-fill-button.html.
+        * accessibility/resources/shouldBeAccessibleByCursor.js: Added.
+        (shouldBeAccessibleByCursor): Tests whether an AccessibilityUIElement can be hit
+        using its screen position.
+        * platform/wk2/TestExpectations: Mark tests hit-test-input-{auto-fill, search-cancel}-button.html
+        as failing due to <https://bugs.webkit.org/show_bug.cgi?id=71298>.
+
 2015-06-22  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] Implement ReadableStream cancel (abstract part)
