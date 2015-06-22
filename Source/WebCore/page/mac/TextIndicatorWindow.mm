@@ -75,7 +75,7 @@ using namespace WebCore;
     BOOL _fadingOut;
 }
 
-- (instancetype)initWithFrame:(NSRect)frame textIndicator:(PassRefPtr<TextIndicator>)textIndicator margin:(NSSize)margin;
+- (instancetype)initWithFrame:(NSRect)frame textIndicator:(PassRefPtr<TextIndicator>)textIndicator margin:(NSSize)margin offset:(NSPoint)offset;
 
 - (void)present;
 - (void)hideWithCompletionHandler:(void(^)(void))completionHandler;
@@ -91,7 +91,7 @@ using namespace WebCore;
 
 @synthesize fadingOut = _fadingOut;
 
-- (instancetype)initWithFrame:(NSRect)frame textIndicator:(PassRefPtr<TextIndicator>)textIndicator margin:(NSSize)margin
+- (instancetype)initWithFrame:(NSRect)frame textIndicator:(PassRefPtr<TextIndicator>)textIndicator margin:(NSSize)margin offset:(NSPoint)offset
 {
     if (!(self = [super initWithFrame:frame]))
         return nil;
@@ -121,7 +121,10 @@ using namespace WebCore;
     RetainPtr<CGColorRef> gradientLightColor = [NSColor colorWithDeviceRed:.949 green:.937 blue:0 alpha:1].CGColor;
 
     for (const auto& textRect : _textIndicator->textRectsInBoundingRectCoordinates()) {
-        FloatRect bounceLayerRect = textRect;
+        FloatRect offsetTextRect = textRect;
+        offsetTextRect.move(offset.x, offset.y);
+
+        FloatRect bounceLayerRect = offsetTextRect;
         bounceLayerRect.move(_margin.width, _margin.height);
         bounceLayerRect.inflateX(horizontalBorder);
         bounceLayerRect.inflateY(verticalBorder);
@@ -404,14 +407,16 @@ void TextIndicatorWindow::setTextIndicator(Ref<TextIndicator> textIndicator, CGR
     verticalMargin = CGCeiling(verticalMargin);
 
     CGRect contentRect = CGRectInset(textBoundingRectInScreenCoordinates, -horizontalMargin, -verticalMargin);
-    NSRect windowContentRect = [NSWindow contentRectForFrameRect:NSIntegralRect(NSRectFromCGRect(contentRect)) styleMask:NSBorderlessWindowMask];
-    m_textIndicatorWindow = adoptNS([[NSWindow alloc] initWithContentRect:windowContentRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
+    NSRect windowContentRect = [NSWindow contentRectForFrameRect:NSRectFromCGRect(contentRect) styleMask:NSBorderlessWindowMask];
+    NSRect integralWindowContentRect = NSIntegralRect(windowContentRect);
+    NSPoint fractionalTextOffset = NSMakePoint(windowContentRect.origin.x - integralWindowContentRect.origin.x, windowContentRect.origin.y - integralWindowContentRect.origin.y);
+    m_textIndicatorWindow = adoptNS([[NSWindow alloc] initWithContentRect:integralWindowContentRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
 
     [m_textIndicatorWindow setBackgroundColor:[NSColor clearColor]];
     [m_textIndicatorWindow setOpaque:NO];
     [m_textIndicatorWindow setIgnoresMouseEvents:YES];
 
-    m_textIndicatorView = adoptNS([[WebTextIndicatorView alloc] initWithFrame:NSMakeRect(0, 0, [m_textIndicatorWindow frame].size.width, [m_textIndicatorWindow frame].size.height) textIndicator:m_textIndicator margin:NSMakeSize(horizontalMargin, verticalMargin)]);
+    m_textIndicatorView = adoptNS([[WebTextIndicatorView alloc] initWithFrame:NSMakeRect(0, 0, [m_textIndicatorWindow frame].size.width, [m_textIndicatorWindow frame].size.height) textIndicator:m_textIndicator margin:NSMakeSize(horizontalMargin, verticalMargin) offset:fractionalTextOffset]);
     [m_textIndicatorWindow setContentView:m_textIndicatorView.get()];
 
     [[m_targetView window] addChildWindow:m_textIndicatorWindow.get() ordered:NSWindowAbove];
