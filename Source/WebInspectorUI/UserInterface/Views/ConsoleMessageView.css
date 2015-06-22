@@ -199,6 +199,7 @@
 
 .console-user-command > .console-message-text {
     color: rgb(0, 128, 255);
+    -webkit-user-select: text;
 }
 
 .console-saved-variable {

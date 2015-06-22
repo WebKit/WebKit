@@ -1,3 +1,13 @@
+2015-06-22  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Unable to select text of user input messages in the console
+        https://bugs.webkit.org/show_bug.cgi?id=145888
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ConsoleMessageView.css:
+        (.console-user-command > .console-message-text):
+
 2015-06-20  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Unable to select parent element in the DOM tree path bar
