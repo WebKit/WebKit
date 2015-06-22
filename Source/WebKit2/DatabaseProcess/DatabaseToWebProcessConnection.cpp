@@ -42,7 +42,7 @@ Ref<DatabaseToWebProcessConnection> DatabaseToWebProcessConnection::create(IPC::
 
 DatabaseToWebProcessConnection::DatabaseToWebProcessConnection(IPC::Connection::Identifier connectionIdentifier)
 {
-    m_connection = IPC::Connection::createServerConnection(connectionIdentifier, *this, RunLoop::main());
+    m_connection = IPC::Connection::createServerConnection(connectionIdentifier, *this);
     m_connection->setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(true);
     m_connection->open();
 }

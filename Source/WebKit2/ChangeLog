@@ -1,5 +1,55 @@
 2015-06-22  Anders Carlsson  <andersca@apple.com>
 
+        Remove m_clientRunLoop from IPC::Connection
+        https://bugs.webkit.org/show_bug.cgi?id=146212
+
+        Reviewed by Sam Weinig.
+
+        We only ever create connections whose messages are dispatched to the main run loop, so we can 
+        vastly simplify the code by only allowing messages to be dispatched there.
+
+        * DatabaseProcess/DatabaseToWebProcessConnection.cpp:
+        (WebKit::DatabaseToWebProcessConnection::DatabaseToWebProcessConnection):
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::NetworkConnectionToWebProcess):
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::createServerConnection):
+        (IPC::Connection::createClientConnection):
+        (IPC::Connection::Connection):
+        (IPC::Connection::addWorkQueueMessageReceiver):
+        (IPC::Connection::removeWorkQueueMessageReceiver):
+        (IPC::Connection::waitForMessage):
+        (IPC::Connection::sendSyncMessage):
+        (IPC::Connection::sendSyncMessageFromSecondaryThread):
+        (IPC::Connection::processIncomingMessage):
+        (IPC::Connection::connectionDidClose):
+        (IPC::Connection::dispatchDidReceiveInvalidMessage):
+        (IPC::Connection::enqueueIncomingMessage):
+        (IPC::Connection::wakeUpRunLoop):
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::receiveSourceEventHandler):
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::WebProcessConnection):
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::initialize):
+        * Shared/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::didFinishLaunching):
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didFinishLaunching):
+        * WebProcess/Databases/WebToDatabaseProcessConnection.cpp:
+        (WebKit::WebToDatabaseProcessConnection::WebToDatabaseProcessConnection):
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::NetworkProcessConnection):
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::PluginProcessConnection::PluginProcessConnection):
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::createInspectorPage):
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::establishConnection):
+
+2015-06-22  Anders Carlsson  <andersca@apple.com>
+
         Crashes in hit testing under WebPage::acceptsFirstMouse() while handling sync message in plug-in teardown
         https://bugs.webkit.org/show_bug.cgi?id=146211
         rdar://problem/17180615

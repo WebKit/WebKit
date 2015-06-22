@@ -51,10 +51,6 @@
 #include "PlatformProcessIdentifier.h"
 #endif
 
-namespace WTF {
-class RunLoop;
-}
-
 namespace IPC {
 
 struct WaitForMessageState;
@@ -144,8 +140,8 @@ public:
     static Connection::SocketPair createPlatformConnection(unsigned options = SetCloexecOnClient | SetCloexecOnServer);
 #endif
 
-    static Ref<Connection> createServerConnection(Identifier, Client&, WTF::RunLoop& clientRunLoop);
-    static Ref<Connection> createClientConnection(Identifier, Client&, WTF::RunLoop& clientRunLoop);
+    static Ref<Connection> createServerConnection(Identifier, Client&);
+    static Ref<Connection> createClientConnection(Identifier, Client&);
     ~Connection();
 
     Client* client() const { return m_client; }
@@ -205,7 +201,7 @@ public:
 #endif
 
 private:
-    Connection(Identifier, bool isServer, Client&, WTF::RunLoop& clientRunLoop);
+    Connection(Identifier, bool isServer, Client&);
     void platformInitialize(Identifier);
     void platformInvalidate();
     
@@ -249,7 +245,6 @@ private:
 
     bool m_isConnected;
     Ref<WorkQueue> m_connectionQueue;
-    WTF::RunLoop& m_clientRunLoop;
 
     HashMap<StringReference, std::pair<RefPtr<WorkQueue>, RefPtr<WorkQueueMessageReceiver>>> m_workQueueMessageReceivers;
 

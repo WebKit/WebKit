@@ -225,17 +225,17 @@ void Connection::SyncMessageState::dispatchMessageAndResetDidScheduleDispatchMes
     dispatchMessages(&connection);
 }
 
-Ref<Connection> Connection::createServerConnection(Identifier identifier, Client& client, RunLoop& clientRunLoop)
+Ref<Connection> Connection::createServerConnection(Identifier identifier, Client& client)
 {
-    return adoptRef(*new Connection(identifier, true, client, clientRunLoop));
+    return adoptRef(*new Connection(identifier, true, client));
 }
 
-Ref<Connection> Connection::createClientConnection(Identifier identifier, Client& client, RunLoop& clientRunLoop)
+Ref<Connection> Connection::createClientConnection(Identifier identifier, Client& client)
 {
-    return adoptRef(*new Connection(identifier, false, client, clientRunLoop));
+    return adoptRef(*new Connection(identifier, false, client));
 }
 
-Connection::Connection(Identifier identifier, bool isServer, Client& client, RunLoop& clientRunLoop)
+Connection::Connection(Identifier identifier, bool isServer, Client& client)
     : m_client(&client)
     , m_isServer(isServer)
     , m_syncRequestID(0)
@@ -244,16 +244,15 @@ Connection::Connection(Identifier identifier, bool isServer, Client& client, Run
     , m_didCloseOnConnectionWorkQueueCallback(0)
     , m_isConnected(false)
     , m_connectionQueue(WorkQueue::create("com.apple.IPC.ReceiveQueue"))
-    , m_clientRunLoop(clientRunLoop)
     , m_inSendSyncCount(0)
     , m_inDispatchMessageCount(0)
     , m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount(0)
     , m_didReceiveInvalidMessage(false)
     , m_waitingForMessage(nullptr)
-    , m_syncMessageState(SyncMessageState::getOrCreate(clientRunLoop))
+    , m_syncMessageState(SyncMessageState::getOrCreate(RunLoop::main()))
     , m_shouldWaitForSyncReplies(true)
 {
-    ASSERT(m_client);
+    ASSERT(RunLoop::isMain());
 
     platformInitialize(identifier);
 
@@ -284,7 +283,7 @@ void Connection::setShouldExitOnSyncMessageSendFailure(bool shouldExitOnSyncMess
 
 void Connection::addWorkQueueMessageReceiver(StringReference messageReceiverName, WorkQueue* workQueue, WorkQueueMessageReceiver* workQueueMessageReceiver)
 {
-    ASSERT(&RunLoop::current() == &m_clientRunLoop);
+    ASSERT(RunLoop::isMain());
 
     RefPtr<Connection> connection(this);
     m_connectionQueue->dispatch([connection, messageReceiverName, workQueue, workQueueMessageReceiver] {
@@ -296,7 +295,7 @@ void Connection::addWorkQueueMessageReceiver(StringReference messageReceiverName
 
 void Connection::removeWorkQueueMessageReceiver(StringReference messageReceiverName)
 {
-    ASSERT(&RunLoop::current() == &m_clientRunLoop);
+    ASSERT(RunLoop::isMain());
 
     RefPtr<Connection> connection(this);
     m_connectionQueue->dispatch([connection, messageReceiverName] {
@@ -416,7 +415,7 @@ bool Connection::sendSyncReply(std::unique_ptr<MessageEncoder> encoder)
 
 std::unique_ptr<MessageDecoder> Connection::waitForMessage(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, std::chrono::milliseconds timeout, unsigned waitForMessageFlags)
 {
-    ASSERT(&m_clientRunLoop == &RunLoop::current());
+    ASSERT(RunLoop::isMain());
 
     bool hasIncomingSynchronousMessage = false;
 
@@ -480,7 +479,7 @@ std::unique_ptr<MessageDecoder> Connection::waitForMessage(StringReference messa
 
 std::unique_ptr<MessageDecoder> Connection::sendSyncMessage(uint64_t syncRequestID, std::unique_ptr<MessageEncoder> encoder, std::chrono::milliseconds timeout, unsigned syncSendFlags)
 {
-    if (&RunLoop::current() != &m_clientRunLoop) {
+    if (!RunLoop::isMain()) {
         // No flags are supported for synchronous messages sent from secondary threads.
         ASSERT(!syncSendFlags);
         return sendSyncMessageFromSecondaryThread(syncRequestID, WTF::move(encoder), timeout);
@@ -533,7 +532,7 @@ std::unique_ptr<MessageDecoder> Connection::sendSyncMessage(uint64_t syncRequest
 
 std::unique_ptr<MessageDecoder> Connection::sendSyncMessageFromSecondaryThread(uint64_t syncRequestID, std::unique_ptr<MessageEncoder> encoder, std::chrono::milliseconds timeout)
 {
-    ASSERT(&RunLoop::current() != &m_clientRunLoop);
+    ASSERT(!RunLoop::isMain());
 
     if (!isValid())
         return nullptr;
@@ -678,7 +677,7 @@ void Connection::processIncomingMessage(std::unique_ptr<MessageDecoder> message)
         StringReference messageName = message->messageName();
         StringCapture capturedMessageName(messageName.isEmpty() ? "<unknown message>" : String(messageName.data(), messageName.size()));
 
-        m_clientRunLoop.dispatch([protectedThis, capturedMessageReceiverName, capturedMessageName] {
+        RunLoop::main().dispatch([protectedThis, capturedMessageReceiverName, capturedMessageName] {
             protectedThis->dispatchDidReceiveInvalidMessage(capturedMessageReceiverName.string().utf8(), capturedMessageName.string().utf8());
         });
         return;
@@ -766,7 +765,7 @@ void Connection::connectionDidClose()
         m_didCloseOnConnectionWorkQueueCallback(this);
 
     RefPtr<Connection> connection(this);
-    m_clientRunLoop.dispatch([connection] {
+    RunLoop::main().dispatch([connection] {
         // If the connection has been explicitly invalidated before dispatchConnectionDidClose was called,
         // then the client will be null here.
         if (!connection->m_client)
@@ -836,7 +835,7 @@ void Connection::dispatchSyncMessage(MessageDecoder& decoder)
 
 void Connection::dispatchDidReceiveInvalidMessage(const CString& messageReceiverNameString, const CString& messageNameString)
 {
-    ASSERT(&RunLoop::current() == &m_clientRunLoop);
+    ASSERT(RunLoop::isMain());
 
     if (!m_client)
         return;
@@ -860,7 +859,7 @@ void Connection::enqueueIncomingMessage(std::unique_ptr<MessageDecoder> incoming
     }
 
     RefPtr<Connection> protectedThis(this);
-    m_clientRunLoop.dispatch([protectedThis] {
+    RunLoop::main().dispatch([protectedThis] {
         protectedThis->dispatchOneMessage();
     });
 }
@@ -923,7 +922,7 @@ void Connection::dispatchOneMessage()
 
 void Connection::wakeUpRunLoop()
 {
-    m_clientRunLoop.wakeUp();
+    RunLoop::main().wakeUp();
 }
 
 } // namespace IPC

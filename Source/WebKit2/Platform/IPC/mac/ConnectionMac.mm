@@ -514,7 +514,7 @@ void Connection::receiveSourceEventHandler()
             StringCapture capturedMessageReceiverName(String(messageReceiverName.data(), messageReceiverName.size()));
             StringReference messageName = decoder->messageName();
             StringCapture capturedMessageName(String(messageName.data(), messageName.size()));
-            m_clientRunLoop.dispatch([protectedThis, capturedMessageReceiverName, capturedMessageName] {
+            RunLoop::main().dispatch([protectedThis, capturedMessageReceiverName, capturedMessageName] {
                 protectedThis->dispatchDidReceiveInvalidMessage(capturedMessageReceiverName.string().utf8(), capturedMessageName.string().utf8());
             });
             return;
