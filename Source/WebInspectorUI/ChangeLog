@@ -1,5 +1,18 @@
 2015-06-22  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Consider making read-only style rules have a darker background
+        https://bugs.webkit.org/show_bug.cgi?id=145983
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.css:
+        (.style-declaration-section:not(.locked)):
+        (.style-declaration-section): Deleted.
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.css:
+        (.css-style-text-editor.read-only > .CodeMirror):
+
+2015-06-22  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Unable to select text of user input messages in the console
         https://bugs.webkit.org/show_bug.cgi?id=145888
 

@@ -53,6 +53,11 @@
     text-indent: 0;
 }
 
+.css-style-text-editor.read-only,
+.css-style-text-editor.read-only > .CodeMirror {
+    background-color: transparent;
+}
+
 .css-style-text-editor.read-only > .CodeMirror pre {
     text-indent: 0;
 }
