@@ -293,7 +293,9 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
     Ref<ResourceLoader> protect(*this);
 
     ASSERT(!m_reachedTerminalState);
+#if ENABLE(CONTENT_EXTENSIONS)
     ASSERT(m_resourceType != ResourceType::Invalid);
+#endif
 
     if (!frameLoader()) {
         didFail(cannotShowURLError());
