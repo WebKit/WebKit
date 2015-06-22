@@ -56,7 +56,7 @@
     padding-top: 15px;
 }
 
-.sidebar > .panel.details.css-style > .content.filter-in-progress .label ~ .label {
+.sidebar > .panel.details.css-style > .content.filter-in-progress .label:not(.filter-section-non-matching) ~ .label {
     padding-top: 0;
 }
 

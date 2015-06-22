@@ -239,8 +239,22 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
                 }
             }
 
-            if (!hasMediaOrInherited.length && previousSection && !previousSection.lastInGroup)
-                hasMediaOrInherited = this._ruleMediaAndInherticanceList.lastValue;
+            if (!hasMediaOrInherited.length && style.type !== WebInspector.CSSStyleDeclaration.Type.Inline) {
+                if (previousSection && !previousSection.lastInGroup)
+                    hasMediaOrInherited = this._ruleMediaAndInherticanceList.lastValue;
+                else {
+                    var prefixElement = document.createElement("strong");
+                    prefixElement.textContent = WebInspector.UIString("Media: ");
+
+                    var mediaLabel = document.createElement("div");
+                    mediaLabel.className = "label";
+                    mediaLabel.appendChild(prefixElement);
+                    mediaLabel.appendChild(document.createTextNode("all"));
+
+                    newDOMFragment.appendChild(mediaLabel);
+                    hasMediaOrInherited.push(mediaLabel);
+                }
+            }
 
             this._ruleMediaAndInherticanceList.push(hasMediaOrInherited);
 

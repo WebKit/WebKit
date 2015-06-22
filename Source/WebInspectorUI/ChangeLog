@@ -1,3 +1,18 @@
+2015-06-22  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: gaps between sections of the styles sidebar rules tab confusing, should say "Media: all"
+        https://bugs.webkit.org/show_bug.cgi?id=142918
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/RulesStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress .label:not(.filter-section-non-matching) ~ .label):
+        Now properly adds padding to filtered labels.
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress .label ~ .label): Deleted.
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel.prototype.refresh): If a section of CSS rules has no media or inheritance, add
+        a label that says "Media: all" above the section.
+
 2015-06-22  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Consider making read-only style rules have a darker background
