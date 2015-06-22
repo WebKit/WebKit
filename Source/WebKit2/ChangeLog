@@ -1,3 +1,30 @@
+2015-06-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WK2] ConnectionUnix should use FastMalloc to allocate on-heap resources
+        https://bugs.webkit.org/show_bug.cgi?id=146143
+
+        Reviewed by Carlos Garcia Campos.
+
+        IPC handling in Unix-specific IPC::Connection implementation should use
+        FastMalloc to allocate on-heap resources, instead of allocating via the
+        system allocator.
+
+        The AttachmentInfo class is marked as allocatable through FastMalloc.
+        That way it can be allocated through FastMalloc while still handled
+        through std::unique_ptr<>.
+
+        The char[] arrays in readBytesFromSocket() and Connection::sendOutgoingMessage()
+        are now handled through a MallocPtr<> object.
+
+        In Connection::sendOutgoingMessage(), both the AttachmentInfo[] and char[]
+        arrays are now only allocated if there are actual attachments contained
+        in the message. The code that's conditioned with a non-empty attachments
+        Vector is now also grouped together, in a single branch.
+
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::readBytesFromSocket):
+        (IPC::Connection::sendOutgoingMessage):
+
 2015-06-22  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] test_ewk2_application_cache_manager has been failed since r185527
