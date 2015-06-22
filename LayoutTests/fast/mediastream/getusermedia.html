@@ -9,6 +9,13 @@
         <script>
             description("Tests webkitGetUserMedia.");
 
+            function setUserMediaPermission(isGranted) {
+                if (window.testRunner)
+                    testRunner.setUserMediaPermission(isGranted);
+                else
+                    debug("This test can not be run without the testRunner");
+            }
+
             var stream;
             var errorArg;
 
@@ -82,6 +89,8 @@
 
             shouldThrow("navigator.webkitGetUserMedia({audio:false, video:false}, error, error);")
             shouldThrow("navigator.webkitGetUserMedia({audio:false, video:false}, error, null);")
+
+            setUserMediaPermission(true);
             shouldNotThrow("navigator.webkitGetUserMedia({audio:true}, gotStream1, error);");
 
             window.jsTestIsAsync = true;
