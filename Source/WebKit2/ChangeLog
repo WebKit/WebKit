@@ -1,3 +1,15 @@
+2015-06-21  Hyungwook Lee  <hyungwook.lee@navercorp.com>
+
+        WKApplicationCacheManagerDeleteEntriesForOrigin() has wrong WebsiteDataTypes.
+        https://bugs.webkit.org/show_bug.cgi?id=146180
+
+        Reviewed by Sam Weinig.
+
+        Modify to use correct WebsiteDataTypes in WKApplicationCacheManagerDeleteEntriesForOrigin()
+
+        * UIProcess/API/C/WKApplicationCacheManager.cpp:
+        (WKApplicationCacheManagerDeleteEntriesForOrigin):
+
 2015-06-21  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/21444762> REGRESSION (r184215): Plug-in services crash on launch on Yosemite
