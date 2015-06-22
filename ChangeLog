@@ -1,3 +1,15 @@
+2015-06-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CMake] Add support for building with various sanitizer tools
+        https://bugs.webkit.org/show_bug.cgi?id=131941
+
+        Reviewed by Martin Robinson.
+
+        * Source/PlatformGTK.cmake: Don't generate any documentation
+        when compiling with sanitizers enabled.
+        * Source/cmake/OptionsCommon.cmake: Allow linking with
+        undefined symbols when compiling with sanitizers enabled.
+
 2015-06-21  Philip Chimento  <philip.chimento@gmail.com>
 
         libwebkit2gtk fails to link without opengl
