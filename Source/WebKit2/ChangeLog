@@ -1,3 +1,18 @@
+2015-06-22  Antti Koivisto  <antti@apple.com>
+
+        Crash replacing TabDocument in MobileSafari at WebKit: -[WKWebView(WKPrivate) _beginAnimatedResizeWithUpdates:]
+        https://bugs.webkit.org/show_bug.cgi?id=146201
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+
+        No repro but if for some reason [_contentView bounds] width is zero we'll compute +Inf targetScale
+        and then NaN contentOffset.x. Verified in lldb that this gives the exact crash signature seen.
+
+        Fix by checking that [_contentView bounds] is not empty like is done with other inputs.
+
 2015-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r182303): [GTK] Context menu API is broken since r182303
