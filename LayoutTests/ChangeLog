@@ -1,3 +1,17 @@
+2015-06-22  Simon Fraser  <simon.fraser@apple.com>
+
+        -webkit-clip-path clips incorrectly if the element bounds go beyond the top edge of the page
+        https://bugs.webkit.org/show_bug.cgi?id=146218
+        rdar://problem/21127840
+
+        Reviewed by Zalan Bujtas.
+        
+        Test clip path on layers with non-zero bounds offsetFromRenderer because of box shadow,
+        or vertical writing mode.
+
+        * compositing/masks/compositing-clip-path-origin-expected.html: Added.
+        * compositing/masks/compositing-clip-path-origin.html: Added.
+
 2015-06-22  David Kilzer  <ddkilzer@apple.com>
 
         fast/text/justify-ideograph-{complex,simple,vertical}.html tests are flaky on El Capitan Debug builds

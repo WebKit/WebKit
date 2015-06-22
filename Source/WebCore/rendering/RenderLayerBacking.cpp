@@ -1061,6 +1061,10 @@ void RenderLayerBacking::updateMaskingLayerGeometry()
             LayoutSize offset = LayoutSize(snapSizeToDevicePixel(m_devicePixelFractionFromRenderer, LayoutPoint(), deviceScaleFactor()));
             Path clipPath = m_owningLayer.computeClipPath(offset, referenceBoxForClippedInline, windRule);
 
+            FloatSize pathOffset = m_maskLayer->offsetFromRenderer();
+            if (!pathOffset.isZero())
+                clipPath.translate(-pathOffset);
+            
             m_maskLayer->setShapeLayerPath(clipPath);
             m_maskLayer->setShapeLayerWindRule(windRule);
         }
