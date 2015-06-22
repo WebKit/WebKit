@@ -1,3 +1,16 @@
+2015-06-22  Anders Carlsson  <andersca@apple.com>
+
+        Crashes in hit testing under WebPage::acceptsFirstMouse() while handling sync message in plug-in teardown
+        https://bugs.webkit.org/show_bug.cgi?id=146211
+        rdar://problem/17180615
+
+        Reviewed by Sam Weinig.
+
+        If we're inside a sendSync message when we're being called, just bail.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::acceptsFirstMouse):
+
 2015-06-22  Dan Bernstein  <mitz@apple.com>
 
         Part 1 of [Xcode] Fold the WebKit2SandboxProfiles-IOSOverride target into the Sandbox Profiles target

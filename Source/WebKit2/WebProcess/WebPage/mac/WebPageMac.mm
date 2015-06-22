@@ -843,6 +843,13 @@ void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent& event,
 void WebPage::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent& event, bool& result)
 {
     result = false;
+
+    if (WebProcess::singleton().parentProcessConnection()->inSendSync()) {
+        // In case we're already inside a sendSync message, it's possible that the page is in a
+        // transitionary state, so any hit-testing could cause crashes  so we just return early in that case.
+        return;
+    }
+
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
     HitTestResult hitResult = frame.eventHandler().hitTestResultAtPoint(frame.view()->windowToContents(event.position()), HitTestRequest::ReadOnly | HitTestRequest::Active);
