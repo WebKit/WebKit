@@ -56,6 +56,7 @@
 #include <runtime/ArrayBuffer.h>
 #include <runtime/ArrayBufferView.h>
 #include <wtf/HashSet.h>
+#include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -274,6 +275,23 @@ void WebSocket::connect(const String& url, const Vector<String>& protocols, Exce
             scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "WebSocket protocols contain duplicates: '" + encodeProtocolString(protocol) + "'");
             m_state = CLOSED;
             ec = SYNTAX_ERR;
+            return;
+        }
+    }
+
+    if (is<Document>(*scriptExecutionContext())) {
+        Document& document = downcast<Document>(*scriptExecutionContext());
+        if (!document.frame()->loader().mixedContentChecker().canRunInsecureContent(document.securityOrigin(), m_url)) {
+            // Balanced by the call to ActiveDOMObject::unsetPendingActivity() in WebSocket::stop().
+            ActiveDOMObject::setPendingActivity(this);
+            // We must block this connection. Instead of throwing an exception, we indicate this
+            // using the error event. But since this code executes as part of the WebSocket's
+            // constructor, we have to wait until the constructor has completed before firing the
+            // event; otherwise, users can't connect to the event.
+            RunLoop::main().dispatch([this]() {
+                dispatchEvent(Event::create(eventNames().errorEvent, false, false));
+                stop();
+            });
             return;
         }
     }
