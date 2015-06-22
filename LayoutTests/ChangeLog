@@ -1,3 +1,28 @@
+2015-06-22  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION(r169105) Dangling renderer pointer in SelectionSubtreeRoot::SelectionSubtreeData.
+        https://bugs.webkit.org/show_bug.cgi?id=146116
+        rdar://problem/20959369
+
+        Reviewed by Brent Fulgham.
+
+        This patch ensures that we don't adjust the selection unless the visual selection still matches this subtree root.
+
+        When multiple selection roots are present we need to ensure that a RenderObject
+        only shows up in one of them.
+        RenderView::splitSelectionBetweenSubtrees(), as the name implies, splits the
+        selection and sets the selection range (start/end) on each selection root.
+        However, SelectionSubtreeRoot::adjustForVisibleSelection() later recomputes the range
+        based on visible selection and that could end up collecting renderers as selection start/end
+        from another selection subtree.
+        RenderObject's holds the last selection state (RenderObject::setSelectionState).
+        If we set a renderer first as "on selection border" and later "inside" using multiple selection roots,
+        we can't clean up selections properly when this object gets destroyed.
+        One of the roots ends up with a dangling RenderObject pointer.
+
+        * fast/regions/crash-when-renderer-is-in-multiple-selection-subtrees-expected.txt: Added.
+        * fast/regions/crash-when-renderer-is-in-multiple-selection-subtrees.html: Added.
+
 2015-06-22  Daniel Bates  <dabates@apple.com>
 
         AX: UI Automation cannot find AutoFill or search cancel buttons

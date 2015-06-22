@@ -70,15 +70,22 @@ void SelectionSubtreeRoot::adjustForVisibleSelection(Document& document)
 
     m_selectionSubtreeData.clearSelection();
 
-    if (startPos.isNotNull()
-        && endPos.isNotNull()
-        && selection.visibleStart() != selection.visibleEnd()
-        && startPos.deprecatedNode()->renderer()->flowThreadContainingBlock() == endPos.deprecatedNode()->renderer()->flowThreadContainingBlock()) {
-        m_selectionSubtreeData.setSelectionStart(startPos.deprecatedNode()->renderer());
-        m_selectionSubtreeData.setSelectionStartPos(startPos.deprecatedEditingOffset());
-        m_selectionSubtreeData.setSelectionEnd(endPos.deprecatedNode()->renderer());
-        m_selectionSubtreeData.setSelectionEndPos(endPos.deprecatedEditingOffset());
-    }
+    if (startPos.isNull() || endPos.isNull())
+        return;
+
+    if (selection.visibleStart() == selection.visibleEnd())
+        return;
+
+    if (startPos.deprecatedNode()->renderer()->flowThreadContainingBlock() != endPos.deprecatedNode()->renderer()->flowThreadContainingBlock())
+        return;
+
+    if (&startPos.deprecatedNode()->renderer()->selectionRoot() != this)
+        return;
+
+    m_selectionSubtreeData.setSelectionStart(startPos.deprecatedNode()->renderer());
+    m_selectionSubtreeData.setSelectionStartPos(startPos.deprecatedEditingOffset());
+    m_selectionSubtreeData.setSelectionEnd(endPos.deprecatedNode()->renderer());
+    m_selectionSubtreeData.setSelectionEndPos(endPos.deprecatedEditingOffset());
 }
 
 } // namespace WebCore
