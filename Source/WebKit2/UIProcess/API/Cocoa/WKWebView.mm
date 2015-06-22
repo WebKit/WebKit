@@ -1900,12 +1900,21 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 - (NSString *)_customUserAgent
 {
     return self.customUserAgent;
-
 }
 
 - (void)_setCustomUserAgent:(NSString *)customUserAgent
 {
     self.customUserAgent = customUserAgent;
+}
+
+- (void)_setUserContentExtensionsEnabled:(BOOL)userContentExtensionsEnabled
+{
+    _page->setUserContentExtensionsEnabled(userContentExtensionsEnabled);
+}
+
+- (BOOL)_userContentExtensionsEnabled
+{
+    return _page->userContentExtensionsEnabled();
 }
 
 - (pid_t)_webProcessIdentifier

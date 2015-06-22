@@ -1,3 +1,41 @@
+2015-06-20  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Add SPI to reload without content blocking.
+        https://bugs.webkit.org/show_bug.cgi?id=146128
+        rdar://problem/20351903
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetCustomUserAgent):
+        (WKPageSetUserContentExtensionsEnabled):
+        (WKPageSupportsTextEncoding):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _customUserAgent]):
+        (-[WKWebView _setUserContentExtensionsEnabled:]):
+        (-[WKWebView _userContentExtensionsEnabled]):
+        (-[WKWebView _setCustomUserAgent:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::setShouldScaleViewToFitDocument):
+        (WebKit::WebPageProxy::setUserContentExtensionsEnabled):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::userContentExtensionsEnabled):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::reinitializeWebPage):
+        (WebKit::WebPage::setShouldScaleViewToFitDocument):
+        (WebKit::WebPage::setUserContentExtensionsEnabled):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Pass a boolean from the API to WebCore.
+
 2015-06-22  Anders Carlsson  <andersca@apple.com>
 
         Remove m_clientRunLoop from IPC::Connection

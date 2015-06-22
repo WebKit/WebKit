@@ -92,8 +92,8 @@ public:
     WEBCORE_EXPORT void removeUserContentExtension(const String& name);
     WEBCORE_EXPORT void removeAllUserContentExtensions();
 
-    void processContentExtensionRulesForLoad(ResourceRequest&, ResourceType, DocumentLoader& initiatingDocumentLoader);
-    Vector<ContentExtensions::Action> actionsForResourceLoad(const ResourceLoadInfo&);
+    void processContentExtensionRulesForLoad(Page&, ResourceRequest&, ResourceType, DocumentLoader& initiatingDocumentLoader);
+    Vector<ContentExtensions::Action> actionsForResourceLoad(Page&, const ResourceLoadInfo&);
 #endif
 
 private:

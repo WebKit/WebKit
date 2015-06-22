@@ -515,6 +515,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
     if (parameters.viewScaleFactor != 1)
         scaleView(parameters.viewScaleFactor);
+
+    m_page->setUserContentExtensionsEnabled(parameters.userContentExtensionsEnabled);
 }
 
 void WebPage::reinitializeWebPage(const WebPageCreationParameters& parameters)
@@ -5020,6 +5022,14 @@ void WebPage::setShouldScaleViewToFitDocument(bool shouldScaleViewToFitDocument)
         return;
 
     m_drawingArea->setShouldScaleViewToFitDocument(shouldScaleViewToFitDocument);
+}
+
+void WebPage::setUserContentExtensionsEnabled(bool userContentExtensionsEnabled)
+{
+    if (!m_page)
+        return;
+
+    m_page->setUserContentExtensionsEnabled(userContentExtensionsEnabled);
 }
 
 } // namespace WebKit

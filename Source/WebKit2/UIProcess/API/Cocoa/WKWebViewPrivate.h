@@ -73,6 +73,8 @@ WK_EXTERN NSString * const _WKShouldOpenExternalURLsKey WK_AVAILABLE(WK_MAC_TBA,
 @property (copy, setter=_setApplicationNameForUserAgent:) NSString *_applicationNameForUserAgent;
 @property (copy, setter=_setCustomUserAgent:) NSString *_customUserAgent;
 
+@property (nonatomic, setter=_setUserContentExtensionsEnabled:) BOOL _userContentExtensionsEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
 @property (nonatomic, readonly) pid_t _webProcessIdentifier;
 
 @property (nonatomic, getter=_isEditable, setter=_setEditable:) BOOL _editable WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);

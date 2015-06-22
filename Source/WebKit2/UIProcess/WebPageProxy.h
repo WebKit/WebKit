@@ -659,6 +659,9 @@ public:
     void scaleViewAndUpdateGeometryFenced(double scale, WebCore::IntSize viewSize, std::function<void (const WebCore::MachSendRight&, CallbackBase::Error)>);
 #endif
     void setShouldScaleViewToFitDocument(bool);
+    
+    bool userContentExtensionsEnabled() { return m_userContentExtensionsEnabled; }
+    void setUserContentExtensionsEnabled(bool);
 
     float deviceScaleFactor() const;
     void setIntrinsicDeviceScaleFactor(float);
@@ -1745,6 +1748,7 @@ private:
     bool m_requiresTargetMonitoring { false };
 #endif
 
+    bool m_userContentExtensionsEnabled { true };
 };
 
 } // namespace WebKit

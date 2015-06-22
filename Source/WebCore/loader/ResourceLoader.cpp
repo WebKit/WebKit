@@ -293,12 +293,28 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
     Ref<ResourceLoader> protect(*this);
 
     ASSERT(!m_reachedTerminalState);
-
-#if ENABLE(CONTENT_EXTENSIONS)
     ASSERT(m_resourceType != ResourceType::Invalid);
 
-    if (frameLoader() && frameLoader()->frame().page() && frameLoader()->frame().page()->userContentController() && m_documentLoader)
-        frameLoader()->frame().page()->userContentController()->processContentExtensionRulesForLoad(request, m_resourceType, *m_documentLoader);
+    if (!frameLoader()) {
+        didFail(cannotShowURLError());
+        return;
+    }
+
+    Page* page = frameLoader()->frame().page();
+    if (!page) {
+        didFail(cannotShowURLError());
+        return;
+    }
+
+    if (!m_documentLoader) {
+        didFail(cannotShowURLError());
+        return;
+    }
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    auto* userContentController = page->userContentController();
+    if (userContentController)
+        userContentController->processContentExtensionRulesForLoad(*page, request, m_resourceType, *m_documentLoader);
 
     if (request.isNull()) {
         didFail(cannotShowURLError());

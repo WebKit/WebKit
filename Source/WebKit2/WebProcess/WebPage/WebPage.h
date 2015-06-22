@@ -1136,6 +1136,7 @@ private:
     void clearWheelEventTestTrigger();
 
     void setShouldScaleViewToFitDocument(bool);
+    void setUserContentExtensionsEnabled(bool);
 
     uint64_t m_pageID;
 

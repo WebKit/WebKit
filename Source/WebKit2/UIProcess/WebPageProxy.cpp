@@ -5047,6 +5047,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.appleMailPaginationQuirkEnabled = false;
 #endif
     parameters.shouldScaleViewToFitDocument = m_shouldScaleViewToFitDocument;
+    parameters.userContentExtensionsEnabled = m_userContentExtensionsEnabled;
 
     return parameters;
 }
@@ -5903,6 +5904,19 @@ void WebPageProxy::setShouldScaleViewToFitDocument(bool shouldScaleViewToFitDocu
         return;
 
     m_process->send(Messages::WebPage::SetShouldScaleViewToFitDocument(shouldScaleViewToFitDocument), m_pageID);
+}
+
+void WebPageProxy::setUserContentExtensionsEnabled(bool userContentExtensionsEnabled)
+{
+    if (m_userContentExtensionsEnabled == userContentExtensionsEnabled)
+        return;
+
+    m_userContentExtensionsEnabled = userContentExtensionsEnabled;
+
+    if (!isValid())
+        return;
+
+    m_process->send(Messages::WebPage::SetUserContentExtensionsEnabled(userContentExtensionsEnabled), m_pageID);
 }
 
 } // namespace WebKit

@@ -130,6 +130,7 @@ struct WebPageCreationParameters {
 #endif
     bool appleMailPaginationQuirkEnabled;
     bool shouldScaleViewToFitDocument;
+    bool userContentExtensionsEnabled;
 };
 
 } // namespace WebKit

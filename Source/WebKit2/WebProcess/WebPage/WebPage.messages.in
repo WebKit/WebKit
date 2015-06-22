@@ -434,4 +434,5 @@ messages -> WebPage LegacyReceiver {
 
     ClearWheelEventTestTrigger()
     SetShouldScaleViewToFitDocument(bool shouldScaleViewToFitDocument)
+    SetUserContentExtensionsEnabled(bool userContentExtensionsEnabled)
 }
