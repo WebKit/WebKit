@@ -1,3 +1,17 @@
+2015-06-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Run CDjs as part of JSC stress testing
+        https://bugs.webkit.org/show_bug.cgi?id=146174
+
+        Reviewed by Geoffrey Garen.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests): Make this aware of the cdjs-tests.yaml.
+        * Scripts/run-jsc-stress-tests:
+        - Teach this about tests that indicate error by returning an error code while also having lots of output even when they succeed.
+        - Add the ability to have "tests" be a list of tests rather than just one test. This could also be a list of directories that have tests.
+        - Fix a bug with bundle copying: whether the $collection should have the basename appended depends on whether we copy into bundleDir.dirname, not on whether absoluteCollection is a directory.
+
 2015-06-21  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r172975): navigator.language unable to tell region for Traditional Chinese users

@@ -426,6 +426,23 @@ def simpleErrorHandler
     }
 end
 
+# Error handler for tests that fail exactly when they return non-zero exit status and produce
+# lots of spew. This will echo that spew when the test fails.
+def noisyErrorHandler
+    Proc.new {
+        | outp, plan |
+        outputFilename = Shellwords.shellescape((Pathname("..") + (plan.name + ".out")).to_s)
+    
+        outp.puts "if test -e #{plan.failFile}"
+        outp.puts "then"
+        outp.puts "    (cat #{outputFilename} && echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + redirectAndPrefixCommand(plan.name)
+        outp.puts "    " + plan.failCommand
+        outp.puts "else"
+        outp.puts "    " + plan.successCommand
+        outp.puts "fi"
+    }
+end
+
 # Error handler for tests that diff their output with some expectation.
 def diffErrorHandler(expectedFilename)
     Proc.new {
@@ -992,6 +1009,35 @@ def defaultRunMozillaTest(mode, *extraFiles)
     end
 end
 
+def runNoisyTest(kind, *options)
+    addRunCommand(kind, [pathToVM.to_s] + BASE_OPTIONS + options + [$benchmark.to_s], noisyOutputHandler, noisyErrorHandler)
+end
+
+def runNoisyTestDefault
+    runNoisyTest("default")
+end
+
+def runNoisyTestDefaultFTL
+    runNoisyTest("ftl", *FTL_OPTIONS) if $enableFTL
+end
+
+def runNoisyTestNoCJIT
+    runNoisyTest($enableFTL ? "ftl-no-cjit" : "no-cjit", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(($enableFTL ? FTL_OPTIONS : []) + NO_CJIT_OPTIONS))
+end
+
+def runNoisyTestEagerNoCJIT
+    runNoisyTest($enableFTL ? "ftl-eager-no-cjit" : "eager-no-cjit", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(($enableFTL ? FTL_OPTIONS : []) + NO_CJIT_OPTIONS + EAGER_OPTIONS))
+end
+
+def defaultRunNoisyTest
+    runNoisyTestDefault
+    if $jitTests
+        runNoisyTestDefaultFTL
+        runNoisyTestNoCJIT
+        runNoisyTestEagerNoCJIT
+    end
+end
+
 def skip
     $didAddRunCommand = true
     puts "Skipping #{$collectionName}/#{$benchmark}"
@@ -1056,18 +1102,13 @@ def prepareCollection(name)
         FileUtils.mkdir_p bundleDir
         if bundleDir.basename == $collection.basename
             FileUtils.cp_r absoluteCollection, bundleDir.dirname
+            $collection = bundleDir
         else
             FileUtils.cp_r absoluteCollection, bundleDir
+            $collection = bundleDir + $collection.basename
         end
 
         $extraFilesBaseDir = absoluteCollection
-
-        # Redirect the collection's location to the newly constructed bundle.
-        if absoluteCollection.directory?
-            $collection = bundleDir
-        else
-            $collection = bundleDir + $collection.basename
-        end
     }
 end
 
@@ -1113,18 +1154,28 @@ def handleCollectionFile(collection)
         prepareCollection($collectionName)
       
         Dir.chdir($outputDir) {
-            directoryToSearch = $collection
+            pathsToSearch = [$collection]
             if entry["tests"]
-                directoryToSearch += entry["tests"]
+                if entry["tests"].is_a? Array
+                    pathsToSearch = entry["tests"].map {
+                        | testName |
+                        pathsToSearch[0] + testName
+                    }
+                else
+                    pathsToSearch[0] += entry["tests"]
+                end
             end
-            allJSFiles(directoryToSearch).each {
-                | path |
-               
-                $benchmark = path.basename
-                $benchmarkDirectory = path.dirname
-                
-                $runCommandOptions = {}
-                eval entry["cmd"]
+            pathsToSearch.each {
+                | pathToSearch |
+                allJSFiles(pathToSearch).each {
+                    | path |
+                    
+                    $benchmark = path.basename
+                    $benchmarkDirectory = path.dirname
+                    
+                    $runCommandOptions = {}
+                    eval entry["cmd"]
+                }
             }
         }
     }

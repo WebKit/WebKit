@@ -272,6 +272,7 @@ sub runJSCStressTests
         "/usr/bin/env", "ruby", "Tools/Scripts/run-jsc-stress-tests",
         "-j", jscPath($productDir), "-o", $jscStressResultsDir,
         "PerformanceTests/SunSpider/tests/sunspider-1.0",
+        "PerformanceTests/JetStream/cdjs/cdjs-tests.yaml",
         "Source/JavaScriptCore/tests/executableAllocationFuzz.yaml",
         "Source/JavaScriptCore/tests/exceptionFuzz.yaml",
         "PerformanceTests/SunSpider/no-architecture-specific-optimizations.yaml",
