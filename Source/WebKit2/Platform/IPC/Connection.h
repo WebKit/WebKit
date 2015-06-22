@@ -293,7 +293,6 @@ private:
 
     class SyncMessageState;
     friend class SyncMessageState;
-    RefPtr<SyncMessageState> m_syncMessageState;
 
     Mutex m_syncReplyStateMutex;
     bool m_shouldWaitForSyncReplies;

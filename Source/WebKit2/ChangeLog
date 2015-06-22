@@ -1,3 +1,29 @@
+2015-06-22  Anders Carlsson  <andersca@apple.com>
+
+        Simplify Connection::SyncMessageState
+        https://bugs.webkit.org/show_bug.cgi?id=146213
+
+        Reviewed by Andreas Kling.
+
+        Since we no longer support Connections dispatching to multiple threads, we can make SyncMessageState
+        into a singleton and get rid of the RunLoop -> SyncMessageState hash map.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::SyncMessageState::singleton):
+        (IPC::Connection::SyncMessageState::SyncMessageState):
+        (IPC::Connection::SyncMessageState::processIncomingMessage):
+        (IPC::Connection::SyncMessageState::dispatchMessages):
+        (IPC::Connection::waitForSyncReply):
+        (IPC::Connection::processIncomingSyncReply):
+        (IPC::Connection::processIncomingMessage):
+        (IPC::Connection::connectionDidClose):
+        (IPC::Connection::SyncMessageState::syncMessageStateMap): Deleted.
+        (IPC::Connection::SyncMessageState::syncMessageStateMapMutex): Deleted.
+        (IPC::Connection::SyncMessageState::getOrCreate): Deleted.
+        (IPC::Connection::SyncMessageState::~SyncMessageState): Deleted.
+        (IPC::Connection::Connection): Deleted.
+        * Platform/IPC/Connection.h:
+
 2015-06-20  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Add SPI to reload without content blocking.
