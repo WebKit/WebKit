@@ -42,7 +42,7 @@ public:
     FilterOperations(const FilterOperations& other) { *this = other; }
     
     WEBCORE_EXPORT FilterOperations& operator=(const FilterOperations&);
-    
+
     bool operator==(const FilterOperations&) const;
     bool operator!=(const FilterOperations& o) const
     {
@@ -70,8 +70,17 @@ public:
     bool hasFilterThatMovesPixels() const;
 
     bool hasReferenceFilter() const;
+
+#if ENABLE(FILTERS_LEVEL_2)
+    bool isUsedForBackdropFilters() const { return m_usedForBackdropFilters; }
+    void setUsedForBackdropFilters(bool usedForBackdrop) { m_usedForBackdropFilters = usedForBackdrop; }
+#endif
+
 private:
     Vector<RefPtr<FilterOperation>> m_operations;
+#if ENABLE(FILTERS_LEVEL_2)
+    bool m_usedForBackdropFilters { false };
+#endif
 };
 
 } // namespace WebCore

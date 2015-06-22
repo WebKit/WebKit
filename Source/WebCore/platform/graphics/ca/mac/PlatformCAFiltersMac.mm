@@ -161,6 +161,10 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
             const auto& blurOperation = downcast<BlurFilterOperation>(filterOperation);
             CAFilter *filter = [CAFilter filterWithType:kCAFilterGaussianBlur];
             [filter setValue:[NSNumber numberWithFloat:floatValueForLength(blurOperation.stdDeviation(), 0)] forKey:@"inputRadius"];
+#if ENABLE(FILTERS_LEVEL_2)
+            if (filters.isUsedForBackdropFilters())
+                [filter setValue:[NSNumber numberWithBool:YES] forKey:@"inputNormalizeEdges"];
+#endif
             [filter setName:filterName];
             [array.get() addObject:filter];
             break;

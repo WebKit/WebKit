@@ -1,3 +1,19 @@
+2015-06-22  Dean Jackson  <dino@apple.com>
+
+        Element with blur backdrop-filter shows edge duplication and dark edges
+        https://bugs.webkit.org/show_bug.cgi?id=146215
+        <rdar://problem/20367695>
+
+        Reviewed by Tim Horton.
+
+        Add a pixel test to show that the input images to backdrop filters should duplicate their
+        edge pixels. Unfortunately this is not reproducible with normal filters, so it
+        can't be a reference test.
+
+        * css3/filters/backdrop/blur-input-bounds.html: Added.
+        * platform/mac/css3/filters/backdrop/blur-input-bounds-expected.png: Added.
+        * platform/mac/css3/filters/backdrop/blur-input-bounds-expected.txt: Added.
+
 2015-06-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Arabic text styled with Georgia is rendered as boxes

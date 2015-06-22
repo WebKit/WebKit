@@ -51,6 +51,9 @@ FilterOperations::FilterOperations()
 FilterOperations& FilterOperations::operator=(const FilterOperations& other)
 {
     m_operations = other.m_operations;
+#if ENABLE(FILTERS_LEVEL_2)
+    m_usedForBackdropFilters = other.m_usedForBackdropFilters;
+#endif
     return *this;
 }
 
@@ -58,7 +61,12 @@ bool FilterOperations::operator==(const FilterOperations& o) const
 {
     if (m_operations.size() != o.m_operations.size())
         return false;
-        
+
+#if ENABLE(FILTERS_LEVEL_2)
+    if (m_usedForBackdropFilters != o.m_usedForBackdropFilters)
+        return false;
+#endif
+
     unsigned s = m_operations.size();
     for (unsigned i = 0; i < s; i++) {
         if (*m_operations[i] != *o.m_operations[i])
