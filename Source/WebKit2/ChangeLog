@@ -1,3 +1,15 @@
+2015-06-22  Dan Bernstein  <mitz@apple.com>
+
+        Part 1 of [Xcode] Fold the WebKit2SandboxProfiles-IOSOverride target into the Sandbox Profiles target
+        https://bugs.webkit.org/show_bug.cgi?id=146197
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/SandboxProfiles.xcconfig: Added. Defines INSTALL_PATH based on the value
+        of WK_INSTALL_OVERRIDE_SANDBOX_PROFILES.
+        * WebKit2.xcodeproj/project.pbxproj: Use SandboxProfiles.xcconfig for the Sandbox Profiles
+        target, and change the destination path in its Copy Files build phase to INSTALL_PATH.
+
 2015-06-22  Antti Koivisto  <antti@apple.com>
 
         Crash replacing TabDocument in MobileSafari at WebKit: -[WKWebView(WKPrivate) _beginAnimatedResizeWithUpdates:]
