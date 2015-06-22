@@ -37,6 +37,15 @@
 
 namespace WebCore {
 
+void ReadableStreamReader::cancel(JSC::JSValue reason, ReadableStream::CancelPromise&& promise)
+{
+    if (m_stream.isReadable() && m_stream.reader() != this) {
+        promise.resolve(nullptr);
+        return;
+    }
+    m_stream.cancelNoCheck(reason, WTF::move(promise));
+}
+
 void ReadableStreamReader::closed(ReadableStream::ClosedSuccessCallback&& successCallback, ReadableStream::FailureCallback&& failureCallback)
 {
     if (m_stream.isReadable() && m_stream.reader() != this) {

@@ -182,6 +182,12 @@ RefPtr<ReadableJSStream> ReadableJSStream::create(ExecState& exec, ScriptExecuti
     return readableStream;
 }
 
+bool ReadableJSStream::doCancel(JSValue)
+{
+    // FIXME: Implement it.
+    return true;
+}
+
 ReadableJSStream::ReadableJSStream(ScriptExecutionContext& scriptExecutionContext, ExecState& state, JSObject* source)
     : ReadableStream(scriptExecutionContext)
 {

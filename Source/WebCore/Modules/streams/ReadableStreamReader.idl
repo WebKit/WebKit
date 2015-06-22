@@ -33,9 +33,8 @@
     NoInterfaceObject,
     SkipVTableValidation
 ] interface ReadableStreamReader {
-    // FIXME: Remove RaisesException once methods are implemented.
-    [Custom, RaisesException] Object read();
-    [Custom, RaisesException] Promise cancel(DOMString reason);
+    [Custom] Object read();
+    [Custom] Promise cancel(any reason);
     [RaisesException] void releaseLock();
 
     [CustomGetter] readonly attribute Promise closed;

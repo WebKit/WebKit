@@ -72,6 +72,7 @@ private:
     virtual bool hasValue() const override;
     virtual JSC::JSValue read() override;
     virtual bool doPull() override;
+    virtual bool doCancel(JSC::JSValue) override;
 
     JSDOMGlobalObject* globalObject();
 

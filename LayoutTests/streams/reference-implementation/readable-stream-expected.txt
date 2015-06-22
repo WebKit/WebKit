@@ -25,7 +25,7 @@ PASS ReadableStream pull should be able to close a stream.
 PASS ReadableStream: enqueue should throw when the stream is readable but draining 
 PASS ReadableStream: enqueue should throw when the stream is closed 
 PASS ReadableStream: enqueue should throw the stored error when the stream is errored 
-FAIL ReadableStream: should call underlying source methods as methods cancel is not implemented
+FAIL ReadableStream: should call underlying source methods as methods assert_equals: expected 1 but got 0
 FAIL ReadableStream strategies: the default strategy should give desiredSize of 1 to start, decreasing by 1 per enqueue assert_equals: expected (number) 1 but got (undefined) undefined
 FAIL ReadableStream strategies: the default strategy should continue giving desiredSize of 1 if the chunks are read immediately assert_equals: desiredSize should start at 1 expected (number) 1 but got (undefined) undefined
 PASS ReadableStream integration test: adapting a random push source 

@@ -53,6 +53,7 @@ public:
     ReadableStreamReader(ReadableStream& stream)
         : m_stream(stream) { }
 
+    void cancel(JSC::JSValue, ReadableStream::CancelPromise&&);
     void closed(ReadableStream::ClosedSuccessCallback&&, ReadableStream::FailureCallback&&);
     void read(ReadableStream::ReadSuccessCallback&&, ReadableStream::ReadEndCallback&&, ReadableStream::FailureCallback&&);
     void releaseLock(ExceptionCode&);

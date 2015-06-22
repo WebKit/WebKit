@@ -32,6 +32,7 @@
 
 #if ENABLE(STREAMS_API)
 
+#include "ExceptionCode.h"
 #include "ReadableStreamReader.h"
 #include <runtime/JSCJSValueInlines.h>
 #include <wtf/RefCountedLeakCounter.h>
@@ -160,6 +161,53 @@ ReadableStreamReader& ReadableStream::getReader()
 
     m_releasedReaders.append(WTF::move(newReader));
     return reader;
+}
+
+void ReadableStream::cancel(JSC::JSValue reason, CancelPromise&& promise, ExceptionCode& ec)
+{
+    if (locked()) {
+        ec = TypeError;
+        return;
+    }
+    cancelNoCheck(reason, WTF::move(promise));
+}
+
+void ReadableStream::cancelNoCheck(JSC::JSValue reason, CancelPromise&& promise)
+{
+    if (m_state == State::Closed) {
+        promise.resolve(nullptr);
+        return;
+    }
+    if (m_state == State::Errored) {
+        promise.reject(error());
+        return;
+    }
+    ASSERT(m_state == State::Readable);
+
+    m_cancelPromise = WTF::move(promise);
+
+    close();
+
+    if (doCancel(reason))
+        error() ? notifyCancelFailed() : notifyCancelSucceeded();
+}
+
+void ReadableStream::notifyCancelSucceeded()
+{
+    ASSERT(m_state == State::Closed);
+    ASSERT(m_cancelPromise);
+
+    m_cancelPromise.value().resolve(nullptr);
+    m_cancelPromise = Nullopt;
+}
+
+void ReadableStream::notifyCancelFailed()
+{
+    ASSERT(m_state == State::Closed);
+    ASSERT(m_cancelPromise);
+
+    m_cancelPromise.value().reject(error());
+    m_cancelPromise = Nullopt;
 }
 
 void ReadableStream::closed(ClosedSuccessCallback&& successCallback, FailureCallback&& failureCallback)

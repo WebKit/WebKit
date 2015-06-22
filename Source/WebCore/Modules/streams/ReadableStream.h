@@ -33,9 +33,11 @@
 #if ENABLE(STREAMS_API)
 
 #include "ActiveDOMObject.h"
+#include "JSDOMPromise.h"
 #include "ScriptWrappable.h"
 #include <functional>
 #include <wtf/Deque.h>
+#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -47,6 +49,8 @@ namespace WebCore {
 
 class ReadableStreamReader;
 class ScriptExecutionContext;
+
+typedef int ExceptionCode;
 
 // ReadableStream implements the core of the streams API ReadableStream functionality.
 // It handles in particular the backpressure according the queue size.
@@ -80,8 +84,14 @@ public:
     void changeStateToClosed();
     void changeStateToErrored();
     void finishPulling();
+    void notifyCancelSucceeded();
+    void notifyCancelFailed();
 
     typedef std::function<void(JSC::JSValue)> FailureCallback;
+
+    typedef DOMPromise<std::nullptr_t, JSC::JSValue> CancelPromise;
+    void cancel(JSC::JSValue, CancelPromise&&, ExceptionCode&);
+    void cancelNoCheck(JSC::JSValue, CancelPromise&&);
 
     typedef std::function<void()> ClosedSuccessCallback;
     void closed(ClosedSuccessCallback&&, FailureCallback&&);
@@ -107,9 +117,12 @@ private:
     virtual bool hasValue() const = 0;
     virtual JSC::JSValue read() = 0;
     virtual bool doPull() = 0;
+    virtual bool doCancel(JSC::JSValue) = 0;
 
     std::unique_ptr<ReadableStreamReader> m_reader;
     Vector<std::unique_ptr<ReadableStreamReader>> m_releasedReaders;
+
+    Optional<CancelPromise> m_cancelPromise;
 
     ClosedSuccessCallback m_closedSuccessCallback;
     FailureCallback m_closedFailureCallback;

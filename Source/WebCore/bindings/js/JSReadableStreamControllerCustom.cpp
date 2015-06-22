@@ -43,9 +43,10 @@ namespace WebCore {
 JSValue JSReadableStreamController::close(ExecState* exec)
 {
     ReadableJSStream& stream = impl().stream();
-    // FIXME: Handle the case of draining.
-    if (!stream.isReadable())
-        return exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Calling close on a stream which is not readable")));
+    if (stream.isCloseRequested())
+        return exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Calling enqueue on a stream which is closing")));
+    if (stream.isErrored())
+        return exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Calling close on a stream which is errored")));
     stream.changeStateToClosed();
     return jsUndefined();
 }

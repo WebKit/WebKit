@@ -49,8 +49,15 @@ namespace WebCore {
 
 JSValue JSReadableStream::cancel(ExecState* exec)
 {
-    JSValue error = createError(exec, ASCIILiteral("cancel is not implemented"));
-    return exec->vm().throwException(exec, error);
+    // FIXME: We should be able to remove this custom binding, once we can pass a JSValue or a ScriptValue.
+    ExceptionCode ec = 0;
+    JSPromiseDeferred& promiseDeferred = *JSPromiseDeferred::create(exec, globalObject());
+    impl().cancel(exec->argument(0), DeferredWrapper(exec, globalObject(), &promiseDeferred), ec);
+
+    if (ec)
+        DeferredWrapper(exec, globalObject(), &promiseDeferred).reject(ec);
+
+    return promiseDeferred.promise();
 }
 
 JSValue JSReadableStream::getReader(ExecState* exec)
