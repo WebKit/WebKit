@@ -1,3 +1,10 @@
+2015-06-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix. A/B testing is broken when continuous builders report revisions out of order.
+
+        * public/v2/app.js:
+        (App.AnalysisTaskController.Ember.Controller.extend.):
+
 2015-06-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         A/B testing results should be shown even if they were submitted to different platforms
