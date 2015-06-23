@@ -70,6 +70,7 @@ function installDependenciesWithApt {
         libgif-dev \
         libgl1-mesa-dev \
         libgpg-error-dev \
+        libhyphen-dev \
         libicu-dev \
         libjpeg-dev \
         libjson-glib-dev \
