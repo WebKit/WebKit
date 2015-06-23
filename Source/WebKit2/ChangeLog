@@ -1,3 +1,30 @@
+2015-06-22  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL][CustomProtocol] Do not add duplicated custom scheme
+        https://bugs.webkit.org/show_bug.cgi?id=146199
+
+        Reviewed by Carlos Garcia Campos.
+
+        WebSoupCustomProtocolRequestManager::registerSchemeForCustomProtocol generates
+        a crash when duplicated scheme is registered on debug mode, or just registers it on release mode.
+        However application can register duplicate scheme by mistake or on purpose. Thus it would be good
+        if we don't register it instead of registering it or generating a crash when trying to regiseter
+        duplicated scheme.
+
+        EFL port want to allow user to change registered callback, thus EWK2ContextTest::ewk_context_url_scheme_register()
+        is modified to test it.
+
+        Test: ewk_context_url_scheme_register() in test_ewk2_context.cpp.
+
+        * UIProcess/API/efl/ewk_context.h: Added a comment to replace registered callback.
+        * UIProcess/API/efl/tests/test_ewk2_context.cpp:
+        (EWK2ContextTest::schemeRequestCallback1):
+        (EWK2ContextTest::schemeRequestCallback2):
+        (TEST_F):
+        (EWK2ContextTest::schemeRequestCallback): Deleted.
+        * UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManager.cpp:
+        (WebKit::WebSoupCustomProtocolRequestManager::registerSchemeForCustomProtocol):
+
 2015-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.9.3 release.

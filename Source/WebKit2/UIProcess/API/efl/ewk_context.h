@@ -304,6 +304,9 @@ EAPI Ewk_Storage_Manager *ewk_context_storage_manager_get(const Ewk_Context *con
  * #Ewk_Url_Scheme_Request and calling ewk_url_scheme_request_finish() later when the data of
  * the request is available.
  *
+ * To replace registered callback with new callback, calls ewk_context_url_scheme_register()
+ * with new callback again.
+ *
  * @param context a #Ewk_Context object.
  * @param scheme the network scheme to register
  * @param callback the function to be called when an URL request with @a scheme is made.

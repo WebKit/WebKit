@@ -44,7 +44,7 @@ static constexpr double testTimeoutSeconds = 2.0;
 
 class EWK2ContextTest : public EWK2UnitTestBase {
 public:
-    static void schemeRequestCallback(Ewk_Url_Scheme_Request* request, void* userData)
+    static void schemeRequestCallback1(Ewk_Url_Scheme_Request* request, void* userData)
     {
         const char* scheme = ewk_url_scheme_request_scheme_get(request);
         ASSERT_STREQ("fooscheme", scheme);
@@ -52,6 +52,19 @@ public:
         ASSERT_STREQ("fooscheme:MyPath", url);
         const char* path = ewk_url_scheme_request_path_get(request);
         ASSERT_STREQ("MyPath", path);
+        ASSERT_TRUE(ewk_url_scheme_request_finish(request, htmlReply, strlen(htmlReply), "text/html"));
+
+        finishTest = true;
+    }
+
+    static void schemeRequestCallback2(Ewk_Url_Scheme_Request* request, void* userData)
+    {
+        const char* scheme = ewk_url_scheme_request_scheme_get(request);
+        ASSERT_STREQ("fooscheme", scheme);
+        const char* url = ewk_url_scheme_request_url_get(request);
+        ASSERT_STREQ("fooscheme:MyNewPath", url);
+        const char* path = ewk_url_scheme_request_path_get(request);
+        ASSERT_STREQ("MyNewPath", path);
         ASSERT_TRUE(ewk_url_scheme_request_finish(request, htmlReply, strlen(htmlReply), "text/html"));
 
         finishTest = true;
@@ -132,9 +145,13 @@ TEST_F(EWK2ContextTest, ewk_context_storage_manager_get)
 
 TEST_F(EWK2ContextTest, ewk_context_url_scheme_register)
 {
-    ewk_context_url_scheme_register(ewk_view_context_get(webView()), "fooscheme", schemeRequestCallback, nullptr);
+    ewk_context_url_scheme_register(ewk_view_context_get(webView()), "fooscheme", schemeRequestCallback1, nullptr);
     ewk_view_url_set(webView(), "fooscheme:MyPath");
+    ASSERT_TRUE(waitUntilTrue(finishTest, testTimeoutSeconds));
 
+    finishTest = false;
+    ewk_context_url_scheme_register(ewk_view_context_get(webView()), "fooscheme", schemeRequestCallback2, nullptr);
+    ewk_view_url_set(webView(), "fooscheme:MyNewPath");
     ASSERT_TRUE(waitUntilTrue(finishTest, testTimeoutSeconds));
 }
 
