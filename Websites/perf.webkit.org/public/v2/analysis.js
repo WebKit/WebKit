@@ -129,21 +129,23 @@ App.TestGroup = App.NameLabelModel.extend({
     createdAt: DS.attr('date'),
     buildRequests: DS.hasMany('buildRequests'),
     rootSets: DS.hasMany('rootSets'),
+    platform: DS.belongsTo('platform'),
     _fetchTestResults: function ()
     {
         var task = this.get('task');
-        if (!task)
+        var platform = this.get('platform');
+        if (!task || !platform)
             return null;
         var self = this;
         return App.Manifest.fetchRunsWithPlatformAndMetric(this.store,
-            task.get('platform').get('id'), task.get('metric').get('id'), this.get('id')).then(
+            platform.get('id'), task.get('metric').get('id'), this.get('id')).then(
             function (result) { self.set('testResults', result.data); },
             function (error) {
                 // FIXME: Somehow this never gets called.
                 alert('Failed to fetch the results:' + error);
                 return null;
             });
-    }.observes('task', 'task.platform', 'task.metric').on('init'),
+    }.observes('task', 'task.platform', 'task.metric', 'platform').on('init'),
 });
 
 App.TestGroup.create = function (analysisTask, name, rootSets, repetitionCount)

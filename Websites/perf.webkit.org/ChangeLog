@@ -1,3 +1,18 @@
+2015-06-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        A/B testing results should be shown even if they were submitted to different platforms
+        https://bugs.webkit.org/show_bug.cgi?id=146219
+
+        Reviewed by Andreas Kling.
+
+        Fetch A/B testing results regardless of the platform to which results are submitted
+        by providing the platform ID to which the results were submitted for each test group.
+
+        * public/api/test-groups.php:
+        (main): Include the platform id in the test groups.
+        * public/v2/analysis.js:
+        (App.TestGroup._fetchTestResults): Fetch results from the platform associated with the group.
+
 2015-06-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove unnecessary svn:executable flags
