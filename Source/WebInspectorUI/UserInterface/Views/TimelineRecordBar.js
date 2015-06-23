@@ -205,8 +205,11 @@ WebInspector.TimelineRecordBar.prototype = {
 
     set records(records)
     {
-        if (this._records && this._records.length)
+        if (this._records && this._records.length) {
             this._element.classList.remove(this._records[0].type);
+            if (this._records[0].eventType)
+                this._element.classList.remove(this._records[0].eventType);
+        }
 
         records = records || [];
 
@@ -216,8 +219,13 @@ WebInspector.TimelineRecordBar.prototype = {
         this._records = records;
 
         // Assume all records are the same type.
-        if (this._records.length)
+        if (this._records.length) {
             this._element.classList.add(this._records[0].type);
+            // Although all records may not have the same event type, the first record is
+            // sufficient to determine the correct style for the record bar.
+            if (this._records[0].eventType)
+                this._element.classList.add(this._records[0].eventType);
+        }
     },
 
     refresh: function(graphDataSource)

@@ -32,8 +32,6 @@ WebInspector.LayoutTimelineOverviewGraph = function(timeline)
     this._layoutTimeline = timeline;
     this._layoutTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._layoutTimelineRecordAdded, this);
 
-    this._timelineRecordBars = [];
-
     this.reset();
 };
 
@@ -47,47 +45,71 @@ WebInspector.LayoutTimelineOverviewGraph.prototype = {
     {
         WebInspector.TimelineOverviewGraph.prototype.reset.call(this);
 
-        this._timelineRecordBarMap = new Map;
+        function createRecordRow()
+        {
+            var element = document.createElement("div");
+            element.className = "graph-row";
+            this.element.appendChild(element);
+            return {element, recordBars: [], records: []};
+        }
 
         this.element.removeChildren();
+
+        this._timelineRecordBarMap = new Map;
+        this._timelineLayoutRecordRow = createRecordRow.call(this);
+        this._timelinePaintRecordRow = createRecordRow.call(this);
     },
 
     updateLayout: function()
     {
         WebInspector.TimelineOverviewGraph.prototype.updateLayout.call(this);
 
-        var secondsPerPixel = this.timelineOverview.secondsPerPixel;
-
-        var recordBarIndex = 0;
-
-        function createBar(records, renderMode)
-        {
-            var timelineRecordBar = this._timelineRecordBars[recordBarIndex];
-            if (!timelineRecordBar)
-                timelineRecordBar = this._timelineRecordBars[recordBarIndex] = new WebInspector.TimelineRecordBar(records, renderMode);
-            else {
-                timelineRecordBar.renderMode = renderMode;
-                timelineRecordBar.records = records;
-            }
-            timelineRecordBar.refresh(this);
-            if (!timelineRecordBar.element.parentNode)
-                this.element.appendChild(timelineRecordBar.element);
-            ++recordBarIndex;
-        }
-
-        WebInspector.TimelineRecordBar.createCombinedBars(this._layoutTimeline.records, secondsPerPixel, this, createBar.bind(this));
-
-        // Remove the remaining unused TimelineRecordBars.
-        for (; recordBarIndex < this._timelineRecordBars.length; ++recordBarIndex) {
-            this._timelineRecordBars[recordBarIndex].records = null;
-            this._timelineRecordBars[recordBarIndex].element.remove();
-        }
+        this._updateRowLayout(this._timelinePaintRecordRow);
+        this._updateRowLayout(this._timelineLayoutRecordRow);
     },
 
     // Private
 
+    _updateRowLayout: function(row)
+    {
+        var secondsPerPixel = this.timelineOverview.secondsPerPixel;
+        var recordBarIndex = 0;
+
+        function createBar(records, renderMode)
+        {
+            var timelineRecordBar = row.recordBars[recordBarIndex];
+            if (!timelineRecordBar)
+                timelineRecordBar = row.recordBars[recordBarIndex] = new WebInspector.TimelineRecordBar(records, renderMode);
+            else {
+                timelineRecordBar.renderMode = renderMode;
+                timelineRecordBar.records = records;
+            }
+
+            timelineRecordBar.refresh(this);
+            if (!timelineRecordBar.element.parentNode)
+                row.element.appendChild(timelineRecordBar.element);
+            ++recordBarIndex;
+        }
+
+        WebInspector.TimelineRecordBar.createCombinedBars(row.records, secondsPerPixel, this, createBar.bind(this));
+
+        // Remove the remaining unused TimelineRecordBars.
+        for (; recordBarIndex < row.recordBars.length; ++recordBarIndex) {
+            row.recordBars[recordBarIndex].records = null;
+            row.recordBars[recordBarIndex].element.remove();
+        }
+    },
+
     _layoutTimelineRecordAdded: function(event)
     {
+        var layoutTimelineRecord = event.data.record;
+        console.assert(layoutTimelineRecord instanceof WebInspector.LayoutTimelineRecord);
+
+        if (layoutTimelineRecord.eventType === WebInspector.LayoutTimelineRecord.EventType.Paint)
+            this._timelinePaintRecordRow.records.push(layoutTimelineRecord);
+        else
+            this._timelineLayoutRecordRow.records.push(layoutTimelineRecord);
+
         this.needsLayout();
     }
 };

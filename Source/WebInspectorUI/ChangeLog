@@ -1,3 +1,38 @@
+2015-06-23  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Layout & Rendering timeline should show paint and layout records in separate rows
+        https://bugs.webkit.org/show_bug.cgi?id=146119
+
+        Reviewed by Timothy Hatcher.
+
+        This patch makes the original Layout & Rendering timeline visually consistent with the Rendering Frames
+        timeline, which uses green to distinguish Paint from Layout. In order to support having record bars with
+        different colors in the same overview graph, the timeline has been split into two rows.
+
+        * UserInterface/Views/LayoutTimelineOverviewGraph.css:
+        (.timeline-overview-graph.layout > .graph-row):
+        (.timeline-overview-graph.layout > .graph-row > .timeline-record-bar):
+        (.timeline-overview-graph.layout > .graph-row > .timeline-record-bar > .segment):
+        New row styles.
+
+        * UserInterface/Views/LayoutTimelineOverviewGraph.js:
+        (WebInspector.LayoutTimelineOverviewGraph.prototype.reset.createRecordRow):
+        (WebInspector.LayoutTimelineOverviewGraph.prototype.reset):
+        (WebInspector.LayoutTimelineOverviewGraph.prototype.updateLayout):
+        (WebInspector.LayoutTimelineOverviewGraph.prototype._updateRowLayout.createBar):
+        (WebInspector.LayoutTimelineOverviewGraph.prototype._updateRowLayout):
+        (WebInspector.LayoutTimelineOverviewGraph.prototype._layoutTimelineRecordAdded):
+        (WebInspector.LayoutTimelineOverviewGraph): Deleted.
+        Added bookkeeping objects for timeline row elements and their associated records.
+
+        * UserInterface/Views/TimelineRecordBar.css:
+        (.timeline-record-bar.timeline-record-type-layout.layout-timeline-record-paint > .segment):
+        New style for layout record event types.
+
+        * UserInterface/Views/TimelineRecordBar.js:
+        (WebInspector.TimelineRecordBar.prototype.set records):
+        Add style class for eventType, if present.
+
 2015-06-22  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: gaps between sections of the styles sidebar rules tab confusing, should say "Media: all"
