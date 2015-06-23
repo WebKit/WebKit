@@ -422,6 +422,14 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     return [self convertPathToScreenSpace:path];
 }
 
+- (BOOL)accessibilityHasPopup
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+    
+    return m_object->ariaHasPopup();
+}
+
 - (NSString *)accessibilityLanguage
 {
     if (![self _prepareAccessibilityCall])
