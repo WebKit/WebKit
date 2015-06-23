@@ -545,7 +545,6 @@ void Cache::deleteDumpFile()
 void Cache::clear(std::chrono::system_clock::time_point modifiedSince, std::function<void ()>&& completionHandler)
 {
     LOG(NetworkCache, "(NetworkProcess) clearing cache");
-    deleteDumpFile();
 
     if (m_statistics)
         m_statistics->clear();
@@ -555,6 +554,8 @@ void Cache::clear(std::chrono::system_clock::time_point modifiedSince, std::func
         return;
     }
     m_storage->clear(modifiedSince, WTF::move(completionHandler));
+
+    deleteDumpFile();
 }
 
 void Cache::clear()
