@@ -1,3 +1,14 @@
+2015-06-23  Anders Carlsson  <andersca@apple.com>
+
+        Add operator! and copy/move constructors to WeakObjCPtr
+        https://bugs.webkit.org/show_bug.cgi?id=146255
+
+        Reviewed by Andreas Kling.
+
+        * Shared/mac/WeakObjCPtr.h:
+        (WebKit::WeakObjCPtr::WeakObjCPtr):
+        (WebKit::WeakObjCPtr::operator!):
+
 2015-06-23  Antti Koivisto  <antti@apple.com>
 
         CrashTracer: com.apple.WebKit.Networking at JavaScriptCore: WTF::String::isolatedCopy const &

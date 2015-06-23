@@ -106,3 +106,49 @@ TEST(WebKit2_WeakObjCPtr, Id)
 
     EXPECT_EQ(weak.get(), (void*)nil);
 }
+
+TEST(WebKit2_WeakObjCPtr, LogicalNegation)
+{
+    id object = [[NSObject alloc] init];
+    WeakObjCPtr<id> weak(object);
+
+    EXPECT_FALSE(!weak);
+
+    [object release];
+
+    EXPECT_TRUE(!weak);
+}
+
+TEST(WebKit2_WeakObjCPtr, CopyConstructor)
+{
+    id object = [[NSObject alloc] init];
+    WeakObjCPtr<id> weak1(object);
+    WeakObjCPtr<id> weak2(weak1);
+
+    EXPECT_EQ(weak1.get(), object);
+    EXPECT_EQ(weak2.get(), object);
+
+    {
+        WeakObjCPtr<id> weak3(weak2);
+    }
+
+    [object release];
+
+    EXPECT_EQ(weak1.get(), (void*)nil);
+    EXPECT_EQ(weak2.get(), (void*)nil);
+}
+
+TEST(WebKit2_WeakObjCPtr, MoveConstructor)
+{
+    id object = [[NSObject alloc] init];
+    WeakObjCPtr<id> weak1(object);
+    WeakObjCPtr<id> weak2(WTF::move(weak1));
+
+    EXPECT_EQ(weak1.get(), (void*)nil);
+    EXPECT_EQ(weak2.get(), object);
+
+    [object release];
+
+    EXPECT_EQ(weak1.get(), (void*)nil);
+    EXPECT_EQ(weak2.get(), (void*)nil);
+}

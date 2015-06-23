@@ -37,6 +37,8 @@ extern "C" {
 id objc_loadWeakRetained(id*);
 id objc_initWeak(id*, id);
 void objc_destroyWeak(id*);
+void objc_copyWeak(id*, id*);
+void objc_moveWeak(id*, id*);
 }
 #endif
 
@@ -56,6 +58,16 @@ public:
         objc_initWeak(&m_weakReference, ptr);
     }
 
+    WeakObjCPtr(const WeakObjCPtr& other)
+    {
+        objc_copyWeak(&m_weakReference, const_cast<id*>(&other.m_weakReference));
+    }
+
+    WeakObjCPtr(WeakObjCPtr&& other)
+    {
+        objc_moveWeak(&m_weakReference, &other.m_weakReference);
+    }
+
     ~WeakObjCPtr()
     {
         objc_destroyWeak(&m_weakReference);
@@ -66,6 +78,11 @@ public:
         objc_storeWeak(&m_weakReference, ptr);
 
         return *this;
+    }
+
+    bool operator!() const
+    {
+        return !get();
     }
 
     RetainPtr<ValueType> get() const
