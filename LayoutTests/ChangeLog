@@ -1,3 +1,12 @@
+2015-06-23  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Unreviewed, gardening.
+
+        Mark fast/forms/listbox-visible-size.html to failure and skip
+        fast/text/arabic-times-new-roman.html because it is for iOS.
+
+        * platform/efl/TestExpectations:
+
 2015-06-22  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [EFL] Hyphenation is not supported

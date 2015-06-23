@@ -78,6 +78,9 @@ editing/selection/extend-by-character-007.html [ Skip ]
 fast/text/softbank-emoji.html [ Skip ]
 fast/text/emoji.html [ Skip ]
 
+# This test has been added for ios port since r185842.
+fast/text/arabic-times-new-roman.html [ Skip ]
+
 # ----------------------------------------
 # Tests which also fail in other platforms
 # ----------------------------------------
@@ -2270,3 +2273,5 @@ accessibility/math-multiscript-attributes.html [ Failure ]
 accessibility/transformed-element.html [ Failure ]
 
 webkit.org/b/146139 fast/css/named-images.html [ Missing ]
+
+webkit.org/b/146233 fast/forms/listbox-visible-size.html [ Failure ]
