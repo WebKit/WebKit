@@ -1,4 +1,22 @@
 =================
+WebKitGTK+  2.9.3
+=================
+
+What's new in WebKitGTK+ 2.9.3?
+
+  - Inhibit screen saver when playing full screen video.
+  - Fix DOCUMENT_VIEWER cache model to actually disable the memory cache.
+  - Fix a regression that prevented the WebKitWebView::context-menu signal
+    from being emitted.
+  - Update web inspector icon so Rendering Frames timeline distinguish between
+    layout and painting.
+  - Ensure fragment identifier part of URI is not removed for custom URI scheme
+    requests.
+  - Improve performance of keyboard events handling.
+  - Expose element tag name as an object attribute to accessibility.
+  - Fix the build with Wayland target enabled.
+
+=================
 WebKitGTK+  2.9.2
 =================
 

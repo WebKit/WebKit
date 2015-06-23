@@ -1,3 +1,9 @@
+2015-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.9.3 release.
+
+        * gtk/NEWS: Add release notes for 2.9.3.
+
 2015-06-22  Dan Bernstein  <mitz@apple.com>
 
         Part 2 of [Xcode] Fold the WebKit2SandboxProfiles-IOSOverride target into the Sandbox Profiles target
