@@ -1,3 +1,12 @@
+2015-06-22  YunQiang Su  <wzssyqa@gmail.com>
+
+        [WTF] Platform.h: use _ABI64 instead of _MIPS_SIM_ABI64 to determine MIPS N64
+        https://bugs.webkit.org/show_bug.cgi?id=145113
+
+        Reviewed by Csaba Osztrogonác.
+
+        * wtf/Platform.h:
+
 2015-06-22  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
