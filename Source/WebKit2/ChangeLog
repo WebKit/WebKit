@@ -1,3 +1,20 @@
+2015-06-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Expose some more rendering progress events, and have MiniBrowser log for each of them
+        https://bugs.webkit.org/show_bug.cgi?id=146227
+
+        Reviewed by Darin Adler.
+
+        Add _WKRenderingProgressEventFirstLayoutAfterSuppressedIncrementalRendering and 
+        _WKRenderingProgressEventFirstPaintAfterSuppressedIncrementalRendering to the private
+        header, and convert them to/from WebCore milestones.
+
+        * Shared/API/Cocoa/_WKRenderingProgressEvents.h:
+        * Shared/API/Cocoa/_WKRenderingProgressEventsInternal.h:
+        (renderingProgressEvents):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (layoutMilestones):
+
 2015-06-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build after r185876 and r185877.

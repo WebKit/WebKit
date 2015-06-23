@@ -2087,6 +2087,12 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
     if (events & _WKRenderingProgressEventReachedSessionRestorationRenderTreeSizeThreshold)
         milestones |= WebCore::ReachedSessionRestorationRenderTreeSizeThreshold;
 
+    if (events & _WKRenderingProgressEventFirstLayoutAfterSuppressedIncrementalRendering)
+        milestones |= WebCore::DidFirstLayoutAfterSuppressedIncrementalRendering;
+
+    if (events & _WKRenderingProgressEventFirstPaintAfterSuppressedIncrementalRendering)
+        milestones |= WebCore::DidFirstPaintAfterSuppressedIncrementalRendering;
+
     return milestones;
 }
 

@@ -71,6 +71,12 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     _webView.navigationDelegate = self;
     _webView.UIDelegate = self;
     
+    _webView._observedRenderingProgressEvents = _WKRenderingProgressEventFirstLayout
+        | _WKRenderingProgressEventFirstVisuallyNonEmptyLayout
+        | _WKRenderingProgressEventFirstPaintWithSignificantArea
+        | _WKRenderingProgressEventFirstLayoutAfterSuppressedIncrementalRendering
+        | _WKRenderingProgressEventFirstPaintAfterSuppressedIncrementalRendering;
+
     _zoomTextOnly = NO;
 }
 
@@ -521,6 +527,24 @@ static NSSet *dataTypes()
 {
     NSLog(@"WebContent process crashed; reloading");
     [self reload:nil];
+}
+
+- (void)_webView:(WKWebView *)webView renderingProgressDidChange:(_WKRenderingProgressEvents)progressEvents
+{
+    if (progressEvents & _WKRenderingProgressEventFirstLayout)
+        LOG(@"renderingProgressDidChange: %@", @"first layout");
+
+    if (progressEvents & _WKRenderingProgressEventFirstVisuallyNonEmptyLayout)
+        LOG(@"renderingProgressDidChange: %@", @"first visually non-empty layout");
+
+    if (progressEvents & _WKRenderingProgressEventFirstPaintWithSignificantArea)
+        LOG(@"renderingProgressDidChange: %@", @"first paint with significant area");
+
+    if (progressEvents & _WKRenderingProgressEventFirstLayoutAfterSuppressedIncrementalRendering)
+        LOG(@"renderingProgressDidChange: %@", @"first layout after suppressed incremental rendering");
+
+    if (progressEvents & _WKRenderingProgressEventFirstPaintAfterSuppressedIncrementalRendering)
+        LOG(@"renderingProgressDidChange: %@", @"first paint after suppressed incremental rendering");
 }
 
 @end

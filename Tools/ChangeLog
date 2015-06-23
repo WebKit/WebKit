@@ -1,3 +1,21 @@
+2015-06-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Expose some more rendering progress events, and have MiniBrowser log for each of them
+        https://bugs.webkit.org/show_bug.cgi?id=146227
+
+        Reviewed by Darin Adler.
+
+        Register for layout milestones/rendering progress events in the WK1 and WK2
+        browser window controllers, and, if logging is turned on, log when they are
+        reached.
+
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController awakeFromNib]):
+        (-[WK1BrowserWindowController webView:didLayout:]):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController awakeFromNib]):
+        (-[WK2BrowserWindowController _webView:renderingProgressDidChange:]):
+
 2015-06-23  Brady Eidson  <beidson@apple.com>
 
         WKFrameInfo should have an accessor for the Frame's current security origin.

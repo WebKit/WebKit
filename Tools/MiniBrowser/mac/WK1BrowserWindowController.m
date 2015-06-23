@@ -53,6 +53,8 @@
     [[WebPreferences standardPreferences] setImageControlsEnabled:YES];
     [[WebPreferences standardPreferences] setServiceControlsEnabled:YES];
 
+    [_webView _listenForLayoutMilestones:WebDidFirstLayout | WebDidFirstVisuallyNonEmptyLayout | WebDidHitRelevantRepaintedObjectsAreaThreshold];
+
     [self didChangeSettings];
 
     [containerView addSubview:_webView];
@@ -271,6 +273,18 @@
         } else
             [_webView _setPaginationMode:WebPaginationModeUnpaginated];
     }
+}
+
+- (void)webView:(WebView *)sender didLayout:(WebLayoutMilestones)milestones
+{
+    if (milestones & WebDidFirstLayout)
+        LOG(@"layout milestone: %@", @"first layout");
+
+    if (milestones & WebDidFirstVisuallyNonEmptyLayout)
+        LOG(@"layout milestone: %@", @"first non-empty layout");
+
+    if (milestones & WebDidHitRelevantRepaintedObjectsAreaThreshold)
+        LOG(@"layout milestone: %@", @"relevant repainted objects area threshold");
 }
 
 - (void)webView:(WebView *)webView decidePolicyForNavigationAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener
