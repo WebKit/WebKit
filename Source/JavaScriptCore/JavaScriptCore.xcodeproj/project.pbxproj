@@ -1310,6 +1310,8 @@
 		A5FD0082189B191A00633231 /* InspectorConsoleAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FD0080189B191A00633231 /* InspectorConsoleAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5FD0085189B1B7E00633231 /* JSGlobalObjectConsoleAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD0083189B1B7E00633231 /* JSGlobalObjectConsoleAgent.cpp */; };
 		A5FD0086189B1B7E00633231 /* JSGlobalObjectConsoleAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5FD0084189B1B7E00633231 /* JSGlobalObjectConsoleAgent.h */; };
+		A6738B041B2BB37D00027B28 /* JSBoundSlotBaseFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = A6738B031B2BB36C00027B28 /* JSBoundSlotBaseFunction.h */; };
+		A6738B051B2BB39600027B28 /* JSBoundSlotBaseFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6738B021B2BB36C00027B28 /* JSBoundSlotBaseFunction.cpp */; };
 		A700873917CBE85300C3E643 /* MapConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A700873717CBE85300C3E643 /* MapConstructor.cpp */; };
 		A700873A17CBE85300C3E643 /* MapConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = A700873817CBE85300C3E643 /* MapConstructor.h */; };
 		A700873D17CBE8D300C3E643 /* MapPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A700873B17CBE8D300C3E643 /* MapPrototype.cpp */; };
@@ -3076,6 +3078,8 @@
 		A5FD0080189B191A00633231 /* InspectorConsoleAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorConsoleAgent.h; sourceTree = "<group>"; };
 		A5FD0083189B1B7E00633231 /* JSGlobalObjectConsoleAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalObjectConsoleAgent.cpp; sourceTree = "<group>"; };
 		A5FD0084189B1B7E00633231 /* JSGlobalObjectConsoleAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObjectConsoleAgent.h; sourceTree = "<group>"; };
+		A6738B021B2BB36C00027B28 /* JSBoundSlotBaseFunction.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSBoundSlotBaseFunction.cpp; sourceTree = "<group>"; };
+		A6738B031B2BB36C00027B28 /* JSBoundSlotBaseFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSBoundSlotBaseFunction.h; sourceTree = "<group>"; };
 		A700873717CBE85300C3E643 /* MapConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MapConstructor.cpp; sourceTree = "<group>"; };
 		A700873817CBE85300C3E643 /* MapConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapConstructor.h; sourceTree = "<group>"; };
 		A700873B17CBE8D300C3E643 /* MapPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MapPrototype.cpp; sourceTree = "<group>"; };
@@ -4329,6 +4333,8 @@
 		7EF6E0BB0EB7A1EC0079AFAF /* runtime */ = {
 			isa = PBXGroup;
 			children = (
+				A6738B021B2BB36C00027B28 /* JSBoundSlotBaseFunction.cpp */,
+				A6738B031B2BB36C00027B28 /* JSBoundSlotBaseFunction.h */,
 				BCF605110E203EF800B9A64D /* ArgList.cpp */,
 				BCF605120E203EF800B9A64D /* ArgList.h */,
 				0FE0500C1AA9091100D33B33 /* ArgumentsMode.h */,
@@ -6430,6 +6436,7 @@
 				A503FA22188EFF6800110F14 /* ScriptDebugListener.h in Headers */,
 				A503FA26188EFFFD00110F14 /* ScriptDebugServer.h in Headers */,
 				A55D93A6185012A800400DED /* ScriptFunctionCall.h in Headers */,
+				A6738B041B2BB37D00027B28 /* JSBoundSlotBaseFunction.h in Headers */,
 				A54CF2FA184EAEDA00237F19 /* ScriptObject.h in Headers */,
 				A54CF2F6184EAB2400237F19 /* ScriptValue.h in Headers */,
 				A7299DA617D12858005F5FF9 /* SetConstructor.h in Headers */,
@@ -7019,6 +7026,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A6738B051B2BB39600027B28 /* JSBoundSlotBaseFunction.cpp in Sources */,
 				9EA5C7A2190F088700508EBE /* InitializeLLVMMac.cpp in Sources */,
 				9EA5C7A1190F084200508EBE /* BundlePath.mm in Sources */,
 				52B310FF1975B4240080857C /* TypeLocationCache.cpp in Sources */,

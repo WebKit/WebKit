@@ -1,3 +1,39 @@
+2015-06-23  Matthew Mirman  <mmirman@apple.com>
+
+        Completes native binding descriptors with native getters and potentially setters.
+        https://bugs.webkit.org/show_bug.cgi?id=140575
+        rdar://problem/19506502
+
+        Reviewed by Mark Lam.
+
+        * CMakeLists.txt:  Added JSBoundSlotBaseFunction.cpp
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * inspector/InjectedScriptSource.js: Added case for descriptor having a native getter.
+        * runtime/JSBoundSlotBaseFunction.cpp: Added.
+        (JSC::boundSlotBaseFunctionCall):
+        (JSC::JSBoundSlotBaseFunction::JSBoundSlotBaseFunction):  
+        Necessary wrapper for custom getters and setters as objects.
+        (JSC::JSBoundSlotBaseFunction::create):
+        (JSC::JSBoundSlotBaseFunction::visitChildren):
+        (JSC::JSBoundSlotBaseFunction::finishCreation):
+        * runtime/JSBoundSlotBaseFunction.h: Added.
+        (JSC::JSBoundSlotBaseFunction::createStructure):
+        (JSC::JSBoundSlotBaseFunction::boundSlotBase):
+        (JSC::JSBoundSlotBaseFunction::customGetterSetter):
+        (JSC::JSBoundSlotBaseFunction::isGetter):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init): Added a globally initialized structure for JSBoundSlotBaseFunction
+        (JSC::JSGlobalObject::visitChildren): visits that structure
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::boundSlotBaseFunctionStructure): added a getter for that structure
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertyDescriptor): extends the case for CustomGetterSetter to 
+        actually include GetterSetter as a JSBoundSlotBaseFunction
+        * runtime/VM.cpp: Added initializer for customGetterSetterFunctionMap
+        * runtime/VM.h: Added cache for JSBoundSlotBaseFunction
+
 2015-06-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Allow trailing comma in ArrayBindingPattern and ObjectBindingPattern
