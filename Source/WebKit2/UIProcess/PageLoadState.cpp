@@ -101,6 +101,7 @@ void PageLoadState::commitChanges()
     bool hasOnlySecureContentChanged = hasOnlySecureContent(m_committedState) != hasOnlySecureContent(m_uncommittedState);
     bool estimatedProgressChanged = estimatedProgress(m_committedState) != estimatedProgress(m_uncommittedState);
     bool networkRequestsInProgressChanged = m_committedState.networkRequestsInProgress != m_uncommittedState.networkRequestsInProgress;
+    bool certificateInfoChanged = m_committedState.certificateInfo != m_uncommittedState.certificateInfo;
 
     if (canGoBackChanged)
         callObserverCallback(&Observer::willChangeCanGoBack);
@@ -118,10 +119,14 @@ void PageLoadState::commitChanges()
         callObserverCallback(&Observer::willChangeEstimatedProgress);
     if (networkRequestsInProgressChanged)
         callObserverCallback(&Observer::willChangeNetworkRequestsInProgress);
+    if (certificateInfoChanged)
+        callObserverCallback(&Observer::willChangeCertificateInfo);
 
     m_committedState = m_uncommittedState;
 
     // The "did" ordering is the reverse of the "will". This is a requirement of Cocoa Key-Value Observing.
+    if (certificateInfoChanged)
+        callObserverCallback(&Observer::didChangeCertificateInfo);
     if (networkRequestsInProgressChanged)
         callObserverCallback(&Observer::didChangeNetworkRequestsInProgress);
     if (estimatedProgressChanged)
@@ -267,13 +272,14 @@ void PageLoadState::didFailProvisionalLoad(const Transaction::Token& token)
     m_uncommittedState.unreachableURL = m_lastUnreachableURL;
 }
 
-void PageLoadState::didCommitLoad(const Transaction::Token& token, bool hasInsecureContent)
+void PageLoadState::didCommitLoad(const Transaction::Token& token, WebCertificateInfo& certificateInfo, bool hasInsecureContent)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
     ASSERT(m_uncommittedState.state == State::Provisional);
 
     m_uncommittedState.state = State::Committed;
     m_uncommittedState.hasInsecureContent = hasInsecureContent;
+    m_uncommittedState.certificateInfo = &certificateInfo;
 
     m_uncommittedState.url = m_uncommittedState.provisionalURL;
     m_uncommittedState.provisionalURL = String();

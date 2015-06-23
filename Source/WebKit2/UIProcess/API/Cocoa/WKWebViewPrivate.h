@@ -65,7 +65,7 @@ WK_EXTERN NSString * const _WKShouldOpenExternalURLsKey WK_AVAILABLE(WK_MAC_TBA,
 
 - (void)_loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)baseURL forUnreachableURL:(NSURL *)unreachableURL;
 
-@property (nonatomic, readonly) NSArray *_certificateChain;
+@property (nonatomic, readonly) NSArray *_certificateChain WK_DEPRECATED(10_10, WK_MAC_TBA, 8_0, WK_IOS_TBA, "use -certificateChain");
 @property (nonatomic, readonly) NSURL *_committedURL;
 @property (nonatomic, readonly) NSString *_MIMEType;
 @property (nonatomic, readonly) NSString *_userAgent WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);

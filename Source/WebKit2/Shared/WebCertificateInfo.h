@@ -28,15 +28,15 @@
 
 #include "APIObject.h"
 #include <WebCore/CertificateInfo.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 
 namespace WebKit {
 
 class WebCertificateInfo : public API::ObjectImpl<API::Object::Type::CertificateInfo> {
 public:
-    static PassRefPtr<WebCertificateInfo> create(const WebCore::CertificateInfo& info)
+    static Ref<WebCertificateInfo> create(const WebCore::CertificateInfo& info)
     {
-        return adoptRef(new WebCertificateInfo(info));
+        return adoptRef(*new WebCertificateInfo(info));
     }
 
     const WebCore::CertificateInfo& certificateInfo() const { return m_certificateInfo; }

@@ -26,10 +26,12 @@
 #ifndef PageLoadState_h
 #define PageLoadState_h
 
+#include "WebCertificateInfo.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
+class WebCertificateInfo;
 class WebPageProxy;
 
 class PageLoadState {
@@ -70,6 +72,9 @@ public:
 
         virtual void willChangeNetworkRequestsInProgress() = 0;
         virtual void didChangeNetworkRequestsInProgress() = 0;
+
+        virtual void willChangeCertificateInfo() = 0;
+        virtual void didChangeCertificateInfo() = 0;
     };
 
     class Transaction {
@@ -123,6 +128,8 @@ public:
     double estimatedProgress() const;
     bool networkRequestsInProgress() const { return m_committedState.networkRequestsInProgress; }
 
+    WebCertificateInfo* certificateInfo() const { return m_committedState.certificateInfo.get(); }
+
     const String& pendingAPIRequestURL() const;
     void setPendingAPIRequestURL(const Transaction::Token&, const String&);
     void clearPendingAPIRequestURL(const Transaction::Token&);
@@ -131,7 +138,7 @@ public:
     void didReceiveServerRedirectForProvisionalLoad(const Transaction::Token&, const String& url);
     void didFailProvisionalLoad(const Transaction::Token&);
 
-    void didCommitLoad(const Transaction::Token&, bool hasInsecureContent);
+    void didCommitLoad(const Transaction::Token&, WebCertificateInfo&, bool hasInsecureContent);
     void didFinishLoad(const Transaction::Token&);
     void didFailLoad(const Transaction::Token&);
 
@@ -191,6 +198,8 @@ private:
 
         double estimatedProgress;
         bool networkRequestsInProgress;
+
+        RefPtr<WebCertificateInfo> certificateInfo;
     };
 
     static bool isLoading(const Data&);

@@ -125,6 +125,8 @@ private:
     virtual void didChangeCanGoForward() override { }
     virtual void willChangeNetworkRequestsInProgress() override { }
     virtual void didChangeNetworkRequestsInProgress() override { }
+    virtual void willChangeCertificateInfo() override { }
+    virtual void didChangeCertificateInfo() override { }
 
     WKBrowsingContextController *m_controller;
 };

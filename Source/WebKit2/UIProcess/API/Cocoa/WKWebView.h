@@ -164,6 +164,13 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 @property (nonatomic, readonly) BOOL hasOnlySecureContent;
 
+/*! @abstract An array of SecCertificateRef objects forming the certificate
+ chain for the currently committed navigation.
+ @discussion The certificates are ordered from leaf (at index 0) to anchor.
+ @link WKWebView @/link is key-value observing (KVO) compliant for this property.
+ */
+@property (nonatomic, readonly, copy) NSArray *certificateChain WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
 /*! @abstract A Boolean value indicating whether there is a back item in
  the back-forward list that can be navigated to.
  @discussion @link WKWebView @/link is key-value observing (KVO) compliant

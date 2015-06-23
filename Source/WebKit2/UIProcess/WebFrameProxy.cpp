@@ -139,14 +139,14 @@ void WebFrameProxy::didFailProvisionalLoad()
     m_frameLoadState.didFailProvisionalLoad();
 }
 
-void WebFrameProxy::didCommitLoad(const String& contentType, const WebCore::CertificateInfo& certificateInfo)
+void WebFrameProxy::didCommitLoad(const String& contentType, WebCertificateInfo& certificateInfo)
 {
     m_frameLoadState.didCommitLoad();
 
     m_title = String();
     m_MIMEType = contentType;
     m_isFrameSet = false;
-    m_certificateInfo = WebCertificateInfo::create(certificateInfo);
+    m_certificateInfo = &certificateInfo;
 }
 
 void WebFrameProxy::didFinishLoad()

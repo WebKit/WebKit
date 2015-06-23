@@ -517,6 +517,15 @@ static bool shouldAllowPictureInPictureMediaPlayback()
     return _page->pageLoadState().hasOnlySecureContent();
 }
 
+- (NSArray *)certificateChain
+{
+    auto certificateInfo = _page->pageLoadState().certificateInfo();
+    if (!certificateInfo)
+        return @[ ];
+
+    return (NSArray *)certificateInfo->certificateInfo().certificateChain() ?: @[ ];
+}
+
 - (BOOL)canGoBack
 {
     return _page->pageLoadState().canGoBack();

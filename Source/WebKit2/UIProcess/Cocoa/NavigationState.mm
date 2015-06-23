@@ -840,6 +840,16 @@ void NavigationState::didChangeNetworkRequestsInProgress()
     [m_webView didChangeValueForKey:@"_networkRequestsInProgress"];
 }
 
+void NavigationState::willChangeCertificateInfo()
+{
+    [m_webView willChangeValueForKey:@"certificateChain"];
+}
+
+void NavigationState::didChangeCertificateInfo()
+{
+    [m_webView didChangeValueForKey:@"certificateChain"];
+}
+
 } // namespace WebKit
 
 #endif

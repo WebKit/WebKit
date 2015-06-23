@@ -1,3 +1,56 @@
+2015-06-23  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/21342465> Make -[WKWebView _certificateChain] public.
+        https://bugs.webkit.org/show_bug.cgi?id=145886
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebCertificateInfo.h:
+        (WebKit::WebCertificateInfo::create): Changed to return a Ref rather than a PassRefPtr.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm: Added no-op overrides of new
+        PageLoadState::Observer functions to PageLoadStateObserver.
+
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        (-[WKProcessGroup _setAllowsSpecificHTTPSCertificate:forHost:]): Updated for change to
+        WebCertificateInfo::create.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _setAllowsSpecificHTTPSCertificate:forHost:]): Ditto.
+
+        * UIProcess/API/Cocoa/WKWebView.h: Declared new certificateChain property on WKWebView.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView certificateChain]): Added. Returns the certificate chain from the page load
+        state, or an empty array if there is no certificate chain.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: Deprecated _certificateChain.
+
+        * UIProcess/Cocoa/NavigationState.h: Declared overrides of new PageLoadState::Observer
+        functions.
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::willChangeCertificateInfo): Override to call
+        -willChangeValueForKey:.
+        (WebKit::NavigationState::didChangeCertificateInfo): Override to call
+        -didChangeValueForKey:.
+
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::commitChanges): Call the new observer functions
+        willChangeCertificateInfo and didChangeCertificateInfo.
+        (WebKit::PageLoadState::didCommitLoad): Added new certificateInfo parameter, which is stored
+        in the uncommitted state.
+        * UIProcess/PageLoadState.h:
+        (WebKit::PageLoadState::certificateInfo): Added this getter.
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didCommitLoad): Changed the parameter type from
+        WebCore::CertificateInfo to WebCertificateInfo.
+        * UIProcess/WebFrameProxy.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame): Pass the certificate info to
+        PageLoadState::didCommitLoad.
+
 2015-06-22  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL][CustomProtocol] Do not add duplicated custom scheme

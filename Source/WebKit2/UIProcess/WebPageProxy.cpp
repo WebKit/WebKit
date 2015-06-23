@@ -2942,8 +2942,9 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
 
     auto transaction = m_pageLoadState.transaction();
     bool markPageInsecure = m_treatsSHA1CertificatesAsInsecure && certificateInfo.containsNonRootSHA1SignedCertificate();
+    Ref<WebCertificateInfo> webCertificateInfo = WebCertificateInfo::create(certificateInfo);
     if (frame->isMainFrame())
-        m_pageLoadState.didCommitLoad(transaction, markPageInsecure);
+        m_pageLoadState.didCommitLoad(transaction, webCertificateInfo, markPageInsecure);
     else if (markPageInsecure)
         m_pageLoadState.didDisplayOrRunInsecureContent(transaction);
 
@@ -2956,7 +2957,7 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
 
     clearLoadDependentCallbacks();
 
-    frame->didCommitLoad(mimeType, certificateInfo);
+    frame->didCommitLoad(mimeType, webCertificateInfo);
 
     if (frame->isMainFrame()) {
         m_mainFrameHasCustomContentProvider = frameHasCustomContentProvider;
