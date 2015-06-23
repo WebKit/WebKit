@@ -191,7 +191,7 @@ GeolocationPosition* WebGeolocationClient::lastPosition()
     WebThreadRun(^{
         // A soft deny does not prevent subsequent request from the Geolocation object.
         [self deny];
-        _geolocation->resetAllGeolocationPermission();
+        _geolocation->resetIsAllowed();
     });
 }
 

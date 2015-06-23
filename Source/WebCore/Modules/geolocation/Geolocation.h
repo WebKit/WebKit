@@ -66,6 +66,7 @@ public:
     void clearWatch(int watchID);
 
     WEBCORE_EXPORT void setIsAllowed(bool);
+    void resetIsAllowed() { m_allowGeolocation = Unknown; }
     bool isAllowed() const { return m_allowGeolocation == Yes; }
 
     void positionChanged();

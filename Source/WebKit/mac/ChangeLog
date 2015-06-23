@@ -1,3 +1,29 @@
+2015-06-22  Chris Dumez  <cdumez@apple.com>
+
+        [WK1] WebAllowDenyPolicyListener.denyOnlyThisRequest() should not start a new permission request
+        https://bugs.webkit.org/show_bug.cgi?id=146228
+        <rdar://problem/15179262>
+
+        Reviewed by Daniel Bates.
+
+        Call the new Geolocation::resetIsAllowed() API after denying the
+        current request, instead of calling
+        Geolocation::resetAllGeolocationPermission(). In addition to resetting
+        m_allowGeolocation to Unknown, the latter would also start a new
+        permission request. However, for
+        WebAllowDenyPolicyListener.denyOnlyThisRequest(), we really only want
+        to deny the current request and then reset m_allowGeolocation to
+        Unknown so that permission is requested again later if the app requests
+        a position again.
+
+        The previous implementation meant that if the client application keeps
+        calling WebAllowDenyPolicyListener.denyOnlyThisRequest(), we would end
+        up in an infinite loop (requesting for permission), even though the
+        application did not make any new geolocation requests.
+
+        * WebCoreSupport/WebGeolocationClient.mm:
+        (-[WebGeolocationPolicyListener denyOnlyThisRequest]):
+
 2015-06-22  Anders Carlsson  <andersca@apple.com>
 
         Delegates should be formal protocols
