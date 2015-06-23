@@ -33,6 +33,7 @@ set(WebKitTestNetscapePlugin_INCLUDE_DIRECTORIES
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/unix/ForwardingHeaders
     ${WEBCORE_DIR}
+    ${WTF_DIR}
 )
 
 set(WebKitTestNetscapePlugin_SYSTEM_INCLUDE_DIRECTORIES

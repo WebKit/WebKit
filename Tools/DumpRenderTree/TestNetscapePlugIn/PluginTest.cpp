@@ -28,6 +28,9 @@
 #include "PluginObject.h"
 #include <assert.h>
 #include <string.h>
+#include <wtf/Platform.h>
+#include <wtf/ExportMacros.h>
+#include <wtf/Assertions.h>
 
 #if defined(XP_UNIX) || defined(ANDROID)
 #include <unistd.h>
@@ -254,6 +257,7 @@ void PluginTest::executeScript(const char* script)
     browser->releasevariantvalue(&browserResult);
 }
 
+WTF_ATTRIBUTE_PRINTF(2, 3)
 void PluginTest::log(const char* format, ...)
 {
     va_list args;
