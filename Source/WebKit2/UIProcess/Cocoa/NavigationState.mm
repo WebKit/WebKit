@@ -37,6 +37,7 @@
 #import "CompletionHandlerCallChecker.h"
 #import "NavigationActionData.h"
 #import "PageLoadState.h"
+#import "SecurityOriginData.h"
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKFrameInfoInternal.h"
@@ -449,7 +450,7 @@ void NavigationState::NavigationClient::didFailProvisionalNavigationWithError(We
 }
 
 // FIXME: Shouldn't need to pass the WebFrameProxy in here. At most, a FrameHandle.
-void NavigationState::NavigationClient::didFailProvisionalLoadInSubframeWithError(WebPageProxy& page, WebFrameProxy& webFrameProxy, API::Navigation* navigation, const WebCore::ResourceError& error, API::Object*)
+void NavigationState::NavigationClient::didFailProvisionalLoadInSubframeWithError(WebPageProxy& page, WebFrameProxy& webFrameProxy, const SecurityOriginData& securityOrigin, API::Navigation* navigation, const WebCore::ResourceError& error, API::Object*)
 {
     // FIXME: We should assert that navigation is not null here, but it's currently null because WebPageProxy::didFailProvisionalLoadForFrame passes null.
     RetainPtr<WKNavigation> wkNavigation;
@@ -462,7 +463,7 @@ void NavigationState::NavigationClient::didFailProvisionalLoadInSubframeWithErro
     auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
     auto errorWithRecoveryAttempter = createErrorWithRecoveryAttempter(m_navigationState.m_webView, webFrameProxy, error);
 
-    [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView navigation:nil didFailProvisionalLoadInSubframe:wrapper(API::FrameInfo::create(webFrameProxy)) withError:errorWithRecoveryAttempter.get()];
+    [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView navigation:nil didFailProvisionalLoadInSubframe:wrapper(API::FrameInfo::create(webFrameProxy, securityOrigin.securityOrigin())) withError:errorWithRecoveryAttempter.get()];
 }
 
 void NavigationState::NavigationClient::didCommitNavigation(WebPageProxy& page, API::Navigation* navigation, API::Object*)

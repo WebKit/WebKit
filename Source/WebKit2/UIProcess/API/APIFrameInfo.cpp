@@ -31,9 +31,10 @@
 namespace API {
 
 // FIXME: This should use the full request of the frame, not just the URL.
-FrameInfo::FrameInfo(const WebKit::WebFrameProxy& frame)
+FrameInfo::FrameInfo(const WebKit::WebFrameProxy& frame, const WebCore::SecurityOrigin& securityOrigin)
     : m_isMainFrame(frame.isMainFrame())
     , m_request(WebCore::ResourceRequest(frame.url()))
+    , m_securityOrigin(adoptRef(*SecurityOrigin::create(securityOrigin).leakRef()))
 {
 }
 

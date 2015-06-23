@@ -56,7 +56,7 @@ void WKResourceCacheManagerGetCacheOrigins(WKResourceCacheManagerRef cacheManage
         Vector<RefPtr<API::Object>> securityOrigins;
         for (const auto& dataRecord : dataRecords) {
             for (const auto& origin : dataRecord.origins)
-                securityOrigins.append(API::SecurityOrigin::create(origin));
+                securityOrigins.append(API::SecurityOrigin::create(*origin));
         }
 
         callback(toAPI(API::Array::create(WTF::move(securityOrigins)).ptr()), nullptr, context);

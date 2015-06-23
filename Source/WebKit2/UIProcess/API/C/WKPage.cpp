@@ -48,6 +48,7 @@
 #include "NavigationActionData.h"
 #include "PluginInformation.h"
 #include "PrintInfo.h"
+#include "SecurityOriginData.h"
 #include "WKAPICast.h"
 #include "WKPagePolicyClientInternal.h"
 #include "WKPageRenderingProgressEventsInternal.h"
@@ -1333,7 +1334,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
         }
 
     private:
-        virtual PassRefPtr<WebPageProxy> createNewPage(WebPageProxy* page, WebFrameProxy*, const ResourceRequest& resourceRequest, const WindowFeatures& windowFeatures, const NavigationActionData& navigationActionData) override
+        virtual PassRefPtr<WebPageProxy> createNewPage(WebPageProxy* page, WebFrameProxy*, const SecurityOriginData&, const ResourceRequest& resourceRequest, const WindowFeatures& windowFeatures, const NavigationActionData& navigationActionData) override
         {
             if (!m_client.base.version && !m_client.createNewPage_deprecatedForUseWithV0)
                 return 0;
@@ -1407,7 +1408,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             m_client.unfocus(toAPI(page), m_client.base.clientInfo);
         }
 
-        virtual void runJavaScriptAlert(WebPageProxy* page, const String& message, WebFrameProxy* frame, std::function<void ()> completionHandler) override
+        virtual void runJavaScriptAlert(WebPageProxy* page, const String& message, WebFrameProxy* frame, const SecurityOriginData&, std::function<void ()> completionHandler) override
         {
             if (!m_client.runJavaScriptAlert) {
                 completionHandler();
@@ -1418,7 +1419,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             completionHandler();
         }
 
-        virtual void runJavaScriptConfirm(WebPageProxy* page, const String& message, WebFrameProxy* frame, std::function<void (bool)> completionHandler) override
+        virtual void runJavaScriptConfirm(WebPageProxy* page, const String& message, WebFrameProxy* frame, const SecurityOriginData&, std::function<void (bool)> completionHandler) override
         {
             if (!m_client.runJavaScriptConfirm) {
                 completionHandler(false);
@@ -1429,7 +1430,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             completionHandler(result);
         }
 
-        virtual void runJavaScriptPrompt(WebPageProxy* page, const String& message, const String& defaultValue, WebFrameProxy* frame, std::function<void (const String&)> completionHandler) override
+        virtual void runJavaScriptPrompt(WebPageProxy* page, const String& message, const String& defaultValue, WebFrameProxy* frame, const SecurityOriginData&, std::function<void (const String&)> completionHandler) override
         {
             if (!m_client.runJavaScriptPrompt) {
                 completionHandler(String());
@@ -1853,11 +1854,11 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
             m_client.didFailNavigation(toAPI(&page), toAPI(navigation), toAPI(error), toAPI(userData), m_client.base.clientInfo);
         }
 
-        virtual void didFailProvisionalLoadInSubframeWithError(WebPageProxy& page, WebFrameProxy& subframe, API::Navigation* navigation, const WebCore::ResourceError& error, API::Object* userData) override
+        virtual void didFailProvisionalLoadInSubframeWithError(WebPageProxy& page, WebFrameProxy& subframe, const WebKit::SecurityOriginData& securityOriginData, API::Navigation* navigation, const WebCore::ResourceError& error, API::Object* userData) override
         {
             if (!m_client.didFailProvisionalLoadInSubframe)
                 return;
-            m_client.didFailProvisionalLoadInSubframe(toAPI(&page), toAPI(navigation), toAPI(API::FrameInfo::create(subframe).ptr()), toAPI(error), toAPI(userData), m_client.base.clientInfo);
+            m_client.didFailProvisionalLoadInSubframe(toAPI(&page), toAPI(navigation), toAPI(API::FrameInfo::create(subframe, securityOriginData.securityOrigin()).ptr()), toAPI(error), toAPI(userData), m_client.base.clientInfo);
         }
 
         virtual void didFinishDocumentLoad(WebPageProxy& page, API::Navigation* navigation, API::Object* userData) override

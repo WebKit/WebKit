@@ -51,6 +51,8 @@
 		51393E221523952D005F39C5 /* DOMWindowExtensionBasic_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51393E1D1523944A005F39C5 /* DOMWindowExtensionBasic_Bundle.cpp */; };
 		5142B2731517C8C800C32B19 /* ContextMenuCanCopyURL.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5142B2721517C89100C32B19 /* ContextMenuCanCopyURL.html */; };
 		517E7E04151119C100D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 517E7E031511187500D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html */; };
+		51CD1C6C1B38CE4300142CA5 /* ModalAlerts.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51CD1C6A1B38CE3600142CA5 /* ModalAlerts.mm */; };
+		51CD1C721B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51CD1C711B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html */; };
 		51E5C7021919C3B200D8B3E1 /* simple2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51E780361919AFF8001829A2 /* simple2.html */; };
 		51E5C7031919C3B200D8B3E1 /* simple3.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51E780371919AFF8001829A2 /* simple3.html */; };
 		51FCF7A11534B2A000104491 /* ShouldGoToBackForwardListItem_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51FCF7971534AC6D00104491 /* ShouldGoToBackForwardListItem_Bundle.cpp */; };
@@ -338,6 +340,7 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
+				51CD1C721B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html in Copy Resources */,
 				7AE9E5091AE5AE8B00CF874B /* test.pdf in Copy Resources */,
 				7A1458FC1AD5C07000E06772 /* mouse-button-listener.html in Copy Resources */,
 				7C486BA11AA12567003F6F9B /* bundle-file.html in Copy Resources */,
@@ -516,6 +519,8 @@
 		5142B2721517C89100C32B19 /* ContextMenuCanCopyURL.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = ContextMenuCanCopyURL.html; sourceTree = "<group>"; };
 		517E7DFB15110EA600D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryCachePruneWithinResourceLoadDelegate.mm; sourceTree = "<group>"; };
 		517E7E031511187500D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = MemoryCachePruneWithinResourceLoadDelegate.html; sourceTree = "<group>"; };
+		51CD1C6A1B38CE3600142CA5 /* ModalAlerts.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModalAlerts.mm; sourceTree = "<group>"; };
+		51CD1C711B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "modal-alerts-in-new-about-blank-window.html"; sourceTree = "<group>"; };
 		51E5C7041919EA5F00D8B3E1 /* ShouldKeepCurrentBackForwardListItemInList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShouldKeepCurrentBackForwardListItemInList.cpp; sourceTree = "<group>"; };
 		51E780361919AFF8001829A2 /* simple2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = simple2.html; sourceTree = "<group>"; };
 		51E780371919AFF8001829A2 /* simple3.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = simple3.html; sourceTree = "<group>"; };
@@ -842,6 +847,7 @@
 				A1A4FE5D18DD3DB700B5EA8A /* Download.mm */,
 				2D1FE0AF1AD465C1006CD9E6 /* FixedLayoutSize.mm */,
 				37D36ED61AF42ECD00BAF5D9 /* LoadAlternateHTMLString.mm */,
+				51CD1C6A1B38CE3600142CA5 /* ModalAlerts.mm */,
 				1ABC3DED1899BE6D004F0626 /* Navigation.mm */,
 				CEA6CF2219CCF5BD0064F5A7 /* OpenAndCloseWindow.mm */,
 				C95501BE19AD2FAF0049BE3E /* Preferences.mm */,
@@ -1133,6 +1139,7 @@
 				93AF4ECF1506F123007FD57E /* lots-of-images.html */,
 				2DD7D3AE178227AC0026E1E3 /* lots-of-text-vertical-lr.html */,
 				930AD401150698B30067970F /* lots-of-text.html */,
+				51CD1C711B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html */,
 				33E79E05137B5FCE00E32D99 /* mouse-move-listener.html */,
 				CEA6CF2719CCF69D0064F5A7 /* open-and-close-window.html */,
 				F6FDDDD514241C48004F1729 /* push-state.html */,
@@ -1536,6 +1543,7 @@
 				7CCE7F0D1A411AE600447C4C /* ReloadPageAfterCrash.cpp in Sources */,
 				7CCE7EC91A411A7E00447C4C /* RenderedImageFromDOMNode.mm in Sources */,
 				7CCE7ECA1A411A7E00447C4C /* RenderedImageFromDOMRange.mm in Sources */,
+				51CD1C6C1B38CE4300142CA5 /* ModalAlerts.mm in Sources */,
 				7CCE7F0E1A411AE600447C4C /* ResizeReversePaginatedWebView.cpp in Sources */,
 				7CCE7F0F1A411AE600447C4C /* ResizeWindowAfterCrash.cpp in Sources */,
 				7CCE7F101A411AE600447C4C /* ResponsivenessTimerDoesntFireEarly.cpp in Sources */,

@@ -28,14 +28,10 @@
 #if WK_API_ENABLED
 
 #import <Foundation/Foundation.h>
+#import <WebKit/WKSecurityOrigin.h>
 
 WK_CLASS_AVAILABLE(10_10, 8_0)
-@interface _WKSecurityOrigin : NSObject
-
-@property (nonatomic, readonly, copy) NSString *protocol;
-@property (nonatomic, readonly, copy) NSString *host;
-@property (nonatomic, readonly) unsigned short port;
-
+@interface _WKSecurityOrigin : WKSecurityOrigin
 @end
 
 #endif

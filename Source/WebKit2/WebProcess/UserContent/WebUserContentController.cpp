@@ -27,6 +27,7 @@
 #include "WebUserContentController.h"
 
 #include "DataReference.h"
+#include "SecurityOriginData.h"
 #include "WebCompiledContentExtension.h"
 #include "WebFrame.h"
 #include "WebPage.h"
@@ -135,7 +136,7 @@ public:
         if (!webPage)
             return;
 
-        WebProcess::singleton().parentProcessConnection()->send(Messages::WebUserContentControllerProxy::DidPostMessage(webPage->pageID(), webFrame->frameID(), m_identifier, IPC::DataReference(value->data())), m_controller->identifier());
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebUserContentControllerProxy::DidPostMessage(webPage->pageID(), webFrame->frameID(), SecurityOriginData::fromFrame(webFrame), m_identifier, IPC::DataReference(value->data())), m_controller->identifier());
     }
 
     WebCore::UserMessageHandlerDescriptor& descriptor() { return *m_descriptor; }

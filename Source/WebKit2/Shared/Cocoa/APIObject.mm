@@ -48,6 +48,7 @@
 #import "WKNavigationResponseInternal.h"
 #import "WKPreferencesInternal.h"
 #import "WKProcessPoolInternal.h"
+#import "WKSecurityOriginInternal.h"
 #import "WKUserContentControllerInternal.h"
 #import "WKUserScriptInternal.h"
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
@@ -170,6 +171,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::PageGroup:
         wrapper = [WKBrowsingContextGroup alloc];
+        break;
+
+    case Type::SecurityOrigin:
+        wrapper = [WKSecurityOrigin alloc];
         break;
 
     case Type::String:

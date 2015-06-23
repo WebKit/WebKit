@@ -157,7 +157,7 @@ void WebUserContentControllerProxy::removeUserMessageHandlerForName(const String
     }
 }
 
-void WebUserContentControllerProxy::didPostMessage(IPC::Connection& connection, uint64_t pageID, uint64_t frameID, uint64_t messageHandlerID, const IPC::DataReference& dataReference)
+void WebUserContentControllerProxy::didPostMessage(IPC::Connection& connection, uint64_t pageID, uint64_t frameID, const SecurityOriginData& securityOrigin, uint64_t messageHandlerID, const IPC::DataReference& dataReference)
 {
     WebPageProxy* page = WebProcessProxy::webPage(pageID);
     if (!page)
@@ -178,9 +178,8 @@ void WebUserContentControllerProxy::didPostMessage(IPC::Connection& connection, 
     auto buffer = dataReference.vector();
     RefPtr<WebCore::SerializedScriptValue> value = WebCore::SerializedScriptValue::adopt(buffer);
 
-    handler->client().didPostMessage(*page, *frame, *value);
+    handler->client().didPostMessage(*page, *frame, securityOrigin, *value);
 }
-
 
 #if ENABLE(CONTENT_EXTENSIONS)
 void WebUserContentControllerProxy::addUserContentExtension(API::UserContentExtension& userContentExtension)

@@ -35,6 +35,7 @@
 #include "InjectedBundleNavigationAction.h"
 #include "NavigationActionData.h"
 #include "PluginView.h"
+#include "SecurityOriginData.h"
 #include "UserData.h"
 #include "WKBundleAPICast.h"
 #include "WebBackForwardListProxy.h"
@@ -493,7 +494,7 @@ void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& e
         navigationID = static_cast<WebDocumentLoader*>(documentLoader)->navigationID();
 
     // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidFailProvisionalLoadForFrame(m_frame->frameID(), navigationID, m_frame->coreFrame()->loader().provisionalLoadErrorBeingHandledURL(), error, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+    webPage->send(Messages::WebPageProxy::DidFailProvisionalLoadForFrame(m_frame->frameID(), SecurityOriginData::fromFrame(m_frame), navigationID, m_frame->coreFrame()->loader().provisionalLoadErrorBeingHandledURL(), error, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 
     // If we have a load listener, notify it.
     if (WebFrame::LoadListener* loadListener = m_frame->loadListener())
@@ -699,7 +700,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
     unsigned syncSendFlags = IPC::InformPlatformProcessWillSuspend;
     if (WebPage::synchronousMessagesShouldSpinRunLoop())
         syncSendFlags |= IPC::SpinRunLoopWhileWaitingForReply;
-    if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForResponseSync(m_frame->frameID(), response, request, canShowMIMEType, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())), Messages::WebPageProxy::DecidePolicyForResponseSync::Reply(receivedPolicyAction, policyAction, downloadID), std::chrono::milliseconds::max(), syncSendFlags)) {
+    if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForResponseSync(m_frame->frameID(), SecurityOriginData::fromFrame(m_frame), response, request, canShowMIMEType, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())), Messages::WebPageProxy::DecidePolicyForResponseSync::Reply(receivedPolicyAction, policyAction, downloadID), std::chrono::milliseconds::max(), syncSendFlags)) {
         function(PolicyIgnore);
         return;
     }
@@ -738,7 +739,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Navigati
     navigationActionData.isProcessingUserGesture = navigationAction.processingUserGesture();
     navigationActionData.canHandleRequest = webPage->canHandleRequest(request);
 
-    webPage->send(Messages::WebPageProxy::DecidePolicyForNewWindowAction(m_frame->frameID(), navigationActionData, request, frameName, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+    webPage->send(Messages::WebPageProxy::DecidePolicyForNewWindowAction(m_frame->frameID(), SecurityOriginData::fromFrame(m_frame), navigationActionData, request, frameName, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
 void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& navigationAction, const ResourceRequest& request, PassRefPtr<FormState> prpFormState, FramePolicyFunction function)
@@ -808,7 +809,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         documentLoader = static_cast<WebDocumentLoader*>(coreFrame->loader().documentLoader());
 
     // Notify the UIProcess.
-    if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationAction(m_frame->frameID(), documentLoader->navigationID(), navigationActionData, originatingFrame ? originatingFrame->frameID() : 0, navigationAction.resourceRequest(), request, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())), Messages::WebPageProxy::DecidePolicyForNavigationAction::Reply(receivedPolicyAction, newNavigationID, policyAction, downloadID))) {
+    if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationAction(m_frame->frameID(), SecurityOriginData::fromFrame(m_frame), documentLoader->navigationID(), navigationActionData, originatingFrame ? originatingFrame->frameID() : 0, SecurityOriginData::fromFrame(originatingFrame.get()), navigationAction.resourceRequest(), request, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())), Messages::WebPageProxy::DecidePolicyForNavigationAction::Reply(receivedPolicyAction, newNavigationID, policyAction, downloadID))) {
         function(PolicyIgnore);
         return;
     }

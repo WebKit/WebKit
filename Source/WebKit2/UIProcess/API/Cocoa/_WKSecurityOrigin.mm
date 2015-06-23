@@ -24,41 +24,11 @@
  */
 
 #import "config.h"
-#import "_WKSecurityOriginInternal.h"
+#import "_WKSecurityOrigin.h"
 
 #if WK_API_ENABLED
 
-#import <WebCore/SecurityOrigin.h>
-#import <wtf/RefPtr.h>
-
-@implementation _WKSecurityOrigin {
-    RefPtr<WebCore::SecurityOrigin> _origin;
-}
-
-- (instancetype)_initWithSecurityOrigin:(const WebCore::SecurityOrigin&)origin
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _origin = origin.isolatedCopy();
-    return self;
-}
-
-- (NSString *)protocol
-{
-    return _origin->protocol();
-}
-
-- (NSString *)host
-{
-    return _origin->host();
-}
-
-- (unsigned short)port
-{
-    return _origin->port();
-}
-
+@implementation _WKSecurityOrigin
 @end
 
 #endif // WK_API_ENABLED

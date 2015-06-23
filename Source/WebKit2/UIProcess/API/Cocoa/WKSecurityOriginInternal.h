@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,48 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APISecurityOrigin_h
-#define APISecurityOrigin_h
+#import "WKSecurityOrigin.h"
 
-#include "APIObject.h"
-#include <WebCore/SecurityOrigin.h>
-#include <wtf/PassRefPtr.h>
+#if WK_API_ENABLED
+
+#import "APISecurityOrigin.h"
 
 namespace API {
 
-class SecurityOrigin : public API::ObjectImpl<API::Object::Type::SecurityOrigin> {
-public:
-    static RefPtr<SecurityOrigin> createFromString(const WTF::String& string)
-    {
-        return create(WebCore::SecurityOrigin::createFromString(string));
-    }
-
-    static RefPtr<SecurityOrigin> create(const WTF::String& protocol, const WTF::String& host, int port)
-    {
-        return create(WebCore::SecurityOrigin::create(protocol, host, port));
-    }
-
-    static RefPtr<SecurityOrigin> create(const WebCore::SecurityOrigin& securityOrigin)
-    {
-        return adoptRef(new SecurityOrigin(securityOrigin));
-    }
-
-    WebCore::SecurityOrigin& securityOrigin() const { return *m_securityOrigin; }
-
-private:
-    SecurityOrigin(PassRefPtr<WebCore::SecurityOrigin> securityOrigin)
-        : m_securityOrigin(securityOrigin)
-    {
-    }
-
-    SecurityOrigin(const WebCore::SecurityOrigin& securityOrigin)
-        : m_securityOrigin(securityOrigin.isolatedCopy())
-    {
-    }
-
-    RefPtr<WebCore::SecurityOrigin> m_securityOrigin;
-};
+inline WKSecurityOrigin *wrapper(API::SecurityOrigin& securityOrigin)
+{
+    ASSERT([securityOrigin.wrapper() isKindOfClass:[WKSecurityOrigin self]]);
+    return (WKSecurityOrigin *)securityOrigin.wrapper();
+}
 
 }
+
+@interface WKSecurityOrigin () <WKObject> {
+@package
+    API::ObjectStorage<API::SecurityOrigin> _securityOrigin;
+}
+@end
 
 #endif

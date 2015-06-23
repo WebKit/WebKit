@@ -36,6 +36,7 @@
 #import <WebKit/WKProcessPool.h>
 #import <WebKit/WKScriptMessage.h>
 #import <WebKit/WKScriptMessageHandler.h>
+#import <WebKit/WKSecurityOrigin.h>
 #import <WebKit/WKUIDelegate.h>
 #import <WebKit/WKUserContentController.h>
 #import <WebKit/WKUserScript.h>

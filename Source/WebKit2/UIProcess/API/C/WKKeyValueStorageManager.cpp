@@ -73,7 +73,7 @@ void WKKeyValueStorageManagerGetKeyValueStorageOrigins(WKKeyValueStorageManagerR
         Vector<RefPtr<API::Object>> webSecurityOrigins;
         webSecurityOrigins.reserveInitialCapacity(securityOrigins.size());
         for (auto& origin : securityOrigins)
-            webSecurityOrigins.uncheckedAppend(API::SecurityOrigin::create(origin));
+            webSecurityOrigins.uncheckedAppend(API::SecurityOrigin::create(*origin));
 
         callback(toAPI(API::Array::create(WTF::move(webSecurityOrigins)).ptr()), nullptr, context);
     });

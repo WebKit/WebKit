@@ -28,6 +28,7 @@
 
 #if WK_API_ENABLED
 
+#import "SecurityOriginData.h"
 #import "WKFrameInfoInternal.h"
 #import "WKNSArray.h"
 #import "WKScriptMessageHandler.h"
@@ -84,9 +85,9 @@ public:
     {
     }
     
-    virtual void didPostMessage(WebKit::WebPageProxy& page, WebKit::WebFrameProxy& frame, WebCore::SerializedScriptValue& serializedScriptValue)
+    virtual void didPostMessage(WebKit::WebPageProxy& page, WebKit::WebFrameProxy& frame, const WebKit::SecurityOriginData& securityOriginData, WebCore::SerializedScriptValue& serializedScriptValue)
     {
-        RetainPtr<WKFrameInfo> frameInfo = wrapper(API::FrameInfo::create(frame));
+        RetainPtr<WKFrameInfo> frameInfo = wrapper(API::FrameInfo::create(frame, securityOriginData.securityOrigin()));
 
         RetainPtr<JSContext> context = adoptNS([[JSContext alloc] init]);
         JSValueRef valueRef = serializedScriptValue.deserialize([context JSGlobalContextRef], 0);

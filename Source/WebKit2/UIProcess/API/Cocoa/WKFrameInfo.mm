@@ -28,6 +28,8 @@
 
 #if WK_API_ENABLED
 
+#import "WKSecurityOriginInternal.h"
+
 @implementation WKFrameInfo
 
 - (void)dealloc
@@ -50,6 +52,11 @@
 - (NSURLRequest *)request
 {
     return _frameInfo->request().nsURLRequest(WebCore::DoNotUpdateHTTPBody);
+}
+
+- (WKSecurityOrigin *)securityOrigin
+{
+    return wrapper(_frameInfo->securityOrigin());
 }
 
 - (id)copyWithZone:(NSZone *)zone

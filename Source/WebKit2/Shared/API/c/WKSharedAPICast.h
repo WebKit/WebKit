@@ -215,7 +215,7 @@ inline WKSecurityOriginRef toCopiedAPI(WebCore::SecurityOrigin* origin)
 {
     if (!origin)
         return 0;
-    return toAPI(API::SecurityOrigin::create(origin).leakRef());
+    return toAPI(API::SecurityOrigin::create(*origin).leakRef());
 }
 
 /* Geometry conversions */

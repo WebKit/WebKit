@@ -27,7 +27,9 @@
 #define APIFrameInfo_h
 
 #include "APIObject.h"
+#include "APISecurityOrigin.h"
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/SecurityOrigin.h>
 
 namespace WebKit {
 class WebFrameProxy;
@@ -37,19 +39,21 @@ namespace API {
 
 class FrameInfo final : public ObjectImpl<Object::Type::FrameInfo> {
 public:
-    static Ref<FrameInfo> create(const WebKit::WebFrameProxy& frame)
+    static Ref<FrameInfo> create(const WebKit::WebFrameProxy& frame, const WebCore::SecurityOrigin& securityOrigin)
     {
-        return adoptRef(*new FrameInfo(frame));
+        return adoptRef(*new FrameInfo(frame, securityOrigin));
     }
 
-    explicit FrameInfo(const WebKit::WebFrameProxy&);
+    FrameInfo(const WebKit::WebFrameProxy&, const WebCore::SecurityOrigin&);
 
     bool isMainFrame() const { return m_isMainFrame; }
     const WebCore::ResourceRequest& request() const { return m_request; }
+    SecurityOrigin& securityOrigin() { return m_securityOrigin.get(); }
 
 private:
     bool m_isMainFrame;
     WebCore::ResourceRequest m_request;
+    Ref<SecurityOrigin> m_securityOrigin;
 };
 
 } // namespace API

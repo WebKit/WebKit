@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKSecurityOrigin.h"
+#import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-#import <wtf/PassRefPtr.h>
+#import <Foundation/Foundation.h>
 
-namespace WebCore {
-class SecurityOrigin;
-}
+/*! A WKSecurityOrigin object contains information about a security origin.
+ @discussion An instance of this class is a transient, data-only object;
+ it does not uniquely identify a security origin across multiple delegate method
+ calls.
+ */
+WK_ASSUME_NONNULL_BEGIN
 
-@interface _WKSecurityOrigin ()
+WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_MAC_TBA)
+@interface WKSecurityOrigin : NSObject
 
-- (instancetype)_initWithSecurityOrigin:(const WebCore::SecurityOrigin&)origin;
+- (instancetype)init WK_UNAVAILABLE;
+
+/*! @abstract The security origin's protocol.
+ */
+@property (nonatomic, readonly, copy) NSString *protocol;
+
+/*! @abstract The security origin's host.
+ */
+@property (nonatomic, readonly, copy) NSString *host;
+
+/*! @abstract The security origin's port.
+ */
+@property (nonatomic, readonly) NSInteger port;
 
 @end
+
+WK_ASSUME_NONNULL_END
 
 #endif

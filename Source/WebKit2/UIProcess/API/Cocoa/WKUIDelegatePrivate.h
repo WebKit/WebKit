@@ -27,8 +27,8 @@
 
 #if WK_API_ENABLED
 
+#import <WebKit/WKSecurityOrigin.h>
 #import <WebKit/_WKActivatedElementInfo.h>
-#import <WebKit/_WKSecurityOrigin.h>
 
 @class UIViewController;
 @class _WKFrameHandle;
@@ -38,10 +38,10 @@
 @optional
 
 // FIXME: This should be handled by the WKWebsiteDataStore delegate.
-- (void)_webView:(WKWebView *)webView decideDatabaseQuotaForSecurityOrigin:(_WKSecurityOrigin *)securityOrigin currentQuota:(unsigned long long)currentQuota currentOriginUsage:(unsigned long long)currentOriginUsage currentDatabaseUsage:(unsigned long long)currentUsage expectedUsage:(unsigned long long)expectedUsage decisionHandler:(void (^)(unsigned long long newQuota))decisionHandler;
+- (void)_webView:(WKWebView *)webView decideDatabaseQuotaForSecurityOrigin:(WKSecurityOrigin *)securityOrigin currentQuota:(unsigned long long)currentQuota currentOriginUsage:(unsigned long long)currentOriginUsage currentDatabaseUsage:(unsigned long long)currentUsage expectedUsage:(unsigned long long)expectedUsage decisionHandler:(void (^)(unsigned long long newQuota))decisionHandler;
 
 // FIXME: This should be handled by the WKWebsiteDataStore delegate.
-- (void)_webView:(WKWebView *)webView decideWebApplicationCacheQuotaForSecurityOrigin:(_WKSecurityOrigin *)securityOrigin currentQuota:(unsigned long long)currentQuota totalBytesNeeded:(unsigned long long)totalBytesNeeded decisionHandler:(void (^)(unsigned long long newQuota))decisionHandler;
+- (void)_webView:(WKWebView *)webView decideWebApplicationCacheQuotaForSecurityOrigin:(WKSecurityOrigin *)securityOrigin currentQuota:(unsigned long long)currentQuota totalBytesNeeded:(unsigned long long)totalBytesNeeded decisionHandler:(void (^)(unsigned long long newQuota))decisionHandler;
 
 - (void)_webView:(WKWebView *)webView printFrame:(_WKFrameHandle *)frame;
 

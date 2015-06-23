@@ -30,14 +30,15 @@
 
 #import "CompletionHandlerCallChecker.h"
 #import "NavigationActionData.h"
+#import "SecurityOriginData.h"
 #import "WKFrameInfoInternal.h"
 #import "WKNavigationActionInternal.h"
+#import "WKSecurityOriginInternal.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewInternal.h"
 #import "WKWindowFeaturesInternal.h"
 #import "WKUIDelegatePrivate.h"
 #import "_WKFrameHandleInternal.h"
-#import "_WKSecurityOriginInternal.h"
 
 namespace WebKit {
 
@@ -91,7 +92,7 @@ UIDelegate::UIClient::~UIClient()
 {
 }
 
-PassRefPtr<WebKit::WebPageProxy> UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy*, WebKit::WebFrameProxy* initiatingFrame, const WebCore::ResourceRequest& request, const WebCore::WindowFeatures& windowFeatures, const WebKit::NavigationActionData& navigationActionData)
+PassRefPtr<WebKit::WebPageProxy> UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy*, WebKit::WebFrameProxy* initiatingFrame, const WebKit::SecurityOriginData& securityOriginData, const WebCore::ResourceRequest& request, const WebCore::WindowFeatures& windowFeatures, const WebKit::NavigationActionData& navigationActionData)
 {
     if (!m_uiDelegate.m_delegateMethods.webViewCreateWebViewWithConfigurationForNavigationActionWindowFeatures)
         return nullptr;
@@ -103,7 +104,7 @@ PassRefPtr<WebKit::WebPageProxy> UIDelegate::UIClient::createNewPage(WebKit::Web
     auto configuration = adoptNS([m_uiDelegate.m_webView->_configuration copy]);
     [configuration _setRelatedWebView:m_uiDelegate.m_webView];
 
-    auto sourceFrameInfo = API::FrameInfo::create(*initiatingFrame);
+    auto sourceFrameInfo = API::FrameInfo::create(*initiatingFrame, securityOriginData.securityOrigin());
     auto navigationAction = API::NavigationAction::create(navigationActionData, sourceFrameInfo.ptr(), nullptr, request, WebCore::URL());
 
     RetainPtr<WKWebView> webView = [delegate.get() webView:m_uiDelegate.m_webView createWebViewWithConfiguration:configuration.get() forNavigationAction:wrapper(navigationAction) windowFeatures:adoptNS([[WKWindowFeatures alloc] _initWithWindowFeatures:windowFeatures]).get()];
@@ -117,7 +118,7 @@ PassRefPtr<WebKit::WebPageProxy> UIDelegate::UIClient::createNewPage(WebKit::Web
     return webView->_page.get();
 }
 
-void UIDelegate::UIClient::runJavaScriptAlert(WebKit::WebPageProxy*, const WTF::String& message, WebKit::WebFrameProxy* webFrameProxy, std::function<void ()> completionHandler)
+void UIDelegate::UIClient::runJavaScriptAlert(WebKit::WebPageProxy*, const WTF::String& message, WebKit::WebFrameProxy* webFrameProxy, const WebKit::SecurityOriginData& securityOriginData, std::function<void ()> completionHandler)
 {
     if (!m_uiDelegate.m_delegateMethods.webViewRunJavaScriptAlertPanelWithMessageInitiatedByFrameCompletionHandler) {
         completionHandler();
@@ -131,13 +132,13 @@ void UIDelegate::UIClient::runJavaScriptAlert(WebKit::WebPageProxy*, const WTF::
     }
 
     RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:));
-    [delegate webView:m_uiDelegate.m_webView runJavaScriptAlertPanelWithMessage:message initiatedByFrame:wrapper(API::FrameInfo::create(*webFrameProxy)) completionHandler:[completionHandler, checker] {
+    [delegate webView:m_uiDelegate.m_webView runJavaScriptAlertPanelWithMessage:message initiatedByFrame:wrapper(API::FrameInfo::create(*webFrameProxy, securityOriginData.securityOrigin())) completionHandler:[completionHandler, checker] {
         completionHandler();
         checker->didCallCompletionHandler();
     }];
 }
 
-void UIDelegate::UIClient::runJavaScriptConfirm(WebKit::WebPageProxy*, const WTF::String& message, WebKit::WebFrameProxy* webFrameProxy, std::function<void (bool)> completionHandler)
+void UIDelegate::UIClient::runJavaScriptConfirm(WebKit::WebPageProxy*, const WTF::String& message, WebKit::WebFrameProxy* webFrameProxy, const WebKit::SecurityOriginData& securityOriginData, std::function<void (bool)> completionHandler)
 {
     if (!m_uiDelegate.m_delegateMethods.webViewRunJavaScriptConfirmPanelWithMessageInitiatedByFrameCompletionHandler) {
         completionHandler(false);
@@ -151,13 +152,13 @@ void UIDelegate::UIClient::runJavaScriptConfirm(WebKit::WebPageProxy*, const WTF
     }
 
     RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:completionHandler:));
-    [delegate webView:m_uiDelegate.m_webView runJavaScriptConfirmPanelWithMessage:message initiatedByFrame:wrapper(API::FrameInfo::create(*webFrameProxy)) completionHandler:[completionHandler, checker](BOOL result) {
+    [delegate webView:m_uiDelegate.m_webView runJavaScriptConfirmPanelWithMessage:message initiatedByFrame:wrapper(API::FrameInfo::create(*webFrameProxy, securityOriginData.securityOrigin())) completionHandler:[completionHandler, checker](BOOL result) {
         completionHandler(result);
         checker->didCallCompletionHandler();
     }];
 }
 
-void UIDelegate::UIClient::runJavaScriptPrompt(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& defaultValue, WebKit::WebFrameProxy* webFrameProxy, std::function<void (const WTF::String&)> completionHandler)
+void UIDelegate::UIClient::runJavaScriptPrompt(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& defaultValue, WebKit::WebFrameProxy* webFrameProxy, const WebKit::SecurityOriginData& securityOriginData, std::function<void (const WTF::String&)> completionHandler)
 {
     if (!m_uiDelegate.m_delegateMethods.webViewRunJavaScriptTextInputPanelWithPromptDefaultTextInitiatedByFrameCompletionHandler) {
         completionHandler(String());
@@ -171,7 +172,7 @@ void UIDelegate::UIClient::runJavaScriptPrompt(WebKit::WebPageProxy*, const WTF:
     }
 
     RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:));
-    [delegate webView:m_uiDelegate.m_webView runJavaScriptTextInputPanelWithPrompt:message defaultText:defaultValue initiatedByFrame:wrapper(API::FrameInfo::create(*webFrameProxy)) completionHandler:[completionHandler, checker](NSString *result) {
+    [delegate webView:m_uiDelegate.m_webView runJavaScriptTextInputPanelWithPrompt:message defaultText:defaultValue initiatedByFrame:wrapper(API::FrameInfo::create(*webFrameProxy, securityOriginData.securityOrigin())) completionHandler:[completionHandler, checker](NSString *result) {
         completionHandler(result);
         checker->didCallCompletionHandler();
     }];
@@ -190,8 +191,9 @@ void UIDelegate::UIClient::exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, 
         return;
     }
 
+    ASSERT(securityOrigin);
     RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:decideDatabaseQuotaForSecurityOrigin:currentQuota:currentOriginUsage:currentDatabaseUsage:expectedUsage:decisionHandler:));
-    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView decideDatabaseQuotaForSecurityOrigin:adoptNS([[_WKSecurityOrigin alloc] _initWithSecurityOrigin:securityOrigin->securityOrigin()]).get() currentQuota:currentQuota currentOriginUsage:currentOriginUsage currentDatabaseUsage:currentUsage expectedUsage:expectedUsage decisionHandler:[completionHandler, checker](unsigned long long newQuota) {
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView decideDatabaseQuotaForSecurityOrigin:wrapper(*securityOrigin) currentQuota:currentQuota currentOriginUsage:currentOriginUsage currentDatabaseUsage:currentUsage expectedUsage:expectedUsage decisionHandler:[completionHandler, checker](unsigned long long newQuota) {
         checker->didCallCompletionHandler();
         completionHandler(newQuota);
     }];
@@ -211,7 +213,9 @@ void UIDelegate::UIClient::reachedApplicationCacheOriginQuota(WebPageProxy*, con
     }
 
     RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:decideWebApplicationCacheQuotaForSecurityOrigin:currentQuota:totalBytesNeeded:decisionHandler:));
-    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView decideWebApplicationCacheQuotaForSecurityOrigin:adoptNS([[_WKSecurityOrigin alloc] _initWithSecurityOrigin:securityOrigin]).get() currentQuota:currentQuota totalBytesNeeded:totalBytesNeeded decisionHandler:[completionHandler, checker](unsigned long long newQuota) {
+    RefPtr<API::SecurityOrigin> apiOrigin = API::SecurityOrigin::create(securityOrigin);
+    
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView decideWebApplicationCacheQuotaForSecurityOrigin:wrapper(*apiOrigin) currentQuota:currentQuota totalBytesNeeded:totalBytesNeeded decisionHandler:[completionHandler, checker](unsigned long long newQuota) {
         checker->didCallCompletionHandler();
         completionHandler(newQuota);
     }];

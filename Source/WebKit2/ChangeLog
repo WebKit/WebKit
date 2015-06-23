@@ -1,3 +1,138 @@
+2015-06-23  Brady Eidson  <beidson@apple.com>
+
+        WKFrameInfo should have an accessor for the Frame's current security origin.
+        https://bugs.webkit.org/show_bug.cgi?id=146162
+
+        Reviewed by Dan Bernstein.
+
+        This patch:
+        - Promotes _WKSecurityOrigin to API.
+        - Makes the WKSecurityOrigin Cocoa API object work with API::SecurityOrigin.
+        - Adds a WKSecurityOrigin accessor to WKFrameInfo.
+        - Changes IPC messaging so every handler that calls out with a WKFrameInfo object
+          gets a relevant SecurityOrigin to wrap.
+
+        * Shared/API/APISecurityOrigin.h:
+        (API::SecurityOrigin::create):
+        (API::SecurityOrigin::SecurityOrigin):
+
+        * Shared/API/Cocoa/WebKit.h:
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toCopiedAPI):
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+
+        * Shared/SecurityOriginData.cpp:
+        (WebKit::SecurityOriginData::fromFrame):
+        * Shared/SecurityOriginData.h:
+
+        * UIProcess/API/APIFrameInfo.cpp:
+        (API::FrameInfo::FrameInfo):
+        * UIProcess/API/APIFrameInfo.h:
+
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::didFailProvisionalLoadInSubframeWithError):
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::createNewPage):
+        (API::UIClient::runJavaScriptAlert):
+        (API::UIClient::runJavaScriptConfirm):
+        (API::UIClient::runJavaScriptPrompt):
+
+        * UIProcess/API/C/WKApplicationCacheManager.cpp:
+        (WKApplicationCacheManagerGetApplicationCacheOrigins):
+
+        * UIProcess/API/C/WKKeyValueStorageManager.cpp:
+        (WKKeyValueStorageManagerGetKeyValueStorageOrigins):
+
+        * UIProcess/API/C/WKOriginDataManager.cpp:
+        (WKOriginDataManagerGetOrigins):
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        (WKPageSetPageNavigationClient):
+
+        * UIProcess/API/C/WKResourceCacheManager.cpp:
+        (WKResourceCacheManagerGetCacheOrigins):
+
+        * UIProcess/API/Cocoa/WKFrameInfo.h:
+        * UIProcess/API/Cocoa/WKFrameInfo.mm:
+        (-[WKFrameInfo securityOrigin]):
+
+        * UIProcess/API/Cocoa/WKSecurityOrigin.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/_WKSecurityOrigin.h.
+        * UIProcess/API/Cocoa/WKSecurityOrigin.mm: Copied from Source/WebKit2/UIProcess/API/Cocoa/_WKSecurityOrigin.mm.
+        (-[WKSecurityOrigin dealloc]):
+        (-[WKSecurityOrigin description]):
+        (-[WKSecurityOrigin protocol]):
+        (-[WKSecurityOrigin host]):
+        (-[WKSecurityOrigin port]):
+        (-[WKSecurityOrigin _apiObject]):
+        * UIProcess/API/Cocoa/WKSecurityOriginInternal.h: Renamed from Source/WebKit2/UIProcess/API/Cocoa/_WKSecurityOriginInternal.h.
+        (API::wrapper):
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+
+        * UIProcess/API/Cocoa/_WKSecurityOrigin.h:
+        * UIProcess/API/Cocoa/_WKSecurityOrigin.mm:
+        (-[_WKSecurityOrigin _initWithSecurityOrigin:]): Deleted.
+        (-[_WKSecurityOrigin protocol]): Deleted.
+        (-[_WKSecurityOrigin host]): Deleted.
+        (-[_WKSecurityOrigin port]): Deleted.
+
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::didFailProvisionalLoadInSubframeWithError):
+
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::createNewPage):
+        (WebKit::UIDelegate::UIClient::runJavaScriptAlert):
+        (WebKit::UIDelegate::UIClient::runJavaScriptConfirm):
+        (WebKit::UIDelegate::UIClient::runJavaScriptPrompt):
+        (WebKit::UIDelegate::UIClient::exceededDatabaseQuota):
+        (WebKit::UIDelegate::UIClient::reachedApplicationCacheOriginQuota):
+
+        * UIProcess/UserContent/WebScriptMessageHandler.h:
+
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::didPostMessage):
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        * UIProcess/UserContent/WebUserContentControllerProxy.messages.in:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        (WebKit::WebPageProxy::decidePolicyForResponse):
+        (WebKit::WebPageProxy::decidePolicyForResponseSync):
+        (WebKit::WebPageProxy::createNewPage):
+        (WebKit::WebPageProxy::runJavaScriptAlert):
+        (WebKit::WebPageProxy::runJavaScriptConfirm):
+        (WebKit::WebPageProxy::runJavaScriptPrompt):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserMessageHandlerDescriptorProxy::didPostMessage):
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createWindow):
+        (WebKit::WebChromeClient::runJavaScriptAlert):
+        (WebKit::WebChromeClient::runJavaScriptConfirm):
+        (WebKit::WebChromeClient::runJavaScriptPrompt):
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2015-06-23  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/21342465> Make -[WKWebView _certificateChain] public.
