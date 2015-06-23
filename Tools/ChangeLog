@@ -1,3 +1,31 @@
+2015-06-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Make it possible to enable incremental rendering suppression in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=146223
+        
+        Reviewed by Tim Horton.
+
+        Add a menu item to enable incremental rendering suppression to MiniBrowser.
+        
+        For WK1, this just toggles a pref, and takes effect immediately.
+        
+        For WK2, this is a WKConfiguration property, so only affects new web views.
+        
+        Also remove a toolbar item connection to toggleUseMinimumViewSize: that caused
+        logging on launch.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (defaultConfiguration):
+        * MiniBrowser/mac/BrowserWindow.xib:
+        * MiniBrowser/mac/SettingsController.h:
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController _populateMenu]):
+        (-[SettingsController validateMenuItem:]):
+        (-[SettingsController toggleIncrementalRenderingSuppressed:]):
+        (-[SettingsController incrementalRenderingSuppressed]):
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController didChangeSettings]):
+
 2015-06-19  Filip Pizlo  <fpizlo@apple.com>
 
         Run CDjs as part of JSC stress testing

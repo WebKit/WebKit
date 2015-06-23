@@ -82,6 +82,7 @@ static WKWebViewConfiguration *defaultConfiguration()
         }
     }
 
+    configuration.suppressesIncrementalRendering = [SettingsController shared].incrementalRenderingSuppressed;
     return configuration;
 }
 #endif

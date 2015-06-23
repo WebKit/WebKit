@@ -100,9 +100,6 @@
                                 <action selector="toggleShrinkToFit:" target="-2" id="gp7-Vk-KTI"/>
                             </connections>
                         </button>
-                        <connections>
-                            <action selector="toggleUseMinimumViewSize:" target="-2" id="gZA-yS-7L4"/>
-                        </connections>
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="6BDC61B7-F1A8-425A-A212-9CAC59C56385" label="Progress" paletteLabel="Progress" tag="-1" id="60">
                         <nil key="toolTip"/>
