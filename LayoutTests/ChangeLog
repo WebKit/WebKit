@@ -1,3 +1,12 @@
+2015-06-23  Daniel Bates  <dabates@apple.com>
+
+        AX Tests hit-test-input-{auto-fill, search}-button.html and input-search-cancel-button.html fail on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=146243
+
+        Mark the tests as failing for now.
+
+        * platform/win/TestExpectations:
+
 2015-06-23  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         MediaDevices.getUserMedia should migrate from callbacks to DOMPromise
