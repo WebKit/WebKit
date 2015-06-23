@@ -1,12 +1,12 @@
 
-FAIL ReadableStream cancellation: integration test on an infinite stream derived from a random push source assert_equals: it returns a promise that is fulfilled when the cancellation finishes expected true but got false
-FAIL ReadableStream cancellation: cancel(reason) should pass through the given reason to the underlying source assert_equals: the error passed to the underlying source's cancel method should equal the one passed to the stream's cancel expected (object) object "Error: Sorry, it just wasn't meant to be." but got (undefined) undefined
+PASS ReadableStream cancellation: integration test on an infinite stream derived from a random push source 
+PASS ReadableStream cancellation: cancel(reason) should pass through the given reason to the underlying source 
 PASS ReadableStream cancellation: cancel() on a locked stream should fail and not call the underlying source cancel 
-FAIL ReadableStream cancellation: should fulfill promise when cancel callback went fine assert_true: expected true got false
+PASS ReadableStream cancellation: should fulfill promise when cancel callback went fine 
 PASS ReadableStream cancellation: returning a value from the underlying source's cancel should not affect the fulfillment value of the promise returned by the stream's cancel 
-FAIL ReadableStream cancellation: should reject promise when cancel callback raises an exception assert_unreached: cancel should reject Reached unreachable code
+PASS ReadableStream cancellation: should reject promise when cancel callback raises an exception 
 PASS ReadableStream cancellation: if the underlying source's cancel method returns a promise, the promise returned by the stream's cancel should fulfill when that one does (1) 
-FAIL ReadableStream cancellation: if the underlying source's cancel method returns a promise, the promise returned by the stream's cancel should fulfill when that one does (2) assert_true: cancel() return value should be fulfilled only after the promise returned by the underlying source's cancel expected true got false
-FAIL ReadableStream cancellation: if the underlying source's cancel method returns a promise, the promise returned by the stream's cancel should reject when that one does assert_unreached: cancel() return value should not be rejected Reached unreachable code
+PASS ReadableStream cancellation: if the underlying source's cancel method returns a promise, the promise returned by the stream's cancel should fulfill when that one does (2) 
+PASS ReadableStream cancellation: if the underlying source's cancel method returns a promise, the promise returned by the stream's cancel should reject when that one does 
 PASS ReadableStream cancellation: cancelling before start finishes should prevent pull() from being called 
 

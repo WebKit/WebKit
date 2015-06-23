@@ -5,8 +5,8 @@ PASS Underlying source: throwing pull getter (initial pull)
 PASS Underlying source: throwing pull method (initial pull) 
 PASS Underlying source: throwing pull getter (second pull) 
 PASS Underlying source: throwing pull method (second pull) 
-FAIL Underlying source: throwing cancel getter assert_unreached: cancel should not fulfill Reached unreachable code
-FAIL Underlying source: throwing cancel method assert_unreached: cancel should not fulfill Reached unreachable code
+PASS Underlying source: throwing cancel getter 
+PASS Underlying source: throwing cancel method 
 PASS Underlying source: calling enqueue on an empty canceled stream should not throw 
 PASS Underlying source: calling enqueue on a non-empty canceled stream should not throw 
 PASS Underlying source: calling enqueue on a closed stream should throw 

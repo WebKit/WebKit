@@ -60,7 +60,7 @@ static inline JSValue callFunction(ExecState& exec, JSValue jsFunction, JSValue 
     return call(&exec, jsFunction, callType, callData, thisValue, arguments);
 }
 
-JSPromise* ReadableJSStream::invoke(ExecState& state, const char* propertyName)
+JSPromise* ReadableJSStream::invoke(ExecState& state, const char* propertyName, JSValue parameter)
 {
     JSValue function = getPropertyFromObject(state, m_source.get(), propertyName);
     if (state.hadException())
@@ -73,7 +73,7 @@ JSPromise* ReadableJSStream::invoke(ExecState& state, const char* propertyName)
     }
 
     MarkedArgumentBuffer arguments;
-    arguments.append(jsController(state, globalObject()));
+    arguments.append(parameter);
 
     JSPromise* promise = jsDynamicCast<JSPromise*>(callFunction(state, function, m_source.get(), arguments));
 
@@ -108,11 +108,11 @@ static inline JSFunction* createStartResultFulfilledFunction(ExecState& state, R
     });
 }
 
-static inline void startReadableStreamAsync(ReadableStream& readableStream)
+static inline void startReadableStreamAsync(ReadableStream& stream)
 {
-    RefPtr<ReadableStream> stream = &readableStream;
-    stream->scriptExecutionContext()->postTask([stream](ScriptExecutionContext&) {
-        stream->start();
+    RefPtr<ReadableStream> protectedStream = &stream;
+    stream.scriptExecutionContext()->postTask([protectedStream](ScriptExecutionContext&) {
+        protectedStream->start();
     });
 }
 
@@ -120,7 +120,7 @@ void ReadableJSStream::doStart(ExecState& exec)
 {
     JSLockHolder lock(&exec);
 
-    JSPromise* promise = invoke(exec, "start");
+    JSPromise* promise = invoke(exec, "start", jsController(exec, globalObject()));
 
     if (exec.hadException())
         return;
@@ -135,9 +135,9 @@ void ReadableJSStream::doStart(ExecState& exec)
 
 static inline JSFunction* createPullResultFulfilledFunction(ExecState& exec, ReadableJSStream& stream)
 {
-    RefPtr<ReadableJSStream> readableStream = &stream;
-    return JSFunction::create(exec.vm(), exec.callee()->globalObject(), 0, String(), [readableStream](ExecState*) {
-        readableStream->finishPulling();
+    RefPtr<ReadableJSStream> protectedStream = &stream;
+    return JSFunction::create(exec.vm(), exec.callee()->globalObject(), 0, String(), [protectedStream](ExecState*) {
+        protectedStream->finishPulling();
         return JSValue::encode(jsUndefined());
     });
 }
@@ -147,7 +147,7 @@ bool ReadableJSStream::doPull()
     ExecState& state = *globalObject()->globalExec();
     JSLockHolder lock(&state);
 
-    JSPromise* promise = invoke(state, "pull");
+    JSPromise* promise = invoke(state, "pull", jsController(state, globalObject()));
 
     if (promise)
         thenPromise(state, promise, createPullResultFulfilledFunction(state, *this), m_errorFunction.get());
@@ -158,6 +158,43 @@ bool ReadableJSStream::doPull()
         return true;
     }
 
+    return !promise;
+}
+
+static JSFunction* createCancelResultFulfilledFunction(ExecState& exec, ReadableJSStream& stream)
+{
+    RefPtr<ReadableJSStream> protectedStream = &stream;
+    return JSFunction::create(exec.vm(), exec.callee()->globalObject(), 1, String(), [protectedStream](ExecState*) {
+        protectedStream->notifyCancelSucceeded();
+        return JSValue::encode(jsUndefined());
+    });
+}
+
+static JSFunction* createCancelResultRejectedFunction(ExecState& exec, ReadableJSStream& stream)
+{
+    RefPtr<ReadableJSStream> protectedStream = &stream;
+    return JSFunction::create(exec.vm(), exec.callee()->globalObject(), 1, String(), [protectedStream](ExecState* exec) {
+        protectedStream->storeError(*exec, exec->argument(0));
+        protectedStream->notifyCancelFailed();
+        return JSValue::encode(jsUndefined());
+    });
+}
+
+bool ReadableJSStream::doCancel(JSValue reason)
+{
+    ExecState& exec = *globalObject()->globalExec();
+    JSLockHolder lock(&exec);
+
+    JSPromise* promise = invoke(exec, "cancel", reason);
+
+    if (promise)
+        thenPromise(exec, promise, createCancelResultFulfilledFunction(exec, *this), createCancelResultRejectedFunction(exec, *this));
+
+    if (exec.hadException()) {
+        storeException(exec);
+        ASSERT(!exec.hadException());
+        return true;
+    }
     return !promise;
 }
 
@@ -180,12 +217,6 @@ RefPtr<ReadableJSStream> ReadableJSStream::create(ExecState& exec, ScriptExecuti
         return nullptr;
 
     return readableStream;
-}
-
-bool ReadableJSStream::doCancel(JSValue)
-{
-    // FIXME: Implement it.
-    return true;
 }
 
 ReadableJSStream::ReadableJSStream(ScriptExecutionContext& scriptExecutionContext, ExecState& state, JSObject* source)
