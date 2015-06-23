@@ -1454,9 +1454,6 @@ webkit.org/b/49964 fast/canvas/canvas-fillPath-shadow.html [ Failure ]
 # Failing after r119268 on GTK and EFL
 webkit.org/b/88138 http/tests/media/video-buffered.html [ Failure ]
 
-# EFL port does not support hyphenation
-webkit.org/b/89830 fast/text/hyphenate-locale.html [ Skip ]
-
 # ENABLE_INPUT_TYPE_* are not enabled on EFL port.
 webkit.org/b/29359 fast/forms/date [ Skip ]
 webkit.org/b/29359 fast/forms/datetime [ Skip ]

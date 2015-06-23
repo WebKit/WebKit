@@ -298,7 +298,6 @@ String directoryName(const String& path)
     return dirname(fsRep.mutableData());
 }
 
-#if !PLATFORM(EFL)
 Vector<String> listDirectory(const String& path, const String& filter)
 {
     Vector<String> entries;
@@ -322,7 +321,6 @@ Vector<String> listDirectory(const String& path, const String& filter)
     }
     return entries;
 }
-#endif
 
 #if !OS(DARWIN) || PLATFORM(EFL) || PLATFORM(GTK)
 String openTemporaryFile(const String& prefix, PlatformFileHandle& handle)

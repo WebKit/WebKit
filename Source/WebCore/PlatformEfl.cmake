@@ -256,6 +256,8 @@ list(APPEND WebCore_SOURCES
     platform/text/efl/TextBreakIteratorInternalICUEfl.cpp
 
     platform/text/enchant/TextCheckerEnchant.cpp
+
+    platform/text/hyphen/HyphenationLibHyphen.cpp
 )
 
 if (USE_GEOCLUE2)
@@ -310,6 +312,7 @@ list(APPEND WebCore_LIBRARIES
     ${LIBSOUP_LIBRARIES}
     ${LIBXML2_LIBRARIES}
     ${LIBXSLT_LIBRARIES}
+    ${HYPHEN_LIBRARIES}
     ${PNG_LIBRARIES}
     ${SQLITE_LIBRARIES}
     ${WEBP_LIBRARIES}
@@ -534,4 +537,10 @@ if (ENABLE_SUBTLE_CRYPTO)
     list(APPEND WebCore_LIBRARIES
         ${GNUTLS_LIBRARIES}
     )
+endif ()
+
+if (DEVELOPER_MODE)
+    if (USE_LIBHYPHEN AND IS_DIRECTORY ${CMAKE_SOURCE_DIR}/WebKitBuild/DependenciesEFL)
+        add_definitions(-DTEST_HYPHENATAION_PATH=\"${CMAKE_SOURCE_DIR}/WebKitBuild/DependenciesEFL/Root/webkitgtk-test-dicts\")
+    endif ()
 endif ()

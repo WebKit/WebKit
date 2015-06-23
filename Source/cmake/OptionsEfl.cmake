@@ -47,6 +47,8 @@ file(MAKE_DIRECTORY ${THEME_BINARY_DIR})
 
 WEBKIT_OPTION_BEGIN()
 
+WEBKIT_OPTION_DEFINE(USE_LIBHYPHEN "Whether to enable the default automatic hyphenation implementation." PUBLIC ON)
+
 SET_AND_EXPOSE_TO_BUILD(ENABLE_DEVELOPER_MODE ${DEVELOPER_MODE})
 if (DEVELOPER_MODE)
     set(ENABLE_TOOLS ON)
@@ -286,4 +288,11 @@ endif ()
 
 if (ENABLE_SUBTLE_CRYPTO)
     find_package(GnuTLS 3.0.0 REQUIRED)
+endif ()
+
+if (USE_LIBHYPHEN)
+    find_package(Hyphen)
+    if (NOT HYPHEN_FOUND)
+       message(FATAL_ERROR "libhyphen is needed for USE_LIBHYPHEN.")
+    endif ()
 endif ()

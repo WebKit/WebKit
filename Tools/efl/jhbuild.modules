@@ -7,6 +7,7 @@
     <dependencies>
       <dep package="cairo"/>
       <dep package="fonts"/>
+      <dep package="dicts"/>
       <dep package="fontconfig"/>
       <dep package="freetype6"/>
       <dep package="harfbuzz"/>
@@ -89,6 +90,16 @@
             repo="github.com"
             hash="sha256:369aea9e18aa1a234400976c0a8135b9709805ce4b65a3b474a8d0ee0e298f34"
             md5sum="39802b485f513842724e6cfd265335bb" size="22592847">
+    </branch>
+  </autotools>
+
+  <autotools id="dicts"
+             skip-autogen="true">
+    <branch module="mrobinson/webkitgtk-test-dicts/archive/0.0.1.zip" version="0.0.1"
+            checkoutdir="webkitgtk-test-dicts"
+            repo="github.com"
+            hash="sha256:6cfc94a7846a0d8f76a7a733f729e8109c6e1d0fbc9e0e8587eb5c3ef9888c24"
+            md5sum="6bd8d32c157305fc69932ea8d1348723" size="99299">
     </branch>
   </autotools>
 

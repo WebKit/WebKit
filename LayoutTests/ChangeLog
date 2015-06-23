@@ -1,3 +1,26 @@
+2015-06-22  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Hyphenation is not supported
+        https://bugs.webkit.org/show_bug.cgi?id=89830
+
+        Reviewed by Gyuyoung Kim.
+
+        Rebaseline expected results which is related to hyphenation.
+
+        * platform/efl/TestExpectations: Unskip hyphenate-locale.html
+        * platform/efl/fast/text/hyphenate-character-expected.png:
+        * platform/efl/fast/text/hyphenate-character-expected.txt:
+        * platform/efl/fast/text/hyphenate-first-word-expected.png:
+        * platform/efl/fast/text/hyphenate-first-word-expected.txt:
+        * platform/efl/fast/text/hyphenate-limit-before-after-expected.png:
+        * platform/efl/fast/text/hyphenate-limit-before-after-expected.txt:
+        * platform/efl/fast/text/hyphenate-limit-lines-expected.png:
+        * platform/efl/fast/text/hyphenate-limit-lines-expected.txt:
+        * platform/efl/fast/text/hyphenate-locale-expected.png: Added.
+        * platform/efl/fast/text/hyphenate-locale-expected.txt: Added.
+        * platform/efl/fast/text/hyphens-expected.png:
+        * platform/efl/fast/text/hyphens-expected.txt:
+
 2015-06-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Allow trailing comma in ArrayBindingPattern and ObjectBindingPattern

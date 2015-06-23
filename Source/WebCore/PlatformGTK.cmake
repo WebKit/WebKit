@@ -192,8 +192,9 @@ list(APPEND WebCore_SOURCES
 
     platform/text/enchant/TextCheckerEnchant.cpp
 
-    platform/text/gtk/HyphenationLibHyphen.cpp
     platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp
+
+    platform/text/hyphen/HyphenationLibHyphen.cpp
 )
 
 list(APPEND WebCorePlatformGTK_SOURCES

@@ -82,23 +82,6 @@ String homeDirectoryPath()
     return String::fromUTF8(home);
 }
 
-Vector<String> listDirectory(const String& path, const String& filter)
-{
-    Vector<String> matchingEntries;
-    CString cfilter = filter.utf8();
-    const char *f_name;
-
-    Eina_Iterator* it = eina_file_ls(path.utf8().data());
-    EINA_ITERATOR_FOREACH(it, f_name) {
-        if (!fnmatch(cfilter.data(), f_name, 0))
-            matchingEntries.append(String::fromUTF8(f_name));
-        eina_stringshare_del(f_name);
-    }
-    eina_iterator_free(it);
-
-    return matchingEntries;
-}
-
 uint64_t getVolumeFreeSizeForPath(const char* path)
 {
     struct statvfs buf;
