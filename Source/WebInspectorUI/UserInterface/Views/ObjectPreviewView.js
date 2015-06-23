@@ -148,6 +148,7 @@ WebInspector.ObjectPreviewView = class ObjectPreviewView extends WebInspector.Ob
     _appendEntryPreviews(element, preview)
     {
         var lossless = preview.lossless && !preview.propertyPreviews.length;
+        var overflow = preview.overflow;
 
         var isIterator = preview.subtype === "iterator";
 
@@ -171,7 +172,12 @@ WebInspector.ObjectPreviewView = class ObjectPreviewView extends WebInspector.Ob
                 lossless = false;
         }
 
-        if (preview.overflow)
+        if (preview.collectionEntryPreviews.length > limit) {
+            lossless = false;
+            overflow = true;
+        }
+
+        if (overflow)
             element.appendChild(document.createTextNode(", \u2026"));
         element.appendChild(document.createTextNode(isIterator ? "]" : "}"));
 
@@ -187,6 +193,9 @@ WebInspector.ObjectPreviewView = class ObjectPreviewView extends WebInspector.Ob
         // Do not show Date properties in previews. If there are any properties, show them in full view.
         if (preview.subtype === "date")
             return !preview.propertyPreviews.length;
+
+        var lossless = preview.lossless;
+        var overflow = preview.overflow;
 
         // FIXME: Array previews should have better sparse support: (undefined × 10).
         var isArray = preview.subtype === "array";
@@ -224,12 +233,16 @@ WebInspector.ObjectPreviewView = class ObjectPreviewView extends WebInspector.Ob
                 element.appendChild(WebInspector.FormattedValue.createElementForPropertyPreview(property));
         }
 
-        if (preview.overflow)
-            element.appendChild(document.createTextNode(", \u2026"));
+        if (numberAdded === limit && preview.propertyPreviews.length > limit) {
+            lossless = false;
+            overflow = true;
+        }
 
+        if (overflow)
+            element.appendChild(document.createTextNode(", \u2026"));
         element.appendChild(document.createTextNode(isArray ? "]" : "}"));
 
-        return preview.lossless;
+        return lossless;
     }
 
     _appendValuePreview(element, preview)

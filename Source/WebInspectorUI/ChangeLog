@@ -1,3 +1,16 @@
+2015-06-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Some brief previews are incorrectly treated as lossless
+        https://bugs.webkit.org/show_bug.cgi?id=146247
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ObjectPreviewView.js:
+        (WebInspector.ObjectPreviewView.prototype._appendEntryPreviews):
+        (WebInspector.ObjectPreviewView.prototype._appendPropertyPreviews):
+        When we have a brief preview we may need to override lossless / overflow
+        if the preview view itself shows less properties than were in the preview.
+
 2015-06-23  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Layout & Rendering timeline should show paint and layout records in separate rows
