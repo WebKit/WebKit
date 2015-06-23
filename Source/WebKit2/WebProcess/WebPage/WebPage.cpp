@@ -2323,20 +2323,6 @@ void WebPage::setInitialFocus(bool forward, bool isKeyboardEventValid, const Web
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
-void WebPage::setWindowResizerSize(const IntSize& windowResizerSize)
-{
-    if (m_windowResizerSize == windowResizerSize)
-        return;
-
-    m_windowResizerSize = windowResizerSize;
-
-    for (Frame* coreFrame = m_mainFrame->coreFrame(); coreFrame; coreFrame = coreFrame->tree().traverseNext()) {
-        FrameView* view = coreFrame->view();
-        if (view)
-            view->windowResizerRectChanged();
-    }
-}
-
 void WebPage::setCanStartMediaTimerFired()
 {
     if (m_page)
@@ -2509,17 +2495,7 @@ IntRect WebPage::rootViewToAccessibilityScreen(const IntRect& rect)
 
 IntRect WebPage::windowResizerRect() const
 {
-    if (m_windowResizerSize.isEmpty())
-        return IntRect();
-
-    IntSize frameViewSize;
-    if (Frame* coreFrame = m_mainFrame->coreFrame()) {
-        if (FrameView* view = coreFrame->view())
-            frameViewSize = view->size();
-    }
-
-    return IntRect(frameViewSize.width() - m_windowResizerSize.width(), frameViewSize.height() - m_windowResizerSize.height(), 
-                   m_windowResizerSize.width(), m_windowResizerSize.height());
+    return IntRect();
 }
 
 KeyboardUIMode WebPage::keyboardUIMode()

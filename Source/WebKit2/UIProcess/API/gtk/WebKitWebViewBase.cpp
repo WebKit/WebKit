@@ -154,9 +154,6 @@ struct _WebKitWebViewBasePrivate {
     ClickCounter clickCounter;
     CString tooltipText;
     IntRect tooltipArea;
-#if !GTK_CHECK_VERSION(3, 13, 4)
-    IntSize resizerSize;
-#endif
     GRefPtr<AtkObject> accessible;
     bool needsResizeOnMap;
     GtkWidget* authenticationDialog;
@@ -170,9 +167,6 @@ struct _WebKitWebViewBasePrivate {
     TouchEventsMap touchEvents;
 
     GtkWindow* toplevelOnScreenWindow;
-#if !GTK_CHECK_VERSION(3, 13, 4)
-    unsigned long toplevelResizeGripVisibilityID;
-#endif
     unsigned long toplevelFocusInEventID;
     unsigned long toplevelFocusOutEventID;
     unsigned long toplevelVisibilityEventID;
@@ -207,38 +201,6 @@ struct _WebKitWebViewBasePrivate {
 };
 
 WEBKIT_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_CONTAINER)
-
-#if !GTK_CHECK_VERSION(3, 13, 4)
-static void webkitWebViewBaseNotifyResizerSize(WebKitWebViewBase* webViewBase)
-{
-    WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    if (!priv->toplevelOnScreenWindow)
-        return;
-
-    gboolean resizerVisible;
-    g_object_get(G_OBJECT(priv->toplevelOnScreenWindow), "resize-grip-visible", &resizerVisible, NULL);
-
-    IntSize resizerSize;
-    if (resizerVisible) {
-        GdkRectangle resizerRect;
-        gtk_window_get_resize_grip_area(priv->toplevelOnScreenWindow, &resizerRect);
-        GdkRectangle allocation;
-        gtk_widget_get_allocation(GTK_WIDGET(webViewBase), &allocation);
-        if (gdk_rectangle_intersect(&resizerRect, &allocation, 0))
-            resizerSize = IntSize(resizerRect.width, resizerRect.height);
-    }
-
-    if (resizerSize != priv->resizerSize) {
-        priv->resizerSize = resizerSize;
-        priv->pageProxy->setWindowResizerSize(resizerSize);
-    }
-}
-
-static void toplevelWindowResizeGripVisibilityChanged(GObject*, GParamSpec*, WebKitWebViewBase* webViewBase)
-{
-    webkitWebViewBaseNotifyResizerSize(webViewBase);
-}
-#endif
 
 static gboolean toplevelWindowFocusInEvent(GtkWidget*, GdkEventFocus*, WebKitWebViewBase* webViewBase)
 {
@@ -280,12 +242,6 @@ static void webkitWebViewBaseSetToplevelOnScreenWindow(WebKitWebViewBase* webVie
     if (priv->toplevelOnScreenWindow == window)
         return;
 
-#if !GTK_CHECK_VERSION(3, 13, 4)
-    if (priv->toplevelResizeGripVisibilityID) {
-        g_signal_handler_disconnect(priv->toplevelOnScreenWindow, priv->toplevelResizeGripVisibilityID);
-        priv->toplevelResizeGripVisibilityID = 0;
-    }
-#endif
     if (priv->toplevelFocusInEventID) {
         g_signal_handler_disconnect(priv->toplevelOnScreenWindow, priv->toplevelFocusInEventID);
         priv->toplevelFocusInEventID = 0;
@@ -304,13 +260,6 @@ static void webkitWebViewBaseSetToplevelOnScreenWindow(WebKitWebViewBase* webVie
     if (!priv->toplevelOnScreenWindow)
         return;
 
-#if !GTK_CHECK_VERSION(3, 13, 4)
-    webkitWebViewBaseNotifyResizerSize(webViewBase);
-
-    priv->toplevelResizeGripVisibilityID =
-        g_signal_connect(priv->toplevelOnScreenWindow, "notify::resize-grip-visible",
-                         G_CALLBACK(toplevelWindowResizeGripVisibilityChanged), webViewBase);
-#endif
     priv->toplevelFocusInEventID =
         g_signal_connect(priv->toplevelOnScreenWindow, "focus-in-event",
                          G_CALLBACK(toplevelWindowFocusInEvent), webViewBase);
@@ -655,10 +604,6 @@ static void resizeWebKitWebViewBaseFromAllocation(WebKitWebViewBase* webViewBase
 
     if (drawingArea)
         drawingArea->setSize(viewRect.size(), IntSize(), IntSize());
-
-#if !GTK_CHECK_VERSION(3, 13, 4)
-    webkitWebViewBaseNotifyResizerSize(webViewBase);
-#endif
 }
 
 static void webkitWebViewBaseSizeAllocate(GtkWidget* widget, GtkAllocation* allocation)

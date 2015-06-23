@@ -1,3 +1,26 @@
+2015-06-23  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of the window resizer size
+        https://bugs.webkit.org/show_bug.cgi?id=146240
+
+        Reviewed by Darin Adler.
+
+        This code was only used by older versions of GTK+, so get rid of it.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseNotifyResizerSize): Deleted.
+        (toplevelWindowResizeGripVisibilityChanged): Deleted.
+        (webkitWebViewBaseSetToplevelOnScreenWindow): Deleted.
+        (resizeWebKitWebViewBaseFromAllocation): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setWindowResizerSize): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::windowResizerRect):
+        (WebKit::WebPage::setWindowResizerSize): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2015-06-23  Brady Eidson  <beidson@apple.com>
 
         WKFrameInfo should have an accessor for the Frame's current security origin.

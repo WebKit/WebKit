@@ -1487,13 +1487,6 @@ void WebPageProxy::setInitialFocus(bool forward, bool isKeyboardEventValid, cons
     m_process->send(Messages::WebPage::SetInitialFocus(forward, isKeyboardEventValid, keyboardEvent, callbackID), m_pageID);
 }
 
-void WebPageProxy::setWindowResizerSize(const IntSize& windowResizerSize)
-{
-    if (!isValid())
-        return;
-    m_process->send(Messages::WebPage::SetWindowResizerSize(windowResizerSize), m_pageID);
-}
-    
 void WebPageProxy::clearSelection()
 {
     if (!isValid())
