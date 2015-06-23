@@ -24,8 +24,7 @@
  */
 
 #include "config.h"
-
-#import "PlatformCALayerMac.h"
+#import "PlatformCALayerCocoa.h"
 
 #import "AnimationUtilities.h"
 #import "BlockExceptions.h"
@@ -33,22 +32,22 @@
 #import "GraphicsContext.h"
 #import "GraphicsLayerCA.h"
 #import "LengthFunctions.h"
-#import "PlatformCAAnimationMac.h"
+#import "PlatformCAAnimationCocoa.h"
 #import "PlatformCAFilters.h"
 #import "QuartzCoreSPI.h"
 #import "ScrollbarThemeMac.h"
 #import "SoftLinking.h"
-#import "TiledBacking.h"
 #import "TileController.h"
+#import "TiledBacking.h"
 #import "WebActionDisablingCALayerDelegate.h"
 #import "WebCoreCALayerExtras.h"
-#import "WebLayer.h"
 #import "WebGLLayer.h"
+#import "WebLayer.h"
 #import "WebTiledBackingLayer.h"
-#import <objc/objc-auto.h>
-#import <objc/runtime.h>
 #import <AVFoundation/AVFoundation.h>
 #import <QuartzCore/QuartzCore.h>
+#import <objc/objc-auto.h>
+#import <objc/runtime.h>
 #import <wtf/CurrentTime.h>
 #import <wtf/RetainPtr.h>
 
@@ -71,14 +70,14 @@ SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
 
 using namespace WebCore;
 
-PassRefPtr<PlatformCALayer> PlatformCALayerMac::create(LayerType layerType, PlatformCALayerClient* owner)
+PassRefPtr<PlatformCALayer> PlatformCALayerCocoa::create(LayerType layerType, PlatformCALayerClient* owner)
 {
-    return adoptRef(new PlatformCALayerMac(layerType, owner));
+    return adoptRef(new PlatformCALayerCocoa(layerType, owner));
 }
 
-PassRefPtr<PlatformCALayer> PlatformCALayerMac::create(void* platformLayer, PlatformCALayerClient* owner)
+PassRefPtr<PlatformCALayer> PlatformCALayerCocoa::create(void* platformLayer, PlatformCALayerClient* owner)
 {
-    return adoptRef(new PlatformCALayerMac(static_cast<PlatformLayer*>(platformLayer), owner));
+    return adoptRef(new PlatformCALayerCocoa(static_cast<PlatformLayer*>(platformLayer), owner));
 }
 
 static NSString * const platformCALayerPointer = @"WKPlatformCALayer";
@@ -173,7 +172,7 @@ static double mediaTimeToCurrentTime(CFTimeInterval t)
 
 @end
 
-void PlatformCALayerMac::setOwner(PlatformCALayerClient* owner)
+void PlatformCALayerCocoa::setOwner(PlatformCALayerClient* owner)
 {
     PlatformCALayer::setOwner(owner);
     
@@ -192,7 +191,7 @@ static NSString *toCAFilterType(PlatformCALayer::FilterType type)
     }
 }
 
-PlatformCALayer::LayerType PlatformCALayerMac::layerTypeForPlatformLayer(PlatformLayer* layer)
+PlatformCALayer::LayerType PlatformCALayerCocoa::layerTypeForPlatformLayer(PlatformLayer* layer)
 {
     if ([layer isKindOfClass:getAVPlayerLayerClass()] || [layer isKindOfClass:objc_getClass("WebVideoContainerLayer")])
         return LayerTypeAVPlayerLayer;
@@ -203,7 +202,7 @@ PlatformCALayer::LayerType PlatformCALayerMac::layerTypeForPlatformLayer(Platfor
     return LayerTypeCustom;
 }
 
-PlatformCALayerMac::PlatformCALayerMac(LayerType layerType, PlatformCALayerClient* owner)
+PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerClient* owner)
     : PlatformCALayer(layerType, owner)
     , m_customAppearance(GraphicsLayer::NoCustomAppearance)
 {
@@ -247,7 +246,7 @@ PlatformCALayerMac::PlatformCALayerMac(LayerType layerType, PlatformCALayerClien
         layerClass = getAVPlayerLayerClass();
         break;
     case LayerTypeWebGLLayer:
-        // We don't create PlatformCALayerMacs wrapped around WebGLLayers.
+        // We don't create PlatformCALayerCocoas wrapped around WebGLLayers.
         ASSERT_NOT_REACHED();
         break;
     case LayerTypeShapeLayer:
@@ -264,7 +263,7 @@ PlatformCALayerMac::PlatformCALayerMac(LayerType layerType, PlatformCALayerClien
     commonInit();
 }
 
-PlatformCALayerMac::PlatformCALayerMac(PlatformLayer* layer, PlatformCALayerClient* owner)
+PlatformCALayerCocoa::PlatformCALayerCocoa(PlatformLayer* layer, PlatformCALayerClient* owner)
     : PlatformCALayer(layerTypeForPlatformLayer(layer), owner)
     , m_customAppearance(GraphicsLayer::NoCustomAppearance)
 {
@@ -272,7 +271,7 @@ PlatformCALayerMac::PlatformCALayerMac(PlatformLayer* layer, PlatformCALayerClie
     commonInit();
 }
 
-void PlatformCALayerMac::commonInit()
+void PlatformCALayerCocoa::commonInit()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     // Save a pointer to 'this' in the CALayer
@@ -298,7 +297,7 @@ void PlatformCALayerMac::commonInit()
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-PassRefPtr<PlatformCALayer> PlatformCALayerMac::clone(PlatformCALayerClient* owner) const
+PassRefPtr<PlatformCALayer> PlatformCALayerCocoa::clone(PlatformCALayerClient* owner) const
 {
     LayerType type;
     switch (layerType()) {
@@ -316,7 +315,7 @@ PassRefPtr<PlatformCALayer> PlatformCALayerMac::clone(PlatformCALayerClient* own
         type = LayerTypeLayer;
         break;
     };
-    RefPtr<PlatformCALayer> newLayer = PlatformCALayerMac::create(type, owner);
+    RefPtr<PlatformCALayer> newLayer = PlatformCALayerCocoa::create(type, owner);
     
     newLayer->setPosition(position());
     newLayer->setBounds(bounds());
@@ -350,7 +349,7 @@ PassRefPtr<PlatformCALayer> PlatformCALayerMac::clone(PlatformCALayerClient* own
     return newLayer;
 }
 
-PlatformCALayerMac::~PlatformCALayerMac()
+PlatformCALayerCocoa::~PlatformCALayerCocoa()
 {
     [m_layer setValue:nil forKey:platformCALayerPointer];
     
@@ -361,33 +360,33 @@ PlatformCALayerMac::~PlatformCALayerMac()
         [static_cast<WebTiledBackingLayer *>(m_layer.get()) invalidate];
 }
 
-void PlatformCALayerMac::animationStarted(const String& animationKey, CFTimeInterval beginTime)
+void PlatformCALayerCocoa::animationStarted(const String& animationKey, CFTimeInterval beginTime)
 {
     if (m_owner)
         m_owner->platformCALayerAnimationStarted(animationKey, beginTime);
 }
 
-void PlatformCALayerMac::animationEnded(const String& animationKey)
+void PlatformCALayerCocoa::animationEnded(const String& animationKey)
 {
     if (m_owner)
         m_owner->platformCALayerAnimationEnded(animationKey);
 }
 
-void PlatformCALayerMac::setNeedsDisplay()
+void PlatformCALayerCocoa::setNeedsDisplay()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setNeedsDisplay];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::setNeedsDisplayInRect(const FloatRect& dirtyRect)
+void PlatformCALayerCocoa::setNeedsDisplayInRect(const FloatRect& dirtyRect)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setNeedsDisplayInRect:dirtyRect];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::copyContentsFromLayer(PlatformCALayer* layer)
+void PlatformCALayerCocoa::copyContentsFromLayer(PlatformCALayer* layer)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     CALayer* caLayer = layer->m_layer.get();
@@ -398,22 +397,22 @@ void PlatformCALayerMac::copyContentsFromLayer(PlatformCALayer* layer)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-PlatformCALayer* PlatformCALayerMac::superlayer() const
+PlatformCALayer* PlatformCALayerCocoa::superlayer() const
 {
     return platformCALayer([m_layer superlayer]);
 }
 
-void PlatformCALayerMac::removeFromSuperlayer()
+void PlatformCALayerCocoa::removeFromSuperlayer()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer removeFromSuperlayer];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::setSublayers(const PlatformCALayerList& list)
+void PlatformCALayerCocoa::setSublayers(const PlatformCALayerList& list)
 {
     // Short circuiting here avoids the allocation of the array below.
-    if (list.size() == 0) {
+    if (!list.size()) {
         removeAllSublayers();
         return;
     }
@@ -428,14 +427,14 @@ void PlatformCALayerMac::setSublayers(const PlatformCALayerList& list)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::removeAllSublayers()
+void PlatformCALayerCocoa::removeAllSublayers()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setSublayers:nil];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::appendSublayer(PlatformCALayer& layer)
+void PlatformCALayerCocoa::appendSublayer(PlatformCALayer& layer)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     ASSERT(m_layer != layer.m_layer);
@@ -443,7 +442,7 @@ void PlatformCALayerMac::appendSublayer(PlatformCALayer& layer)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::insertSublayer(PlatformCALayer& layer, size_t index)
+void PlatformCALayerCocoa::insertSublayer(PlatformCALayer& layer, size_t index)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     ASSERT(m_layer != layer.m_layer);
@@ -451,7 +450,7 @@ void PlatformCALayerMac::insertSublayer(PlatformCALayer& layer, size_t index)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::replaceSublayer(PlatformCALayer& reference, PlatformCALayer& layer)
+void PlatformCALayerCocoa::replaceSublayer(PlatformCALayer& reference, PlatformCALayer& layer)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     ASSERT(m_layer != layer.m_layer);
@@ -459,14 +458,14 @@ void PlatformCALayerMac::replaceSublayer(PlatformCALayer& reference, PlatformCAL
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::adoptSublayers(PlatformCALayer& source)
+void PlatformCALayerCocoa::adoptSublayers(PlatformCALayer& source)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setSublayers:[source.m_layer.get() sublayers]];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::addAnimationForKey(const String& key, PlatformCAAnimation& animation)
+void PlatformCALayerCocoa::addAnimationForKey(const String& key, PlatformCAAnimation& animation)
 {
     // Add the delegate
     if (!m_delegate) {
@@ -475,55 +474,55 @@ void PlatformCALayerMac::addAnimationForKey(const String& key, PlatformCAAnimati
         [webAnimationDelegate setOwner:this];
     }
     
-    CAPropertyAnimation* propertyAnimation = static_cast<CAPropertyAnimation*>(downcast<PlatformCAAnimationMac>(animation).platformAnimation());
+    CAPropertyAnimation* propertyAnimation = static_cast<CAPropertyAnimation*>(downcast<PlatformCAAnimationCocoa>(animation).platformAnimation());
     if (![propertyAnimation delegate])
         [propertyAnimation setDelegate:static_cast<id>(m_delegate.get())];
-     
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer addAnimation:propertyAnimation forKey:key];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::removeAnimationForKey(const String& key)
+void PlatformCALayerCocoa::removeAnimationForKey(const String& key)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer removeAnimationForKey:key];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-PassRefPtr<PlatformCAAnimation> PlatformCALayerMac::animationForKey(const String& key)
+PassRefPtr<PlatformCAAnimation> PlatformCALayerCocoa::animationForKey(const String& key)
 {
     CAPropertyAnimation* propertyAnimation = static_cast<CAPropertyAnimation*>([m_layer animationForKey:key]);
     if (!propertyAnimation)
         return 0;
-    return PlatformCAAnimationMac::create(propertyAnimation);
+    return PlatformCAAnimationCocoa::create(propertyAnimation);
 }
 
-void PlatformCALayerMac::setMask(PlatformCALayer* layer)
+void PlatformCALayerCocoa::setMask(PlatformCALayer* layer)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setMask:layer ? layer->platformLayer() : nil];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-bool PlatformCALayerMac::isOpaque() const
+bool PlatformCALayerCocoa::isOpaque() const
 {
     return [m_layer isOpaque];
 }
 
-void PlatformCALayerMac::setOpaque(bool value)
+void PlatformCALayerCocoa::setOpaque(bool value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setOpaque:value];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-FloatRect PlatformCALayerMac::bounds() const
+FloatRect PlatformCALayerCocoa::bounds() const
 {
     return [m_layer bounds];
 }
 
-void PlatformCALayerMac::setBounds(const FloatRect& value)
+void PlatformCALayerCocoa::setBounds(const FloatRect& value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setBounds:value];
@@ -534,13 +533,13 @@ void PlatformCALayerMac::setBounds(const FloatRect& value)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-FloatPoint3D PlatformCALayerMac::position() const
+FloatPoint3D PlatformCALayerCocoa::position() const
 {
     CGPoint point = [m_layer position];
     return FloatPoint3D(point.x, point.y, [m_layer zPosition]);
 }
 
-void PlatformCALayerMac::setPosition(const FloatPoint3D& value)
+void PlatformCALayerCocoa::setPosition(const FloatPoint3D& value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setPosition:CGPointMake(value.x(), value.y())];
@@ -548,7 +547,7 @@ void PlatformCALayerMac::setPosition(const FloatPoint3D& value)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-FloatPoint3D PlatformCALayerMac::anchorPoint() const
+FloatPoint3D PlatformCALayerCocoa::anchorPoint() const
 {
     CGPoint point = [m_layer anchorPoint];
     float z = 0;
@@ -556,7 +555,7 @@ FloatPoint3D PlatformCALayerMac::anchorPoint() const
     return FloatPoint3D(point.x, point.y, z);
 }
 
-void PlatformCALayerMac::setAnchorPoint(const FloatPoint3D& value)
+void PlatformCALayerCocoa::setAnchorPoint(const FloatPoint3D& value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setAnchorPoint:CGPointMake(value.x(), value.y())];
@@ -564,129 +563,129 @@ void PlatformCALayerMac::setAnchorPoint(const FloatPoint3D& value)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-TransformationMatrix PlatformCALayerMac::transform() const
+TransformationMatrix PlatformCALayerCocoa::transform() const
 {
     return [m_layer transform];
 }
 
-void PlatformCALayerMac::setTransform(const TransformationMatrix& value)
+void PlatformCALayerCocoa::setTransform(const TransformationMatrix& value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setTransform:value];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-TransformationMatrix PlatformCALayerMac::sublayerTransform() const
+TransformationMatrix PlatformCALayerCocoa::sublayerTransform() const
 {
     return [m_layer sublayerTransform];
 }
 
-void PlatformCALayerMac::setSublayerTransform(const TransformationMatrix& value)
+void PlatformCALayerCocoa::setSublayerTransform(const TransformationMatrix& value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setSublayerTransform:value];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::setHidden(bool value)
+void PlatformCALayerCocoa::setHidden(bool value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setHidden:value];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::setBackingStoreAttached(bool)
+void PlatformCALayerCocoa::setBackingStoreAttached(bool)
 {
     // We could throw away backing store here with setContents:nil.
 }
 
-bool PlatformCALayerMac::backingStoreAttached() const
+bool PlatformCALayerCocoa::backingStoreAttached() const
 {
     return true;
 }
 
-void PlatformCALayerMac::setGeometryFlipped(bool value)
+void PlatformCALayerCocoa::setGeometryFlipped(bool value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setGeometryFlipped:value];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-bool PlatformCALayerMac::isDoubleSided() const
+bool PlatformCALayerCocoa::isDoubleSided() const
 {
     return [m_layer isDoubleSided];
 }
 
-void PlatformCALayerMac::setDoubleSided(bool value)
+void PlatformCALayerCocoa::setDoubleSided(bool value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setDoubleSided:value];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-bool PlatformCALayerMac::masksToBounds() const
+bool PlatformCALayerCocoa::masksToBounds() const
 {
     return [m_layer masksToBounds];
 }
 
-void PlatformCALayerMac::setMasksToBounds(bool value)
+void PlatformCALayerCocoa::setMasksToBounds(bool value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setMasksToBounds:value];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-bool PlatformCALayerMac::acceleratesDrawing() const
+bool PlatformCALayerCocoa::acceleratesDrawing() const
 {
     return [m_layer acceleratesDrawing];
 }
 
-void PlatformCALayerMac::setAcceleratesDrawing(bool acceleratesDrawing)
+void PlatformCALayerCocoa::setAcceleratesDrawing(bool acceleratesDrawing)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setAcceleratesDrawing:acceleratesDrawing];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-CFTypeRef PlatformCALayerMac::contents() const
+CFTypeRef PlatformCALayerCocoa::contents() const
 {
     return [m_layer contents];
 }
 
-void PlatformCALayerMac::setContents(CFTypeRef value)
+void PlatformCALayerCocoa::setContents(CFTypeRef value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setContents:static_cast<id>(const_cast<void*>(value))];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::setContentsRect(const FloatRect& value)
+void PlatformCALayerCocoa::setContentsRect(const FloatRect& value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setContentsRect:value];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::setMinificationFilter(FilterType value)
+void PlatformCALayerCocoa::setMinificationFilter(FilterType value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setMinificationFilter:toCAFilterType(value)];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::setMagnificationFilter(FilterType value)
+void PlatformCALayerCocoa::setMagnificationFilter(FilterType value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setMagnificationFilter:toCAFilterType(value)];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-Color PlatformCALayerMac::backgroundColor() const
+Color PlatformCALayerCocoa::backgroundColor() const
 {
     return [m_layer backgroundColor];
 }
 
-void PlatformCALayerMac::setBackgroundColor(const Color& value)
+void PlatformCALayerCocoa::setBackgroundColor(const Color& value)
 {
     CGFloat components[4];
     value.getRGBA(components[0], components[1], components[2], components[3]);
@@ -699,14 +698,14 @@ void PlatformCALayerMac::setBackgroundColor(const Color& value)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::setBorderWidth(float value)
+void PlatformCALayerCocoa::setBorderWidth(float value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setBorderWidth:value];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::setBorderColor(const Color& value)
+void PlatformCALayerCocoa::setBorderColor(const Color& value)
 {
     if (value.isValid()) {
         CGFloat components[4];
@@ -725,31 +724,31 @@ void PlatformCALayerMac::setBorderColor(const Color& value)
     }
 }
 
-float PlatformCALayerMac::opacity() const
+float PlatformCALayerCocoa::opacity() const
 {
     return [m_layer opacity];
 }
 
-void PlatformCALayerMac::setOpacity(float value)
+void PlatformCALayerCocoa::setOpacity(float value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setOpacity:value];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::setFilters(const FilterOperations& filters)
+void PlatformCALayerCocoa::setFilters(const FilterOperations& filters)
 {
     PlatformCAFilters::setFiltersOnLayer(platformLayer(), filters);
 }
 
-void PlatformCALayerMac::copyFiltersFrom(const PlatformCALayer& sourceLayer)
+void PlatformCALayerCocoa::copyFiltersFrom(const PlatformCALayer& sourceLayer)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setFilters:[sourceLayer.platformLayer() filters]];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-bool PlatformCALayerMac::filtersCanBeComposited(const FilterOperations& filters)
+bool PlatformCALayerCocoa::filtersCanBeComposited(const FilterOperations& filters)
 {
     // Return false if there are no filters to avoid needless work
     if (!filters.size())
@@ -758,15 +757,15 @@ bool PlatformCALayerMac::filtersCanBeComposited(const FilterOperations& filters)
     for (unsigned i = 0; i < filters.size(); ++i) {
         const FilterOperation* filterOperation = filters.at(i);
         switch (filterOperation->type()) {
-            case FilterOperation::REFERENCE:
+        case FilterOperation::REFERENCE:
+            return false;
+        case FilterOperation::DROP_SHADOW:
+            // FIXME: For now we can only handle drop-shadow is if it's last in the list
+            if (i < (filters.size() - 1))
                 return false;
-            case FilterOperation::DROP_SHADOW:
-                // FIXME: For now we can only handle drop-shadow is if it's last in the list
-                if (i < (filters.size() - 1))
-                    return false;
-                break;
-            default:
-                break;
+            break;
+        default:
+            break;
         }
     }
 
@@ -774,39 +773,39 @@ bool PlatformCALayerMac::filtersCanBeComposited(const FilterOperations& filters)
 }
 
 #if ENABLE(CSS_COMPOSITING)
-void PlatformCALayerMac::setBlendMode(BlendMode blendMode)
+void PlatformCALayerCocoa::setBlendMode(BlendMode blendMode)
 {
     PlatformCAFilters::setBlendingFiltersOnLayer(platformLayer(), blendMode);
 }
 #endif
 
-void PlatformCALayerMac::setName(const String& value)
+void PlatformCALayerCocoa::setName(const String& value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setName:value];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::setSpeed(float value)
+void PlatformCALayerCocoa::setSpeed(float value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setSpeed:value];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::setTimeOffset(CFTimeInterval value)
+void PlatformCALayerCocoa::setTimeOffset(CFTimeInterval value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setTimeOffset:value];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-float PlatformCALayerMac::contentsScale() const
+float PlatformCALayerCocoa::contentsScale() const
 {
     return [m_layer contentsScale];
 }
 
-void PlatformCALayerMac::setContentsScale(float value)
+void PlatformCALayerCocoa::setContentsScale(float value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setContentsScale:value];
@@ -823,26 +822,26 @@ void PlatformCALayerMac::setContentsScale(float value)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-float PlatformCALayerMac::cornerRadius() const
+float PlatformCALayerCocoa::cornerRadius() const
 {
     return [m_layer cornerRadius];
 }
 
-void PlatformCALayerMac::setCornerRadius(float value)
+void PlatformCALayerCocoa::setCornerRadius(float value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setCornerRadius:value];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::setEdgeAntialiasingMask(unsigned mask)
+void PlatformCALayerCocoa::setEdgeAntialiasingMask(unsigned mask)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setEdgeAntialiasingMask:mask];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-FloatRoundedRect PlatformCALayerMac::shapeRoundedRect() const
+FloatRoundedRect PlatformCALayerCocoa::shapeRoundedRect() const
 {
     ASSERT(m_layerType == LayerTypeShapeLayer);
     if (m_shapeRoundedRect)
@@ -851,7 +850,7 @@ FloatRoundedRect PlatformCALayerMac::shapeRoundedRect() const
     return FloatRoundedRect();
 }
 
-void PlatformCALayerMac::setShapeRoundedRect(const FloatRoundedRect& roundedRect)
+void PlatformCALayerCocoa::setShapeRoundedRect(const FloatRoundedRect& roundedRect)
 {
     ASSERT(m_layerType == LayerTypeShapeLayer);
     m_shapeRoundedRect = std::make_unique<FloatRoundedRect>(roundedRect);
@@ -863,7 +862,7 @@ void PlatformCALayerMac::setShapeRoundedRect(const FloatRoundedRect& roundedRect
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-WindRule PlatformCALayerMac::shapeWindRule() const
+WindRule PlatformCALayerCocoa::shapeWindRule() const
 {
     ASSERT(m_layerType == LayerTypeShapeLayer);
 
@@ -874,7 +873,7 @@ WindRule PlatformCALayerMac::shapeWindRule() const
     return RULE_NONZERO;
 }
 
-void PlatformCALayerMac::setShapeWindRule(WindRule windRule)
+void PlatformCALayerCocoa::setShapeWindRule(WindRule windRule)
 {
     ASSERT(m_layerType == LayerTypeShapeLayer);
 
@@ -888,7 +887,7 @@ void PlatformCALayerMac::setShapeWindRule(WindRule windRule)
     }
 }
 
-Path PlatformCALayerMac::shapePath() const
+Path PlatformCALayerCocoa::shapePath() const
 {
     ASSERT(m_layerType == LayerTypeShapeLayer);
 
@@ -897,7 +896,7 @@ Path PlatformCALayerMac::shapePath() const
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::setShapePath(const Path& path)
+void PlatformCALayerCocoa::setShapePath(const Path& path)
 {
     ASSERT(m_layerType == LayerTypeShapeLayer);
 
@@ -906,12 +905,12 @@ void PlatformCALayerMac::setShapePath(const Path& path)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-bool PlatformCALayerMac::requiresCustomAppearanceUpdateOnBoundsChange() const
+bool PlatformCALayerCocoa::requiresCustomAppearanceUpdateOnBoundsChange() const
 {
     return m_customAppearance == GraphicsLayer::ScrollingShadow;
 }
 
-void PlatformCALayerMac::updateCustomAppearance(GraphicsLayer::CustomAppearance appearance)
+void PlatformCALayerCocoa::updateCustomAppearance(GraphicsLayer::CustomAppearance appearance)
 {
     if (m_customAppearance == appearance)
         return;
@@ -936,7 +935,7 @@ void PlatformCALayerMac::updateCustomAppearance(GraphicsLayer::CustomAppearance 
 #endif
 }
 
-TiledBacking* PlatformCALayerMac::tiledBacking()
+TiledBacking* PlatformCALayerCocoa::tiledBacking()
 {
     if (!usesTiledBackingLayer())
         return nullptr;
@@ -1099,12 +1098,12 @@ CGRect PlatformCALayer::frameForLayer(const PlatformLayer* tileLayer)
     return [tileLayer frame];
 }
 
-PassRefPtr<PlatformCALayer> PlatformCALayerMac::createCompatibleLayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client) const
+PassRefPtr<PlatformCALayer> PlatformCALayerCocoa::createCompatibleLayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client) const
 {
-    return PlatformCALayerMac::create(layerType, client);
+    return PlatformCALayerCocoa::create(layerType, client);
 }
 
-void PlatformCALayerMac::enumerateRectsBeingDrawn(CGContextRef context, void (^block)(CGRect))
+void PlatformCALayerCocoa::enumerateRectsBeingDrawn(CGContextRef context, void (^block)(CGRect))
 {
     wkCALayerEnumerateRectsBeingDrawnWithBlock(m_layer.get(), context, block);
 }

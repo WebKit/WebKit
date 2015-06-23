@@ -28,7 +28,7 @@
 
 #import "RemoteLayerTreeContext.h"
 #import <WebCore/GraphicsLayerCA.h>
-#import <WebCore/PlatformCALayerMac.h>
+#import <WebCore/PlatformCALayerCocoa.h>
 #import <WebCore/TiledBacking.h>
 #import <wtf/RetainPtr.h>
 

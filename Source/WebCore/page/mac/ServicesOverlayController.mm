@@ -46,7 +46,7 @@
 #import "MainFrame.h"
 #import "Page.h"
 #import "PageOverlayController.h"
-#import "PlatformCAAnimationMac.h"
+#import "PlatformCAAnimationCocoa.h"
 #import "Settings.h"
 #import "SoftLinking.h"
 #import <QuartzCore/QuartzCore.h>
@@ -158,7 +158,7 @@ void ServicesOverlayController::Highlight::fadeIn()
     [animation setRemovedOnCompletion:false];
     [animation setToValue:@1];
 
-    RefPtr<PlatformCAAnimation> platformAnimation = PlatformCAAnimationMac::create(animation.get());
+    RefPtr<PlatformCAAnimation> platformAnimation = PlatformCAAnimationCocoa::create(animation.get());
     downcast<GraphicsLayerCA>(*layer()).platformCALayer()->addAnimationForKey("FadeHighlightIn", *platformAnimation);
 }
 
@@ -176,7 +176,7 @@ void ServicesOverlayController::Highlight::fadeOut()
         retainedSelf->didFinishFadeOutAnimation();
     }];
 
-    RefPtr<PlatformCAAnimation> platformAnimation = PlatformCAAnimationMac::create(animation.get());
+    RefPtr<PlatformCAAnimation> platformAnimation = PlatformCAAnimationCocoa::create(animation.get());
     downcast<GraphicsLayerCA>(*layer()).platformCALayer()->addAnimationForKey("FadeHighlightOut", *platformAnimation);
     [CATransaction commit];
 }

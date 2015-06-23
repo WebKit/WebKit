@@ -24,7 +24,6 @@
  */
 
 #include "config.h"
-
 #include "LayerFlushScheduler.h"
 
 #include <wtf/AutodrainedPool.h>

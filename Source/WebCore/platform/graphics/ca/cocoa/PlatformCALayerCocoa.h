@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformCALayerMac_h
-#define PlatformCALayerMac_h
+#ifndef PlatformCALayerCocoa_h
+#define PlatformCALayerCocoa_h
 
 #include "PlatformCALayer.h"
 
@@ -32,7 +32,7 @@ OBJC_CLASS NSObject;
 
 namespace WebCore {
 
-class PlatformCALayerMac final : public PlatformCALayer {
+class PlatformCALayerCocoa final : public PlatformCALayer {
 public:
     static PassRefPtr<PlatformCALayer> create(LayerType, PlatformCALayerClient*);
     
@@ -42,7 +42,7 @@ public:
 
     WEBCORE_EXPORT static LayerType layerTypeForPlatformLayer(PlatformLayer*);
 
-    ~PlatformCALayerMac();
+    ~PlatformCALayerCocoa();
 
     virtual void setOwner(PlatformCALayerClient*) override;
 
@@ -163,12 +163,12 @@ public:
     virtual void enumerateRectsBeingDrawn(CGContextRef, void (^block)(CGRect)) override;
 
 private:
-    PlatformCALayerMac(LayerType, PlatformCALayerClient* owner);
-    PlatformCALayerMac(PlatformLayer*, PlatformCALayerClient* owner);
+    PlatformCALayerCocoa(LayerType, PlatformCALayerClient* owner);
+    PlatformCALayerCocoa(PlatformLayer*, PlatformCALayerClient* owner);
 
     void commonInit();
 
-    virtual bool isPlatformCALayerMac() const override { return true; }
+    virtual bool isPlatformCALayerCocoa() const override { return true; }
 
     bool requiresCustomAppearanceUpdateOnBoundsChange() const;
 
@@ -180,6 +180,6 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_PLATFORM_CALAYER(WebCore::PlatformCALayerMac, isPlatformCALayerMac())
+SPECIALIZE_TYPE_TRAITS_PLATFORM_CALAYER(WebCore::PlatformCALayerCocoa, isPlatformCALayerCocoa())
 
-#endif // PlatformCALayerMac_h
+#endif // PlatformCALayerCocoa_h

@@ -32,7 +32,7 @@
 #import "WebProcess.h"
 #import <AVFoundation/AVFoundation.h>
 #import <WebCore/GraphicsLayerCA.h>
-#import <WebCore/PlatformCALayerMac.h>
+#import <WebCore/PlatformCALayerCocoa.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <wtf/RetainPtr.h>
@@ -48,7 +48,7 @@ static NSString * const platformCALayerPointer = @"WKPlatformCALayer";
 
 PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemoteCustom::create(PlatformLayer *platformLayer, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
 {
-    RefPtr<PlatformCALayerRemote> layer = adoptRef(new PlatformCALayerRemoteCustom(PlatformCALayerMac::layerTypeForPlatformLayer(platformLayer), platformLayer, owner, context));
+    RefPtr<PlatformCALayerRemote> layer = adoptRef(new PlatformCALayerRemoteCustom(PlatformCALayerCocoa::layerTypeForPlatformLayer(platformLayer), platformLayer, owner, context));
     context.layerWasCreated(*layer, layer->layerType());
 
     return layer.release();

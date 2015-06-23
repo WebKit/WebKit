@@ -56,7 +56,7 @@ typedef Vector<RefPtr<PlatformCALayer>> PlatformCALayerList;
 
 class WEBCORE_EXPORT PlatformCALayer : public RefCounted<PlatformCALayer> {
 #if PLATFORM(COCOA)
-    friend class PlatformCALayerMac;
+    friend class PlatformCALayerCocoa;
 #elif PLATFORM(WIN)
     friend class PlatformCALayerWin;
 #endif
@@ -93,7 +93,7 @@ public:
 
     GraphicsLayer::PlatformLayerID layerID() const { return m_layerID; }
 
-    virtual bool isPlatformCALayerMac() const { return false; }
+    virtual bool isPlatformCALayerCocoa() const { return false; }
     virtual bool isPlatformCALayerRemote() const { return false; }
     virtual bool isPlatformCALayerRemoteCustom() const { return false; }
 

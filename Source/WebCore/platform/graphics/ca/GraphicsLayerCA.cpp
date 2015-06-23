@@ -53,8 +53,8 @@
 #endif
 
 #if PLATFORM(COCOA)
-#include "PlatformCAAnimationMac.h"
-#include "PlatformCALayerMac.h"
+#include "PlatformCAAnimationCocoa.h"
+#include "PlatformCALayerCocoa.h"
 #include "WebCoreSystemInterface.h"
 #endif
 
@@ -289,7 +289,7 @@ bool GraphicsLayer::supportsLayerType(Type type)
         return true;
     case Type::Shape:
 #if PLATFORM(COCOA)
-        // FIXME: we can use shaper layers on Windows when PlatformCALayerMac::setShapePath() etc are implemented.
+        // FIXME: we can use shaper layers on Windows when PlatformCALayerCocoa::setShapePath() etc are implemented.
         return true;
 #else
         return false;
@@ -320,7 +320,7 @@ std::unique_ptr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* facto
 bool GraphicsLayerCA::filtersCanBeComposited(const FilterOperations& filters)
 {
 #if PLATFORM(COCOA)
-    return PlatformCALayerMac::filtersCanBeComposited(filters);
+    return PlatformCALayerCocoa::filtersCanBeComposited(filters);
 #elif PLATFORM(WIN)
     return PlatformCALayerWin::filtersCanBeComposited(filters);
 #endif
@@ -329,7 +329,7 @@ bool GraphicsLayerCA::filtersCanBeComposited(const FilterOperations& filters)
 PassRefPtr<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* owner)
 {
 #if PLATFORM(COCOA)
-    return PlatformCALayerMac::create(layerType, owner);
+    return PlatformCALayerCocoa::create(layerType, owner);
 #elif PLATFORM(WIN)
     return PlatformCALayerWin::create(layerType, owner);
 #endif
@@ -338,7 +338,7 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformCALay
 PassRefPtr<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformLayer* platformLayer, PlatformCALayerClient* owner)
 {
 #if PLATFORM(COCOA)
-    return PlatformCALayerMac::create(platformLayer, owner);
+    return PlatformCALayerCocoa::create(platformLayer, owner);
 #elif PLATFORM(WIN)
     return PlatformCALayerWin::create(platformLayer, owner);
 #endif
@@ -347,7 +347,7 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformLayer
 PassRefPtr<PlatformCAAnimation> GraphicsLayerCA::createPlatformCAAnimation(PlatformCAAnimation::AnimationType type, const String& keyPath)
 {
 #if PLATFORM(COCOA)
-    return PlatformCAAnimationMac::create(type, keyPath);
+    return PlatformCAAnimationCocoa::create(type, keyPath);
 #elif PLATFORM(WIN)
     return PlatformCAAnimationWin::create(type, keyPath);
 #endif
@@ -1219,7 +1219,7 @@ GraphicsLayerCA::VisibleAndCoverageRects GraphicsLayerCA::computeVisibleAndCover
     FloatPoint boundsOrigin = m_boundsOrigin;
 #if PLATFORM(IOS)
     // In WK1, UIKit may be changing layer bounds behind our back in overflow-scroll layers, so use the layer's origin.
-    if (m_layer->isPlatformCALayerMac())
+    if (m_layer->isPlatformCALayerCocoa())
         boundsOrigin = m_layer->bounds().location();
 #endif
     clipRectForChildren.move(boundsOrigin.x(), boundsOrigin.y());

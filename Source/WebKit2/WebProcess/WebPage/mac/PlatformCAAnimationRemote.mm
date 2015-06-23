@@ -31,7 +31,7 @@
 #import "WebCoreArgumentCoders.h"
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/GraphicsLayer.h>
-#import <WebCore/PlatformCAAnimationMac.h>
+#import <WebCore/PlatformCAAnimationCocoa.h>
 #import <WebCore/PlatformCAFilters.h>
 #import <WebCore/TimingFunction.h>
 #import <wtf/CurrentTime.h>

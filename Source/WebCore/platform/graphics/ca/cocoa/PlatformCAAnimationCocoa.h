@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PlatformCAAnimationMac_h
-#define PlatformCAAnimationMac_h
+#ifndef PlatformCAAnimationCocoa_h
+#define PlatformCAAnimationCocoa_h
 
 #include "PlatformCAAnimation.h"
 
@@ -46,14 +46,14 @@ WEBCORE_EXPORT CAMediaTimingFunction* toCAMediaTimingFunction(const TimingFuncti
 bool hasExplicitBeginTime(CAAnimation *);
 void setHasExplicitBeginTime(CAAnimation *, bool);
 
-class PlatformCAAnimationMac final : public PlatformCAAnimation {
+class PlatformCAAnimationCocoa final : public PlatformCAAnimation {
 public:
     static PassRefPtr<PlatformCAAnimation> create(AnimationType, const String& keyPath);
     WEBCORE_EXPORT static PassRefPtr<PlatformCAAnimation> create(PlatformAnimationRef);
 
-    virtual ~PlatformCAAnimationMac();
+    virtual ~PlatformCAAnimationCocoa();
 
-    virtual bool isPlatformCAAnimationMac() const override { return true; }
+    virtual bool isPlatformCAAnimationCocoa() const override { return true; }
 
     virtual PassRefPtr<PlatformCAAnimation> copy() const override;
 
@@ -124,8 +124,8 @@ public:
     virtual void copyTimingFunctionsFrom(const PlatformCAAnimation&) override;
 
 protected:
-    PlatformCAAnimationMac(AnimationType, const String& keyPath);
-    PlatformCAAnimationMac(PlatformAnimationRef);
+    PlatformCAAnimationCocoa(AnimationType, const String& keyPath);
+    PlatformCAAnimationCocoa(PlatformAnimationRef);
 
 private:
     RetainPtr<CAPropertyAnimation> m_animation;
@@ -133,6 +133,6 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CAANIMATION(WebCore::PlatformCAAnimationMac, isPlatformCAAnimationMac())
+SPECIALIZE_TYPE_TRAITS_CAANIMATION(WebCore::PlatformCAAnimationCocoa, isPlatformCAAnimationCocoa())
 
-#endif // PlatformCAAnimationMac_h
+#endif // PlatformCAAnimationCocoa_h

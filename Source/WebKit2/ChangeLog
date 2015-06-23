@@ -1,3 +1,23 @@
+2015-06-22  Dean Jackson  <dino@apple.com>
+
+        Rename PlatformCA*Mac to PlatformCA*Cocoa
+        https://bugs.webkit.org/show_bug.cgi?id=146224
+        <rdar://problem/21497182>
+
+        Reviewed by Simon Fraser.
+
+        Rename PlatformCALayerMac and related files in platform/graphics/ca/mac
+        to the more accurate Cocoa suffix.
+
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.mm:
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::filtersCanBeComposited):
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.mm:
+        (WebKit::PlatformCALayerRemoteCustom::create):
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteTiledBacking.cpp:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::commitTransientZoom):
+
 2015-06-22  Anders Carlsson  <andersca@apple.com>
 
         Simplify Connection::SyncMessageState

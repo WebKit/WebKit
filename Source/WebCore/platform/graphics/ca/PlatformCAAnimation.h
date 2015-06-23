@@ -47,7 +47,7 @@ public:
 
     virtual ~PlatformCAAnimation() { }
 
-    virtual bool isPlatformCAAnimationMac() const { return false; }
+    virtual bool isPlatformCAAnimationCocoa() const { return false; }
     virtual bool isPlatformCAAnimationWin() const { return false; }
     virtual bool isPlatformCAAnimationRemote() const { return false; }
     

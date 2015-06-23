@@ -36,7 +36,7 @@
 #import <WebCore/GraphicsLayerCA.h>
 #import <WebCore/LengthFunctions.h>
 #import <WebCore/PlatformCAFilters.h>
-#import <WebCore/PlatformCALayerMac.h>
+#import <WebCore/PlatformCALayerCocoa.h>
 #import <WebCore/TiledBacking.h>
 #import <wtf/CurrentTime.h>
 #import <wtf/RetainPtr.h>
@@ -651,7 +651,7 @@ void PlatformCALayerRemote::setBlendMode(BlendMode blendMode)
 
 bool PlatformCALayerRemote::filtersCanBeComposited(const FilterOperations& filters)
 {
-    return PlatformCALayerMac::filtersCanBeComposited(filters);
+    return PlatformCALayerCocoa::filtersCanBeComposited(filters);
 }
 
 void PlatformCALayerRemote::setName(const String& value)

@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
-
 #import "PlatformCAFilters.h"
+
 #import "BlockExceptions.h"
 #import "FloatConversion.h"
 #import "LengthFunctions.h" // This is a layering violation.
-#import "PlatformCALayerMac.h"
+#import "PlatformCALayerCocoa.h"
 #import "QuartzCoreSPI.h"
 #import <QuartzCore/QuartzCore.h>
 
@@ -63,7 +63,7 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
     }
     
     // Assume filtersCanBeComposited was called and it returned true.
-    ASSERT(PlatformCALayerMac::filtersCanBeComposited(filters));
+    ASSERT(PlatformCALayerCocoa::filtersCanBeComposited(filters));
     
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     
@@ -189,14 +189,14 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
             t = std::min(std::max(0.0, t), 1.0);
             // FIXME: results don't match the software filter.
             [filter setValue:[CIVector vectorWithX:WebCore::blend(sepiaNoneConstants[0][0], sepiaFullConstants[0][0], t)
-                                                 Y:WebCore::blend(sepiaNoneConstants[0][1], sepiaFullConstants[0][1], t)
-                                                 Z:WebCore::blend(sepiaNoneConstants[0][2], sepiaFullConstants[0][2], t) W:0] forKey:@"inputRVector"];
+                Y:WebCore::blend(sepiaNoneConstants[0][1], sepiaFullConstants[0][1], t)
+                Z:WebCore::blend(sepiaNoneConstants[0][2], sepiaFullConstants[0][2], t) W:0] forKey:@"inputRVector"];
             [filter setValue:[CIVector vectorWithX:WebCore::blend(sepiaNoneConstants[1][0], sepiaFullConstants[1][0], t)
-                                                 Y:WebCore::blend(sepiaNoneConstants[1][1], sepiaFullConstants[1][1], t)
-                                                 Z:WebCore::blend(sepiaNoneConstants[1][2], sepiaFullConstants[1][2], t) W:0] forKey:@"inputGVector"];
+                Y:WebCore::blend(sepiaNoneConstants[1][1], sepiaFullConstants[1][1], t)
+                Z:WebCore::blend(sepiaNoneConstants[1][2], sepiaFullConstants[1][2], t) W:0] forKey:@"inputGVector"];
             [filter setValue:[CIVector vectorWithX:WebCore::blend(sepiaNoneConstants[2][0], sepiaFullConstants[2][0], t)
-                                                 Y:WebCore::blend(sepiaNoneConstants[2][1], sepiaFullConstants[2][1], t)
-                                                 Z:WebCore::blend(sepiaNoneConstants[2][2], sepiaFullConstants[2][2], t) W:0] forKey:@"inputBVector"];
+                Y:WebCore::blend(sepiaNoneConstants[2][1], sepiaFullConstants[2][1], t)
+                Z:WebCore::blend(sepiaNoneConstants[2][2], sepiaFullConstants[2][2], t) W:0] forKey:@"inputBVector"];
             [filter setName:filterName];
             [array.get() addObject:filter];
             break;
@@ -338,14 +338,17 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
         CIVector* rowVector = nullptr;
         switch (internalFilterPropertyIndex) {
         case 0: rowVector = [[CIVector alloc] initWithX:WebCore::blend(sepiaNoneConstants[0][0], sepiaFullConstants[0][0], amount)
-                                                      Y:WebCore::blend(sepiaNoneConstants[0][1], sepiaFullConstants[0][1], amount)
-                                                      Z:WebCore::blend(sepiaNoneConstants[0][2], sepiaFullConstants[0][2], amount) W:0]; break; // inputRVector
+            Y:WebCore::blend(sepiaNoneConstants[0][1], sepiaFullConstants[0][1], amount)
+            Z:WebCore::blend(sepiaNoneConstants[0][2], sepiaFullConstants[0][2], amount) W:0];
+            break; // inputRVector
         case 1: rowVector = [[CIVector alloc] initWithX:WebCore::blend(sepiaNoneConstants[1][0], sepiaFullConstants[1][0], amount)
-                                                      Y:WebCore::blend(sepiaNoneConstants[1][1], sepiaFullConstants[1][1], amount)
-                                                      Z:WebCore::blend(sepiaNoneConstants[1][2], sepiaFullConstants[1][2], amount) W:0]; break; // inputGVector
+            Y:WebCore::blend(sepiaNoneConstants[1][1], sepiaFullConstants[1][1], amount)
+            Z:WebCore::blend(sepiaNoneConstants[1][2], sepiaFullConstants[1][2], amount) W:0];
+            break; // inputGVector
         case 2: rowVector = [[CIVector alloc] initWithX:WebCore::blend(sepiaNoneConstants[2][0], sepiaFullConstants[2][0], amount)
-                                                      Y:WebCore::blend(sepiaNoneConstants[2][1], sepiaFullConstants[2][1], amount)
-                                                      Z:WebCore::blend(sepiaNoneConstants[2][2], sepiaFullConstants[2][2], amount) W:0]; break; // inputBVector
+            Y:WebCore::blend(sepiaNoneConstants[2][1], sepiaFullConstants[2][1], amount)
+            Z:WebCore::blend(sepiaNoneConstants[2][2], sepiaFullConstants[2][2], amount) W:0];
+            break; // inputBVector
         }
         value = adoptNS(rowVector);
 #endif
@@ -545,50 +548,50 @@ void PlatformCAFilters::setBlendingFiltersOnLayer(PlatformLayer* layer, const Bl
     CAFilter* filter = nil;
 
     switch (blendMode) {
-        case BlendModeNormal:
-            // No need to set an actual filter object in this case.
-            break;
-        case BlendModeOverlay:
-            filter = [CAFilter filterWithType:kCAFilterOverlayBlendMode];
-            break;
-        case BlendModeColorDodge:
-            filter = [CAFilter filterWithType:kCAFilterColorDodgeBlendMode];
-            break;
-        case BlendModeColorBurn:
-            filter = [CAFilter filterWithType:kCAFilterColorBurnBlendMode];
-            break;
-        case BlendModeDarken:
-            filter = [CAFilter filterWithType:kCAFilterDarkenBlendMode];
-            break;
-        case BlendModeDifference:
-            filter = [CAFilter filterWithType:kCAFilterDifferenceBlendMode];
-            break;
-        case BlendModeExclusion:
-            filter = [CAFilter filterWithType:kCAFilterExclusionBlendMode];
-            break;
-        case BlendModeHardLight:
-            filter = [CAFilter filterWithType:kCAFilterHardLightBlendMode];
-            break;
-        case BlendModeMultiply:
-            filter = [CAFilter filterWithType:kCAFilterMultiplyBlendMode];
-            break;
-        case BlendModeLighten:
-            filter = [CAFilter filterWithType:kCAFilterLightenBlendMode];
-            break;
-        case BlendModeSoftLight:
-            filter = [CAFilter filterWithType:kCAFilterSoftLightBlendMode];
-            break;
-        case BlendModeScreen:
-            filter = [CAFilter filterWithType:kCAFilterScreenBlendMode];
-            break;
-        case BlendModePlusDarker:
-            filter = [CAFilter filterWithType:kCAFilterPlusD];
-            break;
-        case BlendModePlusLighter:
-            filter = [CAFilter filterWithType:kCAFilterPlusL];
-            break;
-        default:
-            ASSERT_NOT_REACHED();
+    case BlendModeNormal:
+        // No need to set an actual filter object in this case.
+        break;
+    case BlendModeOverlay:
+        filter = [CAFilter filterWithType:kCAFilterOverlayBlendMode];
+        break;
+    case BlendModeColorDodge:
+        filter = [CAFilter filterWithType:kCAFilterColorDodgeBlendMode];
+        break;
+    case BlendModeColorBurn:
+        filter = [CAFilter filterWithType:kCAFilterColorBurnBlendMode];
+        break;
+    case BlendModeDarken:
+        filter = [CAFilter filterWithType:kCAFilterDarkenBlendMode];
+        break;
+    case BlendModeDifference:
+        filter = [CAFilter filterWithType:kCAFilterDifferenceBlendMode];
+        break;
+    case BlendModeExclusion:
+        filter = [CAFilter filterWithType:kCAFilterExclusionBlendMode];
+        break;
+    case BlendModeHardLight:
+        filter = [CAFilter filterWithType:kCAFilterHardLightBlendMode];
+        break;
+    case BlendModeMultiply:
+        filter = [CAFilter filterWithType:kCAFilterMultiplyBlendMode];
+        break;
+    case BlendModeLighten:
+        filter = [CAFilter filterWithType:kCAFilterLightenBlendMode];
+        break;
+    case BlendModeSoftLight:
+        filter = [CAFilter filterWithType:kCAFilterSoftLightBlendMode];
+        break;
+    case BlendModeScreen:
+        filter = [CAFilter filterWithType:kCAFilterScreenBlendMode];
+        break;
+    case BlendModePlusDarker:
+        filter = [CAFilter filterWithType:kCAFilterPlusD];
+        break;
+    case BlendModePlusLighter:
+        filter = [CAFilter filterWithType:kCAFilterPlusL];
+        break;
+    default:
+        ASSERT_NOT_REACHED();
     }
 
     [layer setCompositingFilter:filter];
