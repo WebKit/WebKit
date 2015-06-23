@@ -184,7 +184,7 @@ public:
     {
     }
 
-    virtual void didPostMessage(WebPageProxy& page, WebFrameProxy&, WebCore::SerializedScriptValue& serializedScriptValue)
+    virtual void didPostMessage(WebPageProxy& page, WebFrameProxy&, const SecurityOriginData&, WebCore::SerializedScriptValue& serializedScriptValue)
     {
         WebKitJavascriptResult* jsResult = webkitJavascriptResultCreate(WEBKIT_WEB_VIEW(page.viewWidget()), serializedScriptValue);
         g_signal_emit(m_manager, signals[SCRIPT_MESSAGE_RECEIVED], m_handlerName, jsResult);

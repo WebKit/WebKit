@@ -1,3 +1,11 @@
+2015-06-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r185876 and r185877.
+
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+        * UIProcess/API/gtk/WebKitUserContentManager.cpp:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+
 2015-06-23  Anders Carlsson  <andersca@apple.com>
 
         Get rid of the window resizer size
