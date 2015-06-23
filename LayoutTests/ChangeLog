@@ -1,3 +1,16 @@
+2015-06-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Unreviewed test gardening after r185842
+        https://bugs.webkit.org/show_bug.cgi?id=145681
+        <rdar://problem/21169844>
+
+        * platform/mac-yosemite/fast/text/arabic-times-new-roman-expected.png: Copied from LayoutTests/platform/mac/fast/text/arabic-times-new-roman-expected.png.
+        * platform/mac-yosemite/fast/text/arabic-times-new-roman-expected.txt: Copied from LayoutTests/platform/mac/fast/text/arabic-times-new-roman-expected.txt.
+        * platform/mac/fast/text/arabic-times-new-roman-expected.png:
+        * platform/mac/fast/text/arabic-times-new-roman-expected.txt:
+        * platform/win/fast/text/arabic-times-new-roman-expected.png: Added.
+        * platform/win/fast/text/arabic-times-new-roman-expected.txt: Added.
+
 2015-06-23  Daniel Bates  <dabates@apple.com>
 
         AX Tests hit-test-input-{auto-fill, search}-button.html and input-search-cancel-button.html fail on Windows
