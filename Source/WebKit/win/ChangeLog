@@ -1,3 +1,15 @@
+2015-06-23  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo] WebDownload::initWithRequest is not implemented.
+        https://bugs.webkit.org/show_bug.cgi?id=146203
+
+        Reviewed by Alex Christensen.
+
+        Implement method to start download from a IWebURLRequest object.
+
+        * WebDownloadCurl.cpp:
+        (WebDownload::initWithRequest): Implemented.
+
 2015-06-18  Anders Carlsson  <andersca@apple.com>
 
         Remove shouldInterruptJavaScript

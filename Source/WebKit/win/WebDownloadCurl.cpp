@@ -81,8 +81,14 @@ HRESULT STDMETHODCALLTYPE WebDownload::initWithRequest(
         /* [in] */ IWebURLRequest* request, 
         /* [in] */ IWebDownloadDelegate* delegate)
 {
-   notImplemented();
-   return E_FAIL;
+    BString url;
+
+    if (!SUCCEEDED(request->URL(&url)))
+        return E_FAIL;
+
+    init(URL(ParsedURLString, String(url)), delegate);
+
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebDownload::initToResumeWithBundle(
