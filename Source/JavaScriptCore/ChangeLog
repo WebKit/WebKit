@@ -1,3 +1,23 @@
+2015-06-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Allow trailing comma in ArrayBindingPattern and ObjectBindingPattern
+        https://bugs.webkit.org/show_bug.cgi?id=146192
+
+        Reviewed by Darin Adler.
+
+        According to the ES6 spec, trailing comma in ArrayBindingPattern and ObjectBindingPattern is allowed.
+        And empty ArrayBindingPattern and ObjectBindingPattern is also allowed.
+
+        This patch allows trailing comma and empty binding patterns.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ArrayPatternNode::bindValue):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseDeconstructionPattern):
+        * tests/stress/trailing-comma-in-patterns.js: Added.
+        (shouldBe):
+        (iterator):
+
 2015-06-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Destructuring assignment need to accept iterables

@@ -3139,8 +3139,12 @@ void ArrayPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs) 
         generator.emitCall(iterator.get(), iterator.get(), NoExpectedFunction, args, divot(), divotStart(), divotEnd());
     }
 
+    if (m_targetPatterns.isEmpty()) {
+        generator.emitIteratorClose(iterator.get(), this);
+        return;
+    }
+
     RefPtr<RegisterID> done;
-    ASSERT(!m_targetPatterns.isEmpty());
     for (auto& target : m_targetPatterns) {
         RefPtr<RegisterID> value = generator.newTemporary();
 

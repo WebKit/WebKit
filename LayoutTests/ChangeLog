@@ -1,3 +1,12 @@
+2015-06-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Allow trailing comma in ArrayBindingPattern and ObjectBindingPattern
+        https://bugs.webkit.org/show_bug.cgi?id=146192
+
+        Reviewed by Darin Adler.
+
+        * js/object-literal-syntax-expected.txt:
+
 2015-06-22  Simon Fraser  <simon.fraser@apple.com>
 
         -webkit-clip-path clips incorrectly if the element bounds go beyond the top edge of the page

@@ -35,7 +35,7 @@ PASS ({set a(){}}) threw exception SyntaxError: Unexpected token ')'. setter fun
 PASS ({b:1, set a(){}}) threw exception SyntaxError: Unexpected token ')'. setter functions must have one parameter..
 PASS ({set a(){}}) threw exception SyntaxError: Unexpected token ')'. setter functions must have one parameter..
 PASS ({set a(x{}}) threw exception SyntaxError: Unexpected token '{'. Expected a ')' after a parameter declaration..
-PASS ({set a({}}) threw exception SyntaxError: Unexpected token '}'. There must be at least one bound property in an object deconstruction pattern..
+PASS ({set a({}}) threw exception SyntaxError: Unexpected token '}'. Expected a ')' after a parameter declaration..
 PASS ({set a((x)){}}) threw exception SyntaxError: Unexpected token '('. Expected a parameter pattern or a ')' in parameter list..
 PASS ({set a(x, y){}}) threw exception SyntaxError: Unexpected token ','. setter functions must have one parameter..
 PASS ({set a([x], y){}}) threw exception SyntaxError: Unexpected token ','. setter functions must have one parameter..
