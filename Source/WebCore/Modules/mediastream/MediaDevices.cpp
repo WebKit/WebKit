@@ -60,8 +60,13 @@ Document* MediaDevices::document() const
     return downcast<Document>(scriptExecutionContext());
 }
 
-void MediaDevices::getUserMedia(const Dictionary& options, ResolveCallback resolveCallback, RejectCallback rejectCallback, ExceptionCode& ec) const
+void MediaDevices::getUserMedia(const Dictionary& options, Promise&& promise, ExceptionCode& ec) const
 {
+    if (!options.isObject()) {
+        ec = TypeError;
+        return;
+    }
+
     UserMediaController* userMedia = UserMediaController::from(document() ? document()->page() : nullptr);
     if (!userMedia) {
         // FIXME: We probably want to return a MediaStreamError here using the rejectCallback, and get rid off the ExceptionCode parameter.
@@ -69,7 +74,7 @@ void MediaDevices::getUserMedia(const Dictionary& options, ResolveCallback resol
         return;
     }
 
-    RefPtr<UserMediaRequest> request = UserMediaRequest::create(document(), userMedia, options, WTF::move(resolveCallback), WTF::move(rejectCallback), ec);
+    RefPtr<UserMediaRequest> request = UserMediaRequest::create(document(), userMedia, options, WTF::move(promise), ec);
     if (!request) {
         ec = NOT_SUPPORTED_ERR;
         return;

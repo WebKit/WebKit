@@ -32,5 +32,5 @@
     NoInterfaceObject,
     Conditional=MEDIA_STREAM
 ] interface MediaDevices {
-    [Custom, RaisesException] Promise getUserMedia(Dictionary options);
+    [RaisesException] Promise getUserMedia(Dictionary options);
 };

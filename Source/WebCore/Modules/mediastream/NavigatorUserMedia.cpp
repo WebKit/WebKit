@@ -29,7 +29,9 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
+#include "MediaStream.h"
 #include "Navigator.h"
+#include "NavigatorUserMediaError.h"
 #include "NavigatorUserMediaErrorCallback.h"
 #include "NavigatorUserMediaSuccessCallback.h"
 #include "Page.h"
@@ -48,6 +50,7 @@ NavigatorUserMedia::~NavigatorUserMedia()
 
 void NavigatorUserMedia::webkitGetUserMedia(Navigator* navigator, const Dictionary& options, PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback, PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback, ExceptionCode& ec)
 {
+    // FIXME: Remove this test once IDL is updated to make errroCallback parameter mandatory.
     if (!successCallback || !errorCallback) {
         ec = TYPE_MISMATCH_ERR;
         return;
@@ -59,7 +62,25 @@ void NavigatorUserMedia::webkitGetUserMedia(Navigator* navigator, const Dictiona
         return;
     }
 
-    RefPtr<UserMediaRequest> request = UserMediaRequest::create(navigator->frame()->document(), userMedia, options, successCallback, errorCallback, ec);
+    // We do not need to protect the context (i.e. document) here as UserMediaRequest is observing context destruction and will check validity before resolving/rejecting promise.
+    Document* document = navigator->frame()->document();
+
+    ASSERT(errorCallback);
+    ASSERT(successCallback);
+    auto resolveCallback = [successCallback, document](const RefPtr<MediaStream>& stream) mutable {
+        RefPtr<MediaStream> protectedStream = stream;
+        document->postTask([successCallback, protectedStream](ScriptExecutionContext&) {
+            successCallback->handleEvent(protectedStream.get());
+        });
+    };
+    auto rejectCallback = [errorCallback, document](const RefPtr<NavigatorUserMediaError>& error) mutable {
+        RefPtr<NavigatorUserMediaError> protectedError = error;
+        document->postTask([errorCallback, protectedError](ScriptExecutionContext&) {
+            errorCallback->handleEvent(protectedError.get());
+        });
+    };
+
+    auto request = UserMediaRequest::create(navigator->frame()->document(), userMedia, options, MediaDevices::Promise(WTF::move(resolveCallback), WTF::move(rejectCallback)), ec);
     if (!request) {
         ec = NOT_SUPPORTED_ERR;
         return;

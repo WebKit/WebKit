@@ -36,6 +36,8 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "JSCryptoAlgorithmDictionary.h"
+#include "JSCryptoKey.h"
+#include "JSCryptoKeyPair.h"
 #include "JSCryptoKeySerializationJWK.h"
 #include "JSCryptoOperationData.h"
 #include "JSDOMPromise.h"

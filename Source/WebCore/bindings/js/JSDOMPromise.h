@@ -28,11 +28,10 @@
 
 #if ENABLE(PROMISES)
 
-#include "JSCryptoKey.h"
-#include "JSCryptoKeyPair.h"
 #include "JSDOMBinding.h"
 #include <heap/StrongInlines.h>
 #include <runtime/JSPromiseDeferred.h>
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -84,6 +83,31 @@ public:
 
 private:
     DeferredWrapper m_wrapper;
+};
+
+template<typename Value, typename Error>
+class DOMPromiseWithCallback {
+public:
+    DOMPromiseWithCallback(DeferredWrapper&& wrapper) : m_wrapper(WTF::move(wrapper)) { }
+    DOMPromiseWithCallback(std::function<void(const Value&)> resolve, std::function<void(const Error&)> reject)
+        : m_resolveCallback(WTF::move(resolve))
+        , m_rejectCallback(WTF::move(reject))
+    {
+        ASSERT(m_resolveCallback);
+        ASSERT(m_rejectCallback);
+    }
+    explicit DOMPromiseWithCallback(DOMPromiseWithCallback&& promise)
+        : m_wrapper(WTF::move(promise.m_wrapper))
+        , m_resolveCallback(WTF::move(promise.m_resolveCallback))
+        , m_rejectCallback(WTF::move(promise.m_rejectCallback)) { }
+
+    void resolve(const Value&);
+    void reject(const Error&);
+
+private:
+    Optional<DOMPromise<Value, Error>> m_wrapper;
+    std::function<void(const Value&)> m_resolveCallback;
+    std::function<void(const Error&)> m_rejectCallback;
 };
 
 template<class ResolveResultType>
@@ -194,6 +218,28 @@ inline void DeferredWrapper::reject<String>(const String& result)
     JSC::ExecState* exec = m_globalObject->globalExec();
     JSC::JSLockHolder locker(exec);
     reject(*exec, jsString(exec, result));
+}
+
+template<typename Value, typename Error>
+inline void DOMPromiseWithCallback<Value, Error>::resolve(const Value& value)
+{
+    if (m_resolveCallback) {
+        m_resolveCallback(value);
+        return;
+    }
+    ASSERT(m_wrapper);
+    m_wrapper.value().resolve(value);
+}
+
+template<typename Value, typename Error>
+inline void DOMPromiseWithCallback<Value, Error>::reject(const Error& error)
+{
+    if (m_rejectCallback) {
+        m_rejectCallback(error);
+        return;
+    }
+    ASSERT(m_wrapper);
+    m_wrapper.value().reject(error);
 }
 
 }

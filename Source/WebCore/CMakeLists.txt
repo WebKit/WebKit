@@ -1153,7 +1153,6 @@ set(WebCore_SOURCES
     bindings/js/JSLazyEventListener.cpp
     bindings/js/JSLocationCustom.cpp
     bindings/js/JSMainThreadExecState.cpp
-    bindings/js/JSMediaDevicesCustom.cpp
     bindings/js/JSMediaSourceStatesCustom.cpp
     bindings/js/JSMediaStreamCapabilitiesCustom.cpp
     bindings/js/JSMessageChannelCustom.cpp

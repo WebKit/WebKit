@@ -34,6 +34,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "ContextDestructionObserver.h"
+#include "JSDOMPromise.h"
 #include "ScriptWrappable.h"
 #include <functional>
 #include <wtf/RefCounted.h>
@@ -55,10 +56,8 @@ public:
 
     Document* document() const;
 
-    typedef std::function<void(MediaStream&)> ResolveCallback;
-    typedef std::function<void(NavigatorUserMediaError&)> RejectCallback;
-
-    void getUserMedia(const Dictionary&, ResolveCallback, RejectCallback, ExceptionCode&) const;
+    typedef DOMPromiseWithCallback<RefPtr<MediaStream>, RefPtr<NavigatorUserMediaError>> Promise;
+    void getUserMedia(const Dictionary&, Promise&&, ExceptionCode&) const;
 
 private:
     explicit MediaDevices(ScriptExecutionContext*);
