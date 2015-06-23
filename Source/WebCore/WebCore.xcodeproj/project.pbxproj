@@ -1314,6 +1314,8 @@
 		31C0FF4E0E4CEFDD007D6FE5 /* DOMWebKitTransitionEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 31C0FF480E4CEFDD007D6FE5 /* DOMWebKitTransitionEventInternal.h */; };
 		31D591B316697A6C00E6BF02 /* PlugInClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 31D591B116697A6C00E6BF02 /* PlugInClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31DCD29D1AB4FBDE0072E817 /* AnimationTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = 31DCD29C1AB4FBDE0072E817 /* AnimationTrigger.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		31DEA4551B39F4D900F77178 /* WebSystemBackdropLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31DEA4531B39F4D900F77178 /* WebSystemBackdropLayer.mm */; };
+		31DEA4561B39F4D900F77178 /* WebSystemBackdropLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 31DEA4541B39F4D900F77178 /* WebSystemBackdropLayer.h */; };
 		31DF63571AF187DD0078FD91 /* NSColorSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 31DF63561AF187DD0078FD91 /* NSColorSPI.h */; };
 		31DF63591AF194F00078FD91 /* UIColorSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 31DF63581AF194F00078FD91 /* UIColorSPI.h */; };
 		31EAF97E121435A400E7C1BF /* DeviceMotionClientIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 31EAF97C121435A400E7C1BF /* DeviceMotionClientIOS.h */; };
@@ -8481,6 +8483,8 @@
 		31C0FF480E4CEFDD007D6FE5 /* DOMWebKitTransitionEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitTransitionEventInternal.h; sourceTree = "<group>"; };
 		31D591B116697A6C00E6BF02 /* PlugInClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlugInClient.h; sourceTree = "<group>"; };
 		31DCD29C1AB4FBDE0072E817 /* AnimationTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationTrigger.h; sourceTree = "<group>"; };
+		31DEA4531B39F4D900F77178 /* WebSystemBackdropLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSystemBackdropLayer.mm; sourceTree = "<group>"; };
+		31DEA4541B39F4D900F77178 /* WebSystemBackdropLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSystemBackdropLayer.h; sourceTree = "<group>"; };
 		31DF63561AF187DD0078FD91 /* NSColorSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSColorSPI.h; sourceTree = "<group>"; };
 		31DF63581AF194F00078FD91 /* UIColorSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIColorSPI.h; sourceTree = "<group>"; };
 		31E8D8BA160BC94B004CE8F5 /* RenderSnapshottedPlugIn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSnapshottedPlugIn.cpp; sourceTree = "<group>"; };
@@ -16273,6 +16277,8 @@
 				0F13163F16ED0CDE0035CC04 /* PlatformCAFiltersCocoa.mm */,
 				2D70BA1218074DDF0001908A /* PlatformCALayerCocoa.h */,
 				4958782012A57DDF007238AC /* PlatformCALayerCocoa.mm */,
+				31DEA4541B39F4D900F77178 /* WebSystemBackdropLayer.h */,
+				31DEA4531B39F4D900F77178 /* WebSystemBackdropLayer.mm */,
 				0F580FA11496939100FB5BD8 /* WebTiledBackingLayer.h */,
 				0F580FA21496939100FB5BD8 /* WebTiledBackingLayer.mm */,
 			);
@@ -24938,6 +24944,7 @@
 				D359D78A129CA2710006E5D2 /* HTMLDetailsElement.h in Headers */,
 				A8EA79FA0A1916DF00A8EF5F /* HTMLDirectoryElement.h in Headers */,
 				A8EA7CB70A192B9C00A8EF5F /* HTMLDivElement.h in Headers */,
+				31DEA4561B39F4D900F77178 /* WebSystemBackdropLayer.h in Headers */,
 				A8EA79F70A1916DF00A8EF5F /* HTMLDListElement.h in Headers */,
 				93F198E508245E59001E9ABC /* HTMLDocument.h in Headers */,
 				977B3867122883E900B81FF8 /* HTMLDocumentParser.h in Headers */,
@@ -29741,6 +29748,7 @@
 				A8EA73C30A1900E300A8EF5F /* RenderFieldset.cpp in Sources */,
 				066C77300AB603FD00238CC4 /* RenderFileUploadControl.cpp in Sources */,
 				53C8298D13D8D92700DE2DEB /* RenderFlexibleBox.cpp in Sources */,
+				31DEA4551B39F4D900F77178 /* WebSystemBackdropLayer.mm in Sources */,
 				508CCA5013CF106B003151F3 /* RenderFlowThread.cpp in Sources */,
 				A871DED40A1530C700B12A68 /* RenderFrame.cpp in Sources */,
 				0FD3080E117CF7E700A791F7 /* RenderFrameBase.cpp in Sources */,
