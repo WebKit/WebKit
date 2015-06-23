@@ -4,25 +4,30 @@ import logging
 import json
 import os
 
-from webkitpy.benchmark_runner.generic_factory import GenericFactory
-from webkitpy.benchmark_runner.utils import loadJSONFromFile
 
+class BrowserDriverFactory(object):
 
-driverFileName = 'browser_drivers.json'
+    browser_drivers = {}
+    platforms = set()
+    browsers = set()
 
-
-class BrowserDriverFactory(GenericFactory):
-
-    products = loadJSONFromFile(os.path.join(os.path.dirname(__file__), driverFileName))
 
     @classmethod
     def available_platforms(cls):
-        return cls.products.keys()
+        return list(cls.platforms)
 
     @classmethod
     def available_browsers(cls):
-        browsers = []
-        for platform in cls.products.values():
-            for browser in platform:
-                browsers.append(browser)
-        return browsers
+        return list(cls.browsers)
+
+    @classmethod
+    def add_browser_driver(cls, platform, browser_name, browser_driver_class):
+        cls.platforms.add(platform)
+        cls.browsers.add(browser_name)
+        if platform not in cls.browser_drivers:
+            cls.browser_drivers[platform] = {}
+        cls.browser_drivers[platform][browser_name] = browser_driver_class
+
+    @classmethod
+    def create(cls, platform, browser_name):
+        return cls.browser_drivers[platform][browser_name]()

@@ -18,6 +18,7 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
 
     """This class depends on unix environment, need to be modified to achieve crossplatform compability
     """
+    name = 'SimpleHTTPServerDriver'
 
     def __init__(self):
         self.server_process = None

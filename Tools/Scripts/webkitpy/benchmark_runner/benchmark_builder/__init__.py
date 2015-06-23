@@ -11,3 +11,18 @@
 # code in this file so that callers can opt-in as they want.  This also
 # allows different callers to choose different initialization code,
 # as necessary.
+import os
+
+from webkitpy.benchmark_runner.utils import load_subclasses
+from benchmark_builder_factory import BenchmarkBuilderFactory
+
+
+def benchmark_builder_loader(benchmark_builder_class):
+    if benchmark_builder_class.builder_name:
+        BenchmarkBuilderFactory.add(benchmark_builder_class.builder_name, benchmark_builder_class)
+
+
+load_subclasses(
+    dirname=os.path.dirname(os.path.abspath(__file__)),
+    base_class_name='GenericBenchmarkBuilder',
+    loader=benchmark_builder_loader)

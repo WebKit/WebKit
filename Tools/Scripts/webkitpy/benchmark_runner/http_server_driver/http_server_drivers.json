@@ -1,6 +1,0 @@
-{
-  "SimpleHTTPServerDriver": {
-    "moduleName": "SimpleHTTPServerDriver", 
-    "filePath": "http_server_driver.simple_http_server_driver"
-  }
-}

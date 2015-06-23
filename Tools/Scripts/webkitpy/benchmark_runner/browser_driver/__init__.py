@@ -11,3 +11,18 @@
 # code in this file so that callers can opt-in as they want.  This also
 # allows different callers to choose different initialization code,
 # as necessary.
+import os
+
+from webkitpy.benchmark_runner.utils import load_subclasses
+from browser_driver_factory import BrowserDriverFactory
+
+
+def browser_driver_loader(browser_driver_class):
+    if browser_driver_class.platform and browser_driver_class.browser_name:
+        BrowserDriverFactory.add_browser_driver(browser_driver_class.platform, browser_driver_class.browser_name, browser_driver_class)
+
+
+load_subclasses(
+    dirname=os.path.dirname(os.path.abspath(__file__)),
+    base_class_name='BrowserDriver',
+    loader=browser_driver_loader)

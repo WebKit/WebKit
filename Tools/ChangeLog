@@ -1,3 +1,66 @@
+2015-06-22  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Get rid of factory json files in benchmark_runner
+        https://bugs.webkit.org/show_bug.cgi?id=146175
+
+        Reviewed by Ryosuke Niwa.
+
+        Get rid of factory json files in benchmark_runner and refactoring the code.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder/__init__.py:
+        (benchmark_builder_loader):
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder/benchmark_builder_factory.py:
+        (BenchmarkBuilderFactory):
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder/benchmark_builders.json: Removed.
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder/generic_benchmark_builder.py:
+        (GenericBenchmarkBuilder):
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (BenchmarkRunner.__init__):
+        (BenchmarkRunner.execute):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/__init__.py:
+        (browser_driver_loader):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/browser_driver.py:
+        (BrowserDriver):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/browser_driver_factory.py:
+        (BrowserDriverFactory):
+        (BrowserDriverFactory.available_platforms):
+        (BrowserDriverFactory.available_browsers):
+        (BrowserDriverFactory.add_browser_driver):
+        (BrowserDriverFactory.create):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/browser_drivers.json: Removed.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_browser_driver.py:
+        (OSXBrowserDriver):
+        (OSXBrowserDriver.prepareEnv):
+        (OSXBrowserDriver.terminateProcesses):
+        (OSXBrowserDriver.screenSize):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_chrome_driver.py:
+        (OSXChromeDriver):
+        (OSXChromeCanaryDriver):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_firefox_driver.py:
+        (OSXFirefoxDriver):
+        (OSXFirefoxNightlyDriver):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        (OSXSafariDriver):
+        * Scripts/webkitpy/benchmark_runner/generic_factory.py:
+        (GenericFactory.create):
+        (GenericFactory.add):
+        (GenericFactory.iterateGetItem): Deleted.
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/__init__.py:
+        (http_server_driver_loader):
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server_driver.py:
+        (HTTPServerDriver):
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server_driver_factory.py:
+        (HTTPServerDriverFactory):
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server_drivers.json: Removed.
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/simple_http_server_driver.py:
+        (SimpleHTTPServerDriver):
+        * Scripts/webkitpy/benchmark_runner/utils.py:
+        (is_subclass):
+        (load_subclasses):
+        (ModuleNotFoundError): Deleted.
+        (loadModule): Deleted.
+        (loadJSONFromFile): Deleted.
+
 2015-06-22  Simon Fraser  <simon.fraser@apple.com>
 
         Make it possible to enable incremental rendering suppression in MiniBrowser

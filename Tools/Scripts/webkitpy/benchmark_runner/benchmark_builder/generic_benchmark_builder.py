@@ -16,6 +16,8 @@ _log = logging.getLogger(__name__)
 
 class GenericBenchmarkBuilder(object):
 
+    builder_name = 'GenericBenchmarkBuilder'
+
     def prepare(self, name, plan):
         self.name = name
         self.webRoot = tempfile.mkdtemp()

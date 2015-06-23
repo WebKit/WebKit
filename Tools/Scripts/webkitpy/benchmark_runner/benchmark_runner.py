@@ -16,7 +16,7 @@ from benchmark_builder.benchmark_builder_factory import BenchmarkBuilderFactory
 from benchmark_results import BenchmarkResults
 from browser_driver.browser_driver_factory import BrowserDriverFactory
 from http_server_driver.http_server_driver_factory import HTTPServerDriverFactory
-from utils import loadModule, getPathFromProjectRoot
+from utils import getPathFromProjectRoot
 from utils import timeout
 
 
@@ -37,8 +37,8 @@ class BenchmarkRunner(object):
                     self.plan['count'] = countOverride
                 if httpServerDriverOverride:
                     self.plan['http_server_driver'] = httpServerDriverOverride
-                self.browserDriver = BrowserDriverFactory.create([platform, browser])
-                self.httpServerDriver = HTTPServerDriverFactory.create([self.plan['http_server_driver']])
+                self.browserDriver = BrowserDriverFactory.create(platform, browser)
+                self.httpServerDriver = HTTPServerDriverFactory.create(self.plan['http_server_driver'])
                 self.httpServerDriver.setDeviceID(deviceID)
                 self.buildDir = os.path.abspath(buildDir) if buildDir else None
                 self.outputFile = outputFile
@@ -65,7 +65,7 @@ class BenchmarkRunner(object):
         _log.info('Start to execute the plan')
         _log.info('Start a new benchmark')
         results = []
-        self.benchmarkBuilder = BenchmarkBuilderFactory.create([self.plan['benchmark_builder']])
+        self.benchmarkBuilder = BenchmarkBuilderFactory.create(self.plan['benchmark_builder'])
 
         webRoot = self.benchmarkBuilder.prepare(self.planName, self.plan)
         for x in xrange(int(self.plan['count'])):

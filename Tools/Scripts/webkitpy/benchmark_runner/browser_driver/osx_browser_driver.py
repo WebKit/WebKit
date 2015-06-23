@@ -3,9 +3,6 @@ import logging
 import os
 import subprocess
 
-from AppKit import NSRunningApplication
-from AppKit import NSScreen
-from Quartz import CGWarpMouseCursorPosition
 from browser_driver import BrowserDriver
 
 
@@ -14,9 +11,11 @@ _log = logging.getLogger(__name__)
 
 class OSXBrowserDriver(BrowserDriver):
     bundleIdentifier = None
+    platform = 'osx'
 
     def prepareEnv(self, deviceID):
         self.closeBrowsers()
+        from Quartz import CGWarpMouseCursorPosition
         CGWarpMouseCursorPosition((10, 0))
 
     def closeBrowsers(self):
@@ -37,6 +36,7 @@ class OSXBrowserDriver(BrowserDriver):
     @classmethod
     def terminateProcesses(cls, bundleIdentifier):
         _log.info('Closing all terminating all processes with the bundle identifier %s' % bundleIdentifier)
+        from AppKit import NSRunningApplication
         processes = NSRunningApplication.runningApplicationsWithBundleIdentifier_(bundleIdentifier)
         for process in processes:
             process.terminate()
@@ -49,4 +49,5 @@ class OSXBrowserDriver(BrowserDriver):
 
     @classmethod
     def screenSize(cls):
+        from AppKit import NSScreen
         return NSScreen.mainScreen().frame().size

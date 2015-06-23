@@ -4,6 +4,8 @@ import abc
 
 
 class BrowserDriver(object):
+    platform = None
+    browser_name = None
 
     @abc.abstractmethod
     def prepareEnv(self, deviceID):

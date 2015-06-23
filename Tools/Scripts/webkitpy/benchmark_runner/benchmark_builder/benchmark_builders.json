@@ -1,6 +1,0 @@
-{
-    "GenericBenchmarkBuilder": {
-        "filePath": "benchmark_builder.generic_benchmark_builder",
-        "moduleName": "GenericBenchmarkBuilder"
-    }
-}
