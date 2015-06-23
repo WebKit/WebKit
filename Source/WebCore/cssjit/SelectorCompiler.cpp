@@ -435,6 +435,11 @@ FunctionType SelectorFragment::appendUnoptimizedPseudoClassWithContext(bool (*ma
 
 static inline FunctionType addScrollbarPseudoClassType(const CSSSelector& selector, SelectorFragment& fragment)
 {
+    // FIXME: scrollbar pseudoclass interaction with :not doesn't behave correctly.
+    // Compile them when they are fixed and tested.
+    // https://bugs.webkit.org/show_bug.cgi?id=146221
+    return FunctionType::CannotCompile;
+    
     switch (selector.pseudoClassType()) {
     case CSSSelector::PseudoClassWindowInactive:
         fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isWindowInactive));
