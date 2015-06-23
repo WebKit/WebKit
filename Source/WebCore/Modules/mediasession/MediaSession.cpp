@@ -74,6 +74,37 @@ void MediaSession::addActiveMediaElement(HTMLMediaElement& element)
 
 void MediaSession::releaseSession()
 {
+    // 5.1.3
+    // 1. Let media session be the current media session.
+    // 2. Indefinitely pause all of media session's active participating media elements.
+    // 3. Reset media session's active participating media elements to an empty list.
+    while (!m_activeParticipatingElements.isEmpty())
+        m_activeParticipatingElements.takeAny()->pause();
+
+    // 4. Run the media session release algorithm for media session.
+    releaseInternal();
+}
+
+void MediaSession::releaseInternal()
+{
+    // 6.5. Releasing a media session
+    // 1. If current media session's current state is idle, then terminate these steps.
+    if (m_currentState == State::Idle)
+        return;
+
+    // 2. If current media session still has one or more active participating media elements, then terminate these steps.
+    if (!m_activeParticipatingElements.isEmpty())
+        return;
+
+    // 3. Optionally, based on platform conventions, the user agent must release any currently held platform media focus
+    //    for current media session.
+    // 4. Optionally, based on platform conventions, the user agent must remove any previously established ongoing media
+    //    interface in the underlying platform’s notifications area and any ongoing media interface in the underlying
+    //    platform's lock screen area for current media session, if any.
+    // 5. Optionally, based on platform conventions, the user agent must prevent any hardware and/or software media keys
+    //    from controlling playback of current media session's active participating media elements.
+    // 6. Set current media session's current state to idle.
+    m_currentState = State::Idle;
 }
 
 bool MediaSession::invoke()

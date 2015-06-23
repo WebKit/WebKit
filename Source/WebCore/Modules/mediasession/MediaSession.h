@@ -72,6 +72,8 @@ private:
 
     void addActiveMediaElement(HTMLMediaElement&);
 
+    void releaseInternal();
+
     State m_currentState { State::Idle };
     Vector<HTMLMediaElement*> m_participatingElements;
     HashSet<HTMLMediaElement*> m_activeParticipatingElements;
