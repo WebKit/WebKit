@@ -1,3 +1,19 @@
+2015-06-24  Darin Adler  <darin@apple.com>
+
+        Fix Array.concat with RuntimeArray (regression from my last patch)
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncConcat): Use getLength instead of JSArray::length.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::defineOwnProperty): Added comment about use of
+        JSArray::length here that is incorrect (in a really non-obvious way).
+        (JSC::JSArray::fillArgList): Ditto.
+        (JSC::JSArray::copyToArguments): Ditto.
+
+        * runtime/JSArray.h: Added a comment explaining that it is not always
+        safe to use JSArray::length.
+
 2015-06-23  Mark Lam  <mark.lam@apple.com>
 
         Gardening: Fixing 2 bad asserts from r185889.

@@ -111,6 +111,7 @@ bool JSArray::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName 
         }
 
         // Based on SameValue check in 8.12.9, this is always okay.
+        // FIXME: Nothing prevents this from being called on a RuntimeArray, and the length function will always return 0 in that case.
         if (newLen == array->length()) {
             if (descriptor.writablePresent())
                 array->setLengthWritable(exec, descriptor.writable());
@@ -160,6 +161,7 @@ bool JSArray::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName 
     if (Optional<uint32_t> optionalIndex = parseIndex(propertyName)) {
         // b. Reject if index >= oldLen and oldLenDesc.[[Writable]] is false.
         uint32_t index = optionalIndex.value();
+        // FIXME: Nothing prevents this from being called on a RuntimeArray, and the length function will always return 0 in that case.
         if (index >= array->length() && !array->isLengthWritable())
             return reject(exec, throwException, "Attempting to define numeric property on array with non-writable length property.");
         // c. Let succeeded be the result of calling the default [[DefineOwnProperty]] internal method (8.12.9) on A passing P, Desc, and false as arguments.
@@ -1090,7 +1092,8 @@ void JSArray::fillArgList(ExecState* exec, MarkedArgumentBuffer& args)
             break;
         args.append(v.get());
     }
-    
+
+    // FIXME: What prevents this from being called with a RuntimeArray? The length function will always return 0 in that case.
     for (; i < length(); ++i)
         args.append(get(exec, i));
 }
@@ -1101,7 +1104,10 @@ void JSArray::copyToArguments(ExecState* exec, VirtualRegister firstElementDest,
     WriteBarrier<Unknown>* vector;
     unsigned vectorEnd;
     length += offset; // We like to think of the length as being our length, rather than the output length.
+
+    // FIXME: What prevents this from being called with a RuntimeArray? The length function will always return 0 in that case.
     ASSERT(length == this->length());
+
     switch (indexingType()) {
     case ArrayClass:
         return;

@@ -201,7 +201,7 @@ void shift(ExecState* exec, JSObject* thisObj, unsigned header, unsigned current
 
     if (isJSArray(thisObj)) {
         JSArray* array = asArray(thisObj);
-        if (array->length() == length && asArray(thisObj)->shiftCount<shiftCountMode>(exec, header, count))
+        if (array->length() == length && array->shiftCount<shiftCountMode>(exec, header, count))
             return;
     }
 
@@ -290,7 +290,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
 
     ASSERT(isJSArray(thisValue));
     JSArray* thisArray = asArray(thisValue);
-    
+
     unsigned length = thisArray->length();
 
     StringRecursionChecker checker(exec, thisArray);
@@ -414,9 +414,12 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState* exec)
     Checked<unsigned, RecordOverflow> finalArraySize = 0;
 
     for (unsigned i = 0; ; ++i) {
-        if (JSArray* currentArray = jsDynamicCast<JSArray*>(curArg))
-            finalArraySize += currentArray->length();
-        else
+        if (JSArray* currentArray = jsDynamicCast<JSArray*>(curArg)) {
+            // Can't use JSArray::length here because this might be a RuntimeArray!
+            finalArraySize += getLength(exec, currentArray);
+            if (exec->hadException())
+                return JSValue::encode(jsUndefined());
+        } else
             ++finalArraySize;
         if (i == argCount)
             break;
@@ -434,7 +437,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState* exec)
     unsigned n = 0;
     for (unsigned i = 0; ; ++i) {
         if (JSArray* currentArray = jsDynamicCast<JSArray*>(curArg)) {
-            unsigned length = currentArray->length();
+            // Can't use JSArray::length here because this might be a RuntimeArray!
+            unsigned length = getLength(exec, currentArray);
             if (exec->hadException())
                 return JSValue::encode(jsUndefined());
             for (unsigned k = 0; k < length; ++k) {

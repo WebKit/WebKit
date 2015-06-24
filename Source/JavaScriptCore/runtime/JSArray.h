@@ -66,9 +66,11 @@ public:
     JS_EXPORT_PRIVATE static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 
     DECLARE_EXPORT_INFO;
-        
+
+    // OK if we know this is a JSArray, but not if it could be an object of a derived class; for RuntimeArray this always returns 0.
     unsigned length() const { return getArrayLength(); }
-    // OK to use on new arrays, but not if it might be a RegExpMatchArray.
+
+    // OK to use on new arrays, but not if it might be a RegExpMatchArray or RuntimeArray.
     JS_EXPORT_PRIVATE bool setLength(ExecState*, unsigned, bool throwException = false);
 
     JS_EXPORT_PRIVATE void push(ExecState*, JSValue);
